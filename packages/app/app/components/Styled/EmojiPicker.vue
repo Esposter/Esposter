@@ -13,7 +13,7 @@ interface StyledEmojiPickerProps {
   tooltipProps: VTooltip["$props"];
 }
 
-const { buttonAttrs, buttonProps, tooltipProps } = defineProps<StyledEmojiPickerProps>();
+const { buttonAttrs = {}, buttonProps = {}, tooltipProps } = defineProps<StyledEmojiPickerProps>();
 const emit = defineEmits<{ select: [emoji: string]; "update:menu": [value: boolean] }>();
 const emojiIndex = new EmojiIndex(data);
 const menu = ref(false);
@@ -40,10 +40,7 @@ const onSelectEmoji = (emoji: { native: string }) => {
     <template #activator="{ props: menuProps }">
       <v-tooltip :="tooltipProps">
         <template #activator="{ props: tooltipActivatorProps }">
-          <v-btn
-            icon="mdi-emoticon"
-            :="mergeProps(menuProps, tooltipActivatorProps, buttonProps ?? {}, buttonAttrs ?? {})"
-          />
+          <v-btn icon="mdi-emoticon" :="mergeProps(menuProps, tooltipActivatorProps, buttonProps, buttonAttrs)" />
         </template>
       </v-tooltip>
     </template>

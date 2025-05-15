@@ -4,7 +4,7 @@ import type { EventSourceInput } from "@fullcalendar/core";
 
 import { useTableEditorStore } from "@/store/tableEditor";
 
-await useReadTableEditor();
+await useReadTableEditorConfiguration();
 const tableEditorStore = useTableEditorStore<TodoListItem>();
 const { editItem, resetItem, save } = tableEditorStore;
 const { editedItem, tableEditor } = storeToRefs(tableEditorStore);
@@ -23,7 +23,7 @@ const events = computed<EventSourceInput>(() => {
 <template>
   <NuxtLayout>
     <v-container fluid>
-      <StyledCard h-full p-4="!">
+      <StyledCard p-4 h-full>
         <StyledCalendar
           h-full
           :calendar-options="{

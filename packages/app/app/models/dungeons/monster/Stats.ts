@@ -8,7 +8,7 @@ export interface Stats {
   maxHp: number;
 }
 
-export const statsSchema = z.interface({
+export const statsSchema = z.object({
   attack: z.int().positive(),
   baseExp: z.int().positive(),
   level: z.int().positive(),

@@ -18,8 +18,8 @@ const isDeletable = computed(() => nameTyped.value === name);
   <v-dialog v-if="originalItem" v-model="dialog">
     <template #activator>
       <v-tooltip text="Delete">
-        <template #activator="{ props: tooltipProps }">
-          <v-btn icon="mdi-delete" :="tooltipProps" @click="dialog = true" />
+        <template #activator="{ props }">
+          <v-btn icon="mdi-delete" :="props" @click="dialog = true" />
         </template>
       </v-tooltip>
     </template>

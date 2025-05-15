@@ -7,12 +7,6 @@ export const useReadPostFromRoute = async () => {
   const postId = route.params.id as string;
   const post = await $trpc.post.readPost.query(postId);
 
-  if (!post)
-    throw createError({
-      statusCode: 404,
-      statusMessage: getEntityNotFoundStatusMessage(DatabaseEntityType.Post, postId),
-    });
-
   if (post.parentId)
     throw createError({
       statusCode: 404,

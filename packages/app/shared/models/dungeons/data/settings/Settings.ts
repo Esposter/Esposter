@@ -21,7 +21,7 @@ export type Settings = Record<
   (typeof InitialSettings)[keyof typeof InitialSettings]
 >;
 
-export const settingsSchema = z.interface({
+export const settingsSchema = z.object({
   [SettingsOption.Animations]: animationsSettingSchema,
   [SettingsOption.Sound]: soundSettingSchema,
   [SettingsOption.VolumePercentage]: z.int().nonnegative().max(100),

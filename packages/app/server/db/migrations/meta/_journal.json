@@ -64,6 +64,13 @@
       "when": 1744158529883,
       "tag": "0008_deep_sinister_six",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1746332558858,
+      "tag": "0009_wooden_johnny_storm",
+      "breakpoints": true
     }
   ]
 }

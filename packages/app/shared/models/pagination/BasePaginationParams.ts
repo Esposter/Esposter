@@ -14,7 +14,7 @@ export const createBasePaginationParamsSchema = <TSortKey extends string>(
   minSortBy = 0,
   defaultSortBy: SortItem<TSortKey>[] = [],
 ) =>
-  z.interface({
+  z.object({
     limit: z.int().min(1).max(MAX_READ_LIMIT).default(DEFAULT_READ_LIMIT),
     sortBy: createSortItemSchema(sortKeySchema).array().min(minSortBy).default(defaultSortBy),
   });

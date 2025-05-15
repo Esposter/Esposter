@@ -10,7 +10,7 @@ export class Save {
   world = getInitialWorld();
 }
 
-export const saveSchema = z.interface({
+export const saveSchema = z.object({
   player: playerSchema,
   tilemapKey: tilemapKeySchema,
   world: worldSchema,

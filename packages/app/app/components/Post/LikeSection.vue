@@ -10,7 +10,7 @@ interface PostLikeSectionProps {
   post: PostWithRelations;
 }
 
-const { isCommentStore, post } = defineProps<PostLikeSectionProps>();
+const { isCommentStore = false, post } = defineProps<PostLikeSectionProps>();
 const { data: session } = await authClient.useSession(useFetch);
 const likeStore = isCommentStore ? useCommentLikeStore() : useLikeStore();
 const { createLike, deleteLike, updateLike } = likeStore;

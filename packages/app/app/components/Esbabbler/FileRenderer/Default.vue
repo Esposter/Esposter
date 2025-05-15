@@ -1,23 +1,20 @@
 <script setup lang="ts">
 import type { FileRendererProps } from "@/models/esbabbler/file/FileRendererProps";
 
-import { getFilename } from "@/util/getFilename";
+import { getFilesize } from "@/services/file/getFilesize";
 
-const { url } = defineProps<FileRendererProps>();
-/**
- * Intentional double decode:
- * the first decode is to unwrap the fact that we need to encode the path
- * the second decode is to decode the filename which is encoded to support utf8
- */
-const uniqueFilename = computed(() => decodeURIComponent(decodeURIComponent(getFilename(url))));
-const cleanFilename = computed(() => uniqueFilename.value.substring(uniqueFilename.value.indexOf(":") + 1));
+const { file, isPreview, url } = defineProps<FileRendererProps>();
+const filesize = computed(() => getFilesize(file.size));
 </script>
 
 <template>
-  <NuxtInvisibleLink :href="url" :download="cleanFilename">
-    <StyledCard pl-2="!" pr-1="!" py-2="!">
-      {{ cleanFilename }}
-      <v-icon icon="mdi-download" />
+  <NuxtInvisibleLink :href="url">
+    <StyledCard h-full flex flex-col items-center justify-center p-2 display>
+      <v-icon icon="mdi-file" :size="isPreview ? '6rem' : 'large'" />
+      <v-card-actions v-if="!isPreview">
+        {{ file.filename }}
+        ({{ filesize }})
+      </v-card-actions>
     </StyledCard>
   </NuxtInvisibleLink>
 </template>

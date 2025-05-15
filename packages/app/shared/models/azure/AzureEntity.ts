@@ -7,6 +7,5 @@ import { applyItemMetadataMixin, itemMetadataSchema } from "#shared/models/entit
 export const AzureEntity = applyItemMetadataMixin(CompositeKeyEntity);
 export type AzureEntity = typeof AzureEntity.prototype;
 
-export const createAzureEntitySchema = <TEntity extends CompositeKeyEntityConstraint>(
-  schema: z.ZodInterface<TEntity>,
-) => createCompositeKeyEntitySchema(schema).extend(itemMetadataSchema);
+export const createAzureEntitySchema = <TEntity extends CompositeKeyEntityConstraint>(schema: z.ZodObject<TEntity>) =>
+  createCompositeKeyEntitySchema(schema).extend(itemMetadataSchema);

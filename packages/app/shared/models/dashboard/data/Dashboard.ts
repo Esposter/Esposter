@@ -7,8 +7,13 @@ import { z } from "zod";
 
 export class Dashboard extends AItemEntity {
   visuals: Visual[] = [];
+
+  constructor(init?: Partial<Dashboard>) {
+    super();
+    Object.assign(this, init);
+  }
 }
 
 export const dashboardSchema = aItemEntitySchema.extend(
-  z.interface({ visuals: visualSchema.array() }),
+  z.object({ visuals: visualSchema.array() }),
 ) satisfies z.ZodType<ToData<Dashboard>>;

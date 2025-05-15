@@ -7,13 +7,13 @@ import { useClickerStore } from "@/store/clicker";
 
 export const useClickerItemProperties = () => {
   const clickerStore = useClickerStore();
-  const { game } = storeToRefs(clickerStore);
+  const { clicker } = storeToRefs(clickerStore);
   const clickerItemColor = useClickerItemColor();
   const clickerItemProperties = computed<ClickerItemProperties>(() => ({
     color: clickerItemColor.value,
-    iconComponent: IconComponentMap[game.value.type],
-    name: NameMap[game.value.type],
-    pluralName: PluralNameMap[game.value.type],
+    iconComponent: IconComponentMap[clicker.value.type],
+    name: NameMap[clicker.value.type],
+    pluralName: PluralNameMap[clicker.value.type],
   }));
   return clickerItemProperties;
 };

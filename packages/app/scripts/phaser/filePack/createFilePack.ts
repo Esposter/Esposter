@@ -2,7 +2,7 @@ import type { Types } from "phaser";
 
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 import { trimFileExtension } from "@/util/trimFileExtension";
-import { CONTENT_TYPE_PHASER_METHOD_MAP } from "@@/scripts/phaser/constants";
+import { ContentTypePhaserMethodMap } from "@@/scripts/phaser/constants";
 import { outputFile } from "@@/scripts/phaser/util/outputFile";
 import { createEnumString } from "@@/scripts/util/createEnumString";
 import { AZURE_MAX_PAGE_SIZE } from "@@/server/services/azure/table/constants";
@@ -19,8 +19,8 @@ export const createFilePack = async () => {
   const fileKeys = new Set<string>();
   const enumName = "FileKey";
 
-  for await (const response of containerClient.listBlobsFlat().byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE }))
-    for (const blob of response.segment.blobItems) {
+  for await (const { segment } of containerClient.listBlobsFlat().byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE }))
+    for (const blob of segment.blobItems) {
       if (!blob.properties.contentType)
         throw new InvalidOperationError(Operation.Read, "Content Type", `Missing Content Type: ${blob.name}`);
 
@@ -36,7 +36,7 @@ export const createFilePack = async () => {
         });
       };
 
-      for (const [contentType, phaserMethod] of Object.entries(CONTENT_TYPE_PHASER_METHOD_MAP))
+      for (const [contentType, phaserMethod] of Object.entries(ContentTypePhaserMethodMap))
         if (blob.properties.contentType.includes(contentType)) addFileKey(phaserMethod);
     }
 

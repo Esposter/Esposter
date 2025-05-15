@@ -10,7 +10,7 @@ export interface Attack {
   soundEffectKey: SoundEffectKey;
 }
 
-export const attackSchema = z.interface({
+export const attackSchema = z.object({
   id: attackIdSchema,
   soundEffectKey: soundEffectKeySchema,
 }) satisfies z.ZodType<Attack>;

@@ -12,7 +12,7 @@ export interface Item {
   quantity: number;
 }
 
-export const itemSchema = z.interface({
+export const itemSchema = z.object({
   description: z.string().min(1),
   effect: itemEffectSchema,
   id: itemIdSchema,

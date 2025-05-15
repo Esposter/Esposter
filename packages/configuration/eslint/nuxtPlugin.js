@@ -21,6 +21,7 @@ export default tseslint.config(
       "vitest/consistent-test-it": ["error", { fn: "test" }],
       "vitest/max-expects": "off",
       "vitest/no-hooks": "off",
+      "vitest/no-interpolation-in-snapshots": "off",
       "vitest/prefer-to-be-falsy": "off",
       "vitest/prefer-to-be-truthy": "off",
       "vitest/require-hook": "off",
@@ -31,7 +32,19 @@ export default tseslint.config(
       },
     },
   },
-  perfectionist.configs["recommended-natural"],
+  {
+    ...perfectionist.configs["recommended-natural"],
+    rules: {
+      ...perfectionist.configs["recommended-natural"].rules,
+      "perfectionist/sort-imports": [
+        "error",
+        {
+          ...perfectionist.configs["recommended-natural"].rules["perfectionist/sort-imports"][1],
+          internalPattern: [],
+        },
+      ],
+    },
+  },
   eslintPluginPrettierRecommended,
   {
     rules: {

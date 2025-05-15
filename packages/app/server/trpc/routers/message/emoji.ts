@@ -4,17 +4,17 @@ import { selectRoomSchema } from "#shared/db/schema/rooms";
 import { createEmojiInputSchema } from "#shared/models/db/message/metadata/CreateEmojiInput";
 import { deleteEmojiInputSchema } from "#shared/models/db/message/metadata/DeleteEmojiInput";
 import {
-  MessageEmojiMetadataEntity,
-  MessageEmojiMetadataEntityPropertyNames,
+    MessageEmojiMetadataEntity,
+    MessageEmojiMetadataEntityPropertyNames,
 } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
 import { updateEmojiInputSchema } from "#shared/models/db/message/metadata/UpdateEmojiInput";
+import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { AZURE_MAX_PAGE_SIZE } from "@@/server/services/azure/table/constants";
 import { createEntity } from "@@/server/services/azure/table/createEntity";
 import { deleteEntity } from "@@/server/services/azure/table/deleteEntity";
-import { getReverseTickedTimestamp } from "@@/server/services/azure/table/getReverseTickedTimestamp";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
 import { updateEntity } from "@@/server/services/azure/table/updateEntity";
 import { emojiEventEmitter } from "@@/server/services/esbabbler/events/emojiEventEmitter";
@@ -28,13 +28,13 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-const onCreateEmojiInputSchema = z.interface({ roomId: selectRoomSchema.shape.id });
+const onCreateEmojiInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnCreateEmojiInput = z.infer<typeof onCreateEmojiInputSchema>;
 
-const onUpdateEmojiInputSchema = z.interface({ roomId: selectRoomSchema.shape.id });
+const onUpdateEmojiInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnUpdateEmojiInput = z.infer<typeof onUpdateEmojiInputSchema>;
 
-const onDeleteEmojiInputSchema = z.interface({ roomId: selectRoomSchema.shape.id });
+const onDeleteEmojiInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnDeleteEmojiInput = z.infer<typeof onDeleteEmojiInputSchema>;
 
 export const emojiRouter = router({
@@ -53,7 +53,7 @@ export const emojiRouter = router({
       if (foundEmoji)
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Create, emojiRouter.createEmoji.name, JSON.stringify(foundEmoji))
+          message: new InvalidOperationError(Operation.Create, MessageMetadataType.Emoji, JSON.stringify(foundEmoji))
             .message,
         });
 

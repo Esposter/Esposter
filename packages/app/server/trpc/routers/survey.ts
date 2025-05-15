@@ -33,23 +33,33 @@ export const surveyRouter = router({
     async ({ ctx }) =>
       (await ctx.db.select({ count: count() }).from(surveys).where(eq(surveys.userId, ctx.session.user.id)))[0].count,
   ),
-  createSurvey: authedProcedure.input(createSurveyInputSchema).mutation<null | Survey>(async ({ ctx, input }) => {
+  createSurvey: authedProcedure.input(createSurveyInputSchema).mutation<Survey>(async ({ ctx, input }) => {
     const newSurvey = (
       await ctx.db
         .insert(surveys)
-        .values({ ...input, modelVersion: 1, userId: ctx.session.user.id })
+        .values({ ...input, userId: ctx.session.user.id })
         .returning()
     ).find(Boolean);
-    return newSurvey ?? null;
+    if (!newSurvey)
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Survey, JSON.stringify(input)).message,
+      });
+    return newSurvey;
   }),
-  deleteSurvey: authedProcedure.input(deleteSurveyInputSchema).mutation<null | Survey>(async ({ ctx, input }) => {
+  deleteSurvey: authedProcedure.input(deleteSurveyInputSchema).mutation<Survey>(async ({ ctx, input }) => {
     const deletedSurvey = (
       await ctx.db
         .delete(surveys)
         .where(and(eq(surveys.id, input), eq(surveys.userId, ctx.session.user.id)))
         .returning()
     ).find(Boolean);
-    return deletedSurvey ?? null;
+    if (!deletedSurvey)
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.Survey, input).message,
+      });
+    return deletedSurvey;
   }),
   publishSurvey: authedProcedure.input(publishSurveyInputSchema).mutation(async ({ ctx, input: { id, ...rest } }) => {
     const survey = await ctx.db.query.surveys.findFirst({
@@ -63,20 +73,29 @@ export const surveyRouter = router({
 
     rest.publishVersion++;
     if (rest.publishVersion <= survey.publishVersion)
-      throw new InvalidOperationError(
-        Operation.Update,
-        DatabaseEntityType.Survey,
-        "cannot update survey publish with old publish version",
-      );
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: new InvalidOperationError(
+          Operation.Update,
+          DatabaseEntityType.Survey,
+          "cannot update survey publish with old publish version",
+        ).message,
+      });
 
     await ctx.db.update(surveys).set(rest).where(eq(surveys.id, id));
 
     const blobName = getPublishPath(id, rest.publishVersion, "json");
     await useUpload(AzureContainer.SurveyerAssets, blobName, survey.model);
   }),
-  readSurvey: authedProcedure
-    .input(readSurveyInputSchema)
-    .query(({ ctx, input }) => ctx.db.query.surveys.findFirst({ where: (surveys, { eq }) => eq(surveys.id, input) })),
+  readSurvey: authedProcedure.input(readSurveyInputSchema).query(async ({ ctx, input }) => {
+    const survey = await ctx.db.query.surveys.findFirst({ where: (surveys, { eq }) => eq(surveys.id, input) });
+    if (!survey)
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: new NotFoundError(DatabaseEntityType.Survey, input).message,
+      });
+    return survey;
+  }),
   readSurveys: authedProcedure
     .input(readSurveysInputSchema)
     .query(async ({ ctx, input: { limit, offset, sortBy } }) => {
@@ -90,7 +109,7 @@ export const surveyRouter = router({
     }),
   updateSurvey: authedProcedure
     .input(updateSurveyInputSchema)
-    .mutation<null | Survey>(async ({ ctx, input: { id, ...rest } }) => {
+    .mutation<Survey>(async ({ ctx, input: { id, ...rest } }) => {
       const survey = await ctx.db.query.surveys.findFirst({
         where: (surveys, { and, eq }) => and(eq(surveys.id, id), eq(surveys.userId, ctx.session.user.id)),
       });
@@ -103,16 +122,28 @@ export const surveyRouter = router({
       if (rest.model !== survey.model) {
         rest.modelVersion++;
         if (rest.modelVersion <= survey.modelVersion)
-          throw new InvalidOperationError(
-            Operation.Update,
-            DatabaseEntityType.Survey,
-            "cannot update survey model with old model version",
-          );
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: new InvalidOperationError(
+              Operation.Update,
+              DatabaseEntityType.Survey,
+              "cannot update survey model with old model version",
+            ).message,
+          });
       }
 
-      const updatedSurvey = (await ctx.db.update(surveys).set(rest).where(eq(surveys.id, id)).returning()).find(
-        Boolean,
-      );
-      return updatedSurvey ?? null;
+      const updatedSurvey = (
+        await ctx.db
+          .update(surveys)
+          .set(rest)
+          .where(and(eq(surveys.id, id), eq(surveys.userId, ctx.session.user.id)))
+          .returning()
+      ).find(Boolean);
+      if (!updatedSurvey)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Survey, id).message,
+        });
+      return updatedSurvey;
     }),
 });

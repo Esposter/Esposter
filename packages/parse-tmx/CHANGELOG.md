@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.1](https://github.com/Esposter/Esposter/compare/v2.2.0...v2.2.1) (2025-05-14)
+
+### Bug Fixes
+
+* make package json fields consistent ([d94cebc](https://github.com/Esposter/Esposter/commit/d94cebc5b8009a79a4572f4021ebee35f6efe1ef))
+
+# [2.2.0](https://github.com/Esposter/Esposter/compare/v2.1.0...v2.2.0) (2025-05-14)
+
+### Bug Fixes
+
+* badge links ([137dd98](https://github.com/Esposter/Esposter/commit/137dd981e769737175d75df739106b9555ac3d77))
+
+### Features
+
+* Add sample tmx snapshot tests ([aa4545c](https://github.com/Esposter/Esposter/commit/aa4545cca2fb621f8c8a586eb3ef66774e448049))
+* rewrite xml2js to typescript ([ec28805](https://github.com/Esposter/Esposter/commit/ec28805140c79c9f8bc0746b7ee0c1c948cbb506))
+* **test:** Add coverage to root ([fd36fc1](https://github.com/Esposter/Esposter/commit/fd36fc109c81fbf79a3f3636d03716876985fe3a))
+
 # [2.1.0](https://github.com/Esposter/Esposter/compare/v2.0.0...v2.1.0) (2025-04-25)
 
 ### Bug Fixes

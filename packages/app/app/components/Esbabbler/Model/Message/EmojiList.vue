@@ -36,8 +36,8 @@ const hasEmojis = computed(() => emojis.value.length > 0);
       flex
       items-center
       shadow-md
-      z-1
       cursor-pointer
+      z-1
       w-fit
       px-2
       origin-center
@@ -59,16 +59,16 @@ const hasEmojis = computed(() => emojis.value.length > 0);
 <style scoped lang="scss">
 .reacted {
   background-color: v-bind(infoOpacity10);
-  border: 1px $border-style-root v-bind(info);
+  border: $border-width-root $border-style-root v-bind(info);
 }
 
 .not-reacted {
   background-color: v-bind(backgroundOpacity80);
-  border: 1px $border-style-root transparent;
+  border: $border-width-root $border-style-root transparent;
 
   &:hover {
     background-color: v-bind(surfaceOpacity80);
-    border: 1px $border-style-root v-bind(border);
+    border: $border-width-root $border-style-root v-bind(border);
   }
 }
 </style>

@@ -19,24 +19,22 @@ export const useSurveyStore = defineStore("surveyer/survey", () => {
 
   const createSurvey = async (input: CreateSurveyInput) => {
     const newSurvey = await $trpc.survey.createSurvey.mutate(input);
-    if (!newSurvey) return;
-
     storeCreateSurvey(newSurvey);
     totalItemsLength.value++;
   };
   const updateSurvey = async (input: UpdateSurveyInput) => {
     input.modelVersion++;
-    const updatedSurvey = await $trpc.survey.updateSurvey.mutate(input);
     // Surveyjs needs to know whether the save was successful with a boolean
-    if (!updatedSurvey) return false;
-
-    storeUpdateSurvey(updatedSurvey);
-    return true;
+    try {
+      const updatedSurvey = await $trpc.survey.updateSurvey.mutate(input);
+      storeUpdateSurvey(updatedSurvey);
+      return true;
+    } catch {
+      return false;
+    }
   };
   const deleteSurvey = async (input: DeleteSurveyInput) => {
     const deletedSurvey = await $trpc.survey.deleteSurvey.mutate(input);
-    if (!deletedSurvey) return;
-
     storeDeleteSurvey({ id: deletedSurvey.id });
   };
 

@@ -19,7 +19,7 @@ const { primary, "primary-darken-1": primaryDarken1 } = useColors();
 <style scoped lang="scss">
 .author {
   color: v-bind(primary);
-  transition: color 0.25s;
+  transition: color $transition-duration-root;
 
   &:hover {
     color: v-bind(primaryDarken1);

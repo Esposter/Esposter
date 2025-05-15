@@ -9,10 +9,15 @@ import { z } from "zod";
 export class FlowchartEditor extends AItemEntity {
   edges: Edge[] = [];
   nodes: Node[] = [];
+
+  constructor(init?: Partial<FlowchartEditor>) {
+    super();
+    Object.assign(this, init);
+  }
 }
 
 export const flowchartEditorSchema = aItemEntitySchema.extend(
-  z.interface({
+  z.object({
     edges: edgeSchema.array(),
     nodes: nodeSchema.array(),
   }),

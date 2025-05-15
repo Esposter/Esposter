@@ -5,7 +5,7 @@ import { NameMap } from "@/services/clicker/properties/NameMap";
 import { useClickerStore } from "@/store/clicker";
 
 const clickerStore = useClickerStore();
-const { game } = storeToRefs(clickerStore);
+const { clicker } = storeToRefs(clickerStore);
 </script>
 
 <template>
@@ -14,8 +14,8 @@ const { game } = storeToRefs(clickerStore);
       <v-btn
         class="bg-surface border-sm"
         :="props"
-        :active="game.type === clickerType"
-        @click="game.type = clickerType"
+        :active="clicker.type === clickerType"
+        @click="clicker.type = clickerType"
       >
         <svg size-8 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
           <g>

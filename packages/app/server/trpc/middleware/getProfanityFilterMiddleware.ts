@@ -12,7 +12,9 @@ export const getProfanityFilterMiddleware = <T>(schema: z.ZodType<T>, keys: (key
 
     for (const key of keys) {
       const value = result.data[key];
-      if (typeof value !== "string" || profanityMatcher.hasMatch(value))
+      if (!value) continue;
+      else if (typeof value !== "string") throw new TRPCError({ code: "BAD_REQUEST" });
+      else if (profanityMatcher.hasMatch(value))
         throw new TRPCError({ code: "BAD_REQUEST", message: `${key} contains profanity: ${value}.` });
     }
 

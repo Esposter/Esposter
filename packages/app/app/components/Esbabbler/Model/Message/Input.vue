@@ -1,22 +1,15 @@
 <script setup lang="ts">
 import { MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
-import { getTypingMessage } from "@/services/esbabbler/getTypingMessage";
-import { useEsbabblerStore } from "@/store/esbabbler";
+import { getTypingMessage } from "@/services/esbabbler/message/getTypingMessage";
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
+import { useReplyStore } from "@/store/esbabbler/reply";
 import { useRoomStore } from "@/store/esbabbler/room";
 import { Extension } from "@tiptap/vue-3";
 
-const esbabblerStore = useEsbabblerStore();
-const { userMap } = storeToRefs(esbabblerStore);
 const roomStore = useRoomStore();
-const { currentRoom } = storeToRefs(roomStore);
-const placeholder = computed(() => {
-  if (!currentRoom.value) return "";
-  const user = userMap.value.get(currentRoom.value.userId);
-  return user ? `Message ${user.name}'s Room` : "";
-});
+const { currentRoomName } = storeToRefs(roomStore);
 const messageStore = useMessageStore();
 const { sendMessage } = messageStore;
 const { messages, typings } = storeToRefs(messageStore);
@@ -33,27 +26,31 @@ const keyboardExtension = new Extension({
 });
 const mentionExtension = useMentionExtension();
 const messageInputStore = useMessageInputStore();
-const { messageInput, replyRowKey } = storeToRefs(messageInputStore);
-const reply = computed(() =>
-  replyRowKey.value ? messages.value.find(({ rowKey }) => rowKey === replyRowKey.value) : undefined,
-);
+const { messageInput } = storeToRefs(messageInputStore);
+const replyStore = useReplyStore();
+const { rowKey } = storeToRefs(replyStore);
+const reply = computed(() => messages.value.find((m) => m.rowKey === rowKey.value));
 </script>
 
 <template>
   <EsbabblerModelMessageForwardRoomDialog />
+  <EsbabblerModelMessageDropzoneBackground />
   <div w-full>
-    <EsbabblerModelMessageReplyHeader v-if="reply" :user-id="reply.userId" @close="replyRowKey = undefined" />
+    <EsbabblerModelMessageReplyHeader v-if="reply" :user-id="reply.userId" @close="rowKey = ''" />
     <RichTextEditor
       v-model="messageInput"
-      :placeholder
+      :placeholder="`Message ${currentRoomName}`"
       :limit="MESSAGE_MAX_LENGTH"
       :extensions="[keyboardExtension, mentionExtension]"
       :card-props="reply ? { class: 'rd-t-none' } : undefined"
     >
+      <template #prepend-inner-header>
+        <EsbabblerModelMessageFileInputContainer />
+      </template>
       <template #append-footer="editorProps">
         <RichTextEditorCustomSendMessageButton :="editorProps" />
       </template>
-      <template #prepend-external-footer>
+      <template #prepend-outer-footer>
         <div class="text-sm">{{ typingMessage }}&nbsp;</div>
       </template>
     </RichTextEditor>

@@ -5,6 +5,7 @@ import type { JoinRoomInput } from "#shared/models/db/room/JoinRoomInput";
 
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { RoutePath } from "#shared/models/router/RoutePath";
+import { dayjs } from "#shared/services/dayjs";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createCursorPaginationData } from "@/services/shared/pagination/cursor/createCursorPaginationData";
 import { uuidValidateV4 } from "@esposter/shared";
@@ -15,10 +16,11 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
   const {
     createRoom: storeCreateRoom,
     deleteRoom: storeDeleteRoom,
-    rooms,
+    rooms: storeRooms,
     updateRoom: storeUpdateRoom,
     ...restOperationData
   } = createOperationData(items, ["id"], DatabaseEntityType.Room);
+  const rooms = computed(() => storeRooms.value.toSorted((a, b) => dayjs(b.updatedAt).diff(a.updatedAt)));
   const router = useRouter();
   const currentRoomId = computed(() => {
     const roomId = router.currentRoute.value.params.id;
@@ -32,21 +34,15 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
 
   const createRoom = async (input: CreateRoomInput) => {
     const newRoom = await $trpc.room.createRoom.mutate(input);
-    if (!newRoom) return;
-
     storeCreateRoom(newRoom, true);
   };
   const joinRoom = async (input: JoinRoomInput) => {
     const joinedRoom = await $trpc.room.joinRoom.mutate(input);
-    if (!joinedRoom) return;
-
     storeCreateRoom(joinedRoom, true);
     await navigateTo(RoutePath.Messages(joinedRoom.id));
   };
   const leaveRoom = async (input: DeleteRoomInput) => {
     const id = await $trpc.room.leaveRoom.mutate(input);
-    if (!id) return;
-
     storeDeleteRoom({ id });
   };
 

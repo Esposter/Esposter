@@ -30,7 +30,8 @@ const onUpdateRoom = async () => {
 onClickOutside(
   title,
   getSynchronizedFunction(async () => {
-    if (isUpdateMode.value) await onUpdateRoom();
+    if (!isUpdateMode.value) return;
+    await onUpdateRoom();
   }),
 );
 </script>
@@ -62,6 +63,7 @@ onClickOutside(
         formRules.isNotProfanity,
       ]"
       @keydown.enter="onUpdateRoom"
+      @keydown.esc="isUpdateMode = false"
     />
     <v-toolbar-title v-else font-bold="!" select="all" @click="isUpdateMode = true">
       {{ currentRoomName }}
@@ -71,6 +73,6 @@ onClickOutside(
 
 <style scoped lang="scss">
 .custom-border {
-  border: 1px $border-style-root v-bind(borderColor);
+  border: $border-width-root $border-style-root v-bind(borderColor);
 }
 </style>

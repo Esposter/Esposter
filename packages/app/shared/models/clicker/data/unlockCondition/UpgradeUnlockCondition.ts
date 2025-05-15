@@ -11,7 +11,7 @@ export interface UpgradeUnlockCondition extends ItemEntityType<ItemType.Upgrade>
 }
 
 export const upgradeUnlockConditionSchema = createItemEntityTypeSchema(z.literal(ItemType.Upgrade)).extend(
-  z.interface({
+  z.object({
     id: upgradeIdSchema,
   }),
 ) satisfies z.ZodType<UpgradeUnlockCondition>;

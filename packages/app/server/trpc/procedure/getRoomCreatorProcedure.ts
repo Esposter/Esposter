@@ -20,5 +20,5 @@ export const getRoomCreatorProcedure = <T>(schema: z.ZodType<T>, roomIdKey: keyo
       where: (rooms, { and, eq }) => and(eq(rooms.id, roomId), eq(rooms.userId, ctx.session.user.id)),
     });
     if (!isCreator) throw new TRPCError({ code: "UNAUTHORIZED" });
-    return next();
+    return next({ ctx: { roomId } });
   });

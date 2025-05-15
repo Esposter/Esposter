@@ -21,19 +21,21 @@ const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const editedMessageHtml = ref(useRefreshMentions(() => message.message).value);
-const onUpdateMessage = async (editor: Editor) => {
+const onUpdateMessage = (editor: Editor) => {
   try {
     if (!currentRoomId.value || editedMessageHtml.value === message.message) return;
-    if (EMPTY_TEXT_REGEX.test(editor.getText())) {
+    else if (EMPTY_TEXT_REGEX.test(editor.getText()) && message.files.length === 0) {
       emit("update:delete-mode", true);
       return;
     }
-
-    await $trpc.message.updateMessage.mutate({
-      message: editedMessageHtml.value,
-      partitionKey: message.partitionKey,
-      rowKey: message.rowKey,
-    });
+    // Optimistically update UI
+    getSynchronizedFunction(async () => {
+      await $trpc.message.updateMessage.mutate({
+        message: editedMessageHtml.value,
+        partitionKey: message.partitionKey,
+        rowKey: message.rowKey,
+      });
+    })();
   } finally {
     emit("update:update-mode", false);
     editedMessageHtml.value = message.message;
@@ -43,7 +45,7 @@ const keyboardExtension = new Extension({
   addKeyboardShortcuts() {
     return {
       Enter: () => {
-        getSynchronizedFunction(() => onUpdateMessage(this.editor))();
+        onUpdateMessage(this.editor);
         return true;
       },
       Esc: () => {
@@ -62,6 +64,7 @@ const mentionExtension = useMentionExtension();
     placeholder="Edit message"
     :limit="MESSAGE_MAX_LENGTH"
     :extensions="[keyboardExtension, mentionExtension]"
+    @keydown.esc="emit('update:update-mode', false)"
   >
     <template #append-footer="{ editor }">
       <v-btn variant="outlined" size="small" @click="emit('update:update-mode', false)">Cancel</v-btn>

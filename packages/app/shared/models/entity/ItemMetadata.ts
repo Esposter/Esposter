@@ -8,7 +8,7 @@ export class ItemMetadata {
   updatedAt = new Date();
 }
 
-export const itemMetadataSchema = z.interface({
+export const itemMetadataSchema = z.object({
   createdAt: z.date(),
   deletedAt: z.date().nullable(),
   updatedAt: z.date(),

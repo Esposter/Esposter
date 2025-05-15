@@ -11,7 +11,7 @@ export const AItemEntity = applyItemMetadataMixin(BaseAItemEntity);
 export type AItemEntity = typeof AItemEntity.prototype;
 
 export const aItemEntitySchema = z
-  .interface({
+  .object({
     id: z.uuid(),
   })
   .extend(itemMetadataSchema) satisfies z.ZodType<ToData<AItemEntity>>;

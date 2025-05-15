@@ -2,7 +2,7 @@ import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 import {
   TableEditorConfiguration,
   tableEditorConfigurationSchema,
-} from "#shared/models/tableEditor/TableEditorConfiguration";
+} from "#shared/models/tableEditor/data/TableEditorConfiguration";
 import { streamToText } from "#shared/util/text/streamToText";
 import { jsonDateParse } from "#shared/util/time/jsonDateParse";
 import { useDownload } from "@@/server/composables/azure/useDownload";
@@ -12,7 +12,7 @@ import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 
 export const tableEditorRouter = router({
-  readTableEditor: authedProcedure.query<TableEditorConfiguration>(async ({ ctx }) => {
+  readTableEditorConfiguration: authedProcedure.query<TableEditorConfiguration>(async ({ ctx }) => {
     try {
       const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
       const response = await useDownload(AzureContainer.TableEditorAssets, blobName);
@@ -24,8 +24,10 @@ export const tableEditorRouter = router({
       return new TableEditorConfiguration();
     }
   }),
-  saveTableEditor: authedProcedure.input(tableEditorConfigurationSchema).mutation(async ({ ctx, input }) => {
-    const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
-    await useUpload(AzureContainer.TableEditorAssets, blobName, JSON.stringify(input));
-  }),
+  saveTableEditorConfiguration: authedProcedure
+    .input(tableEditorConfigurationSchema)
+    .mutation(async ({ ctx, input }) => {
+      const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
+      await useUpload(AzureContainer.TableEditorAssets, blobName, JSON.stringify(input));
+    }),
 });

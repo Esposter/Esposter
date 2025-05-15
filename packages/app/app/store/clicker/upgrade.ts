@@ -23,12 +23,12 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
 
         switch (type) {
           case Target.Building: {
-            const foundBuilding = clickerStore.game.boughtBuildings.find((bb) => bb.id === uc.id);
+            const foundBuilding = clickerStore.clicker.boughtBuildings.find(({ id }) => id === uc.id);
             if (foundBuilding) return foundBuilding.amount >= uc.amount;
             break;
           }
           case Target.Upgrade: {
-            const foundUpgrade = clickerStore.game.boughtUpgrades.find((bu) => bu.id === uc.id);
+            const foundUpgrade = clickerStore.clicker.boughtUpgrades.find(({ id }) => id === uc.id);
             if (foundUpgrade) return true;
             break;
           }
@@ -42,7 +42,7 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
   );
 
   const createBoughtUpgrade = (newUpgrade: Upgrade) => {
-    clickerStore.game.boughtUpgrades.push(newUpgrade);
+    clickerStore.clicker.boughtUpgrades.push(newUpgrade);
     decrementPoints(newUpgrade.price);
   };
 

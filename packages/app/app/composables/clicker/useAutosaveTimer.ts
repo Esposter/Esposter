@@ -4,11 +4,11 @@ import { clearInterval, setInterval } from "worker-timers";
 
 export const useAutosaveTimer = () => {
   const clickerStore = useClickerStore();
-  const { saveGame } = clickerStore;
+  const { saveClicker } = clickerStore;
   const autosaveTimer = ref<number>();
 
   onMounted(() => {
-    autosaveTimer.value = setInterval(saveGame, AUTOSAVE_INTERVAL);
+    autosaveTimer.value = setInterval(saveClicker, AUTOSAVE_INTERVAL);
   });
 
   onUnmounted(() => {

@@ -1,6 +1,6 @@
 import type { EntityIdKeys } from "#shared/models/entity/EntityIdKeys";
-import type { Item } from "#shared/models/tableEditor/Item";
-import type { TableEditor } from "#shared/models/tableEditor/TableEditor";
+import type { Item } from "#shared/models/tableEditor/data/Item";
+import type { TableEditor } from "#shared/models/tableEditor/data/TableEditor";
 import type {
   _ExtractActionsFromSetupStore,
   _ExtractGettersFromSetupStore,
@@ -8,8 +8,8 @@ import type {
   Store,
 } from "pinia";
 
-import { TableEditorConfiguration } from "#shared/models/tableEditor/TableEditorConfiguration";
-import { TableEditorType } from "#shared/models/tableEditor/TableEditorType";
+import { TableEditorConfiguration } from "#shared/models/tableEditor/data/TableEditorConfiguration";
+import { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType";
 import { authClient } from "@/services/auth/authClient";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
 import { saveItemMetadata } from "@/services/shared/metadata/saveItemMetadata";
@@ -51,7 +51,7 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
 
     if (session.value.data) {
       saveItemMetadata(tableEditorConfiguration.value);
-      await $trpc.tableEditor.saveTableEditor.mutate(tableEditorConfiguration.value);
+      await $trpc.tableEditor.saveTableEditorConfiguration.mutate(tableEditorConfiguration.value);
     } else {
       saveItemMetadata(tableEditorConfiguration.value);
       localStorage.setItem(TABLE_EDITOR_LOCAL_STORAGE_KEY, tableEditorConfiguration.value.toJSON());

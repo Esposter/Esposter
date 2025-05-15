@@ -3,6 +3,7 @@ import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { OptionMenuItem } from "@/models/esbabbler/message/OptionMenuItem";
 
 import { authClient } from "@/services/auth/authClient";
+import { useEsbabblerStore } from "@/store/esbabbler";
 import { mergeProps } from "vue";
 
 interface MessageOptionsMenuProps {
@@ -20,6 +21,8 @@ const emit = defineEmits<{
   "update:select-emoji": [emoji: string];
   "update:update-mode": [value: true];
 }>();
+const esbabblerStore = useEsbabblerStore();
+const { optionsMenu } = storeToRefs(esbabblerStore);
 const { data: session } = await authClient.useSession(useFetch);
 const isCreator = computed(() => session.value?.user.id === message.userId);
 const isEditable = computed(() => isCreator.value && !message.isForward);
@@ -77,11 +80,24 @@ const items = computed(() =>
         @select="(emoji) => emit('update:select-emoji', emoji)"
       />
       <v-tooltip v-for="{ icon, shortTitle, title, onClick } of menuItems" :key="title" :text="shortTitle ?? title">
-        <template #activator="{ props: tooltipProps }">
-          <v-btn v-if="isCreator" m-0="!" rd-none="!" :icon size="small" :="tooltipProps" @click="onClick" />
+        <template #activator="{ props }">
+          <v-btn m-0="!" rd-none="!" :icon size="small" :="props" @click="onClick" />
         </template>
       </v-tooltip>
-      <v-menu transition="none" location="left" @update:model-value="(value) => emit('update:menu', value)">
+      <v-menu
+        :model-value="optionsMenu?.rowKey === message.rowKey"
+        transition="none"
+        location="left"
+        :target="optionsMenu?.target"
+        @update:model-value="
+          (value) => {
+            // We just need to set a placeholder so that the menu will appear
+            if (value) optionsMenu = { rowKey: message.rowKey, target: 'true' };
+            else optionsMenu = undefined;
+            emit('update:menu', value);
+          }
+        "
+      >
         <template #activator="{ props: menuProps }">
           <v-tooltip text="More">
             <template #activator="{ props: tooltipProps }">
@@ -99,7 +115,7 @@ const items = computed(() =>
           <v-list-item v-for="{ title, color, icon, onClick } of items" :key="title" @click="onClick">
             <span :class="color ? `text-${color}` : undefined">{{ title }}</span>
             <template #append>
-              <v-icon size="small" :icon :color />
+              <v-icon size="small" :color :icon />
             </template>
           </v-list-item>
         </v-list>

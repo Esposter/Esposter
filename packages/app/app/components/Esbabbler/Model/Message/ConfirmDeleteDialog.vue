@@ -39,9 +39,9 @@ const { text } = useColors();
     </div>
   </StyledDeleteDialog>
 </template>
-
+<!-- @TODO: https://github.com/vuejs/core/issues/7312 -->
 <style scoped lang="scss">
 .custom-border {
-  border: 1px $border-style-root v-bind(text);
+  border: $border-width-root $border-style-root v-bind(text);
 }
 </style>

@@ -3,8 +3,8 @@ import { selectInviteSchema } from "#shared/db/schema/invites";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { RoutePath } from "#shared/models/router/RoutePath";
 import { authClient } from "@/services/auth/authClient";
+import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
 import { useRoomStore } from "@/store/esbabbler/room";
-import { NotFoundError } from "@esposter/shared";
 
 definePageMeta({
   middleware: "auth",
@@ -22,7 +22,7 @@ const code = route.params.code as string;
 const invite = await $trpc.room.readInvite.query(code);
 if (!invite)
   throw createError({
-    message: new NotFoundError(DatabaseEntityType.Invite, `${code}, the code may have expired`).message,
+    message: getEntityNotFoundStatusMessage(DatabaseEntityType.Invite, code),
     statusCode: 404,
   });
 // @TODO: https://github.com/drizzle-team/drizzle-orm/issues/3493

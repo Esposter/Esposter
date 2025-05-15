@@ -5,9 +5,9 @@ import { useClickerStore } from "@/store/clicker";
 import { filename } from "pathe/utils";
 
 const clickerStore = useClickerStore();
-const { game } = storeToRefs(clickerStore);
+const { clicker } = storeToRefs(clickerStore);
 const amount = computed(() => {
-  const cursorBuilding = game.value.boughtBuildings.find(({ id }) => id === Target.Cursor);
+  const cursorBuilding = clicker.value.boughtBuildings.find(({ id }) => id === Target.Cursor);
   return cursorBuilding?.amount ?? 0;
 });
 const rotatingDivIds = computed(() => Array.from({ length: amount.value }, () => crypto.randomUUID()));

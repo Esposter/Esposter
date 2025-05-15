@@ -1,20 +1,23 @@
 {
   "name": "parse-tmx",
-  "version": "2.1.0",
+  "version": "2.2.1",
   "description": "A parser for tmx.",
   "type": "module",
+  "homepage": "https://github.com/Esposter/Esposter#readme",
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist",
-    "README.md"
+    "dist"
   ],
   "keywords": [
     "tmx",
     "parser"
   ],
-  "homepage": "https://github.com/Esposter/Esposter#readme",
-  "license": "Apache-2.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Esposter/Esposter.git"
@@ -24,19 +27,16 @@
   },
   "scripts": {
     "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
-    "test": "cross-env NODE_OPTIONS=--max-old-space-size=8192 vitest",
+    "test": "NODE_OPTIONS=--max-old-space-size=8192 vitest",
+    "coverage": "vitest run --coverage",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "typecheck": "tsc",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts"
   },
   "dependencies": {
-    "data-urls": "catalog:",
-    "events": "catalog:",
-    "xml2js": "catalog:"
-  },
-  "dependenciesComments": {
-    "events": "https://github.com/rolldown/rolldown/issues/4318"
+    "@esposter/xml2js": "workspace:*",
+    "data-urls": "catalog:"
   },
   "devDependencies": {
     "@types/data-urls": "catalog:",

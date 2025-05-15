@@ -9,4 +9,4 @@ export const ObjectInteractionEffectMap: Partial<Record<ObjectgroupName, Effect>
   [ObjectgroupName.Chest]: chestInteractionEffect,
   [ObjectgroupName.Door]: doorInteractionEffect,
   [ObjectgroupName.Sign]: signInteractionEffect,
-};
+} as const;

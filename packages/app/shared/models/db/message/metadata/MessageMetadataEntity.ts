@@ -10,13 +10,13 @@ export abstract class MessageMetadataEntity<TType extends MessageMetadataType> e
 
 export const createMessageMetadataEntitySchema = <TType extends string>(typeSchema: z.ZodType<TType>) =>
   createAzureMetadataEntitySchema(
-    z.interface({
+    z.object({
       partitionKey: messageEntitySchema.shape.partitionKey,
       rowKey: z.string(),
     }),
     typeSchema,
   ).extend(
-    z.interface({
+    z.object({
       messageRowKey: messageEntitySchema.shape.rowKey,
     }),
   );

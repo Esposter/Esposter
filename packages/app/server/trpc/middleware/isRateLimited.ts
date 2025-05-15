@@ -10,6 +10,7 @@ export const isRateLimited = middleware(async ({ ctx, next, path }) => {
     ((ctx.req.headers["x-forwarded-for"] as string | undefined) ?? "").split(",").pop()?.trim() ??
     ctx.req.socket.remoteAddress;
   if (!ip) throw new TRPCError({ code: "BAD_REQUEST" });
+  else if (ip === "::1") return next();
 
   try {
     const response = await rateLimiter.consume(`${path}${ID_SEPARATOR}${ip}`);

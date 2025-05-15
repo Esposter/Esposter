@@ -15,7 +15,7 @@ export const createCursorPaginationParamsSchema = <TSortKey extends string>(
 ) =>
   // We need at least one sort item so we can derive a primary cursor for pagination
   createBasePaginationParamsSchema(sortKeySchema, 1, defaultSortBy).extend(
-    z.interface({
+    z.object({
       cursor: z.string().optional(),
     }),
   );

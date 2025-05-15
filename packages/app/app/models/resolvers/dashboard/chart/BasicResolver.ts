@@ -41,7 +41,7 @@ export class BasicResolver<T extends BasicChartConfiguration> extends AChartType
     );
   }
 
-  override handleSchema(schema: z.ZodInterface) {
+  override handleSchema(schema: z.ZodObject) {
     return basicChartConfigurationSchema.extend(schema);
   }
   // This is our base resolver that's always active

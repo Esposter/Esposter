@@ -12,9 +12,17 @@ export const useReadMessages = async () => {
   const { hasMore, nextCursor } = storeToRefs(messageStore);
   const readUsers = useReadUsers();
   const readReplies = useReadReplies();
+  const readFiles = useReadFiles();
   const readEmojis = useReadEmojis();
   const readMetadata = (messages: MessageEntity[]) =>
-    Promise.all([readUsers(messages.map(({ userId }) => userId)), readReplies(messages), readEmojis(messages)]);
+    Promise.all([
+      readUsers(messages.map(({ userId }) => userId)),
+      readReplies([
+        ...new Set(messages.map(({ replyRowKey }) => replyRowKey).filter((value): value is string => Boolean(value))),
+      ]),
+      readFiles(messages.flatMap(({ files }) => files)),
+      readEmojis(messages.map(({ rowKey }) => rowKey)),
+    ]);
   const readMoreMessages = async (onComplete: () => void) => {
     try {
       if (!currentRoomId.value) return;

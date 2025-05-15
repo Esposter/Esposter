@@ -7,6 +7,7 @@ import { html } from "@/services/prettier/html";
 import { z } from "zod";
 
 export class WebpageEditor extends AItemEntity implements ProjectData {
+  [key: string]: unknown;
   pages: unknown[] = [
     {
       component: html`
@@ -727,6 +728,11 @@ export class WebpageEditor extends AItemEntity implements ProjectData {
       `,
     },
   ];
+
+  constructor(init?: Partial<WebpageEditor>) {
+    super();
+    Object.assign(this, init);
+  }
 }
 
 export const webpageEditorSchema = z.record(z.string().min(1), z.unknown());

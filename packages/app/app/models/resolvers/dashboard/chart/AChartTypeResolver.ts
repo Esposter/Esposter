@@ -13,7 +13,7 @@ export abstract class AChartTypeResolver<T extends Chart["configuration"]> imple
 
   handleConfiguration(_apexOptions: ApexOptions, _configuration: T) {}
 
-  handleSchema(schema: z.ZodInterface): z.ZodInterface {
+  handleSchema(schema: z.ZodObject): z.ZodObject {
     return schema;
   }
 

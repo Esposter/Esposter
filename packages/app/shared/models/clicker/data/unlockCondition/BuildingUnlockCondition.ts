@@ -12,8 +12,8 @@ export interface BuildingUnlockCondition extends ItemEntityType<ItemType.Buildin
 }
 
 export const buildingUnlockConditionSchema = createItemEntityTypeSchema(z.literal(ItemType.Building)).extend(
-  z.interface({
-    amount: z.number().int(),
+  z.object({
+    amount: z.int(),
     id: buildingIdSchema,
   }),
 ) satisfies z.ZodType<BuildingUnlockCondition>;

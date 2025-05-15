@@ -20,7 +20,7 @@ defineSlots<{
   activator: (props: StyledDialogActivatorSlotProps) => unknown;
   default: (props: Record<string, never>) => unknown;
 }>();
-const { cardProps, confirmButtonAttrs, confirmButtonProps } = defineProps<StyledDialogProps>();
+const { cardProps = {}, confirmButtonAttrs = {}, confirmButtonProps = {} } = defineProps<StyledDialogProps>();
 const emit = defineEmits<{ submit: [event: SubmitEventPromise, onComplete: () => void] }>();
 const isOpen = ref(false);
 const isValid = ref(true);
@@ -50,7 +50,7 @@ const isValid = ref(true);
             color="error"
             variant="outlined"
             :disabled="!isValid"
-            :="mergeProps(confirmButtonProps ?? {}, confirmButtonAttrs ?? {})"
+            :="mergeProps(confirmButtonProps, confirmButtonAttrs)"
           />
         </v-card-actions>
       </StyledCard>

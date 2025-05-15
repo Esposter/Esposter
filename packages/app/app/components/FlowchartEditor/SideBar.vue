@@ -24,7 +24,7 @@ const { text } = useColors();
 
 <style scoped lang="scss">
 .vue-flow__node-default {
-  border: 1px $border-style-root v-bind(text);
+  border: $border-width-root $border-style-root v-bind(text);
 }
 
 :deep(.v-list-item__content) {

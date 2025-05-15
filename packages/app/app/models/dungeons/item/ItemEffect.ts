@@ -10,7 +10,7 @@ export interface ItemEffect extends ItemEntityType<ItemEffectType> {
 }
 
 export const itemEffectSchema = createItemEntityTypeSchema(itemEffectTypeSchema).extend(
-  z.interface({
+  z.object({
     value: z.number(),
   }),
 ) satisfies z.ZodType<ItemEffect>;

@@ -1,9 +1,9 @@
 import type { ItemEntityType } from "#shared/models/entity/ItemEntityType";
-import type { Item } from "#shared/models/tableEditor/Item";
+import type { Item } from "#shared/models/tableEditor/data/Item";
 import type { ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
 
 import { ItemEntityTypePropertyNames } from "#shared/models/entity/ItemEntityType";
-import { ATableEditorItemEntity } from "#shared/models/tableEditor/ATableEditorItemEntity";
+import { ATableEditorItemEntity } from "#shared/models/tableEditor/data/ATableEditorItemEntity";
 
 class NullItem extends ATableEditorItemEntity implements ItemEntityType<"None"> {
   type = "None" as const;

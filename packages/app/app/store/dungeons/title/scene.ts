@@ -14,7 +14,7 @@ import { exhaustiveGuard } from "@esposter/shared";
 export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
   const dungeonsStore = useDungeonsStore();
   const { fadeSwitchToScene } = dungeonsStore;
-  const isContinueEnabled = computed(() => dungeonsStore.game.saves.length > 0);
+  const isContinueEnabled = computed(() => dungeonsStore.dungeons.saves.length > 0);
 
   const onPlayerInput = (scene: SceneWithPlugins, justDownInput: PlayerInput) => {
     if (isPlayerSpecialInput(justDownInput)) onPlayerSpecialInput(scene, justDownInput);
@@ -25,7 +25,7 @@ export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
     if (playerSpecialInput === PlayerSpecialInput.Confirm)
       switch (PlayerTitleMenuOptionGrid.value) {
         case PlayerTitleMenuOption.Continue:
-          dungeonsStore.save = dungeonsStore.game.saves[0];
+          dungeonsStore.save = dungeonsStore.dungeons.saves[0];
           fadeSwitchToScene(scene, SceneKey.World);
           return;
         case PlayerTitleMenuOption.Settings:

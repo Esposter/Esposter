@@ -15,7 +15,7 @@ const dialog = ref(false);
       <v-card-title>
         <v-text-field v-model="roomSearchQuery" placeholder="Where would you like to go?" hide-details />
       </v-card-title>
-      <v-card-text overflow-y="auto">
+      <v-card-text overflow-y-auto>
         <EsbabblerModelRoomListSearched @update:room="dialog = false" />
       </v-card-text>
     </StyledCard>

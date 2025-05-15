@@ -11,7 +11,7 @@ export interface Effect {
   value: number;
 }
 
-export const effectSchema = z.interface({
+export const effectSchema = z.object({
   configuration: effectConfigurationSchema,
   targets: targetSchema.array().min(1),
   value: z.number(),

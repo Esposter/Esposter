@@ -100,9 +100,7 @@ const upgradeIcon = computed(() => {
     </StyledCard>
   </v-menu>
 </template>
-
-<!-- @TODO: This doesn't actually work yet -->
-<!-- https://github.com/vuejs/core/issues/7312 -->
+<!-- @TODO: https://github.com/vuejs/core/issues/7312 -->
 <style scoped lang="scss">
 .not-affordable {
   color: v-bind(error);

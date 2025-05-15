@@ -5,7 +5,7 @@ import type { EditorView } from "@codemirror/view";
 import { getLanguageExtension } from "@/services/codemirror/getLanguageExtension";
 import { Codemirror } from "vue-codemirror";
 
-interface FileRendererCodeProps extends FileRendererProps {
+export interface FileRendererCodeProps extends FileRendererProps {
   language: string;
 }
 
