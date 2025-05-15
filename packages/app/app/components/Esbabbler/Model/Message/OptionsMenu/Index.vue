@@ -95,6 +95,7 @@ const deleteMessageItem = {
         :update-message-items
         :delete-message-item
         @update:menu="(value) => emit('update:menu', value)"
+        @update:select-emoji="(emoji) => emit('update:select-emoji', emoji)"
       />
     </v-card-actions>
   </StyledCard>

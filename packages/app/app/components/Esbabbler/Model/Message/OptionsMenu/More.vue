@@ -2,6 +2,7 @@
 import type { Item } from "@/models/shared/Item";
 
 import { useEsbabblerStore } from "@/store/esbabbler";
+import { unemojify } from "node-emoji";
 import { mergeProps } from "vue";
 
 interface MessageOptionsMenuProps {
@@ -11,9 +12,10 @@ interface MessageOptionsMenuProps {
 }
 
 const { deleteMessageItem, rowKey, updateMessageItems } = defineProps<MessageOptionsMenuProps>();
-const emit = defineEmits<{ "update:menu": [value: boolean] }>();
+const emit = defineEmits<{ "update:menu": [value: boolean]; "update:select-emoji": [emoji: string] }>();
 const esbabblerStore = useEsbabblerStore();
 const { optionsMenu } = storeToRefs(esbabblerStore);
+const emojiMenuItems: string[] = ["🤣", "👍", "❤️", "👌"];
 </script>
 
 <template>
@@ -39,6 +41,20 @@ const { optionsMenu } = storeToRefs(esbabblerStore);
       </v-tooltip>
     </template>
     <v-list>
+      <v-list-item>
+        <div flex gap-x-2>
+          <v-tooltip v-for="emoji of emojiMenuItems" :key="emoji" :text="unemojify(emoji)">
+            <template #activator="{ props }">
+              <v-btn m-0="!" size-10="!" rd-2="!" icon flex-1 :="props" @click="emit('update:select-emoji', emoji)">
+                {{ emoji }}
+              </v-btn>
+            </template>
+          </v-tooltip>
+        </div>
+      </v-list-item>
+      <v-list-item py-2="!" min-height="auto">
+        <v-divider />
+      </v-list-item>
       <v-list-item v-for="{ title, color, icon, onClick } of updateMessageItems" :key="title" @click="onClick">
         <span :class="color ? `text-${color}` : undefined">{{ title }}</span>
         <template #append>

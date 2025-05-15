@@ -21,7 +21,7 @@ const isCreator = computed(() => currentRoom.value?.userId === member.id);
       </v-badge>
     </template>
     <v-list-item-title>
-      <div flex items-center gap-1>
+      <div flex items-center gap-x-1>
         {{ member.name }}
         <v-tooltip v-if="isCreator" text="Room Owner">
           <template #activator="{ props }">
