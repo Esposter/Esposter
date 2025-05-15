@@ -49,23 +49,21 @@ const forwardMessageItem: Item = {
   },
   title: "Forward",
 };
-const deleteMessageItem: Item = {
+const deleteMessageItem = {
   color: "error",
   icon: "mdi-delete",
   onClick: () => {
     emit("update:delete-mode", true);
   },
   title: "Delete Message",
-};
+} as const satisfies Item;
 const emojiMenuItems: string[] = ["🤣", "👍", "❤️"];
 // We only include menu items that will be part of our v-for to generate similar components
 const menuItems = computed(() =>
   isEditable.value ? [editMessageItem, forwardMessageItem] : [replyItem, forwardMessageItem],
 );
-const popupMenuItems = computed(() =>
-  isEditable.value
-    ? [editMessageItem, replyItem, forwardMessageItem, deleteMessageItem]
-    : [replyItem, forwardMessageItem, deleteMessageItem],
+const updateMessageMenuItems = computed(() =>
+  isEditable.value ? [editMessageItem, replyItem, forwardMessageItem] : [replyItem, forwardMessageItem],
 );
 </script>
 
@@ -124,10 +122,19 @@ const popupMenuItems = computed(() =>
           </v-tooltip>
         </template>
         <v-list>
-          <v-list-item v-for="{ title, color, icon, onClick } of popupMenuItems" :key="title" @click="onClick">
+          <v-list-item v-for="{ title, color, icon, onClick } of updateMessageMenuItems" :key="title" @click="onClick">
             <span :class="color ? `text-${color}` : undefined">{{ title }}</span>
             <template #append>
               <v-icon size="small" :color :icon />
+            </template>
+          </v-list-item>
+          <v-list-item py-2="!" min-height="auto">
+            <v-divider />
+          </v-list-item>
+          <v-list-item @click="deleteMessageItem.onClick">
+            <span :class="`text-${deleteMessageItem.color}`">{{ deleteMessageItem.title }}</span>
+            <template #append>
+              <v-icon size="small" :color="deleteMessageItem.color" :icon="deleteMessageItem.icon" />
             </template>
           </v-list-item>
         </v-list>
