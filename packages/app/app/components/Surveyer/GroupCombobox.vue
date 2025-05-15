@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import type { VCombobox } from "vuetify/components";
+
 import { useSurveyStore } from "@/store/surveyer/survey";
-import { VCombobox } from "vuetify/components";
 
 interface GroupComboboxProps {
   comboboxProps?: VCombobox["$props"];

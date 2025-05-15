@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import type { SubmitEventPromise } from "vuetify";
-import type { VCard } from "vuetify/components";
+import type { VBtn, VCard } from "vuetify/components";
 
 import { mergeProps } from "vue";
-import { VBtn } from "vuetify/components";
 
 export interface StyledDialogActivatorSlotProps {
   isOpen: boolean;

@@ -1,11 +1,12 @@
 <script setup lang="ts">
+import type { VBtn, VTooltip } from "vuetify/components";
+
 import data from "emoji-mart-vue-fast/data/all.json";
 // @ts-expect-error @TODO: https://github.com/serebrov/emoji-mart-vue/issues/121
 import Picker from "emoji-mart-vue-fast/src/components/Picker.vue";
 // @ts-expect-error @TODO: https://github.com/serebrov/emoji-mart-vue/issues/121
 import { EmojiIndex } from "emoji-mart-vue-fast/src/utils/emoji-data";
 import { mergeProps } from "vue";
-import { VBtn, VTooltip } from "vuetify/components";
 
 interface StyledEmojiPickerProps {
   buttonAttrs?: VBtn["$attrs"];

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { VBtn } from "vuetify/components";
+import type { VBtn } from "vuetify/components";
 
 interface StyledButtonProps {
   buttonProps?: VBtn["$props"];

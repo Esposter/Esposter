@@ -77,7 +77,7 @@ const deleteMessageItem = {
           <div>Click to react</div>
         </div>
       </v-tooltip>
-      <v-divider h-6 self-center thickness="2" vertical />
+      <v-divider thickness="2" vertical h-6 self-center />
       <StyledEmojiPicker
         :tooltip-props="{ text: 'Add Reaction' }"
         :button-props="{ size: 'small' }"

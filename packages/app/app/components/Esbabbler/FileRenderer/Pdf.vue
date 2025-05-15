@@ -4,8 +4,6 @@ import type { FileRendererProps } from "@/models/esbabbler/file/FileRendererProp
 import { VPdfViewer } from "@vue-pdf-viewer/viewer";
 import PdfWorker from "pdfjs-dist/build/pdf.worker?url";
 import VuePdfEmbed from "vue-pdf-embed";
-import "vue-pdf-embed/dist/styles/annotationLayer.css";
-import "vue-pdf-embed/dist/styles/textLayer.css";
 
 const { file, isPreview, url } = defineProps<FileRendererProps>();
 const isDark = useIsDark();
@@ -50,3 +48,8 @@ watch(isDark, (newIsDark) => {
     </StyledCard>
   </v-dialog>
 </template>
+
+<style lang="scss">
+@use "vue-pdf-embed/dist/styles/annotationLayer.css";
+@use "vue-pdf-embed/dist/styles/textLayer.css";
+</style>
