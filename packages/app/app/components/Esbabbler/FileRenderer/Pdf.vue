@@ -40,7 +40,13 @@ watch(isDark, (newIsDark) => {
   <v-dialog v-if="!isPreview" v-model="dialog" width="64rem" height="48rem">
     <StyledCard>
       <v-card-title font-bold>{{ file.filename }}</v-card-title>
-      <VPdfViewer v-model:dark-mode="darkMode" :download-filename="file.filename" :src="url" :worker-url="PdfWorker" />
+      <VPdfViewer
+        v-model:dark-mode="darkMode"
+        :character-map="{ url: '/cmaps' }"
+        :download-filename="file.filename"
+        :src="url"
+        :worker-url="PdfWorker"
+      />
     </StyledCard>
   </v-dialog>
 </template>
