@@ -42,7 +42,7 @@ watch(isDark, (newIsDark) => {
       <v-card-title font-bold>{{ file.filename }}</v-card-title>
       <VPdfViewer
         v-model:dark-mode="darkMode"
-        :character-map="{ url: '/cmaps' }"
+        :character-map="{ url: '/cmaps/' }"
         :download-filename="file.filename"
         :src="url"
         :worker-url="PdfWorker"
