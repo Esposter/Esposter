@@ -3,9 +3,7 @@ import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { Item } from "@/models/shared/Item";
 
 import { authClient } from "@/services/auth/authClient";
-import { useEsbabblerStore } from "@/store/esbabbler";
 import { unemojify } from "node-emoji";
-import { mergeProps } from "vue";
 
 interface MessageOptionsMenuProps {
   hoverProps?: Record<string, unknown>;
@@ -22,8 +20,6 @@ const emit = defineEmits<{
   "update:select-emoji": [emoji: string];
   "update:update-mode": [value: true];
 }>();
-const esbabblerStore = useEsbabblerStore();
-const { optionsMenu } = storeToRefs(esbabblerStore);
 const { data: session } = await authClient.useSession(useFetch);
 const isCreator = computed(() => session.value?.user.id === message.userId);
 const isEditable = computed(() => isCreator.value && !message.isForward);
@@ -49,6 +45,14 @@ const forwardMessageItem: Item = {
   },
   title: "Forward",
 };
+const emojiMenuItems: string[] = ["🤣", "👍", "❤️"];
+// We only include menu items that will be part of our v-for to generate similar components
+const menuItems = computed(() =>
+  isEditable.value ? [editMessageItem, forwardMessageItem] : [replyItem, forwardMessageItem],
+);
+const updateMessageItems = computed(() =>
+  isEditable.value ? [editMessageItem, replyItem, forwardMessageItem] : [replyItem, forwardMessageItem],
+);
 const deleteMessageItem = {
   color: "error",
   icon: "mdi-delete",
@@ -57,14 +61,6 @@ const deleteMessageItem = {
   },
   title: "Delete Message",
 } as const satisfies Item;
-const emojiMenuItems: string[] = ["🤣", "👍", "❤️"];
-// We only include menu items that will be part of our v-for to generate similar components
-const menuItems = computed(() =>
-  isEditable.value ? [editMessageItem, forwardMessageItem] : [replyItem, forwardMessageItem],
-);
-const updateMessageMenuItems = computed(() =>
-  isEditable.value ? [editMessageItem, replyItem, forwardMessageItem] : [replyItem, forwardMessageItem],
-);
 </script>
 
 <template>
@@ -94,51 +90,12 @@ const updateMessageMenuItems = computed(() =>
           <v-btn m-0="!" rd-none="!" :icon size="small" :="props" @click="onClick" />
         </template>
       </v-tooltip>
-      <v-menu
-        :model-value="optionsMenu?.rowKey === message.rowKey"
-        transition="none"
-        location="left"
-        :target="optionsMenu?.target"
-        @update:model-value="
-          (value) => {
-            // We just need to set a placeholder so that the menu will appear
-            if (value) optionsMenu = { rowKey: message.rowKey, target: 'true' };
-            else optionsMenu = undefined;
-            emit('update:menu', value);
-          }
-        "
-      >
-        <template #activator="{ props: menuProps }">
-          <v-tooltip text="More">
-            <template #activator="{ props: tooltipProps }">
-              <v-btn
-                m-0="!"
-                rd-none="!"
-                icon="mdi-dots-horizontal"
-                size="small"
-                :="mergeProps(menuProps, tooltipProps)"
-              />
-            </template>
-          </v-tooltip>
-        </template>
-        <v-list>
-          <v-list-item v-for="{ title, color, icon, onClick } of updateMessageMenuItems" :key="title" @click="onClick">
-            <span :class="color ? `text-${color}` : undefined">{{ title }}</span>
-            <template #append>
-              <v-icon size="small" :color :icon />
-            </template>
-          </v-list-item>
-          <v-list-item py-2="!" min-height="auto">
-            <v-divider />
-          </v-list-item>
-          <v-list-item @click="deleteMessageItem.onClick">
-            <span :class="`text-${deleteMessageItem.color}`">{{ deleteMessageItem.title }}</span>
-            <template #append>
-              <v-icon size="small" :color="deleteMessageItem.color" :icon="deleteMessageItem.icon" />
-            </template>
-          </v-list-item>
-        </v-list>
-      </v-menu>
+      <EsbabblerModelMessageOptionsMenuMore
+        :row-key="message.rowKey"
+        :update-message-items
+        :delete-message-item
+        @update:menu="(value) => emit('update:menu', value)"
+      />
     </v-card-actions>
   </StyledCard>
 </template>
