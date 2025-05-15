@@ -13,7 +13,7 @@ interface MessageProps {
   nextMessage?: MessageEntity;
 }
 
-const slots = defineSlots<{ default?: (props: Record<string, never>) => unknown }>();
+defineSlots<{ default?: (props: Record<string, never>) => unknown }>();
 const { active, creator, isPreview = false, message, nextMessage } = defineProps<MessageProps>();
 const isSameBatch = computed(
   () =>

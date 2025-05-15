@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Item } from "@/models/shared/Item";
 
+import { EMOJI_TEXT } from "@/services/esbabbler/message/constants";
 import { useEsbabblerStore } from "@/store/esbabbler";
 import { unemojify } from "node-emoji";
 import { mergeProps } from "vue";
@@ -52,6 +53,24 @@ const emojiMenuItems: string[] = ["🤣", "👍", "❤️", "👌"];
           </v-tooltip>
         </div>
       </v-list-item>
+      <StyledEmojiPicker
+        @select="
+          (emoji) => {
+            emit('update:select-emoji', emoji);
+            optionsMenu = undefined;
+            emit('update:menu', false);
+          }
+        "
+      >
+        <template #default="menuProps">
+          <v-list-item :="menuProps">
+            <span>{{ EMOJI_TEXT }}</span>
+            <template #append>
+              <v-icon size="small" icon="mdi-emoticon" />
+            </template>
+          </v-list-item>
+        </template>
+      </StyledEmojiPicker>
       <v-list-item py-2="!" min-height="auto">
         <v-divider />
       </v-list-item>

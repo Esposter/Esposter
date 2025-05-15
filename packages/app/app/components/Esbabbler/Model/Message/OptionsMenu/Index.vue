@@ -3,6 +3,7 @@ import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { Item } from "@/models/shared/Item";
 
 import { authClient } from "@/services/auth/authClient";
+import { EMOJI_TEXT } from "@/services/esbabbler/message/constants";
 import { unemojify } from "node-emoji";
 
 interface MessageOptionsMenuProps {
@@ -79,7 +80,7 @@ const deleteMessageItem = {
       </v-tooltip>
       <v-divider thickness="2" vertical h-6 self-center />
       <StyledEmojiPicker
-        :tooltip-props="{ text: 'Add Reaction' }"
+        :tooltip-props="{ text: EMOJI_TEXT }"
         :button-props="{ size: 'small' }"
         :button-attrs="{ 'rd-none': '!' }"
         @update:menu="(value) => emit('update:menu', value)"
