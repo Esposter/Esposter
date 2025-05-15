@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
-import type { OptionMenuItem } from "@/models/esbabbler/message/OptionMenuItem";
+import type { Item } from "@/models/shared/Item";
 
 import { authClient } from "@/services/auth/authClient";
 import { useEsbabblerStore } from "@/store/esbabbler";
@@ -26,7 +26,7 @@ const { optionsMenu } = storeToRefs(esbabblerStore);
 const { data: session } = await authClient.useSession(useFetch);
 const isCreator = computed(() => session.value?.user.id === message.userId);
 const isEditable = computed(() => isCreator.value && !message.isForward);
-const editMessageOptionMenuItem: OptionMenuItem = {
+const editMessageItem: Item = {
   icon: "mdi-pencil",
   onClick: () => {
     emit("update:update-mode", true);
@@ -34,21 +34,21 @@ const editMessageOptionMenuItem: OptionMenuItem = {
   shortTitle: "Edit",
   title: "Edit Message",
 };
-const replyOptionMenuItem: OptionMenuItem = {
+const replyItem: Item = {
   icon: "mdi-reply",
   onClick: () => {
     emit("update:reply", message.rowKey);
   },
   title: "Reply",
 };
-const forwardMessageOptionMenuItem: OptionMenuItem = {
+const forwardMessageItem: Item = {
   icon: "mdi-share",
   onClick: () => {
     emit("update:forward", message.rowKey);
   },
   title: "Forward",
 };
-const deleteMessageOptionMenuItem: OptionMenuItem = {
+const deleteMessageItem: Item = {
   color: "error",
   icon: "mdi-delete",
   onClick: () => {
@@ -58,14 +58,12 @@ const deleteMessageOptionMenuItem: OptionMenuItem = {
 };
 // We only include menu items that will be part of our v-for to generate similar components
 const menuItems = computed(() =>
-  isEditable.value
-    ? [editMessageOptionMenuItem, forwardMessageOptionMenuItem]
-    : [replyOptionMenuItem, forwardMessageOptionMenuItem],
+  isEditable.value ? [editMessageItem, forwardMessageItem] : [replyItem, forwardMessageItem],
 );
-const items = computed(() =>
+const popupMenuItems = computed(() =>
   isEditable.value
-    ? [editMessageOptionMenuItem, replyOptionMenuItem, forwardMessageOptionMenuItem, deleteMessageOptionMenuItem]
-    : [replyOptionMenuItem, forwardMessageOptionMenuItem, deleteMessageOptionMenuItem],
+    ? [editMessageItem, replyItem, forwardMessageItem, deleteMessageItem]
+    : [replyItem, forwardMessageItem, deleteMessageItem],
 );
 </script>
 
@@ -112,7 +110,7 @@ const items = computed(() =>
           </v-tooltip>
         </template>
         <v-list>
-          <v-list-item v-for="{ title, color, icon, onClick } of items" :key="title" @click="onClick">
+          <v-list-item v-for="{ title, color, icon, onClick } of popupMenuItems" :key="title" @click="onClick">
             <span :class="color ? `text-${color}` : undefined">{{ title }}</span>
             <template #append>
               <v-icon size="small" :color :icon />

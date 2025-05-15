@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { OptionMenuItem } from "@/models/esbabbler/message/OptionMenuItem";
+import type { Item } from "@/models/shared/Item";
 
 interface FileOptionsMenuProps {
   hoverProps?: Record<string, unknown>;
@@ -8,7 +8,7 @@ interface FileOptionsMenuProps {
 
 const { hoverProps, isHovering } = defineProps<FileOptionsMenuProps>();
 const emit = defineEmits<{ delete: [] }>();
-const menuItems: OptionMenuItem[] = [
+const menuItems: Item[] = [
   {
     color: "error",
     icon: "mdi-delete",

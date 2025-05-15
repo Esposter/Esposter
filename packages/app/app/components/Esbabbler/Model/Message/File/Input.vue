@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { FileEntity } from "#shared/models/azure/FileEntity";
 import type { UploadFileUrl } from "@/models/esbabbler/file/UploadFileUrl";
-import type { OptionMenuItem } from "@/models/esbabbler/message/OptionMenuItem";
+import type { Item } from "@/models/shared/Item";
 
 interface FileInputProps {
   file: FileEntity;
@@ -12,7 +12,7 @@ interface FileInputProps {
 const { file, index, uploadFileUrl = { progress: 1, url: "" } } = defineProps<FileInputProps>();
 const emit = defineEmits<{ delete: [number] }>();
 const progressPercentage = computed(() => uploadFileUrl.progress * 100);
-const menuItems: OptionMenuItem[] = [
+const menuItems: Item[] = [
   {
     color: "error",
     icon: "mdi-delete",
