@@ -65,7 +65,7 @@ const items = computed<MenuItem[]>(() => [
 <template>
   <div w-full flex flex-wrap>
     <template v-for="(item, index) of items" :key="index">
-      <v-divider v-if="isDivider(item)" h-6="!" self-center="!" thickness="2" vertical />
+      <v-divider v-if="isDivider(item)" h-6 self-center thickness="2" vertical />
       <v-tooltip v-else :text="item.title">
         <template #activator="{ props: tooltipProps }">
           <v-btn rd-none="!" density="comfortable" :="mergeProps(item, tooltipProps)" />

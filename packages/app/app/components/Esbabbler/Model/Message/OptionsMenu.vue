@@ -4,6 +4,7 @@ import type { Item } from "@/models/shared/Item";
 
 import { authClient } from "@/services/auth/authClient";
 import { useEsbabblerStore } from "@/store/esbabbler";
+import { unemojify } from "node-emoji";
 import { mergeProps } from "vue";
 
 interface MessageOptionsMenuProps {
@@ -56,6 +57,7 @@ const deleteMessageItem: Item = {
   },
   title: "Delete Message",
 };
+const emojiMenuItems: string[] = ["🤣", "👍", "❤️"];
 // We only include menu items that will be part of our v-for to generate similar components
 const menuItems = computed(() =>
   isEditable.value ? [editMessageItem, forwardMessageItem] : [replyItem, forwardMessageItem],
@@ -70,6 +72,18 @@ const popupMenuItems = computed(() =>
 <template>
   <StyledCard :card-props="{ elevation: isHovering ? 12 : 2, ...hoverProps }">
     <v-card-actions p-0="!" gap-0 min-h-auto="!">
+      <v-tooltip v-for="emoji of emojiMenuItems" :key="emoji">
+        <template #activator="{ props }">
+          <v-btn m-0="!" size-10="!" rd-none="!" icon :="props" @click="emit('update:select-emoji', emoji)">
+            {{ emoji }}
+          </v-btn>
+        </template>
+        <div flex flex-col text-center>
+          <div font-bold>{{ unemojify(emoji) }}</div>
+          <div>Click to react</div>
+        </div>
+      </v-tooltip>
+      <v-divider h-6 self-center thickness="2" vertical />
       <StyledEmojiPicker
         :tooltip-props="{ text: 'Add Reaction' }"
         :button-props="{ size: 'small' }"
