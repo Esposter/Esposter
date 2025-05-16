@@ -60,32 +60,42 @@ export const surveyRouter = router({
       });
     return deletedSurvey;
   }),
-  publishSurvey: authedProcedure.input(publishSurveyInputSchema).mutation(async ({ ctx, input: { id, ...rest } }) => {
-    const survey = await ctx.db.query.surveys.findFirst({
-      where: (surveys, { and, eq }) => and(eq(surveys.id, id), eq(surveys.userId, ctx.session.user.id)),
-    });
-    if (!survey)
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: new NotFoundError(DatabaseEntityType.Survey, id).message,
+  publishSurvey: authedProcedure
+    .input(publishSurveyInputSchema)
+    .mutation<Survey>(async ({ ctx, input: { id, ...rest } }) => {
+      const survey = await ctx.db.query.surveys.findFirst({
+        where: (surveys, { and, eq }) => and(eq(surveys.id, id), eq(surveys.userId, ctx.session.user.id)),
       });
+      if (!survey)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new NotFoundError(DatabaseEntityType.Survey, id).message,
+        });
 
-    rest.publishVersion++;
-    if (rest.publishVersion <= survey.publishVersion)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(
-          Operation.Update,
-          DatabaseEntityType.Survey,
-          "cannot update survey publish with old publish version",
-        ).message,
-      });
+      rest.publishVersion++;
+      if (rest.publishVersion <= survey.publishVersion)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(
+            Operation.Update,
+            DatabaseEntityType.Survey,
+            "cannot update survey publish with old publish version",
+          ).message,
+        });
 
-    await ctx.db.update(surveys).set(rest).where(eq(surveys.id, id));
+      const updatedSurvey = (await ctx.db.update(surveys).set(rest).where(eq(surveys.id, id)).returning()).find(
+        Boolean,
+      );
+      if (!updatedSurvey)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Survey, JSON.stringify(rest)).message,
+        });
 
-    const blobName = getPublishPath(id, rest.publishVersion, "json");
-    await useUpload(AzureContainer.SurveyerAssets, blobName, survey.model);
-  }),
+      const blobName = getPublishPath(id, rest.publishVersion, "json");
+      await useUpload(AzureContainer.SurveyerAssets, blobName, survey.model);
+      return updatedSurvey;
+    }),
   readSurvey: authedProcedure.input(readSurveyInputSchema).query(async ({ ctx, input }) => {
     const survey = await ctx.db.query.surveys.findFirst({ where: (surveys, { eq }) => eq(surveys.id, input) });
     if (!survey)

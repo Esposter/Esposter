@@ -17,7 +17,10 @@ const creator = new SurveyCreatorModel({ autoSaveEnabled: true, showTranslationT
 const actions = [
   new Action({
     action: getSynchronizedFunction(async () => {
-      await $trpc.survey.publishSurvey.mutate({ id: survey.id, publishVersion: survey.publishVersion });
+      Object.assign(
+        survey,
+        await $trpc.survey.publishSurvey.mutate({ id: survey.id, publishVersion: survey.publishVersion }),
+      );
     }),
     iconName: "icon-publish-24x24",
     id: "publish-survey",
