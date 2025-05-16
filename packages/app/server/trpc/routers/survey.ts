@@ -8,12 +8,16 @@ import { deleteSurveyInputSchema } from "#shared/models/db/survey/DeleteSurveyIn
 import { updateSurveyInputSchema } from "#shared/models/db/survey/UpdateSurveyInput";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
+import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
 import { useUpload } from "@@/server/composables/azure/useUpload";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { getPublishPath } from "@@/server/services/publish/getPublishPath";
 import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
+import { rateLimitedProcedure } from "@@/server/trpc/procedure/rateLimitedProcedure";
+import { dayjs } from "@@/shared/services/dayjs";
+import { ContainerSASPermissions } from "@azure/storage-blob";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, count, desc, eq } from "drizzle-orm";
@@ -23,6 +27,9 @@ export type ReadSurveyInput = z.infer<typeof readSurveyInputSchema>;
 
 const readSurveysInputSchema = createOffsetPaginationParamsSchema(selectSurveySchema.keyof()).default({});
 export type ReadSurveysInput = z.infer<typeof readSurveysInputSchema>;
+
+const generateSurveyModelSasUrlInputSchema = selectSurveySchema.shape.id;
+export type GenerateSurveyModelSasUrlInput = z.infer<typeof generateSurveyModelSasUrlInputSchema>;
 
 const publishSurveyInputSchema = selectSurveySchema.pick({ id: true, publishVersion: true });
 export type PublishSurveyInput = z.infer<typeof publishSurveyInputSchema>;
@@ -60,6 +67,25 @@ export const surveyRouter = router({
       });
     return deletedSurvey;
   }),
+  generateSurveyModelSasUrl: rateLimitedProcedure
+    .input(generateSurveyModelSasUrlInputSchema)
+    .query<string>(async ({ ctx, input }) => {
+      const survey = await ctx.db.query.surveys.findFirst({ where: (surveys, { eq }) => eq(surveys.id, input) });
+      if (!survey)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new NotFoundError(DatabaseEntityType.Survey, input).message,
+        });
+
+      const containerClient = await useContainerClient(AzureContainer.SurveyerAssets);
+      const blobName = getPublishPath(input, survey.publishVersion, "json");
+      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+      return blockBlobClient.generateSasUrl({
+        contentType: "application/json",
+        expiresOn: dayjs().add(30, "days").toDate(),
+        permissions: ContainerSASPermissions.from({ read: true }),
+      });
+    }),
   publishSurvey: authedProcedure
     .input(publishSurveyInputSchema)
     .mutation<Survey>(async ({ ctx, input: { id, ...rest } }) => {
