@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.3.0](https://github.com/Esposter/Esposter/compare/v2.2.1...v2.3.0) (2025-05-16)
+
+**Note:** Version bump only for package vue-phaserjs
+
 ## [2.2.1](https://github.com/Esposter/Esposter/compare/v2.2.0...v2.2.1) (2025-05-14)
 
 ### Bug Fixes
@@ -20,6 +24,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * build inheritance ([a3361c7](https://github.com/Esposter/Esposter/commit/a3361c73b1e5fd1a63edbf082c07fb3a2de74153))
+
 * README ([1e4a49a](https://github.com/Esposter/Esposter/commit/1e4a49a357fe725a812d93c3f18b6ce7a3b8a3bc))
 
 # [2.0.0](https://github.com/Esposter/Esposter/compare/v1.42.3...v2.0.0) (2025-04-19)
@@ -43,8 +48,11 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Features
 
 * Add num members info + update deps ([84b4a60](https://github.com/Esposter/Esposter/commit/84b4a608988aa1a95ba2769eee53834c1ca46776))
+
 * Add polyfills ([f2e60ba](https://github.com/Esposter/Esposter/commit/f2e60baa41aacdf1d0f49ecfe0876312c7ad8f12))
+
 * Change to use symlinks ([6efc67a](https://github.com/Esposter/Esposter/commit/6efc67a13aa2aec0b3d2b494a857095106b9ad44))
+
 * switch to rolldown-vite ([f21d387](https://github.com/Esposter/Esposter/commit/f21d3872b3cc918ce34291e24d685b668ccfd879))
 
 # [1.41.0](https://github.com/Esposter/Esposter/compare/v1.40.0...v1.41.0) (2025-04-06)
@@ -86,6 +94,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * typecheck ([4faf963](https://github.com/Esposter/Esposter/commit/4faf963c79a0384cc6fd6a59ffccc5d7fe4913d9))
+
 * typescript eslint ([141b4e2](https://github.com/Esposter/Esposter/commit/141b4e217984fb3ebcb9a9b1cbce770e92100f50))
 
 # [1.33.0](https://github.com/Esposter/Esposter/compare/v1.32.0...v1.33.0) (2025-01-14)
@@ -133,6 +142,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * lint && types ([abc4876](https://github.com/Esposter/Esposter/commit/abc4876b327f871ec8360e8850f40f0b68454f38))
+
 * overrides ([1bdf2df](https://github.com/Esposter/Esposter/commit/1bdf2df6e792177e39abb4ec5efee779e3ef6aac))
 
 # [1.26.0](https://github.com/Esposter/Esposter/compare/v1.25.0...v1.26.0) (2024-11-02)
@@ -162,7 +172,9 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * move anything frontend to only use undefined instead of null for consistency ([f8d9305](https://github.com/Esposter/Esposter/commit/f8d93052c401f285343d5c69bce2b91182548083))
+
 * some pinia todos ([7efdc7f](https://github.com/Esposter/Esposter/commit/7efdc7f569dc8cf8b825195522d770203bd5f3a8))
+
 * types ([d111b55](https://github.com/Esposter/Esposter/commit/d111b55d42168f5520592a737d06e781fa687d1c))
 
 # [1.22.0](https://github.com/Esposter/Esposter/compare/v1.21.5...v1.22.0) (2024-09-28)
@@ -202,7 +214,9 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * imports + moving input active setter to lib ([2a62a9b](https://github.com/Esposter/Esposter/commit/2a62a9b01d40d8f615639f2df4d2a285cfacdb14))
+
 * license ([b3e06ac](https://github.com/Esposter/Esposter/commit/b3e06ac20fa8bbebf16d6d1d125dba207a659fe8))
+
 * move fading listeners to lib ([730d942](https://github.com/Esposter/Esposter/commit/730d942efd7e93f76e4ee32a219743a6e4e5282b))
 
 ### Features
@@ -234,14 +248,23 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * add auto imports dts file ([cd669fc](https://github.com/Esposter/Esposter/commit/cd669fc421b75950cd7918c8b31e5276cc0a55b0))
+
 * add files ([baa1167](https://github.com/Esposter/Esposter/commit/baa116797544bbfaf3710db0ab3bd955521e1ed9))
+
 * font family not style you baka ([f96bb51](https://github.com/Esposter/Esposter/commit/f96bb5175451fbc09ff5165518fae137e5263c26))
+
 * lint + types ([73ad2bd](https://github.com/Esposter/Esposter/commit/73ad2bd81e6f81102b781b96395602c255905085))
+
 * more types and scenekey imports ([3434e95](https://github.com/Esposter/Esposter/commit/3434e9515c4b433f51d67a57d7b7b323974c8531))
+
 * shared + vue-phaser pkgs + app usage ([b560736](https://github.com/Esposter/Esposter/commit/b5607366da843044a2229337f90a6613b3ec44b7))
+
 * use text from lib instead because we can't map emits.. ([db57897](https://github.com/Esposter/Esposter/commit/db5789711a49b0d09c3c057fded3b7f46a2e1c9b))
+
 * vue-phaser imports ([db73bf0](https://github.com/Esposter/Esposter/commit/db73bf0a551ff9d143031fc639b0be3113c16bbb))
+
 * vue-phaser to use scenekey types + dungeons text ([474d22e](https://github.com/Esposter/Esposter/commit/474d22e971c6854774231b5f4308e9b45f2d6f56))
+
 * woohoo! that's the last of em scenekey issues ([706a09e](https://github.com/Esposter/Esposter/commit/706a09e10149115f5ab58b15b8a5826d63403007))
 
 ### Features
@@ -297,7 +320,9 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Features
 
 * Add vite pkg ([837a130](https://github.com/Esposter/Esposter/commit/837a1306a226e44b061a3f8a6c660e33dff99078))
+
 * successfully used vue package ([5d1ac61](https://github.com/Esposter/Esposter/commit/5d1ac61970afe222f3841232e2225a88cf097b2b))
+
 * Use mkcert plugin + add build stuff ([400c961](https://github.com/Esposter/Esposter/commit/400c961f5dcca03c38c43c8a92afd6b06824786a))
 
 # [1.10.0](https://github.com/Esposter/Esposter/compare/v1.9.1...v1.10.0) (2024-05-28)
@@ -315,12 +340,15 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * add back typescript plugin ([b33061f](https://github.com/Esposter/Esposter/commit/b33061fdb55edda900bb8ebfb4f37e8177ec8874))
+
 * lint ([2620a47](https://github.com/Esposter/Esposter/commit/2620a472120d9d53079b8ae0fc5230c772b2fc4d))
+
 * revert to non config dir ([0b5078a](https://github.com/Esposter/Esposter/commit/0b5078af8e2ba5f6eaaa3290573240e5b55640fa))
 
 ### Features
 
 * Add shared rollup ([89b938f](https://github.com/Esposter/Esposter/commit/89b938f6c27b52d5883b78d7b98be93b8d09f946))
+
 * use rollup-plugin-dts ([fbb2c50](https://github.com/Esposter/Esposter/commit/fbb2c503c9fb13a509df9ec8af87cd7bd9093dfe))
 
 ## [1.7.1](https://github.com/Esposter/Esposter/compare/v1.7.0...v1.7.1) (2024-05-18)
