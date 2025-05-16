@@ -91,11 +91,7 @@ export class Parser {
 
       if (isEmpty(object))
         if (typeof this.options.emptyTag === "function") object = this.options.emptyTag();
-        else
-          object = (this.options.emptyTag !== "" ? this.options.emptyTag : emptyString) as unknown as Record<
-            string,
-            unknown
-          >;
+        else object = (this.options.emptyTag || emptyString) as unknown as Record<string, unknown>;
 
       if (this.options.validator) {
         const xpath = `/${this.stack
