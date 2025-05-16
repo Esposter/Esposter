@@ -2,8 +2,8 @@ import type { ItemEntityType } from "#shared/models/entity/ItemEntityType";
 import type { ToData } from "#shared/models/entity/ToData";
 
 import {
-    BasicChartConfiguration,
-    basicChartConfigurationSchema,
+  BasicChartConfiguration,
+  basicChartConfigurationSchema,
 } from "#shared/models/dashboard/data/chart/BasicChartConfiguration";
 import { ChartType, chartTypeSchema } from "#shared/models/dashboard/data/chart/type/ChartType";
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
