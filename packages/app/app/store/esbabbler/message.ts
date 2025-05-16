@@ -4,8 +4,8 @@ import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessage
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { Editor } from "@tiptap/core";
 
+import { AzureEntityType } from "#shared/models/azure/AzureEntityType";
 import { createMessageEntity } from "#shared/services/esbabbler/createMessageEntity";
-import { AzureEntityType } from "@/models/shared/entity/AzureEntityType";
 import { authClient } from "@/services/auth/authClient";
 import { MessageHookMap } from "@/services/esbabbler/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";

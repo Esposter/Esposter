@@ -10,9 +10,9 @@ export const deserializeEntity = <TEntity extends AzureEntity>(
   cls: Class<TEntity>,
 ): TEntity => {
   const instance = new cls();
-  for (const [property, value] of Object.entries(entity))
-    if (Array.isArray(instance[property as keyof TEntity]))
-      instance[property as keyof TEntity] = jsonDateParse(value as string);
-    else instance[property as keyof TEntity] = value as TEntity[keyof TEntity];
+  for (const [property, value] of Object.entries(entity) as [keyof TEntity, unknown][])
+    if (Array.isArray(instance[property]) || typeof instance[property] === "object")
+      instance[property] = jsonDateParse(value as string);
+    else instance[property] = value as TEntity[keyof TEntity];
   return instance;
 };

@@ -2,14 +2,21 @@ import type { Survey } from "#shared/db/schema/surveys";
 import type { z } from "zod";
 
 import { selectSurveySchema, surveys } from "#shared/db/schema/surveys";
+import { AzureEntityType } from "#shared/models/azure/AzureEntityType";
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 import { createSurveyInputSchema } from "#shared/models/db/survey/CreateSurveyInput";
 import { deleteSurveyInputSchema } from "#shared/models/db/survey/DeleteSurveyInput";
+import { SurveyResponseEntity, surveyResponseEntitySchema } from "#shared/models/db/survey/SurveyResponseEntity";
 import { updateSurveyInputSchema } from "#shared/models/db/survey/UpdateSurveyInput";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
+import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { useUpload } from "@@/server/composables/azure/useUpload";
+import { AzureTable } from "@@/server/models/azure/table/AzureTable";
+import { createEntity } from "@@/server/services/azure/table/createEntity";
+import { getEntity } from "@@/server/services/azure/table/getEntity";
+import { updateEntity } from "@@/server/services/azure/table/updateEntity";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { getPublishPath } from "@@/server/services/publish/getPublishPath";
@@ -34,6 +41,21 @@ export type GenerateSurveyModelSasUrlInput = z.infer<typeof generateSurveyModelS
 const publishSurveyInputSchema = selectSurveySchema.pick({ id: true, publishVersion: true });
 export type PublishSurveyInput = z.infer<typeof publishSurveyInputSchema>;
 
+const createSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
+  model: true,
+  partitionKey: true,
+  rowKey: true,
+});
+export type CreateSurveyResponseInput = z.infer<typeof createSurveyResponseInputSchema>;
+
+const updateSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
+  model: true,
+  modelVersion: true,
+  partitionKey: true,
+  rowKey: true,
+});
+export type UpdateSurveyResponseInput = z.infer<typeof updateSurveyResponseInputSchema>;
+
 export const surveyRouter = router({
   count: authedProcedure.query(
     async ({ ctx }) =>
@@ -52,6 +74,11 @@ export const surveyRouter = router({
         message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Survey, JSON.stringify(input)).message,
       });
     return newSurvey;
+  }),
+  createSurveyResponse: rateLimitedProcedure.input(createSurveyResponseInputSchema).mutation(async ({ input }) => {
+    const newSurveyResponse = new SurveyResponseEntity(input);
+    const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
+    await createEntity(surveyResponseClient, newSurveyResponse);
   }),
   deleteSurvey: authedProcedure.input(deleteSurveyInputSchema).mutation<Survey>(async ({ ctx, input }) => {
     const deletedSurvey = (
@@ -165,7 +192,11 @@ export const surveyRouter = router({
               "cannot update survey model with old model version",
             ).message,
           });
-      }
+      } else
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Survey, "duplicate model").message,
+        });
 
       const updatedSurvey = (
         await ctx.db
@@ -180,5 +211,42 @@ export const surveyRouter = router({
           message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Survey, id).message,
         });
       return updatedSurvey;
+    }),
+  updateSurveyResponse: rateLimitedProcedure
+    .input(updateSurveyResponseInputSchema)
+    .mutation<SurveyResponseEntity>(async ({ input }) => {
+      const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
+      const surveyResponse = await getEntity(
+        surveyResponseClient,
+        SurveyResponseEntity,
+        input.partitionKey,
+        input.rowKey,
+      );
+      if (!surveyResponse)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new NotFoundError(AzureEntityType.SurveyResponse, JSON.stringify(input)).message,
+        });
+
+      if (input.model !== surveyResponse.model) {
+        input.modelVersion++;
+        if (input.modelVersion <= surveyResponse.modelVersion)
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: new InvalidOperationError(
+              Operation.Update,
+              DatabaseEntityType.Survey,
+              "cannot update survey response model with old model version",
+            ).message,
+          });
+      } else
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Update, AzureEntityType.SurveyResponse, "duplicate model")
+            .message,
+        });
+
+      await updateEntity(surveyResponseClient, input);
+      return surveyResponse;
     }),
 });

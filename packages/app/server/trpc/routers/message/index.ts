@@ -3,6 +3,7 @@ import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { AzureUpdateEntity } from "@@/shared/models/azure/AzureUpdateEntity";
 
 import { selectRoomSchema } from "#shared/db/schema/rooms";
+import { AzureEntityType } from "#shared/models/azure/AzureEntityType";
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 import { FileEntity, fileEntitySchema } from "#shared/models/azure/FileEntity";
 import { createMessageInputSchema } from "#shared/models/db/message/CreateMessageInput";
@@ -15,7 +16,6 @@ import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { dayjs } from "#shared/services/dayjs";
 import { createMessageEntity } from "#shared/services/esbabbler/createMessageEntity";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
-import { AzureEntityType } from "@/models/shared/entity/AzureEntityType";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
