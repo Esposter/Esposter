@@ -7,17 +7,18 @@ import { DefaultDark, SC2020 } from "survey-creator-core/themes";
 defineRouteRules({ ssr: false });
 definePageMeta({ middleware: "auth", validate });
 
-const survey = await useReadSurveyFromRoute();
+const survey = reactive(await useReadSurveyFromRoute());
 const surveyerStore = useSurveyStore();
 const { updateSurvey } = surveyerStore;
 const creator = new SurveyCreatorModel({ autoSaveEnabled: true, showTranslationTab: true });
 creator.text = survey.model;
 creator.saveSurveyFunc = async (saveNo: number, callback: Function) => {
-  survey.model = creator.text;
-
   try {
-    const isSuccessful = await updateSurvey(survey);
-    callback(saveNo, isSuccessful);
+    Object.assign(
+      survey,
+      await updateSurvey({ id: survey.id, model: creator.text, modelVersion: survey.modelVersion }, true),
+    );
+    callback(saveNo, true);
   } catch {
     callback(saveNo, false);
   }
@@ -37,6 +38,12 @@ watch(
 
 <template>
   <NuxtLayout>
+    <v-toolbar class="border-b-sm" color="surface">
+      <v-toolbar-title px-4 font-bold>
+        {{ survey.name }}
+        <span class="text-lg">(Version: {{ survey.modelVersion }}, Publish Version: {{ survey.publishVersion }})</span>
+      </v-toolbar-title>
+    </v-toolbar>
     <SurveyCreatorComponent :model="creator" />
   </NuxtLayout>
 </template>
