@@ -30,6 +30,7 @@ export const useSurveyStore = defineStore("surveyer/survey", () => {
   const deleteSurvey = async (input: DeleteSurveyInput) => {
     const deletedSurvey = await $trpc.survey.deleteSurvey.mutate(input);
     storeDeleteSurvey({ id: deletedSurvey.id });
+    totalItemsLength.value--;
   };
 
   const searchQuery = ref("");
