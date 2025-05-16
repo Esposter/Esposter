@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { validate } from "@/services/router/validate";
 import { useSurveyStore } from "@/store/surveyer/survey";
 import { Action, ComputedUpdater } from "survey-core";
@@ -14,14 +13,12 @@ const survey = reactive(await useReadSurveyFromRoute());
 const surveyerStore = useSurveyStore();
 const { updateSurvey } = surveyerStore;
 const creator = new SurveyCreatorModel({ autoSaveEnabled: true, showTranslationTab: true });
+const dialog = ref(false);
 const actions = [
   new Action({
-    action: getSynchronizedFunction(async () => {
-      Object.assign(
-        survey,
-        await $trpc.survey.publishSurvey.mutate({ id: survey.id, publishVersion: survey.publishVersion }),
-      );
-    }),
+    action: () => {
+      dialog.value = true;
+    },
     iconName: "icon-publish-24x24",
     id: "publish-survey",
     tooltip: "Publish Survey",
@@ -70,15 +67,36 @@ watch(
 
 <template>
   <NuxtLayout>
-    <v-toolbar class="border-b-sm" color="surface">
-      <v-toolbar-title px-4 font-bold>
-        {{ survey.name }}
-        <span class="text-lg text-gray">
-          (Version: {{ survey.modelVersion }}, Published Version: {{ survey.publishVersion }})
-        </span>
-      </v-toolbar-title>
-    </v-toolbar>
-    <SurveyCreatorComponent :model="creator" />
+    <div h-full flex flex-col>
+      <v-toolbar class="border-b-sm" color="surface">
+        <v-toolbar-title px-4 font-bold>
+          {{ survey.name }}
+          <span class="text-lg text-gray">
+            (Version: {{ survey.modelVersion }}, Published Version: {{ survey.publishVersion }})
+          </span>
+        </v-toolbar-title>
+      </v-toolbar>
+      <SurveyCreatorComponent flex-1 :model="creator" />
+    </div>
+    <StyledDialog
+      v-model="dialog"
+      :card-props="{ title: 'Publish Survey' }"
+      :confirm-button-props="{ text: 'Publish' }"
+      @submit="
+        async () => {
+          Object.assign(
+            survey,
+            await $trpc.survey.publishSurvey.mutate({ id: survey.id, publishVersion: survey.publishVersion }),
+          );
+          dialog = false;
+        }
+      "
+    >
+      <v-card-text class="text-error">
+        You are about to publish your changes to <span font-bold>{{ survey.name }}</span
+        >. This will cause all active surveys to use this version.
+      </v-card-text>
+    </StyledDialog>
   </NuxtLayout>
 </template>
 

@@ -21,7 +21,7 @@ defineSlots<{
 }>();
 const { cardProps = {}, confirmButtonAttrs = {}, confirmButtonProps = {} } = defineProps<StyledDialogProps>();
 const emit = defineEmits<{ submit: [event: SubmitEventPromise, onComplete: () => void] }>();
-const isOpen = ref(false);
+const isOpen = defineModel<boolean>({ default: false });
 const isValid = ref(true);
 </script>
 
