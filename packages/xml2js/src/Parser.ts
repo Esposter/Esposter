@@ -207,9 +207,12 @@ export class Parser {
   }
 }
 
-export const parseStringPromise = <T>(str: convertableToString, options?: ParserOptions): Promise<T> => {
+export const parseStringPromise = <T>(
+  convertableToString: convertableToString,
+  options?: ParserOptions,
+): Promise<T> => {
   const parser = new Parser(options);
-  return parser.parseStringPromise(str);
+  return parser.parseStringPromise(convertableToString);
 };
 
 // Underscore has a nice function for this, but we try to go without dependencies
