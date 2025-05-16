@@ -16,7 +16,7 @@ export class Dungeons extends AItemEntity {
   }
 }
 
-export const dungeonsGameSchema = aItemEntitySchema.extend(
+export const dungeonsSchema = aItemEntitySchema.extend(
   z.object({
     id: z.uuid(),
     saves: saveSchema.array(),
