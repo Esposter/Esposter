@@ -9,11 +9,12 @@ const route = useRoute();
 const surveyId = route.params.id as string;
 const { $trpc } = useNuxtApp();
 const surveyModelSasUrl = await $trpc.survey.generateSurveyModelSasUrl.query(surveyId);
-const { data } = await useFetch<string>(surveyModelSasUrl);
+const surveyModel = await $fetch<string>(surveyModelSasUrl);
+const model = new Model(surveyModel);
 </script>
 
 <template>
   <NuxtLayout>
-    <SurveyComponent v-if="data" :model="new Model(data)" />
+    <SurveyComponent :model />
   </NuxtLayout>
 </template>
