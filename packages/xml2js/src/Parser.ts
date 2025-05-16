@@ -1,21 +1,26 @@
+/* eslint-disable @typescript-eslint/no-dynamic-delete */
 import type { QualifiedTag, SAXParser, Tag } from "sax";
 import type { convertableToString, ParserOptions } from "xml2js";
 
+import { BUILTIN_NAME_KEY, TEXT_NODE_NAME } from "@/constants";
 import { DefaultParserOptions } from "@/DefaultParserOptions";
 import { normalize } from "@/processors";
 import { stripBOM } from "@/stripBOM";
 import { parser } from "sax";
 
 export class Parser {
+  get xmlnsKey(): string {
+    return `${this.options.attrkey}ns`;
+  }
+
   private options: typeof DefaultParserOptions = structuredClone(DefaultParserOptions);
-  private resultObject: Record<string, unknown> = {};
+  private resultObject: Record<string, unknown> | string = {};
   private saxParser: SAXParser;
-  private xmlnsKey = "";
+  private stack: Record<string, unknown>[] = [];
 
   constructor(init?: Partial<ParserOptions>) {
     Object.assign(this.options, init);
-    // Define the key used for namespaces
-    if (this.options.xmlns) this.xmlnsKey = `${this.options.attrkey}ns`;
+
     if (this.options.normalizeTags) {
       this.options.tagNameProcessors ??= [];
       this.options.tagNameProcessors.unshift(normalize);
@@ -25,15 +30,13 @@ export class Parser {
     this.saxParser.onerror = () => {
       this.saxParser.resume();
     };
-
-    const stack: Record<string, unknown>[] = [];
     this.saxParser.onopentag = (node) => {
-      const object: Record<string, unknown> = {};
-      object[this.options.charkey] = "";
+      const newObject: Record<string, unknown> = {};
+      newObject[this.options.charkey] = "";
       if (!this.options.ignoreAttrs)
         for (const key in node.attributes)
           if (Object.prototype.hasOwnProperty.call(node.attributes, key)) {
-            if (!(this.options.attrkey in object) && !this.options.mergeAttrs) object[this.options.attrkey] = {};
+            if (!(this.options.attrkey in newObject) && !this.options.mergeAttrs) newObject[this.options.attrkey] = {};
 
             const newValue = this.options.attrValueProcessors
               ? processItem(this.options.attrValueProcessors, (node as Tag).attributes[key], key)
@@ -41,25 +44,25 @@ export class Parser {
             const processedKey = this.options.attrNameProcessors
               ? processItem(this.options.attrNameProcessors, key, "")
               : key;
-            if (this.options.mergeAttrs) this.assignOrPush(object, processedKey, newValue);
-            else defineProperty(object[this.options.attrkey] as Record<string, unknown>, processedKey, newValue);
+            if (this.options.mergeAttrs) this.assignOrPush(newObject, processedKey, newValue);
+            else defineProperty(newObject[this.options.attrkey] as Record<string, unknown>, processedKey, newValue);
           }
 
       // We will hardcode a place to store the node name
-      object["#name"] = this.options.tagNameProcessors
+      newObject[BUILTIN_NAME_KEY] = this.options.tagNameProcessors
         ? processItem(this.options.tagNameProcessors, node.name, "")
         : node.name;
       if (this.options.xmlns)
-        object[this.xmlnsKey] = { local: (node as QualifiedTag).local, uri: (node as QualifiedTag).uri };
+        newObject[this.xmlnsKey] = { local: (node as QualifiedTag).local, uri: (node as QualifiedTag).uri };
 
-      stack.push(object);
+      this.stack.push(newObject);
     };
     this.saxParser.onclosetag = () => {
-      let object = stack.pop();
+      let object = this.stack.pop();
       if (!object) return;
 
-      const nodeName = object["#name"] as string;
-      if (!(this.options.explicitChildren && this.options.preserveChildrenOrder)) delete object["#name"];
+      const nodeName = object[BUILTIN_NAME_KEY] as string;
+      if (!(this.options.explicitChildren && this.options.preserveChildrenOrder)) delete object[BUILTIN_NAME_KEY];
 
       let cdata = false;
       if (object.cdata === true) {
@@ -67,13 +70,12 @@ export class Parser {
         delete object.cdata;
       }
 
-      const nextObject = stack.at(-1);
-      let emptyStr = "";
+      const nextObject = this.stack.at(-1);
+      let emptyString = "";
       // Remove the '#' key altogether if it's blank
       const char = object[this.options.charkey] as string;
       if (/^\s*$/.exec(char) && !cdata) {
-        emptyStr = char;
-        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+        emptyString = char;
         delete object[this.options.charkey];
       } else {
         if (this.options.trim) object[this.options.charkey] = char.trim();
@@ -90,18 +92,16 @@ export class Parser {
       if (isEmpty(object))
         if (typeof this.options.emptyTag === "function") object = this.options.emptyTag();
         else
-          object = (this.options.emptyTag !== "" ? this.options.emptyTag : emptyStr) as unknown as Record<
+          object = (this.options.emptyTag !== "" ? this.options.emptyTag : emptyString) as unknown as Record<
             string,
             unknown
           >;
 
       if (this.options.validator) {
-        const xpath =
-          "/" +
-          stack
-            .map((node) => node["#name"])
-            .concat(nodeName)
-            .join("/");
+        const xpath = `/${this.stack
+          .map((node) => node[BUILTIN_NAME_KEY])
+          .concat(nodeName)
+          .join("/")}`;
         object = this.options.validator(xpath, nextObject?.[nodeName], object);
       }
 
@@ -112,13 +112,11 @@ export class Parser {
           // separate attributes
           if (this.options.attrkey in object) {
             node[this.options.attrkey] = object[this.options.attrkey];
-            // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
             delete object[this.options.attrkey];
           }
           // Separate char data
           if (!this.options.charsAsChildren && this.options.charkey in object) {
             node[this.options.charkey] = object[this.options.charkey];
-            // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
             delete object[this.options.charkey];
           }
 
@@ -130,13 +128,13 @@ export class Parser {
           nextObject[this.options.childkey] ??= [];
           // Push a clone so that the node in the children array can receive the #name property while the original object can do without it
           (nextObject[this.options.childkey] as Record<string, unknown>[]).push(structuredClone(object));
-          delete object["#name"];
+          delete object[BUILTIN_NAME_KEY];
           // Re-check whether we can collapse the node now to just the this.options.charkey value
           if (Object.keys(object).length === 1 && this.options.charkey in object)
             object = object[this.options.charkey] as Record<string, unknown>;
         }
       // Check whether we closed all the open tags
-      if (stack.length > 0) this.assignOrPush(nextObject ?? {}, nodeName, object);
+      if (this.stack.length > 0) this.assignOrPush(nextObject ?? {}, nodeName, object);
       else {
         // If explicitRoot was specified, wrap stuff in the root tag name
         if (this.options.explicitRoot) {
@@ -151,10 +149,10 @@ export class Parser {
     };
 
     const ontext = (text: string): Record<string, unknown> | undefined => {
-      const s = stack.at(-1);
-      if (!s) return undefined;
+      const object = this.stack.at(-1);
+      if (!object) return undefined;
 
-      s[this.options.charkey] += text;
+      object[this.options.charkey] += text;
 
       if (
         this.options.explicitChildren &&
@@ -162,24 +160,25 @@ export class Parser {
         this.options.charsAsChildren &&
         (this.options.includeWhiteChars || text.replace(/\\n/g, "").trim() !== "")
       ) {
-        s[this.options.childkey] ??= [];
+        object[this.options.childkey] ??= [];
         const charChild: Record<string, string> = {
-          "#name": "__text__",
+          [BUILTIN_NAME_KEY]: TEXT_NODE_NAME,
         };
         charChild[this.options.charkey] = text;
         if (this.options.normalize)
           charChild[this.options.charkey] = charChild[this.options.charkey].replace(/\s{2,}/g, " ").trim();
 
-        (s[this.options.childkey] as Record<string, string>[]).push(charChild);
+        (object[this.options.childkey] as Record<string, string>[]).push(charChild);
       }
 
-      return s;
+      return object;
     };
 
     this.saxParser.ontext = ontext;
     this.saxParser.oncdata = (text: string) => {
-      const s = ontext(text);
-      if (s) s.cdata = true;
+      const object = ontext(text);
+      if (!object) return;
+      object.cdata = true;
     };
   }
 
