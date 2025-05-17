@@ -46,7 +46,7 @@ const emojiMenuItems: string[] = ["🤣", "👍", "❤️", "👌"];
         <div flex gap-x-2>
           <v-tooltip v-for="emoji of emojiMenuItems" :key="emoji" :text="unemojify(emoji)">
             <template #activator="{ props }">
-              <v-btn m-0="!" size-10="!" rd-2="!" icon flex-1 :="props" @click="emit('update:select-emoji', emoji)">
+              <v-btn m-0="!" size-10="!" rd-2="!" flex-1 icon :="props" @click="emit('update:select-emoji', emoji)">
                 {{ emoji }}
               </v-btn>
             </template>

@@ -11,6 +11,21 @@ const { $trpc } = useNuxtApp();
 const surveyModelSasUrl = await $trpc.survey.generateSurveyModelSasUrl.query(surveyId);
 const surveyModel = await $fetch<string>(surveyModelSasUrl);
 const model = new Model(surveyModel);
+model.onComplete.add(async (survey, { showSaveError, showSaveInProgress, showSaveSuccess }) => {
+  showSaveInProgress();
+  survey.clearIncorrectValues(true);
+
+  try {
+    await $trpc.survey.createSurveyResponse.mutate({
+      model: survey.data,
+      partitionKey: surveyId,
+      rowKey: crypto.randomUUID(),
+    });
+    showSaveSuccess();
+  } catch {
+    showSaveError();
+  }
+});
 </script>
 
 <template>
