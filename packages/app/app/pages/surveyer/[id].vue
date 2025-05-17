@@ -71,7 +71,7 @@ watch(
       <v-toolbar class="border-b-sm" color="surface">
         <v-toolbar-title px-4 font-bold>
           {{ survey.name }}
-          <span class="text-lg text-gray">
+          <span class="text-gray text-lg">
             (Version: {{ survey.modelVersion }}, Published Version: {{ survey.publishVersion }})
           </span>
         </v-toolbar-title>
