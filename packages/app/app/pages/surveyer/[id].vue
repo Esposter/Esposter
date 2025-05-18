@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { validate } from "@/services/router/validate";
-import { DefaultDark, SC2020 } from "survey-creator-core/themes";
 
 defineRouteRules({ ssr: false });
 definePageMeta({ middleware: "auth", validate });
@@ -8,16 +7,6 @@ definePageMeta({ middleware: "auth", validate });
 const { $trpc } = useNuxtApp();
 const survey = reactive(await useReadSurveyFromRoute());
 const { creator, dialog } = useSurveyCreator(survey);
-const isDark = useIsDark();
-
-watch(
-  isDark,
-  (newIsDark) => {
-    if (newIsDark) creator.applyCreatorTheme(DefaultDark);
-    else creator.applyCreatorTheme(SC2020);
-  },
-  { immediate: true },
-);
 </script>
 
 <template>

@@ -3,6 +3,7 @@ import type { Survey } from "#shared/db/schema/surveys";
 import { useSurveyStore } from "@/store/surveyer/survey";
 import { Action, ComputedUpdater } from "survey-core";
 import { SurveyCreatorModel } from "survey-creator-core";
+import { DefaultDark, SC2020 } from "survey-creator-core/themes";
 
 export const useSurveyCreator = (survey: Survey) => {
   const surveyerStore = useSurveyStore();
@@ -47,6 +48,17 @@ export const useSurveyCreator = (survey: Survey) => {
       callback(saveNo, false);
     }
   };
+
+  const isDark = useIsDark();
+
+  watch(
+    isDark,
+    (newIsDark) => {
+      if (newIsDark) creator.applyCreatorTheme(DefaultDark);
+      else creator.applyCreatorTheme(SC2020);
+    },
+    { immediate: true },
+  );
 
   return { creator, dialog };
 };
