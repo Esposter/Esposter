@@ -145,7 +145,7 @@ catalog:
   pluralize: ^8.0.0
   postgres: ^3.4.5
   prettier: ^3.5.3
-  rate-limiter-flexible: ^7.1.0
+  rate-limiter-flexible: ^7.1.1
   rolldown: npm:rolldown@canary
   rolldown-plugin-dts: ^0.13.2
   rolldown-vite: ^6.3.10
