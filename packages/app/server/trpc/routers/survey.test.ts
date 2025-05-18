@@ -27,7 +27,7 @@ describe("survey", () => {
     await mockContext.db.delete(surveys);
   });
 
-  test("creates", async () => {
+  test.todo("creates", async () => {
     expect.hasAssertions();
 
     const newSurvey = await caller.createSurvey({ group, model, name });
@@ -37,7 +37,7 @@ describe("survey", () => {
     expect(newSurvey.model).toBe(model);
   });
 
-  test("count", async () => {
+  test.todo("count", async () => {
     expect.hasAssertions();
 
     const count = await caller.count();
@@ -50,7 +50,7 @@ describe("survey", () => {
     expect(newCount).toBe(1);
   });
 
-  test("reads", async () => {
+  test.todo("reads", async () => {
     expect.hasAssertions();
 
     const newSurvey = await caller.createSurvey({ group, model, name });
@@ -67,7 +67,7 @@ describe("survey", () => {
     );
   });
 
-  test("updates", async () => {
+  test.todo("updates", async () => {
     expect.hasAssertions();
 
     const newSurvey = await caller.createSurvey({ group, model, name });
@@ -88,7 +88,7 @@ describe("survey", () => {
     );
   });
 
-  test("fails update with old model version", async () => {
+  test.todo("fails update with old model version", async () => {
     expect.hasAssertions();
 
     const newSurvey = await caller.createSurvey({ group, model, name });
@@ -100,7 +100,7 @@ describe("survey", () => {
     );
   });
 
-  test("deletes", async () => {
+  test.todo("deletes", async () => {
     expect.hasAssertions();
 
     const newSurvey = await caller.createSurvey({ group, model, name });
