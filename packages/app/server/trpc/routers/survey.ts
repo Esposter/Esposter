@@ -19,7 +19,7 @@ import { getEntity } from "@@/server/services/azure/table/getEntity";
 import { updateEntity } from "@@/server/services/azure/table/updateEntity";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
-import { getPublishPath } from "@@/server/services/publish/getPublishPath";
+import { getVersionPath } from "@@/server/services/version/getVersionPath";
 import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { rateLimitedProcedure } from "@@/server/trpc/procedure/rateLimitedProcedure";
@@ -114,7 +114,7 @@ export const surveyRouter = router({
         });
 
       const containerClient = await useContainerClient(AzureContainer.SurveyerAssets);
-      const blobName = getPublishPath(input, survey.publishVersion, "json");
+      const blobName = getVersionPath(input, survey.publishVersion, "json");
       const blockBlobClient = containerClient.getBlockBlobClient(blobName);
       return blockBlobClient.generateSasUrl({
         contentType: "application/json",
@@ -154,7 +154,7 @@ export const surveyRouter = router({
           message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Survey, JSON.stringify(rest)).message,
         });
 
-      const blobName = getPublishPath(id, rest.publishVersion, "json");
+      const blobName = getVersionPath(id, rest.publishVersion, "json");
       await useUpload(AzureContainer.SurveyerAssets, blobName, survey.model);
       return updatedSurvey;
     }),
