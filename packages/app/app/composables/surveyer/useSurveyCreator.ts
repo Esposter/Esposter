@@ -1,5 +1,6 @@
 import type { Survey } from "#shared/db/schema/surveys";
 
+import { downloadJsonFile } from "@/services/file/downloadJsonFile";
 import { useSurveyStore } from "@/store/surveyer/survey";
 import { Action, ComputedUpdater } from "survey-core";
 import { SurveyCreatorModel } from "survey-creator-core";
@@ -11,6 +12,15 @@ export const useSurveyCreator = (survey: Survey) => {
   const creator = new SurveyCreatorModel({ autoSaveEnabled: true, showTranslationTab: true });
   const dialog = ref(false);
   const actions = [
+    new Action({
+      action: () => {
+        downloadJsonFile(survey.name, creator.JSON);
+      },
+      iconName: "icon-download-24x24",
+      id: "download-survey",
+      tooltip: "Download Survey",
+      visible: new ComputedUpdater(() => creator.activeTab === "designer"),
+    }),
     new Action({
       action: () => {
         dialog.value = true;
