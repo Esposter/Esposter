@@ -8,11 +8,11 @@ export const getEntity = async <TEntity extends AzureEntity>(
   tableClient: CustomTableClient<TEntity>,
   cls: Class<TEntity>,
   ...args: Parameters<CustomTableClient<TEntity>["getEntity"]>
-): Promise<TEntity | undefined> => {
+): Promise<null | TEntity> => {
   try {
     const entity = await tableClient.getEntity<TEntity>(...args);
     return deserializeEntity(entity, cls);
   } catch {
-    return undefined;
+    return null;
   }
 };

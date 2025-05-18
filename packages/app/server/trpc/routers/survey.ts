@@ -41,6 +41,12 @@ export type GenerateSurveyModelSasUrlInput = z.infer<typeof generateSurveyModelS
 const publishSurveyInputSchema = selectSurveySchema.pick({ id: true, publishVersion: true });
 export type PublishSurveyInput = z.infer<typeof publishSurveyInputSchema>;
 
+const readSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
+  partitionKey: true,
+  rowKey: true,
+});
+export type ReadSurveyResponseInput = z.infer<typeof readSurveyResponseInputSchema>;
+
 const createSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
   model: true,
   partitionKey: true,
@@ -75,11 +81,14 @@ export const surveyRouter = router({
       });
     return newSurvey;
   }),
-  createSurveyResponse: rateLimitedProcedure.input(createSurveyResponseInputSchema).mutation(async ({ input }) => {
-    const newSurveyResponse = new SurveyResponseEntity(input);
-    const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
-    await createEntity(surveyResponseClient, newSurveyResponse);
-  }),
+  createSurveyResponse: rateLimitedProcedure
+    .input(createSurveyResponseInputSchema)
+    .mutation<SurveyResponseEntity>(async ({ input }) => {
+      const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
+      const newSurveyResponse = new SurveyResponseEntity(input);
+      await createEntity(surveyResponseClient, newSurveyResponse);
+      return newSurveyResponse;
+    }),
   deleteSurvey: authedProcedure.input(deleteSurveyInputSchema).mutation<Survey>(async ({ ctx, input }) => {
     const deletedSurvey = (
       await ctx.db
@@ -158,6 +167,13 @@ export const surveyRouter = router({
       });
     return survey;
   }),
+  readSurveyResponse: rateLimitedProcedure
+    .input(readSurveyResponseInputSchema)
+    .query<null | SurveyResponseEntity>(async ({ input: { partitionKey, rowKey } }) => {
+      const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
+      const surveyResponse = await getEntity(surveyResponseClient, SurveyResponseEntity, partitionKey, rowKey);
+      return surveyResponse;
+    }),
   readSurveys: authedProcedure
     .input(readSurveysInputSchema)
     .query(async ({ ctx, input: { limit, offset, sortBy } }) => {
@@ -247,6 +263,6 @@ export const surveyRouter = router({
         });
 
       await updateEntity(surveyResponseClient, input);
-      return surveyResponse;
+      return Object.assign(surveyResponse, input);
     }),
 });

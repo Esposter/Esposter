@@ -105,8 +105,8 @@ export const messageRouter = router({
     .use(getProfanityFilterMiddleware(createMessageInputSchema, ["message"]))
     .input(createMessageInputSchema)
     .mutation<MessageEntity>(async ({ ctx, input }) => {
-      const newMessage = createMessageEntity({ ...input, userId: ctx.session.user.id });
       const messageClient = await useTableClient(AzureTable.Messages);
+      const newMessage = createMessageEntity({ ...input, userId: ctx.session.user.id });
       await createEntity(messageClient, newMessage);
       messageEventEmitter.emit("createMessage", [[newMessage]]);
       return newMessage;
