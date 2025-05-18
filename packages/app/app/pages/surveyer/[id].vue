@@ -1,8 +1,5 @@
 <script setup lang="ts">
 import { validate } from "@/services/router/validate";
-import { useSurveyStore } from "@/store/surveyer/survey";
-import { Action, ComputedUpdater } from "survey-core";
-import { SurveyCreatorModel } from "survey-creator-core";
 import { DefaultDark, SC2020 } from "survey-creator-core/themes";
 
 defineRouteRules({ ssr: false });
@@ -10,49 +7,7 @@ definePageMeta({ middleware: "auth", validate });
 
 const { $trpc } = useNuxtApp();
 const survey = reactive(await useReadSurveyFromRoute());
-const surveyerStore = useSurveyStore();
-const { updateSurvey } = surveyerStore;
-const creator = new SurveyCreatorModel({ autoSaveEnabled: true, showTranslationTab: true });
-const dialog = ref(false);
-const actions = [
-  new Action({
-    action: () => {
-      dialog.value = true;
-    },
-    iconName: "icon-publish-24x24",
-    id: "publish-survey",
-    tooltip: "Publish Survey",
-    visible: new ComputedUpdater(() => creator.activeTab === "designer"),
-  }),
-  new Action({
-    action: () => {
-      creator.JSON = {};
-    },
-    iconName: "icon-clear-24x24",
-    id: "clear-survey",
-    tooltip: "Clear Survey",
-    visible: new ComputedUpdater(() => creator.activeTab === "designer"),
-  }),
-];
-
-for (const action of actions) {
-  creator.toolbar.actions.push(action);
-  creator.footerToolbar.actions.push(action);
-}
-
-creator.text = survey.model;
-creator.saveSurveyFunc = async (saveNo: number, callback: Function) => {
-  try {
-    Object.assign(
-      survey,
-      await updateSurvey({ id: survey.id, model: creator.text, modelVersion: survey.modelVersion }, true),
-    );
-    callback(saveNo, true);
-  } catch {
-    callback(saveNo, false);
-  }
-};
-
+const { creator, dialog } = useSurveyCreator(survey);
 const isDark = useIsDark();
 
 watch(
