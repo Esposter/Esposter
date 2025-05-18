@@ -16,6 +16,7 @@ describe("survey", () => {
   const updatedName = "updatedName";
   const group = "group";
   const model = "model";
+  const updatedModel = "updatedModel";
 
   beforeAll(async () => {
     const createCaller = createCallerFactory(surveyRouter);
@@ -71,11 +72,7 @@ describe("survey", () => {
     expect.hasAssertions();
 
     const newSurvey = await caller.createSurvey({ group, model, name });
-    const updatedSurvey = await caller.updateSurvey({
-      id: newSurvey.id,
-      modelVersion: newSurvey.modelVersion,
-      name: updatedName,
-    });
+    const updatedSurvey = await caller.updateSurvey({ id: newSurvey.id, name: updatedName });
 
     expect(updatedSurvey.name).toBe(updatedName);
   });
@@ -83,20 +80,55 @@ describe("survey", () => {
   test("fails update with non-existent id", async () => {
     expect.hasAssertions();
 
-    await expect(caller.updateSurvey({ id: NIL, modelVersion: 0 })).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(caller.updateSurvey({ id: NIL })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: No values to set]`,
+    );
+  });
+
+  test.todo("updates model", async () => {
+    expect.hasAssertions();
+
+    const newSurvey = await caller.createSurvey({ group, model, name });
+    const updatedSurvey = await caller.updateSurveyModel({
+      id: newSurvey.id,
+      model: updatedModel,
+      modelVersion: newSurvey.modelVersion,
+    });
+
+    expect(updatedSurvey.model).toBe(updatedModel);
+  });
+
+  test("fails update model with non-existent id", async () => {
+    expect.hasAssertions();
+
+    await expect(
+      caller.updateSurveyModel({ id: NIL, model, modelVersion: 0 }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Survey is not found for id: 00000000-0000-0000-0000-000000000000]`,
     );
   });
 
-  test.todo("fails update with old model version", async () => {
+  test.todo("fails update model with old model version", async () => {
     expect.hasAssertions();
 
     const newSurvey = await caller.createSurvey({ group, model, name });
 
     await expect(
-      caller.updateSurvey({ id: newSurvey.id, modelVersion: newSurvey.modelVersion - 1 }),
+      caller.updateSurveyModel({ id: newSurvey.id, model, modelVersion: newSurvey.modelVersion - 1 }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Invalid operation: Update, name: Survey, cannot update survey model with old model version]`,
+    );
+  });
+
+  test.todo("fails update model with duplicate", async () => {
+    expect.hasAssertions();
+
+    const newSurvey = await caller.createSurvey({ group, model, name });
+
+    await expect(
+      caller.updateSurveyModel({ id: newSurvey.id, model, modelVersion: newSurvey.modelVersion }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Update, name: Survey, duplicate model]`,
     );
   });
 
