@@ -2,6 +2,7 @@ import type { Survey } from "#shared/db/schema/surveys";
 import type { CreateSurveyInput } from "#shared/models/db/survey/CreateSurveyInput";
 import type { DeleteSurveyInput } from "#shared/models/db/survey/DeleteSurveyInput";
 import type { UpdateSurveyInput } from "#shared/models/db/survey/UpdateSurveyInput";
+import type { UpdateSurveyModelInput } from "#shared/models/db/survey/UpdateSurveyModelInput";
 
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createOperationData } from "@/services/shared/createOperationData";
@@ -22,9 +23,15 @@ export const useSurveyStore = defineStore("surveyer/survey", () => {
     storeCreateSurvey(newSurvey);
     totalItemsLength.value++;
   };
-  const updateSurvey = async (input: UpdateSurveyInput, isExternal?: true) => {
+  const updateSurvey = async (input: UpdateSurveyInput) => {
     const updatedSurvey = await $trpc.survey.updateSurvey.mutate(input);
-    if (!isExternal) storeUpdateSurvey(updatedSurvey);
+    storeUpdateSurvey(updatedSurvey);
+    return updatedSurvey;
+  };
+  // This is called by surveyjs externally so we will also need to
+  // update our reactivity externally outside from our stores
+  const updateSurveyModel = async (input: UpdateSurveyModelInput) => {
+    const updatedSurvey = await $trpc.survey.updateSurvey.mutate(input);
     return updatedSurvey;
   };
   const deleteSurvey = async (input: DeleteSurveyInput) => {
@@ -40,6 +47,7 @@ export const useSurveyStore = defineStore("surveyer/survey", () => {
     createSurvey,
     deleteSurvey,
     updateSurvey,
+    updateSurveyModel,
     ...restOperationData,
     ...restData,
     searchQuery,

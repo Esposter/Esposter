@@ -8,6 +8,7 @@ import { createSurveyInputSchema } from "#shared/models/db/survey/CreateSurveyIn
 import { deleteSurveyInputSchema } from "#shared/models/db/survey/DeleteSurveyInput";
 import { SurveyResponseEntity, surveyResponseEntitySchema } from "#shared/models/db/survey/SurveyResponseEntity";
 import { updateSurveyInputSchema } from "#shared/models/db/survey/UpdateSurveyInput";
+import { updateSurveyModelInputSchema } from "#shared/models/db/survey/UpdateSurveyModelInput";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
@@ -195,6 +196,23 @@ export const surveyRouter = router({
     }),
   updateSurvey: authedProcedure
     .input(updateSurveyInputSchema)
+    .mutation<Survey>(async ({ ctx, input: { id, ...rest } }) => {
+      const updatedSurvey = (
+        await ctx.db
+          .update(surveys)
+          .set(rest)
+          .where(and(eq(surveys.id, id), eq(surveys.userId, ctx.session.user.id)))
+          .returning()
+      ).find(Boolean);
+      if (!updatedSurvey)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Survey, id).message,
+        });
+      return updatedSurvey;
+    }),
+  updateSurveyModel: authedProcedure
+    .input(updateSurveyModelInputSchema)
     .mutation<Survey>(async ({ ctx, input: { id, ...rest } }) => {
       const survey = await ctx.db.query.surveys.findFirst({
         where: (surveys, { and, eq }) => and(eq(surveys.id, id), eq(surveys.userId, ctx.session.user.id)),

@@ -10,7 +10,7 @@ import { DefaultDark, SC2020 } from "survey-creator-core/themes";
 
 export const useSurveyCreator = (survey: Survey) => {
   const surveyerStore = useSurveyStore();
-  const { updateSurvey } = surveyerStore;
+  const { updateSurveyModel } = surveyerStore;
   const creator = new SurveyCreatorModel({ autoSaveEnabled: true, showTranslationTab: true });
   const dialog = ref(false);
   const actions = [
@@ -64,7 +64,7 @@ export const useSurveyCreator = (survey: Survey) => {
     try {
       Object.assign(
         survey,
-        await updateSurvey({ id: survey.id, model: creator.text, modelVersion: survey.modelVersion }, true),
+        await updateSurveyModel({ id: survey.id, model: creator.text, modelVersion: survey.modelVersion }),
       );
       callback(saveNo, true);
     } catch {
