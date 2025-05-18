@@ -58,8 +58,8 @@ describe("post", () => {
   test("fails update with non-existent id", async () => {
     expect.hasAssertions();
 
-    await expect(caller.updatePost({ id: NIL })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: No values to set]`,
+    await expect(caller.updatePost({ description, id: NIL })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Update, name: Post, 00000000-0000-0000-0000-000000000000]`,
     );
   });
 

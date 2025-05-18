@@ -93,8 +93,8 @@ describe("room", () => {
   test("fails update with non-existent id", async () => {
     expect.hasAssertions();
 
-    await expect(caller.updateRoom({ id: NIL })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: No values to set]`,
+    await expect(caller.updateRoom({ id: NIL, name })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Update, name: Room, 00000000-0000-0000-0000-000000000000]`,
     );
   });
 
@@ -238,7 +238,7 @@ describe("room", () => {
     );
   });
 
-  test("leaves with creator to be delete", async () => {
+  test("leaves with creator to be deleted", async () => {
     expect.hasAssertions();
 
     const newRoom = await caller.createRoom({ name });
