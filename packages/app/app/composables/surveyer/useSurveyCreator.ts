@@ -1,6 +1,8 @@
 import type { Survey } from "#shared/db/schema/surveys";
 
+import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { downloadJsonFile } from "@/services/file/downloadJsonFile";
+import { uploadJsonFile } from "@/services/file/uploadJsonFile";
 import { useSurveyStore } from "@/store/surveyer/survey";
 import { Action, ComputedUpdater } from "survey-core";
 import { SurveyCreatorModel } from "survey-creator-core";
@@ -12,6 +14,17 @@ export const useSurveyCreator = (survey: Survey) => {
   const creator = new SurveyCreatorModel({ autoSaveEnabled: true, showTranslationTab: true });
   const dialog = ref(false);
   const actions = [
+    new Action({
+      action: getSynchronizedFunction(async () => {
+        await uploadJsonFile(async (file) => {
+          creator.text = await file.text();
+        });
+      }),
+      iconName: "icon-import-24x24",
+      id: "upload-survey",
+      tooltip: "Upload Survey",
+      visible: new ComputedUpdater(() => creator.activeTab === "designer"),
+    }),
     new Action({
       action: () => {
         downloadJsonFile(survey.name, creator.JSON);

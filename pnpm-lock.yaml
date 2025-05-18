@@ -891,6 +891,9 @@ importers:
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
+      show-open-file-picker:
+        specifier: ^0.3.0
+        version: 0.3.0
       sql-highlight:
         specifier: 'catalog:'
         version: 6.0.0
@@ -9752,6 +9755,9 @@ packages:
   shell-quote@1.8.2:
     resolution: {integrity: sha512-AzqKpGKjrj7EM6rKVQEPpB288oCfnrEIuyoT9cyF4nmGa7V8Zk6f7RRqYisX8X9m+Q7bd632aZW4ky7EhbQztA==}
     engines: {node: '>= 0.4'}
+
+  show-open-file-picker@0.3.0:
+    resolution: {integrity: sha512-7X5BH5bOC4WnnJu5S+LisYKSU5NyBeT3LZ98v3xz4J6h81Tza3Fllgz/kuuzdlq/RTaCDBOoMZbomnu3z+qkQg==}
 
   side-channel-list@1.0.0:
     resolution: {integrity: sha512-FCLHtRD/gnpCiCHEiJLOwdmFP+wzCmDEkc9y7NsYxeF4u7Btsn1ZuwgwJGxImImHicJArLP4R0yX4c2KCrMrTA==}
@@ -21562,6 +21568,8 @@ snapshots:
   shebang-regex@3.0.0: {}
 
   shell-quote@1.8.2: {}
+
+  show-open-file-picker@0.3.0: {}
 
   side-channel-list@1.0.0:
     dependencies:

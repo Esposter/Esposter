@@ -134,6 +134,7 @@
     "postgres": "catalog:",
     "rate-limiter-flexible": "catalog:",
     "rxjs": "catalog:",
+    "show-open-file-picker": "^0.3.0",
     "sql-highlight": "catalog:",
     "superjson": "catalog:",
     "survey-core": "catalog:",
