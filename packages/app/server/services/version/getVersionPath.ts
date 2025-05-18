@@ -1,2 +1,2 @@
-export const getVersionPath = (id: number | string, version: number, extension: string) =>
-  `${id}_v${version}.${extension}`;
+export const getVersionPath = (version: number, extension: string, prefix = "") =>
+  `${prefix ? `${prefix}/` : ""}v${version}.${extension}`;

@@ -14,11 +14,13 @@ import { useContainerClient } from "@@/server/composables/azure/useContainerClie
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { useUpload } from "@@/server/composables/azure/useUpload";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
+import { deleteDirectory } from "@@/server/services/azure/container/deleteDirectory";
 import { createEntity } from "@@/server/services/azure/table/createEntity";
 import { getEntity } from "@@/server/services/azure/table/getEntity";
 import { updateEntity } from "@@/server/services/azure/table/updateEntity";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
+import { PUBLISH_DIRECTORY_PATH } from "@@/server/services/surveyer/constants";
 import { getVersionPath } from "@@/server/services/version/getVersionPath";
 import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
@@ -79,6 +81,9 @@ export const surveyRouter = router({
         code: "BAD_REQUEST",
         message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Survey, JSON.stringify(input)).message,
       });
+
+    const blobName = getVersionPath(newSurvey.modelVersion, "json", newSurvey.id);
+    await useUpload(AzureContainer.SurveyerAssets, blobName, newSurvey.model);
     return newSurvey;
   }),
   createSurveyResponse: rateLimitedProcedure
@@ -101,6 +106,9 @@ export const surveyRouter = router({
         code: "BAD_REQUEST",
         message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.Survey, input).message,
       });
+
+    const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
+    await deleteDirectory(containerClient, input);
     return deletedSurvey;
   }),
   generateSurveyModelSasUrl: rateLimitedProcedure
@@ -114,7 +122,7 @@ export const surveyRouter = router({
         });
 
       const containerClient = await useContainerClient(AzureContainer.SurveyerAssets);
-      const blobName = getVersionPath(input, survey.publishVersion, "json");
+      const blobName = getVersionPath(survey.publishVersion, "json", `${input}/${PUBLISH_DIRECTORY_PATH}`);
       const blockBlobClient = containerClient.getBlockBlobClient(blobName);
       return blockBlobClient.generateSasUrl({
         contentType: "application/json",
@@ -154,7 +162,7 @@ export const surveyRouter = router({
           message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Survey, JSON.stringify(rest)).message,
         });
 
-      const blobName = getVersionPath(id, rest.publishVersion, "json");
+      const blobName = getVersionPath(rest.publishVersion, "json", `${id}/${PUBLISH_DIRECTORY_PATH}`);
       await useUpload(AzureContainer.SurveyerAssets, blobName, survey.model);
       return updatedSurvey;
     }),
@@ -226,6 +234,9 @@ export const surveyRouter = router({
           code: "BAD_REQUEST",
           message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Survey, id).message,
         });
+
+      const blobName = getVersionPath(updatedSurvey.modelVersion, "json", updatedSurvey.id);
+      await useUpload(AzureContainer.SurveyerAssets, blobName, updatedSurvey.model);
       return updatedSurvey;
     }),
   updateSurveyResponse: rateLimitedProcedure

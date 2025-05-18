@@ -16,7 +16,7 @@ import { CODE_LENGTH } from "#shared/services/invite/constants";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { createCode } from "#shared/util/math/random/createCode";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
-import { AZURE_MAX_PAGE_SIZE } from "@@/server/services/azure/table/constants";
+import { deleteDirectory } from "@@/server/services/azure/container/deleteDirectory";
 import { deleteRoom } from "@@/server/services/db/room/deleteRoom";
 import { roomEventEmitter } from "@@/server/services/esbabbler/events/roomEventEmitter";
 import { readInviteCode } from "@@/server/services/esbabbler/readInviteCode";
@@ -146,13 +146,7 @@ export const roomRouter = router({
   deleteRoom: authedProcedure.input(deleteRoomInputSchema).mutation<Room>(async ({ ctx, input }) => {
     const deletedRoom = await deleteRoom(ctx.db, ctx.session, input);
     const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
-    const blobBatchClient = containerClient.getBlobBatchClient();
-    const blobUrls: string[] = [];
-    for await (const { segment } of containerClient
-      .listBlobsFlat({ prefix: input })
-      .byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE }))
-      blobUrls.push(...segment.blobItems.map(({ name }) => `${containerClient.url}/${name}`));
-    if (blobUrls.length > 0) await blobBatchClient.deleteBlobs(blobUrls, containerClient.credential);
+    await deleteDirectory(containerClient, input);
     return deletedRoom;
   }),
   joinRoom: authedProcedure.input(joinRoomInputSchema).mutation<Room>(async ({ ctx, input }) => {
