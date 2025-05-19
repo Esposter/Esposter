@@ -1,5 +1,6 @@
 import type { Editor } from "@tiptap/core";
 
+import { validateFile } from "@/services/file/validateFile";
 import { createDataMap } from "@/services/shared/createDataMap";
 import { useRoomStore } from "@/store/esbabbler/room";
 import { useUploadFileStore } from "@/store/esbabbler/uploadFile";
@@ -10,8 +11,8 @@ export const useMessageInputStore = defineStore("esbabbler/messageInput", () => 
   const { data: messageInput } = createDataMap(() => roomStore.currentRoomId, "");
   const uploadFileStore = useUploadFileStore();
   const validateMessageInput = (editor?: Editor, isDisplayError?: true) => {
-    if (isDisplayError && !uploadFileStore.files.every(({ size }) => uploadFileStore.validateFile(size))) {
-      useToast(`You can only upload non-empty files!`, { cardProps: { color: "error" } });
+    if (isDisplayError && !uploadFileStore.files.every(({ size }) => validateFile(size))) {
+      useEmptyFileToast();
       return false;
     } else
       return (

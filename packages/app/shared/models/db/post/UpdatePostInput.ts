@@ -3,6 +3,7 @@ import type { z } from "zod";
 import { selectPostSchema } from "#shared/db/schema/posts";
 
 export const updatePostInputSchema = selectPostSchema
-  .pick({ description: true, id: true, title: true })
-  .partial({ description: true, title: true });
+  .pick({ id: true })
+  // @TODO: oneOf([description, title])
+  .extend(selectPostSchema.pick({ description: true, title: true }).partial());
 export type UpdatePostInput = z.infer<typeof updatePostInputSchema>;

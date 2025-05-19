@@ -1,14 +1,17 @@
 import { pgTable } from "#shared/db/pgTable";
 import { users } from "#shared/db/schema/users";
+import { fileEntitySchema } from "#shared/models/azure/FileEntity";
+import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { SURVEY_NAME_MAX_LENGTH } from "#shared/services/surveyer/constants";
 import { relations, sql } from "drizzle-orm";
-import { check, integer, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { check, integer, jsonb, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const surveys = pgTable(
   "surveys",
   {
+    fileIds: jsonb("fileIds").$type<string[]>().default([]),
     group: text("group"),
     id: uuid("id").primaryKey().defaultRandom(),
     model: text("model").notNull().default(""),
@@ -28,6 +31,7 @@ export const surveys = pgTable(
 export type Survey = typeof surveys.$inferSelect;
 
 export const selectSurveySchema = createSelectSchema(surveys, {
+  fileIds: fileEntitySchema.shape.id.array().max(MAX_READ_LIMIT),
   name: z.string().min(1).max(SURVEY_NAME_MAX_LENGTH),
 });
 

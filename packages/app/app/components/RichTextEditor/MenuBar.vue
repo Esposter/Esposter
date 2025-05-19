@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { IsDivider } from "@/models/richTextEditor/IsDivider";
-import type { MenuItem } from "@/models/richTextEditor/MenuItem";
+import type { MenuItem } from "@/models/shared/MenuItem";
 import type { Editor } from "@tiptap/vue-3";
 
+import { isDivider } from "@/services/shared/isDivider";
 import { mergeProps } from "vue";
 
 interface MenuBarProps {
@@ -60,13 +60,12 @@ const items = computed<MenuItem[]>(() => [
     title: "Redo",
   },
 ]);
-const isDivider = (value: MenuItem): value is IsDivider => "isDivider" in value;
 </script>
 
 <template>
   <div w-full flex flex-wrap>
     <template v-for="(item, index) of items" :key="index">
-      <v-divider v-if="isDivider(item)" h-6="!" self-center="!" thickness="2" vertical />
+      <v-divider v-if="isDivider(item)" h-6 self-center thickness="2" vertical />
       <v-tooltip v-else :text="item.title">
         <template #activator="{ props: tooltipProps }">
           <v-btn rd-none="!" density="comfortable" :="mergeProps(item, tooltipProps)" />

@@ -20,9 +20,7 @@ const isUpdateMode = ref(false);
       <div flex>
         <PostLikeSection pt-2 :post="comment" is-comment-store />
         <v-card px-2="!" pt-2="!" flex-1 shadow-none="!">
-          <v-avatar>
-            <v-img v-if="comment.user.image" :src="comment.user.image" :alt="comment.user.name" />
-          </v-avatar>
+          <StyledAvatar :image="comment.user.image" :name="comment.user.name" />
           Posted by <span font-bold>{{ comment.user.name }}</span> <span text-gray>{{ createdAtTimeAgo }}</span>
           <PostCommentUpdateRichTextEditor
             v-if="isUpdateMode"
@@ -41,9 +39,7 @@ const isUpdateMode = ref(false);
     </template>
     <template #commentPreview>
       <v-card px-2="!" shadow-none="!">
-        <v-avatar>
-          <v-img v-if="comment.user.image" :src="comment.user.image" />
-        </v-avatar>
+        <StyledAvatar :image="comment.user.image" :name="comment.user.name" />
         Posted by <span font-bold>{{ comment.user.name }}</span> <span text-gray>{{ createdAtTimeAgo }}</span>
         <v-card-text class="text-subtitle-1 card-content" px-0="!" pb-0="!" v-html="comment.description" />
       </v-card>

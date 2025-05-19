@@ -13,7 +13,7 @@ interface MessageProps {
   nextMessage?: MessageEntity;
 }
 
-const slots = defineSlots<{ default?: (props: Record<string, never>) => unknown }>();
+defineSlots<{ default?: (props: Record<string, never>) => unknown }>();
 const { active, creator, isPreview = false, message, nextMessage } = defineProps<MessageProps>();
 const isSameBatch = computed(
   () =>
@@ -49,8 +49,8 @@ const messageHtml = useRefreshMentions(() => message.message);
       </template>
     </v-list-item-title>
     <template v-if="message.isForward">
-      <div flex gap-2>
-        <div class="bg-border" w-1 h-inherit rd-1 />
+      <div flex gap-x-2>
+        <div class="bg-border" w-1 h-inherit rd />
         <div flex flex-col>
           <v-list-item-subtitle>
             <span italic>
@@ -63,7 +63,7 @@ const messageHtml = useRefreshMentions(() => message.message);
       </div>
     </template>
     <slot v-else>
-      <div flex gap-1 items-end>
+      <div flex gap-x-1 items-end>
         <v-list-item-subtitle v-if="!EMPTY_TEXT_REGEX.test(messageHtml)" op-100="!" v-html="messageHtml" />
         <span v-if="message.isEdited" text-gray text-2.4 line-height-3.2>(edited)</span>
       </div>

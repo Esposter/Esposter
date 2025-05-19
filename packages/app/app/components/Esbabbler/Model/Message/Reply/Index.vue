@@ -20,10 +20,10 @@ const color = computed(() => (isIndicatorActive.value ? text.value : "gray"));
 </script>
 
 <template>
-  <div flex items-center gap-1>
+  <div flex items-center gap-x-1>
     <template v-if="reply && creator">
       <StyledAvatar :image="creator.image" :name="creator.name" :avatar-props="{ size: 'x-small' }" />
-      <div flex items-center gap-1>
+      <div flex items-center gap-x-1>
         <span text-xs text-gray font-bold>{{ creator.name }}</span>
         <v-icon v-if="reply.isForward" icon="mdi-share" size="small" />
         <span v-if="!EMPTY_TEXT_REGEX.test(reply.message)" text-xs v-html="reply.message" />

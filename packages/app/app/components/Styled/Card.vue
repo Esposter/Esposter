@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import type { VCard } from "vuetify/components";
+
 import { mergeProps } from "vue";
-import { VCard } from "vuetify/components";
 
 interface StyledCardProps {
   cardAttrs?: VCard["$attrs"];

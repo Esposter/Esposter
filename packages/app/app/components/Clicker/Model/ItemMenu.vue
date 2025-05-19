@@ -2,12 +2,12 @@
 import type { BuildingWithStats } from "#shared/models/clicker/data/building/BuildingWithStats";
 import type { ItemType } from "#shared/models/clicker/data/ItemType";
 import type { Upgrade } from "#shared/models/clicker/data/upgrade/Upgrade";
+import type { VMenu } from "vuetify/components";
 
 import { Target } from "#shared/models/clicker/data/Target";
 import { formatNumberLong } from "@/services/clicker/format";
 import { marked } from "marked";
 import { filename } from "pathe/utils";
-import { VMenu } from "vuetify/components";
 
 type ItemMenuProps = Partial<Pick<BuildingWithStats, "amount">> &
   Partial<Pick<Upgrade, "description">> &

@@ -1,4 +1,3 @@
-import { extname } from "node:path";
+import { ID_SEPARATOR } from "@esposter/shared";
 
-export const getBlobName = (roomId: string, id: string, filename: string) =>
-  `${roomId}/${id}${extname(filename).toLowerCase()}`;
+export const getBlobName = (filepath: string, filename: string) => `${filepath}${ID_SEPARATOR}${filename}`;

@@ -16,7 +16,7 @@ export const useReadFiles = () => {
     if (newFiles.length === 0) return;
 
     const downloadFileSasUrls = await $trpc.message.generateDownloadFileSasUrls.query({
-      files: newFiles,
+      files: newFiles.map(({ filename, id, mimetype }) => ({ filename, id, mimetype })),
       roomId: currentRoomId.value,
     });
     for (let i = 0; i < newFiles.length; i++) fileUrlMap.value.set(newFiles[i].id, { url: downloadFileSasUrls[i] });

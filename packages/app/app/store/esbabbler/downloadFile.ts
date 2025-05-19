@@ -17,7 +17,7 @@ export const useDownloadFileStore = defineStore("esbabbler/downloadFile", () => 
     if (!roomStore.currentRoomId || message.files.length === 0) return;
 
     const downloadFileSasUrls = await $trpc.message.generateDownloadFileSasUrls.query({
-      files: message.files,
+      files: message.files.map(({ filename, id, mimetype }) => ({ filename, id, mimetype })),
       roomId: roomStore.currentRoomId,
     });
 

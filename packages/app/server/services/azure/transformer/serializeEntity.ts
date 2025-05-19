@@ -1,10 +1,13 @@
-import type { CompositeKey } from "#shared/models/azure/CompositeKey";
+import type { AzureEntity } from "#shared/models/azure/AzureEntity";
+import type { AzureUpdateEntity } from "#shared/models/azure/AzureUpdateEntity";
 import type { TableEntity } from "@azure/data-tables";
 
-export const serializeEntity = (entity: CompositeKey): TableEntity =>
+import { getIsSerializable } from "@@/server/services/azure/transformer/getIsSerializable";
+
+export const serializeEntity = (entity: AzureUpdateEntity<AzureEntity>) =>
   Object.fromEntries(
     Object.entries(entity).map(([property, value]) => {
-      if (Array.isArray(value)) return [property, JSON.stringify(value)];
+      if (getIsSerializable(value)) return [property, JSON.stringify(value)];
       else return [property, value];
     }),
-  );
+  ) as TableEntity;

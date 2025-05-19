@@ -16,8 +16,6 @@ const createdAtTimeAgo = useTimeAgo(() => session.value?.user.createdAt ?? "");
       </div>
       <div>Joined {{ SITE_NAME }} on {{ createdAt }} ({{ createdAtTimeAgo }})</div>
     </div>
-    <v-avatar size="6rem">
-      <v-img v-if="session.user.image" :src="session.user.image" :alt="session.user.name" />
-    </v-avatar>
+    <StyledAvatar :image="session.user.image ?? null" :name="session.user.name" :avatar-props="{ size: '6rem' }" />
   </StyledCard>
 </template>
