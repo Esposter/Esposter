@@ -18,7 +18,7 @@ export class SurveyResponseEntity extends AzureEntity {
 export const surveyResponseEntitySchema = createAzureEntitySchema(
   z.object({
     partitionKey: selectSurveySchema.shape.id,
-    rowKey: z.string().uuid(),
+    rowKey: z.uuid(),
   }),
 ).extend(
   z.object({

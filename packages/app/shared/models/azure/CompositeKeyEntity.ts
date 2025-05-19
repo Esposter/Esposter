@@ -5,8 +5,8 @@ import { Serializable } from "#shared/models/entity/Serializable";
 import { getPropertyNames } from "#shared/util/getPropertyNames";
 
 export interface CompositeKeyEntityConstraint extends z.ZodRawShape {
-  partitionKey: z.ZodString;
-  rowKey: z.ZodString;
+  partitionKey: z.ZodString | z.ZodUUID;
+  rowKey: z.ZodString | z.ZodUUID;
 }
 
 export class CompositeKeyEntity extends Serializable implements CompositeKey {
