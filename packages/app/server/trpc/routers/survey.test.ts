@@ -4,7 +4,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { surveys } from "#shared/db/schema/surveys";
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext } from "@@/server/trpc/context.test";
+import { createMockContext, mockUserOnce } from "@@/server/trpc/context.test";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
 import { NIL } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
@@ -85,6 +85,15 @@ describe("survey", () => {
     );
   });
 
+  test.todo("fails update with wrong user", async () => {
+    expect.hasAssertions();
+
+    const newSurvey = await caller.createSurvey({ group, model, name });
+    await mockUserOnce(mockContext.db);
+
+    await expect(caller.updateSurvey({ id: newSurvey.id, name })).rejects.toThrowErrorMatchingInlineSnapshot();
+  });
+
   test.todo("updates model", async () => {
     expect.hasAssertions();
 
@@ -106,6 +115,17 @@ describe("survey", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Survey is not found for id: 00000000-0000-0000-0000-000000000000]`,
     );
+  });
+
+  test.todo("fails update model with wrong user", async () => {
+    expect.hasAssertions();
+
+    const newSurvey = await caller.createSurvey({ group, model, name });
+    await mockUserOnce(mockContext.db);
+
+    await expect(
+      caller.updateSurveyModel({ id: newSurvey.id, model, modelVersion: 0 }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot();
   });
 
   test.todo("fails update model with old model version", async () => {
@@ -147,5 +167,14 @@ describe("survey", () => {
     await expect(caller.deleteSurvey(NIL)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Invalid operation: Delete, name: Survey, 00000000-0000-0000-0000-000000000000]`,
     );
+  });
+
+  test.todo("fails delete with wrong user", async () => {
+    expect.hasAssertions();
+
+    const newSurvey = await caller.createSurvey({ group, model, name });
+    await mockUserOnce(mockContext.db);
+
+    await expect(caller.deleteSurvey(newSurvey.id)).rejects.toThrowErrorMatchingInlineSnapshot();
   });
 });
