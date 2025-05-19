@@ -124,14 +124,14 @@ export const surveyRouter = router({
         message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.Survey, input).message,
       });
 
-    const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
+    const containerClient = await useContainerClient(AzureContainer.SurveyerAssets);
     await deleteDirectory(containerClient, input, true);
     return deletedSurvey;
   }),
   generateDownloadFileSasUrls: getCreatorProcedure(generateDownloadFileSasUrlsInputSchema, "surveyId")
     .input(generateDownloadFileSasUrlsInputSchema)
     .query<string[]>(async ({ input: { files, surveyId } }) => {
-      const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
+      const containerClient = await useContainerClient(AzureContainer.SurveyerAssets);
       return generateDownloadFileSasUrls(containerClient, files, surveyId);
     }),
   generateSurveyModelSasUrl: rateLimitedProcedure
