@@ -20,13 +20,13 @@ import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { cloneDirectory } from "@@/server/services/azure/container/cloneDirectory";
 import { deleteDirectory } from "@@/server/services/azure/container/deleteDirectory";
 import { getBlobName } from "@@/server/services/azure/container/getBlobName";
+import { getVersionPath } from "@@/server/services/azure/container/getVersionPath";
 import { createEntity } from "@@/server/services/azure/table/createEntity";
 import { getEntity } from "@@/server/services/azure/table/getEntity";
 import { updateEntity } from "@@/server/services/azure/table/updateEntity";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { PUBLISH_DIRECTORY_PATH, SURVEY_MODEL_FILENAME } from "@@/server/services/surveyer/constants";
-import { getVersionPath } from "@@/server/services/version/getVersionPath";
 import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { rateLimitedProcedure } from "@@/server/trpc/procedure/rateLimitedProcedure";
@@ -127,7 +127,7 @@ export const surveyRouter = router({
       const fileSasEntities = await Promise.all(
         files.map<Promise<FileSasEntity>>(async ({ filename, mimetype }) => {
           const id: string = crypto.randomUUID();
-          const blobName = getBlobName(surveyId, id, filename);
+          const blobName = getBlobName(`${surveyId}/${id}`, filename);
           const blockBlobClient = containerClient.getBlockBlobClient(blobName);
           return {
             id,

@@ -8,7 +8,7 @@ export const deleteFiles = async (containerClient: ContainerClient, files: FileE
 
   const blobBatchClient = containerClient.getBlobBatchClient();
   const blobUrls = files.map(({ filename, id }) => {
-    const blobName = getBlobName(prefix, id, filename);
+    const blobName = getBlobName(`${prefix}/${id}`, filename);
     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
     return blockBlobClient.url;
   });

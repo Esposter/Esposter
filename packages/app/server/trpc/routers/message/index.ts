@@ -138,7 +138,7 @@ export const messageRouter = router({
         });
 
       const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
-      const blobName = getBlobName(ctx.roomId, id, message.files.splice(index, 1)[0].filename);
+      const blobName = getBlobName(`${ctx.roomId}/${id}`, message.files.splice(index, 1)[0].filename);
       const updatedMessage = {
         files: message.files,
         partitionKey,
@@ -220,7 +220,7 @@ export const messageRouter = router({
       const fileSasEntities = await Promise.all(
         files.map<Promise<FileSasEntity>>(async ({ filename, mimetype }) => {
           const id: string = crypto.randomUUID();
-          const blobName = getBlobName(roomId, id, filename);
+          const blobName = getBlobName(`${roomId}/${id}`, filename);
           const blockBlobClient = containerClient.getBlockBlobClient(blobName);
           return {
             id,

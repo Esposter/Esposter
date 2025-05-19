@@ -10,7 +10,7 @@ export const generateDownloadFileSasUrls = (containerClient: ContainerClient, fi
   else
     return Promise.all(
       files.map(({ filename, id, mimetype }) => {
-        const blobName = getBlobName(prefix, id, filename);
+        const blobName = getBlobName(`${prefix}/${id}`, filename);
         const blockBlobClient = containerClient.getBlockBlobClient(blobName);
         return blockBlobClient.generateSasUrl({
           contentDisposition: `attachment; filename="${filename}"`,
