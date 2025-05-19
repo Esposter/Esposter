@@ -32,13 +32,14 @@ import { PUBLISH_DIRECTORY_PATH, SURVEY_MODEL_FILENAME } from "@@/server/service
 import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { rateLimitedProcedure } from "@@/server/trpc/procedure/rateLimitedProcedure";
+import { getCreatorProcedure } from "@@/server/trpc/procedure/survey/getCreatorProcedure";
 import { ContainerSASPermissions } from "@azure/storage-blob";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, count, desc, eq } from "drizzle-orm";
 import { z } from "zod";
 
-const readSurveyInputSchema = selectSurveySchema.shape.id;
+const readSurveyInputSchema = z.object({ id: selectSurveySchema.shape.id });
 export type ReadSurveyInput = z.infer<typeof readSurveyInputSchema>;
 
 const readSurveysInputSchema = createOffsetPaginationParamsSchema(selectSurveySchema.keyof()).default({});
@@ -127,18 +128,9 @@ export const surveyRouter = router({
     await deleteDirectory(containerClient, input, true);
     return deletedSurvey;
   }),
-  generateDownloadFileSasUrls: authedProcedure
+  generateDownloadFileSasUrls: getCreatorProcedure(generateDownloadFileSasUrlsInputSchema, "surveyId")
     .input(generateDownloadFileSasUrlsInputSchema)
-    .query<string[]>(async ({ ctx, input: { files, surveyId } }) => {
-      const survey = await ctx.db.query.surveys.findFirst({
-        where: (surveys, { and, eq }) => and(eq(surveys.id, surveyId), eq(surveys.userId, ctx.session.user.id)),
-      });
-      if (!survey)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: new NotFoundError(DatabaseEntityType.Survey, surveyId).message,
-        });
-
+    .query<string[]>(async ({ input: { files, surveyId } }) => {
       const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
       return generateDownloadFileSasUrls(containerClient, files, surveyId);
     }),
@@ -161,35 +153,17 @@ export const surveyRouter = router({
         permissions: ContainerSASPermissions.from({ read: true }),
       });
     }),
-  generateUploadFileSasEntities: authedProcedure
+  generateUploadFileSasEntities: getCreatorProcedure(generateUploadFileSasEntitiesInputSchema, "surveyId")
     .input(generateUploadFileSasEntitiesInputSchema)
-    .query<FileSasEntity[]>(async ({ ctx, input: { files, surveyId } }) => {
-      const survey = await ctx.db.query.surveys.findFirst({
-        where: (surveys, { and, eq }) => and(eq(surveys.id, surveyId), eq(surveys.userId, ctx.session.user.id)),
-      });
-      if (!survey)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: new NotFoundError(DatabaseEntityType.Survey, surveyId).message,
-        });
-
+    .query<FileSasEntity[]>(async ({ input: { files, surveyId } }) => {
       const containerClient = await useContainerClient(AzureContainer.SurveyerAssets);
       return generateUploadFileSasEntities(containerClient, files, surveyId);
     }),
-  publishSurvey: authedProcedure
+  publishSurvey: getCreatorProcedure(publishSurveyInputSchema, "id")
     .input(publishSurveyInputSchema)
     .mutation<Survey>(async ({ ctx, input: { id, ...rest } }) => {
-      const survey = await ctx.db.query.surveys.findFirst({
-        where: (surveys, { and, eq }) => and(eq(surveys.id, id), eq(surveys.userId, ctx.session.user.id)),
-      });
-      if (!survey)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: new NotFoundError(DatabaseEntityType.Survey, id).message,
-        });
-
       rest.publishVersion++;
-      if (rest.publishVersion <= survey.publishVersion)
+      if (rest.publishVersion <= ctx.survey.publishVersion)
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: new InvalidOperationError(
@@ -213,17 +187,9 @@ export const surveyRouter = router({
       await cloneDirectory(containerClient, id, getVersionPath(rest.publishVersion, `${id}/${PUBLISH_DIRECTORY_PATH}`));
       return updatedSurvey;
     }),
-  readSurvey: authedProcedure.input(readSurveyInputSchema).query(async ({ ctx, input }) => {
-    const survey = await ctx.db.query.surveys.findFirst({
-      where: (surveys, { and, eq }) => and(eq(surveys.id, input), eq(surveys.userId, ctx.session.user.id)),
-    });
-    if (!survey)
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: new NotFoundError(DatabaseEntityType.Survey, input).message,
-      });
-    return survey;
-  }),
+  readSurvey: getCreatorProcedure(readSurveyInputSchema, "id")
+    .input(readSurveyInputSchema)
+    .query(({ ctx }) => ctx.survey),
   readSurveyResponse: rateLimitedProcedure
     .input(readSurveyResponseInputSchema)
     .query<null | SurveyResponseEntity>(async ({ input: { partitionKey, rowKey } }) => {
@@ -259,21 +225,12 @@ export const surveyRouter = router({
         });
       return updatedSurvey;
     }),
-  updateSurveyModel: authedProcedure
+  updateSurveyModel: getCreatorProcedure(readSurveyInputSchema, "id")
     .input(updateSurveyModelInputSchema)
     .mutation<Survey>(async ({ ctx, input: { id, ...rest } }) => {
-      const survey = await ctx.db.query.surveys.findFirst({
-        where: (surveys, { and, eq }) => and(eq(surveys.id, id), eq(surveys.userId, ctx.session.user.id)),
-      });
-      if (!survey)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: new NotFoundError(DatabaseEntityType.Survey, id).message,
-        });
-
-      if (rest.model !== survey.model) {
+      if (rest.model !== ctx.survey.model) {
         rest.modelVersion++;
-        if (rest.modelVersion <= survey.modelVersion)
+        if (rest.modelVersion <= ctx.survey.modelVersion)
           throw new TRPCError({
             code: "BAD_REQUEST",
             message: new InvalidOperationError(

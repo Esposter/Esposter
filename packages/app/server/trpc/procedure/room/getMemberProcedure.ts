@@ -5,10 +5,7 @@ import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { NotFoundError, UUIDV4_SEARCH_REGEX } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
-export const getRoomUserProcedure = <T extends z.ZodObject<z.ZodRawShape>>(
-  schema: T,
-  roomIdKey: keyof T["shape"] & string,
-) =>
+export const getMemberProcedure = <T extends z.ZodRawShape>(schema: z.ZodObject<T>, roomIdKey: keyof T) =>
   authedProcedure.use(async ({ ctx, getRawInput, next }) => {
     const rawInput = await getRawInput();
     const result = schema.safeParse(rawInput);

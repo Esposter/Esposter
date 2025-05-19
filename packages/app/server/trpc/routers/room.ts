@@ -27,8 +27,8 @@ import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSor
 import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
-import { getRoomCreatorProcedure } from "@@/server/trpc/procedure/getRoomCreatorProcedure";
-import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProcedure";
+import { getCreatorProcedure } from "@@/server/trpc/procedure/room/getCreatorProcedure";
+import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { AzureContainer } from "@@/shared/models/azure/blob/AzureContainer";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -88,7 +88,7 @@ export type CreateInviteInput = z.infer<typeof createInviteInputSchema>;
 // For room-related queries/mutations we don't need to grab the room user procedure
 // as the SQL clauses inherently contain logic to filter if the user is a member/creator of the room
 export const roomRouter = router({
-  createInvite: getRoomUserProcedure(createInviteInputSchema, "roomId")
+  createInvite: getMemberProcedure(createInviteInputSchema, "roomId")
     .input(createInviteInputSchema)
     .mutation<string>(async ({ ctx, input: { roomId } }) => {
       let inviteCode = await readInviteCode(ctx.db, ctx.session.user.id, roomId, true);
@@ -109,7 +109,7 @@ export const roomRouter = router({
         message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Invite, roomId).message,
       });
     }),
-  createMembers: getRoomCreatorProcedure(createMembersInputSchema, "roomId")
+  createMembers: getCreatorProcedure(createMembersInputSchema, "roomId")
     .input(createMembersInputSchema)
     .mutation<UserToRoom[]>(({ ctx, input: { roomId, userIds } }) =>
       ctx.db.transaction(async (tx) => {
@@ -253,10 +253,10 @@ export const roomRouter = router({
         with: InviteRelations,
       })) ?? null,
   ),
-  readInviteCode: getRoomUserProcedure(readInviteCodeInputSchema, "roomId")
+  readInviteCode: getMemberProcedure(readInviteCodeInputSchema, "roomId")
     .input(readInviteCodeInputSchema)
     .query<null | string>(async ({ ctx, input: { roomId } }) => readInviteCode(ctx.db, ctx.session.user.id, roomId)),
-  readMembers: getRoomUserProcedure(readMembersInputSchema, "roomId")
+  readMembers: getMemberProcedure(readMembersInputSchema, "roomId")
     .input(readMembersInputSchema)
     .query(async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
       const filterWhere = filter?.name ? ilike(users.name, `%${filter.name}%`) : undefined;
@@ -271,7 +271,7 @@ export const roomRouter = router({
       const resultUsers = joinedUsers.map(({ users }) => users);
       return getCursorPaginationData(resultUsers, limit, sortBy);
     }),
-  readMembersByIds: getRoomUserProcedure(readMembersByIdsInputSchema, "roomId")
+  readMembersByIds: getMemberProcedure(readMembersByIdsInputSchema, "roomId")
     .input(readMembersByIdsInputSchema)
     .query(async ({ ctx, input: { ids, roomId } }) => {
       const joinedUsers = await ctx.db

@@ -55,7 +55,7 @@ describe("survey", () => {
     expect.hasAssertions();
 
     const newSurvey = await caller.createSurvey({ group, model, name });
-    const readSurvey = await caller.readSurvey(newSurvey.id);
+    const readSurvey = await caller.readSurvey({ id: newSurvey.id });
 
     expect(readSurvey).toStrictEqual(newSurvey);
   });
@@ -63,7 +63,7 @@ describe("survey", () => {
   test("fails read with non-existent id", async () => {
     expect.hasAssertions();
 
-    await expect(caller.readSurvey(NIL)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(caller.readSurvey({ id: NIL })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Survey is not found for id: 00000000-0000-0000-0000-000000000000]`,
     );
   });
