@@ -98,6 +98,17 @@ describe("room", () => {
     );
   });
 
+  test("fails update with wrong user", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await caller.createRoom({ name });
+    await mockUserOnce(mockContext.db);
+
+    await expect(caller.updateRoom({ id: newRoom.id, name })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Update, name: Room, ${newRoom.id}]`,
+    );
+  });
+
   test("on updates", async () => {
     expect.hasAssertions();
 
@@ -127,6 +138,17 @@ describe("room", () => {
 
     await expect(caller.deleteRoom(NIL)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Invalid operation: Delete, name: Room, 00000000-0000-0000-0000-000000000000]`,
+    );
+  });
+
+  test("fails delete with wrong user", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await caller.createRoom({ name });
+    await mockUserOnce(mockContext.db);
+
+    await expect(caller.deleteRoom(newRoom.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Delete, name: Room, ${newRoom.id}]`,
     );
   });
 
