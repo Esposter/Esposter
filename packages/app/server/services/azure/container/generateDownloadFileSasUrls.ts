@@ -7,7 +7,7 @@ import { ContainerSASPermissions } from "@azure/storage-blob";
 
 export const generateDownloadFileSasUrls = async (
   containerClient: ContainerClient,
-  files: FileEntity[],
+  files: Pick<FileEntity, "filename" | "id" | "mimetype">[],
   prefix = "",
 ): Promise<string[]> => {
   if (files.length === 0) return [];

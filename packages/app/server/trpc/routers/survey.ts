@@ -20,6 +20,7 @@ import { useUpload } from "@@/server/composables/azure/useUpload";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { cloneDirectory } from "@@/server/services/azure/container/cloneDirectory";
 import { deleteDirectory } from "@@/server/services/azure/container/deleteDirectory";
+import { generateDownloadFileSasUrls } from "@@/server/services/azure/container/generateDownloadFileSasUrls";
 import { generateUploadFileSasEntities } from "@@/server/services/azure/container/generateUploadFileSasEntities";
 import { getVersionPath } from "@@/server/services/azure/container/getVersionPath";
 import { createEntity } from "@@/server/services/azure/table/createEntity";
@@ -51,6 +52,12 @@ const generateUploadFileSasEntitiesInputSchema = z.object({
   surveyId: selectSurveySchema.shape.id,
 });
 export type GenerateUploadFileSasEntitiesInput = z.infer<typeof generateUploadFileSasEntitiesInputSchema>;
+
+const generateDownloadFileSasUrlsInputSchema = z.object({
+  files: fileEntitySchema.pick({ filename: true, id: true, mimetype: true }).array().min(1).max(MAX_READ_LIMIT),
+  surveyId: selectSurveySchema.shape.id,
+});
+export type GenerateDownloadFileSasUrlsInput = z.infer<typeof generateDownloadFileSasUrlsInputSchema>;
 
 const publishSurveyInputSchema = selectSurveySchema.pick({ id: true, publishVersion: true });
 export type PublishSurveyInput = z.infer<typeof publishSurveyInputSchema>;
@@ -120,6 +127,21 @@ export const surveyRouter = router({
     await deleteDirectory(containerClient, input, true);
     return deletedSurvey;
   }),
+  generateDownloadFileSasUrls: authedProcedure
+    .input(generateDownloadFileSasUrlsInputSchema)
+    .query<string[]>(async ({ ctx, input: { files, surveyId } }) => {
+      const survey = await ctx.db.query.surveys.findFirst({
+        where: (surveys, { and, eq }) => and(eq(surveys.id, surveyId), eq(surveys.userId, ctx.session.user.id)),
+      });
+      if (!survey)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new NotFoundError(DatabaseEntityType.Survey, surveyId).message,
+        });
+
+      const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
+      return generateDownloadFileSasUrls(containerClient, files, surveyId);
+    }),
   generateSurveyModelSasUrl: rateLimitedProcedure
     .input(generateSurveyModelSasUrlInputSchema)
     .query<string>(async ({ ctx, input }) => {
@@ -141,7 +163,16 @@ export const surveyRouter = router({
     }),
   generateUploadFileSasEntities: authedProcedure
     .input(generateUploadFileSasEntitiesInputSchema)
-    .query<FileSasEntity[]>(async ({ input: { files, surveyId } }) => {
+    .query<FileSasEntity[]>(async ({ ctx, input: { files, surveyId } }) => {
+      const survey = await ctx.db.query.surveys.findFirst({
+        where: (surveys, { and, eq }) => and(eq(surveys.id, surveyId), eq(surveys.userId, ctx.session.user.id)),
+      });
+      if (!survey)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new NotFoundError(DatabaseEntityType.Survey, surveyId).message,
+        });
+
       const containerClient = await useContainerClient(AzureContainer.SurveyerAssets);
       return generateUploadFileSasEntities(containerClient, files, surveyId);
     }),
@@ -183,7 +214,9 @@ export const surveyRouter = router({
       return updatedSurvey;
     }),
   readSurvey: authedProcedure.input(readSurveyInputSchema).query(async ({ ctx, input }) => {
-    const survey = await ctx.db.query.surveys.findFirst({ where: (surveys, { eq }) => eq(surveys.id, input) });
+    const survey = await ctx.db.query.surveys.findFirst({
+      where: (surveys, { and, eq }) => and(eq(surveys.id, input), eq(surveys.userId, ctx.session.user.id)),
+    });
     if (!survey)
       throw new TRPCError({
         code: "NOT_FOUND",

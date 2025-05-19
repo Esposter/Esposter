@@ -1,5 +1,3 @@
-import type { FileEntity } from "#shared/models/azure/FileEntity";
-
 import { pgTable } from "#shared/db/pgTable";
 import { users } from "#shared/db/schema/users";
 import { fileEntitySchema } from "#shared/models/azure/FileEntity";
@@ -13,7 +11,7 @@ import { z } from "zod";
 export const surveys = pgTable(
   "surveys",
   {
-    files: jsonb("files").$type<FileEntity[]>().default([]),
+    fileIds: jsonb("fileIds").$type<string[]>().default([]),
     group: text("group"),
     id: uuid("id").primaryKey().defaultRandom(),
     model: text("model").notNull().default(""),
@@ -33,7 +31,7 @@ export const surveys = pgTable(
 export type Survey = typeof surveys.$inferSelect;
 
 export const selectSurveySchema = createSelectSchema(surveys, {
-  files: fileEntitySchema.array().max(MAX_READ_LIMIT),
+  fileIds: fileEntitySchema.shape.id.array().max(MAX_READ_LIMIT),
   name: z.string().min(1).max(SURVEY_NAME_MAX_LENGTH),
 });
 

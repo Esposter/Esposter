@@ -70,7 +70,7 @@ const generateUploadFileSasEntitiesInputSchema = z.object({
 export type GenerateUploadFileSasEntitiesInput = z.infer<typeof generateUploadFileSasEntitiesInputSchema>;
 
 const generateDownloadFileSasUrlsInputSchema = z.object({
-  files: fileEntitySchema.array().min(1).max(MAX_READ_LIMIT),
+  files: fileEntitySchema.pick({ filename: true, id: true, mimetype: true }).array().min(1).max(MAX_READ_LIMIT),
   roomId: selectRoomSchema.shape.id,
 });
 export type GenerateDownloadFileSasUrlsInput = z.infer<typeof generateDownloadFileSasUrlsInputSchema>;
@@ -208,7 +208,7 @@ export const messageRouter = router({
     }),
   generateDownloadFileSasUrls: getRoomUserProcedure(generateDownloadFileSasUrlsInputSchema, "roomId")
     .input(generateDownloadFileSasUrlsInputSchema)
-    .query(async ({ input: { files, roomId } }) => {
+    .query<string[]>(async ({ input: { files, roomId } }) => {
       const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
       return generateDownloadFileSasUrls(containerClient, files, roomId);
     }),
