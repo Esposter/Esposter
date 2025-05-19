@@ -1,8 +1,10 @@
 import type { Survey } from "#shared/db/schema/surveys";
 
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
+import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
 import { downloadJsonFile } from "@/services/file/downloadJsonFile";
 import { uploadJsonFile } from "@/services/file/uploadJsonFile";
+import { validateFile } from "@/services/file/validateFile";
 import { useSurveyStore } from "@/store/surveyer/survey";
 import { Action, ComputedUpdater } from "survey-core";
 import { SurveyCreatorModel } from "survey-creator-core";
@@ -71,6 +73,25 @@ export const useSurveyCreator = (survey: Survey) => {
       callback(saveNo, false);
     }
   };
+
+  const { $trpc } = useNuxtApp();
+  creator.onUploadFile.add(async (_, { files }) => {
+    if (!files.every(({ size }) => validateFile(size))) {
+      useEmptyFileToast();
+      return;
+    }
+
+    const fileSasEntities = await $trpc.survey.generateUploadFileSasEntities.query({
+      files: files.map(({ name, type }) => ({ filename: name, mimetype: type })),
+      surveyId: survey.id,
+    });
+    await Promise.all(
+      files.map(async (file, index) => {
+        const { sasUrl } = fileSasEntities[index];
+        await uploadBlocks(file, sasUrl);
+      }),
+    );
+  });
 
   const isDark = useIsDark();
 

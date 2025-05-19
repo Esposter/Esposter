@@ -4,6 +4,7 @@ import type { UploadFileUrl } from "@/models/esbabbler/file/UploadFileUrl";
 import { MAX_FILE_LIMIT } from "#shared/services/azure/container/constants";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
+import { validateFile } from "@/services/file/validateFile";
 import { useRoomStore } from "@/store/esbabbler/room";
 import { useUploadFileStore } from "@/store/esbabbler/uploadFile";
 
@@ -11,7 +12,6 @@ const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
 const { currentRoomId, currentRoomName } = storeToRefs(roomStore);
 const uploadFileStore = useUploadFileStore();
-const { validateFile } = uploadFileStore;
 const { files, fileUrlMap, isFileLoading } = storeToRefs(uploadFileStore);
 const { isOverDropZone } = useDropZone(
   document,
