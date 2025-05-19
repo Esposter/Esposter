@@ -146,7 +146,7 @@ export const roomRouter = router({
   deleteRoom: authedProcedure.input(deleteRoomInputSchema).mutation<Room>(async ({ ctx, input }) => {
     const deletedRoom = await deleteRoom(ctx.db, ctx.session, input);
     const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
-    await deleteDirectory(containerClient, input);
+    await deleteDirectory(containerClient, input, true);
     return deletedRoom;
   }),
   joinRoom: authedProcedure.input(joinRoomInputSchema).mutation<Room>(async ({ ctx, input }) => {

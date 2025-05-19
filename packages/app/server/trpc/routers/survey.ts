@@ -117,7 +117,7 @@ export const surveyRouter = router({
       });
 
     const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
-    await deleteDirectory(containerClient, input);
+    await deleteDirectory(containerClient, input, true);
     return deletedSurvey;
   }),
   generateUploadFileSasUrls: authedProcedure
