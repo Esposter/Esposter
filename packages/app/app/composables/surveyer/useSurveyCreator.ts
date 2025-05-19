@@ -75,22 +75,28 @@ export const useSurveyCreator = (survey: Survey) => {
   };
 
   const { $trpc } = useNuxtApp();
-  creator.onUploadFile.add(async (_, { files }) => {
-    if (!files.every(({ size }) => validateFile(size))) {
+  creator.onUploadFile.add(async (_, { callback, files }) => {
+    const file = files[0];
+
+    if (!validateFile(file.size)) {
       useEmptyFileToast();
       return;
     }
 
-    const fileSasEntities = await $trpc.survey.generateUploadFileSasEntities.query({
-      files: files.map(({ name, type }) => ({ filename: name, mimetype: type })),
-      surveyId: survey.id,
-    });
-    await Promise.all(
-      files.map(async (file, index) => {
-        const { sasUrl } = fileSasEntities[index];
-        await uploadBlocks(file, sasUrl);
-      }),
-    );
+    try {
+      const { id, sasUrl } = (
+        await $trpc.survey.generateUploadFileSasEntities.query({
+          files: [{ filename: file.name, mimetype: file.type }],
+          surveyId: survey.id,
+        })
+      )[0];
+      await uploadBlocks(file, sasUrl);
+      // We're actually going to lie to surveyjs and return the file id instead
+      // since our urls are going to be temporary sas urls generated based off the file id
+      callback("success", id);
+    } catch {
+      callback("error");
+    }
   });
 
   const isDark = useIsDark();
