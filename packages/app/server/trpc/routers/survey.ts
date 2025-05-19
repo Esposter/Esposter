@@ -41,11 +41,11 @@ export type ReadSurveyInput = z.infer<typeof readSurveyInputSchema>;
 const readSurveysInputSchema = createOffsetPaginationParamsSchema(selectSurveySchema.keyof()).default({});
 export type ReadSurveysInput = z.infer<typeof readSurveysInputSchema>;
 
-const generateUploadFileSasUrlsInputSchema = z.object({
+const generateUploadFileSasEntitiesInputSchema = z.object({
   files: fileEntitySchema.pick({ filename: true, mimetype: true }).array().min(1).max(MAX_READ_LIMIT),
   surveyId: selectSurveySchema.shape.id,
 });
-export type GenerateUploadFileSasUrlsInput = z.infer<typeof generateUploadFileSasUrlsInputSchema>;
+export type GenerateUploadFileSasEntitiesInput = z.infer<typeof generateUploadFileSasEntitiesInputSchema>;
 
 const publishSurveyInputSchema = selectSurveySchema.pick({ id: true, publishVersion: true });
 export type PublishSurveyInput = z.infer<typeof publishSurveyInputSchema>;
@@ -118,8 +118,8 @@ export const surveyRouter = router({
     await deleteDirectory(containerClient, input, true);
     return deletedSurvey;
   }),
-  generateUploadFileSasUrls: authedProcedure
-    .input(generateUploadFileSasUrlsInputSchema)
+  generateUploadFileSasEntities: authedProcedure
+    .input(generateUploadFileSasEntitiesInputSchema)
     .query<FileSasEntity[]>(async ({ input: { files, surveyId } }) => {
       const containerClient = await useContainerClient(AzureContainer.SurveyerAssets);
       return generateUploadFileSasEntities(

@@ -63,11 +63,11 @@ const readMessagesByRowKeysInputSchema = z.object({
 });
 export type ReadMessagesByRowKeysInput = z.infer<typeof readMessagesByRowKeysInputSchema>;
 
-const generateUploadFileSasUrlsInputSchema = z.object({
+const generateUploadFileSasEntitiesInputSchema = z.object({
   files: fileEntitySchema.pick({ filename: true, mimetype: true }).array().min(1).max(MAX_READ_LIMIT),
   roomId: selectRoomSchema.shape.id,
 });
-export type GenerateUploadFileSasUrlsInput = z.infer<typeof generateUploadFileSasUrlsInputSchema>;
+export type GenerateUploadFileSasEntitiesInput = z.infer<typeof generateUploadFileSasEntitiesInputSchema>;
 
 const generateDownloadFileSasUrlsInputSchema = z.object({
   files: fileEntitySchema.array().min(1).max(MAX_READ_LIMIT),
@@ -212,8 +212,8 @@ export const messageRouter = router({
       const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
       return generateDownloadFileSasUrls(containerClient, files, roomId);
     }),
-  generateUploadFileSasUrls: getRoomUserProcedure(generateUploadFileSasUrlsInputSchema, "roomId")
-    .input(generateUploadFileSasUrlsInputSchema)
+  generateUploadFileSasEntities: getRoomUserProcedure(generateUploadFileSasEntitiesInputSchema, "roomId")
+    .input(generateUploadFileSasEntitiesInputSchema)
     .query<FileSasEntity[]>(async ({ input: { files, roomId } }) => {
       const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
       return generateUploadFileSasEntities(

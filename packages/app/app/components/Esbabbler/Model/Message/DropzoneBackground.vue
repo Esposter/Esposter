@@ -22,7 +22,7 @@ const { isOverDropZone } = useDropZone(
       return;
     }
 
-    const fileSasEntities = await $trpc.message.generateUploadFileSasUrls.query({
+    const fileSasEntities = await $trpc.message.generateUploadFileSasEntities.query({
       files: newFiles.map(({ name, type }) => ({ filename: name, mimetype: type })),
       roomId: currentRoomId.value,
     });
