@@ -1,9 +1,10 @@
 import type { Survey } from "#shared/db/schema/surveys";
-import type { z } from "zod";
+import type { FileSasEntity } from "#shared/models/esbabbler/FileSasEntity";
 
 import { selectSurveySchema, surveys } from "#shared/db/schema/surveys";
 import { AzureEntityType } from "#shared/models/azure/AzureEntityType";
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
+import { fileEntitySchema } from "#shared/models/azure/FileEntity";
 import { createSurveyInputSchema } from "#shared/models/db/survey/CreateSurveyInput";
 import { deleteSurveyInputSchema } from "#shared/models/db/survey/DeleteSurveyInput";
 import { SurveyResponseEntity, surveyResponseEntitySchema } from "#shared/models/db/survey/SurveyResponseEntity";
@@ -11,17 +12,20 @@ import { updateSurveyInputSchema } from "#shared/models/db/survey/UpdateSurveyIn
 import { updateSurveyModelInputSchema } from "#shared/models/db/survey/UpdateSurveyModelInput";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
+import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { useUpload } from "@@/server/composables/azure/useUpload";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
+import { cloneDirectory } from "@@/server/services/azure/container/cloneDirectory";
 import { deleteDirectory } from "@@/server/services/azure/container/deleteDirectory";
+import { getBlobName } from "@@/server/services/azure/container/getBlobName";
 import { createEntity } from "@@/server/services/azure/table/createEntity";
 import { getEntity } from "@@/server/services/azure/table/getEntity";
 import { updateEntity } from "@@/server/services/azure/table/updateEntity";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
-import { PUBLISH_DIRECTORY_PATH } from "@@/server/services/surveyer/constants";
+import { PUBLISH_DIRECTORY_PATH, SURVEY_MODEL_FILENAME } from "@@/server/services/surveyer/constants";
 import { getVersionPath } from "@@/server/services/version/getVersionPath";
 import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
@@ -31,6 +35,7 @@ import { ContainerSASPermissions } from "@azure/storage-blob";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, count, desc, eq } from "drizzle-orm";
+import { z } from "zod";
 
 const readSurveyInputSchema = selectSurveySchema.shape.id;
 export type ReadSurveyInput = z.infer<typeof readSurveyInputSchema>;
@@ -38,8 +43,11 @@ export type ReadSurveyInput = z.infer<typeof readSurveyInputSchema>;
 const readSurveysInputSchema = createOffsetPaginationParamsSchema(selectSurveySchema.keyof()).default({});
 export type ReadSurveysInput = z.infer<typeof readSurveysInputSchema>;
 
-const generateSurveyModelSasUrlInputSchema = selectSurveySchema.shape.id;
-export type GenerateSurveyModelSasUrlInput = z.infer<typeof generateSurveyModelSasUrlInputSchema>;
+const generateUploadFileSasUrlsInputSchema = z.object({
+  files: fileEntitySchema.pick({ filename: true, mimetype: true }).array().min(1).max(MAX_READ_LIMIT),
+  surveyId: selectSurveySchema.shape.id,
+});
+export type GenerateUploadFileSasUrlsInput = z.infer<typeof generateUploadFileSasUrlsInputSchema>;
 
 const publishSurveyInputSchema = selectSurveySchema.pick({ id: true, publishVersion: true });
 export type PublishSurveyInput = z.infer<typeof publishSurveyInputSchema>;
@@ -83,7 +91,7 @@ export const surveyRouter = router({
         message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Survey, JSON.stringify(input)).message,
       });
 
-    const blobName = getVersionPath(newSurvey.modelVersion, "json", newSurvey.id);
+    const blobName = `${newSurvey.id}/${SURVEY_MODEL_FILENAME}`;
     await useUpload(AzureContainer.SurveyerAssets, blobName, newSurvey.model);
     return newSurvey;
   }),
@@ -112,24 +120,26 @@ export const surveyRouter = router({
     await deleteDirectory(containerClient, input);
     return deletedSurvey;
   }),
-  generateSurveyModelSasUrl: rateLimitedProcedure
-    .input(generateSurveyModelSasUrlInputSchema)
-    .query<string>(async ({ ctx, input }) => {
-      const survey = await ctx.db.query.surveys.findFirst({ where: (surveys, { eq }) => eq(surveys.id, input) });
-      if (!survey)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: new NotFoundError(DatabaseEntityType.Survey, input).message,
-        });
-
+  generateUploadFileSasUrls: authedProcedure
+    .input(generateUploadFileSasUrlsInputSchema)
+    .query<FileSasEntity[]>(async ({ input: { files, surveyId } }) => {
       const containerClient = await useContainerClient(AzureContainer.SurveyerAssets);
-      const blobName = getVersionPath(survey.publishVersion, "json", `${input}/${PUBLISH_DIRECTORY_PATH}`);
-      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-      return blockBlobClient.generateSasUrl({
-        contentType: "application/json",
-        expiresOn: dayjs().add(30, "days").toDate(),
-        permissions: ContainerSASPermissions.from({ read: true }),
-      });
+      const fileSasEntities = await Promise.all(
+        files.map<Promise<FileSasEntity>>(async ({ filename, mimetype }) => {
+          const id: string = crypto.randomUUID();
+          const blobName = getBlobName(surveyId, id, filename);
+          const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+          return {
+            id,
+            sasUrl: await blockBlobClient.generateSasUrl({
+              contentType: mimetype,
+              expiresOn: dayjs().add(1, "hour").toDate(),
+              permissions: ContainerSASPermissions.from({ write: true }),
+            }),
+          };
+        }),
+      );
+      return fileSasEntities;
     }),
   publishSurvey: authedProcedure
     .input(publishSurveyInputSchema)
@@ -163,8 +173,8 @@ export const surveyRouter = router({
           message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Survey, JSON.stringify(rest)).message,
         });
 
-      const blobName = getVersionPath(rest.publishVersion, "json", `${id}/${PUBLISH_DIRECTORY_PATH}`);
-      await useUpload(AzureContainer.SurveyerAssets, blobName, survey.model);
+      const containerClient = await useContainerClient(AzureContainer.SurveyerAssets);
+      await cloneDirectory(containerClient, id, getVersionPath(rest.publishVersion, `${id}/${PUBLISH_DIRECTORY_PATH}`));
       return updatedSurvey;
     }),
   readSurvey: authedProcedure.input(readSurveyInputSchema).query(async ({ ctx, input }) => {
@@ -253,7 +263,7 @@ export const surveyRouter = router({
           message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Survey, id).message,
         });
 
-      const blobName = getVersionPath(updatedSurvey.modelVersion, "json", updatedSurvey.id);
+      const blobName = `${updatedSurvey.id}/${SURVEY_MODEL_FILENAME}`;
       await useUpload(AzureContainer.SurveyerAssets, blobName, updatedSurvey.model);
       return updatedSurvey;
     }),

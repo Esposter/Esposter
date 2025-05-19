@@ -6,8 +6,8 @@ import { getBlobName } from "@@/server/services/azure/container/getBlobName";
 export const cloneFiles = async (
   containerClient: ContainerClient,
   files: FileEntity[],
-  destinationPrefix = "",
-  sourcePrefix = destinationPrefix,
+  sourcePrefix = "",
+  destinationPrefix = sourcePrefix,
 ) => {
   if (files.length === 0) return [];
   else

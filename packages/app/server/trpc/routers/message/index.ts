@@ -187,7 +187,7 @@ export const messageRouter = router({
       const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
       await Promise.all(
         roomIds.map(async (roomId) => {
-          const newFileIds = await cloneFiles(containerClient, messageEntity.files, roomId, ctx.roomId);
+          const newFileIds = await cloneFiles(containerClient, messageEntity.files, ctx.roomId, roomId);
           const forward = createMessageEntity({
             // eslint-disable-next-line @typescript-eslint/no-misused-spread
             files: messageEntity.files.map((file, index) => new FileEntity({ ...file, id: newFileIds[index] })),
