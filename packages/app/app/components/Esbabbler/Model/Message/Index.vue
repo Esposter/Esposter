@@ -50,7 +50,7 @@ const messageHtml = useRefreshMentions(() => message.message);
     </v-list-item-title>
     <template v-if="message.isForward">
       <div flex gap-x-2>
-        <div class="bg-border" w-1 h-inherit rd />
+        <div class="bg-border" rd w-1 h-inherit />
         <div flex flex-col>
           <v-list-item-subtitle>
             <span italic>

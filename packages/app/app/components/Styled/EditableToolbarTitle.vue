@@ -52,8 +52,8 @@ onClickOutside(title, () => {
       v-else
       class="custom-border"
       font-bold
-      select-all
       rd
+      select-all
       @click="
         () => {
           isUpdateMode = true;
