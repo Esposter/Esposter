@@ -19,7 +19,7 @@ import { useUpload } from "@@/server/composables/azure/useUpload";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { cloneDirectory } from "@@/server/services/azure/container/cloneDirectory";
 import { deleteDirectory } from "@@/server/services/azure/container/deleteDirectory";
-import { getBlobName } from "@@/server/services/azure/container/getBlobName";
+import { generateUploadFileSasEntities } from "@@/server/services/azure/container/generateUploadFileSasEntities";
 import { getVersionPath } from "@@/server/services/azure/container/getVersionPath";
 import { createEntity } from "@@/server/services/azure/table/createEntity";
 import { getEntity } from "@@/server/services/azure/table/getEntity";
@@ -30,8 +30,6 @@ import { PUBLISH_DIRECTORY_PATH, SURVEY_MODEL_FILENAME } from "@@/server/service
 import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { rateLimitedProcedure } from "@@/server/trpc/procedure/rateLimitedProcedure";
-import { dayjs } from "@@/shared/services/dayjs";
-import { ContainerSASPermissions } from "@azure/storage-blob";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, count, desc, eq } from "drizzle-orm";
@@ -124,22 +122,11 @@ export const surveyRouter = router({
     .input(generateUploadFileSasUrlsInputSchema)
     .query<FileSasEntity[]>(async ({ input: { files, surveyId } }) => {
       const containerClient = await useContainerClient(AzureContainer.SurveyerAssets);
-      const fileSasEntities = await Promise.all(
-        files.map<Promise<FileSasEntity>>(async ({ filename, mimetype }) => {
-          const id: string = crypto.randomUUID();
-          const blobName = getBlobName(`${surveyId}/${id}`, filename);
-          const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-          return {
-            id,
-            sasUrl: await blockBlobClient.generateSasUrl({
-              contentType: mimetype,
-              expiresOn: dayjs().add(1, "hour").toDate(),
-              permissions: ContainerSASPermissions.from({ write: true }),
-            }),
-          };
-        }),
+      return generateUploadFileSasEntities(
+        containerClient,
+        files.map(({ filename, mimetype }) => ({ filename, mimetype })),
+        surveyId,
       );
-      return fileSasEntities;
     }),
   publishSurvey: authedProcedure
     .input(publishSurveyInputSchema)

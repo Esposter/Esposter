@@ -13,7 +13,6 @@ import { MessageEntity, messageEntitySchema } from "#shared/models/db/message/Me
 import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { dayjs } from "#shared/services/dayjs";
 import { createMessageEntity } from "#shared/services/esbabbler/createMessageEntity";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
@@ -22,6 +21,7 @@ import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { cloneFiles } from "@@/server/services/azure/container/cloneFiles";
 import { deleteFiles } from "@@/server/services/azure/container/deleteFiles";
 import { generateDownloadFileSasUrls } from "@@/server/services/azure/container/generateDownloadFileSasUrls";
+import { generateUploadFileSasEntities } from "@@/server/services/azure/container/generateUploadFileSasEntities";
 import { getBlobName } from "@@/server/services/azure/container/getBlobName";
 import { createEntity } from "@@/server/services/azure/table/createEntity";
 import { deleteEntity } from "@@/server/services/azure/table/deleteEntity";
@@ -37,7 +37,6 @@ import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/g
 import { router } from "@@/server/trpc";
 import { getProfanityFilterMiddleware } from "@@/server/trpc/middleware/getProfanityFilterMiddleware";
 import { getRoomUserProcedure } from "@@/server/trpc/procedure/getRoomUserProcedure";
-import { ContainerSASPermissions } from "@azure/storage-blob";
 import { NotFoundError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
@@ -217,22 +216,11 @@ export const messageRouter = router({
     .input(generateUploadFileSasUrlsInputSchema)
     .query<FileSasEntity[]>(async ({ input: { files, roomId } }) => {
       const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
-      const fileSasEntities = await Promise.all(
-        files.map<Promise<FileSasEntity>>(async ({ filename, mimetype }) => {
-          const id: string = crypto.randomUUID();
-          const blobName = getBlobName(`${roomId}/${id}`, filename);
-          const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-          return {
-            id,
-            sasUrl: await blockBlobClient.generateSasUrl({
-              contentType: mimetype,
-              expiresOn: dayjs().add(1, "hour").toDate(),
-              permissions: ContainerSASPermissions.from({ write: true }),
-            }),
-          };
-        }),
+      return generateUploadFileSasEntities(
+        containerClient,
+        files.map(({ filename, mimetype }) => ({ filename, mimetype })),
+        roomId,
       );
-      return fileSasEntities;
     }),
   onCreateMessage: getRoomUserProcedure(onCreateMessageInputSchema, "roomId")
     .input(onCreateMessageInputSchema)
