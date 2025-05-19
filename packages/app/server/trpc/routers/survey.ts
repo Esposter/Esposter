@@ -122,11 +122,7 @@ export const surveyRouter = router({
     .input(generateUploadFileSasEntitiesInputSchema)
     .query<FileSasEntity[]>(async ({ input: { files, surveyId } }) => {
       const containerClient = await useContainerClient(AzureContainer.SurveyerAssets);
-      return generateUploadFileSasEntities(
-        containerClient,
-        files.map(({ filename, mimetype }) => ({ filename, mimetype })),
-        surveyId,
-      );
+      return generateUploadFileSasEntities(containerClient, files, surveyId);
     }),
   publishSurvey: authedProcedure
     .input(publishSurveyInputSchema)

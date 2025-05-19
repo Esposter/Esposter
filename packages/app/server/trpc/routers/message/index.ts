@@ -216,11 +216,7 @@ export const messageRouter = router({
     .input(generateUploadFileSasEntitiesInputSchema)
     .query<FileSasEntity[]>(async ({ input: { files, roomId } }) => {
       const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
-      return generateUploadFileSasEntities(
-        containerClient,
-        files.map(({ filename, mimetype }) => ({ filename, mimetype })),
-        roomId,
-      );
+      return generateUploadFileSasEntities(containerClient, files, roomId);
     }),
   onCreateMessage: getRoomUserProcedure(onCreateMessageInputSchema, "roomId")
     .input(onCreateMessageInputSchema)
