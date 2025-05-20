@@ -3,6 +3,6 @@ import type { z } from "zod/v4";
 import { selectPostSchema } from "#shared/db/schema/posts";
 
 export const createPostInputSchema = selectPostSchema
-  .pick({ description: true, title: true })
-  .partial({ description: true });
+  .pick({ title: true })
+  .extend(selectPostSchema.pick({ description: true }).partial());
 export type CreatePostInput = z.infer<typeof createPostInputSchema>;
