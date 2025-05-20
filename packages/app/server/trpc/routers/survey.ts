@@ -197,7 +197,8 @@ export const surveyRouter = router({
         });
 
       const containerClient = await useContainerClient(AzureContainer.SurveyerAssets);
-      // @TODO: We only want to clone specific blobs that are actually used by the survey
+      // We make sure to clean up all files that aren't used by the survey
+      // so we can simply just clone all the files in the root directory to the publish directory
       await cloneDirectory(containerClient, id, getVersionPath(rest.publishVersion, `${id}/${PUBLISH_DIRECTORY_PATH}`));
       return updatedSurvey;
     }),

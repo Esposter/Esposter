@@ -8,7 +8,7 @@ import { uploadJsonFile } from "@/services/file/uploadJsonFile";
 import { validateFile } from "@/services/file/validateFile";
 import { useSurveyStore } from "@/store/surveyer/survey";
 import { Action, ComputedUpdater, QuestionImageModel, QuestionImagePickerModel } from "survey-core";
-import { SurveyCreatorModel } from "survey-creator-core";
+import { LogoImageViewModel, SurveyCreatorModel } from "survey-creator-core";
 import { DefaultDark, SC2020 } from "survey-creator-core/themes";
 
 export const useSurveyCreator = (survey: Survey) => {
@@ -77,6 +77,7 @@ export const useSurveyCreator = (survey: Survey) => {
 
   const { $trpc } = useNuxtApp();
   const deleteFile = useDeleteFile(survey.id);
+
   creator.onUploadFile.add(async (_, { callback, element, files, propertyName }) => {
     const file = files[0];
 
@@ -108,6 +109,12 @@ export const useSurveyCreator = (survey: Survey) => {
       callback("error");
     }
   });
+  // Add all the possible delete file events
+  LogoImageViewModel.prototype.remove = (model: LogoImageViewModel) => {
+    const url = model.survey.logo;
+    model.survey.logo = "";
+    deleteFile(url);
+  };
   creator.onCollectionItemDeleting.add((_, { item }: { item: ImageItemValue }) => {
     if (!item.imageLink) return;
     deleteFile(item.imageLink);
