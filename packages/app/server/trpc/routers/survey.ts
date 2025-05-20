@@ -60,6 +60,12 @@ const generateDownloadFileSasUrlsInputSchema = z.object({
 });
 export type GenerateDownloadFileSasUrlsInput = z.infer<typeof generateDownloadFileSasUrlsInputSchema>;
 
+const deleteFileInputSchema = z.object({
+  blobPath: z.string().min(1).max(MAX_READ_LIMIT),
+  surveyId: selectSurveySchema.shape.id,
+});
+export type DeleteFileInput = z.infer<typeof deleteFileInputSchema>;
+
 const publishSurveyInputSchema = selectSurveySchema.pick({ id: true, publishVersion: true });
 export type PublishSurveyInput = z.infer<typeof publishSurveyInputSchema>;
 
@@ -110,6 +116,14 @@ export const surveyRouter = router({
       const newSurveyResponse = new SurveyResponseEntity(input);
       await createEntity(surveyResponseClient, newSurveyResponse);
       return newSurveyResponse;
+    }),
+  deleteFile: getCreatorProcedure(deleteFileInputSchema, "surveyId")
+    .input(deleteFileInputSchema)
+    .mutation(async ({ input: { blobPath, surveyId } }) => {
+      const containerClient = await useContainerClient(AzureContainer.SurveyerAssets);
+      const blobName = `${surveyId}/${blobPath}`;
+      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+      await blockBlobClient.delete();
     }),
   deleteSurvey: authedProcedure.input(deleteSurveyInputSchema).mutation<Survey>(async ({ ctx, input }) => {
     const deletedSurvey = (

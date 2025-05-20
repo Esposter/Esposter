@@ -1,13 +1,12 @@
 import type { Survey } from "#shared/db/schema/surveys";
-import type { FileEntity } from "#shared/models/azure/FileEntity";
 import type { Base } from "survey-core";
 
+import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
 import { downloadJsonFile } from "@/services/file/downloadJsonFile";
 import { uploadJsonFile } from "@/services/file/uploadJsonFile";
 import { validateFile } from "@/services/file/validateFile";
-import { FILE_PROPERTY_NAME } from "@/services/surveyer/constants";
 import { useSurveyStore } from "@/store/surveyer/survey";
 import { Action, ComputedUpdater } from "survey-core";
 import { SurveyCreatorModel } from "survey-creator-core";
@@ -78,7 +77,7 @@ export const useSurveyCreator = (survey: Survey) => {
   };
 
   const { $trpc } = useNuxtApp();
-  creator.onUploadFile.add(async (_, { callback, element, files }) => {
+  creator.onUploadFile.add(async (_, { callback, element, files, propertyName }) => {
     const file = files[0];
 
     if (!validateFile(file.size)) {
@@ -95,11 +94,16 @@ export const useSurveyCreator = (survey: Survey) => {
       )[0];
       await uploadBlocks(file, sasUrl);
 
-      const fileEntity: FileEntity = { filename: file.name, id, mimetype: file.type, size: file.size };
-      (element as Base).setPropertyValue(FILE_PROPERTY_NAME, fileEntity);
+      const oldDownloadFileSasUrl = (element as Base).getPropertyValue(propertyName.toString());
+      if (oldDownloadFileSasUrl) {
+        const pathname = decodeURIComponent(new URL(oldDownloadFileSasUrl).pathname);
+        const blobPath = pathname.substring(`/${AzureContainer.SurveyerAssets}/${survey.id}/`.length);
+        await $trpc.survey.deleteFile.mutate({ blobPath, surveyId: survey.id });
+      }
+
       const downloadFileSasUrl = (
         await $trpc.survey.generateDownloadFileSasUrls.query({
-          files: [{ filename: fileEntity.filename, id: fileEntity.id, mimetype: fileEntity.mimetype }],
+          files: [{ filename: file.name, id, mimetype: file.type }],
           surveyId: survey.id,
         })
       )[0];
