@@ -53,7 +53,7 @@ catalog:
   "@types/js-beautify": ^1.14.3
   "@types/json-schema": ^7.0.15
   "@types/mjml-browser": ^4.15.0
-  "@types/node": ^22.15.19
+  "@types/node": ^22.15.21
   "@types/omit-deep-lodash": ^1.1.3
   "@types/pluralize": ^0.0.33
   "@types/sax": ^1.2.7
@@ -92,7 +92,7 @@ catalog:
   dotenv: ^16.5.0
   drizzle-kit: ^0.31.1
   drizzle-orm: ^0.43.1
-  drizzle-zod: ^0.7.1
+  drizzle-zod: 0.7.1
   emoji-mart-vue-fast: ^15.0.4
   eslint: ^9.27.0
   eslint-config-prettier: ^10.1.5
@@ -132,7 +132,7 @@ catalog:
   mjml-browser: ^4.15.3
   node-emoji: ^2.2.0
   node-html-parser: ^7.0.1
-  nuxt: ^3.17.3
+  nuxt: ^3.17.4
   nuxt-security: ^2.2.0
   obscenity: ^0.4.3
   omit-deep-lodash: ^1.1.7
@@ -143,7 +143,7 @@ catalog:
   phaser3-rex-plugins: ^1.80.15
   pinia: ^3.0.2
   pluralize: ^8.0.0
-  postgres: ^3.4.5
+  postgres: ^3.4.6
   prettier: ^3.5.3
   rate-limiter-flexible: ^7.1.1
   rolldown: ^1.0.0-beta.9
@@ -154,10 +154,10 @@ catalog:
   sax: ^1.4.1
   sql-highlight: ^6.0.0
   superjson: ^2.2.2
-  survey-core: ^2.0.9
+  survey-core: ^2.0.10
   survey-creator-core: ^2.0.10
-  survey-creator-vue: ^2.0.9
-  survey-vue3-ui: ^2.0.9
+  survey-creator-vue: ^2.0.10
+  survey-vue3-ui: ^2.0.10
   three: ^0.176.0
   three-globe: ^2.42.4
   tippy.js: ^6.3.7
@@ -189,7 +189,7 @@ catalog:
   worker-timers: ^8.0.21
   ws: ^8.18.2
   xmlbuilder2: ^3.1.1
-  zod: ^3.25.7
+  zod: ^3.25.8
   zod-to-json-schema: ^3.24.5
 overrides:
   pdfjs-dist: ^5.2.133

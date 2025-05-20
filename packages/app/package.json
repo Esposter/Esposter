@@ -167,7 +167,8 @@
     "ajv-formats": "https://github.com/json-layout/json-layout/issues/5",
     "ajv-i18n": "https://github.com/json-layout/json-layout/issues/5",
     "better-auth": "https://github.com/better-auth/better-auth/issues/1669",
-    "debug": "https://github.com/json-layout/json-layout/issues/5"
+    "debug": "https://github.com/json-layout/json-layout/issues/5",
+    "drizzle-zod": "@TODO: Broken with zod-4"
   },
   "devDependencies": {
     "@nuxt/eslint": "catalog:",
