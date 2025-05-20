@@ -8,7 +8,7 @@ import { AzureEntity, createAzureEntitySchema } from "#shared/models/azure/Azure
 import { fileEntitySchema } from "#shared/models/azure/FileEntity";
 import { MAX_FILE_LIMIT } from "#shared/services/azure/container/constants";
 import { MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export class MessageEntity extends AzureEntity {
   files: FileEntity[] = [];

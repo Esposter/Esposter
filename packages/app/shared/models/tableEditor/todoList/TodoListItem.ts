@@ -3,12 +3,12 @@ import type { ToData } from "#shared/models/entity/ToData";
 
 import { createItemEntityTypeSchema } from "#shared/models/entity/ItemEntityType";
 import {
-  ATableEditorItemEntity,
-  aTableEditorItemEntitySchema,
+    ATableEditorItemEntity,
+    aTableEditorItemEntitySchema,
 } from "#shared/models/tableEditor/data/ATableEditorItemEntity";
 import { TodoListItemType, todoListItemTypeSchema } from "#shared/models/tableEditor/todoList/TodoListItemType";
 import { NOTES_MAX_LENGTH } from "#shared/services/tableEditor/todoList/constants";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export class TodoListItem extends ATableEditorItemEntity implements ItemEntityType<TodoListItemType> {
   dueAt: Date | null = null;

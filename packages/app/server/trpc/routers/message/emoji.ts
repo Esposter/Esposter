@@ -4,8 +4,8 @@ import { selectRoomSchema } from "#shared/db/schema/rooms";
 import { createEmojiInputSchema } from "#shared/models/db/message/metadata/CreateEmojiInput";
 import { deleteEmojiInputSchema } from "#shared/models/db/message/metadata/DeleteEmojiInput";
 import {
-  MessageEmojiMetadataEntity,
-  MessageEmojiMetadataEntityPropertyNames,
+    MessageEmojiMetadataEntity,
+    MessageEmojiMetadataEntityPropertyNames,
 } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
 import { updateEmojiInputSchema } from "#shared/models/db/message/metadata/UpdateEmojiInput";
@@ -26,7 +26,7 @@ import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProce
 import { readMetadataInputSchema } from "@@/server/trpc/routers/message";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 const onCreateEmojiInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnCreateEmojiInput = z.infer<typeof onCreateEmojiInputSchema>;

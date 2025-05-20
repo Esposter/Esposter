@@ -1,6 +1,6 @@
 import { selectRoomSchema } from "#shared/db/schema/rooms";
 import { messageEntitySchema } from "#shared/models/db/message/MessageEntity";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export const createMessageInputSchema = z
   .object({ roomId: selectRoomSchema.shape.id })

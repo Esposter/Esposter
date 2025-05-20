@@ -33,7 +33,7 @@ import { AzureContainer } from "@@/shared/models/azure/blob/AzureContainer";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, desc, eq, ilike, inArray, sql } from "drizzle-orm";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 const readRoomInputSchema = selectRoomSchema.shape.id.optional();
 export type ReadRoomInput = z.infer<typeof readRoomInputSchema>;

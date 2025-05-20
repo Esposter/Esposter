@@ -1,6 +1,6 @@
 import type { LayoutItem as BaseLayoutItem } from "grid-layout-plus";
 
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export type LayoutItem = BaseLayoutItem & { i: string };
 

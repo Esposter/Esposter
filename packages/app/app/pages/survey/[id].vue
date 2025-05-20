@@ -35,8 +35,7 @@ const saveSurveyResponse = async (survey: Model) => {
 const route = useRoute();
 const surveyId = route.params.id as string;
 const { $trpc } = useNuxtApp();
-const surveyModelSasUrl = await $trpc.survey.generateSurveyModelSasUrl.query(surveyId);
-const surveyModel = await $fetch<string>(surveyModelSasUrl);
+const surveyModel = await $trpc.survey.readSurveyModel.query(surveyId);
 const model = new Model(surveyModel);
 model.onValueChanged.add(saveSurveyResponse);
 model.onCurrentPageChanged.add(saveSurveyResponse);

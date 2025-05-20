@@ -2,7 +2,7 @@ import type { ProjectData } from "grapesjs";
 
 import { AItemEntity } from "#shared/models/entity/AItemEntity";
 import { html } from "@/services/prettier/html";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export class EmailEditor extends AItemEntity implements ProjectData {
   [key: string]: unknown;

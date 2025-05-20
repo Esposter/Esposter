@@ -10,7 +10,7 @@ import { monsterKeySchema } from "@/models/dungeons/keys/image/UI/MonsterKey";
 import { statsSchema } from "@/models/dungeons/monster/Stats";
 import { statusSchema } from "@/models/dungeons/monster/Status";
 import { getMonsterData } from "@/services/dungeons/monster/getMonsterData";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export class Monster {
   asset!: Asset;

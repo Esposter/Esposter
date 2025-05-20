@@ -1,4 +1,4 @@
-import type { z } from "zod";
+import type { z } from "zod/v4";
 
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";

@@ -1,16 +1,14 @@
 import type { Survey } from "#shared/db/schema/surveys";
-import type { FileEntity } from "#shared/models/azure/FileEntity";
-import type { Base } from "survey-core";
+import type { Base, ImageItemValue } from "survey-core";
 
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
 import { downloadJsonFile } from "@/services/file/downloadJsonFile";
 import { uploadJsonFile } from "@/services/file/uploadJsonFile";
 import { validateFile } from "@/services/file/validateFile";
-import { FILE_PROPERTY_NAME } from "@/services/surveyer/constants";
 import { useSurveyStore } from "@/store/surveyer/survey";
-import { Action, ComputedUpdater } from "survey-core";
-import { SurveyCreatorModel } from "survey-creator-core";
+import { Action, ComputedUpdater, QuestionImageModel, QuestionImagePickerModel } from "survey-core";
+import { LogoImageViewModel, SurveyCreatorModel } from "survey-creator-core";
 import { DefaultDark, SC2020 } from "survey-creator-core/themes";
 
 export const useSurveyCreator = (survey: Survey) => {
@@ -67,6 +65,11 @@ export const useSurveyCreator = (survey: Survey) => {
   creator.text = survey.model;
   creator.saveSurveyFunc = async (saveNo: number, callback: Function) => {
     try {
+      if (creator.text === survey.model) {
+        callback(saveNo, true);
+        return;
+      }
+
       Object.assign(
         survey,
         await updateSurveyModel({ id: survey.id, model: creator.text, modelVersion: survey.modelVersion }),
@@ -78,11 +81,14 @@ export const useSurveyCreator = (survey: Survey) => {
   };
 
   const { $trpc } = useNuxtApp();
-  creator.onUploadFile.add(async (_, { callback, element, files }) => {
+  const deleteFile = useDeleteFile(survey.id);
+
+  creator.onUploadFile.add(async (_, { callback, element, files, propertyName }) => {
     const file = files[0];
 
     if (!validateFile(file.size)) {
       useEmptyFileToast();
+      callback("error");
       return;
     }
 
@@ -95,17 +101,43 @@ export const useSurveyCreator = (survey: Survey) => {
       )[0];
       await uploadBlocks(file, sasUrl);
 
-      const fileEntity: FileEntity = { filename: file.name, id, mimetype: file.type, size: file.size };
-      (element as Base).setPropertyValue(FILE_PROPERTY_NAME, fileEntity);
+      const oldDownloadFileSasUrl = (element as Base).getPropertyValue(propertyName.toString());
+      if (oldDownloadFileSasUrl) await deleteFile(oldDownloadFileSasUrl);
+
       const downloadFileSasUrl = (
         await $trpc.survey.generateDownloadFileSasUrls.query({
-          files: [{ filename: fileEntity.filename, id: fileEntity.id, mimetype: fileEntity.mimetype }],
+          files: [{ filename: file.name, id, mimetype: file.type }],
           surveyId: survey.id,
         })
       )[0];
       callback("success", downloadFileSasUrl);
     } catch {
       callback("error");
+    }
+  });
+  // Add all the possible delete file events
+  LogoImageViewModel.prototype.remove = getSynchronizedFunction(async (model: LogoImageViewModel) => {
+    const url = model.survey.logo;
+    model.survey.logo = "";
+    await deleteFile(url);
+  });
+  creator.onCollectionItemDeleting.add(async (_, { item }: { item: ImageItemValue }) => {
+    if (!item.imageLink) return;
+    await deleteFile(item.imageLink);
+  });
+  creator.onElementDeleting.add(async (_, { element }) => {
+    if (element instanceof QuestionImageModel) {
+      if (!element.imageLink) return;
+      await deleteFile(element.imageLink);
+      return;
+    }
+
+    if (element instanceof QuestionImagePickerModel) {
+      for (const item of element.choices as ImageItemValue[]) {
+        if (!item.imageLink) continue;
+        await deleteFile(item.imageLink);
+      }
+      return;
     }
   });
 

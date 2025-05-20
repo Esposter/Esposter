@@ -1,6 +1,6 @@
 import type { Position } from "grid-engine";
 
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export const positionSchema = z.object({
   x: z.int().nonnegative(),

@@ -3,7 +3,7 @@ import type { ItemEffect } from "@/models/dungeons/item/ItemEffect";
 
 import { itemEffectSchema } from "@/models/dungeons/item/ItemEffect";
 import { itemIdSchema } from "@/models/dungeons/item/ItemId";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export interface Item {
   description: string;

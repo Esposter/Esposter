@@ -1,6 +1,6 @@
 import type { ItemEntityType } from "#shared/models/entity/ItemEntityType";
 import type { ApexOptions } from "apexcharts";
-import type { z } from "zod";
+import type { z } from "zod/v4";
 
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
 

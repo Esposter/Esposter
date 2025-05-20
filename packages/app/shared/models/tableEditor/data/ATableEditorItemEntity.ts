@@ -3,7 +3,7 @@ import type { ToData } from "#shared/models/entity/ToData";
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
 import { DEFAULT_NAME } from "#shared/services/constants";
 import { ITEM_NAME_MAX_LENGTH } from "#shared/services/tableEditor/constants";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export abstract class ATableEditorItemEntity extends AItemEntity {
   name = DEFAULT_NAME;

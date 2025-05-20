@@ -2,7 +2,7 @@ import type { BasePaginationParams } from "#shared/models/pagination/BasePaginat
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 
 import { createBasePaginationParamsSchema } from "#shared/models/pagination/BasePaginationParams";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export interface CursorPaginationParams<TSortKey extends string> extends BasePaginationParams<TSortKey> {
   // This will be a serialised string of all the cursors based on sorting

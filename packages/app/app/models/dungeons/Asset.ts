@@ -1,7 +1,7 @@
 import type { AssetKey } from "@/models/dungeons/keys/AssetKey";
 
 import { assetKeySchema } from "@/models/dungeons/keys/AssetKey";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export interface Asset {
   // By default, this will be 0

@@ -1,4 +1,4 @@
-import type { z } from "zod";
+import type { z } from "zod/v4";
 
 import { profanityMatcher } from "#shared/services/obscenity/profanityMatcher";
 import { middleware } from "@@/server/trpc";

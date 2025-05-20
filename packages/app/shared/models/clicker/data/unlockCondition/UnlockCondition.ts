@@ -3,7 +3,7 @@ import type { UpgradeUnlockCondition } from "#shared/models/clicker/data/unlockC
 
 import { buildingUnlockConditionSchema } from "#shared/models/clicker/data/unlockCondition/BuildingUnlockCondition";
 import { upgradeUnlockConditionSchema } from "#shared/models/clicker/data/unlockCondition/UpgradeUnlockCondition";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export type UnlockCondition = BuildingUnlockCondition | UpgradeUnlockCondition;
 

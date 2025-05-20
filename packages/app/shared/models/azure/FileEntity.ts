@@ -1,5 +1,5 @@
 import { FILENAME_MAX_LENGTH } from "#shared/services/azure/container/constants";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export class FileEntity {
   filename!: string;

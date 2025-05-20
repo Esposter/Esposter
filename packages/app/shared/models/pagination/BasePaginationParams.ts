@@ -2,7 +2,7 @@ import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 
 import { createSortItemSchema } from "#shared/models/pagination/sorting/SortItem";
 import { DEFAULT_READ_LIMIT, MAX_READ_LIMIT } from "#shared/services/pagination/constants";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export interface BasePaginationParams<TSortKey extends string> {
   limit?: number;

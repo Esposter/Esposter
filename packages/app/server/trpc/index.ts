@@ -2,7 +2,7 @@ import type { Context } from "@@/server/trpc/context";
 
 import { transformer } from "#shared/services/trpc/transformer";
 import { initTRPC } from "@trpc/server";
-import { z } from "zod";
+import { z } from "zod/v4";
 // Avoid exporting the entire t-object since it's not very
 // descriptive and can be confusing to newcomers used to t
 // meaning translation in i18n libraries

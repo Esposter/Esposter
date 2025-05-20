@@ -39,7 +39,7 @@ import { getProfanityFilterMiddleware } from "@@/server/trpc/middleware/getProfa
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { NotFoundError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export const readMetadataInputSchema = z.object({
   messageRowKeys: messageEntitySchema.shape.rowKey.array().min(1).max(MAX_READ_LIMIT),

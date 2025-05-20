@@ -64,7 +64,7 @@ describe("survey", () => {
     expect.hasAssertions();
 
     await expect(caller.readSurvey({ id: NIL })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Survey is not found for id: 00000000-0000-0000-0000-000000000000]`,
+      `[TRPCError: UNAUTHORIZED]`,
     );
   });
 
@@ -112,9 +112,7 @@ describe("survey", () => {
 
     await expect(
       caller.updateSurveyModel({ id: NIL, model, modelVersion: 0 }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Survey is not found for id: 00000000-0000-0000-0000-000000000000]`,
-    );
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
   test.todo("fails update model with wrong user", async () => {

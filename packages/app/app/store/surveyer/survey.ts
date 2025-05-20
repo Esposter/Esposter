@@ -3,6 +3,7 @@ import type { CreateSurveyInput } from "#shared/models/db/survey/CreateSurveyInp
 import type { DeleteSurveyInput } from "#shared/models/db/survey/DeleteSurveyInput";
 import type { UpdateSurveyInput } from "#shared/models/db/survey/UpdateSurveyInput";
 import type { UpdateSurveyModelInput } from "#shared/models/db/survey/UpdateSurveyModelInput";
+import type { Except } from "type-fest";
 
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createOperationData } from "@/services/shared/createOperationData";
@@ -10,7 +11,7 @@ import { createOffsetPaginationData } from "@/services/shared/pagination/offset/
 
 export const useSurveyStore = defineStore("surveyer/survey", () => {
   const { $trpc } = useNuxtApp();
-  const { items, ...restData } = createOffsetPaginationData<Survey>();
+  const { items, ...restData } = createOffsetPaginationData<Except<Survey, "model">>();
   const {
     createSurvey: storeCreateSurvey,
     deleteSurvey: storeDeleteSurvey,
@@ -31,7 +32,7 @@ export const useSurveyStore = defineStore("surveyer/survey", () => {
   // This is called by surveyjs externally so we will also need to
   // update our reactivity externally outside from our stores
   const updateSurveyModel = async (input: UpdateSurveyModelInput) => {
-    const updatedSurvey = await $trpc.survey.updateSurvey.mutate(input);
+    const updatedSurvey = await $trpc.survey.updateSurveyModel.mutate(input);
     return updatedSurvey;
   };
   const deleteSurvey = async (input: DeleteSurveyInput) => {

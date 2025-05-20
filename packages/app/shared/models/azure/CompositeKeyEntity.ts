@@ -1,5 +1,5 @@
 import type { CompositeKey } from "#shared/models/azure/CompositeKey";
-import type { z } from "zod";
+import type { z } from "zod/v4";
 
 import { Serializable } from "#shared/models/entity/Serializable";
 import { getPropertyNames } from "#shared/util/getPropertyNames";

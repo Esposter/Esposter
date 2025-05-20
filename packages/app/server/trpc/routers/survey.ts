@@ -12,32 +12,32 @@ import { updateSurveyInputSchema } from "#shared/models/db/survey/UpdateSurveyIn
 import { updateSurveyModelInputSchema } from "#shared/models/db/survey/UpdateSurveyModelInput";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
-import { dayjs } from "#shared/services/dayjs";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
+import { extractBlobUrls } from "#shared/services/surveyer/extractBlobUrls";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { useUpload } from "@@/server/composables/azure/useUpload";
+import { useUpdateBlobUrls } from "@@/server/composables/surveyer/useUpdateBlobUrls";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
-import { cloneDirectory } from "@@/server/services/azure/container/cloneDirectory";
 import { deleteDirectory } from "@@/server/services/azure/container/deleteDirectory";
 import { generateDownloadFileSasUrls } from "@@/server/services/azure/container/generateDownloadFileSasUrls";
 import { generateUploadFileSasEntities } from "@@/server/services/azure/container/generateUploadFileSasEntities";
-import { getVersionPath } from "@@/server/services/azure/container/getVersionPath";
 import { createEntity } from "@@/server/services/azure/table/createEntity";
 import { getEntity } from "@@/server/services/azure/table/getEntity";
 import { updateEntity } from "@@/server/services/azure/table/updateEntity";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
-import { PUBLISH_DIRECTORY_PATH, SURVEY_MODEL_FILENAME } from "@@/server/services/surveyer/constants";
+import { SURVEY_MODEL_FILENAME } from "@@/server/services/surveyer/constants";
+import { getPublishDirectory } from "@@/server/services/surveyer/getPublishDirectory";
 import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { rateLimitedProcedure } from "@@/server/trpc/procedure/rateLimitedProcedure";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/survey/getCreatorProcedure";
-import { ContainerSASPermissions } from "@azure/storage-blob";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, count, desc, eq } from "drizzle-orm";
-import { z } from "zod";
+import { z } from "zod/v4";
+import { cloneBlobUrls } from "~~/server/services/azure/container/cloneBlobUrls";
 
 const readSurveyInputSchema = z.object({ id: selectSurveySchema.shape.id });
 export type ReadSurveyInput = z.infer<typeof readSurveyInputSchema>;
@@ -45,8 +45,8 @@ export type ReadSurveyInput = z.infer<typeof readSurveyInputSchema>;
 const readSurveysInputSchema = createOffsetPaginationParamsSchema(selectSurveySchema.keyof()).prefault({});
 export type ReadSurveysInput = z.infer<typeof readSurveysInputSchema>;
 
-const generateSurveyModelSasUrlInputSchema = selectSurveySchema.shape.id;
-export type GenerateSurveyModelSasUrlInput = z.infer<typeof generateSurveyModelSasUrlInputSchema>;
+const readSurveyModelInputSchema = selectSurveySchema.shape.id;
+export type readSurveyModelInput = z.infer<typeof readSurveyModelInputSchema>;
 
 const generateUploadFileSasEntitiesInputSchema = z.object({
   files: fileEntitySchema.pick({ filename: true, mimetype: true }).array().min(1).max(MAX_READ_LIMIT),
@@ -59,6 +59,12 @@ const generateDownloadFileSasUrlsInputSchema = z.object({
   surveyId: selectSurveySchema.shape.id,
 });
 export type GenerateDownloadFileSasUrlsInput = z.infer<typeof generateDownloadFileSasUrlsInputSchema>;
+
+const deleteFileInputSchema = z.object({
+  blobPath: z.string().min(1).max(MAX_READ_LIMIT),
+  surveyId: selectSurveySchema.shape.id,
+});
+export type DeleteFileInput = z.infer<typeof deleteFileInputSchema>;
 
 const publishSurveyInputSchema = selectSurveySchema.pick({ id: true, publishVersion: true });
 export type PublishSurveyInput = z.infer<typeof publishSurveyInputSchema>;
@@ -111,6 +117,14 @@ export const surveyRouter = router({
       await createEntity(surveyResponseClient, newSurveyResponse);
       return newSurveyResponse;
     }),
+  deleteFile: getCreatorProcedure(deleteFileInputSchema, "surveyId")
+    .input(deleteFileInputSchema)
+    .mutation(async ({ input: { blobPath, surveyId } }) => {
+      const containerClient = await useContainerClient(AzureContainer.SurveyerAssets);
+      const blobName = `${surveyId}/${blobPath}`;
+      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+      await blockBlobClient.delete();
+    }),
   deleteSurvey: authedProcedure.input(deleteSurveyInputSchema).mutation<Survey>(async ({ ctx, input }) => {
     const deletedSurvey = (
       await ctx.db
@@ -124,34 +138,15 @@ export const surveyRouter = router({
         message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.Survey, input).message,
       });
 
-    const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
+    const containerClient = await useContainerClient(AzureContainer.SurveyerAssets);
     await deleteDirectory(containerClient, input, true);
     return deletedSurvey;
   }),
   generateDownloadFileSasUrls: getCreatorProcedure(generateDownloadFileSasUrlsInputSchema, "surveyId")
     .input(generateDownloadFileSasUrlsInputSchema)
     .query<string[]>(async ({ input: { files, surveyId } }) => {
-      const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
-      return generateDownloadFileSasUrls(containerClient, files, surveyId);
-    }),
-  generateSurveyModelSasUrl: rateLimitedProcedure
-    .input(generateSurveyModelSasUrlInputSchema)
-    .query<string>(async ({ ctx, input }) => {
-      const survey = await ctx.db.query.surveys.findFirst({ where: (surveys, { eq }) => eq(surveys.id, input) });
-      if (!survey)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: new NotFoundError(DatabaseEntityType.Survey, input).message,
-        });
-
       const containerClient = await useContainerClient(AzureContainer.SurveyerAssets);
-      const blobName = `${getVersionPath(survey.publishVersion, `${input}/${PUBLISH_DIRECTORY_PATH}`)}/${SURVEY_MODEL_FILENAME}`;
-      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-      return blockBlobClient.generateSasUrl({
-        contentType: "application/json",
-        expiresOn: dayjs().add(30, "days").toDate(),
-        permissions: ContainerSASPermissions.from({ read: true }),
-      });
+      return generateDownloadFileSasUrls(containerClient, files, surveyId);
     }),
   generateUploadFileSasEntities: getCreatorProcedure(generateUploadFileSasEntitiesInputSchema, "surveyId")
     .input(generateUploadFileSasEntitiesInputSchema)
@@ -183,13 +178,23 @@ export const surveyRouter = router({
         });
 
       const containerClient = await useContainerClient(AzureContainer.SurveyerAssets);
-      // @TODO: We only want to clone specific blobs that are actually used by the survey
-      await cloneDirectory(containerClient, id, getVersionPath(rest.publishVersion, `${id}/${PUBLISH_DIRECTORY_PATH}`));
+      const blobUrls = extractBlobUrls(updatedSurvey.model);
+      const publishDirectory = getPublishDirectory(updatedSurvey);
+      await cloneBlobUrls(containerClient, blobUrls, updatedSurvey.id, publishDirectory);
       return updatedSurvey;
     }),
   readSurvey: getCreatorProcedure(readSurveyInputSchema, "id")
     .input(readSurveyInputSchema)
-    .query(({ ctx }) => ctx.survey),
+    .query(async ({ ctx }) => ({ ...ctx.survey, model: await useUpdateBlobUrls(ctx.survey) })),
+  readSurveyModel: rateLimitedProcedure.input(readSurveyModelInputSchema).query<string>(async ({ ctx, input }) => {
+    const survey = await ctx.db.query.surveys.findFirst({ where: (surveys, { eq }) => eq(surveys.id, input) });
+    if (!survey)
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: new NotFoundError(DatabaseEntityType.Survey, input).message,
+      });
+    return useUpdateBlobUrls(survey, true);
+  }),
   readSurveyResponse: rateLimitedProcedure
     .input(readSurveyResponseInputSchema)
     .query<null | SurveyResponseEntity>(async ({ input: { partitionKey, rowKey } }) => {
@@ -201,6 +206,9 @@ export const surveyRouter = router({
     .input(readSurveysInputSchema)
     .query(async ({ ctx, input: { limit, offset, sortBy } }) => {
       const resultSurveys = await ctx.db.query.surveys.findMany({
+        columns: {
+          model: false,
+        },
         limit: limit + 1,
         offset,
         orderBy: sortBy.length > 0 ? parseSortByToSql(surveys, sortBy) : desc(surveys.updatedAt),

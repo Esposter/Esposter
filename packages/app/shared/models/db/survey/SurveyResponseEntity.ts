@@ -3,7 +3,7 @@ import type { ToData } from "#shared/models/entity/ToData";
 
 import { selectSurveySchema } from "#shared/db/schema/surveys";
 import { AzureEntity, createAzureEntitySchema } from "#shared/models/azure/AzureEntity";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export class SurveyResponseEntity extends AzureEntity {
   model: Record<string, unknown> = {};

@@ -1,5 +1,5 @@
 import type { CompositeKeyEntityConstraint } from "#shared/models/azure/CompositeKeyEntity";
-import type { z } from "zod";
+import type { z } from "zod/v4";
 
 import { CompositeKeyEntity, createCompositeKeyEntitySchema } from "#shared/models/azure/CompositeKeyEntity";
 import { applyItemMetadataMixin, itemMetadataSchema } from "#shared/models/entity/ItemMetadata";

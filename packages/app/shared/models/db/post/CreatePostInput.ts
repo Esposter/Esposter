@@ -1,4 +1,4 @@
-import type { z } from "zod";
+import type { z } from "zod/v4";
 
 import { selectPostSchema } from "#shared/db/schema/posts";
 

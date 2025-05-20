@@ -1,5 +1,5 @@
 import type { Class } from "type-fest";
-import type { z } from "zod";
+import type { z } from "zod/v4";
 
 export const getPropertySchema = (type: Class<unknown>): undefined | z.core.JSONSchema.BaseSchema => {
   switch (type) {

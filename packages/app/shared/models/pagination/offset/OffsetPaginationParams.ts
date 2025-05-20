@@ -1,7 +1,7 @@
 import type { BasePaginationParams } from "#shared/models/pagination/BasePaginationParams";
 
 import { createBasePaginationParamsSchema } from "#shared/models/pagination/BasePaginationParams";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export interface OffsetPaginationParams<TSortKey extends string> extends BasePaginationParams<TSortKey> {
   offset?: number;

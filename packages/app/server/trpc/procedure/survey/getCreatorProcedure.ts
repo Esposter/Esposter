@@ -1,4 +1,4 @@
-import type { z } from "zod";
+import type { z } from "zod/v4";
 
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { TRPCError } from "@trpc/server";
