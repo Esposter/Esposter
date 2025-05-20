@@ -96,7 +96,7 @@ export const useSurveyCreator = (survey: Survey) => {
       await uploadBlocks(file, sasUrl);
 
       const oldDownloadFileSasUrl = (element as Base).getPropertyValue(propertyName.toString());
-      if (oldDownloadFileSasUrl) deleteFile(oldDownloadFileSasUrl);
+      if (oldDownloadFileSasUrl) await deleteFile(oldDownloadFileSasUrl);
 
       const downloadFileSasUrl = (
         await $trpc.survey.generateDownloadFileSasUrls.query({
@@ -110,26 +110,26 @@ export const useSurveyCreator = (survey: Survey) => {
     }
   });
   // Add all the possible delete file events
-  LogoImageViewModel.prototype.remove = (model: LogoImageViewModel) => {
+  LogoImageViewModel.prototype.remove = getSynchronizedFunction(async (model: LogoImageViewModel) => {
     const url = model.survey.logo;
     model.survey.logo = "";
-    deleteFile(url);
-  };
-  creator.onCollectionItemDeleting.add((_, { item }: { item: ImageItemValue }) => {
-    if (!item.imageLink) return;
-    deleteFile(item.imageLink);
+    await deleteFile(url);
   });
-  creator.onElementDeleting.add((_, { element }) => {
+  creator.onCollectionItemDeleting.add(async (_, { item }: { item: ImageItemValue }) => {
+    if (!item.imageLink) return;
+    await deleteFile(item.imageLink);
+  });
+  creator.onElementDeleting.add(async (_, { element }) => {
     if (element instanceof QuestionImageModel) {
       if (!element.imageLink) return;
-      deleteFile(element.imageLink);
+      await deleteFile(element.imageLink);
       return;
     }
 
     if (element instanceof QuestionImagePickerModel) {
       for (const item of element.choices as ImageItemValue[]) {
         if (!item.imageLink) continue;
-        deleteFile(item.imageLink);
+        await deleteFile(item.imageLink);
       }
       return;
     }
