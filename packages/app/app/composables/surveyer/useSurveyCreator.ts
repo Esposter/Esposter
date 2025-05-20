@@ -7,7 +7,7 @@ import { downloadJsonFile } from "@/services/file/downloadJsonFile";
 import { uploadJsonFile } from "@/services/file/uploadJsonFile";
 import { validateFile } from "@/services/file/validateFile";
 import { useSurveyStore } from "@/store/surveyer/survey";
-import { Action, ComputedUpdater, QuestionImagePickerModel } from "survey-core";
+import { Action, ComputedUpdater, QuestionImageModel, QuestionImagePickerModel } from "survey-core";
 import { SurveyCreatorModel } from "survey-creator-core";
 import { DefaultDark, SC2020 } from "survey-creator-core/themes";
 
@@ -113,10 +113,18 @@ export const useSurveyCreator = (survey: Survey) => {
     deleteFile(item.imageLink);
   });
   creator.onElementDeleting.add((_, { element }) => {
-    if (!(element instanceof QuestionImagePickerModel)) return;
-    for (const item of element.choices as ImageItemValue[]) {
-      if (!item.imageLink) continue;
-      deleteFile(item.imageLink);
+    if (element instanceof QuestionImageModel) {
+      if (!element.imageLink) return;
+      deleteFile(element.imageLink);
+      return;
+    }
+
+    if (element instanceof QuestionImagePickerModel) {
+      for (const item of element.choices as ImageItemValue[]) {
+        if (!item.imageLink) continue;
+        deleteFile(item.imageLink);
+      }
+      return;
     }
   });
 
