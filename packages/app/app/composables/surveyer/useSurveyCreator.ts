@@ -65,6 +65,11 @@ export const useSurveyCreator = (survey: Survey) => {
   creator.text = survey.model;
   creator.saveSurveyFunc = async (saveNo: number, callback: Function) => {
     try {
+      if (creator.text === survey.model) {
+        callback(saveNo, true);
+        return;
+      }
+
       Object.assign(
         survey,
         await updateSurveyModel({ id: survey.id, model: creator.text, modelVersion: survey.modelVersion }),
@@ -83,6 +88,7 @@ export const useSurveyCreator = (survey: Survey) => {
 
     if (!validateFile(file.size)) {
       useEmptyFileToast();
+      callback("error");
       return;
     }
 
