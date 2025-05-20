@@ -1,14 +1,13 @@
 import type { Survey } from "#shared/db/schema/surveys";
-import type { Base } from "survey-core";
+import type { Base, ImageItemValue } from "survey-core";
 
-import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
 import { downloadJsonFile } from "@/services/file/downloadJsonFile";
 import { uploadJsonFile } from "@/services/file/uploadJsonFile";
 import { validateFile } from "@/services/file/validateFile";
 import { useSurveyStore } from "@/store/surveyer/survey";
-import { Action, ComputedUpdater } from "survey-core";
+import { Action, ComputedUpdater, QuestionImagePickerModel } from "survey-core";
 import { SurveyCreatorModel } from "survey-creator-core";
 import { DefaultDark, SC2020 } from "survey-creator-core/themes";
 
@@ -77,6 +76,7 @@ export const useSurveyCreator = (survey: Survey) => {
   };
 
   const { $trpc } = useNuxtApp();
+  const deleteFile = useDeleteFile(survey.id);
   creator.onUploadFile.add(async (_, { callback, element, files, propertyName }) => {
     const file = files[0];
 
@@ -95,11 +95,7 @@ export const useSurveyCreator = (survey: Survey) => {
       await uploadBlocks(file, sasUrl);
 
       const oldDownloadFileSasUrl = (element as Base).getPropertyValue(propertyName.toString());
-      if (oldDownloadFileSasUrl) {
-        const pathname = decodeURIComponent(new URL(oldDownloadFileSasUrl).pathname);
-        const blobPath = pathname.substring(`/${AzureContainer.SurveyerAssets}/${survey.id}/`.length);
-        await $trpc.survey.deleteFile.mutate({ blobPath, surveyId: survey.id });
-      }
+      if (oldDownloadFileSasUrl) deleteFile(oldDownloadFileSasUrl);
 
       const downloadFileSasUrl = (
         await $trpc.survey.generateDownloadFileSasUrls.query({
@@ -110,6 +106,17 @@ export const useSurveyCreator = (survey: Survey) => {
       callback("success", downloadFileSasUrl);
     } catch {
       callback("error");
+    }
+  });
+  creator.onCollectionItemDeleting.add((_, { item }: { item: ImageItemValue }) => {
+    if (!item.imageLink) return;
+    deleteFile(item.imageLink);
+  });
+  creator.onElementDeleting.add((_, { element }) => {
+    if (!(element instanceof QuestionImagePickerModel)) return;
+    for (const item of element.choices as ImageItemValue[]) {
+      if (!item.imageLink) continue;
+      deleteFile(item.imageLink);
     }
   });
 
