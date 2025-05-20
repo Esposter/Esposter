@@ -1,17 +1,15 @@
-import type { extractBlobUrls as baseExtractBlobUrls } from "#shared/services/surveyer/extractBlobUrls"; // Adjust path
+import type { OmitIndexSignature } from "type-fest";
 
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
+import { extractBlobUrls } from "#shared/services/surveyer/extractBlobUrls"; // Adjust path
 import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
 
-describe("extractBlobUrls", () => {
-  let extractBlobUrls: typeof baseExtractBlobUrls;
+describe(extractBlobUrls, () => {
   const MOCK_AZURE_BLOB_URL = "https://testaccount.blob.core.windows.net";
   const MOCK_BLOB_URL = `${MOCK_AZURE_BLOB_URL}/${AzureContainer.SurveyerAssets}`;
 
-  beforeAll(async () => {
-    vi.stubEnv("AZURE_BLOB_URL", MOCK_AZURE_BLOB_URL);
-    vi.resetModules();
-    extractBlobUrls = (await import("#shared/services/surveyer/extractBlobUrls")).extractBlobUrls;
+  beforeAll(() => {
+    vi.stubEnv<keyof OmitIndexSignature<typeof process.env>>("AZURE_BLOB_URL", MOCK_AZURE_BLOB_URL);
   });
 
   afterAll(() => {
@@ -65,7 +63,7 @@ describe("extractBlobUrls", () => {
   test("should extract URLs correctly when they have query parameters (SAS tokens, etc.)", () => {
     expect.hasAssertions();
 
-    expect(extractBlobUrls(`${MOCK_BLOB_URL}?`)).toStrictEqual([`${MOCK_BLOB_URL}?`]);
+    expect(extractBlobUrls(`${MOCK_BLOB_URL}?`)).toStrictEqual([MOCK_BLOB_URL]);
   });
 
   test("should not extract URLs from a different container", () => {

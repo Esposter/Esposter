@@ -2,6 +2,7 @@ import type { Survey } from "#shared/db/schema/surveys";
 
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 import { extractBlobUrls } from "#shared/services/surveyer/extractBlobUrls";
+import { getBlobUrlSearchRegex } from "#shared/services/surveyer/getBlobUrlSearchRegex";
 import { Mimetype } from "@/models/file/Mimetype";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
 import { getPublishDirectory } from "@@/server/services/surveyer/getPublishDirectory";
@@ -20,12 +21,12 @@ export const useUpdateBlobUrls = async (survey: Survey, isPublish?: true) => {
     const publishDirectory = getPublishDirectory(survey);
 
     for (const blobUrl of blobUrls) {
-      const blobName = `${publishDirectory}/${decodeURIComponent(blobUrl.substring(`${containerClient.url}/${survey.id}/`.length, blobUrl.indexOf("?")))}`;
+      const blobName = `${publishDirectory}/${blobUrl.substring(`${containerClient.url}/${survey.id}/`.length)}`;
       blobNames.push(blobName);
     }
   } else
     for (const blobUrl of blobUrls) {
-      const blobName = decodeURIComponent(blobUrl.substring(`${containerClient.url}/`.length, blobUrl.indexOf("?")));
+      const blobName = blobUrl.substring(`${containerClient.url}/`.length);
       blobNames.push(blobName);
     }
 
@@ -46,7 +47,7 @@ export const useUpdateBlobUrls = async (survey: Survey, isPublish?: true) => {
   for (let i = 0; i < blobUrls.length; i++) {
     const blobUrl = blobUrls[i];
     const updatedBlobUrl = updatedBlobUrls[i];
-    updatedModel = updatedModel.replaceAll(blobUrl, updatedBlobUrl);
+    updatedModel = updatedModel.replaceAll(getBlobUrlSearchRegex(blobUrl), updatedBlobUrl);
   }
   return updatedModel;
 };
