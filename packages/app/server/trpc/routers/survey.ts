@@ -14,11 +14,12 @@ import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { dayjs } from "#shared/services/dayjs";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
+import { extractBlobUrls } from "#shared/services/surveyer/extractBlobUrls";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { useUpload } from "@@/server/composables/azure/useUpload";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
-import { cloneDirectory } from "@@/server/services/azure/container/cloneDirectory";
+import { cloneBlobUrls } from "@@/server/services/azure/container/cloneBlobUrls";
 import { deleteDirectory } from "@@/server/services/azure/container/deleteDirectory";
 import { generateDownloadFileSasUrls } from "@@/server/services/azure/container/generateDownloadFileSasUrls";
 import { generateUploadFileSasEntities } from "@@/server/services/azure/container/generateUploadFileSasEntities";
@@ -197,9 +198,12 @@ export const surveyRouter = router({
         });
 
       const containerClient = await useContainerClient(AzureContainer.SurveyerAssets);
-      // We make sure to clean up all files that aren't used by the survey
-      // so we can simply just clone all the files in the root directory to the publish directory
-      await cloneDirectory(containerClient, id, getVersionPath(rest.publishVersion, `${id}/${PUBLISH_DIRECTORY_PATH}`));
+      const blobUrls = extractBlobUrls(updatedSurvey.model);
+      await cloneBlobUrls(
+        containerClient,
+        blobUrls,
+        getVersionPath(rest.publishVersion, `${id}/${PUBLISH_DIRECTORY_PATH}`),
+      );
       return updatedSurvey;
     }),
   readSurvey: getCreatorProcedure(readSurveyInputSchema, "id")
