@@ -20,12 +20,12 @@ export const useUpdateBlobUrls = async (survey: Survey, isPublish?: true) => {
     const publishDirectory = getPublishDirectory(survey);
 
     for (const blobUrl of blobUrls) {
-      const blobName = `${publishDirectory}/${blobUrl.substring(`${containerClient.url}/${survey.id}/`.length)}`;
+      const blobName = `${publishDirectory}/${decodeURIComponent(blobUrl.substring(`${containerClient.url}/${survey.id}/`.length, blobUrl.indexOf("?")))}`;
       blobNames.push(blobName);
     }
   } else
     for (const blobUrl of blobUrls) {
-      const blobName = blobUrl.substring(`${containerClient.url}/`.length);
+      const blobName = decodeURIComponent(blobUrl.substring(`${containerClient.url}/`.length, blobUrl.indexOf("?")));
       blobNames.push(blobName);
     }
 

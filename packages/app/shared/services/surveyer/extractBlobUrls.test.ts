@@ -65,7 +65,7 @@ describe("extractBlobUrls", () => {
   test("should extract URLs correctly when they have query parameters (SAS tokens, etc.)", () => {
     expect.hasAssertions();
 
-    expect(extractBlobUrls(`${MOCK_BLOB_URL}?`)).toStrictEqual([MOCK_BLOB_URL]);
+    expect(extractBlobUrls(`${MOCK_BLOB_URL}?`)).toStrictEqual([`${MOCK_BLOB_URL}?`]);
   });
 
   test("should not extract URLs from a different container", () => {
