@@ -1,8 +1,5 @@
-import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
+import { BLOB_URL_SEARCH_REGEX } from "#shared/services/surveyer/constants";
 
-export const extractBlobUrls = (model: string): string[] => {
-  const blobUrlPrefix = `${process.env.AZURE_BLOB_URL}/${AzureContainer.SurveyerAssets}`;
-  return [
-    ...new Set(Array.from(model.matchAll(new RegExp(`${blobUrlPrefix}[^\\]*`, "g"))).map(([blobUrl]) => blobUrl)),
-  ];
-};
+export const extractBlobUrls = (model: string): string[] => [
+  ...new Set(Array.from(model.matchAll(BLOB_URL_SEARCH_REGEX)).map(([blobUrl]) => blobUrl)),
+];
