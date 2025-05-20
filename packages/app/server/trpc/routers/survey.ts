@@ -23,13 +23,13 @@ import { cloneBlobUrls } from "@@/server/services/azure/container/cloneBlobUrls"
 import { deleteDirectory } from "@@/server/services/azure/container/deleteDirectory";
 import { generateDownloadFileSasUrls } from "@@/server/services/azure/container/generateDownloadFileSasUrls";
 import { generateUploadFileSasEntities } from "@@/server/services/azure/container/generateUploadFileSasEntities";
-import { getVersionPath } from "@@/server/services/azure/container/getVersionPath";
 import { createEntity } from "@@/server/services/azure/table/createEntity";
 import { getEntity } from "@@/server/services/azure/table/getEntity";
 import { updateEntity } from "@@/server/services/azure/table/updateEntity";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
-import { PUBLISH_DIRECTORY_PATH, SURVEY_MODEL_FILENAME } from "@@/server/services/surveyer/constants";
+import { SURVEY_MODEL_FILENAME } from "@@/server/services/surveyer/constants";
+import { getPublishDirectory } from "@@/server/services/surveyer/getPublishDirectory";
 import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { rateLimitedProcedure } from "@@/server/trpc/procedure/rateLimitedProcedure";
@@ -179,16 +179,13 @@ export const surveyRouter = router({
 
       const containerClient = await useContainerClient(AzureContainer.SurveyerAssets);
       const blobUrls = extractBlobUrls(updatedSurvey.model);
-      await cloneBlobUrls(
-        containerClient,
-        blobUrls,
-        getVersionPath(rest.publishVersion, `${id}/${PUBLISH_DIRECTORY_PATH}`),
-      );
+      const publishDirectory = getPublishDirectory(updatedSurvey);
+      await cloneBlobUrls(containerClient, blobUrls, publishDirectory);
       return updatedSurvey;
     }),
   readSurvey: getCreatorProcedure(readSurveyInputSchema, "id")
     .input(readSurveyInputSchema)
-    .query(({ ctx }) => ({ ...ctx.survey, model: useUpdateBlobUrls(ctx.survey.model) })),
+    .query(async ({ ctx }) => ({ ...ctx.survey, model: await useUpdateBlobUrls(ctx.survey) })),
   readSurveyModel: rateLimitedProcedure.input(readSurveyModelInputSchema).query<string>(async ({ ctx, input }) => {
     const survey = await ctx.db.query.surveys.findFirst({ where: (surveys, { eq }) => eq(surveys.id, input) });
     if (!survey)
@@ -196,7 +193,7 @@ export const surveyRouter = router({
         code: "NOT_FOUND",
         message: new NotFoundError(DatabaseEntityType.Survey, input).message,
       });
-    return useUpdateBlobUrls(survey.model);
+    return useUpdateBlobUrls(survey, true);
   }),
   readSurveyResponse: rateLimitedProcedure
     .input(readSurveyResponseInputSchema)
