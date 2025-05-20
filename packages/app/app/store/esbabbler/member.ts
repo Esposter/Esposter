@@ -1,5 +1,6 @@
 import type { User } from "#shared/db/schema/users";
 
+import { EN_US_COMPARATOR } from "@/services/shared/constants";
 import { createCursorPaginationDataMap } from "@/services/shared/pagination/cursor/createCursorPaginationDataMap";
 import { useEsbabblerStore } from "@/store/esbabbler";
 import { useRoomStore } from "@/store/esbabbler/room";
@@ -16,7 +17,7 @@ export const useMemberStore = defineStore("esbabbler/member", () => {
       if (!user) continue;
       members.push(user);
     }
-    return members.toSorted((a, b) => a.name.localeCompare(b.name));
+    return members.toSorted((a, b) => EN_US_COMPARATOR.compare(a.name, b.name));
   });
   return {
     members,
