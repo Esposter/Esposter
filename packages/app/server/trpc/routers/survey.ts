@@ -19,6 +19,7 @@ import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { useUpload } from "@@/server/composables/azure/useUpload";
 import { useUpdateBlobUrls } from "@@/server/composables/surveyer/useUpdateBlobUrls";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
+import { cloneBlobUrls } from "@@/server/services/azure/container/cloneBlobUrls";
 import { deleteDirectory } from "@@/server/services/azure/container/deleteDirectory";
 import { generateDownloadFileSasUrls } from "@@/server/services/azure/container/generateDownloadFileSasUrls";
 import { generateUploadFileSasEntities } from "@@/server/services/azure/container/generateUploadFileSasEntities";
@@ -36,8 +37,7 @@ import { getCreatorProcedure } from "@@/server/trpc/procedure/survey/getCreatorP
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, count, desc, eq } from "drizzle-orm";
-import { z } from "zod/v4";
-import { cloneBlobUrls } from "~~/server/services/azure/container/cloneBlobUrls";
+import { z } from "zod";
 
 const readSurveyInputSchema = z.object({ id: selectSurveySchema.shape.id });
 export type ReadSurveyInput = z.infer<typeof readSurveyInputSchema>;
