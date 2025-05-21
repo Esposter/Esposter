@@ -147,8 +147,8 @@ catalog:
   prettier: ^3.5.3
   rate-limiter-flexible: ^7.1.1
   rolldown: ^1.0.0-beta.9
-  rolldown-plugin-dts: ^0.13.3
-  rolldown-vite: ^6.3.11
+  rolldown-plugin-dts: ^0.13.4
+  rolldown-vite: ^6.3.12
   rxjs: ^7.8.2
   sass-embedded: ^1.89.0
   sax: ^1.4.1
@@ -183,13 +183,13 @@ catalog:
   vue-tsc: ^2.2.10
   vue-waypoint: ^4.3.0
   vue3-apexcharts: ^1.8.0
-  vuetify: ^3.8.5
+  vuetify: ^3.8.6
   vuetify-nuxt-module: ^0.18.6
   vuetify-sonner: ^0.3.21
   worker-timers: ^8.0.21
   ws: ^8.18.2
   xmlbuilder2: ^3.1.1
-  zod: ^3.25.8
+  zod: ^3.25.13
   zod-to-json-schema: ^3.24.5
 overrides:
   pdfjs-dist: ^5.2.133
