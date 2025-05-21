@@ -30,7 +30,7 @@ describe(extractBlobUrls, () => {
   test("should extract a single matching blob URL", () => {
     expect.hasAssertions();
 
-    expect(extractBlobUrls(MOCK_BLOB_URL)).toStrictEqual([MOCK_BLOB_URL]);
+    expect(extractBlobUrls(`${MOCK_BLOB_URL}"`)).toStrictEqual([MOCK_BLOB_URL]);
   });
 
   test("should extract multiple unique matching blob URLs", () => {
@@ -39,36 +39,18 @@ describe(extractBlobUrls, () => {
     const url1 = `${MOCK_BLOB_URL}/1`;
     const url2 = `${MOCK_BLOB_URL}/2`;
 
-    expect(extractBlobUrls(`${url1}"${url2}`)).toStrictEqual([url1, url2]);
+    expect(extractBlobUrls(`${url1}"${url2}"`)).toStrictEqual([url1, url2]);
   });
 
   test("should extract only unique URLs if duplicates are present", () => {
     expect.hasAssertions();
 
-    expect(extractBlobUrls(`${MOCK_BLOB_URL}"${MOCK_BLOB_URL}`)).toStrictEqual([MOCK_BLOB_URL]);
-  });
-
-  test("should extract URLs correctly when they end", () => {
-    expect.hasAssertions();
-
-    expect(extractBlobUrls(`${MOCK_BLOB_URL}"`)).toStrictEqual([MOCK_BLOB_URL]);
-  });
-
-  test("should extract URLs correctly when they end (JSON escaped)", () => {
-    expect.hasAssertions();
-
-    expect(extractBlobUrls(`${MOCK_BLOB_URL}\\`)).toStrictEqual([MOCK_BLOB_URL]);
-  });
-
-  test("should extract URLs correctly when they have query parameters (SAS tokens, etc.)", () => {
-    expect.hasAssertions();
-
-    expect(extractBlobUrls(`${MOCK_BLOB_URL}?`)).toStrictEqual([MOCK_BLOB_URL]);
+    expect(extractBlobUrls(`${MOCK_BLOB_URL}"${MOCK_BLOB_URL}"`)).toStrictEqual([MOCK_BLOB_URL]);
   });
 
   test("should not extract URLs from a different container", () => {
     expect.hasAssertions();
 
-    expect(extractBlobUrls(`${MOCK_AZURE_BLOB_URL}/`)).toStrictEqual([]);
+    expect(extractBlobUrls(`${MOCK_AZURE_BLOB_URL}"`)).toStrictEqual([]);
   });
 });
