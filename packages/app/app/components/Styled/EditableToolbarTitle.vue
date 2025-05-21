@@ -10,43 +10,49 @@ defineSlots<{ default?: (props: Record<string, never>) => unknown }>();
 const { initialValue } = defineProps<EditableToolbarTitleProps>();
 const emit = defineEmits<{ update: [value: string, onComplete: () => void] }>();
 const editedValue = ref(initialValue);
+const form = useTemplateRef("form");
+const isValid = ref(true);
 const isUpdateMode = ref(false);
-const title = useTemplateRef("title");
 const titleHovered = ref(false);
 const { text } = useColors();
 const borderColor = computed(() => (!isUpdateMode.value && titleHovered.value ? text.value : "transparent"));
 const onUpdate = () => {
-  emit("update", editedValue.value, () => {
+  if (!isValid.value) {
     isUpdateMode.value = false;
     editedValue.value = initialValue;
+    return;
+  }
+
+  emit("update", editedValue.value, () => {
+    isUpdateMode.value = false;
   });
 };
 
-onClickOutside(title, () => {
+onClickOutside(form, () => {
   if (!isUpdateMode.value) return;
   onUpdate();
 });
 </script>
 
 <template>
-  <div ref="title" flex items-center :w="isUpdateMode ? 'full' : undefined">
+  <div flex items-center :py-2="isUpdateMode ? '' : undefined" :w-full="isUpdateMode ? '' : undefined">
     <template v-if="isUpdateMode">
-      <v-text-field
-        v-model="editedValue"
-        density="compact"
-        font-bold
-        hide-details
-        autofocus
-        text-xl
-        :rules="[
-          formRules.required,
-          formRules.requireAtMostNCharacters(ROOM_NAME_MAX_LENGTH),
-          formRules.isNotEqual(initialValue),
-          formRules.isNotProfanity,
-        ]"
-        @keydown.enter="onUpdate"
-        @keydown.esc="isUpdateMode = false"
-      />
+      <v-form ref="form" v-model="isValid" flex-1 @submit.prevent="onUpdate">
+        <v-text-field
+          v-model="editedValue"
+          density="compact"
+          font-bold
+          autofocus
+          text-xl
+          :rules="[
+            formRules.required,
+            formRules.requireAtMostNCharacters(ROOM_NAME_MAX_LENGTH),
+            formRules.isNotEqual(initialValue),
+            formRules.isNotProfanity,
+          ]"
+          @keydown.esc="isUpdateMode = false"
+        />
+      </v-form>
     </template>
     <v-toolbar-title
       v-else
