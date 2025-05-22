@@ -542,7 +542,7 @@ catalogs:
       version: 3.1.1
     zod:
       specifier: ^3.25.20
-      version: 3.25.20
+      version: 3.25.22
     zod-to-json-schema:
       specifier: ^3.24.5
       version: 3.24.5
@@ -761,7 +761,7 @@ importers:
         version: 0.43.1(@electric-sql/pglite@0.3.2)(kysely@0.28.2)(postgres@3.4.7)
       drizzle-zod:
         specifier: 'catalog:'
-        version: 0.7.1(drizzle-orm@0.43.1(@electric-sql/pglite@0.3.2)(kysely@0.28.2)(postgres@3.4.7))(zod@3.25.20)
+        version: 0.7.1(drizzle-orm@0.43.1(@electric-sql/pglite@0.3.2)(kysely@0.28.2)(postgres@3.4.7))(zod@3.25.22)
       emoji-mart-vue-fast:
         specifier: 'catalog:'
         version: 15.0.4(vue@3.5.14(typescript@5.8.3))
@@ -962,10 +962,10 @@ importers:
         version: 8.18.2
       zod:
         specifier: 'catalog:'
-        version: 3.25.20
+        version: 3.25.22
       zod-to-json-schema:
         specifier: 'catalog:'
-        version: 3.24.5(zod@3.25.20)
+        version: 3.24.5(zod@3.25.22)
     devDependencies:
       '@nuxt/eslint':
         specifier: 'catalog:'
@@ -6316,8 +6316,8 @@ packages:
     engines: {node: '>=0.10.0'}
     hasBin: true
 
-  electron-to-chromium@1.5.155:
-    resolution: {integrity: sha512-ps5KcGGmwL8VaeJlvlDlu4fORQpv3+GIcF5I3f9tUKUlJ/wsysh6HU8P5L1XWRYeXfA0oJd4PyM8ds8zTFf6Ng==}
+  electron-to-chromium@1.5.156:
+    resolution: {integrity: sha512-QeOqv11TSASsY/3Ft3LUyDqEiEOph5/85srEPFUo9wuGFNTb0/z5fGE/+ZzTrYvSTGoXNkdQLTw3MKRmgyOyGA==}
 
   emoji-mart-vue-fast@15.0.4:
     resolution: {integrity: sha512-OjuxqoMJRTTG7Vevz0mR1ZnqY1DI8gGnmoskuuC8qL8VwwTjrGdwAO4WRWtAUN8P6Di7kxvY6cUgNETNFmbP4A==}
@@ -11302,8 +11302,8 @@ packages:
     peerDependencies:
       zod: ^3.24.1
 
-  zod@3.25.20:
-    resolution: {integrity: sha512-z03fqpTMDF1G02VLKUMt6vyACE7rNWkh3gpXVHgPTw28NPtDFRGvcpTtPwn2kMKtQ0idtYJUTxchytmnqYswcw==}
+  zod@3.25.22:
+    resolution: {integrity: sha512-RJcat0cZeUQYkl1PqHRP2YJ1muB9+qsJ7qQKHUE4CgChMZNtdWFNZON22Wk21XsL3FXsmjYsxD9YEVmqE/Kjmg==}
 
 snapshots:
 
@@ -13465,7 +13465,7 @@ snapshots:
       unixify: 1.0.0
       urlpattern-polyfill: 8.0.2
       yargs: 17.7.2
-      zod: 3.25.20
+      zod: 3.25.22
     transitivePeerDependencies:
       - encoding
       - rollup
@@ -16500,7 +16500,7 @@ snapshots:
       jose: 5.10.0
       kysely: 0.28.2
       nanostores: 0.11.4
-      zod: 3.25.20
+      zod: 3.25.22
 
   better-call@1.0.9:
     dependencies:
@@ -16562,7 +16562,7 @@ snapshots:
   browserslist@4.24.5:
     dependencies:
       caniuse-lite: 1.0.30001718
-      electron-to-chromium: 1.5.155
+      electron-to-chromium: 1.5.156
       node-releases: 2.0.19
       update-browserslist-db: 1.1.3(browserslist@4.24.5)
 
@@ -17532,10 +17532,10 @@ snapshots:
       kysely: 0.28.2
       postgres: 3.4.7
 
-  drizzle-zod@0.7.1(drizzle-orm@0.43.1(@electric-sql/pglite@0.3.2)(kysely@0.28.2)(postgres@3.4.7))(zod@3.25.20):
+  drizzle-zod@0.7.1(drizzle-orm@0.43.1(@electric-sql/pglite@0.3.2)(kysely@0.28.2)(postgres@3.4.7))(zod@3.25.22):
     dependencies:
       drizzle-orm: 0.43.1(@electric-sql/pglite@0.3.2)(kysely@0.28.2)(postgres@3.4.7)
-      zod: 3.25.20
+      zod: 3.25.22
 
   dts-resolver@2.0.1: {}
 
@@ -17564,7 +17564,7 @@ snapshots:
     dependencies:
       jake: 10.9.2
 
-  electron-to-chromium@1.5.155: {}
+  electron-to-chromium@1.5.156: {}
 
   emoji-mart-vue-fast@15.0.4(vue@3.5.14(typescript@5.8.3)):
     dependencies:
@@ -23385,8 +23385,8 @@ snapshots:
       compress-commons: 6.0.2
       readable-stream: 4.7.0
 
-  zod-to-json-schema@3.24.5(zod@3.25.20):
+  zod-to-json-schema@3.24.5(zod@3.25.22):
     dependencies:
-      zod: 3.25.20
+      zod: 3.25.22
 
-  zod@3.25.20: {}
+  zod@3.25.22: {}
