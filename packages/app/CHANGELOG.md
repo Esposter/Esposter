@@ -3,22 +3,86 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.4.0](https://github.com/Esposter/Esposter/compare/v2.3.0...v2.4.0) (2025-05-23)
+
+### Bug Fixes
+
+* add back generate survey model sas url + add uploading files ([0367e45](https://github.com/Esposter/Esposter/commit/0367e45765c8a56dd765cf58740128b12c1dc2f3))
+* add callbacks and validation not to save the same model ([86cbc13](https://github.com/Esposter/Esposter/commit/86cbc13111126ee015f87e9fe07ac84975842e4e))
+* Add more delete file events ([f7926f5](https://github.com/Esposter/Esposter/commit/f7926f5def34d5e6894794c146b80274f95c4754))
+* add question image model delete file ([6f7da33](https://github.com/Esposter/Esposter/commit/6f7da33b6543cd5237534929dc7cc072d4df46a4))
+* calling correct containers + endpoints ([0f931cd](https://github.com/Esposter/Esposter/commit/0f931cd9b6a1a431ae15b74bc8ada0ee0889ad0b))
+* decrement total items length ([b8f559a](https://github.com/Esposter/Esposter/commit/b8f559ae151c9626b3439188e21f0bb58a4f049a))
+* don't do weird processing for now ([87d8593](https://github.com/Esposter/Esposter/commit/87d85938f5b7140760694a7d7c7e78e1d9f2ebde))
+* don't serialize dates ([23192b3](https://github.com/Esposter/Esposter/commit/23192b35a9af62d80ffc0f2df3e09bda0f6ef52f))
+* endpoint names ([51bc634](https://github.com/Esposter/Esposter/commit/51bc6348ad476fc792ee0f9232daf4cd74e9bcf1))
+* escape regexp ([afa3c65](https://github.com/Esposter/Esposter/commit/afa3c653e4a5930a08120fb6414087f14f8a181c))
+* get blob name ([80e0080](https://github.com/Esposter/Esposter/commit/80e00805fd5314294e42d1084b854127950cd339))
+* imports ([4423f0d](https://github.com/Esposter/Esposter/commit/4423f0d36a4268926103c92b93e7f9397b3908c3))
+* inline snapshots ([1a6f590](https://github.com/Esposter/Esposter/commit/1a6f590eb60ffddab7390ef0faec138cd8fdfc5a))
+* lint ([2a5f055](https://github.com/Esposter/Esposter/commit/2a5f055786a57764285af5d5b6bddc938cd81692))
+* make blob urls unique ([452f699](https://github.com/Esposter/Esposter/commit/452f6999a37879c00e38bf27c7d462471d18a0e0))
+* make schemas consistent ([999bb39](https://github.com/Esposter/Esposter/commit/999bb390c801e0b3ad970632511da83fc0a462d4))
+* make tests todo until we can someday mock azure storage :c ([2753b21](https://github.com/Esposter/Esposter/commit/2753b2194323d664d2cfedd03f2a5ec6106d412e))
+* not calling await on promises ([0c2ad2b](https://github.com/Esposter/Esposter/commit/0c2ad2b2bd565f8c3a0beabfa8faa2b91f0cc0dc))
+* publish survey ([d2d073d](https://github.com/Esposter/Esposter/commit/d2d073d620acf2f1c06c000d0762854f3e6302d7))
+* reading survey ([b08254f](https://github.com/Esposter/Esposter/commit/b08254f2de4e8c6d21c74df5a16a9d122ec4fe8e))
+* remove file ids ([20cfced](https://github.com/Esposter/Esposter/commit/20cfced944f599ab9a9ad1d8fd3f8b6c43b5bc83))
+* styles and updates for toolbar title ([c6cda63](https://github.com/Esposter/Esposter/commit/c6cda6316f4c783c00d9fb9ee1fc563466e995bf))
+* switch to only cloning proper blob urls ([37a7df8](https://github.com/Esposter/Esposter/commit/37a7df80e7e188b295d902fc549b8a75a6098ed4))
+* tests ([0781e45](https://github.com/Esposter/Esposter/commit/0781e4570a668825d793ca7045d3b7c7bb2b6011))
+* tests ([83073d7](https://github.com/Esposter/Esposter/commit/83073d7a8113a37fab4b6c54eb3456f392b28022))
+* try updating the blob url regex ([c65fe12](https://github.com/Esposter/Esposter/commit/c65fe12fecb869aad5371a68dae61891397e1b85))
+* type ([ca04433](https://github.com/Esposter/Esposter/commit/ca04433ea8dad4c4a47017f3e7da3e33a0d63bb5))
+* type ([3ba7203](https://github.com/Esposter/Esposter/commit/3ba72033facc92ad0e89f9248f4d6e09ea837264))
+* type ([c6613dc](https://github.com/Esposter/Esposter/commit/c6613dc7696d196b607c7870b171ab575074e717))
+* unnecessary map ([c9a05e2](https://github.com/Esposter/Esposter/commit/c9a05e2ca6a66f681bc08a4ba76838a9bd239464))
+* update blob urls when reading survey and model ([889a0a9](https://github.com/Esposter/Esposter/commit/889a0a92286ba723c328f88b809b0ad83d231fa9))
+* updating survey ([2356661](https://github.com/Esposter/Esposter/commit/235666128bcd2a9a06eaa18152cf7274d25f2459))
+* use $fetch ([8ac5691](https://github.com/Esposter/Esposter/commit/8ac5691f8fd7c060fd0cc8e2c3cddefd515ec421))
+
+### Features
+
+* Add cleaning up file ([edcd4a5](https://github.com/Esposter/Esposter/commit/edcd4a5e38dd42cad1ba7b9f4ddb0dc4d9357c82))
+* Add clone directory ([76487d8](https://github.com/Esposter/Esposter/commit/76487d839a68909705dda51e52036595a565e7cc))
+* Add create and update survey response endpoints ([1c13668](https://github.com/Esposter/Esposter/commit/1c1366865847c5f83cdb6937dad547d9e4737baa))
+* Add creating survey response ([dc70787](https://github.com/Esposter/Esposter/commit/dc70787c1822c879120af07526d58ca16cbdaa36))
+* Add custom toolbar buttons ([c47885f](https://github.com/Esposter/Esposter/commit/c47885fdc11dbea92fac9e5e81f25e26f39f0e94))
+* Add deleting directory deep/non-deep ([3249585](https://github.com/Esposter/Esposter/commit/32495850b233f9498e723d039b388e87999d8934))
+* Add download survey ([1f6f7e6](https://github.com/Esposter/Esposter/commit/1f6f7e61ad1e64507982b89874e61278ddef2ff5))
+* Add generate survey model sas url endpoint ([3d22573](https://github.com/Esposter/Esposter/commit/3d2257354dcdfb96bedc332475d86f17e08deb45))
+* Add loading survey response from local storage ([e0acc0f](https://github.com/Esposter/Esposter/commit/e0acc0fb70cebab6953f825d89c5fa8f65a24892))
+* Add upload survey ([6ce2131](https://github.com/Esposter/Esposter/commit/6ce2131c642755e5bf16b54cda5269fdafc0a4f6))
+* grab published survey blob instead ([8a80dbc](https://github.com/Esposter/Esposter/commit/8a80dbc61e9761486b87141e88ae6c1e6ba3112a))
+* **test:** Add like wrong user tests ([78ed386](https://github.com/Esposter/Esposter/commit/78ed386d7623356e64f9f9b3b637f5521be66bb0))
+* **test:** Add post with wrong user tests ([a076198](https://github.com/Esposter/Esposter/commit/a07619862c96645845f02340fdf591a38fe8f992))
+* **test:** Add room with wrong user tests ([21ac2ee](https://github.com/Esposter/Esposter/commit/21ac2ee6e7602897ba61cc4fc3a5ba1b63951bfc))
+* **test:** Add survey wrong user tests, but todo for now ([90b1cd6](https://github.com/Esposter/Esposter/commit/90b1cd6f342b5290bac617edcef59940f200069a))
+
 # [2.3.0](https://github.com/Esposter/Esposter/compare/v2.2.1...v2.3.0) (2025-05-16)
 
 ### Bug Fixes
 
 * add files ([657132f](https://github.com/Esposter/Esposter/commit/657132f5b55d525d14dd97b63edf55c38b135f5f))
+
 * include trailing slash ([d7e5db8](https://github.com/Esposter/Esposter/commit/d7e5db8cc3efaf086f947b57c39294aab59f0739))
+
 * make all user avatars use styled component ([6f757ad](https://github.com/Esposter/Esposter/commit/6f757adde873440b846ac60816b830790f374ba5))
+
 * tidy up import types and css ([c4395a0](https://github.com/Esposter/Esposter/commit/c4395a07eb1916ad4a44992eb2b5e7c21741a114))
 
 ### Features
 
 * Add cmaps ([53bb18d](https://github.com/Esposter/Esposter/commit/53bb18d4a5cfd8cff4e353a5c92fa6f6c80ca0ca))
+
 * Add dividers to segment message actions ([574c8e9](https://github.com/Esposter/Esposter/commit/574c8e912bf3dec7b2c06bbcc489fb1c1e4aea53))
+
 * Add emoji shortcuts ([4951e55](https://github.com/Esposter/Esposter/commit/4951e5569a49a4f9be28ad8597d6a036a19c09d8))
+
 * Add insane reaction menu with fallback ([1b27930](https://github.com/Esposter/Esposter/commit/1b279306b1d5e4a5cc10c69d9a10f182abc1f052))
+
 * add shortcut reactions to menu + make gap classes more succinct ([0257bed](https://github.com/Esposter/Esposter/commit/0257bed729c64c06576ba665dc445c677e08d16c))
+
 * Make emoji operations optimistic ([b48efff](https://github.com/Esposter/Esposter/commit/b48efff49c20f295038ea736c0dec2965b6e0f6c))
 
 ## [2.2.1](https://github.com/Esposter/Esposter/compare/v2.2.0...v2.2.1) (2025-05-14)
