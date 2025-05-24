@@ -6,7 +6,7 @@ const survey = defineModel<Survey>({ required: true });
 </script>
 
 <template>
-  <v-toolbar class="border-b-sm" color="surface">
+  <v-toolbar class="border-b-sm" color="surface" density="comfortable">
     <StyledEditableToolbarTitle
       px-4
       :initial-value="survey.name"
@@ -27,3 +27,10 @@ const survey = defineModel<Survey>({ required: true });
     </StyledEditableToolbarTitle>
   </v-toolbar>
 </template>
+
+<style scoped lang="scss">
+:deep(.v-toolbar__content) {
+  min-height: $app-bar-height;
+  height: auto !important;
+}
+</style>

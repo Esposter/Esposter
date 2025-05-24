@@ -30,7 +30,7 @@ const { tilemapKey } = storeToRefs(worldSceneStore);
 const worldDialogStore = useWorldDialogStore();
 const { showMessages } = worldDialogStore;
 const sceneKey = useInjectSceneKey();
-// We only care about the starting frame, so we don't want this to be reactive
+// We only care about the starting frame, so we don't want this to be computed and have it be manually changed as required
 const frame = ref(PlayerWalkingAnimationMapping[playerWalkingDirection.value].standing);
 
 onCreate(

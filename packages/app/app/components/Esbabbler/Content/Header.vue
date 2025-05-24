@@ -10,10 +10,9 @@ const { currentRoomId, currentRoomName } = storeToRefs(roomStore);
 </script>
 
 <template>
-  <v-toolbar :pl="leftDrawerOpenAuto ? '4' : undefined" b-none density="comfortable">
+  <v-toolbar :style="{ paddingLeft: leftDrawerOpenAuto ? '1rem' : undefined }" b-none density="comfortable">
     <EsbabblerContentShowRoomListButton />
     <StyledEditableToolbarTitle
-      px-1
       :initial-value="currentRoomName"
       @update="
         async (value, onComplete) => {
@@ -32,3 +31,10 @@ const { currentRoomId, currentRoomName } = storeToRefs(roomStore);
     </template>
   </v-toolbar>
 </template>
+
+<style scoped lang="scss">
+:deep(.v-toolbar__content) {
+  min-height: $app-bar-height;
+  height: auto !important;
+}
+</style>

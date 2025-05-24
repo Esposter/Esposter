@@ -17,13 +17,13 @@ catalog:
   "@codemirror/state": ^6.5.2
   "@codemirror/theme-one-dark": ^6.1.2
   "@codemirror/view": ^6.36.8
-  "@electric-sql/pglite": ^0.3.1
+  "@electric-sql/pglite": ^0.3.2
   "@fullcalendar/core": ^6.1.17
   "@fullcalendar/daygrid": ^6.1.17
   "@fullcalendar/interaction": ^6.1.17
   "@fullcalendar/timegrid": ^6.1.17
   "@fullcalendar/vue3": ^6.1.17
-  "@koumoul/vjsf": ^3.15.1
+  "@koumoul/vjsf": ^3.15.2
   "@lerna-lite/cli": ^4.1.2
   "@lerna-lite/publish": ^4.1.2
   "@lerna-lite/run": ^4.1.2
@@ -64,7 +64,7 @@ catalog:
   "@vite-pwa/nuxt": ^1.0.1
   "@vitejs/plugin-vue": ^5.2.4
   "@vitest/coverage-v8": ^3.1.4
-  "@vitest/eslint-plugin": ^1.2.0
+  "@vitest/eslint-plugin": ^1.2.1
   "@vue-flow/background": ^1.3.2
   "@vue-flow/controls": ^1.1.2
   "@vue-flow/core": ^1.44.0
@@ -80,7 +80,7 @@ catalog:
   ajv-formats: ^3.0.1
   ajv-i18n: ^4.2.0
   apexcharts: ^4.7.0
-  better-auth: 1.1.21
+  better-auth: ^1.2.8
   codemirror: ^6.0.1
   ctix: ^2.7.1
   data-urls: ^5.0.0
@@ -91,7 +91,7 @@ catalog:
   dotenv: ^16.5.0
   drizzle-kit: ^0.31.1
   drizzle-orm: ^0.43.1
-  drizzle-zod: ^0.8.1
+  drizzle-zod: ^0.8.2
   emoji-mart-vue-fast: ^15.0.4
   eslint: ^9.27.0
   eslint-config-prettier: ^10.1.5
@@ -138,16 +138,16 @@ catalog:
   p-progress: ^1.0.0
   pathe: ^2.0.3
   pdfjs-dist: ^5.2.133
-  phaser: ^3.88.2
+  phaser: ^3.90.0
   phaser3-rex-plugins: ^1.80.15
   pinia: ^3.0.2
   pluralize: ^8.0.0
-  postgres: ^3.4.6
+  postgres: ^3.4.7
   prettier: ^3.5.3
   rate-limiter-flexible: ^7.1.1
   rolldown: ^1.0.0-beta.9
-  rolldown-plugin-dts: ^0.13.3
-  rolldown-vite: ^6.3.11
+  rolldown-plugin-dts: ^0.13.4
+  rolldown-vite: ^6.3.12
   rxjs: ^7.8.2
   sass-embedded: ^1.89.0
   sax: ^1.4.1
@@ -182,12 +182,12 @@ catalog:
   vue-tsc: ^2.2.10
   vue-waypoint: ^4.3.0
   vue3-apexcharts: ^1.8.0
-  vuetify: ^3.8.5
+  vuetify: ^3.8.6
   vuetify-nuxt-module: ^0.18.6
   vuetify-sonner: ^0.3.21
   worker-timers: ^8.0.21
   ws: ^8.18.2
   xmlbuilder2: ^3.1.1
-  zod: ^3.25.8
+  zod: ^3.25.28
 overrides:
   pdfjs-dist: ^5.2.133
