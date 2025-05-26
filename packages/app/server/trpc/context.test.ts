@@ -103,7 +103,7 @@ const createMockDb = async () => {
   const { apply } = await pushSchema(schema, db as never);
   await apply();
   await db.insert(users).values(mocks.getSession().user);
-  return db;
+  return db as unknown as Context["db"];
 };
 
 describe.todo("context");
