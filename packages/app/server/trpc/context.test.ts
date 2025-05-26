@@ -101,9 +101,9 @@ const createMockDb = async () => {
   const { apply } = await pushSchema(schema, db as never);
   await apply();
   await db.insert(users).values(mocks.getSession().user);
-  // It is fine to use pglite here as a mock for the postgresjs db
-  // as they support the same API
-  return db as unknown as Context["db"];
+  // Use in-memory pglite db which supports the same API
+  // as a mock for the postgresjs db
+  return db;
 };
 
 describe.todo("context");
