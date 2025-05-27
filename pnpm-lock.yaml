@@ -193,8 +193,8 @@ catalogs:
       specifier: ^1.4.0
       version: 1.4.0
     '@vue-pdf-viewer/viewer':
-      specifier: ^2.5.2
-      version: 2.5.2
+      specifier: ^2.5.3
+      version: 2.5.3
     '@vue/test-utils':
       specifier: ^2.4.6
       version: 2.4.6
@@ -719,7 +719,7 @@ importers:
         version: 1.4.0(@vue-flow/core@1.44.0(vue@3.5.14(typescript@5.8.3)))(vue@3.5.14(typescript@5.8.3))
       '@vue-pdf-viewer/viewer':
         specifier: 'catalog:'
-        version: 2.5.2(pdfjs-dist@5.2.133)(typescript@5.8.3)(vite@6.3.5(@types/node@22.15.21)(jiti@2.4.2)(lightningcss@1.30.1)(sass-embedded@1.89.0)(terser@5.39.2)(tsx@4.19.4)(yaml@2.8.0))(vue@3.5.14(typescript@5.8.3))
+        version: 2.5.3(pdfjs-dist@5.2.133)(typescript@5.8.3)(vite@6.3.5(@types/node@22.15.21)(jiti@2.4.2)(lightningcss@1.30.1)(sass-embedded@1.89.0)(terser@5.39.2)(tsx@4.19.4)(yaml@2.8.0))(vue@3.5.14(typescript@5.8.3))
       '@vuepic/vue-datepicker':
         specifier: 'catalog:'
         version: 11.0.2(vue@3.5.14(typescript@5.8.3))
@@ -4658,8 +4658,8 @@ packages:
       vue:
         optional: true
 
-  '@vue-pdf-viewer/viewer@2.5.2':
-    resolution: {integrity: sha512-edigZk2E2L1FdHyvOxyDWz1HlD5rD/Qx2Iefm1H072hWjbjlL1G4i8Xs7EI8xg/Lj1gRf2NPbJPmaPwngvJyBw==}
+  '@vue-pdf-viewer/viewer@2.5.3':
+    resolution: {integrity: sha512-g1TH+YSAnBXnbFWAAF+VoXnMW5qQzMeTbW5GZ3I77thiWmWP0D0P7xLUAR9FsEuS6E+n55B6ODbfvLgfhCDqKQ==}
     engines: {bun: '>=1.0.4', node: '>=18.20.3', npm: '>=9.5.1', pnpm: '>=8.8.0', yarn: '>=1.20.0'}
     peerDependencies:
       pdfjs-dist: ^5.2.133
@@ -15532,7 +15532,7 @@ snapshots:
     optionalDependencies:
       vue: 3.5.14(typescript@5.8.3)
 
-  '@vue-pdf-viewer/viewer@2.5.2(pdfjs-dist@5.2.133)(typescript@5.8.3)(vite@6.3.5(@types/node@22.15.21)(jiti@2.4.2)(lightningcss@1.30.1)(sass-embedded@1.89.0)(terser@5.39.2)(tsx@4.19.4)(yaml@2.8.0))(vue@3.5.14(typescript@5.8.3))':
+  '@vue-pdf-viewer/viewer@2.5.3(pdfjs-dist@5.2.133)(typescript@5.8.3)(vite@6.3.5(@types/node@22.15.21)(jiti@2.4.2)(lightningcss@1.30.1)(sass-embedded@1.89.0)(terser@5.39.2)(tsx@4.19.4)(yaml@2.8.0))(vue@3.5.14(typescript@5.8.3))':
     dependencies:
       '@vueuse/core': 13.2.0(vue@3.5.14(typescript@5.8.3))
       pdfjs-dist: 5.2.133
