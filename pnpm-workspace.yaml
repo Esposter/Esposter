@@ -159,7 +159,7 @@ catalog:
   survey-creator-vue: ^2.0.10
   survey-vue3-ui: ^2.0.10
   three: ^0.176.0
-  three-globe: ^2.42.6
+  three-globe: ^2.42.7
   tippy.js: ^6.3.7
   trpc-nuxt: ^1.0.5
   tsx: ^4.19.4
