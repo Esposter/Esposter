@@ -9,7 +9,7 @@ import {
   MAILJET_BASE_URL,
   PLACEHOLD_BASE_URL,
   TUI_BASE_URL,
-  WORDPRESS_BASE_URL,
+  WORDPRESS_DESIGNSPELL_BASE_URL,
 } from "../app/services/grapesjs/constants";
 import { MAX_FILE_REQUEST_SIZE, MAX_REQUEST_SIZE } from "../shared/services/esposter/constants";
 
@@ -39,8 +39,8 @@ export const security: NuxtConfig["security"] = {
         PLACEHOLD_BASE_URL,
         // grapesjs
         TUI_BASE_URL,
-        // grapesjs,
-        WORDPRESS_BASE_URL,
+        // grapesjs
+        WORDPRESS_DESIGNSPELL_BASE_URL,
       ],
       // desmos
       "script-src": "'unsafe-eval'",

@@ -4,4 +4,4 @@ export const GRAPESJS_BASE_URL = "https://grapesjs.com";
 export const MAILJET_BASE_URL = "https://www.mailjet.com";
 export const PLACEHOLD_BASE_URL = "https://placehold.co";
 export const TUI_BASE_URL = "https://uicdn.toast.com";
-export const WORDPRESS_BASE_URL = "https://designspell.files.wordpress.com";
+export const WORDPRESS_DESIGNSPELL_BASE_URL = "https://designspell.wordpress.com";

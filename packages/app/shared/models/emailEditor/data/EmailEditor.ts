@@ -1,7 +1,7 @@
 import type { ProjectData } from "grapesjs";
 
 import { AItemEntity } from "#shared/models/entity/AItemEntity";
-import { BLOGSPOT_BASE_URL, PLACEHOLD_BASE_URL, WORDPRESS_BASE_URL } from "@/services/grapesjs/constants";
+import { BLOGSPOT_BASE_URL, PLACEHOLD_BASE_URL, WORDPRESS_DESIGNSPELL_BASE_URL } from "@/services/grapesjs/constants";
 import { html } from "@/services/prettier/html";
 import { z } from "zod";
 
@@ -44,7 +44,10 @@ export class EmailEditor extends AItemEntity implements ProjectData {
             </mj-section>
             <mj-section background-color="white">
               <mj-column>
-                <mj-image width="200px" src="${WORDPRESS_BASE_URL}/2012/01/sciolino-paris-bw.jpg"></mj-image>
+                <mj-image
+                  width="200px"
+                  src="${WORDPRESS_DESIGNSPELL_BASE_URL}/wp-content/uploads/2012/01/sciolino-paris-bw.jpg"
+                ></mj-image>
               </mj-column>
               <mj-column>
                 <mj-text font-style="italic" font-size="20px" font-family="Helvetica Neue" color="#626262">
