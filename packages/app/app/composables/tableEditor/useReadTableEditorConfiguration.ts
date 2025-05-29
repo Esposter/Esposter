@@ -9,11 +9,11 @@ export const useReadTableEditorConfiguration = async () => {
   const { tableEditorConfiguration } = storeToRefs(tableEditorStore);
   await useReadData(
     () => {
-      const tableEditorConfigurationStoreJson = localStorage.getItem(TABLE_EDITOR_LOCAL_STORAGE_KEY);
-      if (tableEditorConfigurationStoreJson)
+      const tableEditorConfigurationJson = localStorage.getItem(TABLE_EDITOR_LOCAL_STORAGE_KEY);
+      if (tableEditorConfigurationJson)
         tableEditorConfiguration.value = Object.assign(
           new TableEditorConfiguration(),
-          jsonDateParse(tableEditorConfigurationStoreJson),
+          jsonDateParse(tableEditorConfigurationJson),
         );
       else tableEditorConfiguration.value = new TableEditorConfiguration();
     },

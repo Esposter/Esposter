@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Editor } from "grapesjs";
 
+import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
+import { jsonDateParse } from "#shared/util/time/jsonDateParse";
 import { authClient } from "@/services/auth/authClient";
 import { WEBPAGE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/webpageEditor/constants";
 import { useWebpageEditorStore } from "@/store/webpageEditor";
@@ -74,11 +76,6 @@ const { trigger } = watchTriggerable(session, (newSession) => {
     selectorManager: { componentFirst: true },
     showOffsets: true,
     storageManager: {
-      options: {
-        local: {
-          key: WEBPAGE_EDITOR_LOCAL_STORAGE_KEY,
-        },
-      },
       type: newSession ? "remote" : "local",
     },
     styleManager: {
@@ -373,6 +370,15 @@ const { trigger } = watchTriggerable(session, (newSession) => {
         },
       ],
     },
+  });
+  editor.Storage.add("local", {
+    load: () => {
+      const webpageEditorJson = localStorage.getItem(WEBPAGE_EDITOR_LOCAL_STORAGE_KEY);
+      return webpageEditorJson
+        ? Object.assign(new WebpageEditor(), jsonDateParse(webpageEditorJson))
+        : new WebpageEditor();
+    },
+    store: (data) => new Promise(() => localStorage.setItem(WEBPAGE_EDITOR_LOCAL_STORAGE_KEY, JSON.stringify(data))),
   });
   editor.Storage.add("remote", {
     load: () => readWebpageEditor(),
