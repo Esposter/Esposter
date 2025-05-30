@@ -5,7 +5,7 @@ import type { ReadonlyRefOrGetter } from "@vueuse/core";
 import { getActiveChartTypeResolvers } from "@/services/dashboard/chart/getActiveChartTypeResolvers";
 import { zodToJsonSchema } from "@/services/dashboard/jsonSchema/zodToJsonSchema";
 import { getActiveVisualTypeResolvers } from "@/services/dashboard/visual/getActiveVisualTypeResolvers";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export const useSchema = (chartType: ReadonlyRefOrGetter<ChartType>, visualType: ReadonlyRefOrGetter<VisualType>) =>
   computed(() => {

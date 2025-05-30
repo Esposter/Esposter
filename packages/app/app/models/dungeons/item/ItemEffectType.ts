@@ -1,8 +1,8 @@
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export enum ItemEffectType {
   Capture = "Capture",
   Heal = "Heal",
 }
 
-export const itemEffectTypeSchema = z.nativeEnum(ItemEffectType) satisfies z.ZodType<ItemEffectType>;
+export const itemEffectTypeSchema = z.enum(ItemEffectType) satisfies z.ZodType<ItemEffectType>;

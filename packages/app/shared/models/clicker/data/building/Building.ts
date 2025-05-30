@@ -1,7 +1,7 @@
 import type { BuildingId } from "#shared/models/clicker/data/building/BuildingId";
 
 import { buildingIdSchema } from "#shared/models/clicker/data/building/BuildingId";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export interface Building {
   basePrice: number;

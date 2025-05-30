@@ -7,7 +7,7 @@ import { layoutItemSchema } from "#shared/models/dashboard/data/LayoutItem";
 import { VisualType, visualTypeSchema } from "#shared/models/dashboard/data/VisualType";
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
 import { createItemEntityTypeSchema } from "#shared/models/entity/ItemEntityType";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export class Visual extends AItemEntity implements ItemEntityType<VisualType>, LayoutItem {
   chart = new Chart();
@@ -25,7 +25,9 @@ export class Visual extends AItemEntity implements ItemEntityType<VisualType>, L
   }
 }
 
-export const visualSchema = aItemEntitySchema
-  .merge(createItemEntityTypeSchema(visualTypeSchema))
-  .merge(layoutItemSchema)
-  .merge(z.object({ chart: chartSchema })) satisfies z.ZodType<ToData<Visual>>;
+export const visualSchema = z.object({
+  ...aItemEntitySchema.shape,
+  ...createItemEntityTypeSchema(visualTypeSchema).shape,
+  ...layoutItemSchema.shape,
+  chart: chartSchema,
+}) satisfies z.ZodType<ToData<Visual>>;

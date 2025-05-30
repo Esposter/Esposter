@@ -3,14 +3,13 @@ import type { ToData } from "#shared/models/entity/ToData";
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
 import { DEFAULT_NAME } from "#shared/services/constants";
 import { ITEM_NAME_MAX_LENGTH } from "#shared/services/tableEditor/constants";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export abstract class ATableEditorItemEntity extends AItemEntity {
   name = DEFAULT_NAME;
 }
 
-export const aTableEditorItemEntitySchema = aItemEntitySchema.merge(
-  z.object({
-    name: z.string().min(1).max(ITEM_NAME_MAX_LENGTH),
-  }),
-) satisfies z.ZodType<ToData<ATableEditorItemEntity>>;
+export const aTableEditorItemEntitySchema = z.object({
+  ...aItemEntitySchema.shape,
+  name: z.string().min(1).max(ITEM_NAME_MAX_LENGTH),
+}) satisfies z.ZodType<ToData<ATableEditorItemEntity>>;

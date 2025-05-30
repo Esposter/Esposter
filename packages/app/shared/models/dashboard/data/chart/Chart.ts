@@ -8,15 +8,15 @@ import {
 import { ChartType, chartTypeSchema } from "#shared/models/dashboard/data/chart/type/ChartType";
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
 import { createItemEntityTypeSchema } from "#shared/models/entity/ItemEntityType";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export class Chart extends AItemEntity implements ItemEntityType<ChartType> {
   configuration = new BasicChartConfiguration();
   type: ChartType = ChartType.Basic;
 }
 
-export const chartSchema = aItemEntitySchema.merge(createItemEntityTypeSchema(chartTypeSchema)).merge(
-  z.object({
-    configuration: basicChartConfigurationSchema,
-  }),
-) satisfies z.ZodType<ToData<Chart>>;
+export const chartSchema = z.object({
+  ...aItemEntitySchema.shape,
+  ...createItemEntityTypeSchema(chartTypeSchema).shape,
+  configuration: basicChartConfigurationSchema,
+}) satisfies z.ZodType<ToData<Chart>>;

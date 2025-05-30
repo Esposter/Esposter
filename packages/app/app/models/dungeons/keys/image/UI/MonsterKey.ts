@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export enum MonsterKey {
   Aquavalor = "Aquavalor",
@@ -8,4 +8,4 @@ export enum MonsterKey {
   Iguanignite = "Iguanignite",
 }
 
-export const monsterKeySchema = z.nativeEnum(MonsterKey) satisfies z.ZodType<MonsterKey>;
+export const monsterKeySchema = z.enum(MonsterKey) satisfies z.ZodType<MonsterKey>;

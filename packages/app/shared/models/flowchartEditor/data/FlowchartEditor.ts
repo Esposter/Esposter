@@ -4,7 +4,7 @@ import type { Edge, Node } from "@vue-flow/core";
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
 import { edgeSchema } from "#shared/models/flowchartEditor/data/Edge";
 import { nodeSchema } from "#shared/models/flowchartEditor/data/Node";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export class FlowchartEditor extends AItemEntity {
   edges: Edge[] = [];
@@ -16,9 +16,8 @@ export class FlowchartEditor extends AItemEntity {
   }
 }
 
-export const flowchartEditorSchema = z
-  .object({
-    edges: edgeSchema.array(),
-    nodes: nodeSchema.array(),
-  })
-  .merge(aItemEntitySchema) satisfies z.ZodType<ToData<FlowchartEditor>>;
+export const flowchartEditorSchema = z.object({
+  ...aItemEntitySchema.shape,
+  edges: edgeSchema.array(),
+  nodes: nodeSchema.array(),
+}) satisfies z.ZodType<ToData<FlowchartEditor>>;

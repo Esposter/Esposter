@@ -2,7 +2,7 @@ import type { Chart } from "#shared/models/dashboard/data/chart/Chart";
 import type { ChartType } from "#shared/models/dashboard/data/chart/type/ChartType";
 import type { ItemEntityType } from "#shared/models/entity/ItemEntityType";
 import type { ApexOptions } from "apexcharts";
-import type { z } from "zod";
+import type { z } from "zod/v4";
 
 export abstract class AChartTypeResolver<T extends Chart["configuration"]> implements ItemEntityType<ChartType> {
   type;
@@ -13,7 +13,7 @@ export abstract class AChartTypeResolver<T extends Chart["configuration"]> imple
 
   handleConfiguration(_apexOptions: ApexOptions, _configuration: T) {}
 
-  handleSchema(schema: z.AnyZodObject): z.AnyZodObject {
+  handleSchema(schema: z.ZodObject): z.ZodObject {
     return schema;
   }
 

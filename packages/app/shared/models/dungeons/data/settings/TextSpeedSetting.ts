@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export enum TextSpeedSetting {
   Fast = "Fast",
@@ -6,4 +6,4 @@ export enum TextSpeedSetting {
   Slow = "Slow",
 }
 
-export const textSpeedSettingSchema = z.nativeEnum(TextSpeedSetting) satisfies z.ZodType<TextSpeedSetting>;
+export const textSpeedSettingSchema = z.enum(TextSpeedSetting) satisfies z.ZodType<TextSpeedSetting>;

@@ -7,7 +7,7 @@ import { effectTypeSchema } from "#shared/models/clicker/data/effect/EffectType"
 import { itemTypeSchema } from "#shared/models/clicker/data/ItemType";
 import { targetSchema } from "#shared/models/clicker/data/Target";
 import { createItemEntityTypeSchema } from "#shared/models/entity/ItemEntityType";
-import { z } from "zod";
+import { z } from "zod/v4";
 // Only used for effect types that are based off other specific targets
 export interface EffectConfiguration extends ItemEntityType<EffectType> {
   // e.g. "Upgrade" item type would apply the effect to enhance the upgrade effects themselves
@@ -17,9 +17,8 @@ export interface EffectConfiguration extends ItemEntityType<EffectType> {
   targets?: Target[];
 }
 
-export const effectConfigurationSchema = createItemEntityTypeSchema(effectTypeSchema).merge(
-  z.object({
-    itemType: itemTypeSchema.optional(),
-    targets: targetSchema.array().optional(),
-  }),
-) satisfies z.ZodType<EffectConfiguration>;
+export const effectConfigurationSchema = z.object({
+  ...createItemEntityTypeSchema(effectTypeSchema).shape,
+  itemType: itemTypeSchema.optional(),
+  targets: targetSchema.array().optional(),
+}) satisfies z.ZodType<EffectConfiguration>;

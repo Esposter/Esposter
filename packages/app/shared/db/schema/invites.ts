@@ -8,7 +8,7 @@ import { CODE_LENGTH } from "#shared/services/invite/constants";
 import { relations, sql } from "drizzle-orm";
 import { check, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export const invites = pgTable(
   "invites",

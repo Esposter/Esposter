@@ -3,7 +3,7 @@ import type { ProjectData } from "grapesjs";
 import { AItemEntity } from "#shared/models/entity/AItemEntity";
 import { BLOGSPOT_BASE_URL, PLACEHOLD_BASE_URL, WORDPRESS_DESIGNSPELL_BASE_URL } from "@/services/grapesjs/constants";
 import { html } from "@/services/prettier/html";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export class EmailEditor extends AItemEntity implements ProjectData {
   [key: string]: unknown;

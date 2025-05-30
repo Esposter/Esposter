@@ -1,5 +1,5 @@
 import type { Item } from "@/models/dungeons/item/Item";
-import type { z } from "zod";
+import type { z } from "zod/v4";
 
 import { itemSchema } from "@/models/dungeons/item/Item";
 

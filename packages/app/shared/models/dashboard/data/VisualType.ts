@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export enum VisualType {
   Area = "Area",
@@ -21,4 +21,4 @@ export enum VisualType {
   Treemap = "Treemap",
 }
 
-export const visualTypeSchema = z.nativeEnum(VisualType) satisfies z.ZodType<VisualType>;
+export const visualTypeSchema = z.enum(VisualType) satisfies z.ZodType<VisualType>;

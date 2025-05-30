@@ -1,4 +1,4 @@
-import type { z } from "zod";
+import type { z } from "zod/v4";
 
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
@@ -11,7 +11,7 @@ export const getMemberProcedure = <T extends z.ZodRawShape>(schema: z.ZodObject<
     const result = schema.safeParse(rawInput);
     if (!result.success) throw new TRPCError({ code: "BAD_REQUEST" });
 
-    const value = result.data[roomIdKey];
+    const value = result.data[roomIdKey as keyof typeof result.data];
     if (typeof value !== "string") throw new TRPCError({ code: "BAD_REQUEST" });
 
     const roomId = value.match(UUIDV4_SEARCH_REGEX)?.[0];

@@ -1,4 +1,4 @@
-import type { z } from "zod";
+import type { z } from "zod/v4";
 
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { UUIDV4_SEARCH_REGEX } from "@esposter/shared";
@@ -10,7 +10,7 @@ export const getCreatorProcedure = <T extends z.ZodRawShape>(schema: z.ZodObject
     const result = schema.safeParse(rawInput);
     if (!result.success) throw new TRPCError({ code: "BAD_REQUEST" });
 
-    const value = result.data[roomIdKey];
+    const value = result.data[roomIdKey as keyof typeof result.data];
     if (typeof value !== "string") throw new TRPCError({ code: "BAD_REQUEST" });
 
     const roomId = value.match(UUIDV4_SEARCH_REGEX)?.[0];

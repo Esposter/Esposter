@@ -12,7 +12,7 @@ import { MonsterKey } from "@/models/dungeons/keys/image/UI/MonsterKey";
 import { Monster, monsterSchema } from "@/models/dungeons/monster/Monster";
 import { getItem } from "@/services/dungeons/item/getItem";
 import { getInitialMetadata } from "@/services/dungeons/scene/world/TilemapInitialPositionMap";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export class Player {
   direction: Direction;

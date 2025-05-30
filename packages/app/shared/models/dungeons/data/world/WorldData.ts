@@ -1,7 +1,7 @@
 import type { Chest } from "#shared/models/dungeons/data/world/Chest";
 
 import { chestSchema } from "#shared/models/dungeons/data/world/Chest";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export class WorldData {
   chestMap: Record<string, Chest> = {};
