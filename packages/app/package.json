@@ -167,7 +167,8 @@
     "ajv-formats": "https://github.com/json-layout/json-layout/issues/5",
     "ajv-i18n": "https://github.com/json-layout/json-layout/issues/5",
     "debug": "https://github.com/json-layout/json-layout/issues/5",
-    "drizzle-zod": "@TODO: Broken with zod-4"
+    "drizzle-zod": "@TODO: Broken with zod-4",
+    "@vue-pdf-viewer/viewer": "@TODO: Broken with nuxt build"
   },
   "devDependencies": {
     "@nuxt/eslint": "catalog:",
