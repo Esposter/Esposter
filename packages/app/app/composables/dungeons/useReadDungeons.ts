@@ -9,8 +9,8 @@ export const useReadDungeons = async () => {
   const { dungeons } = storeToRefs(dungeonsStore);
   await useReadData(
     () => {
-      const dungeonsStoreJson = localStorage.getItem(DUNGEONS_LOCAL_STORAGE_KEY);
-      if (dungeonsStoreJson) dungeons.value = Object.assign(new Dungeons(), jsonDateParse(dungeonsStoreJson));
+      const dungeonsJson = localStorage.getItem(DUNGEONS_LOCAL_STORAGE_KEY);
+      if (dungeonsJson) dungeons.value = Object.assign(new Dungeons(), jsonDateParse(dungeonsJson));
       else dungeons.value = new Dungeons();
     },
     async () => {

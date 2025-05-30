@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.4.1](https://github.com/Esposter/Esposter/compare/v2.4.0...v2.4.1) (2025-05-28)
+
+### Bug Fixes
+
+* cleanup types ([b59f652](https://github.com/Esposter/Esposter/commit/b59f65299c9112719d636347bc98ac1f503951b0))
+* types ([c918317](https://github.com/Esposter/Esposter/commit/c918317dcd6a9de8220f393b93bc17048524fe52))
+
 # [2.4.0](https://github.com/Esposter/Esposter/compare/v2.3.0...v2.4.0) (2025-05-23)
 
 ### Bug Fixes

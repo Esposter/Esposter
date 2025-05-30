@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Editor } from "grapesjs";
 
+import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
+import { jsonDateParse } from "#shared/util/time/jsonDateParse";
 import { authClient } from "@/services/auth/authClient";
 import { EMAIL_EDITOR_LOCAL_STORAGE_KEY } from "@/services/emailEditor/constants";
 import { useEmailEditorStore } from "@/store/emailEditor";
@@ -22,13 +24,15 @@ const { trigger } = watchTriggerable(session, (newSession) => {
     height: "100%",
     plugins: [grapesJSMJML],
     storageManager: {
-      options: {
-        local: {
-          key: EMAIL_EDITOR_LOCAL_STORAGE_KEY,
-        },
-      },
       type: newSession ? "remote" : "local",
     },
+  });
+  editor.Storage.add("local", {
+    load: () => {
+      const emailEditorJson = localStorage.getItem(EMAIL_EDITOR_LOCAL_STORAGE_KEY);
+      return emailEditorJson ? Object.assign(new EmailEditor(), jsonDateParse(emailEditorJson)) : new EmailEditor();
+    },
+    store: (data) => new Promise(() => localStorage.setItem(EMAIL_EDITOR_LOCAL_STORAGE_KEY, JSON.stringify(data))),
   });
   editor.Storage.add("remote", {
     load: () => readEmailEditor(),

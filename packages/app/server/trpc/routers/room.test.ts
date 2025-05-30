@@ -220,9 +220,10 @@ describe("room", () => {
     const newRoom = await caller.createRoom({ name });
     const inviteCode = await caller.createInvite({ roomId: newRoom.id });
 
-    await expect(caller.joinRoom(inviteCode)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: duplicate key value violates unique constraint "users_to_rooms_userId_roomId_pk"]`,
-    );
+    await expect(caller.joinRoom(inviteCode)).rejects.toThrowErrorMatchingInlineSnapshot(`
+      [TRPCError: Failed query: insert into "users_to_rooms" ("roomId", "userId") values ($1, $2) returning "roomId", "userId"
+      params: ${newRoom.id},${getMockSession().user.id}]
+    `);
   });
 
   test("on joins", async () => {
