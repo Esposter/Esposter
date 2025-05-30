@@ -1,4 +1,4 @@
-import type { z } from "zod";
+import type { z } from "zod/v4";
 
 import { basicChartConfigurationSchema } from "#shared/models/dashboard/data/chart/BasicChartConfiguration";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
@@ -9,7 +9,7 @@ export class RadialBarResolver extends AVisualTypeResolver {
     super(VisualType.RadialBar);
   }
 
-  override handleSchema(schema: z.AnyZodObject) {
-    return schema.omit({ [basicChartConfigurationSchema.keyof().Values.dataLabels]: true });
+  override handleSchema(schema: z.ZodObject) {
+    return schema.omit({ [basicChartConfigurationSchema.keyof().enum.dataLabels]: true });
   }
 }

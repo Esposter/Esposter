@@ -132,9 +132,6 @@ catalogs:
     '@types/js-beautify':
       specifier: ^1.14.3
       version: 1.14.3
-    '@types/json-schema':
-      specifier: ^7.0.15
-      version: 7.0.15
     '@types/mjml-browser':
       specifier: ^4.15.0
       version: 4.15.0
@@ -256,8 +253,8 @@ catalogs:
       specifier: ^0.44.0
       version: 0.44.0
     drizzle-zod:
-      specifier: 0.7.1
-      version: 0.7.1
+      specifier: ^0.8.2
+      version: 0.8.2
     emoji-mart-vue-fast:
       specifier: ^15.0.4
       version: 15.0.4
@@ -543,9 +540,6 @@ catalogs:
     zod:
       specifier: ^3.25.41
       version: 3.25.41
-    zod-to-json-schema:
-      specifier: ^3.24.5
-      version: 3.24.5
 
 overrides:
   pdfjs-dist: ^5.2.133
@@ -761,7 +755,7 @@ importers:
         version: 0.44.0(@electric-sql/pglite@0.3.2)(kysely@0.28.2)(postgres@3.4.7)
       drizzle-zod:
         specifier: 'catalog:'
-        version: 0.7.1(drizzle-orm@0.44.0(@electric-sql/pglite@0.3.2)(kysely@0.28.2)(postgres@3.4.7))(zod@3.25.41)
+        version: 0.8.2(drizzle-orm@0.44.0(@electric-sql/pglite@0.3.2)(kysely@0.28.2)(postgres@3.4.7))(zod@3.25.41)
       emoji-mart-vue-fast:
         specifier: 'catalog:'
         version: 15.0.4(vue@3.5.16(typescript@5.8.3))
@@ -963,9 +957,6 @@ importers:
       zod:
         specifier: 'catalog:'
         version: 3.25.41
-      zod-to-json-schema:
-        specifier: 'catalog:'
-        version: 3.24.5(zod@3.25.41)
     devDependencies:
       '@nuxt/eslint':
         specifier: 'catalog:'
@@ -1000,9 +991,6 @@ importers:
       '@types/js-beautify':
         specifier: 'catalog:'
         version: 1.14.3
-      '@types/json-schema':
-        specifier: 'catalog:'
-        version: 7.0.15
       '@types/mjml-browser':
         specifier: 'catalog:'
         version: 4.15.0
@@ -6321,11 +6309,11 @@ packages:
       sqlite3:
         optional: true
 
-  drizzle-zod@0.7.1:
-    resolution: {integrity: sha512-nZzALOdz44/AL2U005UlmMqaQ1qe5JfanvLujiTHiiT8+vZJTBFhj3pY4Vk+L6UWyKFfNmLhk602Hn4kCTynKQ==}
+  drizzle-zod@0.8.2:
+    resolution: {integrity: sha512-9Do/16OjFFNrQDZgvMtxtDDwKWbFOxUAIwNPKX98SfxrP8H18vhN1BvNXbhelLcdgCE7GEaXDJqBjMExSkhpkA==}
     peerDependencies:
       drizzle-orm: '>=0.36.0'
-      zod: '>=3.0.0'
+      zod: ^3.25.1
 
   dts-resolver@2.0.1:
     resolution: {integrity: sha512-Pe2kqaQTNVxleYpt9Q9658fn6rEpoZbMbDpEBbcU6pnuGM3Q0IdM+Rv67kN6qcyp8Bv2Uv9NYy5Y1rG1LSgfoQ==}
@@ -11251,11 +11239,6 @@ packages:
   zip-stream@6.0.1:
     resolution: {integrity: sha512-zK7YHHz4ZXpW89AHXUPbQVGKI7uvkd3hzusTdotCg1UxyaVtg0zFJSTfW/Dq5f7OBBVnq6cZIaC8Ti4hb6dtCA==}
     engines: {node: '>= 14'}
-
-  zod-to-json-schema@3.24.5:
-    resolution: {integrity: sha512-/AuWwMP+YqiPbsJx5D6TfgRTc4kTLjsh5SOcd4bLsfUg2RcEXrFMJl1DGgdHy2aCfsIA/cr/1JM0xcB2GZji8g==}
-    peerDependencies:
-      zod: ^3.24.1
 
   zod@3.25.41:
     resolution: {integrity: sha512-8+sDJTGtCYIDBhdqDygp0ffj8kzziRKqAJPhpYObbElJ+3TRe/mnlnwH+/OMa3kKhueS4Drm5UMW00/u1p07zA==}
@@ -17410,7 +17393,7 @@ snapshots:
       kysely: 0.28.2
       postgres: 3.4.7
 
-  drizzle-zod@0.7.1(drizzle-orm@0.44.0(@electric-sql/pglite@0.3.2)(kysely@0.28.2)(postgres@3.4.7))(zod@3.25.41):
+  drizzle-zod@0.8.2(drizzle-orm@0.44.0(@electric-sql/pglite@0.3.2)(kysely@0.28.2)(postgres@3.4.7))(zod@3.25.41):
     dependencies:
       drizzle-orm: 0.44.0(@electric-sql/pglite@0.3.2)(kysely@0.28.2)(postgres@3.4.7)
       zod: 3.25.41
@@ -23205,9 +23188,5 @@ snapshots:
       archiver-utils: 5.0.2
       compress-commons: 6.0.2
       readable-stream: 4.7.0
-
-  zod-to-json-schema@3.24.5(zod@3.25.41):
-    dependencies:
-      zod: 3.25.41
 
   zod@3.25.41: {}

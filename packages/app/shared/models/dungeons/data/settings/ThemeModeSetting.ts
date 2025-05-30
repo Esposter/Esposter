@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export enum ThemeModeSetting {
   Blue = "Blue",
@@ -6,4 +6,4 @@ export enum ThemeModeSetting {
   Purple = "Purple",
 }
 
-export const themeModeSettingSchema = z.nativeEnum(ThemeModeSetting) satisfies z.ZodType<ThemeModeSetting>;
+export const themeModeSettingSchema = z.enum(ThemeModeSetting) satisfies z.ZodType<ThemeModeSetting>;

@@ -1,7 +1,7 @@
 import type { AssetKey } from "@/models/dungeons/keys/AssetKey";
 
 import { assetKeySchema } from "@/models/dungeons/keys/AssetKey";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export interface Asset {
   // By default, this will be 0
@@ -10,6 +10,6 @@ export interface Asset {
 }
 
 export const assetSchema = z.object({
-  frame: z.number().int().nonnegative().optional(),
+  frame: z.int().nonnegative().optional(),
   key: assetKeySchema,
 }) satisfies z.ZodType<Asset>;

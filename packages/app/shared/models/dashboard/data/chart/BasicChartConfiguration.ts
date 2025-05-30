@@ -1,7 +1,7 @@
 import type { ToData } from "#shared/models/entity/ToData";
 
 import { Serializable } from "#shared/models/entity/Serializable";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export class BasicChartConfiguration extends Serializable {
   dataLabels?: boolean;

@@ -8,7 +8,7 @@ import {
 } from "#shared/models/tableEditor/data/ATableEditorItemEntity";
 import { TodoListItemType, todoListItemTypeSchema } from "#shared/models/tableEditor/todoList/TodoListItemType";
 import { NOTES_MAX_LENGTH } from "#shared/services/tableEditor/todoList/constants";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export class TodoListItem extends ATableEditorItemEntity implements ItemEntityType<TodoListItemType> {
   dueAt: Date | null = null;
@@ -16,11 +16,9 @@ export class TodoListItem extends ATableEditorItemEntity implements ItemEntityTy
   type = TodoListItemType.Todo;
 }
 
-export const todoListItemSchema = aTableEditorItemEntitySchema
-  .merge(createItemEntityTypeSchema(todoListItemTypeSchema))
-  .merge(
-    z.object({
-      dueAt: z.date().nullable(),
-      notes: z.string().max(NOTES_MAX_LENGTH),
-    }),
-  ) satisfies z.ZodType<ToData<TodoListItem>>;
+export const todoListItemSchema = z.object({
+  ...aTableEditorItemEntitySchema.shape,
+  ...createItemEntityTypeSchema(todoListItemTypeSchema).shape,
+  dueAt: z.date().nullable(),
+  notes: z.string().max(NOTES_MAX_LENGTH),
+}) satisfies z.ZodType<ToData<TodoListItem>>;

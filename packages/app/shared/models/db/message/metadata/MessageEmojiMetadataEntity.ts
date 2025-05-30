@@ -8,7 +8,7 @@ import {
 } from "#shared/models/db/message/metadata/MessageMetadataEntity";
 import { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
 import { getPropertyNames } from "#shared/util/getPropertyNames";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export class MessageEmojiMetadataEntity extends MessageMetadataEntity<MessageMetadataType.Emoji> {
   emojiTag!: string;
@@ -22,8 +22,8 @@ export class MessageEmojiMetadataEntity extends MessageMetadataEntity<MessageMet
 
 export const MessageEmojiMetadataEntityPropertyNames = getPropertyNames<MessageEmojiMetadataEntity>();
 
-export const messageEmojiMetadataEntitySchema = createMessageMetadataEntitySchema(
-  z.literal(MessageMetadataType.Emoji),
-).merge(z.object({ emojiTag: z.string(), userIds: selectUserSchema.shape.id.array() })) satisfies z.ZodType<
-  ToData<MessageEmojiMetadataEntity>
->;
+export const messageEmojiMetadataEntitySchema = z.object({
+  ...createMessageMetadataEntitySchema(z.literal(MessageMetadataType.Emoji)).shape,
+  emojiTag: z.string(),
+  userIds: selectUserSchema.shape.id.array(),
+}) satisfies z.ZodType<ToData<MessageEmojiMetadataEntity>>;

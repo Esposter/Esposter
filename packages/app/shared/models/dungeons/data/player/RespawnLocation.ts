@@ -5,7 +5,7 @@ import { directionSchema } from "#shared/models/dungeons/data/player/Direction";
 import { positionSchema } from "#shared/models/dungeons/data/player/Position";
 import { tilemapKeySchema } from "#shared/models/dungeons/keys/TilemapKey";
 import { Direction } from "grid-engine";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export class RespawnLocation {
   direction = Direction.UP;

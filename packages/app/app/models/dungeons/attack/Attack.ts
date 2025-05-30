@@ -3,7 +3,7 @@ import type { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey
 
 import { attackIdSchema } from "@/models/dungeons/attack/AttackId";
 import { soundEffectKeySchema } from "@/models/dungeons/keys/sound/SoundEffectKey";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export interface Attack {
   id: AttackId;

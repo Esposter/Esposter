@@ -9,7 +9,7 @@ import { createTableEditorSchema, TableEditor } from "#shared/models/tableEditor
 import { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType";
 import { todoListItemSchema } from "#shared/models/tableEditor/todoList/TodoListItem";
 import { vuetifyComponentItemSchema } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 type TableEditorTypes = {
   [P in keyof typeof TableEditorType]: TableEditor<Item>;
@@ -25,9 +25,8 @@ export class TableEditorConfiguration extends AItemEntity implements TableEditor
   }
 }
 
-export const tableEditorConfigurationSchema = z
-  .object({
-    [TableEditorType.TodoList]: createTableEditorSchema(todoListItemSchema),
-    [TableEditorType.VuetifyComponent]: createTableEditorSchema(vuetifyComponentItemSchema),
-  })
-  .merge(aItemEntitySchema) satisfies z.ZodType<ToData<TableEditorConfiguration>>;
+export const tableEditorConfigurationSchema = z.object({
+  ...aItemEntitySchema.shape,
+  [TableEditorType.TodoList]: createTableEditorSchema(todoListItemSchema),
+  [TableEditorType.VuetifyComponent]: createTableEditorSchema(vuetifyComponentItemSchema),
+}) satisfies z.ZodType<ToData<TableEditorConfiguration>>;

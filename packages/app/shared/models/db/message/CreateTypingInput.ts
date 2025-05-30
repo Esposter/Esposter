@@ -1,6 +1,6 @@
 import { selectRoomSchema } from "#shared/db/schema/rooms";
 import { selectUserSchema } from "#shared/db/schema/users";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export const createTypingInputSchema = z.object({
   roomId: selectRoomSchema.shape.id,

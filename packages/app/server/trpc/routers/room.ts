@@ -33,16 +33,18 @@ import { AzureContainer } from "@@/shared/models/azure/blob/AzureContainer";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, desc, eq, ilike, inArray, sql } from "drizzle-orm";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 const readRoomInputSchema = selectRoomSchema.shape.id.optional();
 export type ReadRoomInput = z.infer<typeof readRoomInputSchema>;
 
-const readRoomsInputSchema = createCursorPaginationParamsSchema(selectRoomSchema.keyof(), [
-  { key: "updatedAt", order: SortOrder.Desc },
-])
-  .merge(z.object({ filter: selectRoomSchema.pick({ name: true }).optional() }))
-  .default({});
+const readRoomsInputSchema = z
+  .object({
+    ...createCursorPaginationParamsSchema(selectRoomSchema.keyof(), [{ key: "updatedAt", order: SortOrder.Desc }])
+      .shape,
+    filter: selectRoomSchema.pick({ name: true }).optional(),
+  })
+  .prefault({});
 export type ReadRoomsInput = z.infer<typeof readRoomsInputSchema>;
 
 const onUpdateRoomInputSchema = selectRoomSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
@@ -57,12 +59,11 @@ export type OnJoinRoomInput = z.infer<typeof onJoinRoomInputSchema>;
 const onLeaveRoomInputSchema = selectRoomSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
 export type OnLeaveRoomInput = z.infer<typeof onLeaveRoomInputSchema>;
 
-const readMembersInputSchema = z
-  .object({
-    filter: selectUserSchema.pick({ name: true }).optional(),
-    roomId: selectRoomSchema.shape.id,
-  })
-  .merge(createCursorPaginationParamsSchema(selectUserSchema.keyof(), [{ key: "name", order: SortOrder.Asc }]));
+const readMembersInputSchema = z.object({
+  ...createCursorPaginationParamsSchema(selectUserSchema.keyof(), [{ key: "updatedAt", order: SortOrder.Desc }]).shape,
+  filter: selectUserSchema.pick({ name: true }).optional(),
+  roomId: selectRoomSchema.shape.id,
+});
 export type ReadMembersInput = z.infer<typeof readMembersInputSchema>;
 
 const readMembersByIdsInputSchema = z.object({

@@ -4,7 +4,7 @@ import type { UpgradeId } from "#shared/models/clicker/data/upgrade/UpgradeId";
 
 import { effectSchema } from "#shared/models/clicker/data/effect/Effect";
 import { unlockConditionSchema } from "#shared/models/clicker/data/unlockCondition/UnlockCondition";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export interface Upgrade<TId extends string = UpgradeId> {
   description: string;

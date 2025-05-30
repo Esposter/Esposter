@@ -39,7 +39,7 @@ import { getProfanityFilterMiddleware } from "@@/server/trpc/middleware/getProfa
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { NotFoundError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export const readMetadataInputSchema = z.object({
   messageRowKeys: messageEntitySchema.shape.rowKey.array().min(1).max(MAX_READ_LIMIT),
@@ -47,14 +47,18 @@ export const readMetadataInputSchema = z.object({
 });
 export type ReadMetadataInput = z.infer<typeof readMetadataInputSchema>;
 
-const readMessagesInputSchema = z
-  .object({ roomId: selectRoomSchema.shape.id })
+const readMessagesInputSchema =
   // Azure table storage doesn't actually support sorting but remember that it is internally insert-sorted
   // as we insert our messages with a reverse-ticked timestamp as our rowKey
   // so unfortunately we have to provide a dummy default to keep the consistency here that cursor pagination
   // always requires a sortBy even though we don't actually need the user to specify it
-  .merge(createCursorPaginationParamsSchema(messageEntitySchema.keyof(), [{ key: "createdAt", order: SortOrder.Desc }]))
-  .omit({ sortBy: true });
+  z
+    .object({
+      ...createCursorPaginationParamsSchema(messageEntitySchema.keyof(), [{ key: "createdAt", order: SortOrder.Desc }])
+        .shape,
+      roomId: selectRoomSchema.shape.id,
+    })
+    .omit({ sortBy: true });
 export type ReadMessagesInput = z.infer<typeof readMessagesInputSchema>;
 
 const readMessagesByRowKeysInputSchema = z.object({
@@ -75,11 +79,10 @@ const generateDownloadFileSasUrlsInputSchema = z.object({
 });
 export type GenerateDownloadFileSasUrlsInput = z.infer<typeof generateDownloadFileSasUrlsInputSchema>;
 
-const deleteFileInputSchema = messageEntitySchema.pick({ partitionKey: true, rowKey: true }).merge(
-  z.object({
-    id: fileEntitySchema.shape.id,
-  }),
-);
+const deleteFileInputSchema = z.object({
+  ...messageEntitySchema.pick({ partitionKey: true, rowKey: true }).shape,
+  id: fileEntitySchema.shape.id,
+});
 export type DeleteFileInput = z.infer<typeof deleteFileInputSchema>;
 
 const onCreateMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
@@ -94,9 +97,10 @@ export type OnCreateTypingInput = z.infer<typeof onCreateTypingInputSchema>;
 const onDeleteMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnDeleteMessageInput = z.infer<typeof onDeleteMessageInputSchema>;
 
-export const forwardMessagesInputSchema = messageEntitySchema
-  .pick({ message: true, partitionKey: true, rowKey: true })
-  .merge(z.object({ roomIds: selectRoomSchema.shape.id.array().min(1).max(MAX_READ_LIMIT) }));
+export const forwardMessagesInputSchema = z.object({
+  ...messageEntitySchema.pick({ message: true, partitionKey: true, rowKey: true }).shape,
+  roomIds: selectRoomSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
+});
 export type ForwardMessagesInput = z.infer<typeof forwardMessagesInputSchema>;
 
 export const messageRouter = router({

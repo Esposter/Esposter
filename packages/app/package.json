@@ -157,8 +157,7 @@
     "vuetify-sonner": "catalog:",
     "worker-timers": "catalog:",
     "ws": "catalog:",
-    "zod": "catalog:",
-    "zod-to-json-schema": "catalog:"
+    "zod": "catalog:"
   },
   "dependenciesComments": {
     "vue-phaserjs": "@TODO: broken with vue's new reactive system",
@@ -167,7 +166,6 @@
     "ajv-formats": "https://github.com/json-layout/json-layout/issues/5",
     "ajv-i18n": "https://github.com/json-layout/json-layout/issues/5",
     "debug": "https://github.com/json-layout/json-layout/issues/5",
-    "drizzle-zod": "@TODO: Broken with zod-4",
     "@vue-pdf-viewer/viewer": "@TODO: Broken with nuxt build"
   },
   "devDependencies": {
@@ -182,7 +180,6 @@
     "@types/fs-extra": "catalog:",
     "@types/howler": "catalog:",
     "@types/js-beautify": "catalog:",
-    "@types/json-schema": "catalog:",
     "@types/mjml-browser": "catalog:",
     "@types/omit-deep-lodash": "catalog:",
     "@types/pluralize": "catalog:",
