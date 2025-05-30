@@ -55,14 +55,11 @@ export type OnJoinRoomInput = z.infer<typeof onJoinRoomInputSchema>;
 const onLeaveRoomInputSchema = selectRoomSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
 export type OnLeaveRoomInput = z.infer<typeof onLeaveRoomInputSchema>;
 
-const readMembersInputSchema = createCursorPaginationParamsSchema(selectUserSchema.keyof(), [
-  { key: "updatedAt", order: SortOrder.Desc },
-]).extend(
-  z.object({
-    filter: selectUserSchema.pick({ name: true }).optional(),
-    roomId: selectRoomSchema.shape.id,
-  }),
-);
+const readMembersInputSchema = z.object({
+  ...createCursorPaginationParamsSchema(selectUserSchema.keyof(), [{ key: "updatedAt", order: SortOrder.Desc }]).shape,
+  filter: selectUserSchema.pick({ name: true }).optional(),
+  roomId: selectRoomSchema.shape.id,
+});
 export type ReadMembersInput = z.infer<typeof readMembersInputSchema>;
 
 const readMembersByIdsInputSchema = z.object({

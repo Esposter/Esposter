@@ -9,8 +9,7 @@ export abstract class ATableEditorItemEntity extends AItemEntity {
   name = DEFAULT_NAME;
 }
 
-export const aTableEditorItemEntitySchema = aItemEntitySchema.extend(
-  z.object({
-    name: z.string().min(1).max(ITEM_NAME_MAX_LENGTH),
-  }),
-) satisfies z.ZodType<ToData<ATableEditorItemEntity>>;
+export const aTableEditorItemEntitySchema = z.object({
+  ...aItemEntitySchema.shape,
+  name: z.string().min(1).max(ITEM_NAME_MAX_LENGTH),
+}) satisfies z.ZodType<ToData<ATableEditorItemEntity>>;

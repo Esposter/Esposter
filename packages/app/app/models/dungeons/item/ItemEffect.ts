@@ -9,8 +9,8 @@ export interface ItemEffect extends ItemEntityType<ItemEffectType> {
   value: number;
 }
 
-export const itemEffectSchema = createItemEntityTypeSchema(itemEffectTypeSchema).extend(
+export const itemEffectSchema = 
   z.object({
+    ...createItemEntityTypeSchema(itemEffectTypeSchema).shape,
     value: z.number(),
-  }),
-) satisfies z.ZodType<ItemEffect>;
+  }) satisfies z.ZodType<ItemEffect>;

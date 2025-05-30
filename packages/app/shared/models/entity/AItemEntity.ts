@@ -10,8 +10,7 @@ class BaseAItemEntity extends Serializable {
 export const AItemEntity = applyItemMetadataMixin(BaseAItemEntity);
 export type AItemEntity = typeof AItemEntity.prototype;
 
-export const aItemEntitySchema = z
-  .object({
-    id: z.uuid(),
-  })
-  .extend(itemMetadataSchema) satisfies z.ZodType<ToData<AItemEntity>>;
+export const aItemEntitySchema = z.object({
+  ...itemMetadataSchema.shape,
+  id: z.uuid(),
+}) satisfies z.ZodType<ToData<AItemEntity>>;

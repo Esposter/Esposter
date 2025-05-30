@@ -1,9 +1,9 @@
-import type { z } from "zod/v4";
-
 import { selectSurveySchema } from "#shared/db/schema/surveys";
+import { z } from "zod/v4";
 
-export const updateSurveyInputSchema = selectSurveySchema
-  .pick({ id: true })
+export const updateSurveyInputSchema = z.object({
+  ...selectSurveySchema.pick({ id: true }).shape,
   // @TODO: oneOf([group, name])
-  .extend(selectSurveySchema.pick({ group: true, name: true }).partial());
+  ...selectSurveySchema.partial({ group: true, name: true }).shape,
+});
 export type UpdateSurveyInput = z.infer<typeof updateSurveyInputSchema>;

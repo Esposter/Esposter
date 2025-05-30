@@ -1,9 +1,9 @@
-import type { z } from "zod/v4";
-
 import { messageEntitySchema } from "#shared/models/db/message/MessageEntity";
+import { z } from "zod/v4";
 
-export const updateMessageInputSchema = messageEntitySchema
-  .pick({ partitionKey: true, rowKey: true })
+export const updateMessageInputSchema = z.object({
+  ...messageEntitySchema.pick({ partitionKey: true, rowKey: true }).shape,
   // @TODO: oneOf([files, message])
-  .extend(messageEntitySchema.pick({ files: true, message: true }).partial());
+  ...messageEntitySchema.partial({ files: true, message: true }).shape,
+});
 export type UpdateMessageInput = z.infer<typeof updateMessageInputSchema>;

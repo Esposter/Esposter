@@ -25,7 +25,9 @@ export class Visual extends AItemEntity implements ItemEntityType<VisualType>, L
   }
 }
 
-export const visualSchema = aItemEntitySchema
-  .extend(createItemEntityTypeSchema(visualTypeSchema))
-  .extend(layoutItemSchema)
-  .extend(z.object({ chart: chartSchema })) satisfies z.ZodType<ToData<Visual>>;
+export const visualSchema = z.object({
+  ...aItemEntitySchema.shape,
+  ...createItemEntityTypeSchema(visualTypeSchema).shape,
+  ...layoutItemSchema.shape,
+  chart: chartSchema,
+}) satisfies z.ZodType<ToData<Visual>>;

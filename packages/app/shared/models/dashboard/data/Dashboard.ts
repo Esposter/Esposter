@@ -14,6 +14,7 @@ export class Dashboard extends AItemEntity {
   }
 }
 
-export const dashboardSchema = aItemEntitySchema.extend(
-  z.object({ visuals: visualSchema.array() }),
-) satisfies z.ZodType<ToData<Dashboard>>;
+export const dashboardSchema = z.object({
+  ...aItemEntitySchema.shape,
+  visuals: visualSchema.array(),
+}) satisfies z.ZodType<ToData<Dashboard>>;

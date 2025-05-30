@@ -25,9 +25,8 @@ export class TableEditorConfiguration extends AItemEntity implements TableEditor
   }
 }
 
-export const tableEditorConfigurationSchema = aItemEntitySchema.extend(
-  z.object({
-    [TableEditorType.TodoList]: createTableEditorSchema(todoListItemSchema),
-    [TableEditorType.VuetifyComponent]: createTableEditorSchema(vuetifyComponentItemSchema),
-  }),
-) satisfies z.ZodType<ToData<TableEditorConfiguration>>;
+export const tableEditorConfigurationSchema = z.object({
+  ...aItemEntitySchema.shape,
+  [TableEditorType.TodoList]: createTableEditorSchema(todoListItemSchema),
+  [TableEditorType.VuetifyComponent]: createTableEditorSchema(vuetifyComponentItemSchema),
+}) satisfies z.ZodType<ToData<TableEditorConfiguration>>;

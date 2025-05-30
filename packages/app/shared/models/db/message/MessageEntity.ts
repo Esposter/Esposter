@@ -26,21 +26,21 @@ export class MessageEntity extends AzureEntity {
   }
 }
 
-export const messageEntitySchema = createAzureEntitySchema(
-  z.object({
-    // ${roomId}-${createdAt.format("yyyyMMdd")}
-    partitionKey: z.string(),
-    // reverse-ticked timestamp
-    rowKey: z.string(),
-  }),
-).extend(
+export const messageEntitySchema =
   // @TODO: oneOf([files, message])
   z.object({
+    ...createAzureEntitySchema(
+      z.object({
+        // ${roomId}-${createdAt.format("yyyyMMdd")}
+        partitionKey: z.string(),
+        // reverse-ticked timestamp
+        rowKey: z.string(),
+      }),
+    ).shape,
     files: fileEntitySchema.array().max(MAX_FILE_LIMIT).default([]),
     isEdited: z.literal(true).optional(),
     isForward: z.literal(true).optional(),
     message: z.string().max(MESSAGE_MAX_LENGTH).default(""),
     replyRowKey: z.string().optional(),
     userId: selectUserSchema.shape.id,
-  }),
-) satisfies z.ZodType<ToData<SetOptional<MessageEntity, "files" | "message">>>;
+  }) satisfies z.ZodType<ToData<SetOptional<MessageEntity, "files" | "message">>>;

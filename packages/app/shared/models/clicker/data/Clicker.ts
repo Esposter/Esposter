@@ -23,11 +23,11 @@ export class Clicker extends AItemEntity implements ItemEntityType<ClickerType> 
   }
 }
 
-export const clickerSchema = aItemEntitySchema.extend(createItemEntityTypeSchema(clickerTypeSchema)).extend(
-  z.object({
-    boughtBuildings: buildingWithStatsSchema.array(),
-    boughtUpgrades: createUpgradeSchema(upgradeIdSchema).array(),
-    id: z.uuid(),
-    noPoints: z.number(),
-  }),
-) satisfies z.ZodType<ToData<Clicker>>;
+export const clickerSchema = z.object({
+  ...aItemEntitySchema.shape,
+  ...createItemEntityTypeSchema(clickerTypeSchema).shape,
+  boughtBuildings: buildingWithStatsSchema.array(),
+  boughtUpgrades: createUpgradeSchema(upgradeIdSchema).array(),
+  id: z.uuid(),
+  noPoints: z.number(),
+}) satisfies z.ZodType<ToData<Clicker>>;

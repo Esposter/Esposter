@@ -16,9 +16,8 @@ export class FlowchartEditor extends AItemEntity {
   }
 }
 
-export const flowchartEditorSchema = aItemEntitySchema.extend(
-  z.object({
-    edges: edgeSchema.array(),
-    nodes: nodeSchema.array(),
-  }),
-) satisfies z.ZodType<ToData<FlowchartEditor>>;
+export const flowchartEditorSchema = z.object({
+  ...aItemEntitySchema.shape,
+  edges: edgeSchema.array(),
+  nodes: nodeSchema.array(),
+}) satisfies z.ZodType<ToData<FlowchartEditor>>;

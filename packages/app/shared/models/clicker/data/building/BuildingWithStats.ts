@@ -8,7 +8,8 @@ export interface BuildingWithStats extends Building {
   producedValue: number;
 }
 
-export const buildingWithStatsSchema = buildingSchema.extend({
+export const buildingWithStatsSchema = z.object({
+  ...buildingSchema.shape,
   amount: z.number(),
   producedValue: z.number(),
 }) satisfies z.ZodType<BuildingWithStats>;

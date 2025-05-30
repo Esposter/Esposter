@@ -15,14 +15,13 @@ export class SurveyResponseEntity extends AzureEntity {
   }
 }
 
-export const surveyResponseEntitySchema = createAzureEntitySchema(
-  z.object({
-    partitionKey: selectSurveySchema.shape.id,
-    rowKey: z.uuid(),
-  }),
-).extend(
-  z.object({
-    model: z.record(z.string().min(1), z.unknown()),
-    modelVersion: z.number().int().nonnegative(),
-  }),
-) satisfies z.ZodType<ToData<SurveyResponseEntity>>;
+export const surveyResponseEntitySchema = z.object({
+  ...createAzureEntitySchema(
+    z.object({
+      partitionKey: selectSurveySchema.shape.id,
+      rowKey: z.uuid(),
+    }),
+  ).shape,
+  model: z.record(z.string().min(1), z.unknown()),
+  modelVersion: z.int().nonnegative(),
+}) satisfies z.ZodType<ToData<SurveyResponseEntity>>;

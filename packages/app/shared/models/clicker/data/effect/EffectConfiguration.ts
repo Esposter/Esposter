@@ -17,9 +17,8 @@ export interface EffectConfiguration extends ItemEntityType<EffectType> {
   targets?: Target[];
 }
 
-export const effectConfigurationSchema = createItemEntityTypeSchema(effectTypeSchema).extend(
-  z.object({
-    itemType: itemTypeSchema.optional(),
-    targets: targetSchema.array().optional(),
-  }),
-) satisfies z.ZodType<EffectConfiguration>;
+export const effectConfigurationSchema = z.object({
+  ...createItemEntityTypeSchema(effectTypeSchema).shape,
+  itemType: itemTypeSchema.optional(),
+  targets: targetSchema.array().optional(),
+}) satisfies z.ZodType<EffectConfiguration>;

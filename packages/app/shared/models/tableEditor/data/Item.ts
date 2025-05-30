@@ -10,6 +10,7 @@ import { z } from "zod/v4";
 // to enforce that all entities implement Item
 export type Item = ATableEditorItemEntity & ItemEntityType<string>;
 
-export const itemSchema = aTableEditorItemEntitySchema.extend(
-  createItemEntityTypeSchema(z.string()),
-) satisfies z.ZodType<ToData<Item>>;
+export const itemSchema = z.object({
+  ...aTableEditorItemEntitySchema.shape,
+  ...createItemEntityTypeSchema(z.string()).shape,
+}) satisfies z.ZodType<ToData<Item>>;
