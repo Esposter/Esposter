@@ -38,9 +38,13 @@ import { z } from "zod/v4";
 const readRoomInputSchema = selectRoomSchema.shape.id.optional();
 export type ReadRoomInput = z.infer<typeof readRoomInputSchema>;
 
-const readRoomsInputSchema = createCursorPaginationParamsSchema(selectRoomSchema.keyof(), [
-  { key: "updatedAt", order: SortOrder.Desc },
-]).prefault({});
+const readRoomsInputSchema = z
+  .object({
+    ...createCursorPaginationParamsSchema(selectRoomSchema.keyof(), [{ key: "updatedAt", order: SortOrder.Desc }])
+      .shape,
+    filter: selectRoomSchema.pick({ name: true }).optional(),
+  })
+  .prefault({});
 export type ReadRoomsInput = z.infer<typeof readRoomsInputSchema>;
 
 const onUpdateRoomInputSchema = selectRoomSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
