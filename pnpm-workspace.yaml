@@ -137,7 +137,7 @@ catalog:
   omit-deep-lodash: ^1.1.7
   p-progress: ^1.0.0
   pathe: ^2.0.3
-  pdfjs-dist: ^5.2.133
+  pdfjs-dist: ^5.3.31
   phaser: ^3.90.0
   phaser3-rex-plugins: ^1.80.16
   pinia: ^3.0.2
