@@ -3,11 +3,11 @@ import type { BasePaginationParams } from "#shared/models/pagination/BasePaginat
 import { createBasePaginationParamsSchema } from "#shared/models/pagination/BasePaginationParams";
 import { z } from "zod/v4";
 
-export interface OffsetPaginationParams<TSortKey extends string> extends BasePaginationParams<TSortKey> {
+export interface OffsetPaginationParams<T extends string> extends BasePaginationParams<T> {
   offset?: number;
 }
 
-export const createOffsetPaginationParamsSchema = <TSortKey extends string>(sortKeySchema: z.ZodType<TSortKey>) =>
+export const createOffsetPaginationParamsSchema = <T extends z.ZodType<string>>(sortKeySchema: T) =>
   z.object({
     ...createBasePaginationParamsSchema(sortKeySchema).shape,
     offset: z.int().nonnegative().default(0),

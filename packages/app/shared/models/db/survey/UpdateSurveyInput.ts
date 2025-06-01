@@ -3,7 +3,9 @@ import { z } from "zod/v4";
 
 export const updateSurveyInputSchema = z.object({
   ...selectSurveySchema.pick({ id: true }).shape,
-  // @TODO: oneOf([group, name])
-  ...selectSurveySchema.pick({ group: true, name: true }).partial().shape,
+  ...selectSurveySchema
+    .pick({ group: true, name: true })
+    .partial()
+    .refine(({ group, name }) => Boolean(group) || Boolean(name)).shape,
 });
 export type UpdateSurveyInput = z.infer<typeof updateSurveyInputSchema>;

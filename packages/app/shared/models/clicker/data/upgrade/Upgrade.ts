@@ -15,7 +15,7 @@ export interface Upgrade<TId extends string = UpgradeId> {
   unlockConditions: UnlockCondition[];
 }
 
-export const createUpgradeSchema = <TId extends string = UpgradeId>(idSchema: z.ZodType<TId>) =>
+export const createUpgradeSchema = <T extends z.ZodType<string> = z.ZodType<UpgradeId>>(idSchema: T) =>
   z.object({
     description: z.string().min(1),
     effects: effectSchema.array().min(1),
