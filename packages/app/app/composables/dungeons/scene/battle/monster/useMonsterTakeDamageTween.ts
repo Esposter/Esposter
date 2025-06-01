@@ -20,7 +20,7 @@ export const useMonsterTakeDamageTween = (isEnemy: boolean) => {
       },
       delay: 0,
       duration: dayjs.duration(0.15, "seconds").asMilliseconds(),
-      onComplete: (_, [monsterImageGameObject]) => {
+      onComplete: (_tween, [monsterImageGameObject]) => {
         monsterImageGameObject.setAlpha(1);
         resolve();
       },

@@ -13,8 +13,8 @@ const { backgroundOpacity40 } = useColors();
 <template>
   <!-- @vue-expect-error @TODO -->
   <v-data-table-server class="border-sm" :="dataTableServerProps">
-    <template v-for="(_, slot) of slots" #[slot]="scope">
-      <slot :name="slot" :="{ ...scope }" />
+    <template v-for="(_slot, name) of slots" #[name]="scope">
+      <slot :name :="{ ...scope }" />
     </template>
   </v-data-table-server>
 </template>

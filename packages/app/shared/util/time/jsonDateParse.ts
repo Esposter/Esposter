@@ -2,7 +2,7 @@ const reISO = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.{0,1}\d*))(?:
 const reMsAjax = /^\/Date\((d|-|.*)\)[/|\\]$/;
 
 export const jsonDateParse = (text: string) =>
-  JSON.parse(text, (_, value) => {
+  JSON.parse(text, (_key, value) => {
     let parsedValue = value;
 
     if (typeof value === "string") {

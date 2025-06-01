@@ -14,7 +14,7 @@ const { createPost } = postStore;
       <v-container>
         <PostUpsertForm
           @submit="
-            async (_, values) => {
+            async (_event, values) => {
               await createPost(values);
               await navigateTo(RoutePath.Index);
             }

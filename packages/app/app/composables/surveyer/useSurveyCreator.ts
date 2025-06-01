@@ -1,5 +1,5 @@
 import type { Survey } from "#shared/db/schema/surveys";
-import type { Base, ImageItemValue } from "survey-core";
+import type { Base } from "survey-core";
 
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { jsonDateParse } from "#shared/util/time/jsonDateParse";
@@ -7,7 +7,7 @@ import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
 import { validateFile } from "@/services/file/validateFile";
 import { THEME_KEY } from "@/services/surveyer/constants";
 import { getActions } from "@/services/surveyer/getActions";
-import { QuestionImageModel, QuestionImagePickerModel } from "survey-core";
+import { ImageItemValue, QuestionImageModel, QuestionImagePickerModel } from "survey-core";
 import { LogoImageViewModel, SurveyCreatorModel } from "survey-creator-core";
 import { DefaultDark, SC2020 } from "survey-creator-core/themes";
 
@@ -30,7 +30,7 @@ export const useSurveyCreator = (survey: Ref<Survey>) => {
 
   const { $trpc } = useNuxtApp();
   const deleteFile = useDeleteFile(survey.value.id);
-  creator.onUploadFile.add(async (_, { callback, element, files, propertyName }) => {
+  creator.onUploadFile.add(async (_creator, { callback, element, files, propertyName }) => {
     const file = files[0];
 
     if (!validateFile(file.size)) {
@@ -63,16 +63,19 @@ export const useSurveyCreator = (survey: Ref<Survey>) => {
     }
   });
   // Add all the possible delete file events
+  const removeLogo = LogoImageViewModel.prototype.remove;
   LogoImageViewModel.prototype.remove = getSynchronizedFunction(async (model: LogoImageViewModel) => {
     const url = model.survey.logo;
-    model.survey.logo = "";
+    removeLogo(model);
     await deleteFile(url);
   });
-  creator.onCollectionItemDeleting.add(async (_, { item }: { item: ImageItemValue }) => {
-    if (!item.imageLink) return;
-    await deleteFile(item.imageLink);
+  creator.onCollectionItemDeleting.add(async (_creator, { item }) => {
+    if (item instanceof ImageItemValue) {
+      if (!item.imageLink) return;
+      await deleteFile(item.imageLink);
+    }
   });
-  creator.onElementDeleting.add(async (_, { element }) => {
+  creator.onElementDeleting.add(async (_creator, { element }) => {
     if (element instanceof QuestionImageModel) {
       if (!element.imageLink) return;
       await deleteFile(element.imageLink);

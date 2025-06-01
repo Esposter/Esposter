@@ -14,8 +14,8 @@ const slots = defineSlots<Record<keyof VCard["$slots"], Function>>();
 
 <template>
   <v-card class="border-sm" :="mergeProps(cardProps, cardAttrs)">
-    <template v-for="(_, slot) of slots" #[slot]="scope">
-      <slot :name="slot" :="{ ...scope }" />
+    <template v-for="(_slot, name) of slots" #[name]="scope">
+      <slot :name :="{ ...scope }" />
     </template>
   </v-card>
 </template>

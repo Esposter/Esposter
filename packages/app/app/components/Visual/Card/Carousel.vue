@@ -66,7 +66,7 @@ interface CardStyleVariables {
 // We will create fake card ids that are just the indexes of our cards.
 // By doing this, we can "rotate" the cards by just incrementing the whole list by 1.
 // This can also act as a z index for us to use, which is pretty convenient C:
-const cardIds = ref<number[]>(cards.map((_, index) => index));
+const cardIds = ref<number[]>(cards.map((_card, index) => index));
 
 // the active card is the card that's moving from right -> left -> right.
 const activeCardId = ref<number>();
@@ -187,7 +187,7 @@ onUnmounted(() => {
 watch(
   () => cards,
   (newCards) => {
-    cardIds.value = newCards.map((_, index) => index);
+    cardIds.value = newCards.map((_card, index) => index);
     inactiveCardId.value = undefined;
     activeCardId.value = 0;
   },
