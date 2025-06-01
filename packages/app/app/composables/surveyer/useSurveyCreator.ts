@@ -1,6 +1,8 @@
 import type { Survey } from "#shared/db/schema/surveys";
 import type { Base } from "survey-core";
+import type { ThemeTabPlugin } from "survey-creator-core";
 
+import { getPropertyNames } from "#shared/util/getPropertyNames";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { jsonDateParse } from "#shared/util/time/jsonDateParse";
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
@@ -63,12 +65,17 @@ export const useSurveyCreator = (survey: Ref<Survey>) => {
     }
   });
   // Add all the possible delete file events
-  // @TODO: Missing theme editor background image clear button
   const remove = LogoImageViewModel.prototype.remove;
   LogoImageViewModel.prototype.remove = getSynchronizedFunction(async (model: LogoImageViewModel) => {
     const url = model.survey.logo;
     remove(model);
     await deleteFile(url);
+  });
+  creator.themeEditor.themeModel.onPropertyChanged.add(async (_themeEditor, { name, newValue, oldValue }) => {
+    if (name === getPropertyNames<ThemeTabPlugin["themeModel"]>().backgroundImage) {
+      if (!newValue) await deleteFile(oldValue);
+      return;
+    }
   });
   creator.onCollectionItemDeleting.add(async (_creator, { item }) => {
     if (item instanceof ImageItemValue) {
