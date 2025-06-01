@@ -63,16 +63,18 @@ export const useSurveyCreator = (survey: Ref<Survey>) => {
     }
   });
   // Add all the possible delete file events
-  const removeLogo = LogoImageViewModel.prototype.remove;
+  // @TODO: Missing theme editor background image clear button
+  const remove = LogoImageViewModel.prototype.remove;
   LogoImageViewModel.prototype.remove = getSynchronizedFunction(async (model: LogoImageViewModel) => {
     const url = model.survey.logo;
-    removeLogo(model);
+    remove(model);
     await deleteFile(url);
   });
   creator.onCollectionItemDeleting.add(async (_creator, { item }) => {
     if (item instanceof ImageItemValue) {
       if (!item.imageLink) return;
       await deleteFile(item.imageLink);
+      return;
     }
   });
   creator.onElementDeleting.add(async (_creator, { element }) => {
