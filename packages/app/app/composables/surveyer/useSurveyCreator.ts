@@ -2,87 +2,34 @@ import type { Survey } from "#shared/db/schema/surveys";
 import type { Base, ImageItemValue } from "survey-core";
 
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
+import { jsonDateParse } from "#shared/util/time/jsonDateParse";
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
-import { downloadJsonFile } from "@/services/file/downloadJsonFile";
-import { uploadJsonFile } from "@/services/file/uploadJsonFile";
 import { validateFile } from "@/services/file/validateFile";
-import { useSurveyStore } from "@/store/surveyer/survey";
-import { Action, ComputedUpdater, QuestionImageModel, QuestionImagePickerModel } from "survey-core";
+import { THEME_KEY } from "@/services/surveyer/constants";
+import { getActions } from "@/services/surveyer/getActions";
+import { QuestionImageModel, QuestionImagePickerModel } from "survey-core";
 import { LogoImageViewModel, SurveyCreatorModel } from "survey-creator-core";
 import { DefaultDark, SC2020 } from "survey-creator-core/themes";
 
-export const useSurveyCreator = (survey: Survey) => {
-  const surveyerStore = useSurveyStore();
-  const { updateSurveyModel } = surveyerStore;
-  const creator = new SurveyCreatorModel({ autoSaveEnabled: true, showTranslationTab: true });
+export const useSurveyCreator = (survey: Ref<Survey>) => {
+  const creator = new SurveyCreatorModel({ autoSaveEnabled: true, showThemeTab: true, showTranslationTab: true });
   const dialog = ref(false);
-  const actions = [
-    new Action({
-      action: getSynchronizedFunction(async () => {
-        await uploadJsonFile(async (file) => {
-          creator.text = await file.text();
-        });
-      }),
-      iconName: "icon-import-24x24",
-      id: "upload-survey",
-      tooltip: "Upload Survey",
-      visible: new ComputedUpdater(() => creator.activeTab === "designer"),
-    }),
-    new Action({
-      action: () => {
-        downloadJsonFile(survey.name, creator.JSON);
-      },
-      iconName: "icon-download-24x24",
-      id: "download-survey",
-      tooltip: "Download Survey",
-      visible: new ComputedUpdater(() => creator.activeTab === "designer"),
-    }),
-    new Action({
-      action: () => {
-        dialog.value = true;
-      },
-      iconName: "icon-publish-24x24",
-      id: "publish-survey",
-      tooltip: "Publish Survey",
-      visible: new ComputedUpdater(() => creator.activeTab === "designer"),
-    }),
-    new Action({
-      action: () => {
-        creator.JSON = {};
-      },
-      iconName: "icon-clear-24x24",
-      id: "clear-survey",
-      tooltip: "Clear Survey",
-      visible: new ComputedUpdater(() => creator.activeTab === "designer"),
-    }),
-  ];
+  const actions = getActions(survey, creator, dialog);
 
   for (const action of actions) {
     creator.toolbar.actions.push(action);
     creator.footerToolbar.actions.push(action);
   }
 
-  creator.text = survey.model;
-  creator.saveSurveyFunc = async (saveNo: number, callback: Function) => {
-    try {
-      if (creator.text === survey.model) {
-        callback(saveNo, true);
-        return;
-      }
-
-      Object.assign(
-        survey,
-        await updateSurveyModel({ id: survey.id, model: creator.text, modelVersion: survey.modelVersion }),
-      );
-      callback(saveNo, true);
-    } catch {
-      callback(saveNo, false);
-    }
-  };
+  const { [THEME_KEY]: theme, ...model } = jsonDateParse(survey.value.model);
+  creator.JSON = model;
+  if (theme) creator.theme = theme;
+  const save = useSave(survey, creator);
+  creator.saveSurveyFunc = save;
+  creator.saveThemeFunc = save;
 
   const { $trpc } = useNuxtApp();
-  const deleteFile = useDeleteFile(survey.id);
-
+  const deleteFile = useDeleteFile(survey.value.id);
   creator.onUploadFile.add(async (_, { callback, element, files, propertyName }) => {
     const file = files[0];
 
@@ -96,7 +43,7 @@ export const useSurveyCreator = (survey: Survey) => {
       const { id, sasUrl } = (
         await $trpc.survey.generateUploadFileSasEntities.query({
           files: [{ filename: file.name, mimetype: file.type }],
-          surveyId: survey.id,
+          surveyId: survey.value.id,
         })
       )[0];
       await uploadBlocks(file, sasUrl);
@@ -107,7 +54,7 @@ export const useSurveyCreator = (survey: Survey) => {
       const downloadFileSasUrl = (
         await $trpc.survey.generateDownloadFileSasUrls.query({
           files: [{ filename: file.name, id, mimetype: file.type }],
-          surveyId: survey.id,
+          surveyId: survey.value.id,
         })
       )[0];
       callback("success", downloadFileSasUrl);
