@@ -19,7 +19,7 @@ const icon = computed(() => {
 });
 
 const animateCursors = (amount: number) => {
-  const initialRotationOffsets = Array.from({ length: amount }, (_, index) => (360 / amount) * index);
+  const initialRotationOffsets = Array.from({ length: amount }, (_value, index) => (360 / amount) * index);
 
   for (let i = 0; i < amount; i++) {
     const rotationOffset = initialRotationOffsets[i];

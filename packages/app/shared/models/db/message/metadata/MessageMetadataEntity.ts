@@ -8,7 +8,7 @@ export abstract class MessageMetadataEntity<TType extends MessageMetadataType> e
   messageRowKey!: string;
 }
 
-export const createMessageMetadataEntitySchema = <TType extends string>(typeSchema: z.ZodType<TType>) =>
+export const createMessageMetadataEntitySchema = <T extends z.ZodType<string>>(typeSchema: T) =>
   z.object({
     ...createAzureMetadataEntitySchema(
       z.object({

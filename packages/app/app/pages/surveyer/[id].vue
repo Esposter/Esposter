@@ -4,7 +4,7 @@ import { validate } from "@/services/router/validate";
 defineRouteRules({ ssr: false });
 definePageMeta({ middleware: "auth", validate });
 
-const survey = reactive(await useReadSurveyFromRoute());
+const survey = ref(await useReadSurveyFromRoute());
 const { creator, dialog } = useSurveyCreator(survey);
 </script>
 

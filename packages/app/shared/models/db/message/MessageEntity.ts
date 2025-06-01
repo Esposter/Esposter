@@ -8,6 +8,7 @@ import { AzureEntity, createAzureEntitySchema } from "#shared/models/azure/Azure
 import { fileEntitySchema } from "#shared/models/azure/FileEntity";
 import { MAX_FILE_LIMIT } from "#shared/services/azure/container/constants";
 import { MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
+import { refineMessageSchema } from "#shared/services/esbabbler/refineMessageSchema";
 import { z } from "zod/v4";
 
 export class MessageEntity extends AzureEntity {
@@ -26,8 +27,7 @@ export class MessageEntity extends AzureEntity {
   }
 }
 
-export const messageEntitySchema =
-  // @TODO: oneOf([files, message])
+export const messageEntitySchema = refineMessageSchema(
   z.object({
     ...createAzureEntitySchema(
       z.object({
@@ -43,4 +43,5 @@ export const messageEntitySchema =
     message: z.string().max(MESSAGE_MAX_LENGTH).default(""),
     replyRowKey: z.string().optional(),
     userId: selectUserSchema.shape.id,
-  }) satisfies z.ZodType<ToData<SetOptional<MessageEntity, "files" | "message">>>;
+  }),
+) satisfies z.ZodType<ToData<SetOptional<MessageEntity, "files" | "message">>>;

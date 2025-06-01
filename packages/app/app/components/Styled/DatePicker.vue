@@ -17,8 +17,8 @@ const { border, surface } = useColors();
 
 <template>
   <VueDatePicker v-model="modelValue" teleport-center :="datePickerProps" :dark="isDark">
-    <template v-for="(_, slot) of slots" #[slot]="scope">
-      <slot :name="slot" :="{ ...scope }" />
+    <template v-for="(_slot, name) of slots" #[name]="scope">
+      <slot :name :="{ ...scope }" />
     </template>
   </VueDatePicker>
 </template>

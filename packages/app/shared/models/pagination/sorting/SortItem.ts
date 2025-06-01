@@ -8,7 +8,7 @@ export interface SortItem<T extends string> {
   order: SortOrder;
 }
 
-export const createSortItemSchema = <T extends string>(sortKeySchema: z.ZodType<T>) =>
+export const createSortItemSchema = <T extends z.ZodType<string>>(sortKeySchema: T) =>
   z.object({
     key: sortKeySchema,
     order: sortOrderSchema,

@@ -17,7 +17,7 @@ const { updatePost } = postStore;
         <PostUpsertForm
           :initial-values="{ title: post.title, description: post.description }"
           @submit="
-            async (_, values) => {
+            async (_event, values) => {
               await updatePost({ id: post.id, ...values });
               await navigateTo(RoutePath.Index);
             }
