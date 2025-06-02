@@ -1,8 +1,6 @@
-import { selectRoomSchema } from "#shared/db/schema/rooms";
-import { z } from "zod/v4";
+import type { z } from "zod/v4";
 
-export const updateRoomInputSchema = z.object({
-  ...selectRoomSchema.pick({ id: true }).shape,
-  ...selectRoomSchema.pick({ name: true }).partial().shape,
-});
+import { selectRoomSchema } from "#shared/db/schema/rooms";
+
+export const updateRoomInputSchema = selectRoomSchema.pick({ id: true, name: true }).partial({ name: true });
 export type UpdateRoomInput = z.infer<typeof updateRoomInputSchema>;
