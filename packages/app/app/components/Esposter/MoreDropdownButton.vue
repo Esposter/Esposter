@@ -31,11 +31,6 @@ const items = computed<ListLinkItem[]>(() => {
       icon: "mdi-lock",
       title: "Privacy Policy",
     },
-    {
-      href: RoutePath.TermsAndConditions,
-      icon: "mdi-shield-lock",
-      title: "Terms & Conditions",
-    },
   ];
   return session.value
     ? [
