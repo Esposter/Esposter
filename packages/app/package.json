@@ -160,12 +160,12 @@
     "zod": "catalog:"
   },
   "dependenciesComments": {
-    "vue-phaserjs": "@TODO: broken with vue's new reactive system",
     "ajv": "https://github.com/json-layout/json-layout/issues/5",
     "ajv-errors": "https://github.com/json-layout/json-layout/issues/5",
     "ajv-formats": "https://github.com/json-layout/json-layout/issues/5",
     "ajv-i18n": "https://github.com/json-layout/json-layout/issues/5",
     "debug": "https://github.com/json-layout/json-layout/issues/5",
+    "vue-phaserjs": "@TODO: broken with vue's new reactive system",
     "@vue-pdf-viewer/viewer": "@TODO: Broken with nuxt build"
   },
   "devDependencies": {
