@@ -24,20 +24,14 @@ export const createFilePack = async () => {
       if (!blob.properties.contentType)
         throw new InvalidOperationError(Operation.Read, "Content Type", `Missing Content Type: ${blob.name}`);
 
-      const addFileKey = (type: string) => {
-        const key = trimFileExtension(blob.name).replaceAll("/", "");
-        if (fileKeys.has(key)) throw new InvalidOperationError(Operation.Push, enumName, `Duplicate key: ${key}`);
-
-        fileKeys.add(key);
-        filePack.files.push({
-          key,
-          type,
-          url: blob.name,
-        });
-      };
-
       for (const [contentType, phaserMethod] of Object.entries(ContentTypePhaserMethodMap))
-        if (blob.properties.contentType.includes(contentType)) addFileKey(phaserMethod);
+        if (blob.properties.contentType.includes(contentType)) {
+          const key = trimFileExtension(blob.name).replaceAll("/", "");
+          if (fileKeys.has(key)) throw new InvalidOperationError(Operation.Push, enumName, `Duplicate key: ${key}`);
+
+          fileKeys.add(key);
+          filePack.files.push({ key, type: phaserMethod, url: blob.name });
+        }
     }
 
   await Promise.all([
