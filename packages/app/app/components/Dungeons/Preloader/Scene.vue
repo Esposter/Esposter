@@ -39,7 +39,6 @@ const preload = (scene: SceneWithPlugins) => {
       assetText.value = `Loading asset: ${prettify(file.key)}`;
     })
     .once("complete", async () => {
-      scene.load.setBaseURL();
       await switchToScene(IS_DEVELOPMENT ? SceneKey.Title : SceneKey.Title);
     });
 
