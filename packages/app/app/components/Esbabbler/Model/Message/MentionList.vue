@@ -56,9 +56,7 @@ watch(
         :ripple="false"
         @click="selectItem(index)"
       >
-        <v-avatar v-if="image" size="x-small">
-          <v-img :src="image" :alt="name" />
-        </v-avatar>
+        <StyledAvatar :image :name :avatar-props="{ size: 'x-small' }" />
         <span font-bold pl-2>
           {{ name }}
         </span>

@@ -96,13 +96,13 @@ export const createMockContext = async (): Promise<Context> => {
 const createMockDb = async () => {
   // @TODO: https://github.com/drizzle-team/drizzle-orm/issues/2853#issuecomment-2668459509
   const { pushSchema } = require("drizzle-kit/api") as typeof import("drizzle-kit/api");
+  // Use in-memory pglite db which supports the same API
+  // as a mock for the postgresjs db
   const client = new PGlite();
   const db = drizzle(client, { schema });
   const { apply } = await pushSchema(schema, db as never);
   await apply();
   await db.insert(users).values(mocks.getSession().user);
-  // It is fine to use pglite here as a mock for the postgresjs db
-  // as they support the same API
   return db as unknown as Context["db"];
 };
 

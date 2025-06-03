@@ -3,12 +3,46 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.4.1](https://github.com/Esposter/Esposter/compare/v2.4.0...v2.4.1) (2025-05-28)
+
+**Note:** Version bump only for package parse-tmx
+
+# [2.4.0](https://github.com/Esposter/Esposter/compare/v2.3.0...v2.4.0) (2025-05-23)
+
+**Note:** Version bump only for package parse-tmx
+
+# [2.3.0](https://github.com/Esposter/Esposter/compare/v2.2.1...v2.3.0) (2025-05-16)
+
+**Note:** Version bump only for package parse-tmx
+
+## [2.2.1](https://github.com/Esposter/Esposter/compare/v2.2.0...v2.2.1) (2025-05-14)
+
+### Bug Fixes
+
+* make package json fields consistent ([d94cebc](https://github.com/Esposter/Esposter/commit/d94cebc5b8009a79a4572f4021ebee35f6efe1ef))
+
+# [2.2.0](https://github.com/Esposter/Esposter/compare/v2.1.0...v2.2.0) (2025-05-14)
+
+### Bug Fixes
+
+* badge links ([137dd98](https://github.com/Esposter/Esposter/commit/137dd981e769737175d75df739106b9555ac3d77))
+
+### Features
+
+* Add sample tmx snapshot tests ([aa4545c](https://github.com/Esposter/Esposter/commit/aa4545cca2fb621f8c8a586eb3ef66774e448049))
+
+* rewrite xml2js to typescript ([ec28805](https://github.com/Esposter/Esposter/commit/ec28805140c79c9f8bc0746b7ee0c1c948cbb506))
+
+* **test:** Add coverage to root ([fd36fc1](https://github.com/Esposter/Esposter/commit/fd36fc109c81fbf79a3f3636d03716876985fe3a))
+
 # [2.1.0](https://github.com/Esposter/Esposter/compare/v2.0.0...v2.1.0) (2025-04-25)
 
 ### Bug Fixes
 
 * Add data type ([492177b](https://github.com/Esposter/Esposter/commit/492177bd82e86972ee2900ed137bbcfb7fc98cc0))
+
 * build inheritance ([a3361c7](https://github.com/Esposter/Esposter/commit/a3361c73b1e5fd1a63edbf082c07fb3a2de74153))
+
 * remove rolldown plugin node polyfills for now ([5a792c7](https://github.com/Esposter/Esposter/commit/5a792c7c846f22aa1f1d67d9c379a8a202e17acc))
 
 ### Features
@@ -36,13 +70,17 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * lint ([c237159](https://github.com/Esposter/Esposter/commit/c237159c6ffd5af15ddfb1604dedea095282691e))
+
 * no need for undefined ([d461897](https://github.com/Esposter/Esposter/commit/d46189710b2f807684de21081c0c0a3dcff10804))
+
 * use class to allow private identifiers ([f18d9d8](https://github.com/Esposter/Esposter/commit/f18d9d8b24d06d087dab49905ddbc0c219fa679b))
 
 ### Features
 
 * Add tsconfig.json at root to enable complete devtooling with eslint + tsconfig across the whole monorepo in both packages and at the root for scripts ([5b1e48c](https://github.com/Esposter/Esposter/commit/5b1e48c742a023852a7ab1ed5a53f2400228be20))
+
 * Change to use symlinks ([6efc67a](https://github.com/Esposter/Esposter/commit/6efc67a13aa2aec0b3d2b494a857095106b9ad44))
+
 * try migrate to rolldown ([378d3ff](https://github.com/Esposter/Esposter/commit/378d3ffff8f4e79675eb7956dadfb61d2c0f809e))
 
 # [1.41.0](https://github.com/Esposter/Esposter/compare/v1.40.0...v1.41.0) (2025-04-06)
@@ -96,6 +134,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * parse-tmx ([32a522d](https://github.com/Esposter/Esposter/commit/32a522db4c0a50ff5b3531d6e389e74bb965dc10))
+
 * scripts + parse-tmx perf improvement ([c89e711](https://github.com/Esposter/Esposter/commit/c89e71123e873be9ac8999d7212e7b1d6ced73b9))
 
 # [1.30.0](https://github.com/Esposter/Esposter/compare/v1.29.2...v1.30.0) (2024-11-28)
@@ -191,12 +230,15 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * license ([b3e06ac](https://github.com/Esposter/Esposter/commit/b3e06ac20fa8bbebf16d6d1d125dba207a659fe8))
+
 * readme ([a32ba22](https://github.com/Esposter/Esposter/commit/a32ba22983630d49ed721d27d71215bcf5ebecfe))
+
 * readme ([c8e3c2a](https://github.com/Esposter/Esposter/commit/c8e3c2a5b930275463d09f51ecd896c24009d380))
 
 ### Features
 
 * Add typedoc generation ([81c6d2a](https://github.com/Esposter/Esposter/commit/81c6d2a5ac321d44ff16934e616e2c11e9c872af))
+
 * Update parse-tmx doc ([6eb8b77](https://github.com/Esposter/Esposter/commit/6eb8b7760a0ffd28ba9d0ddb73790dae5aaa2a3d))
 
 ## [1.20.2](https://github.com/Esposter/Esposter/compare/v1.20.1...v1.20.2) (2024-09-13)
@@ -280,6 +322,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Features
 
 * Add shared rollup ([89b938f](https://github.com/Esposter/Esposter/commit/89b938f6c27b52d5883b78d7b98be93b8d09f946))
+
 * use rollup-plugin-dts ([fbb2c50](https://github.com/Esposter/Esposter/commit/fbb2c503c9fb13a509df9ec8af87cd7bd9093dfe))
 
 ## [1.7.1](https://github.com/Esposter/Esposter/compare/v1.7.0...v1.7.1) (2024-05-18)

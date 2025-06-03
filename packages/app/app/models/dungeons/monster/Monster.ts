@@ -10,7 +10,7 @@ import { fileKeySchema } from "@/models/dungeons/keys/FileKey";
 import { statsSchema } from "@/models/dungeons/monster/Stats";
 import { statusSchema } from "@/models/dungeons/monster/Status";
 import { getMonsterData } from "@/services/dungeons/monster/getMonsterData";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export class Monster {
   asset!: Asset;
@@ -28,7 +28,7 @@ export class Monster {
 export const monsterSchema = z.object({
   asset: assetSchema,
   attackIds: attackSchema.shape.id.array(),
-  id: z.string().uuid(),
+  id: z.uuid(),
   key: fileKeySchema,
   stats: statsSchema,
   status: statusSchema,

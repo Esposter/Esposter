@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { VBtn } from "vuetify/components";
+import type { VBtn } from "vuetify/components";
 
 interface StyledButtonProps {
   buttonProps?: VBtn["$props"];
@@ -11,8 +11,8 @@ const slots = defineSlots<Record<keyof VBtn["$slots"], Function>>();
 
 <template>
   <v-btn class="button" un-color-white="!" :="buttonProps">
-    <template v-for="(_, slot) of slots" #[slot]>
-      <slot :name="slot" />
+    <template v-for="(_slot, name) of slots" #[name]>
+      <slot :name />
     </template>
   </v-btn>
 </template>

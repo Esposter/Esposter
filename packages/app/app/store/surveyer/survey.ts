@@ -2,6 +2,8 @@ import type { Survey } from "#shared/db/schema/surveys";
 import type { CreateSurveyInput } from "#shared/models/db/survey/CreateSurveyInput";
 import type { DeleteSurveyInput } from "#shared/models/db/survey/DeleteSurveyInput";
 import type { UpdateSurveyInput } from "#shared/models/db/survey/UpdateSurveyInput";
+import type { UpdateSurveyModelInput } from "#shared/models/db/survey/UpdateSurveyModelInput";
+import type { Except } from "type-fest";
 
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createOperationData } from "@/services/shared/createOperationData";
@@ -9,7 +11,7 @@ import { createOffsetPaginationData } from "@/services/shared/pagination/offset/
 
 export const useSurveyStore = defineStore("surveyer/survey", () => {
   const { $trpc } = useNuxtApp();
-  const { items, ...restData } = createOffsetPaginationData<Survey>();
+  const { items, ...restData } = createOffsetPaginationData<Except<Survey, "model">>();
   const {
     createSurvey: storeCreateSurvey,
     deleteSurvey: storeDeleteSurvey,
@@ -23,19 +25,20 @@ export const useSurveyStore = defineStore("surveyer/survey", () => {
     totalItemsLength.value++;
   };
   const updateSurvey = async (input: UpdateSurveyInput) => {
-    input.modelVersion++;
-    // Surveyjs needs to know whether the save was successful with a boolean
-    try {
-      const updatedSurvey = await $trpc.survey.updateSurvey.mutate(input);
-      storeUpdateSurvey(updatedSurvey);
-      return true;
-    } catch {
-      return false;
-    }
+    const updatedSurvey = await $trpc.survey.updateSurvey.mutate(input);
+    storeUpdateSurvey(updatedSurvey);
+    return updatedSurvey;
+  };
+  // This is called by surveyjs externally so we will also need to
+  // update our reactivity externally outside from our stores
+  const updateSurveyModel = async (input: UpdateSurveyModelInput) => {
+    const updatedSurvey = await $trpc.survey.updateSurveyModel.mutate(input);
+    return updatedSurvey;
   };
   const deleteSurvey = async (input: DeleteSurveyInput) => {
     const deletedSurvey = await $trpc.survey.deleteSurvey.mutate(input);
     storeDeleteSurvey({ id: deletedSurvey.id });
+    totalItemsLength.value--;
   };
 
   const searchQuery = ref("");
@@ -45,6 +48,7 @@ export const useSurveyStore = defineStore("surveyer/survey", () => {
     createSurvey,
     deleteSurvey,
     updateSurvey,
+    updateSurveyModel,
     ...restOperationData,
     ...restData,
     searchQuery,

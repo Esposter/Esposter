@@ -1,5 +1,5 @@
 import { getPropertyNames } from "#shared/util/getPropertyNames";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export interface ItemEntityType<T extends string> {
   type: T;
@@ -7,4 +7,4 @@ export interface ItemEntityType<T extends string> {
 
 export const ItemEntityTypePropertyNames = getPropertyNames<ItemEntityType<string>>();
 
-export const createItemEntityTypeSchema = <T extends string>(schema: z.ZodType<T>) => z.object({ type: schema });
+export const createItemEntityTypeSchema = <T extends z.ZodType<string>>(schema: T) => z.object({ type: schema });

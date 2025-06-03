@@ -1,8 +1,9 @@
+import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, getMockSession } from "@@/server/trpc/context.test";
+import { createMockContext, getMockSession, mockUserOnce } from "@@/server/trpc/context.test";
 import { likeRouter } from "@@/server/trpc/routers/like";
 import { postRouter } from "@@/server/trpc/routers/post";
 import { NIL } from "@esposter/shared";
@@ -11,6 +12,7 @@ import { beforeAll, describe, expect, test } from "vitest";
 describe("like", () => {
   let likeCaller: DecorateRouterRecord<TRPCRouter["like"]>;
   let postCaller: DecorateRouterRecord<TRPCRouter["post"]>;
+  let mockContext: Context;
   const title = "title";
   const value = 1;
   const updatedValue = -1;
@@ -18,7 +20,7 @@ describe("like", () => {
   beforeAll(async () => {
     const createLikeCaller = createCallerFactory(likeRouter);
     const createPostCaller = createCallerFactory(postRouter);
-    const mockContext = await createMockContext();
+    mockContext = await createMockContext();
     likeCaller = createLikeCaller(mockContext);
     postCaller = createPostCaller(mockContext);
   });
@@ -46,7 +48,6 @@ describe("like", () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
-    const value = 1;
     await likeCaller.createLike({ postId: newPost.id, value });
     const updatedLike = await likeCaller.updateLike({ postId: newPost.id, value: updatedValue });
     const readPost = await postCaller.readPost(newPost.id);
@@ -70,9 +71,21 @@ describe("like", () => {
 
     const newPost = await postCaller.createPost({ title });
 
-    await expect(
-      likeCaller.updateLike({ postId: newPost.id, value: updatedValue }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Like is not found for id: {"postId":"${newPost.id}"}]`);
+    await expect(likeCaller.updateLike({ postId: newPost.id, value })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Like is not found for id: {"postId":"${newPost.id}"}]`,
+    );
+  });
+
+  test("fails update with wrong user", async () => {
+    expect.hasAssertions();
+
+    const newPost = await postCaller.createPost({ title });
+    await likeCaller.createLike({ postId: newPost.id, value });
+    await mockUserOnce(mockContext.db);
+
+    await expect(likeCaller.updateLike({ postId: newPost.id, value })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Like is not found for id: {"postId":"${newPost.id}"}]`,
+    );
   });
 
   test("deletes", async () => {
@@ -97,6 +110,18 @@ describe("like", () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
+
+    await expect(likeCaller.deleteLike(newPost.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Delete, name: Like, {"postId":"${newPost.id}"}]`,
+    );
+  });
+
+  test("fails delete with wrong user", async () => {
+    expect.hasAssertions();
+
+    const newPost = await postCaller.createPost({ title });
+    await likeCaller.createLike({ postId: newPost.id, value });
+    await mockUserOnce(mockContext.db);
 
     await expect(likeCaller.deleteLike(newPost.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Invalid operation: Delete, name: Like, {"postId":"${newPost.id}"}]`,

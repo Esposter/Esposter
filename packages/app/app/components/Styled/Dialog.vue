@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import type { SubmitEventPromise } from "vuetify";
-import type { VCard } from "vuetify/components";
+import type { VBtn, VCard } from "vuetify/components";
 
 import { mergeProps } from "vue";
-import { VBtn } from "vuetify/components";
 
 export interface StyledDialogActivatorSlotProps {
   isOpen: boolean;
@@ -20,9 +19,9 @@ defineSlots<{
   activator: (props: StyledDialogActivatorSlotProps) => unknown;
   default: (props: Record<string, never>) => unknown;
 }>();
-const { cardProps, confirmButtonAttrs, confirmButtonProps } = defineProps<StyledDialogProps>();
+const { cardProps = {}, confirmButtonAttrs = {}, confirmButtonProps = {} } = defineProps<StyledDialogProps>();
 const emit = defineEmits<{ submit: [event: SubmitEventPromise, onComplete: () => void] }>();
-const isOpen = ref(false);
+const isOpen = defineModel<boolean>({ default: false });
 const isValid = ref(true);
 </script>
 
@@ -50,7 +49,7 @@ const isValid = ref(true);
             color="error"
             variant="outlined"
             :disabled="!isValid"
-            :="mergeProps(confirmButtonProps ?? {}, confirmButtonAttrs ?? {})"
+            :="mergeProps(confirmButtonProps, confirmButtonAttrs)"
           />
         </v-card-actions>
       </StyledCard>

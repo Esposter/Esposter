@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export enum BuildingId {
   "Alchemy Lab" = "Alchemy Lab",
@@ -22,4 +22,4 @@ export enum BuildingId {
   "Wizard Tower" = "Wizard Tower",
 }
 
-export const buildingIdSchema = z.nativeEnum(BuildingId) satisfies z.ZodType<BuildingId>;
+export const buildingIdSchema = z.enum(BuildingId) satisfies z.ZodType<BuildingId>;

@@ -1,12 +1,12 @@
-import { useMessageStore } from "@/store/esbabbler/message";
+import { useReplyStore } from "@/store/esbabbler/reply";
 import { useRoomStore } from "@/store/esbabbler/room";
 
 export const useReadReplies = () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
-  const messageStore = useMessageStore();
-  const { replyMap } = storeToRefs(messageStore);
+  const replyStore = useReplyStore();
+  const { replyMap } = storeToRefs(replyStore);
   return async (replyRowKeys: string[]) => {
     if (!currentRoomId.value || replyRowKeys.length === 0) return;
 

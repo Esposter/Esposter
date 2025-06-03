@@ -1,14 +1,16 @@
+import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext } from "@@/server/trpc/context.test";
+import { createMockContext, mockUserOnce } from "@@/server/trpc/context.test";
 import { postRouter } from "@@/server/trpc/routers/post";
 import { NIL } from "@esposter/shared";
 import { beforeAll, describe, expect, test } from "vitest";
 
 describe("post", () => {
   let caller: DecorateRouterRecord<TRPCRouter["post"]>;
+  let mockContext: Context;
   const title = "title";
   const updatedTitle = "updatedTitle";
   const description = "description";
@@ -16,7 +18,7 @@ describe("post", () => {
 
   beforeAll(async () => {
     const createCaller = createCallerFactory(postRouter);
-    const mockContext = await createMockContext();
+    mockContext = await createMockContext();
     caller = createCaller(mockContext);
   });
 
@@ -58,8 +60,19 @@ describe("post", () => {
   test("fails update with non-existent id", async () => {
     expect.hasAssertions();
 
-    await expect(caller.updatePost({ id: NIL })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: No values to set]`,
+    await expect(caller.updatePost({ description, id: NIL })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Update, name: Post, 00000000-0000-0000-0000-000000000000]`,
+    );
+  });
+
+  test("fails update with wrong user", async () => {
+    expect.hasAssertions();
+
+    const newPost = await caller.createPost({ title });
+    await mockUserOnce(mockContext.db);
+
+    await expect(caller.updatePost({ description, id: newPost.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Update, name: Post, ${newPost.id}]`,
     );
   });
 
@@ -77,6 +90,17 @@ describe("post", () => {
 
     await expect(caller.deletePost(NIL)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Invalid operation: Delete, name: Post, 00000000-0000-0000-0000-000000000000]`,
+    );
+  });
+
+  test("fails delete with wrong user", async () => {
+    expect.hasAssertions();
+
+    const newPost = await caller.createPost({ title });
+    await mockUserOnce(mockContext.db);
+
+    await expect(caller.deletePost(newPost.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Delete, name: Post, ${newPost.id}]`,
     );
   });
 
@@ -127,6 +151,18 @@ describe("post", () => {
     );
   });
 
+  test("fails update comment with wrong user", async () => {
+    expect.hasAssertions();
+
+    const newPost = await caller.createPost({ title });
+    const newComment = await caller.createComment({ description, parentId: newPost.id });
+    await mockUserOnce(mockContext.db);
+
+    await expect(caller.updateComment({ description, id: newComment.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Update, name: Comment, ${newComment.id}]`,
+    );
+  });
+
   test("deletes comment", async () => {
     expect.hasAssertions();
 
@@ -156,6 +192,18 @@ describe("post", () => {
 
     await expect(caller.deleteComment(NIL)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Invalid operation: Delete, name: Comment, 00000000-0000-0000-0000-000000000000]`,
+    );
+  });
+
+  test("fails delete comment with wrong user", async () => {
+    expect.hasAssertions();
+
+    const newPost = await caller.createPost({ title });
+    const newComment = await caller.createComment({ description, parentId: newPost.id });
+    await mockUserOnce(mockContext.db);
+
+    await expect(caller.deleteComment(newComment.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Delete, name: Comment, ${newComment.id}]`,
     );
   });
 

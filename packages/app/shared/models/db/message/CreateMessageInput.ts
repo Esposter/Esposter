@@ -1,8 +1,14 @@
 import { selectRoomSchema } from "#shared/db/schema/rooms";
 import { messageEntitySchema } from "#shared/models/db/message/MessageEntity";
-import { z } from "zod";
+import { refineMessageSchema } from "#shared/services/esbabbler/refineMessageSchema";
+import { z } from "zod/v4";
 
-export const createMessageInputSchema = z
-  .object({ roomId: selectRoomSchema.shape.id })
-  .merge(messageEntitySchema.pick({ files: true, message: true, replyRowKey: true }));
+export const createMessageInputSchema = refineMessageSchema(
+  z.object({
+    ...messageEntitySchema
+      .pick({ files: true, message: true, replyRowKey: true })
+      .partial({ files: true, message: true }).shape,
+    roomId: selectRoomSchema.shape.id,
+  }),
+);
 export type CreateMessageInput = z.infer<typeof createMessageInputSchema>;

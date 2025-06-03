@@ -3,6 +3,34 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.4.1](https://github.com/Esposter/Esposter/compare/v2.4.0...v2.4.1) (2025-05-28)
+
+**Note:** Version bump only for package @esposter/shared
+
+# [2.4.0](https://github.com/Esposter/Esposter/compare/v2.3.0...v2.4.0) (2025-05-23)
+
+**Note:** Version bump only for package @esposter/shared
+
+# [2.3.0](https://github.com/Esposter/Esposter/compare/v2.2.1...v2.3.0) (2025-05-16)
+
+**Note:** Version bump only for package @esposter/shared
+
+## [2.2.1](https://github.com/Esposter/Esposter/compare/v2.2.0...v2.2.1) (2025-05-14)
+
+### Bug Fixes
+
+* make package json fields consistent ([d94cebc](https://github.com/Esposter/Esposter/commit/d94cebc5b8009a79a4572f4021ebee35f6efe1ef))
+
+# [2.2.0](https://github.com/Esposter/Esposter/compare/v2.1.0...v2.2.0) (2025-05-14)
+
+### Bug Fixes
+
+* badge links ([9a91428](https://github.com/Esposter/Esposter/commit/9a9142840f701ee520d3d1cfe2aac7cbd1f2c6c4))
+
+* badge links ([9be88e9](https://github.com/Esposter/Esposter/commit/9be88e919ddb7b13ad328a7996fcee05b97270c1))
+
+* badge links ([c06a71b](https://github.com/Esposter/Esposter/commit/c06a71b34f5a8254323185833939365ab360a5fd))
+
 # [2.1.0](https://github.com/Esposter/Esposter/compare/v2.0.0...v2.1.0) (2025-04-25)
 
 ### Bug Fixes
@@ -34,6 +62,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Features
 
 * Change to use symlinks ([6efc67a](https://github.com/Esposter/Esposter/commit/6efc67a13aa2aec0b3d2b494a857095106b9ad44))
+
 * try migrate to rolldown ([378d3ff](https://github.com/Esposter/Esposter/commit/378d3ffff8f4e79675eb7956dadfb61d2c0f809e))
 
 # [1.41.0](https://github.com/Esposter/Esposter/compare/v1.40.0...v1.41.0) (2025-04-06)
@@ -263,13 +292,17 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * lint ([2620a47](https://github.com/Esposter/Esposter/commit/2620a472120d9d53079b8ae0fc5230c772b2fc4d))
+
 * remove unnecessary vscode settings + move data-urls to root ([7d7ba46](https://github.com/Esposter/Esposter/commit/7d7ba466f0bd137d25472591a81a7b4b9a979117))
+
 * revert to non config dir ([0b5078a](https://github.com/Esposter/Esposter/commit/0b5078af8e2ba5f6eaaa3290573240e5b55640fa))
+
 * stuff up ([1852568](https://github.com/Esposter/Esposter/commit/185256899307c2e9a0e9f64c1a0e038498cb9ad9))
 
 ### Features
 
 * Add shared rollup ([89b938f](https://github.com/Esposter/Esposter/commit/89b938f6c27b52d5883b78d7b98be93b8d09f946))
+
 * use rollup-plugin-dts ([fbb2c50](https://github.com/Esposter/Esposter/commit/fbb2c503c9fb13a509df9ec8af87cd7bd9093dfe))
 
 ## [1.7.1](https://github.com/Esposter/Esposter/compare/v1.7.0...v1.7.1) (2024-05-18)

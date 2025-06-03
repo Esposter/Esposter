@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export enum EffectType {
   Additive = "Additive",
@@ -9,4 +9,4 @@ export enum EffectType {
   Multiplicative = "Multiplicative",
 }
 
-export const effectTypeSchema = z.nativeEnum(EffectType) satisfies z.ZodType<EffectType>;
+export const effectTypeSchema = z.enum(EffectType) satisfies z.ZodType<EffectType>;

@@ -21,16 +21,3 @@ export const getCursorWhere = <TTable extends TableConfig, TItem extends ToData<
     }),
   );
 };
-
-export const getCursorWhereAzureTable = <TItem extends ToData<AEntity>>(
-  serializedCursors: string,
-  sortBy: SortItem<keyof TItem & string>[],
-) => {
-  const cursors = parse(serializedCursors);
-  return Object.entries(cursors)
-    .map(([key, value]) => {
-      const comparer = sortBy.some((s) => s.key === key && s.order === SortOrder.Asc) ? "gt" : "lt";
-      return `${key} ${comparer} '${value}'`;
-    })
-    .join(" and ");
-};

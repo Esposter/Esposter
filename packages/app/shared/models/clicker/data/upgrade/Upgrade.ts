@@ -4,7 +4,7 @@ import type { UpgradeId } from "#shared/models/clicker/data/upgrade/UpgradeId";
 
 import { effectSchema } from "#shared/models/clicker/data/effect/Effect";
 import { unlockConditionSchema } from "#shared/models/clicker/data/unlockCondition/UnlockCondition";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export interface Upgrade<TId extends string = UpgradeId> {
   description: string;
@@ -15,7 +15,7 @@ export interface Upgrade<TId extends string = UpgradeId> {
   unlockConditions: UnlockCondition[];
 }
 
-export const createUpgradeSchema = <TId extends string = UpgradeId>(idSchema: z.ZodType<TId>) =>
+export const createUpgradeSchema = <T extends z.ZodType<string> = z.ZodType<UpgradeId>>(idSchema: T) =>
   z.object({
     description: z.string().min(1),
     effects: effectSchema.array().min(1),

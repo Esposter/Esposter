@@ -5,7 +5,7 @@ import { TextSpeedSetting, textSpeedSettingSchema } from "#shared/models/dungeon
 import { ThemeModeSetting, themeModeSettingSchema } from "#shared/models/dungeons/data/settings/ThemeModeSetting";
 import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
 import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 const InitialSettings = {
   [SettingsOption.Animations]: AnimationsSetting.On,
@@ -24,7 +24,7 @@ export type Settings = Record<
 export const settingsSchema = z.object({
   [SettingsOption.Animations]: animationsSettingSchema,
   [SettingsOption.Sound]: soundSettingSchema,
-  [SettingsOption.VolumePercentage]: z.number().int().nonnegative().max(100),
+  [SettingsOption.VolumePercentage]: z.int().nonnegative().max(100),
   [SettingsOption["Battle Style"]]: battleStyleSettingSchema,
   [SettingsOption["Text Speed"]]: textSpeedSettingSchema,
   [SettingsOption["Theme Mode"]]: themeModeSettingSchema,

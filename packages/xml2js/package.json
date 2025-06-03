@@ -1,0 +1,43 @@
+{
+  "name": "@esposter/xml2js",
+  "version": "2.4.1",
+  "description": "Simple XML to JavaScript object converter.",
+  "type": "module",
+  "homepage": "https://github.com/Esposter/Esposter#readme",
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "xml",
+    "json"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esposter/Esposter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "scripts": {
+    "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "typecheck": "tsc",
+    "export:gen": "ctix build --config ../configuration/.ctirc-ts"
+  },
+  "dependencies": {
+    "sax": "catalog:",
+    "xmlbuilder2": "catalog:"
+  },
+  "devDependencies": {
+    "@types/sax": "catalog:",
+    "@types/xml2js": "catalog:"
+  }
+}

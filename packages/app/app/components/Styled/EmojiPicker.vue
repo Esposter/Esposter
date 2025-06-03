@@ -1,19 +1,21 @@
 <script setup lang="ts">
+import type { VBtn, VTooltip } from "vuetify/components";
+
 import data from "emoji-mart-vue-fast/data/all.json";
 // @ts-expect-error @TODO: https://github.com/serebrov/emoji-mart-vue/issues/121
 import Picker from "emoji-mart-vue-fast/src/components/Picker.vue";
 // @ts-expect-error @TODO: https://github.com/serebrov/emoji-mart-vue/issues/121
 import { EmojiIndex } from "emoji-mart-vue-fast/src/utils/emoji-data";
 import { mergeProps } from "vue";
-import { VBtn, VTooltip } from "vuetify/components";
 
 interface StyledEmojiPickerProps {
   buttonAttrs?: VBtn["$attrs"];
   buttonProps?: VBtn["$props"];
-  tooltipProps: VTooltip["$props"];
+  tooltipProps?: VTooltip["$props"];
 }
 
-const { buttonAttrs, buttonProps, tooltipProps } = defineProps<StyledEmojiPickerProps>();
+defineSlots<{ default?: (props: Record<string, unknown>) => unknown }>();
+const { buttonAttrs = {}, buttonProps = {}, tooltipProps = {} } = defineProps<StyledEmojiPickerProps>();
 const emit = defineEmits<{ select: [emoji: string]; "update:menu": [value: boolean] }>();
 const emojiIndex = new EmojiIndex(data);
 const menu = ref(false);
@@ -38,14 +40,13 @@ const onSelectEmoji = (emoji: { native: string }) => {
     "
   >
     <template #activator="{ props: menuProps }">
-      <v-tooltip :="tooltipProps">
-        <template #activator="{ props: tooltipActivatorProps }">
-          <v-btn
-            icon="mdi-emoticon"
-            :="mergeProps(menuProps, tooltipActivatorProps, buttonProps ?? {}, buttonAttrs ?? {})"
-          />
-        </template>
-      </v-tooltip>
+      <slot :="menuProps">
+        <v-tooltip :="tooltipProps">
+          <template #activator="{ props: tooltipActivatorProps }">
+            <v-btn icon="mdi-emoticon" :="mergeProps(menuProps, tooltipActivatorProps, buttonProps, buttonAttrs)" />
+          </template>
+        </v-tooltip>
+      </slot>
     </template>
     <Picker :data="emojiIndex" @select="onSelectEmoji" />
   </v-menu>

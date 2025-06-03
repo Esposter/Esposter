@@ -4,7 +4,7 @@ import { AItemEntity } from "#shared/models/entity/AItemEntity";
 import { GRAPESJS_BASE_URL, PLACEHOLD_BASE_URL } from "@/services/grapesjs/constants";
 import { css } from "@/services/prettier/css";
 import { html } from "@/services/prettier/html";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export class WebpageEditor extends AItemEntity implements ProjectData {
   [key: string]: unknown;

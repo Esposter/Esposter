@@ -20,13 +20,13 @@ const realActive = computed(() => !isLoading.value && active);
       justify-center
       :active="realActive"
       @change="
-        (waypointState: WaypointState) => {
-          if (waypointState.going === Going.In) {
-            isLoading = true;
-            emit('change', () => {
-              isLoading = false;
-            });
-          }
+        ({ going }: WaypointState) => {
+          if (going !== Going.In) return;
+
+          isLoading = true;
+          emit('change', () => {
+            isLoading = false;
+          });
         }
       "
     >

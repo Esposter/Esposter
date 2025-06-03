@@ -16,7 +16,7 @@ const isLoading = ref(false);
 </script>
 
 <template>
-  <v-col flex flex-wrap items-center self-center gap-4 cols="6">
+  <v-col flex flex-wrap items-center self-center gap-x-4 cols="6">
     <template v-if="editMode">
       <v-avatar>
         <v-img v-if="modelValue" :src="modelValue" :alt="modelValue" />

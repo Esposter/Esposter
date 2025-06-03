@@ -9,7 +9,7 @@ import { USER_NAME_MAX_LENGTH } from "#shared/services/user/constants";
 import { relations, sql } from "drizzle-orm";
 import { boolean, check, integer, pgTable, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export const users = pgTable(
   "users",
@@ -93,11 +93,7 @@ export const likes = pgTable(
 export type Like = typeof likes.$inferSelect;
 
 export const selectLikeSchema = createSelectSchema(likes, {
-  value: z
-    .number()
-    .int()
-    .refine((value) => value === 1 || value === -1)
-    .innerType(),
+  value: z.literal([1, -1]),
 });
 
 export const likesRelations = relations(likes, ({ one }) => ({

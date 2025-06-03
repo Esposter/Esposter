@@ -1,8 +1,9 @@
-import type { z } from "zod";
+import type { z } from "zod/v4";
 
 import { selectSurveySchema } from "#shared/db/schema/surveys";
 
 export const updateSurveyInputSchema = selectSurveySchema
-  .pick({ id: true, modelVersion: true })
-  .merge(selectSurveySchema.pick({ group: true, model: true, name: true }).partial());
+  .pick({ group: true, id: true, name: true })
+  .partial({ group: true, name: true })
+  .refine(({ group, name }) => Boolean(group) || Boolean(name));
 export type UpdateSurveyInput = z.infer<typeof updateSurveyInputSchema>;

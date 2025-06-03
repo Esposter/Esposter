@@ -18,7 +18,7 @@ interface BarContainerProps {
 
 const {
   barPercentage: baseBarPercentage,
-  isSkipAnimations,
+  isSkipAnimations = false,
   position,
   scaleY = 0.7,
   type,

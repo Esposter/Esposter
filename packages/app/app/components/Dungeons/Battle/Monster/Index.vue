@@ -8,7 +8,7 @@ interface MonsterProps {
   isEnemy?: boolean;
 }
 
-const { isEnemy } = defineProps<MonsterProps>();
+const { isEnemy = false } = defineProps<MonsterProps>();
 const store = isEnemy ? useEnemyStore() : useBattlePlayerStore();
 const { initialMonsterPosition } = store;
 const { activeMonster, monsterPosition, monsterTween } = storeToRefs(store);

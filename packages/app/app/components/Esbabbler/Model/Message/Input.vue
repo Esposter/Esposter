@@ -4,6 +4,7 @@ import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { getTypingMessage } from "@/services/esbabbler/message/getTypingMessage";
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
+import { useReplyStore } from "@/store/esbabbler/reply";
 import { useRoomStore } from "@/store/esbabbler/room";
 import { Extension } from "@tiptap/vue-3";
 
@@ -25,18 +26,17 @@ const keyboardExtension = new Extension({
 });
 const mentionExtension = useMentionExtension();
 const messageInputStore = useMessageInputStore();
-const { removeFileUrl } = messageInputStore;
-const { files, messageInput, replyRowKey } = storeToRefs(messageInputStore);
-const reply = computed(() =>
-  replyRowKey.value ? messages.value.find(({ rowKey }) => rowKey === replyRowKey.value) : undefined,
-);
+const { messageInput } = storeToRefs(messageInputStore);
+const replyStore = useReplyStore();
+const { rowKey } = storeToRefs(replyStore);
+const reply = computed(() => messages.value.find((m) => m.rowKey === rowKey.value));
 </script>
 
 <template>
   <EsbabblerModelMessageForwardRoomDialog />
   <EsbabblerModelMessageDropzoneBackground />
   <div w-full>
-    <EsbabblerModelMessageReplyHeader v-if="reply" :user-id="reply.userId" @close="replyRowKey = undefined" />
+    <EsbabblerModelMessageReplyHeader v-if="reply" :user-id="reply.userId" @close="rowKey = ''" />
     <RichTextEditor
       v-model="messageInput"
       :placeholder="`Message ${currentRoomName}`"
@@ -45,15 +45,7 @@ const reply = computed(() =>
       :card-props="reply ? { class: 'rd-t-none' } : undefined"
     >
       <template #prepend-inner-header>
-        <EsbabblerModelMessageFileInputContainer
-          :files
-          @delete="
-            (index) => {
-              const { id } = files.splice(index, 1)[0];
-              removeFileUrl(id);
-            }
-          "
-        />
+        <EsbabblerModelMessageFileInputContainer />
       </template>
       <template #append-footer="editorProps">
         <RichTextEditorCustomSendMessageButton :="editorProps" />

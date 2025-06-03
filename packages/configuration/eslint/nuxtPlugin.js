@@ -32,7 +32,19 @@ export default tseslint.config(
       },
     },
   },
-  perfectionist.configs["recommended-natural"],
+  {
+    ...perfectionist.configs["recommended-natural"],
+    rules: {
+      ...perfectionist.configs["recommended-natural"].rules,
+      "perfectionist/sort-imports": [
+        "error",
+        {
+          ...perfectionist.configs["recommended-natural"].rules["perfectionist/sort-imports"][1],
+          internalPattern: [],
+        },
+      ],
+    },
+  },
   eslintPluginPrettierRecommended,
   {
     rules: {

@@ -1,7 +1,10 @@
+import type { ProgressNotifier } from "p-progress";
+
 import { MEGABYTE } from "#shared/services/esposter/constants";
 import { commitBlockList } from "@/services/azure/container/commitBlockList";
+import { PProgress } from "p-progress";
 
-export const uploadBlocks = async (file: File, sasUrl: string) => {
+export const uploadBlocks = async (file: File, sasUrl: string, progressNotifier?: ProgressNotifier) => {
   // 4MB block size (adjust as needed)
   const blockSize = 4 * MEGABYTE;
   const totalBlocks = Math.ceil(file.size / blockSize);
@@ -27,6 +30,8 @@ export const uploadBlocks = async (file: File, sasUrl: string) => {
     blockIds.push(blockId);
   }
 
-  await Promise.all(promises);
+  const allProgressPromises = PProgress.all(promises);
+  if (progressNotifier) allProgressPromises.onProgress(progressNotifier);
+  await allProgressPromises;
   await commitBlockList(sasUrl, blockIds);
 };

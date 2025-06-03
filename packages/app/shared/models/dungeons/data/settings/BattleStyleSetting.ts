@@ -1,8 +1,8 @@
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export enum BattleStyleSetting {
   Set = "Set",
   Shift = "Shift",
 }
 
-export const battleStyleSettingSchema = z.nativeEnum(BattleStyleSetting) satisfies z.ZodType<BattleStyleSetting>;
+export const battleStyleSettingSchema = z.enum(BattleStyleSetting) satisfies z.ZodType<BattleStyleSetting>;

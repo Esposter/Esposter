@@ -1,8 +1,9 @@
-import type { z } from "zod";
+import type { z } from "zod/v4";
 
 import { selectPostSchema } from "#shared/db/schema/posts";
 
 export const updatePostInputSchema = selectPostSchema
-  .pick({ id: true })
-  .merge(selectPostSchema.pick({ description: true, title: true }).partial());
+  .pick({ description: true, id: true, title: true })
+  .partial({ description: true, title: true })
+  .refine(({ description, title }) => Boolean(description) || Boolean(title));
 export type UpdatePostInput = z.infer<typeof updatePostInputSchema>;

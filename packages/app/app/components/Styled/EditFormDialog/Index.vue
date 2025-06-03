@@ -1,9 +1,9 @@
 <script setup lang="ts" generic="T extends ItemEntityType<string>">
 import type { ItemEntityType } from "#shared/models/entity/ItemEntityType";
+import type { VForm } from "vuetify/components";
 
 import { dayjs } from "#shared/services/dayjs";
 import Header from "@/components/Styled/EditFormDialog/Header.vue";
-import { VForm } from "vuetify/components";
 
 interface EditFormDialogProps<T> {
   editedItem: T;

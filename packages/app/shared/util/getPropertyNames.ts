@@ -6,6 +6,6 @@ export const getPropertyNames = <T>(): PropertyNames<T> =>
   new Proxy(
     {},
     {
-      get: (_, property) => property,
+      get: (_target, property) => property,
     },
   ) as PropertyNames<T>;

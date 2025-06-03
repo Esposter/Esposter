@@ -23,7 +23,7 @@ const events = computed<EventSourceInput>(() => {
 <template>
   <NuxtLayout>
     <v-container fluid>
-      <StyledCard h-full p-4>
+      <StyledCard p-4 h-full>
         <StyledCalendar
           h-full
           :calendar-options="{

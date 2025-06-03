@@ -1,21 +1,21 @@
 import type { LayoutItem as BaseLayoutItem } from "grid-layout-plus";
 
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export type LayoutItem = BaseLayoutItem & { i: string };
 
 export const layoutItemSchema = z.object({
-  h: z.number().int().nonnegative(),
-  i: z.string().uuid(),
+  h: z.int().nonnegative(),
+  i: z.uuid(),
   isDraggable: z.boolean().optional(),
   isResizable: z.boolean().optional(),
-  maxH: z.number().int().nonnegative().optional(),
-  maxW: z.number().int().nonnegative().optional(),
-  minH: z.number().int().nonnegative().optional(),
-  minW: z.number().int().nonnegative().optional(),
+  maxH: z.int().nonnegative().optional(),
+  maxW: z.int().nonnegative().optional(),
+  minH: z.int().nonnegative().optional(),
+  minW: z.int().nonnegative().optional(),
   moved: z.boolean().optional(),
   static: z.boolean().optional(),
-  w: z.number().int().nonnegative(),
-  x: z.number().int().nonnegative(),
-  y: z.number().int().nonnegative(),
+  w: z.int().nonnegative(),
+  x: z.int().nonnegative(),
+  y: z.int().nonnegative(),
 }) satisfies z.ZodType<LayoutItem>;

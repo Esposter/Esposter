@@ -1,6 +1,6 @@
 import { parseXmlValue } from "@/util/parseXmlValue";
+import { parseStringPromise } from "@esposter/xml2js";
 import parseDataUrl from "data-urls";
-import { parseStringPromise } from "xml2js";
 
 export const parseXmlString = <T extends object>(xmlString: string): Promise<T> => {
   const xml = parseDataUrl(xmlString) ?? xmlString;

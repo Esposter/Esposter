@@ -1,5 +1,6 @@
 import type { Unsubscribable } from "@trpc/server/observable";
 
+import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useRoomStore } from "@/store/esbabbler/room";
 
@@ -21,9 +22,9 @@ export const useMessageSubscribables = () => {
     createMessageUnsubscribable.value = $trpc.message.onCreateMessage.subscribe(
       { roomId },
       {
-        onData: (data) => {
-          storeCreateMessage(data);
-        },
+        onData: getSynchronizedFunction(async (data) => {
+          for (const newMessage of data) await storeCreateMessage(newMessage);
+        }),
       },
     );
     updateMessageUnsubscribable.value = $trpc.message.onUpdateMessage.subscribe(
@@ -37,9 +38,9 @@ export const useMessageSubscribables = () => {
     deleteMessageUnsubscribable.value = $trpc.message.onDeleteMessage.subscribe(
       { roomId },
       {
-        onData: (data) => {
-          storeDeleteMessage(data);
-        },
+        onData: getSynchronizedFunction(async (data) => {
+          await storeDeleteMessage(data);
+        }),
       },
     );
   });

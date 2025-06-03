@@ -2,26 +2,24 @@ import type { CreateMessageInput } from "#shared/models/db/message/CreateMessage
 import type { CreateTypingInput } from "#shared/models/db/message/CreateTypingInput";
 import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
-import type { DownloadFileUrl } from "@/models/esbabbler/file/DownloadFileUrl";
 import type { Editor } from "@tiptap/core";
 
+import { AzureEntityType } from "#shared/models/azure/AzureEntityType";
 import { createMessageEntity } from "#shared/services/esbabbler/createMessageEntity";
-import { AzureEntityType } from "@/models/shared/entity/AzureEntityType";
 import { authClient } from "@/services/auth/authClient";
 import { MessageHookMap } from "@/services/esbabbler/message/MessageHookMap";
-import { createDataMap } from "@/services/shared/createDataMap";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createCursorPaginationDataMap } from "@/services/shared/pagination/cursor/createCursorPaginationDataMap";
 import { useMessageInputStore } from "@/store/esbabbler/messageInput";
+import { useReplyStore } from "@/store/esbabbler/reply";
 import { useRoomStore } from "@/store/esbabbler/room";
-import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
+import { useUploadFileStore } from "@/store/esbabbler/uploadFile";
 import { Operation } from "@esposter/shared";
 
 export const useMessageStore = defineStore("esbabbler/message", () => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
-  const messageInputStore = useMessageInputStore();
   const { items, ...restData } = createCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
   const {
     createMessage: baseStoreCreateMessage,
@@ -30,6 +28,7 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
     updateMessage: storeUpdateMessage,
     ...restOperationData
   } = createOperationData(items, ["partitionKey", "rowKey"], AzureEntityType.Message);
+  const files = computed(() => messages.value.flatMap(({ files }) => files));
 
   const storeCreateMessage = async (message: MessageEntity) => {
     await Promise.all(MessageHookMap[Operation.Create].map((fn) => fn(message)));
@@ -42,18 +41,17 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
     baseStoreDeleteMessage(input);
   };
 
+  const messageInputStore = useMessageInputStore();
+  const { validateMessageInput } = messageInputStore;
+  const uploadFileStore = useUploadFileStore();
+  const replyStore = useReplyStore();
   const sendMessage = async (editor: Editor) => {
-    if (
-      !session.value.data ||
-      !roomStore.currentRoomId ||
-      (EMPTY_TEXT_REGEX.test(editor.getText()) && messageInputStore.files.length === 0)
-    )
-      return;
+    if (!session.value.data || !roomStore.currentRoomId || !validateMessageInput(editor, true)) return;
 
     const createMessageInput: CreateMessageInput = {
-      files: messageInputStore.files,
+      files: uploadFileStore.files,
       message: messageInputStore.messageInput,
-      replyRowKey: messageInputStore.replyRowKey,
+      replyRowKey: replyStore.rowKey,
       roomId: roomStore.currentRoomId,
     };
     await Promise.all(MessageHookMap.ResetSend.map((fn) => fn(editor)));
@@ -64,48 +62,18 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
         userId: session.value.data.user.id,
       }),
     );
-    storeCreateMessage(newMessage);
+    await storeCreateMessage(newMessage);
     Object.assign(newMessage, await $trpc.message.createMessage.mutate(createMessageInput));
     delete newMessage.isLoading;
   };
   MessageHookMap.ResetSend.push((editor) => {
     editor.commands.clearContent(true);
   });
-
-  const { data: replyMap } = createDataMap(() => roomStore.currentRoomId, new Map<string, MessageEntity>());
-  MessageHookMap[Operation.Create].push((message) => {
-    if (!message.replyRowKey) return;
-    const reply = messages.value.find(({ rowKey }) => rowKey === message.replyRowKey);
-    if (!reply) return;
-    replyMap.value.set(message.replyRowKey, reply);
-  });
-  MessageHookMap[Operation.Delete].push((input) => {
-    const message = messages.value.find(({ rowKey }) => rowKey === input.rowKey);
-    if (!message) return;
-    for (const { id } of message.files) downloadFileUrlMap.value.delete(id);
-  });
-
-  const { data: downloadFileUrlMap } = createDataMap(() => roomStore.currentRoomId, new Map<string, DownloadFileUrl>());
-  MessageHookMap[Operation.Create].push(async (message) => {
-    if (!roomStore.currentRoomId || message.files.length === 0) return;
-
-    const downloadFileSasUrls = await $trpc.message.generateDownloadFileSasUrls.query({
-      files: message.files,
-      roomId: roomStore.currentRoomId,
-    });
-
-    for (let i = 0; i < message.files.length; i++)
-      downloadFileUrlMap.value.set(message.files[i].id, { url: downloadFileSasUrls[i] });
-  });
-  MessageHookMap[Operation.Delete].push(({ rowKey }) => {
-    replyMap.value.delete(rowKey);
-  });
-
-  const activeReplyRowKey = ref<string>();
   const typings = ref<CreateTypingInput[]>([]);
   // We only expose the internal store crud message functions for subscriptions
   // everything else will directly use trpc mutations that are tracked by the related subscriptions
   return {
+    files,
     messages,
     storeCreateMessage,
     storeDeleteMessage,
@@ -113,9 +81,6 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
     ...restOperationData,
     sendMessage,
     ...restData,
-    activeReplyRowKey,
-    downloadFileUrlMap,
-    replyMap,
     typings,
   };
 });

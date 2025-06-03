@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export interface Stats {
   attack: number;
@@ -9,8 +9,8 @@ export interface Stats {
 }
 
 export const statsSchema = z.object({
-  attack: z.number().int().positive(),
-  baseExp: z.number().int().positive(),
-  level: z.number().int().positive(),
-  maxHp: z.number().int().positive(),
+  attack: z.int().positive(),
+  baseExp: z.int().positive(),
+  level: z.int().positive(),
+  maxHp: z.int().positive(),
 }) satisfies z.ZodType<Stats>;

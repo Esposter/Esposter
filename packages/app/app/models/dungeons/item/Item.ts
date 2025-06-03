@@ -5,7 +5,7 @@ import type { ItemEffect } from "@/models/dungeons/item/ItemEffect";
 import { itemEffectSchema } from "@/models/dungeons/item/ItemEffect";
 import { itemIdSchema } from "@/models/dungeons/item/ItemId";
 import { fileKeySchema } from "@/models/dungeons/keys/FileKey";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export interface Item {
   description: string;
@@ -20,5 +20,5 @@ export const itemSchema = z.object({
   effect: itemEffectSchema,
   fileKey: fileKeySchema.optional(),
   id: itemIdSchema,
-  quantity: z.number().int().positive(),
+  quantity: z.int().positive(),
 }) satisfies z.ZodType<Item>;

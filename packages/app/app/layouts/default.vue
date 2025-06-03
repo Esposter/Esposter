@@ -30,7 +30,6 @@ router.beforeEach(() => {
 </script>
 
 <template>
-  <!-- Ignore parent div here, it is only for nuxt -->
   <div contents>
     <v-navigation-drawer
       v-if="slots.left"

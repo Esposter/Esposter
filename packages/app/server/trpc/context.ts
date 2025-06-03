@@ -22,4 +22,4 @@ export const createContext = (opts: Contexts) => {
   return { db, headers: new Headers(Object.entries(req.headers as Record<string, string>)), req, res };
 };
 
-export type Context = Awaited<ReturnType<typeof createContext>>;
+export type Context = ReturnType<typeof createContext>;

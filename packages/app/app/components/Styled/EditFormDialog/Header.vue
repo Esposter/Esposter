@@ -36,7 +36,7 @@ const emit = defineEmits<{
     <ErrorIcon :edit-form-ref :is-edit-form-valid />
     <SaveButton :is-savable />
     <ConfirmDeleteDialogButton :name :original-item @delete="(onComplete) => emit('delete', onComplete)" />
-    <v-divider mx-2="!" thickness="2" inset vertical />
+    <v-divider mx-2="!" thickness="2" vertical inset />
     <ToggleFullScreenDialogButton :is-full-screen-dialog @click="(value) => emit('update:fullscreen-dialog', value)" />
     <ConfirmCloseDialogButton
       :edited-item

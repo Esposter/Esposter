@@ -1,6 +1,6 @@
 import type { Class } from "type-fest";
 
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export class ItemMetadata {
   createdAt = new Date();

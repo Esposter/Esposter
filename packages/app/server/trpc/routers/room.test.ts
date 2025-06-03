@@ -93,8 +93,19 @@ describe("room", () => {
   test("fails update with non-existent id", async () => {
     expect.hasAssertions();
 
-    await expect(caller.updateRoom({ id: NIL })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: No values to set]`,
+    await expect(caller.updateRoom({ id: NIL, name })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Update, name: Room, 00000000-0000-0000-0000-000000000000]`,
+    );
+  });
+
+  test("fails update with wrong user", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await caller.createRoom({ name });
+    await mockUserOnce(mockContext.db);
+
+    await expect(caller.updateRoom({ id: newRoom.id, name })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Update, name: Room, ${newRoom.id}]`,
     );
   });
 
@@ -127,6 +138,17 @@ describe("room", () => {
 
     await expect(caller.deleteRoom(NIL)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Invalid operation: Delete, name: Room, 00000000-0000-0000-0000-000000000000]`,
+    );
+  });
+
+  test("fails delete with wrong user", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await caller.createRoom({ name });
+    await mockUserOnce(mockContext.db);
+
+    await expect(caller.deleteRoom(newRoom.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Delete, name: Room, ${newRoom.id}]`,
     );
   });
 
@@ -198,9 +220,10 @@ describe("room", () => {
     const newRoom = await caller.createRoom({ name });
     const inviteCode = await caller.createInvite({ roomId: newRoom.id });
 
-    await expect(caller.joinRoom(inviteCode)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: duplicate key value violates unique constraint "users_to_rooms_userId_roomId_pk"]`,
-    );
+    await expect(caller.joinRoom(inviteCode)).rejects.toThrowErrorMatchingInlineSnapshot(`
+      [TRPCError: Failed query: insert into "users_to_rooms" ("roomId", "userId") values ($1, $2) returning "roomId", "userId"
+      params: ${newRoom.id},${getMockSession().user.id}]
+    `);
   });
 
   test("on joins", async () => {
@@ -238,7 +261,7 @@ describe("room", () => {
     );
   });
 
-  test("leaves with creator to be delete", async () => {
+  test("leaves with creator to be deleted", async () => {
     expect.hasAssertions();
 
     const newRoom = await caller.createRoom({ name });
