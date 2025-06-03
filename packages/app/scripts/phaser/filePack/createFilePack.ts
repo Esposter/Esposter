@@ -15,7 +15,7 @@ export const createFilePack = async () => {
   config();
   const blobServiceClient = BlobServiceClient.fromConnectionString(process.env.AZURE_STORAGE_ACCOUNT_CONNECTION_STRING);
   const containerClient = blobServiceClient.getContainerClient(AzureContainer.DungeonsAssets);
-  const files: Types.Loader.FileConfig[] = [];
+  const filePack: Types.Loader.FileTypes.PackFileSection = { baseURL: process.env.AZURE_BLOB_URL, files: [] };
   const fileKeys = new Set<string>();
   const enumName = "FileKey";
 
@@ -41,8 +41,8 @@ export const createFilePack = async () => {
       if (!options)
         throw new InvalidOperationError(Operation.Read, "Prettier Configuration", "Missing Prettier Configuration");
 
-      const formatted = await format(JSON.stringify(files), { ...options, parser: "json" });
-      await outputFile("files.json", formatted);
+      const formatted = await format(JSON.stringify(filePack), { ...options, parser: "json" });
+      await outputFile("filepack.json", formatted);
     })(),
   ]);
 };
