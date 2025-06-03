@@ -30,18 +30,17 @@ const preload = (scene: SceneWithPlugins) => {
   x.value = width / 2;
   y.value = height / 2;
 
-  scene.load.on("progress", (value: number) => {
-    progressBarWidth.value = progressBarMaxWidth.value * value;
-    percentageText.value = `${parseInt((value * 100).toString())}%`;
-  });
-
-  scene.load.on("fileprogress", (file: Loader.File) => {
-    assetText.value = `Loading asset: ${prettify(file.key)}`;
-  });
-
-  scene.load.on("complete", async () => {
-    await switchToScene(IS_DEVELOPMENT ? SceneKey.Title : SceneKey.Title);
-  });
+  scene.load
+    .on("progress", (value: number) => {
+      progressBarWidth.value = progressBarMaxWidth.value * value;
+      percentageText.value = `${parseInt((value * 100).toString())}%`;
+    })
+    .on("fileprogress", (file: Loader.File) => {
+      assetText.value = `Loading asset: ${prettify(file.key)}`;
+    })
+    .once("complete", async () => {
+      await switchToScene(IS_DEVELOPMENT ? SceneKey.Title : SceneKey.Title);
+    });
 
   for (const fontLoader of Object.values(FontLoaderMap)) fontLoader(scene);
   for (const soundLoader of Object.values(SoundLoaderMap)) soundLoader(scene);
