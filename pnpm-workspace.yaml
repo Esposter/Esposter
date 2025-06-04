@@ -90,12 +90,12 @@ catalog:
   defu: ^6.1.4
   dotenv: ^16.5.0
   drizzle-kit: ^0.31.1
-  drizzle-orm: ^0.44.1
+  drizzle-orm: ^0.44.2
   drizzle-zod: ^0.8.2
   emoji-mart-vue-fast: ^15.0.4
   eslint: ^9.28.0
   eslint-config-prettier: ^10.1.5
-  eslint-plugin-perfectionist: ^4.13.0
+  eslint-plugin-perfectionist: ^4.14.0
   eslint-plugin-pinia: ^0.4.1
   eslint-plugin-prettier: ^5.4.1
   eventemitter3: ^5.0.1
@@ -131,7 +131,7 @@ catalog:
   mjml-browser: ^4.15.3
   node-emoji: ^2.2.0
   node-html-parser: ^7.0.1
-  nuxt: ^3.17.4
+  nuxt: ^3.17.5
   nuxt-security: ^2.2.0
   obscenity: ^0.4.3
   omit-deep-lodash: ^1.1.7
@@ -145,7 +145,7 @@ catalog:
   postgres: ^3.4.7
   prettier: ^3.5.3
   rate-limiter-flexible: ^7.1.1
-  rolldown: ^1.0.0-beta.10
+  rolldown: ^1.0.0-beta.11
   rolldown-plugin-dts: ^0.13.7
   rolldown-vite: ^6.3.16
   rxjs: ^7.8.2
@@ -182,7 +182,7 @@ catalog:
   vue-tsc: ^2.2.10
   vue-waypoint: ^4.3.0
   vue3-apexcharts: ^1.8.0
-  vuetify: ^3.8.7
+  vuetify: ^3.8.8
   vuetify-nuxt-module: ^0.18.6
   vuetify-sonner: ^0.3.21
   worker-timers: ^8.0.21
