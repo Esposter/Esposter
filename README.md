@@ -1,7 +1,7 @@
 # [Esposter](https://esposter.com)
 
-[![Apache-2.0 licensed][badge-license]][url-license]
 [![Build Status][badge-ci]][url-ci]
+[![Apache-2.0 licensed][badge-license]][url-license]
 
 ### Table of Contents
 
@@ -287,8 +287,8 @@ https://devina.io/svg-minifier
 
 This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).
 
+[badge-ci]: https://github.com/Esposter/Esposter/actions/workflows/CI.yml/badge.svg?event=push&branch=main
+[url-ci]: https://github.com/Esposter/Esposter/actions/workflows/CI.yml?query=event%3Apush+branch%3Amain
 [badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
 [url-npm]: https://www.npmjs.com/package/Esposter/v/latest
-[badge-ci]: https://github.com/Esposter/Esposter/actions/workflows/CI.yml/badge.svg?event=push&branch=main
-[url-ci]: https://github.com/Esposter/Esposter/actions/workflows/CI.yml?query=event%3Apush+branch%3Amain
