@@ -3,6 +3,7 @@ import type { TRPCLink } from "@trpc/client";
 
 import { RoutePath } from "#shared/models/router/RoutePath";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
+import { useAlertStore } from "@/store/alert";
 import { observable } from "@trpc/server/observable";
 
 export const errorLink: TRPCLink<TRPCRouter> =
@@ -18,9 +19,12 @@ export const errorLink: TRPCLink<TRPCRouter> =
           switch (err.data.code) {
             case "BAD_REQUEST":
             case "TOO_MANY_REQUESTS":
-            case "UNPROCESSABLE_CONTENT":
-              useToast(err.message, { cardProps: { color: "error" } });
+            case "UNPROCESSABLE_CONTENT": {
+              const alertStore = useAlertStore();
+              const { createAlert } = alertStore;
+              createAlert(err.message, "error");
               break;
+            }
             case "FORBIDDEN":
             case "UNAUTHORIZED":
               await navigateTo(RoutePath.Login);

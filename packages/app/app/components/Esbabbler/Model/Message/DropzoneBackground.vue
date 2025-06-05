@@ -5,10 +5,13 @@ import { MAX_FILE_LIMIT } from "#shared/services/azure/container/constants";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
 import { validateFile } from "@/services/file/validateFile";
+import { useAlertStore } from "@/store/alert";
 import { useRoomStore } from "@/store/esbabbler/room";
 import { useUploadFileStore } from "@/store/esbabbler/uploadFile";
 
 const { $trpc } = useNuxtApp();
+const alertStore = useAlertStore();
+const { createAlert } = alertStore;
 const roomStore = useRoomStore();
 const { currentRoomId, currentRoomName } = storeToRefs(roomStore);
 const uploadFileStore = useUploadFileStore();
@@ -18,7 +21,7 @@ const { isOverDropZone } = useDropZone(
   getSynchronizedFunction(async (newFiles) => {
     if (!currentRoomId.value || !newFiles) return;
     else if (files.value.length + newFiles.length > MAX_FILE_LIMIT) {
-      useToast(`You can only upload ${MAX_FILE_LIMIT} files at a time!`, { cardProps: { color: "error" } });
+      createAlert(`You can only upload ${MAX_FILE_LIMIT} files at a time!`, "error");
       return;
     }
 

@@ -3,6 +3,7 @@ import type { betterAuth } from "better-auth";
 import type { Component, CSSProperties } from "vue";
 
 import { authClient } from "@/services/auth/authClient";
+import { useAlertStore } from "@/store/alert";
 import { toTitleCase } from "@/util/text/toTitleCase";
 
 export interface LoginButtonProps {
@@ -15,6 +16,8 @@ export interface LoginButtonProps {
 
 const { logo, logoAttrs, logoStyle, provider, style } = defineProps<LoginButtonProps>();
 const { signIn } = authClient;
+const alertStore = useAlertStore();
+const { createAlert } = alertStore;
 const isLoading = ref(false);
 </script>
 
@@ -37,7 +40,7 @@ const isLoading = ref(false);
           { provider },
           {
             onError: ({ error }) => {
-              useToast(error.message, { cardProps: { color: 'error' } });
+              createAlert(error.message, 'error');
             },
           },
         );

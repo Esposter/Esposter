@@ -2,11 +2,14 @@
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { RoutePath } from "#shared/models/router/RoutePath";
 import { MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
+import { useAlertStore } from "@/store/alert";
 import { useEsbabblerStore } from "@/store/esbabbler";
 import { useForwardStore } from "@/store/esbabbler/forward";
 import { useMessageStore } from "@/store/esbabbler/message";
 
 const { $trpc } = useNuxtApp();
+const alertStore = useAlertStore();
+const { createAlert } = alertStore;
 const esbabblerStore = useEsbabblerStore();
 const { userMap } = storeToRefs(esbabblerStore);
 const messageStore = useMessageStore();
@@ -75,11 +78,7 @@ const { hasMoreRoomsSearched, readMoreRoomsSearched, roomSearchQuery, roomsSearc
               await $trpc.message.forwardMessages.mutate({ partitionKey, rowKey, roomIds, message: messageInput });
               if (roomIds.length === 1) {
                 await navigateTo(RoutePath.Messages(roomIds[0]));
-                useToast('Message forwarded!', {
-                  position: 'top-center',
-                  prependIcon: 'mdi-share',
-                  prependIconProps: { color: 'success' },
-                });
+                createAlert('Message forwarded!', 'success', { location: 'top center', icon: 'mdi-share' });
               }
               dialog = false;
               roomSearchQuery = '';
