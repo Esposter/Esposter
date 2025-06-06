@@ -36,7 +36,7 @@ export const useSurveyCreator = (survey: Ref<Survey>) => {
     const file = files[0];
 
     if (!validateFile(file.size)) {
-      useEmptyFileToast();
+      useEmptyFileAlert();
       callback("error");
       return;
     }

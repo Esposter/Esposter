@@ -12,7 +12,7 @@ export const useMessageInputStore = defineStore("esbabbler/messageInput", () => 
   const uploadFileStore = useUploadFileStore();
   const validateMessageInput = (editor?: Editor, isDisplayError?: true) => {
     if (isDisplayError && !uploadFileStore.files.every(({ size }) => validateFile(size))) {
-      useEmptyFileToast();
+      useEmptyFileAlert();
       return false;
     } else
       return (
