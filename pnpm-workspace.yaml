@@ -34,15 +34,15 @@ catalog:
   "@nuxt/test-utils": ^3.19.1
   "@nuxtjs/seo": ^3.0.3
   "@pinia/nuxt": ^0.11.1
-  "@tiptap/core": ^2.13.0
-  "@tiptap/extension-character-count": ^2.13.0
-  "@tiptap/extension-link": ^2.13.0
-  "@tiptap/extension-mention": ^2.13.0
-  "@tiptap/extension-placeholder": ^2.13.0
-  "@tiptap/pm": ^2.13.0
-  "@tiptap/starter-kit": ^2.13.0
-  "@tiptap/suggestion": ^2.13.0
-  "@tiptap/vue-3": ^2.13.0
+  "@tiptap/core": ^2.14.0
+  "@tiptap/extension-character-count": ^2.14.0
+  "@tiptap/extension-link": ^2.14.0
+  "@tiptap/extension-mention": ^2.14.0
+  "@tiptap/extension-placeholder": ^2.14.0
+  "@tiptap/pm": ^2.14.0
+  "@tiptap/starter-kit": ^2.14.0
+  "@tiptap/suggestion": ^2.14.0
+  "@tiptap/vue-3": ^2.14.0
   "@trpc/client": ^11.3.1
   "@trpc/server": ^11.3.1
   "@types/data-urls": ^3.0.4
@@ -70,7 +70,7 @@ catalog:
   "@vue-flow/core": ^1.44.0
   "@vue-flow/minimap": ^1.5.3
   "@vue-flow/node-resizer": ^1.4.0
-  "@vue-pdf-viewer/viewer": ^2.5.3
+  "@vue-pdf-viewer/viewer": ^2.5.4
   "@vue/test-utils": ^2.4.6
   "@vuepic/vue-datepicker": ^11.0.2
   "@vueuse/core": ^13.3.0
@@ -145,13 +145,13 @@ catalog:
   postgres: ^3.4.7
   prettier: ^3.5.3
   rate-limiter-flexible: ^7.1.1
-  rolldown: ^1.0.0-beta.11
+  rolldown: ^1.0.0-beta.12
   rolldown-plugin-dts: ^0.13.8
   rolldown-vite: ^6.3.18
   rxjs: ^7.8.2
   sass-embedded: ^1.89.1
   sax: ^1.4.1
-  sql-highlight: ^6.0.0
+  sql-highlight: ^6.1.0
   superjson: ^2.2.2
   survey-core: ^2.1.1
   survey-creator-core: ^2.1.1
@@ -187,6 +187,6 @@ catalog:
   worker-timers: ^8.0.21
   ws: ^8.18.2
   xmlbuilder2: ^3.1.1
-  zod: ^3.25.55
+  zod: ^3.25.56
 overrides:
   pdfjs-dist: ^5.3.31
