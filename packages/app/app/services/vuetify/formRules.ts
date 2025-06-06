@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
-import type { ArrayElement } from "type-fest/source/internal";
-import type { VValidation } from "vuetify/components";
+import type { ValidationRule } from "vuetify";
 
 import { MAX_REQUEST_SIZE, MEGABYTE } from "#shared/services/esposter/constants";
 import { profanityMatcher } from "#shared/services/obscenity/profanityMatcher";
@@ -8,10 +7,6 @@ import deepEqual from "fast-deep-equal";
 
 type FileFieldValue = File | undefined;
 type TextFieldValue = null | string;
-
-// @TODO: Internal vuetify types
-// https://github.com/vuetifyjs/vuetify/issues/16680
-type ValidationRule = ArrayElement<NonNullable<VValidation["$props"]["rules"]>>;
 
 export const formRules: {
   isNotEqual: (oldValue: TextFieldValue) => ValidationRule;
