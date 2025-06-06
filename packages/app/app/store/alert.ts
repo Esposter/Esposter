@@ -5,7 +5,7 @@ import { AlertIconMap } from "@/services/vuetify/AlertIconMap";
 
 export const useAlertStore = defineStore("alert", () => {
   const alerts = ref<(VAlert["$props"] & { id: string })[]>([]);
-  const alertTimeoutMap = new Map<string, NodeJS.Timeout>();
+  const alertTimeoutMap = new Map<string, number>();
   const createAlert = (
     text: VAlert["$props"]["text"],
     type: NonNullable<VAlert["$props"]["type"]>,
@@ -13,7 +13,7 @@ export const useAlertStore = defineStore("alert", () => {
   ) => {
     const id = crypto.randomUUID();
     alerts.value.push({ icon: AlertIconMap[type], id, text, type, ...props });
-    const timeoutId = setTimeout(() => {
+    const timeoutId = window.setTimeout(() => {
       deleteAlert(id);
     }, dayjs.duration(5, "seconds").asMilliseconds());
     alertTimeoutMap.set(id, timeoutId);
