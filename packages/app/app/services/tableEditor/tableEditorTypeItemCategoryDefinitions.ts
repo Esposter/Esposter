@@ -14,5 +14,5 @@ const TableEditorTypeItemCategoryDefinitionMap = {
   },
 } as const satisfies Record<TableEditorType, Except<SelectItemCategoryDefinition<TableEditorType>, "value">>;
 
-export const tableEditorTypeItemCategoryDefinitions: SelectItemCategoryDefinition<TableEditorType>[] =
+export const TableEditorTypeItemCategoryDefinitions: SelectItemCategoryDefinition<TableEditorType>[] =
   parseDictionaryToArray(TableEditorTypeItemCategoryDefinitionMap, "value");

@@ -1,6 +1,5 @@
-import type { ArrayElement } from "type-fest/source/internal";
-import type { VDataTable } from "vuetify/components/VDataTable";
+import type { DataTableHeader as BaseDataTableHeader } from "vuetify";
 
-// @TODO: Internal vuetify types
-// https://github.com/vuetifyjs/vuetify/issues/16680
-export type DataTableHeader = ArrayElement<VDataTable["$props"]["headers"]> & { isRichText?: true };
+export interface DataTableHeader<T = object> extends BaseDataTableHeader<T> {
+  isRichText?: true;
+}

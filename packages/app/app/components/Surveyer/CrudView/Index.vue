@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RoutePath } from "#shared/models/router/RoutePath";
-import { surveyerHeaders } from "@/services/surveyer/headers";
+import { SurveyerHeaders } from "@/services/surveyer/SurveyerHeaders";
 import { useSurveyStore } from "@/store/surveyer/survey";
 
 const { isLoading, readMoreSurveys } = await useReadSurveys();
@@ -16,7 +16,7 @@ const { searchQuery, surveys, totalItemsLength } = storeToRefs(surveyerStore);
       flex-col
       :data-table-server-props="{
         height: '100%',
-        headers: surveyerHeaders,
+        headers: SurveyerHeaders,
         items: surveys,
         itemsLength: totalItemsLength,
         search: searchQuery,

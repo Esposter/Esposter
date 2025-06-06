@@ -16,5 +16,5 @@ const VuetifyComponentItemTypeItemCategoryDefinitionMap = {
   },
 } as const satisfies Record<VuetifyComponentItemType, Except<ItemCategoryDefinition<VuetifyComponentItem>, "value">>;
 
-export const vuetifyComponentItemTypeItemCategoryDefinitions: ItemCategoryDefinition<VuetifyComponentItem>[] =
+export const VuetifyComponentItemTypeItemCategoryDefinitions: ItemCategoryDefinition<VuetifyComponentItem>[] =
   parseDictionaryToArray(VuetifyComponentItemTypeItemCategoryDefinitionMap, "value");

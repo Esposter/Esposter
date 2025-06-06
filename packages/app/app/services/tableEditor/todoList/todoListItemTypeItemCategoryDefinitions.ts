@@ -7,7 +7,7 @@ import { TodoListItemType } from "#shared/models/tableEditor/todoList/TodoListIt
 import { parseDictionaryToArray } from "@/util/parseDictionaryToArray";
 import { prettify } from "@/util/text/prettify";
 
-const todoListItemTypeItemCategoryDefinitionMap = {
+const TodoListItemTypeItemCategoryDefinitionMap = {
   [TodoListItemType.Todo]: {
     create: () => new TodoListItem(),
     icon: "mdi-check",
@@ -16,7 +16,7 @@ const todoListItemTypeItemCategoryDefinitionMap = {
   },
 } as const satisfies Record<TodoListItemType, Except<ItemCategoryDefinition<TodoListItem>, "value">>;
 
-export const todoListItemTypeItemCategoryDefinitions: ItemCategoryDefinition<TodoListItem>[] = parseDictionaryToArray(
-  todoListItemTypeItemCategoryDefinitionMap,
+export const TodoListItemTypeItemCategoryDefinitions: ItemCategoryDefinition<TodoListItem>[] = parseDictionaryToArray(
+  TodoListItemTypeItemCategoryDefinitionMap,
   "value",
 );

@@ -1,18 +1,15 @@
-import type { ThemeDefinition, VuetifyOptions } from "vuetify";
+import type { DefaultsOptions } from "vuetify/lib/composables/defaults.mjs";
+import type { Colors, ThemeOptions } from "vuetify/lib/composables/theme.mjs";
 
 import { defineVuetifyConfiguration } from "vuetify-nuxt-module/custom-configuration";
 
 import { ThemeMode } from "./app/models/vuetify/ThemeMode";
-// @TODO: Internal vuetify types
-export type ThemeColors = NonNullable<ThemeDefinition["colors"]>;
-type Defaults = VuetifyOptions["defaults"];
-type Theme = VuetifyOptions["theme"];
 
 const BaseColorsCommon = {
   border: "#ccc",
   info: "#2d88ff",
   primary: "#42b883",
-} as const satisfies ThemeColors;
+} as const satisfies Partial<Colors>;
 
 const BaseColorsMap = {
   [ThemeMode.dark]: {
@@ -27,7 +24,7 @@ const BaseColorsMap = {
     surface: "#fff",
     text: "#000",
   },
-} as const satisfies Record<ThemeMode, ThemeColors>;
+} as const satisfies Record<ThemeMode, Partial<Colors>>;
 
 type BaseColors = (typeof BaseColorsMap)[ThemeMode];
 
@@ -48,7 +45,7 @@ const getBaseColorsExtension = (colors: BaseColors) => {
   };
 };
 
-const theme: Theme = {
+const theme: ThemeOptions = {
   themes: {
     [ThemeMode.dark]: {
       colors: {
@@ -72,7 +69,7 @@ const theme: Theme = {
   },
 };
 
-const defaults: Defaults = {
+const defaults: DefaultsOptions = {
   VAutocomplete: { variant: "outlined" },
   VBtn: {
     flat: true,

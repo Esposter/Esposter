@@ -1,24 +1,22 @@
-import type { DataTableHeader } from "@/models/vuetify/DataTableHeader";
-
 import { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType";
-import { tableEditorHeaders } from "@/services/tableEditor/headers";
-import { todoListHeaders } from "@/services/tableEditor/todoList/headers";
-import { todoListItemTypeItemCategoryDefinitions } from "@/services/tableEditor/todoList/todoListItemTypeItemCategoryDefinitions";
-import { vuetifyComponentItemTypeItemCategoryDefinitions } from "@/services/tableEditor/vuetifyComponent/vuetifyComponentItemTypeItemCategoryDefinitions";
+import { TableEditorHeaders } from "@/services/tableEditor/TableEditorHeaders";
+import { TodoListHeaders } from "@/services/tableEditor/todoList/TodoListHeaders";
+import { TodoListItemTypeItemCategoryDefinitions } from "@/services/tableEditor/todoList/TodoListItemTypeItemCategoryDefinitions";
+import { VuetifyComponentItemTypeItemCategoryDefinitions } from "@/services/tableEditor/vuetifyComponent/VuetifyComponentItemTypeItemCategoryDefinitions";
 
 export const DefaultPropsMap = {
   [TableEditorType.TodoList]: {
-    headers: todoListHeaders,
-    itemCategoryDefinitions: todoListItemTypeItemCategoryDefinitions,
+    headers: TodoListHeaders,
+    itemCategoryDefinitions: TodoListItemTypeItemCategoryDefinitions,
   },
   [TableEditorType.VuetifyComponent]: {
-    headers: tableEditorHeaders,
-    itemCategoryDefinitions: vuetifyComponentItemTypeItemCategoryDefinitions,
+    headers: TableEditorHeaders,
+    itemCategoryDefinitions: VuetifyComponentItemTypeItemCategoryDefinitions,
   },
 } as const satisfies Record<
   TableEditorType,
   {
-    headers: DataTableHeader[];
+    headers: unknown[];
     itemCategoryDefinitions: unknown[];
   }
 >;

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ITEM_TYPE_QUERY_PARAM_KEY } from "@/services/shared/constants";
-import { tableEditorTypeItemCategoryDefinitions } from "@/services/tableEditor/tableEditorTypeItemCategoryDefinitions";
+import { TableEditorTypeItemCategoryDefinitions } from "@/services/tableEditor/TableEditorTypeItemCategoryDefinitions";
 import { useTableEditorStore } from "@/store/tableEditor";
 
 const tableEditorStore = useTableEditorStore();
@@ -10,7 +10,7 @@ const { tableEditorType } = storeToRefs(tableEditorStore);
 <template>
   <v-select
     v-model="tableEditorType"
-    :items="tableEditorTypeItemCategoryDefinitions"
+    :items="TableEditorTypeItemCategoryDefinitions"
     hide-details
     @update:model-value="
       (value) => $router.replace({ query: { ...$router.currentRoute.value.query, [ITEM_TYPE_QUERY_PARAM_KEY]: value } })
