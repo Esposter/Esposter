@@ -11,6 +11,5 @@ export const modules: NuxtConfig["modules"] = [
   "@vite-pwa/nuxt",
   "@vueuse/nuxt",
   "nuxt-security",
-  "vue-sonner/nuxt",
   "vuetify-nuxt-module",
 ];

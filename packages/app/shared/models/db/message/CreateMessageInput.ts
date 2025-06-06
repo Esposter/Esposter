@@ -5,8 +5,9 @@ import { z } from "zod/v4";
 
 export const createMessageInputSchema = refineMessageSchema(
   z.object({
-    ...messageEntitySchema.pick({ replyRowKey: true }).shape,
-    ...messageEntitySchema.pick({ files: true, message: true }).partial().shape,
+    ...messageEntitySchema
+      .pick({ files: true, message: true, replyRowKey: true })
+      .partial({ files: true, message: true }).shape,
     roomId: selectRoomSchema.shape.id,
   }),
 );

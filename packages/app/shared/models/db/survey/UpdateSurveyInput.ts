@@ -1,11 +1,9 @@
-import { selectSurveySchema } from "#shared/db/schema/surveys";
-import { z } from "zod/v4";
+import type { z } from "zod/v4";
 
-export const updateSurveyInputSchema = z.object({
-  ...selectSurveySchema.pick({ id: true }).shape,
-  ...selectSurveySchema
-    .pick({ group: true, name: true })
-    .partial()
-    .refine(({ group, name }) => Boolean(group) || Boolean(name)).shape,
-});
+import { selectSurveySchema } from "#shared/db/schema/surveys";
+
+export const updateSurveyInputSchema = selectSurveySchema
+  .pick({ group: true, id: true, name: true })
+  .partial({ group: true, name: true })
+  .refine(({ group, name }) => Boolean(group) || Boolean(name));
 export type UpdateSurveyInput = z.infer<typeof updateSurveyInputSchema>;

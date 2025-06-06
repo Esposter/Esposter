@@ -1,23 +1,15 @@
-<script setup lang="ts">
-import { useToastStore } from "@/store/toast";
-import { VSonner } from "vuetify-sonner";
-
-const toastStore = useToastStore();
-const { position } = storeToRefs(toastStore);
-</script>
-
 <template>
   <NuxtPwaAssets />
-  <v-app>
-    <EsposterAppBar />
-    <EsposterLoadingIndicator />
-    <NuxtTheme>
-      <NuxtSEO>
+  <NuxtTheme>
+    <NuxtSEO>
+      <v-app>
+        <EsposterAppBar />
+        <EsposterLoadingIndicator />
         <NuxtPage />
-      </NuxtSEO>
-    </NuxtTheme>
-    <VSonner :position />
-  </v-app>
+        <StyledAlertList />
+      </v-app>
+    </NuxtSEO>
+  </NuxtTheme>
 </template>
 
 <style lang="scss">

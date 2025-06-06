@@ -18,11 +18,10 @@ export const RoutePath = {
   Post: (id: string) => `/post/${id}`,
   PostCreate: "/post/create",
   PostUpdate: (id: string) => `/post/update/${id}`,
-  PrivacyPolicy: "https://www.termsfeed.com/live/367522f3-27be-4faa-a7bd-dda7b419a8fc",
+  PrivacyPolicy: "/privacy-policy",
   Survey: (id: string) => `/surveyer/${id}`,
   Surveyer: "/surveyer",
   TableEditor: "/table-editor",
-  TermsAndConditions: "https://www.termsfeed.com/live/7202726c-ae87-41cd-af54-9bde6ca4477a",
   UserSettings: "/user/settings",
   WebpageEditor: "/webpage-editor",
 } as const;

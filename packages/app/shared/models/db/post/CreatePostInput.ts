@@ -1,8 +1,8 @@
-import { selectPostSchema } from "#shared/db/schema/posts";
-import { z } from "zod/v4";
+import type { z } from "zod/v4";
 
-export const createPostInputSchema = z.object({
-  ...selectPostSchema.pick({ title: true }).shape,
-  ...selectPostSchema.pick({ description: true }).partial().shape,
-});
+import { selectPostSchema } from "#shared/db/schema/posts";
+
+export const createPostInputSchema = selectPostSchema
+  .pick({ description: true, title: true })
+  .partial({ description: true });
 export type CreatePostInput = z.infer<typeof createPostInputSchema>;

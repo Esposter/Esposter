@@ -201,12 +201,17 @@ export const messageRouter = router({
             roomId,
             userId: ctx.session.user.id,
           });
-          const newMessageEntity = createMessageEntity({ message, roomId, userId: ctx.session.user.id });
           await createEntity(messageClient, forward);
-          await createEntity(messageClient, newMessageEntity);
+          const messages = [forward];
+
+          if (message) {
+            const newMessageEntity = createMessageEntity({ message, roomId, userId: ctx.session.user.id });
+            await createEntity(messageClient, newMessageEntity);
+            messages.push(newMessageEntity);
+          }
           // We don't need visual effects like isLoading when forwarding messages
           // so we'll instead rely on the subscription to auto-add the forwarded message for convenience
-          messageEventEmitter.emit("createMessage", [[forward, newMessageEntity], true]);
+          messageEventEmitter.emit("createMessage", [messages, true]);
         }),
       );
     }),

@@ -15,7 +15,7 @@ export const createFilePack = async () => {
   config();
   const blobServiceClient = BlobServiceClient.fromConnectionString(process.env.AZURE_STORAGE_ACCOUNT_CONNECTION_STRING);
   const containerClient = blobServiceClient.getContainerClient(AzureContainer.DungeonsAssets);
-  const filePack: Types.Loader.FileTypes.PackFileSection = { baseURL: process.env.AZURE_BLOB_URL, files: [] };
+  const files: Types.Loader.FileConfig[] = [];
   const fileKeys = new Set<string>();
   const enumName = "FileKey";
 
@@ -24,20 +24,14 @@ export const createFilePack = async () => {
       if (!blob.properties.contentType)
         throw new InvalidOperationError(Operation.Read, "Content Type", `Missing Content Type: ${blob.name}`);
 
-      const addFileKey = (type: string) => {
-        const key = trimFileExtension(blob.name).replaceAll("/", "");
-        if (fileKeys.has(key)) throw new InvalidOperationError(Operation.Push, enumName, `Duplicate key: ${key}`);
-
-        fileKeys.add(key);
-        filePack.files.push({
-          key,
-          type,
-          url: blob.name,
-        });
-      };
-
       for (const [contentType, phaserMethod] of Object.entries(ContentTypePhaserMethodMap))
-        if (blob.properties.contentType.includes(contentType)) addFileKey(phaserMethod);
+        if (blob.properties.contentType.includes(contentType)) {
+          const key = trimFileExtension(blob.name).replaceAll("/", "");
+          if (fileKeys.has(key)) throw new InvalidOperationError(Operation.Push, enumName, `Duplicate key: ${key}`);
+
+          fileKeys.add(key);
+          files.push({ key, type: phaserMethod, url: blob.name });
+        }
     }
 
   await Promise.all([
@@ -47,8 +41,8 @@ export const createFilePack = async () => {
       if (!options)
         throw new InvalidOperationError(Operation.Read, "Prettier Configuration", "Missing Prettier Configuration");
 
-      const formatted = await format(JSON.stringify(filePack), { ...options, parser: "json" });
-      await outputFile("filepack.json", formatted);
+      const formatted = await format(JSON.stringify(files), { ...options, parser: "json" });
+      await outputFile("files.json", formatted);
     })(),
   ]);
 };
