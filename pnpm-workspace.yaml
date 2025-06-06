@@ -187,6 +187,6 @@ catalog:
   worker-timers: ^8.0.21
   ws: ^8.18.2
   xmlbuilder2: ^3.1.1
-  zod: ^3.25.54
+  zod: ^3.25.55
 overrides:
   pdfjs-dist: ^5.3.31
