@@ -165,8 +165,7 @@
     "ajv-i18n": "https://github.com/json-layout/json-layout/issues/5",
     "debug": "https://github.com/json-layout/json-layout/issues/5",
     "vue-phaserjs": "@TODO: broken with vue's new reactive system",
-    "zod": "@TODO: partial is broken",
-    "@vue-pdf-viewer/viewer": "@TODO: Broken with nuxt build"
+    "zod": "@TODO: partial is broken"
   },
   "devDependencies": {
     "@nuxt/eslint": "catalog:",
