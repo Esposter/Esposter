@@ -21,7 +21,7 @@ const editorView = shallowRef<EditorView>();
   <StyledCard>
     <Codemirror
       v-model="code"
-      :style="{ maxHeight: isPreview ? PREVIEW_MAX_HEIGHT : undefined }"
+      :style="isPreview ? { maxHeight: PREVIEW_MAX_HEIGHT, pointerEvents: 'auto', userSelect: 'auto' } : undefined"
       :extensions
       disabled
       @ready="({ view }) => (editorView = view)"

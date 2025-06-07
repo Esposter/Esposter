@@ -68,7 +68,7 @@ const messageHtml = useRefreshMentions(() => message.message);
         <span v-if="message.isEdited" text-gray text-2.4 line-height-3.2>(edited)</span>
       </div>
     </slot>
-    <EsbabblerModelMessageFileContainer v-if="message.files.length > 0" :message />
+    <EsbabblerModelMessageFileContainer v-if="message.files.length > 0" :is-preview :message />
     <EsbabblerModelMessageEmojiList :message-row-key="message.rowKey" />
   </v-list-item>
 </template>

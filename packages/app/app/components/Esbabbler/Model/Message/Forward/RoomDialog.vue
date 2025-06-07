@@ -64,7 +64,7 @@ const { hasMoreRoomsSearched, readMoreRoomsSearched, roomSearchQuery, roomsSearc
         </v-list>
       </v-card-text>
       <v-divider />
-      <EsbabblerModelMessage :creator is-preview :message="forward" />
+      <EsbabblerModelMessage :creator :message="forward" is-preview />
       <v-divider />
       <v-card-actions flex-col gap-0>
         <RichTextEditor v-model="messageInput" :limit="MESSAGE_MAX_LENGTH" placeholder="Add an optional message..." />

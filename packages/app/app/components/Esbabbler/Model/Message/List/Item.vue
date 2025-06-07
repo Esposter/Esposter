@@ -97,7 +97,7 @@ watch(optionsMenu, (newOptionsMenu) => {
       </div>
     </template>
     <template #messagePreview>
-      <EsbabblerModelMessage :creator is-preview :message :next-message />
+      <EsbabblerModelMessage :creator :message :next-message is-preview />
     </template>
   </EsbabblerModelMessageConfirmDeleteDialog>
 </template>

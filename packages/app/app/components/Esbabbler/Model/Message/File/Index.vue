@@ -11,10 +11,11 @@ interface FileProps {
   columnLayout: number[];
   file: FileEntity;
   index: number;
+  isPreview?: boolean;
   message: MessageEntity;
 }
 
-const { columnLayout, file, index, message } = defineProps<FileProps>();
+const { columnLayout, file, index, isPreview = false, message } = defineProps<FileProps>();
 const { data: session } = await authClient.useSession(useFetch);
 const isCreator = computed(() => session.value?.user.id === message.userId);
 const { $trpc } = useNuxtApp();
@@ -42,7 +43,7 @@ const isActive = ref(false);
     @mouseenter="isActive = true"
     @mouseleave="isActive = false"
   >
-    <EsbabblerFileRenderer :file :url />
+    <EsbabblerFileRenderer :file :is-preview :url />
     <div
       v-if="!message.isForward && isCreator && (columnLayout.length > 1 || !EMPTY_TEXT_REGEX.test(message.message))"
       v-show="isActive"
