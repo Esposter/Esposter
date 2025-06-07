@@ -1,6 +1,6 @@
+import type { AzureUpdateEntity } from "#shared/models/azure/AzureUpdateEntity";
 import type { FileSasEntity } from "#shared/models/esbabbler/FileSasEntity";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { AzureUpdateEntity } from "@@/shared/models/azure/AzureUpdateEntity";
 
 import { selectRoomSchema } from "#shared/db/schema/rooms";
 import { AzureEntityType } from "#shared/models/azure/AzureEntityType";
@@ -109,7 +109,7 @@ export const messageRouter = router({
     .input(createMessageInputSchema)
     .mutation<MessageEntity>(async ({ ctx, input }) => {
       const messageClient = await useTableClient(AzureTable.Messages);
-      const newMessage = createMessageEntity({ ...input, userId: ctx.session.user.id });
+      const newMessage = await createMessageEntity({ ...input, userId: ctx.session.user.id });
       await createEntity(messageClient, newMessage);
       messageEventEmitter.emit("createMessage", [[newMessage]]);
       return newMessage;
@@ -191,7 +191,7 @@ export const messageRouter = router({
       await Promise.all(
         roomIds.map(async (roomId) => {
           const newFileIds = await cloneFiles(containerClient, messageEntity.files, ctx.roomId, roomId);
-          const forward = createMessageEntity({
+          const forward = await createMessageEntity({
             // eslint-disable-next-line @typescript-eslint/no-misused-spread
             files: messageEntity.files.map((file, index) => new FileEntity({ ...file, id: newFileIds[index] })),
             isForward: true,
@@ -205,7 +205,7 @@ export const messageRouter = router({
           const messages = [forward];
 
           if (message) {
-            const newMessageEntity = createMessageEntity({ message, roomId, userId: ctx.session.user.id });
+            const newMessageEntity = await createMessageEntity({ message, roomId, userId: ctx.session.user.id });
             await createEntity(messageClient, newMessageEntity);
             messages.push(newMessageEntity);
           }

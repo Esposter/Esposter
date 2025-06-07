@@ -1,7 +1,7 @@
 import type { CompositeKeyEntity } from "#shared/models/azure/CompositeKeyEntity";
 import type { FileEntity } from "#shared/models/azure/FileEntity";
 import type { ToData } from "#shared/models/entity/ToData";
-import type { SetOptional } from "type-fest";
+import type { LinkPreviewResponse } from "#shared/models/esbabbler/linkPreview/LinkPreviewResponse";
 
 import { selectUserSchema } from "#shared/db/schema/users";
 import { AzureEntity, createAzureEntitySchema } from "#shared/models/azure/AzureEntity";
@@ -17,6 +17,7 @@ export class MessageEntity extends AzureEntity {
   isForward?: true;
   // Only used by the frontend for visual effects
   isLoading?: true;
+  linkPreviewResponse?: LinkPreviewResponse;
   message!: string;
   replyRowKey?: string;
   userId!: string;
@@ -24,6 +25,10 @@ export class MessageEntity extends AzureEntity {
   constructor(init?: Partial<MessageEntity> & ToData<CompositeKeyEntity>) {
     super();
     Object.assign(this, init);
+  }
+
+  override getObjectKeys() {
+    return ["linkPreviewResponse"];
   }
 }
 
@@ -44,4 +49,4 @@ export const messageEntitySchema = refineMessageSchema(
     replyRowKey: z.string().optional(),
     userId: selectUserSchema.shape.id,
   }),
-) satisfies z.ZodType<ToData<SetOptional<MessageEntity, "files" | "message">>>;
+) satisfies z.ZodType<ToData<MessageEntity>>;

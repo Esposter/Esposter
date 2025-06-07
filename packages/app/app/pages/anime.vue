@@ -7,7 +7,7 @@ const carousel = ref(0);
 
 <template>
   <NuxtLayout>
-    <v-container p-0="!" h-full fluid>
+    <div h-full>
       <v-carousel v-model="carousel" height="100%" :touch="false" :show-arrows="false" hide-delimiters>
         <v-carousel-item v-for="(drawing, index) of DRAWINGS" :key="index">
           <component
@@ -17,6 +17,6 @@ const carousel = ref(0);
           />
         </v-carousel-item>
       </v-carousel>
-    </v-container>
+    </div>
   </NuxtLayout>
 </template>

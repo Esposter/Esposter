@@ -8,6 +8,8 @@ onlyBuiltDependencies:
   - unrs-resolver
   - vue-demi
 shellEmulator: true
+overrides:
+  pdfjs-dist: ^5.3.31
 catalog:
   "@azure/data-tables": ^13.3.1
   "@azure/storage-blob": ^12.27.0
@@ -127,6 +129,8 @@ catalog:
   howler: ^2.2.4
   is-mobile: ^5.0.0
   js-beautify: ^1.15.4
+  link-preview-js: ^3.1.0
+  linkifyjs: ^4.3.1
   marked: ^15.0.12
   mjml-browser: ^4.15.3
   node-emoji: ^2.2.0
@@ -151,6 +155,7 @@ catalog:
   rxjs: ^7.8.2
   sass-embedded: ^1.89.1
   sax: ^1.4.1
+  show-open-file-picker: ^0.3.0
   sql-highlight: ^6.1.0
   superjson: ^2.2.2
   survey-core: ^2.1.1
@@ -188,5 +193,3 @@ catalog:
   ws: ^8.18.2
   xmlbuilder2: ^3.1.1
   zod: ^3.25.56
-overrides:
-  pdfjs-dist: ^5.3.31

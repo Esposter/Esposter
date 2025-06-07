@@ -1,19 +1,22 @@
 <script setup lang="ts">
+import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
+
 import { authClient } from "@/services/auth/authClient";
+import { EMOJI_TEXT } from "@/services/esbabbler/message/constants";
 import { useEmojiStore } from "@/store/esbabbler/emoji";
 import { emojify } from "node-emoji";
 
 interface MessageEmojiListProps {
-  messageRowKey: string;
+  message: MessageEntity;
 }
 
-const { messageRowKey } = defineProps<MessageEmojiListProps>();
+const { message } = defineProps<MessageEmojiListProps>();
 const { data: session } = await authClient.useSession(useFetch);
 const { backgroundOpacity80, border, info, infoOpacity10, surfaceOpacity80 } = useColors();
 const emojiStore = useEmojiStore();
 const { createEmoji, deleteEmoji, getEmojis, updateEmoji } = emojiStore;
 const emojis = computed(() =>
-  getEmojis(messageRowKey).map(({ emojiTag, partitionKey, rowKey, userIds }) => ({
+  getEmojis(message.rowKey).map(({ emojiTag, partitionKey, rowKey, userIds }) => ({
     emoji: emojify(emojiTag),
     emojiTag,
     isReacted: Boolean(session.value && userIds.includes(session.value.user.id)),
@@ -23,10 +26,11 @@ const emojis = computed(() =>
   })),
 );
 const hasEmojis = computed(() => emojis.value.length > 0);
+const selectEmoji = await useSelectEmoji(message);
 </script>
 
 <template>
-  <div v-if="hasEmojis" flex gap-1 mt-2 flex-wrap>
+  <div v-if="hasEmojis" flex items-center gap-1 mt-2 flex-wrap>
     <div
       v-for="{ partitionKey, rowKey, emojiTag, userIds, isReacted, emoji } of emojis"
       :key="rowKey"
@@ -43,15 +47,20 @@ const hasEmojis = computed(() => emojis.value.length > 0);
       active:scale-95
       @click="
         isReacted
-          ? deleteEmoji({ partitionKey, rowKey, messageRowKey })
+          ? deleteEmoji({ partitionKey, rowKey, messageRowKey: message.rowKey })
           : userIds.length > 0
-            ? updateEmoji({ partitionKey, rowKey, messageRowKey, userIds })
-            : createEmoji({ partitionKey, messageRowKey, emojiTag })
+            ? updateEmoji({ partitionKey, rowKey, messageRowKey: message.rowKey, userIds })
+            : createEmoji({ partitionKey, messageRowKey: message.rowKey, emojiTag })
       "
     >
       {{ emoji }}
       <span class="text-subtitle-2" pl-1>{{ userIds.length }}</span>
     </div>
+    <StyledEmojiPicker
+      :tooltip-props="{ text: EMOJI_TEXT }"
+      :button-props="{ size: 'small', density: 'comfortable' }"
+      @select="selectEmoji"
+    />
   </div>
 </template>
 
