@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { FileRendererProps } from "@/models/esbabbler/file/FileRendererProps";
 
+import { PREVIEW_MAX_HEIGHT } from "@/services/esbabbler/file/constants";
 import { VPdfViewer } from "@vue-pdf-viewer/viewer";
 import PdfWorker from "pdfjs-dist/build/pdf.worker?url";
 import VuePdfEmbed from "vue-pdf-embed";
@@ -18,7 +19,7 @@ watch(isDark, (newIsDark) => {
 <template>
   <VuePdfEmbed
     :style="{
-      maxHeight: isPreview ? '8rem' : undefined,
+      maxHeight: isPreview ? PREVIEW_MAX_HEIGHT : undefined,
       cursor: isPreview ? undefined : 'pointer',
     }"
     :page="1"

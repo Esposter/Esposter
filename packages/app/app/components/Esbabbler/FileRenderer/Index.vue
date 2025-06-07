@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { FileRendererCodeProps } from "@/components/Esbabbler/FileRenderer/Code.vue";
 import type { FileRendererProps } from "@/models/esbabbler/file/FileRendererProps";
 import type { Component } from "vue";
 
@@ -19,13 +18,8 @@ const renderer = computed<Component>(() => {
     return defineAsyncComponent(() => import("@/components/Esbabbler/FileRenderer/Default.vue"));
   else return defineAsyncComponent(() => import("@/components/Esbabbler/FileRenderer/Code.vue"));
 });
-const rendererProps = computed(() => {
-  const rendererProps: FileRendererProps & Partial<FileRendererCodeProps> = props;
-  if (language.value) rendererProps.language = language.value;
-  return rendererProps;
-});
 </script>
 
 <template>
-  <component :is="renderer" :="rendererProps" />
+  <component :is="renderer" :language :="props" />
 </template>
