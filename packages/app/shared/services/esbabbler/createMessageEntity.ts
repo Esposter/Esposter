@@ -3,9 +3,8 @@ import type { CreateMessageInput } from "#shared/models/db/message/CreateMessage
 import { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
 import { getMessagesPartitionKey } from "#shared/services/esbabbler/getMessagesPartitionKey";
-import { getIsServer } from "#shared/util/environment/getIsServer";
 
-export const createMessageEntity = async ({
+export const createMessageEntity = ({
   message,
   roomId,
   ...rest
@@ -19,11 +18,5 @@ export const createMessageEntity = async ({
     rowKey: getReverseTickedTimestamp(),
     updatedAt: createdAt,
   });
-  if (getIsServer() && message) {
-    const getLinkPreviewResponse = (await import("@@/server/services/esbabbler/getLinkPreviewResponse"))
-      .getLinkPreviewResponse;
-    const linkPreviewResponse = await getLinkPreviewResponse(message);
-    if (linkPreviewResponse) messageEntity.linkPreviewResponse = linkPreviewResponse;
-  }
   return messageEntity;
 };

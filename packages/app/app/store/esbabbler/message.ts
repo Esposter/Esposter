@@ -56,7 +56,7 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
     };
     await Promise.all(MessageHookMap.ResetSend.map((fn) => fn(editor)));
     const newMessage = reactive(
-      await createMessageEntity({
+      createMessageEntity({
         ...createMessageInput,
         isLoading: true,
         userId: session.value.data.user.id,
