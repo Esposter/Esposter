@@ -48,29 +48,31 @@ const messageHtml = useRefreshMentions(() => message.message);
         </span>
       </template>
     </v-list-item-title>
-    <template v-if="message.isForward">
-      <div flex gap-x-2>
-        <div class="bg-border" rd w-1 h-inherit />
-        <div flex flex-col>
-          <v-list-item-subtitle>
-            <span italic>
-              <v-icon icon="mdi-share" />
-              Forwarded
-            </span>
-          </v-list-item-subtitle>
-          <v-list-item-subtitle v-if="!EMPTY_TEXT_REGEX.test(messageHtml)" op-100="!" v-html="messageHtml" />
+    <div flex flex-col gap-y-1>
+      <template v-if="message.isForward">
+        <div flex gap-x-2>
+          <div class="bg-border" rd w-1 h-inherit />
+          <div flex flex-col>
+            <v-list-item-subtitle>
+              <span italic>
+                <v-icon icon="mdi-share" />
+                Forwarded
+              </span>
+            </v-list-item-subtitle>
+            <v-list-item-subtitle v-if="!EMPTY_TEXT_REGEX.test(messageHtml)" op-100="!" v-html="messageHtml" />
+          </div>
         </div>
-      </div>
-    </template>
-    <slot v-else>
-      <div flex gap-x-1 items-end>
-        <v-list-item-subtitle v-if="!EMPTY_TEXT_REGEX.test(messageHtml)" op-100="!" v-html="messageHtml" />
-        <span v-if="message.isEdited" text-gray text-2.4 line-height-3.2>(edited)</span>
-      </div>
-    </slot>
-    <EsbabblerModelMessageFileContainer v-if="message.files.length > 0" max-w-140 :is-preview :message />
-    <EsbabblerModelMessageLinkPreview v-if="message.linkPreviewResponse" max-w-140 :="message.linkPreviewResponse" />
-    <EsbabblerModelMessageEmojiList :message />
+      </template>
+      <slot v-else>
+        <div flex gap-x-1 items-end>
+          <v-list-item-subtitle v-if="!EMPTY_TEXT_REGEX.test(messageHtml)" op-100="!" v-html="messageHtml" />
+          <span v-if="message.isEdited" text-gray text-2.4 line-height-3.2>(edited)</span>
+        </div>
+      </slot>
+      <EsbabblerModelMessageFileContainer v-if="message.files.length > 0" max-w-140 :is-preview :message />
+      <EsbabblerModelMessageLinkPreview v-if="message.linkPreviewResponse" max-w-140 :="message.linkPreviewResponse" />
+      <EsbabblerModelMessageEmojiList :message />
+    </div>
   </v-list-item>
 </template>
 

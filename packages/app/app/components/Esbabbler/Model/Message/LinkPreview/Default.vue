@@ -6,14 +6,11 @@ const { favicons, url } = defineProps<DefaultLinkPreviewResponse>();
 
 <template>
   <StyledCard>
-    <v-img height="12rem" :src="favicons[0]" cover eager />
+    <v-img height="12rem" :src="favicons[0]" cover />
     <v-card-title font-bold>
       <NuxtLink :to="url" external target="_blank">
         {{ url }}
       </NuxtLink>
     </v-card-title>
-    <v-card-actions>
-      <v-img :src="favicons[0]" size-full />
-    </v-card-actions>
   </StyledCard>
 </template>
