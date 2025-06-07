@@ -81,10 +81,6 @@ const messageHtml = useRefreshMentions(() => message.message);
     width: 1rem;
   }
 }
-
-:deep(.v-list-item__content) {
-  overflow: visible;
-}
 // We don't want to hide message content even if they added a bunch of newlines
 :deep(.v-list-item-subtitle) {
   line-clamp: unset;
