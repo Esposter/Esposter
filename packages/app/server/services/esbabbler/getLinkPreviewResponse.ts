@@ -7,21 +7,28 @@ import { lookup } from "node:dns";
 
 export const getLinkPreviewResponse = async (message: string): Promise<LinkPreviewResponse | undefined> => {
   const messageHtml = parse(message);
-  const link = find(messageHtml.textContent, "url", { defaultProtocol: "https" }).find(Boolean);
+  const anchor = messageHtml.querySelector("a");
+  if (!anchor) return undefined;
+
+  const link = find(anchor.textContent, "url", { defaultProtocol: "https" }).find(Boolean);
   if (!link) return undefined;
 
-  return getLinkPreview(link.href, {
-    resolveDNSHost: (url) =>
-      new Promise((resolve, reject) => {
-        const hostname = new URL(url).hostname;
-        lookup(hostname, (err, address) => {
-          if (err) {
-            reject(err);
-            return;
-          }
+  try {
+    return await getLinkPreview(link.href, {
+      resolveDNSHost: (url) =>
+        new Promise((resolve, reject) => {
+          const hostname = new URL(url).hostname;
+          lookup(hostname, (err, address) => {
+            if (err) {
+              reject(err);
+              return;
+            }
 
-          resolve(address);
-        });
-      }),
-  });
+            resolve(address);
+          });
+        }),
+    });
+  } catch {
+    return undefined;
+  }
 };
