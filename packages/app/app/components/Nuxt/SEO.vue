@@ -3,10 +3,12 @@ import { SITE_DESCRIPTION, SITE_NAME } from "#shared/services/esposter/constants
 
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 
+useHead({
+  titleTemplate: (title) => (title ? `${SITE_NAME} | ${title}` : SITE_NAME),
+});
 const { surface } = useColors();
 const runtimeConfig = useRuntimeConfig();
 const logoImageUrl = useLogoImageUrl();
-
 useSeoMeta({
   appleMobileWebAppCapable: "yes",
   appleMobileWebAppStatusBarStyle: "default",
@@ -30,10 +32,6 @@ useSeoMeta({
   themeColor: surface,
   twitterCard: "summary_large_image",
   twitterSite: runtimeConfig.public.baseUrl,
-});
-
-useHead({
-  titleTemplate: (title) => (title ? `${SITE_NAME} | ${title}` : SITE_NAME),
 });
 </script>
 

@@ -13,35 +13,37 @@ import {
 } from "../app/services/grapesjs/constants";
 import { MAX_FILE_REQUEST_SIZE, MAX_REQUEST_SIZE } from "../shared/services/esposter/constants";
 
+export const ImageSourceWhitelist = [
+  // @vite-pwa/nuxt
+  "'self'",
+  // phaser, surveyjs
+  "data:",
+  // Upload file createObjectURL preview
+  "blob:",
+  // Google user image
+  "*.googleusercontent.com",
+  // emoji-mart-vue-fast
+  "https://unpkg.com/emoji-datasource-apple@15.0.1/img/apple/sheets-256/64.png",
+  // Azure
+  process.env.AZURE_BLOB_URL,
+  // grapesjs
+  BLOGSPOT_BASE_URL,
+  // grapesjs
+  GRAPESJS_BASE_URL,
+  // grapesjs
+  MAILJET_BASE_URL,
+  // grapesjs
+  PLACEHOLD_BASE_URL,
+  // grapesjs
+  TUI_BASE_URL,
+  // grapesjs
+  WORDPRESS_DESIGNSPELL_BASE_URL,
+];
+
 export const security: NuxtConfig["security"] = {
   headers: {
     contentSecurityPolicy: {
-      "img-src": [
-        // @vite-pwa/nuxt
-        "'self'",
-        // phaser, surveyjs
-        "data:",
-        // Upload file createObjectURL preview
-        "blob:",
-        // Google user image
-        "*.googleusercontent.com",
-        // emoji-mart-vue-fast
-        "https://unpkg.com/emoji-datasource-apple@15.0.1/img/apple/sheets-256/64.png",
-        // Azure
-        process.env.AZURE_BLOB_URL,
-        // grapesjs
-        BLOGSPOT_BASE_URL,
-        // grapesjs
-        GRAPESJS_BASE_URL,
-        // grapesjs
-        MAILJET_BASE_URL,
-        // grapesjs
-        PLACEHOLD_BASE_URL,
-        // grapesjs
-        TUI_BASE_URL,
-        // grapesjs
-        WORDPRESS_DESIGNSPELL_BASE_URL,
-      ],
+      "img-src": ImageSourceWhitelist,
       // desmos
       "script-src": "'unsafe-eval'",
       "script-src-elem": [

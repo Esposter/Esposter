@@ -5,9 +5,7 @@ import { useRoomStore } from "@/store/esbabbler/room";
 definePageMeta({ middleware: "auth", validate });
 
 useHead({ titleTemplate: (title) => (title ? `Esbabbler | ${title}` : "Esbabbler") });
-
 useSubscribables();
-
 const roomStore = useRoomStore();
 const { currentRoomId, currentRoomName, rooms } = storeToRefs(roomStore);
 const isRoomExisting = computed(() => rooms.value.some(({ id }) => id === currentRoomId.value));

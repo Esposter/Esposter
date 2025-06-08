@@ -8,6 +8,7 @@ import { future } from "./configuration/future";
 import { imports } from "./configuration/imports";
 import { modules } from "./configuration/modules";
 import { pwa } from "./configuration/pwa";
+import { routeRules } from "./configuration/routeRules";
 import { runtimeConfig } from "./configuration/runtimeConfig";
 import { security } from "./configuration/security";
 import { site } from "./configuration/site";
@@ -27,6 +28,7 @@ export default defineNuxtConfig({
   imports,
   modules,
   pwa,
+  routeRules,
   runtimeConfig,
   security,
   site,
