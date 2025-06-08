@@ -4,7 +4,7 @@ import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useTween } from "vue-phaserjs";
 
-export const useMonsterAppearTween = async (isEnemy: boolean) => {
+export const useMonsterAppearTween = (isEnemy: boolean) => {
   const store = isEnemy ? useEnemyStore() : useBattlePlayerStore();
   const { initialMonsterPosition } = store;
   const { monsterPosition, monsterTween } = storeToRefs(store);

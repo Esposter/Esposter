@@ -34,7 +34,7 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
     return false;
   };
 
-  const updateQueuedMessagesAndShowMessage = async (
+  const updateQueuedMessagesAndShowMessage = (
     scene: SceneWithPlugins,
     target: DialogTarget,
     messages: DialogMessage[],

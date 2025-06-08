@@ -6,7 +6,6 @@ const { description, images, siteName, title, url } = defineProps<URLLinkPreview
 
 <template>
   <StyledCard>
-    <v-img height="12rem" :src="images[0]" :alt="siteName ?? title" cover />
     <v-card-title font-bold>
       <NuxtLink :to="url" external target="_blank">
         {{ title }}
@@ -15,5 +14,8 @@ const { description, images, siteName, title, url } = defineProps<URLLinkPreview
     <v-card-text v-if="description">
       {{ description }}
     </v-card-text>
+    <v-card-actions>
+      <v-img width="100%" :src="images[0]" :alt="siteName ?? title" cover />
+    </v-card-actions>
   </StyledCard>
 </template>

@@ -8,7 +8,7 @@ import { ExternalAttackManagerStore, useAttackManagerStore } from "@/store/dunge
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { sleep } from "vue-phaserjs";
 
-export const useAttackAnimation = async (scene: SceneWithPlugins, attack: Attack, isToEnemy: boolean) => {
+export const useAttackAnimation = (scene: SceneWithPlugins, attack: Attack, isToEnemy: boolean) => {
   const settingsStore = useSettingsStore();
   const { isSkipAnimations } = storeToRefs(settingsStore);
   if (isSkipAnimations.value) return;
