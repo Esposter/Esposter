@@ -8,9 +8,6 @@ const { hasMore, posts } = storeToRefs(postStore);
 
 <template>
   <NuxtLayout>
-    <template #left>
-      <EsposterProductList />
-    </template>
     <v-pull-to-refresh
       @load="
         async ({ done }) => {
@@ -28,5 +25,8 @@ const { hasMore, posts } = storeToRefs(postStore);
         <StyledWaypoint :active="hasMore" @change="readMorePosts" />
       </v-container>
     </v-pull-to-refresh>
+    <template #left>
+      <EsposterProductList />
+    </template>
   </NuxtLayout>
 </template>

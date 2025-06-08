@@ -34,9 +34,6 @@ const loginButtonsProps = ref<LoginButtonProps[]>([
 
 <template>
   <NuxtLayout>
-    <template #left>
-      <EsposterProductList />
-    </template>
     <v-container h-full flex justify-center items-center>
       <StyledCard :card-props="{ width: '100%', maxWidth: '500' }">
         <v-container>
@@ -52,5 +49,8 @@ const loginButtonsProps = ref<LoginButtonProps[]>([
         </v-container>
       </StyledCard>
     </v-container>
+    <template #left>
+      <EsposterProductList />
+    </template>
   </NuxtLayout>
 </template>

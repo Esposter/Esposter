@@ -31,9 +31,6 @@ onNodesChange(getSynchronizedFunction(throttledSaveFlowChartEditor));
 
 <template>
   <NuxtLayout :left-navigation-drawer-props="{ scrim: false }" :right-navigation-drawer-props="{ scrim: false }">
-    <template #left>
-      <FlowchartEditorSideBar />
-    </template>
     <div class="bg-surface" h-full @drop="onDrop">
       <VueFlow
         v-model:nodes="flowchartEditor.nodes"
@@ -51,6 +48,9 @@ onNodesChange(getSynchronizedFunction(throttledSaveFlowChartEditor));
         </template>
       </VueFlow>
     </div>
+    <template #left>
+      <FlowchartEditorSideBar />
+    </template>
   </NuxtLayout>
 </template>
 
