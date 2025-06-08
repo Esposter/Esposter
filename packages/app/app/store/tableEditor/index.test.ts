@@ -1,5 +1,5 @@
 import { TodoListItem } from "#shared/models/tableEditor/todoList/TodoListItem";
-import { ID_QUERY_PARAM_KEY } from "@/services/shared/constants";
+import { ID_QUERY_PARAMETER_KEY } from "@/services/shared/constants";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { useItemStore } from "@/store/tableEditor/item";
 import { expectToBeDefined } from "@/util/test/expectToBeDefined";
@@ -39,7 +39,7 @@ describe("tableEditorStore", () => {
     expect(editedItem.value).toEqual(newItem);
     expect(editedIndex.value).toBe(0);
     expect(editFormDialog.value).toBe(true);
-    expect(router.currentRoute.value.query).toStrictEqual({ [ID_QUERY_PARAM_KEY]: newItem.id });
+    expect(router.currentRoute.value.query).toStrictEqual({ [ID_QUERY_PARAMETER_KEY]: newItem.id });
   });
 
   test("save unedited item", async () => {

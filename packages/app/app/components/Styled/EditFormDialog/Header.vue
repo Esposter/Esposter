@@ -31,7 +31,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <v-toolbar pl-4 flex-none :title="`Configuration - ${itemType}`">
+  <v-toolbar flex-none pl-4 :title="`Configuration - ${itemType}`">
     <v-spacer />
     <ErrorIcon :edit-form-ref :is-edit-form-valid />
     <SaveButton :is-savable />

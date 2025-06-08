@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType";
-import { ID_QUERY_PARAM_KEY, ITEM_TYPE_QUERY_PARAM_KEY } from "@/services/shared/constants";
+import { ID_QUERY_PARAMETER_KEY, ITEM_TYPE_QUERY_PARAMETER_KEY } from "@/services/shared/constants";
 import { getTableEditorTitle } from "@/services/tableEditor/getTableEditorTitle";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { uuidValidateV4 } from "@esposter/shared";
@@ -17,11 +17,11 @@ const tableEditorTypeName = computed(() => getTableEditorTitle(tableEditorType.v
 useConfirmBeforeNavigation(isDirty);
 
 onMounted(async () => {
-  const itemType = route.query[ITEM_TYPE_QUERY_PARAM_KEY];
+  const itemType = route.query[ITEM_TYPE_QUERY_PARAMETER_KEY];
   if (Object.values(TableEditorType).some((type) => type === itemType))
     tableEditorType.value = itemType as TableEditorType;
 
-  const itemId = route.query[ID_QUERY_PARAM_KEY];
+  const itemId = route.query[ID_QUERY_PARAMETER_KEY];
   if (typeof itemId === "string" && uuidValidateV4(itemId)) await editItem({ id: itemId });
 });
 </script>

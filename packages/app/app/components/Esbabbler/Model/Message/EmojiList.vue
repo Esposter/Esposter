@@ -30,7 +30,7 @@ const selectEmoji = await useSelectEmoji(message);
 </script>
 
 <template>
-  <div v-if="hasEmojis" flex flex-wrap items-center gap-1>
+  <div v-if="hasEmojis" flex items-center flex-wrap gap-1>
     <div
       v-for="{ partitionKey, rowKey, emojiTag, userIds, isReacted, emoji } of emojis"
       :key="rowKey"
