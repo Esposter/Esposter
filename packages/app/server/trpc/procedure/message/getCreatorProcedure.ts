@@ -19,6 +19,5 @@ export const getCreatorProcedure = <T extends z.ZodType<Pick<MessageEntity, "par
         message: new NotFoundError(AzureEntityType.Message, JSON.stringify(input)).message,
       });
     else if (messageEntity.userId !== ctx.session.user.id) throw new TRPCError({ code: "UNAUTHORIZED" });
-
     return next({ ctx: { messageClient, messageEntity } });
   });
