@@ -32,6 +32,13 @@ onClickOutside(form, () => {
   if (!isUpdateMode.value) return;
   onUpdate();
 });
+
+watch(
+  () => initialValue,
+  (newInitialValue) => {
+    editedValue.value = newInitialValue;
+  },
+);
 </script>
 
 <template>
