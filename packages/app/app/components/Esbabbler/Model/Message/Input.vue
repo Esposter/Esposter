@@ -34,7 +34,7 @@ const reply = computed(() => messages.value.find((m) => m.rowKey === rowKey.valu
 
 <template>
   <EsbabblerModelMessageForwardRoomDialog />
-  <EsbabblerModelMessageDropzoneBackground />
+  <EsbabblerModelMessageFileDropzoneBackground />
   <div w-full>
     <EsbabblerModelMessageReplyHeader v-if="reply" :user-id="reply.userId" @close="rowKey = ''" />
     <RichTextEditor
