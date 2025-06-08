@@ -1,7 +1,8 @@
+import type { inferParser } from "@trpc/server/unstable-core-do-not-import";
 import type { z } from "zod/v4";
 
-import { getProfanityFilterMiddleware } from "@@/server/trpc/middleware/getProfanityFilterMiddleware";
+import { addProfanityFilterMiddleware } from "@@/server/trpc/middleware/addProfanityFilterMiddleware";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 
-export const getProfanityFilterProcedure = <T extends z.ZodType>(schema: T, keys: (keyof z.output<T>)[]) =>
-  authedProcedure.input(schema).use(getProfanityFilterMiddleware(schema, keys));
+export const getProfanityFilterProcedure = <T extends z.ZodType>(schema: T, keys: (keyof inferParser<T>["out"])[]) =>
+  addProfanityFilterMiddleware(authedProcedure.input(schema), keys);

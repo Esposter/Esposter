@@ -122,27 +122,24 @@ export const roomRouter = router({
         return newMembers;
       }),
   ),
-  createRoom: getProfanityFilterProcedure(createRoomInputSchema, ["name"])
-    .input(createRoomInputSchema)
-    .mutation<Room>(({ ctx, input }) =>
-      ctx.db.transaction(async (tx) => {
-        const newRoom = (
-          await tx
-            .insert(rooms)
-            .values({ ...input, userId: ctx.session.user.id })
-            .returning()
-        ).find(Boolean);
-        if (!newRoom)
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Room, JSON.stringify(input))
-              .message,
-          });
+  createRoom: getProfanityFilterProcedure(createRoomInputSchema, ["name"]).mutation<Room>(({ ctx, input }) =>
+    ctx.db.transaction(async (tx) => {
+      const newRoom = (
+        await tx
+          .insert(rooms)
+          .values({ ...input, userId: ctx.session.user.id })
+          .returning()
+      ).find(Boolean);
+      if (!newRoom)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Room, JSON.stringify(input)).message,
+        });
 
-        await tx.insert(usersToRooms).values({ roomId: newRoom.id, userId: ctx.session.user.id });
-        return newRoom;
-      }),
-    ),
+      await tx.insert(usersToRooms).values({ roomId: newRoom.id, userId: ctx.session.user.id });
+      return newRoom;
+    }),
+  ),
   deleteRoom: authedProcedure.input(deleteRoomInputSchema).mutation<Room>(async ({ ctx, input }) => {
     const deletedRoom = await deleteRoom(ctx.db, ctx.session, input);
     const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
@@ -337,9 +334,8 @@ export const roomRouter = router({
       const resultRooms = joinedRooms.map(({ rooms }) => rooms);
       return getCursorPaginationData(resultRooms, limit, sortBy);
     }),
-  updateRoom: getProfanityFilterProcedure(updateRoomInputSchema, ["name"])
-    .input(updateRoomInputSchema)
-    .mutation<Room>(async ({ ctx, input: { id, ...rest } }) => {
+  updateRoom: getProfanityFilterProcedure(updateRoomInputSchema, ["name"]).mutation<Room>(
+    async ({ ctx, input: { id, ...rest } }) => {
       const updatedRoom = (
         await ctx.db
           .update(rooms)
@@ -355,5 +351,6 @@ export const roomRouter = router({
 
       roomEventEmitter.emit("updateRoom", updatedRoom);
       return updatedRoom;
-    }),
+    },
+  ),
 });

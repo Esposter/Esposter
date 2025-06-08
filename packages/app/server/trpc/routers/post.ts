@@ -36,9 +36,8 @@ const readPostsInputSchema = z
 export type ReadPostsInput = z.infer<typeof readPostsInputSchema>;
 
 export const postRouter = router({
-  createComment: getProfanityFilterProcedure(createCommentInputSchema, ["description"])
-    .input(createCommentInputSchema)
-    .mutation<PostWithRelations>(async ({ ctx, input }) => {
+  createComment: getProfanityFilterProcedure(createCommentInputSchema, ["description"]).mutation<PostWithRelations>(
+    async ({ ctx, input }) => {
       const parentPost = await ctx.db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, input.parentId) });
       if (!parentPost)
         throw new TRPCError({
@@ -87,10 +86,10 @@ export const postRouter = router({
           message: new NotFoundError(DerivedDatabaseEntityType.Comment, newComment.id).message,
         });
       return newCommentWithRelations;
-    }),
-  createPost: getProfanityFilterProcedure(createPostInputSchema, ["title", "description"])
-    .input(createPostInputSchema)
-    .mutation<PostWithRelations>(async ({ ctx, input }) => {
+    },
+  ),
+  createPost: getProfanityFilterProcedure(createPostInputSchema, ["title", "description"]).mutation<PostWithRelations>(
+    async ({ ctx, input }) => {
       const createdAt = new Date();
       const newPost = (
         await ctx.db
@@ -119,7 +118,8 @@ export const postRouter = router({
           message: new NotFoundError(DatabaseEntityType.Post, newPost.id).message,
         });
       return newPostWithRelations;
-    }),
+    },
+  ),
   deleteComment: authedProcedure.input(deleteCommentInputSchema).mutation<Post>(async ({ ctx, input }) =>
     ctx.db.transaction(async (tx) => {
       const deletedComment = (
@@ -190,9 +190,8 @@ export const postRouter = router({
       });
       return getCursorPaginationData(resultPosts, limit, sortBy);
     }),
-  updateComment: getProfanityFilterProcedure(updateCommentInputSchema, ["description"])
-    .input(updateCommentInputSchema)
-    .mutation<PostWithRelations>(async ({ ctx, input: { id, ...rest } }) => {
+  updateComment: getProfanityFilterProcedure(updateCommentInputSchema, ["description"]).mutation<PostWithRelations>(
+    async ({ ctx, input: { id, ...rest } }) => {
       const updatedComment = (
         await ctx.db
           .update(posts)
@@ -216,7 +215,8 @@ export const postRouter = router({
           message: new NotFoundError(DerivedDatabaseEntityType.Comment, id).message,
         });
       return updatedCommentWithRelations;
-    }),
+    },
+  ),
   updatePost: getProfanityFilterProcedure(updatePostInputSchema, ["title", "description"]).mutation<PostWithRelations>(
     async ({ ctx, input: { id, ...rest } }) => {
       const updatedPost = (

@@ -35,7 +35,7 @@ import { on } from "@@/server/services/events/on";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
 import { router } from "@@/server/trpc";
-import { getProfanityFilterMiddleware } from "@@/server/trpc/middleware/getProfanityFilterMiddleware";
+import { addProfanityFilterMiddleware } from "@@/server/trpc/middleware/addProfanityFilterMiddleware";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/message/getCreatorProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { NotFoundError } from "@esposter/shared";
@@ -108,15 +108,15 @@ export const forwardMessagesInputSchema = z.object({
 export type ForwardMessagesInput = z.infer<typeof forwardMessagesInputSchema>;
 
 export const messageRouter = router({
-  createMessage: getMemberProcedure(createMessageInputSchema, "roomId")
-    .use(getProfanityFilterMiddleware(createMessageInputSchema, ["message"]))
-    .mutation<MessageEntity>(async ({ ctx, input }) => {
-      const messageClient = await useTableClient(AzureTable.Messages);
-      const newMessageEntity = await createMessageEntity({ ...input, userId: ctx.session.user.id });
-      await createEntity(messageClient, newMessageEntity);
-      messageEventEmitter.emit("createMessage", [[newMessageEntity]]);
-      return newMessageEntity;
-    }),
+  createMessage: addProfanityFilterMiddleware(getMemberProcedure(createMessageInputSchema, "roomId"), [
+    "message",
+  ]).mutation<MessageEntity>(async ({ ctx, input }) => {
+    const messageClient = await useTableClient(AzureTable.Messages);
+    const newMessageEntity = await createMessageEntity({ ...input, userId: ctx.session.user.id });
+    await createEntity(messageClient, newMessageEntity);
+    messageEventEmitter.emit("createMessage", [[newMessageEntity]]);
+    return newMessageEntity;
+  }),
   createTyping: getMemberProcedure(createTypingInputSchema, "roomId")
     // Query instead of mutation as there are no concurrency issues with ordering for simply emitting
     .query(({ input }) => {
@@ -282,10 +282,10 @@ export const messageRouter = router({
       });
     },
   ),
-  updateMessage: getCreatorProcedure(updateMessageInputSchema)
-    .use(getProfanityFilterMiddleware(updateMessageInputSchema, ["message"]))
-    .mutation(async ({ ctx: { messageClient }, input }) => {
+  updateMessage: addProfanityFilterMiddleware(getCreatorProcedure(updateMessageInputSchema), ["message"]).mutation(
+    async ({ ctx: { messageClient }, input }) => {
       await updateMessage(messageClient, input);
       messageEventEmitter.emit("updateMessage", input);
-    }),
+    },
+  ),
 });
