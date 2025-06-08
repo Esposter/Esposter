@@ -70,7 +70,12 @@ const messageHtml = useRefreshMentions(() => message.message);
         </div>
       </slot>
       <EsbabblerModelMessageFileContainer v-if="message.files.length > 0" max-w-140 :is-preview :message />
-      <EsbabblerModelMessageLinkPreview v-if="message.linkPreviewResponse" max-w-140 :="message.linkPreviewResponse" />
+      <EsbabblerModelMessageLinkPreviewContainer
+        v-if="message.linkPreviewResponse"
+        :link-preview-response="message.linkPreviewResponse"
+        :partition-key="message.partitionKey"
+        :row-key="message.rowKey"
+      />
       <EsbabblerModelMessageEmojiList :message />
     </div>
   </v-list-item>

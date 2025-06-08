@@ -36,6 +36,7 @@ import { getCursorPaginationData } from "@@/server/services/pagination/cursor/ge
 import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
 import { router } from "@@/server/trpc";
 import { getProfanityFilterMiddleware } from "@@/server/trpc/middleware/getProfanityFilterMiddleware";
+import { getCreatorProcedure } from "@@/server/trpc/procedure/message/getCreatorProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { NotFoundError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -85,6 +86,9 @@ const deleteFileInputSchema = z.object({
 });
 export type DeleteFileInput = z.infer<typeof deleteFileInputSchema>;
 
+const deleteLinkPreviewResponseInputSchema = messageEntitySchema.pick({ partitionKey: true, rowKey: true });
+export type DeleteLinkPreviewResponseInput = z.infer<typeof deleteLinkPreviewResponseInputSchema>;
+
 const onCreateMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnCreateMessageInput = z.infer<typeof onCreateMessageInputSchema>;
 
@@ -106,72 +110,62 @@ export type ForwardMessagesInput = z.infer<typeof forwardMessagesInputSchema>;
 export const messageRouter = router({
   createMessage: getMemberProcedure(createMessageInputSchema, "roomId")
     .use(getProfanityFilterMiddleware(createMessageInputSchema, ["message"]))
-    .input(createMessageInputSchema)
     .mutation<MessageEntity>(async ({ ctx, input }) => {
       const messageClient = await useTableClient(AzureTable.Messages);
-      const newMessage = await createMessageEntity({ ...input, userId: ctx.session.user.id });
-      await createEntity(messageClient, newMessage);
-      messageEventEmitter.emit("createMessage", [[newMessage]]);
-      return newMessage;
+      const newMessageEntity = await createMessageEntity({ ...input, userId: ctx.session.user.id });
+      await createEntity(messageClient, newMessageEntity);
+      messageEventEmitter.emit("createMessage", [[newMessageEntity]]);
+      return newMessageEntity;
     }),
   createTyping: getMemberProcedure(createTypingInputSchema, "roomId")
-    .input(createTypingInputSchema)
     // Query instead of mutation as there are no concurrency issues with ordering for simply emitting
     .query(({ input }) => {
       messageEventEmitter.emit("createTyping", input);
     }),
-  deleteFile: getMemberProcedure(deleteFileInputSchema, "partitionKey")
-    .input(deleteFileInputSchema)
-    .mutation(async ({ ctx, input: { id, partitionKey, rowKey } }) => {
-      const messageClient = await useTableClient(AzureTable.Messages);
-      const message = await getEntity(messageClient, MessageEntity, partitionKey, rowKey);
-      if (!message)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: new NotFoundError(AzureEntityType.Message, JSON.stringify({ partitionKey, rowKey })).message,
-        });
-      else if (message.userId !== ctx.session.user.id) throw new TRPCError({ code: "UNAUTHORIZED" });
-      else if (message.isForward || message.files.length === 0) throw new TRPCError({ code: "BAD_REQUEST" });
+  deleteFile: getCreatorProcedure(deleteFileInputSchema).mutation(
+    async ({ ctx: { messageClient, messageEntity, roomId }, input: { id, partitionKey, rowKey } }) => {
+      if (messageEntity.isForward || messageEntity.files.length === 0) throw new TRPCError({ code: "BAD_REQUEST" });
 
-      const index = message.files.findIndex((f) => f.id === id);
+      const index = messageEntity.files.findIndex((f) => f.id === id);
       if (index === -1)
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: new NotFoundError(AzureEntityType.Message, JSON.stringify({ partitionKey, rowKey })).message,
+          message: new NotFoundError(AzureEntityType.File, id).message,
         });
 
       const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
-      const blobName = getBlobName(`${ctx.roomId}/${id}`, message.files.splice(index, 1)[0].filename);
-      const updatedMessage = {
-        files: message.files,
+      const blobName = getBlobName(`${roomId}/${id}`, messageEntity.files.splice(index, 1)[0].filename);
+      const updatedMessageEntity = {
+        files: messageEntity.files,
         partitionKey,
         rowKey,
       } as const satisfies AzureUpdateEntity<MessageEntity>;
-      await updateMessage(messageClient, updatedMessage);
-      messageEventEmitter.emit("updateMessage", updatedMessage);
+      await updateMessage(messageClient, updatedMessageEntity);
+      messageEventEmitter.emit("updateMessage", updatedMessageEntity);
       await containerClient.deleteBlob(blobName);
-    }),
-  deleteMessage: getMemberProcedure(deleteMessageInputSchema, "partitionKey")
-    .input(deleteMessageInputSchema)
-    .mutation(async ({ ctx, input }) => {
-      const messageClient = await useTableClient(AzureTable.Messages);
-      const messageEntity = await getEntity(messageClient, MessageEntity, input.partitionKey, input.rowKey);
-      if (!messageEntity)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: new NotFoundError(AzureEntityType.Message, JSON.stringify(input)).message,
-        });
-      else if (messageEntity.userId !== ctx.session.user.id) throw new TRPCError({ code: "UNAUTHORIZED" });
-
+    },
+  ),
+  deleteLinkPreviewResponse: getCreatorProcedure(deleteLinkPreviewResponseInputSchema).mutation(
+    async ({ ctx: { messageClient }, input }) => {
+      const updatedMessageEntity = {
+        ...input,
+        linkPreviewResponse: null,
+      } as const satisfies AzureUpdateEntity<MessageEntity>;
+      await updateMessage(messageClient, updatedMessageEntity);
+      messageEventEmitter.emit("updateMessage", updatedMessageEntity);
+    },
+  ),
+  deleteMessage: getCreatorProcedure(deleteMessageInputSchema).mutation(
+    async ({ ctx: { messageClient, messageEntity }, input }) => {
       await deleteEntity(messageClient, input.partitionKey, input.rowKey);
       messageEventEmitter.emit("deleteMessage", input);
 
       const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
       await deleteFiles(containerClient, messageEntity.files);
-    }),
-  forwardMessages: getMemberProcedure(forwardMessagesInputSchema, "partitionKey")
-    .input(forwardMessagesInputSchema)
-    .mutation(async ({ ctx, input: { message, partitionKey, roomIds, rowKey } }) => {
+    },
+  ),
+  forwardMessages: getMemberProcedure(forwardMessagesInputSchema, "partitionKey").mutation(
+    async ({ ctx, input: { message, partitionKey, roomIds, rowKey } }) => {
       const foundUsersToRooms = await ctx.db.query.usersToRooms.findMany({
         where: (usersToRooms, { and, eq, inArray }) =>
           and(eq(usersToRooms.userId, ctx.session.user.id), inArray(usersToRooms.roomId, roomIds)),
@@ -214,85 +208,83 @@ export const messageRouter = router({
           messageEventEmitter.emit("createMessage", [messages, true]);
         }),
       );
-    }),
-  generateDownloadFileSasUrls: getMemberProcedure(generateDownloadFileSasUrlsInputSchema, "roomId")
-    .input(generateDownloadFileSasUrlsInputSchema)
-    .query<string[]>(async ({ input: { files, roomId } }) => {
+    },
+  ),
+  generateDownloadFileSasUrls: getMemberProcedure(generateDownloadFileSasUrlsInputSchema, "roomId").query<string[]>(
+    async ({ input: { files, roomId } }) => {
       const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
       return generateDownloadFileSasUrls(containerClient, files, roomId);
-    }),
-  generateUploadFileSasEntities: getMemberProcedure(generateUploadFileSasEntitiesInputSchema, "roomId")
-    .input(generateUploadFileSasEntitiesInputSchema)
-    .query<FileSasEntity[]>(async ({ input: { files, roomId } }) => {
-      const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
-      return generateUploadFileSasEntities(containerClient, files, roomId);
-    }),
-  onCreateMessage: getMemberProcedure(onCreateMessageInputSchema, "roomId")
-    .input(onCreateMessageInputSchema)
-    .subscription(async function* ({ ctx, input, signal }) {
-      for await (const [[data, isIncludesSelf]] of on(messageEventEmitter, "createMessage", { signal })) {
-        const dataToYield: MessageEntity[] = [];
+    },
+  ),
+  generateUploadFileSasEntities: getMemberProcedure(generateUploadFileSasEntitiesInputSchema, "roomId").query<
+    FileSasEntity[]
+  >(async ({ input: { files, roomId } }) => {
+    const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
+    return generateUploadFileSasEntities(containerClient, files, roomId);
+  }),
+  onCreateMessage: getMemberProcedure(onCreateMessageInputSchema, "roomId").subscription(async function* ({
+    ctx,
+    input,
+    signal,
+  }) {
+    for await (const [[data, isIncludesSelf]] of on(messageEventEmitter, "createMessage", { signal })) {
+      const dataToYield: MessageEntity[] = [];
 
-        for (const newMessage of data)
-          if (
-            isMessagesPartitionKeyForRoomId(newMessage.partitionKey, input.roomId) &&
-            (isIncludesSelf || newMessage.userId !== ctx.session.user.id)
-          )
-            dataToYield.push(newMessage);
+      for (const newMessage of data)
+        if (
+          isMessagesPartitionKeyForRoomId(newMessage.partitionKey, input.roomId) &&
+          (isIncludesSelf || newMessage.userId !== ctx.session.user.id)
+        )
+          dataToYield.push(newMessage);
 
-        yield dataToYield;
-      }
-    }),
-  onCreateTyping: getMemberProcedure(onCreateTypingInputSchema, "roomId")
-    .input(onCreateTypingInputSchema)
-    .subscription(async function* ({ ctx, input, signal }) {
-      // We will add typing inputs for self user in the frontend
-      // without going through the server to avoid duplications and reduce performance overhead
-      for await (const [data] of on(messageEventEmitter, "createTyping", { signal }))
-        if (data.roomId === input.roomId && data.userId !== ctx.session.user.id) yield data;
-    }),
-  onDeleteMessage: getMemberProcedure(onDeleteMessageInputSchema, "roomId")
-    .input(onDeleteMessageInputSchema)
-    .subscription(async function* ({ input, signal }) {
-      for await (const [data] of on(messageEventEmitter, "deleteMessage", { signal }))
-        if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId)) yield data;
-    }),
-  onUpdateMessage: getMemberProcedure(onUpdateMessageInputSchema, "roomId")
-    .input(onUpdateMessageInputSchema)
-    .subscription(async function* ({ input, signal }) {
-      for await (const [data] of on(messageEventEmitter, "updateMessage", { signal }))
-        if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId)) yield data;
-    }),
-  readMessages: getMemberProcedure(readMessagesInputSchema, "roomId")
-    .input(readMessagesInputSchema)
-    .query(async ({ input: { cursor, limit, roomId } }) => {
+      yield dataToYield;
+    }
+  }),
+  onCreateTyping: getMemberProcedure(onCreateTypingInputSchema, "roomId").subscription(async function* ({
+    ctx,
+    input,
+    signal,
+  }) {
+    // We will add typing inputs for self user in the frontend
+    // without going through the server to avoid duplications and reduce performance overhead
+    for await (const [data] of on(messageEventEmitter, "createTyping", { signal }))
+      if (data.roomId === input.roomId && data.userId !== ctx.session.user.id) yield data;
+  }),
+  onDeleteMessage: getMemberProcedure(onDeleteMessageInputSchema, "roomId").subscription(async function* ({
+    input,
+    signal,
+  }) {
+    for await (const [data] of on(messageEventEmitter, "deleteMessage", { signal }))
+      if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId)) yield data;
+  }),
+  onUpdateMessage: getMemberProcedure(onUpdateMessageInputSchema, "roomId").subscription(async function* ({
+    input,
+    signal,
+  }) {
+    for await (const [data] of on(messageEventEmitter, "updateMessage", { signal }))
+      if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId)) yield data;
+  }),
+  readMessages: getMemberProcedure(readMessagesInputSchema, "roomId").query(
+    async ({ input: { cursor, limit, roomId } }) => {
       const sortBy: SortItem<keyof MessageEntity>[] = [{ key: "rowKey", order: SortOrder.Asc }];
       let filter = getMessagesPartitionKeyFilter(roomId);
       if (cursor) filter += ` and ${getCursorWhereAzureTable(cursor, sortBy)}`;
       const messageClient = await useTableClient(AzureTable.Messages);
       const messages = await getTopNEntities(messageClient, limit + 1, MessageEntity, { filter });
       return getCursorPaginationData(messages, limit, sortBy);
-    }),
-  readMessagesByRowKeys: getMemberProcedure(readMessagesByRowKeysInputSchema, "roomId")
-    .input(readMessagesByRowKeysInputSchema)
-    .query(async ({ input: { roomId, rowKeys } }) => {
+    },
+  ),
+  readMessagesByRowKeys: getMemberProcedure(readMessagesByRowKeysInputSchema, "roomId").query(
+    async ({ input: { roomId, rowKeys } }) => {
       const messageClient = await useTableClient(AzureTable.Messages);
       return getTopNEntities(messageClient, rowKeys.length, MessageEntity, {
         filter: `${getMessagesPartitionKeyFilter(roomId)} and (${rowKeys.map((rk) => `RowKey eq '${rk}'`).join(" or ")})`,
       });
-    }),
-  updateMessage: getMemberProcedure(updateMessageInputSchema, "partitionKey")
+    },
+  ),
+  updateMessage: getCreatorProcedure(updateMessageInputSchema)
     .use(getProfanityFilterMiddleware(updateMessageInputSchema, ["message"]))
-    .input(updateMessageInputSchema)
-    .mutation(async ({ ctx, input }) => {
-      const messageClient = await useTableClient(AzureTable.Messages);
-      const message = await getEntity(messageClient, MessageEntity, input.partitionKey, input.rowKey);
-      if (!message)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: new NotFoundError(messageRouter.forwardMessages.name, JSON.stringify(input)).message,
-        });
-      else if (message.userId !== ctx.session.user.id) throw new TRPCError({ code: "UNAUTHORIZED" });
+    .mutation(async ({ ctx: { messageClient }, input }) => {
       await updateMessage(messageClient, input);
       messageEventEmitter.emit("updateMessage", input);
     }),

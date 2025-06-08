@@ -217,9 +217,8 @@ export const postRouter = router({
         });
       return updatedCommentWithRelations;
     }),
-  updatePost: getProfanityFilterProcedure(updatePostInputSchema, ["title", "description"])
-    .input(updatePostInputSchema)
-    .mutation<PostWithRelations>(async ({ ctx, input: { id, ...rest } }) => {
+  updatePost: getProfanityFilterProcedure(updatePostInputSchema, ["title", "description"]).mutation<PostWithRelations>(
+    async ({ ctx, input: { id, ...rest } }) => {
       const updatedPost = (
         await ctx.db
           .update(posts)
@@ -243,5 +242,6 @@ export const postRouter = router({
           message: new NotFoundError(DatabaseEntityType.Post, id).message,
         });
       return updatedPostWithRelations;
-    }),
+    },
+  ),
 });

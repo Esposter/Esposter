@@ -10,12 +10,9 @@ export const deserializeEntity = <TEntity extends AzureEntity>(
   cls: Class<TEntity>,
 ): TEntity => {
   const instance = new cls();
-  const objectKeys = instance.getObjectKeys();
-  // Unfortunately, we'll have to ensure that custom object keys that have optional values have to be declared in the class
-  // if the default property value of the class does not reflect whether it is serializable
+  // We'll ensure that the default property value of the class will reflect whether it is serializable
   for (const [property, value] of Object.entries(entity) as [keyof TEntity, unknown][])
-    if (objectKeys.includes(property) || getIsSerializable(instance[property]))
-      instance[property] = jsonDateParse(value as string);
+    if (getIsSerializable(instance[property])) instance[property] = jsonDateParse(value as string);
     else instance[property] = value as TEntity[keyof TEntity];
   return instance;
 };

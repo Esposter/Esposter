@@ -9,7 +9,6 @@ import { createSurveyInputSchema } from "#shared/models/db/survey/CreateSurveyIn
 import { deleteSurveyInputSchema } from "#shared/models/db/survey/DeleteSurveyInput";
 import { SurveyResponseEntity, surveyResponseEntitySchema } from "#shared/models/db/survey/SurveyResponseEntity";
 import { updateSurveyInputSchema } from "#shared/models/db/survey/UpdateSurveyInput";
-import { updateSurveyModelInputSchema } from "#shared/models/db/survey/UpdateSurveyModelInput";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
@@ -38,6 +37,7 @@ import { InvalidOperationError, NotFoundError, Operation } from "@esposter/share
 import { TRPCError } from "@trpc/server";
 import { and, count, desc, eq } from "drizzle-orm";
 import { z } from "zod/v4";
+import { updateSurveyModelInputSchema } from "~~/shared/models/db/survey/UpdateSurveyModelInput";
 
 const readSurveyInputSchema = z.object({ id: selectSurveySchema.shape.id });
 export type ReadSurveyInput = z.infer<typeof readSurveyInputSchema>;
@@ -117,14 +117,14 @@ export const surveyRouter = router({
       await createEntity(surveyResponseClient, newSurveyResponse);
       return newSurveyResponse;
     }),
-  deleteFile: getCreatorProcedure(deleteFileInputSchema, "surveyId")
-    .input(deleteFileInputSchema)
-    .mutation(async ({ input: { blobPath, surveyId } }) => {
+  deleteFile: getCreatorProcedure(deleteFileInputSchema, "surveyId").mutation(
+    async ({ input: { blobPath, surveyId } }) => {
       const containerClient = await useContainerClient(AzureContainer.SurveyerAssets);
       const blobName = `${surveyId}/${blobPath}`;
       const blockBlobClient = containerClient.getBlockBlobClient(blobName);
       await blockBlobClient.delete();
-    }),
+    },
+  ),
   deleteSurvey: authedProcedure.input(deleteSurveyInputSchema).mutation<Survey>(async ({ ctx, input }) => {
     const deletedSurvey = (
       await ctx.db
@@ -142,21 +142,20 @@ export const surveyRouter = router({
     await deleteDirectory(containerClient, input, true);
     return deletedSurvey;
   }),
-  generateDownloadFileSasUrls: getCreatorProcedure(generateDownloadFileSasUrlsInputSchema, "surveyId")
-    .input(generateDownloadFileSasUrlsInputSchema)
-    .query<string[]>(async ({ input: { files, surveyId } }) => {
+  generateDownloadFileSasUrls: getCreatorProcedure(generateDownloadFileSasUrlsInputSchema, "surveyId").query<string[]>(
+    async ({ input: { files, surveyId } }) => {
       const containerClient = await useContainerClient(AzureContainer.SurveyerAssets);
       return generateDownloadFileSasUrls(containerClient, files, surveyId);
-    }),
-  generateUploadFileSasEntities: getCreatorProcedure(generateUploadFileSasEntitiesInputSchema, "surveyId")
-    .input(generateUploadFileSasEntitiesInputSchema)
-    .query<FileSasEntity[]>(async ({ input: { files, surveyId } }) => {
-      const containerClient = await useContainerClient(AzureContainer.SurveyerAssets);
-      return generateUploadFileSasEntities(containerClient, files, surveyId);
-    }),
-  publishSurvey: getCreatorProcedure(publishSurveyInputSchema, "id")
-    .input(publishSurveyInputSchema)
-    .mutation<Survey>(async ({ ctx, input: { id, ...rest } }) => {
+    },
+  ),
+  generateUploadFileSasEntities: getCreatorProcedure(generateUploadFileSasEntitiesInputSchema, "surveyId").query<
+    FileSasEntity[]
+  >(async ({ input: { files, surveyId } }) => {
+    const containerClient = await useContainerClient(AzureContainer.SurveyerAssets);
+    return generateUploadFileSasEntities(containerClient, files, surveyId);
+  }),
+  publishSurvey: getCreatorProcedure(publishSurveyInputSchema, "id").mutation<Survey>(
+    async ({ ctx, input: { id, ...rest } }) => {
       rest.publishVersion++;
       if (rest.publishVersion <= ctx.survey.publishVersion)
         throw new TRPCError({
@@ -182,10 +181,12 @@ export const surveyRouter = router({
       const publishDirectory = getPublishDirectory(updatedSurvey);
       await cloneBlobUrls(containerClient, blobUrls, updatedSurvey.id, publishDirectory);
       return updatedSurvey;
-    }),
-  readSurvey: getCreatorProcedure(readSurveyInputSchema, "id")
-    .input(readSurveyInputSchema)
-    .query(async ({ ctx }) => ({ ...ctx.survey, model: await useUpdateBlobUrls(ctx.survey) })),
+    },
+  ),
+  readSurvey: getCreatorProcedure(readSurveyInputSchema, "id").query(async ({ ctx }) => ({
+    ...ctx.survey,
+    model: await useUpdateBlobUrls(ctx.survey),
+  })),
   readSurveyModel: rateLimitedProcedure.input(readSurveyModelInputSchema).query<string>(async ({ ctx, input }) => {
     const survey = await ctx.db.query.surveys.findFirst({ where: (surveys, { eq }) => eq(surveys.id, input) });
     if (!survey)
@@ -233,9 +234,8 @@ export const surveyRouter = router({
         });
       return updatedSurvey;
     }),
-  updateSurveyModel: getCreatorProcedure(readSurveyInputSchema, "id")
-    .input(updateSurveyModelInputSchema)
-    .mutation<Survey>(async ({ ctx, input: { id, ...rest } }) => {
+  updateSurveyModel: getCreatorProcedure(updateSurveyModelInputSchema, "id").mutation<Survey>(
+    async ({ ctx, input: { id, ...rest } }) => {
       if (rest.model !== ctx.survey.model) {
         rest.modelVersion++;
         if (rest.modelVersion <= ctx.survey.modelVersion)
@@ -269,7 +269,8 @@ export const surveyRouter = router({
       const blobName = `${updatedSurvey.id}/${SURVEY_MODEL_FILENAME}`;
       await useUpload(AzureContainer.SurveyerAssets, blobName, updatedSurvey.model);
       return updatedSurvey;
-    }),
+    },
+  ),
   updateSurveyResponse: rateLimitedProcedure
     .input(updateSurveyResponseInputSchema)
     .mutation<SurveyResponseEntity>(async ({ input }) => {

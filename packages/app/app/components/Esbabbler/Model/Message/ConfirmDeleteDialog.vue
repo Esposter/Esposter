@@ -2,7 +2,7 @@
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
 
-interface ConfirmDeleteMessageDialogProps {
+interface ConfirmDeleteDialogProps {
   message: MessageEntity;
 }
 
@@ -10,7 +10,7 @@ defineSlots<{
   default: (props: StyledDialogActivatorSlotProps) => unknown;
   messagePreview: (props: Record<string, never>) => unknown;
 }>();
-const { message } = defineProps<ConfirmDeleteMessageDialogProps>();
+const { message } = defineProps<ConfirmDeleteDialogProps>();
 const { $trpc } = useNuxtApp();
 const { text } = useColors();
 </script>

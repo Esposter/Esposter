@@ -1,3 +1,4 @@
+import type { inferParser } from "@trpc/server/unstable-core-do-not-import";
 import type { z } from "zod/v4";
 
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
@@ -5,13 +6,9 @@ import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { NotFoundError, UUIDV4_SEARCH_REGEX } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
-export const getMemberProcedure = <T extends z.ZodType>(schema: T, roomIdKey: keyof z.output<T>) =>
-  authedProcedure.use(async ({ ctx, getRawInput, next }) => {
-    const rawInput = await getRawInput();
-    const result = schema.safeParse(rawInput);
-    if (!result.success) throw new TRPCError({ code: "BAD_REQUEST" });
-
-    const value = result.data[roomIdKey];
+export const getMemberProcedure = <T extends z.ZodType>(schema: T, roomIdKey: keyof inferParser<T>["out"]) =>
+  authedProcedure.input(schema).use(async ({ ctx, input, next }) => {
+    const value = input[roomIdKey];
     if (typeof value !== "string") throw new TRPCError({ code: "BAD_REQUEST" });
 
     const roomId = value.match(UUIDV4_SEARCH_REGEX)?.[0];
