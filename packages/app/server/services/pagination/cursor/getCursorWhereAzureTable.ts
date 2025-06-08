@@ -12,10 +12,14 @@ export const getCursorWhereAzureTable = <TItem extends ToData<AEntity>>(
   sortBy: SortItem<keyof TItem & string>[],
 ) => {
   const cursors = parse(serializedCursors);
+  const sanitizedSortBy = sortBy.map(({ key, order }) => ({
+    key: sanitizeKey(key),
+    order,
+  }));
   return Object.entries(cursors)
     .map(([key, value]) => {
       const sanitizedKey = sanitizeKey(key);
-      const comparer = sortBy.some(({ key, order }) => sanitizeKey(key) === sanitizedKey && order === SortOrder.Asc)
+      const comparer = sanitizedSortBy.some(({ key, order }) => key === sanitizedKey && order === SortOrder.Asc)
         ? "gt"
         : "lt";
       return `${sanitizedKey} ${comparer} '${value}'`;
