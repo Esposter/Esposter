@@ -1,18 +1,22 @@
 <script setup lang="ts">
+import { authClient } from "@/services/auth/authClient";
 import { useRoomStore } from "@/store/esbabbler/room";
 import { useLayoutStore } from "@/store/layout";
 
+const { data: session } = await authClient.useSession(useFetch);
+const { $trpc } = useNuxtApp();
 const layoutStore = useLayoutStore();
 const { leftDrawerOpenAuto } = storeToRefs(layoutStore);
-const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
-const { currentRoomId, currentRoomName } = storeToRefs(roomStore);
+const { currentRoom, currentRoomId, currentRoomName } = storeToRefs(roomStore);
+const isCreator = computed(() => currentRoom.value?.userId === session.value?.user.id);
 </script>
 
 <template>
   <v-toolbar :style="{ paddingLeft: leftDrawerOpenAuto ? '1rem' : undefined }" b-none density="comfortable">
     <EsbabblerContentShowRoomListButton />
     <StyledEditableToolbarTitle
+      v-if="isCreator"
       :initial-value="currentRoomName"
       @update="
         async (value, onComplete) => {
@@ -25,6 +29,9 @@ const { currentRoomId, currentRoomName } = storeToRefs(roomStore);
         }
       "
     />
+    <v-toolbar-title v-else font-bold>
+      {{ currentRoomName }}
+    </v-toolbar-title>
     <template #append>
       <EsbabblerContentAddFriendsDialogButton />
       <EsbabblerContentShowMemberListButton />

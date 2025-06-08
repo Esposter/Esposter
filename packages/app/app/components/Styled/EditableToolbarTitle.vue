@@ -66,7 +66,6 @@ watch(
       class="custom-border"
       font-bold
       rd
-      select-all
       @click="
         () => {
           isUpdateMode = true;
