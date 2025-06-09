@@ -12,6 +12,7 @@ import { updateEmojiInputSchema } from "#shared/models/db/message/metadata/Updat
 import { createMessageEmojiMetadataEntity } from "#shared/services/esbabbler/createMessageEmojiMetadataEntity";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
+import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { AZURE_MAX_PAGE_SIZE } from "@@/server/services/azure/table/constants";
 import { createEntity } from "@@/server/services/azure/table/createEntity";
 import { deleteEntity } from "@@/server/services/azure/table/deleteEntity";
@@ -57,21 +58,27 @@ export const emojiRouter = router({
 
     const newEmoji = createMessageEmojiMetadataEntity({ ...input, userIds: [ctx.session.user.id] });
     await createEntity(messagesMetadataClient, newEmoji);
-    emojiEventEmitter.emit("createEmoji", [newEmoji, ctx.session.user.id]);
+    emojiEventEmitter.emit("createEmoji", [
+      newEmoji,
+      { sessionId: ctx.session.session.id, userId: ctx.session.user.id },
+    ]);
     return newEmoji;
   }),
   deleteEmoji: getMemberProcedure(deleteEmojiInputSchema, "partitionKey").mutation(async ({ ctx, input }) => {
     const messagesMetadataClient = await useTableClient(AzureTable.MessagesMetadata);
     await deleteEntity(messagesMetadataClient, input.partitionKey, input.rowKey);
-    emojiEventEmitter.emit("deleteEmoji", [input, ctx.session.user.id]);
+    emojiEventEmitter.emit("deleteEmoji", [input, { sessionId: ctx.session.session.id, userId: ctx.session.user.id }]);
   }),
   onCreateEmoji: getMemberProcedure(onCreateEmojiInputSchema, "roomId").subscription(async function* ({
     ctx,
     input,
     signal,
   }) {
-    for await (const [[data, userId]] of on(emojiEventEmitter, "createEmoji", { signal }))
-      if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId) && userId !== ctx.session.user.id)
+    for await (const [[data, deviceId]] of on(emojiEventEmitter, "createEmoji", { signal }))
+      if (
+        isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId) &&
+        !getIsSameDevice(deviceId, { sessionId: ctx.session.session.id, userId: ctx.session.user.id })
+      )
         yield data;
   }),
   onDeleteEmoji: getMemberProcedure(onDeleteEmojiInputSchema, "roomId").subscription(async function* ({
@@ -79,8 +86,11 @@ export const emojiRouter = router({
     input,
     signal,
   }) {
-    for await (const [[data, userId]] of on(emojiEventEmitter, "deleteEmoji", { signal }))
-      if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId) && userId !== ctx.session.user.id)
+    for await (const [[data, deviceId]] of on(emojiEventEmitter, "deleteEmoji", { signal }))
+      if (
+        isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId) &&
+        !getIsSameDevice(deviceId, { sessionId: ctx.session.session.id, userId: ctx.session.user.id })
+      )
         yield data;
   }),
   onUpdateEmoji: getMemberProcedure(onUpdateEmojiInputSchema, "roomId").subscription(async function* ({
@@ -88,8 +98,11 @@ export const emojiRouter = router({
     input,
     signal,
   }) {
-    for await (const [[data, userId]] of on(emojiEventEmitter, "updateEmoji", { signal }))
-      if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId) && userId !== ctx.session.user.id)
+    for await (const [[data, deviceId]] of on(emojiEventEmitter, "updateEmoji", { signal }))
+      if (
+        isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId) &&
+        !getIsSameDevice(deviceId, { sessionId: ctx.session.session.id, userId: ctx.session.user.id })
+      )
         yield data;
   }),
   readEmojis: getMemberProcedure(readMetadataInputSchema, "roomId").query(
@@ -110,6 +123,9 @@ export const emojiRouter = router({
     const updatedEmoji = { ...input, userIds: [...input.userIds, ctx.session.user.id] };
     const messagesMetadataClient = await useTableClient(AzureTable.MessagesMetadata);
     await updateEntity(messagesMetadataClient, updatedEmoji);
-    emojiEventEmitter.emit("updateEmoji", [updatedEmoji, ctx.session.user.id]);
+    emojiEventEmitter.emit("updateEmoji", [
+      updatedEmoji,
+      { sessionId: ctx.session.session.id, userId: ctx.session.user.id },
+    ]);
   }),
 });
