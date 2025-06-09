@@ -6,7 +6,7 @@ import { rooms } from "#shared/db/schema/rooms";
 import { CODE_LENGTH } from "#shared/services/invite/constants";
 import { createCode } from "#shared/util/math/random/createCode";
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, getMockSession, mockUserOnce } from "@@/server/trpc/context.test";
+import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { NIL } from "@esposter/shared";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
@@ -56,7 +56,7 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await caller.createRoom({ name });
-    await mockUserOnce(mockContext.db);
+    await mockSessionOnce(mockContext.db);
 
     await expect(caller.readRoom(newRoom.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Room is not found for id: ${newRoom.id}]`,
@@ -102,7 +102,7 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await caller.createRoom({ name });
-    await mockUserOnce(mockContext.db);
+    await mockSessionOnce(mockContext.db);
 
     await expect(caller.updateRoom({ id: newRoom.id, name })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Invalid operation: Update, name: Room, ${newRoom.id}]`,
@@ -145,7 +145,7 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await caller.createRoom({ name });
-    await mockUserOnce(mockContext.db);
+    await mockSessionOnce(mockContext.db);
 
     await expect(caller.deleteRoom(newRoom.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Invalid operation: Delete, name: Room, ${newRoom.id}]`,
@@ -198,7 +198,7 @@ describe("room", () => {
 
     const newRoom = await caller.createRoom({ name });
     const inviteCode = await caller.createInvite({ roomId: newRoom.id });
-    await mockUserOnce(mockContext.db);
+    await mockSessionOnce(mockContext.db);
     const joinedRoom = await caller.joinRoom(inviteCode);
 
     expect(joinedRoom).toStrictEqual(newRoom);
@@ -232,12 +232,12 @@ describe("room", () => {
     const newRoom = await caller.createRoom({ name });
     const inviteCode = await caller.createInvite({ roomId: newRoom.id });
     const onJoinRoom = await caller.onJoinRoom([newRoom.id]);
-    const user = await mockUserOnce(mockContext.db);
+    const session = await mockSessionOnce(mockContext.db);
     const [data] = await Promise.all([onJoinRoom[Symbol.asyncIterator]().next(), caller.joinRoom(inviteCode)]);
 
     assert(!data.done);
 
-    expect(data.value).toStrictEqual({ roomId: newRoom.id, user });
+    expect(data.value).toStrictEqual({ roomId: newRoom.id, sessionId: session.session.id, user: session.user });
   });
 
   test("leaves", async () => {
@@ -245,9 +245,9 @@ describe("room", () => {
 
     const newRoom = await caller.createRoom({ name });
     const inviteCode = await caller.createInvite({ roomId: newRoom.id });
-    const user = await mockUserOnce(mockContext.db);
+    const { user } = await mockSessionOnce(mockContext.db);
     await caller.joinRoom(inviteCode);
-    await mockUserOnce(mockContext.db, user);
+    await mockSessionOnce(mockContext.db, user);
     const roomId = await caller.leaveRoom(newRoom.id);
 
     expect(roomId).toStrictEqual(newRoom.id);
@@ -277,15 +277,15 @@ describe("room", () => {
 
     const newRoom = await caller.createRoom({ name });
     const inviteCode = await caller.createInvite({ roomId: newRoom.id });
-    const user = await mockUserOnce(mockContext.db);
+    const { user } = await mockSessionOnce(mockContext.db);
     await caller.joinRoom(inviteCode);
     const onLeaveRoom = await caller.onLeaveRoom([newRoom.id]);
-    await mockUserOnce(mockContext.db, user);
+    const session = await mockSessionOnce(mockContext.db, user);
     const [data] = await Promise.all([onLeaveRoom[Symbol.asyncIterator]().next(), caller.leaveRoom(newRoom.id)]);
 
     assert(!data.done);
 
-    expect(data.value).toStrictEqual({ roomId: newRoom.id, userId: user.id });
+    expect(data.value).toStrictEqual({ roomId: newRoom.id, sessionId: session.session.id, userId: session.user.id });
   });
 
   test("reads members", async () => {

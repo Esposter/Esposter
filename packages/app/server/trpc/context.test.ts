@@ -36,7 +36,7 @@ const mocks = vi.hoisted(() => {
   };
 });
 
-export const mockUserOnce = async (db: Context["db"], mockUser?: User) => {
+export const mockSessionOnce = async (db: Context["db"], mockUser?: User) => {
   const name = "name";
   const createdAt = new Date(0);
   const user =
@@ -54,8 +54,9 @@ export const mockUserOnce = async (db: Context["db"], mockUser?: User) => {
         })
         .returning()
     )[0];
-  mocks.getSession.mockImplementationOnce(() => ({ session: createSession(user.id), user }));
-  return user;
+  const session = { session: createSession(user.id), user };
+  mocks.getSession.mockImplementationOnce(() => session);
+  return session;
 };
 
 export const getMockSession = () => mocks.getSession();

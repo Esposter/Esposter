@@ -4,7 +4,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { surveys } from "#shared/db/schema/surveys";
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, mockUserOnce } from "@@/server/trpc/context.test";
+import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
 import { NIL } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
@@ -89,7 +89,7 @@ describe("survey", () => {
     expect.hasAssertions();
 
     const newSurvey = await caller.createSurvey({ group, model, name });
-    await mockUserOnce(mockContext.db);
+    await mockSessionOnce(mockContext.db);
 
     await expect(caller.updateSurvey({ id: newSurvey.id, name })).rejects.toThrowErrorMatchingInlineSnapshot();
   });
@@ -119,7 +119,7 @@ describe("survey", () => {
     expect.hasAssertions();
 
     const newSurvey = await caller.createSurvey({ group, model, name });
-    await mockUserOnce(mockContext.db);
+    await mockSessionOnce(mockContext.db);
 
     await expect(
       caller.updateSurveyModel({ id: newSurvey.id, model, modelVersion: 0 }),
@@ -171,7 +171,7 @@ describe("survey", () => {
     expect.hasAssertions();
 
     const newSurvey = await caller.createSurvey({ group, model, name });
-    await mockUserOnce(mockContext.db);
+    await mockSessionOnce(mockContext.db);
 
     await expect(caller.deleteSurvey(newSurvey.id)).rejects.toThrowErrorMatchingInlineSnapshot();
   });

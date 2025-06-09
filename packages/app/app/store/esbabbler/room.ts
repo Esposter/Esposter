@@ -1,7 +1,7 @@
 import type { Room } from "#shared/db/schema/rooms";
 import type { CreateRoomInput } from "#shared/models/db/room/CreateRoomInput";
-import type { DeleteRoomInput } from "#shared/models/db/room/DeleteRoomInput";
 import type { JoinRoomInput } from "#shared/models/db/room/JoinRoomInput";
+import type { LeaveRoomInput } from "#shared/models/db/room/LeaveRoomInput";
 
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { RoutePath } from "#shared/models/router/RoutePath";
@@ -41,7 +41,7 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
     storeCreateRoom(joinedRoom, true);
     await navigateTo(RoutePath.Messages(joinedRoom.id));
   };
-  const leaveRoom = async (input: DeleteRoomInput) => {
+  const leaveRoom = async (input: LeaveRoomInput) => {
     const id = await $trpc.room.leaveRoom.mutate(input);
     storeDeleteRoom({ id });
   };

@@ -3,7 +3,7 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, getMockSession, mockUserOnce } from "@@/server/trpc/context.test";
+import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { likeRouter } from "@@/server/trpc/routers/like";
 import { postRouter } from "@@/server/trpc/routers/post";
 import { NIL } from "@esposter/shared";
@@ -81,7 +81,7 @@ describe("like", () => {
 
     const newPost = await postCaller.createPost({ title });
     await likeCaller.createLike({ postId: newPost.id, value });
-    await mockUserOnce(mockContext.db);
+    await mockSessionOnce(mockContext.db);
 
     await expect(likeCaller.updateLike({ postId: newPost.id, value })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Like is not found for id: {"postId":"${newPost.id}"}]`,
@@ -121,7 +121,7 @@ describe("like", () => {
 
     const newPost = await postCaller.createPost({ title });
     await likeCaller.createLike({ postId: newPost.id, value });
-    await mockUserOnce(mockContext.db);
+    await mockSessionOnce(mockContext.db);
 
     await expect(likeCaller.deleteLike(newPost.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Invalid operation: Delete, name: Like, {"postId":"${newPost.id}"}]`,

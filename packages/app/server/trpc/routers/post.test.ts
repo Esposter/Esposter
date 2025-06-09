@@ -3,7 +3,7 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, mockUserOnce } from "@@/server/trpc/context.test";
+import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { postRouter } from "@@/server/trpc/routers/post";
 import { NIL } from "@esposter/shared";
 import { beforeAll, describe, expect, test } from "vitest";
@@ -69,7 +69,7 @@ describe("post", () => {
     expect.hasAssertions();
 
     const newPost = await caller.createPost({ title });
-    await mockUserOnce(mockContext.db);
+    await mockSessionOnce(mockContext.db);
 
     await expect(caller.updatePost({ description, id: newPost.id })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Invalid operation: Update, name: Post, ${newPost.id}]`,
@@ -97,7 +97,7 @@ describe("post", () => {
     expect.hasAssertions();
 
     const newPost = await caller.createPost({ title });
-    await mockUserOnce(mockContext.db);
+    await mockSessionOnce(mockContext.db);
 
     await expect(caller.deletePost(newPost.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Invalid operation: Delete, name: Post, ${newPost.id}]`,
@@ -156,7 +156,7 @@ describe("post", () => {
 
     const newPost = await caller.createPost({ title });
     const newComment = await caller.createComment({ description, parentId: newPost.id });
-    await mockUserOnce(mockContext.db);
+    await mockSessionOnce(mockContext.db);
 
     await expect(caller.updateComment({ description, id: newComment.id })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Invalid operation: Update, name: Comment, ${newComment.id}]`,
@@ -200,7 +200,7 @@ describe("post", () => {
 
     const newPost = await caller.createPost({ title });
     const newComment = await caller.createComment({ description, parentId: newPost.id });
-    await mockUserOnce(mockContext.db);
+    await mockSessionOnce(mockContext.db);
 
     await expect(caller.deleteComment(newComment.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Invalid operation: Delete, name: Comment, ${newComment.id}]`,

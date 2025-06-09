@@ -17,6 +17,7 @@ import { CODE_LENGTH } from "#shared/services/invite/constants";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { createCode } from "#shared/util/math/random/createCode";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
+import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { deleteDirectory } from "@@/server/services/azure/container/deleteDirectory";
 import { deleteRoom } from "@@/server/services/db/room/deleteRoom";
 import { roomEventEmitter } from "@@/server/services/esbabbler/events/roomEventEmitter";
@@ -176,7 +177,7 @@ export const roomRouter = router({
       });
 
     const { room, roomId, user } = userToRoomWithRelations;
-    roomEventEmitter.emit("joinRoom", { roomId, user });
+    roomEventEmitter.emit("joinRoom", { roomId, sessionId: ctx.session.session.id, user });
     return room;
   }),
   leaveRoom: authedProcedure.input(leaveRoomInputSchema).mutation<Room["id"]>(async ({ ctx, input }) => {
@@ -200,7 +201,7 @@ export const roomRouter = router({
           ).message,
         });
 
-      roomEventEmitter.emit("leaveRoom", userToRoom);
+      roomEventEmitter.emit("leaveRoom", { ...userToRoom, sessionId: ctx.session.session.id });
       return userToRoom.roomId;
     }
   }),
@@ -212,7 +213,14 @@ export const roomRouter = router({
   }),
   onJoinRoom: authedProcedure.input(onJoinRoomInputSchema).subscription(async function* ({ ctx, input, signal }) {
     for await (const [data] of on(roomEventEmitter, "joinRoom", { signal })) {
-      if (!input.includes(data.roomId) || data.user.id === ctx.session.user.id) continue;
+      if (
+        !input.includes(data.roomId) ||
+        getIsSameDevice(
+          { sessionId: data.sessionId, userId: data.user.id },
+          { sessionId: ctx.session.session.id, userId: ctx.session.user.id },
+        )
+      )
+        continue;
       const isMember = await ctx.db.query.usersToRooms.findFirst({
         where: (usersToRooms, { and, eq }) =>
           and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, data.roomId)),
@@ -223,7 +231,11 @@ export const roomRouter = router({
   }),
   onLeaveRoom: authedProcedure.input(onLeaveRoomInputSchema).subscription(async function* ({ ctx, input, signal }) {
     for await (const [data] of on(roomEventEmitter, "leaveRoom", { signal })) {
-      if (!input.includes(data.roomId) || data.userId === ctx.session.user.id) continue;
+      if (
+        !input.includes(data.roomId) ||
+        getIsSameDevice(data, { sessionId: ctx.session.session.id, userId: ctx.session.user.id })
+      )
+        continue;
       const isMember = await ctx.db.query.usersToRooms.findFirst({
         where: (usersToRooms, { and, eq }) =>
           and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, data.roomId)),
