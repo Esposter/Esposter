@@ -7,10 +7,10 @@ import { lookup } from "node:dns";
 
 export const getLinkPreviewResponse = async (message: string): Promise<LinkPreviewResponse | undefined> => {
   const messageHtml = parse(message);
-  const anchor = messageHtml.querySelector("a") as HTMLAnchorElement | null;
-  if (!anchor) return undefined;
+  const url = messageHtml.querySelector("a")?.getAttribute("href");
+  if (!url) return undefined;
 
-  const link = find(anchor.href, "url", { defaultProtocol: "https" }).find(Boolean);
+  const link = find(url, "url", { defaultProtocol: "https" }).find(Boolean);
   if (!link) return undefined;
 
   try {
