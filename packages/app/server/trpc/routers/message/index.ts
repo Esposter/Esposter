@@ -1,6 +1,5 @@
 import type { AzureUpdateEntity } from "#shared/models/azure/AzureUpdateEntity";
 import type { FileSasEntity } from "#shared/models/esbabbler/FileSasEntity";
-import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 
 import { selectRoomSchema } from "#shared/db/schema/rooms";
 import { AzureEntityType } from "#shared/models/azure/AzureEntityType";
@@ -31,17 +30,17 @@ import { createMessageEntity } from "@@/server/services/esbabbler/createMessageE
 import { messageEventEmitter } from "@@/server/services/esbabbler/events/messageEventEmitter";
 import { getMessagesPartitionKeyFilter } from "@@/server/services/esbabbler/getMessagesPartitionKeyFilter";
 import { isMessagesPartitionKeyForRoomId } from "@@/server/services/esbabbler/isMessagesPartitionKeyForRoomId";
+import { readMessages } from "@@/server/services/esbabbler/readMessages";
 import { updateMessage } from "@@/server/services/esbabbler/updateMessage";
 import { on } from "@@/server/services/events/on";
-import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
-import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
 import { router } from "@@/server/trpc";
 import { addProfanityFilterMiddleware } from "@@/server/trpc/middleware/addProfanityFilterMiddleware";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/message/getCreatorProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { NotFoundError } from "@esposter/shared";
-import { TRPCError } from "@trpc/server";
+import { tracked, TRPCError } from "@trpc/server";
 import { z } from "zod/v4";
+import { AZURE_MAX_PAGE_SIZE } from "~~/server/services/azure/table/constants";
 
 export const readMetadataInputSchema = z.object({
   messageRowKeys: messageEntitySchema.shape.rowKey.array().min(1).max(MAX_READ_LIMIT),
@@ -90,7 +89,7 @@ export type DeleteFileInput = z.infer<typeof deleteFileInputSchema>;
 const deleteLinkPreviewResponseInputSchema = messageEntitySchema.pick({ partitionKey: true, rowKey: true });
 export type DeleteLinkPreviewResponseInput = z.infer<typeof deleteLinkPreviewResponseInputSchema>;
 
-const onCreateMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
+const onCreateMessageInputSchema = z.object({ lastEventId: z.string().nullish(), roomId: selectRoomSchema.shape.id });
 export type OnCreateMessageInput = z.infer<typeof onCreateMessageInputSchema>;
 
 const onUpdateMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
@@ -228,20 +227,48 @@ export const messageRouter = router({
   }),
   onCreateMessage: getMemberProcedure(onCreateMessageInputSchema, "roomId").subscription(async function* ({
     ctx,
-    input,
+    input: { lastEventId, roomId },
     signal,
   }) {
+    if (lastEventId) {
+      let cursor: string | undefined = lastEventId;
+      let hasMore = true;
+      const messages: MessageEntity[] = [];
+
+      while (hasMore) {
+        const {
+          hasMore: newHasMore,
+          items,
+          nextCursor,
+        } = await readMessages({ cursor, limit: AZURE_MAX_PAGE_SIZE - 1, roomId }, [
+          { key: "rowKey", order: SortOrder.Desc },
+        ]);
+        messages.push(...items);
+        cursor = nextCursor;
+        hasMore = newHasMore;
+      }
+
+      if (messages.length > 0) {
+        // Remember that Azure Table Storage is insert-sorted by rowKey
+        // so the first message is the newest one but we want to yield from oldest to newest
+        const reversedMessages = messages.toReversed();
+        const newLastEventId = reversedMessages[reversedMessages.length - 1].rowKey;
+        yield tracked(newLastEventId, reversedMessages);
+      }
+    }
+
     for await (const [[data, { isSendToSelf, sessionId }]] of on(messageEventEmitter, "createMessage", { signal })) {
       const dataToYield: MessageEntity[] = [];
+      const lastEventId = data[data.length - 1].rowKey;
 
       for (const newMessage of data)
         if (
-          isMessagesPartitionKeyForRoomId(newMessage.partitionKey, input.roomId) &&
+          isMessagesPartitionKeyForRoomId(newMessage.partitionKey, roomId) &&
           (isSendToSelf || !getIsSameDevice({ sessionId, userId: newMessage.userId }, ctx.session))
         )
           dataToYield.push(newMessage);
 
-      yield dataToYield;
+      yield tracked(lastEventId, dataToYield);
     }
   }),
   onCreateTyping: getMemberProcedure(onCreateTypingInputSchema, "roomId").subscription(async function* ({
@@ -266,16 +293,7 @@ export const messageRouter = router({
     for await (const [data] of on(messageEventEmitter, "updateMessage", { signal }))
       if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId)) yield data;
   }),
-  readMessages: getMemberProcedure(readMessagesInputSchema, "roomId").query(
-    async ({ input: { cursor, limit, roomId } }) => {
-      const sortBy: SortItem<keyof MessageEntity>[] = [{ key: "rowKey", order: SortOrder.Asc }];
-      let filter = getMessagesPartitionKeyFilter(roomId);
-      if (cursor) filter += ` and ${getCursorWhereAzureTable(cursor, sortBy)}`;
-      const messageClient = await useTableClient(AzureTable.Messages);
-      const messages = await getTopNEntities(messageClient, limit + 1, MessageEntity, { filter });
-      return getCursorPaginationData(messages, limit, sortBy);
-    },
-  ),
+  readMessages: getMemberProcedure(readMessagesInputSchema, "roomId").query(({ input }) => readMessages(input)),
   readMessagesByRowKeys: getMemberProcedure(readMessagesByRowKeysInputSchema, "roomId").query(
     async ({ input: { roomId, rowKeys } }) => {
       const messageClient = await useTableClient(AzureTable.Messages);
