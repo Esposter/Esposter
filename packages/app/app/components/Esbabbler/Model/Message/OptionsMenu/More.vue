@@ -2,12 +2,13 @@
 import type { Item } from "@/models/shared/Item";
 
 import { EMOJI_TEXT } from "@/services/esbabbler/message/constants";
+import { EmojiMoreMenuItems } from "@/services/esbabbler/message/EmojiMoreMenuItems";
 import { useEsbabblerStore } from "@/store/esbabbler";
 import { unemojify } from "node-emoji";
 import { mergeProps } from "vue";
 
 interface MessageOptionsMenuProps {
-  deleteMessageItem: Item;
+  deleteMessageItem?: Item;
   rowKey: string;
   updateMessageItems: Item[];
 }
@@ -16,7 +17,6 @@ const { deleteMessageItem, rowKey, updateMessageItems } = defineProps<MessageOpt
 const emit = defineEmits<{ "update:menu": [value: boolean]; "update:select-emoji": [emoji: string] }>();
 const esbabblerStore = useEsbabblerStore();
 const { optionsMenu } = storeToRefs(esbabblerStore);
-const emojiMenuItems: string[] = ["🤣", "👍", "❤️", "👌"];
 </script>
 
 <template>
@@ -44,7 +44,7 @@ const emojiMenuItems: string[] = ["🤣", "👍", "❤️", "👌"];
     <v-list>
       <v-list-item>
         <div flex gap-x-2>
-          <v-tooltip v-for="emoji of emojiMenuItems" :key="emoji" :text="unemojify(emoji)">
+          <v-tooltip v-for="emoji of EmojiMoreMenuItems" :key="emoji" :text="unemojify(emoji)">
             <template #activator="{ props }">
               <v-btn m-0="!" size-10="!" rd-2="!" flex-1 icon :="props" @click="emit('update:select-emoji', emoji)">
                 {{ emoji }}
@@ -83,7 +83,7 @@ const emojiMenuItems: string[] = ["🤣", "👍", "❤️", "👌"];
       <v-list-item py-2="!" min-height="auto">
         <v-divider />
       </v-list-item>
-      <v-list-item @click="deleteMessageItem.onClick">
+      <v-list-item v-if="deleteMessageItem" @click="deleteMessageItem.onClick">
         <span :class="`text-${deleteMessageItem.color}`">{{ deleteMessageItem.title }}</span>
         <template #append>
           <v-icon size="small" :color="deleteMessageItem.color" :icon="deleteMessageItem.icon" />

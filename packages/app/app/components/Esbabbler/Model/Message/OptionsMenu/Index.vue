@@ -4,6 +4,7 @@ import type { Item } from "@/models/shared/Item";
 
 import { authClient } from "@/services/auth/authClient";
 import { EMOJI_TEXT } from "@/services/esbabbler/message/constants";
+import { EmojiMenuItems } from "@/services/esbabbler/message/EmojiMenuItems";
 import { unemojify } from "node-emoji";
 
 interface MessageOptionsMenuProps {
@@ -46,7 +47,6 @@ const forwardMessageItem: Item = {
   },
   title: "Forward",
 };
-const emojiMenuItems: string[] = ["🤣", "👍", "❤️"];
 // We only include menu items that will be part of our v-for to generate similar components
 const menuItems = computed(() =>
   isEditable.value ? [editMessageItem, forwardMessageItem] : [replyItem, forwardMessageItem],
@@ -54,20 +54,24 @@ const menuItems = computed(() =>
 const updateMessageItems = computed(() =>
   isEditable.value ? [editMessageItem, replyItem, forwardMessageItem] : [replyItem, forwardMessageItem],
 );
-const deleteMessageItem = {
-  color: "error",
-  icon: "mdi-delete",
-  onClick: () => {
-    emit("update:delete-mode", true);
-  },
-  title: "Delete Message",
-} as const satisfies Item;
+const deleteMessageItem = computed(() =>
+  isCreator.value
+    ? ({
+        color: "error",
+        icon: "mdi-delete",
+        onClick: () => {
+          emit("update:delete-mode", true);
+        },
+        title: "Delete Message",
+      } as const satisfies Item)
+    : undefined,
+);
 </script>
 
 <template>
   <StyledCard :card-props="{ elevation: isHovering ? 12 : 2, ...hoverProps }">
     <v-card-actions p-0="!" gap-0 min-h-auto="!">
-      <v-tooltip v-for="emoji of emojiMenuItems" :key="emoji">
+      <v-tooltip v-for="emoji of EmojiMenuItems" :key="emoji">
         <template #activator="{ props }">
           <v-btn m-0="!" size-10="!" rd-none="!" icon :="props" @click="emit('update:select-emoji', emoji)">
             {{ emoji }}

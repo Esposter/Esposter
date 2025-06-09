@@ -418,7 +418,7 @@ catalogs:
       specifier: ^1.0.0-beta.13
       version: 1.0.0-beta.13
     rolldown-plugin-dts:
-      specifier: ^0.13.8
+      specifier: ^0.13.9
       version: 0.13.9
     rolldown-vite:
       specifier: ^6.3.18
