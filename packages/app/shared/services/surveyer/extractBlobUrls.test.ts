@@ -24,7 +24,7 @@ describe(extractBlobUrls, () => {
   test("should return an empty array if no matching blob URLs are found", () => {
     expect.hasAssertions();
 
-    expect(extractBlobUrls("https://google.com.au")).toStrictEqual([]);
+    expect(extractBlobUrls("https://github.com")).toStrictEqual([]);
   });
 
   test("should extract a single matching blob URL", () => {
