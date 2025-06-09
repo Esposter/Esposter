@@ -17,6 +17,7 @@ import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
+import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { cloneFiles } from "@@/server/services/azure/container/cloneFiles";
 import { deleteFiles } from "@@/server/services/azure/container/deleteFiles";
 import { generateDownloadFileSasUrls } from "@@/server/services/azure/container/generateDownloadFileSasUrls";
@@ -114,13 +115,13 @@ export const messageRouter = router({
     const messageClient = await useTableClient(AzureTable.Messages);
     const newMessageEntity = await createMessageEntity({ ...input, userId: ctx.session.user.id });
     await createEntity(messageClient, newMessageEntity);
-    messageEventEmitter.emit("createMessage", [[newMessageEntity]]);
+    messageEventEmitter.emit("createMessage", [[newMessageEntity], { sessionId: ctx.session.session.id }]);
     return newMessageEntity;
   }),
   createTyping: getMemberProcedure(createTypingInputSchema, "roomId")
     // Query instead of mutation as there are no concurrency issues with ordering for simply emitting
-    .query(({ input }) => {
-      messageEventEmitter.emit("createTyping", input);
+    .query(({ ctx, input }) => {
+      messageEventEmitter.emit("createTyping", { ...input, sessionId: ctx.session.session.id });
     }),
   deleteFile: getCreatorProcedure(deleteFileInputSchema).mutation(
     async ({ ctx: { messageClient, messageEntity, roomId }, input: { id, partitionKey, rowKey } }) => {
@@ -205,7 +206,10 @@ export const messageRouter = router({
           }
           // We don't need visual effects like isLoading when forwarding messages
           // so we'll instead rely on the subscription to auto-add the forwarded message for convenience
-          messageEventEmitter.emit("createMessage", [messages, true]);
+          messageEventEmitter.emit("createMessage", [
+            messages,
+            { isSendToSelf: true, sessionId: ctx.session.session.id },
+          ]);
         }),
       );
     },
@@ -227,13 +231,13 @@ export const messageRouter = router({
     input,
     signal,
   }) {
-    for await (const [[data, isIncludesSelf]] of on(messageEventEmitter, "createMessage", { signal })) {
+    for await (const [[data, { isSendToSelf, sessionId }]] of on(messageEventEmitter, "createMessage", { signal })) {
       const dataToYield: MessageEntity[] = [];
 
       for (const newMessage of data)
         if (
           isMessagesPartitionKeyForRoomId(newMessage.partitionKey, input.roomId) &&
-          (isIncludesSelf || newMessage.userId !== ctx.session.user.id)
+          (isSendToSelf || !getIsSameDevice({ sessionId, userId: newMessage.userId }, ctx.session))
         )
           dataToYield.push(newMessage);
 
@@ -245,10 +249,8 @@ export const messageRouter = router({
     input,
     signal,
   }) {
-    // We will add typing inputs for self user in the frontend
-    // without going through the server to avoid duplications and reduce performance overhead
     for await (const [data] of on(messageEventEmitter, "createTyping", { signal }))
-      if (data.roomId === input.roomId && data.userId !== ctx.session.user.id) yield data;
+      if (data.roomId === input.roomId && !getIsSameDevice(data, ctx.session)) yield data;
   }),
   onDeleteMessage: getMemberProcedure(onDeleteMessageInputSchema, "roomId").subscription(async function* ({
     input,

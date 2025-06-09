@@ -9,6 +9,7 @@ import { createSurveyInputSchema } from "#shared/models/db/survey/CreateSurveyIn
 import { deleteSurveyInputSchema } from "#shared/models/db/survey/DeleteSurveyInput";
 import { SurveyResponseEntity, surveyResponseEntitySchema } from "#shared/models/db/survey/SurveyResponseEntity";
 import { updateSurveyInputSchema } from "#shared/models/db/survey/UpdateSurveyInput";
+import { updateSurveyModelInputSchema } from "#shared/models/db/survey/UpdateSurveyModelInput";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
@@ -37,7 +38,6 @@ import { InvalidOperationError, NotFoundError, Operation } from "@esposter/share
 import { TRPCError } from "@trpc/server";
 import { and, count, desc, eq } from "drizzle-orm";
 import { z } from "zod/v4";
-import { updateSurveyModelInputSchema } from "~~/shared/models/db/survey/UpdateSurveyModelInput";
 
 const readSurveyInputSchema = z.object({ id: selectSurveySchema.shape.id });
 export type ReadSurveyInput = z.infer<typeof readSurveyInputSchema>;

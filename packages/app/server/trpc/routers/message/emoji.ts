@@ -75,10 +75,7 @@ export const emojiRouter = router({
     signal,
   }) {
     for await (const [[data, deviceId]] of on(emojiEventEmitter, "createEmoji", { signal }))
-      if (
-        isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId) &&
-        !getIsSameDevice(deviceId, { sessionId: ctx.session.session.id, userId: ctx.session.user.id })
-      )
+      if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId) && !getIsSameDevice(deviceId, ctx.session))
         yield data;
   }),
   onDeleteEmoji: getMemberProcedure(onDeleteEmojiInputSchema, "roomId").subscription(async function* ({
@@ -87,10 +84,7 @@ export const emojiRouter = router({
     signal,
   }) {
     for await (const [[data, deviceId]] of on(emojiEventEmitter, "deleteEmoji", { signal }))
-      if (
-        isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId) &&
-        !getIsSameDevice(deviceId, { sessionId: ctx.session.session.id, userId: ctx.session.user.id })
-      )
+      if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId) && !getIsSameDevice(deviceId, ctx.session))
         yield data;
   }),
   onUpdateEmoji: getMemberProcedure(onUpdateEmojiInputSchema, "roomId").subscription(async function* ({
@@ -99,10 +93,7 @@ export const emojiRouter = router({
     signal,
   }) {
     for await (const [[data, deviceId]] of on(emojiEventEmitter, "updateEmoji", { signal }))
-      if (
-        isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId) &&
-        !getIsSameDevice(deviceId, { sessionId: ctx.session.session.id, userId: ctx.session.user.id })
-      )
+      if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId) && !getIsSameDevice(deviceId, ctx.session))
         yield data;
   }),
   readEmojis: getMemberProcedure(readMetadataInputSchema, "roomId").query(

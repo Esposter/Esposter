@@ -1,4 +1,5 @@
 import type { DeviceId } from "@@/server/models/auth/DeviceId";
+import type { Session } from "@@/server/models/auth/Session";
 
-export const getIsSameDevice = (deviceId1: DeviceId, deviceId2: DeviceId) =>
-  deviceId1.sessionId === deviceId2.sessionId && deviceId1.userId === deviceId2.userId;
+export const getIsSameDevice = (deviceId: DeviceId, session: Session) =>
+  deviceId.sessionId === session.session.id && deviceId.userId === session.user.id;

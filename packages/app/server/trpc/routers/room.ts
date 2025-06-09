@@ -215,10 +215,7 @@ export const roomRouter = router({
     for await (const [data] of on(roomEventEmitter, "joinRoom", { signal })) {
       if (
         !input.includes(data.roomId) ||
-        getIsSameDevice(
-          { sessionId: data.sessionId, userId: data.user.id },
-          { sessionId: ctx.session.session.id, userId: ctx.session.user.id },
-        )
+        getIsSameDevice({ sessionId: data.sessionId, userId: data.user.id }, ctx.session)
       )
         continue;
       const isMember = await ctx.db.query.usersToRooms.findFirst({
@@ -231,11 +228,7 @@ export const roomRouter = router({
   }),
   onLeaveRoom: authedProcedure.input(onLeaveRoomInputSchema).subscription(async function* ({ ctx, input, signal }) {
     for await (const [data] of on(roomEventEmitter, "leaveRoom", { signal })) {
-      if (
-        !input.includes(data.roomId) ||
-        getIsSameDevice(data, { sessionId: ctx.session.session.id, userId: ctx.session.user.id })
-      )
-        continue;
+      if (!input.includes(data.roomId) || getIsSameDevice(data, ctx.session)) continue;
       const isMember = await ctx.db.query.usersToRooms.findFirst({
         where: (usersToRooms, { and, eq }) =>
           and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, data.roomId)),
