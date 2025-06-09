@@ -28,8 +28,8 @@ useConfirmBeforeNavigation(isDirty);
     :is-savable
     @close="resetItem()"
     @save="save(editedItem)"
-    @update:edit-form-ref="(value) => (editFormRef = value)"
-    @update:fullscreen-dialog="(value) => (isFullScreenDialog = value)"
+    @update:edit-form-ref="editFormRef = $event"
+    @update:fullscreen-dialog="isFullScreenDialog = $event"
   >
     <v-container fluid>
       <v-select v-model="editedItem.chart.type" :items="VisualTypeChartTypesMap[editedItem.type]" label="Chart Type" />

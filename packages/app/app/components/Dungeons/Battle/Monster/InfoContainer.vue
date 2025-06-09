@@ -41,7 +41,7 @@ onUnmounted(() => {
         },
         displayWidth: nameDisplayWidth,
       }"
-      @update:display-width="(value) => (nameDisplayWidth = value)"
+      @update:display-width="nameDisplayWidth = $event"
     />
     <Text
       :configuration="{
@@ -96,7 +96,7 @@ onUnmounted(() => {
       <DungeonsUIExperienceBar
         :position="{ x: 34, y: 54 }"
         :bar-percentage="experienceBarPercentage"
-        @level-up="(onComplete) => phaserEventEmitter.emit('levelUp', activeMonster, onComplete)"
+        @level-up="phaserEventEmitter.emit('levelUp', activeMonster, $event)"
       />
     </template>
   </Container>

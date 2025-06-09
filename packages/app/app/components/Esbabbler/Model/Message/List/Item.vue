@@ -68,7 +68,7 @@ watch(optionsMenu, (newOptionsMenu) => {
         <EsbabblerModelMessageEditor
           v-if="isUpdateMode"
           :message
-          @update:update-mode="(value) => (isUpdateMode = value)"
+          @update:update-mode="isUpdateMode = $event"
           @update:delete-mode="updateIsOpen"
         />
       </EsbabblerModelMessage>
@@ -86,11 +86,11 @@ watch(optionsMenu, (newOptionsMenu) => {
               :is-hovering
               :hover-props
               @update:delete-mode="updateIsOpen"
-              @update:forward="(rowKey) => (forwardRowKey = rowKey)"
-              @update:menu="(value) => (isOptionsChildrenActive = value)"
-              @update:reply="(rowKey) => (replyRowKey = rowKey)"
+              @update:forward="forwardRowKey = $event"
+              @update:menu="isOptionsChildrenActive = $event"
+              @update:reply="replyRowKey = $event"
               @update:select-emoji="selectEmoji"
-              @update:update-mode="(value) => (isUpdateMode = value)"
+              @update:update-mode="isUpdateMode = $event"
             />
           </v-hover>
         </div>

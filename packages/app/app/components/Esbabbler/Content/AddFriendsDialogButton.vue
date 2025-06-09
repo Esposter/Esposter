@@ -44,7 +44,7 @@ const isCopied = ref(false);
             <StyledClipboardButton
               w-20
               :source="inviteLink"
-              @copied="(value) => (isCopied = value)"
+              @copied="isCopied = $event"
               @create="
                 async () => {
                   if (!currentRoomId) return;

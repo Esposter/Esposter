@@ -30,6 +30,7 @@ const { messageInput } = storeToRefs(messageInputStore);
 const replyStore = useReplyStore();
 const { rowKey } = storeToRefs(replyStore);
 const reply = computed(() => messages.value.find((m) => m.rowKey === rowKey.value));
+const uploadFiles = useUploadFiles();
 </script>
 
 <template>
@@ -43,6 +44,7 @@ const reply = computed(() => messages.value.find((m) => m.rowKey === rowKey.valu
       :limit="MESSAGE_MAX_LENGTH"
       :extensions="[keyboardExtension, mentionExtension]"
       :card-props="reply ? { class: 'rd-t-none' } : undefined"
+      @upload-file="uploadFiles"
     >
       <template #prepend-inner-header>
         <EsbabblerModelMessageFileInputContainer />

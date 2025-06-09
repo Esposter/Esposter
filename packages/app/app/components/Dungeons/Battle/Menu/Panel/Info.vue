@@ -27,7 +27,7 @@ onCreate((scene) => {
         text: line1DialogMessage.text,
         style: { ...DialogTextStyle, wordWrap: { width: wordWrapWidth } },
       }"
-      @update:display-width="(value) => (line1TextDisplayWidth = value)"
+      @update:display-width="line1TextDisplayWidth = $event"
     />
     <Text
       :configuration="{

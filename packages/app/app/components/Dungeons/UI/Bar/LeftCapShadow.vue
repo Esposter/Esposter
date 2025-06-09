@@ -16,6 +16,6 @@ const displayWidth = defineModel<number | undefined>("displayWidth", { required:
 <template>
   <Image
     :configuration="{ ...imagePosition, texture: ImageKey.BarLeftCapShadow, scaleY, displayWidth }"
-    @update:display-width="(value) => (displayWidth = value)"
+    @update:display-width="displayWidth = $event"
   />
 </template>

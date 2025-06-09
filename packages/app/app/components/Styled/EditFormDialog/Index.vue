@@ -53,14 +53,10 @@ watch(editFormRef, (newEditFormRef) => {
           :is-edit-form-valid
           :is-full-screen-dialog
           :is-savable
-          @update:edit-form-dialog="
-            (value) => {
-              dialog = value;
-            }
-          "
-          @update:fullscreen-dialog="(value) => emit('update:fullscreen-dialog', value)"
+          @update:edit-form-dialog="dialog = $event"
+          @update:fullscreen-dialog="emit('update:fullscreen-dialog', $event)"
           @save="emit('save')"
-          @delete="(onComplete) => emit('delete', onComplete)"
+          @delete="emit('delete', $event)"
         />
         <v-divider thickness="2" />
         <slot />

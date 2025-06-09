@@ -2,7 +2,7 @@
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
 import { authClient } from "@/services/auth/authClient";
-import { EMOJI_TEXT } from "@/services/esbabbler/message/constants";
+import { EMOJI_TEXT } from "@/services/styled/constants";
 import { useEmojiStore } from "@/store/esbabbler/emoji";
 import { emojify } from "node-emoji";
 

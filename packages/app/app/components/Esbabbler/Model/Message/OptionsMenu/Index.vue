@@ -3,8 +3,8 @@ import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { Item } from "@/models/shared/Item";
 
 import { authClient } from "@/services/auth/authClient";
-import { EMOJI_TEXT } from "@/services/esbabbler/message/constants";
 import { EmojiMenuItems } from "@/services/esbabbler/message/EmojiMenuItems";
+import { EMOJI_TEXT } from "@/services/styled/constants";
 import { unemojify } from "node-emoji";
 
 interface MessageOptionsMenuProps {
@@ -87,8 +87,8 @@ const deleteMessageItem = computed(() =>
         :tooltip-props="{ text: EMOJI_TEXT }"
         :button-props="{ size: 'small' }"
         :button-attrs="{ 'rd-none': '!' }"
-        @update:menu="(value) => emit('update:menu', value)"
-        @select="(emoji) => emit('update:select-emoji', emoji)"
+        @update:menu="emit('update:menu', $event)"
+        @select="emit('update:select-emoji', $event)"
       />
       <v-tooltip v-for="{ icon, shortTitle, title, onClick } of menuItems" :key="title" :text="shortTitle ?? title">
         <template #activator="{ props }">
@@ -99,8 +99,8 @@ const deleteMessageItem = computed(() =>
         :row-key="message.rowKey"
         :update-message-items
         :delete-message-item
-        @update:menu="(value) => emit('update:menu', value)"
-        @update:select-emoji="(emoji) => emit('update:select-emoji', emoji)"
+        @update:menu="emit('update:menu', $event)"
+        @update:select-emoji="emit('update:select-emoji', $event)"
       />
     </v-card-actions>
   </StyledCard>

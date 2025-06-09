@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { Item } from "@/models/shared/Item";
 
-import { EMOJI_TEXT } from "@/services/esbabbler/message/constants";
 import { EmojiMoreMenuItems } from "@/services/esbabbler/message/EmojiMoreMenuItems";
+import { EMOJI_TEXT } from "@/services/styled/constants";
 import { useEsbabblerStore } from "@/store/esbabbler";
 import { unemojify } from "node-emoji";
 import { mergeProps } from "vue";

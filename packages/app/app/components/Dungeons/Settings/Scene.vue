@@ -14,7 +14,7 @@ const { onPlayerInput } = settingsSceneStore;
 <template>
   <DungeonsScene
     :scene-key="SceneKey.Settings"
-    @create="(scene) => playDungeonsBackgroundMusic(scene, BackgroundMusicKey.Title)"
+    @create="playDungeonsBackgroundMusic($event, BackgroundMusicKey.Title)"
     @update="(scene, _time, delta) => onPlayerInput(scene, controls.getInput(true), controls.getInput(), delta)"
   >
     <DungeonsSettingsContainer />

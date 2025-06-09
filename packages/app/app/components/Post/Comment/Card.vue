@@ -26,12 +26,12 @@ const isUpdateMode = ref(false);
             v-if="isUpdateMode"
             mt-2="!"
             :comment
-            @update:update-mode="(value) => (isUpdateMode = value)"
+            @update:update-mode="isUpdateMode = $event"
             @update:delete-mode="updateIsOpen"
           />
           <v-card-text v-else class="text-subtitle-1 card-content" px-0="!" pb-0="!" v-html="comment.description" />
           <v-card-actions p-0="!">
-            <PostCommentUpdateButton v-if="isCreator" @update:update-mode="(value) => (isUpdateMode = value)" />
+            <PostCommentUpdateButton v-if="isCreator" @update:update-mode="isUpdateMode = $event" />
             <PostCommentDeleteButton v-if="isCreator" @update:delete-mode="updateIsOpen" />
           </v-card-actions>
         </v-card>

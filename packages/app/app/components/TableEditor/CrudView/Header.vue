@@ -40,8 +40,8 @@ const component = computed(() => (editedItem.value ? useEditFormComponent(edited
         }
       "
       @save="save()"
-      @update:edit-form-ref="(value) => (editFormRef = value)"
-      @update:fullscreen-dialog="(value) => (isFullScreenDialog = value)"
+      @update:edit-form-ref="editFormRef = $event"
+      @update:fullscreen-dialog="isFullScreenDialog = $event"
     >
       <component :is="component" />
     </StyledEditFormDialog>

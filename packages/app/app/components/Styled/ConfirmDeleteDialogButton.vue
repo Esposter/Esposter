@@ -6,7 +6,7 @@ const emit = defineEmits<{ delete: [onComplete: () => void] }>();
 </script>
 
 <template>
-  <StyledDeleteDialog :card-props @delete="(onComplete) => emit('delete', onComplete)">
+  <StyledDeleteDialog :card-props @delete="emit('delete', $event)">
     <template #activator="{ updateIsOpen }">
       <v-tooltip :text="cardProps?.title?.toString()">
         <template #activator="{ props }">

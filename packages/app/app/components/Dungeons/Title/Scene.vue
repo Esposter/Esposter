@@ -28,7 +28,7 @@ const versionY = ref<number>();
         versionY = scene.scale.height - 50;
       }
     "
-    @update="(scene) => onPlayerInput(scene, controls.getInput(true))"
+    @update="onPlayerInput($event, controls.getInput(true))"
   >
     <Image
       :configuration="{

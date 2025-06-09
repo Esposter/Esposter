@@ -35,13 +35,13 @@ const emit = defineEmits<{
     <v-spacer />
     <ErrorIcon :edit-form-ref :is-edit-form-valid />
     <SaveButton :is-savable />
-    <ConfirmDeleteDialogButton :name :original-item @delete="(onComplete) => emit('delete', onComplete)" />
+    <ConfirmDeleteDialogButton :name :original-item @delete="emit('delete', $event)" />
     <v-divider mx-2="!" thickness="2" vertical inset />
-    <ToggleFullScreenDialogButton :is-full-screen-dialog @click="(value) => emit('update:fullscreen-dialog', value)" />
+    <ToggleFullScreenDialogButton :is-full-screen-dialog @click="emit('update:fullscreen-dialog', $event)" />
     <ConfirmCloseDialogButton
       :edited-item
       :is-savable
-      @update:edit-form-dialog="(value) => emit('update:edit-form-dialog', value)"
+      @update:edit-form-dialog="emit('update:edit-form-dialog', $event)"
       @save="emit('save')"
     />
   </v-toolbar>

@@ -17,6 +17,12 @@ interface RichTextEditorProps {
   placeholder?: string;
 }
 
+const slots = defineSlots<{
+  "append-footer": (props: FooterBarAppendSlotProps) => unknown;
+  "prepend-footer": (props: FooterBarPrependSlotProps) => unknown;
+  "prepend-inner-header": (props: Record<string, never>) => unknown;
+  "prepend-outer-footer": (props: Record<string, never>) => unknown;
+}>();
 const modelValue = defineModel<string>({ required: true });
 const {
   cardProps,
@@ -25,12 +31,7 @@ const {
   limit,
   placeholder = "Text (optional)",
 } = defineProps<RichTextEditorProps>();
-const slots = defineSlots<{
-  "append-footer": (props: FooterBarAppendSlotProps) => unknown;
-  "prepend-footer": (props: FooterBarPrependSlotProps) => unknown;
-  "prepend-inner-header": (props: Record<string, never>) => unknown;
-  "prepend-outer-footer": (props: Record<string, never>) => unknown;
-}>();
+const emit = defineEmits<{ "upload-file": [files: File[]] }>();
 const editor = useEditor({
   content: modelValue.value,
   extensions: [
@@ -72,7 +73,10 @@ onUnmounted(() => editor.value?.destroy());
       <RichTextEditorFooterBar :editor>
         <template #prepend="editorProps">
           <slot v-if="slots['prepend-footer']" name="prepend-footer" :="editorProps" />
-          <RichTextEditorCustomEmojiPickerButton v-else :editor="editorProps.editor" tooltip="Select an emoji" />
+          <template v-else>
+            <RichTextEditorCustomUploadFileButton @upload-file="emit('upload-file', $event)" />
+            <RichTextEditorCustomEmojiPickerButton :editor="editorProps.editor" />
+          </template>
         </template>
         <template #append="editorProps">
           <slot name="append-footer" :="editorProps" />
