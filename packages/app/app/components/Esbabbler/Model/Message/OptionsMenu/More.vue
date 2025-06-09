@@ -80,15 +80,17 @@ const { optionsMenu } = storeToRefs(esbabblerStore);
           <v-icon size="small" :color :icon />
         </template>
       </v-list-item>
-      <v-list-item py-2="!" min-height="auto">
-        <v-divider />
-      </v-list-item>
-      <v-list-item v-if="deleteMessageItem" @click="deleteMessageItem.onClick">
-        <span :class="`text-${deleteMessageItem.color}`">{{ deleteMessageItem.title }}</span>
-        <template #append>
-          <v-icon size="small" :color="deleteMessageItem.color" :icon="deleteMessageItem.icon" />
-        </template>
-      </v-list-item>
+      <template v-if="deleteMessageItem">
+        <v-list-item py-2="!" min-height="auto">
+          <v-divider />
+        </v-list-item>
+        <v-list-item @click="deleteMessageItem.onClick">
+          <span :class="`text-${deleteMessageItem.color}`">{{ deleteMessageItem.title }}</span>
+          <template #append>
+            <v-icon size="small" :color="deleteMessageItem.color" :icon="deleteMessageItem.icon" />
+          </template>
+        </v-list-item>
+      </template>
     </v-list>
   </v-menu>
 </template>
