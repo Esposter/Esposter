@@ -22,7 +22,7 @@ export const useMessageSubscribables = () => {
     createMessageUnsubscribable.value = $trpc.message.onCreateMessage.subscribe(
       { roomId },
       {
-        onData: getSynchronizedFunction(async (data) => {
+        onData: getSynchronizedFunction(async ({ data }) => {
           for (const newMessage of data) await storeCreateMessage(newMessage);
         }),
       },
