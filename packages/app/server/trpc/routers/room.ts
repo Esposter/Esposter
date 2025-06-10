@@ -364,21 +364,23 @@ export const roomRouter = router({
       });
       if (foundUsersToRooms.length !== userIds.length) throw new TRPCError({ code: "UNAUTHORIZED" });
 
-      const joinedUserStatuses = await ctx.db
-        .select()
+      const statuses = await ctx.db
+        .select({
+          sessionExpiresAt: sessions.expiresAt,
+          status: userStatuses.status,
+          statusExpiresAt: userStatuses.expiresAt,
+        })
         .from(userStatuses)
         .leftJoin(sessions, eq(sessions.userId, userStatuses.userId))
         .where(inArray(userStatuses.userId, userIds));
       const cutoffDate = new Date();
-      return joinedUserStatuses.map(({ sessions, user_statuses }) => {
-        if (!sessions) return UserStatus.Offline;
+      return statuses.map(({ sessionExpiresAt, status, statusExpiresAt }) => {
+        if (!sessionExpiresAt) return UserStatus.Offline;
 
         const getAutoDetectedStatus = () =>
-          dayjs(sessions.expiresAt).isBefore(cutoffDate) ? UserStatus.Offline : UserStatus.Online;
-        if (user_statuses.status)
-          return user_statuses.expiresAt && dayjs(user_statuses.expiresAt).isBefore(cutoffDate)
-            ? getAutoDetectedStatus()
-            : user_statuses.status;
+          dayjs(sessionExpiresAt).isBefore(cutoffDate) ? UserStatus.Offline : UserStatus.Online;
+        if (status)
+          return statusExpiresAt && dayjs(statusExpiresAt).isBefore(cutoffDate) ? getAutoDetectedStatus() : status;
         else return getAutoDetectedStatus();
       });
     },
