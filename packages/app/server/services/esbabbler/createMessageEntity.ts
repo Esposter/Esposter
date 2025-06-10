@@ -9,9 +9,6 @@ export const createMessageEntity = async ({
   ...rest
 }: CreateMessageInput & Pick<MessageEntity, "isForward" | "isLoading" | "userId">) => {
   const messageEntity = baseCreateMessageEntity({ message, ...rest });
-  if (message) {
-    const linkPreviewResponse = await getLinkPreviewResponse(message);
-    if (linkPreviewResponse) messageEntity.linkPreviewResponse = linkPreviewResponse;
-  }
+  if (message) messageEntity.linkPreviewResponse = await getLinkPreviewResponse(message);
   return messageEntity;
 };
