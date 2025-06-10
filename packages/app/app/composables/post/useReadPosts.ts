@@ -7,10 +7,14 @@ export const useReadPosts = async () => {
   const { hasMore, nextCursor } = storeToRefs(postStore);
   const readMorePosts = async (onComplete: () => void) => {
     try {
-      const response = await $trpc.post.readPosts.query({ cursor: nextCursor.value });
-      nextCursor.value = response.nextCursor;
-      hasMore.value = response.hasMore;
-      pushPosts(...response.items);
+      const {
+        hasMore: newHasMore,
+        items,
+        nextCursor: newNextCursor,
+      } = await $trpc.post.readPosts.query({ cursor: nextCursor.value });
+      nextCursor.value = newNextCursor;
+      hasMore.value = newHasMore;
+      pushPosts(...items);
     } finally {
       onComplete();
     }

@@ -27,14 +27,18 @@ export const useReadMessages = async () => {
     try {
       if (!currentRoomId.value) return;
 
-      const response = await $trpc.message.readMessages.query({
+      const {
+        hasMore: newHasMore,
+        items,
+        nextCursor: newNextCursor,
+      } = await $trpc.message.readMessages.query({
         cursor: nextCursor.value,
         roomId: currentRoomId.value,
       });
-      nextCursor.value = response.nextCursor;
-      hasMore.value = response.hasMore;
-      await readMetadata(response.items);
-      pushMessages(...response.items);
+      nextCursor.value = newNextCursor;
+      hasMore.value = newHasMore;
+      await readMetadata(items);
+      pushMessages(...items);
     } finally {
       onComplete();
     }

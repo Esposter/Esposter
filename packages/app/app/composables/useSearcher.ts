@@ -25,10 +25,14 @@ export const useSearcher = <TItem extends ToData<AEntity>, TEntityTypeKey extend
     createCursorPaginationData<TItem>();
   const readMoreItems = async (onComplete: () => void) => {
     try {
-      const response = await query(throttledSearchQuery.value, nextCursor.value);
-      nextCursor.value = response.nextCursor;
-      hasMore.value = response.hasMore;
-      items.value.push(...response.items);
+      const {
+        hasMore: newHasMore,
+        items: newItems,
+        nextCursor: newNextCursor,
+      } = await query(throttledSearchQuery.value, nextCursor.value);
+      nextCursor.value = newNextCursor;
+      hasMore.value = newHasMore;
+      items.value.push(...newItems);
     } finally {
       onComplete();
     }

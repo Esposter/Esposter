@@ -15,11 +15,15 @@ export const useReadMembers = async () => {
     try {
       if (!currentRoomId.value) return;
 
-      const response = await $trpc.room.readMembers.query({ cursor: nextCursor.value, roomId: currentRoomId.value });
-      nextCursor.value = response.nextCursor;
-      hasMore.value = response.hasMore;
-      for (const user of response.items) userMap.value.set(user.id, user);
-      pushMemberIds(...response.items.map(({ id }) => id));
+      const {
+        hasMore: newHasMore,
+        items,
+        nextCursor: newNextCursor,
+      } = await $trpc.room.readMembers.query({ cursor: nextCursor.value, roomId: currentRoomId.value });
+      nextCursor.value = newNextCursor;
+      hasMore.value = newHasMore;
+      for (const user of items) userMap.value.set(user.id, user);
+      pushMemberIds(...items.map(({ id }) => id));
     } finally {
       onComplete();
     }

@@ -16,10 +16,10 @@ export const clickerRouter = router({
   readClicker: authedProcedure.query<Clicker>(async ({ ctx }) => {
     try {
       const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
-      const response = await useDownload(AzureContainer.ClickerAssets, blobName);
-      if (!response.readableStreamBody) return new Clicker();
+      const { readableStreamBody } = await useDownload(AzureContainer.ClickerAssets, blobName);
+      if (!readableStreamBody) return new Clicker();
 
-      const json = await streamToText(response.readableStreamBody);
+      const json = await streamToText(readableStreamBody);
       return Object.assign(new Clicker(), jsonDateParse(json));
     } catch {
       return new Clicker();

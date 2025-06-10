@@ -11,11 +11,15 @@ export const useReadRooms = async () => {
   const readMetadata = (rooms: Room[]) => Promise.all([readUsers(rooms.map(({ userId }) => userId))]);
   const readMoreRooms = async (onComplete: () => void) => {
     try {
-      const response = await $trpc.room.readRooms.query({ cursor: nextCursor.value });
-      nextCursor.value = response.nextCursor;
-      hasMore.value = response.hasMore;
-      await readMetadata(response.items);
-      pushRooms(...response.items);
+      const {
+        hasMore: newHasMore,
+        items,
+        nextCursor: newNextCursor,
+      } = await $trpc.room.readRooms.query({ cursor: nextCursor.value });
+      nextCursor.value = newNextCursor;
+      hasMore.value = newHasMore;
+      await readMetadata(items);
+      pushRooms(...items);
     } finally {
       onComplete();
     }
