@@ -1,5 +1,5 @@
 {
-  "id": "14b59e30-3010-4fbb-919a-31f0cf797338",
+  "id": "fc4d6ed8-45a6-491d-90e8-cf4bf2377d4b",
   "prevId": "cdedd7a8-e3c1-47f1-9650-d459d4904092",
   "version": "7",
   "dialect": "postgresql",
@@ -920,7 +920,18 @@
       "isRLSEnabled": false
     }
   },
-  "enums": {},
+  "enums": {
+    "public.user_status": {
+      "name": "user_status",
+      "schema": "public",
+      "values": [
+        "DoNotDisturb",
+        "Idle",
+        "Offline",
+        "Online"
+      ]
+    }
+  },
   "schemas": {},
   "sequences": {},
   "roles": {},

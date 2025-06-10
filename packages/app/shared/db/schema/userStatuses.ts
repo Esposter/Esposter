@@ -1,8 +1,10 @@
 import { users } from "#shared/db/schema/users";
-import { userStatusEnum } from "#shared/models/db/UserStatus";
+import { UserStatus } from "#shared/models/db/UserStatus";
 import { STATUS_MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
 import { relations, sql } from "drizzle-orm";
-import { check, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { check, pgEnum, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+
+export const userStatusEnum = pgEnum("user_status", UserStatus);
 
 export const userStatuses = pgTable(
   "user_statuses",

@@ -1,3 +1,4 @@
+CREATE TYPE "public"."user_status" AS ENUM('DoNotDisturb', 'Idle', 'Offline', 'Online');--> statement-breakpoint
 CREATE TABLE "user_statuses" (
 	"expiresAt" timestamp,
 	"lastActiveAt" timestamp DEFAULT now() NOT NULL,
