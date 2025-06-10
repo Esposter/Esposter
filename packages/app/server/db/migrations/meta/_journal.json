@@ -71,6 +71,13 @@
       "when": 1746332558858,
       "tag": "0009_wooden_johnny_storm",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1749548961858,
+      "tag": "0010_curly_the_renegades",
+      "breakpoints": true
     }
   ]
 }

@@ -1,8 +1,14 @@
 import type { Server } from "node:http";
 
+import { users } from "#shared/db/schema/users";
+import { userStatuses } from "#shared/db/schema/userStatuses";
 import { dayjs } from "#shared/services/dayjs";
+import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
+import { auth } from "@@/server/auth";
+import { useDb } from "@@/server/composables/useDb";
 import { createContext } from "@@/server/trpc/context";
 import { trpcRouter } from "@@/server/trpc/routers";
+import { TRPCError } from "@trpc/server";
 import { applyWSSHandler } from "@trpc/server/adapters/ws";
 import { WebSocketServer } from "ws";
 
@@ -24,13 +30,30 @@ export default defineEventHandler((event) => {
     router: trpcRouter,
     wss,
   });
+  const db = useDb();
 
-  wss.on("connection", (ws) => {
-    console.log(`Connection opened, client size: ${wss.clients.size}`);
-    ws.once("close", () => {
-      console.log(`Connection closed, client size: ${wss.clients.size}`);
-    });
-  });
+  wss.on(
+    "connection",
+    getSynchronizedFunction(async (ws, { headers }) => {
+      const session = await auth.api.getSession({
+        headers: new Headers(Object.entries(headers as Record<string, string>)),
+      });
+      if (!session) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+      console.log(`Connection opened, client size: ${wss.clients.size}`);
+      ws.once(
+        "close",
+        getSynchronizedFunction(async () => {
+          const lastActiveAt = new Date();
+          console.log(`Connection closed, client size: ${wss.clients.size}`);
+          await db.insert(userStatuses).values({ lastActiveAt, userId: session.user.id }).onConflictDoUpdate({
+            set: { lastActiveAt },
+            target: users.id,
+          });
+        }),
+      );
+    }),
+  );
   process.on("SIGTERM", () => {
     handler.broadcastReconnectNotification();
     wss.close();

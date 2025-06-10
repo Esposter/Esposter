@@ -14,7 +14,7 @@ export const surveys = pgTable(
     model: text("model").notNull().default(""),
     modelVersion: integer("modelVersion").notNull().default(0),
     name: text("name").notNull(),
-    publishedAt: timestamp("publishedAt", { mode: "date" }),
+    publishedAt: timestamp("publishedAt"),
     publishVersion: integer("publishVersion").notNull().default(0),
     userId: text("userId")
       .notNull()
