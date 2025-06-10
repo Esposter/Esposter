@@ -1,9 +1,10 @@
 import type { Room } from "#shared/db/schema/rooms";
-import type { UserToRoom } from "#shared/db/schema/users";
+import type { UserToRoom } from "#shared/db/schema/usersToRooms";
 
 import { InviteRelations, invites, selectInviteSchema } from "#shared/db/schema/invites";
 import { rooms, selectRoomSchema } from "#shared/db/schema/rooms";
-import { selectUserSchema, users, usersToRooms, UserToRoomRelations } from "#shared/db/schema/users";
+import { selectUserSchema, users } from "#shared/db/schema/users";
+import { usersToRooms, UserToRoomRelations } from "#shared/db/schema/usersToRooms";
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 import { createRoomInputSchema } from "#shared/models/db/room/CreateRoomInput";
 import { deleteRoomInputSchema } from "#shared/models/db/room/DeleteRoomInput";

@@ -1,7 +1,9 @@
-import type { Like, User } from "#shared/db/schema/users";
+import type { Like } from "#shared/db/schema/likes";
+import type { User } from "#shared/db/schema/users";
 
 import { pgTable } from "#shared/db/pgTable";
-import { likes, users } from "#shared/db/schema/users";
+import { likes } from "#shared/db/schema/likes";
+import { users } from "#shared/db/schema/users";
 import { POST_DESCRIPTION_MAX_LENGTH, POST_TITLE_MAX_LENGTH } from "#shared/services/post/constants";
 import { relations, sql } from "drizzle-orm";
 import { check, doublePrecision, integer, text, uuid } from "drizzle-orm/pg-core";
@@ -31,12 +33,6 @@ export const posts = pgTable(
 );
 
 export type Post = typeof posts.$inferSelect;
-// @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
-export const PostRelations = {
-  likes: true,
-  user: true,
-} as const;
-export type PostWithRelations = Post & { likes: Like[]; user: User };
 
 export const selectPostSchema = createSelectSchema(posts, {
   description: z.string().max(POST_DESCRIPTION_MAX_LENGTH),
@@ -57,3 +53,9 @@ export const postsRelations = relations(posts, ({ many, one }) => ({
     references: [users.id],
   }),
 }));
+// @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
+export const PostRelations = {
+  likes: true,
+  user: true,
+} as const;
+export type PostWithRelations = Post & { likes: Like[]; user: User };

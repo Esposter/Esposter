@@ -1,4 +1,4 @@
-import type { UserToRoom, UserToRoomWithRelations } from "#shared/db/schema/users";
+import type { UserToRoom, UserToRoomWithRelations } from "#shared/db/schema/usersToRooms";
 import type { DeleteRoomInput } from "#shared/models/db/room/DeleteRoomInput";
 import type { UpdateRoomInput } from "#shared/models/db/room/UpdateRoomInput";
 import type { DeviceId } from "@@/server/models/auth/DeviceId";
