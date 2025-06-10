@@ -369,20 +369,35 @@ export const roomRouter = router({
           sessionExpiresAt: sessions.expiresAt,
           status: userStatuses.status,
           statusExpiresAt: userStatuses.expiresAt,
+          userId: userStatuses.userId,
         })
         .from(userStatuses)
         .leftJoin(sessions, eq(sessions.userId, userStatuses.userId))
         .where(inArray(userStatuses.userId, userIds));
       const cutoffDate = new Date();
-      return statuses.map(({ sessionExpiresAt, status, statusExpiresAt }) => {
-        if (!sessionExpiresAt) return UserStatus.Offline;
+      const resultUserStatuses: UserStatus[] = [];
 
-        const getAutoDetectedStatus = () =>
-          dayjs(sessionExpiresAt).isBefore(cutoffDate) ? UserStatus.Offline : UserStatus.Online;
-        if (status)
-          return statusExpiresAt && dayjs(statusExpiresAt).isBefore(cutoffDate) ? getAutoDetectedStatus() : status;
-        else return getAutoDetectedStatus();
-      });
+      for (const userId of userIds) {
+        const foundStatus = statuses.find((s) => s.userId === userId);
+        // We'll conveniently assume that if they don't have a user status record yet
+        // it means that they're still online as we insert a record as soon as they go offline
+        if (!foundStatus) {
+          resultUserStatuses.push(UserStatus.Online);
+          continue;
+        }
+
+        const { sessionExpiresAt, status, statusExpiresAt } = foundStatus;
+        resultUserStatuses.push(
+          status && (!statusExpiresAt || dayjs(statusExpiresAt).isAfter(cutoffDate))
+            ? status
+            : // Auto detect the user status based on the session expire date
+              dayjs(sessionExpiresAt).isAfter(cutoffDate)
+              ? UserStatus.Online
+              : UserStatus.Offline,
+        );
+      }
+
+      return resultUserStatuses;
     },
   ),
   updateRoom: getProfanityFilterProcedure(updateRoomInputSchema, ["name"]).mutation<Room>(
