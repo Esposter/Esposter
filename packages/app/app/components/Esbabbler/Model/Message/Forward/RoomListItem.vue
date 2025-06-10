@@ -31,9 +31,7 @@ const isActive = ref(false);
     @mouseleave="isActive = false"
   >
     <template #prepend>
-      <v-badge color="green" location="bottom end" dot>
-        <StyledAvatar :image="room.image" :name="room.name" :avatar-props="{ size: 'small' }" />
-      </v-badge>
+      <StyledAvatar :image="room.image" :name="room.name" :avatar-props="{ size: 'small' }" />
     </template>
     <v-list-item-title flex justify-between items-center>
       {{ room.name }}

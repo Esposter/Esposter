@@ -12,10 +12,10 @@ export const webpageEditorRouter = router({
   readWebpageEditor: authedProcedure.query<WebpageEditor>(async ({ ctx }) => {
     try {
       const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
-      const response = await useDownload(AzureContainer.WebpageEditorAssets, blobName);
-      if (!response.readableStreamBody) return new WebpageEditor();
+      const { readableStreamBody } = await useDownload(AzureContainer.WebpageEditorAssets, blobName);
+      if (!readableStreamBody) return new WebpageEditor();
 
-      const json = await streamToText(response.readableStreamBody);
+      const json = await streamToText(readableStreamBody);
       return Object.assign(new WebpageEditor(), jsonDateParse(json));
     } catch {
       return new WebpageEditor();

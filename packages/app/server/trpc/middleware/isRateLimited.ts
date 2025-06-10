@@ -13,12 +13,12 @@ export const isRateLimited = middleware(async ({ ctx, next, path }) => {
   else if (ip === "::1") return next();
 
   try {
-    const response = await rateLimiter.consume(`${path}${ID_SEPARATOR}${ip}`);
+    const { msBeforeNext, remainingPoints } = await rateLimiter.consume(`${path}${ID_SEPARATOR}${ip}`);
     if ("setHeader" in ctx.res) {
-      ctx.res.setHeader("Retry-After", response.msBeforeNext / 1000);
+      ctx.res.setHeader("Retry-After", msBeforeNext / 1000);
       ctx.res.setHeader("X-RateLimit-Limit", rateLimiter.points);
-      ctx.res.setHeader("X-RateLimit-Remaining", response.remainingPoints);
-      ctx.res.setHeader("X-RateLimit-Reset", new Date(Date.now() + response.msBeforeNext).toISOString());
+      ctx.res.setHeader("X-RateLimit-Remaining", remainingPoints);
+      ctx.res.setHeader("X-RateLimit-Reset", new Date(Date.now() + msBeforeNext).toISOString());
     }
   } catch {
     throw new TRPCError({ code: "TOO_MANY_REQUESTS" });

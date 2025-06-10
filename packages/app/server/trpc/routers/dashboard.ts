@@ -12,10 +12,10 @@ export const dashboardRouter = router({
   readDashboard: authedProcedure.query<Dashboard>(async ({ ctx }) => {
     try {
       const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
-      const response = await useDownload(AzureContainer.DashboardAssets, blobName);
-      if (!response.readableStreamBody) return new Dashboard();
+      const { readableStreamBody } = await useDownload(AzureContainer.DashboardAssets, blobName);
+      if (!readableStreamBody) return new Dashboard();
 
-      const json = await streamToText(response.readableStreamBody);
+      const json = await streamToText(readableStreamBody);
       return Object.assign(new Dashboard(), jsonDateParse(json));
     } catch {
       return new Dashboard();

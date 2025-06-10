@@ -48,10 +48,11 @@ export class TiledJSONExternalFile extends MultiFile {
     if (!(tilemapFile.type === "json" && Object.hasOwn(tilemapFile.data, "tilesets"))) return;
 
     for (const tilesetFile of tilesetFiles) {
-      const response = tilesetFile.xhrLoader?.responseText;
-      if (!response) throw new InvalidOperationError(Operation.Read, this.addToCache.name, tilesetFile.url.toString());
+      const responseText = tilesetFile.xhrLoader?.responseText;
+      if (!responseText)
+        throw new InvalidOperationError(Operation.Read, this.addToCache.name, tilesetFile.url.toString());
 
-      const responseData = await parseXmlString<{ tileset: TMXEmbeddedTilesetNode }>(response);
+      const responseData = await parseXmlString<{ tileset: TMXEmbeddedTilesetNode }>(responseText);
       const tilesetData = parseTileset(responseData.tileset) as TMXEmbeddedTilesetParsed;
       const index = tilesetFile.tilesetIndex;
       Object.assign(tilemapFile.data.tilesets[index], tilesetData, {

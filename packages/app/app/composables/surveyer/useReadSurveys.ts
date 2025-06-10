@@ -20,13 +20,13 @@ export const useReadSurveys = async () => {
   }) => {
     isLoading.value = true;
     try {
-      const response = await $trpc.survey.readSurveys.query({
+      const { hasMore: newHasMore, items } = await $trpc.survey.readSurveys.query({
         limit: itemsPerPage,
         offset: (page - 1) * itemsPerPage,
         sortBy,
       });
-      surveys.value = response.items;
-      hasMore.value = response.hasMore;
+      surveys.value = items;
+      hasMore.value = newHasMore;
     } finally {
       isLoading.value = false;
     }
