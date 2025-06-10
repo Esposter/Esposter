@@ -3,7 +3,9 @@ import type { UserToRoom } from "#shared/db/schema/usersToRooms";
 
 import { InviteRelations, invites, selectInviteSchema } from "#shared/db/schema/invites";
 import { rooms, selectRoomSchema } from "#shared/db/schema/rooms";
+import { sessions } from "#shared/db/schema/sessions";
 import { selectUserSchema, users } from "#shared/db/schema/users";
+import { userStatuses } from "#shared/db/schema/userStatuses";
 import { usersToRooms, UserToRoomRelations } from "#shared/db/schema/usersToRooms";
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 import { createRoomInputSchema } from "#shared/models/db/room/CreateRoomInput";
@@ -11,9 +13,11 @@ import { deleteRoomInputSchema } from "#shared/models/db/room/DeleteRoomInput";
 import { joinRoomInputSchema } from "#shared/models/db/room/JoinRoomInput";
 import { leaveRoomInputSchema } from "#shared/models/db/room/LeaveRoomInput";
 import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
+import { UserStatus } from "#shared/models/db/UserStatus";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { dayjs } from "#shared/services/dayjs";
 import { CODE_LENGTH } from "#shared/services/invite/constants";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { createCode } from "#shared/util/math/random/createCode";
@@ -73,6 +77,12 @@ const readMembersByIdsInputSchema = z.object({
   roomId: selectRoomSchema.shape.id,
 });
 export type ReadMembersByIdsInput = z.infer<typeof readMembersByIdsInputSchema>;
+
+const readStatusesInputSchema = z.object({
+  roomId: selectRoomSchema.shape.id,
+  userIds: selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
+});
+export type ReadStatusesInput = z.infer<typeof readStatusesInputSchema>;
 
 const createMembersInputSchema = z.object({
   roomId: selectRoomSchema.shape.id,
@@ -346,6 +356,33 @@ export const roomRouter = router({
       const resultRooms = joinedRooms.map(({ rooms }) => rooms);
       return getCursorPaginationData(resultRooms, limit, sortBy);
     }),
+  readStatuses: getMemberProcedure(readStatusesInputSchema, "roomId").query(
+    async ({ ctx, input: { roomId, userIds } }) => {
+      const foundUsersToRooms = await ctx.db.query.usersToRooms.findMany({
+        where: (usersToRooms, { and, eq, inArray }) =>
+          and(inArray(usersToRooms.userId, userIds), eq(usersToRooms.roomId, roomId)),
+      });
+      if (foundUsersToRooms.length !== userIds.length) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+      const cutoffDate = new Date();
+      const joinedUserStatuses = await ctx.db
+        .select()
+        .from(userStatuses)
+        .leftJoin(sessions, eq(sessions.userId, userStatuses.userId))
+        .where(inArray(userStatuses.userId, userIds));
+      return joinedUserStatuses.map(({ sessions, user_statuses }) => {
+        if (!sessions) return UserStatus.Offline;
+
+        const getAutoDetectedStatus = () =>
+          dayjs(sessions.expiresAt).isBefore(cutoffDate) ? UserStatus.Offline : UserStatus.Online;
+        if (user_statuses.status)
+          return user_statuses.expiresAt && dayjs(user_statuses.expiresAt).isBefore(cutoffDate)
+            ? getAutoDetectedStatus()
+            : user_statuses.status;
+        else return getAutoDetectedStatus();
+      });
+    },
+  ),
   updateRoom: getProfanityFilterProcedure(updateRoomInputSchema, ["name"]).mutation<Room>(
     async ({ ctx, input: { id, ...rest } }) => {
       const updatedRoom = (
