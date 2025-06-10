@@ -364,12 +364,12 @@ export const roomRouter = router({
       });
       if (foundUsersToRooms.length !== userIds.length) throw new TRPCError({ code: "UNAUTHORIZED" });
 
-      const cutoffDate = new Date();
       const joinedUserStatuses = await ctx.db
         .select()
         .from(userStatuses)
         .leftJoin(sessions, eq(sessions.userId, userStatuses.userId))
         .where(inArray(userStatuses.userId, userIds));
+      const cutoffDate = new Date();
       return joinedUserStatuses.map(({ sessions, user_statuses }) => {
         if (!sessions) return UserStatus.Offline;
 
