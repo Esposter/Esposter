@@ -249,13 +249,19 @@ export const roomRouter = router({
       yield data;
     }
   }),
-  readInvite: authedProcedure.input(readInviteInputSchema).query(
-    async ({ ctx, input }) =>
-      (await ctx.db.query.invites.findFirst({
-        where: (invites, { eq }) => eq(invites.code, input),
-        with: InviteRelations,
-      })) ?? null,
-  ),
+  readInvite: authedProcedure.input(readInviteInputSchema).query(async ({ ctx, input }) => {
+    const invite = await ctx.db.query.invites.findFirst({
+      where: (invites, { eq }) => eq(invites.code, input),
+      with: InviteRelations,
+    });
+    if (!invite) return null;
+
+    const isMember = await ctx.db.query.usersToRooms.findFirst({
+      where: (usersToRooms, { and, eq }) =>
+        and(eq(usersToRooms.userId, invite.userId), eq(usersToRooms.roomId, invite.roomId)),
+    });
+    return { ...invite, isMember: Boolean(isMember) };
+  }),
   readInviteCode: getMemberProcedure(readInviteCodeInputSchema, "roomId").query<null | string>(
     async ({ ctx, input: { roomId } }) => readInviteCode(ctx.db, ctx.session.user.id, roomId),
   ),
