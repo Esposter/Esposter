@@ -7,6 +7,7 @@ import { experimental } from "./configuration/experimental";
 import { future } from "./configuration/future";
 import { imports } from "./configuration/imports";
 import { modules } from "./configuration/modules";
+import { nitro } from "./configuration/nitro";
 import { pwa } from "./configuration/pwa";
 import { routeRules } from "./configuration/routeRules";
 import { runtimeConfig } from "./configuration/runtimeConfig";
@@ -27,6 +28,7 @@ export default defineNuxtConfig({
   future,
   imports,
   modules,
+  nitro,
   pwa,
   routeRules,
   runtimeConfig,

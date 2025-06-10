@@ -17,7 +17,7 @@
   "scripts": {
     "build": "NODE_OPTIONS=--max-old-space-size=8192 nuxt build",
     "dev": "nuxt dev",
-    "start": "node .output/server/index.mjs",
+    "start": "bun .output/server/index.mjs",
     "test": "NODE_OPTIONS=--max-old-space-size=8192 vitest",
     "coverage": "vitest run --coverage",
     "generate": "nuxt generate",
@@ -29,14 +29,14 @@
     "lint:fix": "TIMING=1 eslint --config eslint.light.config.js --fix .",
     "lint:all": "TIMING=1 eslint .",
     "lint:all:fix": "TIMING=1 eslint --fix .",
-    "db:run": "tsx node_modules/drizzle-kit/bin.cjs",
-    "db:gen": "pnpm db:run generate",
-    "db:studio": "pnpm db:run studio",
-    "db:up": "pnpm db:run up",
-    "gen-env": "pnpx gen-env-types .env -o env.d.ts -e .",
-    "phaser:gen": "tsx scripts/phaser/index.ts",
-    "tiled:gen": "tsx scripts/tiled/index.ts",
-    "generate-pwa-assets": "pnpx pwa-asset-generator https://pshpstespauea001.blob.core.windows.net/esposter-assets/logo.png public/pwa -o false -f -i public/pwa/index.html -m public/pwa/manifest.json",
+    "db:run": "bun node_modules/drizzle-kit/bin.cjs",
+    "db:gen": "bun db:run generate",
+    "db:studio": "bun db:run studio",
+    "db:up": "bun db:run up",
+    "gen-env": "bunx gen-env-types .env -o env.d.ts -e .",
+    "phaser:gen": "bun scripts/phaser/index.ts",
+    "tiled:gen": "bun scripts/tiled/index.ts",
+    "generate-pwa-assets": "bunx pwa-asset-generator https://pshpstespauea001.blob.core.windows.net/esposter-assets/logo.png public/pwa -o false -f -i public/pwa/index.html -m public/pwa/manifest.json",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted"
   },
   "scriptsComments": {
@@ -197,7 +197,6 @@
     "nuxt-security": "catalog:",
     "prettier": "catalog:",
     "sass-embedded": "catalog:",
-    "tsx": "catalog:",
     "unocss": "catalog:",
     "vuetify-nuxt-module": "catalog:"
   }

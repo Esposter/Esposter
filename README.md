@@ -231,7 +231,7 @@ git reset --hard
 1. Install Node Modules:
 
 ```bash
-pnpm i
+bun i
 ```
 
 2. Install [PostgreSQL + PgAdmin](https://www.postgresql.org/download).
@@ -245,7 +245,7 @@ Checkout the [deployment documentation](https://nuxt.com/docs/getting-started/de
 1. Build the packages to be used by the application:
 
 ```bash
-pnpm build:packages
+bun build:packages
 ```
 
 2. Change to the app directory:
@@ -257,7 +257,7 @@ cd packages/app
 3. Start the development server on <http://localhost:3000>
 
 ```bash
-pnpm dev
+bun dev
 ```
 
 ### Production
@@ -265,18 +265,18 @@ pnpm dev
 Build the application for production:
 
 ```bash
-pnpm build
+bun run build
 ```
 
 Locally preview production build:
 
 ```bash
-pnpm preview
+bun preview
 ```
 
 ### Architecture
 
-Esposter is a lerna + pnpm workspaces monorepo.
+Esposter is a lerna + bun workspaces monorepo.
 Packages are used directly by the nuxt application via `workspace:*`.
 
 ### Miscellaneous Tools

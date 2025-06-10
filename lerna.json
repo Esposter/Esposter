@@ -1,7 +1,7 @@
 {
   "$schema": "node_modules/@lerna-lite/cli/schemas/lerna-schema.json",
   "version": "2.4.1",
-  "npmClient": "pnpm",
+  "npmClient": "bun",
   "forcePublish": true,
   "conventionalCommits": true
 }
