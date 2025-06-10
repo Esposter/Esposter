@@ -107,7 +107,6 @@ export const likeRouter = router({
       });
 
     const noLikesNew = post.noLikes + value * 2;
-
     return ctx.db.transaction(async (tx) => {
       const updatedLike = (
         await tx
