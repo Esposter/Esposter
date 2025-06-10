@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { SurveyResponseEntity } from "#shared/models/db/survey/SurveyResponseEntity";
 
-import { jsonDateParse } from "#shared/util/time/jsonDateParse";
 import { validate } from "@/services/router/validate";
 import { SURVEY_RESPONSE_ID_LOCAL_STORAGE_KEY, THEME_KEY } from "@/services/surveyer/constants";
+import { parseSurveyModel } from "@/services/surveyer/parseSurveyModel";
 import { Model } from "survey-core";
 import { SurveyComponent } from "survey-vue3-ui";
 
@@ -36,7 +36,7 @@ const saveSurveyResponse = async (survey: Model) => {
 const route = useRoute();
 const surveyId = route.params.id as string;
 const { $trpc } = useNuxtApp();
-const { [THEME_KEY]: theme, ...surveyModel } = jsonDateParse(await $trpc.survey.readSurveyModel.query(surveyId));
+const { [THEME_KEY]: theme, ...surveyModel } = parseSurveyModel(await $trpc.survey.readSurveyModel.query(surveyId));
 const model = new Model(surveyModel);
 if (theme) model.applyTheme(theme);
 model.onValueChanged.add(saveSurveyResponse);
