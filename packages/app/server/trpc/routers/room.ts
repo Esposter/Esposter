@@ -282,7 +282,7 @@ export const roomRouter = router({
       const joinedUsers = await ctx.db
         .select()
         .from(users)
-        .innerJoin(usersToRooms, and(eq(usersToRooms.userId, users.id)))
+        .innerJoin(usersToRooms, eq(usersToRooms.userId, users.id))
         .where(and(eq(usersToRooms.roomId, roomId), filterWhere, cursorWhere))
         .orderBy(...parseSortByToSql(users, sortBy))
         .limit(limit + 1);
@@ -295,7 +295,7 @@ export const roomRouter = router({
       const joinedUsers = await ctx.db
         .select()
         .from(users)
-        .innerJoin(usersToRooms, and(eq(usersToRooms.userId, users.id)))
+        .innerJoin(usersToRooms, eq(usersToRooms.userId, users.id))
         .where(and(eq(usersToRooms.roomId, roomId), inArray(users.id, ids)));
       return joinedUsers.map(({ users }) => users);
     },
