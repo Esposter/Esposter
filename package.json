@@ -29,8 +29,7 @@
     "release": "pnpm build:packages && pnpm lint:fix:packages && pnpm typecheck:packages && lerna publish --yes",
     "refresh:lockfile": "pnpm crossOS refresh:lockfile",
     "crossOS": "node scripts/crossOS.ts",
-    "pwsh": "pwsh -ExecutionPolicy Unrestricted",
-    "disable": "oxlint --disable-react-plugin"
+    "pwsh": "pwsh -ExecutionPolicy Unrestricted"
   },
   "crossOS": {
     "refresh:lockfile": {
