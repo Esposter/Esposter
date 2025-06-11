@@ -152,7 +152,7 @@ catalog:
   prettier: ^3.5.3
   rate-limiter-flexible: ^7.1.1
   rolldown: ^1.0.0-beta.14
-  rolldown-plugin-dts: ^0.13.9
+  rolldown-plugin-dts: ^0.13.11
   rolldown-vite: ^6.3.18
   rxjs: ^7.8.2
   sass-embedded: ^1.89.2
@@ -168,7 +168,7 @@ catalog:
   three-globe: ^2.42.11
   tippy.js: ^6.3.7
   trpc-nuxt: ^1.0.5
-  tsx: ^4.20.0
+  tsx: ^4.20.1
   type-fest: ^4.41.0
   typedoc: ^0.28.5
   typescript: ^5.8.3
@@ -189,7 +189,7 @@ catalog:
   vue-tsc: ^2.2.10
   vue-waypoint: ^4.3.0
   vue3-apexcharts: ^1.8.0
-  vuetify: ^3.8.8
+  vuetify: ^3.8.9
   vuetify-nuxt-module: ^0.18.7
   worker-timers: ^8.0.22
   ws: ^8.18.2
