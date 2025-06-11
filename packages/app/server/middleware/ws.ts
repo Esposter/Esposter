@@ -1,11 +1,7 @@
 import type { Server } from "node:http";
 
-<<<<<<< HEAD
-import { dayjs } from "#shared/services/dayjs";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { createCallerFactory } from "@@/server/trpc";
-=======
->>>>>>> main
 import { createContext } from "@@/server/trpc/context";
 import { trpcRouter } from "@@/server/trpc/routers";
 import { userRouter } from "@@/server/trpc/routers/user";
