@@ -1,3 +1,4 @@
+import type { IUserStatus } from "#shared/db/schema/userStatuses";
 import type { ReadableStream } from "node:stream/web";
 import type { z } from "zod/v4";
 
@@ -37,37 +38,34 @@ export const userRouter = router({
     }
   }),
   readStatuses: authedProcedure.input(readStatusesInputSchema).query(async ({ ctx, input }) => {
-    const statuses = await ctx.db
-      .select({
-        sessionExpiresAt: sessions.expiresAt,
-        status: userStatuses.status,
-        statusExpiresAt: userStatuses.expiresAt,
-        userId: userStatuses.userId,
-      })
+    const joinedUserStatuses = await ctx.db
+      .select({ sessionExpiresAt: sessions.expiresAt, userStatuses })
       .from(userStatuses)
       .leftJoin(sessions, eq(sessions.userId, userStatuses.userId))
       .where(inArray(userStatuses.userId, input));
-    const cutoffDate = new Date();
-    const resultUserStatuses: UserStatus[] = [];
+    const lastActiveAt = new Date();
+    const resultUserStatuses: IUserStatus[] = [];
 
     for (const userId of input) {
-      const foundStatus = statuses.find((s) => s.userId === userId);
+      const foundStatus = joinedUserStatuses.find(({ userStatuses }) => userStatuses.userId === userId);
       // We'll conveniently assume that if they don't have a user status record yet
       // it means that they're still online as we insert a record as soon as they go offline
       if (!foundStatus) {
-        resultUserStatuses.push(UserStatus.Online);
+        resultUserStatuses.push({ expiresAt: null, lastActiveAt, message: "", status: UserStatus.Online, userId });
         continue;
       }
 
-      const { sessionExpiresAt, status, statusExpiresAt } = foundStatus;
-      resultUserStatuses.push(
-        status && (!statusExpiresAt || dayjs(statusExpiresAt).isAfter(cutoffDate))
-          ? status
-          : // Auto detect the user status based on the session expire date
-            dayjs(sessionExpiresAt).isAfter(cutoffDate)
-            ? UserStatus.Online
-            : UserStatus.Offline,
-      );
+      const { sessionExpiresAt, userStatuses } = foundStatus;
+      resultUserStatuses.push({
+        ...userStatuses,
+        status:
+          userStatuses.status && (!userStatuses.expiresAt || dayjs(userStatuses.expiresAt).isAfter(lastActiveAt))
+            ? userStatuses.status
+            : // Auto detect the user status based on the session expire date
+              dayjs(sessionExpiresAt).isAfter(lastActiveAt)
+              ? UserStatus.Online
+              : UserStatus.Offline,
+      });
     }
 
     return resultUserStatuses;
