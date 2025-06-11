@@ -4,7 +4,7 @@ import type { SetNonNullable } from "type-fest";
 import type { z } from "zod/v4";
 
 import { sessions } from "#shared/db/schema/sessions";
-import { selectUserSchema, users } from "#shared/db/schema/users";
+import { selectUserSchema } from "#shared/db/schema/users";
 import { selectUserStatusSchema, userStatuses } from "#shared/db/schema/userStatuses";
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 import { UserStatus } from "#shared/models/db/UserStatus";
@@ -89,7 +89,7 @@ export const userRouter = router({
         .values({ lastActiveAt, ...input, userId: ctx.session.user.id })
         .onConflictDoUpdate({
           set: { lastActiveAt, ...input },
-          target: users.id,
+          target: userStatuses.userId,
         })
         .returning()
     ).find(Boolean);

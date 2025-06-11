@@ -1,3 +1,4 @@
+import type { CreateWSSContextFnOptions } from "@trpc/server/adapters/ws";
 import type { Server } from "node:http";
 
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
@@ -25,7 +26,7 @@ export default defineEventHandler((event) => {
   const createCaller = createCallerFactory(userRouter);
 
   wss.on("connection", (ws, req) => {
-    const context = createContext(Object.assign(event, { req }));
+    const context = createContext({ req, res: ws } as CreateWSSContextFnOptions);
     const caller = createCaller(context);
     console.log(`Connection opened, client size: ${wss.clients.size}`);
     ws.once(
