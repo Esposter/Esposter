@@ -28,7 +28,7 @@ import { getCursorPaginationData } from "@@/server/services/pagination/cursor/ge
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { router } from "@@/server/trpc";
-import { isMember } from "@@/server/trpc/middleware/isMember";
+import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/room/getCreatorProcedure";
