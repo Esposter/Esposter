@@ -83,10 +83,7 @@ describe("user", () => {
     const onUpsertStatus = await caller.onUpsertStatus([user.id]);
     await mockSessionOnce(mockContext.db, user);
     const status = UserStatus.Online;
-    const [data] = await Promise.all([
-      onUpsertStatus[Symbol.asyncIterator]().next(),
-      await caller.upsertStatus({ status }),
-    ]);
+    const [data] = await Promise.all([onUpsertStatus[Symbol.asyncIterator]().next(), caller.upsertStatus({ status })]);
 
     assert(!data.done);
 
@@ -101,7 +98,7 @@ describe("user", () => {
     getMockSession();
     const onUpsertStatus = await caller.onUpsertStatus([user.id]);
     await mockSessionOnce(mockContext.db, user);
-    const [data] = await Promise.all([onUpsertStatus[Symbol.asyncIterator]().next(), await caller.upsertStatus()]);
+    const [data] = await Promise.all([onUpsertStatus[Symbol.asyncIterator]().next(), caller.upsertStatus()]);
 
     assert(!data.done);
 

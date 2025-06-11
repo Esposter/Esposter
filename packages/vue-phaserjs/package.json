@@ -27,8 +27,8 @@
   },
   "scripts": {
     "build": "pnpm export:gen && vite build",
-    "lint": "eslint .",
-    "lint:fix": "eslint --fix .",
+    "lint": "oxlint && eslint .",
+    "lint:fix": "oxlint --fix && eslint --fix .",
     "typecheck": "vue-tsc",
     "export:gen": "ctix build --config ../configuration/.ctirc-vue && ctix build --config ../configuration/.ctirc-ts"
   },

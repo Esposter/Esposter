@@ -4,6 +4,7 @@ import typescriptRulesOverrides from "@esposter/configuration/eslint/overrides/t
 import vueRulesOverrides from "@esposter/configuration/eslint/overrides/vueRules.js";
 import typescriptIgnores from "@esposter/configuration/eslint/typescriptIgnores.js";
 import typescriptRules from "@esposter/configuration/eslint/typescriptRules.js";
+import oxlint from "eslint-plugin-oxlint";
 
 import withNuxt from "../../app/.nuxt/eslint.config.mjs";
 /**
@@ -14,12 +15,14 @@ export default withNuxt(nuxtPlugin, {
   files: ["**/*.ts"],
   languageOptions,
   rules: typescriptRules,
-}).overrides({
-  "nuxt/typescript/rules": {
-    ignores: typescriptIgnores,
-    rules: typescriptRulesOverrides,
-  },
-  "nuxt/vue/rules": {
-    rules: vueRulesOverrides,
-  },
-});
+})
+  .overrides({
+    "nuxt/typescript/rules": {
+      ignores: typescriptIgnores,
+      rules: typescriptRulesOverrides,
+    },
+    "nuxt/vue/rules": {
+      rules: vueRulesOverrides,
+    },
+  })
+  .append(...oxlint.buildFromOxlintConfigFile("./.oxlintrc.json"));
