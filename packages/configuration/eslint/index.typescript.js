@@ -25,4 +25,4 @@ export default withNuxt(nuxtPlugin, {
       rules: vueRulesOverrides,
     },
   })
-  .append(...oxlint.configs["flat/recommended"]);
+  .append(...oxlint.buildFromOxlintConfigFile("./.oxlintrc.json"));
