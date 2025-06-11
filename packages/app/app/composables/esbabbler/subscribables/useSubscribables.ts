@@ -3,4 +3,5 @@ export const useSubscribables = () => {
   useMessageSubscribables();
   useRoomSubscribables();
   useTypingSubscribables();
+  useUserSubscribables();
 };
