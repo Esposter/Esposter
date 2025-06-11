@@ -5,10 +5,10 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { userStatuses } from "#shared/db/schema/userStatuses";
 import { UserStatus } from "#shared/models/db/UserStatus";
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, getMockSession } from "@@/server/trpc/context.test";
+import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { userRouter } from "@@/server/trpc/routers/user";
 import { NIL } from "@esposter/shared";
-import { afterEach, beforeAll, describe, expect, test } from "vitest";
+import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("user", () => {
   let caller: DecorateRouterRecord<TRPCRouter["user"]>;
@@ -71,5 +71,40 @@ describe("user", () => {
     const userStatus = (await caller.readStatuses([getMockSession().user.id]))[0];
 
     expect(userStatus.message).toBe(updatedMessage);
+  });
+
+  test("on upserts status", async () => {
+    expect.hasAssertions();
+
+    const { user } = await mockSessionOnce(mockContext.db);
+    // It's stupid I know, but we need to refresh back to our old user
+    // we just need a new mock user with a valid user id
+    getMockSession();
+    const onUpsertStatus = await caller.onUpsertStatus([user.id]);
+    await mockSessionOnce(mockContext.db, user);
+    const status = UserStatus.Online;
+    const [data] = await Promise.all([
+      onUpsertStatus[Symbol.asyncIterator]().next(),
+      await caller.upsertStatus({ status }),
+    ]);
+
+    assert(!data.done);
+
+    expect(data.value.status).toBe(status);
+    expect(data.value.userId).toBe(user.id);
+  });
+
+  test("on upserts status with default Offline", async () => {
+    expect.hasAssertions();
+
+    const { user } = await mockSessionOnce(mockContext.db);
+    getMockSession();
+    const onUpsertStatus = await caller.onUpsertStatus([user.id]);
+    await mockSessionOnce(mockContext.db, user);
+    const [data] = await Promise.all([onUpsertStatus[Symbol.asyncIterator]().next(), await caller.upsertStatus()]);
+
+    assert(!data.done);
+
+    expect(data.value.status).toBe(UserStatus.Offline);
   });
 });
