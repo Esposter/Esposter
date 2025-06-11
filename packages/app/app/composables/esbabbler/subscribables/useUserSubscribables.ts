@@ -17,9 +17,8 @@ export const useUserSubscribables = () => {
     updateStatusUnsubscribable.value = $trpc.user.onUpdateStatus.subscribe(
       newMembers.map(({ id }) => id),
       {
-        onData: ({ id, status }) => {
-          if (status === undefined) return;
-          userStatusMap.value.set(id, status);
+        onData: ({ userId, ...userStatus }) => {
+          userStatusMap.value.set(userId, userStatus);
         },
       },
     );
