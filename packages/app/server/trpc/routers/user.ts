@@ -101,7 +101,13 @@ export const userRouter = router({
       });
     userEventEmitter.emit("updateStatus", {
       ...updatedStatus,
-      status: getDetectedUserStatus(updatedStatus.status, updatedStatus.expiresAt, ctx.session.session.expiresAt),
+      status: getDetectedUserStatus(
+        updatedStatus.status,
+        updatedStatus.expiresAt,
+        // If user has lost connection (!input) then we'll treat it
+        // the same as not having an expiresAt i.e. Offline
+        input ? ctx.session.session.expiresAt : null,
+      ),
     });
   }),
   uploadProfileImage: authedProcedure.input(octetInputParser).mutation(async ({ ctx, input }) => {
