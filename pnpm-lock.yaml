@@ -544,8 +544,8 @@ catalogs:
       specifier: ^3.1.1
       version: 3.1.1
     zod:
-      specifier: ^3.25.58
-      version: 3.25.58
+      specifier: ^3.25.60
+      version: 3.25.60
 
 overrides:
   pdfjs-dist: ^5.3.31
@@ -761,7 +761,7 @@ importers:
         version: 0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7)
       drizzle-zod:
         specifier: 'catalog:'
-        version: 0.8.2(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7))(zod@3.25.58)
+        version: 0.8.2(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7))(zod@3.25.60)
       emoji-mart-vue-fast:
         specifier: 'catalog:'
         version: 15.0.4(vue@3.5.16(typescript@5.8.3))
@@ -965,7 +965,7 @@ importers:
         version: 8.18.2
       zod:
         specifier: 'catalog:'
-        version: 3.25.58
+        version: 3.25.60
     devDependencies:
       '@nuxt/eslint':
         specifier: 'catalog:'
@@ -11331,8 +11331,8 @@ packages:
     resolution: {integrity: sha512-zK7YHHz4ZXpW89AHXUPbQVGKI7uvkd3hzusTdotCg1UxyaVtg0zFJSTfW/Dq5f7OBBVnq6cZIaC8Ti4hb6dtCA==}
     engines: {node: '>= 14'}
 
-  zod@3.25.58:
-    resolution: {integrity: sha512-DVLmMQzSZwNYzQoMaM3MQWnxr2eq+AtM9Hx3w1/Yl0pH8sLTSjN4jGP7w6f7uand6Hw44tsnSu1hz1AOA6qI2Q==}
+  zod@3.25.60:
+    resolution: {integrity: sha512-VyPT/ZfyggoJtTnGCfPGx2OOW9idfmyqsqZCAvYscOlXKCGKPCeSfr44Ewp8fqvtfNMe1T88qjWIFKopTL9jSQ==}
 
 snapshots:
 
@@ -13470,7 +13470,7 @@ snapshots:
       unixify: 1.0.0
       urlpattern-polyfill: 8.0.2
       yargs: 17.7.2
-      zod: 3.25.58
+      zod: 3.25.60
     transitivePeerDependencies:
       - encoding
       - rollup
@@ -16601,7 +16601,7 @@ snapshots:
       jose: 5.10.0
       kysely: 0.28.2
       nanostores: 0.11.4
-      zod: 3.25.58
+      zod: 3.25.60
 
   better-call@1.0.9:
     dependencies:
@@ -17615,10 +17615,10 @@ snapshots:
       kysely: 0.28.2
       postgres: 3.4.7
 
-  drizzle-zod@0.8.2(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7))(zod@3.25.58):
+  drizzle-zod@0.8.2(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7))(zod@3.25.60):
     dependencies:
       drizzle-orm: 0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7)
-      zod: 3.25.58
+      zod: 3.25.60
 
   dts-resolver@2.1.1: {}
 
@@ -23421,4 +23421,4 @@ snapshots:
       compress-commons: 6.0.2
       readable-stream: 4.7.0
 
-  zod@3.25.58: {}
+  zod@3.25.60: {}
