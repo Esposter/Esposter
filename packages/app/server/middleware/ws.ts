@@ -1,7 +1,11 @@
+import type { CreateWSSContextFnOptions } from "@trpc/server/adapters/ws";
 import type { Server } from "node:http";
 
+import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
+import { createCallerFactory } from "@@/server/trpc";
 import { createContext } from "@@/server/trpc/context";
 import { trpcRouter } from "@@/server/trpc/routers";
+import { userRouter } from "@@/server/trpc/routers/user";
 import { applyWSSHandler } from "@trpc/server/adapters/ws";
 import { WebSocketServer } from "ws";
 
@@ -19,12 +23,19 @@ export default defineEventHandler((event) => {
     router: trpcRouter,
     wss,
   });
+  const createCaller = createCallerFactory(userRouter);
 
-  wss.on("connection", (ws) => {
+  wss.on("connection", (ws, req) => {
+    const context = createContext({ req, res: ws } as CreateWSSContextFnOptions);
+    const caller = createCaller(context);
     console.log(`Connection opened, client size: ${wss.clients.size}`);
-    ws.once("close", () => {
-      console.log(`Connection closed, client size: ${wss.clients.size}`);
-    });
+    ws.once(
+      "close",
+      getSynchronizedFunction(async () => {
+        console.log(`Connection closed, client size: ${wss.clients.size}`);
+        await caller.updateStatus();
+      }),
+    );
   });
   process.on("SIGTERM", () => {
     handler.broadcastReconnectNotification();

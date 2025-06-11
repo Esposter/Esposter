@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type { User } from "#shared/db/schema/users";
 
+import { StatusColorMap } from "@/services/esbabbler/StatusColorMap";
 import { useRoomStore } from "@/store/esbabbler/room";
+import { useUserStatusStore } from "@/store/esbabbler/userStatus";
 
 interface MemberListItemProps {
   member: User;
@@ -11,12 +13,18 @@ const { member } = defineProps<MemberListItemProps>();
 const roomStore = useRoomStore();
 const { currentRoom } = storeToRefs(roomStore);
 const isCreator = computed(() => currentRoom.value?.userId === member.id);
+const userStatusStore = useUserStatusStore();
+const { userStatusMap } = storeToRefs(userStatusStore);
+const color = computed(() => {
+  const userStatus = userStatusMap.value.get(member.id);
+  return userStatus ? StatusColorMap[userStatus.status] : "green";
+});
 </script>
 
 <template>
   <v-list-item :value="member.name">
     <template #prepend>
-      <v-badge color="green" location="bottom end" dot>
+      <v-badge location="bottom end" :color dot>
         <StyledAvatar :image="member.image" :name="member.name" />
       </v-badge>
     </template>
