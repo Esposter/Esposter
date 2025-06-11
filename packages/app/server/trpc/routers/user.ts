@@ -1,13 +1,115 @@
+import type { IUserStatus } from "#shared/db/schema/userStatuses";
 import type { ReadableStream } from "node:stream/web";
+import type { SetNonNullable } from "type-fest";
+import type { z } from "zod/v4";
 
+import { sessions } from "#shared/db/schema/sessions";
+import { selectUserSchema } from "#shared/db/schema/users";
+import { selectUserStatusSchema, userStatuses } from "#shared/db/schema/userStatuses";
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
+import { UserStatus } from "#shared/models/db/UserStatus";
+import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
+import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
+import { userEventEmitter } from "@@/server/services/esbabbler/events/userEventEmitter";
+import { getDetectedUserStatus } from "@@/server/services/esbabbler/getDetectedUserStatus";
+import { on } from "@@/server/services/events/on";
 import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
+import { InvalidOperationError, Operation } from "@esposter/shared";
+import { TRPCError } from "@trpc/server";
 import { octetInputParser } from "@trpc/server/http";
+import { eq, inArray } from "drizzle-orm";
 import { Readable } from "node:stream";
 
+const readStatusesInputSchema = selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
+export type ReadStatusesInput = z.infer<typeof readStatusesInputSchema>;
+
+const updateStatusInputSchema = selectUserStatusSchema
+  .pick({ message: true, status: true })
+  .partial()
+  .refine(({ message, status }) => message !== undefined || status !== undefined)
+  .optional();
+export type UpdateStatusInput = z.infer<typeof updateStatusInputSchema>;
+
+const onUpdateStatusInputSchema = selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
+export type OnUpdateStatusInput = z.infer<typeof onUpdateStatusInputSchema>;
+
 export const userRouter = router({
+  onUpdateStatus: authedProcedure.input(onUpdateStatusInputSchema).subscription(async function* ({
+    ctx,
+    input,
+    signal,
+  }) {
+    if (input.includes(ctx.session.user.id)) throw new TRPCError({ code: "BAD_REQUEST" });
+
+    for await (const [data] of on(userEventEmitter, "updateStatus", { signal })) {
+      if (!input.includes(data.userId)) continue;
+      yield data;
+    }
+  }),
+  readStatuses: authedProcedure.input(readStatusesInputSchema).query(async ({ ctx, input }) => {
+    const joinedUserStatuses = await ctx.db
+      .select({ sessionExpiresAt: sessions.expiresAt, userStatuses })
+      .from(userStatuses)
+      .leftJoin(sessions, eq(sessions.userId, userStatuses.userId))
+      .where(inArray(userStatuses.userId, input));
+    const resultUserStatuses: SetNonNullable<IUserStatus, "status">[] = [];
+
+    for (const userId of input) {
+      const foundStatus = joinedUserStatuses.find(({ userStatuses }) => userStatuses.userId === userId);
+      // We'll conveniently assume that if they don't have a user status record yet
+      // it means that they're still online as we insert a record as soon as they go offline
+      if (!foundStatus) {
+        resultUserStatuses.push({
+          expiresAt: null,
+          lastActiveAt: new Date(),
+          message: "",
+          status: UserStatus.Online,
+          userId,
+        });
+        continue;
+      }
+
+      const { sessionExpiresAt, userStatuses } = foundStatus;
+      resultUserStatuses.push({
+        ...userStatuses,
+        status: getDetectedUserStatus(userStatuses.status, userStatuses.expiresAt, sessionExpiresAt),
+      });
+    }
+
+    return resultUserStatuses;
+  }),
+  updateStatus: authedProcedure.input(updateStatusInputSchema).mutation(async ({ ctx, input }) => {
+    // Update lastActiveAt if user has lost connection (!input) or set status to Offline
+    const lastActiveAt = !input || input.status === UserStatus.Offline ? new Date() : undefined;
+    const updatedStatus = (
+      await ctx.db
+        .insert(userStatuses)
+        .values({ lastActiveAt, ...input, userId: ctx.session.user.id })
+        .onConflictDoUpdate({
+          set: { lastActiveAt, ...input },
+          target: userStatuses.userId,
+        })
+        .returning()
+    ).find(Boolean);
+    if (!updatedStatus)
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: new InvalidOperationError(Operation.Update, DatabaseEntityType.UserStatus, JSON.stringify(input))
+          .message,
+      });
+    userEventEmitter.emit("updateStatus", {
+      ...updatedStatus,
+      status: getDetectedUserStatus(
+        updatedStatus.status,
+        updatedStatus.expiresAt,
+        // If user has lost connection (!input) then we'll treat it
+        // the same as not having an expiresAt i.e. Offline
+        input ? ctx.session.session.expiresAt : null,
+      ),
+    });
+  }),
   uploadProfileImage: authedProcedure.input(octetInputParser).mutation(async ({ ctx, input }) => {
     const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
     const blobName = `${ctx.session.user.id}/ProfileImage`;

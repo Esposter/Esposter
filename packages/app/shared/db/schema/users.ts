@@ -3,6 +3,7 @@ import { likes } from "#shared/db/schema/likes";
 import { posts } from "#shared/db/schema/posts";
 import { sessions } from "#shared/db/schema/sessions";
 import { surveys } from "#shared/db/schema/surveys";
+import { userStatuses } from "#shared/db/schema/userStatuses";
 import { usersToRooms } from "#shared/db/schema/usersToRooms";
 import { USER_NAME_MAX_LENGTH } from "#shared/services/user/constants";
 import { relations, sql } from "drizzle-orm";
@@ -33,11 +34,15 @@ export const selectUserSchema = createSelectSchema(users, {
   name: z.string().min(1).max(USER_NAME_MAX_LENGTH),
 });
 
-export const usersRelations = relations(users, ({ many }) => ({
+export const usersRelations = relations(users, ({ many, one }) => ({
   accounts: many(accounts),
   likes: many(likes),
   posts: many(posts),
   sessions: many(sessions),
   surveys: many(surveys),
+  userStatuses: one(userStatuses, {
+    fields: [users.id],
+    references: [userStatuses.userId],
+  }),
   usersToRooms: many(usersToRooms),
 }));
