@@ -1,6 +1,6 @@
 import type { IUserStatus } from "#shared/db/schema/userStatuses";
 import type { ReadableStream } from "node:stream/web";
-import type { SetRequired } from "type-fest";
+import type { SetNonNullable } from "type-fest";
 import type { z } from "zod/v4";
 
 import { sessions } from "#shared/db/schema/sessions";
@@ -51,7 +51,7 @@ export const userRouter = router({
       .leftJoin(sessions, eq(sessions.userId, userStatuses.userId))
       .where(inArray(userStatuses.userId, input));
     const lastActiveAt = new Date();
-    const resultUserStatuses: SetRequired<IUserStatus, "status">[] = [];
+    const resultUserStatuses: SetNonNullable<IUserStatus, "status">[] = [];
 
     for (const userId of input) {
       const foundStatus = joinedUserStatuses.find(({ userStatuses }) => userStatuses.userId === userId);
