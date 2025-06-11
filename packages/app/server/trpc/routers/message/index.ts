@@ -1,7 +1,7 @@
 import type { AzureUpdateEntity } from "#shared/models/azure/AzureUpdateEntity";
 import type { FileSasEntity } from "#shared/models/esbabbler/FileSasEntity";
 
-import { selectRoomSchema } from "#shared/db/schema/rooms";
+import { rooms, selectRoomSchema } from "#shared/db/schema/rooms";
 import { AzureEntityType } from "#shared/models/azure/AzureEntityType";
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 import { FileEntity, fileEntitySchema } from "#shared/models/azure/FileEntity";
@@ -10,6 +10,7 @@ import { createTypingInputSchema } from "#shared/models/db/message/CreateTypingI
 import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
 import { MessageEntity, messageEntitySchema } from "#shared/models/db/message/MessageEntity";
 import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
+import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
@@ -29,6 +30,7 @@ import { getEntity } from "@@/server/services/azure/table/getEntity";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
 import { createMessageEntity } from "@@/server/services/esbabbler/createMessageEntity";
 import { messageEventEmitter } from "@@/server/services/esbabbler/events/messageEventEmitter";
+import { roomEventEmitter } from "@@/server/services/esbabbler/events/roomEventEmitter";
 import { getMessagesPartitionKeyFilter } from "@@/server/services/esbabbler/getMessagesPartitionKeyFilter";
 import { isMessagesPartitionKeyForRoomId } from "@@/server/services/esbabbler/isMessagesPartitionKeyForRoomId";
 import { readMessages } from "@@/server/services/esbabbler/readMessages";
@@ -39,8 +41,9 @@ import { addProfanityFilterMiddleware } from "@@/server/trpc/middleware/addProfa
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/message/getCreatorProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
-import { NotFoundError } from "@esposter/shared";
+import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
+import { eq } from "drizzle-orm";
 import { z } from "zod/v4";
 
 export const readMetadataInputSchema = z.object({
@@ -116,6 +119,17 @@ export const messageRouter = router({
     const newMessageEntity = await createMessageEntity({ ...input, userId: ctx.session.user.id });
     await createEntity(messageClient, newMessageEntity);
     messageEventEmitter.emit("createMessage", [[newMessageEntity], { sessionId: ctx.session.session.id }]);
+
+    const updatedRoom = (
+      await ctx.db.update(rooms).set({ updatedAt: new Date() }).where(eq(rooms.id, input.roomId)).returning()
+    ).find(Boolean);
+    if (!updatedRoom)
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Room, input.roomId).message,
+      });
+
+    roomEventEmitter.emit("updateRoom", updatedRoom);
     return newMessageEntity;
   }),
   createTyping: getMemberProcedure(createTypingInputSchema, "roomId")
