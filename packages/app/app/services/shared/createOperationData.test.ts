@@ -45,11 +45,11 @@ describe(createOperationData, () => {
     const updatedName = "updatedName";
     createItem(newItem);
 
-    expect(items.value[0].name).not.toStrictEqual(updatedName);
+    expect(items.value[0].name).not.toBe(updatedName);
 
     updateItem(Object.assign({}, newItem, { name: updatedName }));
 
-    expect(items.value[0].name).toStrictEqual(updatedName);
+    expect(items.value[0].name).toBe(updatedName);
   });
 
   test("deletes", () => {

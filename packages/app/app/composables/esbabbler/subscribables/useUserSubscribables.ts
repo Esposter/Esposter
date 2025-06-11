@@ -12,13 +12,13 @@ export const useUserSubscribables = () => {
   const userStatusStore = useUserStatusStore();
   const { userStatusMap } = storeToRefs(userStatusStore);
 
-  const updateStatusUnsubscribable = ref<Unsubscribable>();
+  const upsertStatusUnsubscribable = ref<Unsubscribable>();
 
   watch(members, (newMembers) => {
-    updateStatusUnsubscribable.value?.unsubscribe();
+    upsertStatusUnsubscribable.value?.unsubscribe();
     const newMemberIds = newMembers.filter(({ id }) => id !== session.value.data?.user.id).map(({ id }) => id);
     if (newMemberIds.length === 0) return;
-    updateStatusUnsubscribable.value = $trpc.user.onUpdateStatus.subscribe(newMemberIds, {
+    upsertStatusUnsubscribable.value = $trpc.user.onUpsertStatus.subscribe(newMemberIds, {
       onData: ({ userId, ...userStatus }) => {
         userStatusMap.value.set(userId, userStatus);
       },
@@ -26,6 +26,6 @@ export const useUserSubscribables = () => {
   });
 
   onUnmounted(() => {
-    updateStatusUnsubscribable.value?.unsubscribe();
+    upsertStatusUnsubscribable.value?.unsubscribe();
   });
 };

@@ -33,7 +33,7 @@ export default defineEventHandler((event) => {
       "close",
       getSynchronizedFunction(async () => {
         console.log(`Connection closed, client size: ${wss.clients.size}`);
-        await caller.updateStatus();
+        await caller.upsertStatus();
       }),
     );
   });

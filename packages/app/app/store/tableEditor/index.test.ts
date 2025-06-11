@@ -88,7 +88,7 @@ describe("tableEditorStore", () => {
     createItem(newItem);
 
     expect(editFormDialog.value).toBe(false);
-    expect(tableEditor.value.items[0].name).not.toStrictEqual(updatedName);
+    expect(tableEditor.value.items[0].name).not.toBe(updatedName);
 
     await editItem({ id: newItem.id });
     expectToBeDefined(editedItem.value);
@@ -96,7 +96,7 @@ describe("tableEditorStore", () => {
     await save();
 
     expect(editFormDialog.value).toBe(false);
-    expect(tableEditor.value.items[0].name).toStrictEqual(updatedName);
+    expect(tableEditor.value.items[0].name).toBe(updatedName);
   });
 
   test("save delete item", async () => {

@@ -25,25 +25,25 @@ import { Readable } from "node:stream";
 const readStatusesInputSchema = selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
 export type ReadStatusesInput = z.infer<typeof readStatusesInputSchema>;
 
-const updateStatusInputSchema = selectUserStatusSchema
+const upsertStatusInputSchema = selectUserStatusSchema
   .pick({ message: true, status: true })
   .partial()
   .refine(({ message, status }) => message !== undefined || status !== undefined)
   .optional();
-export type UpdateStatusInput = z.infer<typeof updateStatusInputSchema>;
+export type UpsertStatusInput = z.infer<typeof upsertStatusInputSchema>;
 
-const onUpdateStatusInputSchema = selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
-export type OnUpdateStatusInput = z.infer<typeof onUpdateStatusInputSchema>;
+const onUpsertStatusInputSchema = selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
+export type OnUpsertStatusInput = z.infer<typeof onUpsertStatusInputSchema>;
 
 export const userRouter = router({
-  onUpdateStatus: authedProcedure.input(onUpdateStatusInputSchema).subscription(async function* ({
+  onUpsertStatus: authedProcedure.input(onUpsertStatusInputSchema).subscription(async function* ({
     ctx,
     input,
     signal,
   }) {
     if (input.includes(ctx.session.user.id)) throw new TRPCError({ code: "BAD_REQUEST" });
 
-    for await (const [data] of on(userEventEmitter, "updateStatus", { signal })) {
+    for await (const [data] of on(userEventEmitter, "upsertStatus", { signal })) {
       if (!input.includes(data.userId)) continue;
       yield data;
     }
@@ -80,10 +80,19 @@ export const userRouter = router({
 
     return resultUserStatuses;
   }),
-  updateStatus: authedProcedure.input(updateStatusInputSchema).mutation(async ({ ctx, input }) => {
+  uploadProfileImage: authedProcedure.input(octetInputParser).mutation(async ({ ctx, input }) => {
+    const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
+    const blobName = `${ctx.session.user.id}/ProfileImage`;
+    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+    // @TODO: https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/65542
+    const readable = Readable.fromWeb(input as ReadableStream);
+    await blockBlobClient.uploadStream(readable);
+    return blockBlobClient.url;
+  }),
+  upsertStatus: authedProcedure.input(upsertStatusInputSchema).mutation(async ({ ctx, input }) => {
     // Update lastActiveAt if user has lost connection (!input) or set status to Offline
     const lastActiveAt = !input || input.status === UserStatus.Offline ? new Date() : undefined;
-    const updatedStatus = (
+    const upsertedStatus = (
       await ctx.db
         .insert(userStatuses)
         .values({ lastActiveAt, ...input, userId: ctx.session.user.id })
@@ -93,30 +102,21 @@ export const userRouter = router({
         })
         .returning()
     ).find(Boolean);
-    if (!updatedStatus)
+    if (!upsertedStatus)
       throw new TRPCError({
         code: "BAD_REQUEST",
         message: new InvalidOperationError(Operation.Update, DatabaseEntityType.UserStatus, JSON.stringify(input))
           .message,
       });
-    userEventEmitter.emit("updateStatus", {
-      ...updatedStatus,
+    userEventEmitter.emit("upsertStatus", {
+      ...upsertedStatus,
       status: getDetectedUserStatus(
-        updatedStatus.status,
-        updatedStatus.expiresAt,
+        upsertedStatus.status,
+        upsertedStatus.expiresAt,
         // If user has lost connection (!input) then we'll treat it
         // the same as not having an expiresAt i.e. Offline
         input ? ctx.session.session.expiresAt : null,
       ),
     });
-  }),
-  uploadProfileImage: authedProcedure.input(octetInputParser).mutation(async ({ ctx, input }) => {
-    const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
-    const blobName = `${ctx.session.user.id}/ProfileImage`;
-    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-    // @TODO: https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/65542
-    const readable = Readable.fromWeb(input as ReadableStream);
-    await blockBlobClient.uploadStream(readable);
-    return blockBlobClient.url;
   }),
 });
