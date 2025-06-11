@@ -35,6 +35,7 @@ import { updateMessage } from "@@/server/services/esbabbler/updateMessage";
 import { on } from "@@/server/services/events/on";
 import { router } from "@@/server/trpc";
 import { addProfanityFilterMiddleware } from "@@/server/trpc/middleware/addProfanityFilterMiddleware";
+import { isMember } from "@@/server/trpc/middleware/isMember";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/message/getCreatorProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { NotFoundError } from "@esposter/shared";
@@ -166,11 +167,7 @@ export const messageRouter = router({
   ),
   forwardMessages: getMemberProcedure(forwardMessagesInputSchema, "partitionKey").mutation(
     async ({ ctx, input: { message, partitionKey, roomIds, rowKey } }) => {
-      const foundUsersToRooms = await ctx.db.query.usersToRooms.findMany({
-        where: (usersToRooms, { and, eq, inArray }) =>
-          and(eq(usersToRooms.userId, ctx.session.user.id), inArray(usersToRooms.roomId, roomIds)),
-      });
-      if (foundUsersToRooms.length !== roomIds.length) throw new TRPCError({ code: "UNAUTHORIZED" });
+      await isMember(ctx.db, ctx.session, roomIds);
 
       const messageClient = await useTableClient(AzureTable.Messages);
       const messageEntity = await getEntity(messageClient, MessageEntity, partitionKey, rowKey);

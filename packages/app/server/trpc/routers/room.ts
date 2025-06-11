@@ -28,6 +28,7 @@ import { getCursorPaginationData } from "@@/server/services/pagination/cursor/ge
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { router } from "@@/server/trpc";
+import { isMember } from "@@/server/trpc/middleware/isMember";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/room/getCreatorProcedure";
@@ -206,46 +207,39 @@ export const roomRouter = router({
       return userToRoom.roomId;
     }
   }),
-  onDeleteRoom: authedProcedure.input(onDeleteRoomInputSchema).subscription(async function* ({ input, signal }) {
+  onDeleteRoom: authedProcedure.input(onDeleteRoomInputSchema).subscription(async function* ({ ctx, input, signal }) {
+    await isMember(ctx.db, ctx.session, input);
+
     for await (const [roomId] of on(roomEventEmitter, "deleteRoom", { signal })) {
       if (!input.includes(roomId)) continue;
       yield roomId;
     }
   }),
   onJoinRoom: authedProcedure.input(onJoinRoomInputSchema).subscription(async function* ({ ctx, input, signal }) {
+    await isMember(ctx.db, ctx.session, input);
+
     for await (const [data] of on(roomEventEmitter, "joinRoom", { signal })) {
       if (
         !input.includes(data.roomId) ||
         getIsSameDevice({ sessionId: data.sessionId, userId: data.user.id }, ctx.session)
       )
         continue;
-      const isMember = await ctx.db.query.usersToRooms.findFirst({
-        where: (usersToRooms, { and, eq }) =>
-          and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, data.roomId)),
-      });
-      if (!isMember) continue;
       yield data;
     }
   }),
   onLeaveRoom: authedProcedure.input(onLeaveRoomInputSchema).subscription(async function* ({ ctx, input, signal }) {
+    await isMember(ctx.db, ctx.session, input);
+
     for await (const [data] of on(roomEventEmitter, "leaveRoom", { signal })) {
       if (!input.includes(data.roomId) || getIsSameDevice(data, ctx.session)) continue;
-      const isMember = await ctx.db.query.usersToRooms.findFirst({
-        where: (usersToRooms, { and, eq }) =>
-          and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, data.roomId)),
-      });
-      if (!isMember) continue;
       yield data;
     }
   }),
   onUpdateRoom: authedProcedure.input(onUpdateRoomInputSchema).subscription(async function* ({ ctx, input, signal }) {
+    await isMember(ctx.db, ctx.session, input);
+
     for await (const [data] of on(roomEventEmitter, "updateRoom", { signal })) {
       if (!input.includes(data.id)) continue;
-      const isMember = await ctx.db.query.usersToRooms.findFirst({
-        where: (usersToRooms, { and, eq }) =>
-          and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, data.id)),
-      });
-      if (!isMember) continue;
       yield data;
     }
   }),
