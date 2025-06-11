@@ -31,7 +31,13 @@ const onUpdateStatusInputSchema = selectUserSchema.shape.id.array().min(1).max(M
 export type OnUpdateStatusInput = z.infer<typeof onUpdateStatusInputSchema>;
 
 export const userRouter = router({
-  onUpdateStatus: authedProcedure.input(onUpdateStatusInputSchema).subscription(async function* ({ input, signal }) {
+  onUpdateStatus: authedProcedure.input(onUpdateStatusInputSchema).subscription(async function* ({
+    ctx,
+    input,
+    signal,
+  }) {
+    if (input.includes(ctx.session.user.id)) throw new TRPCError({ code: "BAD_REQUEST" });
+
     for await (const [data] of on(userEventEmitter, "updateStatus", { signal })) {
       if (!input.includes(data.userId)) continue;
       yield data;
