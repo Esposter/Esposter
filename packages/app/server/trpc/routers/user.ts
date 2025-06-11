@@ -54,7 +54,6 @@ export const userRouter = router({
       .from(userStatuses)
       .leftJoin(sessions, eq(sessions.userId, userStatuses.userId))
       .where(inArray(userStatuses.userId, input));
-    const lastActiveAt = new Date();
     const resultUserStatuses: SetNonNullable<IUserStatus, "status">[] = [];
 
     for (const userId of input) {
@@ -62,7 +61,13 @@ export const userRouter = router({
       // We'll conveniently assume that if they don't have a user status record yet
       // it means that they're still online as we insert a record as soon as they go offline
       if (!foundStatus) {
-        resultUserStatuses.push({ expiresAt: null, lastActiveAt, message: "", status: UserStatus.Online, userId });
+        resultUserStatuses.push({
+          expiresAt: null,
+          lastActiveAt: new Date(),
+          message: "",
+          status: UserStatus.Online,
+          userId,
+        });
         continue;
       }
 
