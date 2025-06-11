@@ -5,7 +5,7 @@ import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { createCallerFactory } from "@@/server/trpc";
 import { createContext } from "@@/server/trpc/context";
 import { trpcRouter } from "@@/server/trpc/routers";
-import { roomRouter } from "@@/server/trpc/routers/room";
+import { userRouter } from "@@/server/trpc/routers/user";
 import { applyWSSHandler } from "@trpc/server/adapters/ws";
 import { WebSocketServer } from "ws";
 
@@ -27,7 +27,7 @@ export default defineEventHandler((event) => {
     router: trpcRouter,
     wss,
   });
-  const createCaller = createCallerFactory(roomRouter);
+  const createCaller = createCallerFactory(userRouter);
 
   wss.on("connection", (ws, req) => {
     const context = createContext(Object.assign(event, { req }));

@@ -3,9 +3,7 @@ import type { UserToRoom } from "#shared/db/schema/usersToRooms";
 
 import { InviteRelations, invites, selectInviteSchema } from "#shared/db/schema/invites";
 import { rooms, selectRoomSchema } from "#shared/db/schema/rooms";
-import { sessions } from "#shared/db/schema/sessions";
 import { selectUserSchema, users } from "#shared/db/schema/users";
-import { selectUserStatusSchema, userStatuses } from "#shared/db/schema/userStatuses";
 import { usersToRooms, UserToRoomRelations } from "#shared/db/schema/usersToRooms";
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 import { createRoomInputSchema } from "#shared/models/db/room/CreateRoomInput";
@@ -13,11 +11,9 @@ import { deleteRoomInputSchema } from "#shared/models/db/room/DeleteRoomInput";
 import { joinRoomInputSchema } from "#shared/models/db/room/JoinRoomInput";
 import { leaveRoomInputSchema } from "#shared/models/db/room/LeaveRoomInput";
 import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
-import { UserStatus } from "#shared/models/db/UserStatus";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { dayjs } from "#shared/services/dayjs";
 import { CODE_LENGTH } from "#shared/services/invite/constants";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { createCode } from "#shared/util/math/random/createCode";
@@ -84,20 +80,6 @@ const createMembersInputSchema = z.object({
   userIds: selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
 });
 export type CreateMembersInput = z.infer<typeof createMembersInputSchema>;
-
-const readStatusesInputSchema = z.object({
-  roomId: selectRoomSchema.shape.id,
-  userIds: selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
-});
-export type ReadStatusesInput = z.infer<typeof readStatusesInputSchema>;
-
-const updateStatusInputSchema = selectUserStatusSchema.shape.status;
-export type UpdateStatusInput = z.infer<typeof updateStatusInputSchema>;
-
-const onUpdateStatusInputSchema = z.object({
-  roomId: selectRoomSchema.shape.id,
-});
-export type OnUpdateStatusInput = z.infer<typeof onUpdateStatusInputSchema>;
 
 const readInviteInputSchema = selectInviteSchema.shape.code;
 export type ReadInviteInput = z.infer<typeof readInviteInputSchema>;
@@ -261,20 +243,6 @@ export const roomRouter = router({
       yield data;
     }
   }),
-  onUpdateStatus: getMemberProcedure(onUpdateStatusInputSchema, "roomId").subscription(async function* ({
-    ctx,
-    input,
-    signal,
-  }) {
-    for await (const [data] of on(roomEventEmitter, "updateStatus", { signal })) {
-      const isMember = await ctx.db.query.usersToRooms.findFirst({
-        where: (usersToRooms, { and, eq }) =>
-          and(eq(usersToRooms.userId, data.userId), eq(usersToRooms.roomId, input.roomId)),
-      });
-      if (!isMember) continue;
-      yield data;
-    }
-  }),
   readInvite: authedProcedure.input(readInviteInputSchema).query(async ({ ctx, input }) => {
     const invite = await ctx.db.query.invites.findFirst({
       where: (invites, { eq }) => eq(invites.code, input),
@@ -372,50 +340,6 @@ export const roomRouter = router({
       const resultRooms = joinedRooms.map(({ rooms }) => rooms);
       return getCursorPaginationData(resultRooms, limit, sortBy);
     }),
-  readStatuses: getMemberProcedure(readStatusesInputSchema, "roomId").query(
-    async ({ ctx, input: { roomId, userIds } }) => {
-      const foundUsersToRooms = await ctx.db.query.usersToRooms.findMany({
-        where: (usersToRooms, { and, eq, inArray }) =>
-          and(inArray(usersToRooms.userId, userIds), eq(usersToRooms.roomId, roomId)),
-      });
-      if (foundUsersToRooms.length !== userIds.length) throw new TRPCError({ code: "UNAUTHORIZED" });
-
-      const statuses = await ctx.db
-        .select({
-          sessionExpiresAt: sessions.expiresAt,
-          status: userStatuses.status,
-          statusExpiresAt: userStatuses.expiresAt,
-          userId: userStatuses.userId,
-        })
-        .from(userStatuses)
-        .leftJoin(sessions, eq(sessions.userId, userStatuses.userId))
-        .where(inArray(userStatuses.userId, userIds));
-      const cutoffDate = new Date();
-      const resultUserStatuses: UserStatus[] = [];
-
-      for (const userId of userIds) {
-        const foundStatus = statuses.find((s) => s.userId === userId);
-        // We'll conveniently assume that if they don't have a user status record yet
-        // it means that they're still online as we insert a record as soon as they go offline
-        if (!foundStatus) {
-          resultUserStatuses.push(UserStatus.Online);
-          continue;
-        }
-
-        const { sessionExpiresAt, status, statusExpiresAt } = foundStatus;
-        resultUserStatuses.push(
-          status && (!statusExpiresAt || dayjs(statusExpiresAt).isAfter(cutoffDate))
-            ? status
-            : // Auto detect the user status based on the session expire date
-              dayjs(sessionExpiresAt).isAfter(cutoffDate)
-              ? UserStatus.Online
-              : UserStatus.Offline,
-        );
-      }
-
-      return resultUserStatuses;
-    },
-  ),
   updateRoom: getProfanityFilterProcedure(updateRoomInputSchema, ["name"]).mutation<Room>(
     async ({ ctx, input: { id, ...rest } }) => {
       const updatedRoom = (
@@ -435,15 +359,4 @@ export const roomRouter = router({
       return updatedRoom;
     },
   ),
-  updateStatus: authedProcedure.input(updateStatusInputSchema).mutation(async ({ ctx, input }) => {
-    const lastActiveAt = input === UserStatus.Offline ? new Date() : undefined;
-    await ctx.db
-      .insert(userStatuses)
-      .values({ lastActiveAt, status: input, userId: ctx.session.user.id })
-      .onConflictDoUpdate({
-        set: { lastActiveAt, status: input },
-        target: users.id,
-      });
-    roomEventEmitter.emit("updateStatus", { status: input, userId: ctx.session.user.id });
-  }),
 });
