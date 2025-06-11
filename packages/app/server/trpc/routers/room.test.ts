@@ -5,6 +5,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { rooms } from "#shared/db/schema/rooms";
 import { CODE_LENGTH } from "#shared/services/invite/constants";
 import { createCode } from "#shared/util/math/random/createCode";
+import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { roomRouter } from "@@/server/trpc/routers/room";
@@ -42,6 +43,14 @@ describe("room", () => {
     const readRoom = await caller.readRoom(newRoom.id);
 
     expect(readRoom).toStrictEqual(newRoom);
+  });
+
+  test("reads empty rooms", async () => {
+    expect.hasAssertions();
+
+    const readRooms = await caller.readRooms();
+
+    expect(readRooms).toStrictEqual(getCursorPaginationData([], 0, []));
   });
 
   test("fails read with non-existent id", async () => {
@@ -306,5 +315,26 @@ describe("room", () => {
     const members = await caller.readMembersByIds({ ids: [user.id], roomId: newRoom.id });
 
     expect(members[0]).toStrictEqual(user);
+  });
+
+  test("fails read members by empty ids", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await caller.createRoom({ name });
+
+    await expect(caller.readMembersByIds({ ids: [], roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(`
+      [TRPCError: [
+        {
+          "origin": "array",
+          "code": "too_small",
+          "minimum": 1,
+          "inclusive": true,
+          "path": [
+            "ids"
+          ],
+          "message": "Too small: expected array to have >=1 items"
+        }
+      ]]
+    `);
   });
 });

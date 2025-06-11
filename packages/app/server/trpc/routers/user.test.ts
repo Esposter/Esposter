@@ -37,7 +37,7 @@ describe("user", () => {
     expect(userStatus.userId).toBe(NIL);
   });
 
-  test("fails read empty statuses with empty user ids", async () => {
+  test("fails read statuses with empty user ids", async () => {
     expect.hasAssertions();
 
     await expect(caller.readStatuses([])).rejects.toThrowErrorMatchingInlineSnapshot(`

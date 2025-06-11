@@ -3,6 +3,7 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { surveys } from "#shared/db/schema/surveys";
+import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
@@ -66,6 +67,14 @@ describe("survey", () => {
     await expect(caller.readSurvey({ id: NIL })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,
     );
+  });
+
+  test("reads empty surveys", async () => {
+    expect.hasAssertions();
+
+    const readSurveys = await caller.readSurveys();
+
+    expect(readSurveys).toStrictEqual(getOffsetPaginationData([], 0));
   });
 
   test.todo("updates", async () => {
