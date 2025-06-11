@@ -1,5 +1,6 @@
 import type { IUserStatus } from "#shared/db/schema/userStatuses";
 import type { ReadableStream } from "node:stream/web";
+import type { SetRequired } from "type-fest";
 import type { z } from "zod/v4";
 
 import { sessions } from "#shared/db/schema/sessions";
@@ -7,10 +8,11 @@ import { selectUserSchema, users } from "#shared/db/schema/users";
 import { selectUserStatusSchema, userStatuses } from "#shared/db/schema/userStatuses";
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 import { UserStatus } from "#shared/models/db/UserStatus";
-import { dayjs } from "#shared/services/dayjs";
+import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
 import { userEventEmitter } from "@@/server/services/esbabbler/events/userEventEmitter";
+import { getDetectedUserStatus } from "@@/server/services/esbabbler/getDetectedUserStatus";
 import { on } from "@@/server/services/events/on";
 import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
@@ -19,7 +21,6 @@ import { TRPCError } from "@trpc/server";
 import { octetInputParser } from "@trpc/server/http";
 import { eq, inArray } from "drizzle-orm";
 import { Readable } from "node:stream";
-import { DatabaseEntityType } from "~~/shared/models/entity/DatabaseEntityType";
 
 const readStatusesInputSchema = selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
 export type ReadStatusesInput = z.infer<typeof readStatusesInputSchema>;
@@ -50,7 +51,7 @@ export const userRouter = router({
       .leftJoin(sessions, eq(sessions.userId, userStatuses.userId))
       .where(inArray(userStatuses.userId, input));
     const lastActiveAt = new Date();
-    const resultUserStatuses: IUserStatus[] = [];
+    const resultUserStatuses: SetRequired<IUserStatus, "status">[] = [];
 
     for (const userId of input) {
       const foundStatus = joinedUserStatuses.find(({ userStatuses }) => userStatuses.userId === userId);
@@ -64,13 +65,7 @@ export const userRouter = router({
       const { sessionExpiresAt, userStatuses } = foundStatus;
       resultUserStatuses.push({
         ...userStatuses,
-        status:
-          userStatuses.status && (!userStatuses.expiresAt || dayjs(userStatuses.expiresAt).isAfter(lastActiveAt))
-            ? userStatuses.status
-            : // Auto detect the user status based on the session expire date
-              dayjs(sessionExpiresAt).isAfter(lastActiveAt)
-              ? UserStatus.Online
-              : UserStatus.Offline,
+        status: getDetectedUserStatus(userStatuses.status, userStatuses.expiresAt, sessionExpiresAt),
       });
     }
 
@@ -94,7 +89,10 @@ export const userRouter = router({
         message: new InvalidOperationError(Operation.Update, DatabaseEntityType.UserStatus, JSON.stringify(input))
           .message,
       });
-    userEventEmitter.emit("updateStatus", updatedStatus);
+    userEventEmitter.emit("updateStatus", {
+      ...updatedStatus,
+      status: getDetectedUserStatus(updatedStatus.status, updatedStatus.expiresAt, ctx.session.session.expiresAt),
+    });
   }),
   uploadProfileImage: authedProcedure.input(octetInputParser).mutation(async ({ ctx, input }) => {
     const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
