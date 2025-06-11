@@ -3,6 +3,8 @@ import { UserStatus } from "#shared/models/db/UserStatus";
 import { STATUS_MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
 import { relations, sql } from "drizzle-orm";
 import { check, pgEnum, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { createSelectSchema } from "drizzle-zod";
+import z from "zod/v4";
 
 export const userStatusEnum = pgEnum("user_status", UserStatus);
 
@@ -21,6 +23,8 @@ export const userStatuses = pgTable(
   ({ message }) => [check("message", sql`LENGTH(${message}) <= ${sql.raw(STATUS_MESSAGE_MAX_LENGTH.toString())}`)],
 );
 export type IUserStatus = typeof userStatuses.$inferSelect;
+
+export const selectUserStatusSchema = createSelectSchema(userStatuses, { status: z.enum(UserStatus).nullish() });
 
 export const userStatusesRelations = relations(userStatuses, ({ one }) => ({
   user: one(users, {

@@ -5,7 +5,7 @@ import { InviteRelations, invites, selectInviteSchema } from "#shared/db/schema/
 import { rooms, selectRoomSchema } from "#shared/db/schema/rooms";
 import { sessions } from "#shared/db/schema/sessions";
 import { selectUserSchema, users } from "#shared/db/schema/users";
-import { userStatuses } from "#shared/db/schema/userStatuses";
+import { selectUserStatusSchema, userStatuses } from "#shared/db/schema/userStatuses";
 import { usersToRooms, UserToRoomRelations } from "#shared/db/schema/usersToRooms";
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 import { createRoomInputSchema } from "#shared/models/db/room/CreateRoomInput";
@@ -78,17 +78,25 @@ const readMembersByIdsInputSchema = z.object({
 });
 export type ReadMembersByIdsInput = z.infer<typeof readMembersByIdsInputSchema>;
 
+const createMembersInputSchema = z.object({
+  roomId: selectRoomSchema.shape.id,
+  userIds: selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
+});
+export type CreateMembersInput = z.infer<typeof createMembersInputSchema>;
+
 const readStatusesInputSchema = z.object({
   roomId: selectRoomSchema.shape.id,
   userIds: selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
 });
 export type ReadStatusesInput = z.infer<typeof readStatusesInputSchema>;
 
-const createMembersInputSchema = z.object({
+const updateStatusInputSchema = selectUserStatusSchema.shape.status;
+export type UpdateStatusInput = z.infer<typeof updateStatusInputSchema>;
+
+const onUpdateStatusInputSchema = z.object({
   roomId: selectRoomSchema.shape.id,
-  userIds: selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
 });
-export type CreateMembersInput = z.infer<typeof createMembersInputSchema>;
+export type OnUpdateStatusInput = z.infer<typeof onUpdateStatusInputSchema>;
 
 const readInviteInputSchema = selectInviteSchema.shape.code;
 export type ReadInviteInput = z.infer<typeof readInviteInputSchema>;
@@ -259,6 +267,20 @@ export const roomRouter = router({
       yield data;
     }
   }),
+  onUpdateStatus: getMemberProcedure(onUpdateStatusInputSchema, "roomId").subscription(async function* ({
+    ctx,
+    input,
+    signal,
+  }) {
+    for await (const [data] of on(roomEventEmitter, "updateStatus", { signal })) {
+      const isMember = await ctx.db.query.usersToRooms.findFirst({
+        where: (usersToRooms, { and, eq }) =>
+          and(eq(usersToRooms.userId, data.userId), eq(usersToRooms.roomId, input.roomId)),
+      });
+      if (!isMember) continue;
+      yield data;
+    }
+  }),
   readInvite: authedProcedure.input(readInviteInputSchema).query(async ({ ctx, input }) => {
     const invite = await ctx.db.query.invites.findFirst({
       where: (invites, { eq }) => eq(invites.code, input),
@@ -419,4 +441,15 @@ export const roomRouter = router({
       return updatedRoom;
     },
   ),
+  updateStatus: authedProcedure.input(updateStatusInputSchema).mutation(async ({ ctx, input }) => {
+    const lastActiveAt = input === UserStatus.Offline ? new Date() : undefined;
+    await ctx.db
+      .insert(userStatuses)
+      .values({ lastActiveAt, status: input, userId: ctx.session.user.id })
+      .onConflictDoUpdate({
+        set: { lastActiveAt, status: input },
+        target: users.id,
+      });
+    roomEventEmitter.emit("updateStatus", { status: input, userId: ctx.session.user.id });
+  }),
 });
