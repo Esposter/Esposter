@@ -24,8 +24,8 @@
     "url": "https://github.com/Esposter/Esposter/issues"
   },
   "scripts": {
-    "lint": "eslint .",
-    "lint:fix": "eslint --fix .",
+    "lint": "oxlint && eslint .",
+    "lint:fix": "oxlint --fix && eslint --fix .",
     "typecheck": "tsc"
   },
   "devDependencies": {

@@ -8,7 +8,7 @@ export const useReadRooms = async () => {
   const { initializeCursorPaginationData, pushRooms } = roomStore;
   const { currentRoomId, hasMore, nextCursor } = storeToRefs(roomStore);
   const readUsers = useReadUsers();
-  const readMetadata = (rooms: Room[]) => Promise.all([readUsers(rooms.map(({ userId }) => userId))]);
+  const readMetadata = (rooms: Room[]) => readUsers(rooms.map(({ userId }) => userId));
   const readMoreRooms = async (onComplete: () => void) => {
     try {
       const {

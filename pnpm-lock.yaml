@@ -591,6 +591,12 @@ importers:
       eslint:
         specifier: 'catalog:'
         version: 9.28.0(jiti@2.4.2)
+      eslint-plugin-oxlint:
+        specifier: ^1.0.0
+        version: 1.0.0
+      oxlint:
+        specifier: ^1.0.0
+        version: 1.0.0
       rolldown:
         specifier: 'catalog:'
         version: 1.0.0-beta.14
@@ -3387,6 +3393,46 @@ packages:
   '@oxc-transform/binding-win32-x64-msvc@0.72.3':
     resolution: {integrity: sha512-BmSG7DkjV7C5votwwB8bP8qpkRjavLRQPFsAuvyCcc6gnEPeIvdWSPDZXk39YMe00Nm3wQ2oNRa7hgwDMatTvw==}
     engines: {node: '>=14.0.0'}
+    cpu: [x64]
+    os: [win32]
+
+  '@oxlint/darwin-arm64@1.0.0':
+    resolution: {integrity: sha512-Ei8wLh65Th/si5EY6mfQIXVpdXbJWOoh56FaxxPgVxTeJaj3NHUIlxICHkvTZ5dz8bnOFcbS/+9MaW8Qkzfm9g==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@oxlint/darwin-x64@1.0.0':
+    resolution: {integrity: sha512-dbdtQ+rJTUb4jFKTzV+j08yYcR8lZssLF10n7MggK/jI7pBtoQN04cupzYdkxOWSy6uDXjDmWYFDIqlTqV7zOg==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@oxlint/linux-arm64-gnu@1.0.0':
+    resolution: {integrity: sha512-71wy9zMxsAeRhCFQjUkDLT8N5tm10L5FxNxsUcEsezgM187X9tPGP1gwlFpYig7F+bg2X1dijFuTA/FSe0YpKg==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@oxlint/linux-arm64-musl@1.0.0':
+    resolution: {integrity: sha512-UbD4+2k7aGZOFtKK/yeESX7Fv0w9gQbcjrjr1HGY7QOYg7XlFlqzycZdPS6XbAuKA5oOXFpafaYOD4AyX3p2AA==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@oxlint/linux-x64-gnu@1.0.0':
+    resolution: {integrity: sha512-0NXWqsm65I3VaLgADW4y9r7Pwurqgs2fr1lqoTyTIlidD18LQ3UMAWp8NzBPMCYzw8c/rTgOzsFf0gLtxzMtwg==}
+    cpu: [x64]
+    os: [linux]
+
+  '@oxlint/linux-x64-musl@1.0.0':
+    resolution: {integrity: sha512-AY1NLnVQI+tBeuaB8KCriWfiD6O1zZFAQHphRDcZiqSz4mauNq9FFuffW0N9RSR9hYttGr0UVdQ6eK72RhzOYg==}
+    cpu: [x64]
+    os: [linux]
+
+  '@oxlint/win32-arm64@1.0.0':
+    resolution: {integrity: sha512-X9y2KAdoqT/jy/sITGDZNMJHJAmhDhofItBnCf2DWS1HPakdtCAKGX9KMx6SivTbtPn1+JpZgfHn4Y7rNMvujQ==}
+    cpu: [arm64]
+    os: [win32]
+
+  '@oxlint/win32-x64@1.0.0':
+    resolution: {integrity: sha512-x2eQwZCfRUi6GG0lhRuC54O6TK2uW7UbIvERh83vPi0ftd+rtGUuJauNdyC+pPx+iwFToFVet43/5MBMu4bMWg==}
     cpu: [x64]
     os: [win32]
 
@@ -6612,6 +6658,9 @@ packages:
     peerDependencies:
       eslint: ^7.0.0 || ^8.0.0 || ^9.0.0
 
+  eslint-plugin-oxlint@1.0.0:
+    resolution: {integrity: sha512-j+eziIt4SkM4g+P4i7HgAzK/j0OkA33gN9DpF7/nmvaU5W5HPk8CWVntXySseRHdgqBz6IhAwJunXA+d5x618g==}
+
   eslint-plugin-perfectionist@4.14.0:
     resolution: {integrity: sha512-BkhiOqzdum8vQSFgj1/q5+6UUWPMn4GELdxuX7uIsGegmAeH/+LnWsiVxgMrxalD0p68sYfMeKaHF1NfrpI/mg==}
     engines: {node: ^18.0.0 || >=20.0.0}
@@ -8678,6 +8727,11 @@ packages:
     resolution: {integrity: sha512-mGGgl9dmYHUX7Z3bxXhibwarI0fJVj2E64FNIOZQWUDvEeIPyJTe5ElyJmp4nmDdfdnrlG0bhdR+bR9D6DM/dA==}
     peerDependencies:
       oxc-parser: '>=0.72.0'
+
+  oxlint@1.0.0:
+    resolution: {integrity: sha512-yyeryHnd21wPBLBEF4Uf8hvzJlftrIGHxyUaqFaP2JYiZ9cbiColygZhrezvv/Z/aThCmYu3j6iJMxlVPxNt6g==}
+    engines: {node: '>=8.*'}
+    hasBin: true
 
   p-event@6.0.1:
     resolution: {integrity: sha512-Q6Bekk5wpzW5qIyUP4gdMEujObYstZl6DMMOSenwBvV0BlE5LkDwkjs5yHbZmdCEq2o4RJx4tE1vwxFVf2FG1w==}
@@ -14371,6 +14425,30 @@ snapshots:
   '@oxc-transform/binding-win32-x64-msvc@0.72.3':
     optional: true
 
+  '@oxlint/darwin-arm64@1.0.0':
+    optional: true
+
+  '@oxlint/darwin-x64@1.0.0':
+    optional: true
+
+  '@oxlint/linux-arm64-gnu@1.0.0':
+    optional: true
+
+  '@oxlint/linux-arm64-musl@1.0.0':
+    optional: true
+
+  '@oxlint/linux-x64-gnu@1.0.0':
+    optional: true
+
+  '@oxlint/linux-x64-musl@1.0.0':
+    optional: true
+
+  '@oxlint/win32-arm64@1.0.0':
+    optional: true
+
+  '@oxlint/win32-x64@1.0.0':
+    optional: true
+
   '@parcel/watcher-android-arm64@2.5.1':
     optional: true
 
@@ -17945,6 +18023,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  eslint-plugin-oxlint@1.0.0:
+    dependencies:
+      jsonc-parser: 3.3.1
+
   eslint-plugin-perfectionist@4.14.0(eslint@9.28.0(jiti@2.4.2))(typescript@5.8.3):
     dependencies:
       '@typescript-eslint/types': 8.34.0
@@ -20419,6 +20501,17 @@ snapshots:
       estree-walker: 3.0.3
       magic-regexp: 0.10.0
       oxc-parser: 0.72.3
+
+  oxlint@1.0.0:
+    optionalDependencies:
+      '@oxlint/darwin-arm64': 1.0.0
+      '@oxlint/darwin-x64': 1.0.0
+      '@oxlint/linux-arm64-gnu': 1.0.0
+      '@oxlint/linux-arm64-musl': 1.0.0
+      '@oxlint/linux-x64-gnu': 1.0.0
+      '@oxlint/linux-x64-musl': 1.0.0
+      '@oxlint/win32-arm64': 1.0.0
+      '@oxlint/win32-x64': 1.0.0
 
   p-event@6.0.1:
     dependencies:

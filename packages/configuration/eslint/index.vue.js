@@ -4,19 +4,22 @@ import typescriptRulesOverrides from "@esposter/configuration/eslint/overrides/t
 import vueRulesOverrides from "@esposter/configuration/eslint/overrides/vueRules.js";
 import typescriptIgnores from "@esposter/configuration/eslint/typescriptIgnores.js";
 import typescriptRules from "@esposter/configuration/eslint/typescriptRules.js";
+import oxlint from "eslint-plugin-oxlint";
 
 import withNuxt from "../../app/.nuxt/eslint.config.mjs";
 
-export default withNuxt(nuxtPlugin).overrides({
-  "nuxt/typescript/rules": {
-    ignores: typescriptIgnores,
-    languageOptions,
-    rules: {
-      ...typescriptRules,
-      ...typescriptRulesOverrides,
+export default withNuxt(nuxtPlugin)
+  .overrides({
+    "nuxt/typescript/rules": {
+      ignores: typescriptIgnores,
+      languageOptions,
+      rules: {
+        ...typescriptRules,
+        ...typescriptRulesOverrides,
+      },
     },
-  },
-  "nuxt/vue/rules": {
-    rules: vueRulesOverrides,
-  },
-});
+    "nuxt/vue/rules": {
+      rules: vueRulesOverrides,
+    },
+  })
+  .append(...oxlint.configs["flat/recommended"]);
