@@ -4,11 +4,11 @@ import type { ThemeTabPlugin } from "survey-creator-core";
 
 import { getPropertyNames } from "#shared/util/getPropertyNames";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
-import { jsonDateParse } from "#shared/util/time/jsonDateParse";
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
 import { validateFile } from "@/services/file/validateFile";
 import { THEME_KEY } from "@/services/surveyer/constants";
 import { getActions } from "@/services/surveyer/getActions";
+import { parseSurveyModel } from "@/services/surveyer/parseSurveyModel";
 import { ImageItemValue, QuestionImageModel, QuestionImagePickerModel } from "survey-core";
 import { LogoImageViewModel, SurveyCreatorModel } from "survey-creator-core";
 import { DefaultDark, SC2020 } from "survey-creator-core/themes";
@@ -23,7 +23,7 @@ export const useSurveyCreator = (survey: Ref<Survey>) => {
     creator.footerToolbar.actions.push(action);
   }
 
-  const { [THEME_KEY]: theme, ...model } = jsonDateParse(survey.value.model);
+  const { [THEME_KEY]: theme, ...model } = parseSurveyModel(survey.value.model);
   creator.JSON = model;
   if (theme) creator.theme = theme;
   const save = useSave(survey, creator);

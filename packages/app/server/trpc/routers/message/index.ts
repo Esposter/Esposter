@@ -22,6 +22,7 @@ import { deleteFiles } from "@@/server/services/azure/container/deleteFiles";
 import { generateDownloadFileSasUrls } from "@@/server/services/azure/container/generateDownloadFileSasUrls";
 import { generateUploadFileSasEntities } from "@@/server/services/azure/container/generateUploadFileSasEntities";
 import { getBlobName } from "@@/server/services/azure/container/getBlobName";
+import { AZURE_MAX_PAGE_SIZE } from "@@/server/services/azure/table/constants";
 import { createEntity } from "@@/server/services/azure/table/createEntity";
 import { deleteEntity } from "@@/server/services/azure/table/deleteEntity";
 import { getEntity } from "@@/server/services/azure/table/getEntity";
@@ -35,12 +36,12 @@ import { updateMessage } from "@@/server/services/esbabbler/updateMessage";
 import { on } from "@@/server/services/events/on";
 import { router } from "@@/server/trpc";
 import { addProfanityFilterMiddleware } from "@@/server/trpc/middleware/addProfanityFilterMiddleware";
+import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/message/getCreatorProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { NotFoundError } from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
 import { z } from "zod/v4";
-import { AZURE_MAX_PAGE_SIZE } from "~~/server/services/azure/table/constants";
 
 export const readMetadataInputSchema = z.object({
   messageRowKeys: messageEntitySchema.shape.rowKey.array().min(1).max(MAX_READ_LIMIT),
@@ -166,11 +167,7 @@ export const messageRouter = router({
   ),
   forwardMessages: getMemberProcedure(forwardMessagesInputSchema, "partitionKey").mutation(
     async ({ ctx, input: { message, partitionKey, roomIds, rowKey } }) => {
-      const foundUsersToRooms = await ctx.db.query.usersToRooms.findMany({
-        where: (usersToRooms, { and, eq, inArray }) =>
-          and(eq(usersToRooms.userId, ctx.session.user.id), inArray(usersToRooms.roomId, roomIds)),
-      });
-      if (foundUsersToRooms.length !== roomIds.length) throw new TRPCError({ code: "UNAUTHORIZED" });
+      await isMember(ctx.db, ctx.session, roomIds);
 
       const messageClient = await useTableClient(AzureTable.Messages);
       const messageEntity = await getEntity(messageClient, MessageEntity, partitionKey, rowKey);
