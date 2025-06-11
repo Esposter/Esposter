@@ -25,7 +25,11 @@ import { Readable } from "node:stream";
 const readStatusesInputSchema = selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
 export type ReadStatusesInput = z.infer<typeof readStatusesInputSchema>;
 
-const updateStatusInputSchema = selectUserStatusSchema.shape.status;
+const updateStatusInputSchema = selectUserStatusSchema
+  .pick({ message: true, status: true })
+  .partial()
+  .refine(({ message, status }) => message !== undefined || status !== undefined)
+  .optional();
 export type UpdateStatusInput = z.infer<typeof updateStatusInputSchema>;
 
 const onUpdateStatusInputSchema = selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
@@ -72,13 +76,14 @@ export const userRouter = router({
     return resultUserStatuses;
   }),
   updateStatus: authedProcedure.input(updateStatusInputSchema).mutation(async ({ ctx, input }) => {
-    const lastActiveAt = input === UserStatus.Offline ? new Date() : undefined;
+    // Update lastActiveAt if user has lost connection (!input) or set status to Offline
+    const lastActiveAt = !input || input.status === UserStatus.Offline ? new Date() : undefined;
     const updatedStatus = (
       await ctx.db
         .insert(userStatuses)
-        .values({ lastActiveAt, status: input, userId: ctx.session.user.id })
+        .values({ lastActiveAt, ...input, userId: ctx.session.user.id })
         .onConflictDoUpdate({
-          set: { lastActiveAt, status: input },
+          set: { lastActiveAt, ...input },
           target: users.id,
         })
         .returning()
