@@ -20,7 +20,7 @@ describe("dashboard", () => {
     expect.hasAssertions();
 
     const dashboard = await caller.readDashboard();
-    const { createdAt, id, updatedAt} = dashboard;
+    const { createdAt, id, updatedAt } = dashboard;
 
     expect(dashboard).toStrictEqual(new Dashboard({ createdAt, id, updatedAt }));
   });

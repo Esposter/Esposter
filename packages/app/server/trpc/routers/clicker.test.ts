@@ -20,7 +20,7 @@ describe("clicker", () => {
     expect.hasAssertions();
 
     const clicker = await caller.readClicker();
-    const { createdAt, id, updatedAt} = clicker;
+    const { createdAt, id, updatedAt } = clicker;
 
     expect(clicker).toStrictEqual(new Clicker({ createdAt, id, updatedAt }));
   });

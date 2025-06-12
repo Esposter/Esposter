@@ -20,7 +20,7 @@ describe("dungeons", () => {
     expect.hasAssertions();
 
     const dungeons = await caller.readDungeons();
-    const { createdAt, id, updatedAt} = dungeons;
+    const { createdAt, id, updatedAt } = dungeons;
 
     expect(dungeons).toStrictEqual(new Dungeons({ createdAt, id, updatedAt }));
   });

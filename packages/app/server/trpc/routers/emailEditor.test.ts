@@ -20,7 +20,7 @@ describe("emailEditor", () => {
     expect.hasAssertions();
 
     const emailEditor = await caller.readEmailEditor();
-    const { createdAt, id, updatedAt} = emailEditor;
+    const { createdAt, id, updatedAt } = emailEditor;
 
     expect(emailEditor).toStrictEqual(new EmailEditor({ createdAt, id, updatedAt }));
   });
