@@ -6,7 +6,7 @@ import type { Except } from "type-fest";
 export const coalesceMissingIUserStatusFields = (
   onUpsertUserStatus?: Except<OnUpsertUserStatus, RequiredUserStatusFields>,
 ): Except<IUserStatus, RequiredUserStatusFields> => ({
-  expiresAt: onUpsertUserStatus.expiresAt ?? null,
-  lastActiveAt: onUpsertUserStatus.lastActiveAt ?? new Date(),
-  message: onUpsertUserStatus.message ?? "",
+  expiresAt: onUpsertUserStatus?.expiresAt ?? null,
+  lastActiveAt: onUpsertUserStatus?.lastActiveAt ?? new Date(),
+  message: onUpsertUserStatus?.message ?? "",
 });
