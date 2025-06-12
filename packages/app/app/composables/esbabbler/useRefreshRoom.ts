@@ -7,7 +7,7 @@ export const useRefreshRoom = () => {
   const router = useRouter();
   return async () => {
     rooms.value.length > 0
-      ? await router.push(RoutePath.Messages(rooms.value[0].id), { replace: true })
-      : await router.push(RoutePath.MessagesIndex, { replace: true });
+      ? await router.push({ path: RoutePath.Messages(rooms.value[0].id), replace: true })
+      : await router.push({ path: RoutePath.MessagesIndex, replace: true });
   };
 };
