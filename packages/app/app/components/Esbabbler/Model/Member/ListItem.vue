@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { User } from "#shared/db/schema/users";
 
-import { StatusColorMap } from "@/services/esbabbler/StatusColorMap";
+import { UserStatus } from "#shared/models/db/user/UserStatus";
+import { StatusBadgePropsMap } from "@/services/esbabbler/StatusBadgePropsMap";
 import { useRoomStore } from "@/store/esbabbler/room";
 import { useUserStatusStore } from "@/store/esbabbler/userStatus";
 
@@ -15,16 +16,16 @@ const { currentRoom } = storeToRefs(roomStore);
 const isCreator = computed(() => currentRoom.value?.userId === member.id);
 const userStatusStore = useUserStatusStore();
 const { userStatusMap } = storeToRefs(userStatusStore);
-const color = computed(() => {
+const badgeProps = computed(() => {
   const userStatus = userStatusMap.value.get(member.id);
-  return userStatus ? StatusColorMap[userStatus.status] : "green";
+  return StatusBadgePropsMap[userStatus?.status ?? UserStatus.Online];
 });
 </script>
 
 <template>
   <v-list-item :value="member.name">
     <template #prepend>
-      <v-badge location="bottom end" :color dot>
+      <v-badge location="bottom end" dot :="badgeProps">
         <StyledAvatar :image="member.image" :name="member.name" />
       </v-badge>
     </template>
