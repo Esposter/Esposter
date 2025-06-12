@@ -14,7 +14,7 @@ const { message } = defineProps<MessageEmojiListProps>();
 const { data: session } = await authClient.useSession(useFetch);
 const { backgroundOpacity80, border, info, infoOpacity10, surfaceOpacity80 } = useColors();
 const emojiStore = useEmojiStore();
-const { createEmoji, deleteEmoji, getEmojis, updateEmoji } = emojiStore;
+const { deleteEmoji, getEmojis, updateEmoji } = emojiStore;
 const emojis = computed(() =>
   getEmojis(message.rowKey).map(({ emojiTag, partitionKey, rowKey, userIds }) => ({
     emoji: emojify(emojiTag),
