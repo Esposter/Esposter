@@ -97,7 +97,7 @@ catalog:
   emoji-mart-vue-fast: ^15.0.4
   eslint: ^9.28.0
   eslint-config-prettier: ^10.1.5
-  eslint-plugin-oxlint: ^1.0.0
+  eslint-plugin-oxlint: ^1.1.0
   eslint-plugin-perfectionist: ^4.14.0
   eslint-plugin-pinia: ^0.4.1
   eslint-plugin-prettier: ^5.4.1
@@ -107,7 +107,7 @@ catalog:
   filesize: ^10.1.6
   fs-extra: ^11.3.0
   fuse.js: ^7.1.0
-  grapesjs: ^0.22.7
+  grapesjs: ^0.22.8
   grapesjs-blocks-basic: ^1.0.2
   grapesjs-component-countdown: ^1.0.2
   grapesjs-custom-code: ^1.0.2
@@ -140,7 +140,7 @@ catalog:
   nuxt-security: ^2.2.0
   obscenity: ^0.4.3
   omit-deep-lodash: ^1.1.7
-  oxlint: ^1.0.0
+  oxlint: ^1.1.0
   p-progress: ^1.0.0
   pathe: ^2.0.3
   pdfjs-dist: ^5.3.31
@@ -168,7 +168,7 @@ catalog:
   three-globe: ^2.42.11
   tippy.js: ^6.3.7
   trpc-nuxt: ^1.0.5
-  tsx: ^4.20.1
+  tsx: ^4.20.2
   type-fest: ^4.41.0
   typedoc: ^0.28.5
   typescript: ^5.8.3
@@ -194,4 +194,4 @@ catalog:
   worker-timers: ^8.0.22
   ws: ^8.18.2
   xmlbuilder2: ^3.1.1
-  zod: ^3.25.62
+  zod: ^3.25.63
