@@ -39,9 +39,7 @@ export const useEmojiStore = defineStore("esbabbler/emoji", () => {
     );
     if (index === -1) return;
 
-    Object.assign(emojis[index], input, {
-      userIds: [...emojis[index].userIds, ...input.userIds],
-    });
+    Object.assign(emojis[index], input);
     setEmojis(input.messageRowKey, emojis);
   };
   const storeDeleteEmoji = ({ messageRowKey, partitionKey, rowKey }: DeleteEmojiInput) => {

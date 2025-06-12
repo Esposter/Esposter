@@ -30,7 +30,7 @@ const selectEmoji = await useSelectEmoji(message);
 </script>
 
 <template>
-  <div v-if="hasEmojis" flex items-center flex-wrap gap-1>
+  <div v-if="session && hasEmojis" flex items-center flex-wrap gap-1>
     <div
       v-for="{ partitionKey, rowKey, emojiTag, userIds, isReacted, emoji } of emojis"
       :key="rowKey"
@@ -47,10 +47,20 @@ const selectEmoji = await useSelectEmoji(message);
       active:scale-95
       @click="
         isReacted
-          ? deleteEmoji({ partitionKey, rowKey, messageRowKey: message.rowKey })
-          : userIds.length > 0
-            ? updateEmoji({ partitionKey, rowKey, messageRowKey: message.rowKey, userIds })
-            : createEmoji({ partitionKey, messageRowKey: message.rowKey, emojiTag })
+          ? userIds.length === 1
+            ? deleteEmoji({ partitionKey, rowKey, messageRowKey: message.rowKey })
+            : updateEmoji({
+                partitionKey,
+                rowKey,
+                messageRowKey: message.rowKey,
+                userIds: userIds.filter((id) => id !== session?.user.id),
+              })
+          : updateEmoji({
+              partitionKey,
+              rowKey,
+              messageRowKey: message.rowKey,
+              userIds: [...userIds, session.user.id],
+            })
       "
     >
       {{ emoji }}
