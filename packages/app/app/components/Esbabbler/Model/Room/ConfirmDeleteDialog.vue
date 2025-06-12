@@ -29,6 +29,7 @@ const { rooms } = storeToRefs(roomStore);
         ? { title: 'Delete Room', text: 'Are you sure you want to delete this room?' }
         : { title: 'Leave Room', text: 'Are you sure you want to leave this room?' }
     "
+    :confirm-button-props="{ text: isCreator ? 'Delete' : 'Leave' }"
     @delete="
       async (onComplete) => {
         try {
