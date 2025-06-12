@@ -16,11 +16,17 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
   const { items, ...restData } = createCursorPaginationData<Room>();
   const {
     createRoom: storeCreateRoom,
-    deleteRoom: storeDeleteRoom,
+    deleteRoom: baseStoreDeleteRoom,
     rooms: storeRooms,
     updateRoom: storeUpdateRoom,
     ...restOperationData
   } = createOperationData(items, ["id"], DatabaseEntityType.Room);
+  const refreshRoom = useRefreshRoom();
+  const storeDeleteRoom = async (...args: Parameters<typeof baseStoreDeleteRoom>) => {
+    baseStoreDeleteRoom(...args);
+    await refreshRoom();
+  };
+
   const rooms = computed(() => storeRooms.value.toSorted((a, b) => dayjs(b.updatedAt).diff(a.updatedAt)));
   const router = useRouter();
   const currentRoomId = computed(() => {
@@ -39,7 +45,7 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
   };
   const deleteRoom = async (input: DeleteRoomInput) => {
     const { id } = await $trpc.room.deleteRoom.mutate(input);
-    storeDeleteRoom({ id });
+    await storeDeleteRoom({ id });
   };
   const joinRoom = async (input: JoinRoomInput) => {
     const joinedRoom = await $trpc.room.joinRoom.mutate(input);
@@ -48,7 +54,7 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
   };
   const leaveRoom = async (input: LeaveRoomInput) => {
     const id = await $trpc.room.leaveRoom.mutate(input);
-    storeDeleteRoom({ id });
+    await storeDeleteRoom({ id });
   };
 
   return {

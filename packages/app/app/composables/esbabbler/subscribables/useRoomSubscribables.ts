@@ -1,5 +1,6 @@
 import type { Unsubscribable } from "@trpc/server/observable";
 
+import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { useEsbabblerStore } from "@/store/esbabbler";
 import { useRoomStore } from "@/store/esbabbler/room";
 
@@ -28,9 +29,9 @@ export const useRoomSubscribables = () => {
 
     deleteRoomUnsubscribable.value?.unsubscribe();
     deleteRoomUnsubscribable.value = $trpc.room.onDeleteRoom.subscribe(newRoomIds, {
-      onData: (id) => {
-        storeDeleteRoom({ id });
-      },
+      onData: getSynchronizedFunction(async (id) => {
+        await storeDeleteRoom({ id });
+      }),
     });
 
     joinRoomUnsubscribable.value?.unsubscribe();
