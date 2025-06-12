@@ -12,7 +12,7 @@ export const useAlertStore = defineStore("alert", () => {
     props?: Pick<VAlert["$props"], "icon" | "location">,
   ) => {
     const id = crypto.randomUUID();
-    alerts.value.push({ icon: AlertIconMap[type], id, text, type, ...props });
+    alerts.value.push({ icon: AlertIconMap[type], id, location: "bottom center", text, type, ...props });
     const timeoutId = window.setTimeout(() => {
       deleteAlert(id);
     }, dayjs.duration(5, "seconds").asMilliseconds());
