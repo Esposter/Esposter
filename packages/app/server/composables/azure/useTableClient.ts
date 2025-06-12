@@ -9,8 +9,8 @@ export const useTableClient = async <TAzureTable extends AzureTable>(tableName: 
   const tableClient = TableClient.fromConnectionString(runtimeConfig.azure.storageAccountConnectionString, tableName);
   try {
     await tableClient.createTable();
-  } finally {
-    // eslint-disable-next-line no-unsafe-finally
+    return tableClient as CustomTableClient<AzureTableEntityMap[TAzureTable]>;
+  } catch {
     return tableClient as CustomTableClient<AzureTableEntityMap[TAzureTable]>;
   }
 };

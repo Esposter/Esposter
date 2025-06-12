@@ -15,10 +15,10 @@ export const tableEditorRouter = router({
   readTableEditorConfiguration: authedProcedure.query<TableEditorConfiguration>(async ({ ctx }) => {
     try {
       const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
-      const response = await useDownload(AzureContainer.TableEditorAssets, blobName);
-      if (!response.readableStreamBody) return new TableEditorConfiguration();
+      const { readableStreamBody } = await useDownload(AzureContainer.TableEditorAssets, blobName);
+      if (!readableStreamBody) return new TableEditorConfiguration();
 
-      const json = await streamToText(response.readableStreamBody);
+      const json = await streamToText(readableStreamBody);
       return Object.assign(new TableEditorConfiguration(), jsonDateParse(json));
     } catch {
       return new TableEditorConfiguration();

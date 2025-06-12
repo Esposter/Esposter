@@ -1,0 +1,14 @@
+{
+  "$schema": "../../node_modules/oxlint/configuration_schema.json",
+  "ignorePatterns": ["public"],
+  "plugins": ["import", "oxc", "typescript", "unicorn"],
+  "rules": {
+    "import/default": "off",
+    "import/first": "error",
+    "import/no-duplicates": "error",
+    "import/no-mutable-exports": "error",
+    "import/no-named-default": "error",
+    "import/no-self-import": "error",
+    "import/no-unassigned-import": ["error", { "allow": ["*.css", "*.d.ts", "*.i18n"] }]
+  }
+}

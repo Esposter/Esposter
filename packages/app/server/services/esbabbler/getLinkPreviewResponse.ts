@@ -5,13 +5,13 @@ import { find } from "linkifyjs";
 import { parse } from "node-html-parser";
 import { lookup } from "node:dns";
 
-export const getLinkPreviewResponse = async (message: string): Promise<LinkPreviewResponse | undefined> => {
+export const getLinkPreviewResponse = async (message: string): Promise<LinkPreviewResponse | null> => {
   const messageHtml = parse(message);
   const url = messageHtml.querySelector("a")?.getAttribute("href");
-  if (!url) return undefined;
+  if (!url) return null;
 
   const link = find(url, "url", { defaultProtocol: "https" }).find(Boolean);
-  if (!link) return undefined;
+  if (!link) return null;
 
   try {
     return await getLinkPreview(link.href, {
@@ -29,6 +29,6 @@ export const getLinkPreviewResponse = async (message: string): Promise<LinkPrevi
         }),
     });
   } catch {
-    return undefined;
+    return null;
   }
 };

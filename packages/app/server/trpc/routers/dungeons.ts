@@ -12,10 +12,10 @@ export const dungeonsRouter = router({
   readDungeons: authedProcedure.query<Dungeons>(async ({ ctx }) => {
     try {
       const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
-      const response = await useDownload(AzureContainer.DungeonsAssets, blobName);
-      if (!response.readableStreamBody) return new Dungeons();
+      const { readableStreamBody } = await useDownload(AzureContainer.DungeonsAssets, blobName);
+      if (!readableStreamBody) return new Dungeons();
 
-      const json = await streamToText(response.readableStreamBody);
+      const json = await streamToText(readableStreamBody);
       return Object.assign(new Dungeons(), jsonDateParse(json));
     } catch {
       return new Dungeons();

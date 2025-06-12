@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-duplicate-enum-values */
+/* oxlint-disable @typescript-eslint/no-duplicate-enum-values */
 export enum Mimetype {
   ".3g2" = "video/3gpp2",
   ".3gp" = "video/3gpp",

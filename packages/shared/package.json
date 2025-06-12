@@ -25,8 +25,8 @@
     "build": "bun export:gen && rolldown --config rolldown.config.ts",
     "test": "NODE_OPTIONS=--max-old-space-size=8192 vitest",
     "coverage": "vitest run --coverage",
-    "lint": "eslint .",
-    "lint:fix": "eslint --fix .",
+    "lint": "oxlint && eslint .",
+    "lint:fix": "oxlint --fix && eslint --fix .",
     "typecheck": "tsc",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts"
   }

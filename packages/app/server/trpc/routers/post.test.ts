@@ -2,11 +2,13 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { posts } from "#shared/db/schema/posts";
+import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { postRouter } from "@@/server/trpc/routers/post";
 import { NIL } from "@esposter/shared";
-import { beforeAll, describe, expect, test } from "vitest";
+import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("post", () => {
   let caller: DecorateRouterRecord<TRPCRouter["post"]>;
@@ -20,6 +22,10 @@ describe("post", () => {
     const createCaller = createCallerFactory(postRouter);
     mockContext = await createMockContext();
     caller = createCaller(mockContext);
+  });
+
+  afterEach(async () => {
+    await mockContext.db.delete(posts);
   });
 
   test("creates", async () => {
@@ -46,6 +52,14 @@ describe("post", () => {
     await expect(caller.readPost(NIL)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Post is not found for id: 00000000-0000-0000-0000-000000000000]`,
     );
+  });
+
+  test("reads empty posts", async () => {
+    expect.hasAssertions();
+
+    const readPosts = await caller.readPosts();
+
+    expect(readPosts).toStrictEqual(getCursorPaginationData([], 0, []));
   });
 
   test("updates", async () => {

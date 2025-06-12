@@ -1,7 +1,7 @@
-import type { Like } from "#shared/db/schema/users";
+import type { Like } from "#shared/db/schema/likes";
 
+import { likes } from "#shared/db/schema/likes";
 import { posts } from "#shared/db/schema/posts";
-import { likes } from "#shared/db/schema/users";
 import { createLikeInputSchema } from "#shared/models/db/post/CreateLikeInput";
 import { deleteLikeInputSchema } from "#shared/models/db/post/DeleteLikeInput";
 import { updateLikeInputSchema } from "#shared/models/db/post/UpdateLikeInput";
@@ -107,7 +107,6 @@ export const likeRouter = router({
       });
 
     const noLikesNew = post.noLikes + value * 2;
-
     return ctx.db.transaction(async (tx) => {
       const updatedLike = (
         await tx

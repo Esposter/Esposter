@@ -27,8 +27,8 @@
   },
   "scripts": {
     "build": "bun export:gen && rolldown --config rolldown.config.ts",
-    "lint": "eslint .",
-    "lint:fix": "eslint --fix .",
+    "lint": "oxlint && eslint .",
+    "lint:fix": "oxlint --fix && eslint --fix .",
     "typecheck": "tsc",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts"
   },

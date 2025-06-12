@@ -1,13 +1,13 @@
-import type { Room } from "#shared/db/schema/rooms";
-
 import { accounts } from "#shared/db/schema/accounts";
+import { likes } from "#shared/db/schema/likes";
 import { posts } from "#shared/db/schema/posts";
-import { rooms } from "#shared/db/schema/rooms";
 import { sessions } from "#shared/db/schema/sessions";
 import { surveys } from "#shared/db/schema/surveys";
+import { userStatuses } from "#shared/db/schema/userStatuses";
+import { usersToRooms } from "#shared/db/schema/usersToRooms";
 import { USER_NAME_MAX_LENGTH } from "#shared/services/user/constants";
 import { relations, sql } from "drizzle-orm";
-import { boolean, check, integer, pgTable, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { boolean, check, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
@@ -34,75 +34,15 @@ export const selectUserSchema = createSelectSchema(users, {
   name: z.string().min(1).max(USER_NAME_MAX_LENGTH),
 });
 
-export const usersRelations = relations(users, ({ many }) => ({
+export const usersRelations = relations(users, ({ many, one }) => ({
   accounts: many(accounts),
   likes: many(likes),
   posts: many(posts),
   sessions: many(sessions),
   surveys: many(surveys),
+  userStatuses: one(userStatuses, {
+    fields: [users.id],
+    references: [userStatuses.userId],
+  }),
   usersToRooms: many(usersToRooms),
-}));
-
-export const usersToRooms = pgTable(
-  "users_to_rooms",
-  {
-    roomId: uuid("roomId")
-      .notNull()
-      .references(() => rooms.id, { onDelete: "cascade" }),
-    userId: text("userId")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-  },
-  ({ roomId, userId }) => [primaryKey({ columns: [userId, roomId] })],
-);
-export type UserToRoom = typeof usersToRooms.$inferSelect;
-export const UserToRoomRelations = {
-  room: true,
-  user: true,
-} as const;
-export type UserToRoomWithRelations = UserToRoom & { room: Room; user: User };
-
-export const usersToRoomsRelations = relations(usersToRooms, ({ one }) => ({
-  room: one(rooms, {
-    fields: [usersToRooms.roomId],
-    references: [rooms.id],
-  }),
-  user: one(users, {
-    fields: [usersToRooms.userId],
-    references: [users.id],
-  }),
-}));
-
-export const likes = pgTable(
-  "likes",
-  {
-    postId: uuid("postId")
-      .notNull()
-      .references(() => posts.id, { onDelete: "cascade" }),
-    userId: text("userId")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    value: integer("value").notNull(),
-  },
-  ({ postId, userId, value }) => [
-    primaryKey({ columns: [userId, postId] }),
-    check("value", sql`${value} = 1 OR ${value} = -1`),
-  ],
-);
-
-export type Like = typeof likes.$inferSelect;
-
-export const selectLikeSchema = createSelectSchema(likes, {
-  value: z.literal([1, -1]),
-});
-
-export const likesRelations = relations(likes, ({ one }) => ({
-  post: one(posts, {
-    fields: [likes.postId],
-    references: [posts.id],
-  }),
-  user: one(users, {
-    fields: [likes.userId],
-    references: [users.id],
-  }),
 }));

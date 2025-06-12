@@ -12,10 +12,10 @@ export const emailEditorRouter = router({
   readEmailEditor: authedProcedure.query<EmailEditor>(async ({ ctx }) => {
     try {
       const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
-      const response = await useDownload(AzureContainer.EmailEditorAssets, blobName);
-      if (!response.readableStreamBody) return new EmailEditor();
+      const { readableStreamBody } = await useDownload(AzureContainer.EmailEditorAssets, blobName);
+      if (!readableStreamBody) return new EmailEditor();
 
-      const json = await streamToText(response.readableStreamBody);
+      const json = await streamToText(readableStreamBody);
       return Object.assign(new EmailEditor(), jsonDateParse(json));
     } catch {
       return new EmailEditor();

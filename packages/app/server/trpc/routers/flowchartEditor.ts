@@ -12,10 +12,10 @@ export const flowchartEditorRouter = router({
   readFlowchartEditor: authedProcedure.query<FlowchartEditor>(async ({ ctx }) => {
     try {
       const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
-      const response = await useDownload(AzureContainer.FlowchartEditorAssets, blobName);
-      if (!response.readableStreamBody) return new FlowchartEditor();
+      const { readableStreamBody } = await useDownload(AzureContainer.FlowchartEditorAssets, blobName);
+      if (!readableStreamBody) return new FlowchartEditor();
 
-      const json = await streamToText(response.readableStreamBody);
+      const json = await streamToText(readableStreamBody);
       return Object.assign(new FlowchartEditor(), jsonDateParse(json));
     } catch {
       return new FlowchartEditor();

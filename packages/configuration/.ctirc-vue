@@ -1,7 +1,7 @@
 {
   "mode": "module",
   "project": "tsconfig.build.json",
-  "directive": "/// <reference path=\"../../../configuration/types/vue-shims.d.ts\" />",
+  "directive": "import \"../../../configuration/types/vue-shims.d.ts\"",
   "output": "src/components",
   "quote": "\"",
   "overwrite": true,

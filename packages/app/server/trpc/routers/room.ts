@@ -1,9 +1,10 @@
 import type { Room } from "#shared/db/schema/rooms";
-import type { UserToRoom } from "#shared/db/schema/users";
+import type { UserToRoom } from "#shared/db/schema/usersToRooms";
 
 import { InviteRelations, invites, selectInviteSchema } from "#shared/db/schema/invites";
 import { rooms, selectRoomSchema } from "#shared/db/schema/rooms";
-import { selectUserSchema, users, usersToRooms, UserToRoomRelations } from "#shared/db/schema/users";
+import { selectUserSchema, users } from "#shared/db/schema/users";
+import { usersToRooms, UserToRoomRelations } from "#shared/db/schema/usersToRooms";
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 import { createRoomInputSchema } from "#shared/models/db/room/CreateRoomInput";
 import { deleteRoomInputSchema } from "#shared/models/db/room/DeleteRoomInput";
@@ -27,6 +28,7 @@ import { getCursorPaginationData } from "@@/server/services/pagination/cursor/ge
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { router } from "@@/server/trpc";
+import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/room/getCreatorProcedure";
@@ -205,56 +207,55 @@ export const roomRouter = router({
       return userToRoom.roomId;
     }
   }),
-  onDeleteRoom: authedProcedure.input(onDeleteRoomInputSchema).subscription(async function* ({ input, signal }) {
+  onDeleteRoom: authedProcedure.input(onDeleteRoomInputSchema).subscription(async function* ({ ctx, input, signal }) {
+    await isMember(ctx.db, ctx.session, input);
+
     for await (const [roomId] of on(roomEventEmitter, "deleteRoom", { signal })) {
       if (!input.includes(roomId)) continue;
       yield roomId;
     }
   }),
   onJoinRoom: authedProcedure.input(onJoinRoomInputSchema).subscription(async function* ({ ctx, input, signal }) {
+    await isMember(ctx.db, ctx.session, input);
+
     for await (const [data] of on(roomEventEmitter, "joinRoom", { signal })) {
       if (
         !input.includes(data.roomId) ||
         getIsSameDevice({ sessionId: data.sessionId, userId: data.user.id }, ctx.session)
       )
         continue;
-      const isMember = await ctx.db.query.usersToRooms.findFirst({
-        where: (usersToRooms, { and, eq }) =>
-          and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, data.roomId)),
-      });
-      if (!isMember) continue;
       yield data;
     }
   }),
   onLeaveRoom: authedProcedure.input(onLeaveRoomInputSchema).subscription(async function* ({ ctx, input, signal }) {
+    await isMember(ctx.db, ctx.session, input);
+
     for await (const [data] of on(roomEventEmitter, "leaveRoom", { signal })) {
       if (!input.includes(data.roomId) || getIsSameDevice(data, ctx.session)) continue;
-      const isMember = await ctx.db.query.usersToRooms.findFirst({
-        where: (usersToRooms, { and, eq }) =>
-          and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, data.roomId)),
-      });
-      if (!isMember) continue;
       yield data;
     }
   }),
   onUpdateRoom: authedProcedure.input(onUpdateRoomInputSchema).subscription(async function* ({ ctx, input, signal }) {
+    await isMember(ctx.db, ctx.session, input);
+
     for await (const [data] of on(roomEventEmitter, "updateRoom", { signal })) {
       if (!input.includes(data.id)) continue;
-      const isMember = await ctx.db.query.usersToRooms.findFirst({
-        where: (usersToRooms, { and, eq }) =>
-          and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, data.id)),
-      });
-      if (!isMember) continue;
       yield data;
     }
   }),
-  readInvite: authedProcedure.input(readInviteInputSchema).query(
-    async ({ ctx, input }) =>
-      (await ctx.db.query.invites.findFirst({
-        where: (invites, { eq }) => eq(invites.code, input),
-        with: InviteRelations,
-      })) ?? null,
-  ),
+  readInvite: authedProcedure.input(readInviteInputSchema).query(async ({ ctx, input }) => {
+    const invite = await ctx.db.query.invites.findFirst({
+      where: (invites, { eq }) => eq(invites.code, input),
+      with: InviteRelations,
+    });
+    if (!invite) return null;
+
+    const isMember = await ctx.db.query.usersToRooms.findFirst({
+      where: (usersToRooms, { and, eq }) =>
+        and(eq(usersToRooms.userId, invite.userId), eq(usersToRooms.roomId, invite.roomId)),
+    });
+    return { ...invite, isMember: Boolean(isMember) };
+  }),
   readInviteCode: getMemberProcedure(readInviteCodeInputSchema, "roomId").query<null | string>(
     async ({ ctx, input: { roomId } }) => readInviteCode(ctx.db, ctx.session.user.id, roomId),
   ),
@@ -265,7 +266,7 @@ export const roomRouter = router({
       const joinedUsers = await ctx.db
         .select()
         .from(users)
-        .innerJoin(usersToRooms, and(eq(usersToRooms.userId, users.id)))
+        .innerJoin(usersToRooms, eq(usersToRooms.userId, users.id))
         .where(and(eq(usersToRooms.roomId, roomId), filterWhere, cursorWhere))
         .orderBy(...parseSortByToSql(users, sortBy))
         .limit(limit + 1);
@@ -278,7 +279,7 @@ export const roomRouter = router({
       const joinedUsers = await ctx.db
         .select()
         .from(users)
-        .innerJoin(usersToRooms, and(eq(usersToRooms.userId, users.id)))
+        .innerJoin(usersToRooms, eq(usersToRooms.userId, users.id))
         .where(and(eq(usersToRooms.roomId, roomId), inArray(users.id, ids)));
       return joinedUsers.map(({ users }) => users);
     },

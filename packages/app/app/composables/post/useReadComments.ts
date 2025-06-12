@@ -7,10 +7,14 @@ export const useReadComments = async (postId: string) => {
   const { hasMore, nextCursor } = storeToRefs(commentStore);
   const readMoreComments = async (onComplete: () => void) => {
     try {
-      const response = await $trpc.post.readPosts.query({ cursor: nextCursor.value, parentId: postId });
-      nextCursor.value = response.nextCursor;
-      hasMore.value = response.hasMore;
-      pushComments(...response.items);
+      const {
+        hasMore: newHasMore,
+        items,
+        nextCursor: newNextCursor,
+      } = await $trpc.post.readPosts.query({ cursor: nextCursor.value, parentId: postId });
+      nextCursor.value = newNextCursor;
+      hasMore.value = newHasMore;
+      pushComments(...items);
     } finally {
       onComplete();
     }

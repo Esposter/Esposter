@@ -2,7 +2,6 @@
 import { selectInviteSchema } from "#shared/db/schema/invites";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { RoutePath } from "#shared/models/router/RoutePath";
-import { authClient } from "@/services/auth/authClient";
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
 import { useRoomStore } from "@/store/esbabbler/room";
 
@@ -15,7 +14,6 @@ definePageMeta({
   },
 });
 
-const { data: session } = await authClient.useSession(useFetch);
 const { $trpc } = useNuxtApp();
 const route = useRoute();
 const code = route.params.code as string;
@@ -25,10 +23,7 @@ if (!invite)
     message: getEntityNotFoundStatusMessage(DatabaseEntityType.Invite, code),
     statusCode: 404,
   });
-// @TODO: https://github.com/drizzle-team/drizzle-orm/issues/3493
-// We should be able to have an extra property returned to tell us if isMember
-else if (invite.room.usersToRooms.some(({ userId }) => userId === session.value?.user.id))
-  await navigateTo(RoutePath.Messages(invite.roomId));
+else if (invite.isMember) await navigateTo(RoutePath.Messages(invite.roomId));
 
 const roomStore = useRoomStore();
 const { joinRoom } = roomStore;
