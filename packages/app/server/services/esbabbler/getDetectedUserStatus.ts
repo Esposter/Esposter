@@ -1,7 +1,7 @@
 import type { IUserStatus } from "#shared/db/schema/userStatuses";
 import type { Session } from "@@/server/models/auth/Session";
 
-import { UserStatus } from "#shared/models/db/UserStatus";
+import { UserStatus } from "#shared/models/db/user/UserStatus";
 import { dayjs } from "#shared/services/dayjs";
 
 export const getDetectedUserStatus = (

@@ -25,18 +25,22 @@ export default defineEventHandler((event) => {
   });
   const createCaller = createCallerFactory(userRouter);
 
-  wss.on("connection", (ws, req) => {
-    const context = createContext({ req, res: ws } as CreateWSSContextFnOptions);
-    const caller = createCaller(context);
-    console.log(`Connection opened, client size: ${wss.clients.size}`);
-    ws.once(
-      "close",
-      getSynchronizedFunction(async () => {
-        console.log(`Connection closed, client size: ${wss.clients.size}`);
-        await caller.upsertStatus();
-      }),
-    );
-  });
+  wss.on(
+    "connection",
+    getSynchronizedFunction(async (ws, req) => {
+      const context = createContext({ req, res: ws } as CreateWSSContextFnOptions);
+      const caller = createCaller(context);
+      await caller.connect();
+      console.log(`Connection opened, client size: ${wss.clients.size}`);
+      ws.once(
+        "close",
+        getSynchronizedFunction(async () => {
+          console.log(`Connection closed, client size: ${wss.clients.size}`);
+          await caller.disconnect();
+        }),
+      );
+    }),
+  );
   process.on("SIGTERM", () => {
     handler.broadcastReconnectNotification();
     wss.close();

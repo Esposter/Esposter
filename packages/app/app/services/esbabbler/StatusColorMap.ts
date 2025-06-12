@@ -1,4 +1,4 @@
-import { UserStatus } from "#shared/models/db/UserStatus";
+import { UserStatus } from "#shared/models/db/user/UserStatus";
 
 export const StatusColorMap = {
   [UserStatus.DoNotDisturb]: "red",

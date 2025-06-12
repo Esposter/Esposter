@@ -1,5 +1,5 @@
 import { users } from "#shared/db/schema/users";
-import { UserStatus } from "#shared/models/db/UserStatus";
+import { UserStatus } from "#shared/models/db/user/UserStatus";
 import { STATUS_MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
 import { relations, sql } from "drizzle-orm";
 import { check, pgEnum, pgTable, text, timestamp } from "drizzle-orm/pg-core";
