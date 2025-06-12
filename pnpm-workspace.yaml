@@ -18,7 +18,7 @@ catalog:
   "@codemirror/language-data": ^6.5.1
   "@codemirror/state": ^6.5.2
   "@codemirror/theme-one-dark": ^6.1.2
-  "@codemirror/view": ^6.37.1
+  "@codemirror/view": ^6.37.2
   "@electric-sql/pglite": ^0.3.3
   "@fullcalendar/core": ^6.1.17
   "@fullcalendar/daygrid": ^6.1.17
