@@ -35,8 +35,8 @@ export default defineEventHandler((event) => {
       ws.once(
         "close",
         getSynchronizedFunction(async () => {
-          console.log(`Connection closed, client size: ${wss.clients.size}`);
           await caller.disconnect();
+          console.log(`Connection closed, client size: ${wss.clients.size}`);
         }),
       );
     }),
