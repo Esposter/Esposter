@@ -252,12 +252,12 @@ export const roomRouter = router({
 
     const isMember = await ctx.db.query.usersToRooms.findFirst({
       where: (usersToRooms, { and, eq }) =>
-        and(eq(usersToRooms.userId, invite.userId), eq(usersToRooms.roomId, invite.roomId)),
+        and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, invite.roomId)),
     });
     return { ...invite, isMember: Boolean(isMember) };
   }),
   readInviteCode: getMemberProcedure(readInviteCodeInputSchema, "roomId").query<null | string>(
-    async ({ ctx, input: { roomId } }) => readInviteCode(ctx.db, ctx.session.user.id, roomId),
+    ({ ctx, input: { roomId } }) => readInviteCode(ctx.db, ctx.session.user.id, roomId),
   ),
   readMembers: getMemberProcedure(readMembersInputSchema, "roomId").query(
     async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {

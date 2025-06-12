@@ -173,6 +173,45 @@ describe("room", () => {
     expect(data.value).toBe(newRoom.id);
   });
 
+  test("reads invite", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await caller.createRoom({ name });
+    const inviteCode = await caller.createInvite({ roomId: newRoom.id });
+    const readInvite = await caller.readInvite(inviteCode);
+
+    assert(readInvite);
+
+    expect(readInvite.userId).toBe(getMockSession().user.id);
+    expect(readInvite.roomId).toBe(newRoom.id);
+    expect(readInvite.code).toBe(inviteCode);
+    expect(readInvite.isMember).toBe(true);
+  });
+
+  test("reads non-existent invite", async () => {
+    expect.hasAssertions();
+
+    const readInvite = await caller.readInvite(createCode(CODE_LENGTH));
+
+    expect(readInvite).toBeNull();
+  });
+
+  test("fails read invite with invalid code", async () => {
+    expect.hasAssertions();
+
+    await expect(caller.readInvite("")).rejects.toThrowErrorMatchingInlineSnapshot(`
+      [TRPCError: [
+        {
+          "origin": "string",
+          "code": "too_small",
+          "minimum": 8,
+          "path": [],
+          "message": "Too small: expected string to have >8 characters"
+        }
+      ]]
+    `);
+  });
+
   test("reads invite code", async () => {
     expect.hasAssertions();
 
@@ -180,7 +219,7 @@ describe("room", () => {
     const inviteCode = await caller.createInvite({ roomId: newRoom.id });
     const readInviteCode = await caller.readInviteCode({ roomId: newRoom.id });
 
-    expect(readInviteCode).toStrictEqual(inviteCode);
+    expect(readInviteCode).toBe(inviteCode);
   });
 
   test("read invite code with no code to be null", async () => {
@@ -199,7 +238,7 @@ describe("room", () => {
     const inviteCode = await caller.createInvite({ roomId: newRoom.id });
     const cachedInviteCode = await caller.createInvite({ roomId: newRoom.id });
 
-    expect(cachedInviteCode).toStrictEqual(inviteCode);
+    expect(cachedInviteCode).toBe(inviteCode);
   });
 
   test("joins", async () => {
