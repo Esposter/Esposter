@@ -27,8 +27,9 @@ export const useRoomSubscribables = () => {
   const { trigger } = watchTriggerable(rooms, (newRooms) => {
     unsubscribe();
 
+    if (newRooms.length === 0) return;
+
     const newRoomIds = newRooms.map(({ id }) => id);
-    if (newRoomIds.length === 0) return;
 
     updateRoomUnsubscribable.value = $trpc.room.onUpdateRoom.subscribe(newRoomIds, {
       onData: (input) => {
