@@ -45,8 +45,8 @@ catalog:
   "@tiptap/starter-kit": ^2.14.0
   "@tiptap/suggestion": ^2.14.0
   "@tiptap/vue-3": ^2.14.0
-  "@trpc/client": ^11.3.1
-  "@trpc/server": ^11.3.1
+  "@trpc/client": ^11.4.0
+  "@trpc/server": ^11.4.0
   "@types/data-urls": ^3.0.4
   "@types/dedent": ^0.7.2
   "@types/deep-equal": ^1.0.4
@@ -71,7 +71,7 @@ catalog:
   "@vue-flow/controls": ^1.1.2
   "@vue-flow/core": ^1.45.0
   "@vue-flow/minimap": ^1.5.3
-  "@vue-flow/node-resizer": ^1.4.0
+  "@vue-flow/node-resizer": ^1.5.0
   "@vue-pdf-viewer/viewer": ^2.5.4
   "@vue/test-utils": ^2.4.6
   "@vuepic/vue-datepicker": ^11.0.2
@@ -136,7 +136,7 @@ catalog:
   mjml-browser: ^4.15.3
   node-emoji: ^2.2.0
   node-html-parser: ^7.0.1
-  nuxt: ^4.0.0-alpha.1
+  nuxt: ^4.0.0-alpha.2
   nuxt-security: ^2.2.0
   obscenity: ^0.4.3
   omit-deep-lodash: ^1.1.7
@@ -160,10 +160,10 @@ catalog:
   show-open-file-picker: ^0.3.0
   sql-highlight: ^6.1.0
   superjson: ^2.2.2
-  survey-core: ^2.1.1
-  survey-creator-core: ^2.1.1
-  survey-creator-vue: ^2.1.1
-  survey-vue3-ui: ^2.1.1
+  survey-core: ^2.2.0
+  survey-creator-core: ^2.2.0
+  survey-creator-vue: ^2.2.0
+  survey-vue3-ui: ^2.2.0
   three: ^0.177.0
   three-globe: ^2.42.11
   tippy.js: ^6.3.7
