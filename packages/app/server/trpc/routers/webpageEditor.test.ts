@@ -20,9 +20,9 @@ describe("webpageEditor", () => {
     expect.hasAssertions();
 
     const webpageEditor = await caller.readWebpageEditor();
-    const { createdAt, id } = webpageEditor;
+    const { createdAt, id, updatedAt } = webpageEditor;
 
-    expect(webpageEditor).toStrictEqual(new WebpageEditor({ createdAt, id, updatedAt: createdAt }));
+    expect(webpageEditor).toStrictEqual(new WebpageEditor({ createdAt, id, updatedAt }));
   });
 
   test.todo("saves and reads", async () => {

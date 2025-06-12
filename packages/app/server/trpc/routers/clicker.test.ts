@@ -20,9 +20,9 @@ describe("clicker", () => {
     expect.hasAssertions();
 
     const clicker = await caller.readClicker();
-    const { createdAt, id } = clicker;
+    const { createdAt, id, updatedAt} = clicker;
 
-    expect(clicker).toStrictEqual(new Clicker({ createdAt, id, updatedAt: createdAt }));
+    expect(clicker).toStrictEqual(new Clicker({ createdAt, id, updatedAt }));
   });
 
   test.todo("saves and reads", async () => {

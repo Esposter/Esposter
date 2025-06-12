@@ -20,9 +20,9 @@ describe("dashboard", () => {
     expect.hasAssertions();
 
     const dashboard = await caller.readDashboard();
-    const { createdAt, id } = dashboard;
+    const { createdAt, id, updatedAt} = dashboard;
 
-    expect(dashboard).toStrictEqual(new Dashboard({ createdAt, id, updatedAt: createdAt }));
+    expect(dashboard).toStrictEqual(new Dashboard({ createdAt, id, updatedAt }));
   });
 
   test.todo("saves and reads", async () => {

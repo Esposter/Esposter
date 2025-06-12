@@ -20,9 +20,9 @@ describe("dungeons", () => {
     expect.hasAssertions();
 
     const dungeons = await caller.readDungeons();
-    const { createdAt, id } = dungeons;
+    const { createdAt, id, updatedAt} = dungeons;
 
-    expect(dungeons).toStrictEqual(new Dungeons({ createdAt, id, updatedAt: createdAt }));
+    expect(dungeons).toStrictEqual(new Dungeons({ createdAt, id, updatedAt }));
   });
 
   test.todo("saves and reads", async () => {
