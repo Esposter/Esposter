@@ -18,7 +18,7 @@ const { $trpc } = useNuxtApp();
 const { data: session } = await authClient.useSession(useFetch);
 const isCreator = computed(() => session.value?.user.id === creatorId);
 const roomStore = useRoomStore();
-const { leaveRoom } = roomStore;
+const { deleteRoom, leaveRoom } = roomStore;
 const { rooms } = storeToRefs(roomStore);
 </script>
 
@@ -33,7 +33,7 @@ const { rooms } = storeToRefs(roomStore);
     @delete="
       async (onComplete) => {
         try {
-          isCreator ? await $trpc.room.deleteRoom.mutate(roomId) : await leaveRoom(roomId);
+          await (isCreator ? deleteRoom(roomId) : leaveRoom(roomId));
           rooms.length > 0
             ? await navigateTo(RoutePath.Messages(rooms[0].id), { replace: true })
             : await navigateTo(RoutePath.MessagesIndex, { replace: true });

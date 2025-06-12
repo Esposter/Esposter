@@ -1,5 +1,6 @@
 import type { Room } from "#shared/db/schema/rooms";
 import type { CreateRoomInput } from "#shared/models/db/room/CreateRoomInput";
+import type { DeleteRoomInput } from "#shared/models/db/room/DeleteRoomInput";
 import type { JoinRoomInput } from "#shared/models/db/room/JoinRoomInput";
 import type { LeaveRoomInput } from "#shared/models/db/room/LeaveRoomInput";
 
@@ -36,6 +37,10 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
     const newRoom = await $trpc.room.createRoom.mutate(input);
     storeCreateRoom(newRoom, true);
   };
+  const deleteRoom = async (input: DeleteRoomInput) => {
+    const { id } = await $trpc.room.deleteRoom.mutate(input);
+    storeDeleteRoom({ id });
+  };
   const joinRoom = async (input: JoinRoomInput) => {
     const joinedRoom = await $trpc.room.joinRoom.mutate(input);
     storeCreateRoom(joinedRoom, true);
@@ -48,6 +53,7 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
 
   return {
     createRoom,
+    deleteRoom,
     joinRoom,
     leaveRoom,
     storeDeleteRoom,

@@ -210,8 +210,8 @@ export const roomRouter = router({
   onDeleteRoom: authedProcedure.input(onDeleteRoomInputSchema).subscription(async function* ({ ctx, input, signal }) {
     await isMember(ctx.db, ctx.session, input);
 
-    for await (const [roomId] of on(roomEventEmitter, "deleteRoom", { signal })) {
-      if (!input.includes(roomId)) continue;
+    for await (const [{ roomId, sessionId, userId }] of on(roomEventEmitter, "deleteRoom", { signal })) {
+      if (!input.includes(roomId) || getIsSameDevice({ sessionId, userId }, ctx.session)) continue;
       yield roomId;
     }
   }),
