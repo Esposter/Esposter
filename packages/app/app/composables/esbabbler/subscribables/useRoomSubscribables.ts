@@ -17,24 +17,29 @@ export const useRoomSubscribables = () => {
   const joinRoomUnsubscribable = ref<Unsubscribable>();
   const leaveRoomUnsubscribable = ref<Unsubscribable>();
 
-  const { trigger } = watchTriggerable(rooms, (newRooms) => {
-    const newRoomIds = newRooms.map(({ id }) => id);
-
+  const unsubscribe = () => {
     updateRoomUnsubscribable.value?.unsubscribe();
+    deleteRoomUnsubscribable.value?.unsubscribe();
+    joinRoomUnsubscribable.value?.unsubscribe();
+    leaveRoomUnsubscribable.value?.unsubscribe();
+  };
+
+  const { trigger } = watchTriggerable(rooms, (newRooms) => {
+    unsubscribe();
+
+    const newRoomIds = newRooms.map(({ id }) => id);
+    if (newRoomIds.length === 0) return;
+
     updateRoomUnsubscribable.value = $trpc.room.onUpdateRoom.subscribe(newRoomIds, {
       onData: (input) => {
         storeUpdateRoom(input);
       },
     });
-
-    deleteRoomUnsubscribable.value?.unsubscribe();
     deleteRoomUnsubscribable.value = $trpc.room.onDeleteRoom.subscribe(newRoomIds, {
       onData: getSynchronizedFunction(async (id) => {
         await storeDeleteRoom({ id });
       }),
     });
-
-    joinRoomUnsubscribable.value?.unsubscribe();
     joinRoomUnsubscribable.value = $trpc.room.onJoinRoom.subscribe(newRoomIds, {
       onData: ({ roomId, user }) => {
         const userDataMap = getUserDataMap(roomId);
@@ -44,7 +49,6 @@ export const useRoomSubscribables = () => {
         } else userDataMap.set(user.id, user);
       },
     });
-    leaveRoomUnsubscribable.value?.unsubscribe();
     leaveRoomUnsubscribable.value = $trpc.room.onLeaveRoom.subscribe(newRoomIds, {
       onData: ({ roomId, userId }) => {
         const userDataMap = getUserDataMap(roomId);
@@ -59,9 +63,6 @@ export const useRoomSubscribables = () => {
   });
 
   onUnmounted(() => {
-    updateRoomUnsubscribable.value?.unsubscribe();
-    deleteRoomUnsubscribable.value?.unsubscribe();
-    joinRoomUnsubscribable.value?.unsubscribe();
-    leaveRoomUnsubscribable.value?.unsubscribe();
+    unsubscribe();
   });
 };
