@@ -22,10 +22,11 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
     ...restOperationData
   } = createOperationData(items, ["id"], DatabaseEntityType.Room);
   const rooms = computed(() => storeRooms.value.toSorted((a, b) => dayjs(b.updatedAt).diff(a.updatedAt)));
-  const refreshRoom = useRefreshRoom(rooms);
   const storeDeleteRoom = async (...args: Parameters<typeof baseStoreDeleteRoom>) => {
     baseStoreDeleteRoom(...args);
-    await refreshRoom();
+    rooms.value.length > 0
+      ? await router.push({ path: RoutePath.Messages(rooms.value[0].id), replace: true })
+      : await router.push({ path: RoutePath.MessagesIndex, replace: true });
   };
   const router = useRouter();
   const currentRoomId = computed(() => {
