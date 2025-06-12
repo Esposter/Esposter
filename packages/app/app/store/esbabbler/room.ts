@@ -21,13 +21,12 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
     updateRoom: storeUpdateRoom,
     ...restOperationData
   } = createOperationData(items, ["id"], DatabaseEntityType.Room);
-  const refreshRoom = useRefreshRoom();
+  const rooms = computed(() => storeRooms.value.toSorted((a, b) => dayjs(b.updatedAt).diff(a.updatedAt)));
+  const refreshRoom = useRefreshRoom(rooms);
   const storeDeleteRoom = async (...args: Parameters<typeof baseStoreDeleteRoom>) => {
     baseStoreDeleteRoom(...args);
     await refreshRoom();
   };
-
-  const rooms = computed(() => storeRooms.value.toSorted((a, b) => dayjs(b.updatedAt).diff(a.updatedAt)));
   const router = useRouter();
   const currentRoomId = computed(() => {
     const roomId = router.currentRoute.value.params.id;

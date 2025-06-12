@@ -1,9 +1,8 @@
-import { RoutePath } from "#shared/models/router/RoutePath";
-import { useRoomStore } from "@/store/esbabbler/room";
+import type { Room } from "#shared/db/schema/rooms";
 
-export const useRefreshRoom = () => {
-  const roomStore = useRoomStore();
-  const { rooms } = storeToRefs(roomStore);
+import { RoutePath } from "#shared/models/router/RoutePath";
+
+export const useRefreshRoom = (rooms: ComputedRef<Room[]>) => {
   const router = useRouter();
   return async () => {
     rooms.value.length > 0
