@@ -26,9 +26,9 @@ catalog:
   "@fullcalendar/timegrid": ^6.1.17
   "@fullcalendar/vue3": ^6.1.17
   "@koumoul/vjsf": ^3.15.2
-  "@lerna-lite/cli": ^4.3.0
-  "@lerna-lite/publish": ^4.3.0
-  "@lerna-lite/run": ^4.3.0
+  "@lerna-lite/cli": ^4.4.1
+  "@lerna-lite/publish": ^4.4.1
+  "@lerna-lite/run": ^4.4.1
   "@mdi/font": ^7.4.47
   "@nuxt/eslint": ^1.4.1
   "@nuxt/fonts": ^0.11.4
@@ -168,7 +168,7 @@ catalog:
   three-globe: ^2.42.11
   tippy.js: ^6.3.7
   trpc-nuxt: ^1.0.5
-  tsx: 4.19.3
+  tsx: ^4.20.3
   type-fest: ^4.41.0
   typedoc: ^0.28.5
   typescript: ^5.8.3
@@ -194,4 +194,4 @@ catalog:
   worker-timers: ^8.0.22
   ws: ^8.18.2
   xmlbuilder2: ^3.1.1
-  zod: ^3.25.63
+  zod: ^3.25.64

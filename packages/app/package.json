@@ -166,7 +166,6 @@
     "ajv-formats": "https://github.com/json-layout/json-layout/issues/5",
     "ajv-i18n": "https://github.com/json-layout/json-layout/issues/5",
     "debug": "https://github.com/json-layout/json-layout/issues/5",
-    "tsx:": "@TODO: broken",
     "vue-phaserjs": "@TODO: broken with vue's new reactive system"
   },
   "devDependencies": {
