@@ -19,7 +19,7 @@ A parser for [Tiled Map Editor](http://www.mapeditor.org/) \*.tmx files.
 ## <a name="getting-started">🚀 Getting Started</a>
 
 ```bash
-bun i parse-tmx
+bun --bun i parse-tmx
 ```
 
 ## <a name="documentation">📖 Documentation</a>

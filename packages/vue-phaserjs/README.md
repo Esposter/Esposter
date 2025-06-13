@@ -18,7 +18,7 @@ Inspired by [phavuer](https://github.com/laineus/phavuer).
 ## <a name="getting-started">🚀 Getting Started</a>
 
 ```bash
-bun i vue-phaserjs vue phaser phaser3-rex-plugins pinia
+bun --bun i vue-phaserjs vue phaser phaser3-rex-plugins pinia
 ```
 
 Add [phaser.d.ts](https://github.com/Esposter/Esposter/blob/main/packages/app/types/phaser.d.ts) and [vue-phaserjs.d.ts](https://github.com/Esposter/Esposter/blob/main/packages/app/types/vue-phaser.d.ts) so `vue-phaserjs` can narrow down your scene key types + provide intellisense for custom plugins.

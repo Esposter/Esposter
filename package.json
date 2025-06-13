@@ -204,7 +204,7 @@
     "url": "https://github.com/Esposter/Esposter/issues"
   },
   "scripts": {
-    "build": "bun --bun build:packages && bun build:docs && bun build:app",
+    "build": "bun --bun build:packages && bun --bun build:docs && bun --bun build:app",
     "build:app": "lerna run build --scope=@esposter/app",
     "build:docs": "typedoc",
     "build:packages": "lerna run build --ignore @esposter/app",
@@ -216,7 +216,7 @@
     "lint": "oxlint && eslint . && lerna run lint",
     "lint:fix": "oxlint --fix && eslint --fix . && lerna run lint:fix",
     "lint:fix:packages": "bun --bun lint:fix --ignore @esposter/app",
-    "release": "bun --bun build:packages && bun lint:fix:packages && bun typecheck:packages && lerna publish --yes",
+    "release": "bun --bun build:packages && bun --bun lint:fix:packages && bun --bun typecheck:packages && lerna publish --yes",
     "refresh:lockfile": "bun --bun crossOS refresh:lockfile",
     "crossOS": "bun --bun scripts/crossOS.ts",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted"
