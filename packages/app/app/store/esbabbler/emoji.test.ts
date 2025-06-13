@@ -10,6 +10,9 @@ describe(useEmojiStore, () => {
 
   beforeEach(() => {
     setActivePinia(createPinia());
+
+    const router = useRouter();
+    router.currentRoute.value.params.id = crypto.randomUUID();
   });
 
   test("gets", () => {
@@ -22,7 +25,7 @@ describe(useEmojiStore, () => {
     expect(emojis).toHaveLength(0);
   });
 
-  test.todo("sets", () => {
+  test("sets", () => {
     expect.hasAssertions();
 
     const emojiStore = useEmojiStore();
@@ -35,7 +38,7 @@ describe(useEmojiStore, () => {
     expect(emojis[0]).toStrictEqual(newEmoji);
   });
 
-  test.todo("creates", () => {
+  test("creates", () => {
     expect.hasAssertions();
 
     const emojiStore = useEmojiStore();
