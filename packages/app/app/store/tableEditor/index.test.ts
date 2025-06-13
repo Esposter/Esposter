@@ -6,7 +6,7 @@ import { expectToBeDefined } from "@/util/test/expectToBeDefined";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
-describe("tableEditorStore", () => {
+describe(useTableEditorStore, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
 

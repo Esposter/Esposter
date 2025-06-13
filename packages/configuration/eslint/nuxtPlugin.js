@@ -21,6 +21,7 @@ export default tseslint.config(
       "vitest/consistent-test-it": ["error", { fn: "test" }],
       "vitest/max-expects": "off",
       "vitest/no-hooks": "off",
+      "vitest/no-importing-vitest-globals": "off",
       "vitest/no-interpolation-in-snapshots": "off",
       "vitest/prefer-to-be-falsy": "off",
       "vitest/prefer-to-be-truthy": "off",
