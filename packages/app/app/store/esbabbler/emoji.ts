@@ -33,13 +33,20 @@ export const useEmojiStore = defineStore("esbabbler/emoji", () => {
     setEmojis(newEmoji.messageRowKey, emojis);
   };
   const storeUpdateEmoji = (input: UpdateEmojiInput) => {
+    const userId = session.value.data?.user.id;
+    if (!userId) return;
+
     const emojis = getEmojis(input.messageRowKey);
     const index = emojis.findIndex(
       ({ partitionKey, rowKey }) => partitionKey === input.partitionKey && rowKey === input.rowKey,
     );
     if (index === -1) return;
 
-    Object.assign(emojis[index], input);
+    Object.assign(emojis[index], input, {
+      userIds: input.userIds.includes(userId)
+        ? input.userIds.filter((id) => id !== userId)
+        : [...input.userIds, userId],
+    });
     setEmojis(input.messageRowKey, emojis);
   };
   const storeDeleteEmoji = ({ messageRowKey, partitionKey, rowKey }: DeleteEmojiInput) => {
