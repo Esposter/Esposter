@@ -22,9 +22,7 @@ export const useUserSubscribables = () => {
     const newMemberIds = newMembers.filter(({ id }) => id !== session.value.data?.user.id).map(({ id }) => id);
     upsertStatusUnsubscribable.value = $trpc.user.onUpsertStatus.subscribe(newMemberIds, {
       onData: ({ userId, ...userStatus }) => {
-        const oldUserStatus = userStatusMap.value.get(userId);
-        if (!oldUserStatus) userStatusMap.value.set(userId, userStatus);
-        else userStatusMap.value.set(userId, userStatus);
+        userStatusMap.value.set(userId, userStatus);
       },
     });
   });
