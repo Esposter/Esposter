@@ -14,6 +14,20 @@ describe(useTableEditorStore, () => {
     router.currentRoute.value.query = {};
   });
 
+  test("default values", () => {
+    expect.hasAssertions();
+
+    const router = useRouter();
+    const tableEditorStore = useTableEditorStore<TodoListItem>();
+    const { editedIndex, editedItem, editFormDialog, tableEditor } = storeToRefs(tableEditorStore);
+
+    expect(router.currentRoute.value.query).toStrictEqual({});
+    expect(editedIndex.value).toBe(-1);
+    expect(editedItem.value).toBeUndefined();
+    expect(editFormDialog.value).toBe(false);
+    expect(tableEditor.value.items).toHaveLength(0);
+  });
+
   test("edit item", async () => {
     expect.hasAssertions();
 
@@ -24,22 +38,17 @@ describe(useTableEditorStore, () => {
     const { editedIndex, editedItem, editFormDialog } = storeToRefs(tableEditorStore);
     const { editItem } = tableEditorStore;
     const newItem = new TodoListItem();
+
     createItem(newItem);
-
-    expect(editedItem.value).toBeUndefined();
-    expect(editedIndex.value).toBe(-1);
-    expect(editFormDialog.value).toBe(false);
-    expect(router.currentRoute.value.query).toStrictEqual({});
-
     await editItem({ id: newItem.id });
 
+    expect(router.currentRoute.value.query).toStrictEqual({ [ID_QUERY_PARAMETER_KEY]: newItem.id });
     // The edited item will be a structured clone object of the original item class
     // object !== class (not strictly equal)
     // eslint-disable-next-line vitest/prefer-strict-equal
     expect(editedItem.value).toEqual(newItem);
     expect(editedIndex.value).toBe(0);
     expect(editFormDialog.value).toBe(true);
-    expect(router.currentRoute.value.query).toStrictEqual({ [ID_QUERY_PARAMETER_KEY]: newItem.id });
   });
 
   test("save unedited item", async () => {
@@ -48,8 +57,6 @@ describe(useTableEditorStore, () => {
     const tableEditorStore = useTableEditorStore<TodoListItem>();
     const { editFormDialog } = storeToRefs(tableEditorStore);
     const { save } = tableEditorStore;
-
-    expect(editFormDialog.value).toBe(false);
 
     await save();
 
@@ -60,17 +67,14 @@ describe(useTableEditorStore, () => {
     expect.hasAssertions();
 
     const tableEditorStore = useTableEditorStore<TodoListItem>();
-    const { editedItem, editFormDialog, tableEditor } = storeToRefs(tableEditorStore);
+    const { editedItem, tableEditor } = storeToRefs(tableEditorStore);
     const { save } = tableEditorStore;
     const newItem = new TodoListItem();
-    editedItem.value = newItem;
 
-    expect(editFormDialog.value).toBe(false);
-    expect(tableEditor.value.items).toHaveLength(0);
+    editedItem.value = newItem;
 
     await save();
 
-    expect(editFormDialog.value).toBe(false);
     expect(tableEditor.value.items).toHaveLength(1);
     expect(tableEditor.value.items[0]).toStrictEqual(newItem);
   });
@@ -79,15 +83,15 @@ describe(useTableEditorStore, () => {
     expect.hasAssertions();
 
     const tableEditorStore = useTableEditorStore<TodoListItem>();
-    const { editedItem, editFormDialog, tableEditor } = storeToRefs(tableEditorStore);
+    const { editedItem, tableEditor } = storeToRefs(tableEditorStore);
     const { editItem, save } = tableEditorStore;
     const itemStore = useItemStore();
     const { createItem } = itemStore;
     const newItem = new TodoListItem();
     const updatedName = "updatedName";
+
     createItem(newItem);
 
-    expect(editFormDialog.value).toBe(false);
     expect(tableEditor.value.items[0].name).not.toBe(updatedName);
 
     await editItem({ id: newItem.id });
@@ -95,7 +99,6 @@ describe(useTableEditorStore, () => {
     editedItem.value.name = updatedName;
     await save();
 
-    expect(editFormDialog.value).toBe(false);
     expect(tableEditor.value.items[0].name).toBe(updatedName);
   });
 
@@ -103,20 +106,17 @@ describe(useTableEditorStore, () => {
     expect.hasAssertions();
 
     const tableEditorStore = useTableEditorStore<TodoListItem>();
-    const { editFormDialog, tableEditor } = storeToRefs(tableEditorStore);
+    const { tableEditor } = storeToRefs(tableEditorStore);
     const { editItem, save } = tableEditorStore;
     const itemStore = useItemStore();
     const { createItem } = itemStore;
     const newItem = new TodoListItem();
-    createItem(newItem);
 
-    expect(editFormDialog.value).toBe(false);
-    expect(tableEditor.value.items).toHaveLength(1);
+    createItem(newItem);
 
     await editItem({ id: newItem.id });
     await save(true);
 
-    expect(editFormDialog.value).toBe(false);
     expect(tableEditor.value.items).toHaveLength(0);
   });
 
@@ -125,17 +125,15 @@ describe(useTableEditorStore, () => {
 
     const router = useRouter();
     const tableEditorStore = useTableEditorStore<TodoListItem>();
-    const { editedIndex, editedItem } = storeToRefs(tableEditorStore);
+    const { editedIndex, editedItem, editFormDialog, tableEditor } = storeToRefs(tableEditorStore);
     const { resetItem } = tableEditorStore;
-
-    expect(editedItem.value).toBeUndefined();
-    expect(editedIndex.value).toBe(-1);
-    expect(router.currentRoute.value.query).toStrictEqual({});
 
     await resetItem();
 
-    expect(editedItem.value).toBeUndefined();
-    expect(editedIndex.value).toBe(-1);
     expect(router.currentRoute.value.query).toStrictEqual({});
+    expect(editedIndex.value).toBe(-1);
+    expect(editedItem.value).toBeUndefined();
+    expect(editFormDialog.value).toBe(false);
+    expect(tableEditor.value.items).toHaveLength(0);
   });
 });
