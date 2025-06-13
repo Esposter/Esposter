@@ -44,6 +44,7 @@ const items = computed<ListLinkItem[]>(() => {
           icon: "mdi-logout",
           onClick: async () => {
             await signOut();
+            window.location.reload();
           },
           title: "Logout",
         },

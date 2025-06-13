@@ -20,9 +20,9 @@ describe("flowchartEditor", () => {
     expect.hasAssertions();
 
     const flowchartEditor = await caller.readFlowchartEditor();
-    const { createdAt, id } = flowchartEditor;
+    const { createdAt, id, updatedAt } = flowchartEditor;
 
-    expect(flowchartEditor).toStrictEqual(new FlowchartEditor({ createdAt, id, updatedAt: createdAt }));
+    expect(flowchartEditor).toStrictEqual(new FlowchartEditor({ createdAt, id, updatedAt }));
   });
 
   test.todo("saves and reads", async () => {

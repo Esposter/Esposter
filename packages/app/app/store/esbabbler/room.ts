@@ -1,5 +1,6 @@
 import type { Room } from "#shared/db/schema/rooms";
 import type { CreateRoomInput } from "#shared/models/db/room/CreateRoomInput";
+import type { DeleteRoomInput } from "#shared/models/db/room/DeleteRoomInput";
 import type { JoinRoomInput } from "#shared/models/db/room/JoinRoomInput";
 import type { LeaveRoomInput } from "#shared/models/db/room/LeaveRoomInput";
 
@@ -15,12 +16,18 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
   const { items, ...restData } = createCursorPaginationData<Room>();
   const {
     createRoom: storeCreateRoom,
-    deleteRoom: storeDeleteRoom,
+    deleteRoom: baseStoreDeleteRoom,
     rooms: storeRooms,
     updateRoom: storeUpdateRoom,
     ...restOperationData
   } = createOperationData(items, ["id"], DatabaseEntityType.Room);
   const rooms = computed(() => storeRooms.value.toSorted((a, b) => dayjs(b.updatedAt).diff(a.updatedAt)));
+  const storeDeleteRoom = async (...args: Parameters<typeof baseStoreDeleteRoom>) => {
+    baseStoreDeleteRoom(...args);
+    rooms.value.length > 0
+      ? await router.push({ path: RoutePath.Messages(rooms.value[0].id), replace: true })
+      : await router.push({ path: RoutePath.MessagesIndex, replace: true });
+  };
   const router = useRouter();
   const currentRoomId = computed(() => {
     const roomId = router.currentRoute.value.params.id;
@@ -36,6 +43,10 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
     const newRoom = await $trpc.room.createRoom.mutate(input);
     storeCreateRoom(newRoom, true);
   };
+  const deleteRoom = async (input: DeleteRoomInput) => {
+    const { id } = await $trpc.room.deleteRoom.mutate(input);
+    await storeDeleteRoom({ id });
+  };
   const joinRoom = async (input: JoinRoomInput) => {
     const joinedRoom = await $trpc.room.joinRoom.mutate(input);
     storeCreateRoom(joinedRoom, true);
@@ -43,11 +54,12 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
   };
   const leaveRoom = async (input: LeaveRoomInput) => {
     const id = await $trpc.room.leaveRoom.mutate(input);
-    storeDeleteRoom({ id });
+    await storeDeleteRoom({ id });
   };
 
   return {
     createRoom,
+    deleteRoom,
     joinRoom,
     leaveRoom,
     storeDeleteRoom,

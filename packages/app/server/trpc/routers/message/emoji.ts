@@ -10,6 +10,7 @@ import {
 import { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
 import { updateEmojiInputSchema } from "#shared/models/db/message/metadata/UpdateEmojiInput";
 import { createMessageEmojiMetadataEntity } from "#shared/services/esbabbler/createMessageEmojiMetadataEntity";
+import { getUpdatedUserIds } from "#shared/services/esbabbler/emoji/getUpdatedUserIds";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
@@ -109,9 +110,8 @@ export const emojiRouter = router({
       });
     },
   ),
-  // An update is adding the user to the user id list for the already existing emoji
   updateEmoji: getMemberProcedure(updateEmojiInputSchema, "partitionKey").mutation(async ({ ctx, input }) => {
-    const updatedEmoji = { ...input, userIds: [...input.userIds, ctx.session.user.id] };
+    const updatedEmoji = { ...input, userIds: getUpdatedUserIds(input.userIds, ctx.session.user.id) };
     const messagesMetadataClient = await useTableClient(AzureTable.MessagesMetadata);
     await updateEntity(messagesMetadataClient, updatedEmoji);
     emojiEventEmitter.emit("updateEmoji", [

@@ -3,14 +3,12 @@ import type { ReadableStream } from "node:stream/web";
 import type { SetNonNullable } from "type-fest";
 import type { z } from "zod/v4";
 
-import { sessions } from "#shared/db/schema/sessions";
 import { selectUserSchema } from "#shared/db/schema/users";
 import { selectUserStatusSchema, userStatuses } from "#shared/db/schema/userStatuses";
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 import { UserStatus } from "#shared/models/db/user/UserStatus";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
-import { coalesceMissingIUserStatusFields } from "#shared/services/user/coalesceMissingIUserStatusFields";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
 import { userEventEmitter } from "@@/server/services/esbabbler/events/userEventEmitter";
 import { getDetectedUserStatus } from "@@/server/services/esbabbler/getDetectedUserStatus";
@@ -20,7 +18,7 @@ import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { octetInputParser } from "@trpc/server/http";
-import { eq, inArray } from "drizzle-orm";
+import { inArray } from "drizzle-orm";
 import { Readable } from "node:stream";
 
 const readStatusesInputSchema = selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
@@ -36,17 +34,13 @@ const onUpsertStatusInputSchema = selectUserSchema.shape.id.array().min(1).max(M
 export type OnUpsertStatusInput = z.infer<typeof onUpsertStatusInputSchema>;
 
 export const userRouter = router({
-  connect: authedProcedure.mutation(({ ctx }) => {
-    userEventEmitter.emit("upsertStatus", { status: UserStatus.Online, userId: ctx.session.user.id });
-  }),
-  disconnect: authedProcedure.mutation(async ({ ctx }) => {
-    const lastActiveAt = new Date();
+  connect: authedProcedure.mutation(async ({ ctx }) => {
     const upsertedStatus = (
       await ctx.db
         .insert(userStatuses)
-        .values({ lastActiveAt, userId: ctx.session.user.id })
+        .values({ isConnected: true, userId: ctx.session.user.id })
         .onConflictDoUpdate({
-          set: { lastActiveAt },
+          set: { isConnected: true },
           target: userStatuses.userId,
         })
         .returning()
@@ -58,7 +52,27 @@ export const userRouter = router({
           .message,
       });
 
-    userEventEmitter.emit("upsertStatus", { status: UserStatus.Offline, userId: ctx.session.user.id });
+    userEventEmitter.emit("upsertStatus", { ...upsertedStatus, status: getDetectedUserStatus(upsertedStatus) });
+  }),
+  disconnect: authedProcedure.mutation(async ({ ctx }) => {
+    const upsertedStatus = (
+      await ctx.db
+        .insert(userStatuses)
+        .values({ isConnected: false, userId: ctx.session.user.id })
+        .onConflictDoUpdate({
+          set: { isConnected: false },
+          target: userStatuses.userId,
+        })
+        .returning()
+    ).find(Boolean);
+    if (!upsertedStatus)
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: new InvalidOperationError(Operation.Update, DatabaseEntityType.UserStatus, userRouter.disconnect.name)
+          .message,
+      });
+
+    userEventEmitter.emit("upsertStatus", { ...upsertedStatus, status: getDetectedUserStatus(upsertedStatus) });
   }),
   onUpsertStatus: authedProcedure.input(onUpsertStatusInputSchema).subscription(async function* ({
     ctx,
@@ -73,27 +87,25 @@ export const userRouter = router({
     }
   }),
   readStatuses: authedProcedure.input(readStatusesInputSchema).query(async ({ ctx, input }) => {
-    const joinedUserStatuses = await ctx.db
-      .select({ sessionExpiresAt: sessions.expiresAt, userStatuses })
-      .from(userStatuses)
-      .leftJoin(sessions, eq(sessions.userId, userStatuses.userId))
-      .where(inArray(userStatuses.userId, input));
+    const foundUserStatuses = await ctx.db.select().from(userStatuses).where(inArray(userStatuses.userId, input));
     const resultUserStatuses: SetNonNullable<IUserStatus, "status">[] = [];
 
     for (const userId of input) {
-      const foundStatus = joinedUserStatuses.find(({ userStatuses }) => userStatuses.userId === userId);
-      if (!foundStatus) {
+      const foundStatus = foundUserStatuses.find((us) => us.userId === userId);
+      if (!foundStatus)
         // We'll conveniently assume that if they don't have a user status record yet
         // it means that they're still online as we insert a record as soon as they go offline
-        resultUserStatuses.push({ status: UserStatus.Online, userId, ...coalesceMissingIUserStatusFields() });
-        continue;
-      }
-
-      const { sessionExpiresAt, userStatuses } = foundStatus;
-      resultUserStatuses.push({
-        ...userStatuses,
-        status: getDetectedUserStatus(userStatuses.status, userStatuses.expiresAt, sessionExpiresAt),
-      });
+        resultUserStatuses.push({
+          createdAt: new Date(),
+          deletedAt: null,
+          expiresAt: null,
+          isConnected: true,
+          message: "",
+          status: UserStatus.Online,
+          updatedAt: new Date(),
+          userId,
+        });
+      else resultUserStatuses.push({ ...foundStatus, status: getDetectedUserStatus(foundStatus) });
     }
 
     return resultUserStatuses;
@@ -108,13 +120,12 @@ export const userRouter = router({
     return blockBlobClient.url;
   }),
   upsertStatus: authedProcedure.input(upsertStatusInputSchema).mutation(async ({ ctx, input }) => {
-    const lastActiveAt = input.status === UserStatus.Offline ? new Date() : undefined;
     const upsertedStatus = (
       await ctx.db
         .insert(userStatuses)
-        .values({ lastActiveAt, ...input, userId: ctx.session.user.id })
+        .values({ ...input, userId: ctx.session.user.id })
         .onConflictDoUpdate({
-          set: { lastActiveAt, ...input },
+          set: { ...input },
           target: userStatuses.userId,
         })
         .returning()
@@ -126,9 +137,6 @@ export const userRouter = router({
           .message,
       });
 
-    userEventEmitter.emit("upsertStatus", {
-      ...upsertedStatus,
-      status: getDetectedUserStatus(upsertedStatus.status, upsertedStatus.expiresAt, ctx.session.session.expiresAt),
-    });
+    userEventEmitter.emit("upsertStatus", { ...upsertedStatus, status: getDetectedUserStatus(upsertedStatus) });
   }),
 });

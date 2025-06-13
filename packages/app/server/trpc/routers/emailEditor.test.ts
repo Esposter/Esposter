@@ -20,9 +20,9 @@ describe("emailEditor", () => {
     expect.hasAssertions();
 
     const emailEditor = await caller.readEmailEditor();
-    const { createdAt, id } = emailEditor;
+    const { createdAt, id, updatedAt } = emailEditor;
 
-    expect(emailEditor).toStrictEqual(new EmailEditor({ createdAt, id, updatedAt: createdAt }));
+    expect(emailEditor).toStrictEqual(new EmailEditor({ createdAt, id, updatedAt }));
   });
 
   test.todo("saves and reads", async () => {

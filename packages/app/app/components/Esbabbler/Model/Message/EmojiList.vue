@@ -14,11 +14,10 @@ const { message } = defineProps<MessageEmojiListProps>();
 const { data: session } = await authClient.useSession(useFetch);
 const { backgroundOpacity80, border, info, infoOpacity10, surfaceOpacity80 } = useColors();
 const emojiStore = useEmojiStore();
-const { createEmoji, deleteEmoji, getEmojis, updateEmoji } = emojiStore;
+const { deleteEmoji, getEmojis, updateEmoji } = emojiStore;
 const emojis = computed(() =>
   getEmojis(message.rowKey).map(({ emojiTag, partitionKey, rowKey, userIds }) => ({
     emoji: emojify(emojiTag),
-    emojiTag,
     isReacted: Boolean(session.value && userIds.includes(session.value.user.id)),
     partitionKey,
     rowKey,
@@ -30,9 +29,9 @@ const selectEmoji = await useSelectEmoji(message);
 </script>
 
 <template>
-  <div v-if="hasEmojis" flex items-center flex-wrap gap-1>
+  <div v-if="session && hasEmojis" flex items-center flex-wrap gap-1>
     <div
-      v-for="{ partitionKey, rowKey, emojiTag, userIds, isReacted, emoji } of emojis"
+      v-for="{ partitionKey, rowKey, userIds, isReacted, emoji } of emojis"
       :key="rowKey"
       :class="isReacted ? 'reacted' : 'not-reacted'"
       rd-full="!"
@@ -46,11 +45,14 @@ const selectEmoji = await useSelectEmoji(message);
       origin-center
       active:scale-95
       @click="
-        isReacted
+        isReacted && userIds.length === 1
           ? deleteEmoji({ partitionKey, rowKey, messageRowKey: message.rowKey })
-          : userIds.length > 0
-            ? updateEmoji({ partitionKey, rowKey, messageRowKey: message.rowKey, userIds })
-            : createEmoji({ partitionKey, messageRowKey: message.rowKey, emojiTag })
+          : updateEmoji({
+              partitionKey,
+              rowKey,
+              messageRowKey: message.rowKey,
+              userIds,
+            })
       "
     >
       {{ emoji }}

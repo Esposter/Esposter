@@ -5,10 +5,9 @@ export const useReadUserStatuses = () => {
   const userStatusStore = useUserStatusStore();
   const { userStatusMap } = storeToRefs(userStatusStore);
   return async (userIds: string[]) => {
-    const ids = userIds.filter((id) => !userStatusMap.value.has(id));
-    if (ids.length === 0) return;
+    if (userIds.length === 0) return;
 
-    const userStatuses = await $trpc.user.readStatuses.query(ids);
+    const userStatuses = await $trpc.user.readStatuses.query(userIds);
     for (const { userId, ...userStatus } of userStatuses) userStatusMap.value.set(userId, userStatus);
   };
 };

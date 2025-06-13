@@ -21,6 +21,10 @@ export const deleteRoom = async (db: Context["db"], session: Session, id: string
       message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.Room, id).message,
     });
 
-  roomEventEmitter.emit("deleteRoom", deletedRoom.id);
+  roomEventEmitter.emit("deleteRoom", {
+    roomId: deletedRoom.id,
+    sessionId: session.session.id,
+    userId: session.user.id,
+  });
   return deletedRoom;
 };
