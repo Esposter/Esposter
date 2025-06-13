@@ -1,8 +1,9 @@
+import { pgTable } from "#shared/db/pgTable";
 import { users } from "#shared/db/schema/users";
 import { UserStatus } from "#shared/models/db/user/UserStatus";
 import { STATUS_MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
 import { relations, sql } from "drizzle-orm";
-import { check, pgEnum, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { boolean, check, pgEnum, text, timestamp } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import z from "zod/v4";
 
@@ -12,7 +13,7 @@ export const userStatuses = pgTable(
   "user_statuses",
   {
     expiresAt: timestamp("expiresAt"),
-    lastActiveAt: timestamp("lastActiveAt").notNull().defaultNow(),
+    isConnected: boolean("isConnected").notNull().default(true),
     message: text("message").notNull().default(""),
     // This is only used if the user manually sets a status
     status: userStatusEnum("status"),

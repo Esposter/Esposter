@@ -59,13 +59,38 @@ describe("user", () => {
     `);
   });
 
+  test("connect inserts", async () => {
+    expect.hasAssertions();
+
+    const oldUserStatus = (await caller.readStatuses([getMockSession().user.id]))[0];
+    vi.advanceTimersByTime(1);
+    await caller.connect();
+    const newUserStatus = (await caller.readStatuses([getMockSession().user.id]))[0];
+
+    expect(newUserStatus.updatedAt.getTime()).toBe(oldUserStatus.updatedAt.getTime() + 1);
+  });
+
+  test("connect updates", async () => {
+    expect.hasAssertions();
+
+    await caller.connect();
+    const oldUserStatus = (await caller.readStatuses([getMockSession().user.id]))[0];
+    vi.advanceTimersByTime(1);
+    await caller.connect();
+    const newUserStatus = (await caller.readStatuses([getMockSession().user.id]))[0];
+
+    expect(newUserStatus.updatedAt.getTime()).toBe(oldUserStatus.updatedAt.getTime() + 1);
+  });
+
   test("disconnect inserts", async () => {
     expect.hasAssertions();
 
+    const oldUserStatus = (await caller.readStatuses([getMockSession().user.id]))[0];
+    vi.advanceTimersByTime(1);
     await caller.disconnect();
-    const userStatus = (await caller.readStatuses([getMockSession().user.id]))[0];
+    const newUserStatus = (await caller.readStatuses([getMockSession().user.id]))[0];
 
-    expect(userStatus.userId).toBe(getMockSession().user.id);
+    expect(newUserStatus.updatedAt.getTime()).toBe(oldUserStatus.updatedAt.getTime() + 1);
   });
 
   test("disconnect updates", async () => {
@@ -77,7 +102,22 @@ describe("user", () => {
     await caller.disconnect();
     const newUserStatus = (await caller.readStatuses([getMockSession().user.id]))[0];
 
-    expect(newUserStatus.lastActiveAt.getTime()).toBe(oldUserStatus.lastActiveAt.getTime() + 1);
+    expect(newUserStatus.updatedAt.getTime()).toBe(oldUserStatus.updatedAt.getTime() + 1);
+  });
+
+  test("connect disconnect connect", async () => {
+    expect.hasAssertions();
+
+    await caller.connect();
+    await caller.disconnect();
+    const oldUserStatus = (await caller.readStatuses([getMockSession().user.id]))[0];
+
+    expect(oldUserStatus.status).toBe(UserStatus.Offline);
+
+    await caller.connect();
+    const newUserStatus = (await caller.readStatuses([getMockSession().user.id]))[0];
+
+    expect(newUserStatus.status).toBe(UserStatus.Online);
   });
 
   test("upsert status inserts", async () => {
@@ -139,11 +179,11 @@ describe("user", () => {
     getMockSession();
     const onUpsertStatus = await caller.onUpsertStatus([user.id]);
     await mockSessionOnce(mockContext.db, user);
-    const [data] = await Promise.all([onUpsertStatus[Symbol.asyncIterator]().next(), caller.connect()]);
+    const [data] = await Promise.all([onUpsertStatus[Symbol.asyncIterator]().next(), caller.disconnect()]);
 
     assert(!data.done);
 
-    expect(data.value.status).toBe(UserStatus.Online);
+    expect(data.value.status).toBe(UserStatus.Offline);
     expect(data.value.userId).toBe(user.id);
   });
 });
