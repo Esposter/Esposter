@@ -10,5 +10,5 @@ import { spawn } from "node:child_process";
  */
 await remove();
 await createPropertyTypes();
-const proc = spawn("bun", ["scripts/tiled/createTmxProperties.ts"], { shell: true, stdio: "inherit" });
+const proc = spawn("bun", ["--bun", "scripts/tiled/createTmxProperties.ts"], { shell: true, stdio: "inherit" });
 proc.on("exit", (code) => process.exit(code));

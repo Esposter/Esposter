@@ -26,7 +26,7 @@
     "url": "https://github.com/Esposter/Esposter/issues"
   },
   "scripts": {
-    "build": "bun export:gen && rolldown --config rolldown.config.ts",
+    "build": "bun --bun export:gen && rolldown --config rolldown.config.ts",
     "lint": "oxlint && eslint .",
     "lint:fix": "oxlint --fix && eslint --fix .",
     "typecheck": "tsc",

@@ -412,7 +412,6 @@
     "three-globe": "^2.42.11",
     "tippy.js": "^6.3.7",
     "trpc-nuxt": "^1.0.5",
-    "tsx": "^4.20.3",
     "type-fest": "^4.41.0",
     "typedoc": "^0.28.5",
     "typescript": "^5.8.3",

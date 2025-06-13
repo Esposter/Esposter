@@ -165,7 +165,6 @@
       "three-globe": "^2.42.11",
       "tippy.js": "^6.3.7",
       "trpc-nuxt": "^1.0.5",
-      "tsx": "^4.20.3",
       "type-fest": "^4.41.0",
       "typedoc": "^0.28.5",
       "typescript": "^5.8.3",
@@ -205,7 +204,7 @@
     "url": "https://github.com/Esposter/Esposter/issues"
   },
   "scripts": {
-    "build": "bun build:packages && bun build:docs && bun build:app",
+    "build": "bun --bun build:packages && bun build:docs && bun build:app",
     "build:app": "lerna run build --scope=@esposter/app",
     "build:docs": "typedoc",
     "build:packages": "lerna run build --ignore @esposter/app",
@@ -213,20 +212,20 @@
     "test": "lerna run test",
     "coverage": "lerna run coverage",
     "typecheck": "tsc && lerna run typecheck",
-    "typecheck:packages": "bun typecheck --ignore @esposter/app",
+    "typecheck:packages": "bun --bun typecheck --ignore @esposter/app",
     "lint": "oxlint && eslint . && lerna run lint",
     "lint:fix": "oxlint --fix && eslint --fix . && lerna run lint:fix",
-    "lint:fix:packages": "bun lint:fix --ignore @esposter/app",
-    "release": "bun build:packages && bun lint:fix:packages && bun typecheck:packages && lerna publish --yes",
-    "refresh:lockfile": "bun crossOS refresh:lockfile",
-    "crossOS": "node scripts/crossOS.ts",
+    "lint:fix:packages": "bun --bun lint:fix --ignore @esposter/app",
+    "release": "bun --bun build:packages && bun lint:fix:packages && bun typecheck:packages && lerna publish --yes",
+    "refresh:lockfile": "bun --bun crossOS refresh:lockfile",
+    "crossOS": "bun --bun scripts/crossOS.ts",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted"
   },
   "crossOS": {
     "refresh:lockfile": {
       "darwin": "sh ./scripts/refreshLockfile.sh",
       "linux": "./scripts/refreshLockfile.sh",
-      "win32": "bun pwsh scripts/refreshLockfile.ps1"
+      "win32": "bun --bun pwsh scripts/refreshLockfile.ps1"
     }
   },
   "dependencies": {
