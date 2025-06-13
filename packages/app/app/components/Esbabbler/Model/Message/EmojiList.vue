@@ -18,7 +18,6 @@ const { deleteEmoji, getEmojis, updateEmoji } = emojiStore;
 const emojis = computed(() =>
   getEmojis(message.rowKey).map(({ emojiTag, partitionKey, rowKey, userIds }) => ({
     emoji: emojify(emojiTag),
-    emojiTag,
     isReacted: Boolean(session.value && userIds.includes(session.value.user.id)),
     partitionKey,
     rowKey,
@@ -32,7 +31,7 @@ const selectEmoji = await useSelectEmoji(message);
 <template>
   <div v-if="session && hasEmojis" flex items-center flex-wrap gap-1>
     <div
-      v-for="{ partitionKey, rowKey, emojiTag, userIds, isReacted, emoji } of emojis"
+      v-for="{ partitionKey, rowKey, userIds, isReacted, emoji } of emojis"
       :key="rowKey"
       :class="isReacted ? 'reacted' : 'not-reacted'"
       rd-full="!"
@@ -46,20 +45,13 @@ const selectEmoji = await useSelectEmoji(message);
       origin-center
       active:scale-95
       @click="
-        isReacted
-          ? userIds.length === 1
-            ? deleteEmoji({ partitionKey, rowKey, messageRowKey: message.rowKey })
-            : updateEmoji({
-                partitionKey,
-                rowKey,
-                messageRowKey: message.rowKey,
-                userIds: userIds.filter((id) => id !== session?.user.id),
-              })
+        isReacted && userIds.length === 1
+          ? deleteEmoji({ partitionKey, rowKey, messageRowKey: message.rowKey })
           : updateEmoji({
               partitionKey,
               rowKey,
               messageRowKey: message.rowKey,
-              userIds: [...userIds, session.user.id],
+              userIds,
             })
       "
     >

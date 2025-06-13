@@ -20,14 +20,7 @@ export const useSelectEmoji = async (message: MessageEntity) => {
         messageRowKey: message.rowKey,
         partitionKey: message.partitionKey,
       });
-    else if (!foundEmoji.userIds.includes(session.value.user.id))
-      await updateEmoji({
-        messageRowKey: foundEmoji.messageRowKey,
-        partitionKey: foundEmoji.partitionKey,
-        rowKey: foundEmoji.rowKey,
-        userIds: [...foundEmoji.userIds, session.value.user.id],
-      });
-    else if (foundEmoji.userIds.length === 1)
+    else if (foundEmoji.userIds.includes(session.value.user.id) && foundEmoji.userIds.length === 1)
       await deleteEmoji({
         messageRowKey: foundEmoji.messageRowKey,
         partitionKey: foundEmoji.partitionKey,
@@ -38,7 +31,7 @@ export const useSelectEmoji = async (message: MessageEntity) => {
         messageRowKey: foundEmoji.messageRowKey,
         partitionKey: foundEmoji.partitionKey,
         rowKey: foundEmoji.rowKey,
-        userIds: foundEmoji.userIds.filter((userId) => userId !== session.value?.user.id),
+        userIds: foundEmoji.userIds,
       });
   };
 };

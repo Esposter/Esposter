@@ -109,9 +109,17 @@ export const emojiRouter = router({
       });
     },
   ),
-  // An update is adding the user to the user id list for the already existing emoji
   updateEmoji: getMemberProcedure(updateEmojiInputSchema, "partitionKey").mutation(async ({ ctx, input }) => {
-    const updatedEmoji = { ...input, userIds: [...input.userIds, ctx.session.user.id] };
+    // An update is:
+    // 1. Adding the user to the id list if the user doesn't exist
+    // 2. Removing the user from the id list the user exists
+    // for the already existing emoji
+    const updatedEmoji = {
+      ...input,
+      userIds: input.userIds.includes(ctx.session.user.id)
+        ? input.userIds.filter((id) => id !== ctx.session.user.id)
+        : [...input.userIds, ctx.session.user.id],
+    };
     const messagesMetadataClient = await useTableClient(AzureTable.MessagesMetadata);
     await updateEntity(messagesMetadataClient, updatedEmoji);
     emojiEventEmitter.emit("updateEmoji", [
