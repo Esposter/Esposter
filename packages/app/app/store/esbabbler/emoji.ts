@@ -5,6 +5,7 @@ import type { UpdateEmojiInput } from "#shared/models/db/message/metadata/Update
 
 import { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
 import { createMessageEmojiMetadataEntity } from "#shared/services/esbabbler/createMessageEmojiMetadataEntity";
+import { getUpdatedUserIds } from "#shared/services/esbabbler/emoji/getUpdatedUserIds";
 import { authClient } from "@/services/auth/authClient";
 
 export const useEmojiStore = defineStore("esbabbler/emoji", () => {
@@ -33,8 +34,7 @@ export const useEmojiStore = defineStore("esbabbler/emoji", () => {
     setEmojis(newEmoji.messageRowKey, emojis);
   };
   const storeUpdateEmoji = (input: UpdateEmojiInput) => {
-    const userId = session.value.data?.user.id;
-    if (!userId) return;
+    if (!session.value.data) return;
 
     const emojis = getEmojis(input.messageRowKey);
     const index = emojis.findIndex(
@@ -42,11 +42,7 @@ export const useEmojiStore = defineStore("esbabbler/emoji", () => {
     );
     if (index === -1) return;
 
-    Object.assign(emojis[index], input, {
-      userIds: input.userIds.includes(userId)
-        ? input.userIds.filter((id) => id !== userId)
-        : [...input.userIds, userId],
-    });
+    Object.assign(emojis[index], { ...input, userIds: getUpdatedUserIds(input.userIds, session.value.data.user.id) });
     setEmojis(input.messageRowKey, emojis);
   };
   const storeDeleteEmoji = ({ messageRowKey, partitionKey, rowKey }: DeleteEmojiInput) => {
