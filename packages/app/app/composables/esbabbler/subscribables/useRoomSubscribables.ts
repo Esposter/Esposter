@@ -2,6 +2,7 @@ import type { Unsubscribable } from "@trpc/server/observable";
 
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { useEsbabblerStore } from "@/store/esbabbler";
+import { useMemberStore } from "@/store/esbabbler/member";
 import { useRoomStore } from "@/store/esbabbler/room";
 
 export const useRoomSubscribables = () => {
@@ -10,7 +11,9 @@ export const useRoomSubscribables = () => {
   const { getUserDataMap, setUserDataMap } = esbabblerStore;
   const roomStore = useRoomStore();
   const { storeDeleteRoom, storeUpdateRoom } = roomStore;
-  const { rooms } = storeToRefs(roomStore);
+  const { currentRoomId, rooms } = storeToRefs(roomStore);
+  const memberStore = useMemberStore();
+  const { pushMemberIds } = memberStore;
 
   const updateRoomUnsubscribable = ref<Unsubscribable>();
   const deleteRoomUnsubscribable = ref<Unsubscribable>();
@@ -44,10 +47,10 @@ export const useRoomSubscribables = () => {
     joinRoomUnsubscribable.value = $trpc.room.onJoinRoom.subscribe(newRoomIds, {
       onData: ({ roomId, user }) => {
         const userDataMap = getUserDataMap(roomId);
-        if (!userDataMap) {
-          setUserDataMap(roomId, new Map([[user.id, user]]));
-          return;
-        } else userDataMap.set(user.id, user);
+        if (userDataMap) userDataMap.set(user.id, user);
+        else setUserDataMap(roomId, new Map([[user.id, user]]));
+
+        if (roomId === currentRoomId.value) pushMemberIds(user.id);
       },
     });
     leaveRoomUnsubscribable.value = $trpc.room.onLeaveRoom.subscribe(newRoomIds, {
