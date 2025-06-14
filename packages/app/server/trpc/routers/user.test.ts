@@ -172,7 +172,7 @@ describe("user", () => {
     expect(data.value.userId).toBe(user.id);
   });
 
-  test(`on upserts status ${UserStatus.Online} with disconnect`, async () => {
+  test(`on upserts status ${UserStatus.Offline} with disconnect`, async () => {
     expect.hasAssertions();
 
     const { user } = await mockSessionOnce(mockContext.db);
