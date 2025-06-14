@@ -5,7 +5,6 @@ import { basicChartConfigurationSchema } from "#shared/models/dashboard/data/cha
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { AVisualTypeResolver } from "@/models/resolvers/dashboard/visual/AVisualTypeResolver";
 import { uncapitalize } from "@/util/text/uncapitalize";
-import defu from "defu";
 
 export class FunnelResolver extends AVisualTypeResolver {
   constructor() {
@@ -13,13 +12,13 @@ export class FunnelResolver extends AVisualTypeResolver {
   }
 
   override handleConfiguration(apexOptions: ApexOptions) {
-    apexOptions.chart = defu(
+    apexOptions.chart = defuReplaceArray(
       {
         type: uncapitalize(VisualType.Bar),
       },
       apexOptions.chart,
     );
-    apexOptions.dataLabels = defu<ApexDataLabels, (ApexDataLabels | undefined)[]>(
+    apexOptions.dataLabels = defuReplaceArray<ApexDataLabels, (ApexDataLabels | undefined)[]>(
       {
         dropShadow: {
           enabled: true,
@@ -29,13 +28,13 @@ export class FunnelResolver extends AVisualTypeResolver {
       },
       apexOptions.dataLabels,
     );
-    apexOptions.legend = defu(
+    apexOptions.legend = defuReplaceArray(
       {
         show: false,
       },
       apexOptions.legend,
     );
-    apexOptions.plotOptions = defu(
+    apexOptions.plotOptions = defuReplaceArray(
       {
         bar: {
           barHeight: "80%",
@@ -46,13 +45,13 @@ export class FunnelResolver extends AVisualTypeResolver {
       },
       apexOptions.plotOptions,
     );
-    apexOptions.subtitle = defu<ApexTitleSubtitle, (ApexTitleSubtitle | undefined)[]>(
+    apexOptions.subtitle = defuReplaceArray<ApexTitleSubtitle, (ApexTitleSubtitle | undefined)[]>(
       {
         align: "center",
       },
       apexOptions.subtitle,
     );
-    apexOptions.title = defu<ApexTitleSubtitle, (ApexTitleSubtitle | undefined)[]>(
+    apexOptions.title = defuReplaceArray<ApexTitleSubtitle, (ApexTitleSubtitle | undefined)[]>(
       {
         align: "center",
       },

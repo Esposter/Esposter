@@ -2,7 +2,6 @@ import type { Entries } from "type-fest";
 import type { WebSocketServer } from "ws";
 
 declare global {
-  // eslint-disable-next-line no-var
   var websocketServer: undefined | WebSocketServer;
 
   interface ObjectConstructor {

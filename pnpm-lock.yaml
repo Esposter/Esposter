@@ -240,9 +240,6 @@ catalogs:
     dedent:
       specifier: ^1.6.0
       version: 1.6.0
-    defu:
-      specifier: ^6.1.4
-      version: 6.1.4
     dotenv:
       specifier: ^16.5.0
       version: 16.5.0
@@ -765,9 +762,6 @@ importers:
       dedent:
         specifier: 'catalog:'
         version: 1.6.0
-      defu:
-        specifier: 'catalog:'
-        version: 6.1.4
       drizzle-orm:
         specifier: 'catalog:'
         version: 0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7)

@@ -89,7 +89,6 @@ catalog:
   dayjs: ^1.11.13
   debug: ^4.4.1
   dedent: ^1.6.0
-  defu: ^6.1.4
   dotenv: ^16.5.0
   drizzle-kit: ^0.31.1
   drizzle-orm: ^0.44.2

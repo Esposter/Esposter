@@ -3,7 +3,6 @@ import type { ApexOptions } from "apexcharts";
 
 import { ChartType } from "#shared/models/dashboard/data/chart/type/ChartType";
 import { AChartTypeResolver } from "@/models/resolvers/dashboard/chart/AChartTypeResolver";
-import { defu } from "defu";
 
 export class ChartType3DResolver<T extends BasicChartConfiguration> extends AChartTypeResolver<T> {
   constructor() {
@@ -11,13 +10,13 @@ export class ChartType3DResolver<T extends BasicChartConfiguration> extends ACha
   }
 
   override handleConfiguration(apexOptions: ApexOptions) {
-    apexOptions.fill = defu(
+    apexOptions.fill = defuReplaceArray(
       {
         type: "gradient",
       },
       apexOptions.fill,
     );
-    apexOptions.theme = defu(
+    apexOptions.theme = defuReplaceArray(
       {
         palette: "palette2",
       },

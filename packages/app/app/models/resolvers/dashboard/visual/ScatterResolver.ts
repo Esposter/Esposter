@@ -2,7 +2,6 @@ import type { ApexOptions } from "apexcharts";
 
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { AVisualTypeResolver } from "@/models/resolvers/dashboard/visual/AVisualTypeResolver";
-import defu from "defu";
 
 export class ScatterResolver extends AVisualTypeResolver {
   constructor() {
@@ -10,10 +9,12 @@ export class ScatterResolver extends AVisualTypeResolver {
   }
 
   override handleConfiguration(apexOptions: ApexOptions) {
-    apexOptions.chart = defu<ApexChart, (ApexChart | undefined)[]>(
+    apexOptions.chart = defuReplaceArray<ApexChart, (ApexChart | undefined)[]>(
       {
-        enabled: true,
-        type: "xy",
+        zoom: {
+          enabled: true,
+          type: "xy",
+        },
       },
       apexOptions.chart,
     );
