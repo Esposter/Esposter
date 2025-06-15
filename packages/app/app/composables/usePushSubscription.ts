@@ -31,7 +31,7 @@ export const usePushSubscription = () => {
       messageListener.value = getSynchronizedFunction(async function ({
         data: { title, ...rest },
       }: MessageEvent<SetRequired<WebNotificationOptions, "title">>) {
-        await registration.showNotification(title, rest);
+        await registration.showNotification("A Push notification", rest);
       });
       navigator.serviceWorker.addEventListener("message", messageListener.value);
     },
