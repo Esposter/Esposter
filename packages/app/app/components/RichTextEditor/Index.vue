@@ -31,7 +31,6 @@ const {
   limit,
   placeholder = "Text (optional)",
 } = defineProps<RichTextEditorProps>();
-const emit = defineEmits<{ "upload-file": [files: File[]] }>();
 const editor = useEditor({
   content: modelValue.value,
   extensions: [
@@ -72,11 +71,8 @@ onUnmounted(() => editor.value?.destroy());
       <EditorContent :editor />
       <RichTextEditorFooterBar :editor>
         <template #prepend="editorProps">
-          <slot v-if="slots['prepend-footer']" name="prepend-footer" :="editorProps" />
-          <template v-else>
-            <RichTextEditorCustomUploadFileButton @upload-file="emit('upload-file', $event)" />
-            <RichTextEditorCustomEmojiPickerButton :editor="editorProps.editor" />
-          </template>
+          <slot name="prepend-footer" :="editorProps" />
+          <RichTextEditorCustomEmojiPickerButton :editor="editorProps.editor" />
         </template>
         <template #append="editorProps">
           <slot name="append-footer" :="editorProps" />

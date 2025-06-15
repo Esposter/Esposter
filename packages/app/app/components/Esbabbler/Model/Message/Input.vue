@@ -44,10 +44,12 @@ const uploadFiles = useUploadFiles();
       :limit="MESSAGE_MAX_LENGTH"
       :extensions="[keyboardExtension, mentionExtension]"
       :card-props="reply ? { class: 'rd-t-none' } : undefined"
-      @upload-file="uploadFiles"
     >
       <template #prepend-inner-header>
         <EsbabblerModelMessageFileInputContainer />
+      </template>
+      <template #prepend-footer>
+        <RichTextEditorCustomUploadFileButton @upload-file="uploadFiles" />
       </template>
       <template #append-footer="editorProps">
         <RichTextEditorCustomSendMessageButton :="editorProps" />
