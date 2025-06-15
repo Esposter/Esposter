@@ -250,6 +250,7 @@ export const messageRouter = router({
   }) {
     const sendCreateMessageNotification = useSendCreateMessageNotification(
       pushSubscription as unknown as PushSubscription,
+      roomName,
     );
 
     if (lastEventId) {
@@ -275,7 +276,7 @@ export const messageRouter = router({
         // so the first message is the newest one but we want to yield from oldest to newest
         const reversedMessages = messages.toReversed();
         const newestMessage = reversedMessages[reversedMessages.length - 1];
-        await sendCreateMessageNotification(roomName, newestMessage.message);
+        await sendCreateMessageNotification(newestMessage.message);
         yield tracked(newestMessage.rowKey, reversedMessages);
       }
     }
@@ -291,7 +292,7 @@ export const messageRouter = router({
         )
           dataToYield.push(newMessage);
 
-      await sendCreateMessageNotification(roomName, newestMessage.message);
+      await sendCreateMessageNotification(newestMessage.message);
       yield tracked(newestMessage.rowKey, dataToYield);
     }
   }),

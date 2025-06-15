@@ -5,16 +5,16 @@ import { truncate } from "#shared/util/text/truncate";
 import { PUSH_NOTIFICATION_MAX_LENGTH } from "@@/server/services/esposter/constants";
 import { sendNotification } from "web-push";
 
-export const useSendCreateMessageNotification = (pushSubscription?: PushSubscription) => {
+export const useSendCreateMessageNotification = (pushSubscription: PushSubscription | undefined, roomName: string) => {
   const logoImageUrl = useLogoImageUrl();
-  return async (title: string, body: string) => {
+  return async (message: string) => {
     if (!pushSubscription) return;
     await sendNotification(
       pushSubscription,
       JSON.stringify({
-        body: truncate(body, PUSH_NOTIFICATION_MAX_LENGTH),
+        body: truncate(message, PUSH_NOTIFICATION_MAX_LENGTH),
         icon: logoImageUrl,
-        title,
+        title: roomName,
       }),
     );
   };
