@@ -28,11 +28,10 @@ export const usePushSubscription = () => {
         applicationServerKey: runtimeConfig.public.vapid.publicKey,
         userVisibleOnly: true,
       });
-      messageListener.value = getSynchronizedFunction(async function ({
-        data: { title, ...rest },
-      }: MessageEvent<SetRequired<WebNotificationOptions, "title">>) {
-        await registration.showNotification("A Push notification", rest);
-      });
+      messageListener.value = getSynchronizedFunction(
+        ({ data: { title, ...rest } }: MessageEvent<SetRequired<WebNotificationOptions, "title">>) =>
+          registration.showNotification(title, rest),
+      );
       navigator.serviceWorker.addEventListener("message", messageListener.value);
     },
     { immediate: true },

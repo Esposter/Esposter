@@ -250,6 +250,7 @@ export const messageRouter = router({
   }) {
     const sendCreateMessageNotification = useSendCreateMessageNotification(
       pushSubscription as unknown as PushSubscription,
+      roomId,
       roomName,
     );
 
