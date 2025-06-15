@@ -18,13 +18,21 @@ export const useMessageSubscribables = () => {
   const updateMessageUnsubscribable = ref<Unsubscribable>();
   const deleteMessageUnsubscribable = ref<Unsubscribable>();
 
-  onMounted(() => {
+  const unsubscribe = () => {
+    createMessageUnsubscribable.value?.unsubscribe();
+    updateMessageUnsubscribable.value?.unsubscribe();
+    deleteMessageUnsubscribable.value?.unsubscribe();
+  };
+
+  const { trigger } = watchTriggerable(pushSubscription, (newPushSubscription) => {
+    unsubscribe();
+
     if (!currentRoomId.value) return;
 
     const roomId = currentRoomId.value;
     createMessageUnsubscribable.value = $trpc.message.onCreateMessage.subscribe(
       {
-        pushSubscription: pushSubscription.value as Record<string, unknown> | undefined,
+        pushSubscription: newPushSubscription as Record<string, unknown> | undefined,
         roomId,
       },
       {
@@ -51,9 +59,11 @@ export const useMessageSubscribables = () => {
     );
   });
 
+  onMounted(() => {
+    trigger();
+  });
+
   onUnmounted(() => {
-    createMessageUnsubscribable.value?.unsubscribe();
-    updateMessageUnsubscribable.value?.unsubscribe();
-    deleteMessageUnsubscribable.value?.unsubscribe();
+    unsubscribe();
   });
 };
