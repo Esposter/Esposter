@@ -1,8 +1,8 @@
 import type { WebNotificationOptions } from "@vueuse/core";
 import type { SetRequired } from "type-fest";
 // https://github.com/vite-pwa/docs/issues/132
-declare var self: ServiceWorkerGlobalScope;
-declare var clients: Clients;
+declare const self: ServiceWorkerGlobalScope;
+declare const clients: Clients;
 
 self.addEventListener("push", async ({ data, waitUntil }) => {
   if (!data) return;
