@@ -28,8 +28,7 @@ export const usePushSubscription = () => {
         userVisibleOnly: true,
       });
       messageListener.value = getSynchronizedFunction(async (event: MessageEvent<WebNotificationOptions>) => {
-        console.log("Received a message from service worker:", event.data);
-        await show(event.data);
+        await show({ title: JSON.stringify(event.data) });
       });
       navigator.serviceWorker.addEventListener("message", messageListener.value);
     },
