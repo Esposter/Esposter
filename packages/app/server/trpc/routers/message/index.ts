@@ -1,5 +1,6 @@
 import type { AzureUpdateEntity } from "#shared/models/azure/AzureUpdateEntity";
 import type { FileSasEntity } from "#shared/models/esbabbler/FileSasEntity";
+import type { PushSubscription } from "web-push";
 
 import { rooms, selectRoomSchema } from "#shared/db/schema/rooms";
 import { AzureEntityType } from "#shared/models/azure/AzureEntityType";
@@ -16,6 +17,7 @@ import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
+import { useSendCreateMessageNotification } from "@@/server/composables/esbabbler/useSendCreateMessageNotification";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { cloneFiles } from "@@/server/services/azure/container/cloneFiles";
@@ -93,7 +95,12 @@ export type DeleteFileInput = z.infer<typeof deleteFileInputSchema>;
 const deleteLinkPreviewResponseInputSchema = messageEntitySchema.pick({ partitionKey: true, rowKey: true });
 export type DeleteLinkPreviewResponseInput = z.infer<typeof deleteLinkPreviewResponseInputSchema>;
 
-const onCreateMessageInputSchema = z.object({ lastEventId: z.string().nullish(), roomId: selectRoomSchema.shape.id });
+const onCreateMessageInputSchema = z.object({
+  lastEventId: z.string().nullish(),
+  pushSubscription: z.record(z.string().min(1), z.unknown()).optional(),
+  roomId: selectRoomSchema.shape.id,
+  roomName: selectRoomSchema.shape.name,
+});
 export type OnCreateMessageInput = z.infer<typeof onCreateMessageInputSchema>;
 
 const onUpdateMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
@@ -238,9 +245,13 @@ export const messageRouter = router({
   }),
   onCreateMessage: getMemberProcedure(onCreateMessageInputSchema, "roomId").subscription(async function* ({
     ctx,
-    input: { lastEventId, roomId },
+    input: { lastEventId, pushSubscription, roomId, roomName },
     signal,
   }) {
+    const sendCreateMessageNotification = useSendCreateMessageNotification(
+      pushSubscription as unknown as PushSubscription,
+    );
+
     if (lastEventId) {
       let cursor: string | undefined = lastEventId;
       let hasMore = true;
@@ -263,14 +274,15 @@ export const messageRouter = router({
         // Remember that Azure Table Storage is insert-sorted by rowKey
         // so the first message is the newest one but we want to yield from oldest to newest
         const reversedMessages = messages.toReversed();
-        const newLastEventId = reversedMessages[reversedMessages.length - 1].rowKey;
-        yield tracked(newLastEventId, reversedMessages);
+        const newestMessage = reversedMessages[reversedMessages.length - 1];
+        await sendCreateMessageNotification(roomName, newestMessage.message);
+        yield tracked(newestMessage.rowKey, reversedMessages);
       }
     }
 
     for await (const [[data, { isSendToSelf, sessionId }]] of on(messageEventEmitter, "createMessage", { signal })) {
       const dataToYield: MessageEntity[] = [];
-      const lastEventId = data[data.length - 1].rowKey;
+      const newestMessage = data[data.length - 1];
 
       for (const newMessage of data)
         if (
@@ -279,7 +291,8 @@ export const messageRouter = router({
         )
           dataToYield.push(newMessage);
 
-      yield tracked(lastEventId, dataToYield);
+      await sendCreateMessageNotification(roomName, newestMessage.message);
+      yield tracked(newestMessage.rowKey, dataToYield);
     }
   }),
   onCreateTyping: getMemberProcedure(onCreateTypingInputSchema, "roomId").subscription(async function* ({

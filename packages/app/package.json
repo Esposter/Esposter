@@ -155,6 +155,7 @@
     "vue-waypoint": "catalog:",
     "vue3-apexcharts": "catalog:",
     "vuetify": "catalog:",
+    "web-push": "catalog:",
     "worker-timers": "catalog:",
     "ws": "catalog:",
     "zod": "catalog:"
@@ -183,6 +184,7 @@
     "@types/omit-deep-lodash": "catalog:",
     "@types/pluralize": "catalog:",
     "@types/three": "catalog:",
+    "@types/web-push": "catalog:",
     "@types/ws": "catalog:",
     "@unocss/nuxt": "catalog:",
     "@vite-pwa/nuxt": "catalog:",
