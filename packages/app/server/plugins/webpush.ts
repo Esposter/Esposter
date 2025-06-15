@@ -1,5 +1,11 @@
 import webpush from "web-push";
 
 export default defineNitroPlugin(() => {
-  webpush.setVapidDetails("mailto:no-reply@esposter.com", process.env.VAPID_PUBLIC_KEY, process.env.VAPID_PRIVATE_KEY);
+  const runtimeConfig = useRuntimeConfig();
+  const hostname = new URL(runtimeConfig.app.baseURL).hostname;
+  webpush.setVapidDetails(
+    `mailto:no-reply@${hostname}`,
+    runtimeConfig.public.vapid.publicKey,
+    runtimeConfig.vapid.privateKey,
+  );
 });
