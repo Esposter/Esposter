@@ -1,6 +1,6 @@
 {
   "$schema": "../../node_modules/oxlint/configuration_schema.json",
-  "ignorePatterns": ["public"],
+  "ignorePatterns": ["*.tsx", "public/docs"],
   "plugins": ["import", "oxc", "typescript", "unicorn"],
   "rules": {
     "import/default": "off",
