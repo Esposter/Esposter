@@ -1,3 +1,4 @@
+// https://github.com/vite-pwa/docs/issues/132
 declare var self: ServiceWorkerGlobalScope;
 
 self.addEventListener("push", async ({ data, waitUntil }) => {
