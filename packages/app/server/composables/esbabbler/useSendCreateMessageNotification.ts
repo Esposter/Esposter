@@ -20,7 +20,7 @@ export const useSendCreateMessageNotification = (
       JSON.stringify({
         body: truncate(message, PUSH_NOTIFICATION_MAX_LENGTH),
         data: {
-          url: `${runtimeConfig.public.baseUrl}/${RoutePath.Messages(roomId)}`,
+          url: `${runtimeConfig.public.baseUrl}${RoutePath.Messages(roomId)}`,
         },
         icon: logoImageUrl,
         title: roomName,
