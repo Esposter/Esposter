@@ -1,4 +1,5 @@
 import type { WebNotificationOptions } from "@vueuse/core";
+import type { SetRequired } from "type-fest";
 
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { usePushSubscriptionStore } from "@/store/pushSubscription";
@@ -8,7 +9,7 @@ export const usePushSubscription = () => {
   const pushSubscriptionStore = usePushSubscriptionStore();
   const { pushSubscription } = storeToRefs(pushSubscriptionStore);
   const messageListener = ref<(this: ServiceWorkerContainer, ev: ServiceWorkerContainerEventMap["message"]) => void>();
-  const { permissionGranted, show } = useWebNotification();
+  const { permissionGranted } = useWebNotification();
   watch(
     permissionGranted,
     async (newPermissionGranted) => {
@@ -27,8 +28,10 @@ export const usePushSubscription = () => {
         applicationServerKey: runtimeConfig.public.vapid.publicKey,
         userVisibleOnly: true,
       });
-      messageListener.value = getSynchronizedFunction(async (event: MessageEvent<WebNotificationOptions>) => {
-        await show({ title: JSON.stringify(event.data) });
+      messageListener.value = getSynchronizedFunction(async function ({
+        data: { title, ...rest },
+      }: MessageEvent<SetRequired<WebNotificationOptions, "title">>) {
+        await registration.showNotification(title, rest);
       });
       navigator.serviceWorker.addEventListener("message", messageListener.value);
     },
