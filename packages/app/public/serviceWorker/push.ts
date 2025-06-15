@@ -4,19 +4,19 @@ import type { SetRequired } from "type-fest";
 declare const self: ServiceWorkerGlobalScope;
 declare const clients: Clients;
 
-self.addEventListener("push", async (event) => {
-  if (!event.data) return;
+self.addEventListener("push", async ({ data, waitUntil }) => {
+  if (!data) return;
 
-  const data = event.data.json() as SetRequired<WebNotificationOptions, "title">;
-  const { title, ...rest } = data;
+  const jsonData = data.json() as SetRequired<WebNotificationOptions, "title">;
+  const { title, ...rest } = jsonData;
   const clients = await self.clients.matchAll();
   for (const client of clients) {
-    client.postMessage(data);
+    client.postMessage(jsonData);
   }
-  event.waitUntil(self.registration.showNotification(title, rest));
+  waitUntil(self.registration.showNotification(title, rest));
 });
 
-self.addEventListener("notificationclick", (event) => {
-  event.notification.close();
-  event.waitUntil(clients.openWindow(event.notification.data.url));
+self.addEventListener("notificationclick", ({ notification, waitUntil }) => {
+  notification.close();
+  waitUntil(clients.openWindow(notification.data.url));
 });
