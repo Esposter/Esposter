@@ -33,7 +33,6 @@ export const useRoomSubscribables = () => {
     if (newRooms.length === 0) return;
 
     const newRoomIds = newRooms.map(({ id }) => id);
-
     updateRoomUnsubscribable.value = $trpc.room.onUpdateRoom.subscribe(newRoomIds, {
       onData: (input) => {
         storeUpdateRoom(input);

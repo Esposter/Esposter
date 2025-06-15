@@ -14,8 +14,12 @@ export const useUserSubscribables = () => {
 
   const upsertStatusUnsubscribable = ref<Unsubscribable>();
 
-  watch(members, (newMembers) => {
+  const unsubscribe = () => {
     upsertStatusUnsubscribable.value?.unsubscribe();
+  };
+
+  const { trigger } = watchTriggerable(members, (newMembers) => {
+    unsubscribe();
 
     const newMemberIds = newMembers.filter(({ id }) => id !== session.value.data?.user.id).map(({ id }) => id);
     if (newMemberIds.length === 0) return;
@@ -27,7 +31,11 @@ export const useUserSubscribables = () => {
     });
   });
 
+  onMounted(() => {
+    trigger();
+  });
+
   onUnmounted(() => {
-    upsertStatusUnsubscribable.value?.unsubscribe();
+    unsubscribe();
   });
 };
