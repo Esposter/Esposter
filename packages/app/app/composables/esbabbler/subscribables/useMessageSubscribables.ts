@@ -8,7 +8,7 @@ import { usePushSubscriptionStore } from "@/store/pushSubscription";
 export const useMessageSubscribables = () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
-  const { currentRoomId, currentRoomName } = storeToRefs(roomStore);
+  const { currentRoomId } = storeToRefs(roomStore);
   const messageStore = useMessageStore();
   const { storeCreateMessage, storeDeleteMessage, storeUpdateMessage } = messageStore;
   const pushSubscriptionStore = usePushSubscriptionStore();
@@ -26,7 +26,6 @@ export const useMessageSubscribables = () => {
       {
         pushSubscription: pushSubscription.value as Record<string, unknown> | undefined,
         roomId,
-        roomName: currentRoomName.value,
       },
       {
         onData: getSynchronizedFunction(async ({ data }) => {

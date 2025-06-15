@@ -99,7 +99,6 @@ const onCreateMessageInputSchema = z.object({
   lastEventId: z.string().nullish(),
   pushSubscription: z.record(z.string().min(1), z.unknown()).optional(),
   roomId: selectRoomSchema.shape.id,
-  roomName: selectRoomSchema.shape.name,
 });
 export type OnCreateMessageInput = z.infer<typeof onCreateMessageInputSchema>;
 
@@ -125,7 +124,10 @@ export const messageRouter = router({
     const messageClient = await useTableClient(AzureTable.Messages);
     const newMessageEntity = await createMessageEntity({ ...input, userId: ctx.session.user.id });
     await createEntity(messageClient, newMessageEntity);
-    messageEventEmitter.emit("createMessage", [[newMessageEntity], { sessionId: ctx.session.session.id }]);
+    messageEventEmitter.emit("createMessage", [
+      [newMessageEntity],
+      { image: ctx.session.user.image, name: ctx.session.user.name, sessionId: ctx.session.session.id },
+    ]);
 
     const updatedRoom = (
       await ctx.db.update(rooms).set({ updatedAt: new Date() }).where(eq(rooms.id, input.roomId)).returning()
@@ -225,7 +227,12 @@ export const messageRouter = router({
           // so we'll instead rely on the subscription to auto-add the forwarded message for convenience
           messageEventEmitter.emit("createMessage", [
             messages,
-            { isSendToSelf: true, sessionId: ctx.session.session.id },
+            {
+              image: ctx.session.user.image,
+              isSendToSelf: true,
+              name: ctx.session.user.name,
+              sessionId: ctx.session.session.id,
+            },
           ]);
         }),
       );
@@ -245,13 +252,12 @@ export const messageRouter = router({
   }),
   onCreateMessage: getMemberProcedure(onCreateMessageInputSchema, "roomId").subscription(async function* ({
     ctx,
-    input: { lastEventId, pushSubscription, roomId, roomName },
+    input: { lastEventId, pushSubscription, roomId },
     signal,
   }) {
     const sendCreateMessageNotification = useSendCreateMessageNotification(
       pushSubscription as unknown as PushSubscription,
       roomId,
-      roomName,
     );
 
     if (lastEventId) {
@@ -277,12 +283,13 @@ export const messageRouter = router({
         // so the first message is the newest one but we want to yield from oldest to newest
         const reversedMessages = messages.toReversed();
         const newestMessage = reversedMessages[reversedMessages.length - 1];
-        await sendCreateMessageNotification(newestMessage.message);
         yield tracked(newestMessage.rowKey, reversedMessages);
       }
     }
 
-    for await (const [[data, { isSendToSelf, sessionId }]] of on(messageEventEmitter, "createMessage", { signal })) {
+    for await (const [[data, { image, isSendToSelf, name, sessionId }]] of on(messageEventEmitter, "createMessage", {
+      signal,
+    })) {
       const dataToYield: MessageEntity[] = [];
       const newestMessage = data[data.length - 1];
 
@@ -293,8 +300,10 @@ export const messageRouter = router({
         )
           dataToYield.push(newMessage);
 
-      await sendCreateMessageNotification(newestMessage.message);
-      yield tracked(newestMessage.rowKey, dataToYield);
+      if (dataToYield.length > 0) {
+        await sendCreateMessageNotification(newestMessage.message, name, image);
+        yield tracked(newestMessage.rowKey, dataToYield);
+      }
     }
   }),
   onCreateTyping: getMemberProcedure(onCreateTypingInputSchema, "roomId").subscription(async function* ({

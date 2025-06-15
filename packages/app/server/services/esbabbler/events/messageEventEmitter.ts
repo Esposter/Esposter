@@ -3,11 +3,15 @@ import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessage
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessageInput";
 import type { DeviceId } from "@@/server/models/auth/DeviceId";
+import type { Session } from "@@/server/models/auth/Session";
 
 import { EventEmitter } from "node:events";
 
 interface MessageEvents {
-  createMessage: [MessageEntity[], Pick<DeviceId, "sessionId"> & { isSendToSelf?: true }][];
+  createMessage: [
+    MessageEntity[],
+    Pick<DeviceId, "sessionId"> & Pick<Session["user"], "image" | "name"> & { isSendToSelf?: true },
+  ][];
   // We'll allow typing events to also be propagated to separate devices of the same account
   // Why? Because we can. (also it's better UX I suppose)
   createTyping: (CreateTypingInput & Pick<DeviceId, "sessionId">)[];
