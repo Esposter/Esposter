@@ -10,9 +10,7 @@ self.addEventListener("push", async ({ data, waitUntil }) => {
   const jsonData = data.json() as SetRequired<WebNotificationOptions, "title">;
   const { title, ...rest } = jsonData;
   const clients = await self.clients.matchAll();
-  for (const client of clients) {
-    client.postMessage(jsonData);
-  }
+  clients.forEach((client) => client.postMessage(jsonData));
   waitUntil(self.registration.showNotification(title, { ...rest }));
 });
 
