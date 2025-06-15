@@ -1,15 +1,19 @@
+import { usePushSubscriptionStore } from "@/store/pushSubscription";
+
 export const usePushSubscription = () => {
   const runtimeConfig = useRuntimeConfig();
-  const subscription = ref<PushSubscription>();
+  const pushSubscriptionStore = usePushSubscriptionStore();
+  const { pushSubscription } = storeToRefs(pushSubscriptionStore);
   const { permissionGranted } = useWebNotification();
   watch(permissionGranted, async (newPermissionGranted) => {
     if (!newPermissionGranted) {
-      await subscription.value?.unsubscribe();
+      await pushSubscription.value?.unsubscribe();
+      pushSubscription.value = undefined;
       return;
     }
 
     const registration = await navigator.serviceWorker.ready;
-    subscription.value = await registration.pushManager.subscribe({
+    pushSubscription.value = await registration.pushManager.subscribe({
       applicationServerKey: runtimeConfig.public.vapid.publicKey,
       userVisibleOnly: true,
     });
