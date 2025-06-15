@@ -1,7 +1,6 @@
 import type { WebNotificationOptions } from "@vueuse/core";
 import type { SetRequired } from "type-fest";
 
-import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { usePushSubscriptionStore } from "@/store/pushSubscription";
 
 export const usePushSubscription = () => {
@@ -28,10 +27,9 @@ export const usePushSubscription = () => {
         applicationServerKey: runtimeConfig.public.vapid.publicKey,
         userVisibleOnly: true,
       });
-      messageListener.value = getSynchronizedFunction(
-        ({ data: { title, ...rest } }: MessageEvent<SetRequired<WebNotificationOptions, "title">>) =>
-          registration.showNotification(title, rest),
-      );
+      messageListener.value = ({
+        data: { title, ...rest },
+      }: MessageEvent<SetRequired<WebNotificationOptions, "title">>) => {};
       navigator.serviceWorker.addEventListener("message", messageListener.value);
     },
     { immediate: true },
