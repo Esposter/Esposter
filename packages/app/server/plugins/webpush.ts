@@ -1,5 +1,5 @@
-import { setVapidDetails } from "web-push";
+import webpush from "web-push";
 
 export default defineNitroPlugin(() => {
-  setVapidDetails("mailto:no-reply@esposter.com", process.env.VAPID_PUBLIC_KEY, process.env.VAPID_PRIVATE_KEY);
+  webpush.setVapidDetails("mailto:no-reply@esposter.com", process.env.VAPID_PUBLIC_KEY, process.env.VAPID_PRIVATE_KEY);
 });

@@ -6,7 +6,6 @@ export const build: NuxtConfig["build"] = {
     "pluralize",
     "survey-creator-vue",
     "trpc-nuxt",
-    "web-push",
     ({ isServer }) => (isServer ? "@vue-pdf-viewer/viewer" : false),
     ({ isServer }) => (isServer ? "pdfjs-dist" : false),
   ],
