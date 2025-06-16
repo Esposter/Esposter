@@ -22,9 +22,6 @@ export const vite: NuxtConfig["vite"] = {
       },
     },
   },
-  experimental: {
-    enableNativePlugin: true,
-  },
   optimizeDeps: {
     // https://github.com/vue-pdf-viewer/starter-vpv-nuxt-ts/blob/main/nuxt.config.ts
     exclude: ["@vue-pdf-viewer/viewer"],
