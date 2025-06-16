@@ -2,7 +2,6 @@ import { IS_PRODUCTION } from "#shared/util/environment/constants";
 import webpush from "web-push";
 
 export default defineNitroPlugin(() => {
-  if (!IS_PRODUCTION) return;
   const runtimeConfig = useRuntimeConfig();
   if (!IS_PRODUCTION || new URL(runtimeConfig.public.baseUrl).protocol === "http:") return;
   webpush.setVapidDetails(
