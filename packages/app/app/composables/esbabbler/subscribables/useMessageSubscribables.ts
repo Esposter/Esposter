@@ -1,4 +1,5 @@
 import type { Unsubscribable } from "@trpc/server/observable";
+import type { PushSubscription } from "web-push";
 
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { useMessageStore } from "@/store/esbabbler/message";
@@ -32,7 +33,7 @@ export const useMessageSubscribables = () => {
     const roomId = currentRoomId.value;
     createMessageUnsubscribable.value = $trpc.message.onCreateMessage.subscribe(
       {
-        pushSubscription: newPushSubscription as Record<string, unknown> | undefined,
+        pushSubscription: newPushSubscription as unknown as PushSubscription,
         roomId,
       },
       {

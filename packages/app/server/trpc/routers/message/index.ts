@@ -1,6 +1,5 @@
 import type { AzureUpdateEntity } from "#shared/models/azure/AzureUpdateEntity";
 import type { FileSasEntity } from "#shared/models/esbabbler/FileSasEntity";
-import type { PushSubscription } from "web-push";
 
 import { rooms, selectRoomSchema } from "#shared/db/schema/rooms";
 import { AzureEntityType } from "#shared/models/azure/AzureEntityType";
@@ -19,6 +18,7 @@ import { useContainerClient } from "@@/server/composables/azure/useContainerClie
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { useSendCreateMessageNotification } from "@@/server/composables/esbabbler/useSendCreateMessageNotification";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
+import { pushSubscriptionSchema } from "@@/server/models/PushSubscription";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { cloneFiles } from "@@/server/services/azure/container/cloneFiles";
 import { deleteFiles } from "@@/server/services/azure/container/deleteFiles";
@@ -97,7 +97,7 @@ export type DeleteLinkPreviewResponseInput = z.infer<typeof deleteLinkPreviewRes
 
 const onCreateMessageInputSchema = z.object({
   lastEventId: z.string().nullish(),
-  pushSubscription: z.record(z.string().min(1), z.unknown()).optional(),
+  pushSubscription: pushSubscriptionSchema.optional(),
   roomId: selectRoomSchema.shape.id,
 });
 export type OnCreateMessageInput = z.infer<typeof onCreateMessageInputSchema>;
@@ -255,10 +255,7 @@ export const messageRouter = router({
     input: { lastEventId, pushSubscription, roomId },
     signal,
   }) {
-    const sendCreateMessageNotification = useSendCreateMessageNotification(
-      pushSubscription as unknown as PushSubscription,
-      roomId,
-    );
+    const sendCreateMessageNotification = useSendCreateMessageNotification(pushSubscription, roomId);
 
     if (lastEventId) {
       let cursor: string | undefined = lastEventId;
