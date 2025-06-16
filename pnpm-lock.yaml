@@ -502,8 +502,8 @@ catalogs:
       specifier: ^1.17.8
       version: 1.17.8
     vite-tsconfig-paths:
-      specifier: ^6.0.0-beta.3
-      version: 6.0.0-beta.3
+      specifier: ^5.1.4
+      version: 5.1.4
     vitest:
       specifier: ^3.2.3
       version: 3.2.3
@@ -621,7 +621,7 @@ importers:
         version: rolldown-vite@6.3.19(@types/node@24.0.1)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.42.0)(tsx@4.20.3)(yaml@2.8.0)
       vite-tsconfig-paths:
         specifier: 'catalog:'
-        version: 6.0.0-beta.3(rolldown-vite@6.3.19(@types/node@24.0.1)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.42.0)(tsx@4.20.3)(yaml@2.8.0))(typescript@5.8.3)
+        version: 5.1.4(rolldown-vite@6.3.19(@types/node@24.0.1)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.42.0)(tsx@4.20.3)(yaml@2.8.0))(typescript@5.8.3)
       vitest:
         specifier: 'catalog:'
         version: 3.2.3(@types/node@24.0.1)(esbuild@0.25.5)(happy-dom@18.0.1)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.42.0)(tsx@4.20.3)(yaml@2.8.0)
@@ -10945,8 +10945,8 @@ packages:
       vue: ^3.0.0
       vuetify: ^3.0.0
 
-  vite-tsconfig-paths@6.0.0-beta.3:
-    resolution: {integrity: sha512-PMyIKvbwmjgb5ysgoJkNoSoqy5XEF2CR+IsUhzhU5EeRKFR4xO1zwlqe/wFSY/J6HudOInW/DIOjn3hET7HOAw==}
+  vite-tsconfig-paths@5.1.4:
+    resolution: {integrity: sha512-cYj0LRuLV2c2sMqhqhGpaO3LretdtMn/BVX4cPLanIZuwwrkVl+lK84E/miEXkCHWXuq65rhNN4rXsBcOB3S4w==}
     peerDependencies:
       vite: '*'
     peerDependenciesMeta:
@@ -23048,7 +23048,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  vite-tsconfig-paths@6.0.0-beta.3(rolldown-vite@6.3.19(@types/node@24.0.1)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.42.0)(tsx@4.20.3)(yaml@2.8.0))(typescript@5.8.3):
+  vite-tsconfig-paths@5.1.4(rolldown-vite@6.3.19(@types/node@24.0.1)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.42.0)(tsx@4.20.3)(yaml@2.8.0))(typescript@5.8.3):
     dependencies:
       debug: 4.4.1
       globrex: 0.1.2
