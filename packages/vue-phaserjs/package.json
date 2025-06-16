@@ -35,9 +35,6 @@
   "dependencies": {
     "parse-tmx": "workspace:*"
   },
-  "devDependencies": {
-    "rolldown-vite": "catalog:"
-  },
   "peerDependencies": {
     "phaser": "catalog:",
     "phaser3-rex-plugins": "catalog:",
