@@ -29,5 +29,11 @@ export const runtimeConfig: NuxtConfig["runtimeConfig"] = {
     facebook: {
       clientId: process.env.FACEBOOK_CLIENT_ID,
     },
+    vapid: {
+      publicKey: process.env.VAPID_PUBLIC_KEY,
+    },
+  },
+  vapid: {
+    privateKey: process.env.VAPID_PRIVATE_KEY,
   },
 };

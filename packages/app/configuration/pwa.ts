@@ -39,4 +39,7 @@ export const pwa: NuxtConfig["pwa"] = {
     start_url: "/",
     theme_color: "#fff",
   },
+  workbox: {
+    importScripts: ["/serviceWorker/push.js"],
+  },
 };

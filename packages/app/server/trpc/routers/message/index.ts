@@ -16,7 +16,9 @@ import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
+import { useSendCreateMessageNotification } from "@@/server/composables/esbabbler/useSendCreateMessageNotification";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
+import { pushSubscriptionSchema } from "@@/server/models/PushSubscription";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { cloneFiles } from "@@/server/services/azure/container/cloneFiles";
 import { deleteFiles } from "@@/server/services/azure/container/deleteFiles";
@@ -93,7 +95,11 @@ export type DeleteFileInput = z.infer<typeof deleteFileInputSchema>;
 const deleteLinkPreviewResponseInputSchema = messageEntitySchema.pick({ partitionKey: true, rowKey: true });
 export type DeleteLinkPreviewResponseInput = z.infer<typeof deleteLinkPreviewResponseInputSchema>;
 
-const onCreateMessageInputSchema = z.object({ lastEventId: z.string().nullish(), roomId: selectRoomSchema.shape.id });
+const onCreateMessageInputSchema = z.object({
+  lastEventId: z.string().nullish(),
+  pushSubscription: pushSubscriptionSchema.optional(),
+  roomId: selectRoomSchema.shape.id,
+});
 export type OnCreateMessageInput = z.infer<typeof onCreateMessageInputSchema>;
 
 const onUpdateMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
@@ -118,7 +124,10 @@ export const messageRouter = router({
     const messageClient = await useTableClient(AzureTable.Messages);
     const newMessageEntity = await createMessageEntity({ ...input, userId: ctx.session.user.id });
     await createEntity(messageClient, newMessageEntity);
-    messageEventEmitter.emit("createMessage", [[newMessageEntity], { sessionId: ctx.session.session.id }]);
+    messageEventEmitter.emit("createMessage", [
+      [newMessageEntity],
+      { image: ctx.session.user.image, name: ctx.session.user.name, sessionId: ctx.session.session.id },
+    ]);
 
     const updatedRoom = (
       await ctx.db.update(rooms).set({ updatedAt: new Date() }).where(eq(rooms.id, input.roomId)).returning()
@@ -218,7 +227,12 @@ export const messageRouter = router({
           // so we'll instead rely on the subscription to auto-add the forwarded message for convenience
           messageEventEmitter.emit("createMessage", [
             messages,
-            { isSendToSelf: true, sessionId: ctx.session.session.id },
+            {
+              image: ctx.session.user.image,
+              isSendToSelf: true,
+              name: ctx.session.user.name,
+              sessionId: ctx.session.session.id,
+            },
           ]);
         }),
       );
@@ -238,9 +252,11 @@ export const messageRouter = router({
   }),
   onCreateMessage: getMemberProcedure(onCreateMessageInputSchema, "roomId").subscription(async function* ({
     ctx,
-    input: { lastEventId, roomId },
+    input: { lastEventId, pushSubscription, roomId },
     signal,
   }) {
+    const sendCreateMessageNotification = useSendCreateMessageNotification(pushSubscription, roomId);
+
     if (lastEventId) {
       let cursor: string | undefined = lastEventId;
       let hasMore = true;
@@ -263,14 +279,16 @@ export const messageRouter = router({
         // Remember that Azure Table Storage is insert-sorted by rowKey
         // so the first message is the newest one but we want to yield from oldest to newest
         const reversedMessages = messages.toReversed();
-        const newLastEventId = reversedMessages[reversedMessages.length - 1].rowKey;
-        yield tracked(newLastEventId, reversedMessages);
+        const newestMessage = reversedMessages[reversedMessages.length - 1];
+        yield tracked(newestMessage.rowKey, reversedMessages);
       }
     }
 
-    for await (const [[data, { isSendToSelf, sessionId }]] of on(messageEventEmitter, "createMessage", { signal })) {
+    for await (const [[data, { image, isSendToSelf, name, sessionId }]] of on(messageEventEmitter, "createMessage", {
+      signal,
+    })) {
       const dataToYield: MessageEntity[] = [];
-      const lastEventId = data[data.length - 1].rowKey;
+      const newestMessage = data[data.length - 1];
 
       for (const newMessage of data)
         if (
@@ -279,7 +297,10 @@ export const messageRouter = router({
         )
           dataToYield.push(newMessage);
 
-      yield tracked(lastEventId, dataToYield);
+      if (dataToYield.length > 0) {
+        await sendCreateMessageNotification(newestMessage.message, name, image);
+        yield tracked(newestMessage.rowKey, dataToYield);
+      }
     }
   }),
   onCreateTyping: getMemberProcedure(onCreateTypingInputSchema, "roomId").subscription(async function* ({

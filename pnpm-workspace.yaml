@@ -59,6 +59,7 @@ catalog:
   "@types/pluralize": ^0.0.33
   "@types/sax": ^1.2.7
   "@types/three": ^0.177.0
+  "@types/web-push": ^3.6.4
   "@types/ws": ^8.18.1
   "@types/xml2js": ^0.4.14
   "@unocss/eslint-config": ^66.2.0
@@ -190,6 +191,7 @@ catalog:
   vue3-apexcharts: ^1.8.0
   vuetify: ^3.8.9
   vuetify-nuxt-module: ^0.18.7
+  web-push: ^3.6.7
   worker-timers: ^8.0.22
   ws: ^8.18.2
   xmlbuilder2: ^3.1.1
