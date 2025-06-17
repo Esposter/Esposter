@@ -10,6 +10,9 @@ export const vite: NuxtConfig["vite"] = {
     commonjsOptions: {
       transformMixedEsModules: true,
     },
+    rollupOptions: {
+      preserveEntrySignatures: "strict",
+    },
   },
   css: {
     preprocessorOptions: {

@@ -1,5 +1,6 @@
-import { dayjs } from "#shared/services/dayjs";
 import { defineVitestConfig } from "@nuxt/test-utils/config";
+
+import { dayjs } from "./shared/services/dayjs";
 
 export default defineVitestConfig({
   test: {
