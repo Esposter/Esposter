@@ -11,9 +11,7 @@ export const vite: NuxtConfig["vite"] = {
       transformMixedEsModules: true,
     },
     rollupOptions: {
-      experimental: {
-        strictExecutionOrder: true,
-      },
+      preserveEntrySignatures: "strict",
     },
   },
   css: {
