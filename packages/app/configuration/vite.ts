@@ -10,6 +10,11 @@ export const vite: NuxtConfig["vite"] = {
     commonjsOptions: {
       transformMixedEsModules: true,
     },
+    rollupOptions: {
+      experimental: {
+        strictExecutionOrder: true,
+      },
+    },
   },
   css: {
     preprocessorOptions: {
