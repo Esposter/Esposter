@@ -14,6 +14,8 @@ export const ImageSourceWhitelist = [
   "data:",
   // Upload file createObjectURL preview
   "blob:",
+  // Github user image
+  "*.githubusercontent.com",
   // Google user image
   "*.googleusercontent.com",
   // emoji-mart-vue-fast
