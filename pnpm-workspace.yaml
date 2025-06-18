@@ -36,8 +36,8 @@ catalog:
   "@tiptap/starter-kit": ^2.14.0
   "@tiptap/suggestion": ^2.14.0
   "@tiptap/vue-3": ^2.14.0
-  "@trpc/client": ^11.4.1
-  "@trpc/server": ^11.4.1
+  "@trpc/client": ^11.4.2
+  "@trpc/server": ^11.4.2
   "@types/data-urls": ^3.0.4
   "@types/dedent": ^0.7.2
   "@types/deep-equal": ^1.0.4
@@ -150,10 +150,10 @@ catalog:
   show-open-file-picker: ^0.3.0
   sql-highlight: ^6.1.0
   superjson: ^2.2.2
-  survey-core: ^2.2.0
-  survey-creator-core: ^2.2.0
-  survey-creator-vue: ^2.2.0
-  survey-vue3-ui: ^2.2.0
+  survey-core: ^2.2.1
+  survey-creator-core: ^2.2.1
+  survey-creator-vue: ^2.2.1
+  survey-vue3-ui: ^2.2.1
   three: ^0.177.0
   three-globe: ^2.42.11
   tippy.js: ^6.3.7
@@ -172,7 +172,7 @@ catalog:
   vite-plugin-mkcert: ^1.17.8
   vite-tsconfig-paths: ^5.1.4
   vitest: ^3.2.4
-  vue: ^3.5.16
+  vue: ^3.5.17
   vue-codemirror: ^6.1.1
   vue-pdf-embed: ^2.1.2
   vue-router: ^4.5.1
