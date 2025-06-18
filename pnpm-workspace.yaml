@@ -150,10 +150,10 @@ catalog:
   show-open-file-picker: ^0.3.0
   sql-highlight: ^6.1.0
   superjson: ^2.2.2
-  survey-core: ^2.2.0
-  survey-creator-core: ^2.2.0
-  survey-creator-vue: ^2.2.0
-  survey-vue3-ui: ^2.2.0
+  survey-core: ^2.2.1
+  survey-creator-core: ^2.2.1
+  survey-creator-vue: ^2.2.1
+  survey-vue3-ui: ^2.2.1
   three: ^0.177.0
   three-globe: ^2.42.11
   tippy.js: ^6.3.7
