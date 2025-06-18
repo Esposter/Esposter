@@ -179,7 +179,7 @@ catalog:
   vue-tsc: ^2.2.10
   vue-waypoint: ^4.3.0
   vue3-apexcharts: ^1.8.0
-  vuetify: ^3.8.9
+  vuetify: ^3.8.10
   vuetify-nuxt-module: ^0.18.7
   web-push: ^3.6.7
   worker-timers: ^8.0.22
