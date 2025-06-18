@@ -1,6 +1,7 @@
 import type { VAlert } from "vuetify/components";
 
 import { dayjs } from "#shared/services/dayjs";
+import { getIsServer } from "#shared/util/environment/getIsServer";
 import { AlertIconMap } from "@/services/vuetify/AlertIconMap";
 
 export const useAlertStore = defineStore("alert", () => {
@@ -11,6 +12,8 @@ export const useAlertStore = defineStore("alert", () => {
     type: NonNullable<VAlert["$props"]["type"]>,
     props?: Pick<VAlert["$props"], "icon" | "location">,
   ) => {
+    if (!getIsServer()) return;
+
     const id = crypto.randomUUID();
     alerts.value.push({ icon: AlertIconMap[type], id, location: "bottom center", text, type, ...props });
     const timeoutId = window.setTimeout(() => {
