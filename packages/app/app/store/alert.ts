@@ -12,7 +12,7 @@ export const useAlertStore = defineStore("alert", () => {
     type: NonNullable<VAlert["$props"]["type"]>,
     props?: Pick<VAlert["$props"], "icon" | "location">,
   ) => {
-    if (!getIsServer()) return;
+    if (getIsServer()) return;
 
     const id = crypto.randomUUID();
     alerts.value.push({ icon: AlertIconMap[type], id, location: "bottom center", text, type, ...props });
