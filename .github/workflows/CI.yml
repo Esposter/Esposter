@@ -28,4 +28,4 @@ jobs:
         run: pnpm build
 
       - name: 🔍 Lint & ✅ Typecheck & 🧪 Test
-        run: pnpm "/(lint|typecheck|test)/"
+        run: pnpm "/^(lint|typecheck|test)$/"
