@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.5.0](https://github.com/Esposter/Esposter/compare/v2.4.1...v2.5.0) (2025-06-19)
+
+### Bug Fixes
+
+* Add oxlint files to turn off eslint ones ([bdc7aed](https://github.com/Esposter/Esposter/commit/bdc7aed1dfab9d0c8527588cec61a7eb073aa523))
+* remove unnecessary null ([3f00eac](https://github.com/Esposter/Esposter/commit/3f00eaccfd620661f718f194991e8fb07574b08a))
+
+### Performance Improvements
+
+* Add oxlint ([2e92e38](https://github.com/Esposter/Esposter/commit/2e92e38522ba45bc223543e714010567aee6a0b2))
+
 ## [2.4.1](https://github.com/Esposter/Esposter/compare/v2.4.0...v2.4.1) (2025-05-28)
 
 **Note:** Version bump only for package parse-tmx
