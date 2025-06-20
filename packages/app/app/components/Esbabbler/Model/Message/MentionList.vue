@@ -55,8 +55,8 @@ watch(
       :ripple="false"
       @click="selectItem(index)"
     >
-      <StyledAvatar :image :name :avatar-props="{ size: 'x-small' }" />
-      <span font-bold pl-2>
+      <EsbabblerModelMemberStatusAvatar :id :image :name :avatar-props="{ size: 'x-small' }" />
+      <span pl-2 font-semibold>
         {{ name }}
       </span>
     </v-btn>

@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import type { User } from "#shared/db/schema/users";
 
-import { UserStatus } from "#shared/models/db/user/UserStatus";
-import { StatusBadgePropsMap } from "@/services/esbabbler/StatusBadgePropsMap";
 import { useRoomStore } from "@/store/esbabbler/room";
-import { useUserStatusStore } from "@/store/esbabbler/userStatus";
 
 interface MemberListItemProps {
   member: User;
@@ -14,20 +11,12 @@ const { member } = defineProps<MemberListItemProps>();
 const roomStore = useRoomStore();
 const { currentRoom } = storeToRefs(roomStore);
 const isCreator = computed(() => currentRoom.value?.userId === member.id);
-const userStatusStore = useUserStatusStore();
-const { userStatusMap } = storeToRefs(userStatusStore);
-const badgeProps = computed(() => {
-  const userStatus = userStatusMap.value.get(member.id);
-  return StatusBadgePropsMap[userStatus?.status ?? UserStatus.Online];
-});
 </script>
 
 <template>
   <v-list-item :value="member.name">
     <template #prepend>
-      <v-badge location="bottom end" dot :="badgeProps">
-        <StyledAvatar :image="member.image" :name="member.name" />
-      </v-badge>
+      <EsbabblerModelMemberStatusAvatar :id="member.id" :image="member.image" :name="member.name" />
     </template>
     <v-list-item-title>
       <div flex items-center gap-x-1>
