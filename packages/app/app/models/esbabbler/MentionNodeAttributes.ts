@@ -1,4 +1,4 @@
 export interface MentionNodeAttributes {
-  id: string;
-  label: string;
+  id: null | string;
+  label?: null | string;
 }
