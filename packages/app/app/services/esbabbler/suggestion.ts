@@ -1,3 +1,5 @@
+import type { User } from "#shared/db/schema/users";
+import type { MentionNodeAttributes } from "@/models/esbabbler/MentionNodeAttributes";
 import type { MentionOptions } from "@tiptap/extension-mention";
 import type { Instance } from "tippy.js";
 
@@ -7,14 +9,19 @@ import { useRoomStore } from "@/store/esbabbler/room";
 import { VueRenderer } from "@tiptap/vue-3";
 import tippy from "tippy.js";
 
-export const suggestion: MentionOptions["suggestion"] = {
-  items: useDebounceFn(async ({ query }) => {
+type Suggestion = MentionOptions<User, MentionNodeAttributes>["suggestion"];
+
+export const suggestion: Suggestion = {
+  items: useDebounceFn<NonNullable<Suggestion["items"]>>(async ({ query }) => {
     const roomStore = useRoomStore();
     const { currentRoomId } = storeToRefs(roomStore);
-    if (!(currentRoomId.value && query)) return [];
+    if (!currentRoomId.value) return [];
 
     const { $trpc } = useNuxtApp();
-    const { items } = await $trpc.room.readMembers.query({ filter: { name: query }, roomId: currentRoomId.value });
+    const { items } = await $trpc.room.readMembers.query({
+      filter: query ? { name: query } : undefined,
+      roomId: currentRoomId.value,
+    });
     return items;
   }, dayjs.duration(0.3, "seconds").asMilliseconds()),
   render: () => {

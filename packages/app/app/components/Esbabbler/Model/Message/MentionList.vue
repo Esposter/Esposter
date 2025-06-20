@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { User } from "#shared/db/schema/users";
+import type { MentionNodeAttributes } from "@/models/esbabbler/MentionNodeAttributes";
+import type { SuggestionProps } from "@tiptap/suggestion";
 
-interface MessageMentionListProps {
-  command: (props: Record<string, unknown>) => void;
-  items: User[];
-}
-
-const { command, items } = defineProps<MessageMentionListProps>();
-const { infoOpacity10 } = useColors();
+const { command, items, query } = defineProps<SuggestionProps<User, MentionNodeAttributes>>();
+const title = computed(() => {
+  const title = "MEMBERS";
+  return query ? `${title} MATCHING @${query}` : title;
+});
 const selectedIndex = ref(0);
 const selectItem = (index: number) => {
   const item = items[index];
@@ -44,30 +44,21 @@ watch(
 </script>
 
 <template>
-  <div>
-    <StyledCard overflow-y-auto :card-props="{ maxHeight: '250', width: '400' }">
-      <v-btn
-        v-for="({ id, image, name }, index) of items"
-        :key="id"
-        class="button"
-        w-full
-        rd
-        justify-start
-        :ripple="false"
-        @click="selectItem(index)"
-      >
-        <StyledAvatar :image :name :avatar-props="{ size: 'x-small' }" />
-        <span font-bold pl-2>
-          {{ name }}
-        </span>
-      </v-btn>
-      <div v-if="items.length === 0" font-bold text-center p-2>No result</div>
-    </StyledCard>
-  </div>
+  <StyledCard v-if="items.length > 0" overflow-y-auto :card-props="{ maxHeight: '250', width: '400' }">
+    <v-card-title text-sm font-bold>{{ title }}</v-card-title>
+    <v-btn
+      v-for="({ id, image, name }, index) of items"
+      :key="id"
+      w-full
+      rd
+      justify-start
+      :ripple="false"
+      @click="selectItem(index)"
+    >
+      <StyledAvatar :image :name :avatar-props="{ size: 'x-small' }" />
+      <span font-bold pl-2>
+        {{ name }}
+      </span>
+    </v-btn>
+  </StyledCard>
 </template>
-
-<style scoped lang="scss">
-.button {
-  background-color: v-bind(infoOpacity10) !important;
-}
-</style>
