@@ -29,7 +29,7 @@ const menuItems: Item[] = [
         :text="shortTitle ?? title"
       >
         <template #activator="{ props }">
-          <v-btn m-0="!" rd-none="!" :color :icon size="small" density="comfortable" :="props" @click="onClick" />
+          <v-btn m-0="!" rd-none="!" :color :icon size="small" density="comfortable" :="props" @click.stop="onClick" />
         </template>
       </v-tooltip>
     </v-card-actions>
