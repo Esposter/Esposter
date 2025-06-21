@@ -129,7 +129,7 @@ catalog:
   node-html-parser: ^7.0.1
   nuxt: ^4.0.0-alpha.2
   nuxt-security: ^2.2.0
-  obscenity: ^0.4.3
+  obscenity: ^0.4.4
   omit-deep-lodash: ^1.1.7
   oxlint: ^1.2.0
   p-progress: ^1.0.0
