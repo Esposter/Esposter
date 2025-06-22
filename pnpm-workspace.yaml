@@ -27,15 +27,15 @@ catalog:
   "@nuxt/test-utils": ^3.19.1
   "@nuxtjs/seo": ^3.0.3
   "@pinia/nuxt": ^0.11.1
-  "@tiptap/core": ^2.22.2
-  "@tiptap/extension-character-count": ^2.22.2
-  "@tiptap/extension-link": ^2.22.2
-  "@tiptap/extension-mention": ^2.22.2
-  "@tiptap/extension-placeholder": ^2.22.2
-  "@tiptap/pm": ^2.22.2
-  "@tiptap/starter-kit": ^2.22.2
-  "@tiptap/suggestion": ^2.22.2
-  "@tiptap/vue-3": ^2.22.2
+  "@tiptap/core": ^2.22.3
+  "@tiptap/extension-character-count": ^2.22.3
+  "@tiptap/extension-link": ^2.22.3
+  "@tiptap/extension-mention": ^2.22.3
+  "@tiptap/extension-placeholder": ^2.22.3
+  "@tiptap/pm": ^2.22.3
+  "@tiptap/starter-kit": ^2.22.3
+  "@tiptap/suggestion": ^2.22.3
+  "@tiptap/vue-3": ^2.22.3
   "@trpc/client": ^11.4.2
   "@trpc/server": ^11.4.2
   "@types/data-urls": ^3.0.4
