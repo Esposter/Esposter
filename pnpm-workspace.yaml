@@ -140,10 +140,10 @@ catalog:
   pinia: ^3.0.3
   pluralize: ^8.0.0
   postgres: ^3.4.7
-  prettier: ^3.5.3
+  prettier: ^3.6.0
   rate-limiter-flexible: ^7.1.1
   rolldown: ^1.0.0-beta.19
-  rolldown-plugin-dts: ^0.13.11
+  rolldown-plugin-dts: ^0.13.12
   rxjs: ^7.8.2
   sass-embedded: ^1.89.2
   sax: ^1.4.1
