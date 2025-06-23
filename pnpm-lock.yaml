@@ -6892,8 +6892,8 @@ packages:
   fast-levenshtein@2.0.6:
     resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==}
 
-  fast-npm-meta@0.4.3:
-    resolution: {integrity: sha512-eUzR/uVx61fqlHBjG/eQx5mQs7SQObehMTTdq8FAkdCB4KuZSQ6DiZMIrAq4kcibB3WFLQ9c4dT26Vwkix1RKg==}
+  fast-npm-meta@0.4.4:
+    resolution: {integrity: sha512-cq8EVW3jpX1U3dO1AYanz2BJ6n9ITQgCwE1xjNwI5jO2a9erE369OZNO8Wt/Wbw8YHhCD/dimH9BxRsY+6DinA==}
 
   fast-unique-numbers@9.0.22:
     resolution: {integrity: sha512-dBR+30yHAqBGvOuxxQdnn2lTLHCO6r/9B+M4yF8mNrzr3u1yiF+YVJ6u3GTyPN/VRWqaE1FcscZDdBgVKmrmQQ==}
@@ -13798,7 +13798,7 @@ snapshots:
       destr: 2.0.5
       error-stack-parser-es: 1.0.5
       execa: 8.0.1
-      fast-npm-meta: 0.4.3
+      fast-npm-meta: 0.4.4
       get-port-please: 3.1.2
       hookable: 5.5.3
       image-meta: 0.2.1
@@ -18378,7 +18378,7 @@ snapshots:
 
   fast-levenshtein@2.0.6: {}
 
-  fast-npm-meta@0.4.3: {}
+  fast-npm-meta@0.4.4: {}
 
   fast-unique-numbers@9.0.22:
     dependencies:
