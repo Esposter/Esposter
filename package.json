@@ -48,6 +48,7 @@
     "@lerna-lite/cli": "catalog:",
     "@lerna-lite/publish": "catalog:",
     "@lerna-lite/run": "catalog:",
+    "@prettier/plugin-oxc": "catalog:",
     "@types/node": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "ctix": "catalog:",
