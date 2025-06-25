@@ -424,8 +424,8 @@ catalogs:
       specifier: ^7.1.1
       version: 7.1.1
     rolldown:
-      specifier: ^1.0.0-beta.19
-      version: 1.0.0-beta.19
+      specifier: ^1.0.0-beta.20
+      version: 1.0.0-beta.20
     rolldown-plugin-dts:
       specifier: ^0.13.12
       version: 0.13.12
@@ -609,10 +609,10 @@ importers:
         version: 1.3.0
       rolldown:
         specifier: 'catalog:'
-        version: 1.0.0-beta.19
+        version: 1.0.0-beta.20
       rolldown-plugin-dts:
         specifier: 'catalog:'
-        version: 0.13.12(rolldown@1.0.0-beta.19)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3))
+        version: 0.13.12(rolldown@1.0.0-beta.20)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3))
       type-fest:
         specifier: 'catalog:'
         version: 4.41.0
@@ -624,10 +624,10 @@ importers:
         version: 5.8.3
       vite:
         specifier: npm:rolldown-vite@latest
-        version: rolldown-vite@7.0.0(@types/node@24.0.4)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
+        version: rolldown-vite@7.0.1(@types/node@24.0.4)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
       vite-tsconfig-paths:
         specifier: 'catalog:'
-        version: 5.1.4(rolldown-vite@7.0.0(@types/node@24.0.4)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(typescript@5.8.3)
+        version: 5.1.4(rolldown-vite@7.0.1(@types/node@24.0.4)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(typescript@5.8.3)
       vitest:
         specifier: 'catalog:'
         version: 3.2.4(@types/node@24.0.4)(esbuild@0.25.5)(happy-dom@18.0.1)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
@@ -991,7 +991,7 @@ importers:
         version: 0.11.4(@azure/data-tables@13.3.1)(@azure/storage-blob@12.27.0)(db0@0.3.2(@electric-sql/pglite@0.3.3)(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7)))(encoding@0.1.13)(ioredis@5.6.1)(magicast@0.3.5)(rolldown-vite@7.0.0(@types/node@24.0.4)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))
       '@nuxt/scripts':
         specifier: 'catalog:'
-        version: 0.11.8(fec2fb6a51f6a0fbc03fb7efe312eb1f)
+        version: 0.11.8(9531c00be488f72fd9db5a8e994fb8b1)
       '@nuxt/test-utils':
         specifier: 'catalog:'
         version: 3.19.1(@types/node@24.0.4)(@vue/test-utils@2.4.6)(esbuild@0.23.1)(happy-dom@18.0.1)(jiti@2.4.2)(magicast@0.3.5)(playwright-core@1.53.1)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(vitest@3.2.4(@types/node@24.0.4)(esbuild@0.23.1)(happy-dom@18.0.1)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(yaml@2.8.0)
@@ -1045,7 +1045,7 @@ importers:
         version: 2.4.6
       '@vueuse/nuxt':
         specifier: 'catalog:'
-        version: 13.4.0(magicast@0.3.5)(nuxt@4.0.0-alpha.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.27.0)(@electric-sql/pglite@0.3.3)(@parcel/watcher@2.5.1)(@types/node@24.0.4)(db0@0.3.2(@electric-sql/pglite@0.3.3)(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7)))(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7))(encoding@0.1.13)(eslint@9.29.0(jiti@2.4.2))(ioredis@5.6.1)(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rolldown-vite@7.0.0(@types/node@24.0.4)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(rolldown@1.0.0-beta.19)(rollup@4.44.0)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3))(yaml@2.8.0))(vue@3.5.17(typescript@5.8.3))
+        version: 13.4.0(magicast@0.3.5)(nuxt@4.0.0-alpha.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.27.0)(@electric-sql/pglite@0.3.3)(@parcel/watcher@2.5.1)(@types/node@24.0.4)(db0@0.3.2(@electric-sql/pglite@0.3.3)(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7)))(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7))(encoding@0.1.13)(eslint@9.29.0(jiti@2.4.2))(ioredis@5.6.1)(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rolldown-vite@7.0.0(@types/node@24.0.4)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(rolldown@1.0.0-beta.20)(rollup@4.44.0)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3))(yaml@2.8.0))(vue@3.5.17(typescript@5.8.3))
       drizzle-kit:
         specifier: 'catalog:'
         version: 0.31.2
@@ -1060,7 +1060,7 @@ importers:
         version: 18.0.1
       nuxt:
         specifier: 'catalog:'
-        version: 4.0.0-alpha.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.27.0)(@electric-sql/pglite@0.3.3)(@parcel/watcher@2.5.1)(@types/node@24.0.4)(db0@0.3.2(@electric-sql/pglite@0.3.3)(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7)))(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7))(encoding@0.1.13)(eslint@9.29.0(jiti@2.4.2))(ioredis@5.6.1)(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rolldown-vite@7.0.0(@types/node@24.0.4)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(rolldown@1.0.0-beta.19)(rollup@4.44.0)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3))(yaml@2.8.0)
+        version: 4.0.0-alpha.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.27.0)(@electric-sql/pglite@0.3.3)(@parcel/watcher@2.5.1)(@types/node@24.0.4)(db0@0.3.2(@electric-sql/pglite@0.3.3)(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7)))(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7))(encoding@0.1.13)(eslint@9.29.0(jiti@2.4.2))(ioredis@5.6.1)(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rolldown-vite@7.0.0(@types/node@24.0.4)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(rolldown@1.0.0-beta.20)(rollup@4.44.0)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3))(yaml@2.8.0)
       nuxt-security:
         specifier: 'catalog:'
         version: 2.2.0(magicast@0.3.5)(rollup@4.44.0)
@@ -3413,6 +3413,10 @@ packages:
     resolution: {integrity: sha512-wbUN3K3zjMRHxAsNm1nKHebSnDY800b3LxQFTr9wSZpdQdhiQQAZpRIFsYjh0sAotoyqahN576sB1DmpPUhl5Q==}
     engines: {node: '>=6.9.0'}
 
+  '@oxc-project/runtime@0.75.0':
+    resolution: {integrity: sha512-gzRmVI/vorsPmbDXt7GD4Uh2lD3rCOku/1xWPB4Yx48k0EP4TZmzQudWapjN4+7Vv+rgXr0RqCHQadeaMvdBuw==}
+    engines: {node: '>=6.9.0'}
+
   '@oxc-project/types@0.72.3':
     resolution: {integrity: sha512-CfAC4wrmMkUoISpQkFAIfMVvlPfQV3xg7ZlcqPXPOIMQhdKIId44G8W0mCPgtpWdFFAyJ+SFtiM+9vbyCkoVng==}
 
@@ -3421,6 +3425,9 @@ packages:
 
   '@oxc-project/types@0.74.0':
     resolution: {integrity: sha512-KOw/RZrVlHGhCXh1RufBFF7Nuo7HdY5w1lRJukM/igIl6x9qtz8QycDvZdzb4qnHO7znrPyo2sJrFJK2eKHgfQ==}
+
+  '@oxc-project/types@0.75.0':
+    resolution: {integrity: sha512-QMW+06WOXs7+F301Y3X0VpmWhwuQVc/X/RP2zF9OIwvSMmsif3xURS2wxbakFIABYsytgBcHpUcFepVS0Qnd3A==}
 
   '@oxc-transform/binding-darwin-arm64@0.72.3':
     resolution: {integrity: sha512-TfCD0OJvZUummYr127gshEETLtPVi9y48HTxd3FtZ0931Ys2a9lr1zVRmASRLbhgudyfvC3/kLcH5Zp1VGFdxg==}
@@ -3779,6 +3786,11 @@ packages:
     cpu: [arm64]
     os: [darwin]
 
+  '@rolldown/binding-darwin-arm64@1.0.0-beta.20':
+    resolution: {integrity: sha512-8Hjf1onqHu7S9BlL2hq/mSGdlJjFrkmK3qlbH8+4Kabxuf87YI0U4nkC6BSvobtYVJZwnW+twzSSa0mDanJhhQ==}
+    cpu: [arm64]
+    os: [darwin]
+
   '@rolldown/binding-darwin-x64@1.0.0-beta.18':
     resolution: {integrity: sha512-yTBBCYbjFJSekFqv+JL6NEIvvbCZ00Z+GPT/PfgOy+jv+4nOh6Aq8pfzjtt8unSydiAihDdYwBEynXqcCTy5+g==}
     cpu: [x64]
@@ -3786,6 +3798,11 @@ packages:
 
   '@rolldown/binding-darwin-x64@1.0.0-beta.19':
     resolution: {integrity: sha512-EMzFFW+Wshv0d0FnunDOKl3QQK5KW69c9NOo7SL+fXmeDRrhhKnjoAggi6IX+Vq3gz0PqfqsbElT2uFS5g1dcg==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@rolldown/binding-darwin-x64@1.0.0-beta.20':
+    resolution: {integrity: sha512-uz0giD5au8/H3w3x8nMZ5iSUpHF4IsyYWqzd5HE7/hKfcnMXjvCCBT75cDvjqLvB9DsD24nDpcDk+KD9fxtm+w==}
     cpu: [x64]
     os: [darwin]
 
@@ -3799,6 +3816,11 @@ packages:
     cpu: [x64]
     os: [freebsd]
 
+  '@rolldown/binding-freebsd-x64@1.0.0-beta.20':
+    resolution: {integrity: sha512-345SZtPJjG9Sp/Mj24OpB4R9IPPeWWOnVwphleG8rtBEXh1Yu7OqoFKtk21bqFAVSspQtq1hvgZ0n0ajNz3fvA==}
+    cpu: [x64]
+    os: [freebsd]
+
   '@rolldown/binding-linux-arm-gnueabihf@1.0.0-beta.18':
     resolution: {integrity: sha512-jxiVMjr4jtoGirq5WW27RtcctLTXTelNEOSkWEf4m++6Mz1wOaaszSwP7X2MbUts/oaiSAqxdznovkL9Pb6fKg==}
     cpu: [arm]
@@ -3806,6 +3828,11 @@ packages:
 
   '@rolldown/binding-linux-arm-gnueabihf@1.0.0-beta.19':
     resolution: {integrity: sha512-p5PY3ezHgWN5DurWBMSxrZhnQcJTIuyl8d0aHrC53EXKMG8vMr80L7U545p0nqC14XtWjlMPFxumFxLD+zVL9g==}
+    cpu: [arm]
+    os: [linux]
+
+  '@rolldown/binding-linux-arm-gnueabihf@1.0.0-beta.20':
+    resolution: {integrity: sha512-5CeXovvcI1l+F2rjixSEZ8Y92wlTlwefVnzil7rHPGR7IBAL/7ZiuG5gumUo7kBuHAuQjAbDR8xoMz7ztrTp/Q==}
     cpu: [arm]
     os: [linux]
 
@@ -3819,6 +3846,11 @@ packages:
     cpu: [arm64]
     os: [linux]
 
+  '@rolldown/binding-linux-arm64-gnu@1.0.0-beta.20':
+    resolution: {integrity: sha512-BYKjL8HvBGvkcIkzIh1tPYLirP5k9XrYCPexDlfZzQfJX0WrE9KZlSb2eUyLUKMmpG/gvc+4OEe9+hMoN5oE/g==}
+    cpu: [arm64]
+    os: [linux]
+
   '@rolldown/binding-linux-arm64-musl@1.0.0-beta.18':
     resolution: {integrity: sha512-3dEGJz4GkZeUofdN1rmeep7tab0/ZR/bwkx2zoIpbEJ/k01IwR3U/Ee141+uiF9cOB3afFYaRGAHkbYwWY/hPg==}
     cpu: [arm64]
@@ -3826,6 +3858,11 @@ packages:
 
   '@rolldown/binding-linux-arm64-musl@1.0.0-beta.19':
     resolution: {integrity: sha512-4FowIEu7YIBKLYMG0659V2kN/drV/ghljDl9k9DGmUL/Mko0tG2itRmgLeZyjrkbQNTkXUTI3/0fEbwAg8Jazg==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@rolldown/binding-linux-arm64-musl@1.0.0-beta.20':
+    resolution: {integrity: sha512-0r9cw7ivmzLlRYWxnranVAKqWpEjvTs978p8tt7ehIHfZmjNS7Qz+FiT5P6HHvzDYxy+oHW1v8idBwxgjTj0Wg==}
     cpu: [arm64]
     os: [linux]
 
@@ -3839,6 +3876,11 @@ packages:
     cpu: [x64]
     os: [linux]
 
+  '@rolldown/binding-linux-x64-gnu@1.0.0-beta.20':
+    resolution: {integrity: sha512-dfBacWYCvqxWrDmbqAyFvMCdL87QRxe3Jr4rE6P/lEIXGHldZiEfU76lEJRecaMymyupW22l2NanlT8kSnQ54g==}
+    cpu: [x64]
+    os: [linux]
+
   '@rolldown/binding-linux-x64-musl@1.0.0-beta.18':
     resolution: {integrity: sha512-GsEWnxn1locPdsiiQ6pvAkzcAI+nXcjsEfgUqA9oy4FDSKhLJUXvh/m/6bnTJn80aDFBlrkn2+pAWBtkMcA19g==}
     cpu: [x64]
@@ -3846,6 +3888,11 @@ packages:
 
   '@rolldown/binding-linux-x64-musl@1.0.0-beta.19':
     resolution: {integrity: sha512-TztajvVHulPEn1hKCTxmpkomIUvMaeQ9Vv5TEn3bHBp/3T8W7zOwju0ExXNiLtSoD8Nk85T8O1DBPwuo0h+Uig==}
+    cpu: [x64]
+    os: [linux]
+
+  '@rolldown/binding-linux-x64-musl@1.0.0-beta.20':
+    resolution: {integrity: sha512-2ZK9rnMP85UV8QuVTW0TwoANBYpsMQMDKPBrRYcChbP2/BQEn8l5YG+5HgETn92x43APBC8s5jOd8jWDIwfcwg==}
     cpu: [x64]
     os: [linux]
 
@@ -3859,6 +3906,11 @@ packages:
     engines: {node: '>=14.21.3'}
     cpu: [wasm32]
 
+  '@rolldown/binding-wasm32-wasi@1.0.0-beta.20':
+    resolution: {integrity: sha512-+PIRYdHSalz3OIhaeWPjjNuEylFoZDmXx/gjc2wKltOC7aGARS6t4zxG7D/Aw7cztA42NbD4fH/bUMqE6c02KQ==}
+    engines: {node: '>=14.21.3'}
+    cpu: [wasm32]
+
   '@rolldown/binding-win32-arm64-msvc@1.0.0-beta.18':
     resolution: {integrity: sha512-52GjiZ7xF0VcU9OpieR9bYDLAikFHxUC8mHWisF3RjTcfjMIvRjx9NfBeyqAGBMwTnIEg1KbJr/KEsd3R9I5Yw==}
     cpu: [arm64]
@@ -3866,6 +3918,11 @@ packages:
 
   '@rolldown/binding-win32-arm64-msvc@1.0.0-beta.19':
     resolution: {integrity: sha512-ak0Dv/IKcbVHr8JhP0rLUCgEQ++GsSQQ2O+VofTXmCeXhquOkVSxcicgDJ4yLgQDIM0DC2pFXWpAoHRGvkrEdQ==}
+    cpu: [arm64]
+    os: [win32]
+
+  '@rolldown/binding-win32-arm64-msvc@1.0.0-beta.20':
+    resolution: {integrity: sha512-7yenj/WaWmtl8nF9FRgiiVe46ScSJoqFHj/SHclNmU1uzJ1i5tYbFIX0EsZfT5LzJAqBiUWSqmQvp9gnNSaQyQ==}
     cpu: [arm64]
     os: [win32]
 
@@ -3879,6 +3936,11 @@ packages:
     cpu: [ia32]
     os: [win32]
 
+  '@rolldown/binding-win32-ia32-msvc@1.0.0-beta.20':
+    resolution: {integrity: sha512-Lih62tQG0a5Ww/93t7iJj3brARRt4imqtx+gzYRshGDP5gr5rZ+opoo+krp/tGcY47c7DWFS3hFRXEhSIhw7Vw==}
+    cpu: [ia32]
+    os: [win32]
+
   '@rolldown/binding-win32-x64-msvc@1.0.0-beta.18':
     resolution: {integrity: sha512-JDrmS5t/51D5q3+ZZEvj6cjDxXrB5/x7ijaSaMImaTqnbxt7B4R+Nnis95OfTSwuy3gybBWVNEO9O0Aw4DasWg==}
     cpu: [x64]
@@ -3889,11 +3951,19 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@rolldown/binding-win32-x64-msvc@1.0.0-beta.20':
+    resolution: {integrity: sha512-Slcykx2PMcD4hiK0nQ4TVVtXsL3fQ+4pj4JNM1UBeHT7t/74QsfdIXU4hGPgqujE99XA1U/w6I40nCop2ngC5g==}
+    cpu: [x64]
+    os: [win32]
+
   '@rolldown/pluginutils@1.0.0-beta.18':
     resolution: {integrity: sha512-sHG++r1AOeQrzp0Lm3w9TBuaMHty3rU4yCZ4Vd/s428dvv3eTIhuRqHPHJCBlVpZjOJ5b4ZcBPTyRCsDKFt2+w==}
 
   '@rolldown/pluginutils@1.0.0-beta.19':
     resolution: {integrity: sha512-3FL3mnMbPu0muGOCaKAhhFEYmqv9eTfPSJRJmANrCwtgK8VuxpsZDGK+m0LYAGoyO8+0j5uRe4PeyPDK1yA/hA==}
+
+  '@rolldown/pluginutils@1.0.0-beta.20':
+    resolution: {integrity: sha512-PCLTsxf5Gvek1g7KqO+DYnhpqpSzHeSNGso+mmMnv9jm0dFBky1SZCzz0ZTGHstWwpTsmTlIRdlcB949f6PGGQ==}
 
   '@rollup/plugin-alias@5.1.1':
     resolution: {integrity: sha512-PR9zDb+rOzkRb2VD+EuKB7UC41vU5DIwZ5qqCpk0KJudcWAyi8rvYOhS7+L5aZCspw1stTViLgN5v6FF1p5cgQ==}
@@ -9740,12 +9810,56 @@ packages:
       yaml:
         optional: true
 
+  rolldown-vite@7.0.1:
+    resolution: {integrity: sha512-axvJqfF7YiI+owJzSi0Z/uNP3lyLPz3zqmu6oTmCj35CU+Xm5/htoukHrcmiv/NVsprGkiEgJv6yOF6hY3wbNg==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    hasBin: true
+    peerDependencies:
+      '@types/node': ^20.19.0 || >=22.12.0
+      esbuild: ^0.25.0
+      jiti: '>=1.21.0'
+      less: ^4.0.0
+      sass: ^1.70.0
+      sass-embedded: ^1.70.0
+      stylus: '>=0.54.8'
+      sugarss: ^5.0.0
+      terser: ^5.16.0
+      tsx: ^4.8.1
+      yaml: ^2.4.2
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+      esbuild:
+        optional: true
+      jiti:
+        optional: true
+      less:
+        optional: true
+      sass:
+        optional: true
+      sass-embedded:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      terser:
+        optional: true
+      tsx:
+        optional: true
+      yaml:
+        optional: true
+
   rolldown@1.0.0-beta.18:
     resolution: {integrity: sha512-8svdqTMfF/LJ9ZS8NVT4pXAQDFXRrZFVyh9h+qbBprQ4Bge2dj1HkMl3b5LTJdvQY2ioWIBYsMBPw5TJ86j72Q==}
     hasBin: true
 
   rolldown@1.0.0-beta.19:
     resolution: {integrity: sha512-rEBMUCfaK4LOf2rynaqcgKDGqwZ6GdWFdbgjfBOBvsY3Mr3AL0G6AKx516vDhOj1UVkAnxixfqDrXkZkH27n3w==}
+    hasBin: true
+
+  rolldown@1.0.0-beta.20:
+    resolution: {integrity: sha512-pv3VNa/ev6VtdbW7chGb4COEX2v9f/a9s7wE/ON2z/fIi7xH+VjwIrr6ftcGE9Kh6PJsUtuwe7LY+ln/D4AgIQ==}
     hasBin: true
 
   rollup-plugin-visualizer@5.14.0:
@@ -14120,7 +14234,7 @@ snapshots:
       pathe: 2.0.3
       std-env: 3.9.0
 
-  '@nuxt/scripts@0.11.8(fec2fb6a51f6a0fbc03fb7efe312eb1f)':
+  '@nuxt/scripts@0.11.8(9531c00be488f72fd9db5a8e994fb8b1)':
     dependencies:
       '@nuxt/kit': 3.17.5(magicast@0.3.5)
       '@unhead/vue': 2.0.10(vue@3.5.17(typescript@5.8.3))
@@ -14129,7 +14243,7 @@ snapshots:
       defu: 6.1.4
       h3: 1.15.3
       magic-string: 0.30.17
-      nuxt: 4.0.0-alpha.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.27.0)(@electric-sql/pglite@0.3.3)(@parcel/watcher@2.5.1)(@types/node@24.0.4)(db0@0.3.2(@electric-sql/pglite@0.3.3)(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7)))(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7))(encoding@0.1.13)(eslint@9.29.0(jiti@2.4.2))(ioredis@5.6.1)(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rolldown-vite@7.0.0(@types/node@24.0.4)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(rolldown@1.0.0-beta.19)(rollup@4.44.0)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3))(yaml@2.8.0)
+      nuxt: 4.0.0-alpha.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.27.0)(@electric-sql/pglite@0.3.3)(@parcel/watcher@2.5.1)(@types/node@24.0.4)(db0@0.3.2(@electric-sql/pglite@0.3.3)(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7)))(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7))(encoding@0.1.13)(eslint@9.29.0(jiti@2.4.2))(ioredis@5.6.1)(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rolldown-vite@7.0.0(@types/node@24.0.4)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(rolldown@1.0.0-beta.20)(rollup@4.44.0)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3))(yaml@2.8.0)
       ofetch: 1.4.1
       ohash: 2.0.11
       pathe: 2.0.3
@@ -14228,7 +14342,7 @@ snapshots:
       - typescript
       - yaml
 
-  '@nuxt/vite-builder@4.0.0-alpha.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.27.0)(@electric-sql/pglite@0.3.3)(@types/node@24.0.4)(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7))(encoding@0.1.13)(eslint@9.29.0(jiti@2.4.2))(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rolldown@1.0.0-beta.19)(rollup@4.44.0)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3))(vue@3.5.17(typescript@5.8.3))(yaml@2.8.0)':
+  '@nuxt/vite-builder@4.0.0-alpha.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.27.0)(@electric-sql/pglite@0.3.3)(@types/node@24.0.4)(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7))(encoding@0.1.13)(eslint@9.29.0(jiti@2.4.2))(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rolldown@1.0.0-beta.20)(rollup@4.44.0)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3))(vue@3.5.17(typescript@5.8.3))(yaml@2.8.0)':
     dependencies:
       '@nuxt/kit': 4.0.0-alpha.2(magicast@0.3.5)
       '@rollup/plugin-replace': 6.0.2(rollup@4.44.0)
@@ -14248,11 +14362,11 @@ snapshots:
       magic-string: 0.30.17
       mlly: 1.7.4
       mocked-exports: 0.1.1
-      nitropack: 2.11.12(@azure/data-tables@13.3.1)(@azure/storage-blob@12.27.0)(@electric-sql/pglite@0.3.3)(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7))(encoding@0.1.13)(rolldown@1.0.0-beta.19)
+      nitropack: 2.11.12(@azure/data-tables@13.3.1)(@azure/storage-blob@12.27.0)(@electric-sql/pglite@0.3.3)(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7))(encoding@0.1.13)(rolldown@1.0.0-beta.20)
       pathe: 2.0.3
       pkg-types: 2.1.0
       postcss: 8.5.6
-      rollup-plugin-visualizer: 6.0.3(rolldown@1.0.0-beta.19)(rollup@4.44.0)
+      rollup-plugin-visualizer: 6.0.3(rolldown@1.0.0-beta.20)(rollup@4.44.0)
       std-env: 3.9.0
       ufo: 1.6.1
       unenv: 2.0.0-rc.17
@@ -14610,11 +14724,15 @@ snapshots:
 
   '@oxc-project/runtime@0.73.2': {}
 
+  '@oxc-project/runtime@0.75.0': {}
+
   '@oxc-project/types@0.72.3': {}
 
   '@oxc-project/types@0.73.2': {}
 
   '@oxc-project/types@0.74.0': {}
+
+  '@oxc-project/types@0.75.0': {}
 
   '@oxc-transform/binding-darwin-arm64@0.72.3':
     optional: true
@@ -14879,10 +14997,16 @@ snapshots:
   '@rolldown/binding-darwin-arm64@1.0.0-beta.19':
     optional: true
 
+  '@rolldown/binding-darwin-arm64@1.0.0-beta.20':
+    optional: true
+
   '@rolldown/binding-darwin-x64@1.0.0-beta.18':
     optional: true
 
   '@rolldown/binding-darwin-x64@1.0.0-beta.19':
+    optional: true
+
+  '@rolldown/binding-darwin-x64@1.0.0-beta.20':
     optional: true
 
   '@rolldown/binding-freebsd-x64@1.0.0-beta.18':
@@ -14891,10 +15015,16 @@ snapshots:
   '@rolldown/binding-freebsd-x64@1.0.0-beta.19':
     optional: true
 
+  '@rolldown/binding-freebsd-x64@1.0.0-beta.20':
+    optional: true
+
   '@rolldown/binding-linux-arm-gnueabihf@1.0.0-beta.18':
     optional: true
 
   '@rolldown/binding-linux-arm-gnueabihf@1.0.0-beta.19':
+    optional: true
+
+  '@rolldown/binding-linux-arm-gnueabihf@1.0.0-beta.20':
     optional: true
 
   '@rolldown/binding-linux-arm64-gnu@1.0.0-beta.18':
@@ -14903,10 +15033,16 @@ snapshots:
   '@rolldown/binding-linux-arm64-gnu@1.0.0-beta.19':
     optional: true
 
+  '@rolldown/binding-linux-arm64-gnu@1.0.0-beta.20':
+    optional: true
+
   '@rolldown/binding-linux-arm64-musl@1.0.0-beta.18':
     optional: true
 
   '@rolldown/binding-linux-arm64-musl@1.0.0-beta.19':
+    optional: true
+
+  '@rolldown/binding-linux-arm64-musl@1.0.0-beta.20':
     optional: true
 
   '@rolldown/binding-linux-x64-gnu@1.0.0-beta.18':
@@ -14915,10 +15051,16 @@ snapshots:
   '@rolldown/binding-linux-x64-gnu@1.0.0-beta.19':
     optional: true
 
+  '@rolldown/binding-linux-x64-gnu@1.0.0-beta.20':
+    optional: true
+
   '@rolldown/binding-linux-x64-musl@1.0.0-beta.18':
     optional: true
 
   '@rolldown/binding-linux-x64-musl@1.0.0-beta.19':
+    optional: true
+
+  '@rolldown/binding-linux-x64-musl@1.0.0-beta.20':
     optional: true
 
   '@rolldown/binding-wasm32-wasi@1.0.0-beta.18':
@@ -14931,10 +15073,18 @@ snapshots:
       '@napi-rs/wasm-runtime': 0.2.11
     optional: true
 
+  '@rolldown/binding-wasm32-wasi@1.0.0-beta.20':
+    dependencies:
+      '@napi-rs/wasm-runtime': 0.2.11
+    optional: true
+
   '@rolldown/binding-win32-arm64-msvc@1.0.0-beta.18':
     optional: true
 
   '@rolldown/binding-win32-arm64-msvc@1.0.0-beta.19':
+    optional: true
+
+  '@rolldown/binding-win32-arm64-msvc@1.0.0-beta.20':
     optional: true
 
   '@rolldown/binding-win32-ia32-msvc@1.0.0-beta.18':
@@ -14943,15 +15093,23 @@ snapshots:
   '@rolldown/binding-win32-ia32-msvc@1.0.0-beta.19':
     optional: true
 
+  '@rolldown/binding-win32-ia32-msvc@1.0.0-beta.20':
+    optional: true
+
   '@rolldown/binding-win32-x64-msvc@1.0.0-beta.18':
     optional: true
 
   '@rolldown/binding-win32-x64-msvc@1.0.0-beta.19':
     optional: true
 
+  '@rolldown/binding-win32-x64-msvc@1.0.0-beta.20':
+    optional: true
+
   '@rolldown/pluginutils@1.0.0-beta.18': {}
 
   '@rolldown/pluginutils@1.0.0-beta.19': {}
+
+  '@rolldown/pluginutils@1.0.0-beta.20': {}
 
   '@rollup/plugin-alias@5.1.1(rollup@4.44.0)':
     optionalDependencies:
@@ -16493,13 +16651,13 @@ snapshots:
 
   '@vueuse/metadata@13.4.0': {}
 
-  '@vueuse/nuxt@13.4.0(magicast@0.3.5)(nuxt@4.0.0-alpha.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.27.0)(@electric-sql/pglite@0.3.3)(@parcel/watcher@2.5.1)(@types/node@24.0.4)(db0@0.3.2(@electric-sql/pglite@0.3.3)(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7)))(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7))(encoding@0.1.13)(eslint@9.29.0(jiti@2.4.2))(ioredis@5.6.1)(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rolldown-vite@7.0.0(@types/node@24.0.4)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(rolldown@1.0.0-beta.19)(rollup@4.44.0)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3))(yaml@2.8.0))(vue@3.5.17(typescript@5.8.3))':
+  '@vueuse/nuxt@13.4.0(magicast@0.3.5)(nuxt@4.0.0-alpha.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.27.0)(@electric-sql/pglite@0.3.3)(@parcel/watcher@2.5.1)(@types/node@24.0.4)(db0@0.3.2(@electric-sql/pglite@0.3.3)(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7)))(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7))(encoding@0.1.13)(eslint@9.29.0(jiti@2.4.2))(ioredis@5.6.1)(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rolldown-vite@7.0.0(@types/node@24.0.4)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(rolldown@1.0.0-beta.20)(rollup@4.44.0)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3))(yaml@2.8.0))(vue@3.5.17(typescript@5.8.3))':
     dependencies:
       '@nuxt/kit': 3.17.5(magicast@0.3.5)
       '@vueuse/core': 13.4.0(vue@3.5.17(typescript@5.8.3))
       '@vueuse/metadata': 13.4.0
       local-pkg: 1.1.1
-      nuxt: 4.0.0-alpha.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.27.0)(@electric-sql/pglite@0.3.3)(@parcel/watcher@2.5.1)(@types/node@24.0.4)(db0@0.3.2(@electric-sql/pglite@0.3.3)(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7)))(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7))(encoding@0.1.13)(eslint@9.29.0(jiti@2.4.2))(ioredis@5.6.1)(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rolldown-vite@7.0.0(@types/node@24.0.4)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(rolldown@1.0.0-beta.19)(rollup@4.44.0)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3))(yaml@2.8.0)
+      nuxt: 4.0.0-alpha.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.27.0)(@electric-sql/pglite@0.3.3)(@parcel/watcher@2.5.1)(@types/node@24.0.4)(db0@0.3.2(@electric-sql/pglite@0.3.3)(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7)))(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7))(encoding@0.1.13)(eslint@9.29.0(jiti@2.4.2))(ioredis@5.6.1)(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rolldown-vite@7.0.0(@types/node@24.0.4)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(rolldown@1.0.0-beta.20)(rollup@4.44.0)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3))(yaml@2.8.0)
       vue: 3.5.17(typescript@5.8.3)
     transitivePeerDependencies:
       - magicast
@@ -20115,7 +20273,7 @@ snapshots:
     dependencies:
       type-fest: 2.19.0
 
-  nitropack@2.11.12(@azure/data-tables@13.3.1)(@azure/storage-blob@12.27.0)(@electric-sql/pglite@0.3.3)(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7))(encoding@0.1.13)(rolldown@1.0.0-beta.19):
+  nitropack@2.11.12(@azure/data-tables@13.3.1)(@azure/storage-blob@12.27.0)(@electric-sql/pglite@0.3.3)(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7))(encoding@0.1.13)(rolldown@1.0.0-beta.20):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.4.0
       '@netlify/functions': 3.1.10(encoding@0.1.13)(rollup@4.44.0)
@@ -20169,7 +20327,7 @@ snapshots:
       pretty-bytes: 6.1.1
       radix3: 1.1.2
       rollup: 4.44.0
-      rollup-plugin-visualizer: 5.14.0(rolldown@1.0.0-beta.19)(rollup@4.44.0)
+      rollup-plugin-visualizer: 5.14.0(rolldown@1.0.0-beta.20)(rollup@4.44.0)
       scule: 1.3.0
       semver: 7.7.2
       serve-placeholder: 2.0.2
@@ -20524,7 +20682,7 @@ snapshots:
       - magicast
       - vue
 
-  nuxt@4.0.0-alpha.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.27.0)(@electric-sql/pglite@0.3.3)(@parcel/watcher@2.5.1)(@types/node@24.0.4)(db0@0.3.2(@electric-sql/pglite@0.3.3)(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7)))(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7))(encoding@0.1.13)(eslint@9.29.0(jiti@2.4.2))(ioredis@5.6.1)(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rolldown-vite@7.0.0(@types/node@24.0.4)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(rolldown@1.0.0-beta.19)(rollup@4.44.0)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3))(yaml@2.8.0):
+  nuxt@4.0.0-alpha.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.27.0)(@electric-sql/pglite@0.3.3)(@parcel/watcher@2.5.1)(@types/node@24.0.4)(db0@0.3.2(@electric-sql/pglite@0.3.3)(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7)))(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7))(encoding@0.1.13)(eslint@9.29.0(jiti@2.4.2))(ioredis@5.6.1)(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rolldown-vite@7.0.0(@types/node@24.0.4)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(rolldown@1.0.0-beta.20)(rollup@4.44.0)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3))(yaml@2.8.0):
     dependencies:
       '@nuxt/cli': 3.25.1(magicast@0.3.5)
       '@nuxt/devalue': 2.0.2
@@ -20532,7 +20690,7 @@ snapshots:
       '@nuxt/kit': 4.0.0-alpha.2(magicast@0.3.5)
       '@nuxt/schema': 4.0.0-alpha.2
       '@nuxt/telemetry': 2.6.6(magicast@0.3.5)
-      '@nuxt/vite-builder': 4.0.0-alpha.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.27.0)(@electric-sql/pglite@0.3.3)(@types/node@24.0.4)(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7))(encoding@0.1.13)(eslint@9.29.0(jiti@2.4.2))(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rolldown@1.0.0-beta.19)(rollup@4.44.0)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3))(vue@3.5.17(typescript@5.8.3))(yaml@2.8.0)
+      '@nuxt/vite-builder': 4.0.0-alpha.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.27.0)(@electric-sql/pglite@0.3.3)(@types/node@24.0.4)(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7))(encoding@0.1.13)(eslint@9.29.0(jiti@2.4.2))(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rolldown@1.0.0-beta.20)(rollup@4.44.0)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3))(vue@3.5.17(typescript@5.8.3))(yaml@2.8.0)
       '@unhead/vue': 2.0.10(vue@3.5.17(typescript@5.8.3))
       '@vue/shared': 3.5.17
       c12: 3.0.4(magicast@0.3.5)
@@ -20559,7 +20717,7 @@ snapshots:
       mlly: 1.7.4
       mocked-exports: 0.1.1
       nanotar: 0.2.0
-      nitropack: 2.11.12(@azure/data-tables@13.3.1)(@azure/storage-blob@12.27.0)(@electric-sql/pglite@0.3.3)(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7))(encoding@0.1.13)(rolldown@1.0.0-beta.19)
+      nitropack: 2.11.12(@azure/data-tables@13.3.1)(@azure/storage-blob@12.27.0)(@electric-sql/pglite@0.3.3)(drizzle-orm@0.44.2(@electric-sql/pglite@0.3.3)(kysely@0.28.2)(postgres@3.4.7))(encoding@0.1.13)(rolldown@1.0.0-beta.20)
       nypm: 0.6.0
       ofetch: 1.4.1
       ohash: 2.0.11
@@ -21674,7 +21832,7 @@ snapshots:
 
   robust-predicates@3.0.2: {}
 
-  rolldown-plugin-dts@0.13.12(rolldown@1.0.0-beta.19)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3)):
+  rolldown-plugin-dts@0.13.12(rolldown@1.0.0-beta.20)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3)):
     dependencies:
       '@babel/generator': 7.27.5
       '@babel/parser': 7.27.5
@@ -21684,7 +21842,7 @@ snapshots:
       debug: 4.4.1
       dts-resolver: 2.1.1
       get-tsconfig: 4.10.1
-      rolldown: 1.0.0-beta.19
+      rolldown: 1.0.0-beta.20
     optionalDependencies:
       typescript: 5.8.3
       vue-tsc: 2.2.10(typescript@5.8.3)
@@ -21719,6 +21877,25 @@ snapshots:
       picomatch: 4.0.2
       postcss: 8.5.6
       rolldown: 1.0.0-beta.18
+      tinyglobby: 0.2.14
+    optionalDependencies:
+      '@types/node': 24.0.4
+      esbuild: 0.25.5
+      fsevents: 2.3.3
+      jiti: 2.4.2
+      sass-embedded: 1.89.2
+      terser: 5.43.1
+      tsx: 4.20.3
+      yaml: 2.8.0
+
+  rolldown-vite@7.0.1(@types/node@24.0.4)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0):
+    dependencies:
+      '@oxc-project/runtime': 0.73.2
+      fdir: 6.4.6(picomatch@4.0.2)
+      lightningcss: 1.30.1
+      picomatch: 4.0.2
+      postcss: 8.5.6
+      rolldown: 1.0.0-beta.19
       tinyglobby: 0.2.14
     optionalDependencies:
       '@types/node': 24.0.4
@@ -21770,24 +21947,44 @@ snapshots:
       '@rolldown/binding-win32-ia32-msvc': 1.0.0-beta.19
       '@rolldown/binding-win32-x64-msvc': 1.0.0-beta.19
 
-  rollup-plugin-visualizer@5.14.0(rolldown@1.0.0-beta.19)(rollup@4.44.0):
+  rolldown@1.0.0-beta.20:
+    dependencies:
+      '@oxc-project/runtime': 0.75.0
+      '@oxc-project/types': 0.75.0
+      '@rolldown/pluginutils': 1.0.0-beta.20
+      ansis: 4.1.0
+    optionalDependencies:
+      '@rolldown/binding-darwin-arm64': 1.0.0-beta.20
+      '@rolldown/binding-darwin-x64': 1.0.0-beta.20
+      '@rolldown/binding-freebsd-x64': 1.0.0-beta.20
+      '@rolldown/binding-linux-arm-gnueabihf': 1.0.0-beta.20
+      '@rolldown/binding-linux-arm64-gnu': 1.0.0-beta.20
+      '@rolldown/binding-linux-arm64-musl': 1.0.0-beta.20
+      '@rolldown/binding-linux-x64-gnu': 1.0.0-beta.20
+      '@rolldown/binding-linux-x64-musl': 1.0.0-beta.20
+      '@rolldown/binding-wasm32-wasi': 1.0.0-beta.20
+      '@rolldown/binding-win32-arm64-msvc': 1.0.0-beta.20
+      '@rolldown/binding-win32-ia32-msvc': 1.0.0-beta.20
+      '@rolldown/binding-win32-x64-msvc': 1.0.0-beta.20
+
+  rollup-plugin-visualizer@5.14.0(rolldown@1.0.0-beta.20)(rollup@4.44.0):
     dependencies:
       open: 8.4.2
       picomatch: 4.0.2
       source-map: 0.7.4
       yargs: 17.7.2
     optionalDependencies:
-      rolldown: 1.0.0-beta.19
+      rolldown: 1.0.0-beta.20
       rollup: 4.44.0
 
-  rollup-plugin-visualizer@6.0.3(rolldown@1.0.0-beta.19)(rollup@4.44.0):
+  rollup-plugin-visualizer@6.0.3(rolldown@1.0.0-beta.20)(rollup@4.44.0):
     dependencies:
       open: 8.4.2
       picomatch: 4.0.2
       source-map: 0.7.4
       yargs: 17.7.2
     optionalDependencies:
-      rolldown: 1.0.0-beta.19
+      rolldown: 1.0.0-beta.20
       rollup: 4.44.0
 
   rollup@2.79.2:
@@ -23239,13 +23436,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  vite-tsconfig-paths@5.1.4(rolldown-vite@7.0.0(@types/node@24.0.4)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(typescript@5.8.3):
+  vite-tsconfig-paths@5.1.4(rolldown-vite@7.0.1(@types/node@24.0.4)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(typescript@5.8.3):
     dependencies:
       debug: 4.4.1
       globrex: 0.1.2
       tsconfck: 3.1.6(typescript@5.8.3)
     optionalDependencies:
-      vite: rolldown-vite@7.0.0(@types/node@24.0.4)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
+      vite: rolldown-vite@7.0.1(@types/node@24.0.4)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
     transitivePeerDependencies:
       - supports-color
       - typescript
