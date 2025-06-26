@@ -16,7 +16,7 @@ catalog:
   "@fullcalendar/interaction": ^6.1.17
   "@fullcalendar/timegrid": ^6.1.17
   "@fullcalendar/vue3": ^6.1.17
-  "@koumoul/vjsf": ^3.15.4
+  "@koumoul/vjsf": ^3.15.6
   "@lerna-lite/cli": ^4.4.1
   "@lerna-lite/publish": ^4.4.1
   "@lerna-lite/run": ^4.4.1
