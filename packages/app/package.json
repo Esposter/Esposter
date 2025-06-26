@@ -127,7 +127,7 @@
     "p-progress": "catalog:",
     "parse-tmx": "workspace:*",
     "pathe": "catalog:",
-    "pdfjs-dist": "catalog:",
+    "pdfjs-dist": "^5.3.31",
     "phaser": "catalog:",
     "phaser3-rex-plugins": "catalog:",
     "pinia": "catalog:",

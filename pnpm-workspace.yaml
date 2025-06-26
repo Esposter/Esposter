@@ -54,8 +54,8 @@ catalog:
   "@types/web-push": ^3.6.4
   "@types/ws": ^8.18.1
   "@types/xml2js": ^0.4.14
-  "@unocss/eslint-config": ^66.2.3
-  "@unocss/nuxt": ^66.2.3
+  "@unocss/eslint-config": ^66.3.1
+  "@unocss/nuxt": ^66.3.1
   "@vite-pwa/nuxt": ^1.0.4
   "@vitejs/plugin-vue": ^6.0.0
   "@vitest/coverage-v8": ^3.2.4
@@ -92,7 +92,7 @@ catalog:
   eslint-plugin-oxlint: ^1.3.0
   eslint-plugin-perfectionist: ^4.15.0
   eslint-plugin-pinia: ^0.4.1
-  eslint-plugin-prettier: ^5.5.0
+  eslint-plugin-prettier: ^5.5.1
   eventemitter3: ^5.0.1
   events: ^3.3.0
   fast-deep-equal: ^3.1.3
@@ -128,7 +128,7 @@ catalog:
   mjml-browser: ^4.15.3
   node-emoji: ^2.2.0
   node-html-parser: ^7.0.1
-  nuxt: ^4.0.0-alpha.2
+  nuxt: 4.0.0-alpha.2
   nuxt-security: ^2.2.0
   obscenity: ^0.4.4
   omit-deep-lodash: ^1.1.7
@@ -143,7 +143,7 @@ catalog:
   postgres: ^3.4.7
   prettier: ^3.6.1
   rate-limiter-flexible: ^7.1.1
-  rolldown: ^1.0.0-beta.19
+  rolldown: 1.0.0-beta.20
   rolldown-plugin-dts: ^0.13.12
   rxjs: ^7.8.2
   sass-embedded: ^1.89.2
@@ -151,10 +151,10 @@ catalog:
   show-open-file-picker: ^0.3.0
   sql-highlight: ^6.1.0
   superjson: ^2.2.2
-  survey-core: ^2.2.1
-  survey-creator-core: ^2.2.1
-  survey-creator-vue: ^2.2.1
-  survey-vue3-ui: ^2.2.1
+  survey-core: ^2.2.2
+  survey-creator-core: ^2.2.2
+  survey-creator-vue: ^2.2.2
+  survey-vue3-ui: ^2.2.2
   three: ^0.177.0
   three-globe: ^2.42.11
   tippy.js: ^6.3.7
@@ -164,7 +164,7 @@ catalog:
   typedoc: ^0.28.5
   typescript: ^5.8.3
   typescript-eslint: ^8.35.0
-  unocss: ^66.2.3
+  unocss: ^66.3.1
   unplugin-auto-import: ^19.3.0
   v-viewer: ^3.0.21
   viewerjs: ^1.11.7
