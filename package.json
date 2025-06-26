@@ -61,7 +61,7 @@
     "type-fest": "catalog:",
     "typedoc": "catalog:",
     "typescript": "catalog:",
-    "vite": "npm:rolldown-vite@^7.0.1",
+    "vite": "catalog:",
     "vite-tsconfig-paths": "catalog:",
     "vitest": "catalog:",
     "vue-tsc": "catalog:"
