@@ -143,7 +143,7 @@ catalog:
   postgres: ^3.4.7
   prettier: ^3.6.2
   rate-limiter-flexible: ^7.1.1
-  rolldown: 1.0.0-beta.20
+  rolldown: 1.0.0-beta.21
   rolldown-plugin-dts: ^0.13.12
   rxjs: ^7.8.2
   sass-embedded: ^1.89.2
