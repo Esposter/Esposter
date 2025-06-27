@@ -141,7 +141,7 @@ catalog:
   pinia: ^3.0.3
   pluralize: ^8.0.0
   postgres: ^3.4.7
-  prettier: ^3.6.1
+  prettier: ^3.6.2
   rate-limiter-flexible: ^7.1.1
   rolldown: 1.0.0-beta.20
   rolldown-plugin-dts: ^0.13.12
@@ -161,7 +161,7 @@ catalog:
   trpc-nuxt: ^1.0.5
   tsx: ^4.20.3
   type-fest: ^4.41.0
-  typedoc: ^0.28.5
+  typedoc: ^0.28.6
   typescript: ^5.8.3
   typescript-eslint: ^8.35.0
   unocss: ^66.3.2
