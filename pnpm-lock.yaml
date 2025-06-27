@@ -52,14 +52,14 @@ catalogs:
       specifier: ^3.15.6
       version: 3.15.6
     '@lerna-lite/cli':
-      specifier: ^4.4.1
-      version: 4.4.1
+      specifier: ^4.5.0
+      version: 4.5.0
     '@lerna-lite/publish':
-      specifier: ^4.4.1
-      version: 4.4.1
+      specifier: ^4.5.0
+      version: 4.5.0
     '@lerna-lite/run':
-      specifier: ^4.4.1
-      version: 4.4.1
+      specifier: ^4.5.0
+      version: 4.5.0
     '@mdi/font':
       specifier: ^7.4.47
       version: 7.4.47
@@ -576,13 +576,13 @@ importers:
         version: link:packages/configuration
       '@lerna-lite/cli':
         specifier: 'catalog:'
-        version: 4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/run@4.4.1)(@lerna-lite/version@4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/run@4.4.1)(@types/node@24.0.4)(conventional-commits-filter@5.0.0)(typescript@5.8.3))(@types/node@24.0.4)(typescript@5.8.3)
+        version: 4.5.0(@lerna-lite/publish@4.5.0)(@lerna-lite/run@4.5.0)(@lerna-lite/version@4.5.0(@lerna-lite/publish@4.5.0)(@lerna-lite/run@4.5.0)(@types/node@24.0.4)(conventional-commits-filter@5.0.0))(@types/node@24.0.4)
       '@lerna-lite/publish':
         specifier: 'catalog:'
-        version: 4.4.1(@lerna-lite/run@4.4.1)(@types/node@24.0.4)(conventional-commits-filter@5.0.0)(typescript@5.8.3)
+        version: 4.5.0(@lerna-lite/run@4.5.0)(@types/node@24.0.4)(conventional-commits-filter@5.0.0)
       '@lerna-lite/run':
         specifier: 'catalog:'
-        version: 4.4.1(@lerna-lite/publish@4.4.1)(@types/node@24.0.4)(typescript@5.8.3)
+        version: 4.5.0(@lerna-lite/publish@4.5.0)(@types/node@24.0.4)
       '@prettier/plugin-oxc':
         specifier: 'catalog:'
         version: 0.0.4
@@ -624,10 +624,10 @@ importers:
         version: 5.8.3
       vite:
         specifier: npm:rolldown-vite@latest
-        version: rolldown-vite@7.0.2(@types/node@24.0.4)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
+        version: rolldown-vite@7.0.3(@types/node@24.0.4)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
       vite-tsconfig-paths:
         specifier: 'catalog:'
-        version: 5.1.4(rolldown-vite@7.0.2(@types/node@24.0.4)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(typescript@5.8.3)
+        version: 5.1.4(rolldown-vite@7.0.3(@types/node@24.0.4)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(typescript@5.8.3)
       vitest:
         specifier: 'catalog:'
         version: 3.2.4(@types/node@24.0.4)(esbuild@0.25.5)(happy-dom@18.0.1)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
@@ -2617,8 +2617,8 @@ packages:
   '@kwsites/promise-deferred@1.1.1':
     resolution: {integrity: sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==}
 
-  '@lerna-lite/cli@4.4.1':
-    resolution: {integrity: sha512-b1TJ9LgKAN1Pq2w8s+nyIkt4IHqHfYjRWVSkHrCm4ael6Y2qzDmILIR9Dp3yhsu3Yrzjjxim2uJNzXMwerdggA==}
+  '@lerna-lite/cli@4.5.0':
+    resolution: {integrity: sha512-hUFajSZZTcbuhcHE1YE5Sp7aelz1kWNAUfNXBCOm0QUIZbJGtiCLUZZ6GL/D6MMVJWAuIq/9Gi0KmbApNnaWcg==}
     engines: {node: ^20.17.0 || >=22.9.0}
     hasBin: true
     peerDependencies:
@@ -2642,32 +2642,32 @@ packages:
       '@lerna-lite/watch':
         optional: true
 
-  '@lerna-lite/core@4.4.1':
-    resolution: {integrity: sha512-jC8ardf33jtvuyb/b2myNxR66rvAveU91WxTSwdoTAY1OuW9AGFDSwCCGDLsC6I1fN2QZKRnfiH2XqTTRLAdkQ==}
+  '@lerna-lite/core@4.5.0':
+    resolution: {integrity: sha512-hcbBBiTZ5heLplcf/sJ0TCSA2g0AyiFCgcnV8v5LbJXlZaWrcpNunTw6ZitJPVi69AxjR9o5YsrEDt7DsuEOgw==}
     engines: {node: ^20.17.0 || >=22.9.0}
 
-  '@lerna-lite/init@4.4.1':
-    resolution: {integrity: sha512-G+IdQwtUeoUvbDWcbZC/+0OuVKpwdCttJSoqe9hEM0HcQAjx9qynbraTX3jhx/xqWDzcytYqwoBMOjWSbkhc5w==}
+  '@lerna-lite/init@4.5.0':
+    resolution: {integrity: sha512-d9qcI5HEXRrF7uud8dhKSGtHlejC+CC45yqKXVZ2/2yqtLdEd2jQ9CHyhjmPd8EFiDwWl2x91R0Xvi+/+pKLvQ==}
     engines: {node: ^20.17.0 || >=22.9.0}
 
   '@lerna-lite/npmlog@4.1.2':
     resolution: {integrity: sha512-XAouatIhNq+Lh0g3VnX/w/ksc+69mUc2fNDONmayMjFij78iIx07EvIwTwlYTnpdRuI3MfAGboCIAT6TByTgdg==}
     engines: {node: ^20.17.0 || >=22.9.0}
 
-  '@lerna-lite/profiler@4.4.1':
-    resolution: {integrity: sha512-Nq61C0IfPxuOWityujzcEYCl1i5TRg7sS3C4WUgM4Upx55hCnLfHLAC6j4gMDkuzjxXrI6RUlabUI1bHqgAeDA==}
+  '@lerna-lite/profiler@4.5.0':
+    resolution: {integrity: sha512-m45fokOFqxd5JPyOVt+6ScaHqAHhPYuk6iNDcMExt2M6ZcaKxyILs/TVdjVlZ9GmwsAN/vOPY3KY6uv1nacgkA==}
     engines: {node: ^20.17.0 || >=22.9.0}
 
-  '@lerna-lite/publish@4.4.1':
-    resolution: {integrity: sha512-XYTk9nSciWQ+EMbHjSyNw8hWoax+poas94iXq9Ug0uvr/1RtMn78t/VfgFacT5Kl1Pc+O4XF+E++HEdwDnwn0Q==}
+  '@lerna-lite/publish@4.5.0':
+    resolution: {integrity: sha512-t8rzk1pWtLtwmCDdW4G7d+iAi/LdDQ+bNIpaRfldrf/2sIAT+cf1epHcMljYxGp7V7/OPdcpP9/6sE4Bx/zFEw==}
     engines: {node: ^20.17.0 || >=22.9.0}
 
-  '@lerna-lite/run@4.4.1':
-    resolution: {integrity: sha512-kLlHS/ZwOb6734ptX8IiEFuw2GesaJjkvgNp0D+Neh4PE10px5HD4+hmkpFR4KaWUJvYkAtfSJXVZKaIDw8S2g==}
+  '@lerna-lite/run@4.5.0':
+    resolution: {integrity: sha512-vcHxWxYBApT52EwaH9PNamXWri0TSZTi6PIDDM2Lw/SJWDnSc377ldz4Jx7VlvWl6sctk2wZ9fpi8EE4jjekaQ==}
     engines: {node: ^20.17.0 || >=22.9.0}
 
-  '@lerna-lite/version@4.4.1':
-    resolution: {integrity: sha512-LLHHXaMvRlwWp/qOdX6zg7xEQw/ImZ+mKrGmSlWNycVH3aFrsRortOsfjor2QcOfTs3T2TMxD0r76SzU/1KkwQ==}
+  '@lerna-lite/version@4.5.0':
+    resolution: {integrity: sha512-jNW3n+OrmpM3NBPPpPF3PM/PGblY9FdUN7PHvk7ydxLbjpEbONxK9G5dEP442uHBikSsFIwzTN8lM+fMf08DRg==}
     engines: {node: ^20.17.0 || >=22.9.0}
 
   '@levischuck/tiny-cbor@0.2.11':
@@ -6014,15 +6014,6 @@ packages:
   core-util-is@1.0.3:
     resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
 
-  cosmiconfig@9.0.0:
-    resolution: {integrity: sha512-itvL5h8RETACmOTFc4UfIyB2RfEHi71Ax6E/PivVxq9NseKbOWpeyHEOIbmAw1rs8Ak0VursQNww7lf7YtUwzg==}
-    engines: {node: '>=14'}
-    peerDependencies:
-      typescript: '>=4.9.5'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-
   crc-32@1.2.2:
     resolution: {integrity: sha512-ROmzCKrTnOwybPcJApAA6WBWij23HVfGVNKqqrZpuyZOHqK2CwHSvpGuyt/UNNvaIjEd8X5IFGp4Mh+Ie1IHJQ==}
     engines: {node: '>=0.8'}
@@ -6671,9 +6662,6 @@ packages:
 
   err-code@2.0.3:
     resolution: {integrity: sha512-2bmlRpNKBxT/CRmPOlyISQpNj+qSeYvcym/uT0Jx2bMOlKLtSy1ZmLuVxSEKKyor/N5yhvp/ZiG1oE3DEYMSFA==}
-
-  error-ex@1.3.2:
-    resolution: {integrity: sha512-7dFHNmqeFSEt2ZBsCriorKnn3Z2pj+fd9kmI6QoWw4//DL+icEBfc0U7qJCisqrTsKTjw4fNFy2pW9OqStD84g==}
 
   error-stack-parser-es@1.0.5:
     resolution: {integrity: sha512-5qucVt2XcuGMcEGgWI7i+yZpmpByQ8J1lHhcL7PwqCwu9FPP3VUXzT4ltHe5i2z9dePwEHcDVOAfSnHsOlCXRA==}
@@ -7656,9 +7644,6 @@ packages:
     resolution: {integrity: sha512-DDfANUiiG2wC1qawP66qlTugJeL5HyzMpfr8lLK+jMQirGzNod0B12cFB/9q838Ru27sBwfw78/rdoU7RERz6A==}
     engines: {node: '>= 0.4'}
 
-  is-arrayish@0.2.1:
-    resolution: {integrity: sha512-zz06S8t0ozoDXMG+ube26zeCTNXcKIPJZJi8hBrF4idCLms4CG9QtK7qBl1boi5ODzFpjswb5JPmHCbMpjaYzg==}
-
   is-arrayish@0.3.2:
     resolution: {integrity: sha512-eVRqCvVlZbuw3GrM63ovNSNAeA1K16kaR/LRY/92w0zxQ5/1YzwblUX652i4Xs9RwAGjW9d9y6X88t8OaAJfWQ==}
 
@@ -8190,9 +8175,6 @@ packages:
 
   linebreak@1.1.0:
     resolution: {integrity: sha512-MHp03UImeVhB7XZtjd0E4n6+3xr5Dq/9xI/5FptGk5FrbDR3zagPa2DS6U8ks/3HjbKWG9Q1M2ufOzxV2qLYSQ==}
-
-  lines-and-columns@1.2.4:
-    resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==}
 
   link-preview-js@3.1.0:
     resolution: {integrity: sha512-hSvdHCy7tZJ8ohdgN5WcTBKaubpX7saYBzrSmNDDHnC7P6q+F4we+dwXuEr9LuplnkiGxkD4SaO4rrschfCZ2A==}
@@ -9009,10 +8991,6 @@ packages:
   parse-imports-exports@0.2.4:
     resolution: {integrity: sha512-4s6vd6dx1AotCx/RCI2m7t7GCh5bDRUtGNvRfHSP2wbBQdMi67pPe7mtzmgwcaQ8VKK/6IB7Glfyu3qdZJPybQ==}
 
-  parse-json@5.2.0:
-    resolution: {integrity: sha512-ayCKvm/phCGxOkYRSCM82iDwct8/EonSEgCSxWxD7ve6jHggsFl4fZVQBPRNgQoKiuV/odhFrGzQXZwbifC8Rg==}
-    engines: {node: '>=8'}
-
   parse-json@8.3.0:
     resolution: {integrity: sha512-ybiGyvspI+fAoRQbIPRddCcSTV9/LsJbf0e/S85VLowVGzRmokfneg2kwVW/KU5rOXrPSbF1qAKPMgNTqqROQQ==}
     engines: {node: '>=18'}
@@ -9711,6 +9689,46 @@ packages:
 
   rolldown-vite@7.0.2:
     resolution: {integrity: sha512-gLxHHHaN0JVu4+9yFqxRj573zLtZkUP93AFygFX07952nrfdw8rH6MYLdP0UYeVgZGQDV7WZ7T/teODoYagbFA==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    hasBin: true
+    peerDependencies:
+      '@types/node': ^20.19.0 || >=22.12.0
+      esbuild: ^0.25.0
+      jiti: '>=1.21.0'
+      less: ^4.0.0
+      sass: ^1.70.0
+      sass-embedded: ^1.70.0
+      stylus: '>=0.54.8'
+      sugarss: ^5.0.0
+      terser: ^5.16.0
+      tsx: ^4.8.1
+      yaml: ^2.4.2
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+      esbuild:
+        optional: true
+      jiti:
+        optional: true
+      less:
+        optional: true
+      sass:
+        optional: true
+      sass-embedded:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      terser:
+        optional: true
+      tsx:
+        optional: true
+      yaml:
+        optional: true
+
+  rolldown-vite@7.0.3:
+    resolution: {integrity: sha512-Bg5i1Du+reIljLk5sB/+iOXkhW541NcbS1Ntqd+0EpzdXnl+uxiZDEOUGmVFT8Z94FTpEld2BvoXN80+o2LKAA==}
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
     peerDependencies:
@@ -13237,10 +13255,10 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
-  '@lerna-lite/cli@4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/run@4.4.1)(@lerna-lite/version@4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/run@4.4.1)(@types/node@24.0.4)(conventional-commits-filter@5.0.0)(typescript@5.8.3))(@types/node@24.0.4)(typescript@5.8.3)':
+  '@lerna-lite/cli@4.5.0(@lerna-lite/publish@4.5.0)(@lerna-lite/run@4.5.0)(@lerna-lite/version@4.5.0(@lerna-lite/publish@4.5.0)(@lerna-lite/run@4.5.0)(@types/node@24.0.4)(conventional-commits-filter@5.0.0))(@types/node@24.0.4)':
     dependencies:
-      '@lerna-lite/core': 4.4.1(@types/node@24.0.4)(typescript@5.8.3)
-      '@lerna-lite/init': 4.4.1(@types/node@24.0.4)(typescript@5.8.3)
+      '@lerna-lite/core': 4.5.0(@types/node@24.0.4)
+      '@lerna-lite/init': 4.5.0(@types/node@24.0.4)
       '@lerna-lite/npmlog': 4.1.2
       dedent: 1.6.0
       dotenv: 16.6.0
@@ -13248,16 +13266,15 @@ snapshots:
       load-json-file: 7.0.1
       yargs: 18.0.0
     optionalDependencies:
-      '@lerna-lite/publish': 4.4.1(@lerna-lite/run@4.4.1)(@types/node@24.0.4)(conventional-commits-filter@5.0.0)(typescript@5.8.3)
-      '@lerna-lite/run': 4.4.1(@lerna-lite/publish@4.4.1)(@types/node@24.0.4)(typescript@5.8.3)
-      '@lerna-lite/version': 4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/run@4.4.1)(@types/node@24.0.4)(conventional-commits-filter@5.0.0)(typescript@5.8.3)
+      '@lerna-lite/publish': 4.5.0(@lerna-lite/run@4.5.0)(@types/node@24.0.4)(conventional-commits-filter@5.0.0)
+      '@lerna-lite/run': 4.5.0(@lerna-lite/publish@4.5.0)(@types/node@24.0.4)
+      '@lerna-lite/version': 4.5.0(@lerna-lite/publish@4.5.0)(@lerna-lite/run@4.5.0)(@types/node@24.0.4)(conventional-commits-filter@5.0.0)
     transitivePeerDependencies:
       - '@types/node'
       - babel-plugin-macros
       - supports-color
-      - typescript
 
-  '@lerna-lite/core@4.4.1(@types/node@24.0.4)(typescript@5.8.3)':
+  '@lerna-lite/core@4.5.0(@types/node@24.0.4)':
     dependencies:
       '@inquirer/expand': 4.0.15(@types/node@24.0.4)
       '@inquirer/input': 4.1.12(@types/node@24.0.4)
@@ -13267,14 +13284,13 @@ snapshots:
       ci-info: 4.2.0
       clone-deep: 4.0.1
       config-chain: 1.1.13
-      cosmiconfig: 9.0.0(typescript@5.8.3)
       dedent: 1.6.0
       execa: 9.6.0
       fs-extra: 11.3.0
       glob-parent: 6.0.2
       json5: 2.2.3
+      lilconfig: 3.1.3
       load-json-file: 7.0.1
-      minimatch: 10.0.3
       multimatch: 7.0.0
       npm-package-arg: 12.0.2
       p-map: 7.0.3
@@ -13293,11 +13309,10 @@ snapshots:
       - '@types/node'
       - babel-plugin-macros
       - supports-color
-      - typescript
 
-  '@lerna-lite/init@4.4.1(@types/node@24.0.4)(typescript@5.8.3)':
+  '@lerna-lite/init@4.5.0(@types/node@24.0.4)':
     dependencies:
-      '@lerna-lite/core': 4.4.1(@types/node@24.0.4)(typescript@5.8.3)
+      '@lerna-lite/core': 4.5.0(@types/node@24.0.4)
       fs-extra: 11.3.0
       p-map: 7.0.3
       write-json-file: 6.0.0
@@ -13305,7 +13320,6 @@ snapshots:
       - '@types/node'
       - babel-plugin-macros
       - supports-color
-      - typescript
 
   '@lerna-lite/npmlog@4.1.2':
     dependencies:
@@ -13318,9 +13332,9 @@ snapshots:
       string-width: 7.2.0
       wide-align: 1.1.5
 
-  '@lerna-lite/profiler@4.4.1(@types/node@24.0.4)(typescript@5.8.3)':
+  '@lerna-lite/profiler@4.5.0(@types/node@24.0.4)':
     dependencies:
-      '@lerna-lite/core': 4.4.1(@types/node@24.0.4)(typescript@5.8.3)
+      '@lerna-lite/core': 4.5.0(@types/node@24.0.4)
       '@lerna-lite/npmlog': 4.1.2
       fs-extra: 11.3.0
       upath: 2.0.1
@@ -13328,14 +13342,13 @@ snapshots:
       - '@types/node'
       - babel-plugin-macros
       - supports-color
-      - typescript
 
-  '@lerna-lite/publish@4.4.1(@lerna-lite/run@4.4.1)(@types/node@24.0.4)(conventional-commits-filter@5.0.0)(typescript@5.8.3)':
+  '@lerna-lite/publish@4.5.0(@lerna-lite/run@4.5.0)(@types/node@24.0.4)(conventional-commits-filter@5.0.0)':
     dependencies:
-      '@lerna-lite/cli': 4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/run@4.4.1)(@lerna-lite/version@4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/run@4.4.1)(@types/node@24.0.4)(conventional-commits-filter@5.0.0)(typescript@5.8.3))(@types/node@24.0.4)(typescript@5.8.3)
-      '@lerna-lite/core': 4.4.1(@types/node@24.0.4)(typescript@5.8.3)
+      '@lerna-lite/cli': 4.5.0(@lerna-lite/publish@4.5.0)(@lerna-lite/run@4.5.0)(@lerna-lite/version@4.5.0(@lerna-lite/publish@4.5.0)(@lerna-lite/run@4.5.0)(@types/node@24.0.4)(conventional-commits-filter@5.0.0))(@types/node@24.0.4)
+      '@lerna-lite/core': 4.5.0(@types/node@24.0.4)
       '@lerna-lite/npmlog': 4.1.2
-      '@lerna-lite/version': 4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/run@4.4.1)(@types/node@24.0.4)(conventional-commits-filter@5.0.0)(typescript@5.8.3)
+      '@lerna-lite/version': 4.5.0(@lerna-lite/publish@4.5.0)(@lerna-lite/run@4.5.0)(@types/node@24.0.4)(conventional-commits-filter@5.0.0)
       '@npmcli/arborist': 9.1.2
       '@npmcli/package-json': 6.2.0
       byte-size: 9.0.1
@@ -13366,14 +13379,13 @@ snapshots:
       - babel-plugin-macros
       - conventional-commits-filter
       - supports-color
-      - typescript
 
-  '@lerna-lite/run@4.4.1(@lerna-lite/publish@4.4.1)(@types/node@24.0.4)(typescript@5.8.3)':
+  '@lerna-lite/run@4.5.0(@lerna-lite/publish@4.5.0)(@types/node@24.0.4)':
     dependencies:
-      '@lerna-lite/cli': 4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/run@4.4.1)(@lerna-lite/version@4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/run@4.4.1)(@types/node@24.0.4)(conventional-commits-filter@5.0.0)(typescript@5.8.3))(@types/node@24.0.4)(typescript@5.8.3)
-      '@lerna-lite/core': 4.4.1(@types/node@24.0.4)(typescript@5.8.3)
+      '@lerna-lite/cli': 4.5.0(@lerna-lite/publish@4.5.0)(@lerna-lite/run@4.5.0)(@lerna-lite/version@4.5.0(@lerna-lite/publish@4.5.0)(@lerna-lite/run@4.5.0)(@types/node@24.0.4)(conventional-commits-filter@5.0.0))(@types/node@24.0.4)
+      '@lerna-lite/core': 4.5.0(@types/node@24.0.4)
       '@lerna-lite/npmlog': 4.1.2
-      '@lerna-lite/profiler': 4.4.1(@types/node@24.0.4)(typescript@5.8.3)
+      '@lerna-lite/profiler': 4.5.0(@types/node@24.0.4)
       fs-extra: 11.3.0
       p-map: 7.0.3
       tinyrainbow: 2.0.0
@@ -13386,13 +13398,12 @@ snapshots:
       - '@types/node'
       - babel-plugin-macros
       - supports-color
-      - typescript
 
-  '@lerna-lite/version@4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/run@4.4.1)(@types/node@24.0.4)(conventional-commits-filter@5.0.0)(typescript@5.8.3)':
+  '@lerna-lite/version@4.5.0(@lerna-lite/publish@4.5.0)(@lerna-lite/run@4.5.0)(@types/node@24.0.4)(conventional-commits-filter@5.0.0)':
     dependencies:
       '@conventional-changelog/git-client': 2.5.1(conventional-commits-filter@5.0.0)(conventional-commits-parser@6.2.0)
-      '@lerna-lite/cli': 4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/run@4.4.1)(@lerna-lite/version@4.4.1(@lerna-lite/publish@4.4.1)(@lerna-lite/run@4.4.1)(@types/node@24.0.4)(conventional-commits-filter@5.0.0)(typescript@5.8.3))(@types/node@24.0.4)(typescript@5.8.3)
-      '@lerna-lite/core': 4.4.1(@types/node@24.0.4)(typescript@5.8.3)
+      '@lerna-lite/cli': 4.5.0(@lerna-lite/publish@4.5.0)(@lerna-lite/run@4.5.0)(@lerna-lite/version@4.5.0(@lerna-lite/publish@4.5.0)(@lerna-lite/run@4.5.0)(@types/node@24.0.4)(conventional-commits-filter@5.0.0))(@types/node@24.0.4)
+      '@lerna-lite/core': 4.5.0(@types/node@24.0.4)
       '@lerna-lite/npmlog': 4.1.2
       '@octokit/plugin-enterprise-rest': 6.0.1
       '@octokit/rest': 22.0.0
@@ -13407,7 +13418,6 @@ snapshots:
       graceful-fs: 4.2.11
       is-stream: 4.0.1
       load-json-file: 7.0.1
-      minimatch: 10.0.3
       new-github-release-url: 2.0.0
       npm-package-arg: 12.0.2
       p-limit: 6.2.0
@@ -13430,7 +13440,6 @@ snapshots:
       - babel-plugin-macros
       - conventional-commits-filter
       - supports-color
-      - typescript
 
   '@levischuck/tiny-cbor@0.2.11': {}
 
@@ -17484,15 +17493,6 @@ snapshots:
 
   core-util-is@1.0.3: {}
 
-  cosmiconfig@9.0.0(typescript@5.8.3):
-    dependencies:
-      env-paths: 2.2.1
-      import-fresh: 3.3.1
-      js-yaml: 4.1.0
-      parse-json: 5.2.0
-    optionalDependencies:
-      typescript: 5.8.3
-
   crc-32@1.2.2: {}
 
   crc32-stream@6.0.0:
@@ -18058,10 +18058,6 @@ snapshots:
   env-paths@3.0.0: {}
 
   err-code@2.0.3: {}
-
-  error-ex@1.3.2:
-    dependencies:
-      is-arrayish: 0.2.1
 
   error-stack-parser-es@1.0.5: {}
 
@@ -19274,8 +19270,6 @@ snapshots:
       call-bound: 1.0.4
       get-intrinsic: 1.3.0
 
-  is-arrayish@0.2.1: {}
-
   is-arrayish@0.3.2: {}
 
   is-async-function@2.1.1:
@@ -19735,8 +19729,6 @@ snapshots:
     dependencies:
       base64-js: 0.0.8
       unicode-trie: 2.0.0
-
-  lines-and-columns@1.2.4: {}
 
   link-preview-js@3.1.0:
     dependencies:
@@ -20977,13 +20969,6 @@ snapshots:
     dependencies:
       parse-statements: 1.0.11
 
-  parse-json@5.2.0:
-    dependencies:
-      '@babel/code-frame': 7.27.1
-      error-ex: 1.3.2
-      json-parse-even-better-errors: 2.3.1
-      lines-and-columns: 1.2.4
-
   parse-json@8.3.0:
     dependencies:
       '@babel/code-frame': 7.27.1
@@ -21739,6 +21724,25 @@ snapshots:
       picomatch: 4.0.2
       postcss: 8.5.6
       rolldown: 1.0.0-beta.20
+      tinyglobby: 0.2.14
+    optionalDependencies:
+      '@types/node': 24.0.4
+      esbuild: 0.25.5
+      fsevents: 2.3.3
+      jiti: 2.4.2
+      sass-embedded: 1.89.2
+      terser: 5.43.1
+      tsx: 4.20.3
+      yaml: 2.8.0
+
+  rolldown-vite@7.0.3(@types/node@24.0.4)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0):
+    dependencies:
+      '@oxc-project/runtime': 0.75.0
+      fdir: 6.4.6(picomatch@4.0.2)
+      lightningcss: 1.30.1
+      picomatch: 4.0.2
+      postcss: 8.5.6
+      rolldown: 1.0.0-beta.21
       tinyglobby: 0.2.14
     optionalDependencies:
       '@types/node': 24.0.4
@@ -23259,13 +23263,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  vite-tsconfig-paths@5.1.4(rolldown-vite@7.0.2(@types/node@24.0.4)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(typescript@5.8.3):
+  vite-tsconfig-paths@5.1.4(rolldown-vite@7.0.3(@types/node@24.0.4)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(typescript@5.8.3):
     dependencies:
       debug: 4.4.1
       globrex: 0.1.2
       tsconfck: 3.1.6(typescript@5.8.3)
     optionalDependencies:
-      vite: rolldown-vite@7.0.2(@types/node@24.0.4)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
+      vite: rolldown-vite@7.0.3(@types/node@24.0.4)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
     transitivePeerDependencies:
       - supports-color
       - typescript
