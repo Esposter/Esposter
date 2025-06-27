@@ -83,7 +83,7 @@ catalog:
   debug: ^4.4.1
   dedent: ^1.6.0
   dotenv: ^16.6.0
-  drizzle-kit: ^0.31.3
+  drizzle-kit: ^0.31.4
   drizzle-orm: ^0.44.2
   drizzle-zod: ^0.8.2
   emoji-mart-vue-fast: ^15.0.4
