@@ -37,8 +37,8 @@ catalog:
   "@tiptap/starter-kit": ^2.23.0
   "@tiptap/suggestion": ^2.23.0
   "@tiptap/vue-3": ^2.23.0
-  "@trpc/client": ^11.4.2
-  "@trpc/server": ^11.4.2
+  "@trpc/client": ^11.4.3
+  "@trpc/server": ^11.4.3
   "@types/data-urls": ^3.0.4
   "@types/dedent": ^0.7.2
   "@types/deep-equal": ^1.0.4
