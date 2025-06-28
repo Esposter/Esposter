@@ -6,6 +6,11 @@ const typedocConfiguration = {
   entryPoints: ["packages/*"],
   entryPointStrategy: "packages",
   exclude: ["packages/app", "packages/configuration"],
+  externalSymbolLinkMappings: {
+    phaser: {
+      "Phaser.GameObjects.Components.Depth.depth": "#",
+    },
+  },
   name: "Esposter",
   out: "packages/app/public/docs",
   packageOptions: {
