@@ -55,6 +55,7 @@
     "dotenv": "catalog:",
     "eslint": "catalog:",
     "eslint-plugin-oxlint": "catalog:",
+    "happy-dom": "catalog:",
     "oxlint": "catalog:",
     "rolldown": "catalog:",
     "rolldown-plugin-dts": "catalog:",
