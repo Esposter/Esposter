@@ -3,8 +3,7 @@ import type { ValidationRule } from "vuetify";
 
 import { MAX_REQUEST_SIZE, MEGABYTE } from "#shared/services/esposter/constants";
 import { profanityMatcher } from "#shared/services/obscenity/profanityMatcher";
-import deepEqual from "fast-deep-equal";
-import en from "vuetify/lib/locale/en.js";
+import deepEqual from "fast-deep-equal"
 
 type FileFieldValue = File | undefined;
 type TextFieldValue = null | string;
@@ -24,5 +23,5 @@ export const formRules: {
     // compared to using multipart/form-data, so we'll apply the same frontend validation for now for simplicity
     !value || value.size < MAX_REQUEST_SIZE || `This field's file size should be less than ${MAX_REQUEST_SIZE / MEGABYTE} MB`,
   requireAtMostNCharacters: (n) => (value: TextFieldValue) => (value && value.length <= n) || `You must enter a maximum of ${n} characters`,
-  required: (value: TextFieldValue) => (value && value.length > 0) || en.rules.required,
+  required: (value: TextFieldValue) => (value && value.length > 0) || "This field is required",
 };
