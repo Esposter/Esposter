@@ -427,8 +427,8 @@ catalogs:
       specifier: 1.0.0-beta.21
       version: 1.0.0-beta.21
     rolldown-plugin-dts:
-      specifier: ^0.13.12
-      version: 0.13.12
+      specifier: ^0.13.13
+      version: 0.13.13
     rxjs:
       specifier: ^7.8.2
       version: 7.8.2
@@ -618,7 +618,7 @@ importers:
         version: 1.0.0-beta.21
       rolldown-plugin-dts:
         specifier: 'catalog:'
-        version: 0.13.12(rolldown@1.0.0-beta.21)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3))
+        version: 0.13.13(rolldown@1.0.0-beta.21)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3))
       type-fest:
         specifier: 'catalog:'
         version: 4.41.0
@@ -9621,8 +9621,8 @@ packages:
   robust-predicates@3.0.2:
     resolution: {integrity: sha512-IXgzBWvWQwE6PrDI05OvmXUIruQTcoMDzRsOd5CDvHCVLcLHMTSYvOK5Cm46kWqlV3yAbuSpBZdJ5oP5OUoStg==}
 
-  rolldown-plugin-dts@0.13.12:
-    resolution: {integrity: sha512-4QdQQfMOWNDLhmvoG3USAUpCm75dgwWk3IrK6SV9Fw2U5uwcSE7oQTqEcmsUGEBsNxZ58+gtM1oX38MMf0g5PA==}
+  rolldown-plugin-dts@0.13.13:
+    resolution: {integrity: sha512-Nchx9nQoa4IpfQ/BJzodKMvtJ3H3dT322siAJSp3uvQJ+Pi1qgEjOp7hSQwGSQRhaC5gC+9hparbWEH5oiAL9Q==}
     engines: {node: '>=20.18.0'}
     peerDependencies:
       '@typescript/native-preview': '>=7.0.0-dev.20250601.1'
@@ -21552,7 +21552,7 @@ snapshots:
 
   robust-predicates@3.0.2: {}
 
-  rolldown-plugin-dts@0.13.12(rolldown@1.0.0-beta.21)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3)):
+  rolldown-plugin-dts@0.13.13(rolldown@1.0.0-beta.21)(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3)):
     dependencies:
       '@babel/generator': 7.27.5
       '@babel/parser': 7.27.7
