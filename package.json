@@ -64,7 +64,11 @@
     "vite": "catalog:",
     "vite-tsconfig-paths": "catalog:",
     "vitest": "catalog:",
-    "vue-tsc": "catalog:"
+    "vue-tsc": "catalog:",
+    "zeptomatch": "catalog:"
+  },
+  "devDependenciesComments": {
+    "zeptomatch": "@TODO: lerna-lite"
   },
   "engines": {
     "node": "^24.3.0"
