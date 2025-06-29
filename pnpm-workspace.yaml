@@ -17,9 +17,9 @@ catalog:
   "@fullcalendar/timegrid": ^6.1.17
   "@fullcalendar/vue3": ^6.1.17
   "@koumoul/vjsf": ^3.15.6
-  "@lerna-lite/cli": ^4.5.0
-  "@lerna-lite/publish": ^4.5.0
-  "@lerna-lite/run": ^4.5.0
+  "@lerna-lite/cli": ^4.5.1
+  "@lerna-lite/publish": ^4.5.1
+  "@lerna-lite/run": ^4.5.1
   "@mdi/font": ^7.4.47
   "@nuxt/eslint": ^1.4.1
   "@nuxt/fonts": ^0.11.4
@@ -144,7 +144,7 @@ catalog:
   prettier: ^3.6.2
   rate-limiter-flexible: ^7.1.1
   rolldown: 1.0.0-beta.21
-  rolldown-plugin-dts: ^0.13.12
+  rolldown-plugin-dts: ^0.13.13
   rxjs: ^7.8.2
   sass-embedded: ^1.89.2
   sax: ^1.4.1
@@ -156,7 +156,7 @@ catalog:
   survey-creator-vue: ^2.2.2
   survey-vue3-ui: ^2.2.2
   three: ^0.177.0
-  three-globe: ^2.42.11
+  three-globe: ^2.43.0
   tippy.js: ^6.3.7
   trpc-nuxt: ^1.0.5
   tsx: ^4.20.3
@@ -184,10 +184,9 @@ catalog:
   vuetify-nuxt-module: ^0.18.7
   web-push: ^3.6.7
   worker-timers: ^8.0.22
-  ws: ^8.18.2
+  ws: ^8.18.3
   xmlbuilder2: ^3.1.1
   zod: ^3.25.67
-  zeptomatch: ^2.0.2
 
 catalogMode: strict
 
