@@ -460,8 +460,8 @@ catalogs:
       specifier: ^2.2.2
       version: 2.2.2
     three:
-      specifier: ^0.177.0
-      version: 0.177.0
+      specifier: ^0.178.0
+      version: 0.178.0
     three-globe:
       specifier: ^2.43.0
       version: 2.43.0
@@ -936,10 +936,10 @@ importers:
         version: 2.2.2(survey-core@2.2.2)(vue@3.5.17(typescript@5.8.3))
       three:
         specifier: 'catalog:'
-        version: 0.177.0
+        version: 0.178.0
       three-globe:
         specifier: 'catalog:'
-        version: 2.43.0(three@0.177.0)
+        version: 2.43.0(three@0.178.0)
       tippy.js:
         specifier: 'catalog:'
         version: 6.3.7
@@ -10357,8 +10357,8 @@ packages:
     peerDependencies:
       three: '>=0.154'
 
-  three@0.177.0:
-    resolution: {integrity: sha512-EiXv5/qWAaGI+Vz2A+JfavwYCMdGjxVsrn3oBwllUoqYeaBO75J63ZfyaQKoiLrqNHoTlUc6PFgMXnS0kI45zg==}
+  three@0.178.0:
+    resolution: {integrity: sha512-ybFIB0+x8mz0wnZgSGy2MO/WCO6xZhQSZnmfytSPyNpM0sBafGRVhdaj+erYh5U+RhQOAg/eXqw5uVDiM2BjhQ==}
 
   through@2.3.8:
     resolution: {integrity: sha512-w89qg7PI8wAdvX60bMDP+bFoD5Dvhm9oLheFp5O4a2QF0cSBGsBX4qZmadPMvVqlLJBBci+WqGGOAPvcDeNSVg==}
@@ -22325,7 +22325,7 @@ snapshots:
 
   text-hex@1.0.0: {}
 
-  three-conic-polygon-geometry@2.1.2(three@0.177.0):
+  three-conic-polygon-geometry@2.1.2(three@0.178.0):
     dependencies:
       '@turf/boolean-point-in-polygon': 7.2.0
       d3-array: 3.2.4
@@ -22334,16 +22334,16 @@ snapshots:
       d3-scale: 4.0.2
       delaunator: 5.0.1
       earcut: 3.0.1
-      three: 0.177.0
+      three: 0.178.0
 
-  three-geojson-geometry@2.1.1(three@0.177.0):
+  three-geojson-geometry@2.1.1(three@0.178.0):
     dependencies:
       d3-geo: 3.1.1
       d3-interpolate: 3.0.1
       earcut: 3.0.1
-      three: 0.177.0
+      three: 0.178.0
 
-  three-globe@2.43.0(three@0.177.0):
+  three-globe@2.43.0(three@0.178.0):
     dependencies:
       '@tweenjs/tween.js': 25.0.0
       accessor-fn: 1.5.3
@@ -22358,20 +22358,20 @@ snapshots:
       h3-js: 4.2.1
       index-array-by: 1.4.2
       kapsule: 1.16.3
-      three: 0.177.0
-      three-conic-polygon-geometry: 2.1.2(three@0.177.0)
-      three-geojson-geometry: 2.1.1(three@0.177.0)
-      three-slippy-map-globe: 1.0.3(three@0.177.0)
+      three: 0.178.0
+      three-conic-polygon-geometry: 2.1.2(three@0.178.0)
+      three-geojson-geometry: 2.1.1(three@0.178.0)
+      three-slippy-map-globe: 1.0.3(three@0.178.0)
       tinycolor2: 1.6.0
 
-  three-slippy-map-globe@1.0.3(three@0.177.0):
+  three-slippy-map-globe@1.0.3(three@0.178.0):
     dependencies:
       d3-geo: 3.1.1
       d3-octree: 1.1.0
       d3-scale: 4.0.2
-      three: 0.177.0
+      three: 0.178.0
 
-  three@0.177.0: {}
+  three@0.178.0: {}
 
   through@2.3.8: {}
 
