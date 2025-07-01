@@ -9,7 +9,7 @@ const { getUserStatusEnum } = userStatusStore;
 
 <template>
   <div px-2 pb-2>
-    <StyledCard v-if="session" flex p-2>
+    <StyledCard v-if="session" flex p-2 rd-2>
       <EsbabblerModelMemberStatusAvatar :id="session.user.id" :image="session.user.image" :name="session.user.name" />
       <div pl-2 flex flex-col justify-center>
         <div class="text-xs">
