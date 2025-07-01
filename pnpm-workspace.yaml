@@ -28,15 +28,15 @@ catalog:
   "@nuxtjs/seo": ^3.1.0
   "@pinia/nuxt": ^0.11.1
   "@prettier/plugin-oxc": ^0.0.4
-  "@tiptap/core": ^2.23.0
-  "@tiptap/extension-character-count": ^2.23.0
-  "@tiptap/extension-link": ^2.23.0
-  "@tiptap/extension-mention": ^2.23.0
-  "@tiptap/extension-placeholder": ^2.23.0
-  "@tiptap/pm": ^2.23.0
-  "@tiptap/starter-kit": ^2.23.0
-  "@tiptap/suggestion": ^2.23.0
-  "@tiptap/vue-3": ^2.23.0
+  "@tiptap/core": ^2.23.1
+  "@tiptap/extension-character-count": ^2.23.1
+  "@tiptap/extension-link": ^2.23.1
+  "@tiptap/extension-mention": ^2.23.1
+  "@tiptap/extension-placeholder": ^2.23.1
+  "@tiptap/pm": ^2.23.1
+  "@tiptap/starter-kit": ^2.23.1
+  "@tiptap/suggestion": ^2.23.1
+  "@tiptap/vue-3": ^2.23.1
   "@trpc/client": ^11.4.3
   "@trpc/server": ^11.4.3
   "@types/data-urls": ^3.0.4
@@ -46,7 +46,7 @@ catalog:
   "@types/howler": ^2.2.12
   "@types/js-beautify": ^1.14.3
   "@types/mjml-browser": ^4.15.0
-  "@types/node": ^24.0.7
+  "@types/node": ^24.0.8
   "@types/omit-deep-lodash": ^1.1.3
   "@types/pluralize": ^0.0.33
   "@types/sax": ^1.2.7
@@ -143,7 +143,7 @@ catalog:
   postgres: ^3.4.7
   prettier: ^3.6.2
   rate-limiter-flexible: ^7.1.1
-  rolldown: 1.0.0-beta.21
+  rolldown: ^1.0.0-beta.22
   rolldown-plugin-dts: ^0.13.13
   rxjs: ^7.8.2
   sass-embedded: ^1.89.2
@@ -163,7 +163,7 @@ catalog:
   type-fest: ^4.41.0
   typedoc: ^0.28.7
   typescript: ^5.8.3
-  typescript-eslint: ^8.35.0
+  typescript-eslint: ^8.35.1
   unocss: ^66.3.2
   unplugin-auto-import: ^19.3.0
   v-viewer: ^3.0.21
