@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { mergeProps } from "vue";
 
-const isOpen = ref(false);
+const dialog = ref(false);
 </script>
 
 <template>
-  <v-dialog v-model="isOpen" fullscreen>
+  <v-dialog v-model="dialog" fullscreen>
     <template #activator="{ props: dialogProps }">
       <v-tooltip text="User Settings">
         <template #activator="{ props: tooltipProps }">
@@ -13,6 +13,8 @@ const isOpen = ref(false);
         </template>
       </v-tooltip>
     </template>
-    <StyledCard />
+    <StyledCard>
+      <v-btn absolute top-4 right-4 icon="mdi-close" size="small" @click="dialog = false" />
+    </StyledCard>
   </v-dialog>
 </template>

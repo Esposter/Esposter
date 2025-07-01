@@ -18,7 +18,7 @@ const creator = computed(() => members.value.find(({ id }) => id === userId));
     Replying to <span font-bold>{{ creator.name }}</span>
     <v-btn
       class="custom-border"
-      absolute="!"
+      absolute
       top="1/2"
       right-4
       translate-y="-1/2"
