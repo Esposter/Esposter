@@ -1,24 +1,23 @@
 <script setup lang="ts">
-import type { User } from "#shared/db/schema/users";
+import type { Session } from "@/models/auth/Session";
 import type { VAvatar } from "vuetify/components/VAvatar";
 
-import { UserStatus } from "#shared/models/db/user/UserStatus";
 import { StatusBadgePropsMap } from "@/services/esbabbler/StatusBadgePropsMap";
 import { useUserStatusStore } from "@/store/esbabbler/userStatus";
 // @TODO: https://github.com/vuejs/core/issues/11371
 interface StatusAvatarProps {
   avatarProps?: VAvatar["$props"];
-  id: User["id"];
-  image: User["image"];
-  name: User["name"];
+  id: Session["user"]["id"];
+  image: Session["user"]["image"];
+  name: Session["user"]["name"];
 }
 
 const { avatarProps, id, image, name } = defineProps<StatusAvatarProps>();
 const userStatusStore = useUserStatusStore();
-const { userStatusMap } = storeToRefs(userStatusStore);
+const { getUserStatusEnum } = userStatusStore;
 const badgeProps = computed(() => {
-  const userStatus = userStatusMap.value.get(id);
-  return StatusBadgePropsMap[userStatus?.status ?? UserStatus.Online];
+  const userStatusEnum = getUserStatusEnum(id);
+  return StatusBadgePropsMap[userStatusEnum];
 });
 </script>
 

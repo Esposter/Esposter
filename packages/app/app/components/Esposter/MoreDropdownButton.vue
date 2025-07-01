@@ -68,7 +68,7 @@ const menu = ref(false);
         <template #activator="{ props: tooltipProps }">
           <v-avatar>
             <v-btn h-full="!" :="mergeProps(menuProps, tooltipProps)">
-              <StyledAvatar :image="session.user.image ?? null" :name="session.user.name" />
+              <StyledAvatar :image="session.user.image" :name="session.user.name" />
             </v-btn>
           </v-avatar>
         </template>
