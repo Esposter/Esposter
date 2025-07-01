@@ -12,8 +12,8 @@ const hasUpgrades = computed(() => upgrades.length > 0);
 
 <template>
   <v-list-group v-if="hasUpgrades">
-    <template #activator="{ props: listProps }">
-      <v-list-item :="listProps">
+    <template #activator="{ props }">
+      <v-list-item :="props">
         <template #prepend>
           <v-avatar color="background">
             <v-icon icon="mdi-gesture-swipe-up" />

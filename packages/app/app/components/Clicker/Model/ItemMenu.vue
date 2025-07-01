@@ -43,8 +43,8 @@ const upgradeIcon = computed(() => {
 
 <template>
   <v-menu :close-on-content-click="false" :="menuProps">
-    <template #activator="{ props: activatorProps }">
-      <v-list-item :title="id" select-none :="activatorProps">
+    <template #activator="{ props }">
+      <v-list-item :title="id" select-none :="props">
         <template #prepend>
           <v-img
             mr-1
