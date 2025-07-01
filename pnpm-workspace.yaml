@@ -148,7 +148,7 @@ catalog:
   rxjs: ^7.8.2
   sass-embedded: ^1.89.2
   sax: ^1.4.1
-  show-open-file-picker: ^0.3.0
+  show-open-file-picker: ^0.4.0
   sql-highlight: ^6.1.0
   superjson: ^2.2.2
   survey-core: ^2.2.2

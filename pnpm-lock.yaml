@@ -439,8 +439,8 @@ catalogs:
       specifier: ^1.4.1
       version: 1.4.1
     show-open-file-picker:
-      specifier: ^0.3.0
-      version: 0.3.0
+      specifier: ^0.4.0
+      version: 0.4.0
     sql-highlight:
       specifier: ^6.1.0
       version: 6.1.0
@@ -915,7 +915,7 @@ importers:
         version: 7.8.2
       show-open-file-picker:
         specifier: 'catalog:'
-        version: 0.3.0
+        version: 0.4.0
       sql-highlight:
         specifier: 'catalog:'
         version: 6.1.0
@@ -10004,8 +10004,8 @@ packages:
     resolution: {integrity: sha512-ObmnIF4hXNg1BqhnHmgbDETF8dLPCggZWBjkQfhZpbszZnYur5DUljTcCHii5LC3J5E0yeO/1LIMyH+UvHQgyw==}
     engines: {node: '>= 0.4'}
 
-  show-open-file-picker@0.3.0:
-    resolution: {integrity: sha512-7X5BH5bOC4WnnJu5S+LisYKSU5NyBeT3LZ98v3xz4J6h81Tza3Fllgz/kuuzdlq/RTaCDBOoMZbomnu3z+qkQg==}
+  show-open-file-picker@0.4.0:
+    resolution: {integrity: sha512-To0PwbPwZOJWTkl19PwCl//Dk912xoEohCJ4Gac001MyhqoR2xSJsRh9+37Aq7u6pNvTslg0Kx9TzhkZVxRUaA==}
 
   side-channel-list@1.0.0:
     resolution: {integrity: sha512-FCLHtRD/gnpCiCHEiJLOwdmFP+wzCmDEkc9y7NsYxeF4u7Btsn1ZuwgwJGxImImHicJArLP4R0yX4c2KCrMrTA==}
@@ -22025,7 +22025,7 @@ snapshots:
 
   shell-quote@1.8.3: {}
 
-  show-open-file-picker@0.3.0: {}
+  show-open-file-picker@0.4.0: {}
 
   side-channel-list@1.0.0:
     dependencies:
