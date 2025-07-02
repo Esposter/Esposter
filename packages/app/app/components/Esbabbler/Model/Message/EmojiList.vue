@@ -37,11 +37,11 @@ const selectEmoji = await useSelectEmoji(message);
       rd-full="!"
       flex
       items-center
+      px-2
       shadow-md
       cursor-pointer
       z-1
       w-fit
-      px-2
       origin-center
       active:scale-95
       @click="
