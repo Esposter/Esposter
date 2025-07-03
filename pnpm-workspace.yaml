@@ -28,15 +28,15 @@ catalog:
   "@nuxtjs/seo": ^3.1.0
   "@pinia/nuxt": ^0.11.1
   "@prettier/plugin-oxc": ^0.0.4
-  "@tiptap/core": ^2.23.1
-  "@tiptap/extension-character-count": ^2.23.1
-  "@tiptap/extension-link": ^2.23.1
-  "@tiptap/extension-mention": ^2.23.1
-  "@tiptap/extension-placeholder": ^2.23.1
-  "@tiptap/pm": ^2.23.1
-  "@tiptap/starter-kit": ^2.23.1
-  "@tiptap/suggestion": ^2.23.1
-  "@tiptap/vue-3": ^2.23.1
+  "@tiptap/core": ^2.24.0
+  "@tiptap/extension-character-count": ^2.24.0
+  "@tiptap/extension-link": ^2.24.0
+  "@tiptap/extension-mention": ^2.24.0
+  "@tiptap/extension-placeholder": ^2.24.0
+  "@tiptap/pm": ^2.24.0
+  "@tiptap/starter-kit": ^2.24.0
+  "@tiptap/suggestion": ^2.24.0
+  "@tiptap/vue-3": ^2.24.0
   "@trpc/client": ^11.4.3
   "@trpc/server": ^11.4.3
   "@types/data-urls": ^3.0.4
@@ -65,11 +65,11 @@ catalog:
   "@vue-flow/core": ^1.45.0
   "@vue-flow/minimap": ^1.5.3
   "@vue-flow/node-resizer": ^1.5.0
-  "@vue-pdf-viewer/viewer": ^2.5.5
+  "@vue-pdf-viewer/viewer": ^2.5.6
   "@vue/test-utils": ^2.4.6
   "@vuepic/vue-datepicker": ^11.0.2
-  "@vueuse/core": ^13.4.0
-  "@vueuse/nuxt": ^13.4.0
+  "@vueuse/core": ^13.5.0
+  "@vueuse/nuxt": ^13.5.0
   ajv: ^8.17.1
   ajv-errors: ^3.0.0
   ajv-formats: ^3.0.1
@@ -99,7 +99,7 @@ catalog:
   filesize: ^10.1.6
   fs-extra: ^11.3.0
   fuse.js: ^7.1.0
-  grapesjs: ^0.22.8
+  grapesjs: ^0.22.9
   grapesjs-blocks-basic: ^1.0.2
   grapesjs-component-countdown: ^1.0.2
   grapesjs-custom-code: ^1.0.2
@@ -151,10 +151,10 @@ catalog:
   show-open-file-picker: ^0.4.0
   sql-highlight: ^6.1.0
   superjson: ^2.2.2
-  survey-core: ^2.2.2
-  survey-creator-core: ^2.2.2
-  survey-creator-vue: ^2.2.2
-  survey-vue3-ui: ^2.2.2
+  survey-core: ^2.2.3
+  survey-creator-core: ^2.2.3
+  survey-creator-vue: ^2.2.3
+  survey-vue3-ui: ^2.2.3
   three: ^0.178.0
   three-globe: ^2.43.0
   tippy.js: ^6.3.7
@@ -166,7 +166,7 @@ catalog:
   typescript-eslint: ^8.35.1
   unocss: ^66.3.2
   unplugin-auto-import: ^19.3.0
-  v-viewer: ^3.0.21
+  v-viewer: ^3.0.22
   viewerjs: ^1.11.7
   vite: npm:rolldown-vite@latest
   vite-plugin-dts: ^4.5.4
@@ -180,13 +180,13 @@ catalog:
   vue-tsc: ^2.2.12
   vue-waypoint: ^4.3.0
   vue3-apexcharts: ^1.8.0
-  vuetify: ^3.8.11
+  vuetify: ^3.8.12
   vuetify-nuxt-module: ^0.18.7
   web-push: ^3.6.7
   worker-timers: ^8.0.22
   ws: ^8.18.3
   xmlbuilder2: ^3.1.1
-  zod: ^3.25.67
+  zod: ^3.25.69
 
 catalogMode: strict
 
