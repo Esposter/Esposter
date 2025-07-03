@@ -205,6 +205,7 @@ describe("room", () => {
           "origin": "string",
           "code": "too_small",
           "minimum": 8,
+          "exact": true,
           "path": [],
           "message": "Too small: expected string to have >8 characters"
         }
