@@ -205,9 +205,10 @@ describe("room", () => {
           "origin": "string",
           "code": "too_small",
           "minimum": 8,
+          "inclusive": true,
           "exact": true,
           "path": [],
-          "message": "Too small: expected string to have >8 characters"
+          "message": "Too small: expected string to have >=8 characters"
         }
       ]]
     `);
