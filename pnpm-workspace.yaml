@@ -158,7 +158,7 @@ catalog:
   three: ^0.178.0
   three-globe: ^2.43.0
   tippy.js: ^6.3.7
-  trpc-nuxt: ^1.0.5
+  trpc-nuxt: ^1.2.0
   tsx: ^4.20.3
   type-fest: ^4.41.0
   typedoc: ^0.28.7
