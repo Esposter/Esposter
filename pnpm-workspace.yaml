@@ -28,15 +28,15 @@ catalog:
   "@nuxtjs/seo": ^3.1.0
   "@pinia/nuxt": ^0.11.1
   "@prettier/plugin-oxc": ^0.0.4
-  "@tiptap/core": ^2.24.2
-  "@tiptap/extension-character-count": ^2.24.2
-  "@tiptap/extension-link": ^2.24.2
-  "@tiptap/extension-mention": ^2.24.2
-  "@tiptap/extension-placeholder": ^2.24.2
-  "@tiptap/pm": ^2.24.2
-  "@tiptap/starter-kit": ^2.24.2
-  "@tiptap/suggestion": ^2.24.2
-  "@tiptap/vue-3": ^2.24.2
+  "@tiptap/core": ^2.25.0
+  "@tiptap/extension-character-count": ^2.25.0
+  "@tiptap/extension-link": ^2.25.0
+  "@tiptap/extension-mention": ^2.25.0
+  "@tiptap/extension-placeholder": ^2.25.0
+  "@tiptap/pm": ^2.25.0
+  "@tiptap/starter-kit": ^2.25.0
+  "@tiptap/suggestion": ^2.25.0
+  "@tiptap/vue-3": ^2.25.0
   "@trpc/client": ^11.4.3
   "@trpc/server": ^11.4.3
   "@types/data-urls": ^3.0.4
@@ -135,7 +135,7 @@ catalog:
   oxlint: ^1.5.0
   p-progress: ^1.0.0
   pathe: ^2.0.3
-  pdfjs-dist: ^5.3.31
+  pdfjs-dist: ^5.3.93
   phaser: ^3.90.0
   phaser3-rex-plugins: ^1.80.16
   pinia: ^3.0.3
@@ -198,7 +198,7 @@ onlyBuiltDependencies:
   - vue-demi
 
 overrides:
-  pdfjs-dist: ^5.3.31
+  pdfjs-dist: ^5.3.93
   vite: npm:rolldown-vite@latest
 
 shellEmulator: true
