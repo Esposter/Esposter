@@ -43,6 +43,7 @@ import { toWebResourceLike } from "@@/server/services/azure/container/toWebResou
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { createHttpHeaders, createPipelineRequest } from "@azure/core-rest-pipeline";
 import { AnonymousCredential } from "@azure/storage-blob";
+import { Readable } from "node:stream";
 
 export class MockBlockBlobClient implements Except<BlockBlobClient, "accountName"> {
   containerClient: MockContainerClient;
@@ -102,7 +103,18 @@ export class MockBlockBlobClient implements Except<BlockBlobClient, "accountName
   }
 
   download(): Promise<BlobDownloadResponseParsed> {
-    throw new Error("Method not implemented.");
+    const buffer = this.containerClient.blobs.get(this.name);
+    return new Promise((resolve) =>
+      resolve({
+        _response: {
+          headers: toHttpHeadersLike(createHttpHeaders()),
+          parsedHeaders: {},
+          request: toWebResourceLike(createPipelineRequest({ url: "" })),
+          status: buffer ? 200 : 404,
+        },
+        readableStreamBody: buffer ? Readable.from(buffer) : undefined,
+      }),
+    );
   }
 
   downloadToBuffer(): Promise<Buffer> {

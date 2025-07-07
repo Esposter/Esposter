@@ -1,6 +1,7 @@
+import type { ToData } from "#shared/models/entity/ToData";
 import type { ProjectData } from "grapesjs";
 
-import { AItemEntity } from "#shared/models/entity/AItemEntity";
+import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
 import { GRAPESJS_BASE_URL, PLACEHOLD_BASE_URL } from "#shared/services/grapesjs/constants";
 import { css } from "@@/server/services/prettier/css";
 import { html } from "@@/server/services/prettier/html";
@@ -735,4 +736,9 @@ export class WebpageEditor extends AItemEntity implements ProjectData {
   }
 }
 
-export const webpageEditorSchema = z.record(z.string().min(1), z.unknown());
+export const webpageEditorSchema = z
+  .object({
+    ...aItemEntitySchema.shape,
+    pages: z.array(z.unknown()).min(1),
+  })
+  .catchall(z.unknown()) satisfies z.ZodType<ToData<WebpageEditor>>;

@@ -1,10 +1,12 @@
 import type { User } from "#shared/db/schema/users";
+import type { useContainerClient } from "@@/server/composables/azure/useContainerClient";
 import type { useTableClient } from "@@/server/composables/azure/useTableClient";
 import type { Session } from "@@/server/models/auth/Session";
 import type { Context } from "@@/server/trpc/context";
 
 import { users } from "#shared/db/schema/users";
 import { dayjs } from "#shared/services/dayjs";
+import { useContainerClientMock } from "@@/server/composables/azure/useContainerClient.test";
 import { useTableClientMock } from "@@/server/composables/azure/useTableClient.test";
 import { schema } from "@@/server/db/schema";
 import { PGlite } from "@electric-sql/pglite";
@@ -44,6 +46,10 @@ vi.mock("@@/server/auth", () => ({
       getSession: mocks.getSession,
     },
   },
+}));
+
+vi.mock("@@/server/composables/azure/useContainerClient", () => ({
+  useContainerClient: vi.fn<typeof useContainerClient>(useContainerClientMock),
 }));
 
 vi.mock("@@/server/composables/azure/useTableClient", () => ({
