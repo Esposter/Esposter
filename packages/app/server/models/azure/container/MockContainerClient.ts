@@ -1,5 +1,12 @@
 import type { PagedAsyncIterableIterator } from "@@/server/models/azure/PagedAsyncIterableIterator";
-import type { BlobItem, BlockBlobClient, ContainerClient } from "@azure/storage-blob";
+import type {
+  BlobItem,
+  BlockBlobClient,
+  BlockBlobUploadResponse,
+  ContainerClient,
+  ContainerListBlobFlatSegmentResponse,
+  HttpRequestBody,
+} from "@azure/storage-blob";
 
 import { MockBlockBlobClient } from "@@/server/models/azure/container/MockBlockBlobClient";
 /**
@@ -18,7 +25,7 @@ export class MockContainerClient implements ContainerClient {
   containerName: string;
   url: string;
 
-  constructor(containerName: string) {
+  constructor(_connectionString: string, containerName: string) {
     this.containerName = containerName;
     this.url = `https://mockaccount.blob.core.windows.net/${this.containerName}`;
   }
@@ -27,7 +34,7 @@ export class MockContainerClient implements ContainerClient {
     return new MockBlockBlobClient(this, blobName) as unknown as BlockBlobClient;
   }
 
-  async *listBlobsFlat(): PagedAsyncIterableIterator<BlobItem> {
+  async *listBlobsFlat(): PagedAsyncIterableIterator<BlobItem, ContainerListBlobFlatSegmentResponse> {
     for (const name of this.blobs.keys())
       yield await new Promise((resolve) =>
         resolve({
@@ -43,8 +50,19 @@ export class MockContainerClient implements ContainerClient {
         }),
       );
   }
-  // A simple mock for uploadBlockBlob that delegates to the BlockBlobClient
-  async uploadBlockBlob(blobName: string, data: any, length: number): Promise<any> {
-    return this.getBlockBlobClient(blobName).upload(data, length);
+
+  async uploadBlockBlob(
+    blobName: string,
+    body: HttpRequestBody,
+    contentLength: number,
+  ): Promise<{
+    blockBlobClient: BlockBlobClient;
+    response: BlockBlobUploadResponse;
+  }> {
+    const blockBlobClient = this.getBlockBlobClient(blobName);
+    return {
+      blockBlobClient,
+      response: await blockBlobClient.upload(body, contentLength),
+    };
   }
 }

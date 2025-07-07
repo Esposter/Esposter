@@ -35,14 +35,16 @@ import type {
   PollerLikeWithCancellation,
   PollOperationState,
 } from "@azure/storage-blob";
+import type { Except } from "type-fest";
 
 import { MockRestError } from "@@/server/models/azure/MockRestError";
+import { bodyToBuffer } from "@@/server/services/azure/container/bodyToBuffer";
 import { toWebResourceLike } from "@@/server/services/azure/container/toWebResourceLike";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { createHttpHeaders, createPipelineRequest } from "@azure/core-rest-pipeline";
 import { AnonymousCredential } from "@azure/storage-blob";
-
-export class MockBlockBlobClient implements Omit<BlockBlobClient, "storageClientContext"> {
+// @ts-expect-error BlockBlobClient contains "storageClientContext" in its super class
+export class MockBlockBlobClient implements Except<BlockBlobClient, "storageClientContext"> {
   containerClient: MockContainerClient;
   credential = new AnonymousCredential();
   name: string;
@@ -156,6 +158,7 @@ export class MockBlockBlobClient implements Omit<BlockBlobClient, "storageClient
   getBlockList(): Promise<BlockBlobGetBlockListResponse> {
     throw new Error("Method not implemented.");
   }
+
   getPageBlobClient(): PageBlobClient {
     throw new Error("Method not implemented.");
   }
@@ -216,18 +219,16 @@ export class MockBlockBlobClient implements Omit<BlockBlobClient, "storageClient
     throw new Error("Method not implemented.");
   }
 
-  upload(body: HttpRequestBody, _contentLength: number): Promise<BlockBlobUploadResponse> {
-    this.containerClient.blobs.set(this.name, Buffer.from(body));
-    return new Promise((resolve) =>
-      resolve({
-        _response: {
-          headers: toHttpHeadersLike(createHttpHeaders()),
-          parsedHeaders: {},
-          request: toWebResourceLike(createPipelineRequest({ url: "" })),
-          status: 201,
-        },
-      }),
-    );
+  async upload(body: HttpRequestBody, _contentLength: number): Promise<BlockBlobUploadResponse> {
+    this.containerClient.blobs.set(this.name, await bodyToBuffer(body));
+    return {
+      _response: {
+        headers: toHttpHeadersLike(createHttpHeaders()),
+        parsedHeaders: {},
+        request: toWebResourceLike(createPipelineRequest({ url: "" })),
+        status: 201,
+      },
+    };
   }
 
   uploadBrowserData(): Promise<BlobUploadCommonResponse> {
