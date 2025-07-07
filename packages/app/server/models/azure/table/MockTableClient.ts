@@ -22,9 +22,9 @@ import { ID_SEPARATOR } from "@esposter/shared";
  * It uses a Map to simulate table storage and correctly implements the TableClient interface.
  *
  * @example
- * const mockTableClient = new MockTableClient();
- * await mockTableClient.createEntity({ partitionKey: 'partitionKey', rowKey: 'rowKey' });
- * const entity = await mockTableClient.getEntity('partitionKey', 'rowKey');
+ * const mockTableClient = new MockTableClient("", "hello world");
+ * await mockTableClient.createEntity({ partitionKey: "partitionKey", rowKey: "rowKey" });
+ * const entity = await mockTableClient.getEntity("partitionKey", "rowKey");
  */
 export class MockTableClient implements Except<TableClient, "pipeline"> {
   entities = new Map<string, TableEntity>();

@@ -42,9 +42,9 @@ import { AnonymousCredential } from "@azure/storage-blob";
  * It uses a Map to simulate blob storage.
  *
  * @example
- * const mockContainerClient = new MockContainerClient('my-container');
- * const blockBlobClient = mockContainerClient.getBlockBlobClient('my-blob.txt');
- * await blockBlobClient.upload('hello world', 11);
+ * const mockContainerClient = new MockContainerClient("", "hello world");
+ * const blockBlobClient = mockContainerClient.getBlockBlobClient("hello world.txt");
+ * await blockBlobClient.upload("hello world", 11);
  * const content = await blockBlobClient.downloadToBuffer();
  */
 export class MockContainerClient implements Except<ContainerClient, "accountName"> {
