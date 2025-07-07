@@ -36,6 +36,14 @@ const mocks = vi.hoisted(() => {
   };
 });
 
+vi.mock("@@/server/auth", () => ({
+  auth: {
+    api: {
+      getSession: mocks.getSession,
+    },
+  },
+}));
+
 export const mockSessionOnce = async (db: Context["db"], mockUser?: User) => {
   const name = "name";
   const createdAt = new Date(0);
@@ -72,14 +80,6 @@ const createSession = (userId: string): Session["session"] => {
     userId,
   };
 };
-
-vi.mock("@@/server/auth", () => ({
-  auth: {
-    api: {
-      getSession: mocks.getSession,
-    },
-  },
-}));
 
 export const createMockContext = async (): Promise<Context> => {
   const req = new IncomingMessage(new Socket());
