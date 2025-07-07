@@ -36,10 +36,6 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
     this.url = `https://mockaccount.table.core.windows.net/${this.tableName}`;
   }
 
-  clear() {
-    this.entities.clear();
-  }
-
   createEntity<T extends object>(entity: TableEntity<T>): Promise<CreateTableEntityResponse> {
     const key = this.getCompositeKey(entity.partitionKey, entity.rowKey);
     if (this.entities.has(key)) throw new MockRestError("The specified entity already exists.", 409);
