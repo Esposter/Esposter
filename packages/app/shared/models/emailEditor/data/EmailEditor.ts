@@ -6,7 +6,7 @@ import {
   PLACEHOLD_BASE_URL,
   WORDPRESS_DESIGNSPELL_BASE_URL,
 } from "#shared/services/grapesjs/constants";
-import { html } from "@/services/prettier/html";
+import { html } from "@@/server/services/prettier/html";
 import { z } from "zod/v4";
 
 export class EmailEditor extends AItemEntity implements ProjectData {

@@ -16,7 +16,7 @@ import { describe, vi } from "vitest";
 const require = createRequire(import.meta.url);
 
 const mocks = vi.hoisted(() => {
-  const createdAt = new Date(0);
+  const createdAt = new Date();
   const user: User = {
     createdAt,
     deletedAt: null,
@@ -52,7 +52,7 @@ vi.mock("@@/server/composables/azure/useTableClient", () => ({
 
 export const mockSessionOnce = async (db: Context["db"], mockUser?: User) => {
   const name = "name";
-  const createdAt = new Date(0);
+  const createdAt = new Date();
   const user =
     mockUser ??
     (

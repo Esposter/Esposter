@@ -43,16 +43,12 @@ import { toWebResourceLike } from "@@/server/services/azure/container/toWebResou
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { createHttpHeaders, createPipelineRequest } from "@azure/core-rest-pipeline";
 import { AnonymousCredential } from "@azure/storage-blob";
-// @ts-expect-error BlockBlobClient contains "storageClientContext" in its super class
-export class MockBlockBlobClient implements Except<BlockBlobClient, "storageClientContext"> {
+
+export class MockBlockBlobClient implements Except<BlockBlobClient, "accountName"> {
   containerClient: MockContainerClient;
   credential = new AnonymousCredential();
   name: string;
   url: string;
-
-  get accountName(): string {
-    return this.containerClient.accountName;
-  }
 
   get containerName(): string {
     return this.containerClient.containerName;
@@ -91,7 +87,7 @@ export class MockBlockBlobClient implements Except<BlockBlobClient, "storageClie
           headers: toHttpHeadersLike(createHttpHeaders()),
           parsedHeaders: {},
           request: toWebResourceLike(createPipelineRequest({ url: "" })),
-          status: 202,
+          status: 200,
         },
       }),
     );
