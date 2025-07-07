@@ -14,7 +14,7 @@ export const useTableClientMock: typeof useTableClient = (tableName) =>
     if (mockTableClient)
       return resolve(mockTableClient as unknown as CustomTableClient<AzureTableEntityMap[typeof tableName]>);
 
-    const newMockTableClient = new MockTableClient(tableName);
+    const newMockTableClient = new MockTableClient("", tableName);
     MockTableClientMap.set(tableName, newMockTableClient);
     return resolve(newMockTableClient as unknown as CustomTableClient<AzureTableEntityMap[typeof tableName]>);
   });

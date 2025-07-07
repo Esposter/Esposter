@@ -25,7 +25,7 @@ describe("webpageEditor", () => {
     expect(webpageEditor).toStrictEqual(new WebpageEditor({ createdAt, id, updatedAt }));
   });
 
-  test.todo("saves and reads", async () => {
+  test("saves and reads", async () => {
     expect.hasAssertions();
 
     const webpageEditor = new WebpageEditor();

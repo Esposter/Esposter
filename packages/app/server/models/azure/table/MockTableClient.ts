@@ -1,4 +1,4 @@
-import type { PagedAsyncIterableIterator } from "@@/server/models/azure/table/PagedAsyncIterableIterator";
+import type { PagedAsyncIterableIterator } from "@@/server/models/azure/PagedAsyncIterableIterator";
 import type {
   CreateTableEntityResponse,
   GetAccessPolicyResponse,
@@ -22,16 +22,16 @@ import { ID_SEPARATOR } from "@esposter/shared";
  * It uses a Map to simulate table storage and correctly implements the TableClient interface.
  *
  * @example
- * const mockTableClient = new MockTableClient();
- * await mockTableClient.createEntity({ partitionKey: 'partitionKey', rowKey: 'rowKey' });
- * const entity = await mockTableClient.getEntity('partitionKey', 'rowKey');
+ * const mockTableClient = new MockTableClient("", "hello world");
+ * await mockTableClient.createEntity({ partitionKey: "partitionKey", rowKey: "rowKey" });
+ * const entity = await mockTableClient.getEntity("partitionKey", "rowKey");
  */
 export class MockTableClient implements Except<TableClient, "pipeline"> {
   entities = new Map<string, TableEntity>();
   tableName: string;
   url: string;
 
-  constructor(tableName: string) {
+  constructor(_url: string, tableName: string) {
     this.tableName = tableName;
     this.url = `https://mockaccount.table.core.windows.net/${this.tableName}`;
   }
@@ -46,7 +46,7 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
   }
 
   createTable(): Promise<void> {
-    throw new Error("Method not mocked.");
+    throw new Error("Method not implemented.");
   }
 
   deleteEntity(partitionKey: string, rowKey: string): Promise<TableDeleteEntityHeaders> {
@@ -58,11 +58,11 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
   }
 
   deleteTable(): Promise<void> {
-    throw new Error("Method not mocked.");
+    throw new Error("Method not implemented.");
   }
 
   getAccessPolicy(): Promise<GetAccessPolicyResponse> {
-    throw new Error("Method not mocked.");
+    throw new Error("Method not implemented.");
   }
 
   getEntity<T extends object = Record<string, unknown>>(
@@ -82,8 +82,8 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
     return {
       byPage: () =>
         (async function* (entities: Map<string, T>): AsyncGenerator<TableEntityResultPage<T>> {
-          // For a simple mock, we'll return all entities in a single page.
-          // A more complex mock could implement maxPageSize and continuationTokens.
+          // For a simple mock, we'll return all entities in a single page
+          // A more complex mock could implement maxPageSize and continuationTokens
           const allEntitiesWithMetadata = Array.from(entities.values()).map(withMetadata);
           if (allEntitiesWithMetadata.length > 0)
             yield await new Promise((resolve) => resolve(allEntitiesWithMetadata));
@@ -102,11 +102,11 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
   }
 
   setAccessPolicy(): Promise<TableSetAccessPolicyHeaders> {
-    throw new Error("Method not mocked.");
+    throw new Error("Method not implemented.");
   }
 
   submitTransaction(): Promise<TableTransactionResponse> {
-    throw new Error("Method not mocked.");
+    throw new Error("Method not implemented.");
   }
 
   updateEntity<T extends object>(entity: TableEntity<T>, mode: UpdateMode = "Merge"): Promise<TableMergeEntityHeaders> {

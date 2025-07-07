@@ -1,12 +1,13 @@
+import type { ToData } from "#shared/models/entity/ToData";
 import type { ProjectData } from "grapesjs";
 
-import { AItemEntity } from "#shared/models/entity/AItemEntity";
+import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
 import {
   BLOGSPOT_BASE_URL,
   PLACEHOLD_BASE_URL,
   WORDPRESS_DESIGNSPELL_BASE_URL,
 } from "#shared/services/grapesjs/constants";
-import { html } from "@/services/prettier/html";
+import { html } from "@@/server/services/prettier/html";
 import { z } from "zod/v4";
 
 export class EmailEditor extends AItemEntity implements ProjectData {
@@ -96,4 +97,9 @@ export class EmailEditor extends AItemEntity implements ProjectData {
   }
 }
 
-export const emailEditorSchema = z.record(z.string().min(1), z.unknown());
+export const emailEditorSchema = z
+  .object({
+    ...aItemEntitySchema.shape,
+    pages: z.array(z.unknown()).min(1),
+  })
+  .catchall(z.unknown()) satisfies z.ZodType<ToData<EmailEditor>>;
