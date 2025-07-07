@@ -6,6 +6,12 @@ settings:
 
 catalogs:
   default:
+    '@azure/core-http-compat':
+      specifier: ^2.3.0
+      version: 2.3.0
+    '@azure/core-rest-pipeline':
+      specifier: ^1.21.0
+      version: 1.21.0
     '@azure/data-tables':
       specifier: ^13.3.1
       version: 13.3.1
@@ -640,6 +646,12 @@ importers:
 
   packages/app:
     dependencies:
+      '@azure/core-http-compat':
+        specifier: 'catalog:'
+        version: 2.3.0
+      '@azure/core-rest-pipeline':
+        specifier: 'catalog:'
+        version: 1.21.0
       '@azure/data-tables':
         specifier: 'catalog:'
         version: 13.3.1
@@ -16005,7 +16017,7 @@ snapshots:
       estree-walker: 3.0.3
       magic-string: 0.30.17
     optionalDependencies:
-      vite: rolldown-vite@7.0.4(@types/node@24.0.10)(esbuild@0.25.5)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
+      vite: rolldown-vite@7.0.4(@types/node@24.0.10)(esbuild@0.23.1)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
 
   '@vitest/pretty-format@3.2.4':
     dependencies:

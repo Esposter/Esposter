@@ -1,4 +1,4 @@
-import type { PagedAsyncIterableIterator } from "@@/server/models/azure/table/PagedAsyncIterableIterator";
+import type { PagedAsyncIterableIterator } from "@@/server/models/azure/PagedAsyncIterableIterator";
 import type {
   CreateTableEntityResponse,
   GetAccessPolicyResponse,
@@ -46,7 +46,7 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
   }
 
   createTable(): Promise<void> {
-    throw new Error("Method not mocked.");
+    throw new Error("Method not implemented.");
   }
 
   deleteEntity(partitionKey: string, rowKey: string): Promise<TableDeleteEntityHeaders> {
@@ -58,11 +58,11 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
   }
 
   deleteTable(): Promise<void> {
-    throw new Error("Method not mocked.");
+    throw new Error("Method not implemented.");
   }
 
   getAccessPolicy(): Promise<GetAccessPolicyResponse> {
-    throw new Error("Method not mocked.");
+    throw new Error("Method not implemented.");
   }
 
   getEntity<T extends object = Record<string, unknown>>(
@@ -102,11 +102,11 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
   }
 
   setAccessPolicy(): Promise<TableSetAccessPolicyHeaders> {
-    throw new Error("Method not mocked.");
+    throw new Error("Method not implemented.");
   }
 
   submitTransaction(): Promise<TableTransactionResponse> {
-    throw new Error("Method not mocked.");
+    throw new Error("Method not implemented.");
   }
 
   updateEntity<T extends object>(entity: TableEntity<T>, mode: UpdateMode = "Merge"): Promise<TableMergeEntityHeaders> {
