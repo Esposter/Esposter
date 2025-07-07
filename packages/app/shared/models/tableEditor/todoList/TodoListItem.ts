@@ -14,6 +14,11 @@ export class TodoListItem extends ATableEditorItemEntity implements ItemEntityTy
   dueAt: Date | null = null;
   notes = "";
   type = TodoListItemType.Todo;
+
+  constructor(init?: Partial<TodoListItem>) {
+    super();
+    Object.assign(this, init);
+  }
 }
 
 export const todoListItemSchema = z.object({

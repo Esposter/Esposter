@@ -44,9 +44,8 @@ describe(useTableEditorStore, () => {
 
     expect(router.currentRoute.value.query).toStrictEqual({ [ID_QUERY_PARAMETER_KEY]: newItem.id });
     // The edited item will be a structured clone object of the original item class
-    // object !== class (not strictly equal)
-    // eslint-disable-next-line vitest/prefer-strict-equal
-    expect(editedItem.value).toEqual(newItem);
+    // object !== class (not strictly equal) so we manually convert it to the class
+    expect(new TodoListItem(editedItem.value)).toStrictEqual(newItem);
     expect(editedIndex.value).toBe(0);
     expect(editFormDialog.value).toBe(true);
   });
