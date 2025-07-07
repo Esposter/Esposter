@@ -31,7 +31,7 @@ export class MockContainerClient implements ContainerClient {
   }
 
   getBlockBlobClient(blobName: string): BlockBlobClient {
-    return new MockBlockBlobClient(this, blobName) as unknown as BlockBlobClient;
+    return new MockBlockBlobClient("", this, blobName) as unknown as BlockBlobClient;
   }
 
   async *listBlobsFlat(): PagedAsyncIterableIterator<BlobItem, ContainerListBlobFlatSegmentResponse> {

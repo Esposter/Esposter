@@ -58,9 +58,9 @@ export class MockBlockBlobClient implements Except<BlockBlobClient, "storageClie
     return this.containerClient.containerName;
   }
 
-  constructor(containerClient: MockContainerClient, name: string) {
+  constructor(_connectionString: string, containerClient: MockContainerClient, blobName: string) {
     this.containerClient = containerClient;
-    this.name = name;
+    this.name = blobName;
     this.url = `https://mockaccount.blob.core.windows.net/${this.containerName}/${this.name}`;
   }
 

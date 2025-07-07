@@ -31,7 +31,7 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
   tableName: string;
   url: string;
 
-  constructor(tableName: string) {
+  constructor(_url: string, tableName: string) {
     this.tableName = tableName;
     this.url = `https://mockaccount.table.core.windows.net/${this.tableName}`;
   }
