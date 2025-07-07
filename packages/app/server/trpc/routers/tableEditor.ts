@@ -19,7 +19,7 @@ export const tableEditorRouter = router({
       if (!readableStreamBody) return new TableEditorConfiguration();
 
       const json = await streamToText(readableStreamBody);
-      return Object.assign(new TableEditorConfiguration(), jsonDateParse(json));
+      return new TableEditorConfiguration(jsonDateParse(json));
     } catch {
       return new TableEditorConfiguration();
     }

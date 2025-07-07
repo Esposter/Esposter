@@ -20,7 +20,7 @@ export const clickerRouter = router({
       if (!readableStreamBody) return new Clicker();
 
       const json = await streamToText(readableStreamBody);
-      return Object.assign(new Clicker(), jsonDateParse(json));
+      return new Clicker(jsonDateParse(json));
     } catch {
       return new Clicker();
     }

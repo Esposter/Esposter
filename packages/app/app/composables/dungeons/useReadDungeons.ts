@@ -10,8 +10,7 @@ export const useReadDungeons = async () => {
   await useReadData(
     () => {
       const dungeonsJson = localStorage.getItem(DUNGEONS_LOCAL_STORAGE_KEY);
-      if (dungeonsJson) dungeons.value = Object.assign(new Dungeons(), jsonDateParse(dungeonsJson));
-      else dungeons.value = new Dungeons();
+      dungeons.value = dungeonsJson ? new Dungeons(jsonDateParse(dungeonsJson)) : new Dungeons();
     },
     async () => {
       dungeons.value = await $trpc.dungeons.readDungeons.query();

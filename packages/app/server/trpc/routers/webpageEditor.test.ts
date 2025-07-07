@@ -2,10 +2,11 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
+import { MockContainerClientMap } from "@@/server/composables/azure/useContainerClient.test";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { webpageEditorRouter } from "@@/server/trpc/routers/webpageEditor";
-import { beforeAll, describe, expect, test } from "vitest";
+import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("webpageEditor", () => {
   let caller: DecorateRouterRecord<TRPCRouter["webpageEditor"]>;
@@ -14,6 +15,10 @@ describe("webpageEditor", () => {
     const createCaller = createCallerFactory(webpageEditorRouter);
     const mockContext = await createMockContext();
     caller = createCaller(mockContext);
+  });
+
+  afterEach(() => {
+    MockContainerClientMap.clear();
   });
 
   test("reads", async () => {

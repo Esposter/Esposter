@@ -21,7 +21,10 @@ export class TableEditorConfiguration extends AItemEntity implements TableEditor
 
   constructor(init?: PartialDeep<TableEditorConfiguration>) {
     super();
-    Object.assign(this, init);
+    Object.assign(this, init, {
+      [TableEditorType.TodoList]: new TableEditor(init?.[TableEditorType.TodoList]),
+      [TableEditorType.VuetifyComponent]: new TableEditor(init?.[TableEditorType.VuetifyComponent]),
+    });
   }
 }
 

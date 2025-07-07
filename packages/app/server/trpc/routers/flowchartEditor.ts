@@ -16,7 +16,7 @@ export const flowchartEditorRouter = router({
       if (!readableStreamBody) return new FlowchartEditor();
 
       const json = await streamToText(readableStreamBody);
-      return Object.assign(new FlowchartEditor(), jsonDateParse(json));
+      return new FlowchartEditor(jsonDateParse(json));
     } catch {
       return new FlowchartEditor();
     }

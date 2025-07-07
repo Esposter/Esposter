@@ -7,6 +7,11 @@ import { z } from "zod/v4";
 
 export class TableEditor<T extends ToData<Item>> extends AItemEntity {
   items: T[] = [];
+
+  constructor(init?: Partial<TableEditor<T>>) {
+    super();
+    Object.assign(this, init);
+  }
 }
 
 export const createTableEditorSchema = <T extends z.ZodType<ToData<Item>>>(schema: T) =>

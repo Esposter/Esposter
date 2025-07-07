@@ -31,8 +31,7 @@ export const useReadClicker = async () => {
   await useReadData(
     () => {
       const clickerJson = localStorage.getItem(CLICKER_LOCAL_STORAGE_KEY);
-      if (clickerJson) clicker.value = Object.assign(new Clicker(), jsonDateParse(clickerJson));
-      else clicker.value = new Clicker();
+      clicker.value = clickerJson ? new Clicker(jsonDateParse(clickerJson)) : new Clicker();
     },
     async () => {
       clicker.value = await $trpc.clicker.readClicker.query();

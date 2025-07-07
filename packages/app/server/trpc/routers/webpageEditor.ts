@@ -16,7 +16,7 @@ export const webpageEditorRouter = router({
       if (!readableStreamBody) return new WebpageEditor();
 
       const json = await streamToText(readableStreamBody);
-      return Object.assign(new WebpageEditor(), jsonDateParse(json));
+      return new WebpageEditor(jsonDateParse(json));
     } catch {
       return new WebpageEditor();
     }

@@ -16,7 +16,7 @@ export const dashboardRouter = router({
       if (!readableStreamBody) return new Dashboard();
 
       const json = await streamToText(readableStreamBody);
-      return Object.assign(new Dashboard(), jsonDateParse(json));
+      return new Dashboard(jsonDateParse(json));
     } catch {
       return new Dashboard();
     }

@@ -5,6 +5,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { rooms } from "#shared/db/schema/rooms";
 import { CODE_LENGTH } from "#shared/services/invite/constants";
 import { createCode } from "#shared/util/math/random/createCode";
+import { MockContainerClientMap } from "@@/server/composables/azure/useContainerClient.test";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
@@ -25,6 +26,7 @@ describe("room", () => {
   });
 
   afterEach(async () => {
+    MockContainerClientMap.clear();
     await mockContext.db.delete(rooms);
   });
 
@@ -133,7 +135,7 @@ describe("room", () => {
     expect(data.value.name).toBe(updatedName);
   });
 
-  test.todo("deletes", async () => {
+  test("deletes", async () => {
     expect.hasAssertions();
 
     const newRoom = await caller.createRoom({ name });
@@ -161,7 +163,7 @@ describe("room", () => {
     );
   });
 
-  test.todo("on deletes", async () => {
+  test("on deletes", async () => {
     expect.hasAssertions();
 
     const newRoom = await caller.createRoom({ name });

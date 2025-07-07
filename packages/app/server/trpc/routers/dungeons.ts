@@ -16,13 +16,13 @@ export const dungeonsRouter = router({
       if (!readableStreamBody) return new Dungeons();
 
       const json = await streamToText(readableStreamBody);
-      return Object.assign(new Dungeons(), jsonDateParse(json));
+      return new Dungeons(jsonDateParse(json));
     } catch {
       return new Dungeons();
     }
   }),
   saveDungeons: authedProcedure.input(dungeonsSchema).mutation(async ({ ctx, input }) => {
     const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
-    await useUpload(AzureContainer.ClickerAssets, blobName, JSON.stringify(input));
+    await useUpload(AzureContainer.DungeonsAssets, blobName, JSON.stringify(input));
   }),
 });

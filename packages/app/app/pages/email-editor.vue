@@ -30,7 +30,9 @@ const { trigger } = watchTriggerable(session, (newSession) => {
   editor.Storage.add("local", {
     load: () => {
       const emailEditorJson = localStorage.getItem(EMAIL_EDITOR_LOCAL_STORAGE_KEY);
-      return emailEditorJson ? Object.assign(new EmailEditor(), jsonDateParse(emailEditorJson)) : new EmailEditor();
+      return new Promise((resolve) =>
+        resolve(emailEditorJson ? new EmailEditor(jsonDateParse(emailEditorJson)) : new EmailEditor()),
+      );
     },
     store: (data) => new Promise(() => localStorage.setItem(EMAIL_EDITOR_LOCAL_STORAGE_KEY, JSON.stringify(data))),
   });

@@ -20,8 +20,10 @@ export const useEmojiStore = defineStore("esbabbler/emoji", () => {
     Object.assign(newEmoji, await $trpc.emoji.createEmoji.mutate(input));
   };
   const updateEmoji = async (input: UpdateEmojiInput) => {
-    storeUpdateEmoji(input);
-    await $trpc.emoji.updateEmoji.mutate(input);
+    if (!session.value.data) return;
+    const updatedInput = { ...input, userIds: getUpdatedUserIds(input.userIds, session.value.data.user.id) };
+    storeUpdateEmoji(updatedInput);
+    await $trpc.emoji.updateEmoji.mutate(updatedInput);
   };
   const deleteEmoji = async (input: DeleteEmojiInput) => {
     storeDeleteEmoji(input);
@@ -34,15 +36,13 @@ export const useEmojiStore = defineStore("esbabbler/emoji", () => {
     setEmojis(newEmoji.messageRowKey, emojis);
   };
   const storeUpdateEmoji = (input: UpdateEmojiInput) => {
-    if (!session.value.data) return;
-
     const emojis = getEmojis(input.messageRowKey);
     const index = emojis.findIndex(
       ({ partitionKey, rowKey }) => partitionKey === input.partitionKey && rowKey === input.rowKey,
     );
     if (index === -1) return;
 
-    Object.assign(emojis[index], { ...input, userIds: getUpdatedUserIds(input.userIds, session.value.data.user.id) });
+    Object.assign(emojis[index], input);
     setEmojis(input.messageRowKey, emojis);
   };
   const storeDeleteEmoji = ({ messageRowKey, partitionKey, rowKey }: DeleteEmojiInput) => {

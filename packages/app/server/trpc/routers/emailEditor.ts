@@ -16,7 +16,7 @@ export const emailEditorRouter = router({
       if (!readableStreamBody) return new EmailEditor();
 
       const json = await streamToText(readableStreamBody);
-      return Object.assign(new EmailEditor(), jsonDateParse(json));
+      return new EmailEditor(jsonDateParse(json));
     } catch {
       return new EmailEditor();
     }

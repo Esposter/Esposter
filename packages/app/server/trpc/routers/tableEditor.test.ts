@@ -3,10 +3,11 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { TableEditorConfiguration } from "#shared/models/tableEditor/data/TableEditorConfiguration";
 import { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType";
+import { MockContainerClientMap } from "@@/server/composables/azure/useContainerClient.test";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { tableEditorRouter } from "@@/server/trpc/routers/tableEditor";
-import { beforeAll, describe, expect, test } from "vitest";
+import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("tableEditor", () => {
   let caller: DecorateRouterRecord<TRPCRouter["tableEditor"]>;
@@ -15,6 +16,10 @@ describe("tableEditor", () => {
     const createCaller = createCallerFactory(tableEditorRouter);
     const mockContext = await createMockContext();
     caller = createCaller(mockContext);
+  });
+
+  afterEach(() => {
+    MockContainerClientMap.clear();
   });
 
   test("reads", async () => {
@@ -42,7 +47,7 @@ describe("tableEditor", () => {
     );
   });
 
-  test.todo("saves and reads", async () => {
+  test("saves and reads", async () => {
     expect.hasAssertions();
 
     const tableEditorConfiguration = new TableEditorConfiguration();
