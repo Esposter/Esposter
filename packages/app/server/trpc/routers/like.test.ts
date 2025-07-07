@@ -18,11 +18,11 @@ describe("like", () => {
   const updatedValue = -1;
 
   beforeAll(async () => {
-    const createLikeCaller = createCallerFactory(likeRouter);
     const createPostCaller = createCallerFactory(postRouter);
+    const createLikeCaller = createCallerFactory(likeRouter);
     mockContext = await createMockContext();
-    likeCaller = createLikeCaller(mockContext);
     postCaller = createPostCaller(mockContext);
+    likeCaller = createLikeCaller(mockContext);
   });
 
   test("creates", async () => {

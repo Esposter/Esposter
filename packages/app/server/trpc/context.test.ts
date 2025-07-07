@@ -1,9 +1,11 @@
 import type { User } from "#shared/db/schema/users";
+import type { useTableClient } from "@@/server/composables/azure/useTableClient";
 import type { Session } from "@@/server/models/auth/Session";
 import type { Context } from "@@/server/trpc/context";
 
 import { users } from "#shared/db/schema/users";
 import { dayjs } from "#shared/services/dayjs";
+import { useTableClientMock } from "@@/server/composables/azure/useTableClient.test";
 import { schema } from "@@/server/db/schema";
 import { PGlite } from "@electric-sql/pglite";
 import { drizzle } from "drizzle-orm/pglite";
@@ -42,6 +44,10 @@ vi.mock("@@/server/auth", () => ({
       getSession: mocks.getSession,
     },
   },
+}));
+
+vi.mock("@@/server/composables/azure/useTableClient", () => ({
+  useTableClient: vi.fn<typeof useTableClient>(useTableClientMock),
 }));
 
 export const mockSessionOnce = async (db: Context["db"], mockUser?: User) => {
