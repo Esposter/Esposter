@@ -31,7 +31,7 @@ type BaseColors = (typeof BaseColorsMap)[ThemeMode];
 
 const toSixDigitHexColor = (hexColor: string) =>
   hexColor.length === 3
-    ? [...EN_US_SEGMENTER.segment(hexColor)].reduce((acc, curr) => `${acc}${curr}${curr}`, "")
+    ? [...EN_US_SEGMENTER.segment(hexColor)].map((s) => s.segment).reduce((acc, curr) => `${acc}${curr}${curr}`, "")
     : hexColor;
 
 const getBaseColorsExtension = (colors: BaseColors) => {
