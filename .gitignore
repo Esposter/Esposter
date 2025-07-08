@@ -26,7 +26,7 @@ dist
 node_modules
 
 # Typescript build info
-tsconfig.tsbuildinfo
+*.tsbuildinfo
 
 # Logs
 logs

@@ -17,5 +17,6 @@ export const typescript: NuxtConfig["typescript"] = {
       noUncheckedIndexedAccess: false,
     },
     exclude: typescriptIgnores.map((i) => `../${i}`),
+    include: ["../{configuration,scripts}/**/*.ts"],
   },
 };

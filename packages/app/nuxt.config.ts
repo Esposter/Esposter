@@ -1,20 +1,20 @@
-import { app } from "./app/configuration/app";
-import { build } from "./app/configuration/build";
-import { compatibilityDate } from "./app/configuration/compatibilityDate";
-import { css } from "./app/configuration/css";
-import { devtools } from "./app/configuration/devtools";
-import { experimental } from "./app/configuration/experimental";
-import { future } from "./app/configuration/future";
-import { imports } from "./app/configuration/imports";
-import { modules } from "./app/configuration/modules";
-import { pwa } from "./app/configuration/pwa";
-import { runtimeConfig } from "./app/configuration/runtimeConfig";
-import { security } from "./app/configuration/security";
-import { site } from "./app/configuration/site";
-import { typescript } from "./app/configuration/typescript";
-import { unocss } from "./app/configuration/unocss";
-import { vite } from "./app/configuration/vite";
-import { vuetify } from "./app/configuration/vuetify";
+import { app } from "./configuration/app";
+import { build } from "./configuration/build";
+import { compatibilityDate } from "./configuration/compatibilityDate";
+import { css } from "./configuration/css";
+import { devtools } from "./configuration/devtools";
+import { experimental } from "./configuration/experimental";
+import { future } from "./configuration/future";
+import { imports } from "./configuration/imports";
+import { modules } from "./configuration/modules";
+import { pwa } from "./configuration/pwa";
+import { runtimeConfig } from "./configuration/runtimeConfig";
+import { security } from "./configuration/security";
+import { site } from "./configuration/site";
+import { typescript } from "./configuration/typescript";
+import { unocss } from "./configuration/unocss";
+import { vite } from "./configuration/vite";
+import { vuetify } from "./configuration/vuetify";
 
 export default defineNuxtConfig({
   app,
