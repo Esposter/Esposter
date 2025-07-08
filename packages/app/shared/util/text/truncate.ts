@@ -1,2 +1,2 @@
 export const truncate = (string: string, length: number) =>
-  string.length > length ? `${string.substring(0, length)}..."` : string;
+  string.length > length ? `${string.slice(0, length)}..."` : string;

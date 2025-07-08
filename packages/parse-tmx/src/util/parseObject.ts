@@ -22,7 +22,7 @@ export const parseObject = (node: TMXObjectNode): TMXObjectParsed => {
   if (text) {
     const textNode = text[0];
     object.text = textNode._;
-    object.properties = Object.assign({}, object.properties, textNode.$);
+    object.properties = Object.assign({}, ...(object.properties ?? []), textNode.$);
   }
 
   if (object.gid) {

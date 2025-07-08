@@ -34,7 +34,7 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
     return typeof roomId === "string" && uuidValidateV4(roomId) ? roomId : undefined;
   });
   const currentRoom = computed(() => {
-    if (!currentRoomId.value) return undefined;
+    if (!currentRoomId.value) return null;
     return rooms.value.find(({ id }) => id === currentRoomId.value);
   });
   const currentRoomName = computed(() => currentRoom.value?.name ?? "");

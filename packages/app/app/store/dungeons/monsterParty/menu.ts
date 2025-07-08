@@ -30,12 +30,11 @@ export const useMenuStore = defineStore("dungeons/monsterParty/menu", () => {
         case MenuOption.Cancel:
           onCancel();
           break;
-        case MenuOption.Move: {
+        case MenuOption.Move:
           monsterPartySceneStore.monsterIdToMove = monsterPartyOptionGrid.value.id;
           monsterPartySceneStore.sceneMode = SceneMode.Move;
           infoPanelStore.infoDialogMessage.text = `Select a monster to switch ${monsterPartyOptionGrid.value.key} with.`;
           break;
-        }
         case MenuOption.Release:
           if (monsterPartySceneStore.monsters.length <= 1) {
             infoPanelStore.infoDialogMessage.text = "Cannot release any more monsters.";

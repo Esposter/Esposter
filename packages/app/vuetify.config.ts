@@ -4,6 +4,7 @@ import type { Colors, ThemeOptions } from "vuetify/lib/composables/theme.mjs";
 import { defineVuetifyConfiguration } from "vuetify-nuxt-module/custom-configuration";
 
 import { ThemeMode } from "./app/models/vuetify/ThemeMode";
+import { EN_US_SEGMENTER } from "./app/services/shared/constants";
 
 const BaseColorsCommon = {
   border: "#ccc",
@@ -29,11 +30,13 @@ const BaseColorsMap = {
 type BaseColors = (typeof BaseColorsMap)[ThemeMode];
 
 const toSixDigitHexColor = (hexColor: string) =>
-  hexColor.length === 3 ? hexColor.split("").reduce((acc, curr) => `${acc}${curr}${curr}`, "") : hexColor;
+  hexColor.length === 3
+    ? [...EN_US_SEGMENTER.segment(hexColor)].reduce((acc, curr) => `${acc}${curr}${curr}`, "")
+    : hexColor;
 
 const getBaseColorsExtension = (colors: BaseColors) => {
   const sanitisedColors = Object.entries(colors).reduce<Record<string, string>>((acc, [color, hex]) => {
-    acc[color] = `${hex[0]}${toSixDigitHexColor(hex.substring(1))}`;
+    acc[color] = `${hex[0]}${toSixDigitHexColor(hex.slice(1))}`;
     return acc;
   }, {}) as BaseColors;
   return {

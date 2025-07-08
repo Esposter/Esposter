@@ -52,7 +52,7 @@ export const useBuildingStore = defineStore("clicker/building", () => {
   };
   const getBuildingPrice = (building: Building) => {
     const boughtBuildingAmount = getBoughtBuildingAmount(building);
-    return Math.trunc(building.basePrice * Math.pow(1.15, boughtBuildingAmount));
+    return Math.trunc(building.basePrice * boughtBuildingAmount ** 1.15);
   };
 
   const createBoughtBuilding = (newBuilding: Building) => {

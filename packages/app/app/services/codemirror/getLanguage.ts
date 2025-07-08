@@ -2,7 +2,7 @@ import { LanguageRegexSupportPatternMap } from "@/models/codemirror/LanguageRege
 
 export const getLanguage = (filename: string) => {
   for (const [language, supportPattern] of Object.entries(LanguageRegexSupportPatternMap))
-    if (filename.match(supportPattern)) return language;
+    if (supportPattern.test(filename)) return language;
 
-  return undefined;
+  return null;
 };

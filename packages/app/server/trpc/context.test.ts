@@ -108,6 +108,7 @@ export const createMockContext = async (): Promise<Context> => {
 
 const createMockDb = async () => {
   // @TODO: https://github.com/drizzle-team/drizzle-orm/issues/2853#issuecomment-2668459509
+  // oxlint-disable-next-line consistent-type-imports
   const { pushSchema } = require("drizzle-kit/api") as typeof import("drizzle-kit/api");
   // Use in-memory pglite db which supports the same API
   // as a mock for the postgresjs db

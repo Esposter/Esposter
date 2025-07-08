@@ -13,6 +13,6 @@ export const pushListener = (lifecycle: Lifecycle, listener: (scene: SceneWithPl
   }
 
   const listeners = listenersMap.get(sceneKey);
-  if (!listeners) listenersMap.set(sceneKey, [listener]);
-  else listeners.push(listener);
+  if (listeners) listeners.push(listener);
+  else listenersMap.set(sceneKey, [listener]);
 };

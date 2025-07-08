@@ -35,7 +35,7 @@ export class Parser {
       newObject[this.options.charkey] = "";
       if (!this.options.ignoreAttrs)
         for (const key in node.attributes)
-          if (Object.prototype.hasOwnProperty.call(node.attributes, key)) {
+          if (Object.hasOwn(node.attributes, key)) {
             if (!(this.options.attrkey in newObject) && !this.options.mergeAttrs) newObject[this.options.attrkey] = {};
 
             const newValue = this.options.attrValueProcessors
@@ -79,7 +79,7 @@ export class Parser {
         delete object[this.options.charkey];
       } else {
         if (this.options.trim) object[this.options.charkey] = char.trim();
-        if (this.options.normalize) object[this.options.charkey] = char.replace(/\s{2,}/g, " ").trim();
+        if (this.options.normalize) object[this.options.charkey] = char.replaceAll(/\s{2,}/g, " ").trim();
 
         object[this.options.charkey] = this.options.valueProcessors
           ? processItem(this.options.valueProcessors, char, nodeName)
@@ -94,10 +94,7 @@ export class Parser {
         else object = (this.options.emptyTag || emptyString) as unknown as Record<string, unknown>;
 
       if (this.options.validator) {
-        const xpath = `/${this.stack
-          .map((node) => node[BUILTIN_NAME_KEY])
-          .concat(nodeName)
-          .join("/")}`;
+        const xpath = `/${[...this.stack.map((node) => node[BUILTIN_NAME_KEY]), nodeName].join("/")}`;
         object = this.options.validator(xpath, nextObject?.[nodeName], object);
       }
 
@@ -154,7 +151,7 @@ export class Parser {
         this.options.explicitChildren &&
         this.options.preserveChildrenOrder &&
         this.options.charsAsChildren &&
-        (this.options.includeWhiteChars || text.replace(/\\n/g, "").trim() !== "")
+        (this.options.includeWhiteChars || text.replaceAll(String.raw`\\n`, "").trim() !== "")
       ) {
         object[this.options.childkey] ??= [];
         const charChild: Record<string, string> = {
@@ -162,7 +159,7 @@ export class Parser {
         };
         charChild[this.options.charkey] = text;
         if (this.options.normalize)
-          charChild[this.options.charkey] = charChild[this.options.charkey].replace(/\s{2,}/g, " ").trim();
+          charChild[this.options.charkey] = charChild[this.options.charkey].replaceAll(/\s{2,}/g, " ").trim();
 
         (object[this.options.childkey] as Record<string, string>[]).push(charChild);
       }
@@ -183,14 +180,12 @@ export class Parser {
   }
 
   private assignOrPush(object: Record<string, unknown>, key: string, newValue: unknown): void {
-    if (!(key in object))
-      if (!this.options.explicitArray) defineProperty(object, key, newValue);
-      else defineProperty(object, key, [newValue]);
-    else {
+    if (key in object) {
       const objectValue = object[key];
-      if (!Array.isArray(objectValue)) defineProperty(object, key, [objectValue]);
-      else objectValue.push(newValue);
-    }
+      if (Array.isArray(objectValue)) objectValue.push(newValue);
+      else defineProperty(object, key, [objectValue]);
+    } else if (this.options.explicitArray) defineProperty(object, key, [newValue]);
+    else defineProperty(object, key, newValue);
   }
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
   private parseString<T>(convertableToString: convertableToString, callback: (result: T) => void): SAXParser {

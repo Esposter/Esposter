@@ -9,7 +9,7 @@ if (process.argv.length < minArgv)
   throw new Error(`${property} requires at least ${minArgv - 2} arguments`);
 
 const script = process.argv[2];
-const args = process.argv.slice(3, process.argv.length);
+const args = process.argv.slice(3);
 const { platform } = process;
 const require = createRequire(import.meta.url);
 const packageJson = require(resolve(process.cwd(), "package.json"));

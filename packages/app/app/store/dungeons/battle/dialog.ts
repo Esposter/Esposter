@@ -7,13 +7,13 @@ export const useBattleDialogStore = defineStore("dungeons/battle/dialog", () => 
   const { showMessageNoInputRequired: baseShowMessageNoInputRequired, updateQueuedMessagesAndShowMessage } =
     dialogStore;
   const battleDialogTarget = useBattleDialogTarget();
-  const showMessages = async (scene: SceneWithPlugins, messages: string[]) =>
+  const showMessages = (scene: SceneWithPlugins, messages: string[]) =>
     updateQueuedMessagesAndShowMessage(
       scene,
       battleDialogTarget,
       messages.map((text) => ({ text })),
     );
-  const showMessageNoInputRequired = async (scene: SceneWithPlugins, message: string) =>
+  const showMessageNoInputRequired = (scene: SceneWithPlugins, message: string) =>
     baseShowMessageNoInputRequired(scene, battleDialogTarget, { text: message });
   return { showMessageNoInputRequired, showMessages };
 });

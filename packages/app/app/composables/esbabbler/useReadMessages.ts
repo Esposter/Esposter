@@ -17,9 +17,7 @@ export const useReadMessages = async () => {
   const readMetadata = (messages: MessageEntity[]) =>
     Promise.all([
       readUsers(messages.map(({ userId }) => userId)),
-      readReplies([
-        ...new Set(messages.map(({ replyRowKey }) => replyRowKey).filter((value): value is string => Boolean(value))),
-      ]),
+      readReplies([...new Set(messages.map(({ replyRowKey }) => replyRowKey).filter((value) => value !== undefined))]),
       readFiles(messages.flatMap(({ files }) => files)),
       readEmojis(messages.map(({ rowKey }) => rowKey)),
     ]);

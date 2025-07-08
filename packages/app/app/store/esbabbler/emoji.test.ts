@@ -67,12 +67,12 @@ describe(useEmojiStore, () => {
 
     const userId = getMockSession().user.id;
     // eslint-disable-next-line @typescript-eslint/no-misused-spread
-    const updatedEmoji = new MessageEmojiMetadataEntity({ ...newEmoji, userIds: [userId] });
+    const updatedEmoji = { ...newEmoji, userIds: [userId] };
     storeUpdateEmoji(updatedEmoji);
     const emojis = getEmojis(messageRowKey);
 
     expect(emojis).toHaveLength(1);
-    expect(emojis[0]).toStrictEqual(updatedEmoji);
+    expect(emojis[0]).toStrictEqual(new MessageEmojiMetadataEntity(updatedEmoji));
   });
 
   test("deletes", () => {

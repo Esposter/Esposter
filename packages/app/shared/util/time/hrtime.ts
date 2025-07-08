@@ -6,8 +6,8 @@ export const hrtime = (previousHrTime?: [number, number]): [number, number] => {
   let seconds = Math.floor(clocktime);
   let nanoseconds = Math.floor((clocktime % 1) * 1e9);
   if (previousHrTime) {
-    seconds = seconds - previousHrTime[0];
-    nanoseconds = nanoseconds - previousHrTime[1];
+    seconds -= previousHrTime[0];
+    nanoseconds -= previousHrTime[1];
     if (nanoseconds < 0) {
       seconds--;
       nanoseconds += 1e9;

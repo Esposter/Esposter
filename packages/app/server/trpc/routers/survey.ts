@@ -236,21 +236,21 @@ export const surveyRouter = router({
     }),
   updateSurveyModel: getCreatorProcedure(updateSurveyModelInputSchema, "id").mutation<Survey>(
     async ({ ctx, input: { id, ...rest } }) => {
-      if (rest.model !== ctx.survey.model) {
-        rest.modelVersion++;
-        if (rest.modelVersion <= ctx.survey.modelVersion)
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: new InvalidOperationError(
-              Operation.Update,
-              DatabaseEntityType.Survey,
-              "cannot update survey model with old model version",
-            ).message,
-          });
-      } else
+      if (rest.model === ctx.survey.model)
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Survey, "duplicate model").message,
+        });
+
+      if (rest.model !== ctx.survey.model) rest.modelVersion++;
+      if (rest.modelVersion <= ctx.survey.modelVersion)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(
+            Operation.Update,
+            DatabaseEntityType.Survey,
+            "cannot update survey model with old model version",
+          ).message,
         });
 
       const updatedSurvey = (
@@ -286,23 +286,22 @@ export const surveyRouter = router({
           code: "NOT_FOUND",
           message: new NotFoundError(AzureEntityType.SurveyResponse, JSON.stringify(input)).message,
         });
-
-      if (input.model !== surveyResponse.model) {
-        input.modelVersion++;
-        if (input.modelVersion <= surveyResponse.modelVersion)
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: new InvalidOperationError(
-              Operation.Update,
-              DatabaseEntityType.Survey,
-              "cannot update survey response model with old model version",
-            ).message,
-          });
-      } else
+      else if (input.model === surveyResponse.model)
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: new InvalidOperationError(Operation.Update, AzureEntityType.SurveyResponse, "duplicate model")
             .message,
+        });
+
+      input.modelVersion++;
+      if (input.modelVersion <= surveyResponse.modelVersion)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(
+            Operation.Update,
+            DatabaseEntityType.Survey,
+            "cannot update survey response model with old model version",
+          ).message,
         });
 
       await updateEntity(surveyResponseClient, input);

@@ -1,7 +1,8 @@
 import type { ToData } from "#shared/models/entity/ToData";
 
-import { applyItemMetadataMixin, itemMetadataSchema } from "#shared/models/entity/ItemMetadata";
+import { itemMetadataSchema } from "#shared/models/entity/ItemMetadata";
 import { Serializable } from "#shared/models/entity/Serializable";
+import { applyItemMetadataMixin } from "#shared/services/entity/applyItemMetadataMixin";
 import { z } from "zod/v4";
 
 class BaseAItemEntity extends Serializable {

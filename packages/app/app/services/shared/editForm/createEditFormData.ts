@@ -18,24 +18,22 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
   const editedIndex = ref(-1);
   const originalItem = computed(() => {
     const editedItemValue = editedItem.value;
-    if (!editedItemValue) return undefined;
+    if (!editedItemValue) return null;
     return items.value.find(getEntityIdComparator(idKeys, editedItemValue)) ?? undefined;
   });
   const isFullScreenDialog = ref(false);
   // The form is "valid" if there's no form open/no errors
   const isEditFormValid = computed(() => !editFormRef.value || editFormRef.value.errors.length === 0);
-  const isSavable = computed(() => {
-    if (!editedItem.value) return false;
-    // For the form to be savable, it has to have no errors
-    // and either it is a new item, or it is not equal to the original item
-    else
-      return (
-        isEditFormValid.value &&
-        // The edited item is a clone of original item which does not clone the class information
-        // so it's not "strictly" equal including the Object prototype
-        (!originalItem.value || !deepEqual(editedItem.value, structuredClone(toRawDeep(originalItem.value))))
-      );
-  });
+  const isSavable = computed(
+    () =>
+      // For the form to be savable, it has to have no errors
+      // and either it is a new item, or it is not equal to the original item
+      Boolean(editedItem.value) &&
+      isEditFormValid.value &&
+      // The edited item is a clone of original item which does not clone the class information
+      // so it's not "strictly" equal including the Object prototype
+      (!originalItem.value || !deepEqual(editedItem.value, structuredClone(toRawDeep(originalItem.value)))),
+  );
   // We know the form is dirty if:
   // 1. The user has pucked up and the edit form isn't valid
   // 2. or that it is savable

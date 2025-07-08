@@ -16,7 +16,7 @@ export const createTmxProperties = async () => {
   for (const key of Object.values(TilemapKey)) {
     const {
       map: { layers, tilesets },
-    } = await parseTmx(await readFile(`${WORLD_ROOT_DIRECTORY}/${getTilemapDirectory(key)}/index.tmx`, "utf-8"));
+    } = await parseTmx(await readFile(`${WORLD_ROOT_DIRECTORY}/${getTilemapDirectory(key)}/index.tmx`, "utf8"));
     layersData.push({ key, layers });
     externalTilesets.push(...(tilesets as TMXExternalTilesetParsed[]));
   }

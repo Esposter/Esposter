@@ -55,8 +55,7 @@ export const useRoomSubscribables = () => {
     leaveRoomUnsubscribable.value = $trpc.room.onLeaveRoom.subscribe(newRoomIds, {
       onData: ({ roomId, userId }) => {
         const userDataMap = getUserDataMap(roomId);
-        if (!userDataMap) return;
-        else userDataMap.delete(userId);
+        userDataMap?.delete(userId);
       },
     });
   });

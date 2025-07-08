@@ -84,7 +84,7 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
         (async function* (entities: Map<string, T>): AsyncGenerator<TableEntityResultPage<T>> {
           // For a simple mock, we'll return all entities in a single page
           // A more complex mock could implement maxPageSize and continuationTokens
-          const allEntitiesWithMetadata = Array.from(entities.values()).map(withMetadata);
+          const allEntitiesWithMetadata = [...entities.values()].map(withMetadata);
           if (allEntitiesWithMetadata.length > 0)
             yield await new Promise((resolve) => resolve(allEntitiesWithMetadata));
         })(this.entities as Map<string, T>),

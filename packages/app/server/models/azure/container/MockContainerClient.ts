@@ -29,11 +29,11 @@ import type {
 } from "@azure/storage-blob";
 import type { Except } from "type-fest";
 
+import { html } from "#shared/services/prettier/html";
 import { MockBlockBlobClient } from "@@/server/models/azure/container/MockBlockBlobClient";
 import { getBlobItemXml } from "@@/server/services/azure/container/getBlobItemXml";
 import { getBlobPrefixXml } from "@@/server/services/azure/container/getBlobPrefixXml";
 import { toWebResourceLike } from "@@/server/services/azure/container/toWebResourceLike";
-import { html } from "@@/server/services/prettier/html";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { createHttpHeaders, createPipelineRequest } from "@azure/core-rest-pipeline";
 import { AnonymousCredential } from "@azure/storage-blob";
@@ -165,7 +165,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
             yield await new Promise((resolve) =>
               resolve({
                 _response: {
-                  bodyAsText: html`<?xml version="1.0" encoding="utf-8"?>
+                  bodyAsText: html`<?xml version="1.0" encoding="utf8"?>
                     <EnumerationResults ServiceEndpoint="" ContainerName="${this.containerName}">
                       <Blobs>${allBlobItemXml.join("")}${allBlobPrefixXml.join("")}</Blobs>
                       <NextMarker />
@@ -219,7 +219,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
             yield await new Promise((resolve) =>
               resolve({
                 _response: {
-                  bodyAsText: html`<?xml version="1.0" encoding="utf-8"?>
+                  bodyAsText: html`<?xml version="1.0" encoding="utf8"?>
                     <EnumerationResults ServiceEndpoint="" ContainerName="${this.containerName}">
                       <Blobs>${allBlobItemXml.join("")}</Blobs>
                       <NextMarker />
@@ -291,7 +291,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
         // Filter by prefix
         continue;
 
-      const nameAfterPrefix = name.substring(prefix.length);
+      const nameAfterPrefix = name.slice(prefix.length);
       const delimiterIndex = nameAfterPrefix.indexOf(delimiter);
 
       if (delimiterIndex === -1)
@@ -312,13 +312,13 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
         });
       else {
         // Delimiter found, this represents a "subdirectory"
-        const subprefix = `${prefix}${nameAfterPrefix.substring(0, delimiterIndex + delimiter.length)}`;
+        const subprefix = `${prefix}${nameAfterPrefix.slice(0, delimiterIndex + delimiter.length)}`;
         uniqueSubprefixes.add(subprefix);
       }
     }
 
     // Yield prefixes first, then blobs, which mimics Azure's behavior
-    for (const prefixName of Array.from(uniqueSubprefixes).sort())
+    for (const prefixName of [...uniqueSubprefixes].sort())
       yield await new Promise((resolve) => resolve({ kind: "prefix", name: prefixName }));
     for (const blobItem of blobsInCurrentLevel)
       yield await new Promise((resolve) => resolve({ kind: "blob", ...blobItem }));

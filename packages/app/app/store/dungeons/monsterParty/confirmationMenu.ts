@@ -22,10 +22,9 @@ export const useConfirmationMenuStore = defineStore("dungeons/monsterParty/confi
 
     if (justDownInput === PlayerSpecialInput.Confirm)
       switch (MonsterPartyConfirmationMenuOptionGrid.value) {
-        case ConfirmationMenuOption.No: {
+        case ConfirmationMenuOption.No:
           onCancel();
           break;
-        }
         case ConfirmationMenuOption.Yes: {
           const monsterId = monsterPartyOptionGrid.value.id;
           const index = monsterPartySceneStore.monsters.findIndex(({ id }) => id === monsterId);

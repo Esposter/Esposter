@@ -92,7 +92,8 @@ export const userRouter = router({
 
     for (const userId of input) {
       const foundStatus = foundUserStatuses.find((us) => us.userId === userId);
-      if (!foundStatus)
+      if (foundStatus) resultUserStatuses.push({ ...foundStatus, status: getDetectedUserStatus(foundStatus) });
+      else
         // We'll conveniently assume that if they don't have a user status record yet
         // it means that they're still online as we insert a record as soon as they go offline
         resultUserStatuses.push({
@@ -105,7 +106,6 @@ export const userRouter = router({
           updatedAt: new Date(),
           userId,
         });
-      else resultUserStatuses.push({ ...foundStatus, status: getDetectedUserStatus(foundStatus) });
     }
 
     return resultUserStatuses;

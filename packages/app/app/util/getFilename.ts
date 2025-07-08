@@ -1,1 +1,1 @@
-export const getFilename = (path: string) => path.substring(path.lastIndexOf("/") + 1);
+export const getFilename = (path: string) => path.slice(path.lastIndexOf("/") + 1);

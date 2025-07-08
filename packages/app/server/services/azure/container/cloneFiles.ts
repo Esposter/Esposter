@@ -3,7 +3,7 @@ import type { ContainerClient } from "@azure/storage-blob";
 
 import { getBlobName } from "@@/server/services/azure/container/getBlobName";
 
-export const cloneFiles = async (
+export const cloneFiles = (
   containerClient: ContainerClient,
   files: FileEntity[],
   sourcePrefix = "",

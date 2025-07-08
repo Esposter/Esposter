@@ -120,7 +120,7 @@ export const postRouter = router({
       return newPostWithRelations;
     },
   ),
-  deleteComment: authedProcedure.input(deleteCommentInputSchema).mutation<Post>(async ({ ctx, input }) =>
+  deleteComment: authedProcedure.input(deleteCommentInputSchema).mutation<Post>(({ ctx, input }) =>
     ctx.db.transaction(async (tx) => {
       const deletedComment = (
         await tx
@@ -149,7 +149,7 @@ export const postRouter = router({
       return deletedComment;
     }),
   ),
-  deletePost: authedProcedure.input(deletePostInputSchema).mutation<Post>(async ({ ctx, input }) =>
+  deletePost: authedProcedure.input(deletePostInputSchema).mutation<Post>(({ ctx, input }) =>
     ctx.db.transaction(async (tx) => {
       const deletedPost = (
         await tx

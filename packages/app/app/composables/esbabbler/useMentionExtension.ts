@@ -1,5 +1,5 @@
 import { suggestion } from "@/services/esbabbler/suggestion";
-import Mention from "@tiptap/extension-mention";
+import { Mention } from "@tiptap/extension-mention";
 
 export const useMentionExtension = () => {
   const { info, infoOpacity10 } = useColors();

@@ -3,7 +3,7 @@ import type { ItemEntityType } from "#shared/models/entity/ItemEntityType";
 
 interface ConfirmDeleteDialogButtonProps<T> {
   name: string;
-  originalItem?: T;
+  originalItem: null | T;
 }
 
 const { name, originalItem } = defineProps<ConfirmDeleteDialogButtonProps<T>>();
