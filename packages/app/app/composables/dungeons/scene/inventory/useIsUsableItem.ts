@@ -1,6 +1,6 @@
 import type { Item } from "#shared/models/dungeons/item/Item";
 
-import { ItemEffectType } from "@/models/dungeons/item/ItemEffectType";
+import { ItemEffectType } from "#shared/models/dungeons/item/ItemEffectType";
 import { PreviousSceneUsableItemEffectTypesMap } from "@/services/dungeons/scene/inventory/PreviousSceneUsableItemEffectTypesMap";
 import { useSceneStore } from "@/store/dungeons/scene";
 

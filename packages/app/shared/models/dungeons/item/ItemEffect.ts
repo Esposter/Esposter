@@ -1,8 +1,8 @@
+import type { ItemEffectType } from "#shared/models/dungeons/item/ItemEffectType";
 import type { ItemEntityType } from "#shared/models/entity/ItemEntityType";
-import type { ItemEffectType } from "@/models/dungeons/item/ItemEffectType";
 
+import { itemEffectTypeSchema } from "#shared/models/dungeons/item/ItemEffectType";
 import { createItemEntityTypeSchema } from "#shared/models/entity/ItemEntityType";
-import { itemEffectTypeSchema } from "@/models/dungeons/item/ItemEffectType";
 import { z } from "zod/v4";
 
 export interface ItemEffect extends ItemEntityType<ItemEffectType> {

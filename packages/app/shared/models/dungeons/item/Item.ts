@@ -1,8 +1,8 @@
 import type { ItemId } from "#shared/generated/tiled/propertyTypes/enum/ItemId";
-import type { ItemEffect } from "@/models/dungeons/item/ItemEffect";
+import type { ItemEffect } from "#shared/models/dungeons/item/ItemEffect";
 
+import { itemEffectSchema } from "#shared/models/dungeons/item/ItemEffect";
 import { itemIdSchema } from "#shared/models/dungeons/item/ItemId";
-import { itemEffectSchema } from "@/models/dungeons/item/ItemEffect";
 import { z } from "zod/v4";
 
 export interface Item {

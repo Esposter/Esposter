@@ -8,10 +8,10 @@ import { inventorySchema } from "#shared/models/dungeons/data/player/Inventory";
 import { positionSchema } from "#shared/models/dungeons/data/player/Position";
 import { RespawnLocation, respawnLocationSchema } from "#shared/models/dungeons/data/player/RespawnLocation";
 import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
+import { Monster, monsterSchema } from "#shared/models/dungeons/monster/Monster";
 import { getItem } from "#shared/services/dungeons/item/getItem";
 import { getInitialMetadata } from "#shared/services/dungeons/scene/world/getInitialMetadata";
 import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
-import { Monster, monsterSchema } from "@/models/dungeons/monster/Monster";
 import { z } from "zod/v4";
 
 export class Player {

@@ -1,4 +1,4 @@
-import type { Monster } from "@/models/dungeons/monster/Monster";
+import type { Monster } from "#shared/models/dungeons/monster/Monster";
 
 import { createRandomNumber } from "#shared/util/math/random/createRandomNumber";
 import { CaptureResult } from "@/models/dungeons/item/CaptureResult";

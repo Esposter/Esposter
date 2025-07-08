@@ -1,8 +1,8 @@
 import type { Item } from "#shared/models/dungeons/item/Item";
-import type { Monster } from "@/models/dungeons/monster/Monster";
+import type { Monster } from "#shared/models/dungeons/monster/Monster";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { ItemEffectType } from "@/models/dungeons/item/ItemEffectType";
+import { ItemEffectType } from "#shared/models/dungeons/item/ItemEffectType";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { AItemResolver } from "@/models/resolvers/dungeons/AItemResolver";
 import { isBallKey } from "@/services/dungeons/item/isBallKey";

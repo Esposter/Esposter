@@ -1,4 +1,4 @@
-import type { Monster } from "@/models/dungeons/monster/Monster";
+import type { Monster } from "#shared/models/dungeons/monster/Monster";
 import type { Except } from "type-fest";
 
 import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";

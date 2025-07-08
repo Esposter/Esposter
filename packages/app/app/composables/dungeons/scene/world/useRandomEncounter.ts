@@ -3,8 +3,8 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { LayerName } from "#shared/generated/tiled/layers/Home/LayerName";
 import { EncounterObjectProperty } from "#shared/generated/tiled/propertyTypes/class/EncounterObjectProperty";
+import { Monster } from "#shared/models/dungeons/monster/Monster";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { Monster } from "@/models/dungeons/monster/Monster";
 import { getEncounterArea } from "@/services/dungeons/area/getEncounterArea";
 import { MAX_STEPS_BEFORE_NEXT_ENCOUNTER } from "@/services/dungeons/scene/world/constants";
 import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
