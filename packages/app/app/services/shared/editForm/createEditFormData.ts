@@ -16,22 +16,21 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
   const editFormRef = ref<InstanceType<typeof VForm>>();
   const editedItem = ref<TItem>();
   const editedIndex = ref(-1);
-  const originalItem = computed(() => {
-    const editedItemValue = editedItem.value;
-    if (!editedItemValue) return null;
-    return items.value.find(getEntityIdComparator(idKeys, editedItemValue)) ?? undefined;
-  });
+  const originalItem = computed(() =>
+    editedItem.value ? items.value.find(getEntityIdComparator(idKeys, editedItem.value)) : undefined,
+  );
   const isFullScreenDialog = ref(false);
   // The form is "valid" if there's no form open/no errors
   const isEditFormValid = computed(() => !editFormRef.value || editFormRef.value.errors.length === 0);
   const isSavable = computed(
     () =>
-      // For the form to be savable, it has to have no errors
-      // and either it is a new item, or it is not equal to the original item
+      // For the form to be savable, it has to:
       Boolean(editedItem.value) &&
+      // 1. Have no errors
       isEditFormValid.value &&
+      // 2. Be a new item or be not equal to the original item
       // The edited item is a clone of original item which does not clone the class information
-      // so it's not "strictly" equal including the Object prototype
+      // so it's not "strictly" equal but deepEqual is not a strict check so it's ok
       (!originalItem.value || !deepEqual(editedItem.value, structuredClone(toRawDeep(originalItem.value)))),
   );
   // We know the form is dirty if:

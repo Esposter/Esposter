@@ -11,7 +11,7 @@ interface EditFormDialogProps<T> {
   isFullScreenDialog: boolean;
   isSavable: boolean;
   name: string;
-  originalItem: null | T;
+  originalItem?: T;
 }
 
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
