@@ -1,19 +1,24 @@
-import type { OmitIndexSignature } from "type-fest";
-
-import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
-import { extractBlobUrls } from "#shared/services/surveyer/extractBlobUrls"; // Adjust path
+import { extractBlobUrls } from "#shared/services/surveyer/extractBlobUrls";
 import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
 
-describe(extractBlobUrls, () => {
-  const MOCK_AZURE_BLOB_URL = "https://testaccount.blob.core.windows.net";
-  const MOCK_BLOB_URL = `${MOCK_AZURE_BLOB_URL}/${AzureContainer.SurveyerAssets}`;
+describe(extractBlobUrls, async () => {
+  const mocks = await vi.hoisted(async () => {
+    const blobUrl = "https://mockaccount.blob.core.windows.net";
+    const AzureContainer = (await import("#shared/models/azure/blob/AzureContainer")).AzureContainer;
+    return {
+      blobUrl,
+      containerUrl: `${blobUrl}/${AzureContainer.SurveyerAssets}`,
+    };
+  });
 
   beforeAll(() => {
-    vi.stubEnv<keyof OmitIndexSignature<typeof process.env>>("AZURE_BLOB_URL", MOCK_AZURE_BLOB_URL);
+    vi.mock("#shared/util/azure/getBlobUrl", () => ({
+      getBlobUrl: () => mocks.blobUrl,
+    }));
   });
 
   afterAll(() => {
-    vi.unstubAllEnvs();
+    vi.restoreAllMocks();
   });
 
   test("should return an empty array for an empty model string", () => {
@@ -30,14 +35,14 @@ describe(extractBlobUrls, () => {
   test("should extract a single matching blob URL", () => {
     expect.hasAssertions();
 
-    expect(extractBlobUrls(`${MOCK_BLOB_URL}"`)).toStrictEqual([MOCK_BLOB_URL]);
+    expect(extractBlobUrls(`${mocks.containerUrl}"`)).toStrictEqual([mocks.containerUrl]);
   });
 
   test("should extract multiple unique matching blob URLs", () => {
     expect.hasAssertions();
 
-    const url1 = `${MOCK_BLOB_URL}/1`;
-    const url2 = `${MOCK_BLOB_URL}/2`;
+    const url1 = `${mocks.containerUrl}/1`;
+    const url2 = `${mocks.containerUrl}/2`;
 
     expect(extractBlobUrls(`${url1}"${url2}"`)).toStrictEqual([url1, url2]);
   });
@@ -45,12 +50,12 @@ describe(extractBlobUrls, () => {
   test("should extract only unique URLs if duplicates are present", () => {
     expect.hasAssertions();
 
-    expect(extractBlobUrls(`${MOCK_BLOB_URL}"${MOCK_BLOB_URL}"`)).toStrictEqual([MOCK_BLOB_URL]);
+    expect(extractBlobUrls(`${mocks.containerUrl}"${mocks.containerUrl}"`)).toStrictEqual([mocks.containerUrl]);
   });
 
   test("should not extract URLs from a different container", () => {
     expect.hasAssertions();
 
-    expect(extractBlobUrls(`${MOCK_AZURE_BLOB_URL}"`)).toStrictEqual([]);
+    expect(extractBlobUrls(`${mocks.blobUrl}"`)).toStrictEqual([]);
   });
 });

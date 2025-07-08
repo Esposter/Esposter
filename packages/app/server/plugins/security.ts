@@ -1,5 +1,5 @@
 import { RoutePath } from "#shared/models/router/RoutePath";
-import { ImageSourceWhitelist } from "@@/server/services/esposter/ImageSourceWhitelist";
+import { ImageSourceWhitelist } from "#shared/services/esposter/ImageSourceWhitelist";
 
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook("nuxt-security:routeRules", (routeRules) => {

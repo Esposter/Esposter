@@ -1,3 +1,4 @@
+import { getBlobUrl } from "../../../shared/util/azure/getBlobUrl";
 import {
   BLOGSPOT_BASE_URL,
   GRAPESJS_BASE_URL,
@@ -21,7 +22,7 @@ export const ImageSourceWhitelist = [
   // emoji-mart-vue-fast
   "https://unpkg.com/emoji-datasource-apple@15.0.1/img/apple/sheets-256/64.png",
   // Azure
-  process.env.AZURE_BLOB_URL,
+  getBlobUrl(),
   // grapesjs
   BLOGSPOT_BASE_URL,
   // grapesjs

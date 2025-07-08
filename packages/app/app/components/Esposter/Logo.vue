@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useLogoImageUrl } from "~/composables/useLogoImageUrl";
 import { SITE_NAME } from "#shared/services/esposter/constants";
+import { getLogoImageUrl } from "@/services/esposter/getLogoImageUrl";
 
-const logoImageUrl = useLogoImageUrl();
+const logoImageUrl = getLogoImageUrl();
 </script>
 
 <template>

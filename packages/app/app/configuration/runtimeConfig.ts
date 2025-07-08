@@ -22,9 +22,6 @@ export const runtimeConfig: NuxtConfig["runtimeConfig"] = {
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   },
   public: {
-    azure: {
-      blobUrl: process.env.AZURE_BLOB_URL,
-    },
     baseUrl: process.env.BASE_URL,
     facebook: {
       clientId: process.env.FACEBOOK_CLIENT_ID,
