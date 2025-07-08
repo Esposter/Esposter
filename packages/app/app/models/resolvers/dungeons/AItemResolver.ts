@@ -1,5 +1,5 @@
+import type { Item } from "#shared/models/dungeons/item/Item";
 import type { ItemEntityType } from "#shared/models/entity/ItemEntityType";
-import type { Item } from "@/models/dungeons/item/Item";
 import type { ItemEffectType } from "@/models/dungeons/item/ItemEffectType";
 import type { Monster } from "@/models/dungeons/monster/Monster";
 import type { SceneWithPlugins } from "vue-phaserjs";

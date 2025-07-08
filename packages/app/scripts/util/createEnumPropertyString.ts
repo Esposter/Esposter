@@ -1,4 +1,4 @@
-import { startsWithNumber } from "@/util/regex/startsWithNumber";
+import { startsWithNumber } from "#shared/util/regex/startsWithNumber";
 
 export const createEnumPropertyString = (name: string) => {
   // We'll support enum properties that start with numbers

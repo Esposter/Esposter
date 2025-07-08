@@ -28,5 +28,6 @@
   },
   "[xml]": {
     "editor.formatOnSave": false
-  }
+  },
+  "oxc.enable": true
 }

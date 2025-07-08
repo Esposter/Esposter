@@ -4,7 +4,7 @@ import type { ToData } from "#shared/models/entity/ToData";
 import type { VForm } from "vuetify/components";
 
 import { getEntityIdComparator } from "#shared/services/entity/getEntityIdComparator";
-import { toRawDeep } from "@/util/reactivity/toRawDeep";
+import { toRawDeep } from "#shared/util/reactivity/toRawDeep";
 import deepEqual from "fast-deep-equal";
 
 export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extends EntityIdKeys<TItem>>(

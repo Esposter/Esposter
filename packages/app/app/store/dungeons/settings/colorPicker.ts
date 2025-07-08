@@ -1,10 +1,10 @@
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 
 import { ThemeModeSetting } from "#shared/models/dungeons/data/settings/ThemeModeSetting";
-import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { mod } from "@/util/math/mod";
 import { Direction } from "grid-engine";
+import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
 
 export const useColorPickerStore = defineStore("dungeons/settings/colorPicker", () => {
   const settingsStore = useSettingsStore();

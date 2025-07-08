@@ -1,6 +1,6 @@
-import type { NuxtConfig } from "nuxt/schema";
+import type { ModuleOptions } from "vuetify-nuxt-module";
 
-export const vuetify: NuxtConfig["vuetify"] = {
+export const vuetify: ModuleOptions = {
   moduleOptions: {
     // https://www.youtube.com/watch?v=aamWg1TuC3o
     disableVuetifyStyles: true,

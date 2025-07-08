@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Item } from "@/models/dungeons/item/Item";
+import type { Item } from "#shared/models/dungeons/item/Item";
 
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { CURSOR_POSITION_INCREMENT, INITIAL_CURSOR_POSITION } from "@/services/dungeons/scene/inventory/constants";

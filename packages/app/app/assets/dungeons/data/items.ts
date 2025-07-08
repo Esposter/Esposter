@@ -1,4 +1,4 @@
-import type { Item } from "@/models/dungeons/item/Item";
+import type { Item } from "#shared/models/dungeons/item/Item";
 import type { Except } from "type-fest";
 
 import { ItemId } from "#shared/generated/tiled/propertyTypes/enum/ItemId";

@@ -1,9 +1,9 @@
 import type { Monster } from "@/models/dungeons/monster/Monster";
 import type { Except } from "type-fest";
 
+import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
 import { AttackId } from "@/models/dungeons/attack/AttackId";
 import { AssetKey } from "@/models/dungeons/keys/AssetKey";
-import { MonsterKey } from "@/models/dungeons/keys/image/UI/MonsterKey";
 import { parseDictionaryToArray } from "@/util/parseDictionaryToArray";
 
 const MonstersDataMap = {

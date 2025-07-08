@@ -1,12 +1,12 @@
+import type { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
 import type { Asset } from "@/models/dungeons/Asset";
 import type { AttackId } from "@/models/dungeons/attack/AttackId";
-import type { MonsterKey } from "@/models/dungeons/keys/image/UI/MonsterKey";
 import type { Stats } from "@/models/dungeons/monster/Stats";
 import type { Status } from "@/models/dungeons/monster/Status";
 
+import { monsterKeySchema } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
 import { assetSchema } from "@/models/dungeons/Asset";
 import { attackSchema } from "@/models/dungeons/attack/Attack";
-import { monsterKeySchema } from "@/models/dungeons/keys/image/UI/MonsterKey";
 import { statsSchema } from "@/models/dungeons/monster/Stats";
 import { statusSchema } from "@/models/dungeons/monster/Status";
 import { getMonsterData } from "@/services/dungeons/monster/getMonsterData";

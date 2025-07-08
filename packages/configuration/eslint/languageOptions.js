@@ -1,5 +1,5 @@
 export default {
   parserOptions: {
-    project: "tsconfig.json",
+    projectService: "tsconfig.json",
   },
 };

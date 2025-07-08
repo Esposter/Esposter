@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { toRawDeep } from "#shared/util/reactivity/toRawDeep";
 import { useVisualStore } from "@/store/dashboard/visual";
-import { toRawDeep } from "@/util/reactivity/toRawDeep";
 import { GridItem, GridLayout } from "grid-layout-plus";
 
 const visualStore = useVisualStore();

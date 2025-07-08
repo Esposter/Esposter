@@ -1,4 +1,4 @@
-import type { Item } from "@/models/dungeons/item/Item";
+import type { Item } from "#shared/models/dungeons/item/Item";
 
 import { ItemEffectType } from "@/models/dungeons/item/ItemEffectType";
 import { PreviousSceneUsableItemEffectTypesMap } from "@/services/dungeons/scene/inventory/PreviousSceneUsableItemEffectTypesMap";

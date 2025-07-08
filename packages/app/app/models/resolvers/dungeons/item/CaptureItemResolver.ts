@@ -1,4 +1,4 @@
-import type { Item } from "@/models/dungeons/item/Item";
+import type { Item } from "#shared/models/dungeons/item/Item";
 import type { Monster } from "@/models/dungeons/monster/Monster";
 import type { SceneWithPlugins } from "vue-phaserjs";
 

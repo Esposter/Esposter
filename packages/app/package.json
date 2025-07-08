@@ -197,6 +197,7 @@
     "h3": "catalog:",
     "nuxt": "catalog:",
     "nuxt-security": "catalog:",
+    "nuxt-site-config": "catalog:",
     "prettier": "catalog:",
     "sass-embedded": "catalog:",
     "tsx": "catalog:",

@@ -1,4 +1,4 @@
-import type { Item } from "@/models/dungeons/item/Item";
+import type { Item } from "#shared/models/dungeons/item/Item";
 
 import { Grid } from "@/models/dungeons/Grid";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";

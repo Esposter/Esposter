@@ -1,12 +1,12 @@
-import type { NuxtConfig } from "nuxt/schema";
+import type { ModuleOptions } from "nuxt-security";
 
-import { BASE_URL } from "../app/services/desmos/constants";
-import { FONTS_BASE_URL } from "../app/services/google/constants";
-import { ImageSourceWhitelist } from "../server/services/esposter/ImageSourceWhitelist";
-import { MAX_FILE_REQUEST_SIZE, MAX_REQUEST_SIZE } from "../shared/services/esposter/constants";
-import { CLOUDFLARE_BASE_URL, TUI_BASE_URL } from "../shared/services/grapesjs/constants";
+import { ImageSourceWhitelist } from "../../server/services/esposter/ImageSourceWhitelist";
+import { MAX_FILE_REQUEST_SIZE, MAX_REQUEST_SIZE } from "../../shared/services/esposter/constants";
+import { CLOUDFLARE_BASE_URL, TUI_BASE_URL } from "../../shared/services/grapesjs/constants";
+import { BASE_URL } from "../services/desmos/constants";
+import { FONTS_BASE_URL } from "../services/google/constants";
 
-export const security: NuxtConfig["security"] = {
+export const security: Partial<ModuleOptions> = {
   headers: {
     contentSecurityPolicy: {
       "img-src": ImageSourceWhitelist,

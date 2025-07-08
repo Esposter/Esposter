@@ -1,6 +1,6 @@
 import type { NuxtConfig } from "nuxt/schema";
 
-import { PWA_PUBLIC_FOLDER_PATH } from "../shared/services/esposter/constants";
+import { PWA_PUBLIC_FOLDER_PATH } from "../../shared/services/esposter/constants";
 
 export const app: NuxtConfig["app"] = {
   head: {
