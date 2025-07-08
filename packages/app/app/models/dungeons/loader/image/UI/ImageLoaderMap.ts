@@ -1,6 +1,7 @@
 import type { Loader } from "phaser";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
+import { ImageKey } from "#shared/models/dungeons/keys/image/UI/ImageKey";
 import blueButton from "@/assets/dungeons/thirdParty/kenneysAssets/UIPack/blueButton00.png";
 import blueButtonSelected from "@/assets/dungeons/thirdParty/kenneysAssets/UIPack/blueButton01.png";
 import barHorizontalBlueLeft from "@/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/barHorizontalBlueLeft.png";
@@ -18,7 +19,6 @@ import glassPanelGreen from "@/assets/dungeons/thirdParty/kenneysAssets/UISpaceE
 import glassPanelPurple from "@/assets/dungeons/thirdParty/kenneysAssets/UISpaceExpansion/glassPanelPurple.png";
 import cursor from "@/assets/dungeons/UI/cursor/cursor.png";
 import cursorWhite from "@/assets/dungeons/UI/cursor/cursorWhite.png";
-import { ImageKey } from "@/models/dungeons/keys/image/UI/ImageKey";
 import { BallLoaderMap } from "@/models/dungeons/loader/image/UI/BallLoaderMap";
 import { ControlsLoaderMap } from "@/models/dungeons/loader/image/UI/ControlsLoaderMap";
 import { MonsterLoaderMap } from "@/models/dungeons/loader/image/UI/MonsterLoaderMap";

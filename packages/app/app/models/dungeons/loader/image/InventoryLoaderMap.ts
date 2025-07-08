@@ -1,9 +1,9 @@
 import type { Loader } from "phaser";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
+import { InventoryKey } from "#shared/models/dungeons/keys/image/InventoryKey";
 import background from "@/assets/dungeons/scene/inventory/background.png";
 import bag from "@/assets/dungeons/scene/inventory/bag.png";
-import { InventoryKey } from "@/models/dungeons/keys/image/InventoryKey";
 
 export const InventoryLoaderMap = {
   [InventoryKey.Bag]: (scene) => scene.load.image(InventoryKey.Bag, bag),

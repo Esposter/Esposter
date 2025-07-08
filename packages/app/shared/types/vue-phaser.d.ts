@@ -1,5 +1,5 @@
+import type { SpritesheetKey } from "#shared/models/dungeons/keys/spritesheet/SpritesheetKey";
 import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import type { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
 import type { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
 import type { GridEngine } from "grid-engine";
 import type { Scene } from "phaser";

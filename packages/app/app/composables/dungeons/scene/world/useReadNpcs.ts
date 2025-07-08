@@ -4,7 +4,7 @@ import type { Position } from "grid-engine";
 import { NpcObjectProperty } from "#shared/generated/tiled/propertyTypes/class/NpcObjectProperty";
 import { NpcPathObjectProperty } from "#shared/generated/tiled/propertyTypes/class/NpcPathObjectProperty";
 import { ObjectType } from "#shared/generated/tiled/propertyTypes/class/ObjectType";
-import { AssetKey } from "@/models/dungeons/keys/AssetKey";
+import { AssetKey } from "#shared/models/dungeons/keys/AssetKey";
 import { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
 import { Npc } from "@/models/dungeons/scene/world/Npc";
 import { getNpc } from "@/services/dungeons/npc/getNpc";

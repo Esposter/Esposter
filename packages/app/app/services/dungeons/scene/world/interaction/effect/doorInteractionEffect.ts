@@ -3,7 +3,7 @@ import type { Effect } from "@/models/dungeons/scene/world/interaction/Effect";
 
 import { ObjectgroupName } from "#shared/generated/tiled/layers/ObjectgroupName";
 import { TeleportObjectProperty } from "#shared/generated/tiled/propertyTypes/class/TeleportObjectProperty";
-import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
+import { SoundEffectKey } from "#shared/models/dungeons/keys/sound/SoundEffectKey";
 import { getPositionAfterDirectionMovement } from "@/services/dungeons/direction/getPositionAfterDirectionMovement";
 import { getObjects } from "@/services/dungeons/scene/world/getObjects";
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";

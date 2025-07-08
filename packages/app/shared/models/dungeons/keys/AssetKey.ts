@@ -1,5 +1,5 @@
-import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
-import { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
+import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
+import { SpritesheetKey } from "#shared/models/dungeons/keys/spritesheet/SpritesheetKey";
 import { mergeObjectsStrict } from "@esposter/shared";
 import { z } from "zod/v4";
 

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { AttackProps } from "@/models/dungeons/attack/AttackProps";
+import type { AttackProps } from "#shared/models/dungeons/attack/AttackProps";
 
-import { AttackGameObjectType } from "@/models/dungeons/attack/AttackGameObjectType";
-import { AttackKey } from "@/models/dungeons/keys/spritesheet/AttackKey";
+import { AttackGameObjectType } from "#shared/models/dungeons/attack/AttackGameObjectType";
+import { AttackKey } from "#shared/models/dungeons/keys/spritesheet/AttackKey";
 import { Animations } from "phaser";
 
 const { isToEnemy } = defineProps<AttackProps>();

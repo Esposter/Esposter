@@ -1,4 +1,4 @@
-import type { Attack } from "@/models/dungeons/attack/Attack";
+import type { Attack } from "#shared/models/dungeons/attack/Attack";
 
 import { Grid } from "@/models/dungeons/Grid";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";

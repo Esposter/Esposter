@@ -1,6 +1,6 @@
 import type { State } from "@/models/dungeons/state/State";
 
-import { CaptureResult } from "@/models/dungeons/item/CaptureResult";
+import { CaptureResult } from "#shared/models/dungeons/item/CaptureResult";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { createCaptureResult } from "@/services/dungeons/item/createCaptureResult";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";

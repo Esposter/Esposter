@@ -1,6 +1,7 @@
 import type { Loader } from "phaser";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
+import { SoundEffectKey } from "#shared/models/dungeons/keys/sound/SoundEffectKey";
 import openChest from "@/assets/dungeons/sound/openChest.mp3";
 import openDoor from "@/assets/dungeons/sound/openDoor.mp3";
 import textBlip from "@/assets/dungeons/sound/textBlip.mp3";
@@ -8,7 +9,6 @@ import claw from "@/assets/dungeons/thirdParty/leohpaz/claw.wav";
 import flee from "@/assets/dungeons/thirdParty/leohpaz/flee.wav";
 import iceExplosion from "@/assets/dungeons/thirdParty/leohpaz/iceExplosion.wav";
 import stepGrass from "@/assets/dungeons/thirdParty/leohpaz/stepGrass.wav";
-import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
 
 export const SoundEffectLoaderMap: Record<SoundEffectKey, (scene: SceneWithPlugins) => Loader.LoaderPlugin> = {
   [SoundEffectKey.Claw]: (scene) => scene.load.audio(SoundEffectKey.Claw, claw),

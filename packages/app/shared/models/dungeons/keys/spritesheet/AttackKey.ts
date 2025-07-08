@@ -1,4 +1,4 @@
-import { AttackId } from "@/models/dungeons/attack/AttackId";
+import { AttackId } from "#shared/models/dungeons/attack/AttackId";
 import { mergeObjectsStrict } from "@esposter/shared";
 
 enum BaseAttackKey {

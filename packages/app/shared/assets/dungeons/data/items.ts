@@ -3,7 +3,7 @@ import type { Except } from "type-fest";
 
 import { ItemId } from "#shared/generated/tiled/propertyTypes/enum/ItemId";
 import { ItemEffectType } from "#shared/models/dungeons/item/ItemEffectType";
-import { parseDictionaryToArray } from "@/util/parseDictionaryToArray";
+import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
 
 export const ItemMap = {
   [ItemId.DamagedBall]: {

@@ -1,10 +1,10 @@
 import type { Monster } from "#shared/models/dungeons/monster/Monster";
 import type { Except } from "type-fest";
 
+import { AttackId } from "#shared/models/dungeons/attack/AttackId";
+import { AssetKey } from "#shared/models/dungeons/keys/AssetKey";
 import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
-import { AttackId } from "@/models/dungeons/attack/AttackId";
-import { AssetKey } from "@/models/dungeons/keys/AssetKey";
-import { parseDictionaryToArray } from "@/util/parseDictionaryToArray";
+import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
 
 const MonstersDataMap = {
   [MonsterKey.Aquavalor]: {

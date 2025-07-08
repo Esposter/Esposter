@@ -1,6 +1,6 @@
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
+import { SoundEffectKey } from "#shared/models/dungeons/keys/sound/SoundEffectKey";
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
 import { useSettingsStore } from "@/store/dungeons/settings";
 

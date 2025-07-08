@@ -1,9 +1,9 @@
-import type { Attack } from "@/models/dungeons/attack/Attack";
+import type { Attack } from "#shared/models/dungeons/attack/Attack";
 import type { Except } from "type-fest";
 
-import { AttackId } from "@/models/dungeons/attack/AttackId";
-import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
-import { parseDictionaryToArray } from "@/util/parseDictionaryToArray";
+import { AttackId } from "#shared/models/dungeons/attack/AttackId";
+import { SoundEffectKey } from "#shared/models/dungeons/keys/sound/SoundEffectKey";
+import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
 
 const AttackMap = {
   [AttackId.Slash]: {

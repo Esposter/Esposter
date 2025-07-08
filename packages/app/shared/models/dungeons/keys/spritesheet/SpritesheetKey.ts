@@ -1,5 +1,5 @@
-import { AttackKey } from "@/models/dungeons/keys/spritesheet/AttackKey";
-import { CharacterKey } from "@/models/dungeons/keys/spritesheet/CharacterKey";
+import { AttackKey } from "#shared/models/dungeons/keys/spritesheet/AttackKey";
+import { CharacterKey } from "#shared/models/dungeons/keys/spritesheet/CharacterKey";
 import { mergeObjectsStrict } from "@esposter/shared";
 import { z } from "zod/v4";
 

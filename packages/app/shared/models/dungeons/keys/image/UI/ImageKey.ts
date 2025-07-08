@@ -1,6 +1,6 @@
+import { BallKey } from "#shared/models/dungeons/keys/image/UI/BallKey";
+import { ControlsKey } from "#shared/models/dungeons/keys/image/UI/ControlsKey";
 import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
-import { BallKey } from "@/models/dungeons/keys/image/UI/BallKey";
-import { ControlsKey } from "@/models/dungeons/keys/image/UI/ControlsKey";
 import { mergeObjectsStrict } from "@esposter/shared";
 
 enum BaseImageKey {

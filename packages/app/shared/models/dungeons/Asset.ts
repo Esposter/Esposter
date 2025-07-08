@@ -1,6 +1,6 @@
-import type { AssetKey } from "@/models/dungeons/keys/AssetKey";
+import type { AssetKey } from "#shared/models/dungeons/keys/AssetKey";
 
-import { assetKeySchema } from "@/models/dungeons/keys/AssetKey";
+import { assetKeySchema } from "#shared/models/dungeons/keys/AssetKey";
 import { z } from "zod/v4";
 
 export interface Asset {

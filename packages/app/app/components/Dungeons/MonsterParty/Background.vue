@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
+import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
 import { onCreate, Rectangle, TileSprite } from "vue-phaserjs";
 
 const width = ref<number>();
