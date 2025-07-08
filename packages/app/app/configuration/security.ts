@@ -1,7 +1,7 @@
 import type { ModuleOptions } from "nuxt-security";
 
-import { ImageSourceWhitelist } from "../../server/services/esposter/ImageSourceWhitelist";
 import { MAX_FILE_REQUEST_SIZE, MAX_REQUEST_SIZE } from "../../shared/services/esposter/constants";
+import { ImageSourceWhitelist } from "../../shared/services/esposter/ImageSourceWhitelist";
 import { CLOUDFLARE_BASE_URL, TUI_BASE_URL } from "../../shared/services/grapesjs/constants";
 import { BASE_URL } from "../services/desmos/constants";
 import { FONTS_BASE_URL } from "../services/google/constants";

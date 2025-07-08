@@ -5,7 +5,7 @@ import {
   PLACEHOLD_BASE_URL,
   TUI_BASE_URL,
   WORDPRESS_DESIGNSPELL_BASE_URL,
-} from "../../../shared/services/grapesjs/constants";
+} from "../grapesjs/constants";
 
 export const ImageSourceWhitelist = [
   // @vite-pwa/nuxt

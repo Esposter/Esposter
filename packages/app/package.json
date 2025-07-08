@@ -33,7 +33,7 @@
     "db:gen": "pnpm db:run generate",
     "db:studio": "pnpm db:run studio",
     "db:up": "pnpm db:run up",
-    "env:gen": "pnpx gen-env-types .env -o env.d.ts -e .",
+    "env:gen": "pnpx gen-env-types .env -o shared/types/env.d.ts -e .",
     "phaser:gen": "tsx scripts/phaser/index.ts",
     "tiled:gen": "tsx scripts/tiled/index.ts",
     "generate-pwa-assets": "pnpx pwa-asset-generator https://pshpstespauea001.blob.core.windows.net/esposter-assets/logo.png public/pwa -o false -f -i public/pwa/index.html -m public/pwa/manifest.json",

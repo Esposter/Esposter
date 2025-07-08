@@ -3,7 +3,7 @@ import type { NuxtConfig } from "nuxt/schema";
 import typescriptIgnores from "@esposter/configuration/eslint/typescriptIgnores.js";
 
 export const typescript: NuxtConfig["typescript"] = {
-  // @TODO: Remove this when issue is resolved
+  // @TODO: https://github.com/nuxt/nuxt/issues/32556
   sharedTsConfig: {
     compilerOptions: {
       paths: {

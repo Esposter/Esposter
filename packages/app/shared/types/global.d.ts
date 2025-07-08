@@ -1,9 +1,6 @@
 import type { Entries } from "type-fest";
-import type { WebSocketServer } from "ws";
 
 declare global {
-  var websocketServer: undefined | WebSocketServer;
-
   interface ObjectConstructor {
     // If we get "object" type <=> keyof object extends never, then we fallback to a usable type
     entries<T extends object>(o: T): keyof T extends never ? [string, unknown][] : Entries<T>;
