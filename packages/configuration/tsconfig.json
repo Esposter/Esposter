@@ -3,6 +3,7 @@
   "compilerOptions": {
     "allowJs": false,
     "composite": true,
-    "isolatedDeclarations": true
+    "isolatedDeclarations": true,
+    "strictNullChecks": true
   }
 }

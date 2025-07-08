@@ -18,7 +18,7 @@ describe(extractBlobUrls, async () => {
   });
 
   afterAll(() => {
-    vi.restoreAllMocks();
+    vi.unmock("#shared/util/azure/getBlobUrl");
   });
 
   test("should return an empty array for an empty model string", () => {
