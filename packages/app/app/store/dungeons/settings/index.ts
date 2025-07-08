@@ -1,6 +1,6 @@
 import { AnimationsSetting } from "#shared/models/dungeons/data/settings/AnimationsSetting";
-import { useDungeonsStore } from "@/store/dungeons";
 import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
+import { useDungeonsStore } from "@/store/dungeons";
 
 export const useSettingsStore = defineStore("dungeons/settings", () => {
   const dungeonsStore = useDungeonsStore();

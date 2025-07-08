@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { dayjs } from "#shared/services/dayjs";
 import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
+import { dayjs } from "#shared/services/dayjs";
 import { useDialogStore } from "@/store/dungeons/dialog";
 import { Image } from "vue-phaserjs";
 

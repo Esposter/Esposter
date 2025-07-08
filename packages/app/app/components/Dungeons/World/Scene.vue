@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { SceneWithPlugins } from "vue-phaserjs";
 
+import { BackgroundMusicKey } from "#shared/models/dungeons/keys/sound/BackgroundMusicKey";
 import { dayjs } from "#shared/services/dayjs";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { BackgroundMusicKey } from "#shared/models/dungeons/keys/sound/BackgroundMusicKey";
 import { getActiveInputResolvers } from "@/services/dungeons/scene/world/getActiveInputResolvers";
 import { playDungeonsBackgroundMusic } from "@/services/dungeons/sound/playDungeonsBackgroundMusic";
 import { useControlsStore } from "@/store/dungeons/controls";

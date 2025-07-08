@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { ImagePosition } from "@/models/dungeons/ImagePosition";
 import type { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
+import type { ImagePosition } from "@/models/dungeons/ImagePosition";
 import type { TweenBuilderConfiguration } from "vue-phaserjs";
 
 import { Image } from "vue-phaserjs";

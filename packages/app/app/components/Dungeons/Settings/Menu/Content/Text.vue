@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
 import { MenuTextStyle } from "@/assets/dungeons/scene/settings/styles/MenuTextStyle";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import {
@@ -12,7 +13,6 @@ import { useControlsStore } from "@/store/dungeons/controls";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { Input } from "phaser";
 import { Text } from "vue-phaserjs";
-import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
 
 interface ContentTextProps {
   columnIndex: number;

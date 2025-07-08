@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { BackgroundMusicKey } from "#shared/models/dungeons/keys/sound/BackgroundMusicKey";
+import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { playDungeonsBackgroundMusic } from "@/services/dungeons/sound/playDungeonsBackgroundMusic";
 import { useControlsStore } from "@/store/dungeons/controls";
 import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";

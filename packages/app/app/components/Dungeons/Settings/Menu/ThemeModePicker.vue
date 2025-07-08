@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
-import { MenuTextStyle } from "@/assets/dungeons/scene/settings/styles/MenuTextStyle";
 import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
+import { MenuTextStyle } from "@/assets/dungeons/scene/settings/styles/MenuTextStyle";
 import {
   INITIAL_SETTINGS_POSITION,
   INITIAL_SETTINGS_VALUE_POSITION,

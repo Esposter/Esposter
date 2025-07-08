@@ -1,6 +1,7 @@
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
+import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { InfoContainerTextMap } from "@/services/dungeons/scene/settings/InfoContainerTextMap";
@@ -12,7 +13,6 @@ import { useColorPickerStore } from "@/store/dungeons/settings/colorPicker";
 import { useVolumeStore } from "@/store/dungeons/settings/volume";
 import { exhaustiveGuard } from "@esposter/shared";
 import { Direction } from "grid-engine";
-import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
 
 let autoUpdateGridX = false;
 
