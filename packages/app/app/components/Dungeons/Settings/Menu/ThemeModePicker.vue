@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { FileKey } from "#shared/generated/phaser/FileKey";
+import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
 import { MenuTextStyle } from "@/assets/dungeons/scene/settings/styles/MenuTextStyle";
-import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
 import {
   INITIAL_SETTINGS_POSITION,
   INITIAL_SETTINGS_VALUE_POSITION,
