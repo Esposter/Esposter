@@ -3,13 +3,31 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.6.0](https://github.com/Esposter/Esposter/compare/v2.5.0...v2.6.0) (2025-07-09)
+
+### Bug Fixes
+
+* lint ([4c6e7b1](https://github.com/Esposter/Esposter/commit/4c6e7b11cf23b3aed2441fc12c07a07fa965d772))
+* tsconfig ([693ad43](https://github.com/Esposter/Esposter/commit/693ad4368c17463865199e91ca9ea7df0ede0ded))
+
+### Features
+
+* Add oxlint rules to prep eslint migration later in the future ([45d8b00](https://github.com/Esposter/Esposter/commit/45d8b00c2223a92d937dc0734ff8702661c9882c))
+
+### Performance Improvements
+
+* disable time-consuming lint rules ([5a4c8b4](https://github.com/Esposter/Esposter/commit/5a4c8b4927a63c559cbaa1ae755045d996329b12))
+
 # [2.5.0](https://github.com/Esposter/Esposter/compare/v2.4.1...v2.5.0) (2025-06-19)
 
 ### Bug Fixes
 
 * Add oxlint files to turn off eslint ones ([bdc7aed](https://github.com/Esposter/Esposter/commit/bdc7aed1dfab9d0c8527588cec61a7eb073aa523))
+
 * add withNuxt ([27cc5fc](https://github.com/Esposter/Esposter/commit/27cc5fc31bf5a7ae22a33e33bd9d7cf047afb8c8))
+
 * lint + add base emoji tests ([7bee7b7](https://github.com/Esposter/Esposter/commit/7bee7b74c446ff456896145f36450383a8dc89b6))
+
 * oxlint rules ([21d749d](https://github.com/Esposter/Esposter/commit/21d749d390fb30c86e285ed1d10e453cdb6d1fed))
 
 ### Performance Improvements
