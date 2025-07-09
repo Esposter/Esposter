@@ -23,11 +23,7 @@ const { onPlayerInput } = battleSceneStore;
         await battleStateMachine.setState(StateName.Intro);
       }
     "
-    @update="
-      (scene) => {
-        onPlayerInput(scene, controls.getInput());
-      }
-    "
+    @update="onPlayerInput($event, controls.getInput())"
     @shutdown="
       async () => {
         await battleStateMachine.setState(undefined);
