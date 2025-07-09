@@ -2,7 +2,7 @@ import type { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 import type { useContainerClient } from "@@/server/composables/azure/useContainerClient";
 import type { ContainerClient } from "@azure/storage-blob";
 
-import { MockContainerClient } from "@@/server/models/azure/container/MockContainerClient";
+import { MockContainerClient } from "azure-mock";
 import { describe } from "vitest";
 
 export const MockContainerClientMap = new Map<AzureContainer, MockContainerClient>();

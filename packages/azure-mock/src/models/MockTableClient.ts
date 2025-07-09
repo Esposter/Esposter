@@ -1,4 +1,4 @@
-import type { PagedAsyncIterableIterator } from "@@/server/models/azure/PagedAsyncIterableIterator";
+import type { PagedAsyncIterableIterator } from "@/models/PagedAsyncIterableIterator";
 import type {
   CreateTableEntityResponse,
   GetAccessPolicyResponse,
@@ -15,7 +15,7 @@ import type {
 } from "@azure/data-tables";
 import type { Except } from "type-fest";
 
-import { MockRestError } from "@@/server/models/azure/MockRestError";
+import { MockRestError } from "@/models/MockRestError";
 import { ID_SEPARATOR } from "@esposter/shared";
 /**
  * An in-memory mock of the Azure TableClient.
@@ -27,7 +27,7 @@ import { ID_SEPARATOR } from "@esposter/shared";
  * const entity = await mockTableClient.getEntity("partitionKey", "rowKey");
  */
 export class MockTableClient implements Except<TableClient, "pipeline"> {
-  entities = new Map<string, TableEntity>();
+  entities: Map<string, TableEntity> = new Map<string, TableEntity>();
   tableName: string;
   url: string;
 

@@ -1,5 +1,5 @@
-import type { BlobHierarchyItem } from "@@/server/models/azure/container/BlobHierarchyItem";
-import type { PagedAsyncIterableIterator } from "@@/server/models/azure/PagedAsyncIterableIterator";
+import type { BlobHierarchyItem } from "@/models/BlobHierarchyItem";
+import type { PagedAsyncIterableIterator } from "@/models/PagedAsyncIterableIterator";
 import type {
   AppendBlobClient,
   BlobBatchClient,
@@ -29,14 +29,14 @@ import type {
 } from "@azure/storage-blob";
 import type { Except } from "type-fest";
 
-import { html } from "#shared/services/prettier/html";
-import { MockBlockBlobClient } from "@@/server/models/azure/container/MockBlockBlobClient";
-import { getBlobItemXml } from "@@/server/services/azure/container/getBlobItemXml";
-import { getBlobPrefixXml } from "@@/server/services/azure/container/getBlobPrefixXml";
-import { toWebResourceLike } from "@@/server/services/azure/container/toWebResourceLike";
+import { MockBlockBlobClient } from "@/models/MockBlockBlobClient";
+import { getBlobItemXml } from "@/util/getBlobItemXml";
+import { getBlobPrefixXml } from "@/util/getBlobPrefixXml";
+import { toWebResourceLike } from "@/util/toWebResourceLike";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { createHttpHeaders, createPipelineRequest } from "@azure/core-rest-pipeline";
 import { AnonymousCredential } from "@azure/storage-blob";
+import { html } from "@esposter/shared";
 /**
  * An in-memory mock of the Azure ContainerClient.
  * It uses a Map to simulate blob storage.
@@ -48,9 +48,9 @@ import { AnonymousCredential } from "@azure/storage-blob";
  * const content = await blockBlobClient.downloadToBuffer();
  */
 export class MockContainerClient implements Except<ContainerClient, "accountName"> {
-  blobs = new Map<string, Buffer>();
+  blobs: Map<string, Buffer> = new Map<string, Buffer>();
   containerName: string;
-  credential = new AnonymousCredential();
+  credential: AnonymousCredential = new AnonymousCredential();
   url: string;
 
   constructor(_connectionString: string, containerName: string) {

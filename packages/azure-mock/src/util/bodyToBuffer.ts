@@ -1,8 +1,7 @@
 import type { HttpRequestBody } from "@azure/storage-blob";
 
-import { isReadableStream } from "#shared/util/text/isReadableStream";
-import { streamToText } from "#shared/util/text/streamToText";
-import { exhaustiveGuard } from "@esposter/shared";
+import { isReadableStream } from "@/util/isReadableStream";
+import { exhaustiveGuard, streamToText } from "@esposter/shared";
 
 export const bodyToBuffer = async (body: HttpRequestBody): Promise<Buffer> => {
   if (body === null) return Buffer.alloc(0);

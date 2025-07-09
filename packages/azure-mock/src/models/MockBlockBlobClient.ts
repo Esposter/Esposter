@@ -1,4 +1,4 @@
-import type { MockContainerClient } from "@@/server/models/azure/container/MockContainerClient";
+import type { MockContainerClient } from "@/models/MockContainerClient";
 import type {
   AppendBlobClient,
   BlobAbortCopyFromURLResponse,
@@ -37,9 +37,9 @@ import type {
 } from "@azure/storage-blob";
 import type { Except } from "type-fest";
 
-import { MockRestError } from "@@/server/models/azure/MockRestError";
-import { bodyToBuffer } from "@@/server/services/azure/container/bodyToBuffer";
-import { toWebResourceLike } from "@@/server/services/azure/container/toWebResourceLike";
+import { MockRestError } from "@/models/MockRestError";
+import { bodyToBuffer } from "@/util/bodyToBuffer";
+import { toWebResourceLike } from "@/util/toWebResourceLike";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { createHttpHeaders, createPipelineRequest } from "@azure/core-rest-pipeline";
 import { AnonymousCredential } from "@azure/storage-blob";
@@ -47,7 +47,7 @@ import { Readable } from "node:stream";
 
 export class MockBlockBlobClient implements Except<BlockBlobClient, "accountName"> {
   containerClient: MockContainerClient;
-  credential = new AnonymousCredential();
+  credential: AnonymousCredential = new AnonymousCredential();
   name: string;
   url: string;
 

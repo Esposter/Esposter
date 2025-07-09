@@ -28,8 +28,6 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 
 ### Usage
 
-The basic implementation:
-
 ```ts
 import { parseTmx } from "parse-tmx";
 // The *.tmx file can be loaded as a string or URL encoded data

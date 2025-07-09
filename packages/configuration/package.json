@@ -4,7 +4,7 @@
   "description": "A library that contains shared configuration.",
   "private": true,
   "type": "module",
-  "homepage": "https://github.com/Esposter/Esposter#readme",
+  "homepage": "https://github.com/Esposter/Esposter/tree/main/packages/configuration#readme",
   "license": "Apache-2.0",
   "author": "Jimmy Chen",
   "main": "dist/index.js",

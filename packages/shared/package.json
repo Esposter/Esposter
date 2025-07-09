@@ -3,7 +3,7 @@
   "version": "2.6.0",
   "description": "A library that contains shared typescript code.",
   "type": "module",
-  "homepage": "https://github.com/Esposter/Esposter#readme",
+  "homepage": "https://github.com/Esposter/Esposter/tree/main/packages/shared#readme",
   "license": "Apache-2.0",
   "author": "Jimmy Chen",
   "main": "dist/index.js",

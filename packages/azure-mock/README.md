@@ -5,6 +5,34 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
+A library of azure mock classes.
+
+### Table of Contents
+
+- 🚀 [Getting Started](#getting-started)
+- 📖 [Documentation](#documentation)
+- ⚖️ [License](#license)
+
+---
+
+## <a name="getting-started">🚀 Getting Started</a>
+
+```bash
+pnpm i azure-mock
+```
+
+## <a name="documentation">📖 Documentation</a>
+
+We highly recommend you take a look at the [documentation](https://esposter.com/docs/modules/azure_mock.html) to level up.
+
+### Usage
+
+```ts
+import { MockTableClient } from "azure-mock";
+
+const mockTableClient = new MockTableClient("", "tableName");
+```
+
 ## <a name="license">⚖️ License</a>
 
 This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).
