@@ -13,8 +13,7 @@ const { tableEditorType } = storeToRefs(tableEditorStore);
     :items="TableEditorTypeItemCategoryDefinitions"
     hide-details
     @update:model-value="
-      (value) =>
-        $router.replace({ query: { ...$router.currentRoute.value.query, [ITEM_TYPE_QUERY_PARAMETER_KEY]: value } })
+      $router.replace({ query: { ...$router.currentRoute.value.query, [ITEM_TYPE_QUERY_PARAMETER_KEY]: $event } })
     "
   />
 </template>
