@@ -1,4 +1,4 @@
-import type { z } from "zod/v4";
+import type { z } from "zod";
 
 import { prettify } from "@/util/text/prettify";
 import { toTitleCase } from "@/util/text/toTitleCase";

@@ -1,7 +1,7 @@
 import type { IUserStatus } from "#shared/db/schema/userStatuses";
 import type { ReadableStream } from "node:stream/web";
 import type { SetNonNullable } from "type-fest";
-import type { z } from "zod/v4";
+import type { z } from "zod";
 
 import { selectUserSchema } from "#shared/db/schema/users";
 import { selectUserStatusSchema, userStatuses } from "#shared/db/schema/userStatuses";

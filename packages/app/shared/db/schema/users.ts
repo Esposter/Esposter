@@ -9,7 +9,7 @@ import { USER_NAME_MAX_LENGTH } from "#shared/services/user/constants";
 import { relations, sql } from "drizzle-orm";
 import { boolean, check, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 export const users = pgTable(
   "users",

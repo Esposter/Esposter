@@ -4,7 +4,7 @@ import type { ApexOptions } from "apexcharts";
 import { basicChartConfigurationSchema } from "#shared/models/dashboard/data/chart/BasicChartConfiguration";
 import { ChartType } from "#shared/models/dashboard/data/chart/type/ChartType";
 import { AChartTypeResolver } from "@/models/resolvers/dashboard/chart/AChartTypeResolver";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 export class BasicResolver<T extends BasicChartConfiguration> extends AChartTypeResolver<T> {
   constructor() {

@@ -1,5 +1,5 @@
 import type { ApexOptions } from "apexcharts";
-import type { z } from "zod/v4";
+import type { z } from "zod";
 
 import { basicChartConfigurationSchema } from "#shared/models/dashboard/data/chart/BasicChartConfiguration";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";

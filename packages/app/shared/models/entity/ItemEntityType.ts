@@ -1,5 +1,5 @@
 import { getPropertyNames } from "#shared/util/getPropertyNames";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 export interface ItemEntityType<T extends string> {
   type: T;

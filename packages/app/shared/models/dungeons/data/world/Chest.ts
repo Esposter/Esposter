@@ -2,7 +2,7 @@ import type { Chest as IChest } from "#shared/generated/tiled/propertyTypes/clas
 
 import { ItemId } from "#shared/generated/tiled/propertyTypes/enum/ItemId";
 import { itemIdSchema } from "#shared/models/dungeons/item/ItemId";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 export class Chest implements IChest {
   isOpened = false;

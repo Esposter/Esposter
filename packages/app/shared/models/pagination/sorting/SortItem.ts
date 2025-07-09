@@ -1,7 +1,7 @@
 import type { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 
 import { sortOrderSchema } from "#shared/models/pagination/sorting/SortOrder";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 export interface SortItem<T extends string> {
   key: T;

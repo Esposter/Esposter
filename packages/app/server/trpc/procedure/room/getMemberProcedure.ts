@@ -1,5 +1,5 @@
 import type { inferParser } from "@trpc/server/unstable-core-do-not-import";
-import type { z } from "zod/v4";
+import type { z } from "zod";
 
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";

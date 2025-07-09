@@ -9,7 +9,7 @@ import { createTableEditorSchema, TableEditor } from "#shared/models/tableEditor
 import { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType";
 import { todoListItemSchema } from "#shared/models/tableEditor/todoList/TodoListItem";
 import { vuetifyComponentItemSchema } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 type TableEditorTypes = {
   [P in keyof typeof TableEditorType]: TableEditor<Item>;

@@ -1,5 +1,5 @@
 import { isPlainObject } from "@esposter/shared";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 export const zodStrictRecord = <K extends z.ZodType<PropertyKey>, V extends z.ZodType>(zKey: K, zValue: V) =>
   z.custom<Record<z.output<K>, z.output<V>>>(

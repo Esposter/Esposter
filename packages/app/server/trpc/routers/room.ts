@@ -36,7 +36,7 @@ import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProce
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, desc, eq, ilike, inArray, sql } from "drizzle-orm";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 const readRoomInputSchema = selectRoomSchema.shape.id.optional();
 export type ReadRoomInput = z.infer<typeof readRoomInputSchema>;

@@ -48,11 +48,11 @@ catalog:
   "@types/howler": ^2.2.12
   "@types/js-beautify": ^1.14.3
   "@types/mjml-browser": ^4.15.0
-  "@types/node": ^24.0.10
+  "@types/node": ^24.0.12
   "@types/omit-deep-lodash": ^1.1.3
   "@types/pluralize": ^0.0.33
   "@types/sax": ^1.2.7
-  "@types/three": ^0.178.0
+  "@types/three": ^0.178.1
   "@types/web-push": ^3.6.4
   "@types/ws": ^8.18.1
   "@types/xml2js": ^0.4.14
@@ -76,7 +76,7 @@ catalog:
   ajv-errors: ^3.0.0
   ajv-formats: ^3.0.1
   ajv-i18n: ^4.2.0
-  apexcharts: ^4.7.0
+  apexcharts: ^5.2.0
   better-auth: ^1.2.12
   codemirror: ^6.0.2
   ctix: ^2.7.1
@@ -84,7 +84,7 @@ catalog:
   dayjs: ^1.11.13
   debug: ^4.4.1
   dedent: ^1.6.0
-  dotenv: ^17.1.0
+  dotenv: ^17.2.0
   drizzle-kit: ^0.31.4
   drizzle-orm: ^0.44.2
   drizzle-zod: ^0.8.2
@@ -145,7 +145,7 @@ catalog:
   postgres: ^3.4.7
   prettier: ^3.6.2
   rate-limiter-flexible: ^7.1.1
-  rolldown: 1.0.0-beta.24
+  rolldown: ^1.0.0-beta.24
   rolldown-plugin-dts: ^0.13.13
   rxjs: ^7.8.2
   sass-embedded: ^1.89.2
@@ -153,10 +153,10 @@ catalog:
   show-open-file-picker: ^0.4.0
   sql-highlight: ^6.1.0
   superjson: ^2.2.2
-  survey-core: ^2.2.3
-  survey-creator-core: ^2.2.3
-  survey-creator-vue: ^2.2.3
-  survey-vue3-ui: ^2.2.3
+  survey-core: ^2.2.4
+  survey-creator-core: ^2.2.4
+  survey-creator-vue: ^2.2.4
+  survey-vue3-ui: ^2.2.4
   three: ^0.178.0
   three-globe: ^2.43.0
   tippy.js: ^6.3.7
@@ -185,10 +185,10 @@ catalog:
   vuetify: ^3.9.0
   vuetify-nuxt-module: ^0.18.7
   web-push: ^3.6.7
-  worker-timers: ^8.0.22
+  worker-timers: ^8.0.23
   ws: ^8.18.3
   xmlbuilder2: ^3.1.1
-  zod: ^3.25.76
+  zod: ^4.0.0
   nuxt-site-config: ^3.2.2
 
 catalogMode: strict

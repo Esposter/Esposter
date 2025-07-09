@@ -5,7 +5,7 @@ import { STATUS_MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants"
 import { relations, sql } from "drizzle-orm";
 import { boolean, check, pgEnum, text, timestamp } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
-import z from "zod/v4";
+import z from "zod";
 
 export const userStatusEnum = pgEnum("user_status", UserStatus);
 

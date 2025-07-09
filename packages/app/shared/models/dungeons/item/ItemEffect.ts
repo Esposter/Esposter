@@ -3,7 +3,7 @@ import type { ItemEntityType } from "#shared/models/entity/ItemEntityType";
 
 import { itemEffectTypeSchema } from "#shared/models/dungeons/item/ItemEffectType";
 import { createItemEntityTypeSchema } from "#shared/models/entity/ItemEntityType";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 export interface ItemEffect extends ItemEntityType<ItemEffectType> {
   value: number;

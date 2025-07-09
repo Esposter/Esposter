@@ -1,5 +1,5 @@
 import type { inferParser } from "@trpc/server/unstable-core-do-not-import";
-import type { z } from "zod/v4";
+import type { z } from "zod";
 
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { UUIDV4_SEARCH_REGEX } from "@esposter/shared";

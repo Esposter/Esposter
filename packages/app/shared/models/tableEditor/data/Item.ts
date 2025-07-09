@@ -4,7 +4,7 @@ import type { ATableEditorItemEntity } from "#shared/models/tableEditor/data/ATa
 
 import { createItemEntityTypeSchema } from "#shared/models/entity/ItemEntityType";
 import { aTableEditorItemEntitySchema } from "#shared/models/tableEditor/data/ATableEditorItemEntity";
-import { z } from "zod/v4";
+import { z } from "zod";
 // This is not directly used when creating new classes
 // but is only used as a convenient wrapper type for helper functions
 // to enforce that all entities implement Item

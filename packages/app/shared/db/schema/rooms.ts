@@ -5,7 +5,7 @@ import { ROOM_NAME_MAX_LENGTH } from "#shared/services/esbabbler/constants";
 import { relations, sql } from "drizzle-orm";
 import { check, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 export const rooms = pgTable(
   "rooms",

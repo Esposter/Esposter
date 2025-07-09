@@ -2,7 +2,7 @@ import type { MessageMetadataType } from "#shared/models/db/message/metadata/Mes
 
 import { AzureMetadataEntity, createAzureMetadataEntitySchema } from "#shared/models/azure/AzureMetadataEntity";
 import { messageEntitySchema } from "#shared/models/db/message/MessageEntity";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 export abstract class MessageMetadataEntity<TType extends MessageMetadataType> extends AzureMetadataEntity<TType> {
   messageRowKey!: string;

@@ -22,7 +22,7 @@ import { rateLimitedProcedure } from "@@/server/trpc/procedure/rateLimitedProced
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, isNotNull, isNull } from "drizzle-orm";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 const readPostInputSchema = selectPostSchema.shape.id;
 export type ReadPostInput = z.infer<typeof readPostInputSchema>;

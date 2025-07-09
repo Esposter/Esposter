@@ -1,5 +1,5 @@
 import { selectCommentSchema } from "#shared/db/schema/posts";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 export const createCommentInputSchema = z.object({
   ...selectCommentSchema.pick({ description: true }).shape,

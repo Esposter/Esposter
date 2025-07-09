@@ -46,7 +46,7 @@ import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProce
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 export const readMetadataInputSchema = z.object({
   messageRowKeys: messageEntitySchema.shape.rowKey.array().min(1).max(MAX_READ_LIMIT),

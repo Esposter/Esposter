@@ -1,6 +1,6 @@
 import type { Edge } from "@vue-flow/core";
 
-import { z } from "zod/v4";
+import { z } from "zod";
 
 export const edgeSchema = z.object({
   id: z.string(),
