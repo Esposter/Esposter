@@ -21,7 +21,7 @@ Inspired by [phavuer](https://github.com/laineus/phavuer).
 pnpm i vue-phaserjs vue phaser phaser3-rex-plugins pinia
 ```
 
-Add [phaser.d.ts](https://github.com/Esposter/Esposter/blob/main/packages/app/types/phaser.d.ts) and [vue-phaserjs.d.ts](https://github.com/Esposter/Esposter/blob/main/packages/app/types/vue-phaser.d.ts) so `vue-phaserjs` can narrow down your scene key types + provide intellisense for custom plugins.
+Add [phaser.d.ts](https://github.com/Esposter/Esposter/blob/main/packages/app/shared/types/phaser.d.ts) and [vue-phaserjs.d.ts](https://github.com/Esposter/Esposter/blob/main/packages/app/shared/types/vue-phaser.d.ts) so `vue-phaserjs` can narrow down your scene key types + provide intellisense for custom plugins.
 
 ## <a name="documentation">📖 Documentation</a>
 
