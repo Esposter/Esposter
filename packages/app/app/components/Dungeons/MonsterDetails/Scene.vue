@@ -17,10 +17,7 @@ const { barPercentage, experienceToNextLevel } = useExperience(selectedMonster);
 </script>
 
 <template>
-  <DungeonsScene
-    :scene-key="SceneKey.MonsterDetails"
-    @update="(scene) => onPlayerInput(scene, controls.getInput(true))"
-  >
+  <DungeonsScene :scene-key="SceneKey.MonsterDetails" @update="onPlayerInput($scene, controls.getInput(true))">
     <Image :configuration="{ origin: 0, texture: FileKey.SceneMonsterPartyMonsterDetailsBackground }" />
     <Text :configuration="{ x: 10, text: 'Monster Details', style: { ...MenuTextStyle, fontSize: 48 } }" />
     <Text
