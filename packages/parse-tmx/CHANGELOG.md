@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.7.0](https://github.com/Esposter/Esposter/compare/v2.6.0...v2.7.0) (2025-07-09)
+
+### Bug Fixes
+
+* links ([54b8d18](https://github.com/Esposter/Esposter/commit/54b8d1892eb340a7150286306a5d8ea44a0e0a43))
+
+### Features
+
+* Add azure-mock library ([7391d18](https://github.com/Esposter/Esposter/commit/7391d1822b7fc6249efc58f041e2c99fb77cef5c))
+
 # [2.6.0](https://github.com/Esposter/Esposter/compare/v2.5.0...v2.6.0) (2025-07-09)
 
 ### Features
