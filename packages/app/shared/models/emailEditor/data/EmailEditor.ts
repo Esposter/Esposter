@@ -100,6 +100,6 @@ export class EmailEditor extends AItemEntity implements ProjectData {
 export const emailEditorSchema = z
   .object({
     ...aItemEntitySchema.shape,
-    pages: z.array(z.unknown()).min(1),
+    pages: z.unknown().array().min(1),
   })
   .catchall(z.unknown()) satisfies z.ZodType<ToData<EmailEditor>>;
