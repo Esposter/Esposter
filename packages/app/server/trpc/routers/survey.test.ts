@@ -163,7 +163,7 @@ describe("survey", () => {
     );
   });
 
-  test.todo("deletes", async () => {
+  test("deletes", async () => {
     expect.hasAssertions();
 
     const newSurvey = await caller.createSurvey({ group, model, name });
