@@ -1,4 +1,3 @@
-import type { MockContainerClient } from "@/models/MockContainerClient";
 import type {
   AppendBlobClient,
   BlobAbortCopyFromURLResponse,
@@ -38,6 +37,7 @@ import type {
 import type { Except } from "type-fest";
 
 import { MockRestError } from "@/models/MockRestError";
+import { MockBlobDatabase } from "@/store/MockBlobDatabase";
 import { bodyToBuffer } from "@/util/bodyToBuffer";
 import { toWebResourceLike } from "@/util/toWebResourceLike";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
@@ -46,17 +46,13 @@ import { AnonymousCredential } from "@azure/storage-blob";
 import { Readable } from "node:stream";
 
 export class MockBlockBlobClient implements Except<BlockBlobClient, "accountName"> {
-  containerClient: MockContainerClient;
+  containerName: string;
   credential: AnonymousCredential = new AnonymousCredential();
   name: string;
   url: string;
 
-  get containerName(): string {
-    return this.containerClient.containerName;
-  }
-
-  constructor(_connectionString: string, containerClient: MockContainerClient, blobName: string) {
-    this.containerClient = containerClient;
+  constructor(_connectionString: string, containerName: string, blobName: string) {
+    this.containerName = containerName;
     this.name = blobName;
     this.url = `https://mockaccount.blob.core.windows.net/${this.containerName}/${this.name}`;
   }
@@ -80,18 +76,17 @@ export class MockBlockBlobClient implements Except<BlockBlobClient, "accountName
   }
 
   delete(): Promise<BlobDeleteResponse> {
-    if (!this.containerClient.blobs.has(this.name)) throw new MockRestError("The specified blob does not exist.", 404);
-    this.containerClient.blobs.delete(this.name);
-    return new Promise((resolve) =>
-      resolve({
-        _response: {
-          headers: toHttpHeadersLike(createHttpHeaders()),
-          parsedHeaders: {},
-          request: toWebResourceLike(createPipelineRequest({ url: "" })),
-          status: 200,
-        },
-      }),
-    );
+    if (!MockBlobDatabase[this.containerName].has(this.name))
+      throw new MockRestError("The specified blob does not exist.", 404);
+    MockBlobDatabase[this.containerName].delete(this.name);
+    return Promise.resolve({
+      _response: {
+        headers: toHttpHeadersLike(createHttpHeaders()),
+        parsedHeaders: {},
+        request: toWebResourceLike(createPipelineRequest({ url: "" })),
+        status: 200,
+      },
+    });
   }
 
   deleteIfExists(): Promise<BlobDeleteIfExistsResponse> {
@@ -103,24 +98,22 @@ export class MockBlockBlobClient implements Except<BlockBlobClient, "accountName
   }
 
   download(): Promise<BlobDownloadResponseParsed> {
-    const buffer = this.containerClient.blobs.get(this.name);
-    return new Promise((resolve) =>
-      resolve({
-        _response: {
-          headers: toHttpHeadersLike(createHttpHeaders()),
-          parsedHeaders: {},
-          request: toWebResourceLike(createPipelineRequest({ url: "" })),
-          status: buffer ? 200 : 404,
-        },
-        readableStreamBody: buffer ? Readable.from(buffer) : undefined,
-      }),
-    );
+    const buffer = MockBlobDatabase[this.containerName].get(this.name);
+    return Promise.resolve({
+      _response: {
+        headers: toHttpHeadersLike(createHttpHeaders()),
+        parsedHeaders: {},
+        request: toWebResourceLike(createPipelineRequest({ url: "" })),
+        status: buffer ? 200 : 404,
+      },
+      readableStreamBody: buffer ? Readable.from(buffer) : undefined,
+    });
   }
 
   downloadToBuffer(): Promise<Buffer> {
-    const data = this.containerClient.blobs.get(this.name);
+    const data = MockBlobDatabase[this.containerName].get(this.name);
     if (!data) throw new MockRestError("The specified blob does not exist.", 404);
-    return new Promise((resolve) => resolve(Buffer.from(data)));
+    return Promise.resolve(Buffer.from(data));
   }
 
   downloadToFile(): Promise<BlobDownloadResponseParsed> {
@@ -228,7 +221,7 @@ export class MockBlockBlobClient implements Except<BlockBlobClient, "accountName
   }
 
   async upload(body: HttpRequestBody, _contentLength: number): Promise<BlockBlobUploadResponse> {
-    this.containerClient.blobs.set(this.name, await bodyToBuffer(body));
+    MockBlobDatabase[this.containerName].set(this.name, await bodyToBuffer(body));
     return {
       _response: {
         headers: toHttpHeadersLike(createHttpHeaders()),

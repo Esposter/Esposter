@@ -374,8 +374,8 @@ const { trigger } = watchTriggerable(session, (newSession) => {
   editor.Storage.add("local", {
     load: () => {
       const webpageEditorJson = localStorage.getItem(WEBPAGE_EDITOR_LOCAL_STORAGE_KEY);
-      return new Promise((resolve) =>
-        resolve(webpageEditorJson ? new WebpageEditor(jsonDateParse(webpageEditorJson)) : new WebpageEditor()),
+      return Promise.resolve(
+        webpageEditorJson ? new WebpageEditor(jsonDateParse(webpageEditorJson)) : new WebpageEditor(),
       );
     },
     store: (data) => new Promise(() => localStorage.setItem(WEBPAGE_EDITOR_LOCAL_STORAGE_KEY, JSON.stringify(data))),

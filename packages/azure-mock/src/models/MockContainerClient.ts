@@ -29,7 +29,9 @@ import type {
 } from "@azure/storage-blob";
 import type { Except } from "type-fest";
 
+import { MockBlobBatchClient } from "@/models/MockBlobBatchClient";
 import { MockBlockBlobClient } from "@/models/MockBlockBlobClient";
+import { MockBlobDatabase } from "@/store/MockBlobDatabase";
 import { getBlobItemXml } from "@/util/getBlobItemXml";
 import { getBlobPrefixXml } from "@/util/getBlobPrefixXml";
 import { toWebResourceLike } from "@/util/toWebResourceLike";
@@ -48,14 +50,16 @@ import { html } from "@esposter/shared";
  * const content = await blockBlobClient.downloadToBuffer();
  */
 export class MockContainerClient implements Except<ContainerClient, "accountName"> {
-  blobs: Map<string, Buffer> = new Map<string, Buffer>();
+  connectionString: string;
   containerName: string;
   credential: AnonymousCredential = new AnonymousCredential();
   url: string;
 
-  constructor(_connectionString: string, containerName: string) {
+  constructor(connectionString: string, containerName: string) {
+    this.connectionString = connectionString;
     this.containerName = containerName;
     this.url = `https://mockaccount.blob.core.windows.net/${this.containerName}`;
+    if (!(containerName in MockBlobDatabase)) MockBlobDatabase[containerName] = new Map<string, Buffer>();
   }
 
   create(): Promise<ContainerCreateResponse> {
@@ -115,11 +119,11 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
   }
 
   getBlobBatchClient(): BlobBatchClient {
-    throw new Error("Method not implemented.");
+    return new MockBlobBatchClient(this.url) as unknown as BlobBatchClient;
   }
 
-  getBlobClient(): BlobClient {
-    throw new Error("Method not implemented.");
+  getBlobClient(blobName: string): BlobClient {
+    return new MockBlockBlobClient(this.connectionString, this.containerName, blobName) as unknown as BlobClient;
   }
 
   getBlobLeaseClient(): BlobLeaseClient {
@@ -127,7 +131,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
   }
 
   getBlockBlobClient(blobName: string): BlockBlobClient {
-    return new MockBlockBlobClient("", this, blobName) as unknown as BlockBlobClient;
+    return new MockBlockBlobClient(this.connectionString, this.containerName, blobName) as unknown as BlockBlobClient;
   }
 
   getPageBlobClient(): PageBlobClient {
@@ -162,37 +166,35 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
             }
 
           if (allBlobItems.length > 0 || allBlobPrefixes.length > 0)
-            yield await new Promise((resolve) =>
-              resolve({
-                _response: {
-                  bodyAsText: html`<?xml version="1.0" encoding="utf8"?>
-                    <EnumerationResults ServiceEndpoint="" ContainerName="${this.containerName}">
-                      <Blobs>${allBlobItemXml.join("")}${allBlobPrefixXml.join("")}</Blobs>
-                      <NextMarker />
-                    </EnumerationResults>`,
-                  headers: toHttpHeadersLike(createHttpHeaders()),
-                  parsedBody: {
-                    containerName: this.containerName,
-                    marker: "",
-                    prefix: options?.prefix ?? "",
-                    segment: {
-                      blobItems: allBlobItems,
-                    },
-                    serviceEndpoint: "",
+            yield await Promise.resolve({
+              _response: {
+                bodyAsText: html`<?xml version="1.0" encoding="utf8"?>
+                  <EnumerationResults ServiceEndpoint="" ContainerName="${this.containerName}">
+                    <Blobs>${allBlobItemXml.join("")}${allBlobPrefixXml.join("")}</Blobs>
+                    <NextMarker />
+                  </EnumerationResults>`,
+                headers: toHttpHeadersLike(createHttpHeaders()),
+                parsedBody: {
+                  containerName: this.containerName,
+                  marker: "",
+                  prefix: options?.prefix ?? "",
+                  segment: {
+                    blobItems: allBlobItems,
                   },
-                  parsedHeaders: {},
-                  request: toWebResourceLike(createPipelineRequest({ url: "" })),
-                  status: 200,
+                  serviceEndpoint: "",
                 },
-                containerName: this.containerName,
-                marker: "",
-                prefix: options?.prefix ?? "",
-                segment: {
-                  blobItems: allBlobItems,
-                },
-                serviceEndpoint: "",
-              }),
-            );
+                parsedHeaders: {},
+                request: toWebResourceLike(createPipelineRequest({ url: "" })),
+                status: 200,
+              },
+              containerName: this.containerName,
+              marker: "",
+              prefix: options?.prefix ?? "",
+              segment: {
+                blobItems: allBlobItems,
+              },
+              serviceEndpoint: "",
+            });
         }.bind(this)(),
       next: blobHierarchyItemIterator.next.bind(blobHierarchyItemIterator),
       [Symbol.asyncIterator]() {
@@ -216,37 +218,35 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
           }
 
           if (allBlobItems.length > 0)
-            yield await new Promise((resolve) =>
-              resolve({
-                _response: {
-                  bodyAsText: html`<?xml version="1.0" encoding="utf8"?>
-                    <EnumerationResults ServiceEndpoint="" ContainerName="${this.containerName}">
-                      <Blobs>${allBlobItemXml.join("")}</Blobs>
-                      <NextMarker />
-                    </EnumerationResults>`,
-                  headers: toHttpHeadersLike(createHttpHeaders()),
-                  parsedBody: {
-                    containerName: this.containerName,
-                    marker: "",
-                    prefix: "",
-                    segment: {
-                      blobItems: allBlobItems,
-                    },
-                    serviceEndpoint: "",
+            yield await Promise.resolve({
+              _response: {
+                bodyAsText: html`<?xml version="1.0" encoding="utf8"?>
+                  <EnumerationResults ServiceEndpoint="" ContainerName="${this.containerName}">
+                    <Blobs>${allBlobItemXml.join("")}</Blobs>
+                    <NextMarker />
+                  </EnumerationResults>`,
+                headers: toHttpHeadersLike(createHttpHeaders()),
+                parsedBody: {
+                  containerName: this.containerName,
+                  marker: "",
+                  prefix: "",
+                  segment: {
+                    blobItems: allBlobItems,
                   },
-                  parsedHeaders: {},
-                  request: toWebResourceLike(createPipelineRequest({ url: "" })),
-                  status: 200,
+                  serviceEndpoint: "",
                 },
-                containerName: this.containerName,
-                marker: "",
-                prefix: "",
-                segment: {
-                  blobItems: allBlobItems,
-                },
-                serviceEndpoint: "",
-              }),
-            );
+                parsedHeaders: {},
+                request: toWebResourceLike(createPipelineRequest({ url: "" })),
+                status: 200,
+              },
+              containerName: this.containerName,
+              marker: "",
+              prefix: "",
+              segment: {
+                blobItems: allBlobItems,
+              },
+              serviceEndpoint: "",
+            });
         }.bind(this)(),
       next: blobItemIterator.next.bind(blobItemIterator),
       [Symbol.asyncIterator]() {
@@ -286,7 +286,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
     const uniqueSubprefixes = new Set<string>();
     const blobsInCurrentLevel: BlobItem[] = [];
 
-    for (const [name, buffer] of this.blobs.entries()) {
+    for (const [name, buffer] of MockBlobDatabase[this.containerName].entries()) {
       if (!name.startsWith(prefix))
         // Filter by prefix
         continue;
@@ -319,28 +319,25 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
 
     // Yield prefixes first, then blobs, which mimics Azure's behavior
     for (const prefixName of [...uniqueSubprefixes].sort())
-      yield await new Promise((resolve) => resolve({ kind: "prefix", name: prefixName }));
-    for (const blobItem of blobsInCurrentLevel)
-      yield await new Promise((resolve) => resolve({ kind: "blob", ...blobItem }));
+      yield await Promise.resolve({ kind: "prefix", name: prefixName });
+    for (const blobItem of blobsInCurrentLevel) yield await Promise.resolve({ kind: "blob", ...blobItem });
   }
 
   private async *getBlobItemIterator(): AsyncGenerator<BlobItem> {
-    for (const [name, buffer] of this.blobs.entries())
-      yield await new Promise((resolve) =>
-        resolve({
-          deleted: false,
-          name,
-          properties: {
-            blobType: "BlockBlob",
-            contentLength: buffer.length,
-            contentType: "application/octet-stream",
-            etag: `"${crypto.randomUUID()}"`,
-            lastModified: new Date(),
-            leaseState: "available",
-            leaseStatus: "unlocked",
-          },
-          snapshot: "",
-        }),
-      );
+    for (const [name, buffer] of MockBlobDatabase[this.containerName].entries())
+      yield await Promise.resolve({
+        deleted: false,
+        name,
+        properties: {
+          blobType: "BlockBlob",
+          contentLength: buffer.length,
+          contentType: "application/octet-stream",
+          etag: `"${crypto.randomUUID()}"`,
+          lastModified: new Date(),
+          leaseState: "available",
+          leaseStatus: "unlocked",
+        },
+        snapshot: "",
+      });
   }
 }
