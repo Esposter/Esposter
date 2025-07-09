@@ -13,6 +13,7 @@ import { TilesetLoaderMap } from "@/models/dungeons/loader/TilesetLoaderMap";
 import { prettify } from "@/util/text/prettify";
 import { Rectangle, Text, usePhaserStore } from "vue-phaserjs";
 
+const runtimeConfig = useRuntimeConfig();
 const phaserStore = usePhaserStore();
 const { switchToScene } = phaserStore;
 const x = ref<number>();
