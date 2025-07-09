@@ -35,11 +35,11 @@ import { MockBlockBlobClient } from "@/models/MockBlockBlobClient";
 import { MockContainerDatabase } from "@/store/MockContainerDatabase";
 import { getBlobItemXml } from "@/util/getBlobItemXml";
 import { getBlobPrefixXml } from "@/util/getBlobPrefixXml";
+import { getListBlobsXml } from "@/util/getListBlobsXml";
 import { toWebResourceLike } from "@/util/toWebResourceLike";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { createHttpHeaders, createPipelineRequest } from "@azure/core-rest-pipeline";
 import { AnonymousCredential } from "@azure/storage-blob";
-import { html } from "@esposter/shared";
 /**
  * An in-memory mock of the Azure ContainerClient.
  * It uses a Map to simulate blob storage.
@@ -177,11 +177,10 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
           if (allBlobItems.length > 0 || allBlobPrefixes.length > 0)
             yield await Promise.resolve({
               _response: {
-                bodyAsText: html`<?xml version="1.0" encoding="utf8"?>
-                  <EnumerationResults ServiceEndpoint="" ContainerName="${this.containerName}">
-                    <Blobs>${allBlobItemXml.join("")}${allBlobPrefixXml.join("")}</Blobs>
-                    <NextMarker />
-                  </EnumerationResults>`,
+                bodyAsText: getListBlobsXml(
+                  this.containerName,
+                  `${allBlobItemXml.join("")}${allBlobPrefixXml.join("")}`,
+                ),
                 headers: toHttpHeadersLike(createHttpHeaders()),
                 parsedBody: {
                   containerName: this.containerName,
@@ -229,11 +228,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
           if (allBlobItems.length > 0)
             yield await Promise.resolve({
               _response: {
-                bodyAsText: html`<?xml version="1.0" encoding="utf8"?>
-                  <EnumerationResults ServiceEndpoint="" ContainerName="${this.containerName}">
-                    <Blobs>${allBlobItemXml.join("")}</Blobs>
-                    <NextMarker />
-                  </EnumerationResults>`,
+                bodyAsText: getListBlobsXml(this.containerName, allBlobItemXml.join("")),
                 headers: toHttpHeadersLike(createHttpHeaders()),
                 parsedBody: {
                   containerName: this.containerName,
