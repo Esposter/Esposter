@@ -21,6 +21,6 @@ const displayWidth = defineModel<number | undefined>("displayWidth", { required:
       displayWidth,
       scaleY,
     }"
-    @update:display-width="(value) => (displayWidth = value)"
+    @update:display-width="displayWidth = $event"
   />
 </template>
