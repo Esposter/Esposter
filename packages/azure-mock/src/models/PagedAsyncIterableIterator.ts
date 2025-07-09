@@ -1,4 +1,4 @@
-import type { PageSettings } from "@/models/azure/PageSettings";
+import type { PageSettings } from "@/models/PageSettings";
 /**
  * An interface that allows async iterable iteration both to completion and by page.
  */
