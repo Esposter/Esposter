@@ -5,12 +5,12 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { rooms } from "#shared/db/schema/rooms";
 import { CODE_LENGTH } from "#shared/services/invite/constants";
 import { createCode } from "#shared/util/math/random/createCode";
-import { MockContainerClientMap } from "@@/server/composables/azure/useContainerClient.test";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { NIL } from "@esposter/shared";
+import { MockContainerDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("room", () => {
@@ -26,7 +26,7 @@ describe("room", () => {
   });
 
   afterEach(async () => {
-    MockContainerClientMap.clear();
+    MockContainerDatabase.clear();
     await mockContext.db.delete(rooms);
   });
 

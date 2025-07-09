@@ -1,7 +1,7 @@
 import { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import { useEmojiStore } from "@/store/esbabbler/emoji";
-import { MockContainerClientMap } from "@@/server/composables/azure/useContainerClient.test";
 import { getMockSession } from "@@/server/trpc/context.test";
+import { MockContainerDatabase } from "azure-mock";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
@@ -18,7 +18,7 @@ describe(useEmojiStore, () => {
   });
 
   afterEach(() => {
-    MockContainerClientMap.clear();
+    MockContainerDatabase.clear();
   });
 
   test("gets", () => {

@@ -3,10 +3,10 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { TableEditorConfiguration } from "#shared/models/tableEditor/data/TableEditorConfiguration";
 import { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType";
-import { MockContainerClientMap } from "@@/server/composables/azure/useContainerClient.test";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { tableEditorRouter } from "@@/server/trpc/routers/tableEditor";
+import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("tableEditor", () => {
@@ -19,7 +19,7 @@ describe("tableEditor", () => {
   });
 
   afterEach(() => {
-    MockContainerClientMap.clear();
+    MockContainerDatabase.clear();
   });
 
   test("reads", async () => {

@@ -13,7 +13,6 @@ import type {
 import type { Except } from "type-fest";
 
 import { MockBlobClient } from "@/models/MockBlobClient";
-import { MockBlobDatabase } from "@/store/MockBlobDatabase";
 import { bodyToBuffer } from "@/util/bodyToBuffer";
 import { toWebResourceLike } from "@/util/toWebResourceLike";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
@@ -45,7 +44,7 @@ export class MockBlockBlobClient extends MockBlobClient implements Except<BlockB
   }
 
   async upload(body: HttpRequestBody, _contentLength: number): Promise<BlockBlobUploadResponse> {
-    MockBlobDatabase[this.containerName].set(this.name, await bodyToBuffer(body));
+    this.container.set(this.name, await bodyToBuffer(body));
     return {
       _response: {
         headers: toHttpHeadersLike(createHttpHeaders()),

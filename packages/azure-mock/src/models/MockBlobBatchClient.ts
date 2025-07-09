@@ -6,8 +6,9 @@ import type {
   BlobDeleteOptions,
   StorageSharedKeyCredential,
 } from "@azure/storage-blob";
+import type { MapValue } from "type-fest/source/entry";
 
-import { MockBlobDatabase } from "@/store/MockBlobDatabase";
+import { MockContainerDatabase } from "@/store/MockContainerDatabase";
 import { getAzureErrorXml } from "@/util/getAzureErrorXml";
 import { toWebResourceLike } from "@/util/toWebResourceLike";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
@@ -19,10 +20,11 @@ export class MockBlobBatchClient implements BlobBatchClient {
   constructor(url: string) {
     this.url = url;
   }
+
   /**
    * Simulates the deletion of multiple blobs in a single batch request.
    * It iterates through the requested deletions, removes existing blobs from the
-   * underlying MockBlobDatabase, and builds a response object that reports
+   * underlying MockContainerDatabase, and builds a response object that reports
    * which deletions succeeded and which failed (e.g. for blobs that didn't exist).
    */
   // @ts-expect-error We will only implement urls for deleteBlobs and ignore overloads for now
@@ -55,11 +57,10 @@ export class MockBlobBatchClient implements BlobBatchClient {
 
       const containerName = pathSegments[0];
       const blobName = pathSegments.slice(1).join("/");
+      const container = this.getContainer(containerName);
 
-      if (!(containerName in MockBlobDatabase)) MockBlobDatabase[containerName] = new Map<string, Buffer>();
-
-      if (MockBlobDatabase[containerName].has(blobName)) {
-        MockBlobDatabase[containerName].delete(blobName);
+      if (container.has(blobName)) {
+        container.delete(blobName);
         subResponses.push({
           _request: { credential, url: this.url },
           headers: toHttpHeadersLike(createHttpHeaders()),
@@ -96,5 +97,14 @@ export class MockBlobBatchClient implements BlobBatchClient {
       subResponsesFailedCount,
       subResponsesSucceededCount,
     });
+  }
+
+  getContainer(containerName: string): MapValue<typeof MockContainerDatabase> {
+    let container = MockContainerDatabase.get(containerName);
+    if (!container) {
+      container = new Map();
+      MockContainerDatabase.set(containerName, container);
+    }
+    return container;
   }
 }

@@ -3,12 +3,12 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { surveys } from "#shared/db/schema/surveys";
-import { MockContainerClientMap } from "@@/server/composables/azure/useContainerClient.test";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
 import { NIL } from "@esposter/shared";
+import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("survey", () => {
@@ -27,7 +27,7 @@ describe("survey", () => {
   });
 
   afterEach(async () => {
-    MockContainerClientMap.clear();
+    MockContainerDatabase.clear();
     await mockContext.db.delete(surveys);
   });
 

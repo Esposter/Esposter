@@ -3,13 +3,13 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { rooms } from "#shared/db/schema/rooms";
-import { MockTableClientMap } from "@@/server/composables/azure/useTableClient.test";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { messageRouter } from "@@/server/trpc/routers/message";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { NIL } from "@esposter/shared";
+import { MockTableDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("message", () => {
@@ -28,7 +28,7 @@ describe("message", () => {
   });
 
   afterEach(async () => {
-    MockTableClientMap.clear();
+    MockTableDatabase.clear();
     await mockContext.db.delete(rooms);
   });
 

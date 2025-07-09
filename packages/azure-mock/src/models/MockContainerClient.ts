@@ -28,10 +28,11 @@ import type {
   PageBlobClient,
 } from "@azure/storage-blob";
 import type { Except } from "type-fest";
+import type { MapValue } from "type-fest/source/entry";
 
 import { MockBlobBatchClient } from "@/models/MockBlobBatchClient";
 import { MockBlockBlobClient } from "@/models/MockBlockBlobClient";
-import { MockBlobDatabase } from "@/store/MockBlobDatabase";
+import { MockContainerDatabase } from "@/store/MockContainerDatabase";
 import { getBlobItemXml } from "@/util/getBlobItemXml";
 import { getBlobPrefixXml } from "@/util/getBlobPrefixXml";
 import { toWebResourceLike } from "@/util/toWebResourceLike";
@@ -55,11 +56,19 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
   credential: AnonymousCredential = new AnonymousCredential();
   url: string;
 
+  get container(): MapValue<typeof MockContainerDatabase> {
+    let container = MockContainerDatabase.get(this.containerName);
+    if (!container) {
+      container = new Map();
+      MockContainerDatabase.set(this.containerName, container);
+    }
+    return container;
+  }
+
   constructor(connectionString: string, containerName: string) {
     this.connectionString = connectionString;
     this.containerName = containerName;
     this.url = `https://mockaccount.blob.core.windows.net/${this.containerName}`;
-    if (!(containerName in MockBlobDatabase)) MockBlobDatabase[containerName] = new Map<string, Buffer>();
   }
 
   create(): Promise<ContainerCreateResponse> {
@@ -286,7 +295,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
     const uniqueSubprefixes = new Set<string>();
     const blobsInCurrentLevel: BlobItem[] = [];
 
-    for (const [name, buffer] of MockBlobDatabase[this.containerName].entries()) {
+    for (const [name, buffer] of this.container.entries()) {
       if (!name.startsWith(prefix))
         // Filter by prefix
         continue;
@@ -324,7 +333,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
   }
 
   private async *getBlobItemIterator(): AsyncGenerator<BlobItem> {
-    for (const [name, buffer] of MockBlobDatabase[this.containerName].entries())
+    for (const [name, buffer] of this.container.entries())
       yield await Promise.resolve({
         deleted: false,
         name,

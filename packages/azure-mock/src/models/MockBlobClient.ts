@@ -26,10 +26,10 @@ import type {
   PollOperationState,
 } from "@azure/storage-blob";
 import type { Except } from "type-fest";
+import type { MapValue } from "type-fest/source/entry";
 
-import { MockBlockBlobClient } from "@/models/MockBlockBlobClient";
 import { MockRestError } from "@/models/MockRestError";
-import { MockBlobDatabase } from "@/store/MockBlobDatabase";
+import { MockContainerDatabase } from "@/store/MockContainerDatabase";
 import { toWebResourceLike } from "@/util/toWebResourceLike";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { createHttpHeaders, createPipelineRequest } from "@azure/core-rest-pipeline";
@@ -42,6 +42,15 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
   credential: AnonymousCredential = new AnonymousCredential();
   name: string;
   url: string;
+
+  get container(): MapValue<typeof MockContainerDatabase> {
+    let container = MockContainerDatabase.get(this.containerName);
+    if (!container) {
+      container = new Map();
+      MockContainerDatabase.set(this.containerName, container);
+    }
+    return container;
+  }
 
   constructor(connectionString: string, containerName: string, blobName: string) {
     this.connectionString = connectionString;
@@ -65,9 +74,8 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
   }
 
   delete(): Promise<BlobDeleteResponse> {
-    if (!MockBlobDatabase[this.containerName].has(this.name))
-      throw new MockRestError("The specified blob does not exist.", 404);
-    MockBlobDatabase[this.containerName].delete(this.name);
+    if (!this.container.has(this.name)) throw new MockRestError("The specified blob does not exist.", 404);
+    this.container.delete(this.name);
     return Promise.resolve({
       _response: {
         headers: toHttpHeadersLike(createHttpHeaders()),
@@ -87,7 +95,7 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
   }
 
   download(): Promise<BlobDownloadResponseParsed> {
-    const buffer = MockBlobDatabase[this.containerName].get(this.name);
+    const buffer = this.container.get(this.name);
     return Promise.resolve({
       _response: {
         headers: toHttpHeadersLike(createHttpHeaders()),
@@ -100,7 +108,7 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
   }
 
   downloadToBuffer(): Promise<Buffer> {
-    const data = MockBlobDatabase[this.containerName].get(this.name);
+    const data = this.container.get(this.name);
     if (!data) throw new MockRestError("The specified blob does not exist.", 404);
     return Promise.resolve(Buffer.from(data));
   }
@@ -142,7 +150,7 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
   }
 
   getBlockBlobClient(): BlockBlobClient {
-    return new MockBlockBlobClient(this.connectionString, this.containerName, this.name) as unknown as BlockBlobClient;
+    throw new Error("Method not implemented.");
   }
 
   getPageBlobClient(): PageBlobClient {

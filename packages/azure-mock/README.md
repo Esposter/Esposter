@@ -18,7 +18,7 @@ A library of azure mock classes.
 ## <a name="getting-started">🚀 Getting Started</a>
 
 ```bash
-pnpm i azure-mock
+pnpm i -D azure-mock
 ```
 
 ## <a name="documentation">📖 Documentation</a>

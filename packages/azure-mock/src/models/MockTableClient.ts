@@ -14,6 +14,7 @@ import type {
   UpdateMode,
 } from "@azure/data-tables";
 import type { Except } from "type-fest";
+import type { MapValue } from "type-fest/source/entry";
 
 import { MockRestError } from "@/models/MockRestError";
 import { MockTableDatabase } from "@/store/MockTableDatabase";
@@ -31,19 +32,26 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
   tableName: string;
   url: string;
 
+  get table(): MapValue<typeof MockTableDatabase> {
+    let table = MockTableDatabase.get(this.tableName);
+    if (!table) {
+      table = new Map();
+      MockTableDatabase.set(this.tableName, table);
+    }
+    return table;
+  }
+
   constructor(_url: string, tableName: string) {
     this.tableName = tableName;
     this.url = `https://mockaccount.table.core.windows.net/${this.tableName}`;
-    if (!(tableName in MockTableDatabase)) MockTableDatabase[tableName] = new Map<string, TableEntity>();
   }
 
   createEntity<T extends object>(entity: TableEntity<T>): Promise<CreateTableEntityResponse> {
     const key = this.getCompositeKey(entity.partitionKey, entity.rowKey);
-    if (MockTableDatabase[this.tableName].has(key))
-      throw new MockRestError("The specified entity already exists.", 409);
+    if (this.table.has(key)) throw new MockRestError("The specified entity already exists.", 409);
 
     const storedEntity = this.withMetadata(entity);
-    MockTableDatabase[this.tableName].set(key, storedEntity);
+    this.table.set(key, storedEntity);
     return Promise.resolve({ date: new Date(), etag: storedEntity.etag });
   }
 
@@ -53,9 +61,8 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
 
   deleteEntity(partitionKey: string, rowKey: string): Promise<TableDeleteEntityHeaders> {
     const key = this.getCompositeKey(partitionKey, rowKey);
-    if (!MockTableDatabase[this.tableName].has(key))
-      throw new MockRestError("The specified resource does not exist.", 404);
-    MockTableDatabase[this.tableName].delete(key);
+    if (!this.table.has(key)) throw new MockRestError("The specified resource does not exist.", 404);
+    this.table.delete(key);
     // The real response contains headers, an empty object is a sufficient mock.
     return Promise.resolve({});
   }
@@ -73,7 +80,7 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
     rowKey: string,
   ): Promise<GetTableEntityResponse<TableEntityResult<T>>> {
     const key = this.getCompositeKey(partitionKey, rowKey);
-    const entity = MockTableDatabase[this.tableName].get(key);
+    const entity = this.table.get(key);
     if (!entity) throw new MockRestError("The specified resource does not exist.", 404);
 
     const entityWithMetadata = this.withMetadata(entity as T);
@@ -89,14 +96,14 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
           // A more complex mock could implement maxPageSize and continuationTokens
           const allEntitiesWithMetadata = [...entities.values()].map(withMetadata);
           if (allEntitiesWithMetadata.length > 0) yield await Promise.resolve(allEntitiesWithMetadata);
-        })(MockTableDatabase[this.tableName] as Map<string, T>),
+        })(this.table as Map<string, T>),
       next: () =>
         (async function* (entities: Map<string, T>): AsyncGenerator<TableEntityResult<T>> {
           for (const entity of entities.values()) {
             const entityWithMetadata = withMetadata(entity);
             yield await Promise.resolve(entityWithMetadata);
           }
-        })(MockTableDatabase[this.tableName] as Map<string, T>).next(),
+        })(this.table as Map<string, T>).next(),
       [Symbol.asyncIterator]() {
         return this;
       },
@@ -113,22 +120,22 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
 
   updateEntity<T extends object>(entity: TableEntity<T>, mode: UpdateMode = "Merge"): Promise<TableMergeEntityHeaders> {
     const key = this.getCompositeKey(entity.partitionKey, entity.rowKey);
-    const existingEntity = MockTableDatabase[this.tableName].get(key);
+    const existingEntity = this.table.get(key);
     if (!existingEntity) throw new MockRestError("The specified resource does not exist.", 404);
     else if (mode === "Merge") return this.mergeEntity(key, existingEntity, entity);
     // "Replace"
     const newEntityWithMetadata = this.withMetadata(entity);
-    MockTableDatabase[this.tableName].set(key, newEntityWithMetadata);
+    this.table.set(key, newEntityWithMetadata);
     return Promise.resolve({ date: new Date(), etag: newEntityWithMetadata.etag });
   }
 
   upsertEntity<T extends object>(entity: TableEntity<T>, mode: UpdateMode = "Merge"): Promise<TableMergeEntityHeaders> {
     const key = this.getCompositeKey(entity.partitionKey, entity.rowKey);
-    const existingEntity = MockTableDatabase[this.tableName].get(key);
+    const existingEntity = this.table.get(key);
     if (existingEntity && mode === "Merge") return this.mergeEntity(key, existingEntity, entity);
     // "Replace" or entity doesn't exist (which is an insert)
     const newEntity = this.withMetadata(entity);
-    MockTableDatabase[this.tableName].set(key, newEntity);
+    this.table.set(key, newEntity);
     return Promise.resolve({ date: new Date(), etag: newEntity.etag });
   }
 
@@ -142,7 +149,7 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
     entityToMerge: TableEntity<T>,
   ): Promise<TableMergeEntityHeaders> {
     const mergedEntityWithMetadata = this.withMetadata({ ...entity, ...entityToMerge });
-    MockTableDatabase[this.tableName].set(key, mergedEntityWithMetadata);
+    this.table.set(key, mergedEntityWithMetadata);
     return Promise.resolve({ date: new Date(), etag: mergedEntityWithMetadata.etag });
   }
   // Helper to add mock metadata, similar to the real SDK

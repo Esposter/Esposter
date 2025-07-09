@@ -2,10 +2,10 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
-import { MockContainerClientMap } from "@@/server/composables/azure/useContainerClient.test";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { emailEditorRouter } from "@@/server/trpc/routers/emailEditor";
+import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("emailEditor", () => {
@@ -18,7 +18,7 @@ describe("emailEditor", () => {
   });
 
   afterEach(() => {
-    MockContainerClientMap.clear();
+    MockContainerDatabase.clear();
   });
 
   test("reads", async () => {
