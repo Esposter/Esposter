@@ -20,7 +20,6 @@ export class MockBlobBatchClient implements BlobBatchClient {
   constructor(url: string) {
     this.url = url;
   }
-
   /**
    * Simulates the deletion of multiple blobs in a single batch request.
    * It iterates through the requested deletions, removes existing blobs from the
