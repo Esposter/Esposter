@@ -12,6 +12,6 @@ export interface Asset {
 }
 
 export const assetSchema = z.object({
-  frame: z.number().int().nonnegative().optional(),
+  frame: z.int().nonnegative().optional(),
   key: z.union([fileKeySchema, spritesheetKeySchema]),
 }) satisfies z.ZodType<Asset>;
