@@ -3,9 +3,9 @@ import type { ProjectData } from "grapesjs";
 
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
 import {
-    BLOGSPOT_BASE_URL,
-    PLACEHOLD_BASE_URL,
-    WORDPRESS_DESIGNSPELL_BASE_URL,
+  BLOGSPOT_BASE_URL,
+  PLACEHOLD_BASE_URL,
+  WORDPRESS_DESIGNSPELL_BASE_URL,
 } from "#shared/services/grapesjs/constants";
 import { html } from "@esposter/shared";
 import { z } from "zod";
