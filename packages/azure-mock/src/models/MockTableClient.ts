@@ -50,9 +50,8 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
     const key = this.getCompositeKey(entity.partitionKey, entity.rowKey);
     if (this.table.has(key)) throw new MockRestError("The specified entity already exists.", 409);
 
-    const storedEntity = this.withMetadata(entity);
-    this.table.set(key, storedEntity);
-    return Promise.resolve({ date: new Date(), etag: storedEntity.etag });
+    this.table.set(key, entity);
+    return Promise.resolve({ date: new Date(), etag: this.getEtag() });
   }
 
   createTable(): Promise<void> {
@@ -80,11 +79,9 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
     rowKey: string,
   ): Promise<GetTableEntityResponse<TableEntityResult<T>>> {
     const key = this.getCompositeKey(partitionKey, rowKey);
-    const entity = this.table.get(key);
+    const entity = this.table.get(key) as T | undefined;
     if (!entity) throw new MockRestError("The specified resource does not exist.", 404);
-
-    const entityWithMetadata = this.withMetadata(entity as T);
-    return Promise.resolve(entityWithMetadata);
+    return Promise.resolve({ ...entity, etag: this.getEtag() });
   }
 
   listEntities<T extends object>(): PagedAsyncIterableIterator<TableEntityResult<T>, TableEntityResultPage<T>> {
@@ -99,10 +96,7 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
         })(this.table as Map<string, T>),
       next: () =>
         (async function* (entities: Map<string, T>): AsyncGenerator<TableEntityResult<T>> {
-          for (const entity of entities.values()) {
-            const entityWithMetadata = withMetadata(entity);
-            yield await Promise.resolve(entityWithMetadata);
-          }
+          for (const entity of entities.values()) yield await Promise.resolve(withMetadata(entity));
         })(this.table as Map<string, T>).next(),
       [Symbol.asyncIterator]() {
         return this;
@@ -124,9 +118,8 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
     if (!existingEntity) throw new MockRestError("The specified resource does not exist.", 404);
     else if (mode === "Merge") return this.mergeEntity(key, existingEntity, entity);
     // "Replace"
-    const newEntityWithMetadata = this.withMetadata(entity);
-    this.table.set(key, newEntityWithMetadata);
-    return Promise.resolve({ date: new Date(), etag: newEntityWithMetadata.etag });
+    this.table.set(key, entity);
+    return Promise.resolve({ date: new Date(), etag: this.getEtag() });
   }
 
   upsertEntity<T extends object>(entity: TableEntity<T>, mode: UpdateMode = "Merge"): Promise<TableMergeEntityHeaders> {
@@ -134,13 +127,16 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
     const existingEntity = this.table.get(key);
     if (existingEntity && mode === "Merge") return this.mergeEntity(key, existingEntity, entity);
     // "Replace" or entity doesn't exist (which is an insert)
-    const newEntity = this.withMetadata(entity);
-    this.table.set(key, newEntity);
-    return Promise.resolve({ date: new Date(), etag: newEntity.etag });
+    this.table.set(key, entity);
+    return Promise.resolve({ date: new Date(), etag: this.getEtag() });
   }
 
   private getCompositeKey(partitionKey: string, rowKey: string): string {
     return `${partitionKey}${ID_SEPARATOR}${rowKey}`;
+  }
+
+  private getEtag(): string {
+    return `W/"datetime'${new Date().toISOString()}'"`;
   }
 
   private mergeEntity<T extends object>(
@@ -148,15 +144,14 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
     entity: TableEntity<T>,
     entityToMerge: TableEntity<T>,
   ): Promise<TableMergeEntityHeaders> {
-    const mergedEntityWithMetadata = this.withMetadata({ ...entity, ...entityToMerge });
-    this.table.set(key, mergedEntityWithMetadata);
-    return Promise.resolve({ date: new Date(), etag: mergedEntityWithMetadata.etag });
+    this.table.set(key, { ...entity, ...entityToMerge });
+    return Promise.resolve({ date: new Date(), etag: this.getEtag() });
   }
-  // Helper to add mock metadata, similar to the real SDK
+
   private withMetadata<T extends object>(entity: T): T & { etag: string } {
     return {
       ...entity,
-      etag: `W/"datetime'${new Date().toISOString()}'"`,
+      etag: this.getEtag(),
     };
   }
 }

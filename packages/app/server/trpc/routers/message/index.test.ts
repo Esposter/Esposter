@@ -3,14 +3,16 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { rooms } from "#shared/db/schema/rooms";
+import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 import { getMessagesPartitionKey } from "#shared/services/esbabbler/getMessagesPartitionKey";
+import { getBlobName } from "@@/server/services/azure/container/getBlobName";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { messageRouter } from "@@/server/trpc/routers/message";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { NIL } from "@esposter/shared";
-import { MockTableDatabase } from "azure-mock";
+import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("message", () => {
@@ -22,19 +24,19 @@ describe("message", () => {
   const size = 1000;
   const name = "name";
   const message = "message";
-  const forward = "forward";
   const updatedMessage = "updatedMessage";
   const rowKey = "rowKey";
 
   beforeAll(async () => {
-    const createRoomCaller = createCallerFactory(roomRouter);
     const createMessageCaller = createCallerFactory(messageRouter);
+    const createRoomCaller = createCallerFactory(roomRouter);
     mockContext = await createMockContext();
-    roomCaller = createRoomCaller(mockContext);
     messageCaller = createMessageCaller(mockContext);
+    roomCaller = createRoomCaller(mockContext);
   });
 
   afterEach(async () => {
+    MockContainerDatabase.clear();
     MockTableDatabase.clear();
     await mockContext.db.delete(rooms);
   });
@@ -65,7 +67,7 @@ describe("message", () => {
     const readMessages = await messageCaller.readMessages({ roomId: newRoom.id });
 
     expect(readMessages.items).toHaveLength(1);
-    expect(readMessages.items[0]).toStrictEqual(newMessage);
+    expect(readMessages.items[0].message).toBe(newMessage.message);
   });
 
   test("fails read messages with non-existent room id", async () => {
@@ -207,7 +209,7 @@ describe("message", () => {
     );
   });
 
-  test("forwards messages", async () => {
+  test("forwards message", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
@@ -215,7 +217,6 @@ describe("message", () => {
     const targetRoom = await roomCaller.createRoom({ name });
 
     await messageCaller.forwardMessages({
-      message: forward,
       partitionKey: newMessage.partitionKey,
       roomIds: [targetRoom.id],
       rowKey: newMessage.rowKey,
@@ -224,6 +225,30 @@ describe("message", () => {
     const targetMessages = await messageCaller.readMessages({ roomId: targetRoom.id });
 
     expect(targetMessages.items).toHaveLength(2);
+    expect(targetMessages.items[0].isForward).toBeUndefined();
+    expect(targetMessages.items[1].isForward).toBe(true);
+  });
+
+  test("forwards message with optional message", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
+    const targetRoom = await roomCaller.createRoom({ name });
+
+    await messageCaller.forwardMessages({
+      message,
+      partitionKey: newMessage.partitionKey,
+      roomIds: [targetRoom.id],
+      rowKey: newMessage.rowKey,
+    });
+
+    const targetMessages = await messageCaller.readMessages({ roomId: targetRoom.id });
+
+    expect(targetMessages.items).toHaveLength(3);
+    expect(targetMessages.items[0].isForward).toBeUndefined();
+    expect(targetMessages.items[1].isForward).toBe(true);
+    expect(targetMessages.items[2].isForward).toBeUndefined();
   });
 
   test("fails forward messages with non-existent message", async () => {
@@ -233,7 +258,7 @@ describe("message", () => {
     const partitionKey = getMessagesPartitionKey(newRoom.id, new Date());
 
     await expect(
-      messageCaller.forwardMessages({ message: forward, partitionKey, roomIds: [newRoom.id], rowKey }),
+      messageCaller.forwardMessages({ partitionKey, roomIds: [newRoom.id], rowKey }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Message is not found for id: {"partitionKey":"${partitionKey}","rowKey":"rowKey"}]`,
     );
@@ -249,7 +274,6 @@ describe("message", () => {
 
     await expect(
       messageCaller.forwardMessages({
-        message: forward,
         partitionKey: newMessage.partitionKey,
         roomIds: [targetRoom.id],
         rowKey: newMessage.rowKey,
@@ -311,6 +335,10 @@ describe("message", () => {
       files: [{ filename, id, mimetype, size }],
       roomId: newRoom.id,
     });
+    MockContainerDatabase.set(
+      AzureContainer.EsbabblerAssets,
+      new Map([[getBlobName(`${newRoom.id}/${id}`, filename), Buffer.alloc(size)]]),
+    );
 
     await messageCaller.deleteFile({ id, partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey });
 
@@ -448,7 +476,11 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
+    const inviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
+    const { user } = await mockSessionOnce(mockContext.db);
+    await roomCaller.joinRoom(inviteCode);
     const onCreateMessage = await messageCaller.onCreateMessage({ roomId: newRoom.id });
+    await mockSessionOnce(mockContext.db, user);
     const [data] = await Promise.all([
       onCreateMessage[Symbol.asyncIterator]().next(),
       messageCaller.createMessage({ message, roomId: newRoom.id }),
@@ -456,8 +488,8 @@ describe("message", () => {
 
     assert(!data.done);
 
-    expect(data.value).toHaveLength(1);
-    expect(data.value[0].message).toBe(message);
+    expect(data.value.data).toHaveLength(1);
+    expect(data.value.data[0].message).toBe(message);
   });
 
   test("on creates typing", async () => {
@@ -468,11 +500,7 @@ describe("message", () => {
     const mockSession = getMockSession();
     const [data] = await Promise.all([
       onCreateTyping[Symbol.asyncIterator]().next(),
-      messageCaller.createTyping({
-        roomId: newRoom.id,
-        userId: mockSession.user.id,
-        username: mockSession.user.name,
-      }),
+      messageCaller.createTyping({ roomId: newRoom.id, userId: mockSession.user.id, username: mockSession.user.name }),
     ]);
 
     assert(!data.done);

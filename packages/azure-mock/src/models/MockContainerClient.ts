@@ -32,6 +32,7 @@ import type { MapValue } from "type-fest/source/entry";
 
 import { MockBlobBatchClient } from "@/models/MockBlobBatchClient";
 import { MockBlockBlobClient } from "@/models/MockBlockBlobClient";
+import { MockRestError } from "@/models/MockRestError";
 import { MockContainerDatabase } from "@/store/MockContainerDatabase";
 import { getBlobItemXml } from "@/util/getBlobItemXml";
 import { getBlobPrefixXml } from "@/util/getBlobPrefixXml";
@@ -83,8 +84,17 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
     throw new Error("Method not implemented.");
   }
 
-  deleteBlob(): Promise<BlobDeleteResponse> {
-    throw new Error("Method not implemented.");
+  deleteBlob(blobName: string): Promise<BlobDeleteResponse> {
+    if (!this.container.has(blobName)) throw new MockRestError("The specified blob does not exist.", 404);
+    this.container.delete(blobName);
+    return Promise.resolve({
+      _response: {
+        headers: toHttpHeadersLike(createHttpHeaders()),
+        parsedHeaders: {},
+        request: toWebResourceLike(createPipelineRequest({ url: `${this.url}/${blobName}` })),
+        status: 200,
+      },
+    });
   }
 
   deleteIfExists(): Promise<ContainerDeleteIfExistsResponse> {
