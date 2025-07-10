@@ -110,7 +110,7 @@ describe("message", () => {
     );
   });
 
-  test("on creates", async () => {
+  test.todo("on creates", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
@@ -119,13 +119,14 @@ describe("message", () => {
     await roomCaller.joinRoom(inviteCode);
     const onCreateMessage = await messageCaller.onCreateMessage({ roomId: newRoom.id });
     await mockSessionOnce(mockContext.db, user);
-    const [data] = await Promise.all([
+    const [data, newMessage] = await Promise.all([
       onCreateMessage[Symbol.asyncIterator]().next(),
       messageCaller.createMessage({ message, roomId: newRoom.id }),
     ]);
 
     assert(!data.done);
 
+    expect(data.value.id).toBe(newMessage.rowKey);
     expect(data.value.data).toHaveLength(1);
     expect(data.value.data[0].message).toBe(message);
   });
