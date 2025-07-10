@@ -197,8 +197,7 @@ export const messageRouter = router({
       if (!messageEntity)
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: new NotFoundError(messageRouter.forwardMessages.name, JSON.stringify({ partitionKey, rowKey }))
-            .message,
+          message: new NotFoundError(AzureEntityType.Message, JSON.stringify({ partitionKey, rowKey })).message,
         });
 
       const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
