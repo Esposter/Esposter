@@ -41,15 +41,6 @@ describe("message", () => {
     await mockContext.db.delete(rooms);
   });
 
-  test("creates", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-
-    expect(newMessage.message).toBe(message);
-  });
-
   test("reads empty messages", async () => {
     expect.hasAssertions();
 
@@ -102,6 +93,86 @@ describe("message", () => {
     );
   });
 
+  test("creates", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
+
+    expect(newMessage.message).toBe(message);
+  });
+
+  test("fails create with non-existent room id", async () => {
+    expect.hasAssertions();
+
+    await expect(messageCaller.createMessage({ message, roomId: NIL })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Room is not found for id: 00000000-0000-0000-0000-000000000000]`,
+    );
+  });
+
+  test("on creates", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const inviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
+    const { user } = await mockSessionOnce(mockContext.db);
+    await roomCaller.joinRoom(inviteCode);
+    const onCreateMessage = await messageCaller.onCreateMessage({ roomId: newRoom.id });
+    await mockSessionOnce(mockContext.db, user);
+    const [data] = await Promise.all([
+      onCreateMessage[Symbol.asyncIterator]().next(),
+      messageCaller.createMessage({ message, roomId: newRoom.id }),
+    ]);
+
+    assert(!data.done);
+
+    expect(data.value.data).toHaveLength(1);
+    expect(data.value.data[0].message).toBe(message);
+  });
+
+  test("creates typing", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const mockSession = getMockSession();
+    await messageCaller.createTyping({
+      roomId: newRoom.id,
+      userId: mockSession.user.id,
+      username: mockSession.user.name,
+    });
+
+    // createTyping is a query that emits events, so we just verify it doesn't throw
+    expect(true).toBe(true);
+  });
+
+  test("fails create typing with non-existent room id", async () => {
+    expect.hasAssertions();
+
+    const mockSession = getMockSession();
+
+    await expect(
+      messageCaller.createTyping({ roomId: NIL, userId: mockSession.user.id, username: mockSession.user.name }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Room is not found for id: 00000000-0000-0000-0000-000000000000]`,
+    );
+  });
+
+  test("on creates typing", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const onCreateTyping = await messageCaller.onCreateTyping({ roomId: newRoom.id });
+    const mockSession = getMockSession();
+    const [data] = await Promise.all([
+      onCreateTyping[Symbol.asyncIterator]().next(),
+      messageCaller.createTyping({ roomId: newRoom.id, userId: mockSession.user.id, username: mockSession.user.name }),
+    ]);
+
+    assert(!data.done);
+
+    expect(data.value.roomId).toBe(newRoom.id);
+  });
+
   test("updates", async () => {
     expect.hasAssertions();
 
@@ -147,6 +218,26 @@ describe("message", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
+  test("on updates", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
+    const onUpdateMessage = await messageCaller.onUpdateMessage({ roomId: newRoom.id });
+    const [data] = await Promise.all([
+      onUpdateMessage[Symbol.asyncIterator]().next(),
+      messageCaller.updateMessage({
+        message: updatedMessage,
+        partitionKey: newMessage.partitionKey,
+        rowKey: newMessage.rowKey,
+      }),
+    ]);
+
+    assert(!data.done);
+
+    expect(data.value.message).toBe(updatedMessage);
+  });
+
   test("deletes", async () => {
     expect.hasAssertions();
 
@@ -182,31 +273,24 @@ describe("message", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
-  test("creates typing", async () => {
+  test("on deletes", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const mockSession = getMockSession();
-    await messageCaller.createTyping({
-      roomId: newRoom.id,
-      userId: mockSession.user.id,
-      username: mockSession.user.name,
-    });
+    const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
+    const onDeleteMessage = await messageCaller.onDeleteMessage({ roomId: newRoom.id });
+    const [data] = await Promise.all([
+      onDeleteMessage[Symbol.asyncIterator]().next(),
+      messageCaller.deleteMessage({
+        partitionKey: newMessage.partitionKey,
+        rowKey: newMessage.rowKey,
+      }),
+    ]);
 
-    // createTyping is a query that emits events, so we just verify it doesn't throw
-    expect(true).toBe(true);
-  });
+    assert(!data.done);
 
-  test("fails create typing with non-existent room id", async () => {
-    expect.hasAssertions();
-
-    const mockSession = getMockSession();
-
-    await expect(
-      messageCaller.createTyping({ roomId: NIL, userId: mockSession.user.id, username: mockSession.user.name }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Room is not found for id: 00000000-0000-0000-0000-000000000000]`,
-    );
+    expect(data.value.partitionKey).toBe(newMessage.partitionKey);
+    expect(data.value.rowKey).toBe(newMessage.rowKey);
   });
 
   test("forwards message", async () => {
@@ -470,81 +554,5 @@ describe("message", () => {
     await expect(
       messageCaller.deleteLinkPreviewResponse({ partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
-  });
-
-  test("on creates message", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const inviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
-    const { user } = await mockSessionOnce(mockContext.db);
-    await roomCaller.joinRoom(inviteCode);
-    const onCreateMessage = await messageCaller.onCreateMessage({ roomId: newRoom.id });
-    await mockSessionOnce(mockContext.db, user);
-    const [data] = await Promise.all([
-      onCreateMessage[Symbol.asyncIterator]().next(),
-      messageCaller.createMessage({ message, roomId: newRoom.id }),
-    ]);
-
-    assert(!data.done);
-
-    expect(data.value.data).toHaveLength(1);
-    expect(data.value.data[0].message).toBe(message);
-  });
-
-  test("on creates typing", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const onCreateTyping = await messageCaller.onCreateTyping({ roomId: newRoom.id });
-    const mockSession = getMockSession();
-    const [data] = await Promise.all([
-      onCreateTyping[Symbol.asyncIterator]().next(),
-      messageCaller.createTyping({ roomId: newRoom.id, userId: mockSession.user.id, username: mockSession.user.name }),
-    ]);
-
-    assert(!data.done);
-
-    expect(data.value.roomId).toBe(newRoom.id);
-  });
-
-  test("on updates message", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-    const onUpdateMessage = await messageCaller.onUpdateMessage({ roomId: newRoom.id });
-    const [data] = await Promise.all([
-      onUpdateMessage[Symbol.asyncIterator]().next(),
-      messageCaller.updateMessage({
-        message: updatedMessage,
-        partitionKey: newMessage.partitionKey,
-        rowKey: newMessage.rowKey,
-      }),
-    ]);
-
-    assert(!data.done);
-
-    expect(data.value.message).toBe(updatedMessage);
-  });
-
-  test("on deletes message", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-    const onDeleteMessage = await messageCaller.onDeleteMessage({ roomId: newRoom.id });
-    const [data] = await Promise.all([
-      onDeleteMessage[Symbol.asyncIterator]().next(),
-      messageCaller.deleteMessage({
-        partitionKey: newMessage.partitionKey,
-        rowKey: newMessage.rowKey,
-      }),
-    ]);
-
-    assert(!data.done);
-
-    expect(data.value.partitionKey).toBe(newMessage.partitionKey);
-    expect(data.value.rowKey).toBe(newMessage.rowKey);
   });
 });
