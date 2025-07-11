@@ -111,11 +111,11 @@ export type OnCreateTypingInput = z.infer<typeof onCreateTypingInputSchema>;
 const onDeleteMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnDeleteMessageInput = z.infer<typeof onDeleteMessageInputSchema>;
 
-export const forwardMessagesInputSchema = z.object({
+export const forwardMessageInputSchema = z.object({
   ...messageEntitySchema.pick({ message: true, partitionKey: true, rowKey: true }).shape,
   roomIds: selectRoomSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
 });
-export type ForwardMessagesInput = z.infer<typeof forwardMessagesInputSchema>;
+export type ForwardMessageInput = z.infer<typeof forwardMessageInputSchema>;
 
 export const messageRouter = router({
   createMessage: addProfanityFilterMiddleware(getMemberProcedure(createMessageInputSchema, "roomId"), [
@@ -188,7 +188,7 @@ export const messageRouter = router({
       await deleteFiles(containerClient, messageEntity.files);
     },
   ),
-  forwardMessages: getMemberProcedure(forwardMessagesInputSchema, "partitionKey").mutation(
+  forwardMessage: getMemberProcedure(forwardMessageInputSchema, "partitionKey").mutation(
     async ({ ctx, input: { message, partitionKey, roomIds, rowKey } }) => {
       await isMember(ctx.db, ctx.session, roomIds);
 

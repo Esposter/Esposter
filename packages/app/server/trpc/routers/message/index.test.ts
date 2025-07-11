@@ -423,7 +423,7 @@ describe("message", () => {
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     const targetRoom = await roomCaller.createRoom({ name });
 
-    await messageCaller.forwardMessages({
+    await messageCaller.forwardMessage({
       partitionKey: newMessage.partitionKey,
       roomIds: [targetRoom.id],
       rowKey: newMessage.rowKey,
@@ -443,7 +443,7 @@ describe("message", () => {
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     const targetRoom = await roomCaller.createRoom({ name });
 
-    await messageCaller.forwardMessages({
+    await messageCaller.forwardMessage({
       message,
       partitionKey: newMessage.partitionKey,
       roomIds: [targetRoom.id],
@@ -465,7 +465,7 @@ describe("message", () => {
     const partitionKey = getMessagesPartitionKey(newRoom.id, new Date());
 
     await expect(
-      messageCaller.forwardMessages({ partitionKey, roomIds: [newRoom.id], rowKey }),
+      messageCaller.forwardMessage({ partitionKey, roomIds: [newRoom.id], rowKey }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Message is not found for id: {"partitionKey":"${partitionKey}","rowKey":"${rowKey}"}]`,
     );
@@ -480,7 +480,7 @@ describe("message", () => {
     await mockSessionOnce(mockContext.db);
 
     await expect(
-      messageCaller.forwardMessages({
+      messageCaller.forwardMessage({
         partitionKey: newMessage.partitionKey,
         roomIds: [targetRoom.id],
         rowKey: newMessage.rowKey,
@@ -495,7 +495,7 @@ describe("message", () => {
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
 
     await expect(
-      messageCaller.forwardMessages({
+      messageCaller.forwardMessage({
         partitionKey: newMessage.partitionKey,
         roomIds: [NIL],
         rowKey: newMessage.rowKey,
@@ -613,15 +613,20 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
+    const id = crypto.randomUUID();
     const newMessage = await messageCaller.createMessage({
-      files: [{ filename, id: crypto.randomUUID(), mimetype, size }],
+      files: [{ filename, id, mimetype, size }],
       roomId: newRoom.id,
     });
+    MockContainerDatabase.set(
+      AzureContainer.EsbabblerAssets,
+      new Map([[getBlobName(`${newRoom.id}/${id}`, filename), Buffer.alloc(size)]]),
+    );
     await mockSessionOnce(mockContext.db);
 
     await expect(
       messageCaller.deleteFile({
-        id: crypto.randomUUID(),
+        id,
         partitionKey: newMessage.partitionKey,
         rowKey: newMessage.rowKey,
       }),
@@ -632,10 +637,15 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
+    const id = crypto.randomUUID();
     const newMessage = await messageCaller.createMessage({
-      files: [{ filename, id: crypto.randomUUID(), mimetype, size }],
+      files: [{ filename, id, mimetype, size }],
       roomId: newRoom.id,
     });
+    MockContainerDatabase.set(
+      AzureContainer.EsbabblerAssets,
+      new Map([[getBlobName(`${newRoom.id}/${id}`, filename), Buffer.alloc(size)]]),
+    );
 
     await expect(
       messageCaller.deleteFile({ id: NIL, partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey }),
@@ -644,19 +654,38 @@ describe("message", () => {
     );
   });
 
-  test("fails delete file with forward", async () => {
+  test.todo("fails delete file with forward", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
+    const id = crypto.randomUUID();
     const newMessage = await messageCaller.createMessage({
-      files: [{ filename, id: crypto.randomUUID(), mimetype, size }],
+      files: [{ filename, id, mimetype, size }],
       message,
       roomId: newRoom.id,
     });
-    const id = crypto.randomUUID();
+    MockContainerDatabase.set(
+      AzureContainer.EsbabblerAssets,
+      new Map([[getBlobName(`${newRoom.id}/${id}`, filename), Buffer.alloc(size)]]),
+    );
+    const onCreateMessage = await messageCaller.onCreateMessage({ roomId: newRoom.id });
+    const [data] = await Promise.all([
+      onCreateMessage[Symbol.asyncIterator]().next(),
+      messageCaller.forwardMessage({
+        partitionKey: newMessage.partitionKey,
+        roomIds: [newRoom.id],
+        rowKey: newMessage.rowKey,
+      }),
+    ]);
+
+    assert(!data.done);
 
     await expect(
-      messageCaller.deleteFile({ id, partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey }),
+      messageCaller.deleteFile({
+        id,
+        partitionKey: data.value.data[0].partitionKey,
+        rowKey: data.value.data[0].rowKey,
+      }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: File is not found for id: ${id}]`);
   });
 

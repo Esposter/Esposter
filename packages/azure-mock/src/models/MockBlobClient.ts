@@ -63,10 +63,45 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
     throw new Error("Method not implemented.");
   }
 
-  beginCopyFromURL(): Promise<
+  beginCopyFromURL(
+    copySource: string,
+  ): Promise<
     PollerLikeWithCancellation<PollOperationState<BlobBeginCopyFromURLResponse>, BlobBeginCopyFromURLResponse>
   > {
-    throw new Error("Method not implemented.");
+    // Extract container and blob name from the copy source URL
+    // Expected format: https://account.blob.core.windows.net/container/blob-name
+    const url = new URL(copySource);
+    const pathSegments = url.pathname.split("/").filter(Boolean);
+    if (pathSegments.length < 2) throw new MockRestError("Invalid copy source URL format", 400);
+
+    const sourceContainerName = pathSegments[0];
+    const sourceBlobName = pathSegments.slice(1).join("/");
+    const sourceContainer = MockContainerDatabase.get(sourceContainerName);
+    if (!sourceContainer) throw new MockRestError("Source container not found", 404);
+
+    const sourceData = sourceContainer.get(sourceBlobName);
+    if (!sourceData) throw new MockRestError("Source blob not found", 404);
+
+    this.container.set(this.name, Buffer.from(sourceData));
+    const response: BlobBeginCopyFromURLResponse = {
+      _response: {
+        headers: toHttpHeadersLike(createHttpHeaders()),
+        parsedHeaders: {},
+        request: toWebResourceLike(createPipelineRequest({ url: `${this.url}?comp=copy` })),
+        status: 202,
+      },
+    };
+    return Promise.resolve({
+      cancelOperation: () => Promise.resolve(),
+      getOperationState: () => ({ isCompleted: true, result: response }),
+      getResult: () => response,
+      isDone: () => true,
+      isStopped: () => false,
+      onProgress: () => () => {},
+      poll: () => Promise.resolve(),
+      pollUntilDone: () => Promise.resolve(response),
+      stopPolling: () => {},
+    });
   }
 
   createSnapshot(): Promise<BlobCreateSnapshotResponse> {
