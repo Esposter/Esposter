@@ -6,6 +6,5 @@ export const updateEmojiInputSchema = messageEmojiMetadataEntitySchema.pick({
   messageRowKey: true,
   partitionKey: true,
   rowKey: true,
-  userIds: true,
 });
 export type UpdateEmojiInput = z.infer<typeof updateEmojiInputSchema>;

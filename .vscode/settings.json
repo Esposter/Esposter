@@ -15,7 +15,7 @@
   "vue.updateImportsOnFileMove.enabled": true,
   "[typescript][vue]": {
     "editor.formatOnSave": false,
-    "editor.codeActionsOnSave": ["source.fixAll.oxc", "source.fixAll.eslint"]
+    "editor.codeActionsOnSave": ["source.organizeImports", "source.fixAll.oxc", "source.fixAll.eslint"]
   },
   "[properties]": {
     "editor.defaultFormatter": "foxundermoon.shell-format"

@@ -17,6 +17,7 @@ import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { AZURE_MAX_PAGE_SIZE } from "@@/server/services/azure/table/constants";
 import { createEntity } from "@@/server/services/azure/table/createEntity";
 import { deleteEntity } from "@@/server/services/azure/table/deleteEntity";
+import { getEntity } from "@@/server/services/azure/table/getEntity";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
 import { updateEntity } from "@@/server/services/azure/table/updateEntity";
 import { emojiEventEmitter } from "@@/server/services/esbabbler/events/emojiEventEmitter";
@@ -111,8 +112,23 @@ export const emojiRouter = router({
     },
   ),
   updateEmoji: getMemberProcedure(updateEmojiInputSchema, "partitionKey").mutation(async ({ ctx, input }) => {
-    const updatedEmoji = { ...input, userIds: getUpdatedUserIds(input.userIds, ctx.session.user.id) };
-    const messagesMetadataClient = await useTableClient(AzureTable.MessagesMetadata);
+    const messagesMetadataClient = (await useTableClient(
+      AzureTable.MessagesMetadata,
+    )) as CustomTableClient<MessageEmojiMetadataEntity>;
+    const readEmoji = await getEntity(
+      messagesMetadataClient,
+      MessageEmojiMetadataEntity,
+      input.partitionKey,
+      input.rowKey,
+    );
+    if (!readEmoji)
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: new InvalidOperationError(Operation.Read, MessageMetadataType.Emoji, JSON.stringify(readEmoji))
+          .message,
+      });
+
+    const updatedEmoji = { ...input, userIds: getUpdatedUserIds(readEmoji.userIds, ctx.session.user.id) };
     await updateEntity(messagesMetadataClient, updatedEmoji);
     emojiEventEmitter.emit("updateEmoji", [
       updatedEmoji,

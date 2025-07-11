@@ -10,7 +10,7 @@ interface EmojiEvents {
   // so we don't send duplicate events back to the original user
   createEmoji: [MessageEmojiMetadataEntity, DeviceId][];
   deleteEmoji: [DeleteEmojiInput, DeviceId][];
-  updateEmoji: [UpdateEmojiInput, DeviceId][];
+  updateEmoji: [Pick<MessageEmojiMetadataEntity, "userIds"> & UpdateEmojiInput, DeviceId][];
 }
 
 export const emojiEventEmitter = new EventEmitter<EmojiEvents>();

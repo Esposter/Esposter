@@ -1,14 +1,10 @@
 import type { AzureEntity } from "#shared/models/azure/AzureEntity";
-import type { TableEntityResult } from "@azure/data-tables";
 import type { Class } from "type-fest";
 
 import { jsonDateParse } from "#shared/util/time/jsonDateParse";
 import { getIsSerializable } from "@@/server/services/azure/transformer/getIsSerializable";
 
-export const deserializeEntity = <TEntity extends AzureEntity>(
-  entity: TableEntityResult<TEntity>,
-  cls: Class<TEntity>,
-): TEntity => {
+export const deserializeEntity = <TEntity extends AzureEntity>(entity: TEntity, cls: Class<TEntity>): TEntity => {
   const instance = new cls();
   // We'll ensure that the default property value of the class will reflect whether it is serializable
   for (const [property, value] of Object.entries(entity) as [keyof TEntity, unknown][])
