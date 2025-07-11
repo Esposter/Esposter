@@ -54,12 +54,7 @@ describe("emoji", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     const partitionKey = getMessagesPartitionKey(newRoom.id, new Date());
-    const newEmoji = await emojiCaller.createEmoji({
-      emojiTag,
-      messageRowKey: newMessage.rowKey,
-      partitionKey,
-    });
-
+    const newEmoji = await emojiCaller.createEmoji({ emojiTag, messageRowKey: newMessage.rowKey, partitionKey });
     const readEmojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId: newRoom.id });
 
     expect(readEmojis).toHaveLength(1);
@@ -94,11 +89,7 @@ describe("emoji", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     const partitionKey = getMessagesPartitionKey(newRoom.id, new Date());
-    const newEmoji = await emojiCaller.createEmoji({
-      emojiTag,
-      messageRowKey: newMessage.rowKey,
-      partitionKey,
-    });
+    const newEmoji = await emojiCaller.createEmoji({ emojiTag, messageRowKey: newMessage.rowKey, partitionKey });
 
     expect(newEmoji.emojiTag).toBe(emojiTag);
     expect(newEmoji.messageRowKey).toBe(newMessage.rowKey);
@@ -128,12 +119,25 @@ describe("emoji", () => {
     const partitionKey = getMessagesPartitionKey(NIL, new Date());
 
     await expect(
+      emojiCaller.createEmoji({ emojiTag, messageRowKey: NIL, partitionKey }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Room is not found for id: ${partitionKey}]`);
+  });
+
+  test("fails create emoji with non-existent member", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
+    const partitionKey = getMessagesPartitionKey(newRoom.id, new Date());
+    await mockSessionOnce(mockContext.db);
+
+    await expect(
       emojiCaller.createEmoji({
         emojiTag,
-        messageRowKey: NIL,
+        messageRowKey: newMessage.rowKey,
         partitionKey,
       }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Room is not found for id: ${partitionKey}]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
   test("on creates emoji", async () => {
@@ -143,14 +147,9 @@ describe("emoji", () => {
     const onCreateEmoji = await emojiCaller.onCreateEmoji({ roomId: newRoom.id });
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     const partitionKey = getMessagesPartitionKey(newRoom.id, new Date());
-
     const [data] = await Promise.all([
       onCreateEmoji[Symbol.asyncIterator]().next(),
-      emojiCaller.createEmoji({
-        emojiTag,
-        messageRowKey: newMessage.rowKey,
-        partitionKey,
-      }),
+      emojiCaller.createEmoji({ emojiTag, messageRowKey: newMessage.rowKey, partitionKey }),
     ]);
 
     assert(!data.done);
@@ -168,31 +167,37 @@ describe("emoji", () => {
     );
   });
 
-  test("updates deletes new emoji", async () => {
+  test("fails on creates emoji with non-existent member", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    await mockSessionOnce(mockContext.db);
+
+    await expect(emojiCaller.onCreateEmoji({ roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: UNAUTHORIZED]`,
+    );
+  });
+
+  test("updates", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     const partitionKey = getMessagesPartitionKey(newRoom.id, new Date());
-    const newEmoji = await emojiCaller.createEmoji({
-      emojiTag,
-      messageRowKey: newMessage.rowKey,
-      partitionKey,
-    });
-
+    const newEmoji = await emojiCaller.createEmoji({ emojiTag, messageRowKey: newMessage.rowKey, partitionKey });
+    const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
+    const { user } = await mockSessionOnce(mockContext.db);
+    await roomCaller.joinRoom(newInviteCode);
+    await mockSessionOnce(mockContext.db, user);
     await emojiCaller.updateEmoji({
       messageRowKey: newEmoji.messageRowKey,
       partitionKey: newEmoji.partitionKey,
       rowKey: newEmoji.rowKey,
     });
-
-    const readEmojis = await emojiCaller.readEmojis({
-      messageRowKeys: [newMessage.rowKey],
-      roomId: newRoom.id,
-    });
+    const readEmojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId: newRoom.id });
 
     expect(readEmojis).toHaveLength(1);
-    expect(readEmojis[0].userIds).toHaveLength(0);
+    expect(readEmojis[0].userIds).toStrictEqual([getMockSession().user.id, user.id]);
   });
 
   test("fails update emoji with non-existent room", async () => {
@@ -202,6 +207,36 @@ describe("emoji", () => {
       emojiCaller.updateEmoji({ messageRowKey: NIL, partitionKey: NIL, rowKey: NIL }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Room is not found for id: 00000000-0000-0000-0000-000000000000]`,
+    );
+  });
+
+  test("fails update emoji with non-existent member", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
+    const partitionKey = getMessagesPartitionKey(newRoom.id, new Date());
+    const newEmoji = await emojiCaller.createEmoji({ emojiTag, messageRowKey: newMessage.rowKey, partitionKey });
+    await mockSessionOnce(mockContext.db);
+
+    await expect(
+      emojiCaller.updateEmoji({
+        messageRowKey: newEmoji.messageRowKey,
+        partitionKey: newEmoji.partitionKey,
+        rowKey: newEmoji.rowKey,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+  });
+
+  test("fails update emoji with non-existent emoji", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const partitionKey = getMessagesPartitionKey(newRoom.id, new Date());
+    const input = { messageRowKey: NIL, partitionKey, rowKey: NIL };
+
+    await expect(emojiCaller.updateEmoji(input)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Read, name: Emoji, ${JSON.stringify(input)}]`,
     );
   });
 
@@ -216,7 +251,11 @@ describe("emoji", () => {
       messageRowKey: newMessage.rowKey,
       partitionKey,
     });
+    const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
+    const { user } = await mockSessionOnce(mockContext.db);
+    await roomCaller.joinRoom(newInviteCode);
     const onUpdateEmoji = await emojiCaller.onUpdateEmoji({ roomId: newRoom.id });
+    await mockSessionOnce(mockContext.db, user);
     const [data] = await Promise.all([
       onUpdateEmoji[Symbol.asyncIterator]().next(),
       emojiCaller.updateEmoji({
@@ -231,7 +270,26 @@ describe("emoji", () => {
     expect(data.value.messageRowKey).toBe(newEmoji.messageRowKey);
     expect(data.value.partitionKey).toBe(newEmoji.partitionKey);
     expect(data.value.rowKey).toBe(newEmoji.rowKey);
-    expect(data.value.userIds).toHaveLength(0);
+    expect(data.value.userIds).toStrictEqual([getMockSession().user.id, user.id]);
+  });
+
+  test("fails on updates emoji with non-existent room", async () => {
+    expect.hasAssertions();
+
+    await expect(emojiCaller.onUpdateEmoji({ roomId: NIL })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Room is not found for id: 00000000-0000-0000-0000-000000000000]`,
+    );
+  });
+
+  test("fails on updates emoji with non-existent member", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    await mockSessionOnce(mockContext.db);
+
+    await expect(emojiCaller.onUpdateEmoji({ roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: UNAUTHORIZED]`,
+    );
   });
 
   test("deletes", async () => {
@@ -274,17 +332,31 @@ describe("emoji", () => {
     );
   });
 
+  test("fails delete emoji with non-existent member", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
+    const partitionKey = getMessagesPartitionKey(newRoom.id, new Date());
+    const newEmoji = await emojiCaller.createEmoji({ emojiTag, messageRowKey: newMessage.rowKey, partitionKey });
+    await mockSessionOnce(mockContext.db);
+
+    await expect(
+      emojiCaller.deleteEmoji({
+        messageRowKey: newEmoji.messageRowKey,
+        partitionKey: newEmoji.partitionKey,
+        rowKey: newEmoji.rowKey,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+  });
+
   test("on deletes emoji", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     const partitionKey = getMessagesPartitionKey(newRoom.id, new Date());
-    const newEmoji = await emojiCaller.createEmoji({
-      emojiTag,
-      messageRowKey: newMessage.rowKey,
-      partitionKey,
-    });
+    const newEmoji = await emojiCaller.createEmoji({ emojiTag, messageRowKey: newMessage.rowKey, partitionKey });
 
     const onDeleteEmoji = await emojiCaller.onDeleteEmoji({ roomId: newRoom.id });
     const [data] = await Promise.all([
@@ -301,5 +373,24 @@ describe("emoji", () => {
     expect(data.value.messageRowKey).toBe(newEmoji.messageRowKey);
     expect(data.value.partitionKey).toBe(newEmoji.partitionKey);
     expect(data.value.rowKey).toBe(newEmoji.rowKey);
+  });
+
+  test("fails on deletes emoji with non-existent room", async () => {
+    expect.hasAssertions();
+
+    await expect(emojiCaller.onDeleteEmoji({ roomId: NIL })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Room is not found for id: 00000000-0000-0000-0000-000000000000]`,
+    );
+  });
+
+  test("fails on deletes emoji with non-existent member", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    await mockSessionOnce(mockContext.db);
+
+    await expect(emojiCaller.onDeleteEmoji({ roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: UNAUTHORIZED]`,
+    );
   });
 });

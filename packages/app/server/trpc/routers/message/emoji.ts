@@ -124,7 +124,12 @@ export const emojiRouter = router({
     if (!readEmoji)
       throw new TRPCError({
         code: "BAD_REQUEST",
-        message: new InvalidOperationError(Operation.Read, MessageMetadataType.Emoji, JSON.stringify(readEmoji))
+        message: new InvalidOperationError(Operation.Read, MessageMetadataType.Emoji, JSON.stringify(input)).message,
+      });
+    else if (readEmoji.userIds.length === 1 && readEmoji.userIds[0] === ctx.session.user.id)
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: new InvalidOperationError(Operation.Update, MessageMetadataType.Emoji, JSON.stringify(readEmoji))
           .message,
       });
 

@@ -114,9 +114,9 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const inviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
+    const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
     const { user } = await mockSessionOnce(mockContext.db);
-    await roomCaller.joinRoom(inviteCode);
+    await roomCaller.joinRoom(newInviteCode);
     const onCreateMessage = await messageCaller.onCreateMessage({ roomId: newRoom.id });
     await mockSessionOnce(mockContext.db, user);
     const [data, newMessage] = await Promise.all([

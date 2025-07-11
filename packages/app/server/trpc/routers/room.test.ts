@@ -179,14 +179,14 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await caller.createRoom({ name });
-    const inviteCode = await caller.createInvite({ roomId: newRoom.id });
-    const readInvite = await caller.readInvite(inviteCode);
+    const newInviteCode = await caller.createInvite({ roomId: newRoom.id });
+    const readInvite = await caller.readInvite(newInviteCode);
 
     assert(readInvite);
 
     expect(readInvite.userId).toBe(getMockSession().user.id);
     expect(readInvite.roomId).toBe(newRoom.id);
-    expect(readInvite.code).toBe(inviteCode);
+    expect(readInvite.code).toBe(newInviteCode);
     expect(readInvite.isMember).toBe(true);
   });
 
@@ -220,10 +220,10 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await caller.createRoom({ name });
-    const inviteCode = await caller.createInvite({ roomId: newRoom.id });
+    const newInviteCode = await caller.createInvite({ roomId: newRoom.id });
     const readInviteCode = await caller.readInviteCode({ roomId: newRoom.id });
 
-    expect(readInviteCode).toBe(inviteCode);
+    expect(readInviteCode).toBe(newInviteCode);
   });
 
   test("read invite code with no code to be null", async () => {
@@ -239,19 +239,19 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await caller.createRoom({ name });
-    const inviteCode = await caller.createInvite({ roomId: newRoom.id });
+    const newInviteCode = await caller.createInvite({ roomId: newRoom.id });
     const cachedInviteCode = await caller.createInvite({ roomId: newRoom.id });
 
-    expect(cachedInviteCode).toBe(inviteCode);
+    expect(cachedInviteCode).toBe(newInviteCode);
   });
 
   test("joins", async () => {
     expect.hasAssertions();
 
     const newRoom = await caller.createRoom({ name });
-    const inviteCode = await caller.createInvite({ roomId: newRoom.id });
+    const newInviteCode = await caller.createInvite({ roomId: newRoom.id });
     await mockSessionOnce(mockContext.db);
-    const joinedRoom = await caller.joinRoom(inviteCode);
+    const joinedRoom = await caller.joinRoom(newInviteCode);
 
     expect(joinedRoom).toStrictEqual(newRoom);
   });
@@ -270,9 +270,9 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await caller.createRoom({ name });
-    const inviteCode = await caller.createInvite({ roomId: newRoom.id });
+    const newInviteCode = await caller.createInvite({ roomId: newRoom.id });
 
-    await expect(caller.joinRoom(inviteCode)).rejects.toThrowErrorMatchingInlineSnapshot(`
+    await expect(caller.joinRoom(newInviteCode)).rejects.toThrowErrorMatchingInlineSnapshot(`
       [TRPCError: Failed query: insert into "users_to_rooms" ("roomId", "userId") values ($1, $2) returning "roomId", "userId"
       params: ${newRoom.id},${getMockSession().user.id}]
     `);
@@ -282,10 +282,10 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await caller.createRoom({ name });
-    const inviteCode = await caller.createInvite({ roomId: newRoom.id });
+    const newInviteCode = await caller.createInvite({ roomId: newRoom.id });
     const onJoinRoom = await caller.onJoinRoom([newRoom.id]);
     const session = await mockSessionOnce(mockContext.db);
-    const [data] = await Promise.all([onJoinRoom[Symbol.asyncIterator]().next(), caller.joinRoom(inviteCode)]);
+    const [data] = await Promise.all([onJoinRoom[Symbol.asyncIterator]().next(), caller.joinRoom(newInviteCode)]);
 
     assert(!data.done);
 
@@ -296,9 +296,9 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await caller.createRoom({ name });
-    const inviteCode = await caller.createInvite({ roomId: newRoom.id });
+    const newInviteCode = await caller.createInvite({ roomId: newRoom.id });
     const { user } = await mockSessionOnce(mockContext.db);
-    await caller.joinRoom(inviteCode);
+    await caller.joinRoom(newInviteCode);
     await mockSessionOnce(mockContext.db, user);
     const roomId = await caller.leaveRoom(newRoom.id);
 
@@ -328,9 +328,9 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await caller.createRoom({ name });
-    const inviteCode = await caller.createInvite({ roomId: newRoom.id });
+    const newInviteCode = await caller.createInvite({ roomId: newRoom.id });
     const { user } = await mockSessionOnce(mockContext.db);
-    await caller.joinRoom(inviteCode);
+    await caller.joinRoom(newInviteCode);
     const onLeaveRoom = await caller.onLeaveRoom([newRoom.id]);
     const session = await mockSessionOnce(mockContext.db, user);
     const [data] = await Promise.all([onLeaveRoom[Symbol.asyncIterator]().next(), caller.leaveRoom(newRoom.id)]);
