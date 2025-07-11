@@ -3,7 +3,7 @@ packages:
 
 catalog:
   "@azure/core-http-compat": ^2.3.0
-  "@azure/core-rest-pipeline": ^1.21.0
+  "@azure/core-rest-pipeline": ^1.22.0
   "@azure/data-tables": ^13.3.1
   "@azure/storage-blob": ^12.27.0
   "@codemirror/lang-vue": ^0.1.3
@@ -18,10 +18,10 @@ catalog:
   "@fullcalendar/interaction": ^6.1.18
   "@fullcalendar/timegrid": ^6.1.18
   "@fullcalendar/vue3": ^6.1.18
-  "@koumoul/vjsf": ^3.15.9
-  "@lerna-lite/cli": ^4.6.0
-  "@lerna-lite/publish": ^4.6.0
-  "@lerna-lite/run": ^4.6.0
+  "@koumoul/vjsf": ^3.16.1
+  "@lerna-lite/cli": ^4.6.1
+  "@lerna-lite/publish": ^4.6.1
+  "@lerna-lite/run": ^4.6.1
   "@mdi/font": ^7.4.47
   "@nuxt/eslint": ^1.5.2
   "@nuxt/fonts": ^0.11.4
@@ -30,15 +30,15 @@ catalog:
   "@nuxtjs/seo": ^3.1.0
   "@pinia/nuxt": ^0.11.1
   "@prettier/plugin-oxc": ^0.0.4
-  "@tiptap/core": ^2.25.0
-  "@tiptap/extension-character-count": ^2.25.0
-  "@tiptap/extension-link": ^2.25.0
-  "@tiptap/extension-mention": ^2.25.0
-  "@tiptap/extension-placeholder": ^2.25.0
-  "@tiptap/pm": ^2.25.0
-  "@tiptap/starter-kit": ^2.25.0
-  "@tiptap/suggestion": ^2.25.0
-  "@tiptap/vue-3": ^2.25.0
+  "@tiptap/core": ^2.25.1
+  "@tiptap/extension-character-count": ^2.25.1
+  "@tiptap/extension-link": ^2.25.1
+  "@tiptap/extension-mention": ^2.25.1
+  "@tiptap/extension-placeholder": ^2.25.1
+  "@tiptap/pm": ^2.25.1
+  "@tiptap/starter-kit": ^2.25.1
+  "@tiptap/suggestion": ^2.25.1
+  "@tiptap/vue-3": ^2.25.1
   "@trpc/client": ^11.4.3
   "@trpc/server": ^11.4.3
   "@types/data-urls": ^3.0.4
@@ -48,7 +48,7 @@ catalog:
   "@types/howler": ^2.2.12
   "@types/js-beautify": ^1.14.3
   "@types/mjml-browser": ^4.15.0
-  "@types/node": ^24.0.12
+  "@types/node": ^24.0.13
   "@types/omit-deep-lodash": ^1.1.3
   "@types/pluralize": ^0.0.33
   "@types/sax": ^1.2.7
@@ -145,7 +145,7 @@ catalog:
   postgres: ^3.4.7
   prettier: ^3.6.2
   rate-limiter-flexible: ^7.1.1
-  rolldown: ^1.0.0-beta.24
+  rolldown: ^1.0.0-beta.26
   rolldown-plugin-dts: ^0.13.13
   rxjs: ^7.8.2
   sass-embedded: ^1.89.2
@@ -188,7 +188,7 @@ catalog:
   worker-timers: ^8.0.23
   ws: ^8.18.3
   xmlbuilder2: ^3.1.1
-  zod: ^4.0.0
+  zod: ^4.0.5
   nuxt-site-config: ^3.2.2
 
 catalogMode: strict
