@@ -309,7 +309,7 @@ describe("room", () => {
     expect.hasAssertions();
 
     await expect(caller.leaveRoom(NIL)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Delete, name: UserToRoom, {"roomId":"00000000-0000-0000-0000-000000000000"}]`,
+      `[TRPCError: Invalid operation: Delete, name: UserToRoom, "00000000-0000-0000-0000-000000000000"]`,
     );
   });
 
