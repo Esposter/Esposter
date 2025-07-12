@@ -30,15 +30,15 @@ catalog:
   "@nuxtjs/seo": ^3.1.0
   "@pinia/nuxt": ^0.11.1
   "@prettier/plugin-oxc": ^0.0.4
-  "@tiptap/core": ^2.25.1
-  "@tiptap/extension-character-count": ^2.25.1
-  "@tiptap/extension-link": ^2.25.1
-  "@tiptap/extension-mention": ^2.25.1
-  "@tiptap/extension-placeholder": ^2.25.1
-  "@tiptap/pm": ^2.25.1
-  "@tiptap/starter-kit": ^2.25.1
-  "@tiptap/suggestion": ^2.25.1
-  "@tiptap/vue-3": ^2.25.1
+  "@tiptap/core": ^2.26.0
+  "@tiptap/extension-character-count": ^2.26.0
+  "@tiptap/extension-link": ^2.26.0
+  "@tiptap/extension-mention": ^2.26.0
+  "@tiptap/extension-placeholder": ^2.26.0
+  "@tiptap/pm": ^2.26.0
+  "@tiptap/starter-kit": ^2.26.0
+  "@tiptap/suggestion": ^2.26.0
+  "@tiptap/vue-3": ^2.26.0
   "@trpc/client": ^11.4.3
   "@trpc/server": ^11.4.3
   "@types/data-urls": ^3.0.4
@@ -89,7 +89,7 @@ catalog:
   drizzle-orm: ^0.44.2
   drizzle-zod: ^0.8.2
   emoji-mart-vue-fast: ^15.0.4
-  eslint: ^9.30.1
+  eslint: ^9.31.0
   eslint-config-prettier: ^10.1.5
   eslint-plugin-oxlint: ^1.6.0
   eslint-plugin-perfectionist: ^4.15.0
@@ -98,7 +98,7 @@ catalog:
   eventemitter3: ^5.0.1
   events: ^3.3.0
   fast-deep-equal: ^3.1.3
-  filesize: ^10.1.6
+  filesize: ^11.0.0
   fs-extra: ^11.3.0
   fuse.js: ^7.1.0
   grapesjs: ^0.22.9
