@@ -91,31 +91,31 @@ catalogs:
       specifier: ^0.0.4
       version: 0.0.4
     '@tiptap/core':
-      specifier: ^2.26.0
+      specifier: ^2.26.1
       version: 2.26.1
     '@tiptap/extension-character-count':
-      specifier: ^2.26.0
+      specifier: ^2.26.1
       version: 2.26.1
     '@tiptap/extension-link':
-      specifier: ^2.26.0
+      specifier: ^2.26.1
       version: 2.26.1
     '@tiptap/extension-mention':
-      specifier: ^2.26.0
+      specifier: ^2.26.1
       version: 2.26.1
     '@tiptap/extension-placeholder':
-      specifier: ^2.26.0
+      specifier: ^2.26.1
       version: 2.26.1
     '@tiptap/pm':
-      specifier: ^2.26.0
+      specifier: ^2.26.1
       version: 2.26.1
     '@tiptap/starter-kit':
-      specifier: ^2.26.0
+      specifier: ^2.26.1
       version: 2.26.1
     '@tiptap/suggestion':
-      specifier: ^2.26.0
+      specifier: ^2.26.1
       version: 2.26.1
     '@tiptap/vue-3':
-      specifier: ^2.26.0
+      specifier: ^2.26.1
       version: 2.26.1
     '@trpc/client':
       specifier: ^11.4.3
