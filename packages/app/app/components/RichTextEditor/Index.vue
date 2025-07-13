@@ -3,9 +3,7 @@ import type { FooterBarAppendSlotProps, FooterBarPrependSlotProps } from "@/comp
 import type { AnyExtension } from "@tiptap/vue-3";
 import type { VCard } from "vuetify/components";
 
-import { CharacterCount } from "@tiptap/extension-character-count";
-import { Link } from "@tiptap/extension-link";
-import { Placeholder } from "@tiptap/extension-placeholder";
+import { CharacterCount, Placeholder } from "@tiptap/extensions";
 import { StarterKit } from "@tiptap/starter-kit";
 import { EditorContent, useEditor } from "@tiptap/vue-3";
 
@@ -37,7 +35,6 @@ const editor = useEditor({
     StarterKit,
     Placeholder.configure({ placeholder }),
     CharacterCount.configure({ limit }),
-    Link,
     ...(extensions ?? []),
   ],
   onUpdate: ({ editor }) => {
