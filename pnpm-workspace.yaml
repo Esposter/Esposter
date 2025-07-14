@@ -176,7 +176,7 @@ catalog:
   vitest: ^3.2.4
   vue: ^3.5.17
   vue-codemirror: ^6.1.1
-  vue-pdf-embed: ^2.1.2
+  vue-pdf-embed: ^2.1.3
   vue-router: ^4.5.1
   vue-tsc: ^2.2.12
   vue-waypoint: ^4.3.0
