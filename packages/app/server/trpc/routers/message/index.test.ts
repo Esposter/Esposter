@@ -262,7 +262,11 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
+    const newMessage = await messageCaller.createMessage({
+      files: [{ filename, id: crypto.randomUUID(), mimetype, size }],
+      message,
+      roomId: newRoom.id,
+    });
     await messageCaller.updateMessage({
       message: updatedMessage,
       partitionKey: newMessage.partitionKey,
@@ -272,6 +276,7 @@ describe("message", () => {
 
     expect(readMessages.items).toHaveLength(1);
     expect(readMessages.items[0].message).toBe(updatedMessage);
+    expect(readMessages.items[0].isEdited).toBe(true);
   });
 
   test("fails update with non-existent message", async () => {
