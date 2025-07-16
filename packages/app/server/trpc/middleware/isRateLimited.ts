@@ -6,9 +6,10 @@ import { RateLimiterMemory } from "rate-limiter-flexible";
 const rateLimiter = new RateLimiterMemory({ blockDuration: 5, duration: 1, points: 5 });
 
 export const isRateLimited = middleware(async ({ ctx, next, path }) => {
+  const forwardedFor = (ctx.req.headers["x-forwarded-for"] as string | undefined) ?? "";
   const ip =
-    ((ctx.req.headers["x-forwarded-for"] as string | undefined) ?? "").split(",").pop()?.trim() ??
-    ctx.req.socket.remoteAddress;
+    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+    forwardedFor.split(",").pop()?.trim() || ctx.req.socket.remoteAddress;
   if (!ip) throw new TRPCError({ code: "BAD_REQUEST" });
   else if (ip === "::1") return next();
 
