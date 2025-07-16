@@ -288,7 +288,7 @@ describe("message", () => {
     await expect(
       messageCaller.updateMessage({ message: updatedMessage, partitionKey, rowKey }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Message is not found for id: {"files":[],"message":"updatedMessage","partitionKey":"${partitionKey}","rowKey":"rowKey"}]`,
+      `[TRPCError: Message is not found for id: {"message":"updatedMessage","partitionKey":"${partitionKey}","rowKey":"rowKey"}]`,
     );
   });
 
