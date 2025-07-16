@@ -298,8 +298,8 @@ catalogs:
       specifier: ^7.1.0
       version: 7.1.0
     grapesjs:
-      specifier: ^0.22.10
-      version: 0.22.10
+      specifier: ^0.22.11
+      version: 0.22.11
     grapesjs-blocks-basic:
       specifier: ^1.0.2
       version: 1.0.2
@@ -433,8 +433,8 @@ catalogs:
       specifier: ^1.0.0-beta.27
       version: 1.0.0-beta.27
     rolldown-plugin-dts:
-      specifier: ^0.13.13
-      version: 0.13.13
+      specifier: ^0.13.14
+      version: 0.13.14
     rxjs:
       specifier: ^7.8.2
       version: 7.8.2
@@ -621,7 +621,7 @@ importers:
         version: 1.0.0-beta.27
       rolldown-plugin-dts:
         specifier: 'catalog:'
-        version: 0.13.13(rolldown@1.0.0-beta.27)(typescript@5.8.3)(vue-tsc@3.0.1(typescript@5.8.3))
+        version: 0.13.14(rolldown@1.0.0-beta.27)(typescript@5.8.3)(vue-tsc@3.0.1(typescript@5.8.3))
       type-fest:
         specifier: 'catalog:'
         version: 4.41.0
@@ -798,7 +798,7 @@ importers:
         version: 7.1.0
       grapesjs:
         specifier: 'catalog:'
-        version: 0.22.10
+        version: 0.22.11
       grapesjs-blocks-basic:
         specifier: 'catalog:'
         version: 1.0.2
@@ -4351,8 +4351,8 @@ packages:
   '@speed-highlight/core@1.2.7':
     resolution: {integrity: sha512-0dxmVj4gxg3Jg879kvFS/msl4s9F3T9UXC1InxgOf7t5NvcPD97u/WTA5vL/IxWHMn7qSxBozqrnnE2wvl1m8g==}
 
-  '@stylistic/eslint-plugin@5.1.0':
-    resolution: {integrity: sha512-TJRJul4u/lmry5N/kyCU+7RWWOk0wyXN+BncRlDYBqpLFnzXkd7QGVfN7KewarFIXv0IX0jSF/Ksu7aHWEDeuw==}
+  '@stylistic/eslint-plugin@5.2.0':
+    resolution: {integrity: sha512-RCEdbREv9EBiToUBQTlRhVYKG093I6ZnnQ990j08eJ6uRZh71DXkOnoxtTLfDQ6utVCVQzrhZFHZP0zfrfOIjA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       eslint: '>=9.0.0'
@@ -7376,8 +7376,8 @@ packages:
   grapesjs-typed@2.0.1:
     resolution: {integrity: sha512-3Z5hATX/Zp9PkdOv94RtIzqB/n1mMUdTO5X/ZyNUMzSmGZG4CHtTmw3bIQDIkrSTWdbcqInlbFPzvzKYr4rKaw==}
 
-  grapesjs@0.22.10:
-    resolution: {integrity: sha512-5sDZHumDnVdp8khxdmHrPOI9tCXNDB5MZH8VngDFyBzxUbpJHflEAcYkmbLLP+qiocFseTCwP09DNOntB/nZyQ==}
+  grapesjs@0.22.11:
+    resolution: {integrity: sha512-zGG13MEPDwbnijjJ56GZ9mCWIPbcZ53OXyC6fIDiipJC3/ZnsRSDMIivzltoVOn61cv64tcHuyrcltCuVeMi+A==}
 
   graphemer@1.4.0:
     resolution: {integrity: sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==}
@@ -9687,14 +9687,14 @@ packages:
   robust-predicates@3.0.2:
     resolution: {integrity: sha512-IXgzBWvWQwE6PrDI05OvmXUIruQTcoMDzRsOd5CDvHCVLcLHMTSYvOK5Cm46kWqlV3yAbuSpBZdJ5oP5OUoStg==}
 
-  rolldown-plugin-dts@0.13.13:
-    resolution: {integrity: sha512-Nchx9nQoa4IpfQ/BJzodKMvtJ3H3dT322siAJSp3uvQJ+Pi1qgEjOp7hSQwGSQRhaC5gC+9hparbWEH5oiAL9Q==}
+  rolldown-plugin-dts@0.13.14:
+    resolution: {integrity: sha512-wjNhHZz9dlN6PTIXyizB6u/mAg1wEFMW9yw7imEVe3CxHSRnNHVyycIX0yDEOVJfDNISLPbkCIPEpFpizy5+PQ==}
     engines: {node: '>=20.18.0'}
     peerDependencies:
       '@typescript/native-preview': '>=7.0.0-dev.20250601.1'
       rolldown: ^1.0.0-beta.9
       typescript: ^5.0.0
-      vue-tsc: ~2.2.0
+      vue-tsc: ^2.2.0 || ^3.0.0
     peerDependenciesMeta:
       '@typescript/native-preview':
         optional: true
@@ -14019,7 +14019,7 @@ snapshots:
       '@clack/prompts': 0.11.0
       '@eslint/js': 9.31.0
       '@nuxt/eslint-plugin': 1.5.2(eslint@9.31.0(jiti@2.4.2))(typescript@5.8.3)
-      '@stylistic/eslint-plugin': 5.1.0(eslint@9.31.0(jiti@2.4.2))
+      '@stylistic/eslint-plugin': 5.2.0(eslint@9.31.0(jiti@2.4.2))
       '@typescript-eslint/eslint-plugin': 8.37.0(@typescript-eslint/parser@8.37.0(eslint@9.31.0(jiti@2.4.2))(typescript@5.8.3))(eslint@9.31.0(jiti@2.4.2))(typescript@5.8.3)
       '@typescript-eslint/parser': 8.37.0(eslint@9.31.0(jiti@2.4.2))(typescript@5.8.3)
       eslint: 9.31.0(jiti@2.4.2)
@@ -15273,7 +15273,7 @@ snapshots:
 
   '@speed-highlight/core@1.2.7': {}
 
-  '@stylistic/eslint-plugin@5.1.0(eslint@9.31.0(jiti@2.4.2))':
+  '@stylistic/eslint-plugin@5.2.0(eslint@9.31.0(jiti@2.4.2))':
     dependencies:
       '@eslint-community/eslint-utils': 4.7.0(eslint@9.31.0(jiti@2.4.2))
       '@typescript-eslint/types': 8.37.0
@@ -18888,7 +18888,7 @@ snapshots:
 
   grapesjs-typed@2.0.1: {}
 
-  grapesjs@0.22.10:
+  grapesjs@0.22.11:
     dependencies:
       '@types/backbone': 1.4.15
       backbone: 1.4.1
@@ -21624,7 +21624,7 @@ snapshots:
 
   robust-predicates@3.0.2: {}
 
-  rolldown-plugin-dts@0.13.13(rolldown@1.0.0-beta.27)(typescript@5.8.3)(vue-tsc@3.0.1(typescript@5.8.3)):
+  rolldown-plugin-dts@0.13.14(rolldown@1.0.0-beta.27)(typescript@5.8.3)(vue-tsc@3.0.1(typescript@5.8.3)):
     dependencies:
       '@babel/generator': 7.28.0
       '@babel/parser': 7.28.0
