@@ -16,7 +16,6 @@
     "import/max-dependencies": "off",
     "import/group-exports": "off",
     "import/no-anonymous-default-export": "off",
-    "import/no-duplicates": "off",
     "import/no-unassigned-import": ["error", { "allow": ["*.css", "*.d.ts", "*.i18n"] }],
     "import/prefer-default-export": "off",
     "init-declarations": "off",
