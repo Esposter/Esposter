@@ -12,9 +12,6 @@ export default tseslint.config(
     files: ["**/**.test.ts", "**/**.test-d.ts"],
     languageOptions: {
       globals: vitest.environments.env.globals,
-      parserOptions: {
-        projectService: "tsconfig.json",
-      },
     },
     plugins: {
       vitest,
