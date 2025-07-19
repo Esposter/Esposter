@@ -142,7 +142,7 @@ catalogs:
       specifier: ^4.15.0
       version: 4.15.0
     '@types/node':
-      specifier: ^24.0.14
+      specifier: ^24.0.15
       version: 24.0.15
     '@types/omit-deep-lodash':
       specifier: ^1.1.3
