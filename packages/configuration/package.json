@@ -38,7 +38,7 @@
     "eslint-plugin-prettier": "catalog:",
     "typescript-eslint": "catalog:",
     "unplugin-auto-import": "catalog:",
-    "vite-plugin-dts": "catalog:",
+    "unplugin-dts": "catalog:",
     "vite-plugin-mkcert": "catalog:"
   }
 }
