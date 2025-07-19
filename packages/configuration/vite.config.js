@@ -14,11 +14,11 @@ export default defineConfig({
     },
     rollupOptions: {
       // vue-phaserjs
-      external: ["vue", "phaser", "phaser3-rex-plugins", "pinia"],
+      external: ["phaser", "phaser3-rex-plugins", "pinia", "vue"],
     },
   },
   plugins: [
-    AutoImport({ dts: true, imports: ["vue", "pinia"] }),
+    AutoImport({ dts: true, imports: ["pinia", "vue"] }),
     tsconfigPaths(),
     vue(),
     // @TODO: https://github.com/qmhc/vite-plugin-dts/issues/302
