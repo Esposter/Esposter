@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.9.0](https://github.com/Esposter/Esposter/compare/v2.8.1...v2.9.0) (2025-07-19)
+
+### Features
+
+* Migrate to unplugin-dts ([53ac323](https://github.com/Esposter/Esposter/commit/53ac323c677bc0a1c35c27be77785cb4a9207d20))
+
 ## [2.8.1](https://github.com/Esposter/Esposter/compare/v2.8.0...v2.8.1) (2025-07-09)
 
 **Note:** Version bump only for package @esposter/configuration

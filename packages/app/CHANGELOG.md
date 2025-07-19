@@ -3,6 +3,36 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.9.0](https://github.com/Esposter/Esposter/compare/v2.8.1...v2.9.0) (2025-07-19)
+
+### Bug Fixes
+
+* Add warning instead ([0d37e83](https://github.com/Esposter/Esposter/commit/0d37e83dcefe7c5b97615e0bbacca61dfe942cc4))
+* lint ([56b937a](https://github.com/Esposter/Esposter/commit/56b937a8be564dbd51150175e0ba2c3bd9f971d7))
+* lint ([28c92c6](https://github.com/Esposter/Esposter/commit/28c92c68176d1f4c6dd4367e9b2b3201da1b6e06))
+* local builds ([a5cec4a](https://github.com/Esposter/Esposter/commit/a5cec4af3963c5c6fe92e2be3f5c48299bbb97e7))
+* make test todo for now ([eda5ab5](https://github.com/Esposter/Esposter/commit/eda5ab514d71ea008f9c232ecba95fa0edd110e8))
+* most remaining tests ([47b92ed](https://github.com/Esposter/Esposter/commit/47b92ed39bcb5a21a14cc1a568aed2aea7a0cb67))
+* snapshot ([7f919f9](https://github.com/Esposter/Esposter/commit/7f919f96e298697c2bfb51bee9021332fc04ba93))
+* update message only allow message itself ([0623b51](https://github.com/Esposter/Esposter/commit/0623b51e349cb940f9b40276a53db13c38246b76))
+
+### Features
+
+* Add edge case test ([e8a6f7b](https://github.com/Esposter/Esposter/commit/e8a6f7bffade9ef1c865db65ec60b10491c53773))
+* Add failing emoji tests and stop updates from deleting ([84584cc](https://github.com/Esposter/Esposter/commit/84584cc05a115998e6edfc3ea0ec07cc07f88266))
+* Add remaining emoji test ([f4783b2](https://github.com/Esposter/Esposter/commit/f4783b2b3a7b89d02bf19b0758e150b881426761))
+* Add remaining message fail tests ([13a6c05](https://github.com/Esposter/Esposter/commit/13a6c05417c8737094a34855ec6dcd19cd6db45b))
+* Implement beginCopyFromUrl + add message fail tests ([642780f](https://github.com/Esposter/Esposter/commit/642780fdb7907e6a95662e95f9b29aec06b42233))
+* Implement message tests ([9b250d7](https://github.com/Esposter/Esposter/commit/9b250d72f6a218c498b7973c373f2956b7787cc3))
+* Update zod ([2ca3248](https://github.com/Esposter/Esposter/commit/2ca3248076fc529c23c20b3e82638f58c699fa48))
+* Upgrade to tiptap 3 ([62c6951](https://github.com/Esposter/Esposter/commit/62c69515aaa5ec173ae7bbe6e1b222ea6af7f604))
+
+### Performance Improvements
+
+* optimize like ([7ac6112](https://github.com/Esposter/Esposter/commit/7ac61129280718a161a037a9319f1e32c664ce81))
+* optimize post ([17192fb](https://github.com/Esposter/Esposter/commit/17192fb28bc13a7b81a2d0ad205dc649a7b7c990))
+* optimize room and user ([700407f](https://github.com/Esposter/Esposter/commit/700407fe5315c61a8e138fc6e7e89390f8d0562f))
+
 ## [2.8.1](https://github.com/Esposter/Esposter/compare/v2.8.0...v2.8.1) (2025-07-09)
 
 **Note:** Version bump only for package @esposter/app

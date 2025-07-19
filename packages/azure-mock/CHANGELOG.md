@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.9.0](https://github.com/Esposter/Esposter/compare/v2.8.1...v2.9.0) (2025-07-19)
+
+### Bug Fixes
+
+* most remaining tests ([47b92ed](https://github.com/Esposter/Esposter/commit/47b92ed39bcb5a21a14cc1a568aed2aea7a0cb67))
+
+### Features
+
+* Implement beginCopyFromUrl + add message fail tests ([642780f](https://github.com/Esposter/Esposter/commit/642780fdb7907e6a95662e95f9b29aec06b42233))
+* Implement message tests ([9b250d7](https://github.com/Esposter/Esposter/commit/9b250d72f6a218c498b7973c373f2956b7787cc3))
+
 ## [2.8.1](https://github.com/Esposter/Esposter/compare/v2.8.0...v2.8.1) (2025-07-09)
 
 **Note:** Version bump only for package azure-mock
