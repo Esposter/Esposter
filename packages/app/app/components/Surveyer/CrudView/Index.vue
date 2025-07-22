@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import type { Survey } from "#shared/db/schema/surveys";
+import type { ItemSlot } from "vuetify/lib/components/VDataTable/types.mjs";
+
 import { RoutePath } from "#shared/models/router/RoutePath";
 import { SurveyerHeaders } from "@/services/surveyer/SurveyerHeaders";
 import { useSurveyStore } from "@/store/surveyer/survey";
@@ -6,6 +9,7 @@ import { useSurveyStore } from "@/store/surveyer/survey";
 const { isLoading, readMoreSurveys } = await useReadSurveys();
 const surveyerStore = useSurveyStore();
 const { searchQuery, surveys, totalItemsLength } = storeToRefs(surveyerStore);
+const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Survey>) => navigateTo(RoutePath.Survey(item.id));
 </script>
 
 <template>
@@ -27,7 +31,7 @@ const { searchQuery, surveys, totalItemsLength } = storeToRefs(surveyerStore);
         groupBy: [{ key: 'group', order: 'asc' }],
         loading: isLoading,
       }"
-      @click:row="(_event, { item }) => navigateTo(RoutePath.Survey(item.id))"
+      @click:row="onClickRow"
       @update:options="readMoreSurveys"
     >
       <template #top>

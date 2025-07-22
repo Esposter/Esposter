@@ -11,6 +11,7 @@ const firstColumnKey = computed(() => props.value.headers[0].key);
 const richTextColumnKeys = computed(() =>
   props.value.headers.filter(({ isRichText }) => isRichText).map(({ key }) => key as string),
 );
+const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Survey>) => navigateTo(RoutePath.Survey(item.id));
 </script>
 
 <template>
@@ -26,7 +27,7 @@ const richTextColumnKeys = computed(() =>
         search: searchQuery,
         sortBy: [{ key: 'name', order: 'asc' }],
       }"
-      @click:row="(_event, { item }) => editItem({ id: item.id })"
+      @click:row="onClickRow"
     >
       <template #top>
         <TableEditorCrudViewTopSlot />
