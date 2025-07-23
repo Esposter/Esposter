@@ -388,8 +388,8 @@ catalogs:
       specifier: ^4.0.1
       version: 4.0.1
     nuxt-security:
-      specifier: ^2.2.0
-      version: 2.2.0
+      specifier: ^2.3.0
+      version: 2.3.0
     nuxt-site-config:
       specifier: ^3.2.2
       version: 3.2.2
@@ -1069,7 +1069,7 @@ importers:
         version: 4.0.1(@azure/data-tables@13.3.1)(@azure/storage-blob@12.27.0)(@electric-sql/pglite@0.3.5)(@netlify/blobs@9.1.2)(@parcel/watcher@2.5.1)(@types/node@24.1.0)(@vue/compiler-sfc@3.5.18)(db0@0.3.2(@electric-sql/pglite@0.3.5)(drizzle-orm@0.44.3(@electric-sql/pglite@0.3.5)(kysely@0.28.3)(postgres@3.4.7)))(drizzle-orm@0.44.3(@electric-sql/pglite@0.3.5)(kysely@0.28.3)(postgres@3.4.7))(encoding@0.1.13)(eslint@9.31.0(jiti@2.4.2))(ioredis@5.6.1)(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rolldown-vite@7.0.10(@types/node@24.1.0)(esbuild@0.25.8)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(rolldown@1.0.0-beta.29)(rollup@4.45.1)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(vue-tsc@3.0.3(typescript@5.8.3))(yaml@2.8.0)
       nuxt-security:
         specifier: 'catalog:'
-        version: 2.2.0(magicast@0.3.5)(rollup@4.45.1)
+        version: 2.3.0(magicast@0.3.5)(rollup@4.45.1)
       nuxt-site-config:
         specifier: 'catalog:'
         version: 3.2.2(magicast@0.3.5)(vue@3.5.18(typescript@5.8.3))
@@ -8796,9 +8796,9 @@ packages:
       '@unhead/vue':
         optional: true
 
-  nuxt-security@2.2.0:
-    resolution: {integrity: sha512-bTdgAAAdnvM1R1wAX3zQBbYJh6YNFyvsKJwbT9oVv+0U9J/9+k+mufQlJMFO8AdTefi/EDFHG75in9RTnCpngQ==}
-    engines: {node: '>=18.0.0'}
+  nuxt-security@2.3.0:
+    resolution: {integrity: sha512-7yeiEcvTOw+3ET+mKCHSiFpthNyIo//8IL1ZIZ53+zvEWBbIHb2pxhFWAtLXNFaMp0VnyEL8pvE2l3xWooi6xA==}
+    engines: {node: '>=20.0.0'}
 
   nuxt-seo-utils@7.0.14:
     resolution: {integrity: sha512-SvUCHWhnt8U/nKIpmnbe3lIvv6GewqxbxkLvcU6R7TeEIHoPnBtNLPN+nKOj12fMrDThv178/RAfw7KXq6meiw==}
@@ -20397,7 +20397,7 @@ snapshots:
       - magicast
       - vue
 
-  nuxt-security@2.2.0(magicast@0.3.5)(rollup@4.45.1):
+  nuxt-security@2.3.0(magicast@0.3.5)(rollup@4.45.1):
     dependencies:
       '@nuxt/kit': 3.17.7(magicast@0.3.5)
       basic-auth: 2.0.1
