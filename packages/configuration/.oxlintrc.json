@@ -6,7 +6,7 @@
     "style": "error"
   },
   "ignorePatterns": ["*.tsx", "public/docs"],
-  "plugins": ["import", "oxc", "unicorn"],
+  "plugins": ["import", "oxc", "typescript", "unicorn"],
   "rules": {
     "curly": ["error", "multi"],
     "func-names": "off",
@@ -38,6 +38,11 @@
     "radix": "off",
     "sort-imports": "off",
     "sort-keys": "off",
+    "typescript/ban-types": "off",
+    "typescript/consistent-indexed-object-style": ["error", "record"],
+    "typescript/consistent-type-imports": "off",
+    "typescript/no-empty-interface": "off",
+    "typescript/no-unsafe-function-type": "off",
     "unicorn/filename-case": "off",
     "unicorn/no-object-as-default-parameter": "off",
     "unicorn/no-nested-ternary": "off",
@@ -48,17 +53,5 @@
     "unicorn/prefer-event-target": "off",
     "vars-on-top": "off",
     "yoda": ["error", "never"]
-  },
-  "overrides": [
-    {
-      "files": ["**/*.ts"],
-      "plugins": ["typescript"],
-      "rules": {
-        "typescript/ban-types": "off",
-        "typescript/consistent-indexed-object-style": ["error", "record"],
-        "typescript/no-empty-interface": "off",
-        "typescript/no-unsafe-function-type": "off"
-      }
-    }
-  ]
+  }
 }
