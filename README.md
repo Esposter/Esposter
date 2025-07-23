@@ -60,9 +60,9 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
         </a>
       </td>
       <td valign="top">
-        <h3>Vuetify 3</h3>
+        <h3>Vuetify</h3>
         <p>
-          🐉 Material Component Framework for Vue. We highly recommend you take a look at <a href="https://next.vuetifyjs.com">the Vuetify 3 documentation</a> to level up.
+          🐉 Material Component Framework for Vue. We highly recommend you take a look at <a href="https://vuetifyjs.com">the Vuetify documentation</a> to level up.
         </p>
       </td>
     </tr>
