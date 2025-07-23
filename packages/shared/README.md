@@ -9,7 +9,7 @@
 
 - ⚖️ [License](#license)
 
---
+---
 
 ## <a name="license">⚖️ License</a>
 
