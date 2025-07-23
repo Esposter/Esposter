@@ -517,7 +517,7 @@ catalogs:
       specifier: ^3.2.4
       version: 3.2.4
     vue:
-      specifier: ^3.5.17
+      specifier: ^3.5.18
       version: 3.5.18
     vue-codemirror:
       specifier: ^6.1.1
