@@ -32,6 +32,7 @@
     "no-namespace": "off",
     "no-nested-ternary": "off",
     "no-ternary": "off",
+    "no-unassigned-import": "off",
     "prefer-add-event-listener": "off",
     "prefer-global-this": "off",
     "radix": "off",
@@ -45,6 +46,7 @@
     "unicorn/numeric-separators-style": ["error", { "onlyIfContainsSeparator": true }],
     "unicorn/prefer-dom-node-dataset": "off",
     "unicorn/prefer-event-target": "off",
+    "vars-on-top": "off",
     "yoda": ["error", "never"]
   },
   "overrides": [
