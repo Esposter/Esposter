@@ -32,9 +32,9 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
         </a>
       </td>
       <td valign="top">
-        <h3>Nuxt 3</h3>
+        <h3>Nuxt</h3>
         <p>
-          The Intuitive Web Framework, based on Vue 3. We highly recommend you take a look at <a href="https://nuxt.com">the Nuxt documentation</a> to level up.
+          The Intuitive Web Framework, based on Vue. We highly recommend you take a look at <a href="https://nuxt.com">the Nuxt documentation</a> to level up.
         </p>
       </td>
     </tr>
@@ -46,9 +46,9 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
         </a>
       </td>
       <td valign="top">
-        <h3>Vue 3</h3>
+        <h3>Vue</h3>
         <p>
-          🖖 Vue.js is a progressive, incrementally-adoptable JavaScript framework for building UI on the web. We highly recommend you take a look at <a href="https://vuejs.org">the Vue 3 documentation</a> to level up.
+          🖖 Vue.js is a progressive, incrementally-adoptable JavaScript framework for building UI on the web. We highly recommend you take a look at <a href="https://vuejs.org">the Vue documentation</a> to level up.
         </p>
       </td>
     </tr>

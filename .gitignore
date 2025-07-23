@@ -14,7 +14,7 @@ vitest.config.*.timestamp*
 # Tiled
 *.tiled-session
 
-# Nuxt 3
+# Nuxt
 .output
 .data
 .nuxt

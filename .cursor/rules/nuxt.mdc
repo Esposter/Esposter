@@ -163,8 +163,8 @@ alwaysApply: false
   - **Browser Compatibility:** Test the application in different browsers to ensure compatibility.
   - **Accessibility:** Consider accessibility when designing and developing the application.
 - **Version-Specific Issues:**
-  - **Nuxt 2 vs Nuxt 3:** Be aware of the differences between Nuxt 2 and Nuxt 3.
-  - **Vue 2 vs Vue 3:** Be aware of the differences between Vue 2 and Vue 3.
+  - **Nuxt 2 vs Nuxt:** Be aware of the differences between Nuxt 2 and newer Nuxt versions.
+  - **Vue 2 vs Vue:** Be aware of the differences between Vue 2 and newer Vue versions.
   - **Dependency Updates:** Carefully review dependency updates for potential breaking changes.
 - **Compatibility Concerns:**
   - **Browser Support:** Ensure compatibility with the target browsers.
@@ -184,8 +184,7 @@ alwaysApply: false
   - **Prettier:** Prettier is a code formatter that automatically formats code.
 - **Build Configuration:**
   - **`nuxt.config.js` or `nuxt.config.ts`:** Configure the application's build settings in `nuxt.config.js` or `nuxt.config.ts`.
-  - **Webpack:** Nuxt uses Webpack to bundle the application.
-  - **Vite:** Nuxt 3 uses Vite to bundle the application by default, providing faster build and development times.
+  - **Vite:** Nuxt uses Vite to bundle the application by default, providing faster build and development times.
 - **Linting and Formatting:**
   - **ESLint:** Use ESLint to enforce coding standards.
   - **Prettier:** Use Prettier to automatically format code.
