@@ -39,6 +39,8 @@
     }
   },
   "dependencies": {
+    "@azure/data-tables": "catalog:",
+    "@azure/storage-blob": "catalog:",
     "@esposter/shared": "workspace:*",
     "dayjs": "catalog:",
     "vue": "catalog:"
@@ -62,7 +64,7 @@
     "type-fest": "catalog:",
     "typedoc": "catalog:",
     "typescript": "catalog:",
-    "vite": "catalog:",
+    "vite": "npm:rolldown-vite@^7.0.10",
     "vite-tsconfig-paths": "catalog:",
     "vitest": "catalog:",
     "vue-tsc": "catalog:"
