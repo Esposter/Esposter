@@ -3,6 +3,7 @@ import type { ApexOptions } from "apexcharts";
 
 import { ChartType } from "#shared/models/dashboard/data/chart/type/ChartType";
 import { AChartTypeResolver } from "@/models/resolvers/dashboard/chart/AChartTypeResolver";
+import { defu } from "defu";
 
 export class PyramidResolver<T extends BasicChartConfiguration> extends AChartTypeResolver<T> {
   constructor() {
@@ -10,7 +11,7 @@ export class PyramidResolver<T extends BasicChartConfiguration> extends AChartTy
   }
 
   override handleConfiguration(apexOptions: ApexOptions) {
-    apexOptions.plotOptions = defuReplaceArray(
+    apexOptions.plotOptions = defu(
       {
         bar: {
           distributed: true,

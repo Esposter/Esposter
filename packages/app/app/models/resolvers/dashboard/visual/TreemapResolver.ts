@@ -2,6 +2,7 @@ import type { ApexOptions } from "apexcharts";
 
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { AVisualTypeResolver } from "@/models/resolvers/dashboard/visual/AVisualTypeResolver";
+import { defu } from "defu";
 
 export class TreemapResolver extends AVisualTypeResolver {
   constructor() {
@@ -9,7 +10,7 @@ export class TreemapResolver extends AVisualTypeResolver {
   }
 
   override handleConfiguration(apexOptions: ApexOptions) {
-    apexOptions.legend = defuReplaceArray(
+    apexOptions.legend = defu(
       {
         show: false,
       },

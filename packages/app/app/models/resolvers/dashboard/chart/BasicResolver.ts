@@ -4,6 +4,7 @@ import type { ApexOptions } from "apexcharts";
 import { basicChartConfigurationSchema } from "#shared/models/dashboard/data/chart/BasicChartConfiguration";
 import { ChartType } from "#shared/models/dashboard/data/chart/type/ChartType";
 import { AChartTypeResolver } from "@/models/resolvers/dashboard/chart/AChartTypeResolver";
+import { defu } from "defu";
 import { z } from "zod";
 
 export class BasicResolver<T extends BasicChartConfiguration> extends AChartTypeResolver<T> {
@@ -12,7 +13,7 @@ export class BasicResolver<T extends BasicChartConfiguration> extends AChartType
   }
 
   override handleConfiguration(apexOptions: ApexOptions, { dataLabels, subtitle, title }: T) {
-    apexOptions.chart = defuReplaceArray(
+    apexOptions.chart = defu(
       {
         zoom: {
           enabled: false,
@@ -20,19 +21,19 @@ export class BasicResolver<T extends BasicChartConfiguration> extends AChartType
       },
       apexOptions.chart,
     );
-    apexOptions.dataLabels = defuReplaceArray(
+    apexOptions.dataLabels = defu(
       {
         enabled: dataLabels,
       },
       apexOptions.dataLabels,
     );
-    apexOptions.subtitle = defuReplaceArray(
+    apexOptions.subtitle = defu(
       {
         text: subtitle,
       },
       apexOptions.subtitle,
     );
-    apexOptions.title = defuReplaceArray(
+    apexOptions.title = defu(
       {
         text: title,
       },

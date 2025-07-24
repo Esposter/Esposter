@@ -83,6 +83,7 @@ catalog:
   dayjs: ^1.11.13
   debug: ^4.4.1
   dedent: ^1.6.0
+  defu: ^6.1.4
   dotenv: ^17.2.0
   drizzle-kit: ^0.31.4
   drizzle-orm: ^0.44.3
@@ -130,7 +131,7 @@ catalog:
   node-emoji: ^2.2.0
   node-html-parser: ^7.0.1
   nuxt: ^4.0.1
-  nuxt-security: ^2.2.0
+  nuxt-security: ^2.3.0
   nuxt-site-config: ^3.2.2
   obscenity: ^0.4.4
   omit-deep-lodash: ^1.1.7
@@ -188,7 +189,7 @@ catalog:
   worker-timers: ^8.0.23
   ws: ^8.18.3
   xmlbuilder2: ^3.1.1
-  zod: ^4.0.5
+  zod: ^4.0.8
 
 catalogMode: strict
 
