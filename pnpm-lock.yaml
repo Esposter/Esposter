@@ -199,8 +199,8 @@ catalogs:
       specifier: ^1.5.0
       version: 1.5.0
     '@vue-pdf-viewer/viewer':
-      specifier: ^2.5.7
-      version: 2.5.7
+      specifier: ^2.5.8
+      version: 2.5.8
     '@vue/test-utils':
       specifier: ^2.4.6
       version: 2.4.6
@@ -744,7 +744,7 @@ importers:
         version: 1.5.0(@vue-flow/core@1.45.0(vue@3.5.18(typescript@5.8.3)))(vue@3.5.18(typescript@5.8.3))
       '@vue-pdf-viewer/viewer':
         specifier: 'catalog:'
-        version: 2.5.7(pdfjs-dist@5.3.93)(rolldown-vite@7.0.10(@types/node@24.1.0)(esbuild@0.25.8)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(typescript@5.8.3)(vue@3.5.18(typescript@5.8.3))
+        version: 2.5.8(pdfjs-dist@5.3.93)(rolldown-vite@7.0.10(@types/node@24.1.0)(esbuild@0.25.8)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(typescript@5.8.3)(vue@3.5.18(typescript@5.8.3))
       '@vuepic/vue-datepicker':
         specifier: 'catalog:'
         version: 11.0.2(vue@3.5.18(typescript@5.8.3))
@@ -5132,8 +5132,8 @@ packages:
       vue:
         optional: true
 
-  '@vue-pdf-viewer/viewer@2.5.7':
-    resolution: {integrity: sha512-ac7d7Hrw0upgmgnFjRDJ6TlS43BqjeIprr7GOixRe+ijMX/lU9Ht4wS1ArwS9QpjDrKvox/SwjiQy9TcVpr4jg==}
+  '@vue-pdf-viewer/viewer@2.5.8':
+    resolution: {integrity: sha512-EQKxWLDcmvu/T5drm2rMTNRHuDAvNKgerBs97bVuWeDq8qHELOpuERzyT7HQkH2s61Ndow2SKw+5Zq7d3wTsNg==}
     engines: {bun: '>=1.0.4', node: '>=18.20.3', npm: '>=9.5.1', pnpm: '>=8.8.0', yarn: '>=1.20.0'}
     peerDependencies:
       pdfjs-dist: ^5.3.93
@@ -16182,7 +16182,7 @@ snapshots:
       estree-walker: 3.0.3
       magic-string: 0.30.17
     optionalDependencies:
-      vite: rolldown-vite@7.0.10(@types/node@24.1.0)(esbuild@0.23.1)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
+      vite: rolldown-vite@7.0.10(@types/node@24.1.0)(esbuild@0.25.8)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
 
   '@vitest/pretty-format@3.2.4':
     dependencies:
@@ -16267,7 +16267,7 @@ snapshots:
     optionalDependencies:
       vue: 3.5.18(typescript@5.8.3)
 
-  '@vue-pdf-viewer/viewer@2.5.7(pdfjs-dist@5.3.93)(rolldown-vite@7.0.10(@types/node@24.1.0)(esbuild@0.25.8)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(typescript@5.8.3)(vue@3.5.18(typescript@5.8.3))':
+  '@vue-pdf-viewer/viewer@2.5.8(pdfjs-dist@5.3.93)(rolldown-vite@7.0.10(@types/node@24.1.0)(esbuild@0.25.8)(jiti@2.4.2)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(typescript@5.8.3)(vue@3.5.18(typescript@5.8.3))':
     dependencies:
       '@vueuse/core': 13.5.0(vue@3.5.18(typescript@5.8.3))
       pdfjs-dist: 5.3.93
