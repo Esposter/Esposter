@@ -20,9 +20,9 @@ catalog:
   "@fullcalendar/timegrid": ^6.1.18
   "@fullcalendar/vue3": ^6.1.18
   "@koumoul/vjsf": ^3.17.5
-  "@lerna-lite/cli": ^4.6.1
-  "@lerna-lite/publish": ^4.6.1
-  "@lerna-lite/run": ^4.6.1
+  "@lerna-lite/cli": ^4.6.2
+  "@lerna-lite/publish": ^4.6.2
+  "@lerna-lite/run": ^4.6.2
   "@mdi/font": ^7.4.47
   "@nuxt/eslint": ^1.7.1
   "@nuxt/fonts": ^0.11.4
