@@ -125,7 +125,7 @@ catalog:
   is-mobile: ^5.0.0
   js-beautify: ^1.15.4
   link-preview-js: ^3.1.0
-  linkifyjs: ^4.3.1
+  linkifyjs: ^4.3.2
   marked: ^16.1.1
   mjml-browser: ^4.15.3
   node-emoji: ^2.2.0
