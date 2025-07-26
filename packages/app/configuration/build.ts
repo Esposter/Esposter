@@ -6,6 +6,7 @@ export const build: NuxtConfig["build"] = {
     "pluralize",
     "survey-creator-vue",
     "trpc-nuxt",
+    // https://github.com/vue-pdf-viewer/starter-vpv-nuxt-ts/blob/main/nuxt.config.ts
     ({ isServer }) => (isServer ? "@vue-pdf-viewer/viewer" : false),
     ({ isServer }) => (isServer ? "pdfjs-dist" : false),
   ],
