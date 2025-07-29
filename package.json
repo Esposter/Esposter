@@ -70,7 +70,7 @@
     "vue-tsc": "catalog:"
   },
   "devDependenciesComments": {
-    "typedoc": "https://github.com/TypeStrong/typedoc/issues/2982"
+    "typedoc": "@TODO: https://github.com/TypeStrong/typedoc/issues/2982"
   },
   "engines": {
     "node": "^24.4.1"
