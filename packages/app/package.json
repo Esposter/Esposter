@@ -50,7 +50,6 @@
     "@codemirror/state": "catalog:",
     "@codemirror/theme-one-dark": "catalog:",
     "@codemirror/view": "catalog:",
-    "@electric-sql/pglite": "catalog:",
     "@floating-ui/dom": "catalog:",
     "@fullcalendar/core": "catalog:",
     "@fullcalendar/daygrid": "catalog:",
@@ -167,6 +166,7 @@
     "vue-phaserjs": "@TODO: broken with vue's new reactive system"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "catalog:",
     "@nuxt/eslint": "catalog:",
     "@nuxt/fonts": "catalog:",
     "@nuxt/scripts": "catalog:",
@@ -202,6 +202,7 @@
     "vuetify-nuxt-module": "catalog:"
   },
   "devDependenciesComments": {
-    "nuxt": "https://github.com/nuxt/nuxt/issues/32801"
+    "@electric-sql/pglite": "@TODO: Raise github issue about this",
+    "nuxt": "@TODO: https://github.com/nuxt/nuxt/issues/32801"
   }
 }
