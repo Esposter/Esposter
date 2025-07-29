@@ -202,7 +202,7 @@
     "vuetify-nuxt-module": "catalog:"
   },
   "devDependenciesComments": {
-    "@electric-sql/pglite": "@TODO: Raise github issue about this",
+    "@electric-sql/pglite": "@TODO: https://github.com/electric-sql/pglite/issues/743",
     "nuxt": "@TODO: https://github.com/nuxt/nuxt/issues/32801"
   }
 }
