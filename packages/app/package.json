@@ -200,5 +200,8 @@
     "tsx": "catalog:",
     "unocss": "catalog:",
     "vuetify-nuxt-module": "catalog:"
+  },
+  "devDependenciesComments": {
+    "nuxt": "https://github.com/nuxt/nuxt/issues/32801"
   }
 }
