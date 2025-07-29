@@ -1,19 +1,10 @@
 <script setup lang="ts">
-import { ThemeMode } from "@/models/vuetify/ThemeMode";
-import { THEME_COOKIE_NAME } from "@/services/vuetify/constants";
-
-const theme = useGlobalTheme();
 const isDark = useIsDark();
-const themeCookie = useCookie(THEME_COOKIE_NAME);
 const button = useTemplateRef("button");
+const baseToggleTheme = useToggleTheme();
 const toggleTheme = async () => {
-  const newThemeValue = isDark.value ? ThemeMode.light : ThemeMode.dark;
-  const updateTheme = () => {
-    themeCookie.value = theme.name.value = newThemeValue;
-  };
-
   if (!button.value || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    updateTheme();
+    baseToggleTheme();
     return;
   }
 
@@ -26,7 +17,7 @@ const toggleTheme = async () => {
 
   await document.startViewTransition(async () => {
     await nextTick(() => {
-      updateTheme();
+      baseToggleTheme();
     });
   }).ready;
   document.documentElement.animate(
