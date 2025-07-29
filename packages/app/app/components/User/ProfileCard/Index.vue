@@ -11,7 +11,7 @@ const { updateUser } = authClient;
 const { backgroundOpacity20 } = useColors();
 const profileCardRows = computed(() => {
   if (!session.value)
-    throw createError({ statusCode: 404, statusMessage: getEntityNotFoundStatusMessage(DatabaseEntityType.User) });
+    throw createError({ message: getEntityNotFoundStatusMessage(DatabaseEntityType.User), statusCode: 404 });
 
   return {
     name: {

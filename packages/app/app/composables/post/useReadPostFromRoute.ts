@@ -9,8 +9,8 @@ export const useReadPostFromRoute = async () => {
 
   if (post.parentId)
     throw createError({
+      message: `${getEntityNotFoundStatusMessage(DatabaseEntityType.Post, postId)}, you might be trying to find a comment`,
       statusCode: 404,
-      statusMessage: `${getEntityNotFoundStatusMessage(DatabaseEntityType.Post, postId)}, you might be trying to find a comment`,
     });
 
   return post;
