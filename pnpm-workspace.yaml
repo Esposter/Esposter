@@ -119,7 +119,7 @@ catalog:
   grid-engine: ^2.48.0
   grid-layout-plus: ^1.1.0
   gsap: ^3.13.0
-  h3: ^1.15.3
+  h3: ^1.15.4
   happy-dom: ^18.0.1
   howler: ^2.2.4
   is-mobile: ^5.0.0
