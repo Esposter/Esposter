@@ -274,8 +274,8 @@ catalogs:
       specifier: ^10.1.8
       version: 10.1.8
     eslint-plugin-oxlint:
-      specifier: ^1.8.0
-      version: 1.8.0
+      specifier: ^1.9.0
+      version: 1.9.0
     eslint-plugin-perfectionist:
       specifier: ^4.15.0
       version: 4.15.0
@@ -403,8 +403,8 @@ catalogs:
       specifier: ^1.1.7
       version: 1.1.7
     oxlint:
-      specifier: ^1.8.0
-      version: 1.8.0
+      specifier: ^1.9.0
+      version: 1.9.0
     p-progress:
       specifier: ^1.0.0
       version: 1.0.0
@@ -436,8 +436,8 @@ catalogs:
       specifier: ^1.0.0-beta.29
       version: 1.0.0-beta.29
     rolldown-plugin-dts:
-      specifier: ^0.14.1
-      version: 0.14.1
+      specifier: ^0.14.2
+      version: 0.14.2
     rxjs:
       specifier: ^7.8.2
       version: 7.8.2
@@ -472,8 +472,8 @@ catalogs:
       specifier: ^0.178.0
       version: 0.178.0
     three-globe:
-      specifier: ^2.43.0
-      version: 2.43.0
+      specifier: ^2.44.0
+      version: 2.44.0
     tippy.js:
       specifier: ^6.3.7
       version: 6.3.7
@@ -541,8 +541,8 @@ catalogs:
       specifier: ^1.8.0
       version: 1.8.0
     vuetify:
-      specifier: ^3.9.2
-      version: 3.9.2
+      specifier: ^3.9.3
+      version: 3.9.3
     vuetify-nuxt-module:
       specifier: ^0.18.7
       version: 0.18.7
@@ -559,8 +559,8 @@ catalogs:
       specifier: ^3.1.1
       version: 3.1.1
     zod:
-      specifier: ^4.0.11
-      version: 4.0.11
+      specifier: ^4.0.13
+      version: 4.0.13
 
 overrides:
   pdfjs-dist: ^5.4.54
@@ -618,19 +618,19 @@ importers:
         version: 9.32.0(jiti@2.5.1)
       eslint-plugin-oxlint:
         specifier: 'catalog:'
-        version: 1.8.0
+        version: 1.9.0
       happy-dom:
         specifier: 'catalog:'
         version: 18.0.1
       oxlint:
         specifier: 'catalog:'
-        version: 1.8.0
+        version: 1.9.0
       rolldown:
         specifier: 'catalog:'
         version: 1.0.0-beta.29
       rolldown-plugin-dts:
         specifier: 'catalog:'
-        version: 0.14.1(rolldown@1.0.0-beta.29)(typescript@5.8.3)(vue-tsc@3.0.4(typescript@5.8.3))
+        version: 0.14.2(rolldown@1.0.0-beta.29)(typescript@5.8.3)(vue-tsc@3.0.4(typescript@5.8.3))
       type-fest:
         specifier: 'catalog:'
         version: 4.41.0
@@ -693,7 +693,7 @@ importers:
         version: 6.1.18(@fullcalendar/core@6.1.18)(vue@3.5.18(typescript@5.8.3))
       '@koumoul/vjsf':
         specifier: 'catalog:'
-        version: 3.17.5(typescript@5.8.3)(vue@3.5.18(typescript@5.8.3))(vuetify@3.9.2)
+        version: 3.17.5(typescript@5.8.3)(vue@3.5.18(typescript@5.8.3))(vuetify@3.9.3)
       '@mdi/font':
         specifier: 'catalog:'
         version: 7.4.47
@@ -783,7 +783,7 @@ importers:
         version: 0.44.4(@electric-sql/pglite@0.3.5)(kysely@0.28.3)(postgres@3.4.7)
       drizzle-zod:
         specifier: 'catalog:'
-        version: 0.8.2(drizzle-orm@0.44.4(@electric-sql/pglite@0.3.5)(kysely@0.28.3)(postgres@3.4.7))(zod@4.0.11)
+        version: 0.8.2(drizzle-orm@0.44.4(@electric-sql/pglite@0.3.5)(kysely@0.28.3)(postgres@3.4.7))(zod@4.0.13)
       emoji-mart-vue-fast:
         specifier: 'catalog:'
         version: 15.0.4(vue@3.5.18(typescript@5.8.3))
@@ -945,7 +945,7 @@ importers:
         version: 0.178.0
       three-globe:
         specifier: 'catalog:'
-        version: 2.43.0(three@0.178.0)
+        version: 2.44.0(three@0.178.0)
       tippy.js:
         specifier: 'catalog:'
         version: 6.3.7
@@ -978,7 +978,7 @@ importers:
         version: 1.8.0(apexcharts@5.3.2)(vue@3.5.18(typescript@5.8.3))
       vuetify:
         specifier: 'catalog:'
-        version: 3.9.2(typescript@5.8.3)(vite-plugin-vuetify@2.1.1)(vue@3.5.18(typescript@5.8.3))
+        version: 3.9.3(typescript@5.8.3)(vite-plugin-vuetify@2.1.1)(vue@3.5.18(typescript@5.8.3))
       web-push:
         specifier: 'catalog:'
         version: 3.6.7
@@ -990,7 +990,7 @@ importers:
         version: 8.18.3
       zod:
         specifier: 'catalog:'
-        version: 4.0.11
+        version: 4.0.13
     devDependencies:
       '@electric-sql/pglite':
         specifier: 'catalog:'
@@ -3696,43 +3696,43 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@oxlint/darwin-arm64@1.8.0':
-    resolution: {integrity: sha512-1juYJF1xqRNkswzDSN1V44NoZ+O2Mkc9LjbkDB/UErb8dxTqFhCZC3CQR6Em55/tys1FtajXgK3B+ykWnY9HNQ==}
+  '@oxlint/darwin-arm64@1.9.0':
+    resolution: {integrity: sha512-VRxI/T0I4bq+xoaI0qNFeGPxOOganHlfLmx8JbFFZswoxMkm5lIvVYScDKLrsbbPSe4bcZ5v1DmX5sNGQ619Uw==}
     cpu: [arm64]
     os: [darwin]
 
-  '@oxlint/darwin-x64@1.8.0':
-    resolution: {integrity: sha512-5b7J/XE2eGhx3+vw6IFuuL0BbIF3wRzo4SWHVXN9rO3WYq2YpoHToY4C5WMWb8toVZcoJlx4Y1lq3IO2V78zTg==}
+  '@oxlint/darwin-x64@1.9.0':
+    resolution: {integrity: sha512-vMBa3eNrJMSBApXvsx6FgMuWCnNE+ETJJieLPhemZKctMNWOJQX+2i09CG2kb1IkmxagLapH7dZ4i0+Lf13mqg==}
     cpu: [x64]
     os: [darwin]
 
-  '@oxlint/linux-arm64-gnu@1.8.0':
-    resolution: {integrity: sha512-pzfk9IZBbYuIYn4sbT//Vox8B8e8hOZPkIQnNAdzhpGtRjV4NYOgNL5/h2QZC+ecmxl8H+Gi9WV6dyKjFrBtcw==}
+  '@oxlint/linux-arm64-gnu@1.9.0':
+    resolution: {integrity: sha512-8wnMjloRbz7hPKvcgqd8HKNgkEgFJZvp9Los2pdE1CKh33msIxIXPGT3KKhYzyrtBaRaG2LJHshUPub02Q+x9A==}
     cpu: [arm64]
     os: [linux]
 
-  '@oxlint/linux-arm64-musl@1.8.0':
-    resolution: {integrity: sha512-6rpaeAG271wbUNM+WeJhdvJDDMwfoenm7rPY304dxnC+fcuR8Q0LSv09dGeNWrsqjjZuDP9R10qR154nysBxFg==}
+  '@oxlint/linux-arm64-musl@1.9.0':
+    resolution: {integrity: sha512-elj9FTNXvq9oP8UedeHHq2R8lCtTmBGvUO/xLez734zVx3tvBl3avmuEfPBqR4wlUKDANExDh3Rg0pssflhw9w==}
     cpu: [arm64]
     os: [linux]
 
-  '@oxlint/linux-x64-gnu@1.8.0':
-    resolution: {integrity: sha512-qPEF8tKMu+63b58gPfwU3KyJf2z9KyorbrC0yGXFHQLzRPEtrh6bAjf+AzCs3n8WhDR1K6jPgcPT4Sp8bahCyQ==}
+  '@oxlint/linux-x64-gnu@1.9.0':
+    resolution: {integrity: sha512-d7VjQttKDgXKIYY3tm2GXTD83dyI+D8POGdPRT8GjhitHKasHQWFMBDG5iLp60FNc5Ky1cIe/2nwKW9ReQvhKw==}
     cpu: [x64]
     os: [linux]
 
-  '@oxlint/linux-x64-musl@1.8.0':
-    resolution: {integrity: sha512-JyErk/LsLg/tA3XkHhU8VIxahOdq56L99mbpMFGLTkOQgtnhY2MDAYULVgOuFFX3v6Q02o4mpIR/SwW/tRnZlg==}
+  '@oxlint/linux-x64-musl@1.9.0':
+    resolution: {integrity: sha512-R9vi5LGxNNi3pisp4dG7Ez00mAvCeki8VI5DUg6W1MR0GTnaejlVtMflziA2jqpdTGOK4bjLDsHKIadGC1SMVg==}
     cpu: [x64]
     os: [linux]
 
-  '@oxlint/win32-arm64@1.8.0':
-    resolution: {integrity: sha512-QvhtDAU9bBdC2m5xO+ibKyMG4KZR44wB0vDbQ5YkQxJiuXrlleHLyz0+saFzVYQ/Fvc0QgIRTIwiVz9dzxidVw==}
+  '@oxlint/win32-arm64@1.9.0':
+    resolution: {integrity: sha512-TiV7xYBMhkc/r0X+c9cMwGKUWYJRlWnI61m8powqer6lMJ8VfDe1RkRF4ttO5wlPGkiBwBa3vYWAgxaXc9JAMQ==}
     cpu: [arm64]
     os: [win32]
 
-  '@oxlint/win32-x64@1.8.0':
-    resolution: {integrity: sha512-veXJXgF905UOvuxtmvzM328b4Itm8Fyu+lUq4PagXOmyRScevaVUXq6++ui3A/Gxd8yo0SHspHCbYkpuvJkXqQ==}
+  '@oxlint/win32-x64@1.9.0':
+    resolution: {integrity: sha512-OWqqkXsLrpS1uQsxjNqiOkC9a/CszMLa3VwlRcpm/z3iPxEL/qEVjGfjZX6XZw8Q6YukFB77rgYqzotvtCvI1A==}
     cpu: [x64]
     os: [win32]
 
@@ -6871,8 +6871,8 @@ packages:
     peerDependencies:
       eslint: ^7.0.0 || ^8.0.0 || ^9.0.0
 
-  eslint-plugin-oxlint@1.8.0:
-    resolution: {integrity: sha512-C6QNZqB8ANc7rLI2yVEHOTV68uyYdACCasR54sfbXmsxac11aoUzzAIM2i6CBumqOz2qKEEcCZBNMRv++/hhFA==}
+  eslint-plugin-oxlint@1.9.0:
+    resolution: {integrity: sha512-xXaOi5RFsSrLTWY77sHXhhmUniZlzc2k09wXLZYSKs5n7OJclHzaYfeaIIXSegtylULK6Am6LYGny57ObKWwfg==}
 
   eslint-plugin-perfectionist@4.15.0:
     resolution: {integrity: sha512-pC7PgoXyDnEXe14xvRUhBII8A3zRgggKqJFx2a82fjrItDs1BSI7zdZnQtM2yQvcyod6/ujmzb7ejKPx8lZTnw==}
@@ -8944,8 +8944,8 @@ packages:
     peerDependencies:
       oxc-parser: '>=0.72.0'
 
-  oxlint@1.8.0:
-    resolution: {integrity: sha512-kDC3zuplBM35GbrZ/3rRdDrZ6unpUkUjM8P3VSbyLgaYh2xZeg0TLLDbYALNAUyChVonNafXzgHZmbwnHfrTRg==}
+  oxlint@1.9.0:
+    resolution: {integrity: sha512-vvqpkRt7UA1F1DoOJGYO2+T52L6jV4RxS+9hFVCPQ0X+hcNVtbl/TxQuwjobBw8Yw2U8Rb9d8VLJxa8eRSqpQQ==}
     engines: {node: '>=8.*'}
     hasBin: true
 
@@ -9739,8 +9739,8 @@ packages:
   robust-predicates@3.0.2:
     resolution: {integrity: sha512-IXgzBWvWQwE6PrDI05OvmXUIruQTcoMDzRsOd5CDvHCVLcLHMTSYvOK5Cm46kWqlV3yAbuSpBZdJ5oP5OUoStg==}
 
-  rolldown-plugin-dts@0.14.1:
-    resolution: {integrity: sha512-M++jFiiI0dwd9jNnta5vfxc058wwoibgeBzNMZw0QRm8jPJYxy4P3nQYlBtwQagKUDQVR0LXHSrRgXTezELEhw==}
+  rolldown-plugin-dts@0.14.2:
+    resolution: {integrity: sha512-tNCMOLT46jUWuAl4OqgU/k/30CTigP/xo/RlYg8H+BjZ+kBWemKJcei4m+gW3FBOtBqP9XqNLtXk8NBfJf3goA==}
     engines: {node: '>=20.18.0'}
     peerDependencies:
       '@typescript/native-preview': '>=7.0.0-dev.20250601.1'
@@ -10452,8 +10452,8 @@ packages:
     peerDependencies:
       three: '>=0.72.0'
 
-  three-globe@2.43.0:
-    resolution: {integrity: sha512-ZYFQv5QO9B1VviBGxl/DRU1DyCWGqnim+YvuJLbtrB8F49bxudevFJYEn0Y8Zp8iWIzz7RX8+kSYwneCLwkhPA==}
+  three-globe@2.44.0:
+    resolution: {integrity: sha512-ZDZgGf06xSP2WfKxZgXBl1TjiSutzNhBK9vGMmy7Nupaujia5as75MmhV2VBVQL8iN0nAblXVnnXepfLNC93qA==}
     engines: {node: '>=12'}
     peerDependencies:
       three: '>=0.154'
@@ -11257,8 +11257,8 @@ packages:
   vuetify-nuxt-module@0.18.7:
     resolution: {integrity: sha512-AEP5DRuyY5yIk8JzPEhG6NohCkGwf9afn4Mv51YPKGxreqP/KfzL0jooG/HN1cinSo4c+9uRowHllzCsnSN7FA==}
 
-  vuetify@3.9.2:
-    resolution: {integrity: sha512-Pax7YCgbE5SArY8CDM0A9dTVHnG1oU79eIBA+FEEg3dDFV7bc+0AppJJLfG2+aoaBlJf2UH7tOCflJ/U23YU1Q==}
+  vuetify@3.9.3:
+    resolution: {integrity: sha512-0eruHdmRoAMBo/08RLDkTdtdu1vfkx+/PurUIDW2tz/k2GCp51e7KwgCn4uVyzH88KRgf2PKiz5UI5f93Xn05w==}
     engines: {node: ^12.20 || >=14.13}
     peerDependencies:
       typescript: '>=4.7'
@@ -11595,8 +11595,8 @@ packages:
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
-  zod@4.0.11:
-    resolution: {integrity: sha512-LVrgstTaQJek72n6ZGxhAhH/Q24PhGx4lIAcgBmjtvjRq0qYjiH9U0o3hfuC2vfExsnpoHElc4XOJjMKQjUQxg==}
+  zod@4.0.13:
+    resolution: {integrity: sha512-jv+zRxuZQxTrFHzxZ46ezL2FtnE+M4HIJHJEwLsZ7UjrXHltdG6HrxvqM0twoVCWxJiYf8WqKjAcjztegpkB+Q==}
 
 snapshots:
 
@@ -13349,14 +13349,14 @@ snapshots:
 
   '@juggle/resize-observer@3.4.0': {}
 
-  '@koumoul/vjsf@3.17.5(typescript@5.8.3)(vue@3.5.18(typescript@5.8.3))(vuetify@3.9.2)':
+  '@koumoul/vjsf@3.17.5(typescript@5.8.3)(vue@3.5.18(typescript@5.8.3))(vuetify@3.9.3)':
     dependencies:
       '@json-layout/core': 1.12.5(@json-layout/vocabulary@2.6.0)
       '@json-layout/vocabulary': 2.6.0
       '@vueuse/core': 12.8.2(typescript@5.8.3)
       debug: 4.4.1
       vue: 3.5.18(typescript@5.8.3)
-      vuetify: 3.9.2(typescript@5.8.3)(vite-plugin-vuetify@2.1.1)(vue@3.5.18(typescript@5.8.3))
+      vuetify: 3.9.3(typescript@5.8.3)(vite-plugin-vuetify@2.1.1)(vue@3.5.18(typescript@5.8.3))
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -14764,28 +14764,28 @@ snapshots:
   '@oxc-transform/binding-win32-x64-msvc@0.77.3':
     optional: true
 
-  '@oxlint/darwin-arm64@1.8.0':
+  '@oxlint/darwin-arm64@1.9.0':
     optional: true
 
-  '@oxlint/darwin-x64@1.8.0':
+  '@oxlint/darwin-x64@1.9.0':
     optional: true
 
-  '@oxlint/linux-arm64-gnu@1.8.0':
+  '@oxlint/linux-arm64-gnu@1.9.0':
     optional: true
 
-  '@oxlint/linux-arm64-musl@1.8.0':
+  '@oxlint/linux-arm64-musl@1.9.0':
     optional: true
 
-  '@oxlint/linux-x64-gnu@1.8.0':
+  '@oxlint/linux-x64-gnu@1.9.0':
     optional: true
 
-  '@oxlint/linux-x64-musl@1.8.0':
+  '@oxlint/linux-x64-musl@1.9.0':
     optional: true
 
-  '@oxlint/win32-arm64@1.8.0':
+  '@oxlint/win32-arm64@1.9.0':
     optional: true
 
-  '@oxlint/win32-x64@1.8.0':
+  '@oxlint/win32-x64@1.9.0':
     optional: true
 
   '@parcel/watcher-android-arm64@2.5.1':
@@ -16483,11 +16483,11 @@ snapshots:
       date-fns: 4.1.0
       vue: 3.5.18(typescript@5.8.3)
 
-  '@vuetify/loader-shared@2.1.0(vue@3.5.18(typescript@5.8.3))(vuetify@3.9.2)':
+  '@vuetify/loader-shared@2.1.0(vue@3.5.18(typescript@5.8.3))(vuetify@3.9.3)':
     dependencies:
       upath: 2.0.1
       vue: 3.5.18(typescript@5.8.3)
-      vuetify: 3.9.2(typescript@5.8.3)(vite-plugin-vuetify@2.1.1)(vue@3.5.18(typescript@5.8.3))
+      vuetify: 3.9.3(typescript@5.8.3)(vite-plugin-vuetify@2.1.1)(vue@3.5.18(typescript@5.8.3))
 
   '@vueuse/core@10.11.1(vue@3.5.18(typescript@5.8.3))':
     dependencies:
@@ -16940,7 +16940,7 @@ snapshots:
       jose: 5.10.0
       kysely: 0.28.3
       nanostores: 0.11.4
-      zod: 4.0.11
+      zod: 4.0.13
 
   better-call@1.0.12:
     dependencies:
@@ -17942,10 +17942,10 @@ snapshots:
       kysely: 0.28.3
       postgres: 3.4.7
 
-  drizzle-zod@0.8.2(drizzle-orm@0.44.4(@electric-sql/pglite@0.3.5)(kysely@0.28.3)(postgres@3.4.7))(zod@4.0.11):
+  drizzle-zod@0.8.2(drizzle-orm@0.44.4(@electric-sql/pglite@0.3.5)(kysely@0.28.3)(postgres@3.4.7))(zod@4.0.13):
     dependencies:
       drizzle-orm: 0.44.4(@electric-sql/pglite@0.3.5)(kysely@0.28.3)(postgres@3.4.7)
-      zod: 4.0.11
+      zod: 4.0.13
 
   dts-resolver@2.1.1: {}
 
@@ -18309,7 +18309,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-oxlint@1.8.0:
+  eslint-plugin-oxlint@1.9.0:
     dependencies:
       jsonc-parser: 3.3.1
 
@@ -20835,16 +20835,16 @@ snapshots:
       magic-regexp: 0.10.0
       oxc-parser: 0.77.3
 
-  oxlint@1.8.0:
+  oxlint@1.9.0:
     optionalDependencies:
-      '@oxlint/darwin-arm64': 1.8.0
-      '@oxlint/darwin-x64': 1.8.0
-      '@oxlint/linux-arm64-gnu': 1.8.0
-      '@oxlint/linux-arm64-musl': 1.8.0
-      '@oxlint/linux-x64-gnu': 1.8.0
-      '@oxlint/linux-x64-musl': 1.8.0
-      '@oxlint/win32-arm64': 1.8.0
-      '@oxlint/win32-x64': 1.8.0
+      '@oxlint/darwin-arm64': 1.9.0
+      '@oxlint/darwin-x64': 1.9.0
+      '@oxlint/linux-arm64-gnu': 1.9.0
+      '@oxlint/linux-arm64-musl': 1.9.0
+      '@oxlint/linux-x64-gnu': 1.9.0
+      '@oxlint/linux-x64-musl': 1.9.0
+      '@oxlint/win32-arm64': 1.9.0
+      '@oxlint/win32-x64': 1.9.0
 
   p-event@6.0.1:
     dependencies:
@@ -21675,7 +21675,7 @@ snapshots:
 
   robust-predicates@3.0.2: {}
 
-  rolldown-plugin-dts@0.14.1(rolldown@1.0.0-beta.29)(typescript@5.8.3)(vue-tsc@3.0.4(typescript@5.8.3)):
+  rolldown-plugin-dts@0.14.2(rolldown@1.0.0-beta.29)(typescript@5.8.3)(vue-tsc@3.0.4(typescript@5.8.3)):
     dependencies:
       '@babel/generator': 7.28.0
       '@babel/parser': 7.28.0
@@ -22474,7 +22474,7 @@ snapshots:
       earcut: 3.0.2
       three: 0.178.0
 
-  three-globe@2.43.0(three@0.178.0):
+  three-globe@2.44.0(three@0.178.0):
     dependencies:
       '@tweenjs/tween.js': 25.0.0
       accessor-fn: 1.5.3
@@ -23201,14 +23201,14 @@ snapshots:
       vite: rolldown-vite@7.0.11(@types/node@24.1.0)(esbuild@0.23.1)(jiti@2.5.1)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
       vue: 3.5.18(typescript@5.8.3)
 
-  vite-plugin-vuetify@2.1.1(rolldown-vite@7.0.11(@types/node@24.1.0)(esbuild@0.25.8)(jiti@2.5.1)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(vue@3.5.18(typescript@5.8.3))(vuetify@3.9.2):
+  vite-plugin-vuetify@2.1.1(rolldown-vite@7.0.11(@types/node@24.1.0)(esbuild@0.25.8)(jiti@2.5.1)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(vue@3.5.18(typescript@5.8.3))(vuetify@3.9.3):
     dependencies:
-      '@vuetify/loader-shared': 2.1.0(vue@3.5.18(typescript@5.8.3))(vuetify@3.9.2)
+      '@vuetify/loader-shared': 2.1.0(vue@3.5.18(typescript@5.8.3))(vuetify@3.9.3)
       debug: 4.4.1
       upath: 2.0.1
       vite: rolldown-vite@7.0.11(@types/node@24.1.0)(esbuild@0.23.1)(jiti@2.5.1)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
       vue: 3.5.18(typescript@5.8.3)
-      vuetify: 3.9.2(typescript@5.8.3)(vite-plugin-vuetify@2.1.1)(vue@3.5.18(typescript@5.8.3))
+      vuetify: 3.9.3(typescript@5.8.3)(vite-plugin-vuetify@2.1.1)(vue@3.5.18(typescript@5.8.3))
     transitivePeerDependencies:
       - supports-color
 
@@ -23428,8 +23428,8 @@ snapshots:
       ufo: 1.6.1
       unconfig: 0.5.5
       upath: 2.0.1
-      vite-plugin-vuetify: 2.1.1(rolldown-vite@7.0.11(@types/node@24.1.0)(esbuild@0.25.8)(jiti@2.5.1)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(vue@3.5.18(typescript@5.8.3))(vuetify@3.9.2)
-      vuetify: 3.9.2(typescript@5.8.3)(vite-plugin-vuetify@2.1.1)(vue@3.5.18(typescript@5.8.3))
+      vite-plugin-vuetify: 2.1.1(rolldown-vite@7.0.11(@types/node@24.1.0)(esbuild@0.25.8)(jiti@2.5.1)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(vue@3.5.18(typescript@5.8.3))(vuetify@3.9.3)
+      vuetify: 3.9.3(typescript@5.8.3)(vite-plugin-vuetify@2.1.1)(vue@3.5.18(typescript@5.8.3))
     transitivePeerDependencies:
       - magicast
       - supports-color
@@ -23438,12 +23438,12 @@ snapshots:
       - vue
       - webpack-plugin-vuetify
 
-  vuetify@3.9.2(typescript@5.8.3)(vite-plugin-vuetify@2.1.1)(vue@3.5.18(typescript@5.8.3)):
+  vuetify@3.9.3(typescript@5.8.3)(vite-plugin-vuetify@2.1.1)(vue@3.5.18(typescript@5.8.3)):
     dependencies:
       vue: 3.5.18(typescript@5.8.3)
     optionalDependencies:
       typescript: 5.8.3
-      vite-plugin-vuetify: 2.1.1(rolldown-vite@7.0.11(@types/node@24.1.0)(esbuild@0.25.8)(jiti@2.5.1)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(vue@3.5.18(typescript@5.8.3))(vuetify@3.9.2)
+      vite-plugin-vuetify: 2.1.1(rolldown-vite@7.0.11(@types/node@24.1.0)(esbuild@0.25.8)(jiti@2.5.1)(sass-embedded@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(vue@3.5.18(typescript@5.8.3))(vuetify@3.9.3)
 
   w3c-keyname@2.2.8: {}
 
@@ -23941,4 +23941,4 @@ snapshots:
 
   zod@3.25.76: {}
 
-  zod@4.0.11: {}
+  zod@4.0.13: {}
