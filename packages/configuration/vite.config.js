@@ -22,7 +22,7 @@ export default defineConfig({
     tsconfigPaths(),
     vue(),
     // @TODO: https://github.com/qmhc/vite-plugin-dts/issues/302
-    dts({ tsconfigPath: "tsconfig.build.json" }),
+    dts({ processor: "vue", tsconfigPath: "tsconfig.build.json" }),
     mkcert(),
   ],
 });

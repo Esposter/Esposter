@@ -67,6 +67,7 @@ catalog:
   "@vue-flow/minimap": ^1.5.3
   "@vue-flow/node-resizer": ^1.5.0
   "@vue-pdf-viewer/viewer": ^2.5.8
+  "@vue/language-core": ^3.0.4
   "@vue/test-utils": ^2.4.6
   "@vuepic/vue-datepicker": ^11.0.2
   "@vueuse/core": ^13.6.0
@@ -169,7 +170,7 @@ catalog:
   typescript-eslint: ^8.38.0
   unocss: ^66.3.3
   unplugin-auto-import: ^19.3.0
-  unplugin-dts: ^1.0.0-beta.4
+  unplugin-dts: ^1.0.0-beta.5
   v-viewer: ^3.0.22
   viewerjs: ^1.11.7
   vite: npm:rolldown-vite@latest

@@ -53,6 +53,7 @@
     "@prettier/plugin-oxc": "catalog:",
     "@types/node": "catalog:",
     "@vitest/coverage-v8": "catalog:",
+    "@vue/language-core": "catalog:",
     "ctix": "catalog:",
     "dotenv": "catalog:",
     "eslint": "catalog:",
