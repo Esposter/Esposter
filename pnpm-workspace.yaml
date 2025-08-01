@@ -67,7 +67,7 @@ catalog:
   "@vue-flow/minimap": ^1.5.3
   "@vue-flow/node-resizer": ^1.5.0
   "@vue-pdf-viewer/viewer": ^2.5.8
-  "@vue/language-core": ^3.0.4
+  "@vue/language-core": ^3.0.5
   "@vue/test-utils": ^2.4.6
   "@vuepic/vue-datepicker": ^11.0.2
   "@vueuse/core": ^13.6.0
