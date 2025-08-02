@@ -31,13 +31,13 @@ catalog:
   "@nuxtjs/seo": ^3.1.0
   "@pinia/nuxt": ^0.11.2
   "@prettier/plugin-oxc": ^0.0.4
-  "@tiptap/core": ^3.0.7
-  "@tiptap/extension-mention": ^3.0.7
-  "@tiptap/extensions": ^3.0.7
-  "@tiptap/pm": ^3.0.7
-  "@tiptap/starter-kit": ^3.0.7
-  "@tiptap/suggestion": ^3.0.7
-  "@tiptap/vue-3": ^3.0.7
+  "@tiptap/core": ^3.0.9
+  "@tiptap/extension-mention": ^3.0.9
+  "@tiptap/extensions": ^3.0.9
+  "@tiptap/pm": ^3.0.9
+  "@tiptap/starter-kit": ^3.0.9
+  "@tiptap/suggestion": ^3.0.9
+  "@tiptap/vue-3": ^3.0.9
   "@trpc/client": ^11.4.3
   "@trpc/server": ^11.4.3
   "@types/data-urls": ^3.0.4
@@ -159,13 +159,13 @@ catalog:
   survey-creator-core: ^2.3.0
   survey-creator-vue: ^2.3.0
   survey-vue3-ui: ^2.3.0
-  three: ^0.179.0
+  three: ^0.179.1
   three-globe: ^2.44.0
   tippy.js: ^6.3.7
   trpc-nuxt: ^1.2.0
   tsx: ^4.20.3
   type-fest: ^4.41.0
-  typedoc: 0.28.7
+  typedoc: ^0.28.9
   typescript: ^5.9.2
   typescript-eslint: ^8.38.0
   unocss: ^66.3.3
