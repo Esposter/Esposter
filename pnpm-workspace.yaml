@@ -181,7 +181,7 @@ catalog:
   vue-codemirror: ^6.1.1
   vue-pdf-embed: ^2.1.3
   vue-router: ^4.5.1
-  vue-tsc: ^3.0.4
+  vue-tsc: ^3.0.5
   vue-waypoint: ^4.3.0
   vue3-apexcharts: ^1.8.0
   vuetify: ^3.9.3

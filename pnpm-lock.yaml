@@ -535,7 +535,7 @@ catalogs:
       specifier: ^4.5.1
       version: 4.5.1
     vue-tsc:
-      specifier: ^3.0.4
+      specifier: ^3.0.5
       version: 3.0.5
     vue-waypoint:
       specifier: ^4.3.0
