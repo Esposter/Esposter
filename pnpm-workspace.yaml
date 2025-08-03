@@ -148,7 +148,7 @@ catalog:
   prettier: ^3.6.2
   rate-limiter-flexible: ^7.2.0
   rolldown: ^1.0.0-beta.30
-  rolldown-plugin-dts: ^0.15.0
+  rolldown-plugin-dts: ^0.15.1
   rxjs: ^7.8.2
   sass-embedded: ^1.89.2
   sax: ^1.4.1
