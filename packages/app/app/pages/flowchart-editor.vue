@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { BASE_NODE_TYPE } from "@/services/flowchartEditor/constants";
 import { useFlowchartEditorStore } from "@/store/flowchartEditor";
 import { Background } from "@vue-flow/background";
@@ -12,22 +11,30 @@ await useReadFlowchartEditor();
 const flowchartEditorStore = useFlowchartEditorStore();
 const { saveFlowchartEditor } = flowchartEditorStore;
 const { flowchartEditor } = storeToRefs(flowchartEditorStore);
-const { addEdges, onConnect, onEdgesChange, onNodesChange } = useVueFlow();
+const { addEdges, onConnect } = useVueFlow();
 const { onDragLeave, onDragOver, onDrop } = useDragAndDrop();
 
 onConnect(addEdges);
-
-onEdgesChange(getSynchronizedFunction(saveFlowchartEditor));
-
-onNodesChange(getSynchronizedFunction(saveFlowchartEditor));
 </script>
 
 <template>
   <NuxtLayout :left-navigation-drawer-props="{ scrim: false }" :right-navigation-drawer-props="{ scrim: false }">
     <div class="bg-surface" h-full>
       <VueFlow
-        v-model:nodes="flowchartEditor.nodes"
-        v-model:edges="flowchartEditor.edges"
+        :nodes="flowchartEditor.nodes"
+        :edges="flowchartEditor.edges"
+        @update:nodes="
+          async (newNodes) => {
+            flowchartEditor.nodes = newNodes;
+            await saveFlowchartEditor();
+          }
+        "
+        @update:edges="
+          async (newEdges) => {
+            flowchartEditor.edges = newEdges;
+            await saveFlowchartEditor();
+          }
+        "
         @dragover="onDragOver"
         @dragleave="onDragLeave"
         @drop="onDrop"
