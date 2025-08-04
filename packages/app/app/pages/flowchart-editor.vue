@@ -24,12 +24,13 @@ onNodesChange(getSynchronizedFunction(saveFlowchartEditor));
 
 <template>
   <NuxtLayout :left-navigation-drawer-props="{ scrim: false }" :right-navigation-drawer-props="{ scrim: false }">
-    <div class="bg-surface" h-full @drop="onDrop">
+    <div class="bg-surface" h-full>
       <VueFlow
         v-model:nodes="flowchartEditor.nodes"
         v-model:edges="flowchartEditor.edges"
         @dragover="onDragOver"
         @dragleave="onDragLeave"
+        @drop="onDrop"
       >
         <Background />
         <FlowchartEditorSideBarButton />
