@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import type { CustomEvent, GraphNode } from "@vue-flow/core";
+
 import { NodeType } from "#shared/models/flowchartEditor/data/NodeType";
 import { NodeTypeMap } from "@/services/flowchartEditor/NodeTypeMap";
 import { useFlowchartEditorStore } from "@/store/flowchartEditor";
 import { Background } from "@vue-flow/background";
-import { CustomEvent, GraphNode, Panel, useVueFlow, VueFlow } from "@vue-flow/core";
+import { Panel, useVueFlow, VueFlow } from "@vue-flow/core";
 import { MiniMap } from "@vue-flow/minimap";
 
 defineRouteRules({ ssr: false });
@@ -25,8 +27,8 @@ onConnect(addEdges);
         :nodes="flowchartEditor.nodes"
         :edges="flowchartEditor.edges"
         @update:nodes="
-          async (newNodes: GraphNode<unknown, Record<string, CustomEvent>, NodeType>[]) => {
-            flowchartEditor.nodes = newNodes;
+          async (newNodes) => {
+            flowchartEditor.nodes = newNodes as GraphNode<unknown, Record<string, CustomEvent>, NodeType>[];
             await saveFlowchartEditor();
           }
         "
