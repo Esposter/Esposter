@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { BASE_NODE_TYPE } from "@/services/flowchartEditor/constants";
+import { NodeType } from "#shared/models/flowchartEditor/data/NodeType";
+import { NodeTypeMap } from "@/services/flowchartEditor/NodeTypeMap";
 import { useFlowchartEditorStore } from "@/store/flowchartEditor";
 import { Background } from "@vue-flow/background";
-import { useVueFlow, VueFlow } from "@vue-flow/core";
+import { CustomEvent, GraphNode, Panel, useVueFlow, VueFlow } from "@vue-flow/core";
 import { MiniMap } from "@vue-flow/minimap";
 
 defineRouteRules({ ssr: false });
@@ -24,7 +25,7 @@ onConnect(addEdges);
         :nodes="flowchartEditor.nodes"
         :edges="flowchartEditor.edges"
         @update:nodes="
-          async (newNodes) => {
+          async (newNodes: GraphNode<unknown, Record<string, CustomEvent>, NodeType>[]) => {
             flowchartEditor.nodes = newNodes;
             await saveFlowchartEditor();
           }
@@ -40,12 +41,13 @@ onConnect(addEdges);
         @drop="onDrop"
       >
         <Background />
+        <MiniMap class="bg-surface" />
+        <Panel position="top-left" />
         <FlowchartEditorSideBarButton />
         <FlowchartEditorControls />
-        <MiniMap class="bg-surface" />
         <FlowchartEditorDropzoneBackground />
-        <template #[`node-${BASE_NODE_TYPE}`]="{ data }">
-          <FlowchartEditorNodeBase :data />
+        <template v-for="nodeType of Object.values(NodeType)" :key="nodeType" #[`node-${nodeType}`]="{ data }">
+          <component :is="NodeTypeMap[nodeType].component" :data />
         </template>
       </VueFlow>
     </div>

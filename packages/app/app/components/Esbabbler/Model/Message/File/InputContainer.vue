@@ -10,7 +10,7 @@ const { files, fileUrlMap } = storeToRefs(uploadFileStore);
   <v-container v-if="files.length > 0" fluid pb-0>
     <v-row m-0 flex-nowrap overflow-x-auto>
       <EsbabblerModelMessageFileInput
-        v-for="(file, index) in files"
+        v-for="(file, index) of files"
         :key="file.id"
         :file
         :index

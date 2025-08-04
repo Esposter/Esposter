@@ -16,5 +16,7 @@ export const useFlowchartEditorStore = defineStore("flowchartEditor", () => {
       localStorage.setItem(FLOWCHART_EDITOR_LOCAL_STORAGE_KEY, flowchartEditor.value.toJSON());
     }
   };
-  return { flowchartEditor, saveFlowchartEditor };
+  // @ts-expect-error Type instantiation is excessively deep and possibly infinite. ts(2589)
+  const selectedNodes = computed(() => flowchartEditor.value.nodes.map(({ selected }) => selected));
+  return { flowchartEditor, saveFlowchartEditor, selectedNodes };
 });

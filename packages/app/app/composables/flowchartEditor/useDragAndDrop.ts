@@ -1,4 +1,4 @@
-import { BASE_NODE_TYPE } from "@/services/flowchartEditor/constants";
+import { NodeType } from "#shared/models/flowchartEditor/data/NodeType";
 import { useDragStore } from "@/store/flowchartEditor/drag";
 import { useVueFlow } from "@vue-flow/core";
 
@@ -7,7 +7,7 @@ export const useDragAndDrop = () => {
   const { isDragging, isDragOver, type } = storeToRefs(dragStore);
   const { addNodes, nodes, onNodesInitialized, screenToFlowCoordinate, updateNode } = useVueFlow();
 
-  const onDragStart = (event: DragEvent, nodeType = BASE_NODE_TYPE) => {
+  const onDragStart = (event: DragEvent, nodeType = NodeType.Base) => {
     if (event.dataTransfer) {
       event.dataTransfer.setData("application/vueflow", nodeType);
       event.dataTransfer.effectAllowed = "move";
@@ -33,7 +33,7 @@ export const useDragAndDrop = () => {
   const onDragEnd = () => {
     isDragging.value = false;
     isDragOver.value = false;
-    type.value = BASE_NODE_TYPE;
+    type.value = NodeType.Base;
     document.removeEventListener("drop", onDragEnd);
   };
 

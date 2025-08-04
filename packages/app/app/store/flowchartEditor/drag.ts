@@ -1,9 +1,9 @@
-import { BASE_NODE_TYPE } from "@/services/flowchartEditor/constants";
+import { NodeType } from "#shared/models/flowchartEditor/data/NodeType";
 
 export const useDragStore = defineStore("flowchartEditor/drag", () => {
   const isDragging = ref(false);
   const isDragOver = ref(false);
-  const type = ref(BASE_NODE_TYPE);
+  const type = ref(NodeType.Base);
 
   watch(isDragging, (dragging) => {
     document.body.style.userSelect = dragging ? "none" : "";
