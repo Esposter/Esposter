@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { GraphEdge } from "#shared/models/flowchartEditor/data/GraphEdge";
 import type { GraphNode } from "#shared/models/flowchartEditor/data/GraphNode";
 
 import { NodeType } from "#shared/models/flowchartEditor/data/NodeType";
@@ -43,7 +44,7 @@ onConnect(addEdges);
         "
         @update:edges="
           async (newEdges) => {
-            flowchartEditor.edges = newEdges;
+            flowchartEditor.edges = newEdges as GraphEdge[];
             await saveFlowchartEditor();
           }
         "

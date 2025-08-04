@@ -1,14 +1,14 @@
 import type { ToData } from "#shared/models/entity/ToData";
+import type { GraphEdge } from "#shared/models/flowchartEditor/data/GraphEdge";
 import type { GraphNode } from "#shared/models/flowchartEditor/data/GraphNode";
-import type { Edge } from "@vue-flow/core";
 
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
-import { edgeSchema } from "#shared/models/flowchartEditor/data/Edge";
+import { graphEdgeSchema } from "#shared/models/flowchartEditor/data/GraphEdge";
 import { graphNodeSchema } from "#shared/models/flowchartEditor/data/GraphNode";
 import { z } from "zod";
 
 export class FlowchartEditor extends AItemEntity {
-  edges: Edge[] = [];
+  edges: GraphEdge[] = [];
   nodes: GraphNode[] = [];
 
   constructor(init?: Partial<FlowchartEditor>) {
@@ -19,6 +19,6 @@ export class FlowchartEditor extends AItemEntity {
 
 export const flowchartEditorSchema = z.object({
   ...aItemEntitySchema.shape,
-  edges: edgeSchema.array(),
+  edges: graphEdgeSchema.array(),
   nodes: graphNodeSchema.array(),
 }) satisfies z.ZodType<ToData<FlowchartEditor>>;
