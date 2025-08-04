@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { CustomEvent, GraphNode } from "@vue-flow/core";
+import type { GraphNode } from "#shared/models/flowchartEditor/data/GraphNode";
 
 import { NodeType } from "#shared/models/flowchartEditor/data/NodeType";
 import { NodeTypeMap } from "@/services/flowchartEditor/NodeTypeMap";
 import { useFlowchartEditorStore } from "@/store/flowchartEditor";
 import { Background } from "@vue-flow/background";
-import { Panel, useVueFlow, VueFlow } from "@vue-flow/core";
+import { useVueFlow, VueFlow } from "@vue-flow/core";
 import { MiniMap } from "@vue-flow/minimap";
 
 defineRouteRules({ ssr: false });
@@ -24,11 +24,20 @@ onConnect(addEdges);
   <NuxtLayout :left-navigation-drawer-props="{ scrim: false }" :right-navigation-drawer-props="{ scrim: false }">
     <div class="bg-surface" h-full>
       <VueFlow
+        :node-types="
+          Object.entries(NodeTypeMap).reduce(
+            (acc, [nodeType, { component }]) => {
+              acc[nodeType] = component;
+              return acc;
+            },
+            {} as Record<NodeType, Component>,
+          )
+        "
         :nodes="flowchartEditor.nodes"
         :edges="flowchartEditor.edges"
         @update:nodes="
           async (newNodes) => {
-            flowchartEditor.nodes = newNodes as GraphNode<unknown, Record<string, CustomEvent>, NodeType>[];
+            flowchartEditor.nodes = newNodes as GraphNode[];
             await saveFlowchartEditor();
           }
         "
@@ -44,13 +53,10 @@ onConnect(addEdges);
       >
         <Background />
         <MiniMap class="bg-surface" />
-        <Panel position="top-left" />
-        <FlowchartEditorSideBarButton />
         <FlowchartEditorControls />
+        <FlowchartEditorSideBarButton />
+        <FlowchartEditorPanel />
         <FlowchartEditorDropzoneBackground />
-        <template v-for="nodeType of Object.values(NodeType)" :key="nodeType" #[`node-${nodeType}`]="{ data }">
-          <component :is="NodeTypeMap[nodeType].component" :data />
-        </template>
       </VueFlow>
     </div>
     <template #left>

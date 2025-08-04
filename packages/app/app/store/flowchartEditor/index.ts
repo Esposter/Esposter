@@ -17,6 +17,7 @@ export const useFlowchartEditorStore = defineStore("flowchartEditor", () => {
     }
   };
   // @ts-expect-error Type instantiation is excessively deep and possibly infinite. ts(2589)
-  const selectedNodes = computed(() => flowchartEditor.value.nodes.map(({ selected }) => selected));
-  return { flowchartEditor, saveFlowchartEditor, selectedNodes };
+  const selectedNodes = computed(() => flowchartEditor.value.nodes.filter(({ selected }) => selected));
+  const isSingleNodeSelected = computed(() => selectedNodes.value.length === 1);
+  return { flowchartEditor, isSingleNodeSelected, saveFlowchartEditor, selectedNodes };
 });
