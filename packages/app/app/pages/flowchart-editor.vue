@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { dayjs } from "#shared/services/dayjs";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
-import { DEFAULT_NODE_TYPE } from "@/services/flowchartEditor/constants";
+import { BASE_NODE_TYPE } from "@/services/flowchartEditor/constants";
 import { useFlowchartEditorStore } from "@/store/flowchartEditor";
 import { Background } from "@vue-flow/background";
 import { useVueFlow, VueFlow } from "@vue-flow/core";
@@ -12,21 +11,15 @@ defineRouteRules({ ssr: false });
 await useReadFlowchartEditor();
 const flowchartEditorStore = useFlowchartEditorStore();
 const { saveFlowchartEditor } = flowchartEditorStore;
-const throttledSaveFlowChartEditor = useThrottleFn(
-  () => saveFlowchartEditor(),
-  dayjs.duration(1, "second").asMilliseconds(),
-);
 const { flowchartEditor } = storeToRefs(flowchartEditorStore);
 const { addEdges, onConnect, onEdgesChange, onNodesChange } = useVueFlow();
 const { onDragLeave, onDragOver, onDrop } = useDragAndDrop();
 
-onConnect((connection) => {
-  addEdges(connection);
-});
+onConnect(addEdges);
 
-onEdgesChange(getSynchronizedFunction(throttledSaveFlowChartEditor));
+onEdgesChange(getSynchronizedFunction(saveFlowchartEditor));
 
-onNodesChange(getSynchronizedFunction(throttledSaveFlowChartEditor));
+onNodesChange(getSynchronizedFunction(saveFlowchartEditor));
 </script>
 
 <template>
@@ -43,8 +36,8 @@ onNodesChange(getSynchronizedFunction(throttledSaveFlowChartEditor));
         <FlowchartEditorControls />
         <MiniMap class="bg-surface" />
         <FlowchartEditorDropzoneBackground />
-        <template #[`node-${DEFAULT_NODE_TYPE}`]="{ data }">
-          <FlowchartEditorBaseNode :data />
+        <template #[`node-${BASE_NODE_TYPE}`]="{ data }">
+          <FlowchartEditorNodeBase :data />
         </template>
       </VueFlow>
     </div>

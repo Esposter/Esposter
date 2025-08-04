@@ -16,7 +16,7 @@ const { text } = useColors();
   <div class="bg-surface" size-full>
     <NodeResizer :min-width="100" :min-height="30" :color="text" />
     <Handle type="target" :position="Position.Left" />
-    <div p-2>{{ data.label }}</div>
+    <div p-2 text-center>{{ data.label }}</div>
     <Handle type="source" :position="Position.Right" />
   </div>
 </template>
