@@ -1,7 +1,8 @@
+import type { GraphNode } from "#shared/models/flowchartEditor/data/GraphNode";
 import type { GraphEdge as BaseGraphEdge, CustomEvent } from "@vue-flow/core";
 import type { Except } from "type-fest";
 
-import { type GraphNode, graphNodeSchema } from "#shared/models/flowchartEditor/data/GraphNode";
+import { graphNodeSchema } from "#shared/models/flowchartEditor/data/GraphNode";
 import { NodeType, nodeTypeSchema } from "#shared/models/flowchartEditor/data/NodeType";
 import { z } from "zod";
 
