@@ -14,7 +14,6 @@ const { leftDrawerOpen, leftDrawerOpenAuto } = storeToRefs(layoutStore);
       <template v-for="nodeType of Object.values(NodeType)" :key="nodeType">
         <component :is="NodeTypeMap[nodeType].preview" />
       </template>
-      <FlowchartEditorSideBarNodeBase />
     </v-list>
     <v-btn v-if="!leftDrawerOpenAuto" self-end icon="mdi-chevron-double-left" @click="leftDrawerOpen = false" />
   </div>
