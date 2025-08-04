@@ -3,12 +3,12 @@ import type { Node } from "@vue-flow/core";
 
 import { Handle, Position } from "@vue-flow/core";
 import { NodeResizer } from "@vue-flow/node-resizer";
-
-interface ResizableNodeProps {
+// @TODO: https://github.com/vuejs/core/issues/11371
+interface NodeBaseProps {
   data: Node["data"];
 }
 
-const { data } = defineProps<ResizableNodeProps>();
+const { data } = defineProps<NodeBaseProps>();
 const { text } = useColors();
 </script>
 

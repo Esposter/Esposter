@@ -5,7 +5,7 @@ const { text } = useColors();
 
 <template>
   <v-list-item
-    class="vue-flow__node-default"
+    class="bg-surface vue-flow__node-default"
     cursor-pointer
     title="Base Node"
     :draggable="true"
