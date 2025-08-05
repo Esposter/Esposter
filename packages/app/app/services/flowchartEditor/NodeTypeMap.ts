@@ -1,9 +1,8 @@
-import { NodeType } from "#shared/models/flowchartEditor/data/NodeType";
+import { GeneralNodeType } from "#shared/models/flowchartEditor/node/GeneralNodeType";
 
 export const NodeTypeMap = {
-  [NodeType.Base]: {
-    component: defineAsyncComponent(() => import("@/components/FlowchartEditor/Node/Base.vue")),
-    panelContent: defineAsyncComponent(() => import("@/components/FlowchartEditor/Panel/Content/Base.vue")),
-    preview: defineAsyncComponent(() => import("@/components/FlowchartEditor/SideBar/Node/Base.vue")),
+  [GeneralNodeType.Rectangle]: {
+    component: defineAsyncComponent(() => import("@/components/FlowchartEditor/Node/Rectangle.vue")),
+    preview: defineAsyncComponent(() => import("@/components/FlowchartEditor/SideBar/Node/Rectangle.vue")),
   },
-} as const satisfies Record<NodeType, { component: Component; panelContent?: Component; preview: Component }>;
+} as const satisfies Record<GeneralNodeType, { component: Component; preview: Component }>;

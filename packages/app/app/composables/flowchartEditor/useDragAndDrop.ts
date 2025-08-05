@@ -1,13 +1,13 @@
-import { NodeType } from "#shared/models/flowchartEditor/data/NodeType";
+import { GeneralNodeType } from "#shared/models/flowchartEditor/node/GeneralNodeType";
 import { useDragStore } from "@/store/flowchartEditor/drag";
 import { useVueFlow } from "@vue-flow/core";
 
 export const useDragAndDrop = () => {
   const dragStore = useDragStore();
   const { isDragging, isDragOver, type } = storeToRefs(dragStore);
-  const { addNodes, nodes, onNodesInitialized, screenToFlowCoordinate, updateNode } = useVueFlow();
+  const { addNodes, onNodesInitialized, screenToFlowCoordinate, updateNode } = useVueFlow();
 
-  const onDragStart = (event: DragEvent, nodeType = NodeType.Base) => {
+  const onDragStart = (event: DragEvent, nodeType = GeneralNodeType.Rectangle) => {
     if (event.dataTransfer) {
       event.dataTransfer.setData("application/vueflow", nodeType);
       event.dataTransfer.effectAllowed = "move";
@@ -33,7 +33,7 @@ export const useDragAndDrop = () => {
   const onDragEnd = () => {
     isDragging.value = false;
     isDragOver.value = false;
-    type.value = NodeType.Base;
+    type.value = GeneralNodeType.Rectangle;
     document.removeEventListener("drop", onDragEnd);
   };
 
@@ -53,7 +53,7 @@ export const useDragAndDrop = () => {
       }));
       off();
     });
-    addNodes({ data: { label: `Node ${nodes.value.length + 1}` }, id, position, type: type.value });
+    addNodes({ id, position, type: type.value });
   };
 
   return {

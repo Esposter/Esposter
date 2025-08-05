@@ -4,13 +4,13 @@ import type { Except } from "type-fest";
 import { dimensionsSchema } from "#shared/models/flowchartEditor/data/Dimensions";
 import { graphNodeIdSchema } from "#shared/models/flowchartEditor/data/GraphNodeId";
 import { handleBoundsSchema } from "#shared/models/flowchartEditor/data/HandleBounds";
-import { NodeType, nodeTypeSchema } from "#shared/models/flowchartEditor/data/NodeType";
 import { xyPositionSchema } from "#shared/models/flowchartEditor/data/XYPosition";
 import { xyzPositionSchema } from "#shared/models/flowchartEditor/data/XYZPosition";
+import { GeneralNodeType, generalNodeTypeSchema } from "#shared/models/flowchartEditor/node/GeneralNodeType";
 import { z } from "zod";
 
 export type GraphNode = Except<
-  BaseGraphNode<Record<string, unknown>, Record<string, CustomEvent>, NodeType>,
+  BaseGraphNode<Record<string, unknown>, Record<string, CustomEvent>, GeneralNodeType>,
   "events" | "style"
 > & { style?: Exclude<BaseGraphNode["style"], Function> };
 
@@ -25,5 +25,5 @@ export const graphNodeSchema = z.object({
   position: xyPositionSchema,
   resizing: z.boolean(),
   selected: z.boolean(),
-  type: nodeTypeSchema,
+  type: generalNodeTypeSchema,
 }) satisfies z.ZodType<GraphNode>;

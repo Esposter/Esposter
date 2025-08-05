@@ -1,16 +1,9 @@
 <script setup lang="ts">
-const { onDragStart } = useDragAndDrop();
 const { text } = useColors();
 </script>
 
 <template>
-  <v-list-item
-    class="bg-surface vue-flow__node-default"
-    cursor-pointer
-    title="Base Node"
-    :draggable="true"
-    @dragstart="onDragStart($event)"
-  />
+  <v-list-item class="bg-surface vue-flow__node-default" />
 </template>
 
 <style scoped lang="scss">

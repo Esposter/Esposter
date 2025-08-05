@@ -2,7 +2,7 @@
 import type { GraphEdge } from "#shared/models/flowchartEditor/data/GraphEdge";
 import type { GraphNode } from "#shared/models/flowchartEditor/data/GraphNode";
 
-import { NodeType } from "#shared/models/flowchartEditor/data/NodeType";
+import { GeneralNodeType } from "#shared/models/flowchartEditor/node/GeneralNodeType";
 import { NodeTypeMap } from "@/services/flowchartEditor/NodeTypeMap";
 import { useFlowchartEditorStore } from "@/store/flowchartEditor";
 import { Background } from "@vue-flow/background";
@@ -31,7 +31,7 @@ onConnect(addEdges);
               acc[nodeType] = component;
               return acc;
             },
-            {} as Record<NodeType, Component>,
+            {} as Record<GeneralNodeType, Component>,
           )
         "
         :nodes="flowchartEditor.nodes"
