@@ -131,7 +131,7 @@ catalog:
   mjml-browser: ^4.15.3
   node-emoji: ^2.2.0
   node-html-parser: ^7.0.1
-  nuxt: 4.0.1
+  nuxt: ^4.0.3
   nuxt-security: ^2.3.0
   nuxt-site-config: ^3.2.2
   obscenity: ^0.4.4
@@ -184,7 +184,7 @@ catalog:
   vue-tsc: ^3.0.5
   vue-waypoint: ^4.3.0
   vue3-apexcharts: ^1.8.0
-  vuetify: ^3.9.3
+  vuetify: ^3.9.4
   vuetify-nuxt-module: ^0.18.7
   web-push: ^3.6.7
   worker-timers: ^8.0.23
