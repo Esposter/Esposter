@@ -169,7 +169,7 @@ catalog:
   typescript: ^5.9.2
   typescript-eslint: ^8.39.0
   unocss: ^66.4.1
-  unplugin-auto-import: ^19.3.0
+  unplugin-auto-import: ^20.0.0
   unplugin-dts: ^1.0.0-beta.6
   v-viewer: ^3.0.22
   viewerjs: ^1.11.7
