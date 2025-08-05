@@ -100,7 +100,6 @@ onMounted(() => {
 
 <style scoped lang="scss">
 :deep(.dcg-container) {
-  background: transparent !important;
   cursor: move;
 
   > div:first-of-type {
