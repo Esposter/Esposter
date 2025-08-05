@@ -30,7 +30,7 @@ export const useReplyStore = defineStore("esbabbler/reply", () => {
   const isIndicatorActive = ref(false);
   const onIndicatorClick = (rowKey: string) => {
     activeRowKey.value = rowKey;
-    document.querySelector(`#${rowKey}`)?.scrollIntoView({ behavior: "smooth" });
+    document.getElementById(rowKey)?.scrollIntoView({ behavior: "smooth" });
     useTimeoutFn(() => {
       activeRowKey.value = undefined;
     }, dayjs.duration(2, "seconds").asMilliseconds());

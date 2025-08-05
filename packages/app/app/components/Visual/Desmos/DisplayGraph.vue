@@ -70,7 +70,7 @@ watch(componentsToRender, (newComponentsToRender) => {
 });
 
 onMounted(() => {
-  const element = document.querySelector<HTMLDivElement>(`#${id}`);
+  const element = document.getElementById(id) as HTMLDivElement | null;
   if (!element) return;
 
   onLoaded(async ({ GraphingCalculator }) => {
@@ -85,7 +85,7 @@ onMounted(() => {
       trace: false,
     });
     calculator.setExpressions(expressions.map((e) => ({ ...e, color: e.color ?? Colors.BLACK })));
-    const newExpressionPanel = document.querySelector<HTMLDivElement>(`#${id} .dcg-exppanel-outer`);
+    const newExpressionPanel = element.querySelector<HTMLDivElement>(".dcg-exppanel-outer");
     if (!newExpressionPanel) return;
 
     expressionPanel.value = newExpressionPanel;

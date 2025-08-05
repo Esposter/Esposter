@@ -51,6 +51,7 @@
     "unicorn/numeric-separators-style": ["error", { "onlyIfContainsSeparator": true }],
     "unicorn/prefer-dom-node-dataset": "off",
     "unicorn/prefer-event-target": "off",
+    "unicorn/prefer-query-selector": "off",
     "unicorn/switch-case-braces": "off",
     "vars-on-top": "off",
     "yoda": ["error", "never"]
