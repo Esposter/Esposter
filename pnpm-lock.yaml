@@ -562,8 +562,8 @@ catalogs:
       specifier: ^3.1.1
       version: 3.1.1
     zod:
-      specifier: ^4.0.14
-      version: 4.0.14
+      specifier: ^4.0.15
+      version: 4.0.15
 
 overrides:
   pdfjs-dist: ^5.4.54
@@ -789,7 +789,7 @@ importers:
         version: 0.44.4(@electric-sql/pglite@0.3.7)(kysely@0.28.4)(postgres@3.4.7)
       drizzle-zod:
         specifier: 'catalog:'
-        version: 0.8.2(drizzle-orm@0.44.4(@electric-sql/pglite@0.3.7)(kysely@0.28.4)(postgres@3.4.7))(zod@4.0.14)
+        version: 0.8.2(drizzle-orm@0.44.4(@electric-sql/pglite@0.3.7)(kysely@0.28.4)(postgres@3.4.7))(zod@4.0.15)
       emoji-mart-vue-fast:
         specifier: 'catalog:'
         version: 15.0.4(vue@3.5.18(typescript@5.9.2))
@@ -996,7 +996,7 @@ importers:
         version: 8.18.3
       zod:
         specifier: 'catalog:'
-        version: 4.0.14
+        version: 4.0.15
     devDependencies:
       '@electric-sql/pglite':
         specifier: 'catalog:'
@@ -11673,8 +11673,8 @@ packages:
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
-  zod@4.0.14:
-    resolution: {integrity: sha512-nGFJTnJN6cM2v9kXL+SOBq3AtjQby3Mv5ySGFof5UGRHrRioSJ5iG680cYNjE/yWk671nROcpPj4hAS8nyLhSw==}
+  zod@4.0.15:
+    resolution: {integrity: sha512-2IVHb9h4Mt6+UXkyMs0XbfICUh1eUrlJJAOupBHUhLRnKkruawyDddYRCs0Eizt900ntIMk9/4RksYl+FgSpcQ==}
 
 snapshots:
 
@@ -17030,7 +17030,7 @@ snapshots:
       jose: 5.10.0
       kysely: 0.28.4
       nanostores: 0.11.4
-      zod: 4.0.14
+      zod: 4.0.15
 
   better-call@1.0.12:
     dependencies:
@@ -18032,10 +18032,10 @@ snapshots:
       kysely: 0.28.4
       postgres: 3.4.7
 
-  drizzle-zod@0.8.2(drizzle-orm@0.44.4(@electric-sql/pglite@0.3.7)(kysely@0.28.4)(postgres@3.4.7))(zod@4.0.14):
+  drizzle-zod@0.8.2(drizzle-orm@0.44.4(@electric-sql/pglite@0.3.7)(kysely@0.28.4)(postgres@3.4.7))(zod@4.0.15):
     dependencies:
       drizzle-orm: 0.44.4(@electric-sql/pglite@0.3.7)(kysely@0.28.4)(postgres@3.4.7)
-      zod: 4.0.14
+      zod: 4.0.15
 
   dts-resolver@2.1.1: {}
 
@@ -24041,4 +24041,4 @@ snapshots:
 
   zod@3.25.76: {}
 
-  zod@4.0.14: {}
+  zod@4.0.15: {}
