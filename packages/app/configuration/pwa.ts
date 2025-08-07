@@ -1,8 +1,8 @@
-import type { ModuleOptions } from "@vite-pwa/nuxt";
+import type { NuxtConfig } from "nuxt/schema";
 
 import { PWA_PUBLIC_FOLDER_PATH, SITE_DESCRIPTION, SITE_NAME } from "../shared/services/esposter/constants";
 
-export const pwa: ModuleOptions = {
+export const pwa: NuxtConfig["pwa"] = {
   manifest: {
     background_color: "#fff",
     description: SITE_DESCRIPTION,
