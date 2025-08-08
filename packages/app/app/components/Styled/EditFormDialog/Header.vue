@@ -2,11 +2,6 @@
 import type { ItemEntityType } from "#shared/models/entity/ItemEntityType";
 import type { VForm } from "vuetify/components";
 
-import ConfirmCloseDialogButton from "@/components/Styled/EditFormDialog/ConfirmCloseDialogButton.vue";
-import ConfirmDeleteDialogButton from "@/components/Styled/EditFormDialog/ConfirmDeleteDialogButton.vue";
-import ErrorIcon from "@/components/Styled/EditFormDialog/ErrorIcon.vue";
-import SaveButton from "@/components/Styled/EditFormDialog/SaveButton.vue";
-import ToggleFullScreenDialogButton from "@/components/Styled/EditFormDialog/ToggleFullScreenDialogButton.vue";
 import { prettify } from "@/util/text/prettify";
 
 interface HeaderProps<T> {
@@ -33,12 +28,15 @@ const emit = defineEmits<{
 <template>
   <v-toolbar flex-none pl-4 :title="`Configuration - ${itemType}`">
     <v-spacer />
-    <ErrorIcon :edit-form-ref :is-edit-form-valid />
-    <SaveButton :is-savable />
-    <ConfirmDeleteDialogButton :name :original-item @delete="emit('delete', $event)" />
+    <StyledEditFormDialogErrorIcon :edit-form-ref :is-edit-form-valid />
+    <StyledEditFormDialogSaveButton :is-savable />
+    <StyledEditFormDialogConfirmDeleteDialogButton :name :original-item @delete="emit('delete', $event)" />
     <v-divider mx-2="!" thickness="2" vertical inset />
-    <ToggleFullScreenDialogButton :is-full-screen-dialog @click="emit('update:fullscreen-dialog', $event)" />
-    <ConfirmCloseDialogButton
+    <StyledEditFormDialogToggleFullScreenDialogButton
+      :is-full-screen-dialog
+      @click="emit('update:fullscreen-dialog', $event)"
+    />
+    <StyledEditFormDialogConfirmCloseDialogButton
       :edited-item
       :is-savable
       @update:edit-form-dialog="emit('update:edit-form-dialog', $event)"

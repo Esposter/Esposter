@@ -46,6 +46,7 @@ alwaysApply: false
   - Use functional components for simple UI elements.
   - Design components for reusability and testability.
   - Consider using slots for flexible component composition.
+  - Do not add imports of vue components that are defined already in the app as they are automatically imported by nuxt and we can reference them based on the file location.
 - **Code Splitting:**
   - Utilize dynamic imports for route-based code splitting.
   - Split large components into smaller chunks using `import()`.
