@@ -15,6 +15,7 @@ export const RoutePath = {
   Messages: (id: string) => `/messages/${id}`,
   MessagesIndex: "/messages",
   MessagesInvite: (code: string) => `/messages/invite/${code}`,
+  MessagesMessage: (id: string, rowKey: string) => `/messages/${id}/${rowKey}`,
   Post: (id: string) => `/post/${id}`,
   PostCreate: "/post/create",
   PostUpdate: (id: string) => `/post/update/${id}`,

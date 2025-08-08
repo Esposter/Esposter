@@ -1,7 +1,9 @@
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { Item } from "@/models/shared/Item";
 
+import { RoutePath } from "#shared/models/router/RoutePath";
 import { useEsbabblerStore } from "@/store/esbabbler";
+import { useRoomStore } from "@/store/esbabbler/room";
 import { parse } from "node-html-parser";
 
 export const useMessageActionItems = (
@@ -22,6 +24,9 @@ export const useMessageActionItems = (
 ) => {
   const esbabblerStore = useEsbabblerStore();
   const { copy } = esbabblerStore;
+  const roomStore = useRoomStore();
+  const { currentRoomId } = storeToRefs(roomStore);
+  const runtimeConfig = useRuntimeConfig();
   const editMessageItem: Item = {
     icon: "mdi-pencil",
     onClick: () => {
@@ -52,10 +57,19 @@ export const useMessageActionItems = (
     },
     title: "Copy Text",
   };
+  const copyMessageLinkItem: Item = {
+    icon: "mdi-link-variant",
+    onClick: () => {
+      if (!currentRoomId.value) return;
+      const link = `${runtimeConfig.public.baseUrl}${RoutePath.MessagesMessage(currentRoomId.value, message.rowKey)}`;
+      copy(link);
+    },
+    title: "Copy Message Link",
+  };
   const updateMessageItems = computed<Item[]>(() =>
     isEditable.value ? [editMessageItem, forwardMessageItem] : [replyItem, forwardMessageItem],
   );
-  const actionMessageItems: Item[] = [copyTextItem];
+  const actionMessageItems: Item[] = [copyTextItem, copyMessageLinkItem];
   const deleteMessageItem = computed<Item | undefined>(() =>
     isCreator.value && onDeleteMode
       ? {
