@@ -17,7 +17,7 @@ const emit = defineEmits<{
 const { data: session } = await authClient.useSession(useFetch);
 const isCreator = computed(() => session.value?.user.id === message.userId);
 const isEditable = computed(() => isCreator.value && !message.isForward);
-const { primaryItems: menuItems } = useMessageActionItems(message, isEditable, isCreator, {
+const { updateMessageItems } = useMessageActionItems(message, isEditable, isCreator, {
   onForward: (rowKey) => emit("update:forward", rowKey),
   onReply: (rowKey) => emit("update:reply", rowKey),
   onUpdateMode: () => emit("update:update-mode", true),
@@ -25,7 +25,11 @@ const { primaryItems: menuItems } = useMessageActionItems(message, isEditable, i
 </script>
 
 <template>
-  <v-tooltip v-for="{ icon, shortTitle, title, onClick } of menuItems" :key="title" :text="shortTitle ?? title">
+  <v-tooltip
+    v-for="{ icon, shortTitle, title, onClick } of updateMessageItems"
+    :key="title"
+    :text="shortTitle ?? title"
+  >
     <template #activator="{ props }">
       <v-btn m-0="!" rd-none="!" :icon size="small" :="props" @click="onClick" />
     </template>

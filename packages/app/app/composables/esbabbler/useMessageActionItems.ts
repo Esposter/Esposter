@@ -52,14 +52,10 @@ export const useMessageActionItems = (
     },
     title: "Copy Text",
   };
-  const primaryItems = computed<Item[]>(() =>
+  const updateMessageItems = computed<Item[]>(() =>
     isEditable.value ? [editMessageItem, forwardMessageItem] : [replyItem, forwardMessageItem],
   );
-  const menuItems = computed<Item[]>(() =>
-    isEditable.value
-      ? [editMessageItem, replyItem, forwardMessageItem, copyTextItem]
-      : [replyItem, forwardMessageItem, copyTextItem],
-  );
+  const actionMessageItems: Item[] = [copyTextItem];
   const deleteMessageItem = computed<Item | undefined>(() =>
     isCreator.value && onDeleteMode
       ? {
@@ -71,8 +67,8 @@ export const useMessageActionItems = (
       : undefined,
   );
   return {
+    actionMessageItems,
     deleteMessageItem,
-    menuItems,
-    primaryItems,
-  } as const;
+    updateMessageItems,
+  };
 };
