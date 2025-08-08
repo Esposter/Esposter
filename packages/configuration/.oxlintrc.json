@@ -3,7 +3,8 @@
   "categories": {
     "pedantic": "error",
     "suspicious": "error",
-    "style": "error"
+    "style": "error",
+    "perf": "error"
   },
   "ignorePatterns": ["*.tsx", "public/docs"],
   "plugins": ["import", "oxc", "typescript", "unicorn"],
@@ -25,6 +26,7 @@
     "max-params": "off",
     "new-cap": "off",
     "no-await-expression-member": "off",
+    "no-await-in-loop": "off",
     "no-continue": "off",
     "no-duplicate-imports": "off",
     "no-else-return": "off",

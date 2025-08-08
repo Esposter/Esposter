@@ -27,8 +27,8 @@ export const getCursorWhereAzureTable = <TItem extends ToData<AEntity>>(
     .join(" and ");
 };
 // Stupid Azure and Javascript property name casing conventions
-const KeysToCapitalize: string[] = [
+const KeysToCapitalize = new Set<string>([
   CompositeKeyEntityPropertyNames.partitionKey,
   CompositeKeyEntityPropertyNames.rowKey,
-];
-const sanitizeKey = (key: string) => (KeysToCapitalize.includes(key) ? capitalize(key) : key);
+]);
+const sanitizeKey = (key: string) => (KeysToCapitalize.has(key) ? capitalize(key) : key);
