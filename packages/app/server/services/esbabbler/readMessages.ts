@@ -5,6 +5,7 @@ import { CompositeKey } from "#shared/models/azure/CompositeKey";
 import { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
+import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
@@ -13,9 +14,7 @@ import { getCursorPaginationData } from "@@/server/services/pagination/cursor/ge
 import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
 
 export const readMessages = async ({ cursor, isIncludeValue, limit, order, roomId }: ReadMessagesInput) => {
-  // A note that the order is always Asc since Azure Table Storage does not support sorting
-  // We workaround supporting sorting via insert-sorts with the row key using reverse-ticked timestamps
-  const sortBy: SortItem<keyof MessageEntity>[] = [{ isIncludeValue, key: "rowKey", order: SortOrder.Asc }];
+  const sortBy: SortItem<keyof MessageEntity>[] = [{ isIncludeValue, ...MESSAGE_ROWKEY_SORT_ITEM }];
 
   if (order === SortOrder.Asc) {
     // 1. Get ascending ids from the index table (MessagesAscending)

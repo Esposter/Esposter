@@ -1,6 +1,8 @@
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
+import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useRoomStore } from "@/store/esbabbler/room";
 
@@ -75,10 +77,11 @@ export const useReadMessages = async () => {
         rowKeys: [rowKey],
       });
       if (messagesByRowKeys.length > 0) {
+        const cursor = serialize(messagesByRowKeys[0], [MESSAGE_ROWKEY_SORT_ITEM]);
         const [older, newer] = await Promise.all([
-          $trpc.message.readMessages.query({ cursor: rowKey, roomId: currentRoomId.value }),
+          $trpc.message.readMessages.query({ cursor, roomId: currentRoomId.value }),
           $trpc.message.readMessages.query({
-            cursor: rowKey,
+            cursor,
             isIncludeValue: true,
             order: SortOrder.Asc,
             roomId: currentRoomId.value,

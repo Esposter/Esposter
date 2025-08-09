@@ -5,7 +5,7 @@ import type { BinaryOperator, TableConfig } from "drizzle-orm";
 import type { PgTableWithColumns } from "drizzle-orm/pg-core";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { parse } from "@@/server/services/pagination/cursor/parse";
+import { parse } from "#shared/services/pagination/cursor/parse";
 import { exhaustiveGuard, NotFoundError } from "@esposter/shared";
 import { and, gt, gte, lt, lte } from "drizzle-orm";
 

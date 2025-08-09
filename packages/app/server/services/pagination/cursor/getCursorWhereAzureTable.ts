@@ -4,7 +4,7 @@ import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 
 import { CompositeKeyEntityPropertyNames } from "#shared/models/azure/CompositeKeyEntity";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { parse } from "@@/server/services/pagination/cursor/parse";
+import { parse } from "#shared/services/pagination/cursor/parse";
 import { capitalize, exhaustiveGuard, NotFoundError } from "@esposter/shared";
 
 export const getCursorWhereAzureTable = <TItem extends ToData<AEntity>>(
