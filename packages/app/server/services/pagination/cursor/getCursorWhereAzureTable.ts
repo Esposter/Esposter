@@ -30,7 +30,7 @@ export const getCursorWhereAzureTable = <TItem extends ToData<AEntity>>(
         default:
           exhaustiveGuard(sortItem.order);
       }
-      return `${key} ${comparer} '${value}'`;
+      return `${sanitizedKey} ${comparer} '${value}'`;
     })
     .join(" and ");
 };
