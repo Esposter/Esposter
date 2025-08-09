@@ -100,6 +100,7 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
     hasMoreNewer,
     isViewingOlderMessages,
     messageContainer,
+    messageContainerElement,
     messages,
     nextCursorNewer,
     scrollToBottom,
