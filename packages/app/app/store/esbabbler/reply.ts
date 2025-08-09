@@ -1,6 +1,5 @@
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
-import { dayjs } from "#shared/services/dayjs";
 import { MessageHookMap } from "@/services/esbabbler/message/MessageHookMap";
 import { createDataMap } from "@/services/shared/createDataMap";
 import { useMessageStore } from "@/store/esbabbler/message";
@@ -28,18 +27,10 @@ export const useReplyStore = defineStore("esbabbler/reply", () => {
 
   const activeRowKey = ref<string>();
   const isIndicatorActive = ref(false);
-  const onIndicatorClick = (rowKey: string) => {
-    activeRowKey.value = rowKey;
-    document.getElementById(rowKey)?.scrollIntoView({ behavior: "smooth" });
-    useTimeoutFn(() => {
-      activeRowKey.value = undefined;
-    }, dayjs.duration(2, "seconds").asMilliseconds());
-  };
 
   return {
     activeRowKey,
     isIndicatorActive,
-    onIndicatorClick,
     replyMap,
     rowKey,
   };

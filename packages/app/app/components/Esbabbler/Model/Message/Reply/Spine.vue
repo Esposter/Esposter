@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useScrollToMessage } from "@/composables/esbabbler/useScrollToMessage";
 import { useReplyStore } from "@/store/esbabbler/reply";
 
 interface ReplySpineProps {
@@ -8,8 +9,8 @@ interface ReplySpineProps {
 const { replyRowKey } = defineProps<ReplySpineProps>();
 const { border, text } = useColors();
 const replyStore = useReplyStore();
-const { onIndicatorClick } = replyStore;
 const { isIndicatorActive } = storeToRefs(replyStore);
+const scrollToMessage = useScrollToMessage();
 const borderColor = computed(() => (isIndicatorActive.value ? text.value : border.value));
 </script>
 
@@ -24,7 +25,7 @@ const borderColor = computed(() => (isIndicatorActive.value ? text.value : borde
     rd-tl-2
     @mouseenter="isIndicatorActive = true"
     @mouseleave="isIndicatorActive = false"
-    @click="onIndicatorClick(replyRowKey)"
+    @click="scrollToMessage(replyRowKey)"
   />
 </template>
 

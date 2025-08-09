@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import { useReplyStore } from "@/store/esbabbler/reply";
+import { useScrollToMessage } from "@/composables/esbabbler/useScrollToMessage";
 
 const route = useRoute();
-const replyStore = useReplyStore();
-const { onIndicatorClick } = replyStore;
+const scrollToMessage = useScrollToMessage();
 
 onMounted(() => {
   const rowKey = route.params.rowKey as string;
   if (!rowKey) return;
-  onIndicatorClick(rowKey);
+  scrollToMessage(rowKey);
 });
 </script>
 
