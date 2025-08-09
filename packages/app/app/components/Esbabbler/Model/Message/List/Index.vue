@@ -1,15 +1,10 @@
 <script setup lang="ts">
-import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
-
 import StyledWaypoint from "@/components/Styled/Waypoint.vue";
+import { useMessageStore } from "@/store/esbabbler/message";
 
-interface MessageListProps {
-  hasMore: boolean;
-  messages: MessageEntity[];
-  readMoreMessages: NonNullable<InstanceType<typeof StyledWaypoint>["$props"]["onChange"]>;
-}
-
-const { hasMore, messages, readMoreMessages } = defineProps<MessageListProps>();
+const readMoreMessages = await useReadMessages();
+const messageStore = useMessageStore();
+const { hasMore, messages } = storeToRefs(messageStore);
 </script>
 
 <template>
