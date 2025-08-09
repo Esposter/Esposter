@@ -30,7 +30,7 @@ export const readMessages = async ({ cursor, isIncludeValue, limit, order, roomI
       .map(({ rowKey }) => `RowKey eq '${getReverseTickedTimestamp(rowKey)}'`)
       .join(" or ")})`;
     const messages = await getTopNEntities(messageClient, limit + 1, MessageEntity, { filter });
-    return getCursorPaginationData(messages, limit, [{ isIncludeValue, key: "rowKey", order }]);
+    return getCursorPaginationData(messages, limit, sortBy);
   }
   // Default: Desc via reverse-ticked RowKey (efficient)
   let filter = getMessagesPartitionKeyFilter(roomId);
