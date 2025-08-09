@@ -26,11 +26,10 @@ import { generateDownloadFileSasUrls } from "@@/server/services/azure/container/
 import { generateUploadFileSasEntities } from "@@/server/services/azure/container/generateUploadFileSasEntities";
 import { getBlobName } from "@@/server/services/azure/container/getBlobName";
 import { AZURE_MAX_PAGE_SIZE } from "@@/server/services/azure/table/constants";
-import { createEntity } from "@@/server/services/azure/table/createEntity";
 import { deleteEntity } from "@@/server/services/azure/table/deleteEntity";
 import { getEntity } from "@@/server/services/azure/table/getEntity";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
-import { createMessageEntity } from "@@/server/services/esbabbler/createMessageEntity";
+import { createMessage } from "@@/server/services/esbabbler/createMessage";
 import { messageEventEmitter } from "@@/server/services/esbabbler/events/messageEventEmitter";
 import { roomEventEmitter } from "@@/server/services/esbabbler/events/roomEventEmitter";
 import { getMessagesPartitionKeyFilter } from "@@/server/services/esbabbler/getMessagesPartitionKeyFilter";
@@ -59,11 +58,15 @@ const readMessagesInputSchema =
   // as we insert our messages with a reverse-ticked timestamp as our rowKey
   // so unfortunately we have to provide a dummy default to keep the consistency here that cursor pagination
   // always requires a sortBy even though we don't actually need the user to specify it
-  z.object({
-    ...createCursorPaginationParamsSchema(messageEntitySchema.keyof(), [{ key: "createdAt", order: SortOrder.Asc }])
-      .shape,
-    roomId: selectRoomSchema.shape.id,
-  });
+  z
+    .object({
+      ...createCursorPaginationParamsSchema(messageEntitySchema.keyof(), [{ key: "createdAt", order: SortOrder.Desc }])
+        .shape,
+      isIncludeValue: z.literal(true).optional(),
+      order: z.literal(SortOrder.Asc).optional(),
+      roomId: selectRoomSchema.shape.id,
+    })
+    .omit({ sortBy: true });
 export type ReadMessagesInput = z.infer<typeof readMessagesInputSchema>;
 
 const readMessagesByRowKeysInputSchema = z.object({
@@ -120,8 +123,7 @@ export const messageRouter = router({
     "message",
   ]).mutation<MessageEntity>(async ({ ctx, input }) => {
     const messageClient = await useTableClient(AzureTable.Messages);
-    const newMessageEntity = await createMessageEntity({ ...input, userId: ctx.session.user.id });
-    await createEntity(messageClient, newMessageEntity);
+    const newMessageEntity = await createMessage(messageClient, { ...input, userId: ctx.session.user.id });
     messageEventEmitter.emit("createMessage", [
       [newMessageEntity],
       { image: ctx.session.user.image, name: ctx.session.user.name, sessionId: ctx.session.session.id },
@@ -202,7 +204,7 @@ export const messageRouter = router({
       await Promise.all(
         roomIds.map(async (roomId) => {
           const newFileIds = await cloneFiles(containerClient, messageEntity.files, ctx.roomId, roomId);
-          const forward = await createMessageEntity({
+          const forward = await createMessage(messageClient, {
             // eslint-disable-next-line @typescript-eslint/no-misused-spread
             files: messageEntity.files.map((file, index) => new FileEntity({ ...file, id: newFileIds[index] })),
             isForward: true,
@@ -212,12 +214,14 @@ export const messageRouter = router({
             roomId,
             userId: ctx.session.user.id,
           });
-          await createEntity(messageClient, forward);
           const messages = [forward];
 
           if (message) {
-            const newMessageEntity = await createMessageEntity({ message, roomId, userId: ctx.session.user.id });
-            await createEntity(messageClient, newMessageEntity);
+            const newMessageEntity = await createMessage(messageClient, {
+              message,
+              roomId,
+              userId: ctx.session.user.id,
+            });
             messages.push(newMessageEntity);
           }
           // We don't need visual effects like isLoading when forwarding messages
@@ -267,8 +271,8 @@ export const messageRouter = router({
         } = await readMessages({
           cursor,
           limit: AZURE_MAX_PAGE_SIZE - 1,
+          order: SortOrder.Asc,
           roomId,
-          sortBy: [{ key: "rowKey", order: SortOrder.Desc }],
         });
         messages.push(...items);
         cursor = nextCursor;

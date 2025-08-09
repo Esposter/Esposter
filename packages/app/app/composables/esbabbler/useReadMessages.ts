@@ -1,5 +1,6 @@
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
+import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { useMessageStore } from "@/store/esbabbler/message";
 import { useRoomStore } from "@/store/esbabbler/room";
 
@@ -8,8 +9,8 @@ export const useReadMessages = async () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const messageStore = useMessageStore();
-  const { initializeCursorPaginationData, pushMessages } = messageStore;
-  const { hasMore, nextCursor } = storeToRefs(messageStore);
+  const { initializeCursorPaginationData, pushMessages, unshiftMessages } = messageStore;
+  const { hasMore, hasMoreNewer, nextCursor, nextCursorNewer } = storeToRefs(messageStore);
   const readUsers = useReadUsers();
   const readReplies = useReadReplies();
   const readFiles = useReadFiles();
@@ -41,12 +42,56 @@ export const useReadMessages = async () => {
       onComplete();
     }
   };
+  const readMoreNewerMessages = async (onComplete: () => void) => {
+    try {
+      if (!currentRoomId.value) return;
+
+      const {
+        hasMore: newHasMore,
+        items,
+        nextCursor: newNextCursor,
+      } = await $trpc.message.readMessages.query({
+        cursor: nextCursorNewer.value,
+        order: SortOrder.Asc,
+        roomId: currentRoomId.value,
+      });
+      nextCursorNewer.value = newNextCursor;
+      hasMoreNewer.value = newHasMore;
+      await readMetadata(items);
+      // We are given Oldest -> Newest based on our sortBy
+      // but we want Newest -> Oldest to unshift and maintain [newestMessage, ...]
+      unshiftMessages(...items.toReversed());
+    } finally {
+      onComplete();
+    }
+  };
 
   if (currentRoomId.value) {
-    const response = await $trpc.message.readMessages.query({ roomId: currentRoomId.value });
-    await readMetadata(response.items);
-    initializeCursorPaginationData(response);
+    const route = useRoute();
+    const rowKey = route.params.rowKey as string;
+    if (rowKey) {
+      const [older, newer] = await Promise.all([
+        $trpc.message.readMessages.query({ cursor: rowKey, roomId: currentRoomId.value }),
+        $trpc.message.readMessages.query({
+          cursor: rowKey,
+          isIncludeValue: true,
+          order: SortOrder.Asc,
+          roomId: currentRoomId.value,
+        }),
+      ]);
+      const newerItems = newer.items.toReversed();
+      const items = [...older.items, ...newerItems];
+      await readMetadata(items);
+      initializeCursorPaginationData(older);
+      nextCursorNewer.value = newer.nextCursor;
+      hasMoreNewer.value = newer.hasMore;
+      unshiftMessages(...newerItems);
+    } else {
+      const response = await $trpc.message.readMessages.query({ roomId: currentRoomId.value });
+      await readMetadata(response.items);
+      initializeCursorPaginationData(response);
+    }
   }
 
-  return readMoreMessages;
+  return { readMoreMessages, readMoreNewerMessages };
 };

@@ -1,16 +1,10 @@
 <script setup lang="ts">
-import type { Room } from "#shared/db/schema/rooms";
-
-import StyledWaypoint from "@/components/Styled/Waypoint.vue";
-
-interface RoomListProps {
-  hasMore: boolean;
-  readMoreRooms: NonNullable<InstanceType<typeof StyledWaypoint>["$props"]["onChange"]>;
-  rooms: Room[];
-}
+import { useRoomStore } from "@/store/esbabbler/room";
 
 defineSlots<{ prepend: (props: Record<string, never>) => unknown }>();
-const { hasMore, readMoreRooms, rooms } = defineProps<RoomListProps>();
+const roomStore = useRoomStore();
+const { hasMore, rooms } = storeToRefs(roomStore);
+const readMoreRooms = await useReadRooms();
 </script>
 
 <template>

@@ -1,21 +1,38 @@
+import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { ReadMessagesInput } from "@@/server/trpc/routers/message";
-import type { PartialByKeys } from "unocss";
 
+import { CompositeKey } from "#shared/models/azure/CompositeKey";
 import { MessageEntity } from "#shared/models/db/message/MessageEntity";
+import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
 import { getMessagesPartitionKeyFilter } from "@@/server/services/esbabbler/getMessagesPartitionKeyFilter";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
-import { SortOrder } from "@@/shared/models/pagination/sorting/SortOrder";
 
-export const readMessages = async ({
-  cursor,
-  limit,
-  roomId,
-  sortBy = [{ key: "rowKey", order: SortOrder.Asc }],
-}: PartialByKeys<ReadMessagesInput, "sortBy">) => {
+export const readMessages = async ({ cursor, isIncludeValue, limit, order, roomId }: ReadMessagesInput) => {
+  // A note that the order is always Asc since Azure Table Storage does not support sorting
+  // We workaround supporting sorting via insert-sorts with the row key using reverse-ticked timestamps
+  const sortBy: SortItem<keyof MessageEntity>[] = [{ isIncludeValue, key: "rowKey", order: SortOrder.Asc }];
+
+  if (order === SortOrder.Asc) {
+    // 1. Get ascending ids from the index table (MessagesAscending)
+    let indexFilter = getMessagesPartitionKeyFilter(roomId);
+    if (cursor) indexFilter += ` and ${getCursorWhereAzureTable(cursor, sortBy)}`;
+    const indexClient = await useTableClient(AzureTable.MessagesAscending);
+    const indices = await getTopNEntities(indexClient, limit + 1, CompositeKey, { filter: indexFilter });
+    if (indices.length === 0) return getCursorPaginationData([], 0, []);
+    // 2. Join by ids from main table
+    const messageClient = await useTableClient(AzureTable.Messages);
+    const filter = `${getMessagesPartitionKeyFilter(roomId)} and (${indices
+      .map(({ rowKey }) => `RowKey eq '${getReverseTickedTimestamp(rowKey)}'`)
+      .join(" or ")})`;
+    const messages = await getTopNEntities(messageClient, limit + 1, MessageEntity, { filter });
+    return getCursorPaginationData(messages, limit, [{ isIncludeValue, key: "rowKey", order }]);
+  }
+  // Default: Desc via reverse-ticked RowKey (efficient)
   let filter = getMessagesPartitionKeyFilter(roomId);
   if (cursor) filter += ` and ${getCursorWhereAzureTable(cursor, sortBy)}`;
   const messageClient = await useTableClient(AzureTable.Messages);

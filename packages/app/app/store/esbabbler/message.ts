@@ -20,7 +20,12 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
-  const { items, ...restData } = createCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
+  const {
+    initializeCursorPaginationData: baseInitializeCursorPaginationData,
+    items,
+    resetCursorPaginationData: baseResetCursorPaginationData,
+    ...restData
+  } = createCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
   const {
     createMessage: baseStoreCreateMessage,
     deleteMessage: baseStoreDeleteMessage,
@@ -29,6 +34,18 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
     ...restOperationData
   } = createOperationData(items, ["partitionKey", "rowKey"], AzureEntityType.Message);
   const files = computed(() => messages.value.flatMap(({ files }) => files));
+  const hasMoreNewer = ref(false);
+  const nextCursorNewer = ref<string>();
+  const initializeCursorPaginationData: typeof baseInitializeCursorPaginationData = (...args) => {
+    baseInitializeCursorPaginationData(...args);
+    hasMoreNewer.value = false;
+    nextCursorNewer.value = undefined;
+  };
+  const resetCursorPaginationData: typeof baseResetCursorPaginationData = (...args) => {
+    baseResetCursorPaginationData(...args);
+    hasMoreNewer.value = false;
+    nextCursorNewer.value = undefined;
+  };
 
   const storeCreateMessage = async (message: MessageEntity) => {
     await Promise.all(MessageHookMap[Operation.Create].map((fn) => fn(message)));
@@ -70,15 +87,28 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
     editor.commands.clearContent(true);
   });
   const typings = ref<CreateTypingInput[]>([]);
+  const messageContainer = ref<HTMLDivElement | null>(null);
+  // With flex-col-reverse, bottom is at scrollTop ~0. If user has scrolled up by a significant px, show the jump to present snackbar
+  const isViewingOlderMessages = computed(
+    () => messages.value.length > 50 && messageContainer.value && messageContainer.value.scrollTop > 1000,
+  );
+  const scrollToBottom = () => messageContainer.value?.scrollTo({ behavior: "smooth", top: 0 });
   // We only expose the internal store crud message functions for subscriptions
   // everything else will directly use trpc mutations that are tracked by the related subscriptions
   return {
     files,
+    hasMoreNewer,
+    isViewingOlderMessages,
+    messageContainer,
     messages,
+    nextCursorNewer,
+    scrollToBottom,
     storeCreateMessage,
     storeDeleteMessage,
     storeUpdateMessage,
     ...restOperationData,
+    initializeCursorPaginationData,
+    resetCursorPaginationData,
     sendMessage,
     ...restData,
     typings,

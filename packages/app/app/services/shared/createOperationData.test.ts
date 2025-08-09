@@ -20,6 +20,17 @@ describe(createOperationData, () => {
     expect(items.value[0]).toStrictEqual(newItem);
   });
 
+  test("unshifts", () => {
+    expect.hasAssertions();
+
+    const { items, unshiftItems } = operationData;
+    const newItem = new TodoListItem();
+    unshiftItems(newItem);
+
+    expect(items.value).toHaveLength(1);
+    expect(items.value[0]).toStrictEqual(newItem);
+  });
+
   test("creates", () => {
     expect.hasAssertions();
 

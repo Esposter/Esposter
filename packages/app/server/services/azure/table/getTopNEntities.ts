@@ -1,11 +1,11 @@
-import type { AzureEntity } from "#shared/models/azure/AzureEntity";
+import type { CompositeKey } from "#shared/models/azure/CompositeKey";
 import type { CustomTableClient } from "@@/server/models/azure/table/CustomTableClient";
 import type { TableEntityQueryOptions } from "@azure/data-tables";
 import type { Class } from "type-fest";
 
 import { deserializeEntity } from "@@/server/services/azure/transformer/deserializeEntity";
 
-export const getTopNEntities = async <TEntity extends AzureEntity>(
+export const getTopNEntities = async <TEntity extends CompositeKey>(
   tableClient: NoInfer<CustomTableClient<TEntity>>,
   topN: number,
   cls: Class<TEntity>,

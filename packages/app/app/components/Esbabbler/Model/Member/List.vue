@@ -1,15 +1,9 @@
 <script setup lang="ts">
-import type { User } from "#shared/db/schema/users";
+import { useMemberStore } from "@/store/esbabbler/member";
 
-import StyledWaypoint from "@/components/Styled/Waypoint.vue";
-
-interface MemberListProps {
-  hasMore: boolean;
-  members: User[];
-  readMoreMembers: NonNullable<InstanceType<typeof StyledWaypoint>["$props"]["onChange"]>;
-}
-
-const { hasMore, members, readMoreMembers } = defineProps<MemberListProps>();
+const memberStore = useMemberStore();
+const { hasMore, members } = storeToRefs(memberStore);
+const readMoreMembers = await useReadMembers();
 </script>
 
 <template>

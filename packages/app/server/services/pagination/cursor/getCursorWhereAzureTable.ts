@@ -5,24 +5,31 @@ import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import { CompositeKeyEntityPropertyNames } from "#shared/models/azure/CompositeKeyEntity";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { parse } from "@@/server/services/pagination/cursor/parse";
-import { capitalize } from "@esposter/shared";
+import { capitalize, exhaustiveGuard, NotFoundError } from "@esposter/shared";
 
 export const getCursorWhereAzureTable = <TItem extends ToData<AEntity>>(
   serializedCursors: string,
   sortBy: SortItem<keyof TItem & string>[],
 ) => {
   const cursors = parse(serializedCursors);
-  const sanitizedSortBy = sortBy.map(({ key, order }) => ({
-    key: sanitizeKey(key),
-    order,
-  }));
+  const sanitizedSortBy = sortBy.map(({ key, ...rest }) => ({ key: sanitizeKey(key), ...rest }));
   return Object.entries(cursors)
     .map(([key, value]) => {
-      const sanitizedKey = sanitizeKey(key);
-      const comparer = sanitizedSortBy.some(({ key, order }) => key === sanitizedKey && order === SortOrder.Asc)
-        ? "gt"
-        : "lt";
-      return `${sanitizedKey} ${comparer} '${value}'`;
+      const sortItem = sanitizedSortBy.find((s) => s.key === key);
+      if (!sortItem) throw new NotFoundError(getCursorWhereAzureTable.name, key);
+
+      let comparer: string;
+      switch (sortItem.order) {
+        case SortOrder.Asc:
+          comparer = sortItem.isIncludeValue ? "gte" : "gt";
+          break;
+        case SortOrder.Desc:
+          comparer = sortItem.isIncludeValue ? "lte" : "lt";
+          break;
+        default:
+          exhaustiveGuard(sortItem.order);
+      }
+      return `${key} ${comparer} '${value}'`;
     })
     .join(" and ");
 };
