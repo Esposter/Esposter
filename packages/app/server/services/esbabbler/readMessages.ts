@@ -13,7 +13,6 @@ import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities"
 import { getMessagesPartitionKeyFilter } from "@@/server/services/esbabbler/getMessagesPartitionKeyFilter";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
-import { getNextCursor } from "@@/server/services/pagination/cursor/getNextCursor";
 
 export const readMessages = async ({
   cursor,
@@ -36,12 +35,11 @@ export const readMessages = async ({
     const filter = `${getMessagesPartitionKeyFilter(roomId)} and (${indices
       .map(({ rowKey }) => `RowKey eq '${getReverseTickedTimestamp(rowKey)}'`)
       .join(" or ")})`;
+    // We don't need to fetch limit + 1 here because the pagination metadata
+    // is actually determined by the index table, not the message table
     const messages = await getTopNEntities(messageClient, limit, MessageEntity, { filter });
-    // Pagination metadata here is actually determined by the index table, not the message table
-    return Object.assign(getCursorPaginationData(messages, limit, sortBy), {
-      hasMore: indices.length > limit,
-      nextCursor: getNextCursor(indices, sortBy),
-    });
+    const { hasMore, nextCursor } = getCursorPaginationData(indices, limit, sortBy);
+    return Object.assign(getCursorPaginationData(messages, limit, sortBy), { hasMore, nextCursor });
   }
   // Default: Desc via reverse-ticked RowKey (efficient)
   let filter = getMessagesPartitionKeyFilter(roomId);
