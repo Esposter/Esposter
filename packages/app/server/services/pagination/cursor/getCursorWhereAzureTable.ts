@@ -4,14 +4,14 @@ import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 
 import { CompositeKeyEntityPropertyNames } from "#shared/models/azure/CompositeKeyEntity";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { parse } from "#shared/services/pagination/cursor/parse";
+import { deserialize } from "#shared/services/pagination/cursor/deserialize";
 import { capitalize, exhaustiveGuard, NotFoundError } from "@esposter/shared";
 
 export const getCursorWhereAzureTable = <TItem extends ToData<AEntity>>(
   serializedCursors: string,
   sortBy: SortItem<keyof TItem & string>[],
 ) => {
-  const cursors = parse(serializedCursors);
+  const cursors = deserialize(serializedCursors);
   const sanitizedSortBy = sortBy.map(({ key, ...rest }) => ({ key: sanitizeKey(key), ...rest }));
   return Object.entries(cursors)
     .map(([key, value]) => {

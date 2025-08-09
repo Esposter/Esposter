@@ -5,7 +5,7 @@ import type { BinaryOperator, TableConfig } from "drizzle-orm";
 import type { PgTableWithColumns } from "drizzle-orm/pg-core";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { parse } from "#shared/services/pagination/cursor/parse";
+import { deserialize } from "#shared/services/pagination/cursor/deserialize";
 import { exhaustiveGuard, NotFoundError } from "@esposter/shared";
 import { and, gt, gte, lt, lte } from "drizzle-orm";
 
@@ -14,7 +14,7 @@ export const getCursorWhere = <TTable extends TableConfig, TItem extends ToData<
   serializedCursors: string,
   sortBy: SortItem<keyof TItem & string>[],
 ) => {
-  const cursors = parse(serializedCursors);
+  const cursors = deserialize(serializedCursors);
   return and(
     ...Object.entries(cursors).map(([key, value]) => {
       const sortItem = sortBy.find((s) => s.key === key);
