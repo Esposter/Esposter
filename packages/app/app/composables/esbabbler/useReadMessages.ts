@@ -100,13 +100,11 @@ export const useReadMessages = async () => {
           roomId,
         }),
       ]);
-      const newerItems = newer.items;
-      const items = [...newerItems, ...older.items];
-      await readMetadata(items);
+      await readMetadata([...newer.items, ...older.items]);
       initializeCursorPaginationData(older);
       nextCursorNewer.value = newer.nextCursor;
       hasMoreNewer.value = newer.hasMore;
-      unshiftMessages(...newerItems);
+      unshiftMessages(...newer.items);
       return true;
     };
 
