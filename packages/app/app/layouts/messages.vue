@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import { validate } from "@/services/router/validate";
 import { useRoomStore } from "@/store/esbabbler/room";
-
-definePageMeta({ middleware: "auth", validate });
 
 useHead({ titleTemplate: (title) => (title ? `Esbabbler | ${title}` : "Esbabbler") });
 useSubscribables();

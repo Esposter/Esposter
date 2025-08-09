@@ -80,15 +80,12 @@ export const useReadMessages = async () => {
       const messageByRowKey = messagesByRowKeys[0];
       const [older, newer] = await Promise.all([
         $trpc.message.readMessages.query({
-          cursor: serialize(messageByRowKey, [MESSAGE_ROWKEY_SORT_ITEM]),
+          cursor: serialize({ rowKey: messageByRowKey.rowKey }, [MESSAGE_ROWKEY_SORT_ITEM]),
           roomId,
         }),
         $trpc.message.readMessages.query({
           // We'll need to reverse the row key to get the older messages
-          // eslint-disable-next-line @typescript-eslint/no-misused-spread
-          cursor: serialize({ ...messageByRowKey, rowKey: getReverseTickedTimestamp(messageByRowKey.rowKey) }, [
-            MESSAGE_ROWKEY_SORT_ITEM,
-          ]),
+          cursor: serialize({ rowKey: getReverseTickedTimestamp(messageByRowKey.rowKey) }, [MESSAGE_ROWKEY_SORT_ITEM]),
           isIncludeValue: true,
           order: SortOrder.Asc,
           roomId,

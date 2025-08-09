@@ -1,3 +1,4 @@
+import type { CompositeKey } from "#shared/models/azure/CompositeKey";
 import type { AEntity } from "#shared/models/entity/AEntity";
 import type { ToData } from "#shared/models/entity/ToData";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
@@ -7,7 +8,7 @@ import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { deserialize } from "#shared/services/pagination/cursor/deserialize";
 import { capitalize, exhaustiveGuard, NotFoundError } from "@esposter/shared";
 
-export const getCursorWhereAzureTable = <TItem extends ToData<AEntity>>(
+export const getCursorWhereAzureTable = <TItem extends CompositeKey | ToData<AEntity>>(
   serializedCursors: string,
   sortBy: SortItem<keyof TItem & string>[],
 ) => {

@@ -13,7 +13,9 @@ import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessag
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
+import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
+import { MAX_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
+import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { useSendCreateMessageNotification } from "@@/server/composables/esbabbler/useSendCreateMessageNotification";
@@ -25,7 +27,6 @@ import { deleteFiles } from "@@/server/services/azure/container/deleteFiles";
 import { generateDownloadFileSasUrls } from "@@/server/services/azure/container/generateDownloadFileSasUrls";
 import { generateUploadFileSasEntities } from "@@/server/services/azure/container/generateUploadFileSasEntities";
 import { getBlobName } from "@@/server/services/azure/container/getBlobName";
-import { AZURE_MAX_PAGE_SIZE } from "@@/server/services/azure/table/constants";
 import { deleteEntity } from "@@/server/services/azure/table/deleteEntity";
 import { getEntity } from "@@/server/services/azure/table/getEntity";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
@@ -259,21 +260,14 @@ export const messageRouter = router({
     const sendCreateMessageNotification = useSendCreateMessageNotification(pushSubscription, roomId);
 
     if (lastEventId) {
-      let cursor: string | undefined = lastEventId;
+      let cursor: string | undefined = serialize({ rowKey: getReverseTickedTimestamp(lastEventId) }, [
+        MESSAGE_ROWKEY_SORT_ITEM,
+      ]);
       let hasMore = true;
       const messages: MessageEntity[] = [];
 
       while (hasMore) {
-        const {
-          hasMore: newHasMore,
-          items,
-          nextCursor,
-        } = await readMessages({
-          cursor,
-          limit: AZURE_MAX_PAGE_SIZE - 1,
-          order: SortOrder.Asc,
-          roomId,
-        });
+        const { hasMore: newHasMore, items, nextCursor } = await readMessages({ cursor, order: SortOrder.Asc, roomId });
         messages.push(...items);
         cursor = nextCursor;
         hasMore = newHasMore;
@@ -281,9 +275,10 @@ export const messageRouter = router({
 
       if (messages.length > 0) {
         // Remember that Azure Table Storage is insert-sorted by rowKey
-        // so the first message is the oldest one in reading in descending order
-        const newestMessage = messages[messages.length - 1];
-        yield tracked(newestMessage.rowKey, messages);
+        // so the first message is the newest one but we want to yield from oldest to newest
+        const reversedMessages = messages.toReversed();
+        const newestMessage = reversedMessages[reversedMessages.length - 1];
+        yield tracked(newestMessage.rowKey, reversedMessages);
       }
     }
 
