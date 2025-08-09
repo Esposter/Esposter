@@ -92,7 +92,7 @@ catalog:
   emoji-mart-vue-fast: ^15.0.4
   eslint: ^9.33.0
   eslint-config-prettier: ^10.1.8
-  eslint-plugin-oxlint: ^1.11.0
+  eslint-plugin-oxlint: ^1.11.1
   eslint-plugin-perfectionist: ^4.15.0
   eslint-plugin-pinia: ^0.4.1
   eslint-plugin-prettier: ^5.5.4
@@ -135,7 +135,7 @@ catalog:
   nuxt-security: ^2.3.0
   obscenity: ^0.4.4
   omit-deep-lodash: ^1.1.7
-  oxlint: ^1.11.0
+  oxlint: ^1.11.1
   p-progress: ^1.0.0
   pathe: ^2.0.3
   pdfjs-dist: ^5.4.54
