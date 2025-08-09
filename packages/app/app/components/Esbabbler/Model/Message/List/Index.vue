@@ -3,11 +3,11 @@ import { useMessageStore } from "@/store/esbabbler/message";
 
 const { readMoreMessages, readMoreNewerMessages } = await useReadMessages();
 const messageStore = useMessageStore();
-const { hasMore, hasMoreNewer, messages } = storeToRefs(messageStore);
+const { hasMore, hasMoreNewer, messageContainer, messages } = storeToRefs(messageStore);
 </script>
 
 <template>
-  <v-list flex-1 flex pb-0 basis-full flex-col-reverse overflow-y-auto="!" lines="two">
+  <v-list ref="messageContainer" flex-1 flex pb-0 basis-full flex-col-reverse overflow-y-auto="!" lines="two">
     <StyledWaypoint :active="hasMoreNewer" @change="readMoreNewerMessages" />
     <EsbabblerModelMessageListItemContainer
       v-for="(message, index) of messages"

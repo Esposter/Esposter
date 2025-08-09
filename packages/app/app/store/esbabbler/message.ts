@@ -3,6 +3,7 @@ import type { CreateTypingInput } from "#shared/models/db/message/CreateTypingIn
 import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { Editor } from "@tiptap/core";
+import type { VList } from "vuetify/components";
 
 import { AzureEntityType } from "#shared/models/azure/AzureEntityType";
 import { createMessageEntity } from "#shared/services/esbabbler/createMessageEntity";
@@ -87,12 +88,11 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
     editor.commands.clearContent(true);
   });
   const typings = ref<CreateTypingInput[]>([]);
-  const messageContainer = ref<HTMLDivElement | null>(null);
-  // With flex-col-reverse, bottom is at scrollTop ~0. If user has scrolled up by a significant px, show the jump to present snackbar
-  const isViewingOlderMessages = computed(
-    () => messages.value.length > 50 && messageContainer.value && messageContainer.value.scrollTop > 1000,
-  );
-  const scrollToBottom = () => messageContainer.value?.scrollTo({ behavior: "smooth", top: 0 });
+  const messageContainer = ref<InstanceType<typeof VList> | null>(null);
+  const messageContainerElement = computed(() => messageContainer.value?.$el as HTMLDivElement | null);
+  const { y } = useScroll(messageContainerElement);
+  const isViewingOlderMessages = computed(() => y.value < -2000);
+  const scrollToBottom = () => messageContainerElement.value?.scrollTo({ behavior: "smooth", top: 0 });
   // We only expose the internal store crud message functions for subscriptions
   // everything else will directly use trpc mutations that are tracked by the related subscriptions
   return {

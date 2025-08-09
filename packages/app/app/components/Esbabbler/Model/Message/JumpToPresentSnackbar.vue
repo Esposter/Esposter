@@ -9,9 +9,10 @@ const { scrollToBottom } = messageStore;
 
 <template>
   <TransitionFade>
-    <v-snackbar v-if="isViewingOlderMessages" color="background">
-      <span>You're Viewing Older Messages</span>
-      <StyledButton @click="scrollToBottom">Jump to Present</StyledButton>
+    <v-snackbar v-model="isViewingOlderMessages" color="background">
+      <div flex justify-center items-center flex-wrap>
+        You're Viewing Older Messages <StyledButton mx-2 @click="scrollToBottom">Jump to Present</StyledButton>
+      </div>
     </v-snackbar>
   </TransitionFade>
 </template>
