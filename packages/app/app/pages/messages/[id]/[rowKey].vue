@@ -2,13 +2,15 @@
 import { useScrollToMessage } from "@/composables/esbabbler/useScrollToMessage";
 
 const route = useRoute();
-const scrollToMessage = useScrollToMessage();
+const rowKey = route.params.rowKey as string;
 
-onMounted(() => {
-  const rowKey = route.params.rowKey as string;
-  if (!rowKey) return;
-  scrollToMessage(rowKey);
-});
+if (rowKey) {
+  const scrollToMessage = useScrollToMessage();
+
+  onMounted(() => {
+    scrollToMessage(rowKey);
+  });
+}
 </script>
 
 <template>
