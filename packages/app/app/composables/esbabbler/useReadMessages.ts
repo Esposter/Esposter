@@ -69,38 +69,35 @@ export const useReadMessages = async () => {
   };
 
   if (currentRoomId.value) {
+    const roomId = currentRoomId.value;
     const route = useRoute();
     const rowKey = route.params.rowKey as string;
-    if (rowKey) {
-      const messagesByRowKeys = await $trpc.message.readMessagesByRowKeys.query({
-        roomId: currentRoomId.value,
-        rowKeys: [rowKey],
-      });
-      if (messagesByRowKeys.length > 0) {
-        const cursor = serialize(messagesByRowKeys[0], [MESSAGE_ROWKEY_SORT_ITEM]);
-        const [older, newer] = await Promise.all([
-          $trpc.message.readMessages.query({ cursor, roomId: currentRoomId.value }),
-          $trpc.message.readMessages.query({
-            cursor,
-            isIncludeValue: true,
-            order: SortOrder.Asc,
-            roomId: currentRoomId.value,
-          }),
-        ]);
-        const newerItems = newer.items.toReversed();
-        const items = [...older.items, ...newerItems];
-        await readMetadata(items);
-        initializeCursorPaginationData(older);
-        nextCursorNewer.value = newer.nextCursor;
-        hasMoreNewer.value = newer.hasMore;
-        unshiftMessages(...newerItems);
-        return;
-      }
-    }
+    const readMessagesWithRowKey = async () => {
+      if (!rowKey) return false;
 
-    const response = await $trpc.message.readMessages.query({ roomId: currentRoomId.value });
-    await readMetadata(response.items);
-    initializeCursorPaginationData(response);
+      const messagesByRowKeys = await $trpc.message.readMessagesByRowKeys.query({ roomId, rowKeys: [rowKey] });
+      if (messagesByRowKeys.length === 0) return false;
+
+      const cursor = serialize(messagesByRowKeys[0], [MESSAGE_ROWKEY_SORT_ITEM]);
+      const [older, newer] = await Promise.all([
+        $trpc.message.readMessages.query({ cursor, roomId }),
+        $trpc.message.readMessages.query({ cursor, isIncludeValue: true, order: SortOrder.Asc, roomId }),
+      ]);
+      const newerItems = newer.items.toReversed();
+      const items = [...older.items, ...newerItems];
+      await readMetadata(items);
+      initializeCursorPaginationData(older);
+      nextCursorNewer.value = newer.nextCursor;
+      hasMoreNewer.value = newer.hasMore;
+      unshiftMessages(...newerItems);
+      return true;
+    };
+
+    if (!(await readMessagesWithRowKey())) {
+      const response = await $trpc.message.readMessages.query({ roomId });
+      await readMetadata(response.items);
+      initializeCursorPaginationData(response);
+    }
   }
 
   return { readMoreMessages, readMoreNewerMessages };

@@ -333,7 +333,7 @@ export const messageRouter = router({
     async ({ input: { roomId, rowKeys } }) => {
       const messageClient = await useTableClient(AzureTable.Messages);
       return getTopNEntities(messageClient, rowKeys.length, MessageEntity, {
-        filter: `${getMessagesPartitionKeyFilter(roomId)} and (${rowKeys.map((rk) => `RowKey eq '${rk}'`).join(" or ")})`,
+        filter: `${getMessagesPartitionKeyFilter(roomId)} and (${rowKeys.map((rowKey) => `RowKey eq '${rowKey}'`).join(" or ")})`,
       });
     },
   ),

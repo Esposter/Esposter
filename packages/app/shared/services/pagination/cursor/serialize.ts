@@ -2,6 +2,8 @@ import type { AEntity } from "#shared/models/entity/AEntity";
 import type { ToData } from "#shared/models/entity/ToData";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 
+import { getIsServer } from "#shared/util/environment/getIsServer";
+
 export const serialize = <TItem extends ToData<AEntity>>(
   item: TItem | undefined,
   sortBy: SortItem<keyof TItem & string>[],
@@ -13,5 +15,6 @@ export const serialize = <TItem extends ToData<AEntity>>(
     acc[key] = value;
     return acc;
   }, {});
-  return Buffer.from(JSON.stringify(itemCursors)).toString("base64");
+  const payload = JSON.stringify(itemCursors);
+  return getIsServer() ? Buffer.from(payload).toString("base64") : btoa(payload);
 };

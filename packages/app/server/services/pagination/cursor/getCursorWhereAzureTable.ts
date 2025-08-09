@@ -22,10 +22,10 @@ export const getCursorWhereAzureTable = <TItem extends ToData<AEntity>>(
       let comparer: string;
       switch (sortItem.order) {
         case SortOrder.Asc:
-          comparer = sortItem.isIncludeValue ? "gte" : "gt";
+          comparer = sortItem.isIncludeValue ? "ge" : "gt";
           break;
         case SortOrder.Desc:
-          comparer = sortItem.isIncludeValue ? "lte" : "lt";
+          comparer = sortItem.isIncludeValue ? "le" : "lt";
           break;
         default:
           exhaustiveGuard(sortItem.order);
