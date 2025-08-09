@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import StyledWaypoint from "@/components/Styled/Waypoint.vue";
 import { useMessageStore } from "@/store/esbabbler/message";
 
 const readMoreMessages = await useReadMessages();
