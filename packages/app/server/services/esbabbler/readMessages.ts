@@ -26,7 +26,7 @@ export const readMessages = async ({ cursor, isIncludeValue, limit, order, roomI
     // 2. Join by ids from main table
     const messageClient = await useTableClient(AzureTable.Messages);
     const filter = `${getMessagesPartitionKeyFilter(roomId)} and (${indices
-      .map(({ rowKey }) => `RowKey eq ${getReverseTickedTimestamp(rowKey)}`)
+      .map(({ rowKey }) => `RowKey eq '${getReverseTickedTimestamp(rowKey)}'`)
       .join(" or ")})`;
     const messages = await getTopNEntities(messageClient, limit + 1, MessageEntity, { filter });
     return getCursorPaginationData(messages, limit, sortBy);

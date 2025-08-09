@@ -1,6 +1,7 @@
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useMessageStore } from "@/store/esbabbler/message";
@@ -60,9 +61,7 @@ export const useReadMessages = async () => {
       nextCursorNewer.value = newNextCursor;
       hasMoreNewer.value = newHasMore;
       await readMetadata(items);
-      // We are given Oldest -> Newest based on our sortBy
-      // but we want Newest -> Oldest to unshift and maintain [newestMessage, ...]
-      unshiftMessages(...items.toReversed());
+      unshiftMessages(...items);
     } finally {
       onComplete();
     }
@@ -78,13 +77,25 @@ export const useReadMessages = async () => {
       const messagesByRowKeys = await $trpc.message.readMessagesByRowKeys.query({ roomId, rowKeys: [rowKey] });
       if (messagesByRowKeys.length === 0) return false;
 
-      const cursor = serialize(messagesByRowKeys[0], [MESSAGE_ROWKEY_SORT_ITEM]);
+      const messageByRowKey = messagesByRowKeys[0];
       const [older, newer] = await Promise.all([
-        $trpc.message.readMessages.query({ cursor, roomId }),
-        $trpc.message.readMessages.query({ cursor, isIncludeValue: true, order: SortOrder.Asc, roomId }),
+        $trpc.message.readMessages.query({
+          cursor: serialize(messageByRowKey, [MESSAGE_ROWKEY_SORT_ITEM]),
+          roomId,
+        }),
+        $trpc.message.readMessages.query({
+          // We'll need to reverse the row key to get the older messages
+          // eslint-disable-next-line @typescript-eslint/no-misused-spread
+          cursor: serialize({ ...messageByRowKey, rowKey: getReverseTickedTimestamp(messageByRowKey.rowKey) }, [
+            MESSAGE_ROWKEY_SORT_ITEM,
+          ]),
+          isIncludeValue: true,
+          order: SortOrder.Asc,
+          roomId,
+        }),
       ]);
-      const newerItems = newer.items.toReversed();
-      const items = [...older.items, ...newerItems];
+      const newerItems = newer.items;
+      const items = [...newerItems, ...older.items];
       await readMetadata(items);
       initializeCursorPaginationData(older);
       nextCursorNewer.value = newer.nextCursor;
