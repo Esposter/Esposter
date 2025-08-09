@@ -59,13 +59,11 @@ const readMessagesInputSchema =
   // as we insert our messages with a reverse-ticked timestamp as our rowKey
   // so unfortunately we have to provide a dummy default to keep the consistency here that cursor pagination
   // always requires a sortBy even though we don't actually need the user to specify it
-  z
-    .object({
-      ...createCursorPaginationParamsSchema(messageEntitySchema.keyof(), [{ key: "createdAt", order: SortOrder.Desc }])
-        .shape,
-      roomId: selectRoomSchema.shape.id,
-    })
-    .omit({ sortBy: true });
+  z.object({
+    ...createCursorPaginationParamsSchema(messageEntitySchema.keyof(), [{ key: "createdAt", order: SortOrder.Asc }])
+      .shape,
+    roomId: selectRoomSchema.shape.id,
+  });
 export type ReadMessagesInput = z.infer<typeof readMessagesInputSchema>;
 
 const readMessagesByRowKeysInputSchema = z.object({
@@ -266,9 +264,12 @@ export const messageRouter = router({
           hasMore: newHasMore,
           items,
           nextCursor,
-        } = await readMessages({ cursor, limit: AZURE_MAX_PAGE_SIZE - 1, roomId }, [
-          { key: "rowKey", order: SortOrder.Desc },
-        ]);
+        } = await readMessages({
+          cursor,
+          limit: AZURE_MAX_PAGE_SIZE - 1,
+          roomId,
+          sortBy: [{ key: "rowKey", order: SortOrder.Desc }],
+        });
         messages.push(...items);
         cursor = nextCursor;
         hasMore = newHasMore;
@@ -276,10 +277,9 @@ export const messageRouter = router({
 
       if (messages.length > 0) {
         // Remember that Azure Table Storage is insert-sorted by rowKey
-        // so the first message is the newest one but we want to yield from oldest to newest
-        const reversedMessages = messages.toReversed();
-        const newestMessage = reversedMessages[reversedMessages.length - 1];
-        yield tracked(newestMessage.rowKey, reversedMessages);
+        // so the first message is the oldest one in reading in descending order
+        const newestMessage = messages[messages.length - 1];
+        yield tracked(newestMessage.rowKey, messages);
       }
     }
 

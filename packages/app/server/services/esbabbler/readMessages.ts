@@ -1,5 +1,5 @@
-import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { ReadMessagesInput } from "@@/server/trpc/routers/message";
+import type { PartialByKeys } from "unocss";
 
 import { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
@@ -10,10 +10,12 @@ import { getCursorPaginationData } from "@@/server/services/pagination/cursor/ge
 import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
 import { SortOrder } from "@@/shared/models/pagination/sorting/SortOrder";
 
-export const readMessages = async (
-  { cursor, limit, roomId }: ReadMessagesInput,
-  sortBy: SortItem<keyof MessageEntity>[] = [{ key: "rowKey", order: SortOrder.Asc }],
-) => {
+export const readMessages = async ({
+  cursor,
+  limit,
+  roomId,
+  sortBy = [{ key: "rowKey", order: SortOrder.Asc }],
+}: PartialByKeys<ReadMessagesInput, "sortBy">) => {
   let filter = getMessagesPartitionKeyFilter(roomId);
   if (cursor) filter += ` and ${getCursorWhereAzureTable(cursor, sortBy)}`;
   const messageClient = await useTableClient(AzureTable.Messages);
