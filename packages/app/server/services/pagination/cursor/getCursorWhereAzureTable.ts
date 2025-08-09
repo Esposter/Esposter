@@ -15,7 +15,8 @@ export const getCursorWhereAzureTable = <TItem extends ToData<AEntity>>(
   const sanitizedSortBy = sortBy.map(({ key, ...rest }) => ({ key: sanitizeKey(key), ...rest }));
   return Object.entries(cursors)
     .map(([key, value]) => {
-      const sortItem = sanitizedSortBy.find((s) => s.key === key);
+      const sanitizedKey = sanitizeKey(key);
+      const sortItem = sanitizedSortBy.find((s) => s.key === sanitizedKey);
       if (!sortItem) throw new NotFoundError(getCursorWhereAzureTable.name, key);
 
       let comparer: string;
