@@ -28,11 +28,11 @@ watchEffect(async () => {
 
 <template>
   <v-list flex-1 flex pb-0 basis-full flex-col-reverse overflow-y-auto="!" lines="two">
-    <div v-if="hasMoreNewer" ref="bottomSkeleton">
+    <div v-show="hasMoreNewer" ref="bottomSkeleton">
       <EsbabblerModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
     </div>
     <EsbabblerModelMessageListContainer />
-    <div v-if="hasMore" ref="topSkeleton">
+    <div v-show="hasMore" ref="topSkeleton">
       <EsbabblerModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
     </div>
   </v-list>
