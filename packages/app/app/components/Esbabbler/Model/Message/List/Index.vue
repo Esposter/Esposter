@@ -5,9 +5,9 @@ import { useMessageScrollStore } from "@/store/esbabbler/messageScroll";
 
 const { readMoreMessages, readMoreNewerMessages } = await useReadMessages();
 const messageStore = useMessageStore();
-const { hasMore, hasMoreNewer, messages } = storeToRefs(messageStore);
+const { hasMore, hasMoreNewer } = storeToRefs(messageStore);
 const messageScrollStore = useMessageScrollStore();
-const { messageContainer, messageContainerElement } = storeToRefs(messageScrollStore);
+const { isScrolling, messageContainer, messageContainerElement } = storeToRefs(messageScrollStore);
 const isLoading = ref(false);
 const isLoadingNewer = ref(false);
 const topSkeleton = useTemplateRef("topSkeleton");
@@ -30,7 +30,7 @@ watchEffect(async () => {
   await readMoreNewerMessages(() => {
     isLoadingNewer.value = false;
     requestAnimationFrame(() => {
-      if (!isBottomVisible.value || !messageContainerElement.value) return;
+      if (isScrolling.value || !isBottomVisible.value || !messageContainerElement.value) return;
       messageContainerElement.value.scrollTop -=
         messageContainerElement.value.scrollHeight - previousScrollHeight.value;
       previousScrollHeight.value = messageContainerElement.value.scrollHeight;

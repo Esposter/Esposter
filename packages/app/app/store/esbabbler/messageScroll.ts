@@ -6,7 +6,7 @@ import { useRoomStore } from "@/store/esbabbler/room";
 export const useMessageScrollStore = defineStore("esbabbler/messageScroll", () => {
   const messageContainer = ref<InstanceType<typeof VList> | null>(null);
   const messageContainerElement = computed(() => messageContainer.value?.$el as HTMLDivElement | null);
-  const { y } = useScroll(messageContainerElement);
+  const { isScrolling, y } = useScroll(messageContainerElement);
   const isViewingOlderMessages = computed(() => y.value < -2000);
   const roomStore = useRoomStore();
   // We're gonna cheat here and just send them to the messages page C:
@@ -15,6 +15,7 @@ export const useMessageScrollStore = defineStore("esbabbler/messageScroll", () =
     await navigateTo(RoutePath.Messages(roomStore.currentRoomId));
   };
   return {
+    isScrolling,
     isViewingOlderMessages,
     jumpToPresent,
     messageContainer,
