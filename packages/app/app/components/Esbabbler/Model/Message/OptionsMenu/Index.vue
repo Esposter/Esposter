@@ -25,17 +25,16 @@ const emit = defineEmits<{
 const { data: session } = await authClient.useSession(useFetch);
 const isCreator = computed(() => session.value?.user.id === message.userId);
 const isEditable = computed(() => isCreator.value && !message.isForward);
-const { actionMessageItems, deleteMessageItem, updateMessageItems } = useMessageActionItems(
-  message,
-  isEditable,
-  isCreator,
-  {
-    onDeleteMode: () => emit("update:delete-mode", true),
-    onForward: (rowKey) => emit("update:forward", rowKey),
-    onReply: (rowKey) => emit("update:reply", rowKey),
-    onUpdateMode: () => emit("update:update-mode", true),
-  },
-);
+const {
+  actionMessageItems,
+  deleteMessageItem,
+  updateMessageMenuItems: updateMessageItems,
+} = useMessageActionItems(message, isEditable, isCreator, {
+  onDeleteMode: () => emit("update:delete-mode", true),
+  onForward: (rowKey) => emit("update:forward", rowKey),
+  onReply: (rowKey) => emit("update:reply", rowKey),
+  onUpdateMode: () => emit("update:update-mode", true),
+});
 </script>
 
 <template>

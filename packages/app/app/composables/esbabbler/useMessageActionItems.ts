@@ -69,6 +69,9 @@ export const useMessageActionItems = (
   const updateMessageItems = computed<Item[]>(() =>
     isEditable.value ? [editMessageItem, forwardMessageItem] : [replyItem, forwardMessageItem],
   );
+  const updateMessageMenuItems = computed<Item[]>(() =>
+    isEditable.value ? [editMessageItem, replyItem, forwardMessageItem] : [replyItem, forwardMessageItem],
+  );
   const actionMessageItems: Item[] = [copyTextItem, copyMessageLinkItem];
   const deleteMessageItem = computed<Item | undefined>(() =>
     isCreator.value && onDeleteMode
@@ -84,5 +87,6 @@ export const useMessageActionItems = (
     actionMessageItems,
     deleteMessageItem,
     updateMessageItems,
+    updateMessageMenuItems,
   };
 };
