@@ -42,7 +42,7 @@ const { optionsMenu } = storeToRefs(esbabblerStore);
         </template>
       </v-tooltip>
     </template>
-    <v-list>
+    <v-list density="compact" text-sm>
       <v-list-item>
         <div flex gap-x-2>
           <v-tooltip v-for="emoji of EmojiMoreMenuItems" :key="emoji" :text="unemojify(emoji)">
