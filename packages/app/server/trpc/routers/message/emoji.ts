@@ -18,11 +18,11 @@ import { AZURE_MAX_PAGE_SIZE } from "@@/server/services/azure/table/constants";
 import { createEntity } from "@@/server/services/azure/table/createEntity";
 import { deleteEntity } from "@@/server/services/azure/table/deleteEntity";
 import { getEntity } from "@@/server/services/azure/table/getEntity";
+import { getPartitionKeyFilter } from "@@/server/services/azure/table/getPartitionKeyFilter";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
 import { updateEntity } from "@@/server/services/azure/table/updateEntity";
 import { emojiEventEmitter } from "@@/server/services/esbabbler/events/emojiEventEmitter";
-import { getMessagesPartitionKeyFilter } from "@@/server/services/esbabbler/getMessagesPartitionKeyFilter";
-import { isMessagesPartitionKeyForRoomId } from "@@/server/services/esbabbler/isMessagesPartitionKeyForRoomId";
+import { isRoomId } from "@@/server/services/esbabbler/isRoomId";
 import { on } from "@@/server/services/events/on";
 import { router } from "@@/server/trpc";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
@@ -48,7 +48,7 @@ export const emojiRouter = router({
     const { emojiTag, messageRowKey, type } = MessageEmojiMetadataEntityPropertyNames;
     const foundEmoji = (
       await getTopNEntities(messagesMetadataClient, 1, MessageEmojiMetadataEntity, {
-        filter: `PartitionKey eq '${input.partitionKey}' and ${type} eq '${MessageMetadataType.Emoji}' and ${messageRowKey} eq '${input.messageRowKey}' and ${emojiTag} eq '${input.emojiTag}'`,
+        filter: `${getPartitionKeyFilter(input.partitionKey)} and ${type} eq '${MessageMetadataType.Emoji}' and ${messageRowKey} eq '${input.messageRowKey}' and ${emojiTag} eq '${input.emojiTag}'`,
       })
     ).find(Boolean);
     if (foundEmoji)
@@ -77,8 +77,7 @@ export const emojiRouter = router({
     signal,
   }) {
     for await (const [[data, deviceId]] of on(emojiEventEmitter, "createEmoji", { signal }))
-      if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId) && !getIsSameDevice(deviceId, ctx.session))
-        yield data;
+      if (isRoomId(data.partitionKey, input.roomId) && !getIsSameDevice(deviceId, ctx.session)) yield data;
   }),
   onDeleteEmoji: getMemberProcedure(onDeleteEmojiInputSchema, "roomId").subscription(async function* ({
     ctx,
@@ -86,8 +85,7 @@ export const emojiRouter = router({
     signal,
   }) {
     for await (const [[data, deviceId]] of on(emojiEventEmitter, "deleteEmoji", { signal }))
-      if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId) && !getIsSameDevice(deviceId, ctx.session))
-        yield data;
+      if (isRoomId(data.partitionKey, input.roomId) && !getIsSameDevice(deviceId, ctx.session)) yield data;
   }),
   onUpdateEmoji: getMemberProcedure(onUpdateEmojiInputSchema, "roomId").subscription(async function* ({
     ctx,
@@ -95,8 +93,7 @@ export const emojiRouter = router({
     signal,
   }) {
     for await (const [[data, deviceId]] of on(emojiEventEmitter, "updateEmoji", { signal }))
-      if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId) && !getIsSameDevice(deviceId, ctx.session))
-        yield data;
+      if (isRoomId(data.partitionKey, input.roomId) && !getIsSameDevice(deviceId, ctx.session)) yield data;
   }),
   readEmojis: getMemberProcedure(readMetadataInputSchema, "roomId").query(
     async ({ input: { messageRowKeys, roomId } }) => {
@@ -105,7 +102,7 @@ export const emojiRouter = router({
       )) as CustomTableClient<MessageEmojiMetadataEntity>;
       const { messageRowKey, type } = MessageEmojiMetadataEntityPropertyNames;
       return getTopNEntities(messagesMetadataClient, AZURE_MAX_PAGE_SIZE, MessageEmojiMetadataEntity, {
-        filter: `${getMessagesPartitionKeyFilter(roomId)} and ${type} eq '${
+        filter: `${getPartitionKeyFilter(roomId)} and ${type} eq '${
           MessageMetadataType.Emoji
         }' and (${messageRowKeys.map((mrk) => `${messageRowKey} eq '${mrk}'`).join(" or ")})`,
       });

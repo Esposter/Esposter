@@ -4,7 +4,6 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { rooms } from "#shared/db/schema/rooms";
 import { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
-import { getMessagesPartitionKey } from "#shared/services/esbabbler/getMessagesPartitionKey";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { messageRouter } from "@@/server/trpc/routers/message";
@@ -53,8 +52,11 @@ describe("emoji", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-    const partitionKey = getMessagesPartitionKey(newRoom.id, new Date());
-    const newEmoji = await emojiCaller.createEmoji({ emojiTag, messageRowKey: newMessage.rowKey, partitionKey });
+    const newEmoji = await emojiCaller.createEmoji({
+      emojiTag,
+      messageRowKey: newMessage.rowKey,
+      partitionKey: newRoom.id,
+    });
     const readEmojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId: newRoom.id });
 
     expect(readEmojis).toHaveLength(1);
@@ -88,12 +90,15 @@ describe("emoji", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-    const partitionKey = getMessagesPartitionKey(newRoom.id, new Date());
-    const newEmoji = await emojiCaller.createEmoji({ emojiTag, messageRowKey: newMessage.rowKey, partitionKey });
+    const newEmoji = await emojiCaller.createEmoji({
+      emojiTag,
+      messageRowKey: newMessage.rowKey,
+      partitionKey: newRoom.id,
+    });
 
     expect(newEmoji.emojiTag).toBe(emojiTag);
     expect(newEmoji.messageRowKey).toBe(newMessage.rowKey);
-    expect(newEmoji.partitionKey).toBe(partitionKey);
+    expect(newEmoji.partitionKey).toBe(newRoom.id);
     expect(newEmoji.type).toBe(MessageMetadataType.Emoji);
     expect(newEmoji.userIds).toContain(getMockSession().user.id);
   });
@@ -103,11 +108,14 @@ describe("emoji", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-    const partitionKey = getMessagesPartitionKey(newRoom.id, new Date());
-    const newEmoji = await emojiCaller.createEmoji({ emojiTag, messageRowKey: newMessage.rowKey, partitionKey });
+    const newEmoji = await emojiCaller.createEmoji({
+      emojiTag,
+      messageRowKey: newMessage.rowKey,
+      partitionKey: newRoom.id,
+    });
 
     await expect(
-      emojiCaller.createEmoji({ emojiTag, messageRowKey: newMessage.rowKey, partitionKey }),
+      emojiCaller.createEmoji({ emojiTag, messageRowKey: newMessage.rowKey, partitionKey: newRoom.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Invalid operation: Create, name: Emoji, ${JSON.stringify(newEmoji)}]`,
     );
@@ -116,11 +124,9 @@ describe("emoji", () => {
   test("fails create emoji with non-existent room", async () => {
     expect.hasAssertions();
 
-    const partitionKey = getMessagesPartitionKey(NIL, new Date());
-
     await expect(
-      emojiCaller.createEmoji({ emojiTag, messageRowKey: NIL, partitionKey }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Room is not found for id: ${partitionKey}]`);
+      emojiCaller.createEmoji({ emojiTag, messageRowKey: NIL, partitionKey: NIL }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Room is not found for id: ${NIL}]`);
   });
 
   test("fails create emoji with non-existent member", async () => {
@@ -128,11 +134,10 @@ describe("emoji", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-    const partitionKey = getMessagesPartitionKey(newRoom.id, new Date());
     await mockSessionOnce(mockContext.db);
 
     await expect(
-      emojiCaller.createEmoji({ emojiTag, messageRowKey: newMessage.rowKey, partitionKey }),
+      emojiCaller.createEmoji({ emojiTag, messageRowKey: newMessage.rowKey, partitionKey: newRoom.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
@@ -142,17 +147,16 @@ describe("emoji", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const onCreateEmoji = await emojiCaller.onCreateEmoji({ roomId: newRoom.id });
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-    const partitionKey = getMessagesPartitionKey(newRoom.id, new Date());
     const [data] = await Promise.all([
       onCreateEmoji[Symbol.asyncIterator]().next(),
-      emojiCaller.createEmoji({ emojiTag, messageRowKey: newMessage.rowKey, partitionKey }),
+      emojiCaller.createEmoji({ emojiTag, messageRowKey: newMessage.rowKey, partitionKey: newRoom.id }),
     ]);
 
     assert(!data.done);
 
     expect(data.value.emojiTag).toBe(emojiTag);
     expect(data.value.messageRowKey).toBe(newMessage.rowKey);
-    expect(data.value.partitionKey).toBe(partitionKey);
+    expect(data.value.partitionKey).toBe(newRoom.id);
   });
 
   test("fails on creates emoji with non-existent room", async () => {
@@ -179,8 +183,11 @@ describe("emoji", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-    const partitionKey = getMessagesPartitionKey(newRoom.id, new Date());
-    const newEmoji = await emojiCaller.createEmoji({ emojiTag, messageRowKey: newMessage.rowKey, partitionKey });
+    const newEmoji = await emojiCaller.createEmoji({
+      emojiTag,
+      messageRowKey: newMessage.rowKey,
+      partitionKey: newRoom.id,
+    });
     const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
     const { user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInviteCode);
@@ -201,8 +208,11 @@ describe("emoji", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-    const partitionKey = getMessagesPartitionKey(newRoom.id, new Date());
-    const newEmoji = await emojiCaller.createEmoji({ emojiTag, messageRowKey: newMessage.rowKey, partitionKey });
+    const newEmoji = await emojiCaller.createEmoji({
+      emojiTag,
+      messageRowKey: newMessage.rowKey,
+      partitionKey: newRoom.id,
+    });
     const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
     const { user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInviteCode);
@@ -239,8 +249,11 @@ describe("emoji", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-    const partitionKey = getMessagesPartitionKey(newRoom.id, new Date());
-    const newEmoji = await emojiCaller.createEmoji({ emojiTag, messageRowKey: newMessage.rowKey, partitionKey });
+    const newEmoji = await emojiCaller.createEmoji({
+      emojiTag,
+      messageRowKey: newMessage.rowKey,
+      partitionKey: newRoom.id,
+    });
     await mockSessionOnce(mockContext.db);
 
     await expect(
@@ -256,8 +269,7 @@ describe("emoji", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const partitionKey = getMessagesPartitionKey(newRoom.id, new Date());
-    const input = { messageRowKey: NIL, partitionKey, rowKey: NIL };
+    const input = { messageRowKey: NIL, partitionKey: newRoom.id, rowKey: NIL };
 
     await expect(emojiCaller.updateEmoji(input)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Invalid operation: Read, name: Emoji, ${JSON.stringify(input)}]`,
@@ -269,11 +281,10 @@ describe("emoji", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-    const partitionKey = getMessagesPartitionKey(newRoom.id, new Date());
     const newEmoji = await emojiCaller.createEmoji({
       emojiTag,
       messageRowKey: newMessage.rowKey,
-      partitionKey,
+      partitionKey: newRoom.id,
     });
     const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
     const { user } = await mockSessionOnce(mockContext.db);
@@ -321,11 +332,10 @@ describe("emoji", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-    const partitionKey = getMessagesPartitionKey(newRoom.id, new Date());
     const newEmoji = await emojiCaller.createEmoji({
       emojiTag,
       messageRowKey: newMessage.rowKey,
-      partitionKey,
+      partitionKey: newRoom.id,
     });
 
     await emojiCaller.deleteEmoji({
@@ -361,8 +371,11 @@ describe("emoji", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-    const partitionKey = getMessagesPartitionKey(newRoom.id, new Date());
-    const newEmoji = await emojiCaller.createEmoji({ emojiTag, messageRowKey: newMessage.rowKey, partitionKey });
+    const newEmoji = await emojiCaller.createEmoji({
+      emojiTag,
+      messageRowKey: newMessage.rowKey,
+      partitionKey: newRoom.id,
+    });
     await mockSessionOnce(mockContext.db);
 
     await expect(
@@ -379,8 +392,11 @@ describe("emoji", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-    const partitionKey = getMessagesPartitionKey(newRoom.id, new Date());
-    const newEmoji = await emojiCaller.createEmoji({ emojiTag, messageRowKey: newMessage.rowKey, partitionKey });
+    const newEmoji = await emojiCaller.createEmoji({
+      emojiTag,
+      messageRowKey: newMessage.rowKey,
+      partitionKey: newRoom.id,
+    });
 
     const onDeleteEmoji = await emojiCaller.onDeleteEmoji({ roomId: newRoom.id });
     const [data] = await Promise.all([

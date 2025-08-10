@@ -4,7 +4,6 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { rooms } from "#shared/db/schema/rooms";
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
-import { getMessagesPartitionKey } from "#shared/services/esbabbler/getMessagesPartitionKey";
 import { getBlobName } from "@@/server/services/azure/container/getBlobName";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { createCallerFactory } from "@@/server/trpc";
@@ -283,12 +282,11 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const partitionKey = getMessagesPartitionKey(newRoom.id, new Date());
 
     await expect(
-      messageCaller.updateMessage({ message: updatedMessage, partitionKey, rowKey }),
+      messageCaller.updateMessage({ message: updatedMessage, partitionKey: newRoom.id, rowKey }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Message is not found for id: {"message":"updatedMessage","partitionKey":"${partitionKey}","rowKey":"rowKey"}]`,
+      `[TRPCError: Message is not found for id: {"message":"updatedMessage","partitionKey":"${newRoom.id}","rowKey":"rowKey"}]`,
     );
   });
 
@@ -363,10 +361,11 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const partitionKey = getMessagesPartitionKey(newRoom.id, new Date());
 
-    await expect(messageCaller.deleteMessage({ partitionKey, rowKey })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Message is not found for id: {"partitionKey":"${partitionKey}","rowKey":"rowKey"}]`,
+    await expect(
+      messageCaller.deleteMessage({ partitionKey: newRoom.id, rowKey }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Message is not found for id: {"partitionKey":"${newRoom.id}","rowKey":"rowKey"}]`,
     );
   });
 
@@ -467,12 +466,11 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const partitionKey = getMessagesPartitionKey(newRoom.id, new Date());
 
     await expect(
-      messageCaller.forwardMessage({ partitionKey, roomIds: [newRoom.id], rowKey }),
+      messageCaller.forwardMessage({ partitionKey: newRoom.id, roomIds: [newRoom.id], rowKey }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Message is not found for id: {"partitionKey":"${partitionKey}","rowKey":"${rowKey}"}]`,
+      `[TRPCError: Message is not found for id: {"partitionKey":"${newRoom.id}","rowKey":"${rowKey}"}]`,
     );
   });
 
@@ -606,11 +604,12 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const partitionKey = getMessagesPartitionKey(newRoom.id, new Date());
     const id = crypto.randomUUID();
 
-    await expect(messageCaller.deleteFile({ id, partitionKey, rowKey })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Message is not found for id: {"partitionKey":"${partitionKey}","rowKey":"rowKey","id":"${id}"}]`,
+    await expect(
+      messageCaller.deleteFile({ id, partitionKey: newRoom.id, rowKey }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Message is not found for id: {"partitionKey":"${newRoom.id}","rowKey":"rowKey","id":"${id}"}]`,
     );
   });
 
@@ -732,12 +731,11 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const partitionKey = getMessagesPartitionKey(newRoom.id, new Date());
 
     await expect(
-      messageCaller.deleteLinkPreviewResponse({ partitionKey, rowKey }),
+      messageCaller.deleteLinkPreviewResponse({ partitionKey: newRoom.id, rowKey }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Message is not found for id: {"partitionKey":"${partitionKey}","rowKey":"rowKey"}]`,
+      `[TRPCError: Message is not found for id: {"partitionKey":"${newRoom.id}","rowKey":"rowKey"}]`,
     );
   });
 

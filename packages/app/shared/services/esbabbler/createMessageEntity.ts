@@ -2,7 +2,6 @@ import type { CreateMessageInput } from "#shared/models/db/message/CreateMessage
 
 import { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
-import { getMessagesPartitionKey } from "#shared/services/esbabbler/getMessagesPartitionKey";
 
 export const createMessageEntity = ({
   message,
@@ -14,7 +13,7 @@ export const createMessageEntity = ({
     ...rest,
     createdAt,
     message,
-    partitionKey: getMessagesPartitionKey(roomId, createdAt),
+    partitionKey: roomId,
     rowKey: getReverseTickedTimestamp(),
     updatedAt: createdAt,
   });

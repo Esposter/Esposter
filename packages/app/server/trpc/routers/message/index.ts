@@ -29,12 +29,12 @@ import { generateUploadFileSasEntities } from "@@/server/services/azure/containe
 import { getBlobName } from "@@/server/services/azure/container/getBlobName";
 import { deleteEntity } from "@@/server/services/azure/table/deleteEntity";
 import { getEntity } from "@@/server/services/azure/table/getEntity";
+import { getPartitionKeyFilter } from "@@/server/services/azure/table/getPartitionKeyFilter";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
 import { createMessage } from "@@/server/services/esbabbler/createMessage";
 import { messageEventEmitter } from "@@/server/services/esbabbler/events/messageEventEmitter";
 import { roomEventEmitter } from "@@/server/services/esbabbler/events/roomEventEmitter";
-import { getMessagesPartitionKeyFilter } from "@@/server/services/esbabbler/getMessagesPartitionKeyFilter";
-import { isMessagesPartitionKeyForRoomId } from "@@/server/services/esbabbler/isMessagesPartitionKeyForRoomId";
+import { isRoomId } from "@@/server/services/esbabbler/isRoomId";
 import { readMessages } from "@@/server/services/esbabbler/readMessages";
 import { updateMessage } from "@@/server/services/esbabbler/updateMessage";
 import { on } from "@@/server/services/events/on";
@@ -148,7 +148,7 @@ export const messageRouter = router({
       messageEventEmitter.emit("createTyping", { ...input, sessionId: ctx.session.session.id });
     }),
   deleteFile: getCreatorProcedure(deleteFileInputSchema).mutation(
-    async ({ ctx: { messageClient, messageEntity, roomId }, input: { id, partitionKey, rowKey } }) => {
+    async ({ ctx: { messageClient, messageEntity }, input: { id, partitionKey, rowKey } }) => {
       if (messageEntity.isForward || messageEntity.files.length === 0) throw new TRPCError({ code: "BAD_REQUEST" });
 
       const index = messageEntity.files.findIndex((f) => f.id === id);
@@ -159,7 +159,10 @@ export const messageRouter = router({
         });
 
       const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
-      const blobName = getBlobName(`${roomId}/${id}`, messageEntity.files.splice(index, 1)[0].filename);
+      const blobName = getBlobName(
+        `${messageEntity.partitionKey}/${id}`,
+        messageEntity.files.splice(index, 1)[0].filename,
+      );
       const updatedMessageEntity = {
         files: messageEntity.files,
         partitionKey,
@@ -204,7 +207,7 @@ export const messageRouter = router({
       const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
       await Promise.all(
         roomIds.map(async (roomId) => {
-          const newFileIds = await cloneFiles(containerClient, messageEntity.files, ctx.roomId, roomId);
+          const newFileIds = await cloneFiles(containerClient, messageEntity.files, messageEntity.partitionKey, roomId);
           const forward = await createMessage(messageClient, {
             // eslint-disable-next-line @typescript-eslint/no-misused-spread
             files: messageEntity.files.map((file, index) => new FileEntity({ ...file, id: newFileIds[index] })),
@@ -290,7 +293,7 @@ export const messageRouter = router({
 
       for (const newMessage of data)
         if (
-          isMessagesPartitionKeyForRoomId(newMessage.partitionKey, roomId) &&
+          isRoomId(newMessage.partitionKey, roomId) &&
           (isSendToSelf || !getIsSameDevice({ sessionId, userId: newMessage.userId }, ctx.session))
         )
           dataToYield.push(newMessage);
@@ -314,21 +317,21 @@ export const messageRouter = router({
     signal,
   }) {
     for await (const [data] of on(messageEventEmitter, "deleteMessage", { signal }))
-      if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId)) yield data;
+      if (isRoomId(data.partitionKey, input.roomId)) yield data;
   }),
   onUpdateMessage: getMemberProcedure(onUpdateMessageInputSchema, "roomId").subscription(async function* ({
     input,
     signal,
   }) {
     for await (const [data] of on(messageEventEmitter, "updateMessage", { signal }))
-      if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId)) yield data;
+      if (isRoomId(data.partitionKey, input.roomId)) yield data;
   }),
   readMessages: getMemberProcedure(readMessagesInputSchema, "roomId").query(({ input }) => readMessages(input)),
   readMessagesByRowKeys: getMemberProcedure(readMessagesByRowKeysInputSchema, "roomId").query(
     async ({ input: { roomId, rowKeys } }) => {
       const messageClient = await useTableClient(AzureTable.Messages);
       return getTopNEntities(messageClient, rowKeys.length, MessageEntity, {
-        filter: `${getMessagesPartitionKeyFilter(roomId)} and (${rowKeys.map((rowKey) => `RowKey eq '${rowKey}'`).join(" or ")})`,
+        filter: `${getPartitionKeyFilter(roomId)} and (${rowKeys.map((rowKey) => `RowKey eq '${rowKey}'`).join(" or ")})`,
       });
     },
   ),
