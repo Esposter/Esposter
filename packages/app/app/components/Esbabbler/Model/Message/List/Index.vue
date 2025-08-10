@@ -27,18 +27,14 @@ watchEffect(async () => {
 watchEffect(async () => {
   if (!isBottomVisible.value || !hasMoreNewer.value || isLoadingNewer.value) return;
   isLoadingNewer.value = true;
-  await readMoreNewerMessages(async () => {
+  await readMoreNewerMessages(() => {
     isLoadingNewer.value = false;
-    if (!messageContainerElement.value) return;
-    await nextTick();
-    await nextTick();
-    await nextTick();
-    await nextTick();
-    await nextTick();
-    await nextTick();
-    await nextTick();
-    messageContainerElement.value.scrollTop -= messageContainerElement.value.scrollHeight - previousScrollHeight.value;
-    previousScrollHeight.value = messageContainerElement.value.scrollHeight;
+    requestAnimationFrame(() => {
+      if (!isBottomVisible.value || !messageContainerElement.value) return;
+      messageContainerElement.value.scrollTop -=
+        messageContainerElement.value.scrollHeight - previousScrollHeight.value;
+      previousScrollHeight.value = messageContainerElement.value.scrollHeight;
+    });
   });
 });
 

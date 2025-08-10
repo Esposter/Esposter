@@ -45,7 +45,7 @@ export const useReadMessages = async () => {
       onComplete();
     }
   };
-  const readMoreNewerMessages = async (onComplete: () => Promise<void>) => {
+  const readMoreNewerMessages = async (onComplete: () => void) => {
     try {
       if (!currentRoomId.value) return;
 
@@ -63,7 +63,7 @@ export const useReadMessages = async () => {
       await readMetadata(items);
       unshiftMessages(...items);
     } finally {
-      await onComplete();
+      onComplete();
     }
   };
 
