@@ -66,10 +66,10 @@ describe("emoji", () => {
   test("fails read emojis with non-existent room id", async () => {
     expect.hasAssertions();
 
-    await expect(
-      emojiCaller.readEmojis({ messageRowKeys: [NIL], roomId: NIL }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Room is not found for id: 00000000-0000-0000-0000-000000000000]`,
+    const roomId = crypto.randomUUID();
+
+    await expect(emojiCaller.readEmojis({ messageRowKeys: [NIL], roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: UNAUTHORIZED]`,
     );
   });
 
@@ -124,9 +124,11 @@ describe("emoji", () => {
   test("fails create emoji with non-existent room", async () => {
     expect.hasAssertions();
 
+    const roomId = crypto.randomUUID();
+
     await expect(
-      emojiCaller.createEmoji({ emojiTag, messageRowKey: NIL, partitionKey: NIL }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Room is not found for id: ${NIL}]`);
+      emojiCaller.createEmoji({ emojiTag, messageRowKey: NIL, partitionKey: roomId }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
   test("fails create emoji with non-existent member", async () => {
@@ -162,8 +164,10 @@ describe("emoji", () => {
   test("fails on creates emoji with non-existent room", async () => {
     expect.hasAssertions();
 
-    await expect(emojiCaller.onCreateEmoji({ roomId: NIL })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Room is not found for id: 00000000-0000-0000-0000-000000000000]`,
+    const roomId = crypto.randomUUID();
+
+    await expect(emojiCaller.onCreateEmoji({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: UNAUTHORIZED]`,
     );
   });
 
@@ -238,10 +242,8 @@ describe("emoji", () => {
     expect.hasAssertions();
 
     await expect(
-      emojiCaller.updateEmoji({ messageRowKey: NIL, partitionKey: NIL, rowKey: NIL }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Room is not found for id: 00000000-0000-0000-0000-000000000000]`,
-    );
+      emojiCaller.updateEmoji({ messageRowKey: NIL, partitionKey: crypto.randomUUID(), rowKey: NIL }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
   test("fails update emoji with non-existent member", async () => {
@@ -311,8 +313,10 @@ describe("emoji", () => {
   test("fails on updates emoji with non-existent room", async () => {
     expect.hasAssertions();
 
-    await expect(emojiCaller.onUpdateEmoji({ roomId: NIL })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Room is not found for id: 00000000-0000-0000-0000-000000000000]`,
+    const roomId = crypto.randomUUID();
+
+    await expect(emojiCaller.onUpdateEmoji({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: UNAUTHORIZED]`,
     );
   });
 
@@ -358,12 +362,10 @@ describe("emoji", () => {
     await expect(
       emojiCaller.deleteEmoji({
         messageRowKey: NIL,
-        partitionKey: NIL,
+        partitionKey: crypto.randomUUID(),
         rowKey: NIL,
       }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Room is not found for id: 00000000-0000-0000-0000-000000000000]`,
-    );
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
   test("fails delete emoji with non-existent member", async () => {
@@ -418,8 +420,10 @@ describe("emoji", () => {
   test("fails on deletes emoji with non-existent room", async () => {
     expect.hasAssertions();
 
-    await expect(emojiCaller.onDeleteEmoji({ roomId: NIL })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Room is not found for id: 00000000-0000-0000-0000-000000000000]`,
+    const roomId = crypto.randomUUID();
+
+    await expect(emojiCaller.onDeleteEmoji({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: UNAUTHORIZED]`,
     );
   });
 
