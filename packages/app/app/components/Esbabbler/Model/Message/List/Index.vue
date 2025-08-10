@@ -1,38 +1,39 @@
 <script setup lang="ts">
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useMessageStore } from "@/store/esbabbler/message";
+import { useElementVisibility } from "@vueuse/core";
 
 const { readMoreMessages, readMoreNewerMessages } = await useReadMessages();
 const messageStore = useMessageStore();
-const { hasMore, hasMoreNewer, messageContainer } = storeToRefs(messageStore);
+const { hasMore, hasMoreNewer } = storeToRefs(messageStore);
 const isLoading = ref(false);
 const isLoadingNewer = ref(false);
-const topWaypoint = ref<HTMLElement | null>(null);
-const bottomWaypoint = ref<HTMLElement | null>(null);
+const topSkeleton = useTemplateRef("topSkeleton");
+const bottomSkeleton = useTemplateRef("bottomSkeleton");
+const isTopVisible = useElementVisibility(topSkeleton);
+const isBottomVisible = useElementVisibility(bottomSkeleton);
 
-useIntersectionObserver(topWaypoint, ([entry]) => {
-  if (!entry.isIntersecting || !hasMoreNewer.value || isLoadingNewer.value) return;
+watchEffect(async () => {
+  if (!isTopVisible.value || !hasMoreNewer.value || isLoadingNewer.value) return;
   isLoadingNewer.value = true;
-  readMoreNewerMessages(() => (isLoadingNewer.value = false));
+  await readMoreNewerMessages(() => (isLoadingNewer.value = false));
 });
 
-useIntersectionObserver(bottomWaypoint, ([entry]) => {
-  if (!entry.isIntersecting || !hasMore.value || isLoading.value) return;
+watchEffect(async () => {
+  if (!isBottomVisible.value || !hasMore.value || isLoading.value) return;
   isLoading.value = true;
-  readMoreMessages(() => (isLoading.value = false));
+  await readMoreMessages(() => (isLoading.value = false));
 });
 </script>
 
 <template>
-  <v-list ref="messageContainer" flex-1 flex pb-0 basis-full flex-col-reverse overflow-y-auto="!" lines="two">
-    <template v-if="hasMoreNewer">
+  <v-list flex-1 flex pb-0 basis-full flex-col-reverse overflow-y-auto="!" lines="two">
+    <div v-if="hasMoreNewer" ref="topSkeleton" aria-hidden="true">
       <EsbabblerModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
-    </template>
-    <div ref="topWaypoint" aria-hidden="true" h-1 />
+    </div>
     <EsbabblerModelMessageListContainer />
-    <div ref="bottomWaypoint" aria-hidden="true" h-1 />
-    <template v-if="hasMore">
+    <div v-if="hasMore" ref="bottomSkeleton" aria-hidden="true">
       <EsbabblerModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
-    </template>
+    </div>
   </v-list>
 </template>

@@ -12,17 +12,8 @@ export const useReadMessages = async () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const messageStore = useMessageStore();
-  const { initializeCursorPaginationData, pushMessages, unshiftMessages: baseUnshiftMessages } = messageStore;
-  const { hasMore, hasMoreNewer, messageContainerElement, nextCursor, nextCursorNewer } = storeToRefs(messageStore);
-  // A bit of a workaround to prevent sticky scroll position when loading newer messages
-  const unshiftMessages: typeof baseUnshiftMessages = async (...args) => {
-    const previousScrollHeight = messageContainerElement.value?.scrollHeight ?? 0;
-    baseUnshiftMessages(...args);
-    await nextTick();
-    if (messageContainerElement.value)
-      messageContainerElement.value.scrollTop += messageContainerElement.value.scrollHeight - previousScrollHeight;
-  };
-
+  const { initializeCursorPaginationData, pushMessages, unshiftMessages } = messageStore;
+  const { hasMore, hasMoreNewer, nextCursor, nextCursorNewer } = storeToRefs(messageStore);
   const readUsers = useReadUsers();
   const readReplies = useReadReplies();
   const readFiles = useReadFiles();

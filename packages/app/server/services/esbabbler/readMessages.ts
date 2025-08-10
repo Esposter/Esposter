@@ -31,14 +31,14 @@ export const readMessages = async ({
     const indices = await getTopNEntities(indexClient, limit + 1, CompositeKey, { filter: indexFilter });
     if (indices.length === 0) return getCursorPaginationData([], 0, []);
     // 2. Join by ids from main table
+    const { hasMore, items, nextCursor } = getCursorPaginationData(indices, limit, sortBy);
     const messageClient = await useTableClient(AzureTable.Messages);
-    const filter = `${getPartitionKeyFilter(roomId)} and (${indices
+    const filter = `${getPartitionKeyFilter(roomId)} and (${items
       .map(({ rowKey }) => `RowKey eq '${getReverseTickedTimestamp(rowKey)}'`)
       .join(" or ")})`;
     // We don't need to fetch limit + 1 here because the pagination metadata
     // is actually determined by the index table, not the message table
     const messages = await getTopNEntities(messageClient, limit, MessageEntity, { filter });
-    const { hasMore, nextCursor } = getCursorPaginationData(indices, limit, sortBy);
     return Object.assign(getCursorPaginationData(messages, limit, sortBy), { hasMore, nextCursor });
   }
   // Default: Desc via reverse-ticked RowKey (efficient)
