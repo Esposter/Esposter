@@ -14,25 +14,25 @@ const isTopVisible = useElementVisibility(topSkeleton);
 const isBottomVisible = useElementVisibility(bottomSkeleton);
 
 watchEffect(async () => {
-  if (!isTopVisible.value || !hasMoreNewer.value || isLoadingNewer.value) return;
-  isLoadingNewer.value = true;
-  await readMoreNewerMessages(() => (isLoadingNewer.value = false));
+  if (!isTopVisible.value || !hasMore.value || isLoading.value) return;
+  isLoading.value = true;
+  await readMoreMessages(() => (isLoading.value = false));
 });
 
 watchEffect(async () => {
-  if (!isBottomVisible.value || !hasMore.value || isLoading.value) return;
-  isLoading.value = true;
-  await readMoreMessages(() => (isLoading.value = false));
+  if (!isBottomVisible.value || !hasMoreNewer.value || isLoadingNewer.value) return;
+  isLoadingNewer.value = true;
+  await readMoreNewerMessages(() => (isLoadingNewer.value = false));
 });
 </script>
 
 <template>
   <v-list flex-1 flex pb-0 basis-full flex-col-reverse overflow-y-auto="!" lines="two">
-    <div v-if="hasMoreNewer" ref="topSkeleton" aria-hidden="true">
+    <div v-if="hasMoreNewer" ref="bottomSkeleton">
       <EsbabblerModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
     </div>
     <EsbabblerModelMessageListContainer />
-    <div v-if="hasMore" ref="bottomSkeleton" aria-hidden="true">
+    <div v-if="hasMore" ref="topSkeleton">
       <EsbabblerModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
     </div>
   </v-list>
