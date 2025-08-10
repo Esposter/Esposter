@@ -16,11 +16,11 @@ export const useReadMessages = async () => {
   const { hasMore, hasMoreNewer, messageContainerElement, nextCursor, nextCursorNewer } = storeToRefs(messageStore);
   // A bit of a workaround to prevent sticky scroll position when loading newer messages
   const unshiftMessages: typeof baseUnshiftMessages = async (...args) => {
-    if (!messageContainerElement.value) return;
-    const previousScrollHeight = messageContainerElement.value.scrollHeight;
+    const previousScrollHeight = messageContainerElement.value?.scrollHeight ?? 0;
     baseUnshiftMessages(...args);
     await nextTick();
-    messageContainerElement.value.scrollTop += messageContainerElement.value.scrollHeight - previousScrollHeight;
+    if (messageContainerElement.value)
+      messageContainerElement.value.scrollTop += messageContainerElement.value.scrollHeight - previousScrollHeight;
   };
 
   const readUsers = useReadUsers();
@@ -90,12 +90,12 @@ export const useReadMessages = async () => {
       const [older, newer] = await Promise.all([
         $trpc.message.readMessages.query({
           cursor: serialize({ rowKey: messageByRowKey.rowKey }, [MESSAGE_ROWKEY_SORT_ITEM]),
+          isIncludeValue: true,
           roomId,
         }),
         $trpc.message.readMessages.query({
           // We'll need to reverse the row key to get the older messages
           cursor: serialize({ rowKey: getReverseTickedTimestamp(messageByRowKey.rowKey) }, [MESSAGE_ROWKEY_SORT_ITEM]),
-          isIncludeValue: true,
           order: SortOrder.Asc,
           roomId,
         }),
