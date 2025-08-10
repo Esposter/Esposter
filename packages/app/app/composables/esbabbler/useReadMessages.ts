@@ -1,7 +1,6 @@
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useMessageStore } from "@/store/esbabbler/message";
@@ -77,25 +76,13 @@ export const useReadMessages = async () => {
       const messagesByRowKeys = await $trpc.message.readMessagesByRowKeys.query({ roomId, rowKeys: [rowKey] });
       if (messagesByRowKeys.length === 0) return false;
 
-      const messageByRowKey = messagesByRowKeys[0];
-      const [older, newer] = await Promise.all([
-        $trpc.message.readMessages.query({
-          cursor: serialize({ rowKey: messageByRowKey.rowKey }, [MESSAGE_ROWKEY_SORT_ITEM]),
-          isIncludeValue: true,
-          roomId,
-        }),
-        $trpc.message.readMessages.query({
-          // We'll need to reverse the row key to get the older messages
-          cursor: serialize({ rowKey: getReverseTickedTimestamp(messageByRowKey.rowKey) }, [MESSAGE_ROWKEY_SORT_ITEM]),
-          order: SortOrder.Asc,
-          roomId,
-        }),
-      ]);
-      await readMetadata([...newer.items, ...older.items]);
-      initializeCursorPaginationData(older);
-      nextCursorNewer.value = newer.nextCursor;
-      hasMoreNewer.value = newer.hasMore;
-      unshiftMessages(...newer.items);
+      const response = await $trpc.message.readMessages.query({
+        cursor: serialize({ rowKey: messagesByRowKeys[0].rowKey }, [MESSAGE_ROWKEY_SORT_ITEM]),
+        isIncludeValue: true,
+        roomId,
+      });
+      await readMetadata(response.items);
+      initializeCursorPaginationData(response);
       return true;
     };
 

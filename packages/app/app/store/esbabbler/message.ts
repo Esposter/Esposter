@@ -3,10 +3,12 @@ import type { CreateTypingInput } from "#shared/models/db/message/CreateTypingIn
 import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { Editor } from "@tiptap/core";
-// import type { VList } from "vuetify/components";
 
 import { AzureEntityType } from "#shared/models/azure/AzureEntityType";
+import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
 import { createMessageEntity } from "#shared/services/esbabbler/createMessageEntity";
+import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
+import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { authClient } from "@/services/auth/authClient";
 import { MessageHookMap } from "@/services/esbabbler/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
@@ -39,8 +41,12 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
   const nextCursorNewer = ref<string>();
   const initializeCursorPaginationData: typeof baseInitializeCursorPaginationData = (...args) => {
     baseInitializeCursorPaginationData(...args);
-    hasMoreNewer.value = false;
-    nextCursorNewer.value = undefined;
+    if (args[0].items.length === 0) return;
+    // We'll need to also fetch the newer messages to kick-start the pagination
+    hasMoreNewer.value = true;
+    nextCursorNewer.value = serialize({ rowKey: getReverseTickedTimestamp(args[0].items[0].rowKey) }, [
+      MESSAGE_ROWKEY_SORT_ITEM,
+    ]);
   };
   const resetCursorPaginationData: typeof baseResetCursorPaginationData = (...args) => {
     baseResetCursorPaginationData(...args);
