@@ -14,11 +14,11 @@ catalog:
   "@codemirror/view": ^6.38.1
   "@electric-sql/pglite": ^0.3.7
   "@floating-ui/dom": ^1.7.3
-  "@fullcalendar/core": ^6.1.18
-  "@fullcalendar/daygrid": ^6.1.18
-  "@fullcalendar/interaction": ^6.1.18
-  "@fullcalendar/timegrid": ^6.1.18
-  "@fullcalendar/vue3": ^6.1.18
+  "@fullcalendar/core": ^6.1.19
+  "@fullcalendar/daygrid": ^6.1.19
+  "@fullcalendar/interaction": ^6.1.19
+  "@fullcalendar/timegrid": ^6.1.19
+  "@fullcalendar/vue3": ^6.1.19
   "@koumoul/vjsf": ^3.20.4
   "@lerna-lite/cli": ^4.7.0
   "@lerna-lite/publish": ^4.7.0
@@ -189,7 +189,7 @@ catalog:
   worker-timers: ^8.0.23
   ws: ^8.18.3
   xmlbuilder2: ^3.1.1
-  zod: ^4.0.16
+  zod: ^4.0.17
 
 catalogMode: strict
 
