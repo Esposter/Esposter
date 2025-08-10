@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.10.0](https://github.com/Esposter/Esposter/compare/v2.9.0...v2.10.0) (2025-08-10)
+
+### Bug Fixes
+
+* lint ([c439748](https://github.com/Esposter/Esposter/commit/c43974847f2615160db145921858e05caf328f78))
+* lint ([94d10dc](https://github.com/Esposter/Esposter/commit/94d10dc22e222676e8eb7208bcf7c548252c98d8))
+* use get element by id, better API ([8186414](https://github.com/Esposter/Esposter/commit/8186414f0df5294e47b76c29d93a43811038c7b5))
+* vue dts ([cb01c86](https://github.com/Esposter/Esposter/commit/cb01c8602da3d0ad10c01972ac77e5fd2c010964))
+
 # [2.9.0](https://github.com/Esposter/Esposter/compare/v2.8.1...v2.9.0) (2025-07-19)
 
 ### Features

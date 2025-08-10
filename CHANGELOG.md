@@ -3,6 +3,61 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.10.0](https://github.com/Esposter/Esposter/compare/v2.9.0...v2.10.0) (2025-08-10)
+
+### Bug Fixes
+
+* actually you can reply to yourself lol, makes sense ([4e7b00d](https://github.com/Esposter/Esposter/commit/4e7b00d786b07685f544498d62199a0d44e3b29e))
+* add is include value for normal fetching so the order includes it ([457d4f7](https://github.com/Esposter/Esposter/commit/457d4f740c1bb25e7d125e72a8bfbcea6f9905aa))
+* Add isScrolling check to not push users up ([00fb7d6](https://github.com/Esposter/Esposter/commit/00fb7d6d15ddfe4b99b23b693aabd993b8e9123e))
+* add messages layout ([5528b69](https://github.com/Esposter/Esposter/commit/5528b691caf8bea99359f704f455e4716b574b1e))
+* add trailing slash to docs ([5cb2e80](https://github.com/Esposter/Esposter/commit/5cb2e8034a12543cf2c390f12befc36c9d086303))
+* finally fix up remaining types for now ([4589acb](https://github.com/Esposter/Esposter/commit/4589acb77213ad8d047aa09cae7c4d3201ae8cf5))
+* fugly fix for the scroll top for now ([3671e27](https://github.com/Esposter/Esposter/commit/3671e27ddc3f90183feef75647da152eab19e37e))
+* graph edge type ([e49d0b9](https://github.com/Esposter/Esposter/commit/e49d0b94cd6c970aba236eb042e5df1b38d7ad97))
+* jump to present ([680c54b](https://github.com/Esposter/Esposter/commit/680c54b4dd41ff77761ae5815ba4b4b9bd5963b3))
+* jump to present snackbar ([c2d18eb](https://github.com/Esposter/Esposter/commit/c2d18ebe84582c06e88e37d5186cd54e6dd98bb0))
+* lint ([c439748](https://github.com/Esposter/Esposter/commit/c43974847f2615160db145921858e05caf328f78))
+* lint ([94d10dc](https://github.com/Esposter/Esposter/commit/94d10dc22e222676e8eb7208bcf7c548252c98d8))
+* move copy text to separate section ([da7fc5d](https://github.com/Esposter/Esposter/commit/da7fc5dcb43874afedc7eeab98a34938fe7705f7))
+* remove dupe ([821953e](https://github.com/Esposter/Esposter/commit/821953e345d67780c4aa11ef7197f2087ce37e28))
+* remove unnecessary background transparent ([ed86abf](https://github.com/Esposter/Esposter/commit/ed86abf36d8e0a24e03d73403d3313a95ac0dd4b))
+* remove unnecessary nuxt-site-config dep ([99a7800](https://github.com/Esposter/Esposter/commit/99a7800c9babf42489c5989075cd5a5f5ac54821))
+* remove unnecessary type ([bc77c95](https://github.com/Esposter/Esposter/commit/bc77c95ed2453cf49f3bb7f618ecd418e1ed5812))
+* revert back pglite ([4f2945f](https://github.com/Esposter/Esposter/commit/4f2945f4736c3de468cbb133c030dd20e1218183))
+* revert back to nuxt v4.0.1 for now ([26d9abb](https://github.com/Esposter/Esposter/commit/26d9abb59a5f4af386575a3a66c3f66dbb921648))
+* sanitize key ([f694d5f](https://github.com/Esposter/Esposter/commit/f694d5f5744094239164744e620c6d50c72f8953))
+* sanitize key ([d550593](https://github.com/Esposter/Esposter/commit/d550593983a55791aa49fc6e8388b120ac9d94d2))
+* save after update ([de1d724](https://github.com/Esposter/Esposter/commit/de1d7241e58b448501585c209fcc4e662834e23c))
+* serialize and bunch of rowkey cursor issues ([5171005](https://github.com/Esposter/Esposter/commit/5171005ab50be692222e91d3377b5166854bbf63))
+* serialize rowkey as cursor ([eeec613](https://github.com/Esposter/Esposter/commit/eeec613113ee4790e5785cd061ba35d1b8b4cf00))
+* support serialize/deserialize in browser + node ([266f6aa](https://github.com/Esposter/Esposter/commit/266f6aae9aafaa11a84e9e55e28764c80319b026))
+* tests ([8c7a7b4](https://github.com/Esposter/Esposter/commit/8c7a7b42de08809c267d55141aa3edf8de8918a8))
+* thanks friend, got perfect solution, use requestAnimationFrame ([20eb275](https://github.com/Esposter/Esposter/commit/20eb2759f0b8ddb57f1d7e3871914744abcbe447))
+* types ([b17f9b9](https://github.com/Esposter/Esposter/commit/b17f9b93c6016a9d93910f18084a7ff26a6b2066))
+* types ([8bf54fd](https://github.com/Esposter/Esposter/commit/8bf54fd9d247678f124a38255215b2fc570c9953))
+* types ([0abab74](https://github.com/Esposter/Esposter/commit/0abab7463cdc88540e72b17b8b783b9135cc2552))
+* types + reconnect logic ([959c534](https://github.com/Esposter/Esposter/commit/959c534a2f362c9cddcf5c25dcf14698445f2423))
+* use get element by id, better API ([8186414](https://github.com/Esposter/Esposter/commit/8186414f0df5294e47b76c29d93a43811038c7b5))
+* validate message first and also fix use sortBy ([4b9a924](https://github.com/Esposter/Esposter/commit/4b9a924971f16fec1e54087a429ec5c513c569ea))
+* vue dts ([cb01c86](https://github.com/Esposter/Esposter/commit/cb01c8602da3d0ad10c01972ac77e5fd2c010964))
+* we also needed to reverse the day timestamp as well... ([c96fc2b](https://github.com/Esposter/Esposter/commit/c96fc2bd158f6cb9df23c1c75be55669b78e22c1))
+* workaround sticky scroll on loading new messages ([9247da1](https://github.com/Esposter/Esposter/commit/9247da16b060859331848bcaba786278ade244bc))
+
+### Features
+
+* Add copy message link ([21fe9ed](https://github.com/Esposter/Esposter/commit/21fe9ed3a648ebf7056ea50850cb6db41018d086))
+* Add copy text ([a0df02a](https://github.com/Esposter/Esposter/commit/a0df02a5c1c018d46bf21684568f0ec61605cbcd))
+* Add jumping to specific messages ([4fdd9fa](https://github.com/Esposter/Esposter/commit/4fdd9faeff5c1bf6a558162edde66745ab55d79e))
+* Add panel ([39f788e](https://github.com/Esposter/Esposter/commit/39f788e568d3446690641786f165eac8e1c6c80b))
+* Add skeletons ([ab33c06](https://github.com/Esposter/Esposter/commit/ab33c06b746f4caa1d25fc3fa00b269062af5e1e))
+* Add styles ([ea9d2d2](https://github.com/Esposter/Esposter/commit/ea9d2d2d643aa5177c97687017f3f17cf00cfbff))
+* Add zod types ([6bb60a4](https://github.com/Esposter/Esposter/commit/6bb60a4962c9165fa485cbbe0e1b545e21f0ba40))
+
+### Performance Improvements
+
+* make waypoint v-show ([719c5d4](https://github.com/Esposter/Esposter/commit/719c5d48abb279a5aa1af2c8c9ab71d206126c1e))
+
 # [2.9.0](https://github.com/Esposter/Esposter/compare/v2.8.1...v2.9.0) (2025-07-19)
 
 ### Bug Fixes

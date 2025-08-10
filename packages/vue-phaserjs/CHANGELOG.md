@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.10.0](https://github.com/Esposter/Esposter/compare/v2.9.0...v2.10.0) (2025-08-10)
+
+### Features
+
+* Add jumping to specific messages ([4fdd9fa](https://github.com/Esposter/Esposter/commit/4fdd9faeff5c1bf6a558162edde66745ab55d79e))
+
 # [2.9.0](https://github.com/Esposter/Esposter/compare/v2.8.1...v2.9.0) (2025-07-19)
 
 **Note:** Version bump only for package vue-phaserjs
