@@ -1,6 +1,7 @@
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useMessageStore } from "@/store/esbabbler/message";
@@ -44,7 +45,7 @@ export const useReadMessages = async () => {
       onComplete();
     }
   };
-  const readMoreNewerMessages = async (onComplete: () => void) => {
+  const readMoreNewerMessages = async (onComplete: () => Promise<void>) => {
     try {
       if (!currentRoomId.value) return;
 
@@ -62,7 +63,7 @@ export const useReadMessages = async () => {
       await readMetadata(items);
       unshiftMessages(...items);
     } finally {
-      onComplete();
+      await onComplete();
     }
   };
 
@@ -83,6 +84,8 @@ export const useReadMessages = async () => {
       });
       await readMetadata(response.items);
       initializeCursorPaginationData(response);
+      hasMoreNewer.value = true;
+      nextCursorNewer.value = serialize({ rowKey: getReverseTickedTimestamp(rowKey) }, [MESSAGE_ROWKEY_SORT_ITEM]);
       return true;
     };
 

@@ -6,7 +6,7 @@ export const useScrollToMessage = () => {
   const { activeRowKey } = storeToRefs(replyStore);
   return (rowKey: string) => {
     activeRowKey.value = rowKey;
-    document.getElementById(rowKey)?.scrollIntoView({ behavior: "smooth" });
+    document.getElementById(rowKey)?.scrollIntoView();
     useTimeoutFn(() => {
       activeRowKey.value = undefined;
     }, dayjs.duration(2, "seconds").asMilliseconds());
