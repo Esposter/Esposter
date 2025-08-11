@@ -3,6 +3,7 @@ import type { FooterBarAppendSlotProps, FooterBarPrependSlotProps } from "@/comp
 import type { AnyExtension } from "@tiptap/vue-3";
 import type { VCard } from "vuetify/components";
 
+import { type FileHandlePluginOptions, FileHandler } from "@tiptap/extension-file-handler";
 import { CharacterCount, Placeholder } from "@tiptap/extensions";
 import { StarterKit } from "@tiptap/starter-kit";
 import { EditorContent, useEditor } from "@tiptap/vue-3";
@@ -29,12 +30,16 @@ const {
   limit,
   placeholder = "Text (optional)",
 } = defineProps<RichTextEditorProps>();
+const emit = defineEmits<{ paste: Parameters<NonNullable<FileHandlePluginOptions["onPaste"]>> }>();
 const editor = useEditor({
   content: modelValue.value,
   extensions: [
     StarterKit,
     Placeholder.configure({ placeholder }),
     CharacterCount.configure({ limit }),
+    FileHandler.configure({
+      onPaste: (...args) => emit("paste", ...args),
+    }),
     ...(extensions ?? []),
   ],
   onUpdate: ({ editor }) => {

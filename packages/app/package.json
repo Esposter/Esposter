@@ -59,6 +59,7 @@
     "@koumoul/vjsf": "catalog:",
     "@mdi/font": "catalog:",
     "@tiptap/core": "catalog:",
+    "@tiptap/extension-file-handler": "catalog:",
     "@tiptap/extension-mention": "catalog:",
     "@tiptap/extensions": "catalog:",
     "@tiptap/pm": "catalog:",

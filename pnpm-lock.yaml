@@ -96,6 +96,9 @@ catalogs:
     '@tiptap/core':
       specifier: ^3.1.0
       version: 3.1.0
+    '@tiptap/extension-file-handler':
+      specifier: ^3.1.0
+      version: 3.1.0
     '@tiptap/extension-mention':
       specifier: ^3.1.0
       version: 3.1.0
@@ -703,6 +706,9 @@ importers:
       '@tiptap/core':
         specifier: 'catalog:'
         version: 3.1.0(@tiptap/pm@3.1.0)
+      '@tiptap/extension-file-handler':
+        specifier: 'catalog:'
+        version: 3.1.0(@tiptap/core@3.1.0(@tiptap/pm@3.1.0))(@tiptap/extension-text-style@3.1.0(@tiptap/core@3.1.0(@tiptap/pm@3.1.0)))(@tiptap/pm@3.1.0)
       '@tiptap/extension-mention':
         specifier: 'catalog:'
         version: 3.1.0(@tiptap/core@3.1.0(@tiptap/pm@3.1.0))(@tiptap/pm@3.1.0)(@tiptap/suggestion@3.1.0(@tiptap/core@3.1.0(@tiptap/pm@3.1.0))(@tiptap/pm@3.1.0))
@@ -4435,6 +4441,13 @@ packages:
     peerDependencies:
       '@tiptap/extensions': ^3.1.0
 
+  '@tiptap/extension-file-handler@3.1.0':
+    resolution: {integrity: sha512-nCDFJjsmZ6KNLnYsgQYrzV8phacDinWJ3lnA1Qg0Axd6nlVwt6DPUlakUPjqUsOss02qwAxyneQknw6s9K7wow==}
+    peerDependencies:
+      '@tiptap/core': ^3.1.0
+      '@tiptap/extension-text-style': ^3.1.0
+      '@tiptap/pm': ^3.1.0
+
   '@tiptap/extension-floating-menu@3.1.0':
     resolution: {integrity: sha512-dNhRw3gH9VHqaaSEZ5y7n8k5Ot1cH6jzTpXrKOFt0EhrwV+4P+knTHsvKe33AumpukailMpuSGhDr2/RQQCRTQ==}
     peerDependencies:
@@ -4509,6 +4522,11 @@ packages:
 
   '@tiptap/extension-strike@3.1.0':
     resolution: {integrity: sha512-7DzMXM5NrtTC3uVcjYgImNuXKMXonPZXwf0Q+No/sKqxtU+yXjusjVMmZqNLbzvtAFKghO0GDJGD4RxBNX9FgQ==}
+    peerDependencies:
+      '@tiptap/core': ^3.1.0
+
+  '@tiptap/extension-text-style@3.1.0':
+    resolution: {integrity: sha512-OPbOGD2SCSfosbzsr+nw9Uv2O14TpfYgCa8hIODLB7Sz1pRy3elqsAuIkA8G/po2TuPLD4Z4HxzL7dnPq/G5Lw==}
     peerDependencies:
       '@tiptap/core': ^3.1.0
 
@@ -15420,6 +15438,12 @@ snapshots:
     dependencies:
       '@tiptap/extensions': 3.1.0(@tiptap/core@3.1.0(@tiptap/pm@3.1.0))(@tiptap/pm@3.1.0)
 
+  '@tiptap/extension-file-handler@3.1.0(@tiptap/core@3.1.0(@tiptap/pm@3.1.0))(@tiptap/extension-text-style@3.1.0(@tiptap/core@3.1.0(@tiptap/pm@3.1.0)))(@tiptap/pm@3.1.0)':
+    dependencies:
+      '@tiptap/core': 3.1.0(@tiptap/pm@3.1.0)
+      '@tiptap/extension-text-style': 3.1.0(@tiptap/core@3.1.0(@tiptap/pm@3.1.0))
+      '@tiptap/pm': 3.1.0
+
   '@tiptap/extension-floating-menu@3.1.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.1.0(@tiptap/pm@3.1.0))(@tiptap/pm@3.1.0)':
     dependencies:
       '@floating-ui/dom': 1.7.3
@@ -15482,6 +15506,10 @@ snapshots:
       '@tiptap/core': 3.1.0(@tiptap/pm@3.1.0)
 
   '@tiptap/extension-strike@3.1.0(@tiptap/core@3.1.0(@tiptap/pm@3.1.0))':
+    dependencies:
+      '@tiptap/core': 3.1.0(@tiptap/pm@3.1.0)
+
+  '@tiptap/extension-text-style@3.1.0(@tiptap/core@3.1.0(@tiptap/pm@3.1.0))':
     dependencies:
       '@tiptap/core': 3.1.0(@tiptap/pm@3.1.0)
 
@@ -16277,7 +16305,7 @@ snapshots:
       estree-walker: 3.0.3
       magic-string: 0.30.17
     optionalDependencies:
-      vite: rolldown-vite@7.1.0(@types/node@24.2.1)(esbuild@0.25.8)(jiti@2.5.1)(sass-embedded@1.90.0)(sass@1.90.0)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.1)
+      vite: rolldown-vite@7.1.0(@types/node@24.2.1)(esbuild@0.23.1)(jiti@2.5.1)(sass-embedded@1.90.0)(sass@1.90.0)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.1)
 
   '@vitest/pretty-format@3.2.4':
     dependencies:
