@@ -25,7 +25,7 @@ Add [phaser.d.ts](https://github.com/Esposter/Esposter/blob/main/packages/app/sh
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs/modules/vue_phaserjs.html) to level up.
+We highly recommend you take a look at the [documentation](https://esposter.com/docs/modules/vue-phaserjs.html) to level up.
 
 ### Usage
 

@@ -23,7 +23,7 @@ pnpm i -D azure-mock
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs/modules/azure_mock.html) to level up.
+We highly recommend you take a look at the [documentation](https://esposter.com/docs/modules/azure-mock.html) to level up.
 
 ### Usage
 
