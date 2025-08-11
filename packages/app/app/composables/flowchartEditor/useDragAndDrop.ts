@@ -1,6 +1,8 @@
+import type { XYPosition } from "@vue-flow/core";
+
 import { GeneralNodeType } from "#shared/models/flowchartEditor/node/GeneralNodeType";
 import { useDragStore } from "@/store/flowchartEditor/drag";
-import { useVueFlow, type XYPosition } from "@vue-flow/core";
+import { useVueFlow } from "@vue-flow/core";
 
 export const useDragAndDrop = () => {
   const dragStore = useDragStore();
