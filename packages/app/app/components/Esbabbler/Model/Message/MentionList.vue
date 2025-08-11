@@ -34,12 +34,11 @@ const onKeyDown = ({ event }: { event: KeyboardEvent }) => {
 
 defineExpose({ onKeyDown });
 
-watch(
+watchDeep(
   () => items,
   () => {
     selectedIndex.value = 0;
   },
-  { deep: true },
 );
 </script>
 
