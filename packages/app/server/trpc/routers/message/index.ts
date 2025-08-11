@@ -259,8 +259,6 @@ export const messageRouter = router({
     input: { lastEventId, pushSubscription, roomId },
     signal,
   }) {
-    const sendCreateMessageNotification = useSendCreateMessageNotification(pushSubscription, roomId);
-
     if (lastEventId) {
       let cursor: string | undefined = serialize({ rowKey: getReverseTickedTimestamp(lastEventId) }, [
         MESSAGE_ROWKEY_SORT_ITEM,
@@ -284,6 +282,8 @@ export const messageRouter = router({
       }
     }
 
+    const sendCreateMessageNotification = useSendCreateMessageNotification(pushSubscription, roomId);
+
     for await (const [[data, { image, isSendToSelf, name, sessionId }]] of on(messageEventEmitter, "createMessage", {
       signal,
     })) {
@@ -298,7 +298,11 @@ export const messageRouter = router({
           dataToYield.push(newMessage);
 
       if (dataToYield.length > 0) {
-        await sendCreateMessageNotification(newestMessage.message, name, image);
+        await sendCreateMessageNotification(
+          { message: newestMessage.message, rowKey: newestMessage.rowKey },
+          name,
+          image,
+        );
         yield tracked(newestMessage.rowKey, dataToYield);
       }
     }
