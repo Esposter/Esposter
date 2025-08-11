@@ -3,6 +3,7 @@ import type {
   CreateTableEntityResponse,
   GetAccessPolicyResponse,
   GetTableEntityResponse,
+  ListTableEntitiesOptions,
   TableClient,
   TableDeleteEntityHeaders,
   TableEntity,
@@ -18,6 +19,7 @@ import type { MapValue } from "type-fest/source/entry";
 
 import { MockRestError } from "@/models/MockRestError";
 import { MockTableDatabase } from "@/store/MockTableDatabase";
+import { applyTableFilter } from "@/util/tableFilter/applyTableFilter";
 import { ID_SEPARATOR } from "@esposter/shared";
 /**
  * An in-memory mock of the Azure TableClient.
@@ -84,20 +86,23 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
     return Promise.resolve({ ...entity, etag: this.getEtag() });
   }
 
-  listEntities<T extends object>(): PagedAsyncIterableIterator<TableEntityResult<T>, TableEntityResultPage<T>> {
+  listEntities<T extends object>(
+    options?: ListTableEntitiesOptions,
+  ): PagedAsyncIterableIterator<TableEntityResult<T>, TableEntityResultPage<T>> {
     const withMetadata = this.withMetadata.bind(this);
+    const filter = options?.queryOptions?.filter;
+    const tableEntities = Array.from((this.table as Map<string, TableEntity<T>>).values());
+    const resultTableEntities = filter ? applyTableFilter(tableEntities, filter) : tableEntities;
     return {
       byPage: () =>
-        (async function* (entities: Map<string, T>): AsyncGenerator<TableEntityResultPage<T>> {
-          // For a simple mock, we'll return all entities in a single page
-          // A more complex mock could implement maxPageSize and continuationTokens
-          const allEntitiesWithMetadata = [...entities.values()].map(withMetadata);
+        (async function* (entities: TableEntity<T>[]): AsyncGenerator<TableEntityResultPage<T>> {
+          const allEntitiesWithMetadata = entities.map(withMetadata);
           if (allEntitiesWithMetadata.length > 0) yield await Promise.resolve(allEntitiesWithMetadata);
-        })(this.table as Map<string, T>),
+        })(resultTableEntities),
       next: () =>
-        (async function* (entities: Map<string, T>): AsyncGenerator<TableEntityResult<T>> {
-          for (const entity of entities.values()) yield await Promise.resolve(withMetadata(entity));
-        })(this.table as Map<string, T>).next(),
+        (async function* (entities: TableEntity<T>[]): AsyncGenerator<TableEntityResult<T>> {
+          for (const entity of entities) yield await Promise.resolve(withMetadata(entity));
+        })(resultTableEntities).next(),
       [Symbol.asyncIterator]() {
         return this;
       },

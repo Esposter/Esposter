@@ -5,8 +5,7 @@ import type { EntityTypeKey } from "@/models/shared/entity/EntityTypeKey";
 import type { OperationDataKey } from "@/models/shared/pagination/OperationDataKey";
 
 import { getEntityIdComparator } from "#shared/services/entity/getEntityIdComparator";
-import { uncapitalize } from "@/util/text/uncapitalize";
-import { Operation } from "@esposter/shared";
+import { Operation, uncapitalize } from "@esposter/shared";
 
 export const createOperationData = <
   TItem extends ToData<AEntity>,

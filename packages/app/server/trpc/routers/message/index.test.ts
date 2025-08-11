@@ -4,6 +4,10 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { rooms } from "#shared/db/schema/rooms";
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
+import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
+import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
+import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { getBlobName } from "@@/server/services/azure/container/getBlobName";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { createCallerFactory } from "@@/server/trpc";
@@ -58,6 +62,64 @@ describe("message", () => {
 
     expect(readMessages.items).toHaveLength(1);
     expect(readMessages.items[0].message).toBe(newMessage.message);
+  });
+
+  test("reads messages with cursor and includes value", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const firstMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
+    const secondMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
+    const cursor = serialize({ rowKey: secondMessage.rowKey }, [MESSAGE_ROWKEY_SORT_ITEM]);
+    let readMessages = await messageCaller.readMessages({ cursor, roomId: newRoom.id });
+
+    expect(readMessages.items).toHaveLength(1);
+    expect(readMessages.items[0].rowKey).toBe(firstMessage.rowKey);
+
+    readMessages = await messageCaller.readMessages({
+      cursor,
+      isIncludeValue: true,
+      roomId: newRoom.id,
+    });
+
+    expect(readMessages.items).toHaveLength(2);
+    expect(readMessages.items[0].rowKey).toBe(firstMessage.rowKey);
+    expect(readMessages.items[1].rowKey).toBe(secondMessage.rowKey);
+  });
+
+  test("reads messages in ascending order with cursor and includes value", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const firstMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
+    const secondMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
+    // Limit 1 should return oldest first
+    let readMessages = await messageCaller.readMessages({ limit: 1, order: SortOrder.Asc, roomId: newRoom.id });
+
+    expect(readMessages.items).toHaveLength(1);
+    expect(readMessages.items[0].rowKey).toBe(firstMessage.rowKey);
+
+    let cursor = serialize({ rowKey: getReverseTickedTimestamp(firstMessage.rowKey) }, [MESSAGE_ROWKEY_SORT_ITEM]);
+    readMessages = await messageCaller.readMessages({
+      cursor,
+      order: SortOrder.Asc,
+      roomId: newRoom.id,
+    });
+
+    expect(readMessages.items).toHaveLength(1);
+    expect(readMessages.items[0].rowKey).toBe(secondMessage.rowKey);
+
+    cursor = serialize({ rowKey: getReverseTickedTimestamp(firstMessage.rowKey) }, [MESSAGE_ROWKEY_SORT_ITEM]);
+    readMessages = await messageCaller.readMessages({
+      cursor,
+      isIncludeValue: true,
+      order: SortOrder.Asc,
+      roomId: newRoom.id,
+    });
+
+    expect(readMessages.items).toHaveLength(2);
+    expect(readMessages.items[0].rowKey).toBe(firstMessage.rowKey);
+    expect(readMessages.items[1].rowKey).toBe(secondMessage.rowKey);
   });
 
   test("fails read messages with non-existent room id", async () => {
@@ -447,9 +509,8 @@ describe("message", () => {
 
     const targetMessages = await messageCaller.readMessages({ roomId: targetRoom.id });
 
-    expect(targetMessages.items).toHaveLength(2);
-    expect(targetMessages.items[0].isForward).toBeUndefined();
-    expect(targetMessages.items[1].isForward).toBe(true);
+    expect(targetMessages.items).toHaveLength(1);
+    expect(targetMessages.items[0].isForward).toBe(true);
   });
 
   test("forwards message with optional message", async () => {
@@ -468,10 +529,9 @@ describe("message", () => {
 
     const targetMessages = await messageCaller.readMessages({ roomId: targetRoom.id });
 
-    expect(targetMessages.items).toHaveLength(3);
-    expect(targetMessages.items[0].isForward).toBeUndefined();
-    expect(targetMessages.items[1].isForward).toBe(true);
-    expect(targetMessages.items[2].isForward).toBeUndefined();
+    expect(targetMessages.items).toHaveLength(2);
+    expect(targetMessages.items[0].isForward).toBe(true);
+    expect(targetMessages.items[1].isForward).toBeUndefined();
   });
 
   test("fails forward messages with non-existent message", async () => {

@@ -3,7 +3,7 @@ import type { ApexOptions } from "apexcharts";
 
 import { ChartType } from "#shared/models/dashboard/data/chart/type/ChartType";
 import { AChartTypeResolver } from "@/models/resolvers/dashboard/chart/AChartTypeResolver";
-import { uncapitalize } from "@/util/text/uncapitalize";
+import { uncapitalize } from "@esposter/shared";
 import { defu } from "defu";
 
 export class DonutResolver<T extends BasicChartConfiguration> extends AChartTypeResolver<T> {

@@ -3,7 +3,7 @@ import type { AEntity } from "#shared/models/entity/AEntity";
 import type { ToData } from "#shared/models/entity/ToData";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 
-import { CompositeKeyEntityPropertyNames } from "#shared/models/azure/CompositeKeyEntity";
+import { CompositeKeyPropertyNames } from "#shared/models/azure/CompositeKey";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { deserialize } from "#shared/services/pagination/cursor/deserialize";
 import { capitalize, exhaustiveGuard, NotFoundError } from "@esposter/shared";
@@ -36,8 +36,5 @@ export const getCursorWhereAzureTable = <TItem extends CompositeKey | ToData<AEn
     .join(" and ");
 };
 // Stupid Azure and Javascript property name casing conventions
-const KeysToCapitalize = new Set<string>([
-  CompositeKeyEntityPropertyNames.partitionKey,
-  CompositeKeyEntityPropertyNames.rowKey,
-]);
+const KeysToCapitalize = new Set<string>([CompositeKeyPropertyNames.partitionKey, CompositeKeyPropertyNames.rowKey]);
 const sanitizeKey = (key: string) => (KeysToCapitalize.has(key) ? capitalize(key) : key);
