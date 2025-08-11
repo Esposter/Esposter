@@ -9,10 +9,10 @@ import { getReverseTickedTimestamp } from "#shared/services/azure/table/getRever
 import { DEFAULT_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
-import { getPartitionKeyFilter } from "@@/server/services/azure/table/getPartitionKeyFilter";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
+import { getPartitionKeyFilter } from "@esposter/shared";
 
 export const readMessages = async ({
   cursor,

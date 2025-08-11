@@ -1,7 +1,7 @@
-import type { ComparisonOperator } from "@/models/tableFilter/ComparisonOperator";
+import type { BinaryOperator } from "@esposter/shared";
 
 export interface Clause {
   key: string;
-  operator: ComparisonOperator;
+  operator: BinaryOperator;
   value: string;
 }

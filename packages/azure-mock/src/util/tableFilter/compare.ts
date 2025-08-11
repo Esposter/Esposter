@@ -1,16 +1,16 @@
-import type { ComparisonOperator } from "@/models/tableFilter/ComparisonOperator";
+import { BinaryOperator } from "@esposter/shared";
 
-export const compare = (operator: ComparisonOperator, leftHandSide: string, rightHandSide: string): boolean => {
+export const compare = (operator: BinaryOperator, leftHandSide: string, rightHandSide: string): boolean => {
   switch (operator) {
-    case "eq":
+    case BinaryOperator.eq:
       return leftHandSide === rightHandSide;
-    case "ge":
+    case BinaryOperator.ge:
       return leftHandSide >= rightHandSide;
-    case "gt":
+    case BinaryOperator.gt:
       return leftHandSide > rightHandSide;
-    case "le":
+    case BinaryOperator.le:
       return leftHandSide <= rightHandSide;
-    case "lt":
+    case BinaryOperator.lt:
       return leftHandSide < rightHandSide;
   }
 };
