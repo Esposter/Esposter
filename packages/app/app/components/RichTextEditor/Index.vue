@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { FooterBarAppendSlotProps, FooterBarPrependSlotProps } from "@/components/RichTextEditor/FooterBar.vue";
+import type { FileHandlePluginOptions } from "@tiptap/extension-file-handler";
 import type { AnyExtension } from "@tiptap/vue-3";
 import type { VCard } from "vuetify/components";
 
-import { type FileHandlePluginOptions, FileHandler } from "@tiptap/extension-file-handler";
+import { FileHandler } from "@tiptap/extension-file-handler";
 import { CharacterCount, Placeholder } from "@tiptap/extensions";
 import { StarterKit } from "@tiptap/starter-kit";
 import { EditorContent, useEditor } from "@tiptap/vue-3";
