@@ -5,7 +5,8 @@ import { useLayoutStore } from "@/store/layout";
 
 const layoutStore = useLayoutStore();
 const { leftDrawerOpen, leftDrawerOpenAuto } = storeToRefs(layoutStore);
-const { onDragStart } = useDragAndDrop();
+const { createNode, onDragStart } = useDragAndDrop();
+const { height, width } = useWindowSize();
 </script>
 
 <template>
@@ -19,16 +20,19 @@ const { onDragStart } = useDragAndDrop();
         >
           <v-expansion-panel-text>
             <template v-for="nodeType of nodeTypes" :key="nodeType">
-              <v-row>
-                <v-col cols="3">
+              <v-tooltip :text="nodeType">
+                <template #activator="{ props }">
                   <component
                     :is="NodeTypeMap[nodeType].preview"
-                    cursor-pointer
+                    rd-1
+                    size-auto="!"
                     :draggable="true"
+                    :="props"
                     @dragstart="onDragStart($event)"
+                    @click="createNode({ x: width / 2, y: height / 2 })"
                   />
-                </v-col>
-              </v-row>
+                </template>
+              </v-tooltip>
             </template>
           </v-expansion-panel-text>
         </v-expansion-panel>

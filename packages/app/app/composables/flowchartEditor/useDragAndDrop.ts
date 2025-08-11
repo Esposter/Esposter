@@ -1,6 +1,6 @@
 import { GeneralNodeType } from "#shared/models/flowchartEditor/node/GeneralNodeType";
 import { useDragStore } from "@/store/flowchartEditor/drag";
-import { useVueFlow } from "@vue-flow/core";
+import { useVueFlow, type XYPosition } from "@vue-flow/core";
 
 export const useDragAndDrop = () => {
   const dragStore = useDragStore();
@@ -38,7 +38,11 @@ export const useDragAndDrop = () => {
   };
 
   const onDrop = ({ clientX, clientY }: DragEvent) => {
-    const position = screenToFlowCoordinate({ x: clientX, y: clientY });
+    createNode({ x: clientX, y: clientY });
+  };
+
+  const createNode = ({ x, y }: XYPosition) => {
+    const position = screenToFlowCoordinate({ x, y });
     const id = crypto.randomUUID();
     /**
      * Align node position after drop, so it's centered to the mouse
@@ -57,6 +61,7 @@ export const useDragAndDrop = () => {
   };
 
   return {
+    createNode,
     onDragLeave,
     onDragOver,
     onDragStart,
