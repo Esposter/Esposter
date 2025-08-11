@@ -5,7 +5,7 @@ import { parseClause } from "@/util/tableFilter/parseClause";
 import { NotFoundError, uncapitalize } from "@esposter/shared";
 
 export const createTableFilterPredicate = <T extends object>(filter: string): ((entity: TableEntity<T>) => boolean) => {
-  const normalizedFilter = filter.replace(/\(/g, "").replace(/\)/g, "");
+  const normalizedFilter = filter.replaceAll(String.raw`(`, "").replaceAll(String.raw`)`, "");
   const andGroups = normalizedFilter.split(/\s+and\s+/i).filter(Boolean);
   const orGroups = andGroups.map((group) => group.split(/\s+or\s+/i).filter(Boolean));
   return (entity) => {

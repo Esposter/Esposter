@@ -91,7 +91,7 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
   ): PagedAsyncIterableIterator<TableEntityResult<T>, TableEntityResultPage<T>> {
     const withMetadata = this.withMetadata.bind(this);
     const filter = options?.queryOptions?.filter;
-    const tableEntities = Array.from((this.table as Map<string, TableEntity<T>>).values());
+    const tableEntities = [...(this.table as Map<string, TableEntity<T>>).values()];
     const resultTableEntities = filter ? applyTableFilter(tableEntities, filter) : tableEntities;
     return {
       byPage: () =>
