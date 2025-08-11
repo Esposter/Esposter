@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.11.0](https://github.com/Esposter/Esposter/compare/v2.10.0...v2.11.0) (2025-08-11)
+
+### Bug Fixes
+
+* lint ([98009c9](https://github.com/Esposter/Esposter/commit/98009c99b5ab2dcefd0352599a4d0206f72c1a5c))
+* lint ([a61b545](https://github.com/Esposter/Esposter/commit/a61b545779cd690eb2cfc5de8f5eff96c184fa89))
+
+### Features
+
+* Add filter parser ([e70e1f3](https://github.com/Esposter/Esposter/commit/e70e1f3f8982dbcbe876e431db0ec388bd6fdb67))
+* Add message rowkey also to the link ([c376d64](https://github.com/Esposter/Esposter/commit/c376d644451b44bd7155c26d10f9ac12222df645))
+* Add pasting files ([927ae85](https://github.com/Esposter/Esposter/commit/927ae85ad5442ccee47cbe253452590375f3b93b))
+
 # [2.10.0](https://github.com/Esposter/Esposter/compare/v2.9.0...v2.10.0) (2025-08-10)
 
 ### Bug Fixes

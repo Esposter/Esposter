@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.11.0](https://github.com/Esposter/Esposter/compare/v2.10.0...v2.11.0) (2025-08-11)
+
+### Features
+
+* Add filter parser ([e70e1f3](https://github.com/Esposter/Esposter/commit/e70e1f3f8982dbcbe876e431db0ec388bd6fdb67))
+
 # [2.10.0](https://github.com/Esposter/Esposter/compare/v2.9.0...v2.10.0) (2025-08-10)
 
 ### Features

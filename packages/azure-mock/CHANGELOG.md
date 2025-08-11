@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.11.0](https://github.com/Esposter/Esposter/compare/v2.10.0...v2.11.0) (2025-08-11)
+
+### Bug Fixes
+
+* add file ([86fe178](https://github.com/Esposter/Esposter/commit/86fe178754e5f3d474d818644a9500c25f148b74))
+
+### Features
+
+* Add filter parser ([e70e1f3](https://github.com/Esposter/Esposter/commit/e70e1f3f8982dbcbe876e431db0ec388bd6fdb67))
+* Add filter parser tests ([08f251e](https://github.com/Esposter/Esposter/commit/08f251e701d431227a6eaa90a1968c30c6011dbe))
+
 # [2.10.0](https://github.com/Esposter/Esposter/compare/v2.9.0...v2.10.0) (2025-08-10)
 
 **Note:** Version bump only for package azure-mock
