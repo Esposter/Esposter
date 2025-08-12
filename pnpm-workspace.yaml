@@ -163,7 +163,7 @@ catalog:
   three-globe: ^2.44.0
   tippy.js: ^6.3.7
   trpc-nuxt: ^1.2.0
-  tsx: ^4.20.3
+  tsx: ^4.20.4
   type-fest: ^4.41.0
   typedoc: ^0.28.10
   typescript: ^5.9.2
