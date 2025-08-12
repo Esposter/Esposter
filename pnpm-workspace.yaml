@@ -163,7 +163,7 @@ catalog:
   three-globe: ^2.44.0
   tippy.js: ^6.3.7
   trpc-nuxt: ^1.2.0
-  tsx: ^4.20.3
+  tsx: ^4.20.4
   type-fest: ^4.41.0
   typedoc: ^0.28.10
   typescript: ^5.9.2
@@ -184,7 +184,7 @@ catalog:
   vue-tsc: ^3.0.5
   vue-waypoint: ^4.3.0
   vue3-apexcharts: ^1.8.0
-  vuetify: ^3.9.4
+  vuetify: ^3.9.5
   vuetify-nuxt-module: ^0.18.7
   web-push: ^3.6.7
   worker-timers: ^8.0.23
