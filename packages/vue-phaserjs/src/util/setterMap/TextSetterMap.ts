@@ -10,7 +10,7 @@ import { DepthSetterMap } from "@/util/setterMap/components/DepthSetterMap";
 import { FlipSetterMap } from "@/util/setterMap/components/FlipSetterMap";
 import { MaskSetterMap } from "@/util/setterMap/components/MaskSetterMap";
 import { OriginSetterMap } from "@/util/setterMap/components/OriginSetterMap";
-import { PipelineSetterMap } from "@/util/setterMap/components/PipelineSetterMap";
+import { RenderNodesSetterMap } from "@/util/setterMap/components/RenderNodesSetterMap";
 import { ScrollFactorSetterMap } from "@/util/setterMap/components/ScrollFactorSetterMap";
 import { TintSetterMap } from "@/util/setterMap/components/TintSetterMap";
 import { TransformSetterMap } from "@/util/setterMap/components/TransformSetterMap";
@@ -41,7 +41,7 @@ export const TextSetterMap: SetterMap<TextConfiguration, GameObjects.Text, TextE
   ...FlipSetterMap,
   ...MaskSetterMap,
   ...OriginSetterMap,
-  ...PipelineSetterMap,
+  ...RenderNodesSetterMap,
   ...ScrollFactorSetterMap,
   ...TintSetterMap,
   ...TransformSetterMap,

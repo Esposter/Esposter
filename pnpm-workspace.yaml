@@ -140,7 +140,7 @@ catalog:
   p-progress: ^1.0.0
   pathe: ^2.0.3
   pdfjs-dist: ^5.4.54
-  phaser: ^3.90.0
+  phaser: ^4.0.0-rc.4
   phaser3-rex-plugins: ^1.80.16
   pinia: ^3.0.3
   pluralize: ^8.0.0

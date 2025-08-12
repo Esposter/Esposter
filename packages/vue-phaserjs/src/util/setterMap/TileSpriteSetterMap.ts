@@ -10,7 +10,7 @@ import { DepthSetterMap } from "@/util/setterMap/components/DepthSetterMap";
 import { FlipSetterMap } from "@/util/setterMap/components/FlipSetterMap";
 import { MaskSetterMap } from "@/util/setterMap/components/MaskSetterMap";
 import { OriginSetterMap } from "@/util/setterMap/components/OriginSetterMap";
-import { PipelineSetterMap } from "@/util/setterMap/components/PipelineSetterMap";
+import { RenderNodesSetterMap } from "@/util/setterMap/components/RenderNodesSetterMap";
 import { ScrollFactorSetterMap } from "@/util/setterMap/components/ScrollFactorSetterMap";
 import { TextureSetterMap } from "@/util/setterMap/components/TextureSetterMap";
 import { TintSetterMap } from "@/util/setterMap/components/TintSetterMap";
@@ -30,7 +30,7 @@ export const TileSpriteSetterMap: SetterMap<
   ...FlipSetterMap,
   ...MaskSetterMap,
   ...OriginSetterMap,
-  ...PipelineSetterMap,
+  ...RenderNodesSetterMap,
   ...ScrollFactorSetterMap,
   ...TextureSetterMap,
   ...TintSetterMap,
