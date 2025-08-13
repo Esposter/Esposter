@@ -92,7 +92,6 @@ export type ReadInviteCodeInput = z.infer<typeof readInviteCodeInputSchema>;
 
 const createInviteInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type CreateInviteInput = z.infer<typeof createInviteInputSchema>;
-
 // For room-related queries/mutations we don't need to grab the room user procedure
 // as the SQL clauses inherently contain logic to filter if the user is a member/creator of the room
 export const roomRouter = router({

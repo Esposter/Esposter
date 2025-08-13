@@ -380,4 +380,125 @@ describe("room", () => {
       ]]
     `);
   });
+
+  test("creates members", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await caller.createRoom({ name });
+    const userId = getMockSession().user.id;
+    const { user } = await mockSessionOnce(mockContext.db);
+    getMockSession();
+    const newMember = await caller.createMembers({ roomId: newRoom.id, userIds: [user.id] });
+
+    expect(newMember).toHaveLength(1);
+    expect(newMember[0].roomId).toBe(newRoom.id);
+    expect(newMember[0].userId).toBe(user.id);
+
+    const members = await caller.readMembers({ roomId: newRoom.id });
+
+    expect(members.items).toHaveLength(2);
+    expect(members.items[0]).toStrictEqual(user);
+    expect(members.items[1].id).toBe(userId);
+  });
+
+  test("fails create members with empty ids", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await caller.createRoom({ name });
+
+    await expect(caller.createMembers({ roomId: newRoom.id, userIds: [] })).rejects.toThrowErrorMatchingInlineSnapshot(`
+      [TRPCError: [
+        {
+          "origin": "array",
+          "code": "too_small",
+          "minimum": 1,
+          "inclusive": true,
+          "path": [
+            "userIds"
+          ],
+          "message": "Too small: expected array to have >=1 items"
+        }
+      ]]
+    `);
+  });
+
+  test("fails create members with non-creator", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await caller.createRoom({ name });
+    const { user } = await mockSessionOnce(mockContext.db);
+
+    await expect(
+      caller.createMembers({ roomId: newRoom.id, userIds: [user.id] }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+  });
+
+  test("fails create members with duplicate membership", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await caller.createRoom({ name });
+
+    await expect(caller.createMembers({ roomId: newRoom.id, userIds: [getMockSession().user.id] })).rejects
+      .toThrowErrorMatchingInlineSnapshot(`
+      [TRPCError: Failed query: insert into "users_to_rooms" ("roomId", "userId") values ($1, $2) returning "roomId", "userId"
+      params: ${newRoom.id},${getMockSession().user.id}]
+    `);
+  });
+
+  test("fails create members with non-existent user", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await caller.createRoom({ name });
+
+    await expect(caller.createMembers({ roomId: newRoom.id, userIds: [NIL] })).rejects
+      .toThrowErrorMatchingInlineSnapshot(`
+      [TRPCError: Failed query: insert into "users_to_rooms" ("roomId", "userId") values ($1, $2) returning "roomId", "userId"
+      params: ${newRoom.id},${NIL}]
+    `);
+  });
+
+  test("fails create members with non-existent room", async () => {
+    expect.hasAssertions();
+
+    await expect(
+      caller.createMembers({ roomId: NIL, userIds: [getMockSession().user.id] }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: BAD_REQUEST]`);
+  });
+
+  test("kicks member with owner", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await caller.createRoom({ name });
+    const invite = await caller.createInvite({ roomId: newRoom.id });
+    const { user } = await mockSessionOnce(mockContext.db);
+    await caller.joinRoom(invite);
+
+    await expect(caller.deleteMember({ roomId: newRoom.id, userId: user.id })).resolves.toBeUndefined();
+
+    const members = await caller.readMembers({ roomId: newRoom.id });
+
+    expect(members.items.find(({ id }) => id === user.id)).toBeUndefined();
+  });
+
+  test("fails kick with non-existent member", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await caller.createRoom({ name });
+
+    await expect(caller.deleteMember({ roomId: newRoom.id, userId: NIL })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Delete, name: UserToRoom, ${JSON.stringify({ roomId: newRoom.id, userId: NIL })}]`,
+    );
+  });
+
+  test("fails kick self with owner", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await caller.createRoom({ name });
+
+    await expect(
+      caller.deleteMember({ roomId: newRoom.id, userId: getMockSession().user.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Delete, name: UserToRoom, ${JSON.stringify({ roomId: newRoom.id, userId: getMockSession().user.id })}]`,
+    );
+  });
 });
