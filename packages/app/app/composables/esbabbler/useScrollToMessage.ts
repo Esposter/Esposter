@@ -5,6 +5,7 @@ import { useReplyStore } from "@/store/esbabbler/reply";
 import { useRoomStore } from "@/store/esbabbler/room";
 
 export const useScrollToMessage = () => {
+  const { $trpc } = useNuxtApp();
   const replyStore = useReplyStore();
   const { activeRowKey } = storeToRefs(replyStore);
   const roomStore = useRoomStore();
@@ -14,6 +15,12 @@ export const useScrollToMessage = () => {
   return async (rowKey: string) => {
     if (!currentRoomId.value) return;
     else if (!messages.value.some((m) => m.rowKey === rowKey)) {
+      const messagesByRowKeys = await $trpc.message.readMessagesByRowKeys.query({
+        roomId: currentRoomId.value,
+        rowKeys: [rowKey],
+      });
+      if (messagesByRowKeys.length === 0) return;
+
       await navigateTo(RoutePath.MessagesMessage(currentRoomId.value, rowKey));
       return;
     }
