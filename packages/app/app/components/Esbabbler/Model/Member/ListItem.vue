@@ -38,29 +38,41 @@ const isHovering = ref(false);
       </v-list-item-title>
     </v-list-item>
     <template v-if="isKickable">
-      <v-tooltip :text="`Kick ${member.name}`">
-        <template #activator="{ props: tooltipProps }">
-          <v-btn
-            v-show="isHovering"
-            absolute
-            top="1/2"
-            right-0
-            translate-y="-1/2"
-            bg-transparent="!"
-            icon="mdi-close"
-            variant="plain"
-            size="small"
-            :ripple="false"
-            :="tooltipProps"
-            @click="
-              async () => {
-                if (!currentRoom) return;
-                await $trpc.room.deleteMember.mutate({ roomId: currentRoom.id, userId: member.id });
-              }
-            "
-          />
+      <StyledDeleteDialog
+        :card-props="{ title: 'Kick Member', text: `Are you sure you want to kick ${member.name}?` }"
+        :confirm-button-props="{ text: 'Kick' }"
+        @delete="
+          async (onComplete) => {
+            try {
+              if (!currentRoom) return;
+              await $trpc.room.deleteMember.mutate({ roomId: currentRoom.id, userId: member.id });
+            } finally {
+              onComplete();
+            }
+          }
+        "
+      >
+        <template #activator="{ updateIsOpen }">
+          <v-tooltip :text="`Kick ${member.name}`">
+            <template #activator="{ props: tooltipProps }">
+              <v-btn
+                v-show="isHovering"
+                absolute
+                top="1/2"
+                right-0
+                translate-y="-1/2"
+                bg-transparent="!"
+                icon="mdi-close"
+                variant="plain"
+                size="small"
+                :ripple="false"
+                :="tooltipProps"
+                @click="updateIsOpen(true)"
+              />
+            </template>
+          </v-tooltip>
         </template>
-      </v-tooltip>
+      </StyledDeleteDialog>
     </template>
   </div>
 </template>
