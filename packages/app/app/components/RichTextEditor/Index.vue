@@ -47,7 +47,7 @@ const editor = useEditor({
     modelValue.value = editor.getHTML();
   },
 });
-// @TODO: https://github.com/ueberdosis/tiptap/issues/1044
+// https://github.com/ueberdosis/tiptap/issues/1044
 watch([() => placeholder, () => limit], ([newPlaceholder, newLimit]) => {
   if (!editor.value) return;
 
