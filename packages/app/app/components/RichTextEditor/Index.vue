@@ -36,7 +36,7 @@ const editor = useEditor({
   content: modelValue.value,
   extensions: [
     StarterKit,
-    Placeholder.configure({ placeholder }),
+    Placeholder.configure({ placeholder: () => placeholder }),
     CharacterCount.configure({ limit }),
     FileHandler.configure({
       onPaste: (...args) => emit("paste", ...args),
@@ -49,13 +49,12 @@ const editor = useEditor({
 });
 // @TODO: https://github.com/ueberdosis/tiptap/issues/1044
 watch(
-  [() => placeholder, () => limit],
-  ([newPlaceholder, newLimit]) => {
+  () => limit,
+  (newLimit) => {
     if (!editor.value) return;
 
     for (const { name, options } of editor.value.extensionManager.extensions)
-      if (name === Placeholder.name) options.placeholder = newPlaceholder;
-      else if (name === CharacterCount.name) options.limit = newLimit;
+      if (name === CharacterCount.name) options.limit = newLimit;
 
     editor.value.setOptions();
   },
