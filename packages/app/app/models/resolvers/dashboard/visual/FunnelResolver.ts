@@ -1,10 +1,11 @@
 import type { ApexOptions } from "apexcharts";
-import type { z } from "zod/v4";
+import type { z } from "zod";
 
 import { basicChartConfigurationSchema } from "#shared/models/dashboard/data/chart/BasicChartConfiguration";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { AVisualTypeResolver } from "@/models/resolvers/dashboard/visual/AVisualTypeResolver";
-import { uncapitalize } from "@/util/text/uncapitalize";
+import { uncapitalize } from "@esposter/shared";
+import { defu } from "defu";
 
 export class FunnelResolver extends AVisualTypeResolver {
   constructor() {
@@ -12,13 +13,13 @@ export class FunnelResolver extends AVisualTypeResolver {
   }
 
   override handleConfiguration(apexOptions: ApexOptions) {
-    apexOptions.chart = defuReplaceArray(
+    apexOptions.chart = defu(
       {
         type: uncapitalize(VisualType.Bar),
       },
       apexOptions.chart,
     );
-    apexOptions.dataLabels = defuReplaceArray<ApexDataLabels, (ApexDataLabels | undefined)[]>(
+    apexOptions.dataLabels = defu<ApexDataLabels, (ApexDataLabels | undefined)[]>(
       {
         dropShadow: {
           enabled: true,
@@ -28,13 +29,13 @@ export class FunnelResolver extends AVisualTypeResolver {
       },
       apexOptions.dataLabels,
     );
-    apexOptions.legend = defuReplaceArray(
+    apexOptions.legend = defu(
       {
         show: false,
       },
       apexOptions.legend,
     );
-    apexOptions.plotOptions = defuReplaceArray(
+    apexOptions.plotOptions = defu(
       {
         bar: {
           barHeight: "80%",
@@ -45,13 +46,13 @@ export class FunnelResolver extends AVisualTypeResolver {
       },
       apexOptions.plotOptions,
     );
-    apexOptions.subtitle = defuReplaceArray<ApexTitleSubtitle, (ApexTitleSubtitle | undefined)[]>(
+    apexOptions.subtitle = defu<ApexTitleSubtitle, (ApexTitleSubtitle | undefined)[]>(
       {
         align: "center",
       },
       apexOptions.subtitle,
     );
-    apexOptions.title = defuReplaceArray<ApexTitleSubtitle, (ApexTitleSubtitle | undefined)[]>(
+    apexOptions.title = defu<ApexTitleSubtitle, (ApexTitleSubtitle | undefined)[]>(
       {
         align: "center",
       },

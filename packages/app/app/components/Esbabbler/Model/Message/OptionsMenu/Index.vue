@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
-import type { Item } from "@/models/shared/Item";
 
+import { useMessageActionItems } from "@/composables/esbabbler/useMessageActionItems";
 import { authClient } from "@/services/auth/authClient";
 import { EmojiMenuItems } from "@/services/esbabbler/message/EmojiMenuItems";
 import { EMOJI_TEXT } from "@/services/styled/constants";
@@ -25,47 +25,16 @@ const emit = defineEmits<{
 const { data: session } = await authClient.useSession(useFetch);
 const isCreator = computed(() => session.value?.user.id === message.userId);
 const isEditable = computed(() => isCreator.value && !message.isForward);
-const editMessageItem: Item = {
-  icon: "mdi-pencil",
-  onClick: () => {
-    emit("update:update-mode", true);
-  },
-  shortTitle: "Edit",
-  title: "Edit Message",
-};
-const replyItem: Item = {
-  icon: "mdi-reply",
-  onClick: () => {
-    emit("update:reply", message.rowKey);
-  },
-  title: "Reply",
-};
-const forwardMessageItem: Item = {
-  icon: "mdi-share",
-  onClick: () => {
-    emit("update:forward", message.rowKey);
-  },
-  title: "Forward",
-};
-// We only include menu items that will be part of our v-for to generate similar components
-const menuItems = computed(() =>
-  isEditable.value ? [editMessageItem, forwardMessageItem] : [replyItem, forwardMessageItem],
-);
-const updateMessageItems = computed(() =>
-  isEditable.value ? [editMessageItem, replyItem, forwardMessageItem] : [replyItem, forwardMessageItem],
-);
-const deleteMessageItem = computed(() =>
-  isCreator.value
-    ? ({
-        color: "error",
-        icon: "mdi-delete",
-        onClick: () => {
-          emit("update:delete-mode", true);
-        },
-        title: "Delete Message",
-      } as const satisfies Item)
-    : undefined,
-);
+const {
+  actionMessageItems,
+  deleteMessageItem,
+  updateMessageMenuItems: updateMessageItems,
+} = useMessageActionItems(message, isEditable, isCreator, {
+  onDeleteMode: () => emit("update:delete-mode", true),
+  onForward: (rowKey) => emit("update:forward", rowKey),
+  onReply: (rowKey) => emit("update:reply", rowKey),
+  onUpdateMode: () => emit("update:update-mode", true),
+});
 </script>
 
 <template>
@@ -90,15 +59,17 @@ const deleteMessageItem = computed(() =>
         @update:menu="emit('update:menu', $event)"
         @select="emit('update:select-emoji', $event)"
       />
-      <v-tooltip v-for="{ icon, shortTitle, title, onClick } of menuItems" :key="title" :text="shortTitle ?? title">
-        <template #activator="{ props }">
-          <v-btn m-0="!" rd-none="!" :icon size="small" :="props" @click="onClick" />
-        </template>
-      </v-tooltip>
+      <EsbabblerModelMessageOptionsMenuItems
+        :message
+        @update:update-mode="emit('update:update-mode', true)"
+        @update:reply="emit('update:reply', $event)"
+        @update:forward="emit('update:forward', $event)"
+      />
       <EsbabblerModelMessageOptionsMenuMore
         :row-key="message.rowKey"
-        :update-message-items
+        :action-message-items
         :delete-message-item
+        :update-message-items
         @update:menu="emit('update:menu', $event)"
         @update:select-emoji="emit('update:select-emoji', $event)"
       />

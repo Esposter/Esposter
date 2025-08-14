@@ -19,7 +19,7 @@ const { sm, xs } = useDisplay();
     text-center
     p-4
     break-anywhere
-    :card-props="{ minHeight: '200' }"
+    :card-props="{ minHeight: '12rem' }"
   >
     {{ card.text }}
   </StyledCard>

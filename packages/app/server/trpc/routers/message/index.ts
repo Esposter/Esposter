@@ -13,7 +13,9 @@ import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessag
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
+import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
+import { MAX_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
+import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { useSendCreateMessageNotification } from "@@/server/composables/esbabbler/useSendCreateMessageNotification";
@@ -25,16 +27,13 @@ import { deleteFiles } from "@@/server/services/azure/container/deleteFiles";
 import { generateDownloadFileSasUrls } from "@@/server/services/azure/container/generateDownloadFileSasUrls";
 import { generateUploadFileSasEntities } from "@@/server/services/azure/container/generateUploadFileSasEntities";
 import { getBlobName } from "@@/server/services/azure/container/getBlobName";
-import { AZURE_MAX_PAGE_SIZE } from "@@/server/services/azure/table/constants";
-import { createEntity } from "@@/server/services/azure/table/createEntity";
 import { deleteEntity } from "@@/server/services/azure/table/deleteEntity";
 import { getEntity } from "@@/server/services/azure/table/getEntity";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
-import { createMessageEntity } from "@@/server/services/esbabbler/createMessageEntity";
+import { createMessage } from "@@/server/services/esbabbler/createMessage";
 import { messageEventEmitter } from "@@/server/services/esbabbler/events/messageEventEmitter";
 import { roomEventEmitter } from "@@/server/services/esbabbler/events/roomEventEmitter";
-import { getMessagesPartitionKeyFilter } from "@@/server/services/esbabbler/getMessagesPartitionKeyFilter";
-import { isMessagesPartitionKeyForRoomId } from "@@/server/services/esbabbler/isMessagesPartitionKeyForRoomId";
+import { isRoomId } from "@@/server/services/esbabbler/isRoomId";
 import { readMessages } from "@@/server/services/esbabbler/readMessages";
 import { updateMessage } from "@@/server/services/esbabbler/updateMessage";
 import { on } from "@@/server/services/events/on";
@@ -43,10 +42,10 @@ import { addProfanityFilterMiddleware } from "@@/server/trpc/middleware/addProfa
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/message/getCreatorProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
-import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
+import { getPartitionKeyFilter, InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 export const readMetadataInputSchema = z.object({
   messageRowKeys: messageEntitySchema.shape.rowKey.array().min(1).max(MAX_READ_LIMIT),
@@ -63,6 +62,8 @@ const readMessagesInputSchema =
     .object({
       ...createCursorPaginationParamsSchema(messageEntitySchema.keyof(), [{ key: "createdAt", order: SortOrder.Desc }])
         .shape,
+      isIncludeValue: z.literal(true).optional(),
+      order: z.literal(SortOrder.Asc).optional(),
       roomId: selectRoomSchema.shape.id,
     })
     .omit({ sortBy: true });
@@ -111,19 +112,18 @@ export type OnCreateTypingInput = z.infer<typeof onCreateTypingInputSchema>;
 const onDeleteMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnDeleteMessageInput = z.infer<typeof onDeleteMessageInputSchema>;
 
-export const forwardMessagesInputSchema = z.object({
+export const forwardMessageInputSchema = z.object({
   ...messageEntitySchema.pick({ message: true, partitionKey: true, rowKey: true }).shape,
   roomIds: selectRoomSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
 });
-export type ForwardMessagesInput = z.infer<typeof forwardMessagesInputSchema>;
+export type ForwardMessageInput = z.infer<typeof forwardMessageInputSchema>;
 
 export const messageRouter = router({
   createMessage: addProfanityFilterMiddleware(getMemberProcedure(createMessageInputSchema, "roomId"), [
     "message",
   ]).mutation<MessageEntity>(async ({ ctx, input }) => {
     const messageClient = await useTableClient(AzureTable.Messages);
-    const newMessageEntity = await createMessageEntity({ ...input, userId: ctx.session.user.id });
-    await createEntity(messageClient, newMessageEntity);
+    const newMessageEntity = await createMessage(messageClient, { ...input, userId: ctx.session.user.id });
     messageEventEmitter.emit("createMessage", [
       [newMessageEntity],
       { image: ctx.session.user.image, name: ctx.session.user.name, sessionId: ctx.session.session.id },
@@ -147,7 +147,7 @@ export const messageRouter = router({
       messageEventEmitter.emit("createTyping", { ...input, sessionId: ctx.session.session.id });
     }),
   deleteFile: getCreatorProcedure(deleteFileInputSchema).mutation(
-    async ({ ctx: { messageClient, messageEntity, roomId }, input: { id, partitionKey, rowKey } }) => {
+    async ({ ctx: { messageClient, messageEntity }, input: { id, partitionKey, rowKey } }) => {
       if (messageEntity.isForward || messageEntity.files.length === 0) throw new TRPCError({ code: "BAD_REQUEST" });
 
       const index = messageEntity.files.findIndex((f) => f.id === id);
@@ -158,7 +158,10 @@ export const messageRouter = router({
         });
 
       const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
-      const blobName = getBlobName(`${roomId}/${id}`, messageEntity.files.splice(index, 1)[0].filename);
+      const blobName = getBlobName(
+        `${messageEntity.partitionKey}/${id}`,
+        messageEntity.files.splice(index, 1)[0].filename,
+      );
       const updatedMessageEntity = {
         files: messageEntity.files,
         partitionKey,
@@ -188,7 +191,7 @@ export const messageRouter = router({
       await deleteFiles(containerClient, messageEntity.files);
     },
   ),
-  forwardMessages: getMemberProcedure(forwardMessagesInputSchema, "partitionKey").mutation(
+  forwardMessage: getMemberProcedure(forwardMessageInputSchema, "partitionKey").mutation(
     async ({ ctx, input: { message, partitionKey, roomIds, rowKey } }) => {
       await isMember(ctx.db, ctx.session, roomIds);
 
@@ -197,15 +200,14 @@ export const messageRouter = router({
       if (!messageEntity)
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: new NotFoundError(messageRouter.forwardMessages.name, JSON.stringify({ partitionKey, rowKey }))
-            .message,
+          message: new NotFoundError(AzureEntityType.Message, JSON.stringify({ partitionKey, rowKey })).message,
         });
 
       const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
       await Promise.all(
         roomIds.map(async (roomId) => {
-          const newFileIds = await cloneFiles(containerClient, messageEntity.files, ctx.roomId, roomId);
-          const forward = await createMessageEntity({
+          const newFileIds = await cloneFiles(containerClient, messageEntity.files, messageEntity.partitionKey, roomId);
+          const forward = await createMessage(messageClient, {
             // eslint-disable-next-line @typescript-eslint/no-misused-spread
             files: messageEntity.files.map((file, index) => new FileEntity({ ...file, id: newFileIds[index] })),
             isForward: true,
@@ -215,12 +217,14 @@ export const messageRouter = router({
             roomId,
             userId: ctx.session.user.id,
           });
-          await createEntity(messageClient, forward);
           const messages = [forward];
 
           if (message) {
-            const newMessageEntity = await createMessageEntity({ message, roomId, userId: ctx.session.user.id });
-            await createEntity(messageClient, newMessageEntity);
+            const newMessageEntity = await createMessage(messageClient, {
+              message,
+              roomId,
+              userId: ctx.session.user.id,
+            });
             messages.push(newMessageEntity);
           }
           // We don't need visual effects like isLoading when forwarding messages
@@ -255,21 +259,15 @@ export const messageRouter = router({
     input: { lastEventId, pushSubscription, roomId },
     signal,
   }) {
-    const sendCreateMessageNotification = useSendCreateMessageNotification(pushSubscription, roomId);
-
     if (lastEventId) {
-      let cursor: string | undefined = lastEventId;
+      let cursor: string | undefined = serialize({ rowKey: getReverseTickedTimestamp(lastEventId) }, [
+        MESSAGE_ROWKEY_SORT_ITEM,
+      ]);
       let hasMore = true;
       const messages: MessageEntity[] = [];
 
       while (hasMore) {
-        const {
-          hasMore: newHasMore,
-          items,
-          nextCursor,
-        } = await readMessages({ cursor, limit: AZURE_MAX_PAGE_SIZE - 1, roomId }, [
-          { key: "rowKey", order: SortOrder.Desc },
-        ]);
+        const { hasMore: newHasMore, items, nextCursor } = await readMessages({ cursor, order: SortOrder.Asc, roomId });
         messages.push(...items);
         cursor = nextCursor;
         hasMore = newHasMore;
@@ -284,6 +282,8 @@ export const messageRouter = router({
       }
     }
 
+    const sendCreateMessageNotification = useSendCreateMessageNotification(pushSubscription, roomId);
+
     for await (const [[data, { image, isSendToSelf, name, sessionId }]] of on(messageEventEmitter, "createMessage", {
       signal,
     })) {
@@ -292,13 +292,17 @@ export const messageRouter = router({
 
       for (const newMessage of data)
         if (
-          isMessagesPartitionKeyForRoomId(newMessage.partitionKey, roomId) &&
+          isRoomId(newMessage.partitionKey, roomId) &&
           (isSendToSelf || !getIsSameDevice({ sessionId, userId: newMessage.userId }, ctx.session))
         )
           dataToYield.push(newMessage);
 
       if (dataToYield.length > 0) {
-        await sendCreateMessageNotification(newestMessage.message, name, image);
+        await sendCreateMessageNotification(
+          { message: newestMessage.message, rowKey: newestMessage.rowKey },
+          name,
+          image,
+        );
         yield tracked(newestMessage.rowKey, dataToYield);
       }
     }
@@ -316,21 +320,21 @@ export const messageRouter = router({
     signal,
   }) {
     for await (const [data] of on(messageEventEmitter, "deleteMessage", { signal }))
-      if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId)) yield data;
+      if (isRoomId(data.partitionKey, input.roomId)) yield data;
   }),
   onUpdateMessage: getMemberProcedure(onUpdateMessageInputSchema, "roomId").subscription(async function* ({
     input,
     signal,
   }) {
     for await (const [data] of on(messageEventEmitter, "updateMessage", { signal }))
-      if (isMessagesPartitionKeyForRoomId(data.partitionKey, input.roomId)) yield data;
+      if (isRoomId(data.partitionKey, input.roomId)) yield data;
   }),
   readMessages: getMemberProcedure(readMessagesInputSchema, "roomId").query(({ input }) => readMessages(input)),
   readMessagesByRowKeys: getMemberProcedure(readMessagesByRowKeysInputSchema, "roomId").query(
     async ({ input: { roomId, rowKeys } }) => {
       const messageClient = await useTableClient(AzureTable.Messages);
       return getTopNEntities(messageClient, rowKeys.length, MessageEntity, {
-        filter: `${getMessagesPartitionKeyFilter(roomId)} and (${rowKeys.map((rk) => `RowKey eq '${rk}'`).join(" or ")})`,
+        filter: `${getPartitionKeyFilter(roomId)} and (${rowKeys.map((rowKey) => `RowKey eq '${rowKey}'`).join(" or ")})`,
       });
     },
   ),

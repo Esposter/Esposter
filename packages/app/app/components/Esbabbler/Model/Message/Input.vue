@@ -44,6 +44,7 @@ const uploadFiles = useUploadFiles();
       :limit="MESSAGE_MAX_LENGTH"
       :extensions="[keyboardExtension, mentionExtension]"
       :card-props="reply ? { class: 'rd-t-none' } : undefined"
+      @paste="(_editor, files) => uploadFiles(files)"
     >
       <template #prepend-inner-header>
         <EsbabblerModelMessageFileInputContainer />

@@ -7,7 +7,7 @@ const { alerts, deleteAlert } = useAlertStore();
 <template>
   <v-slide-y-transition group>
     <v-alert
-      v-for="alert in alerts"
+      v-for="alert of alerts"
       :key="alert.id"
       position="absolute"
       z-9999

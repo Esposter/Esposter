@@ -102,14 +102,10 @@ export const useSurveyCreator = (survey: Ref<Survey>) => {
 
   const isDark = useIsDark();
 
-  watch(
-    isDark,
-    (newIsDark) => {
-      if (newIsDark) creator.applyCreatorTheme(DefaultDark);
-      else creator.applyCreatorTheme(SC2020);
-    },
-    { immediate: true },
-  );
+  watchImmediate(isDark, (newIsDark) => {
+    if (newIsDark) creator.applyCreatorTheme(DefaultDark);
+    else creator.applyCreatorTheme(SC2020);
+  });
 
   return { creator, dialog };
 };

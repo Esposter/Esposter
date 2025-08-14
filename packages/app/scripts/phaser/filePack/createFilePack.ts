@@ -30,7 +30,7 @@ export const createFilePack = async () => {
           if (fileKeys.has(key)) throw new InvalidOperationError(Operation.Push, enumName, `Duplicate key: ${key}`);
 
           fileKeys.add(key);
-          files.push({ key, type: phaserMethod, url: blob.name });
+          files.push({ cache: false, key, type: phaserMethod, url: blob.name });
         }
     }
 

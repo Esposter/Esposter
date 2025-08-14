@@ -5,7 +5,7 @@ import type { DepthConfiguration } from "@/models/configuration/components/Depth
 import type { FlipConfiguration } from "@/models/configuration/components/FlipConfiguration";
 import type { MaskConfiguration } from "@/models/configuration/components/MaskConfiguration";
 import type { OriginConfiguration } from "@/models/configuration/components/OriginConfiguration";
-import type { PipelineConfiguration } from "@/models/configuration/components/PipelineConfiguration";
+import type { RenderNodesConfiguration } from "@/models/configuration/components/RenderNodesConfiguration";
 import type { ScrollFactorConfiguration } from "@/models/configuration/components/ScrollFactorConfiguration";
 import type { TintConfiguration } from "@/models/configuration/components/TintConfiguration";
 import type { TransformConfiguration } from "@/models/configuration/components/TransformConfiguration";
@@ -24,7 +24,7 @@ export interface TextConfiguration
     GlobalConfiguration,
     MaskConfiguration,
     OriginConfiguration,
-    PipelineConfiguration,
+    RenderNodesConfiguration,
     ScrollFactorConfiguration,
     TintConfiguration,
     TransformConfiguration,

@@ -21,7 +21,7 @@ const width = 200;
 const height = 200;
 
 onMounted(() => {
-  const canvas = document.querySelector<HTMLCanvasElement>(`#${id}`);
+  const canvas = document.getElementById(id) as HTMLCanvasElement | null;
   if (!canvas) return;
   const scene = new Scene();
   let gem: Mesh<BufferGeometry, MeshBasicMaterial & MeshStandardMaterial> | undefined;

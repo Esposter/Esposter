@@ -6,11 +6,14 @@ import { RateLimiterMemory } from "rate-limiter-flexible";
 const rateLimiter = new RateLimiterMemory({ blockDuration: 5, duration: 1, points: 5 });
 
 export const isRateLimited = middleware(async ({ ctx, next, path }) => {
-  const ip =
-    ((ctx.req.headers["x-forwarded-for"] as string | undefined) ?? "").split(",").pop()?.trim() ??
-    ctx.req.socket.remoteAddress;
-  if (!ip) throw new TRPCError({ code: "BAD_REQUEST" });
-  else if (ip === "::1") return next();
+  const forwardedFor = ctx.req.headers["x-forwarded-for"] as string | undefined;
+  const ip = forwardedFor ? forwardedFor.split(",")[0].trim() : ctx.req.socket.remoteAddress;
+  if (!ip) {
+    console.warn(
+      "Rate Limiter: Could not determine IP address. Bypassing middleware. This is expected for local production builds.",
+    );
+    return next();
+  } else if (ip === "::1") return next();
 
   try {
     const { msBeforeNext, remainingPoints } = await rateLimiter.consume(`${path}${ID_SEPARATOR}${ip}`);

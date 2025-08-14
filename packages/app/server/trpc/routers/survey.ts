@@ -37,7 +37,7 @@ import { getCreatorProcedure } from "@@/server/trpc/procedure/survey/getCreatorP
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, count, desc, eq } from "drizzle-orm";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 const readSurveyInputSchema = z.object({ id: selectSurveySchema.shape.id });
 export type ReadSurveyInput = z.infer<typeof readSurveyInputSchema>;

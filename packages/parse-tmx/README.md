@@ -24,11 +24,9 @@ pnpm i parse-tmx
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://esposter.com/docs/modules/parse_tmx.html) to level up.
+We highly recommend you take a look at the [documentation](https://esposter.com/docs/modules/parse-tmx.html) to level up.
 
 ### Usage
-
-The basic implementation:
 
 ```ts
 import { parseTmx } from "parse-tmx";

@@ -3,7 +3,7 @@ import type { SpritesheetKey } from "#shared/models/dungeons/keys/spritesheet/Sp
 
 import { fileKeySchema } from "#shared/models/dungeons/keys/FileKey";
 import { spritesheetKeySchema } from "#shared/models/dungeons/keys/spritesheet/SpritesheetKey";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 export interface Asset {
   // By default, this will be 0

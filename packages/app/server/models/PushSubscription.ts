@@ -1,6 +1,6 @@
 import type { PushSubscription } from "web-push";
 
-import { z } from "zod/v4";
+import { z } from "zod";
 
 export const pushSubscriptionSchema = z.object({
   endpoint: z.url(),

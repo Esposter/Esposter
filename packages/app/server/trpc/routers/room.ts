@@ -36,7 +36,7 @@ import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProce
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, desc, eq, ilike, inArray, sql } from "drizzle-orm";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 const readRoomInputSchema = selectRoomSchema.shape.id.optional();
 export type ReadRoomInput = z.infer<typeof readRoomInputSchema>;
@@ -80,6 +80,9 @@ const createMembersInputSchema = z.object({
   userIds: selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
 });
 export type CreateMembersInput = z.infer<typeof createMembersInputSchema>;
+
+const deleteMemberInputSchema = z.object({ roomId: selectRoomSchema.shape.id, userId: selectUserSchema.shape.id });
+export type DeleteMemberInput = z.infer<typeof deleteMemberInputSchema>;
 
 const readInviteInputSchema = selectInviteSchema.shape.code;
 export type ReadInviteInput = z.infer<typeof readInviteInputSchema>;
@@ -143,45 +146,86 @@ export const roomRouter = router({
       return newRoom;
     }),
   ),
+  deleteMember: getCreatorProcedure(deleteMemberInputSchema, "roomId").mutation(
+    async ({ ctx, input: { roomId, userId } }) => {
+      if (userId === ctx.session.user.id)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(
+            Operation.Delete,
+            DatabaseEntityType.UserToRoom,
+            JSON.stringify({ roomId, userId }),
+          ).message,
+        });
+
+      const deletedMember = (
+        await ctx.db
+          .delete(usersToRooms)
+          .where(and(eq(usersToRooms.roomId, roomId), eq(usersToRooms.userId, userId)))
+          .returning()
+      ).find(Boolean);
+      if (!deletedMember)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(
+            Operation.Delete,
+            DatabaseEntityType.UserToRoom,
+            JSON.stringify({ roomId, userId }),
+          ).message,
+        });
+
+      roomEventEmitter.emit("leaveRoom", { ...deletedMember, sessionId: ctx.session.session.id });
+    },
+  ),
   deleteRoom: authedProcedure.input(deleteRoomInputSchema).mutation<Room>(async ({ ctx, input }) => {
     const deletedRoom = await deleteRoom(ctx.db, ctx.session, input);
     const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
     await deleteDirectory(containerClient, input, true);
     return deletedRoom;
   }),
-  joinRoom: authedProcedure.input(joinRoomInputSchema).mutation<Room>(async ({ ctx, input }) => {
-    const invite = await ctx.db.query.invites.findFirst({ where: (invites, { eq }) => eq(invites.code, input) });
-    if (!invite)
-      throw new TRPCError({ code: "NOT_FOUND", message: new NotFoundError(DatabaseEntityType.Invite, input).message });
-
-    const userToRoom = (
-      await ctx.db.insert(usersToRooms).values({ roomId: invite.roomId, userId: ctx.session.user.id }).returning()
-    ).find(Boolean);
-    if (!userToRoom)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(
-          Operation.Create,
-          DatabaseEntityType.UserToRoom,
-          JSON.stringify({ roomId: invite.roomId, userId: ctx.session.user.id }),
-        ).message,
+  joinRoom: authedProcedure.input(joinRoomInputSchema).mutation<Room>(({ ctx, input }) =>
+    ctx.db.transaction(async (tx) => {
+      const invite = await tx.query.invites.findFirst({
+        columns: {
+          roomId: true,
+        },
+        where: (invites, { eq }) => eq(invites.code, input),
       });
+      if (!invite)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new NotFoundError(DatabaseEntityType.Invite, input).message,
+        });
 
-    const userToRoomWithRelations = await ctx.db.query.usersToRooms.findFirst({
-      where: (usersToRooms, { and, eq }) =>
-        and(eq(usersToRooms.userId, userToRoom.userId), eq(usersToRooms.roomId, userToRoom.roomId)),
-      with: UserToRoomRelations,
-    });
-    if (!userToRoomWithRelations)
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: new NotFoundError(DatabaseEntityType.UserToRoom, JSON.stringify(userToRoom)).message,
+      const userToRoom = (
+        await tx.insert(usersToRooms).values({ roomId: invite.roomId, userId: ctx.session.user.id }).returning()
+      ).find(Boolean);
+      if (!userToRoom)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(
+            Operation.Create,
+            DatabaseEntityType.UserToRoom,
+            JSON.stringify({ roomId: invite.roomId, userId: ctx.session.user.id }),
+          ).message,
+        });
+
+      const userToRoomWithRelations = await tx.query.usersToRooms.findFirst({
+        where: (usersToRooms, { and, eq }) =>
+          and(eq(usersToRooms.userId, userToRoom.userId), eq(usersToRooms.roomId, userToRoom.roomId)),
+        with: UserToRoomRelations,
       });
+      if (!userToRoomWithRelations)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new NotFoundError(DatabaseEntityType.UserToRoom, JSON.stringify(userToRoom)).message,
+        });
 
-    const { room, roomId, user } = userToRoomWithRelations;
-    roomEventEmitter.emit("joinRoom", { roomId, sessionId: ctx.session.session.id, user });
-    return room;
-  }),
+      const { room, roomId, user } = userToRoomWithRelations;
+      roomEventEmitter.emit("joinRoom", { roomId, sessionId: ctx.session.session.id, user });
+      return room;
+    }),
+  ),
   leaveRoom: authedProcedure.input(leaveRoomInputSchema).mutation<Room["id"]>(async ({ ctx, input }) => {
     try {
       const { id } = await deleteRoom(ctx.db, ctx.session, input);
@@ -196,11 +240,8 @@ export const roomRouter = router({
       if (!userToRoom)
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: new InvalidOperationError(
-            Operation.Delete,
-            DatabaseEntityType.UserToRoom,
-            JSON.stringify({ roomId: input }),
-          ).message,
+          message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.UserToRoom, JSON.stringify(input))
+            .message,
         });
 
       roomEventEmitter.emit("leaveRoom", { ...userToRoom, sessionId: ctx.session.session.id });

@@ -16,5 +16,6 @@ export const useEsbabblerStore = defineStore("esbabbler", () => {
     rowKey: MessageEntity["rowKey"];
     target: InstanceType<typeof VMenu>["$props"]["target"];
   }>();
-  return { getUserDataMap, optionsMenu, setUserDataMap, userMap };
+  const { copied, copy, text } = useClipboard();
+  return { copied, copy, getUserDataMap, optionsMenu, setUserDataMap, text, userMap };
 });

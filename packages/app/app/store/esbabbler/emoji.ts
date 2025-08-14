@@ -19,7 +19,7 @@ export const useEmojiStore = defineStore("esbabbler/emoji", () => {
     storeCreateEmoji(newEmoji);
     Object.assign(newEmoji, await $trpc.emoji.createEmoji.mutate(input));
   };
-  const updateEmoji = async (input: UpdateEmojiInput) => {
+  const updateEmoji = async (input: Pick<MessageEmojiMetadataEntity, "userIds"> & UpdateEmojiInput) => {
     if (!session.value.data) return;
     const updatedInput = { ...input, userIds: getUpdatedUserIds(input.userIds, session.value.data.user.id) };
     storeUpdateEmoji(updatedInput);

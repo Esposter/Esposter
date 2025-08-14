@@ -3,9 +3,8 @@ import type { ProjectData } from "grapesjs";
 
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
 import { GRAPESJS_BASE_URL, PLACEHOLD_BASE_URL } from "#shared/services/grapesjs/constants";
-import { css } from "#shared/services/prettier/css";
-import { html } from "#shared/services/prettier/html";
-import { z } from "zod/v4";
+import { css, html } from "@esposter/shared";
+import { z } from "zod";
 
 export class WebpageEditor extends AItemEntity implements ProjectData {
   [key: string]: unknown;

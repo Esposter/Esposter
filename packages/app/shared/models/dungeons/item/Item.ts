@@ -5,7 +5,7 @@ import type { ItemEffect } from "#shared/models/dungeons/item/ItemEffect";
 import { itemEffectSchema } from "#shared/models/dungeons/item/ItemEffect";
 import { itemIdSchema } from "#shared/models/dungeons/item/ItemId";
 import { fileKeySchema } from "#shared/models/dungeons/keys/FileKey";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 export interface Item {
   description: string;

@@ -8,7 +8,7 @@ import { BlendModeSetterMap } from "@/util/setterMap/components/BlendModeSetterM
 import { DepthSetterMap } from "@/util/setterMap/components/DepthSetterMap";
 import { MaskSetterMap } from "@/util/setterMap/components/MaskSetterMap";
 import { OriginSetterMap } from "@/util/setterMap/components/OriginSetterMap";
-import { PipelineSetterMap } from "@/util/setterMap/components/PipelineSetterMap";
+import { RenderNodesSetterMap } from "@/util/setterMap/components/RenderNodesSetterMap";
 import { ScrollFactorSetterMap } from "@/util/setterMap/components/ScrollFactorSetterMap";
 import { TextureSetterMap } from "@/util/setterMap/components/TextureSetterMap";
 import { TransformSetterMap } from "@/util/setterMap/components/TransformSetterMap";
@@ -30,7 +30,7 @@ export const NineSliceSetterMap: SetterMap<NineSliceConfiguration, GameObjects.N
     ...DepthSetterMap,
     ...MaskSetterMap,
     ...OriginSetterMap,
-    ...PipelineSetterMap,
+    ...RenderNodesSetterMap,
     ...ScrollFactorSetterMap,
     ...TextureSetterMap,
     ...TransformSetterMap,

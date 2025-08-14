@@ -102,7 +102,7 @@ export class Parser {
       if (this.options.explicitChildren && !this.options.mergeAttrs && typeof object === "object")
         if (!this.options.preserveChildrenOrder) {
           const node: Record<string, unknown> = {};
-          // separate attributes
+          // Separate attributes
           if (this.options.attrkey in object) {
             node[this.options.attrkey] = object[this.options.attrkey];
             delete object[this.options.attrkey];

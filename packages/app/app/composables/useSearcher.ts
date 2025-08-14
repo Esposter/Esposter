@@ -5,7 +5,7 @@ import type { EntityTypeKey } from "@/models/shared/entity/EntityTypeKey";
 
 import { dayjs } from "#shared/services/dayjs";
 import { createCursorPaginationData } from "@/services/shared/pagination/cursor/createCursorPaginationData";
-import { uncapitalize } from "@/util/text/uncapitalize";
+import { uncapitalize } from "@esposter/shared";
 
 type SearcherKey<TEntityTypeKey extends EntityTypeKey> =
   | `${Uncapitalize<TEntityTypeKey>}SearchQuery`

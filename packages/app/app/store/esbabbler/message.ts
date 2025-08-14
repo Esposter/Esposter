@@ -20,7 +20,12 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
-  const { items, ...restData } = createCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
+  const {
+    initializeCursorPaginationData: baseInitializeCursorPaginationData,
+    items,
+    resetCursorPaginationData: baseResetCursorPaginationData,
+    ...restData
+  } = createCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
   const {
     createMessage: baseStoreCreateMessage,
     deleteMessage: baseStoreDeleteMessage,
@@ -29,6 +34,18 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
     ...restOperationData
   } = createOperationData(items, ["partitionKey", "rowKey"], AzureEntityType.Message);
   const files = computed(() => messages.value.flatMap(({ files }) => files));
+  const hasMoreNewer = ref(false);
+  const nextCursorNewer = ref<string>();
+  const initializeCursorPaginationData: typeof baseInitializeCursorPaginationData = (...args) => {
+    baseInitializeCursorPaginationData(...args);
+    hasMoreNewer.value = false;
+    nextCursorNewer.value = undefined;
+  };
+  const resetCursorPaginationData: typeof baseResetCursorPaginationData = (...args) => {
+    baseResetCursorPaginationData(...args);
+    hasMoreNewer.value = false;
+    nextCursorNewer.value = undefined;
+  };
 
   const storeCreateMessage = async (message: MessageEntity) => {
     await Promise.all(MessageHookMap[Operation.Create].map((fn) => fn(message)));
@@ -74,11 +91,15 @@ export const useMessageStore = defineStore("esbabbler/message", () => {
   // everything else will directly use trpc mutations that are tracked by the related subscriptions
   return {
     files,
+    hasMoreNewer,
     messages,
+    nextCursorNewer,
     storeCreateMessage,
     storeDeleteMessage,
     storeUpdateMessage,
     ...restOperationData,
+    initializeCursorPaginationData,
+    resetCursorPaginationData,
     sendMessage,
     ...restData,
     typings,

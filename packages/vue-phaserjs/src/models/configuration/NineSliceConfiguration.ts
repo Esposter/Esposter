@@ -3,7 +3,7 @@ import type { BlendModeConfiguration } from "@/models/configuration/components/B
 import type { DepthConfiguration } from "@/models/configuration/components/DepthConfiguration";
 import type { MaskConfiguration } from "@/models/configuration/components/MaskConfiguration";
 import type { OriginConfiguration } from "@/models/configuration/components/OriginConfiguration";
-import type { PipelineConfiguration } from "@/models/configuration/components/PipelineConfiguration";
+import type { RenderNodesConfiguration } from "@/models/configuration/components/RenderNodesConfiguration";
 import type { ScrollFactorConfiguration } from "@/models/configuration/components/ScrollFactorConfiguration";
 import type { TextureConfiguration } from "@/models/configuration/components/TextureConfiguration";
 import type { TransformConfiguration } from "@/models/configuration/components/TransformConfiguration";
@@ -20,7 +20,7 @@ export interface NineSliceConfiguration
     GlobalConfiguration,
     MaskConfiguration,
     OriginConfiguration,
-    PipelineConfiguration,
+    RenderNodesConfiguration,
     ScrollFactorConfiguration,
     TextureConfiguration,
     TransformConfiguration,

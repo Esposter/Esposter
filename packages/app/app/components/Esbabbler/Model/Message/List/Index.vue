@@ -1,25 +1,57 @@
 <script setup lang="ts">
-import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
+import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
+import { useMessageStore } from "@/store/esbabbler/message";
+import { useMessageScrollStore } from "@/store/esbabbler/messageScroll";
 
-import StyledWaypoint from "@/components/Styled/Waypoint.vue";
+const { readMoreMessages, readMoreNewerMessages } = await useReadMessages();
+const messageStore = useMessageStore();
+const { hasMore, hasMoreNewer } = storeToRefs(messageStore);
+const messageScrollStore = useMessageScrollStore();
+const { isScrolling, messageContainer, messageContainerElement } = storeToRefs(messageScrollStore);
+const isLoading = ref(false);
+const isLoadingNewer = ref(false);
+const topSkeleton = useTemplateRef("topSkeleton");
+const bottomSkeleton = useTemplateRef("bottomSkeleton");
+const isTopVisible = useElementVisibility(topSkeleton);
+const isBottomVisible = useElementVisibility(bottomSkeleton);
+const previousScrollHeight = ref(0);
 
-interface MessageListProps {
-  hasMore: boolean;
-  messages: MessageEntity[];
-  readMoreMessages: NonNullable<InstanceType<typeof StyledWaypoint>["$props"]["onChange"]>;
-}
+watchEffect(async () => {
+  if (!isTopVisible.value || !hasMore.value || isLoading.value) return;
+  isLoading.value = true;
+  await readMoreMessages(() => {
+    isLoading.value = false;
+  });
+});
 
-const { hasMore, messages, readMoreMessages } = defineProps<MessageListProps>();
+watchEffect(async () => {
+  if (!isBottomVisible.value || !hasMoreNewer.value || isLoadingNewer.value) return;
+  isLoadingNewer.value = true;
+  await readMoreNewerMessages(() => {
+    isLoadingNewer.value = false;
+    requestAnimationFrame(() => {
+      if (isScrolling.value || !isBottomVisible.value || !messageContainerElement.value) return;
+      messageContainerElement.value.scrollTop -=
+        messageContainerElement.value.scrollHeight - previousScrollHeight.value;
+      previousScrollHeight.value = messageContainerElement.value.scrollHeight;
+    });
+  });
+});
+
+watchOnce(messageContainerElement, (newMessageContainerElement) => {
+  if (!newMessageContainerElement) return;
+  previousScrollHeight.value = newMessageContainerElement.scrollHeight;
+});
 </script>
 
 <template>
-  <v-list flex-1 flex pb-0 basis-full flex-col-reverse overflow-y-auto="!" lines="two">
-    <EsbabblerModelMessageListItemContainer
-      v-for="(message, index) of messages"
-      :key="message.rowKey"
-      :current-message="message"
-      :next-message="messages[index + 1]"
-    />
-    <StyledWaypoint :active="hasMore" @change="readMoreMessages" />
+  <v-list ref="messageContainer" flex-1 flex pb-0 basis-full flex-col-reverse overflow-y-auto="!" lines="two">
+    <div v-show="hasMoreNewer" ref="bottomSkeleton">
+      <EsbabblerModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+    </div>
+    <EsbabblerModelMessageListContainer />
+    <div v-show="hasMore" ref="topSkeleton">
+      <EsbabblerModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+    </div>
   </v-list>
 </template>

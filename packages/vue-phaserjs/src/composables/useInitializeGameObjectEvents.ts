@@ -9,11 +9,13 @@ import ClickOutside from "phaser3-rex-plugins/plugins/clickoutside.js";
 
 export const useInitializeGameObjectEvents = () => {
   const currentInstance = getCurrentInstance();
-  const events = Object.keys(currentInstance?.attrs ?? {})
-    .filter(isEvent)
-    .map((e) => getEventName(e));
+  const events = new Set(
+    Object.keys(currentInstance?.attrs ?? {})
+      .filter(isEvent)
+      .map(getEventName),
+  );
   const gameObjectEvents = Object.keys(GameObjectEventMap).filter((key) =>
-    events.includes(key),
+    events.has(key),
   ) as (keyof typeof GameObjectEventMap)[];
   const eventStopHandles: (() => void)[] = [];
   const initializeGameObjectEvents = <TEmitsOptions extends Record<string, unknown[]>>(

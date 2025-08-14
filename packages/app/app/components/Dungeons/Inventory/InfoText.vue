@@ -14,13 +14,12 @@ onCreate((scene) => {
   wordWrapWidth.value = scene.scale.width - WORD_PADDING;
 });
 
-watch(
+watchImmediate(
   () => itemOptionGrid.value,
   (newValue) => {
     infoDialogMessage.value.text =
       newValue === PlayerSpecialInput.Cancel ? "Close your bag and go back to adventuring!" : newValue.description;
   },
-  { immediate: true },
 );
 </script>
 

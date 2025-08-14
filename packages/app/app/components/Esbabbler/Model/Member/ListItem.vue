@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { User } from "#shared/db/schema/users";
 
+import { authClient } from "@/services/auth/authClient";
 import { useRoomStore } from "@/store/esbabbler/room";
 
 interface MemberListItemProps {
@@ -8,27 +9,72 @@ interface MemberListItemProps {
 }
 
 const { member } = defineProps<MemberListItemProps>();
+const { $trpc } = useNuxtApp();
+const { data: session } = await authClient.useSession(useFetch);
 const roomStore = useRoomStore();
 const { currentRoom } = storeToRefs(roomStore);
 const isCreator = computed(() => currentRoom.value?.userId === member.id);
+const isKickable = computed(
+  () => currentRoom.value?.userId === session.value?.user.id && member.id !== session.value?.user.id,
+);
+const isHovering = ref(false);
 </script>
 
 <template>
-  <v-list-item :value="member.name">
-    <template #prepend>
-      <EsbabblerModelMemberStatusAvatar :id="member.id" :image="member.image" :name="member.name" />
+  <div relative @mouseover="isHovering = true" @mouseleave="isHovering = false">
+    <v-list-item :value="member.name">
+      <template #prepend>
+        <EsbabblerModelMemberStatusAvatar :id="member.id" :image="member.image" :name="member.name" />
+      </template>
+      <v-list-item-title pr-6>
+        <div flex items-center gap-x-1>
+          {{ member.name }}
+          <v-tooltip v-if="isCreator" text="Room Owner">
+            <template #activator="{ props }">
+              <v-icon icon="mdi-crown" :="props" color="yellow-darken-4" />
+            </template>
+          </v-tooltip>
+        </div>
+      </v-list-item-title>
+    </v-list-item>
+    <template v-if="isKickable">
+      <StyledDeleteDialog
+        :card-props="{ title: 'Kick Member', text: `Are you sure you want to kick ${member.name}?` }"
+        :confirm-button-props="{ text: 'Kick' }"
+        @delete="
+          async (onComplete) => {
+            try {
+              if (!currentRoom) return;
+              await $trpc.room.deleteMember.mutate({ roomId: currentRoom.id, userId: member.id });
+            } finally {
+              onComplete();
+            }
+          }
+        "
+      >
+        <template #activator="{ updateIsOpen }">
+          <v-tooltip :text="`Kick ${member.name}`">
+            <template #activator="{ props: tooltipProps }">
+              <v-btn
+                v-show="isHovering"
+                absolute
+                top="1/2"
+                right-0
+                translate-y="-1/2"
+                bg-transparent="!"
+                icon="mdi-close"
+                variant="plain"
+                size="small"
+                :ripple="false"
+                :="tooltipProps"
+                @click="updateIsOpen(true)"
+              />
+            </template>
+          </v-tooltip>
+        </template>
+      </StyledDeleteDialog>
     </template>
-    <v-list-item-title>
-      <div flex items-center gap-x-1>
-        {{ member.name }}
-        <v-tooltip v-if="isCreator" text="Room Owner">
-          <template #activator="{ props }">
-            <v-icon icon="mdi-crown" :="props" color="yellow-darken-4" />
-          </template>
-        </v-tooltip>
-      </div>
-    </v-list-item-title>
-  </v-list-item>
+  </div>
 </template>
 
 <style scoped lang="scss">

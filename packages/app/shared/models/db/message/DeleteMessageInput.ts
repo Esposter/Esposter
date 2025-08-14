@@ -1,4 +1,4 @@
-import type { z } from "zod/v4";
+import type { z } from "zod";
 
 import { messageEntitySchema } from "#shared/models/db/message/MessageEntity";
 

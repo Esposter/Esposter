@@ -10,9 +10,6 @@ export const vite: NuxtConfig["vite"] = {
     commonjsOptions: {
       transformMixedEsModules: true,
     },
-    rollupOptions: {
-      preserveEntrySignatures: "strict",
-    },
   },
   css: {
     preprocessorOptions: {
@@ -24,6 +21,10 @@ export const vite: NuxtConfig["vite"] = {
         `,
       },
     },
+  },
+  experimental: {
+    // @TODO: https://github.com/rolldown/rolldown/issues/4271
+    enableNativePlugin: false,
   },
   optimizeDeps: {
     // https://github.com/vue-pdf-viewer/starter-vpv-nuxt-ts/blob/main/nuxt.config.ts

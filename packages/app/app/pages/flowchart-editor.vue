@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { dayjs } from "#shared/services/dayjs";
-import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
-import { DEFAULT_NODE_TYPE } from "@/services/flowchartEditor/constants";
+import type { GraphEdge } from "#shared/models/flowchartEditor/data/GraphEdge";
+import type { GraphNode } from "#shared/models/flowchartEditor/data/GraphNode";
+
+import { GeneralNodeType } from "#shared/models/flowchartEditor/node/GeneralNodeType";
+import { NodeTypeMap } from "@/services/flowchartEditor/NodeTypeMap";
 import { useFlowchartEditorStore } from "@/store/flowchartEditor";
 import { Background } from "@vue-flow/background";
 import { useVueFlow, VueFlow } from "@vue-flow/core";
@@ -12,40 +14,50 @@ defineRouteRules({ ssr: false });
 await useReadFlowchartEditor();
 const flowchartEditorStore = useFlowchartEditorStore();
 const { saveFlowchartEditor } = flowchartEditorStore;
-const throttledSaveFlowChartEditor = useThrottleFn(
-  () => saveFlowchartEditor(),
-  dayjs.duration(1, "second").asMilliseconds(),
-);
 const { flowchartEditor } = storeToRefs(flowchartEditorStore);
-const { addEdges, onConnect, onEdgesChange, onNodesChange } = useVueFlow();
+const { addEdges, onConnect } = useVueFlow();
 const { onDragLeave, onDragOver, onDrop } = useDragAndDrop();
 
-onConnect((connection) => {
-  addEdges(connection);
-});
-
-onEdgesChange(getSynchronizedFunction(throttledSaveFlowChartEditor));
-
-onNodesChange(getSynchronizedFunction(throttledSaveFlowChartEditor));
+onConnect(addEdges);
 </script>
 
 <template>
   <NuxtLayout :left-navigation-drawer-props="{ scrim: false }" :right-navigation-drawer-props="{ scrim: false }">
-    <div class="bg-surface" h-full @drop="onDrop">
+    <div class="bg-surface" h-full>
       <VueFlow
-        v-model:nodes="flowchartEditor.nodes"
-        v-model:edges="flowchartEditor.edges"
+        :node-types="
+          Object.entries(NodeTypeMap).reduce(
+            (acc, [nodeType, { component }]) => {
+              acc[nodeType] = component;
+              return acc;
+            },
+            {} as Record<GeneralNodeType, Component>,
+          )
+        "
+        :nodes="flowchartEditor.nodes"
+        :edges="flowchartEditor.edges"
+        @update:nodes="
+          async (newNodes) => {
+            flowchartEditor.nodes = newNodes as GraphNode[];
+            await saveFlowchartEditor();
+          }
+        "
+        @update:edges="
+          async (newEdges) => {
+            flowchartEditor.edges = newEdges as GraphEdge[];
+            await saveFlowchartEditor();
+          }
+        "
         @dragover="onDragOver"
         @dragleave="onDragLeave"
+        @drop="onDrop"
       >
         <Background />
-        <FlowchartEditorSideBarButton />
-        <FlowchartEditorControls />
         <MiniMap class="bg-surface" />
+        <FlowchartEditorControls />
+        <FlowchartEditorSideBarButton />
+        <FlowchartEditorPanel />
         <FlowchartEditorDropzoneBackground />
-        <template #[`node-${DEFAULT_NODE_TYPE}`]="{ data }">
-          <FlowchartEditorBaseNode :data />
-        </template>
       </VueFlow>
     </div>
     <template #left>

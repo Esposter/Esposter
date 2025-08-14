@@ -4,7 +4,7 @@ import type { AzureMetadataOperationDataKey } from "@/models/shared/metadata/Azu
 import type { ReadonlyRefOrGetter } from "@vueuse/core";
 
 import { AzureMetadataOperation } from "@/models/shared/metadata/AzureMetadataOperation";
-import { uncapitalize } from "@/util/text/uncapitalize";
+import { uncapitalize } from "@esposter/shared";
 
 type TEntity<TType extends string> = TType extends MessageMetadataType ? MessageMetadataEntityMap[TType] : never;
 

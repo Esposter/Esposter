@@ -75,7 +75,7 @@ const { hasMoreRoomsSearched, readMoreRoomsSearched, roomSearchQuery, roomsSearc
             async () => {
               if (!forward) return;
               const { partitionKey, rowKey } = forward;
-              await $trpc.message.forwardMessages.mutate({ partitionKey, rowKey, roomIds, message: messageInput });
+              await $trpc.message.forwardMessage.mutate({ partitionKey, rowKey, roomIds, message: messageInput });
               if (roomIds.length === 1) {
                 await navigateTo(RoutePath.Messages(roomIds[0]));
                 createAlert('Message forwarded!', 'success', { location: 'top center', icon: 'mdi-share' });

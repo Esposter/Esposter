@@ -1,4 +1,4 @@
-import type { z } from "zod/v4";
+import type { z } from "zod";
 
 import { AzureEntityType } from "#shared/models/azure/AzureEntityType";
 import { MessageEntity } from "#shared/models/db/message/MessageEntity";

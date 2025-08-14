@@ -80,6 +80,7 @@ const defaults: DefaultsOptions = {
       backgroundColor: "transparent",
     },
   },
+  VColorInput: { variant: "outlined" },
   VCombobox: { variant: "outlined" },
   VDataTable: {
     style: {

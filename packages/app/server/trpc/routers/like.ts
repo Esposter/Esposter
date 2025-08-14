@@ -14,15 +14,22 @@ import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 
 export const likeRouter = router({
-  createLike: authedProcedure.input(createLikeInputSchema).mutation<Like>(async ({ ctx, input }) => {
-    const post = await ctx.db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, input.postId) });
-    if (!post)
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: new NotFoundError(DatabaseEntityType.Post, input.postId).message,
+  createLike: authedProcedure.input(createLikeInputSchema).mutation<Like>(({ ctx, input }) =>
+    ctx.db.transaction(async (tx) => {
+      const post = await tx.query.posts.findFirst({
+        columns: {
+          createdAt: true,
+          id: true,
+          noLikes: true,
+        },
+        where: (posts, { eq }) => eq(posts.id, input.postId),
       });
+      if (!post)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new NotFoundError(DatabaseEntityType.Post, input.postId).message,
+        });
 
-    return ctx.db.transaction(async (tx) => {
       const newLike = (
         await tx
           .insert(likes)
@@ -44,17 +51,25 @@ export const likeRouter = router({
         })
         .where(eq(posts.id, post.id));
       return newLike;
-    });
-  }),
-  deleteLike: authedProcedure.input(deleteLikeInputSchema).mutation<Like>(async ({ ctx, input }) => {
-    const post = await ctx.db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, input) });
-    if (!post)
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: new NotFoundError(DatabaseEntityType.Post, input).message,
+    }),
+  ),
+  deleteLike: authedProcedure.input(deleteLikeInputSchema).mutation<Like>(({ ctx, input }) =>
+    ctx.db.transaction(async (tx) => {
+      // Get post with current like count in a single query
+      const post = await tx.query.posts.findFirst({
+        columns: {
+          createdAt: true,
+          id: true,
+          noLikes: true,
+        },
+        where: (posts, { eq }) => eq(posts.id, input),
       });
+      if (!post)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new NotFoundError(DatabaseEntityType.Post, input).message,
+        });
 
-    return ctx.db.transaction(async (tx) => {
       const deletedLike = (
         await tx
           .delete(likes)
@@ -80,34 +95,42 @@ export const likeRouter = router({
         })
         .where(eq(posts.id, input));
       return deletedLike;
-    });
-  }),
-  updateLike: authedProcedure.input(updateLikeInputSchema).mutation<Like>(async ({ ctx, input: { postId, value } }) => {
-    const [post, like] = await Promise.all([
-      ctx.db.query.posts.findFirst({ where: (posts, { eq }) => eq(posts.id, postId) }),
-      ctx.db.query.likes.findFirst({
-        where: (likes, { and, eq }) => and(eq(likes.userId, ctx.session.user.id), eq(likes.postId, postId)),
-      }),
-    ]);
-    if (!post)
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: new NotFoundError(DatabaseEntityType.Post, postId).message,
-      });
-    else if (!like)
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: new NotFoundError(DatabaseEntityType.Like, JSON.stringify({ postId })).message,
-      });
-    else if (like.value === value)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Like, JSON.stringify({ value }))
-          .message,
-      });
+    }),
+  ),
+  updateLike: authedProcedure.input(updateLikeInputSchema).mutation<Like>(({ ctx, input: { postId, value } }) =>
+    ctx.db.transaction(async (tx) => {
+      const [post, like] = await Promise.all([
+        tx.query.posts.findFirst({
+          columns: {
+            createdAt: true,
+            id: true,
+            noLikes: true,
+          },
+          where: (posts, { eq }) => eq(posts.id, postId),
+        }),
+        tx.query.likes.findFirst({
+          where: (likes, { and, eq }) => and(eq(likes.userId, ctx.session.user.id), eq(likes.postId, postId)),
+        }),
+      ]);
 
-    const noLikesNew = post.noLikes + value * 2;
-    return ctx.db.transaction(async (tx) => {
+      if (!post)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new NotFoundError(DatabaseEntityType.Post, postId).message,
+        });
+      else if (!like)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new NotFoundError(DatabaseEntityType.Like, JSON.stringify({ postId })).message,
+        });
+      else if (like.value === value)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Like, JSON.stringify({ value }))
+            .message,
+        });
+
+      const noLikesNew = post.noLikes + value * 2;
       const updatedLike = (
         await tx
           .update(likes)
@@ -130,6 +153,6 @@ export const likeRouter = router({
         })
         .where(eq(posts.id, postId));
       return updatedLike;
-    });
-  }),
+    }),
+  ),
 });

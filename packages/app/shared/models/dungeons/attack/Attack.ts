@@ -3,7 +3,7 @@ import type { AttackId } from "#shared/models/dungeons/attack/AttackId";
 
 import { attackIdSchema } from "#shared/models/dungeons/attack/AttackId";
 import { fileKeySchema } from "#shared/models/dungeons/keys/FileKey";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 export interface Attack {
   fileKey: FileKey;

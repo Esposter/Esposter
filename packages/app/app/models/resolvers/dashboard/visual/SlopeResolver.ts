@@ -2,7 +2,8 @@ import type { ApexOptions } from "apexcharts";
 
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { AVisualTypeResolver } from "@/models/resolvers/dashboard/visual/AVisualTypeResolver";
-import { uncapitalize } from "@/util/text/uncapitalize";
+import { uncapitalize } from "@esposter/shared";
+import { defu } from "defu";
 
 export class SlopeResolver extends AVisualTypeResolver {
   constructor() {
@@ -10,13 +11,13 @@ export class SlopeResolver extends AVisualTypeResolver {
   }
 
   override handleConfiguration(apexOptions: ApexOptions) {
-    apexOptions.chart = defuReplaceArray(
+    apexOptions.chart = defu(
       {
         type: uncapitalize(VisualType.Line),
       },
       apexOptions.chart,
     );
-    apexOptions.plotOptions = defuReplaceArray(
+    apexOptions.plotOptions = defu(
       {
         line: {
           isSlopeChart: true,

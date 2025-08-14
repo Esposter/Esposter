@@ -1,5 +1,5 @@
-import type { UnocssNuxtOptions } from "@unocss/nuxt";
+import type { NuxtConfig } from "nuxt/schema";
 
-export const unocss: UnocssNuxtOptions = {
+export const unocss: NuxtConfig["unocss"] = {
   attributify: true,
 };

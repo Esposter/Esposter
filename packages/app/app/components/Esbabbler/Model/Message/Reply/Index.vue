@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useScrollToMessage } from "@/composables/esbabbler/useScrollToMessage";
 import { useEsbabblerStore } from "@/store/esbabbler";
 import { useReplyStore } from "@/store/esbabbler/reply";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
@@ -12,8 +13,8 @@ const { text } = useColors();
 const esbabblerStore = useEsbabblerStore();
 const { userMap } = storeToRefs(esbabblerStore);
 const replyStore = useReplyStore();
-const { onIndicatorClick } = replyStore;
 const { isIndicatorActive, replyMap } = storeToRefs(replyStore);
+const scrollToMessage = useScrollToMessage();
 const reply = computed(() => replyMap.value.get(rowKey));
 const creator = computed(() => (reply.value ? userMap.value.get(reply.value.userId) : undefined));
 const color = computed(() => (isIndicatorActive.value ? text.value : "gray"));
@@ -35,7 +36,7 @@ const color = computed(() => (isIndicatorActive.value ? text.value : "gray"));
           cursor-pointer
           @mouseenter="isIndicatorActive = true"
           @mouseleave="isIndicatorActive = false"
-          @click="onIndicatorClick(reply.rowKey)"
+          @click="scrollToMessage(reply.rowKey)"
         >
           Click to see attachment
         </span>

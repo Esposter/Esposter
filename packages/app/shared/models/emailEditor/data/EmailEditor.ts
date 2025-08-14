@@ -7,8 +7,8 @@ import {
   PLACEHOLD_BASE_URL,
   WORDPRESS_DESIGNSPELL_BASE_URL,
 } from "#shared/services/grapesjs/constants";
-import { html } from "#shared/services/prettier/html";
-import { z } from "zod/v4";
+import { html } from "@esposter/shared";
+import { z } from "zod";
 
 export class EmailEditor extends AItemEntity implements ProjectData {
   [key: string]: unknown;

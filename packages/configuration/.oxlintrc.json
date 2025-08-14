@@ -3,10 +3,11 @@
   "categories": {
     "pedantic": "error",
     "suspicious": "error",
-    "style": "error"
+    "style": "error",
+    "perf": "error"
   },
   "ignorePatterns": ["*.tsx", "public/docs"],
-  "plugins": ["import", "oxc", "unicorn"],
+  "plugins": ["import", "oxc", "typescript", "unicorn"],
   "rules": {
     "curly": ["error", "multi"],
     "func-names": "off",
@@ -16,7 +17,6 @@
     "import/max-dependencies": "off",
     "import/group-exports": "off",
     "import/no-anonymous-default-export": "off",
-    "import/no-duplicates": "off",
     "import/no-unassigned-import": ["error", { "allow": ["*.css", "*.d.ts", "*.i18n"] }],
     "import/prefer-default-export": "off",
     "init-declarations": "off",
@@ -24,7 +24,9 @@
     "max-lines": "off",
     "max-lines-per-function": "off",
     "max-params": "off",
+    "new-cap": "off",
     "no-await-expression-member": "off",
+    "no-await-in-loop": "off",
     "no-continue": "off",
     "no-duplicate-imports": "off",
     "no-else-return": "off",
@@ -33,11 +35,18 @@
     "no-namespace": "off",
     "no-nested-ternary": "off",
     "no-ternary": "off",
+    "no-unassigned-import": "off",
     "prefer-add-event-listener": "off",
+    "prefer-destructuring": "off",
     "prefer-global-this": "off",
     "radix": "off",
     "sort-imports": "off",
     "sort-keys": "off",
+    "typescript/ban-types": "off",
+    "typescript/consistent-indexed-object-style": ["error", "record"],
+    "typescript/consistent-type-imports": "off",
+    "typescript/no-empty-interface": "off",
+    "typescript/no-unsafe-function-type": "off",
     "unicorn/filename-case": "off",
     "unicorn/no-object-as-default-parameter": "off",
     "unicorn/no-nested-ternary": "off",
@@ -46,18 +55,9 @@
     "unicorn/numeric-separators-style": ["error", { "onlyIfContainsSeparator": true }],
     "unicorn/prefer-dom-node-dataset": "off",
     "unicorn/prefer-event-target": "off",
+    "unicorn/prefer-query-selector": "off",
+    "unicorn/switch-case-braces": "off",
+    "vars-on-top": "off",
     "yoda": ["error", "never"]
-  },
-  "overrides": [
-    {
-      "files": ["**/*.ts"],
-      "plugins": ["typescript"],
-      "rules": {
-        "typescript/ban-types": "off",
-        "typescript/consistent-indexed-object-style": ["error", "record"],
-        "typescript/no-empty-interface": "off",
-        "typescript/no-unsafe-function-type": "off"
-      }
-    }
-  ]
+  }
 }

@@ -4,9 +4,9 @@ import { THEME_COOKIE_NAME } from "@/services/vuetify/constants";
 
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 
-const theme = useGlobalTheme();
-const themeCookie = useCookie(THEME_COOKIE_NAME);
-theme.name.value = themeCookie.value ?? ThemeMode.light;
+const theme = useTheme();
+const themeCookie = useCookie(THEME_COOKIE_NAME, { default: () => ThemeMode.light });
+theme.change(themeCookie.value);
 </script>
 
 <template>
