@@ -196,8 +196,8 @@ catalogs:
       specifier: ^1.46.0
       version: 1.46.0
     '@vue-flow/minimap':
-      specifier: ^1.5.3
-      version: 1.5.3
+      specifier: ^1.5.4
+      version: 1.5.4
     '@vue-flow/node-resizer':
       specifier: ^1.5.0
       version: 1.5.0
@@ -744,7 +744,7 @@ importers:
         version: 1.46.0(vue@3.5.18(typescript@5.9.2))
       '@vue-flow/minimap':
         specifier: 'catalog:'
-        version: 1.5.3(@vue-flow/core@1.46.0(vue@3.5.18(typescript@5.9.2)))(vue@3.5.18(typescript@5.9.2))
+        version: 1.5.4(@vue-flow/core@1.46.0(vue@3.5.18(typescript@5.9.2)))(vue@3.5.18(typescript@5.9.2))
       '@vue-flow/node-resizer':
         specifier: 'catalog:'
         version: 1.5.0(@vue-flow/core@1.46.0(vue@3.5.18(typescript@5.9.2)))(vue@3.5.18(typescript@5.9.2))
@@ -5174,8 +5174,8 @@ packages:
     peerDependencies:
       vue: ^3.3.0
 
-  '@vue-flow/minimap@1.5.3':
-    resolution: {integrity: sha512-w8VQc8orPdzfstIPI4/u6H7qlc/uVM1W6b5Upd5NQi0+S9seYl3CiUrzO9liW/f8Fuvr5oHVQg0X6nn2K083rA==}
+  '@vue-flow/minimap@1.5.4':
+    resolution: {integrity: sha512-l4C+XTAXnRxsRpUdN7cAVFBennC1sVRzq4bDSpVK+ag7tdMczAnhFYGgbLkUw3v3sY6gokyWwMl8CDonp8eB2g==}
     peerDependencies:
       '@vue-flow/core': ^1.23.0
       vue: ^3.3.0
@@ -16369,7 +16369,7 @@ snapshots:
     transitivePeerDependencies:
       - '@vue/composition-api'
 
-  '@vue-flow/minimap@1.5.3(@vue-flow/core@1.46.0(vue@3.5.18(typescript@5.9.2)))(vue@3.5.18(typescript@5.9.2))':
+  '@vue-flow/minimap@1.5.4(@vue-flow/core@1.46.0(vue@3.5.18(typescript@5.9.2)))(vue@3.5.18(typescript@5.9.2))':
     dependencies:
       '@vue-flow/core': 1.46.0(vue@3.5.18(typescript@5.9.2))
       d3-selection: 3.0.0
