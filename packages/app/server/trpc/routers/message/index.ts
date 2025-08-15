@@ -11,6 +11,7 @@ import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessag
 import { MessageEntity, messageEntitySchema } from "#shared/models/db/message/MessageEntity";
 import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
+import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadata";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
@@ -41,7 +42,13 @@ import { addProfanityFilterMiddleware } from "@@/server/trpc/middleware/addProfa
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/message/getCreatorProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
-import { getPartitionKeyFilter, InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
+import {
+  getPartitionKeyFilter,
+  InvalidOperationError,
+  isNull as isNullFilter,
+  NotFoundError,
+  Operation,
+} from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
@@ -336,9 +343,9 @@ export const messageRouter = router({
     async ({ input: { roomId, rowKeys } }) => {
       const messageClient = await useTableClient(AzureTable.Messages);
       return getTopNEntities(messageClient, rowKeys.length, MessageEntity, {
-        filter: `${getPartitionKeyFilter(roomId)} and (${rowKeys
+        filter: `${getPartitionKeyFilter(roomId)} and ${isNullFilter(ItemMetadataPropertyNames.deletedAt)} and (${rowKeys
           .map((rowKey) => `RowKey eq '${rowKey}'`)
-          .join(" or ")}) and (deletedAt eq null or deletedAt eq 'null')`,
+          .join(" or ")})`,
       });
     },
   ),

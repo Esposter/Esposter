@@ -1,4 +1,4 @@
-import { BinaryOperator } from "@esposter/shared";
+import { BinaryOperator, exhaustiveGuard } from "@esposter/shared";
 
 export const compare = (operator: BinaryOperator, leftHandSide: string, rightHandSide: string): boolean => {
   switch (operator) {
@@ -12,5 +12,9 @@ export const compare = (operator: BinaryOperator, leftHandSide: string, rightHan
       return leftHandSide <= rightHandSide;
     case BinaryOperator.lt:
       return leftHandSide < rightHandSide;
+    case BinaryOperator.ne:
+      return leftHandSide !== rightHandSide;
+    default:
+      exhaustiveGuard(operator);
   }
 };
