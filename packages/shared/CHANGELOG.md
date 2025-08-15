@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.12.0](https://github.com/Esposter/Esposter/compare/v2.11.0...v2.12.0) (2025-08-15)
+
+### Bug Fixes
+
+* support unary operators and ne binary operator ([b70e1b1](https://github.com/Esposter/Esposter/commit/b70e1b16654ad1ddcdf38191acfbfb00141818b4))
+
+### Features
+
+* soft delete messages ([9305888](https://github.com/Esposter/Esposter/commit/93058887adcfa25d94ee7476187816a8de197e3b))
+
 # [2.11.0](https://github.com/Esposter/Esposter/compare/v2.10.0...v2.11.0) (2025-08-11)
 
 ### Features
