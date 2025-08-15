@@ -24,9 +24,9 @@ export const createTableFilterPredicate = <T extends object>(filter: string): ((
 
         let isMatched = false;
 
-        if (isNullClause(clause)) {
+        if (isNullClause(clause))
           isMatched = compare(BinaryOperator.eq, String(entity[normalizedClauseKey as keyof typeof entity]), "null");
-        } else {
+        else {
           const comparisonResult = compare(
             clause.operator,
             String(entity[normalizedClauseKey as keyof typeof entity]),
