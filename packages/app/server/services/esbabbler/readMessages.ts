@@ -4,6 +4,7 @@ import type { PartialByKeys } from "unocss";
 
 import { CompositeKey } from "#shared/models/azure/CompositeKey";
 import { MessageEntity } from "#shared/models/db/message/MessageEntity";
+import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadata";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
 import { DEFAULT_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
@@ -12,7 +13,7 @@ import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
-import { getPartitionKeyFilter } from "@esposter/shared";
+import { getPartitionKeyFilter, isNull } from "@esposter/shared";
 
 export const readMessages = async ({
   cursor,
@@ -33,7 +34,7 @@ export const readMessages = async ({
     // 2. Join by ids from main table
     const { hasMore, items, nextCursor } = getCursorPaginationData(indices, limit, sortBy);
     const messageClient = await useTableClient(AzureTable.Messages);
-    const filter = `${getPartitionKeyFilter(roomId)} and (${items
+    const filter = `${getPartitionKeyFilter(roomId)} and ${isNull(ItemMetadataPropertyNames.deletedAt)} and (${items
       .map(({ rowKey }) => `RowKey eq '${getReverseTickedTimestamp(rowKey)}'`)
       .join(" or ")})`;
     // We don't need to fetch limit + 1 here because the pagination metadata
@@ -42,7 +43,7 @@ export const readMessages = async ({
     return Object.assign(getCursorPaginationData(messages, limit, sortBy), { hasMore, nextCursor });
   }
   // Default: Desc via reverse-ticked RowKey (efficient)
-  let filter = getPartitionKeyFilter(roomId);
+  let filter = `${getPartitionKeyFilter(roomId)} and ${isNull(ItemMetadataPropertyNames.deletedAt)}`;
   if (cursor) filter += ` and ${getCursorWhereAzureTable(cursor, sortBy)}`;
   const messageClient = await useTableClient(AzureTable.Messages);
   const messages = await getTopNEntities(messageClient, limit + 1, MessageEntity, { filter });

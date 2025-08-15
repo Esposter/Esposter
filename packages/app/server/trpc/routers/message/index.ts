@@ -27,7 +27,6 @@ import { deleteFiles } from "@@/server/services/azure/container/deleteFiles";
 import { generateDownloadFileSasUrls } from "@@/server/services/azure/container/generateDownloadFileSasUrls";
 import { generateUploadFileSasEntities } from "@@/server/services/azure/container/generateUploadFileSasEntities";
 import { getBlobName } from "@@/server/services/azure/container/getBlobName";
-import { deleteEntity } from "@@/server/services/azure/table/deleteEntity";
 import { getEntity } from "@@/server/services/azure/table/getEntity";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
 import { createMessage } from "@@/server/services/esbabbler/createMessage";
@@ -184,7 +183,10 @@ export const messageRouter = router({
   ),
   deleteMessage: getCreatorProcedure(deleteMessageInputSchema).mutation(
     async ({ ctx: { messageClient, messageEntity }, input }) => {
-      await deleteEntity(messageClient, input.partitionKey, input.rowKey);
+      await updateMessage(messageClient, {
+        ...input,
+        deletedAt: new Date(),
+      } as const satisfies AzureUpdateEntity<MessageEntity>);
       messageEventEmitter.emit("deleteMessage", input);
 
       const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
@@ -334,7 +336,9 @@ export const messageRouter = router({
     async ({ input: { roomId, rowKeys } }) => {
       const messageClient = await useTableClient(AzureTable.Messages);
       return getTopNEntities(messageClient, rowKeys.length, MessageEntity, {
-        filter: `${getPartitionKeyFilter(roomId)} and (${rowKeys.map((rowKey) => `RowKey eq '${rowKey}'`).join(" or ")})`,
+        filter: `${getPartitionKeyFilter(roomId)} and (${rowKeys
+          .map((rowKey) => `RowKey eq '${rowKey}'`)
+          .join(" or ")}) and (deletedAt eq null or deletedAt eq 'null')`,
       });
     },
   ),
