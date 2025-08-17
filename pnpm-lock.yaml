@@ -280,8 +280,8 @@ catalogs:
       specifier: ^10.1.8
       version: 10.1.8
     eslint-plugin-oxlint:
-      specifier: ^1.11.2
-      version: 1.11.2
+      specifier: ^1.12.0
+      version: 1.12.0
     eslint-plugin-perfectionist:
       specifier: ^4.15.0
       version: 4.15.0
@@ -624,7 +624,7 @@ importers:
         version: 9.33.0(jiti@2.5.1)
       eslint-plugin-oxlint:
         specifier: 'catalog:'
-        version: 1.11.2
+        version: 1.12.0
       happy-dom:
         specifier: 'catalog:'
         version: 18.0.1
@@ -6933,8 +6933,8 @@ packages:
     peerDependencies:
       eslint: ^7.0.0 || ^8.0.0 || ^9.0.0
 
-  eslint-plugin-oxlint@1.11.2:
-    resolution: {integrity: sha512-I2dxNhSfaPdgCWoHcS4gFQ50gr+95WeQZiLJv7XlC4WXmqFtcG3gheRuz9efV5xcEwJO152HpxEngoGoxNUK8A==}
+  eslint-plugin-oxlint@1.12.0:
+    resolution: {integrity: sha512-4rVg1CgiiA3bKkjVSh4nhZE46K0ZznkTbDqVCAhKSnM2PPu8I1lBXy1k5APg68QBXzOIVlZiNsNCPTh2Rl/lZA==}
 
   eslint-plugin-perfectionist@4.15.0:
     resolution: {integrity: sha512-pC7PgoXyDnEXe14xvRUhBII8A3zRgggKqJFx2a82fjrItDs1BSI7zdZnQtM2yQvcyod6/ujmzb7ejKPx8lZTnw==}
@@ -18401,7 +18401,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-oxlint@1.11.2:
+  eslint-plugin-oxlint@1.12.0:
     dependencies:
       jsonc-parser: 3.3.1
 
