@@ -6,7 +6,7 @@
     "style": "error",
     "perf": "error"
   },
-  "ignorePatterns": ["*.tsx", "public/docs"],
+  "ignorePatterns": ["*.tsx", "public/docs/**"],
   "plugins": ["import", "oxc", "typescript", "unicorn"],
   "rules": {
     "curly": ["error", "multi"],
