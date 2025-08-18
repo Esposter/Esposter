@@ -19,7 +19,6 @@ import { createEntity } from "@@/server/services/azure/table/createEntity";
 import { deleteEntity } from "@@/server/services/azure/table/deleteEntity";
 import { getEntity } from "@@/server/services/azure/table/getEntity";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
-import { isPartitionKey } from "@@/server/services/azure/table/isPartitionKey";
 import { updateEntity } from "@@/server/services/azure/table/updateEntity";
 import { emojiEventEmitter } from "@@/server/services/esbabbler/events/emojiEventEmitter";
 import { isRoomId } from "@@/server/services/esbabbler/isRoomId";
@@ -27,7 +26,7 @@ import { on } from "@@/server/services/events/on";
 import { router } from "@@/server/trpc";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { readMetadataInputSchema } from "@@/server/trpc/routers/message";
-import { BinaryOperator, InvalidOperationError, Operation, UnaryOperator } from "@esposter/shared";
+import { BinaryOperator, InvalidOperationError, isPartitionKey, Operation, UnaryOperator } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 

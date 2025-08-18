@@ -85,6 +85,13 @@
       "when": 1749778132827,
       "tag": "0011_superb_cloak",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1755497098012,
+      "tag": "0012_foamy_bloodaxe",
+      "breakpoints": true
     }
   ]
 }

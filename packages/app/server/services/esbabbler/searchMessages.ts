@@ -6,8 +6,8 @@ import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useSearchClient } from "@@/server/composables/azure/search/useSearchClient";
 import { SearchIndex } from "@@/server/models/azure/search/SearchIndex";
 import { SearchIndexSearchableFieldsMap } from "@@/server/models/azure/search/SearchIndexSearchableFieldsMap";
-import { isPartitionKey } from "@@/server/services/azure/table/isPartitionKey";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
+import { isPartitionKey } from "@esposter/shared";
 
 export const searchMessages = async ({
   limit = DEFAULT_READ_LIMIT,

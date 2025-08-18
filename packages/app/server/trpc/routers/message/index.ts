@@ -2,6 +2,7 @@ import type { AzureUpdateEntity } from "#shared/models/azure/AzureUpdateEntity";
 import type { FileSasEntity } from "#shared/models/esbabbler/FileSasEntity";
 
 import { rooms, selectRoomSchema } from "#shared/db/schema/rooms";
+import { selectSearchHistorySchema } from "#shared/db/schema/searchHistories";
 import { AzureEntityType } from "#shared/models/azure/AzureEntityType";
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 import { FileEntity, fileEntitySchema } from "#shared/models/azure/FileEntity";
@@ -16,7 +17,6 @@ import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cu
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
-import { MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
 import { MAX_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
@@ -32,8 +32,6 @@ import { generateUploadFileSasEntities } from "@@/server/services/azure/containe
 import { getBlobName } from "@@/server/services/azure/container/getBlobName";
 import { getEntity } from "@@/server/services/azure/table/getEntity";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
-import { isPartitionKey } from "@@/server/services/azure/table/isPartitionKey";
-import { isRowKey } from "@@/server/services/azure/table/isRowKey";
 import { createMessage } from "@@/server/services/esbabbler/createMessage";
 import { messageEventEmitter } from "@@/server/services/esbabbler/events/messageEventEmitter";
 import { roomEventEmitter } from "@@/server/services/esbabbler/events/roomEventEmitter";
@@ -49,10 +47,9 @@ import { getCreatorProcedure } from "@@/server/trpc/procedure/message/getCreator
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import {
   InvalidOperationError,
-  isNull as isNullFilter,
-  NotFoundError,
+  isNull as isNullFilter, isPartitionKey, isRowKey, NotFoundError,
   Operation,
-  UnaryOperator,
+  UnaryOperator
 } from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
@@ -89,7 +86,7 @@ export type ReadMessagesByRowKeysInput = z.infer<typeof readMessagesByRowKeysInp
 const searchMessagesInputSchema = z.object({
   ...createOffsetPaginationParamsSchema(messageEntitySchema.keyof(), 0, [{ key: "createdAt", order: SortOrder.Desc }])
     .shape,
-  query: z.string().min(1).max(MESSAGE_MAX_LENGTH),
+  query: selectSearchHistorySchema.shape.query,
   roomId: selectRoomSchema.shape.id,
 });
 export type SearchMessagesInput = z.infer<typeof searchMessagesInputSchema>;

@@ -2,28 +2,28 @@
 const { hasMoreMessagesSearched, messageSearchQuery, messagesSearched, readMoreMessagesSearched } =
   useMessageSearcher();
 const input = useTemplateRef("input");
+const menu = ref(false);
 </script>
 
 <template>
-  <v-text-field
-    ref="input"
-    v-model="messageSearchQuery"
-    placeholder="Search messages"
-    variant="solo"
-    density="comfortable"
-    flat
-    hide-details
-    clearable
-    @keyup.esc="input?.blur()"
-  >
-    <template #append-inner>
-      <v-icon icon="mdi-magnify" />
+  <EsbabblerContentSearchMenu v-model="menu" :has-more="hasMoreMessagesSearched" :messages="messagesSearched">
+    <template #activator="props">
+      <v-text-field
+        ref="input"
+        v-model="messageSearchQuery"
+        width="15rem"
+        placeholder="Search"
+        density="compact"
+        hide-details
+        clearable
+        :="props"
+        @focus="menu = true"
+        @keyup.esc="input?.blur()"
+      >
+        <template #append-inner>
+          <v-icon icon="mdi-magnify" />
+        </template>
+      </v-text-field>
     </template>
-  </v-text-field>
-  <div px-4 py-2>
-    <EsbabblerModelMessageList :items="messagesSearched" />
-    <div v-if="hasMoreMessagesSearched" py-2 flex justify-center>
-      <v-btn variant="text" @click="readMoreMessagesSearched(() => {})">Load more</v-btn>
-    </div>
-  </div>
+  </EsbabblerContentSearchMenu>
 </template>

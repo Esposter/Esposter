@@ -11,11 +11,9 @@ import { DEFAULT_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/p
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
-import { isPartitionKey } from "@@/server/services/azure/table/isPartitionKey";
-import { isRowKey } from "@@/server/services/azure/table/isRowKey";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
-import { isNull, UnaryOperator } from "@esposter/shared";
+import { isNull, isPartitionKey, isRowKey, UnaryOperator } from "@esposter/shared";
 
 export const readMessages = async ({
   cursor,
