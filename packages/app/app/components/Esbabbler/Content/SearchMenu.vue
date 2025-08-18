@@ -13,8 +13,8 @@ const modelValue = defineModel<boolean>({ default: false });
 </script>
 
 <template>
-  <v-menu v-model="modelValue" :close-on-content-click="false" location="bottom" offset="8">
-    <template #activator="props">
+  <v-menu v-model="modelValue" location="top" :close-on-content-click="false">
+    <template #activator="{ props }">
       <slot name="activator" :="props" />
     </template>
     <StyledCard pa-4>
