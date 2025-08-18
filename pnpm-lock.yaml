@@ -385,7 +385,7 @@ catalogs:
       specifier: ^4.3.2
       version: 4.3.2
     marked:
-      specifier: ^16.1.2
+      specifier: ^16.2.0
       version: 16.2.0
     mjml-browser:
       specifier: ^4.15.3
