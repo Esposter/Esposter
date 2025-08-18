@@ -6,7 +6,6 @@ import { useSurveyStore } from "@/store/surveyer/survey";
 export const useReadSurveys = async () => {
   const { $trpc } = useNuxtApp();
   const surveyStore = useSurveyStore();
-  // @ts-expect-error: @TODO: pinia type error cannot convert Ref | WritableComputedRef
   const { hasMore, surveys, totalItemsLength } = storeToRefs(surveyStore);
   const isLoading = ref(false);
   // This is also used by v-data-table-server to initialize the offset pagination data

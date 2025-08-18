@@ -20,6 +20,7 @@ export const createOffsetPaginationData = <TItem>(baseItems?: Ref<TItem[]>) => {
       hasMore,
       initializeOffsetPaginationData,
       items: baseItems,
+      offset,
       resetOffsetPaginationData,
     };
   }
