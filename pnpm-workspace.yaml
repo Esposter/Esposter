@@ -168,7 +168,7 @@ catalog:
   type-fest: ^4.41.0
   typedoc: ^0.28.10
   typescript: ^5.9.2
-  typescript-eslint: ^8.39.1
+  typescript-eslint: ^8.40.0
   unocss: ^66.4.2
   unplugin-auto-import: ^20.0.0
   unplugin-dts: ^1.0.0-beta.6
