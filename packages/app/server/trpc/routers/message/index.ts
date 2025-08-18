@@ -16,6 +16,7 @@ import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cu
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
+import { MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
 import { MAX_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
@@ -85,13 +86,12 @@ const readMessagesByRowKeysInputSchema = z.object({
 });
 export type ReadMessagesByRowKeysInput = z.infer<typeof readMessagesByRowKeysInputSchema>;
 
-const searchMessagesInputSchema = z
-  .object({
-    ...createOffsetPaginationParamsSchema(messageEntitySchema.keyof()).shape,
-    query: z.string(),
-    roomId: selectRoomSchema.shape.id,
-  })
-  .omit({ sortBy: true });
+const searchMessagesInputSchema = z.object({
+  ...createOffsetPaginationParamsSchema(messageEntitySchema.keyof(), 0, [{ key: "createdAt", order: SortOrder.Desc }])
+    .shape,
+  query: z.string().min(1).max(MESSAGE_MAX_LENGTH),
+  roomId: selectRoomSchema.shape.id,
+});
 export type SearchMessagesInput = z.infer<typeof searchMessagesInputSchema>;
 
 const generateUploadFileSasEntitiesInputSchema = z.object({
@@ -362,9 +362,7 @@ export const messageRouter = router({
       });
     },
   ),
-  searchMessages: getMemberProcedure(searchMessagesInputSchema, "roomId").query(
-    async ({ input: { limit, offset = 0, query, roomId } }) => searchMessages({ limit, offset, query, roomId }),
-  ),
+  searchMessages: getMemberProcedure(searchMessagesInputSchema, "roomId").query(({ input }) => searchMessages(input)),
   updateMessage: addProfanityFilterMiddleware(getCreatorProcedure(updateMessageInputSchema), ["message"]).mutation(
     async ({ ctx: { messageClient }, input }) => {
       await updateMessage(messageClient, input);

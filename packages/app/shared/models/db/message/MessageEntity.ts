@@ -10,6 +10,7 @@ import { fileEntitySchema } from "#shared/models/azure/FileEntity";
 import { MAX_FILE_LIMIT } from "#shared/services/azure/container/constants";
 import { MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
 import { refineMessageSchema } from "#shared/services/esbabbler/refineMessageSchema";
+import { getPropertyNames } from "#shared/util/getPropertyNames";
 import { z } from "zod";
 
 export class MessageEntity extends AzureEntity {
@@ -28,6 +29,8 @@ export class MessageEntity extends AzureEntity {
     Object.assign(this, init);
   }
 }
+
+export const MessageEntityPropertyNames = getPropertyNames<MessageEntity>();
 
 export const messageEntitySchema = refineMessageSchema(
   z.object({
