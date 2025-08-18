@@ -47,9 +47,12 @@ import { getCreatorProcedure } from "@@/server/trpc/procedure/message/getCreator
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import {
   InvalidOperationError,
-  isNull as isNullFilter, isPartitionKey, isRowKey, NotFoundError,
+  isNull as isNullFilter,
+  isPartitionKey,
+  isRowKey,
+  NotFoundError,
   Operation,
-  UnaryOperator
+  UnaryOperator,
 } from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";

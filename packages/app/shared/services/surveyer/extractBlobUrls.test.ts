@@ -13,7 +13,7 @@ describe(extractBlobUrls, async () => {
   });
 
   beforeAll(() => {
-    vi.mock("#shared/util/azure/getBlobUrl", () => ({
+    vi.mock("#shared/services/azure/container/getBlobUrl", () => ({
       getBlobUrl: () => mocks.blobUrl,
     }));
   });
