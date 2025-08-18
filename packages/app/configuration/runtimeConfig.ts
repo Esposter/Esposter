@@ -5,6 +5,9 @@ export const runtimeConfig: NuxtConfig["runtimeConfig"] = {
     secret: process.env.AUTH_SECRET,
   },
   azure: {
+    search: {
+      apiKey: process.env.AZURE_SEARCH_API_KEY,
+    },
     storageAccountConnectionString: process.env.AZURE_STORAGE_ACCOUNT_CONNECTION_STRING,
   },
   database: {

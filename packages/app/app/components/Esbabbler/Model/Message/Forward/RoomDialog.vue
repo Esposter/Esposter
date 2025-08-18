@@ -25,7 +25,7 @@ const dialog = computed({
     rowKey.value = "";
   },
 });
-const { hasMoreRoomsSearched, readMoreRoomsSearched, roomSearchQuery, roomsSearched } = useSearcher(
+const { hasMoreRoomsSearched, readMoreRoomsSearched, roomSearchQuery, roomsSearched } = useCursorSearcher(
   (searchQuery, cursor) =>
     $trpc.room.readRooms.query({
       cursor,

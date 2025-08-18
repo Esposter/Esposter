@@ -70,7 +70,7 @@ export const useRoomStore = defineStore("esbabbler/room", () => {
     currentRoom,
     currentRoomId,
     currentRoomName,
-    ...useSearcher(
+    ...useCursorSearcher(
       (searchQuery, cursor) =>
         $trpc.room.readRooms.query({
           cursor,

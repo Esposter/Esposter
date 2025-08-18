@@ -35,6 +35,7 @@ const isCreator = computed(() => currentRoom.value?.userId === session.value?.us
     <template #append>
       <EsbabblerContentAddFriendsDialogButton />
       <EsbabblerContentShowMemberListButton />
+      <EsbabblerContentSearchBar />
     </template>
   </v-toolbar>
 </template>

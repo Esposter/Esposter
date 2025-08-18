@@ -13,6 +13,7 @@ import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessag
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadata";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
+import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
 import { MAX_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
@@ -30,11 +31,14 @@ import { generateUploadFileSasEntities } from "@@/server/services/azure/containe
 import { getBlobName } from "@@/server/services/azure/container/getBlobName";
 import { getEntity } from "@@/server/services/azure/table/getEntity";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
+import { isPartitionKey } from "@@/server/services/azure/table/isPartitionKey";
+import { isRowKey } from "@@/server/services/azure/table/isRowKey";
 import { createMessage } from "@@/server/services/esbabbler/createMessage";
 import { messageEventEmitter } from "@@/server/services/esbabbler/events/messageEventEmitter";
 import { roomEventEmitter } from "@@/server/services/esbabbler/events/roomEventEmitter";
 import { isRoomId } from "@@/server/services/esbabbler/isRoomId";
 import { readMessages } from "@@/server/services/esbabbler/readMessages";
+import { searchMessages } from "@@/server/services/esbabbler/searchMessages";
 import { updateMessage } from "@@/server/services/esbabbler/updateMessage";
 import { on } from "@@/server/services/events/on";
 import { router } from "@@/server/trpc";
@@ -43,11 +47,11 @@ import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/message/getCreatorProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import {
-  getPartitionKeyFilter,
   InvalidOperationError,
   isNull as isNullFilter,
   NotFoundError,
   Operation,
+  UnaryOperator,
 } from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
@@ -80,6 +84,15 @@ const readMessagesByRowKeysInputSchema = z.object({
   rowKeys: messageEntitySchema.shape.rowKey.array().min(1).max(MAX_READ_LIMIT),
 });
 export type ReadMessagesByRowKeysInput = z.infer<typeof readMessagesByRowKeysInputSchema>;
+
+const searchMessagesInputSchema = z
+  .object({
+    ...createOffsetPaginationParamsSchema(messageEntitySchema.keyof()).shape,
+    query: z.string(),
+    roomId: selectRoomSchema.shape.id,
+  })
+  .omit({ sortBy: true });
+export type SearchMessagesInput = z.infer<typeof searchMessagesInputSchema>;
 
 const generateUploadFileSasEntitiesInputSchema = z.object({
   files: fileEntitySchema.pick({ filename: true, mimetype: true }).array().min(1).max(MAX_READ_LIMIT),
@@ -343,11 +356,14 @@ export const messageRouter = router({
     async ({ input: { roomId, rowKeys } }) => {
       const messageClient = await useTableClient(AzureTable.Messages);
       return getTopNEntities(messageClient, rowKeys.length, MessageEntity, {
-        filter: `${getPartitionKeyFilter(roomId)} and ${isNullFilter(ItemMetadataPropertyNames.deletedAt)} and (${rowKeys
-          .map((rowKey) => `RowKey eq '${rowKey}'`)
-          .join(" or ")})`,
+        filter: `${isPartitionKey(roomId)} ${UnaryOperator.and} ${isNullFilter(ItemMetadataPropertyNames.deletedAt)} ${UnaryOperator.and} (${rowKeys
+          .map((rowKey) => isRowKey(rowKey))
+          .join(` ${UnaryOperator.or} `)})`,
       });
     },
+  ),
+  searchMessages: getMemberProcedure(searchMessagesInputSchema, "roomId").query(
+    async ({ input: { limit, offset = 0, query, roomId } }) => searchMessages({ limit, offset, query, roomId }),
   ),
   updateMessage: addProfanityFilterMiddleware(getCreatorProcedure(updateMessageInputSchema), ["message"]).mutation(
     async ({ ctx: { messageClient }, input }) => {

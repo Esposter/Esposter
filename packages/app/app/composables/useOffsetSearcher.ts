@@ -1,10 +1,10 @@
 import type { AEntity } from "#shared/models/entity/AEntity";
 import type { ToData } from "#shared/models/entity/ToData";
-import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
+import type { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
 import type { EntityTypeKey } from "@/models/shared/entity/EntityTypeKey";
 
 import { dayjs } from "#shared/services/dayjs";
-import { createCursorPaginationData } from "@/services/shared/pagination/cursor/createCursorPaginationData";
+import { createOffsetPaginationData } from "@/services/shared/pagination/offset/createOffsetPaginationData";
 import { uncapitalize } from "@esposter/shared";
 
 type SearcherKey<TEntityTypeKey extends EntityTypeKey> =
@@ -13,42 +13,38 @@ type SearcherKey<TEntityTypeKey extends EntityTypeKey> =
   | `hasMore${TEntityTypeKey}sSearched`
   | `readMore${TEntityTypeKey}sSearched`;
 
-export const useSearcher = <TItem extends ToData<AEntity>, TEntityTypeKey extends EntityTypeKey>(
-  query: (searchQuery: string, cursor?: string) => Promise<CursorPaginationData<TItem>>,
+export const useOffsetSearcher = <TItem extends ToData<AEntity>, TEntityTypeKey extends EntityTypeKey>(
+  query: (searchQuery: string, offset: number) => Promise<OffsetPaginationData<TItem>>,
   entityTypeKey: TEntityTypeKey,
   isIncludeEmptySearchQuery?: true,
 ) => {
   const searchQuery = ref("");
   const isEmptySearchQuery = computed(() => !searchQuery.value.trim());
   const throttledSearchQuery = useThrottle(searchQuery, dayjs.duration(1, "second").asMilliseconds());
-  const { hasMore, initializeCursorPaginationData, items, nextCursor, resetCursorPaginationData } =
-    createCursorPaginationData<TItem>();
+  const { hasMore, initializeOffsetPaginationData, items, resetOffsetPaginationData } =
+    createOffsetPaginationData<TItem>();
+
   const readMoreItems = async (onComplete: () => void) => {
     try {
-      const {
-        hasMore: newHasMore,
-        items: newItems,
-        nextCursor: newNextCursor,
-      } = await query(throttledSearchQuery.value, nextCursor.value);
-      nextCursor.value = newNextCursor;
-      hasMore.value = newHasMore;
-      items.value.push(...newItems);
+      const data = await query(searchQuery.value, items.value.length);
+      hasMore.value = data.hasMore;
+      items.value.push(...data.items);
     } finally {
       onComplete();
     }
   };
 
-  watch(isEmptySearchQuery, (newIsEmptySearchQuery) => {
-    if (isIncludeEmptySearchQuery || !newIsEmptySearchQuery) return;
-    resetCursorPaginationData();
+  watch(isEmptySearchQuery, (newEmptySearchQuery) => {
+    if (isIncludeEmptySearchQuery || newEmptySearchQuery) return;
+    resetOffsetPaginationData();
   });
 
   watch(
     throttledSearchQuery,
     async (newThrottledSearchQuery) => {
-      const sanitizedNewThrottledSearchQuery = newThrottledSearchQuery.trim();
-      if (!(isIncludeEmptySearchQuery || sanitizedNewThrottledSearchQuery)) return;
-      initializeCursorPaginationData(await query(sanitizedNewThrottledSearchQuery));
+      const sanitizedThrottledSearchQuery = newThrottledSearchQuery.trim();
+      if (!(isIncludeEmptySearchQuery || sanitizedThrottledSearchQuery)) return;
+      initializeOffsetPaginationData(await query(sanitizedThrottledSearchQuery, 0));
     },
     { immediate: isIncludeEmptySearchQuery },
   );

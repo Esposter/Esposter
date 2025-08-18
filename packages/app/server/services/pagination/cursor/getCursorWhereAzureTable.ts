@@ -6,7 +6,7 @@ import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import { CompositeKeyPropertyNames } from "#shared/models/azure/CompositeKey";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { deserialize } from "#shared/services/pagination/cursor/deserialize";
-import { capitalize, exhaustiveGuard, NotFoundError } from "@esposter/shared";
+import { BinaryOperator, capitalize, exhaustiveGuard, NotFoundError, UnaryOperator } from "@esposter/shared";
 
 export const getCursorWhereAzureTable = <TItem extends CompositeKey | ToData<AEntity>>(
   serializedCursors: string,
@@ -20,20 +20,20 @@ export const getCursorWhereAzureTable = <TItem extends CompositeKey | ToData<AEn
       const sortItem = sanitizedSortBy.find((s) => s.key === sanitizedKey);
       if (!sortItem) throw new NotFoundError(getCursorWhereAzureTable.name, key);
 
-      let comparer: string;
+      let comparer: BinaryOperator;
       switch (sortItem.order) {
         case SortOrder.Asc:
-          comparer = sortItem.isIncludeValue ? "ge" : "gt";
+          comparer = sortItem.isIncludeValue ? BinaryOperator.ge : BinaryOperator.gt;
           break;
         case SortOrder.Desc:
-          comparer = sortItem.isIncludeValue ? "le" : "lt";
+          comparer = sortItem.isIncludeValue ? BinaryOperator.le : BinaryOperator.lt;
           break;
         default:
           exhaustiveGuard(sortItem.order);
       }
       return `${sanitizedKey} ${comparer} '${value}'`;
     })
-    .join(" and ");
+    .join(` ${UnaryOperator.and} `);
 };
 // Stupid Azure and Javascript property name casing conventions
 const KeysToCapitalize = new Set<string>([CompositeKeyPropertyNames.partitionKey, CompositeKeyPropertyNames.rowKey]);

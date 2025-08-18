@@ -1,4 +1,4 @@
-import { getBlobUrl } from "../../../shared/util/azure/getBlobUrl";
+import { getBlobUrl } from "../azure/container/getBlobUrl";
 import {
   BLOGSPOT_BASE_URL,
   GRAPESJS_BASE_URL,
