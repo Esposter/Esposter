@@ -11,7 +11,7 @@ interface SearchMenuProps {
 
 defineSlots<{ activator: (props: Record<string, unknown>) => unknown }>();
 const { hasMore, messages } = defineProps<SearchMenuProps>();
-const emit = defineEmits<{ readMore: []; select: [preset: { key: string; label: string }] }>();
+const emit = defineEmits<{ readMore: []; select: [filterType: FilterType] }>();
 const modelValue = defineModel<boolean>({ default: false });
 </script>
 
@@ -21,14 +21,11 @@ const modelValue = defineModel<boolean>({ default: false });
       <slot name="activator" :="props" />
     </template>
     <StyledCard p-2>
-      <v-card-title text-base font-bold>Search Options</v-card-title>
+      <v-card-title text-sm font-extrabold>Search Options</v-card-title>
       <v-list py-0 density="compact">
         <v-hover v-for="filterType in Object.values(FilterType)" :key="filterType" #default="{ isHovering, props }">
-          <v-list-item
-            :title="`${uncapitalize(filterType)}:`"
-            :="props"
-            @click="emit('select', { key: filterType, label: `${filterType}:` })"
-          >
+          <v-list-item :="props" @click="emit('select', filterType)">
+            <v-list-item-title font-semibold>{{ uncapitalize(filterType) }}:</v-list-item-title>
             <template #append>
               <v-icon v-show="isHovering" icon="mdi-plus" />
             </template>
@@ -36,7 +33,7 @@ const modelValue = defineModel<boolean>({ default: false });
         </v-hover>
       </v-list>
       <template v-if="messages.length > 0">
-        <div font-bold mb-2>History</div>
+        <div mb-2 text-sm font-extrabold>History</div>
         <EsbabblerModelMessageList :items="messages" />
         <div v-if="hasMore" py-2 flex justify-center>
           <v-btn variant="text" @click="emit('readMore')">Load more</v-btn>

@@ -1,10 +1,11 @@
+/* eslint-disable perfectionist/sort-enums */
 export enum FilterType {
-  After = "After",
-  AuthorType = "AuthorType",
+  From = "From",
+  Mentions = "Mentions",
+  Has = "Has",
   Before = "Before",
   During = "During",
-  From = "From",
-  Has = "Has",
-  Mentions = "Mentions",
+  After = "After",
   Pinned = "Pinned",
+  AuthorType = "AuthorType",
 }
