@@ -70,6 +70,9 @@
     "vitest": "catalog:",
     "vue-tsc": "catalog:"
   },
+  "devDependenciesComments": {
+    "oxlint": "@TODO: https://github.com/oxc-project/oxc/issues/13204"
+  },
   "engines": {
     "node": "^24.6.0"
   },
