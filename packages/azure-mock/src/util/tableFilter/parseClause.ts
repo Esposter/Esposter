@@ -1,7 +1,8 @@
 import type { Clause } from "@/models/tableFilter/Clause";
+import type { BinaryOperator } from "@esposter/shared";
 
 import { CLAUSE_REGEX } from "@/util/tableFilter/constants";
-import { BinaryOperator, NotFoundError } from "@esposter/shared";
+import { NotFoundError } from "@esposter/shared";
 
 export const parseClause = (rawClause: string): Clause => {
   const match = CLAUSE_REGEX.exec(rawClause.trim());
