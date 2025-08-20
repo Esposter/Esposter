@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useScrollToMessage } from "@/composables/esbabbler/useScrollToMessage";
 import { useMessageStore } from "@/store/message";
 import { useReplyStore } from "@/store/message/reply";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
-import { useMessageActionItems } from "@/composables/esbabbler/useMessageActionItems";
 import { authClient } from "@/services/auth/authClient";
 
 interface OptionsMenuItemsProps {

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useScrollToMessage } from "@/composables/esbabbler/useScrollToMessage";
 import { useDataStore } from "@/store/message/data";
 
 const dataStore = useDataStore();
