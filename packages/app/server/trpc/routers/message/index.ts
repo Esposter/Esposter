@@ -92,7 +92,7 @@ const searchMessagesInputSchema = z.object({
   ...createOffsetPaginationParamsSchema(messageEntitySchema.keyof(), 0, [
     { key: ItemMetadataPropertyNames.createdAt, order: SortOrder.Desc },
   ]).shape,
-  filters: filterSchema.array().max(MAX_READ_LIMIT).optional(),
+  filters: filterSchema.array().min(1).max(MAX_READ_LIMIT).optional(),
   query: selectSearchHistorySchema.shape.query,
   roomId: selectRoomSchema.shape.id,
 });
