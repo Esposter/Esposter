@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { authClient } from "@/services/auth/authClient";
-import { useRoomStore } from "@/store/esbabbler/room";
 import { useLayoutStore } from "@/store/layout";
+import { useRoomStore } from "@/store/message/room";
 
 const { data: session } = await authClient.useSession(useFetch);
 const { $trpc } = useNuxtApp();

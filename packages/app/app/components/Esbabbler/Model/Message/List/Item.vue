@@ -3,9 +3,9 @@ import type { User } from "#shared/db/schema/users";
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
 import { dayjs } from "#shared/services/dayjs";
-import { useEsbabblerStore } from "@/store/esbabbler";
-import { useForwardStore } from "@/store/esbabbler/forward";
-import { useReplyStore } from "@/store/esbabbler/reply";
+import { useMessageStore } from "@/store/message";
+import { useForwardStore } from "@/store/message/forward";
+import { useReplyStore } from "@/store/message/reply";
 
 interface MessageListItemProps {
   creator: User;
@@ -17,8 +17,8 @@ const { creator, message, nextMessage } = defineProps<MessageListItemProps>();
 const isSameBatch = computed(
   () => message.userId === nextMessage?.userId && dayjs(message.createdAt).diff(nextMessage.createdAt, "minutes") <= 5,
 );
-const esbabblerStore = useEsbabblerStore();
-const { optionsMenu } = storeToRefs(esbabblerStore);
+const messageStore = useMessageStore();
+const { optionsMenu } = storeToRefs(messageStore);
 const replyStore = useReplyStore();
 const { activeRowKey: activeReplyRowKey, rowKey: replyRowKey } = storeToRefs(replyStore);
 const forwardStore = useForwardStore();

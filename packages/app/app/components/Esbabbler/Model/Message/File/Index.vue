@@ -4,7 +4,7 @@ import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
 import { authClient } from "@/services/auth/authClient";
 import { CONTAINER_BORDER_RADIUS } from "@/services/esbabbler/file/constants";
-import { useDownloadFileStore } from "@/store/esbabbler/downloadFile";
+import { useDownloadFileStore } from "@/store/message/downloadFile";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
 interface FileProps {

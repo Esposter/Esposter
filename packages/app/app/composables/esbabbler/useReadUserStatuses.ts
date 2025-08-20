@@ -1,4 +1,4 @@
-import { useUserStatusStore } from "@/store/esbabbler/userStatus";
+import { useUserStatusStore } from "@/store/message/userStatus";
 
 export const useReadUserStatuses = () => {
   const { $trpc } = useNuxtApp();

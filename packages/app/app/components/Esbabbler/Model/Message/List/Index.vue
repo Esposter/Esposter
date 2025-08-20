@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
-import { useMessageStore } from "@/store/esbabbler/message";
-import { useMessageScrollStore } from "@/store/esbabbler/messageScroll";
+import { useDataStore } from "@/store/message/data";
+import { useScrollStore } from "@/store/message/scroll";
 
 const { readMoreMessages, readMoreNewerMessages } = await useReadMessages();
-const messageStore = useMessageStore();
-const { hasMore, hasMoreNewer } = storeToRefs(messageStore);
-const messageScrollStore = useMessageScrollStore();
-const { isScrolling, messageContainer, messageContainerElement } = storeToRefs(messageScrollStore);
+const dataStore = useDataStore();
+const { hasMore, hasMoreNewer } = storeToRefs(dataStore);
+const scrollStore = useScrollStore();
+const { isScrolling, messageContainer, messageContainerElement } = storeToRefs(scrollStore);
 const isLoading = ref(false);
 const isLoadingNewer = ref(false);
 const topSkeleton = useTemplateRef("topSkeleton");

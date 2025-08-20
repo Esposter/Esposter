@@ -3,7 +3,7 @@ import type { Session } from "@/models/auth/Session";
 import type { VAvatar } from "vuetify/components/VAvatar";
 
 import { StatusBadgePropsMap } from "@/services/esbabbler/StatusBadgePropsMap";
-import { useUserStatusStore } from "@/store/esbabbler/userStatus";
+import { useUserStatusStore } from "@/store/message/userStatus";
 // @TODO: https://github.com/vuejs/core/issues/11371
 interface StatusAvatarProps {
   avatarProps?: VAvatar["$props"];

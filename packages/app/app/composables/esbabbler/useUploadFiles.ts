@@ -4,8 +4,8 @@ import { MAX_FILE_LIMIT } from "#shared/services/azure/container/constants";
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
 import { validateFile } from "@/services/file/validateFile";
 import { useAlertStore } from "@/store/alert";
-import { useRoomStore } from "@/store/esbabbler/room";
-import { useUploadFileStore } from "@/store/esbabbler/uploadFile";
+import { useRoomStore } from "@/store/message/room";
+import { useUploadFileStore } from "@/store/message/uploadFile";
 
 export const useUploadFiles = () => {
   const { $trpc } = useNuxtApp();

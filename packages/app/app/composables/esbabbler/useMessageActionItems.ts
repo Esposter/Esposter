@@ -2,8 +2,8 @@ import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { Item } from "@/models/shared/Item";
 
 import { RoutePath } from "#shared/models/router/RoutePath";
-import { useEsbabblerStore } from "@/store/esbabbler";
-import { useRoomStore } from "@/store/esbabbler/room";
+import { useMessageStore } from "@/store/message";
+import { useRoomStore } from "@/store/message/room";
 import { parse } from "node-html-parser";
 
 export const useMessageActionItems = (
@@ -22,8 +22,8 @@ export const useMessageActionItems = (
     onUpdateMode: () => void;
   },
 ) => {
-  const esbabblerStore = useEsbabblerStore();
-  const { copy } = esbabblerStore;
+  const messageStore = useMessageStore();
+  const { copy } = messageStore;
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const runtimeConfig = useRuntimeConfig();

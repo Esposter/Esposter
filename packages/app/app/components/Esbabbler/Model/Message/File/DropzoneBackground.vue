@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
-import { useRoomStore } from "@/store/esbabbler/room";
+import { useRoomStore } from "@/store/message/room";
 
 const roomStore = useRoomStore();
 const { currentRoomName } = storeToRefs(roomStore);

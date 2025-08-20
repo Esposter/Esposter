@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useEsbabblerStore } from "@/store/esbabbler";
+import { useMessageStore } from "@/store/message";
 
-const esbabblerStore = useEsbabblerStore();
-const { copied, text } = storeToRefs(esbabblerStore);
+const messageStore = useMessageStore();
+const { copied, text } = storeToRefs(messageStore);
 </script>
 
 <template>

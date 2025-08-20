@@ -5,7 +5,7 @@ import type { Instance } from "tippy.js";
 
 import { dayjs } from "#shared/services/dayjs";
 import MentionList from "@/components/Esbabbler/Model/Message/MentionList.vue";
-import { useRoomStore } from "@/store/esbabbler/room";
+import { useRoomStore } from "@/store/message/room";
 import { VueRenderer } from "@tiptap/vue-3";
 import tippy from "tippy.js";
 

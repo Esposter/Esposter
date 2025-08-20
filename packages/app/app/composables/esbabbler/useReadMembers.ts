@@ -1,5 +1,5 @@
-import { useMemberStore } from "@/store/esbabbler/member";
-import { useRoomStore } from "@/store/esbabbler/room";
+import { useMemberStore } from "@/store/message/member";
+import { useRoomStore } from "@/store/message/room";
 
 export const useReadMembers = async () => {
   const { $trpc } = useNuxtApp();

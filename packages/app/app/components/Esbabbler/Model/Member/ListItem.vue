@@ -2,7 +2,7 @@
 import type { User } from "#shared/db/schema/users";
 
 import { authClient } from "@/services/auth/authClient";
-import { useRoomStore } from "@/store/esbabbler/room";
+import { useRoomStore } from "@/store/message/room";
 
 interface MemberListItemProps {
   member: User;

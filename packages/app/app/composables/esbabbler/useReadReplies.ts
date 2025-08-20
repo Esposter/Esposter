@@ -1,5 +1,5 @@
-import { useReplyStore } from "@/store/esbabbler/reply";
-import { useRoomStore } from "@/store/esbabbler/room";
+import { useReplyStore } from "@/store/message/reply";
+import { useRoomStore } from "@/store/message/room";
 
 export const useReadReplies = () => {
   const { $trpc } = useNuxtApp();

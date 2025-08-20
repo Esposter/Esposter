@@ -1,8 +1,8 @@
 import type { Unsubscribable } from "@trpc/server/observable";
 
 import { authClient } from "@/services/auth/authClient";
-import { useMemberStore } from "@/store/esbabbler/member";
-import { useUserStatusStore } from "@/store/esbabbler/userStatus";
+import { useMemberStore } from "@/store/message/member";
+import { useUserStatusStore } from "@/store/message/userStatus";
 
 export const useUserSubscribables = () => {
   const session = authClient.useSession();

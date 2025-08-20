@@ -3,7 +3,7 @@ import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
 import { authClient } from "@/services/auth/authClient";
 import { EMOJI_TEXT } from "@/services/styled/constants";
-import { useEmojiStore } from "@/store/esbabbler/emoji";
+import { useEmojiStore } from "@/store/message/emoji";
 import { emojify } from "node-emoji";
 
 interface MessageEmojiListProps {

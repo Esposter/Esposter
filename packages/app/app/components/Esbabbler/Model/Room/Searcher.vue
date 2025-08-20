@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useRoomStore } from "@/store/esbabbler/room";
+import { useRoomStore } from "@/store/message/room";
 
 const roomStore = useRoomStore();
 const { roomSearchQuery } = storeToRefs(roomStore);

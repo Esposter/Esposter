@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { DEFAULT_NAME } from "#shared/services/constants";
-import { useRoomStore } from "@/store/esbabbler/room";
+import { useRoomStore } from "@/store/message/room";
 
 const roomStore = useRoomStore();
 const { createRoom } = roomStore;

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Room } from "#shared/db/schema/rooms";
 
-import { useForwardStore } from "@/store/esbabbler/forward";
+import { useForwardStore } from "@/store/message/forward";
 
 interface ForwardRoomListItemProps {
   room: Room;

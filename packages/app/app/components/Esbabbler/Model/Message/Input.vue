@@ -2,17 +2,17 @@
 import { MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { getTypingMessage } from "@/services/esbabbler/message/getTypingMessage";
-import { useMessageStore } from "@/store/esbabbler/message";
-import { useMessageInputStore } from "@/store/esbabbler/messageInput";
-import { useReplyStore } from "@/store/esbabbler/reply";
-import { useRoomStore } from "@/store/esbabbler/room";
+import { useDataStore } from "@/store/message/data";
+import { useInputStore } from "@/store/message/input";
+import { useReplyStore } from "@/store/message/reply";
+import { useRoomStore } from "@/store/message/room";
 import { Extension } from "@tiptap/vue-3";
 
 const roomStore = useRoomStore();
 const { currentRoomName } = storeToRefs(roomStore);
-const messageStore = useMessageStore();
-const { sendMessage } = messageStore;
-const { messages, typings } = storeToRefs(messageStore);
+const dataStore = useDataStore();
+const { sendMessage } = dataStore;
+const { messages, typings } = storeToRefs(dataStore);
 const typingMessage = computed(() => getTypingMessage(typings.value.map(({ username }) => username)));
 const keyboardExtension = new Extension({
   addKeyboardShortcuts() {
@@ -25,8 +25,8 @@ const keyboardExtension = new Extension({
   },
 });
 const mentionExtension = useMentionExtension();
-const messageInputStore = useMessageInputStore();
-const { messageInput } = storeToRefs(messageInputStore);
+const inputStore = useInputStore();
+const { input } = storeToRefs(inputStore);
 const replyStore = useReplyStore();
 const { rowKey } = storeToRefs(replyStore);
 const reply = computed(() => messages.value.find((m) => m.rowKey === rowKey.value));
@@ -39,7 +39,7 @@ const uploadFiles = useUploadFiles();
   <div w-full>
     <EsbabblerModelMessageReplyHeader v-if="reply" :user-id="reply.userId" @close="rowKey = ''" />
     <RichTextEditor
-      v-model="messageInput"
+      v-model="input"
       :placeholder="`Message ${currentRoomName}`"
       :limit="MESSAGE_MAX_LENGTH"
       :extensions="[keyboardExtension, mentionExtension]"

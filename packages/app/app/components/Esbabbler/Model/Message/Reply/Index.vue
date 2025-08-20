@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useScrollToMessage } from "@/composables/esbabbler/useScrollToMessage";
-import { useEsbabblerStore } from "@/store/esbabbler";
-import { useReplyStore } from "@/store/esbabbler/reply";
+import { useMessageStore } from "@/store/message";
+import { useReplyStore } from "@/store/message/reply";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
 interface ReplyProps {
@@ -10,8 +10,8 @@ interface ReplyProps {
 
 const { rowKey } = defineProps<ReplyProps>();
 const { text } = useColors();
-const esbabblerStore = useEsbabblerStore();
-const { userMap } = storeToRefs(esbabblerStore);
+const messageStore = useMessageStore();
+const { userMap } = storeToRefs(messageStore);
 const replyStore = useReplyStore();
 const { isIndicatorActive, replyMap } = storeToRefs(replyStore);
 const scrollToMessage = useScrollToMessage();

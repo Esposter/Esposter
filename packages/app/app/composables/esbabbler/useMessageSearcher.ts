@@ -1,7 +1,7 @@
 import { AzureEntityType } from "#shared/models/azure/AzureEntityType";
 import { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
-import { useRoomStore } from "@/store/esbabbler/room";
+import { useRoomStore } from "@/store/message/room";
 
 export const useMessageSearcher = () => {
   const { $trpc } = useNuxtApp();

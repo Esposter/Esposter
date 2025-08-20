@@ -1,7 +1,7 @@
 import type { FileEntity } from "#shared/models/azure/FileEntity";
 
-import { useDownloadFileStore } from "@/store/esbabbler/downloadFile";
-import { useRoomStore } from "@/store/esbabbler/room";
+import { useDownloadFileStore } from "@/store/message/downloadFile";
+import { useRoomStore } from "@/store/message/room";
 
 export const useReadFiles = () => {
   const { $trpc } = useNuxtApp();

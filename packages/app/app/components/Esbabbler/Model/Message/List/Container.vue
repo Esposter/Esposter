@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useScrollToMessage } from "@/composables/esbabbler/useScrollToMessage";
-import { useMessageStore } from "@/store/esbabbler/message";
+import { useDataStore } from "@/store/message/data";
 
-const messageStore = useMessageStore();
-const { messages } = storeToRefs(messageStore);
+const dataStore = useDataStore();
+const { messages } = storeToRefs(dataStore);
 const route = useRoute();
 const rowKey = route.params.rowKey as string;
 

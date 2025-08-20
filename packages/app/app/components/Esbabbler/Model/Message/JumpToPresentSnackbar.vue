@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import StyledButton from "@/components/Styled/Button.vue";
-import { useMessageScrollStore } from "@/store/esbabbler/messageScroll";
+import { useScrollStore } from "@/store/message/scroll";
 
-const messageScrollStore = useMessageScrollStore();
-const { isViewingOlderMessages } = storeToRefs(messageScrollStore);
-const { jumpToPresent } = messageScrollStore;
+const scrollStore = useScrollStore();
+const { isViewingOlderMessages } = storeToRefs(scrollStore);
+const { jumpToPresent } = scrollStore;
 </script>
 
 <template>

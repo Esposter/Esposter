@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RoutePath } from "#shared/models/router/RoutePath";
-import { useRoomStore } from "@/store/esbabbler/room";
+import { useRoomStore } from "@/store/message/room";
 
 const emit = defineEmits<{ "update:room": [] }>();
 const roomStore = useRoomStore();

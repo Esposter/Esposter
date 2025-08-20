@@ -4,16 +4,16 @@ import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
-import { useMessageStore } from "@/store/esbabbler/message";
-import { useRoomStore } from "@/store/esbabbler/room";
+import { useDataStore } from "@/store/message/data";
+import { useRoomStore } from "@/store/message/room";
 
 export const useReadMessages = async () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
-  const messageStore = useMessageStore();
-  const { initializeCursorPaginationData, pushMessages, unshiftMessages } = messageStore;
-  const { hasMore, hasMoreNewer, nextCursor, nextCursorNewer } = storeToRefs(messageStore);
+  const dataStore = useDataStore();
+  const { initializeCursorPaginationData, pushMessages, unshiftMessages } = dataStore;
+  const { hasMore, hasMoreNewer, nextCursor, nextCursorNewer } = storeToRefs(dataStore);
   const readUsers = useReadUsers();
   const readReplies = useReadReplies();
   const readFiles = useReadFiles();

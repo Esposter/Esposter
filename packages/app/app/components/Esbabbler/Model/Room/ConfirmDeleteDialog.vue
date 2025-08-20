@@ -2,7 +2,7 @@
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
 
 import { authClient } from "@/services/auth/authClient";
-import { useRoomStore } from "@/store/esbabbler/room";
+import { useRoomStore } from "@/store/message/room";
 
 interface RoomConfirmDeleteDialogProps {
   creatorId: string;

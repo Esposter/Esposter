@@ -2,16 +2,16 @@ import type { Unsubscribable } from "@trpc/server/observable";
 import type { PushSubscription } from "web-push";
 
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
-import { useMessageStore } from "@/store/esbabbler/message";
-import { useRoomStore } from "@/store/esbabbler/room";
+import { useDataStore } from "@/store/message/data";
+import { useRoomStore } from "@/store/message/room";
 import { usePushSubscriptionStore } from "@/store/pushSubscription";
 
 export const useMessageSubscribables = () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
-  const messageStore = useMessageStore();
-  const { storeCreateMessage, storeDeleteMessage, storeUpdateMessage } = messageStore;
+  const dataStore = useDataStore();
+  const { storeCreateMessage, storeDeleteMessage, storeUpdateMessage } = dataStore;
   const pushSubscriptionStore = usePushSubscriptionStore();
   const { pushSubscription } = storeToRefs(pushSubscriptionStore);
 

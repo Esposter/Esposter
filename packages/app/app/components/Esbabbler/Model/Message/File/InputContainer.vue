@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useUploadFileStore } from "@/store/esbabbler/uploadFile";
+import { useUploadFileStore } from "@/store/message/uploadFile";
 
 const uploadFileStore = useUploadFileStore();
 const { removeFileUrl } = uploadFileStore;

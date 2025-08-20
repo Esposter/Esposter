@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useMemberStore } from "@/store/esbabbler/member";
+import { useMemberStore } from "@/store/message/member";
 
 interface ReplyHeaderProps {
   userId: string;

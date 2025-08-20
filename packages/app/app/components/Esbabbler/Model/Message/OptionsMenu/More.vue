@@ -3,7 +3,7 @@ import type { Item } from "@/models/shared/Item";
 
 import { EmojiMoreMenuItems } from "@/services/esbabbler/message/EmojiMoreMenuItems";
 import { EMOJI_TEXT } from "@/services/styled/constants";
-import { useEsbabblerStore } from "@/store/esbabbler";
+import { useMessageStore } from "@/store/message";
 import { unemojify } from "node-emoji";
 import { mergeProps } from "vue";
 
@@ -16,8 +16,8 @@ interface MessageOptionsMenuProps {
 
 const { actionMessageItems, deleteMessageItem, rowKey, updateMessageItems } = defineProps<MessageOptionsMenuProps>();
 const emit = defineEmits<{ "update:menu": [value: boolean]; "update:select-emoji": [emoji: string] }>();
-const esbabblerStore = useEsbabblerStore();
-const { optionsMenu } = storeToRefs(esbabblerStore);
+const messageStore = useMessageStore();
+const { optionsMenu } = storeToRefs(messageStore);
 </script>
 
 <template>

@@ -1,7 +1,7 @@
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
 import { authClient } from "@/services/auth/authClient";
-import { useEmojiStore } from "@/store/esbabbler/emoji";
+import { useEmojiStore } from "@/store/message/emoji";
 import { unemojify } from "node-emoji";
 
 export const useSelectEmoji = async (message: MessageEntity) => {

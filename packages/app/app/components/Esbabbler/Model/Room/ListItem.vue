@@ -2,7 +2,7 @@
 import type { Room } from "#shared/db/schema/rooms";
 
 import { RoutePath } from "#shared/models/router/RoutePath";
-import { useRoomStore } from "@/store/esbabbler/room";
+import { useRoomStore } from "@/store/message/room";
 
 interface RoomListItemProps {
   room: Room;

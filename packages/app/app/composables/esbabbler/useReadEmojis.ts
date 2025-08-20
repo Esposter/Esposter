@@ -1,5 +1,5 @@
-import { useEmojiStore } from "@/store/esbabbler/emoji";
-import { useRoomStore } from "@/store/esbabbler/room";
+import { useEmojiStore } from "@/store/message/emoji";
+import { useRoomStore } from "@/store/message/room";
 
 export const useReadEmojis = () => {
   const { $trpc } = useNuxtApp();

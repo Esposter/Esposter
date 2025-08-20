@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { authClient } from "@/services/auth/authClient";
-import { useUserStatusStore } from "@/store/esbabbler/userStatus";
+import { useUserStatusStore } from "@/store/message/userStatus";
 
 const { data: session } = await authClient.useSession(useFetch);
 const userStatusStore = useUserStatusStore();

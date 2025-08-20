@@ -1,14 +1,14 @@
 import type { Unsubscribable } from "@trpc/server/observable";
 
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
-import { useEsbabblerStore } from "@/store/esbabbler";
-import { useMemberStore } from "@/store/esbabbler/member";
-import { useRoomStore } from "@/store/esbabbler/room";
+import { useMessageStore } from "@/store/message";
+import { useMemberStore } from "@/store/message/member";
+import { useRoomStore } from "@/store/message/room";
 
 export const useRoomSubscribables = () => {
   const { $trpc } = useNuxtApp();
-  const esbabblerStore = useEsbabblerStore();
-  const { getUserDataMap, setUserDataMap } = esbabblerStore;
+  const messageStore = useMessageStore();
+  const { getUserDataMap, setUserDataMap } = messageStore;
   const roomStore = useRoomStore();
   const { storeDeleteRoom, storeUpdateRoom } = roomStore;
   const { currentRoomId, rooms } = storeToRefs(roomStore);

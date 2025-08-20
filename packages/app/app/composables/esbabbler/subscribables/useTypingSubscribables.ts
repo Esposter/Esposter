@@ -1,13 +1,13 @@
 import type { Unsubscribable } from "@trpc/server/observable";
 
 import { dayjs } from "#shared/services/dayjs";
-import { useMessageStore } from "@/store/esbabbler/message";
-import { useRoomStore } from "@/store/esbabbler/room";
+import { useDataStore } from "@/store/message/data";
+import { useRoomStore } from "@/store/message/room";
 
 export const useTypingSubscribables = () => {
   const { $trpc } = useNuxtApp();
-  const messageStore = useMessageStore();
-  const { typings } = storeToRefs(messageStore);
+  const dataStore = useDataStore();
+  const { typings } = storeToRefs(dataStore);
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const typingTimeoutIdMap = ref(new Map<string, number>());

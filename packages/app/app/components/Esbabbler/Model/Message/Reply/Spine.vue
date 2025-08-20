@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useScrollToMessage } from "@/composables/esbabbler/useScrollToMessage";
-import { useReplyStore } from "@/store/esbabbler/reply";
+import { useReplyStore } from "@/store/message/reply";
 
 interface ReplySpineProps {
   replyRowKey: string;

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useRoomStore } from "@/store/esbabbler/room";
+import { useRoomStore } from "@/store/message/room";
 
 defineSlots<{ prepend: (props: Record<string, never>) => unknown }>();
 const roomStore = useRoomStore();

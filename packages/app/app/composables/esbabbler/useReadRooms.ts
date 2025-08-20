@@ -1,6 +1,6 @@
 import type { Room } from "#shared/db/schema/rooms";
 
-import { useRoomStore } from "@/store/esbabbler/room";
+import { useRoomStore } from "@/store/message/room";
 
 export const useReadRooms = async () => {
   const { $trpc } = useNuxtApp();
