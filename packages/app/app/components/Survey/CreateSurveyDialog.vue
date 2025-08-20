@@ -7,7 +7,7 @@ import { DEFAULT_NAME } from "#shared/services/constants";
 import { dayjs } from "#shared/services/dayjs";
 import { SURVEY_NAME_MAX_LENGTH } from "#shared/services/survey/constants";
 import { formRules } from "@/services/vuetify/formRules";
-import { useSurveyStore } from "@/store/surveyer/survey";
+import { useSurveyStore } from "@/store/survey";
 
 interface CreateSurveyDialogProps {
   cardProps?: VCard["$props"];
@@ -19,8 +19,8 @@ defineSlots<{
 }>();
 const { cardProps, initialValue = { group: null, model: "", name: DEFAULT_NAME } } =
   defineProps<CreateSurveyDialogProps>();
-const surveyerStore = useSurveyStore();
-const { createSurvey } = surveyerStore;
+const surveyStore = useSurveyStore();
+const { createSurvey } = surveyStore;
 const name = ref(initialValue.name);
 const group = ref(initialValue.group);
 </script>

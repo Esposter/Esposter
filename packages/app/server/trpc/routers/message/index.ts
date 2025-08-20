@@ -87,8 +87,9 @@ const readMessagesByRowKeysInputSchema = z.object({
 export type ReadMessagesByRowKeysInput = z.infer<typeof readMessagesByRowKeysInputSchema>;
 
 const searchMessagesInputSchema = z.object({
-  ...createOffsetPaginationParamsSchema(messageEntitySchema.keyof(), 0, [{ key: "createdAt", order: SortOrder.Desc }])
-    .shape,
+  ...createOffsetPaginationParamsSchema(messageEntitySchema.keyof(), 0, [
+    { key: ItemMetadataPropertyNames.createdAt, order: SortOrder.Desc },
+  ]).shape,
   query: selectSearchHistorySchema.shape.query,
   roomId: selectRoomSchema.shape.id,
 });

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { VCombobox } from "vuetify/components";
 
-import { useSurveyStore } from "@/store/surveyer/survey";
+import { useSurveyStore } from "@/store/survey";
 
 interface GroupComboboxProps {
   comboboxProps?: VCombobox["$props"];
@@ -9,8 +9,8 @@ interface GroupComboboxProps {
 
 const modelValue = defineModel<null | string>();
 const { comboboxProps } = defineProps<GroupComboboxProps>();
-const surveyerStore = useSurveyStore();
-const { surveys } = storeToRefs(surveyerStore);
+const surveyStore = useSurveyStore();
+const { surveys } = storeToRefs(surveyStore);
 const groups = computed(() => {
   const results = new Set<string>();
   for (const { group } of surveys.value) if (group) results.add(group);

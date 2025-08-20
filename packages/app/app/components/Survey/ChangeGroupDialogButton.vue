@@ -2,15 +2,15 @@
 import type { Survey } from "#shared/db/schema/surveys";
 
 import { formRules } from "@/services/vuetify/formRules";
-import { useSurveyStore } from "@/store/surveyer/survey";
+import { useSurveyStore } from "@/store/survey";
 
 interface ChangeGroupDialogButtonProps {
   survey: Survey;
 }
 
 const { survey } = defineProps<ChangeGroupDialogButtonProps>();
-const surveyerStore = useSurveyStore();
-const { updateSurvey } = surveyerStore;
+const surveyStore = useSurveyStore();
+const { updateSurvey } = surveyStore;
 const group = ref(survey.group);
 </script>
 

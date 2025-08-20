@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { useSurveyStore } from "@/store/surveyer/survey";
+import { useSurveyStore } from "@/store/survey";
 
 interface DeleteSurveyButtonDialogProps {
   id: string;
 }
 
 const { id } = defineProps<DeleteSurveyButtonDialogProps>();
-const surveyerStore = useSurveyStore();
-const { deleteSurvey } = surveyerStore;
+const surveyStore = useSurveyStore();
+const { deleteSurvey } = surveyStore;
 </script>
 
 <template>

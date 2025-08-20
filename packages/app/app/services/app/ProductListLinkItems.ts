@@ -1,7 +1,8 @@
 import type { ListLinkItem } from "@/models/shared/ListLinkItem";
 
 import { RoutePath } from "#shared/models/router/RoutePath";
-import { MESSAGE_DISPLAY_NAME } from "@/services/app/constants";
+import { MESSAGE_DISPLAY_NAME } from "#shared/services/message/constants";
+import { SURVEY_DISPLAY_NAME } from "#shared/services/survey/constants";
 
 export const ProductListLinkItems = [
   {
@@ -35,9 +36,9 @@ export const ProductListLinkItems = [
     title: "Dashboard Editor",
   },
   {
-    href: RoutePath.Surveyer,
+    href: RoutePath[SURVEY_DISPLAY_NAME],
     icon: "mdi-text-box-edit",
-    title: "Surveyer",
+    title: SURVEY_DISPLAY_NAME,
   },
   {
     href: RoutePath.Clicker,

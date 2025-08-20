@@ -1,12 +1,13 @@
 import type { Survey } from "#shared/db/schema/surveys";
 import type { DataTableHeader } from "@/models/vuetify/DataTableHeader";
 
+import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadata";
 import { dayjs } from "#shared/services/dayjs";
 
-export const SurveyerHeaders: DataTableHeader<Survey>[] = [
+export const SurveyHeaders: DataTableHeader<Survey>[] = [
   { key: "name", title: "Name" },
   {
-    key: "createdAt",
+    key: ItemMetadataPropertyNames.createdAt,
     title: "Created At",
     value: (item) => dayjs(item.createdAt).format("ddd, MMM D, YYYY h:mm A"),
   },

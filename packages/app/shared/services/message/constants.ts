@@ -1,3 +1,4 @@
+export const MESSAGE_DISPLAY_NAME = "Esbabbler";
 // Crazy big timestamps for calculating reverse-ticked timestamps.
 // It also indicates how long before azure table storage
 // completely ***ks up trying to insert a negative partition / row key

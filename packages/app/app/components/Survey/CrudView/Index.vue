@@ -3,12 +3,12 @@ import type { Survey } from "#shared/db/schema/surveys";
 import type { ItemSlot } from "vuetify/lib/components/VDataTable/types.mjs";
 
 import { RoutePath } from "#shared/models/router/RoutePath";
-import { SurveyerHeaders } from "@/services/survey/SurveyerHeaders";
-import { useSurveyStore } from "@/store/surveyer/survey";
+import { SurveyHeaders } from "@/services/survey/SurveyHeaders";
+import { useSurveyStore } from "@/store/survey";
 
 const { isLoading, readMoreSurveys } = await useReadSurveys();
-const surveyerStore = useSurveyStore();
-const { searchQuery, surveys, totalItemsLength } = storeToRefs(surveyerStore);
+const surveyStore = useSurveyStore();
+const { searchQuery, surveys, totalItemsLength } = storeToRefs(surveyStore);
 const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Survey>) => navigateTo(RoutePath.Survey(item.id));
 </script>
 
@@ -20,7 +20,7 @@ const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Survey>) => navigateT
       flex-col
       :data-table-server-props="{
         height: '100%',
-        headers: SurveyerHeaders,
+        headers: SurveyHeaders,
         items: surveys,
         itemsLength: totalItemsLength,
         search: searchQuery,
