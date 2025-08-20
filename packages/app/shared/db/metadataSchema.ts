@@ -3,8 +3,8 @@ import { timestamp } from "drizzle-orm/pg-core";
 
 export const metadataSchema = {
   createdAt: timestamp(ItemMetadataPropertyNames.createdAt).notNull().defaultNow(),
-  deletedAt: timestamp("deletedAt"),
-  updatedAt: timestamp("updatedAt")
+  deletedAt: timestamp(ItemMetadataPropertyNames.deletedAt),
+  updatedAt: timestamp(ItemMetadataPropertyNames.updatedAt)
     .notNull()
     .$onUpdateFn(() => new Date()),
 };

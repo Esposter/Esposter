@@ -71,8 +71,9 @@ const readMessagesInputSchema =
   // always requires a sortBy even though we don't actually need the user to specify it
   z
     .object({
-      ...createCursorPaginationParamsSchema(messageEntitySchema.keyof(), [{ key: "createdAt", order: SortOrder.Desc }])
-        .shape,
+      ...createCursorPaginationParamsSchema(messageEntitySchema.keyof(), [
+        { key: ItemMetadataPropertyNames.createdAt, order: SortOrder.Desc },
+      ]).shape,
       isIncludeValue: z.literal(true).optional(),
       order: z.literal(SortOrder.Asc).optional(),
       roomId: selectRoomSchema.shape.id,

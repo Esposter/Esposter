@@ -12,6 +12,7 @@ import { joinRoomInputSchema } from "#shared/models/db/room/JoinRoomInput";
 import { leaveRoomInputSchema } from "#shared/models/db/room/LeaveRoomInput";
 import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
+import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadata";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { CODE_LENGTH } from "#shared/services/invite/constants";
@@ -43,8 +44,9 @@ export type ReadRoomInput = z.infer<typeof readRoomInputSchema>;
 
 const readRoomsInputSchema = z
   .object({
-    ...createCursorPaginationParamsSchema(selectRoomSchema.keyof(), [{ key: "updatedAt", order: SortOrder.Desc }])
-      .shape,
+    ...createCursorPaginationParamsSchema(selectRoomSchema.keyof(), [
+      { key: ItemMetadataPropertyNames.updatedAt, order: SortOrder.Desc },
+    ]).shape,
     filter: selectRoomSchema.pick({ name: true }).optional(),
   })
   .prefault({});
@@ -63,7 +65,9 @@ const onLeaveRoomInputSchema = selectRoomSchema.shape.id.array().min(1).max(MAX_
 export type OnLeaveRoomInput = z.infer<typeof onLeaveRoomInputSchema>;
 
 const readMembersInputSchema = z.object({
-  ...createCursorPaginationParamsSchema(selectUserSchema.keyof(), [{ key: "updatedAt", order: SortOrder.Desc }]).shape,
+  ...createCursorPaginationParamsSchema(selectUserSchema.keyof(), [
+    { key: ItemMetadataPropertyNames.updatedAt, order: SortOrder.Desc },
+  ]).shape,
   filter: selectUserSchema.pick({ name: true }).optional(),
   roomId: selectRoomSchema.shape.id,
 });

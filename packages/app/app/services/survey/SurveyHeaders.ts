@@ -12,7 +12,7 @@ export const SurveyHeaders: DataTableHeader<Survey>[] = [
     value: (item) => dayjs(item.createdAt).format("ddd, MMM D, YYYY h:mm A"),
   },
   {
-    key: "updatedAt",
+    key: ItemMetadataPropertyNames.updatedAt,
     title: "Updated At",
     value: (item) => dayjs(item.updatedAt).format("ddd, MMM D, YYYY h:mm A"),
   },
