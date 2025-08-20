@@ -1,5 +1,5 @@
 import type { FileEntity } from "#shared/models/azure/FileEntity";
-import type { FileSasEntity } from "#shared/models/esbabbler/FileSasEntity";
+import type { FileSasEntity } from "#shared/models/message/FileSasEntity";
 import type { ContainerClient } from "@azure/storage-blob";
 
 import { dayjs } from "#shared/services/dayjs";

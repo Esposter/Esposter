@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { DefaultLinkPreviewResponse } from "#shared/models/esbabbler/linkPreview/DefaultLinkPreviewResponse";
+import type { DefaultLinkPreviewResponse } from "#shared/models/message/linkPreview/DefaultLinkPreviewResponse";
 
 const { favicons, url } = defineProps<DefaultLinkPreviewResponse>();
 </script>

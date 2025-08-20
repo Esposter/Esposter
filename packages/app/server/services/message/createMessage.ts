@@ -7,7 +7,7 @@ import { createMessageEntity as baseCreateMessageEntity } from "#shared/services
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { createEntity } from "@@/server/services/azure/table/createEntity";
-import { getLinkPreviewResponse } from "@@/server/services/esbabbler/getLinkPreviewResponse";
+import { getLinkPreviewResponse } from "@@/server/services/message/getLinkPreviewResponse";
 
 export const createMessage = async (
   messageClient: CustomTableClient<MessageEntity>,

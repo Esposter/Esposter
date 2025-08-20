@@ -1,5 +1,5 @@
 import type { Survey } from "#shared/db/schema/surveys";
-import type { FileSasEntity } from "#shared/models/esbabbler/FileSasEntity";
+import type { FileSasEntity } from "#shared/models/message/FileSasEntity";
 
 import { selectSurveySchema, surveys } from "#shared/db/schema/surveys";
 import { AzureEntityType } from "#shared/models/azure/AzureEntityType";

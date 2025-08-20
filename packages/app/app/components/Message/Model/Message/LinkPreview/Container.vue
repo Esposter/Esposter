@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
-import type { LinkPreviewResponse } from "#shared/models/esbabbler/linkPreview/LinkPreviewResponse";
+import type { LinkPreviewResponse } from "#shared/models/message/linkPreview/LinkPreviewResponse";
 
 interface ContainerProps {
   linkPreviewResponse: LinkPreviewResponse;

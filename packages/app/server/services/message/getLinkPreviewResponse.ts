@@ -1,4 +1,4 @@
-import type { LinkPreviewResponse } from "#shared/models/esbabbler/linkPreview/LinkPreviewResponse";
+import type { LinkPreviewResponse } from "#shared/models/message/linkPreview/LinkPreviewResponse";
 
 import { getLinkPreview } from "link-preview-js";
 import { find } from "linkifyjs";

@@ -1,7 +1,7 @@
 import type { CompositeKeyEntity } from "#shared/models/azure/CompositeKeyEntity";
 import type { FileEntity } from "#shared/models/azure/FileEntity";
 import type { ToData } from "#shared/models/entity/ToData";
-import type { LinkPreviewResponse } from "#shared/models/esbabbler/linkPreview/LinkPreviewResponse";
+import type { LinkPreviewResponse } from "#shared/models/message/linkPreview/LinkPreviewResponse";
 import type { Except } from "type-fest";
 
 import { selectUserSchema } from "#shared/db/schema/users";

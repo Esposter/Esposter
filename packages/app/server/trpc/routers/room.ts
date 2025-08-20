@@ -21,9 +21,9 @@ import { useContainerClient } from "@@/server/composables/azure/useContainerClie
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { deleteDirectory } from "@@/server/services/azure/container/deleteDirectory";
 import { deleteRoom } from "@@/server/services/db/room/deleteRoom";
-import { roomEventEmitter } from "@@/server/services/esbabbler/events/roomEventEmitter";
-import { readInviteCode } from "@@/server/services/esbabbler/readInviteCode";
 import { on } from "@@/server/services/events/on";
+import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmitter";
+import { readInviteCode } from "@@/server/services/message/readInviteCode";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";

@@ -1,5 +1,5 @@
 import type { AzureUpdateEntity } from "#shared/models/azure/AzureUpdateEntity";
-import type { FileSasEntity } from "#shared/models/esbabbler/FileSasEntity";
+import type { FileSasEntity } from "#shared/models/message/FileSasEntity";
 
 import { rooms, selectRoomSchema } from "#shared/db/schema/rooms";
 import { selectSearchHistorySchema } from "#shared/db/schema/searchHistories";
@@ -21,7 +21,7 @@ import { MAX_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagin
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
-import { useSendCreateMessageNotification } from "@@/server/composables/esbabbler/useSendCreateMessageNotification";
+import { useSendCreateMessageNotification } from "@@/server/composables/message/useSendCreateMessageNotification";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { pushSubscriptionSchema } from "@@/server/models/PushSubscription";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
@@ -32,14 +32,14 @@ import { generateUploadFileSasEntities } from "@@/server/services/azure/containe
 import { getBlobName } from "@@/server/services/azure/container/getBlobName";
 import { getEntity } from "@@/server/services/azure/table/getEntity";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
-import { createMessage } from "@@/server/services/esbabbler/createMessage";
-import { messageEventEmitter } from "@@/server/services/esbabbler/events/messageEventEmitter";
-import { roomEventEmitter } from "@@/server/services/esbabbler/events/roomEventEmitter";
-import { isRoomId } from "@@/server/services/esbabbler/isRoomId";
-import { readMessages } from "@@/server/services/esbabbler/readMessages";
-import { searchMessages } from "@@/server/services/esbabbler/searchMessages";
-import { updateMessage } from "@@/server/services/esbabbler/updateMessage";
 import { on } from "@@/server/services/events/on";
+import { createMessage } from "@@/server/services/message/createMessage";
+import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
+import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmitter";
+import { isRoomId } from "@@/server/services/message/isRoomId";
+import { readMessages } from "@@/server/services/message/readMessages";
+import { searchMessages } from "@@/server/services/message/searchMessages";
+import { updateMessage } from "@@/server/services/message/updateMessage";
 import { router } from "@@/server/trpc";
 import { addProfanityFilterMiddleware } from "@@/server/trpc/middleware/addProfanityFilterMiddleware";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";

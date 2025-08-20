@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { URLLinkPreviewResponse } from "#shared/models/esbabbler/linkPreview/URLLinkPreviewResponse";
+import type { URLLinkPreviewResponse } from "#shared/models/message/linkPreview/URLLinkPreviewResponse";
 
 const { description, images, siteName, title, url } = defineProps<URLLinkPreviewResponse>();
 </script>

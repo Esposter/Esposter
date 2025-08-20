@@ -1,5 +1,5 @@
-import type { BaseLinkPreviewResponse } from "#shared/models/esbabbler/linkPreview/BaseLinkPreviewResponse";
-import type { Video } from "#shared/models/esbabbler/linkPreview/Video";
+import type { BaseLinkPreviewResponse } from "#shared/models/message/linkPreview/BaseLinkPreviewResponse";
+import type { Video } from "#shared/models/message/linkPreview/Video";
 
 export interface URLLinkPreviewResponse extends BaseLinkPreviewResponse {
   contentType: "text/html";
