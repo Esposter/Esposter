@@ -23,6 +23,7 @@ import { useContainerClient } from "@@/server/composables/azure/useContainerClie
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { useSendCreateMessageNotification } from "@@/server/composables/message/useSendCreateMessageNotification";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
+import { filterSchema } from "@@/server/models/message/Filter";
 import { pushSubscriptionSchema } from "@@/server/models/PushSubscription";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { cloneFiles } from "@@/server/services/azure/container/cloneFiles";
@@ -91,6 +92,7 @@ const searchMessagesInputSchema = z.object({
   ...createOffsetPaginationParamsSchema(messageEntitySchema.keyof(), 0, [
     { key: ItemMetadataPropertyNames.createdAt, order: SortOrder.Desc },
   ]).shape,
+  filters: filterSchema.array().max(MAX_READ_LIMIT).optional(),
   query: selectSearchHistorySchema.shape.query,
   roomId: selectRoomSchema.shape.id,
 });

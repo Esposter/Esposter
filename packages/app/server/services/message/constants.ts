@@ -1,1 +1,2 @@
+export const FILTER_VALUE_MAX_LENGTH = 100;
 export const PUSH_NOTIFICATION_MAX_LENGTH = 100;

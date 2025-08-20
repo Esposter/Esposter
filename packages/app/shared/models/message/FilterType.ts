@@ -1,4 +1,6 @@
 /* eslint-disable perfectionist/sort-enums */
+import { z } from "zod";
+
 export enum FilterType {
   From = "From",
   Mentions = "Mentions",
@@ -9,3 +11,5 @@ export enum FilterType {
   Pinned = "Pinned",
   AuthorType = "AuthorType",
 }
+
+export const filterTypeSchema = z.enum(FilterType) satisfies z.ZodType<FilterType>;
