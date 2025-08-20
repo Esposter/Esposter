@@ -4,6 +4,6 @@ import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 
 export const AzureContainerPropertiesMap: Partial<Record<AzureContainer, ContainerCreateOptions>> = {
   [AzureContainer.DungeonsAssets]: { access: "blob" },
-  [AzureContainer.EsposterAssets]: { access: "blob" },
+  [AzureContainer.AppAssets]: { access: "blob" },
   [AzureContainer.PublicUserAssets]: { access: "blob" },
 };

@@ -4,7 +4,7 @@ import type { PushSubscription } from "web-push";
 import { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import { RoutePath } from "#shared/models/router/RoutePath";
 import { truncate } from "#shared/util/text/truncate";
-import { PUSH_NOTIFICATION_MAX_LENGTH } from "@@/server/services/esposter/constants";
+import { PUSH_NOTIFICATION_MAX_LENGTH } from "@@/server/services/message/constants";
 import { parse } from "node-html-parser";
 import webpush from "web-push";
 

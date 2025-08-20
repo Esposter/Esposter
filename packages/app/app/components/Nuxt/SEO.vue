@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { SITE_DESCRIPTION, SITE_NAME } from "#shared/services/esposter/constants";
-import { getLogoImageUrl } from "@/services/esposter/getLogoImageUrl";
+import { SITE_DESCRIPTION, SITE_NAME } from "#shared/services/app/constants";
+import { getLogoImageUrl } from "@/services/app/getLogoImageUrl";
 
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 

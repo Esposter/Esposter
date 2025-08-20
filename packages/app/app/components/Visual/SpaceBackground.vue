@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NOT_FOUND_BACKGROUND_PATH } from "#shared/services/esposter/constants";
+import { NOT_FOUND_BACKGROUND_PATH } from "#shared/services/app/constants";
 import { gsap } from "gsap";
 
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();

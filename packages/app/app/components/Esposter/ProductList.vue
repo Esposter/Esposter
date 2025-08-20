@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ProductListLinkItems } from "@/services/esposter/ProductListLinkItems";
+import { ProductListLinkItems } from "@/services/app/ProductListLinkItems";
 </script>
 
 <template>

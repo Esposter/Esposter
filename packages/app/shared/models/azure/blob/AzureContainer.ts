@@ -1,9 +1,10 @@
 export enum AzureContainer {
+  // @TODO: Rename app and message in azure
+  AppAssets = "app-assets",
   ClickerAssets = "clicker-assets",
   DashboardAssets = "dashboard-assets",
   DungeonsAssets = "dungeons-assets",
   EmailEditorAssets = "email-editor-assets",
-  EsposterAssets = "esposter-assets",
   FlowchartEditorAssets = "flowchart-editor-assets",
   MessageAssets = "message-assets",
   PrivateUserAssets = "private-user-assets",

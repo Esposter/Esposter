@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MESSAGE_DISPLAY_NAME } from "@/services/esposter/constants";
+import { MESSAGE_DISPLAY_NAME } from "@/services/app/constants";
 import { useRoomStore } from "@/store/message/room";
 
 useHead({ titleTemplate: (title) => (title ? `${MESSAGE_DISPLAY_NAME} | ${title}` : MESSAGE_DISPLAY_NAME) });

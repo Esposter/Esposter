@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RoutePath } from "#shared/models/router/RoutePath";
-import { MESSAGE_DISPLAY_NAME } from "@/services/esposter/constants";
+import { MESSAGE_DISPLAY_NAME } from "@/services/app/constants";
 
 definePageMeta({ middleware: "auth" });
 

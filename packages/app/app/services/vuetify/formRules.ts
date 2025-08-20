@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 import type { ValidationRule } from "vuetify";
 
-import { MAX_REQUEST_SIZE, MEGABYTE } from "#shared/services/esposter/constants";
+import { MAX_REQUEST_SIZE, MEGABYTE } from "#shared/services/app/constants";
 import { profanityMatcher } from "#shared/services/obscenity/profanityMatcher";
 import deepEqual from "fast-deep-equal";
 
