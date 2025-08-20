@@ -2,8 +2,8 @@
 import type { SurveyResponseEntity } from "#shared/models/db/survey/SurveyResponseEntity";
 
 import { validate } from "@/services/router/validate";
-import { SURVEY_RESPONSE_ID_LOCAL_STORAGE_KEY, THEME_KEY } from "@/services/surveyer/constants";
-import { parseSurveyModel } from "@/services/surveyer/parseSurveyModel";
+import { SURVEY_RESPONSE_ID_LOCAL_STORAGE_KEY, THEME_KEY } from "@/services/survey/constants";
+import { parseSurveyModel } from "@/services/survey/parseSurveyModel";
 import { Model } from "survey-core";
 import { SurveyComponent } from "survey-vue3-ui";
 

@@ -5,7 +5,7 @@ import type { VCard } from "vuetify/components";
 
 import { DEFAULT_NAME } from "#shared/services/constants";
 import { dayjs } from "#shared/services/dayjs";
-import { SURVEY_NAME_MAX_LENGTH } from "#shared/services/surveyer/constants";
+import { SURVEY_NAME_MAX_LENGTH } from "#shared/services/survey/constants";
 import { formRules } from "@/services/vuetify/formRules";
 import { useSurveyStore } from "@/store/surveyer/survey";
 

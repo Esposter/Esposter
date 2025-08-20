@@ -1,11 +1,11 @@
 import type { Survey } from "#shared/db/schema/surveys";
 
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
-import { extractBlobUrls } from "#shared/services/surveyer/extractBlobUrls";
-import { getBlobUrlSearchRegex } from "#shared/services/surveyer/getBlobUrlSearchRegex";
+import { extractBlobUrls } from "#shared/services/survey/extractBlobUrls";
+import { getBlobUrlSearchRegex } from "#shared/services/survey/getBlobUrlSearchRegex";
 import { Mimetype } from "@/models/file/Mimetype";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
-import { getPublishDirectory } from "@@/server/services/surveyer/getPublishDirectory";
+import { getPublishDirectory } from "@@/server/services/survey/getPublishDirectory";
 import { ContainerSASPermissions } from "@azure/storage-blob";
 import dayjs from "dayjs";
 import { extname } from "node:path";

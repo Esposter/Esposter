@@ -3,7 +3,7 @@ import type { Survey } from "#shared/db/schema/surveys";
 import type { ItemSlot } from "vuetify/lib/components/VDataTable/types.mjs";
 
 import { RoutePath } from "#shared/models/router/RoutePath";
-import { SurveyerHeaders } from "@/services/surveyer/SurveyerHeaders";
+import { SurveyerHeaders } from "@/services/survey/SurveyerHeaders";
 import { useSurveyStore } from "@/store/surveyer/survey";
 
 const { isLoading, readMoreSurveys } = await useReadSurveys();

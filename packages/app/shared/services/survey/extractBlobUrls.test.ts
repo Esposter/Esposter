@@ -1,5 +1,5 @@
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
-import { extractBlobUrls } from "#shared/services/surveyer/extractBlobUrls";
+import { extractBlobUrls } from "#shared/services/survey/extractBlobUrls";
 import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
 
 describe(extractBlobUrls, async () => {

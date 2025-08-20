@@ -1,7 +1,7 @@
 import type { Survey } from "#shared/db/schema/surveys";
 import type { SurveyCreatorModel } from "survey-creator-core";
 
-import { THEME_KEY } from "@/services/surveyer/constants";
+import { THEME_KEY } from "@/services/survey/constants";
 import { useSurveyStore } from "@/store/surveyer/survey";
 
 export const useSave = (survey: Ref<Survey>, creator: SurveyCreatorModel) => {
