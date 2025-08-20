@@ -1,7 +1,7 @@
 import type { DownloadFileUrl } from "@/models/esbabbler/file/DownloadFileUrl";
 
-import { MessageHookMap } from "@/services/esbabbler/message/MessageHookMap";
 import { getInferredMimetype } from "@/services/file/getInferredMimetype";
+import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createDataMap } from "@/services/shared/createDataMap";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";

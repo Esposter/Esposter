@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
-import { getColumnLayout } from "@/services/esbabbler/file/getColumnLayout";
+import { getColumnLayout } from "@/services/message/file/getColumnLayout";
 
 interface FileContainerProps {
   isPreview?: boolean;

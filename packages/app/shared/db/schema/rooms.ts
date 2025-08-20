@@ -1,7 +1,7 @@
 import { pgTable } from "#shared/db/pgTable";
 import { users } from "#shared/db/schema/users";
 import { usersToRooms } from "#shared/db/schema/usersToRooms";
-import { ROOM_NAME_MAX_LENGTH } from "#shared/services/esbabbler/constants";
+import { ROOM_NAME_MAX_LENGTH } from "#shared/services/message/constants";
 import { relations, sql } from "drizzle-orm";
 import { check, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";

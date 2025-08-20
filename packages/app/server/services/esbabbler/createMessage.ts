@@ -3,7 +3,7 @@ import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { CustomTableClient } from "@@/server/models/azure/table/CustomTableClient";
 
 import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
-import { createMessageEntity as baseCreateMessageEntity } from "#shared/services/esbabbler/createMessageEntity";
+import { createMessageEntity as baseCreateMessageEntity } from "#shared/services/message/createMessageEntity";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { createEntity } from "@@/server/services/azure/table/createEntity";

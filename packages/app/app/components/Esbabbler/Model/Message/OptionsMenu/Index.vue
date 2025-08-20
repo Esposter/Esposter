@@ -3,7 +3,7 @@ import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
 import { useMessageActionItems } from "@/composables/esbabbler/useMessageActionItems";
 import { authClient } from "@/services/auth/authClient";
-import { EmojiMenuItems } from "@/services/esbabbler/message/EmojiMenuItems";
+import { EmojiMenuItems } from "@/services/message/EmojiMenuItems";
 import { EMOJI_TEXT } from "@/services/styled/constants";
 import { unemojify } from "node-emoji";
 

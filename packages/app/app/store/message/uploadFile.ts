@@ -1,7 +1,7 @@
 import type { FileEntity } from "#shared/models/azure/FileEntity";
 import type { UploadFileUrl } from "@/models/esbabbler/file/UploadFileUrl";
 
-import { MessageHookMap } from "@/services/esbabbler/message/MessageHookMap";
+import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createDataMap } from "@/services/shared/createDataMap";
 import { useRoomStore } from "@/store/message/room";
 

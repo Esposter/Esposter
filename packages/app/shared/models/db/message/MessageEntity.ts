@@ -8,8 +8,8 @@ import { selectUserSchema } from "#shared/db/schema/users";
 import { AzureEntity, createAzureEntitySchema } from "#shared/models/azure/AzureEntity";
 import { fileEntitySchema } from "#shared/models/azure/FileEntity";
 import { MAX_FILE_LIMIT } from "#shared/services/azure/container/constants";
-import { MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
-import { refineMessageSchema } from "#shared/services/esbabbler/refineMessageSchema";
+import { MESSAGE_MAX_LENGTH } from "#shared/services/message/constants";
+import { refineMessageSchema } from "#shared/services/message/refineMessageSchema";
 import { getPropertyNames } from "#shared/util/getPropertyNames";
 import { z } from "zod";
 

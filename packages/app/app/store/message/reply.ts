@@ -1,6 +1,6 @@
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
-import { MessageHookMap } from "@/services/esbabbler/message/MessageHookMap";
+import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createDataMap } from "@/services/shared/createDataMap";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";

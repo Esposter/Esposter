@@ -2,7 +2,7 @@
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { Editor } from "@tiptap/core";
 
-import { MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
+import { MESSAGE_MAX_LENGTH } from "#shared/services/message/constants";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { useRoomStore } from "@/store/message/room";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";

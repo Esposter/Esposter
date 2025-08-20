@@ -3,7 +3,7 @@ import type { FileEntity } from "#shared/models/azure/FileEntity";
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
 import { authClient } from "@/services/auth/authClient";
-import { CONTAINER_BORDER_RADIUS } from "@/services/esbabbler/file/constants";
+import { CONTAINER_BORDER_RADIUS } from "@/services/message/file/constants";
 import { useDownloadFileStore } from "@/store/message/downloadFile";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 

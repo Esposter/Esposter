@@ -3,7 +3,7 @@ import type { FileRendererProps } from "@/models/esbabbler/file/FileRendererProp
 import type { EditorView } from "@codemirror/view";
 
 import { getLanguageExtension } from "@/services/codemirror/getLanguageExtension";
-import { PREVIEW_MAX_HEIGHT } from "@/services/esbabbler/file/constants";
+import { PREVIEW_MAX_HEIGHT } from "@/services/message/file/constants";
 import { Codemirror } from "vue-codemirror";
 
 interface FileRendererCodeProps extends FileRendererProps {

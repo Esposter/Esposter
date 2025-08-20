@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ROOM_NAME_MAX_LENGTH } from "#shared/services/esbabbler/constants";
+import { ROOM_NAME_MAX_LENGTH } from "#shared/services/message/constants";
 import { formRules } from "@/services/vuetify/formRules";
 
 interface EditableToolbarTitleProps {

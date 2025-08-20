@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { RoutePath } from "#shared/models/router/RoutePath";
-import { MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
+import { MESSAGE_MAX_LENGTH } from "#shared/services/message/constants";
 import { useAlertStore } from "@/store/alert";
 import { useMessageStore } from "@/store/message";
 import { useDataStore } from "@/store/message/data";

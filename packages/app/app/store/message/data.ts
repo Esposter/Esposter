@@ -5,9 +5,9 @@ import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { Editor } from "@tiptap/core";
 
 import { AzureEntityType } from "#shared/models/azure/AzureEntityType";
-import { createMessageEntity } from "#shared/services/esbabbler/createMessageEntity";
+import { createMessageEntity } from "#shared/services/message/createMessageEntity";
 import { authClient } from "@/services/auth/authClient";
-import { MessageHookMap } from "@/services/esbabbler/message/MessageHookMap";
+import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createCursorPaginationDataMap } from "@/services/shared/pagination/cursor/createCursorPaginationDataMap";
 import { useInputStore } from "@/store/message/input";

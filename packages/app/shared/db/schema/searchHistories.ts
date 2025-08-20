@@ -1,6 +1,6 @@
 import { pgTable } from "#shared/db/pgTable";
 import { users } from "#shared/db/schema/users";
-import { MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
+import { MESSAGE_MAX_LENGTH } from "#shared/services/message/constants";
 import { relations, sql } from "drizzle-orm";
 import { check, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";

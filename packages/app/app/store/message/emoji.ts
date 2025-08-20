@@ -4,8 +4,8 @@ import type { MessageEmojiMetadataEntity } from "#shared/models/db/message/metad
 import type { UpdateEmojiInput } from "#shared/models/db/message/metadata/UpdateEmojiInput";
 
 import { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
-import { createMessageEmojiMetadataEntity } from "#shared/services/esbabbler/createMessageEmojiMetadataEntity";
-import { getUpdatedUserIds } from "#shared/services/esbabbler/emoji/getUpdatedUserIds";
+import { createMessageEmojiMetadataEntity } from "#shared/services/message/createMessageEmojiMetadataEntity";
+import { getUpdatedUserIds } from "#shared/services/message/emoji/getUpdatedUserIds";
 import { authClient } from "@/services/auth/authClient";
 
 export const useEmojiStore = defineStore("message/emoji", () => {

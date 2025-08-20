@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
+import { MESSAGE_MAX_LENGTH } from "#shared/services/message/constants";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
-import { getTypingMessage } from "@/services/esbabbler/message/getTypingMessage";
+import { getTypingMessage } from "@/services/message/getTypingMessage";
 import { useDataStore } from "@/store/message/data";
 import { useInputStore } from "@/store/message/input";
 import { useReplyStore } from "@/store/message/reply";

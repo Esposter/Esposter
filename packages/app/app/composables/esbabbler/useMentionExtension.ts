@@ -1,4 +1,4 @@
-import { suggestion } from "@/services/esbabbler/suggestion";
+import { suggestion } from "@/services/message/suggestion";
 import { Mention } from "@tiptap/extension-mention";
 
 export const useMentionExtension = () => {

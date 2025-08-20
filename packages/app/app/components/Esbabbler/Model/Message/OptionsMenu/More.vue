@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Item } from "@/models/shared/Item";
 
-import { EmojiMoreMenuItems } from "@/services/esbabbler/message/EmojiMoreMenuItems";
+import { EmojiMoreMenuItems } from "@/services/message/EmojiMoreMenuItems";
 import { EMOJI_TEXT } from "@/services/styled/constants";
 import { useMessageStore } from "@/store/message";
 import { unemojify } from "node-emoji";
