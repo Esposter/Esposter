@@ -14,15 +14,15 @@ const { currentRoomName } = storeToRefs(roomStore);
     <Head>
       <Title>{{ currentRoomName }}</Title>
     </Head>
-    <EsbabblerContent />
+    <MessageContent />
     <template #left>
-      <EsbabblerLeftSideBar />
+      <MessageLeftSideBar />
     </template>
     <template #right>
-      <EsbabblerRightSideBar />
+      <MessageRightSideBar />
     </template>
     <template #footer>
-      <EsbabblerModelMessageInput />
+      <MessageModelMessageInput />
     </template>
   </NuxtLayout>
 </template>

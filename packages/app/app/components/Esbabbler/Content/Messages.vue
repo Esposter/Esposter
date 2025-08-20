@@ -1,4 +1,0 @@
-<template>
-  <EsbabblerModelMessageList />
-  <EsbabblerModelMessageJumpToPresentSnackbar />
-</template>
