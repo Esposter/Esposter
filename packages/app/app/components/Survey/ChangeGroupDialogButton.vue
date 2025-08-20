@@ -4,11 +4,11 @@ import type { Survey } from "#shared/db/schema/surveys";
 import { formRules } from "@/services/vuetify/formRules";
 import { useSurveyStore } from "@/store/surveyer/survey";
 
-interface SurveyerChangeGroupDialogButtonProps {
+interface ChangeGroupDialogButtonProps {
   survey: Survey;
 }
 
-const { survey } = defineProps<SurveyerChangeGroupDialogButtonProps>();
+const { survey } = defineProps<ChangeGroupDialogButtonProps>();
 const surveyerStore = useSurveyStore();
 const { updateSurvey } = surveyerStore;
 const group = ref(survey.group);
@@ -42,7 +42,7 @@ const group = ref(survey.group);
     <v-container fluid>
       <v-row>
         <v-col cols="12">
-          <SurveyerGroupCombobox v-model="group" :rules="[formRules.isNotEqual(survey.group)]" />
+          <SurveyGroupCombobox v-model="group" :rules="[formRules.isNotEqual(survey.group)]" />
         </v-col>
       </v-row>
     </v-container>

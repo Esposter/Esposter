@@ -5,6 +5,6 @@ import { escapeRegExp } from "#shared/util/regex/escapeRegExp";
 export const getBlobUrlSearchRegex = (blobUrl?: string) =>
   new RegExp(
     // Match until we reach a character that ends with "
-    `${blobUrl ? escapeRegExp(blobUrl) : `${getBlobUrl()}/${AzureContainer.SurveyerAssets}`}[^"]*`,
+    `${blobUrl ? escapeRegExp(blobUrl) : `${getBlobUrl()}/${AzureContainer.SurveyAssets}`}[^"]*`,
     "g",
   );

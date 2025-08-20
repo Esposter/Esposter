@@ -1,5 +1,5 @@
 <template>
-  <SurveyerCreateSurveyDialog :card-props="{ title: 'Create Survey' }">
+  <SurveyCreateSurveyDialog :card-props="{ title: 'Create Survey' }">
     <template #activator="{ updateIsOpen }">
       <v-tooltip text="Create Survey">
         <template #activator="{ props }">
@@ -9,5 +9,5 @@
         </template>
       </v-tooltip>
     </template>
-  </SurveyerCreateSurveyDialog>
+  </SurveyCreateSurveyDialog>
 </template>

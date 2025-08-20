@@ -17,7 +17,7 @@ import { extractBlobUrls } from "#shared/services/survey/extractBlobUrls";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { useUpload } from "@@/server/composables/azure/useUpload";
-import { useUpdateBlobUrls } from "@@/server/composables/surveyer/useUpdateBlobUrls";
+import { useUpdateBlobUrls } from "@@/server/composables/survey/useUpdateBlobUrls";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { cloneBlobUrls } from "@@/server/services/azure/container/cloneBlobUrls";
 import { deleteDirectory } from "@@/server/services/azure/container/deleteDirectory";
@@ -106,7 +106,7 @@ export const surveyRouter = router({
       });
 
     const blobName = `${newSurvey.id}/${SURVEY_MODEL_FILENAME}`;
-    await useUpload(AzureContainer.SurveyerAssets, blobName, newSurvey.model);
+    await useUpload(AzureContainer.SurveyAssets, blobName, newSurvey.model);
     return newSurvey;
   }),
   createSurveyResponse: rateLimitedProcedure
@@ -119,7 +119,7 @@ export const surveyRouter = router({
     }),
   deleteFile: getCreatorProcedure(deleteFileInputSchema, "surveyId").mutation(
     async ({ input: { blobPath, surveyId } }) => {
-      const containerClient = await useContainerClient(AzureContainer.SurveyerAssets);
+      const containerClient = await useContainerClient(AzureContainer.SurveyAssets);
       const blobName = `${surveyId}/${blobPath}`;
       const blockBlobClient = containerClient.getBlockBlobClient(blobName);
       await blockBlobClient.delete();
@@ -138,20 +138,20 @@ export const surveyRouter = router({
         message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.Survey, input).message,
       });
 
-    const containerClient = await useContainerClient(AzureContainer.SurveyerAssets);
+    const containerClient = await useContainerClient(AzureContainer.SurveyAssets);
     await deleteDirectory(containerClient, input, true);
     return deletedSurvey;
   }),
   generateDownloadFileSasUrls: getCreatorProcedure(generateDownloadFileSasUrlsInputSchema, "surveyId").query<string[]>(
     async ({ input: { files, surveyId } }) => {
-      const containerClient = await useContainerClient(AzureContainer.SurveyerAssets);
+      const containerClient = await useContainerClient(AzureContainer.SurveyAssets);
       return generateDownloadFileSasUrls(containerClient, files, surveyId);
     },
   ),
   generateUploadFileSasEntities: getCreatorProcedure(generateUploadFileSasEntitiesInputSchema, "surveyId").query<
     FileSasEntity[]
   >(async ({ input: { files, surveyId } }) => {
-    const containerClient = await useContainerClient(AzureContainer.SurveyerAssets);
+    const containerClient = await useContainerClient(AzureContainer.SurveyAssets);
     return generateUploadFileSasEntities(containerClient, files, surveyId);
   }),
   publishSurvey: getCreatorProcedure(publishSurveyInputSchema, "id").mutation<Survey>(
@@ -176,7 +176,7 @@ export const surveyRouter = router({
           message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Survey, JSON.stringify(rest)).message,
         });
 
-      const containerClient = await useContainerClient(AzureContainer.SurveyerAssets);
+      const containerClient = await useContainerClient(AzureContainer.SurveyAssets);
       const blobUrls = extractBlobUrls(updatedSurvey.model);
       const publishDirectory = getPublishDirectory(updatedSurvey);
       await cloneBlobUrls(containerClient, blobUrls, updatedSurvey.id, publishDirectory);
@@ -267,7 +267,7 @@ export const surveyRouter = router({
         });
 
       const blobName = `${updatedSurvey.id}/${SURVEY_MODEL_FILENAME}`;
-      await useUpload(AzureContainer.SurveyerAssets, blobName, updatedSurvey.model);
+      await useUpload(AzureContainer.SurveyAssets, blobName, updatedSurvey.model);
       return updatedSurvey;
     },
   ),

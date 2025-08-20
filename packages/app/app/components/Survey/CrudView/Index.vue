@@ -35,10 +35,10 @@ const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Survey>) => navigateT
       @update:options="readMoreSurveys"
     >
       <template #top>
-        <SurveyerCrudViewHeader />
+        <SurveyCrudViewHeader />
       </template>
       <template #[`item.actions`]="{ item }">
-        <SurveyerCrudViewActionSlot :item />
+        <SurveyCrudViewActionSlot :item />
       </template>
     </StyledDataTableServer>
   </v-container>

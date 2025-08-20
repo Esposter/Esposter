@@ -8,7 +8,7 @@ describe(extractBlobUrls, async () => {
     const AzureContainer = (await import("#shared/models/azure/blob/AzureContainer")).AzureContainer;
     return {
       blobUrl,
-      containerUrl: `${blobUrl}/${AzureContainer.SurveyerAssets}`,
+      containerUrl: `${blobUrl}/${AzureContainer.SurveyAssets}`,
     };
   });
 

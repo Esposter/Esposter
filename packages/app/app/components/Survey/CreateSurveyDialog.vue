@@ -52,7 +52,7 @@ const group = ref(initialValue.group);
           />
         </v-col>
         <v-col cols="12">
-          <SurveyerGroupCombobox v-model="group" />
+          <SurveyGroupCombobox v-model="group" />
         </v-col>
       </v-row>
     </v-container>

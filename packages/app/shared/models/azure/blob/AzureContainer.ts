@@ -9,7 +9,7 @@ export enum AzureContainer {
   MessageAssets = "message-assets",
   PrivateUserAssets = "private-user-assets",
   PublicUserAssets = "public-user-assets",
-  SurveyerAssets = "surveyer-assets",
+  SurveyAssets = "survey-assets",
   TableEditorAssets = "table-editor-assets",
   WebpageEditorAssets = "webpage-editor-assets",
 }

@@ -11,7 +11,7 @@ const { group, model, name } = defineProps<CloneSurveyDialogButton>();
 </script>
 
 <template>
-  <SurveyerCreateSurveyDialog :initial-value="{ name, group, model }" :card-props="{ title: 'Clone Survey' }">
+  <SurveyCreateSurveyDialog :initial-value="{ name, group, model }" :card-props="{ title: 'Clone Survey' }">
     <template #activator="{ updateIsOpen }">
       <v-tooltip text="Clone Survey">
         <template #activator="{ props }">
@@ -19,5 +19,5 @@ const { group, model, name } = defineProps<CloneSurveyDialogButton>();
         </template>
       </v-tooltip>
     </template>
-  </SurveyerCreateSurveyDialog>
+  </SurveyCreateSurveyDialog>
 </template>

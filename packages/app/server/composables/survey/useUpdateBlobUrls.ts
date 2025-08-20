@@ -14,7 +14,7 @@ export const useUpdateBlobUrls = async (survey: Survey, isPublish?: true) => {
   const blobUrls = extractBlobUrls(survey.model);
   if (blobUrls.length === 0) return survey.model;
 
-  const containerClient = await useContainerClient(AzureContainer.SurveyerAssets);
+  const containerClient = await useContainerClient(AzureContainer.SurveyAssets);
   const blobNames: string[] = [];
 
   if (isPublish) {
