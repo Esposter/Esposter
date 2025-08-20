@@ -1,5 +1,5 @@
 import type { FileEntity } from "#shared/models/azure/FileEntity";
-import type { UploadFileUrl } from "@/models/esbabbler/file/UploadFileUrl";
+import type { UploadFileUrl } from "@/models/message/file/UploadFileUrl";
 
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createDataMap } from "@/services/shared/createDataMap";

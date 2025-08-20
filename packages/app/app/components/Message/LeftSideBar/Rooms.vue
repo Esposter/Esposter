@@ -8,5 +8,5 @@
         </template>
       </v-list-item>
     </template>
-  </EsbabblerModelRoomList>
+  </MessageModelRoomList>
 </template>

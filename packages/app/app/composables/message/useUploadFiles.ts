@@ -1,4 +1,4 @@
-import type { UploadFileUrl } from "@/models/esbabbler/file/UploadFileUrl";
+import type { UploadFileUrl } from "@/models/message/file/UploadFileUrl";
 
 import { MAX_FILE_LIMIT } from "#shared/services/azure/container/constants";
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";

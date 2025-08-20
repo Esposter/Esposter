@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
-import { FilterType } from "@/models/esbabbler/FilterType";
+import { FilterType } from "@/models/message/FilterType";
 import { uncapitalize } from "@esposter/shared";
 
 interface SearchMenuProps {

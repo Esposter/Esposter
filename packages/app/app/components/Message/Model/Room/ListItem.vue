@@ -43,7 +43,7 @@ const active = computed(() => room.id === currentRoomId.value);
           @click="updateIsOpen(true)"
         />
       </template>
-    </EsbabblerModelRoomConfirmDeleteDialog>
+    </MessageModelRoomConfirmDeleteDialog>
   </div>
 </template>
 

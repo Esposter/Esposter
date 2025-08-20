@@ -71,7 +71,7 @@ watch(optionsMenu, (newOptionsMenu) => {
           @update:update-mode="isUpdateMode = $event"
           @update:delete-mode="updateIsOpen"
         />
-      </EsbabblerModelMessage>
+      </MessageModelMessage>
       <div v-if="!message.isLoading" v-show="activeAndNotUpdateMode && !isOpen" relative z-1>
         <div
           absolute
@@ -99,5 +99,5 @@ watch(optionsMenu, (newOptionsMenu) => {
     <template #messagePreview>
       <MessageModelMessage :creator :message :next-message is-preview />
     </template>
-  </EsbabblerModelMessageConfirmDeleteDialog>
+  </MessageModelMessageConfirmDeleteDialog>
 </template>

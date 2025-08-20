@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { FileRendererProps } from "@/models/esbabbler/file/FileRendererProps";
+import type { FileRendererProps } from "@/models/message/file/FileRendererProps";
 
 import { getFilesize } from "@/services/file/getFilesize";
 

@@ -26,5 +26,5 @@ const onEscape = () => {
         </template>
       </v-text-field>
     </template>
-  </EsbabblerContentSearchMenu>
+  </MessageContentSearchMenu>
 </template>

@@ -6,8 +6,8 @@ const props = defineProps<LinkPreviewResponse>();
 const { contentType } = toRefs(props);
 const component = computed<Component>(() => {
   if (contentType.value === "text/html")
-    return defineAsyncComponent(() => import("@/components/Esbabbler/Model/Message/LinkPreview/URL.vue"));
-  else return defineAsyncComponent(() => import("@/components/Esbabbler/Model/Message/LinkPreview/Default.vue"));
+    return defineAsyncComponent(() => import("@/components/Message/Model/Message/LinkPreview/URL.vue"));
+  else return defineAsyncComponent(() => import("@/components/Message/Model/Message/LinkPreview/Default.vue"));
 });
 </script>
 

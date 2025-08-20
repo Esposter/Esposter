@@ -1,4 +1,4 @@
-import type { DownloadFileUrl } from "@/models/esbabbler/file/DownloadFileUrl";
+import type { DownloadFileUrl } from "@/models/message/file/DownloadFileUrl";
 
 import { getInferredMimetype } from "@/services/file/getInferredMimetype";
 import { MessageHookMap } from "@/services/message/MessageHookMap";

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { FileEntity } from "#shared/models/azure/FileEntity";
-import type { UploadFileUrl } from "@/models/esbabbler/file/UploadFileUrl";
+import type { UploadFileUrl } from "@/models/message/file/UploadFileUrl";
 import type { Item } from "@/models/shared/Item";
 
 interface FileInputProps {

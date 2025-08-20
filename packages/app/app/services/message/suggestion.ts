@@ -1,10 +1,10 @@
 import type { User } from "#shared/db/schema/users";
-import type { MentionNodeAttributes } from "@/models/esbabbler/MentionNodeAttributes";
+import type { MentionNodeAttributes } from "@/models/message/MentionNodeAttributes";
 import type { MentionOptions } from "@tiptap/extension-mention";
 import type { Instance } from "tippy.js";
 
 import { dayjs } from "#shared/services/dayjs";
-import MentionList from "@/components/Esbabbler/Model/Message/MentionList.vue";
+import MentionList from "@/components/Message/Model/Message/MentionList.vue";
 import { useRoomStore } from "@/store/message/room";
 import { VueRenderer } from "@tiptap/vue-3";
 import tippy from "tippy.js";
