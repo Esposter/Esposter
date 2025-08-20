@@ -658,7 +658,7 @@ describe("message", () => {
       roomId: newRoom.id,
     });
     MockContainerDatabase.set(
-      AzureContainer.EsbabblerAssets,
+      AzureContainer.MessageAssets,
       new Map([[getBlobName(`${newRoom.id}/${id}`, filename), Buffer.alloc(size)]]),
     );
 
@@ -695,7 +695,7 @@ describe("message", () => {
       roomId: newRoom.id,
     });
     MockContainerDatabase.set(
-      AzureContainer.EsbabblerAssets,
+      AzureContainer.MessageAssets,
       new Map([[getBlobName(`${newRoom.id}/${id}`, filename), Buffer.alloc(size)]]),
     );
     await mockSessionOnce(mockContext.db);
@@ -719,7 +719,7 @@ describe("message", () => {
       roomId: newRoom.id,
     });
     MockContainerDatabase.set(
-      AzureContainer.EsbabblerAssets,
+      AzureContainer.MessageAssets,
       new Map([[getBlobName(`${newRoom.id}/${id}`, filename), Buffer.alloc(size)]]),
     );
 
@@ -741,7 +741,7 @@ describe("message", () => {
       roomId: newRoom.id,
     });
     MockContainerDatabase.set(
-      AzureContainer.EsbabblerAssets,
+      AzureContainer.MessageAssets,
       new Map([[getBlobName(`${newRoom.id}/${id}`, filename), Buffer.alloc(size)]]),
     );
     const onCreateMessage = await messageCaller.onCreateMessage({ roomId: newRoom.id });

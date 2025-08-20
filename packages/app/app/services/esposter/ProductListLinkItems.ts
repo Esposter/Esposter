@@ -1,12 +1,13 @@
 import type { ListLinkItem } from "@/models/shared/ListLinkItem";
 
 import { RoutePath } from "#shared/models/router/RoutePath";
+import { MESSAGE_DISPLAY_NAME } from "@/services/esposter/constants";
 
 export const ProductListLinkItems = [
   {
     href: RoutePath.MessagesIndex,
     icon: "mdi-message-fast",
-    title: "Esbabbler",
+    title: MESSAGE_DISPLAY_NAME,
   },
   {
     href: RoutePath.TableEditor,

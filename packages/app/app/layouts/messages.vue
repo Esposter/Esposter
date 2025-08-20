@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { MESSAGE_DISPLAY_NAME } from "@/services/esposter/constants";
 import { useRoomStore } from "@/store/message/room";
 
-useHead({ titleTemplate: (title) => (title ? `Esbabbler | ${title}` : "Esbabbler") });
+useHead({ titleTemplate: (title) => (title ? `${MESSAGE_DISPLAY_NAME} | ${title}` : MESSAGE_DISPLAY_NAME) });
 useSubscribables();
 const roomStore = useRoomStore();
 const { currentRoomName } = storeToRefs(roomStore);

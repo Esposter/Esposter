@@ -179,7 +179,7 @@ export const roomRouter = router({
   ),
   deleteRoom: authedProcedure.input(deleteRoomInputSchema).mutation<Room>(async ({ ctx, input }) => {
     const deletedRoom = await deleteRoom(ctx.db, ctx.session, input);
-    const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
+    const containerClient = await useContainerClient(AzureContainer.MessageAssets);
     await deleteDirectory(containerClient, input, true);
     return deletedRoom;
   }),

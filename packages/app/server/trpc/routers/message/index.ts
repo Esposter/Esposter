@@ -176,7 +176,7 @@ export const messageRouter = router({
           message: new NotFoundError(AzureEntityType.File, id).message,
         });
 
-      const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
+      const containerClient = await useContainerClient(AzureContainer.MessageAssets);
       const blobName = getBlobName(
         `${messageEntity.partitionKey}/${id}`,
         messageEntity.files.splice(index, 1)[0].filename,
@@ -209,7 +209,7 @@ export const messageRouter = router({
       } as const satisfies AzureUpdateEntity<MessageEntity>);
       messageEventEmitter.emit("deleteMessage", input);
 
-      const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
+      const containerClient = await useContainerClient(AzureContainer.MessageAssets);
       await deleteFiles(containerClient, messageEntity.files);
     },
   ),
@@ -225,7 +225,7 @@ export const messageRouter = router({
           message: new NotFoundError(AzureEntityType.Message, JSON.stringify({ partitionKey, rowKey })).message,
         });
 
-      const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
+      const containerClient = await useContainerClient(AzureContainer.MessageAssets);
       await Promise.all(
         roomIds.map(async (roomId) => {
           const newFileIds = await cloneFiles(containerClient, messageEntity.files, messageEntity.partitionKey, roomId);
@@ -266,14 +266,14 @@ export const messageRouter = router({
   ),
   generateDownloadFileSasUrls: getMemberProcedure(generateDownloadFileSasUrlsInputSchema, "roomId").query<string[]>(
     async ({ input: { files, roomId } }) => {
-      const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
+      const containerClient = await useContainerClient(AzureContainer.MessageAssets);
       return generateDownloadFileSasUrls(containerClient, files, roomId);
     },
   ),
   generateUploadFileSasEntities: getMemberProcedure(generateUploadFileSasEntitiesInputSchema, "roomId").query<
     FileSasEntity[]
   >(async ({ input: { files, roomId } }) => {
-    const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
+    const containerClient = await useContainerClient(AzureContainer.MessageAssets);
     return generateUploadFileSasEntities(containerClient, files, roomId);
   }),
   onCreateMessage: getMemberProcedure(onCreateMessageInputSchema, "roomId").subscription(async function* ({
