@@ -134,7 +134,7 @@ catalog:
   node-emoji: ^2.2.0
   node-html-parser: ^7.0.1
   nuxt: ^4.0.3
-  nuxt-security: ^2.3.0
+  nuxt-security: ^2.4.0
   obscenity: ^0.4.4
   omit-deep-lodash: ^1.1.7
   oxlint: 1.11.2
