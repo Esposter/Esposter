@@ -2,6 +2,7 @@
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
 import { FilterType } from "#shared/models/message/FilterType";
+import { FilterTypePlaceholderMap } from "@/services/message/FilterTypePlaceholderMap";
 import { uncapitalize } from "@esposter/shared";
 
 interface SearchMenuProps {
@@ -21,11 +22,14 @@ const modelValue = defineModel<boolean>({ default: false });
       <slot name="activator" :="props" />
     </template>
     <StyledCard p-2>
-      <v-card-title text-sm font-extrabold>Search Options</v-card-title>
+      <v-card-title text-base font-extrabold>Search Options</v-card-title>
       <v-list py-0 density="compact">
         <v-hover v-for="filterType in Object.values(FilterType)" :key="filterType" #default="{ isHovering, props }">
           <v-list-item :="props" @click="emit('select', filterType)">
-            <v-list-item-title font-semibold>{{ uncapitalize(filterType) }}:</v-list-item-title>
+            <v-list-item-title font-bold>
+              {{ uncapitalize(filterType) }}:
+              <span font-semibold text-gray>{{ FilterTypePlaceholderMap[filterType] }}</span>
+            </v-list-item-title>
             <template #append>
               <v-icon v-show="isHovering" icon="mdi-plus" />
             </template>
