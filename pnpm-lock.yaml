@@ -121,11 +121,11 @@ catalogs:
       specifier: ^3.2.0
       version: 3.2.0
     '@trpc/client':
-      specifier: ^11.4.4
-      version: 11.4.4
+      specifier: ^11.5.0
+      version: 11.5.0
     '@trpc/server':
-      specifier: ^11.4.4
-      version: 11.4.4
+      specifier: ^11.5.0
+      version: 11.5.0
     '@types/data-urls':
       specifier: ^3.0.4
       version: 3.0.4
@@ -651,10 +651,10 @@ importers:
         version: 5.9.2
       vite:
         specifier: npm:rolldown-vite@latest
-        version: rolldown-vite@7.1.3(@types/node@24.3.0)(esbuild@0.25.9)(jiti@2.5.1)(sass-embedded@1.90.0)(sass@1.90.0)(terser@5.43.1)(tsx@4.20.4)(yaml@2.8.1)
+        version: rolldown-vite@7.1.4(@types/node@24.3.0)(esbuild@0.25.9)(jiti@2.5.1)(sass-embedded@1.90.0)(sass@1.90.0)(terser@5.43.1)(tsx@4.20.4)(yaml@2.8.1)
       vite-tsconfig-paths:
         specifier: 'catalog:'
-        version: 5.1.4(rolldown-vite@7.1.3(@types/node@24.3.0)(esbuild@0.25.9)(jiti@2.5.1)(sass-embedded@1.90.0)(sass@1.90.0)(terser@5.43.1)(tsx@4.20.4)(yaml@2.8.1))(typescript@5.9.2)
+        version: 5.1.4(rolldown-vite@7.1.4(@types/node@24.3.0)(esbuild@0.25.9)(jiti@2.5.1)(sass-embedded@1.90.0)(sass@1.90.0)(terser@5.43.1)(tsx@4.20.4)(yaml@2.8.1))(typescript@5.9.2)
       vitest:
         specifier: 'catalog:'
         version: 3.2.4(@types/node@24.3.0)(esbuild@0.25.9)(happy-dom@18.0.1)(jiti@2.5.1)(sass-embedded@1.90.0)(sass@1.90.0)(terser@5.43.1)(tsx@4.20.4)(yaml@2.8.1)
@@ -735,10 +735,10 @@ importers:
         version: 3.2.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.18(typescript@5.9.2))
       '@trpc/client':
         specifier: 'catalog:'
-        version: 11.4.4(@trpc/server@11.4.4(typescript@5.9.2))(typescript@5.9.2)
+        version: 11.5.0(@trpc/server@11.5.0(typescript@5.9.2))(typescript@5.9.2)
       '@trpc/server':
         specifier: 'catalog:'
-        version: 11.4.4(typescript@5.9.2)
+        version: 11.5.0(typescript@5.9.2)
       '@vue-flow/background':
         specifier: 'catalog:'
         version: 1.3.2(@vue-flow/core@1.46.0(vue@3.5.18(typescript@5.9.2)))(vue@3.5.18(typescript@5.9.2))
@@ -966,7 +966,7 @@ importers:
         version: 6.3.7
       trpc-nuxt:
         specifier: 'catalog:'
-        version: 1.2.0(@trpc/client@11.4.4(@trpc/server@11.4.4(typescript@5.9.2))(typescript@5.9.2))(@trpc/server@11.4.4(typescript@5.9.2))
+        version: 1.2.0(@trpc/client@11.5.0(@trpc/server@11.5.0(typescript@5.9.2))(typescript@5.9.2))(@trpc/server@11.5.0(typescript@5.9.2))
       v-viewer:
         specifier: 'catalog:'
         version: 3.0.22(viewerjs@1.11.7)(vue@3.5.18(typescript@5.9.2))
@@ -4593,14 +4593,14 @@ packages:
       '@tiptap/pm': ^3.2.0
       vue: ^3.0.0
 
-  '@trpc/client@11.4.4':
-    resolution: {integrity: sha512-86OZl+Y+Xlt9ITGlhCMImERcsWCOrVzpNuzg3XBlsDSmSs9NGsghKjeCpJQlE36XaG3aze+o9pRukiYYvBqxgQ==}
+  '@trpc/client@11.5.0':
+    resolution: {integrity: sha512-32oH+KOAdo73jJKjU9tyG+vCjID6A28NgXwUNr691O5HjpF5yyTX51Zzyee8YtGzU89Nw/drCHdfA4gD7BN2eg==}
     peerDependencies:
-      '@trpc/server': 11.4.4
+      '@trpc/server': 11.5.0
       typescript: '>=5.7.2'
 
-  '@trpc/server@11.4.4':
-    resolution: {integrity: sha512-VkJb2xnb4rCynuwlCvgPBh5aM+Dco6fBBIo6lWAdJJRYVwtyE5bxNZBgUvRRz/cFSEAy0vmzLxF7aABDJfK5Rg==}
+  '@trpc/server@11.5.0':
+    resolution: {integrity: sha512-0IBtkmUCeO2ycn4K45/cqsujnlCQrSvkCo7lFDpg3kGMIPiLyLRciID5IiS7prEjRjeITa+od2aaHTIwONApVw==}
     peerDependencies:
       typescript: '>=5.7.2'
 
@@ -9836,6 +9836,46 @@ packages:
 
   rolldown-vite@7.1.3:
     resolution: {integrity: sha512-J22JlCJQbIRxR6KGwpf76Uq3R4wk6avQHCijXGPsXsbVpPt+Uavg5M5dvzP7XdlAKL8uZE5Xof9j4Y9yu+cxxg==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    hasBin: true
+    peerDependencies:
+      '@types/node': ^20.19.0 || >=22.12.0
+      esbuild: ^0.25.0
+      jiti: '>=1.21.0'
+      less: ^4.0.0
+      sass: ^1.70.0
+      sass-embedded: ^1.70.0
+      stylus: '>=0.54.8'
+      sugarss: ^5.0.0
+      terser: ^5.16.0
+      tsx: ^4.8.1
+      yaml: ^2.4.2
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+      esbuild:
+        optional: true
+      jiti:
+        optional: true
+      less:
+        optional: true
+      sass:
+        optional: true
+      sass-embedded:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      terser:
+        optional: true
+      tsx:
+        optional: true
+      yaml:
+        optional: true
+
+  rolldown-vite@7.1.4:
+    resolution: {integrity: sha512-VE0cXhJfTypUhm71w4pR62dMyqw8JKHWMdbUBSDVqZTGGpZz5Zkw+cT47rvBR/SQ9E9F2GtlW02rWIY2T9HdLg==}
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
     peerDependencies:
@@ -15619,12 +15659,12 @@ snapshots:
       '@tiptap/extension-bubble-menu': 3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)
       '@tiptap/extension-floating-menu': 3.2.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)
 
-  '@trpc/client@11.4.4(@trpc/server@11.4.4(typescript@5.9.2))(typescript@5.9.2)':
+  '@trpc/client@11.5.0(@trpc/server@11.5.0(typescript@5.9.2))(typescript@5.9.2)':
     dependencies:
-      '@trpc/server': 11.4.4(typescript@5.9.2)
+      '@trpc/server': 11.5.0(typescript@5.9.2)
       typescript: 5.9.2
 
-  '@trpc/server@11.4.4(typescript@5.9.2)':
+  '@trpc/server@11.5.0(typescript@5.9.2)':
     dependencies:
       typescript: 5.9.2
 
@@ -21886,6 +21926,25 @@ snapshots:
       tsx: 4.20.4
       yaml: 2.8.1
 
+  rolldown-vite@7.1.4(@types/node@24.3.0)(esbuild@0.25.9)(jiti@2.5.1)(sass-embedded@1.90.0)(sass@1.90.0)(terser@5.43.1)(tsx@4.20.4)(yaml@2.8.1):
+    dependencies:
+      fdir: 6.5.0(picomatch@4.0.3)
+      lightningcss: 1.30.1
+      picomatch: 4.0.3
+      postcss: 8.5.6
+      rolldown: 1.0.0-beta.33
+      tinyglobby: 0.2.14
+    optionalDependencies:
+      '@types/node': 24.3.0
+      esbuild: 0.25.9
+      fsevents: 2.3.3
+      jiti: 2.5.1
+      sass: 1.90.0
+      sass-embedded: 1.90.0
+      terser: 5.43.1
+      tsx: 4.20.4
+      yaml: 2.8.1
+
   rolldown@1.0.0-beta.33:
     dependencies:
       '@oxc-project/runtime': 0.82.2
@@ -22747,10 +22806,10 @@ snapshots:
 
   triple-beam@1.4.1: {}
 
-  trpc-nuxt@1.2.0(@trpc/client@11.4.4(@trpc/server@11.4.4(typescript@5.9.2))(typescript@5.9.2))(@trpc/server@11.4.4(typescript@5.9.2)):
+  trpc-nuxt@1.2.0(@trpc/client@11.5.0(@trpc/server@11.5.0(typescript@5.9.2))(typescript@5.9.2))(@trpc/server@11.5.0(typescript@5.9.2)):
     dependencies:
-      '@trpc/client': 11.4.4(@trpc/server@11.4.4(typescript@5.9.2))(typescript@5.9.2)
-      '@trpc/server': 11.4.4(typescript@5.9.2)
+      '@trpc/client': 11.5.0(@trpc/server@11.5.0(typescript@5.9.2))(typescript@5.9.2)
+      '@trpc/server': 11.5.0(typescript@5.9.2)
       h3: 1.15.4
       ofetch: 1.4.1
       ohash: 2.0.11
@@ -23366,13 +23425,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  vite-tsconfig-paths@5.1.4(rolldown-vite@7.1.3(@types/node@24.3.0)(esbuild@0.25.9)(jiti@2.5.1)(sass-embedded@1.90.0)(sass@1.90.0)(terser@5.43.1)(tsx@4.20.4)(yaml@2.8.1))(typescript@5.9.2):
+  vite-tsconfig-paths@5.1.4(rolldown-vite@7.1.4(@types/node@24.3.0)(esbuild@0.25.9)(jiti@2.5.1)(sass-embedded@1.90.0)(sass@1.90.0)(terser@5.43.1)(tsx@4.20.4)(yaml@2.8.1))(typescript@5.9.2):
     dependencies:
       debug: 4.4.1
       globrex: 0.1.2
       tsconfck: 3.1.6(typescript@5.9.2)
     optionalDependencies:
-      vite: rolldown-vite@7.1.3(@types/node@24.3.0)(esbuild@0.25.9)(jiti@2.5.1)(sass-embedded@1.90.0)(sass@1.90.0)(terser@5.43.1)(tsx@4.20.4)(yaml@2.8.1)
+      vite: rolldown-vite@7.1.4(@types/node@24.3.0)(esbuild@0.25.9)(jiti@2.5.1)(sass-embedded@1.90.0)(sass@1.90.0)(terser@5.43.1)(tsx@4.20.4)(yaml@2.8.1)
     transitivePeerDependencies:
       - supports-color
       - typescript
