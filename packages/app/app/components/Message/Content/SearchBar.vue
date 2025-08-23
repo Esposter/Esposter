@@ -1,14 +1,22 @@
 <script setup lang="ts">
-const { hasMoreMessagesSearched, messageSearchQuery, messagesSearched, readMoreMessagesSearched } =
-  useMessageSearcher();
-const menu = ref(false);
+import { useSearchFilterStore } from "@/store/message/searchFilter";
+
+const searchFilterStore = useSearchFilterStore();
+const { clearFilters } = searchFilterStore;
+const { hasFilters } = storeToRefs(searchFilterStore);
+const { hasMoreMessagesSearched, messageSearchQuery, messagesSearched } = useMessageSearcher();
+const isEmpty = computed(() => !messageSearchQuery.value && !hasFilters.value);
+const clearSearch = () => {
+  messageSearchQuery.value = "";
+  clearFilters();
+};
 const onEscape = () => {
   (document.activeElement as HTMLElement | null)?.blur();
 };
 </script>
 
 <template>
-  <MessageContentSearchMenu v-model="menu" :messages="messagesSearched" :has-more="hasMoreMessagesSearched">
+  <MessageContentSearchMenu :messages="messagesSearched" :has-more="hasMoreMessagesSearched">
     <template #activator="props">
       <v-text-field
         v-model="messageSearchQuery"
@@ -17,14 +25,23 @@ const onEscape = () => {
         placeholder="Search"
         density="compact"
         hide-details
-        clearable
         :="props"
         @keydown.esc="onEscape()"
       >
         <template #append-inner>
-          <v-icon icon="mdi-magnify" />
+          <v-icon v-if="isEmpty" icon="mdi-magnify" />
+          <v-btn
+            v-else
+            density="compact"
+            icon="mdi-close"
+            size="small"
+            variant="plain"
+            :ripple="false"
+            @click="clearSearch()"
+          />
         </template>
       </v-text-field>
     </template>
   </MessageContentSearchMenu>
+  <MessageContentSearchFilterChips />
 </template>
