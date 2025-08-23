@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { FilterType } from "#shared/models/message/FilterType";
 import { useSearchFilterStore } from "@/store/message/searchFilter";
 
 const searchFilterStore = useSearchFilterStore();
-const { clearFilters } = searchFilterStore;
-const { hasFilters } = storeToRefs(searchFilterStore);
+const { clearFilters, createFilter } = searchFilterStore;
+const { hasFilters, selectedFilters } = storeToRefs(searchFilterStore);
+const filterTypes = Object.values(FilterType);
 const { hasMoreMessagesSearched, messageSearchQuery, messagesSearched } = useMessageSearcher();
 const isEmpty = computed(() => !messageSearchQuery.value && !hasFilters.value);
 const clearSearch = () => {
@@ -16,17 +18,37 @@ const onEscape = () => {
 </script>
 
 <template>
-  <MessageContentSearchMenu :messages="messagesSearched" :has-more="hasMoreMessagesSearched">
+  <MessageContentSearchMenu :messages="messagesSearched" :has-more="hasMoreMessagesSearched" @select="createFilter">
     <template #activator="props">
-      <v-text-field
-        v-model="messageSearchQuery"
+      <v-autocomplete
+        v-model="selectedFilters"
+        :search="messageSearchQuery"
         cursor-auto
         width="15rem"
-        placeholder="Search"
         density="compact"
+        menu-icon=""
+        placeholder="Search"
+        chips
         hide-details
+        hide-no-data
+        multiple
         :="props"
         @keydown.esc="onEscape()"
+        @update:search="
+          (value) => {
+            if (value[value.length - 1] === ':') {
+              const filterType = filterTypes.find(
+                (type) => type.toLowerCase() === value.slice(0, value.length - 1).toLowerCase(),
+              );
+              if (filterType) {
+                createFilter(filterType);
+                return;
+              }
+            }
+
+            messageSearchQuery = value;
+          }
+        "
       >
         <template #append-inner>
           <v-icon v-if="isEmpty" icon="mdi-magnify" />
@@ -40,8 +62,10 @@ const onEscape = () => {
             @click="clearSearch()"
           />
         </template>
-      </v-text-field>
+        <template #chip="{ item: { raw } }">
+          <v-chip>{{ raw.type }}: {{ raw.value }} </v-chip>
+        </template>
+      </v-autocomplete>
     </template>
   </MessageContentSearchMenu>
-  <MessageContentSearchFilterChips />
 </template>

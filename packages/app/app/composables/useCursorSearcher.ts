@@ -16,11 +16,11 @@ type SearcherKey<TEntityTypeKey extends EntityTypeKey> =
 export const useCursorSearcher = <TItem extends ToData<AEntity>, TEntityTypeKey extends EntityTypeKey>(
   query: (searchQuery: string, cursor?: string) => Promise<CursorPaginationData<TItem>>,
   entityTypeKey: TEntityTypeKey,
+  isAutoSearch?: true,
   isIncludeEmptySearchQuery?: true,
 ) => {
   const searchQuery = ref("");
-  const isEmptySearchQuery = computed(() => !searchQuery.value.trim());
-  const throttledSearchQuery = useThrottle(searchQuery, dayjs.duration(1, "second").asMilliseconds());
+
   const { hasMore, initializeCursorPaginationData, items, nextCursor, resetCursorPaginationData } =
     createCursorPaginationData<TItem>();
   const readMoreItems = async (onComplete: () => void) => {
@@ -29,7 +29,7 @@ export const useCursorSearcher = <TItem extends ToData<AEntity>, TEntityTypeKey 
         hasMore: newHasMore,
         items: newItems,
         nextCursor: newNextCursor,
-      } = await query(throttledSearchQuery.value, nextCursor.value);
+      } = await query(searchQuery.value, nextCursor.value);
       nextCursor.value = newNextCursor;
       hasMore.value = newHasMore;
       items.value.push(...newItems);
@@ -38,20 +38,25 @@ export const useCursorSearcher = <TItem extends ToData<AEntity>, TEntityTypeKey 
     }
   };
 
-  watch(isEmptySearchQuery, (newIsEmptySearchQuery) => {
-    if (isIncludeEmptySearchQuery || !newIsEmptySearchQuery) return;
-    resetCursorPaginationData();
-  });
+  if (isAutoSearch) {
+    const throttledSearchQuery = useThrottle(searchQuery, dayjs.duration(1, "second").asMilliseconds());
+    const isEmptySearchQuery = computed(() => !searchQuery.value.trim());
 
-  watch(
-    throttledSearchQuery,
-    async (newThrottledSearchQuery) => {
-      const sanitizedNewThrottledSearchQuery = newThrottledSearchQuery.trim();
-      if (!(isIncludeEmptySearchQuery || sanitizedNewThrottledSearchQuery)) return;
-      initializeCursorPaginationData(await query(sanitizedNewThrottledSearchQuery));
-    },
-    { immediate: isIncludeEmptySearchQuery },
-  );
+    watch(isEmptySearchQuery, (newIsEmptySearchQuery) => {
+      if (isIncludeEmptySearchQuery || !newIsEmptySearchQuery) return;
+      resetCursorPaginationData();
+    });
+
+    watch(
+      throttledSearchQuery,
+      async (newThrottledSearchQuery) => {
+        const sanitizedNewThrottledSearchQuery = newThrottledSearchQuery.trim();
+        if (!(isIncludeEmptySearchQuery || sanitizedNewThrottledSearchQuery)) return;
+        initializeCursorPaginationData(await query(sanitizedNewThrottledSearchQuery));
+      },
+      { immediate: isIncludeEmptySearchQuery },
+    );
+  }
 
   return {
     [`${uncapitalize(entityTypeKey)}SearchQuery`]: searchQuery,

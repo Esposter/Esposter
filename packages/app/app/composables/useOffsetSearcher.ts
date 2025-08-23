@@ -16,11 +16,10 @@ type SearcherKey<TEntityTypeKey extends EntityTypeKey> =
 export const useOffsetSearcher = <TItem extends ToData<AEntity>, TEntityTypeKey extends EntityTypeKey>(
   query: (searchQuery: string, offset: number) => Promise<OffsetPaginationData<TItem>>,
   entityTypeKey: TEntityTypeKey,
+  isAutoSearch?: true,
   isIncludeEmptySearchQuery?: true,
 ) => {
   const searchQuery = ref("");
-  const isEmptySearchQuery = computed(() => !searchQuery.value.trim());
-  const throttledSearchQuery = useThrottle(searchQuery, dayjs.duration(1, "second").asMilliseconds());
   const { hasMore, initializeOffsetPaginationData, items, resetOffsetPaginationData } =
     createOffsetPaginationData<TItem>();
 
@@ -34,20 +33,25 @@ export const useOffsetSearcher = <TItem extends ToData<AEntity>, TEntityTypeKey 
     }
   };
 
-  watch(isEmptySearchQuery, (newEmptySearchQuery) => {
-    if (isIncludeEmptySearchQuery || newEmptySearchQuery) return;
-    resetOffsetPaginationData();
-  });
+  if (isAutoSearch) {
+    const throttledSearchQuery = useThrottle(searchQuery, dayjs.duration(1, "second").asMilliseconds());
+    const isEmptySearchQuery = computed(() => !searchQuery.value.trim());
 
-  watch(
-    throttledSearchQuery,
-    async (newThrottledSearchQuery) => {
-      const sanitizedThrottledSearchQuery = newThrottledSearchQuery.trim();
-      if (!(isIncludeEmptySearchQuery || sanitizedThrottledSearchQuery)) return;
-      initializeOffsetPaginationData(await query(sanitizedThrottledSearchQuery, 0));
-    },
-    { immediate: isIncludeEmptySearchQuery },
-  );
+    watch(isEmptySearchQuery, (newEmptySearchQuery) => {
+      if (isIncludeEmptySearchQuery || newEmptySearchQuery) return;
+      resetOffsetPaginationData();
+    });
+
+    watch(
+      throttledSearchQuery,
+      async (newThrottledSearchQuery) => {
+        const sanitizedThrottledSearchQuery = newThrottledSearchQuery.trim();
+        if (!(isIncludeEmptySearchQuery || sanitizedThrottledSearchQuery)) return;
+        initializeOffsetPaginationData(await query(sanitizedThrottledSearchQuery, 0));
+      },
+      { immediate: isIncludeEmptySearchQuery },
+    );
+  }
 
   return {
     [`${uncapitalize(entityTypeKey)}SearchQuery`]: searchQuery,

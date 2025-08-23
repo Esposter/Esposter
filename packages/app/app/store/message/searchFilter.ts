@@ -1,3 +1,4 @@
+import type { FilterType } from "#shared/models/message/FilterType";
 import type { Filter } from "@@/server/models/message/Filter";
 
 import { createDataMap } from "@/services/shared/createDataMap";
@@ -6,8 +7,8 @@ import { useRoomStore } from "@/store/message/room";
 export const useSearchFilterStore = defineStore("message/searchFilter", () => {
   const roomStore = useRoomStore();
   const { data: selectedFilters } = createDataMap<Filter[]>(() => roomStore.currentRoomId, []);
-  const createFilter = (filter: Filter) => {
-    selectedFilters.value.push(filter);
+  const createFilter = (type: FilterType) => {
+    selectedFilters.value.push({ type, value: "" });
   };
   const deleteFilter = (index: number) => {
     if (index >= 0 && index < selectedFilters.value.length) {

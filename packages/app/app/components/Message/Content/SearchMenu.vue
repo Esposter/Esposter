@@ -12,7 +12,7 @@ interface SearchMenuProps {
 
 defineSlots<{ activator: (props: Record<string, unknown>) => unknown }>();
 const { hasMore, messages } = defineProps<SearchMenuProps>();
-const emit = defineEmits<{ readMore: []; select: [filterType: FilterType] }>();
+const emit = defineEmits<{ readMore: []; select: [type: FilterType] }>();
 const modelValue = defineModel<boolean>({ default: false });
 </script>
 

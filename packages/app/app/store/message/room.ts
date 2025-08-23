@@ -77,6 +77,7 @@ export const useRoomStore = defineStore("message/room", () => {
           filter: { name: searchQuery },
         }),
       DatabaseEntityType.Room,
+      true,
     ),
   };
 });

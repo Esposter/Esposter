@@ -33,6 +33,7 @@ const { hasMoreRoomsSearched, readMoreRoomsSearched, roomSearchQuery, roomsSearc
     }),
   DatabaseEntityType.Room,
   true,
+  true,
 );
 </script>
 
