@@ -35,13 +35,14 @@ const onEscape = () => {
         :="props"
         @keydown.esc="onEscape()"
         @update:search="
-          (value) => {
+          (value: string) => {
             if (value[value.length - 1] === ':') {
               const filterType = filterTypes.find(
                 (type) => type.toLowerCase() === value.slice(0, value.length - 1).toLowerCase(),
               );
               if (filterType) {
                 createFilter(filterType);
+                messageSearchQuery = '';
                 return;
               }
             }
