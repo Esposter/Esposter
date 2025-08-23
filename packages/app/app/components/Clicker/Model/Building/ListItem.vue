@@ -21,7 +21,7 @@ const boughtBuildingAmount = computed(() => getBoughtBuildingAmount(building));
 const buildingStatsHtml = computed(() => getBoughtBuildingStats(building).map((s) => marked.parse(s)));
 const hasBuildingStatsHtml = computed(() => buildingStatsHtml.value.length > 0);
 const buildingPrice = computed(() => getBuildingPrice(building));
-const isAffordable = computed(() => Boolean(clicker.value.noPoints >= buildingPrice.value));
+const isAffordable = computed(() => clicker.value.noPoints >= buildingPrice.value);
 const displayFlavorDescription = useDecompileString(building.flavorDescription);
 </script>
 
