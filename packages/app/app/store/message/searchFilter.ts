@@ -11,9 +11,7 @@ export const useSearchFilterStore = defineStore("message/searchFilter", () => {
     selectedFilters.value.push({ type, value: "" });
   };
   const deleteFilter = (index: number) => {
-    if (index >= 0 && index < selectedFilters.value.length) {
-      selectedFilters.value.splice(index, 1);
-    }
+    if (index >= 0 && index < selectedFilters.value.length) selectedFilters.value.splice(index, 1);
   };
   const clearFilters = () => {
     selectedFilters.value = [];
