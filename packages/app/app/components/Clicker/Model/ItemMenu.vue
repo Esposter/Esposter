@@ -21,8 +21,8 @@ const slots = defineSlots<{
   "append-text"?: (props: Record<string, never>) => unknown;
 }>();
 const { error } = useColors();
-const descriptionHtml = computed(() => (description ? marked.parse(description) : ""));
-const flavorDescriptionHtml = computed(() => marked.parse(`"${flavorDescription}"`));
+const descriptionHtml = computed(() => (description ? marked.parse(description, { async: false }) : ""));
+const flavorDescriptionHtml = computed(() => marked.parse(`"${flavorDescription}"`, { async: false }));
 const displayPrice = computed(() => formatNumberLong(price));
 const buildingIcon = computed(() => {
   const glob = import.meta.glob<string>("@/assets/clicker/icons/buildings/*.png", { eager: true, import: "default" });
