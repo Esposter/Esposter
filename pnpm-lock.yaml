@@ -442,8 +442,8 @@ catalogs:
       specifier: ^1.0.0-beta.34
       version: 1.0.0-beta.34
     rolldown-plugin-dts:
-      specifier: ^0.15.7
-      version: 0.15.7
+      specifier: ^0.15.9
+      version: 0.15.9
     rxjs:
       specifier: ^7.8.2
       version: 7.8.2
@@ -493,8 +493,8 @@ catalogs:
       specifier: ^4.41.0
       version: 4.41.0
     typedoc:
-      specifier: ^0.28.10
-      version: 0.28.10
+      specifier: ^0.28.11
+      version: 0.28.11
     typescript:
       specifier: ^5.9.2
       version: 5.9.2
@@ -639,13 +639,13 @@ importers:
         version: 1.0.0-beta.34
       rolldown-plugin-dts:
         specifier: 'catalog:'
-        version: 0.15.7(rolldown@1.0.0-beta.34)(typescript@5.9.2)(vue-tsc@3.0.5(typescript@5.9.2))
+        version: 0.15.9(rolldown@1.0.0-beta.34)(typescript@5.9.2)(vue-tsc@3.0.5(typescript@5.9.2))
       type-fest:
         specifier: 'catalog:'
         version: 4.41.0
       typedoc:
         specifier: 'catalog:'
-        version: 0.28.10(typescript@5.9.2)
+        version: 0.28.11(typescript@5.9.2)
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
@@ -6789,8 +6789,8 @@ packages:
       drizzle-orm: '>=0.36.0'
       zod: ^3.25.0 || ^4.0.0
 
-  dts-resolver@2.1.1:
-    resolution: {integrity: sha512-3BiGFhB6mj5Kv+W2vdJseQUYW+SKVzAFJL6YNP6ursbrwy1fXHRotfHi3xLNxe4wZl/K8qbAFeCDjZLjzqxxRw==}
+  dts-resolver@2.1.2:
+    resolution: {integrity: sha512-xeXHBQkn2ISSXxbJWD828PFjtyg+/UrMDo7W4Ffcs7+YWCquxU8YjV1KoxuiL+eJ5pg3ll+bC6flVv61L3LKZg==}
     engines: {node: '>=20.18.0'}
     peerDependencies:
       oxc-resolver: '>=11.0.0'
@@ -9908,8 +9908,8 @@ packages:
   robust-predicates@3.0.2:
     resolution: {integrity: sha512-IXgzBWvWQwE6PrDI05OvmXUIruQTcoMDzRsOd5CDvHCVLcLHMTSYvOK5Cm46kWqlV3yAbuSpBZdJ5oP5OUoStg==}
 
-  rolldown-plugin-dts@0.15.7:
-    resolution: {integrity: sha512-BpdrnLaa+uyw0rPT47+4FUC7hQFazBFppeFT0ioW5Ybg0XCLeRohc3HHPlnCxI6LtzgSWT7Ot8ahn6ji10IQBg==}
+  rolldown-plugin-dts@0.15.9:
+    resolution: {integrity: sha512-S2pPcC8h0C8a0ZLDdUTqqtTR9jlryThF3SmH8eZw97FQwgY+hd0x07Zm5algBkmj25S4nvvOusliR1YpImK3LA==}
     engines: {node: '>=20.18.0'}
     peerDependencies:
       '@typescript/native-preview': '>=7.0.0-dev.20250601.1'
@@ -10820,8 +10820,8 @@ packages:
     resolution: {integrity: sha512-EGjWssW7Tsk4DGfE+5yluuljS1OGYWiI1J6e8puZz9nTMM51Oug8CD5Zo4gWMsOhq5BI+1bF+rWTm4Vbj3ivRA==}
     engines: {node: '>= 18'}
 
-  typedoc@0.28.10:
-    resolution: {integrity: sha512-zYvpjS2bNJ30SoNYfHSRaFpBMZAsL7uwKbWwqoCNFWjcPnI3e/mPLh2SneH9mX7SJxtDpvDgvd9/iZxGbo7daw==}
+  typedoc@0.28.11:
+    resolution: {integrity: sha512-1FqgrrUYGNuE3kImAiEDgAVVVacxdO4ZVTKbiOVDGkoeSB4sNwQaDpa8mta+Lw5TEzBFmGXzsg0I1NLRIoaSFw==}
     engines: {node: '>= 18', pnpm: '>= 10'}
     hasBin: true
     peerDependencies:
@@ -18220,7 +18220,7 @@ snapshots:
       drizzle-orm: 0.44.4(@electric-sql/pglite@0.3.7)(kysely@0.28.5)(postgres@3.4.7)
       zod: 4.1.1
 
-  dts-resolver@2.1.1: {}
+  dts-resolver@2.1.2: {}
 
   dunder-proto@1.0.1:
     dependencies:
@@ -21999,7 +21999,7 @@ snapshots:
 
   robust-predicates@3.0.2: {}
 
-  rolldown-plugin-dts@0.15.7(rolldown@1.0.0-beta.34)(typescript@5.9.2)(vue-tsc@3.0.5(typescript@5.9.2)):
+  rolldown-plugin-dts@0.15.9(rolldown@1.0.0-beta.34)(typescript@5.9.2)(vue-tsc@3.0.5(typescript@5.9.2)):
     dependencies:
       '@babel/generator': 7.28.3
       '@babel/parser': 7.28.3
@@ -22007,7 +22007,7 @@ snapshots:
       ast-kit: 2.1.2
       birpc: 2.5.0
       debug: 4.4.1
-      dts-resolver: 2.1.1
+      dts-resolver: 2.1.2
       get-tsconfig: 4.10.1
       rolldown: 1.0.0-beta.34
     optionalDependencies:
@@ -23028,7 +23028,7 @@ snapshots:
 
   typed-function@4.2.1: {}
 
-  typedoc@0.28.10(typescript@5.9.2):
+  typedoc@0.28.11(typescript@5.9.2):
     dependencies:
       '@gerrit0/mini-shiki': 3.9.2
       lunr: 2.3.9
