@@ -18,9 +18,7 @@ const rolldownConfiguration: ConfigExport = defineConfig([
         tsconfig: "tsconfig.build.json",
       }),
     ],
-    resolve: {
-      tsconfigFilename: "tsconfig.build.json",
-    },
+    tsconfig: "tsconfig.build.json",
   },
 ]);
 
