@@ -1,5 +1,6 @@
 import type { User } from "#shared/db/schema/users";
 import type { MentionNodeAttributes } from "@/models/message/MentionNodeAttributes";
+import type { VirtualElement } from "@floating-ui/dom";
 import type { MentionOptions } from "@tiptap/extension-mention";
 
 import MentionList from "@/components/Message/Model/Message/MentionList.vue";
@@ -11,7 +12,7 @@ import { posToDOMRect, VueRenderer } from "@tiptap/vue-3";
 type Suggestion = MentionOptions<User, MentionNodeAttributes>["suggestion"];
 
 const updatePosition = async (editor: Editor, element: HTMLElement) => {
-  const virtualElement = {
+  const virtualElement: VirtualElement = {
     getBoundingClientRect: () => posToDOMRect(editor.view, editor.state.selection.from, editor.state.selection.to),
   };
   const { strategy, x, y } = await computePosition(virtualElement, element, {
@@ -59,7 +60,7 @@ export const suggestion: Suggestion = {
       },
 
       onStart: async (props) => {
-        component = new VueRenderer(MentionList as Component, { editor: props.editor, props });
+        component = new VueRenderer(MentionList, { editor: props.editor, props });
 
         if (!(props.clientRect && component.element)) return;
 
