@@ -34,7 +34,7 @@ const onKeyDown = ({ event }: { event: KeyboardEvent }) => {
 
 defineExpose({ onKeyDown });
 
-watchDeep(
+watch(
   () => items,
   () => {
     selectedIndex.value = 0;
@@ -47,20 +47,20 @@ watchDeep(
   <div>
     <StyledCard v-if="items.length > 0" overflow-y-auto :card-props="{ maxHeight: '250', width: '400' }" :elevation="1">
       <v-card-title text-sm font-bold>{{ title }}</v-card-title>
-      <v-btn
-        v-for="({ id, image, name }, index) of items"
-        :key="id"
-        w-full
-        rd
-        justify-start
-        :ripple="false"
-        @click="selectItem(index)"
-      >
-        <MessageModelMemberStatusAvatar :id :image :name :avatar-props="{ size: 'x-small' }" />
-        <span pl-2 font-semibold>
-          {{ name }}
-        </span>
-      </v-btn>
+      <v-list density="compact" py-0>
+        <v-list-item
+          v-for="({ id, image, name }, index) of items"
+          :key="id"
+          :active="selectedIndex === index"
+          :ripple="false"
+          @click="selectItem(index)"
+        >
+          <template #prepend>
+            <MessageModelMemberStatusAvatar :id :image :name :avatar-props="{ size: 'x-small' }" />
+          </template>
+          <v-list-item-title font-semibold>{{ name }}</v-list-item-title>
+        </v-list-item>
+      </v-list>
     </StyledCard>
   </div>
 </template>
