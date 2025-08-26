@@ -162,7 +162,6 @@ catalog:
   survey-vue3-ui: ^2.3.3
   three: ^0.179.1
   three-globe: ^2.44.0
-  tippy.js: ^6.3.7
   trpc-nuxt: ^1.2.0
   tsx: ^4.20.5
   type-fest: ^4.41.0

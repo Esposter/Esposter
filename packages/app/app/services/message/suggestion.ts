@@ -1,15 +1,30 @@
 import type { User } from "#shared/db/schema/users";
 import type { MentionNodeAttributes } from "@/models/message/MentionNodeAttributes";
 import type { MentionOptions } from "@tiptap/extension-mention";
-import type { Instance } from "tippy.js";
 
 import { dayjs } from "#shared/services/dayjs";
 import MentionList from "@/components/Message/Model/Message/MentionList.vue";
 import { useRoomStore } from "@/store/message/room";
-import { VueRenderer } from "@tiptap/vue-3";
-import tippy from "tippy.js";
+import { computePosition, flip, shift } from "@floating-ui/dom";
+import { Editor } from "@tiptap/core";
+import { posToDOMRect, VueRenderer } from "@tiptap/vue-3";
 
 type Suggestion = MentionOptions<User, MentionNodeAttributes>["suggestion"];
+
+const updatePosition = async (editor: Editor, element: HTMLElement) => {
+  const virtualElement = {
+    getBoundingClientRect: () => posToDOMRect(editor.view, editor.state.selection.from, editor.state.selection.to),
+  };
+  const { strategy, x, y } = await computePosition(virtualElement, element, {
+    middleware: [shift(), flip()],
+    placement: "bottom-start",
+    strategy: "absolute",
+  });
+  element.style.width = "max-content";
+  element.style.position = strategy;
+  element.style.left = `${x}px`;
+  element.style.top = `${y}px`;
+};
 
 export const suggestion: Suggestion = {
   items: useDebounceFn<NonNullable<Suggestion["items"]>>(async ({ query }) => {
@@ -26,47 +41,39 @@ export const suggestion: Suggestion = {
   }, dayjs.duration(0.3, "seconds").asMilliseconds()),
   render: () => {
     let component: VueRenderer;
-    let popup: Instance[];
 
     return {
-      onExit() {
-        popup[0].destroy();
+      onExit: () => {
         component.destroy();
       },
 
-      onKeyDown(props) {
+      onKeyDown: (props) => {
         if (props.event.key === "Escape") {
-          popup[0].hide();
+          component.destroy();
           return true;
         }
 
         return Boolean((component.ref as InstanceType<typeof MentionList>).onKeyDown(props));
       },
 
-      onStart: (props) => {
+      onStart: async (props) => {
         component = new VueRenderer(MentionList as Component, { editor: props.editor, props });
 
-        if (!props.clientRect) return;
+        if (!(props.clientRect && component.element)) return;
 
-        popup = tippy("body", {
-          appendTo: () => document.body,
-          content: component.element ?? undefined,
-          getReferenceClientRect: props.clientRect as () => DOMRect,
-          interactive: true,
-          placement: "top-start",
-          showOnCreate: true,
-          trigger: "manual",
-        });
+        const element = component.element as HTMLElement;
+        element.style.position = "absolute";
+        document.body.appendChild(element);
+        await updatePosition(props.editor, element);
       },
 
-      onUpdate(props) {
+      onUpdate: async (props) => {
         component.updateProps(props);
 
         if (!props.clientRect) return;
 
-        popup[0].setProps({
-          getReferenceClientRect: props.clientRect as () => DOMRect,
-        });
+        const element = component.element as HTMLElement;
+        await updatePosition(props.editor, element);
       },
     };
   },

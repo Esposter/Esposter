@@ -43,7 +43,7 @@ watchDeep(
 </script>
 
 <template>
-  <StyledCard v-if="items.length > 0" overflow-y-auto :card-props="{ maxHeight: '250', width: '400' }">
+  <StyledCard overflow-y-auto :card-props="{ maxHeight: '250', width: '400' }">
     <v-card-title text-sm font-bold>{{ title }}</v-card-title>
     <v-btn
       v-for="({ id, image, name }, index) of items"
