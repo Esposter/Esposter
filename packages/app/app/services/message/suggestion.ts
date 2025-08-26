@@ -2,7 +2,6 @@ import type { User } from "#shared/db/schema/users";
 import type { MentionNodeAttributes } from "@/models/message/MentionNodeAttributes";
 import type { MentionOptions } from "@tiptap/extension-mention";
 
-import { dayjs } from "#shared/services/dayjs";
 import MentionList from "@/components/Message/Model/Message/MentionList.vue";
 import { useRoomStore } from "@/store/message/room";
 import { computePosition, flip, shift } from "@floating-ui/dom";
@@ -24,10 +23,11 @@ const updatePosition = async (editor: Editor, element: HTMLElement) => {
   element.style.position = strategy;
   element.style.left = `${x}px`;
   element.style.top = `${y}px`;
+  element.style.zIndex = "9999";
 };
 
 export const suggestion: Suggestion = {
-  items: useDebounceFn<NonNullable<Suggestion["items"]>>(async ({ query }) => {
+  items: async ({ query }) => {
     const roomStore = useRoomStore();
     const { currentRoomId } = storeToRefs(roomStore);
     if (!currentRoomId.value) return [];
@@ -38,20 +38,22 @@ export const suggestion: Suggestion = {
       roomId: currentRoomId.value,
     });
     return items;
-  }, dayjs.duration(0.3, "seconds").asMilliseconds()),
+  },
   render: () => {
-    let component: VueRenderer;
+    let component: undefined | VueRenderer;
 
     return {
       onExit: () => {
-        component.destroy();
+        component?.destroy();
       },
 
       onKeyDown: (props) => {
         if (props.event.key === "Escape") {
-          component.destroy();
+          component?.destroy();
           return true;
         }
+
+        if (!component) return false;
 
         return Boolean((component.ref as InstanceType<typeof MentionList>).onKeyDown(props));
       },
@@ -68,9 +70,9 @@ export const suggestion: Suggestion = {
       },
 
       onUpdate: async (props) => {
-        component.updateProps(props);
+        component?.updateProps(props);
 
-        if (!props.clientRect) return;
+        if (!(props.clientRect && component?.element)) return;
 
         const element = component.element as HTMLElement;
         await updatePosition(props.editor, element);

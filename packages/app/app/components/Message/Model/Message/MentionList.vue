@@ -43,21 +43,24 @@ watchDeep(
 </script>
 
 <template>
-  <StyledCard overflow-y-auto :card-props="{ maxHeight: '250', width: '400' }">
-    <v-card-title text-sm font-bold>{{ title }}</v-card-title>
-    <v-btn
-      v-for="({ id, image, name }, index) of items"
-      :key="id"
-      w-full
-      rd
-      justify-start
-      :ripple="false"
-      @click="selectItem(index)"
-    >
-      <MessageModelMemberStatusAvatar :id :image :name :avatar-props="{ size: 'x-small' }" />
-      <span pl-2 font-semibold>
-        {{ name }}
-      </span>
-    </v-btn>
-  </StyledCard>
+  <!-- floating-ui needs a parent element to always be in the DOM to position the list -->
+  <div>
+    <StyledCard v-if="items.length > 0" overflow-y-auto :card-props="{ maxHeight: '250', width: '400' }" :elevation="1">
+      <v-card-title text-sm font-bold>{{ title }}</v-card-title>
+      <v-btn
+        v-for="({ id, image, name }, index) of items"
+        :key="id"
+        w-full
+        rd
+        justify-start
+        :ripple="false"
+        @click="selectItem(index)"
+      >
+        <MessageModelMemberStatusAvatar :id :image :name :avatar-props="{ size: 'x-small' }" />
+        <span pl-2 font-semibold>
+          {{ name }}
+        </span>
+      </v-btn>
+    </StyledCard>
+  </div>
 </template>
