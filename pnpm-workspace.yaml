@@ -72,8 +72,8 @@ catalog:
   "@vue/language-core": ^3.0.5
   "@vue/test-utils": ^2.4.6
   "@vuepic/vue-datepicker": ^11.0.2
-  "@vueuse/core": ^13.7.0
-  "@vueuse/nuxt": ^13.7.0
+  "@vueuse/core": ^13.8.0
+  "@vueuse/nuxt": ^13.8.0
   ajv: ^8.17.1
   ajv-errors: ^3.0.0
   ajv-formats: ^3.0.1
@@ -83,7 +83,7 @@ catalog:
   codemirror: ^6.0.2
   ctix: ^2.7.1
   data-urls: ^5.0.0
-  dayjs: ^1.11.13
+  dayjs: ^1.11.15
   debug: ^4.4.1
   dedent: ^1.6.0
   defu: ^6.1.4
@@ -94,7 +94,7 @@ catalog:
   emoji-mart-vue-fast: ^15.0.4
   eslint: ^9.34.0
   eslint-config-prettier: ^10.1.8
-  eslint-plugin-oxlint: ^1.12.0
+  eslint-plugin-oxlint: ^1.13.0
   eslint-plugin-perfectionist: ^4.15.0
   eslint-plugin-pinia: ^0.4.1
   eslint-plugin-prettier: ^5.5.4
@@ -129,7 +129,7 @@ catalog:
   js-beautify: ^1.15.4
   link-preview-js: ^3.1.0
   linkifyjs: ^4.3.2
-  marked: ^16.2.0
+  marked: ^16.2.1
   mjml-browser: ^4.15.3
   node-emoji: ^2.2.0
   node-html-parser: ^7.0.1
@@ -169,7 +169,7 @@ catalog:
   typescript: ^5.9.2
   typescript-eslint: ^8.41.0
   unocss: ^66.4.2
-  unplugin-auto-import: ^20.0.0
+  unplugin-auto-import: ^20.1.0
   unplugin-dts: ^1.0.0-beta.6
   v-viewer: ^3.0.22
   viewerjs: ^1.11.7
@@ -190,7 +190,7 @@ catalog:
   worker-timers: ^8.0.24
   ws: ^8.18.3
   xmlbuilder2: ^3.1.1
-  zod: ^4.1.3
+  zod: ^4.1.5
 
 catalogMode: strict
 
