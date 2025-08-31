@@ -21,9 +21,9 @@ catalog:
   "@fullcalendar/timegrid": ^6.1.19
   "@fullcalendar/vue3": ^6.1.19
   "@koumoul/vjsf": ^3.20.4
-  "@lerna-lite/cli": ^4.7.2
-  "@lerna-lite/publish": ^4.7.2
-  "@lerna-lite/run": ^4.7.2
+  "@lerna-lite/cli": ^4.7.3
+  "@lerna-lite/publish": ^4.7.3
+  "@lerna-lite/run": ^4.7.3
   "@mdi/font": ^7.4.47
   "@nuxt/eslint": ^1.9.0
   "@nuxt/fonts": ^0.11.4
@@ -83,7 +83,7 @@ catalog:
   codemirror: ^6.0.2
   ctix: ^2.7.1
   data-urls: ^5.0.0
-  dayjs: ^1.11.15
+  dayjs: ^1.11.18
   debug: ^4.4.1
   dedent: ^1.6.0
   defu: ^6.1.4
@@ -94,7 +94,7 @@ catalog:
   emoji-mart-vue-fast: ^15.0.4
   eslint: ^9.34.0
   eslint-config-prettier: ^10.1.8
-  eslint-plugin-oxlint: ^1.13.0
+  eslint-plugin-oxlint: ^1.14.0
   eslint-plugin-perfectionist: ^4.15.0
   eslint-plugin-pinia: ^0.4.1
   eslint-plugin-prettier: ^5.5.4
@@ -137,10 +137,10 @@ catalog:
   nuxt-security: ^2.4.0
   obscenity: ^0.4.4
   omit-deep-lodash: ^1.1.7
-  oxlint: 1.11.2
+  oxlint: ^1.14.0
   p-progress: ^1.0.0
   pathe: ^2.0.3
-  pdfjs-dist: ^5.4.54
+  pdfjs-dist: ^5.4.149
   phaser: ^4.0.0-rc.5
   phaser3-rex-plugins: ^1.80.16
   pinia: ^3.0.3
@@ -202,7 +202,7 @@ onlyBuiltDependencies:
   - vue-demi
 
 overrides:
-  pdfjs-dist: ^5.4.54
+  pdfjs-dist: ^5.4.149
   vite: npm:rolldown-vite@latest
 
 shellEmulator: true
