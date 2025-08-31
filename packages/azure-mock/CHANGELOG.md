@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.13.0](https://github.com/Esposter/Esposter/compare/v2.12.0...v2.13.0) (2025-08-31)
+
+### Bug Fixes
+
+* move is partition key and is row key to shared and fix up some things with search bar ([a3409c4](https://github.com/Esposter/Esposter/commit/a3409c476fed907a2ac9f0c26816c0a621821ca7))
+* table filter parse clause ([43e4822](https://github.com/Esposter/Esposter/commit/43e48229351dc83dea5a9e10384b416bc9ce4b8a))
+
+### Features
+
+* Add basic search first ([8d413dc](https://github.com/Esposter/Esposter/commit/8d413dc1707db91a8370d1777dab3dc538d90826))
+
 # [2.12.0](https://github.com/Esposter/Esposter/compare/v2.11.0...v2.12.0) (2025-08-15)
 
 ### Bug Fixes

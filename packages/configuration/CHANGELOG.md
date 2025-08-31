@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.13.0](https://github.com/Esposter/Esposter/compare/v2.12.0...v2.13.0) (2025-08-31)
+
+### Bug Fixes
+
+* migrate to floating ui ([9cbb7f5](https://github.com/Esposter/Esposter/commit/9cbb7f591555605ac6360482188138a222302326))
+* pin oxlint to v1.11.2 for now ([95d229b](https://github.com/Esposter/Esposter/commit/95d229be7db767d5cca616d1b772a529f4077de5))
+
 # [2.12.0](https://github.com/Esposter/Esposter/compare/v2.11.0...v2.12.0) (2025-08-15)
 
 **Note:** Version bump only for package @esposter/configuration

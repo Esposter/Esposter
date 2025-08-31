@@ -3,6 +3,44 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.13.0](https://github.com/Esposter/Esposter/compare/v2.12.0...v2.13.0) (2025-08-31)
+
+### Bug Fixes
+
+* add files ([ffdcdfc](https://github.com/Esposter/Esposter/commit/ffdcdfc350a63776d5496ea7ed44fc8f0fef07de))
+* add files ([fdcf797](https://github.com/Esposter/Esposter/commit/fdcf79779ad68ab12f835221ded0fa9dd2c7de10))
+* add filter type and esc blur ([1e08050](https://github.com/Esposter/Esposter/commit/1e08050ef87701541f94b78557db39fe8a2b7e11))
+* add min to filters ([08339d7](https://github.com/Esposter/Esposter/commit/08339d7f49aac22c38fbb2fb9aae9cdf4e062148))
+* add self-ref fk ([ed75f7d](https://github.com/Esposter/Esposter/commit/ed75f7d1880455d462a4da63b4fdb8f5517e7aa0))
+* add type so I don't need that type assertion error ([e8325ae](https://github.com/Esposter/Esposter/commit/e8325ae4e97133d2ff848dca1c17f72602589631))
+* add types ([cf51805](https://github.com/Esposter/Esposter/commit/cf51805b577613747dd8235304e15b6e40162a52))
+* cursor + menu ([3bff4fe](https://github.com/Esposter/Esposter/commit/3bff4fe6b14090100ce9ddd5479960742c308641))
+* discriminated union key && cleanup unnecessary dom elements ([994eb25](https://github.com/Esposter/Esposter/commit/994eb257f10ecc79ef7385a73bc3911b77e68841))
+* filter type order ([91a03f5](https://github.com/Esposter/Esposter/commit/91a03f56f72aa5099ad91692657867a6a0d5741f))
+* lint ([0bf6184](https://github.com/Esposter/Esposter/commit/0bf6184850ffb22d4b488fcee8c55b11a7aa4f8a))
+* migrate to floating ui ([9cbb7f5](https://github.com/Esposter/Esposter/commit/9cbb7f591555605ac6360482188138a222302326))
+* move is partition key and is row key to shared and fix up some things with search bar ([a3409c4](https://github.com/Esposter/Esposter/commit/a3409c476fed907a2ac9f0c26816c0a621821ca7))
+* null condition ([d3f9292](https://github.com/Esposter/Esposter/commit/d3f9292ec5a4d4b4f23ba70a4a8654debfdd8d96))
+* pin oxlint to v1.11.2 for now ([95d229b](https://github.com/Esposter/Esposter/commit/95d229be7db767d5cca616d1b772a529f4077de5))
+* pricing ([873d341](https://github.com/Esposter/Esposter/commit/873d34117685112ff0e0e79f7129b4014f92513d))
+* remove unnecessary Boolean ([23c0c38](https://github.com/Esposter/Esposter/commit/23c0c38aa27afc4407027c593e3c09f17ab54c36))
+* remove unnecessary weird fix ([63b1c96](https://github.com/Esposter/Esposter/commit/63b1c968e59a8df7f5069a6dfe162170405ed902))
+* remove unused isPartitionKey ([7ca950b](https://github.com/Esposter/Esposter/commit/7ca950be88d3bac852b68606d3c741463d405aed))
+* reset after create ([9ff4f2d](https://github.com/Esposter/Esposter/commit/9ff4f2d843ccff4222e7c5c994308eba7e271c7a))
+* self-ref ([6a8db43](https://github.com/Esposter/Esposter/commit/6a8db4359d617f59c58663fda456d641bbba750f))
+* table filter parse clause ([43e4822](https://github.com/Esposter/Esposter/commit/43e48229351dc83dea5a9e10384b416bc9ce4b8a))
+* tests ([61d3e20](https://github.com/Esposter/Esposter/commit/61d3e2095692d60307c81598387cb1405e528007))
+* types ([cc6c165](https://github.com/Esposter/Esposter/commit/cc6c165091977613999be3fb8e7b5f4af8106e33))
+* undefined accesses ([649d4fd](https://github.com/Esposter/Esposter/commit/649d4fd388d9ce7c41dc3558fe2f6aabae7c974f))
+* using search client composable ([8e8ec93](https://github.com/Esposter/Esposter/commit/8e8ec939fee16b2f569284dadb7e7f982e97056a))
+
+### Features
+
+* Add basic search first ([8d413dc](https://github.com/Esposter/Esposter/commit/8d413dc1707db91a8370d1777dab3dc538d90826))
+* Add placeholders ([37df36a](https://github.com/Esposter/Esposter/commit/37df36a17c75c6e9d85affd80272149d40c91023))
+* Add search filter chips ([b5eeacc](https://github.com/Esposter/Esposter/commit/b5eeacc7db4422ac913d4d00ed986d099f946daf))
+* Add search filter store ([0342175](https://github.com/Esposter/Esposter/commit/034217546c8ad6ae7f0adae09d90bde617cd4e6e))
+
 # [2.12.0](https://github.com/Esposter/Esposter/compare/v2.11.0...v2.12.0) (2025-08-15)
 
 ### Bug Fixes
