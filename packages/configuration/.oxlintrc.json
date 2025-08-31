@@ -7,7 +7,7 @@
     "perf": "error"
   },
   "ignorePatterns": ["public"],
-  "plugins": ["import", "oxc", "typescript", "unicorn"],
+  "plugins": ["import", "oxc", "typescript", "unicorn", "vue"],
   "rules": {
     "curly": ["error", "multi"],
     "func-names": "off",
