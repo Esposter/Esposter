@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.13.1](https://github.com/Esposter/Esposter/compare/v2.13.0...v2.13.1) (2025-08-31)
+
+### Bug Fixes
+
+* remove unnecessary perms ([d563089](https://github.com/Esposter/Esposter/commit/d5630891a8506ed7cfc27e4ccca90a2966f6a7a9))
+
 # [2.13.0](https://github.com/Esposter/Esposter/compare/v2.12.0...v2.13.0) (2025-08-31)
 
 ### Bug Fixes
