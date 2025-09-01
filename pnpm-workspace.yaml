@@ -91,7 +91,7 @@ catalog:
   drizzle-kit: ^0.31.4
   drizzle-orm: ^0.44.5
   drizzle-zod: ^0.8.3
-  emoji-mart-vue-fast: ^15.0.4
+  emoji-mart-vue-fast: ^15.0.5
   eslint: ^9.34.0
   eslint-config-prettier: ^10.1.8
   eslint-plugin-oxlint: ^1.14.0
