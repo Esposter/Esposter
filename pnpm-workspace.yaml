@@ -165,7 +165,7 @@ catalog:
   trpc-nuxt: ^1.2.0
   tsx: ^4.20.5
   type-fest: ^4.41.0
-  typedoc: ^0.28.11
+  typedoc: ^0.28.12
   typescript: ^5.9.2
   typescript-eslint: ^8.41.0
   unocss: ^66.5.0
