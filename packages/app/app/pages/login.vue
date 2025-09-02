@@ -39,7 +39,7 @@ const loginButtonsProps = ref<LoginButtonProps[]>([
         <v-container>
           <div class="text-h5" text-center mb-1>Sign in to</div>
           <div mb-2 flex justify-center items-center>
-            <EsposterLogo />
+            <AppLogo />
             <span class="text-h6" pl-2>{{ SITE_NAME }}</span>
           </div>
           <div mb-2 text-center>Login and start taking rides with {{ SITE_NAME }}!</div>
@@ -50,7 +50,7 @@ const loginButtonsProps = ref<LoginButtonProps[]>([
       </StyledCard>
     </v-container>
     <template #left>
-      <EsposterProductList />
+      <AppProductList />
     </template>
   </NuxtLayout>
 </template>

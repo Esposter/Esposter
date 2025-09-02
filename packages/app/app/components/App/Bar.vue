@@ -7,7 +7,7 @@ import { SITE_NAME } from "#shared/services/app/constants";
   <v-app-bar pl-2 color="surface" density="comfortable">
     <template #prepend>
       <NuxtInvisibleLink :to="RoutePath.Index">
-        <EsposterLogo />
+        <AppLogo />
       </NuxtInvisibleLink>
     </template>
     <v-app-bar-title pl-2>
@@ -15,10 +15,10 @@ import { SITE_NAME } from "#shared/services/app/constants";
     </v-app-bar-title>
     <template #append>
       <div flex gap-x-2>
-        <EsposterMenuButton />
-        <EsposterToggleThemeButton />
-        <EsposterGithubButton />
-        <EsposterMoreDropdownButton />
+        <AppMenuButton />
+        <AppToggleThemeButton />
+        <AppGithubButton />
+        <AppMoreDropdownButton />
       </div>
     </template>
   </v-app-bar>

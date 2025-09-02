@@ -3,8 +3,8 @@
   <NuxtTheme>
     <NuxtSEO>
       <v-app>
-        <EsposterAppBar />
-        <EsposterLoadingIndicator />
+        <AppBar />
+        <AppLoadingIndicator />
         <NuxtPage />
         <StyledAlertList />
       </v-app>
