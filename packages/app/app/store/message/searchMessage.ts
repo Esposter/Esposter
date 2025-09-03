@@ -20,6 +20,7 @@ export const useSearchMessageStore = defineStore("message/searchMessage", () => 
   };
   const hasFilters = computed(() => selectedFilters.value.length > 0);
   const { items: messages, ...rest } = createOffsetPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
+  const { data: totalItemsLength } = createDataMap<number>(() => roomStore.currentRoomId, 0);
   return {
     clearFilters,
     createFilter,
@@ -27,6 +28,7 @@ export const useSearchMessageStore = defineStore("message/searchMessage", () => 
     hasFilters,
     messages,
     selectedFilters,
+    totalItemsLength,
     ...rest,
   };
 });

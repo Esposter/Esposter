@@ -9,18 +9,19 @@ export const useReadSearchedMessages = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const searchMessageStore = useSearchMessageStore();
-  const { hasMore, messages } = storeToRefs(searchMessageStore);
+  const { hasMore, messages, totalItemsLength } = storeToRefs(searchMessageStore);
   const { selectedFilters } = storeToRefs(searchMessageStore);
   return async ({ offset, query }: PartialByKeys<Pick<SearchMessagesInput, "offset" | "query">, "offset">) => {
     if (!currentRoomId.value) return;
 
-    const response = await $trpc.message.searchMessages.query({
+    const { count, data } = await $trpc.message.searchMessages.query({
       filters: selectedFilters.value.length > 0 ? selectedFilters.value : undefined,
       offset,
-      query: query.trim(),
+      query,
       roomId: currentRoomId.value,
     });
-    messages.value = response.items;
-    hasMore.value = response.hasMore;
+    messages.value = data.items;
+    hasMore.value = data.hasMore;
+    if (count !== undefined) totalItemsLength.value = count;
   };
 };

@@ -1,23 +1,17 @@
 import type { SearchMessagesInput } from "#shared/models/db/message/SearchMessagesInput";
 
 import { MessageEntity } from "#shared/models/db/message/MessageEntity";
-import { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
 import { useSearchClient } from "@@/server/composables/azure/search/useSearchClient";
 import { SearchIndex } from "@@/server/models/azure/search/SearchIndex";
 import { SearchIndexSearchableFieldsMap } from "@@/server/models/azure/search/SearchIndexSearchableFieldsMap";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { isPartitionKey } from "@esposter/shared";
 
-export const searchMessages = async ({
-  limit,
-  offset,
-  query,
-  roomId,
-  sortBy,
-}: SearchMessagesInput): Promise<OffsetPaginationData<MessageEntity>> => {
+export const searchMessages = async ({ limit, offset, query, roomId, sortBy }: SearchMessagesInput) => {
   const client = useSearchClient(SearchIndex.Messages);
-  const { results } = await client.search(query, {
+  const { count, results } = await client.search(query, {
     filter: isPartitionKey(roomId),
+    includeTotalCount: true,
     orderBy: sortBy.map(({ key, order }) => `${key} ${order}`),
     searchFields: SearchIndexSearchableFieldsMap[SearchIndex.Messages],
     skip: offset,
@@ -25,5 +19,5 @@ export const searchMessages = async ({
   });
   const searchedMessages: MessageEntity[] = [];
   for await (const { document } of results) searchedMessages.push(document);
-  return getOffsetPaginationData(searchedMessages, limit);
+  return { count, data: getOffsetPaginationData(searchedMessages, limit) };
 };
