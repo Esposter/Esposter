@@ -18,7 +18,7 @@ export default defineConfig({
     },
   },
   plugins: [
-    AutoImport({ dts: true, imports: ["pinia", "vue"] }),
+    AutoImport({ imports: ["pinia", "vue"] }),
     tsconfigPaths(),
     vue(),
     // @TODO: https://github.com/qmhc/vite-plugin-dts/issues/302
