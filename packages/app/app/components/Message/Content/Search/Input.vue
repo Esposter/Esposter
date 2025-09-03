@@ -2,12 +2,11 @@
 import { FilterType } from "#shared/models/message/FilterType";
 import { useSearchMessageStore } from "@/store/message/searchMessage";
 
-const emit = defineEmits<{ search: [query: string] }>();
+const readSearchedMessages = useReadSearchedMessages();
 const searchMessageStore = useSearchMessageStore();
 const { createFilter } = searchMessageStore;
-const { selectedFilters } = storeToRefs(searchMessageStore);
+const { searchQuery, selectedFilters } = storeToRefs(searchMessageStore);
 const filterTypes = Object.values(FilterType);
-const searchQuery = defineModel<string>({ default: "" });
 const activeSelectedFilter = computed({
   get: () => selectedFilters.value.at(-1),
   set: (value) => {
@@ -32,14 +31,14 @@ const onEscape = () => (document.activeElement as HTMLElement | null)?.blur();
     hide-no-data
     multiple
     @keydown.enter="
-      ({ preventDefault }: KeyboardEvent) => {
+      async ({ preventDefault }: KeyboardEvent) => {
         if (activeSelectedFilter && !activeSelectedFilter.value) {
           const value = searchQuery.trim();
           if (!value) return;
           activeSelectedFilter.value = value;
           preventDefault();
           searchQuery = '';
-        } else emit('search', searchQuery);
+        } else await readSearchedMessages();
       }
     "
     @keydown.esc="onEscape()"

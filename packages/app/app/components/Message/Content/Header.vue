@@ -35,7 +35,7 @@ const isCreator = computed(() => currentRoom.value?.userId === session.value?.us
     <template #append>
       <MessageContentAddFriendsDialogButton />
       <MessageContentShowMemberListButton />
-      <MessageContentSearchBar />
+      <MessageContentSearchMenu />
     </template>
   </v-toolbar>
 </template>
