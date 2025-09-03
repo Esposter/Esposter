@@ -22,21 +22,12 @@ export const createOffsetPaginationDataMap = <TItem>(currentId: ReadonlyRefOrGet
       offsetPaginationDataMap.value.set(currentIdValue, newOffsetPaginationData);
     },
   });
-
   const items = computed({
     get: () => offsetPaginationData.value.items,
     set: (items) => {
       offsetPaginationData.value.items = items;
     },
   });
-
-  const offset = computed({
-    get: () => offsetPaginationData.value.offset,
-    set: (newOffset) => {
-      offsetPaginationData.value.offset = newOffset;
-    },
-  });
-
   const hasMore = computed({
     get: () => offsetPaginationData.value.hasMore,
     set: (hasMore) => {
@@ -56,7 +47,6 @@ export const createOffsetPaginationDataMap = <TItem>(currentId: ReadonlyRefOrGet
     hasMore,
     initializeOffsetPaginationData,
     items,
-    offset,
     resetOffsetPaginationData,
   };
 };

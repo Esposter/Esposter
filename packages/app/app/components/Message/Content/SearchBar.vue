@@ -5,7 +5,7 @@ import { useSearchMessageStore } from "@/store/message/searchMessage";
 
 const searchMessageStore = useSearchMessageStore();
 const { clearFilters, createFilter } = searchMessageStore;
-const { hasFilters, hasMore, items, offset, selectedFilters } = storeToRefs(searchMessageStore);
+const { hasFilters, hasMore, items, selectedFilters } = storeToRefs(searchMessageStore);
 const activeSelectedFilter = computed({
   get: () => selectedFilters.value.at(-1),
   set: (value) => {
@@ -23,12 +23,7 @@ const onEscape = () => {
 </script>
 
 <template>
-  <MessageContentSearchMenu
-    :messages="items"
-    :has-more
-    @select="createFilter"
-    @read-more="() => readSearchedMessages({ query: messageSearchQuery, offset })"
-  >
+  <MessageContentSearchMenu :messages="items" :has-more @select="createFilter">
     <template #activator="props">
       <v-autocomplete
         v-model="selectedFilters"

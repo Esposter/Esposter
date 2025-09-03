@@ -1,8 +1,7 @@
-import type { SearchMessagesInput } from "@@/server/trpc/routers/message";
+import type { SearchMessagesInput } from "#shared/models/db/message/SearchMessagesInput";
 
 import { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
-import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useSearchClient } from "@@/server/composables/azure/search/useSearchClient";
 import { SearchIndex } from "@@/server/models/azure/search/SearchIndex";
 import { SearchIndexSearchableFieldsMap } from "@@/server/models/azure/search/SearchIndexSearchableFieldsMap";
@@ -10,8 +9,8 @@ import { getOffsetPaginationData } from "@@/server/services/pagination/offset/ge
 import { isPartitionKey } from "@esposter/shared";
 
 export const searchMessages = async ({
-  limit = DEFAULT_READ_LIMIT,
-  offset = 0,
+  limit,
+  offset,
   query,
   roomId,
   sortBy,

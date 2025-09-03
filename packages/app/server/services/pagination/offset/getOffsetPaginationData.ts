@@ -11,6 +11,5 @@ export const getOffsetPaginationData = <TItem extends ToData<AEntity>>(
   return {
     hasMore,
     items: filteredItems,
-    offset: 0,
   };
 };

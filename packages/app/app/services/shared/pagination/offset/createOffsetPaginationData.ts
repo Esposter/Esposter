@@ -2,17 +2,14 @@ import { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPag
 
 export const createOffsetPaginationData = <TItem>(baseItems?: Ref<TItem[]>) => {
   if (baseItems) {
-    const offset = ref(0);
     const hasMore = ref(false);
 
     const initializeOffsetPaginationData = (data: OffsetPaginationData<TItem>) => {
       baseItems.value = data.items;
-      offset.value = data.offset;
       hasMore.value = data.hasMore;
     };
     const resetOffsetPaginationData = () => {
       baseItems.value = [];
-      offset.value = 0;
       hasMore.value = false;
     };
 
@@ -20,7 +17,6 @@ export const createOffsetPaginationData = <TItem>(baseItems?: Ref<TItem[]>) => {
       hasMore,
       initializeOffsetPaginationData,
       items: baseItems,
-      offset,
       resetOffsetPaginationData,
     };
   }
@@ -30,12 +26,6 @@ export const createOffsetPaginationData = <TItem>(baseItems?: Ref<TItem[]>) => {
     get: () => offsetPaginationData.value.items,
     set: (items) => {
       offsetPaginationData.value.items = items;
-    },
-  });
-  const offset = computed({
-    get: () => offsetPaginationData.value.offset,
-    set: (offset) => {
-      offsetPaginationData.value.offset = offset;
     },
   });
   const hasMore = computed({
@@ -56,7 +46,6 @@ export const createOffsetPaginationData = <TItem>(baseItems?: Ref<TItem[]>) => {
     hasMore,
     initializeOffsetPaginationData,
     items,
-    offset,
     resetOffsetPaginationData,
   };
 };
