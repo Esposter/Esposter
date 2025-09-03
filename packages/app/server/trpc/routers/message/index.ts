@@ -2,7 +2,6 @@ import type { AzureUpdateEntity } from "#shared/models/azure/AzureUpdateEntity";
 import type { FileSasEntity } from "#shared/models/message/FileSasEntity";
 
 import { rooms, selectRoomSchema } from "#shared/db/schema/rooms";
-import { selectSearchHistorySchema } from "#shared/db/schema/searchHistories";
 import { AzureEntityType } from "#shared/models/azure/AzureEntityType";
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 import { FileEntity, fileEntitySchema } from "#shared/models/azure/FileEntity";
@@ -10,11 +9,11 @@ import { createMessageInputSchema } from "#shared/models/db/message/CreateMessag
 import { createTypingInputSchema } from "#shared/models/db/message/CreateTypingInput";
 import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
 import { MessageEntity, messageEntitySchema } from "#shared/models/db/message/MessageEntity";
+import { searchMessagesInputSchema } from "#shared/models/db/message/SearchMessagesInput";
 import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadata";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
-import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
 import { MAX_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
@@ -23,7 +22,6 @@ import { useContainerClient } from "@@/server/composables/azure/useContainerClie
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { useSendCreateMessageNotification } from "@@/server/composables/message/useSendCreateMessageNotification";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
-import { filterSchema } from "@@/server/models/message/Filter";
 import { pushSubscriptionSchema } from "@@/server/models/PushSubscription";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { cloneFiles } from "@@/server/services/azure/container/cloneFiles";
@@ -87,16 +85,6 @@ const readMessagesByRowKeysInputSchema = z.object({
   rowKeys: messageEntitySchema.shape.rowKey.array().min(1).max(MAX_READ_LIMIT),
 });
 export type ReadMessagesByRowKeysInput = z.infer<typeof readMessagesByRowKeysInputSchema>;
-
-const searchMessagesInputSchema = z.object({
-  ...createOffsetPaginationParamsSchema(messageEntitySchema.keyof(), 0, [
-    { key: ItemMetadataPropertyNames.createdAt, order: SortOrder.Desc },
-  ]).shape,
-  filters: filterSchema.array().min(1).max(MAX_READ_LIMIT).optional(),
-  query: selectSearchHistorySchema.shape.query,
-  roomId: selectRoomSchema.shape.id,
-});
-export type SearchMessagesInput = z.infer<typeof searchMessagesInputSchema>;
 
 const generateUploadFileSasEntitiesInputSchema = z.object({
   files: fileEntitySchema.pick({ filename: true, mimetype: true }).array().min(1).max(MAX_READ_LIMIT),

@@ -1,10 +1,12 @@
+import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
+import type { Filter } from "#shared/models/message/Filter";
 import type { FilterType } from "#shared/models/message/FilterType";
-import type { Filter } from "@@/server/models/message/Filter";
 
 import { createDataMap } from "@/services/shared/createDataMap";
+import { createOffsetPaginationDataMap } from "@/services/shared/pagination/offset/createOffsetPaginationDataMap";
 import { useRoomStore } from "@/store/message/room";
 
-export const useSearchFilterStore = defineStore("message/searchFilter", () => {
+export const useSearchMessageStore = defineStore("message/searchMessage", () => {
   const roomStore = useRoomStore();
   const { data: selectedFilters } = createDataMap<Filter[]>(() => roomStore.currentRoomId, []);
   const createFilter = (type: FilterType) => {
@@ -23,5 +25,6 @@ export const useSearchFilterStore = defineStore("message/searchFilter", () => {
     deleteFilter,
     hasFilters,
     selectedFilters,
+    ...createOffsetPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId),
   };
 });

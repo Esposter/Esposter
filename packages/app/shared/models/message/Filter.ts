@@ -1,7 +1,7 @@
 import type { FilterType } from "#shared/models/message/FilterType";
 
 import { filterTypeSchema } from "#shared/models/message/FilterType";
-import { FILTER_VALUE_MAX_LENGTH } from "@@/server/services/message/constants";
+import { FILTER_VALUE_MAX_LENGTH } from "#shared/services/message/constants";
 import { z } from "zod";
 
 export interface Filter {

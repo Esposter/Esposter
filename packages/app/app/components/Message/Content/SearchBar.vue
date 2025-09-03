@@ -1,24 +1,34 @@
 <script setup lang="ts">
 import { FilterType } from "#shared/models/message/FilterType";
-import { useSearchFilterStore } from "@/store/message/searchFilter";
+import { useReadSearchedMessages } from "@/composables/message/useReadSearchedMessages";
+import { useSearchMessageStore } from "@/store/message/searchMessage";
 
-const searchFilterStore = useSearchFilterStore();
-const { clearFilters, createFilter } = searchFilterStore;
-const { hasFilters, selectedFilters } = storeToRefs(searchFilterStore);
+const searchMessageStore = useSearchMessageStore();
+const { clearFilters, createFilter } = searchMessageStore;
+const { hasFilters, hasMore, items, offset, selectedFilters } = storeToRefs(searchMessageStore);
+const activeSelectedFilter = computed({
+  get: () => selectedFilters.value.at(-1),
+  set: (value) => {
+    if (!value) return;
+    selectedFilters.value[selectedFilters.value.length - 1] = value;
+  },
+});
 const filterTypes = Object.values(FilterType);
-const { hasMoreMessagesSearched, messageSearchQuery, messagesSearched } = useMessageSearcher();
+const readSearchedMessages = useReadSearchedMessages();
+const messageSearchQuery = ref("");
 const isEmpty = computed(() => !messageSearchQuery.value && !hasFilters.value);
-const clearSearch = () => {
-  messageSearchQuery.value = "";
-  clearFilters();
-};
 const onEscape = () => {
   (document.activeElement as HTMLElement | null)?.blur();
 };
 </script>
 
 <template>
-  <MessageContentSearchMenu :messages="messagesSearched" :has-more="hasMoreMessagesSearched" @select="createFilter">
+  <MessageContentSearchMenu
+    :messages="items"
+    :has-more
+    @select="createFilter"
+    @read-more="() => readSearchedMessages({ query: messageSearchQuery, offset })"
+  >
     <template #activator="props">
       <v-autocomplete
         v-model="selectedFilters"
@@ -33,6 +43,20 @@ const onEscape = () => {
         hide-no-data
         multiple
         :="props"
+        @keydown.enter="
+          async ({ preventDefault }: KeyboardEvent) => {
+            if (activeSelectedFilter && !activeSelectedFilter.value) {
+              const value = messageSearchQuery.trim();
+              if (!value) return;
+              activeSelectedFilter.value = value;
+              preventDefault();
+              messageSearchQuery = '';
+              return;
+            }
+
+            await readSearchedMessages({ query: messageSearchQuery });
+          }
+        "
         @keydown.esc="onEscape()"
         @update:search="
           (value: string) => {
@@ -60,7 +84,12 @@ const onEscape = () => {
             size="small"
             variant="plain"
             :ripple="false"
-            @click="clearSearch()"
+            @click="
+              () => {
+                messageSearchQuery = '';
+                clearFilters();
+              }
+            "
           />
         </template>
         <template #chip="{ item: { raw } }">
