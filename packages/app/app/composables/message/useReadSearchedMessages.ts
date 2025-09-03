@@ -9,7 +9,7 @@ export const useReadSearchedMessages = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const searchMessageStore = useSearchMessageStore();
-  const { hasMore, items } = storeToRefs(searchMessageStore);
+  const { hasMore, messages } = storeToRefs(searchMessageStore);
   const { selectedFilters } = storeToRefs(searchMessageStore);
   return async ({ offset, query }: PartialByKeys<Pick<SearchMessagesInput, "offset" | "query">, "offset">) => {
     if (!currentRoomId.value) return;
@@ -20,7 +20,7 @@ export const useReadSearchedMessages = () => {
       query: query.trim(),
       roomId: currentRoomId.value,
     });
-    items.value = response.items;
+    messages.value = response.items;
     hasMore.value = response.hasMore;
   };
 };
