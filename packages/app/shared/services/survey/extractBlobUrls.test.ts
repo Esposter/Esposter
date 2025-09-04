@@ -1,27 +1,21 @@
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 import { extractBlobUrls } from "#shared/services/survey/extractBlobUrls";
-import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
-describe(extractBlobUrls, async () => {
-  const mocks = await vi.hoisted(async () => {
-    const blobUrl = "https://mockaccount.blob.core.windows.net";
-    const AzureContainer = (await import("#shared/models/azure/blob/AzureContainer")).AzureContainer;
-    return {
-      blobUrl,
-      containerUrl: `${blobUrl}/${AzureContainer.SurveyAssets}`,
-    };
-  });
+const mocks = await vi.hoisted(async () => {
+  const blobUrl = "https://mockaccount.blob.core.windows.net";
+  const AzureContainer = (await import("#shared/models/azure/blob/AzureContainer")).AzureContainer;
+  return {
+    blobUrl,
+    containerUrl: `${blobUrl}/${AzureContainer.SurveyAssets}`,
+  };
+});
 
-  beforeAll(() => {
-    vi.mock("#shared/services/azure/container/getBlobUrl", () => ({
-      getBlobUrl: () => mocks.blobUrl,
-    }));
-  });
+vi.mock("#shared/services/azure/container/getBlobUrl", () => ({
+  getBlobUrl: () => mocks.blobUrl,
+}));
 
-  afterAll(() => {
-    vi.doUnmock("#shared/util/azure/getBlobUrl");
-  });
-
+describe(extractBlobUrls, () => {
   test("should return an empty array for an empty model string", () => {
     expect.hasAssertions();
     expect(extractBlobUrls("")).toStrictEqual([]);
