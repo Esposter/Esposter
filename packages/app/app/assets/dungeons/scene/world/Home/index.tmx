@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="20" height="34" tilewidth="64" tileheight="64" infinite="0" nextlayerid="27" nextobjectid="35">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="20" height="34" tilewidth="64" tileheight="64" infinite="0" nextlayerid="27" nextobjectid="35">
  <editorsettings>
   <export target="tilemap.json" format="json"/>
  </editorsettings>
- <tileset firstgid="1" source="../../../../../public/tilesets/axulart/BasicPlains.tsx"/>
- <tileset firstgid="65" source="../../../../../public/tilesets/axulart/BeachAndCaves.tsx"/>
- <tileset firstgid="185" source="../../../../../public/tilesets/firstParty/Grass.tsx"/>
- <tileset firstgid="189" source="../../../../../public/tilesets/firstParty/Collision.tsx"/>
- <tileset firstgid="190" source="../../../../../public/tilesets/firstParty/Bushes.tsx"/>
- <tileset firstgid="194" source="../../../../../public/tilesets/firstParty/Encounter.tsx"/>
- <tileset firstgid="195" source="../../../../../public/tilesets/axulart/House.tsx"/>
- <tileset firstgid="207" source="../../../../../public/tilesets/axulart/HouseInterior.tsx"/>
- <tileset firstgid="327" source="../../../../../public/tilesets/firstParty/Entrance.tsx"/>
- <tileset firstgid="330" source="../../../../../public/tilesets/firstParty/Teleport.tsx"/>
+ <tileset firstgid="1" source="../../../../../../public/tilesets/axulart/BasicPlains.tsx"/>
+ <tileset firstgid="65" source="../../../../../../public/tilesets/axulart/BeachAndCaves.tsx"/>
+ <tileset firstgid="185" source="../../../../../../public/tilesets/firstParty/Grass.tsx"/>
+ <tileset firstgid="189" source="../../../../../../public/tilesets/firstParty/Collision.tsx"/>
+ <tileset firstgid="190" source="../../../../../../public/tilesets/firstParty/Bushes.tsx"/>
+ <tileset firstgid="194" source="../../../../../../public/tilesets/firstParty/Encounter.tsx"/>
+ <tileset firstgid="195" source="../../../../../../public/tilesets/axulart/House.tsx"/>
+ <tileset firstgid="207" source="../../../../../../public/tilesets/axulart/HouseInterior.tsx"/>
+ <tileset firstgid="327" source="../../../../../../public/tilesets/firstParty/Entrance.tsx"/>
+ <tileset firstgid="330" source="../../../../../../public/tilesets/firstParty/Teleport.tsx"/>
  <layer id="3" name="Ground" width="20" height="34" locked="1">
   <data encoding="csv">
 188,186,188,187,188,188,188,185,188,188,186,186,188,186,188,188,187,188,188,188,
