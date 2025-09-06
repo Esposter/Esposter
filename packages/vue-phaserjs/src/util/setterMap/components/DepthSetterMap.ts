@@ -8,6 +8,7 @@ export const DepthSetterMap = {
     if (value === undefined) return;
 
     gameObject.setDepth(value);
+    if (!(gameObject.parentContainer as GameObjects.Container | null)) return;
     const i = gameObject.parentContainer.list.findIndex(
       (obj) => "depth" in obj && typeof obj.depth === "number" && obj.depth > gameObject.depth,
     );
