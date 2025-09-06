@@ -4,7 +4,6 @@ import type { WorldData } from "#shared/models/dungeons/data/world/WorldData";
 import type { Tilemaps } from "phaser";
 
 import { useDungeonsStore } from "@/store/dungeons";
-
 // We will create the tilemap and its metadata in the world scene vue component
 export const ExternalWorldSceneStore = {
   objectLayerMap: new Map<ObjectgroupName, Tilemaps.ObjectLayer | undefined>(),
@@ -23,9 +22,7 @@ export const useWorldSceneStore = defineStore("dungeons/world/scene", () => {
     // 2. The tilemap key watcher to load the new tilemap from the vue-phaser library
     await nextTick();
   };
-
   const worldData = computed<WorldData>(() => dungeonsStore.save.world[tilemapKey.value]);
-
   return {
     switchToTilemap,
     tilemapKey,
