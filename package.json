@@ -274,6 +274,8 @@
     "@esposter/app",
     "@parcel/watcher",
     "core-js",
-    "unrs-resolver"
+    "esbuild",
+    "unrs-resolver",
+    "vue-demi"
   ]
 }
