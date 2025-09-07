@@ -6731,8 +6731,8 @@ packages:
       eslint-import-resolver-node:
         optional: true
 
-  eslint-plugin-jsdoc@54.3.1:
-    resolution: {integrity: sha512-6KlEwRCaQfSi1Wsis4cxsqDfOuQDPG56ozSPCkG+N9aISTQpahbo2n0YZs6c7CIVXQzVdYSxuvQ6w31rfeiMhw==}
+  eslint-plugin-jsdoc@54.4.0:
+    resolution: {integrity: sha512-jH4W/E89kEQPY3WxgkJ4ZAC8DJ7boUCeh3MO6hSX+JRzOkIiJ4rCA3lUE73ufWNrafpJqueZ5Lztqf5eK+ry7Q==}
     engines: {node: '>=20.11.0'}
     peerDependencies:
       eslint: ^7.0.0 || ^8.0.0 || ^9.0.0
@@ -9254,8 +9254,8 @@ packages:
   prosemirror-transform@1.10.4:
     resolution: {integrity: sha512-pwDy22nAnGqNR1feOQKHxoFkkUtepoFAd3r2hbEDsnf4wp57kKA36hXsB3njA9FtONBEwSDnDeCiJe+ItD+ykw==}
 
-  prosemirror-view@1.40.1:
-    resolution: {integrity: sha512-pbwUjt3G7TlsQQHDiYSupWBhJswpLVB09xXm1YiJPdkjkh9Pe7Y51XdLh5VWIZmROLY8UpUpG03lkdhm9lzIBA==}
+  prosemirror-view@1.41.0:
+    resolution: {integrity: sha512-FatMIIl0vRHMcNc3sPy3cMw5MMyWuO1nWQxqvYpJvXAruucGvmQ2tyyjT2/Lbok77T9a/qZqBVCq4sj43V2ihw==}
 
   proto-list@1.2.4:
     resolution: {integrity: sha512-vtK/94akxsTMhe0/cbfpR+syPuszcuwhqVjJq26CuNDgFGj682oRBXOP5MJpv2r7JtE8MsiepGIqvvOTBwn2vA==}
@@ -10212,6 +10212,10 @@ packages:
 
   tinyglobby@0.2.14:
     resolution: {integrity: sha512-tX5e7OM1HnYr2+a2C/4V0htOcSQcoSTH9KgJnVvNm5zm/cyEWKJ7j7YutsH9CxMdtOkkLFy2AHrMci9IM8IPZQ==}
+    engines: {node: '>=12.0.0'}
+
+  tinyglobby@0.2.15:
+    resolution: {integrity: sha512-j2Zq4NyQYG5XMST4cbs02Ak8iJUdxRM0XI5QyxXuZOzKOINmWurp3smXu3y5wDcJrptwpSjgXHzIQxR0omXljQ==}
     engines: {node: '>=12.0.0'}
 
   tinypool@1.1.1:
@@ -12091,14 +12095,14 @@ snapshots:
   '@babel/template@7.27.2':
     dependencies:
       '@babel/code-frame': 7.27.1
-      '@babel/parser': 7.28.4
+      '@babel/parser': 7.27.7
       '@babel/types': 7.28.4
 
   '@babel/traverse@7.27.7':
     dependencies:
       '@babel/code-frame': 7.27.1
       '@babel/generator': 7.28.3
-      '@babel/parser': 7.28.4
+      '@babel/parser': 7.27.7
       '@babel/template': 7.27.2
       '@babel/types': 7.28.4
       debug: 4.4.1
@@ -12706,7 +12710,7 @@ snapshots:
       mlly: 1.8.0
       mrmime: 2.0.1
       open: 10.2.0
-      tinyglobby: 0.2.14
+      tinyglobby: 0.2.15
       ws: 8.18.3
     transitivePeerDependencies:
       - bufferutil
@@ -13019,7 +13023,7 @@ snapshots:
       resolve-from: 5.0.0
       semver: 7.7.2
       slash: 5.1.0
-      tinyglobby: 0.2.14
+      tinyglobby: 0.2.15
       tinyrainbow: 3.0.2
       write-file-atomic: 6.0.0
       write-json-file: 6.0.0
@@ -13088,7 +13092,7 @@ snapshots:
       semver: 7.7.2
       ssri: 12.0.0
       tar: 7.4.3
-      tinyglobby: 0.2.14
+      tinyglobby: 0.2.15
       tinyrainbow: 3.0.2
     transitivePeerDependencies:
       - '@75lb/nature'
@@ -13646,7 +13650,7 @@ snapshots:
       eslint-merge-processors: 2.0.0(eslint@9.35.0(jiti@2.5.1))
       eslint-plugin-import-lite: 0.3.0(eslint@9.35.0(jiti@2.5.1))(typescript@5.9.2)
       eslint-plugin-import-x: 4.16.1(@typescript-eslint/utils@8.42.0(eslint@9.35.0(jiti@2.5.1))(typescript@5.9.2))(eslint@9.35.0(jiti@2.5.1))
-      eslint-plugin-jsdoc: 54.3.1(eslint@9.35.0(jiti@2.5.1))
+      eslint-plugin-jsdoc: 54.4.0(eslint@9.35.0(jiti@2.5.1))
       eslint-plugin-regexp: 2.10.0(eslint@9.35.0(jiti@2.5.1))
       eslint-plugin-unicorn: 60.0.0(eslint@9.35.0(jiti@2.5.1))
       eslint-plugin-vue: 10.4.0(@typescript-eslint/parser@8.42.0(eslint@9.35.0(jiti@2.5.1))(typescript@5.9.2))(eslint@9.35.0(jiti@2.5.1))(vue-eslint-parser@10.2.0(eslint@9.35.0(jiti@2.5.1)))
@@ -13716,7 +13720,7 @@ snapshots:
       ohash: 2.0.11
       pathe: 2.0.3
       sirv: 3.0.2
-      tinyglobby: 0.2.14
+      tinyglobby: 0.2.15
       ufo: 1.6.1
       unifont: 0.4.1
       unplugin: 2.3.10
@@ -13765,7 +13769,7 @@ snapshots:
       scule: 1.3.0
       semver: 7.7.2
       std-env: 3.9.0
-      tinyglobby: 0.2.14
+      tinyglobby: 0.2.15
       ufo: 1.6.1
       unctx: 2.4.1
       unimport: 5.2.0
@@ -13792,7 +13796,7 @@ snapshots:
       scule: 1.3.0
       semver: 7.7.2
       std-env: 3.9.0
-      tinyglobby: 0.2.14
+      tinyglobby: 0.2.15
       ufo: 1.6.1
       unctx: 2.4.1
       unimport: 5.2.0
@@ -15152,9 +15156,9 @@ snapshots:
       prosemirror-schema-list: 1.5.1
       prosemirror-state: 1.4.3
       prosemirror-tables: 1.8.1
-      prosemirror-trailing-node: 3.0.0(prosemirror-model@1.25.3)(prosemirror-state@1.4.3)(prosemirror-view@1.40.1)
+      prosemirror-trailing-node: 3.0.0(prosemirror-model@1.25.3)(prosemirror-state@1.4.3)(prosemirror-view@1.41.0)
       prosemirror-transform: 1.10.4
-      prosemirror-view: 1.40.1
+      prosemirror-view: 1.41.0
 
   '@tiptap/starter-kit@3.4.1':
     dependencies:
@@ -15561,7 +15565,7 @@ snapshots:
       magic-string: 0.30.18
       pathe: 2.0.3
       perfect-debounce: 1.0.0
-      tinyglobby: 0.2.14
+      tinyglobby: 0.2.15
       unplugin-utils: 0.3.0
 
   '@unocss/config@66.5.0':
@@ -15635,7 +15639,7 @@ snapshots:
       '@unocss/rule-utils': 66.5.0
       css-tree: 3.1.0
       postcss: 8.5.6
-      tinyglobby: 0.2.14
+      tinyglobby: 0.2.15
 
   '@unocss/preset-attributify@66.5.0':
     dependencies:
@@ -15729,7 +15733,7 @@ snapshots:
       chokidar: 3.6.0
       magic-string: 0.30.18
       pathe: 2.0.3
-      tinyglobby: 0.2.14
+      tinyglobby: 0.2.15
       unplugin-utils: 0.3.0
       vite: 7.1.4(@types/node@24.3.1)(jiti@2.5.1)(lightningcss@1.30.1)(sass-embedded@1.92.1)(sass@1.92.1)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1)
 
@@ -15741,7 +15745,7 @@ snapshots:
       chokidar: 3.6.0
       magic-string: 0.30.18
       pathe: 2.0.3
-      tinyglobby: 0.2.14
+      tinyglobby: 0.2.15
       unplugin: 2.3.10
       unplugin-utils: 0.3.0
       webpack: 5.101.3(esbuild@0.23.1)
@@ -17843,7 +17847,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-jsdoc@54.3.1(eslint@9.35.0(jiti@2.5.1)):
+  eslint-plugin-jsdoc@54.4.0(eslint@9.35.0(jiti@2.5.1)):
     dependencies:
       '@es-joy/jsdoccomment': 0.53.0
       are-docs-informative: 0.0.2
@@ -19712,7 +19716,7 @@ snapshots:
       proc-log: 5.0.0
       semver: 7.7.2
       tar: 7.4.3
-      tinyglobby: 0.2.14
+      tinyglobby: 0.2.15
       which: 5.0.0
     transitivePeerDependencies:
       - supports-color
@@ -20789,20 +20793,20 @@ snapshots:
     dependencies:
       prosemirror-state: 1.4.3
       prosemirror-transform: 1.10.4
-      prosemirror-view: 1.40.1
+      prosemirror-view: 1.41.0
 
   prosemirror-gapcursor@1.3.2:
     dependencies:
       prosemirror-keymap: 1.2.3
       prosemirror-model: 1.25.3
       prosemirror-state: 1.4.3
-      prosemirror-view: 1.40.1
+      prosemirror-view: 1.41.0
 
   prosemirror-history@1.4.1:
     dependencies:
       prosemirror-state: 1.4.3
       prosemirror-transform: 1.10.4
-      prosemirror-view: 1.40.1
+      prosemirror-view: 1.41.0
       rope-sequence: 1.3.4
 
   prosemirror-inputrules@1.5.0:
@@ -20846,7 +20850,7 @@ snapshots:
     dependencies:
       prosemirror-model: 1.25.3
       prosemirror-transform: 1.10.4
-      prosemirror-view: 1.40.1
+      prosemirror-view: 1.41.0
 
   prosemirror-tables@1.8.1:
     dependencies:
@@ -20854,21 +20858,21 @@ snapshots:
       prosemirror-model: 1.25.3
       prosemirror-state: 1.4.3
       prosemirror-transform: 1.10.4
-      prosemirror-view: 1.40.1
+      prosemirror-view: 1.41.0
 
-  prosemirror-trailing-node@3.0.0(prosemirror-model@1.25.3)(prosemirror-state@1.4.3)(prosemirror-view@1.40.1):
+  prosemirror-trailing-node@3.0.0(prosemirror-model@1.25.3)(prosemirror-state@1.4.3)(prosemirror-view@1.41.0):
     dependencies:
       '@remirror/core-constants': 3.0.0
       escape-string-regexp: 4.0.0
       prosemirror-model: 1.25.3
       prosemirror-state: 1.4.3
-      prosemirror-view: 1.40.1
+      prosemirror-view: 1.41.0
 
   prosemirror-transform@1.10.4:
     dependencies:
       prosemirror-model: 1.25.3
 
-  prosemirror-view@1.40.1:
+  prosemirror-view@1.41.0:
     dependencies:
       prosemirror-model: 1.25.3
       prosemirror-state: 1.4.3
@@ -21099,7 +21103,7 @@ snapshots:
       picomatch: 4.0.3
       postcss: 8.5.6
       rolldown: 1.0.0-beta.33
-      tinyglobby: 0.2.14
+      tinyglobby: 0.2.15
     optionalDependencies:
       '@types/node': 24.3.1
       esbuild: 0.23.1
@@ -21119,7 +21123,7 @@ snapshots:
       picomatch: 4.0.3
       postcss: 8.5.6
       rolldown: 1.0.0-beta.33
-      tinyglobby: 0.2.14
+      tinyglobby: 0.2.15
     optionalDependencies:
       '@types/node': 24.3.1
       esbuild: 0.25.9
@@ -21957,6 +21961,11 @@ snapshots:
       fdir: 6.5.0(picomatch@4.0.3)
       picomatch: 4.0.3
 
+  tinyglobby@0.2.15:
+    dependencies:
+      fdir: 6.5.0(picomatch@4.0.3)
+      picomatch: 4.0.3
+
   tinypool@1.1.1: {}
 
   tinyrainbow@2.0.0: {}
@@ -22223,7 +22232,7 @@ snapshots:
       pkg-types: 2.3.0
       scule: 1.3.0
       strip-literal: 3.0.0
-      tinyglobby: 0.2.14
+      tinyglobby: 0.2.15
       unplugin: 2.3.10
       unplugin-utils: 0.2.5
 
@@ -22592,7 +22601,7 @@ snapshots:
     dependencies:
       debug: 4.4.1
       pretty-bytes: 6.1.1
-      tinyglobby: 0.2.14
+      tinyglobby: 0.2.15
       vite: 7.1.4(@types/node@24.3.1)(jiti@2.5.1)(lightningcss@1.30.1)(sass-embedded@1.92.1)(sass@1.92.1)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1)
       workbox-build: 7.3.0
       workbox-window: 7.3.0
@@ -22638,7 +22647,7 @@ snapshots:
       picomatch: 4.0.3
       postcss: 8.5.6
       rollup: 4.50.0
-      tinyglobby: 0.2.14
+      tinyglobby: 0.2.15
     optionalDependencies:
       '@types/node': 24.3.1
       fsevents: 2.3.3
@@ -22686,7 +22695,7 @@ snapshots:
       std-env: 3.9.0
       tinybench: 2.9.0
       tinyexec: 0.3.2
-      tinyglobby: 0.2.14
+      tinyglobby: 0.2.15
       tinypool: 1.1.1
       tinyrainbow: 2.0.0
       vite: rolldown-vite@7.1.4(@types/node@24.3.1)(esbuild@0.23.1)(jiti@2.5.1)(sass-embedded@1.92.1)(sass@1.92.1)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1)
@@ -22729,7 +22738,7 @@ snapshots:
       std-env: 3.9.0
       tinybench: 2.9.0
       tinyexec: 0.3.2
-      tinyglobby: 0.2.14
+      tinyglobby: 0.2.15
       tinypool: 1.1.1
       tinyrainbow: 2.0.0
       vite: rolldown-vite@7.1.4(@types/node@24.3.1)(esbuild@0.25.9)(jiti@2.5.1)(sass-embedded@1.92.1)(sass@1.92.1)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1)
