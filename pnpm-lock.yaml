@@ -403,8 +403,8 @@ catalogs:
       specifier: ^2.4.0
       version: 2.4.0
     obscenity:
-      specifier: ^0.4.4
-      version: 0.4.4
+      specifier: ^0.4.5
+      version: 0.4.5
     omit-deep-lodash:
       specifier: ^1.1.7
       version: 1.1.7
@@ -897,7 +897,7 @@ importers:
         version: 7.0.1
       obscenity:
         specifier: 'catalog:'
-        version: 0.4.4
+        version: 0.4.5
       omit-deep-lodash:
         specifier: 'catalog:'
         version: 1.1.7
@@ -8611,8 +8611,8 @@ packages:
   obliterator@2.0.5:
     resolution: {integrity: sha512-42CPE9AhahZRsMNslczq0ctAEtqk8Eka26QofnqC346BZdHDySk3LWka23LI7ULIw11NmltpiLagIq8gBozxTw==}
 
-  obscenity@0.4.4:
-    resolution: {integrity: sha512-z5bgosYRNzu95yIkRggCznD6UNGZ9jB35/GDtTu+eDOVmtnHfLJ+rBMpQxsQLKe+WrMdvzvkdlg2NLYaDxWFWA==}
+  obscenity@0.4.5:
+    resolution: {integrity: sha512-5NNZIolweauL3pDmSbScAa39LBm70ozdtffnUlPnM+MVNYx8KIchKVa7KY8aYOggWTF+O7Ih18UU5Y9kyIqBPQ==}
     engines: {node: '>=18.0.0'}
 
   ofetch@1.4.1:
@@ -20135,7 +20135,7 @@ snapshots:
 
   obliterator@2.0.5: {}
 
-  obscenity@0.4.4: {}
+  obscenity@0.4.5: {}
 
   ofetch@1.4.1:
     dependencies:
