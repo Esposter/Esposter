@@ -24,7 +24,7 @@ onClickExceptDrag(
 <template>
   <div ref="container">
     <DashboardVisualPreview :type />
-    <DashboardVisualPreviewRemoveButton :id :type />
+    <DashboardVisualPreviewDeleteButton :id :type />
     <DashboardVisualPreviewEditFormDialog v-if="editedItem?.id === id" v-model="editedItem" />
   </div>
 </template>

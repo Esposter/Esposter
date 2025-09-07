@@ -4,4 +4,5 @@ export enum BinaryOperator {
   gt = "gt",
   le = "le",
   lt = "lt",
+  ne = "ne",
 }

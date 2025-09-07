@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.13.1](https://github.com/Esposter/Esposter/compare/v2.13.0...v2.13.1) (2025-08-31)
+
+**Note:** Version bump only for package parse-tmx
+
+# [2.13.0](https://github.com/Esposter/Esposter/compare/v2.12.0...v2.13.0) (2025-08-31)
+
+**Note:** Version bump only for package parse-tmx
+
+# [2.12.0](https://github.com/Esposter/Esposter/compare/v2.11.0...v2.12.0) (2025-08-15)
+
+### Bug Fixes
+
+* docs links ([f6d1bf0](https://github.com/Esposter/Esposter/commit/f6d1bf0d0b369f086bb535bd18211a221e6818b9))
+
 # [2.11.0](https://github.com/Esposter/Esposter/compare/v2.10.0...v2.11.0) (2025-08-11)
 
 **Note:** Version bump only for package parse-tmx

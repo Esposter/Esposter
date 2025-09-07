@@ -1,19 +1,19 @@
 <script setup lang="ts">
 import type { Editor } from "@tiptap/vue-3";
 
-import { useMessageStore } from "@/store/esbabbler/message";
-import { useMessageInputStore } from "@/store/esbabbler/messageInput";
+import { useDataStore } from "@/store/message/data";
+import { useInputStore } from "@/store/message/input";
 
 interface CustomEmojiPickerButtonProps {
   editor?: Editor;
 }
 
 const { editor } = defineProps<CustomEmojiPickerButtonProps>();
-const messageStore = useMessageStore();
-const { sendMessage } = messageStore;
-const messageInputStore = useMessageInputStore();
-const { validateMessageInput } = messageInputStore;
-const disabled = computed(() => !validateMessageInput(editor));
+const dataStore = useDataStore();
+const { sendMessage } = dataStore;
+const inputStore = useInputStore();
+const { validateInput } = inputStore;
+const disabled = computed(() => !validateInput(editor));
 const backgroundColor = computed(() => (disabled.value ? "transparent" : "currentColor"));
 </script>
 

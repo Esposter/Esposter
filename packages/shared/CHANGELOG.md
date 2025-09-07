@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.13.1](https://github.com/Esposter/Esposter/compare/v2.13.0...v2.13.1) (2025-08-31)
+
+**Note:** Version bump only for package @esposter/shared
+
+# [2.13.0](https://github.com/Esposter/Esposter/compare/v2.12.0...v2.13.0) (2025-08-31)
+
+### Bug Fixes
+
+* move is partition key and is row key to shared and fix up some things with search bar ([a3409c4](https://github.com/Esposter/Esposter/commit/a3409c476fed907a2ac9f0c26816c0a621821ca7))
+* null condition ([d3f9292](https://github.com/Esposter/Esposter/commit/d3f9292ec5a4d4b4f23ba70a4a8654debfdd8d96))
+* self-ref ([6a8db43](https://github.com/Esposter/Esposter/commit/6a8db4359d617f59c58663fda456d641bbba750f))
+
+### Features
+
+* Add basic search first ([8d413dc](https://github.com/Esposter/Esposter/commit/8d413dc1707db91a8370d1777dab3dc538d90826))
+
+# [2.12.0](https://github.com/Esposter/Esposter/compare/v2.11.0...v2.12.0) (2025-08-15)
+
+### Bug Fixes
+
+* support unary operators and ne binary operator ([b70e1b1](https://github.com/Esposter/Esposter/commit/b70e1b16654ad1ddcdf38191acfbfb00141818b4))
+
+### Features
+
+* soft delete messages ([9305888](https://github.com/Esposter/Esposter/commit/93058887adcfa25d94ee7476187816a8de197e3b))
+
 # [2.11.0](https://github.com/Esposter/Esposter/compare/v2.10.0...v2.11.0) (2025-08-11)
 
 ### Features

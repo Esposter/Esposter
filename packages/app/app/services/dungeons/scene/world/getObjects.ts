@@ -4,12 +4,12 @@ import type { SetRequired } from "type-fest";
 
 import { getObjectUnitPosition } from "@/services/dungeons/tilemap/getObjectUnitPosition";
 
-export const getObjects = (objectLayer: Tilemaps.ObjectLayer) => {
+export const getObjects = (tilemap: Tilemaps.Tilemap, objectLayer: Tilemaps.ObjectLayer) => {
   const objects: SetRequired<Types.Tilemaps.TiledObject, keyof Position>[] = [];
 
   for (const { x, y, ...rest } of objectLayer.objects) {
     if (!(x && y)) continue;
-    objects.push({ ...getObjectUnitPosition({ x, y }), ...rest });
+    objects.push({ ...getObjectUnitPosition(tilemap, { x, y }), ...rest });
   }
 
   return objects;

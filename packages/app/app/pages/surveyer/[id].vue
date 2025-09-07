@@ -11,10 +11,10 @@ const { creator, dialog } = useSurveyCreator(survey);
 <template>
   <NuxtLayout>
     <div h-full flex flex-col>
-      <SurveyerHeader v-model="survey" />
+      <SurveyHeader v-model="survey" />
       <SurveyCreatorComponent :model="creator" />
     </div>
-    <SurveyerPublishSurveyDialog v-model="dialog" v-model:survey="survey" />
+    <SurveyPublishSurveyDialog v-model="dialog" v-model:survey="survey" />
   </NuxtLayout>
 </template>
 

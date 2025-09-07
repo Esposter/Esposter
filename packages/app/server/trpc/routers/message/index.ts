@@ -1,5 +1,5 @@
 import type { AzureUpdateEntity } from "#shared/models/azure/AzureUpdateEntity";
-import type { FileSasEntity } from "#shared/models/esbabbler/FileSasEntity";
+import type { FileSasEntity } from "#shared/models/message/FileSasEntity";
 
 import { rooms, selectRoomSchema } from "#shared/db/schema/rooms";
 import { AzureEntityType } from "#shared/models/azure/AzureEntityType";
@@ -9,8 +9,10 @@ import { createMessageInputSchema } from "#shared/models/db/message/CreateMessag
 import { createTypingInputSchema } from "#shared/models/db/message/CreateTypingInput";
 import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
 import { MessageEntity, messageEntitySchema } from "#shared/models/db/message/MessageEntity";
+import { searchMessagesInputSchema } from "#shared/models/db/message/SearchMessagesInput";
 import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
+import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadata";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
@@ -18,7 +20,7 @@ import { MAX_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagin
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
-import { useSendCreateMessageNotification } from "@@/server/composables/esbabbler/useSendCreateMessageNotification";
+import { useSendCreateMessageNotification } from "@@/server/composables/message/useSendCreateMessageNotification";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { pushSubscriptionSchema } from "@@/server/models/PushSubscription";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
@@ -27,22 +29,30 @@ import { deleteFiles } from "@@/server/services/azure/container/deleteFiles";
 import { generateDownloadFileSasUrls } from "@@/server/services/azure/container/generateDownloadFileSasUrls";
 import { generateUploadFileSasEntities } from "@@/server/services/azure/container/generateUploadFileSasEntities";
 import { getBlobName } from "@@/server/services/azure/container/getBlobName";
-import { deleteEntity } from "@@/server/services/azure/table/deleteEntity";
 import { getEntity } from "@@/server/services/azure/table/getEntity";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
-import { createMessage } from "@@/server/services/esbabbler/createMessage";
-import { messageEventEmitter } from "@@/server/services/esbabbler/events/messageEventEmitter";
-import { roomEventEmitter } from "@@/server/services/esbabbler/events/roomEventEmitter";
-import { isRoomId } from "@@/server/services/esbabbler/isRoomId";
-import { readMessages } from "@@/server/services/esbabbler/readMessages";
-import { updateMessage } from "@@/server/services/esbabbler/updateMessage";
 import { on } from "@@/server/services/events/on";
+import { createMessage } from "@@/server/services/message/createMessage";
+import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
+import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmitter";
+import { isRoomId } from "@@/server/services/message/isRoomId";
+import { readMessages } from "@@/server/services/message/readMessages";
+import { searchMessages } from "@@/server/services/message/searchMessages";
+import { updateMessage } from "@@/server/services/message/updateMessage";
 import { router } from "@@/server/trpc";
 import { addProfanityFilterMiddleware } from "@@/server/trpc/middleware/addProfanityFilterMiddleware";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/message/getCreatorProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
-import { getPartitionKeyFilter, InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
+import {
+  InvalidOperationError,
+  isNull as isNullFilter,
+  isPartitionKey,
+  isRowKey,
+  NotFoundError,
+  Operation,
+  UnaryOperator,
+} from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
@@ -60,8 +70,9 @@ const readMessagesInputSchema =
   // always requires a sortBy even though we don't actually need the user to specify it
   z
     .object({
-      ...createCursorPaginationParamsSchema(messageEntitySchema.keyof(), [{ key: "createdAt", order: SortOrder.Desc }])
-        .shape,
+      ...createCursorPaginationParamsSchema(messageEntitySchema.keyof(), [
+        { key: ItemMetadataPropertyNames.createdAt, order: SortOrder.Desc },
+      ]).shape,
       isIncludeValue: z.literal(true).optional(),
       order: z.literal(SortOrder.Asc).optional(),
       roomId: selectRoomSchema.shape.id,
@@ -157,7 +168,7 @@ export const messageRouter = router({
           message: new NotFoundError(AzureEntityType.File, id).message,
         });
 
-      const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
+      const containerClient = await useContainerClient(AzureContainer.MessageAssets);
       const blobName = getBlobName(
         `${messageEntity.partitionKey}/${id}`,
         messageEntity.files.splice(index, 1)[0].filename,
@@ -184,10 +195,13 @@ export const messageRouter = router({
   ),
   deleteMessage: getCreatorProcedure(deleteMessageInputSchema).mutation(
     async ({ ctx: { messageClient, messageEntity }, input }) => {
-      await deleteEntity(messageClient, input.partitionKey, input.rowKey);
+      await updateMessage(messageClient, {
+        ...input,
+        deletedAt: new Date(),
+      } as const satisfies AzureUpdateEntity<MessageEntity>);
       messageEventEmitter.emit("deleteMessage", input);
 
-      const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
+      const containerClient = await useContainerClient(AzureContainer.MessageAssets);
       await deleteFiles(containerClient, messageEntity.files);
     },
   ),
@@ -203,7 +217,7 @@ export const messageRouter = router({
           message: new NotFoundError(AzureEntityType.Message, JSON.stringify({ partitionKey, rowKey })).message,
         });
 
-      const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
+      const containerClient = await useContainerClient(AzureContainer.MessageAssets);
       await Promise.all(
         roomIds.map(async (roomId) => {
           const newFileIds = await cloneFiles(containerClient, messageEntity.files, messageEntity.partitionKey, roomId);
@@ -244,14 +258,14 @@ export const messageRouter = router({
   ),
   generateDownloadFileSasUrls: getMemberProcedure(generateDownloadFileSasUrlsInputSchema, "roomId").query<string[]>(
     async ({ input: { files, roomId } }) => {
-      const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
+      const containerClient = await useContainerClient(AzureContainer.MessageAssets);
       return generateDownloadFileSasUrls(containerClient, files, roomId);
     },
   ),
   generateUploadFileSasEntities: getMemberProcedure(generateUploadFileSasEntitiesInputSchema, "roomId").query<
     FileSasEntity[]
   >(async ({ input: { files, roomId } }) => {
-    const containerClient = await useContainerClient(AzureContainer.EsbabblerAssets);
+    const containerClient = await useContainerClient(AzureContainer.MessageAssets);
     return generateUploadFileSasEntities(containerClient, files, roomId);
   }),
   onCreateMessage: getMemberProcedure(onCreateMessageInputSchema, "roomId").subscription(async function* ({
@@ -334,10 +348,13 @@ export const messageRouter = router({
     async ({ input: { roomId, rowKeys } }) => {
       const messageClient = await useTableClient(AzureTable.Messages);
       return getTopNEntities(messageClient, rowKeys.length, MessageEntity, {
-        filter: `${getPartitionKeyFilter(roomId)} and (${rowKeys.map((rowKey) => `RowKey eq '${rowKey}'`).join(" or ")})`,
+        filter: `${isPartitionKey(roomId)} ${UnaryOperator.and} ${isNullFilter(ItemMetadataPropertyNames.deletedAt)} ${UnaryOperator.and} (${rowKeys
+          .map((rowKey) => isRowKey(rowKey))
+          .join(` ${UnaryOperator.or} `)})`,
       });
     },
   ),
+  searchMessages: getMemberProcedure(searchMessagesInputSchema, "roomId").query(({ input }) => searchMessages(input)),
   updateMessage: addProfanityFilterMiddleware(getCreatorProcedure(updateMessageInputSchema), ["message"]).mutation(
     async ({ ctx: { messageClient }, input }) => {
       await updateMessage(messageClient, input);

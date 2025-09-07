@@ -10,7 +10,7 @@ import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSou
 import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { usePlayerStore } from "@/store/dungeons/player";
-import { ExternalWorldSceneStore, useWorldSceneStore } from "@/store/dungeons/world/scene";
+import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { NotFoundError } from "@esposter/shared";
 import { Cameras } from "phaser";
 import { useCameraStore } from "vue-phaserjs";
@@ -27,16 +27,17 @@ export const doorInteractionEffect: Effect = (scene, teleportObjects) => {
   const { fadeIn, fadeOut } = cameraStore;
   const worldSceneStore = useWorldSceneStore();
   const { switchToTilemap } = worldSceneStore;
+  const { objectLayerMap, tilemap } = storeToRefs(worldSceneStore);
   fadeOut(scene);
   getDungeonsSoundEffect(scene, FileKey.SoundOpenDoor).play();
   scene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, async () => {
     await switchToTilemap(teleportTargetTiledObjectProperty.value.tilemapKey);
 
-    const doorObjectLayer = ExternalWorldSceneStore.objectLayerMap.get(ObjectgroupName.Door);
+    const doorObjectLayer = objectLayerMap.value?.get(ObjectgroupName.Door);
     if (!doorObjectLayer)
       throw new NotFoundError(doorInteractionEffect.name, teleportTargetTiledObjectProperty.value.tilemapKey);
 
-    const doorObjects = getObjects(doorObjectLayer);
+    const doorObjects = getObjects(tilemap.value, doorObjectLayer);
     for (const { properties, x, y } of doorObjects) {
       const idTiledObjectProperty = getTiledObjectProperty<TeleportTarget["id"]>(properties, TeleportObjectProperty.id);
       if (idTiledObjectProperty.value !== teleportTargetTiledObjectProperty.value.id) continue;

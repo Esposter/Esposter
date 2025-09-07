@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { Visual } from "#shared/models/dashboard/data/Visual";
 
-import { useApexOptions } from "@/composables/dashboard/useApexOptions";
 import { VisualTypeDemoDataMap } from "@/services/dashboard/demo/VisualTypeDemoDataMap";
 import VueApexCharts from "vue3-apexcharts";
 

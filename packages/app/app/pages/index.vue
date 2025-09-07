@@ -26,7 +26,7 @@ const { hasMore, posts } = storeToRefs(postStore);
       </v-container>
     </v-pull-to-refresh>
     <template #left>
-      <EsposterProductList />
+      <AppProductList />
     </template>
   </NuxtLayout>
 </template>

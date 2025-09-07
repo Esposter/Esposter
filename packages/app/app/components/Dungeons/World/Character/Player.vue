@@ -10,7 +10,7 @@ import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { usePlayerStore } from "@/store/dungeons/player";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";
-import { ExternalWorldSceneStore, useWorldSceneStore } from "@/store/dungeons/world/scene";
+import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { Direction } from "grid-engine";
 import { Cameras } from "phaser";
 import { onCreate, onNextTick, onShutdown, useInjectSceneKey } from "vue-phaserjs";
@@ -26,7 +26,7 @@ const worldPlayerStore = useWorldPlayerStore();
 const { healParty, respawn } = worldPlayerStore;
 const { isMoving, sprite } = storeToRefs(worldPlayerStore);
 const worldSceneStore = useWorldSceneStore();
-const { tilemapKey } = storeToRefs(worldSceneStore);
+const { layerMap, tilemapKey } = storeToRefs(worldSceneStore);
 const worldDialogStore = useWorldDialogStore();
 const { showMessages } = worldDialogStore;
 const sceneKey = useInjectSceneKey();
@@ -86,10 +86,7 @@ onShutdown((scene) => {
     "
     :on-position-change-finished="
       (scene, { enterTile }) => {
-        const tile = ExternalWorldSceneStore.tilemapKeyLayerMap
-          .get(tilemapKey)
-          ?.get(LayerName.Encounter)
-          ?.getTileAt(enterTile.x, enterTile.y, false);
+        const tile = layerMap?.get(LayerName.Encounter)?.getTileAt(enterTile.x, enterTile.y, false);
         if (!tile) return;
 
         getDungeonsSoundEffect(scene, FileKey.ThirdPartyLeohpazStepGrass).play();

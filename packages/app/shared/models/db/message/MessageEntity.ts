@@ -1,15 +1,16 @@
 import type { CompositeKeyEntity } from "#shared/models/azure/CompositeKeyEntity";
 import type { FileEntity } from "#shared/models/azure/FileEntity";
 import type { ToData } from "#shared/models/entity/ToData";
-import type { LinkPreviewResponse } from "#shared/models/esbabbler/linkPreview/LinkPreviewResponse";
+import type { LinkPreviewResponse } from "#shared/models/message/linkPreview/LinkPreviewResponse";
 import type { Except } from "type-fest";
 
 import { selectUserSchema } from "#shared/db/schema/users";
 import { AzureEntity, createAzureEntitySchema } from "#shared/models/azure/AzureEntity";
 import { fileEntitySchema } from "#shared/models/azure/FileEntity";
 import { MAX_FILE_LIMIT } from "#shared/services/azure/container/constants";
-import { MESSAGE_MAX_LENGTH } from "#shared/services/esbabbler/constants";
-import { refineMessageSchema } from "#shared/services/esbabbler/refineMessageSchema";
+import { MESSAGE_MAX_LENGTH } from "#shared/services/message/constants";
+import { refineMessageSchema } from "#shared/services/message/refineMessageSchema";
+import { getPropertyNames } from "#shared/util/getPropertyNames";
 import { z } from "zod";
 
 export class MessageEntity extends AzureEntity {
@@ -28,6 +29,8 @@ export class MessageEntity extends AzureEntity {
     Object.assign(this, init);
   }
 }
+
+export const MessageEntityPropertyNames = getPropertyNames<MessageEntity>();
 
 export const messageEntitySchema = refineMessageSchema(
   z.object({

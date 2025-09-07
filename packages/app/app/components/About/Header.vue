@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { VUEJS_LOGO_UWU_PATH } from "#shared/services/esposter/constants";
+import { VUEJS_LOGO_UWU_PATH } from "#shared/services/app/constants";
 
 const isDark = useIsDark();
 const { smAndDown } = useDisplay();

@@ -1,7 +1,7 @@
 import type { Survey } from "#shared/db/schema/surveys";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 
-import { useSurveyStore } from "@/store/surveyer/survey";
+import { useSurveyStore } from "@/store/survey";
 
 export const useReadSurveys = async () => {
   const { $trpc } = useNuxtApp();

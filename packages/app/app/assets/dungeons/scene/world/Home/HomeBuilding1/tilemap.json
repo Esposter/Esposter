@@ -203,28 +203,28 @@
  "nextobjectid":4,
  "orientation":"orthogonal",
  "renderorder":"right-down",
- "tiledversion":"1.10.2",
+ "tiledversion":"1.11.2",
  "tileheight":64,
  "tilesets":[
         {
          "firstgid":1,
-         "source":"..\/..\/..\/..\/..\/..\/public\/tilesets\/firstParty\/Collision.tsx"
+         "source":"..\/..\/..\/..\/..\/..\/..\/public\/tilesets\/firstParty\/Collision.tsx"
         }, 
         {
          "firstgid":2,
-         "source":"..\/..\/..\/..\/..\/..\/public\/tilesets\/axulart\/HouseInterior.tsx"
+         "source":"..\/..\/..\/..\/..\/..\/..\/public\/tilesets\/axulart\/HouseInterior.tsx"
         }, 
         {
          "firstgid":122,
-         "source":"..\/..\/..\/..\/..\/..\/public\/tilesets\/firstParty\/Encounter.tsx"
+         "source":"..\/..\/..\/..\/..\/..\/..\/public\/tilesets\/firstParty\/Encounter.tsx"
         }, 
         {
          "firstgid":123,
-         "source":"..\/..\/..\/..\/..\/..\/public\/tilesets\/firstParty\/Entrance.tsx"
+         "source":"..\/..\/..\/..\/..\/..\/..\/public\/tilesets\/firstParty\/Entrance.tsx"
         }, 
         {
          "firstgid":126,
-         "source":"..\/..\/..\/..\/..\/..\/public\/tilesets\/firstParty\/Teleport.tsx"
+         "source":"..\/..\/..\/..\/..\/..\/..\/public\/tilesets\/firstParty\/Teleport.tsx"
         }],
  "tilewidth":64,
  "type":"map",

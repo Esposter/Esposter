@@ -9,8 +9,8 @@ import {
 } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
 import { updateEmojiInputSchema } from "#shared/models/db/message/metadata/UpdateEmojiInput";
-import { createMessageEmojiMetadataEntity } from "#shared/services/esbabbler/createMessageEmojiMetadataEntity";
-import { getUpdatedUserIds } from "#shared/services/esbabbler/emoji/getUpdatedUserIds";
+import { createMessageEmojiMetadataEntity } from "#shared/services/message/createMessageEmojiMetadataEntity";
+import { getUpdatedUserIds } from "#shared/services/message/emoji/getUpdatedUserIds";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
@@ -20,13 +20,13 @@ import { deleteEntity } from "@@/server/services/azure/table/deleteEntity";
 import { getEntity } from "@@/server/services/azure/table/getEntity";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
 import { updateEntity } from "@@/server/services/azure/table/updateEntity";
-import { emojiEventEmitter } from "@@/server/services/esbabbler/events/emojiEventEmitter";
-import { isRoomId } from "@@/server/services/esbabbler/isRoomId";
 import { on } from "@@/server/services/events/on";
+import { emojiEventEmitter } from "@@/server/services/message/events/emojiEventEmitter";
+import { isRoomId } from "@@/server/services/message/isRoomId";
 import { router } from "@@/server/trpc";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { readMetadataInputSchema } from "@@/server/trpc/routers/message";
-import { getPartitionKeyFilter, InvalidOperationError, Operation } from "@esposter/shared";
+import { BinaryOperator, InvalidOperationError, isPartitionKey, Operation, UnaryOperator } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -47,7 +47,7 @@ export const emojiRouter = router({
     const { emojiTag, messageRowKey, type } = MessageEmojiMetadataEntityPropertyNames;
     const foundEmoji = (
       await getTopNEntities(messagesMetadataClient, 1, MessageEmojiMetadataEntity, {
-        filter: `${getPartitionKeyFilter(input.partitionKey)} and ${type} eq '${MessageMetadataType.Emoji}' and ${messageRowKey} eq '${input.messageRowKey}' and ${emojiTag} eq '${input.emojiTag}'`,
+        filter: `${isPartitionKey(input.partitionKey)} ${UnaryOperator.and} ${type} ${BinaryOperator.eq} '${MessageMetadataType.Emoji}' ${UnaryOperator.and} ${messageRowKey} ${BinaryOperator.eq} '${input.messageRowKey}' ${UnaryOperator.and} ${emojiTag} ${BinaryOperator.eq} '${input.emojiTag}'`,
       })
     ).find(Boolean);
     if (foundEmoji)
@@ -101,9 +101,9 @@ export const emojiRouter = router({
       )) as CustomTableClient<MessageEmojiMetadataEntity>;
       const { messageRowKey, type } = MessageEmojiMetadataEntityPropertyNames;
       return getTopNEntities(messagesMetadataClient, AZURE_MAX_PAGE_SIZE, MessageEmojiMetadataEntity, {
-        filter: `${getPartitionKeyFilter(roomId)} and ${type} eq '${
+        filter: `${isPartitionKey(roomId)} ${UnaryOperator.and} ${type} ${BinaryOperator.eq} '${
           MessageMetadataType.Emoji
-        }' and (${messageRowKeys.map((mrk) => `${messageRowKey} eq '${mrk}'`).join(" or ")})`,
+        }' ${UnaryOperator.and} (${messageRowKeys.map((mrk) => `${messageRowKey} ${BinaryOperator.eq} '${mrk}'`).join(` ${UnaryOperator.or} `)})`,
       });
     },
   ),

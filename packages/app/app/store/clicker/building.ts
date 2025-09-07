@@ -37,7 +37,6 @@ export const useBuildingStore = defineStore("clicker/building", () => {
     if (!boughtBuilding) return [];
 
     const buildingPower = getBoughtBuildingPower(boughtBuilding);
-
     return [
       `- Each ${boughtBuilding.id} produces **${formatNumberLong(buildingPower / boughtBuilding.amount)} ${
         clickerItemProperties.value.pluralName
@@ -52,7 +51,7 @@ export const useBuildingStore = defineStore("clicker/building", () => {
   };
   const getBuildingPrice = (building: Building) => {
     const boughtBuildingAmount = getBoughtBuildingAmount(building);
-    return Math.trunc(building.basePrice * boughtBuildingAmount ** 1.15);
+    return Math.trunc(building.basePrice * (1 + boughtBuildingAmount) ** 1.15);
   };
 
   const createBoughtBuilding = (newBuilding: Building) => {

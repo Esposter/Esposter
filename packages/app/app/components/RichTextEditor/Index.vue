@@ -47,19 +47,16 @@ const editor = useEditor({
     modelValue.value = editor.getHTML();
   },
 });
-// @TODO: https://github.com/ueberdosis/tiptap/issues/1044
-watch(
-  () => limit,
-  (newLimit) => {
-    if (!editor.value) return;
+// https://github.com/ueberdosis/tiptap/issues/1044
+watch([() => placeholder, () => limit], ([newPlaceholder, newLimit]) => {
+  if (!editor.value) return;
 
-    for (const { name, options } of editor.value.extensionManager.extensions)
-      if (name === CharacterCount.name) options.limit = newLimit;
+  for (const { name, options } of editor.value.extensionManager.extensions)
+    if (name === Placeholder.name) options.placeholder = newPlaceholder;
+    else if (name === CharacterCount.name) options.limit = newLimit;
 
-    editor.value.setOptions();
-  },
-  { flush: "post" },
-);
+  editor.value.setOptions();
+});
 
 onUnmounted(() => editor.value?.destroy());
 </script>

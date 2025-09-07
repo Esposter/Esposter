@@ -1,6 +1,6 @@
 import { selectRoomSchema } from "#shared/db/schema/rooms";
 import { messageEntitySchema } from "#shared/models/db/message/MessageEntity";
-import { refineMessageSchema } from "#shared/services/esbabbler/refineMessageSchema";
+import { refineMessageSchema } from "#shared/services/message/refineMessageSchema";
 import { z } from "zod";
 
 export const createMessageInputSchema = refineMessageSchema(

@@ -1,3 +1,4 @@
+import { getPropertyNames } from "#shared/util/getPropertyNames";
 import { z } from "zod";
 
 export class ItemMetadata {
@@ -5,6 +6,8 @@ export class ItemMetadata {
   deletedAt: Date | null = null;
   updatedAt = new Date();
 }
+
+export const ItemMetadataPropertyNames = getPropertyNames<ItemMetadata>();
 
 export const itemMetadataSchema = z.object({
   createdAt: z.date(),

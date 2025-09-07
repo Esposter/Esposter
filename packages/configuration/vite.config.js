@@ -1,7 +1,7 @@
 import vue from "@vitejs/plugin-vue";
-import AutoImport from "unplugin-auto-import/vite";
-import dts from "unplugin-dts/vite";
+import AutoImport from "unplugin-auto-import/rolldown";
 import { defineConfig } from "vite";
+import dts from "vite-plugin-dts";
 import mkcert from "vite-plugin-mkcert";
 import tsconfigPaths from "vite-tsconfig-paths";
 // https://vitejs.dev/config/
@@ -12,17 +12,17 @@ export default defineConfig({
       fileName: "index",
       formats: ["es"],
     },
-    rollupOptions: {
+    rolldownOptions: {
       // vue-phaserjs
       external: ["phaser", "phaser3-rex-plugins", "pinia", "vue"],
     },
   },
   plugins: [
-    AutoImport({ dts: true, imports: ["pinia", "vue"] }),
+    AutoImport({ imports: ["pinia", "vue"] }),
     tsconfigPaths(),
     vue(),
-    // @TODO: https://github.com/qmhc/vite-plugin-dts/issues/302
-    dts({ processor: "vue", tsconfigPath: "tsconfig.build.json" }),
+    // @TODO: https://github.com/qmhc/unplugin-dts/issues/302
+    dts({ tsconfigPath: "tsconfig.build.json" }),
     mkcert(),
   ],
 });

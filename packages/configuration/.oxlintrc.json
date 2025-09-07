@@ -6,8 +6,8 @@
     "style": "error",
     "perf": "error"
   },
-  "ignorePatterns": ["*.tsx", "public/docs"],
-  "plugins": ["import", "oxc", "typescript", "unicorn"],
+  "ignorePatterns": ["public"],
+  "plugins": ["import", "oxc", "typescript", "unicorn", "vue"],
   "rules": {
     "curly": ["error", "multi"],
     "func-names": "off",
@@ -53,6 +53,7 @@
     "unicorn/no-null": "off",
     "unicorn/number-literal-case": "off",
     "unicorn/numeric-separators-style": ["error", { "onlyIfContainsSeparator": true }],
+    "unicorn/prefer-dom-node-append": "off",
     "unicorn/prefer-dom-node-dataset": "off",
     "unicorn/prefer-event-target": "off",
     "unicorn/prefer-query-selector": "off",
