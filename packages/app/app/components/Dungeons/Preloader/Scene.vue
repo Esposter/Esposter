@@ -4,7 +4,7 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 
 import files from "#shared/generated/phaser/files.json";
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
-import { getBlobUrl } from "#shared/util/azure/getBlobUrl";
+import { getBlobUrl } from "#shared/services/azure/container/getBlobUrl";
 import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SpritesheetLoaderMap } from "@/models/dungeons/loader/spritesheet/SpritesheetLoaderMap";
