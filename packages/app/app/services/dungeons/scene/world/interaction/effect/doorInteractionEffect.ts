@@ -32,7 +32,9 @@ export const doorInteractionEffect: Effect = (scene, teleportObjects) => {
   scene.cameras.main.once(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, async () => {
     await switchToTilemap(teleportTargetTiledObjectProperty.value.tilemapKey);
 
-    const doorObjectLayer = ExternalWorldSceneStore.objectLayerMap.get(ObjectgroupName.Door);
+    const doorObjectLayer = ExternalWorldSceneStore.tilemapKeyObjectLayerMap
+      .get(teleportTargetTiledObjectProperty.value.tilemapKey)
+      ?.get(ObjectgroupName.Door);
     if (!doorObjectLayer)
       throw new NotFoundError(doorInteractionEffect.name, teleportTargetTiledObjectProperty.value.tilemapKey);
 

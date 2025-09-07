@@ -32,9 +32,17 @@ export const createTilemapMetadata = (layerNameEnum: Record<string, string>, ...
     layerMap.set(layerName, layer);
   }
 
+  let objectLayerMap = ExternalWorldSceneStore.tilemapKeyObjectLayerMap.get(tilemapKey);
+  // If the object layer map already exists, we don't need to create it again
+  if (objectLayerMap) return;
+
+  objectLayerMap = new Map();
+
   for (const objectgroupName of Object.values(ObjectgroupName)) {
     const objectLayer = getObjectLayer(objectgroupName);
     if (!objectLayer) continue;
-    ExternalWorldSceneStore.objectLayerMap.set(objectgroupName, objectLayer);
+    objectLayerMap.set(objectgroupName, objectLayer);
   }
+
+  ExternalWorldSceneStore.tilemapKeyObjectLayerMap.set(tilemapKey, objectLayerMap);
 };

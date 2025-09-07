@@ -11,15 +11,23 @@ import { getNpc } from "@/services/dungeons/npc/getNpc";
 import { getObjects } from "@/services/dungeons/scene/world/getObjects";
 import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
 import { useNpcStore } from "@/store/dungeons/world/npc";
-import { ExternalWorldSceneStore } from "@/store/dungeons/world/scene";
+import { ExternalWorldSceneStore, useWorldSceneStore } from "@/store/dungeons/world/scene";
+import { NotFoundError } from "@esposter/shared";
 import { Direction } from "grid-engine";
+import { storeToRefs } from "pinia";
 
 export const useReadNpcs = () => {
   const npcStore = useNpcStore();
   const { initializeCursorPaginationData } = npcStore;
   const npcs: Npc[] = [];
 
-  for (const [layerName, npcLayer] of ExternalWorldSceneStore.objectLayerMap.entries()) {
+  const worldSceneStore = useWorldSceneStore();
+  const { tilemapKey } = storeToRefs(worldSceneStore);
+
+  const objectLayerMap = ExternalWorldSceneStore.tilemapKeyObjectLayerMap.get(tilemapKey.value);
+  if (!objectLayerMap) throw new NotFoundError(useReadNpcs.name, tilemapKey.value);
+
+  for (const [layerName, npcLayer] of objectLayerMap.entries()) {
     if (!(layerName.includes(ObjectType.Npc) && npcLayer)) continue;
 
     const npcLayerObjects = getObjects(npcLayer);
