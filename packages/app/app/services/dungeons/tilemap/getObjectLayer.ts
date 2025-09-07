@@ -1,3 +1,5 @@
-import { ExternalWorldSceneStore } from "@/store/dungeons/world/scene";
+import type { ObjectgroupName } from "#shared/generated/tiled/layers/ObjectgroupName";
+import type { Tilemaps } from "phaser";
 
-export const getObjectLayer = (layerName: string) => ExternalWorldSceneStore.tilemap.getObjectLayer(layerName);
+export const getObjectLayer = (tilemap: Tilemaps.Tilemap, layerName: ObjectgroupName) =>
+  tilemap.getObjectLayer(layerName);

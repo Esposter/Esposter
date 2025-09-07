@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { getChestPosition } from "@/services/dungeons/chest/getChestPosition";
 import { getPositionId } from "@/services/dungeons/direction/getPositionId";
-import { ExternalWorldSceneStore, useWorldSceneStore } from "@/store/dungeons/world/scene";
+import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 
 const worldSceneStore = useWorldSceneStore();
-const { worldData } = storeToRefs(worldSceneStore);
+const { tilemap, worldData } = storeToRefs(worldSceneStore);
 const chestEntries = computed(() =>
   Object.entries(worldData.value.chestMap).map(([id, chest]) => [getChestPosition(id), chest] as const),
 );
@@ -15,8 +15,8 @@ const chestEntries = computed(() =>
     v-for="[position, chest] of chestEntries"
     :key="getPositionId(position)"
     :position="{
-      x: position.x * ExternalWorldSceneStore.tilemap.tileWidth,
-      y: position.y * ExternalWorldSceneStore.tilemap.tileHeight,
+      x: position.x * tilemap.tileWidth,
+      y: position.y * tilemap.tileHeight,
     }"
     :chest
   />

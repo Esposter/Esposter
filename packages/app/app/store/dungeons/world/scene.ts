@@ -4,17 +4,11 @@ import type { WorldData } from "#shared/models/dungeons/data/world/WorldData";
 import type { Tilemaps } from "phaser";
 
 import { useDungeonsStore } from "@/store/dungeons";
-// We will create the tilemap and its metadata in the world scene vue component
-export const ExternalWorldSceneStore = {
-  tilemap: undefined as unknown as Tilemaps.Tilemap,
-  // Each tilemap may or may not use any number of layers that it likes
-  tilemapKeyLayerMap: new Map<TilemapKey, Map<string, Tilemaps.TilemapLayer | undefined>>(),
-  tilemapKeyObjectLayerMap: new Map<TilemapKey, Map<ObjectgroupName, Tilemaps.ObjectLayer | undefined>>(),
-};
 
 export const useWorldSceneStore = defineStore("dungeons/world/scene", () => {
   const dungeonsStore = useDungeonsStore();
   const tilemapKey = computed(() => dungeonsStore.save.tilemapKey);
+  const worldData = computed<WorldData>(() => dungeonsStore.save.world[tilemapKey.value]);
   const switchToTilemap = async (tilemapKey: TilemapKey) => {
     dungeonsStore.save.tilemapKey = tilemapKey;
     // We need to wait for:
@@ -22,9 +16,29 @@ export const useWorldSceneStore = defineStore("dungeons/world/scene", () => {
     // 2. The tilemap key watcher to load the new tilemap from the vue-phaser library
     await nextTick();
   };
-  const worldData = computed<WorldData>(() => dungeonsStore.save.world[tilemapKey.value]);
+  // We will create the tilemap and its metadata in the world scene vue component
+  const tilemap = ref() as Ref<Tilemaps.Tilemap>;
+  const tilemapKeyLayerMap = ref(new Map<TilemapKey, Map<string, Tilemaps.TilemapLayer | undefined>>());
+  const layerMap = computed({
+    get: () => tilemapKeyLayerMap.value.get(tilemapKey.value),
+    set: (newLayerMap) => {
+      if (newLayerMap) tilemapKeyLayerMap.value.set(tilemapKey.value, newLayerMap);
+      else tilemapKeyLayerMap.value.delete(tilemapKey.value);
+    },
+  });
+  const tilemapKeyObjectLayerMap = ref(new Map<TilemapKey, Map<ObjectgroupName, Tilemaps.ObjectLayer | undefined>>());
+  const objectLayerMap = computed({
+    get: () => tilemapKeyObjectLayerMap.value.get(tilemapKey.value),
+    set: (newObjectLayerMap) => {
+      if (newObjectLayerMap) tilemapKeyObjectLayerMap.value.set(tilemapKey.value, newObjectLayerMap);
+      else tilemapKeyObjectLayerMap.value.delete(tilemapKey.value);
+    },
+  });
   return {
+    layerMap,
+    objectLayerMap,
     switchToTilemap,
+    tilemap,
     tilemapKey,
     worldData,
   };
