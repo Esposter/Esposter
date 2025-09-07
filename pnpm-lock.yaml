@@ -235,8 +235,8 @@ catalogs:
       specifier: ^4.2.0
       version: 4.2.0
     apexcharts:
-      specifier: ^5.3.4
-      version: 5.3.4
+      specifier: ^5.3.5
+      version: 5.3.5
     better-auth:
       specifier: ^1.3.8
       version: 1.3.8
@@ -777,7 +777,7 @@ importers:
         version: 4.2.0(ajv@8.17.1)
       apexcharts:
         specifier: 'catalog:'
-        version: 5.3.4
+        version: 5.3.5
       better-auth:
         specifier: 'catalog:'
         version: 1.3.8
@@ -987,7 +987,7 @@ importers:
         version: 4.3.0(vue@3.5.21(typescript@5.9.2))
       vue3-apexcharts:
         specifier: 'catalog:'
-        version: 1.8.0(apexcharts@5.3.4)(vue@3.5.21(typescript@5.9.2))
+        version: 1.8.0(apexcharts@5.3.5)(vue@3.5.21(typescript@5.9.2))
       vuetify:
         specifier: 'catalog:'
         version: 3.9.7(typescript@5.9.2)(vite-plugin-vuetify@2.1.2)(vue@3.5.21(typescript@5.9.2))
@@ -5449,8 +5449,8 @@ packages:
     resolution: {integrity: sha512-KMReFUr0B4t+D+OBkjR3KYqvocp2XaSzO55UcB6mgQMd3KbcE+mWTyvVV7D/zsdEbNnV6acZUutkiHQXvTr1Rw==}
     engines: {node: '>= 8'}
 
-  apexcharts@5.3.4:
-    resolution: {integrity: sha512-N0gNh8uLu/BN8N+BCphNK+gZAoSoUtDDn1jFGB+3+EMcv8s6vajuP3W0g4dMLTRp6chFkjMmQK3uD8pz4ISmLA==}
+  apexcharts@5.3.5:
+    resolution: {integrity: sha512-I04DY/WBZbJgJD2uixeV5EzyiL+J5LgKQXEu8rctqAwyRmKv44aDVeofJoLdTJe3ao4r2KEQfCgtVzXn6pqirg==}
 
   aproba@2.1.0:
     resolution: {integrity: sha512-tLIEcj5GuR2RSTnxNKdkK0dJ/GrC7P38sUkiDmDuHfsHmbagTFAxDVIBltoklXEVIQ/f14IL8IMJ5pn9Hez1Ew==}
@@ -16444,7 +16444,7 @@ snapshots:
       normalize-path: 3.0.0
       picomatch: 2.3.1
 
-  apexcharts@5.3.4:
+  apexcharts@5.3.5:
     dependencies:
       '@svgdotjs/svg.draggable.js': 3.0.6(@svgdotjs/svg.js@3.2.4)
       '@svgdotjs/svg.filter.js': 3.0.9
@@ -22818,9 +22818,9 @@ snapshots:
     dependencies:
       vue: 3.5.21(typescript@5.9.2)
 
-  vue3-apexcharts@1.8.0(apexcharts@5.3.4)(vue@3.5.21(typescript@5.9.2)):
+  vue3-apexcharts@1.8.0(apexcharts@5.3.5)(vue@3.5.21(typescript@5.9.2)):
     dependencies:
-      apexcharts: 5.3.4
+      apexcharts: 5.3.5
       vue: 3.5.21(typescript@5.9.2)
 
   vue@3.5.21(typescript@5.9.2):
