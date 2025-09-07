@@ -22,7 +22,7 @@
     "url": "https://github.com/Esposter/Esposter/issues"
   },
   "scripts": {
-    "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
+    "build": "bun --bun export:gen && rolldown --config rolldown.config.ts",
     "test": "NODE_OPTIONS=--max-old-space-size=8192 vitest",
     "coverage": "vitest run --coverage",
     "lint": "oxlint && eslint .",
