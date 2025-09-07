@@ -11,7 +11,7 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 import { Direction } from "grid-engine";
 import { filter } from "rxjs";
 import { Sprite } from "vue-phaserjs";
-
+// @TODO: https://github.com/vuejs/core/issues/11371
 export interface CharacterProps {
   id: Character["id"];
   onComplete?: InstanceType<typeof Sprite>["$props"]["onComplete"];

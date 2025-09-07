@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { SITE_DESCRIPTION, SITE_NAME } from "#shared/services/esposter/constants";
+import { SITE_DESCRIPTION, SITE_NAME } from "#shared/services/app/constants";
+import { getLogoImageUrl } from "@/services/app/getLogoImageUrl";
 
 defineSlots<{ default: (props: Record<string, never>) => unknown }>();
 
@@ -8,7 +9,7 @@ useHead({
 });
 const { surface } = useColors();
 const runtimeConfig = useRuntimeConfig();
-const logoImageUrl = useLogoImageUrl();
+const logoImageUrl = getLogoImageUrl();
 useSeoMeta({
   appleMobileWebAppCapable: "yes",
   appleMobileWebAppStatusBarStyle: "default",

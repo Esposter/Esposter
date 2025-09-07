@@ -2,7 +2,7 @@
 import type { GameObjects } from "phaser";
 import type VirtualJoystick from "phaser3-rex-plugins/plugins/virtualjoystick";
 
-import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
+import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
 import { JOYSTICK_RADIUS } from "@/services/dungeons/scene/joystick/constants";
 import { getJoystickX } from "@/services/dungeons/scene/joystick/getJoystickX";
 import { getJoystickY } from "@/services/dungeons/scene/joystick/getJoystickY";

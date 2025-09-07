@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { Monster } from "@/models/dungeons/monster/Monster";
+import type { Monster } from "#shared/models/dungeons/monster/Monster";
 
-import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
+import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
 import { BarType } from "@/models/dungeons/UI/bar/BarType";
 import { prettify } from "@/util/text/prettify";
 import deepEqual from "fast-deep-equal";

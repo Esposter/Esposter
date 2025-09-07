@@ -1,0 +1,4 @@
+<template>
+  <MessageModelMessageList />
+  <MessageModelMessageJumpToPresentSnackbar />
+</template>

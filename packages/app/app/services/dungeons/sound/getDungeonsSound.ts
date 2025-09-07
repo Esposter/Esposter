@@ -1,4 +1,4 @@
-import type { SoundKey } from "@/models/dungeons/keys/sound/SoundKey";
+import type { SoundKey } from "#shared/models/dungeons/keys/sound/SoundKey";
 import type { Types } from "phaser";
 import type { SceneWithPlugins } from "vue-phaserjs";
 

@@ -13,11 +13,19 @@ describe(createOperationData, () => {
     expect.hasAssertions();
 
     const { items, pushItems } = operationData;
-
-    expect(items.value).toHaveLength(0);
-
     const newItem = new TodoListItem();
     pushItems(newItem);
+
+    expect(items.value).toHaveLength(1);
+    expect(items.value[0]).toStrictEqual(newItem);
+  });
+
+  test("unshifts", () => {
+    expect.hasAssertions();
+
+    const { items, unshiftItems } = operationData;
+    const newItem = new TodoListItem();
+    unshiftItems(newItem);
 
     expect(items.value).toHaveLength(1);
     expect(items.value[0]).toStrictEqual(newItem);
@@ -27,9 +35,6 @@ describe(createOperationData, () => {
     expect.hasAssertions();
 
     const { createItem, items } = operationData;
-
-    expect(items.value).toHaveLength(0);
-
     const newItem = new TodoListItem();
     createItem(newItem);
 
@@ -45,11 +50,11 @@ describe(createOperationData, () => {
     const updatedName = "updatedName";
     createItem(newItem);
 
-    expect(items.value[0].name).not.toBe(updatedName);
+    // eslint-disable-next-line @typescript-eslint/no-misused-spread
+    const updatedItem = { ...newItem, name: updatedName };
+    updateItem(updatedItem);
 
-    updateItem(Object.assign({}, newItem, { name: updatedName }));
-
-    expect(items.value[0].name).toBe(updatedName);
+    expect(items.value[0]).toStrictEqual(new TodoListItem(updatedItem));
   });
 
   test("deletes", () => {
@@ -58,9 +63,6 @@ describe(createOperationData, () => {
     const { createItem, deleteItem, items } = operationData;
     const newItem = new TodoListItem();
     createItem(newItem);
-
-    expect(items.value).toHaveLength(1);
-
     deleteItem({ id: newItem.id });
 
     expect(items.value).toHaveLength(0);

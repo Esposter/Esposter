@@ -1,4 +1,4 @@
-import type { AttackId } from "@/models/dungeons/attack/AttackId";
+import type { AttackId } from "#shared/models/dungeons/attack/AttackId";
 
 import { attacks } from "@/assets/dungeons/data/attacks";
 import { NotFoundError } from "@esposter/shared";

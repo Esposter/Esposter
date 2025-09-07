@@ -11,8 +11,8 @@ const hasBuildings = computed(() => buildings.length > 0);
 
 <template>
   <v-list-group v-if="hasBuildings">
-    <template #activator="{ props: listProps }">
-      <v-list-item :="listProps">
+    <template #activator="{ props }">
+      <v-list-item :="props">
         <template #prepend>
           <v-avatar color="background">
             <v-icon icon="mdi-domain" />

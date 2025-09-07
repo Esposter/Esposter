@@ -1,17 +1,17 @@
 import type { FileEntity } from "#shared/models/azure/FileEntity";
-import type { FileSasEntity } from "#shared/models/esbabbler/FileSasEntity";
+import type { FileSasEntity } from "#shared/models/message/FileSasEntity";
 import type { ContainerClient } from "@azure/storage-blob";
 
 import { dayjs } from "#shared/services/dayjs";
 import { getBlobName } from "@@/server/services/azure/container/getBlobName";
 import { ContainerSASPermissions } from "@azure/storage-blob";
 
-export const generateUploadFileSasEntities = async (
+export const generateUploadFileSasEntities = (
   containerClient: ContainerClient,
   files: Pick<FileEntity, "filename" | "mimetype">[],
   prefix = "",
-): Promise<FileSasEntity[]> => {
-  if (files.length === 0) return [];
+) => {
+  if (files.length === 0) return [] as FileSasEntity[];
   else
     return Promise.all(
       files.map(async ({ filename, mimetype }) => {

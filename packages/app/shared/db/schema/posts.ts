@@ -1,5 +1,6 @@
 import type { Like } from "#shared/db/schema/likes";
 import type { User } from "#shared/db/schema/users";
+import type { AnyPgColumn } from "drizzle-orm/pg-core";
 
 import { pgTable } from "#shared/db/pgTable";
 import { likes } from "#shared/db/schema/likes";
@@ -8,7 +9,7 @@ import { POST_DESCRIPTION_MAX_LENGTH, POST_TITLE_MAX_LENGTH } from "#shared/serv
 import { relations, sql } from "drizzle-orm";
 import { check, doublePrecision, integer, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 export const posts = pgTable(
   "posts",
@@ -18,7 +19,7 @@ export const posts = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
     noComments: integer("noComments").notNull().default(0),
     noLikes: integer("noLikes").notNull().default(0),
-    parentId: uuid("parentId"),
+    parentId: uuid("parentId").references((): AnyPgColumn => posts.id, { onDelete: "cascade" }),
     ranking: doublePrecision("ranking").notNull(),
     title: text("title").notNull().default(""),
     userId: text("userId")

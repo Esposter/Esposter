@@ -1,4 +1,5 @@
 import type { KebabCasedPropertiesDeep } from "type-fest";
+import type { Component } from "vue";
 
 import { toKebabCase } from "@esposter/shared";
 import * as components from "vuetify/components";

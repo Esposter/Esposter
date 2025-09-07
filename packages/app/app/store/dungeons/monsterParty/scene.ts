@@ -1,4 +1,4 @@
-import type { Monster } from "@/models/dungeons/monster/Monster";
+import type { Monster } from "#shared/models/dungeons/monster/Monster";
 
 import { SceneMode } from "@/models/dungeons/scene/monsterParty/SceneMode";
 import { COLUMN_SIZE, ROW_SIZE } from "@/services/dungeons/scene/monsterParty/constants";

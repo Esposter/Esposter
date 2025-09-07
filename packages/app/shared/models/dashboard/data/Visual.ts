@@ -7,7 +7,7 @@ import { layoutItemSchema } from "#shared/models/dashboard/data/LayoutItem";
 import { VisualType, visualTypeSchema } from "#shared/models/dashboard/data/VisualType";
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
 import { createItemEntityTypeSchema } from "#shared/models/entity/ItemEntityType";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 export class Visual extends AItemEntity implements ItemEntityType<VisualType>, LayoutItem {
   chart = new Chart();

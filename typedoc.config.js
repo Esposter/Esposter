@@ -1,11 +1,18 @@
 import { config } from "dotenv";
 
+import azureMockExternalSymbolLinkMappings from "./packages/azure-mock/typedoc/externalSymbolLinkMappings.js";
+import vuePhaserjsExternalSymbolLinkMappings from "./packages/vue-phaserjs/typedoc/externalSymbolLinkMappings.js";
+
 config({ path: "packages/app/.env" });
 /** @satisfies {import('typedoc').TypeDocOptions} */
 const typedocConfiguration = {
   entryPoints: ["packages/*"],
   entryPointStrategy: "packages",
   exclude: ["packages/app", "packages/configuration"],
+  externalSymbolLinkMappings: {
+    ...azureMockExternalSymbolLinkMappings,
+    ...vuePhaserjsExternalSymbolLinkMappings,
+  },
   name: "Esposter",
   out: "packages/app/public/docs",
   packageOptions: {

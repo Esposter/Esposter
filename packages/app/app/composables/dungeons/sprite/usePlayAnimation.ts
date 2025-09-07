@@ -1,4 +1,4 @@
-import type { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
+import type { SpritesheetKey } from "#shared/models/dungeons/keys/spritesheet/SpritesheetKey";
 import type { SetupContext } from "vue";
 
 export const usePlayAnimation = (

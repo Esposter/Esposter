@@ -10,7 +10,7 @@ const disabled = computed(() => deepEqual(viewport.value, DEFAULT_VIEWPORT_TRANS
 </script>
 
 <template>
-  <Controls position="top-right">
+  <Controls position="bottom-left">
     <ControlButton title="Default Viewport" :disabled @click="setViewport(DEFAULT_VIEWPORT_TRANSFORM)">
       <v-icon :op="disabled ? 40 : undefined" icon="mdi-home" size="x-small" />
     </ControlButton>

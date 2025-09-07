@@ -1,6 +1,6 @@
 import type { NuxtConfig } from "nuxt/schema";
 
-import { PWA_PUBLIC_FOLDER_PATH, SITE_DESCRIPTION, SITE_NAME } from "../shared/services/esposter/constants";
+import { PWA_PUBLIC_FOLDER_PATH, SITE_DESCRIPTION, SITE_NAME } from "../shared/services/app/constants";
 
 export const pwa: NuxtConfig["pwa"] = {
   manifest: {
@@ -38,5 +38,8 @@ export const pwa: NuxtConfig["pwa"] = {
     short_name: SITE_NAME,
     start_url: "/",
     theme_color: "#fff",
+  },
+  workbox: {
+    importScripts: ["/serviceWorker/push.js"],
   },
 };

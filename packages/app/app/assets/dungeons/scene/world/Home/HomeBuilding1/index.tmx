@@ -3,11 +3,11 @@
  <editorsettings>
   <export target="tilemap.json" format="json"/>
  </editorsettings>
- <tileset firstgid="1" source="../../../../../../public/tilesets/firstParty/Collision.tsx"/>
- <tileset firstgid="2" source="../../../../../../public/tilesets/axulart/HouseInterior.tsx"/>
- <tileset firstgid="122" source="../../../../../../public/tilesets/firstParty/Encounter.tsx"/>
- <tileset firstgid="123" source="../../../../../../public/tilesets/firstParty/Entrance.tsx"/>
- <tileset firstgid="126" source="../../../../../../public/tilesets/firstParty/Teleport.tsx"/>
+ <tileset firstgid="1" source="../../../../../../../public/tilesets/firstParty/Collision.tsx"/>
+ <tileset firstgid="2" source="../../../../../../../public/tilesets/axulart/HouseInterior.tsx"/>
+ <tileset firstgid="122" source="../../../../../../../public/tilesets/firstParty/Encounter.tsx"/>
+ <tileset firstgid="123" source="../../../../../../../public/tilesets/firstParty/Entrance.tsx"/>
+ <tileset firstgid="126" source="../../../../../../../public/tilesets/firstParty/Teleport.tsx"/>
  <group id="3" name="MainScene" locked="1">
   <layer id="6" name="Background" width="13" height="9" locked="1">
    <data encoding="csv">

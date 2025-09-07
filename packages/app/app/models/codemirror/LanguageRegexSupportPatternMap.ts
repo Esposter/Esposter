@@ -1,8 +1,8 @@
+import { escapeRegExp } from "#shared/util/regex/escapeRegExp";
 import { extendedLanguages } from "@/services/codemirror/extendedLanguages";
 import { getLanguageRegexSupportPattern } from "@/services/codemirror/getLanguageRegexSupportPattern";
-import { escapeRegExp } from "@/util/regex/escapeRegExp";
 
-export const LanguageRegexSupportPatternMap = extendedLanguages.reduce<Record<string, string>>((acc, curr) => {
+export const LanguageRegexSupportPatternMap = extendedLanguages.reduce<Record<string, RegExp>>((acc, curr) => {
   acc[curr.name] = getLanguageRegexSupportPattern(curr.extensions.map((ext) => escapeRegExp(ext)).join("|"));
   return acc;
 }, {});

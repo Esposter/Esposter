@@ -2,7 +2,7 @@ import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import type { Direction } from "grid-engine";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { ItemEffectType } from "@/models/dungeons/item/ItemEffectType";
+import { ItemEffectType } from "#shared/models/dungeons/item/ItemEffectType";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";

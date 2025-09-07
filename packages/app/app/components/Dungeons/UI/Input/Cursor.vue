@@ -3,7 +3,7 @@ import type { Grid } from "@/models/dungeons/Grid";
 import type { Position } from "grid-engine";
 import type { ImageConfiguration } from "vue-phaserjs";
 
-import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
+import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
 import { Image } from "vue-phaserjs";
 
 interface CursorProps {

@@ -4,7 +4,7 @@ import type { AzureMetadataOperationDataKey } from "@/models/shared/metadata/Azu
 import type { ReadonlyRefOrGetter } from "@vueuse/core";
 
 import { AzureMetadataOperation } from "@/models/shared/metadata/AzureMetadataOperation";
-import { uncapitalize } from "@/util/text/uncapitalize";
+import { uncapitalize } from "@esposter/shared";
 
 type TEntity<TType extends string> = TType extends MessageMetadataType ? MessageMetadataEntityMap[TType] : never;
 
@@ -19,8 +19,7 @@ export const createAzureMetadataMap = <TType extends string>(
     if (!currentIdValue) return [];
     const dataMap = metadataMap.value.get(currentIdValue);
     if (!dataMap) return [];
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return dataMap.get(rowKey) ?? dataMap.set(rowKey, []).get(rowKey)!;
+    return dataMap.get(rowKey) ?? dataMap.set(rowKey, []).get(rowKey) ?? [];
   };
   const setMetadatas = (rowKey: string, metadatas: TEntity<TType>[]) => {
     const currentIdValue = toValue(currentId);

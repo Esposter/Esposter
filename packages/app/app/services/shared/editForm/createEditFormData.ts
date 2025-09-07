@@ -4,7 +4,7 @@ import type { ToData } from "#shared/models/entity/ToData";
 import type { VForm } from "vuetify/components";
 
 import { getEntityIdComparator } from "#shared/services/entity/getEntityIdComparator";
-import { toRawDeep } from "@/util/reactivity/toRawDeep";
+import { toRawDeep } from "#shared/util/reactivity/toRawDeep";
 import deepEqual from "fast-deep-equal";
 
 export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extends EntityIdKeys<TItem>>(
@@ -16,26 +16,23 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
   const editFormRef = ref<InstanceType<typeof VForm>>();
   const editedItem = ref<TItem>();
   const editedIndex = ref(-1);
-  const originalItem = computed(() => {
-    const editedItemValue = editedItem.value;
-    if (!editedItemValue) return undefined;
-    return items.value.find(getEntityIdComparator(idKeys, editedItemValue)) ?? undefined;
-  });
+  const originalItem = computed(() =>
+    editedItem.value ? items.value.find(getEntityIdComparator(idKeys, editedItem.value)) : undefined,
+  );
   const isFullScreenDialog = ref(false);
   // The form is "valid" if there's no form open/no errors
   const isEditFormValid = computed(() => !editFormRef.value || editFormRef.value.errors.length === 0);
-  const isSavable = computed(() => {
-    if (!editedItem.value) return false;
-    // For the form to be savable, it has to have no errors
-    // and either it is a new item, or it is not equal to the original item
-    else
-      return (
-        isEditFormValid.value &&
-        // The edited item is a clone of original item which does not clone the class information
-        // so it's not "strictly" equal including the Object prototype
-        (!originalItem.value || !deepEqual(editedItem.value, structuredClone(toRawDeep(originalItem.value))))
-      );
-  });
+  const isSavable = computed(
+    () =>
+      // For the form to be savable, it has to:
+      Boolean(editedItem.value) &&
+      // 1. Have no errors
+      isEditFormValid.value &&
+      // 2. Be a new item or be not equal to the original item
+      // The edited item is a clone of original item which does not clone the class information
+      // so it's not "strictly" equal but deepEqual is not a strict check so it's ok
+      (!originalItem.value || !deepEqual(editedItem.value, structuredClone(toRawDeep(originalItem.value)))),
+  );
   // We know the form is dirty if:
   // 1. The user has pucked up and the edit form isn't valid
   // 2. or that it is savable

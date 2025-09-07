@@ -10,6 +10,7 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { NIL } from "@esposter/shared";
+import { MockContainerDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("room", () => {
@@ -25,6 +26,7 @@ describe("room", () => {
   });
 
   afterEach(async () => {
+    MockContainerDatabase.clear();
     await mockContext.db.delete(rooms);
   });
 
@@ -133,7 +135,7 @@ describe("room", () => {
     expect(data.value.name).toBe(updatedName);
   });
 
-  test.todo("deletes", async () => {
+  test("deletes", async () => {
     expect.hasAssertions();
 
     const newRoom = await caller.createRoom({ name });
@@ -161,7 +163,7 @@ describe("room", () => {
     );
   });
 
-  test.todo("on deletes", async () => {
+  test("on deletes", async () => {
     expect.hasAssertions();
 
     const newRoom = await caller.createRoom({ name });
@@ -177,14 +179,14 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await caller.createRoom({ name });
-    const inviteCode = await caller.createInvite({ roomId: newRoom.id });
-    const readInvite = await caller.readInvite(inviteCode);
+    const newInviteCode = await caller.createInvite({ roomId: newRoom.id });
+    const readInvite = await caller.readInvite(newInviteCode);
 
     assert(readInvite);
 
     expect(readInvite.userId).toBe(getMockSession().user.id);
     expect(readInvite.roomId).toBe(newRoom.id);
-    expect(readInvite.code).toBe(inviteCode);
+    expect(readInvite.code).toBe(newInviteCode);
     expect(readInvite.isMember).toBe(true);
   });
 
@@ -205,8 +207,10 @@ describe("room", () => {
           "origin": "string",
           "code": "too_small",
           "minimum": 8,
+          "inclusive": true,
+          "exact": true,
           "path": [],
-          "message": "Too small: expected string to have >8 characters"
+          "message": "Too small: expected string to have >=8 characters"
         }
       ]]
     `);
@@ -216,10 +220,10 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await caller.createRoom({ name });
-    const inviteCode = await caller.createInvite({ roomId: newRoom.id });
+    const newInviteCode = await caller.createInvite({ roomId: newRoom.id });
     const readInviteCode = await caller.readInviteCode({ roomId: newRoom.id });
 
-    expect(readInviteCode).toBe(inviteCode);
+    expect(readInviteCode).toBe(newInviteCode);
   });
 
   test("read invite code with no code to be null", async () => {
@@ -235,19 +239,19 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await caller.createRoom({ name });
-    const inviteCode = await caller.createInvite({ roomId: newRoom.id });
+    const newInviteCode = await caller.createInvite({ roomId: newRoom.id });
     const cachedInviteCode = await caller.createInvite({ roomId: newRoom.id });
 
-    expect(cachedInviteCode).toBe(inviteCode);
+    expect(cachedInviteCode).toBe(newInviteCode);
   });
 
   test("joins", async () => {
     expect.hasAssertions();
 
     const newRoom = await caller.createRoom({ name });
-    const inviteCode = await caller.createInvite({ roomId: newRoom.id });
+    const newInviteCode = await caller.createInvite({ roomId: newRoom.id });
     await mockSessionOnce(mockContext.db);
-    const joinedRoom = await caller.joinRoom(inviteCode);
+    const joinedRoom = await caller.joinRoom(newInviteCode);
 
     expect(joinedRoom).toStrictEqual(newRoom);
   });
@@ -266,9 +270,9 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await caller.createRoom({ name });
-    const inviteCode = await caller.createInvite({ roomId: newRoom.id });
+    const newInviteCode = await caller.createInvite({ roomId: newRoom.id });
 
-    await expect(caller.joinRoom(inviteCode)).rejects.toThrowErrorMatchingInlineSnapshot(`
+    await expect(caller.joinRoom(newInviteCode)).rejects.toThrowErrorMatchingInlineSnapshot(`
       [TRPCError: Failed query: insert into "users_to_rooms" ("roomId", "userId") values ($1, $2) returning "roomId", "userId"
       params: ${newRoom.id},${getMockSession().user.id}]
     `);
@@ -278,10 +282,10 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await caller.createRoom({ name });
-    const inviteCode = await caller.createInvite({ roomId: newRoom.id });
+    const newInviteCode = await caller.createInvite({ roomId: newRoom.id });
     const onJoinRoom = await caller.onJoinRoom([newRoom.id]);
     const session = await mockSessionOnce(mockContext.db);
-    const [data] = await Promise.all([onJoinRoom[Symbol.asyncIterator]().next(), caller.joinRoom(inviteCode)]);
+    const [data] = await Promise.all([onJoinRoom[Symbol.asyncIterator]().next(), caller.joinRoom(newInviteCode)]);
 
     assert(!data.done);
 
@@ -292,9 +296,9 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await caller.createRoom({ name });
-    const inviteCode = await caller.createInvite({ roomId: newRoom.id });
+    const newInviteCode = await caller.createInvite({ roomId: newRoom.id });
     const { user } = await mockSessionOnce(mockContext.db);
-    await caller.joinRoom(inviteCode);
+    await caller.joinRoom(newInviteCode);
     await mockSessionOnce(mockContext.db, user);
     const roomId = await caller.leaveRoom(newRoom.id);
 
@@ -305,7 +309,7 @@ describe("room", () => {
     expect.hasAssertions();
 
     await expect(caller.leaveRoom(NIL)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Delete, name: UserToRoom, {"roomId":"00000000-0000-0000-0000-000000000000"}]`,
+      `[TRPCError: Invalid operation: Delete, name: UserToRoom, "00000000-0000-0000-0000-000000000000"]`,
     );
   });
 
@@ -324,9 +328,9 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await caller.createRoom({ name });
-    const inviteCode = await caller.createInvite({ roomId: newRoom.id });
+    const newInviteCode = await caller.createInvite({ roomId: newRoom.id });
     const { user } = await mockSessionOnce(mockContext.db);
-    await caller.joinRoom(inviteCode);
+    await caller.joinRoom(newInviteCode);
     const onLeaveRoom = await caller.onLeaveRoom([newRoom.id]);
     const session = await mockSessionOnce(mockContext.db, user);
     const [data] = await Promise.all([onLeaveRoom[Symbol.asyncIterator]().next(), caller.leaveRoom(newRoom.id)]);
@@ -375,5 +379,126 @@ describe("room", () => {
         }
       ]]
     `);
+  });
+
+  test("creates members", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await caller.createRoom({ name });
+    const userId = getMockSession().user.id;
+    const { user } = await mockSessionOnce(mockContext.db);
+    getMockSession();
+    const newMember = await caller.createMembers({ roomId: newRoom.id, userIds: [user.id] });
+
+    expect(newMember).toHaveLength(1);
+    expect(newMember[0].roomId).toBe(newRoom.id);
+    expect(newMember[0].userId).toBe(user.id);
+
+    const members = await caller.readMembers({ roomId: newRoom.id });
+
+    expect(members.items).toHaveLength(2);
+    expect(members.items[0]).toStrictEqual(user);
+    expect(members.items[1].id).toBe(userId);
+  });
+
+  test("fails create members with empty ids", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await caller.createRoom({ name });
+
+    await expect(caller.createMembers({ roomId: newRoom.id, userIds: [] })).rejects.toThrowErrorMatchingInlineSnapshot(`
+      [TRPCError: [
+        {
+          "origin": "array",
+          "code": "too_small",
+          "minimum": 1,
+          "inclusive": true,
+          "path": [
+            "userIds"
+          ],
+          "message": "Too small: expected array to have >=1 items"
+        }
+      ]]
+    `);
+  });
+
+  test("fails create members with non-creator", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await caller.createRoom({ name });
+    const { user } = await mockSessionOnce(mockContext.db);
+
+    await expect(
+      caller.createMembers({ roomId: newRoom.id, userIds: [user.id] }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+  });
+
+  test("fails create members with duplicate membership", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await caller.createRoom({ name });
+
+    await expect(caller.createMembers({ roomId: newRoom.id, userIds: [getMockSession().user.id] })).rejects
+      .toThrowErrorMatchingInlineSnapshot(`
+      [TRPCError: Failed query: insert into "users_to_rooms" ("roomId", "userId") values ($1, $2) returning "roomId", "userId"
+      params: ${newRoom.id},${getMockSession().user.id}]
+    `);
+  });
+
+  test("fails create members with non-existent user", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await caller.createRoom({ name });
+
+    await expect(caller.createMembers({ roomId: newRoom.id, userIds: [NIL] })).rejects
+      .toThrowErrorMatchingInlineSnapshot(`
+      [TRPCError: Failed query: insert into "users_to_rooms" ("roomId", "userId") values ($1, $2) returning "roomId", "userId"
+      params: ${newRoom.id},${NIL}]
+    `);
+  });
+
+  test("fails create members with non-existent room", async () => {
+    expect.hasAssertions();
+
+    await expect(
+      caller.createMembers({ roomId: NIL, userIds: [getMockSession().user.id] }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: BAD_REQUEST]`);
+  });
+
+  test("kicks member with owner", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await caller.createRoom({ name });
+    const invite = await caller.createInvite({ roomId: newRoom.id });
+    const { user } = await mockSessionOnce(mockContext.db);
+    await caller.joinRoom(invite);
+
+    await expect(caller.deleteMember({ roomId: newRoom.id, userId: user.id })).resolves.toBeUndefined();
+
+    const members = await caller.readMembers({ roomId: newRoom.id });
+
+    expect(members.items.find(({ id }) => id === user.id)).toBeUndefined();
+  });
+
+  test("fails kick with non-existent member", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await caller.createRoom({ name });
+
+    await expect(caller.deleteMember({ roomId: newRoom.id, userId: NIL })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Delete, name: UserToRoom, ${JSON.stringify({ roomId: newRoom.id, userId: NIL })}]`,
+    );
+  });
+
+  test("fails kick self with owner", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await caller.createRoom({ name });
+
+    await expect(
+      caller.deleteMember({ roomId: newRoom.id, userId: getMockSession().user.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Delete, name: UserToRoom, ${JSON.stringify({ roomId: newRoom.id, userId: getMockSession().user.id })}]`,
+    );
   });
 });

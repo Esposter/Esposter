@@ -1,4 +1,4 @@
-import { AttackId } from "@/models/dungeons/attack/AttackId";
+import { AttackId } from "#shared/models/dungeons/attack/AttackId";
 
 export const AttackComponentMap: Record<AttackId, Component> = {
   [AttackId.Slash]: defineAsyncComponent(() => import("@/components/Dungeons/Battle/Attack/Slash.vue")),

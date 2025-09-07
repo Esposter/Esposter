@@ -1,0 +1,1 @@
+ALTER TABLE "posts" ADD CONSTRAINT "posts_parentId_posts_id_fk" FOREIGN KEY ("parentId") REFERENCES "public"."posts"("id") ON DELETE cascade ON UPDATE no action;

@@ -1,8 +1,8 @@
 import type { XYPosition } from "@vue-flow/core";
 
-import { z } from "zod/v4";
+import { z } from "zod";
 
 export const xyPositionSchema = z.object({
-  x: z.number(),
-  y: z.number(),
+  x: z.int(),
+  y: z.int(),
 }) satisfies z.ZodType<XYPosition>;

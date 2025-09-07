@@ -9,7 +9,7 @@ import { createTableEditorSchema, TableEditor } from "#shared/models/tableEditor
 import { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType";
 import { todoListItemSchema } from "#shared/models/tableEditor/todoList/TodoListItem";
 import { vuetifyComponentItemSchema } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 type TableEditorTypes = {
   [P in keyof typeof TableEditorType]: TableEditor<Item>;
@@ -21,7 +21,10 @@ export class TableEditorConfiguration extends AItemEntity implements TableEditor
 
   constructor(init?: PartialDeep<TableEditorConfiguration>) {
     super();
-    Object.assign(this, init);
+    Object.assign(this, init, {
+      [TableEditorType.TodoList]: new TableEditor(init?.[TableEditorType.TodoList]),
+      [TableEditorType.VuetifyComponent]: new TableEditor(init?.[TableEditorType.VuetifyComponent]),
+    });
   }
 }
 

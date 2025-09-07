@@ -10,7 +10,7 @@ import { FlipSetterMap } from "@/util/setterMap/components/FlipSetterMap";
 import { MaskSetterMap } from "@/util/setterMap/components/MaskSetterMap";
 import { OriginSetterMap } from "@/util/setterMap/components/OriginSetterMap";
 import { PathFollowerComponentSetterMap } from "@/util/setterMap/components/PathFollowerComponentSetterMap";
-import { PipelineSetterMap } from "@/util/setterMap/components/PipelineSetterMap";
+import { RenderNodesSetterMap } from "@/util/setterMap/components/RenderNodesSetterMap";
 import { ScrollFactorSetterMap } from "@/util/setterMap/components/ScrollFactorSetterMap";
 import { SizeSetterMap } from "@/util/setterMap/components/SizeSetterMap";
 import { TextureSetterMap } from "@/util/setterMap/components/TextureSetterMap";
@@ -31,7 +31,7 @@ export const PathFollowerSetterMap: SetterMap<
   ...MaskSetterMap,
   ...OriginSetterMap,
   ...PathFollowerComponentSetterMap,
-  ...PipelineSetterMap,
+  ...RenderNodesSetterMap,
   ...ScrollFactorSetterMap,
   ...SizeSetterMap,
   ...TextureSetterMap,

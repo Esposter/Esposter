@@ -1,4 +1,4 @@
-import type { Monster } from "@/models/dungeons/monster/Monster";
+import type { Monster } from "#shared/models/dungeons/monster/Monster";
 
 import { Grid } from "@/models/dungeons/Grid";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
@@ -19,9 +19,10 @@ export const useMonsterPartyOptionGrid = () => {
 
   if (!isInitialized) {
     MonsterPartyOptionGrid.grid = computed(() => {
-      const grid = [...monstersGrid.value];
+      const grid: (Monster | PlayerSpecialInput.Cancel)[][] = [...monstersGrid.value];
       const rowSize = monstersGrid.value[0]?.length ?? 0;
-      if (rowSize > 0) grid.push(Array(rowSize).fill(PlayerSpecialInput.Cancel));
+      if (rowSize > 0)
+        grid.push(Array.from<Monster | PlayerSpecialInput.Cancel>({ length: rowSize }).fill(PlayerSpecialInput.Cancel));
       return grid;
     });
     isInitialized = true;

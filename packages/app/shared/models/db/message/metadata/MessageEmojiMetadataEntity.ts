@@ -8,7 +8,7 @@ import {
 } from "#shared/models/db/message/metadata/MessageMetadataEntity";
 import { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
 import { getPropertyNames } from "#shared/util/getPropertyNames";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 export class MessageEmojiMetadataEntity extends MessageMetadataEntity<MessageMetadataType.Emoji> {
   emojiTag!: string;

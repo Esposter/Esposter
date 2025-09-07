@@ -10,7 +10,7 @@ export const useInfoPanelStore = defineStore("dungeons/monsterParty/infoPanel", 
   const inputPromptCursorX = computed(
     () => (infoTextDisplayWidth.value ?? 0) + (dialogStore.inputPromptCursorDisplayWidth ?? 0) * 2.7,
   );
-  const showMessages = async (scene: SceneWithPlugins, messages: string[]) =>
+  const showMessages = (scene: SceneWithPlugins, messages: string[]) =>
     updateQueuedMessagesAndShowMessage(
       scene,
       new DialogTarget({ inputPromptCursorX, message: infoDialogMessage }),

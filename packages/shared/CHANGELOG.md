@@ -3,6 +3,86 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.13.1](https://github.com/Esposter/Esposter/compare/v2.13.0...v2.13.1) (2025-08-31)
+
+**Note:** Version bump only for package @esposter/shared
+
+# [2.13.0](https://github.com/Esposter/Esposter/compare/v2.12.0...v2.13.0) (2025-08-31)
+
+### Bug Fixes
+
+* move is partition key and is row key to shared and fix up some things with search bar ([a3409c4](https://github.com/Esposter/Esposter/commit/a3409c476fed907a2ac9f0c26816c0a621821ca7))
+* null condition ([d3f9292](https://github.com/Esposter/Esposter/commit/d3f9292ec5a4d4b4f23ba70a4a8654debfdd8d96))
+* self-ref ([6a8db43](https://github.com/Esposter/Esposter/commit/6a8db4359d617f59c58663fda456d641bbba750f))
+
+### Features
+
+* Add basic search first ([8d413dc](https://github.com/Esposter/Esposter/commit/8d413dc1707db91a8370d1777dab3dc538d90826))
+
+# [2.12.0](https://github.com/Esposter/Esposter/compare/v2.11.0...v2.12.0) (2025-08-15)
+
+### Bug Fixes
+
+* support unary operators and ne binary operator ([b70e1b1](https://github.com/Esposter/Esposter/commit/b70e1b16654ad1ddcdf38191acfbfb00141818b4))
+
+### Features
+
+* soft delete messages ([9305888](https://github.com/Esposter/Esposter/commit/93058887adcfa25d94ee7476187816a8de197e3b))
+
+# [2.11.0](https://github.com/Esposter/Esposter/compare/v2.10.0...v2.11.0) (2025-08-11)
+
+### Features
+
+* Add filter parser ([e70e1f3](https://github.com/Esposter/Esposter/commit/e70e1f3f8982dbcbe876e431db0ec388bd6fdb67))
+
+# [2.10.0](https://github.com/Esposter/Esposter/compare/v2.9.0...v2.10.0) (2025-08-10)
+
+### Features
+
+* Add jumping to specific messages ([4fdd9fa](https://github.com/Esposter/Esposter/commit/4fdd9faeff5c1bf6a558162edde66745ab55d79e))
+
+# [2.9.0](https://github.com/Esposter/Esposter/compare/v2.8.1...v2.9.0) (2025-07-19)
+
+**Note:** Version bump only for package @esposter/shared
+
+## [2.8.1](https://github.com/Esposter/Esposter/compare/v2.8.0...v2.8.1) (2025-07-09)
+
+**Note:** Version bump only for package @esposter/shared
+
+# [2.8.0](https://github.com/Esposter/Esposter/compare/v2.7.0...v2.8.0) (2025-07-09)
+
+**Note:** Version bump only for package @esposter/shared
+
+# [2.7.0](https://github.com/Esposter/Esposter/compare/v2.6.0...v2.7.0) (2025-07-09)
+
+### Bug Fixes
+
+* links ([54b8d18](https://github.com/Esposter/Esposter/commit/54b8d1892eb340a7150286306a5d8ea44a0e0a43))
+
+### Features
+
+* Add azure-mock library ([7391d18](https://github.com/Esposter/Esposter/commit/7391d1822b7fc6249efc58f041e2c99fb77cef5c))
+
+# [2.6.0](https://github.com/Esposter/Esposter/compare/v2.5.0...v2.6.0) (2025-07-09)
+
+### Features
+
+* Add oxlint rules to prep eslint migration later in the future ([45d8b00](https://github.com/Esposter/Esposter/commit/45d8b00c2223a92d937dc0734ff8702661c9882c))
+
+# [2.5.0](https://github.com/Esposter/Esposter/compare/v2.4.1...v2.5.0) (2025-06-19)
+
+### Bug Fixes
+
+* Add oxlint files to turn off eslint ones ([bdc7aed](https://github.com/Esposter/Esposter/commit/bdc7aed1dfab9d0c8527588cec61a7eb073aa523))
+
+### Features
+
+* Add some small tests to shared pkg ([c6da15f](https://github.com/Esposter/Esposter/commit/c6da15f1a302cc92c743047943051eba748c7f4c))
+
+### Performance Improvements
+
+* Add oxlint ([2e92e38](https://github.com/Esposter/Esposter/commit/2e92e38522ba45bc223543e714010567aee6a0b2))
+
 ## [2.4.1](https://github.com/Esposter/Esposter/compare/v2.4.0...v2.4.1) (2025-05-28)
 
 **Note:** Version bump only for package @esposter/shared

@@ -1,4 +1,4 @@
-import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
+import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
 
 export const InfoContainerTextMap = {
   [SettingsOption.Animations]: "Select to display animations and effects or not.",

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { AttackProps } from "@/models/dungeons/attack/AttackProps";
 
+import { SpritesheetKey } from "#shared/models/dungeons/keys/spritesheet/SpritesheetKey";
 import { AttackGameObjectType } from "@/models/dungeons/attack/AttackGameObjectType";
-import { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
 
 const { isToEnemy } = defineProps<AttackProps>();
 const isActive = defineModel<boolean>("isActive", { required: true });

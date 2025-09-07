@@ -26,7 +26,7 @@ describe(parseTmx, () => {
       filenames.map(async (filename) => {
         if (extname(filename).toLowerCase() !== ".tmx") return;
 
-        const file = await readFile(`${MAP_DIRECTORY}/${filename}`, "utf-8");
+        const file = await readFile(`${MAP_DIRECTORY}/${filename}`, "utf8");
         const tmxParsed = await parseTmx(file);
 
         await expect(JSON.stringify(tmxParsed)).toMatchFileSnapshot(`${ROOT_DIRECTORY}/__snapshots__/${filename}.json`);

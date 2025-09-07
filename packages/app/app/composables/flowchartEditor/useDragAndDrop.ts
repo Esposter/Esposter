@@ -1,4 +1,6 @@
-import { DEFAULT_NODE_TYPE } from "@/services/flowchartEditor/constants";
+import type { XYPosition } from "@vue-flow/core";
+
+import { GeneralNodeType } from "#shared/models/flowchartEditor/node/GeneralNodeType";
 import { useDragStore } from "@/store/flowchartEditor/drag";
 import { useVueFlow } from "@vue-flow/core";
 
@@ -7,7 +9,7 @@ export const useDragAndDrop = () => {
   const { isDragging, isDragOver, type } = storeToRefs(dragStore);
   const { addNodes, onNodesInitialized, screenToFlowCoordinate, updateNode } = useVueFlow();
 
-  const onDragStart = (event: DragEvent, nodeType = DEFAULT_NODE_TYPE) => {
+  const onDragStart = (event: DragEvent, nodeType = GeneralNodeType.Rectangle) => {
     if (event.dataTransfer) {
       event.dataTransfer.setData("application/vueflow", nodeType);
       event.dataTransfer.effectAllowed = "move";
@@ -33,16 +35,17 @@ export const useDragAndDrop = () => {
   const onDragEnd = () => {
     isDragging.value = false;
     isDragOver.value = false;
-    type.value = DEFAULT_NODE_TYPE;
+    type.value = GeneralNodeType.Rectangle;
     document.removeEventListener("drop", onDragEnd);
   };
 
   const onDrop = ({ clientX, clientY }: DragEvent) => {
-    if (!type.value) return;
+    createNode({ x: clientX, y: clientY });
+  };
 
-    const position = screenToFlowCoordinate({ x: clientX, y: clientY });
+  const createNode = ({ x, y }: XYPosition) => {
+    const position = screenToFlowCoordinate({ x, y });
     const id = crypto.randomUUID();
-    const newNode = { id, position, type: type.value };
     /**
      * Align node position after drop, so it's centered to the mouse
      * We can hook into events even in a callback, and we can remove the event listener after it's been called.
@@ -56,11 +59,11 @@ export const useDragAndDrop = () => {
       }));
       off();
     });
-
-    addNodes(newNode);
+    addNodes({ id, position, type: type.value });
   };
 
   return {
+    createNode,
     onDragLeave,
     onDragOver,
     onDragStart,

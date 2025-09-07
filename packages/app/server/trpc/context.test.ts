@@ -1,9 +1,13 @@
 import type { User } from "#shared/db/schema/users";
+import type { useContainerClient } from "@@/server/composables/azure/useContainerClient";
+import type { useTableClient } from "@@/server/composables/azure/useTableClient";
 import type { Session } from "@@/server/models/auth/Session";
 import type { Context } from "@@/server/trpc/context";
 
 import { users } from "#shared/db/schema/users";
 import { dayjs } from "#shared/services/dayjs";
+import { useContainerClientMock } from "@@/server/composables/azure/useContainerClient.test";
+import { useTableClientMock } from "@@/server/composables/azure/useTableClient.test";
 import { schema } from "@@/server/db/schema";
 import { PGlite } from "@electric-sql/pglite";
 import { drizzle } from "drizzle-orm/pglite";
@@ -14,7 +18,7 @@ import { describe, vi } from "vitest";
 const require = createRequire(import.meta.url);
 
 const mocks = vi.hoisted(() => {
-  const createdAt = new Date(0);
+  const createdAt = new Date();
   const user: User = {
     createdAt,
     deletedAt: null,
@@ -36,9 +40,25 @@ const mocks = vi.hoisted(() => {
   };
 });
 
+vi.mock("@@/server/auth", () => ({
+  auth: {
+    api: {
+      getSession: mocks.getSession,
+    },
+  },
+}));
+
+vi.mock("@@/server/composables/azure/useContainerClient", () => ({
+  useContainerClient: vi.fn<typeof useContainerClient>(useContainerClientMock),
+}));
+
+vi.mock("@@/server/composables/azure/useTableClient", () => ({
+  useTableClient: vi.fn<typeof useTableClient>(useTableClientMock),
+}));
+
 export const mockSessionOnce = async (db: Context["db"], mockUser?: User) => {
   const name = "name";
-  const createdAt = new Date(0);
+  const createdAt = new Date();
   const user =
     mockUser ??
     (
@@ -73,14 +93,6 @@ const createSession = (userId: string): Session["session"] => {
   };
 };
 
-vi.mock("@@/server/auth", () => ({
-  auth: {
-    api: {
-      getSession: mocks.getSession,
-    },
-  },
-}));
-
 export const createMockContext = async (): Promise<Context> => {
   const req = new IncomingMessage(new Socket());
   req.headers = {
@@ -96,6 +108,7 @@ export const createMockContext = async (): Promise<Context> => {
 
 const createMockDb = async () => {
   // @TODO: https://github.com/drizzle-team/drizzle-orm/issues/2853#issuecomment-2668459509
+  // oxlint-disable-next-line consistent-type-imports
   const { pushSchema } = require("drizzle-kit/api") as typeof import("drizzle-kit/api");
   // Use in-memory pglite db which supports the same API
   // as a mock for the postgresjs db

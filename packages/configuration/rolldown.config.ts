@@ -7,10 +7,18 @@ const rolldownConfiguration: ConfigExport = defineConfig([
   {
     input: "src/index.ts",
     output: [{ dir: "dist", format: "es" }],
-    plugins: [dts({ resolve: ["type-fest"], tsconfig: "tsconfig.build.json" })],
-    resolve: {
-      tsconfigFilename: "tsconfig.build.json",
-    },
+    plugins: [
+      dts({
+        resolve: [
+          // azure-mock
+          "@azure/core-http-compat",
+          "@azure/core-rest-pipeline",
+          "type-fest",
+        ],
+        tsconfig: "tsconfig.build.json",
+      }),
+    ],
+    tsconfig: "tsconfig.build.json",
   },
 ]);
 

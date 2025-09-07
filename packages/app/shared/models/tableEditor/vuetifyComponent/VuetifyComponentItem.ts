@@ -14,7 +14,7 @@ import {
   VuetifyComponentType,
   vuetifyComponentTypeSchema,
 } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentType";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 export class VuetifyComponentItem extends ATableEditorItemEntity implements ItemEntityType<VuetifyComponentItemType> {
   component: VuetifyComponentType = VuetifyComponentType["v-alert"];

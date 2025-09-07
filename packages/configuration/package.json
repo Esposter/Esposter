@@ -1,10 +1,10 @@
 {
   "name": "@esposter/configuration",
-  "version": "2.4.1",
+  "version": "2.13.1",
   "description": "A library that contains shared configuration.",
   "private": true,
   "type": "module",
-  "homepage": "https://github.com/Esposter/Esposter#readme",
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/configuration#readme",
   "license": "Apache-2.0",
   "author": "Jimmy Chen",
   "main": "dist/index.js",
@@ -38,7 +38,6 @@
     "eslint-plugin-prettier": "catalog:",
     "typescript-eslint": "catalog:",
     "unplugin-auto-import": "catalog:",
-    "vite-plugin-dts": "catalog:",
     "vite-plugin-mkcert": "catalog:"
   }
 }

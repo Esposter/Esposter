@@ -5,12 +5,12 @@ import { dayjs } from "#shared/services/dayjs";
 import { getBlobName } from "@@/server/services/azure/container/getBlobName";
 import { ContainerSASPermissions } from "@azure/storage-blob";
 
-export const generateDownloadFileSasUrls = async (
+export const generateDownloadFileSasUrls = (
   containerClient: ContainerClient,
   files: Pick<FileEntity, "filename" | "id" | "mimetype">[],
   prefix = "",
-): Promise<string[]> => {
-  if (files.length === 0) return [];
+) => {
+  if (files.length === 0) return [] as string[];
   else
     return Promise.all(
       files.map(({ filename, id, mimetype }) => {

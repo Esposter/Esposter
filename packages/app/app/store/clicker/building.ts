@@ -2,12 +2,12 @@ import type { BuildingMap } from "#shared/assets/clicker/data/BuildingMap";
 import type { Building } from "#shared/models/clicker/data/building/Building";
 import type { BuildingWithStats } from "#shared/models/clicker/data/building/BuildingWithStats";
 
+import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
 import { formatNumberLong } from "@/services/clicker/format";
 import { applyBuildingUpgrade } from "@/services/clicker/upgrade/applyBuildingUpgrade";
 import { applyBuildingUpgrades } from "@/services/clicker/upgrade/applyBuildingUpgrades";
 import { useClickerStore } from "@/store/clicker";
 import { usePointStore } from "@/store/clicker/point";
-import { parseDictionaryToArray } from "@/util/parseDictionaryToArray";
 import { getInitials } from "@/util/text/getInitials";
 
 export const useBuildingStore = defineStore("clicker/building", () => {
@@ -37,7 +37,6 @@ export const useBuildingStore = defineStore("clicker/building", () => {
     if (!boughtBuilding) return [];
 
     const buildingPower = getBoughtBuildingPower(boughtBuilding);
-
     return [
       `- Each ${boughtBuilding.id} produces **${formatNumberLong(buildingPower / boughtBuilding.amount)} ${
         clickerItemProperties.value.pluralName
@@ -52,7 +51,7 @@ export const useBuildingStore = defineStore("clicker/building", () => {
   };
   const getBuildingPrice = (building: Building) => {
     const boughtBuildingAmount = getBoughtBuildingAmount(building);
-    return Math.trunc(building.basePrice * Math.pow(1.15, boughtBuildingAmount));
+    return Math.trunc(building.basePrice * (1 + boughtBuildingAmount) ** 1.15);
   };
 
   const createBoughtBuilding = (newBuilding: Building) => {

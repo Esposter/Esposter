@@ -7,7 +7,7 @@ export const useWebpageEditorStore = defineStore("webpageEditor", () => {
   const { $trpc } = useNuxtApp();
   const readWebpageEditor = () => $trpc.webpageEditor.readWebpageEditor.query();
   const saveWebpageEditor = async (projectData: ProjectData) => {
-    const webpageEditor = Object.assign(new WebpageEditor(), projectData);
+    const webpageEditor = new WebpageEditor(projectData);
     saveItemMetadata(webpageEditor);
     await $trpc.webpageEditor.saveWebpageEditor.mutate(webpageEditor);
   };

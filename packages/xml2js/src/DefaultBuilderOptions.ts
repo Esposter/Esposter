@@ -12,5 +12,5 @@ export const DefaultBuilderOptions: SetRequired<
   doctype: null,
   renderOpts: { indent: "  ", newline: "\n", pretty: true },
   rootName: "root",
-  xmldec: { encoding: "UTF-8", standalone: true, version: "1.0" },
+  xmldec: { encoding: "utf8", standalone: true, version: "1.0" },
 };

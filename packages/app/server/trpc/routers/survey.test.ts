@@ -8,6 +8,7 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
 import { NIL } from "@esposter/shared";
+import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("survey", () => {
@@ -26,10 +27,11 @@ describe("survey", () => {
   });
 
   afterEach(async () => {
+    MockContainerDatabase.clear();
     await mockContext.db.delete(surveys);
   });
 
-  test.todo("creates", async () => {
+  test("creates", async () => {
     expect.hasAssertions();
 
     const newSurvey = await caller.createSurvey({ group, model, name });
@@ -39,7 +41,7 @@ describe("survey", () => {
     expect(newSurvey.model).toBe(model);
   });
 
-  test.todo("count", async () => {
+  test("count", async () => {
     expect.hasAssertions();
 
     const count = await caller.count();
@@ -52,7 +54,7 @@ describe("survey", () => {
     expect(newCount).toBe(1);
   });
 
-  test.todo("reads", async () => {
+  test("reads", async () => {
     expect.hasAssertions();
 
     const newSurvey = await caller.createSurvey({ group, model, name });
@@ -77,7 +79,7 @@ describe("survey", () => {
     expect(readSurveys).toStrictEqual(getOffsetPaginationData([], 0));
   });
 
-  test.todo("updates", async () => {
+  test("updates", async () => {
     expect.hasAssertions();
 
     const newSurvey = await caller.createSurvey({ group, model, name });
@@ -94,16 +96,18 @@ describe("survey", () => {
     );
   });
 
-  test.todo("fails update with wrong user", async () => {
+  test("fails update with wrong user", async () => {
     expect.hasAssertions();
 
     const newSurvey = await caller.createSurvey({ group, model, name });
     await mockSessionOnce(mockContext.db);
 
-    await expect(caller.updateSurvey({ id: newSurvey.id, name })).rejects.toThrowErrorMatchingInlineSnapshot();
+    await expect(caller.updateSurvey({ id: newSurvey.id, name })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Update, name: Survey, ${newSurvey.id}]`,
+    );
   });
 
-  test.todo("updates model", async () => {
+  test("updates model", async () => {
     expect.hasAssertions();
 
     const newSurvey = await caller.createSurvey({ group, model, name });
@@ -124,7 +128,7 @@ describe("survey", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
-  test.todo("fails update model with wrong user", async () => {
+  test("fails update model with wrong user", async () => {
     expect.hasAssertions();
 
     const newSurvey = await caller.createSurvey({ group, model, name });
@@ -132,22 +136,22 @@ describe("survey", () => {
 
     await expect(
       caller.updateSurveyModel({ id: newSurvey.id, model, modelVersion: 0 }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot();
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
-  test.todo("fails update model with old model version", async () => {
+  test("fails update model with old model version", async () => {
     expect.hasAssertions();
 
     const newSurvey = await caller.createSurvey({ group, model, name });
 
     await expect(
-      caller.updateSurveyModel({ id: newSurvey.id, model, modelVersion: newSurvey.modelVersion - 1 }),
+      caller.updateSurveyModel({ id: newSurvey.id, model: updatedModel, modelVersion: newSurvey.modelVersion - 1 }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Invalid operation: Update, name: Survey, cannot update survey model with old model version]`,
     );
   });
 
-  test.todo("fails update model with duplicate", async () => {
+  test("fails update model with duplicate", async () => {
     expect.hasAssertions();
 
     const newSurvey = await caller.createSurvey({ group, model, name });
@@ -159,7 +163,7 @@ describe("survey", () => {
     );
   });
 
-  test.todo("deletes", async () => {
+  test("deletes", async () => {
     expect.hasAssertions();
 
     const newSurvey = await caller.createSurvey({ group, model, name });
@@ -176,12 +180,14 @@ describe("survey", () => {
     );
   });
 
-  test.todo("fails delete with wrong user", async () => {
+  test("fails delete with wrong user", async () => {
     expect.hasAssertions();
 
     const newSurvey = await caller.createSurvey({ group, model, name });
     await mockSessionOnce(mockContext.db);
 
-    await expect(caller.deleteSurvey(newSurvey.id)).rejects.toThrowErrorMatchingInlineSnapshot();
+    await expect(caller.deleteSurvey(newSurvey.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Delete, name: Survey, ${newSurvey.id}]`,
+    );
   });
 });

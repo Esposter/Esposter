@@ -12,7 +12,7 @@ import { readFile } from "node:fs/promises";
 const filePath = `${WORLD_ROOT_DIRECTORY}/index.tiled-project`;
 
 export const createPropertyTypes = async () => {
-  const tiledProject: TiledProject = jsonDateParse(await readFile(filePath, "utf-8"));
+  const tiledProject: TiledProject = jsonDateParse(await readFile(filePath, "utf8"));
   const classObjectTypes: string[] = [];
 
   for (const propertyType of tiledProject.propertyTypes)

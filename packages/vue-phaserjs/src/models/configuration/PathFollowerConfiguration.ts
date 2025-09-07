@@ -5,7 +5,7 @@ import type { FlipConfiguration } from "@/models/configuration/components/FlipCo
 import type { MaskConfiguration } from "@/models/configuration/components/MaskConfiguration";
 import type { OriginConfiguration } from "@/models/configuration/components/OriginConfiguration";
 import type { PathFollowerComponentConfiguration } from "@/models/configuration/components/PathFollowerComponentConfiguration";
-import type { PipelineConfiguration } from "@/models/configuration/components/PipelineConfiguration";
+import type { RenderNodesConfiguration } from "@/models/configuration/components/RenderNodesConfiguration";
 import type { ScrollFactorConfiguration } from "@/models/configuration/components/ScrollFactorConfiguration";
 import type { SizeConfiguration } from "@/models/configuration/components/SizeConfiguration";
 import type { TextureConfiguration } from "@/models/configuration/components/TextureConfiguration";
@@ -26,7 +26,7 @@ export interface PathFollowerConfiguration
     MaskConfiguration,
     OriginConfiguration,
     PathFollowerComponentConfiguration,
-    PipelineConfiguration,
+    RenderNodesConfiguration,
     ScrollFactorConfiguration,
     SizeConfiguration,
     TextureConfiguration,

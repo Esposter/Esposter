@@ -1,4 +1,4 @@
-import type { Monster } from "@/models/dungeons/monster/Monster";
+import type { Monster } from "#shared/models/dungeons/monster/Monster";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import type { SceneWithPlugins } from "vue-phaserjs";
 

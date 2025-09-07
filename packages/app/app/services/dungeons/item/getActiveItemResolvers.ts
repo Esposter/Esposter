@@ -1,5 +1,5 @@
-import type { Item } from "@/models/dungeons/item/Item";
-import type { Monster } from "@/models/dungeons/monster/Monster";
+import type { Item } from "#shared/models/dungeons/item/Item";
+import type { Monster } from "#shared/models/dungeons/monster/Monster";
 import type { AItemResolver } from "@/models/resolvers/dungeons/AItemResolver";
 
 import { CaptureItemResolver } from "@/models/resolvers/dungeons/item/CaptureItemResolver";

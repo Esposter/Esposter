@@ -1,5 +1,5 @@
-import type { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
-import type { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
+import type { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
+import type { SpritesheetKey } from "#shared/models/dungeons/keys/spritesheet/SpritesheetKey";
 
 import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
 import { describe, expect, expectTypeOf, test } from "vitest";

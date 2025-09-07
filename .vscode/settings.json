@@ -7,15 +7,15 @@
     ".env.example": "env",
     ".tsx": "xml"
   },
-  "symlink-follow.autoFollow": true,
   "search.followSymlinks": false,
+  "symlink-follow.autoFollow": true,
   "typescript.tsdk": "node_modules/typescript/lib",
   "javascript.updateImportsOnFileMove.enabled": "always",
   "typescript.updateImportsOnFileMove.enabled": "always",
   "vue.updateImportsOnFileMove.enabled": true,
   "[typescript][vue]": {
     "editor.formatOnSave": false,
-    "editor.codeActionsOnSave": ["source.organizeImports", "source.fixAll.eslint"]
+    "editor.codeActionsOnSave": ["source.organizeImports", "source.fixAll.oxc", "source.fixAll.eslint"]
   },
   "[properties]": {
     "editor.defaultFormatter": "foxundermoon.shell-format"
@@ -28,5 +28,6 @@
   },
   "[xml]": {
     "editor.formatOnSave": false
-  }
+  },
+  "oxc.enable": true
 }

@@ -3,7 +3,7 @@ import { users } from "#shared/db/schema/users";
 import { relations, sql } from "drizzle-orm";
 import { check, integer, pgTable, primaryKey, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 export const likes = pgTable(
   "likes",

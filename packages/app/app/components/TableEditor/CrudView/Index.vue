@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import type { Item } from "#shared/models/tableEditor/data/Item";
+import type { ItemSlot } from "vuetify/lib/components/VDataTable/types.mjs";
+
 import { DefaultPropsMap } from "@/services/tableEditor/DefaultPropsMap";
 import { useTableEditorStore } from "@/store/tableEditor";
 
@@ -11,6 +14,7 @@ const firstColumnKey = computed(() => props.value.headers[0].key);
 const richTextColumnKeys = computed(() =>
   props.value.headers.filter(({ isRichText }) => isRichText).map(({ key }) => key as string),
 );
+const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Item>) => editItem({ id: item.id });
 </script>
 
 <template>
@@ -26,7 +30,7 @@ const richTextColumnKeys = computed(() =>
         search: searchQuery,
         sortBy: [{ key: 'name', order: 'asc' }],
       }"
-      @click:row="(_event, { item }) => editItem({ id: item.id })"
+      @click:row="onClickRow"
     >
       <template #top>
         <TableEditorCrudViewTopSlot />

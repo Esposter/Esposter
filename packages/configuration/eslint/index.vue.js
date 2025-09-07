@@ -6,7 +6,7 @@ import typescriptIgnores from "@esposter/configuration/eslint/typescriptIgnores.
 import typescriptRules from "@esposter/configuration/eslint/typescriptRules.js";
 import oxlint from "eslint-plugin-oxlint";
 
-import withNuxt from "../../app/.nuxt/eslint.config.mjs";
+import { withNuxt } from "../../app/.nuxt/eslint.config.mjs";
 
 export default withNuxt(nuxtPlugin)
   .overrides({

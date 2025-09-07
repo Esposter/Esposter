@@ -22,8 +22,7 @@ export const createDataMap = <TItem extends NonNullable<unknown>>(
       if (!value) {
         const clonedDefaultValue = structuredClone(defaultValue);
         dataMap.value.set(currentIdValue, clonedDefaultValue);
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        return dataMap.value.get(currentIdValue)!;
+        return dataMap.value.get(currentIdValue) ?? clonedDefaultValue;
       }
       return value;
     },

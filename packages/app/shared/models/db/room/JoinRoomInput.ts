@@ -1,4 +1,4 @@
-import type { z } from "zod/v4";
+import type { z } from "zod";
 
 import { selectInviteSchema } from "#shared/db/schema/invites";
 

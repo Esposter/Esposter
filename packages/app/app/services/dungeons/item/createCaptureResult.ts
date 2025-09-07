@@ -1,7 +1,7 @@
-import type { Monster } from "@/models/dungeons/monster/Monster";
+import type { Monster } from "#shared/models/dungeons/monster/Monster";
 
+import { CaptureResult } from "#shared/models/dungeons/item/CaptureResult";
 import { createRandomNumber } from "#shared/util/math/random/createRandomNumber";
-import { CaptureResult } from "@/models/dungeons/item/CaptureResult";
 
 export const createCaptureResult = ({ stats, status }: Monster) => {
   const hpRate = status.hp / stats.maxHp;

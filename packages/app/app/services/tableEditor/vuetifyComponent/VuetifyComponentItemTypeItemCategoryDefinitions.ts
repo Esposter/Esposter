@@ -4,7 +4,7 @@ import type { Except } from "type-fest";
 import { ItemEntityTypePropertyNames } from "#shared/models/entity/ItemEntityType";
 import { VuetifyComponentItem } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 import { VuetifyComponentItemType } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentItemType";
-import { parseDictionaryToArray } from "@/util/parseDictionaryToArray";
+import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
 import { prettify } from "@/util/text/prettify";
 
 const VuetifyComponentItemTypeItemCategoryDefinitionMap = {

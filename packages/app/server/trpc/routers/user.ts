@@ -1,7 +1,7 @@
 import type { IUserStatus } from "#shared/db/schema/userStatuses";
 import type { ReadableStream } from "node:stream/web";
 import type { SetNonNullable } from "type-fest";
-import type { z } from "zod/v4";
+import type { z } from "zod";
 
 import { selectUserSchema } from "#shared/db/schema/users";
 import { selectUserStatusSchema, userStatuses } from "#shared/db/schema/userStatuses";
@@ -10,9 +10,9 @@ import { UserStatus } from "#shared/models/db/user/UserStatus";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
-import { userEventEmitter } from "@@/server/services/esbabbler/events/userEventEmitter";
-import { getDetectedUserStatus } from "@@/server/services/esbabbler/getDetectedUserStatus";
 import { on } from "@@/server/services/events/on";
+import { userEventEmitter } from "@@/server/services/message/events/userEventEmitter";
+import { getDetectedUserStatus } from "@@/server/services/message/getDetectedUserStatus";
 import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -89,10 +89,12 @@ export const userRouter = router({
   readStatuses: authedProcedure.input(readStatusesInputSchema).query(async ({ ctx, input }) => {
     const foundUserStatuses = await ctx.db.select().from(userStatuses).where(inArray(userStatuses.userId, input));
     const resultUserStatuses: SetNonNullable<IUserStatus, "status">[] = [];
+    const userStatusMap = new Map(foundUserStatuses.map((us) => [us.userId, us]));
 
     for (const userId of input) {
-      const foundStatus = foundUserStatuses.find((us) => us.userId === userId);
-      if (!foundStatus)
+      const foundStatus = userStatusMap.get(userId);
+      if (foundStatus) resultUserStatuses.push({ ...foundStatus, status: getDetectedUserStatus(foundStatus) });
+      else
         // We'll conveniently assume that if they don't have a user status record yet
         // it means that they're still online as we insert a record as soon as they go offline
         resultUserStatuses.push({
@@ -105,7 +107,6 @@ export const userRouter = router({
           updatedAt: new Date(),
           userId,
         });
-      else resultUserStatuses.push({ ...foundStatus, status: getDetectedUserStatus(foundStatus) });
     }
 
     return resultUserStatuses;

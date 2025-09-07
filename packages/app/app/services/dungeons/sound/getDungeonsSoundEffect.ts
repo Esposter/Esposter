@@ -1,4 +1,4 @@
-import type { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
+import type { SoundEffectKey } from "#shared/models/dungeons/keys/sound/SoundEffectKey";
 import type { Types } from "phaser";
 import type { Except } from "type-fest";
 import type { SceneWithPlugins } from "vue-phaserjs";

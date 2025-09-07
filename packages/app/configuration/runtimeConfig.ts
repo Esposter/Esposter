@@ -5,6 +5,9 @@ export const runtimeConfig: NuxtConfig["runtimeConfig"] = {
     secret: process.env.AUTH_SECRET,
   },
   azure: {
+    search: {
+      apiKey: process.env.AZURE_SEARCH_API_KEY,
+    },
     storageAccountConnectionString: process.env.AZURE_STORAGE_ACCOUNT_CONNECTION_STRING,
   },
   database: {
@@ -22,12 +25,15 @@ export const runtimeConfig: NuxtConfig["runtimeConfig"] = {
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   },
   public: {
-    azure: {
-      blobUrl: process.env.AZURE_BLOB_URL,
-    },
     baseUrl: process.env.BASE_URL,
     facebook: {
       clientId: process.env.FACEBOOK_CLIENT_ID,
     },
+    vapid: {
+      publicKey: process.env.VAPID_PUBLIC_KEY,
+    },
+  },
+  vapid: {
+    privateKey: process.env.VAPID_PRIVATE_KEY,
   },
 };

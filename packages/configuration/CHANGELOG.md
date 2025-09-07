@@ -3,6 +3,95 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.13.1](https://github.com/Esposter/Esposter/compare/v2.13.0...v2.13.1) (2025-08-31)
+
+**Note:** Version bump only for package @esposter/configuration
+
+# [2.13.0](https://github.com/Esposter/Esposter/compare/v2.12.0...v2.13.0) (2025-08-31)
+
+### Bug Fixes
+
+* migrate to floating ui ([9cbb7f5](https://github.com/Esposter/Esposter/commit/9cbb7f591555605ac6360482188138a222302326))
+* pin oxlint to v1.11.2 for now ([95d229b](https://github.com/Esposter/Esposter/commit/95d229be7db767d5cca616d1b772a529f4077de5))
+
+# [2.12.0](https://github.com/Esposter/Esposter/compare/v2.11.0...v2.12.0) (2025-08-15)
+
+**Note:** Version bump only for package @esposter/configuration
+
+# [2.11.0](https://github.com/Esposter/Esposter/compare/v2.10.0...v2.11.0) (2025-08-11)
+
+**Note:** Version bump only for package @esposter/configuration
+
+# [2.10.0](https://github.com/Esposter/Esposter/compare/v2.9.0...v2.10.0) (2025-08-10)
+
+### Bug Fixes
+
+* lint ([c439748](https://github.com/Esposter/Esposter/commit/c43974847f2615160db145921858e05caf328f78))
+
+* lint ([94d10dc](https://github.com/Esposter/Esposter/commit/94d10dc22e222676e8eb7208bcf7c548252c98d8))
+
+* use get element by id, better API ([8186414](https://github.com/Esposter/Esposter/commit/8186414f0df5294e47b76c29d93a43811038c7b5))
+
+* vue dts ([cb01c86](https://github.com/Esposter/Esposter/commit/cb01c8602da3d0ad10c01972ac77e5fd2c010964))
+
+# [2.9.0](https://github.com/Esposter/Esposter/compare/v2.8.1...v2.9.0) (2025-07-19)
+
+### Features
+
+* Migrate to unplugin-dts ([53ac323](https://github.com/Esposter/Esposter/commit/53ac323c677bc0a1c35c27be77785cb4a9207d20))
+
+## [2.8.1](https://github.com/Esposter/Esposter/compare/v2.8.0...v2.8.1) (2025-07-09)
+
+**Note:** Version bump only for package @esposter/configuration
+
+# [2.8.0](https://github.com/Esposter/Esposter/compare/v2.7.0...v2.8.0) (2025-07-09)
+
+**Note:** Version bump only for package @esposter/configuration
+
+# [2.7.0](https://github.com/Esposter/Esposter/compare/v2.6.0...v2.7.0) (2025-07-09)
+
+### Bug Fixes
+
+* links ([54b8d18](https://github.com/Esposter/Esposter/commit/54b8d1892eb340a7150286306a5d8ea44a0e0a43))
+
+* readme + homepage ([15ea752](https://github.com/Esposter/Esposter/commit/15ea7529278f0cd82ceefc261baf0d232752c51e))
+
+### Features
+
+* Add azure-mock library ([7391d18](https://github.com/Esposter/Esposter/commit/7391d1822b7fc6249efc58f041e2c99fb77cef5c))
+
+# [2.6.0](https://github.com/Esposter/Esposter/compare/v2.5.0...v2.6.0) (2025-07-09)
+
+### Bug Fixes
+
+* lint ([4c6e7b1](https://github.com/Esposter/Esposter/commit/4c6e7b11cf23b3aed2441fc12c07a07fa965d772))
+
+* tsconfig ([693ad43](https://github.com/Esposter/Esposter/commit/693ad4368c17463865199e91ca9ea7df0ede0ded))
+
+### Features
+
+* Add oxlint rules to prep eslint migration later in the future ([45d8b00](https://github.com/Esposter/Esposter/commit/45d8b00c2223a92d937dc0734ff8702661c9882c))
+
+### Performance Improvements
+
+* disable time-consuming lint rules ([5a4c8b4](https://github.com/Esposter/Esposter/commit/5a4c8b4927a63c559cbaa1ae755045d996329b12))
+
+# [2.5.0](https://github.com/Esposter/Esposter/compare/v2.4.1...v2.5.0) (2025-06-19)
+
+### Bug Fixes
+
+* Add oxlint files to turn off eslint ones ([bdc7aed](https://github.com/Esposter/Esposter/commit/bdc7aed1dfab9d0c8527588cec61a7eb073aa523))
+
+* add withNuxt ([27cc5fc](https://github.com/Esposter/Esposter/commit/27cc5fc31bf5a7ae22a33e33bd9d7cf047afb8c8))
+
+* lint + add base emoji tests ([7bee7b7](https://github.com/Esposter/Esposter/commit/7bee7b74c446ff456896145f36450383a8dc89b6))
+
+* oxlint rules ([21d749d](https://github.com/Esposter/Esposter/commit/21d749d390fb30c86e285ed1d10e453cdb6d1fed))
+
+### Performance Improvements
+
+* Add oxlint ([2e92e38](https://github.com/Esposter/Esposter/commit/2e92e38522ba45bc223543e714010567aee6a0b2))
+
 ## [2.4.1](https://github.com/Esposter/Esposter/compare/v2.4.0...v2.4.1) (2025-05-28)
 
 **Note:** Version bump only for package @esposter/configuration

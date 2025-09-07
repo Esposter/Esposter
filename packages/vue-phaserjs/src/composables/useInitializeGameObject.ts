@@ -6,7 +6,7 @@ import type { SetupContext } from "vue";
 import { useInitializeGameObjectEvents } from "@/composables/useInitializeGameObjectEvents";
 import { useInitializeGameObjectSetters } from "@/composables/useInitializeGameObjectSetters";
 import { useInjectSceneKey } from "@/composables/useInjectSceneKey";
-import { useParentContainerStore } from "@/store/parentContainer";
+import { pushGameObject } from "@/pushGameObject";
 import { getScene } from "@/util/getScene";
 import { getInitializeGameObjectLifecycleHook } from "@/util/hooks/getInitializeGameObjectLifecycleHook";
 import { InjectionKeyMap } from "@/util/InjectionKeyMap";
@@ -25,8 +25,6 @@ export const useInitializeGameObject = <
   immediate?: true,
 ) => {
   let gameObject: TGameObject;
-  const parentContainerStore = useParentContainerStore();
-  const { pushGameObject } = parentContainerStore;
   const { initializeGameObjectSetters, setterWatchHandles } = useInitializeGameObjectSetters(
     () => gameObject,
     configuration,

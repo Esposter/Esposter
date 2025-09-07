@@ -6,7 +6,7 @@ import typescriptIgnores from "@esposter/configuration/eslint/typescriptIgnores.
 import typescriptRules from "@esposter/configuration/eslint/typescriptRules.js";
 import oxlint from "eslint-plugin-oxlint";
 
-import withNuxt from "../../app/.nuxt/eslint.config.mjs";
+import { withNuxt } from "../../app/.nuxt/eslint.config.mjs";
 /**
  * Unfortunately, running all typescript-eslint rules in vue files is so slow, it's unrealistic to put it in CI/CD,
  * so we have a light version that lints the extra typescript-eslint rules only in ts files so we can use it in CI/CD

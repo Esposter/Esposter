@@ -1,8 +1,8 @@
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
+import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { InfoContainerTextMap } from "@/services/dungeons/scene/settings/InfoContainerTextMap";
 import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";

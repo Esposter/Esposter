@@ -1,9 +1,9 @@
 import type { Loader } from "phaser";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
+import { CharacterKey } from "#shared/models/dungeons/keys/spritesheet/CharacterKey";
 import character from "@/assets/dungeons/thirdParty/axulart/character/custom.png";
 import npc from "@/assets/dungeons/thirdParty/parabellumGames/characters.png";
-import { CharacterKey } from "@/models/dungeons/keys/spritesheet/CharacterKey";
 
 export const CharacterLoaderMap = {
   [CharacterKey.Character]: (scene) =>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
+import type { SpritesheetKey } from "#shared/models/dungeons/keys/spritesheet/SpritesheetKey";
 import type { Position } from "grid-engine";
 import type { Types } from "phaser";
 import type { SceneWithPlugins } from "vue-phaserjs";

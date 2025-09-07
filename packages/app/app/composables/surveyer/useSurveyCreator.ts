@@ -6,9 +6,9 @@ import { getPropertyNames } from "#shared/util/getPropertyNames";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
 import { validateFile } from "@/services/file/validateFile";
-import { THEME_KEY } from "@/services/surveyer/constants";
-import { getActions } from "@/services/surveyer/getActions";
-import { parseSurveyModel } from "@/services/surveyer/parseSurveyModel";
+import { THEME_KEY } from "@/services/survey/constants";
+import { getActions } from "@/services/survey/getActions";
+import { parseSurveyModel } from "@/services/survey/parseSurveyModel";
 import { ImageItemValue, QuestionImageModel, QuestionImagePickerModel } from "survey-core";
 import { LogoImageViewModel, SurveyCreatorModel } from "survey-creator-core";
 import { DefaultDark, SC2020 } from "survey-creator-core/themes";
@@ -102,14 +102,10 @@ export const useSurveyCreator = (survey: Ref<Survey>) => {
 
   const isDark = useIsDark();
 
-  watch(
-    isDark,
-    (newIsDark) => {
-      if (newIsDark) creator.applyCreatorTheme(DefaultDark);
-      else creator.applyCreatorTheme(SC2020);
-    },
-    { immediate: true },
-  );
+  watchImmediate(isDark, (newIsDark) => {
+    if (newIsDark) creator.applyCreatorTheme(DefaultDark);
+    else creator.applyCreatorTheme(SC2020);
+  });
 
   return { creator, dialog };
 };

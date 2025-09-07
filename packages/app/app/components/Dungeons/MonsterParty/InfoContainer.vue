@@ -26,15 +26,11 @@ onCreate((scene) => {
   y.value = scene.scale.height - 69;
 });
 
-watch(
-  cancelButtonActive,
-  (newCancelButtonActive) => {
-    // We will keep info text as a ref as it can be set by other things
-    // e.g. when using items
-    infoDialogMessage.value.text = newCancelButtonActive ? "Go back to previous menu." : DEFAULT_INFO_DIALOG_MESSAGE;
-  },
-  { immediate: true },
-);
+watchImmediate(cancelButtonActive, (newCancelButtonActive) => {
+  // We will keep info text as a ref as it can be set by other things
+  // e.g. when using items
+  infoDialogMessage.value.text = newCancelButtonActive ? "Go back to previous menu." : DEFAULT_INFO_DIALOG_MESSAGE;
+});
 </script>
 
 <template>

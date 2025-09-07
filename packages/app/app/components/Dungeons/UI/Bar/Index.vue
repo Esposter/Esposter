@@ -3,8 +3,8 @@ import type { ImagePosition } from "@/models/dungeons/ImagePosition";
 import type { Tweens } from "phaser";
 import type { TweenBuilderConfiguration } from "vue-phaserjs";
 
+import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
 import { dayjs } from "#shared/services/dayjs";
-import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
 import { BarOrigin } from "@/models/dungeons/UI/bar/BarOrigin";
 import { BarType } from "@/models/dungeons/UI/bar/BarType";
 import { useSettingsStore } from "@/store/dungeons/settings";

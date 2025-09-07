@@ -3,8 +3,8 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { LayerName } from "#shared/generated/tiled/layers/Home/LayerName";
 import { EncounterObjectProperty } from "#shared/generated/tiled/propertyTypes/class/EncounterObjectProperty";
+import { Monster } from "#shared/models/dungeons/monster/Monster";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import { Monster } from "@/models/dungeons/monster/Monster";
 import { getEncounterArea } from "@/services/dungeons/area/getEncounterArea";
 import { MAX_STEPS_BEFORE_NEXT_ENCOUNTER } from "@/services/dungeons/scene/world/constants";
 import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
@@ -12,9 +12,10 @@ import { useDungeonsStore } from "@/store/dungeons";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useEncounterStore } from "@/store/dungeons/world/encounter";
-import { ExternalWorldSceneStore, useWorldSceneStore } from "@/store/dungeons/world/scene";
+import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { createRandomBoolean } from "@/util/math/random/createRandomBoolean";
 import { getWeightedRandomValue } from "@/util/math/random/getWeightedRandomValues";
+import { NotFoundError } from "@esposter/shared";
 
 export const useRandomEncounter = (scene: SceneWithPlugins) => {
   const dungeonsStore = useDungeonsStore();
@@ -32,10 +33,9 @@ export const useRandomEncounter = (scene: SceneWithPlugins) => {
   if (!isEncounter) return;
 
   const worldSceneStore = useWorldSceneStore();
-  const { tilemapKey } = storeToRefs(worldSceneStore);
-  const properties = ExternalWorldSceneStore.tilemapKeyLayerMap.get(tilemapKey.value)?.get(LayerName.Encounter)
-    ?.layer.properties;
-  if (!properties) return;
+  const { layerMap } = storeToRefs(worldSceneStore);
+  const properties = layerMap.value?.get(LayerName.Encounter)?.layer.properties;
+  if (!properties) throw new NotFoundError(useRandomEncounter.name, LayerName.Encounter);
 
   const areaTiledObjectProperty = getTiledObjectProperty<Area>(properties, EncounterObjectProperty.area);
   const encounterArea = getEncounterArea(areaTiledObjectProperty.value);

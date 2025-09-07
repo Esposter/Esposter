@@ -4,25 +4,29 @@ import type { Position } from "grid-engine";
 import { NpcObjectProperty } from "#shared/generated/tiled/propertyTypes/class/NpcObjectProperty";
 import { NpcPathObjectProperty } from "#shared/generated/tiled/propertyTypes/class/NpcPathObjectProperty";
 import { ObjectType } from "#shared/generated/tiled/propertyTypes/class/ObjectType";
-import { AssetKey } from "@/models/dungeons/keys/AssetKey";
+import { AssetKey } from "#shared/models/dungeons/keys/AssetKey";
 import { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
 import { Npc } from "@/models/dungeons/scene/world/Npc";
 import { getNpc } from "@/services/dungeons/npc/getNpc";
 import { getObjects } from "@/services/dungeons/scene/world/getObjects";
 import { getTiledObjectProperty } from "@/services/dungeons/tilemap/getTiledObjectProperty";
 import { useNpcStore } from "@/store/dungeons/world/npc";
-import { ExternalWorldSceneStore } from "@/store/dungeons/world/scene";
+import { useWorldSceneStore } from "@/store/dungeons/world/scene";
+import { NotFoundError } from "@esposter/shared";
 import { Direction } from "grid-engine";
 
 export const useReadNpcs = () => {
   const npcStore = useNpcStore();
   const { initializeCursorPaginationData } = npcStore;
   const npcs: Npc[] = [];
+  const worldSceneStore = useWorldSceneStore();
+  const { objectLayerMap, tilemap } = storeToRefs(worldSceneStore);
+  if (!objectLayerMap.value) throw new NotFoundError(useReadNpcs.name, ObjectType.Npc);
 
-  for (const [layerName, npcLayer] of ExternalWorldSceneStore.objectLayerMap.entries()) {
+  for (const [layerName, npcLayer] of objectLayerMap.value.entries()) {
     if (!(layerName.includes(ObjectType.Npc) && npcLayer)) continue;
 
-    const npcLayerObjects = getObjects(npcLayer);
+    const npcLayerObjects = getObjects(tilemap.value, npcLayer);
     const npcObject = npcLayerObjects.find((obj) => obj.type === ObjectType.Npc);
     if (!npcObject) continue;
 

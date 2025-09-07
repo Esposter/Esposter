@@ -1,4 +1,4 @@
-import type { AttackId } from "@/models/dungeons/attack/AttackId";
+import type { AttackId } from "#shared/models/dungeons/attack/AttackId";
 
 export const ExternalAttackManagerStore = {
   onComplete: undefined as (() => void) | undefined,

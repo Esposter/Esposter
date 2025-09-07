@@ -1,12 +1,12 @@
 import type { Loader } from "phaser";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
+import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
 import aquavalor from "@/assets/dungeons/UI/monsters/aquavalor.png";
 import carnodusk from "@/assets/dungeons/UI/monsters/carnodusk.png";
 import frostsaber from "@/assets/dungeons/UI/monsters/frostsaber.png";
 import ignivolt from "@/assets/dungeons/UI/monsters/ignivolt.png";
 import iguanignite from "@/assets/dungeons/UI/monsters/iguanignite.png";
-import { MonsterKey } from "@/models/dungeons/keys/image/UI/MonsterKey";
 
 export const MonsterLoaderMap = {
   [MonsterKey.Aquavalor]: (scene) => scene.load.image(MonsterKey.Aquavalor, aquavalor),

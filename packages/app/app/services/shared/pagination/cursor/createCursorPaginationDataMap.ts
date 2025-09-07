@@ -9,10 +9,11 @@ export const createCursorPaginationDataMap = <TItem>(currentId: ReadonlyRefOrGet
     get: () => {
       const currentIdValue = toValue(currentId);
       if (!currentIdValue) return new CursorPaginationData<TItem>();
+      const defaultValue = new CursorPaginationData<TItem>();
       return (
         cursorPaginationDataMap.value.get(currentIdValue) ??
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        cursorPaginationDataMap.value.set(currentIdValue, new CursorPaginationData<TItem>()).get(currentIdValue)!
+        cursorPaginationDataMap.value.set(currentIdValue, defaultValue).get(currentIdValue) ??
+        defaultValue
       );
     },
     set: (newCursorPaginationData) => {

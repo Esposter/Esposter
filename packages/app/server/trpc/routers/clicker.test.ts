@@ -5,7 +5,8 @@ import { Clicker } from "#shared/models/clicker/data/Clicker";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { clickerRouter } from "@@/server/trpc/routers/clicker";
-import { beforeAll, describe, expect, test } from "vitest";
+import { MockContainerDatabase } from "azure-mock";
+import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("clicker", () => {
   let caller: DecorateRouterRecord<TRPCRouter["clicker"]>;
@@ -14,6 +15,10 @@ describe("clicker", () => {
     const createCaller = createCallerFactory(clickerRouter);
     const mockContext = await createMockContext();
     caller = createCaller(mockContext);
+  });
+
+  afterEach(() => {
+    MockContainerDatabase.clear();
   });
 
   test("reads", async () => {
@@ -25,7 +30,7 @@ describe("clicker", () => {
     expect(clicker).toStrictEqual(new Clicker({ createdAt, id, updatedAt }));
   });
 
-  test.todo("saves and reads", async () => {
+  test("saves and reads", async () => {
     expect.hasAssertions();
 
     const clicker = new Clicker();

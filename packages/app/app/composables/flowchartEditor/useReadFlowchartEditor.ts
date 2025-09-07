@@ -10,9 +10,9 @@ export const useReadFlowchartEditor = async () => {
   await useReadData(
     () => {
       const flowchartEditorJson = localStorage.getItem(FLOWCHART_EDITOR_LOCAL_STORAGE_KEY);
-      if (flowchartEditorJson)
-        flowchartEditor.value = Object.assign(new FlowchartEditor(), jsonDateParse(flowchartEditorJson));
-      else flowchartEditor.value = new FlowchartEditor();
+      flowchartEditor.value = flowchartEditorJson
+        ? new FlowchartEditor(jsonDateParse(flowchartEditorJson))
+        : new FlowchartEditor();
     },
     async () => {
       flowchartEditor.value = await $trpc.flowchartEditor.readFlowchartEditor.query();

@@ -3,7 +3,7 @@ import { FunnelType } from "#shared/models/dashboard/data/chart/type/FunnelType"
 import { PieType } from "#shared/models/dashboard/data/chart/type/PieType";
 import { TreemapType } from "#shared/models/dashboard/data/chart/type/TreemapType";
 import { mergeObjectsStrict } from "@esposter/shared";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 enum BaseChartType {
   Basic = "Basic",

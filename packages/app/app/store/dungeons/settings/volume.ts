@@ -1,8 +1,8 @@
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import type Slider from "phaser3-rex-plugins/plugins/slider";
 
+import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
 import { dayjs } from "#shared/services/dayjs";
-import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { step } from "@/util/math/ease/step";
 import { clamp } from "@vueuse/core";

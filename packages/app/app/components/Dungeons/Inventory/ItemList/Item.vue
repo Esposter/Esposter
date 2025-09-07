@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Item } from "@/models/dungeons/item/Item";
+import type { Item } from "#shared/models/dungeons/item/Item";
 
 import { MenuTextStyle } from "@/assets/dungeons/scene/inventory/styles/MenuTextStyle";
 import { CONTENT_MENU_WIDTH, INITIAL_CURSOR_POSITION } from "@/services/dungeons/scene/inventory/constants";

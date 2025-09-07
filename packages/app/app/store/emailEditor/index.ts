@@ -7,7 +7,7 @@ export const useEmailEditorStore = defineStore("emailEditor", () => {
   const { $trpc } = useNuxtApp();
   const readEmailEditor = () => $trpc.emailEditor.readEmailEditor.query();
   const saveEmailEditor = async (projectData: ProjectData) => {
-    const emailEditor = Object.assign(new EmailEditor(), projectData);
+    const emailEditor = new EmailEditor(projectData);
     saveItemMetadata(emailEditor);
     await $trpc.emailEditor.saveEmailEditor.mutate(emailEditor);
   };

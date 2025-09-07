@@ -102,7 +102,7 @@ export class TiledJSONExternalFile extends MultiFile {
       const pathIndex = tileset.source.indexOf(publicString);
       if (pathIndex === -1) throw new NotFoundError(this.onFileComplete.name, tileset.source);
 
-      const relativePath = tileset.source.substring(pathIndex + publicString.length);
+      const relativePath = tileset.source.slice(pathIndex + publicString.length);
       const tilesetFile = new TilesetFile(
         index,
         loader,

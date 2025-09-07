@@ -1,4 +1,4 @@
-import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
+import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
 import { TextSpeedDelayMap } from "@/services/dungeons/scene/settings/TextSpeedDelayMap";
 import { useSettingsStore } from "@/store/dungeons/settings";
 

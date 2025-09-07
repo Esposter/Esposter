@@ -5,8 +5,7 @@ import type { EntityTypeKey } from "@/models/shared/entity/EntityTypeKey";
 import type { OperationDataKey } from "@/models/shared/pagination/OperationDataKey";
 
 import { getEntityIdComparator } from "#shared/services/entity/getEntityIdComparator";
-import { uncapitalize } from "@/util/text/uncapitalize";
-import { Operation } from "@esposter/shared";
+import { Operation, uncapitalize } from "@esposter/shared";
 
 export const createOperationData = <
   TItem extends ToData<AEntity>,
@@ -20,6 +19,9 @@ export const createOperationData = <
 ) => {
   const pushItems = (...newItems: TItem[]) => {
     items.value.push(...newItems);
+  };
+  const unshiftItems = (...newItems: TItem[]) => {
+    items.value.unshift(...newItems);
   };
   const createItem = (newItem: TItem, isReversed?: true) => {
     if (isReversed) items.value.unshift(newItem);
@@ -39,18 +41,21 @@ export const createOperationData = <
     [`${uncapitalize(Operation.Create)}${entityTypeKey}`]: createItem,
     [`${uncapitalize(Operation.Delete)}${entityTypeKey}`]: deleteItem,
     [`${uncapitalize(Operation.Push)}${entityTypeKey}s`]: pushItems,
+    [`${uncapitalize(Operation.Unshift)}${entityTypeKey}s`]: unshiftItems,
     [`${uncapitalize(Operation.Update)}${entityTypeKey}`]: updateItem,
   } as {
     [P in OperationDataKey<TEntityTypeKey>]: P extends `${Uncapitalize<TEntityTypeKey>}s`
       ? typeof items
       : P extends `${Uncapitalize<Operation.Push>}${TEntityTypeKey}s`
         ? typeof pushItems
-        : P extends `${Uncapitalize<Operation.Create>}${TEntityTypeKey}`
-          ? typeof createItem
-          : P extends `${Uncapitalize<Operation.Update>}${TEntityTypeKey}`
-            ? typeof updateItem
-            : P extends `${Uncapitalize<Operation.Delete>}${TEntityTypeKey}`
-              ? typeof deleteItem
-              : never;
+        : P extends `${Uncapitalize<Operation.Unshift>}${TEntityTypeKey}s`
+          ? typeof unshiftItems
+          : P extends `${Uncapitalize<Operation.Create>}${TEntityTypeKey}`
+            ? typeof createItem
+            : P extends `${Uncapitalize<Operation.Update>}${TEntityTypeKey}`
+              ? typeof updateItem
+              : P extends `${Uncapitalize<Operation.Delete>}${TEntityTypeKey}`
+                ? typeof deleteItem
+                : never;
   };
 };

@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
 import { MenuTextStyle } from "@/assets/dungeons/scene/settings/styles/MenuTextStyle";
-import { SettingsOption } from "@/models/dungeons/scene/settings/SettingsOption";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import {
   INITIAL_SETTINGS_POSITION,

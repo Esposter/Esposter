@@ -3,7 +3,7 @@ import type { ItemEntityType } from "#shared/models/entity/ItemEntityType";
 
 import { AzureEntity, createAzureEntitySchema } from "#shared/models/azure/AzureEntity";
 import { createItemEntityTypeSchema } from "#shared/models/entity/ItemEntityType";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 export abstract class AzureMetadataEntity<T extends string> extends AzureEntity implements ItemEntityType<T> {
   type!: T;

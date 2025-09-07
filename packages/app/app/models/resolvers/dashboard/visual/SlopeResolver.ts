@@ -2,8 +2,8 @@ import type { ApexOptions } from "apexcharts";
 
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { AVisualTypeResolver } from "@/models/resolvers/dashboard/visual/AVisualTypeResolver";
-import { uncapitalize } from "@/util/text/uncapitalize";
-import defu from "defu";
+import { uncapitalize } from "@esposter/shared";
+import { defu } from "defu";
 
 export class SlopeResolver extends AVisualTypeResolver {
   constructor() {

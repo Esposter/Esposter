@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { LayerName } from "#shared/generated/tiled/layers/Home/LayerName";
+import { SoundEffectKey } from "#shared/models/dungeons/keys/sound/SoundEffectKey";
+import { SpritesheetKey } from "#shared/models/dungeons/keys/spritesheet/SpritesheetKey";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
-import { SoundEffectKey } from "@/models/dungeons/keys/sound/SoundEffectKey";
-import { SpritesheetKey } from "@/models/dungeons/keys/spritesheet/SpritesheetKey";
 import { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
 import { PlayerWalkingAnimationMapping } from "@/services/dungeons/scene/world/constants";
 import { getDungeonsSoundEffect } from "@/services/dungeons/sound/getDungeonsSoundEffect";
@@ -10,7 +10,7 @@ import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { usePlayerStore } from "@/store/dungeons/player";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";
-import { ExternalWorldSceneStore, useWorldSceneStore } from "@/store/dungeons/world/scene";
+import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { Direction } from "grid-engine";
 import { Cameras } from "phaser";
 import { onCreate, onNextTick, onShutdown, useInjectSceneKey } from "vue-phaserjs";
@@ -26,7 +26,7 @@ const worldPlayerStore = useWorldPlayerStore();
 const { healParty, respawn } = worldPlayerStore;
 const { isMoving, sprite } = storeToRefs(worldPlayerStore);
 const worldSceneStore = useWorldSceneStore();
-const { tilemapKey } = storeToRefs(worldSceneStore);
+const { layerMap, tilemapKey } = storeToRefs(worldSceneStore);
 const worldDialogStore = useWorldDialogStore();
 const { showMessages } = worldDialogStore;
 const sceneKey = useInjectSceneKey();
@@ -86,10 +86,7 @@ onShutdown((scene) => {
     "
     :on-position-change-finished="
       (scene, { enterTile }) => {
-        const tile = ExternalWorldSceneStore.tilemapKeyLayerMap
-          .get(tilemapKey)
-          ?.get(LayerName.Encounter)
-          ?.getTileAt(enterTile.x, enterTile.y, false);
+        const tile = layerMap?.get(LayerName.Encounter)?.getTileAt(enterTile.x, enterTile.y, false);
         if (!tile) return;
 
         getDungeonsSoundEffect(scene, SoundEffectKey.StepGrass).play();

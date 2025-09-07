@@ -3,5 +3,6 @@ export enum Operation {
   Delete = "Delete",
   Push = "Push",
   Read = "Read",
+  Unshift = "Unshift",
   Update = "Update",
 }

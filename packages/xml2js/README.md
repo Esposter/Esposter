@@ -6,6 +6,8 @@
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
 Inspired by [xml2js](https://github.com/Leonidas-from-XIV/node-xml2js).
+A complete rewrite from coffeescript to typescript that removes unnecessary dependencies like `events` to resolve many dependency issues e.g. [`this.removeAllListeners is not a function`](https://github.com/Leonidas-from-XIV/node-xml2js/issues/697).
+The package aims to retain all the options and behaviour by `xml2js` but it is recommended to only use `parseStringPromise` as the sole option for parsing.
 
 ### Table of Contents
 

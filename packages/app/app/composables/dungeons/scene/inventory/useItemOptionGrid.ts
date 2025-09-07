@@ -1,4 +1,4 @@
-import type { Item } from "@/models/dungeons/item/Item";
+import type { Item } from "#shared/models/dungeons/item/Item";
 
 import { Grid } from "@/models/dungeons/Grid";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
@@ -24,16 +24,12 @@ export const useItemOptionGrid = () => {
   if (!isInitialized) {
     ItemOptionGrid.grid = computed(() => [...inventory.value.map((i) => [i]), [PlayerSpecialInput.Cancel]]);
 
-    watch(
-      inventory,
-      () => {
-        if (unref(ItemOptionGrid.validate(ItemOptionGrid.position.value))) return;
-        // If our inventory has changed and we are no longer on a valid item,
-        // simply move down to the next valid item
-        ItemOptionGrid.move(Direction.DOWN);
-      },
-      { deep: true },
-    );
+    watchDeep(inventory, () => {
+      if (unref(ItemOptionGrid.validate(ItemOptionGrid.position.value))) return;
+      // If our inventory has changed and we are no longer on a valid item,
+      // simply move down to the next valid item
+      ItemOptionGrid.move(Direction.DOWN);
+    });
 
     isInitialized = true;
   }

@@ -1,4 +1,4 @@
-import type { z } from "zod/v4";
+import type { z } from "zod";
 
 import { selectLikeSchema } from "#shared/db/schema/likes";
 

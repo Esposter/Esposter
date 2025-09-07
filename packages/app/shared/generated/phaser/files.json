@@ -1,131 +1,166 @@
 [
-  { "key": "SceneBattleForestBackground", "type": "image", "url": "Scene/Battle/ForestBackground.png" },
-  { "key": "SceneInventoryBackground", "type": "image", "url": "Scene/Inventory/Background.png" },
-  { "key": "SceneInventoryBag", "type": "image", "url": "Scene/Inventory/Bag.png" },
-  { "key": "SceneMonsterPartyBackground", "type": "image", "url": "Scene/MonsterParty/Background.png" },
+  { "cache": false, "key": "SceneBattleForestBackground", "type": "image", "url": "Scene/Battle/ForestBackground.png" },
+  { "cache": false, "key": "SceneInventoryBackground", "type": "image", "url": "Scene/Inventory/Background.png" },
+  { "cache": false, "key": "SceneInventoryBag", "type": "image", "url": "Scene/Inventory/Bag.png" },
+  { "cache": false, "key": "SceneMonsterPartyBackground", "type": "image", "url": "Scene/MonsterParty/Background.png" },
   {
+    "cache": false,
     "key": "SceneMonsterPartyMonsterDetailsBackground",
     "type": "image",
     "url": "Scene/MonsterParty/MonsterDetailsBackground.png"
   },
-  { "key": "SceneTitleScreenBackground", "type": "image", "url": "Scene/Title/ScreenBackground.png" },
-  { "key": "SceneTitleText", "type": "image", "url": "Scene/Title/Text.png" },
-  { "key": "SceneTitleTextBackground", "type": "image", "url": "Scene/Title/TextBackground.png" },
-  { "key": "SceneWorldHomeForeground", "type": "image", "url": "Scene/World/Home/Foreground.png" },
+  { "cache": false, "key": "SceneTitleScreenBackground", "type": "image", "url": "Scene/Title/ScreenBackground.png" },
+  { "cache": false, "key": "SceneTitleText", "type": "image", "url": "Scene/Title/Text.png" },
+  { "cache": false, "key": "SceneTitleTextBackground", "type": "image", "url": "Scene/Title/TextBackground.png" },
+  { "cache": false, "key": "SceneWorldHomeForeground", "type": "image", "url": "Scene/World/Home/Foreground.png" },
   {
+    "cache": false,
     "key": "SceneWorldHomeHomeBuilding1Foreground",
     "type": "image",
     "url": "Scene/World/Home/HomeBuilding1/Foreground.png"
   },
   {
+    "cache": false,
     "key": "SceneWorldHomeHomeBuilding2Foreground",
     "type": "image",
     "url": "Scene/World/Home/HomeBuilding2/Foreground.png"
   },
-  { "key": "SoundOpenChest", "type": "audio", "url": "Sound/OpenChest.mp3" },
-  { "key": "SoundOpenDoor", "type": "audio", "url": "Sound/OpenDoor.mp3" },
-  { "key": "SoundTextBlip", "type": "audio", "url": "Sound/TextBlip.mp3" },
+  { "cache": false, "key": "SoundOpenChest", "type": "audio", "url": "Sound/OpenChest.mp3" },
+  { "cache": false, "key": "SoundOpenDoor", "type": "audio", "url": "Sound/OpenDoor.mp3" },
+  { "cache": false, "key": "SoundTextBlip", "type": "audio", "url": "Sound/TextBlip.mp3" },
   {
+    "cache": false,
     "key": "ThirdPartyKenneysAssetsFontsKenneyFutureNarrow",
     "type": "font",
     "url": "ThirdParty/KenneysAssets/Fonts/KenneyFutureNarrow.woff2"
   },
   {
+    "cache": false,
     "key": "ThirdPartyKenneysAssetsUIPackBlueButton00",
     "type": "image",
     "url": "ThirdParty/KenneysAssets/UIPack/BlueButton00.png"
   },
   {
+    "cache": false,
     "key": "ThirdPartyKenneysAssetsUIPackBlueButton01",
     "type": "image",
     "url": "ThirdParty/KenneysAssets/UIPack/BlueButton01.png"
   },
   {
+    "cache": false,
     "key": "ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalBlueLeft",
     "type": "image",
     "url": "ThirdParty/KenneysAssets/UISpaceExpansion/BarHorizontalBlueLeft.png"
   },
   {
+    "cache": false,
     "key": "ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalBlueMid",
     "type": "image",
     "url": "ThirdParty/KenneysAssets/UISpaceExpansion/BarHorizontalBlueMid.png"
   },
   {
+    "cache": false,
     "key": "ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalBlueRight",
     "type": "image",
     "url": "ThirdParty/KenneysAssets/UISpaceExpansion/BarHorizontalBlueRight.png"
   },
   {
+    "cache": false,
     "key": "ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalGreenLeft",
     "type": "image",
     "url": "ThirdParty/KenneysAssets/UISpaceExpansion/BarHorizontalGreenLeft.png"
   },
   {
+    "cache": false,
     "key": "ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalGreenMid",
     "type": "image",
     "url": "ThirdParty/KenneysAssets/UISpaceExpansion/BarHorizontalGreenMid.png"
   },
   {
+    "cache": false,
     "key": "ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalGreenRight",
     "type": "image",
     "url": "ThirdParty/KenneysAssets/UISpaceExpansion/BarHorizontalGreenRight.png"
   },
   {
+    "cache": false,
     "key": "ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalShadowLeft",
     "type": "image",
     "url": "ThirdParty/KenneysAssets/UISpaceExpansion/BarHorizontalShadowLeft.png"
   },
   {
+    "cache": false,
     "key": "ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalShadowMid",
     "type": "image",
     "url": "ThirdParty/KenneysAssets/UISpaceExpansion/BarHorizontalShadowMid.png"
   },
   {
+    "cache": false,
     "key": "ThirdPartyKenneysAssetsUISpaceExpansionBarHorizontalShadowRight",
     "type": "image",
     "url": "ThirdParty/KenneysAssets/UISpaceExpansion/BarHorizontalShadowRight.png"
   },
   {
+    "cache": false,
     "key": "ThirdPartyKenneysAssetsUISpaceExpansionCustomUI",
     "type": "image",
     "url": "ThirdParty/KenneysAssets/UISpaceExpansion/CustomUI.png"
   },
   {
+    "cache": false,
     "key": "ThirdPartyKenneysAssetsUISpaceExpansionGlassPanel",
     "type": "image",
     "url": "ThirdParty/KenneysAssets/UISpaceExpansion/GlassPanel.png"
   },
   {
+    "cache": false,
     "key": "ThirdPartyKenneysAssetsUISpaceExpansionGlassPanelGreen",
     "type": "image",
     "url": "ThirdParty/KenneysAssets/UISpaceExpansion/GlassPanelGreen.png"
   },
   {
+    "cache": false,
     "key": "ThirdPartyKenneysAssetsUISpaceExpansionGlassPanelPurple",
     "type": "image",
     "url": "ThirdParty/KenneysAssets/UISpaceExpansion/GlassPanelPurple.png"
   },
-  { "key": "ThirdPartyLeohpazClaw", "type": "audio", "url": "ThirdParty/Leohpaz/Claw.wav" },
-  { "key": "ThirdPartyLeohpazFlee", "type": "audio", "url": "ThirdParty/Leohpaz/Flee.wav" },
-  { "key": "ThirdPartyLeohpazIceExplosion", "type": "audio", "url": "ThirdParty/Leohpaz/IceExplosion.wav" },
-  { "key": "ThirdPartyLeohpazLicense", "type": "image", "url": "ThirdParty/Leohpaz/License.png" },
-  { "key": "ThirdPartyLeohpazStepGrass", "type": "audio", "url": "ThirdParty/Leohpaz/StepGrass.wav" },
+  { "cache": false, "key": "ThirdPartyLeohpazClaw", "type": "audio", "url": "ThirdParty/Leohpaz/Claw.wav" },
+  { "cache": false, "key": "ThirdPartyLeohpazFlee", "type": "audio", "url": "ThirdParty/Leohpaz/Flee.wav" },
   {
+    "cache": false,
+    "key": "ThirdPartyLeohpazIceExplosion",
+    "type": "audio",
+    "url": "ThirdParty/Leohpaz/IceExplosion.wav"
+  },
+  { "cache": false, "key": "ThirdPartyLeohpazLicense", "type": "image", "url": "ThirdParty/Leohpaz/License.png" },
+  { "cache": false, "key": "ThirdPartyLeohpazStepGrass", "type": "audio", "url": "ThirdParty/Leohpaz/StepGrass.wav" },
+  {
+    "cache": false,
     "key": "ThirdPartyXDeviruchiAndTheJourneyBegins",
     "type": "audio",
     "url": "ThirdParty/XDeviruchi/AndTheJourneyBegins.wav"
   },
-  { "key": "ThirdPartyXDeviruchiDecisiveBattle", "type": "audio", "url": "ThirdParty/XDeviruchi/DecisiveBattle.wav" },
-  { "key": "ThirdPartyXDeviruchiTitleTheme", "type": "audio", "url": "ThirdParty/XDeviruchi/TitleTheme.wav" },
-  { "key": "UIBallsCosmoBall", "type": "image", "url": "UI/Balls/CosmoBall.png" },
-  { "key": "UIBallsDamagedBall", "type": "image", "url": "UI/Balls/DamagedBall.png" },
-  { "key": "UICursorCursor", "type": "image", "url": "UI/Cursor/Cursor.png" },
-  { "key": "UICursorCursorWhite", "type": "image", "url": "UI/Cursor/CursorWhite.png" },
-  { "key": "UIJoystickBase", "type": "image", "url": "UI/Joystick/Base.png" },
-  { "key": "UIJoystickThumb", "type": "image", "url": "UI/Joystick/Thumb.png" },
-  { "key": "UIMonstersAquavalor", "type": "image", "url": "UI/Monsters/Aquavalor.png" },
-  { "key": "UIMonstersCarnodusk", "type": "image", "url": "UI/Monsters/Carnodusk.png" },
-  { "key": "UIMonstersFrostsaber", "type": "image", "url": "UI/Monsters/Frostsaber.png" },
-  { "key": "UIMonstersIgnivolt", "type": "image", "url": "UI/Monsters/Ignivolt.png" },
-  { "key": "UIMonstersIguanignite", "type": "image", "url": "UI/Monsters/Iguanignite.png" }
+  {
+    "cache": false,
+    "key": "ThirdPartyXDeviruchiDecisiveBattle",
+    "type": "audio",
+    "url": "ThirdParty/XDeviruchi/DecisiveBattle.wav"
+  },
+  {
+    "cache": false,
+    "key": "ThirdPartyXDeviruchiTitleTheme",
+    "type": "audio",
+    "url": "ThirdParty/XDeviruchi/TitleTheme.wav"
+  },
+  { "cache": false, "key": "UIBallsCosmoBall", "type": "image", "url": "UI/Balls/CosmoBall.png" },
+  { "cache": false, "key": "UIBallsDamagedBall", "type": "image", "url": "UI/Balls/DamagedBall.png" },
+  { "cache": false, "key": "UICursorCursor", "type": "image", "url": "UI/Cursor/Cursor.png" },
+  { "cache": false, "key": "UICursorCursorWhite", "type": "image", "url": "UI/Cursor/CursorWhite.png" },
+  { "cache": false, "key": "UIJoystickBase", "type": "image", "url": "UI/Joystick/Base.png" },
+  { "cache": false, "key": "UIJoystickThumb", "type": "image", "url": "UI/Joystick/Thumb.png" },
+  { "cache": false, "key": "UIMonstersAquavalor", "type": "image", "url": "UI/Monsters/Aquavalor.png" },
+  { "cache": false, "key": "UIMonstersCarnodusk", "type": "image", "url": "UI/Monsters/Carnodusk.png" },
+  { "cache": false, "key": "UIMonstersFrostsaber", "type": "image", "url": "UI/Monsters/Frostsaber.png" },
+  { "cache": false, "key": "UIMonstersIgnivolt", "type": "image", "url": "UI/Monsters/Ignivolt.png" },
+  { "cache": false, "key": "UIMonstersIguanignite", "type": "image", "url": "UI/Monsters/Iguanignite.png" }
 ]

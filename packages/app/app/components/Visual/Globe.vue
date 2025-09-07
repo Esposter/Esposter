@@ -46,7 +46,7 @@ const { width } = useWindowSize();
 const height = computed(() => width.value);
 
 onMounted(async () => {
-  const canvas = document.querySelector<HTMLCanvasElement>(`#${id}`);
+  const canvas = document.getElementById(id) as HTMLCanvasElement | null;
   if (!canvas) return;
   const renderer = new WebGLRenderer({ antialias: true, canvas });
   renderer.setClearColor(0x000, 0);

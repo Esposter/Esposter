@@ -1,6 +1,6 @@
 import type { ProgressNotifier } from "p-progress";
 
-import { MEGABYTE } from "#shared/services/esposter/constants";
+import { MEGABYTE } from "#shared/services/app/constants";
 import { commitBlockList } from "@/services/azure/container/commitBlockList";
 import { PProgress } from "p-progress";
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AssetKey } from "@/models/dungeons/keys/AssetKey";
+import { AssetKey } from "#shared/models/dungeons/keys/AssetKey";
 import { isMonsterFainted } from "@/services/dungeons/monster/isMonsterFainted";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { Container, Image, onCreate } from "vue-phaserjs";

@@ -9,7 +9,7 @@ import { DepthSetterMap } from "@/util/setterMap/components/DepthSetterMap";
 import { FlipSetterMap } from "@/util/setterMap/components/FlipSetterMap";
 import { MaskSetterMap } from "@/util/setterMap/components/MaskSetterMap";
 import { OriginSetterMap } from "@/util/setterMap/components/OriginSetterMap";
-import { PipelineSetterMap } from "@/util/setterMap/components/PipelineSetterMap";
+import { RenderNodesSetterMap } from "@/util/setterMap/components/RenderNodesSetterMap";
 import { ScrollFactorSetterMap } from "@/util/setterMap/components/ScrollFactorSetterMap";
 import { SizeSetterMap } from "@/util/setterMap/components/SizeSetterMap";
 import { TextureCropSetterMap } from "@/util/setterMap/components/TextureCropSetterMap";
@@ -25,7 +25,7 @@ export const ImageSetterMap: SetterMap<ImageConfiguration, GameObjects.Image, Im
   ...FlipSetterMap,
   ...MaskSetterMap,
   ...OriginSetterMap,
-  ...PipelineSetterMap,
+  ...RenderNodesSetterMap,
   ...ScrollFactorSetterMap,
   ...SizeSetterMap,
   ...TextureCropSetterMap,

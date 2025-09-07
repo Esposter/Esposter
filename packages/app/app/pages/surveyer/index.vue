@@ -4,6 +4,6 @@ definePageMeta({ middleware: "auth" });
 
 <template>
   <NuxtLayout>
-    <SurveyerCrudView />
+    <SurveyCrudView />
   </NuxtLayout>
 </template>

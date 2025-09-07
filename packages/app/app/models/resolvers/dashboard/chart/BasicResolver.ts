@@ -5,7 +5,7 @@ import { basicChartConfigurationSchema } from "#shared/models/dashboard/data/cha
 import { ChartType } from "#shared/models/dashboard/data/chart/type/ChartType";
 import { AChartTypeResolver } from "@/models/resolvers/dashboard/chart/AChartTypeResolver";
 import { defu } from "defu";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 export class BasicResolver<T extends BasicChartConfiguration> extends AChartTypeResolver<T> {
   constructor() {

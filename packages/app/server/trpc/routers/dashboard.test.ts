@@ -5,7 +5,8 @@ import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
-import { beforeAll, describe, expect, test } from "vitest";
+import { MockContainerDatabase } from "azure-mock";
+import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("dashboard", () => {
   let caller: DecorateRouterRecord<TRPCRouter["dashboard"]>;
@@ -14,6 +15,10 @@ describe("dashboard", () => {
     const createCaller = createCallerFactory(dashboardRouter);
     const mockContext = await createMockContext();
     caller = createCaller(mockContext);
+  });
+
+  afterEach(() => {
+    MockContainerDatabase.clear();
   });
 
   test("reads", async () => {
@@ -25,7 +30,7 @@ describe("dashboard", () => {
     expect(dashboard).toStrictEqual(new Dashboard({ createdAt, id, updatedAt }));
   });
 
-  test.todo("saves and reads", async () => {
+  test("saves and reads", async () => {
     expect.hasAssertions();
 
     const dashboard = new Dashboard();

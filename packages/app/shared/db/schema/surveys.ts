@@ -1,10 +1,10 @@
 import { pgTable } from "#shared/db/pgTable";
 import { users } from "#shared/db/schema/users";
-import { SURVEY_NAME_MAX_LENGTH } from "#shared/services/surveyer/constants";
+import { SURVEY_NAME_MAX_LENGTH } from "#shared/services/survey/constants";
 import { relations, sql } from "drizzle-orm";
 import { check, integer, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 export const surveys = pgTable(
   "surveys",

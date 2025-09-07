@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ImageKey } from "@/models/dungeons/keys/image/ImageKey";
+import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
 import { BarType } from "@/models/dungeons/UI/bar/BarType";
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
