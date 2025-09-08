@@ -17,7 +17,7 @@ const readMoreMembers = await useReadMembers();
       @click="emit('select', member.name)"
     />
     <StyledWaypoint :active="hasMore" @change="readMoreMembers">
-      <MessageModelMemberListItemSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+      <MessageModelMemberSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
     </StyledWaypoint>
   </v-list>
 </template>
