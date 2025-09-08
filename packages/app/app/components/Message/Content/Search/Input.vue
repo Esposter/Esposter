@@ -20,6 +20,7 @@ const onEscape = () => (document.activeElement as HTMLElement | null)?.blur();
 <template>
   <v-autocomplete
     v-model="selectedFilters"
+    :item-value="({ type, value }) => `${type}: ${value}`"
     :search="searchQuery"
     cursor-auto
     width="15rem"
@@ -30,6 +31,7 @@ const onEscape = () => (document.activeElement as HTMLElement | null)?.blur();
     hide-details
     hide-no-data
     multiple
+    return-object
     @keydown.enter="
       async ({ preventDefault }: KeyboardEvent) => {
         if (activeSelectedFilter && !activeSelectedFilter.value) {
