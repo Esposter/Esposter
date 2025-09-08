@@ -18,7 +18,7 @@ const { createFilter } = searchMessageStore;
           <span font-semibold text-gray>{{ FilterTypePlaceholderMap[filterType] }}</span>
         </v-list-item-title>
         <template #append>
-          <v-icon v-show="isHovering" icon="mdi-plus" />
+          <v-icon :op="isHovering ? undefined : '0!'" icon="mdi-plus" />
         </template>
       </v-list-item>
     </v-hover>
