@@ -5,15 +5,8 @@ import { useSearchMessageStore } from "@/store/message/searchMessage";
 const readSearchedMessages = useReadSearchedMessages();
 const searchMessageStore = useSearchMessageStore();
 const { createFilter } = searchMessageStore;
-const { searchQuery, selectedFilters } = storeToRefs(searchMessageStore);
+const { activeSelectedFilter, searchQuery, selectedFilters } = storeToRefs(searchMessageStore);
 const filterTypes = Object.values(FilterType);
-const activeSelectedFilter = computed({
-  get: () => selectedFilters.value.at(-1),
-  set: (value) => {
-    if (!value) return;
-    selectedFilters.value[selectedFilters.value.length - 1] = value;
-  },
-});
 const onEscape = () => (document.activeElement as HTMLElement | null)?.blur();
 </script>
 

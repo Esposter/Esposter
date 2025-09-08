@@ -12,6 +12,13 @@ export const useSearchMessageStore = defineStore("message/searchMessage", () => 
   const { data: searchQuery } = createDataMap<string>(() => roomStore.currentRoomId, "");
   const isSearched = ref(false);
   const { data: selectedFilters } = createDataMap<Filter[]>(() => roomStore.currentRoomId, []);
+  const activeSelectedFilter = computed({
+    get: () => selectedFilters.value.at(-1),
+    set: (value) => {
+      if (!value) return;
+      selectedFilters.value[selectedFilters.value.length - 1] = value;
+    },
+  });
   const createFilter = (type: FilterType) => {
     selectedFilters.value.push({ type, value: "" });
   };
@@ -27,6 +34,7 @@ export const useSearchMessageStore = defineStore("message/searchMessage", () => 
   const pageCount = computed(() => Math.ceil(totalItemsLength.value / DEFAULT_READ_LIMIT));
   const page = ref(1);
   return {
+    activeSelectedFilter,
     clearFilters,
     createFilter,
     deleteFilter,
