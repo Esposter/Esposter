@@ -15,14 +15,14 @@
     "url": "https://github.com/Esposter/Esposter/issues"
   },
   "scripts": {
-    "build": "NODE_OPTIONS=--max-old-space-size=8192 nuxt build",
+    "build": "nuxt build",
     "dev": "nuxt dev",
     "start": "node .output/server/index.mjs",
-    "test": "NODE_OPTIONS=--max-old-space-size=8192 vitest",
+    "test": "vitest",
     "coverage": "vitest run --coverage",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "typecheck": "NODE_OPTIONS=--max-old-space-size=8192 nuxt typecheck",
+    "typecheck": "nuxt typecheck",
     "cleanup": "nuxt cleanup",
     "postinstall": "nuxt prepare",
     "lint": "oxlint && TIMING=1 eslint --config eslint.light.config.js .",
@@ -40,7 +40,6 @@
     "pwsh": "pwsh -ExecutionPolicy Unrestricted"
   },
   "scriptsComments": {
-    "build": "https://rollupjs.org/troubleshooting/#error-javascript-heap-out-of-memory",
     "db:run": "https://github.com/drizzle-team/drizzle-orm/issues/1228"
   },
   "dependencies": {

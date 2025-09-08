@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRoomStore } from "@/store/message/room";
 
-defineSlots<{ prepend: (props: Record<string, never>) => unknown }>();
+defineSlots<{ prepend: () => VNode }>();
 const roomStore = useRoomStore();
 const { hasMore, rooms } = storeToRefs(roomStore);
 const readMoreRooms = await useReadRooms();

@@ -14,8 +14,8 @@ interface FooterBarProps {
 }
 
 defineSlots<{
-  append: (props: FooterBarAppendSlotProps) => unknown;
-  prepend: (props: FooterBarPrependSlotProps) => unknown;
+  append: (props: FooterBarAppendSlotProps) => VNode;
+  prepend: (props: FooterBarPrependSlotProps) => VNode;
 }>();
 
 const { editor } = defineProps<FooterBarProps>();

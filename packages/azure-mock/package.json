@@ -23,7 +23,7 @@
   },
   "scripts": {
     "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
-    "test": "NODE_OPTIONS=--max-old-space-size=8192 vitest",
+    "test": "vitest",
     "coverage": "vitest run --coverage",
     "lint": "oxlint && eslint .",
     "lint:fix": "oxlint --fix && eslint --fix .",

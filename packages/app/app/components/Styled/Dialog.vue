@@ -16,8 +16,8 @@ export interface StyledDialogProps {
 }
 
 defineSlots<{
-  activator: (props: StyledDialogActivatorSlotProps) => unknown;
-  default: (props: Record<string, never>) => unknown;
+  activator: (props: StyledDialogActivatorSlotProps) => VNode;
+  default: () => VNode;
 }>();
 const { cardProps = {}, confirmButtonAttrs = {}, confirmButtonProps = {} } = defineProps<StyledDialogProps>();
 const emit = defineEmits<{ submit: [event: SubmitEventPromise, onComplete: () => void] }>();

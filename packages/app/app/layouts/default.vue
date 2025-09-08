@@ -13,10 +13,10 @@ interface DefaultProps {
 
 const { footerStyle, leftNavigationDrawerProps, mainStyle, rightNavigationDrawerProps } = defineProps<DefaultProps>();
 const slots = defineSlots<{
-  default?: (props: Record<string, never>) => unknown;
-  footer?: (props: Record<string, never>) => unknown;
-  left?: (props: Record<string, never>) => unknown;
-  right?: (props: Record<string, never>) => unknown;
+  default?: () => VNode;
+  footer?: () => VNode;
+  left?: () => VNode;
+  right?: () => VNode;
 }>();
 const layoutStore = useLayoutStore();
 const { leftDrawerOpen, leftDrawerOpenAuto, rightDrawerOpen, rightDrawerOpenAuto } = storeToRefs(layoutStore);

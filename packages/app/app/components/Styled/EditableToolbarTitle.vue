@@ -6,7 +6,7 @@ interface EditableToolbarTitleProps {
   initialValue: string;
 }
 
-defineSlots<{ default?: (props: Record<string, never>) => unknown }>();
+defineSlots<{ default?: () => VNode }>();
 const { initialValue } = defineProps<EditableToolbarTitleProps>();
 const emit = defineEmits<{ update: [value: string, onComplete: () => void] }>();
 const editedValue = ref(initialValue);

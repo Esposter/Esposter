@@ -7,8 +7,8 @@ interface ConfirmDeleteDialogProps {
 }
 
 defineSlots<{
-  default: (props: StyledDialogActivatorSlotProps) => unknown;
-  messagePreview: (props: Record<string, never>) => unknown;
+  default: (props: StyledDialogActivatorSlotProps) => VNode;
+  messagePreview: () => VNode;
 }>();
 const { message } = defineProps<ConfirmDeleteDialogProps>();
 const { $trpc } = useNuxtApp();

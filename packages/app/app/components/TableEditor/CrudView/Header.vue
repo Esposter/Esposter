@@ -2,7 +2,7 @@
 import { useTableEditorStore } from "@/store/tableEditor";
 
 defineSlots<{
-  "append-header": (props: Record<string, never>) => unknown;
+  "append-header": () => VNode;
 }>();
 
 const tableEditorStore = useTableEditorStore();

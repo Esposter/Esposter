@@ -17,8 +17,8 @@ type ItemMenuProps = Partial<Pick<BuildingWithStats, "amount">> &
 const { amount, description, flavorDescription, id, isAffordable, menuProps, price, type } =
   defineProps<ItemMenuProps>();
 const slots = defineSlots<{
-  action?: (props: Record<string, never>) => unknown;
-  "append-text"?: (props: Record<string, never>) => unknown;
+  action?: () => VNode;
+  "append-text"?: () => VNode;
 }>();
 const { error } = useColors();
 const descriptionHtml = computed(() => (description ? marked.parse(description, { async: false }) : ""));

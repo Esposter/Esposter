@@ -13,7 +13,7 @@ interface ContainerProps {
   configuration?: Partial<ContainerConfiguration>;
 }
 
-defineSlots<{ default: (props: Record<string, never>) => unknown }>();
+defineSlots<{ default: () => VNode }>();
 const { configuration = {} } = defineProps<ContainerProps>();
 const emit = defineEmits<ContainerEmits>();
 const container = ref<GameObjects.Container>();

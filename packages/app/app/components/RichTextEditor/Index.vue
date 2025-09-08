@@ -18,10 +18,10 @@ interface RichTextEditorProps {
 }
 
 const slots = defineSlots<{
-  "append-footer": (props: FooterBarAppendSlotProps) => unknown;
-  "prepend-footer": (props: FooterBarPrependSlotProps) => unknown;
-  "prepend-inner-header": (props: Record<string, never>) => unknown;
-  "prepend-outer-footer": (props: Record<string, never>) => unknown;
+  "append-footer": (props: FooterBarAppendSlotProps) => VNode;
+  "prepend-footer": (props: FooterBarPrependSlotProps) => VNode;
+  "prepend-inner-header": () => VNode;
+  "prepend-outer-footer": () => VNode;
 }>();
 const modelValue = defineModel<string>({ required: true });
 const {

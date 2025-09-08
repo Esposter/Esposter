@@ -13,7 +13,7 @@ interface MessageProps {
   nextMessage?: MessageEntity;
 }
 
-defineSlots<{ default?: (props: Record<string, never>) => unknown }>();
+defineSlots<{ default?: () => VNode }>();
 const { active, creator, isPreview = false, message, nextMessage } = defineProps<MessageProps>();
 const isSameBatch = computed(
   () =>

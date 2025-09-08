@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineSlots<{ default: (props: Record<string, never>) => unknown }>();
+defineSlots<{ default: () => VNode }>();
 </script>
 
 <template>

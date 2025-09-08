@@ -14,7 +14,7 @@ interface EditFormDialogProps<T> {
   originalItem?: T;
 }
 
-defineSlots<{ default: (props: Record<string, never>) => unknown }>();
+defineSlots<{ default: () => VNode }>();
 const { editedItem, isEditFormValid, isFullScreenDialog, isSavable, name, originalItem } =
   defineProps<EditFormDialogProps<T>>();
 const dialog = defineModel<boolean>({ required: true });
