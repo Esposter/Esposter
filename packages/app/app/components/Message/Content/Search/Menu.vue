@@ -8,7 +8,7 @@ const { activeSelectedFilter, isSearched } = storeToRefs(searchMessageStore);
 
 <template>
   <!-- @TODO: Menu should be based on focus of the input -->
-  <v-menu location="top" :close-on-content-click="false">
+  <v-menu location="top" :max-height="500" :close-on-content-click="false">
     <template #activator="{ props }">
       <MessageContentSearchInput :="props" />
     </template>

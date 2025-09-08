@@ -10,12 +10,13 @@ const readMoreMembers = await useReadMembers();
 
 <template>
   <v-list overflow-y-auto="!">
-    <MessageModelMemberListItem
-      v-for="member of members"
-      :key="member.id"
-      :member
-      @click="emit('select', member.name)"
-    />
+    <v-hover v-for="member in members" :key="member.id" #default="{ isHovering, props }">
+      <MessageModelMemberListItem :key="member.id" :="props" :member @click="emit('select', member.name)">
+        <template #append>
+          <v-icon :op="isHovering ? undefined : '0!'" icon="mdi-plus" />
+        </template>
+      </MessageModelMemberListItem>
+    </v-hover>
     <StyledWaypoint :active="hasMore" @change="readMoreMembers">
       <MessageModelMemberSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
     </StyledWaypoint>

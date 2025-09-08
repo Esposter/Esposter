@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { User } from "#shared/db/schema/users";
+import type { ListItemSlot } from "vuetify/lib/components/VList/VListItem.mjs";
 
 import { authClient } from "@/services/auth/authClient";
 import { useRoomStore } from "@/store/message/room";
@@ -8,6 +9,7 @@ interface MemberListItemProps {
   member: User;
 }
 
+defineSlots<{ append: (props: ListItemSlot) => VNode }>();
 const { member } = defineProps<MemberListItemProps>();
 const { $trpc } = useNuxtApp();
 const { data: session } = await authClient.useSession(useFetch);
@@ -36,6 +38,9 @@ const isHovering = ref(false);
           </v-tooltip>
         </div>
       </v-list-item-title>
+      <template #append="props">
+        <slot name="append" :="props" />
+      </template>
     </v-list-item>
     <template v-if="isKickable">
       <StyledDeleteDialog
