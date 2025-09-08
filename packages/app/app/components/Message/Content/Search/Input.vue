@@ -47,8 +47,9 @@ const onEscape = () => (document.activeElement as HTMLElement | null)?.blur();
     @update:search="
       (value: string) => {
         if (value[value.length - 1] === ':') {
+          const trimmedValue = value.trim();
           const filterType = filterTypes.find(
-            (type) => type.toLowerCase() === value.slice(0, value.length - 1).toLowerCase(),
+            (type) => type.toLowerCase() === trimmedValue.slice(0, trimmedValue.length - 1).toLowerCase(),
           );
           if (filterType) {
             createFilter(filterType);
