@@ -3,40 +3,23 @@ import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useDataStore } from "@/store/message/data";
 import { useScrollStore } from "@/store/message/scroll";
 
-const { readMoreMessages, readMoreNewerMessages } = await useReadMessages();
+const { readMoreMessages, readMoreNewerMessages: baseReadMoreNewerMessages } = await useReadMessages();
 const dataStore = useDataStore();
 const { hasMore, hasMoreNewer } = storeToRefs(dataStore);
 const scrollStore = useScrollStore();
 const { isScrolling, messageContainer, messageContainerElement } = storeToRefs(scrollStore);
-const isLoading = ref(false);
-const isLoadingNewer = ref(false);
-const topSkeleton = useTemplateRef("topSkeleton");
-const bottomSkeleton = useTemplateRef("bottomSkeleton");
-const isTopVisible = useElementVisibility(topSkeleton);
-const isBottomVisible = useElementVisibility(bottomSkeleton);
 const previousScrollHeight = ref(0);
-
-watchEffect(async () => {
-  if (!isTopVisible.value || !hasMore.value || isLoading.value) return;
-  isLoading.value = true;
-  await readMoreMessages(() => {
-    isLoading.value = false;
-  });
-});
-
-watchEffect(async () => {
-  if (!isBottomVisible.value || !hasMoreNewer.value || isLoadingNewer.value) return;
-  isLoadingNewer.value = true;
-  await readMoreNewerMessages(() => {
-    isLoadingNewer.value = false;
+const readMoreNewerMessages = async (onComplete: () => void) => {
+  await baseReadMoreNewerMessages(() => {
     requestAnimationFrame(() => {
-      if (isScrolling.value || !isBottomVisible.value || !messageContainerElement.value) return;
+      if (isScrolling.value || !messageContainerElement.value) return;
       messageContainerElement.value.scrollTop -=
         messageContainerElement.value.scrollHeight - previousScrollHeight.value;
       previousScrollHeight.value = messageContainerElement.value.scrollHeight;
     });
+    onComplete();
   });
-});
+};
 
 watchOnce(messageContainerElement, (newMessageContainerElement) => {
   if (!newMessageContainerElement) return;
@@ -46,12 +29,12 @@ watchOnce(messageContainerElement, (newMessageContainerElement) => {
 
 <template>
   <v-list ref="messageContainer" flex-1 flex pb-0 basis-full flex-col-reverse overflow-y-auto="!" lines="two">
-    <div v-show="hasMoreNewer" ref="bottomSkeleton">
+    <StyledWaypoint :active="hasMoreNewer" @change="readMoreNewerMessages">
       <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
-    </div>
+    </StyledWaypoint>
     <MessageModelMessageListContainer />
-    <div v-show="hasMore" ref="topSkeleton">
+    <StyledWaypoint :active="hasMore" @change="readMoreMessages">
       <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
-    </div>
+    </StyledWaypoint>
   </v-list>
 </template>

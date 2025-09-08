@@ -11,6 +11,6 @@ const readMoreRooms = await useReadRooms();
   <v-list overflow-y-auto="!">
     <slot name="prepend" />
     <MessageModelRoomListItem v-for="room of rooms" :key="room.id" :room />
-    <StyledWaypoint :active="hasMore" @change="readMoreRooms" />
+    <StyledWaypoint flex justify-center :active="hasMore" @change="readMoreRooms" />
   </v-list>
 </template>

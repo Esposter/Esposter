@@ -34,7 +34,7 @@ currentPost.value = post;
           </StyledCard>
         </v-col>
       </v-row>
-      <StyledWaypoint :active="hasMore" @change="readMoreComments" />
+      <StyledWaypoint flex justify-center :active="hasMore" @change="readMoreComments" />
     </v-container>
   </NuxtLayout>
 </template>

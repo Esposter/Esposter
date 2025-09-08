@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useMemberStore } from "@/store/message/member";
 
 const emit = defineEmits<{ select: [value: string] }>();
@@ -15,6 +16,8 @@ const readMoreMembers = await useReadMembers();
       :member
       @click="emit('select', member.name)"
     />
-    <StyledWaypoint :active="hasMore" @change="readMoreMembers" />
+    <StyledWaypoint :active="hasMore" @change="readMoreMembers">
+      <MessageModelMemberListItemSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+    </StyledWaypoint>
   </v-list>
 </template>

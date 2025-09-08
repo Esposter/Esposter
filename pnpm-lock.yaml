@@ -6,21 +6,9 @@ settings:
 
 catalogs:
   default:
-    '@azure/core-http-compat':
-      specifier: ^2.3.0
-      version: 2.3.0
-    '@azure/core-rest-pipeline':
-      specifier: ^1.22.0
-      version: 1.22.0
-    '@azure/data-tables':
-      specifier: ^13.3.1
-      version: 13.3.1
     '@azure/search-documents':
       specifier: ^12.1.0
       version: 12.1.0
-    '@azure/storage-blob':
-      specifier: ^12.28.0
-      version: 12.28.0
     '@codemirror/lang-vue':
       specifier: ^0.1.3
       version: 0.1.3
@@ -63,15 +51,6 @@ catalogs:
     '@koumoul/vjsf':
       specifier: ^3.20.5
       version: 3.20.5
-    '@lerna-lite/cli':
-      specifier: ^4.7.3
-      version: 4.7.3
-    '@lerna-lite/publish':
-      specifier: ^4.7.3
-      version: 4.7.3
-    '@lerna-lite/run':
-      specifier: ^4.7.3
-      version: 4.7.3
     '@mdi/font':
       specifier: ^7.4.47
       version: 7.4.47
@@ -93,9 +72,6 @@ catalogs:
     '@pinia/nuxt':
       specifier: ^0.11.2
       version: 0.11.2
-    '@prettier/plugin-oxc':
-      specifier: ^0.0.4
-      version: 0.0.4
     '@tiptap/core':
       specifier: ^3.4.1
       version: 3.4.1
@@ -126,9 +102,6 @@ catalogs:
     '@trpc/server':
       specifier: ^11.5.1
       version: 11.5.1
-    '@types/data-urls':
-      specifier: ^3.0.4
-      version: 3.0.4
     '@types/dedent':
       specifier: ^0.7.2
       version: 0.7.2
@@ -147,18 +120,12 @@ catalogs:
     '@types/mjml-browser':
       specifier: ^4.15.0
       version: 4.15.0
-    '@types/node':
-      specifier: ^24.3.1
-      version: 24.3.1
     '@types/omit-deep-lodash':
       specifier: ^1.1.3
       version: 1.1.3
     '@types/pluralize':
       specifier: ^0.0.33
       version: 0.0.33
-    '@types/sax':
-      specifier: ^1.2.7
-      version: 1.2.7
     '@types/three':
       specifier: ^0.180.0
       version: 0.180.0
@@ -168,27 +135,12 @@ catalogs:
     '@types/ws':
       specifier: ^8.18.1
       version: 8.18.1
-    '@types/xml2js':
-      specifier: ^0.4.14
-      version: 0.4.14
-    '@unocss/eslint-config':
-      specifier: ^66.5.1
-      version: 66.5.1
     '@unocss/nuxt':
       specifier: ^66.5.1
       version: 66.5.1
     '@vite-pwa/nuxt':
       specifier: ^1.0.4
       version: 1.0.4
-    '@vitejs/plugin-vue':
-      specifier: ^6.0.1
-      version: 6.0.1
-    '@vitest/coverage-v8':
-      specifier: ^3.2.4
-      version: 3.2.4
-    '@vitest/eslint-plugin':
-      specifier: ^1.3.9
-      version: 1.3.9
     '@vue-flow/background':
       specifier: ^1.3.2
       version: 1.3.2
@@ -207,9 +159,6 @@ catalogs:
     '@vue-pdf-viewer/viewer':
       specifier: ^2.5.11
       version: 2.5.11
-    '@vue/language-core':
-      specifier: ^3.0.6
-      version: 3.0.6
     '@vue/test-utils':
       specifier: ^2.4.6
       version: 2.4.6
@@ -243,15 +192,6 @@ catalogs:
     codemirror:
       specifier: ^6.0.2
       version: 6.0.2
-    ctix:
-      specifier: ^2.7.1
-      version: 2.7.1
-    data-urls:
-      specifier: ^5.0.0
-      version: 5.0.0
-    dayjs:
-      specifier: ^1.11.18
-      version: 1.11.18
     debug:
       specifier: ^4.4.1
       version: 4.4.1
@@ -261,9 +201,6 @@ catalogs:
     defu:
       specifier: ^6.1.4
       version: 6.1.4
-    dotenv:
-      specifier: ^17.2.2
-      version: 17.2.2
     drizzle-kit:
       specifier: ^0.31.4
       version: 0.31.4
@@ -276,24 +213,6 @@ catalogs:
     emoji-mart-vue-fast:
       specifier: ^15.0.5
       version: 15.0.5
-    eslint:
-      specifier: ^9.35.0
-      version: 9.35.0
-    eslint-config-prettier:
-      specifier: ^10.1.8
-      version: 10.1.8
-    eslint-plugin-oxlint:
-      specifier: ^1.14.0
-      version: 1.14.0
-    eslint-plugin-perfectionist:
-      specifier: ^4.15.0
-      version: 4.15.0
-    eslint-plugin-pinia:
-      specifier: ^0.4.1
-      version: 0.4.1
-    eslint-plugin-prettier:
-      specifier: ^5.5.4
-      version: 5.5.4
     eventemitter3:
       specifier: ^5.0.1
       version: 5.0.1
@@ -366,9 +285,6 @@ catalogs:
     h3:
       specifier: ^1.15.4
       version: 1.15.4
-    happy-dom:
-      specifier: ^18.0.1
-      version: 18.0.1
     howler:
       specifier: ^2.2.4
       version: 2.2.4
@@ -408,9 +324,6 @@ catalogs:
     omit-deep-lodash:
       specifier: ^1.1.7
       version: 1.1.7
-    oxlint:
-      specifier: ^1.14.0
-      version: 1.14.0
     p-progress:
       specifier: ^1.0.0
       version: 1.0.0
@@ -438,21 +351,12 @@ catalogs:
     rate-limiter-flexible:
       specifier: ^7.3.0
       version: 7.3.0
-    rolldown:
-      specifier: ^1.0.0-beta.35
-      version: 1.0.0-beta.35
-    rolldown-plugin-dts:
-      specifier: ^0.16.1
-      version: 0.16.1
     rxjs:
       specifier: ^7.8.2
       version: 7.8.2
     sass-embedded:
       specifier: ^1.92.1
       version: 1.92.1
-    sax:
-      specifier: ^1.4.1
-      version: 1.4.1
     show-open-file-picker:
       specifier: ^0.4.0
       version: 0.4.0
@@ -486,45 +390,15 @@ catalogs:
     tsx:
       specifier: ^4.20.5
       version: 4.20.5
-    type-fest:
-      specifier: ^4.41.0
-      version: 4.41.0
-    typedoc:
-      specifier: ^0.28.12
-      version: 0.28.12
-    typescript:
-      specifier: ^5.9.2
-      version: 5.9.2
-    typescript-eslint:
-      specifier: ^8.42.0
-      version: 8.42.0
     unocss:
       specifier: ^66.5.1
       version: 66.5.1
-    unplugin-auto-import:
-      specifier: ^20.1.0
-      version: 20.1.0
     v-viewer:
       specifier: ^3.0.22
       version: 3.0.22
     viewerjs:
       specifier: ^1.11.7
       version: 1.11.7
-    vite-plugin-dts:
-      specifier: ^4.5.4
-      version: 4.5.4
-    vite-plugin-mkcert:
-      specifier: ^1.17.8
-      version: 1.17.8
-    vite-tsconfig-paths:
-      specifier: ^5.1.4
-      version: 5.1.4
-    vitest:
-      specifier: ^3.2.4
-      version: 3.2.4
-    vue:
-      specifier: ^3.5.21
-      version: 3.5.21
     vue-codemirror:
       specifier: ^6.1.1
       version: 6.1.1
@@ -534,12 +408,6 @@ catalogs:
     vue-router:
       specifier: ^4.5.1
       version: 4.5.1
-    vue-tsc:
-      specifier: ^3.0.6
-      version: 3.0.6
-    vue-waypoint:
-      specifier: ^4.3.0
-      version: 4.3.0
     vue3-apexcharts:
       specifier: ^1.8.0
       version: 1.8.0
@@ -558,9 +426,6 @@ catalogs:
     ws:
       specifier: ^8.18.3
       version: 8.18.3
-    xmlbuilder2:
-      specifier: ^3.1.1
-      version: 3.1.1
     zod:
       specifier: ^4.1.5
       version: 4.1.5
@@ -982,9 +847,6 @@ importers:
       vue-router:
         specifier: 'catalog:'
         version: 4.5.1(vue@3.5.21(typescript@5.9.2))
-      vue-waypoint:
-        specifier: 'catalog:'
-        version: 4.3.0(vue@3.5.21(typescript@5.9.2))
       vue3-apexcharts:
         specifier: 'catalog:'
         version: 1.8.0(apexcharts@5.3.5)(vue@3.5.21(typescript@5.9.2))
@@ -10923,11 +10785,6 @@ packages:
     hasBin: true
     peerDependencies:
       typescript: '>=5.0.0'
-
-  vue-waypoint@4.3.0:
-    resolution: {integrity: sha512-hze6CUkb7x+xiHp+rNChHTQB+wYeQ8OM4MHnJe78JBY4luK9fkDp/iAN1+gS5LNYU7iNbwAIBE7yIokRdoFh+A==}
-    peerDependencies:
-      vue: ^3.0.0
 
   vue3-apexcharts@1.8.0:
     resolution: {integrity: sha512-5tSD4mXTBbIJ9ir+58qHE6oNtIe0RNgqIRYMKpcsIaxkKtwUww4JhvPkpUFlmiW4OJbbdklgjleXq1lfcM4gdA==}
@@ -22819,10 +22676,6 @@ snapshots:
       '@volar/typescript': 2.4.23
       '@vue/language-core': 3.0.6(typescript@5.9.2)
       typescript: 5.9.2
-
-  vue-waypoint@4.3.0(vue@3.5.21(typescript@5.9.2)):
-    dependencies:
-      vue: 3.5.21(typescript@5.9.2)
 
   vue3-apexcharts@1.8.0(apexcharts@5.3.5)(vue@3.5.21(typescript@5.9.2)):
     dependencies:

@@ -22,7 +22,7 @@ const { hasMore, posts } = storeToRefs(postStore);
             <PostCard :post />
           </v-col>
         </v-row>
-        <StyledWaypoint :active="hasMore" @change="readMorePosts" />
+        <StyledWaypoint flex justify-center :active="hasMore" @change="readMorePosts" />
       </v-container>
     </v-pull-to-refresh>
     <template #left>

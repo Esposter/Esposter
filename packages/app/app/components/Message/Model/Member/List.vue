@@ -9,6 +9,6 @@ const readMoreMembers = await useReadMembers();
 <template>
   <v-list overflow-y-auto="!">
     <MessageModelMemberListItem v-for="member of members" :key="member.id" :member />
-    <StyledWaypoint :active="hasMore" @change="readMoreMembers" />
+    <StyledWaypoint flex justify-center :active="hasMore" @change="readMoreMembers" />
   </v-list>
 </template>
