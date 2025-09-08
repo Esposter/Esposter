@@ -14,6 +14,7 @@ const { isSearched } = storeToRefs(searchMessageStore);
       <MessageContentSearchMessages v-if="isSearched" />
       <template v-else>
         <MessageContentSearchOptions />
+        <v-divider mx-4 />
         <MessageContentSearchHistory />
       </template>
     </StyledCard>
