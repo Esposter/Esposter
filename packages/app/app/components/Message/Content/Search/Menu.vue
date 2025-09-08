@@ -2,7 +2,7 @@
 import { useSearchMessageStore } from "@/store/message/searchMessage";
 
 const searchMessageStore = useSearchMessageStore();
-const { isSearched } = searchMessageStore;
+const { isSearched } = storeToRefs(searchMessageStore);
 </script>
 
 <template>
