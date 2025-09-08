@@ -172,10 +172,10 @@ catalogs:
       specifier: ^0.4.14
       version: 0.4.14
     '@unocss/eslint-config':
-      specifier: ^66.5.0
+      specifier: ^66.5.1
       version: 66.5.1
     '@unocss/nuxt':
-      specifier: ^66.5.0
+      specifier: ^66.5.1
       version: 66.5.1
     '@vite-pwa/nuxt':
       specifier: ^1.0.4
@@ -499,7 +499,7 @@ catalogs:
       specifier: ^8.42.0
       version: 8.42.0
     unocss:
-      specifier: ^66.5.0
+      specifier: ^66.5.1
       version: 66.5.1
     unplugin-auto-import:
       specifier: ^20.1.0
@@ -12106,7 +12106,7 @@ snapshots:
     dependencies:
       '@babel/code-frame': 7.27.1
       '@babel/generator': 7.28.3
-      '@babel/parser': 7.27.7
+      '@babel/parser': 7.28.4
       '@babel/template': 7.27.2
       '@babel/types': 7.28.4
       debug: 4.4.1
