@@ -1,7 +1,7 @@
 import { useMemberStore } from "@/store/message/member";
 import { useRoomStore } from "@/store/message/room";
 
-export const useReadMembers = () => {
+export const useReadMembers = async () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
@@ -30,15 +30,12 @@ export const useReadMembers = () => {
     }
   };
 
-  const isPending = ref(false);
+  let isPending = ref(false);
 
   if (currentRoomId.value) {
-    const { data, pending, status } = $trpc.room.readMembers.useQuery({ roomId: currentRoomId.value });
-    isPending.value = pending.value;
-    console.log("pending", pending.value);
+    const { data, pending, status } = await $trpc.room.readMembers.useQuery({ roomId: currentRoomId.value });
+    isPending = pending;
     watchEffect(async () => {
-      console.log("pending 2", pending.value);
-      isPending.value = pending.value;
       if (!(status.value === "success" && data.value)) return;
       const { items, ...rest } = data.value;
       const userIds = items.map(({ id }) => id);

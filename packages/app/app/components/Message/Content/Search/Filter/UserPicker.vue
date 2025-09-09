@@ -5,7 +5,7 @@ import { useMemberStore } from "@/store/message/member";
 const emit = defineEmits<{ select: [value: string] }>();
 const memberStore = useMemberStore();
 const { hasMore, members } = storeToRefs(memberStore);
-const { isPending, readMoreMembers } = useReadMembers();
+const { isPending, readMoreMembers } = await useReadMembers();
 </script>
 
 <template>

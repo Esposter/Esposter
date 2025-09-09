@@ -4,7 +4,7 @@ import { useMemberStore } from "@/store/message/member";
 
 const memberStore = useMemberStore();
 const { hasMore, members } = storeToRefs(memberStore);
-const { isPending, readMoreMembers } = useReadMembers();
+const { isPending, readMoreMembers } = await useReadMembers();
 </script>
 
 <template>
