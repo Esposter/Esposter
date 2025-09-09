@@ -1,7 +1,7 @@
 import { useMemberStore } from "@/store/message/member";
 import { useRoomStore } from "@/store/message/room";
 
-export const useReadMembers = async () => {
+export const useReadMembers = () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
@@ -30,12 +30,22 @@ export const useReadMembers = async () => {
     }
   };
 
+  const isPending = ref(false);
+
   if (currentRoomId.value) {
-    const response = await $trpc.room.readMembers.query({ roomId: currentRoomId.value });
-    const userIds = response.items.map(({ id }) => id);
-    await readMetadata(userIds);
-    initializeCursorPaginationData(Object.assign(response, { items: userIds }));
+    const { data, pending, status } = $trpc.room.readMembers.useQuery({ roomId: currentRoomId.value });
+    isPending.value = pending.value;
+    console.log("pending", pending.value);
+    watchEffect(async () => {
+      console.log("pending 2", pending.value);
+      isPending.value = pending.value;
+      if (!(status.value === "success" && data.value)) return;
+      const { items, ...rest } = data.value;
+      const userIds = items.map(({ id }) => id);
+      await readMetadata(userIds);
+      initializeCursorPaginationData(Object.assign(rest, { items: userIds }));
+    });
   }
 
-  return readMoreMembers;
+  return { isPending, readMoreMembers };
 };

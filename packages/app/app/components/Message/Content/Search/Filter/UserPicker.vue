@@ -5,7 +5,7 @@ import { useMemberStore } from "@/store/message/member";
 const emit = defineEmits<{ select: [value: string] }>();
 const memberStore = useMemberStore();
 const { hasMore, members } = storeToRefs(memberStore);
-const readMoreMembers = await useReadMembers();
+const { isPending, readMoreMembers } = useReadMembers();
 </script>
 
 <template>
@@ -17,6 +17,9 @@ const readMoreMembers = await useReadMembers();
         </template>
       </MessageModelMemberListItem>
     </v-hover>
+    <template v-if="isPending">
+      <MessageModelMemberSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+    </template>
     <StyledWaypoint :active="hasMore" @change="readMoreMembers">
       <MessageModelMemberSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
     </StyledWaypoint>
