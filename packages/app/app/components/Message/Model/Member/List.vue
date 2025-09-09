@@ -13,7 +13,7 @@ const { isPending, readMoreMembers } = useReadMembers();
     <template v-if="isPending">
       <MessageModelMemberSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
     </template>
-    <StyledWaypoint :active="hasMore" @change="readMoreMembers">
+    <StyledWaypoint v-else :active="hasMore" @change="readMoreMembers">
       <MessageModelMemberSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
     </StyledWaypoint>
   </v-list>
