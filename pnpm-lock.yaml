@@ -355,8 +355,8 @@ catalogs:
       specifier: ^2.0.1
       version: 2.0.1
     grid-engine:
-      specifier: ^2.48.0
-      version: 2.48.0
+      specifier: ^2.48.1
+      version: 2.48.1
     grid-layout-plus:
       specifier: ^1.1.0
       version: 1.1.0
@@ -858,7 +858,7 @@ importers:
         version: 2.0.1
       grid-engine:
         specifier: 'catalog:'
-        version: 2.48.0(phaser@4.0.0-rc.5)
+        version: 2.48.1(phaser@4.0.0-rc.5)
       grid-layout-plus:
         specifier: 'catalog:'
         version: 1.1.0(vue@3.5.21(typescript@5.9.2))
@@ -7309,10 +7309,10 @@ packages:
   grapick@0.1.13:
     resolution: {integrity: sha512-2v7DdmXKbl9+GsL2ZRl2qEMD+PeczYJBSifwx+5SGbaSh0pZ+b6GLya87cBfN953wwXsZqyzuSVPBzqRz8F12g==}
 
-  grid-engine@2.48.0:
-    resolution: {integrity: sha512-SEdt2B7uvAEtWbWZIagmx65MGAyC5gTa3nidYcCP+eLtK2L3ra1NdKreuPeaIUAXMCw2eSgi3urPuZfLumOzLA==}
+  grid-engine@2.48.1:
+    resolution: {integrity: sha512-rEuDH/dnhKMmqV5p0OYXcQtGLy3VcOytpAD43rEe1upLq0Fhu+02TVk9BtHbCFF/7WirJhFblDbLHGYbFD8z0g==}
     peerDependencies:
-      phaser: ~3.88.2
+      phaser: ~3.90.0
 
   grid-layout-plus@1.1.0:
     resolution: {integrity: sha512-Q5uj0U5nx6xfHg8G1CDRJAEg+/40RVJl5jjRImcRwC78BxoJrEkTneT1pyxYMlbZ8fpGPT6QdHJQkD4+W6gt5A==}
@@ -8366,8 +8366,8 @@ packages:
   mlly@1.8.0:
     resolution: {integrity: sha512-l8D9ODSRWLe2KHJSifWGwBqpTZXIXTeo8mlKjY+E2HAakaTeNpqAyBZ8GSqLzHgw4XmHmC8whvpjJNMbFZN7/g==}
 
-  mnemonist@0.39.8:
-    resolution: {integrity: sha512-vyWo2K3fjrUw8YeeZ1zF0fy6Mu59RHokURlld8ymdUPjMlD9EC9ov1/YPqTgqRvUN9nTr3Gqfz29LYAmu0PHPQ==}
+  mnemonist@0.40.3:
+    resolution: {integrity: sha512-Vjyr90sJ23CKKH/qPAgUKicw/v6pRoamxIEDFOF8uSgFME7DqPRpHgRTejWVjkdGg5dXj0/NyxZHZ9bcjH+2uQ==}
 
   mocked-exports@0.1.1:
     resolution: {integrity: sha512-aF7yRQr/Q0O2/4pIXm6PZ5G+jAd7QS4Yu8m+WEeEHGnbo+7mE36CbLSDQiXYV8bVL3NfmdeqPJct0tUlnjVSnA==}
@@ -18472,9 +18472,9 @@ snapshots:
 
   grapick@0.1.13: {}
 
-  grid-engine@2.48.0(phaser@4.0.0-rc.5):
+  grid-engine@2.48.1(phaser@4.0.0-rc.5):
     dependencies:
-      mnemonist: 0.39.8
+      mnemonist: 0.40.3
       phaser: 4.0.0-rc.5
       rxjs: 7.8.2
       tiled-property-flattener: 1.1.1
@@ -19518,7 +19518,7 @@ snapshots:
       pkg-types: 1.3.1
       ufo: 1.6.1
 
-  mnemonist@0.39.8:
+  mnemonist@0.40.3:
     dependencies:
       obliterator: 2.0.5
 
