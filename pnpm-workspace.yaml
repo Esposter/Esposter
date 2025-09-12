@@ -49,7 +49,7 @@ catalog:
   "@types/howler": ^2.2.12
   "@types/js-beautify": ^1.14.3
   "@types/mjml-browser": ^4.15.0
-  "@types/node": ^24.3.1
+  "@types/node": ^24.3.2
   "@types/omit-deep-lodash": ^1.1.3
   "@types/pluralize": ^0.0.33
   "@types/sax": ^1.2.7
@@ -69,7 +69,7 @@ catalog:
   "@vue-flow/minimap": ^1.5.4
   "@vue-flow/node-resizer": ^1.5.0
   "@vue-pdf-viewer/viewer": ^3.0.0
-  "@vue/language-core": ^3.0.6
+  "@vue/language-core": ^3.0.7
   "@vue/test-utils": ^2.4.6
   "@vuepic/vue-datepicker": ^11.0.2
   "@vueuse/core": ^13.9.0
@@ -133,7 +133,7 @@ catalog:
   mjml-browser: ^4.15.3
   node-emoji: ^2.2.0
   node-html-parser: ^7.0.1
-  nuxt: ^4.1.1
+  nuxt: ^4.1.2
   nuxt-security: ^2.4.0
   obscenity: ^0.4.5
   omit-deep-lodash: ^1.1.7
@@ -149,7 +149,7 @@ catalog:
   prettier: ^3.6.2
   rate-limiter-flexible: ^7.3.0
   rolldown: ^1.0.0-beta.37
-  rolldown-plugin-dts: ^0.16.3
+  rolldown-plugin-dts: ^0.16.5
   rxjs: ^7.8.2
   sass-embedded: ^1.92.1
   sax: ^1.4.1
@@ -181,7 +181,7 @@ catalog:
   vue-codemirror: ^6.1.1
   vue-pdf-embed: ^2.1.3
   vue-router: ^4.5.1
-  vue-tsc: ^3.0.6
+  vue-tsc: ^3.0.7
   vue3-apexcharts: ^1.8.0
   vuetify: ^3.10.0
   vuetify-nuxt-module: ^0.18.7
