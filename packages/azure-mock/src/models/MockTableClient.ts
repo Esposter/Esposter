@@ -14,8 +14,8 @@ import type {
   TableTransactionResponse,
   UpdateMode,
 } from "@azure/data-tables";
+import type { MapValue } from "@esposter/shared";
 import type { Except } from "type-fest";
-import type { MapValue } from "type-fest/source/entry";
 
 import { MockRestError } from "@/models/MockRestError";
 import { MockTableDatabase } from "@/store/MockTableDatabase";

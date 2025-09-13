@@ -27,8 +27,8 @@ import type {
   HttpRequestBody,
   PageBlobClient,
 } from "@azure/storage-blob";
+import type { MapValue } from "@esposter/shared";
 import type { Except } from "type-fest";
-import type { MapValue } from "type-fest/source/entry";
 
 import { MockBlobBatchClient } from "@/models/MockBlobBatchClient";
 import { MockBlockBlobClient } from "@/models/MockBlockBlobClient";

@@ -1,18 +1,16 @@
-import type { UpperCaseToLowerCase } from "@/util/types/UpperCaseToLowerCase";
-import type { Trim } from "type-fest";
-import type { StringDigit, UpperCaseCharacters } from "type-fest/source/internal";
+import type { DigitCharacter, LowercaseLetter, Trim, UppercaseLetter } from "type-fest";
 
 export type Prettify<T extends string> = Trim<BasePrettify<T>>;
 
 type BasePrettify<T extends string> = T extends `${infer Start}${infer WordBoundaryCharacter}${infer Rest}`
   ? // 1. lowercase + uppercase/digit
-    Start extends UpperCaseToLowerCase<UpperCaseCharacters>
-    ? WordBoundaryCharacter extends StringDigit | UpperCaseCharacters
+    Start extends LowercaseLetter
+    ? WordBoundaryCharacter extends DigitCharacter | UppercaseLetter
       ? `${Start} ${WordBoundaryCharacter}${BasePrettify<Rest>}`
       : `${Start}${BasePrettify<`${WordBoundaryCharacter}${Rest}`>}`
     : // 2. digit + lowercase/uppercase
-      Start extends StringDigit
-      ? WordBoundaryCharacter extends UpperCaseCharacters | UpperCaseToLowerCase<UpperCaseCharacters>
+      Start extends DigitCharacter
+      ? WordBoundaryCharacter extends LowercaseLetter | UppercaseLetter
         ? `${Start} ${WordBoundaryCharacter}${BasePrettify<Rest>}`
         : `${Start}${BasePrettify<`${WordBoundaryCharacter}${Rest}`>}`
       : `${Start}${WordBoundaryCharacter}${BasePrettify<Rest>}`
