@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.14.0](https://github.com/Esposter/Esposter/compare/v2.13.1...v2.14.0) (2025-09-14)
+
+### Bug Fixes
+
+* types ([6bea715](https://github.com/Esposter/Esposter/commit/6bea71580fa0b200d31228196ab56d600f5b4269))
+
 ## [2.13.1](https://github.com/Esposter/Esposter/compare/v2.13.0...v2.13.1) (2025-08-31)
 
 **Note:** Version bump only for package vue-phaserjs

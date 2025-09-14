@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.14.0](https://github.com/Esposter/Esposter/compare/v2.13.1...v2.14.0) (2025-09-14)
+
+### Bug Fixes
+
+* switch back to vite plugin dts ([52c9546](https://github.com/Esposter/Esposter/commit/52c9546cfa230916137767fb734b0138c19d043b))
+
 ## [2.13.1](https://github.com/Esposter/Esposter/compare/v2.13.0...v2.13.1) (2025-08-31)
 
 **Note:** Version bump only for package @esposter/configuration
