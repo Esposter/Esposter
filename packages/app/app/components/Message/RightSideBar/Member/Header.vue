@@ -8,7 +8,7 @@ const membersCount = computed(() => members.value.length);
 
 <template>
   <v-container fluid>
-    <v-row>
+    <v-row items-center>
       <v-col font-bold>Members—{{ membersCount }}</v-col>
     </v-row>
   </v-container>
