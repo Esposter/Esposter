@@ -56,6 +56,7 @@ const uploadFiles = useUploadFiles();
         <RichTextEditorCustomSendMessageButton :="editorProps" />
       </template>
       <template #prepend-outer-footer>
+        <!-- Add &nbsp; to avoid layout shift -->
         <div class="text-sm">{{ typingMessage }}&nbsp;</div>
       </template>
     </RichTextEditor>
