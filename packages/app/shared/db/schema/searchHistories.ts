@@ -15,9 +15,7 @@ export const searchHistories = pgTable(
       .notNull()
       .references(() => users.id),
   },
-  ({ query }) => [
-    check("query", sql`LENGTH(${query}) >= 1 AND LENGTH(${query}) <= ${sql.raw(MESSAGE_MAX_LENGTH.toString())}`),
-  ],
+  ({ query }) => [check("query", sql`LENGTH(${query}) <= ${sql.raw(MESSAGE_MAX_LENGTH.toString())}`)],
 );
 
 export type SearchHistory = typeof searchHistories.$inferSelect;
