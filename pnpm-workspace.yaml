@@ -32,14 +32,14 @@ catalog:
   "@nuxtjs/seo": ^3.1.0
   "@pinia/nuxt": ^0.11.2
   "@prettier/plugin-oxc": ^0.0.4
-  "@tiptap/core": ^3.4.2
-  "@tiptap/extension-file-handler": ^3.4.2
-  "@tiptap/extension-mention": ^3.4.2
-  "@tiptap/extensions": ^3.4.2
-  "@tiptap/pm": ^3.4.2
-  "@tiptap/starter-kit": ^3.4.2
-  "@tiptap/suggestion": ^3.4.2
-  "@tiptap/vue-3": ^3.4.2
+  "@tiptap/core": ^3.4.3
+  "@tiptap/extension-file-handler": ^3.4.3
+  "@tiptap/extension-mention": ^3.4.3
+  "@tiptap/extensions": ^3.4.3
+  "@tiptap/pm": ^3.4.3
+  "@tiptap/starter-kit": ^3.4.3
+  "@tiptap/suggestion": ^3.4.3
+  "@tiptap/vue-3": ^3.4.3
   "@trpc/client": ^11.5.1
   "@trpc/server": ^11.5.1
   "@types/data-urls": ^3.0.4
@@ -148,7 +148,7 @@ catalog:
   postgres: ^3.4.7
   prettier: ^3.6.2
   rate-limiter-flexible: ^7.3.1
-  rolldown: ^1.0.0-beta.37
+  rolldown: ^1.0.0-beta.38
   rolldown-plugin-dts: ^0.16.5
   rxjs: ^7.8.2
   sass-embedded: ^1.92.1
@@ -165,7 +165,7 @@ catalog:
   trpc-nuxt: ^1.2.0
   tsx: ^4.20.5
   type-fest: ^5.0.0
-  typedoc: ^0.28.12
+  typedoc: ^0.28.13
   typescript: ^5.9.2
   typescript-eslint: ^8.43.0
   unocss: ^66.5.1
