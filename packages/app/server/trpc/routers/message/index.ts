@@ -2,6 +2,7 @@ import type { AzureUpdateEntity } from "#shared/models/azure/AzureUpdateEntity";
 import type { FileSasEntity } from "#shared/models/message/FileSasEntity";
 
 import { rooms, selectRoomSchema } from "#shared/db/schema/rooms";
+import { searchHistories, selectSearchHistorySchema } from "#shared/db/schema/searchHistories";
 import { AzureEntityType } from "#shared/models/azure/AzureEntityType";
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 import { FileEntity, fileEntitySchema } from "#shared/models/azure/FileEntity";
@@ -14,6 +15,7 @@ import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessag
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadata";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
+import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
 import { MAX_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
@@ -39,6 +41,8 @@ import { isRoomId } from "@@/server/services/message/isRoomId";
 import { readMessages } from "@@/server/services/message/readMessages";
 import { searchMessages } from "@@/server/services/message/searchMessages";
 import { updateMessage } from "@@/server/services/message/updateMessage";
+import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
+import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { router } from "@@/server/trpc";
 import { addProfanityFilterMiddleware } from "@@/server/trpc/middleware/addProfanityFilterMiddleware";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
@@ -54,7 +58,7 @@ import {
   UnaryOperator,
 } from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
 
 export const readMetadataInputSchema = z.object({
@@ -85,6 +89,13 @@ const readMessagesByRowKeysInputSchema = z.object({
   rowKeys: messageEntitySchema.shape.rowKey.array().min(1).max(MAX_READ_LIMIT),
 });
 export type ReadMessagesByRowKeysInput = z.infer<typeof readMessagesByRowKeysInputSchema>;
+
+const readSearchHistoriesInputSchema = z.object({
+  ...createOffsetPaginationParamsSchema(selectSearchHistorySchema.keyof(), 0, [{ key: "id", order: SortOrder.Desc }])
+    .shape,
+  roomId: selectRoomSchema.shape.id,
+});
+export type ReadSearchHistoriesInput = z.infer<typeof readSearchHistoriesInputSchema>;
 
 const generateUploadFileSasEntitiesInputSchema = z.object({
   files: fileEntitySchema.pick({ filename: true, mimetype: true }).array().min(1).max(MAX_READ_LIMIT),
@@ -354,7 +365,27 @@ export const messageRouter = router({
       });
     },
   ),
-  searchMessages: getMemberProcedure(searchMessagesInputSchema, "roomId").query(({ input }) => searchMessages(input)),
+  readSearchHistories: getMemberProcedure(readSearchHistoriesInputSchema, "roomId").query(
+    async ({ ctx, input: { limit, offset, roomId, sortBy } }) => {
+      const resultSearchHistories = await ctx.db.query.searchHistories.findMany({
+        limit: limit + 1,
+        offset,
+        orderBy: sortBy.length > 0 ? parseSortByToSql(searchHistories, sortBy) : desc(searchHistories.createdAt),
+        where: (searchHistories, { eq }) => eq(searchHistories.roomId, roomId),
+      });
+      return getOffsetPaginationData(resultSearchHistories, limit);
+    },
+  ),
+  searchMessages: getMemberProcedure(searchMessagesInputSchema, "roomId").query(async ({ ctx, input }) => {
+    const result = await searchMessages(input);
+    await ctx.db.insert(searchHistories).values({
+      filters: (input.filters ?? []).map((f) => ({ $type: "Filter", ...f })),
+      query: input.query,
+      roomId: input.roomId,
+      userId: ctx.session.user.id,
+    });
+    return result;
+  }),
   updateMessage: addProfanityFilterMiddleware(getCreatorProcedure(updateMessageInputSchema), ["message"]).mutation(
     async ({ ctx: { messageClient }, input }) => {
       await updateMessage(messageClient, input);

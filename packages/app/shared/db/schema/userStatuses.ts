@@ -1,4 +1,5 @@
 import { pgTable } from "#shared/db/pgTable";
+import { messageSchema } from "#shared/db/schema/messageSchema";
 import { users } from "#shared/db/schema/users";
 import { UserStatus } from "#shared/models/db/user/UserStatus";
 import { STATUS_MESSAGE_MAX_LENGTH } from "#shared/services/message/constants";
@@ -21,7 +22,12 @@ export const userStatuses = pgTable(
       .primaryKey()
       .references(() => users.id, { onDelete: "cascade" }),
   },
-  ({ message }) => [check("message", sql`LENGTH(${message}) <= ${sql.raw(STATUS_MESSAGE_MAX_LENGTH.toString())}`)],
+  {
+    extraConfig: ({ message }) => [
+      check("message", sql`LENGTH(${message}) <= ${sql.raw(STATUS_MESSAGE_MAX_LENGTH.toString())}`),
+    ],
+    schema: messageSchema,
+  },
 );
 export type IUserStatus = typeof userStatuses.$inferSelect;
 

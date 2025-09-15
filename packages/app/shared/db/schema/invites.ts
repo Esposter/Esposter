@@ -3,6 +3,7 @@ import type { User } from "#shared/db/schema/users";
 import type { UserToRoom } from "#shared/db/schema/usersToRooms";
 
 import { pgTable } from "#shared/db/pgTable";
+import { messageSchema } from "#shared/db/schema/messageSchema";
 import { rooms } from "#shared/db/schema/rooms";
 import { users } from "#shared/db/schema/users";
 import { CODE_LENGTH } from "#shared/services/invite/constants";
@@ -23,7 +24,10 @@ export const invites = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },
-  ({ code }) => [check("code", sql`LENGTH(${code}) = ${sql.raw(CODE_LENGTH.toString())}`)],
+  {
+    extraConfig: ({ code }) => [check("code", sql`LENGTH(${code}) = ${sql.raw(CODE_LENGTH.toString())}`)],
+    schema: messageSchema,
+  },
 );
 
 export type Invite = typeof invites.$inferSelect;

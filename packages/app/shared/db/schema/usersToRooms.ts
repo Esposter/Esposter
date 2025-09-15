@@ -1,12 +1,13 @@
 import type { Room } from "#shared/db/schema/rooms";
 import type { User } from "#shared/db/schema/users";
 
+import { messageSchema } from "#shared/db/schema/messageSchema";
 import { rooms } from "#shared/db/schema/rooms";
 import { users } from "#shared/db/schema/users";
 import { relations } from "drizzle-orm";
-import { pgTable, primaryKey, text, uuid } from "drizzle-orm/pg-core";
+import { primaryKey, text, uuid } from "drizzle-orm/pg-core";
 
-export const usersToRooms = pgTable(
+export const usersToRooms = messageSchema.table(
   "users_to_rooms",
   {
     roomId: uuid("roomId")
