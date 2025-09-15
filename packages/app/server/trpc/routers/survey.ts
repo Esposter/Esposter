@@ -36,7 +36,7 @@ import { rateLimitedProcedure } from "@@/server/trpc/procedure/rateLimitedProced
 import { getCreatorProcedure } from "@@/server/trpc/procedure/survey/getCreatorProcedure";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, count, desc, eq } from "drizzle-orm";
+import { and, count, eq } from "drizzle-orm";
 import { z } from "zod";
 
 const readSurveyInputSchema = z.object({ id: selectSurveySchema.shape.id });
@@ -212,7 +212,8 @@ export const surveyRouter = router({
         },
         limit: limit + 1,
         offset,
-        orderBy: sortBy.length > 0 ? parseSortByToSql(surveys, sortBy) : desc(surveys.updatedAt),
+        orderBy: (surveys, { desc }) =>
+          sortBy.length > 0 ? parseSortByToSql(surveys, sortBy) : desc(surveys.updatedAt),
         where: (surveys) => eq(surveys.userId, ctx.session.user.id),
       });
       return getOffsetPaginationData(resultSurveys, limit);

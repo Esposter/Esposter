@@ -58,7 +58,7 @@ import {
   UnaryOperator,
 } from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
-import { desc, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 export const readMetadataInputSchema = z.object({
@@ -370,7 +370,8 @@ export const messageRouter = router({
       const resultSearchHistories = await ctx.db.query.searchHistories.findMany({
         limit: limit + 1,
         offset,
-        orderBy: sortBy.length > 0 ? parseSortByToSql(searchHistories, sortBy) : desc(searchHistories.createdAt),
+        orderBy: (searchHistories, { desc }) =>
+          sortBy.length > 0 ? parseSortByToSql(searchHistories, sortBy) : desc(searchHistories.createdAt),
         where: (searchHistories, { eq }) => eq(searchHistories.roomId, roomId),
       });
       return getOffsetPaginationData(resultSearchHistories, limit);

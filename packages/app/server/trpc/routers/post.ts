@@ -193,7 +193,7 @@ export const postRouter = router({
       const where = cursorWhere ? and(parentIdWhere, cursorWhere) : parentIdWhere;
       const resultPosts: PostWithRelations[] = await ctx.db.query.posts.findMany({
         limit: limit + 1,
-        orderBy: parseSortByToSql(posts, sortBy),
+        orderBy: (posts) => parseSortByToSql(posts, sortBy),
         where,
         with: PostRelations,
       });
