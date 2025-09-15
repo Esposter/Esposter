@@ -51,6 +51,7 @@ export default defineConfig(
   {
     extends: ["json/recommended"],
     files: ["**/*.json"],
+    ignores: ["**/migrations/**/*.json", "**/tilemap.json"],
     language: "json/json",
     plugins: { json },
     rules: {
