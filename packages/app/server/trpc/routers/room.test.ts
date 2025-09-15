@@ -273,7 +273,7 @@ describe("room", () => {
     const newInviteCode = await caller.createInvite({ roomId: newRoom.id });
 
     await expect(caller.joinRoom(newInviteCode)).rejects.toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: Failed query: insert into "users_to_rooms" ("roomId", "userId") values ($1, $2) returning "roomId", "userId"
+      [TRPCError: Failed query: insert into "message"."users_to_rooms" ("roomId", "userId") values ($1, $2) returning "roomId", "userId"
       params: ${newRoom.id},${getMockSession().user.id}]
     `);
   });
@@ -440,7 +440,7 @@ describe("room", () => {
 
     await expect(caller.createMembers({ roomId: newRoom.id, userIds: [getMockSession().user.id] })).rejects
       .toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: Failed query: insert into "users_to_rooms" ("roomId", "userId") values ($1, $2) returning "roomId", "userId"
+      [TRPCError: Failed query: insert into "message"."users_to_rooms" ("roomId", "userId") values ($1, $2) returning "roomId", "userId"
       params: ${newRoom.id},${getMockSession().user.id}]
     `);
   });
@@ -452,7 +452,7 @@ describe("room", () => {
 
     await expect(caller.createMembers({ roomId: newRoom.id, userIds: [NIL] })).rejects
       .toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: Failed query: insert into "users_to_rooms" ("roomId", "userId") values ($1, $2) returning "roomId", "userId"
+      [TRPCError: Failed query: insert into "message"."users_to_rooms" ("roomId", "userId") values ($1, $2) returning "roomId", "userId"
       params: ${newRoom.id},${NIL}]
     `);
   });
