@@ -3,7 +3,7 @@ import { SearchFilterComponentMap } from "@/services/message/SearchFilterCompone
 import { useSearchMessageStore } from "@/store/message/searchMessage";
 
 const searchMessageStore = useSearchMessageStore();
-const { activeSelectedFilter, isSearched } = storeToRefs(searchMessageStore);
+const { activeSelectedFilter } = storeToRefs(searchMessageStore);
 </script>
 
 <template>
@@ -13,10 +13,9 @@ const { activeSelectedFilter, isSearched } = storeToRefs(searchMessageStore);
       <MessageContentSearchInput :="props" />
     </template>
     <StyledCard p-2>
-      <MessageContentSearchMessages v-if="isSearched" />
       <component
         :is="SearchFilterComponentMap[activeSelectedFilter.type]"
-        v-else-if="
+        v-if="
           activeSelectedFilter && !activeSelectedFilter.value && SearchFilterComponentMap[activeSelectedFilter.type]
         "
         @select="

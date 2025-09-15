@@ -9,7 +9,7 @@ import { isPartitionKey } from "@esposter/shared";
 
 export const searchMessages = async ({ limit, offset, query, roomId, sortBy }: SearchMessagesInput) => {
   const client = useSearchClient(SearchIndex.Messages);
-  const { count, results } = await client.search(query, {
+  const { count, results } = await client.search(query || "*", {
     filter: isPartitionKey(roomId),
     includeTotalCount: true,
     orderBy: sortBy.map(({ key, order }) => `${key} ${order}`),
