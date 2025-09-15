@@ -1,8 +1,9 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
+import type { TableRelationalConfig } from "drizzle-orm";
 import type { PgTableWithColumns, TableConfig } from "drizzle-orm/pg-core";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { asc, desc, SQL, TableRelationalConfig } from "drizzle-orm";
+import { asc, desc, SQL } from "drizzle-orm";
 
 interface ParseSortByToSql {
   <TTable extends TableRelationalConfig["columns"]>(table: TTable, sortBy: SortItem<keyof TTable & string>[]): SQL[];
