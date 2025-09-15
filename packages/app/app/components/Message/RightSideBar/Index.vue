@@ -2,12 +2,14 @@
 import { useSearchMessageStore } from "@/store/message/searchMessage";
 
 const searchMessageStore = useSearchMessageStore();
-const { isSearched } = storeToRefs(searchMessageStore);
+const { isSearched, isSearching } = storeToRefs(searchMessageStore);
 </script>
 
 <template>
-  <template v-if="isSearched">
-    <MessageRightSideBarSearchMessages />
+  <template v-if="isSearching || isSearched">
+    <MessageRightSideBarSearchHeader />
+    <v-divider />
+    <MessageRightSideBarSearchMessages v-if="isSearched" />
   </template>
   <template v-else>
     <MessageRightSideBarMemberHeader />

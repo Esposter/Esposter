@@ -9,24 +9,28 @@ export const useReadSearchedMessages = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const searchMessageStore = useSearchMessageStore();
-  const { hasMore, isSearched, messages, searchQuery, totalItemsLength } = storeToRefs(searchMessageStore);
+  const { hasMore, isSearched, isSearching, messages, searchQuery, totalItemsLength } = storeToRefs(searchMessageStore);
   const { selectedFilters } = storeToRefs(searchMessageStore);
   const layoutStore = useLayoutStore();
   const { rightDrawerOpen } = storeToRefs(layoutStore);
   return async (offset?: SearchMessagesInput["offset"]) => {
     if (!currentRoomId.value) return;
 
-    const { count, data } = await $trpc.message.searchMessages.query({
-      filters: selectedFilters.value.length > 0 ? selectedFilters.value : undefined,
-      offset,
-      query: searchQuery.value,
-      roomId: currentRoomId.value,
-    });
-    messages.value = data.items;
-    hasMore.value = data.hasMore;
-    if (count !== undefined) totalItemsLength.value = count;
-    // Mark that a search has been performed and reveal results in the right drawer
-    isSearched.value = true;
+    isSearching.value = true;
     rightDrawerOpen.value = true;
+    try {
+      const { count, data } = await $trpc.message.searchMessages.query({
+        filters: selectedFilters.value.length > 0 ? selectedFilters.value : undefined,
+        offset,
+        query: searchQuery.value,
+        roomId: currentRoomId.value,
+      });
+      messages.value = data.items;
+      hasMore.value = data.hasMore;
+      if (count !== undefined) totalItemsLength.value = count;
+      isSearched.value = true;
+    } finally {
+      isSearching.value = false;
+    }
   };
 };

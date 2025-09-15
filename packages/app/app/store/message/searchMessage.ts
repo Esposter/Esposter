@@ -10,6 +10,7 @@ import { useRoomStore } from "@/store/message/room";
 export const useSearchMessageStore = defineStore("message/searchMessage", () => {
   const roomStore = useRoomStore();
   const { data: searchQuery } = createDataMap<string>(() => roomStore.currentRoomId, "");
+  const isSearching = ref(false);
   const isSearched = ref(false);
   const { data: selectedFilters } = createDataMap<Filter[]>(() => roomStore.currentRoomId, []);
   const activeSelectedFilter = computed({
@@ -40,6 +41,7 @@ export const useSearchMessageStore = defineStore("message/searchMessage", () => 
     deleteFilter,
     hasFilters,
     isSearched,
+    isSearching,
     messages,
     page,
     pageCount,
