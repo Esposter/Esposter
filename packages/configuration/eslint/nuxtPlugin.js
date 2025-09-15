@@ -1,3 +1,4 @@
+import json from "@eslint/json";
 import unocss from "@unocss/eslint-config/flat";
 import vitest from "@vitest/eslint-plugin";
 import perfectionist from "eslint-plugin-perfectionist";
@@ -45,6 +46,18 @@ export default defineConfig(
           internalPattern: [],
         },
       ],
+    },
+  },
+  {
+    extends: ["json/recommended"],
+    files: ["**/*.json"],
+    ignores: ["**/migrations/**/*.json", "**/tilemap.json"],
+    language: "json/json",
+    plugins: { json },
+    rules: {
+      // @TODO: https://github.com/eslint/json/issues/122
+      // "json/sort-keys": "error",
+      "json/top-level-interop": "error",
     },
   },
   eslintPluginPrettierRecommended,
