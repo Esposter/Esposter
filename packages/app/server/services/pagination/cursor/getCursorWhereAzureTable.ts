@@ -3,21 +3,21 @@ import type { AEntity } from "#shared/models/entity/AEntity";
 import type { ToData } from "#shared/models/entity/ToData";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 
-import { CompositeKeyPropertyNames } from "#shared/models/azure/CompositeKey";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { serializeKey } from "#shared/services/azure/table/serializeKey";
 import { deserialize } from "#shared/services/pagination/cursor/deserialize";
-import { BinaryOperator, capitalize, exhaustiveGuard, NotFoundError, UnaryOperator } from "@esposter/shared";
+import { BinaryOperator, exhaustiveGuard, NotFoundError, UnaryOperator } from "@esposter/shared";
 
 export const getCursorWhereAzureTable = <TItem extends CompositeKey | ToData<AEntity>>(
   serializedCursors: string,
   sortBy: SortItem<keyof TItem & string>[],
 ) => {
   const cursors = deserialize(serializedCursors);
-  const sanitizedSortBy = sortBy.map(({ key, ...rest }) => ({ key: sanitizeKey(key), ...rest }));
+  const serializedSortBy = sortBy.map(({ key, ...rest }) => ({ key: serializeKey(key), ...rest }));
   return Object.entries(cursors)
     .map(([key, value]) => {
-      const sanitizedKey = sanitizeKey(key);
-      const sortItem = sanitizedSortBy.find((s) => s.key === sanitizedKey);
+      const serializedKey = serializeKey(key);
+      const sortItem = serializedSortBy.find((s) => s.key === serializedKey);
       if (!sortItem) throw new NotFoundError(getCursorWhereAzureTable.name, key);
 
       let comparer: BinaryOperator;
@@ -31,10 +31,7 @@ export const getCursorWhereAzureTable = <TItem extends CompositeKey | ToData<AEn
         default:
           exhaustiveGuard(sortItem.order);
       }
-      return `${sanitizedKey} ${comparer} '${value}'`;
+      return `${serializedKey} ${comparer} '${value}'`;
     })
     .join(` ${UnaryOperator.and} `);
 };
-// Stupid Azure and Javascript property name casing conventions
-const KeysToCapitalize = new Set<string>([CompositeKeyPropertyNames.partitionKey, CompositeKeyPropertyNames.rowKey]);
-const sanitizeKey = (key: string) => (KeysToCapitalize.has(key) ? capitalize(key) : key);

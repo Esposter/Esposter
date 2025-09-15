@@ -10,7 +10,7 @@ const { messages, page, pageCount } = storeToRefs(searchMessageStore);
 <template>
   <template v-if="messages.length > 0">
     <v-list density="compact">
-      <MessageContentSearchHistoryMessage v-for="message in messages" :key="message.rowKey" :message />
+      <MessageRightSideBarSearchMessage v-for="message in messages" :key="message.rowKey" :message />
     </v-list>
     <div mt-2 flex justify-center>
       <v-pagination

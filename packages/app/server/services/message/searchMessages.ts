@@ -1,6 +1,7 @@
 import type { SearchMessagesInput } from "#shared/models/db/message/SearchMessagesInput";
 
 import { MessageEntity } from "#shared/models/db/message/MessageEntity";
+import { deserializeKey } from "#shared/services/azure/table/deserializeKey";
 import { filterToClause } from "#shared/services/azure/table/filterToClause";
 import { useSearchClient } from "@@/server/composables/azure/search/useSearchClient";
 import { SearchIndex } from "@@/server/models/azure/search/SearchIndex";
@@ -12,10 +13,10 @@ export const searchMessages = async ({ filters, limit, offset, query, roomId, so
   const client = useSearchClient(SearchIndex.Messages);
   let filter = isPartitionKey(roomId);
   if (filters) {
-    const clauses = filters.map(filterToClause).filter((clause) => clause !== null);
+    const clauses = filters.map(filterToClause);
     filter += ` ${UnaryOperator.and} ${serializeClauses(clauses)}`;
   }
-  const { count, results } = await client.search(query || "*", {
+  const { count, results } = await client.search(query, {
     filter,
     includeTotalCount: true,
     orderBy: sortBy.map(({ key, order }) => `${key} ${order}`),
@@ -24,6 +25,11 @@ export const searchMessages = async ({ filters, limit, offset, query, roomId, so
     top: limit + 1,
   });
   const searchedMessages: MessageEntity[] = [];
-  for await (const { document } of results) searchedMessages.push(document);
+  for await (const { document } of results) {
+    const deserializedDocument = Object.fromEntries(
+      Object.entries(document).map(([key, value]) => [deserializeKey(key), value]),
+    ) as unknown as MessageEntity;
+    searchedMessages.push(new MessageEntity(deserializedDocument));
+  }
   return { count, data: getOffsetPaginationData(searchedMessages, limit) };
 };

@@ -15,7 +15,7 @@ const creator = computed(() => userMap.value.get(message.userId));
 </script>
 
 <template>
-  <v-list-item v-if="creator" cursor-pointer @click="scrollToMessage(message.rowKey)">
+  <v-list-item v-if="creator" @click="scrollToMessage(message.rowKey)">
     <MessageModelMessage :creator :message is-preview />
   </v-list-item>
 </template>
