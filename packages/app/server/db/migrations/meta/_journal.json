@@ -99,6 +99,13 @@
       "when": 1755569050402,
       "tag": "0013_chief_vampiro",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1757897328633,
+      "tag": "0014_colorful_kitty_pryde",
+      "breakpoints": true
     }
   ]
 }

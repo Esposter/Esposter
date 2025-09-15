@@ -10,7 +10,7 @@ export const searchHistories = pgTable(
   "search_history",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    query: text("query").notNull(),
+    query: text("query").notNull().default(""),
     userId: text("user_id")
       .notNull()
       .references(() => users.id),
@@ -23,7 +23,7 @@ export const searchHistories = pgTable(
 export type SearchHistory = typeof searchHistories.$inferSelect;
 
 export const selectSearchHistorySchema = createSelectSchema(searchHistories, {
-  query: z.string().min(1).max(MESSAGE_MAX_LENGTH),
+  query: z.string().max(MESSAGE_MAX_LENGTH),
 });
 
 export const searchHistoriesRelations = relations(searchHistories, ({ one }) => ({
