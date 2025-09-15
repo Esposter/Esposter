@@ -29,7 +29,6 @@
     "typecheck": "tsc"
   },
   "devDependencies": {
-    "@eslint/json": "catalog:",
     "@unocss/eslint-config": "catalog:",
     "@vitejs/plugin-vue": "catalog:",
     "@vitest/eslint-plugin": "catalog:",
