@@ -9,11 +9,8 @@ const { messages, page, pageCount } = storeToRefs(searchMessageStore);
 
 <template>
   <template v-if="messages.length > 0">
-    <v-list class="border-sm" mt-2>
-      <v-list-item v-for="{ rowKey, message, createdAt } in messages" :key="rowKey">
-        <v-list-item-title font-semibold>{{ message }}</v-list-item-title>
-        <v-list-item-subtitle text-gray>{{ createdAt }}</v-list-item-subtitle>
-      </v-list-item>
+    <v-list density="compact">
+      <MessageContentSearchHistoryMessage v-for="message in messages" :key="message.rowKey" :message />
     </v-list>
     <div mt-2 flex justify-center>
       <v-pagination

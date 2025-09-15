@@ -10,6 +10,6 @@ const recentMessages = computed(() => messages.value.slice(0, 10));
 <template>
   <v-card-title text-base font-extrabold>History</v-card-title>
   <v-list py-0 density="compact">
-    <MessageContentSearchHistoryMessage v-for="message in recentMessages" :key="message.rowKey" :message />
+    <MessageRightSideBarSearchMessage v-for="message in recentMessages" :key="message.rowKey" :message />
   </v-list>
 </template>

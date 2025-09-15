@@ -11,7 +11,7 @@ const { isSearching, totalItemsLength } = storeToRefs(searchMessageStore);
       <v-col font-bold>Search</v-col>
       <v-col text-right>
         <v-progress-circular v-if="isSearching" size="small" indeterminate />
-        <span v-else text-gray>{{ totalItemsLength }} results</span>
+        <span v-else text-gray>{{ totalItemsLength }} result{{ totalItemsLength === 1 ? "" : "s" }}</span>
       </v-col>
     </v-row>
   </v-container>

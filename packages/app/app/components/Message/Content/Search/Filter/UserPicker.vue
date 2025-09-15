@@ -11,7 +11,7 @@ const { isPending, readMoreMembers } = await useReadMembers();
 <template>
   <v-list overflow-y-auto="!">
     <v-hover v-for="member in members" :key="member.id" #default="{ isHovering, props }">
-      <MessageModelMemberListItem :key="member.id" :="props" :member @click="emit('select', member.name)">
+      <MessageModelMemberListItem :key="member.id" :="props" :member @click="emit('select', member.id)">
         <template #append>
           <v-icon :op="isHovering ? undefined : '0!'" icon="mdi-plus" />
         </template>
