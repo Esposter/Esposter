@@ -2,17 +2,20 @@ import type { SearchMessagesInput } from "#shared/models/db/message/SearchMessag
 
 import { useLayoutStore } from "@/store/layout";
 import { useRoomStore } from "@/store/message/room";
+import { useSearchHistoryStore } from "@/store/message/searchHistory";
 import { useSearchMessageStore } from "@/store/message/searchMessage";
 
 export const useReadSearchedMessages = () => {
   const { $trpc } = useNuxtApp();
+  const layoutStore = useLayoutStore();
+  const { rightDrawerOpen } = storeToRefs(layoutStore);
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const searchMessageStore = useSearchMessageStore();
   const { hasMore, isSearched, isSearching, messages, searchQuery, totalItemsLength } = storeToRefs(searchMessageStore);
   const { selectedFilters } = storeToRefs(searchMessageStore);
-  const layoutStore = useLayoutStore();
-  const { rightDrawerOpen } = storeToRefs(layoutStore);
+  const searchHistoryStore = useSearchHistoryStore();
+  const { createSearchHistory } = searchHistoryStore;
   return async (offset?: SearchMessagesInput["offset"]) => {
     if (!currentRoomId.value) return;
 
@@ -22,6 +25,11 @@ export const useReadSearchedMessages = () => {
       const { count, data } = await $trpc.message.searchMessages.query({
         filters: selectedFilters.value.length > 0 ? selectedFilters.value : undefined,
         offset,
+        query: searchQuery.value,
+        roomId: currentRoomId.value,
+      });
+      await createSearchHistory({
+        filters: selectedFilters.value.length > 0 ? selectedFilters.value : undefined,
         query: searchQuery.value,
         roomId: currentRoomId.value,
       });

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { FilterType } from "#shared/models/message/FilterType";
+import { getFilterDisplayValue } from "@/services/message/getFilterDisplayValue";
 import { useMessageStore } from "@/store/message";
 import { useSearchMessageStore } from "@/store/message/searchMessage";
 
@@ -16,7 +17,7 @@ const onEscape = () => (document.activeElement as HTMLElement | null)?.blur();
 <template>
   <v-autocomplete
     v-model="selectedFilters"
-    :item-value="({ type, value }) => `${type}: ${value}`"
+    :item-value="getFilterDisplayValue"
     :search="searchQuery"
     cursor-auto
     width="15rem"
@@ -60,8 +61,7 @@ const onEscape = () => (document.activeElement as HTMLElement | null)?.blur();
   >
     <template #chip="{ item: { raw } }">
       <v-chip>
-        {{ raw.type }}:
-        {{ raw.type === FilterType.From ? (userMap.get(raw.value)?.name ?? raw.value) : raw.value }}
+        {{ getFilterDisplayValue(raw) }}
       </v-chip>
     </template>
   </v-autocomplete>
