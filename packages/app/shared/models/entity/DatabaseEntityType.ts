@@ -3,6 +3,7 @@ export enum DatabaseEntityType {
   Like = "Like",
   Post = "Post",
   Room = "Room",
+  SearchHistory = "SearchHistory",
   Survey = "Survey",
   User = "User",
   UserStatus = "UserStatus",

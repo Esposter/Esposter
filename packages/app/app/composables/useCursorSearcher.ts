@@ -20,7 +20,6 @@ export const useCursorSearcher = <TItem extends ToData<AEntity>, TEntityTypeKey 
   isIncludeEmptySearchQuery?: true,
 ) => {
   const searchQuery = ref("");
-
   const { hasMore, initializeCursorPaginationData, items, nextCursor, resetCursorPaginationData } =
     createCursorPaginationData<TItem>();
   const readMoreItems = async (onComplete: () => void) => {
