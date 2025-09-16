@@ -1,4 +1,5 @@
 import { FILENAME_MAX_LENGTH } from "#shared/services/azure/container/constants";
+import { getPropertyNames } from "#shared/util/getPropertyNames";
 import { z } from "zod";
 
 export class FileEntity {
@@ -11,6 +12,8 @@ export class FileEntity {
     Object.assign(this, init);
   }
 }
+
+export const FileEntityPropertyNames = getPropertyNames<FileEntity>();
 
 export const fileEntitySchema = z.object({
   filename: z.string().min(1).max(FILENAME_MAX_LENGTH),
