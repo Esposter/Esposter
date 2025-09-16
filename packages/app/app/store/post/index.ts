@@ -5,11 +5,10 @@ import type { UpdatePostInput } from "#shared/models/db/post/UpdatePostInput";
 
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createOperationData } from "@/services/shared/createOperationData";
-import { createCursorPaginationData } from "@/services/shared/pagination/cursor/createCursorPaginationData";
 
 export const usePostStore = defineStore("post", () => {
   const { $trpc } = useNuxtApp();
-  const { items, ...restData } = createCursorPaginationData<PostWithRelations>();
+  const { items, ...restData } = useCursorPaginationData<PostWithRelations>();
   const {
     createPost: storeCreatePost,
     deletePost: storeDeletePost,

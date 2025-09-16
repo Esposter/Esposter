@@ -3,7 +3,9 @@ import type { ReadonlyRefOrGetter } from "@vueuse/core";
 import { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
 // We want to handle the case where we have a Record<id, OffsetPaginationData> scenario
 // where we store multiple different lists for different ids, e.g. searched messages for room ids
-export const createOffsetPaginationDataMap = <TItem>(currentId: ReadonlyRefOrGetter<string | undefined>) => {
+export const useOffsetPaginationDataMap = <TItem>(
+  currentId: ReadonlyRefOrGetter<string | undefined>,
+): ReturnType<typeof useOffsetPaginationOperationData<TItem>> => {
   const offsetPaginationDataMap: Ref<Map<string, OffsetPaginationData<TItem>>> = ref(new Map());
   const offsetPaginationData = computed({
     get: () => {
@@ -22,31 +24,5 @@ export const createOffsetPaginationDataMap = <TItem>(currentId: ReadonlyRefOrGet
       offsetPaginationDataMap.value.set(currentIdValue, newOffsetPaginationData);
     },
   });
-  const items = computed({
-    get: () => offsetPaginationData.value.items,
-    set: (items) => {
-      offsetPaginationData.value.items = items;
-    },
-  });
-  const hasMore = computed({
-    get: () => offsetPaginationData.value.hasMore,
-    set: (hasMore) => {
-      offsetPaginationData.value.hasMore = hasMore;
-    },
-  });
-
-  const initializeOffsetPaginationData = (data: OffsetPaginationData<TItem>) => {
-    offsetPaginationData.value = data;
-  };
-
-  const resetOffsetPaginationData = () => {
-    offsetPaginationData.value = new OffsetPaginationData<TItem>();
-  };
-
-  return {
-    hasMore,
-    initializeOffsetPaginationData,
-    items,
-    resetOffsetPaginationData,
-  };
+  return useOffsetPaginationOperationData(offsetPaginationData);
 };

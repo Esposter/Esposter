@@ -5,7 +5,6 @@ import type { UpdateCommentInput } from "#shared/models/db/post/UpdateCommentInp
 
 import { DerivedDatabaseEntityType } from "#shared/models/entity/DerivedDatabaseEntityType";
 import { createOperationData } from "@/services/shared/createOperationData";
-import { createCursorPaginationDataMap } from "@/services/shared/pagination/cursor/createCursorPaginationDataMap";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { uuidValidateV4 } from "@esposter/shared";
 
@@ -17,7 +16,7 @@ export const useCommentStore = defineStore("post/comment", () => {
     return typeof postId === "string" && uuidValidateV4(postId) ? postId : undefined;
   });
   const currentPost = ref<PostWithRelations>();
-  const { items, ...restData } = createCursorPaginationDataMap<PostWithRelations>(currentPostId);
+  const { items, ...restData } = useCursorPaginationDataMap<PostWithRelations>(currentPostId);
   const {
     createComment: storeCreateComment,
     deleteComment: storeDeleteComment,

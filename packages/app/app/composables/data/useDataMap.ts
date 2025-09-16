@@ -1,6 +1,6 @@
 import type { ReadonlyRefOrGetter } from "@vueuse/core";
 
-export const createDataMap = <TItem extends NonNullable<unknown>>(
+export const useDataMap = <TItem extends NonNullable<unknown>>(
   currentId: ReadonlyRefOrGetter<string | undefined>,
   defaultValue: TItem,
 ) => {

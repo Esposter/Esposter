@@ -4,12 +4,11 @@ import type { DeleteSearchHistoryInput } from "#shared/models/db/searchHistory/D
 
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createOperationData } from "@/services/shared/createOperationData";
-import { createCursorPaginationDataMap } from "@/services/shared/pagination/cursor/createCursorPaginationDataMap";
 import { useRoomStore } from "@/store/message/room";
 
 export const useSearchHistoryStore = defineStore("message/searchHistory", () => {
   const roomStore = useRoomStore();
-  const { items, ...restData } = createCursorPaginationDataMap<SearchHistory>(() => roomStore.currentRoomId);
+  const { items, ...restData } = useCursorPaginationDataMap<SearchHistory>(() => roomStore.currentRoomId);
   const {
     createSearchHistory: baseCreateSearchHistory,
     deleteSearchHistory: baseDeleteSearchHistory,

@@ -9,7 +9,6 @@ import { createMessageEntity } from "#shared/services/message/createMessageEntit
 import { authClient } from "@/services/auth/authClient";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
-import { createCursorPaginationDataMap } from "@/services/shared/pagination/cursor/createCursorPaginationDataMap";
 import { useInputStore } from "@/store/message/input";
 import { useReplyStore } from "@/store/message/reply";
 import { useRoomStore } from "@/store/message/room";
@@ -25,7 +24,7 @@ export const useDataStore = defineStore("message/data", () => {
     items,
     resetCursorPaginationData: baseResetCursorPaginationData,
     ...restData
-  } = createCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
+  } = useCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
   const {
     createMessage: baseStoreCreateMessage,
     deleteMessage: baseStoreDeleteMessage,

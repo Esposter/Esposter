@@ -1,6 +1,6 @@
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 
-export const createCursorPaginationOperationData = <TItem>(cursorPaginationData: Ref<CursorPaginationData<TItem>>) => {
+export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Ref<CursorPaginationData<TItem>>) => {
   const items = computed({
     get: () => cursorPaginationData.value.items,
     set: (items) => {

@@ -8,12 +8,11 @@ import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { RoutePath } from "#shared/models/router/RoutePath";
 import { dayjs } from "#shared/services/dayjs";
 import { createOperationData } from "@/services/shared/createOperationData";
-import { createCursorPaginationData } from "@/services/shared/pagination/cursor/createCursorPaginationData";
 import { uuidValidateV4 } from "@esposter/shared";
 
 export const useRoomStore = defineStore("message/room", () => {
   const { $trpc } = useNuxtApp();
-  const { items, ...restData } = createCursorPaginationData<Room>();
+  const { items, ...restData } = useCursorPaginationData<Room>();
   const {
     createRoom: storeCreateRoom,
     deleteRoom: baseStoreDeleteRoom,

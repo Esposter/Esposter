@@ -4,7 +4,6 @@ import type { CursorPaginationData } from "#shared/models/pagination/cursor/Curs
 import type { EntityTypeKey } from "@/models/shared/entity/EntityTypeKey";
 
 import { dayjs } from "#shared/services/dayjs";
-import { createCursorPaginationData } from "@/services/shared/pagination/cursor/createCursorPaginationData";
 import { uncapitalize } from "@esposter/shared";
 
 type SearcherKey<TEntityTypeKey extends EntityTypeKey> =
@@ -21,7 +20,7 @@ export const useCursorSearcher = <TItem extends ToData<AEntity>, TEntityTypeKey 
 ) => {
   const searchQuery = ref("");
   const { hasMore, initializeCursorPaginationData, items, nextCursor, resetCursorPaginationData } =
-    createCursorPaginationData<TItem>();
+    useCursorPaginationData<TItem>();
   const readMoreItems = async (onComplete: () => void) => {
     try {
       const {

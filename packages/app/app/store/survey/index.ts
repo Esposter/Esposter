@@ -7,11 +7,10 @@ import type { Except } from "type-fest";
 
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createOperationData } from "@/services/shared/createOperationData";
-import { createOffsetPaginationData } from "@/services/shared/pagination/offset/createOffsetPaginationData";
 
 export const useSurveyStore = defineStore("survey", () => {
   const { $trpc } = useNuxtApp();
-  const { items, ...restData } = createOffsetPaginationData<Except<Survey, "model">>();
+  const { items, ...restData } = useOffsetPaginationData<Except<Survey, "model">>();
   const {
     createSurvey: storeCreateSurvey,
     deleteSurvey: storeDeleteSurvey,
