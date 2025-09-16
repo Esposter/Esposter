@@ -17,11 +17,10 @@ export const useRoomStore = defineStore("message/room", () => {
   const {
     createRoom: storeCreateRoom,
     deleteRoom: baseStoreDeleteRoom,
-    rooms: storeRooms,
     updateRoom: storeUpdateRoom,
     ...restOperationData
   } = createOperationData(items, ["id"], DatabaseEntityType.Room);
-  const rooms = computed(() => storeRooms.value.toSorted((a, b) => dayjs(b.updatedAt).diff(a.updatedAt)));
+  const rooms = computed(() => items.value.toSorted((a, b) => dayjs(b.updatedAt).diff(a.updatedAt)));
   const storeDeleteRoom = async (...args: Parameters<typeof baseStoreDeleteRoom>) => {
     baseStoreDeleteRoom(...args);
     rooms.value.length > 0

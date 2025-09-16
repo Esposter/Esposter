@@ -1,6 +1,7 @@
 import type { ReadonlyRefOrGetter } from "@vueuse/core";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
+import { createCursorPaginationOperationData } from "@/services/shared/pagination/cursor/createCursorPaginationOperationData";
 // We want to handle the case where we have a Record<id, CursorPaginationData> scenario
 // where we store multiple different lists for different ids, e.g. comments for post ids
 export const createCursorPaginationDataMap = <TItem>(currentId: ReadonlyRefOrGetter<string | undefined>) => {
@@ -22,37 +23,5 @@ export const createCursorPaginationDataMap = <TItem>(currentId: ReadonlyRefOrGet
       cursorPaginationDataMap.value.set(currentIdValue, newCursorPaginationData);
     },
   });
-  const items = computed({
-    get: () => cursorPaginationData.value.items,
-    set: (items) => {
-      cursorPaginationData.value.items = items;
-    },
-  });
-  const nextCursor = computed({
-    get: () => cursorPaginationData.value.nextCursor,
-    set: (nextCursor) => {
-      cursorPaginationData.value.nextCursor = nextCursor;
-    },
-  });
-  const hasMore = computed({
-    get: () => cursorPaginationData.value.hasMore,
-    set: (hasMore) => {
-      cursorPaginationData.value.hasMore = hasMore;
-    },
-  });
-
-  const initializeCursorPaginationData = (data: CursorPaginationData<TItem>) => {
-    cursorPaginationData.value = data;
-  };
-  const resetCursorPaginationData = () => {
-    cursorPaginationData.value = new CursorPaginationData<TItem>();
-  };
-
-  return {
-    hasMore,
-    initializeCursorPaginationData,
-    items,
-    nextCursor,
-    resetCursorPaginationData,
-  };
+  return createCursorPaginationOperationData(cursorPaginationData);
 };
