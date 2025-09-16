@@ -16,14 +16,14 @@ export const parseNode = <
   node: TNode,
   expectedCount: number,
   translateFlips: boolean,
-): Promise<TParsedNode> | TParsedNode => {
+): Promise<TParsedNode> => {
   const tmxNodeType = node["#name"] as TMXNodeType;
   switch (tmxNodeType) {
     case TMXNodeType.Group:
       return parseGroup(node as TMXGroupLayerNode, expectedCount, translateFlips) as Promise<TParsedNode>;
     case TMXNodeType.ImageLayer:
     case TMXNodeType.Objectgroup:
-      return parseLayer(node as TMXLayerNode) as TParsedNode;
+      return Promise.resolve(parseLayer(node as TMXLayerNode) as TParsedNode);
     case TMXNodeType.Layer:
       return parseTileLayer(node as TMXLayerNode, expectedCount, translateFlips) as Promise<TParsedNode>;
     default:
