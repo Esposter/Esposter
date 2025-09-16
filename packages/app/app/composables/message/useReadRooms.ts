@@ -27,7 +27,7 @@ export const useReadRooms = async () => {
 
   if (currentRoomId.value) {
     const [item, response] = await Promise.all([
-      currentRoomId.value ? $trpc.room.readRoom.query(currentRoomId.value) : null,
+      currentRoomId.value ? $trpc.room.readRoom.query(currentRoomId.value) : Promise.resolve(null),
       $trpc.room.readRooms.query(),
     ]);
     if (item && !response.items.some(({ id }) => id === item.id)) response.items.push(item);

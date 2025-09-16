@@ -48,13 +48,13 @@ export const useDataStore = defineStore("message/data", () => {
   };
 
   const storeCreateMessage = async (message: MessageEntity) => {
-    await Promise.all(MessageHookMap[Operation.Create].map((fn) => fn(message)));
+    await Promise.all(MessageHookMap[Operation.Create].map((fn) => Promise.resolve(fn(message))));
     // Our messages list is reversed i.e. most recent messages are at the front
     baseStoreCreateMessage(message, true);
   };
 
   const storeDeleteMessage = async (input: DeleteMessageInput) => {
-    await Promise.all(MessageHookMap[Operation.Delete].map((fn) => fn(input)));
+    await Promise.all(MessageHookMap[Operation.Delete].map((fn) => Promise.resolve(fn(input))));
     baseStoreDeleteMessage(input);
   };
 
@@ -71,7 +71,7 @@ export const useDataStore = defineStore("message/data", () => {
       replyRowKey: replyStore.rowKey,
       roomId: roomStore.currentRoomId,
     };
-    await Promise.all(MessageHookMap.ResetSend.map((fn) => fn(editor)));
+    await Promise.all(MessageHookMap.ResetSend.map((fn) => Promise.resolve(fn(editor))));
     const newMessage = reactive(
       createMessageEntity({
         ...createMessageInput,
