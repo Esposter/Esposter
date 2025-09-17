@@ -1,100 +1,93 @@
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
+import { MessageEntityPropertyNames } from "#shared/models/db/message/MessageEntity";
+import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 
-export const useReadMessages = async () => {
+export const useReadMessages = () => {
+  const route = useRoute();
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const dataStore = useDataStore();
-  const { initializeCursorPaginationData, pushMessages, unshiftMessages } = dataStore;
-  const { hasMore, hasMoreNewer, nextCursor, nextCursorNewer } = storeToRefs(dataStore);
+  const { readItems, readMoreItems } = dataStore;
+  const { hasMoreNewer, nextCursorNewer } = storeToRefs(dataStore);
+  const { unshiftMessages } = dataStore;
   const readUsers = useReadUsers();
   const readReplies = useReadReplies();
   const readFiles = useReadFiles();
   const readEmojis = useReadEmojis();
-  const readMetadata = (messages: MessageEntity[]) =>
-    Promise.all([
+  const readMetadata = async (messages: MessageEntity[]) => {
+    await Promise.all([
       readUsers(messages.map(({ userId }) => userId)),
       readReplies([...new Set(messages.map(({ replyRowKey }) => replyRowKey).filter((value) => value !== undefined))]),
       readFiles(messages.flatMap(({ files }) => files)),
       readEmojis(messages.map(({ rowKey }) => rowKey)),
     ]);
-  const readMoreMessages = async (onComplete: () => void) => {
-    try {
-      if (!currentRoomId.value) return;
-
-      const {
-        hasMore: newHasMore,
-        items,
-        nextCursor: newNextCursor,
-      } = await $trpc.message.readMessages.query({
-        cursor: nextCursor.value,
-        roomId: currentRoomId.value,
-      });
-      nextCursor.value = newNextCursor;
-      hasMore.value = newHasMore;
-      await readMetadata(items);
-      pushMessages(...items);
-    } finally {
-      onComplete();
-    }
-  };
-  const readMoreNewerMessages = async (onComplete: () => void) => {
-    try {
-      if (!currentRoomId.value) return;
-
-      const {
-        hasMore: newHasMore,
-        items,
-        nextCursor: newNextCursor,
-      } = await $trpc.message.readMessages.query({
-        cursor: nextCursorNewer.value,
-        order: SortOrder.Asc,
-        roomId: currentRoomId.value,
-      });
-      nextCursorNewer.value = newNextCursor;
-      hasMoreNewer.value = newHasMore;
-      await readMetadata(items);
-      unshiftMessages(...items);
-    } finally {
-      onComplete();
-    }
   };
 
-  if (currentRoomId.value) {
-    const roomId = currentRoomId.value;
-    const route = useRoute();
-    const rowKey = route.params.rowKey as string;
-    const readMessagesWithRowKey = async () => {
-      if (!rowKey) return false;
+  const readMessages = () =>
+    readItems(
+      async () => {
+        if (!currentRoomId.value)
+          throw new InvalidOperationError(Operation.Read, readMessages.name, MessageEntityPropertyNames.partitionKey);
+        const roomId = currentRoomId.value;
+        const rowKey = route.params.rowKey as string | undefined;
 
-      const messagesByRowKeys = await $trpc.message.readMessagesByRowKeys.query({ roomId, rowKeys: [rowKey] });
-      if (messagesByRowKeys.length === 0) return false;
+        if (rowKey) {
+          const messagesByRowKeys = await $trpc.message.readMessagesByRowKeys.query({ roomId, rowKeys: [rowKey] });
+          if (messagesByRowKeys.length > 0) {
+            const response = await $trpc.message.readMessages.useQuery({
+              cursor: serialize({ rowKey: messagesByRowKeys[0].rowKey }, [MESSAGE_ROWKEY_SORT_ITEM]),
+              isIncludeValue: true,
+              roomId,
+            });
+            hasMoreNewer.value = true;
+            nextCursorNewer.value = serialize({ rowKey: getReverseTickedTimestamp(rowKey) }, [
+              MESSAGE_ROWKEY_SORT_ITEM,
+            ]);
+            return response;
+          }
+        }
 
-      const response = await $trpc.message.readMessages.query({
-        cursor: serialize({ rowKey: messagesByRowKeys[0].rowKey }, [MESSAGE_ROWKEY_SORT_ITEM]),
-        isIncludeValue: true,
-        roomId,
-      });
+        const response = await $trpc.message.readMessages.useQuery({ roomId });
+        hasMoreNewer.value = false;
+        nextCursorNewer.value = undefined;
+        return response;
+      },
+      ({ items }) => readMetadata(items),
+    );
+
+  const readMoreMessages = () =>
+    readMoreItems(async (cursor) => {
+      if (!currentRoomId.value) return new CursorPaginationData<MessageEntity>();
+      const response = await $trpc.message.readMessages.query({ cursor, roomId: currentRoomId.value });
       await readMetadata(response.items);
-      initializeCursorPaginationData(response);
-      hasMoreNewer.value = true;
-      nextCursorNewer.value = serialize({ rowKey: getReverseTickedTimestamp(rowKey) }, [MESSAGE_ROWKEY_SORT_ITEM]);
-      return true;
-    };
+      return response;
+    });
 
-    if (!(await readMessagesWithRowKey())) {
-      const response = await $trpc.message.readMessages.query({ roomId });
-      await readMetadata(response.items);
-      initializeCursorPaginationData(response);
-    }
-  }
+  const readMoreNewerMessages = async () => {
+    if (!currentRoomId.value) return;
+    const {
+      hasMore: newHasMore,
+      items,
+      nextCursor: newNextCursor,
+    } = await $trpc.message.readMessages.query({
+      cursor: nextCursorNewer.value,
+      order: SortOrder.Asc,
+      roomId: currentRoomId.value,
+    });
+    hasMoreNewer.value = newHasMore;
+    nextCursorNewer.value = newNextCursor;
+    unshiftMessages(...items);
+    await readMetadata(items);
+  };
 
-  return { readMoreMessages, readMoreNewerMessages };
+  return { readMessages, readMoreMessages, readMoreNewerMessages };
 };

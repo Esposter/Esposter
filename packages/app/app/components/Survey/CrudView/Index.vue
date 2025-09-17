@@ -6,9 +6,9 @@ import { RoutePath } from "#shared/models/router/RoutePath";
 import { SurveyHeaders } from "@/services/survey/SurveyHeaders";
 import { useSurveyStore } from "@/store/survey";
 
-const { isLoading, readMoreSurveys } = await useReadSurveys();
+const { isLoading, readSurveys } = useReadSurveys();
 const surveyStore = useSurveyStore();
-const { searchQuery, surveys, totalItemsLength } = storeToRefs(surveyStore);
+const { items, searchQuery, totalItemsLength } = storeToRefs(surveyStore);
 const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Survey>) => navigateTo(RoutePath.Survey(item.id));
 </script>
 
@@ -21,7 +21,7 @@ const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Survey>) => navigateT
       :data-table-server-props="{
         height: '100%',
         headers: SurveyHeaders,
-        items: surveys,
+        items,
         itemsLength: totalItemsLength,
         search: searchQuery,
         sortBy: [
@@ -32,7 +32,7 @@ const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Survey>) => navigateT
         loading: isLoading,
       }"
       @click:row="onClickRow"
-      @update:options="readMoreSurveys"
+      @update:options="readSurveys"
     >
       <template #top>
         <SurveyCrudViewHeader />

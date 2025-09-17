@@ -24,7 +24,7 @@ export const useDownloadFileStore = defineStore("message/downloadFile", () => {
       fileUrlMap.value.set(message.files[i].id, { url: downloadFileSasUrls[i] });
   });
   MessageHookMap[Operation.Delete].push((input) => {
-    const message = dataStore.messages.find(({ rowKey }) => rowKey === input.rowKey);
+    const message = dataStore.items.find(({ rowKey }) => rowKey === input.rowKey);
     if (!message) return;
     for (const { id } of message.files) fileUrlMap.value.delete(id);
   });

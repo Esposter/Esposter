@@ -46,6 +46,7 @@ export const useCommentStore = defineStore("post/comment", () => {
   return {
     createComment,
     deleteComment,
+    items,
     updateComment,
     ...restOperationData,
     currentPost,

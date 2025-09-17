@@ -1,6 +1,7 @@
 import type { AsyncData } from "#app";
 import type { TRPCClientErrorLike } from "@trpc/client";
 import type { InferrableClientTypes } from "@trpc/server/unstable-core-do-not-import";
+import type { Promisable } from "type-fest";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 
@@ -30,21 +31,21 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
     cursorPaginationData.value = new CursorPaginationData<TItem>();
   };
   const readItems = async <TDef extends InferrableClientTypes>(
-    useQuery: () => AsyncData<CursorPaginationData<TItem> | null, TRPCClientErrorLike<TDef>>,
-    onComplete?: (data: CursorPaginationData<TItem>) => Promise<void> | void,
+    useQuery: () => Promise<Awaited<AsyncData<CursorPaginationData<TItem> | null, TRPCClientErrorLike<TDef>>>>,
+    onComplete?: (data: CursorPaginationData<TItem>) => Promisable<void>,
   ) => {
     const { data, pending: isPending, status, ...rest } = await useQuery();
-    const watchHandle = watchEffect(() => {
+    const watchHandle = watchEffect(async () => {
       if (!(status.value === "success" && data.value)) return;
       initializeCursorPaginationData(data.value);
-      onComplete?.(data.value);
+      await onComplete?.(data.value);
       watchHandle();
     });
     return { data, isPending, status, ...rest };
   };
   const readMoreItems = async (
     query: (cursor?: string) => Promise<CursorPaginationData<TItem>>,
-    onComplete?: () => void,
+    onComplete?: () => Promisable<void>,
   ) => {
     try {
       const { hasMore: newHasMore, items: newItems, nextCursor: newNextCursor } = await query(nextCursor.value);
@@ -52,7 +53,7 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
       nextCursor.value = newNextCursor;
       items.value.push(...newItems);
     } finally {
-      onComplete?.();
+      await onComplete?.();
     }
   };
 

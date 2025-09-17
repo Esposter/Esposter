@@ -1,25 +1,10 @@
 import { useCommentStore } from "@/store/post/comment";
 
-export const useReadComments = async (postId: string) => {
+export const useReadComments = (postId: string) => {
   const { $trpc } = useNuxtApp();
   const commentStore = useCommentStore();
-  const { initializeCursorPaginationData, pushComments } = commentStore;
-  const { hasMore, nextCursor } = storeToRefs(commentStore);
-  const readMoreComments = async (onComplete: () => void) => {
-    try {
-      const {
-        hasMore: newHasMore,
-        items,
-        nextCursor: newNextCursor,
-      } = await $trpc.post.readPosts.query({ cursor: nextCursor.value, parentId: postId });
-      nextCursor.value = newNextCursor;
-      hasMore.value = newHasMore;
-      pushComments(...items);
-    } finally {
-      onComplete();
-    }
-  };
-
-  initializeCursorPaginationData(await $trpc.post.readPosts.query({ parentId: postId }));
-  return readMoreComments;
+  const { readItems, readMoreItems } = commentStore;
+  const readComments = () => readItems(() => $trpc.post.readPosts.useQuery({ parentId: postId }));
+  const readMoreComments = () => readMoreItems((cursor) => $trpc.post.readPosts.query({ cursor, parentId: postId }));
+  return { readComments, readMoreComments };
 };

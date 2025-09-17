@@ -16,7 +16,7 @@ export const useReplyStore = defineStore("message/reply", () => {
   const { data: replyMap } = useDataMap(() => roomStore.currentRoomId, new Map<string, MessageEntity>());
   MessageHookMap[Operation.Create].push((message) => {
     if (!message.replyRowKey) return;
-    const reply = dataStore.messages.find(({ rowKey }) => rowKey === message.replyRowKey);
+    const reply = dataStore.items.find(({ rowKey }) => rowKey === message.replyRowKey);
     if (!reply) return;
     replyMap.value.set(message.replyRowKey, reply);
   });
