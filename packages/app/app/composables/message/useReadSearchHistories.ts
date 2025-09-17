@@ -12,7 +12,7 @@ export const useReadSearchHistories = async () => {
     if (!currentRoomId.value) return;
 
     try {
-      const data = await $trpc.message.readSearchHistories.query({
+      const data = await $trpc.searchHistory.readSearchHistories.query({
         cursor: nextCursor.value,
         roomId: currentRoomId.value,
       });
@@ -25,7 +25,7 @@ export const useReadSearchHistories = async () => {
   let isPending = ref(false);
 
   if (currentRoomId.value) {
-    const { data, pending, status } = await $trpc.message.readSearchHistories.useQuery({
+    const { data, pending, status } = await $trpc.searchHistory.readSearchHistories.useQuery({
       roomId: currentRoomId.value,
     });
     isPending = pending;

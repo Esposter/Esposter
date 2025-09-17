@@ -307,8 +307,8 @@ export const roomRouter = router({
   ),
   readMembers: getMemberProcedure(readMembersInputSchema, "roomId").query(
     async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
-      const filterWhere = filter?.name ? ilike(users.name, `%${filter.name}%`) : undefined;
       const cursorWhere = cursor ? getCursorWhere(users, cursor, sortBy) : undefined;
+      const filterWhere = filter?.name ? ilike(users.name, `%${filter.name}%`) : undefined;
       const joinedUsers = await ctx.db
         .select()
         .from(users)
@@ -372,14 +372,15 @@ export const roomRouter = router({
     return joinedRoom?.rooms ?? null;
   }),
   readRooms: getMemberProcedure(readRoomsInputSchema, "roomId").query(
-    async ({ ctx, input: { cursor, filter, limit, sortBy } }) => {
-      const filterWhere = filter?.name ? ilike(rooms.name, `%${filter.name}%`) : undefined;
+    async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
       const cursorWhere = cursor ? getCursorWhere(rooms, cursor, sortBy) : undefined;
+      const filterWhere = filter?.name ? ilike(rooms.name, `%${filter.name}%`) : undefined;
+      const roomIdWhere = roomId ? eq(rooms.id, roomId) : undefined;
       const joinedRooms = await ctx.db
         .select()
         .from(rooms)
         .innerJoin(usersToRooms, and(eq(usersToRooms.roomId, rooms.id), eq(usersToRooms.userId, ctx.session.user.id)))
-        .where(and(filterWhere, cursorWhere))
+        .where(and(cursorWhere, filterWhere, roomIdWhere))
         .orderBy(...parseSortByToSql(rooms, sortBy))
         .limit(limit + 1);
       const resultRooms = joinedRooms.map(({ rooms }) => rooms);

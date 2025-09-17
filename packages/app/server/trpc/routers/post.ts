@@ -188,13 +188,14 @@ export const postRouter = router({
   readPosts: rateLimitedProcedure
     .input(readPostsInputSchema)
     .query(async ({ ctx, input: { cursor, limit, parentId, sortBy } }) => {
-      const parentIdWhere = parentId ? eq(posts.parentId, parentId) : isNull(posts.parentId);
-      const cursorWhere = cursor ? getCursorWhere(posts, cursor, sortBy) : undefined;
-      const where = cursorWhere ? and(parentIdWhere, cursorWhere) : parentIdWhere;
       const resultPosts: PostWithRelations[] = await ctx.db.query.posts.findMany({
         limit: limit + 1,
         orderBy: (posts) => parseSortByToSql(posts, sortBy),
-        where,
+        where: (posts, { and, eq, isNull }) => {
+          const cursorWhere = cursor ? getCursorWhere(posts, cursor, sortBy) : undefined;
+          const parentIdWhere = parentId ? eq(posts.parentId, parentId) : isNull(posts.parentId);
+          return cursorWhere ? and(parentIdWhere, cursorWhere) : parentIdWhere;
+        },
         with: PostRelations,
       });
       return getCursorPaginationData(resultPosts, limit, sortBy);

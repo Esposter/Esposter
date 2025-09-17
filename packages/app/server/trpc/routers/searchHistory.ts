@@ -23,8 +23,6 @@ const readSearchHistoriesInputSchema = z.object({
   ]).shape,
   roomId: selectSearchHistorySchema.shape.roomId,
 });
-export type CreateSearchHistoryInput = z.infer<typeof createSearchHistoryInputSchema>;
-export type DeleteSearchHistoryInput = z.infer<typeof deleteSearchHistoryInputSchema>;
 export type ReadSearchHistoriesInput = z.infer<typeof readSearchHistoriesInputSchema>;
 
 export const searchHistoryRouter = router({
@@ -63,13 +61,14 @@ export const searchHistoryRouter = router({
     }),
   readSearchHistories: getMemberProcedure(readSearchHistoriesInputSchema, "roomId").query(
     async ({ ctx, input: { cursor, limit, roomId, sortBy } }) => {
-      const filterWhere = eq(searchHistories.roomId, roomId);
-      const cursorWhere = cursor ? getCursorWhere(searchHistories, cursor, sortBy) : undefined;
-      const where = cursorWhere ? and(filterWhere, cursorWhere) : filterWhere;
       const resultSearchHistories = await ctx.db.query.searchHistories.findMany({
         limit: limit + 1,
         orderBy: (searchHistories) => parseSortByToSql(searchHistories, sortBy),
-        where,
+        where: (searchHistories, { and, eq }) => {
+          const filterWhere = eq(searchHistories.roomId, roomId);
+          const cursorWhere = cursor ? getCursorWhere(searchHistories, cursor, sortBy) : undefined;
+          return cursorWhere ? and(filterWhere, cursorWhere) : filterWhere;
+        },
       });
       return getCursorPaginationData(resultSearchHistories, limit, sortBy);
     },
