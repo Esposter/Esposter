@@ -29,17 +29,17 @@ catalog:
   "@nuxt/fonts": ^0.11.4
   "@nuxt/scripts": ^0.11.13
   "@nuxt/test-utils": ^3.19.2
-  "@nuxtjs/seo": ^3.1.0
+  "@nuxtjs/seo": ^3.2.2
   "@pinia/nuxt": ^0.11.2
   "@prettier/plugin-oxc": ^0.0.4
-  "@tiptap/core": ^3.4.3
-  "@tiptap/extension-file-handler": ^3.4.3
-  "@tiptap/extension-mention": ^3.4.3
-  "@tiptap/extensions": ^3.4.3
-  "@tiptap/pm": ^3.4.3
-  "@tiptap/starter-kit": ^3.4.3
-  "@tiptap/suggestion": ^3.4.3
-  "@tiptap/vue-3": ^3.4.3
+  "@tiptap/core": ^3.4.4
+  "@tiptap/extension-file-handler": ^3.4.4
+  "@tiptap/extension-mention": ^3.4.4
+  "@tiptap/extensions": ^3.4.4
+  "@tiptap/pm": ^3.4.4
+  "@tiptap/starter-kit": ^3.4.4
+  "@tiptap/suggestion": ^3.4.4
+  "@tiptap/vue-3": ^3.4.4
   "@trpc/client": ^11.5.1
   "@trpc/server": ^11.5.1
   "@types/data-urls": ^3.0.4
@@ -94,7 +94,7 @@ catalog:
   emoji-mart-vue-fast: ^15.0.5
   eslint: ^9.35.0
   eslint-config-prettier: ^10.1.8
-  eslint-plugin-oxlint: ^1.15.0
+  eslint-plugin-oxlint: ^1.16.0
   eslint-plugin-perfectionist: ^4.15.0
   eslint-plugin-pinia: ^0.4.1
   eslint-plugin-prettier: ^5.5.4
@@ -137,7 +137,7 @@ catalog:
   nuxt-security: ^2.4.0
   obscenity: ^0.4.5
   omit-deep-lodash: ^1.1.7
-  oxlint: ^1.15.0
+  oxlint: ^1.16.0
   p-progress: ^1.0.0
   pathe: ^2.0.3
   pdfjs-dist: ^5.4.149
@@ -156,10 +156,10 @@ catalog:
   show-open-file-picker: ^0.4.0
   sql-highlight: ^6.1.0
   superjson: ^2.2.2
-  survey-core: ^2.3.6
-  survey-creator-core: ^2.3.6
-  survey-creator-vue: ^2.3.6
-  survey-vue3-ui: ^2.3.6
+  survey-core: ^2.3.7
+  survey-creator-core: ^2.3.7
+  survey-creator-vue: ^2.3.7
+  survey-vue3-ui: ^2.3.7
   three: ^0.180.0
   three-globe: ^2.44.0
   trpc-nuxt: ^1.2.0
@@ -183,7 +183,7 @@ catalog:
   vue-router: ^4.5.1
   vue-tsc: ^3.0.7
   vue3-apexcharts: ^1.8.0
-  vuetify: ^3.10.1
+  vuetify: ^3.10.2
   vuetify-nuxt-module: ^0.18.7
   web-push: ^3.6.7
   worker-timers: ^8.0.24
