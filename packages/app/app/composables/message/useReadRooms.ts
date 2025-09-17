@@ -10,15 +10,10 @@ export const useReadRooms = () => {
   const readUsers = useReadUsers();
   const readMetadata = (rooms: Room[]) => readUsers(rooms.map(({ userId }) => userId));
   const readRooms = () =>
-    readItems(async () => {
-      const [room, cursorPaginationData] = await Promise.all([
-        currentRoomId.value ? $trpc.room.readRoom.query(currentRoomId.value) : Promise.resolve(null),
-        $trpc.room.readRooms.query(),
-      ]);
-      if (room && !cursorPaginationData.items.some(({ id }) => id === room.id)) cursorPaginationData.items.push(room);
-      await readMetadata(cursorPaginationData.items);
-      return cursorPaginationData;
-    });
+    readItems(
+      () => $trpc.room.readRooms.useQuery({ roomId: currentRoomId.value }),
+      ({ items }) => readMetadata(items),
+    );
   const readMoreRooms = () =>
     readMoreItems(async (cursor) => {
       const cursorPaginationData = await $trpc.room.readRooms.query({ cursor });

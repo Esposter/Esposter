@@ -44,6 +44,7 @@ export type ReadRoomInput = z.infer<typeof readRoomInputSchema>;
 
 const readRoomsInputSchema = z
   .object({
+    roomId: selectRoomSchema.shape.id.optional(),
     ...createCursorPaginationParamsSchema(selectRoomSchema.keyof(), [
       { key: ItemMetadataPropertyNames.updatedAt, order: SortOrder.Desc },
     ]).shape,
@@ -370,9 +371,8 @@ export const roomRouter = router({
     ).find(Boolean);
     return joinedRoom?.rooms ?? null;
   }),
-  readRooms: authedProcedure
-    .input(readRoomsInputSchema)
-    .query(async ({ ctx, input: { cursor, filter, limit, sortBy } }) => {
+  readRooms: getMemberProcedure(readRoomsInputSchema, "roomId").query(
+    async ({ ctx, input: { cursor, filter, limit, sortBy } }) => {
       const filterWhere = filter?.name ? ilike(rooms.name, `%${filter.name}%`) : undefined;
       const cursorWhere = cursor ? getCursorWhere(rooms, cursor, sortBy) : undefined;
       const joinedRooms = await ctx.db
@@ -384,7 +384,8 @@ export const roomRouter = router({
         .limit(limit + 1);
       const resultRooms = joinedRooms.map(({ rooms }) => rooms);
       return getCursorPaginationData(resultRooms, limit, sortBy);
-    }),
+    },
+  ),
   updateRoom: getProfanityFilterProcedure(updateRoomInputSchema, ["name"]).mutation<Room>(
     async ({ ctx, input: { id, ...rest } }) => {
       const updatedRoom = (
