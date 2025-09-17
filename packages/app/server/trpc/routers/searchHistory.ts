@@ -14,7 +14,7 @@ import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, eq } from "drizzle-orm";
+import { and, eq, SQL } from "drizzle-orm";
 import { z } from "zod";
 
 const readSearchHistoriesInputSchema = z.object({
@@ -65,9 +65,9 @@ export const searchHistoryRouter = router({
         limit: limit + 1,
         orderBy: (searchHistories) => parseSortByToSql(searchHistories, sortBy),
         where: (searchHistories, { and, eq }) => {
-          const cursorWhere = cursor ? getCursorWhere(searchHistories, cursor, sortBy) : undefined;
-          const filterWhere = eq(searchHistories.roomId, roomId);
-          return cursorWhere ? and(filterWhere, cursorWhere) : filterWhere;
+          const wheres: (SQL | undefined)[] = [eq(searchHistories.roomId, roomId)];
+          if (cursor) wheres.push(getCursorWhere(searchHistories, cursor, sortBy));
+          return and(...wheres);
         },
       });
       return getCursorPaginationData(resultSearchHistories, limit, sortBy);

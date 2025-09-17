@@ -21,7 +21,7 @@ import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfani
 import { rateLimitedProcedure } from "@@/server/trpc/procedure/rateLimitedProcedure";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, eq, isNotNull, isNull } from "drizzle-orm";
+import { and, eq, isNotNull, isNull, SQL } from "drizzle-orm";
 import { z } from "zod";
 
 const readPostInputSchema = selectPostSchema.shape.id;
@@ -192,9 +192,9 @@ export const postRouter = router({
         limit: limit + 1,
         orderBy: (posts) => parseSortByToSql(posts, sortBy),
         where: (posts, { and, eq, isNull }) => {
-          const cursorWhere = cursor ? getCursorWhere(posts, cursor, sortBy) : undefined;
-          const parentIdWhere = parentId ? eq(posts.parentId, parentId) : isNull(posts.parentId);
-          return cursorWhere ? and(parentIdWhere, cursorWhere) : parentIdWhere;
+          const wheres: (SQL | undefined)[] = [parentId ? eq(posts.parentId, parentId) : isNull(posts.parentId)];
+          if (cursor) wheres.push(getCursorWhere(posts, cursor, sortBy));
+          return and(...wheres);
         },
         with: PostRelations,
       });
