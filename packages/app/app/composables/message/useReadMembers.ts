@@ -1,5 +1,4 @@
 import { MessageEntityPropertyNames } from "#shared/models/db/message/MessageEntity";
-import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { useMessageStore } from "@/store/message";
 import { useMemberStore } from "@/store/message/member";
 import { useRoomStore } from "@/store/message/room";
@@ -26,18 +25,19 @@ export const useReadMembers = () => {
           );
         return $trpc.room.readMembers.useQuery({ roomId: currentRoomId.value });
       },
-      ({ items }) => readMetadata(items),
+      async ({ items }) => {
+        for (const user of items) userMap.value.set(user.id, user);
+        await readMetadata(items.map(({ id }) => id));
+      },
     );
   const readMoreMembers = () =>
     readMoreItems(async (cursor) => {
       if (!currentRoomId.value)
         throw new InvalidOperationError(Operation.Read, readMoreMembers.name, MessageEntityPropertyNames.partitionKey);
       const cursorPaginationData = await $trpc.room.readMembers.query({ cursor, roomId: currentRoomId.value });
-      const userIds = cursorPaginationData.items.map(({ id }) => id);
       for (const user of cursorPaginationData.items) userMap.value.set(user.id, user);
-      await readMetadata(userIds);
-      // eslint-disable-next-line @typescript-eslint/no-misused-spread
-      return new CursorPaginationData({ ...cursorPaginationData, items: userIds });
+      await readMetadata(cursorPaginationData.items.map(({ id }) => id));
+      return cursorPaginationData;
     });
   return { readMembers, readMoreMembers };
 };

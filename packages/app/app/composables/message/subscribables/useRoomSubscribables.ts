@@ -13,7 +13,7 @@ export const useRoomSubscribables = () => {
   const { storeDeleteRoom, storeUpdateRoom } = roomStore;
   const { currentRoomId, rooms } = storeToRefs(roomStore);
   const memberStore = useMemberStore();
-  const { pushMemberIds } = memberStore;
+  const { pushMembers } = memberStore;
 
   const updateRoomUnsubscribable = ref<Unsubscribable>();
   const deleteRoomUnsubscribable = ref<Unsubscribable>();
@@ -49,7 +49,7 @@ export const useRoomSubscribables = () => {
         if (userDataMap) userDataMap.set(user.id, user);
         else setUserDataMap(roomId, new Map([[user.id, user]]));
 
-        if (roomId === currentRoomId.value) pushMemberIds(user.id);
+        if (roomId === currentRoomId.value) pushMembers(user);
       },
     });
     leaveRoomUnsubscribable.value = $trpc.room.onLeaveRoom.subscribe(newRoomIds, {
