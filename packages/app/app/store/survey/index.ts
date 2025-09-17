@@ -7,11 +7,10 @@ import type { Except } from "type-fest";
 
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createOperationData } from "@/services/shared/createOperationData";
-import { createOffsetPaginationData } from "@/services/shared/pagination/offset/createOffsetPaginationData";
 
 export const useSurveyStore = defineStore("survey", () => {
   const { $trpc } = useNuxtApp();
-  const { items, ...restData } = createOffsetPaginationData<Except<Survey, "model">>();
+  const { items, ...restData } = useOffsetPaginationData<Except<Survey, "model">>();
   const {
     createSurvey: storeCreateSurvey,
     deleteSurvey: storeDeleteSurvey,
@@ -27,17 +26,13 @@ export const useSurveyStore = defineStore("survey", () => {
   const updateSurvey = async (input: UpdateSurveyInput) => {
     const updatedSurvey = await $trpc.survey.updateSurvey.mutate(input);
     storeUpdateSurvey(updatedSurvey);
-    return updatedSurvey;
   };
   // This is called by surveyjs externally so we will also need to
   // update our reactivity externally outside from our stores
-  const updateSurveyModel = async (input: UpdateSurveyModelInput) => {
-    const updatedSurvey = await $trpc.survey.updateSurveyModel.mutate(input);
-    return updatedSurvey;
-  };
+  const updateSurveyModel = (input: UpdateSurveyModelInput) => $trpc.survey.updateSurveyModel.mutate(input);
   const deleteSurvey = async (input: DeleteSurveyInput) => {
-    const deletedSurvey = await $trpc.survey.deleteSurvey.mutate(input);
-    storeDeleteSurvey({ id: deletedSurvey.id });
+    const { id } = await $trpc.survey.deleteSurvey.mutate(input);
+    storeDeleteSurvey({ id });
     totalItemsLength.value--;
   };
 
@@ -47,6 +42,7 @@ export const useSurveyStore = defineStore("survey", () => {
   return {
     createSurvey,
     deleteSurvey,
+    items,
     updateSurvey,
     updateSurveyModel,
     ...restOperationData,

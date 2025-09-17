@@ -4,7 +4,8 @@ import { useRoomStore } from "@/store/message/room";
 defineSlots<{ prepend: () => VNode }>();
 const roomStore = useRoomStore();
 const { hasMore, rooms } = storeToRefs(roomStore);
-const readMoreRooms = await useReadRooms();
+const { readMoreRooms, readRooms } = useReadRooms();
+await readRooms();
 </script>
 
 <template>

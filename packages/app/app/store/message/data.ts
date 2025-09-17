@@ -9,7 +9,6 @@ import { createMessageEntity } from "#shared/services/message/createMessageEntit
 import { authClient } from "@/services/auth/authClient";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
-import { createCursorPaginationDataMap } from "@/services/shared/pagination/cursor/createCursorPaginationDataMap";
 import { useInputStore } from "@/store/message/input";
 import { useReplyStore } from "@/store/message/reply";
 import { useRoomStore } from "@/store/message/room";
@@ -20,32 +19,16 @@ export const useDataStore = defineStore("message/data", () => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
-  const {
-    initializeCursorPaginationData: baseInitializeCursorPaginationData,
-    items,
-    resetCursorPaginationData: baseResetCursorPaginationData,
-    ...restData
-  } = createCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
+  const { items, ...restData } = useCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
   const {
     createMessage: baseStoreCreateMessage,
     deleteMessage: baseStoreDeleteMessage,
-    messages,
     updateMessage: storeUpdateMessage,
     ...restOperationData
   } = createOperationData(items, ["partitionKey", "rowKey"], AzureEntityType.Message);
-  const files = computed(() => messages.value.flatMap(({ files }) => files));
+  const files = computed(() => items.value.flatMap(({ files }) => files));
   const hasMoreNewer = ref(false);
   const nextCursorNewer = ref<string>();
-  const initializeCursorPaginationData: typeof baseInitializeCursorPaginationData = (...args) => {
-    baseInitializeCursorPaginationData(...args);
-    hasMoreNewer.value = false;
-    nextCursorNewer.value = undefined;
-  };
-  const resetCursorPaginationData: typeof baseResetCursorPaginationData = (...args) => {
-    baseResetCursorPaginationData(...args);
-    hasMoreNewer.value = false;
-    nextCursorNewer.value = undefined;
-  };
 
   const storeCreateMessage = async (message: MessageEntity) => {
     await Promise.all(MessageHookMap[Operation.Create].map((fn) => Promise.resolve(fn(message))));
@@ -92,14 +75,12 @@ export const useDataStore = defineStore("message/data", () => {
   return {
     files,
     hasMoreNewer,
-    messages,
+    items,
     nextCursorNewer,
     storeCreateMessage,
     storeDeleteMessage,
     storeUpdateMessage,
     ...restOperationData,
-    initializeCursorPaginationData,
-    resetCursorPaginationData,
     sendMessage,
     ...restData,
     typings,

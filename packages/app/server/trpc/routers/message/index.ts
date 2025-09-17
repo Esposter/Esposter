@@ -2,7 +2,6 @@ import type { AzureUpdateEntity } from "#shared/models/azure/AzureUpdateEntity";
 import type { FileSasEntity } from "#shared/models/message/FileSasEntity";
 
 import { rooms, selectRoomSchema } from "#shared/db/schema/rooms";
-import { searchHistories, selectSearchHistorySchema } from "#shared/db/schema/searchHistories";
 import { AzureEntityType } from "#shared/models/azure/AzureEntityType";
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 import { FileEntity, fileEntitySchema } from "#shared/models/azure/FileEntity";
@@ -40,9 +39,6 @@ import { isRoomId } from "@@/server/services/message/isRoomId";
 import { readMessages } from "@@/server/services/message/readMessages";
 import { searchMessages } from "@@/server/services/message/searchMessages";
 import { updateMessage } from "@@/server/services/message/updateMessage";
-import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
-import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
-import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { router } from "@@/server/trpc";
 import { addProfanityFilterMiddleware } from "@@/server/trpc/middleware/addProfanityFilterMiddleware";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
@@ -58,7 +54,7 @@ import {
   UnaryOperator,
 } from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 export const readMetadataInputSchema = z.object({
@@ -89,14 +85,6 @@ const readMessagesByRowKeysInputSchema = z.object({
   rowKeys: messageEntitySchema.shape.rowKey.array().min(1).max(MAX_READ_LIMIT),
 });
 export type ReadMessagesByRowKeysInput = z.infer<typeof readMessagesByRowKeysInputSchema>;
-
-const readSearchHistoriesInputSchema = z.object({
-  ...createCursorPaginationParamsSchema(selectSearchHistorySchema.keyof(), [
-    { key: "createdAt", order: SortOrder.Desc },
-  ]).shape,
-  roomId: selectRoomSchema.shape.id,
-});
-export type ReadSearchHistoriesInput = z.infer<typeof readSearchHistoriesInputSchema>;
 
 const generateUploadFileSasEntitiesInputSchema = z.object({
   files: fileEntitySchema.pick({ filename: true, mimetype: true }).array().min(1).max(MAX_READ_LIMIT),
@@ -364,19 +352,6 @@ export const messageRouter = router({
           .map((rowKey) => isRowKey(rowKey))
           .join(` ${UnaryOperator.or} `)})`,
       });
-    },
-  ),
-  readSearchHistories: getMemberProcedure(readSearchHistoriesInputSchema, "roomId").query(
-    async ({ ctx, input: { cursor, limit, roomId, sortBy } }) => {
-      const filterWhere = eq(searchHistories.roomId, roomId);
-      const cursorWhere = cursor ? getCursorWhere(searchHistories, cursor, sortBy) : undefined;
-      const where = cursorWhere ? and(filterWhere, cursorWhere) : filterWhere;
-      const resultSearchHistories = await ctx.db.query.searchHistories.findMany({
-        limit: limit + 1,
-        orderBy: (searchHistories) => parseSortByToSql(searchHistories, sortBy),
-        where,
-      });
-      return getCursorPaginationData(resultSearchHistories, limit, sortBy);
     },
   ),
   searchMessages: getMemberProcedure(searchMessagesInputSchema, "roomId").query(({ input }) => searchMessages(input)),

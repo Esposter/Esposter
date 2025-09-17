@@ -10,10 +10,10 @@ interface GroupComboboxProps {
 const modelValue = defineModel<null | string>();
 const { comboboxProps } = defineProps<GroupComboboxProps>();
 const surveyStore = useSurveyStore();
-const { surveys } = storeToRefs(surveyStore);
+const { items } = storeToRefs(surveyStore);
 const groups = computed(() => {
   const results = new Set<string>();
-  for (const { group } of surveys.value) if (group) results.add(group);
+  for (const { group } of items.value) if (group) results.add(group);
   return [...results];
 });
 </script>

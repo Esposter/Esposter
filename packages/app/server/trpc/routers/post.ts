@@ -21,7 +21,7 @@ import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfani
 import { rateLimitedProcedure } from "@@/server/trpc/procedure/rateLimitedProcedure";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, eq, isNotNull, isNull } from "drizzle-orm";
+import { and, eq, isNotNull, isNull, SQL } from "drizzle-orm";
 import { z } from "zod";
 
 const readPostInputSchema = selectPostSchema.shape.id;
@@ -188,13 +188,14 @@ export const postRouter = router({
   readPosts: rateLimitedProcedure
     .input(readPostsInputSchema)
     .query(async ({ ctx, input: { cursor, limit, parentId, sortBy } }) => {
-      const parentIdWhere = parentId ? eq(posts.parentId, parentId) : isNull(posts.parentId);
-      const cursorWhere = cursor ? getCursorWhere(posts, cursor, sortBy) : undefined;
-      const where = cursorWhere ? and(parentIdWhere, cursorWhere) : parentIdWhere;
       const resultPosts: PostWithRelations[] = await ctx.db.query.posts.findMany({
         limit: limit + 1,
         orderBy: (posts) => parseSortByToSql(posts, sortBy),
-        where,
+        where: (posts, { and, eq, isNull }) => {
+          const wheres: (SQL | undefined)[] = [parentId ? eq(posts.parentId, parentId) : isNull(posts.parentId)];
+          if (cursor) wheres.push(getCursorWhere(posts, cursor, sortBy));
+          return and(...wheres);
+        },
         with: PostRelations,
       });
       return getCursorPaginationData(resultPosts, limit, sortBy);

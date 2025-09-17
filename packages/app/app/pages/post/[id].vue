@@ -5,11 +5,12 @@ import { useCommentStore } from "@/store/post/comment";
 
 definePageMeta({ validate });
 
-const post = await useReadPostFromRoute();
-const readMoreComments = await useReadComments(post.id);
 const { data: session } = await authClient.useSession(useFetch);
+const post = await useReadPostFromRoute();
+const { readComments, readMoreComments } = useReadComments(post.id);
+await readComments();
 const commentStore = useCommentStore();
-const { comments, currentPost, hasMore } = storeToRefs(commentStore);
+const { currentPost, hasMore, items } = storeToRefs(commentStore);
 currentPost.value = post;
 </script>
 
@@ -29,7 +30,7 @@ currentPost.value = post;
             </v-container>
             <v-container>
               <PostCommentEmptyBanner v-if="currentPost.noComments === 0" />
-              <PostCommentCard v-for="comment of comments" v-else :key="comment.id" :comment />
+              <PostCommentCard v-for="comment of items" v-else :key="comment.id" :comment />
             </v-container>
           </StyledCard>
         </v-col>

@@ -44,18 +44,16 @@ export const createOperationData = <
     [`${uncapitalize(Operation.Unshift)}${entityTypeKey}s`]: unshiftItems,
     [`${uncapitalize(Operation.Update)}${entityTypeKey}`]: updateItem,
   } as {
-    [P in OperationDataKey<TEntityTypeKey>]: P extends `${Uncapitalize<TEntityTypeKey>}s`
-      ? typeof items
-      : P extends `${Uncapitalize<Operation.Push>}${TEntityTypeKey}s`
-        ? typeof pushItems
-        : P extends `${Uncapitalize<Operation.Unshift>}${TEntityTypeKey}s`
-          ? typeof unshiftItems
-          : P extends `${Uncapitalize<Operation.Create>}${TEntityTypeKey}`
-            ? typeof createItem
-            : P extends `${Uncapitalize<Operation.Update>}${TEntityTypeKey}`
-              ? typeof updateItem
-              : P extends `${Uncapitalize<Operation.Delete>}${TEntityTypeKey}`
-                ? typeof deleteItem
-                : never;
+    [P in OperationDataKey<TEntityTypeKey>]: P extends `${Uncapitalize<Operation.Push>}${TEntityTypeKey}s`
+      ? typeof pushItems
+      : P extends `${Uncapitalize<Operation.Unshift>}${TEntityTypeKey}s`
+        ? typeof unshiftItems
+        : P extends `${Uncapitalize<Operation.Create>}${TEntityTypeKey}`
+          ? typeof createItem
+          : P extends `${Uncapitalize<Operation.Update>}${TEntityTypeKey}`
+            ? typeof updateItem
+            : P extends `${Uncapitalize<Operation.Delete>}${TEntityTypeKey}`
+              ? typeof deleteItem
+              : never;
   };
 };
