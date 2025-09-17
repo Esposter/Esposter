@@ -1,7 +1,6 @@
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
 import { MessageEntityPropertyNames } from "#shared/models/db/message/MessageEntity";
-import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
@@ -66,7 +65,8 @@ export const useReadMessages = () => {
 
   const readMoreMessages = () =>
     readMoreItems(async (cursor) => {
-      if (!currentRoomId.value) return new CursorPaginationData<MessageEntity>();
+      if (!currentRoomId.value)
+        throw new InvalidOperationError(Operation.Read, readMessages.name, MessageEntityPropertyNames.partitionKey);
       const response = await $trpc.message.readMessages.query({ cursor, roomId: currentRoomId.value });
       await readMetadata(response.items);
       return response;
