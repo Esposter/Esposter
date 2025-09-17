@@ -30,7 +30,7 @@ export const useReadMembers = () => {
         await readMetadata(items.map(({ id }) => id));
       },
     );
-  const readMoreMembers = () =>
+  const readMoreMembers = (onComplete: () => void) =>
     readMoreItems(async (cursor) => {
       if (!currentRoomId.value)
         throw new InvalidOperationError(Operation.Read, readMoreMembers.name, MessageEntityPropertyNames.partitionKey);
@@ -38,6 +38,6 @@ export const useReadMembers = () => {
       for (const user of cursorPaginationData.items) userMap.value.set(user.id, user);
       await readMetadata(cursorPaginationData.items.map(({ id }) => id));
       return cursorPaginationData;
-    });
+    }, onComplete);
   return { readMembers, readMoreMembers };
 };

@@ -14,11 +14,11 @@ export const useReadRooms = () => {
       () => $trpc.room.readRooms.useQuery({ roomId: currentRoomId.value }),
       ({ items }) => readMetadata(items),
     );
-  const readMoreRooms = () =>
+  const readMoreRooms = (onComplete: () => void) =>
     readMoreItems(async (cursor) => {
       const cursorPaginationData = await $trpc.room.readRooms.query({ cursor });
       await readMetadata(cursorPaginationData.items);
       return cursorPaginationData;
-    });
+    }, onComplete);
   return { readMoreRooms, readRooms };
 };

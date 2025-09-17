@@ -63,14 +63,14 @@ export const useReadMessages = () => {
       ({ items }) => readMetadata(items),
     );
 
-  const readMoreMessages = () =>
+  const readMoreMessages = (onComplete: () => void) =>
     readMoreItems(async (cursor) => {
       if (!currentRoomId.value)
         throw new InvalidOperationError(Operation.Read, readMessages.name, MessageEntityPropertyNames.partitionKey);
       const response = await $trpc.message.readMessages.query({ cursor, roomId: currentRoomId.value });
       await readMetadata(response.items);
       return response;
-    });
+    }, onComplete);
 
   const readMoreNewerMessages = async (onComplete: () => void) => {
     if (!currentRoomId.value) return;

@@ -19,7 +19,7 @@ export const useReadSearchHistories = () => {
         );
       return $trpc.searchHistory.readSearchHistories.useQuery({ roomId: currentRoomId.value });
     });
-  const readMoreSearchHistories = () =>
+  const readMoreSearchHistories = (onComplete: () => void) =>
     readMoreItems((cursor) => {
       if (!currentRoomId.value)
         throw new InvalidOperationError(
@@ -28,6 +28,6 @@ export const useReadSearchHistories = () => {
           MessageEntityPropertyNames.partitionKey,
         );
       return $trpc.searchHistory.readSearchHistories.query({ cursor, roomId: currentRoomId.value });
-    });
+    }, onComplete);
   return { readMoreSearchHistories, readSearchHistories };
 };

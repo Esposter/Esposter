@@ -5,6 +5,7 @@ export const useReadPosts = () => {
   const postStore = usePostStore();
   const { readItems, readMoreItems } = postStore;
   const readPosts = () => readItems(() => $trpc.post.readPosts.useQuery());
-  const readMorePosts = () => readMoreItems((cursor) => $trpc.post.readPosts.query({ cursor }));
+  const readMorePosts = (onComplete: () => void) =>
+    readMoreItems((cursor) => $trpc.post.readPosts.query({ cursor }), onComplete);
   return { readMorePosts, readPosts };
 };
