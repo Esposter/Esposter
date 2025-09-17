@@ -65,8 +65,8 @@ export const searchHistoryRouter = router({
         limit: limit + 1,
         orderBy: (searchHistories) => parseSortByToSql(searchHistories, sortBy),
         where: (searchHistories, { and, eq }) => {
-          const filterWhere = eq(searchHistories.roomId, roomId);
           const cursorWhere = cursor ? getCursorWhere(searchHistories, cursor, sortBy) : undefined;
+          const filterWhere = eq(searchHistories.roomId, roomId);
           return cursorWhere ? and(filterWhere, cursorWhere) : filterWhere;
         },
       });
