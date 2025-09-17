@@ -72,7 +72,7 @@ export const useReadMessages = () => {
       return response;
     });
 
-  const readMoreNewerMessages = async () => {
+  const readMoreNewerMessages = async (onComplete: () => void) => {
     if (!currentRoomId.value) return;
     const {
       hasMore: newHasMore,
@@ -87,6 +87,7 @@ export const useReadMessages = () => {
     nextCursorNewer.value = newNextCursor;
     unshiftMessages(...items);
     await readMetadata(items);
+    onComplete();
   };
 
   return { readMessages, readMoreMessages, readMoreNewerMessages };

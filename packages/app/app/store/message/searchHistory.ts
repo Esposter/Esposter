@@ -21,14 +21,15 @@ export const useSearchHistoryStore = defineStore("message/searchHistory", () => 
     const newHistory = await $trpc.searchHistory.createSearchHistory.mutate(input);
     baseCreateSearchHistory(newHistory);
   };
-  const deleteSearchHistory = async (id: DeleteSearchHistoryInput) => {
-    const deletedHistory = await $trpc.searchHistory.deleteSearchHistory.mutate(id);
-    baseDeleteSearchHistory({ id: deletedHistory.id });
+  const deleteSearchHistory = async (input: DeleteSearchHistoryInput) => {
+    const { id } = await $trpc.searchHistory.deleteSearchHistory.mutate(input);
+    baseDeleteSearchHistory({ id });
   };
 
   return {
     createSearchHistory,
     deleteSearchHistory,
+    items,
     ...restOperationData,
     ...restData,
   };

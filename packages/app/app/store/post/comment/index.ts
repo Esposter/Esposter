@@ -38,8 +38,8 @@ export const useCommentStore = defineStore("post/comment", () => {
   const deleteComment = async (input: DeleteCommentInput) => {
     if (!currentPost.value) return;
 
-    const deletedComment = await $trpc.post.deleteComment.mutate(input);
-    storeDeleteComment({ id: deletedComment.id });
+    const { id } = await $trpc.post.deleteComment.mutate(input);
+    storeDeleteComment({ id });
     currentPost.value.noComments -= 1;
   };
 

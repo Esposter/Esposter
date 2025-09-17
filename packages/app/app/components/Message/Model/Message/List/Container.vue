@@ -2,7 +2,7 @@
 import { useDataStore } from "@/store/message/data";
 
 const dataStore = useDataStore();
-const { messages } = storeToRefs(dataStore);
+const { items } = storeToRefs(dataStore);
 const route = useRoute();
 const rowKey = route.params.rowKey as string;
 
@@ -17,9 +17,9 @@ if (rowKey) {
 
 <template>
   <MessageModelMessageListItemContainer
-    v-for="(message, index) of messages"
+    v-for="(message, index) of items"
     :key="message.rowKey"
     :current-message="message"
-    :next-message="messages[index + 1]"
+    :next-message="items[index + 1]"
   />
 </template>

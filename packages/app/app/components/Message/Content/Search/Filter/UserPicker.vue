@@ -3,9 +3,10 @@ import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useMemberStore } from "@/store/message/member";
 
 const emit = defineEmits<{ select: [value: string] }>();
+const { readMembers, readMoreMembers } = useReadMembers();
+const { isPending } = await readMembers();
 const memberStore = useMemberStore();
 const { hasMore, members } = storeToRefs(memberStore);
-const { isPending, readMoreMembers } = await useReadMembers();
 </script>
 
 <template>

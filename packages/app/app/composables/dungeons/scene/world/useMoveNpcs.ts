@@ -7,9 +7,9 @@ import { exhaustiveGuard } from "@esposter/shared";
 
 export const useMoveNpcs = (scene: SceneWithPlugins) => {
   const npcStore = useNpcStore();
-  const { npcs } = storeToRefs(npcStore);
+  const { items } = storeToRefs(npcStore);
 
-  for (const npc of npcs.value) {
+  for (const npc of items.value) {
     if (!scene.gridEngine.hasCharacter(npc.id) || npc.isMoving) continue;
 
     switch (npc.movementPattern) {

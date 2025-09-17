@@ -3,7 +3,8 @@ import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useDataStore } from "@/store/message/data";
 import { useScrollStore } from "@/store/message/scroll";
 
-const { readMoreMessages, readMoreNewerMessages: baseReadMoreNewerMessages } = await useReadMessages();
+const { readMessages, readMoreMessages, readMoreNewerMessages: baseReadMoreNewerMessages } = useReadMessages();
+await readMessages();
 const dataStore = useDataStore();
 const { hasMore, hasMoreNewer } = storeToRefs(dataStore);
 const scrollStore = useScrollStore();

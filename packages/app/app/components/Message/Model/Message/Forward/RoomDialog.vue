@@ -13,10 +13,10 @@ const { createAlert } = alertStore;
 const messageStore = useMessageStore();
 const { userMap } = storeToRefs(messageStore);
 const dataStore = useDataStore();
-const { messages } = storeToRefs(dataStore);
+const { items } = storeToRefs(dataStore);
 const forwardStore = useForwardStore();
 const { messageInput, roomIds, rowKey } = storeToRefs(forwardStore);
-const forward = computed(() => messages.value.find((m) => m.rowKey === rowKey.value));
+const forward = computed(() => items.value.find((m) => m.rowKey === rowKey.value));
 const creator = computed(() => (forward.value ? userMap.value.get(forward.value.userId) : undefined));
 const dialog = computed({
   get: () => Boolean(rowKey.value),
