@@ -193,6 +193,8 @@ catalog:
 
 catalogMode: strict
 
+minimumReleaseAge: 1440
+
 onlyBuiltDependencies:
   - "@parcel/watcher"
   - core-js
