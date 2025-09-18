@@ -30,12 +30,14 @@ currentPost.value = post;
             </v-container>
             <v-container>
               <PostCommentEmptyBanner v-if="currentPost.noComments === 0" />
-              <PostCommentCard v-for="comment of items" v-else :key="comment.id" :comment />
+              <template v-else-if="!isPending">
+                <PostCommentCard v-for="comment of items" :key="comment.id" :comment />
+                <StyledWaypoint flex justify-center :is-active="hasMore" @change="readMoreComments" />
+              </template>
             </v-container>
           </StyledCard>
         </v-col>
       </v-row>
-      <StyledWaypoint v-if="!isPending" flex justify-center :active="hasMore" @change="readMoreComments" />
     </v-container>
   </NuxtLayout>
 </template>

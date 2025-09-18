@@ -10,12 +10,14 @@ const { hasMore, members } = storeToRefs(memberStore);
 
 <template>
   <v-list overflow-y-auto="!">
-    <MessageModelMemberListItem v-for="member of members" :key="member.id" :member />
     <template v-if="isPending">
       <MessageModelMemberSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
     </template>
-    <StyledWaypoint v-else :active="hasMore" @change="readMoreMembers">
-      <MessageModelMemberSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
-    </StyledWaypoint>
+    <template v-else>
+      <MessageModelMemberListItem v-for="member of members" :key="member.id" :member />
+      <StyledWaypoint :is-active="hasMore" @change="readMoreMembers">
+        <MessageModelMemberSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+      </StyledWaypoint>
+    </template>
   </v-list>
 </template>

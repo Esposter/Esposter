@@ -11,7 +11,9 @@ const { isPending } = await readRooms();
 <template>
   <v-list overflow-y-auto="!">
     <slot name="prepend" />
-    <MessageModelRoomListItem v-for="room of rooms" :key="room.id" :room />
-    <StyledWaypoint v-if="!isPending" flex justify-center :active="hasMore" @change="readMoreRooms" />
+    <template v-if="!isPending">
+      <MessageModelRoomListItem v-for="room of rooms" :key="room.id" :room />
+      <StyledWaypoint flex justify-center :is-active="hasMore" @change="readMoreRooms" />
+    </template>
   </v-list>
 </template>

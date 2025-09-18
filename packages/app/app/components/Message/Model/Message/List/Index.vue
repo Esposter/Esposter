@@ -33,15 +33,14 @@ watchOnce(messageContainerElement, (newMessageContainerElement) => {
     <template v-if="isPending">
       <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
     </template>
-    <StyledWaypoint v-else :active="hasMoreNewer" @change="readMoreNewerMessages">
-      <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
-    </StyledWaypoint>
-    <MessageModelMessageListContainer />
-    <template v-if="isPending">
-      <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+    <template v-else>
+      <StyledWaypoint :is-active="hasMoreNewer" @change="readMoreNewerMessages">
+        <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+      </StyledWaypoint>
+      <MessageModelMessageListContainer />
+      <StyledWaypoint :is-active="hasMore" @change="readMoreMessages">
+        <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+      </StyledWaypoint>
     </template>
-    <StyledWaypoint v-else :active="hasMore" @change="readMoreMessages">
-      <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
-    </StyledWaypoint>
   </v-list>
 </template>

@@ -1,17 +1,17 @@
 <script setup lang="ts">
-interface StyledSkeletonWaypointProps {
-  active: boolean;
+interface StyledWaypointProps {
+  isActive: boolean;
 }
 
 defineSlots<{ default: () => VNode }>();
-const { active } = defineProps<StyledSkeletonWaypointProps>();
+const { isActive } = defineProps<StyledWaypointProps>();
 const emit = defineEmits<{ change: [onComplete: () => void] }>();
 const isLoading = ref(false);
 const container = useTemplateRef("container");
 const isVisible = useElementVisibility(container);
 
 watchEffect(() => {
-  if (!isVisible.value || !active || isLoading.value) return;
+  if (!isVisible.value || !isActive || isLoading.value) return;
   isLoading.value = true;
   emit("change", () => {
     isLoading.value = false;
@@ -20,7 +20,7 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div v-show="active" ref="container">
+  <div v-show="isActive" ref="container">
     <slot>
       <v-progress-circular v-if="isLoading" size="small" indeterminate />
     </slot>

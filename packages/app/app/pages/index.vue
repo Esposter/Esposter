@@ -18,12 +18,14 @@ const { hasMore, items } = storeToRefs(postStore);
       "
     >
       <v-container>
-        <v-row>
-          <v-col v-for="post of items" :key="post.id" cols="12">
-            <PostCard :post />
-          </v-col>
-        </v-row>
-        <StyledWaypoint v-if="!isPending" flex justify-center :active="hasMore" @change="readMorePosts" />
+        <template v-if="!isPending">
+          <v-row>
+            <v-col v-for="post of items" :key="post.id" cols="12">
+              <PostCard :post />
+            </v-col>
+          </v-row>
+          <StyledWaypoint flex justify-center :is-active="hasMore" @change="readMorePosts" />
+        </template>
       </v-container>
     </v-pull-to-refresh>
     <template #left>
