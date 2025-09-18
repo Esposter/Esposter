@@ -2,7 +2,7 @@ import type { Filter } from "#shared/models/message/Filter";
 
 import { FilterType } from "#shared/models/message/FilterType";
 import { useMessageStore } from "@/store/message";
-import { NotFoundError } from "@esposter/shared";
+import { NotFoundError, uncapitalize } from "@esposter/shared";
 
 export const getFilterDisplayValue = ({ type, value }: Filter) => {
   switch (type) {
@@ -10,7 +10,7 @@ export const getFilterDisplayValue = ({ type, value }: Filter) => {
     case FilterType.From: {
       const messageStore = useMessageStore();
       const { userMap } = storeToRefs(messageStore);
-      return `${type}: ${userMap.value.get(value)?.name ?? value}`;
+      return `${uncapitalize(type)}: ${userMap.value.get(value)?.name ?? value}`;
     }
     default:
       throw new NotFoundError(getFilterDisplayValue.name, type);

@@ -15,6 +15,7 @@ const { messages, page, pageCount } = storeToRefs(searchMessageStore);
     <div mt-2 flex justify-center>
       <v-pagination
         v-model="page"
+        w-full
         :length="pageCount"
         @update:model-value="readSearchedMessages(($event - 1) * DEFAULT_READ_LIMIT)"
       />
