@@ -1,6 +1,7 @@
 import type { SearchHistory } from "#shared/db/schema/searchHistories";
 import type { CreateSearchHistoryInput } from "#shared/models/db/searchHistory/CreateSearchHistoryInput";
 import type { DeleteSearchHistoryInput } from "#shared/models/db/searchHistory/DeleteSearchHistoryInput";
+import type { UpdateSearchHistoryInput } from "#shared/models/db/searchHistory/UpdateSearchHistoryInput";
 
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createOperationData } from "@/services/shared/createOperationData";
@@ -12,7 +13,7 @@ export const useSearchHistoryStore = defineStore("message/searchHistory", () => 
   const {
     createSearchHistory: baseCreateSearchHistory,
     deleteSearchHistory: baseDeleteSearchHistory,
-    updateSearchHistory: _,
+    updateSearchHistory: baseUpdateSearchHistory,
     ...restOperationData
   } = createOperationData(items, ["id"], DatabaseEntityType.SearchHistory);
   const { $trpc } = useNuxtApp();
@@ -20,6 +21,10 @@ export const useSearchHistoryStore = defineStore("message/searchHistory", () => 
   const createSearchHistory = async (input: CreateSearchHistoryInput) => {
     const newHistory = await $trpc.searchHistory.createSearchHistory.mutate(input);
     baseCreateSearchHistory(newHistory);
+  };
+  const updateSearchHistory = async (input: UpdateSearchHistoryInput) => {
+    const updated = await $trpc.searchHistory.updateSearchHistory.mutate(input);
+    baseUpdateSearchHistory(updated);
   };
   const deleteSearchHistory = async (input: DeleteSearchHistoryInput) => {
     const { id } = await $trpc.searchHistory.deleteSearchHistory.mutate(input);
@@ -30,6 +35,7 @@ export const useSearchHistoryStore = defineStore("message/searchHistory", () => 
     createSearchHistory,
     deleteSearchHistory,
     items,
+    updateSearchHistory,
     ...restOperationData,
     ...restData,
   };

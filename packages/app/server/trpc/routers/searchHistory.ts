@@ -3,6 +3,7 @@ import type { SearchHistory } from "#shared/db/schema/searchHistories";
 import { searchHistories, selectSearchHistorySchema } from "#shared/db/schema/searchHistories";
 import { createSearchHistoryInputSchema } from "#shared/models/db/searchHistory/CreateSearchHistoryInput";
 import { deleteSearchHistoryInputSchema } from "#shared/models/db/searchHistory/DeleteSearchHistoryInput";
+import { updateSearchHistoryInputSchema } from "#shared/models/db/searchHistory/UpdateSearchHistoryInput";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
@@ -73,4 +74,21 @@ export const searchHistoryRouter = router({
       return getCursorPaginationData(resultSearchHistories, limit, sortBy);
     },
   ),
+  updateSearchHistory: authedProcedure
+    .input(updateSearchHistoryInputSchema)
+    .mutation<SearchHistory>(async ({ ctx, input: { id, query } }) => {
+      const updatedSearchHistory = (
+        await ctx.db
+          .update(searchHistories)
+          .set({ query })
+          .where(and(eq(searchHistories.id, id), eq(searchHistories.userId, ctx.session.user.id)))
+          .returning()
+      ).find(Boolean);
+      if (!updatedSearchHistory)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Update, DatabaseEntityType.SearchHistory, id).message,
+        });
+      return updatedSearchHistory;
+    }),
 });

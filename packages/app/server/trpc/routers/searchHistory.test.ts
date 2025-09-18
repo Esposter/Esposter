@@ -17,6 +17,7 @@ describe("searchHistory", () => {
   let mockContext: Context;
   const name = "name";
   const query = "query";
+  const updatedQuery = "updatedQuery";
 
   beforeAll(async () => {
     const createCaller = createCallerFactory(searchHistoryRouter);
@@ -101,6 +102,27 @@ describe("searchHistory", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
+  test("updates", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newSearchHistory = await searchHistoryCaller.createSearchHistory({ query, roomId: newRoom.id });
+    const updated = await searchHistoryCaller.updateSearchHistory({ id: newSearchHistory.id, query: updatedQuery });
+
+    expect(updated.id).toBe(newSearchHistory.id);
+    expect(updated.query).toBe(updatedQuery);
+  });
+
+  test("fails update with non-existent id", async () => {
+    expect.hasAssertions();
+
+    const id = crypto.randomUUID();
+
+    await expect(
+      searchHistoryCaller.updateSearchHistory({ id, query: updatedQuery }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Invalid operation: Update, name: SearchHistory, ${id}]`);
+  });
+
   test("deletes", async () => {
     expect.hasAssertions();
 
@@ -114,9 +136,7 @@ describe("searchHistory", () => {
   test("fails delete with non-existent id", async () => {
     expect.hasAssertions();
 
-    const newRoom = await roomCaller.createRoom({ name });
-    const { id } = await searchHistoryCaller.createSearchHistory({ query, roomId: newRoom.id });
-    await mockSessionOnce(mockContext.db);
+    const id = crypto.randomUUID();
 
     await expect(searchHistoryCaller.deleteSearchHistory(id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Invalid operation: Delete, name: SearchHistory, ${id}]`,
