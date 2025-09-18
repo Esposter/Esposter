@@ -13,7 +13,7 @@ import { z } from "zod";
 export const searchHistories = pgTable(
   "search_history",
   {
-    filters: jsonb("filters").notNull().default([]).$type<Filter[]>(),
+    filters: jsonb("filters").notNull().$type<Filter[]>().default([]),
     id: uuid("id").primaryKey().defaultRandom(),
     query: text("query").notNull().default(""),
     roomId: uuid("room_id")
