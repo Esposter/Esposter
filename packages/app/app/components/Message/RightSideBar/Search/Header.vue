@@ -6,17 +6,15 @@ const { isSearching, totalItemsLength } = storeToRefs(searchMessageStore);
 </script>
 
 <template>
-  <v-container fluid>
-    <v-row items-center>
-      <v-col font-bold>Search</v-col>
-      <v-col flex items-center text-right>
-        <v-progress-circular v-if="isSearching" size="small" indeterminate />
-        <template v-else>
-          <span text-center text-gray>{{ totalItemsLength }} result{{ totalItemsLength === 1 ? "" : "s" }}</span>
-          <StyledHelpTooltip pl-2 text="New messages may take up to 5 minutes to appear." />
-        </template>
-      </v-col>
-    </v-row>
+  <v-container fluid flex>
+    <template v-if="isSearching">
+      Searching
+      <v-progress-circular size="small" indeterminate />
+    </template>
+    <template v-else>
+      {{ totalItemsLength }} result{{ totalItemsLength === 1 ? "" : "s" }}
+      <v-spacer />
+      <StyledHelpTooltip text="New messages may take up to 5 minutes to appear." />
+    </template>
   </v-container>
-  <v-divider />
 </template>
