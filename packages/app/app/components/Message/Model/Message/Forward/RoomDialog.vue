@@ -61,7 +61,7 @@ const { hasMoreRoomsSearched, readMoreRoomsSearched, roomSearchQuery, roomsSearc
             :key="roomSearched.id"
             :room="roomSearched"
           />
-          <StyledWaypoint flex justify-center :active="hasMoreRoomsSearched" @change="readMoreRoomsSearched" />
+          <StyledWaypoint flex justify-center :is-active="hasMoreRoomsSearched" @change="readMoreRoomsSearched" />
         </v-list>
       </v-card-text>
       <v-divider />

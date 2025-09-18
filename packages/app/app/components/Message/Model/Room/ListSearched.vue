@@ -22,6 +22,6 @@ const { hasMoreRoomsSearched, roomsSearched } = storeToRefs(roomStore);
         </template>
       </v-list-item>
     </NuxtInvisibleLink>
-    <StyledWaypoint flex justify-center :active="hasMoreRoomsSearched" @change="readMoreRoomsSearched" />
+    <StyledWaypoint flex justify-center :is-active="hasMoreRoomsSearched" @change="readMoreRoomsSearched" />
   </v-list>
 </template>
