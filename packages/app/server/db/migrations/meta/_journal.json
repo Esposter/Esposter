@@ -120,6 +120,20 @@
       "when": 1757918895383,
       "tag": "0016_melted_squadron_supreme",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1758167355393,
+      "tag": "0017_square_manta",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1758167368644,
+      "tag": "0018_smooth_christian_walker",
+      "breakpoints": true
     }
   ]
 }

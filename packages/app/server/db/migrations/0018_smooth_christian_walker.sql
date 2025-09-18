@@ -1,0 +1,3 @@
+ALTER TABLE "message"."search_history" ADD COLUMN "filters" jsonb DEFAULT '[]'::jsonb NOT NULL;--> statement-breakpoint
+ALTER TABLE "message"."search_history" ADD COLUMN "room_id" uuid NOT NULL;--> statement-breakpoint
+ALTER TABLE "message"."search_history" ADD CONSTRAINT "search_history_room_id_rooms_id_fk" FOREIGN KEY ("room_id") REFERENCES "message"."rooms"("id") ON DELETE no action ON UPDATE no action;
