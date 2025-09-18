@@ -14,7 +14,7 @@ import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, eq, SQL } from "drizzle-orm";
+import { and, eq, sql, SQL } from "drizzle-orm";
 import { z } from "zod";
 
 const readSearchHistoriesInputSchema = z.object({
@@ -31,7 +31,11 @@ export const searchHistoryRouter = router({
       const newHistory = (
         await ctx.db
           .insert(searchHistories)
-          .values({ ...input, userId: ctx.session.user.id })
+          .values({
+            ...input,
+            filters: input.filters ? sql`${JSON.stringify(input.filters)}::jsonb` : undefined,
+            userId: ctx.session.user.id,
+          })
           .returning()
       ).find(Boolean);
       if (!newHistory)
