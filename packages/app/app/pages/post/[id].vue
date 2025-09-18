@@ -8,7 +8,7 @@ definePageMeta({ validate });
 const { data: session } = await authClient.useSession(useFetch);
 const post = await useReadPostFromRoute();
 const { readComments, readMoreComments } = useReadComments(post.id);
-await readComments();
+const { isPending } = await readComments();
 const commentStore = useCommentStore();
 const { currentPost, hasMore, items } = storeToRefs(commentStore);
 currentPost.value = post;
@@ -35,7 +35,7 @@ currentPost.value = post;
           </StyledCard>
         </v-col>
       </v-row>
-      <StyledWaypoint flex justify-center :active="hasMore" @change="readMoreComments" />
+      <StyledWaypoint v-if="!isPending" flex justify-center :active="hasMore" @change="readMoreComments" />
     </v-container>
   </NuxtLayout>
 </template>

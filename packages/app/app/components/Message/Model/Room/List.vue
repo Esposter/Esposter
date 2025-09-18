@@ -5,13 +5,13 @@ defineSlots<{ prepend: () => VNode }>();
 const roomStore = useRoomStore();
 const { hasMore, rooms } = storeToRefs(roomStore);
 const { readMoreRooms, readRooms } = useReadRooms();
-await readRooms();
+const { isPending } = await readRooms();
 </script>
 
 <template>
   <v-list overflow-y-auto="!">
     <slot name="prepend" />
     <MessageModelRoomListItem v-for="room of rooms" :key="room.id" :room />
-    <StyledWaypoint flex justify-center :active="hasMore" @change="readMoreRooms" />
+    <StyledWaypoint v-if="!isPending" flex justify-center :active="hasMore" @change="readMoreRooms" />
   </v-list>
 </template>

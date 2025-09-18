@@ -2,7 +2,7 @@
 import { usePostStore } from "@/store/post";
 
 const { readMorePosts, readPosts } = useReadPosts();
-const { refresh } = await readPosts();
+const { isPending, refresh } = await readPosts();
 const postStore = usePostStore();
 const { hasMore, items } = storeToRefs(postStore);
 </script>
@@ -23,7 +23,7 @@ const { hasMore, items } = storeToRefs(postStore);
             <PostCard :post />
           </v-col>
         </v-row>
-        <StyledWaypoint flex justify-center :active="hasMore" @change="readMorePosts" />
+        <StyledWaypoint v-if="!isPending" flex justify-center :active="hasMore" @change="readMorePosts" />
       </v-container>
     </v-pull-to-refresh>
     <template #left>

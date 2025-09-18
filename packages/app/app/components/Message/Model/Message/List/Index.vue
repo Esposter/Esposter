@@ -4,7 +4,7 @@ import { useDataStore } from "@/store/message/data";
 import { useScrollStore } from "@/store/message/scroll";
 
 const { readMessages, readMoreMessages, readMoreNewerMessages: baseReadMoreNewerMessages } = useReadMessages();
-await readMessages();
+const { isPending } = await readMessages();
 const dataStore = useDataStore();
 const { hasMore, hasMoreNewer } = storeToRefs(dataStore);
 const scrollStore = useScrollStore();
@@ -30,11 +30,17 @@ watchOnce(messageContainerElement, (newMessageContainerElement) => {
 
 <template>
   <v-list ref="messageContainer" flex-1 flex pb-0 basis-full flex-col-reverse overflow-y-auto="!" lines="two">
-    <StyledWaypoint :active="hasMoreNewer" @change="readMoreNewerMessages">
+    <template v-if="isPending">
+      <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+    </template>
+    <StyledWaypoint v-else :active="hasMoreNewer" @change="readMoreNewerMessages">
       <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
     </StyledWaypoint>
     <MessageModelMessageListContainer />
-    <StyledWaypoint :active="hasMore" @change="readMoreMessages">
+    <template v-if="isPending">
+      <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+    </template>
+    <StyledWaypoint v-else :active="hasMore" @change="readMoreMessages">
       <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
     </StyledWaypoint>
   </v-list>
