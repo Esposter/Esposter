@@ -29,7 +29,7 @@ export const useSearchMessageStore = defineStore("message/searchMessage", () => 
     selectedFilters.value = [];
   };
   const hasFilters = computed(() => selectedFilters.value.length > 0);
-  const { items: messages, ...rest } = useOffsetPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
+  const { items, ...rest } = useOffsetPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
   const { data: totalItemsLength } = useDataMap<number>(() => roomStore.currentRoomId, 0);
   const pageCount = computed(() => Math.ceil(totalItemsLength.value / DEFAULT_READ_LIMIT));
   const page = ref(1);
@@ -41,7 +41,7 @@ export const useSearchMessageStore = defineStore("message/searchMessage", () => 
     hasFilters,
     isSearched,
     isSearching,
-    messages,
+    items,
     page,
     pageCount,
     searchQuery,

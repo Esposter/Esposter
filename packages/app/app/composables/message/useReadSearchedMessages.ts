@@ -1,9 +1,9 @@
-import type { SearchMessagesInput } from "#shared/models/db/message/SearchMessagesInput";
-
+import { MessageEntityPropertyNames } from "#shared/models/db/message/MessageEntity";
 import { useLayoutStore } from "@/store/layout";
 import { useRoomStore } from "@/store/message/room";
 import { useSearchHistoryStore } from "@/store/message/searchHistory";
 import { useSearchMessageStore } from "@/store/message/searchMessage";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const useReadSearchedMessages = () => {
   const { $trpc } = useNuxtApp();
@@ -12,33 +12,40 @@ export const useReadSearchedMessages = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const searchMessageStore = useSearchMessageStore();
-  const { hasMore, isSearched, isSearching, messages, searchQuery, totalItemsLength } = storeToRefs(searchMessageStore);
+  const { getReadMoreItems } = searchMessageStore;
+  const { isSearched, isSearching, searchQuery, totalItemsLength } = storeToRefs(searchMessageStore);
   const { selectedFilters } = storeToRefs(searchMessageStore);
   const searchHistoryStore = useSearchHistoryStore();
   const { createSearchHistory } = searchHistoryStore;
-  return async (offset?: SearchMessagesInput["offset"]) => {
-    if (!currentRoomId.value) return;
+  return getReadMoreItems(
+    async (offset) => {
+      if (!currentRoomId.value)
+        throw new InvalidOperationError(
+          Operation.Read,
+          useReadSearchedMessages.name,
+          MessageEntityPropertyNames.partitionKey,
+        );
 
-    isSearching.value = true;
-    rightDrawerOpen.value = true;
-    try {
+      isSearching.value = true;
+      rightDrawerOpen.value = true;
       const { count, data } = await $trpc.message.searchMessages.query({
         filters: selectedFilters.value.length > 0 ? selectedFilters.value : undefined,
         offset,
         query: searchQuery.value,
         roomId: currentRoomId.value,
       });
-      await createSearchHistory({
-        filters: selectedFilters.value.length > 0 ? selectedFilters.value : undefined,
-        query: searchQuery.value,
-        roomId: currentRoomId.value,
-      });
-      messages.value = data.items;
-      hasMore.value = data.hasMore;
+      if (!offset)
+        await createSearchHistory({
+          filters: selectedFilters.value.length > 0 ? selectedFilters.value : undefined,
+          query: searchQuery.value,
+          roomId: currentRoomId.value,
+        });
       if (count !== undefined) totalItemsLength.value = count;
+      return data;
+    },
+    () => {
       isSearched.value = true;
-    } finally {
       isSearching.value = false;
-    }
-  };
+    },
+  );
 };

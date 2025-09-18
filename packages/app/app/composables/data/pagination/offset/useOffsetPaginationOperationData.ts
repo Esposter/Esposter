@@ -34,7 +34,7 @@ export const useOffsetPaginationOperationData = <TItem>(offsetPaginationData: Re
       try {
         const { hasMore: newHasMore, items: newItems } = await query(offset);
         hasMore.value = newHasMore;
-        items.value.push(...newItems);
+        items.value = newItems;
       } finally {
         onComplete?.();
       }
