@@ -8,7 +8,7 @@ const readSearchedMessages = useReadSearchedMessages();
 const { readMoreSearchHistories, readSearchHistories } = useReadSearchHistories();
 const { isPending } = await readSearchHistories();
 const searchMessageStore = useSearchMessageStore();
-const { searchQuery, selectedFilters } = storeToRefs(searchMessageStore);
+const { menu, searchQuery, selectedFilters } = storeToRefs(searchMessageStore);
 const searchHistoryStore = useSearchHistoryStore();
 const { hasMore, items } = storeToRefs(searchHistoryStore);
 </script>
@@ -26,6 +26,7 @@ const { hasMore, items } = storeToRefs(searchHistoryStore);
               if (!history) return;
               searchQuery = history.query;
               selectedFilters = history.filters;
+              menu = false;
               await readSearchedMessages();
             }
           "

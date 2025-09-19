@@ -29,7 +29,7 @@ export const useReadSearchedMessages = () => {
       isSearching.value = true;
       rightDrawerOpen.value = true;
       const { count, data } = await $trpc.message.searchMessages.query({
-        filters: selectedFilters.value.length > 0 ? selectedFilters.value : undefined,
+        filters: selectedFilters.value,
         offset,
         query: searchQuery.value,
         roomId: currentRoomId.value,

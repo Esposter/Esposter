@@ -3,6 +3,7 @@ import type { Filter } from "#shared/models/message/Filter";
 import type { FilterType } from "#shared/models/message/FilterType";
 
 import { MessageEntityPropertyNames } from "#shared/models/db/message/MessageEntity";
+import { getIsSearchQueryEmpty } from "#shared/services/message/getIsSearchQueryEmpty";
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useRoomStore } from "@/store/message/room";
 
@@ -20,6 +21,7 @@ export const useSearchMessageStore = defineStore("message/searchMessage", () => 
       selectedFilters.value[selectedFilters.value.length - 1] = value;
     },
   });
+  const isSearchQueryEmpty = computed(() => getIsSearchQueryEmpty(searchQuery.value, selectedFilters.value));
   const createFilter = (type: FilterType) => {
     selectedFilters.value.push({ key: MessageEntityPropertyNames.userId, type, value: "" });
   };
@@ -42,6 +44,7 @@ export const useSearchMessageStore = defineStore("message/searchMessage", () => 
     hasFilters,
     isSearched,
     isSearching,
+    isSearchQueryEmpty,
     items,
     menu,
     page,

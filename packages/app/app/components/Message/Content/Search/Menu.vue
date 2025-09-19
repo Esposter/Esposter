@@ -7,7 +7,6 @@ const { activeSelectedFilter, menu } = storeToRefs(searchMessageStore);
 </script>
 
 <template>
-  <!-- @TODO: Menu should be based on focus of the input -->
   <v-menu
     :model-value="menu"
     location="top"

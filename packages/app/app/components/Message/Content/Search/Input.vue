@@ -6,7 +6,8 @@ import { useSearchMessageStore } from "@/store/message/searchMessage";
 const readSearchedMessages = useReadSearchedMessages();
 const searchMessageStore = useSearchMessageStore();
 const { createFilter } = searchMessageStore;
-const { activeSelectedFilter, menu, searchQuery, selectedFilters } = storeToRefs(searchMessageStore);
+const { activeSelectedFilter, isSearchQueryEmpty, menu, searchQuery, selectedFilters } =
+  storeToRefs(searchMessageStore);
 const filterTypes = Object.values(FilterType);
 const onEscape = () => (document.activeElement as HTMLElement | null)?.blur();
 </script>
@@ -35,7 +36,7 @@ const onEscape = () => (document.activeElement as HTMLElement | null)?.blur();
           activeSelectedFilter.value = value;
           preventDefault();
           searchQuery = '';
-        } else await readSearchedMessages();
+        } else if (!isSearchQueryEmpty) await readSearchedMessages();
       }
     "
     @update:focused="(value) => (menu = value)"
