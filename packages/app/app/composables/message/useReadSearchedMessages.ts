@@ -1,5 +1,5 @@
 import { MessageEntityPropertyNames } from "#shared/models/db/message/MessageEntity";
-import { RightDrawer } from "@/services/message/RightDrawer";
+import { RightDrawer } from "@/models/message/RightDrawer";
 import { useLayoutStore } from "@/store/layout";
 import { useLayoutStore as useMessageLayoutStore } from "@/store/message/layout";
 import { useRoomStore } from "@/store/message/room";

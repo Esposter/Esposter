@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RightDrawer } from "@/services/message/RightDrawer";
+import { RightDrawer } from "@/models/message/RightDrawer";
 import { useLayoutStore } from "@/store/layout";
 import { useLayoutStore as useMessageLayoutStore } from "@/store/message/layout";
 
