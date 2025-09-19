@@ -1,12 +1,9 @@
 <script setup lang="ts">
 import { FilterType } from "#shared/models/message/FilterType";
 import { getFilterDisplayValue } from "@/services/message/getFilterDisplayValue";
-import { useMessageStore } from "@/store/message";
 import { useSearchMessageStore } from "@/store/message/searchMessage";
 
 const readSearchedMessages = useReadSearchedMessages();
-const messageStore = useMessageStore();
-const { userMap } = storeToRefs(messageStore);
 const searchMessageStore = useSearchMessageStore();
 const { createFilter } = searchMessageStore;
 const { activeSelectedFilter, searchQuery, selectedFilters } = storeToRefs(searchMessageStore);

@@ -4,6 +4,7 @@ import { getFilterDisplayValue } from "@/services/message/getFilterDisplayValue"
 import { useSearchHistoryStore } from "@/store/message/searchHistory";
 import { useSearchMessageStore } from "@/store/message/searchMessage";
 
+const readSearchedMessages = useReadSearchedMessages();
 const { readMoreSearchHistories, readSearchHistories } = useReadSearchHistories();
 const { isPending } = await readSearchHistories();
 const searchMessageStore = useSearchMessageStore();
@@ -20,11 +21,12 @@ const { hasMore, items } = storeToRefs(searchHistoryStore);
         <v-list-item
           :="props"
           @click="
-            () => {
+            async () => {
               const history = items.find((i) => i.id === id);
               if (!history) return;
-              selectedFilters = history.filters;
               searchQuery = history.query;
+              selectedFilters = history.filters;
+              await readSearchedMessages();
             }
           "
         >
