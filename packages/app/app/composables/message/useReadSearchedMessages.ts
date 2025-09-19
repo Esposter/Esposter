@@ -1,5 +1,7 @@
 import { MessageEntityPropertyNames } from "#shared/models/db/message/MessageEntity";
+import { RightDrawer } from "@/services/message/RightDrawer";
 import { useLayoutStore } from "@/store/layout";
+import { useLayoutStore as useMessageLayoutStore } from "@/store/message/layout";
 import { useRoomStore } from "@/store/message/room";
 import { useSearchHistoryStore } from "@/store/message/searchHistory";
 import { useSearchMessageStore } from "@/store/message/searchMessage";
@@ -9,11 +11,13 @@ export const useReadSearchedMessages = () => {
   const { $trpc } = useNuxtApp();
   const layoutStore = useLayoutStore();
   const { rightDrawerOpen } = storeToRefs(layoutStore);
+  const messageLayoutStore = useMessageLayoutStore();
+  const { rightDrawer } = storeToRefs(messageLayoutStore);
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const searchMessageStore = useSearchMessageStore();
   const { getReadMoreItems } = searchMessageStore;
-  const { isSearched, isSearching, searchQuery, totalItemsLength } = storeToRefs(searchMessageStore);
+  const { isSearching, searchQuery, totalItemsLength } = storeToRefs(searchMessageStore);
   const { selectedFilters } = storeToRefs(searchMessageStore);
   const searchHistoryStore = useSearchHistoryStore();
   const { createSearchHistory } = searchHistoryStore;
@@ -28,6 +32,7 @@ export const useReadSearchedMessages = () => {
 
       isSearching.value = true;
       rightDrawerOpen.value = true;
+      rightDrawer.value = RightDrawer.Search;
       const { count, data } = await $trpc.message.searchMessages.query({
         filters: selectedFilters.value,
         offset,
@@ -44,7 +49,6 @@ export const useReadSearchedMessages = () => {
       return data;
     },
     () => {
-      isSearched.value = true;
       isSearching.value = false;
     },
   );

@@ -12,7 +12,6 @@ export const useSearchMessageStore = defineStore("message/searchMessage", () => 
   const { data: searchQuery } = useDataMap<string>(() => roomStore.currentRoomId, "");
   const menu = ref(false);
   const isSearching = ref(false);
-  const isSearched = ref(false);
   const { data: selectedFilters } = useDataMap<Filter[]>(() => roomStore.currentRoomId, []);
   const activeSelectedFilter = computed({
     get: () => selectedFilters.value.at(-1),
@@ -42,7 +41,6 @@ export const useSearchMessageStore = defineStore("message/searchMessage", () => 
     createFilter,
     deleteFilter,
     hasFilters,
-    isSearched,
     isSearching,
     isSearchQueryEmpty,
     items,
