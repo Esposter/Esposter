@@ -49,7 +49,7 @@ catalog:
   "@types/howler": ^2.2.12
   "@types/js-beautify": ^1.14.3
   "@types/mjml-browser": ^4.15.0
-  "@types/node": ^24.5.1
+  "@types/node": ^24.5.2
   "@types/omit-deep-lodash": ^1.1.3
   "@types/pluralize": ^0.0.33
   "@types/sax": ^1.2.7
@@ -130,7 +130,7 @@ catalog:
   link-preview-js: ^3.1.0
   linkifyjs: ^4.3.2
   marked: ^16.3.0
-  mjml-browser: ^4.15.3
+  mjml-browser: ^4.16.1
   node-emoji: ^2.2.0
   node-html-parser: ^7.0.1
   nuxt: ^4.1.2
@@ -149,7 +149,7 @@ catalog:
   prettier: ^3.6.2
   rate-limiter-flexible: ^7.3.1
   rolldown: ^1.0.0-beta.38
-  rolldown-plugin-dts: ^0.16.5
+  rolldown-plugin-dts: ^0.16.6
   rxjs: ^7.8.2
   sass-embedded: ^1.92.1
   sax: ^1.4.1
@@ -172,7 +172,7 @@ catalog:
   unplugin-auto-import: ^20.1.0
   v-viewer: ^3.0.22
   viewerjs: ^1.11.7
-  vite: npm:rolldown-vite@7.1.10
+  vite: npm:rolldown-vite@7.1.11
   vite-plugin-dts: ^4.5.4
   vite-plugin-mkcert: ^1.17.8
   vite-tsconfig-paths: ^5.1.4
@@ -193,8 +193,6 @@ catalog:
 
 catalogMode: strict
 
-minimumReleaseAge: 1440
-
 onlyBuiltDependencies:
   - "@parcel/watcher"
   - core-js
@@ -204,6 +202,6 @@ onlyBuiltDependencies:
 
 overrides:
   pdfjs-dist: ^5.4.149
-  vite: npm:rolldown-vite@7.1.10
+  vite: npm:rolldown-vite@7.1.11
 
 shellEmulator: true
