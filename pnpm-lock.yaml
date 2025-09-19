@@ -487,8 +487,8 @@ catalogs:
       specifier: ^4.20.5
       version: 4.20.5
     type-fest:
-      specifier: ^5.0.0
-      version: 5.0.0
+      specifier: ^5.0.1
+      version: 5.0.1
     typedoc:
       specifier: ^0.28.13
       version: 0.28.13
@@ -636,7 +636,7 @@ importers:
         version: 0.16.6(rolldown@1.0.0-beta.38)(typescript@5.9.2)(vue-tsc@3.0.7(typescript@5.9.2))
       type-fest:
         specifier: 'catalog:'
-        version: 5.0.0
+        version: 5.0.1
       typedoc:
         specifier: 'catalog:'
         version: 0.28.13(typescript@5.9.2)
@@ -10336,8 +10336,8 @@ packages:
     resolution: {integrity: sha512-TeTSQ6H5YHvpqVwBRcnLDCBnDOHWYu7IvGbHT6N8AOymcr9PJGjc1GTtiWZTYg0NCgYwvnYWEkVChQAr9bjfwA==}
     engines: {node: '>=16'}
 
-  type-fest@5.0.0:
-    resolution: {integrity: sha512-GeJop7+u7BYlQ6yQCAY1nBQiRSHR+6OdCEtd8Bwp9a3NK3+fWAVjOaPKJDteB9f6cIJ0wt4IfnScjLG450EpXA==}
+  type-fest@5.0.1:
+    resolution: {integrity: sha512-9MpwAI52m8H6ssA542UxSLnSiSD2dsC3/L85g6hVubLSXd82wdI80eZwTWhdOfN67NlA+D+oipAs1MlcTcu3KA==}
     engines: {node: '>=20'}
 
   type-level-regexp@0.1.17:
@@ -22079,7 +22079,7 @@ snapshots:
 
   type-fest@4.41.0: {}
 
-  type-fest@5.0.0:
+  type-fest@5.0.1:
     dependencies:
       tagged-tag: 1.0.0
 
