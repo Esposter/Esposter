@@ -12,7 +12,7 @@ import { isPartitionKey, serializeClauses, UnaryOperator } from "@esposter/share
 export const searchMessages = async ({ filters, limit, offset, query, roomId, sortBy }: SearchMessagesInput) => {
   const client = useSearchClient(SearchIndex.Messages);
   let filter = isPartitionKey(roomId);
-  if (filters) {
+  if (filters.length > 0) {
     const clauses = filters.map(filterToClause);
     filter += ` ${UnaryOperator.and} ${serializeClauses(clauses)}`;
   }

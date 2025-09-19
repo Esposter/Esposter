@@ -25,10 +25,10 @@ export const useCursorSearcher = <TItem extends ToData<AEntity>, TDef extends In
 
   if (isAutoSearch) {
     const throttledSearchQuery = useThrottle(searchQuery, dayjs.duration(1, "second").asMilliseconds());
-    const isEmptySearchQuery = computed(() => !searchQuery.value.trim());
+    const isSearchQueryEmpty = computed(() => !searchQuery.value.trim());
 
-    watch(isEmptySearchQuery, (newIsEmptySearchQuery) => {
-      if (isIncludeEmptySearchQuery || !newIsEmptySearchQuery) return;
+    watch(isSearchQueryEmpty, (newIsSearchQueryEmpty) => {
+      if (isIncludeEmptySearchQuery || !newIsSearchQueryEmpty) return;
       resetCursorPaginationData();
     });
 
@@ -39,7 +39,7 @@ export const useCursorSearcher = <TItem extends ToData<AEntity>, TDef extends In
         const sanitizedOldThrottledSearchQuery = oldThrottledSearchQuery?.trim();
         if (
           sanitizedNewThrottledSearchQuery === sanitizedOldThrottledSearchQuery ||
-          (isIncludeEmptySearchQuery && sanitizedNewThrottledSearchQuery)
+          !(isIncludeEmptySearchQuery || sanitizedNewThrottledSearchQuery)
         )
           return;
 
