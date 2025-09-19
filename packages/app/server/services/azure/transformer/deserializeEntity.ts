@@ -6,9 +6,9 @@ import { getIsSerializable } from "@@/server/services/azure/transformer/getIsSer
 
 export const deserializeEntity = <TEntity extends CompositeKey>(entity: TEntity, cls: Class<TEntity>): TEntity => {
   const instance = new cls();
-  // We don't want to deserialize Date properties with null values in the constructor i.e. deletedAt
+  // Azure Table Storage already deserializes Date properties for us C:
   for (const [property, value] of Object.entries(entity) as [keyof TEntity, unknown][])
-    if (getIsSerializable(instance[property]) && !(value instanceof Date))
+    if (!(value instanceof Date) && getIsSerializable(instance[property]))
       instance[property] = jsonDateParse(value as string);
     else instance[property] = value as TEntity[keyof TEntity];
   return instance;

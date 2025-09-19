@@ -14,7 +14,6 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { messageRouter } from "@@/server/trpc/routers/message";
 import { roomRouter } from "@@/server/trpc/routers/room";
-import { NIL } from "@esposter/shared";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
@@ -163,7 +162,7 @@ describe("message", () => {
     const roomId = crypto.randomUUID();
 
     await expect(
-      messageCaller.readMessagesByRowKeys({ roomId, rowKeys: [NIL] }),
+      messageCaller.readMessagesByRowKeys({ roomId, rowKeys: [""] }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
@@ -572,7 +571,7 @@ describe("message", () => {
     await expect(
       messageCaller.forwardMessage({
         partitionKey: newMessage.partitionKey,
-        roomIds: [NIL],
+        roomIds: [crypto.randomUUID()],
         rowKey: newMessage.rowKey,
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
@@ -713,21 +712,20 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const id = crypto.randomUUID();
+    const newFileId = crypto.randomUUID();
+    const deleteFileId = crypto.randomUUID();
     const newMessage = await messageCaller.createMessage({
-      files: [{ filename, id, mimetype, size }],
+      files: [{ filename, id: newFileId, mimetype, size }],
       roomId: newRoom.id,
     });
     MockContainerDatabase.set(
       AzureContainer.MessageAssets,
-      new Map([[getBlobName(`${newRoom.id}/${id}`, filename), Buffer.alloc(size)]]),
+      new Map([[getBlobName(`${newRoom.id}/${newFileId}`, filename), Buffer.alloc(size)]]),
     );
 
     await expect(
-      messageCaller.deleteFile({ id: NIL, partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: File is not found for id: 00000000-0000-0000-0000-000000000000]`,
-    );
+      messageCaller.deleteFile({ id: deleteFileId, partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: File is not found for id: ${deleteFileId}]`);
   });
 
   test.todo("fails delete file with forward", async () => {
