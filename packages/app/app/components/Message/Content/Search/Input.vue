@@ -36,7 +36,10 @@ const onEscape = () => (document.activeElement as HTMLElement | null)?.blur();
           activeSelectedFilter.value = value;
           preventDefault();
           searchQuery = '';
-        } else if (!isSearchQueryEmpty) await readSearchedMessages();
+        } else if (!isSearchQueryEmpty) {
+          menu = false;
+          await readSearchedMessages();
+        }
       }
     "
     @update:focused="(value) => (menu = value)"
