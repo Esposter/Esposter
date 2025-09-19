@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RoutePath } from "#shared/models/router/RoutePath";
 import { MESSAGE_MAX_LENGTH } from "#shared/services/message/constants";
+import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useAlertStore } from "@/store/alert";
 import { useMessageStore } from "@/store/message";
 import { useDataStore } from "@/store/message/data";
@@ -65,7 +66,9 @@ const {
       <v-card-text p-4="!" overflow-y-auto>
         <v-list py-0>
           <MessageModelMessageForwardRoomListItem v-for="room of itemsSearched" :key="room.id" :room />
-          <StyledWaypoint flex justify-center :is-active="hasMore" @change="readMoreItemsSearched" />
+          <StyledWaypoint :is-active="hasMore" @change="readMoreItemsSearched">
+            <MessageModelRoomSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+          </StyledWaypoint>
         </v-list>
       </v-card-text>
       <v-divider />

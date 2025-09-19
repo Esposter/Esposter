@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { RoutePath } from "#shared/models/router/RoutePath";
+import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useSearchStore } from "@/store/message/room/search";
 
 const emit = defineEmits<{ "update:room": [] }>();
@@ -22,6 +23,8 @@ const { hasMore, items } = storeToRefs(searchStore);
         </template>
       </v-list-item>
     </NuxtInvisibleLink>
-    <StyledWaypoint flex justify-center :is-active="hasMore" @change="readMoreItemsSearched" />
+    <StyledWaypoint :is-active="hasMore" @change="readMoreItemsSearched">
+      <MessageModelRoomSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+    </StyledWaypoint>
   </v-list>
 </template>
