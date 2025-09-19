@@ -76,7 +76,7 @@ const messageHtml = useRefreshMentions(() => message.message);
         :partition-key="message.partitionKey"
         :row-key="message.rowKey"
       />
-      <MessageModelMessageEmojiList :message />
+      <MessageModelMessageEmojiList :is-preview :message />
     </div>
   </v-list-item>
 </template>

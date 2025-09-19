@@ -3,7 +3,7 @@ import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
 import { authClient } from "@/services/auth/authClient";
 import { EmojiMenuItems } from "@/services/message/EmojiMenuItems";
-import { EMOJI_TEXT } from "@/services/styled/constants";
+import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
 import { unemojify } from "node-emoji";
 
 interface MessageOptionsMenuProps {
@@ -52,7 +52,7 @@ const {
       </v-tooltip>
       <v-divider thickness="2" vertical h-6 self-center />
       <StyledEmojiPicker
-        :tooltip-props="{ text: EMOJI_TEXT }"
+        :tooltip-props="{ text: EMOJI_PICKER_TOOLTIP_TEXT }"
         :button-props="{ size: 'small' }"
         :button-attrs="{ 'rd-none': '!' }"
         @update:menu="emit('update:menu', $event)"

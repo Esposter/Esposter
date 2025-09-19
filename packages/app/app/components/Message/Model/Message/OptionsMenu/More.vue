@@ -2,7 +2,7 @@
 import type { Item } from "@/models/shared/Item";
 
 import { EmojiMoreMenuItems } from "@/services/message/EmojiMoreMenuItems";
-import { EMOJI_TEXT } from "@/services/styled/constants";
+import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
 import { useMessageStore } from "@/store/message";
 import { unemojify } from "node-emoji";
 import { mergeProps } from "vue";
@@ -65,7 +65,7 @@ const { optionsMenu } = storeToRefs(messageStore);
       >
         <template #default="menuProps">
           <v-list-item :="menuProps">
-            <span>{{ EMOJI_TEXT }}</span>
+            <span>{{ EMOJI_PICKER_TOOLTIP_TEXT }}</span>
             <template #append>
               <v-icon size="small" icon="mdi-emoticon" />
             </template>
