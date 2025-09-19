@@ -10,7 +10,7 @@ const { isPending } = await readRooms();
 </script>
 
 <template>
-  <v-list overflow-y-auto="!">
+  <v-list>
     <slot name="prepend" />
     <template v-if="isPending">
       <MessageModelRoomSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />

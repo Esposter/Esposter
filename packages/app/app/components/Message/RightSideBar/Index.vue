@@ -7,5 +7,7 @@ const { rightDrawer } = storeToRefs(layoutStore);
 </script>
 
 <template>
-  <component :is="RightDrawerComponentMap[rightDrawer]" />
+  <div flex flex-col h-full>
+    <component :is="RightDrawerComponentMap[rightDrawer]" />
+  </div>
 </template>

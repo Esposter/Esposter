@@ -9,7 +9,7 @@ const { hasMore, members } = storeToRefs(memberStore);
 </script>
 
 <template>
-  <v-list overflow-y-auto="!">
+  <v-list>
     <template v-if="isPending">
       <MessageModelMemberSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
     </template>

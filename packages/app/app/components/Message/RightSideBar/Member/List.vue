@@ -1,3 +1,3 @@
 <template>
-  <MessageModelMemberList />
+  <MessageModelMemberList overflow-y-auto="!" />
 </template>
