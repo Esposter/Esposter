@@ -7,4 +7,5 @@ export default {
   "vue/require-default-prop": "off",
   "vue/v-bind-style": ["error", "shorthand", { sameNameShorthand: "always" }],
   "vue/v-slot-style": ["error", { atComponent: "shorthand" }],
+  "vue/valid-template-root": "off",
 };
