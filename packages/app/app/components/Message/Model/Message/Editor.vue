@@ -67,17 +67,13 @@ const mentionExtension = useMentionExtension();
     @keydown.esc="emit('update:update-mode', false)"
   >
     <template #append-footer="{ editor }">
-      <v-btn variant="outlined" size="small" @click="emit('update:update-mode', false)">Cancel</v-btn>
+      <v-btn size="small" text="Cancel" variant="outlined" @click="emit('update:update-mode', false)" />
       <StyledButton
         v-if="editor"
         ml-2
-        :button-props="{
-          size: 'small',
-        }"
+        :button-props="{ size: 'small', text: 'Save' }"
         @click="onUpdateMessage(editor)"
-      >
-        Save
-      </StyledButton>
+      />
     </template>
   </RichTextEditor>
 </template>

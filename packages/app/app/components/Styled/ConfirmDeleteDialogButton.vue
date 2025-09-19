@@ -10,7 +10,7 @@ const emit = defineEmits<{ delete: [onComplete: () => void] }>();
     <template #activator="{ updateIsOpen }">
       <v-tooltip :text="cardProps?.title?.toString()">
         <template #activator="{ props }">
-          <v-btn m-0="!" rd-none="!" icon="mdi-delete" size="small" :="props" @click.stop="updateIsOpen(true)" />
+          <v-btn m-0 icon="mdi-delete" size="small" tile :="props" @click.stop="updateIsOpen(true)" />
         </template>
       </v-tooltip>
     </template>

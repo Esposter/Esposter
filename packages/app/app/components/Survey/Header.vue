@@ -1,30 +1,29 @@
 <script setup lang="ts">
 import type { Survey } from "#shared/db/schema/surveys";
 
+import { SURVEY_NAME_MAX_LENGTH } from "#shared/services/survey/constants";
+
 const { $trpc } = useNuxtApp();
 const survey = defineModel<Survey>({ required: true });
 </script>
 
 <template>
   <v-toolbar class="border-b-sm" color="surface" density="comfortable">
-    <StyledEditableToolbarTitle
+    <StyledEditableNameDialogButton
       px-4
-      :initial-value="survey.name"
-      @update="
-        async (value, onComplete) => {
-          try {
-            if (!value || value === survey.name) return;
-            Object.assign(survey, await $trpc.survey.updateSurvey.mutate({ id: survey.id, name: value }));
-          } finally {
-            onComplete();
-          }
+      :card-props="{ title: 'Edit Survey Name' }"
+      :max-length="SURVEY_NAME_MAX_LENGTH"
+      :name="survey.name"
+      :tooltip-props="{ location: 'bottom', text: 'Edit Survey Name' }"
+      @submit="
+        async (name) => {
+          Object.assign(survey, await $trpc.survey.updateSurvey.mutate({ id: survey.id, name }));
         }
       "
-    >
-      <span pl-2 class="text-gray text-lg">
-        (Version: {{ survey.modelVersion }}, Published Version: {{ survey.publishVersion }})
-      </span>
-    </StyledEditableToolbarTitle>
+    />
+    <span pl-2 text-gray text-lg>
+      (Version: {{ survey.modelVersion }}, Published Version: {{ survey.publishVersion }})
+    </span>
   </v-toolbar>
 </template>
 

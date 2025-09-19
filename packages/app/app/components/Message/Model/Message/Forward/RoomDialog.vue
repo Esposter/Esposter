@@ -52,14 +52,14 @@ const {
       <v-card-title flex flex-col>
         <div flex justify-between items-center>
           Forward To
-          <v-btn icon="mdi-close" density="comfortable" @click="dialog = false" />
+          <v-btn density="comfortable" icon="mdi-close" @click="dialog = false" />
         </div>
         <div class="text-subtitle-2" text-gray pb-2>Select where you want to share this message.</div>
         <v-text-field
           v-model="searchQuery"
-          placeholder="Search"
           append-inner-icon="mdi-magnify"
           density="compact"
+          placeholder="Search"
           hide-details
         />
       </v-card-title>
@@ -78,7 +78,10 @@ const {
         <RichTextEditor v-model="messageInput" :limit="MESSAGE_MAX_LENGTH" placeholder="Add an optional message..." />
         <StyledButton
           w-full
-          :disabled="roomIds.length === 0"
+          :button-props="{
+            disabled: roomIds.length === 0,
+            text: `Send ${roomIds.length > 1 ? `(${roomIds.length})` : ''}`,
+          }"
           @click="
             async () => {
               if (!forward) return;
@@ -94,9 +97,7 @@ const {
               messageInput = '';
             }
           "
-        >
-          Send {{ roomIds.length > 1 ? `(${roomIds.length})` : "" }}
-        </StyledButton>
+        />
       </v-card-actions>
     </StyledCard>
   </v-dialog>

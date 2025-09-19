@@ -14,7 +14,7 @@ const { post } = defineProps<PostCommentsButtonProps>();
   <NuxtInvisibleLink :to="RoutePath.Post(post.id)">
     <v-tooltip text="Comments">
       <template #activator="{ props }">
-        <v-btn rd-none="!" height="2.5rem" prepend-icon="mdi-comment" :text="post.noComments.toString()" :="props" />
+        <v-btn height="2.5rem" prepend-icon="mdi-comment" :text="post.noComments.toString()" tile :="props" />
       </template>
     </v-tooltip>
   </NuxtInvisibleLink>

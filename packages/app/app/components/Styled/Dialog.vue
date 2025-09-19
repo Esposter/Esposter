@@ -42,12 +42,19 @@ const isValid = ref(true);
         <slot />
         <v-card-actions>
           <v-spacer />
-          <v-btn text-3 variant="outlined" @click="isOpen = false">Cancel</v-btn>
+          <v-btn text-3 text="Cancel" variant="outlined" @click="isOpen = false" />
           <v-btn
+            v-if="confirmButtonProps.color"
             text-3
             type="submit"
-            color="error"
             variant="outlined"
+            :disabled="!isValid"
+            :="mergeProps(confirmButtonProps, confirmButtonAttrs)"
+          />
+          <StyledButton
+            v-else
+            text-3
+            type="submit"
             :disabled="!isValid"
             :="mergeProps(confirmButtonProps, confirmButtonAttrs)"
           />

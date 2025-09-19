@@ -68,7 +68,7 @@ const items = computed<MenuItem[]>(() => [
       <v-divider v-if="isDivider(item)" h-6 self-center thickness="2" vertical />
       <v-tooltip v-else :text="item.title">
         <template #activator="{ props: tooltipProps }">
-          <v-btn rd-none="!" density="comfortable" :="mergeProps(item, tooltipProps)" />
+          <v-btn density="comfortable" tile :="mergeProps(item, tooltipProps)" />
         </template>
       </v-tooltip>
     </template>

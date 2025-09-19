@@ -58,6 +58,7 @@ const { joinRoom } = roomStore;
           <v-card-actions w-full>
             <StyledButton
               w-full
+              :button-props="{ text: 'Accept Invite' }"
               @click="
                 async () => {
                   const code = $route.params.code;
@@ -65,9 +66,7 @@ const { joinRoom } = roomStore;
                   await joinRoom(code);
                 }
               "
-            >
-              Accept Invite
-            </StyledButton>
+            />
           </v-card-actions>
         </StyledCard>
       </v-dialog>

@@ -18,9 +18,7 @@ const isEmptyDescription = computed(() => EMPTY_TEXT_REGEX.test(description.valu
     <template #append-footer="{ editor }">
       <StyledButton
         v-if="editor"
-        :button-props="{
-          disabled: isEmptyDescription,
-        }"
+        :button-props="{ disabled: isEmptyDescription, text: 'Comment' }"
         @click="
           async () => {
             const savedDescription = description;
@@ -28,9 +26,7 @@ const isEmptyDescription = computed(() => EMPTY_TEXT_REGEX.test(description.valu
             await createComment({ parentId: postId, description: savedDescription });
           }
         "
-      >
-        Comment
-      </StyledButton>
+      />
     </template>
   </PostDescriptionRichTextEditor>
 </template>

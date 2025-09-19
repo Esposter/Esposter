@@ -41,9 +41,15 @@ const {
     <v-card-actions p-0="!" gap-0 min-h-auto="!">
       <v-tooltip v-for="emoji of EmojiMenuItems" :key="emoji">
         <template #activator="{ props }">
-          <v-btn m-0="!" size-10="!" rd-none="!" icon :="props" @click="emit('update:select-emoji', emoji)">
-            {{ emoji }}
-          </v-btn>
+          <v-btn
+            m-0="!"
+            size-10="!"
+            rd-none="!"
+            icon
+            :text="emoji"
+            :="props"
+            @click="emit('update:select-emoji', emoji)"
+          />
         </template>
         <div flex flex-col text-center>
           <div font-bold>{{ unemojify(emoji) }}</div>

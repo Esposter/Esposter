@@ -38,9 +38,10 @@ const isDeletable = computed(() => nameTyped.value === name);
       </v-card-text>
       <v-card-actions>
         <v-spacer />
-        <v-btn variant="outlined" @click="dialog = false">Cancel</v-btn>
+        <v-btn text="Cancel" variant="outlined" @click="dialog = false" />
         <v-btn
           color="error"
+          text="Delete"
           variant="outlined"
           :disabled="!isDeletable"
           @click="
@@ -51,9 +52,7 @@ const isDeletable = computed(() => nameTyped.value === name);
               });
             }
           "
-        >
-          Delete
-        </v-btn>
+        />
       </v-card-actions>
     </StyledCard>
   </v-dialog>
