@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { RoutePath } from "#shared/models/router/RoutePath";
-import { useRoomStore } from "@/store/message/room";
+import { useSearchStore } from "@/store/message/room/search";
 
 const emit = defineEmits<{ "update:room": [] }>();
-const roomStore = useRoomStore();
-const { readMoreRoomsSearched } = roomStore;
-const { hasMoreRoomsSearched, roomsSearched } = storeToRefs(roomStore);
+const searchStore = useSearchStore();
+const { readMoreItemsSearched } = searchStore;
+const { hasMore, items } = storeToRefs(searchStore);
 </script>
 
 <template>
   <v-list>
     <NuxtInvisibleLink
-      v-for="{ id, name, image } of roomsSearched"
+      v-for="{ id, name, image } of items"
       :key="id"
       :to="RoutePath.Messages(id)"
       @click="emit('update:room')"
@@ -22,6 +22,6 @@ const { hasMoreRoomsSearched, roomsSearched } = storeToRefs(roomStore);
         </template>
       </v-list-item>
     </NuxtInvisibleLink>
-    <StyledWaypoint flex justify-center :is-active="hasMoreRoomsSearched" @change="readMoreRoomsSearched" />
+    <StyledWaypoint flex justify-center :is-active="hasMore" @change="readMoreItemsSearched" />
   </v-list>
 </template>

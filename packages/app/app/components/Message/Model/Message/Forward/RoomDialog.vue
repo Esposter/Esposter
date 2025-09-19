@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { RoutePath } from "#shared/models/router/RoutePath";
 import { MESSAGE_MAX_LENGTH } from "#shared/services/message/constants";
 import { useAlertStore } from "@/store/alert";
@@ -25,13 +24,22 @@ const dialog = computed({
     rowKey.value = "";
   },
 });
-const { hasMoreRoomsSearched, readMoreRoomsSearched, roomSearchQuery, roomsSearched } = useCursorSearcher(
+const {
+  hasMore,
+  items: itemsSearched,
+  readMoreItemsSearched,
+  searchQuery,
+} = useCursorSearcher(
+  (searchQuery, cursor) =>
+    $trpc.room.readRooms.useQuery({
+      cursor,
+      filter: { name: searchQuery },
+    }),
   (searchQuery, cursor) =>
     $trpc.room.readRooms.query({
       cursor,
       filter: { name: searchQuery },
     }),
-  DatabaseEntityType.Room,
   true,
   true,
 );
@@ -47,7 +55,7 @@ const { hasMoreRoomsSearched, readMoreRoomsSearched, roomSearchQuery, roomsSearc
         </div>
         <div class="text-subtitle-2" text-gray pb-2>Select where you want to share this message.</div>
         <v-text-field
-          v-model="roomSearchQuery"
+          v-model="searchQuery"
           placeholder="Search"
           append-inner-icon="mdi-magnify"
           density="compact"
@@ -56,12 +64,8 @@ const { hasMoreRoomsSearched, readMoreRoomsSearched, roomSearchQuery, roomsSearc
       </v-card-title>
       <v-card-text p-4="!" overflow-y-auto>
         <v-list py-0>
-          <MessageModelMessageForwardRoomListItem
-            v-for="roomSearched of roomsSearched"
-            :key="roomSearched.id"
-            :room="roomSearched"
-          />
-          <StyledWaypoint flex justify-center :is-active="hasMoreRoomsSearched" @change="readMoreRoomsSearched" />
+          <MessageModelMessageForwardRoomListItem v-for="room of itemsSearched" :key="room.id" :room />
+          <StyledWaypoint flex justify-center :is-active="hasMore" @change="readMoreItemsSearched" />
         </v-list>
       </v-card-text>
       <v-divider />
@@ -82,7 +86,7 @@ const { hasMoreRoomsSearched, readMoreRoomsSearched, roomSearchQuery, roomsSearc
                 createAlert('Message forwarded!', 'success', { location: 'top center', icon: 'mdi-share' });
               }
               dialog = false;
-              roomSearchQuery = '';
+              searchQuery = '';
               roomIds = [];
               messageInput = '';
             }
