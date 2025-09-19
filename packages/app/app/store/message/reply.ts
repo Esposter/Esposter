@@ -7,18 +7,19 @@ import { Operation } from "@esposter/shared";
 
 export const useReplyStore = defineStore("message/reply", () => {
   const roomStore = useRoomStore();
-  const { data: rowKey } = useDataMap(() => roomStore.currentRoomId, "");
+  // oxlint-disable-next-line no-useless-undefined
+  const { data: rowKey } = useDataMap<string | undefined>(() => roomStore.currentRoomId, undefined);
   MessageHookMap.ResetSend.push(() => {
     rowKey.value = "";
   });
 
   const dataStore = useDataStore();
   const { data: replyMap } = useDataMap(() => roomStore.currentRoomId, new Map<string, MessageEntity>());
-  MessageHookMap[Operation.Create].push((message) => {
-    if (!message.replyRowKey) return;
-    const reply = dataStore.items.find(({ rowKey }) => rowKey === message.replyRowKey);
+  MessageHookMap[Operation.Create].push(({ replyRowKey }) => {
+    if (!replyRowKey) return;
+    const reply = dataStore.items.find(({ rowKey }) => rowKey === replyRowKey);
     if (!reply) return;
-    replyMap.value.set(message.replyRowKey, reply);
+    replyMap.value.set(replyRowKey, reply);
   });
   MessageHookMap[Operation.Delete].push(({ rowKey }) => {
     replyMap.value.delete(rowKey);
