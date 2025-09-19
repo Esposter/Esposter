@@ -3,12 +3,20 @@ import { SearchFilterComponentMap } from "@/services/message/SearchFilterCompone
 import { useSearchMessageStore } from "@/store/message/searchMessage";
 
 const searchMessageStore = useSearchMessageStore();
-const { activeSelectedFilter } = storeToRefs(searchMessageStore);
+const { activeSelectedFilter, menu } = storeToRefs(searchMessageStore);
 </script>
 
 <template>
   <!-- @TODO: Menu should be based on focus of the input -->
-  <v-menu location="top" :height="500" :close-on-content-click="false">
+  <v-menu
+    :model-value="menu"
+    location="top"
+    persistent
+    :close-on-content-click="false"
+    :height="500"
+    :open-on-click="false"
+    @mousedown.prevent
+  >
     <template #activator="{ props }">
       <MessageContentSearchInput :="props" />
     </template>

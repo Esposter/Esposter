@@ -9,6 +9,7 @@ import { useRoomStore } from "@/store/message/room";
 export const useSearchMessageStore = defineStore("message/searchMessage", () => {
   const roomStore = useRoomStore();
   const { data: searchQuery } = useDataMap<string>(() => roomStore.currentRoomId, "");
+  const menu = ref(false);
   const isSearching = ref(false);
   const isSearched = ref(false);
   const { data: selectedFilters } = useDataMap<Filter[]>(() => roomStore.currentRoomId, []);
@@ -42,6 +43,7 @@ export const useSearchMessageStore = defineStore("message/searchMessage", () => 
     isSearched,
     isSearching,
     items,
+    menu,
     page,
     pageCount,
     searchQuery,

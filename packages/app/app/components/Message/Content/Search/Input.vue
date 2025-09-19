@@ -6,7 +6,7 @@ import { useSearchMessageStore } from "@/store/message/searchMessage";
 const readSearchedMessages = useReadSearchedMessages();
 const searchMessageStore = useSearchMessageStore();
 const { createFilter } = searchMessageStore;
-const { activeSelectedFilter, searchQuery, selectedFilters } = storeToRefs(searchMessageStore);
+const { activeSelectedFilter, menu, searchQuery, selectedFilters } = storeToRefs(searchMessageStore);
 const filterTypes = Object.values(FilterType);
 const onEscape = () => (document.activeElement as HTMLElement | null)?.blur();
 </script>
@@ -26,6 +26,7 @@ const onEscape = () => (document.activeElement as HTMLElement | null)?.blur();
     hide-no-data
     multiple
     return-object
+    @keydown.esc="onEscape()"
     @keydown.enter="
       async ({ preventDefault }: KeyboardEvent) => {
         if (activeSelectedFilter && !activeSelectedFilter.value) {
@@ -37,7 +38,7 @@ const onEscape = () => (document.activeElement as HTMLElement | null)?.blur();
         } else await readSearchedMessages();
       }
     "
-    @keydown.esc="onEscape()"
+    @update:focused="(value) => (menu = value)"
     @update:search="
       (value: string) => {
         if (value[value.length - 1] === ':') {
