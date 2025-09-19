@@ -11,14 +11,12 @@ const { leftDrawerOpenAuto } = storeToRefs(layoutStore);
 const roomStore = useRoomStore();
 const { currentRoom, currentRoomId, currentRoomName } = storeToRefs(roomStore);
 const isCreator = computed(() => currentRoom.value?.userId === session.value?.user.id);
-const editedRoomName = ref(currentRoomName.value);
 </script>
 
 <template>
   <v-toolbar
     v-if="currentRoom"
-    :style="{ paddingLeft: leftDrawerOpenAuto ? '1rem' : undefined }"
-    b-none
+    :style="{ paddingLeft: leftDrawerOpenAuto ? '.25rem' : undefined }"
     density="comfortable"
   >
     <MessageContentShowRoomListButton />
@@ -36,7 +34,7 @@ const editedRoomName = ref(currentRoomName.value);
       "
     >
       <StyledAvatar :image="currentRoom.image" :name="currentRoom.name" :avatar-props="{ size: 'x-small' }" />
-      <span pl-2 font-bold>{{ currentRoomName }}</span>
+      <span pl-2>{{ currentRoomName }}</span>
     </StyledEditableNameDialogButton>
     <template #append>
       <MessageContentAddFriendsDialogButton />

@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import type { VCard, VTooltip } from "vuetify/components";
+import type { VBtn, VCard, VTooltip } from "vuetify/components";
 
 import { formRules } from "@/services/vuetify/formRules";
 import { mergeProps } from "vue";
 
 interface EditableNameDialogButtonProps {
+  buttonProps?: VBtn["$props"];
   cardProps: VCard["$props"];
   isDisabled?: boolean;
   maxLength: number;
@@ -13,7 +14,8 @@ interface EditableNameDialogButtonProps {
 }
 
 defineSlots<{ default?: () => VNode }>();
-const { cardProps, isDisabled, maxLength, name, tooltipProps } = defineProps<EditableNameDialogButtonProps>();
+const { buttonProps, cardProps, isDisabled, maxLength, name, tooltipProps } =
+  defineProps<EditableNameDialogButtonProps>();
 const emit = defineEmits<{ submit: [name: string] }>();
 const editedName = ref(name);
 
@@ -46,16 +48,19 @@ watch(
           <v-hover>
             <template #default="{ isHovering, props: hoverProps }">
               <v-btn
-                rd-2
+                font-bold
+                rounded="lg"
                 :ripple="false"
                 slim
                 :disabled="isDisabled"
-                :="mergeProps(tooltipActivatorProps, hoverProps)"
+                :="mergeProps(tooltipActivatorProps, hoverProps, buttonProps ?? {})"
                 @click="updateIsOpen(true)"
               >
-                <slot />
+                <slot>
+                  {{ name }}
+                </slot>
                 <template #append>
-                  <v-icon v-show="!isDisabled && isHovering" icon="mdi-pencil" size="small" />
+                  <v-icon v-if="!isDisabled" :op="isHovering ? undefined : '0!'" icon="mdi-pencil" size="small" />
                 </template>
               </v-btn>
             </template>
