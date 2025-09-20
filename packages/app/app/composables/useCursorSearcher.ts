@@ -45,6 +45,7 @@ export const useCursorSearcher = <TItem extends ToData<AEntity>, TDef extends In
         )
           return;
 
+        abortController?.abort();
         abortController = new AbortController();
         const cursorPaginationData = await query(sanitizedNewThrottledSearchQuery, undefined, {
           signal: abortController.signal,
