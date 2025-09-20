@@ -6,7 +6,7 @@ const { isSearching, totalItemsLength } = storeToRefs(searchMessageStore);
 </script>
 
 <template>
-  <v-container fluid gap-y-2>
+  <v-container fluid>
     <v-row gap-y-2 no-gutters>
       <v-col cols="12">
         <MessageContentSearchMenu />
