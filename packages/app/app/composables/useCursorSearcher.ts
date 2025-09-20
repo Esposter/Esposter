@@ -1,7 +1,7 @@
 import type { AsyncData } from "#app";
 import type { AEntity } from "#shared/models/entity/AEntity";
 import type { ToData } from "#shared/models/entity/ToData";
-import type { TRPCClientErrorLike } from "@trpc/client";
+import type { TRPCClientErrorLike, TRPCProcedureOptions } from "@trpc/client";
 import type { InferrableClientTypes } from "@trpc/server/unstable-core-do-not-import";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
@@ -12,7 +12,7 @@ export const useCursorSearcher = <TItem extends ToData<AEntity>, TDef extends In
     searchQuery: string,
     cursor?: string,
   ) => Promise<Awaited<AsyncData<CursorPaginationData<TItem> | null, TRPCClientErrorLike<TDef>>>>,
-  query: (searchQuery: string, cursor?: string) => Promise<CursorPaginationData<TItem>>,
+  query: (searchQuery: string, cursor?: string, opts?: TRPCProcedureOptions) => Promise<CursorPaginationData<TItem>>,
   isAutoSearch?: true,
   isIncludeEmptySearchQuery?: true,
 ) => {
@@ -26,9 +26,11 @@ export const useCursorSearcher = <TItem extends ToData<AEntity>, TDef extends In
   if (isAutoSearch) {
     const throttledSearchQuery = useThrottle(searchQuery, dayjs.duration(1, "second").asMilliseconds());
     const isSearchQueryEmpty = computed(() => !searchQuery.value.trim());
+    let abortController: AbortController | undefined;
 
     watch(isSearchQueryEmpty, (newIsSearchQueryEmpty) => {
       if (isIncludeEmptySearchQuery || !newIsSearchQueryEmpty) return;
+      abortController?.abort();
       resetCursorPaginationData();
     });
 
@@ -43,7 +45,10 @@ export const useCursorSearcher = <TItem extends ToData<AEntity>, TDef extends In
         )
           return;
 
-        const cursorPaginationData = await query(sanitizedNewThrottledSearchQuery);
+        abortController = new AbortController();
+        const cursorPaginationData = await query(sanitizedNewThrottledSearchQuery, undefined, {
+          signal: abortController.signal,
+        });
         initializeCursorPaginationData(cursorPaginationData);
       },
       { immediate: isIncludeEmptySearchQuery },

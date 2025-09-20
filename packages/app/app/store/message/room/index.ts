@@ -68,18 +68,5 @@ export const useRoomStore = defineStore("message/room", () => {
     currentRoom,
     currentRoomId,
     currentRoomName,
-    ...useCursorSearcher(
-      (searchQuery, cursor) =>
-        $trpc.room.readRooms.useQuery({
-          cursor,
-          filter: { name: searchQuery },
-        }),
-      (searchQuery, cursor) =>
-        $trpc.room.readRooms.query({
-          cursor,
-          filter: { name: searchQuery },
-        }),
-      true,
-    ),
   };
 });

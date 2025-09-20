@@ -6,11 +6,14 @@ export const useSearchStore = defineStore("message/room/search", () => {
         cursor,
         filter: { name: searchQuery },
       }),
-    (searchQuery, cursor) =>
-      $trpc.room.readRooms.query({
-        cursor,
-        filter: { name: searchQuery },
-      }),
+    (searchQuery, cursor, opts) =>
+      $trpc.room.readRooms.query(
+        {
+          cursor,
+          filter: { name: searchQuery },
+        },
+        opts,
+      ),
     true,
   );
 });
