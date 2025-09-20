@@ -41,15 +41,7 @@ const {
     <v-card-actions p-0="!" gap-0 min-h-auto="!">
       <v-tooltip v-for="emoji of EmojiMenuItems" :key="emoji">
         <template #activator="{ props }">
-          <v-btn
-            m-0="!"
-            size-10="!"
-            rd-none="!"
-            icon
-            :text="emoji"
-            :="props"
-            @click="emit('update:select-emoji', emoji)"
-          />
+          <v-btn m-0 size-10="!" :text="emoji" icon tile :="props" @click="emit('update:select-emoji', emoji)" />
         </template>
         <div flex flex-col text-center>
           <div font-bold>{{ unemojify(emoji) }}</div>
@@ -59,8 +51,7 @@ const {
       <v-divider thickness="2" vertical h-6 self-center />
       <StyledEmojiPicker
         :tooltip-props="{ text: EMOJI_PICKER_TOOLTIP_TEXT }"
-        :button-props="{ size: 'small' }"
-        :button-attrs="{ 'rd-none': '!' }"
+        :button-props="{ size: 'small', tile: true }"
         @update:menu="emit('update:menu', $event)"
         @select="emit('update:select-emoji', $event)"
       />

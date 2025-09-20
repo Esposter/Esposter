@@ -48,12 +48,12 @@ const { optionsMenu } = storeToRefs(messageStore);
           <v-tooltip v-for="emoji of EmojiMoreMenuItems" :key="emoji" :text="unemojify(emoji)">
             <template #activator="{ props }">
               <v-btn
-                m-0="!"
+                m-0
                 size-10="!"
-                rd-2="!"
                 flex-1
-                icon
+                rounded="sm"
                 :text="emoji"
+                icon
                 :="props"
                 @click="emit('update:select-emoji', emoji)"
               />
