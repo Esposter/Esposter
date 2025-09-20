@@ -6,10 +6,12 @@ const { isSearching, totalItemsLength } = storeToRefs(searchMessageStore);
 </script>
 
 <template>
-  <v-container fluid flex>
+  <v-container fluid flex items-center>
     <template v-if="isSearching">
       Searching
-      <v-progress-circular size="small" indeterminate />
+      <div pl-2>
+        <v-progress-circular size="small" indeterminate />
+      </div>
     </template>
     <template v-else>
       {{ totalItemsLength }} result{{ totalItemsLength === 1 ? "" : "s" }}
