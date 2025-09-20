@@ -18,7 +18,7 @@ const onEscape = () => (document.activeElement as HTMLElement | null)?.blur();
     :item-value="getFilterDisplayValue"
     :search="searchQuery"
     cursor-auto
-    width="15rem"
+    width="100%"
     density="compact"
     menu-icon=""
     placeholder="Search"
