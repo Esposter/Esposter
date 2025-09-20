@@ -17,7 +17,7 @@ export const useReadSearchedMessages = () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const searchMessageStore = useSearchMessageStore();
   const { getReadMoreItems } = searchMessageStore;
-  const { isSearching, searchQuery, totalItemsLength } = storeToRefs(searchMessageStore);
+  const { isSearching, menu, page, searchQuery, totalItemsLength } = storeToRefs(searchMessageStore);
   const { selectedFilters } = storeToRefs(searchMessageStore);
   const searchHistoryStore = useSearchHistoryStore();
   const { createSearchHistory } = searchHistoryStore;
@@ -30,6 +30,7 @@ export const useReadSearchedMessages = () => {
           MessageEntityPropertyNames.partitionKey,
         );
 
+      menu.value = false;
       isSearching.value = true;
       rightDrawerOpen.value = true;
       rightDrawer.value = RightDrawer.Search;
@@ -39,12 +40,15 @@ export const useReadSearchedMessages = () => {
         query: searchQuery.value,
         roomId: currentRoomId.value,
       });
-      if (!offset)
+      // No offset means the user has searched the message instead of reading from the offset pagination
+      if (!offset) {
+        page.value = 1;
         await createSearchHistory({
           filters: selectedFilters.value.length > 0 ? selectedFilters.value : undefined,
           query: searchQuery.value,
           roomId: currentRoomId.value,
         });
+      }
       if (count !== undefined) totalItemsLength.value = count;
       return data;
     },

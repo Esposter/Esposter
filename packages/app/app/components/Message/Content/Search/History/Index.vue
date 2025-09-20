@@ -26,7 +26,6 @@ const { hasMore, items } = storeToRefs(searchHistoryStore);
               if (!history) return;
               searchQuery = history.query;
               selectedFilters = history.filters;
-              menu = false;
               await readSearchedMessages();
             }
           "
