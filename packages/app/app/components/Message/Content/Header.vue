@@ -24,7 +24,7 @@ const isCreator = computed(() => currentRoom.value?.userId === session.value?.us
       :card-props="{ title: 'Edit Room' }"
       :max-length="ROOM_NAME_MAX_LENGTH"
       :name="currentRoomName"
-      :is-disabled="!isCreator"
+      :is-editable="!isCreator"
       :tooltip-props="{ location: 'bottom', text: 'Edit Room' }"
       @submit="
         async (name) => {

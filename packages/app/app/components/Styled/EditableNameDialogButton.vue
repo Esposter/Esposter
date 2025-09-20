@@ -7,14 +7,14 @@ import { mergeProps } from "vue";
 interface EditableNameDialogButtonProps {
   buttonProps?: VBtn["$props"];
   cardProps: VCard["$props"];
-  isDisabled?: boolean;
+  isEditable?: boolean;
   maxLength: number;
   name: string;
   tooltipProps: VTooltip["$props"];
 }
 
 defineSlots<{ default?: () => VNode }>();
-const { buttonProps, cardProps, isDisabled, maxLength, name, tooltipProps } =
+const { buttonProps, cardProps, isEditable, maxLength, name, tooltipProps } =
   defineProps<EditableNameDialogButtonProps>();
 const emit = defineEmits<{ submit: [name: string] }>();
 const editedName = ref(name);
@@ -48,11 +48,11 @@ watch(
           <v-hover>
             <template #default="{ isHovering, props: hoverProps }">
               <v-btn
+                :style="{ pointerEvents: isEditable ? undefined : 'none' }"
                 font-bold
                 rounded="lg"
                 :ripple="false"
                 slim
-                :disabled="isDisabled"
                 :="mergeProps(tooltipActivatorProps, hoverProps, buttonProps ?? {})"
                 @click="updateIsOpen(true)"
               >
@@ -60,7 +60,7 @@ watch(
                   {{ name }}
                 </slot>
                 <template #append>
-                  <v-icon v-if="!isDisabled" :op="isHovering ? undefined : '0!'" icon="mdi-pencil" size="small" />
+                  <v-icon v-if="isEditable" :op="isHovering ? undefined : '0!'" icon="mdi-pencil" size="small" />
                 </template>
               </v-btn>
             </template>
