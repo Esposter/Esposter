@@ -208,8 +208,8 @@ catalogs:
       specifier: ^3.0.0
       version: 3.0.0
     '@vue/language-core':
-      specifier: ^3.0.7
-      version: 3.0.7
+      specifier: ^3.0.8
+      version: 3.0.8
     '@vue/test-utils':
       specifier: ^2.4.6
       version: 2.4.6
@@ -609,7 +609,7 @@ importers:
         version: 3.2.4(vitest@3.2.4(@types/node@24.5.2)(esbuild@0.25.10)(happy-dom@18.0.1)(jiti@2.5.1)(sass-embedded@1.93.0)(sass@1.93.0)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))
       '@vue/language-core':
         specifier: 'catalog:'
-        version: 3.0.7(typescript@5.9.2)
+        version: 3.0.8(typescript@5.9.2)
       ctix:
         specifier: 'catalog:'
         version: 2.7.1(@types/node@24.5.2)(prettier-plugin-organize-imports@4.3.0(prettier@3.6.2)(typescript@5.9.2)(vue-tsc@3.0.7(typescript@5.9.2)))(prettier@3.6.2)(typescript@5.9.2)
@@ -5164,6 +5164,14 @@ packages:
 
   '@vue/language-core@3.0.7':
     resolution: {integrity: sha512-0sqqyqJ0Gn33JH3TdIsZLCZZ8Gr4kwlg8iYOnOrDDkJKSjFurlQY/bEFQx5zs7SX2C/bjMkmPYq/NiyY1fTOkw==}
+    peerDependencies:
+      typescript: '*'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
+  '@vue/language-core@3.0.8':
+    resolution: {integrity: sha512-eYs6PF7bxoPYvek9qxceo1BCwFbJZYqJll+WaYC8o8ec60exqj+n+QRGGiJHSeUfYp0hDxARbMdxMq/fbPgU5g==}
     peerDependencies:
       typescript: '*'
     peerDependenciesMeta:
@@ -16165,6 +16173,19 @@ snapshots:
       typescript: 5.9.2
 
   '@vue/language-core@3.0.7(typescript@5.9.2)':
+    dependencies:
+      '@volar/language-core': 2.4.23
+      '@vue/compiler-dom': 3.5.21
+      '@vue/compiler-vue2': 2.7.16
+      '@vue/shared': 3.5.21
+      alien-signals: 2.0.7
+      muggle-string: 0.4.1
+      path-browserify: 1.0.1
+      picomatch: 4.0.3
+    optionalDependencies:
+      typescript: 5.9.2
+
+  '@vue/language-core@3.0.8(typescript@5.9.2)':
     dependencies:
       '@volar/language-core': 2.4.23
       '@vue/compiler-dom': 3.5.21
