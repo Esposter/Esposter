@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { MessageType } from "#shared/models/db/message/MessageType";
 import { ROOM_NAME_MAX_LENGTH } from "#shared/services/message/constants";
 import { authClient } from "@/services/auth/authClient";
 import { useLayoutStore } from "@/store/layout";
@@ -30,6 +31,11 @@ const isCreator = computed(() => currentRoom.value?.userId === session.value?.us
         async (name) => {
           if (!currentRoomId) return;
           await $trpc.room.updateRoom.mutate({ id: currentRoomId, name });
+          await $trpc.message.createMessage.mutate({
+            roomId: currentRoomId,
+            type: MessageType.EditRoom,
+            message: name,
+          });
         }
       "
     >

@@ -7,6 +7,7 @@ import type { Except } from "type-fest";
 import { selectUserSchema } from "#shared/db/schema/users";
 import { AzureEntity, createAzureEntitySchema } from "#shared/models/azure/AzureEntity";
 import { fileEntitySchema } from "#shared/models/azure/FileEntity";
+import { MessageType } from "#shared/models/db/message/MessageType";
 import { MAX_FILE_LIMIT } from "#shared/services/azure/container/constants";
 import { MESSAGE_MAX_LENGTH } from "#shared/services/message/constants";
 import { refineMessageSchema } from "#shared/services/message/refineMessageSchema";
@@ -22,6 +23,7 @@ export class MessageEntity extends AzureEntity {
   linkPreviewResponse: LinkPreviewResponse | null = null;
   message!: string;
   replyRowKey?: string;
+  type = MessageType.Message;
   userId!: string;
 
   constructor(init?: Partial<MessageEntity> & ToData<CompositeKeyEntity>) {
@@ -47,6 +49,7 @@ export const messageEntitySchema = refineMessageSchema(
     isForward: z.literal(true).optional(),
     message: z.string().max(MESSAGE_MAX_LENGTH).default(""),
     replyRowKey: z.string().optional(),
+    type: z.enum(MessageType).default(MessageType.Message),
     userId: selectUserSchema.shape.id,
   }),
   // We only generate link preview responses via the backend, so we can safely exclude it from the schema
