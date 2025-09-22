@@ -442,8 +442,8 @@ catalogs:
       specifier: ^1.0.0-beta.39
       version: 1.0.0-beta.39
     rolldown-plugin-dts:
-      specifier: ^0.16.7
-      version: 0.16.7
+      specifier: ^0.16.8
+      version: 0.16.8
     rxjs:
       specifier: ^7.8.2
       version: 7.8.2
@@ -633,7 +633,7 @@ importers:
         version: 1.0.0-beta.39
       rolldown-plugin-dts:
         specifier: 'catalog:'
-        version: 0.16.7(rolldown@1.0.0-beta.39)(typescript@5.9.2)(vue-tsc@3.0.7(typescript@5.9.2))
+        version: 0.16.8(rolldown@1.0.0-beta.39)(typescript@5.9.2)(vue-tsc@3.0.7(typescript@5.9.2))
       type-fest:
         specifier: 'catalog:'
         version: 5.0.1
@@ -9460,8 +9460,8 @@ packages:
   robust-predicates@3.0.2:
     resolution: {integrity: sha512-IXgzBWvWQwE6PrDI05OvmXUIruQTcoMDzRsOd5CDvHCVLcLHMTSYvOK5Cm46kWqlV3yAbuSpBZdJ5oP5OUoStg==}
 
-  rolldown-plugin-dts@0.16.7:
-    resolution: {integrity: sha512-9iDzS4MHXMyieisFbWxuz96i/idGJNpvWILqCH06mrEZvn8Q2el3Q63xxjOt7HJjTOUNFhB1isvZFy4dA87lPQ==}
+  rolldown-plugin-dts@0.16.8:
+    resolution: {integrity: sha512-lsx7yrYA0ZXfARLEcPKgHIw8DX4fLQOhmMChgZbn5eFhqibY2Bav1+/Yn5WNm+ATtw+cefXYgEYO/7njeHsgAA==}
     engines: {node: '>=20.18.0'}
     peerDependencies:
       '@ts-macro/tsc': ^0.3.6
@@ -12072,14 +12072,14 @@ snapshots:
   '@babel/template@7.27.2':
     dependencies:
       '@babel/code-frame': 7.27.1
-      '@babel/parser': 7.27.7
+      '@babel/parser': 7.28.4
       '@babel/types': 7.28.4
 
   '@babel/traverse@7.27.7':
     dependencies:
       '@babel/code-frame': 7.27.1
       '@babel/generator': 7.28.3
-      '@babel/parser': 7.27.7
+      '@babel/parser': 7.28.4
       '@babel/template': 7.27.2
       '@babel/types': 7.28.4
       debug: 4.4.3
@@ -21138,7 +21138,7 @@ snapshots:
 
   robust-predicates@3.0.2: {}
 
-  rolldown-plugin-dts@0.16.7(rolldown@1.0.0-beta.39)(typescript@5.9.2)(vue-tsc@3.0.7(typescript@5.9.2)):
+  rolldown-plugin-dts@0.16.8(rolldown@1.0.0-beta.39)(typescript@5.9.2)(vue-tsc@3.0.7(typescript@5.9.2)):
     dependencies:
       '@babel/generator': 7.28.3
       '@babel/parser': 7.28.4
