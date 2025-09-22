@@ -17,3 +17,22 @@ const slots = defineSlots<Record<keyof VListItem["$slots"], () => VNode>>();
     </template>
   </v-list-item>
 </template>
+
+<style scoped lang="scss">
+:deep(.v-list-item__prepend) {
+  align-self: flex-start;
+
+  > :first-child {
+    width: $avatar-width;
+  }
+
+  > .v-list-item__spacer {
+    width: 1rem;
+  }
+}
+// We don't want to hide message content even if they added a bunch of newlines
+:deep(.v-list-item-subtitle) {
+  line-clamp: unset;
+  -webkit-line-clamp: unset;
+}
+</style>

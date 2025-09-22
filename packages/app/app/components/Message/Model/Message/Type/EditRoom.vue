@@ -9,10 +9,13 @@ const displayCreatedAt = useDateFormat(() => message.createdAt, "DD/MM/YYYY H:mm
 
 <template>
   <MessageModelMessageTypeListItem :active :is-preview>
-    <v-icon icon="mdi-pencil" size="small" />
+    <template #prepend>
+      <v-icon icon="mdi-pencil" size="small" />
+    </template>
     <span font-bold>{{ creator.name }}</span>
     <span text-gray> changed the room name: </span>
     <span font-bold>{{ message.message }}. </span>
     <span text-gray text-sm>{{ displayCreatedAt }}</span>
+    <MessageModelMessageEmojiList :is-preview :message />
   </MessageModelMessageTypeListItem>
 </template>

@@ -35,7 +35,7 @@ const messageHtml = useRefreshMentions(() => message.message);
         <StyledAvatar mt-6 :image="creator.image" :name="creator.name" />
       </div>
       <StyledAvatar v-else-if="!isSameBatch" :image="creator.image" :name="creator.name" />
-      <span v-else :op="active ? undefined : 0" class="created-at" text-center text-gray text-xs>
+      <span v-else :op="active ? undefined : 0" text-center text-gray text-xs>
         {{ displayCreatedAtShortFormat }}
       </span>
     </template>
@@ -82,22 +82,3 @@ const messageHtml = useRefreshMentions(() => message.message);
     </div>
   </MessageModelMessageTypeListItem>
 </template>
-
-<style scoped lang="scss">
-:deep(.v-list-item__prepend) {
-  align-self: flex-start;
-
-  > .v-list-item__spacer {
-    width: 1rem;
-  }
-}
-// We don't want to hide message content even if they added a bunch of newlines
-:deep(.v-list-item-subtitle) {
-  line-clamp: unset;
-  -webkit-line-clamp: unset;
-}
-
-.created-at {
-  width: $avatar-width;
-}
-</style>
