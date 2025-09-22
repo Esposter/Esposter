@@ -15,6 +15,5 @@ const slots = defineSlots<Record<keyof VListItem["$slots"], () => VNode>>();
     <template v-for="(_slot, name) of slots" #[name]="scope">
       <slot :name :="{ ...scope }" />
     </template>
-    <slot />
   </v-list-item>
 </template>
