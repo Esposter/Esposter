@@ -99,7 +99,7 @@ watch(optionsMenu, (newOptionsMenu) => {
       </div>
     </template>
     <template #messagePreview>
-      <MessageModelMessage :creator :message :next-message is-preview />
+      <MessageModelMessageType :creator :message :next-message is-preview />
     </template>
   </MessageModelMessageConfirmDeleteDialog>
 </template>

@@ -9,7 +9,7 @@ interface StyledCardProps {
 }
 
 const { cardAttrs = {}, cardProps = {} } = defineProps<StyledCardProps>();
-const slots = defineSlots<Record<keyof VCard["$slots"], Function>>();
+const slots = defineSlots<Record<keyof VCard["$slots"], () => VNode>>();
 </script>
 
 <template>

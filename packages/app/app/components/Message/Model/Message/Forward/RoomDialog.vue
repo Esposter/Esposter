@@ -75,7 +75,7 @@ const {
         </v-list>
       </v-card-text>
       <v-divider />
-      <MessageModelMessage :creator :message="forward" is-preview />
+      <MessageModelMessageType :creator :message="forward" is-preview />
       <v-divider />
       <v-card-actions flex-col gap-0>
         <RichTextEditor v-model="messageInput" :limit="MESSAGE_MAX_LENGTH" placeholder="Add an optional message..." />
