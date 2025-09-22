@@ -79,24 +79,28 @@ const { optionsMenu } = storeToRefs(messageStore);
           </v-list-item>
         </template>
       </StyledEmojiPicker>
-      <v-list-item py-2="!" min-height="auto">
-        <v-divider />
-      </v-list-item>
-      <v-list-item v-for="{ title, color, icon, onClick } of updateMessageItems" :key="title" @click="onClick">
-        <span :class="color ? `text-${color}` : undefined">{{ title }}</span>
-        <template #append>
-          <v-icon size="small" :color :icon />
-        </template>
-      </v-list-item>
-      <v-list-item py-2="!" min-height="auto">
-        <v-divider />
-      </v-list-item>
-      <v-list-item v-for="{ title, color, icon, onClick } of actionMessageItems" :key="title" @click="onClick">
-        <span :class="color ? `text-${color}` : undefined">{{ title }}</span>
-        <template #append>
-          <v-icon size="small" :color :icon />
-        </template>
-      </v-list-item>
+      <template v-if="updateMessageItems.length > 0">
+        <v-list-item py-2="!" min-height="auto">
+          <v-divider />
+        </v-list-item>
+        <v-list-item v-for="{ title, color, icon, onClick } of updateMessageItems" :key="title" @click="onClick">
+          <span :class="color ? `text-${color}` : undefined">{{ title }}</span>
+          <template #append>
+            <v-icon size="small" :color :icon />
+          </template>
+        </v-list-item>
+      </template>
+      <template v-if="actionMessageItems.length > 0">
+        <v-list-item py-2="!" min-height="auto">
+          <v-divider />
+        </v-list-item>
+        <v-list-item v-for="{ title, color, icon, onClick } of actionMessageItems" :key="title" @click="onClick">
+          <span :class="color ? `text-${color}` : undefined">{{ title }}</span>
+          <template #append>
+            <v-icon size="small" :color :icon />
+          </template>
+        </v-list-item>
+      </template>
       <template v-if="deleteMessageItem">
         <v-list-item py-2="!" min-height="auto">
           <v-divider />

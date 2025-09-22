@@ -4,6 +4,7 @@ import type { MessageComponentProps } from "@/services/message/MessageComponentM
 interface EditRoomProps extends MessageComponentProps {}
 
 const { active, creator, isPreview = false, message } = defineProps<EditRoomProps>();
+const displayCreatedAt = useDateFormat(() => message.createdAt, "DD/MM/YYYY H:mm");
 </script>
 
 <template>
@@ -11,6 +12,7 @@ const { active, creator, isPreview = false, message } = defineProps<EditRoomProp
     <v-icon icon="mdi-pencil" size="small" />
     <span font-bold>{{ creator.name }}</span>
     <span text-gray> changed the room name: </span>
-    <span font-bold>{{ message.message }}</span>
+    <span font-bold>{{ message.message }}. </span>
+    <span text-gray text-sm>{{ displayCreatedAt }}</span>
   </MessageModelMessageTypeListItem>
 </template>
