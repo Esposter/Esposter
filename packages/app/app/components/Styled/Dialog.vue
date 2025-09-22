@@ -28,7 +28,7 @@ const isValid = ref(true);
 <template>
   <v-dialog v-model="isOpen">
     <template #activator>
-      <slot name="activator" :is-open :update-is-open="(value: true) => (isOpen = value)" />
+      <slot name="activator" :is-open :update-is-open="(value) => (isOpen = value)" />
     </template>
     <v-form
       v-model="isValid"
