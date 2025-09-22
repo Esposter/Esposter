@@ -30,6 +30,15 @@ export const useDataStore = defineStore("message/data", () => {
   const hasMoreNewer = ref(false);
   const nextCursorNewer = ref<string>();
 
+  const createMessage = async (input: CreateMessageInput) => {
+    if (!session.value.data) return;
+
+    const newMessage = reactive(createMessageEntity({ ...input, isLoading: true, userId: session.value.data.user.id }));
+    await storeCreateMessage(newMessage);
+    Object.assign(newMessage, await $trpc.message.createMessage.mutate(input));
+    delete newMessage.isLoading;
+  };
+
   const storeCreateMessage = async (message: MessageEntity) => {
     await Promise.all(MessageHookMap[Operation.Create].map((fn) => Promise.resolve(fn(message))));
     // Our messages list is reversed i.e. most recent messages are at the front
@@ -46,25 +55,16 @@ export const useDataStore = defineStore("message/data", () => {
   const uploadFileStore = useUploadFileStore();
   const replyStore = useReplyStore();
   const sendMessage = async (editor: Editor) => {
-    if (!session.value.data || !roomStore.currentRoomId || !validateInput(editor, true)) return;
+    if (!roomStore.currentRoomId || !validateInput(editor, true)) return;
 
-    const createMessageInput: CreateMessageInput = {
+    const input: CreateMessageInput = {
       files: uploadFileStore.files,
       message: inputStore.input,
       replyRowKey: replyStore.rowKey,
       roomId: roomStore.currentRoomId,
     };
     await Promise.all(MessageHookMap.ResetSend.map((fn) => Promise.resolve(fn(editor))));
-    const newMessage = reactive(
-      createMessageEntity({
-        ...createMessageInput,
-        isLoading: true,
-        userId: session.value.data.user.id,
-      }),
-    );
-    await storeCreateMessage(newMessage);
-    Object.assign(newMessage, await $trpc.message.createMessage.mutate(createMessageInput));
-    delete newMessage.isLoading;
+    await createMessage(input);
   };
   MessageHookMap.ResetSend.push((editor) => {
     editor.commands.clearContent(true);
@@ -73,6 +73,7 @@ export const useDataStore = defineStore("message/data", () => {
   // We only expose the internal store crud message functions for subscriptions
   // everything else will directly use trpc mutations that are tracked by the related subscriptions
   return {
+    createMessage,
     files,
     hasMoreNewer,
     items,

@@ -8,10 +8,9 @@ const { active, creator, isPreview = false, message } = defineProps<EditRoomProp
 
 <template>
   <MessageModelMessageTypeListItem :active :is-preview>
-    <v-list-item-subtitle italic>
-      <v-icon icon="mdi-pencil" size="small" />
-      {{ creator.name }}
-      changed the room name: {{ message.message }}
-    </v-list-item-subtitle>
+    <v-icon icon="mdi-pencil" size="small" />
+    <span font-bold>{{ creator.name }}</span>
+    <span text-gray> changed the room name: </span>
+    <span font-bold>{{ message.message }}</span>
   </MessageModelMessageTypeListItem>
 </template>
