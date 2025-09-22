@@ -6,7 +6,7 @@ interface StyledDataTableServerProps {
 }
 
 const { dataTableServerProps } = defineProps<StyledDataTableServerProps>();
-const slots = defineSlots<Record<keyof VDataTableServer["$slots"], () => VNode>>();
+const slots = defineSlots<Record<keyof VDataTableServer["$slots"], Function>>();
 const { backgroundOpacity40 } = useColors();
 </script>
 
