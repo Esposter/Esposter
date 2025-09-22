@@ -18,10 +18,10 @@ const isSameBatch = computed(
     dayjs(message.createdAt).diff(nextMessage.createdAt, "minutes") <= 5,
 );
 const createdAtDayjs = computed(() => dayjs(message.createdAt));
-const displayCreatedAtShortFormat = computed(() => createdAtDayjs.value.format("H:mm"));
+const displayCreatedAtShort = computed(() => createdAtDayjs.value.format("H:mm"));
 const displayCreatedAt = computed(() => {
-  if (createdAtDayjs.value.isToday()) return displayCreatedAtShortFormat.value;
-  else if (createdAtDayjs.value.isYesterday()) return `Yesterday at ${displayCreatedAtShortFormat.value}`;
+  if (createdAtDayjs.value.isToday()) return displayCreatedAtShort.value;
+  else if (createdAtDayjs.value.isYesterday()) return `Yesterday at ${displayCreatedAtShort.value}`;
   else return createdAtDayjs.value.format("DD/MM/YYYY H:mm");
 });
 const messageHtml = useRefreshMentions(() => message.message);
@@ -36,7 +36,7 @@ const messageHtml = useRefreshMentions(() => message.message);
       </div>
       <StyledAvatar v-else-if="!isSameBatch" :image="creator.image" :name="creator.name" />
       <span v-else :op="active ? undefined : 0" text-center text-gray text-xs>
-        {{ displayCreatedAtShortFormat }}
+        {{ displayCreatedAtShort }}
       </span>
     </template>
     <v-list-item-title>
