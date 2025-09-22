@@ -1,6 +1,6 @@
 import type { FileEntity } from "#shared/models/azure/FileEntity";
 
-export interface FileRendererProps {
+export interface FileRendererComponentProps {
   file: FileEntity;
   isPreview?: boolean;
   url: string;

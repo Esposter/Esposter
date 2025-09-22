@@ -1,15 +1,11 @@
 <script setup lang="ts">
-import type { User } from "#shared/db/schema/users";
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
+import type { MessageComponentProps } from "@/services/message/MessageComponentMap";
 
 import { dayjs } from "#shared/services/dayjs";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
-interface MessageProps {
-  active?: boolean;
-  creator: User;
-  isPreview?: boolean;
-  message: MessageEntity;
+interface MessageProps extends MessageComponentProps {
   nextMessage?: MessageEntity;
 }
 
@@ -26,7 +22,7 @@ const messageHtml = useRefreshMentions(() => message.message);
 </script>
 
 <template>
-  <v-list-item :style="isPreview ? { pointerEvents: 'none', userSelect: 'none' } : undefined" :active>
+  <MessageModelMessageTypeListItem :active :is-preview>
     <template #prepend>
       <div v-if="message.replyRowKey" relative flex flex-col items-center>
         <MessageModelMessageReplySpine absolute top-0 mt-2.5 ml-7.5 :reply-row-key="message.replyRowKey" />
@@ -78,7 +74,7 @@ const messageHtml = useRefreshMentions(() => message.message);
       />
       <MessageModelMessageEmojiList :is-preview :message />
     </div>
-  </v-list-item>
+  </MessageModelMessageTypeListItem>
 </template>
 
 <style scoped lang="scss">

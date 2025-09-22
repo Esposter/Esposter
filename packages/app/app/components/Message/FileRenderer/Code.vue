@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { FileRendererProps } from "@/models/message/file/FileRendererProps";
+import type { FileRendererComponentProps } from "@/models/message/file/FileRendererComponentProps";
 import type { EditorView } from "@codemirror/view";
 
 import { getLanguageExtension } from "@/services/codemirror/getLanguageExtension";
 import { PREVIEW_MAX_HEIGHT } from "@/services/message/file/constants";
 import { Codemirror } from "vue-codemirror";
 
-interface FileRendererCodeProps extends FileRendererProps {
+interface FileRendererCodeProps extends FileRendererComponentProps {
   language: string;
 }
 

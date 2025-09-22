@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { FileRendererProps } from "@/models/message/file/FileRendererProps";
+import type { FileRendererComponentProps } from "@/models/message/file/FileRendererComponentProps";
 
 import { getFilesize } from "@/services/file/getFilesize";
 
-const { file, isPreview, url } = defineProps<FileRendererProps>();
+const { file, isPreview, url } = defineProps<FileRendererComponentProps>();
 const filesize = computed(() => getFilesize(file.size));
 </script>
 

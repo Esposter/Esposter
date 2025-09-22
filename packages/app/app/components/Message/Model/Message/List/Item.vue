@@ -3,6 +3,7 @@ import type { User } from "#shared/db/schema/users";
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
 import { dayjs } from "#shared/services/dayjs";
+import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 import { useMessageStore } from "@/store/message";
 import { useForwardStore } from "@/store/message/forward";
 import { useReplyStore } from "@/store/message/reply";
@@ -44,7 +45,8 @@ watch(optionsMenu, (newOptionsMenu) => {
 <template>
   <MessageModelMessageConfirmDeleteDialog :message>
     <template #default="{ isOpen, updateIsOpen }">
-      <MessageModelMessage
+      <component
+        :is="MessageComponentMap[message.type]"
         :id="message.rowKey"
         :mt="isSameBatch ? undefined : 4"
         py-1="!"
@@ -71,7 +73,7 @@ watch(optionsMenu, (newOptionsMenu) => {
           @update:update-mode="isUpdateMode = $event"
           @update:delete-mode="updateIsOpen"
         />
-      </MessageModelMessage>
+      </component>
       <div v-if="!message.isLoading" v-show="activeAndNotUpdateMode && !isOpen" relative z-1>
         <div
           absolute
