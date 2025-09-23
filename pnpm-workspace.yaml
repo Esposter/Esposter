@@ -32,14 +32,14 @@ catalog:
   "@nuxtjs/seo": ^3.2.2
   "@pinia/nuxt": ^0.11.2
   "@prettier/plugin-oxc": ^0.0.4
-  "@tiptap/core": ^3.5.0
-  "@tiptap/extension-file-handler": ^3.5.0
-  "@tiptap/extension-mention": ^3.5.0
-  "@tiptap/extensions": ^3.5.0
-  "@tiptap/pm": ^3.5.0
-  "@tiptap/starter-kit": ^3.5.0
-  "@tiptap/suggestion": ^3.5.0
-  "@tiptap/vue-3": ^3.5.0
+  "@tiptap/core": ^3.5.1
+  "@tiptap/extension-file-handler": ^3.5.1
+  "@tiptap/extension-mention": ^3.5.1
+  "@tiptap/extensions": ^3.5.1
+  "@tiptap/pm": ^3.5.1
+  "@tiptap/starter-kit": ^3.5.1
+  "@tiptap/suggestion": ^3.5.1
+  "@tiptap/vue-3": ^3.5.1
   "@trpc/client": ^11.5.1
   "@trpc/server": ^11.5.1
   "@types/data-urls": ^3.0.4
@@ -94,7 +94,7 @@ catalog:
   emoji-mart-vue-fast: ^15.0.5
   eslint: ^9.36.0
   eslint-config-prettier: ^10.1.8
-  eslint-plugin-oxlint: ^1.16.0
+  eslint-plugin-oxlint: ^1.17.0
   eslint-plugin-perfectionist: ^4.15.0
   eslint-plugin-pinia: ^0.4.1
   eslint-plugin-prettier: ^5.5.4
@@ -137,7 +137,7 @@ catalog:
   nuxt-security: ^2.4.0
   obscenity: ^0.4.5
   omit-deep-lodash: ^1.1.7
-  oxlint: ^1.16.0
+  oxlint: ^1.17.0
   p-progress: ^1.0.0
   pathe: ^2.0.3
   pdfjs-dist: ^5.4.149
@@ -151,15 +151,15 @@ catalog:
   rolldown: ^1.0.0-beta.39
   rolldown-plugin-dts: ^0.16.8
   rxjs: ^7.8.2
-  sass-embedded: ^1.93.1
+  sass-embedded: ^1.93.2
   sax: ^1.4.1
   show-open-file-picker: ^0.4.0
   sql-highlight: ^6.1.0
   superjson: ^2.2.2
-  survey-core: ^2.3.7
-  survey-creator-core: ^2.3.7
-  survey-creator-vue: ^2.3.7
-  survey-vue3-ui: ^2.3.7
+  survey-core: ^2.3.8
+  survey-creator-core: ^2.3.8
+  survey-creator-vue: ^2.3.8
+  survey-vue3-ui: ^2.3.8
   three: ^0.180.0
   three-globe: ^2.44.0
   trpc-nuxt: ^1.2.0

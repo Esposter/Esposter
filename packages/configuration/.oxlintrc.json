@@ -59,6 +59,7 @@
     "unicorn/prefer-query-selector": "off",
     "unicorn/switch-case-braces": "off",
     "vars-on-top": "off",
+    "vue/no-required-prop-with-default": "off",
     "yoda": ["error", "never"]
   }
 }
