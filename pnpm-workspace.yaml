@@ -32,14 +32,14 @@ catalog:
   "@nuxtjs/seo": ^3.2.2
   "@pinia/nuxt": ^0.11.2
   "@prettier/plugin-oxc": ^0.0.4
-  "@tiptap/core": ^3.4.6
-  "@tiptap/extension-file-handler": ^3.4.6
-  "@tiptap/extension-mention": ^3.4.6
-  "@tiptap/extensions": ^3.4.6
-  "@tiptap/pm": ^3.4.6
-  "@tiptap/starter-kit": ^3.4.6
-  "@tiptap/suggestion": ^3.4.6
-  "@tiptap/vue-3": ^3.4.6
+  "@tiptap/core": ^3.5.0
+  "@tiptap/extension-file-handler": ^3.5.0
+  "@tiptap/extension-mention": ^3.5.0
+  "@tiptap/extensions": ^3.5.0
+  "@tiptap/pm": ^3.5.0
+  "@tiptap/starter-kit": ^3.5.0
+  "@tiptap/suggestion": ^3.5.0
+  "@tiptap/vue-3": ^3.5.0
   "@trpc/client": ^11.5.1
   "@trpc/server": ^11.5.1
   "@types/data-urls": ^3.0.4
