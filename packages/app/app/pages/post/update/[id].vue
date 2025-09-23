@@ -11,19 +11,20 @@ const { updatePost } = postStore;
 </script>
 
 <template>
-  <div>
-    <NuxtLayout>
-      <v-container>
-        <PostUpsertForm
-          :initial-values="{ title: post.title, description: post.description }"
-          @submit="
-            async (_event, values) => {
-              await updatePost({ id: post.id, ...values });
-              await navigateTo(RoutePath.Index);
-            }
-          "
-        />
-      </v-container>
-    </NuxtLayout>
-  </div>
+  <NuxtLayout>
+    <Head>
+      <Title>{{ post.title }}</Title>
+    </Head>
+    <v-container>
+      <PostUpsertForm
+        :initial-values="{ title: post.title, description: post.description }"
+        @submit="
+          async (_event, values) => {
+            await updatePost({ id: post.id, ...values });
+            await navigateTo(RoutePath.Index);
+          }
+        "
+      />
+    </v-container>
+  </NuxtLayout>
 </template>

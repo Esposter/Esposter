@@ -16,6 +16,9 @@ currentPost.value = post;
 
 <template>
   <NuxtLayout>
+    <Head>
+      <Title>{{ post.title }}</Title>
+    </Head>
     <v-container v-if="currentPost" h-full flex flex-col flex-1>
       <v-row flex-none="!">
         <v-col>

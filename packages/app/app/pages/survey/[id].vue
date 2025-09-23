@@ -74,6 +74,9 @@ onMounted(async () => {
 
 <template>
   <NuxtLayout>
+    <Head>
+      <Title>Survey Response</Title>
+    </Head>
     <SurveyComponent v-if="!isLoading" :model />
   </NuxtLayout>
 </template>
