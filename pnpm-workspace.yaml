@@ -169,7 +169,7 @@ catalog:
   typescript: ^5.9.2
   typescript-eslint: ^8.44.1
   unocss: ^66.5.2
-  unplugin-auto-import: ^20.1.0
+  unplugin-auto-import: ^20.2.0
   v-viewer: ^3.0.22
   viewerjs: ^1.11.7
   vite: npm:rolldown-vite@7.1.12
