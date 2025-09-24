@@ -163,7 +163,6 @@
     "ajv-errors": "https://github.com/json-layout/json-layout/issues/5",
     "ajv-formats": "https://github.com/json-layout/json-layout/issues/5",
     "ajv-i18n": "https://github.com/json-layout/json-layout/issues/5",
-    "better-auth": "@TODO: https://github.com/better-auth/better-auth/issues/4722",
     "debug": "https://github.com/json-layout/json-layout/issues/5",
     "vue-phaserjs": "@TODO: vite dev is broken with vue's new reactive system"
   },
