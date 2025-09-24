@@ -14,14 +14,12 @@ export const useFixedLayoutStyles = (bottomOffset?: number) => {
     bottom: computed<CSSProperties>(() => ({
       bottom: "0px",
       left: `${middleLeftOffset.value}px`,
-      transform: "translateY(0px)",
       width: `calc(100% - ${middleLeftOffset.value + middleRightOffset.value}px)`,
     })),
     left: computed<CSSProperties>(() => ({
       height: `calc(100% - ${APP_BAR_HEIGHT}px)`,
       left: `${leftOffset.value}px`,
       top: `${APP_BAR_HEIGHT}px`,
-      transform: "translateX(0px)",
       width: `${LEFT_DRAWER_WIDTH}px`,
     })),
     middle: computed<CSSProperties>(() => ({
@@ -34,7 +32,6 @@ export const useFixedLayoutStyles = (bottomOffset?: number) => {
       height: `calc(100% - ${APP_BAR_HEIGHT}px)`,
       right: `${rightOffset.value}px`,
       top: `${APP_BAR_HEIGHT}px`,
-      transform: "translateX(0px)",
       width: `${RIGHT_DRAWER_WIDTH}px`,
     })),
   };
