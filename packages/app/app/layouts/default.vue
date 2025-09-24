@@ -32,10 +32,8 @@ const { isDesktop, isLeftDrawerOpen, isLeftDrawerOpenAuto, isRightDrawerOpen, is
   storeToRefs(layoutStore);
 // Fix the layout structure so navigating does not cause a layout shift
 const { bottom, left, middle, right } = useFixedLayoutStyles(bottomOffset);
-const router = useRouter();
 
-router.beforeEach(() => {
-  // We need to reset layout structure on route change
+onMounted(() => {
   isLeftDrawerOpen.value = isLeftDrawerOpenAuto.value = slots.left ? isDesktop.value : false;
   isRightDrawerOpen.value = isRightDrawerOpenAuto.value = slots.right ? isDesktop.value : false;
 });
