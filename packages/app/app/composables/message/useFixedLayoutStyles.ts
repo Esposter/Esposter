@@ -3,7 +3,7 @@ import type { CSSProperties } from "vue";
 import { APP_BAR_HEIGHT, LEFT_DRAWER_WIDTH, RIGHT_DRAWER_WIDTH } from "#shared/services/app/constants";
 import { useLayoutStore } from "@/store/layout";
 
-export const useFixedLayoutStyles = (bottomOffset?: number) => {
+export const useFixedLayoutStyles = (bottomOffset = 0) => {
   const layoutStore = useLayoutStore();
   const { isLeftDrawerOpen, isRightDrawerOpen } = storeToRefs(layoutStore);
   const leftOffset = computed(() => (isLeftDrawerOpen.value ? 0 : -LEFT_DRAWER_WIDTH));
@@ -23,7 +23,7 @@ export const useFixedLayoutStyles = (bottomOffset?: number) => {
       width: `${LEFT_DRAWER_WIDTH}px`,
     })),
     middle: computed<CSSProperties>(() => ({
-      "--v-layout-bottom": bottomOffset ? `${bottomOffset}px` : undefined,
+      "--v-layout-bottom": `${bottomOffset}px`,
       "--v-layout-left": `${middleLeftOffset.value}px`,
       "--v-layout-right": `${middleRightOffset.value}px`,
       "--v-layout-top": `${APP_BAR_HEIGHT}px`,
