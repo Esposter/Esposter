@@ -3,7 +3,6 @@ import type { ItemEntityType } from "#shared/models/entity/ItemEntityType";
 import type { VForm } from "vuetify/components";
 
 import { dayjs } from "#shared/services/dayjs";
-import Header from "@/components/Styled/EditFormDialog/Header.vue";
 
 interface EditFormDialogProps<T> {
   editedItem: T;
@@ -43,9 +42,9 @@ watch(editFormRef, (newEditFormRef) => {
 
 <template>
   <v-dialog v-model="dialog" :fullscreen="isFullScreenDialog" :width="isFullScreenDialog ? '100%' : 800" persistent>
-    <v-form ref="editFormRef" contents="!" @submit.prevent="emit('save')">
+    <v-form ref="editFormRef" @submit.prevent="emit('save')">
       <StyledCard>
-        <Header
+        <StyledEditFormDialogHeader
           :name
           :edited-item
           :original-item

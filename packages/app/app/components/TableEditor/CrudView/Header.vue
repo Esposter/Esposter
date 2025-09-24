@@ -43,7 +43,9 @@ const component = computed(() => (editedItem.value ? useEditFormComponent(edited
       @update:edit-form-ref="editFormRef = $event"
       @update:fullscreen-dialog="isFullScreenDialog = $event"
     >
-      <component :is="component" />
+      <v-container v-if="editedItem" overflow-y-auto fluid>
+        <component :is="component" v-model="editedItem" />
+      </v-container>
     </StyledEditFormDialog>
   </v-toolbar>
 </template>

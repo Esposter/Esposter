@@ -18,8 +18,15 @@ const slots = defineSlots<{
   left?: () => VNode;
   right?: () => VNode;
 }>();
+const router = useRouter();
+const { mobile } = useDisplay();
 const layoutStore = useLayoutStore();
 const { leftDrawerOpen, leftDrawerOpenAuto, rightDrawerOpen, rightDrawerOpenAuto } = storeToRefs(layoutStore);
+
+router.beforeEach(() => {
+  // We need to reset layout structure on route change
+  leftDrawerOpen.value = rightDrawerOpen.value = leftDrawerOpenAuto.value = rightDrawerOpenAuto.value = !mobile.value;
+});
 </script>
 
 <template>

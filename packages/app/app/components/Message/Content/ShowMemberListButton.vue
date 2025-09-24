@@ -10,7 +10,7 @@ const { rightDrawer } = storeToRefs(messageLayoutStore);
 </script>
 
 <template>
-  <v-tooltip location="bottom" text="Show Member List">
+  <v-tooltip location="bottom" :text="`${rightDrawerOpen ? 'Hide' : 'Show'} Member List`">
     <template #activator="{ props }">
       <v-btn
         icon="mdi-account-multiple"
