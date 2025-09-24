@@ -5,13 +5,22 @@ import type { VNavigationDrawer } from "vuetify/components";
 import { useLayoutStore } from "@/store/layout";
 
 interface DefaultProps {
+  bottomOffset?: number;
   footerStyle?: CSSProperties;
+  hideGlobalScrollbar?: true;
   leftNavigationDrawerProps?: VNavigationDrawer["$props"];
   mainStyle?: CSSProperties;
   rightNavigationDrawerProps?: VNavigationDrawer["$props"];
 }
 
-const { footerStyle, leftNavigationDrawerProps, mainStyle, rightNavigationDrawerProps } = defineProps<DefaultProps>();
+const {
+  bottomOffset,
+  footerStyle,
+  hideGlobalScrollbar,
+  leftNavigationDrawerProps,
+  mainStyle,
+  rightNavigationDrawerProps,
+} = defineProps<DefaultProps>();
 const slots = defineSlots<{
   default?: () => VNode;
   footer?: () => VNode;
@@ -19,13 +28,24 @@ const slots = defineSlots<{
   right?: () => VNode;
 }>();
 const layoutStore = useLayoutStore();
-const { isLeftDrawerOpen, isLeftDrawerOpenAuto, isRightDrawerOpen, isRightDrawerOpenAuto } = storeToRefs(layoutStore);
+const { isDesktop, isLeftDrawerOpen, isLeftDrawerOpenAuto, isRightDrawerOpen, isRightDrawerOpenAuto } =
+  storeToRefs(layoutStore);
+// Fix the layout structure so navigating does not cause a layout shift
+const { bottom, left, middle, right } = useFixedLayoutStyles(bottomOffset);
+const router = useRouter();
+
+router.beforeEach(() => {
+  // We need to reset layout structure on route change
+  isLeftDrawerOpen.value = isLeftDrawerOpenAuto.value = slots.left ? isDesktop.value : false;
+  isRightDrawerOpen.value = isRightDrawerOpenAuto.value = slots.right ? isDesktop.value : false;
+});
 </script>
 
 <template>
   <div contents>
     <v-navigation-drawer
       v-if="slots.left"
+      :style="left"
       :model-value="leftNavigationDrawerProps?.permanent ?? isLeftDrawerOpen"
       :="leftNavigationDrawerProps"
       @update:model-value="
@@ -40,6 +60,7 @@ const { isLeftDrawerOpen, isLeftDrawerOpenAuto, isRightDrawerOpen, isRightDrawer
 
     <v-navigation-drawer
       v-if="slots.right"
+      :style="right"
       :model-value="rightNavigationDrawerProps?.permanent ?? isRightDrawerOpen"
       location="right"
       :="rightNavigationDrawerProps"
@@ -52,12 +73,12 @@ const { isLeftDrawerOpen, isLeftDrawerOpenAuto, isRightDrawerOpen, isRightDrawer
     >
       <slot name="right" />
     </v-navigation-drawer>
-
-    <v-main :style="mainStyle">
+    <!-- Set max height here so we can hide global window scrollbar -->
+    <v-main :style="{ ...middle, ...mainStyle, maxHeight: hideGlobalScrollbar ? '100dvh' : undefined }">
       <slot />
     </v-main>
 
-    <v-footer v-if="slots.footer" :style="footerStyle" app>
+    <v-footer v-if="slots.footer" :style="{ ...bottom, ...footerStyle }" app>
       <slot name="footer" />
     </v-footer>
   </div>

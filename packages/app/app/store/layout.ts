@@ -10,18 +10,8 @@ export const useLayoutStore = defineStore("layout", () => {
   // suddenly whenever we open and close the drawer
   const isLeftDrawerOpenAuto = ref(isDesktop.value);
   const isRightDrawerOpenAuto = ref(isDesktop.value);
-  const router = useRouter();
-
-  router.beforeEach(() => {
-    // We need to reset layout structure on route change
-    isLeftDrawerOpen.value =
-      isRightDrawerOpen.value =
-      isLeftDrawerOpenAuto.value =
-      isRightDrawerOpenAuto.value =
-        isDesktop.value;
-  });
-
   return {
+    isDesktop,
     isLeftDrawerOpen,
     isLeftDrawerOpenAuto,
     isRightDrawerOpen,
