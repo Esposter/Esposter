@@ -10,7 +10,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 export const useReadSearchedMessages = () => {
   const { $trpc } = useNuxtApp();
   const layoutStore = useLayoutStore();
-  const { rightDrawerOpen } = storeToRefs(layoutStore);
+  const { isRightDrawerOpen } = storeToRefs(layoutStore);
   const messageLayoutStore = useMessageLayoutStore();
   const { rightDrawer } = storeToRefs(messageLayoutStore);
   const roomStore = useRoomStore();
@@ -32,7 +32,7 @@ export const useReadSearchedMessages = () => {
 
       menu.value = false;
       isSearching.value = true;
-      rightDrawerOpen.value = true;
+      isRightDrawerOpen.value = true;
       rightDrawer.value = RightDrawer.Search;
       const { count, data } = await $trpc.message.searchMessages.query({
         filters: selectedFilters.value,

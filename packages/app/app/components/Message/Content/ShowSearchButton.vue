@@ -4,7 +4,7 @@ import { useLayoutStore } from "@/store/layout";
 import { useLayoutStore as useMessageLayoutStore } from "@/store/message/layout";
 
 const layoutStore = useLayoutStore();
-const { rightDrawerOpen } = storeToRefs(layoutStore);
+const { isRightDrawerOpen } = storeToRefs(layoutStore);
 const messageLayoutStore = useMessageLayoutStore();
 const { rightDrawer } = storeToRefs(messageLayoutStore);
 </script>
@@ -18,10 +18,10 @@ const { rightDrawer } = storeToRefs(messageLayoutStore);
         :="props"
         @click="
           () => {
-            if (rightDrawer === RightDrawer.Search) rightDrawerOpen = !rightDrawerOpen;
+            if (rightDrawer === RightDrawer.Search) isRightDrawerOpen = !isRightDrawerOpen;
             else {
               rightDrawer = RightDrawer.Search;
-              rightDrawerOpen = true;
+              isRightDrawerOpen = true;
             }
           }
         "

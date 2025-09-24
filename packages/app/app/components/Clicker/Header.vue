@@ -2,25 +2,25 @@
 import { useLayoutStore } from "@/store/layout";
 
 const layoutStore = useLayoutStore();
-const { leftDrawerOpen, leftDrawerOpenAuto, rightDrawerOpen, rightDrawerOpenAuto } = storeToRefs(layoutStore);
+const { isLeftDrawerOpen, isLeftDrawerOpenAuto, isRightDrawerOpen, isRightDrawerOpenAuto } = storeToRefs(layoutStore);
 </script>
 
 <template>
   <v-toolbar>
-    <template v-if="!leftDrawerOpenAuto" #prepend>
+    <template v-if="!isLeftDrawerOpenAuto" #prepend>
       <v-tooltip text="Store">
         <template #activator="{ props }">
-          <v-btn icon="mdi-store" :="props" @click="leftDrawerOpen = true" />
+          <v-btn icon="mdi-store" :="props" @click="isLeftDrawerOpen = true" />
         </template>
       </v-tooltip>
     </template>
     <v-spacer />
     <ClickerModelItemTypeSelectors />
     <v-spacer />
-    <template v-if="!rightDrawerOpenAuto" #append>
+    <template v-if="!isRightDrawerOpenAuto" #append>
       <v-tooltip text="Inventory">
         <template #activator="{ props }">
-          <v-btn icon="mdi-bag-personal" :="props" @click="rightDrawerOpen = true" />
+          <v-btn icon="mdi-bag-personal" :="props" @click="isRightDrawerOpen = true" />
         </template>
       </v-tooltip>
     </template>

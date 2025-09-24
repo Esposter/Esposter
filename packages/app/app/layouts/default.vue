@@ -18,27 +18,20 @@ const slots = defineSlots<{
   left?: () => VNode;
   right?: () => VNode;
 }>();
-const router = useRouter();
-const { mobile } = useDisplay();
 const layoutStore = useLayoutStore();
-const { leftDrawerOpen, leftDrawerOpenAuto, rightDrawerOpen, rightDrawerOpenAuto } = storeToRefs(layoutStore);
-
-router.beforeEach(() => {
-  // We need to reset layout structure on route change
-  leftDrawerOpen.value = rightDrawerOpen.value = leftDrawerOpenAuto.value = rightDrawerOpenAuto.value = !mobile.value;
-});
+const { isLeftDrawerOpen, isLeftDrawerOpenAuto, isRightDrawerOpen, isRightDrawerOpenAuto } = storeToRefs(layoutStore);
 </script>
 
 <template>
   <div contents>
     <v-navigation-drawer
       v-if="slots.left"
-      :model-value="leftNavigationDrawerProps?.permanent ?? leftDrawerOpen"
+      :model-value="leftNavigationDrawerProps?.permanent ?? isLeftDrawerOpen"
       :="leftNavigationDrawerProps"
       @update:model-value="
         (value) => {
-          leftDrawerOpen = value;
-          leftDrawerOpenAuto = value;
+          isLeftDrawerOpen = value;
+          isLeftDrawerOpenAuto = value;
         }
       "
     >
@@ -47,13 +40,13 @@ router.beforeEach(() => {
 
     <v-navigation-drawer
       v-if="slots.right"
-      :model-value="rightNavigationDrawerProps?.permanent ?? rightDrawerOpen"
+      :model-value="rightNavigationDrawerProps?.permanent ?? isRightDrawerOpen"
       location="right"
       :="rightNavigationDrawerProps"
       @update:model-value="
         (value) => {
-          rightDrawerOpen = value;
-          rightDrawerOpenAuto = value;
+          isRightDrawerOpen = value;
+          isRightDrawerOpenAuto = value;
         }
       "
     >
