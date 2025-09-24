@@ -61,8 +61,8 @@ catalogs:
       specifier: ^6.1.19
       version: 6.1.19
     '@koumoul/vjsf':
-      specifier: ^3.20.5
-      version: 3.20.5
+      specifier: ^3.20.6
+      version: 3.20.6
     '@lerna-lite/cli':
       specifier: ^4.8.0
       version: 4.8.0
@@ -702,7 +702,7 @@ importers:
         version: 6.1.19(@fullcalendar/core@6.1.19)(vue@3.5.21(typescript@5.9.2))
       '@koumoul/vjsf':
         specifier: 'catalog:'
-        version: 3.20.5(typescript@5.9.2)(vue@3.5.21(typescript@5.9.2))(vuetify@3.10.2)
+        version: 3.20.6(typescript@5.9.2)(vue@3.5.21(typescript@5.9.2))(vuetify@3.10.2)
       '@mdi/font':
         specifier: 'catalog:'
         version: 7.4.47
@@ -2640,8 +2640,8 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@json-layout/core@1.15.9':
-    resolution: {integrity: sha512-8eONSe9Xoz2XjQKEslYWgh+6A3IM7sqiM/Sdg8i8UhNn/OU1+eKr9yA069bWEgi/hS+ImjrjjIkRWuRtdHeTcQ==}
+  '@json-layout/core@2.0.0':
+    resolution: {integrity: sha512-pWjn3i7dSj7C6iYwMyyHzQQlBZ8180Tlwzyvv2BZwY0jIRdS9Kxw+Ra92Yah096toEIwac3F7xWwn0OUu37Wzw==}
     peerDependencies:
       '@json-layout/vocabulary': ^2.8.0
 
@@ -2651,8 +2651,8 @@ packages:
   '@juggle/resize-observer@3.4.0':
     resolution: {integrity: sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==}
 
-  '@koumoul/vjsf@3.20.5':
-    resolution: {integrity: sha512-ZTTuym0PyOLQQonWUDz7ZXWYkXZL3XQOKkn7H+jJ96a3Yx1f6HB3frzZOSTHDnqlEbWVR62ynzdjxTpQmqlVdw==}
+  '@koumoul/vjsf@3.20.6':
+    resolution: {integrity: sha512-gCS0ePJM6irzXHu/ob/mtJAVPf+kdyCJYlVFDWaiAsKYaaUGVtl8jZJhBwyADI7CuuR5ouvq39rmlbpFpYJNvw==}
     peerDependencies:
       vue: ^3.4.3
       vuetify: ^3.8.12
@@ -12933,7 +12933,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@json-layout/core@1.15.9(@json-layout/vocabulary@2.8.0)':
+  '@json-layout/core@2.0.0(@json-layout/vocabulary@2.8.0)':
     dependencies:
       '@json-layout/vocabulary': 2.8.0
       ajv: 8.17.1
@@ -12958,9 +12958,9 @@ snapshots:
 
   '@juggle/resize-observer@3.4.0': {}
 
-  '@koumoul/vjsf@3.20.5(typescript@5.9.2)(vue@3.5.21(typescript@5.9.2))(vuetify@3.10.2)':
+  '@koumoul/vjsf@3.20.6(typescript@5.9.2)(vue@3.5.21(typescript@5.9.2))(vuetify@3.10.2)':
     dependencies:
-      '@json-layout/core': 1.15.9(@json-layout/vocabulary@2.8.0)
+      '@json-layout/core': 2.0.0(@json-layout/vocabulary@2.8.0)
       '@json-layout/vocabulary': 2.8.0
       '@vueuse/core': 12.8.2(typescript@5.9.2)
       debug: 4.4.3
