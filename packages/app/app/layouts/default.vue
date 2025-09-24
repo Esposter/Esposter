@@ -26,7 +26,6 @@ const { leftDrawerOpen, leftDrawerOpenAuto, rightDrawerOpen, rightDrawerOpenAuto
   <div contents>
     <v-navigation-drawer
       v-if="slots.left"
-      app
       :model-value="leftNavigationDrawerProps?.permanent ?? leftDrawerOpen"
       :="leftNavigationDrawerProps"
       @update:model-value="
@@ -41,9 +40,8 @@ const { leftDrawerOpen, leftDrawerOpenAuto, rightDrawerOpen, rightDrawerOpenAuto
 
     <v-navigation-drawer
       v-if="slots.right"
-      app
-      location="right"
       :model-value="rightNavigationDrawerProps?.permanent ?? rightDrawerOpen"
+      location="right"
       :="rightNavigationDrawerProps"
       @update:model-value="
         (value) => {
@@ -73,7 +71,7 @@ const { leftDrawerOpen, leftDrawerOpenAuto, rightDrawerOpen, rightDrawerOpenAuto
 // content greater than screen size rather than the entire drawer.
 // Make sure to apply attribute overflow-y-auto for the container
 // that you want to show the scrollbar on in the drawer
-.v-navigation-drawer__content {
+:deep(.v-navigation-drawer__content) {
   display: flex;
   flex-direction: column;
 }
