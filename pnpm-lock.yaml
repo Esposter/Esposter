@@ -40,8 +40,8 @@ catalogs:
       specifier: ^6.38.3
       version: 6.38.3
     '@electric-sql/pglite':
-      specifier: ^0.3.9
-      version: 0.3.9
+      specifier: ^0.3.10
+      version: 0.3.10
     '@floating-ui/dom':
       specifier: ^1.7.4
       version: 1.7.4
@@ -792,10 +792,10 @@ importers:
         version: 6.1.4
       drizzle-orm:
         specifier: 'catalog:'
-        version: 0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7)
+        version: 0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)
       drizzle-zod:
         specifier: 'catalog:'
-        version: 0.8.3(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7))(zod@4.1.11)
+        version: 0.8.3(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7))(zod@4.1.11)
       emoji-mart-vue-fast:
         specifier: 'catalog:'
         version: 15.0.5(vue@3.5.21(typescript@5.9.2))
@@ -1000,22 +1000,22 @@ importers:
     devDependencies:
       '@electric-sql/pglite':
         specifier: 'catalog:'
-        version: 0.3.9
+        version: 0.3.10
       '@nuxt/eslint':
         specifier: 'catalog:'
         version: 1.9.0(@typescript-eslint/utils@8.44.1(eslint@9.36.0(jiti@2.6.0))(typescript@5.9.2))(@vue/compiler-sfc@3.5.21)(eslint@9.36.0(jiti@2.6.0))(magicast@0.3.5)(rolldown-vite@7.1.12(@types/node@24.5.2)(esbuild@0.23.1)(jiti@2.6.0)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))(typescript@5.9.2)
       '@nuxt/fonts':
         specifier: 'catalog:'
-        version: 0.11.4(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.2(@electric-sql/pglite@0.3.9)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7)))(encoding@0.1.13)(ioredis@5.8.0)(magicast@0.3.5)(rolldown-vite@7.1.12(@types/node@24.5.2)(esbuild@0.23.1)(jiti@2.6.0)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))
+        version: 0.11.4(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.2(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)))(encoding@0.1.13)(ioredis@5.8.0)(magicast@0.3.5)(rolldown-vite@7.1.12(@types/node@24.5.2)(esbuild@0.23.1)(jiti@2.6.0)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))
       '@nuxt/scripts':
         specifier: 'catalog:'
-        version: 0.11.13(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(@unhead/vue@2.0.17(vue@3.5.21(typescript@5.9.2)))(db0@0.3.2(@electric-sql/pglite@0.3.9)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7)))(ioredis@5.8.0)(magicast@0.3.5)(typescript@5.9.2)(vue@3.5.21(typescript@5.9.2))
+        version: 0.11.13(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(@unhead/vue@2.0.17(vue@3.5.21(typescript@5.9.2)))(db0@0.3.2(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)))(ioredis@5.8.0)(magicast@0.3.5)(typescript@5.9.2)(vue@3.5.21(typescript@5.9.2))
       '@nuxt/test-utils':
         specifier: 'catalog:'
         version: 3.19.2(@vue/test-utils@2.4.6)(happy-dom@18.0.1)(magicast@0.3.5)(playwright-core@1.55.1)(typescript@5.9.2)(vitest@3.2.4(@types/node@24.5.2)(esbuild@0.23.1)(happy-dom@18.0.1)(jiti@2.6.0)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))
       '@nuxtjs/seo':
         specifier: 'catalog:'
-        version: 3.2.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(@unhead/vue@2.0.17(vue@3.5.21(typescript@5.9.2)))(db0@0.3.2(@electric-sql/pglite@0.3.9)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7)))(h3@1.15.4)(ioredis@5.8.0)(magicast@0.3.5)(rolldown-vite@7.1.12(@types/node@24.5.2)(esbuild@0.23.1)(jiti@2.6.0)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))(rollup@4.52.2)(unhead@2.0.17)(unstorage@1.17.1(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.2(@electric-sql/pglite@0.3.9)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7)))(ioredis@5.8.0))(vue@3.5.21(typescript@5.9.2))
+        version: 3.2.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(@unhead/vue@2.0.17(vue@3.5.21(typescript@5.9.2)))(db0@0.3.2(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)))(h3@1.15.4)(ioredis@5.8.0)(magicast@0.3.5)(rolldown-vite@7.1.12(@types/node@24.5.2)(esbuild@0.23.1)(jiti@2.6.0)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))(rollup@4.52.2)(unhead@2.0.17)(unstorage@1.17.1(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.2(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)))(ioredis@5.8.0))(vue@3.5.21(typescript@5.9.2))
       '@pinia/nuxt':
         specifier: 'catalog:'
         version: 0.11.2(magicast@0.3.5)(pinia@3.0.3(typescript@5.9.2)(vue@3.5.21(typescript@5.9.2)))
@@ -1063,7 +1063,7 @@ importers:
         version: 2.4.6
       '@vueuse/nuxt':
         specifier: 'catalog:'
-        version: 13.9.0(magicast@0.3.5)(nuxt@4.1.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(@electric-sql/pglite@0.3.9)(@parcel/watcher@2.5.1)(@types/node@24.5.2)(@vue/compiler-sfc@3.5.21)(db0@0.3.2(@electric-sql/pglite@0.3.9)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7)))(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7))(encoding@0.1.13)(eslint@9.36.0(jiti@2.6.0))(ioredis@5.8.0)(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rolldown-vite@7.1.12(@types/node@24.5.2)(esbuild@0.23.1)(jiti@2.6.0)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))(rolldown@1.0.0-beta.39)(rollup@4.52.2)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(typescript@5.9.2)(vue-tsc@3.0.8(typescript@5.9.2))(yaml@2.8.1))(vue@3.5.21(typescript@5.9.2))
+        version: 13.9.0(magicast@0.3.5)(nuxt@4.1.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(@electric-sql/pglite@0.3.10)(@parcel/watcher@2.5.1)(@types/node@24.5.2)(@vue/compiler-sfc@3.5.21)(db0@0.3.2(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)))(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7))(encoding@0.1.13)(eslint@9.36.0(jiti@2.6.0))(ioredis@5.8.0)(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rolldown-vite@7.1.12(@types/node@24.5.2)(esbuild@0.23.1)(jiti@2.6.0)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))(rolldown@1.0.0-beta.39)(rollup@4.52.2)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(typescript@5.9.2)(vue-tsc@3.0.8(typescript@5.9.2))(yaml@2.8.1))(vue@3.5.21(typescript@5.9.2))
       azure-mock:
         specifier: workspace:*
         version: link:../azure-mock
@@ -1078,7 +1078,7 @@ importers:
         version: 1.15.4
       nuxt:
         specifier: 'catalog:'
-        version: 4.1.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(@electric-sql/pglite@0.3.9)(@parcel/watcher@2.5.1)(@types/node@24.5.2)(@vue/compiler-sfc@3.5.21)(db0@0.3.2(@electric-sql/pglite@0.3.9)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7)))(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7))(encoding@0.1.13)(eslint@9.36.0(jiti@2.6.0))(ioredis@5.8.0)(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rolldown-vite@7.1.12(@types/node@24.5.2)(esbuild@0.23.1)(jiti@2.6.0)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))(rolldown@1.0.0-beta.39)(rollup@4.52.2)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(typescript@5.9.2)(vue-tsc@3.0.8(typescript@5.9.2))(yaml@2.8.1)
+        version: 4.1.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(@electric-sql/pglite@0.3.10)(@parcel/watcher@2.5.1)(@types/node@24.5.2)(@vue/compiler-sfc@3.5.21)(db0@0.3.2(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)))(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7))(encoding@0.1.13)(eslint@9.36.0(jiti@2.6.0))(ioredis@5.8.0)(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rolldown-vite@7.1.12(@types/node@24.5.2)(esbuild@0.23.1)(jiti@2.6.0)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))(rolldown@1.0.0-beta.39)(rollup@4.52.2)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(typescript@5.9.2)(vue-tsc@3.0.8(typescript@5.9.2))(yaml@2.8.1)
       nuxt-security:
         specifier: 'catalog:'
         version: 2.4.0(magicast@0.3.5)(rollup@4.52.2)
@@ -1944,8 +1944,8 @@ packages:
   '@drizzle-team/brocli@0.10.2':
     resolution: {integrity: sha512-z33Il7l5dKjUgGULTqBsQBQwckHh5AbIuxhdsIxDDiZAzBOrZO6q9ogcWC65kU382AfynTfgNumVcNIjuIua6w==}
 
-  '@electric-sql/pglite@0.3.9':
-    resolution: {integrity: sha512-7S0uzvxA2HqvK8uaDKr2T12C0fq2OMxVyM8eaoIZjtqBJDYURfjORa4aYwk/fOnLwx5d6b4n7n0mcpOzNGlLwg==}
+  '@electric-sql/pglite@0.3.10':
+    resolution: {integrity: sha512-1XtXXprd848aR4hvjNqBc3Gc86zNGmd60x+MgOUShbHYxt+J76N8A81DqTEl275T8xBD0vdTgqR/dJ4yJyz0NQ==}
 
   '@emnapi/core@1.5.0':
     resolution: {integrity: sha512-sbP8GzB1WDzacS8fgNPpHlp6C9VZe+SJP3F90W9rLemaQj2PzIuTEl1qDOYQf58YIpyjViI24y9aPWCjEzY2cg==}
@@ -12410,7 +12410,7 @@ snapshots:
 
   '@drizzle-team/brocli@0.10.2': {}
 
-  '@electric-sql/pglite@0.3.9': {}
+  '@electric-sql/pglite@0.3.10': {}
 
   '@emnapi/core@1.5.0':
     dependencies:
@@ -13720,7 +13720,7 @@ snapshots:
       - utf-8-validate
       - vite
 
-  '@nuxt/fonts@0.11.4(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.2(@electric-sql/pglite@0.3.9)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7)))(encoding@0.1.13)(ioredis@5.8.0)(magicast@0.3.5)(rolldown-vite@7.1.12(@types/node@24.5.2)(esbuild@0.23.1)(jiti@2.6.0)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))':
+  '@nuxt/fonts@0.11.4(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.2(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)))(encoding@0.1.13)(ioredis@5.8.0)(magicast@0.3.5)(rolldown-vite@7.1.12(@types/node@24.5.2)(esbuild@0.23.1)(jiti@2.6.0)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))':
     dependencies:
       '@nuxt/devtools-kit': 2.6.5(magicast@0.3.5)(rolldown-vite@7.1.12(@types/node@24.5.2)(esbuild@0.23.1)(jiti@2.6.0)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))
       '@nuxt/kit': 3.19.2(magicast@0.3.5)
@@ -13741,7 +13741,7 @@ snapshots:
       ufo: 1.6.1
       unifont: 0.4.1
       unplugin: 2.3.10
-      unstorage: 1.17.1(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.2(@electric-sql/pglite@0.3.9)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7)))(ioredis@5.8.0)
+      unstorage: 1.17.1(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.2(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)))(ioredis@5.8.0)
     transitivePeerDependencies:
       - '@azure/app-configuration'
       - '@azure/cosmos'
@@ -13831,7 +13831,7 @@ snapshots:
       std-env: 3.9.0
       ufo: 1.6.1
 
-  '@nuxt/scripts@0.11.13(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(@unhead/vue@2.0.17(vue@3.5.21(typescript@5.9.2)))(db0@0.3.2(@electric-sql/pglite@0.3.9)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7)))(ioredis@5.8.0)(magicast@0.3.5)(typescript@5.9.2)(vue@3.5.21(typescript@5.9.2))':
+  '@nuxt/scripts@0.11.13(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(@unhead/vue@2.0.17(vue@3.5.21(typescript@5.9.2)))(db0@0.3.2(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)))(ioredis@5.8.0)(magicast@0.3.5)(typescript@5.9.2)(vue@3.5.21(typescript@5.9.2))':
     dependencies:
       '@nuxt/kit': 4.1.2(magicast@0.3.5)
       '@unhead/vue': 2.0.17(vue@3.5.21(typescript@5.9.2))
@@ -13848,7 +13848,7 @@ snapshots:
       std-env: 3.9.0
       ufo: 1.6.1
       unplugin: 2.3.10
-      unstorage: 1.17.1(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.2(@electric-sql/pglite@0.3.9)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7)))(ioredis@5.8.0)
+      unstorage: 1.17.1(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.2(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)))(ioredis@5.8.0)
       valibot: 1.1.0(typescript@5.9.2)
     transitivePeerDependencies:
       - '@azure/app-configuration'
@@ -13999,13 +13999,13 @@ snapshots:
       - magicast
       - vue
 
-  '@nuxtjs/seo@3.2.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(@unhead/vue@2.0.17(vue@3.5.21(typescript@5.9.2)))(db0@0.3.2(@electric-sql/pglite@0.3.9)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7)))(h3@1.15.4)(ioredis@5.8.0)(magicast@0.3.5)(rolldown-vite@7.1.12(@types/node@24.5.2)(esbuild@0.23.1)(jiti@2.6.0)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))(rollup@4.52.2)(unhead@2.0.17)(unstorage@1.17.1(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.2(@electric-sql/pglite@0.3.9)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7)))(ioredis@5.8.0))(vue@3.5.21(typescript@5.9.2))':
+  '@nuxtjs/seo@3.2.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(@unhead/vue@2.0.17(vue@3.5.21(typescript@5.9.2)))(db0@0.3.2(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)))(h3@1.15.4)(ioredis@5.8.0)(magicast@0.3.5)(rolldown-vite@7.1.12(@types/node@24.5.2)(esbuild@0.23.1)(jiti@2.6.0)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))(rollup@4.52.2)(unhead@2.0.17)(unstorage@1.17.1(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.2(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)))(ioredis@5.8.0))(vue@3.5.21(typescript@5.9.2))':
     dependencies:
       '@nuxt/kit': 4.1.2(magicast@0.3.5)
       '@nuxtjs/robots': 5.5.5(h3@1.15.4)(magicast@0.3.5)(vue@3.5.21(typescript@5.9.2))
       '@nuxtjs/sitemap': 7.4.7(h3@1.15.4)(magicast@0.3.5)(rolldown-vite@7.1.12(@types/node@24.5.2)(esbuild@0.23.1)(jiti@2.6.0)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))(vue@3.5.21(typescript@5.9.2))
-      nuxt-link-checker: 4.3.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.2(@electric-sql/pglite@0.3.9)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7)))(h3@1.15.4)(ioredis@5.8.0)(magicast@0.3.5)(rolldown-vite@7.1.12(@types/node@24.5.2)(esbuild@0.23.1)(jiti@2.6.0)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))(vue@3.5.21(typescript@5.9.2))
-      nuxt-og-image: 5.1.11(@unhead/vue@2.0.17(vue@3.5.21(typescript@5.9.2)))(h3@1.15.4)(magicast@0.3.5)(rolldown-vite@7.1.12(@types/node@24.5.2)(esbuild@0.23.1)(jiti@2.6.0)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))(unstorage@1.17.1(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.2(@electric-sql/pglite@0.3.9)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7)))(ioredis@5.8.0))(vue@3.5.21(typescript@5.9.2))
+      nuxt-link-checker: 4.3.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.2(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)))(h3@1.15.4)(ioredis@5.8.0)(magicast@0.3.5)(rolldown-vite@7.1.12(@types/node@24.5.2)(esbuild@0.23.1)(jiti@2.6.0)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))(vue@3.5.21(typescript@5.9.2))
+      nuxt-og-image: 5.1.11(@unhead/vue@2.0.17(vue@3.5.21(typescript@5.9.2)))(h3@1.15.4)(magicast@0.3.5)(rolldown-vite@7.1.12(@types/node@24.5.2)(esbuild@0.23.1)(jiti@2.6.0)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))(unstorage@1.17.1(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.2(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)))(ioredis@5.8.0))(vue@3.5.21(typescript@5.9.2))
       nuxt-schema-org: 5.0.9(@unhead/vue@2.0.17(vue@3.5.21(typescript@5.9.2)))(h3@1.15.4)(magicast@0.3.5)(unhead@2.0.17)(vue@3.5.21(typescript@5.9.2))
       nuxt-seo-utils: 7.0.17(h3@1.15.4)(magicast@0.3.5)(rollup@4.52.2)(vue@3.5.21(typescript@5.9.2))
       nuxt-site-config: 3.2.9(h3@1.15.4)(magicast@0.3.5)(vue@3.5.21(typescript@5.9.2))
@@ -16267,13 +16267,13 @@ snapshots:
 
   '@vueuse/metadata@13.9.0': {}
 
-  '@vueuse/nuxt@13.9.0(magicast@0.3.5)(nuxt@4.1.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(@electric-sql/pglite@0.3.9)(@parcel/watcher@2.5.1)(@types/node@24.5.2)(@vue/compiler-sfc@3.5.21)(db0@0.3.2(@electric-sql/pglite@0.3.9)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7)))(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7))(encoding@0.1.13)(eslint@9.36.0(jiti@2.6.0))(ioredis@5.8.0)(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rolldown-vite@7.1.12(@types/node@24.5.2)(esbuild@0.23.1)(jiti@2.6.0)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))(rolldown@1.0.0-beta.39)(rollup@4.52.2)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(typescript@5.9.2)(vue-tsc@3.0.8(typescript@5.9.2))(yaml@2.8.1))(vue@3.5.21(typescript@5.9.2))':
+  '@vueuse/nuxt@13.9.0(magicast@0.3.5)(nuxt@4.1.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(@electric-sql/pglite@0.3.10)(@parcel/watcher@2.5.1)(@types/node@24.5.2)(@vue/compiler-sfc@3.5.21)(db0@0.3.2(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)))(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7))(encoding@0.1.13)(eslint@9.36.0(jiti@2.6.0))(ioredis@5.8.0)(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rolldown-vite@7.1.12(@types/node@24.5.2)(esbuild@0.23.1)(jiti@2.6.0)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))(rolldown@1.0.0-beta.39)(rollup@4.52.2)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(typescript@5.9.2)(vue-tsc@3.0.8(typescript@5.9.2))(yaml@2.8.1))(vue@3.5.21(typescript@5.9.2))':
     dependencies:
       '@nuxt/kit': 3.19.2(magicast@0.3.5)
       '@vueuse/core': 13.9.0(vue@3.5.21(typescript@5.9.2))
       '@vueuse/metadata': 13.9.0
       local-pkg: 1.1.2
-      nuxt: 4.1.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(@electric-sql/pglite@0.3.9)(@parcel/watcher@2.5.1)(@types/node@24.5.2)(@vue/compiler-sfc@3.5.21)(db0@0.3.2(@electric-sql/pglite@0.3.9)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7)))(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7))(encoding@0.1.13)(eslint@9.36.0(jiti@2.6.0))(ioredis@5.8.0)(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rolldown-vite@7.1.12(@types/node@24.5.2)(esbuild@0.23.1)(jiti@2.6.0)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))(rolldown@1.0.0-beta.39)(rollup@4.52.2)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(typescript@5.9.2)(vue-tsc@3.0.8(typescript@5.9.2))(yaml@2.8.1)
+      nuxt: 4.1.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(@electric-sql/pglite@0.3.10)(@parcel/watcher@2.5.1)(@types/node@24.5.2)(@vue/compiler-sfc@3.5.21)(db0@0.3.2(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)))(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7))(encoding@0.1.13)(eslint@9.36.0(jiti@2.6.0))(ioredis@5.8.0)(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rolldown-vite@7.1.12(@types/node@24.5.2)(esbuild@0.23.1)(jiti@2.6.0)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))(rolldown@1.0.0-beta.39)(rollup@4.52.2)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(typescript@5.9.2)(vue-tsc@3.0.8(typescript@5.9.2))(yaml@2.8.1)
       vue: 3.5.21(typescript@5.9.2)
     transitivePeerDependencies:
       - magicast
@@ -17466,10 +17466,10 @@ snapshots:
 
   dayjs@1.11.18: {}
 
-  db0@0.3.2(@electric-sql/pglite@0.3.9)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7)):
+  db0@0.3.2(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)):
     optionalDependencies:
-      '@electric-sql/pglite': 0.3.9
-      drizzle-orm: 0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7)
+      '@electric-sql/pglite': 0.3.10
+      drizzle-orm: 0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)
 
   de-indent@1.0.2: {}
 
@@ -17586,15 +17586,15 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7):
+  drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7):
     optionalDependencies:
-      '@electric-sql/pglite': 0.3.9
+      '@electric-sql/pglite': 0.3.10
       kysely: 0.28.7
       postgres: 3.4.7
 
-  drizzle-zod@0.8.3(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7))(zod@4.1.11):
+  drizzle-zod@0.8.3(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7))(zod@4.1.11):
     dependencies:
-      drizzle-orm: 0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7)
+      drizzle-orm: 0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)
       zod: 4.1.11
 
   dts-resolver@2.1.2: {}
@@ -19642,7 +19642,7 @@ snapshots:
     dependencies:
       type-fest: 2.19.0
 
-  nitropack@2.12.6(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(@electric-sql/pglite@0.3.9)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7))(encoding@0.1.13)(rolldown@1.0.0-beta.39):
+  nitropack@2.12.6(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7))(encoding@0.1.13)(rolldown@1.0.0-beta.39):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.4.0
       '@rollup/plugin-alias': 5.1.1(rollup@4.52.2)
@@ -19663,7 +19663,7 @@ snapshots:
       cookie-es: 2.0.0
       croner: 9.1.0
       crossws: 0.3.5
-      db0: 0.3.2(@electric-sql/pglite@0.3.9)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7))
+      db0: 0.3.2(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7))
       defu: 6.1.4
       destr: 2.0.5
       dot-prop: 9.0.0
@@ -19709,7 +19709,7 @@ snapshots:
       unenv: 2.0.0-rc.21
       unimport: 5.3.0
       unplugin-utils: 0.3.0
-      unstorage: 1.17.1(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.2(@electric-sql/pglite@0.3.9)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7)))(ioredis@5.8.0)
+      unstorage: 1.17.1(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.2(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)))(ioredis@5.8.0)
       untyped: 2.0.0
       unwasm: 0.3.11
       youch: 4.1.0-beta.11
@@ -19907,7 +19907,7 @@ snapshots:
     transitivePeerDependencies:
       - magicast
 
-  nuxt-link-checker@4.3.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.2(@electric-sql/pglite@0.3.9)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7)))(h3@1.15.4)(ioredis@5.8.0)(magicast@0.3.5)(rolldown-vite@7.1.12(@types/node@24.5.2)(esbuild@0.23.1)(jiti@2.6.0)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))(vue@3.5.21(typescript@5.9.2)):
+  nuxt-link-checker@4.3.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.2(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)))(h3@1.15.4)(ioredis@5.8.0)(magicast@0.3.5)(rolldown-vite@7.1.12(@types/node@24.5.2)(esbuild@0.23.1)(jiti@2.6.0)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))(vue@3.5.21(typescript@5.9.2)):
     dependencies:
       '@nuxt/devtools-kit': 2.6.5(magicast@0.3.5)(rolldown-vite@7.1.12(@types/node@24.5.2)(esbuild@0.23.1)(jiti@2.6.0)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))
       '@nuxt/kit': 4.1.2(magicast@0.3.5)
@@ -19925,7 +19925,7 @@ snapshots:
       std-env: 3.9.0
       ufo: 1.6.1
       ultrahtml: 1.6.0
-      unstorage: 1.17.1(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.2(@electric-sql/pglite@0.3.9)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7)))(ioredis@5.8.0)
+      unstorage: 1.17.1(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.2(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)))(ioredis@5.8.0)
     transitivePeerDependencies:
       - '@azure/app-configuration'
       - '@azure/cosmos'
@@ -19951,7 +19951,7 @@ snapshots:
       - vite
       - vue
 
-  nuxt-og-image@5.1.11(@unhead/vue@2.0.17(vue@3.5.21(typescript@5.9.2)))(h3@1.15.4)(magicast@0.3.5)(rolldown-vite@7.1.12(@types/node@24.5.2)(esbuild@0.23.1)(jiti@2.6.0)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))(unstorage@1.17.1(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.2(@electric-sql/pglite@0.3.9)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7)))(ioredis@5.8.0))(vue@3.5.21(typescript@5.9.2)):
+  nuxt-og-image@5.1.11(@unhead/vue@2.0.17(vue@3.5.21(typescript@5.9.2)))(h3@1.15.4)(magicast@0.3.5)(rolldown-vite@7.1.12(@types/node@24.5.2)(esbuild@0.23.1)(jiti@2.6.0)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))(unstorage@1.17.1(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.2(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)))(ioredis@5.8.0))(vue@3.5.21(typescript@5.9.2)):
     dependencies:
       '@nuxt/devtools-kit': 2.6.5(magicast@0.3.5)(rolldown-vite@7.1.12(@types/node@24.5.2)(esbuild@0.23.1)(jiti@2.6.0)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))
       '@nuxt/kit': 4.1.2(magicast@0.3.5)
@@ -19982,7 +19982,7 @@ snapshots:
       strip-literal: 3.0.0
       ufo: 1.6.1
       unplugin: 2.3.10
-      unstorage: 1.17.1(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.2(@electric-sql/pglite@0.3.9)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7)))(ioredis@5.8.0)
+      unstorage: 1.17.1(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.2(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)))(ioredis@5.8.0)
       unwasm: 0.3.11
       yoga-wasm-web: 0.3.3
     transitivePeerDependencies:
@@ -20071,7 +20071,7 @@ snapshots:
       - magicast
       - vue
 
-  nuxt@4.1.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(@electric-sql/pglite@0.3.9)(@parcel/watcher@2.5.1)(@types/node@24.5.2)(@vue/compiler-sfc@3.5.21)(db0@0.3.2(@electric-sql/pglite@0.3.9)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7)))(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7))(encoding@0.1.13)(eslint@9.36.0(jiti@2.6.0))(ioredis@5.8.0)(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rolldown-vite@7.1.12(@types/node@24.5.2)(esbuild@0.23.1)(jiti@2.6.0)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))(rolldown@1.0.0-beta.39)(rollup@4.52.2)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(typescript@5.9.2)(vue-tsc@3.0.8(typescript@5.9.2))(yaml@2.8.1):
+  nuxt@4.1.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(@electric-sql/pglite@0.3.10)(@parcel/watcher@2.5.1)(@types/node@24.5.2)(@vue/compiler-sfc@3.5.21)(db0@0.3.2(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)))(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7))(encoding@0.1.13)(eslint@9.36.0(jiti@2.6.0))(ioredis@5.8.0)(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rolldown-vite@7.1.12(@types/node@24.5.2)(esbuild@0.23.1)(jiti@2.6.0)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(yaml@2.8.1))(rolldown@1.0.0-beta.39)(rollup@4.52.2)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.5)(typescript@5.9.2)(vue-tsc@3.0.8(typescript@5.9.2))(yaml@2.8.1):
     dependencies:
       '@nuxt/cli': 3.28.0(magicast@0.3.5)
       '@nuxt/devalue': 2.0.2
@@ -20106,7 +20106,7 @@ snapshots:
       mlly: 1.8.0
       mocked-exports: 0.1.1
       nanotar: 0.2.0
-      nitropack: 2.12.6(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(@electric-sql/pglite@0.3.9)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7))(encoding@0.1.13)(rolldown@1.0.0-beta.39)
+      nitropack: 2.12.6(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7))(encoding@0.1.13)(rolldown@1.0.0-beta.39)
       nypm: 0.6.2
       ofetch: 1.4.1
       ohash: 2.0.11
@@ -20130,7 +20130,7 @@ snapshots:
       unimport: 5.3.0
       unplugin: 2.3.10
       unplugin-vue-router: 0.15.0(@vue/compiler-sfc@3.5.21)(typescript@5.9.2)(vue-router@4.5.1(vue@3.5.21(typescript@5.9.2)))(vue@3.5.21(typescript@5.9.2))
-      unstorage: 1.17.1(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.2(@electric-sql/pglite@0.3.9)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7)))(ioredis@5.8.0)
+      unstorage: 1.17.1(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.2(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)))(ioredis@5.8.0)
       untyped: 2.0.0
       vue: 3.5.21(typescript@5.9.2)
       vue-bundle-renderer: 2.1.2
@@ -22468,7 +22468,7 @@ snapshots:
       '@unrs/resolver-binding-win32-ia32-msvc': 1.11.1
       '@unrs/resolver-binding-win32-x64-msvc': 1.11.1
 
-  unstorage@1.17.1(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.2(@electric-sql/pglite@0.3.9)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7)))(ioredis@5.8.0):
+  unstorage@1.17.1(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.2(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)))(ioredis@5.8.0):
     dependencies:
       anymatch: 3.1.3
       chokidar: 4.0.3
@@ -22481,7 +22481,7 @@ snapshots:
     optionalDependencies:
       '@azure/data-tables': 13.3.1
       '@azure/storage-blob': 12.28.0
-      db0: 0.3.2(@electric-sql/pglite@0.3.9)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.9)(kysely@0.28.7)(postgres@3.4.7))
+      db0: 0.3.2(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.5(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7))
       ioredis: 5.8.0
 
   untun@0.1.3:
