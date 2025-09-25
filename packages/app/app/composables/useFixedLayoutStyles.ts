@@ -5,11 +5,13 @@ import { useLayoutStore } from "@/store/layout";
 
 export const useFixedLayoutStyles = (bottomOffset = 0) => {
   const layoutStore = useLayoutStore();
-  const { isLeftDrawerOpen, isRightDrawerOpen } = storeToRefs(layoutStore);
+  const { isDesktop, isLeftDrawerOpen, isRightDrawerOpen } = storeToRefs(layoutStore);
   const leftOffset = computed(() => (isLeftDrawerOpen.value ? 0 : -LEFT_DRAWER_WIDTH));
   const rightOffset = computed(() => (isRightDrawerOpen.value ? 0 : -RIGHT_DRAWER_WIDTH));
-  const middleLeftOffset = computed(() => (isLeftDrawerOpen.value ? LEFT_DRAWER_WIDTH : 0));
-  const middleRightOffset = computed(() => (isRightDrawerOpen.value ? RIGHT_DRAWER_WIDTH : 0));
+  // We only need to offset the middle if we are on desktop
+  // as the drawers are floating on non-desktop screens
+  const middleLeftOffset = computed(() => (isDesktop.value && isLeftDrawerOpen.value ? LEFT_DRAWER_WIDTH : 0));
+  const middleRightOffset = computed(() => (isDesktop.value && isRightDrawerOpen.value ? RIGHT_DRAWER_WIDTH : 0));
   return {
     bottom: computed<CSSProperties>(() => ({
       bottom: "0px",
