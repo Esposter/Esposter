@@ -6,16 +6,21 @@ RUN corepack enable
 
 WORKDIR /app
 # Copy only the files needed to determine dependencies
-COPY package.json pnpm-*.yaml ./
-COPY packages/**/package.json ./
-# Install all dependencies, including dev dependencies
-# This slow step will now be cached effectively
-RUN pnpm i
+COPY **/package.json pnpm-*.yaml ./
+# Fetch all dependencies into pnpm's content-addressable store.
+# This is the slow network step. By doing it here, we cache the downloaded packages.
+# The `--prod` flag can be used if your build step doesn't require dev dependencies,
+# but tools like lerna, typescript, etc., are usually dev deps, so we omit it.
+RUN pnpm fetch
+# Copy the rest of your source code.
+# This invalidates the cache more frequently, but the expensive fetch step above is already done.
 COPY . .
+# Install dependencies from the store.
+# This command is now extremely fast because it uses the already-fetched packages.
+# It mainly just creates the node_modules directory and symlinks everything.
+# --frozen-lockfile is a best practice for CI/Docker builds to ensure consistency.
+RUN pnpm i --frozen-lockfile --offline
 RUN pnpm build:packages
-# Change ownership of the entire /app directory to the non-root user.
-# This is also done only ONCE during the build.
-RUN chown -R node:node /app
 # Switch to the non-root 'node' user for security
 USER node
 # Expose the port Nuxt will run on
