@@ -1,4 +1,5 @@
 import { rateLimiterFlexible } from "#shared/db/schema/rateLimiterFlexible";
+import { IS_PRODUCTION } from "#shared/util/environment/constants";
 import { auth } from "@@/server/auth";
 import { db } from "@@/server/db";
 import { middleware } from "@@/server/trpc";
@@ -10,6 +11,8 @@ const rateLimiter = new RateLimiterDrizzleNonAtomic({ schema: rateLimiterFlexibl
 
 export const isRateLimited = middleware(async ({ ctx, next, path }) => {
   const session = await auth.api.getSession({ headers: ctx.headers });
+  if (!IS_PRODUCTION) return next({ ctx: { session } });
+
   const forwardedFor = ctx.req.headers["x-forwarded-for"] as string | undefined;
   const ip = forwardedFor ? forwardedFor.split(",")[0].trim() : ctx.req.socket.remoteAddress;
   if (!ip) {
@@ -17,7 +20,7 @@ export const isRateLimited = middleware(async ({ ctx, next, path }) => {
       "Rate Limiter: Could not determine IP address. Bypassing middleware... This is expected for local production builds.",
     );
     return next({ ctx: { session } });
-  } else if (ip === "::1") return next({ ctx: { session } });
+  }
 
   try {
     const { msBeforeNext, remainingPoints } = await rateLimiter.consume(
