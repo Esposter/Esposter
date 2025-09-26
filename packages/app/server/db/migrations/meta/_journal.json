@@ -134,6 +134,13 @@
       "when": 1758167368644,
       "tag": "0018_smooth_christian_walker",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1758885749033,
+      "tag": "0019_curved_iron_monger",
+      "breakpoints": true
     }
   ]
 }

@@ -2,6 +2,7 @@ import * as accounts from "#shared/db/schema/accounts";
 import * as invites from "#shared/db/schema/invites";
 import * as likes from "#shared/db/schema/likes";
 import * as posts from "#shared/db/schema/posts";
+import * as rateLimiterFlexible from "#shared/db/schema/rateLimiterFlexible";
 import * as rooms from "#shared/db/schema/rooms";
 import * as searchHistories from "#shared/db/schema/searchHistories";
 import * as sessions from "#shared/db/schema/sessions";
@@ -24,4 +25,5 @@ export const schema = {
   ...likes,
   ...usersToRooms,
   ...userStatuses,
+  ...rateLimiterFlexible,
 };
