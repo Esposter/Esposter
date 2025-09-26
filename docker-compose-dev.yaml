@@ -1,10 +1,7 @@
 services:
   packages-builder:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
     command: pnpm watch:packages
-    working_dir: /app
+    image: esposter-dev:latest
     volumes:
       - .:/app:delegated
       - /app/node_modules
@@ -15,6 +12,7 @@ services:
       - /app/packages/shared/node_modules
       - /app/packages/vue-phaserjs/node_modules
       - /app/packages/xml2js/node_modules
+    working_dir: /app
 
   dev-server:
     build:
@@ -25,6 +23,7 @@ services:
     depends_on:
       - packages-builder
     env_file: packages/app/.env
+    image: esposter-dev:latest
     # Map a port from your Windows machine to the container.
     # Format: "HOST:CONTAINER"
     # Accessing localhost:3000 on Windows will connect to port 3000 in the container.
