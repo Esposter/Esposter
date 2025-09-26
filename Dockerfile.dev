@@ -21,8 +21,6 @@ COPY . .
 # --frozen-lockfile is a best practice for CI/Docker builds to ensure consistency.
 RUN pnpm i --frozen-lockfile --offline
 RUN pnpm build:packages
-# Switch to the non-root 'node' user for security
-USER node
 # Expose the port Nuxt will run on
 EXPOSE 3000
 # Set the default command to start the dev server

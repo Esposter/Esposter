@@ -1,6 +1,7 @@
 services:
   dev-server:
     build: 
+      context: .
       dockerfile: Dockerfile.dev
     image: node:24-alpine
     # Map a port from your Windows machine to the container.
@@ -17,4 +18,6 @@ services:
     # strict consistency checks and speeding up file I/O.
     volumes:
       - .:/app:delegated
+      # ...EXCEPT for this one critical folder, which is preserved from the image
+      - /app/node_modules
     working_dir: /app
