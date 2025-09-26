@@ -19,10 +19,9 @@ services:
       context: .
       dockerfile: Dockerfile.dev
     # HOST 0.0.0.0 is crucial for network access to nuxt from outside the container
-    command: pnpm --filter "@esposter/app" dev --host 0.0.0.0
+    command: pnpm dev --host 0.0.0.0
     depends_on:
       - packages-builder
-    env_file: packages/app/.env
     image: esposter-dev:latest
     # Map a port from your Windows machine to the container.
     # Format: "HOST:CONTAINER"
@@ -47,4 +46,4 @@ services:
       - /app/packages/shared/node_modules
       - /app/packages/vue-phaserjs/node_modules
       - /app/packages/xml2js/node_modules
-    working_dir: /app
+    working_dir: /app/packages/app
