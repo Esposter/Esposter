@@ -163,7 +163,7 @@ catalog:
   three: ^0.180.0
   three-globe: ^2.44.0
   trpc-nuxt: ^1.2.0
-  tsx: ^4.20.5
+  tsx: ^4.20.6
   type-fest: ^5.0.1
   typedoc: ^0.28.13
   typescript: ^5.9.2
