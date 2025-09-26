@@ -23,6 +23,8 @@ services:
     depends_on:
       - packages-builder
     env_file: packages/app/.env
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@host.docker.internal:5432/esposter
     image: esposter-dev:latest
     # Map a port from your Windows machine to the container.
     # Format: "HOST:CONTAINER"
