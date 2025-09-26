@@ -1,0 +1,20 @@
+services:
+  dev-server:
+    build: 
+      dockerfile: Dockerfile.dev
+    image: node:24-alpine
+    # Map a port from your Windows machine to the container.
+    # Format: "HOST:CONTAINER"
+    # Accessing localhost:3000 on Windows will connect to port 3000 in the container.
+    # Change 3000 if your app uses a different port.
+    ports:
+      - "3000:3000"
+    # This is the magic for HMR: Mount your current project folder
+    # into the /app directory inside the container.
+    # Changes on your PC are instantly reflected inside the container.
+    # The ':delegated' flag is a performance optimization for Mac/Windows.
+    # It tells Docker the container's view is the source of truth, reducing
+    # strict consistency checks and speeding up file I/O.
+    volumes:
+      - .:/app:delegated
+    working_dir: /app

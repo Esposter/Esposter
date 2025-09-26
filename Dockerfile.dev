@@ -1,0 +1,25 @@
+# Use the official Node image. It has the 'node' user built-in.
+FROM node:24-alpine
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+
+WORKDIR /app
+# Copy only the files needed to determine dependencies
+COPY package.json pnpm-*.yaml ./
+COPY packages/**/package.json ./
+# Install all dependencies, including dev dependencies
+# This slow step will now be cached effectively
+RUN pnpm i
+COPY . .
+RUN pnpm build:packages
+# Change ownership of the entire /app directory to the non-root user.
+# This is also done only ONCE during the build.
+RUN chown -R node:node /app
+# Switch to the non-root 'node' user for security
+USER node
+# Expose the port Nuxt will run on
+EXPOSE 3000
+# Set the default command to start the dev server
+# HOST 0.0.0.0 is crucial for network access outside the container
+CMD ["pnpm", "--filter", "@esposter/app", "dev", "--host", "0.0.0.0"]
