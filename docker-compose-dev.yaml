@@ -18,6 +18,12 @@ services:
     # strict consistency checks and speeding up file I/O.
     volumes:
       - .:/app:delegated
-      # ...EXCEPT for this one critical folder, which is preserved from the image
-      - /app/node_modules
+      # ...EXCEPT for node_modules, which is preserved from the image
+      - /app/packages/app/node_modules
+      - /app/packages/azure-mock/node_modules
+      - /app/packages/configuration/node_modules
+      - /app/packages/parse-tmx/node_modules
+      - /app/packages/shared/node_modules
+      - /app/packages/vue-phaserjs/node_modules
+      - /app/packages/xml2js/node_modules
     working_dir: /app

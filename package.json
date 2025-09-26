@@ -19,7 +19,7 @@
     "build:docs": "typedoc",
     "build:docker": "pnpm crossOS copyfiles .gitignore .dockerignore && docker compose -f docker-compose-dev.yaml build",
     "build:packages": "lerna run build --ignore @esposter/app",
-    "dev:docker": "pnpm build:docker && docker compose -f docker-compose-dev.yaml up",
+    "dev:docker": "docker compose -f docker-compose-dev.yaml up",
     "start": "lerna run start --scope=@esposter/app",
     "test": "lerna run test",
     "coverage": "lerna run coverage",
