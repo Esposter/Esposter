@@ -20,9 +20,5 @@ COPY . .
 # It mainly just creates the node_modules directory and symlinks everything.
 # --frozen-lockfile is a best practice for CI/Docker builds to ensure consistency.
 RUN pnpm i --frozen-lockfile --offline
-RUN pnpm build:packages
 # Expose the port Nuxt will run on
 EXPOSE 3000
-# Set the default command to start the dev server
-# HOST 0.0.0.0 is crucial for network access outside the container
-CMD ["pnpm", "--filter", "@esposter/app", "dev", "--host", "0.0.0.0"]

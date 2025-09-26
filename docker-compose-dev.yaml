@@ -1,8 +1,30 @@
 services:
+  packages-builder:
+    build: 
+      context: .
+      dockerfile: Dockerfile.dev
+    command: pnpm watch:packages
+    image: node:24-alpine
+    working_dir: /app
+    volumes:
+      - .:/app:delegated
+      - /app/node_modules
+      - /app/packages/app/node_modules
+      - /app/packages/azure-mock/node_modules
+      - /app/packages/configuration/node_modules
+      - /app/packages/parse-tmx/node_modules
+      - /app/packages/shared/node_modules
+      - /app/packages/vue-phaserjs/node_modules
+      - /app/packages/xml2js/node_modules
+
   dev-server:
     build: 
       context: .
       dockerfile: Dockerfile.dev
+    # HOST 0.0.0.0 is crucial for network access to nuxt from outside the container
+    command: pnpm --filter "@esposter/app" dev --host 0.0.0.0
+    depends_on:
+      - packages-builder
     image: node:24-alpine
     # Map a port from your Windows machine to the container.
     # Format: "HOST:CONTAINER"
@@ -18,8 +40,8 @@ services:
     # strict consistency checks and speeding up file I/O.
     volumes:
       - .:/app:delegated
-      # ...EXCEPT for node_modules, which is preserved from the image
-      - /node_modules
+      # ...EXCEPT for node_modules which is preserved from the image
+      - /app/node_modules
       - /app/packages/app/node_modules
       - /app/packages/azure-mock/node_modules
       - /app/packages/configuration/node_modules
