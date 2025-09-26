@@ -23,11 +23,11 @@
   },
   "scripts": {
     "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
-    "test": "vitest",
     "coverage": "vitest run --coverage",
+    "export:gen": "ctix build --config ../configuration/.ctirc-ts",
     "lint": "oxlint && eslint .",
     "lint:fix": "oxlint --fix && eslint --fix .",
-    "typecheck": "tsc",
-    "export:gen": "ctix build --config ../configuration/.ctirc-ts"
+    "test": "vitest",
+    "typecheck": "tsc"
   }
 }

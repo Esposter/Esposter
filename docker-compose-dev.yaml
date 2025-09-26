@@ -1,0 +1,52 @@
+services:
+  packages-builder:
+    command: pnpm watch:packages
+    image: esposter-dev:latest
+    volumes:
+      - .:/app:delegated
+      - /app/node_modules
+      - /app/packages/app/node_modules
+      - /app/packages/azure-mock/node_modules
+      - /app/packages/configuration/node_modules
+      - /app/packages/parse-tmx/node_modules
+      - /app/packages/shared/node_modules
+      - /app/packages/vue-phaserjs/node_modules
+      - /app/packages/xml2js/node_modules
+    working_dir: /app
+
+  dev-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    # HOST 0.0.0.0 is crucial for network access to nuxt from outside the container
+    command: pnpm dev --host 0.0.0.0
+    depends_on:
+      - packages-builder
+    env_file: packages/app/.env
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@host.docker.internal:5432/esposter
+    image: esposter-dev:latest
+    # Map a port from your Windows machine to the container.
+    # Format: "HOST:CONTAINER"
+    # Accessing localhost:3000 on Windows will connect to port 3000 in the container.
+    # Change 3000 if your app uses a different port.
+    ports:
+      - "3000:3000"
+    # This is the magic for HMR: Mount your current project folder
+    # into the /app directory inside the container.
+    # Changes on your PC are instantly reflected inside the container.
+    # The ':delegated' flag is a performance optimization for Mac/Windows.
+    # It tells Docker the container's view is the source of truth, reducing
+    # strict consistency checks and speeding up file I/O.
+    volumes:
+      - .:/app:delegated
+      # ...EXCEPT for node_modules which is preserved from the image
+      - /app/node_modules
+      - /app/packages/app/node_modules
+      - /app/packages/azure-mock/node_modules
+      - /app/packages/configuration/node_modules
+      - /app/packages/parse-tmx/node_modules
+      - /app/packages/shared/node_modules
+      - /app/packages/vue-phaserjs/node_modules
+      - /app/packages/xml2js/node_modules
+    working_dir: /app/packages/app

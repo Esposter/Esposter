@@ -24,6 +24,7 @@ catalog:
   "@lerna-lite/cli": ^4.9.0
   "@lerna-lite/publish": ^4.9.0
   "@lerna-lite/run": ^4.9.0
+  "@lerna-lite/watch": ^4.9.0
   "@mdi/font": ^7.4.47
   "@nuxt/eslint": ^1.9.0
   "@nuxt/fonts": ^0.11.4
