@@ -15,6 +15,7 @@ RUN pnpm fetch
 # Copy the rest of your source code.
 # This invalidates the cache more frequently, but the expensive fetch step above is already done.
 COPY . .
+WORKDIR /app/packages/app
 # Install dependencies from the store.
 # This command is now extremely fast because it uses the already-fetched packages.
 # It mainly just creates the node_modules directory and symlinks everything.

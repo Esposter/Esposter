@@ -1,10 +1,9 @@
 services:
   packages-builder:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile.dev
     command: pnpm watch:packages
-    image: node:24-alpine
     working_dir: /app
     volumes:
       - .:/app:delegated
@@ -18,14 +17,14 @@ services:
       - /app/packages/xml2js/node_modules
 
   dev-server:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile.dev
     # HOST 0.0.0.0 is crucial for network access to nuxt from outside the container
     command: pnpm --filter "@esposter/app" dev --host 0.0.0.0
     depends_on:
       - packages-builder
-    image: node:24-alpine
+    env_file: packages/app/.env
     # Map a port from your Windows machine to the container.
     # Format: "HOST:CONTAINER"
     # Accessing localhost:3000 on Windows will connect to port 3000 in the container.
