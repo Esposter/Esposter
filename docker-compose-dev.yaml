@@ -19,6 +19,7 @@ services:
     volumes:
       - .:/app:delegated
       # ...EXCEPT for node_modules, which is preserved from the image
+      - /node_modules
       - /app/packages/app/node_modules
       - /app/packages/azure-mock/node_modules
       - /app/packages/configuration/node_modules
