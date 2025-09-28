@@ -211,8 +211,8 @@ catalogs:
       specifier: ^3.0.1
       version: 3.0.1
     '@vue/language-core':
-      specifier: ^3.0.8
-      version: 3.0.8
+      specifier: ^3.1.0
+      version: 3.1.0
     '@vue/test-utils':
       specifier: ^2.4.6
       version: 2.4.6
@@ -609,7 +609,7 @@ importers:
         version: 3.2.4(vitest@3.2.4(@types/node@24.5.2)(esbuild@0.25.10)(happy-dom@18.0.1)(jiti@2.6.0)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))
       '@vue/language-core':
         specifier: 'catalog:'
-        version: 3.0.8(typescript@5.9.2)
+        version: 3.1.0(typescript@5.9.2)
       ctix:
         specifier: 'catalog:'
         version: 2.7.1(@types/node@24.5.2)(prettier-plugin-organize-imports@4.3.0(prettier@3.6.2)(typescript@5.9.2)(vue-tsc@3.0.8(typescript@5.9.2)))(prettier@3.6.2)(typescript@5.9.2)
@@ -5157,6 +5157,14 @@ packages:
       typescript:
         optional: true
 
+  '@vue/language-core@3.1.0':
+    resolution: {integrity: sha512-a7ns+X9vTbdmk7QLrvnZs8s4E1wwtxG/sELzr6F2j4pU+r/OoAv6jJGSz+5tVTU6e4+3rjepGhSP8jDmBBcb3w==}
+    peerDependencies:
+      typescript: '*'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
   '@vue/reactivity@3.5.22':
     resolution: {integrity: sha512-f2Wux4v/Z2pqc9+4SmgZC1p73Z53fyD90NFWXiX9AKVnVBEvLFOWCEgJD3GdGnlxPZt01PSlfmLqbLYzY/Fw4A==}
 
@@ -5384,6 +5392,9 @@ packages:
 
   alien-signals@2.0.7:
     resolution: {integrity: sha512-wE7y3jmYeb0+h6mr5BOovuqhFv22O/MV9j5p0ndJsa7z1zJNPGQ4ph5pQk/kTTCWRC3xsA4SmtwmkzQO+7NCNg==}
+
+  alien-signals@3.0.0:
+    resolution: {integrity: sha512-JHoRJf18Y6HN4/KZALr3iU+0vW9LKG+8FMThQlbn4+gv8utsLIkwpomjElGPccGeNwh0FI2HN6BLnyFLo6OyLQ==}
 
   ansi-escapes@4.3.2:
     resolution: {integrity: sha512-gKXj5ALrKWQLsYG9jlTRmR/xKluxHV+Z9QEwNIgCfM1/uwPMCuzVVnh5mwTd+OuBZcwSIMbqssNWRm1lE51QaQ==}
@@ -16135,6 +16146,18 @@ snapshots:
     optionalDependencies:
       typescript: 5.9.2
 
+  '@vue/language-core@3.1.0(typescript@5.9.2)':
+    dependencies:
+      '@volar/language-core': 2.4.23
+      '@vue/compiler-dom': 3.5.22
+      '@vue/shared': 3.5.22
+      alien-signals: 3.0.0
+      muggle-string: 0.4.1
+      path-browserify: 1.0.1
+      picomatch: 4.0.3
+    optionalDependencies:
+      typescript: 5.9.2
+
   '@vue/reactivity@3.5.22':
     dependencies:
       '@vue/shared': 3.5.22
@@ -16410,6 +16433,8 @@ snapshots:
   alien-signals@0.4.14: {}
 
   alien-signals@2.0.7: {}
+
+  alien-signals@3.0.0: {}
 
   ansi-escapes@4.3.2:
     dependencies:
