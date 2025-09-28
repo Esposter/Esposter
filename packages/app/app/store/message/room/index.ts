@@ -22,9 +22,10 @@ export const useRoomStore = defineStore("message/room", () => {
   const rooms = computed(() => items.value.toSorted((a, b) => dayjs(b.updatedAt).diff(a.updatedAt)));
   const storeDeleteRoom = async (...args: Parameters<typeof baseStoreDeleteRoom>) => {
     baseStoreDeleteRoom(...args);
-    rooms.value.length > 0
-      ? await router.push({ path: RoutePath.Messages(rooms.value[0].id), replace: true })
-      : await router.push({ path: RoutePath.MessagesIndex, replace: true });
+    await router.push({
+      path: rooms.value.length > 0 ? RoutePath.Messages(rooms.value[0].id) : RoutePath.MessagesIndex,
+      replace: true,
+    });
   };
   const router = useRouter();
   const currentRoomId = computed(() => {
