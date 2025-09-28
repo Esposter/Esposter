@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
-import { useMessageStore } from "@/store/message";
+import { useRoomStore } from "@/store/message/room";
 
 interface MessageProps {
   message: MessageEntity;
@@ -9,9 +9,9 @@ interface MessageProps {
 
 const { message } = defineProps<MessageProps>();
 const scrollToMessage = useScrollToMessage();
-const messageStore = useMessageStore();
-const { userMap } = storeToRefs(messageStore);
-const creator = computed(() => userMap.value.get(message.userId));
+const roomStore = useRoomStore();
+const { memberMap } = storeToRefs(roomStore);
+const creator = computed(() => memberMap.value.get(message.userId));
 </script>
 
 <template>

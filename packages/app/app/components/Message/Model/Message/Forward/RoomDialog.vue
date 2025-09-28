@@ -3,21 +3,21 @@ import { RoutePath } from "#shared/models/router/RoutePath";
 import { MESSAGE_MAX_LENGTH } from "#shared/services/message/constants";
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useAlertStore } from "@/store/alert";
-import { useMessageStore } from "@/store/message";
 import { useDataStore } from "@/store/message/data";
 import { useForwardStore } from "@/store/message/forward";
+import { useRoomStore } from "@/store/message/room";
 
 const { $trpc } = useNuxtApp();
 const alertStore = useAlertStore();
 const { createAlert } = alertStore;
-const messageStore = useMessageStore();
-const { userMap } = storeToRefs(messageStore);
+const roomStore = useRoomStore();
+const { memberMap } = storeToRefs(roomStore);
 const dataStore = useDataStore();
 const { items } = storeToRefs(dataStore);
 const forwardStore = useForwardStore();
 const { messageInput, roomIds, rowKey } = storeToRefs(forwardStore);
 const forward = computed(() => items.value.find((m) => m.rowKey === rowKey.value));
-const creator = computed(() => (forward.value ? userMap.value.get(forward.value.userId) : undefined));
+const creator = computed(() => (forward.value ? memberMap.value.get(forward.value.userId) : undefined));
 const dialog = computed({
   get: () => Boolean(rowKey.value),
   set: (newDialog) => {

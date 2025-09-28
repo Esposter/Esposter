@@ -13,8 +13,13 @@ const displayCreatedAt = useDateFormat(() => message.createdAt, "DD/MM/YYYY H:mm
       <v-icon icon="mdi-pencil" size="small" />
     </template>
     <span font-bold>{{ creator.name }}</span>
-    <span text-gray> changed the room name: </span>
-    <span font-bold>{{ message.message }}. </span>
+    <template v-if="message.message">
+      <span text-gray> changed the room name: </span>
+      <span font-bold>{{ message.message }}. </span>
+    </template>
+    <template v-else>
+      <span text-gray> removed the custom room name. </span>
+    </template>
     <span text-gray text-sm>{{ displayCreatedAt }}</span>
     <MessageModelMessageEmojiList :is-preview :message />
   </MessageModelMessageTypeListItem>

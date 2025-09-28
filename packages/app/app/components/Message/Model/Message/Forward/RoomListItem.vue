@@ -10,6 +10,7 @@ interface ForwardRoomListItemProps {
 const { room } = defineProps<ForwardRoomListItemProps>();
 const forwardStore = useForwardStore();
 const { roomIds } = storeToRefs(forwardStore);
+const { name } = useRoomName(room);
 const isActive = ref(false);
 </script>
 
@@ -31,10 +32,10 @@ const isActive = ref(false);
     @mouseleave="isActive = false"
   >
     <template #prepend>
-      <StyledAvatar :image="room.image" :name="room.name" :avatar-props="{ size: 'small' }" />
+      <StyledAvatar :image="room.image" :name :avatar-props="{ size: 'small' }" />
     </template>
     <v-list-item-title flex justify-between items-center>
-      {{ room.name }}
+      {{ name }}
       <v-checkbox v-model="roomIds" :value="room.id" :ripple="false" density="compact" hide-details @click.prevent="" />
     </v-list-item-title>
   </v-list-item>

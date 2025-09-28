@@ -1,4 +1,5 @@
 import type { Room } from "#shared/db/schema/rooms";
+import type { User } from "#shared/db/schema/users";
 import type { CreateRoomInput } from "#shared/models/db/room/CreateRoomInput";
 import type { DeleteRoomInput } from "#shared/models/db/room/DeleteRoomInput";
 import type { JoinRoomInput } from "#shared/models/db/room/JoinRoomInput";
@@ -27,6 +28,11 @@ export const useRoomStore = defineStore("message/room", () => {
       replace: true,
     });
   };
+  const {
+    data: memberMap,
+    getDataMap: getMemberDataMap,
+    setDataMap: setMemberDataMap,
+  } = useDataMap(() => currentRoomId.value, new Map<string, User>());
   const router = useRouter();
   const currentRoomId = computed(() => {
     const roomId = router.currentRoute.value.params.id;
@@ -34,9 +40,9 @@ export const useRoomStore = defineStore("message/room", () => {
   });
   const currentRoom = computed(() => {
     if (!currentRoomId.value) return null;
-    return rooms.value.find(({ id }) => id === currentRoomId.value);
+    return rooms.value.find(({ id }) => id === currentRoomId.value) ?? null;
   });
-  const currentRoomName = computed(() => currentRoom.value?.name ?? "");
+  const { name: currentRoomName, placeholder: placeholderRoomName } = useRoomName(currentRoom);
 
   const createRoom = async (input: CreateRoomInput) => {
     const newRoom = await $trpc.room.createRoom.mutate(input);
@@ -69,5 +75,9 @@ export const useRoomStore = defineStore("message/room", () => {
     currentRoom,
     currentRoomId,
     currentRoomName,
+    getMemberDataMap,
+    memberMap,
+    placeholderRoomName,
+    setMemberDataMap,
   };
 });

@@ -10,7 +10,7 @@ interface RoomListItemProps {
 
 const { room } = defineProps<RoomListItemProps>();
 const roomStore = useRoomStore();
-const { currentRoomId } = storeToRefs(roomStore);
+const { currentRoomId, currentRoomName } = storeToRefs(roomStore);
 const isHovering = ref(false);
 const active = computed(() => room.id === currentRoomId.value);
 </script>
@@ -20,10 +20,10 @@ const active = computed(() => room.id === currentRoomId.value);
     <NuxtInvisibleLink :to="RoutePath.Messages(room.id)">
       <v-list-item :active :value="room.id">
         <template #prepend>
-          <StyledAvatar :image="room.image" :name="room.name" />
+          <StyledAvatar :image="room.image" :name="currentRoomName" />
         </template>
         <v-list-item-title pr-6>
-          {{ room.name }}
+          {{ currentRoomName }}
         </v-list-item-title>
       </v-list-item>
     </NuxtInvisibleLink>

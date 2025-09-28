@@ -10,6 +10,7 @@ interface EditableNameDialogButtonProps {
   isEditable?: boolean;
   maxLength: number;
   name: string;
+  placeholder?: string;
   tooltipProps: VTooltip["$props"];
 }
 
@@ -33,12 +34,8 @@ watch(
     :confirm-button-props="{ text: 'Save', disabled: editedName === name }"
     @submit="
       (_event, onComplete) => {
-        try {
-          if (editedName === name) return;
-          emit('submit', editedName);
-        } finally {
-          onComplete();
-        }
+        emit('submit', editedName);
+        onComplete();
       }
     "
   >
@@ -72,10 +69,12 @@ watch(
       <v-row>
         <v-col cols="12">
           <v-text-field
-            v-model="editedName"
+            :model-value="editedName"
             density="compact"
+            :placeholder
             autofocus
             :rules="[formRules.requireAtMostNCharacters(maxLength), formRules.isNotProfanity]"
+            @update:model-value="editedName = $event.trim()"
           />
         </v-col>
       </v-row>

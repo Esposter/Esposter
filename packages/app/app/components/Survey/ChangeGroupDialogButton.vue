@@ -34,7 +34,7 @@ const group = ref(survey.group);
     <v-container fluid>
       <v-row>
         <v-col cols="12">
-          <SurveyGroupCombobox v-model="group" />
+          <SurveyGroupCombobox :model-value="group" @update:model-value="group = $event.trim()" />
         </v-col>
       </v-row>
     </v-container>

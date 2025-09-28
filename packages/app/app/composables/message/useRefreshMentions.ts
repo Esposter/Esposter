@@ -1,11 +1,11 @@
 import type { ReadonlyRefOrGetter } from "@vueuse/core";
 
-import { useMessageStore } from "@/store/message";
+import { useRoomStore } from "@/store/message/room";
 import { parse } from "node-html-parser";
 
 export const useRefreshMentions = (message: ReadonlyRefOrGetter<string>) => {
-  const messageStore = useMessageStore();
-  const { userMap } = storeToRefs(messageStore);
+  const roomStore = useRoomStore();
+  const { memberMap } = storeToRefs(roomStore);
   return computed(() => {
     const messageHtml = parse(toValue(message));
     const mentions = messageHtml.querySelectorAll("span[data-type='mention']");
@@ -13,7 +13,7 @@ export const useRefreshMentions = (message: ReadonlyRefOrGetter<string>) => {
     for (const mention of mentions) {
       const memberId = mention.getAttribute("data-id");
       if (!memberId) continue;
-      const member = userMap.value.get(memberId);
+      const member = memberMap.value.get(memberId);
       if (!member?.name || member.name === mention.textContent.slice(1)) continue;
 
       mention.textContent = `@${member.name}`;

@@ -8,12 +8,12 @@ interface StyledAvatarProps {
   name: Session["user"]["name"];
 }
 
-const { avatarProps, image, name } = defineProps<StyledAvatarProps>();
+const { avatarProps, image } = defineProps<StyledAvatarProps>();
 </script>
 
 <template>
   <v-avatar v-if="image" :="avatarProps">
     <v-img :src="image" :alt="name" />
   </v-avatar>
-  <StyledDefaultAvatar v-else :name :="avatarProps" />
+  <StyledDefaultAvatar v-else :="avatarProps" />
 </template>

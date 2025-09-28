@@ -11,7 +11,7 @@ const { $trpc } = useNuxtApp();
 const layoutStore = useLayoutStore();
 const { isLeftDrawerOpenAuto } = storeToRefs(layoutStore);
 const roomStore = useRoomStore();
-const { currentRoom, currentRoomId, currentRoomName } = storeToRefs(roomStore);
+const { currentRoom, currentRoomId, currentRoomName, placeholderRoomName } = storeToRefs(roomStore);
 const isCreator = computed(() => currentRoom.value?.userId === session.value?.user.id);
 const dataStore = useDataStore();
 const { createMessage } = dataStore;
@@ -26,17 +26,16 @@ const { createMessage } = dataStore;
     <MessageContentShowRoomListButton />
     <StyledEditableNameDialogButton
       :card-props="{ title: 'Edit Room' }"
+      :is-editable="isCreator"
       :max-length="ROOM_NAME_MAX_LENGTH"
       :name="currentRoomName"
-      :is-editable="isCreator"
+      :placeholder="placeholderRoomName"
       :tooltip-props="{ location: 'bottom', text: 'Edit Room' }"
       @submit="
         async (name) => {
           if (!currentRoomId) return;
-          const newName = name.trim();
-          if (!newName || newName === currentRoomName) return;
-          await $trpc.room.updateRoom.mutate({ id: currentRoomId, name: newName });
-          await createMessage({ roomId: currentRoomId, type: MessageType.EditRoom, message: newName });
+          await $trpc.room.updateRoom.mutate({ id: currentRoomId, name });
+          await createMessage({ roomId: currentRoomId, type: MessageType.EditRoom, message: name });
         }
       "
     >

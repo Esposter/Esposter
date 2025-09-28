@@ -22,6 +22,6 @@ export const formRules: {
     value.size < MAX_REQUEST_SIZE ||
     `This field's file size should be less than ${MAX_REQUEST_SIZE / MEGABYTE} MB`,
   requireAtMostNCharacters: (n) => (value: TextFieldValue) =>
-    (value && value.length <= n) || `You must enter a maximum of ${n} characters`,
+    (value !== null && value.length <= n) || `You must enter a maximum of ${n} characters`,
   required: (value: TextFieldValue) => (value && value.length > 0) || "This field is required",
 };
