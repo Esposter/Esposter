@@ -8,6 +8,8 @@ import type { LeaveRoomInput } from "#shared/models/db/room/LeaveRoomInput";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { RoutePath } from "#shared/models/router/RoutePath";
 import { dayjs } from "#shared/services/dayjs";
+import { getRoomName } from "@/services/message/room/getRoomName";
+import { getRoomPlaceholder } from "@/services/message/room/getRoomPlaceholder";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { uuidValidateV4 } from "@esposter/shared";
 
@@ -28,21 +30,22 @@ export const useRoomStore = defineStore("message/room", () => {
       replace: true,
     });
   };
-  const {
-    data: memberMap,
-    getDataMap: getMemberDataMap,
-    setDataMap: setMemberDataMap,
-  } = useDataMap(() => currentRoomId.value, new Map<string, User>());
   const router = useRouter();
   const currentRoomId = computed(() => {
     const roomId = router.currentRoute.value.params.id;
     return typeof roomId === "string" && uuidValidateV4(roomId) ? roomId : undefined;
   });
+  const {
+    data: memberMap,
+    getDataMap: getMemberDataMap,
+    setDataMap: setMemberDataMap,
+  } = useDataMap(() => currentRoomId.value, new Map<string, User>());
   const currentRoom = computed(() => {
     if (!currentRoomId.value) return null;
     return rooms.value.find(({ id }) => id === currentRoomId.value) ?? null;
   });
-  const { name: currentRoomName, placeholder: placeholderRoomName } = useRoomName(currentRoom);
+  const placeholderRoomName = computed(() => getRoomPlaceholder(currentRoom.value, memberMap.value));
+  const currentRoomName = computed(() => getRoomName(currentRoom.value, memberMap.value));
 
   const createRoom = async (input: CreateRoomInput) => {
     const newRoom = await $trpc.room.createRoom.mutate(input);
