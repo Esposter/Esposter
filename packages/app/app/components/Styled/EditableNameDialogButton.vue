@@ -15,10 +15,11 @@ interface EditableNameDialogButtonProps {
 }
 
 defineSlots<{ default?: () => VNode }>();
-const { buttonProps, cardProps, isEditable, maxLength, name, tooltipProps } =
+const { buttonProps, cardProps, isEditable, maxLength, name, placeholder, tooltipProps } =
   defineProps<EditableNameDialogButtonProps>();
 const emit = defineEmits<{ submit: [name: string] }>();
 const editedName = ref(name);
+const displayName = computed(() => name || placeholder);
 
 watch(
   () => name,
@@ -54,7 +55,7 @@ watch(
                 @click="updateIsOpen(true)"
               >
                 <slot>
-                  {{ name }}
+                  {{ displayName }}
                 </slot>
                 <template #append>
                   <v-icon v-if="isEditable" :op="isHovering ? undefined : '0!'" icon="mdi-pencil" size="small" />
