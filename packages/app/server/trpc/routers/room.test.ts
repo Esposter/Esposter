@@ -144,6 +144,15 @@ describe("room", () => {
     expect(updatedRoom.name).toBe(updatedName);
   });
 
+  test("trims name on update", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await caller.createRoom({ name });
+    const updatedRoom = await caller.updateRoom({ id: newRoom.id, name: ` ${updatedName} ` });
+
+    expect(updatedRoom.name).toBe(updatedName);
+  });
+
   test("fails update with non-existent id", async () => {
     expect.hasAssertions();
 
