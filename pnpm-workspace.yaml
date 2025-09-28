@@ -12,7 +12,7 @@ catalog:
   "@codemirror/language-data": ^6.5.1
   "@codemirror/state": ^6.5.2
   "@codemirror/theme-one-dark": ^6.1.3
-  "@codemirror/view": ^6.38.3
+  "@codemirror/view": ^6.38.4
   "@electric-sql/pglite": ^0.3.10
   "@floating-ui/dom": ^1.7.4
   "@fullcalendar/core": ^6.1.19
