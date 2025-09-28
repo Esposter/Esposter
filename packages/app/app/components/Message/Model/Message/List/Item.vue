@@ -29,12 +29,12 @@ const isMessageActive = ref(false);
 const isOptionsActive = ref(false);
 const isOptionsChildrenActive = ref(false);
 const isDisabled = computed(() => optionsMenu.value && optionsMenu.value.rowKey !== message.rowKey);
-const active = computed(
+const isActive = computed(
   () =>
     !isDisabled.value &&
     (isMessageActive.value || isOptionsActive.value || isOptionsChildrenActive.value || isUpdateMode.value),
 );
-const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.value);
+const isActiveAndNotUpdateMode = computed(() => isActive.value && !isUpdateMode.value);
 const selectEmoji = await useSelectEmoji(message);
 
 watch(optionsMenu, (newOptionsMenu) => {
@@ -52,7 +52,7 @@ watch(optionsMenu, (newOptionsMenu) => {
         py-1="!"
         min-h-auto="!"
         :op="message.isLoading ? 50 : undefined"
-        :active="(active || activeReplyRowKey === message.rowKey) && !isOpen"
+        :active="(isActive || activeReplyRowKey === message.rowKey) && !isOpen"
         :creator
         :message
         :next-message
@@ -74,7 +74,7 @@ watch(optionsMenu, (newOptionsMenu) => {
           @update:delete-mode="updateIsOpen"
         />
       </component>
-      <div v-if="!message.isLoading" v-show="activeAndNotUpdateMode && !isOpen" relative z-1>
+      <div v-if="!message.isLoading" v-show="isActiveAndNotUpdateMode && !isOpen" relative z-1>
         <div
           absolute
           right-4

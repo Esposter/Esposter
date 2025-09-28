@@ -7,10 +7,10 @@ import { useRoomStore } from "@/store/message/room";
 export const useRoomSubscribables = () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
-  const { storeDeleteRoom, storeUpdateRoom } = roomStore;
+  const { getMemberDataMap, setMemberDataMap, storeDeleteRoom, storeUpdateRoom } = roomStore;
   const { currentRoomId, rooms } = storeToRefs(roomStore);
   const memberStore = useMemberStore();
-  const { getMemberDataMap, pushMembers, setMemberDataMap } = memberStore;
+  const { pushMembers } = memberStore;
 
   const updateRoomUnsubscribable = ref<Unsubscribable>();
   const deleteRoomUnsubscribable = ref<Unsubscribable>();

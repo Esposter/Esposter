@@ -10,20 +10,21 @@ interface RoomListItemProps {
 
 const { room } = defineProps<RoomListItemProps>();
 const roomStore = useRoomStore();
-const { currentRoomId, currentRoomName } = storeToRefs(roomStore);
+const { currentRoomId } = storeToRefs(roomStore);
+const { name } = useRoomName(room);
 const isHovering = ref(false);
-const active = computed(() => room.id === currentRoomId.value);
+const isActive = computed(() => room.id === currentRoomId.value);
 </script>
 
 <template>
   <div relative @mouseover="isHovering = true" @mouseleave="isHovering = false">
     <NuxtInvisibleLink :to="RoutePath.Messages(room.id)">
-      <v-list-item :active :value="room.id">
+      <v-list-item :active="isActive" :value="room.id">
         <template #prepend>
-          <StyledAvatar :image="room.image" :name="currentRoomName" />
+          <StyledAvatar :image="room.image" :name />
         </template>
         <v-list-item-title pr-6>
-          {{ currentRoomName }}
+          {{ name }}
         </v-list-item-title>
       </v-list-item>
     </NuxtInvisibleLink>
