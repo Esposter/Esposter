@@ -39,7 +39,7 @@ const { createMessage } = dataStore;
         }
       "
     >
-      <StyledAvatar :image="currentRoom.image" :name="currentRoom.name" :avatar-props="{ size: 'x-small' }" />
+      <StyledAvatar :image="currentRoom.image" :name="currentRoomName" :avatar-props="{ size: 'x-small' }" />
       <span pl-2>{{ currentRoomName }}</span>
     </StyledEditableNameDialogButton>
     <template #append>
