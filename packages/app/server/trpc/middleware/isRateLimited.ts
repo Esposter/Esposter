@@ -7,7 +7,13 @@ import { ID_SEPARATOR } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { RateLimiterDrizzleNonAtomic } from "rate-limiter-flexible";
 
-const rateLimiter = new RateLimiterDrizzleNonAtomic({ schema: rateLimiterFlexible, storeClient: db });
+const rateLimiter = new RateLimiterDrizzleNonAtomic({
+  blockDuration: 60,
+  duration: 10,
+  points: 100,
+  schema: rateLimiterFlexible,
+  storeClient: db,
+});
 
 export const isRateLimited = middleware(async ({ ctx, next, path }) => {
   const session = await auth.api.getSession({ headers: ctx.headers });
