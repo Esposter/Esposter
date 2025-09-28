@@ -19,9 +19,7 @@ export const rooms = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ name }) => [
-      check("name", sql`LENGTH(${name}) >= 1 AND LENGTH(${name}) <= ${sql.raw(ROOM_NAME_MAX_LENGTH.toString())}`),
-    ],
+    extraConfig: ({ name }) => [check("name", sql`LENGTH(${name}) <= ${sql.raw(ROOM_NAME_MAX_LENGTH.toString())}`)],
     schema: messageSchema,
   },
 );

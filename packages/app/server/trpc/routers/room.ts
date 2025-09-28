@@ -408,10 +408,11 @@ export const roomRouter = router({
   ),
   updateRoom: getProfanityFilterProcedure(updateRoomInputSchema, ["name"]).mutation<Room>(
     async ({ ctx, input: { id, ...rest } }) => {
+      const name = rest.name?.trim();
       const updatedRoom = (
         await ctx.db
           .update(rooms)
-          .set(rest)
+          .set({ ...rest, name })
           .where(and(eq(rooms.id, id), eq(rooms.userId, ctx.session.user.id)))
           .returning()
       ).find(Boolean);

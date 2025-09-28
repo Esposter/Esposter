@@ -33,8 +33,10 @@ const { createMessage } = dataStore;
       @submit="
         async (name) => {
           if (!currentRoomId) return;
-          await $trpc.room.updateRoom.mutate({ id: currentRoomId, name });
-          await createMessage({ roomId: currentRoomId, type: MessageType.EditRoom, message: name });
+          const newName = name.trim();
+          if (!newName || newName === currentRoomName) return;
+          await $trpc.room.updateRoom.mutate({ id: currentRoomId, name: newName });
+          await createMessage({ roomId: currentRoomId, type: MessageType.EditRoom, message: newName });
         }
       "
     >

@@ -30,7 +30,7 @@ watch(
 <template>
   <StyledDialog
     :card-props
-    :confirm-button-props="{ text: 'Save' }"
+    :confirm-button-props="{ text: 'Save', disabled: editedName === name }"
     @submit="
       (_event, onComplete) => {
         try {
@@ -75,12 +75,7 @@ watch(
             v-model="editedName"
             density="compact"
             autofocus
-            :rules="[
-              formRules.required,
-              formRules.requireAtMostNCharacters(maxLength),
-              formRules.isNotEqual(name),
-              formRules.isNotProfanity,
-            ]"
+            :rules="[formRules.requireAtMostNCharacters(maxLength), formRules.isNotProfanity]"
           />
         </v-col>
       </v-row>

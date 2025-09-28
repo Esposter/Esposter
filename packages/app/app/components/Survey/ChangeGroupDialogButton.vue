@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { Survey } from "#shared/db/schema/surveys";
 
-import { formRules } from "@/services/vuetify/formRules";
 import { useSurveyStore } from "@/store/survey";
 
 interface ChangeGroupDialogButtonProps {
@@ -17,7 +16,7 @@ const group = ref(survey.group);
 <template>
   <StyledDialog
     :card-props="{ title: 'Change Group' }"
-    :confirm-button-props="{ color: 'primary', text: 'Change' }"
+    :confirm-button-props="{ color: 'primary', text: 'Change', disabled: group === survey.group }"
     @submit="
       async (_event, onComplete) => {
         await updateSurvey({ ...survey, group });
@@ -35,7 +34,7 @@ const group = ref(survey.group);
     <v-container fluid>
       <v-row>
         <v-col cols="12">
-          <SurveyGroupCombobox v-model="group" :rules="[formRules.isNotEqual(survey.group)]" />
+          <SurveyGroupCombobox v-model="group" />
         </v-col>
       </v-row>
     </v-container>
