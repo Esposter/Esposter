@@ -15,6 +15,7 @@ interface EditableNameDialogButtonProps {
 }
 
 defineSlots<{ default?: () => VNode }>();
+const modelValue = defineModel<boolean>({ default: false });
 const { buttonProps, cardProps, isEditable, maxLength, name, placeholder, tooltipProps } =
   defineProps<EditableNameDialogButtonProps>();
 const emit = defineEmits<{ submit: [name: string] }>();
@@ -31,6 +32,7 @@ watch(
 
 <template>
   <StyledDialog
+    v-model="modelValue"
     :card-props
     :confirm-button-props="{ text: 'Save', disabled: editedName === name }"
     @submit="

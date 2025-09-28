@@ -5,6 +5,7 @@ import { authClient } from "@/services/auth/authClient";
 import { useLayoutStore } from "@/store/layout";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
+import { useDialogStore } from "@/store/message/room/dialog";
 
 const { data: session } = await authClient.useSession(useFetch);
 const { $trpc } = useNuxtApp();
@@ -15,6 +16,8 @@ const { currentRoom, currentRoomId, currentRoomName, placeholderRoomName } = sto
 const isCreator = computed(() => currentRoom.value?.userId === session.value?.user.id);
 const dataStore = useDataStore();
 const { createMessage } = dataStore;
+const dialogStore = useDialogStore();
+const { isEditRoomDialogOpen } = storeToRefs(dialogStore);
 </script>
 
 <template>
@@ -25,6 +28,7 @@ const { createMessage } = dataStore;
   >
     <MessageContentShowRoomListButton />
     <StyledEditableNameDialogButton
+      v-model="isEditRoomDialogOpen"
       :card-props="{ title: 'Edit Room' }"
       :is-editable="isCreator"
       :max-length="ROOM_NAME_MAX_LENGTH"
