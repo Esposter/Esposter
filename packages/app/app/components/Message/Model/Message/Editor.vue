@@ -5,7 +5,6 @@ import type { Editor } from "@tiptap/core";
 import { MESSAGE_MAX_LENGTH } from "#shared/services/message/constants";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { MENTION_ID } from "@/services/message/constants";
-import { useRoomStore } from "@/store/message/room";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { Extension } from "@tiptap/vue-3";
 
@@ -19,16 +18,14 @@ const emit = defineEmits<{
   "update:update-mode": [value: false];
 }>();
 const { $trpc } = useNuxtApp();
-const roomStore = useRoomStore();
-const { currentRoomId } = storeToRefs(roomStore);
 const editedMessageHtml = ref(useMessageWithMentions(() => message.message).value);
 const onUpdateMessage = (editor: Editor) => {
   try {
-    if (!currentRoomId.value || editedMessageHtml.value === message.message) return;
-    else if (EMPTY_TEXT_REGEX.test(editor.getText())) {
+    if (EMPTY_TEXT_REGEX.test(editor.getText())) {
       emit("update:delete-mode", true);
       return;
     }
+
     const mentions = useMentions(() => editedMessageHtml.value);
     getSynchronizedFunction(async () => {
       await $trpc.message.updateMessage.mutate({
@@ -77,6 +74,7 @@ const mentionExtension = useMentionExtension();
         v-if="editor"
         ml-2
         :button-props="{ size: 'small', text: 'Save' }"
+        :disabled="editedMessageHtml === message.message"
         @click="onUpdateMessage(editor)"
       />
     </template>
