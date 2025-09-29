@@ -2,13 +2,12 @@ import type { CreateMessageInput } from "#shared/models/db/message/CreateMessage
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { CustomTableClient } from "@@/server/models/azure/table/CustomTableClient";
 
-import { MessageType } from "#shared/models/db/message/MessageType";
 import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
 import { createMessageEntity as baseCreateMessageEntity } from "#shared/services/message/createMessageEntity";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { createEntity } from "@@/server/services/azure/table/createEntity";
-import { getLinkPreviewResponse } from "@@/server/services/message/getLinkPreviewResponse";
+import { addMessageMetadata } from "@@/server/services/message/addMessageMetadata";
 
 export const createMessage = async (
   messageClient: CustomTableClient<MessageEntity>,
@@ -16,8 +15,7 @@ export const createMessage = async (
 ) => {
   const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
   const messageEntity = baseCreateMessageEntity({ message, ...rest });
-  if (messageEntity.type === MessageType.Message && message)
-    messageEntity.linkPreviewResponse = await getLinkPreviewResponse(message);
+  await addMessageMetadata(messageEntity);
   await createEntity(messageClient, messageEntity);
   await createEntity(messageAscendingClient, {
     partitionKey: messageEntity.partitionKey,

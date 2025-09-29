@@ -1,6 +1,6 @@
 import type { ReadonlyRefOrGetter } from "@vueuse/core";
 
-import { MENTION_ID, MENTION_LABEL } from "@/services/message/constants";
+import { MENTION_ID, MENTION_LABEL } from "#shared/services/message/constants";
 import { useRoomStore } from "@/store/message/room";
 import { parse } from "node-html-parser";
 

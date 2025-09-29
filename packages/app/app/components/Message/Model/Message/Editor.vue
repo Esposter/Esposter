@@ -4,7 +4,6 @@ import type { Editor } from "@tiptap/core";
 
 import { MESSAGE_MAX_LENGTH } from "#shared/services/message/constants";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
-import { MENTION_ID } from "@/services/message/constants";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { Extension } from "@tiptap/vue-3";
 
@@ -26,13 +25,8 @@ const onUpdateMessage = (editor: Editor) => {
       return;
     }
 
-    const mentions = useMentions(() => editedMessageHtml.value);
     getSynchronizedFunction(async () => {
       await $trpc.message.updateMessage.mutate({
-        mentions:
-          mentions.value.length > 0
-            ? mentions.value.map((mention) => mention.getAttribute(MENTION_ID)).filter((id) => id !== undefined)
-            : undefined,
         message: editedMessageHtml.value,
         partitionKey: message.partitionKey,
         rowKey: message.rowKey,

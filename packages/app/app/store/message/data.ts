@@ -7,7 +7,6 @@ import type { Editor } from "@tiptap/core";
 import { AzureEntityType } from "#shared/models/azure/AzureEntityType";
 import { createMessageEntity } from "#shared/services/message/createMessageEntity";
 import { authClient } from "@/services/auth/authClient";
-import { MENTION_ID } from "@/services/message/constants";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useInputStore } from "@/store/message/input";
@@ -35,10 +34,6 @@ export const useDataStore = defineStore("message/data", () => {
     if (!session.value.data) return;
 
     const newMessage = reactive(createMessageEntity({ ...input, isLoading: true, userId: session.value.data.user.id }));
-    const mentions = useMentions(() => newMessage.message);
-    newMessage.mentions = mentions.value
-      .map((mention) => mention.getAttribute(MENTION_ID))
-      .filter((id) => id !== undefined);
     await storeCreateMessage(newMessage);
     Object.assign(newMessage, await $trpc.message.createMessage.mutate(input));
     delete newMessage.isLoading;
