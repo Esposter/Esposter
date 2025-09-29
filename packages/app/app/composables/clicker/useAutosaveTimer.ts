@@ -12,6 +12,6 @@ export const useAutosaveTimer = () => {
   });
 
   onUnmounted(() => {
-    autosaveTimer.value && clearInterval(autosaveTimer.value);
+    if (autosaveTimer.value) clearInterval(autosaveTimer.value);
   });
 };

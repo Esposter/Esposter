@@ -13,5 +13,6 @@ export const pushGameObject = (
       typeof configuration.depth === "number" &&
       obj.depth > configuration.depth,
   );
-  i === -1 ? parentContainer.add(gameObject) : parentContainer.addAt(gameObject, i);
+  if (i === -1) parentContainer.add(gameObject);
+  else parentContainer.addAt(gameObject, i);
 };

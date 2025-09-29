@@ -96,7 +96,7 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
     return {
       byPage: () =>
         (async function* (entities: TableEntity<T>[]): AsyncGenerator<TableEntityResultPage<T>> {
-          const allEntitiesWithMetadata = entities.map(withMetadata);
+          const allEntitiesWithMetadata = entities.map((e) => withMetadata(e));
           if (allEntitiesWithMetadata.length > 0) yield await Promise.resolve(allEntitiesWithMetadata);
         })(resultTableEntities),
       next: () =>

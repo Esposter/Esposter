@@ -13,7 +13,7 @@ export const serializeClauses = (clauses: Clause[]): string => {
   for (const clauses of Object.values(groupedClauses))
     if (clauses.length === 1) groupedStrings.push(serializeClause(clauses[0]));
     else {
-      const groupedString = clauses.map(serializeClause).join(` ${UnaryOperator.or} `);
+      const groupedString = clauses.map((c) => serializeClause(c)).join(` ${UnaryOperator.or} `);
       groupedStrings.push(`(${groupedString})`);
     }
 

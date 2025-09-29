@@ -333,7 +333,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
       }
     }
     // Yield prefixes first, then blobs, which mimics Azure's behavior
-    for (const prefixName of [...uniqueSubprefixes].sort())
+    for (const prefixName of [...uniqueSubprefixes].toSorted())
       yield await Promise.resolve({ kind: "prefix", name: prefixName });
     for (const blobItem of blobsInCurrentLevel) yield await Promise.resolve({ kind: "blob", ...blobItem });
   }
