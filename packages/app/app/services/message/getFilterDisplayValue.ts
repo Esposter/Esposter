@@ -6,8 +6,8 @@ import { NotFoundError, uncapitalize } from "@esposter/shared";
 
 export const getFilterDisplayValue = ({ type, value }: Filter) => {
   switch (type) {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    case FilterType.From: {
+    case FilterType.From:
+    case FilterType.Mentions: {
       const roomStore = useRoomStore();
       const { memberMap } = storeToRefs(roomStore);
       return `${uncapitalize(type)}: ${memberMap.value.get(value)?.name ?? value}`;
