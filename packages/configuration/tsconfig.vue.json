@@ -6,6 +6,6 @@
       "@/*": ["*"]
     }
   },
-  "include": ["types/global.d.ts", "${configDir}/*.ts", "${configDir}/src/**/*.ts", "${configDir}/src/**/*.vue"],
+  "include": ["types/*.d.ts", "${configDir}/*.ts", "${configDir}/src/**/*.ts", "${configDir}/src/**/*.vue"],
   "exclude": ["${configDir}/node_modules"]
 }
