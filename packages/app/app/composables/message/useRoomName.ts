@@ -1,10 +1,11 @@
 import type { Room } from "#shared/db/schema/rooms";
+import type { ReadonlyRefOrGetter } from "@vueuse/core";
 
 import { getRoomName } from "@/services/message/room/getRoomName";
 import { getRoomPlaceholder } from "@/services/message/room/getRoomPlaceholder";
 import { useRoomStore } from "@/store/message/room";
 
-export const useRoomName = (room: MaybeRefOrGetter<null | Room>) => {
+export const useRoomName = (room: ReadonlyRefOrGetter<null | Room>) => {
   const roomStore = useRoomStore();
   const { memberMap } = storeToRefs(roomStore);
   const placeholder = computed(() => getRoomPlaceholder(toValue(room), memberMap.value));

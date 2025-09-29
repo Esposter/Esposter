@@ -1,10 +1,11 @@
 import type { Item } from "#shared/models/dungeons/item/Item";
+import type { ReadonlyRefOrGetter } from "@vueuse/core";
 
 import { ItemEffectType } from "#shared/models/dungeons/item/ItemEffectType";
 import { PreviousSceneUsableItemEffectTypesMap } from "@/services/dungeons/scene/inventory/PreviousSceneUsableItemEffectTypesMap";
 import { useSceneStore } from "@/store/dungeons/scene";
 
-export const useIsUsableItem = (item: MaybeRefOrGetter<Item>) => {
+export const useIsUsableItem = (item: ReadonlyRefOrGetter<Item>) => {
   const sceneStore = useSceneStore();
   const { previousSceneKey } = storeToRefs(sceneStore);
   return computed(() =>
