@@ -2,7 +2,7 @@ import type { SearchMessagesInput } from "#shared/models/db/message/SearchMessag
 
 import { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import { deserializeKey } from "#shared/services/azure/table/deserializeKey";
-import { filterToClause } from "#shared/services/azure/table/filterToClause";
+import { filtersToClauses } from "#shared/services/azure/table/filtersToClauses";
 import { dedupeFilters } from "#shared/services/message/dedupeFilters";
 import { useSearchClient } from "@@/server/composables/azure/search/useSearchClient";
 import { SearchIndex } from "@@/server/models/azure/search/SearchIndex";
@@ -14,7 +14,7 @@ export const searchMessages = async ({ filters, limit, offset, query, roomId, so
   const client = useSearchClient(SearchIndex.Messages);
   let filter = isPartitionKey(roomId);
   if (filters.length > 0) {
-    const clauses = dedupeFilters(filters).map(filterToClause);
+    const clauses = filtersToClauses(dedupeFilters(filters));
     filter += ` ${UnaryOperator.and} ${serializeClauses(clauses)}`;
   }
   const { count, results } = await client.search(query, {
