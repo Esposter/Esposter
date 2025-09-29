@@ -10,7 +10,7 @@ export const serializeClauses = (clauses: Clause[]): string => {
   const groupedClauses = Object.groupBy(clauses, ({ key }) => key);
   const groupedStrings: string[] = [];
 
-  for (const clauses of Object.values(groupedClauses).filter((groupedClause) => groupedClause !== undefined)) {
+  for (const clauses of Object.values(groupedClauses).filter((groupedClause) => groupedClause !== undefined))
     if (clauses.length === 0) continue;
     else if (clauses.length === 1) {
       groupedStrings.push(serializeClause(clauses[0]));
@@ -19,7 +19,6 @@ export const serializeClauses = (clauses: Clause[]): string => {
       const groupedString = clauses.map(serializeClause).join(` ${UnaryOperator.or} `);
       groupedStrings.push(`(${groupedString})`);
     }
-  }
 
   return groupedStrings.join(` ${UnaryOperator.and} `);
 };
