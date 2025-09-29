@@ -24,7 +24,7 @@ const displayCreatedAt = computed(() => {
   else if (createdAtDayjs.value.isYesterday()) return `Yesterday at ${displayCreatedAtShort.value}`;
   else return createdAtDayjs.value.format("DD/MM/YYYY H:mm");
 });
-const messageHtml = useRefreshMentions(() => message.message);
+const messageHtml = useMessageWithMentions(() => message.message);
 </script>
 
 <template>

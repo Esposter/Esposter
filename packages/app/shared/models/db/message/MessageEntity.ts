@@ -9,7 +9,7 @@ import { AzureEntity, createAzureEntitySchema } from "#shared/models/azure/Azure
 import { fileEntitySchema } from "#shared/models/azure/FileEntity";
 import { MessageType } from "#shared/models/db/message/MessageType";
 import { FILE_MAX_LENGTH } from "#shared/services/azure/container/constants";
-import { MESSAGE_MAX_LENGTH } from "#shared/services/message/constants";
+import { MENTION_MAX_LENGTH, MESSAGE_MAX_LENGTH } from "#shared/services/message/constants";
 import { refineMessageSchema } from "#shared/services/message/refineMessageSchema";
 import { getPropertyNames } from "#shared/util/getPropertyNames";
 import { z } from "zod";
@@ -48,7 +48,7 @@ export const messageEntitySchema = refineMessageSchema(
     files: fileEntitySchema.array().max(FILE_MAX_LENGTH).default([]),
     isEdited: z.literal(true).optional(),
     isForward: z.literal(true).optional(),
-    mentions: z.string().array().default([]),
+    mentions: selectUserSchema.shape.id.array().max(MENTION_MAX_LENGTH).default([]),
     message: z.string().max(MESSAGE_MAX_LENGTH).default(""),
     replyRowKey: z.string().optional(),
     type: z.enum(MessageType).default(MessageType.Message),
