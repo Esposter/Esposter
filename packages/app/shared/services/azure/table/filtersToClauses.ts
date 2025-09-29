@@ -7,7 +7,7 @@ import { BinaryOperator, NotFoundError, SearchOperator } from "@esposter/shared"
 export const filtersToClauses = (filters: Filter[]): Clause[] => {
   const clauses: Clause[] = [];
 
-  for (const [type, filtersByType] of Object.entries(Object.groupBy(filters, ({ type }) => type))) {
+  for (const [type, filtersByType] of Object.entries(Object.groupBy(filters, ({ type }) => type)))
     switch (type) {
       case FilterType.From:
         for (const { key, value } of filtersByType) clauses.push({ key, operator: BinaryOperator.eq, value });
@@ -25,7 +25,6 @@ export const filtersToClauses = (filters: Filter[]): Clause[] => {
       default:
         throw new NotFoundError(filtersToClauses.name, type);
     }
-  }
 
   return clauses;
 };
