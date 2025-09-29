@@ -8,8 +8,8 @@ import { selectUserSchema } from "#shared/db/schema/users";
 import { AzureEntity, createAzureEntitySchema } from "#shared/models/azure/AzureEntity";
 import { fileEntitySchema } from "#shared/models/azure/FileEntity";
 import { MessageType } from "#shared/models/db/message/MessageType";
-import { MAX_FILE_LIMIT } from "#shared/services/azure/container/constants";
-import { MESSAGE_MAX_LENGTH } from "#shared/services/message/constants";
+import { FILE_MAX_LENGTH } from "#shared/services/azure/container/constants";
+import { MENTION_MAX_LENGTH, MESSAGE_MAX_LENGTH } from "#shared/services/message/constants";
 import { refineMessageSchema } from "#shared/services/message/refineMessageSchema";
 import { getPropertyNames } from "#shared/util/getPropertyNames";
 import { z } from "zod";
@@ -21,6 +21,7 @@ export class MessageEntity extends AzureEntity {
   // Only used by the frontend for visual effects
   isLoading?: true;
   linkPreviewResponse: LinkPreviewResponse | null = null;
+  mentions: string[] = [];
   message!: string;
   replyRowKey?: string;
   type = MessageType.Message;
@@ -44,9 +45,10 @@ export const messageEntitySchema = refineMessageSchema(
         rowKey: z.string(),
       }),
     ).shape,
-    files: fileEntitySchema.array().max(MAX_FILE_LIMIT).default([]),
+    files: fileEntitySchema.array().max(FILE_MAX_LENGTH).default([]),
     isEdited: z.literal(true).optional(),
     isForward: z.literal(true).optional(),
+    mentions: selectUserSchema.shape.id.array().max(MENTION_MAX_LENGTH).default([]),
     message: z.string().max(MESSAGE_MAX_LENGTH).default(""),
     replyRowKey: z.string().optional(),
     type: z.enum(MessageType).default(MessageType.Message),

@@ -1,8 +1,8 @@
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { Filter } from "#shared/models/message/Filter";
-import type { FilterType } from "#shared/models/message/FilterType";
 
 import { MessageEntityPropertyNames } from "#shared/models/db/message/MessageEntity";
+import { FilterType } from "#shared/models/message/FilterType";
 import { getIsSearchQueryEmpty } from "#shared/services/message/getIsSearchQueryEmpty";
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useRoomStore } from "@/store/message/room";
@@ -22,7 +22,8 @@ export const useSearchMessageStore = defineStore("message/searchMessage", () => 
   });
   const isSearchQueryEmpty = computed(() => getIsSearchQueryEmpty(searchQuery.value, selectedFilters.value));
   const createFilter = (type: FilterType) => {
-    selectedFilters.value.push({ key: MessageEntityPropertyNames.userId, type, value: "" });
+    const key = type === FilterType.From ? MessageEntityPropertyNames.userId : MessageEntityPropertyNames.mentions;
+    selectedFilters.value.push({ key, type, value: "" });
   };
   const deleteFilter = (index: number) => {
     if (index >= 0 && index < selectedFilters.value.length) selectedFilters.value.splice(index, 1);

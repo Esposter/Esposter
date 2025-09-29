@@ -1,4 +1,5 @@
 import { MessageEntityPropertyNames } from "#shared/models/db/message/MessageEntity";
+import { dedupeFilters } from "#shared/services/message/dedupeFilters";
 import { RightDrawer } from "@/models/message/RightDrawer";
 import { useLayoutStore } from "@/store/layout";
 import { useLayoutStore as useMessageLayoutStore } from "@/store/message/layout";
@@ -35,7 +36,7 @@ export const useReadSearchedMessages = () => {
       isRightDrawerOpen.value = true;
       rightDrawer.value = RightDrawer.Search;
       const { count, data } = await $trpc.message.searchMessages.query({
-        filters: selectedFilters.value,
+        filters: dedupeFilters(selectedFilters.value),
         offset,
         query: searchQuery.value,
         roomId: currentRoomId.value,
