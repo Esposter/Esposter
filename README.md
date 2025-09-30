@@ -204,7 +204,6 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 | Powershell                 | https://marketplace.visualstudio.com/items?itemName=ms-vscode.PowerShell       |
 | Material Icon Theme        | https://marketplace.visualstudio.com/items?itemName=PKief.material-icon-theme  |
 | Better Comments            | https://marketplace.visualstudio.com/items?itemName=aaron-bond.better-comments |
-| Dark++ Italic              | https://marketplace.visualstudio.com/items?itemName=idbartosz.darkpp-italic    |
 
 ## <a name="local-development">🏠 Local Development</a>
 
