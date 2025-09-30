@@ -20,7 +20,7 @@ catalog:
   "@fullcalendar/interaction": ^6.1.19
   "@fullcalendar/timegrid": ^6.1.19
   "@fullcalendar/vue3": ^6.1.19
-  "@koumoul/vjsf": ^3.20.7
+  "@koumoul/vjsf": ^3.20.8
   "@lerna-lite/cli": ^4.9.0
   "@lerna-lite/publish": ^4.9.0
   "@lerna-lite/run": ^4.9.0
