@@ -45,6 +45,7 @@ export const suggestion: Suggestion = {
 
     return {
       onExit: () => {
+        component?.element?.remove();
         component?.destroy();
       },
 
