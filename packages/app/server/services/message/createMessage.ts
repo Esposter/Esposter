@@ -11,10 +11,10 @@ import { addMessageMetadata } from "@@/server/services/message/addMessageMetadat
 
 export const createMessage = async (
   messageClient: CustomTableClient<MessageEntity>,
-  { message, ...rest }: CreateMessageInput & Pick<MessageEntity, "isForward" | "isLoading" | "userId">,
+  input: CreateMessageInput & Pick<MessageEntity, "isForward" | "isLoading" | "userId">,
 ) => {
   const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
-  const messageEntity = baseCreateMessageEntity({ message, ...rest });
+  const messageEntity = baseCreateMessageEntity(input);
   await addMessageMetadata(messageEntity);
   await createEntity(messageClient, messageEntity);
   await createEntity(messageAscendingClient, {

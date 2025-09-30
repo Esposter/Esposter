@@ -2,6 +2,7 @@ import type { CreateMessageInput } from "#shared/models/db/message/CreateMessage
 import type { CreateTypingInput } from "#shared/models/db/message/CreateTypingInput";
 import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
+import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessageInput";
 import type { Editor } from "@tiptap/core";
 
 import { AzureEntityType } from "#shared/models/azure/AzureEntityType";
@@ -37,6 +38,10 @@ export const useDataStore = defineStore("message/data", () => {
     await storeCreateMessage(newMessage);
     Object.assign(newMessage, await $trpc.message.createMessage.mutate(input));
     delete newMessage.isLoading;
+  };
+
+  const updateMessage = async (input: UpdateMessageInput) => {
+    await $trpc.message.updateMessage.mutate(input);
   };
 
   const storeCreateMessage = async (message: MessageEntity) => {
@@ -81,6 +86,7 @@ export const useDataStore = defineStore("message/data", () => {
     storeCreateMessage,
     storeDeleteMessage,
     storeUpdateMessage,
+    updateMessage,
     ...restOperationData,
     sendMessage,
     ...restData,
