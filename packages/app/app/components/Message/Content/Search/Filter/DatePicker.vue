@@ -12,15 +12,14 @@ const date = ref<Date | null>(null);
     :allowed-dates="
       (value) => {
         const date = toJsDate(value);
-        const today = dayjs().startOf('day');
-        return dayjs(date).isBefore(today, 'day');
+        return dayjs(date).isSameOrBefore(new Date(), 'day');
       }
     "
     show-adjacent-months
     @update:model-value="
       (value) => {
         if (!value) return;
-        emit('select', value.toString());
+        emit('select', value.toISOString());
       }
     "
   />

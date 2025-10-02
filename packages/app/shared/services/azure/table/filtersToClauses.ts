@@ -35,8 +35,8 @@ export const filtersToClauses = (filters: Filter[]): Clause[] => {
       case FilterType.During: {
         for (const { key, value } of filtersByType) {
           const date = dayjs(value);
-          clauses.push({ key, operator: BinaryOperator.ge, value: date.startOf("day").toString() });
-          clauses.push({ key, operator: BinaryOperator.le, value: date.endOf("day").toString() });
+          clauses.push({ key, operator: BinaryOperator.ge, value: date.startOf("day").toISOString() });
+          clauses.push({ key, operator: BinaryOperator.le, value: date.endOf("day").toISOString() });
         }
         break;
       }

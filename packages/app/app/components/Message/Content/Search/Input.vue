@@ -25,7 +25,6 @@ const onEscape = () => (document.activeElement as HTMLElement | null)?.blur();
     :item-value="getFilterDisplayValue"
     :search="searchQuery"
     chips
-    closable-chips
     hide-details
     hide-no-data
     multiple
