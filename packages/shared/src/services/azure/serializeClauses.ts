@@ -14,11 +14,12 @@ export const serializeClauses = (clauses: Clause[]): string => {
   for (const clauses of Object.values(groupedClauses))
     if (clauses.length === 1) groupedStrings.push(serializeClause(clauses[0]));
     else {
+      const serializedClauses = clauses.map((c) => serializeClause(c));
       const isRangeClause = clauses.some(({ operator }) => RangeOperators.includes(operator));
-      const groupedString = clauses
-        .map((c) => serializeClause(c))
-        .join(` ${isRangeClause ? UnaryOperator.and : UnaryOperator.or} `);
-      groupedStrings.push(`(${groupedString})`);
+      const groupedString = isRangeClause
+        ? serializedClauses.join(` ${UnaryOperator.and} `)
+        : `(${serializedClauses.join(` ${UnaryOperator.or} `)})`;
+      groupedStrings.push(groupedString);
     }
 
   return groupedStrings.join(` ${UnaryOperator.and} `);

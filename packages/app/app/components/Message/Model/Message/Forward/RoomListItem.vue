@@ -36,7 +36,7 @@ const isActive = ref(false);
     </template>
     <v-list-item-title flex justify-between items-center>
       {{ name }}
-      <v-checkbox v-model="roomIds" :value="room.id" :ripple="false" density="compact" hide-details @click.prevent="" />
+      <v-checkbox v-model="roomIds" :value="room.id" :ripple="false" density="compact" hide-details @click.stop />
     </v-list-item-title>
   </v-list-item>
 </template>

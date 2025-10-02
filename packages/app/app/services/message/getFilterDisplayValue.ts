@@ -14,12 +14,12 @@ export const getFilterDisplayValue = ({ type, value }: Filter) => {
     case FilterType.Mentions: {
       const roomStore = useRoomStore();
       const { memberMap } = storeToRefs(roomStore);
-      return `${displayType}: ${memberMap.value.get(value)?.name ?? value}`;
+      return `${displayType} ${memberMap.value.get(value)?.name ?? value}`;
     }
     case FilterType.Before:
     case FilterType.During:
     case FilterType.After: {
-      return `${displayType}: ${new Date(value).toLocaleDateString()}`;
+      return `${displayType} ${new Date(value).toLocaleDateString()}`;
     }
     default:
       throw new NotFoundError(getFilterDisplayValue.name, type);

@@ -3,6 +3,7 @@ import type { Filter } from "#shared/models/message/Filter";
 import type { Clause } from "@esposter/shared";
 
 import { FilterType } from "#shared/models/message/FilterType";
+import { escapeValue } from "#shared/services/azure/search/escapeValue";
 import { dayjs } from "#shared/services/dayjs";
 import { BinaryOperator, NotFoundError, SearchOperator } from "@esposter/shared";
 
@@ -12,7 +13,8 @@ export const filtersToClauses = (filters: Filter[]): Clause[] => {
   for (const [type, filtersByType] of Object.entries(Object.groupBy(filters, ({ type }) => type)))
     switch (type) {
       case FilterType.From:
-        for (const { key, value } of filtersByType) clauses.push({ key, operator: BinaryOperator.eq, value });
+        for (const { key, value } of filtersByType)
+          clauses.push({ key, operator: BinaryOperator.eq, value: escapeValue(value) });
         break;
       case FilterType.Mentions: {
         const mentionFiltersByKey = Object.groupBy(filtersByType, ({ key }) => key);

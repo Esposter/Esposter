@@ -9,5 +9,5 @@ export const serializeClause = (clause: Clause): string => {
 
   const { key, not, operator, value } = clause;
   const notPrefix = not ? `${UnaryOperator.not} ` : "";
-  return `${notPrefix}${key} ${operator} '${value}'`;
+  return `${notPrefix}${key} ${operator} ${value}`;
 };
