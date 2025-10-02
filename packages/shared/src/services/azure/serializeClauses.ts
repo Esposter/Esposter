@@ -1,6 +1,7 @@
 import type { Clause } from "@/models/azure/Clause";
 
 import { UnaryOperator } from "@/models/azure/UnaryOperator";
+import { RangeOperators } from "@/services/azure/constants";
 import { serializeClause } from "@/services/azure/serializeClause";
 
 export const serializeClauses = (clauses: Clause[]): string => {
@@ -13,7 +14,10 @@ export const serializeClauses = (clauses: Clause[]): string => {
   for (const clauses of Object.values(groupedClauses))
     if (clauses.length === 1) groupedStrings.push(serializeClause(clauses[0]));
     else {
-      const groupedString = clauses.map((c) => serializeClause(c)).join(` ${UnaryOperator.or} `);
+      const isRangeClause = clauses.some(({ operator }) => RangeOperators.includes(operator));
+      const groupedString = clauses
+        .map((c) => serializeClause(c))
+        .join(` ${isRangeClause ? UnaryOperator.and : UnaryOperator.or} `);
       groupedStrings.push(`(${groupedString})`);
     }
 
