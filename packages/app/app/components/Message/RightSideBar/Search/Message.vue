@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
+import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 import { useRoomStore } from "@/store/message/room";
 
 interface MessageProps {
@@ -16,6 +17,6 @@ const creator = computed(() => memberMap.value.get(message.userId));
 
 <template>
   <v-list-item v-if="creator" @click="scrollToMessage(message.rowKey)">
-    <MessageModelMessageType :creator :message is-preview />
+    <component :is="MessageComponentMap[message.type]" :creator :message is-preview />
   </v-list-item>
 </template>
