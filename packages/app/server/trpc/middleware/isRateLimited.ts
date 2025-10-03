@@ -1,22 +1,37 @@
+import { rateLimiterFlexible } from "#shared/db/schema/rateLimiterFlexible";
+import { IS_PRODUCTION } from "#shared/util/environment/constants";
+import { auth } from "@@/server/auth";
+import { db } from "@@/server/db";
 import { middleware } from "@@/server/trpc";
 import { ID_SEPARATOR } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { RateLimiterMemory } from "rate-limiter-flexible";
+import { RateLimiterDrizzleNonAtomic } from "rate-limiter-flexible";
 
-const rateLimiter = new RateLimiterMemory({ blockDuration: 5, duration: 1, points: 5 });
+const rateLimiter = new RateLimiterDrizzleNonAtomic({
+  blockDuration: 60,
+  duration: 10,
+  points: 100,
+  schema: rateLimiterFlexible,
+  storeClient: db,
+});
 
 export const isRateLimited = middleware(async ({ ctx, next, path }) => {
+  const session = await auth.api.getSession({ headers: ctx.headers });
+  if (!IS_PRODUCTION) return next({ ctx: { session } });
+
   const forwardedFor = ctx.req.headers["x-forwarded-for"] as string | undefined;
   const ip = forwardedFor ? forwardedFor.split(",")[0].trim() : ctx.req.socket.remoteAddress;
   if (!ip) {
     console.warn(
-      "Rate Limiter: Could not determine IP address. Bypassing middleware. This is expected for local production builds.",
+      "Rate Limiter: Could not determine IP address. Bypassing middleware... This is expected for local production builds.",
     );
-    return next();
-  } else if (ip === "::1") return next();
+    return next({ ctx: { session } });
+  }
 
   try {
-    const { msBeforeNext, remainingPoints } = await rateLimiter.consume(`${path}${ID_SEPARATOR}${ip}`);
+    const { msBeforeNext, remainingPoints } = await rateLimiter.consume(
+      session ? session.user.id : `${path}${ID_SEPARATOR}${ip}`,
+    );
     if ("setHeader" in ctx.res) {
       ctx.res.setHeader("Retry-After", msBeforeNext / 1000);
       ctx.res.setHeader("X-RateLimit-Limit", rateLimiter.points);
@@ -27,5 +42,5 @@ export const isRateLimited = middleware(async ({ ctx, next, path }) => {
     throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
   }
 
-  return next();
+  return next({ ctx: { session } });
 });

@@ -7,6 +7,9 @@ import { TRPCError } from "@trpc/server";
 
 export const getMemberProcedure = <T extends z.ZodType>(schema: T, roomIdKey: keyof inferParser<T>["out"]) =>
   authedProcedure.input(schema).use(async ({ ctx, input, next }) => {
+    // If the roomIdKey is not in the input, we don't need to check if the user is a member
+    if (!(roomIdKey in (input as object))) return next();
+
     const value = input[roomIdKey];
     if (!(typeof value === "string" && uuidValidateV4(value))) throw new TRPCError({ code: "BAD_REQUEST" });
 

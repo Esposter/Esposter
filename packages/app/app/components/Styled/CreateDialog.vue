@@ -8,8 +8,8 @@ export interface StyledCreateDialogProps {
 }
 
 defineSlots<{
-  activator: (props: StyledDialogActivatorSlotProps) => unknown;
-  default: (props: Record<string, never>) => unknown;
+  activator: (props: StyledDialogActivatorSlotProps) => VNode;
+  default: () => VNode;
 }>();
 const { cardProps, confirmButtonProps } = defineProps<StyledCreateDialogProps>();
 const emit = defineEmits<{ create: [onComplete: () => void] }>();

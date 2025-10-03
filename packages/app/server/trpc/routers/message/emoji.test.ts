@@ -9,7 +9,6 @@ import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/tr
 import { messageRouter } from "@@/server/trpc/routers/message";
 import { emojiRouter } from "@@/server/trpc/routers/message/emoji";
 import { roomRouter } from "@@/server/trpc/routers/room";
-import { NIL } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
@@ -68,7 +67,7 @@ describe("emoji", () => {
 
     const roomId = crypto.randomUUID();
 
-    await expect(emojiCaller.readEmojis({ messageRowKeys: [NIL], roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(emojiCaller.readEmojis({ messageRowKeys: [""], roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,
     );
   });
@@ -127,7 +126,7 @@ describe("emoji", () => {
     const roomId = crypto.randomUUID();
 
     await expect(
-      emojiCaller.createEmoji({ emojiTag, messageRowKey: NIL, partitionKey: roomId }),
+      emojiCaller.createEmoji({ emojiTag, messageRowKey: "", partitionKey: roomId }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
@@ -242,7 +241,7 @@ describe("emoji", () => {
     expect.hasAssertions();
 
     await expect(
-      emojiCaller.updateEmoji({ messageRowKey: NIL, partitionKey: crypto.randomUUID(), rowKey: NIL }),
+      emojiCaller.updateEmoji({ messageRowKey: "", partitionKey: crypto.randomUUID(), rowKey: "" }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
@@ -271,7 +270,7 @@ describe("emoji", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const input = { messageRowKey: NIL, partitionKey: newRoom.id, rowKey: NIL };
+    const input = { messageRowKey: "", partitionKey: newRoom.id, rowKey: "" };
 
     await expect(emojiCaller.updateEmoji(input)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Invalid operation: Read, name: Emoji, ${JSON.stringify(input)}]`,
@@ -361,9 +360,9 @@ describe("emoji", () => {
 
     await expect(
       emojiCaller.deleteEmoji({
-        messageRowKey: NIL,
+        messageRowKey: "",
         partitionKey: crypto.randomUUID(),
-        rowKey: NIL,
+        rowKey: "",
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });

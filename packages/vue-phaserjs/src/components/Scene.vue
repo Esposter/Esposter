@@ -14,7 +14,7 @@ import { runLifecycleListeners } from "@/util/hooks/runLifecycleListeners";
 import { InjectionKeyMap } from "@/util/InjectionKeyMap";
 import { Cameras, Scene, Scenes } from "phaser";
 
-defineSlots<{ default: (props: Record<string, never>) => unknown }>();
+defineSlots<{ default: () => VNode }>();
 const { autoStart, sceneKey } = defineProps<SceneProps>();
 const emit = defineEmits<{
   create: [SceneWithPlugins];

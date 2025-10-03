@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { FileRendererProps } from "@/models/message/file/FileRendererProps";
+import type { FileRendererComponentProps } from "@/models/message/file/FileRendererComponentProps";
 
-const { url } = defineProps<FileRendererProps>();
+const { url } = defineProps<FileRendererComponentProps>();
 </script>
 
 <template>

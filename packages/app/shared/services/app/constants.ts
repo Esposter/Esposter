@@ -3,6 +3,8 @@ export const SITE_DESCRIPTION = `${SITE_NAME} is a nice and casual place for pos
 export const LINKEDIN_PROFILE_URL = "https://www.linkedin.com/in/jimmy-chen-b6216820b";
 
 export const APP_BAR_HEIGHT = 56;
+export const LEFT_DRAWER_WIDTH = 256;
+export const RIGHT_DRAWER_WIDTH = 256;
 
 export const MEGABYTE = 2 ** 20;
 export const MAX_REQUEST_SIZE = 2 * MEGABYTE;

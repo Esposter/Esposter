@@ -43,24 +43,21 @@ watch(
 </script>
 
 <template>
-  <!-- floating-ui needs a parent element to always be in the DOM to position the list -->
-  <div>
-    <StyledCard v-if="items.length > 0" overflow-y-auto :card-props="{ maxHeight: '250', width: '400' }" :elevation="1">
-      <v-card-title text-sm font-bold>{{ title }}</v-card-title>
-      <v-list density="compact" py-0>
-        <v-list-item
-          v-for="({ id, image, name }, index) of items"
-          :key="id"
-          :active="selectedIndex === index"
-          :ripple="false"
-          @click="selectItem(index)"
-        >
-          <template #prepend>
-            <MessageModelMemberStatusAvatar :id :image :name :avatar-props="{ size: 'x-small' }" />
-          </template>
-          <v-list-item-title font-semibold>{{ name }}</v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </StyledCard>
-  </div>
+  <StyledCard v-if="items.length > 0" overflow-y-auto :card-props="{ maxHeight: '250', width: '400' }" :elevation="1">
+    <v-card-title text-sm font-bold>{{ title }}</v-card-title>
+    <v-list density="compact" py-0>
+      <v-list-item
+        v-for="({ id, image, name }, index) of items"
+        :key="id"
+        :active="selectedIndex === index"
+        :ripple="false"
+        @click="selectItem(index)"
+      >
+        <template #prepend>
+          <MessageModelMemberStatusAvatar :id :image :name :avatar-props="{ size: 'x-small' }" />
+        </template>
+        <v-list-item-title font-semibold>{{ name }}</v-list-item-title>
+      </v-list-item>
+    </v-list>
+  </StyledCard>
 </template>

@@ -2,7 +2,7 @@
 import { SITE_DESCRIPTION, SITE_NAME } from "#shared/services/app/constants";
 import { getLogoImageUrl } from "@/services/app/getLogoImageUrl";
 
-defineSlots<{ default: (props: Record<string, never>) => unknown }>();
+defineSlots<{ default: () => VNode }>();
 
 useHead({
   titleTemplate: (title) => (title ? `${SITE_NAME} | ${title}` : SITE_NAME),

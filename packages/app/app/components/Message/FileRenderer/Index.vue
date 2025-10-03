@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { FileRendererProps } from "@/models/message/file/FileRendererProps";
+import type { FileRendererComponentProps } from "@/models/message/file/FileRendererComponentProps";
 import type { Component } from "vue";
 
 import { TypeRendererMap } from "@/models/message/file/TypeRendererMap";
 import { getLanguage } from "@/services/codemirror/getLanguage";
 import { getInferredMimetype } from "@/services/file/getInferredMimetype";
 
-const props = defineProps<FileRendererProps>();
+const props = defineProps<FileRendererComponentProps>();
 const { file } = toRefs(props);
 const language = computed(() => getLanguage(file.value.filename));
 const renderer = computed<Component>(() => {

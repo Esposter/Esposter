@@ -12,7 +12,6 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "javascript.updateImportsOnFileMove.enabled": "always",
   "typescript.updateImportsOnFileMove.enabled": "always",
-  "vue.updateImportsOnFileMove.enabled": true,
   "[typescript][vue]": {
     "editor.formatOnSave": false,
     "editor.codeActionsOnSave": ["source.organizeImports", "source.fixAll.oxc", "source.fixAll.eslint"]

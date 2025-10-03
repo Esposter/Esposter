@@ -8,21 +8,17 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
   const dashboardStore = useDashboardStore();
   const { saveDashboard } = dashboardStore;
   const visualType = ref(VisualType.Area);
+  const visuals = computed({
+    get: () => dashboardStore.dashboard.visuals,
+    set: (newVisuals) => {
+      dashboardStore.dashboard.visuals = newVisuals;
+    },
+  });
   const {
     createVisual: storeCreateVisual,
     updateVisual,
-    visuals,
     ...restOperationData
-  } = createOperationData(
-    computed({
-      get: () => dashboardStore.dashboard.visuals,
-      set: (newVisuals) => {
-        dashboardStore.dashboard.visuals = newVisuals;
-      },
-    }),
-    ["id"],
-    "Visual",
-  );
+  } = createOperationData(visuals, ["id"], "Visual");
   const createVisual = () => {
     storeCreateVisual(
       new Visual({

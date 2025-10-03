@@ -16,25 +16,25 @@ export interface StyledDialogProps {
 }
 
 defineSlots<{
-  activator: (props: StyledDialogActivatorSlotProps) => unknown;
-  default: (props: Record<string, never>) => unknown;
+  activator: (props: StyledDialogActivatorSlotProps) => VNode;
+  default: () => VNode;
 }>();
 const { cardProps = {}, confirmButtonAttrs = {}, confirmButtonProps = {} } = defineProps<StyledDialogProps>();
 const emit = defineEmits<{ submit: [event: SubmitEventPromise, onComplete: () => void] }>();
-const isOpen = defineModel<boolean>({ default: false });
+const modelValue = defineModel<boolean>({ default: false });
 const isValid = ref(true);
 </script>
 
 <template>
-  <v-dialog v-model="isOpen">
+  <v-dialog v-model="modelValue">
     <template #activator>
-      <slot name="activator" :is-open :update-is-open="(value: true) => (isOpen = value)" />
+      <slot name="activator" :is-open="modelValue" :update-is-open="(value) => (modelValue = value)" />
     </template>
     <v-form
       v-model="isValid"
       @submit.prevent="
         emit('submit', $event, () => {
-          isOpen = false;
+          modelValue = false;
         })
       "
     >
@@ -42,12 +42,19 @@ const isValid = ref(true);
         <slot />
         <v-card-actions>
           <v-spacer />
-          <v-btn text-3 variant="outlined" @click="isOpen = false">Cancel</v-btn>
+          <v-btn text-3 text="Cancel" variant="outlined" @click="modelValue = false" />
           <v-btn
+            v-if="confirmButtonProps.color"
             text-3
             type="submit"
-            color="error"
             variant="outlined"
+            :disabled="!isValid"
+            :="mergeProps(confirmButtonProps, confirmButtonAttrs)"
+          />
+          <StyledButton
+            v-else
+            text-3
+            type="submit"
             :disabled="!isValid"
             :="mergeProps(confirmButtonProps, confirmButtonAttrs)"
           />

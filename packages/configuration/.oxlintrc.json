@@ -17,6 +17,7 @@
     "import/max-dependencies": "off",
     "import/group-exports": "off",
     "import/no-anonymous-default-export": "off",
+    "import/no-named-export": "off",
     "import/no-unassigned-import": ["error", { "allow": ["*.css", "*.d.ts", "*.i18n"] }],
     "import/prefer-default-export": "off",
     "init-declarations": "off",
@@ -59,6 +60,7 @@
     "unicorn/prefer-query-selector": "off",
     "unicorn/switch-case-braces": "off",
     "vars-on-top": "off",
+    "vue/no-required-prop-with-default": "off",
     "yoda": ["error", "never"]
   }
 }

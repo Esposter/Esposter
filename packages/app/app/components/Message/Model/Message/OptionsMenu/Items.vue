@@ -30,7 +30,7 @@ const { updateMessageItems } = useMessageActionItems(message, isEditable, isCrea
     :text="shortTitle ?? title"
   >
     <template #activator="{ props }">
-      <v-btn m-0="!" rd-none="!" :icon size="small" :="props" @click="onClick" />
+      <v-btn m-0 :icon size="small" tile :="props" @click="onClick" />
     </template>
   </v-tooltip>
 </template>

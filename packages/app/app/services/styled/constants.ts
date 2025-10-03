@@ -1,1 +1,1 @@
-export const EMOJI_TEXT = "Add Reaction";
+export const EMOJI_PICKER_TOOLTIP_TEXT = "Add Reaction";

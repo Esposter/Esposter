@@ -18,10 +18,10 @@ export const useUserSubscribables = () => {
     upsertStatusUnsubscribable.value?.unsubscribe();
   };
 
-  const { trigger } = watchTriggerable(members, (newMembers) => {
-    unsubscribe();
+  const { trigger } = watchTriggerable([members, () => session.value.data], ([newMembers, newSessionData]) => {
+    if (!newSessionData) return;
 
-    const newMemberIds = newMembers.filter(({ id }) => id !== session.value.data?.user.id).map(({ id }) => id);
+    const newMemberIds = newMembers.filter(({ id }) => id !== newSessionData.user.id).map(({ id }) => id);
     if (newMemberIds.length === 0) return;
 
     upsertStatusUnsubscribable.value = $trpc.user.onUpsertStatus.subscribe(newMemberIds, {

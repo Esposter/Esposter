@@ -1,6 +1,6 @@
 {
   "name": "parse-tmx",
-  "version": "2.13.1",
+  "version": "2.14.0",
   "description": "A parser for tmx.",
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/parse-tmx#readme",
@@ -27,12 +27,12 @@
   },
   "scripts": {
     "build": "bun --bun export:gen && rolldown --config rolldown.config.ts",
-    "test": "NODE_OPTIONS=--max-old-space-size=8192 vitest",
     "coverage": "vitest run --coverage",
+    "export:gen": "ctix build --config ../configuration/.ctirc-ts",
     "lint": "oxlint && eslint .",
     "lint:fix": "oxlint --fix && eslint --fix .",
-    "typecheck": "tsc",
-    "export:gen": "ctix build --config ../configuration/.ctirc-ts"
+    "test": "vitest",
+    "typecheck": "tsc"
   },
   "dependencies": {
     "@esposter/xml2js": "workspace:*",

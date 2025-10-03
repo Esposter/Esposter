@@ -1,41 +1,55 @@
 <script setup lang="ts">
+import { MessageType } from "#shared/models/db/message/MessageType";
+import { ROOM_NAME_MAX_LENGTH } from "#shared/services/message/constants";
 import { authClient } from "@/services/auth/authClient";
 import { useLayoutStore } from "@/store/layout";
+import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
+import { useDialogStore } from "@/store/message/room/dialog";
 
 const { data: session } = await authClient.useSession(useFetch);
 const { $trpc } = useNuxtApp();
 const layoutStore = useLayoutStore();
-const { leftDrawerOpenAuto } = storeToRefs(layoutStore);
+const { isLeftDrawerOpenAuto } = storeToRefs(layoutStore);
 const roomStore = useRoomStore();
-const { currentRoom, currentRoomId, currentRoomName } = storeToRefs(roomStore);
+const { currentRoom, currentRoomId, currentRoomName, placeholderRoomName } = storeToRefs(roomStore);
 const isCreator = computed(() => currentRoom.value?.userId === session.value?.user.id);
+const dataStore = useDataStore();
+const { createMessage } = dataStore;
+const dialogStore = useDialogStore();
+const { isEditRoomDialogOpen } = storeToRefs(dialogStore);
 </script>
 
 <template>
-  <v-toolbar :style="{ paddingLeft: leftDrawerOpenAuto ? '1rem' : undefined }" b-none density="comfortable">
+  <v-toolbar
+    v-if="currentRoom"
+    :style="{ paddingLeft: isLeftDrawerOpenAuto ? '.25rem' : undefined }"
+    density="comfortable"
+  >
     <MessageContentShowRoomListButton />
-    <StyledEditableToolbarTitle
-      v-if="isCreator"
-      :initial-value="currentRoomName"
-      @update="
-        async (value, onComplete) => {
-          try {
-            if (!currentRoomId || !value || value === currentRoomName) return;
-            await $trpc.room.updateRoom.mutate({ id: currentRoomId, name: value });
-          } finally {
-            onComplete();
-          }
+    <StyledEditableNameDialogButton
+      v-model="isEditRoomDialogOpen"
+      :card-props="{ title: 'Edit Room' }"
+      :is-editable="isCreator"
+      :max-length="ROOM_NAME_MAX_LENGTH"
+      :name="currentRoom.name"
+      :placeholder="placeholderRoomName"
+      :tooltip-props="{ location: 'bottom', text: 'Edit Room' }"
+      @submit="
+        async (name) => {
+          if (!currentRoomId) return;
+          await $trpc.room.updateRoom.mutate({ id: currentRoomId, name });
+          await createMessage({ roomId: currentRoomId, type: MessageType.EditRoom, message: name });
         }
       "
-    />
-    <v-toolbar-title v-else font-bold>
-      {{ currentRoomName }}
-    </v-toolbar-title>
+    >
+      <StyledAvatar :image="currentRoom.image" :name="currentRoomName" :avatar-props="{ size: 'x-small' }" />
+      <span pl-2>{{ currentRoomName }}</span>
+    </StyledEditableNameDialogButton>
     <template #append>
       <MessageContentAddFriendsDialogButton />
       <MessageContentShowMemberListButton />
-      <MessageContentSearchMenu />
+      <MessageContentShowSearchButton />
     </template>
   </v-toolbar>
 </template>

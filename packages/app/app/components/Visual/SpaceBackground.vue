@@ -2,7 +2,7 @@
 import { NOT_FOUND_BACKGROUND_PATH } from "#shared/services/app/constants";
 import { gsap } from "gsap";
 
-defineSlots<{ default: (props: Record<string, never>) => unknown }>();
+defineSlots<{ default: () => VNode }>();
 
 onMounted(() => {
   gsap.to(".hover", {

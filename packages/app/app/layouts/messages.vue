@@ -9,9 +9,8 @@ const { currentRoomName } = storeToRefs(roomStore);
 </script>
 
 <template>
-  <!-- Set max height here so we can hide global window scrollbar
-    and show scrollbar within the chat content only for chat routes -->
-  <NuxtLayout :main-style="{ maxHeight: '100dvh' }" :footer-style="{ paddingBottom: 0 }">
+  <!-- We only want to show the inner scrollbar inside the chat content -->
+  <NuxtLayout :bottom-offset="151" :footer-style="{ paddingBottom: 0 }" hide-global-scrollbar>
     <Head>
       <Title>{{ currentRoomName }}</Title>
     </Head>

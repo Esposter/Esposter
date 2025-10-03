@@ -15,7 +15,7 @@ interface CreateSurveyDialogProps {
 }
 
 defineSlots<{
-  activator: (props: StyledDialogActivatorSlotProps) => unknown;
+  activator: (props: StyledDialogActivatorSlotProps) => VNode;
 }>();
 const { cardProps, initialValue = { group: null, model: "", name: DEFAULT_NAME } } =
   defineProps<CreateSurveyDialogProps>();

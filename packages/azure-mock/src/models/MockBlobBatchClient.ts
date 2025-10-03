@@ -6,7 +6,7 @@ import type {
   BlobDeleteOptions,
   StorageSharedKeyCredential,
 } from "@azure/storage-blob";
-import type { MapValue } from "type-fest/source/entry";
+import type { MapValue } from "@esposter/shared";
 
 import { MockContainerDatabase } from "@/store/MockContainerDatabase";
 import { getAzureErrorXml } from "@/util/getAzureErrorXml";

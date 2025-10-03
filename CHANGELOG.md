@@ -3,6 +3,38 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.14.0](https://github.com/Esposter/Esposter/compare/v2.13.1...v2.14.0) (2025-09-14)
+
+### Bug Fixes
+
+* Add MapValue type ([5ad7ee0](https://github.com/Esposter/Esposter/commit/5ad7ee0c7e7a36b0d712e545175852a2b8eb9bb2))
+* add v-else ([a558410](https://github.com/Esposter/Esposter/commit/a558410b12a39726da4ae295f98366be9191d0ce))
+* conditions ([7ea99fc](https://github.com/Esposter/Esposter/commit/7ea99fc35be58f5ace20b5189101522123272979))
+* don't require offset to be part of data ([dd2090a](https://github.com/Esposter/Esposter/commit/dd2090a03ce0cba10ffd05155549ae5b27a69eba))
+* handle start spaces ([b7b0dcd](https://github.com/Esposter/Esposter/commit/b7b0dcd6ebf54bf20b773fea815a0473c2808cb0))
+* hover ([b91327d](https://github.com/Esposter/Esposter/commit/b91327d046ba1a28b447f9d7c00283e0332b9dba))
+* lint ([e269995](https://github.com/Esposter/Esposter/commit/e269995d5b01349ae3ab24b85a37594c47c4b6d9))
+* move hoisted outside of runtime code ([8acf61a](https://github.com/Esposter/Esposter/commit/8acf61a8f107a2a075f62fed42c9d1ceef49986c))
+* node options + add hover plus icon ([72b7e89](https://github.com/Esposter/Esposter/commit/72b7e892443f1ec4908f2e1686cebf832a574bdc))
+* object layer should be per tilemap ([10b2271](https://github.com/Esposter/Esposter/commit/10b2271234bf4fc60cd37307f20ef692c93b0686))
+* remove unnecessary composables ([0b85e80](https://github.com/Esposter/Esposter/commit/0b85e80af9ade3bdc54c5c8c6439c3047c03c6ef))
+* storeToRefs ([1ae99bd](https://github.com/Esposter/Esposter/commit/1ae99bd8ed48734a2aca7d18ddb9e9f67cb2171f))
+* switch back to vite plugin dts ([52c9546](https://github.com/Esposter/Esposter/commit/52c9546cfa230916137767fb734b0138c19d043b))
+* types ([6bea715](https://github.com/Esposter/Esposter/commit/6bea71580fa0b200d31228196ab56d600f5b4269))
+* update pnpm to fix npm hosted deps + update deps ([eddbeb7](https://github.com/Esposter/Esposter/commit/eddbeb7f89dfaec2b818a3d16e58f6983b57685c))
+* update tileset paths + re-export map ([7f10532](https://github.com/Esposter/Esposter/commit/7f1053214225f62478adbc6e72bd0b8ceebb82c8))
+* use return object and item value ([b9470a2](https://github.com/Esposter/Esposter/commit/b9470a256fa9e59d97322616430226dcbffb313c))
+
+### Features
+
+* Add count ([3670619](https://github.com/Esposter/Esposter/commit/367061974de1497b0ab1bf8b3965efdda4443bc7))
+* Add history messages ([6ab2039](https://github.com/Esposter/Esposter/commit/6ab2039a1757e46c76a9e2992294a0b7e84cf4da))
+* Add member skeleton ([c20c785](https://github.com/Esposter/Esposter/commit/c20c7858a0461ce0fe37c23d199a9243f8a05f5f))
+* Add skeleton on beginning as well ([cb37784](https://github.com/Esposter/Esposter/commit/cb37784d69d5ec12e659adcb6928b282620bece2))
+* Add some basic search func ([ba85959](https://github.com/Esposter/Esposter/commit/ba859597c9558c206e92fec418f1fe4167255eb3))
+* Add user picker ([870a1f9](https://github.com/Esposter/Esposter/commit/870a1f9c3037b37ce1db1f309e92e9f3edba5b4e))
+* upgrade type-fest to ESM only ([e2a7bb6](https://github.com/Esposter/Esposter/commit/e2a7bb6067fb9d87092ec274d709e3d15a4ffddf))
+
 ## [2.13.1](https://github.com/Esposter/Esposter/compare/v2.13.0...v2.13.1) (2025-08-31)
 
 ### Bug Fixes

@@ -1,35 +1,35 @@
 <script setup lang="ts">
 import { FilterType } from "#shared/models/message/FilterType";
+import { getFilterDisplayValue } from "@/services/message/getFilterDisplayValue";
 import { useSearchMessageStore } from "@/store/message/searchMessage";
 
 const readSearchedMessages = useReadSearchedMessages();
 const searchMessageStore = useSearchMessageStore();
 const { createFilter } = searchMessageStore;
-const { searchQuery, selectedFilters } = storeToRefs(searchMessageStore);
+const { activeSelectedFilter, isSearchQueryEmpty, menu, searchQuery, selectedFilters } =
+  storeToRefs(searchMessageStore);
+const searchQueryOnFocus = ref("");
 const filterTypes = Object.values(FilterType);
-const activeSelectedFilter = computed({
-  get: () => selectedFilters.value.at(-1),
-  set: (value) => {
-    if (!value) return;
-    selectedFilters.value[selectedFilters.value.length - 1] = value;
-  },
-});
 const onEscape = () => (document.activeElement as HTMLElement | null)?.blur();
 </script>
 
 <template>
   <v-autocomplete
     v-model="selectedFilters"
-    :search="searchQuery"
-    cursor-auto
-    width="15rem"
+    cursor-text
+    autocomplete="suppress"
     density="compact"
     menu-icon=""
     placeholder="Search"
+    width="100%"
+    :item-value="getFilterDisplayValue"
+    :search="searchQuery"
     chips
     hide-details
     hide-no-data
     multiple
+    return-object
+    @keydown.esc="onEscape()"
     @keydown.enter="
       async ({ preventDefault }: KeyboardEvent) => {
         if (activeSelectedFilter && !activeSelectedFilter.value) {
@@ -38,15 +38,34 @@ const onEscape = () => (document.activeElement as HTMLElement | null)?.blur();
           activeSelectedFilter.value = value;
           preventDefault();
           searchQuery = '';
-        } else await readSearchedMessages();
+        } else if (!isSearchQueryEmpty) await readSearchedMessages();
       }
     "
-    @keydown.esc="onEscape()"
+    @update:focused="
+      async (value) => {
+        // 1. When focus is gained, open the menu and save the current search query
+        if (value) {
+          menu = value;
+          searchQueryOnFocus = searchQuery;
+        }
+        // 2. When focus is lost, if the query is now empty but wasn't on focus,
+        // it means the user selected an item, so we restore the empty string
+        // This prevents the old text from reappearing after selection
+        else if (searchQuery === '') searchQueryOnFocus = '';
+        // 3. Wait for Vuetify's internal clear to happen, then restore our saved value.
+        await nextTick();
+        if (value) searchQuery = searchQueryOnFocus;
+      }
+    "
     @update:search="
       (value: string) => {
+        // Ignore internal clear value callback on blur event
+        if (!value && !menu) return;
+
         if (value[value.length - 1] === ':') {
+          const trimmedValue = value.trim();
           const filterType = filterTypes.find(
-            (type) => type.toLowerCase() === value.slice(0, value.length - 1).toLowerCase(),
+            (type) => type.toLowerCase() === trimmedValue.slice(0, trimmedValue.length - 1).toLowerCase(),
           );
           if (filterType) {
             createFilter(filterType);
@@ -60,7 +79,9 @@ const onEscape = () => (document.activeElement as HTMLElement | null)?.blur();
     "
   >
     <template #chip="{ item: { raw } }">
-      <v-chip>{{ raw.type }}: {{ raw.value }} </v-chip>
+      <v-chip>
+        {{ getFilterDisplayValue(raw) }}
+      </v-chip>
     </template>
   </v-autocomplete>
 </template>

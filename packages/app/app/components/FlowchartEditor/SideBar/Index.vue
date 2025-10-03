@@ -4,7 +4,7 @@ import { NodeTypeMap } from "@/services/flowchartEditor/NodeTypeMap";
 import { useLayoutStore } from "@/store/layout";
 
 const layoutStore = useLayoutStore();
-const { leftDrawerOpen, leftDrawerOpenAuto } = storeToRefs(layoutStore);
+const { isLeftDrawerOpen, isLeftDrawerOpenAuto } = storeToRefs(layoutStore);
 const { createNode, onDragStart } = useDragAndDrop();
 const { height, width } = useWindowSize();
 </script>
@@ -38,6 +38,6 @@ const { height, width } = useWindowSize();
         </v-expansion-panel>
       </v-expansion-panels>
     </v-list>
-    <v-btn v-if="!leftDrawerOpenAuto" self-end icon="mdi-chevron-double-left" @click="leftDrawerOpen = false" />
+    <v-btn v-if="!isLeftDrawerOpenAuto" self-end icon="mdi-chevron-double-left" @click="isLeftDrawerOpen = false" />
   </div>
 </template>

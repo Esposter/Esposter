@@ -2,7 +2,7 @@
 import type { Item } from "@/models/shared/Item";
 
 import { EmojiMoreMenuItems } from "@/services/message/EmojiMoreMenuItems";
-import { EMOJI_TEXT } from "@/services/styled/constants";
+import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
 import { useMessageStore } from "@/store/message";
 import { unemojify } from "node-emoji";
 import { mergeProps } from "vue";
@@ -38,7 +38,7 @@ const { optionsMenu } = storeToRefs(messageStore);
     <template #activator="{ props: menuProps }">
       <v-tooltip text="More">
         <template #activator="{ props: tooltipProps }">
-          <v-btn m-0="!" rd-none="!" icon="mdi-dots-horizontal" size="small" :="mergeProps(menuProps, tooltipProps)" />
+          <v-btn m-0 icon="mdi-dots-horizontal" size="small" tile :="mergeProps(menuProps, tooltipProps)" />
         </template>
       </v-tooltip>
     </template>
@@ -47,9 +47,16 @@ const { optionsMenu } = storeToRefs(messageStore);
         <div flex gap-x-2>
           <v-tooltip v-for="emoji of EmojiMoreMenuItems" :key="emoji" :text="unemojify(emoji)">
             <template #activator="{ props }">
-              <v-btn m-0="!" size-10="!" rd-2="!" flex-1 icon :="props" @click="emit('update:select-emoji', emoji)">
-                {{ emoji }}
-              </v-btn>
+              <v-btn
+                m-0
+                size-10="!"
+                flex-1
+                rounded="sm"
+                :text="emoji"
+                icon
+                :="props"
+                @click="emit('update:select-emoji', emoji)"
+              />
             </template>
           </v-tooltip>
         </div>
@@ -65,31 +72,35 @@ const { optionsMenu } = storeToRefs(messageStore);
       >
         <template #default="menuProps">
           <v-list-item :="menuProps">
-            <span>{{ EMOJI_TEXT }}</span>
+            <span>{{ EMOJI_PICKER_TOOLTIP_TEXT }}</span>
             <template #append>
               <v-icon size="small" icon="mdi-emoticon" />
             </template>
           </v-list-item>
         </template>
       </StyledEmojiPicker>
-      <v-list-item py-2="!" min-height="auto">
-        <v-divider />
-      </v-list-item>
-      <v-list-item v-for="{ title, color, icon, onClick } of updateMessageItems" :key="title" @click="onClick">
-        <span :class="color ? `text-${color}` : undefined">{{ title }}</span>
-        <template #append>
-          <v-icon size="small" :color :icon />
-        </template>
-      </v-list-item>
-      <v-list-item py-2="!" min-height="auto">
-        <v-divider />
-      </v-list-item>
-      <v-list-item v-for="{ title, color, icon, onClick } of actionMessageItems" :key="title" @click="onClick">
-        <span :class="color ? `text-${color}` : undefined">{{ title }}</span>
-        <template #append>
-          <v-icon size="small" :color :icon />
-        </template>
-      </v-list-item>
+      <template v-if="updateMessageItems.length > 0">
+        <v-list-item py-2="!" min-height="auto">
+          <v-divider />
+        </v-list-item>
+        <v-list-item v-for="{ title, color, icon, onClick } of updateMessageItems" :key="title" @click="onClick">
+          <span :class="color ? `text-${color}` : undefined">{{ title }}</span>
+          <template #append>
+            <v-icon size="small" :color :icon />
+          </template>
+        </v-list-item>
+      </template>
+      <template v-if="actionMessageItems.length > 0">
+        <v-list-item py-2="!" min-height="auto">
+          <v-divider />
+        </v-list-item>
+        <v-list-item v-for="{ title, color, icon, onClick } of actionMessageItems" :key="title" @click="onClick">
+          <span :class="color ? `text-${color}` : undefined">{{ title }}</span>
+          <template #append>
+            <v-icon size="small" :color :icon />
+          </template>
+        </v-list-item>
+      </template>
       <template v-if="deleteMessageItem">
         <v-list-item py-2="!" min-height="auto">
           <v-divider />

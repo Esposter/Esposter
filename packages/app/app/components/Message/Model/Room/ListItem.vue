@@ -11,25 +11,27 @@ interface RoomListItemProps {
 const { room } = defineProps<RoomListItemProps>();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
+const { name } = useRoomName(room);
 const isHovering = ref(false);
-const active = computed(() => room.id === currentRoomId.value);
+const isActive = computed(() => room.id === currentRoomId.value);
 </script>
 
 <template>
   <div relative @mouseover="isHovering = true" @mouseleave="isHovering = false">
     <NuxtInvisibleLink :to="RoutePath.Messages(room.id)">
-      <v-list-item :active :value="room.id">
+      <v-list-item :active="isActive" :value="room.id">
         <template #prepend>
-          <StyledAvatar :image="room.image" :name="room.name" />
+          <StyledAvatar :image="room.image" :name />
         </template>
         <v-list-item-title pr-6>
-          {{ room.name }}
+          {{ name }}
         </v-list-item-title>
       </v-list-item>
     </NuxtInvisibleLink>
     <MessageModelRoomConfirmDeleteDialog :room-id="room.id" :creator-id="room.userId">
       <template #default="{ updateIsOpen, tooltipProps }">
         <v-btn
+          v-show="isHovering"
           absolute
           top="1/2"
           right-0

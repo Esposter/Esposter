@@ -14,8 +14,8 @@ import type {
   TableTransactionResponse,
   UpdateMode,
 } from "@azure/data-tables";
+import type { MapValue } from "@esposter/shared";
 import type { Except } from "type-fest";
-import type { MapValue } from "type-fest/source/entry";
 
 import { MockRestError } from "@/models/MockRestError";
 import { MockTableDatabase } from "@/store/MockTableDatabase";
@@ -96,7 +96,7 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
     return {
       byPage: () =>
         (async function* (entities: TableEntity<T>[]): AsyncGenerator<TableEntityResultPage<T>> {
-          const allEntitiesWithMetadata = entities.map(withMetadata);
+          const allEntitiesWithMetadata = entities.map((e) => withMetadata(e));
           if (allEntitiesWithMetadata.length > 0) yield await Promise.resolve(allEntitiesWithMetadata);
         })(resultTableEntities),
       next: () =>

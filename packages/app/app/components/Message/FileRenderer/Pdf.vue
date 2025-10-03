@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { FileRendererProps } from "@/models/message/file/FileRendererProps";
+import type { FileRendererComponentProps } from "@/models/message/file/FileRendererComponentProps";
 
 import { PREVIEW_MAX_HEIGHT } from "@/services/message/file/constants";
 import { VPdfViewer } from "@vue-pdf-viewer/viewer";
 import PdfWorker from "pdfjs-dist/build/pdf.worker?url";
 import VuePdfEmbed from "vue-pdf-embed";
 
-const { file, isPreview, url } = defineProps<FileRendererProps>();
+const { file, isPreview, url } = defineProps<FileRendererComponentProps>();
 const isDark = useIsDark();
 const dialog = ref(false);
 const darkMode = ref(isDark.value);

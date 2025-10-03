@@ -20,9 +20,11 @@ export const surveys = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },
-  ({ name }) => [
-    check("name", sql`LENGTH(${name}) >= 1 AND LENGTH(${name}) <= ${sql.raw(SURVEY_NAME_MAX_LENGTH.toString())}`),
-  ],
+  {
+    extraConfig: ({ name }) => [
+      check("name", sql`LENGTH(${name}) >= 1 AND LENGTH(${name}) <= ${sql.raw(SURVEY_NAME_MAX_LENGTH.toString())}`),
+    ],
+  },
 );
 
 export type Survey = typeof surveys.$inferSelect;

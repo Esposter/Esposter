@@ -3,6 +3,7 @@ import type { User } from "#shared/db/schema/users";
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
 import { dayjs } from "#shared/services/dayjs";
+import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 import { useMessageStore } from "@/store/message";
 import { useForwardStore } from "@/store/message/forward";
 import { useReplyStore } from "@/store/message/reply";
@@ -28,12 +29,12 @@ const isMessageActive = ref(false);
 const isOptionsActive = ref(false);
 const isOptionsChildrenActive = ref(false);
 const isDisabled = computed(() => optionsMenu.value && optionsMenu.value.rowKey !== message.rowKey);
-const active = computed(
+const isActive = computed(
   () =>
     !isDisabled.value &&
     (isMessageActive.value || isOptionsActive.value || isOptionsChildrenActive.value || isUpdateMode.value),
 );
-const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.value);
+const isActiveAndNotUpdateMode = computed(() => isActive.value && !isUpdateMode.value);
 const selectEmoji = await useSelectEmoji(message);
 
 watch(optionsMenu, (newOptionsMenu) => {
@@ -44,13 +45,14 @@ watch(optionsMenu, (newOptionsMenu) => {
 <template>
   <MessageModelMessageConfirmDeleteDialog :message>
     <template #default="{ isOpen, updateIsOpen }">
-      <MessageModelMessage
+      <component
+        :is="MessageComponentMap[message.type]"
         :id="message.rowKey"
         :mt="isSameBatch ? undefined : 4"
         py-1="!"
         min-h-auto="!"
         :op="message.isLoading ? 50 : undefined"
-        :active="(active || activeReplyRowKey === message.rowKey) && !isOpen"
+        :active="(isActive || activeReplyRowKey === message.rowKey) && !isOpen"
         :creator
         :message
         :next-message
@@ -71,8 +73,8 @@ watch(optionsMenu, (newOptionsMenu) => {
           @update:update-mode="isUpdateMode = $event"
           @update:delete-mode="updateIsOpen"
         />
-      </MessageModelMessage>
-      <div v-if="!message.isLoading" v-show="activeAndNotUpdateMode && !isOpen" relative z-1>
+      </component>
+      <div v-if="!message.isLoading" v-show="isActiveAndNotUpdateMode && !isOpen" relative z-1>
         <div
           absolute
           right-4
@@ -97,7 +99,7 @@ watch(optionsMenu, (newOptionsMenu) => {
       </div>
     </template>
     <template #messagePreview>
-      <MessageModelMessage :creator :message :next-message is-preview />
+      <MessageModelMessageType :creator :message :next-message is-preview />
     </template>
   </MessageModelMessageConfirmDeleteDialog>
 </template>

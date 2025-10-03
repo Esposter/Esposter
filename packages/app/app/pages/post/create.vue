@@ -9,18 +9,16 @@ const { createPost } = postStore;
 </script>
 
 <template>
-  <div>
-    <NuxtLayout>
-      <v-container>
-        <PostUpsertForm
-          @submit="
-            async (_event, values) => {
-              await createPost(values);
-              await navigateTo(RoutePath.Index);
-            }
-          "
-        />
-      </v-container>
-    </NuxtLayout>
-  </div>
+  <NuxtLayout>
+    <v-container>
+      <PostUpsertForm
+        @submit="
+          async (_event, values) => {
+            await createPost(values);
+            await navigateTo(RoutePath.Index);
+          }
+        "
+      />
+    </v-container>
+  </NuxtLayout>
 </template>

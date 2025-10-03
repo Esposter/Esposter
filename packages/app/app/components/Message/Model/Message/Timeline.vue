@@ -13,8 +13,8 @@ const areDifferentDays = computed(
 );
 const displayDate = computed(() => {
   if (currentMessageDateDayjs.value.isToday()) return "Today";
-  if (currentMessageDateDayjs.value.isYesterday()) return "Yesterday";
-  return currentMessageDateDayjs.value.format("dddd, MMMM Do");
+  else if (currentMessageDateDayjs.value.isYesterday()) return "Yesterday";
+  else return currentMessageDateDayjs.value.format("dddd, MMMM Do");
 });
 </script>
 

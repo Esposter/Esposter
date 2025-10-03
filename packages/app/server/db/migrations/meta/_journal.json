@@ -99,6 +99,55 @@
       "when": 1755569050402,
       "tag": "0013_chief_vampiro",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1757897328633,
+      "tag": "0014_colorful_kitty_pryde",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1757897408642,
+      "tag": "0015_unknown_jamie_braddock",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1757918895383,
+      "tag": "0016_melted_squadron_supreme",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1758167355393,
+      "tag": "0017_square_manta",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1758167368644,
+      "tag": "0018_smooth_christian_walker",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1758885749033,
+      "tag": "0019_curved_iron_monger",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1759024494037,
+      "tag": "0020_young_rattler",
+      "breakpoints": true
     }
   ]
 }

@@ -7,15 +7,15 @@ import { createMessageEntity as baseCreateMessageEntity } from "#shared/services
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { createEntity } from "@@/server/services/azure/table/createEntity";
-import { getLinkPreviewResponse } from "@@/server/services/message/getLinkPreviewResponse";
+import { addMessageMetadata } from "@@/server/services/message/addMessageMetadata";
 
 export const createMessage = async (
   messageClient: CustomTableClient<MessageEntity>,
-  { message, ...rest }: CreateMessageInput & Pick<MessageEntity, "isForward" | "isLoading" | "userId">,
+  input: CreateMessageInput & Pick<MessageEntity, "isForward" | "isLoading" | "userId">,
 ) => {
   const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
-  const messageEntity = baseCreateMessageEntity({ message, ...rest });
-  if (message) messageEntity.linkPreviewResponse = await getLinkPreviewResponse(message);
+  const messageEntity = baseCreateMessageEntity(input);
+  await addMessageMetadata(messageEntity);
   await createEntity(messageClient, messageEntity);
   await createEntity(messageAscendingClient, {
     partitionKey: messageEntity.partitionKey,

@@ -1,4 +1,5 @@
 import { pgTable } from "#shared/db/pgTable";
+import { messageSchema } from "#shared/db/schema/messageSchema";
 import { users } from "#shared/db/schema/users";
 import { usersToRooms } from "#shared/db/schema/usersToRooms";
 import { ROOM_NAME_MAX_LENGTH } from "#shared/services/message/constants";
@@ -17,9 +18,10 @@ export const rooms = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },
-  ({ name }) => [
-    check("name", sql`LENGTH(${name}) >= 1 AND LENGTH(${name}) <= ${sql.raw(ROOM_NAME_MAX_LENGTH.toString())}`),
-  ],
+  {
+    extraConfig: ({ name }) => [check("name", sql`LENGTH(${name}) <= ${sql.raw(ROOM_NAME_MAX_LENGTH.toString())}`)],
+    schema: messageSchema,
+  },
 );
 
 export type Room = typeof rooms.$inferSelect;

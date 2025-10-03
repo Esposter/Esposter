@@ -1,6 +1,16 @@
-import { BinaryOperator, exhaustiveGuard } from "@esposter/shared";
+import { BinaryOperator, exhaustiveGuard, InvalidOperationError, Operation } from "@esposter/shared";
 
-export const compare = (operator: BinaryOperator, leftHandSide: string, rightHandSide: string): boolean => {
+export const compare = <T>(operator: BinaryOperator, leftHandSide: T, rightHandSide: null | T): boolean => {
+  if (rightHandSide === null || rightHandSide === undefined) {
+    if (operator !== BinaryOperator.eq)
+      throw new InvalidOperationError(
+        Operation.Read,
+        compare.name,
+        JSON.stringify({ leftHandSide, operator, rightHandSide }),
+      );
+    return leftHandSide === rightHandSide;
+  }
+
   switch (operator) {
     case BinaryOperator.eq:
       return leftHandSide === rightHandSide;

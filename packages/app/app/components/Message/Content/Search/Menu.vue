@@ -1,19 +1,39 @@
 <script setup lang="ts">
+import { SearchFilterComponentMap } from "@/services/message/SearchFilterComponentMap";
 import { useSearchMessageStore } from "@/store/message/searchMessage";
 
 const searchMessageStore = useSearchMessageStore();
-const { isSearched } = searchMessageStore;
+const { activeSelectedFilter, menu } = storeToRefs(searchMessageStore);
 </script>
 
 <template>
-  <v-menu location="top" :close-on-content-click="false">
+  <v-menu
+    v-model="menu"
+    location="top"
+    :close-on-content-click="false"
+    :height="500"
+    :open-on-click="false"
+    @mousedown.prevent
+  >
     <template #activator="{ props }">
       <MessageContentSearchInput :="props" />
     </template>
     <StyledCard p-2>
-      <MessageContentSearchMessages v-if="isSearched" />
+      <component
+        :is="SearchFilterComponentMap[activeSelectedFilter.type]"
+        v-if="
+          activeSelectedFilter && !activeSelectedFilter.value && SearchFilterComponentMap[activeSelectedFilter.type]
+        "
+        @select="
+          (value: string) => {
+            if (!activeSelectedFilter) return;
+            activeSelectedFilter.value = value;
+          }
+        "
+      />
       <template v-else>
         <MessageContentSearchOptions />
+        <v-divider mx-4 />
         <MessageContentSearchHistory />
       </template>
     </StyledCard>

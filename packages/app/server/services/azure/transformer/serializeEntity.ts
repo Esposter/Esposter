@@ -7,7 +7,7 @@ import { getIsSerializable } from "@@/server/services/azure/transformer/getIsSer
 export const serializeEntity = (entity: AzureUpdateEntity<AzureEntity>) =>
   Object.fromEntries(
     Object.entries(entity).map(([property, value]) => {
-      if (getIsSerializable(value)) return [property, JSON.stringify(value)];
+      if (value && getIsSerializable(value)) return [property, JSON.stringify(value)];
       else return [property, value];
     }),
   ) as TableEntity;

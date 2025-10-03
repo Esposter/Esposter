@@ -3,9 +3,9 @@ import vitest from "@vitest/eslint-plugin";
 import perfectionist from "eslint-plugin-perfectionist";
 import pinia from "eslint-plugin-pinia";
 import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
-import tseslint from "typescript-eslint";
+import { defineConfig } from "eslint/config";
 
-export default tseslint.config(
+export default defineConfig(
   pinia.configs["all-flat"],
   unocss,
   {
@@ -35,6 +35,7 @@ export default tseslint.config(
   },
   {
     ...perfectionist.configs["recommended-natural"],
+    ignores: ["**/*.json"],
     rules: {
       ...perfectionist.configs["recommended-natural"].rules,
       "perfectionist/sort-imports": [

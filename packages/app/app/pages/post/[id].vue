@@ -5,16 +5,20 @@ import { useCommentStore } from "@/store/post/comment";
 
 definePageMeta({ validate });
 
-const post = await useReadPostFromRoute();
-const readMoreComments = await useReadComments(post.id);
 const { data: session } = await authClient.useSession(useFetch);
+const post = await useReadPostFromRoute();
+const { readComments, readMoreComments } = useReadComments(post.id);
+const { isPending } = await readComments();
 const commentStore = useCommentStore();
-const { comments, currentPost, hasMore } = storeToRefs(commentStore);
+const { currentPost, hasMore, items } = storeToRefs(commentStore);
 currentPost.value = post;
 </script>
 
 <template>
   <NuxtLayout>
+    <Head>
+      <Title>{{ post.title }}</Title>
+    </Head>
     <v-container v-if="currentPost" h-full flex flex-col flex-1>
       <v-row flex-none="!">
         <v-col>
@@ -29,12 +33,14 @@ currentPost.value = post;
             </v-container>
             <v-container>
               <PostCommentEmptyBanner v-if="currentPost.noComments === 0" />
-              <PostCommentCard v-for="comment of comments" v-else :key="comment.id" :comment />
+              <template v-else-if="!isPending">
+                <PostCommentCard v-for="comment of items" :key="comment.id" :comment />
+                <StyledWaypoint flex justify-center :is-active="hasMore" @change="readMoreComments" />
+              </template>
             </v-container>
           </StyledCard>
         </v-col>
       </v-row>
-      <StyledWaypoint :active="hasMore" @change="readMoreComments" />
     </v-container>
   </NuxtLayout>
 </template>

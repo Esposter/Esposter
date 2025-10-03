@@ -10,7 +10,7 @@ interface StyledDatePickerProps {
 const modelValue = defineModel<ModelValue>();
 const { datePickerProps } = defineProps<StyledDatePickerProps>();
 defineEmits<(emitEvents: EmitEvents) => void>();
-const slots = defineSlots<Record<keyof InstanceType<typeof VueDatePicker>["$slots"], Function>>();
+const slots = defineSlots<Record<keyof InstanceType<typeof VueDatePicker>["$slots"], () => VNode>>();
 const isDark = useIsDark();
 const { border, surface } = useColors();
 </script>

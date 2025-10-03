@@ -7,7 +7,6 @@ import { getCursorPaginationData } from "@@/server/services/pagination/cursor/ge
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { postRouter } from "@@/server/trpc/routers/post";
-import { NIL } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("post", () => {
@@ -49,8 +48,10 @@ describe("post", () => {
   test("fails read with non-existent id", async () => {
     expect.hasAssertions();
 
-    await expect(caller.readPost(NIL)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Post is not found for id: 00000000-0000-0000-0000-000000000000]`,
+    const id = crypto.randomUUID();
+
+    await expect(caller.readPost(id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Post is not found for id: ${id}]`,
     );
   });
 
@@ -74,8 +75,10 @@ describe("post", () => {
   test("fails update with non-existent id", async () => {
     expect.hasAssertions();
 
-    await expect(caller.updatePost({ description, id: NIL })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Update, name: Post, 00000000-0000-0000-0000-000000000000]`,
+    const id = crypto.randomUUID();
+
+    await expect(caller.updatePost({ description, id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Update, name: Post, ${id}]`,
     );
   });
 
@@ -102,8 +105,10 @@ describe("post", () => {
   test("fails delete with non-existent id", async () => {
     expect.hasAssertions();
 
-    await expect(caller.deletePost(NIL)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Delete, name: Post, 00000000-0000-0000-0000-000000000000]`,
+    const id = crypto.randomUUID();
+
+    await expect(caller.deletePost(id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Delete, name: Post, ${id}]`,
     );
   });
 
@@ -142,8 +147,10 @@ describe("post", () => {
   test("fails create comment with non-existent parent id", async () => {
     expect.hasAssertions();
 
-    await expect(caller.createComment({ description, parentId: NIL })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Post is not found for id: 00000000-0000-0000-0000-000000000000]`,
+    const parentId = crypto.randomUUID();
+
+    await expect(caller.createComment({ description, parentId })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Post is not found for id: ${parentId}]`,
     );
   });
 
@@ -160,8 +167,10 @@ describe("post", () => {
   test("fails update comment with non-existent id", async () => {
     expect.hasAssertions();
 
-    await expect(caller.updateComment({ description, id: NIL })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Update, name: Comment, 00000000-0000-0000-0000-000000000000]`,
+    const id = crypto.randomUUID();
+
+    await expect(caller.updateComment({ description, id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Update, name: Comment, ${id}]`,
     );
   });
 
@@ -204,8 +213,10 @@ describe("post", () => {
   test("fails delete comment with non-existent id", async () => {
     expect.hasAssertions();
 
-    await expect(caller.deleteComment(NIL)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Delete, name: Comment, 00000000-0000-0000-0000-000000000000]`,
+    const id = crypto.randomUUID();
+
+    await expect(caller.deleteComment(id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Delete, name: Comment, ${id}]`,
     );
   });
 

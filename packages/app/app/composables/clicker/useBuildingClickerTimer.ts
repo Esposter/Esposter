@@ -21,6 +21,6 @@ export const useBuildingClickerTimer = () => {
   });
 
   onUnmounted(() => {
-    buildingClickerTimer.value && clearInterval(buildingClickerTimer.value);
+    if (buildingClickerTimer.value) clearInterval(buildingClickerTimer.value);
   });
 };

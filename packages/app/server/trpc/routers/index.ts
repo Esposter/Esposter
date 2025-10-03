@@ -10,6 +10,7 @@ import { messageRouter } from "@@/server/trpc/routers/message";
 import { emojiRouter } from "@@/server/trpc/routers/message/emoji";
 import { postRouter } from "@@/server/trpc/routers/post";
 import { roomRouter } from "@@/server/trpc/routers/room";
+import { searchHistoryRouter } from "@@/server/trpc/routers/searchHistory";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
 import { tableEditorRouter } from "@@/server/trpc/routers/tableEditor";
 import { userRouter } from "@@/server/trpc/routers/user";
@@ -27,6 +28,7 @@ export const trpcRouter = router({
   message: messageRouter,
   post: postRouter,
   room: roomRouter,
+  searchHistory: searchHistoryRouter,
   survey: surveyRouter,
   tableEditor: tableEditorRouter,
   user: userRouter,

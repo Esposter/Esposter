@@ -3,19 +3,24 @@ import type { useContainerClient } from "@@/server/composables/azure/useContaine
 import type { useTableClient } from "@@/server/composables/azure/useTableClient";
 import type { Session } from "@@/server/models/auth/Session";
 import type { Context } from "@@/server/trpc/context";
+import type * as DrizzleKit from "drizzle-kit/api";
 
+import { messageSchema } from "#shared/db/schema/messageSchema";
 import { users } from "#shared/db/schema/users";
 import { dayjs } from "#shared/services/dayjs";
 import { useContainerClientMock } from "@@/server/composables/azure/useContainerClient.test";
 import { useTableClientMock } from "@@/server/composables/azure/useTableClient.test";
 import { schema } from "@@/server/db/schema";
 import { PGlite } from "@electric-sql/pglite";
-import { drizzle } from "drizzle-orm/pglite";
+import { sql } from "drizzle-orm";
+import { drizzle, PgliteDatabase } from "drizzle-orm/pglite";
 import { IncomingMessage, ServerResponse } from "node:http";
 import { createRequire } from "node:module";
 import { Socket } from "node:net";
 import { describe, vi } from "vitest";
+// https://github.com/drizzle-team/drizzle-orm/issues/2853
 const require = createRequire(import.meta.url);
+const { generateDrizzleJson, generateMigration } = require("drizzle-kit/api") as typeof DrizzleKit;
 
 const mocks = vi.hoisted(() => {
   const createdAt = new Date();
@@ -105,19 +110,25 @@ export const createMockContext = async (): Promise<Context> => {
     res: new ServerResponse(req),
   };
 };
-
+// In-memory pglite db supports the same API as a mock for the postgresjs db
 const createMockDb = async () => {
-  // @TODO: https://github.com/drizzle-team/drizzle-orm/issues/2853#issuecomment-2668459509
-  // oxlint-disable-next-line consistent-type-imports
-  const { pushSchema } = require("drizzle-kit/api") as typeof import("drizzle-kit/api");
-  // Use in-memory pglite db which supports the same API
-  // as a mock for the postgresjs db
   const client = new PGlite();
   const db = drizzle(client, { schema });
-  const { apply } = await pushSchema(schema, db as never);
-  await apply();
+  await createSchema(db);
+  await pushSchema(db);
   await db.insert(users).values(mocks.getSession().user);
   return db as unknown as Context["db"];
+};
+
+const createSchema = async (db: PgliteDatabase<typeof schema>) => {
+  await db.execute(sql.raw(`CREATE SCHEMA "${messageSchema.schemaName}"`));
+};
+
+const pushSchema = async (db: PgliteDatabase<typeof schema>) => {
+  const previousJson = generateDrizzleJson({});
+  const currentJson = generateDrizzleJson(schema, previousJson.id);
+  const statements = await generateMigration(previousJson, currentJson);
+  for (const statement of statements) await db.execute(statement);
 };
 
 describe.todo("context");

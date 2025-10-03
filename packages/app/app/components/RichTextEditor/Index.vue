@@ -18,10 +18,10 @@ interface RichTextEditorProps {
 }
 
 const slots = defineSlots<{
-  "append-footer": (props: FooterBarAppendSlotProps) => unknown;
-  "prepend-footer": (props: FooterBarPrependSlotProps) => unknown;
-  "prepend-inner-header": (props: Record<string, never>) => unknown;
-  "prepend-outer-footer": (props: Record<string, never>) => unknown;
+  "append-footer": (props: FooterBarAppendSlotProps) => VNode;
+  "prepend-footer": (props: FooterBarPrependSlotProps) => VNode;
+  "prepend-inner-header": () => VNode;
+  "prepend-outer-footer": () => VNode;
 }>();
 const modelValue = defineModel<string>({ required: true });
 const {
@@ -79,6 +79,7 @@ onUnmounted(() => editor.value?.destroy());
       </RichTextEditorFooterBar>
     </StyledCard>
     <div flex justify-between px-1 pt-1>
+      <!-- Add &nbsp; to avoid layout shift -->
       <slot name="prepend-outer-footer">&nbsp;</slot>
       <v-counter :value="editor?.storage.characterCount.characters()" :max="limit" :active="editor?.isFocused" />
     </div>

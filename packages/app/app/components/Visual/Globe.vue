@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { MeshPhongMaterial } from "three";
-import type { ArrayElement } from "type-fest/source/internal";
 
 import { dayjs } from "#shared/services/dayjs";
 import { createRandomInteger } from "#shared/util/math/random/createRandomInteger";
@@ -12,7 +11,7 @@ import { getRandomValues } from "@/util/math/random/getRandomValues";
 import { AmbientLight, Color, DirectionalLight, Fog, PerspectiveCamera, PointLight, Scene, WebGLRenderer } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
-type Data = ArrayElement<typeof data>;
+type Data = (typeof data)[number];
 
 const {
   arcLength,

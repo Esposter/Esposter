@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.14.0](https://github.com/Esposter/Esposter/compare/v2.13.1...v2.14.0) (2025-09-14)
+
+### Features
+
+* upgrade type-fest to ESM only ([e2a7bb6](https://github.com/Esposter/Esposter/commit/e2a7bb6067fb9d87092ec274d709e3d15a4ffddf))
+
 ## [2.13.1](https://github.com/Esposter/Esposter/compare/v2.13.0...v2.13.1) (2025-08-31)
 
 **Note:** Version bump only for package azure-mock

@@ -3,7 +3,7 @@ import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
 import { authClient } from "@/services/auth/authClient";
 import { EmojiMenuItems } from "@/services/message/EmojiMenuItems";
-import { EMOJI_TEXT } from "@/services/styled/constants";
+import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
 import { unemojify } from "node-emoji";
 
 interface MessageOptionsMenuProps {
@@ -41,9 +41,7 @@ const {
     <v-card-actions p-0="!" gap-0 min-h-auto="!">
       <v-tooltip v-for="emoji of EmojiMenuItems" :key="emoji">
         <template #activator="{ props }">
-          <v-btn m-0="!" size-10="!" rd-none="!" icon :="props" @click="emit('update:select-emoji', emoji)">
-            {{ emoji }}
-          </v-btn>
+          <v-btn m-0 size-10="!" :text="emoji" icon tile :="props" @click="emit('update:select-emoji', emoji)" />
         </template>
         <div flex flex-col text-center>
           <div font-bold>{{ unemojify(emoji) }}</div>
@@ -52,9 +50,8 @@ const {
       </v-tooltip>
       <v-divider thickness="2" vertical h-6 self-center />
       <StyledEmojiPicker
-        :tooltip-props="{ text: EMOJI_TEXT }"
-        :button-props="{ size: 'small' }"
-        :button-attrs="{ 'rd-none': '!' }"
+        :tooltip-props="{ text: EMOJI_PICKER_TOOLTIP_TEXT }"
+        :button-props="{ size: 'small', tile: true }"
         @update:menu="emit('update:menu', $event)"
         @select="emit('update:select-emoji', $event)"
       />

@@ -6,7 +6,6 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { likeRouter } from "@@/server/trpc/routers/like";
 import { postRouter } from "@@/server/trpc/routers/post";
-import { NIL } from "@esposter/shared";
 import { beforeAll, describe, expect, test } from "vitest";
 
 describe("like", () => {
@@ -39,8 +38,10 @@ describe("like", () => {
   test("fails create with non-existent post id", async () => {
     expect.hasAssertions();
 
-    await expect(likeCaller.createLike({ postId: NIL, value: 1 })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Post is not found for id: 00000000-0000-0000-0000-000000000000]`,
+    const postId = crypto.randomUUID();
+
+    await expect(likeCaller.createLike({ postId, value: 1 })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Post is not found for id: ${postId}]`,
     );
   });
 
@@ -59,10 +60,10 @@ describe("like", () => {
   test("fails update with non-existent post id", async () => {
     expect.hasAssertions();
 
-    await expect(
-      likeCaller.updateLike({ postId: NIL, value: updatedValue }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Post is not found for id: 00000000-0000-0000-0000-000000000000]`,
+    const postId = crypto.randomUUID();
+
+    await expect(likeCaller.updateLike({ postId, value: updatedValue })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Post is not found for id: ${postId}]`,
     );
   });
 
@@ -101,8 +102,10 @@ describe("like", () => {
   test("fails delete with non-existent post id", async () => {
     expect.hasAssertions();
 
-    await expect(likeCaller.deleteLike(NIL)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Post is not found for id: 00000000-0000-0000-0000-000000000000]`,
+    const id = crypto.randomUUID();
+
+    await expect(likeCaller.deleteLike(id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Post is not found for id: ${id}]`,
     );
   });
 

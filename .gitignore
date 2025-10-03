@@ -1,7 +1,10 @@
-# Build artifacts
+# Build Artifacts
 **/src/index.ts
 **/src/components/index.ts
 **/public/docs
+
+# Docker Build Artifacts
+.dockerignore
 
 # Testing
 coverage

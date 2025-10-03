@@ -2,13 +2,13 @@
 import { useLayoutStore } from "@/store/layout";
 
 const layoutStore = useLayoutStore();
-const { leftDrawerOpen, leftDrawerOpenAuto } = storeToRefs(layoutStore);
+const { isLeftDrawerOpen, isLeftDrawerOpenAuto } = storeToRefs(layoutStore);
 </script>
 
 <template>
-  <v-tooltip v-if="!leftDrawerOpenAuto" location="bottom" text="Show Room List">
+  <v-tooltip v-if="!isLeftDrawerOpenAuto" location="bottom" text="Show Room List">
     <template #activator="{ props }">
-      <v-btn icon="mdi-menu" size="small" :="props" @click="leftDrawerOpen = true" />
+      <v-btn icon="mdi-menu" size="small" :="props" @click="isLeftDrawerOpen = true" />
     </template>
   </v-tooltip>
 </template>

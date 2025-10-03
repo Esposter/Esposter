@@ -1,6 +1,7 @@
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { Item } from "@/models/shared/Item";
 
+import { MessageType } from "#shared/models/db/message/MessageType";
 import { RoutePath } from "#shared/models/router/RoutePath";
 import { useMessageStore } from "@/store/message";
 import { useRoomStore } from "@/store/message/room";
@@ -67,14 +68,22 @@ export const useMessageActionItems = (
     title: "Copy Message Link",
   };
   const updateMessageItems = computed<Item[]>(() =>
-    isEditable.value ? [editMessageItem, forwardMessageItem] : [replyItem, forwardMessageItem],
+    message.type === MessageType.Message
+      ? isEditable.value
+        ? [editMessageItem, forwardMessageItem]
+        : [replyItem, forwardMessageItem]
+      : [],
   );
   const updateMessageMenuItems = computed<Item[]>(() =>
-    isEditable.value ? [editMessageItem, replyItem, forwardMessageItem] : [replyItem, forwardMessageItem],
+    message.type === MessageType.Message
+      ? isEditable.value
+        ? [editMessageItem, replyItem, forwardMessageItem]
+        : [replyItem, forwardMessageItem]
+      : [],
   );
   const actionMessageItems: Item[] = [copyTextItem, copyMessageLinkItem];
   const deleteMessageItem = computed<Item | undefined>(() =>
-    isCreator.value && onDeleteMode
+    message.type === MessageType.Message && isCreator.value && onDeleteMode
       ? {
           color: "error",
           icon: "mdi-delete",

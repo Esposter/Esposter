@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { useRoomStore } from "@/store/message/room";
+import { useSearchStore } from "@/store/message/room/search";
 
-const roomStore = useRoomStore();
-const { roomSearchQuery } = storeToRefs(roomStore);
+const searchStore = useSearchStore();
+const { searchQuery } = storeToRefs(searchStore);
 const dialog = ref(false);
 </script>
 
 <template>
   <v-dialog v-model="dialog">
     <template #activator>
-      <v-btn variant="outlined" @click="dialog = true">Find or start a conversation</v-btn>
+      <v-btn text="Find or start a conversation" variant="outlined" @click="dialog = true" />
     </template>
     <StyledCard>
       <v-card-title>
-        <v-text-field v-model="roomSearchQuery" placeholder="Where would you like to go?" hide-details />
+        <v-text-field v-model="searchQuery" placeholder="Where would you like to go?" hide-details />
       </v-card-title>
       <v-card-text overflow-y-auto>
         <MessageModelRoomListSearched @update:room="dialog = false" />

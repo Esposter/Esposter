@@ -19,7 +19,7 @@ const copyText = () => {
   <v-divider thickness="2" vertical h-6 self-center />
   <v-tooltip text="Copy Text">
     <template #activator="{ props }">
-      <v-btn m-0="!" rd-none="!" icon="mdi-content-copy" size="small" :="props" @click="copyText" />
+      <v-btn m-0 icon="mdi-content-copy" size="small" tile :="props" @click="copyText" />
     </template>
   </v-tooltip>
   <StyledClipboardSnackbar v-model="copied" :source="text" />

@@ -2,14 +2,14 @@
 import { useLayoutStore } from "@/store/layout";
 
 const layoutStore = useLayoutStore();
-const { leftDrawerOpen, leftDrawerOpenAuto } = storeToRefs(layoutStore);
+const { isLeftDrawerOpen, isLeftDrawerOpenAuto } = storeToRefs(layoutStore);
 </script>
 
 <template>
-  <div v-if="!leftDrawerOpenAuto" class="vue-flow__panel">
+  <div v-if="!isLeftDrawerOpenAuto" class="vue-flow__panel">
     <v-tooltip text="Components">
       <template #activator="{ props }">
-        <v-btn icon="mdi-chevron-double-right" :="props" @click="leftDrawerOpen = true" />
+        <v-btn icon="mdi-chevron-double-right" :="props" @click="isLeftDrawerOpen = true" />
       </template>
     </v-tooltip>
   </div>

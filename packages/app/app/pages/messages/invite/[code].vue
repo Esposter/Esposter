@@ -27,6 +27,7 @@ else if (invite.isMember) await navigateTo(RoutePath.Messages(invite.roomId));
 
 const roomStore = useRoomStore();
 const { joinRoom } = roomStore;
+const { name } = useRoomName(invite.room);
 </script>
 
 <template>
@@ -44,7 +45,7 @@ const { joinRoom } = roomStore;
             <div text-center>
               You've been invited to join
               <span font-bold>
-                {{ invite.room.name }}
+                {{ name }}
               </span>
               by
               <div text-2xl font-bold>
@@ -58,6 +59,7 @@ const { joinRoom } = roomStore;
           <v-card-actions w-full>
             <StyledButton
               w-full
+              :button-props="{ text: 'Accept Invite' }"
               @click="
                 async () => {
                   const code = $route.params.code;
@@ -65,9 +67,7 @@ const { joinRoom } = roomStore;
                   await joinRoom(code);
                 }
               "
-            >
-              Accept Invite
-            </StyledButton>
+            />
           </v-card-actions>
         </StyledCard>
       </v-dialog>

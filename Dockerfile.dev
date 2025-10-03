@@ -1,0 +1,16 @@
+FROM oven/bun:1
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+
+WORKDIR /app
+# Copy only the files needed to determine dependencies
+COPY **/package.json bun.lock* ./
+WORKDIR /app/packages/app
+# Use ignore-scripts to avoid building node modules like better-sqlite3
+RUN bun --bun i --frozen-lockfile --ignore-scripts
+# Copy the rest of your source code.
+# This invalidates the cache more frequently, but the expensive install step above is already done.
+COPY . .
+# Expose the port Nuxt will run on
+EXPOSE 3000/tcp
