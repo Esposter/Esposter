@@ -17,8 +17,13 @@ export const useSendCreateMessageNotification = (pushSubscription: PushSubscript
   ) => {
     if (!pushSubscription) return;
 
-    const messageHtml = parse(message);
-    const textContent = messageHtml.querySelector("p")?.textContent;
+    let textContent: string | undefined = message;
+
+    try {
+      textContent = parse(message).querySelector("p")?.textContent;
+      // eslint-disable-next-line no-empty
+    } catch {}
+
     if (!textContent) return;
 
     await webpush.sendNotification(

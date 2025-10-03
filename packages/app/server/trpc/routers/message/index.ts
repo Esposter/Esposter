@@ -309,7 +309,6 @@ export const messageRouter = router({
       signal,
     })) {
       const dataToYield: MessageEntity[] = [];
-      const newestMessage = data[data.length - 1];
 
       for (const newMessage of data)
         if (
@@ -319,6 +318,7 @@ export const messageRouter = router({
           dataToYield.push(newMessage);
 
       if (dataToYield.length > 0) {
+        const newestMessage = dataToYield[dataToYield.length - 1];
         await sendCreateMessageNotification(
           { message: newestMessage.message, rowKey: newestMessage.rowKey },
           name,
