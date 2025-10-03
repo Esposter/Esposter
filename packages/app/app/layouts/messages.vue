@@ -10,7 +10,7 @@ const { currentRoomName } = storeToRefs(roomStore);
 
 <template>
   <!-- We only want to show the inner scrollbar inside the chat content -->
-  <NuxtLayout :bottom-offset="151" :footer-style="{ paddingBottom: 0 }" hide-global-scrollbar>
+  <NuxtLayout :footer-style="{ paddingBottom: 0 }" hide-global-scrollbar>
     <Head>
       <Title>{{ currentRoomName }}</Title>
     </Head>
