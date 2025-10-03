@@ -8,9 +8,8 @@ const { activeSelectedFilter, menu } = storeToRefs(searchMessageStore);
 
 <template>
   <v-menu
-    :model-value="menu"
+    v-model="menu"
     location="top"
-    persistent
     :close-on-content-click="false"
     :height="500"
     :open-on-click="false"

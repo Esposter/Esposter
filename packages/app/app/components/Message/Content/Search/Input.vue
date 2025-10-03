@@ -43,9 +43,11 @@ const onEscape = () => (document.activeElement as HTMLElement | null)?.blur();
     "
     @update:focused="
       async (value) => {
-        menu = value;
-        // 1. When focus is gained, save the current search query
-        if (value) searchQueryOnFocus = searchQuery;
+        // 1. When focus is gained, open the menu and save the current search query
+        if (value) {
+          menu = value;
+          searchQueryOnFocus = searchQuery;
+        }
         // 2. When focus is lost, if the query is now empty but wasn't on focus,
         // it means the user selected an item, so we restore the empty string
         // This prevents the old text from reappearing after selection
