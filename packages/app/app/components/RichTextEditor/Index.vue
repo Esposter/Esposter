@@ -82,7 +82,6 @@ const editor = useEditor({
                   return false;
                 },
                 keydown: (_view, event) => {
-                  console.log(options);
                   if (event.key === "Control" || event.key === "Meta") options.link.cursorStyle.value = "pointer";
                   // Return false to allow other plugins to handle the event
                   return false;
