@@ -21,6 +21,7 @@ export class MessageEntity extends AzureEntity {
   isForward?: true;
   // Only used by the frontend for visual effects
   isLoading?: true;
+  isPinned?: true;
   linkPreviewResponse: LinkPreviewResponse | null = null;
   mentions: string[] = [];
   message!: string;
@@ -48,6 +49,7 @@ export const messageEntitySchema = refineMessageSchema(
     files: fileEntitySchema.array().max(FILE_MAX_LENGTH).default([]),
     isEdited: z.literal(true).optional(),
     isForward: z.literal(true).optional(),
+    isPinned: z.literal(true).optional(),
     mentions: selectUserSchema.shape.id.array().max(MENTION_MAX_LENGTH).default([]),
     message: z.string().max(MESSAGE_MAX_LENGTH).default(""),
     replyRowKey: z.string().optional(),

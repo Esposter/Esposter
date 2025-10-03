@@ -14,15 +14,19 @@ export const useMessageActionItems = (
   {
     onDeleteMode,
     onForward,
+    onPin,
     onReply,
     onUpdateMode,
   }: {
     onDeleteMode?: () => void;
     onForward: (rowKey: string) => void;
+    onPin: (value: true) => void;
     onReply: (rowKey: string) => void;
     onUpdateMode: () => void;
   },
 ) => {
+  // oxlint-disable-next-line no-unused-vars
+  const { $trpc } = useNuxtApp();
   const messageStore = useMessageStore();
   const { copy } = messageStore;
   const roomStore = useRoomStore();
@@ -58,6 +62,23 @@ export const useMessageActionItems = (
     },
     title: "Copy Text",
   };
+  const pinMessageItem = computed<Item>(() =>
+    message.isPinned
+      ? {
+          icon: "mdi-pin-off",
+          onClick: async () => {
+            await $trpc.message.unpinMessage.mutate({ partitionKey: message.partitionKey, rowKey: message.rowKey });
+          },
+          title: "Unpin Message",
+        }
+      : {
+          icon: "mdi-pin",
+          onClick: () => {
+            onPin(true);
+          },
+          title: "Pin Message",
+        },
+  );
   const copyMessageLinkItem: Item = {
     icon: "mdi-link-variant",
     onClick: () => {
@@ -81,7 +102,7 @@ export const useMessageActionItems = (
         : [replyItem, forwardMessageItem]
       : [],
   );
-  const actionMessageItems: Item[] = [copyTextItem, copyMessageLinkItem];
+  const actionMessageItems = computed<Item[]>(() => [copyTextItem, pinMessageItem.value, copyMessageLinkItem]);
   const deleteMessageItem = computed<Item | undefined>(() =>
     message.type === MessageType.Message && isCreator.value && onDeleteMode
       ? {

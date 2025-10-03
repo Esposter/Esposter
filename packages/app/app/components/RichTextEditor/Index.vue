@@ -35,11 +35,15 @@ const emit = defineEmits<{ paste: Parameters<NonNullable<FileHandlePluginOptions
 const editor = useEditor({
   content: modelValue.value,
   extensions: [
-    StarterKit,
-    Placeholder.configure({ placeholder: () => placeholder }),
     CharacterCount.configure({ limit }),
     FileHandler.configure({
       onPaste: (...args) => emit("paste", ...args),
+    }),
+    Placeholder.configure({ placeholder: () => placeholder }),
+    StarterKit.configure({
+      link: {
+        openOnClick: false,
+      },
     }),
     ...(extensions ?? []),
   ],

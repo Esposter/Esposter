@@ -6,7 +6,6 @@ import { useDialogStore } from "@/store/message/room/dialog";
 interface EditRoomProps extends MessageComponentProps {}
 
 const { active, creator, isPreview = false, message } = defineProps<EditRoomProps>();
-const displayCreatedAt = useDateFormat(() => message.createdAt, "DD/MM/YYYY H:mm");
 const dialogStore = useDialogStore();
 const { isEditRoomDialogOpen } = storeToRefs(dialogStore);
 </script>
@@ -25,7 +24,8 @@ const { isEditRoomDialogOpen } = storeToRefs(dialogStore);
       <span text-gray> removed the custom room name. </span>
     </template>
     <span class="text-info" cursor-pointer hover:underline @click="isEditRoomDialogOpen = true">Edit Room</span>
-    <span text-gray text-sm>&nbsp;{{ displayCreatedAt }}</span>
+    <span>&nbsp;</span>
+    <MessageModelMessageCreatedAtDate :created-at="message.createdAt" />
     <MessageModelMessageEmojiList :is-preview :message />
   </MessageModelMessageTypeListItem>
 </template>

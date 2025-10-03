@@ -9,6 +9,7 @@ import { createMessageInputSchema } from "#shared/models/db/message/CreateMessag
 import { createTypingInputSchema } from "#shared/models/db/message/CreateTypingInput";
 import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
 import { MessageEntity, messageEntitySchema } from "#shared/models/db/message/MessageEntity";
+import { MessageType } from "#shared/models/db/message/MessageType";
 import { searchMessagesInputSchema } from "#shared/models/db/message/SearchMessagesInput";
 import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
@@ -31,6 +32,7 @@ import { generateUploadFileSasEntities } from "@@/server/services/azure/containe
 import { getBlobName } from "@@/server/services/azure/container/getBlobName";
 import { getEntity } from "@@/server/services/azure/table/getEntity";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
+import { updateEntity } from "@@/server/services/azure/table/updateEntity";
 import { on } from "@@/server/services/events/on";
 import { createMessage } from "@@/server/services/message/createMessage";
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
@@ -129,6 +131,12 @@ export const forwardMessageInputSchema = z.object({
 });
 export type ForwardMessageInput = z.infer<typeof forwardMessageInputSchema>;
 
+export const pinMessageInputSchema = messageEntitySchema.pick({ partitionKey: true, rowKey: true });
+export type PinMessageInput = z.infer<typeof pinMessageInputSchema>;
+
+export const unpinMessageInputSchema = messageEntitySchema.pick({ partitionKey: true, rowKey: true });
+export type UnpinMessageInput = z.infer<typeof unpinMessageInputSchema>;
+
 export const messageRouter = router({
   createMessage: addProfanityFilterMiddleware(getMemberProcedure(createMessageInputSchema, "roomId"), [
     "message",
@@ -184,13 +192,14 @@ export const messageRouter = router({
     },
   ),
   deleteLinkPreviewResponse: getCreatorProcedure(deleteLinkPreviewResponseInputSchema).mutation(
-    async ({ ctx: { messageClient }, input }) => {
-      const updatedMessageEntity = {
-        ...input,
-        linkPreviewResponse: null,
-      } as const satisfies AzureUpdateEntity<MessageEntity>;
-      await updateMessage(messageClient, updatedMessageEntity);
-      messageEventEmitter.emit("updateMessage", updatedMessageEntity);
+    async ({ ctx: { messageClient, messageEntity } }) => {
+      messageEntity.linkPreviewResponse = null;
+      await updateMessage(messageClient, messageEntity, "Replace");
+      messageEventEmitter.emit("updateMessage", {
+        linkPreviewResponse: messageEntity.linkPreviewResponse,
+        partitionKey: messageEntity.partitionKey,
+        rowKey: messageEntity.rowKey,
+      });
     },
   ),
   deleteMessage: getCreatorProcedure(deleteMessageInputSchema).mutation(
@@ -343,6 +352,28 @@ export const messageRouter = router({
     for await (const [data] of on(messageEventEmitter, "updateMessage", { signal }))
       if (isRoomId(data.partitionKey, input.roomId)) yield data;
   }),
+  pinMessage: getMemberProcedure(pinMessageInputSchema, "partitionKey").mutation(async ({ ctx, input }) => {
+    const messageClient = await useTableClient(AzureTable.Messages);
+    const updatedMessageEntity = { ...input, isPinned: true } as const satisfies AzureUpdateEntity<MessageEntity>;
+    await updateEntity(messageClient, updatedMessageEntity);
+    messageEventEmitter.emit("updateMessage", updatedMessageEntity);
+
+    const systemMessage = await createMessage(messageClient, {
+      replyRowKey: input.rowKey,
+      roomId: input.partitionKey,
+      type: MessageType.PinMessage,
+      userId: ctx.session.user.id,
+    });
+    messageEventEmitter.emit("createMessage", [
+      [systemMessage],
+      {
+        image: ctx.session.user.image,
+        isSendToSelf: true,
+        name: ctx.session.user.name,
+        sessionId: ctx.session.session.id,
+      },
+    ]);
+  }),
   readMessages: getMemberProcedure(readMessagesInputSchema, "roomId").query(({ input }) => readMessages(input)),
   readMessagesByRowKeys: getMemberProcedure(readMessagesByRowKeysInputSchema, "roomId").query(
     async ({ input: { roomId, rowKeys } }) => {
@@ -355,6 +386,23 @@ export const messageRouter = router({
     },
   ),
   searchMessages: getMemberProcedure(searchMessagesInputSchema, "roomId").query(({ input }) => searchMessages(input)),
+  unpinMessage: getMemberProcedure(unpinMessageInputSchema, "partitionKey").mutation(async ({ input }) => {
+    const messageClient = await useTableClient(AzureTable.Messages);
+    const messageEntity = await getEntity(messageClient, MessageEntity, input.partitionKey, input.rowKey);
+    if (!messageEntity)
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: new NotFoundError(AzureEntityType.Message, JSON.stringify(input)).message,
+      });
+
+    messageEntity.isPinned = undefined;
+    await updateEntity(messageClient, messageEntity, "Replace");
+    messageEventEmitter.emit("updateMessage", {
+      isPinned: messageEntity.isPinned,
+      partitionKey: messageEntity.partitionKey,
+      rowKey: messageEntity.rowKey,
+    });
+  }),
   updateMessage: addProfanityFilterMiddleware(getCreatorProcedure(updateMessageInputSchema), ["message"]).mutation(
     async ({ ctx: { messageClient }, input }) => {
       await updateMessage(messageClient, input);

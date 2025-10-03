@@ -83,17 +83,25 @@ watch(optionsMenu, (newOptionsMenu) => {
           @mouseleave="isOptionsActive = false"
         >
           <v-hover #default="{ isHovering, props: hoverProps }">
-            <MessageModelMessageOptionsMenu
-              :message
-              :is-hovering
-              :hover-props
-              @update:delete-mode="updateIsOpen"
-              @update:forward="forwardRowKey = $event"
-              @update:menu="isOptionsChildrenActive = $event"
-              @update:reply="replyRowKey = $event"
-              @update:select-emoji="selectEmoji"
-              @update:update-mode="isUpdateMode = $event"
-            />
+            <MessageModelMessageConfirmPinDialog :message>
+              <template #default="{ updateIsOpen: updatePinDialogIsOpen }">
+                <MessageModelMessageOptionsMenu
+                  :message
+                  :is-hovering
+                  :hover-props
+                  @update:delete-mode="updateIsOpen"
+                  @update:forward="forwardRowKey = $event"
+                  @update:menu="isOptionsChildrenActive = $event"
+                  @update:pin="updatePinDialogIsOpen"
+                  @update:reply="replyRowKey = $event"
+                  @update:select-emoji="selectEmoji"
+                  @update:update-mode="isUpdateMode = $event"
+                />
+              </template>
+              <template #messagePreview>
+                <MessageModelMessageType :creator :message :next-message is-preview />
+              </template>
+            </MessageModelMessageConfirmPinDialog>
           </v-hover>
         </div>
       </div>

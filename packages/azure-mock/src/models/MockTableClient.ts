@@ -123,8 +123,10 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
     if (!existingEntity) throw new MockRestError("The specified resource does not exist.", 404);
     else if (mode === "Merge") return this.mergeEntity(key, existingEntity, entity);
     // "Replace"
-    this.table.set(key, entity);
-    return Promise.resolve({ date: new Date(), etag: this.getEtag() });
+    else {
+      this.table.set(key, entity);
+      return Promise.resolve({ date: new Date(), etag: this.getEtag() });
+    }
   }
 
   upsertEntity<T extends object>(entity: TableEntity<T>, mode: UpdateMode = "Merge"): Promise<TableMergeEntityHeaders> {
@@ -132,8 +134,10 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
     const existingEntity = this.table.get(key);
     if (existingEntity && mode === "Merge") return this.mergeEntity(key, existingEntity, entity);
     // "Replace" or entity doesn't exist (which is an insert)
-    this.table.set(key, entity);
-    return Promise.resolve({ date: new Date(), etag: this.getEtag() });
+    else {
+      this.table.set(key, entity);
+      return Promise.resolve({ date: new Date(), etag: this.getEtag() });
+    }
   }
 
   private getCompositeKey(partitionKey: string, rowKey: string): string {

@@ -17,13 +17,7 @@ const isSameBatch = computed(
     message.userId === nextMessage?.userId &&
     dayjs(message.createdAt).diff(nextMessage.createdAt, "minutes") <= 5,
 );
-const createdAtDayjs = computed(() => dayjs(message.createdAt));
-const displayCreatedAtShort = computed(() => createdAtDayjs.value.format("H:mm"));
-const displayCreatedAt = computed(() => {
-  if (createdAtDayjs.value.isToday()) return displayCreatedAtShort.value;
-  else if (createdAtDayjs.value.isYesterday()) return `Yesterday at ${displayCreatedAtShort.value}`;
-  else return createdAtDayjs.value.format("DD/MM/YYYY H:mm");
-});
+const displayCreatedAtShort = computed(() => dayjs(message.createdAt).format("H:mm"));
 const messageHtml = useMessageWithMentions(() => message.message);
 </script>
 
@@ -45,9 +39,7 @@ const messageHtml = useMessageWithMentions(() => message.message);
         <span font-bold>
           {{ creator.name }}
         </span>
-        <span pl-2 text-gray text-xs>
-          {{ displayCreatedAt }}
-        </span>
+        <MessageModelMessageCreatedAtDate pl-2 :created-at="message.createdAt" />
       </template>
     </v-list-item-title>
     <div flex flex-col gap-y-1>

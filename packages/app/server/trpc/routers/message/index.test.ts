@@ -4,6 +4,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { rooms } from "#shared/db/schema/rooms";
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
+import { MessageType } from "#shared/models/db/message/MessageType";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
 import { MENTION_ID_ATTRIBUTE, MENTION_TYPE, MENTION_TYPE_ATTRIBUTE } from "#shared/services/message/constants";
@@ -196,6 +197,7 @@ describe("message", () => {
     expect(newMessage.mentions).toHaveLength(1);
     expect(newMessage.mentions[0]).toBe(userId);
     expect(newMessage.message).toBe(message);
+    expect(newMessage.type).toBe(MessageType.Message);
     expect(newMessage.userId).toBe(userId);
   });
 
@@ -849,5 +851,40 @@ describe("message", () => {
     await expect(
       messageCaller.deleteLinkPreviewResponse({ partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+  });
+
+  test("pins message and creates system message", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const message = getMessage(getMockSession().user.id);
+    const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
+
+    await messageCaller.pinMessage({ partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey });
+
+    const readMessages = await messageCaller.readMessages({ roomId: newRoom.id });
+
+    expect(readMessages.items).toHaveLength(2);
+    expect(readMessages.items[0].partitionKey).toBe(newMessage.partitionKey);
+    expect(readMessages.items[0].rowKey).toBe(newMessage.rowKey);
+    expect(readMessages.items[0].isPinned).toBe(true);
+    expect(readMessages.items[1].type).toBe(MessageType.PinMessage);
+    expect(readMessages.items[1].replyRowKey).toBe(newMessage.rowKey);
+  });
+
+  test("unpins message", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const message = getMessage(getMockSession().user.id);
+    const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
+
+    await messageCaller.pinMessage({ partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey });
+    await messageCaller.unpinMessage({ partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey });
+
+    const readMessages = await messageCaller.readMessages({ roomId: newRoom.id });
+
+    expect(readMessages.items).toHaveLength(2);
+    expect(readMessages.items[0].isPinned).toBeUndefined();
   });
 });

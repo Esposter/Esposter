@@ -10,6 +10,7 @@ interface OptionsMenuItemsProps {
 const { message } = defineProps<OptionsMenuItemsProps>();
 const emit = defineEmits<{
   "update:forward": [rowKey: string];
+  "update:pin": [value: true];
   "update:reply": [rowKey: string];
   "update:update-mode": [value: true];
 }>();
@@ -18,6 +19,7 @@ const isCreator = computed(() => session.value?.user.id === message.userId);
 const isEditable = computed(() => isCreator.value && !message.isForward);
 const { updateMessageItems } = useMessageActionItems(message, isEditable, isCreator, {
   onForward: (rowKey) => emit("update:forward", rowKey),
+  onPin: (value) => emit("update:pin", value),
   onReply: (rowKey) => emit("update:reply", rowKey),
   onUpdateMode: () => emit("update:update-mode", true),
 });

@@ -44,8 +44,8 @@
   },
   "dependencies": {
     "@azure/data-tables": "catalog:",
-    "@azure/storage-blob": "catalog:",
     "@azure/search-documents": "catalog:",
+    "@azure/storage-blob": "catalog:",
     "@codemirror/lang-vue": "catalog:",
     "@codemirror/language": "catalog:",
     "@codemirror/language-data": "catalog:",

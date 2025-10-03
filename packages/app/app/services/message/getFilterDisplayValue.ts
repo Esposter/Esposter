@@ -17,7 +17,7 @@ export const getFilterDisplayValue = ({ type, value }: Filter) => {
       return `${displayType} ${memberMap.value.get(value)?.name ?? value}`;
     }
     case FilterType.Has: {
-      return `${displayType} ${value}`;
+      return `${displayType} ${uncapitalize(value)}`;
     }
     case FilterType.Before:
     case FilterType.During:

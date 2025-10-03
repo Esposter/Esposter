@@ -3,7 +3,7 @@ import type { TableEntity } from "@azure/data-tables";
 import { compare } from "@/util/tableFilter/compare";
 import { isNullClause } from "@/util/tableFilter/isNullClause";
 import { parseClause } from "@/util/tableFilter/parseClause";
-import { BinaryOperator, NotFoundError, uncapitalize } from "@esposter/shared";
+import { BinaryOperator, uncapitalize } from "@esposter/shared";
 
 export const createTableFilterPredicate = <T extends object>(filter: string): ((entity: TableEntity<T>) => boolean) => {
   // Preserve spacing when stripping parentheses so patterns like not(<clause>) still match
@@ -13,25 +13,16 @@ export const createTableFilterPredicate = <T extends object>(filter: string): ((
   return (entity) => {
     for (const group of orGroups) {
       let isGroupMatched = false;
+
       for (const rawClause of group) {
         const clause = parseClause(rawClause);
         const normalizedClauseKey = uncapitalize(clause.key);
-        if (!(normalizedClauseKey in entity))
-          throw new NotFoundError(
-            createTableFilterPredicate.name,
-            JSON.stringify({ entity, filter, key: normalizedClauseKey }),
-          );
-
+        const value = entity[normalizedClauseKey as keyof typeof entity];
         let isMatched = false;
 
-        if (isNullClause(clause))
-          isMatched = compare(BinaryOperator.eq, entity[normalizedClauseKey as keyof typeof entity], null);
+        if (isNullClause(clause)) isMatched = compare(BinaryOperator.eq, value, null);
         else {
-          const comparisonResult = compare(
-            clause.operator,
-            String(entity[normalizedClauseKey as keyof typeof entity]),
-            clause.value,
-          );
+          const comparisonResult = compare(clause.operator, String(value), clause.value);
           isMatched = clause.not ? !comparisonResult : comparisonResult;
         }
 
@@ -40,8 +31,10 @@ export const createTableFilterPredicate = <T extends object>(filter: string): ((
           break;
         }
       }
+
       if (!isGroupMatched) return false;
     }
+
     return true;
   };
 };

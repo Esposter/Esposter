@@ -17,6 +17,7 @@ const emit = defineEmits<{
   "update:delete-mode": [value: true];
   "update:forward": [rowKey: string];
   "update:menu": [value: boolean];
+  "update:pin": [value: true];
   "update:reply": [rowKey: string];
   "update:select-emoji": [emoji: string];
   "update:update-mode": [value: true];
@@ -31,6 +32,7 @@ const {
 } = useMessageActionItems(message, isEditable, isCreator, {
   onDeleteMode: () => emit("update:delete-mode", true),
   onForward: (rowKey) => emit("update:forward", rowKey),
+  onPin: (value) => emit("update:pin", value),
   onReply: (rowKey) => emit("update:reply", rowKey),
   onUpdateMode: () => emit("update:update-mode", true),
 });
@@ -57,9 +59,10 @@ const {
       />
       <MessageModelMessageOptionsMenuItems
         :message
-        @update:update-mode="emit('update:update-mode', true)"
-        @update:reply="emit('update:reply', $event)"
+        @update:pin="emit('update:pin', $event)"
         @update:forward="emit('update:forward', $event)"
+        @update:reply="emit('update:reply', $event)"
+        @update:update-mode="emit('update:update-mode', true)"
       />
       <MessageModelMessageOptionsMenuMore
         :row-key="message.rowKey"
