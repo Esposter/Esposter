@@ -4,6 +4,7 @@ import type { ToData } from "#shared/models/entity/ToData";
 import type { LinkPreviewResponse } from "#shared/models/message/linkPreview/LinkPreviewResponse";
 import type { Except } from "type-fest";
 
+import { selectRoomSchema } from "#shared/db/schema/rooms";
 import { selectUserSchema } from "#shared/db/schema/users";
 import { AzureEntity, createAzureEntitySchema } from "#shared/models/azure/AzureEntity";
 import { fileEntitySchema } from "#shared/models/azure/FileEntity";
@@ -39,8 +40,7 @@ export const messageEntitySchema = refineMessageSchema(
   z.object({
     ...createAzureEntitySchema(
       z.object({
-        // ${roomId}-${createdAt.format("yyyyMMdd")}
-        partitionKey: z.string(),
+        partitionKey: selectRoomSchema.shape.id,
         // reverse-ticked timestamp
         rowKey: z.string(),
       }),
