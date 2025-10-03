@@ -181,11 +181,11 @@ export const messageRouter = router({
         `${messageEntity.partitionKey}/${id}`,
         messageEntity.files.splice(index, 1)[0].filename,
       );
-      const updatedMessageEntity = {
+      const updatedMessageEntity: AzureUpdateEntity<MessageEntity> = {
         files: messageEntity.files,
         partitionKey,
         rowKey,
-      } as const satisfies AzureUpdateEntity<MessageEntity>;
+      };
       await updateMessage(messageClient, updatedMessageEntity);
       messageEventEmitter.emit("updateMessage", updatedMessageEntity);
       await containerClient.deleteBlob(blobName);
@@ -193,21 +193,19 @@ export const messageRouter = router({
   ),
   deleteLinkPreviewResponse: getCreatorProcedure(deleteLinkPreviewResponseInputSchema).mutation(
     async ({ ctx: { messageClient, messageEntity } }) => {
-      messageEntity.linkPreviewResponse = null;
-      await updateMessage(messageClient, messageEntity, "Replace");
-      messageEventEmitter.emit("updateMessage", {
-        linkPreviewResponse: messageEntity.linkPreviewResponse,
+      const updatedMessageEntity: AzureUpdateEntity<MessageEntity> = {
+        linkPreviewResponse: null,
         partitionKey: messageEntity.partitionKey,
         rowKey: messageEntity.rowKey,
-      });
+      };
+      Object.assign(messageEntity, updatedMessageEntity);
+      await updateMessage(messageClient, messageEntity, "Replace");
+      messageEventEmitter.emit("updateMessage", updatedMessageEntity);
     },
   ),
   deleteMessage: getCreatorProcedure(deleteMessageInputSchema).mutation(
     async ({ ctx: { messageClient, messageEntity }, input }) => {
-      await updateMessage(messageClient, {
-        ...input,
-        deletedAt: new Date(),
-      } as const satisfies AzureUpdateEntity<MessageEntity>);
+      await updateMessage(messageClient, { ...input, deletedAt: new Date() });
       messageEventEmitter.emit("deleteMessage", input);
 
       const containerClient = await useContainerClient(AzureContainer.MessageAssets);
@@ -354,7 +352,7 @@ export const messageRouter = router({
   }),
   pinMessage: getMemberProcedure(pinMessageInputSchema, "partitionKey").mutation(async ({ ctx, input }) => {
     const messageClient = await useTableClient(AzureTable.Messages);
-    const updatedMessageEntity = { ...input, isPinned: true } as const satisfies AzureUpdateEntity<MessageEntity>;
+    const updatedMessageEntity: AzureUpdateEntity<MessageEntity> = { ...input, isPinned: true };
     await updateEntity(messageClient, updatedMessageEntity);
     messageEventEmitter.emit("updateMessage", updatedMessageEntity);
 
@@ -395,13 +393,10 @@ export const messageRouter = router({
         message: new NotFoundError(AzureEntityType.Message, JSON.stringify(input)).message,
       });
 
-    messageEntity.isPinned = undefined;
+    const updatedMessageEntity: AzureUpdateEntity<MessageEntity> = { ...input, isPinned: undefined };
+    Object.assign(messageEntity, updatedMessageEntity);
     await updateEntity(messageClient, messageEntity, "Replace");
-    messageEventEmitter.emit("updateMessage", {
-      isPinned: messageEntity.isPinned,
-      partitionKey: messageEntity.partitionKey,
-      rowKey: messageEntity.rowKey,
-    });
+    messageEventEmitter.emit("updateMessage", updatedMessageEntity);
   }),
   updateMessage: addProfanityFilterMiddleware(getCreatorProcedure(updateMessageInputSchema), ["message"]).mutation(
     async ({ ctx: { messageClient }, input }) => {

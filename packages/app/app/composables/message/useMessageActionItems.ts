@@ -102,7 +102,16 @@ export const useMessageActionItems = (
         : [replyItem, forwardMessageItem]
       : [],
   );
-  const actionMessageItems = computed<Item[]>(() => [copyTextItem, pinMessageItem.value, copyMessageLinkItem]);
+  const actionMessageItems = computed<Item[]>(() => {
+    switch (message.type) {
+      case MessageType.EditRoom:
+        return [copyTextItem, copyMessageLinkItem];
+      case MessageType.Message:
+        return [copyTextItem, pinMessageItem.value, copyMessageLinkItem];
+      case MessageType.PinMessage:
+        return [copyMessageLinkItem];
+    }
+  });
   const deleteMessageItem = computed<Item | undefined>(() =>
     message.type === MessageType.Message && isCreator.value && onDeleteMode
       ? {

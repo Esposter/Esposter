@@ -8,6 +8,7 @@ import { FileHandler } from "@tiptap/extension-file-handler";
 import { CharacterCount, Placeholder } from "@tiptap/extensions";
 import { StarterKit } from "@tiptap/starter-kit";
 import { EditorContent, useEditor } from "@tiptap/vue-3";
+import { Plugin } from "prosemirror-state";
 
 interface RichTextEditorProps {
   cardProps?: VCard["$props"];
@@ -43,6 +44,36 @@ const editor = useEditor({
     StarterKit.configure({
       link: {
         openOnClick: false,
+      },
+    }).extend({
+      addProseMirrorPlugins() {
+        const { editor } = this;
+        return [
+          new Plugin({
+            props: {
+              handleClick(_view, _pos, event) {
+                // Check if Ctrl or Cmd key is pressed
+                // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+                const isModifierPressed = event.ctrlKey || event.metaKey;
+                // If no modifier key, do nothing and let the editor handle it
+                // (e.g., for selecting text).
+                if (!isModifierPressed) return false;
+
+                const attrs = editor.getAttributes("link");
+                const href = attrs.href;
+
+                if (href) {
+                  // If a link is found at the click position, open it
+                  window.open(href, "_blank", "noopener noreferrer");
+                  // Return true to indicate that we've handled the event
+                  return true;
+                } else
+                  // If no link was found, let the editor continue
+                  return false;
+              },
+            },
+          }),
+        ];
       },
     }),
     ...(extensions ?? []),

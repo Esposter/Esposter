@@ -133,6 +133,7 @@
     "pinia": "catalog:",
     "pluralize": "catalog:",
     "postgres": "catalog:",
+    "prosemirror-state": "catalog:",
     "rate-limiter-flexible": "catalog:",
     "rxjs": "catalog:",
     "show-open-file-picker": "catalog:",

@@ -3,7 +3,7 @@ import type { Filter } from "#shared/models/message/Filter";
 
 import { FilterType } from "#shared/models/message/FilterType";
 import { useRoomStore } from "@/store/message/room";
-import { NotFoundError, uncapitalize } from "@esposter/shared";
+import { uncapitalize } from "@esposter/shared";
 
 export const getFilterDisplayValue = ({ type, value }: Filter) => {
   const displayType = `${uncapitalize(type)}:`;
@@ -24,7 +24,5 @@ export const getFilterDisplayValue = ({ type, value }: Filter) => {
     case FilterType.After: {
       return `${displayType} ${new Date(value).toLocaleDateString()}`;
     }
-    default:
-      throw new NotFoundError(getFilterDisplayValue.name, type);
   }
 };

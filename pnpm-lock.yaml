@@ -438,6 +438,9 @@ catalogs:
     prettier:
       specifier: ^3.6.2
       version: 3.6.2
+    prosemirror-state:
+      specifier: ^1.4.3
+      version: 1.4.3
     rate-limiter-flexible:
       specifier: ^8.0.1
       version: 8.0.1
@@ -931,6 +934,9 @@ importers:
       postgres:
         specifier: 'catalog:'
         version: 3.4.7
+      prosemirror-state:
+        specifier: 'catalog:'
+        version: 1.4.3
       rate-limiter-flexible:
         specifier: 'catalog:'
         version: 8.0.1
