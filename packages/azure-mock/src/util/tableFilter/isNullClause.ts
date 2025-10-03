@@ -1,6 +1,8 @@
-import type { Clause } from "@/models/tableFilter/Clause";
+import type { Clause } from "@esposter/shared";
 
-import { BinaryOperator, Literal } from "@esposter/shared";
-// Equivalent to `not(${key} ne NaN)` null check in Azure Table Storage
-export const isNullClause = ({ not, operator, value }: Clause): boolean =>
-  Boolean(not) && operator === BinaryOperator.ne && value === Literal.NaN;
+import { getNullClause } from "@esposter/shared";
+
+export const isNullClause = ({ key, not, operator, value }: Clause): boolean => {
+  const nullClause = getNullClause(key);
+  return not === nullClause.not && operator === nullClause.operator && value === nullClause.value;
+};

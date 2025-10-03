@@ -1,6 +1,8 @@
-type PropertyNames<T> = {
+import type { RequiredDeep } from "type-fest";
+
+type PropertyNames<T> = RequiredDeep<{
   [P in keyof T]: P;
-};
+}>;
 
 export const getPropertyNames = <T>(): PropertyNames<T> =>
   new Proxy(

@@ -16,6 +16,9 @@ export const getFilterDisplayValue = ({ type, value }: Filter) => {
       const { memberMap } = storeToRefs(roomStore);
       return `${displayType} ${memberMap.value.get(value)?.name ?? value}`;
     }
+    case FilterType.Has: {
+      return `${displayType} ${value}`;
+    }
     case FilterType.Before:
     case FilterType.During:
     case FilterType.After: {

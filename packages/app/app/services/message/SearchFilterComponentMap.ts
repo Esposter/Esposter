@@ -6,7 +6,7 @@ export const SearchFilterComponentMap = {
   [FilterType.Mentions]: defineAsyncComponent(
     () => import("@/components/Message/Content/Search/Filter/UserPicker.vue"),
   ),
-  // [FilterType.Has]: null,
+  [FilterType.Has]: defineAsyncComponent(() => import("@/components/Message/Content/Search/Filter/HasPicker.vue")),
   [FilterType.Before]: defineAsyncComponent(() => import("@/components/Message/Content/Search/Filter/DatePicker.vue")),
   [FilterType.During]: defineAsyncComponent(() => import("@/components/Message/Content/Search/Filter/DatePicker.vue")),
   [FilterType.After]: defineAsyncComponent(() => import("@/components/Message/Content/Search/Filter/DatePicker.vue")),

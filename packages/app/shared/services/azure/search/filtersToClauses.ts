@@ -2,10 +2,13 @@
 import type { Filter } from "#shared/models/message/Filter";
 import type { Clause } from "@esposter/shared";
 
+import { FileEntityPropertyNames } from "#shared/models/azure/FileEntity";
+import { MessageEntityPropertyNames } from "#shared/models/db/message/MessageEntity";
 import { FilterType } from "#shared/models/message/FilterType";
+import { FilterTypeHas } from "#shared/models/message/FilterTypeHas";
 import { escapeValue } from "#shared/services/azure/search/escapeValue";
 import { dayjs } from "#shared/services/dayjs";
-import { BinaryOperator, NotFoundError, SearchOperator } from "@esposter/shared";
+import { BinaryOperator, getNonNullClause, NotFoundError, SearchOperator } from "@esposter/shared";
 
 export const filtersToClauses = (filters: Filter[]): Clause[] => {
   const clauses: Clause[] = [];
@@ -24,6 +27,47 @@ export const filtersToClauses = (filters: Filter[]): Clause[] => {
             operator: SearchOperator.arrayContains,
             value: mentionFilters.map(({ value }) => value),
           });
+        break;
+      }
+      case FilterType.Has: {
+        for (const { value } of filtersByType)
+          switch (value) {
+            case FilterTypeHas.Forward:
+              clauses.push({
+                key: MessageEntityPropertyNames.isForward,
+                operator: BinaryOperator.eq,
+                value: String(true),
+              });
+              break;
+            case FilterTypeHas.Link:
+            case FilterTypeHas.Embed:
+              // Presence of a link preview implies message had a link/embed
+              clauses.push(getNonNullClause(MessageEntityPropertyNames.linkPreviewResponse));
+              break;
+            case FilterTypeHas.Image:
+              clauses.push({
+                key: `${MessageEntityPropertyNames.files}/${FileEntityPropertyNames.mimetype}`,
+                operator: SearchOperator.startsWith,
+                value: "image/",
+              });
+              break;
+            case FilterTypeHas.Video:
+              clauses.push({
+                key: `${MessageEntityPropertyNames.files}/${FileEntityPropertyNames.mimetype}`,
+                operator: SearchOperator.startsWith,
+                value: "video/",
+              });
+              break;
+            case FilterTypeHas.Sound:
+              clauses.push({
+                key: `${MessageEntityPropertyNames.files}/${FileEntityPropertyNames.mimetype}`,
+                operator: SearchOperator.startsWith,
+                value: "audio/",
+              });
+              break;
+            default:
+              throw new NotFoundError(filtersToClauses.name, value);
+          }
         break;
       }
       case FilterType.Before: {
