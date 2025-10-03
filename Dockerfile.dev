@@ -11,6 +11,7 @@ WORKDIR /app/packages/app
 RUN bun --bun i --frozen-lockfile --ignore-scripts
 # Copy the rest of your source code.
 # This invalidates the cache more frequently, but the expensive install step above is already done.
+WORKDIR /app
 COPY . .
 # Expose the port Nuxt will run on
 EXPOSE 3000/tcp
