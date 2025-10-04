@@ -1,7 +1,7 @@
 import json from "@eslint/json";
 import depend from "eslint-plugin-depend";
 import { defineConfig } from "eslint/config";
-/** @satisfies {import('@eslint/core').RuleConfig} */
+/** @satisfies {import('@eslint/core').RulesConfig} */
 const rules = {
   "depend/ban-dependencies": [
     "error",
