@@ -1,9 +1,6 @@
-/* eslint-disable perfectionist/sort-switch-case */
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { Filter } from "#shared/models/message/Filter";
 
-import { MessageEntityPropertyNames } from "#shared/models/db/message/MessageEntity";
-import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadata";
 import { FilterType } from "#shared/models/message/FilterType";
 import { getIsSearchQueryEmpty } from "#shared/services/message/getIsSearchQueryEmpty";
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
@@ -24,26 +21,7 @@ export const useSearchMessageStore = defineStore("message/searchMessage", () => 
   });
   const isSearchQueryEmpty = computed(() => getIsSearchQueryEmpty(searchQuery.value, selectedFilters.value));
   const createFilter = (type: FilterType) => {
-    let key = "";
-
-    switch (type) {
-      case FilterType.From:
-        key = MessageEntityPropertyNames.userId;
-        break;
-      case FilterType.Mentions:
-        key = MessageEntityPropertyNames.mentions;
-        break;
-      case FilterType.Before:
-      case FilterType.During:
-      case FilterType.After:
-        key = ItemMetadataPropertyNames.createdAt;
-        break;
-      case FilterType.Pinned:
-        key = MessageEntityPropertyNames.isPinned;
-        break;
-    }
-
-    selectedFilters.value.push({ key, type, value: "" });
+    selectedFilters.value.push({ type, value: "" });
   };
   const deleteFilter = (index: number) => {
     if (index >= 0 && index < selectedFilters.value.length) selectedFilters.value.splice(index, 1);
