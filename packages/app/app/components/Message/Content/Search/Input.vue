@@ -10,7 +10,7 @@ const { activeSelectedFilter, isSearchQueryEmpty, menu, searchQuery, selectedFil
   storeToRefs(searchMessageStore);
 const searchQueryOnFocus = ref("");
 const filterTypes = Object.values(FilterType);
-const onEscape = () => (document.activeElement as HTMLElement | null)?.blur();
+const blur = () => (document.activeElement as HTMLElement | null)?.blur();
 </script>
 
 <template>
@@ -29,7 +29,7 @@ const onEscape = () => (document.activeElement as HTMLElement | null)?.blur();
     hide-no-data
     multiple
     return-object
-    @keydown.esc="onEscape()"
+    @keydown.esc="blur()"
     @keydown.enter="
       async ({ preventDefault }: KeyboardEvent) => {
         if (activeSelectedFilter && !activeSelectedFilter.value) {
@@ -38,7 +38,10 @@ const onEscape = () => (document.activeElement as HTMLElement | null)?.blur();
           activeSelectedFilter.value = value;
           preventDefault();
           searchQuery = '';
-        } else if (!isSearchQueryEmpty) await readSearchedMessages();
+        } else if (!isSearchQueryEmpty) {
+          blur();
+          await readSearchedMessages();
+        }
       }
     "
     @update:focused="

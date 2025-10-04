@@ -4,12 +4,14 @@ import type { Clause } from "@esposter/shared";
 
 import { FileEntityPropertyNames } from "#shared/models/azure/FileEntity";
 import { MessageEntityPropertyNames } from "#shared/models/db/message/MessageEntity";
-import { Mimetypes } from "#shared/models/file/Mimetypes";
 import { FilterType } from "#shared/models/message/FilterType";
 import { FilterTypeHas } from "#shared/models/message/FilterTypeHas";
 import { escapeValue } from "#shared/services/azure/search/escapeValue";
 import { dayjs } from "#shared/services/dayjs";
 import { BinaryOperator, getNonNullClause, NotFoundError, SearchOperator } from "@esposter/shared";
+import { types } from "mime-types";
+
+const ContentTypes = Object.values(types);
 
 export const filtersToClauses = (filters: Filter[]): Clause[] => {
   const clauses: Clause[] = [];
@@ -49,21 +51,21 @@ export const filtersToClauses = (filters: Filter[]): Clause[] => {
               clauses.push({
                 key: `${MessageEntityPropertyNames.files}/${FileEntityPropertyNames.mimetype}`,
                 operator: SearchOperator.arrayContains,
-                value: Mimetypes.filter((mimetype) => mimetype.startsWith("image/")),
+                value: ContentTypes.filter((contentType) => contentType.startsWith("image/")),
               });
               break;
             case FilterTypeHas.Video:
               clauses.push({
                 key: `${MessageEntityPropertyNames.files}/${FileEntityPropertyNames.mimetype}`,
                 operator: SearchOperator.arrayContains,
-                value: Mimetypes.filter((mimetype) => mimetype.startsWith("video/")),
+                value: ContentTypes.filter((contentType) => contentType.startsWith("video/")),
               });
               break;
             case FilterTypeHas.Sound:
               clauses.push({
                 key: `${MessageEntityPropertyNames.files}/${FileEntityPropertyNames.mimetype}`,
                 operator: SearchOperator.arrayContains,
-                value: Mimetypes.filter((mimetype) => mimetype.startsWith("audio/")),
+                value: ContentTypes.filter((contentType) => contentType.startsWith("audio/")),
               });
               break;
             default:
