@@ -11,7 +11,7 @@ const mocks = await vi.hoisted(async () => {
   };
 });
 
-vi.mock("#shared/services/azure/container/getBlobUrl", () => ({
+vi.mock(import("#shared/services/azure/container/getBlobUrl"), () => ({
   getBlobUrl: () => mocks.blobUrl,
 }));
 

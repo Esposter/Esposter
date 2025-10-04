@@ -1,6 +1,4 @@
 import type { User } from "#shared/db/schema/users";
-import type { useContainerClient } from "@@/server/composables/azure/useContainerClient";
-import type { useTableClient } from "@@/server/composables/azure/useTableClient";
 import type { Session } from "@@/server/models/auth/Session";
 import type { Context } from "@@/server/trpc/context";
 import type * as DrizzleKit from "drizzle-kit/api";
@@ -37,15 +35,12 @@ const mocks = vi.hoisted(() => {
   return {
     getSession: vi.fn<() => Session>(() => {
       const session = createSession(user.id);
-      return {
-        session,
-        user,
-      };
+      return { session, user };
     }),
   };
 });
 
-vi.mock("@@/server/auth", () => ({
+vi.mock(import("@@/server/auth") as unknown as Promise<{ auth: { api: { getSession: () => Session } } }>, () => ({
   auth: {
     api: {
       getSession: mocks.getSession,
@@ -53,12 +48,12 @@ vi.mock("@@/server/auth", () => ({
   },
 }));
 
-vi.mock("@@/server/composables/azure/useContainerClient", () => ({
-  useContainerClient: vi.fn<typeof useContainerClient>(useContainerClientMock),
+vi.mock(import("@@/server/composables/azure/useContainerClient"), () => ({
+  useContainerClient: useContainerClientMock,
 }));
 
-vi.mock("@@/server/composables/azure/useTableClient", () => ({
-  useTableClient: vi.fn<typeof useTableClient>(useTableClientMock),
+vi.mock(import("@@/server/composables/azure/useTableClient"), () => ({
+  useTableClient: useTableClientMock,
 }));
 
 export const mockSessionOnce = async (db: Context["db"], mockUser?: User) => {

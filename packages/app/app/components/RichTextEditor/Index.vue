@@ -57,7 +57,6 @@ const editor = useEditor({
             props: {
               handleClick(_view, _pos, event) {
                 // Check if Ctrl or Cmd key is pressed
-                // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
                 const isModifierPressed = event.ctrlKey || event.metaKey;
                 // If no modifier key, do nothing and let the editor handle it
                 // (e.g., for selecting text).

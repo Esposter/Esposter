@@ -29,10 +29,13 @@
     "typecheck": "tsc"
   },
   "devDependencies": {
+    "@eslint/core": "catalog:",
+    "@eslint/json": "catalog:",
     "@unocss/eslint-config": "catalog:",
     "@vitejs/plugin-vue": "catalog:",
     "@vitest/eslint-plugin": "catalog:",
     "eslint-config-prettier": "catalog:",
+    "eslint-plugin-depend": "catalog:",
     "eslint-plugin-perfectionist": "catalog:",
     "eslint-plugin-pinia": "catalog:",
     "eslint-plugin-prettier": "catalog:",
