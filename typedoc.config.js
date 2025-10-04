@@ -1,7 +1,7 @@
+import { externalSymbolLinkMappings as azureMockExternalSymbolLinkMappings } from "azure-mock";
 import { config } from "dotenv";
 
-import azureMockExternalSymbolLinkMappings from "./packages/azure-mock/typedoc/externalSymbolLinkMappings.js";
-import vuePhaserjsExternalSymbolLinkMappings from "./packages/vue-phaserjs/typedoc/externalSymbolLinkMappings.js";
+import { externalSymbolLinkMappings as vuePhaserjsExternalSymbolLinkMappings } from "./packages/vue-phaserjs/typedoc/externalSymbolLinkMappings.js";
 
 config({ path: "packages/app/.env" });
 /** @satisfies {import('typedoc').TypeDocOptions} */
