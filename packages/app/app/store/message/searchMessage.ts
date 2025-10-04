@@ -1,3 +1,4 @@
+/* eslint-disable perfectionist/sort-switch-case */
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { Filter } from "#shared/models/message/Filter";
 
@@ -23,7 +24,7 @@ export const useSearchMessageStore = defineStore("message/searchMessage", () => 
   });
   const isSearchQueryEmpty = computed(() => getIsSearchQueryEmpty(searchQuery.value, selectedFilters.value));
   const createFilter = (type: FilterType) => {
-    let key: keyof MessageEntity;
+    let key = "";
 
     switch (type) {
       case FilterType.From:
@@ -32,8 +33,13 @@ export const useSearchMessageStore = defineStore("message/searchMessage", () => 
       case FilterType.Mentions:
         key = MessageEntityPropertyNames.mentions;
         break;
-      default:
+      case FilterType.Before:
+      case FilterType.During:
+      case FilterType.After:
         key = ItemMetadataPropertyNames.createdAt;
+        break;
+      case FilterType.Pinned:
+        key = MessageEntityPropertyNames.isPinned;
         break;
     }
 

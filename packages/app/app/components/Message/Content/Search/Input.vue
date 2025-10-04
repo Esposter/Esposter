@@ -31,12 +31,11 @@ const blur = () => (document.activeElement as HTMLElement | null)?.blur();
     return-object
     @keydown.esc="blur()"
     @keydown.enter="
-      async ({ preventDefault }: KeyboardEvent) => {
+      async () => {
         if (activeSelectedFilter && !activeSelectedFilter.value) {
           const value = searchQuery.trim();
           if (!value) return;
           activeSelectedFilter.value = value;
-          preventDefault();
           searchQuery = '';
         } else if (!isSearchQueryEmpty) {
           blur();

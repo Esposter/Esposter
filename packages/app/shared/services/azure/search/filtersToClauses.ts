@@ -2,8 +2,6 @@
 import type { Filter } from "#shared/models/message/Filter";
 import type { Clause } from "@esposter/shared";
 
-import { FileEntityPropertyNames } from "#shared/models/azure/FileEntity";
-import { MessageEntityPropertyNames } from "#shared/models/db/message/MessageEntity";
 import { FilterType } from "#shared/models/message/FilterType";
 import { FilterTypeHas } from "#shared/models/message/FilterTypeHas";
 import { escapeValue } from "#shared/services/azure/search/escapeValue";
@@ -33,40 +31,36 @@ export const filtersToClauses = (filters: Filter[]): Clause[] => {
         break;
       }
       case FilterType.Has: {
-        for (const { value } of filtersByType)
+        for (const { key, value } of filtersByType)
           switch (value) {
-            case FilterTypeHas.Forward:
-              clauses.push({
-                key: MessageEntityPropertyNames.isForward,
-                operator: BinaryOperator.eq,
-                value: String(true),
-              });
-              break;
             case FilterTypeHas.Link:
             case FilterTypeHas.Embed:
               // Presence of a link preview implies message had a link/embed
-              clauses.push(getNonNullClause(MessageEntityPropertyNames.linkPreviewResponse));
+              clauses.push(getNonNullClause(key));
               break;
             case FilterTypeHas.Image:
               clauses.push({
-                key: `${MessageEntityPropertyNames.files}/${FileEntityPropertyNames.mimetype}`,
+                key,
                 operator: SearchOperator.arrayContains,
                 value: ContentTypes.filter((contentType) => contentType.startsWith("image/")),
               });
               break;
             case FilterTypeHas.Video:
               clauses.push({
-                key: `${MessageEntityPropertyNames.files}/${FileEntityPropertyNames.mimetype}`,
+                key,
                 operator: SearchOperator.arrayContains,
                 value: ContentTypes.filter((contentType) => contentType.startsWith("video/")),
               });
               break;
             case FilterTypeHas.Sound:
               clauses.push({
-                key: `${MessageEntityPropertyNames.files}/${FileEntityPropertyNames.mimetype}`,
+                key,
                 operator: SearchOperator.arrayContains,
                 value: ContentTypes.filter((contentType) => contentType.startsWith("audio/")),
               });
+              break;
+            case FilterTypeHas.Forward:
+              clauses.push({ key, operator: BinaryOperator.eq, value: String(true) });
               break;
             default:
               throw new NotFoundError(filtersToClauses.name, value);
@@ -87,6 +81,10 @@ export const filtersToClauses = (filters: Filter[]): Clause[] => {
           clauses.push({ key, operator: BinaryOperator.ge, value: date.startOf("day").toISOString() });
           clauses.push({ key, operator: BinaryOperator.le, value: date.endOf("day").toISOString() });
         }
+        break;
+      }
+      case FilterType.Pinned: {
+        for (const { key, value } of filtersByType) clauses.push({ key, operator: BinaryOperator.eq, value });
         break;
       }
       default:

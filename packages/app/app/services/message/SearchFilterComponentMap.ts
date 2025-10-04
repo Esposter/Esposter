@@ -10,6 +10,6 @@ export const SearchFilterComponentMap = {
   [FilterType.Before]: defineAsyncComponent(() => import("@/components/Message/Content/Search/Filter/DatePicker.vue")),
   [FilterType.During]: defineAsyncComponent(() => import("@/components/Message/Content/Search/Filter/DatePicker.vue")),
   [FilterType.After]: defineAsyncComponent(() => import("@/components/Message/Content/Search/Filter/DatePicker.vue")),
-  // [FilterType.Pinned]: null,
+  [FilterType.Pinned]: defineAsyncComponent(() => import("@/components/Message/Content/Search/Filter/PinPicker.vue")),
   // [FilterType.AuthorType]: null,
 } as const satisfies Record<FilterType, Component | null>;

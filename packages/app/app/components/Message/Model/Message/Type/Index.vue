@@ -42,22 +42,28 @@ const messageHtml = useMessageWithMentions(() => message.message);
         <MessageModelMessageCreatedAtDate pl-2 :created-at="message.createdAt" />
       </template>
     </v-list-item-title>
-    <div flex flex-col gap-y-1>
-      <template v-if="message.isForward">
-        <div flex gap-x-2>
-          <div class="bg-border" w-1 h-inherit rd />
-          <div flex flex-col>
-            <v-list-item-subtitle>
-              <span italic>
-                <v-icon icon="mdi-share" />
-                Forwarded
-              </span>
-            </v-list-item-subtitle>
-            <v-list-item-subtitle v-if="!EMPTY_TEXT_REGEX.test(messageHtml)" op-100="!" v-html="messageHtml" />
-          </div>
-        </div>
-      </template>
-      <slot v-else>
+    <div v-if="message.isForward" flex gap-x-2>
+      <div class="bg-border" w-1 h-inherit rd />
+      <div flex flex-col gap-y-1>
+        <v-list-item-subtitle>
+          <span italic>
+            <v-icon icon="mdi-share" />
+            Forwarded
+          </span>
+        </v-list-item-subtitle>
+        <v-list-item-subtitle v-if="!EMPTY_TEXT_REGEX.test(messageHtml)" op-100="!" v-html="messageHtml" />
+        <MessageModelMessageFileContainer v-if="message.files.length > 0" max-w-140 :is-preview :message />
+        <MessageModelMessageLinkPreviewContainer
+          v-if="message.linkPreviewResponse"
+          :link-preview-response="message.linkPreviewResponse"
+          :partition-key="message.partitionKey"
+          :row-key="message.rowKey"
+        />
+        <MessageModelMessageEmojiList :is-preview :message />
+      </div>
+    </div>
+    <div v-else flex flex-col gap-y-1>
+      <slot>
         <div flex gap-x-1 items-end>
           <v-list-item-subtitle v-if="!EMPTY_TEXT_REGEX.test(messageHtml)" op-100="!" v-html="messageHtml" />
           <span v-if="message.isEdited" text-gray text-2.4 line-height-3.2>(edited)</span>

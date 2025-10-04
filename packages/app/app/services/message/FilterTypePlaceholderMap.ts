@@ -11,6 +11,6 @@ export const FilterTypePlaceholderMap = {
   [FilterType.Before]: "specific date",
   [FilterType.During]: "specific date",
   [FilterType.After]: "specific date",
-  // [FilterType.Pinned]: "true or false",
+  [FilterType.Pinned]: "true or false",
   // [FilterType.AuthorType]: "user, bot or webhook",
 } as const satisfies Record<FilterType, string>;

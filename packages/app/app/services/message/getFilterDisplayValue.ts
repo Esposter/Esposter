@@ -24,5 +24,8 @@ export const getFilterDisplayValue = ({ type, value }: Filter) => {
     case FilterType.After: {
       return `${displayType} ${new Date(value).toLocaleDateString()}`;
     }
+    case FilterType.Pinned: {
+      return `${displayType} ${value}`;
+    }
   }
 };

@@ -8,7 +8,7 @@ export enum FilterType {
   Before = "Before",
   During = "During",
   After = "After",
-  // Pinned = "Pinned",
+  Pinned = "Pinned",
   // AuthorType = "AuthorType",
 }
 
