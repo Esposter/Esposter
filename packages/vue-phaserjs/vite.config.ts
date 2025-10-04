@@ -1,1 +1,0 @@
-../configuration/vite.config.ts
