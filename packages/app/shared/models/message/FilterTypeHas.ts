@@ -1,5 +1,4 @@
 /* eslint-disable perfectionist/sort-enums */
-
 export enum FilterTypeHas {
   Link = "Link",
   Embed = "Embed",
