@@ -15,6 +15,7 @@
     "url": "https://github.com/Esposter/Esposter/issues"
   },
   "scripts": {
+    "analyze": "nuxt analyze",
     "build": "nuxt build",
     "cleanup": "nuxt cleanup",
     "coverage": "vitest run --coverage",

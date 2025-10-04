@@ -20,7 +20,7 @@ catalog:
   "@fullcalendar/interaction": ^6.1.19
   "@fullcalendar/timegrid": ^6.1.19
   "@fullcalendar/vue3": ^6.1.19
-  "@koumoul/vjsf": ^3.20.8
+  "@koumoul/vjsf": ^3.22.0
   "@lerna-lite/cli": ^4.9.0
   "@lerna-lite/publish": ^4.9.0
   "@lerna-lite/run": ^4.9.0
@@ -33,14 +33,14 @@ catalog:
   "@nuxtjs/seo": ^3.2.2
   "@pinia/nuxt": ^0.11.2
   "@prettier/plugin-oxc": ^0.0.4
-  "@tiptap/core": ^3.6.3
-  "@tiptap/extension-file-handler": ^3.6.3
-  "@tiptap/extension-mention": ^3.6.3
-  "@tiptap/extensions": ^3.6.3
-  "@tiptap/pm": ^3.6.3
-  "@tiptap/starter-kit": ^3.6.3
-  "@tiptap/suggestion": ^3.6.3
-  "@tiptap/vue-3": ^3.6.3
+  "@tiptap/core": ^3.6.5
+  "@tiptap/extension-file-handler": ^3.6.5
+  "@tiptap/extension-mention": ^3.6.5
+  "@tiptap/extensions": ^3.6.5
+  "@tiptap/pm": ^3.6.5
+  "@tiptap/starter-kit": ^3.6.5
+  "@tiptap/suggestion": ^3.6.5
+  "@tiptap/vue-3": ^3.6.5
   "@trpc/client": ^11.6.0
   "@trpc/server": ^11.6.0
   "@types/data-urls": ^3.0.4
@@ -93,7 +93,7 @@ catalog:
   drizzle-orm: ^0.44.6
   drizzle-zod: ^0.8.3
   emoji-mart-vue-fast: ^15.0.5
-  eslint: ^9.36.0
+  eslint: ^9.37.0
   eslint-config-prettier: ^10.1.8
   eslint-plugin-oxlint: ^1.19.0
   eslint-plugin-perfectionist: ^4.15.0
