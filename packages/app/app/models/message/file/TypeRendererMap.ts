@@ -1,6 +1,6 @@
 import type { Component } from "vue";
 
-import { Mimetype } from "@/models/file/Mimetype";
+import { Mimetype } from "#shared/models/file/Mimetype";
 
 export const TypeRendererMap: Record<string, Component> = {
   audio: defineAsyncComponent(() => import("@/components/Message/FileRenderer/Audio.vue")),

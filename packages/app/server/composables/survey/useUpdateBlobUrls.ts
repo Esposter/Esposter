@@ -1,9 +1,9 @@
 import type { Survey } from "#shared/db/schema/surveys";
 
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
+import { Mimetype } from "#shared/models/file/Mimetype";
 import { extractBlobUrls } from "#shared/services/survey/extractBlobUrls";
 import { getBlobUrlSearchRegex } from "#shared/services/survey/getBlobUrlSearchRegex";
-import { Mimetype } from "@/models/file/Mimetype";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
 import { getPublishDirectory } from "@@/server/services/survey/getPublishDirectory";
 import { ContainerSASPermissions } from "@azure/storage-blob";
@@ -35,9 +35,7 @@ export const useUpdateBlobUrls = async (survey: Survey, isPublish?: true) => {
       const blockBlobClient = containerClient.getBlockBlobClient(blobName);
       const extension = extname(blobName).toLowerCase();
       return blockBlobClient.generateSasUrl({
-        contentType: Object.keys(Mimetype).includes(extension)
-          ? Mimetype[extension as keyof typeof Mimetype]
-          : undefined,
+        contentType: extension in Mimetype ? Mimetype[extension as keyof typeof Mimetype] : undefined,
         expiresOn: dayjs().add(1, "year").toDate(),
         permissions: ContainerSASPermissions.from({ read: true }),
       });

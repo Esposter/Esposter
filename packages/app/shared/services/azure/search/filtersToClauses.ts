@@ -4,6 +4,7 @@ import type { Clause } from "@esposter/shared";
 
 import { FileEntityPropertyNames } from "#shared/models/azure/FileEntity";
 import { MessageEntityPropertyNames } from "#shared/models/db/message/MessageEntity";
+import { Mimetypes } from "#shared/models/file/Mimetypes";
 import { FilterType } from "#shared/models/message/FilterType";
 import { FilterTypeHas } from "#shared/models/message/FilterTypeHas";
 import { escapeValue } from "#shared/services/azure/search/escapeValue";
@@ -47,22 +48,22 @@ export const filtersToClauses = (filters: Filter[]): Clause[] => {
             case FilterTypeHas.Image:
               clauses.push({
                 key: `${MessageEntityPropertyNames.files}/${FileEntityPropertyNames.mimetype}`,
-                operator: SearchOperator.startsWith,
-                value: "image/",
+                operator: SearchOperator.arrayContains,
+                value: Mimetypes.filter((mimetype) => mimetype.startsWith("image/")),
               });
               break;
             case FilterTypeHas.Video:
               clauses.push({
                 key: `${MessageEntityPropertyNames.files}/${FileEntityPropertyNames.mimetype}`,
-                operator: SearchOperator.startsWith,
-                value: "video/",
+                operator: SearchOperator.arrayContains,
+                value: Mimetypes.filter((mimetype) => mimetype.startsWith("video/")),
               });
               break;
             case FilterTypeHas.Sound:
               clauses.push({
                 key: `${MessageEntityPropertyNames.files}/${FileEntityPropertyNames.mimetype}`,
-                operator: SearchOperator.startsWith,
-                value: "audio/",
+                operator: SearchOperator.arrayContains,
+                value: Mimetypes.filter((mimetype) => mimetype.startsWith("audio/")),
               });
               break;
             default:
