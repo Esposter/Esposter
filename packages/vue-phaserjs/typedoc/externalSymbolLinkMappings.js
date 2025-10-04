@@ -1,5 +1,5 @@
 /** @satisfies {import('typedoc').TypeDocOptions["externalSymbolLinkMappings"]} */
-export const externalSymbolLinkMappings = {
+export default {
   phaser: {
     "Phaser.GameObjects.Components.Depth.depth": "#",
   },

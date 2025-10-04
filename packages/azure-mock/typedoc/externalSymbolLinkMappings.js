@@ -1,6 +1,5 @@
-import type { TypeDocOptions } from "typedoc";
-
-export const externalSymbolLinkMappings: TypeDocOptions["externalSymbolLinkMappings"] = {
+/** @satisfies {import('typedoc').TypeDocOptions["externalSymbolLinkMappings"]} */
+export default {
   "@azure/storage-blob": {
     AppendBlobClient: "#",
     BlobClient: "#",
