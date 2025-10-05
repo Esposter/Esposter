@@ -7,7 +7,14 @@ import { MessageEntityPropertyNames } from "#shared/models/db/message/MessageEnt
 import { FilterType } from "#shared/models/message/FilterType";
 import { FilterTypeHas } from "#shared/models/message/FilterTypeHas";
 import { dayjs } from "#shared/services/dayjs";
-import { BinaryOperator, escapeValue, getNonNullClause, Literal, NotFoundError, SearchOperator } from "@esposter/shared";
+import {
+  BinaryOperator,
+  escapeValue,
+  getNonNullClause,
+  Literal,
+  NotFoundError,
+  SearchOperator,
+} from "@esposter/shared";
 import { types } from "mime-types";
 
 const ContentTypes = Object.values(types);

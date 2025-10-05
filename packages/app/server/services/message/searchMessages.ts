@@ -1,4 +1,5 @@
 import type { SearchMessagesInput } from "#shared/models/db/message/SearchMessagesInput";
+import type { Clause } from "@esposter/shared";
 
 import { MessageEntity, MessageEntityPropertyNames } from "#shared/models/db/message/MessageEntity";
 import { filtersToClauses } from "#shared/services/azure/search/filtersToClauses";
@@ -7,7 +8,6 @@ import { useSearchClient } from "@@/server/composables/azure/search/useSearchCli
 import { SearchIndex } from "@@/server/models/azure/search/SearchIndex";
 import { SearchIndexSearchableFieldsMap } from "@@/server/models/azure/search/SearchIndexSearchableFieldsMap";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
-import type { Clause } from "@esposter/shared";
 import { BinaryOperator, deserializeKey, escapeValue, serializeClauses } from "@esposter/shared";
 
 export const searchMessages = async ({ filters, limit, offset, query, roomId, sortBy }: SearchMessagesInput) => {

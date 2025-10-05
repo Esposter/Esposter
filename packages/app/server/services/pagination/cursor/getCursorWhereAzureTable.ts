@@ -1,7 +1,6 @@
 import type { AEntity } from "#shared/models/entity/AEntity";
 import type { ToData } from "#shared/models/entity/ToData";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-// oxlint-disable-next-line no-duplicates
 import type { Clause, CompositeKey } from "@esposter/shared";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";

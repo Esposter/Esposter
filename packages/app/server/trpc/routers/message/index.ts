@@ -52,11 +52,13 @@ import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/message/getCreatorProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import {
-  BinaryOperator, escapeValue, getNullClause,
+  BinaryOperator,
+  escapeValue,
+  getNullClause,
   InvalidOperationError,
   NotFoundError,
   Operation,
-  serializeClauses
+  serializeClauses,
 } from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
