@@ -1,8 +1,8 @@
-import type { CompositeKeyEntity } from "#shared/models/azure/CompositeKeyEntity";
+import type { CompositeKeyEntity } from "#shared/models/azure/table/CompositeKeyEntity";
 import type { ToData } from "#shared/models/entity/ToData";
 
 import { selectSurveySchema } from "#shared/db/schema/surveys";
-import { AzureEntity, createAzureEntitySchema } from "#shared/models/azure/AzureEntity";
+import { AzureEntity, createAzureEntitySchema } from "#shared/models/azure/table/AzureEntity";
 import { z } from "zod";
 
 export class SurveyResponseEntity extends AzureEntity {

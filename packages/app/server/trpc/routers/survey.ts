@@ -2,9 +2,9 @@ import type { Survey } from "#shared/db/schema/surveys";
 import type { FileSasEntity } from "#shared/models/message/FileSasEntity";
 
 import { selectSurveySchema, surveys } from "#shared/db/schema/surveys";
-import { AzureEntityType } from "#shared/models/azure/AzureEntityType";
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
-import { fileEntitySchema } from "#shared/models/azure/FileEntity";
+import { AzureEntityType } from "#shared/models/azure/table/AzureEntityType";
+import { fileEntitySchema } from "#shared/models/azure/table/FileEntity";
 import { createSurveyInputSchema } from "#shared/models/db/survey/CreateSurveyInput";
 import { deleteSurveyInputSchema } from "#shared/models/db/survey/DeleteSurveyInput";
 import { SurveyResponseEntity, surveyResponseEntitySchema } from "#shared/models/db/survey/SurveyResponseEntity";

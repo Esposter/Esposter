@@ -1,8 +1,4 @@
-import type { RequiredDeep } from "type-fest";
-
-type PropertyNames<T> = RequiredDeep<{
-  [P in keyof T]: P;
-}>;
+import type { PropertyNames } from "@/util/types/PropertyNames";
 
 export const getPropertyNames = <T>(): PropertyNames<T> =>
   new Proxy(

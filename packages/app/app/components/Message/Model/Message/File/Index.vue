@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { FileEntity } from "#shared/models/azure/FileEntity";
+import type { FileEntity } from "#shared/models/azure/table/FileEntity";
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
 import { authClient } from "@/services/auth/authClient";

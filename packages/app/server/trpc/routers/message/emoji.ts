@@ -1,4 +1,5 @@
 import type { CustomTableClient } from "@@/server/models/azure/table/CustomTableClient";
+import type { Clause } from "@esposter/shared";
 
 import { selectRoomSchema } from "#shared/db/schema/rooms";
 import { createEmojiInputSchema } from "#shared/models/db/message/metadata/CreateEmojiInput";
@@ -26,7 +27,7 @@ import { isRoomId } from "@@/server/services/message/isRoomId";
 import { router } from "@@/server/trpc";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { readMetadataInputSchema } from "@@/server/trpc/routers/message";
-import { BinaryOperator, InvalidOperationError, isPartitionKey, Operation, UnaryOperator } from "@esposter/shared";
+import { BinaryOperator, escapeValue, InvalidOperationError, Operation, serializeClauses } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -44,10 +45,31 @@ export const emojiRouter = router({
     const messagesMetadataClient = (await useTableClient(
       AzureTable.MessagesMetadata,
     )) as CustomTableClient<MessageEmojiMetadataEntity>;
-    const { emojiTag, messageRowKey, type } = MessageEmojiMetadataEntityPropertyNames;
+    const clauses: Clause[] = [
+      {
+        key: MessageEmojiMetadataEntityPropertyNames.partitionKey,
+        operator: BinaryOperator.eq,
+        value: escapeValue(input.partitionKey),
+      },
+      {
+        key: MessageEmojiMetadataEntityPropertyNames.type,
+        operator: BinaryOperator.eq,
+        value: escapeValue(MessageMetadataType.Emoji),
+      },
+      {
+        key: MessageEmojiMetadataEntityPropertyNames.messageRowKey,
+        operator: BinaryOperator.eq,
+        value: escapeValue(input.messageRowKey),
+      },
+      {
+        key: MessageEmojiMetadataEntityPropertyNames.emojiTag,
+        operator: BinaryOperator.eq,
+        value: escapeValue(input.emojiTag),
+      },
+    ];
     const foundEmoji = (
       await getTopNEntities(messagesMetadataClient, 1, MessageEmojiMetadataEntity, {
-        filter: `${isPartitionKey(input.partitionKey)} ${UnaryOperator.and} ${type} ${BinaryOperator.eq} '${MessageMetadataType.Emoji}' ${UnaryOperator.and} ${messageRowKey} ${BinaryOperator.eq} '${input.messageRowKey}' ${UnaryOperator.and} ${emojiTag} ${BinaryOperator.eq} '${input.emojiTag}'`,
+        filter: serializeClauses(clauses),
       })
     ).find(Boolean);
     if (foundEmoji)
@@ -99,11 +121,26 @@ export const emojiRouter = router({
       const messagesMetadataClient = (await useTableClient(
         AzureTable.MessagesMetadata,
       )) as CustomTableClient<MessageEmojiMetadataEntity>;
-      const { messageRowKey, type } = MessageEmojiMetadataEntityPropertyNames;
+      const clauses: Clause[] = [
+        {
+          key: MessageEmojiMetadataEntityPropertyNames.partitionKey,
+          operator: BinaryOperator.eq,
+          value: escapeValue(roomId),
+        },
+        {
+          key: MessageEmojiMetadataEntityPropertyNames.type,
+          operator: BinaryOperator.eq,
+          value: escapeValue(MessageMetadataType.Emoji),
+        },
+      ];
+      for (const messageRowKey of messageRowKeys)
+        clauses.push({
+          key: MessageEmojiMetadataEntityPropertyNames.messageRowKey,
+          operator: BinaryOperator.eq,
+          value: escapeValue(messageRowKey),
+        });
       return getTopNEntities(messagesMetadataClient, AZURE_MAX_PAGE_SIZE, MessageEmojiMetadataEntity, {
-        filter: `${isPartitionKey(roomId)} ${UnaryOperator.and} ${type} ${BinaryOperator.eq} '${
-          MessageMetadataType.Emoji
-        }' ${UnaryOperator.and} (${messageRowKeys.map((mrk) => `${messageRowKey} ${BinaryOperator.eq} '${mrk}'`).join(` ${UnaryOperator.or} `)})`,
+        filter: serializeClauses(clauses),
       });
     },
   ),

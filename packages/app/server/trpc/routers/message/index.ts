@@ -1,14 +1,19 @@
-import type { AzureUpdateEntity } from "#shared/models/azure/AzureUpdateEntity";
+import type { AzureUpdateEntity } from "#shared/models/azure/table/AzureUpdateEntity";
 import type { FileSasEntity } from "#shared/models/message/FileSasEntity";
+import type { Clause } from "@esposter/shared";
 
 import { rooms, selectRoomSchema } from "#shared/db/schema/rooms";
-import { AzureEntityType } from "#shared/models/azure/AzureEntityType";
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
-import { FileEntity, fileEntitySchema } from "#shared/models/azure/FileEntity";
+import { AzureEntityType } from "#shared/models/azure/table/AzureEntityType";
+import { FileEntity, fileEntitySchema } from "#shared/models/azure/table/FileEntity";
 import { createMessageInputSchema } from "#shared/models/db/message/CreateMessageInput";
 import { createTypingInputSchema } from "#shared/models/db/message/CreateTypingInput";
 import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
-import { MessageEntity, messageEntitySchema } from "#shared/models/db/message/MessageEntity";
+import {
+  MessageEntity,
+  MessageEntityPropertyNames,
+  messageEntitySchema,
+} from "#shared/models/db/message/MessageEntity";
 import { MessageType } from "#shared/models/db/message/MessageType";
 import { searchMessagesInputSchema } from "#shared/models/db/message/SearchMessagesInput";
 import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
@@ -47,13 +52,13 @@ import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/message/getCreatorProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import {
+  BinaryOperator,
+  escapeValue,
+  getTableNullClause,
   InvalidOperationError,
-  isNull as isNullFilter,
-  isPartitionKey,
-  isRowKey,
   NotFoundError,
   Operation,
-  UnaryOperator,
+  serializeClauses,
 } from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
@@ -64,22 +69,21 @@ export const readMetadataInputSchema = z.object({
   roomId: selectRoomSchema.shape.id,
 });
 export type ReadMetadataInput = z.infer<typeof readMetadataInputSchema>;
-
-const readMessagesInputSchema =
-  // Azure table storage doesn't actually support sorting but remember that it is internally insert-sorted
-  // as we insert our messages with a reverse-ticked timestamp as our rowKey
-  // so unfortunately we have to provide a dummy default to keep the consistency here that cursor pagination
-  // always requires a sortBy even though we don't actually need the user to specify it
-  z
-    .object({
-      ...createCursorPaginationParamsSchema(messageEntitySchema.keyof(), [
-        { key: ItemMetadataPropertyNames.createdAt, order: SortOrder.Desc },
-      ]).shape,
-      isIncludeValue: z.literal(true).optional(),
-      order: z.literal(SortOrder.Asc).optional(),
-      roomId: selectRoomSchema.shape.id,
-    })
-    .omit({ sortBy: true });
+// Azure table storage doesn't actually support sorting but remember that it is internally insert-sorted
+// as we insert our messages with a reverse-ticked timestamp as our rowKey
+// so unfortunately we have to provide a dummy default to keep the consistency here that cursor pagination
+// always requires a sortBy even though we don't actually need the user to specify it
+const readMessagesInputSchema = z
+  .object({
+    ...createCursorPaginationParamsSchema(messageEntitySchema.keyof(), [
+      { key: ItemMetadataPropertyNames.createdAt, order: SortOrder.Desc },
+    ]).shape,
+    filter: messageEntitySchema.pick({ isPinned: true }).optional(),
+    isIncludeValue: z.literal(true).optional(),
+    order: z.literal(SortOrder.Asc).optional(),
+    roomId: selectRoomSchema.shape.id,
+  })
+  .omit({ sortBy: true });
 export type ReadMessagesInput = z.infer<typeof readMessagesInputSchema>;
 
 const readMessagesByRowKeysInputSchema = z.object({
@@ -376,10 +380,18 @@ export const messageRouter = router({
   readMessagesByRowKeys: getMemberProcedure(readMessagesByRowKeysInputSchema, "roomId").query(
     async ({ input: { roomId, rowKeys } }) => {
       const messageClient = await useTableClient(AzureTable.Messages);
+      const clauses: Clause[] = [
+        { key: MessageEntityPropertyNames.partitionKey, operator: BinaryOperator.eq, value: escapeValue(roomId) },
+        getTableNullClause(ItemMetadataPropertyNames.deletedAt),
+      ];
+      for (const rowKey of rowKeys)
+        clauses.push({
+          key: MessageEntityPropertyNames.rowKey,
+          operator: BinaryOperator.eq,
+          value: escapeValue(rowKey),
+        });
       return getTopNEntities(messageClient, rowKeys.length, MessageEntity, {
-        filter: `${isPartitionKey(roomId)} ${UnaryOperator.and} ${isNullFilter(ItemMetadataPropertyNames.deletedAt)} ${UnaryOperator.and} (${rowKeys
-          .map((rowKey) => isRowKey(rowKey))
-          .join(` ${UnaryOperator.or} `)})`,
+        filter: serializeClauses(clauses),
       });
     },
   ),

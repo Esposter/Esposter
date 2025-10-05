@@ -1,4 +1,4 @@
-import type { CompositeKey } from "#shared/models/azure/CompositeKey";
+import type { CompositeKey } from "@esposter/shared";
 import type { Class } from "type-fest";
 
 import { jsonDateParse } from "#shared/util/time/jsonDateParse";

@@ -25,7 +25,6 @@ export const useMessageActionItems = (
     onUpdateMode: () => void;
   },
 ) => {
-  // oxlint-disable-next-line no-unused-vars
   const { $trpc } = useNuxtApp();
   const messageStore = useMessageStore();
   const { copy } = messageStore;

@@ -1,5 +1,5 @@
-import type { AzureEntity } from "#shared/models/azure/AzureEntity";
-import type { AzureUpdateEntity } from "#shared/models/azure/AzureUpdateEntity";
+import type { AzureEntity } from "#shared/models/azure/table/AzureEntity";
+import type { AzureUpdateEntity } from "#shared/models/azure/table/AzureUpdateEntity";
 import type { TableEntity } from "@azure/data-tables";
 
 import { getIsSerializable } from "@@/server/services/azure/transformer/getIsSerializable";

@@ -2,9 +2,9 @@ import type { Clause } from "@/models/azure/Clause";
 
 import { BinaryOperator } from "@/models/azure/BinaryOperator";
 import { Literal } from "@/models/azure/Literal";
-
-export const getNonNullClause = (key: Clause["key"]): Clause => ({
+// Azure Search actually supports null values c:
+export const getSearchNullClause = (key: Clause["key"]): Clause => ({
   key,
-  operator: BinaryOperator.ne,
+  operator: BinaryOperator.eq,
   value: Literal.Null,
 });

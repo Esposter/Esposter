@@ -47,6 +47,7 @@ const { isEditRoomDialogOpen } = storeToRefs(dialogStore);
       <span pl-2>{{ currentRoomName }}</span>
     </StyledEditableNameDialogButton>
     <template #append>
+      <MessageContentPinnedMessagesMenuButton />
       <MessageContentAddFriendsDialogButton />
       <MessageContentShowMemberListButton />
       <MessageContentShowSearchButton />

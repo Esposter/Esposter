@@ -1,18 +1,18 @@
-import type { CompositeKeyEntity } from "#shared/models/azure/CompositeKeyEntity";
-import type { FileEntity } from "#shared/models/azure/FileEntity";
+import type { CompositeKeyEntity } from "#shared/models/azure/table/CompositeKeyEntity";
+import type { FileEntity } from "#shared/models/azure/table/FileEntity";
 import type { ToData } from "#shared/models/entity/ToData";
 import type { LinkPreviewResponse } from "#shared/models/message/linkPreview/LinkPreviewResponse";
 import type { Except } from "type-fest";
 
 import { selectRoomSchema } from "#shared/db/schema/rooms";
 import { selectUserSchema } from "#shared/db/schema/users";
-import { AzureEntity, createAzureEntitySchema } from "#shared/models/azure/AzureEntity";
-import { fileEntitySchema } from "#shared/models/azure/FileEntity";
+import { AzureEntity, createAzureEntitySchema } from "#shared/models/azure/table/AzureEntity";
+import { fileEntitySchema } from "#shared/models/azure/table/FileEntity";
 import { MessageType } from "#shared/models/db/message/MessageType";
 import { FILE_MAX_LENGTH } from "#shared/services/azure/container/constants";
 import { MENTION_MAX_LENGTH, MESSAGE_MAX_LENGTH } from "#shared/services/message/constants";
 import { refineMessageSchema } from "#shared/services/message/refineMessageSchema";
-import { getPropertyNames } from "#shared/util/getPropertyNames";
+import { getPropertyNames } from "@esposter/shared";
 import { z } from "zod";
 
 export class MessageEntity extends AzureEntity {

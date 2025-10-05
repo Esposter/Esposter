@@ -18,8 +18,8 @@ import type { MapValue } from "@esposter/shared";
 import type { Except } from "type-fest";
 
 import { MockRestError } from "@/models/MockRestError";
+import { createTableFilterPredicate } from "@/services/table/createTableFilterPredicate";
 import { MockTableDatabase } from "@/store/MockTableDatabase";
-import { applyTableFilter } from "@/util/tableFilter/applyTableFilter";
 import { ID_SEPARATOR } from "@esposter/shared";
 /**
  * An in-memory mock of the Azure TableClient.
@@ -92,7 +92,9 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
     const withMetadata = this.withMetadata.bind(this);
     const filter = options?.queryOptions?.filter;
     const tableEntities = [...(this.table as Map<string, TableEntity<T>>).values()];
-    const resultTableEntities = filter ? applyTableFilter(tableEntities, filter) : tableEntities;
+    const resultTableEntities = filter
+      ? tableEntities.filter((e) => createTableFilterPredicate(filter)(e))
+      : tableEntities;
     return {
       byPage: () =>
         (async function* (entities: TableEntity<T>[]): AsyncGenerator<TableEntityResultPage<T>> {

@@ -31,18 +31,18 @@ export const getCursorWhere: GetCursorWhere = <TTable extends TableConfig>(
       const sortItem = sortBy.find((s) => s.key === key);
       if (!sortItem) throw new NotFoundError(getCursorWhere.name, key);
 
-      let comparer: BinaryOperator;
+      let operator: BinaryOperator;
       switch (sortItem.order) {
         case SortOrder.Asc:
-          comparer = sortItem.isIncludeValue ? gte : gt;
+          operator = sortItem.isIncludeValue ? gte : gt;
           break;
         case SortOrder.Desc:
-          comparer = sortItem.isIncludeValue ? lte : lt;
+          operator = sortItem.isIncludeValue ? lte : lt;
           break;
         default:
           exhaustiveGuard(sortItem.order);
       }
-      return comparer(table[key], value);
+      return operator(table[key], value);
     }),
   );
 };

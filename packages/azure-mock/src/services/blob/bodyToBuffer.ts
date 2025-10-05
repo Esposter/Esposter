@@ -1,6 +1,6 @@
 import type { HttpRequestBody } from "@azure/storage-blob";
 
-import { isReadableStream } from "@/util/isReadableStream";
+import { isReadableStream } from "@/services/blob/isReadableStream";
 import { exhaustiveGuard, streamToText } from "@esposter/shared";
 
 export const bodyToBuffer = async (body: HttpRequestBody): Promise<Buffer> => {

@@ -1,8 +1,8 @@
 import type { TableEntity } from "@azure/data-tables";
 
-import { compare } from "@/util/tableFilter/compare";
-import { isNullClause } from "@/util/tableFilter/isNullClause";
-import { parseClause } from "@/util/tableFilter/parseClause";
+import { compare } from "@/services/table/compare";
+import { isTableNullClause } from "@/services/table/isTableNullClause";
+import { parseClause } from "@/services/table/parseClause";
 import { BinaryOperator, uncapitalize } from "@esposter/shared";
 
 export const createTableFilterPredicate = <T extends object>(filter: string): ((entity: TableEntity<T>) => boolean) => {
@@ -20,7 +20,7 @@ export const createTableFilterPredicate = <T extends object>(filter: string): ((
         const value = entity[normalizedClauseKey as keyof typeof entity];
         let isMatched = false;
 
-        if (isNullClause(clause)) isMatched = compare(BinaryOperator.eq, value, null);
+        if (isTableNullClause(clause)) isMatched = compare(BinaryOperator.eq, value, null);
         else {
           const comparisonResult = compare(clause.operator, String(value), clause.value);
           isMatched = clause.not ? !comparisonResult : comparisonResult;

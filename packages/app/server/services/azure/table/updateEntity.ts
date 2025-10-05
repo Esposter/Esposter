@@ -1,5 +1,5 @@
-import type { AzureEntity } from "#shared/models/azure/AzureEntity";
-import type { AzureUpdateEntity } from "#shared/models/azure/AzureUpdateEntity";
+import type { AzureEntity } from "#shared/models/azure/table/AzureEntity";
+import type { AzureUpdateEntity } from "#shared/models/azure/table/AzureUpdateEntity";
 import type { CustomTableClient } from "@@/server/models/azure/table/CustomTableClient";
 import type { TupleSlice } from "@esposter/shared";
 

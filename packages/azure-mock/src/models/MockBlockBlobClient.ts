@@ -13,8 +13,8 @@ import type {
 import type { Except } from "type-fest";
 
 import { MockBlobClient } from "@/models/MockBlobClient";
-import { bodyToBuffer } from "@/util/bodyToBuffer";
-import { toWebResourceLike } from "@/util/toWebResourceLike";
+import { bodyToBuffer } from "@/services/blob/bodyToBuffer";
+import { toWebResourceLike } from "@/services/blob/toWebResourceLike";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { createHttpHeaders, createPipelineRequest } from "@azure/core-rest-pipeline";
 

@@ -1,4 +1,4 @@
-import type { AzureUpdateEntity } from "#shared/models/azure/AzureUpdateEntity";
+import type { AzureUpdateEntity } from "#shared/models/azure/table/AzureUpdateEntity";
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 
 import { MessageType } from "#shared/models/db/message/MessageType";
