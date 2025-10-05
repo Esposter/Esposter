@@ -1,8 +1,11 @@
 import type { TableEntity } from "@azure/data-tables";
+import type { Clause } from "@esposter/shared";
 
 import { applyTableFilter } from "@/util/tableFilter/applyTableFilter";
-import { BinaryOperator, isPartitionKey } from "@esposter/shared";
+import { BinaryOperator, escapeValue, getPropertyNames } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+
+const TableEntityPropertyNames = getPropertyNames<TableEntity>();
 
 describe(applyTableFilter, () => {
   const partitionKey = "0";
@@ -12,7 +15,14 @@ describe(applyTableFilter, () => {
   test(BinaryOperator.eq, () => {
     expect.hasAssertions();
 
-    const filteredTableEntities = applyTableFilter(tableEntities, isPartitionKey(partitionKey));
+    const clauses: Clause[] = [
+      {
+        key: TableEntityPropertyNames.partitionKey,
+        operator: BinaryOperator.eq,
+        value: escapeValue(partitionKey),
+      },
+    ];
+    const filteredTableEntities = applyTableFilter(tableEntities, clauses);
 
     expect(filteredTableEntities).toHaveLength(1);
     expect(filteredTableEntities[0].partitionKey).toBe(partitionKey);
@@ -21,7 +31,14 @@ describe(applyTableFilter, () => {
   test(`${BinaryOperator.eq} negative`, () => {
     expect.hasAssertions();
 
-    const filteredTableEntities = applyTableFilter(tableEntities, isPartitionKey("1"));
+    const clauses: Clause[] = [
+      {
+        key: TableEntityPropertyNames.partitionKey,
+        operator: BinaryOperator.eq,
+        value: escapeValue("1"),
+      },
+    ];
+    const filteredTableEntities = applyTableFilter(tableEntities, clauses);
 
     expect(filteredTableEntities).toHaveLength(0);
   });
@@ -29,7 +46,14 @@ describe(applyTableFilter, () => {
   test(BinaryOperator.gt, () => {
     expect.hasAssertions();
 
-    const filteredTableEntities = applyTableFilter(tableEntities, isPartitionKey("-1", BinaryOperator.gt));
+    const clauses: Clause[] = [
+      {
+        key: TableEntityPropertyNames.partitionKey,
+        operator: BinaryOperator.gt,
+        value: escapeValue("-1"),
+      },
+    ];
+    const filteredTableEntities = applyTableFilter(tableEntities, clauses);
 
     expect(filteredTableEntities).toHaveLength(1);
     expect(filteredTableEntities[0].partitionKey).toBe(partitionKey);
@@ -38,7 +62,14 @@ describe(applyTableFilter, () => {
   test(`${BinaryOperator.gt} negative`, () => {
     expect.hasAssertions();
 
-    const filteredTableEntities = applyTableFilter(tableEntities, isPartitionKey("1", BinaryOperator.gt));
+    const clauses: Clause[] = [
+      {
+        key: TableEntityPropertyNames.partitionKey,
+        operator: BinaryOperator.gt,
+        value: escapeValue("1"),
+      },
+    ];
+    const filteredTableEntities = applyTableFilter(tableEntities, clauses);
 
     expect(filteredTableEntities).toHaveLength(0);
   });
@@ -46,7 +77,14 @@ describe(applyTableFilter, () => {
   test(BinaryOperator.ge, () => {
     expect.hasAssertions();
 
-    const filteredTableEntities = applyTableFilter(tableEntities, isPartitionKey("-1", BinaryOperator.ge));
+    const clauses: Clause[] = [
+      {
+        key: TableEntityPropertyNames.partitionKey,
+        operator: BinaryOperator.ge,
+        value: escapeValue("-1"),
+      },
+    ];
+    const filteredTableEntities = applyTableFilter(tableEntities, clauses);
 
     expect(filteredTableEntities).toHaveLength(1);
     expect(filteredTableEntities[0].partitionKey).toBe(partitionKey);
@@ -55,7 +93,14 @@ describe(applyTableFilter, () => {
   test(`${BinaryOperator.ge} equals`, () => {
     expect.hasAssertions();
 
-    const filteredTableEntities = applyTableFilter(tableEntities, isPartitionKey(partitionKey, BinaryOperator.ge));
+    const clauses: Clause[] = [
+      {
+        key: TableEntityPropertyNames.partitionKey,
+        operator: BinaryOperator.ge,
+        value: escapeValue(partitionKey),
+      },
+    ];
+    const filteredTableEntities = applyTableFilter(tableEntities, clauses);
 
     expect(filteredTableEntities).toHaveLength(1);
     expect(filteredTableEntities[0].partitionKey).toBe(partitionKey);
@@ -64,7 +109,14 @@ describe(applyTableFilter, () => {
   test(BinaryOperator.lt, () => {
     expect.hasAssertions();
 
-    const filteredTableEntities = applyTableFilter(tableEntities, isPartitionKey("1", BinaryOperator.lt));
+    const clauses: Clause[] = [
+      {
+        key: TableEntityPropertyNames.partitionKey,
+        operator: BinaryOperator.lt,
+        value: escapeValue("1"),
+      },
+    ];
+    const filteredTableEntities = applyTableFilter(tableEntities, clauses);
 
     expect(filteredTableEntities).toHaveLength(1);
     expect(filteredTableEntities[0].partitionKey).toBe(partitionKey);
@@ -73,7 +125,14 @@ describe(applyTableFilter, () => {
   test(`${BinaryOperator.lt} negative`, () => {
     expect.hasAssertions();
 
-    const filteredTableEntities = applyTableFilter(tableEntities, isPartitionKey("-1", BinaryOperator.lt));
+    const clauses: Clause[] = [
+      {
+        key: TableEntityPropertyNames.partitionKey,
+        operator: BinaryOperator.lt,
+        value: escapeValue("-1"),
+      },
+    ];
+    const filteredTableEntities = applyTableFilter(tableEntities, clauses);
 
     expect(filteredTableEntities).toHaveLength(0);
   });
@@ -81,7 +140,14 @@ describe(applyTableFilter, () => {
   test(BinaryOperator.le, () => {
     expect.hasAssertions();
 
-    const filteredTableEntities = applyTableFilter(tableEntities, isPartitionKey("1", BinaryOperator.le));
+    const clauses: Clause[] = [
+      {
+        key: TableEntityPropertyNames.partitionKey,
+        operator: BinaryOperator.le,
+        value: escapeValue("1"),
+      },
+    ];
+    const filteredTableEntities = applyTableFilter(tableEntities, clauses);
 
     expect(filteredTableEntities).toHaveLength(1);
     expect(filteredTableEntities[0].partitionKey).toBe(partitionKey);
@@ -90,7 +156,14 @@ describe(applyTableFilter, () => {
   test(`${BinaryOperator.le} equals`, () => {
     expect.hasAssertions();
 
-    const filteredTableEntities = applyTableFilter(tableEntities, isPartitionKey(partitionKey, BinaryOperator.le));
+    const clauses: Clause[] = [
+      {
+        key: TableEntityPropertyNames.partitionKey,
+        operator: BinaryOperator.le,
+        value: escapeValue(partitionKey),
+      },
+    ];
+    const filteredTableEntities = applyTableFilter(tableEntities, clauses);
 
     expect(filteredTableEntities).toHaveLength(1);
     expect(filteredTableEntities[0].partitionKey).toBe(partitionKey);

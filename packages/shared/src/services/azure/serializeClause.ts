@@ -4,8 +4,11 @@ import { SearchOperator } from "@/models/azure/SearchOperator";
 import { UnaryOperator } from "@/models/azure/UnaryOperator";
 import { InvalidOperationError } from "@/models/error/InvalidOperationError";
 import { Operation } from "@/models/shared/Operation";
+import { serializeKey } from "@esposter/shared";
 
 export const serializeClause = (clause: Clause): string => {
+  clause.key = serializeKey(clause.key);
+
   if (clause.operator === SearchOperator.arrayContains) {
     const keys = clause.key.split("/");
     if (keys.length === 1) return `${clause.key}/any(x: search.in(x, '${clause.value.join(",")}'))`;

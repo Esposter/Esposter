@@ -3,9 +3,10 @@ import type { CreateTypingInput } from "#shared/models/db/message/CreateTypingIn
 import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessageInput";
+import type { MessageEvents } from "#shared/models/message/events/MessageEvents";
 import type { Editor } from "@tiptap/core";
 
-import { AzureEntityType } from "#shared/models/azure/AzureEntityType";
+import { AzureEntityType } from "#shared/models/azure/table/AzureEntityType";
 import { createMessageEntity } from "#shared/services/message/createMessageEntity";
 import { authClient } from "@/services/auth/authClient";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
@@ -24,7 +25,7 @@ export const useDataStore = defineStore("message/data", () => {
   const {
     createMessage: baseStoreCreateMessage,
     deleteMessage: baseStoreDeleteMessage,
-    updateMessage: storeUpdateMessage,
+    updateMessage: baseStoreUpdateMessage,
     ...restOperationData
   } = createOperationData(items, ["partitionKey", "rowKey"], AzureEntityType.Message);
   const files = computed(() => items.value.flatMap(({ files }) => files));
@@ -39,17 +40,18 @@ export const useDataStore = defineStore("message/data", () => {
     Object.assign(newMessage, await $trpc.message.createMessage.mutate(input));
     delete newMessage.isLoading;
   };
-
   const updateMessage = async (input: UpdateMessageInput) => {
     await $trpc.message.updateMessage.mutate(input);
   };
-
   const storeCreateMessage = async (message: MessageEntity) => {
     await Promise.all(MessageHookMap[Operation.Create].map((fn) => Promise.resolve(fn(message))));
     // Our messages list is reversed i.e. most recent messages are at the front
     baseStoreCreateMessage(message, true);
   };
-
+  const storeUpdateMessage = async (input: MessageEvents["updateMessage"][number]) => {
+    await Promise.all(MessageHookMap[Operation.Update].map((fn) => Promise.resolve(fn(input))));
+    baseStoreUpdateMessage(input);
+  };
   const storeDeleteMessage = async (input: DeleteMessageInput) => {
     await Promise.all(MessageHookMap[Operation.Delete].map((fn) => Promise.resolve(fn(input))));
     baseStoreDeleteMessage(input);

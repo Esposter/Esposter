@@ -1,6 +1,6 @@
 import type { z } from "zod";
 
-import { AzureEntityType } from "#shared/models/azure/AzureEntityType";
+import { AzureEntityType } from "#shared/models/azure/table/AzureEntityType";
 import { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { AzureTable } from "@@/server/models/azure/table/AzureTable";

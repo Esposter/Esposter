@@ -2,13 +2,12 @@
 import type { Filter } from "#shared/models/message/Filter";
 import type { Clause } from "@esposter/shared";
 
-import { FileEntityPropertyNames } from "#shared/models/azure/FileEntity";
+import { FileEntityPropertyNames } from "#shared/models/azure/table/FileEntity";
 import { MessageEntityPropertyNames } from "#shared/models/db/message/MessageEntity";
 import { FilterType } from "#shared/models/message/FilterType";
 import { FilterTypeHas } from "#shared/models/message/FilterTypeHas";
-import { escapeValue } from "#shared/services/azure/search/escapeValue";
 import { dayjs } from "#shared/services/dayjs";
-import { BinaryOperator, getNonNullClause, Literal, NotFoundError, SearchOperator } from "@esposter/shared";
+import { BinaryOperator, escapeValue, getNonNullClause, Literal, NotFoundError, SearchOperator } from "@esposter/shared";
 import { types } from "mime-types";
 
 const ContentTypes = Object.values(types);

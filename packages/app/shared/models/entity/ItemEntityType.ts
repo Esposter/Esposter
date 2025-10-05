@@ -1,4 +1,4 @@
-import { getPropertyNames } from "#shared/util/getPropertyNames";
+import { getPropertyNames } from "@esposter/shared";
 import { z } from "zod";
 
 export interface ItemEntityType<T extends string> {

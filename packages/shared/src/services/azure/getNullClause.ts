@@ -2,7 +2,7 @@ import type { Clause } from "@/models/azure/Clause";
 
 import { BinaryOperator } from "@/models/azure/BinaryOperator";
 import { Literal } from "@/models/azure/Literal";
-// Equivalent to `not(${key} ne NaN)` null check in Azure Table Storage
+// https://stackoverflow.com/questions/4228460/querying-azure-table-storage-for-null-values
 export const getNullClause = (key: Clause["key"]): Clause => ({
   key,
   not: true,

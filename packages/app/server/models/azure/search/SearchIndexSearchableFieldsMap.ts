@@ -1,4 +1,4 @@
-import { FileEntityPropertyNames } from "#shared/models/azure/FileEntity";
+import { FileEntityPropertyNames } from "#shared/models/azure/table/FileEntity";
 import { MessageEntityPropertyNames } from "#shared/models/db/message/MessageEntity";
 import { SearchIndex } from "@@/server/models/azure/search/SearchIndex";
 

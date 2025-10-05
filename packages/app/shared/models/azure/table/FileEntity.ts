@@ -1,5 +1,5 @@
 import { FILENAME_MAX_LENGTH } from "#shared/services/azure/container/constants";
-import { getPropertyNames } from "#shared/util/getPropertyNames";
+import { getPropertyNames } from "@esposter/shared";
 import { z } from "zod";
 
 export class FileEntity {

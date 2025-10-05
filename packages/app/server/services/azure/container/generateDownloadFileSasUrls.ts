@@ -1,4 +1,4 @@
-import type { FileEntity } from "#shared/models/azure/FileEntity";
+import type { FileEntity } from "#shared/models/azure/table/FileEntity";
 import type { ContainerClient } from "@azure/storage-blob";
 
 import { dayjs } from "#shared/services/dayjs";

@@ -29,5 +29,8 @@
     "lint:fix": "oxlint --fix && eslint --fix .",
     "test": "vitest",
     "typecheck": "tsc"
+  },
+  "devDependencies": {
+    "@azure/data-tables": "catalog:"
   }
 }

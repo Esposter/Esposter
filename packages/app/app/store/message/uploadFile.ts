@@ -1,4 +1,4 @@
-import type { FileEntity } from "#shared/models/azure/FileEntity";
+import type { FileEntity } from "#shared/models/azure/table/FileEntity";
 import type { UploadFileUrl } from "@/models/message/file/UploadFileUrl";
 
 import { MessageHookMap } from "@/services/message/MessageHookMap";

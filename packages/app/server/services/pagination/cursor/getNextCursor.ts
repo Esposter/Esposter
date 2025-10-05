@@ -1,7 +1,7 @@
-import type { CompositeKey } from "#shared/models/azure/CompositeKey";
 import type { AEntity } from "#shared/models/entity/AEntity";
 import type { ToData } from "#shared/models/entity/ToData";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
+import type { CompositeKey } from "@esposter/shared";
 
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 

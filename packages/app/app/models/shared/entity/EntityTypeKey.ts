@@ -1,4 +1,4 @@
-import type { AzureEntityType } from "#shared/models/azure/AzureEntityType";
+import type { AzureEntityType } from "#shared/models/azure/table/AzureEntityType";
 import type { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import type { DerivedDatabaseEntityType } from "#shared/models/entity/DerivedDatabaseEntityType";
 

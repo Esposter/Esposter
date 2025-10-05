@@ -3,8 +3,8 @@ import type { ToData } from "#shared/models/entity/ToData";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 
-import { CompositeKey } from "#shared/models/azure/CompositeKey";
 import { getNextCursor } from "@@/server/services/pagination/cursor/getNextCursor";
+import { CompositeKey } from "@esposter/shared";
 
 export const getCursorPaginationData = <TItem extends CompositeKey | ToData<AEntity>>(
   items: TItem[],
