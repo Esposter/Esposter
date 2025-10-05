@@ -8,9 +8,9 @@ import type {
 } from "@azure/storage-blob";
 import type { MapValue } from "@esposter/shared";
 
+import { getAzureErrorXml } from "@/services/blob/getAzureErrorXml";
+import { toWebResourceLike } from "@/services/blob/toWebResourceLike";
 import { MockContainerDatabase } from "@/store/MockContainerDatabase";
-import { getAzureErrorXml } from "@/util/getAzureErrorXml";
-import { toWebResourceLike } from "@/util/toWebResourceLike";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { createHttpHeaders, createPipelineRequest } from "@azure/core-rest-pipeline";
 

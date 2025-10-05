@@ -13,7 +13,7 @@ import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
-import { BinaryOperator, CompositeKey, escapeValue, getNullClause, serializeClauses } from "@esposter/shared";
+import { BinaryOperator, CompositeKey, escapeValue, getTableNullClause, serializeClauses } from "@esposter/shared";
 
 export const readMessages = async ({
   cursor,
@@ -26,7 +26,7 @@ export const readMessages = async ({
   const sortBy: SortItem<keyof CompositeKey>[] = [{ isIncludeValue, ...MESSAGE_ROWKEY_SORT_ITEM }];
   const clauses: Clause[] = [
     { key: MessageEntityPropertyNames.partitionKey, operator: BinaryOperator.eq, value: escapeValue(roomId) },
-    getNullClause(ItemMetadataPropertyNames.deletedAt),
+    getTableNullClause(ItemMetadataPropertyNames.deletedAt),
   ];
   if (inputFilter?.isPinned)
     clauses.push({ key: MessageEntityPropertyNames.isPinned, operator: BinaryOperator.eq, value: String(true) });

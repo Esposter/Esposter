@@ -1,7 +1,7 @@
 import type { TableEntity } from "@azure/data-tables";
 import type { Clause } from "@esposter/shared";
 
-import { applyTableFilter } from "@/util/tableFilter/applyTableFilter";
+import { applyTableFilter } from "@/services/table/applyTableFilter";
 import { BinaryOperator, escapeValue, getPropertyNames } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

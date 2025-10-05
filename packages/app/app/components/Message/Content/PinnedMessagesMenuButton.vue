@@ -18,24 +18,23 @@ const { hasMore, messages } = storeToRefs(pinStore);
         </template>
       </v-tooltip>
     </template>
-    <StyledCard>
+    <StyledCard flex flex-col>
       <v-card-title>
-        <v-icon icon="mdi-pin" size="large" />
+        <v-icon icon="mdi-pin" />
         Pinned messages
       </v-card-title>
-      <v-card-text>
-        <template v-if="isPending">
-          <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+      <v-divider />
+      <template v-if="isPending">
+        <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+      </template>
+      <MessageModelMessageSearchList v-else :messages>
+        <div v-if="hasMore" flex justify-center>
+          <v-btn variant="text" density="comfortable" @click="readMorePinnedMessages">Load more</v-btn>
+        </div>
+        <template #no-data>
+          <div>This direct message doesn't have any pinned messages... yet.</div>
         </template>
-        <MessageModelMessageSearchList v-else :messages>
-          <div v-if="hasMore" flex justify-center>
-            <v-btn variant="text" density="comfortable" @click="readMorePinnedMessages">Load more</v-btn>
-          </div>
-          <template #no-data>
-            <div>This direct message doesn't have any pinned messages... yet.</div>
-          </template>
-        </MessageModelMessageSearchList>
-      </v-card-text>
+      </MessageModelMessageSearchList>
     </StyledCard>
   </v-menu>
 </template>

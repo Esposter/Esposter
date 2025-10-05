@@ -4,19 +4,24 @@ import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 import { useRoomStore } from "@/store/message/room";
 
-interface MessageProps {
+interface ListItemProps {
   message: MessageEntity;
 }
 
-const { message } = defineProps<MessageProps>();
-const scrollToMessage = useScrollToMessage();
+const { message } = defineProps<ListItemProps>();
 const roomStore = useRoomStore();
 const { memberMap } = storeToRefs(roomStore);
 const creator = computed(() => memberMap.value.get(message.userId));
+const scrollToMessage = useScrollToMessage();
 </script>
 
 <template>
-  <v-list-item v-if="creator" @click="scrollToMessage(message.rowKey)">
-    <component :is="MessageComponentMap[message.type]" :creator :message is-preview />
-  </v-list-item>
+  <component
+    :is="MessageComponentMap[message.type]"
+    v-if="creator"
+    :creator
+    :message
+    is-preview
+    @click="scrollToMessage(message.rowKey)"
+  />
 </template>

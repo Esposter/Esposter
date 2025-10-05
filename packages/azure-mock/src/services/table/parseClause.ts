@@ -1,6 +1,6 @@
 import type { BinaryOperator, Clause } from "@esposter/shared";
 
-import { CLAUSE_REGEX } from "@/util/tableFilter/constants";
+import { CLAUSE_REGEX } from "@/services/table/constants";
 import { NotFoundError } from "@esposter/shared";
 
 export const parseClause = (rawClause: string): Extract<Clause, { operator: BinaryOperator }> => {

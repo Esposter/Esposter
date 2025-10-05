@@ -10,7 +10,7 @@ import { dayjs } from "#shared/services/dayjs";
 import {
   BinaryOperator,
   escapeValue,
-  getNonNullClause,
+  getSearchNonNullClause,
   Literal,
   NotFoundError,
   SearchOperator,
@@ -46,7 +46,7 @@ export const filtersToClauses = (filters: Filter[]): Clause[] => {
             case FilterTypeHas.Link:
             case FilterTypeHas.Embed:
               // Presence of a link preview implies message had a link/embed
-              clauses.push(getNonNullClause(MessageEntityPropertyNames.linkPreviewResponse));
+              clauses.push(getSearchNonNullClause(MessageEntityPropertyNames.linkPreviewResponse));
               break;
             case FilterTypeHas.Image:
               clauses.push({

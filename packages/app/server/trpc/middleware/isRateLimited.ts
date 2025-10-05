@@ -1,13 +1,12 @@
 import { rateLimiterFlexible } from "#shared/db/schema/rateLimiterFlexible";
 import { IS_PRODUCTION } from "#shared/util/environment/constants";
 import { auth } from "@@/server/auth";
-import { useDb } from "@@/server/composables/db/useDb";
+import { db } from "@@/server/db";
 import { middleware } from "@@/server/trpc";
 import { ID_SEPARATOR } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { RateLimiterDrizzleNonAtomic } from "rate-limiter-flexible";
 
-const db = useDb();
 const rateLimiter = new RateLimiterDrizzleNonAtomic({
   blockDuration: 60,
   duration: 10,

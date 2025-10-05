@@ -18,8 +18,8 @@ import type { MapValue } from "@esposter/shared";
 import type { Except } from "type-fest";
 
 import { MockRestError } from "@/models/MockRestError";
+import { createTableFilterPredicate } from "@/services/table/createTableFilterPredicate";
 import { MockTableDatabase } from "@/store/MockTableDatabase";
-import { createTableFilterPredicate } from "@/util/tableFilter/createTableFilterPredicate";
 import { ID_SEPARATOR } from "@esposter/shared";
 /**
  * An in-memory mock of the Azure TableClient.

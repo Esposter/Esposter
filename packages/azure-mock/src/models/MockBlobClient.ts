@@ -29,8 +29,8 @@ import type { MapValue } from "@esposter/shared";
 import type { Except } from "type-fest";
 
 import { MockRestError } from "@/models/MockRestError";
+import { toWebResourceLike } from "@/services/blob/toWebResourceLike";
 import { MockContainerDatabase } from "@/store/MockContainerDatabase";
-import { toWebResourceLike } from "@/util/toWebResourceLike";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { createHttpHeaders, createPipelineRequest } from "@azure/core-rest-pipeline";
 import { AnonymousCredential } from "@azure/storage-blob";
