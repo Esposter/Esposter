@@ -1,5 +1,5 @@
 import { CompositeKeyPropertyNames } from "@/models/azure/table/CompositeKey";
-import { capitalize } from "@esposter/shared";
+import { capitalize } from "@/util/text/capitalize";
 // Stupid Azure and Javascript property name casing conventions
 export const KeysToCapitalize: Set<string> = new Set<string>([
   CompositeKeyPropertyNames.partitionKey,

@@ -4,7 +4,7 @@ import { SearchOperator } from "@/models/azure/SearchOperator";
 import { UnaryOperator } from "@/models/azure/UnaryOperator";
 import { InvalidOperationError } from "@/models/error/InvalidOperationError";
 import { Operation } from "@/models/shared/Operation";
-import { serializeKey } from "@esposter/shared";
+import { serializeKey } from "@/services/azure/table/serializeKey";
 
 export const serializeClause = (clause: Clause): string => {
   clause.key = serializeKey(clause.key);
