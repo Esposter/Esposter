@@ -6,7 +6,7 @@ import { mergeProps } from "vue";
 const { readMorePinnedMessages, readPinnedMessages } = useReadPinnedMessages();
 const { isPending } = await readPinnedMessages();
 const pinStore = usePinStore();
-const { hasMore, items } = storeToRefs(pinStore);
+const { hasMore, messages } = storeToRefs(pinStore);
 </script>
 
 <template>
@@ -27,7 +27,7 @@ const { hasMore, items } = storeToRefs(pinStore);
         <template v-if="isPending">
           <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
         </template>
-        <MessageModelMessageSearchList v-else :messages="items">
+        <MessageModelMessageSearchList v-else :messages>
           <div v-if="hasMore" flex justify-center>
             <v-btn variant="text" density="comfortable" @click="readMorePinnedMessages">Load more</v-btn>
           </div>

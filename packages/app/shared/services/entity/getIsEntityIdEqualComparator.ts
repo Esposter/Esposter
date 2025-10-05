@@ -2,7 +2,7 @@ import type { AEntity } from "#shared/models/entity/AEntity";
 import type { EntityIdKeys } from "#shared/models/entity/EntityIdKeys";
 import type { ToData } from "#shared/models/entity/ToData";
 
-export const getEntityIdComparator =
+export const getIsEntityIdEqualComparator =
   <TEntity extends ToData<AEntity>, TIdKeys extends EntityIdKeys<TEntity>>(
     idKeys: [...TIdKeys],
     entityToCompare: Partial<{ [P in keyof TEntity & TIdKeys[number]]: TEntity[P] }>,
