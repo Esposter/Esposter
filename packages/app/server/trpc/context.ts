@@ -1,7 +1,7 @@
 import type { CreateWSSContextFnOptions } from "@trpc/server/adapters/ws";
 import type { H3Event } from "h3";
 
-import { useDb } from "@@/server/composables/useDb";
+import { useDb } from "@@/server/composables/db/useDb";
 
 type Contexts = CreateWSSContextFnOptions | H3Event;
 
