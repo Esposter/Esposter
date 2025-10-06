@@ -25,9 +25,9 @@ export const getFilterDisplayValue = ({ type, value }: Filter) => {
     case FilterType.Before:
     case FilterType.During:
     case FilterType.After:
-      if (!(value instanceof Date))
-        throw new InvalidOperationError(Operation.Read, getFilterDisplayValue.name, serializeValue(value));
-      return `${displayType} ${value.toLocaleDateString()}`;
+      if (value instanceof Date) return `${displayType} ${value.toLocaleDateString()}`;
+      else if (typeof value === "string") return `${displayType} ${new Date(value).toLocaleDateString()}`;
+      else throw new InvalidOperationError(Operation.Read, getFilterDisplayValue.name, serializeValue(value));
     case FilterType.Pinned:
       if (typeof value !== "boolean")
         throw new InvalidOperationError(Operation.Read, getFilterDisplayValue.name, serializeValue(value));

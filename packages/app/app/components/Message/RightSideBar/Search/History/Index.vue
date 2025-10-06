@@ -30,7 +30,9 @@ const { hasMore, items } = storeToRefs(searchHistoryStore);
             }
           "
         >
-          <v-list-item-title> {{ filters.map(getFilterDisplayValue).join(" ") }} {{ query }} </v-list-item-title>
+          <v-list-item-title>
+            {{ filters.map((f) => getFilterDisplayValue(f)).join(" ") }} {{ query }}
+          </v-list-item-title>
           <template #append>
             <v-icon :op="isHovering ? undefined : '0!'" icon="mdi-plus" />
           </template>
