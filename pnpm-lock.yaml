@@ -777,7 +777,7 @@ importers:
         version: 1.5.0(@vue-flow/core@1.47.0(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))
       '@vue-pdf-viewer/viewer':
         specifier: 'catalog:'
-        version: 3.1.0(pdfjs-dist@5.4.149)(rolldown-vite@7.1.15(@types/node@24.6.2)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
+        version: 3.1.0(pdfjs-dist@5.4.296)(rolldown-vite@7.1.15(@types/node@24.6.2)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
       '@vuepic/vue-datepicker':
         specifier: 'catalog:'
         version: 11.0.2(vue@3.5.22(typescript@5.9.3))
@@ -936,7 +936,7 @@ importers:
         version: 2.0.3
       pdfjs-dist:
         specifier: ^5.4.149
-        version: 5.4.149
+        version: 5.4.296
       phaser:
         specifier: 'catalog:'
         version: 4.0.0-rc.5
@@ -5785,8 +5785,8 @@ packages:
   caniuse-api@3.0.0:
     resolution: {integrity: sha512-bsTwuIg/BZZK/vreVTYYbSWoe2F+71P7K5QGEX+pT250DZbfU1MQ5prOKpPR+LL6uWKK3KMwMCAS74QB3Um1uw==}
 
-  caniuse-lite@1.0.30001747:
-    resolution: {integrity: sha512-mzFa2DGIhuc5490Nd/G31xN1pnBnYMadtkyTjefPI7wzypqgCEpeWu9bJr0OnDsyKrW75zA9ZAt7pbQFmwLsQg==}
+  caniuse-lite@1.0.30001748:
+    resolution: {integrity: sha512-5P5UgAr0+aBmNiplks08JLw+AW/XG/SurlgZLgB1dDLfAw7EfRGxIwzPHxdSCGY/BTKDqIVyJL87cCN6s0ZR0w==}
 
   capital-case@1.0.4:
     resolution: {integrity: sha512-ds37W8CytHgwnhGGTi88pcPyR15qoNkOpYwmMMfnWqqWgESapLqvDx6huFjQ5vqWSn2Z06173XNA7LtMOeUh1A==}
@@ -5848,8 +5848,8 @@ packages:
     resolution: {integrity: sha512-rNjApaLzuwaOTjCiT8lSDdGN1APCiqkChLMJxJPWLunPAt5fy8xgU9/jNOchV84wfIxrA0lRQB7oCT8jrn/wrQ==}
     engines: {node: '>=6.0'}
 
-  ci-info@4.3.0:
-    resolution: {integrity: sha512-l+2bNRMiQgcfILUi33labAZYIWlH1kWDp+ecNo5iisRKrbm0xcRyCww71/YU0Fkw0mAFpz9bJayXPjey6vkmaQ==}
+  ci-info@4.3.1:
+    resolution: {integrity: sha512-Wdy2Igu8OcBpI2pZePZ5oWjPC38tmDVx5WKUXKwlLYkA0ozo85sLsLvkBbBn/sZaSCMFOGZJ14fvW9t5/d7kdA==}
     engines: {node: '>=8'}
 
   citty@0.1.6:
@@ -6262,8 +6262,8 @@ packages:
     peerDependencies:
       d3-selection: 2 - 3
 
-  d3-tricontour@1.0.2:
-    resolution: {integrity: sha512-HIRxHzHagPtUPNabjOlfcyismJYIsc+Xlq4mlsts4e8eAcwyq9Tgk/sYdyhlBpQ0MHwVquc/8j+e29YjXnmxeA==}
+  d3-tricontour@1.1.0:
+    resolution: {integrity: sha512-G7gHKj89n2owmkGb6WX6ixcnQ0Kf/0wpa9VIh9DGdbHu8wdrlaHU4ir3/bFNERl8N8nn4G7e7qbtBG8N9caihQ==}
     engines: {node: '>=12'}
 
   d3-zoom@3.0.0:
@@ -6417,8 +6417,8 @@ packages:
     engines: {node: '>=0.10'}
     hasBin: true
 
-  detect-libc@2.1.1:
-    resolution: {integrity: sha512-ecqj/sy1jcK1uWrwpR67UhYrIFQ+5WlGxth34WquCbamhFA6hkkwiu37o6J5xCHdo1oixJRfVRw+ywV+Hq/0Aw==}
+  detect-libc@2.1.2:
+    resolution: {integrity: sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ==}
     engines: {node: '>=8'}
 
   devalue@5.3.2:
@@ -8620,8 +8620,8 @@ packages:
   nuxt-csurf@1.6.5:
     resolution: {integrity: sha512-/DMNTON8LIVhntamKbBmAuM879B0QnuSJa7ZAkmkZe+21m+1QGcjVUxtSkizaM48NUvkuAGYOG0ncn+kqEgrzw==}
 
-  nuxt-link-checker@4.3.2:
-    resolution: {integrity: sha512-ehEeoe1OFW2r9ZC7DCneYsk2eupyi5udLpbqbTtJOiqoCddbDZ8/bv7k6kBwbQAAyZPJFptGhwas8n4hUUY3Qg==}
+  nuxt-link-checker@4.3.4:
+    resolution: {integrity: sha512-pWAfGobX+a8eHF+wyO0SZXogzlaJtZ05NrqaCACBmpV1XdPgesE762m8ZK+4kHMt2bpt8JNQHc8LfltYDNrWCw==}
 
   nuxt-og-image@5.1.11:
     resolution: {integrity: sha512-LnioM0JsfrSYPo/4TgPBu+ncI6QNCejs0FVu/f/SLeygwrh3senm9MvlBi1tldE1AU0J7030uO8UekOlvFPPXQ==}
@@ -8956,8 +8956,8 @@ packages:
     resolution: {integrity: sha512-//nshmD55c46FuFw26xV/xFAaB5HF9Xdap7HJBBnrKdAd6/GxDBaNA1870O79+9ueg61cZLSVc+OaFlfmObYVQ==}
     engines: {node: '>= 14.16'}
 
-  pdfjs-dist@5.4.149:
-    resolution: {integrity: sha512-Xe8/1FMJEQPUVSti25AlDpwpUm2QAVmNOpFP0SIahaPIOKBKICaefbzogLdwey3XGGoaP4Lb9wqiw2e9Jqp0LA==}
+  pdfjs-dist@5.4.296:
+    resolution: {integrity: sha512-DlOzet0HO7OEnmUmB6wWGJrrdvbyJKftI1bhMitK7O2N8W2gc757yyYBbINy9IDafXAV9wmKr9t7xsTaNKRG5Q==}
     engines: {node: '>=20.16.0 || >=22.3.0'}
 
   perfect-debounce@1.0.0:
@@ -12133,7 +12133,7 @@ snapshots:
   '@babel/template@7.27.2':
     dependencies:
       '@babel/code-frame': 7.27.1
-      '@babel/parser': 7.27.7
+      '@babel/parser': 7.28.4
       '@babel/types': 7.28.4
 
   '@babel/traverse@7.27.7':
@@ -13079,7 +13079,7 @@ snapshots:
       '@inquirer/select': 4.3.4(@types/node@24.6.2)
       '@lerna-lite/npmlog': 4.7.3
       '@npmcli/run-script': 10.0.0
-      ci-info: 4.3.0
+      ci-info: 4.3.1
       config-chain: 1.1.13
       dedent: 1.7.0
       execa: 9.6.0
@@ -13149,7 +13149,7 @@ snapshots:
       '@npmcli/arborist': 9.1.5
       '@npmcli/package-json': 7.0.1
       byte-size: 9.0.1
-      ci-info: 4.3.0
+      ci-info: 4.3.1
       columnify: 1.6.0
       fs-extra: 11.3.2
       has-unicode: 2.0.1
@@ -13354,7 +13354,7 @@ snapshots:
   '@mapbox/node-pre-gyp@2.0.0(encoding@0.1.13)':
     dependencies:
       consola: 3.4.2
-      detect-libc: 2.1.1
+      detect-libc: 2.1.2
       https-proxy-agent: 7.0.6
       node-fetch: 2.7.0(encoding@0.1.13)
       nopt: 8.1.0
@@ -14065,7 +14065,7 @@ snapshots:
       '@nuxt/kit': 4.1.2(magicast@0.3.5)
       '@nuxtjs/robots': 5.5.5(h3@1.15.4)(magicast@0.3.5)(vue@3.5.22(typescript@5.9.3))
       '@nuxtjs/sitemap': 7.4.7(h3@1.15.4)(magicast@0.3.5)(rolldown-vite@7.1.15(@types/node@24.6.2)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))(vue@3.5.22(typescript@5.9.3))
-      nuxt-link-checker: 4.3.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.4(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.6(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)))(h3@1.15.4)(ioredis@5.8.0)(magicast@0.3.5)(rolldown-vite@7.1.15(@types/node@24.6.2)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))(vue@3.5.22(typescript@5.9.3))
+      nuxt-link-checker: 4.3.4(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.4(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.6(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)))(h3@1.15.4)(ioredis@5.8.0)(magicast@0.3.5)(rolldown-vite@7.1.15(@types/node@24.6.2)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))(vue@3.5.22(typescript@5.9.3))
       nuxt-og-image: 5.1.11(@unhead/vue@2.0.17(vue@3.5.22(typescript@5.9.3)))(h3@1.15.4)(magicast@0.3.5)(rolldown-vite@7.1.15(@types/node@24.6.2)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))(unstorage@1.17.1(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.4(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.6(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)))(ioredis@5.8.0))(vue@3.5.22(typescript@5.9.3))
       nuxt-schema-org: 5.0.9(@unhead/vue@2.0.17(vue@3.5.22(typescript@5.9.3)))(h3@1.15.4)(magicast@0.3.5)(unhead@2.0.17)(vue@3.5.22(typescript@5.9.3))
       nuxt-seo-utils: 7.0.17(h3@1.15.4)(magicast@0.3.5)(rollup@4.52.4)(vue@3.5.22(typescript@5.9.3))
@@ -16089,11 +16089,11 @@ snapshots:
     dependencies:
       vue: 3.5.22(typescript@5.9.3)
 
-  '@vue-pdf-viewer/viewer@3.1.0(pdfjs-dist@5.4.149)(rolldown-vite@7.1.15(@types/node@24.6.2)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))':
+  '@vue-pdf-viewer/viewer@3.1.0(pdfjs-dist@5.4.296)(rolldown-vite@7.1.15(@types/node@24.6.2)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))':
     dependencies:
       '@vue-pdf-viewer/shared': 1.0.0(vue@3.5.22(typescript@5.9.3))
       '@vueuse/core': 13.9.0(vue@3.5.22(typescript@5.9.3))
-      pdfjs-dist: 5.4.149
+      pdfjs-dist: 5.4.296
       reka-ui: 2.5.1(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
       vite-plugin-css-injected-by-js: 3.5.2(rolldown-vite@7.1.15(@types/node@24.6.2)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))
       vue: 3.5.22(typescript@5.9.3)
@@ -16628,7 +16628,7 @@ snapshots:
   autoprefixer@10.4.21(postcss@8.5.6):
     dependencies:
       browserslist: 4.26.3
-      caniuse-lite: 1.0.30001747
+      caniuse-lite: 1.0.30001748
       fraction.js: 4.3.7
       normalize-range: 0.1.2
       picocolors: 1.1.1
@@ -16779,7 +16779,7 @@ snapshots:
   browserslist@4.26.3:
     dependencies:
       baseline-browser-mapping: 2.8.12
-      caniuse-lite: 1.0.30001747
+      caniuse-lite: 1.0.30001748
       electron-to-chromium: 1.5.230
       node-releases: 2.0.23
       update-browserslist-db: 1.1.3(browserslist@4.26.3)
@@ -16897,11 +16897,11 @@ snapshots:
   caniuse-api@3.0.0:
     dependencies:
       browserslist: 4.26.3
-      caniuse-lite: 1.0.30001747
+      caniuse-lite: 1.0.30001748
       lodash.memoize: 4.1.2
       lodash.uniq: 4.5.0
 
-  caniuse-lite@1.0.30001747: {}
+  caniuse-lite@1.0.30001748: {}
 
   capital-case@1.0.4:
     dependencies:
@@ -16996,7 +16996,7 @@ snapshots:
 
   chrome-trace-event@1.0.4: {}
 
-  ci-info@4.3.0: {}
+  ci-info@4.3.1: {}
 
   citty@0.1.6:
     dependencies:
@@ -17401,7 +17401,7 @@ snapshots:
       d3-array: 3.2.4
       d3-delaunay: 6.0.4
       d3-geo: 3.1.1
-      d3-tricontour: 1.0.2
+      d3-tricontour: 1.1.0
 
   d3-geo@3.1.1:
     dependencies:
@@ -17447,7 +17447,7 @@ snapshots:
       d3-selection: 3.0.0
       d3-timer: 3.0.1
 
-  d3-tricontour@1.0.2:
+  d3-tricontour@1.1.0:
     dependencies:
       d3-delaunay: 6.0.4
       d3-scale: 4.0.2
@@ -17564,7 +17564,7 @@ snapshots:
 
   detect-libc@1.0.3: {}
 
-  detect-libc@2.1.1: {}
+  detect-libc@2.1.2: {}
 
   devalue@5.3.2: {}
 
@@ -18000,7 +18000,7 @@ snapshots:
       '@eslint-community/eslint-utils': 4.9.0(eslint@9.37.0(jiti@2.6.1))
       '@eslint/plugin-kit': 0.3.5
       change-case: 5.4.4
-      ci-info: 4.3.0
+      ci-info: 4.3.1
       clean-regexp: 1.0.0
       core-js-compat: 3.45.1
       eslint: 9.37.0(jiti@2.6.1)
@@ -19261,7 +19261,7 @@ snapshots:
   libnpmpublish@11.1.1:
     dependencies:
       '@npmcli/package-json': 7.0.1
-      ci-info: 4.3.0
+      ci-info: 4.3.1
       npm-package-arg: 13.0.0
       npm-registry-fetch: 19.0.0
       proc-log: 5.0.0
@@ -19313,7 +19313,7 @@ snapshots:
 
   lightningcss@1.30.2:
     dependencies:
-      detect-libc: 2.1.1
+      detect-libc: 2.1.2
     optionalDependencies:
       lightningcss-android-arm64: 1.30.2
       lightningcss-darwin-arm64: 1.30.2
@@ -19929,7 +19929,7 @@ snapshots:
     transitivePeerDependencies:
       - magicast
 
-  nuxt-link-checker@4.3.2(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.4(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.6(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)))(h3@1.15.4)(ioredis@5.8.0)(magicast@0.3.5)(rolldown-vite@7.1.15(@types/node@24.6.2)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))(vue@3.5.22(typescript@5.9.3)):
+  nuxt-link-checker@4.3.4(@azure/data-tables@13.3.1)(@azure/storage-blob@12.28.0)(db0@0.3.4(@electric-sql/pglite@0.3.10)(drizzle-orm@0.44.6(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)))(h3@1.15.4)(ioredis@5.8.0)(magicast@0.3.5)(rolldown-vite@7.1.15(@types/node@24.6.2)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))(vue@3.5.22(typescript@5.9.3)):
     dependencies:
       '@nuxt/devtools-kit': 2.6.5(magicast@0.3.5)(rolldown-vite@7.1.15(@types/node@24.6.2)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))
       '@nuxt/kit': 4.1.2(magicast@0.3.5)
@@ -20586,7 +20586,7 @@ snapshots:
 
   pathval@2.0.1: {}
 
-  pdfjs-dist@5.4.149:
+  pdfjs-dist@5.4.296:
     optionalDependencies:
       '@napi-rs/canvas': 0.1.80
 
@@ -22849,7 +22849,7 @@ snapshots:
 
   vue-pdf-embed@2.1.3(vue@3.5.22(typescript@5.9.3)):
     dependencies:
-      pdfjs-dist: 5.4.149
+      pdfjs-dist: 5.4.296
       vue: 3.5.22(typescript@5.9.3)
 
   vue-router@4.5.1(vue@3.5.22(typescript@5.9.3)):
