@@ -2,8 +2,7 @@ import type { TableEntity } from "@azure/data-tables";
 
 import { compare } from "@/services/table/compare";
 import { isTableNullClause } from "@/services/table/isTableNullClause";
-import { parseClause } from "@/services/table/parseClause";
-import { BinaryOperator, uncapitalize } from "@esposter/shared";
+import { BinaryOperator, deserializeClause, uncapitalize } from "@esposter/shared";
 
 export const createTableFilterPredicate = <T extends object>(filter: string): ((entity: TableEntity<T>) => boolean) => {
   // Preserve spacing when stripping parentheses so patterns like not(<clause>) still match
@@ -11,11 +10,11 @@ export const createTableFilterPredicate = <T extends object>(filter: string): ((
   const andGroups = normalizedFilter.split(/\s+and\s+/i).filter(Boolean);
   const orGroups = andGroups.map((group) => group.split(/\s+or\s+/i).filter(Boolean));
   return (entity) => {
-    for (const group of orGroups) {
+    for (const orGroup of orGroups) {
       let isGroupMatched = false;
 
-      for (const rawClause of group) {
-        const clause = parseClause(rawClause);
+      for (const group of orGroup) {
+        const clause = deserializeClause(group);
         const normalizedClauseKey = uncapitalize(clause.key);
         const value = entity[normalizedClauseKey as keyof typeof entity];
         let isMatched = false;
