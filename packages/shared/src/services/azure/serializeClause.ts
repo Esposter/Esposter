@@ -11,12 +11,11 @@ export const serializeClause = (clause: Clause): string => {
   clause.key = serializeKey(clause.key);
 
   if (clause.operator === SearchOperator.arrayContains) {
-    const keys = clause.key.split("/");
-    if (keys.length === 1)
-      return `${clause.key}/any(x: search.in(x, '${clause.value.map((v) => serializeValue(v)).join(",")}'))`;
+    const keys = clause.key.split("/").map((key) => serializeKey(key));
+    if (keys.length === 1) return `${keys[0]}/any(x: search.in(x, ${serializeValue(clause.value.join(","))}))`;
     else if (keys.length === 2) {
       const [collectionName, propertyName] = keys;
-      return `${collectionName}/any(x: search.in(x/${propertyName}, '${clause.value.map((v) => serializeValue(v)).join(",")}'))`;
+      return `${collectionName}/any(x: search.in(x/${propertyName}, ${serializeValue(clause.value.join(","))}))`;
     } else throw new InvalidOperationError(Operation.Read, serializeClause.name, clause.key);
   }
 

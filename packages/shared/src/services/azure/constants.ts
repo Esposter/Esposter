@@ -10,6 +10,6 @@ export const RangeOperators: (BinaryOperator | SearchOperator)[] = [
 ];
 // oxlint-disable-next-line typescript/no-inferrable-types
 export const CLAUSE_REGEX: RegExp = new RegExp(
-  `^(?<not>not\\s+)?(?<key>[A-Za-z0-9_]+)\\s+(?<operator>${Object.values(BinaryOperator).join("|")})\\s+(?<value>'[^']*'|${[null, Number.NaN].join("|")})$`,
+  `^(?<not>not\\s+)?(?<key>[A-Za-z0-9_]+)\\s+(?<operator>${Object.values(BinaryOperator).join("|")})\\s+(?<value>'[^']*'|${[String(null), Number.NaN].join("|")})$`,
   "i",
 );
