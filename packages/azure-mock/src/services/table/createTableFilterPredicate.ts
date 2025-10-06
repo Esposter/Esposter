@@ -2,7 +2,7 @@ import type { TableEntity } from "@azure/data-tables";
 
 import { compare } from "@/services/table/compare";
 import { isTableNullClause } from "@/services/table/isTableNullClause";
-import { BinaryOperator, deserializeClause, uncapitalize } from "@esposter/shared";
+import { BinaryOperator, deserializeClause } from "@esposter/shared";
 
 export const createTableFilterPredicate = <T extends object>(filter: string): ((entity: TableEntity<T>) => boolean) => {
   // Preserve spacing when stripping parentheses so patterns like not(<clause>) still match
@@ -15,13 +15,16 @@ export const createTableFilterPredicate = <T extends object>(filter: string): ((
 
       for (const group of orGroup) {
         const clause = deserializeClause(group);
-        const normalizedClauseKey = uncapitalize(clause.key);
-        const value = entity[normalizedClauseKey as keyof typeof entity];
+        const value = entity[clause.key as keyof typeof entity];
         let isMatched = false;
 
         if (isTableNullClause(clause)) isMatched = compare(BinaryOperator.eq, value, null);
         else {
-          const comparisonResult = compare(clause.operator, String(value), clause.value);
+          const comparisonResult = compare(
+            clause.operator,
+            value,
+            clause.value as (typeof entity)[keyof typeof entity] | null,
+          );
           isMatched = clause.not ? !comparisonResult : comparisonResult;
         }
 

@@ -523,18 +523,18 @@ describe("message", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const message = getMessage(getMockSession().user.id);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-    const targetRoom = await roomCaller.createRoom({ name });
+    const forwardedRoom = await roomCaller.createRoom({ name });
 
     await messageCaller.forwardMessage({
       partitionKey: newMessage.partitionKey,
-      roomIds: [targetRoom.id],
+      roomIds: [forwardedRoom.id],
       rowKey: newMessage.rowKey,
     });
 
-    const targetMessages = await messageCaller.readMessages({ roomId: targetRoom.id });
+    const forwardedMessages = await messageCaller.readMessages({ roomId: forwardedRoom.id });
 
-    expect(targetMessages.items).toHaveLength(1);
-    expect(targetMessages.items[0].isForward).toBe(true);
+    expect(forwardedMessages.items).toHaveLength(1);
+    expect(forwardedMessages.items[0].isForward).toBe(true);
   });
 
   test("forwards message with optional message", async () => {
@@ -543,20 +543,20 @@ describe("message", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const message = getMessage(getMockSession().user.id);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-    const targetRoom = await roomCaller.createRoom({ name });
+    const forwardedRoom = await roomCaller.createRoom({ name });
 
     await messageCaller.forwardMessage({
       message,
       partitionKey: newMessage.partitionKey,
-      roomIds: [targetRoom.id],
+      roomIds: [forwardedRoom.id],
       rowKey: newMessage.rowKey,
     });
 
-    const targetMessages = await messageCaller.readMessages({ roomId: targetRoom.id });
+    const forwardedMessages = await messageCaller.readMessages({ roomId: forwardedRoom.id });
 
-    expect(targetMessages.items).toHaveLength(2);
-    expect(targetMessages.items[0].isForward).toBe(true);
-    expect(targetMessages.items[1].isForward).toBeUndefined();
+    expect(forwardedMessages.items).toHaveLength(2);
+    expect(forwardedMessages.items[0].isForward).toBe(true);
+    expect(forwardedMessages.items[1].isForward).toBeUndefined();
   });
 
   test("fails forward messages with non-existent message", async () => {
@@ -577,13 +577,13 @@ describe("message", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const message = getMessage(getMockSession().user.id);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-    const targetRoom = await roomCaller.createRoom({ name });
+    const forwardedRoom = await roomCaller.createRoom({ name });
     await mockSessionOnce(mockContext.db);
 
     await expect(
       messageCaller.forwardMessage({
         partitionKey: newMessage.partitionKey,
-        roomIds: [targetRoom.id],
+        roomIds: [forwardedRoom.id],
         rowKey: newMessage.rowKey,
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
@@ -691,12 +691,13 @@ describe("message", () => {
 
     await messageCaller.deleteFile({ id, partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey });
 
-    const updatedMessage = await messageCaller.readMessagesByRowKeys({
+    const updatedMessages = await messageCaller.readMessagesByRowKeys({
       roomId: newRoom.id,
       rowKeys: [newMessage.rowKey],
     });
 
-    expect(updatedMessage[0].files).toHaveLength(0);
+    expect(updatedMessages).toHaveLength(1);
+    expect(updatedMessages[0].files).toHaveLength(0);
   });
 
   test("fails delete file with non-existent message", async () => {
@@ -820,12 +821,13 @@ describe("message", () => {
       rowKey: newMessage.rowKey,
     });
 
-    const updatedMessage = await messageCaller.readMessagesByRowKeys({
+    const updatedMessages = await messageCaller.readMessagesByRowKeys({
       roomId: newRoom.id,
       rowKeys: [newMessage.rowKey],
     });
 
-    expect(updatedMessage[0].linkPreviewResponse).toBeNull();
+    expect(updatedMessages).toHaveLength(1);
+    expect(updatedMessages[0].linkPreviewResponse).toBeNull();
   });
 
   test("fails delete link preview response with non-existent message", async () => {
