@@ -49,6 +49,7 @@
   "dependencies": {
     "@esposter/shared": "workspace:*",
     "dayjs": "catalog:",
+    "fast-deep-equal": "catalog:",
     "vue": "catalog:"
   },
   "devDependencies": {

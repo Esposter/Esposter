@@ -7,10 +7,11 @@ import { deserializeValue } from "@/services/azure/deserializeValue";
 import { deserializeKey } from "@/services/azure/table/deserializeKey";
 
 export const deserializeClause = (string: string): Extract<Clause, { operator: BinaryOperator }> => {
-  const match = CLAUSE_REGEX.exec(string.trim());
-  if (!match) throw new NotFoundError(deserializeClause.name, string);
+  const trimmedString = string.trim();
+  const match = CLAUSE_REGEX.exec(trimmedString);
+  if (!match) throw new NotFoundError(deserializeClause.name, trimmedString);
   const groups = match.groups as Record<keyof Clause, string> | undefined;
-  if (!groups) throw new NotFoundError(deserializeClause.name, string);
+  if (!groups) throw new NotFoundError(deserializeClause.name, trimmedString);
   return {
     key: deserializeKey(groups.key),
     not: Boolean(groups.not),

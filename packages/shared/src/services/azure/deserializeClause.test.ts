@@ -47,4 +47,15 @@ describe(deserializeClause, () => {
       value: Number.NaN,
     });
   });
+
+  test("deserializes unquoted numeric literal", () => {
+    expect.hasAssertions();
+
+    expect(deserializeClause(`a ${BinaryOperator.eq} 0`)).toStrictEqual({
+      key: "a",
+      not: false,
+      operator: BinaryOperator.eq,
+      value: 0,
+    });
+  });
 });

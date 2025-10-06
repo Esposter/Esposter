@@ -4,7 +4,9 @@ import { compare } from "@/services/table/compare";
 import { isTableNullClause } from "@/services/table/isTableNullClause";
 import { BinaryOperator, deserializeClause } from "@esposter/shared";
 
-export const createTableFilterPredicate = <T extends object>(filter: string): ((entity: TableEntity<T>) => boolean) => {
+export const createTableFilterPredicate = <T extends Record<string, unknown>>(
+  filter: string,
+): ((entity: TableEntity<T>) => boolean) => {
   // Preserve spacing when stripping parentheses so patterns like not(<clause>) still match
   const normalizedFilter = filter.replaceAll(String.raw`(`, " ").replaceAll(String.raw`)`, "");
   const andGroups = normalizedFilter.split(/\s+and\s+/i).filter(Boolean);
