@@ -9,12 +9,12 @@ import { useSearchClient } from "@@/server/composables/azure/search/useSearchCli
 import { SearchIndex } from "@@/server/models/azure/search/SearchIndex";
 import { SearchIndexSearchableFieldsMap } from "@@/server/models/azure/search/SearchIndexSearchableFieldsMap";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
-import { BinaryOperator, deserializeKey, escapeValue, getSearchNullClause, serializeClauses } from "@esposter/shared";
+import { BinaryOperator, deserializeKey, getSearchNullClause, serializeClauses } from "@esposter/shared";
 
 export const searchMessages = async ({ filters, limit, offset, query, roomId, sortBy }: SearchMessagesInput) => {
   const client = useSearchClient(SearchIndex.Messages);
   const clauses: Clause[] = [
-    { key: MessageEntityPropertyNames.partitionKey, operator: BinaryOperator.eq, value: escapeValue(roomId) },
+    { key: MessageEntityPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
     getSearchNullClause(ItemMetadataPropertyNames.deletedAt),
   ];
   if (filters.length > 0) clauses.push(...filtersToClauses(dedupeFilters(filters)));

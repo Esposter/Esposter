@@ -53,7 +53,6 @@ import { getCreatorProcedure } from "@@/server/trpc/procedure/message/getCreator
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import {
   BinaryOperator,
-  escapeValue,
   getTableNullClause,
   InvalidOperationError,
   NotFoundError,
@@ -381,14 +380,14 @@ export const messageRouter = router({
     async ({ input: { roomId, rowKeys } }) => {
       const messageClient = await useTableClient(AzureTable.Messages);
       const clauses: Clause[] = [
-        { key: MessageEntityPropertyNames.partitionKey, operator: BinaryOperator.eq, value: escapeValue(roomId) },
+        { key: MessageEntityPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
         getTableNullClause(ItemMetadataPropertyNames.deletedAt),
       ];
       for (const rowKey of rowKeys)
         clauses.push({
           key: MessageEntityPropertyNames.rowKey,
           operator: BinaryOperator.eq,
-          value: escapeValue(rowKey),
+          value: rowKey,
         });
       return getTopNEntities(messageClient, rowKeys.length, MessageEntity, {
         filter: serializeClauses(clauses),

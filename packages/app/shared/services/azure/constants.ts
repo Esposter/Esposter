@@ -1,0 +1,1 @@
+export const SERIALIZABLE_VALUE_MAX_LENGTH = 100;

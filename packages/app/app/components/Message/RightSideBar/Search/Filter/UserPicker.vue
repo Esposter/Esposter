@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import type { SerializableValue } from "@esposter/shared";
+
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useMemberStore } from "@/store/message/member";
 
-const emit = defineEmits<{ select: [value: string] }>();
+const emit = defineEmits<{ select: [value: SerializableValue] }>();
 const { readMembers, readMoreMembers } = useReadMembers();
 const { isPending } = await readMembers();
 const memberStore = useMemberStore();

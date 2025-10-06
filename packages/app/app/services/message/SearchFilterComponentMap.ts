@@ -2,14 +2,24 @@
 import { FilterType } from "#shared/models/message/FilterType";
 
 export const SearchFilterComponentMap = {
-  [FilterType.From]: defineAsyncComponent(() => import("@/components/Message/Content/Search/Filter/UserPicker.vue")),
-  [FilterType.Mentions]: defineAsyncComponent(
-    () => import("@/components/Message/Content/Search/Filter/UserPicker.vue"),
+  [FilterType.From]: defineAsyncComponent(
+    () => import("@/components/Message/RightSideBar/Search/Filter/UserPicker.vue"),
   ),
-  [FilterType.Has]: defineAsyncComponent(() => import("@/components/Message/Content/Search/Filter/HasPicker.vue")),
-  [FilterType.Before]: defineAsyncComponent(() => import("@/components/Message/Content/Search/Filter/DatePicker.vue")),
-  [FilterType.During]: defineAsyncComponent(() => import("@/components/Message/Content/Search/Filter/DatePicker.vue")),
-  [FilterType.After]: defineAsyncComponent(() => import("@/components/Message/Content/Search/Filter/DatePicker.vue")),
-  [FilterType.Pinned]: defineAsyncComponent(() => import("@/components/Message/Content/Search/Filter/PinPicker.vue")),
+  [FilterType.Mentions]: defineAsyncComponent(
+    () => import("@/components/Message/RightSideBar/Search/Filter/UserPicker.vue"),
+  ),
+  [FilterType.Has]: defineAsyncComponent(() => import("@/components/Message/RightSideBar/Search/Filter/HasPicker.vue")),
+  [FilterType.Before]: defineAsyncComponent(
+    () => import("@/components/Message/RightSideBar/Search/Filter/DatePicker.vue"),
+  ),
+  [FilterType.During]: defineAsyncComponent(
+    () => import("@/components/Message/RightSideBar/Search/Filter/DatePicker.vue"),
+  ),
+  [FilterType.After]: defineAsyncComponent(
+    () => import("@/components/Message/RightSideBar/Search/Filter/DatePicker.vue"),
+  ),
+  [FilterType.Pinned]: defineAsyncComponent(
+    () => import("@/components/Message/RightSideBar/Search/Filter/PinPicker.vue"),
+  ),
   // [FilterType.AuthorType]: null,
 } as const satisfies Record<FilterType, Component | null>;

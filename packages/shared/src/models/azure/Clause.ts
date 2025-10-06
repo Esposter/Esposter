@@ -1,5 +1,6 @@
 import type { BinaryOperator } from "@/models/azure/BinaryOperator";
 import type { SearchOperator } from "@/models/azure/SearchOperator";
+import type { SerializableValue } from "@/models/azure/SerializableValue";
 
 export type Clause = {
   key: string;
@@ -7,14 +8,14 @@ export type Clause = {
 } & (
   | {
       operator: BinaryOperator;
-      value: string;
+      value: SerializableValue;
     }
   | {
       operator: Exclude<SearchOperator, SearchOperator.arrayContains>;
-      value: string;
+      value: SerializableValue;
     }
   | {
       operator: SearchOperator.arrayContains;
-      value: string[];
+      value: SerializableValue[];
     }
 );

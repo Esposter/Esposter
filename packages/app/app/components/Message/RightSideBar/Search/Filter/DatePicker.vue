@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import type { SerializableValue } from "@esposter/shared";
+
 import { dayjs } from "#shared/services/dayjs";
 
-const emit = defineEmits<{ select: [value: string] }>();
+const emit = defineEmits<{ select: [value: SerializableValue] }>();
 const { toJsDate } = useDate();
 const date = ref<Date | null>(null);
 </script>
@@ -19,7 +21,7 @@ const date = ref<Date | null>(null);
     @update:model-value="
       (value) => {
         if (!value) return;
-        emit('select', value.toISOString());
+        emit('select', value);
       }
     "
   />

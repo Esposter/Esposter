@@ -2,7 +2,7 @@ import type { TableEntity } from "@azure/data-tables";
 import type { Clause } from "@esposter/shared";
 
 import { applyTableFilter } from "@/services/table/applyTableFilter";
-import { BinaryOperator, escapeValue, getPropertyNames } from "@esposter/shared";
+import { BinaryOperator, getPropertyNames } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const TableEntityPropertyNames = getPropertyNames<TableEntity>();
@@ -19,7 +19,7 @@ describe(applyTableFilter, () => {
       {
         key: TableEntityPropertyNames.partitionKey,
         operator: BinaryOperator.eq,
-        value: escapeValue(partitionKey),
+        value: partitionKey,
       },
     ];
     const filteredTableEntities = applyTableFilter(tableEntities, clauses);
@@ -35,7 +35,7 @@ describe(applyTableFilter, () => {
       {
         key: TableEntityPropertyNames.partitionKey,
         operator: BinaryOperator.eq,
-        value: escapeValue("1"),
+        value: "1",
       },
     ];
     const filteredTableEntities = applyTableFilter(tableEntities, clauses);
@@ -50,7 +50,7 @@ describe(applyTableFilter, () => {
       {
         key: TableEntityPropertyNames.partitionKey,
         operator: BinaryOperator.gt,
-        value: escapeValue("-1"),
+        value: "-1",
       },
     ];
     const filteredTableEntities = applyTableFilter(tableEntities, clauses);
@@ -66,7 +66,7 @@ describe(applyTableFilter, () => {
       {
         key: TableEntityPropertyNames.partitionKey,
         operator: BinaryOperator.gt,
-        value: escapeValue("1"),
+        value: "1",
       },
     ];
     const filteredTableEntities = applyTableFilter(tableEntities, clauses);
@@ -81,7 +81,7 @@ describe(applyTableFilter, () => {
       {
         key: TableEntityPropertyNames.partitionKey,
         operator: BinaryOperator.ge,
-        value: escapeValue("-1"),
+        value: "-1",
       },
     ];
     const filteredTableEntities = applyTableFilter(tableEntities, clauses);
@@ -97,7 +97,7 @@ describe(applyTableFilter, () => {
       {
         key: TableEntityPropertyNames.partitionKey,
         operator: BinaryOperator.ge,
-        value: escapeValue(partitionKey),
+        value: partitionKey,
       },
     ];
     const filteredTableEntities = applyTableFilter(tableEntities, clauses);
@@ -113,7 +113,7 @@ describe(applyTableFilter, () => {
       {
         key: TableEntityPropertyNames.partitionKey,
         operator: BinaryOperator.lt,
-        value: escapeValue("1"),
+        value: "1",
       },
     ];
     const filteredTableEntities = applyTableFilter(tableEntities, clauses);
@@ -129,7 +129,7 @@ describe(applyTableFilter, () => {
       {
         key: TableEntityPropertyNames.partitionKey,
         operator: BinaryOperator.lt,
-        value: escapeValue("-1"),
+        value: "-1",
       },
     ];
     const filteredTableEntities = applyTableFilter(tableEntities, clauses);
@@ -144,7 +144,7 @@ describe(applyTableFilter, () => {
       {
         key: TableEntityPropertyNames.partitionKey,
         operator: BinaryOperator.le,
-        value: escapeValue("1"),
+        value: "1",
       },
     ];
     const filteredTableEntities = applyTableFilter(tableEntities, clauses);
@@ -160,7 +160,7 @@ describe(applyTableFilter, () => {
       {
         key: TableEntityPropertyNames.partitionKey,
         operator: BinaryOperator.le,
-        value: escapeValue(partitionKey),
+        value: partitionKey,
       },
     ];
     const filteredTableEntities = applyTableFilter(tableEntities, clauses);

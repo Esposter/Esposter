@@ -5,7 +5,7 @@ import type { Clause, CompositeKey } from "@esposter/shared";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { deserialize } from "#shared/services/pagination/cursor/deserialize";
-import { BinaryOperator, escapeValue, exhaustiveGuard, NotFoundError, serializeKey } from "@esposter/shared";
+import { BinaryOperator, exhaustiveGuard, NotFoundError, serializeKey } from "@esposter/shared";
 
 export const getCursorWhereAzureTable = <TItem extends CompositeKey | ToData<AEntity>>(
   serializedCursors: string,
@@ -29,6 +29,6 @@ export const getCursorWhereAzureTable = <TItem extends CompositeKey | ToData<AEn
       default:
         exhaustiveGuard(sortItem.order);
     }
-    return { key, operator, value: escapeValue(value) };
+    return { key, operator, value };
   });
 };

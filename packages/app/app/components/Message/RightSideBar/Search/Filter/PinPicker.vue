@@ -1,12 +1,14 @@
 <script setup lang="ts">
-const emit = defineEmits<{ select: [value: string] }>();
+import type { SerializableValue } from "@esposter/shared";
+
+const emit = defineEmits<{ select: [value: SerializableValue] }>();
 const options = [true, false] as const;
 </script>
 
 <template>
   <v-list density="compact" py-0>
     <v-hover v-for="value in options" :key="String(value)" #default="{ isHovering, props }">
-      <v-list-item :="props" @click="emit('select', String(value))">
+      <v-list-item :="props" @click="emit('select', value)">
         <v-list-item-title font-semibold>
           <v-icon :icon="value ? 'mdi-pin' : 'mdi-pin-off'" mr-2 />
           {{ value }}

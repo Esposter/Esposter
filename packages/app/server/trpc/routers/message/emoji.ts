@@ -27,7 +27,7 @@ import { isRoomId } from "@@/server/services/message/isRoomId";
 import { router } from "@@/server/trpc";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { readMetadataInputSchema } from "@@/server/trpc/routers/message";
-import { BinaryOperator, escapeValue, InvalidOperationError, Operation, serializeClauses } from "@esposter/shared";
+import { BinaryOperator, InvalidOperationError, Operation, serializeClauses } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -49,22 +49,22 @@ export const emojiRouter = router({
       {
         key: MessageEmojiMetadataEntityPropertyNames.partitionKey,
         operator: BinaryOperator.eq,
-        value: escapeValue(input.partitionKey),
+        value: input.partitionKey,
       },
       {
         key: MessageEmojiMetadataEntityPropertyNames.type,
         operator: BinaryOperator.eq,
-        value: escapeValue(MessageMetadataType.Emoji),
+        value: MessageMetadataType.Emoji,
       },
       {
         key: MessageEmojiMetadataEntityPropertyNames.messageRowKey,
         operator: BinaryOperator.eq,
-        value: escapeValue(input.messageRowKey),
+        value: input.messageRowKey,
       },
       {
         key: MessageEmojiMetadataEntityPropertyNames.emojiTag,
         operator: BinaryOperator.eq,
-        value: escapeValue(input.emojiTag),
+        value: input.emojiTag,
       },
     ];
     const foundEmoji = (
@@ -125,19 +125,19 @@ export const emojiRouter = router({
         {
           key: MessageEmojiMetadataEntityPropertyNames.partitionKey,
           operator: BinaryOperator.eq,
-          value: escapeValue(roomId),
+          value: roomId,
         },
         {
           key: MessageEmojiMetadataEntityPropertyNames.type,
           operator: BinaryOperator.eq,
-          value: escapeValue(MessageMetadataType.Emoji),
+          value: MessageMetadataType.Emoji,
         },
       ];
       for (const messageRowKey of messageRowKeys)
         clauses.push({
           key: MessageEmojiMetadataEntityPropertyNames.messageRowKey,
           operator: BinaryOperator.eq,
-          value: escapeValue(messageRowKey),
+          value: messageRowKey,
         });
       return getTopNEntities(messagesMetadataClient, AZURE_MAX_PAGE_SIZE, MessageEmojiMetadataEntity, {
         filter: serializeClauses(clauses),

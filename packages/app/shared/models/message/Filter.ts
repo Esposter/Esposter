@@ -1,15 +1,16 @@
 import type { FilterType } from "#shared/models/message/FilterType";
+import type { SerializableValue } from "@esposter/shared";
 
+import { serializableValueSchema } from "#shared/models/azure/SerializableValue";
 import { filterTypeSchema } from "#shared/models/message/FilterType";
-import { FILTER_VALUE_MAX_LENGTH } from "#shared/services/message/constants";
 import { z } from "zod";
 
 export interface Filter {
   type: FilterType;
-  value: string;
+  value: SerializableValue;
 }
 
 export const filterSchema = z.object({
   type: filterTypeSchema,
-  value: z.string().min(1).max(FILTER_VALUE_MAX_LENGTH),
+  value: serializableValueSchema,
 });

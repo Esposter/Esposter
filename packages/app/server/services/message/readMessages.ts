@@ -13,7 +13,7 @@ import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
-import { BinaryOperator, CompositeKey, escapeValue, getTableNullClause, serializeClauses } from "@esposter/shared";
+import { BinaryOperator, CompositeKey, getTableNullClause, serializeClauses } from "@esposter/shared";
 
 export const readMessages = async ({
   cursor,
@@ -25,16 +25,16 @@ export const readMessages = async ({
 }: PartialByKeys<ReadMessagesInput, "limit">) => {
   const sortBy: SortItem<keyof CompositeKey>[] = [{ isIncludeValue, ...MESSAGE_ROWKEY_SORT_ITEM }];
   const clauses: Clause[] = [
-    { key: MessageEntityPropertyNames.partitionKey, operator: BinaryOperator.eq, value: escapeValue(roomId) },
+    { key: MessageEntityPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
     getTableNullClause(ItemMetadataPropertyNames.deletedAt),
   ];
   if (inputFilter?.isPinned)
-    clauses.push({ key: MessageEntityPropertyNames.isPinned, operator: BinaryOperator.eq, value: String(true) });
+    clauses.push({ key: MessageEntityPropertyNames.isPinned, operator: BinaryOperator.eq, value: true });
 
   if (order === SortOrder.Asc) {
     // 1. Get ascending ids from the index table (MessagesAscending)
     const indexClauses: Clause[] = [
-      { key: MessageEntityPropertyNames.partitionKey, operator: BinaryOperator.eq, value: escapeValue(roomId) },
+      { key: MessageEntityPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
     ];
     if (cursor) indexClauses.push(...getCursorWhereAzureTable(cursor, sortBy));
     const indexClient = await useTableClient(AzureTable.MessagesAscending);
@@ -49,7 +49,7 @@ export const readMessages = async ({
       clauses.push({
         key: MessageEntityPropertyNames.rowKey,
         operator: BinaryOperator.eq,
-        value: escapeValue(getReverseTickedTimestamp(rowKey)),
+        value: getReverseTickedTimestamp(rowKey),
       });
     // We don't need to fetch limit + 1 here because the pagination metadata
     // is actually determined by the index table, not the message table

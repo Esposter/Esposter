@@ -9,7 +9,7 @@ const { isSearching, totalItemsLength } = storeToRefs(searchMessageStore);
   <v-container fluid>
     <v-row gap-y-2 no-gutters>
       <v-col cols="12">
-        <MessageContentSearchMenu />
+        <MessageRightSideBarSearchMenu />
       </v-col>
       <v-col flex items-center cols="12">
         <template v-if="isSearching">

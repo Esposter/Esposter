@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { SerializableValue } from "@esposter/shared";
+
 import { SearchFilterComponentMap } from "@/services/message/SearchFilterComponentMap";
 import { useSearchMessageStore } from "@/store/message/searchMessage";
 
@@ -16,7 +18,7 @@ const { activeSelectedFilter, menu } = storeToRefs(searchMessageStore);
     @mousedown.prevent
   >
     <template #activator="{ props }">
-      <MessageContentSearchInput :="props" />
+      <MessageRightSideBarSearchInput :="props" />
     </template>
     <StyledCard p-2>
       <component
@@ -25,16 +27,16 @@ const { activeSelectedFilter, menu } = storeToRefs(searchMessageStore);
           activeSelectedFilter && !activeSelectedFilter.value && SearchFilterComponentMap[activeSelectedFilter.type]
         "
         @select="
-          (value: string) => {
+          (value: SerializableValue) => {
             if (!activeSelectedFilter) return;
             activeSelectedFilter.value = value;
           }
         "
       />
       <template v-else>
-        <MessageContentSearchOptions />
+        <MessageRightSideBarSearchOptions />
         <v-divider mx-4 />
-        <MessageContentSearchHistory />
+        <MessageRightSideBarSearchHistory />
       </template>
     </StyledCard>
   </v-menu>

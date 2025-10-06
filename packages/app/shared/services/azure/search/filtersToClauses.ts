@@ -9,11 +9,12 @@ import { FilterTypeHas } from "#shared/models/message/FilterTypeHas";
 import { dayjs } from "#shared/services/dayjs";
 import {
   BinaryOperator,
-  escapeValue,
   getSearchNonNullClause,
-  Literal,
+  InvalidOperationError,
   NotFoundError,
+  Operation,
   SearchOperator,
+  serializeValue,
 } from "@esposter/shared";
 import { types } from "mime-types";
 
@@ -29,7 +30,7 @@ export const filtersToClauses = (filters: Filter[]): Clause[] => {
           clauses.push({
             key: MessageEntityPropertyNames.userId,
             operator: BinaryOperator.eq,
-            value: escapeValue(value),
+            value,
           });
         break;
       case FilterType.Mentions: {
@@ -77,7 +78,7 @@ export const filtersToClauses = (filters: Filter[]): Clause[] => {
               });
               break;
             default:
-              throw new NotFoundError(filtersToClauses.name, value);
+              throw new NotFoundError(filtersToClauses.name, serializeValue(value));
           }
         break;
       }
@@ -93,27 +94,32 @@ export const filtersToClauses = (filters: Filter[]): Clause[] => {
       }
       case FilterType.During: {
         for (const { value } of filtersByType) {
+          if (!(value instanceof Date))
+            throw new InvalidOperationError(Operation.Read, filtersToClauses.name, serializeValue(value));
           const date = dayjs(value);
           clauses.push({
             key: MessageEntityPropertyNames.createdAt,
             operator: BinaryOperator.ge,
-            value: date.startOf("day").toISOString(),
+            value: date.startOf("day").toDate(),
           });
           clauses.push({
             key: MessageEntityPropertyNames.createdAt,
             operator: BinaryOperator.le,
-            value: date.endOf("day").toISOString(),
+            value: date.endOf("day").toDate(),
           });
         }
         break;
       }
       case FilterType.Pinned: {
-        for (const { value } of filtersByType)
+        for (const { value } of filtersByType) {
+          if (typeof value !== "boolean")
+            throw new InvalidOperationError(Operation.Read, filtersToClauses.name, serializeValue(value));
           clauses.push({
             key: MessageEntityPropertyNames.isPinned,
             operator: BinaryOperator.eq,
-            value: value === String(true) ? value : Literal.Null,
+            value: value || null,
           });
+        }
         break;
       }
       default:
