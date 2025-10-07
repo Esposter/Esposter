@@ -11,6 +11,7 @@ on:
 env:
   APP_NAME: webhook-app
   APP_PACKAGE_PATH: packages/webhook
+  APP_FILTER: "@esposter/shared @esposter/webhook"
 
 jobs:
   build:
@@ -24,17 +25,17 @@ jobs:
 
       - name: 📦 Install dependencies
         run: |
-          pnpm --filter @esposter/webhook i --frozen-lockfile
+          pnpm --filter ${{ env.APP_FILTER }} i --frozen-lockfile
 
       - name: 🏗️ Build
         run: |
-          pnpm --filter @esposter/webhook build
+          pnpm --filter ${{ env.APP_FILTER }} build
 
       - name: 🧳 Prepare deploy directory
         env:
           DEPLOY_DIR: ${{ runner.temp }}/${{ env.APP_NAME }}
         run: |
-          pnpm --filter @esposter/webhook deploy --prod $DEPLOY_DIR
+          pnpm --filter ${{ env.APP_FILTER }} deploy --prod $DEPLOY_DIR
           cp ${{ env.APP_PACKAGE_PATH }}/host.json $DEPLOY_DIR/host.json
 
       - name: 📦 Zip artifact for deployment
