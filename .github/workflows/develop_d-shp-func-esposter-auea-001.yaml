@@ -38,7 +38,7 @@ jobs:
           mkdir -p ${{ env.PACKAGE_ARTIFACT_PATH }}
 
           # Create a pruned, production-only node_modules for @esposter/webhook
-          pnpm deploy --filter @esposter/webhook... --prod ${{ env.PACKAGE_ARTIFACT_PATH }}
+          pnpm deploy --filter @esposter/webhook --prod ${{ env.PACKAGE_ARTIFACT_PATH }}
 
           # Copy runtime files
           cp ${{ env.PACKAGE_PATH }}/host.json ${{ env.PACKAGE_ARTIFACT_PATH }}/host.json
