@@ -43,6 +43,21 @@ jobs:
     needs: build
 
     steps:
+      - name: 📡 Get GitHub Runner IP
+        id: get_ip
+        run: echo "runner_ip=$(curl -s ipinfo.io/ip)" >> $GITHUB_OUTPUT
+
+      - name: 📡 Allow Runner IP in Azure Function App SCM Firewall
+        run: |
+          az functionapp config access-restriction add \
+          --resource-group d-shp-rg-esposter-auea-001 \
+          --name d-shp-func-esposter-auea-001 \
+          --rule-name GitHub-Actions-Runner-$(date +%s) \
+          --action Allow \
+          --ip-address ${{ steps.get_ip.outputs.runner_ip }}/32 \
+          --priority 200 \
+          --scm-site true
+
       - name: 📥 Download artifact from build job
         uses: actions/download-artifact@v4
         with:
@@ -61,9 +76,17 @@ jobs:
 
       - name: 🚀 Run Azure Functions Action
         uses: Azure/functions-action@v1
-        id: fa
         with:
           app-name: d-shp-func-esposter-auea-001
           slot-name: Production
           package: ${{ env.APP_PACKAGE_PATH }}
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_A05B9C3CC0E447C58F4B5B8673600880 }}
+
+      - name: 📡 Remove Runner IP from Azure Function App SCM Firewall
+        if: always() # This ensures the rule is removed even if deployment fails
+        run: |
+          az functionapp config access-restriction remove \
+            --resource-group d-shp-rg-esposter-auea-001 \
+            --name d-shp-func-esposter-auea-001 \
+            --rule-name GitHub-Actions-Runner-$(date +%s) \
+            --scm-site true
