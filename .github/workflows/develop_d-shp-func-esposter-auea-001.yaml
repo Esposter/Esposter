@@ -86,5 +86,5 @@ jobs:
           az functionapp config access-restriction remove \
             --resource-group d-shp-rg-esposter-auea-001 \
             --name d-shp-func-esposter-auea-001 \
-            --rule-name GitHub-Actions-Runner-${{ github.run_id }} \
+            --rule-name GitHub-Actions-${{ github.run_id }} \
             --scm-site true
