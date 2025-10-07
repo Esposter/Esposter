@@ -31,7 +31,7 @@ jobs:
       - name: 📦 Zip artifact for deployment
         run: |
           cd packages/webhook/dist
-          zip -r ../../${{ env.ZIP_FILE_NAME }} ./*
+          zip -r ${{ github.workspace }}/release.zip .
 
       - name: 📤 Upload artifact for deployment job
         uses: actions/upload-artifact@v4
