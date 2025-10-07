@@ -27,7 +27,7 @@ jobs:
       - name: 📦 Resolve Project Dependencies
         run: |
           pushd ${{ env.PACKAGE_PATH }}
-          pnpm --filter @esposter/webhook... i --frozen-lockfile
+          pnpm --filter @esposter/webhook... i --frozen-lockfile --shamefully-hoist
           pnpm --filter @esposter/webhook... build
           popd
 
