@@ -163,10 +163,10 @@ catalog:
   show-open-file-picker: ^0.4.0
   sql-highlight: ^6.1.0
   superjson: ^2.2.2
-  survey-core: ^2.3.9
-  survey-creator-core: ^2.3.9
-  survey-creator-vue: ^2.3.9
-  survey-vue3-ui: ^2.3.9
+  survey-core: ^2.3.10
+  survey-creator-core: ^2.3.10
+  survey-creator-vue: ^2.3.10
+  survey-vue3-ui: ^2.3.10
   three: ^0.180.0
   three-globe: ^2.44.0
   trpc-nuxt: ^1.2.0
