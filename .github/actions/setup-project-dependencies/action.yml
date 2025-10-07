@@ -19,6 +19,3 @@ runs:
       with:
         node-version-file: ${{ inputs.node-version-file }}
         cache: pnpm
-
-    - name: 📦 Install dependencies
-      run: pnpm i

@@ -12,6 +12,9 @@ jobs:
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
 
+      - name: 📦 Install dependencies
+        run: pnpm i
+
       - name: 🏗️ Build
         run: pnpm build
 
