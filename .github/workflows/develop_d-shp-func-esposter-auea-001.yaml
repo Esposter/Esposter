@@ -29,7 +29,7 @@ jobs:
           popd
 
       - name: 📦 Zip artifact for deployment
-        run: zip release.zip ./* -r
+        run: zip release.zip ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }} -r
 
       - name: 📤 Upload artifact for deployment job
         uses: actions/upload-artifact@v4
