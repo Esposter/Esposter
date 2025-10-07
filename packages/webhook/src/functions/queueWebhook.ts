@@ -3,7 +3,7 @@ import type { WebhookPayload } from "@esposter/shared";
 
 import { app } from "@azure/functions";
 import { webhookPayloadSchema } from "@esposter/shared";
-import z, { ZodError } from "zod";
+import { z, ZodError } from "zod";
 
 export interface WebhookQueueMessage {
   payload: WebhookPayload;
