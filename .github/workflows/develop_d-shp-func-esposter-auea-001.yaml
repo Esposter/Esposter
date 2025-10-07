@@ -10,6 +10,7 @@ on:
 
 env:
   ARTIFACT_NAME: webhook-app-build
+  PACKAGE_PATH: packages/webhook
   ZIP_FILE_NAME: release.zip
 
 jobs:
@@ -26,11 +27,13 @@ jobs:
         run: pnpm --filter @esposter/webhook... i --frozen-lockfile
 
       - name: 🏗️ Build
-        run: pnpm --filter @esposter/webhook... build
+        run: |
+          pnpm --filter @esposter/webhook... build
+          cp ${{ env.PACKAGE_PATH }}/host.json ${{ env.PACKAGE_PATH }}/dist/host.json
 
       - name: 📦 Zip artifact for deployment
         run: |
-          cd packages/webhook/dist
+          cd ${{ env.PACKAGE_PATH }}/dist
           zip -r ${{ github.workspace }}/release.zip .
 
       - name: 📤 Upload artifact for deployment job
