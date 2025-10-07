@@ -15,6 +15,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Setup Project Dependencies
+        uses: ./.github/actions/setup-project-dependencies
+      
       - name: Resolve Project Dependencies
         run: |
           pushd ./${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
