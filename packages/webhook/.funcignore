@@ -1,0 +1,58 @@
+# Azure Functions ignore file (similar to .gitignore semantics)
+
+# --- Local and environment settings ---
+local.settings.json
+.env
+.env.*
+
+# --- Source files and TypeScript build metadata ---
+src
+tsconfig.json
+tsconfig.*.json
+
+# --- Build/test/lint/tooling configs ---
+*config.js
+*config.ts
+
+# --- Documentation and repository metadata ---
+README.md
+CHANGELOG.md
+LICENSE
+*.md
+
+# --- Logs, coverage, caches ---
+coverage/
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# --- Editor/IDE/project files ---
+.vscode
+.idea
+*.code-workspace
+
+# --- VCS/CI ---
+.git
+.gitignore
+.gitattributes
+.github
+
+# --- OS cruft ---
+.DS_Store
+Thumbs.db
+
+# --- Monorepo/workspace lockfiles (if present here) ---
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# --- Optional: exclude source maps to reduce package size ---
+dist/**/*.map
+
+# NOTE:
+# Do NOT ignore node_modules/ here unless you rely on remote build.
+# Keep runtime artifacts: host.json, package.json, dist/**, node_modules/**
+
