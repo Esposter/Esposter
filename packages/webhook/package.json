@@ -32,6 +32,8 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@azure/functions": "catalog:"
+    "@azure/functions": "catalog:",
+    "@esposter/shared": "workspace:*",
+    "zod": "catalog:"
   }
 }

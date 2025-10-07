@@ -30,6 +30,9 @@
     "test": "vitest",
     "typecheck": "tsc"
   },
+  "dependencies": {
+    "zod": "catalog:"
+  },
   "devDependencies": {
     "@azure/data-tables": "catalog:"
   }

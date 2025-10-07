@@ -30,6 +30,10 @@
     "test": "vitest",
     "typecheck": "tsc"
   },
+  "dependencies": {
+    "@esposter/shared": "workspace:*",
+    "fast-deep-equal": "catalog:"
+  },
   "devDependencies": {
     "@azure/core-http-compat": "catalog:",
     "@azure/core-rest-pipeline": "catalog:",

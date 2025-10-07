@@ -33,6 +33,7 @@
     "typecheck": "vue-tsc"
   },
   "dependencies": {
+    "@esposter/shared": "workspace:*",
     "parse-tmx": "workspace:*"
   },
   "peerDependencies": {

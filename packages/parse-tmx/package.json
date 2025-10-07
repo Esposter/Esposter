@@ -35,8 +35,10 @@
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@esposter/shared": "workspace:*",
     "@esposter/xml2js": "workspace:*",
-    "data-urls": "catalog:"
+    "data-urls": "catalog:",
+    "dayjs": "catalog:"
   },
   "devDependencies": {
     "@types/data-urls": "catalog:",
