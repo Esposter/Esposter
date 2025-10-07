@@ -4,7 +4,7 @@
   "version": "2.14.0",
   "private": true,
   "type": "module",
-  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/xml2js#readme",
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/webhook#readme",
   "license": "Apache-2.0",
   "author": "Jimmy Chen",
   "main": "dist/index.js",
