@@ -54,7 +54,7 @@ jobs:
 
       - name: 📡 Get GitHub Runner IP
         id: get_ip
-        run: echo runner_ip=$(curl -s ipinfo.io/ip) >> $GITHUB_OUTPUT
+        run: echo "runner_ip=$(curl -s ipinfo.io/ip)" >> $GITHUB_OUTPUT
 
       - name: 📡 Allow Runner IP in Azure Function App SCM Firewall
         run: |
