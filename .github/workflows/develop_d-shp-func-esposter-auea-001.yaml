@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: 🔧 Setup Project Dependencies
-        uses: .github/actions/setup-project-dependencies
+        uses: ./.github/actions/setup-project-dependencies
 
       - name: 📦 Resolve Project Dependencies
         run: |
