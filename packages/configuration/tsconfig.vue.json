@@ -1,5 +1,4 @@
 {
-  "extends": "../app/.nuxt/tsconfig.json",
   "compilerOptions": {
     "baseUrl": "${configDir}/src",
     "paths": {
