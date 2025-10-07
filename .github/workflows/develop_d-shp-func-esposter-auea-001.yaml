@@ -10,6 +10,7 @@ on:
 
 env:
   PACKAGE_PATH: packages/webhook
+  PACKAGE_ARTIFACT_PATH: ./.deploy/webhook
 
 jobs:
   build-and-deploy:
@@ -27,9 +28,23 @@ jobs:
       - name: 📦 Resolve Project Dependencies
         run: |
           pushd ${{ env.PACKAGE_PATH }}
-          pnpm --filter @esposter/webhook... i --frozen-lockfile --shamefully-hoist
+          pnpm --filter @esposter/webhook... i --frozen-lockfile
           pnpm --filter @esposter/webhook... build
           popd
+
+      - name: 📦 Prepare Azure Functions Package (dist + pruned node_modules)
+        run: |
+          rm -rf ${{ env.PACKAGE_ARTIFACT_PATH }}
+          mkdir -p ${{ env.PACKAGE_ARTIFACT_PATH }}
+
+          # Create a pruned, production-only node_modules for @esposter/webhook
+          pnpm deploy --filter @esposter/webhook... --prod ${{ env.PACKAGE_ARTIFACT_PATH }}
+
+          # Copy runtime files
+          cp ${{ env.PACKAGE_PATH }}/host.json ${{ env.PACKAGE_ARTIFACT_PATH }}/host.json
+
+          # Copy compiled output alongside package.json and node_modules
+          cp -R ${{ env.PACKAGE_PATH }}/dist ${{ env.PACKAGE_ARTIFACT_PATH }}/dist
 
       - name: 🔑 Azure CLI Login
         uses: azure/login@v2
@@ -57,7 +72,7 @@ jobs:
         uses: Azure/functions-action@v1
         with:
           app-name: d-shp-func-esposter-auea-001
-          package: ${{ env.PACKAGE_PATH }}
+          package: ${{ env.PACKAGE_ARTIFACT_PATH }}
           publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE  }}
 
       - name: 📡 Remove Runner IP from Azure Function App SCM Firewall
