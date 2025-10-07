@@ -61,7 +61,7 @@ jobs:
           az functionapp config access-restriction add \
           --resource-group d-shp-rg-esposter-auea-001 \
           --name d-shp-func-esposter-auea-001 \
-          --rule-name GitHub-Actions-Runner-$(github.run_id) \
+          --rule-name GitHub-Actions-Runner-${{ github.run_id }} \
           --action Allow \
           --ip-address ${{ steps.get_ip.outputs.runner_ip }}/32 \
           --priority 200 \
@@ -97,5 +97,5 @@ jobs:
           az functionapp config access-restriction remove \
             --resource-group d-shp-rg-esposter-auea-001 \
             --name d-shp-func-esposter-auea-001 \
-            --rule-name GitHub-Actions-Runner-$(github.run_id) \
+            --rule-name GitHub-Actions-Runner-${{ github.run_id }} \
             --scm-site true
