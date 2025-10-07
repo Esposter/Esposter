@@ -1,6 +1,6 @@
-import type { WebhookQueueMessage } from "@/functions/webhook";
+import type { WebhookQueueMessage } from "@/functions/queueWebhook";
 
-import { webhookQueueName } from "@/functions/webhook";
+import { webhookQueueName } from "@/functions/queueWebhook";
 import { app } from "@azure/functions";
 
 app.storageQueue("processWebhook", {
