@@ -31,7 +31,7 @@ jobs:
           pnpm --filter @esposter/webhook... build
           popd
 
-      - name: Azure CLI Login
+      - name: 🔑 Azure CLI Login
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
