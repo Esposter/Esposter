@@ -9,9 +9,7 @@ on:
       - develop
 
 env:
-  ARTIFACT_NAME: webhook-app-build
   PACKAGE_PATH: packages/webhook
-  ZIP_FILE_NAME: release.zip
 
 jobs:
   build:
@@ -27,20 +25,7 @@ jobs:
         run: pnpm --filter @esposter/webhook... i --frozen-lockfile
 
       - name: 🏗️ Build
-        run: |
-          pnpm --filter @esposter/webhook... build
-          cp ${{ env.PACKAGE_PATH }}/host.json ${{ env.PACKAGE_PATH }}/dist/host.json
-
-      - name: 📦 Zip artifact for deployment
-        run: |
-          cd ${{ env.PACKAGE_PATH }}/dist
-          zip -r ${{ github.workspace }}/release.zip .
-
-      - name: 📤 Upload artifact for deployment job
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.ARTIFACT_NAME }}
-          path: ${{ env.ZIP_FILE_NAME }}
+        run: pnpm --filter @esposter/webhook... build
 
   deploy:
     permissions:
@@ -71,17 +56,12 @@ jobs:
           --priority 200 \
           --scm-site true
 
-      - name: 📥 Download artifact from build job
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ env.ARTIFACT_NAME }}
-
       - name: 🚀 Run Azure Functions Action
         uses: Azure/functions-action@v1
         with:
           app-name: d-shp-func-esposter-auea-001
-          slot-name: Production
-          package: ${{ env.ZIP_FILE_NAME }}
+          package: ${{ env.PACKAGE_PATH }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_A05B9C3CC0E447C58F4B5B8673600880 }}
 
       - name: 📡 Remove Runner IP from Azure Function App SCM Firewall
         if: always() # This ensures the rule is removed even if deployment fails
