@@ -59,35 +59,14 @@ jobs:
 
       - name: 📡 Allow Runner IP in Azure Function App SCM Firewall
         run: |
-          # --- Part 1: Prepare all variables ---
-          RESOURCE_GROUP="d-shp-rg-esposter-auea-001"
-          FUNCTION_APP_NAME="d-shp-func-esposter-auea-001"
-          RULE_NAME="GitHub-Actions-Runner-${{ github.run_id }}"
-          IP_ADDRESS="${{ steps.get_ip.outputs.runner_ip }}/32"
-          PRIORITY=200 # This is a likely source of the error
-
-          # --- Part 2: Print the final command for debugging ---
-          # This is the key step you asked for. It will show the fully formed command.
-          echo "--- Running the following command ---"
-          echo "az functionapp config access-restriction add \
-            --resource-group $RESOURCE_GROUP \
-            --name $FUNCTION_APP_NAME \
-            --rule-name $RULE_NAME \
-            --action Allow \
-            --ip-address $IP_ADDRESS \
-            --priority $PRIORITY \
-            --scm-site true"
-          echo "-----------------------------------"
-
-          # --- Part 3: Execute the command ---
           az functionapp config access-restriction add \
-            --resource-group $RESOURCE_GROUP \
-            --name $FUNCTION_APP_NAME \
-            --rule-name $RULE_NAME \
-            --action Allow \
-            --ip-address $IP_ADDRESS \
-            --priority $PRIORITY \
-            --scm-site true
+          --resource-group d-shp-rg-esposter-auea-001 \
+          --name d-shp-func-esposter-auea-001 \
+          --rule-name GitHub-Actions-${{ github.run_id }} \
+          --action Allow \
+          --ip-address ${{ steps.get_ip.outputs.runner_ip }}/32 \
+          --priority 200 \
+          --scm-site true
 
       - name: 📥 Download artifact from build job
         uses: actions/download-artifact@v4
