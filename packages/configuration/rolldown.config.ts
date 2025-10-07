@@ -6,7 +6,7 @@ import { dts } from "rolldown-plugin-dts";
 const rolldownConfiguration: ConfigExport = defineConfig([
   {
     input: "src/index.ts",
-    output: [{ dir: "dist", format: "es" }],
+    output: { dir: "dist", format: "es" },
     plugins: [
       dts({
         resolve: [
