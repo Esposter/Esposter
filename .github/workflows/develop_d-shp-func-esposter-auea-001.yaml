@@ -12,7 +12,10 @@ env:
   PACKAGE_PATH: packages/webhook
 
 jobs:
-  build:
+  build-and-deploy:
+    permissions:
+      id-token: write # Require write permission to Fetch an OIDC token.
+
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout
@@ -28,13 +31,6 @@ jobs:
           pnpm --filter @esposter/webhook... build
           popd
 
-  deploy:
-    permissions:
-      id-token: write # Require write permission to Fetch an OIDC token.
-
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
       - name: Azure CLI Login
         uses: azure/login@v2
         with:
