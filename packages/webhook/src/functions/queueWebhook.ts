@@ -35,10 +35,10 @@ app.http("queueWebhook", {
     try {
       const body = await request.json();
       const payload = webhookPayloadSchema.parse(body);
+      context.extraOutputs.set(outputPropertyName, { payload, webhookId });
       context.log(`Queued job for webhookId: ${webhookId}`);
       return {
         jsonBody: { message: "Webhook accepted and queued for processing." },
-        [outputPropertyName]: { payload, webhookId },
         status: 202,
       };
     } catch (error) {
