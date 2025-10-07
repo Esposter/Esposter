@@ -1,5 +1,8 @@
 # Azure Functions ignore file (similar to .gitignore semantics)
 
+# node modules
+node_modules
+
 # --- Local and environment settings ---
 local.settings.json
 .env
@@ -53,7 +56,5 @@ yarn.lock
 # --- Optional: exclude source maps to reduce package size ---
 dist/**/*.map
 
-# NOTE:
-# Do NOT ignore node_modules/ here unless you rely on remote build.
-# Keep runtime artifacts: host.json, package.json, dist/**, node_modules/**
+# Keep runtime artifacts: host.json, package.json, dist/**
 
