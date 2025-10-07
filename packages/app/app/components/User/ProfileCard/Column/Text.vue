@@ -2,8 +2,8 @@
 import type { Row } from "@/models/user/ProfileCard/Row";
 import type { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 
-import { USER_NAME_MAX_LENGTH } from "#shared/services/user/constants";
 import { formRules } from "@/services/vuetify/formRules";
+import { USER_NAME_MAX_LENGTH } from "@esposter/shared";
 
 export interface UserProfileCardColumnTextProps {
   editMode: boolean;

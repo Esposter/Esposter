@@ -20,7 +20,7 @@ export interface Embed {
   url?: string;
 }
 
-export const embedSchema = z.object({
+export const embedSchema: z.ZodType<Embed> = z.object({
   author: embedAuthorSchema.optional(),
   // Hex color code as an integer
   color: z
@@ -37,4 +37,4 @@ export const embedSchema = z.object({
   timestamp: z.iso.datetime().optional(),
   title: z.string().max(256).optional(),
   url: z.url().optional(),
-}) satisfies z.ZodType<Embed>;
+});

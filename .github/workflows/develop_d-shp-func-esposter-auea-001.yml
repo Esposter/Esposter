@@ -9,7 +9,7 @@ on:
       - develop
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: packages/app # set this to the path to your web app project, defaults to the repository root
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: packages/webhook # set this to the path to your web app project, defaults to the repository root
 
 jobs:
   build:

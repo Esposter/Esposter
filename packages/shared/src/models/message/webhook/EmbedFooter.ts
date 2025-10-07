@@ -5,7 +5,7 @@ export interface EmbedFooter {
   text: string;
 }
 
-export const embedFooterSchema = z.object({
+export const embedFooterSchema: z.ZodType<EmbedFooter> = z.object({
   icon_url: z.url().optional(),
   text: z.string().max(2048),
-}) satisfies z.ZodType<EmbedFooter>;
+});

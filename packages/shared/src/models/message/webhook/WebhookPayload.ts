@@ -1,7 +1,7 @@
 import type { Embed } from "@/models/message/webhook/Embed";
 
-import { USER_NAME_MAX_LENGTH } from "#shared/services/user/constants";
 import { embedSchema } from "@/models/message/webhook/Embed";
+import { USER_NAME_MAX_LENGTH } from "@/services/user/constants";
 import { z } from "zod";
 
 export interface WebhookPayload {
@@ -11,7 +11,7 @@ export interface WebhookPayload {
   username?: string;
 }
 
-export const webhookPayloadSchema = z
+export const webhookPayloadSchema: z.ZodType<WebhookPayload> = z
   .object({
     avatarUrl: z.url().optional(),
     content: z.string().max(2000).optional(),
@@ -22,4 +22,4 @@ export const webhookPayloadSchema = z
   // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   .refine((data) => data.content || (data.embeds && data.embeds.length > 0), {
     message: 'Webhook must have either "content" or "embeds".',
-  }) satisfies z.ZodType<WebhookPayload>;
+  });

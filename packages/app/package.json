@@ -157,8 +157,7 @@
     "vuetify": "catalog:",
     "web-push": "catalog:",
     "worker-timers": "catalog:",
-    "ws": "catalog:",
-    "zod": "catalog:"
+    "ws": "catalog:"
   },
   "dependenciesComments": {
     "ajv": "https://github.com/json-layout/json-layout/issues/5",

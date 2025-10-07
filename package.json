@@ -50,7 +50,8 @@
     "@esposter/shared": "workspace:*",
     "dayjs": "catalog:",
     "fast-deep-equal": "catalog:",
-    "vue": "catalog:"
+    "vue": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",

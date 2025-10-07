@@ -5,7 +5,7 @@ import { sessions } from "#shared/db/schema/sessions";
 import { surveys } from "#shared/db/schema/surveys";
 import { userStatuses } from "#shared/db/schema/userStatuses";
 import { usersToRooms } from "#shared/db/schema/usersToRooms";
-import { USER_NAME_MAX_LENGTH } from "#shared/services/user/constants";
+import { USER_NAME_MAX_LENGTH } from "@esposter/shared";
 import { relations, sql } from "drizzle-orm";
 import { boolean, check, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";

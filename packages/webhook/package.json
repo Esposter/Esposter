@@ -1,0 +1,35 @@
+{
+  "name": "@esposter/webhook",
+  "version": "2.14.0",
+  "description": "A library that contains webhook functionality.",
+  "type": "module",
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/xml2js#readme",
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "webhook"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esposter/Esposter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "scripts": {
+    "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
+    "export:gen": "ctix build --config ../configuration/.ctirc-ts",
+    "lint": "oxlint && eslint .",
+    "lint:fix": "oxlint --fix && eslint --fix .",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@azure/functions": "catalog:"
+  }
+}
