@@ -18,7 +18,7 @@ const storageQueueOutput: StorageQueueOutput = {
   type: "queue",
 };
 
-app.http("webhook", {
+app.http("queueWebhook", {
   authLevel: "anonymous",
   extraOutputs: [storageQueueOutput],
   handler: async (request, context) => {
