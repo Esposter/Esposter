@@ -9,7 +9,7 @@ on:
       - develop
 
 env:
-  APP_NAME: "webhook-app"
+  APP_NAME: webhook-app
   APP_PACKAGE_PATH: packages/webhook
 
 jobs:
