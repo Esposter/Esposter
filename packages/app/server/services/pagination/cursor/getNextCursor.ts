@@ -10,5 +10,6 @@ export const getNextCursor = <TItem extends CompositeKey | ToData<AEntity>>(
   sortBy: SortItem<keyof TItem & string>[],
 ) => {
   const nextItem = items.at(-1);
+  if (!nextItem) return undefined;
   return serialize(nextItem, sortBy);
 };

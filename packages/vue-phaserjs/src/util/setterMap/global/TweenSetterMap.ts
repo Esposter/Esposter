@@ -11,7 +11,6 @@ export const TweenSetterMap = {
 
     const tween = gameObject.scene.add.tween({ ...value, targets: gameObject });
     tween.on(Tweens.Events.TWEEN_COMPLETE, () => {
-      // oxlint-disable-next-line no-useless-undefined
       emit("update:tween", undefined);
     });
   },
@@ -20,7 +19,6 @@ export const TweenSetterMap = {
 
     const tweenchain = gameObject.scene.add.tweenchain(value.map((c) => ({ ...c, targets: gameObject })));
     tweenchain.on(Tweens.Events.TWEEN_COMPLETE, () => {
-      // oxlint-disable-next-line no-useless-undefined
       emit("update:tweenchain", undefined);
     });
     return tweenchain;

@@ -7,7 +7,6 @@ import { Operation } from "@esposter/shared";
 
 export const useReplyStore = defineStore("message/reply", () => {
   const roomStore = useRoomStore();
-  // oxlint-disable-next-line no-useless-undefined
   const { data: rowKey } = useDataMap<string | undefined>(() => roomStore.currentRoomId, undefined);
   MessageHookMap.ResetSend.push(() => {
     rowKey.value = "";
