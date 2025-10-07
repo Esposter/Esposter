@@ -16,10 +16,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Resolve Project Dependencies
-        shell: bash
         run: |
           pushd ./${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          pnpm install
+          pnpm i
           pnpm build
           popd
 
