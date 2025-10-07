@@ -9,7 +9,8 @@ on:
       - develop
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: packages/webhook
+  APP_NAME: "webhook-app"
+  APP_PACKAGE_PATH: packages/webhook
 
 jobs:
   build:
@@ -23,27 +24,25 @@ jobs:
 
       - name: 📦 Install dependencies
         run: |
-          pnpm -w i --frozen-lockfile \
-            --filter @esposter/shared... \
-            --filter @esposter/webhook...
+          pnpm i --frozen-lockfile --filter @esposter/webhook
 
       - name: 🏗️ Build
         run: |
-          pnpm -w -r --filter @esposter/shared... --filter @esposter/webhook... build
+          pnpm build --filter @esposter/webhook
 
       - name: 🧳 Prepare deploy directory
         env:
-          DEPLOY_DIR: ${{ runner.temp }}/webhook-app
+          DEPLOY_DIR: ${{ runner.temp }}/${{ env.APP_NAME }}
         run: |
-          pnpm -w --filter @esposter/webhook deploy --prod $DEPLOY_DIR
-          cp ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/host.json $DEPLOY_DIR/host.json
+          pnpm --filter @esposter/webhook deploy --prod $DEPLOY_DIR
+          cp ${{ env.APP_PACKAGE_PATH }}/host.json $DEPLOY_DIR/host.json
 
       - name: 📦 Zip artifact for deployment
         env:
-          DEPLOY_DIR: ${{ runner.temp }}/webhook-app
+          DEPLOY_DIR: ${{ runner.temp }}/${{ env.APP_NAME }}
         run: |
           cd ${{ runner.temp }}
-          zip $GITHUB_WORKSPACE/release.zip webhook-app -r
+          zip $GITHUB_WORKSPACE/release.zip ${{ env.APP_NAME }} -r
 
       - name: 📤 Upload artifact for deployment job
         uses: actions/upload-artifact@v4
