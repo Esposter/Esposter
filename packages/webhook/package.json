@@ -6,6 +6,8 @@
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/xml2js#readme",
   "license": "Apache-2.0",
   "author": "Jimmy Chen",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],

@@ -1,13 +1,20 @@
 import type { StorageQueueOutput } from "@azure/functions";
+import type { WebhookPayload } from "@esposter/shared";
 
 import { app } from "@azure/functions";
 import { webhookPayloadSchema } from "@esposter/shared";
 import z, { ZodError } from "zod";
 
+export interface WebhookQueueMessage {
+  payload: WebhookPayload;
+  webhookId: string;
+}
+
+export const webhookQueueName = "webhook-jobs";
 const storageQueueOutput: StorageQueueOutput = {
   connection: "AzureWebJobsStorage",
   name: "outputQueueItem",
-  queueName: "webhook-jobs",
+  queueName: webhookQueueName,
   type: "queue",
 };
 
