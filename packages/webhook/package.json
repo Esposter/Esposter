@@ -1,7 +1,8 @@
 {
   "name": "@esposter/webhook",
-  "version": "2.14.0",
   "description": "A library that contains webhook functionality.",
+  "version": "2.14.0",
+  "private": true,
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/xml2js#readme",
   "license": "Apache-2.0",
@@ -14,9 +15,6 @@
   "keywords": [
     "webhook"
   ],
-  "publishConfig": {
-    "access": "public"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Esposter/Esposter.git"
