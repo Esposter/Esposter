@@ -21,11 +21,12 @@ jobs:
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
 
-      - name: 📦 Install dependencies
-        run: pnpm --filter @esposter/webhook... i --frozen-lockfile
-
-      - name: 🏗️ Build
-        run: pnpm --filter @esposter/webhook... build
+      - name: 📦 Resolve Project Dependencies
+        run: |
+          pushd './${{ env.PACKAGE_PATH }}'
+          pnpm --filter @esposter/webhook... i --frozen-lockfile
+          pnpm --filter @esposter/webhook... build
+          popd
 
   deploy:
     permissions:
