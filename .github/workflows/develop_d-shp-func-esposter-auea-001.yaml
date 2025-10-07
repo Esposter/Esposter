@@ -9,8 +9,8 @@ on:
       - develop
 
 env:
-  APP_NAME: webhook-app
   APP_PACKAGE_PATH: packages/webhook
+  ARTIFACT_NAME: webhook-app-build
   ZIP_FILE_NAME: release.zip
 
 jobs:
@@ -30,12 +30,14 @@ jobs:
         run: pnpm --filter @esposter/webhook... build
 
       - name: 📦 Zip artifact for deployment
-        run: zip ${{ env.ZIP_FILE_NAME }} ./* -r
+        run: |
+          cd ${{ env.APP_PACKAGE_PATH }}/dist
+          zip -r ../../${{ env.ZIP_FILE_NAME }} .
 
       - name: 📤 Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.APP_NAME }}
+          name: ${{ env.ARTIFACT_NAME }}
           path: ${{ env.ZIP_FILE_NAME }}
 
   deploy:
@@ -54,7 +56,7 @@ jobs:
 
       - name: 📡 Get GitHub Runner IP
         id: get_ip
-        run: echo "runner_ip=$(curl -s ipinfo.io/ip)" >> $GITHUB_OUTPUT
+        run: echo runner_ip=$(curl -s ipinfo.io/ip) >> $GITHUB_OUTPUT
 
       - name: 📡 Allow Runner IP in Azure Function App SCM Firewall
         run: |
@@ -70,26 +72,14 @@ jobs:
       - name: 📥 Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: ${{ env.APP_NAME }}
-
-      - name: 🗜️ Unzip artifact for deployment
-        run: |
-          unzip ${{ env.ZIP_FILE_NAME }}
-          rm ${{ env.ZIP_FILE_NAME }}
-
-      - name: ⬆️ Upload artifact for deployment job
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.APP_NAME }}
-          path: ${{ env.ZIP_FILE_NAME }}
+          name: ${{ env.ARTIFACT_NAME }}
 
       - name: 🚀 Run Azure Functions Action
         uses: Azure/functions-action@v1
         with:
           app-name: d-shp-func-esposter-auea-001
           slot-name: Production
-          package: ${{ env.APP_PACKAGE_PATH }}
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_A05B9C3CC0E447C58F4B5B8673600880 }}
+          package: ${{ env.ZIP_FILE_NAME }}
 
       - name: 📡 Remove Runner IP from Azure Function App SCM Firewall
         if: always() # This ensures the rule is removed even if deployment fails
