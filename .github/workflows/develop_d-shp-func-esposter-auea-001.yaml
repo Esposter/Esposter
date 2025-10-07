@@ -21,15 +21,29 @@ jobs:
       - name: 🔧 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
 
-      - name: 📦 Resolve Project Dependencies
+      - name: 📦 Install dependencies
         run: |
-          pushd ./${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          pnpm i
-          pnpm build
-          popd
+          pnpm -w i --frozen-lockfile \
+            --filter @esposter/shared... \
+            --filter @esposter/webhook...
+
+      - name: 🏗️ Build
+        run: |
+          pnpm -w -r --filter @esposter/shared... --filter @esposter/webhook... build
+
+      - name: 🧳 Prepare deploy directory
+        env:
+          DEPLOY_DIR: ${{ runner.temp }}/webhook-app
+        run: |
+          pnpm -w --filter @esposter/webhook deploy --prod $DEPLOY_DIR
+          cp ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/host.json $DEPLOY_DIR/host.json
 
       - name: 📦 Zip artifact for deployment
-        run: zip release.zip ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }} -r
+        env:
+          DEPLOY_DIR: ${{ runner.temp }}/webhook-app
+        run: |
+          cd ${{ runner.temp }}
+          zip $GITHUB_WORKSPACE/release.zip webhook-app -r
 
       - name: 📤 Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -64,5 +78,5 @@ jobs:
         with:
           app-name: d-shp-func-esposter-auea-001
           slot-name: Production
-          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          package: webhook-app
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_A05B9C3CC0E447C58F4B5B8673600880 }}
