@@ -9,20 +9,8 @@ jobs:
   ci:
     runs-on: ubuntu-latest
     steps:
-      - name: 📥 Checkout
-        uses: actions/checkout@v5
-
-      - name: 📦 Install pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: 🛠️ Setup node
-        uses: actions/setup-node@v5
-        with:
-          node-version-file: package.json
-          cache: pnpm
-
-      - name: 📦 Install dependencies
-        run: pnpm i
+      - name: 🔧 Setup Project Dependencies
+        uses: ./.github/actions/setup-project-dependencies
 
       - name: 🏗️ Build
         run: pnpm build
