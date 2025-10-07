@@ -13,3 +13,5 @@ app.storageQueue("processWebhook", {
   },
   queueName: webhookQueueName,
 });
+
+export default {};
