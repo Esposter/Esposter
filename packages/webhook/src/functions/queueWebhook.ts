@@ -37,11 +37,9 @@ app.http("queueWebhook", {
       const queueMessage = { payload, webhookId };
       context.log(`Queued job for webhookId: ${webhookId}`);
       return {
-        httpResponse: {
-          jsonBody: { message: "Webhook accepted and queued for processing." },
-          status: 202,
-        },
+        jsonBody: { message: "Webhook accepted and queued for processing." },
         outputQueueItem: queueMessage,
+        status: 202,
       };
     } catch (error) {
       if (error instanceof ZodError) {
