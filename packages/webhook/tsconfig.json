@@ -1,3 +1,31 @@
 {
-  "extends": "../configuration/tsconfig.node.json"
+  "compilerOptions": {
+    "baseUrl": "${configDir}/src",
+    "paths": {
+      "@/*": ["*"]
+    },
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "target": "ESNext",
+    "allowJs": false,
+    "composite": true,
+    "isolatedDeclarations": true,
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitOverride": true,
+    "module": "preserve",
+    "noEmit": true,
+    "lib": ["ESNext"],
+    "types": [],
+    "moduleResolution": "Bundler",
+    "useDefineForClassFields": true,
+    "noImplicitThis": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["${configDir}/*.ts", "${configDir}/src/**/*.ts"],
+  "exclude": ["${configDir}/node_modules"]
 }
