@@ -11,9 +11,10 @@ export interface WebhookQueueMessage {
 }
 
 export const webhookQueueName = "webhook-jobs";
+const outputPropertyName = "queueMessage";
 const storageQueueOutput: StorageQueueOutput = {
   connection: "AzureWebJobsStorage",
-  name: "outputQueueItem",
+  name: outputPropertyName,
   queueName: webhookQueueName,
   type: "queue",
 };
@@ -34,11 +35,10 @@ app.http("queueWebhook", {
     try {
       const body = await request.json();
       const payload = webhookPayloadSchema.parse(body);
-      const queueMessage = { payload, webhookId };
       context.log(`Queued job for webhookId: ${webhookId}`);
       return {
         jsonBody: { message: "Webhook accepted and queued for processing." },
-        outputQueueItem: queueMessage,
+        [outputPropertyName]: { payload, webhookId },
         status: 202,
       };
     } catch (error) {
