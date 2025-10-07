@@ -47,12 +47,18 @@ jobs:
         with:
           name: node-app
 
-      - name: 📦 Unzip artifact for deployment
+      - name: 🗜️ Unzip artifact for deployment
         run: |
           unzip release.zip
           rm release.zip
 
-      - name: 🔧 Run Azure Functions Action
+      - name: ⬆️ Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: node-app
+          path: release.zip
+
+      - name: 🚀 Run Azure Functions Action
         uses: Azure/functions-action@v1
         id: fa
         with:
