@@ -24,11 +24,11 @@ jobs:
 
       - name: 📦 Install dependencies
         run: |
-          pnpm i --frozen-lockfile --filter @esposter/webhook
+          pnpm --filter @esposter/webhook i --frozen-lockfile
 
       - name: 🏗️ Build
         run: |
-          pnpm build --filter @esposter/webhook
+          pnpm --filter @esposter/webhook build
 
       - name: 🧳 Prepare deploy directory
         env:
