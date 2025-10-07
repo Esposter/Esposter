@@ -9,7 +9,6 @@ on:
       - develop
 
 env:
-  APP_PACKAGE_PATH: packages/webhook
   ARTIFACT_NAME: webhook-app-build
   ZIP_FILE_NAME: release.zip
 
@@ -31,8 +30,8 @@ jobs:
 
       - name: 📦 Zip artifact for deployment
         run: |
-          cd ${{ env.APP_PACKAGE_PATH }}/dist
-          zip -r ../../${{ env.ZIP_FILE_NAME }} .
+          cd packages/webhook/dist
+          zip -r ../../${{ env.ZIP_FILE_NAME }} ./*
 
       - name: 📤 Upload artifact for deployment job
         uses: actions/upload-artifact@v4
