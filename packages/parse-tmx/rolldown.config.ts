@@ -1,1 +1,1 @@
-../configuration/rolldown.config.ts
+../configuration/rolldown.config.node.ts
