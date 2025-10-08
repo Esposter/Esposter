@@ -81,13 +81,13 @@ app.http("queueWebhook", {
           jsonBody: { message: "Rate limit exceeded." },
           status: 429,
         };
+      } else {
+        context.error("An internal error occurred:", error);
+        return {
+          jsonBody: { message: "An internal server error occurred." },
+          status: 500,
+        };
       }
-
-      context.error("An internal error occurred:", error);
-      return {
-        jsonBody: { message: "An internal server error occurred." },
-        status: 500,
-      };
     }
   },
   methods: ["POST"],
