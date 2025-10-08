@@ -1,5 +1,5 @@
-import type { User } from "#shared/db/schema/users";
 import type { MentionNodeAttributes } from "@/models/message/MentionNodeAttributes";
+import type { User } from "@esposter/db";
 import type { VirtualElement } from "@floating-ui/dom";
 import type { MentionOptions } from "@tiptap/extension-mention";
 

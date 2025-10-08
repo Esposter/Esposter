@@ -1,5 +1,5 @@
 /* eslint-disable perfectionist/sort-objects */
-import { FilterType } from "#shared/models/message/FilterType";
+import { FilterType } from "@esposter/shared/src/models/message/filter/FilterType";
 
 export const SearchFilterComponentMap = {
   [FilterType.From]: defineAsyncComponent(

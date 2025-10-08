@@ -1,7 +1,5 @@
-import type { Like } from "#shared/db/schema/likes";
+import type { Like } from "@esposter/db";
 
-import { likes } from "#shared/db/schema/likes";
-import { posts } from "#shared/db/schema/posts";
 import { createLikeInputSchema } from "#shared/models/db/post/CreateLikeInput";
 import { deleteLikeInputSchema } from "#shared/models/db/post/DeleteLikeInput";
 import { updateLikeInputSchema } from "#shared/models/db/post/UpdateLikeInput";
@@ -9,6 +7,7 @@ import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { ranking } from "@@/server/services/post/ranking";
 import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
+import { likes, posts } from "@esposter/db";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";

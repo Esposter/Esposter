@@ -64,6 +64,7 @@
     "oxlint": "catalog:",
     "rolldown": "catalog:",
     "rolldown-plugin-dts": "catalog:",
+    "tsx": "catalog:",
     "type-fest": "catalog:",
     "typedoc": "catalog:",
     "typescript": "catalog:",

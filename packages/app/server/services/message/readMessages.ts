@@ -4,7 +4,6 @@ import type { Clause } from "@esposter/shared";
 import type { PartialByKeys } from "unocss";
 
 import { MessageEntity, MessageEntityPropertyNames } from "#shared/models/db/message/MessageEntity";
-import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadata";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
 import { DEFAULT_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
@@ -13,7 +12,13 @@ import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
-import { BinaryOperator, CompositeKey, getTableNullClause, serializeClauses } from "@esposter/shared";
+import {
+  BinaryOperator,
+  CompositeKey,
+  getTableNullClause,
+  ItemMetadataPropertyNames,
+  serializeClauses,
+} from "@esposter/shared";
 
 export const readMessages = async ({
   cursor,

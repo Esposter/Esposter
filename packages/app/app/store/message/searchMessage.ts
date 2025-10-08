@@ -1,10 +1,10 @@
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
-import type { Filter } from "#shared/models/message/Filter";
+import type { Filter } from "@esposter/shared";
 
-import { FilterType } from "#shared/models/message/FilterType";
 import { getIsSearchQueryEmpty } from "#shared/services/message/getIsSearchQueryEmpty";
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useRoomStore } from "@/store/message/room";
+import { FilterType } from "@esposter/shared";
 
 export const useSearchMessageStore = defineStore("message/searchMessage", () => {
   const roomStore = useRoomStore();

@@ -1,4 +1,4 @@
-import type { Survey } from "#shared/db/schema/surveys";
+import type { Survey } from "@esposter/db";
 
 import { getVersionPath } from "@@/server/services/azure/container/getVersionPath";
 import { PUBLISH_DIRECTORY_PATH } from "@@/server/services/survey/constants";

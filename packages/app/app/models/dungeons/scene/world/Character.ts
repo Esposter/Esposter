@@ -3,7 +3,7 @@ import type { Asset } from "#shared/models/dungeons/Asset";
 import type { CharacterId } from "@/models/dungeons/scene/world/CharacterId";
 import type { Direction, WalkingAnimationMapping } from "grid-engine";
 
-import { ItemMetadata } from "#shared/models/entity/ItemMetadata";
+import { ItemMetadata } from "@esposter/shared";
 
 export class Character<TName extends string = string> extends ItemMetadata {
   asset!: Asset;

@@ -1,5 +1,5 @@
 import { db } from "@@/server/db";
-import { schema } from "@@/server/db/schema";
+import { schema } from "@esposter/db";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 

@@ -2,7 +2,6 @@ import type { AzureUpdateEntity } from "#shared/models/azure/table/AzureUpdateEn
 import type { FileSasEntity } from "#shared/models/message/FileSasEntity";
 import type { Clause } from "@esposter/shared";
 
-import { rooms, selectRoomSchema } from "#shared/db/schema/rooms";
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 import { AzureEntityType } from "#shared/models/azure/table/AzureEntityType";
 import { FileEntity, fileEntitySchema } from "#shared/models/azure/table/FileEntity";
@@ -18,7 +17,6 @@ import { MessageType } from "#shared/models/db/message/MessageType";
 import { searchMessagesInputSchema } from "#shared/models/db/message/SearchMessagesInput";
 import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
-import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadata";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
@@ -51,10 +49,12 @@ import { addProfanityFilterMiddleware } from "@@/server/trpc/middleware/addProfa
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/message/getCreatorProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
+import { rooms, selectRoomSchema } from "@esposter/db";
 import {
   BinaryOperator,
   getTableNullClause,
   InvalidOperationError,
+  ItemMetadataPropertyNames,
   NotFoundError,
   Operation,
   serializeClauses,

@@ -1,5 +1,5 @@
-import type { User } from "#shared/db/schema/users";
 import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
+import type { User } from "@esposter/db";
 import type { Component } from "vue";
 
 import { MessageType } from "#shared/models/db/message/MessageType";

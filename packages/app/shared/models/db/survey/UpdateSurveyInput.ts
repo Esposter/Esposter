@@ -1,6 +1,6 @@
 import type { z } from "zod";
 
-import { selectSurveySchema } from "#shared/db/schema/surveys";
+import { selectSurveySchema } from "@esposter/db";
 
 export const updateSurveyInputSchema = selectSurveySchema
   .pick({ group: true, id: true, name: true })

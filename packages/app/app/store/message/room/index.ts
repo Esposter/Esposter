@@ -1,9 +1,8 @@
-import type { Room } from "#shared/db/schema/rooms";
-import type { User } from "#shared/db/schema/users";
 import type { CreateRoomInput } from "#shared/models/db/room/CreateRoomInput";
 import type { DeleteRoomInput } from "#shared/models/db/room/DeleteRoomInput";
 import type { JoinRoomInput } from "#shared/models/db/room/JoinRoomInput";
 import type { LeaveRoomInput } from "#shared/models/db/room/LeaveRoomInput";
+import type { Room, User } from "@esposter/db";
 
 import { MessageType } from "#shared/models/db/message/MessageType";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";

@@ -1,6 +1,6 @@
 import { IS_PRODUCTION } from "#shared/util/environment/constants";
 import { DrizzleLogger } from "@@/server/db/logger";
-import { schema } from "@@/server/db/schema";
+import { schema } from "@esposter/db";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Survey } from "#shared/db/schema/surveys";
+import type { Survey } from "@esposter/db";
 import type { ItemSlot } from "vuetify/lib/components/VDataTable/types.mjs";
 
 import { RoutePath } from "#shared/models/router/RoutePath";
