@@ -20,7 +20,6 @@ const storageQueueOutput: StorageQueueOutput = {
 };
 
 app.http("queueWebhook", {
-  authLevel: "anonymous",
   extraOutputs: [storageQueueOutput],
   handler: async (request, context) => {
     context.log(`Webhook trigger function processed a request for URL: ${request.url}`);
