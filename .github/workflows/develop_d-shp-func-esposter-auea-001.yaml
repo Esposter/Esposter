@@ -9,6 +9,8 @@ on:
       - develop
 
 env:
+  ARTIFACT_NAME: functionapp.zip
+  OUTPUT_DIRECTORY: packages/webhook/dist
   PACKAGE_PATH: packages/webhook
 
 jobs:
@@ -59,6 +61,7 @@ jobs:
           app-name: d-shp-func-esposter-auea-001
           package: ${{ env.PACKAGE_PATH }}
           publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE  }}
+          respect-funcignore: true
 
       - name: 📡 Remove Runner IP from Azure Function App SCM Firewall
         if: always() # This ensures the rule is removed even if deployment fails

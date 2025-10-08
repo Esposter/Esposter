@@ -13,6 +13,14 @@ src
 tsconfig.json
 tsconfig.*.json
 
+# Test files
+tests
+__tests__
+*.test.js
+*.test.ts
+*.spec.js
+*.spec.ts
+
 # --- Build/test/lint/tooling configs ---
 *config.js
 *config.ts
