@@ -32,7 +32,10 @@
   },
   "dependencies": {
     "@azure/functions": "catalog:",
+    "@esposter/db": "workspace:*",
     "@esposter/shared": "workspace:*",
+    "drizzle-orm": "catalog:",
+    "postgres": "catalog:",
     "zod": "catalog:"
   }
 }

@@ -1276,9 +1276,18 @@ importers:
       '@azure/functions':
         specifier: 'catalog:'
         version: 4.8.0
+      '@esposter/db':
+        specifier: workspace:*
+        version: link:../db
       '@esposter/shared':
         specifier: workspace:*
         version: link:../shared
+      drizzle-orm:
+        specifier: 'catalog:'
+        version: 0.44.6(@electric-sql/pglite@0.3.10)(kysely@0.28.7)(postgres@3.4.7)
+      postgres:
+        specifier: 'catalog:'
+        version: 3.4.7
       zod:
         specifier: 'catalog:'
         version: 4.1.12

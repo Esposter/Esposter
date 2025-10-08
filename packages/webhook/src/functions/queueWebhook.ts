@@ -2,7 +2,10 @@ import type { StorageQueueOutput } from "@azure/functions";
 import type { WebhookPayload } from "@esposter/shared";
 
 import { app } from "@azure/functions";
+import { schema } from "@esposter/db";
 import { webhookPayloadSchema } from "@esposter/shared";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 import { z, ZodError } from "zod";
 
 export interface WebhookQueueMessage {
@@ -18,12 +21,8 @@ const storageQueueOutput: StorageQueueOutput = {
   queueName: webhookQueueName,
   type: "queue",
 };
-
-// interface DbWebhookRow {
-//   id: string;
-//   isActive: boolean;
-//   token: string;
-// }
+const client = postgres(process.env.DATABASE_URL);
+const db = drizzle(client, { schema });
 
 app.http("queueWebhook", {
   extraOutputs: [storageQueueOutput],
@@ -37,19 +36,16 @@ app.http("queueWebhook", {
         status: 400,
       };
 
-    // let client: null | ReturnType<typeof postgres> = null;
     try {
       const token = request.headers.get("authorization");
       if (!token) return { jsonBody: { message: "Missing webhook token." }, status: 401 };
 
-      // client = postgres(process.env.DATABASE_URL);
-      // const rows = await client<
-      //   DbWebhookRow[]
-      // >`select id, is_active as "isActive", secret from "message"."webhooks" where id = ${webhookId} limit 1`;
-      // const hook = rows?.[0];
-      // if (!hook) return { jsonBody: { message: "Webhook not found." }, status: 404 };
-      // if (!hook.isActive) return { jsonBody: { message: "Webhook is inactive." }, status: 403 };
-      // if (hook.token !== token) return { jsonBody: { message: "Invalid webhook token." }, status: 401 };
+      const webhook = await db.query.webhooks.findFirst({
+        columns: { id: true, isActive: true, token: true },
+        where: (webhooks, { and, eq }) =>
+          and(eq(webhooks.id, webhookId), eq(webhooks.isActive, true), eq(webhooks.token, token)),
+      });
+      if (!webhook) return { jsonBody: { message: "Webhook not found." }, status: 404 };
 
       const body = await request.json();
       const payload = webhookPayloadSchema.parse(body);
@@ -77,8 +73,6 @@ app.http("queueWebhook", {
         jsonBody: { message: "An internal server error occurred." },
         status: 500,
       };
-    } finally {
-      // if (client) await client.end({ timeout: 1 });
     }
   },
   methods: ["POST"],
