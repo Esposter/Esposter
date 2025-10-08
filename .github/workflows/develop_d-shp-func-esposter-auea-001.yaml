@@ -9,8 +9,6 @@ on:
       - develop
 
 env:
-  ARTIFACT_NAME: functionapp.zip
-  OUTPUT_DIRECTORY: packages/webhook/dist
   PACKAGE_PATH: packages/webhook
 
 jobs:
