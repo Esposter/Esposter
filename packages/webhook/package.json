@@ -1,23 +1,21 @@
 {
-  "name": "@esposter/xml2js",
-  "description": "Simple XML to JavaScript object converter.",
+  "name": "@esposter/webhook",
+  "description": "A library that contains webhook functionality.",
   "version": "2.14.0",
+  "private": true,
   "type": "module",
-  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/xml2js#readme",
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/webhook#readme",
   "license": "Apache-2.0",
   "author": "Jimmy Chen",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    ".funcignore"
   ],
   "keywords": [
-    "xml",
-    "json"
+    "webhook"
   ],
-  "publishConfig": {
-    "access": "public"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Esposter/Esposter.git"
@@ -33,11 +31,8 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "sax": "catalog:",
-    "xmlbuilder2": "catalog:"
-  },
-  "devDependencies": {
-    "@types/sax": "catalog:",
-    "@types/xml2js": "catalog:"
+    "@azure/functions": "catalog:",
+    "@esposter/shared": "workspace:*",
+    "zod": "catalog:"
   }
 }

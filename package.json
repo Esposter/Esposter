@@ -46,12 +46,6 @@
       "win32": "pnpm pwsh -Command Copy-Item -Force"
     }
   },
-  "dependencies": {
-    "@esposter/shared": "workspace:*",
-    "dayjs": "catalog:",
-    "fast-deep-equal": "catalog:",
-    "vue": "catalog:"
-  },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
     "@lerna-lite/cli": "catalog:",

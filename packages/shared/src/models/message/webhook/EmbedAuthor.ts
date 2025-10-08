@@ -6,8 +6,8 @@ export interface EmbedAuthor {
   url?: string;
 }
 
-export const embedAuthorSchema = z.object({
+export const embedAuthorSchema: z.ZodType<EmbedAuthor> = z.object({
   icon_url: z.url().optional(),
   name: z.string().max(256),
   url: z.url().optional(),
-}) satisfies z.ZodType<EmbedAuthor>;
+});

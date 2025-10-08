@@ -1,7 +1,7 @@
 {
   "name": "azure-mock",
-  "version": "2.14.0",
   "description": "A library that contains azure mock classes.",
+  "version": "2.14.0",
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter#readme",
   "license": "Apache-2.0",
@@ -29,6 +29,10 @@
     "lint:fix": "oxlint --fix && eslint --fix .",
     "test": "vitest",
     "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@esposter/shared": "workspace:*",
+    "fast-deep-equal": "catalog:"
   },
   "devDependencies": {
     "@azure/core-http-compat": "catalog:",
