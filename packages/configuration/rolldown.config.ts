@@ -5,7 +5,6 @@ import { dts } from "rolldown-plugin-dts";
 
 const rolldownConfiguration: ConfigExport = defineConfig([
   {
-    external: ["@azure/functions"],
     input: "src/index.ts",
     output: { dir: "dist", format: "es" },
     plugins: [
