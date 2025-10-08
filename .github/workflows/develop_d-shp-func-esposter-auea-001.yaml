@@ -9,6 +9,7 @@ on:
       - develop
 
 env:
+  OUTPUT_DIRECTORY: dist
   PACKAGE_PATH: packages/webhook
 
 jobs:
@@ -28,9 +29,10 @@ jobs:
         run: |
           echo inject-workspace-packages=true >> .npmrc
           echo node-linker=hoisted >> .npmrc
-          pnpm --filter @esposter/webhook deploy ${{ env.PACKAGE_PATH }}
           pushd ${{ env.PACKAGE_PATH }}
-          pnpm build
+          pnpm --filter @esposter/webhook... i --no-frozen-lockfile
+          pnpm --filter @esposter/webhook... build
+          pnpm --filter @esposter/webhook deploy ${{ env.OUTPUT_DIRECTORY }}
           popd
 
       - name: 🔑 Azure CLI Login
@@ -59,7 +61,7 @@ jobs:
         uses: Azure/functions-action@v1
         with:
           app-name: d-shp-func-esposter-auea-001
-          package: ${{ env.PACKAGE_PATH }}
+          package: ${{ env.OUTPUT_DIRECTORY }}
           publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE  }}
           respect-funcignore: true
 
