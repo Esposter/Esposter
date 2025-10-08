@@ -27,6 +27,7 @@ jobs:
       - name: 📦 Resolve Project Dependencies
         run: |
           echo inject-workspace-packages=true >> .npmrc
+          pnpm --filter @esposter/webhook... i --no-frozen-lockfile
           pnpm --filter @esposter/webhook deploy ${{ env.OUTPUT_DIRECTORY }}
 
       - name: 🔑 Azure CLI Login
