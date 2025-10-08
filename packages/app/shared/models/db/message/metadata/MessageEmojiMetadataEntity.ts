@@ -1,12 +1,12 @@
 import type { CompositeKeyEntity } from "#shared/models/azure/table/CompositeKeyEntity";
 import type { ToData } from "#shared/models/entity/ToData";
 
-import { selectUserSchema } from "#shared/db/schema/users";
 import {
   createMessageMetadataEntitySchema,
   MessageMetadataEntity,
 } from "#shared/models/db/message/metadata/MessageMetadataEntity";
 import { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
+import { selectUserSchema } from "@esposter/db";
 import { getPropertyNames } from "@esposter/shared";
 import { z } from "zod";
 

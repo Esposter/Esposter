@@ -1,5 +1,5 @@
-import { posts } from "#shared/db/schema/posts";
-import { users } from "#shared/db/schema/users";
+import { posts } from "@/schema/posts";
+import { users } from "@/schema/users";
 import { relations, sql } from "drizzle-orm";
 import { check, integer, pgTable, primaryKey, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";

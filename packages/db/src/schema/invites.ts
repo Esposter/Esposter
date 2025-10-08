@@ -1,16 +1,17 @@
-import type { Room } from "#shared/db/schema/rooms";
-import type { User } from "#shared/db/schema/users";
-import type { UserToRoom } from "#shared/db/schema/usersToRooms";
+import type { Room } from "@/schema/rooms";
+import type { User } from "@/schema/users";
+import type { UserToRoom } from "@/schema/usersToRooms";
 
-import { pgTable } from "#shared/db/pgTable";
-import { messageSchema } from "#shared/db/schema/messageSchema";
-import { rooms } from "#shared/db/schema/rooms";
-import { users } from "#shared/db/schema/users";
-import { CODE_LENGTH } from "#shared/services/invite/constants";
+import { pgTable } from "@/pgTable";
+import { messageSchema } from "@/schema/messageSchema";
+import { rooms } from "@/schema/rooms";
+import { users } from "@/schema/users";
 import { relations, sql } from "drizzle-orm";
 import { check, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
+
+export const CODE_LENGTH = 8;
 
 export const invites = pgTable(
   "invites",

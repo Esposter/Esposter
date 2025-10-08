@@ -1,12 +1,19 @@
-import { pgTable } from "#shared/db/pgTable";
-import { messageSchema } from "#shared/db/schema/messageSchema";
-import { users } from "#shared/db/schema/users";
-import { UserStatus } from "#shared/models/db/user/UserStatus";
-import { STATUS_MESSAGE_MAX_LENGTH } from "#shared/services/message/constants";
+import { pgTable } from "@/pgTable";
+import { messageSchema } from "@/schema/messageSchema";
+import { users } from "@/schema/users";
 import { relations, sql } from "drizzle-orm";
 import { boolean, check, pgEnum, text, timestamp } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
+
+export const STATUS_MESSAGE_MAX_LENGTH = 1000;
+
+export enum UserStatus {
+  DoNotDisturb = "DoNotDisturb",
+  Idle = "Idle",
+  Offline = "Offline",
+  Online = "Online",
+}
 
 export const userStatusEnum = pgEnum("user_status", UserStatus);
 

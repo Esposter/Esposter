@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { FilterType } from "#shared/models/message/FilterType";
 import { getFilterDisplayValue } from "@/services/message/getFilterDisplayValue";
 import { useSearchMessageStore } from "@/store/message/searchMessage";
+import { FilterType } from "@esposter/shared";
 
 const readSearchedMessages = useReadSearchedMessages();
 const searchMessageStore = useSearchMessageStore();

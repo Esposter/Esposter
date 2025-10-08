@@ -1,8 +1,6 @@
 /* eslint-disable perfectionist/sort-objects */
-import { FilterType } from "#shared/models/message/FilterType";
-import { FilterTypeHas } from "#shared/models/message/FilterTypeHas";
 import { joinWithOxfordOr } from "@/util/text/joinWithOxfordOr";
-import { uncapitalize } from "@esposter/shared";
+import { FilterType, FilterTypeHas, uncapitalize } from "@esposter/shared";
 
 export const FilterTypePlaceholderMap = {
   [FilterType.From]: "user",

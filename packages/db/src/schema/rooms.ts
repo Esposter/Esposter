@@ -1,12 +1,13 @@
-import { pgTable } from "#shared/db/pgTable";
-import { messageSchema } from "#shared/db/schema/messageSchema";
-import { users } from "#shared/db/schema/users";
-import { usersToRooms } from "#shared/db/schema/usersToRooms";
-import { ROOM_NAME_MAX_LENGTH } from "#shared/services/message/constants";
+import { pgTable } from "@/pgTable";
+import { messageSchema } from "@/schema/messageSchema";
+import { users } from "@/schema/users";
+import { usersToRooms } from "@/schema/usersToRooms";
 import { relations, sql } from "drizzle-orm";
 import { check, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
+
+export const ROOM_NAME_MAX_LENGTH = 100;
 
 export const rooms = pgTable(
   "rooms",

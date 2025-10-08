@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { User } from "#shared/db/schema/users";
+import type { User } from "@esposter/db";
 import type { ListItemSlot } from "vuetify/lib/components/VList/VListItem.mjs";
 
 import { authClient } from "@/services/auth/authClient";

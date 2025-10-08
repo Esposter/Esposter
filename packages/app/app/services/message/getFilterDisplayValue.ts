@@ -1,9 +1,8 @@
 /* eslint-disable perfectionist/sort-switch-case */
-import type { Filter } from "#shared/models/message/Filter";
+import type { Filter } from "@esposter/shared";
 
-import { FilterType } from "#shared/models/message/FilterType";
 import { useRoomStore } from "@/store/message/room";
-import { InvalidOperationError, Operation, serializeValue, uncapitalize } from "@esposter/shared";
+import { FilterType, InvalidOperationError, Operation, serializeValue, uncapitalize } from "@esposter/shared";
 
 export const getFilterDisplayValue = ({ type, value }: Filter) => {
   const displayType = `${uncapitalize(type)}:`;

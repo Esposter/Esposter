@@ -1,5 +1,5 @@
 /* eslint-disable perfectionist/sort-objects */
-import { FilterTypeHas } from "#shared/models/message/FilterTypeHas";
+import { FilterTypeHas } from "@esposter/shared";
 
 export const FilterTypeHasIconMap = {
   [FilterTypeHas.Link]: "mdi-link-variant",

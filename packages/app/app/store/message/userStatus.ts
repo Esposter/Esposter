@@ -1,7 +1,7 @@
-import type { IUserStatus } from "#shared/db/schema/userStatuses";
+import type { IUserStatus } from "@esposter/db";
 import type { Except, SetNonNullable } from "type-fest";
 
-import { UserStatus } from "#shared/models/db/user/UserStatus";
+import { UserStatus } from "@esposter/db";
 
 export const useUserStatusStore = defineStore("message/userStatus", () => {
   const userStatusMap = ref(new Map<string, SetNonNullable<Except<IUserStatus, "userId">, "status">>());

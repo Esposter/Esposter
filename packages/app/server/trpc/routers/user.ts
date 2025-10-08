@@ -1,12 +1,9 @@
-import type { IUserStatus } from "#shared/db/schema/userStatuses";
+import type { IUserStatus } from "@esposter/db";
 import type { ReadableStream } from "node:stream/web";
 import type { SetNonNullable } from "type-fest";
 import type { z } from "zod";
 
-import { selectUserSchema } from "#shared/db/schema/users";
-import { selectUserStatusSchema, userStatuses } from "#shared/db/schema/userStatuses";
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
-import { UserStatus } from "#shared/models/db/user/UserStatus";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
@@ -15,6 +12,7 @@ import { userEventEmitter } from "@@/server/services/message/events/userEventEmi
 import { getDetectedUserStatus } from "@@/server/services/message/getDetectedUserStatus";
 import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
+import { selectUserSchema, selectUserStatusSchema, UserStatus, userStatuses } from "@esposter/db";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { octetInputParser } from "@trpc/server/http";

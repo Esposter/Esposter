@@ -1,5 +1,4 @@
-import type { Room } from "#shared/db/schema/rooms";
-import type { User } from "#shared/db/schema/users";
+import type { Room, User } from "@esposter/db";
 
 export const getRoomPlaceholder = (room: null | Room, memberMap: Map<string, User>) => {
   if (!room) return "";

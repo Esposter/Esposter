@@ -1,14 +1,13 @@
 /* eslint-disable perfectionist/sort-switch-case */
-import type { Filter } from "#shared/models/message/Filter";
-import type { Clause } from "@esposter/shared";
+import type { Clause, Filter } from "@esposter/shared";
 
 import { FileEntityPropertyNames } from "#shared/models/azure/table/FileEntity";
 import { MessageEntityPropertyNames } from "#shared/models/db/message/MessageEntity";
-import { FilterType } from "#shared/models/message/FilterType";
-import { FilterTypeHas } from "#shared/models/message/FilterTypeHas";
 import { dayjs } from "#shared/services/dayjs";
 import {
   BinaryOperator,
+  FilterType,
+  FilterTypeHas,
   getSearchNonNullClause,
   InvalidOperationError,
   NotFoundError,

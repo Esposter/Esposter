@@ -1,4 +1,4 @@
-import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadata";
+import { ItemMetadataPropertyNames } from "@esposter/shared";
 import { timestamp } from "drizzle-orm/pg-core";
 
 export const metadataSchema = {

@@ -4,14 +4,13 @@ import type { ToData } from "#shared/models/entity/ToData";
 import type { LinkPreviewResponse } from "#shared/models/message/linkPreview/LinkPreviewResponse";
 import type { Except } from "type-fest";
 
-import { selectRoomSchema } from "#shared/db/schema/rooms";
-import { selectUserSchema } from "#shared/db/schema/users";
 import { AzureEntity, createAzureEntitySchema } from "#shared/models/azure/table/AzureEntity";
 import { fileEntitySchema } from "#shared/models/azure/table/FileEntity";
 import { MessageType } from "#shared/models/db/message/MessageType";
 import { FILE_MAX_LENGTH } from "#shared/services/azure/container/constants";
-import { MENTION_MAX_LENGTH, MESSAGE_MAX_LENGTH } from "#shared/services/message/constants";
+import { MENTION_MAX_LENGTH } from "#shared/services/message/constants";
 import { refineMessageSchema } from "#shared/services/message/refineMessageSchema";
+import { MESSAGE_MAX_LENGTH, selectRoomSchema, selectUserSchema } from "@esposter/db";
 import { getPropertyNames } from "@esposter/shared";
 import { z } from "zod";
 

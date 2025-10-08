@@ -1,4 +1,4 @@
-import type { Survey } from "#shared/db/schema/surveys";
+import type { Survey } from "@esposter/db";
 
 import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 import { extractBlobUrls } from "#shared/services/survey/extractBlobUrls";

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { selectInviteSchema } from "#shared/db/schema/invites";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { RoutePath } from "#shared/models/router/RoutePath";
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
 import { useRoomStore } from "@/store/message/room";
+import { selectInviteSchema } from "@esposter/db";
 
 definePageMeta({
   middleware: "auth",

@@ -1,4 +1,4 @@
-import type { Room } from "#shared/db/schema/rooms";
+import type { Room } from "@esposter/db";
 
 import { getRoomName } from "@/services/message/room/getRoomName";
 import { getRoomPlaceholder } from "@/services/message/room/getRoomPlaceholder";

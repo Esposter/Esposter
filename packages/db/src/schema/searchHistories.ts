@@ -1,14 +1,15 @@
-import type { Filter } from "#shared/models/message/Filter";
+import type { Filter } from "@esposter/shared";
 
-import { pgTable } from "#shared/db/pgTable";
-import { messageSchema } from "#shared/db/schema/messageSchema";
-import { rooms } from "#shared/db/schema/rooms";
-import { users } from "#shared/db/schema/users";
-import { MESSAGE_MAX_LENGTH } from "#shared/services/message/constants";
+import { pgTable } from "@/pgTable";
+import { messageSchema } from "@/schema/messageSchema";
+import { rooms } from "@/schema/rooms";
+import { users } from "@/schema/users";
 import { relations, sql } from "drizzle-orm";
 import { check, jsonb, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
+
+export const MESSAGE_MAX_LENGTH = 10000;
 
 export const searchHistories = pgTable(
   "search_history",

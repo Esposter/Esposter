@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { MessageType } from "#shared/models/db/message/MessageType";
-import { ROOM_NAME_MAX_LENGTH } from "#shared/services/message/constants";
 import { authClient } from "@/services/auth/authClient";
 import { useLayoutStore } from "@/store/layout";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { useDialogStore } from "@/store/message/room/dialog";
+import { ROOM_NAME_MAX_LENGTH } from "@esposter/db";
 
 const { data: session } = await authClient.useSession(useFetch);
 const { $trpc } = useNuxtApp();

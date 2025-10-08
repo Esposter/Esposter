@@ -1,6 +1,5 @@
-import type { Post, PostWithRelations } from "#shared/db/schema/posts";
+import type { Post, PostWithRelations } from "@esposter/db";
 
-import { PostRelations, posts, selectPostSchema } from "#shared/db/schema/posts";
 import { createCommentInputSchema } from "#shared/models/db/post/CreateCommentInput";
 import { createPostInputSchema } from "#shared/models/db/post/CreatePostInput";
 import { deleteCommentInputSchema } from "#shared/models/db/post/DeleteCommentInput";
@@ -19,6 +18,7 @@ import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
 import { rateLimitedProcedure } from "@@/server/trpc/procedure/rateLimitedProcedure";
+import { PostRelations, posts, selectPostSchema } from "@esposter/db";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, isNotNull, isNull, SQL } from "drizzle-orm";

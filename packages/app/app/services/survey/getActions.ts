@@ -1,4 +1,4 @@
-import type { Survey } from "#shared/db/schema/surveys";
+import type { Survey } from "@esposter/db";
 import type { SurveyCreatorModel } from "survey-creator-core";
 
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";

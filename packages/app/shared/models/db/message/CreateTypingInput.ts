@@ -1,5 +1,4 @@
-import { selectRoomSchema } from "#shared/db/schema/rooms";
-import { selectUserSchema } from "#shared/db/schema/users";
+import { selectRoomSchema, selectUserSchema } from "@esposter/db";
 import { z } from "zod";
 
 export const createTypingInputSchema = z.object({

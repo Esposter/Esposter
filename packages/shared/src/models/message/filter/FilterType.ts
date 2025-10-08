@@ -12,4 +12,4 @@ export enum FilterType {
   // AuthorType = "AuthorType",
 }
 
-export const filterTypeSchema = z.enum(FilterType) satisfies z.ZodType<FilterType>;
+export const filterTypeSchema: z.ZodType<FilterType> = z.enum(FilterType);

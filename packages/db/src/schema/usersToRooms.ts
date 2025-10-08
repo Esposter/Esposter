@@ -1,9 +1,9 @@
-import type { Room } from "#shared/db/schema/rooms";
-import type { User } from "#shared/db/schema/users";
+import type { Room } from "@/schema/rooms";
+import type { User } from "@/schema/users";
 
-import { messageSchema } from "#shared/db/schema/messageSchema";
-import { rooms } from "#shared/db/schema/rooms";
-import { users } from "#shared/db/schema/users";
+import { messageSchema } from "@/schema/messageSchema";
+import { rooms } from "@/schema/rooms";
+import { users } from "@/schema/users";
 import { relations } from "drizzle-orm";
 import { primaryKey, text, uuid } from "drizzle-orm/pg-core";
 

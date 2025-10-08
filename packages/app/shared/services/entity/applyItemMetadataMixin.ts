@@ -1,4 +1,4 @@
-import type { ItemMetadata } from "#shared/models/entity/ItemMetadata";
+import type { ItemMetadata } from "@esposter/shared";
 import type { Class } from "type-fest";
 
 export const applyItemMetadataMixin = <TBase extends Class<NonNullable<unknown>>>(Base: TBase) =>

@@ -1,7 +1,7 @@
 import type { BuildColumns, BuildExtraConfigColumns } from "drizzle-orm";
 import type { PgColumnBuilderBase, PgSchema, PgTableExtraConfigValue, PgTableWithColumns } from "drizzle-orm/pg-core";
 
-import { metadataSchema } from "#shared/db/metadataSchema";
+import { metadataSchema } from "@/metadataSchema";
 import { pgTable as basePgTable } from "drizzle-orm/pg-core";
 
 export const pgTable = <

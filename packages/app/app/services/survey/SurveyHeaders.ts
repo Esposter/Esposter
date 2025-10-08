@@ -1,8 +1,8 @@
-import type { Survey } from "#shared/db/schema/surveys";
 import type { DataTableHeader } from "@/models/vuetify/DataTableHeader";
+import type { Survey } from "@esposter/db";
 
-import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadata";
 import { dayjs } from "#shared/services/dayjs";
+import { ItemMetadataPropertyNames } from "@esposter/shared";
 
 export const SurveyHeaders: DataTableHeader<Survey>[] = [
   { key: "name", title: "Name" },

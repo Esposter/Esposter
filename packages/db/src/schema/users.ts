@@ -1,10 +1,10 @@
-import { accounts } from "#shared/db/schema/accounts";
-import { likes } from "#shared/db/schema/likes";
-import { posts } from "#shared/db/schema/posts";
-import { sessions } from "#shared/db/schema/sessions";
-import { surveys } from "#shared/db/schema/surveys";
-import { userStatuses } from "#shared/db/schema/userStatuses";
-import { usersToRooms } from "#shared/db/schema/usersToRooms";
+import { accounts } from "@/schema/accounts";
+import { likes } from "@/schema/likes";
+import { posts } from "@/schema/posts";
+import { sessions } from "@/schema/sessions";
+import { surveys } from "@/schema/surveys";
+import { userStatuses } from "@/schema/userStatuses";
+import { usersToRooms } from "@/schema/usersToRooms";
 import { USER_NAME_MAX_LENGTH } from "@esposter/shared";
 import { relations, sql } from "drizzle-orm";
 import { boolean, check, pgTable, text, timestamp } from "drizzle-orm/pg-core";

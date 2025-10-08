@@ -1,4 +1,4 @@
-import type { Filter } from "#shared/models/message/Filter";
+import type { Filter } from "@esposter/shared";
 
 export const dedupeFilters = (filters: Filter[]): Filter[] =>
   filters.filter(

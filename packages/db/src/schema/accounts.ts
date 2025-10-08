@@ -1,4 +1,4 @@
-import { users } from "#shared/db/schema/users";
+import { users } from "@/schema/users";
 import { relations } from "drizzle-orm";
 import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
 

@@ -1,15 +1,17 @@
-import type { Like } from "#shared/db/schema/likes";
-import type { User } from "#shared/db/schema/users";
+import type { Like } from "@/schema/likes";
+import type { User } from "@/schema/users";
 import type { AnyPgColumn } from "drizzle-orm/pg-core";
 
-import { pgTable } from "#shared/db/pgTable";
-import { likes } from "#shared/db/schema/likes";
-import { users } from "#shared/db/schema/users";
-import { POST_DESCRIPTION_MAX_LENGTH, POST_TITLE_MAX_LENGTH } from "#shared/services/post/constants";
+import { pgTable } from "@/pgTable";
+import { likes } from "@/schema/likes";
+import { users } from "@/schema/users";
 import { relations, sql } from "drizzle-orm";
 import { check, doublePrecision, integer, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
+
+export const POST_TITLE_MAX_LENGTH = 300;
+export const POST_DESCRIPTION_MAX_LENGTH = 1000;
 
 export const posts = pgTable(
   "posts",
