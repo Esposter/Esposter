@@ -51,7 +51,7 @@ app.http("queueWebhook", {
       const webhook = await db.query.webhooks.findFirst({
         columns: { id: true, isActive: true, token: true },
         where: (webhooks, { and, eq }) =>
-          and(eq(webhooks.id, webhookId), eq(webhooks.isActive, true), eq(webhooks.token, token)),
+          and(eq(webhooks.id, webhookId), eq(webhooks.token, token), eq(webhooks.isActive, true)),
       });
       if (!webhook) return { jsonBody: { message: "Webhook not found." }, status: 404 };
 
