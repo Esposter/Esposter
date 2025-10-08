@@ -48,7 +48,6 @@ app.http("queueWebhook", {
       const token = request.headers.get("authorization");
       if (!token) return { jsonBody: { message: "Missing webhook token." }, status: 401 };
 
-      await rateLimiter.consume(token);
       const webhook = await db.query.webhooks.findFirst({
         columns: { id: true, isActive: true, token: true },
         where: (webhooks, { and, eq }) =>
@@ -56,6 +55,7 @@ app.http("queueWebhook", {
       });
       if (!webhook) return { jsonBody: { message: "Webhook not found." }, status: 404 };
 
+      await rateLimiter.consume(token);
       const body = await request.json();
       const payload = webhookPayloadSchema.parse(body);
       context.extraOutputs.set(outputPropertyName, { payload, webhookId });
