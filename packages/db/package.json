@@ -34,7 +34,7 @@
   },
   "scripts": {
     "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
-    "db:run": "tsx --tsconfig tsconfig.root.json node_modules/drizzle-kit/bin.cjs",
+    "db:run": "tsx node_modules/drizzle-kit/bin.cjs",
     "db:gen": "pnpm db:run generate",
     "db:studio": "pnpm db:run studio",
     "db:up": "pnpm db:run up",
