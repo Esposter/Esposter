@@ -30,8 +30,7 @@ jobs:
           echo node-linker=hoisted >> .npmrc
           pnpm --filter @esposter/webhook deploy ${{ env.PACKAGE_PATH }}
           pushd ${{ env.PACKAGE_PATH }}
-          pnpm --filter @esposter/webhook... i --no-frozen-lockfile
-          pnpm --filter @esposter/webhook... build
+          pnpm build
           popd
 
       - name: 🔑 Azure CLI Login
