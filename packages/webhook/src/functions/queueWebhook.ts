@@ -2,7 +2,7 @@ import type { StorageQueueOutput } from "@azure/functions";
 import type { WebhookPayload } from "@esposter/shared";
 
 import { app } from "@azure/functions";
-import { rateLimiterFlexible, schema } from "@esposter/db";
+import { rateLimiterFlexible, schema, selectWebhookSchema } from "@esposter/db";
 import { webhookPayloadSchema } from "@esposter/shared";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
@@ -41,6 +41,13 @@ app.http("queueWebhook", {
     if (!webhookId)
       return {
         jsonBody: { message: "Webhook ID is required in the URL." },
+        status: 400,
+      };
+
+    const result = await selectWebhookSchema.shape.id.safeParseAsync(webhookId);
+    if (!result.success)
+      return {
+        jsonBody: { errors: z.treeifyError(result.error), message: "Invalid webhook ID." },
         status: 400,
       };
 
