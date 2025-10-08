@@ -7,24 +7,15 @@
       "command": "host start",
       "problemMatcher": "$func-node-watch",
       "isBackground": true,
-      "dependsOn": "npm install (functions)",
+      "dependsOn": "pnpm i (functions)",
       "options": {
         "cwd": "${workspaceFolder}/packages\\webhook"
       }
     },
     {
       "type": "shell",
-      "label": "npm install (functions)",
-      "command": "npm install",
-      "options": {
-        "cwd": "${workspaceFolder}/packages\\webhook"
-      }
-    },
-    {
-      "type": "shell",
-      "label": "npm prune (functions)",
-      "command": "npm prune --production",
-      "problemMatcher": [],
+      "label": "pnpm i (functions)",
+      "command": "pnpm i",
       "options": {
         "cwd": "${workspaceFolder}/packages\\webhook"
       }
