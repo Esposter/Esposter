@@ -9,7 +9,7 @@ on:
       - develop
 
 env:
-  PACKAGE_PATH: packages/webhook
+  OUTPUT_DIRECTORY: dist
 
 jobs:
   build-and-deploy:
@@ -27,7 +27,7 @@ jobs:
       - name: 📦 Resolve Project Dependencies
         run: |
           echo inject-workspace-packages=true >> .npmrc
-          pnpm --filter @esposter/webhook deploy ${{ env.PACKAGE_PATH }}
+          pnpm --filter @esposter/webhook deploy ${{ env.OUTPUT_DIRECTORY }}
 
       - name: 🔑 Azure CLI Login
         uses: azure/login@v2
@@ -55,7 +55,7 @@ jobs:
         uses: Azure/functions-action@v1
         with:
           app-name: d-shp-func-esposter-auea-001
-          package: ${{ env.PACKAGE_PATH }}
+          package: ${{ env.OUTPUT_DIRECTORY }}
           publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE  }}
           respect-funcignore: true
 
