@@ -26,10 +26,8 @@ jobs:
 
       - name: 📦 Resolve Project Dependencies
         run: |
-          pushd ${{ env.PACKAGE_PATH }}
-          pnpm --filter @esposter/webhook... i --frozen-lockfile
-          pnpm --filter @esposter/webhook... build
-          popd
+          echo inject-workspace-packages=true >> .npmrc
+          pnpm --filter @esposter/webhook deploy ${{ env.PACKAGE_PATH }}
 
       - name: 🔑 Azure CLI Login
         uses: azure/login@v2
