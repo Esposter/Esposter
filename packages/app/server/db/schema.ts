@@ -11,11 +11,13 @@ import * as users from "#shared/db/schema/users";
 import * as userStatuses from "#shared/db/schema/userStatuses";
 import * as usersToRooms from "#shared/db/schema/usersToRooms";
 import * as verifications from "#shared/db/schema/verifications";
+import * as webhooks from "#shared/db/schema/webhooks";
 
 export const schema = {
   ...accounts,
   ...invites,
   ...posts,
+  ...webhooks,
   ...rooms,
   ...searchHistories,
   ...sessions,

@@ -19,6 +19,12 @@ const storageQueueOutput: StorageQueueOutput = {
   type: "queue",
 };
 
+// interface DbWebhookRow {
+//   id: string;
+//   isActive: boolean;
+//   token: string;
+// }
+
 app.http("queueWebhook", {
   extraOutputs: [storageQueueOutput],
   handler: async (request, context) => {
@@ -31,7 +37,20 @@ app.http("queueWebhook", {
         status: 400,
       };
 
+    // let client: null | ReturnType<typeof postgres> = null;
     try {
+      const token = request.headers.get("authorization");
+      if (!token) return { jsonBody: { message: "Missing webhook token." }, status: 401 };
+
+      // client = postgres(process.env.DATABASE_URL);
+      // const rows = await client<
+      //   DbWebhookRow[]
+      // >`select id, is_active as "isActive", secret from "message"."webhooks" where id = ${webhookId} limit 1`;
+      // const hook = rows?.[0];
+      // if (!hook) return { jsonBody: { message: "Webhook not found." }, status: 404 };
+      // if (!hook.isActive) return { jsonBody: { message: "Webhook is inactive." }, status: 403 };
+      // if (hook.token !== token) return { jsonBody: { message: "Invalid webhook token." }, status: 401 };
+
       const body = await request.json();
       const payload = webhookPayloadSchema.parse(body);
       context.extraOutputs.set(outputPropertyName, { payload, webhookId });
@@ -58,6 +77,8 @@ app.http("queueWebhook", {
         jsonBody: { message: "An internal server error occurred." },
         status: 500,
       };
+    } finally {
+      // if (client) await client.end({ timeout: 1 });
     }
   },
   methods: ["POST"],
