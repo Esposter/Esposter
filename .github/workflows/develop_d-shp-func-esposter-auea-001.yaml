@@ -26,9 +26,11 @@ jobs:
 
       - name: 📦 Resolve Project Dependencies
         run: |
-          echo "node-linker=hoisted" >> .npmrc
+          echo inject-workspace-packages=true >> .npmrc
+          echo node-linker=hoisted >> .npmrc
+          pnpm --filter @esposter/webhook deploy ${{ env.PACKAGE_PATH }}
           pushd ${{ env.PACKAGE_PATH }}
-          pnpm --filter @esposter/webhook... i --frozen-lockfile
+          pnpm --filter @esposter/webhook... i --no-frozen-lockfile
           pnpm --filter @esposter/webhook... build
           popd
 
