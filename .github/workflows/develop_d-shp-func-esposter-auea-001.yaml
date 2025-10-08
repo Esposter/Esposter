@@ -10,6 +10,7 @@ on:
 
 env:
   OUTPUT_DIRECTORY: dist
+  PACKAGE_PATH: packages/webhook
 
 jobs:
   build-and-deploy:
@@ -26,10 +27,12 @@ jobs:
 
       - name: 📦 Resolve Project Dependencies
         run: |
-          echo "inject-workspace-packages=true" >> .npmrc
-          echo "node-linker=pnp" >> .npmrc
-          echo "symlink=false" >> .npmrc
+          echo inject-workspace-packages=true >> .npmrc
+          echo node-linker=hoisted >> .npmrc
+          pushd ${{ env.PACKAGE_PATH }}
           pnpm --filter @esposter/webhook... i --no-frozen-lockfile
+          pnpm --filter @esposter/webhook... build
+          popd
           pnpm --filter @esposter/webhook deploy ${{ env.OUTPUT_DIRECTORY }}
 
       - name: 🔑 Azure CLI Login
