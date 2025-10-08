@@ -26,7 +26,8 @@ jobs:
 
       - name: 📦 Resolve Project Dependencies
         run: |
-          echo inject-workspace-packages=true >> .npmrc
+          echo "inject-workspace-packages=true" >> .npmrc
+          echo "symlink=false" >> .npmrc
           pnpm --filter @esposter/webhook... i --no-frozen-lockfile
           pnpm --filter @esposter/webhook deploy ${{ env.OUTPUT_DIRECTORY }}
 
