@@ -2,10 +2,11 @@ import type { StorageQueueOutput } from "@azure/functions";
 import type { WebhookPayload } from "@esposter/shared";
 
 import { app } from "@azure/functions";
-import { schema } from "@esposter/db";
+import { rateLimiterFlexible, schema } from "@esposter/db";
 import { webhookPayloadSchema } from "@esposter/shared";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
+import { RateLimiterDrizzleNonAtomic, RateLimiterRes } from "rate-limiter-flexible";
 import { z, ZodError } from "zod";
 
 export interface WebhookQueueMessage {
@@ -23,6 +24,13 @@ const storageQueueOutput: StorageQueueOutput = {
 };
 const client = postgres(process.env.DATABASE_URL);
 const db = drizzle(client, { schema });
+const rateLimiter = new RateLimiterDrizzleNonAtomic({
+  blockDuration: 60,
+  duration: 60,
+  points: 30,
+  schema: rateLimiterFlexible,
+  storeClient: db,
+});
 
 app.http("queueWebhook", {
   extraOutputs: [storageQueueOutput],
@@ -40,6 +48,7 @@ app.http("queueWebhook", {
       const token = request.headers.get("authorization");
       if (!token) return { jsonBody: { message: "Missing webhook token." }, status: 401 };
 
+      await rateLimiter.consume(token);
       const webhook = await db.query.webhooks.findFirst({
         columns: { id: true, isActive: true, token: true },
         where: (webhooks, { and, eq }) =>
@@ -65,6 +74,12 @@ app.http("queueWebhook", {
             message: "Invalid request body.",
           },
           status: 400,
+        };
+      } else if (error instanceof RateLimiterRes) {
+        context.log("Rate limit exceeded:", error);
+        return {
+          jsonBody: { message: "Rate limit exceeded." },
+          status: 429,
         };
       }
 

@@ -36,6 +36,7 @@
     "@esposter/shared": "workspace:*",
     "drizzle-orm": "catalog:",
     "postgres": "catalog:",
+    "rate-limiter-flexible": "catalog:",
     "zod": "catalog:"
   }
 }
