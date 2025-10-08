@@ -32,8 +32,8 @@ jobs:
           pushd ${{ env.PACKAGE_PATH }}
           pnpm --filter @esposter/webhook... i --no-frozen-lockfile
           pnpm --filter @esposter/webhook... build
-          pnpm --filter @esposter/webhook deploy ${{ env.OUTPUT_DIRECTORY }}
           popd
+          pnpm --filter @esposter/webhook deploy ${{ env.OUTPUT_DIRECTORY }}
 
       - name: 🔑 Azure CLI Login
         uses: azure/login@v2
