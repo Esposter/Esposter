@@ -17,4 +17,5 @@ export const MessageComponentMap = {
   [MessageType.PinMessage]: defineAsyncComponent(
     () => import("@/components/Message/Model/Message/Type/PinMessage.vue"),
   ),
+  [MessageType.Webhook]: defineAsyncComponent(() => import("@/components/Message/Model/Message/Type/Index.vue")),
 } as const satisfies Record<MessageType, Component>;

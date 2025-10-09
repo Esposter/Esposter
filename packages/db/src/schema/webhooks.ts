@@ -15,6 +15,9 @@ export const WEBHOOK_NAME_MAX_LENGTH = 100;
 export const webhooks = pgTable(
   "webhooks",
   {
+    creatorId: text("creator_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
     id: uuid("id").primaryKey().defaultRandom(),
     isActive: boolean("is_active").notNull().default(true),
     name: text("name").notNull().default(""),
@@ -24,6 +27,8 @@ export const webhooks = pgTable(
     token: text("token").notNull(),
     userId: text("user_id")
       .notNull()
+      .default(sql`gen_random_uuid()`)
+      .unique()
       .references(() => users.id, { onDelete: "cascade" }),
   },
   {
@@ -41,6 +46,10 @@ export const selectWebhookSchema = createSelectSchema(webhooks, {
 });
 
 export const webhooksRelations = relations(webhooks, ({ one }) => ({
+  creator: one(users, {
+    fields: [webhooks.creatorId],
+    references: [users.id],
+  }),
   room: one(rooms, {
     fields: [webhooks.roomId],
     references: [rooms.id],

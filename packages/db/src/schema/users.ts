@@ -7,20 +7,28 @@ import { userStatuses } from "@/schema/userStatuses";
 import { usersToRooms } from "@/schema/usersToRooms";
 import { USER_NAME_MAX_LENGTH } from "@esposter/shared";
 import { relations, sql } from "drizzle-orm";
-import { boolean, check, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { boolean, check, pgEnum, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
+
+export enum UserType {
+  App = "App",
+  Human = "Human",
+}
+
+export const userTypeEnum = pgEnum("user_type", UserType);
 
 export const users = pgTable(
   "users",
   {
     createdAt: timestamp("created_at").notNull(),
     deletedAt: timestamp("deleted_at"),
-    email: text("email").notNull().unique(),
-    emailVerified: boolean("email_verified").notNull(),
+    email: text("email").unique(),
+    emailVerified: boolean("email_verified"),
     id: text("id").primaryKey(),
     image: text("image"),
     name: text("name").notNull(),
+    type: userTypeEnum("type").notNull().default(UserType.Human),
     updatedAt: timestamp("updated_at").notNull(),
   },
   ({ name }) => [
@@ -32,6 +40,7 @@ export type User = typeof users.$inferSelect;
 
 export const selectUserSchema = createSelectSchema(users, {
   name: z.string().min(1).max(USER_NAME_MAX_LENGTH),
+  type: z.enum(UserType),
 });
 
 export const usersRelations = relations(users, ({ many, one }) => ({
