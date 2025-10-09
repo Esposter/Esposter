@@ -7,7 +7,7 @@ import { dayjs } from "#shared/services/dayjs";
 import { useContainerClientMock } from "@@/server/composables/azure/useContainerClient.test";
 import { useTableClientMock } from "@@/server/composables/azure/useTableClient.test";
 import { PGlite } from "@electric-sql/pglite";
-import { messageSchema, schema, users, UserType } from "@esposter/db";
+import { messageSchema, schema, users } from "@esposter/db";
 import { sql } from "drizzle-orm";
 import { drizzle, PgliteDatabase } from "drizzle-orm/pglite";
 import { IncomingMessage, ServerResponse } from "node:http";
@@ -18,8 +18,9 @@ import { describe, vi } from "vitest";
 const require = createRequire(import.meta.url);
 const { generateDrizzleJson, generateMigration } = require("drizzle-kit/api") as typeof DrizzleKit;
 
-const mocks = vi.hoisted(() => {
+const mocks = await vi.hoisted(async () => {
   const createdAt = new Date();
+  const UserType = (await import("@esposter/db")).UserType;
   const user = {
     createdAt,
     deletedAt: null,
