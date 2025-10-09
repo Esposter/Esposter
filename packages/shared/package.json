@@ -31,6 +31,8 @@
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@vueuse/core": "catalog:",
+    "vue": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {

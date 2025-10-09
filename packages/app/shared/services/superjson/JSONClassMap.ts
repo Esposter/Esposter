@@ -1,4 +1,4 @@
-import type { Serializable } from "#shared/models/entity/Serializable";
+import type { Serializable } from "@esposter/shared";
 import type { Class } from "type-fest";
 
 import { Clicker } from "#shared/models/clicker/data/Clicker";

@@ -1,7 +1,7 @@
-import type { CompositeKey } from "@esposter/shared";
+import type { CompositeKey } from "@/models/azure/table/CompositeKey";
 import type { z } from "zod";
 
-import { Serializable } from "#shared/models/entity/Serializable";
+import { Serializable } from "@/models/shared/Serializable";
 
 export interface CompositeKeyEntityConstraint extends z.ZodRawShape {
   partitionKey: z.ZodString | z.ZodUUID;
@@ -15,4 +15,4 @@ export class CompositeKeyEntity extends Serializable implements CompositeKey {
 
 export const createCompositeKeyEntitySchema = <TEntity extends CompositeKeyEntityConstraint>(
   schema: z.ZodObject<TEntity>,
-) => schema;
+): z.ZodObject<TEntity> => schema;

@@ -1,7 +1,7 @@
-import { toRawDeep } from "#shared/util/reactivity/toRawDeep";
+import { toRawDeep } from "@/util/reactivity/toRawDeep";
 
 export abstract class Serializable {
-  toJSON() {
+  toJSON(): string {
     return JSON.stringify(structuredClone(toRawDeep(this)));
   }
 }

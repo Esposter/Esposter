@@ -1,5 +1,5 @@
-import type { AzureEntity } from "#shared/models/azure/table/AzureEntity";
 import type { CustomTableClient } from "@@/server/models/azure/table/CustomTableClient";
+import type { AzureEntity } from "@esposter/shared";
 import type { Class } from "type-fest";
 
 import { deserializeEntity } from "@@/server/services/azure/transformer/deserializeEntity";

@@ -1,5 +1,5 @@
-import type { AzureEntity } from "#shared/models/azure/table/AzureEntity";
 import type { CustomTableClient } from "@@/server/models/azure/table/CustomTableClient";
+import type { AzureEntity } from "@esposter/shared";
 
 export const deleteEntity = <TEntity extends AzureEntity>(
   tableClient: CustomTableClient<TEntity>,

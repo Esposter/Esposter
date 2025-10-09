@@ -106,6 +106,7 @@ export const useMessageActionItems = (
       case MessageType.EditRoom:
         return [copyTextItem, copyMessageLinkItem];
       case MessageType.Message:
+      case MessageType.Webhook:
         return [copyTextItem, pinMessageItem.value, copyMessageLinkItem];
       case MessageType.PinMessage:
         return [copyMessageLinkItem];

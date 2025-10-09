@@ -1,5 +1,5 @@
-import type { CompositeKeyEntity } from "#shared/models/azure/table/CompositeKeyEntity";
 import type { ToData } from "#shared/models/entity/ToData";
+import type { CompositeKeyEntity } from "@esposter/shared";
 
 import {
   createMessageMetadataEntitySchema,
