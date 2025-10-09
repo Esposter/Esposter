@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.15.0](https://github.com/Esposter/Esposter/compare/v2.14.0...v2.15.0) (2025-10-09)
+
+### Bug Fixes
+
+* bundle libs that are in node to be in node platform ([92c3875](https://github.com/Esposter/Esposter/commit/92c38752e6d5e2a481f0a2107d7143e00fe4e14d))
+* deserializing key + make checking length consistent ([736f771](https://github.com/Esposter/Esposter/commit/736f771406a70640b1d81f028e29097aeeb26a5a))
+* finally fix up remaining table filter predicate issues ([ae864b9](https://github.com/Esposter/Esposter/commit/ae864b991fae6b29969ee43935666351da36ce17))
+* lint ([437f01f](https://github.com/Esposter/Esposter/commit/437f01f31e381d85717db8e97b5e29d516bf92d8))
+* move deps back to respective packages properly ([5a55e2d](https://github.com/Esposter/Esposter/commit/5a55e2d29f3de9d88bb68779780e983e9388457f))
+* package json ([f3fbfed](https://github.com/Esposter/Esposter/commit/f3fbfedc9772b653d34b2f2621d9dbf2612c3bd1))
+* tests + room query + serialize entity ([c184b6a](https://github.com/Esposter/Esposter/commit/c184b6a3b20eb60784e6efa55bc6bebcb9e2be89))
+* types ([36a0faa](https://github.com/Esposter/Esposter/commit/36a0faab76fc19bf70becfaf3a730f3cf0a35d1e))
+* types ([387f44a](https://github.com/Esposter/Esposter/commit/387f44aa550bb7cd71d00d70dcbc0f40fcb33238))
+
+### Features
+
+* Add has filter ([052999c](https://github.com/Esposter/Esposter/commit/052999cb1e255d2756ac8a0b6405810cd6fb8800))
+* Add pin message UI ([bbbc388](https://github.com/Esposter/Esposter/commit/bbbc38815924cb6a3ae07c2cc448a5c47e559395))
+* Add pin/unpin messages ([039b7ea](https://github.com/Esposter/Esposter/commit/039b7ea48a0613fb1e6bfaf1e604df683a8695cd))
+* migrate to rate limiter drizzle ([00091a2](https://github.com/Esposter/Esposter/commit/00091a2d8b31c16fb6cb749a1a278817e312dd87))
+
+### Reverts
+
+* Revert "refactor: move some things to ts" ([07551a7](https://github.com/Esposter/Esposter/commit/07551a70d016a1f07813b7cec198844e1c418d8b))
+
 # [2.14.0](https://github.com/Esposter/Esposter/compare/v2.13.1...v2.14.0) (2025-09-14)
 
 ### Features

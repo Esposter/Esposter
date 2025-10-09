@@ -3,6 +3,36 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.15.0](https://github.com/Esposter/Esposter/compare/v2.14.0...v2.15.0) (2025-10-09)
+
+### Bug Fixes
+
+* circular deps ([2efeacf](https://github.com/Esposter/Esposter/commit/2efeacf4c6f9f024291bd88299b17a8b8613afbb))
+* date filter value ([f34de46](https://github.com/Esposter/Esposter/commit/f34de46c2197e41589d82dbab1c3186287ec8422))
+* deserializing key + make checking length consistent ([736f771](https://github.com/Esposter/Esposter/commit/736f771406a70640b1d81f028e29097aeeb26a5a))
+* finally fix up remaining table filter predicate issues ([ae864b9](https://github.com/Esposter/Esposter/commit/ae864b991fae6b29969ee43935666351da36ce17))
+* just use oxlint fix ([b333d61](https://github.com/Esposter/Esposter/commit/b333d61406a39977c903b654d97357673f1f42d7))
+* lint ([437f01f](https://github.com/Esposter/Esposter/commit/437f01f31e381d85717db8e97b5e29d516bf92d8))
+* move deps back to respective packages properly ([5a55e2d](https://github.com/Esposter/Esposter/commit/5a55e2d29f3de9d88bb68779780e983e9388457f))
+* package json ([f3fbfed](https://github.com/Esposter/Esposter/commit/f3fbfedc9772b653d34b2f2621d9dbf2612c3bd1))
+* types and lint ([6518c40](https://github.com/Esposter/Esposter/commit/6518c40541d214b22d72e691fbc1aeba56623c70))
+* use array contains for checking mimetypes ([f878f91](https://github.com/Esposter/Esposter/commit/f878f91a6d4cf55e0be9fe03d75d77c32929994a))
+
+### Features
+
+* Add date picker ([b1cba14](https://github.com/Esposter/Esposter/commit/b1cba14594830339fed08a11c51f3cd1470b88fd))
+* Add has filter ([052999c](https://github.com/Esposter/Esposter/commit/052999cb1e255d2756ac8a0b6405810cd6fb8800))
+* Add lerna watch ([495631f](https://github.com/Esposter/Esposter/commit/495631fc018bfe3cf44674b8249378fa29dcc7fd))
+* Add pin message UI ([bbbc388](https://github.com/Esposter/Esposter/commit/bbbc38815924cb6a3ae07c2cc448a5c47e559395))
+* Add search operator with array contains ([d88f723](https://github.com/Esposter/Esposter/commit/d88f72329a185554268c47e29d794e9c6f306a3e))
+* Add serializing and converting filters to clauses ([780fa36](https://github.com/Esposter/Esposter/commit/780fa363ab78d193c1917d44d1b34f2dcfce98d3))
+* Add webhook pkg ([ae1477f](https://github.com/Esposter/Esposter/commit/ae1477f28b6b6df94da98cec1c944ff9de96e258))
+* move db schema to package ([39895ca](https://github.com/Esposter/Esposter/commit/39895cab56fbe31d35f6178e2cdd7e5bf0a37ab7))
+
+### Performance Improvements
+
+* remove unnecessary brackets ([601d298](https://github.com/Esposter/Esposter/commit/601d2984ef192e456f3e9ae786127a10b27bae16))
+
 # [2.14.0](https://github.com/Esposter/Esposter/compare/v2.13.1...v2.14.0) (2025-09-14)
 
 ### Bug Fixes
