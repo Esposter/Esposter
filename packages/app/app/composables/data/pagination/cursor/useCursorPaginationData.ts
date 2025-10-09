@@ -1,5 +1,5 @@
 import type { AEntity } from "#shared/models/entity/AEntity";
-import type { ToData } from "#shared/models/entity/ToData";
+import type { ToData } from "@esposter/shared";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 

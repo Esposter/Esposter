@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
-import type { User } from "@esposter/db";
+import type { MessageEntity, User } from "@esposter/db";
 
 import { dayjs } from "#shared/services/dayjs";
 import { MessageComponentMap } from "@/services/message/MessageComponentMap";

@@ -1,5 +1,5 @@
-import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
+import type { MessageEntity } from "@esposter/db";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 

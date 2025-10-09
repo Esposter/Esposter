@@ -1,5 +1,4 @@
-import type { ToData } from "#shared/models/entity/ToData";
-import type { CompositeKeyEntity } from "@esposter/shared";
+import type { CompositeKeyEntity, ToData } from "@esposter/shared";
 
 import { selectSurveySchema } from "@esposter/db";
 import { AzureEntity, createAzureEntitySchema } from "@esposter/shared";

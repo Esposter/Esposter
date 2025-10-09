@@ -1,5 +1,5 @@
 import type { Save } from "#shared/models/dungeons/data/Save";
-import type { ToData } from "#shared/models/entity/ToData";
+import type { ToData } from "@esposter/shared";
 
 import { saveSchema } from "#shared/models/dungeons/data/Save";
 import { getInitialSettings, settingsSchema } from "#shared/models/dungeons/data/settings/Settings";

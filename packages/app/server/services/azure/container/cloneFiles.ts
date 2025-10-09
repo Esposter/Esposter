@@ -1,5 +1,5 @@
-import type { FileEntity } from "#shared/models/azure/table/FileEntity";
 import type { ContainerClient } from "@azure/storage-blob";
+import type { FileEntity } from "@esposter/shared";
 
 import { getBlobName } from "@@/server/services/azure/container/getBlobName";
 

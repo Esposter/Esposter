@@ -1,4 +1,4 @@
-import type { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
+import type { AzureContainer } from "#shared/models/azure/container/AzureContainer";
 import type { HttpRequestBody } from "@azure/storage-blob";
 
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";

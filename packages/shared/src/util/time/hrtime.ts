@@ -1,4 +1,4 @@
-import { getIsServer } from "#shared/util/environment/getIsServer";
+import { getIsServer } from "@/util/environment/getIsServer";
 
 export const hrtime = (previousHrTime?: [number, number]): [number, number] => {
   if (getIsServer()) return process.hrtime(previousHrTime);

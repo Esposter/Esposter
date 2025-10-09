@@ -1,4 +1,4 @@
-import type { DeepOmit } from "#shared/util/types/DeepOmit";
+import type { DeepOmit } from "@/util/types/DeepOmit";
 import type { Primitive } from "type-fest";
 
 import { describe, expect, expectTypeOf, test } from "vitest";

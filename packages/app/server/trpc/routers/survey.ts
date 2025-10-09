@@ -1,9 +1,8 @@
 import type { FileSasEntity } from "#shared/models/message/FileSasEntity";
 import type { Survey } from "@esposter/db";
 
-import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
+import { AzureContainer } from "#shared/models/azure/container/AzureContainer";
 import { AzureEntityType } from "#shared/models/azure/table/AzureEntityType";
-import { fileEntitySchema } from "#shared/models/azure/table/FileEntity";
 import { createSurveyInputSchema } from "#shared/models/db/survey/CreateSurveyInput";
 import { deleteSurveyInputSchema } from "#shared/models/db/survey/DeleteSurveyInput";
 import { SurveyResponseEntity, surveyResponseEntitySchema } from "#shared/models/db/survey/SurveyResponseEntity";
@@ -34,7 +33,7 @@ import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { rateLimitedProcedure } from "@@/server/trpc/procedure/rateLimitedProcedure";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/survey/getCreatorProcedure";
 import { selectSurveySchema, surveys } from "@esposter/db";
-import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
+import { fileEntitySchema, InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, count, eq } from "drizzle-orm";
 import { z } from "zod";

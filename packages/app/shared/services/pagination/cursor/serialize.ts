@@ -1,6 +1,6 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 
-import { getIsServer } from "#shared/util/environment/getIsServer";
+import { getIsServer } from "@esposter/shared";
 
 export const serialize = <TItem extends object>(item: TItem, sortBy: SortItem<keyof TItem & string>[]): string => {
   const itemCursors = sortBy.reduce<Record<string, unknown>>((acc, { key }) => {

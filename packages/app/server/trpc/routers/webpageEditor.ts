@@ -1,4 +1,4 @@
-import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
+import { AzureContainer } from "#shared/models/azure/container/AzureContainer";
 import { WebpageEditor, webpageEditorSchema } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { jsonDateParse } from "#shared/util/time/jsonDateParse";
 import { useDownload } from "@@/server/composables/azure/useDownload";

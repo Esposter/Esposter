@@ -1,6 +1,6 @@
 import type { Types } from "phaser";
 
-import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
+import { AzureContainer } from "#shared/models/azure/container/AzureContainer";
 import { trimFileExtension } from "@/util/trimFileExtension";
 import { ContentTypePhaserMethodMap } from "@@/scripts/phaser/constants";
 import { outputFile } from "@@/scripts/phaser/util/outputFile";

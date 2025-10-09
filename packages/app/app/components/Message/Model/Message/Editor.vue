@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
+import type { MessageEntity } from "@esposter/db";
 import type { Editor } from "@tiptap/core";
 
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";

@@ -7,7 +7,7 @@ import { dayjs } from "#shared/services/dayjs";
 import { useContainerClientMock } from "@@/server/composables/azure/useContainerClient.test";
 import { useTableClientMock } from "@@/server/composables/azure/useTableClient.test";
 import { PGlite } from "@electric-sql/pglite";
-import { messageSchema, schema, users } from "@esposter/db";
+import { messageSchema, schema, users, UserType } from "@esposter/db";
 import { sql } from "drizzle-orm";
 import { drizzle, PgliteDatabase } from "drizzle-orm/pglite";
 import { IncomingMessage, ServerResponse } from "node:http";
@@ -20,7 +20,7 @@ const { generateDrizzleJson, generateMigration } = require("drizzle-kit/api") as
 
 const mocks = vi.hoisted(() => {
   const createdAt = new Date();
-  const user: User = {
+  const user = {
     createdAt,
     deletedAt: null,
     email: "",
@@ -28,8 +28,9 @@ const mocks = vi.hoisted(() => {
     id: crypto.randomUUID(),
     image: null,
     name: "name",
+    type: UserType.Human,
     updatedAt: createdAt,
-  };
+  } as const satisfies User;
   return {
     getSession: vi.fn<() => Session>(() => {
       const session = createSession(user.id);
@@ -54,7 +55,7 @@ vi.mock(import("@@/server/composables/azure/useTableClient"), () => ({
   useTableClient: useTableClientMock,
 }));
 
-export const mockSessionOnce = async (db: Context["db"], mockUser?: User) => {
+export const mockSessionOnce = async (db: Context["db"], mockUser?: Session["user"]) => {
   const name = "name";
   const createdAt = new Date();
   const user =
@@ -72,7 +73,10 @@ export const mockSessionOnce = async (db: Context["db"], mockUser?: User) => {
         })
         .returning()
     )[0];
-  const session = { session: createSession(user.id), user };
+  const session = {
+    session: createSession(user.id),
+    user: { ...user, email: user.email ?? "", emailVerified: user.emailVerified ?? false },
+  };
   mocks.getSession.mockImplementationOnce(() => session);
   return session;
 };

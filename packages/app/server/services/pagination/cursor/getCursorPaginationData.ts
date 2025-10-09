@@ -1,7 +1,7 @@
 import type { AEntity } from "#shared/models/entity/AEntity";
-import type { ToData } from "#shared/models/entity/ToData";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
+import type { ToData } from "@esposter/shared";
 
 import { getNextCursor } from "@@/server/services/pagination/cursor/getNextCursor";
 import { CompositeKey } from "@esposter/shared";

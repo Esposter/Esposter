@@ -1,4 +1,4 @@
-import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
+import { AzureContainer } from "#shared/models/azure/container/AzureContainer";
 import { Dashboard, dashboardSchema } from "#shared/models/dashboard/data/Dashboard";
 import { jsonDateParse } from "#shared/util/time/jsonDateParse";
 import { useDownload } from "@@/server/composables/azure/useDownload";

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { FileEntity } from "#shared/models/azure/table/FileEntity";
-import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
+import type { MessageEntity } from "@esposter/db";
+import type { FileEntity } from "@esposter/shared";
 
 import { authClient } from "@/services/auth/authClient";
 import { CONTAINER_BORDER_RADIUS } from "@/services/message/file/constants";

@@ -1,17 +1,22 @@
-import type { FileEntity } from "#shared/models/azure/table/FileEntity";
-import type { ToData } from "#shared/models/entity/ToData";
-import type { LinkPreviewResponse } from "#shared/models/message/linkPreview/LinkPreviewResponse";
-import type { CompositeKeyEntity } from "@esposter/shared";
+import type { LinkPreviewResponse } from "@/models/message/linkPreview/LinkPreviewResponse";
+import type { CompositeKeyEntity, FileEntity, ToData } from "@esposter/shared";
 import type { Except } from "type-fest";
 
-import { fileEntitySchema } from "#shared/models/azure/table/FileEntity";
-import { MessageType } from "#shared/models/db/message/MessageType";
-import { FILE_MAX_LENGTH } from "#shared/services/azure/container/constants";
-import { MENTION_MAX_LENGTH } from "#shared/services/message/constants";
-import { refineMessageSchema } from "#shared/services/message/refineMessageSchema";
-import { MESSAGE_MAX_LENGTH, selectRoomSchema, selectUserSchema } from "@esposter/db";
-import { AzureEntity, createAzureEntitySchema, getPropertyNames } from "@esposter/shared";
+import { MessageType } from "@/models/message/MessageType";
+import { selectRoomSchema } from "@/schema/rooms";
+import { selectUserSchema } from "@/schema/users";
+import { refineMessageSchema } from "@/services/message/refineMessageSchema";
+import {
+  AzureEntity,
+  createAzureEntitySchema,
+  FILE_MAX_LENGTH,
+  fileEntitySchema,
+  getPropertyNames,
+  MENTION_MAX_LENGTH,
+} from "@esposter/shared";
 import { z } from "zod";
+
+export const MESSAGE_MAX_LENGTH = 10000;
 
 export class MessageEntity extends AzureEntity {
   files: FileEntity[] = [];

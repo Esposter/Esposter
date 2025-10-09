@@ -2,7 +2,7 @@ import type { CreateEmojiInput } from "#shared/models/db/message/metadata/Create
 
 import { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
-import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
+import { getReverseTickedTimestamp } from "@esposter/shared";
 
 export const createMessageEmojiMetadataEntity = (
   input: CreateEmojiInput & Pick<MessageEmojiMetadataEntity, "userIds">,

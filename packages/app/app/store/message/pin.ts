@@ -1,4 +1,4 @@
-import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
+import type { MessageEntity } from "@esposter/db";
 
 import { AzureEntityType } from "#shared/models/azure/table/AzureEntityType";
 import { dayjs } from "#shared/services/dayjs";

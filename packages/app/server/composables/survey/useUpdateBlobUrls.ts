@@ -1,6 +1,6 @@
 import type { Survey } from "@esposter/db";
 
-import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
+import { AzureContainer } from "#shared/models/azure/container/AzureContainer";
 import { extractBlobUrls } from "#shared/services/survey/extractBlobUrls";
 import { getBlobUrlSearchRegex } from "#shared/services/survey/getBlobUrlSearchRegex";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";

@@ -1,4 +1,3 @@
-import { MessageEntityPropertyNames } from "#shared/models/db/message/MessageEntity";
 import { dedupeFilters } from "#shared/services/message/dedupeFilters";
 import { RightDrawer } from "@/models/message/RightDrawer";
 import { useLayoutStore } from "@/store/layout";
@@ -6,6 +5,7 @@ import { useLayoutStore as useMessageLayoutStore } from "@/store/message/layout"
 import { useRoomStore } from "@/store/message/room";
 import { useSearchHistoryStore } from "@/store/message/searchHistory";
 import { useSearchMessageStore } from "@/store/message/searchMessage";
+import { MessageEntityPropertyNames } from "@esposter/db";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const useReadSearchedMessages = () => {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { FileEntity } from "#shared/models/azure/table/FileEntity";
 import type { UploadFileUrl } from "@/models/message/file/UploadFileUrl";
 import type { Item } from "@/models/shared/Item";
+import type { FileEntity } from "@esposter/shared";
 
 interface FileInputProps {
   file: FileEntity;

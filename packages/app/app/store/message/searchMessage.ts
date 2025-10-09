@@ -1,4 +1,4 @@
-import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
+import type { MessageEntity } from "@esposter/db";
 import type { Filter } from "@esposter/shared";
 
 import { getIsSearchQueryEmpty } from "#shared/services/message/getIsSearchQueryEmpty";

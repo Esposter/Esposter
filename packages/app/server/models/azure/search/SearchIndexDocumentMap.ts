@@ -1,4 +1,4 @@
-import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
+import type { MessageEntity } from "@esposter/db";
 
 import { SearchIndex } from "@@/server/models/azure/search/SearchIndex";
 

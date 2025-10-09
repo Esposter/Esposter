@@ -1,10 +1,10 @@
-import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { Item } from "@/models/shared/Item";
+import type { MessageEntity } from "@esposter/db";
 
-import { MessageType } from "#shared/models/db/message/MessageType";
 import { RoutePath } from "#shared/models/router/RoutePath";
 import { useMessageStore } from "@/store/message";
 import { useRoomStore } from "@/store/message/room";
+import { MessageType } from "@esposter/db";
 import { parse } from "node-html-parser";
 
 export const useMessageActionItems = (

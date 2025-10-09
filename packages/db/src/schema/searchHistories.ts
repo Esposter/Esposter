@@ -1,5 +1,6 @@
 import type { Filter } from "@esposter/shared";
 
+import { MESSAGE_MAX_LENGTH } from "@/models/message/MessageEntity";
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { rooms } from "@/schema/rooms";
@@ -8,8 +9,6 @@ import { relations, sql } from "drizzle-orm";
 import { check, jsonb, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
-
-export const MESSAGE_MAX_LENGTH = 10000;
 
 export const searchHistories = pgTable(
   "search_history",

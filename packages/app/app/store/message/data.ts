@@ -1,13 +1,11 @@
-import type { CreateMessageInput } from "#shared/models/db/message/CreateMessageInput";
 import type { CreateTypingInput } from "#shared/models/db/message/CreateTypingInput";
 import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
-import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessageInput";
 import type { MessageEvents } from "#shared/models/message/events/MessageEvents";
+import type { CreateMessageInput, MessageEntity } from "@esposter/db";
 import type { Editor } from "@tiptap/core";
 
 import { AzureEntityType } from "#shared/models/azure/table/AzureEntityType";
-import { createMessageEntity } from "#shared/services/message/createMessageEntity";
 import { authClient } from "@/services/auth/authClient";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
@@ -15,6 +13,7 @@ import { useInputStore } from "@/store/message/input";
 import { useReplyStore } from "@/store/message/reply";
 import { useRoomStore } from "@/store/message/room";
 import { useUploadFileStore } from "@/store/message/uploadFile";
+import { createMessageEntity } from "@esposter/db";
 import { Operation } from "@esposter/shared";
 
 export const useDataStore = defineStore("message/data", () => {

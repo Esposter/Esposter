@@ -1,6 +1,6 @@
-import { MessageEntityPropertyNames } from "#shared/models/db/message/MessageEntity";
 import { useRoomStore } from "@/store/message/room";
 import { useSearchHistoryStore } from "@/store/message/searchHistory";
+import { MessageEntityPropertyNames } from "@esposter/db";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const useReadSearchHistories = () => {

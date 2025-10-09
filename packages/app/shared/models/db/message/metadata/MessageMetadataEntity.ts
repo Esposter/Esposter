@@ -1,7 +1,7 @@
 import type { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
 
 import { AzureMetadataEntity, createAzureMetadataEntitySchema } from "#shared/models/azure/table/AzureMetadataEntity";
-import { messageEntitySchema } from "#shared/models/db/message/MessageEntity";
+import { messageEntitySchema } from "@esposter/db";
 import { z } from "zod";
 
 export abstract class MessageMetadataEntity<TType extends MessageMetadataType> extends AzureMetadataEntity<TType> {

@@ -1,5 +1,5 @@
 import type { ItemEntityType } from "#shared/models/entity/ItemEntityType";
-import type { ToData } from "#shared/models/entity/ToData";
+import type { ToData } from "@esposter/shared";
 
 import {
   BasicChartConfiguration,

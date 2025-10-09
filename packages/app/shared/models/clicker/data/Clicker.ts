@@ -1,7 +1,7 @@
 import type { BuildingWithStats } from "#shared/models/clicker/data/building/BuildingWithStats";
 import type { Upgrade } from "#shared/models/clicker/data/upgrade/Upgrade";
 import type { ItemEntityType } from "#shared/models/entity/ItemEntityType";
-import type { ToData } from "#shared/models/entity/ToData";
+import type { ToData } from "@esposter/shared";
 
 import { buildingWithStatsSchema } from "#shared/models/clicker/data/building/BuildingWithStats";
 import { ClickerType, clickerTypeSchema } from "#shared/models/clicker/data/ClickerType";

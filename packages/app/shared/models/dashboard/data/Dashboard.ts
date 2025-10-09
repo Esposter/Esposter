@@ -1,5 +1,5 @@
 import type { Visual } from "#shared/models/dashboard/data/Visual";
-import type { ToData } from "#shared/models/entity/ToData";
+import type { ToData } from "@esposter/shared";
 
 import { visualSchema } from "#shared/models/dashboard/data/Visual";
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";

@@ -1,13 +1,12 @@
-import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
+import type { MessageEntity } from "@esposter/db";
 
-import { MessageEntityPropertyNames } from "#shared/models/db/message/MessageEntity";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { MessageEntityPropertyNames } from "@esposter/db";
+import { getReverseTickedTimestamp, InvalidOperationError, Operation } from "@esposter/shared";
 
 export const useReadMessages = () => {
   const route = useRoute();

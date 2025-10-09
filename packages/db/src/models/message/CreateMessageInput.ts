@@ -1,6 +1,6 @@
-import { messageEntitySchema } from "#shared/models/db/message/MessageEntity";
-import { refineMessageSchema } from "#shared/services/message/refineMessageSchema";
-import { selectRoomSchema } from "@esposter/db";
+import { messageEntitySchema } from "@/models/message/MessageEntity";
+import { selectRoomSchema } from "@/schema/rooms";
+import { refineMessageSchema } from "@/services/message/refineMessageSchema";
 import { z } from "zod";
 
 export const createMessageInputSchema = refineMessageSchema(

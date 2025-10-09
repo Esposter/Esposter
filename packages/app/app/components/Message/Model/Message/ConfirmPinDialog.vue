@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
+import type { MessageEntity } from "@esposter/db";
 
 interface ConfirmPinDialogProps {
   message: MessageEntity;

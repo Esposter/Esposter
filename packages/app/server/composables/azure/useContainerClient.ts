@@ -1,4 +1,4 @@
-import type { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
+import type { AzureContainer } from "#shared/models/azure/container/AzureContainer";
 
 import { AzureContainerPropertiesMap } from "@@/server/models/azure/container/AzureContainerPropertiesMap";
 import { syncProperties } from "@@/server/services/azure/container/syncProperties";

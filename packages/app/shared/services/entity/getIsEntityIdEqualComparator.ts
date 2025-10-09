@@ -1,6 +1,6 @@
 import type { AEntity } from "#shared/models/entity/AEntity";
 import type { EntityIdKeys } from "#shared/models/entity/EntityIdKeys";
-import type { ToData } from "#shared/models/entity/ToData";
+import type { ToData } from "@esposter/shared";
 
 export const getIsEntityIdEqualComparator =
   <TEntity extends ToData<AEntity>, TIdKeys extends EntityIdKeys<TEntity>>(

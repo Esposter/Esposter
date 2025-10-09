@@ -1,6 +1,6 @@
-import { FileEntityPropertyNames } from "#shared/models/azure/table/FileEntity";
-import { MessageEntityPropertyNames } from "#shared/models/db/message/MessageEntity";
 import { SearchIndex } from "@@/server/models/azure/search/SearchIndex";
+import { MessageEntityPropertyNames } from "@esposter/db";
+import { FileEntityPropertyNames } from "@esposter/shared";
 
 export const SearchIndexSearchableFieldsMap = {
   [SearchIndex.Messages]: [

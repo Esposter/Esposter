@@ -1,6 +1,6 @@
 import type { PropertyNames } from "@/util/types/PropertyNames";
 
-import { getPropertyNames } from "@/util/getPropertyNames";
+import { getPropertyNames } from "@/util/object/getPropertyNames";
 import { z } from "zod";
 
 export class ItemMetadata {

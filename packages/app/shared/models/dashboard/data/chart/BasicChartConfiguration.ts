@@ -1,4 +1,4 @@
-import type { ToData } from "#shared/models/entity/ToData";
+import type { ToData } from "@esposter/shared";
 
 import { Serializable } from "@esposter/shared";
 import { z } from "zod";

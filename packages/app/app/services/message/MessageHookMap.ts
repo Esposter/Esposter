@@ -1,6 +1,6 @@
 import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
-import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { MessageEvents } from "#shared/models/message/events/MessageEvents";
+import type { MessageEntity } from "@esposter/db";
 import type { Editor } from "@tiptap/core";
 import type { Promisable } from "type-fest";
 

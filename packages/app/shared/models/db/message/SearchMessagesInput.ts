@@ -1,9 +1,8 @@
-import { messageEntitySchema } from "#shared/models/db/message/MessageEntity";
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { getIsSearchQueryEmpty } from "#shared/services/message/getIsSearchQueryEmpty";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
-import { selectRoomSchema, selectSearchHistorySchema } from "@esposter/db";
+import { messageEntitySchema, selectRoomSchema, selectSearchHistorySchema } from "@esposter/db";
 import { filterSchema, ItemMetadataPropertyNames } from "@esposter/shared";
 import { z } from "zod";
 

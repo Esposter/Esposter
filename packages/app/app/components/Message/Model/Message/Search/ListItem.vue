@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
+import type { MessageEntity } from "@esposter/db";
 
 import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 import { useRoomStore } from "@/store/message/room";

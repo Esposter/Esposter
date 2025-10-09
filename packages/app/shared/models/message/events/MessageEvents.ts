@@ -1,9 +1,9 @@
 import type { CreateTypingInput } from "#shared/models/db/message/CreateTypingInput";
 import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
-import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessageInput";
 import type { DeviceId } from "@@/server/models/auth/DeviceId";
 import type { Session } from "@@/server/models/auth/Session";
+import type { MessageEntity } from "@esposter/db";
 import type { PartialByKeys } from "unocss";
 
 export interface MessageEvents {

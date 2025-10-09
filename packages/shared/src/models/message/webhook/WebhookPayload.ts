@@ -1,6 +1,7 @@
 import type { Embed } from "@/models/message/webhook/Embed";
 
 import { embedSchema } from "@/models/message/webhook/Embed";
+import { FILE_MAX_LENGTH } from "@/services/azure/container/constants";
 import { USER_NAME_MAX_LENGTH } from "@/services/user/constants";
 import { z } from "zod";
 
@@ -15,7 +16,7 @@ export const webhookPayloadSchema: z.ZodType<WebhookPayload> = z
   .object({
     avatarUrl: z.url().optional(),
     content: z.string().max(2000).optional(),
-    embeds: embedSchema.array().max(10).optional(),
+    embeds: embedSchema.array().max(FILE_MAX_LENGTH).optional(),
     username: z.string().max(USER_NAME_MAX_LENGTH).optional(),
   })
   // Ensure at least one of content or embeds exists

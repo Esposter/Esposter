@@ -2,24 +2,15 @@ import type { AzureUpdateEntity } from "#shared/models/azure/table/AzureUpdateEn
 import type { FileSasEntity } from "#shared/models/message/FileSasEntity";
 import type { Clause } from "@esposter/shared";
 
-import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
+import { AzureContainer } from "#shared/models/azure/container/AzureContainer";
 import { AzureEntityType } from "#shared/models/azure/table/AzureEntityType";
-import { FileEntity, fileEntitySchema } from "#shared/models/azure/table/FileEntity";
-import { createMessageInputSchema } from "#shared/models/db/message/CreateMessageInput";
 import { createTypingInputSchema } from "#shared/models/db/message/CreateTypingInput";
 import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
-import {
-  MessageEntity,
-  MessageEntityPropertyNames,
-  messageEntitySchema,
-} from "#shared/models/db/message/MessageEntity";
-import { MessageType } from "#shared/models/db/message/MessageType";
 import { searchMessagesInputSchema } from "#shared/models/db/message/SearchMessagesInput";
 import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
 import { MAX_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
@@ -49,9 +40,20 @@ import { addProfanityFilterMiddleware } from "@@/server/trpc/middleware/addProfa
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/message/getCreatorProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
-import { rooms, selectRoomSchema } from "@esposter/db";
+import {
+  createMessageInputSchema,
+  MessageEntity,
+  MessageEntityPropertyNames,
+  messageEntitySchema,
+  MessageType,
+  rooms,
+  selectRoomSchema,
+} from "@esposter/db";
 import {
   BinaryOperator,
+  FileEntity,
+  fileEntitySchema,
+  getReverseTickedTimestamp,
   getTableNullClause,
   InvalidOperationError,
   ItemMetadataPropertyNames,

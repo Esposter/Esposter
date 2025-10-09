@@ -1,6 +1,6 @@
 import type { AsyncData } from "#app";
 import type { AEntity } from "#shared/models/entity/AEntity";
-import type { ToData } from "#shared/models/entity/ToData";
+import type { ToData } from "@esposter/shared";
 import type { TRPCClientErrorLike, TRPCProcedureOptions } from "@trpc/client";
 import type { InferrableClientTypes } from "@trpc/server/unstable-core-do-not-import";
 

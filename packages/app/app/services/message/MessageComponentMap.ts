@@ -1,8 +1,7 @@
-import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
-import type { User } from "@esposter/db";
+import type { MessageEntity, User } from "@esposter/db";
 import type { Component } from "vue";
 
-import { MessageType } from "#shared/models/db/message/MessageType";
+import { MessageType } from "@esposter/db/src/models/message/MessageType";
 
 export interface MessageComponentProps {
   active?: boolean;

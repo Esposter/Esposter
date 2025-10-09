@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { MessageComponentProps } from "@/services/message/MessageComponentMap";
+import type { MessageEntity } from "@esposter/db";
 
 import { dayjs } from "#shared/services/dayjs";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";

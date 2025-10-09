@@ -1,4 +1,4 @@
-import type { DeepOmitArray } from "#shared/util/types/DeepOmitArray";
+import type { DeepOmitArray } from "@/util/types/DeepOmitArray";
 import type { Primitive } from "type-fest";
 // https://stackoverflow.com/questions/55539387/deep-omit-with-typescript
 export type DeepOmit<T, TKey> = T extends Primitive

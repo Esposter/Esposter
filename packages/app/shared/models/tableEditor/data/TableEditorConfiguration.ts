@@ -1,7 +1,7 @@
-import type { ToData } from "#shared/models/entity/ToData";
 import type { Item } from "#shared/models/tableEditor/data/Item";
 import type { TodoListItem } from "#shared/models/tableEditor/todoList/TodoListItem";
 import type { VuetifyComponentItem } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
+import type { ToData } from "@esposter/shared";
 import type { PartialDeep } from "type-fest";
 
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";

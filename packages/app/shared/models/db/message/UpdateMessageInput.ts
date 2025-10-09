@@ -1,6 +1,6 @@
 import type { z } from "zod";
 
-import { messageEntitySchema } from "#shared/models/db/message/MessageEntity";
+import { messageEntitySchema } from "@esposter/db";
 
 export const updateMessageInputSchema = messageEntitySchema.pick({
   message: true,

@@ -1,4 +1,4 @@
-import type { FileEntity } from "#shared/models/azure/table/FileEntity";
+import type { FileEntity } from "@esposter/shared";
 
 import { useDownloadFileStore } from "@/store/message/downloadFile";
 import { useRoomStore } from "@/store/message/room";

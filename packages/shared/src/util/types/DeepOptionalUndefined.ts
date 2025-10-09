@@ -1,5 +1,5 @@
-import type { DeepOptionalProperties } from "#shared/util/types/DeepOptionalProperties";
-import type { DeepRequiredProperties } from "#shared/util/types/DeepRequiredProperties";
+import type { DeepOptionalProperties } from "@/util/types/DeepOptionalProperties";
+import type { DeepRequiredProperties } from "@/util/types/DeepRequiredProperties";
 
 export type DeepOptionalUndefined<T> = T extends (...args: unknown[]) => unknown // Handle Functions
   ? T // Don't transform functions

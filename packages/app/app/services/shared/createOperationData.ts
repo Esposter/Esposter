@@ -1,8 +1,8 @@
 import type { AEntity } from "#shared/models/entity/AEntity";
 import type { EntityIdKeys } from "#shared/models/entity/EntityIdKeys";
-import type { ToData } from "#shared/models/entity/ToData";
 import type { EntityTypeKey } from "@/models/shared/entity/EntityTypeKey";
 import type { OperationDataKey } from "@/models/shared/pagination/OperationDataKey";
+import type { ToData } from "@esposter/shared";
 
 import { getIsEntityIdEqualComparator } from "#shared/services/entity/getIsEntityIdEqualComparator";
 import { Operation, uncapitalize } from "@esposter/shared";
