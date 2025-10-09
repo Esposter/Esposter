@@ -6,5 +6,5 @@ export interface ListLinkItem extends Props {
   onClick?: () => Promise<void>;
   title: string;
 }
-
+// @TODO: new nuxt version should fix this
 type Props = AllowedComponentProps & AnchorHTMLAttributes & NuxtLinkProps & VNodeProps;

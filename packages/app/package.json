@@ -205,6 +205,6 @@
     "vuetify-nuxt-module": "catalog:"
   },
   "devDependenciesComments": {
-    "nuxt": "@TODO: entry is not a function ❯ Module.__vite_ssr_export_default__ ../../../node_modules/.pnpm/nuxt@4.1.3_@azure+data-tabl_3b5f74263d1c94149c69b5b381533886/node_modules/nuxt/dist/app/nuxt-vitest-app-entry.js"
+    "nuxt": "@TODO: https://github.com/nuxt/nuxt/issues/33414"
   }
 }
