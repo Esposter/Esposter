@@ -1,4 +1,4 @@
-import { Environment } from "@esposter/shared/src/models/environment/Environment.js";
+import { Environment } from "../../models/environment/Environment.js";
 
 export const IS_PRODUCTION = process.env.NODE_ENV === Environment.production;
 export const IS_TEST = process.env.NODE_ENV === Environment.test;
