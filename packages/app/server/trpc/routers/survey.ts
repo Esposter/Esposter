@@ -7,7 +7,6 @@ import { updateSurveyModelInputSchema } from "#shared/models/db/survey/UpdateSur
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
-import { extractBlobUrls } from "#shared/services/survey/extractBlobUrls";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { useUpload } from "@@/server/composables/azure/useUpload";
@@ -26,8 +25,7 @@ import {
   AzureTable,
   cloneBlobUrls,
   createEntity,
-  deleteDirectory,
-  fileEntitySchema,
+  deleteDirectory, extractBlobUrls, fileEntitySchema,
   generateDownloadFileSasUrls,
   generateUploadFileSasEntities,
   getEntity,
@@ -35,7 +33,7 @@ import {
   SurveyResponseEntity,
   surveyResponseEntitySchema,
   surveys,
-  updateEntity,
+  updateEntity
 } from "@esposter/db";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";

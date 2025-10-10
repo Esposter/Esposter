@@ -1,17 +1,17 @@
-import { extractBlobUrls } from "#shared/services/survey/extractBlobUrls";
-import { AzureContainer } from "@esposter/db";
+import { AzureContainer } from "@/models/azure/container/AzureContainer";
+import { extractBlobUrls } from "@/services/survey/extractBlobUrls";
 import { describe, expect, test, vi } from "vitest";
 
 const mocks = await vi.hoisted(async () => {
   const blobUrl = "https://mockaccount.blob.core.windows.net";
-  const AzureContainer = (await import("@esposter/db")).AzureContainer;
+  const AzureContainer = (await import("@/models/azure/container/AzureContainer")).AzureContainer;
   return {
     blobUrl,
     containerUrl: `${blobUrl}/${AzureContainer.SurveyAssets}`,
   };
 });
 
-vi.mock(import("@esposter/db"), () => ({
+vi.mock(import("@/services/azure/container/getBlobUrl"), () => ({
   getBlobUrl: () => mocks.blobUrl,
 }));
 
