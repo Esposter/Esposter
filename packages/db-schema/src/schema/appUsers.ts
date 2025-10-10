@@ -1,4 +1,5 @@
 import { pgTable } from "@/pgTable";
+import { messageSchema } from "@/schema/messageSchema";
 import { webhooks } from "@/schema/webhooks";
 import { relations, sql } from "drizzle-orm";
 import { check, text, uuid } from "drizzle-orm/pg-core";
@@ -18,6 +19,7 @@ export const appUsers = pgTable(
     extraConfig: ({ name }) => [
       check("name", sql`LENGTH(${name}) >= 1 AND LENGTH(${name}) <= ${sql.raw(APP_USER_NAME_MAX_LENGTH.toString())}`),
     ],
+    schema: messageSchema,
   },
 );
 

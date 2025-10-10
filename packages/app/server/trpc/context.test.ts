@@ -121,6 +121,7 @@ const pushSchema = async (db: PgliteDatabase<typeof schema>) => {
   const previousJson = generateDrizzleJson({});
   const currentJson = generateDrizzleJson(schema, previousJson.id);
   const statements = await generateMigration(previousJson, currentJson);
+  console.log(statements);
   for (const statement of statements) await db.execute(statement);
 };
 

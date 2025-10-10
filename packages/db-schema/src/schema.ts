@@ -1,4 +1,5 @@
 import * as accounts from "@/schema/accounts";
+import * as appUsers from "@/schema/appUsers";
 import * as invites from "@/schema/invites";
 import * as likes from "@/schema/likes";
 import * as posts from "@/schema/posts";
@@ -15,6 +16,7 @@ import * as webhooks from "@/schema/webhooks";
 
 export const schema = {
   ...accounts,
+  ...appUsers,
   ...invites,
   ...posts,
   ...webhooks,

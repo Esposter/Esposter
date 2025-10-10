@@ -169,6 +169,13 @@
       "when": 1760075284939,
       "tag": "0023_tiny_purple_man",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1760086141558,
+      "tag": "0024_blue_the_professor",
+      "breakpoints": true
     }
   ]
 }
