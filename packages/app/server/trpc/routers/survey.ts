@@ -25,7 +25,9 @@ import {
   AzureTable,
   cloneBlobUrls,
   createEntity,
-  deleteDirectory, extractBlobUrls, fileEntitySchema,
+  deleteDirectory,
+  extractBlobUrls,
+  fileEntitySchema,
   generateDownloadFileSasUrls,
   generateUploadFileSasEntities,
   getEntity,
@@ -33,7 +35,7 @@ import {
   SurveyResponseEntity,
   surveyResponseEntitySchema,
   surveys,
-  updateEntity
+  updateEntity,
 } from "@esposter/db";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
