@@ -2,7 +2,7 @@ import type { TableEntity } from "@azure/data-tables";
 
 import { compare } from "@/services/table/compare";
 import { isTableNullClause } from "@/services/table/isTableNullClause";
-import { BinaryOperator, deserializeClause } from "@esposter/shared";
+import { BinaryOperator, deserializeClause } from "@esposter/db";
 
 export const createTableFilterPredicate = <T extends Record<string, unknown>>(
   filter: string,

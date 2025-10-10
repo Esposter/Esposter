@@ -1,5 +1,5 @@
 import type { UploadFileUrl } from "@/models/message/file/UploadFileUrl";
-import type { FileEntity } from "@esposter/shared";
+import type { FileEntity } from "@esposter/db";
 
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { useRoomStore } from "@/store/message/room";

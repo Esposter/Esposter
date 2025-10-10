@@ -1,4 +1,4 @@
-import { AzureContainer } from "#shared/models/azure/container/AzureContainer";
+import { AzureContainer } from "@esposter/db";
 
 export const useDeleteFile = (surveyId: string) => {
   const { $trpc } = useNuxtApp();

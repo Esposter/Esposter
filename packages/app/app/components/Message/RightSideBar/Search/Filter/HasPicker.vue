@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { SerializableValue } from "@esposter/shared";
+import type { SerializableValue } from "@esposter/db";
 
 import { FilterTypeHasIconMap } from "@/models/message/FilterTypeHasIconMap";
-import { FilterTypeHas } from "@esposter/shared";
+import { FilterTypeHas } from "@esposter/db";
 
 const emit = defineEmits<{ select: [value: SerializableValue] }>();
 </script>

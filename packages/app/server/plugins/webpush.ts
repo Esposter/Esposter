@@ -1,4 +1,4 @@
-import { IS_PRODUCTION } from "#shared/util/environment/constants";
+import { IS_PRODUCTION } from "@esposter/shared";
 import webpush from "web-push";
 
 export default defineNitroPlugin(() => {

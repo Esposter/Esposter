@@ -1,4 +1,4 @@
-import type { AzureContainer } from "#shared/models/azure/container/AzureContainer";
+import type { AzureContainer } from "@esposter/db";
 
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
 

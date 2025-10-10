@@ -1,6 +1,6 @@
 import type { MessageMetadataEntityMap } from "#shared/models/db/message/metadata/MessageMetadataEntityMap";
-import type { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
 import type { AzureMetadataOperationDataKey } from "@/models/shared/metadata/AzureMetadataOperationDataKey";
+import type { MessageMetadataType } from "@esposter/db";
 import type { ReadonlyRefOrGetter } from "@vueuse/core";
 
 import { AzureMetadataOperation } from "@/models/shared/metadata/AzureMetadataOperation";

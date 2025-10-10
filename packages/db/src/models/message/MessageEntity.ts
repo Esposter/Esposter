@@ -1,21 +1,20 @@
+import type { CompositeKeyEntity } from "@/models/azure/table/CompositeKeyEntity";
+import type { FileEntity } from "@/models/azure/table/FileEntity";
 import type { LinkPreviewResponse } from "@/models/message/linkPreview/LinkPreviewResponse";
-import type { CompositeKeyEntity, FileEntity, ToData } from "@esposter/shared";
+import type { ToData } from "@esposter/shared";
 import type { Except } from "type-fest";
 
+import { AzureEntity, createAzureEntitySchema } from "@/models/azure/table/AzureEntity";
+import { fileEntitySchema } from "@/models/azure/table/FileEntity";
 import { MessageType } from "@/models/message/MessageType";
 import { selectRoomSchema } from "@/schema/rooms";
 import { selectUserSchema } from "@/schema/users";
+import { FILE_MAX_LENGTH } from "@/services/azure/container/constants";
 import { refineMessageSchema } from "@/services/message/refineMessageSchema";
-import {
-  AzureEntity,
-  createAzureEntitySchema,
-  FILE_MAX_LENGTH,
-  fileEntitySchema,
-  getPropertyNames,
-  MENTION_MAX_LENGTH,
-} from "@esposter/shared";
+import { getPropertyNames } from "@esposter/shared";
 import { z } from "zod";
 
+export const MENTION_MAX_LENGTH = 100;
 export const MESSAGE_MAX_LENGTH = 10000;
 
 export class MessageEntity extends AzureEntity {

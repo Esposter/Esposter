@@ -1,14 +1,13 @@
 import type { BuildingWithStats } from "#shared/models/clicker/data/building/BuildingWithStats";
 import type { Upgrade } from "#shared/models/clicker/data/upgrade/Upgrade";
-import type { ItemEntityType } from "#shared/models/entity/ItemEntityType";
-import type { ToData } from "@esposter/shared";
+import type { ItemEntityType, ToData } from "@esposter/shared";
 
 import { buildingWithStatsSchema } from "#shared/models/clicker/data/building/BuildingWithStats";
 import { ClickerType, clickerTypeSchema } from "#shared/models/clicker/data/ClickerType";
 import { createUpgradeSchema } from "#shared/models/clicker/data/upgrade/Upgrade";
 import { upgradeIdSchema } from "#shared/models/clicker/data/upgrade/UpgradeId";
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
-import { createItemEntityTypeSchema } from "#shared/models/entity/ItemEntityType";
+import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
 export class Clicker extends AItemEntity implements ItemEntityType<ClickerType> {

@@ -1,10 +1,6 @@
 import type { ItemMetadata } from "@/models/shared/ItemMetadata";
+import type { WithMetadata } from "@/models/shared/WithMetadata";
 import type { Class } from "type-fest";
-
-interface WithMetadata<TBase extends Class<NonNullable<unknown>>> {
-  new (...args: ConstructorParameters<TBase>): InstanceType<TBase> & ItemMetadata;
-  prototype: InstanceType<TBase> & ItemMetadata;
-}
 
 export const applyItemMetadataMixin = <TBase extends Class<NonNullable<unknown>>>(Base: TBase): WithMetadata<TBase> =>
   class ItemWithMetadata extends Base implements ItemMetadata {

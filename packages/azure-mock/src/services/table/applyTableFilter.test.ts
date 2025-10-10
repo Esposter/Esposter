@@ -1,8 +1,9 @@
 import type { TableEntity } from "@azure/data-tables";
-import type { Clause } from "@esposter/shared";
+import type { Clause } from "@esposter/db";
 
 import { applyTableFilter } from "@/services/table/applyTableFilter";
-import { BinaryOperator, getPropertyNames } from "@esposter/shared";
+import { BinaryOperator } from "@esposter/db";
+import { getPropertyNames } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const TableEntityPropertyNames = getPropertyNames<TableEntity>();

@@ -1,4 +1,4 @@
-import type { FileEntity } from "@esposter/shared";
+import type { FileEntity } from "@esposter/db";
 
 export interface FileRendererComponentProps {
   file: FileEntity;

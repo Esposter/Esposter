@@ -1,5 +1,5 @@
 import { createTableFilterPredicate } from "@/services/table/createTableFilterPredicate";
-import { BinaryOperator, getTableNullClause, serializeClause, serializeClauses } from "@esposter/shared";
+import { BinaryOperator, getTableNullClause, serializeClause, serializeClauses } from "@esposter/db";
 import { describe, expect, test } from "vitest";
 
 describe(createTableFilterPredicate, () => {

@@ -1,7 +1,7 @@
 import type { CreateMessageInput } from "@/models/message/CreateMessageInput";
 
 import { MessageEntity } from "@/models/message/MessageEntity";
-import { getReverseTickedTimestamp } from "@esposter/shared";
+import { getReverseTickedTimestamp } from "@/services/azure/table/getReverseTickedTimestamp";
 
 export const createMessageEntity = ({
   message,

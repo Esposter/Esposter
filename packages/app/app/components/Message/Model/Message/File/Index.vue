@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { MessageEntity } from "@esposter/db";
-import type { FileEntity } from "@esposter/shared";
+import type { FileEntity, MessageEntity } from "@esposter/db";
 
 import { authClient } from "@/services/auth/authClient";
 import { CONTAINER_BORDER_RADIUS } from "@/services/message/file/constants";

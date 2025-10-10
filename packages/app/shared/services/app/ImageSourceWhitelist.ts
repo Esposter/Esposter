@@ -1,4 +1,5 @@
-import { getBlobUrl } from "../azure/container/getBlobUrl";
+import { getBlobUrl } from "@esposter/db/src/services/azure/container/getBlobUrl";
+
 import {
   BLOGSPOT_BASE_URL,
   GRAPESJS_BASE_URL,

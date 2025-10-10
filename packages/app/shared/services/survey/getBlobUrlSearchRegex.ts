@@ -1,6 +1,5 @@
-import { AzureContainer } from "#shared/models/azure/container/AzureContainer";
-import { getBlobUrl } from "#shared/services/azure/container/getBlobUrl";
 import { escapeRegExp } from "#shared/util/regex/escapeRegExp";
+import { AzureContainer, getBlobUrl } from "@esposter/db";
 
 export const getBlobUrlSearchRegex = (blobUrl?: string) =>
   new RegExp(

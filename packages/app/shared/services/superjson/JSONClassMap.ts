@@ -7,7 +7,6 @@ import { Chart } from "#shared/models/dashboard/data/chart/Chart";
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
-import { SurveyResponseEntity } from "#shared/models/db/survey/SurveyResponseEntity";
 import { Dungeons } from "#shared/models/dungeons/data/Dungeons";
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { FlowchartEditor } from "#shared/models/flowchartEditor/data/FlowchartEditor";
@@ -16,7 +15,7 @@ import { TableEditorConfiguration } from "#shared/models/tableEditor/data/TableE
 import { TodoListItem } from "#shared/models/tableEditor/todoList/TodoListItem";
 import { VuetifyComponentItem } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
-import { MessageEntity } from "@esposter/db";
+import { MessageEntity, SurveyResponseEntity } from "@esposter/db";
 
 export const JSONClassMap = {
   BasicChartConfiguration,

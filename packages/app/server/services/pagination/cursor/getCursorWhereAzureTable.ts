@@ -1,10 +1,12 @@
 import type { AEntity } from "#shared/models/entity/AEntity";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { Clause, CompositeKey, ToData } from "@esposter/shared";
+import type { Clause, CompositeKey } from "@esposter/db";
+import type { ToData } from "@esposter/shared";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { deserialize } from "#shared/services/pagination/cursor/deserialize";
-import { BinaryOperator, exhaustiveGuard, NotFoundError, serializeKey } from "@esposter/shared";
+import { BinaryOperator, serializeKey } from "@esposter/db";
+import { exhaustiveGuard, NotFoundError } from "@esposter/shared";
 
 export const getCursorWhereAzureTable = <TItem extends CompositeKey | ToData<AEntity>>(
   serializedCursors: string,

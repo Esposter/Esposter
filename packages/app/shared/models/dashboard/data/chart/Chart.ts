@@ -1,5 +1,4 @@
-import type { ItemEntityType } from "#shared/models/entity/ItemEntityType";
-import type { ToData } from "@esposter/shared";
+import type { ItemEntityType, ToData } from "@esposter/shared";
 
 import {
   BasicChartConfiguration,
@@ -7,7 +6,7 @@ import {
 } from "#shared/models/dashboard/data/chart/BasicChartConfiguration";
 import { ChartType, chartTypeSchema } from "#shared/models/dashboard/data/chart/type/ChartType";
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
-import { createItemEntityTypeSchema } from "#shared/models/entity/ItemEntityType";
+import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
 export class Chart extends AItemEntity implements ItemEntityType<ChartType> {

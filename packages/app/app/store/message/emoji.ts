@@ -3,11 +3,11 @@ import type { DeleteEmojiInput } from "#shared/models/db/message/metadata/Delete
 import type { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import type { UpdateEmojiInput } from "#shared/models/db/message/metadata/UpdateEmojiInput";
 
-import { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
 import { getIsEntityIdEqualComparator } from "#shared/services/entity/getIsEntityIdEqualComparator";
 import { createMessageEmojiMetadataEntity } from "#shared/services/message/createMessageEmojiMetadataEntity";
 import { getUpdatedUserIds } from "#shared/services/message/emoji/getUpdatedUserIds";
 import { authClient } from "@/services/auth/authClient";
+import { MessageMetadataType } from "@esposter/db";
 
 export const useEmojiStore = defineStore("message/emoji", () => {
   const session = authClient.useSession();

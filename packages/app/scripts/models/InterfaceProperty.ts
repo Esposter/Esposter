@@ -1,4 +1,4 @@
-import type { ItemEntityType } from "#shared/models/entity/ItemEntityType";
+import type { ItemEntityType } from "@esposter/shared";
 
 export interface InterfaceProperty extends ItemEntityType<string> {
   name: string;

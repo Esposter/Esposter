@@ -44,10 +44,17 @@
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@azure/data-tables": "catalog:",
+    "@azure/storage-blob": "catalog:",
     "@esposter/shared": "workspace:*",
+    "dayjs": "catalog:",
     "drizzle-kit": "catalog:",
     "drizzle-orm": "catalog:",
     "drizzle-zod": "catalog:",
+    "mime-types": "catalog:",
     "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/mime-types": "catalog:"
   }
 }

@@ -1,6 +1,5 @@
 import type { useTableClient } from "@@/server/composables/azure/useTableClient";
-import type { AzureTableEntityMap } from "@@/server/models/azure/table/AzureTableEntityMap";
-import type { CustomTableClient } from "@@/server/models/azure/table/CustomTableClient";
+import type { AzureTableEntityMap, CustomTableClient } from "@esposter/db";
 
 import { MockTableClient } from "azure-mock";
 import { describe } from "vitest";

@@ -1,4 +1,4 @@
-import type { Filter } from "@esposter/shared";
+import type { Filter } from "@/models/message/filter/Filter";
 
 import { MESSAGE_MAX_LENGTH } from "@/models/message/MessageEntity";
 import { pgTable } from "@/pgTable";

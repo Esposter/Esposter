@@ -1,6 +1,6 @@
-import type { Clause } from "@esposter/shared";
+import type { Clause } from "@esposter/db";
 
-import { getTableNullClause } from "@esposter/shared";
+import { getTableNullClause } from "@esposter/db";
 import deepEqual from "fast-deep-equal";
 
 export const isTableNullClause = (clause: Clause): boolean => {

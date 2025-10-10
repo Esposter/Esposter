@@ -2,19 +2,16 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { AzureContainer } from "#shared/models/azure/container/AzureContainer";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MENTION_ID_ATTRIBUTE, MENTION_TYPE, MENTION_TYPE_ATTRIBUTE } from "#shared/services/message/constants";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
-import { getBlobName } from "@@/server/services/azure/container/getBlobName";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { messageRouter } from "@@/server/trpc/routers/message";
 import { roomRouter } from "@@/server/trpc/routers/room";
-import { MessageType, rooms } from "@esposter/db";
-import { getReverseTickedTimestamp } from "@esposter/shared";
+import { AzureContainer, getBlobName, getReverseTickedTimestamp, MessageType, rooms } from "@esposter/db";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 

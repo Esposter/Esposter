@@ -2,10 +2,9 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { TRPCLink } from "@trpc/client";
 
 import { transformer } from "#shared/services/trpc/transformer";
-import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
 import { TRPC_CLIENT_PATH } from "@/services/trpc/constants";
 import { errorLink } from "@/services/trpc/errorLink";
-import { getIsServer } from "@esposter/shared";
+import { getIsServer, IS_DEVELOPMENT } from "@esposter/shared";
 import { createWSClient, isNonJsonSerializable, loggerLink, splitLink, wsLink } from "@trpc/client";
 import { createTRPCNuxtClient, httpBatchLink, httpLink } from "trpc-nuxt/client";
 

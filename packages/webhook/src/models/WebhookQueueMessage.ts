@@ -1,6 +1,6 @@
-import type { WebhookPayload } from "@esposter/shared";
+import type { Webhook, WebhookPayload } from "@esposter/db";
 
 export interface WebhookQueueMessage {
-  id: string;
   payload: WebhookPayload;
+  webhook: Pick<Webhook, "roomId" | "userId">;
 }

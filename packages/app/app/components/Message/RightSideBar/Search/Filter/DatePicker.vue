@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SerializableValue } from "@esposter/shared";
+import type { SerializableValue } from "@esposter/db";
 
 import { dayjs } from "#shared/services/dayjs";
 

@@ -1,8 +1,7 @@
-import type { SearchIndex } from "@@/server/models/azure/search/SearchIndex";
-import type { SearchIndexDocumentMap } from "@@/server/models/azure/search/SearchIndexDocumentMap";
+import type { SearchIndex, SearchIndexDocumentMap } from "@esposter/db";
 
-import { getSearchUrl } from "@@/server/services/azure/search/getSearchUrl";
 import { AzureKeyCredential, SearchClient } from "@azure/search-documents";
+import { getSearchUrl } from "@esposter/db";
 
 export const useSearchClient = <TIndex extends SearchIndex>(
   index: TIndex,

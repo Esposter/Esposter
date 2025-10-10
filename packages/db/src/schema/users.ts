@@ -5,11 +5,12 @@ import { sessions } from "@/schema/sessions";
 import { surveys } from "@/schema/surveys";
 import { userStatuses } from "@/schema/userStatuses";
 import { usersToRooms } from "@/schema/usersToRooms";
-import { USER_NAME_MAX_LENGTH } from "@esposter/shared";
 import { relations, sql } from "drizzle-orm";
 import { boolean, check, pgEnum, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
+
+export const USER_NAME_MAX_LENGTH = 100;
 
 export enum UserType {
   App = "App",

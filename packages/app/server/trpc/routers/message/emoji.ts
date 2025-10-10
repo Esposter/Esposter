@@ -1,5 +1,4 @@
-import type { CustomTableClient } from "@@/server/models/azure/table/CustomTableClient";
-import type { Clause } from "@esposter/shared";
+import type { Clause, CustomTableClient } from "@esposter/db";
 
 import { createEmojiInputSchema } from "#shared/models/db/message/metadata/CreateEmojiInput";
 import { deleteEmojiInputSchema } from "#shared/models/db/message/metadata/DeleteEmojiInput";
@@ -7,27 +6,31 @@ import {
   MessageEmojiMetadataEntity,
   MessageEmojiMetadataEntityPropertyNames,
 } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
-import { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
 import { updateEmojiInputSchema } from "#shared/models/db/message/metadata/UpdateEmojiInput";
 import { createMessageEmojiMetadataEntity } from "#shared/services/message/createMessageEmojiMetadataEntity";
 import { getUpdatedUserIds } from "#shared/services/message/emoji/getUpdatedUserIds";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
-import { AzureTable } from "@@/server/models/azure/table/AzureTable";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
-import { AZURE_MAX_PAGE_SIZE } from "@@/server/services/azure/table/constants";
-import { createEntity } from "@@/server/services/azure/table/createEntity";
-import { deleteEntity } from "@@/server/services/azure/table/deleteEntity";
-import { getEntity } from "@@/server/services/azure/table/getEntity";
-import { getTopNEntities } from "@@/server/services/azure/table/getTopNEntities";
-import { updateEntity } from "@@/server/services/azure/table/updateEntity";
 import { on } from "@@/server/services/events/on";
 import { emojiEventEmitter } from "@@/server/services/message/events/emojiEventEmitter";
 import { isRoomId } from "@@/server/services/message/isRoomId";
 import { router } from "@@/server/trpc";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { readMetadataInputSchema } from "@@/server/trpc/routers/message";
-import { selectRoomSchema } from "@esposter/db";
-import { BinaryOperator, InvalidOperationError, Operation, serializeClauses } from "@esposter/shared";
+import {
+  AZURE_MAX_PAGE_SIZE,
+  AzureTable,
+  BinaryOperator,
+  createEntity,
+  deleteEntity,
+  getEntity,
+  getTopNEntities,
+  MessageMetadataType,
+  selectRoomSchema,
+  serializeClauses,
+  updateEntity,
+} from "@esposter/db";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 

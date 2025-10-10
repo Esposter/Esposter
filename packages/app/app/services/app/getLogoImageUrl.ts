@@ -1,4 +1,3 @@
-import { AzureContainer } from "#shared/models/azure/container/AzureContainer";
-import { getBlobUrl } from "#shared/services/azure/container/getBlobUrl";
+import { AzureContainer, getBlobUrl } from "@esposter/db";
 
 export const getLogoImageUrl = () => `${getBlobUrl()}/${AzureContainer.AppAssets}/logo.png`;

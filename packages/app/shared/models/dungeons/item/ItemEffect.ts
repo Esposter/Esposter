@@ -1,8 +1,8 @@
 import type { ItemEffectType } from "#shared/models/dungeons/item/ItemEffectType";
-import type { ItemEntityType } from "#shared/models/entity/ItemEntityType";
+import type { ItemEntityType } from "@esposter/shared";
 
 import { itemEffectTypeSchema } from "#shared/models/dungeons/item/ItemEffectType";
-import { createItemEntityTypeSchema } from "#shared/models/entity/ItemEntityType";
+import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
 export interface ItemEffect extends ItemEntityType<ItemEffectType> {

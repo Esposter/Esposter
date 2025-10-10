@@ -2,8 +2,7 @@ import { WEBHOOK_STORAGE_QUEUE_OUTPUT } from "@/services/constants";
 import { db } from "@/services/db";
 import { rateLimiter } from "@/services/rateLimiter";
 import { app } from "@azure/functions";
-import { selectWebhookSchema } from "@esposter/db";
-import { webhookPayloadSchema } from "@esposter/shared";
+import { selectWebhookSchema, webhookPayloadSchema } from "@esposter/db";
 import { RateLimiterRes } from "rate-limiter-flexible";
 import { z, ZodError } from "zod";
 
@@ -15,7 +14,7 @@ app.http("queueWebhook", {
     try {
       const { id, token } = await selectWebhookSchema.pick({ id: true, token: true }).parseAsync(request.params);
       const webhook = await db.query.webhooks.findFirst({
-        columns: { id: true },
+        columns: { roomId: true, userId: true },
         where: (webhooks, { and, eq }) =>
           and(eq(webhooks.id, id), eq(webhooks.token, token), eq(webhooks.isActive, true)),
       });
@@ -24,7 +23,7 @@ app.http("queueWebhook", {
       await rateLimiter.consume(token);
       const body = await request.json();
       const payload = await webhookPayloadSchema.parseAsync(body);
-      context.extraOutputs.set(WEBHOOK_STORAGE_QUEUE_OUTPUT.name, { id, payload });
+      context.extraOutputs.set(WEBHOOK_STORAGE_QUEUE_OUTPUT.name, { payload, webhook });
       context.log(`Queued job for id: ${id}`);
       return {
         jsonBody: { message: "Webhook accepted and queued for processing." },

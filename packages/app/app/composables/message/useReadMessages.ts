@@ -5,8 +5,8 @@ import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants"
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
-import { MessageEntityPropertyNames } from "@esposter/db";
-import { getReverseTickedTimestamp, InvalidOperationError, Operation } from "@esposter/shared";
+import { getReverseTickedTimestamp, MessageEntityPropertyNames } from "@esposter/db";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const useReadMessages = () => {
   const route = useRoute();
