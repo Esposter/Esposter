@@ -2,7 +2,7 @@ import { auth } from "@@/server/auth";
 import { db } from "@@/server/db";
 import { middleware } from "@@/server/trpc";
 import { rateLimiterFlexible } from "@esposter/db-schema";
-import { ID_SEPARATOR, IS_PRODUCTION } from "@esposter/shared";
+import { getIsProduction, ID_SEPARATOR } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { RateLimiterDrizzleNonAtomic } from "rate-limiter-flexible";
 
@@ -16,7 +16,7 @@ const rateLimiter = new RateLimiterDrizzleNonAtomic({
 
 export const isRateLimited = middleware(async ({ ctx, next, path }) => {
   const session = await auth.api.getSession({ headers: ctx.headers });
-  if (!IS_PRODUCTION) return next({ ctx: { session } });
+  if (!getIsProduction()) return next({ ctx: { session } });
 
   const forwardedFor = ctx.req.headers["x-forwarded-for"] as string | undefined;
   const ip = forwardedFor ? forwardedFor.split(",")[0].trim() : ctx.req.socket.remoteAddress;
