@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.15.1](https://github.com/Esposter/Esposter/compare/v2.15.0...v2.15.1) (2025-10-10)
+
+### Bug Fixes
+
+* add remaining js shims ([60c6643](https://github.com/Esposter/Esposter/commit/60c66434c940ca9610333e68e10a246fa7772716))
+* don't circular import self ([5c04718](https://github.com/Esposter/Esposter/commit/5c047189d8faddcdc296cb79655954c0411a398c))
+* tests ([cfb9a92](https://github.com/Esposter/Esposter/commit/cfb9a92579f4a591be9cd0aac3a7f4cecfd8e26f))
+
 # [2.15.0](https://github.com/Esposter/Esposter/compare/v2.14.0...v2.15.0) (2025-10-09)
 
 ### Bug Fixes

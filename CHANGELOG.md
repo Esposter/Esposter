@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.15.1](https://github.com/Esposter/Esposter/compare/v2.15.0...v2.15.1) (2025-10-10)
+
+### Bug Fixes
+
+* add remaining js shims ([60c6643](https://github.com/Esposter/Esposter/commit/60c66434c940ca9610333e68e10a246fa7772716))
+* cleanup pnpm lock ([bd6d0e4](https://github.com/Esposter/Esposter/commit/bd6d0e416d9a45ce3181318d002b1d8de226fae3))
+* don't circular import self ([5c04718](https://github.com/Esposter/Esposter/commit/5c047189d8faddcdc296cb79655954c0411a398c))
+* imports ([8814647](https://github.com/Esposter/Esposter/commit/8814647903a4d6d200ea195d5f7ed0e65b7545d2))
+* just re-implement in ts ([1d13edc](https://github.com/Esposter/Esposter/commit/1d13edcd94d52da3555377b9d943e66febcc6bc4))
+* lint ([dce643a](https://github.com/Esposter/Esposter/commit/dce643a4389e35445167122d214403e31ed47166))
+* lint ([a86f226](https://github.com/Esposter/Esposter/commit/a86f22607293dfc151dbffc1d5a05bd1b3376456))
+* lint ([f34d2d6](https://github.com/Esposter/Esposter/commit/f34d2d6f28a1923ad45e409a073e28006d2e4f11))
+* migrate schema ([df55198](https://github.com/Esposter/Esposter/commit/df55198279c3cfd62913bc2e959287fe82d0d0d2))
+* provide js version for nuxt config ([4c7bdac](https://github.com/Esposter/Esposter/commit/4c7bdac0c60c15001efb69d90e194fb77d957ead))
+* schema ([6869f80](https://github.com/Esposter/Esposter/commit/6869f80e081eb0e3c594c500b81b6d2733d460bc))
+* split to db-schema pkg that is browser-friendly ([549fcac](https://github.com/Esposter/Esposter/commit/549fcacfe755039fb2a85e17baaa11f2ddfc6d4f))
+* tests ([cfb9a92](https://github.com/Esposter/Esposter/commit/cfb9a92579f4a591be9cd0aac3a7f4cecfd8e26f))
+
 # [2.15.0](https://github.com/Esposter/Esposter/compare/v2.14.0...v2.15.0) (2025-10-09)
 
 ### Bug Fixes
