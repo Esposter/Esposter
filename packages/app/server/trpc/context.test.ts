@@ -72,10 +72,7 @@ export const mockSessionOnce = async (db: Context["db"], mockUser?: Session["use
         })
         .returning()
     )[0];
-  const session = {
-    session: createSession(user.id),
-    user: { ...user, email: user.email ?? "", emailVerified: user.emailVerified ?? false },
-  };
+  const session = { session: createSession(user.id), user };
   mocks.getSession.mockImplementationOnce(() => session);
   return session;
 };
