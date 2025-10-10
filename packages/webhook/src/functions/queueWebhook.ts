@@ -58,3 +58,5 @@ app.http("queueWebhook", {
   methods: ["POST"],
   route: "webhooks/{id}/{token}",
 });
+
+export default {};
