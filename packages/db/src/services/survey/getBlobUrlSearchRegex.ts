@@ -1,4 +1,4 @@
-import { AzureContainer, } from "@/models/azure/container/AzureContainer";
+import { AzureContainer } from "@/models/azure/container/AzureContainer";
 import { getBlobUrl } from "@/services/azure/container/getBlobUrl";
 import { escapeRegExp } from "@esposter/shared";
 
