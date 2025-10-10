@@ -2,6 +2,7 @@ import type { Room } from "@/schema/rooms";
 import type { User } from "@/schema/users";
 
 import { pgTable } from "@/pgTable";
+import { appUsers } from "@/schema/appUsers";
 import { messageSchema } from "@/schema/messageSchema";
 import { rooms } from "@/schema/rooms";
 import { users } from "@/schema/users";
@@ -25,11 +26,9 @@ export const webhooks = pgTable(
       .notNull()
       .references(() => rooms.id, { onDelete: "cascade" }),
     token: text("token").notNull(),
-    userId: text("user_id")
+    userId: uuid("user_id")
       .notNull()
-      .default(sql`gen_random_uuid()`)
-      .unique()
-      .references(() => users.id, { onDelete: "cascade" }),
+      .references(() => appUsers.id, { onDelete: "cascade" }),
   },
   {
     extraConfig: ({ name }) => [
@@ -54,9 +53,9 @@ export const webhooksRelations = relations(webhooks, ({ one }) => ({
     fields: [webhooks.roomId],
     references: [rooms.id],
   }),
-  user: one(users, {
+  user: one(appUsers, {
     fields: [webhooks.userId],
-    references: [users.id],
+    references: [appUsers.id],
   }),
 }));
 // @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695

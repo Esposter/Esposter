@@ -11,7 +11,7 @@ import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const searchHistories = pgTable(
-  "search_history",
+  "search_histories",
   {
     filters: jsonb("filters").notNull().$type<Filter[]>().default([]),
     id: uuid("id").primaryKey().defaultRandom(),

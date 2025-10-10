@@ -18,10 +18,9 @@ import { describe, vi } from "vitest";
 const require = createRequire(import.meta.url);
 const { generateDrizzleJson, generateMigration } = require("drizzle-kit/api") as typeof DrizzleKit;
 
-const mocks = await vi.hoisted(async () => {
+const mocks = vi.hoisted(() => {
   const createdAt = new Date();
-  const UserType = (await import("@esposter/db")).UserType;
-  const user = {
+  const user: User = {
     createdAt,
     deletedAt: null,
     email: "",
@@ -29,9 +28,8 @@ const mocks = await vi.hoisted(async () => {
     id: crypto.randomUUID(),
     image: null,
     name: "name",
-    type: UserType.Human,
     updatedAt: createdAt,
-  } as const satisfies User;
+  };
   return {
     getSession: vi.fn<() => Session>(() => {
       const session = createSession(user.id);
