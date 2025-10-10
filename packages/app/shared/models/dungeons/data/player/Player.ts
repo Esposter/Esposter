@@ -11,7 +11,7 @@ import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
 import { Monster, monsterSchema } from "#shared/models/dungeons/monster/Monster";
 import { getItem } from "#shared/services/dungeons/item/getItem";
 import { getInitialMetadata } from "#shared/services/dungeons/scene/world/getInitialMetadata";
-import { getIsProduction } from "@esposter/shared";
+import { IS_PRODUCTION } from "#shared/util/environment/constants";
 import { z } from "zod";
 
 export class Player {
@@ -21,7 +21,7 @@ export class Player {
     { id: ItemId.DamagedBall, quantity: 5 },
   ].map(({ id, ...rest }) => ({ ...getItem(id), ...rest }));
   monsters: Monster[] = (() => {
-    if (getIsProduction()) return [new Monster(MonsterKey.Iguanignite)];
+    if (IS_PRODUCTION) return [new Monster(MonsterKey.Iguanignite)];
 
     const monsters = [
       new Monster(MonsterKey.Iguanignite),

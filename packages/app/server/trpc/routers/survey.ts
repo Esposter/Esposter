@@ -14,6 +14,7 @@ import { useUpdateBlobUrls } from "@@/server/composables/survey/useUpdateBlobUrl
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { SURVEY_MODEL_FILENAME } from "@@/server/services/survey/constants";
+import { extractBlobUrls } from "@@/server/services/survey/extractBlobUrls";
 import { getPublishDirectory } from "@@/server/services/survey/getPublishDirectory";
 import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
@@ -23,7 +24,6 @@ import {
   cloneBlobUrls,
   createEntity,
   deleteDirectory,
-  extractBlobUrls,
   generateDownloadFileSasUrls,
   generateUploadFileSasEntities,
   getEntity,

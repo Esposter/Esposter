@@ -2,6 +2,7 @@
 import type { Loader } from "phaser";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
+import { IS_PRODUCTION } from "#shared/util/environment/constants";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { FontLoaderMap } from "@/models/dungeons/loader/FontLoaderMap";
 import { ImageLoaderMap } from "@/models/dungeons/loader/image/ImageLoaderMap";
@@ -10,7 +11,6 @@ import { SpritesheetLoaderMap } from "@/models/dungeons/loader/spritesheet/Sprit
 import { TilemapLoaderMap } from "@/models/dungeons/loader/TilemapLoaderMap";
 import { TilesetLoaderMap } from "@/models/dungeons/loader/TilesetLoaderMap";
 import { prettify } from "@/util/text/prettify";
-import { getIsProduction } from "@esposter/shared";
 import { Rectangle, Text, usePhaserStore } from "vue-phaserjs";
 
 const phaserStore = usePhaserStore();
@@ -39,7 +39,7 @@ const preload = (scene: SceneWithPlugins) => {
       assetText.value = `Loading asset: ${prettify(file.key)}`;
     })
     .once("complete", async () => {
-      await switchToScene(getIsProduction() ? SceneKey.Title : SceneKey.Title);
+      await switchToScene(IS_PRODUCTION ? SceneKey.Title : SceneKey.Title);
     });
 
   for (const fontLoader of Object.values(FontLoaderMap)) fontLoader(scene);

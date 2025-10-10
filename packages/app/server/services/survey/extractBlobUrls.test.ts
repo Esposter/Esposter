@@ -1,4 +1,4 @@
-import { extractBlobUrls } from "@/services/survey/extractBlobUrls";
+import { extractBlobUrls } from "@@/server/services/survey/extractBlobUrls";
 import { AzureContainer } from "@esposter/db-schema";
 import { describe, expect, test, vi } from "vitest";
 
@@ -11,8 +11,7 @@ const mocks = await vi.hoisted(async () => {
   };
 });
 
-vi.mock(import("@esposter/db-schema"), async () => ({
-  ...(await import("@esposter/db-schema")),
+vi.mock(import("#shared/services/azure/container/getBlobUrl"), () => ({
   getBlobUrl: () => mocks.blobUrl,
 }));
 

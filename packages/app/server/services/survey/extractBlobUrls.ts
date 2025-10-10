@@ -1,4 +1,4 @@
-import { getBlobUrlSearchRegex } from "@/services/survey/getBlobUrlSearchRegex";
+import { getBlobUrlSearchRegex } from "@@/server/services/survey/getBlobUrlSearchRegex";
 
 export const extractBlobUrls = (model: string): string[] => [
   ...new Set(

@@ -2,9 +2,10 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { TRPCLink } from "@trpc/client";
 
 import { transformer } from "#shared/services/trpc/transformer";
+import { IS_PRODUCTION } from "#shared/util/environment/constants";
 import { TRPC_CLIENT_PATH } from "@/services/trpc/constants";
 import { errorLink } from "@/services/trpc/errorLink";
-import { getIsProduction, getIsServer } from "@esposter/shared";
+import { getIsServer } from "@esposter/shared";
 import { createWSClient, isNonJsonSerializable, loggerLink, splitLink, wsLink } from "@trpc/client";
 import { createTRPCNuxtClient, httpBatchLink, httpLink } from "trpc-nuxt/client";
 
@@ -13,7 +14,7 @@ export default defineNuxtPlugin(() => {
     // Log to your console in development and only log errors in production
     loggerLink({
       enabled: (opts) =>
-        (!getIsProduction() && !getIsServer()) || (opts.direction === "down" && opts.result instanceof Error),
+        (!IS_PRODUCTION && !getIsServer()) || (opts.direction === "down" && opts.result instanceof Error),
     }),
     errorLink,
   ];

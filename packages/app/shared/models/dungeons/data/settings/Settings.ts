@@ -4,13 +4,13 @@ import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOp
 import { SoundSetting, soundSettingSchema } from "#shared/models/dungeons/data/settings/SoundSetting";
 import { TextSpeedSetting, textSpeedSettingSchema } from "#shared/models/dungeons/data/settings/TextSpeedSetting";
 import { ThemeModeSetting, themeModeSettingSchema } from "#shared/models/dungeons/data/settings/ThemeModeSetting";
-import { getIsProduction } from "@esposter/shared";
+import { IS_PRODUCTION } from "#shared/util/environment/constants";
 import { z } from "zod";
 
 const InitialSettings = {
   [SettingsOption.Animations]: AnimationsSetting.On,
   [SettingsOption.Sound]: SoundSetting.On,
-  [SettingsOption.VolumePercentage]: getIsProduction() ? 100 : 0,
+  [SettingsOption.VolumePercentage]: IS_PRODUCTION ? 100 : 0,
   [SettingsOption["Battle Style"]]: BattleStyleSetting.Shift,
   [SettingsOption["Text Speed"]]: TextSpeedSetting.Mid,
   [SettingsOption["Theme Mode"]]: ThemeModeSetting.Blue,
