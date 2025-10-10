@@ -21,13 +21,13 @@ export const appUsers = pgTable(
   },
 );
 
-export type User = typeof appUsers.$inferSelect;
+export type AppUser = typeof appUsers.$inferSelect;
 
-export const selectUserSchema = createSelectSchema(appUsers, {
+export const selectAppUserSchema = createSelectSchema(appUsers, {
   name: z.string().min(1).max(APP_USER_NAME_MAX_LENGTH),
 });
 
-export const usersRelations = relations(appUsers, ({ one }) => ({
+export const appUsersRelations = relations(appUsers, ({ one }) => ({
   webhooks: one(webhooks, {
     fields: [appUsers.id],
     references: [webhooks.userId],

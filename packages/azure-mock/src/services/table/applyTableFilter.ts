@@ -1,5 +1,5 @@
 import type { TableEntity } from "@azure/data-tables";
-import type { Clause } from "@esposter/db";
+import type { Clause } from "@esposter/db-schema";
 
 import { createTableFilterPredicate } from "@/services/table/createTableFilterPredicate";
 import { serializeClauses } from "@esposter/db";

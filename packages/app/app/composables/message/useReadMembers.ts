@@ -1,6 +1,6 @@
 import { useMemberStore } from "@/store/message/member";
 import { useRoomStore } from "@/store/message/room";
-import { MessageEntityPropertyNames } from "@esposter/db";
+import { MessageEntityPropertyNames } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const useReadMembers = () => {

@@ -1,5 +1,6 @@
 import { createTableFilterPredicate } from "@/services/table/createTableFilterPredicate";
-import { BinaryOperator, getTableNullClause, serializeClause, serializeClauses } from "@esposter/db";
+import { getTableNullClause, serializeClause, serializeClauses } from "@esposter/db";
+import { BinaryOperator } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
 describe(createTableFilterPredicate, () => {

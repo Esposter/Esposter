@@ -1,4 +1,4 @@
-import type { MessageEntity } from "@esposter/db";
+import type { MessageEntity } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
 import { getIsEntityIdEqualComparator } from "#shared/services/entity/getIsEntityIdEqualComparator";
@@ -6,7 +6,7 @@ import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
-import { AzureEntityType } from "@esposter/db";
+import { AzureEntityType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 
 export const usePinStore = defineStore("message/pin", () => {

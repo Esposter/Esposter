@@ -1,5 +1,5 @@
 /* eslint-disable perfectionist/sort-objects */
-import { FilterTypeHas } from "@esposter/db";
+import { FilterTypeHas } from "@esposter/db-schema";
 
 export const FilterTypeHasIconMap = {
   [FilterTypeHas.Link]: "mdi-link-variant",

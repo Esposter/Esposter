@@ -1,5 +1,5 @@
 import { DrizzleLogger } from "@@/server/db/logger";
-import { schema } from "@esposter/db";
+import { schema } from "@esposter/db-schema";
 import { IS_PRODUCTION } from "@esposter/shared";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";

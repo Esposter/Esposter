@@ -1,4 +1,4 @@
-import type { CompositeKey } from "@/models/azure/table/CompositeKey";
+import type { CompositeKey } from "@esposter/db-schema";
 import type { Class } from "type-fest";
 
 import { getIsSerializable } from "@/services/azure/transformer/getIsSerializable";

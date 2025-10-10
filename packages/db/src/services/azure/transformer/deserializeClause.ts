@@ -1,9 +1,9 @@
-import type { Clause } from "@/models/azure/Clause";
+import type { Clause } from "@esposter/db-schema";
 
-import { BinaryOperator } from "@/models/azure/BinaryOperator";
 import { deserializeKey } from "@/services/azure/table/deserializeKey";
 import { CLAUSE_REGEX } from "@/services/azure/transformer/constants";
 import { deserializeValue } from "@/services/azure/transformer/deserializeValue";
+import { BinaryOperator } from "@esposter/db-schema";
 import { NotFoundError } from "@esposter/shared";
 
 export const deserializeClause = (string: string): Extract<Clause, { operator: BinaryOperator }> => {

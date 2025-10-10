@@ -1,9 +1,9 @@
-import type { Filter, MessageEntity } from "@esposter/db";
+import type { Filter, MessageEntity } from "@esposter/db-schema";
 
 import { getIsSearchQueryEmpty } from "#shared/services/message/getIsSearchQueryEmpty";
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useRoomStore } from "@/store/message/room";
-import { FilterType } from "@esposter/db";
+import { FilterType } from "@esposter/db-schema";
 
 export const useSearchMessageStore = defineStore("message/searchMessage", () => {
   const roomStore = useRoomStore();

@@ -5,7 +5,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { userRouter } from "@@/server/trpc/routers/user";
-import { UserStatus, userStatuses } from "@esposter/db";
+import { UserStatus, userStatuses } from "@esposter/db-schema";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("user", () => {

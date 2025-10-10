@@ -1,4 +1,4 @@
-import type { CreateMessageInput, WebhookPayload } from "@esposter/db";
+import type { CreateMessageInput, WebhookPayload } from "@esposter/db-schema";
 
 export const mapWebhookPayloadToMessage = (payload: WebhookPayload, roomId: string): CreateMessageInput => ({
   files: [],

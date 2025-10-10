@@ -4,7 +4,7 @@ import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { ToData } from "@esposter/shared";
 
 import { getNextCursor } from "@@/server/services/pagination/cursor/getNextCursor";
-import { CompositeKey } from "@esposter/db";
+import { CompositeKey } from "@esposter/db-schema";
 
 export const getCursorPaginationData = <TItem extends CompositeKey | ToData<AEntity>>(
   items: TItem[],

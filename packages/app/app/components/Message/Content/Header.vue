@@ -4,7 +4,7 @@ import { useLayoutStore } from "@/store/layout";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { useDialogStore } from "@/store/message/room/dialog";
-import { MessageType, ROOM_NAME_MAX_LENGTH } from "@esposter/db";
+import { MessageType, ROOM_NAME_MAX_LENGTH } from "@esposter/db-schema";
 
 const { data: session } = await authClient.useSession(useFetch);
 const { $trpc } = useNuxtApp();

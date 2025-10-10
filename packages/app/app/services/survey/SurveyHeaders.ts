@@ -1,5 +1,5 @@
 import type { DataTableHeader } from "@/models/vuetify/DataTableHeader";
-import type { Survey } from "@esposter/db";
+import type { Survey } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
 import { ItemMetadataPropertyNames } from "@esposter/shared";

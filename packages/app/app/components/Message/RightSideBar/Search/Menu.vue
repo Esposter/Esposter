@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SerializableValue } from "@esposter/db";
+import type { SerializableValue } from "@esposter/db-schema";
 
 import { SearchFilterComponentMap } from "@/services/message/SearchFilterComponentMap";
 import { useSearchMessageStore } from "@/store/message/searchMessage";

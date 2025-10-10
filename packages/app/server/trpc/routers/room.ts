@@ -1,4 +1,4 @@
-import type { Room, UserToRoom } from "@esposter/db";
+import type { Room, UserToRoom } from "@esposter/db-schema";
 
 import { createRoomInputSchema } from "#shared/models/db/room/CreateRoomInput";
 import { deleteRoomInputSchema } from "#shared/models/db/room/DeleteRoomInput";
@@ -24,10 +24,10 @@ import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/room/getCreatorProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
+import { deleteDirectory } from "@esposter/db";
 import {
   AzureContainer,
   CODE_LENGTH,
-  deleteDirectory,
   InviteRelations,
   invites,
   rooms,
@@ -37,7 +37,7 @@ import {
   users,
   usersToRooms,
   UserToRoomRelations,
-} from "@esposter/db";
+} from "@esposter/db-schema";
 import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, desc, eq, ilike, inArray, ne, SQL, sql } from "drizzle-orm";

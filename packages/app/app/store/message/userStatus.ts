@@ -1,7 +1,7 @@
-import type { IUserStatus } from "@esposter/db";
+import type { IUserStatus } from "@esposter/db-schema";
 import type { Except, SetNonNullable } from "type-fest";
 
-import { UserStatus } from "@esposter/db";
+import { UserStatus } from "@esposter/db-schema";
 
 export const useUserStatusStore = defineStore("message/userStatus", () => {
   const userStatusMap = ref(new Map<string, SetNonNullable<Except<IUserStatus, "userId">, "status">>());

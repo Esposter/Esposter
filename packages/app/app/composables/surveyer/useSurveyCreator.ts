@@ -1,4 +1,4 @@
-import type { Survey } from "@esposter/db";
+import type { Survey } from "@esposter/db-schema";
 import type { Base } from "survey-core";
 import type { ThemeTabPlugin } from "survey-creator-core";
 

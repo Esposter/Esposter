@@ -1,7 +1,7 @@
 import { auth } from "@@/server/auth";
 import { db } from "@@/server/db";
 import { middleware } from "@@/server/trpc";
-import { rateLimiterFlexible } from "@esposter/db";
+import { rateLimiterFlexible } from "@esposter/db-schema";
 import { ID_SEPARATOR, IS_PRODUCTION } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { RateLimiterDrizzleNonAtomic } from "rate-limiter-flexible";

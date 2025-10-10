@@ -1,6 +1,4 @@
-import type { AzureEntity } from "@/models/azure/table/AzureEntity";
-import type { AzureUpdateEntity } from "@/models/azure/table/AzureUpdateEntity";
-import type { CustomTableClient } from "@/models/azure/table/CustomTableClient";
+import type { AzureEntity, AzureUpdateEntity, CustomTableClient } from "@esposter/db-schema";
 import type { TupleSlice } from "@esposter/shared";
 
 import { serializeEntity } from "@/services/azure/transformer/serializeEntity";

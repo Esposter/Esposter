@@ -1,4 +1,4 @@
-import type { AzureTable } from "@esposter/db";
+import type { AzureTable } from "@esposter/db-schema";
 
 import { getTableClient } from "@esposter/db";
 

@@ -1,6 +1,5 @@
-import type { CompositeKey } from "@/models/azure/table/CompositeKey";
-import type { CustomTableClient } from "@/models/azure/table/CustomTableClient";
 import type { TableEntityQueryOptions } from "@azure/data-tables";
+import type { CompositeKey, CustomTableClient } from "@esposter/db-schema";
 import type { Class } from "type-fest";
 
 import { deserializeEntity } from "@/services/azure/transformer/deserializeEntity";

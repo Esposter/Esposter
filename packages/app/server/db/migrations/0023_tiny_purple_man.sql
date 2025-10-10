@@ -19,7 +19,7 @@ ALTER TABLE "message"."webhooks" DROP CONSTRAINT "webhooks_user_id_users_id_fk";
 --> statement-breakpoint
 ALTER TABLE "users" ALTER COLUMN "email" SET NOT NULL;--> statement-breakpoint
 ALTER TABLE "users" ALTER COLUMN "email_verified" SET NOT NULL;--> statement-breakpoint
-ALTER TABLE "message"."webhooks" ALTER COLUMN "user_id" SET DATA TYPE uuid;--> statement-breakpoint
+ALTER TABLE "message"."webhooks" ALTER COLUMN "user_id" SET DATA TYPE uuid USING "user_id"::uuid;--> statement-breakpoint
 ALTER TABLE "message"."webhooks" ALTER COLUMN "user_id" DROP DEFAULT;--> statement-breakpoint
 ALTER TABLE "message"."search_histories" ADD CONSTRAINT "search_histories_room_id_rooms_id_fk" FOREIGN KEY ("room_id") REFERENCES "message"."rooms"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "message"."search_histories" ADD CONSTRAINT "search_histories_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint

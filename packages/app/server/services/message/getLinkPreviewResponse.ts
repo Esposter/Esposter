@@ -1,4 +1,4 @@
-import type { LinkPreviewResponse } from "@esposter/db";
+import type { LinkPreviewResponse } from "@esposter/db-schema";
 
 import { getLinkPreview } from "link-preview-js";
 import { find } from "linkifyjs";

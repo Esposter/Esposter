@@ -1,5 +1,4 @@
-import type { AzureEntity } from "@/models/azure/table/AzureEntity";
-import type { CustomTableClient } from "@/models/azure/table/CustomTableClient";
+import type { AzureEntity, CustomTableClient } from "@esposter/db-schema";
 
 export const deleteEntity = <TEntity extends AzureEntity>(
   tableClient: CustomTableClient<TEntity>,

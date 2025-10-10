@@ -2,7 +2,8 @@ import type { z } from "zod";
 
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
-import { AzureEntityType, AzureTable, getEntity, MessageEntity } from "@esposter/db";
+import { getEntity } from "@esposter/db";
+import { AzureEntityType, AzureTable, MessageEntity } from "@esposter/db-schema";
 import { NotFoundError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 

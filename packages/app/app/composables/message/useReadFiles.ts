@@ -1,4 +1,4 @@
-import type { FileEntity } from "@esposter/db";
+import type { FileEntity } from "@esposter/db-schema";
 
 import { useDownloadFileStore } from "@/store/message/downloadFile";
 import { useRoomStore } from "@/store/message/room";

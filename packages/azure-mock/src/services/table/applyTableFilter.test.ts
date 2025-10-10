@@ -1,8 +1,8 @@
 import type { TableEntity } from "@azure/data-tables";
-import type { Clause } from "@esposter/db";
+import type { Clause } from "@esposter/db-schema";
 
 import { applyTableFilter } from "@/services/table/applyTableFilter";
-import { BinaryOperator } from "@esposter/db";
+import { BinaryOperator } from "@esposter/db-schema";
 import { getPropertyNames } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

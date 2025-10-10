@@ -1,6 +1,6 @@
 import { usePinStore } from "@/store/message/pin";
 import { useRoomStore } from "@/store/message/room";
-import { MessageEntityPropertyNames } from "@esposter/db";
+import { MessageEntityPropertyNames } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const useReadPinnedMessages = () => {

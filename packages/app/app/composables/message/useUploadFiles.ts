@@ -5,7 +5,7 @@ import { validateFile } from "@/services/file/validateFile";
 import { useAlertStore } from "@/store/alert";
 import { useRoomStore } from "@/store/message/room";
 import { useUploadFileStore } from "@/store/message/uploadFile";
-import { FILE_MAX_LENGTH } from "@esposter/db";
+import { FILE_MAX_LENGTH } from "@esposter/db-schema";
 
 export const useUploadFiles = () => {
   const { $trpc } = useNuxtApp();

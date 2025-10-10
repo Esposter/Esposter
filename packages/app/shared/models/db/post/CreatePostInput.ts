@@ -1,6 +1,6 @@
 import type { z } from "zod";
 
-import { selectPostSchema } from "@esposter/db";
+import { selectPostSchema } from "@esposter/db-schema";
 
 export const createPostInputSchema = selectPostSchema
   .pick({ description: true, title: true })

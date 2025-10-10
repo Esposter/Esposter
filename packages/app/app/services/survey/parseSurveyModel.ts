@@ -1,4 +1,4 @@
-import type { Survey } from "@esposter/db";
+import type { Survey } from "@esposter/db-schema";
 
 import { jsonDateParse } from "@esposter/shared";
 

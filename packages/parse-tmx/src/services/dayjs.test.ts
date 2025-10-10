@@ -6,4 +6,4 @@ baseDayjs.extend(duration);
 
 export const dayjs: typeof baseDayjs = baseDayjs;
 
-describe.todo("dayjs");
+describe.todo(dayjs);

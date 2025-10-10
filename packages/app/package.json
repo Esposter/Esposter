@@ -50,6 +50,7 @@
     "@codemirror/theme-one-dark": "catalog:",
     "@codemirror/view": "catalog:",
     "@esposter/db": "workspace:*",
+    "@esposter/db-schema": "workspace:*",
     "@esposter/shared": "workspace:*",
     "@floating-ui/dom": "catalog:",
     "@fullcalendar/core": "catalog:",

@@ -1,8 +1,8 @@
-import type { Clause } from "@/models/azure/Clause";
+import type { Clause } from "@esposter/db-schema";
 
-import { UnaryOperator } from "@/models/azure/UnaryOperator";
 import { RangeOperators } from "@/services/azure/transformer/RangeOperators";
 import { serializeClause } from "@/services/azure/transformer/serializeClause";
+import { UnaryOperator } from "@esposter/db-schema";
 
 export const serializeClauses = (clauses: Clause[]): string => {
   if (clauses.length === 0) return "";

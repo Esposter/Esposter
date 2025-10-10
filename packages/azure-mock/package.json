@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@esposter/db": "workspace:*",
+    "@esposter/db-schema": "workspace:*",
     "@esposter/shared": "workspace:*",
     "fast-deep-equal": "catalog:"
   },

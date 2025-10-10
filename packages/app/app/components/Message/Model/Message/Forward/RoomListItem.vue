@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Room } from "@esposter/db";
+import type { Room } from "@esposter/db-schema";
 
 import { useForwardStore } from "@/store/message/forward";
 

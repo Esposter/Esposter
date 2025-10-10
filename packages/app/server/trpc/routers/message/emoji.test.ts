@@ -7,7 +7,7 @@ import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/tr
 import { messageRouter } from "@@/server/trpc/routers/message";
 import { emojiRouter } from "@@/server/trpc/routers/message/emoji";
 import { roomRouter } from "@@/server/trpc/routers/room";
-import { MessageMetadataType, rooms } from "@esposter/db";
+import { MessageMetadataType, rooms } from "@esposter/db-schema";
 import { MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 

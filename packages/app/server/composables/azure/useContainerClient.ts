@@ -1,4 +1,4 @@
-import type { AzureContainer } from "@esposter/db";
+import type { AzureContainer } from "@esposter/db-schema";
 
 import { getContainerClient } from "@esposter/db";
 

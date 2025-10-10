@@ -4,7 +4,7 @@ import { useUpload } from "@@/server/composables/azure/useUpload";
 import { SAVE_FILENAME } from "@@/server/services/dashboard/constants";
 import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
-import { AzureContainer } from "@esposter/db";
+import { AzureContainer } from "@esposter/db-schema";
 import { jsonDateParse, streamToText } from "@esposter/shared";
 
 export const dashboardRouter = router({

@@ -1,6 +1,4 @@
-import type { AzureTable } from "@/models/azure/table/AzureTable";
-import type { AzureTableEntityMap } from "@/models/azure/table/AzureTableEntityMap";
-import type { CustomTableClient } from "@/models/azure/table/CustomTableClient";
+import type { AzureTable, AzureTableEntityMap, CustomTableClient } from "@esposter/db-schema";
 
 import { TableClient } from "@azure/data-tables";
 

@@ -1,5 +1,5 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { Survey } from "@esposter/db";
+import type { Survey } from "@esposter/db-schema";
 
 import { useSurveyStore } from "@/store/survey";
 

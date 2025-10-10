@@ -1,6 +1,6 @@
 /* eslint-disable perfectionist/sort-objects */
 import { joinWithOxfordOr } from "@/util/text/joinWithOxfordOr";
-import { FilterType, FilterTypeHas } from "@esposter/db";
+import { FilterType, FilterTypeHas } from "@esposter/db-schema";
 import { uncapitalize } from "@esposter/shared";
 
 export const FilterTypePlaceholderMap = {

@@ -1,9 +1,9 @@
-import type { AzureUpdateEntity, MessageEntity } from "@esposter/db";
+import type { AzureUpdateEntity, MessageEntity } from "@esposter/db-schema";
 
 import { MENTION_ID_ATTRIBUTE } from "#shared/services/message/constants";
 import { getMentions } from "#shared/services/message/getMentions";
 import { getLinkPreviewResponse } from "@@/server/services/message/getLinkPreviewResponse";
-import { MessageType } from "@esposter/db";
+import { MessageType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 
 export const addMessageMetadata = async (

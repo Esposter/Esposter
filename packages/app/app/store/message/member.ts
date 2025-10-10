@@ -1,4 +1,4 @@
-import type { User } from "@esposter/db";
+import type { User } from "@esposter/db-schema";
 
 import { EN_US_COMPARATOR } from "@/services/shared/constants";
 import { createOperationData } from "@/services/shared/createOperationData";

@@ -1,4 +1,4 @@
-import type { CompositeKeyEntity } from "@esposter/db";
+import type { CompositeKeyEntity } from "@esposter/db-schema";
 import type { ToData } from "@esposter/shared";
 
 import {
@@ -6,7 +6,7 @@ import {
   MessageMetadataEntity,
   MessageMetadataType,
   selectUserSchema,
-} from "@esposter/db";
+} from "@esposter/db-schema";
 import { getPropertyNames } from "@esposter/shared";
 import { z } from "zod";
 

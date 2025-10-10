@@ -1,13 +1,13 @@
 import {
-  TableEditorConfiguration,
-  tableEditorConfigurationSchema,
+    TableEditorConfiguration,
+    tableEditorConfigurationSchema,
 } from "#shared/models/tableEditor/data/TableEditorConfiguration";
 import { useDownload } from "@@/server/composables/azure/useDownload";
 import { useUpload } from "@@/server/composables/azure/useUpload";
 import { SAVE_FILENAME } from "@@/server/services/tableEditor/constants";
 import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
-import { AzureContainer } from "@esposter/db";
+import { AzureContainer } from "@esposter/db-schema";
 import { jsonDateParse, streamToText } from "@esposter/shared";
 
 export const tableEditorRouter = router({

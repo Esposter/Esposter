@@ -1,4 +1,4 @@
-import { BinaryOperator } from "@esposter/db";
+import { BinaryOperator } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const compare = <T>(operator: BinaryOperator, leftHandSide: T, rightHandSide: null | T): boolean => {

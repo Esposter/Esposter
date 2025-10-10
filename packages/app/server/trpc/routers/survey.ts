@@ -1,4 +1,4 @@
-import type { FileSasEntity, Survey } from "@esposter/db";
+import type { FileSasEntity, Survey } from "@esposter/db-schema";
 
 import { createSurveyInputSchema } from "#shared/models/db/survey/CreateSurveyInput";
 import { deleteSurveyInputSchema } from "#shared/models/db/survey/DeleteSurveyInput";
@@ -20,23 +20,25 @@ import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { rateLimitedProcedure } from "@@/server/trpc/procedure/rateLimitedProcedure";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/survey/getCreatorProcedure";
 import {
-  AzureContainer,
-  AzureEntityType,
-  AzureTable,
   cloneBlobUrls,
   createEntity,
   deleteDirectory,
   extractBlobUrls,
-  fileEntitySchema,
   generateDownloadFileSasUrls,
   generateUploadFileSasEntities,
   getEntity,
+  updateEntity,
+} from "@esposter/db";
+import {
+  AzureContainer,
+  AzureEntityType,
+  AzureTable,
+  fileEntitySchema,
   selectSurveySchema,
   SurveyResponseEntity,
   surveyResponseEntitySchema,
   surveys,
-  updateEntity,
-} from "@esposter/db";
+} from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, count, eq } from "drizzle-orm";

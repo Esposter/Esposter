@@ -1,4 +1,4 @@
-import type { Room } from "@esposter/db";
+import type { Room } from "@esposter/db-schema";
 
 import { useRoomStore } from "@/store/message/room";
 

@@ -1,11 +1,11 @@
-import type { MessageEntity } from "@esposter/db";
+import type { MessageEntity } from "@esposter/db-schema";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
-import { getReverseTickedTimestamp, MessageEntityPropertyNames } from "@esposter/db";
+import { getReverseTickedTimestamp, MessageEntityPropertyNames } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const useReadMessages = () => {

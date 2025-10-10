@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
-import type { MessageEntity } from "@esposter/db";
+import type { MessageEntity } from "@esposter/db-schema";
 
 interface ConfirmDeleteDialogProps {
   message: MessageEntity;

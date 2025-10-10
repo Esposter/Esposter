@@ -1,5 +1,4 @@
-import type { CompositeKey } from "@/models/azure/table/CompositeKey";
-import type { CustomTableClient } from "@/models/azure/table/CustomTableClient";
+import type { CompositeKey, CustomTableClient } from "@esposter/db-schema";
 import type { TupleSlice } from "@esposter/shared";
 
 import { serializeEntity } from "@/services/azure/transformer/serializeEntity";

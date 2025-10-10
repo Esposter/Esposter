@@ -3,7 +3,7 @@ import type { Context } from "@@/server/trpc/context";
 
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmitter";
-import { rooms } from "@esposter/db";
+import { rooms } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";

@@ -1,4 +1,4 @@
-import { selectSearchHistorySchema } from "@esposter/db";
+import { selectSearchHistorySchema } from "@esposter/db-schema";
 import { z } from "zod";
 
 export const deleteSearchHistoryInputSchema = selectSearchHistorySchema.shape.id;

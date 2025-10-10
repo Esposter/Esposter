@@ -1,4 +1,4 @@
-import type { SearchHistory } from "@esposter/db";
+import type { SearchHistory } from "@esposter/db-schema";
 
 import { createSearchHistoryInputSchema } from "#shared/models/db/searchHistory/CreateSearchHistoryInput";
 import { deleteSearchHistoryInputSchema } from "#shared/models/db/searchHistory/DeleteSearchHistoryInput";
@@ -12,7 +12,7 @@ import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSor
 import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
-import { searchHistories, selectSearchHistorySchema } from "@esposter/db";
+import { searchHistories, selectSearchHistorySchema } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, SQL } from "drizzle-orm";

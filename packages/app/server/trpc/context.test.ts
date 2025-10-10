@@ -1,13 +1,13 @@
 import type { Session } from "@@/server/models/auth/Session";
 import type { Context } from "@@/server/trpc/context";
-import type { User } from "@esposter/db";
+import type { User } from "@esposter/db-schema";
 import type * as DrizzleKit from "drizzle-kit/api";
 
 import { dayjs } from "#shared/services/dayjs";
 import { useContainerClientMock } from "@@/server/composables/azure/useContainerClient.test";
 import { useTableClientMock } from "@@/server/composables/azure/useTableClient.test";
 import { PGlite } from "@electric-sql/pglite";
-import { messageSchema, schema, users } from "@esposter/db";
+import { messageSchema, schema, users } from "@esposter/db-schema";
 import { sql } from "drizzle-orm";
 import { drizzle, PgliteDatabase } from "drizzle-orm/pglite";
 import { IncomingMessage, ServerResponse } from "node:http";

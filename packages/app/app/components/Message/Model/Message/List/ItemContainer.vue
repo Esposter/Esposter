@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MessageEntity } from "@esposter/db";
+import type { MessageEntity } from "@esposter/db-schema";
 
 import { useMemberStore } from "@/store/message/member";
 

@@ -1,6 +1,6 @@
 import type { UpdateRoomInput } from "#shared/models/db/room/UpdateRoomInput";
 import type { DeviceId } from "@@/server/models/auth/DeviceId";
-import type { UserToRoom, UserToRoomWithRelations } from "@esposter/db";
+import type { UserToRoom, UserToRoomWithRelations } from "@esposter/db-schema";
 
 import { EventEmitter } from "node:events";
 

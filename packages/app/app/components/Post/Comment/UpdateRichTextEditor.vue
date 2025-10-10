@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PostWithRelations } from "@esposter/db";
+import type { PostWithRelations } from "@esposter/db-schema";
 import type { Editor } from "@tiptap/vue-3";
 
 import { useCommentStore } from "@/store/post/comment";

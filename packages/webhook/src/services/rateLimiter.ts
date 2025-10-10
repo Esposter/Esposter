@@ -1,5 +1,5 @@
 import { db } from "@/services/db";
-import { rateLimiterFlexible } from "@esposter/db";
+import { rateLimiterFlexible } from "@esposter/db-schema";
 import { RateLimiterDrizzleNonAtomic } from "rate-limiter-flexible";
 
 export const rateLimiter: RateLimiterDrizzleNonAtomic = new RateLimiterDrizzleNonAtomic({

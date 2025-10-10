@@ -1,6 +1,6 @@
 {
   "name": "@esposter/db",
-  "description": "Database schemas and utilities for Esposter using Drizzle ORM (PostgreSQL).",
+  "description": "A library of database utilities that is available in server environment only.",
   "version": "2.15.0",
   "private": true,
   "type": "module",
@@ -35,10 +35,6 @@
   "scripts": {
     "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
     "coverage": "vitest run --coverage",
-    "db:run": "tsx node_modules/drizzle-kit/bin.cjs",
-    "db:gen": "pnpm db:run generate",
-    "db:studio": "pnpm db:run studio",
-    "db:up": "pnpm db:run up",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts",
     "lint": "oxlint && eslint .",
     "lint:fix": "oxlint --fix && eslint --fix .",
@@ -48,11 +44,9 @@
   "dependencies": {
     "@azure/data-tables": "catalog:",
     "@azure/storage-blob": "catalog:",
+    "@esposter/db-schema": "workspace:*",
     "@esposter/shared": "workspace:*",
     "dayjs": "catalog:",
-    "drizzle-kit": "catalog:",
-    "drizzle-orm": "catalog:",
-    "drizzle-zod": "catalog:",
     "mime-types": "catalog:",
     "zod": "catalog:"
   },

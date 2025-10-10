@@ -3,7 +3,7 @@ import type { Row } from "@/models/user/ProfileCard/Row";
 import type { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 
 import { formRules } from "@/services/vuetify/formRules";
-import { USER_NAME_MAX_LENGTH } from "@esposter/db";
+import { USER_NAME_MAX_LENGTH } from "@esposter/db-schema";
 
 export interface UserProfileCardColumnTextProps {
   editMode: boolean;

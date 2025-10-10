@@ -1,4 +1,4 @@
-import type { MessageEntity } from "@esposter/db";
+import type { MessageEntity } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
 import { useEmojiStore } from "@/store/message/emoji";

@@ -1,7 +1,7 @@
 import type { CreatePostInput } from "#shared/models/db/post/CreatePostInput";
 import type { DeletePostInput } from "#shared/models/db/post/DeletePostInput";
 import type { UpdatePostInput } from "#shared/models/db/post/UpdatePostInput";
-import type { PostWithRelations } from "@esposter/db";
+import type { PostWithRelations } from "@esposter/db-schema";
 
 import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createOperationData } from "@/services/shared/createOperationData";

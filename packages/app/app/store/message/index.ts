@@ -1,4 +1,4 @@
-import type { MessageEntity } from "@esposter/db";
+import type { MessageEntity } from "@esposter/db-schema";
 import type { VMenu } from "vuetify/components/VMenu";
 
 export const useMessageStore = defineStore("message", () => {

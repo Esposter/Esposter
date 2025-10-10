@@ -34,6 +34,7 @@
     "@azure/data-tables": "catalog:",
     "@azure/functions": "catalog:",
     "@esposter/db": "workspace:*",
+    "@esposter/db-schema": "workspace:*",
     "@esposter/shared": "workspace:*",
     "drizzle-orm": "catalog:",
     "postgres": "catalog:",

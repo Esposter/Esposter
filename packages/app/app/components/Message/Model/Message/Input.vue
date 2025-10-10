@@ -5,7 +5,7 @@ import { useDataStore } from "@/store/message/data";
 import { useInputStore } from "@/store/message/input";
 import { useReplyStore } from "@/store/message/reply";
 import { useRoomStore } from "@/store/message/room";
-import { MESSAGE_MAX_LENGTH } from "@esposter/db";
+import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 import { Extension } from "@tiptap/vue-3";
 
 const roomStore = useRoomStore();

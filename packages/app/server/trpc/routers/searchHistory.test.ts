@@ -7,7 +7,7 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { searchHistoryRouter } from "@@/server/trpc/routers/searchHistory";
-import { rooms, searchHistories } from "@esposter/db";
+import { rooms, searchHistories } from "@esposter/db-schema";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("searchHistory", () => {

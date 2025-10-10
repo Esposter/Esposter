@@ -1,0 +1,57 @@
+{
+  "name": "@esposter/db-schema",
+  "description": "A library of database schemas and utilities using Drizzle ORM (PostgreSQL) that is available in both browser and server environments.",
+  "version": "2.15.0",
+  "private": true,
+  "type": "module",
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/db-schema#readme",
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "drizzle",
+    "orm",
+    "postgresql",
+    "postgres",
+    "pg",
+    "sql",
+    "database",
+    "schema",
+    "postgres",
+    "typescript",
+    "ts"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esposter/Esposter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "scripts": {
+    "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
+    "db:run": "tsx node_modules/drizzle-kit/bin.cjs",
+    "db:gen": "pnpm db:run generate",
+    "db:studio": "pnpm db:run studio",
+    "db:up": "pnpm db:run up",
+    "export:gen": "ctix build --config ../configuration/.ctirc-ts",
+    "lint": "oxlint && eslint .",
+    "lint:fix": "oxlint --fix && eslint --fix .",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@esposter/shared": "workspace:*",
+    "drizzle-kit": "catalog:",
+    "drizzle-orm": "catalog:",
+    "drizzle-zod": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@azure/data-tables": "catalog:",
+    "@azure/storage-blob": "catalog:"
+  }
+}

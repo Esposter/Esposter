@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SerializableValue } from "@esposter/db";
+import type { SerializableValue } from "@esposter/db-schema";
 
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useMemberStore } from "@/store/message/member";

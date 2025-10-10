@@ -1,4 +1,4 @@
-import type { AzureUpdateEntity, Clause, FileSasEntity } from "@esposter/db";
+import type { AzureUpdateEntity, Clause, FileSasEntity } from "@esposter/db-schema";
 
 import { createTypingInputSchema } from "#shared/models/db/message/CreateTypingInput";
 import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
@@ -28,31 +28,33 @@ import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/message/getCreatorProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import {
-  AzureContainer,
-  AzureEntityType,
-  AzureTable,
-  BinaryOperator,
   cloneFiles,
-  createMessageInputSchema,
   deleteFiles,
-  FileEntity,
-  fileEntitySchema,
   generateDownloadFileSasUrls,
   generateUploadFileSasEntities,
   getBlobName,
   getEntity,
-  getReverseTickedTimestamp,
   getTableNullClause,
   getTopNEntities,
+  serializeClauses,
+  updateEntity,
+} from "@esposter/db";
+import {
+  AzureContainer,
+  AzureEntityType,
+  AzureTable,
+  BinaryOperator,
+  createMessageInputSchema,
+  FileEntity,
+  fileEntitySchema,
+  getReverseTickedTimestamp,
   MessageEntity,
   MessageEntityPropertyNames,
   messageEntitySchema,
   MessageType,
   rooms,
   selectRoomSchema,
-  serializeClauses,
-  updateEntity,
-} from "@esposter/db";
+} from "@esposter/db-schema";
 import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation } from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";

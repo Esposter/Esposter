@@ -4,7 +4,8 @@ import { WEBHOOK_STORAGE_QUEUE_OUTPUT } from "@/services/constants";
 import { getTableClient } from "@/services/getTableClient";
 import { mapWebhookPayloadToMessage } from "@/services/mapWebhookPayloadToMessage";
 import { app } from "@azure/functions";
-import { AzureTable, createEntity, createMessageEntity, getReverseTickedTimestamp } from "@esposter/db";
+import { createEntity } from "@esposter/db";
+import { AzureTable, createMessageEntity, getReverseTickedTimestamp } from "@esposter/db-schema";
 
 app.storageQueue("processWebhook", {
   connection: "AzureWebJobsStorage",

@@ -2,7 +2,7 @@ import { WEBHOOK_STORAGE_QUEUE_OUTPUT } from "@/services/constants";
 import { db } from "@/services/db";
 import { rateLimiter } from "@/services/rateLimiter";
 import { app } from "@azure/functions";
-import { selectWebhookSchema, webhookPayloadSchema } from "@esposter/db";
+import { selectWebhookSchema, webhookPayloadSchema } from "@esposter/db-schema";
 import { RateLimiterRes } from "rate-limiter-flexible";
 import { z, ZodError } from "zod";
 

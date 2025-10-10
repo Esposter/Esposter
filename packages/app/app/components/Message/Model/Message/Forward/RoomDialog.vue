@@ -5,7 +5,7 @@ import { useAlertStore } from "@/store/alert";
 import { useDataStore } from "@/store/message/data";
 import { useForwardStore } from "@/store/message/forward";
 import { useRoomStore } from "@/store/message/room";
-import { MESSAGE_MAX_LENGTH } from "@esposter/db";
+import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 
 const { $trpc } = useNuxtApp();
 const alertStore = useAlertStore();

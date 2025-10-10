@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
-import type { Survey } from "@esposter/db";
+import type { Survey } from "@esposter/db-schema";
 import type { VCard } from "vuetify/components";
 
 import { DEFAULT_NAME } from "#shared/services/constants";
 import { dayjs } from "#shared/services/dayjs";
 import { formRules } from "@/services/vuetify/formRules";
 import { useSurveyStore } from "@/store/survey";
-import { SURVEY_NAME_MAX_LENGTH } from "@esposter/db";
+import { SURVEY_NAME_MAX_LENGTH } from "@esposter/db-schema";
 
 interface CreateSurveyDialogProps {
   cardProps?: VCard["$props"];

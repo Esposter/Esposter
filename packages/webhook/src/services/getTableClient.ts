@@ -1,6 +1,7 @@
-import type { AzureTableEntityMap, CustomTableClient } from "@esposter/db";
+import type { AzureTableEntityMap, CustomTableClient } from "@esposter/db-schema";
 
-import { AzureTable, getTableClient as baseGetTableClient } from "@esposter/db";
+import { getTableClient as baseGetTableClient } from "@esposter/db";
+import { AzureTable } from "@esposter/db-schema";
 
 export const getTableClient = <TAzureTable extends AzureTable>(
   tableName: TAzureTable,

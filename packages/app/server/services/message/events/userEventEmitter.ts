@@ -1,4 +1,4 @@
-import type { IUserStatus } from "@esposter/db";
+import type { IUserStatus } from "@esposter/db-schema";
 import type { SetNonNullable } from "type-fest";
 
 import { EventEmitter } from "node:events";

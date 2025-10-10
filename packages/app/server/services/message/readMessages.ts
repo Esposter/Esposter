@@ -1,6 +1,6 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { ReadMessagesInput } from "@@/server/trpc/routers/message";
-import type { Clause } from "@esposter/db";
+import type { Clause } from "@esposter/db-schema";
 import type { PartialByKeys } from "unocss";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
@@ -8,17 +8,15 @@ import { DEFAULT_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/p
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
+import { getTableNullClause, getTopNEntities, serializeClauses } from "@esposter/db";
 import {
   AzureTable,
   BinaryOperator,
   CompositeKey,
   getReverseTickedTimestamp,
-  getTableNullClause,
-  getTopNEntities,
   MessageEntity,
   MessageEntityPropertyNames,
-  serializeClauses,
-} from "@esposter/db";
+} from "@esposter/db-schema";
 import { ItemMetadataPropertyNames } from "@esposter/shared";
 
 export const readMessages = async ({

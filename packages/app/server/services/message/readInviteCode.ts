@@ -1,7 +1,7 @@
 import type { Context } from "@@/server/trpc/context";
 
 import { dayjs } from "#shared/services/dayjs";
-import { invites } from "@esposter/db";
+import { invites } from "@esposter/db-schema";
 import { and, eq } from "drizzle-orm";
 
 export const readInviteCode = async (db: Context["db"], userId: string, roomId: string, isAutoDelete = false) => {

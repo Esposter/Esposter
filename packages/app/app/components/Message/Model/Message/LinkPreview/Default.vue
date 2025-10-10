@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { DefaultLinkPreviewResponse } from "@esposter/db";
+import type { DefaultLinkPreviewResponse } from "@esposter/db-schema";
 
 const { favicons, url } = defineProps<DefaultLinkPreviewResponse>();
 </script>

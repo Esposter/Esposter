@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PostWithRelations } from "@esposter/db";
+import type { PostWithRelations } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";

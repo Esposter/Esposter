@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { UploadFileUrl } from "@/models/message/file/UploadFileUrl";
 import type { Item } from "@/models/shared/Item";
-import type { FileEntity } from "@esposter/db";
+import type { FileEntity } from "@esposter/db-schema";
 
 interface FileInputProps {
   file: FileEntity;

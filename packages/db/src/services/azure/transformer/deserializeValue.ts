@@ -1,4 +1,4 @@
-import type { SerializableValue } from "@/models/azure/SerializableValue";
+import type { SerializableValue } from "@esposter/db-schema";
 
 export const deserializeValue = (string: string): SerializableValue => {
   if (string === String(true)) return true;

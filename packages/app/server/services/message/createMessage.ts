@@ -1,13 +1,13 @@
-import type { CreateMessageInput, CustomTableClient, MessageEntity } from "@esposter/db";
+import type { CreateMessageInput, CustomTableClient, MessageEntity } from "@esposter/db-schema";
 
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { addMessageMetadata } from "@@/server/services/message/addMessageMetadata";
+import { createEntity } from "@esposter/db";
 import {
   AzureTable,
   createMessageEntity as baseCreateMessageEntity,
-  createEntity,
   getReverseTickedTimestamp,
-} from "@esposter/db";
+} from "@esposter/db-schema";
 
 export const createMessage = async (
   messageClient: CustomTableClient<MessageEntity>,

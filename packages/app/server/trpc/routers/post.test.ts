@@ -6,7 +6,7 @@ import { getCursorPaginationData } from "@@/server/services/pagination/cursor/ge
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { postRouter } from "@@/server/trpc/routers/post";
-import { posts } from "@esposter/db";
+import { posts } from "@esposter/db-schema";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("post", () => {

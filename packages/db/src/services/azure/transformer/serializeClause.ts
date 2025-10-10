@@ -1,9 +1,8 @@
-import type { Clause } from "@/models/azure/Clause";
+import type { Clause } from "@esposter/db-schema";
 
-import { SearchOperator } from "@/models/azure/search/SearchOperator";
-import { UnaryOperator } from "@/models/azure/UnaryOperator";
 import { serializeKey } from "@/services/azure/table/serializeKey";
 import { serializeValue } from "@/services/azure/transformer/serializeValue";
+import { SearchOperator, UnaryOperator } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const serializeClause = (clause: Clause): string => {

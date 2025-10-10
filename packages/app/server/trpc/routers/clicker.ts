@@ -7,7 +7,7 @@ import { SAVE_FILENAME } from "@@/server/services/clicker/constants";
 import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { rateLimitedProcedure } from "@@/server/trpc/procedure/rateLimitedProcedure";
-import { AzureContainer } from "@esposter/db";
+import { AzureContainer } from "@esposter/db-schema";
 import { jsonDateParse, streamToText } from "@esposter/shared";
 
 export const clickerRouter = router({

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { FilterTypePlaceholderMap } from "@/services/message/FilterTypePlaceholderMap";
 import { useSearchMessageStore } from "@/store/message/searchMessage";
-import { FilterType } from "@esposter/db";
+import { FilterType } from "@esposter/db-schema";
 import { uncapitalize } from "@esposter/shared";
 
 const searchMessageStore = useSearchMessageStore();

@@ -11,7 +11,8 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { messageRouter } from "@@/server/trpc/routers/message";
 import { roomRouter } from "@@/server/trpc/routers/room";
-import { AzureContainer, getBlobName, getReverseTickedTimestamp, MessageType, rooms } from "@esposter/db";
+import { getBlobName } from "@esposter/db";
+import { AzureContainer, getReverseTickedTimestamp, MessageType, rooms } from "@esposter/db-schema";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 

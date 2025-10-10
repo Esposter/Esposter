@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PostWithRelations } from "@esposter/db";
+import type { PostWithRelations } from "@esposter/db-schema";
 
 import { RoutePath } from "#shared/models/router/RoutePath";
 

@@ -1,4 +1,4 @@
-import type { Room, User } from "@esposter/db";
+import type { Room, User } from "@esposter/db-schema";
 
 import { getRoomPlaceholder } from "@/services/message/room/getRoomPlaceholder";
 

@@ -1,4 +1,4 @@
-import type { SerializableValue } from "@/models/azure/SerializableValue";
+import type { SerializableValue } from "@esposter/db-schema";
 
 import { escapeValue } from "@/services/azure/transformer/escapeValue";
 

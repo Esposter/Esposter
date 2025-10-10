@@ -1,6 +1,6 @@
 import type { ContainerClient } from "@azure/storage-blob";
 
-import { AZURE_MAX_PAGE_SIZE } from "@/services/azure/constants";
+import { AZURE_MAX_PAGE_SIZE } from "@esposter/db-schema";
 
 export const deleteDirectory = async (containerClient: ContainerClient, prefix = "", isDeep?: true) => {
   const blobUrls: string[] = [];

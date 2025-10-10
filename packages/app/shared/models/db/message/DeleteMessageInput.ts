@@ -1,6 +1,6 @@
 import type { z } from "zod";
 
-import { messageEntitySchema } from "@esposter/db";
+import { messageEntitySchema } from "@esposter/db-schema";
 
 export const deleteMessageInputSchema = messageEntitySchema.pick({
   partitionKey: true,

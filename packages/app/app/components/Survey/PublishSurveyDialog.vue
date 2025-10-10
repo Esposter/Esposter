@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Survey } from "@esposter/db";
+import type { Survey } from "@esposter/db-schema";
 
 const { $trpc } = useNuxtApp();
 const dialog = defineModel<boolean>({ required: true });

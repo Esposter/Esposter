@@ -1,6 +1,5 @@
-import type { AzureEntity } from "@/models/azure/table/AzureEntity";
-import type { AzureUpdateEntity } from "@/models/azure/table/AzureUpdateEntity";
 import type { TableEntity } from "@azure/data-tables";
+import type { AzureEntity, AzureUpdateEntity } from "@esposter/db-schema";
 
 import { getIsSerializable } from "@/services/azure/transformer/getIsSerializable";
 

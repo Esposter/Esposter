@@ -1,6 +1,6 @@
-import type { SearchOperator } from "@/models/azure/search/SearchOperator";
+import type { SearchOperator } from "@esposter/db-schema";
 
-import { BinaryOperator } from "@/models/azure/BinaryOperator";
+import { BinaryOperator } from "@esposter/db-schema";
 
 export const RangeOperators: (BinaryOperator | SearchOperator)[] = [
   BinaryOperator.ge,

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { LinkPreviewResponse, MessageEntity } from "@esposter/db";
+import type { LinkPreviewResponse, MessageEntity } from "@esposter/db-schema";
 
 interface ContainerProps {
   linkPreviewResponse: LinkPreviewResponse;

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { Survey } from "@esposter/db";
+import type { Survey } from "@esposter/db-schema";
 
-import { SURVEY_NAME_MAX_LENGTH } from "@esposter/db";
+import { SURVEY_NAME_MAX_LENGTH } from "@esposter/db-schema";
 
 const { $trpc } = useNuxtApp();
 const survey = defineModel<Survey>({ required: true });

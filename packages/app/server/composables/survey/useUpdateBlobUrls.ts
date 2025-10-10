@@ -1,9 +1,10 @@
-import type { Survey } from "@esposter/db";
+import type { Survey } from "@esposter/db-schema";
 
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
 import { getPublishDirectory } from "@@/server/services/survey/getPublishDirectory";
 import { ContainerSASPermissions } from "@azure/storage-blob";
-import { AzureContainer, extractBlobUrls, getBlobUrlSearchRegex } from "@esposter/db";
+import { extractBlobUrls, getBlobUrlSearchRegex } from "@esposter/db";
+import { AzureContainer } from "@esposter/db-schema";
 import dayjs from "dayjs";
 import { lookup } from "mime-types";
 import { extname } from "node:path";

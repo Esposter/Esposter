@@ -15,7 +15,7 @@ import { TableEditorConfiguration } from "#shared/models/tableEditor/data/TableE
 import { TodoListItem } from "#shared/models/tableEditor/todoList/TodoListItem";
 import { VuetifyComponentItem } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
-import { MessageEntity, SurveyResponseEntity } from "@esposter/db";
+import { MessageEntity, SurveyResponseEntity } from "@esposter/db-schema";
 
 export const JSONClassMap = {
   BasicChartConfiguration,

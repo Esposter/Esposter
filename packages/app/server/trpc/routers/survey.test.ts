@@ -6,7 +6,7 @@ import { getOffsetPaginationData } from "@@/server/services/pagination/offset/ge
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
-import { surveys } from "@esposter/db";
+import { surveys } from "@esposter/db-schema";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 

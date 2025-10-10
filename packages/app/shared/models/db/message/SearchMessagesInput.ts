@@ -2,7 +2,7 @@ import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/of
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { getIsSearchQueryEmpty } from "#shared/services/message/getIsSearchQueryEmpty";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
-import { filterSchema, messageEntitySchema, selectRoomSchema, selectSearchHistorySchema } from "@esposter/db";
+import { filterSchema, messageEntitySchema, selectRoomSchema, selectSearchHistorySchema } from "@esposter/db-schema";
 import { ItemMetadataPropertyNames } from "@esposter/shared";
 import { z } from "zod";
 

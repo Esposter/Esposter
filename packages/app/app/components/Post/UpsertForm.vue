@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { Post } from "@esposter/db";
+import type { Post } from "@esposter/db-schema";
 import type { SubmitEventPromise } from "vuetify";
 
 import { formRules } from "@/services/vuetify/formRules";
-import { POST_TITLE_MAX_LENGTH } from "@esposter/db";
+import { POST_TITLE_MAX_LENGTH } from "@esposter/db-schema";
 
 export interface PostUpsertFormProps {
   initialValues?: Pick<Post, "description" | "title">;

@@ -7,7 +7,7 @@ import { getIsEntityIdEqualComparator } from "#shared/services/entity/getIsEntit
 import { createMessageEmojiMetadataEntity } from "#shared/services/message/createMessageEmojiMetadataEntity";
 import { getUpdatedUserIds } from "#shared/services/message/emoji/getUpdatedUserIds";
 import { authClient } from "@/services/auth/authClient";
-import { MessageMetadataType } from "@esposter/db";
+import { MessageMetadataType } from "@esposter/db-schema";
 
 export const useEmojiStore = defineStore("message/emoji", () => {
   const session = authClient.useSession();

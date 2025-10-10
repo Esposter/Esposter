@@ -1,6 +1,6 @@
 import { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import { createAzureMetadataMap } from "@/services/shared/metadata/createAzureMetadataMap";
-import { MessageMetadataType } from "@esposter/db";
+import { MessageMetadataType } from "@esposter/db-schema";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(createAzureMetadataMap, () => {

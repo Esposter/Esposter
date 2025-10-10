@@ -1,4 +1,4 @@
-import { BinaryOperator } from "@/models/azure/BinaryOperator";
+import { BinaryOperator } from "@esposter/db-schema";
 
 const VALUE_REGEX = [
   true,

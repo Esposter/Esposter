@@ -1,16 +1,17 @@
 /* eslint-disable perfectionist/sort-switch-case */
-import type { Clause } from "@/models/azure/Clause";
-import type { Filter } from "@/models/message/filter/Filter";
+import type { Clause, Filter } from "@esposter/db-schema";
 
-import { BinaryOperator } from "@/models/azure/BinaryOperator";
-import { SearchOperator } from "@/models/azure/search/SearchOperator";
-import { FileEntityPropertyNames } from "@/models/azure/table/FileEntity";
-import { FilterType } from "@/models/message/filter/FilterType";
-import { FilterTypeHas } from "@/models/message/filter/FilterTypeHas";
-import { MessageEntityPropertyNames } from "@/models/message/MessageEntity";
 import { getSearchNonNullClause } from "@/services/azure/search/getSearchNonNullClause";
 import { serializeValue } from "@/services/azure/transformer/serializeValue";
 import { dayjs } from "@/services/dayjs";
+import {
+  BinaryOperator,
+  FileEntityPropertyNames,
+  FilterType,
+  FilterTypeHas,
+  MessageEntityPropertyNames,
+  SearchOperator,
+} from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { types } from "mime-types";
 

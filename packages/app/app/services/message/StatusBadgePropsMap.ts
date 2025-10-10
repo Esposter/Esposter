@@ -1,6 +1,6 @@
 import type { VBadge } from "vuetify/components";
 
-import { UserStatus } from "@esposter/db";
+import { UserStatus } from "@esposter/db-schema";
 
 export const StatusBadgePropsMap = {
   [UserStatus.DoNotDisturb]: { color: "red" },

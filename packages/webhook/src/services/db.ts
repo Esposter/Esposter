@@ -1,6 +1,6 @@
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
-import { schema } from "@esposter/db";
+import { schema } from "@esposter/db-schema";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 

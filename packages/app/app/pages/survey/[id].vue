@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SurveyResponseEntity } from "@esposter/db";
+import type { SurveyResponseEntity } from "@esposter/db-schema";
 
 import { validate } from "@/services/router/validate";
 import { SURVEY_RESPONSE_ID_LOCAL_STORAGE_KEY, THEME_KEY } from "@/services/survey/constants";

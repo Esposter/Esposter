@@ -1,5 +1,5 @@
-import type { FileEntity } from "@/models/azure/table/FileEntity";
 import type { ContainerClient } from "@azure/storage-blob";
+import type { FileEntity } from "@esposter/db-schema";
 
 import { getBlobName } from "@/services/azure/container/getBlobName";
 import { dayjs } from "@/services/dayjs";

@@ -5,7 +5,7 @@ import { ContentTypePhaserMethodMap } from "@@/scripts/phaser/constants";
 import { outputFile } from "@@/scripts/phaser/util/outputFile";
 import { createEnumString } from "@@/scripts/util/createEnumString";
 import { BlobServiceClient } from "@azure/storage-blob";
-import { AZURE_MAX_PAGE_SIZE, AzureContainer } from "@esposter/db";
+import { AZURE_MAX_PAGE_SIZE, AzureContainer } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { config } from "dotenv";
 import { format, resolveConfig } from "prettier";
