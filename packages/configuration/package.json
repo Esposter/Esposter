@@ -36,11 +36,13 @@
     "@vitest/eslint-plugin": "catalog:",
     "eslint-config-prettier": "catalog:",
     "eslint-plugin-depend": "catalog:",
+    "eslint-plugin-oxlint": "catalog:",
     "eslint-plugin-perfectionist": "catalog:",
     "eslint-plugin-pinia": "catalog:",
     "eslint-plugin-prettier": "catalog:",
     "typescript-eslint": "catalog:",
     "unplugin-auto-import": "catalog:",
+    "vite-plugin-dts": "catalog:",
     "vite-plugin-mkcert": "catalog:"
   }
 }

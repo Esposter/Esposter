@@ -59,7 +59,6 @@
     "ctix": "catalog:",
     "dotenv": "catalog:",
     "eslint": "catalog:",
-    "eslint-plugin-oxlint": "catalog:",
     "happy-dom": "catalog:",
     "oxlint": "catalog:",
     "rolldown": "catalog:",
@@ -69,7 +68,6 @@
     "typedoc": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vite-plugin-dts": "catalog:",
     "vite-tsconfig-paths": "catalog:",
     "vitest": "catalog:",
     "vue-tsc": "catalog:"
