@@ -1,11 +1,11 @@
-import type { AzureUpdateEntity, MessageEntity } from "@esposter/db-schema";
+import type { AzureUpdateEntity, MessageEntityMap } from "@esposter/db-schema";
 
 import { getLinkPreviewResponse } from "@/services/message/getLinkPreviewResponse";
 import { MessageType } from "@esposter/db-schema";
 import { getMentions, MENTION_ID_ATTRIBUTE, Operation } from "@esposter/shared";
 
 export const addMessageMetadata = async (
-  messageEntity: AzureUpdateEntity<MessageEntity>,
+  messageEntity: AzureUpdateEntity<MessageEntityMap[MessageType]>,
   operation: Operation.Create | Operation.Update = Operation.Create,
 ) => {
   if (operation === Operation.Update) {

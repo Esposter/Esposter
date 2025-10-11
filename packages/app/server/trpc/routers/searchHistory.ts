@@ -3,7 +3,6 @@ import type { SearchHistory } from "@esposter/db-schema";
 import { createSearchHistoryInputSchema } from "#shared/models/db/searchHistory/CreateSearchHistoryInput";
 import { deleteSearchHistoryInputSchema } from "#shared/models/db/searchHistory/DeleteSearchHistoryInput";
 import { updateSearchHistoryInputSchema } from "#shared/models/db/searchHistory/UpdateSearchHistoryInput";
-import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
@@ -12,7 +11,7 @@ import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSor
 import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
-import { searchHistories, selectSearchHistorySchema } from "@esposter/db-schema";
+import { DatabaseEntityType, searchHistories, selectSearchHistorySchema } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, SQL } from "drizzle-orm";

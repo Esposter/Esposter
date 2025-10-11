@@ -3,10 +3,11 @@ import type { CompositeKey } from "@/models/azure/table/CompositeKey";
 import type { MessageEntity } from "@/models/message/MessageEntity";
 import type { MessageMetadataEntity } from "@/models/message/metadata/MessageMetadataEntity";
 import type { MessageMetadataType } from "@/models/message/metadata/MessageMetadataType";
+import type { WebhookMessageEntity } from "@/models/message/WebhookMessageEntity";
 import type { SurveyResponseEntity } from "@/models/survey/SurveyResponseEntity";
 
 export interface AzureTableEntityMap {
-  [AzureTable.Messages]: MessageEntity;
+  [AzureTable.Messages]: MessageEntity | WebhookMessageEntity;
   [AzureTable.MessagesAscending]: CompositeKey;
   [AzureTable.MessagesMetadata]: MessageMetadataEntity<MessageMetadataType>;
   [AzureTable.SurveyResponses]: SurveyResponseEntity;

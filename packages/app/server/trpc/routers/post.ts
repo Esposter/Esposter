@@ -6,8 +6,6 @@ import { deleteCommentInputSchema } from "#shared/models/db/post/DeleteCommentIn
 import { deletePostInputSchema } from "#shared/models/db/post/DeletePostInput";
 import { updateCommentInputSchema } from "#shared/models/db/post/UpdateCommentInput";
 import { updatePostInputSchema } from "#shared/models/db/post/UpdatePostInput";
-import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
-import { DerivedDatabaseEntityType } from "#shared/models/entity/DerivedDatabaseEntityType";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
@@ -18,7 +16,13 @@ import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
 import { rateLimitedProcedure } from "@@/server/trpc/procedure/rateLimitedProcedure";
-import { PostRelations, posts, selectPostSchema } from "@esposter/db-schema";
+import {
+  DatabaseEntityType,
+  DerivedDatabaseEntityType,
+  PostRelations,
+  posts,
+  selectPostSchema,
+} from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, isNotNull, isNull, SQL } from "drizzle-orm";

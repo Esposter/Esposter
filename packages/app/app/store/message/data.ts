@@ -2,7 +2,7 @@ import type { CreateTypingInput } from "#shared/models/db/message/CreateTypingIn
 import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
 import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessageInput";
 import type { MessageEvents } from "#shared/models/message/events/MessageEvents";
-import type { CreateMessageInput, MessageEntity } from "@esposter/db-schema";
+import type { BaseCreateMessageInput, MessageEntity } from "@esposter/db-schema";
 import type { Editor } from "@tiptap/core";
 
 import { authClient } from "@/services/auth/authClient";
@@ -12,7 +12,7 @@ import { useInputStore } from "@/store/message/input";
 import { useReplyStore } from "@/store/message/reply";
 import { useRoomStore } from "@/store/message/room";
 import { useUploadFileStore } from "@/store/message/uploadFile";
-import { AzureEntityType, createMessageEntity } from "@esposter/db-schema";
+import { AzureEntityType, createMessageEntity, MessageType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 
 export const useDataStore = defineStore("message/data", () => {
@@ -30,7 +30,7 @@ export const useDataStore = defineStore("message/data", () => {
   const hasMoreNewer = ref(false);
   const nextCursorNewer = ref<string>();
 
-  const createMessage = async (input: CreateMessageInput) => {
+  const createMessage = async (input: BaseCreateMessageInput) => {
     if (!session.value.data) return;
 
     const newMessage = reactive(createMessageEntity({ ...input, isLoading: true, userId: session.value.data.user.id }));
@@ -62,11 +62,12 @@ export const useDataStore = defineStore("message/data", () => {
   const sendMessage = async (editor: Editor) => {
     if (!roomStore.currentRoomId || !validateInput(editor, true)) return;
 
-    const input: CreateMessageInput = {
+    const input: BaseCreateMessageInput = {
       files: uploadFileStore.files,
       message: inputStore.input,
       replyRowKey: replyStore.rowKey,
       roomId: roomStore.currentRoomId,
+      type: MessageType.Message,
     };
     await Promise.all(MessageHookMap.ResetSend.map((fn) => Promise.resolve(fn(editor))));
     await createMessage(input);

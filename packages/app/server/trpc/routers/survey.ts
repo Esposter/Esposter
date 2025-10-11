@@ -4,7 +4,6 @@ import { createSurveyInputSchema } from "#shared/models/db/survey/CreateSurveyIn
 import { deleteSurveyInputSchema } from "#shared/models/db/survey/DeleteSurveyInput";
 import { updateSurveyInputSchema } from "#shared/models/db/survey/UpdateSurveyInput";
 import { updateSurveyModelInputSchema } from "#shared/models/db/survey/UpdateSurveyModelInput";
-import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
@@ -32,12 +31,11 @@ import {
 import {
   AzureContainer,
   AzureEntityType,
-  AzureTable,
-  fileEntitySchema,
+  AzureTable, DatabaseEntityType, fileEntitySchema,
   selectSurveySchema,
   SurveyResponseEntity,
   surveyResponseEntitySchema,
-  surveys,
+  surveys
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";

@@ -5,7 +5,6 @@ import { deleteRoomInputSchema } from "#shared/models/db/room/DeleteRoomInput";
 import { joinRoomInputSchema } from "#shared/models/db/room/JoinRoomInput";
 import { leaveRoomInputSchema } from "#shared/models/db/room/LeaveRoomInput";
 import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
-import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
@@ -28,6 +27,7 @@ import { deleteDirectory } from "@esposter/db";
 import {
   AzureContainer,
   CODE_LENGTH,
+  DatabaseEntityType,
   InviteRelations,
   invites,
   rooms,

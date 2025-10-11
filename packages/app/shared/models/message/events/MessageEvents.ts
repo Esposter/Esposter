@@ -4,7 +4,7 @@ import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessage
 import type { DeviceId } from "@@/server/models/auth/DeviceId";
 import type { Session } from "@@/server/models/auth/Session";
 import type { MessageEntity } from "@esposter/db-schema";
-import type { PartialByKeys } from "unocss";
+import type { PartialByKeys } from "@esposter/shared";
 
 export interface MessageEvents {
   createMessage: [

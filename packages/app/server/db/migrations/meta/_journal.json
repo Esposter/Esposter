@@ -176,6 +176,13 @@
       "when": 1760086141558,
       "tag": "0024_blue_the_professor",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1760154819076,
+      "tag": "0025_lying_talkback",
+      "breakpoints": true
     }
   ]
 }

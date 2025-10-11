@@ -2,13 +2,13 @@ import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/of
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { getIsSearchQueryEmpty } from "#shared/services/message/getIsSearchQueryEmpty";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
-import { filterSchema, messageEntitySchema, selectRoomSchema, selectSearchHistorySchema } from "@esposter/db-schema";
+import { baseMessageEntitySchema, filterSchema, selectRoomSchema, selectSearchHistorySchema } from "@esposter/db-schema";
 import { ItemMetadataPropertyNames } from "@esposter/shared";
 import { z } from "zod";
 
 export const searchMessagesInputSchema = z
   .object({
-    ...createOffsetPaginationParamsSchema(messageEntitySchema.keyof(), 0, [
+    ...createOffsetPaginationParamsSchema(baseMessageEntitySchema.keyof(), 0, [
       { key: ItemMetadataPropertyNames.createdAt, order: SortOrder.Desc },
     ]).shape,
     filters: filterSchema.array().max(MAX_READ_LIMIT).default([]),

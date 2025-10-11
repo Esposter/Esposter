@@ -1,6 +1,6 @@
 import type { Npc } from "@/models/dungeons/npc/Npc";
+import type { PartialByKeys } from "@esposter/shared";
 import type { Except } from "type-fest";
-import type { PartialByKeys } from "unocss";
 
 import { NpcId } from "#shared/generated/tiled/propertyTypes/enum/NpcId";
 import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";

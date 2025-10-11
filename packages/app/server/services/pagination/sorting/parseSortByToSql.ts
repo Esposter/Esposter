@@ -5,15 +5,17 @@ import type { PgTableWithColumns, TableConfig } from "drizzle-orm/pg-core";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { asc, desc, SQL } from "drizzle-orm";
 
-interface ParseSortByToSql {
-  <TTable extends TableRelationalConfig["columns"]>(table: TTable, sortBy: SortItem<keyof TTable & string>[]): SQL[];
-  <TTable extends TableConfig>(
-    table: PgTableWithColumns<TTable>,
-    sortBy: SortItem<keyof TTable["columns"] & string>[],
-  ): SQL[];
-}
-
-export const parseSortByToSql: ParseSortByToSql = <TTable extends TableConfig>(
+export function parseSortByToSql<TTable extends TableRelationalConfig["columns"]>(
+  table: TTable,
+  sortBy: SortItem<keyof TTable & string>[],
+): SQL[];
+export function parseSortByToSql<TTable extends TableConfig>(
   table: PgTableWithColumns<TTable>,
   sortBy: SortItem<keyof TTable["columns"] & string>[],
-) => sortBy.map((sb) => (sb.order === SortOrder.Asc ? asc(table[sb.key]) : desc(table[sb.key])));
+): SQL[];
+export function parseSortByToSql<TTable extends TableConfig>(
+  table: PgTableWithColumns<TTable>,
+  sortBy: SortItem<keyof TTable["columns"] & string>[],
+): SQL[] {
+  return sortBy.map((sb) => (sb.order === SortOrder.Asc ? asc(table[sb.key]) : desc(table[sb.key])));
+}

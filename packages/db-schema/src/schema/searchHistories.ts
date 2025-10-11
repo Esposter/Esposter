@@ -1,6 +1,6 @@
 import type { Filter } from "@/models/message/filter/Filter";
 
-import { MESSAGE_MAX_LENGTH } from "@/models/message/MessageEntity";
+import { MESSAGE_MAX_LENGTH } from "@/models/message/BaseMessageEntity";
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { rooms } from "@/schema/rooms";

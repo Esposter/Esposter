@@ -9,7 +9,7 @@ export class SurveyResponseEntity extends AzureEntity {
   model: Record<string, unknown> = {};
   modelVersion = 0;
 
-  constructor(init?: Partial<SurveyResponseEntity> & ToData<CompositeKeyEntity>) {
+  constructor(init: Partial<SurveyResponseEntity> & ToData<CompositeKeyEntity>) {
     super();
     Object.assign(this, init);
   }

@@ -5,7 +5,7 @@ import type { Class } from "type-fest";
 import { deserializeEntity } from "@/services/azure/transformer/deserializeEntity";
 
 export const getTopNEntities = async <TEntity extends CompositeKey>(
-  tableClient: NoInfer<CustomTableClient<TEntity>>,
+  tableClient: CustomTableClient<TEntity>,
   topN: number,
   cls: Class<TEntity>,
   queryOptions?: TableEntityQueryOptions,

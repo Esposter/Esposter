@@ -1,7 +1,7 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { ReadMessagesInput } from "@@/server/trpc/routers/message";
 import type { Clause } from "@esposter/db-schema";
-import type { PartialByKeys } from "unocss";
+import type { PartialByKeys } from "@esposter/shared";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { DEFAULT_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
@@ -11,11 +11,12 @@ import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/g
 import { getTableNullClause, getTopNEntities, serializeClauses } from "@esposter/db";
 import {
   AzureTable,
+  BaseMessageEntity,
+  BaseMessageEntityPropertyNames,
   BinaryOperator,
   CompositeKey,
   getReverseTickedTimestamp,
-  MessageEntity,
-  MessageEntityPropertyNames,
+  MessageType,
 } from "@esposter/db-schema";
 import { ItemMetadataPropertyNames } from "@esposter/shared";
 
@@ -29,16 +30,16 @@ export const readMessages = async ({
 }: PartialByKeys<ReadMessagesInput, "limit">) => {
   const sortBy: SortItem<keyof CompositeKey>[] = [{ isIncludeValue, ...MESSAGE_ROWKEY_SORT_ITEM }];
   const clauses: Clause[] = [
-    { key: MessageEntityPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
+    { key: BaseMessageEntityPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
     getTableNullClause(ItemMetadataPropertyNames.deletedAt),
   ];
   if (inputFilter?.isPinned)
-    clauses.push({ key: MessageEntityPropertyNames.isPinned, operator: BinaryOperator.eq, value: true });
+    clauses.push({ key: BaseMessageEntityPropertyNames.isPinned, operator: BinaryOperator.eq, value: true });
 
   if (order === SortOrder.Asc) {
     // 1. Get ascending ids from the index table (MessagesAscending)
     const indexClauses: Clause[] = [
-      { key: MessageEntityPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
+      { key: BaseMessageEntityPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
     ];
     if (cursor) indexClauses.push(...getCursorWhereAzureTable(cursor, sortBy));
     const indexClient = await useTableClient(AzureTable.MessagesAscending);
@@ -51,19 +52,21 @@ export const readMessages = async ({
     const messageClient = await useTableClient(AzureTable.Messages);
     for (const { rowKey } of items)
       clauses.push({
-        key: MessageEntityPropertyNames.rowKey,
+        key: BaseMessageEntityPropertyNames.rowKey,
         operator: BinaryOperator.eq,
         value: getReverseTickedTimestamp(rowKey),
       });
     // We don't need to fetch limit + 1 here because the pagination metadata
     // is actually determined by the index table, not the message table
-    const messages = await getTopNEntities(messageClient, limit, MessageEntity, { filter: serializeClauses(clauses) });
+    const messages = await getTopNEntities(messageClient, limit, BaseMessageEntity<MessageType.Message>, {
+      filter: serializeClauses(clauses),
+    });
     return Object.assign(getCursorPaginationData(messages, limit, sortBy), { hasMore, nextCursor });
   }
   // Default: Desc via reverse-ticked RowKey (efficient)
   if (cursor) clauses.push(...getCursorWhereAzureTable(cursor, sortBy));
   const messageClient = await useTableClient(AzureTable.Messages);
-  const messages = await getTopNEntities(messageClient, limit + 1, MessageEntity, {
+  const messages = await getTopNEntities(messageClient, limit + 1, BaseMessageEntity<MessageType.Message>, {
     filter: serializeClauses(clauses),
   });
   return getCursorPaginationData(messages, limit, sortBy);

@@ -1,10 +1,9 @@
-import type { AzureUpdateEntity, Clause, FileSasEntity } from "@esposter/db-schema";
+import type { AzureUpdateEntity, Clause, FileSasEntity, MessageEntity } from "@esposter/db-schema";
 
 import { createTypingInputSchema } from "#shared/models/db/message/CreateTypingInput";
 import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
 import { searchMessagesInputSchema } from "#shared/models/db/message/SearchMessagesInput";
 import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
-import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MAX_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
@@ -43,14 +42,15 @@ import {
   AzureContainer,
   AzureEntityType,
   AzureTable,
+  baseCreateMessageInputSchema,
+  BaseMessageEntity,
+  BaseMessageEntityPropertyNames,
+  baseMessageEntitySchema,
   BinaryOperator,
-  createMessageInputSchema,
+  DatabaseEntityType,
   FileEntity,
   fileEntitySchema,
   getReverseTickedTimestamp,
-  MessageEntity,
-  MessageEntityPropertyNames,
-  messageEntitySchema,
   MessageType,
   rooms,
   selectRoomSchema,
@@ -61,7 +61,7 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 export const readMetadataInputSchema = z.object({
-  messageRowKeys: messageEntitySchema.shape.rowKey.array().min(1).max(MAX_READ_LIMIT),
+  messageRowKeys: baseMessageEntitySchema.shape.rowKey.array().min(1).max(MAX_READ_LIMIT),
   roomId: selectRoomSchema.shape.id,
 });
 export type ReadMetadataInput = z.infer<typeof readMetadataInputSchema>;
@@ -71,10 +71,10 @@ export type ReadMetadataInput = z.infer<typeof readMetadataInputSchema>;
 // always requires a sortBy even though we don't actually need the user to specify it
 const readMessagesInputSchema = z
   .object({
-    ...createCursorPaginationParamsSchema(messageEntitySchema.keyof(), [
+    ...createCursorPaginationParamsSchema(baseMessageEntitySchema.keyof(), [
       { key: ItemMetadataPropertyNames.createdAt, order: SortOrder.Desc },
     ]).shape,
-    filter: messageEntitySchema.pick({ isPinned: true }).optional(),
+    filter: baseMessageEntitySchema.pick({ isPinned: true }).optional(),
     isIncludeValue: z.literal(true).optional(),
     order: z.literal(SortOrder.Asc).optional(),
     roomId: selectRoomSchema.shape.id,
@@ -84,7 +84,7 @@ export type ReadMessagesInput = z.infer<typeof readMessagesInputSchema>;
 
 const readMessagesByRowKeysInputSchema = z.object({
   roomId: selectRoomSchema.shape.id,
-  rowKeys: messageEntitySchema.shape.rowKey.array().min(1).max(MAX_READ_LIMIT),
+  rowKeys: baseMessageEntitySchema.shape.rowKey.array().min(1).max(MAX_READ_LIMIT),
 });
 export type ReadMessagesByRowKeysInput = z.infer<typeof readMessagesByRowKeysInputSchema>;
 
@@ -101,20 +101,20 @@ const generateDownloadFileSasUrlsInputSchema = z.object({
 export type GenerateDownloadFileSasUrlsInput = z.infer<typeof generateDownloadFileSasUrlsInputSchema>;
 
 const deleteFileInputSchema = z.object({
-  ...messageEntitySchema.pick({ partitionKey: true, rowKey: true }).shape,
+  ...baseMessageEntitySchema.pick({ partitionKey: true, rowKey: true }).shape,
   id: fileEntitySchema.shape.id,
 });
 export type DeleteFileInput = z.infer<typeof deleteFileInputSchema>;
 
-const deleteLinkPreviewResponseInputSchema = messageEntitySchema.pick({ partitionKey: true, rowKey: true });
+const deleteLinkPreviewResponseInputSchema = baseMessageEntitySchema.pick({ partitionKey: true, rowKey: true });
 export type DeleteLinkPreviewResponseInput = z.infer<typeof deleteLinkPreviewResponseInputSchema>;
 
-const onCreateMessageInputSchema = z.object({
+const onbaseCreateMessageInputSchema = z.object({
   lastEventId: z.string().nullish(),
   pushSubscription: pushSubscriptionSchema.optional(),
   roomId: selectRoomSchema.shape.id,
 });
-export type OnCreateMessageInput = z.infer<typeof onCreateMessageInputSchema>;
+export type OnCreateMessageInput = z.infer<typeof onbaseCreateMessageInputSchema>;
 
 const onUpdateMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnUpdateMessageInput = z.infer<typeof onUpdateMessageInputSchema>;
@@ -126,19 +126,19 @@ const onDeleteMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id 
 export type OnDeleteMessageInput = z.infer<typeof onDeleteMessageInputSchema>;
 
 export const forwardMessageInputSchema = z.object({
-  ...messageEntitySchema.pick({ message: true, partitionKey: true, rowKey: true }).shape,
+  ...baseMessageEntitySchema.pick({ message: true, partitionKey: true, rowKey: true }).shape,
   roomIds: selectRoomSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
 });
 export type ForwardMessageInput = z.infer<typeof forwardMessageInputSchema>;
 
-export const pinMessageInputSchema = messageEntitySchema.pick({ partitionKey: true, rowKey: true });
+export const pinMessageInputSchema = baseMessageEntitySchema.pick({ partitionKey: true, rowKey: true });
 export type PinMessageInput = z.infer<typeof pinMessageInputSchema>;
 
-export const unpinMessageInputSchema = messageEntitySchema.pick({ partitionKey: true, rowKey: true });
+export const unpinMessageInputSchema = baseMessageEntitySchema.pick({ partitionKey: true, rowKey: true });
 export type UnpinMessageInput = z.infer<typeof unpinMessageInputSchema>;
 
 export const messageRouter = router({
-  createMessage: addProfanityFilterMiddleware(getMemberProcedure(createMessageInputSchema, "roomId"), [
+  createMessage: addProfanityFilterMiddleware(getMemberProcedure(baseCreateMessageInputSchema, "roomId"), [
     "message",
   ]).mutation<MessageEntity>(async ({ ctx, input }) => {
     const messageClient = await useTableClient(AzureTable.Messages);
@@ -221,7 +221,12 @@ export const messageRouter = router({
       await isMember(ctx.db, ctx.session, roomIds);
 
       const messageClient = await useTableClient(AzureTable.Messages);
-      const messageEntity = await getEntity(messageClient, MessageEntity, partitionKey, rowKey);
+      const messageEntity = await getEntity(
+        messageClient,
+        BaseMessageEntity<MessageType.Message>,
+        partitionKey,
+        rowKey,
+      );
       if (!messageEntity)
         throw new TRPCError({
           code: "NOT_FOUND",
@@ -241,6 +246,7 @@ export const messageRouter = router({
             // We don't forward reply information for privacy
             replyRowKey: undefined,
             roomId,
+            type: MessageType.Message,
             userId: ctx.session.user.id,
           });
           const messages = [forward];
@@ -249,6 +255,7 @@ export const messageRouter = router({
             const newMessageEntity = await createMessage(messageClient, messageAscendingClient, {
               message,
               roomId,
+              type: MessageType.Message,
               userId: ctx.session.user.id,
             });
             messages.push(newMessageEntity);
@@ -280,7 +287,7 @@ export const messageRouter = router({
     const containerClient = await useContainerClient(AzureContainer.MessageAssets);
     return generateUploadFileSasEntities(containerClient, files, roomId);
   }),
-  onCreateMessage: getMemberProcedure(onCreateMessageInputSchema, "roomId").subscription(async function* ({
+  onCreateMessage: getMemberProcedure(onbaseCreateMessageInputSchema, "roomId").subscription(async function* ({
     ctx,
     input: { lastEventId, pushSubscription, roomId },
     signal,
@@ -294,7 +301,7 @@ export const messageRouter = router({
 
       while (hasMore) {
         const { hasMore: newHasMore, items, nextCursor } = await readMessages({ cursor, order: SortOrder.Asc, roomId });
-        messages.push(...items);
+        messages.push(...(items as MessageEntity[]));
         cursor = nextCursor;
         hasMore = newHasMore;
       }
@@ -383,16 +390,16 @@ export const messageRouter = router({
     async ({ input: { roomId, rowKeys } }) => {
       const messageClient = await useTableClient(AzureTable.Messages);
       const clauses: Clause[] = [
-        { key: MessageEntityPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
+        { key: BaseMessageEntityPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
         getTableNullClause(ItemMetadataPropertyNames.deletedAt),
       ];
       for (const rowKey of rowKeys)
         clauses.push({
-          key: MessageEntityPropertyNames.rowKey,
+          key: BaseMessageEntityPropertyNames.rowKey,
           operator: BinaryOperator.eq,
           value: rowKey,
         });
-      return getTopNEntities(messageClient, rowKeys.length, MessageEntity, {
+      return getTopNEntities(messageClient, rowKeys.length, BaseMessageEntity<MessageType.Message>, {
         filter: serializeClauses(clauses),
       });
     },
@@ -400,7 +407,12 @@ export const messageRouter = router({
   searchMessages: getMemberProcedure(searchMessagesInputSchema, "roomId").query(({ input }) => searchMessages(input)),
   unpinMessage: getMemberProcedure(unpinMessageInputSchema, "partitionKey").mutation(async ({ input }) => {
     const messageClient = await useTableClient(AzureTable.Messages);
-    const messageEntity = await getEntity(messageClient, MessageEntity, input.partitionKey, input.rowKey);
+    const messageEntity = await getEntity(
+      messageClient,
+      BaseMessageEntity<MessageType.PinMessage>,
+      input.partitionKey,
+      input.rowKey,
+    );
     if (!messageEntity)
       throw new TRPCError({
         code: "NOT_FOUND",

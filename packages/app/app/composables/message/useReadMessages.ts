@@ -5,7 +5,7 @@ import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants"
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
-import { getReverseTickedTimestamp, MessageEntityPropertyNames } from "@esposter/db-schema";
+import { BaseMessageEntityPropertyNames, getReverseTickedTimestamp } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const useReadMessages = () => {
@@ -34,7 +34,7 @@ export const useReadMessages = () => {
     readItems(
       async () => {
         if (!currentRoomId.value)
-          throw new InvalidOperationError(Operation.Read, readMessages.name, MessageEntityPropertyNames.partitionKey);
+          throw new InvalidOperationError(Operation.Read, readMessages.name, BaseMessageEntityPropertyNames.partitionKey);
         const roomId = currentRoomId.value;
         const rowKey = route.params.rowKey as string | undefined;
 
@@ -65,7 +65,7 @@ export const useReadMessages = () => {
   const readMoreMessages = (onComplete: () => void) =>
     readMoreItems(async (cursor) => {
       if (!currentRoomId.value)
-        throw new InvalidOperationError(Operation.Read, readMessages.name, MessageEntityPropertyNames.partitionKey);
+        throw new InvalidOperationError(Operation.Read, readMessages.name, BaseMessageEntityPropertyNames.partitionKey);
       const response = await $trpc.message.readMessages.query({ cursor, roomId: currentRoomId.value });
       await readMetadata(response.items);
       return response;

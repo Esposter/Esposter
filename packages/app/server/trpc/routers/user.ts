@@ -3,7 +3,6 @@ import type { ReadableStream } from "node:stream/web";
 import type { SetNonNullable } from "type-fest";
 import type { z } from "zod";
 
-import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
 import { on } from "@@/server/services/events/on";
@@ -12,11 +11,10 @@ import { getDetectedUserStatus } from "@@/server/services/message/getDetectedUse
 import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import {
-  AzureContainer,
-  selectUserSchema,
+  AzureContainer, DatabaseEntityType, selectUserSchema,
   selectUserStatusSchema,
   UserStatus,
-  userStatuses,
+  userStatuses
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";

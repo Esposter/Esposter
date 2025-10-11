@@ -5,8 +5,8 @@ import type { UpdateSurveyModelInput } from "#shared/models/db/survey/UpdateSurv
 import type { Survey } from "@esposter/db-schema";
 import type { Except } from "type-fest";
 
-import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createOperationData } from "@/services/shared/createOperationData";
+import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const useSurveyStore = defineStore("survey", () => {
   const { $trpc } = useNuxtApp();

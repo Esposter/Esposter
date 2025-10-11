@@ -5,11 +5,11 @@ import { getSearchNonNullClause } from "@/services/azure/search/getSearchNonNull
 import { serializeValue } from "@/services/azure/transformer/serializeValue";
 import { dayjs } from "@/services/dayjs";
 import {
+  BaseMessageEntityPropertyNames,
   BinaryOperator,
   FileEntityPropertyNames,
   FilterType,
   FilterTypeHas,
-  MessageEntityPropertyNames,
   SearchOperator,
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
@@ -25,14 +25,14 @@ export const filtersToClauses = (filters: Filter[]): Clause[] => {
       case FilterType.From:
         for (const { value } of filtersByType)
           clauses.push({
-            key: MessageEntityPropertyNames.userId,
+            key: BaseMessageEntityPropertyNames.userId,
             operator: BinaryOperator.eq,
             value,
           });
         break;
       case FilterType.Mentions: {
         clauses.push({
-          key: MessageEntityPropertyNames.mentions,
+          key: BaseMessageEntityPropertyNames.mentions,
           operator: SearchOperator.arrayContains,
           value: filtersByType.map(({ value }) => value),
         });
@@ -44,32 +44,32 @@ export const filtersToClauses = (filters: Filter[]): Clause[] => {
             case FilterTypeHas.Link:
             case FilterTypeHas.Embed:
               // Presence of a link preview implies message had a link/embed
-              clauses.push(getSearchNonNullClause(MessageEntityPropertyNames.linkPreviewResponse));
+              clauses.push(getSearchNonNullClause(BaseMessageEntityPropertyNames.linkPreviewResponse));
               break;
             case FilterTypeHas.Image:
               clauses.push({
-                key: `${MessageEntityPropertyNames.files}/${FileEntityPropertyNames.mimetype}`,
+                key: `${BaseMessageEntityPropertyNames.files}/${FileEntityPropertyNames.mimetype}`,
                 operator: SearchOperator.arrayContains,
                 value: ContentTypes.filter((contentType) => contentType.startsWith("image/")),
               });
               break;
             case FilterTypeHas.Video:
               clauses.push({
-                key: `${MessageEntityPropertyNames.files}/${FileEntityPropertyNames.mimetype}`,
+                key: `${BaseMessageEntityPropertyNames.files}/${FileEntityPropertyNames.mimetype}`,
                 operator: SearchOperator.arrayContains,
                 value: ContentTypes.filter((contentType) => contentType.startsWith("video/")),
               });
               break;
             case FilterTypeHas.Sound:
               clauses.push({
-                key: `${MessageEntityPropertyNames.files}/${FileEntityPropertyNames.mimetype}`,
+                key: `${BaseMessageEntityPropertyNames.files}/${FileEntityPropertyNames.mimetype}`,
                 operator: SearchOperator.arrayContains,
                 value: ContentTypes.filter((contentType) => contentType.startsWith("audio/")),
               });
               break;
             case FilterTypeHas.Forward:
               clauses.push({
-                key: MessageEntityPropertyNames.isForward,
+                key: BaseMessageEntityPropertyNames.isForward,
                 operator: BinaryOperator.eq,
                 value: String(true),
               });
@@ -81,12 +81,12 @@ export const filtersToClauses = (filters: Filter[]): Clause[] => {
       }
       case FilterType.Before: {
         for (const { value } of filtersByType)
-          clauses.push({ key: MessageEntityPropertyNames.createdAt, operator: BinaryOperator.lt, value });
+          clauses.push({ key: BaseMessageEntityPropertyNames.createdAt, operator: BinaryOperator.lt, value });
         break;
       }
       case FilterType.After: {
         for (const { value } of filtersByType)
-          clauses.push({ key: MessageEntityPropertyNames.createdAt, operator: BinaryOperator.gt, value });
+          clauses.push({ key: BaseMessageEntityPropertyNames.createdAt, operator: BinaryOperator.gt, value });
         break;
       }
       case FilterType.During: {
@@ -95,12 +95,12 @@ export const filtersToClauses = (filters: Filter[]): Clause[] => {
             throw new InvalidOperationError(Operation.Read, filtersToClauses.name, serializeValue(value));
           const date = dayjs(value);
           clauses.push({
-            key: MessageEntityPropertyNames.createdAt,
+            key: BaseMessageEntityPropertyNames.createdAt,
             operator: BinaryOperator.ge,
             value: date.startOf("day").toDate(),
           });
           clauses.push({
-            key: MessageEntityPropertyNames.createdAt,
+            key: BaseMessageEntityPropertyNames.createdAt,
             operator: BinaryOperator.le,
             value: date.endOf("day").toDate(),
           });
@@ -112,7 +112,7 @@ export const filtersToClauses = (filters: Filter[]): Clause[] => {
           if (typeof value !== "boolean")
             throw new InvalidOperationError(Operation.Read, filtersToClauses.name, serializeValue(value));
           clauses.push({
-            key: MessageEntityPropertyNames.isPinned,
+            key: BaseMessageEntityPropertyNames.isPinned,
             operator: BinaryOperator.eq,
             value: value || null,
           });

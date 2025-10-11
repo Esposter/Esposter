@@ -28,6 +28,8 @@ export const webhooks = pgTable(
     token: text("token").notNull(),
     userId: uuid("user_id")
       .notNull()
+      // 1:1 with appUsers
+      .unique()
       .references(() => appUsers.id, { onDelete: "cascade" }),
   },
   {

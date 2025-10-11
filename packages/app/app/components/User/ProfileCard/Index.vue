@@ -1,9 +1,9 @@
 <!-- eslint-disable perfectionist/sort-objects -->
 <script setup lang="ts">
-import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 import { authClient } from "@/services/auth/authClient";
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
+import { DatabaseEntityType } from "@esposter/db-schema";
 import deepEqual from "fast-deep-equal";
 
 const { data: session } = await authClient.useSession(useFetch);

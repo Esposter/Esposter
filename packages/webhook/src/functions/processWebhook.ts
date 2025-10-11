@@ -1,11 +1,13 @@
 import type { WebhookQueueMessage } from "@/models/WebhookQueueMessage";
 
 import { WEBHOOK_STORAGE_QUEUE_OUTPUT } from "@/services/constants";
+import { db } from "@/services/db";
 import { getTableClient } from "@/services/getTableClient";
-import { mapWebhookPayloadToMessage } from "@/services/mapWebhookPayloadToMessage";
+import { getWebhookCreateMessageInput } from "@/services/getWebhookCreateMessageInput";
 import { app } from "@azure/functions";
 import { createMessage } from "@esposter/db";
-import { AzureTable } from "@esposter/db-schema";
+import { AzureTable, DatabaseEntityType } from "@esposter/db-schema";
+import { NotFoundError } from "@esposter/shared";
 
 app.storageQueue("processWebhook", {
   connection: "AzureWebJobsStorage",
@@ -19,8 +21,16 @@ app.storageQueue("processWebhook", {
     try {
       const messageClient = await getTableClient(AzureTable.Messages);
       const messageAscendingClient = await getTableClient(AzureTable.MessagesAscending);
-      const messageInput = mapWebhookPayloadToMessage(payload, roomId);
-      await createMessage(messageClient, messageAscendingClient, { ...messageInput, userId });
+      const appUser = await db.query.appUsers.findFirst({
+        where: (appUsers, { eq }) => eq(appUsers.id, userId),
+      });
+      if (!appUser) {
+        context.error(new NotFoundError(DatabaseEntityType.AppUser, userId));
+        return;
+      }
+
+      const webhookCreateMessageInput = getWebhookCreateMessageInput(payload, roomId, appUser);
+      await createMessage(messageClient, messageAscendingClient, webhookCreateMessageInput);
     } catch (error) {
       context.error("Failed to process webhook queue message:", error);
       throw error;

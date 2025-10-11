@@ -15,9 +15,10 @@ import { TableEditorConfiguration } from "#shared/models/tableEditor/data/TableE
 import { TodoListItem } from "#shared/models/tableEditor/todoList/TodoListItem";
 import { VuetifyComponentItem } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
-import { MessageEntity, SurveyResponseEntity } from "@esposter/db-schema";
+import { BaseMessageEntity, SurveyResponseEntity, WebhookMessageEntity } from "@esposter/db-schema";
 
-export const JSONClassMap = {
+export const JSONClassMap: Record<string, Class<Serializable>> = {
+  BaseMessageEntity,
   BasicChartConfiguration,
   Chart,
   Clicker,
@@ -26,12 +27,12 @@ export const JSONClassMap = {
   EmailEditor,
   FlowchartEditor,
   MessageEmojiMetadataEntity,
-  MessageEntity,
   SurveyResponseEntity,
   TableEditor,
   TableEditorConfiguration,
   TodoListItem,
   Visual,
   VuetifyComponentItem,
+  WebhookMessageEntity,
   WebpageEditor,
-} as const satisfies Record<string, Class<Serializable>>;
+};

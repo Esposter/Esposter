@@ -1,7 +1,7 @@
 import type { MessageMetadataType } from "@/models/message/metadata/MessageMetadataType";
 
 import { AzureMetadataEntity, createAzureMetadataEntitySchema } from "@/models/azure/table/AzureMetadataEntity";
-import { messageEntitySchema } from "@/models/message/MessageEntity";
+import { baseMessageEntitySchema } from "@/models/message/BaseMessageEntity";
 import { z } from "zod";
 
 export abstract class MessageMetadataEntity<TType extends MessageMetadataType> extends AzureMetadataEntity<TType> {
@@ -12,10 +12,10 @@ export const createMessageMetadataEntitySchema = <T extends z.ZodType<string>>(t
   z.object({
     ...createAzureMetadataEntitySchema(
       z.object({
-        partitionKey: messageEntitySchema.shape.partitionKey,
+        partitionKey: baseMessageEntitySchema.shape.partitionKey,
         rowKey: z.string(),
       }),
       typeSchema,
     ).shape,
-    messageRowKey: messageEntitySchema.shape.rowKey,
+    messageRowKey: baseMessageEntitySchema.shape.rowKey,
   });
