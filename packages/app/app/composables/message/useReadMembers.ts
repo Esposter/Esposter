@@ -30,7 +30,11 @@ export const useReadMembers = () => {
   const readMoreMembers = (onComplete: () => void) =>
     readMoreItems(async (cursor) => {
       if (!currentRoomId.value)
-        throw new InvalidOperationError(Operation.Read, readMoreMembers.name, BaseMessageEntityPropertyNames.partitionKey);
+        throw new InvalidOperationError(
+          Operation.Read,
+          readMoreMembers.name,
+          BaseMessageEntityPropertyNames.partitionKey,
+        );
       const cursorPaginationData = await $trpc.room.readMembers.query({ cursor, roomId: currentRoomId.value });
       for (const member of cursorPaginationData.items) memberMap.value.set(member.id, member);
       await readMetadata(cursorPaginationData.items.map(({ id }) => id));

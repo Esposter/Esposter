@@ -34,7 +34,11 @@ export const useReadMessages = () => {
     readItems(
       async () => {
         if (!currentRoomId.value)
-          throw new InvalidOperationError(Operation.Read, readMessages.name, BaseMessageEntityPropertyNames.partitionKey);
+          throw new InvalidOperationError(
+            Operation.Read,
+            readMessages.name,
+            BaseMessageEntityPropertyNames.partitionKey,
+          );
         const roomId = currentRoomId.value;
         const rowKey = route.params.rowKey as string | undefined;
 

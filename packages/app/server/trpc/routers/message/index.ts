@@ -301,7 +301,7 @@ export const messageRouter = router({
 
       while (hasMore) {
         const { hasMore: newHasMore, items, nextCursor } = await readMessages({ cursor, order: SortOrder.Asc, roomId });
-        messages.push(...(items as MessageEntity[]));
+        messages.push(...items);
         cursor = nextCursor;
         hasMore = newHasMore;
       }
