@@ -168,7 +168,7 @@ catalog:
   survey-creator-vue: ^2.3.10
   survey-vue3-ui: ^2.3.10
   three: ^0.180.0
-  three-globe: ^2.44.0
+  three-globe: ^2.44.1
   trpc-nuxt: ^1.2.0
   tsx: ^4.20.6
   type-fest: ^5.0.1
