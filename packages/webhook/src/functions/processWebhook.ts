@@ -4,8 +4,8 @@ import { WEBHOOK_STORAGE_QUEUE_OUTPUT } from "@/services/constants";
 import { getTableClient } from "@/services/getTableClient";
 import { mapWebhookPayloadToMessage } from "@/services/mapWebhookPayloadToMessage";
 import { app } from "@azure/functions";
-import { createEntity } from "@esposter/db";
-import { AzureTable, createMessageEntity, getReverseTickedTimestamp } from "@esposter/db-schema";
+import { createMessage } from "@esposter/db";
+import { AzureTable } from "@esposter/db-schema";
 
 app.storageQueue("processWebhook", {
   connection: "AzureWebJobsStorage",
@@ -17,16 +17,10 @@ app.storageQueue("processWebhook", {
     } = queueEntry as WebhookQueueMessage;
 
     try {
-      const messageInput = mapWebhookPayloadToMessage(payload, roomId);
-      const messageEntity = createMessageEntity({ ...messageInput, userId });
       const messageClient = await getTableClient(AzureTable.Messages);
-      await createEntity(messageClient, messageEntity);
-
       const messageAscendingClient = await getTableClient(AzureTable.MessagesAscending);
-      await createEntity(messageAscendingClient, {
-        partitionKey: messageEntity.partitionKey,
-        rowKey: getReverseTickedTimestamp(messageEntity.rowKey),
-      });
+      const messageInput = mapWebhookPayloadToMessage(payload, roomId);
+      await createMessage(messageClient, messageAscendingClient, { ...messageInput, userId });
     } catch (error) {
       context.error("Failed to process webhook queue message:", error);
       throw error;

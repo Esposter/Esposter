@@ -47,7 +47,10 @@
     "@esposter/db-schema": "workspace:*",
     "@esposter/shared": "workspace:*",
     "dayjs": "catalog:",
+    "link-preview-js": "catalog:",
+    "linkifyjs": "catalog:",
     "mime-types": "catalog:",
+    "node-html-parser": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {

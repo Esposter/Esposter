@@ -1,8 +1,7 @@
-import type { CreateMessageInput, CustomTableClient, MessageEntity } from "@esposter/db-schema";
+import type { AzureTableEntityMap, CreateMessageInput, CustomTableClient, MessageEntity } from "@esposter/db-schema";
 
-import { useTableClient } from "@@/server/composables/azure/useTableClient";
-import { addMessageMetadata } from "@@/server/services/message/addMessageMetadata";
-import { createEntity } from "@esposter/db";
+import { createEntity } from "@/services/azure/table/createEntity";
+import { addMessageMetadata } from "@/services/message/addMessageMetadata";
 import {
   AzureTable,
   createMessageEntity as baseCreateMessageEntity,
@@ -10,14 +9,13 @@ import {
 } from "@esposter/db-schema";
 
 export const createMessage = async (
-  messageClient: CustomTableClient<MessageEntity>,
+  messageClient: CustomTableClient<AzureTableEntityMap[AzureTable.Messages]>,
+  messageAscendingClient: CustomTableClient<AzureTableEntityMap[AzureTable.MessagesAscending]>,
   input: CreateMessageInput & Pick<MessageEntity, "isForward" | "isLoading" | "userId">,
 ) => {
   const messageEntity = baseCreateMessageEntity(input);
   await addMessageMetadata(messageEntity);
   await createEntity(messageClient, messageEntity);
-
-  const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
   await createEntity(messageAscendingClient, {
     partitionKey: messageEntity.partitionKey,
     rowKey: getReverseTickedTimestamp(messageEntity.rowKey),

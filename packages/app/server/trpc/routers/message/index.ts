@@ -15,7 +15,6 @@ import { useSendCreateMessageNotification } from "@@/server/composables/message/
 import { pushSubscriptionSchema } from "@@/server/models/PushSubscription";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { on } from "@@/server/services/events/on";
-import { createMessage } from "@@/server/services/message/createMessage";
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
 import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmitter";
 import { isRoomId } from "@@/server/services/message/isRoomId";
@@ -29,6 +28,7 @@ import { getCreatorProcedure } from "@@/server/trpc/procedure/message/getCreator
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import {
   cloneFiles,
+  createMessage,
   deleteFiles,
   generateDownloadFileSasUrls,
   generateUploadFileSasEntities,
@@ -142,7 +142,11 @@ export const messageRouter = router({
     "message",
   ]).mutation<MessageEntity>(async ({ ctx, input }) => {
     const messageClient = await useTableClient(AzureTable.Messages);
-    const newMessageEntity = await createMessage(messageClient, { ...input, userId: ctx.session.user.id });
+    const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
+    const newMessageEntity = await createMessage(messageClient, messageAscendingClient, {
+      ...input,
+      userId: ctx.session.user.id,
+    });
     messageEventEmitter.emit("createMessage", [
       [newMessageEntity],
       { image: ctx.session.user.image, name: ctx.session.user.name, sessionId: ctx.session.session.id },
@@ -224,11 +228,12 @@ export const messageRouter = router({
           message: new NotFoundError(AzureEntityType.Message, JSON.stringify({ partitionKey, rowKey })).message,
         });
 
+      const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
       const containerClient = await useContainerClient(AzureContainer.MessageAssets);
       await Promise.all(
         roomIds.map(async (roomId) => {
           const newFileIds = await cloneFiles(containerClient, messageEntity.files, messageEntity.partitionKey, roomId);
-          const forward = await createMessage(messageClient, {
+          const forward = await createMessage(messageClient, messageAscendingClient, {
             // eslint-disable-next-line @typescript-eslint/no-misused-spread
             files: messageEntity.files.map((file, index) => new FileEntity({ ...file, id: newFileIds[index] })),
             isForward: true,
@@ -241,7 +246,7 @@ export const messageRouter = router({
           const messages = [forward];
 
           if (message) {
-            const newMessageEntity = await createMessage(messageClient, {
+            const newMessageEntity = await createMessage(messageClient, messageAscendingClient, {
               message,
               roomId,
               userId: ctx.session.user.id,
@@ -356,7 +361,8 @@ export const messageRouter = router({
     await updateEntity(messageClient, updatedMessageEntity);
     messageEventEmitter.emit("updateMessage", updatedMessageEntity);
 
-    const systemMessage = await createMessage(messageClient, {
+    const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
+    const systemMessage = await createMessage(messageClient, messageAscendingClient, {
       replyRowKey: input.rowKey,
       roomId: input.partitionKey,
       type: MessageType.PinMessage,
