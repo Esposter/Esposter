@@ -1,15 +1,17 @@
-import type { AppUser, WebhookCreateMessageInput, WebhookPayload } from "@esposter/db-schema";
+import type { Webhook, WebhookCreateMessageInput, WebhookPayload } from "@esposter/db-schema";
 
 import { MessageType } from "@esposter/db-schema";
 
 export const getWebhookCreateMessageInput = (
   payload: WebhookPayload,
-  roomId: string,
-  appUser: AppUser,
+  { roomId, userId }: Pick<Webhook, "roomId" | "userId">,
 ): WebhookCreateMessageInput => ({
-  appUser,
-  files: [],
-  message: payload.content ?? "",
+  appUser: {
+    id: userId,
+    image: payload.avatarUrl,
+    name: payload.username,
+  },
+  message: payload.content,
   roomId,
   type: MessageType.Webhook,
 });
