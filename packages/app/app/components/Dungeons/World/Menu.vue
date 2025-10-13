@@ -4,7 +4,7 @@ import type { Position } from "grid-engine";
 import { WorldMenuOptionGrid } from "@/services/dungeons/scene/world/WorldMenuOptionGrid";
 import { MENU_PADDING, MENU_WIDTH } from "@/services/dungeons/UI/menu/constants";
 import { useMenuStore } from "@/store/dungeons/world/menu";
-import { getScene, useInjectSceneKey } from "vue-phaserjs";
+import { getScene, onUpdate, useInjectSceneKey } from "vue-phaserjs";
 
 const menuStore = useMenuStore();
 const { isMenuVisible } = storeToRefs(menuStore);
@@ -16,8 +16,16 @@ watch(isMenuVisible, (newIsMenuVisible) => {
 
   const scene = getScene(sceneKey);
   position.value = {
-    x: scene.scale.width - MENU_PADDING * 2 - MENU_WIDTH,
-    y: MENU_PADDING * 2,
+    x: scene.cameras.main.worldView.right - MENU_PADDING * 2 - MENU_WIDTH,
+    y: scene.cameras.main.worldView.top + MENU_PADDING * 2,
+  };
+});
+
+onUpdate((scene) => {
+  if (!isMenuVisible.value) return;
+  position.value = {
+    x: scene.cameras.main.worldView.right - MENU_PADDING * 2 - MENU_WIDTH,
+    y: scene.cameras.main.worldView.top + MENU_PADDING * 2,
   };
 });
 </script>
