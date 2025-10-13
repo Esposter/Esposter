@@ -568,8 +568,8 @@ catalogs:
       specifier: ^3.10.5
       version: 3.10.5
     vuetify-nuxt-module:
-      specifier: ^0.18.7
-      version: 0.18.7
+      specifier: ^0.18.8
+      version: 0.18.8
     web-push:
       specifier: ^3.6.7
       version: 3.6.7
@@ -1125,7 +1125,7 @@ importers:
         version: 66.5.3(@unocss/webpack@66.5.3(webpack@5.102.1(esbuild@0.23.1)))(postcss@8.5.6)(rolldown-vite@7.1.16(@types/node@24.7.2)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))
       vuetify-nuxt-module:
         specifier: 'catalog:'
-        version: 0.18.7(magicast@0.3.5)(rolldown-vite@7.1.16(@types/node@24.7.2)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
+        version: 0.18.8(magicast@0.3.5)(rolldown-vite@7.1.16(@types/node@24.7.2)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
 
   packages/azure-mock:
     dependencies:
@@ -11148,8 +11148,8 @@ packages:
       typescript:
         optional: true
 
-  vuetify-nuxt-module@0.18.7:
-    resolution: {integrity: sha512-AEP5DRuyY5yIk8JzPEhG6NohCkGwf9afn4Mv51YPKGxreqP/KfzL0jooG/HN1cinSo4c+9uRowHllzCsnSN7FA==}
+  vuetify-nuxt-module@0.18.8:
+    resolution: {integrity: sha512-57J0MgmRTyEX4ZIIXZUyY+UodDi+hoJ9/UnUZQoBbpTc/9WAZyRonaJedIcHLnTBKyIxxWdvtWHkJdosngX3NQ==}
 
   vuetify@3.10.5:
     resolution: {integrity: sha512-3h1onfjcj04B+LJ0cXvGrOOe6C3652JAlyUAuGKgQXwhP9Oe1hAfdM6+svXR5Dt1xC39lQEGqJdacZtwisUEoQ==}
@@ -23110,7 +23110,7 @@ snapshots:
     optionalDependencies:
       typescript: 5.9.3
 
-  vuetify-nuxt-module@0.18.7(magicast@0.3.5)(rolldown-vite@7.1.16(@types/node@24.7.2)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)):
+  vuetify-nuxt-module@0.18.8(magicast@0.3.5)(rolldown-vite@7.1.16(@types/node@24.7.2)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)):
     dependencies:
       '@nuxt/kit': 3.19.3(magicast@0.3.5)
       defu: 6.1.4
