@@ -4,12 +4,11 @@ import type { Position } from "grid-engine";
 import { WorldMenuOptionGrid } from "@/services/dungeons/scene/world/WorldMenuOptionGrid";
 import { MENU_PADDING, MENU_WIDTH } from "@/services/dungeons/UI/menu/constants";
 import { useMenuStore } from "@/store/dungeons/world/menu";
-import { onUpdate, useInjectSceneKey } from "vue-phaserjs";
+import { onUpdate } from "vue-phaserjs";
 
 const menuStore = useMenuStore();
 const { isMenuVisible } = storeToRefs(menuStore);
 const position = ref<Position>();
-const sceneKey = useInjectSceneKey();
 
 onUpdate((scene) => {
   if (!isMenuVisible.value) return;
