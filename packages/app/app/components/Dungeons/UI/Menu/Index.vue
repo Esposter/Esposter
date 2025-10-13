@@ -27,7 +27,6 @@ const menuHeight = computed(() => getMenuHeight(grid.rowSize));
         origin: 0,
         fillColor: primary,
         alpha: 0.9,
-        scrollFactor: 0,
         strokeStyle: [8, border],
       }"
       @clickoutside="menu = false"
