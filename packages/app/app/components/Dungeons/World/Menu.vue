@@ -16,8 +16,8 @@ watch(isMenuVisible, (newIsMenuVisible) => {
 
   const scene = getScene(sceneKey);
   position.value = {
-    x: scene.cameras.main.worldView.right - MENU_PADDING * 2 - MENU_WIDTH,
-    y: scene.cameras.main.worldView.top + MENU_PADDING * 2,
+    x: scene.scale.width - MENU_PADDING * 2 - MENU_WIDTH,
+    y: MENU_PADDING * 2,
   };
 });
 </script>

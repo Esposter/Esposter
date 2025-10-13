@@ -18,7 +18,7 @@ const menuHeight = computed(() => getMenuHeight(grid.rowSize));
 </script>
 
 <template>
-  <Container :configuration="{ visible: menu, ...position, depth: MENU_DEPTH }">
+  <Container :configuration="{ visible: menu, ...position, depth: MENU_DEPTH, scrollFactor: 0 }">
     <Rectangle
       :configuration="{
         x: 1,
