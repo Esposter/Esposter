@@ -21,7 +21,7 @@ const { getUserStatusEnum } = userStatusStore;
           </div>
         </div>
         <div flex>
-          <MessageLeftSideBarUserSettingsDialogButton />
+          <MessageLeftSideBarSettingsDialogButton />
         </div>
       </div>
     </StyledCard>
