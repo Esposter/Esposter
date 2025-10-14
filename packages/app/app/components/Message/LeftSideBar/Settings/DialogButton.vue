@@ -1,6 +1,10 @@
 <script setup lang="ts">
+import { SettingsContentMap } from "@/services/message/settings/SettingsContentMap";
+import { useSettingsStore } from "@/store/message/settings";
 import { mergeProps } from "vue";
 
+const settingsStore = useSettingsStore();
+const { settingsType } = storeToRefs(settingsStore);
 const dialog = ref(false);
 </script>
 
@@ -15,6 +19,8 @@ const dialog = ref(false);
     </template>
     <StyledCard>
       <v-btn absolute top-4 right-4 icon="mdi-close" size="small" @click="dialog = false" />
+      <MessageLeftSideBarSettingsLeftSideBar />
+      <component :is="SettingsContentMap[settingsType]" />
     </StyledCard>
   </v-dialog>
 </template>

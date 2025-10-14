@@ -10,4 +10,5 @@ export enum DatabaseEntityType {
   UserStatus = "UserStatus",
   UserToRoom = "UserToRoom",
   VerificationToken = "VerificationToken",
+  Webhook = "Webhook",
 }

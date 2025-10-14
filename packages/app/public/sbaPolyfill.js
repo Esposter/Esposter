@@ -1,3 +1,4 @@
+// data-urls requires SharedArrayBuffer
 if (!window.SharedArrayBuffer) {
   console.log("Polyfilling SharedArrayBuffer.");
   // Use a dummy class to polyfill SharedArrayBuffer

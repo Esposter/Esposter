@@ -2,7 +2,7 @@
 import type { MessageEntity } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
-import { EmojiMenuItems } from "@/services/message/EmojiMenuItems";
+import { EmojiMenuItems } from "@/services/message/emoji/EmojiMenuItems";
 import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
 import { unemojify } from "node-emoji";
 

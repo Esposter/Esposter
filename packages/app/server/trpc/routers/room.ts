@@ -17,6 +17,7 @@ import { readInviteCode } from "@@/server/services/message/readInviteCode";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
+import { deleteRoom } from "@@/server/services/room/deleteRoom";
 import { router } from "@@/server/trpc";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
@@ -42,7 +43,6 @@ import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operat
 import { TRPCError } from "@trpc/server";
 import { and, desc, eq, ilike, inArray, ne, SQL, sql } from "drizzle-orm";
 import { z } from "zod";
-import { deleteRoom } from "~~/server/services/room/deleteRoom";
 
 const readRoomInputSchema = selectRoomSchema.shape.id.optional();
 export type ReadRoomInput = z.infer<typeof readRoomInputSchema>;

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useReadSearchHistories } from "@/composables/message/useReadSearchHistories";
-import { getFilterDisplayValue } from "@/services/message/getFilterDisplayValue";
+import { getFilterDisplayValue } from "@/services/message/filter/getFilterDisplayValue";
 import { useSearchHistoryStore } from "@/store/message/searchHistory";
 import { useSearchMessageStore } from "@/store/message/searchMessage";
 

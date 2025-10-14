@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getFilterDisplayValue } from "@/services/message/getFilterDisplayValue";
+import { getFilterDisplayValue } from "@/services/message/filter/getFilterDisplayValue";
 import { useSearchMessageStore } from "@/store/message/searchMessage";
 import { FilterType } from "@esposter/db-schema";
 
