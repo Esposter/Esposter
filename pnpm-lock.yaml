@@ -193,8 +193,8 @@ catalogs:
       specifier: ^66.5.4
       version: 66.5.4
     '@vite-pwa/nuxt':
-      specifier: ^1.0.5
-      version: 1.0.5
+      specifier: ^1.0.6
+      version: 1.0.6
     '@vitejs/plugin-vue':
       specifier: ^6.0.1
       version: 6.0.1
@@ -1089,7 +1089,7 @@ importers:
         version: 66.5.4(magicast@0.3.5)(postcss@8.5.6)(rolldown-vite@7.1.17(@types/node@24.7.2)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))(webpack@5.102.1(esbuild@0.23.1))
       '@vite-pwa/nuxt':
         specifier: 'catalog:'
-        version: 1.0.5(magicast@0.3.5)(rolldown-vite@7.1.17(@types/node@24.7.2)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))(workbox-build@7.3.0)(workbox-window@7.3.0)
+        version: 1.0.6(magicast@0.3.5)(rolldown-vite@7.1.17(@types/node@24.7.2)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))(workbox-build@7.3.0)(workbox-window@7.3.0)
       '@vue/test-utils':
         specifier: 'catalog:'
         version: 2.4.6
@@ -5172,8 +5172,8 @@ packages:
   '@vexip-ui/utils@2.16.4':
     resolution: {integrity: sha512-KX+Q4EsuwDp6ZlRJ7OAkiYxu52D5CVM8zpqQz/FXYV+JUtzl9T3dvxgtA8gQ0wm5Sh/xT6jp8Wo4X7tLAzRh/A==}
 
-  '@vite-pwa/nuxt@1.0.5':
-    resolution: {integrity: sha512-edbxP9qbQMrxJn6nA/YH2AysntCEYPHjox9R61PVThM/fjX1DQYwKibY4+MOappcZiR6lSNpbgdupv9ngbWXxQ==}
+  '@vite-pwa/nuxt@1.0.6':
+    resolution: {integrity: sha512-gNAo3HgSQbLdyBw/BhXEzTagZNzgypE/20bGpscz0gfla+qAS2oy6WPz8kU4td83Ub3aod4Q1WXLq+09H2xLig==}
     peerDependencies:
       '@vite-pwa/assets-generator': ^1.0.0
     peerDependenciesMeta:
@@ -16153,7 +16153,7 @@ snapshots:
 
   '@vexip-ui/utils@2.16.4': {}
 
-  '@vite-pwa/nuxt@1.0.5(magicast@0.3.5)(rolldown-vite@7.1.17(@types/node@24.7.2)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))(workbox-build@7.3.0)(workbox-window@7.3.0)':
+  '@vite-pwa/nuxt@1.0.6(magicast@0.3.5)(rolldown-vite@7.1.17(@types/node@24.7.2)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.93.2)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))(workbox-build@7.3.0)(workbox-window@7.3.0)':
     dependencies:
       '@nuxt/kit': 3.19.3(magicast@0.3.5)
       pathe: 1.1.2
