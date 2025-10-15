@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SettingsType } from "@/models/message/settings/SettingsType";
+import { SettingsListItemMap } from "@/services/message/settings/SettingsListItemMap";
 import { useSettingsStore } from "@/store/message/settings";
 
 const settingsStore = useSettingsStore();
@@ -7,15 +7,18 @@ const { settingsType } = storeToRefs(settingsStore);
 </script>
 
 <template>
-  <v-navigation-drawer b-r-1 location="left" rail permanent>
-    <v-list density="compact">
-      <v-list-item :active="settingsType === SettingsType.Webhook" @click="settingsType = SettingsType.Webhook">
-        <template #prepend>
-          <v-avatar color="background">
-            <v-icon icon="mdi-webhook" />
-          </v-avatar>
+  <v-navigation-drawer location="left" permanent>
+    <v-list pt-10 density="compact">
+      <v-list-item
+        v-for="[type, { icon }] of Object.entries(SettingsListItemMap)"
+        :key="type"
+        :active="type === settingsType"
+        @click="settingsType = type"
+      >
+        <v-list-item-title font-bold>{{ settingsType }}</v-list-item-title>
+        <template #append>
+          <v-icon :icon />
         </template>
-        <v-list-item-title font-bold>Webhook</v-list-item-title>
       </v-list-item>
     </v-list>
   </v-navigation-drawer>

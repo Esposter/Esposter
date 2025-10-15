@@ -9,8 +9,8 @@ const isLoading = ref(false);
 </script>
 
 <template>
-  <div flex flex-col gap-4>
-    <div flex items-end gap-2>
+  <div flex flex-col gap-y-4>
+    <div flex gap-x-4>
       <v-text-field v-model="name" label="Name" density="compact" :disabled="isLoading" />
       <v-btn
         color="primary"
