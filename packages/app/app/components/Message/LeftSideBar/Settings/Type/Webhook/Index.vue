@@ -10,10 +10,9 @@ const isLoading = ref(false);
 
 <template>
   <div flex flex-col gap-y-4>
-    <div flex gap-x-4>
-      <v-text-field v-model="name" label="Name" density="compact" :disabled="isLoading" />
-      <v-btn
-        color="primary"
+    <div flex justify-center items-center gap-x-4>
+      <v-text-field v-model="name" :disabled="isLoading" label="Name" density="compact" hide-details />
+      <StyledButton
         :loading="isLoading"
         :disabled="!name"
         @click="
@@ -25,7 +24,7 @@ const isLoading = ref(false);
         "
       >
         Create
-      </v-btn>
+      </StyledButton>
     </div>
     <MessageLeftSideBarSettingsTypeWebhookList />
   </div>
