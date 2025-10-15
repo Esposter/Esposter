@@ -4,12 +4,13 @@ import type { Clause, Filter } from "@esposter/db-schema";
 import { getSearchNonNullClause } from "@/services/azure/search/getSearchNonNullClause";
 import { dayjs } from "@/services/dayjs";
 import {
-    BaseMessageEntityPropertyNames,
-    BinaryOperator,
-    FileEntityPropertyNames,
-    FilterType,
-    FilterTypeHas,
-    SearchOperator, serializeValue
+  BaseMessageEntityPropertyNames,
+  BinaryOperator,
+  FileEntityPropertyNames,
+  FilterType,
+  FilterTypeHas,
+  SearchOperator,
+  serializeValue,
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { types } from "mime-types";
