@@ -1,4 +1,4 @@
-import type { Session } from "@@/server/models/auth/Session";
+import type { Session } from "#shared/models/auth/Session";
 import type { Context } from "@@/server/trpc/context";
 import type { User } from "@esposter/db-schema";
 import type * as DrizzleKit from "drizzle-kit/api";

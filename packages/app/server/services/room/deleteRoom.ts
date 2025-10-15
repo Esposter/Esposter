@@ -1,4 +1,4 @@
-import type { Session } from "@@/server/models/auth/Session";
+import type { Session } from "#shared/models/auth/Session";
 import type { Context } from "@@/server/trpc/context";
 
 import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmitter";

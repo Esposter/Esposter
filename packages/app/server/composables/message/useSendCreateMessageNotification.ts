@@ -1,4 +1,4 @@
-import type { Session } from "@@/server/models/auth/Session";
+import type { Session } from "#shared/models/auth/Session";
 import type { MessageEntity } from "@esposter/db-schema";
 import type { PushSubscription } from "web-push";
 

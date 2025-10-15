@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useReadSearchHistories } from "@/composables/message/useReadSearchHistories";
 import { getFilterDisplayValue } from "@/services/message/filter/getFilterDisplayValue";
 import { useSearchHistoryStore } from "@/store/message/searchHistory";
 import { useSearchMessageStore } from "@/store/message/searchMessage";
@@ -8,7 +7,7 @@ const readSearchedMessages = useReadSearchedMessages();
 const { readMoreSearchHistories, readSearchHistories } = useReadSearchHistories();
 const { isPending } = await readSearchHistories();
 const searchMessageStore = useSearchMessageStore();
-const { menu, searchQuery, selectedFilters } = storeToRefs(searchMessageStore);
+const { searchQuery, selectedFilters } = storeToRefs(searchMessageStore);
 const searchHistoryStore = useSearchHistoryStore();
 const { hasMore, items } = storeToRefs(searchHistoryStore);
 </script>

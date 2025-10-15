@@ -1,4 +1,4 @@
-import type { Session } from "@@/server/models/auth/Session";
+import type { Session } from "#shared/models/auth/Session";
 
 export interface DeviceId {
   sessionId: Session["session"]["id"];

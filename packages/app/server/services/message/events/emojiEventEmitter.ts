@@ -1,7 +1,7 @@
+import type { DeviceId } from "#shared/models/auth/DeviceId";
 import type { DeleteEmojiInput } from "#shared/models/db/message/metadata/DeleteEmojiInput";
 import type { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import type { UpdateEmojiInput } from "#shared/models/db/message/metadata/UpdateEmojiInput";
-import type { DeviceId } from "@@/server/models/auth/DeviceId";
 
 import { EventEmitter } from "node:events";
 
