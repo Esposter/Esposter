@@ -1,7 +1,6 @@
 import { serializeKey } from "@/services/azure/table/serializeKey";
-import { escapeValue } from "@/services/azure/transformer/escapeValue";
 import { serializeClauses } from "@/services/azure/transformer/serializeClauses";
-import { BinaryOperator, CompositeKeyPropertyNames, UnaryOperator } from "@esposter/db-schema";
+import { BinaryOperator, CompositeKeyPropertyNames, escapeValue, UnaryOperator } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
 describe(serializeClauses, () => {

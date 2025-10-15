@@ -1,5 +1,5 @@
 import { deserializeValue } from "@/services/azure/transformer/deserializeValue";
-import { escapeValue } from "@/services/azure/transformer/escapeValue";
+import { escapeValue } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
 describe(deserializeValue, () => {

@@ -1,6 +1,6 @@
-import type { SerializableValue } from "@esposter/db-schema";
+import type { SerializableValue } from "@/models/azure/SerializableValue";
 
-import { escapeValue } from "@/services/azure/transformer/escapeValue";
+import { escapeValue } from "@esposter/db-schema";
 
 export const serializeValue = (value: SerializableValue): string => {
   if (value instanceof Date) return value.toISOString();
