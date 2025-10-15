@@ -1,12 +1,9 @@
 <script setup lang="ts">
-import { toRefs } from "vue";
-
 interface HelpTooltipProps {
   text: string;
 }
 
-const props = defineProps<HelpTooltipProps>();
-const { text } = toRefs(props);
+const { text } = defineProps<HelpTooltipProps>();
 </script>
 
 <template>
