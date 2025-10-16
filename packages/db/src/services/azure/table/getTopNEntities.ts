@@ -13,7 +13,7 @@ export const getTopNEntities = async <TEntity extends CompositeKey>(
   // Filter out metadata like continuation token before deserializing the json
   // Take the first page as the topEntries result
   // This only sends a single request to the service
-  for await (const page of tableClient.listEntities<TEntity>({ queryOptions }).byPage({ maxPageSize: topN }))
-    return page.slice(0, topN).map(({ etag: _etag, ...entity }) => deserializeEntity(entity as TEntity, cls));
+  for await (const page of tableClient.listEntities({ queryOptions }).byPage({ maxPageSize: topN }))
+    return page.slice(0, topN).map(({ etag: _etag, ...entity }) => deserializeEntity(entity, cls));
   return [];
 };

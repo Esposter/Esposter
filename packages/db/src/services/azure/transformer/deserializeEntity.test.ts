@@ -1,8 +1,9 @@
 import type { SerializableValue } from "@esposter/db-schema";
+import type { ExcludeFunctionProperties } from "@esposter/shared";
 
 import { deserializeEntity } from "@/services/azure/transformer/deserializeEntity";
 import { AzureEntity } from "@esposter/db-schema";
-import { jsonDateParse } from "@esposter/shared";
+import { ItemMetadata, jsonDateParse } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(deserializeEntity, () => {
@@ -32,19 +33,16 @@ describe(deserializeEntity, () => {
       partitionKey: "",
       rowKey: "",
       string: "",
-    } as const satisfies Partial<Record<keyof Entity, SerializableValue>>;
-    const deserializedEntity = deserializeEntity(serializedEntity as unknown as Entity, Entity);
+      // eslint-disable-next-line @typescript-eslint/no-misused-spread
+      ...new ItemMetadata(),
+    } as const satisfies Record<keyof ExcludeFunctionProperties<Entity>, SerializableValue>;
+    const deserializedEntity = deserializeEntity(serializedEntity, Entity);
 
     expect(deserializedEntity).toStrictEqual(
       new Entity({
+        ...serializedEntity,
         array: jsonDateParse(serializedEntity.array),
-        bool: serializedEntity.bool,
-        date: serializedEntity.date,
-        number: serializedEntity.number,
         object: jsonDateParse(serializedEntity.object),
-        partitionKey: serializedEntity.partitionKey,
-        rowKey: serializedEntity.rowKey,
-        string: serializedEntity.string,
       }),
     );
   });

@@ -7,7 +7,7 @@ describe(serializeEntity, () => {
   test("serializes", () => {
     expect.hasAssertions();
 
-    const entity: AzureUpdateEntity<AzureEntity & Record<string, unknown>> = {
+    const entity = {
       array: [],
       bool: true,
       date: new Date(0),
@@ -16,18 +16,13 @@ describe(serializeEntity, () => {
       partitionKey: "",
       rowKey: "",
       string: "",
-    };
+    } as const satisfies AzureUpdateEntity<AzureEntity & Record<string, unknown>>;
     const serializedEntity = serializeEntity(entity);
 
     expect(serializedEntity).toStrictEqual({
+      ...entity,
       array: JSON.stringify(entity.array),
-      bool: entity.bool,
-      date: entity.date,
-      number: entity.number,
       object: JSON.stringify(entity.object),
-      partitionKey: entity.partitionKey,
-      rowKey: entity.rowKey,
-      string: entity.string,
     });
   });
 });
