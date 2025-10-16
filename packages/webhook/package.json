@@ -33,6 +33,7 @@
   "dependencies": {
     "@azure/data-tables": "catalog:",
     "@azure/functions": "catalog:",
+    "@azure/web-pubsub": "catalog:",
     "@esposter/db": "workspace:*",
     "@esposter/db-schema": "workspace:*",
     "@esposter/shared": "workspace:*",

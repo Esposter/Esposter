@@ -1,5 +1,5 @@
 import type { Session } from "#shared/models/auth/Session";
-import type { MessageEntity } from "@esposter/db-schema";
+import type { AppUser, MessageEntity } from "@esposter/db-schema";
 import type { PushSubscription } from "web-push";
 
 import { RoutePath } from "#shared/models/router/RoutePath";
@@ -12,8 +12,7 @@ export const useSendCreateMessageNotification = (pushSubscription: PushSubscript
   const runtimeConfig = useRuntimeConfig();
   return async (
     { message, rowKey }: Pick<MessageEntity, "message" | "rowKey">,
-    title: Session["user"]["name"],
-    icon: Session["user"]["image"],
+    { image, name }: Partial<Pick<AppUser, "image" | "name"> | Pick<Session["user"], "image" | "name">>,
   ) => {
     if (!pushSubscription) return;
 
@@ -33,8 +32,8 @@ export const useSendCreateMessageNotification = (pushSubscription: PushSubscript
         data: {
           url: `${runtimeConfig.public.baseUrl}${RoutePath.MessagesMessage(roomId, rowKey)}`,
         },
-        icon,
-        title,
+        icon: image,
+        title: name,
       }),
     );
   };
