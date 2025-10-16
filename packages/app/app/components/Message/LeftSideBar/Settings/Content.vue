@@ -8,7 +8,7 @@ const { settingsType } = storeToRefs(settingsStore);
 
 <template>
   <v-main h-dvh>
-    <v-container class="bg-surface" relative h-full>
+    <v-container class="bg-surface" relative h-full fluid>
       <component :is="SettingsContentMap[settingsType]" pt-10 />
     </v-container>
   </v-main>
