@@ -55,5 +55,10 @@
   "devDependencies": {
     "@azure/data-tables": "catalog:",
     "@azure/storage-blob": "catalog:"
+  },
+  "peerDependencies": {
+    "drizzle-orm": "catalog:",
+    "drizzle-zod": "catalog:",
+    "zod": "catalog:"
   }
 }

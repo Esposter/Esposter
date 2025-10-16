@@ -38,6 +38,7 @@
     "@esposter/db-schema": "workspace:*",
     "@esposter/shared": "workspace:*",
     "drizzle-orm": "catalog:",
+    "drizzle-zod": "catalog:",
     "postgres": "catalog:",
     "rate-limiter-flexible": "catalog:",
     "zod": "catalog:"
