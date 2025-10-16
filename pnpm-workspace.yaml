@@ -195,7 +195,7 @@ catalog:
   web-push: ^3.6.7
   worker-timers: ^8.0.25
   ws: ^8.18.3
-  xmlbuilder2: ^3.1.1
+  xmlbuilder2: ^4.0.0
   zod: ^4.1.12
 
 catalogMode: strict
