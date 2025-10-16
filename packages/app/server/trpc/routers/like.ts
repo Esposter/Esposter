@@ -77,11 +77,7 @@ export const likeRouter = router({
       if (!deletedLike)
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: new InvalidOperationError(
-            Operation.Delete,
-            DatabaseEntityType.Like,
-            JSON.stringify({ postId: input }),
-          ).message,
+          message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.Like, input).message,
         });
 
       const noLikesNew = post.noLikes - deletedLike.value;
@@ -119,13 +115,16 @@ export const likeRouter = router({
       else if (!like)
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: new NotFoundError(DatabaseEntityType.Like, JSON.stringify({ postId })).message,
+          message: new NotFoundError(DatabaseEntityType.Like, postId).message,
         });
       else if (like.value === value)
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Like, JSON.stringify({ value }))
-            .message,
+          message: new InvalidOperationError(
+            Operation.Update,
+            DatabaseEntityType.Like,
+            JSON.stringify({ postId, value }),
+          ).message,
         });
 
       const noLikesNew = post.noLikes + value * 2;
@@ -139,8 +138,11 @@ export const likeRouter = router({
       if (!updatedLike)
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Like, JSON.stringify({ value }))
-            .message,
+          message: new InvalidOperationError(
+            Operation.Update,
+            DatabaseEntityType.Like,
+            JSON.stringify({ postId, value }),
+          ).message,
         });
 
       await tx

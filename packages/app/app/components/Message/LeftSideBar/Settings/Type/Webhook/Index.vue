@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import { WEBHOOK_MAX_LENGTH } from "#shared/services/message/constants";
 import { useWebhookStore } from "@/store/message/webhook";
 
 const webhookStore = useWebhookStore();
 const { createWebhook, readWebhooks } = webhookStore;
+const { items } = storeToRefs(webhookStore);
 await readWebhooks();
 const name = ref("");
 const isLoading = ref(false);
@@ -14,7 +16,7 @@ const isLoading = ref(false);
       <v-text-field v-model="name" :disabled="isLoading" label="Name" density="compact" hide-details />
       <StyledButton
         :loading="isLoading"
-        :disabled="!name"
+        :disabled="!name || items.length >= WEBHOOK_MAX_LENGTH"
         @click="
           async () => {
             isLoading = true;
@@ -25,6 +27,9 @@ const isLoading = ref(false);
       >
         Create
       </StyledButton>
+    </div>
+    <div v-if="items.length >= WEBHOOK_MAX_LENGTH" text-sm text-red>
+      You can only create up to {{ WEBHOOK_MAX_LENGTH }} webhooks.
     </div>
     <MessageLeftSideBarSettingsTypeWebhookList />
   </div>

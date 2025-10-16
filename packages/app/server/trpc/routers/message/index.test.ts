@@ -1,5 +1,8 @@
+import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
+import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessageInput";
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { DeleteFileInput, DeleteLinkPreviewResponseInput } from "@@/server/trpc/routers/message";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
@@ -11,8 +14,8 @@ import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/tr
 import { messageRouter } from "@@/server/trpc/routers/message";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { getBlobName } from "@esposter/db";
-import { AzureContainer, getReverseTickedTimestamp, MessageType, rooms } from "@esposter/db-schema";
-import { MENTION_ID_ATTRIBUTE, MENTION_TYPE, MENTION_TYPE_ATTRIBUTE } from "@esposter/shared";
+import { AzureContainer, AzureEntityType, getReverseTickedTimestamp, MessageType, rooms } from "@esposter/db-schema";
+import { MENTION_ID_ATTRIBUTE, MENTION_TYPE, MENTION_TYPE_ATTRIBUTE, NotFoundError } from "@esposter/shared";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
@@ -367,11 +370,10 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
+    const input: UpdateMessageInput = { message: updatedMessage, partitionKey: newRoom.id, rowKey };
 
-    await expect(
-      messageCaller.updateMessage({ message: updatedMessage, partitionKey: newRoom.id, rowKey }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Message is not found for id: {"message":"updatedMessage","partitionKey":"${newRoom.id}","rowKey":"rowKey"}]`,
+    await expect(messageCaller.updateMessage(input)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(AzureEntityType.Message, JSON.stringify(input)).message}]`,
     );
   });
 
@@ -451,11 +453,10 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
+    const input: DeleteMessageInput = { partitionKey: newRoom.id, rowKey };
 
-    await expect(
-      messageCaller.deleteMessage({ partitionKey: newRoom.id, rowKey }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Message is not found for id: {"partitionKey":"${newRoom.id}","rowKey":"rowKey"}]`,
+    await expect(messageCaller.deleteMessage(input)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(AzureEntityType.Message, JSON.stringify(input)).message}]`,
     );
   });
 
@@ -564,7 +565,7 @@ describe("message", () => {
     await expect(
       messageCaller.forwardMessage({ partitionKey: newRoom.id, roomIds: [newRoom.id], rowKey }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Message is not found for id: {"partitionKey":"${newRoom.id}","rowKey":"${rowKey}"}]`,
+      `[TRPCError: ${new NotFoundError(AzureEntityType.Message, JSON.stringify({ partitionKey: newRoom.id, rowKey })).message}]`,
     );
   });
 
@@ -701,12 +702,11 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const id = crypto.randomUUID();
+    const input: DeleteFileInput = { id: crypto.randomUUID(), partitionKey: newRoom.id, rowKey };
 
-    await expect(
-      messageCaller.deleteFile({ id, partitionKey: newRoom.id, rowKey }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Message is not found for id: {"partitionKey":"${newRoom.id}","rowKey":"rowKey","id":"${id}"}]`,
+    await expect(messageCaller.deleteFile(input)).rejects.toThrowErrorMatchingInlineSnapshot(
+      // eslint-disable-next-line perfectionist/sort-objects
+      `[TRPCError: ${new NotFoundError(AzureEntityType.Message, JSON.stringify({ partitionKey: newRoom.id, rowKey, id: input.id })).message}]`,
     );
   });
 
@@ -751,7 +751,9 @@ describe("message", () => {
 
     await expect(
       messageCaller.deleteFile({ id: deleteFileId, partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: File is not found for id: ${deleteFileId}]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(AzureEntityType.File, deleteFileId).message}]`,
+    );
   });
 
   test.todo("fails delete file with forward", async () => {
@@ -787,7 +789,7 @@ describe("message", () => {
         partitionKey: data.value.data[0].partitionKey,
         rowKey: data.value.data[0].rowKey,
       }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: File is not found for id: ${id}]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${new NotFoundError(AzureEntityType.File, id).message}]`);
   });
 
   test("fails delete file with message without files", async () => {
@@ -831,11 +833,10 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
+    const input: DeleteLinkPreviewResponseInput = { partitionKey: newRoom.id, rowKey };
 
-    await expect(
-      messageCaller.deleteLinkPreviewResponse({ partitionKey: newRoom.id, rowKey }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Message is not found for id: {"partitionKey":"${newRoom.id}","rowKey":"rowKey"}]`,
+    await expect(messageCaller.deleteLinkPreviewResponse(input)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(AzureEntityType.Message, JSON.stringify(input)).message}]`,
     );
   });
 

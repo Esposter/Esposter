@@ -4,13 +4,14 @@ import { createWebhookInputSchema } from "#shared/models/db/webhook/CreateWebhoo
 import { deleteWebhookInputSchema } from "#shared/models/db/webhook/DeleteWebhookInput";
 import { rotateTokenInputSchema } from "#shared/models/db/webhook/RotateTokenInput";
 import { updateWebhookInputSchema } from "#shared/models/db/webhook/UpdateWebhookInput";
+import { WEBHOOK_MAX_LENGTH } from "#shared/services/message/constants";
 import { generateToken } from "@@/server/services/auth/generateToken";
 import { router } from "@@/server/trpc";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/room/getCreatorProcedure";
 import { appUsers, DatabaseEntityType, selectRoomSchema, WebhookRelations, webhooks } from "@esposter/db-schema";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, eq } from "drizzle-orm";
+import { and, count, eq } from "drizzle-orm";
 import { z } from "zod";
 
 const readWebhooksInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
@@ -19,6 +20,19 @@ export type ReadWebhooksInput = z.infer<typeof readWebhooksInputSchema>;
 export const webhookRouter = router({
   createWebhook: getCreatorProcedure(createWebhookInputSchema, "roomId").mutation<Webhook>(
     async ({ ctx, input: { name, roomId } }) => {
+      const webhookCount = (
+        await ctx.db.select({ count: count() }).from(webhooks).where(eq(webhooks.roomId, roomId))
+      )[0].count;
+      if (webhookCount >= WEBHOOK_MAX_LENGTH)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(
+            Operation.Create,
+            DatabaseEntityType.Webhook,
+            JSON.stringify({ name, roomId }),
+          ).message,
+        });
+
       const newAppUser = (await ctx.db.insert(appUsers).values({ name }).returning()).find(Boolean);
       if (!newAppUser)
         throw new TRPCError({
@@ -48,18 +62,24 @@ export const webhookRouter = router({
   ),
   deleteWebhook: getCreatorProcedure(deleteWebhookInputSchema, "roomId").mutation<Webhook>(
     async ({ ctx, input: { id, roomId } }) => {
-      const deletedWebhook = (
-        await ctx.db
-          .delete(webhooks)
-          .where(and(eq(webhooks.id, id), eq(webhooks.roomId, roomId)))
-          .returning()
-      ).find(Boolean);
-      if (!deletedWebhook)
+      const webhook = await ctx.db.query.webhooks.findFirst({
+        where: (webhooks, { eq }) => and(eq(webhooks.id, id), eq(webhooks.roomId, roomId)),
+      });
+      if (!webhook)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new NotFoundError(DatabaseEntityType.Webhook, id).message,
+        });
+
+      const deletedAppUser = (await ctx.db.delete(appUsers).where(eq(appUsers.id, webhook.userId)).returning()).find(
+        Boolean,
+      );
+      if (!deletedAppUser)
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.Webhook, id).message,
+          message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.AppUser, webhook.userId).message,
         });
-      return deletedWebhook;
+      return webhook;
     },
   ),
   readWebhooks: getCreatorProcedure(readWebhooksInputSchema, "roomId").query(({ ctx, input: { roomId } }) =>

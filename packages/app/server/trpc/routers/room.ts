@@ -1,4 +1,5 @@
 import type { Room, UserToRoom } from "@esposter/db-schema";
+import type { SQL } from "drizzle-orm";
 
 import { createRoomInputSchema } from "#shared/models/db/room/CreateRoomInput";
 import { deleteRoomInputSchema } from "#shared/models/db/room/DeleteRoomInput";
@@ -41,7 +42,7 @@ import {
 } from "@esposter/db-schema";
 import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, desc, eq, ilike, inArray, ne, SQL, sql } from "drizzle-orm";
+import { and, desc, eq, ilike, inArray, ne, sql } from "drizzle-orm";
 import { z } from "zod";
 
 const readRoomInputSchema = selectRoomSchema.shape.id.optional();
@@ -250,8 +251,7 @@ export const roomRouter = router({
       if (!userToRoom)
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.UserToRoom, JSON.stringify(input))
-            .message,
+          message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.UserToRoom, input).message,
         });
 
       roomEventEmitter.emit("leaveRoom", { ...userToRoom, sessionId: ctx.session.session.id });
