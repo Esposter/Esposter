@@ -1,15 +1,13 @@
 import type { AzureUpdateEntity, MessageEntityMap } from "@esposter/db-schema";
 
 import { getLinkPreviewResponse } from "@/services/message/getLinkPreviewResponse";
-import { MessageType, StandardMessageEntity } from "@esposter/db-schema";
+import { MessageType } from "@esposter/db-schema";
 import { getMentions, MENTION_ID_ATTRIBUTE, Operation } from "@esposter/shared";
 
 export const addMessageMetadata = async (
   messageEntity: AzureUpdateEntity<MessageEntityMap[MessageType]>,
   operation: Operation.Create | Operation.Update = Operation.Create,
 ) => {
-  if (!(messageEntity instanceof StandardMessageEntity)) return;
-
   if (operation === Operation.Update) {
     messageEntity.isEdited = true;
     if (messageEntity.message !== undefined)
