@@ -9,13 +9,13 @@
     "dynamicConcurrencyEnabled": true,
     "snapshotPersistenceEnabled": true
   },
-  "fileLoggingMode": "never",
-  "logLevel": {
-    "default": "Warning"
-  },
   "extensionBundle": {
     "id": "Microsoft.Azure.Functions.ExtensionBundle",
     "version": "[4.*, 5.0.0)"
+  },
+  "fileLoggingMode": "never",
+  "logLevel": {
+    "default": "Warning"
   },
   "version": "2.0"
 }
