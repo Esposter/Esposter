@@ -3,16 +3,16 @@ import { AzureContainer } from "@esposter/db-schema";
 import { describe, expect, test, vi } from "vitest";
 
 const mocks = await vi.hoisted(async () => {
-  const blobUrl = "https://mockaccount.blob.core.windows.net";
+  const azureContainerBaseUrl = "https://mockaccount.blob.core.windows.net";
   const AzureContainer = (await import("@esposter/db-schema")).AzureContainer;
   return {
-    blobUrl,
-    containerUrl: `${blobUrl}/${AzureContainer.SurveyAssets}`,
+    azureContainerBaseUrl,
+    azureContainerUrl: `${azureContainerBaseUrl}/${AzureContainer.SurveyAssets}`,
   };
 });
 
-vi.mock(import("#shared/services/azure/container/getBlobUrl"), () => ({
-  getBlobUrl: () => mocks.blobUrl,
+vi.mock(import("#shared/services/azure/container/constants"), () => ({
+  AZURE_CONTAINER_BASE_URL: mocks.azureContainerBaseUrl,
 }));
 
 describe(extractBlobUrls, () => {
@@ -30,7 +30,7 @@ describe(extractBlobUrls, () => {
   test("should extract a single matching blob URL", () => {
     expect.hasAssertions();
 
-    const url = `${mocks.containerUrl}/1`;
+    const url = `${mocks.azureContainerUrl}/1`;
 
     expect(extractBlobUrls(`${url}"`)).toStrictEqual([url]);
   });
@@ -38,8 +38,8 @@ describe(extractBlobUrls, () => {
   test("should extract multiple unique matching blob URLs", () => {
     expect.hasAssertions();
 
-    const url1 = `${mocks.containerUrl}/1`;
-    const url2 = `${mocks.containerUrl}/2`;
+    const url1 = `${mocks.azureContainerUrl}/1`;
+    const url2 = `${mocks.azureContainerUrl}/2`;
 
     expect(extractBlobUrls(`${url1}"${url2}"`)).toStrictEqual([url1, url2]);
   });
@@ -47,7 +47,7 @@ describe(extractBlobUrls, () => {
   test("should extract only unique URLs if duplicates are present", () => {
     expect.hasAssertions();
 
-    const url = `${mocks.containerUrl}/1`;
+    const url = `${mocks.azureContainerUrl}/1`;
 
     expect(extractBlobUrls(`${url}"${url}"`)).toStrictEqual([url]);
   });
@@ -55,7 +55,7 @@ describe(extractBlobUrls, () => {
   test("should not extract URLs from a different container", () => {
     expect.hasAssertions();
 
-    const url = `${mocks.blobUrl}/${AzureContainer.ClickerAssets}/1`;
+    const url = `${mocks.azureContainerBaseUrl}/${AzureContainer.ClickerAssets}/1`;
 
     expect(extractBlobUrls(`${url}"`)).toStrictEqual([]);
   });
