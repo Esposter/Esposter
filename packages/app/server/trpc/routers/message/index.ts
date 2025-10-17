@@ -24,7 +24,6 @@ import { readMessages } from "@@/server/services/message/readMessages";
 import { searchMessages } from "@@/server/services/message/searchMessages";
 import { updateMessage } from "@@/server/services/message/updateMessage";
 import { router } from "@@/server/trpc";
-import { addProfanityFilterMiddleware } from "@@/server/trpc/middleware/addProfanityFilterMiddleware";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/message/getCreatorProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
@@ -148,32 +147,32 @@ export const unpinMessageInputSchema = baseMessageEntitySchema.pick({ partitionK
 export type UnpinMessageInput = z.infer<typeof unpinMessageInputSchema>;
 
 export const messageRouter = router({
-  createMessage: addProfanityFilterMiddleware(getMemberProcedure(baseCreateMessageInputSchema, "roomId"), [
-    "message",
-  ]).mutation<MessageEntity>(async ({ ctx, input }) => {
-    const messageClient = await useTableClient(AzureTable.Messages);
-    const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
-    const newMessageEntity = await createMessage(messageClient, messageAscendingClient, {
-      ...input,
-      userId: ctx.session.user.id,
-    });
-    messageEventEmitter.emit("createMessage", [
-      [newMessageEntity],
-      { image: ctx.session.user.image, name: ctx.session.user.name, sessionId: ctx.session.session.id },
-    ]);
-
-    const updatedRoom = (
-      await ctx.db.update(rooms).set({ updatedAt: new Date() }).where(eq(rooms.id, input.roomId)).returning()
-    ).find(Boolean);
-    if (!updatedRoom)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Room, input.roomId).message,
+  createMessage: getMemberProcedure(baseCreateMessageInputSchema, "roomId").mutation<MessageEntity>(
+    async ({ ctx, input }) => {
+      const messageClient = await useTableClient(AzureTable.Messages);
+      const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
+      const newMessageEntity = await createMessage(messageClient, messageAscendingClient, {
+        ...input,
+        userId: ctx.session.user.id,
       });
+      messageEventEmitter.emit("createMessage", [
+        [newMessageEntity],
+        { image: ctx.session.user.image, name: ctx.session.user.name, sessionId: ctx.session.session.id },
+      ]);
 
-    roomEventEmitter.emit("updateRoom", updatedRoom);
-    return newMessageEntity;
-  }),
+      const updatedRoom = (
+        await ctx.db.update(rooms).set({ updatedAt: new Date() }).where(eq(rooms.id, input.roomId)).returning()
+      ).find(Boolean);
+      if (!updatedRoom)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Room, input.roomId).message,
+        });
+
+      roomEventEmitter.emit("updateRoom", updatedRoom);
+      return newMessageEntity;
+    },
+  ),
   createTyping: getMemberProcedure(createTypingInputSchema, "roomId")
     // Query instead of mutation as there are no concurrency issues with ordering for simply emitting
     .query(({ ctx, input }) => {
@@ -453,10 +452,8 @@ export const messageRouter = router({
     await updateEntity(messageClient, messageEntity, "Replace");
     messageEventEmitter.emit("updateMessage", updatedMessageEntity);
   }),
-  updateMessage: addProfanityFilterMiddleware(getCreatorProcedure(updateMessageInputSchema), ["message"]).mutation(
-    async ({ ctx: { messageClient }, input }) => {
-      await updateMessage(messageClient, input);
-      messageEventEmitter.emit("updateMessage", input);
-    },
-  ),
+  updateMessage: getCreatorProcedure(updateMessageInputSchema).mutation(async ({ ctx: { messageClient }, input }) => {
+    await updateMessage(messageClient, input);
+    messageEventEmitter.emit("updateMessage", input);
+  }),
 });
