@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Webhook } from "@esposter/db-schema";
 
-import { getAzureFunctionAppBaseUrl } from "#shared/services/azure/functionApp/getAzureFunctionAppBaseUrl";
+import { AZURE_FUNCTION_APP_BASE_URL } from "#shared/services/azure/functionApp/constants";
 import { useWebhookStore } from "@/store/message/webhook";
 
 interface ListItemProps {
@@ -12,7 +12,7 @@ const { webhook } = defineProps<ListItemProps>();
 const webhookStore = useWebhookStore();
 const { updateWebhook } = webhookStore;
 const name = ref(webhook.name);
-const source = computed(() => `${getAzureFunctionAppBaseUrl()}/api/webhooks/${webhook.id}/${webhook.token}`);
+const source = computed(() => `${AZURE_FUNCTION_APP_BASE_URL}/api/webhooks/${webhook.id}/${webhook.token}`);
 </script>
 
 <template>

@@ -1,4 +1,4 @@
-import { getAzureContainerBaseUrl } from "../azure/container/getAzureContainerBaseUrl";
+import { AZURE_CONTAINER_BASE_URL } from "../azure/container/constants";
 import {
   BLOGSPOT_BASE_URL,
   GRAPESJS_BASE_URL,
@@ -22,7 +22,7 @@ export const ImageSourceWhitelist = [
   // emoji-mart-vue-fast
   "https://unpkg.com/emoji-datasource-apple@15.0.1/img/apple/sheets-256/64.png",
   // Azure
-  getAzureContainerBaseUrl(),
+  AZURE_CONTAINER_BASE_URL,
   // grapesjs
   BLOGSPOT_BASE_URL,
   // grapesjs

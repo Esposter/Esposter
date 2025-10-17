@@ -11,8 +11,8 @@ const mocks = await vi.hoisted(async () => {
   };
 });
 
-vi.mock(import("#shared/services/azure/container/getAzureContainerBaseUrl"), () => ({
-  getAzureContainerBaseUrl: () => mocks.azureContainerBaseUrl,
+vi.mock(import("#shared/services/azure/container/constants"), () => ({
+  AZURE_CONTAINER_BASE_URL: mocks.azureContainerBaseUrl,
 }));
 
 describe(extractBlobUrls, () => {
