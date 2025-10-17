@@ -4,7 +4,7 @@ import type { SetNonNullable } from "type-fest";
 import type { z } from "zod";
 
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
-import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
+import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { on } from "@@/server/services/events/on";
 import { userEventEmitter } from "@@/server/services/message/events/userEventEmitter";
 import { getDetectedUserStatus } from "@@/server/services/message/getDetectedUserStatus";

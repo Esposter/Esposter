@@ -1,7 +1,7 @@
 import type { HttpRequestBody } from "@azure/storage-blob";
 import type { AzureContainer } from "@esposter/db-schema";
 
-import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
+import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 
 export const useUpload = async (
   azureContainer: AzureContainer,

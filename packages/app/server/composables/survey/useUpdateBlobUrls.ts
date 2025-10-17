@@ -1,6 +1,6 @@
 import type { Survey } from "@esposter/db-schema";
 
-import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
+import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { useBlobUrlSearchRegex } from "@@/server/composables/survey/useBlobUrlSearchRegex";
 import { extractBlobUrls } from "@@/server/services/survey/extractBlobUrls";
 import { getPublishDirectory } from "@@/server/services/survey/getPublishDirectory";

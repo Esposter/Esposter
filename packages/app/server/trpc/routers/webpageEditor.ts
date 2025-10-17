@@ -1,6 +1,6 @@
 import { WebpageEditor, webpageEditorSchema } from "#shared/models/webpageEditor/data/WebpageEditor";
-import { useDownload } from "@@/server/composables/azure/useDownload";
-import { useUpload } from "@@/server/composables/azure/useUpload";
+import { useDownload } from "@@/server/composables/azure/container/useDownload";
+import { useUpload } from "@@/server/composables/azure/container/useUpload";
 import { SAVE_FILENAME } from "@@/server/services/webpageEditor/constants";
 import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";

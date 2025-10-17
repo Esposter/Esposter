@@ -4,8 +4,8 @@ import type { User } from "@esposter/db-schema";
 import type * as DrizzleKit from "drizzle-kit/api";
 
 import { dayjs } from "#shared/services/dayjs";
-import { useContainerClientMock } from "@@/server/composables/azure/useContainerClient.test";
-import { useTableClientMock } from "@@/server/composables/azure/useTableClient.test";
+import { useContainerClientMock } from "@@/server/composables/azure/container/useContainerClient.test";
+import { useTableClientMock } from "@@/server/composables/azure/table/useTableClient.test";
 import { PGlite } from "@electric-sql/pglite";
 import { messageSchema, schema, users } from "@esposter/db-schema";
 import { sql } from "drizzle-orm";
@@ -46,11 +46,11 @@ vi.mock(import("@@/server/auth") as unknown as Promise<{ auth: { api: { getSessi
   },
 }));
 
-vi.mock(import("@@/server/composables/azure/useContainerClient"), () => ({
+vi.mock(import("@@/server/composables/azure/container/useContainerClient"), () => ({
   useContainerClient: useContainerClientMock,
 }));
 
-vi.mock(import("@@/server/composables/azure/useTableClient"), () => ({
+vi.mock(import("@@/server/composables/azure/table/useTableClient"), () => ({
   useTableClient: useTableClientMock,
 }));
 

@@ -5,7 +5,7 @@ import type { PartialByKeys } from "@esposter/shared";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { DEFAULT_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
-import { useTableClient } from "@@/server/composables/azure/useTableClient";
+import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
 import { getTableNullClause, getTopNEntities, serializeClauses } from "@esposter/db";

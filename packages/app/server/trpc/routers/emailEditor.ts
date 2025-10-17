@@ -1,6 +1,6 @@
 import { EmailEditor, emailEditorSchema } from "#shared/models/emailEditor/data/EmailEditor";
-import { useDownload } from "@@/server/composables/azure/useDownload";
-import { useUpload } from "@@/server/composables/azure/useUpload";
+import { useDownload } from "@@/server/composables/azure/container/useDownload";
+import { useUpload } from "@@/server/composables/azure/container/useUpload";
 import { SAVE_FILENAME } from "@@/server/services/emailEditor/constants";
 import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";

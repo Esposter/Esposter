@@ -1,7 +1,7 @@
 import type { MessageEntity } from "@esposter/db-schema";
 import type { z } from "zod";
 
-import { useTableClient } from "@@/server/composables/azure/useTableClient";
+import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getEntity } from "@esposter/db";
 import { AzureEntityType, AzureTable, StandardMessageEntity } from "@esposter/db-schema";

@@ -6,9 +6,9 @@ import { updateSurveyInputSchema } from "#shared/models/db/survey/UpdateSurveyIn
 import { updateSurveyModelInputSchema } from "#shared/models/db/survey/UpdateSurveyModelInput";
 import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
-import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
-import { useTableClient } from "@@/server/composables/azure/useTableClient";
-import { useUpload } from "@@/server/composables/azure/useUpload";
+import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
+import { useUpload } from "@@/server/composables/azure/container/useUpload";
+import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { useUpdateBlobUrls } from "@@/server/composables/survey/useUpdateBlobUrls";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";

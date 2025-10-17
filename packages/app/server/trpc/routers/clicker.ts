@@ -1,8 +1,8 @@
 import { BuildingMap } from "#shared/assets/clicker/data/BuildingMap";
 import { UpgradeMap } from "#shared/assets/clicker/data/upgrades/UpgradeMap";
 import { Clicker, clickerSchema } from "#shared/models/clicker/data/Clicker";
-import { useDownload } from "@@/server/composables/azure/useDownload";
-import { useUpload } from "@@/server/composables/azure/useUpload";
+import { useDownload } from "@@/server/composables/azure/container/useDownload";
+import { useUpload } from "@@/server/composables/azure/container/useUpload";
 import { SAVE_FILENAME } from "@@/server/services/clicker/constants";
 import { router } from "@@/server/trpc";
 import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
