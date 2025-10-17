@@ -1,3 +1,4 @@
+import type { CreateMessageEvent } from "#shared/models/message/events/CreateMessageEvent";
 import type { AzureUpdateEntity, Clause, FileSasEntity, MessageEntity } from "@esposter/db-schema";
 
 import { createTypingInputSchema } from "#shared/models/db/message/CreateTypingInput";
@@ -10,7 +11,9 @@ import { MAX_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagin
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
+import { useWebPubSubClient } from "@@/server/composables/azure/webPubSub/useWebPubSubClient";
 import { useSendCreateMessageNotification } from "@@/server/composables/message/useSendCreateMessageNotification";
+import { AsyncQueue } from "@@/server/models/AsyncQueue";
 import { pushSubscriptionSchema } from "@@/server/models/PushSubscription";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { on } from "@@/server/services/events/on";
@@ -21,7 +24,6 @@ import { readMessages } from "@@/server/services/message/readMessages";
 import { searchMessages } from "@@/server/services/message/searchMessages";
 import { updateMessage } from "@@/server/services/message/updateMessage";
 import { router } from "@@/server/trpc";
-import { addProfanityFilterMiddleware } from "@@/server/trpc/middleware/addProfanityFilterMiddleware";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/message/getCreatorProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
@@ -54,8 +56,15 @@ import {
   MessageType,
   rooms,
   selectRoomSchema,
+  WebhookMessageEntity,
 } from "@esposter/db-schema";
-import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation } from "@esposter/shared";
+import {
+  InvalidOperationError,
+  ItemMetadataPropertyNames,
+  jsonDateParse,
+  NotFoundError,
+  Operation,
+} from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
@@ -138,32 +147,32 @@ export const unpinMessageInputSchema = baseMessageEntitySchema.pick({ partitionK
 export type UnpinMessageInput = z.infer<typeof unpinMessageInputSchema>;
 
 export const messageRouter = router({
-  createMessage: addProfanityFilterMiddleware(getMemberProcedure(baseCreateMessageInputSchema, "roomId"), [
-    "message",
-  ]).mutation<MessageEntity>(async ({ ctx, input }) => {
-    const messageClient = await useTableClient(AzureTable.Messages);
-    const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
-    const newMessageEntity = await createMessage(messageClient, messageAscendingClient, {
-      ...input,
-      userId: ctx.session.user.id,
-    });
-    messageEventEmitter.emit("createMessage", [
-      [newMessageEntity],
-      { image: ctx.session.user.image, name: ctx.session.user.name, sessionId: ctx.session.session.id },
-    ]);
-
-    const updatedRoom = (
-      await ctx.db.update(rooms).set({ updatedAt: new Date() }).where(eq(rooms.id, input.roomId)).returning()
-    ).find(Boolean);
-    if (!updatedRoom)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Room, input.roomId).message,
+  createMessage: getMemberProcedure(baseCreateMessageInputSchema, "roomId").mutation<MessageEntity>(
+    async ({ ctx, input }) => {
+      const messageClient = await useTableClient(AzureTable.Messages);
+      const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
+      const newMessageEntity = await createMessage(messageClient, messageAscendingClient, {
+        ...input,
+        userId: ctx.session.user.id,
       });
+      messageEventEmitter.emit("createMessage", [
+        [newMessageEntity],
+        { image: ctx.session.user.image, name: ctx.session.user.name, sessionId: ctx.session.session.id },
+      ]);
 
-    roomEventEmitter.emit("updateRoom", updatedRoom);
-    return newMessageEntity;
-  }),
+      const updatedRoom = (
+        await ctx.db.update(rooms).set({ updatedAt: new Date() }).where(eq(rooms.id, input.roomId)).returning()
+      ).find(Boolean);
+      if (!updatedRoom)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Room, input.roomId).message,
+        });
+
+      roomEventEmitter.emit("updateRoom", updatedRoom);
+      return newMessageEntity;
+    },
+  ),
   createTyping: getMemberProcedure(createTypingInputSchema, "roomId")
     // Query instead of mutation as there are no concurrency issues with ordering for simply emitting
     .query(({ ctx, input }) => {
@@ -315,26 +324,45 @@ export const messageRouter = router({
       }
     }
 
+    const messageQueue = new AsyncQueue<CreateMessageEvent>(signal);
+    (async () => {
+      for await (const [data] of on(messageEventEmitter, "createMessage", { signal })) messageQueue.push(data);
+    })();
+
+    const webPubSubClient = await useWebPubSubClient([roomId], signal);
+    webPubSubClient.on("group-message", ({ message: { data } }) => {
+      const webhookMessageEntity = new WebhookMessageEntity(jsonDateParse(data as string));
+      messageQueue.push([
+        [webhookMessageEntity],
+        {
+          image: webhookMessageEntity.appUser.image,
+          name: webhookMessageEntity.appUser.name,
+        },
+      ]);
+    });
+
     const sendCreateMessageNotification = useSendCreateMessageNotification(pushSubscription, roomId);
 
-    for await (const [[data, { image, isSendToSelf, name, sessionId }]] of on(messageEventEmitter, "createMessage", {
-      signal,
-    })) {
+    for await (const [data, options] of messageQueue) {
       const dataToYield: MessageEntity[] = [];
+      const { image, name } = options;
 
-      for (const newMessage of data)
-        if (
-          isRoomId(newMessage.partitionKey, roomId) &&
-          (isSendToSelf || !getIsSameDevice({ sessionId, userId: newMessage.userId }, ctx.session))
-        )
-          dataToYield.push(newMessage);
+      if ("isSendToSelf" in options) {
+        const { isSendToSelf, sessionId } = options;
+
+        for (const newMessage of data)
+          if (
+            isRoomId(newMessage.partitionKey, roomId) &&
+            (isSendToSelf || !getIsSameDevice({ sessionId, userId: newMessage.userId }, ctx.session))
+          )
+            dataToYield.push(newMessage);
+      } else dataToYield.push(...data);
 
       if (dataToYield.length > 0) {
         const newestMessage = dataToYield[dataToYield.length - 1];
         await sendCreateMessageNotification(
           { message: newestMessage.message, rowKey: newestMessage.rowKey },
-          name,
-          image,
+          { image, name },
         );
         yield tracked(newestMessage.rowKey, dataToYield);
       }
@@ -424,10 +452,8 @@ export const messageRouter = router({
     await updateEntity(messageClient, messageEntity, "Replace");
     messageEventEmitter.emit("updateMessage", updatedMessageEntity);
   }),
-  updateMessage: addProfanityFilterMiddleware(getCreatorProcedure(updateMessageInputSchema), ["message"]).mutation(
-    async ({ ctx: { messageClient }, input }) => {
-      await updateMessage(messageClient, input);
-      messageEventEmitter.emit("updateMessage", input);
-    },
-  ),
+  updateMessage: getCreatorProcedure(updateMessageInputSchema).mutation(async ({ ctx: { messageClient }, input }) => {
+    await updateMessage(messageClient, input);
+    messageEventEmitter.emit("updateMessage", input);
+  }),
 });

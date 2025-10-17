@@ -6,6 +6,8 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { likeRouter } from "@@/server/trpc/routers/like";
 import { postRouter } from "@@/server/trpc/routers/post";
+import { DatabaseEntityType } from "@esposter/db-schema";
+import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { beforeAll, describe, expect, test } from "vitest";
 
 describe("like", () => {
@@ -41,7 +43,7 @@ describe("like", () => {
     const postId = crypto.randomUUID();
 
     await expect(likeCaller.createLike({ postId, value: 1 })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Post is not found for id: ${postId}]`,
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Post, postId).message}]`,
     );
   });
 
@@ -63,7 +65,7 @@ describe("like", () => {
     const postId = crypto.randomUUID();
 
     await expect(likeCaller.updateLike({ postId, value: updatedValue })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Post is not found for id: ${postId}]`,
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Post, postId).message}]`,
     );
   });
 
@@ -73,7 +75,7 @@ describe("like", () => {
     const newPost = await postCaller.createPost({ title });
 
     await expect(likeCaller.updateLike({ postId: newPost.id, value })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Like is not found for id: {"postId":"${newPost.id}"}]`,
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Like, newPost.id).message}]`,
     );
   });
 
@@ -85,7 +87,7 @@ describe("like", () => {
     await mockSessionOnce(mockContext.db);
 
     await expect(likeCaller.updateLike({ postId: newPost.id, value })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Like is not found for id: {"postId":"${newPost.id}"}]`,
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Like, newPost.id).message}]`,
     );
   });
 
@@ -105,7 +107,7 @@ describe("like", () => {
     const id = crypto.randomUUID();
 
     await expect(likeCaller.deleteLike(id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Post is not found for id: ${id}]`,
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Post, id).message}]`,
     );
   });
 
@@ -115,7 +117,7 @@ describe("like", () => {
     const newPost = await postCaller.createPost({ title });
 
     await expect(likeCaller.deleteLike(newPost.id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Delete, name: Like, {"postId":"${newPost.id}"}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Like, newPost.id).message}]`,
     );
   });
 
@@ -127,7 +129,7 @@ describe("like", () => {
     await mockSessionOnce(mockContext.db);
 
     await expect(likeCaller.deleteLike(newPost.id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Delete, name: Like, {"postId":"${newPost.id}"}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Like, newPost.id).message}]`,
     );
   });
 });

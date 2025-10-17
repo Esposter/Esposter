@@ -1,0 +1,36 @@
+<script setup lang="ts">
+import type { Webhook } from "@esposter/db-schema";
+
+import { useWebhookStore } from "@/store/message/webhook";
+
+interface DeleteDialogButtonProps {
+  webhook: Webhook;
+}
+
+const { webhook } = defineProps<DeleteDialogButtonProps>();
+const webhookStore = useWebhookStore();
+const { deleteWebhook } = webhookStore;
+</script>
+
+<template>
+  <StyledDeleteDialog
+    :card-props="{ title: 'Delete Webhook', text: `Are you sure you want to delete ${webhook.name}?` }"
+    @delete="
+      async (onComplete) => {
+        try {
+          deleteWebhook({ id: webhook.id });
+        } finally {
+          onComplete();
+        }
+      }
+    "
+  >
+    <template #activator="{ updateIsOpen }">
+      <v-tooltip text="Delete Webhook">
+        <template #activator="{ props }">
+          <v-btn icon="mdi-delete" size="small" :="props" @click="updateIsOpen(true)" />
+        </template>
+      </v-tooltip>
+    </template>
+  </StyledDeleteDialog>
+</template>

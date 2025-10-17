@@ -1,18 +1,18 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/azure/functions-action
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy Node.js project to Azure Function App - d-shp-func-esposter-auea-001
+name: Build and deploy Node.js project to Azure Function App - p-shp-func-esposter-auea-001
 
 on:
   push:
     branches:
-      - develop
+      - main
 
 env:
-  FUNCTION_APP_NAME: d-shp-func-esposter-auea-001
+  FUNCTION_APP_NAME: p-shp-func-esposter-auea-001
   OUTPUT_DIRECTORY: dist
   PACKAGE_PATH: packages/webhook
-  RESOURCE_GROUP_NAME: d-shp-rg-esposter-auea-001
+  RESOURCE_GROUP_NAME: p-shp-rg-esposter-auea-001
 
 jobs:
   build-and-deploy:
@@ -64,7 +64,7 @@ jobs:
         with:
           app-name: ${{ env.FUNCTION_APP_NAME }}
           package: ${{ env.OUTPUT_DIRECTORY }}
-          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE_DEVELOP  }}
+          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE  }}
           respect-funcignore: true
 
       - name: 📡 Remove Runner IP from Azure Function App SCM Firewall

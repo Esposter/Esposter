@@ -7,7 +7,9 @@ catalog:
   "@azure/data-tables": ^13.3.1
   "@azure/functions": ^4.8.0
   "@azure/search-documents": ^12.2.0
-  "@azure/storage-blob": ^12.28.0
+  "@azure/storage-blob": ^12.29.1
+  "@azure/web-pubsub": ^1.2.0
+  "@azure/web-pubsub-client": ^1.0.2
   "@codemirror/lang-vue": ^0.1.3
   "@codemirror/language": ^6.11.3
   "@codemirror/language-data": ^6.5.1
@@ -36,14 +38,14 @@ catalog:
   "@nuxtjs/seo": ^3.2.2
   "@pinia/nuxt": ^0.11.2
   "@prettier/plugin-oxc": ^0.0.4
-  "@tiptap/core": ^3.7.1
-  "@tiptap/extension-file-handler": ^3.7.1
-  "@tiptap/extension-mention": ^3.7.1
-  "@tiptap/extensions": ^3.7.1
-  "@tiptap/pm": ^3.7.1
-  "@tiptap/starter-kit": ^3.7.1
-  "@tiptap/suggestion": ^3.7.1
-  "@tiptap/vue-3": ^3.7.1
+  "@tiptap/core": ^3.7.2
+  "@tiptap/extension-file-handler": ^3.7.2
+  "@tiptap/extension-mention": ^3.7.2
+  "@tiptap/extensions": ^3.7.2
+  "@tiptap/pm": ^3.7.2
+  "@tiptap/starter-kit": ^3.7.2
+  "@tiptap/suggestion": ^3.7.2
+  "@tiptap/vue-3": ^3.7.2
   "@trpc/client": ^11.6.0
   "@trpc/server": ^11.6.0
   "@types/data-urls": ^3.0.4
@@ -54,7 +56,7 @@ catalog:
   "@types/js-beautify": ^1.14.3
   "@types/mime-types": ^3.0.1
   "@types/mjml-browser": ^4.15.0
-  "@types/node": ^24.7.2
+  "@types/node": ^24.8.1
   "@types/omit-deep-lodash": ^1.1.3
   "@types/pluralize": ^0.0.33
   "@types/sax": ^1.2.7
@@ -134,7 +136,7 @@ catalog:
   js-beautify: ^1.15.4
   link-preview-js: ^3.1.0
   linkifyjs: ^4.3.2
-  marked: ^16.4.0
+  marked: ^16.4.1
   mime-types: ^3.0.1
   mjml-browser: ^4.16.1
   node-emoji: ^2.2.0

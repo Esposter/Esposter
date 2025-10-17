@@ -1,13 +1,16 @@
+import type { CreateWebhookInput } from "#shared/models/db/webhook/CreateWebhookInput";
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { WEBHOOK_MAX_LENGTH } from "#shared/services/message/constants";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { webhookRouter } from "@@/server/trpc/routers/webhook";
-import { appUsers, rooms, webhooks } from "@esposter/db-schema";
-import { afterEach, beforeAll, describe, expect, test } from "vitest";
+import { appUsers, DatabaseEntityType, rooms, webhooks } from "@esposter/db-schema";
+import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
+import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("webhook", () => {
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
@@ -36,10 +39,26 @@ describe("webhook", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newWebhook = await webhookCaller.createWebhook({ name, roomId: newRoom.id });
+    const appUser = await mockContext.db.query.appUsers.findFirst();
+
+    assert(appUser);
 
     expect(newWebhook.name).toBe(name);
     expect(newWebhook.isActive).toBe(true);
     expect(newWebhook.token).toBeTypeOf("string");
+    expect(newWebhook.userId).toBe(appUser.id);
+  });
+
+  test("fails create with max webhooks", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const input: CreateWebhookInput = { name, roomId: newRoom.id };
+    await Promise.all(Array.from({ length: WEBHOOK_MAX_LENGTH }).map(() => webhookCaller.createWebhook(input)));
+
+    await expect(webhookCaller.createWebhook(input)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.Webhook, JSON.stringify(input)).message}]`,
+    );
   });
 
   test("fails create with non-existent room", async () => {
@@ -127,7 +146,9 @@ describe("webhook", () => {
 
     await expect(
       webhookCaller.updateWebhook({ id, name: updatedName, roomId: newRoom.id }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Invalid operation: Update, name: Webhook, ${id}]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Webhook, id).message}]`,
+    );
   });
 
   test("fails update with wrong user", async () => {
@@ -172,7 +193,9 @@ describe("webhook", () => {
     const newWebhook = await webhookCaller.createWebhook({ name, roomId: newRoom.id });
     const deletedWebhook = await webhookCaller.deleteWebhook({ id: newWebhook.id, roomId: newRoom.id });
     const readWebhooks = await webhookCaller.readWebhooks({ roomId: newRoom.id });
+    const appUser = await mockContext.db.query.appUsers.findFirst();
 
+    expect(appUser).toBeUndefined();
     expect(deletedWebhook.id).toBe(newWebhook.id);
     expect(readWebhooks.find(({ id }) => id === newWebhook.id)).toBeUndefined();
   });
@@ -184,7 +207,7 @@ describe("webhook", () => {
     const id = crypto.randomUUID();
 
     await expect(webhookCaller.deleteWebhook({ id, roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Delete, name: Webhook, ${id}]`,
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Webhook, id).message}]`,
     );
   });
 

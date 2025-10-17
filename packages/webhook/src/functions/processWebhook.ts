@@ -3,9 +3,10 @@ import type { WebhookQueueMessage } from "@/models/WebhookQueueMessage";
 import { WEBHOOK_STORAGE_QUEUE_OUTPUT } from "@/services/constants";
 import { getTableClient } from "@/services/getTableClient";
 import { getWebhookCreateMessageInput } from "@/services/getWebhookCreateMessageInput";
+import { getWebPubSubServiceClient } from "@/services/getWebPubSubServiceClient";
 import { app } from "@azure/functions";
 import { createMessage } from "@esposter/db";
-import { AzureTable } from "@esposter/db-schema";
+import { AzureTable, AzureWebPubSubHub } from "@esposter/db-schema";
 
 app.storageQueue("processWebhook", {
   connection: "AzureWebJobsStorage",
@@ -17,7 +18,9 @@ app.storageQueue("processWebhook", {
       const messageClient = await getTableClient(AzureTable.Messages);
       const messageAscendingClient = await getTableClient(AzureTable.MessagesAscending);
       const webhookCreateMessageInput = getWebhookCreateMessageInput(payload, webhook);
-      await createMessage(messageClient, messageAscendingClient, webhookCreateMessageInput);
+      const newMessage = await createMessage(messageClient, messageAscendingClient, webhookCreateMessageInput);
+      const webPubSubServiceClient = getWebPubSubServiceClient(AzureWebPubSubHub.Messages);
+      await webPubSubServiceClient.group(newMessage.partitionKey).sendToAll(JSON.stringify(newMessage));
     } catch (error) {
       context.error("Failed to process webhook queue message:", error);
       throw error;
