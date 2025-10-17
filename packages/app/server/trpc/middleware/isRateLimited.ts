@@ -1,5 +1,5 @@
-import { IS_PRODUCTION } from "#shared/util/environment/constants";
 import { auth } from "@@/server/auth";
+import { useIsProduction } from "@@/server/composables/useIsProduction";
 import { db } from "@@/server/db";
 import { middleware } from "@@/server/trpc";
 import { rateLimiterFlexible } from "@esposter/db-schema";
@@ -17,7 +17,8 @@ const rateLimiter = new RateLimiterDrizzleNonAtomic({
 
 export const isRateLimited = middleware(async ({ ctx, next, path }) => {
   const session = await auth.api.getSession({ headers: ctx.headers });
-  if (!IS_PRODUCTION) return next({ ctx: { session } });
+  const isProduction = useIsProduction();
+  if (!isProduction) return next({ ctx: { session } });
 
   const forwardedFor = ctx.req.headers["x-forwarded-for"] as string | undefined;
   const ip = forwardedFor ? forwardedFor.split(",")[0].trim() : ctx.req.socket.remoteAddress;

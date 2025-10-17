@@ -1,12 +1,13 @@
 import type { SearchIndex, SearchIndexDocumentMap } from "@esposter/db-schema";
 
-import { AZURE_SEARCH_BASE_URL } from "#shared/services/azure/search/constants";
+import { useSearchBaseUrl } from "@@/server/composables/azure/search/useSearchBaseUrl";
 import { AzureKeyCredential, SearchClient } from "@azure/search-documents";
 
 export const useSearchClient = <TIndex extends SearchIndex>(
   index: TIndex,
 ): SearchClient<SearchIndexDocumentMap[TIndex]> => {
   const runtimeConfig = useRuntimeConfig();
+  const searchBaseUrl = useSearchBaseUrl();
   const apiKey = runtimeConfig.azure.search.apiKey;
-  return new SearchClient<SearchIndexDocumentMap[TIndex]>(AZURE_SEARCH_BASE_URL, index, new AzureKeyCredential(apiKey));
+  return new SearchClient<SearchIndexDocumentMap[TIndex]>(searchBaseUrl, index, new AzureKeyCredential(apiKey));
 };

@@ -4,6 +4,7 @@ declare global {
   namespace NodeJS {
     interface ProcessEnv {
       APP_ENV: Environment;
+      AZURE_CONTAINER_BASE_URL: string;
       AZURE_SEARCH_API_KEY: string;
       AZURE_STORAGE_ACCOUNT_CONNECTION_STRING: string;
       AZURE_WEB_PUBSUB_CONNECTION_STRING: string;

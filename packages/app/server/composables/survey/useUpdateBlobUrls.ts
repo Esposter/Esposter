@@ -1,8 +1,8 @@
 import type { Survey } from "@esposter/db-schema";
 
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
+import { useBlobUrlSearchRegex } from "@@/server/composables/survey/useBlobUrlSearchRegex";
 import { extractBlobUrls } from "@@/server/services/survey/extractBlobUrls";
-import { getBlobUrlSearchRegex } from "@@/server/services/survey/getBlobUrlSearchRegex";
 import { getPublishDirectory } from "@@/server/services/survey/getPublishDirectory";
 import { ContainerSASPermissions } from "@azure/storage-blob";
 import { AzureContainer } from "@esposter/db-schema";
@@ -46,7 +46,7 @@ export const useUpdateBlobUrls = async (survey: Survey, isPublish?: true) => {
   for (let i = 0; i < blobUrls.length; i++) {
     const blobUrl = blobUrls[i];
     const updatedBlobUrl = updatedBlobUrls[i];
-    updatedModel = updatedModel.replaceAll(getBlobUrlSearchRegex(blobUrl), updatedBlobUrl);
+    updatedModel = updatedModel.replaceAll(useBlobUrlSearchRegex(blobUrl), updatedBlobUrl);
   }
 
   return updatedModel;
