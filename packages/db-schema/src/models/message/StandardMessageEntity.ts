@@ -10,9 +10,10 @@ import { z } from "zod";
 
 export class StandardMessageEntity extends BaseMessageEntity {
   userId!: string;
-  // oxlint-disable-next-line no-useless-constructor
+
   constructor(init: Partial<StandardMessageEntity> & ToData<CompositeKeyEntity>) {
     super(init);
+    Object.assign(this, init);
   }
 }
 
