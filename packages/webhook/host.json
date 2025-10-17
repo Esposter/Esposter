@@ -1,13 +1,11 @@
 {
   "applicationInsights": {
     "samplingSettings": {
-      "isEnabled": true,
       "excludedTypes": "Request"
     }
   },
   "concurrency": {
-    "dynamicConcurrencyEnabled": true,
-    "snapshotPersistenceEnabled": true
+    "dynamicConcurrencyEnabled": true
   },
   "extensionBundle": {
     "id": "Microsoft.Azure.Functions.ExtensionBundle",
