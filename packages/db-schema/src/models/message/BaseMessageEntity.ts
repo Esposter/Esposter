@@ -11,8 +11,6 @@ import { MessageType } from "@/models/message/MessageType";
 import { selectRoomSchema } from "@/schema/rooms";
 import { selectUserSchema } from "@/schema/users";
 import { FILE_MAX_LENGTH } from "@/services/azure/container/constants";
-import { refineMessageSchema } from "@/services/message/refineMessageSchema";
-import { getPropertyNames } from "@esposter/shared";
 import { z } from "zod";
 
 export const MENTION_MAX_LENGTH = 100;
@@ -33,7 +31,6 @@ export class BaseMessageEntity<TType extends MessageType = Exclude<MessageType, 
   message!: string;
   replyRowKey?: string;
   type!: TType;
-  userId!: string;
 
   constructor(init: Partial<MessageEntityMap[TType]> & ToData<CompositeKeyEntity>) {
     super();
@@ -41,28 +38,21 @@ export class BaseMessageEntity<TType extends MessageType = Exclude<MessageType, 
   }
 }
 
-export const BaseMessageEntityPropertyNames = getPropertyNames<BaseMessageEntity>();
-
-export const baseMessageEntitySchema = refineMessageSchema(
-  z.object({
-    ...createAzureEntitySchema(
-      z.object({
-        partitionKey: selectRoomSchema.shape.id,
-        // reverse-ticked timestamp
-        rowKey: z.string(),
-      }),
-    ).shape,
-    files: fileEntitySchema.array().max(FILE_MAX_LENGTH).default([]),
-    isEdited: z.literal(true).optional(),
-    isForward: z.literal(true).optional(),
-    isPinned: z.literal(true).optional(),
-    mentions: selectUserSchema.shape.id.array().max(MENTION_MAX_LENGTH).default([]),
-    message: z.string().max(MESSAGE_MAX_LENGTH).default(""),
-    replyRowKey: z.string().optional(),
-    type: z
-      .enum(Object.values(MessageType).filter((type) => type !== MessageType.Webhook))
-      .default(MessageType.Message),
-    userId: selectUserSchema.shape.id,
-  }),
-  // We only generate link preview responses via the backend, so we can safely exclude it from the schema
-) satisfies z.ZodType<ToData<Except<BaseMessageEntity, "linkPreviewResponse">>>;
+export const baseMessageEntitySchema = z.object({
+  ...createAzureEntitySchema(
+    z.object({
+      partitionKey: selectRoomSchema.shape.id,
+      // reverse-ticked timestamp
+      rowKey: z.string(),
+    }),
+  ).shape,
+  files: fileEntitySchema.array().max(FILE_MAX_LENGTH).default([]),
+  isEdited: z.literal(true).optional(),
+  isForward: z.literal(true).optional(),
+  isPinned: z.literal(true).optional(),
+  mentions: selectUserSchema.shape.id.array().max(MENTION_MAX_LENGTH).default([]),
+  message: z.string().max(MESSAGE_MAX_LENGTH).default(""),
+  replyRowKey: z.string().optional(),
+  type: z.enum(Object.values(MessageType).filter((type) => type !== MessageType.Webhook)).default(MessageType.Message),
+  userId: selectUserSchema.shape.id,
+}) satisfies z.ZodType<ToData<Except<BaseMessageEntity, "linkPreviewResponse">>>; // We only generate link preview responses via the backend, so we can safely exclude it from the schema

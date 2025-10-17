@@ -1,10 +1,10 @@
 import { SearchIndex } from "@/models/azure/search/SearchIndex";
 import { FileEntityPropertyNames } from "@/models/azure/table/FileEntity";
-import { BaseMessageEntityPropertyNames } from "@/models/message/BaseMessageEntity";
+import { StandardMessageEntityPropertyNames } from "@/models/message/StandardMessageEntity";
 
 export const SearchIndexSearchableFieldsMap = {
   [SearchIndex.Messages]: [
-    BaseMessageEntityPropertyNames.message,
-    `${BaseMessageEntityPropertyNames.files}/${FileEntityPropertyNames.filename}`,
+    StandardMessageEntityPropertyNames.message,
+    `${StandardMessageEntityPropertyNames.files}/${FileEntityPropertyNames.filename}`,
   ] as const,
 } as const satisfies Record<SearchIndex, readonly string[]>;

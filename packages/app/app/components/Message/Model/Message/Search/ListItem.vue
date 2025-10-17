@@ -11,7 +11,7 @@ interface ListItemProps {
 const { message } = defineProps<ListItemProps>();
 const roomStore = useRoomStore();
 const { memberMap } = storeToRefs(roomStore);
-const creator = computed(() => memberMap.value.get(message.userId));
+const creator = computed(() => (message.userId ? memberMap.value.get(message.userId) : undefined));
 const scrollToMessage = useScrollToMessage();
 </script>
 

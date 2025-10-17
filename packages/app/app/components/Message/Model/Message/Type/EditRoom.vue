@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { MessageComponentProps } from "@/services/message/MessageComponentMap";
+import type { StandardMessageEntity } from "@esposter/db-schema";
 
 import { useDialogStore } from "@/store/message/room/dialog";
 
-interface EditRoomProps extends MessageComponentProps {}
+interface EditRoomProps extends MessageComponentProps<StandardMessageEntity> {}
 
 const { active, creator, isPreview = false, message } = defineProps<EditRoomProps>();
 const dialogStore = useDialogStore();

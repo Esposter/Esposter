@@ -2,7 +2,7 @@ import type { CreateTypingInput } from "#shared/models/db/message/CreateTypingIn
 import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
 import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessageInput";
 import type { MessageEvents } from "#shared/models/message/events/MessageEvents";
-import type { BaseCreateMessageInput, MessageEntity } from "@esposter/db-schema";
+import type { MessageEntity, StandardCreateMessageInput } from "@esposter/db-schema";
 import type { Editor } from "@tiptap/core";
 
 import { authClient } from "@/services/auth/authClient";
@@ -30,7 +30,7 @@ export const useDataStore = defineStore("message/data", () => {
   const hasMoreNewer = ref(false);
   const nextCursorNewer = ref<string>();
 
-  const createMessage = async (input: BaseCreateMessageInput) => {
+  const createMessage = async (input: StandardCreateMessageInput) => {
     if (!session.value.data) return;
 
     const newMessage = reactive(createMessageEntity({ ...input, isLoading: true, userId: session.value.data.user.id }));
@@ -62,7 +62,7 @@ export const useDataStore = defineStore("message/data", () => {
   const sendMessage = async (editor: Editor) => {
     if (!roomStore.currentRoomId || !validateInput(editor, true)) return;
 
-    const input: BaseCreateMessageInput = {
+    const input: StandardCreateMessageInput = {
       files: uploadFileStore.files,
       message: inputStore.input,
       replyRowKey: replyStore.rowKey,

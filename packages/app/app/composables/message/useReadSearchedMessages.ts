@@ -5,7 +5,7 @@ import { useLayoutStore as useMessageLayoutStore } from "@/store/message/layout"
 import { useRoomStore } from "@/store/message/room";
 import { useSearchHistoryStore } from "@/store/message/searchHistory";
 import { useSearchMessageStore } from "@/store/message/searchMessage";
-import { BaseMessageEntityPropertyNames } from "@esposter/db-schema";
+import { StandardMessageEntityPropertyNames } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const useReadSearchedMessages = () => {
@@ -28,7 +28,7 @@ export const useReadSearchedMessages = () => {
         throw new InvalidOperationError(
           Operation.Read,
           useReadSearchedMessages.name,
-          BaseMessageEntityPropertyNames.partitionKey,
+          StandardMessageEntityPropertyNames.partitionKey,
         );
 
       menu.value = false;

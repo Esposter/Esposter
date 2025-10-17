@@ -1,22 +1,17 @@
-import type { MessageEntity, MessageType } from "@esposter/db-schema";
+import type { MessageEntity } from "@esposter/db-schema";
 import type { z } from "zod";
 
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getEntity } from "@esposter/db";
-import { AzureEntityType, AzureTable, BaseMessageEntity } from "@esposter/db-schema";
+import { AzureEntityType, AzureTable, StandardMessageEntity } from "@esposter/db-schema";
 import { NotFoundError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
 export const getCreatorProcedure = <T extends z.ZodType<Pick<MessageEntity, "partitionKey" | "rowKey">>>(schema: T) =>
   getMemberProcedure(schema, "partitionKey").use(async ({ ctx, input, next }) => {
     const messageClient = await useTableClient(AzureTable.Messages);
-    const messageEntity = await getEntity(
-      messageClient,
-      BaseMessageEntity<MessageType.Message>,
-      input.partitionKey,
-      input.rowKey,
-    );
+    const messageEntity = await getEntity(messageClient, StandardMessageEntity, input.partitionKey, input.rowKey);
     if (!messageEntity)
       throw new TRPCError({
         code: "NOT_FOUND",

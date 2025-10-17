@@ -44,10 +44,6 @@ import {
   AzureContainer,
   AzureEntityType,
   AzureTable,
-  baseCreateMessageInputSchema,
-  BaseMessageEntity,
-  BaseMessageEntityPropertyNames,
-  baseMessageEntitySchema,
   BinaryOperator,
   DatabaseEntityType,
   FileEntity,
@@ -56,6 +52,10 @@ import {
   MessageType,
   rooms,
   selectRoomSchema,
+  standardCreateMessageInputSchema,
+  StandardMessageEntity,
+  StandardMessageEntityPropertyNames,
+  standardMessageEntitySchema,
   WebhookMessageEntity,
 } from "@esposter/db-schema";
 import {
@@ -70,7 +70,7 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 export const readMetadataInputSchema = z.object({
-  messageRowKeys: baseMessageEntitySchema.shape.rowKey.array().min(1).max(MAX_READ_LIMIT),
+  messageRowKeys: standardMessageEntitySchema.shape.rowKey.array().min(1).max(MAX_READ_LIMIT),
   roomId: selectRoomSchema.shape.id,
 });
 export type ReadMetadataInput = z.infer<typeof readMetadataInputSchema>;
@@ -80,10 +80,10 @@ export type ReadMetadataInput = z.infer<typeof readMetadataInputSchema>;
 // always requires a sortBy even though we don't actually need the user to specify it
 const readMessagesInputSchema = z
   .object({
-    ...createCursorPaginationParamsSchema(baseMessageEntitySchema.keyof(), [
+    ...createCursorPaginationParamsSchema(standardMessageEntitySchema.keyof(), [
       { key: ItemMetadataPropertyNames.createdAt, order: SortOrder.Desc },
     ]).shape,
-    filter: baseMessageEntitySchema.pick({ isPinned: true }).optional(),
+    filter: standardMessageEntitySchema.pick({ isPinned: true }).optional(),
     isIncludeValue: z.literal(true).optional(),
     order: z.literal(SortOrder.Asc).optional(),
     roomId: selectRoomSchema.shape.id,
@@ -93,7 +93,7 @@ export type ReadMessagesInput = z.infer<typeof readMessagesInputSchema>;
 
 const readMessagesByRowKeysInputSchema = z.object({
   roomId: selectRoomSchema.shape.id,
-  rowKeys: baseMessageEntitySchema.shape.rowKey.array().min(1).max(MAX_READ_LIMIT),
+  rowKeys: standardMessageEntitySchema.shape.rowKey.array().min(1).max(MAX_READ_LIMIT),
 });
 export type ReadMessagesByRowKeysInput = z.infer<typeof readMessagesByRowKeysInputSchema>;
 
@@ -110,20 +110,20 @@ const generateDownloadFileSasUrlsInputSchema = z.object({
 export type GenerateDownloadFileSasUrlsInput = z.infer<typeof generateDownloadFileSasUrlsInputSchema>;
 
 const deleteFileInputSchema = z.object({
-  ...baseMessageEntitySchema.pick({ partitionKey: true, rowKey: true }).shape,
+  ...standardMessageEntitySchema.pick({ partitionKey: true, rowKey: true }).shape,
   id: fileEntitySchema.shape.id,
 });
 export type DeleteFileInput = z.infer<typeof deleteFileInputSchema>;
 
-const deleteLinkPreviewResponseInputSchema = baseMessageEntitySchema.pick({ partitionKey: true, rowKey: true });
+const deleteLinkPreviewResponseInputSchema = standardMessageEntitySchema.pick({ partitionKey: true, rowKey: true });
 export type DeleteLinkPreviewResponseInput = z.infer<typeof deleteLinkPreviewResponseInputSchema>;
 
-const onbaseCreateMessageInputSchema = z.object({
+const onstandardCreateMessageInputSchema = z.object({
   lastEventId: z.string().nullish(),
   pushSubscription: pushSubscriptionSchema.optional(),
   roomId: selectRoomSchema.shape.id,
 });
-export type OnCreateMessageInput = z.infer<typeof onbaseCreateMessageInputSchema>;
+export type OnCreateMessageInput = z.infer<typeof onstandardCreateMessageInputSchema>;
 
 const onUpdateMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnUpdateMessageInput = z.infer<typeof onUpdateMessageInputSchema>;
@@ -135,19 +135,19 @@ const onDeleteMessageInputSchema = z.object({ roomId: selectRoomSchema.shape.id 
 export type OnDeleteMessageInput = z.infer<typeof onDeleteMessageInputSchema>;
 
 export const forwardMessageInputSchema = z.object({
-  ...baseMessageEntitySchema.pick({ message: true, partitionKey: true, rowKey: true }).shape,
+  ...standardMessageEntitySchema.pick({ message: true, partitionKey: true, rowKey: true }).shape,
   roomIds: selectRoomSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
 });
 export type ForwardMessageInput = z.infer<typeof forwardMessageInputSchema>;
 
-export const pinMessageInputSchema = baseMessageEntitySchema.pick({ partitionKey: true, rowKey: true });
+export const pinMessageInputSchema = standardMessageEntitySchema.pick({ partitionKey: true, rowKey: true });
 export type PinMessageInput = z.infer<typeof pinMessageInputSchema>;
 
-export const unpinMessageInputSchema = baseMessageEntitySchema.pick({ partitionKey: true, rowKey: true });
+export const unpinMessageInputSchema = standardMessageEntitySchema.pick({ partitionKey: true, rowKey: true });
 export type UnpinMessageInput = z.infer<typeof unpinMessageInputSchema>;
 
 export const messageRouter = router({
-  createMessage: getMemberProcedure(baseCreateMessageInputSchema, "roomId").mutation<MessageEntity>(
+  createMessage: getMemberProcedure(standardCreateMessageInputSchema, "roomId").mutation<MessageEntity>(
     async ({ ctx, input }) => {
       const messageClient = await useTableClient(AzureTable.Messages);
       const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
@@ -194,7 +194,7 @@ export const messageRouter = router({
         `${messageEntity.partitionKey}/${id}`,
         messageEntity.files.splice(index, 1)[0].filename,
       );
-      const updatedMessageEntity: AzureUpdateEntity<MessageEntity> = {
+      const updatedMessageEntity: AzureUpdateEntity<StandardMessageEntity> = {
         files: messageEntity.files,
         partitionKey,
         rowKey,
@@ -206,7 +206,7 @@ export const messageRouter = router({
   ),
   deleteLinkPreviewResponse: getCreatorProcedure(deleteLinkPreviewResponseInputSchema).mutation(
     async ({ ctx: { messageClient, messageEntity } }) => {
-      const updatedMessageEntity: AzureUpdateEntity<MessageEntity> = {
+      const updatedMessageEntity: AzureUpdateEntity<StandardMessageEntity> = {
         linkPreviewResponse: null,
         partitionKey: messageEntity.partitionKey,
         rowKey: messageEntity.rowKey,
@@ -230,12 +230,7 @@ export const messageRouter = router({
       await isMember(ctx.db, ctx.session, roomIds);
 
       const messageClient = await useTableClient(AzureTable.Messages);
-      const messageEntity = await getEntity(
-        messageClient,
-        BaseMessageEntity<MessageType.Message>,
-        partitionKey,
-        rowKey,
-      );
+      const messageEntity = await getEntity(messageClient, StandardMessageEntity, partitionKey, rowKey);
       if (!messageEntity)
         throw new TRPCError({
           code: "NOT_FOUND",
@@ -296,7 +291,7 @@ export const messageRouter = router({
     const containerClient = await useContainerClient(AzureContainer.MessageAssets);
     return generateUploadFileSasEntities(containerClient, files, roomId);
   }),
-  onCreateMessage: getMemberProcedure(onbaseCreateMessageInputSchema, "roomId").subscription(async function* ({
+  onCreateMessage: getMemberProcedure(onstandardCreateMessageInputSchema, "roomId").subscription(async function* ({
     ctx,
     input: { lastEventId, pushSubscription, roomId },
     signal,
@@ -350,7 +345,7 @@ export const messageRouter = router({
       if ("isSendToSelf" in options) {
         const { isSendToSelf, sessionId } = options;
 
-        for (const newMessage of data)
+        for (const newMessage of data as StandardMessageEntity[])
           if (
             isRoomId(newMessage.partitionKey, roomId) &&
             (isSendToSelf || !getIsSameDevice({ sessionId, userId: newMessage.userId }, ctx.session))
@@ -418,16 +413,16 @@ export const messageRouter = router({
     async ({ input: { roomId, rowKeys } }) => {
       const messageClient = await useTableClient(AzureTable.Messages);
       const clauses: Clause[] = [
-        { key: BaseMessageEntityPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
+        { key: StandardMessageEntityPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
         getTableNullClause(ItemMetadataPropertyNames.deletedAt),
       ];
       for (const rowKey of rowKeys)
         clauses.push({
-          key: BaseMessageEntityPropertyNames.rowKey,
+          key: StandardMessageEntityPropertyNames.rowKey,
           operator: BinaryOperator.eq,
           value: rowKey,
         });
-      return getTopNEntities(messageClient, rowKeys.length, BaseMessageEntity<MessageType.Message>, {
+      return getTopNEntities(messageClient, rowKeys.length, StandardMessageEntity, {
         filter: serializeClauses(clauses),
       });
     },
@@ -435,12 +430,7 @@ export const messageRouter = router({
   searchMessages: getMemberProcedure(searchMessagesInputSchema, "roomId").query(({ input }) => searchMessages(input)),
   unpinMessage: getMemberProcedure(unpinMessageInputSchema, "partitionKey").mutation(async ({ input }) => {
     const messageClient = await useTableClient(AzureTable.Messages);
-    const messageEntity = await getEntity(
-      messageClient,
-      BaseMessageEntity<MessageType.PinMessage>,
-      input.partitionKey,
-      input.rowKey,
-    );
+    const messageEntity = await getEntity(messageClient, StandardMessageEntity, input.partitionKey, input.rowKey);
     if (!messageEntity)
       throw new TRPCError({
         code: "NOT_FOUND",

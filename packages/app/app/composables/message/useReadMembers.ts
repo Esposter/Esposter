@@ -1,6 +1,6 @@
 import { useMemberStore } from "@/store/message/member";
 import { useRoomStore } from "@/store/message/room";
-import { BaseMessageEntityPropertyNames } from "@esposter/db-schema";
+import { StandardMessageEntityPropertyNames } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const useReadMembers = () => {
@@ -18,7 +18,7 @@ export const useReadMembers = () => {
           throw new InvalidOperationError(
             Operation.Read,
             readMoreMembers.name,
-            BaseMessageEntityPropertyNames.partitionKey,
+            StandardMessageEntityPropertyNames.partitionKey,
           );
         return $trpc.room.readMembers.useQuery({ roomId: currentRoomId.value });
       },
@@ -33,7 +33,7 @@ export const useReadMembers = () => {
         throw new InvalidOperationError(
           Operation.Read,
           readMoreMembers.name,
-          BaseMessageEntityPropertyNames.partitionKey,
+          StandardMessageEntityPropertyNames.partitionKey,
         );
       const cursorPaginationData = await $trpc.room.readMembers.query({ cursor, roomId: currentRoomId.value });
       for (const member of cursorPaginationData.items) memberMap.value.set(member.id, member);

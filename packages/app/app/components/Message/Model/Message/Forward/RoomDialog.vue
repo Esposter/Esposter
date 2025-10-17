@@ -17,7 +17,7 @@ const { items } = storeToRefs(dataStore);
 const forwardStore = useForwardStore();
 const { messageInput, roomIds, rowKey } = storeToRefs(forwardStore);
 const forward = computed(() => items.value.find((m) => m.rowKey === rowKey.value));
-const creator = computed(() => (forward.value ? memberMap.value.get(forward.value.userId) : undefined));
+const creator = computed(() => (forward.value?.userId ? memberMap.value.get(forward.value.userId) : undefined));
 const dialog = computed({
   get: () => Boolean(rowKey.value),
   set: (newDialog) => {

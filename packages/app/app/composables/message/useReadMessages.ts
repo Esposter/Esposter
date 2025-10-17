@@ -5,7 +5,11 @@ import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants"
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
-import { BaseMessageEntityPropertyNames, getReverseTickedTimestamp } from "@esposter/db-schema";
+import {
+  getReverseTickedTimestamp,
+  StandardMessageEntity,
+  StandardMessageEntityPropertyNames,
+} from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const useReadMessages = () => {
@@ -22,10 +26,13 @@ export const useReadMessages = () => {
   const readFiles = useReadFiles();
   const readEmojis = useReadEmojis();
   const readMetadata = async (messages: MessageEntity[]) => {
+    const standardMessages = messages.filter((message) => message instanceof StandardMessageEntity);
     await Promise.all([
-      readUsers(messages.map(({ userId }) => userId)),
-      readReplies([...new Set(messages.map(({ replyRowKey }) => replyRowKey).filter((value) => value !== undefined))]),
-      readFiles(messages.flatMap(({ files }) => files)),
+      readUsers(standardMessages.map(({ userId }) => userId)),
+      readReplies([
+        ...new Set(standardMessages.map(({ replyRowKey }) => replyRowKey).filter((value) => value !== undefined)),
+      ]),
+      readFiles(standardMessages.flatMap(({ files }) => files)),
       readEmojis(messages.map(({ rowKey }) => rowKey)),
     ]);
   };
@@ -37,7 +44,7 @@ export const useReadMessages = () => {
           throw new InvalidOperationError(
             Operation.Read,
             readMessages.name,
-            BaseMessageEntityPropertyNames.partitionKey,
+            StandardMessageEntityPropertyNames.partitionKey,
           );
         const roomId = currentRoomId.value;
         const rowKey = route.params.rowKey as string | undefined;
@@ -69,7 +76,11 @@ export const useReadMessages = () => {
   const readMoreMessages = (onComplete: () => void) =>
     readMoreItems(async (cursor) => {
       if (!currentRoomId.value)
-        throw new InvalidOperationError(Operation.Read, readMessages.name, BaseMessageEntityPropertyNames.partitionKey);
+        throw new InvalidOperationError(
+          Operation.Read,
+          readMessages.name,
+          StandardMessageEntityPropertyNames.partitionKey,
+        );
       const response = await $trpc.message.readMessages.query({ cursor, roomId: currentRoomId.value });
       await readMetadata(response.items);
       return response;

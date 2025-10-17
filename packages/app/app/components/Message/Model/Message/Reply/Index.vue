@@ -14,7 +14,7 @@ const { memberMap } = storeToRefs(roomStore);
 const replyStore = useReplyStore();
 const { isIndicatorActive, replyMap } = storeToRefs(replyStore);
 const reply = computed(() => replyMap.value.get(rowKey));
-const creator = computed(() => (reply.value ? memberMap.value.get(reply.value.userId) : undefined));
+const creator = computed(() => (reply.value?.userId ? memberMap.value.get(reply.value.userId) : undefined));
 const color = computed(() => (isIndicatorActive.value ? text.value : "gray"));
 const scrollToMessage = useScrollToMessage();
 </script>

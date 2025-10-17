@@ -10,13 +10,15 @@ interface MessageProps extends MessageComponentProps {
 }
 
 defineSlots<{ default?: () => VNode }>();
-const { active, creator, isPreview = false, message, nextMessage } = defineProps<MessageProps>();
-const isSameBatch = computed(
-  () =>
-    !isPreview &&
-    message.userId === nextMessage?.userId &&
-    dayjs(message.createdAt).diff(nextMessage.createdAt, "minutes") <= 5,
-);
+const {
+  active,
+  creator,
+  isPreview = false,
+  isSameBatch: baseIsSameBatch,
+  message,
+  nextMessage,
+} = defineProps<MessageProps>();
+const isSameBatch = computed(() => baseIsSameBatch && !isPreview);
 const displayCreatedAtShort = computed(() => dayjs(message.createdAt).format("H:mm"));
 const messageHtml = useMessageWithMentions(() => message.message);
 </script>

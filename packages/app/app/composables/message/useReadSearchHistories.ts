@@ -1,6 +1,6 @@
 import { useRoomStore } from "@/store/message/room";
 import { useSearchHistoryStore } from "@/store/message/searchHistory";
-import { BaseMessageEntityPropertyNames } from "@esposter/db-schema";
+import { StandardMessageEntityPropertyNames } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const useReadSearchHistories = () => {
@@ -15,7 +15,7 @@ export const useReadSearchHistories = () => {
         throw new InvalidOperationError(
           Operation.Read,
           readSearchHistories.name,
-          BaseMessageEntityPropertyNames.partitionKey,
+          StandardMessageEntityPropertyNames.partitionKey,
         );
       return $trpc.searchHistory.readSearchHistories.useQuery({ roomId: currentRoomId.value });
     });
@@ -25,7 +25,7 @@ export const useReadSearchHistories = () => {
         throw new InvalidOperationError(
           Operation.Read,
           readSearchHistories.name,
-          BaseMessageEntityPropertyNames.partitionKey,
+          StandardMessageEntityPropertyNames.partitionKey,
         );
       return $trpc.searchHistory.readSearchHistories.query({ cursor, roomId: currentRoomId.value });
     }, onComplete);

@@ -4,8 +4,8 @@ import type { MessageEntityMap } from "@/models/message/MessageEntityMap";
 import type { ServerCreateMessageInput } from "@/models/message/ServerCreateMessageInput";
 import type { WebhookCreateMessageInput } from "@/models/message/WebhookCreateMessageInput";
 
-import { BaseMessageEntity } from "@/models/message/BaseMessageEntity";
 import { MessageType } from "@/models/message/MessageType";
+import { StandardMessageEntity } from "@/models/message/StandardMessageEntity";
 import { WebhookMessageEntity } from "@/models/message/WebhookMessageEntity";
 import { getReverseTickedTimestamp } from "@/services/azure/table/getReverseTickedTimestamp";
 
@@ -22,7 +22,7 @@ export const createMessageEntity = <T extends CreateMessageInput>(input: T): Mes
     }) as MessageEntityMap[T["type"]];
   } else {
     const { roomId, ...rest } = input as ServerCreateMessageInput;
-    return new BaseMessageEntity({
+    return new StandardMessageEntity({
       ...rest,
       createdAt,
       partitionKey: roomId,

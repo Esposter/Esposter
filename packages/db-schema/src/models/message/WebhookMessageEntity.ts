@@ -8,5 +8,5 @@ export class WebhookMessageEntity extends BaseMessageEntity<MessageType.Webhook>
   appUser!: PartialByKeys<Pick<AppUser, "id" | "image" | "name">, "image" | "name">;
   override type: MessageType.Webhook = MessageType.Webhook;
   // Webhook messages don't have a direct user author
-  declare userId: never;
+  userId?: undefined;
 }

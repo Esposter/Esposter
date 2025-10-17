@@ -1,6 +1,6 @@
 import { usePinStore } from "@/store/message/pin";
 import { useRoomStore } from "@/store/message/room";
-import { BaseMessageEntityPropertyNames } from "@esposter/db-schema";
+import { StandardMessageEntityPropertyNames } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const useReadPinnedMessages = () => {
@@ -15,7 +15,7 @@ export const useReadPinnedMessages = () => {
         throw new InvalidOperationError(
           Operation.Read,
           readPinnedMessages.name,
-          BaseMessageEntityPropertyNames.partitionKey,
+          StandardMessageEntityPropertyNames.partitionKey,
         );
       return $trpc.message.readMessages.useQuery({ filter: { isPinned: true }, roomId: currentRoomId.value });
     });
@@ -25,7 +25,7 @@ export const useReadPinnedMessages = () => {
         throw new InvalidOperationError(
           Operation.Read,
           readMorePinnedMessages.name,
-          BaseMessageEntityPropertyNames.partitionKey,
+          StandardMessageEntityPropertyNames.partitionKey,
         );
       return $trpc.message.readMessages.query({ cursor, filter: { isPinned: true }, roomId: currentRoomId.value });
     });

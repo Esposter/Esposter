@@ -3,10 +3,10 @@ import type { Class } from "type-fest";
 
 import { deserializeEntity } from "@/services/azure/transformer/deserializeEntity";
 
-export const getEntity = async <TEntity extends AzureEntity>(
-  tableClient: CustomTableClient<TEntity>,
+export const getEntity = async <TTableEntity extends AzureEntity, TEntity extends TTableEntity>(
+  tableClient: CustomTableClient<TTableEntity>,
   cls: Class<TEntity>,
-  ...args: Parameters<CustomTableClient<TEntity>["getEntity"]>
+  ...args: Parameters<CustomTableClient<TTableEntity>["getEntity"]>
 ): Promise<null | TEntity> => {
   try {
     const { etag: _etag, ...entity } = await tableClient.getEntity(...args);

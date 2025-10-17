@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { MessageComponentProps } from "@/services/message/MessageComponentMap";
+import type { StandardMessageEntity } from "@esposter/db-schema";
 
-interface PinMessageProps extends MessageComponentProps {}
+interface PinMessageProps extends MessageComponentProps<StandardMessageEntity> {}
 
 const { active, creator, isPreview = false, message } = defineProps<PinMessageProps>();
 const scrollToMessage = useScrollToMessage();

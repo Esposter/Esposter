@@ -6,12 +6,12 @@ import { useSearchClient } from "@@/server/composables/azure/search/useSearchCli
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { deserializeKey, filtersToClauses, getSearchNullClause, serializeClauses } from "@esposter/db";
 import {
-  BaseMessageEntity,
-  BaseMessageEntityPropertyNames,
   BinaryOperator,
   MessageType,
   SearchIndex,
   SearchIndexSearchableFieldsMap,
+  StandardMessageEntity,
+  StandardMessageEntityPropertyNames,
   WebhookMessageEntity,
 } from "@esposter/db-schema";
 import { ItemMetadataPropertyNames } from "@esposter/shared";
@@ -19,7 +19,7 @@ import { ItemMetadataPropertyNames } from "@esposter/shared";
 export const searchMessages = async ({ filters, limit, offset, query, roomId, sortBy }: SearchMessagesInput) => {
   const client = useSearchClient(SearchIndex.Messages);
   const clauses: Clause[] = [
-    { key: BaseMessageEntityPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
+    { key: StandardMessageEntityPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
     getSearchNullClause(ItemMetadataPropertyNames.deletedAt),
   ];
   if (filters.length > 0) clauses.push(...filtersToClauses(dedupeFilters(filters)));
@@ -39,7 +39,7 @@ export const searchMessages = async ({ filters, limit, offset, query, roomId, so
     searchedMessages.push(
       (deserializedDocument.type === MessageType.Webhook
         ? new WebhookMessageEntity(deserializedDocument)
-        : new BaseMessageEntity(deserializedDocument)) as MessageEntity,
+        : new StandardMessageEntity(deserializedDocument)) as MessageEntity,
     );
   }
   return { count, data: getOffsetPaginationData(searchedMessages, limit) };

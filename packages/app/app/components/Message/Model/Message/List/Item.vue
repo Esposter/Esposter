@@ -6,6 +6,7 @@ import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 import { useMessageStore } from "@/store/message";
 import { useForwardStore } from "@/store/message/forward";
 import { useReplyStore } from "@/store/message/reply";
+import { MessageType } from "@esposter/db-schema";
 
 interface MessageListItemProps {
   creator: User;
@@ -15,7 +16,13 @@ interface MessageListItemProps {
 
 const { creator, message, nextMessage } = defineProps<MessageListItemProps>();
 const isSameBatch = computed(
-  () => message.userId === nextMessage?.userId && dayjs(message.createdAt).diff(nextMessage.createdAt, "minutes") <= 5,
+  () =>
+    nextMessage &&
+    ((message.type === MessageType.Webhook &&
+      nextMessage.type === MessageType.Webhook &&
+      message.appUser.id === nextMessage.appUser.id) ||
+      message.userId === nextMessage.userId) &&
+    dayjs(message.createdAt).diff(nextMessage.createdAt, "minutes") <= 5,
 );
 const messageStore = useMessageStore();
 const { optionsMenu } = storeToRefs(messageStore);
@@ -53,6 +60,7 @@ watch(optionsMenu, (newOptionsMenu) => {
         :op="message.isLoading ? 50 : undefined"
         :active="(isActive || activeReplyRowKey === message.rowKey) && !isOpen"
         :creator
+        :is-same-batch
         :message
         :next-message
         @mouseenter="isMessageActive = true"

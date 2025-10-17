@@ -15,10 +15,10 @@ import { TableEditorConfiguration } from "#shared/models/tableEditor/data/TableE
 import { TodoListItem } from "#shared/models/tableEditor/todoList/TodoListItem";
 import { VuetifyComponentItem } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
-import { BaseMessageEntity, SurveyResponseEntity, WebhookMessageEntity } from "@esposter/db-schema";
+import { StandardMessageEntity, SurveyResponseEntity, WebhookMessageEntity } from "@esposter/db-schema";
 
 export const JSONClassMap: Record<string, Class<Serializable>> = {
-  BaseMessageEntity,
+  StandardMessageEntity,
   BasicChartConfiguration,
   Chart,
   Clicker,

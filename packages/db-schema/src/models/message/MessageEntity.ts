@@ -1,4 +1,4 @@
-import type { BaseMessageEntity } from "@/models/message/BaseMessageEntity";
+import type { StandardMessageEntity } from "@/models/message/StandardMessageEntity";
 import type { WebhookMessageEntity } from "@/models/message/WebhookMessageEntity";
 
-export type MessageEntity = BaseMessageEntity | WebhookMessageEntity;
+export type MessageEntity = StandardMessageEntity | WebhookMessageEntity;

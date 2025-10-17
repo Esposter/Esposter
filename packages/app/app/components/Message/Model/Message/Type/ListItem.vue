@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { MessageComponentProps } from "@/services/message/MessageComponentMap";
+import type { StandardMessageEntity } from "@esposter/db-schema";
 import type { CSSProperties } from "vue";
 import type { VListItem } from "vuetify/components";
 
-interface ListItemProps extends Pick<MessageComponentProps, "isPreview"> {
+interface ListItemProps extends Pick<MessageComponentProps<StandardMessageEntity>, "isPreview"> {
   active?: boolean;
 }
 

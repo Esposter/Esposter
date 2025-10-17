@@ -3,11 +3,12 @@ import type { Component } from "vue";
 
 import { MessageType } from "@esposter/db-schema";
 
-export interface MessageComponentProps {
+export interface MessageComponentProps<T extends MessageEntity = MessageEntity> {
   active?: boolean;
   creator: User;
   isPreview?: boolean;
-  message: MessageEntity;
+  isSameBatch?: boolean;
+  message: T;
 }
 
 export const MessageComponentMap = {
