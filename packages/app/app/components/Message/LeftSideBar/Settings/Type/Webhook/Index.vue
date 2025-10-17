@@ -29,7 +29,7 @@ const isLoading = ref(false);
       </StyledButton>
     </div>
     <div v-if="items.length >= WEBHOOK_MAX_LENGTH" text-sm text-red>
-      You can only create up to {{ WEBHOOK_MAX_LENGTH }} webhooks.
+      You can only create up to {{ WEBHOOK_MAX_LENGTH }} webhook{{ WEBHOOK_MAX_LENGTH > 1 ? "s" : "" }}.
     </div>
     <MessageLeftSideBarSettingsTypeWebhookList />
   </div>

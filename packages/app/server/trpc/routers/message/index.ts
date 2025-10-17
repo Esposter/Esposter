@@ -11,7 +11,7 @@ import { MAX_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagin
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/useTableClient";
-import { useWebPubSubClient } from "@@/server/composables/azure/webpubsub/useWebPubSubClient";
+import { useWebPubSubClient } from "@@/server/composables/azure/webPubSub/useWebPubSubClient";
 import { useSendCreateMessageNotification } from "@@/server/composables/message/useSendCreateMessageNotification";
 import { AsyncQueue } from "@@/server/models/AsyncQueue";
 import { pushSubscriptionSchema } from "@@/server/models/PushSubscription";

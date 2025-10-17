@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { SITE_DESCRIPTION, SITE_NAME } from "#shared/services/app/constants";
-import { getLogoImageUrl } from "@/services/app/getLogoImageUrl";
+import { LOGO_IMAGE_URL } from "@/services/app/constants";
 
 defineSlots<{ default: () => VNode }>();
 
@@ -9,7 +9,6 @@ useHead({
 });
 const { surface } = useColors();
 const runtimeConfig = useRuntimeConfig();
-const logoImageUrl = getLogoImageUrl();
 useSeoMeta({
   appleMobileWebAppCapable: "yes",
   appleMobileWebAppStatusBarStyle: "default",
@@ -22,7 +21,7 @@ useSeoMeta({
   msapplicationConfig: "/browserconfig.xml",
   msapplicationTileColor: surface,
   ogDescription: SITE_DESCRIPTION,
-  ogImage: logoImageUrl,
+  ogImage: LOGO_IMAGE_URL,
   ogImageAlt: SITE_NAME,
   ogImageHeight: 200,
   ogImageWidth: 250,

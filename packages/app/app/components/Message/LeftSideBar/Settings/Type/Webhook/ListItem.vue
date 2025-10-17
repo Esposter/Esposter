@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Webhook } from "@esposter/db-schema";
 
+import { AZURE_FUNCTION_APP_BASE_URL } from "#shared/services/azure/functionApp/constants";
 import { useWebhookStore } from "@/store/message/webhook";
 
 interface ListItemProps {
@@ -9,8 +10,9 @@ interface ListItemProps {
 
 const { webhook } = defineProps<ListItemProps>();
 const webhookStore = useWebhookStore();
-const { deleteWebhook, rotateToken, updateWebhook } = webhookStore;
+const { updateWebhook } = webhookStore;
 const name = ref(webhook.name);
+const source = computed(() => `${AZURE_FUNCTION_APP_BASE_URL}/api/webhooks/${webhook.id}/${webhook.token}`);
 </script>
 
 <template>
@@ -20,45 +22,25 @@ const name = ref(webhook.name);
         <v-icon icon="mdi-webhook" />
       </v-avatar>
     </template>
-    <v-list-item-title>
-      <div flex items-center gap-2>
-        <v-text-field
-          v-model="name"
-          label="Name"
-          density="compact"
-          hide-details
-          @blur="updateWebhook({ id: webhook.id, name })"
-        />
-        <v-switch
-          :model-value="webhook.isActive"
-          color="primary"
-          density="compact"
-          hide-details
-          @update:model-value="(value) => updateWebhook({ id: webhook.id, isActive: value ?? false })"
-        />
-      </div>
-      <div text-sm text-gray>
-        {{ `${useRuntimeConfig().public.baseUrl}/api/webhooks/${webhook.id}/${webhook.token}` }}
-      </div>
-    </v-list-item-title>
+    <v-text-field
+      v-model="name"
+      label="Name"
+      density="compact"
+      hide-details
+      @blur="updateWebhook({ id: webhook.id, name })"
+    />
     <template #append>
-      <v-btn icon="mdi-refresh" size="small" @click="rotateToken({ id: webhook.id })" />
-      <StyledDeleteDialog
-        :card-props="{ title: 'Delete Webhook', text: `Are you sure you want to delete ${webhook.name}?` }"
-        @delete="
-          async (onComplete) => {
-            try {
-              deleteWebhook({ id: webhook.id });
-            } finally {
-              onComplete();
-            }
-          }
-        "
-      >
-        <template #activator="{ updateIsOpen }">
-          <v-btn icon="mdi-delete" size="small" @click="updateIsOpen(true)" />
-        </template>
-      </StyledDeleteDialog>
+      <StyledClipboardIconButton :source text="Copy Webhook URL" />
+      <MessageLeftSideBarSettingsTypeWebhookRotateTokenButton :id="webhook.id" />
+      <MessageLeftSideBarSettingsTypeWebhookDeleteDialogButton :webhook />
+      <v-spacer />
+      <MessageLeftSideBarSettingsTypeWebhookActiveSwitch :webhook />
     </template>
   </v-list-item>
 </template>
+
+<style scoped lang="scss">
+:deep(.v-list-item__content) {
+  overflow: visible;
+}
+</style>
