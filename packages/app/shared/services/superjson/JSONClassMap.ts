@@ -18,7 +18,6 @@ import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { StandardMessageEntity, SurveyResponseEntity, WebhookMessageEntity } from "@esposter/db-schema";
 
 export const JSONClassMap: Record<string, Class<Serializable>> = {
-  StandardMessageEntity,
   BasicChartConfiguration,
   Chart,
   Clicker,
@@ -27,6 +26,7 @@ export const JSONClassMap: Record<string, Class<Serializable>> = {
   EmailEditor,
   FlowchartEditor,
   MessageEmojiMetadataEntity,
+  StandardMessageEntity,
   SurveyResponseEntity,
   TableEditor,
   TableEditorConfiguration,
