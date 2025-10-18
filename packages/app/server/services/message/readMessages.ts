@@ -8,13 +8,13 @@ import { DEFAULT_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/p
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
-import { getTableNullClause, getTopNEntities, serializeClauses } from "@esposter/db";
+import { getTableNullClause, getTopNEntities, getTopNEntitiesByType, serializeClauses } from "@esposter/db";
 import {
   AzureTable,
   BinaryOperator,
   CompositeKey,
   getReverseTickedTimestamp,
-  StandardMessageEntity,
+  MessageEntityMap,
   StandardMessageEntityPropertyNames,
 } from "@esposter/db-schema";
 import { ItemMetadataPropertyNames } from "@esposter/shared";
@@ -57,7 +57,7 @@ export const readMessages = async ({
       });
     // We don't need to fetch limit + 1 here because the pagination metadata
     // is actually determined by the index table, not the message table
-    const messages = await getTopNEntities(messageClient, limit, StandardMessageEntity, {
+    const messages = await getTopNEntitiesByType(messageClient, limit, MessageEntityMap, {
       filter: serializeClauses(clauses),
     });
     return Object.assign(getCursorPaginationData(messages, limit, sortBy), { hasMore, nextCursor });
@@ -65,7 +65,7 @@ export const readMessages = async ({
   // Default: Desc via reverse-ticked RowKey (efficient)
   if (cursor) clauses.push(...getCursorWhereAzureTable(cursor, sortBy));
   const messageClient = await useTableClient(AzureTable.Messages);
-  const messages = await getTopNEntities(messageClient, limit + 1, StandardMessageEntity, {
+  const messages = await getTopNEntitiesByType(messageClient, limit + 1, MessageEntityMap, {
     filter: serializeClauses(clauses),
   });
   return getCursorPaginationData(messages, limit, sortBy);

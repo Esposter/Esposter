@@ -8,7 +8,7 @@ export const createMessage = async <T extends CreateMessageInput>(
   messageClient: CustomTableClient<AzureTableEntityMap[AzureTable.Messages]>,
   messageAscendingClient: CustomTableClient<AzureTableEntityMap[AzureTable.MessagesAscending]>,
   input: T,
-): Promise<MessageEntityMap[T["type"]]> => {
+): Promise<InstanceType<MessageEntityMap[T["type"]]>> => {
   const messageEntity = createMessageEntity(input);
   await addMessageMetadata(messageEntity);
   await createEntity(messageClient, messageEntity);
