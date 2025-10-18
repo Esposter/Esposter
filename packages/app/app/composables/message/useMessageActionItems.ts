@@ -88,14 +88,14 @@ export const useMessageActionItems = (
     title: "Copy Message Link",
   };
   const updateMessageItems = computed<Item[]>(() =>
-    message.type === MessageType.Message
+    message.type === MessageType.Message || message.type === MessageType.Webhook
       ? isEditable.value
         ? [editMessageItem, forwardMessageItem]
         : [replyItem, forwardMessageItem]
       : [],
   );
   const updateMessageMenuItems = computed<Item[]>(() =>
-    message.type === MessageType.Message
+    message.type === MessageType.Message || message.type === MessageType.Webhook
       ? isEditable.value
         ? [editMessageItem, replyItem, forwardMessageItem]
         : [replyItem, forwardMessageItem]

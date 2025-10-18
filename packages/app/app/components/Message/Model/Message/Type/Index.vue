@@ -3,6 +3,7 @@ import type { MessageComponentProps } from "@/services/message/MessageComponentM
 
 import { dayjs } from "#shared/services/dayjs";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
+import { MessageType } from "@esposter/db-schema";
 
 defineSlots<{ default?: () => VNode }>();
 const {
@@ -22,23 +23,15 @@ const messageHtml = useMessageWithMentions(() => message.message);
     <template #prepend>
       <div v-if="message.replyRowKey" relative flex flex-col items-center>
         <MessageModelMessageReplySpine absolute top-0 mt-2.5 ml-7.5 :reply-row-key="message.replyRowKey" />
-        <!-- @TODO: Fetch app users in the future as the source of truth -->
         <StyledAvatar mt-6 :image="creator.image" :name="creator.name" />
+        <MessageModelMessageAppUserBadge v-if="message.type === MessageType.Webhook" pl-2 />
       </div>
       <StyledAvatar v-else-if="!isSameBatch" :image="creator.image" :name="creator.name" />
       <span v-else :op="active ? undefined : 0" text-center text-gray text-xs>
         {{ displayCreatedAtShort }}
       </span>
     </template>
-    <v-list-item-title>
-      <MessageModelMessageReply v-if="message.replyRowKey" :row-key="message.replyRowKey" />
-      <template v-if="message.replyRowKey || !isSameBatch">
-        <span font-bold>
-          {{ creator.name }}
-        </span>
-        <MessageModelMessageCreatedAtDate pl-2 :created-at="message.createdAt" />
-      </template>
-    </v-list-item-title>
+    <MessageModelMessageReplyTitle v-if="message.replyRowKey || !isSameBatch" :creator :message />
     <div v-if="message.isForward" flex gap-x-2>
       <div class="bg-border" w-1 h-inherit rd />
       <div flex flex-col gap-y-1>

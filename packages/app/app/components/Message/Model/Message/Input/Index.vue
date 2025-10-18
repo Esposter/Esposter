@@ -37,7 +37,7 @@ const uploadFiles = useUploadFiles();
   <MessageModelMessageForwardRoomDialog />
   <MessageModelMessageFileDropzoneBackground />
   <div w-full>
-    <MessageModelMessageReplyHeader v-if="reply" :reply @close="rowKey = ''" />
+    <MessageModelMessageInputReplyHeader v-if="reply" :reply @close="rowKey = ''" />
     <RichTextEditor
       v-model="input"
       :placeholder="`Message ${currentRoomName}`"
