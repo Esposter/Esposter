@@ -6,12 +6,12 @@ import { useDownload } from "@@/server/composables/azure/container/useDownload";
 import { useUpload } from "@@/server/composables/azure/container/useUpload";
 import { SAVE_FILENAME } from "@@/server/services/tableEditor/constants";
 import { router } from "@@/server/trpc";
-import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
+import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { AzureContainer } from "@esposter/db-schema";
 import { jsonDateParse, streamToText } from "@esposter/shared";
 
 export const tableEditorRouter = router({
-  readTableEditorConfiguration: authedProcedure.query<TableEditorConfiguration>(async ({ ctx }) => {
+  readTableEditorConfiguration: standardAuthedProcedure.query<TableEditorConfiguration>(async ({ ctx }) => {
     try {
       const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
       const { readableStreamBody } = await useDownload(AzureContainer.TableEditorAssets, blobName);
@@ -23,7 +23,7 @@ export const tableEditorRouter = router({
       return new TableEditorConfiguration();
     }
   }),
-  saveTableEditorConfiguration: authedProcedure
+  saveTableEditorConfiguration: standardAuthedProcedure
     .input(tableEditorConfigurationSchema)
     .mutation(async ({ ctx, input }) => {
       const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;

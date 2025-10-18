@@ -5,14 +5,14 @@ import { deleteLikeInputSchema } from "#shared/models/db/post/DeleteLikeInput";
 import { updateLikeInputSchema } from "#shared/models/db/post/UpdateLikeInput";
 import { ranking } from "@@/server/services/post/ranking";
 import { router } from "@@/server/trpc";
-import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
+import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { DatabaseEntityType, likes, posts } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 
 export const likeRouter = router({
-  createLike: authedProcedure.input(createLikeInputSchema).mutation<Like>(({ ctx, input }) =>
+  createLike: standardAuthedProcedure.input(createLikeInputSchema).mutation<Like>(({ ctx, input }) =>
     ctx.db.transaction(async (tx) => {
       const post = await tx.query.posts.findFirst({
         columns: {
@@ -51,7 +51,7 @@ export const likeRouter = router({
       return newLike;
     }),
   ),
-  deleteLike: authedProcedure.input(deleteLikeInputSchema).mutation<Like>(({ ctx, input }) =>
+  deleteLike: standardAuthedProcedure.input(deleteLikeInputSchema).mutation<Like>(({ ctx, input }) =>
     ctx.db.transaction(async (tx) => {
       // Get post with current like count in a single query
       const post = await tx.query.posts.findFirst({
@@ -91,7 +91,7 @@ export const likeRouter = router({
       return deletedLike;
     }),
   ),
-  updateLike: authedProcedure.input(updateLikeInputSchema).mutation<Like>(({ ctx, input: { postId, value } }) =>
+  updateLike: standardAuthedProcedure.input(updateLikeInputSchema).mutation<Like>(({ ctx, input: { postId, value } }) =>
     ctx.db.transaction(async (tx) => {
       const [post, like] = await Promise.all([
         tx.query.posts.findFirst({

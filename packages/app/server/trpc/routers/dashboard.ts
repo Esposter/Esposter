@@ -3,12 +3,12 @@ import { useDownload } from "@@/server/composables/azure/container/useDownload";
 import { useUpload } from "@@/server/composables/azure/container/useUpload";
 import { SAVE_FILENAME } from "@@/server/services/dashboard/constants";
 import { router } from "@@/server/trpc";
-import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
+import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { AzureContainer } from "@esposter/db-schema";
 import { jsonDateParse, streamToText } from "@esposter/shared";
 
 export const dashboardRouter = router({
-  readDashboard: authedProcedure.query<Dashboard>(async ({ ctx }) => {
+  readDashboard: standardAuthedProcedure.query<Dashboard>(async ({ ctx }) => {
     try {
       const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
       const { readableStreamBody } = await useDownload(AzureContainer.DashboardAssets, blobName);
@@ -20,7 +20,7 @@ export const dashboardRouter = router({
       return new Dashboard();
     }
   }),
-  saveDashboard: authedProcedure.input(dashboardSchema).mutation(async ({ ctx, input }) => {
+  saveDashboard: standardAuthedProcedure.input(dashboardSchema).mutation(async ({ ctx, input }) => {
     const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
     await useUpload(AzureContainer.DashboardAssets, blobName, JSON.stringify(input));
   }),

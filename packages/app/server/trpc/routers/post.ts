@@ -13,9 +13,9 @@ import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWh
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { ranking } from "@@/server/services/post/ranking";
 import { router } from "@@/server/trpc";
-import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
-import { rateLimitedProcedure } from "@@/server/trpc/procedure/rateLimitedProcedure";
+import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
+import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
 import {
   DatabaseEntityType,
   DerivedDatabaseEntityType,
@@ -131,7 +131,7 @@ export const postRouter = router({
         return newPostWithRelations;
       }),
   ),
-  deleteComment: authedProcedure.input(deleteCommentInputSchema).mutation<Post>(({ ctx, input }) =>
+  deleteComment: standardAuthedProcedure.input(deleteCommentInputSchema).mutation<Post>(({ ctx, input }) =>
     ctx.db.transaction(async (tx) => {
       const deletedComment = (
         await tx
@@ -166,7 +166,7 @@ export const postRouter = router({
       return deletedComment;
     }),
   ),
-  deletePost: authedProcedure.input(deletePostInputSchema).mutation<Post>(async ({ ctx, input }) => {
+  deletePost: standardAuthedProcedure.input(deletePostInputSchema).mutation<Post>(async ({ ctx, input }) => {
     const deletedPost = (
       await ctx.db
         .delete(posts)
@@ -180,7 +180,7 @@ export const postRouter = router({
       });
     return deletedPost;
   }),
-  readPost: rateLimitedProcedure.input(readPostInputSchema).query<PostWithRelations>(async ({ ctx, input }) => {
+  readPost: standardRateLimitedProcedure.input(readPostInputSchema).query<PostWithRelations>(async ({ ctx, input }) => {
     const post = await ctx.db.query.posts.findFirst({
       where: (posts, { eq }) => eq(posts.id, input),
       with: PostRelations,
@@ -189,7 +189,7 @@ export const postRouter = router({
       throw new TRPCError({ code: "NOT_FOUND", message: new NotFoundError(DatabaseEntityType.Post, input).message });
     return post;
   }),
-  readPosts: rateLimitedProcedure
+  readPosts: standardRateLimitedProcedure
     .input(readPostsInputSchema)
     .query(async ({ ctx, input: { cursor, limit, parentId, sortBy } }) => {
       const resultPosts: PostWithRelations[] = await ctx.db.query.posts.findMany({

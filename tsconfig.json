@@ -1,5 +1,5 @@
 {
   "extends": "./packages/configuration/tsconfig.node.json",
-  "include": ["**/*.ts"],
+  "include": ["**/*.ts", "packages/app/server/services/rateLimiter"],
   "exclude": ["node_modules", "packages"]
 }

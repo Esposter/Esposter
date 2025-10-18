@@ -16,8 +16,8 @@ import { SURVEY_MODEL_FILENAME } from "@@/server/services/survey/constants";
 import { extractBlobUrls } from "@@/server/services/survey/extractBlobUrls";
 import { getPublishDirectory } from "@@/server/services/survey/getPublishDirectory";
 import { router } from "@@/server/trpc";
-import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
-import { rateLimitedProcedure } from "@@/server/trpc/procedure/rateLimitedProcedure";
+import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
+import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/survey/getCreatorProcedure";
 import {
   cloneBlobUrls,
@@ -93,11 +93,11 @@ const updateSurveyResponseInputSchema = surveyResponseEntitySchema.pick({
 export type UpdateSurveyResponseInput = z.infer<typeof updateSurveyResponseInputSchema>;
 
 export const surveyRouter = router({
-  count: authedProcedure.query(
+  count: standardAuthedProcedure.query(
     async ({ ctx }) =>
       (await ctx.db.select({ count: count() }).from(surveys).where(eq(surveys.userId, ctx.session.user.id)))[0].count,
   ),
-  createSurvey: authedProcedure.input(createSurveyInputSchema).mutation<Survey>(async ({ ctx, input }) => {
+  createSurvey: standardAuthedProcedure.input(createSurveyInputSchema).mutation<Survey>(async ({ ctx, input }) => {
     const newSurvey = (
       await ctx.db
         .insert(surveys)
@@ -114,7 +114,7 @@ export const surveyRouter = router({
     await useUpload(AzureContainer.SurveyAssets, blobName, newSurvey.model);
     return newSurvey;
   }),
-  createSurveyResponse: rateLimitedProcedure
+  createSurveyResponse: standardRateLimitedProcedure
     .input(createSurveyResponseInputSchema)
     .mutation<SurveyResponseEntity>(async ({ input }) => {
       const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
@@ -130,7 +130,7 @@ export const surveyRouter = router({
       await blockBlobClient.delete();
     },
   ),
-  deleteSurvey: authedProcedure.input(deleteSurveyInputSchema).mutation<Survey>(async ({ ctx, input }) => {
+  deleteSurvey: standardAuthedProcedure.input(deleteSurveyInputSchema).mutation<Survey>(async ({ ctx, input }) => {
     const deletedSurvey = (
       await ctx.db
         .delete(surveys)
@@ -192,7 +192,7 @@ export const surveyRouter = router({
     ...ctx.survey,
     model: await useUpdateBlobUrls(ctx.survey),
   })),
-  readSurveyModel: rateLimitedProcedure.input(readSurveyModelInputSchema).query<string>(async ({ ctx, input }) => {
+  readSurveyModel: standardRateLimitedProcedure.input(readSurveyModelInputSchema).query<string>(async ({ ctx, input }) => {
     const survey = await ctx.db.query.surveys.findFirst({ where: (surveys, { eq }) => eq(surveys.id, input) });
     if (!survey)
       throw new TRPCError({
@@ -201,14 +201,14 @@ export const surveyRouter = router({
       });
     return useUpdateBlobUrls(survey, true);
   }),
-  readSurveyResponse: rateLimitedProcedure
+  readSurveyResponse: standardRateLimitedProcedure
     .input(readSurveyResponseInputSchema)
     .query<null | SurveyResponseEntity>(async ({ input: { partitionKey, rowKey } }) => {
       const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
       const surveyResponse = await getEntity(surveyResponseClient, SurveyResponseEntity, partitionKey, rowKey);
       return surveyResponse;
     }),
-  readSurveys: authedProcedure
+  readSurveys: standardAuthedProcedure
     .input(readSurveysInputSchema)
     .query(async ({ ctx, input: { limit, offset, sortBy } }) => {
       const resultSurveys = await ctx.db.query.surveys.findMany({
@@ -223,7 +223,7 @@ export const surveyRouter = router({
       });
       return getOffsetPaginationData(resultSurveys, limit);
     }),
-  updateSurvey: authedProcedure
+  updateSurvey: standardAuthedProcedure
     .input(updateSurveyInputSchema)
     .mutation<Survey>(async ({ ctx, input: { id, ...rest } }) => {
       const updatedSurvey = (
@@ -277,7 +277,7 @@ export const surveyRouter = router({
       return updatedSurvey;
     },
   ),
-  updateSurveyResponse: rateLimitedProcedure
+  updateSurveyResponse: standardRateLimitedProcedure
     .input(updateSurveyResponseInputSchema)
     .mutation<SurveyResponseEntity>(async ({ input }) => {
       const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);

@@ -5,6 +5,7 @@ import { deleteWebhookInputSchema } from "#shared/models/db/webhook/DeleteWebhoo
 import { rotateTokenInputSchema } from "#shared/models/db/webhook/RotateTokenInput";
 import { updateWebhookInputSchema } from "#shared/models/db/webhook/UpdateWebhookInput";
 import { WEBHOOK_MAX_LENGTH } from "#shared/services/message/constants";
+import { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterType";
 import { generateToken } from "@@/server/services/auth/generateToken";
 import { router } from "@@/server/trpc";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/room/getCreatorProcedure";
@@ -18,7 +19,7 @@ const readWebhooksInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type ReadWebhooksInput = z.infer<typeof readWebhooksInputSchema>;
 
 export const webhookRouter = router({
-  createWebhook: getCreatorProcedure(createWebhookInputSchema, "roomId").mutation<Webhook>(
+  createWebhook: getCreatorProcedure(createWebhookInputSchema, "roomId", RateLimiterType.Slow).mutation<Webhook>(
     async ({ ctx, input: { name, roomId } }) => {
       const webhookCount = (
         await ctx.db.select({ count: count() }).from(webhooks).where(eq(webhooks.roomId, roomId))

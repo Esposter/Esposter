@@ -9,8 +9,8 @@ import { getCursorPaginationData } from "@@/server/services/pagination/cursor/ge
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { router } from "@@/server/trpc";
-import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
+import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { DatabaseEntityType, searchHistories, selectSearchHistorySchema } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -43,7 +43,7 @@ export const searchHistoryRouter = router({
       return newHistory;
     },
   ),
-  deleteSearchHistory: authedProcedure
+  deleteSearchHistory: standardAuthedProcedure
     .input(deleteSearchHistoryInputSchema)
     .mutation<SearchHistory>(async ({ ctx, input }) => {
       const deletedSearchHistory = (
@@ -73,7 +73,7 @@ export const searchHistoryRouter = router({
       return getCursorPaginationData(resultSearchHistories, limit, sortBy);
     },
   ),
-  updateSearchHistory: authedProcedure
+  updateSearchHistory: standardAuthedProcedure
     .input(updateSearchHistoryInputSchema)
     .mutation<SearchHistory>(async ({ ctx, input: { id, query } }) => {
       const updatedSearchHistory = (
