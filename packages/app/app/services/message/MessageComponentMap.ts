@@ -1,11 +1,12 @@
-import type { MessageEntity, User } from "@esposter/db-schema";
+import type { Creator } from "@/models/message/Creator";
+import type { MessageEntity } from "@esposter/db-schema";
 import type { Component } from "vue";
 
 import { MessageType } from "@esposter/db-schema";
 
 export interface MessageComponentProps<T extends MessageEntity = MessageEntity> {
   active?: boolean;
-  creator: User;
+  creator: Creator;
   isPreview?: boolean;
   isSameBatch?: boolean;
   message: T;

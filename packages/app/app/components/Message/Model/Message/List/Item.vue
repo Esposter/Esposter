@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { MessageEntity, User } from "@esposter/db-schema";
+import type { Creator } from "@/models/message/Creator";
+import type { MessageEntity } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
 import { MessageComponentMap } from "@/services/message/MessageComponentMap";
@@ -9,7 +10,7 @@ import { useReplyStore } from "@/store/message/reply";
 import { MessageType } from "@esposter/db-schema";
 
 interface MessageListItemProps {
-  creator: User;
+  creator: Creator;
   message: MessageEntity;
   nextMessage?: MessageEntity;
 }

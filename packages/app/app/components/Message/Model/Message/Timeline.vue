@@ -2,19 +2,17 @@
 import { dayjs } from "#shared/services/dayjs";
 
 interface MessageTimelineProps {
-  currentMessageDate: Date;
+  messageDate: Date;
   nextMessageDate?: Date;
 }
 
-const { currentMessageDate, nextMessageDate } = defineProps<MessageTimelineProps>();
-const currentMessageDateDayjs = computed(() => dayjs(currentMessageDate));
-const areDifferentDays = computed(
-  () => !nextMessageDate || !currentMessageDateDayjs.value.isSame(nextMessageDate, "day"),
-);
+const { messageDate, nextMessageDate } = defineProps<MessageTimelineProps>();
+const messageDateDayjs = computed(() => dayjs(messageDate));
+const areDifferentDays = computed(() => !nextMessageDate || !messageDateDayjs.value.isSame(nextMessageDate, "day"));
 const displayDate = computed(() => {
-  if (currentMessageDateDayjs.value.isToday()) return "Today";
-  else if (currentMessageDateDayjs.value.isYesterday()) return "Yesterday";
-  else return currentMessageDateDayjs.value.format("dddd, MMMM Do");
+  if (messageDateDayjs.value.isToday()) return "Today";
+  else if (messageDateDayjs.value.isYesterday()) return "Yesterday";
+  else return messageDateDayjs.value.format("dddd, MMMM Do");
 });
 </script>
 

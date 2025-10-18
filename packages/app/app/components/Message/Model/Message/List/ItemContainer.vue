@@ -2,24 +2,24 @@
 import type { MessageEntity } from "@esposter/db-schema";
 
 import { useMemberStore } from "@/store/message/member";
+import { MessageType } from "@esposter/db-schema";
 
 interface MessageListItemContainerProps {
-  currentMessage: MessageEntity;
+  message: MessageEntity;
   nextMessage?: MessageEntity;
 }
 
-const { currentMessage, nextMessage } = defineProps<MessageListItemContainerProps>();
+const { message, nextMessage } = defineProps<MessageListItemContainerProps>();
 const memberStore = useMemberStore();
 const { members } = storeToRefs(memberStore);
-const creator = computed(() => members.value.find(({ id }) => id === currentMessage.userId));
+const creator = computed(() =>
+  message.type === MessageType.Webhook ? message.appUser : members.value.find(({ id }) => id === message.userId),
+);
 </script>
 
 <template>
   <template v-if="creator">
-    <MessageModelMessageListItem :creator :message="currentMessage" :next-message />
-    <MessageModelMessageTimeline
-      :current-message-date="currentMessage.createdAt"
-      :next-message-date="nextMessage?.createdAt"
-    />
+    <MessageModelMessageListItem :creator :message :next-message />
+    <MessageModelMessageTimeline :message-date="message.createdAt" :next-message-date="nextMessage?.createdAt" />
   </template>
 </template>
