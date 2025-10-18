@@ -1,10 +1,8 @@
-import { useIsProduction } from "@@/server/composables/useIsProduction";
 import webpush from "web-push";
 
 export default defineNitroPlugin(() => {
   const runtimeConfig = useRuntimeConfig();
-  const isProduction = useIsProduction();
-  if (!(isProduction && new URL(runtimeConfig.public.baseUrl).protocol === "https:")) return;
+  if (new URL(runtimeConfig.public.baseUrl).hostname === "localhost") return;
   webpush.setVapidDetails(
     runtimeConfig.public.baseUrl,
     runtimeConfig.public.vapid.publicKey,
