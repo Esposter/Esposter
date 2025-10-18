@@ -440,6 +440,18 @@ describe("room", () => {
     `);
   });
 
+  test("fails read members by ids with wrong user", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await caller.createRoom({ name });
+    const userId = getMockSession().user.id;
+    await mockSessionOnce(mockContext.db);
+
+    await expect(
+      caller.readMembersByIds({ ids: [userId], roomId: newRoom.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+  });
+
   test("creates members", async () => {
     expect.hasAssertions();
 

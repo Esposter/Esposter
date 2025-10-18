@@ -222,4 +222,48 @@ describe("webhook", () => {
       webhookCaller.deleteWebhook({ id: newWebhook.id, roomId: newRoom.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
+
+  test("reads app users by ids", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newWebhook = await webhookCaller.createWebhook({ name, roomId: newRoom.id });
+    const users = await webhookCaller.readAppUsersByIds({ ids: [newWebhook.userId], roomId: newRoom.id });
+
+    expect(users[0].id).toBe(newWebhook.userId);
+  });
+
+  test("fails read app users by empty ids", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+
+    await expect(webhookCaller.readAppUsersByIds({ ids: [], roomId: newRoom.id })).rejects
+      .toThrowErrorMatchingInlineSnapshot(`
+      [TRPCError: [
+        {
+          "origin": "array",
+          "code": "too_small",
+          "minimum": 1,
+          "inclusive": true,
+          "path": [
+            "ids"
+          ],
+          "message": "Too small: expected array to have >=1 items"
+        }
+      ]]
+    `);
+  });
+
+  test("fails read app users by ids with wrong user", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newWebhook = await webhookCaller.createWebhook({ name, roomId: newRoom.id });
+    await mockSessionOnce(mockContext.db);
+
+    await expect(
+      webhookCaller.readAppUsersByIds({ ids: [newWebhook.userId], roomId: newRoom.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+  });
 });
