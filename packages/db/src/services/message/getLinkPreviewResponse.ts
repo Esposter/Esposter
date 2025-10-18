@@ -5,16 +5,16 @@ import { find } from "linkifyjs";
 import { parse } from "node-html-parser";
 import { lookup } from "node:dns";
 
-export const getLinkPreviewResponse = (message: string): Promise<LinkPreviewResponse | null> => {
+export const getLinkPreviewResponse = async (message: string): Promise<LinkPreviewResponse | null> => {
   const messageHtml = parse(message);
   const url = messageHtml.querySelector("a")?.getAttribute("href");
-  if (!url) return Promise.resolve(null);
+  if (!url) return null;
 
   const link = find(url, "url", { defaultProtocol: "https" }).find(Boolean);
-  if (!link) return Promise.resolve(null);
+  if (!link) return null;
 
   try {
-    return getLinkPreview(link.href, {
+    const linkPreviewResponse = await getLinkPreview(link.href, {
       resolveDNSHost: (url) =>
         new Promise((resolve, reject) => {
           const hostname = new URL(url).hostname;
@@ -28,7 +28,8 @@ export const getLinkPreviewResponse = (message: string): Promise<LinkPreviewResp
           });
         }),
     });
+    return linkPreviewResponse;
   } catch {
-    return Promise.resolve(null);
+    return null;
   }
 };
