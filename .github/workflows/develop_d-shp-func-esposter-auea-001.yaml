@@ -36,6 +36,7 @@ jobs:
           pnpm --filter @esposter/webhook... build
           popd
           pnpm --filter @esposter/webhook deploy ${{ env.OUTPUT_DIRECTORY }}
+          cp ${{ env.PACKAGE_PATH }}/host.json ${{ env.OUTPUT_DIRECTORY }}/host.json
 
       - name: 🔑 Azure CLI Login
         uses: azure/login@v2
