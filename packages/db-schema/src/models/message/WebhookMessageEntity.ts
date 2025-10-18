@@ -6,13 +6,14 @@ import { BaseMessageEntity } from "@/models/message/BaseMessageEntity";
 import { MessageType } from "@/models/message/MessageType";
 
 export class WebhookMessageEntity extends BaseMessageEntity<MessageType.Webhook> {
-  appUser!: PartialByKeys<Pick<AppUser, "id" | "image" | "name">, "image" | "name">;
+  appUser: PartialByKeys<Pick<AppUser, "id" | "image" | "name">, "image" | "name">;
   override type: MessageType.Webhook = MessageType.Webhook;
   // Webhook messages don't have a direct user author
   userId?: undefined;
 
   constructor(init: Partial<WebhookMessageEntity> & ToData<CompositeKeyEntity>) {
     super();
-    Object.assign(this, init);
+    Object.assign(this, init, { appUser: init.appUser });
+    this.appUser = init.appUser ?? { id: "" };
   }
 }
