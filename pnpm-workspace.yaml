@@ -78,7 +78,7 @@ catalog:
   "@vue-pdf-viewer/viewer": ^3.2.2
   "@vue/language-core": ^3.1.1
   "@vue/test-utils": ^2.4.6
-  "@vuepic/vue-datepicker": ^11.0.2
+  "@vuepic/vue-datepicker": ^11.0.3
   "@vueuse/core": ^13.9.0
   "@vueuse/nuxt": ^13.9.0
   ajv: ^8.17.1
