@@ -1,13 +1,8 @@
 <script setup lang="ts">
 import type { MessageComponentProps } from "@/services/message/MessageComponentMap";
-import type { MessageEntity } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
-
-interface MessageProps extends MessageComponentProps {
-  nextMessage?: MessageEntity;
-}
 
 defineSlots<{ default?: () => VNode }>();
 const {
@@ -16,8 +11,7 @@ const {
   isPreview = false,
   isSameBatch: baseIsSameBatch,
   message,
-  nextMessage,
-} = defineProps<MessageProps>();
+} = defineProps<MessageComponentProps>();
 const isSameBatch = computed(() => baseIsSameBatch && !isPreview);
 const displayCreatedAtShort = computed(() => dayjs(message.createdAt).format("H:mm"));
 const messageHtml = useMessageWithMentions(() => message.message);

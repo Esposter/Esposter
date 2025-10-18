@@ -62,7 +62,6 @@ watch(optionsMenu, (newOptionsMenu) => {
         :creator
         :is-same-batch
         :message
-        :next-message
         @mouseenter="isMessageActive = true"
         @mouseleave="isMessageActive = false"
         @contextmenu.prevent="
