@@ -1,9 +1,4 @@
 {
-  "applicationInsights": {
-    "samplingSettings": {
-      "excludedTypes": "Request"
-    }
-  },
   "concurrency": {
     "dynamicConcurrencyEnabled": true
   },
@@ -11,9 +6,16 @@
     "id": "Microsoft.Azure.Functions.ExtensionBundle",
     "version": "[4.*, 5.0.0)"
   },
-  "fileLoggingMode": "never",
-  "logLevel": {
-    "default": "Warning"
+  "logging": {
+    "applicationInsights": {
+      "samplingSettings": {
+        "excludedTypes": "Request"
+      }
+    },
+    "fileLoggingMode": "never",
+    "logLevel": {
+      "default": "Warning"
+    }
   },
   "version": "2.0"
 }
