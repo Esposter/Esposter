@@ -5,6 +5,9 @@ import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { usePushSubscriptionStore } from "@/store/pushSubscription";
+import { WebPubSubClient } from "@azure/web-pubsub-client";
+import { WebhookMessageEntity } from "@esposter/db-schema";
+import { jsonDateParse } from "@esposter/shared";
 
 export const useMessageSubscribables = () => {
   const { $trpc } = useNuxtApp();
@@ -18,14 +21,17 @@ export const useMessageSubscribables = () => {
   const createMessageUnsubscribable = ref<Unsubscribable>();
   const updateMessageUnsubscribable = ref<Unsubscribable>();
   const deleteMessageUnsubscribable = ref<Unsubscribable>();
+  const webPubSubClient = ref<WebPubSubClient>();
 
   const unsubscribe = () => {
     createMessageUnsubscribable.value?.unsubscribe();
     updateMessageUnsubscribable.value?.unsubscribe();
     deleteMessageUnsubscribable.value?.unsubscribe();
+    webPubSubClient.value?.stop();
+    webPubSubClient.value = undefined;
   };
 
-  const { trigger } = watchTriggerable(pushSubscription, (newPushSubscription) => {
+  const { trigger } = watchTriggerable(pushSubscription, async (newPushSubscription) => {
     unsubscribe();
 
     if (!currentRoomId.value) return;
@@ -58,10 +64,21 @@ export const useMessageSubscribables = () => {
         }),
       },
     );
+    const clientAccessUrl = await $trpc.message.getWebPubSubClientAccessUrl.query({ roomId });
+    webPubSubClient.value = new WebPubSubClient(clientAccessUrl);
+    await webPubSubClient.value.start();
+    await webPubSubClient.value.joinGroup(roomId);
+    webPubSubClient.value.on(
+      "group-message",
+      getSynchronizedFunction(async ({ message: { data } }) => {
+        const entity = new WebhookMessageEntity(jsonDateParse(data as string));
+        await storeCreateMessage(entity);
+      }),
+    );
   });
 
-  onMounted(() => {
-    trigger();
+  onMounted(async () => {
+    await trigger();
   });
 
   onUnmounted(() => {

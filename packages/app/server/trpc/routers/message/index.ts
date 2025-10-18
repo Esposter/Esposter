@@ -1,4 +1,3 @@
-import type { CreateMessageEvent } from "#shared/models/message/events/CreateMessageEvent";
 import type { AzureUpdateEntity, Clause, FileSasEntity, MessageEntity } from "@esposter/db-schema";
 
 import { createTypingInputSchema } from "#shared/models/db/message/CreateTypingInput";
@@ -11,9 +10,8 @@ import { MAX_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagin
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { useWebPubSubClient } from "@@/server/composables/azure/webPubSub/useWebPubSubClient";
+import { useWebPubSubServiceClient } from "@@/server/composables/azure/webPubSub/useWebPubSubServiceClient";
 import { useSendCreateMessageNotification } from "@@/server/composables/message/useSendCreateMessageNotification";
-import { AsyncQueue } from "@@/server/models/AsyncQueue";
 import { pushSubscriptionSchema } from "@@/server/models/PushSubscription";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { on } from "@@/server/services/events/on";
@@ -44,6 +42,7 @@ import {
   AzureContainer,
   AzureEntityType,
   AzureTable,
+  AzureWebPubSubHub,
   BinaryOperator,
   DatabaseEntityType,
   FileEntity,
@@ -57,15 +56,8 @@ import {
   StandardMessageEntity,
   StandardMessageEntityPropertyNames,
   standardMessageEntitySchema,
-  WebhookMessageEntity,
 } from "@esposter/db-schema";
-import {
-  InvalidOperationError,
-  ItemMetadataPropertyNames,
-  jsonDateParse,
-  NotFoundError,
-  Operation,
-} from "@esposter/shared";
+import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation } from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
@@ -147,6 +139,9 @@ export type PinMessageInput = z.infer<typeof pinMessageInputSchema>;
 export const unpinMessageInputSchema = standardMessageEntitySchema.pick({ partitionKey: true, rowKey: true });
 export type UnpinMessageInput = z.infer<typeof unpinMessageInputSchema>;
 
+const getWebPubSubClientAccessUrlInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
+export type GetWebPubSubClientAccessUrlInput = z.infer<typeof getWebPubSubClientAccessUrlInputSchema>;
+
 export const messageRouter = router({
   createMessage: getMemberProcedure(standardCreateMessageInputSchema, "roomId").mutation<MessageEntity>(
     async ({ ctx, input }) => {
@@ -174,6 +169,7 @@ export const messageRouter = router({
       return newMessageEntity;
     },
   ),
+
   createTyping: getMemberProcedure(createTypingInputSchema, "roomId")
     // Query instead of mutation as there are no concurrency issues with ordering for simply emitting
     .query(({ ctx, input }) => {
@@ -292,6 +288,16 @@ export const messageRouter = router({
     const containerClient = await useContainerClient(AzureContainer.MessageAssets);
     return generateUploadFileSasEntities(containerClient, files, roomId);
   }),
+  getWebPubSubClientAccessUrl: getMemberProcedure(getWebPubSubClientAccessUrlInputSchema, "roomId").query(
+    async ({ ctx, input: { roomId } }) => {
+      const webPubSubServiceClient = useWebPubSubServiceClient(AzureWebPubSubHub.Messages);
+      const { url } = await webPubSubServiceClient.getClientAccessToken({
+        roles: [`webPubSub.joinLeaveGroup.${roomId}`],
+        userId: ctx.session.user.id,
+      });
+      return url;
+    },
+  ),
   onCreateMessage: getMemberProcedure(onstandardCreateMessageInputSchema, "roomId").subscription(async function* ({
     ctx,
     input: { lastEventId, pushSubscription, roomId },
@@ -320,26 +326,9 @@ export const messageRouter = router({
       }
     }
 
-    const messageQueue = new AsyncQueue<CreateMessageEvent>(signal);
-    (async () => {
-      for await (const [data] of on(messageEventEmitter, "createMessage", { signal })) messageQueue.push(data);
-    })();
-
-    const webPubSubClient = await useWebPubSubClient([roomId], signal);
-    webPubSubClient.on("group-message", ({ message: { data } }) => {
-      const webhookMessageEntity = new WebhookMessageEntity(jsonDateParse(data as string));
-      messageQueue.push([
-        [webhookMessageEntity],
-        {
-          image: webhookMessageEntity.appUser.image,
-          name: webhookMessageEntity.appUser.name,
-        },
-      ]);
-    });
-
     const sendCreateMessageNotification = useSendCreateMessageNotification(pushSubscription, roomId);
 
-    for await (const [data, options] of messageQueue) {
+    for await (const [[data, options]] of on(messageEventEmitter, "createMessage", { signal })) {
       const dataToYield: MessageEntity[] = [];
       const { image, name } = options;
 
