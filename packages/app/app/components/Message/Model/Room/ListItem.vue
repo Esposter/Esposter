@@ -31,7 +31,7 @@ const isActive = computed(() => room.id === currentRoomId.value);
     <MessageModelRoomConfirmDeleteDialog :room-id="room.id" :creator-id="room.userId">
       <template #default="{ updateIsOpen, tooltipProps }">
         <v-btn
-          v-show="isHovering"
+          v-show="isActive || isHovering"
           absolute
           top="1/2"
           right-0

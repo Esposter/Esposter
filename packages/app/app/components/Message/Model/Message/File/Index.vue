@@ -42,7 +42,7 @@ const isActive = ref(false);
     @mouseenter="isActive = true"
     @mouseleave="isActive = false"
   >
-    <MessageFileRenderer :file :is-preview :url />
+    <MessageModelFileRenderer :file :is-preview :url />
     <div
       v-if="!message.isForward && isCreator && (columnLayout.length > 1 || !EMPTY_TEXT_REGEX.test(message.message))"
       v-show="isActive"

@@ -10,11 +10,16 @@ const { dialog } = storeToRefs(settingsStore);
 <template>
   <v-dialog v-model="dialog" fullscreen>
     <template #activator="{ props: dialogProps }">
-      <v-tooltip :text="`${DatabaseEntityType.User} Settings`">
+      <v-tooltip :text="`${DatabaseEntityType.Room} Settings`">
         <template #activator="{ props: tooltipProps }">
           <v-btn icon="mdi-cog" size="small" :="mergeProps(dialogProps, tooltipProps)" />
         </template>
       </v-tooltip>
     </template>
+    <v-app>
+      <MessageModelRoomSettingsLeftSideBar />
+      <MessageModelRoomSettingsRightSideBar />
+      <MessageModelRoomSettingsContent />
+    </v-app>
   </v-dialog>
 </template>

@@ -42,7 +42,7 @@ const menuItems: Item[] = [
       </v-card-title>
       <v-card-text pb-0>
         <v-card h-full rd-4>
-          <MessageFileRenderer :file :url="uploadFileUrl.url" is-preview />
+          <MessageModelFileRenderer :file :url="uploadFileUrl.url" is-preview />
         </v-card>
       </v-card-text>
       <v-card v-if="progressPercentage < 100" pt-4>

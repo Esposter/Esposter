@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useSettingsStore } from "@/store/message/settings";
+import { useSettingsStore } from "@/store/message/room/settings";
 
 const settingsStore = useSettingsStore();
 const { dialog } = storeToRefs(settingsStore);

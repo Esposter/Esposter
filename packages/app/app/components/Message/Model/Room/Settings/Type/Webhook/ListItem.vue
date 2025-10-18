@@ -31,10 +31,10 @@ const source = computed(() => `${functionAppBaseUrl}/api/webhooks/${webhook.id}/
     />
     <template #append>
       <StyledClipboardIconButton :source text="Copy Webhook URL" />
-      <MessageLeftSideBarSettingsTypeWebhookRotateTokenButton :id="webhook.id" />
-      <MessageLeftSideBarSettingsTypeWebhookDeleteDialogButton :webhook />
+      <MessageModelRoomSettingsTypeWebhookRotateTokenButton :id="webhook.id" />
+      <MessageModelRoomSettingsTypeWebhookDeleteDialogButton :webhook />
       <v-spacer />
-      <MessageLeftSideBarSettingsTypeWebhookActiveSwitch :webhook />
+      <MessageModelRoomSettingsTypeWebhookActiveSwitch :webhook />
     </template>
   </v-list-item>
 </template>

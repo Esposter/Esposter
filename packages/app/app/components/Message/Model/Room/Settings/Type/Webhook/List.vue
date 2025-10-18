@@ -8,9 +8,9 @@ const { items } = storeToRefs(webhookStore);
 <template>
   <v-list>
     <v-list-subheader>Webhooks</v-list-subheader>
-    <MessageLeftSideBarSettingsTypeWebhookNoData v-if="items.length === 0" />
+    <MessageModelRoomSettingsTypeWebhookNoData v-if="items.length === 0" />
     <template v-else>
-      <MessageLeftSideBarSettingsTypeWebhookListItem v-for="webhook of items" :key="webhook.id" :webhook />
+      <MessageModelRoomSettingsTypeWebhookListItem v-for="webhook of items" :key="webhook.id" :webhook />
     </template>
   </v-list>
 </template>

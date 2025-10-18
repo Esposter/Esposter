@@ -2,7 +2,7 @@ import type { CreateWebhookInput } from "#shared/models/db/webhook/CreateWebhook
 import type { DeleteWebhookInput } from "#shared/models/db/webhook/DeleteWebhookInput";
 import type { RotateTokenInput } from "#shared/models/db/webhook/RotateTokenInput";
 import type { UpdateWebhookInput } from "#shared/models/db/webhook/UpdateWebhookInput";
-import type { Webhook } from "@esposter/db-schema";
+import type { Room, Webhook } from "@esposter/db-schema";
 import type { Except } from "type-fest";
 
 import { createOperationData } from "@/services/shared/createOperationData";
@@ -23,7 +23,7 @@ export const useWebhookStore = defineStore("message/webhook", () => {
     if (!roomStore.currentRoomId) return;
     items.value = await $trpc.webhook.readWebhooks.query({ roomId: roomStore.currentRoomId });
   };
-  const createWebhook = async (input: Except<CreateWebhookInput, "roomId">) => {
+  const createWebhook = async (roomId: Room["id"], input: Except<CreateWebhookInput, "roomId">) => {
     if (!roomStore.currentRoomId) return;
     const newWebhook = await $trpc.webhook.createWebhook.mutate({ ...input, roomId: roomStore.currentRoomId });
     storeCreateWebhook(newWebhook, true);
