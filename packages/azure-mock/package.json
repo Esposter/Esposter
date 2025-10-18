@@ -34,7 +34,10 @@
     "@esposter/db": "workspace:*",
     "@esposter/db-schema": "workspace:*",
     "@esposter/shared": "workspace:*",
-    "fast-deep-equal": "catalog:"
+    "drizzle-orm": "catalog:",
+    "drizzle-zod": "catalog:",
+    "fast-deep-equal": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@azure/core-http-compat": "catalog:",
