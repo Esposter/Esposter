@@ -5,6 +5,7 @@ import { dts } from "rolldown-plugin-dts";
 
 const rolldownConfiguration: ConfigExport = defineConfig([
   {
+    external: ["@esposter/db-schema"],
     input: "src/index.ts",
     output: { dir: "dist", format: "es" },
     plugins: [

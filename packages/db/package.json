@@ -56,5 +56,8 @@
   },
   "devDependencies": {
     "@types/mime-types": "catalog:"
+  },
+  "peerDependencies": {
+    "@esposter/db-schema": "workspace:*"
   }
 }
