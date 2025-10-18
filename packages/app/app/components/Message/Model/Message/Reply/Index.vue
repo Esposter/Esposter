@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useReplyStore } from "@/store/message/reply";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
+import { MessageType } from "@esposter/db-schema";
 
 interface ReplyProps {
   rowKey: string;
@@ -21,6 +22,7 @@ const scrollToMessage = useScrollToMessage();
     <template v-if="reply && creator">
       <StyledAvatar :image="creator.image" :name="creator.name" :avatar-props="{ size: 'x-small' }" />
       <div flex items-center gap-x-1>
+        <MessageModelMessageAppUserBadge v-if="reply.type === MessageType.Webhook" />
         <span text-xs text-gray font-bold>{{ creator.name }}</span>
         <v-icon v-if="reply.isForward" icon="mdi-share" size="small" />
         <span v-if="!EMPTY_TEXT_REGEX.test(reply.message)" text-xs v-html="reply.message" />

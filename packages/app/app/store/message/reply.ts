@@ -13,6 +13,7 @@ export const useReplyStore = defineStore("message/reply", () => {
   });
 
   const dataStore = useDataStore();
+  // These are all the messages that have been replied to
   const { data: replyMap } = useDataMap(() => roomStore.currentRoomId, new Map<string, MessageEntity>());
   MessageHookMap[Operation.Create].push(({ replyRowKey }) => {
     if (!replyRowKey) return;
