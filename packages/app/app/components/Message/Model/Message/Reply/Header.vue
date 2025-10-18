@@ -1,16 +1,14 @@
 <script setup lang="ts">
-import { useMemberStore } from "@/store/message/member";
+import type { MessageEntity } from "@esposter/db-schema";
 
 interface ReplyHeaderProps {
-  userId: string;
+  reply: MessageEntity;
 }
 
-const { userId } = defineProps<ReplyHeaderProps>();
+const { reply } = defineProps<ReplyHeaderProps>();
 const emit = defineEmits<{ close: [] }>();
 const { text } = useColors();
-const memberStore = useMemberStore();
-const { members } = storeToRefs(memberStore);
-const creator = computed(() => members.value.find(({ id }) => id === userId));
+const creator = useCreator(() => reply);
 </script>
 
 <template>
