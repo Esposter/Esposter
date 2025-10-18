@@ -23,9 +23,9 @@ const messageHtml = useMessageWithMentions(() => message.message);
       <div v-if="message.replyRowKey" relative flex flex-col items-center>
         <MessageModelMessageReplySpine absolute top-0 mt-2.5 ml-7.5 :reply-row-key="message.replyRowKey" />
         <!-- @TODO: Fetch app users in the future as the source of truth -->
-        <StyledAvatar mt-6 :image="creator.image" :name="creator.name ?? ''" />
+        <StyledAvatar mt-6 :image="creator.image" :name="creator.name" />
       </div>
-      <StyledAvatar v-else-if="!isSameBatch" :image="creator.image" :name="creator.name ?? ''" />
+      <StyledAvatar v-else-if="!isSameBatch" :image="creator.image" :name="creator.name" />
       <span v-else :op="active ? undefined : 0" text-center text-gray text-xs>
         {{ displayCreatedAtShort }}
       </span>

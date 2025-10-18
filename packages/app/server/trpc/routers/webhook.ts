@@ -5,18 +5,33 @@ import { deleteWebhookInputSchema } from "#shared/models/db/webhook/DeleteWebhoo
 import { rotateTokenInputSchema } from "#shared/models/db/webhook/RotateTokenInput";
 import { updateWebhookInputSchema } from "#shared/models/db/webhook/UpdateWebhookInput";
 import { WEBHOOK_MAX_LENGTH } from "#shared/services/message/constants";
+import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterType";
 import { generateToken } from "@@/server/services/auth/generateToken";
 import { router } from "@@/server/trpc";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/room/getCreatorProcedure";
-import { appUsers, DatabaseEntityType, selectRoomSchema, WebhookRelations, webhooks } from "@esposter/db-schema";
+import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
+import {
+  appUsers,
+  DatabaseEntityType,
+  selectAppUserSchema,
+  selectRoomSchema,
+  WebhookRelations,
+  webhooks,
+} from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, count, eq } from "drizzle-orm";
+import { and, count, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 
 const readWebhooksInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type ReadWebhooksInput = z.infer<typeof readWebhooksInputSchema>;
+
+const readAppUsersByIdsInputSchema = z.object({
+  ids: selectAppUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
+  roomId: selectRoomSchema.shape.id,
+});
+export type ReadAppUsersByIdsInput = z.infer<typeof readAppUsersByIdsInputSchema>;
 
 export const webhookRouter = router({
   createWebhook: getCreatorProcedure(createWebhookInputSchema, "roomId", RateLimiterType.Slow).mutation<Webhook>(
@@ -81,6 +96,16 @@ export const webhookRouter = router({
           message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.AppUser, webhook.userId).message,
         });
       return webhook;
+    },
+  ),
+  readAppUsersByIds: getMemberProcedure(readAppUsersByIdsInputSchema, "roomId").query(
+    async ({ ctx, input: { ids, roomId } }) => {
+      const rows = await ctx.db
+        .select({ appUser: appUsers })
+        .from(appUsers)
+        .innerJoin(webhooks, eq(webhooks.userId, appUsers.id))
+        .where(and(eq(webhooks.roomId, roomId), inArray(appUsers.id, ids)));
+      return rows.map(({ appUser }) => appUser);
     },
   ),
   readWebhooks: getCreatorProcedure(readWebhooksInputSchema, "roomId").query(({ ctx, input: { roomId } }) =>

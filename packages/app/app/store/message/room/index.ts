@@ -2,7 +2,7 @@ import type { CreateRoomInput } from "#shared/models/db/room/CreateRoomInput";
 import type { DeleteRoomInput } from "#shared/models/db/room/DeleteRoomInput";
 import type { JoinRoomInput } from "#shared/models/db/room/JoinRoomInput";
 import type { LeaveRoomInput } from "#shared/models/db/room/LeaveRoomInput";
-import type { Room, User } from "@esposter/db-schema";
+import type { AppUser, Room, User } from "@esposter/db-schema";
 
 import { RoutePath } from "#shared/models/router/RoutePath";
 import { dayjs } from "#shared/services/dayjs";
@@ -40,6 +40,11 @@ export const useRoomStore = defineStore("message/room", () => {
     getDataMap: getMemberDataMap,
     setDataMap: setMemberDataMap,
   } = useDataMap(() => currentRoomId.value, new Map<string, User>());
+  const {
+    data: appUserMap,
+    getDataMap: getAppUserDataMap,
+    setDataMap: setAppUserDataMap,
+  } = useDataMap(() => currentRoomId.value, new Map<string, AppUser>());
   const currentRoom = computed(() => {
     if (!currentRoomId.value) return null;
     return rooms.value.find(({ id }) => id === currentRoomId.value) ?? null;
@@ -79,12 +84,15 @@ export const useRoomStore = defineStore("message/room", () => {
     ...restOperationData,
     rooms,
     ...restData,
+    appUserMap,
     currentRoom,
     currentRoomId,
     currentRoomName,
+    getAppUserDataMap,
     getMemberDataMap,
     memberMap,
     placeholderRoomName,
+    setAppUserDataMap,
     setMemberDataMap,
   };
 });

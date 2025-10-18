@@ -9,6 +9,7 @@ import {
   getReverseTickedTimestamp,
   StandardMessageEntity,
   StandardMessageEntityPropertyNames,
+  WebhookMessageEntity,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -22,13 +23,21 @@ export const useReadMessages = () => {
   const { hasMoreNewer, nextCursorNewer } = storeToRefs(dataStore);
   const { unshiftMessages } = dataStore;
   const readUsers = useReadUsers();
+  const readAppUsers = useReadAppUsers();
   const readReplies = useReadReplies();
   const readFiles = useReadFiles();
   const readEmojis = useReadEmojis();
   const readMetadata = async (messages: MessageEntity[]) => {
-    const standardMessages = messages.filter((message) => message instanceof StandardMessageEntity);
+    const webhookMessages: WebhookMessageEntity[] = [];
+    const standardMessages: StandardMessageEntity[] = [];
+
+    for (const message of messages)
+      if (message instanceof WebhookMessageEntity) webhookMessages.push(message);
+      else standardMessages.push(message);
+
     await Promise.all([
       readUsers(standardMessages.map(({ userId }) => userId)),
+      readAppUsers(webhookMessages.map(({ appUser }) => appUser.id)),
       readReplies([
         ...new Set(standardMessages.map(({ replyRowKey }) => replyRowKey).filter((value) => value !== undefined)),
       ]),
