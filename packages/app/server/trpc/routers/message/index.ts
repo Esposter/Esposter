@@ -13,6 +13,7 @@ import { useTableClient } from "@@/server/composables/azure/table/useTableClient
 import { useWebPubSubServiceClient } from "@@/server/composables/azure/webPubSub/useWebPubSubServiceClient";
 import { useSendCreateMessageNotification } from "@@/server/composables/message/useSendCreateMessageNotification";
 import { pushSubscriptionSchema } from "@@/server/models/PushSubscription";
+import { getDeviceId } from "@@/server/services/auth/getDeviceId";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { on } from "@@/server/services/events/on";
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
@@ -293,7 +294,7 @@ export const messageRouter = router({
       const webPubSubServiceClient = useWebPubSubServiceClient(AzureWebPubSubHub.Messages);
       const { url } = await webPubSubServiceClient.getClientAccessToken({
         roles: [`webPubSub.joinLeaveGroup.${roomId}`],
-        userId: ctx.session.user.id,
+        userId: getDeviceId({ sessionId: ctx.session.session.id, userId: ctx.session.user.id }),
       });
       return url;
     },
