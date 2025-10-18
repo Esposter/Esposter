@@ -64,10 +64,14 @@ export const useMessageSubscribables = () => {
         }),
       },
     );
-    const clientAccessUrl = await $trpc.message.getWebPubSubClientAccessUrl.query({ roomId });
-    webPubSubClient.value = new WebPubSubClient(clientAccessUrl);
+    webPubSubClient.value = new WebPubSubClient({
+      getClientAccessUrl: (options) =>
+        $trpc.message.getWebPubSubClientAccessUrl.query(
+          { roomId },
+          { signal: options?.abortSignal as AbortSignal | undefined },
+        ),
+    });
     await webPubSubClient.value.start();
-    await webPubSubClient.value.joinGroup(roomId);
     webPubSubClient.value.on(
       "group-message",
       getSynchronizedFunction(async ({ message: { data } }) => {

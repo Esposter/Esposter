@@ -290,9 +290,11 @@ export const messageRouter = router({
     return generateUploadFileSasEntities(containerClient, files, roomId);
   }),
   getWebPubSubClientAccessUrl: getMemberProcedure(getWebPubSubClientAccessUrlInputSchema, "roomId").query(
-    async ({ ctx, input: { roomId } }) => {
+    async ({ ctx, input: { roomId }, signal }) => {
       const webPubSubServiceClient = useWebPubSubServiceClient(AzureWebPubSubHub.Messages);
       const { url } = await webPubSubServiceClient.getClientAccessToken({
+        abortSignal: signal,
+        groups: [roomId],
         roles: [`webPubSub.joinLeaveGroup.${roomId}`],
         userId: getDeviceId({ sessionId: ctx.session.session.id, userId: ctx.session.user.id }),
       });
