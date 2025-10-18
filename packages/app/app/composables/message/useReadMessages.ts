@@ -24,7 +24,6 @@ export const useReadMessages = () => {
   const { unshiftMessages } = dataStore;
   const readUsers = useReadUsers();
   const readAppUsers = useReadAppUsers();
-  const readForwards = useReadForwards();
   const readReplies = useReadReplies();
   const readFiles = useReadFiles();
   const readEmojis = useReadEmojis();
@@ -36,7 +35,6 @@ export const useReadMessages = () => {
       if (message instanceof WebhookMessageEntity) webhookMessages.push(message);
       else standardMessages.push(message);
 
-    readForwards(standardMessages);
     await Promise.all([
       readUsers(standardMessages.map(({ userId }) => userId)),
       readAppUsers(webhookMessages.map(({ appUser }) => appUser.id)),
