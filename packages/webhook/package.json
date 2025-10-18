@@ -42,5 +42,8 @@
     "postgres": "catalog:",
     "rate-limiter-flexible": "catalog:",
     "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@esposter/configuration": "workspace:*"
   }
 }

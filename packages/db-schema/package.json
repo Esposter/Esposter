@@ -47,16 +47,17 @@
   },
   "dependencies": {
     "@esposter/shared": "workspace:*",
-    "drizzle-kit": "catalog:",
     "drizzle-orm": "catalog:",
     "drizzle-zod": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@azure/data-tables": "catalog:",
-    "@azure/storage-blob": "catalog:"
+    "@azure/storage-blob": "catalog:",
+    "drizzle-kit": "catalog:"
   },
   "peerDependencies": {
+    "@esposter/shared": "workspace:*",
     "drizzle-orm": "catalog:",
     "drizzle-zod": "catalog:",
     "zod": "catalog:"

@@ -1275,9 +1275,6 @@ importers:
       '@esposter/shared':
         specifier: workspace:*
         version: link:../shared
-      drizzle-kit:
-        specifier: 'catalog:'
-        version: 0.31.5
       drizzle-orm:
         specifier: 'catalog:'
         version: 0.44.6(@electric-sql/pglite@0.3.11)(kysely@0.28.8)(postgres@3.4.7)
@@ -1294,6 +1291,9 @@ importers:
       '@azure/storage-blob':
         specifier: 'catalog:'
         version: 12.29.1
+      drizzle-kit:
+        specifier: 'catalog:'
+        version: 0.31.5
 
   packages/parse-tmx:
     dependencies:
@@ -1392,6 +1392,10 @@ importers:
       zod:
         specifier: 'catalog:'
         version: 4.1.12
+    devDependencies:
+      '@esposter/configuration':
+        specifier: workspace:*
+        version: link:../configuration
 
   packages/xml2js:
     dependencies:
