@@ -12,7 +12,7 @@ const roomStore = useRoomStore();
 const { currentRoomName } = storeToRefs(roomStore);
 const dataStore = useDataStore();
 const { sendMessage } = dataStore;
-const { items, typings } = storeToRefs(dataStore);
+const { typings } = storeToRefs(dataStore);
 const typingMessage = computed(() => getTypingMessage(typings.value.map(({ username }) => username)));
 const keyboardExtension = new Extension({
   addKeyboardShortcuts() {
@@ -28,8 +28,8 @@ const mentionExtension = useMentionExtension();
 const inputStore = useInputStore();
 const { input } = storeToRefs(inputStore);
 const replyStore = useReplyStore();
-const { rowKey } = storeToRefs(replyStore);
-const reply = computed(() => items.value.find((m) => m.rowKey === rowKey.value));
+const { replyMap, rowKey } = storeToRefs(replyStore);
+const reply = computed(() => (rowKey.value ? replyMap.value.get(rowKey.value) : undefined));
 const uploadFiles = useUploadFiles();
 </script>
 

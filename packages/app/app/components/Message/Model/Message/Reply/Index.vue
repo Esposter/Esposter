@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useReplyStore } from "@/store/message/reply";
-import { useRoomStore } from "@/store/message/room";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
 interface ReplyProps {
@@ -9,12 +8,10 @@ interface ReplyProps {
 
 const { rowKey } = defineProps<ReplyProps>();
 const { text } = useColors();
-const roomStore = useRoomStore();
-const { memberMap } = storeToRefs(roomStore);
 const replyStore = useReplyStore();
 const { isIndicatorActive, replyMap } = storeToRefs(replyStore);
 const reply = computed(() => replyMap.value.get(rowKey));
-const creator = computed(() => (reply.value?.userId ? memberMap.value.get(reply.value.userId) : undefined));
+const creator = useCreator(reply);
 const color = computed(() => (isIndicatorActive.value ? text.value : "gray"));
 const scrollToMessage = useScrollToMessage();
 </script>
