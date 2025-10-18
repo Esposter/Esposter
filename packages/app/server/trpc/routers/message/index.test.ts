@@ -53,7 +53,7 @@ describe("message", () => {
     await mockContext.db.delete(rooms);
   });
 
-  test("reads empty messages", async () => {
+  test("reads empty", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
@@ -62,7 +62,7 @@ describe("message", () => {
     expect(readMessages).toStrictEqual(getCursorPaginationData([], 0, []));
   });
 
-  test("reads messages", async () => {
+  test("reads", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
@@ -74,7 +74,7 @@ describe("message", () => {
     expect(readMessages.items[0].message).toBe(newMessage.message);
   });
 
-  test("reads messages with cursor and includes value", async () => {
+  test("reads with cursor and includes value", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
@@ -98,7 +98,7 @@ describe("message", () => {
     expect(readMessages.items[1].rowKey).toBe(secondMessage.rowKey);
   });
 
-  test("reads messages in ascending order with cursor and includes value", async () => {
+  test("reads in ascending order with cursor and includes value", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
@@ -134,7 +134,7 @@ describe("message", () => {
     expect(readMessages.items[1].rowKey).toBe(secondMessage.rowKey);
   });
 
-  test("fails read messages with non-existent room id", async () => {
+  test("fails read with non-existent room id", async () => {
     expect.hasAssertions();
 
     const roomId = crypto.randomUUID();
@@ -144,7 +144,7 @@ describe("message", () => {
     );
   });
 
-  test("fails read messages with non-existent member", async () => {
+  test("fails read with non-existent member", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
@@ -155,7 +155,7 @@ describe("message", () => {
     );
   });
 
-  test("reads messages by row keys", async () => {
+  test("reads by row keys", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
@@ -170,7 +170,7 @@ describe("message", () => {
     expect(readMessages[0].message).toBe(message);
   });
 
-  test("fails read messages by row keys with non-existent room id", async () => {
+  test("fails read by row keys with non-existent room id", async () => {
     expect.hasAssertions();
 
     const roomId = crypto.randomUUID();
@@ -180,7 +180,7 @@ describe("message", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
-  test("fails read messages by row keys with non-existent member", async () => {
+  test("fails read by row keys with non-existent member", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });

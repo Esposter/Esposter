@@ -38,7 +38,9 @@ export const useReadMessages = () => {
     await Promise.all([
       readUsers(standardMessages.map(({ userId }) => userId)),
       readAppUsers(webhookMessages.map(({ appUser }) => appUser.id)),
-      readReplies([...new Set(messages.map(({ replyRowKey }) => replyRowKey).filter((value) => value !== undefined))]),
+      readReplies([
+        ...new Set(standardMessages.map(({ replyRowKey }) => replyRowKey).filter((value) => value !== undefined)),
+      ]),
       readFiles(standardMessages.flatMap(({ files }) => files)),
       readEmojis(messages.map(({ rowKey }) => rowKey)),
     ]);

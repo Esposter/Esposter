@@ -36,7 +36,7 @@ import {
   getBlobName,
   getEntity,
   getTableNullClause,
-  getTopNEntities,
+  getTopNEntitiesByType,
   serializeClauses,
   updateEntity,
 } from "@esposter/db";
@@ -49,6 +49,7 @@ import {
   FileEntity,
   fileEntitySchema,
   getReverseTickedTimestamp,
+  MessageEntityMap,
   MessageType,
   rooms,
   selectRoomSchema,
@@ -422,7 +423,7 @@ export const messageRouter = router({
           operator: BinaryOperator.eq,
           value: rowKey,
         });
-      return getTopNEntities(messageClient, rowKeys.length, StandardMessageEntity, {
+      return getTopNEntitiesByType(messageClient, rowKeys.length, MessageEntityMap, {
         filter: serializeClauses(clauses),
       });
     },
