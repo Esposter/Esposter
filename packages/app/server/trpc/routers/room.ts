@@ -331,25 +331,29 @@ export const roomRouter = router({
       const wheres: (SQL | undefined)[] = [eq(usersToRooms.roomId, roomId)];
       if (cursor) wheres.push(getCursorWhere(users, cursor, sortBy));
       if (filter?.name) wheres.push(ilike(users.name, `%${filter.name}%`));
-      const joinedUsers = await ctx.db
-        .select()
+
+      const rows = await ctx.db
+        .select({ user: users })
         .from(users)
         .innerJoin(usersToRooms, eq(usersToRooms.userId, users.id))
         .where(and(...wheres))
         .orderBy(...parseSortByToSql(users, sortBy))
         .limit(limit + 1);
-      const resultUsers = joinedUsers.map(({ users }) => users);
-      return getCursorPaginationData(resultUsers, limit, sortBy);
+      return getCursorPaginationData(
+        rows.map(({ user }) => user),
+        limit,
+        sortBy,
+      );
     },
   ),
   readMembersByIds: getMemberProcedure(readMembersByIdsInputSchema, "roomId").query(
     async ({ ctx, input: { ids, roomId } }) => {
-      const joinedUsers = await ctx.db
-        .select()
+      const rows = await ctx.db
+        .select({ user: users })
         .from(users)
         .innerJoin(usersToRooms, eq(usersToRooms.userId, users.id))
         .where(and(eq(usersToRooms.roomId, roomId), inArray(users.id, ids)));
-      return joinedUsers.map(({ users }) => users);
+      return rows.map(({ user }) => user);
     },
   ),
   readRoom: standardAuthedProcedure.input(readRoomInputSchema).query<null | Room>(async ({ ctx, input }) => {
@@ -382,16 +386,16 @@ export const roomRouter = router({
       return room;
     }
     // By default, we will return the latest updated room
-    const joinedRoom = (
+    const row = (
       await ctx.db
-        .select()
+        .select({ room: rooms })
         .from(rooms)
         .innerJoin(usersToRooms, eq(usersToRooms.roomId, rooms.id))
         .where(eq(usersToRooms.userId, ctx.session.user.id))
         .orderBy(desc(rooms.updatedAt))
         .limit(1)
     ).find(Boolean);
-    return joinedRoom?.rooms ?? null;
+    return row?.room ?? null;
   }),
   readRooms: getMemberProcedure(readRoomsInputSchema, "roomId").query(
     async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
@@ -400,8 +404,12 @@ export const roomRouter = router({
 
       if (roomId) {
         pinnedRoom = (
-          await ctx.db.select().from(rooms).innerJoin(usersToRooms, innerJoinCondition).where(eq(rooms.id, roomId))
-        ).find(Boolean)?.rooms;
+          await ctx.db
+            .select({ room: rooms })
+            .from(rooms)
+            .innerJoin(usersToRooms, innerJoinCondition)
+            .where(eq(rooms.id, roomId))
+        ).find(Boolean)?.room;
         if (!pinnedRoom)
           throw new TRPCError({
             code: "BAD_REQUEST",
@@ -414,14 +422,14 @@ export const roomRouter = router({
       if (filter?.name) wheres.push(ilike(rooms.name, `%${filter.name}%`));
       if (pinnedRoom) wheres.push(ne(rooms.id, pinnedRoom.id));
 
-      const joinedRooms = await ctx.db
-        .select()
+      const rows = await ctx.db
+        .select({ rooms })
         .from(rooms)
         .innerJoin(usersToRooms, innerJoinCondition)
         .where(and(...wheres))
         .orderBy(...parseSortByToSql(rooms, sortBy))
         .limit(limit + 1);
-      const resultRooms = joinedRooms.map(({ rooms }) => rooms);
+      const resultRooms = rows.map(({ rooms }) => rooms);
       const cursorPaginationData = getCursorPaginationData(resultRooms, limit, sortBy);
       if (pinnedRoom) cursorPaginationData.items.push(pinnedRoom);
       return cursorPaginationData;
