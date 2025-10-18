@@ -11,7 +11,7 @@ import { z } from "zod";
 export class StandardMessageEntity extends BaseMessageEntity {
   userId!: string;
 
-  constructor(init: Partial<StandardMessageEntity> & ToData<CompositeKeyEntity>) {
+  constructor(init?: Partial<StandardMessageEntity> & ToData<CompositeKeyEntity>) {
     super();
     Object.assign(this, init);
   }

@@ -68,5 +68,6 @@ export const readMessages = async ({
   const messages = await getTopNEntitiesByType(messageClient, limit + 1, MessageEntityMap, {
     filter: serializeClauses(clauses),
   });
+  console.log(messages);
   return getCursorPaginationData(messages, limit, sortBy);
 };

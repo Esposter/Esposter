@@ -15,7 +15,7 @@ describe(deserializeEntity, () => {
     object = {};
     string = "";
 
-    constructor(init: Partial<Entity>) {
+    constructor(init?: Partial<Entity>) {
       super();
       Object.assign(this, init);
     }

@@ -11,9 +11,9 @@ export class WebhookMessageEntity extends BaseMessageEntity<MessageType.Webhook>
   // Webhook messages don't have a direct user author
   userId?: undefined;
 
-  constructor(init: Partial<WebhookMessageEntity> & ToData<CompositeKeyEntity>) {
+  constructor(init?: Partial<WebhookMessageEntity> & ToData<CompositeKeyEntity>) {
     super();
     Object.assign(this, init);
-    this.appUser = init.appUser ?? { id: "" };
+    this.appUser = init?.appUser ?? { id: "" };
   }
 }
