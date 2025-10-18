@@ -14,7 +14,14 @@ import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/tr
 import { messageRouter } from "@@/server/trpc/routers/message";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { getBlobName } from "@esposter/db";
-import { AzureContainer, AzureEntityType, getReverseTickedTimestamp, MessageType, rooms } from "@esposter/db-schema";
+import {
+  AzureContainer,
+  AzureEntityType,
+  getReverseTickedTimestamp,
+  MessageType,
+  rooms,
+  StandardMessageEntity,
+} from "@esposter/db-schema";
 import { MENTION_ID_ATTRIBUTE, MENTION_TYPE, MENTION_TYPE_ATTRIBUTE, NotFoundError } from "@esposter/shared";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
@@ -194,11 +201,18 @@ describe("message", () => {
     const message = getMessage(userId);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
 
-    expect(newMessage.mentions).toHaveLength(1);
-    expect(newMessage.mentions[0]).toBe(userId);
-    expect(newMessage.message).toBe(message);
-    expect(newMessage.type).toBe(MessageType.Message);
-    expect(newMessage.userId).toBe(userId);
+    expect(newMessage).toStrictEqual(
+      new StandardMessageEntity({
+        createdAt: newMessage.createdAt,
+        mentions: [userId],
+        message,
+        partitionKey: newRoom.id,
+        rowKey: newMessage.rowKey,
+        type: MessageType.Message,
+        updatedAt: newMessage.updatedAt,
+        userId,
+      }),
+    );
   });
 
   test("fails create with non-existent room id", async () => {

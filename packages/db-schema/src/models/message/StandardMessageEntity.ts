@@ -12,7 +12,7 @@ export class StandardMessageEntity extends BaseMessageEntity {
   userId!: string;
 
   constructor(init: Partial<StandardMessageEntity> & ToData<CompositeKeyEntity>) {
-    super(init);
+    super();
     Object.assign(this, init);
   }
 }

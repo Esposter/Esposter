@@ -192,15 +192,17 @@ export const surveyRouter = router({
     ...ctx.survey,
     model: await useUpdateBlobUrls(ctx.survey),
   })),
-  readSurveyModel: standardRateLimitedProcedure.input(readSurveyModelInputSchema).query<string>(async ({ ctx, input }) => {
-    const survey = await ctx.db.query.surveys.findFirst({ where: (surveys, { eq }) => eq(surveys.id, input) });
-    if (!survey)
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: new NotFoundError(DatabaseEntityType.Survey, input).message,
-      });
-    return useUpdateBlobUrls(survey, true);
-  }),
+  readSurveyModel: standardRateLimitedProcedure
+    .input(readSurveyModelInputSchema)
+    .query<string>(async ({ ctx, input }) => {
+      const survey = await ctx.db.query.surveys.findFirst({ where: (surveys, { eq }) => eq(surveys.id, input) });
+      if (!survey)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new NotFoundError(DatabaseEntityType.Survey, input).message,
+        });
+      return useUpdateBlobUrls(survey, true);
+    }),
   readSurveyResponse: standardRateLimitedProcedure
     .input(readSurveyResponseInputSchema)
     .query<null | SurveyResponseEntity>(async ({ input: { partitionKey, rowKey } }) => {

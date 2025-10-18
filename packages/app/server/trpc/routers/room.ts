@@ -258,7 +258,11 @@ export const roomRouter = router({
       return userToRoom.roomId;
     }
   }),
-  onDeleteRoom: standardAuthedProcedure.input(onDeleteRoomInputSchema).subscription(async function* ({ ctx, input, signal }) {
+  onDeleteRoom: standardAuthedProcedure.input(onDeleteRoomInputSchema).subscription(async function* ({
+    ctx,
+    input,
+    signal,
+  }) {
     await isMember(ctx.db, ctx.session, input);
 
     for await (const [{ roomId, sessionId, userId }] of on(roomEventEmitter, "deleteRoom", { signal })) {
@@ -266,7 +270,11 @@ export const roomRouter = router({
       yield roomId;
     }
   }),
-  onJoinRoom: standardAuthedProcedure.input(onJoinRoomInputSchema).subscription(async function* ({ ctx, input, signal }) {
+  onJoinRoom: standardAuthedProcedure.input(onJoinRoomInputSchema).subscription(async function* ({
+    ctx,
+    input,
+    signal,
+  }) {
     await isMember(ctx.db, ctx.session, input);
 
     for await (const [data] of on(roomEventEmitter, "joinRoom", { signal })) {
@@ -278,7 +286,11 @@ export const roomRouter = router({
       yield data;
     }
   }),
-  onLeaveRoom: standardAuthedProcedure.input(onLeaveRoomInputSchema).subscription(async function* ({ ctx, input, signal }) {
+  onLeaveRoom: standardAuthedProcedure.input(onLeaveRoomInputSchema).subscription(async function* ({
+    ctx,
+    input,
+    signal,
+  }) {
     await isMember(ctx.db, ctx.session, input);
 
     for await (const [data] of on(roomEventEmitter, "leaveRoom", { signal })) {
@@ -286,7 +298,11 @@ export const roomRouter = router({
       yield data;
     }
   }),
-  onUpdateRoom: standardAuthedProcedure.input(onUpdateRoomInputSchema).subscription(async function* ({ ctx, input, signal }) {
+  onUpdateRoom: standardAuthedProcedure.input(onUpdateRoomInputSchema).subscription(async function* ({
+    ctx,
+    input,
+    signal,
+  }) {
     await isMember(ctx.db, ctx.session, input);
 
     for await (const [data] of on(roomEventEmitter, "updateRoom", { signal })) {

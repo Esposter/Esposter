@@ -12,7 +12,7 @@ export class WebhookMessageEntity extends BaseMessageEntity<MessageType.Webhook>
   userId?: undefined;
 
   constructor(init: Partial<WebhookMessageEntity> & ToData<CompositeKeyEntity>) {
-    super(init);
+    super();
     Object.assign(this, init);
   }
 }

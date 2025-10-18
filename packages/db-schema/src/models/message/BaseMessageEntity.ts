@@ -1,7 +1,5 @@
-import type { CompositeKeyEntity } from "@/models/azure/table/CompositeKeyEntity";
 import type { FileEntity } from "@/models/azure/table/FileEntity";
 import type { LinkPreviewResponse } from "@/models/message/linkPreview/LinkPreviewResponse";
-import type { MessageEntityMap } from "@/models/message/MessageEntityMap";
 import type { ItemEntityType, ToData } from "@esposter/shared";
 import type { Except } from "type-fest";
 
@@ -31,11 +29,6 @@ export class BaseMessageEntity<TType extends MessageType = Exclude<MessageType, 
   message!: string;
   replyRowKey?: string;
   type!: TType;
-
-  constructor(init: Partial<MessageEntityMap[TType]> & ToData<CompositeKeyEntity>) {
-    super();
-    Object.assign(this, init);
-  }
 }
 
 export const baseMessageEntitySchema = z.object({
