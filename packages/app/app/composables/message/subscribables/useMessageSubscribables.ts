@@ -25,13 +25,9 @@ export const useMessageSubscribables = () => {
 
   const unsubscribe = () => {
     createMessageUnsubscribable.value?.unsubscribe();
-    updateMessageUnsubscribable.value?.unsubscribe();
-    deleteMessageUnsubscribable.value?.unsubscribe();
-    webPubSubClient.value?.stop();
-    webPubSubClient.value = undefined;
   };
 
-  const { trigger } = watchTriggerable(pushSubscription, async (newPushSubscription) => {
+  const { trigger } = watchTriggerable(pushSubscription, (newPushSubscription) => {
     unsubscribe();
 
     if (!currentRoomId.value) return;
@@ -48,6 +44,14 @@ export const useMessageSubscribables = () => {
         }),
       },
     );
+  });
+
+  onMounted(async () => {
+    trigger();
+
+    if (!currentRoomId.value) return;
+
+    const roomId = currentRoomId.value;
     updateMessageUnsubscribable.value = $trpc.message.onUpdateMessage.subscribe(
       { roomId },
       {
@@ -81,11 +85,10 @@ export const useMessageSubscribables = () => {
     );
   });
 
-  onMounted(async () => {
-    await trigger();
-  });
-
   onUnmounted(() => {
     unsubscribe();
+    updateMessageUnsubscribable.value?.unsubscribe();
+    deleteMessageUnsubscribable.value?.unsubscribe();
+    webPubSubClient.value?.stop();
   });
 };

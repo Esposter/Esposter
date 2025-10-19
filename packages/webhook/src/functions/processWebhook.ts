@@ -20,7 +20,7 @@ app.storageQueue("processWebhook", {
       const webhookCreateMessageInput = getWebhookCreateMessageInput(payload, webhook);
       const newMessage = await createMessage(messageClient, messageAscendingClient, webhookCreateMessageInput);
       const webPubSubServiceClient = getWebPubSubServiceClient(AzureWebPubSubHub.Messages);
-      await webPubSubServiceClient.group(newMessage.partitionKey).sendToAll(JSON.stringify(newMessage));
+      await webPubSubServiceClient.group(newMessage.partitionKey).sendToAll(newMessage);
     } catch (error) {
       context.error("Failed to process webhook queue message:", error);
       throw error;
