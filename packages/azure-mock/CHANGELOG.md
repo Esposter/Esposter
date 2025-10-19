@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.16.0](https://github.com/Esposter/Esposter/compare/v2.15.1...v2.16.0) (2025-10-19)
+
+### Bug Fixes
+
+* peer deps ([6f8d586](https://github.com/Esposter/Esposter/commit/6f8d5860fb6baf483a347cdb3bd74d9bcc83fbe8))
+
 ## [2.15.1](https://github.com/Esposter/Esposter/compare/v2.15.0...v2.15.1) (2025-10-10)
 
 ### Bug Fixes

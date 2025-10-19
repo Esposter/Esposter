@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.16.0](https://github.com/Esposter/Esposter/compare/v2.15.1...v2.16.0) (2025-10-19)
+
+### Bug Fixes
+
+* cleanup pkgs and make parse-tmx a bit more browser-friendly ([ebd4702](https://github.com/Esposter/Esposter/commit/ebd47024e2f0676511b5971833935e90b3789ed9))
+
+### Performance Improvements
+
+* externalise common packages to minimize space ([62b4756](https://github.com/Esposter/Esposter/commit/62b475665ee55ec26f6a698c97df8bd60dd31723))
+
 ## [2.15.1](https://github.com/Esposter/Esposter/compare/v2.15.0...v2.15.1) (2025-10-10)
 
 **Note:** Version bump only for package @esposter/configuration

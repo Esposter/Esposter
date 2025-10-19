@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.16.0](https://github.com/Esposter/Esposter/compare/v2.15.1...v2.16.0) (2025-10-19)
+
+### Bug Fixes
+
+* await in func ([8fc0de5](https://github.com/Esposter/Esposter/commit/8fc0de5ce17a77290d278a5fe65c8ba2e5ccda0d))
+* better split between webhook messages and standard messages ([e73a83c](https://github.com/Esposter/Esposter/commit/e73a83c8abdea17047523594507155149d895923))
+* constructor ([292e9b5](https://github.com/Esposter/Esposter/commit/292e9b502d5af9e951276bda81f72f1bad65d431))
+* instantiate class based on type ([c2ca9f7](https://github.com/Esposter/Esposter/commit/c2ca9f7cb55baab5a1f3d3f37645b613b5a57d46))
+* lint ([2e3a9f7](https://github.com/Esposter/Esposter/commit/2e3a9f78ae92e75082fe04869981eda5e59f2586))
+* move shared code to db-schema away from server code ([610c70e](https://github.com/Esposter/Esposter/commit/610c70e1b5bbbb831f622877bf35fd0ddb48fa56))
+* peer deps ([6f8d586](https://github.com/Esposter/Esposter/commit/6f8d5860fb6baf483a347cdb3bd74d9bcc83fbe8))
+* put back the environments ([3ea1f39](https://github.com/Esposter/Esposter/commit/3ea1f39fe69d86c3c35fd84ec412079e4b013f60))
+* rename folder casing ([1ccbd62](https://github.com/Esposter/Esposter/commit/1ccbd629a418bd496c3d3a658250819827891241))
+* tests to compare correct times ([83dcb0a](https://github.com/Esposter/Esposter/commit/83dcb0a64a4f043600b19a045a95cf25631bd2b3))
+* wrong instanceof check ([a7ede21](https://github.com/Esposter/Esposter/commit/a7ede21e6d7527c2ac9ae68edc5629b5ef73d06c))
+
+### Features
+
+* Add web pubsub ([bf65e17](https://github.com/Esposter/Esposter/commit/bf65e170039e7307b9ec24792176b883206dbeb8))
+
 ## [2.15.1](https://github.com/Esposter/Esposter/compare/v2.15.0...v2.15.1) (2025-10-10)
 
 ### Bug Fixes

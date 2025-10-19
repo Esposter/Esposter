@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.16.0](https://github.com/Esposter/Esposter/compare/v2.15.1...v2.16.0) (2025-10-19)
+
+### Bug Fixes
+
+* try adding scrollfactor to container ([6cc27f5](https://github.com/Esposter/Esposter/commit/6cc27f509a570a9fd6ff964e6892209dec542427))
+
 ## [2.15.1](https://github.com/Esposter/Esposter/compare/v2.15.0...v2.15.1) (2025-10-10)
 
 **Note:** Version bump only for package vue-phaserjs

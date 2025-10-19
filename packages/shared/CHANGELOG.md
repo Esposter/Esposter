@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.16.0](https://github.com/Esposter/Esposter/compare/v2.15.1...v2.16.0) (2025-10-19)
+
+### Bug Fixes
+
+* add files ([7bf631f](https://github.com/Esposter/Esposter/commit/7bf631fc3b6106fcc85768e30917447dcfd3cfdb))
+* make accessing process env dynamic so bundler doesn't optimize ([21a8f0e](https://github.com/Esposter/Esposter/commit/21a8f0eaba0b7de72cffc388ca62fdf4a96e793a))
+* make getting env function so it is always latest ([9b11dd5](https://github.com/Esposter/Esposter/commit/9b11dd5e6ec352913050100bd50da0575c6875a6))
+* put back the environments ([3ea1f39](https://github.com/Esposter/Esposter/commit/3ea1f39fe69d86c3c35fd84ec412079e4b013f60))
+
+### Features
+
+* Add web push to azure func ([cda5d52](https://github.com/Esposter/Esposter/commit/cda5d529235d8d317fb9cd615969cfd68443e697))
+
 ## [2.15.1](https://github.com/Esposter/Esposter/compare/v2.15.0...v2.15.1) (2025-10-10)
 
 ### Bug Fixes
