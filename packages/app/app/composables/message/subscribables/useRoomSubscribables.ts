@@ -1,8 +1,8 @@
 import type { Unsubscribable } from "@trpc/server/observable";
 
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
-import { useMemberStore } from "@/store/message/user/member";
 import { useRoomStore } from "@/store/message/room";
+import { useMemberStore } from "@/store/message/user/member";
 
 export const useRoomSubscribables = () => {
   const { $trpc } = useNuxtApp();
