@@ -4,7 +4,7 @@ import type { Except } from "type-fest";
 import { SettingsType } from "@/models/message/room/SettingsType";
 
 export const SettingsListItemMap = {
-  [SettingsType.Webhook]: {
+  [SettingsType.Webhooks]: {
     icon: "mdi-webhook",
   },
 } as const satisfies Record<SettingsType, Except<Item, "onClick" | "title">>;
