@@ -22,8 +22,8 @@ const { getStatusEnum } = statusStore;
         </div>
         <div flex>
           <MessageLeftSideBarSettingsDialogButton>
-            <template #activator="{ updateIsOpen, tooltipProps }">
-              <v-btn :="tooltipProps" icon="mdi-cog" size="small" @click="updateIsOpen(true)" />
+            <template #activator="activatorProps">
+              <v-btn :="activatorProps" icon="mdi-cog" size="small" />
             </template>
           </MessageLeftSideBarSettingsDialogButton>
         </div>

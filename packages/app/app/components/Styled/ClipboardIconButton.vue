@@ -10,8 +10,8 @@ const { copied, copy } = useClipboard({ source });
 
 <template>
   <v-tooltip :text="text ?? 'Copy'">
-    <template #activator="{ props: activatorProps }">
-      <v-btn icon="mdi-clipboard" size="small" :="activatorProps" @click="copy(source)" />
+    <template #activator="{ props }">
+      <v-btn :="props" icon="mdi-clipboard" size="small" @click="copy(source)" />
     </template>
   </v-tooltip>
   <StyledClipboardSnackbar v-model="copied" :source />

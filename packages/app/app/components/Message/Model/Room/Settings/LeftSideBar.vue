@@ -8,17 +8,17 @@ const { settingsType } = storeToRefs(settingsStore);
 
 <template>
   <MessageModelSettingsLeftSideBar>
-    <v-list pt-10 density="compact">
+    <v-list pt-10>
       <v-list-item
         v-for="[type, { icon }] of Object.entries(SettingsListItemMap)"
         :key="type"
         :active="type === settingsType"
         @click="settingsType = type"
       >
-        <v-list-item-title font-bold>{{ settingsType }}</v-list-item-title>
-        <template #append>
+        <template #prepend>
           <v-icon :icon />
         </template>
+        <v-list-item-title font-bold>{{ settingsType }}</v-list-item-title>
       </v-list-item>
     </v-list>
   </MessageModelSettingsLeftSideBar>
