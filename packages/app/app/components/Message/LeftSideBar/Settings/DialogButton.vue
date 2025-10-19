@@ -22,7 +22,7 @@ const { dialog } = storeToRefs(settingsStore);
     </template>
     <v-app>
       <MessageModelSettingsLeftSideBar />
-      <MessageModelSettingsRightSideBar />
+      <MessageModelSettingsRightSideBar @close="dialog = false" />
       <MessageModelSettingsContent />
     </v-app>
   </StyledDialog>
