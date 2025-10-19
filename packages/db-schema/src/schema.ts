@@ -3,6 +3,7 @@ import * as appUsers from "@/schema/appUsers";
 import * as invites from "@/schema/invites";
 import * as likes from "@/schema/likes";
 import * as posts from "@/schema/posts";
+import * as pushSubscriptions from "@/schema/pushSubscriptions";
 import * as rateLimiterFlexible from "@/schema/rateLimiterFlexible";
 import * as rooms from "@/schema/rooms";
 import * as searchHistories from "@/schema/searchHistories";
@@ -18,16 +19,17 @@ export const schema = {
   ...accounts,
   ...appUsers,
   ...invites,
+  ...likes,
   ...posts,
-  ...webhooks,
+  ...pushSubscriptions,
+  ...rateLimiterFlexible,
   ...rooms,
   ...searchHistories,
   ...sessions,
   ...surveys,
   ...users,
-  ...verifications,
-  ...likes,
-  ...usersToRooms,
   ...userStatuses,
-  ...rateLimiterFlexible,
+  ...usersToRooms,
+  ...verifications,
+  ...webhooks,
 };

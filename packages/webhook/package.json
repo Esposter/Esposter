@@ -41,9 +41,11 @@
     "drizzle-zod": "catalog:",
     "postgres": "catalog:",
     "rate-limiter-flexible": "catalog:",
+    "web-push": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@esposter/configuration": "workspace:*"
+    "@esposter/configuration": "workspace:*",
+    "@types/web-push": "catalog:"
   }
 }

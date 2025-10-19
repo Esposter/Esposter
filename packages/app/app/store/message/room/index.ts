@@ -4,7 +4,6 @@ import type { JoinRoomInput } from "#shared/models/db/room/JoinRoomInput";
 import type { LeaveRoomInput } from "#shared/models/db/room/LeaveRoomInput";
 import type { AppUser, Room, User } from "@esposter/db-schema";
 
-import { RoutePath } from "#shared/models/router/RoutePath";
 import { dayjs } from "#shared/services/dayjs";
 import { authClient } from "@/services/auth/authClient";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
@@ -12,7 +11,7 @@ import { getRoomName } from "@/services/message/room/getRoomName";
 import { getRoomPlaceholder } from "@/services/message/room/getRoomPlaceholder";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { DatabaseEntityType, MessageType } from "@esposter/db-schema";
-import { Operation, uuidValidateV4 } from "@esposter/shared";
+import { Operation, RoutePath, uuidValidateV4 } from "@esposter/shared";
 
 export const useRoomStore = defineStore("message/room", () => {
   const { $trpc } = useNuxtApp();

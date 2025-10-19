@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RoutePath } from "#shared/models/router/RoutePath";
+import { RoutePath } from "@esposter/shared";
 </script>
 
 <template>

@@ -2,10 +2,7 @@ import type { Session } from "#shared/models/auth/Session";
 import type { AppUser, MessageEntity } from "@esposter/db-schema";
 import type { PushSubscription } from "web-push";
 
-import { RoutePath } from "#shared/models/router/RoutePath";
-import { truncate } from "#shared/util/text/truncate";
-import { PUSH_NOTIFICATION_MAX_LENGTH } from "@@/server/services/message/constants";
-import { parse } from "node-html-parser";
+import { getCreateMessageNotificationPayload, RoutePath } from "@esposter/shared";
 import webpush from "web-push";
 
 export const useSendCreateMessageNotification = (pushSubscription: PushSubscription | undefined, roomId: string) => {
@@ -16,25 +13,13 @@ export const useSendCreateMessageNotification = (pushSubscription: PushSubscript
   ) => {
     if (!pushSubscription) return;
 
-    let textContent: string | undefined = message;
+    const payload = getCreateMessageNotificationPayload(message, {
+      icon: image,
+      title: name,
+      url: `${runtimeConfig.public.baseUrl}${RoutePath.MessagesMessage(roomId, rowKey)}`,
+    });
+    if (!payload) return;
 
-    try {
-      textContent = parse(message).querySelector("p")?.textContent;
-      // eslint-disable-next-line no-empty
-    } catch {}
-
-    if (!textContent) return;
-
-    await webpush.sendNotification(
-      pushSubscription,
-      JSON.stringify({
-        body: truncate(textContent, PUSH_NOTIFICATION_MAX_LENGTH),
-        data: {
-          url: `${runtimeConfig.public.baseUrl}${RoutePath.MessagesMessage(roomId, rowKey)}`,
-        },
-        icon: image,
-        title: name,
-      }),
-    );
+    await webpush.sendNotification(pushSubscription, payload);
   };
 };

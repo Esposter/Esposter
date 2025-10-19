@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { ListLinkItem } from "@/models/shared/ListLinkItem";
 
-import { RoutePath } from "#shared/models/router/RoutePath";
 import { ProductListLinkItems } from "@/services/app/ProductListLinkItems";
+import { RoutePath } from "@esposter/shared";
 import { mergeProps } from "vue";
 
 const items: ListLinkItem[] = [

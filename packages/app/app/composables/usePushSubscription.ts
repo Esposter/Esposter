@@ -1,6 +1,9 @@
+import type { PushSubscription } from "web-push";
+
 import { usePushSubscriptionStore } from "@/store/pushSubscription";
 
 export const usePushSubscription = () => {
+  const { $trpc } = useNuxtApp();
   const runtimeConfig = useRuntimeConfig();
   const pushSubscriptionStore = usePushSubscriptionStore();
   const { pushSubscription } = storeToRefs(pushSubscriptionStore);
@@ -14,6 +17,7 @@ export const usePushSubscription = () => {
   const { trigger } = watchTriggerable(permissionGranted, async (newPermissionGranted) => {
     if (!newPermissionGranted) {
       await unsubscribe();
+      if (pushSubscription.value) await $trpc.pushSubscription.unsubscribe.mutate(pushSubscription.value.endpoint);
       return;
     }
 
@@ -22,6 +26,7 @@ export const usePushSubscription = () => {
       applicationServerKey: runtimeConfig.public.vapid.publicKey,
       userVisibleOnly: true,
     });
+    await $trpc.pushSubscription.subscribe.mutate(pushSubscription.value as unknown as PushSubscription);
   });
 
   onMounted(async () => {

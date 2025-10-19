@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { RoutePath } from "#shared/models/router/RoutePath";
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
 import { useRoomStore } from "@/store/message/room";
 import { DatabaseEntityType, selectInviteSchema } from "@esposter/db-schema";
+import { RoutePath } from "@esposter/shared";
 
 definePageMeta({
   middleware: "auth",

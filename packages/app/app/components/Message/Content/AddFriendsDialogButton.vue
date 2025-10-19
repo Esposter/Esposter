@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { RoutePath } from "#shared/models/router/RoutePath";
 import { useRoomStore } from "@/store/message/room";
+import { RoutePath } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();

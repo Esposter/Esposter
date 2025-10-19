@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
 
-import { RoutePath } from "#shared/models/router/RoutePath";
 import { usePostStore } from "@/store/post";
+import { RoutePath } from "@esposter/shared";
 
 interface PostConfirmDeleteDialogProps {
   postId: string;

@@ -2,9 +2,9 @@
 import type { Survey } from "@esposter/db-schema";
 import type { ItemSlot } from "vuetify/lib/components/VDataTable/types.mjs";
 
-import { RoutePath } from "#shared/models/router/RoutePath";
 import { SurveyHeaders } from "@/services/survey/SurveyHeaders";
 import { useSurveyStore } from "@/store/survey";
+import { RoutePath } from "@esposter/shared";
 
 const { isLoading, readSurveys } = useReadSurveys();
 const surveyStore = useSurveyStore();
