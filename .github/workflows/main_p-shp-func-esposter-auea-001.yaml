@@ -1,18 +1,19 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/azure/functions-action
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy Node.js project to Azure Function App - p-shp-func-esposter-auea-001
+name: Build and deploy Node.js project to Azure Function App - d-shp-func-esposter-auea-001
 
 on:
   push:
     branches:
-      - main
+      - develop
 
 env:
   FUNCTION_APP_NAME: p-shp-func-esposter-auea-001
   OUTPUT_DIRECTORY: dist
   PACKAGE_PATH: packages/webhook
   RESOURCE_GROUP_NAME: p-shp-rg-esposter-auea-001
+  STORAGE_ACCOUNT_NAME: pshpstespauea001
   ZIP_FILE_NAME: release.zip
 
 jobs:
@@ -52,32 +53,11 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: 🌐 Get GitHub Runner IP
-        id: get_ip
-        run: echo runner_ip=$(curl -s ipinfo.io/ip) >> $GITHUB_OUTPUT
-
-      - name: 📡 Allow Runner IP in Azure Function App SCM Firewall
+      - name: 🚀 Upload Package to Blob Storage and Update App Settings
         run: |
-          az functionapp config access-restriction add \
-          --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
-          --name ${{ env.FUNCTION_APP_NAME }} \
-          --rule-name GitHub-Actions-${{ github.run_id }} \
-          --action Allow \
-          --ip-address ${{ steps.get_ip.outputs.runner_ip }}/32 \
-          --priority 200 \
-          --scm-site true
+          BLOB_NAME="${{ env.FUNCTION_APP_NAME }}/${{ github.sha }}.zip"
+          az storage container create --account-name ${{ env.STORAGE_ACCOUNT_NAME }} --name ${{ env.FUNCTION_APP_NAME }} --auth-mode login
+          az storage blob upload --account-name ${{ env.STORAGE_ACCOUNT_NAME }} --container-name ${{ env.FUNCTION_APP_NAME }} --name $BLOB_NAME --file ${{ env.ZIP_FILE_NAME }} --auth-mode login
 
-      - name: 🚀 Run Azure Functions Action
-        uses: Azure/functions-action@v1
-        with:
-          app-name: ${{ env.FUNCTION_APP_NAME }}
-          package: ${{ env.ZIP_FILE_NAME }}
-
-      - name: 📡 Remove Runner IP from Azure Function App SCM Firewall
-        if: always() # This ensures the rule is removed even if deployment fails
-        run: |
-          az functionapp config access-restriction remove \
-            --resource-group ${{ env.RESOURCE_GROUP_NAME }} \
-            --name ${{ env.FUNCTION_APP_NAME }} \
-            --rule-name GitHub-Actions-${{ github.run_id }} \
-            --scm-site true
+          BLOB_URL="https://${{ env.STORAGE_ACCOUNT_NAME }}.blob.core.windows.net/${{ env.FUNCTION_APP_NAME }}/${BLOB_NAME}"
+          az functionapp config appsettings set --name ${{ env.FUNCTION_APP_NAME }} --resource-group ${{ env.RESOURCE_GROUP_NAME }} --settings "WEBSITE_RUN_FROM_PACKAGE=${BLOB_URL}"
