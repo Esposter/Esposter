@@ -6,7 +6,7 @@ self.addEventListener("push", async ({ data, waitUntil }) => {
   const { title, ...rest } = jsonData;
   const clients = await self.clients.matchAll();
 
-  for (const client of clients) client.postMessage(jsonData, client.target.origin);
+  for (const client of clients) client.postMessage(jsonData);
 
   waitUntil(self.registration.showNotification(title, rest));
 });
