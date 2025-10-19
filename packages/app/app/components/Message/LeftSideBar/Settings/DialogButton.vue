@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useSettingsStore } from "@/store/message/room/settings";
+import { useSettingsStore } from "@/store/message/user/settings";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import { mergeProps } from "vue";
 

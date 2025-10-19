@@ -1,7 +1,7 @@
 import type { Unsubscribable } from "@trpc/server/observable";
 
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
-import { useMemberStore } from "@/store/message/member";
+import { useMemberStore } from "@/store/message/user/member";
 import { useRoomStore } from "@/store/message/room";
 
 export const useRoomSubscribables = () => {

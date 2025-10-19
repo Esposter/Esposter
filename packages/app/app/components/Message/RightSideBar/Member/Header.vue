@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useMemberStore } from "@/store/message/member";
+import { useMemberStore } from "@/store/message/user/member";
 
 const memberStore = useMemberStore();
 const { members } = storeToRefs(memberStore);

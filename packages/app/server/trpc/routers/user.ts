@@ -92,10 +92,10 @@ export const userRouter = router({
   readStatuses: standardAuthedProcedure.input(readStatusesInputSchema).query(async ({ ctx, input }) => {
     const foundUserStatuses = await ctx.db.select().from(userStatuses).where(inArray(userStatuses.userId, input));
     const resultUserStatuses: SetNonNullable<IUserStatus, "status">[] = [];
-    const userStatusMap = new Map(foundUserStatuses.map((us) => [us.userId, us]));
+    const statusMap = new Map(foundUserStatuses.map((us) => [us.userId, us]));
 
     for (const userId of input) {
-      const foundStatus = userStatusMap.get(userId);
+      const foundStatus = statusMap.get(userId);
       if (foundStatus) resultUserStatuses.push({ ...foundStatus, status: getDetectedUserStatus(foundStatus) });
       else
         // We'll conveniently assume that if they don't have a user status record yet

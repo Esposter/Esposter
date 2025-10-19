@@ -1,13 +1,13 @@
-import { useUserStatusStore } from "@/store/message/userStatus";
+import { useStatusStore } from "@/store/message/user/status";
 
 export const useReadUserStatuses = () => {
   const { $trpc } = useNuxtApp();
-  const userStatusStore = useUserStatusStore();
-  const { userStatusMap } = storeToRefs(userStatusStore);
+  const statusStore = useStatusStore();
+  const { statusMap } = storeToRefs(statusStore);
   return async (userIds: string[]) => {
     if (userIds.length === 0) return;
 
     const userStatuses = await $trpc.user.readStatuses.query(userIds);
-    for (const { userId, ...userStatus } of userStatuses) userStatusMap.value.set(userId, userStatus);
+    for (const { userId, ...userStatus } of userStatuses) statusMap.value.set(userId, userStatus);
   };
 };

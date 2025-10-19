@@ -1,4 +1,4 @@
-import { SettingsType } from "@/models/message/settings/SettingsType";
+import { SettingsType } from "@/models/message/room/SettingsType";
 
 export const SettingsContentMap = {
   [SettingsType.Webhook]: defineAsyncComponent(

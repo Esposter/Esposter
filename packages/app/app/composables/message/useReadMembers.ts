@@ -1,4 +1,4 @@
-import { useMemberStore } from "@/store/message/member";
+import { useMemberStore } from "@/store/message/user/member";
 import { useRoomStore } from "@/store/message/room";
 import { StandardMessageEntityPropertyNames } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";

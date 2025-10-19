@@ -2,7 +2,7 @@
 import type { SerializableValue } from "@esposter/db-schema";
 
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
-import { useMemberStore } from "@/store/message/member";
+import { useMemberStore } from "@/store/message/user/member";
 
 const emit = defineEmits<{ select: [value: SerializableValue] }>();
 const { readMembers, readMoreMembers } = useReadMembers();

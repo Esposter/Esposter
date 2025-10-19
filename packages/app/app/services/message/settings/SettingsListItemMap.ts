@@ -1,7 +1,7 @@
 import type { Item } from "@/models/shared/Item";
 import type { Except } from "type-fest";
 
-import { SettingsType } from "@/models/message/settings/SettingsType";
+import { SettingsType } from "@/models/message/room/SettingsType";
 
 export const SettingsListItemMap = {
   [SettingsType.Webhook]: {
