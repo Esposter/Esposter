@@ -16,6 +16,7 @@ export const pushNotification = async ({ message, partitionKey, rowKey }: Messag
     .select({
       auth: pushSubscriptions.auth,
       endpoint: pushSubscriptions.endpoint,
+      expirationTime: pushSubscriptions.expirationTime,
       p256dh: pushSubscriptions.p256dh,
     })
     .from(pushSubscriptions)
@@ -24,6 +25,11 @@ export const pushNotification = async ({ message, partitionKey, rowKey }: Messag
       and(eq(usersToRooms.userId, pushSubscriptions.userId), eq(usersToRooms.roomId, partitionKey)),
     );
   await Promise.all(
-    rows.map(({ auth, endpoint, p256dh }) => webpush.sendNotification({ endpoint, keys: { auth, p256dh } }, payload)),
+    rows.map(({ auth, endpoint, expirationTime, p256dh }) =>
+      webpush.sendNotification(
+        { endpoint, expirationTime: expirationTime ? expirationTime.getTime() : null, keys: { auth, p256dh } },
+        payload,
+      ),
+    ),
   );
 };
