@@ -113,7 +113,7 @@ export const useMessageActionItems = (
     }
   });
   const deleteMessageItem = computed<Item | undefined>(() =>
-    message.type === MessageType.Message && isCreator.value && onDeleteMode
+    (message.type === MessageType.Message || message.type === MessageType.Webhook) && isCreator.value && onDeleteMode
       ? {
           color: "error",
           icon: "mdi-delete",

@@ -15,7 +15,8 @@ const emit = defineEmits<{
   "update:update-mode": [value: true];
 }>();
 const { data: session } = await authClient.useSession(useFetch);
-const isCreator = computed(() => session.value?.user.id === message.userId);
+const creator = useCreator(() => message);
+const isCreator = computed(() => creator.value?.id === session.value?.user.id);
 const isEditable = computed(() => isCreator.value && !message.isForward);
 const { updateMessageItems } = useMessageActionItems(message, isEditable, isCreator, {
   onForward: (rowKey) => emit("update:forward", rowKey),

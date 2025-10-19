@@ -10,7 +10,7 @@ interface PostCommentCardProps {
 const { comment } = defineProps<PostCommentCardProps>();
 const { data: session } = await authClient.useSession(useFetch);
 const createdAtTimeAgo = useTimeAgo(() => comment.createdAt);
-const isCreator = computed(() => session.value?.user.id === comment.userId);
+const isCreator = computed(() => comment.userId === session.value?.user.id);
 const isUpdateMode = ref(false);
 </script>
 

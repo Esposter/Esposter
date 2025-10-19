@@ -16,7 +16,8 @@ interface FileProps {
 
 const { columnLayout, file, index, isPreview = false, message } = defineProps<FileProps>();
 const { data: session } = await authClient.useSession(useFetch);
-const isCreator = computed(() => session.value?.user.id === message.userId);
+const creator = useCreator(() => message);
+const isCreator = computed(() => creator.value?.id === session.value?.user.id);
 const { $trpc } = useNuxtApp();
 const downloadFileStore = useDownloadFileStore();
 const { viewFiles } = downloadFileStore;

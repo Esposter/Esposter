@@ -15,7 +15,7 @@ const { isCommentStore = false, post } = defineProps<PostCardProps>();
 const { data: session } = await authClient.useSession(useFetch);
 const { surfaceOpacity80 } = useColors();
 const createdAtTimeAgo = useTimeAgo(() => post.createdAt);
-const isCreator = computed(() => session.value?.user.id === post.userId);
+const isCreator = computed(() => post.userId === session.value?.user.id);
 const isEmptyDescription = computed(() => EMPTY_TEXT_REGEX.test(post.description));
 </script>
 

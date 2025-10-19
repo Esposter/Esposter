@@ -14,7 +14,7 @@ defineSlots<{
 }>();
 const { creatorId, roomId } = defineProps<RoomConfirmDeleteDialogProps>();
 const { data: session } = await authClient.useSession(useFetch);
-const isCreator = computed(() => session.value?.user.id === creatorId);
+const isCreator = computed(() => creatorId === session.value?.user.id);
 const roomStore = useRoomStore();
 const { deleteRoom, leaveRoom } = roomStore;
 </script>
