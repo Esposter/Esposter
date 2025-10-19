@@ -65,7 +65,7 @@ jobs:
 
       - name: 🚀 Upload Package to Blob Storage and Update App Settings
         run: |
-          BLOB_NAME="${{ env.FUNCTION_APP_NAME }}/${{ github.sha }}.zip"
+          BLOB_NAME="${{ github.sha }}.zip"
           az storage container create --account-name ${{ env.STORAGE_ACCOUNT_NAME }} --name ${{ env.FUNCTION_APP_NAME }} --auth-mode login
           az storage blob upload --account-name ${{ env.STORAGE_ACCOUNT_NAME }} --container-name ${{ env.FUNCTION_APP_NAME }} --name $BLOB_NAME --file ${{ env.ZIP_FILE_NAME }} --auth-mode login
 
