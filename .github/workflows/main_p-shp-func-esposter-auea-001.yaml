@@ -6,7 +6,7 @@ name: Build and deploy Node.js project to Azure Function App - d-shp-func-espost
 on:
   push:
     branches:
-      - develop
+      - main
 
 env:
   FUNCTION_APP_NAME: p-shp-func-esposter-auea-001
