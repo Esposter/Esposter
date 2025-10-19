@@ -21,7 +21,11 @@ const { getStatusEnum } = statusStore;
           </div>
         </div>
         <div flex>
-          <MessageLeftSideBarSettingsDialogButton />
+          <MessageLeftSideBarSettingsDialogButton>
+            <template #activator="{ updateIsOpen, tooltipProps }">
+              <v-btn :="tooltipProps" icon="mdi-cog" size="small" @click="updateIsOpen(true)" />
+            </template>
+          </MessageLeftSideBarSettingsDialogButton>
         </div>
       </div>
     </StyledCard>

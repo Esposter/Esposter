@@ -7,7 +7,7 @@ const { settingsType } = storeToRefs(settingsStore);
 </script>
 
 <template>
-  <v-navigation-drawer location="left" rail permanent>
+  <MessageModelSettingsLeftSideBar>
     <v-list pt-10 density="compact">
       <v-list-item
         v-for="[type, { icon }] of Object.entries(SettingsListItemMap)"
@@ -21,5 +21,5 @@ const { settingsType } = storeToRefs(settingsStore);
         </template>
       </v-list-item>
     </v-list>
-  </v-navigation-drawer>
+  </MessageModelSettingsLeftSideBar>
 </template>

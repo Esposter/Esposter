@@ -15,9 +15,7 @@ const { roomId } = defineProps<RoomSettingsContentProps>();
 </script>
 
 <template>
-  <v-main h-dvh>
-    <v-container class="bg-surface" relative h-full fluid>
-      <component :is="SettingsContentMap[settingsType]" pt-10 :room-id />
-    </v-container>
-  </v-main>
+  <MessageModelSettingsContent>
+    <component :is="SettingsContentMap[settingsType]" pt-10 :room-id />
+  </MessageModelSettingsContent>
 </template>

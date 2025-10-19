@@ -1,20 +1,29 @@
 <script setup lang="ts">
+import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
+
 import { useSettingsStore } from "@/store/message/user/settings";
 import { DatabaseEntityType } from "@esposter/db-schema";
-import { mergeProps } from "vue";
 
+defineSlots<{
+  activator: (props: StyledDialogActivatorSlotProps & { tooltipProps: Record<string, unknown> }) => VNode;
+}>();
 const settingsStore = useSettingsStore();
 const { dialog } = storeToRefs(settingsStore);
 </script>
 
 <template>
-  <v-dialog v-model="dialog" fullscreen>
-    <template #activator="{ props: activatorProps }">
+  <StyledDialog v-model="dialog" fullscreen>
+    <template #activator="activatorProps">
       <v-tooltip :text="`${DatabaseEntityType.User} Settings`">
         <template #activator="{ props: tooltipProps }">
-          <v-btn icon="mdi-cog" size="small" :="mergeProps(activatorProps, tooltipProps)" />
+          <slot name="activator" :="{ ...activatorProps, tooltipProps }" />
         </template>
       </v-tooltip>
     </template>
-  </v-dialog>
+    <v-app>
+      <MessageModelSettingsLeftSideBar />
+      <MessageModelSettingsRightSideBar />
+      <MessageModelSettingsContent />
+    </v-app>
+  </StyledDialog>
 </template>
