@@ -42,7 +42,7 @@ jobs:
       - name: 📦 Zip Artifact for Deployment
         run: |
           pushd ${{ env.OUTPUT_DIRECTORY }}
-          zip -r ../${{ env.ZIP_FILE_NAME }} .
+          zip -r ../${{ env.ZIP_FILE_NAME }} . -x@.funcignore
           popd
 
       - name: 🔑 Azure CLI Login
@@ -72,7 +72,6 @@ jobs:
         with:
           app-name: ${{ env.FUNCTION_APP_NAME }}
           package: ${{ env.ZIP_FILE_NAME }}
-          respect-funcignore: true
 
       - name: 📡 Remove Runner IP from Azure Function App SCM Firewall
         if: always() # This ensures the rule is removed even if deployment fails
