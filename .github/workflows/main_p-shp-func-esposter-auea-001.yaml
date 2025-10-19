@@ -53,6 +53,16 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+      - name: 🌐 Get GitHub Runner IP
+        id: get_ip
+        run: echo runner_ip=$(curl -s ipinfo.io/ip) >> $GITHUB_OUTPUT
+
+      - name: 📡 Allow Runner IP in Storage Account Firewall
+        run: |
+          az storage account network-rule add \
+            --account-name ${{ env.STORAGE_ACCOUNT_NAME }} \
+            --ip-address ${{ steps.get_ip.outputs.runner_ip }}
+
       - name: 🚀 Upload Package to Blob Storage and Update App Settings
         run: |
           BLOB_NAME="${{ env.FUNCTION_APP_NAME }}/${{ github.sha }}.zip"
@@ -61,3 +71,10 @@ jobs:
 
           BLOB_URL="https://${{ env.STORAGE_ACCOUNT_NAME }}.blob.core.windows.net/${{ env.FUNCTION_APP_NAME }}/${BLOB_NAME}"
           az functionapp config appsettings set --name ${{ env.FUNCTION_APP_NAME }} --resource-group ${{ env.RESOURCE_GROUP_NAME }} --settings "WEBSITE_RUN_FROM_PACKAGE=${BLOB_URL}"
+
+      - name: 📡 Remove Runner IP from Storage Account Firewall
+        if: always() # This ensures the rule is removed even if deployment fails
+        run: |
+          az storage account network-rule remove \
+            --account-name ${{ env.STORAGE_ACCOUNT_NAME }} \
+            --ip-address ${{ steps.get_ip.outputs.runner_ip }}
