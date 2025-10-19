@@ -51,7 +51,7 @@ watch(optionsMenu, (newOptionsMenu) => {
 
 <template>
   <MessageModelMessageConfirmDeleteDialog :message>
-    <template #default="{ isOpen, updateIsOpen }">
+    <template #activator="{ isOpen, updateIsOpen }">
       <component
         :is="MessageComponentMap[message.type]"
         :id="message.rowKey"
@@ -91,7 +91,7 @@ watch(optionsMenu, (newOptionsMenu) => {
         >
           <v-hover #default="{ isHovering, props: hoverProps }">
             <MessageModelMessageConfirmPinDialog :message>
-              <template #default="{ updateIsOpen: updatePinDialogIsOpen }">
+              <template #activator="{ updateIsOpen: updatePinDialogIsOpen }">
                 <MessageModelMessageOptionsMenu
                   :message
                   :is-hovering

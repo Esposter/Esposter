@@ -7,7 +7,7 @@ interface ConfirmPinDialogProps {
 }
 
 defineSlots<{
-  default: (props: StyledDialogActivatorSlotProps) => VNode;
+  activator: (props: StyledDialogActivatorSlotProps) => VNode;
   messagePreview: () => VNode;
 }>();
 const { message } = defineProps<ConfirmPinDialogProps>();
@@ -33,7 +33,7 @@ const { text } = useColors();
     "
   >
     <template #activator="activatorProps">
-      <slot :="activatorProps" />
+      <slot name="activator" :="activatorProps" />
     </template>
     <div class="custom-border" shadow-md py-2 mx-4 rd-lg>
       <slot name="messagePreview" />

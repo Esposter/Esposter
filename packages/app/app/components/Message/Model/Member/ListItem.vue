@@ -19,12 +19,11 @@ const isCreator = computed(() => currentRoom.value?.userId === member.id);
 const isKickable = computed(
   () => currentRoom.value?.userId === session.value?.user.id && member.id !== session.value?.user.id,
 );
-const isHovering = ref(false);
 </script>
 
 <template>
-  <div relative @mouseover="isHovering = true" @mouseleave="isHovering = false">
-    <v-list-item :value="member.name">
+  <v-hover #default="{ isHovering, props: hoverProps }">
+    <v-list-item :="hoverProps" :value="member.name">
       <template #prepend>
         <MessageModelMemberStatusAvatar :id="member.id" :image="member.image" :name="member.name" />
       </template>
@@ -39,47 +38,44 @@ const isHovering = ref(false);
         </div>
       </v-list-item-title>
       <template #append="props">
-        <slot name="append" :="props" />
+        <slot name="append" :="props">
+          <template v-if="isKickable">
+            <StyledDeleteDialog
+              :card-props="{ title: 'Kick Member', text: `Are you sure you want to kick ${member.name}?` }"
+              :confirm-button-props="{ text: 'Kick' }"
+              @delete="
+                async (onComplete) => {
+                  try {
+                    if (!currentRoom) return;
+                    await $trpc.room.deleteMember.mutate({ roomId: currentRoom.id, userId: member.id });
+                  } finally {
+                    onComplete();
+                  }
+                }
+              "
+            >
+              <template #activator="{ updateIsOpen }">
+                <v-tooltip :text="`Kick ${member.name}`">
+                  <template #activator="{ props: tooltipProps }">
+                    <v-btn
+                      v-show="isHovering"
+                      bg-transparent="!"
+                      icon="mdi-close"
+                      variant="plain"
+                      size="small"
+                      :ripple="false"
+                      :="tooltipProps"
+                      @click.stop="updateIsOpen(true)"
+                    />
+                  </template>
+                </v-tooltip>
+              </template>
+            </StyledDeleteDialog>
+          </template>
+        </slot>
       </template>
     </v-list-item>
-    <template v-if="isKickable">
-      <StyledDeleteDialog
-        :card-props="{ title: 'Kick Member', text: `Are you sure you want to kick ${member.name}?` }"
-        :confirm-button-props="{ text: 'Kick' }"
-        @delete="
-          async (onComplete) => {
-            try {
-              if (!currentRoom) return;
-              await $trpc.room.deleteMember.mutate({ roomId: currentRoom.id, userId: member.id });
-            } finally {
-              onComplete();
-            }
-          }
-        "
-      >
-        <template #activator="{ updateIsOpen }">
-          <v-tooltip :text="`Kick ${member.name}`">
-            <template #activator="{ props: tooltipProps }">
-              <v-btn
-                v-show="isHovering"
-                absolute
-                top="1/2"
-                right-0
-                translate-y="-1/2"
-                bg-transparent="!"
-                icon="mdi-close"
-                variant="plain"
-                size="small"
-                :ripple="false"
-                :="tooltipProps"
-                @click="updateIsOpen(true)"
-              />
-            </template>
-          </v-tooltip>
-        </template>
-      </StyledDeleteDialog>
-    </template>
-  </div>
+  </v-hover>
 </template>
 
 <style scoped lang="scss">

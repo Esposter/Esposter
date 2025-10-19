@@ -21,7 +21,7 @@ const isEmptyDescription = computed(() => EMPTY_TEXT_REGEX.test(post.description
 
 <template>
   <PostConfirmDeleteDialog :post-id="post.id">
-    <template #default="{ updateIsOpen }">
+    <template #activator="{ updateIsOpen }">
       <StyledCard class="card">
         <PostLikeSection absolute top-2 left-2 :post :is-comment-store />
         <v-card px-2="!" pt-2="!">

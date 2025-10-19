@@ -16,7 +16,7 @@ const isUpdateMode = ref(false);
 
 <template>
   <PostCommentConfirmDeleteDialog :comment-id="comment.id">
-    <template #default="{ updateIsOpen }">
+    <template #activator="{ updateIsOpen }">
       <div flex>
         <PostLikeSection pt-2 :post="comment" is-comment-store />
         <v-card px-2="!" pt-2="!" flex-1 shadow-none="!">

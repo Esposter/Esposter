@@ -1,11 +1,18 @@
 <script setup lang="ts">
+import type { Room } from "@esposter/db-schema";
+
 import { WEBHOOK_MAX_LENGTH } from "#shared/services/message/constants";
 import { useWebhookStore } from "@/store/message/webhook";
 
+interface WebhookSettingsProps {
+  roomId: Room["id"];
+}
+
+const { roomId } = defineProps<WebhookSettingsProps>();
 const webhookStore = useWebhookStore();
 const { createWebhook, readWebhooks } = webhookStore;
 const { items } = storeToRefs(webhookStore);
-await readWebhooks();
+await readWebhooks(roomId);
 const name = ref("");
 const isLoading = ref(false);
 </script>
@@ -20,7 +27,7 @@ const isLoading = ref(false);
         @click="
           async () => {
             isLoading = true;
-            await createWebhook({ name });
+            await createWebhook(roomId, { name });
             isLoading = false;
           }
         "
@@ -31,6 +38,6 @@ const isLoading = ref(false);
     <div v-if="items.length >= WEBHOOK_MAX_LENGTH" text-sm text-red>
       You can only create up to {{ WEBHOOK_MAX_LENGTH }} webhook{{ WEBHOOK_MAX_LENGTH > 1 ? "s" : "" }}.
     </div>
-    <MessageModelRoomSettingsTypeWebhookList />
+    <MessageModelRoomSettingsTypeWebhookList :room-id />
   </div>
 </template>

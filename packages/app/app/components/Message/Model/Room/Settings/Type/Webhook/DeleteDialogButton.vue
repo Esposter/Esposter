@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import type { Webhook } from "@esposter/db-schema";
+import type { Room, Webhook } from "@esposter/db-schema";
 
 import { useWebhookStore } from "@/store/message/webhook";
 
 interface DeleteDialogButtonProps {
+  roomId: Room["id"];
   webhook: Webhook;
 }
 
-const { webhook } = defineProps<DeleteDialogButtonProps>();
+const { roomId, webhook } = defineProps<DeleteDialogButtonProps>();
 const webhookStore = useWebhookStore();
 const { deleteWebhook } = webhookStore;
 </script>
@@ -18,7 +19,7 @@ const { deleteWebhook } = webhookStore;
     @delete="
       async (onComplete) => {
         try {
-          deleteWebhook({ id: webhook.id });
+          deleteWebhook(roomId, { id: webhook.id });
         } finally {
           onComplete();
         }

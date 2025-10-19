@@ -9,7 +9,7 @@ interface PostConfirmDeleteDialogProps {
 }
 
 defineSlots<{
-  default: (props: StyledDialogActivatorSlotProps) => VNode;
+  activator: (props: StyledDialogActivatorSlotProps) => VNode;
   postPreview: () => VNode;
 }>();
 const { postId } = defineProps<PostConfirmDeleteDialogProps>();
@@ -36,7 +36,7 @@ const { text } = useColors();
     "
   >
     <template #activator="activatorProps">
-      <slot :="activatorProps" />
+      <slot name="activator" :="activatorProps" />
     </template>
     <div class="custom-border" py-2 mx-4 rd-lg shadow-md>
       <slot name="postPreview" />

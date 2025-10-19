@@ -19,31 +19,26 @@ export const useWebhookStore = defineStore("message/webhook", () => {
     updateWebhook: storeUpdateWebhook,
     ...restOperationData
   } = createOperationData(items, ["id"], DatabaseEntityType.Webhook);
-  const readWebhooks = async () => {
-    if (!roomStore.currentRoomId) return;
-    items.value = await $trpc.webhook.readWebhooks.query({ roomId: roomStore.currentRoomId });
+  const readWebhooks = async (roomId: Room["id"]) => {
+    items.value = await $trpc.webhook.readWebhooks.query({ roomId });
   };
   const createWebhook = async (roomId: Room["id"], input: Except<CreateWebhookInput, "roomId">) => {
-    if (!roomStore.currentRoomId) return;
-    const newWebhook = await $trpc.webhook.createWebhook.mutate({ ...input, roomId: roomStore.currentRoomId });
+    const newWebhook = await $trpc.webhook.createWebhook.mutate({ ...input, roomId });
     storeCreateWebhook(newWebhook, true);
   };
-  const updateWebhook = async (input: Except<UpdateWebhookInput, "roomId">) => {
-    if (!roomStore.currentRoomId) return;
+  const updateWebhook = async (roomId: Room["id"], input: Except<UpdateWebhookInput, "roomId">) => {
     const updatedWebhook = await $trpc.webhook.updateWebhook.mutate({
       ...input,
-      roomId: roomStore.currentRoomId,
+      roomId,
     });
     storeUpdateWebhook(updatedWebhook);
   };
-  const rotateToken = async (input: Except<RotateTokenInput, "roomId">) => {
-    if (!roomStore.currentRoomId) return;
-    const updatedWebhook = await $trpc.webhook.rotateToken.mutate({ ...input, roomId: roomStore.currentRoomId });
+  const rotateToken = async (roomId: Room["id"], input: Except<RotateTokenInput, "roomId">) => {
+    const updatedWebhook = await $trpc.webhook.rotateToken.mutate({ ...input, roomId });
     storeUpdateWebhook(updatedWebhook);
   };
-  const deleteWebhook = async (input: Except<DeleteWebhookInput, "roomId">) => {
-    if (!roomStore.currentRoomId) return;
-    const { id } = await $trpc.webhook.deleteWebhook.mutate({ ...input, roomId: roomStore.currentRoomId });
+  const deleteWebhook = async (roomId: Room["id"], input: Except<DeleteWebhookInput, "roomId">) => {
+    const { id } = await $trpc.webhook.deleteWebhook.mutate({ ...input, roomId });
     storeDeleteWebhook({ id });
   };
   return {

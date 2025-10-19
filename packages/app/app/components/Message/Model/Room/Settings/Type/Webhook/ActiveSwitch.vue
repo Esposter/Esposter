@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import type { Webhook } from "@esposter/db-schema";
+import type { Room, Webhook } from "@esposter/db-schema";
 
 import { useWebhookStore } from "@/store/message/webhook";
 
 interface ActiveSwitchProps {
+  roomId: Room["id"];
   webhook: Webhook;
 }
 
-const { webhook } = defineProps<ActiveSwitchProps>();
+const { roomId, webhook } = defineProps<ActiveSwitchProps>();
 const webhookStore = useWebhookStore();
 const { updateWebhook } = webhookStore;
 </script>
@@ -21,7 +22,7 @@ const { updateWebhook } = webhookStore;
         density="compact"
         hide-details
         :="props"
-        @update:model-value="(value) => updateWebhook({ id: webhook.id, isActive: value ?? false })"
+        @update:model-value="(value) => updateWebhook(roomId, { id: webhook.id, isActive: value ?? false })"
       />
     </template>
   </v-tooltip>

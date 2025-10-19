@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import type { Webhook } from "@esposter/db-schema";
+import type { Room, Webhook } from "@esposter/db-schema";
 
 import { useWebhookStore } from "@/store/message/webhook";
 
 interface ListItemProps {
+  roomId: Room["id"];
   webhook: Webhook;
 }
 
-const { webhook } = defineProps<ListItemProps>();
+const { roomId, webhook } = defineProps<ListItemProps>();
 const webhookStore = useWebhookStore();
 const { updateWebhook } = webhookStore;
 const name = ref(webhook.name);
@@ -27,14 +28,14 @@ const source = computed(() => `${functionAppBaseUrl}/api/webhooks/${webhook.id}/
       label="Name"
       density="compact"
       hide-details
-      @blur="updateWebhook({ id: webhook.id, name })"
+      @blur="updateWebhook(roomId, { id: webhook.id, name })"
     />
     <template #append>
       <StyledClipboardIconButton :source text="Copy Webhook URL" />
-      <MessageModelRoomSettingsTypeWebhookRotateTokenButton :id="webhook.id" />
-      <MessageModelRoomSettingsTypeWebhookDeleteDialogButton :webhook />
+      <MessageModelRoomSettingsTypeWebhookRotateTokenButton :id="webhook.id" :room-id />
+      <MessageModelRoomSettingsTypeWebhookDeleteDialogButton :room-id :webhook />
       <v-spacer />
-      <MessageModelRoomSettingsTypeWebhookActiveSwitch :webhook />
+      <MessageModelRoomSettingsTypeWebhookActiveSwitch :room-id :webhook />
     </template>
   </v-list-item>
 </template>
