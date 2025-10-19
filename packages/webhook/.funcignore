@@ -1,3 +1,5 @@
+.funcignore
+
 # Local and environment settings
 local.settings.json
 .env
