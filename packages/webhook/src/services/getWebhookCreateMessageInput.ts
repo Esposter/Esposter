@@ -8,7 +8,7 @@ export const getWebhookCreateMessageInput = (
 ): WebhookCreateMessageInput => ({
   appUser: {
     id: userId,
-    image: payload.avatarUrl,
+    image: payload.avatar_url,
     name: payload.username,
   },
   message: payload.content,
