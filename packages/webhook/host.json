@@ -14,7 +14,7 @@
     },
     "fileLoggingMode": "never",
     "logLevel": {
-      "default": "Warning"
+      "Host": "None"
     }
   },
   "version": "2.0"
