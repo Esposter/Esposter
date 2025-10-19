@@ -59,4 +59,4 @@ app.http("queueWebhook", {
   route: "webhooks/{id}/{token}",
 });
 
-export default {};
+export {};
