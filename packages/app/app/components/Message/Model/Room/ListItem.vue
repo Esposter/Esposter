@@ -25,12 +25,27 @@ const isActive = computed(() => room.id === currentRoomId.value);
         {{ name }}
       </v-list-item-title>
       <template #append>
-        <MessageModelRoomSettingsDialogButton v-show="isActive || isHovering" :room-id="room.id" />
+        <MessageModelRoomSettingsDialogButton :room-id="room.id">
+          <template #activator="{ updateIsOpen, tooltipProps }">
+            <v-btn
+              v-show="isActive || isHovering"
+              bg-transparent="!"
+              density="compact"
+              icon="mdi-cog"
+              variant="plain"
+              size="small"
+              :ripple="false"
+              :="tooltipProps"
+              @click.stop="updateIsOpen(true)"
+            />
+          </template>
+        </MessageModelRoomSettingsDialogButton>
         <MessageModelRoomConfirmDeleteDialog :room-id="room.id" :creator-id="room.userId">
           <template #activator="{ updateIsOpen, tooltipProps }">
             <v-btn
               v-show="isActive || isHovering"
               bg-transparent="!"
+              density="compact"
               icon="mdi-close"
               variant="plain"
               size="small"
