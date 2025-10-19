@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { MessageEntity } from "@esposter/db-schema";
 
-import { authClient } from "@/services/auth/authClient";
 import { EmojiMenuItems } from "@/services/message/emoji/EmojiMenuItems";
 import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
 import { unemojify } from "node-emoji";
@@ -22,15 +21,13 @@ const emit = defineEmits<{
   "update:select-emoji": [emoji: string];
   "update:update-mode": [value: true];
 }>();
-const { data: session } = await authClient.useSession(useFetch);
-const creator = useCreator(() => message);
-const isCreator = computed(() => creator.value?.id === session.value?.user.id);
-const isEditable = computed(() => isCreator.value && !message.isForward);
+const isMessageCreator = await useIsMessageCreator(() => message);
+const isEditable = computed(() => isMessageCreator.value && !message.isForward);
 const {
   actionMessageItems,
   deleteMessageItem,
   updateMessageMenuItems: updateMessageItems,
-} = useMessageActionItems(message, isEditable, isCreator, {
+} = useMessageActionItems(message, isEditable, isMessageCreator, {
   onDeleteMode: () => emit("update:delete-mode", true),
   onForward: (rowKey) => emit("update:forward", rowKey),
   onPin: (value) => emit("update:pin", value),

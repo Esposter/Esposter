@@ -6,6 +6,7 @@ import type { AppUser, Room, User } from "@esposter/db-schema";
 
 import { RoutePath } from "#shared/models/router/RoutePath";
 import { dayjs } from "#shared/services/dayjs";
+import { authClient } from "@/services/auth/authClient";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { getRoomName } from "@/services/message/room/getRoomName";
 import { getRoomPlaceholder } from "@/services/message/room/getRoomPlaceholder";
@@ -49,6 +50,8 @@ export const useRoomStore = defineStore("message/room", () => {
     if (!currentRoomId.value) return null;
     return rooms.value.find(({ id }) => id === currentRoomId.value) ?? null;
   });
+  const session = authClient.useSession();
+  const isCreator = computed(() => currentRoom.value?.userId === session.value.data?.user.id);
   const placeholderRoomName = computed(() => getRoomPlaceholder(currentRoom.value, memberMap.value));
   const currentRoomName = computed(() => getRoomName(currentRoom.value, memberMap.value));
 
@@ -90,6 +93,7 @@ export const useRoomStore = defineStore("message/room", () => {
     currentRoomName,
     getAppUserDataMap,
     getMemberDataMap,
+    isCreator,
     memberMap,
     placeholderRoomName,
     setAppUserDataMap,

@@ -14,11 +14,9 @@ const { member } = defineProps<MemberListItemProps>();
 const { $trpc } = useNuxtApp();
 const { data: session } = await authClient.useSession(useFetch);
 const roomStore = useRoomStore();
-const { currentRoom } = storeToRefs(roomStore);
+const { currentRoom, isCreator: isRoomCreator } = storeToRefs(roomStore);
 const isCreator = computed(() => currentRoom.value?.userId === member.id);
-const isKickable = computed(
-  () => currentRoom.value?.userId === session.value?.user.id && member.id !== session.value?.user.id,
-);
+const isKickable = computed(() => isRoomCreator.value && member.id !== session.value?.user.id);
 </script>
 
 <template>

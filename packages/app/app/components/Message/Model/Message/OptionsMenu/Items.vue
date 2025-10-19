@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import type { MessageEntity } from "@esposter/db-schema";
 
-import { authClient } from "@/services/auth/authClient";
-
 interface OptionsMenuItemsProps {
   message: MessageEntity;
 }
@@ -14,11 +12,9 @@ const emit = defineEmits<{
   "update:reply": [rowKey: string];
   "update:update-mode": [value: true];
 }>();
-const { data: session } = await authClient.useSession(useFetch);
-const creator = useCreator(() => message);
-const isCreator = computed(() => creator.value?.id === session.value?.user.id);
-const isEditable = computed(() => isCreator.value && !message.isForward);
-const { updateMessageItems } = useMessageActionItems(message, isEditable, isCreator, {
+const isMessageCreator = await useIsMessageCreator(() => message);
+const isEditable = computed(() => isMessageCreator.value && !message.isForward);
+const { updateMessageItems } = useMessageActionItems(message, isEditable, isMessageCreator, {
   onForward: (rowKey) => emit("update:forward", rowKey),
   onPin: (value) => emit("update:pin", value),
   onReply: (rowKey) => emit("update:reply", rowKey),

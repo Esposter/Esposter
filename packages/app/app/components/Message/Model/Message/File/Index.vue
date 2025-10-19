@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { FileEntity, MessageEntity } from "@esposter/db-schema";
 
-import { authClient } from "@/services/auth/authClient";
 import { CONTAINER_BORDER_RADIUS } from "@/services/message/file/constants";
 import { useDownloadFileStore } from "@/store/message/downloadFile";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
@@ -15,10 +14,8 @@ interface FileProps {
 }
 
 const { columnLayout, file, index, isPreview = false, message } = defineProps<FileProps>();
-const { data: session } = await authClient.useSession(useFetch);
-const creator = useCreator(() => message);
-const isCreator = computed(() => creator.value?.id === session.value?.user.id);
 const { $trpc } = useNuxtApp();
+const isMessageCreator = await useIsMessageCreator(() => message);
 const downloadFileStore = useDownloadFileStore();
 const { viewFiles } = downloadFileStore;
 const { fileUrlMap, viewableFiles } = storeToRefs(downloadFileStore);
@@ -45,7 +42,9 @@ const isActive = ref(false);
   >
     <MessageModelFileRenderer :file :is-preview :url />
     <div
-      v-if="!message.isForward && isCreator && (columnLayout.length > 1 || !EMPTY_TEXT_REGEX.test(message.message))"
+      v-if="
+        !message.isForward && isMessageCreator && (columnLayout.length > 1 || !EMPTY_TEXT_REGEX.test(message.message))
+      "
       v-show="isActive"
       absolute
       top-2
