@@ -39,7 +39,7 @@ jobs:
           pnpm --filter @esposter/webhook deploy ${{ env.OUTPUT_DIRECTORY }}
           cp ${{ env.PACKAGE_PATH }}/host.json ${{ env.OUTPUT_DIRECTORY }}/host.json
 
-      - name: 📦 Zip artifact for deployment
+      - name: 📦 Zip Artifact for Deployment
         run: |
           pushd ${{ env.OUTPUT_DIRECTORY }}
           zip -r ../${{ env.ZIP_FILE_NAME }} .
