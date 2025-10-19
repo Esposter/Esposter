@@ -2,9 +2,10 @@ import type { MessageEntity } from "@esposter/db-schema";
 import type { z } from "zod";
 
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
+import { getIsCreator } from "@@/server/services/room/getIsCreator";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getEntity } from "@esposter/db";
-import { AzureEntityType, AzureTable, StandardMessageEntity } from "@esposter/db-schema";
+import { AzureEntityType, AzureTable, MessageType, StandardMessageEntity } from "@esposter/db-schema";
 import { NotFoundError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
@@ -17,6 +18,12 @@ export const getCreatorProcedure = <T extends z.ZodType<Pick<MessageEntity, "par
         code: "NOT_FOUND",
         message: new NotFoundError(AzureEntityType.Message, JSON.stringify(input)).message,
       });
-    else if (messageEntity.userId !== ctx.session.user.id) throw new TRPCError({ code: "UNAUTHORIZED" });
+    else if (
+      !(
+        (messageEntity.type === MessageType.Message && messageEntity.userId === ctx.session.user.id) ||
+        (await getIsCreator(ctx.db, ctx.session, messageEntity.partitionKey))
+      )
+    )
+      throw new TRPCError({ code: "UNAUTHORIZED" });
     return next({ ctx: { messageClient, messageEntity } });
   });
