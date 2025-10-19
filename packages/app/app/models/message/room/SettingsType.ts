@@ -1,3 +1,3 @@
 export enum SettingsType {
-  Webhook = "Webhook",
+  Webhooks = "Webhooks",
 }
