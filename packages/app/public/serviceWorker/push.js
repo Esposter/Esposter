@@ -4,11 +4,11 @@ self.addEventListener("push", ({ data, waitUntil }) => {
 
   const jsonData = data.json();
   const { title, ...rest } = jsonData;
-  waitUntil(async () => {
+  waitUntil((async () => {
     const clients = await self.clients.matchAll({ includeUncontrolled: true });
     for (const client of clients) client.postMessage(jsonData);
     await self.registration.showNotification(title, rest);
-  })();
+  })());
 });
 
 self.addEventListener("notificationclick", async ({ notification, waitUntil }) => {
