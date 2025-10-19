@@ -1,17 +1,28 @@
 // https://github.com/vite-pwa/docs/issues/132
-self.addEventListener("push", async ({ data, waitUntil }) => {
+self.addEventListener("push", ({ data, waitUntil }) => {
   if (!data) return;
 
   const jsonData = data.json();
   const { title, ...rest } = jsonData;
-  const clients = await self.clients.matchAll();
-
-  for (const client of clients) client.postMessage(jsonData);
-
-  waitUntil(self.registration.showNotification(title, rest));
+  waitUntil(async () => {
+    const clients = await self.clients.matchAll({ includeUncontrolled: true });
+    for (const client of clients) client.postMessage(jsonData);
+    await self.registration.showNotification(title, rest);
+  })();
 });
 
-self.addEventListener("notificationclick", ({ notification, waitUntil }) => {
+self.addEventListener("notificationclick", async ({ notification, waitUntil }) => {
   notification.close();
-  waitUntil(self.clients.openWindow(notification.data.url));
+  const { url } = notification.data;
+  waitUntil(
+    (async () => {
+      const clients = await self.clients.matchAll({ includeUncontrolled: true });
+      for (const client of clients)
+        if (client.url === url) {
+          await client.focus();
+          return;
+        }
+      await self.clients.openWindow(url);
+    })(),
+  );
 });
