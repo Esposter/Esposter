@@ -7,7 +7,7 @@ const { settingsType } = storeToRefs(settingsStore);
 </script>
 
 <template>
-  <v-navigation-drawer location="left" permanent>
+  <v-navigation-drawer location="left" rail permanent>
     <v-list pt-10 density="compact">
       <v-list-item
         v-for="[type, { icon }] of Object.entries(SettingsListItemMap)"
