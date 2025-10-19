@@ -11,7 +11,7 @@ import { afterEach, beforeAll, describe, expect, test } from "vitest";
 describe("pushSubscription", () => {
   let caller: DecorateRouterRecord<TRPCRouter["pushSubscription"]>;
   let mockContext: Context;
-  const endpoint = "endpoint";
+  const endpoint = "https://.";
   const auth = "auth";
   const updatedAuth = "updatedAuth";
   const p256dh = "p256dh";
