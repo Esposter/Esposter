@@ -6,7 +6,7 @@ import { FILE_MAX_LENGTH } from "@/services/azure/container/constants";
 import { z } from "zod";
 
 export interface WebhookPayload {
-  avatarUrl?: string;
+  avatar_url?: string;
   content?: string;
   embeds?: Embed[];
   username?: string;
@@ -14,7 +14,7 @@ export interface WebhookPayload {
 
 export const webhookPayloadSchema: z.ZodType<WebhookPayload> = z
   .object({
-    avatarUrl: z.url().optional(),
+    avatar_url: z.url().optional(),
     content: z.string().max(2000).optional(),
     embeds: embedSchema.array().max(FILE_MAX_LENGTH).optional(),
     username: z.string().max(USER_NAME_MAX_LENGTH).optional(),
