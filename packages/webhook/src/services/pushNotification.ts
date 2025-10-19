@@ -1,4 +1,4 @@
-import type { MessageEntity } from "@esposter/db-schema";
+import type { WebhookMessageEntity } from "@esposter/db-schema";
 
 import { db } from "@/services/db";
 import { pushSubscriptions, usersToRooms } from "@esposter/db-schema";
@@ -6,8 +6,15 @@ import { getCreateMessageNotificationPayload, RoutePath } from "@esposter/shared
 import { and, eq } from "drizzle-orm";
 import webpush from "web-push";
 
-export const pushNotification = async ({ message, partitionKey, rowKey }: MessageEntity): Promise<void> => {
+export const pushNotification = async ({
+  appUser: { image, name },
+  message,
+  partitionKey,
+  rowKey,
+}: WebhookMessageEntity): Promise<void> => {
   const payload = getCreateMessageNotificationPayload(message, {
+    icon: image,
+    title: name,
     url: `${process.env.BASE_URL}${RoutePath.MessagesMessage(partitionKey, rowKey)}`,
   });
   if (!payload) return;
