@@ -13,6 +13,7 @@ env:
   OUTPUT_DIRECTORY: dist
   PACKAGE_PATH: packages/webhook
   RESOURCE_GROUP_NAME: d-shp-rg-esposter-auea-001
+  ZIP_FILE_NAME: release.zip
 
 jobs:
   build-and-deploy:
@@ -24,10 +25,10 @@ jobs:
       - name: 📥 Checkout
         uses: actions/checkout@v5
 
-      - name: 🔧 Setup Project Dependencies
+      - name: 🔨 Setup Project Dependencies
         uses: ./.github/actions/setup-project-dependencies
 
-      - name: 📦 Resolve Project Dependencies
+      - name: 🔧 Resolve Project Dependencies
         run: |
           echo inject-workspace-packages=true >> .npmrc
           echo node-linker=hoisted >> .npmrc
@@ -38,6 +39,12 @@ jobs:
           pnpm --filter @esposter/webhook deploy ${{ env.OUTPUT_DIRECTORY }}
           cp ${{ env.PACKAGE_PATH }}/host.json ${{ env.OUTPUT_DIRECTORY }}/host.json
 
+      - name: 📦 Zip artifact for deployment
+        run: |
+          pushd ${{ env.OUTPUT_DIRECTORY }}
+          zip -r ../${{ env.ZIP_FILE_NAME }} .
+          popd
+
       - name: 🔑 Azure CLI Login
         uses: azure/login@v2
         with:
@@ -45,7 +52,7 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: 📡 Get GitHub Runner IP
+      - name: 🌐 Get GitHub Runner IP
         id: get_ip
         run: echo runner_ip=$(curl -s ipinfo.io/ip) >> $GITHUB_OUTPUT
 
@@ -64,8 +71,7 @@ jobs:
         uses: Azure/functions-action@v1
         with:
           app-name: ${{ env.FUNCTION_APP_NAME }}
-          package: ${{ env.OUTPUT_DIRECTORY }}
-          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE_DEVELOP  }}
+          package: ${{ env.ZIP_FILE_NAME }}
           respect-funcignore: true
 
       - name: 📡 Remove Runner IP from Azure Function App SCM Firewall
