@@ -11,7 +11,7 @@ on:
 env:
   FUNCTION_APP_NAME: d-shp-func-esposter-auea-001
   OUTPUT_DIRECTORY: dist
-  PACKAGE_PATH: packages/webhook
+  PACKAGE_PATH: packages/azure-functions
   RESOURCE_GROUP_NAME: d-shp-rg-esposter-auea-001
   STORAGE_ACCOUNT_NAME: dshpstespauea001
   ZIP_FILE_NAME: release.zip

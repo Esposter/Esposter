@@ -4,7 +4,7 @@
   "version": "2.16.0",
   "private": true,
   "type": "module",
-  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/webhook#readme",
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/azure-functions#readme",
   "license": "Apache-2.0",
   "author": "Jimmy Chen",
   "main": "dist/index.js",
