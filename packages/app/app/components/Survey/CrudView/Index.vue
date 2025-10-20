@@ -8,7 +8,7 @@ import { RoutePath } from "@esposter/shared";
 
 const { isLoading, readSurveys } = useReadSurveys();
 const surveyStore = useSurveyStore();
-const { items, searchQuery, count } = storeToRefs(surveyStore);
+const { count, items, searchQuery } = storeToRefs(surveyStore);
 const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Survey>) => navigateTo(RoutePath.Survey(item.id));
 </script>
 
