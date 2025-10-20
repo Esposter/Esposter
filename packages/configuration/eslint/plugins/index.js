@@ -1,5 +1,4 @@
 import depend from "@esposter/configuration/eslint/plugins/depend.js";
-import json from "@esposter/configuration/eslint/plugins/json.js";
 import perfectionist from "@esposter/configuration/eslint/plugins/perfectionist.js";
 import vitest from "@esposter/configuration/eslint/plugins/vitest.js";
 import unocss from "@unocss/eslint-config/flat";
