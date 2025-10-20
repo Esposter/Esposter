@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import { useSettingsStore } from "@/store/message/user/settings";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import { mergeProps } from "vue";
 
 defineSlots<{ activator: (props: Record<string, unknown>) => VNode }>();
-const settingsStore = useSettingsStore();
-const { dialog } = storeToRefs(settingsStore);
+const dialog = ref(false);
 </script>
 
 <template>

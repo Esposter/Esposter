@@ -1,19 +1,18 @@
 <script setup lang="ts">
+import { SettingsType } from "@/models/message/room/SettingsType";
 import { SettingsListItemMap } from "@/services/message/settings/SettingsListItemMap";
-import { useSettingsStore } from "@/store/message/room/settings";
 
-const settingsStore = useSettingsStore();
-const { settingsType } = storeToRefs(settingsStore);
+const modelValue = defineModel<SettingsType>({ required: true });
 </script>
 
 <template>
   <MessageModelSettingsLeftSideBar>
     <v-list pt-10>
       <v-list-item
-        v-for="[type, { icon }] of Object.entries(SettingsListItemMap)"
-        :key="type"
-        :active="type === settingsType"
-        @click="settingsType = type"
+        v-for="[settingsType, { icon }] of Object.entries(SettingsListItemMap)"
+        :key="settingsType"
+        :active="settingsType === modelValue"
+        @click="modelValue = settingsType"
       >
         <template #prepend>
           <v-icon :icon />

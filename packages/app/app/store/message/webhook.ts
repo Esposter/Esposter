@@ -27,10 +27,7 @@ export const useWebhookStore = defineStore("message/webhook", () => {
     storeCreateWebhook(newWebhook, true);
   };
   const updateWebhook = async (roomId: Room["id"], input: Except<UpdateWebhookInput, "roomId">) => {
-    const updatedWebhook = await $trpc.webhook.updateWebhook.mutate({
-      ...input,
-      roomId,
-    });
+    const updatedWebhook = await $trpc.webhook.updateWebhook.mutate({ ...input, roomId });
     storeUpdateWebhook(updatedWebhook);
   };
   const rotateToken = async (roomId: Room["id"], input: Except<RotateTokenInput, "roomId">) => {

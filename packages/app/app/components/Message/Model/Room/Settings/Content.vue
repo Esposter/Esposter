@@ -1,17 +1,15 @@
 <script setup lang="ts">
 import type { Room } from "@esposter/db-schema";
 
+import { SettingsType } from "@/models/message/room/SettingsType";
 import { SettingsContentMap } from "@/services/message/settings/SettingsContentMap";
-import { useSettingsStore } from "@/store/message/room/settings";
-
-const settingsStore = useSettingsStore();
-const { settingsType } = storeToRefs(settingsStore);
 
 interface RoomSettingsContentProps {
   roomId: Room["id"];
+  settingsType: SettingsType;
 }
 
-const { roomId } = defineProps<RoomSettingsContentProps>();
+const { roomId, settingsType } = defineProps<RoomSettingsContentProps>();
 </script>
 
 <template>

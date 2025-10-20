@@ -1,14 +1,11 @@
 <script setup lang="ts">
 import type { Room } from "@esposter/db-schema";
 
+import { SettingsType } from "@/models/message/room/SettingsType";
 import { authClient } from "@/services/auth/authClient";
 import { useRoomStore } from "@/store/message/room";
-import { useSettingsStore } from "@/store/message/room/settings";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import { mergeProps } from "vue";
-
-const settingsStore = useSettingsStore();
-const { dialog } = storeToRefs(settingsStore);
 
 interface RoomSettingsDialogButtonProps {
   roomId: Room["id"];
@@ -21,6 +18,8 @@ const roomStore = useRoomStore();
 const { rooms } = storeToRefs(roomStore);
 const room = computed(() => rooms.value.find(({ id }) => id === roomId));
 const isCreator = computed(() => room.value?.userId === session.value?.user.id);
+const dialog = ref(false);
+const settingsType = ref(SettingsType.Webhooks);
 </script>
 
 <template>
@@ -33,9 +32,9 @@ const isCreator = computed(() => room.value?.userId === session.value?.user.id);
       </v-tooltip>
     </template>
     <v-app>
-      <MessageModelRoomSettingsLeftSideBar />
-      <MessageModelRoomSettingsRightSideBar />
-      <MessageModelRoomSettingsContent :room-id />
+      <MessageModelRoomSettingsLeftSideBar v-model="settingsType" />
+      <MessageModelRoomSettingsRightSideBar @close="dialog = false" />
+      <MessageModelRoomSettingsContent :room-id :settings-type />
     </v-app>
   </v-dialog>
 </template>

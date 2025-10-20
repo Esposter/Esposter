@@ -1,10 +1,7 @@
 <script setup lang="ts">
-import { useSettingsStore } from "@/store/message/room/settings";
-
-const settingsStore = useSettingsStore();
-const { dialog } = storeToRefs(settingsStore);
+const emit = defineEmits<{ close: [event: MouseEvent] }>();
 </script>
 
 <template>
-  <MessageModelSettingsRightSideBar @close="dialog = false" />
+  <MessageModelSettingsRightSideBar @close="emit('close', $event)" />
 </template>
