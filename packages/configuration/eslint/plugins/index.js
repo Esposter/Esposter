@@ -9,7 +9,6 @@ import { defineConfig } from "eslint/config";
 
 export default defineConfig(
   depend,
-  json,
   perfectionist,
   pinia.configs["all-flat"],
   unocss,
