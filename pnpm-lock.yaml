@@ -5654,8 +5654,8 @@ packages:
   alien-signals@0.4.14:
     resolution: {integrity: sha512-itUAVzhczTmP2U5yX67xVpsbbOiquusbWVyA9N+sy6+r6YVbFkahXvNCeEPWEOMhwDYwbVbGHFkVL03N9I5g+Q==}
 
-  alien-signals@3.0.2:
-    resolution: {integrity: sha512-kSbM0MCLV+iTDax+/FR4iYlheTZJI6R9LV1PJnLFGkHU1p2JX1+kPaeGRDoOYGZeoOvvfKsH/FCK501P6bsPuA==}
+  alien-signals@3.0.3:
+    resolution: {integrity: sha512-2JXjom6R7ZwrISpUphLhf4htUq1aKRCennTJ6u9kFfr3sLmC9+I4CxxVi+McoFnIg+p1HnVrfLT/iCt4Dlz//Q==}
 
   ansi-escapes@4.3.2:
     resolution: {integrity: sha512-gKXj5ALrKWQLsYG9jlTRmR/xKluxHV+Z9QEwNIgCfM1/uwPMCuzVVnh5mwTd+OuBZcwSIMbqssNWRm1lE51QaQ==}
@@ -16645,7 +16645,7 @@ snapshots:
       '@volar/language-core': 2.4.23
       '@vue/compiler-dom': 3.5.22
       '@vue/shared': 3.5.22
-      alien-signals: 3.0.2
+      alien-signals: 3.0.3
       muggle-string: 0.4.1
       path-browserify: 1.0.1
       picomatch: 4.0.3
@@ -16926,7 +16926,7 @@ snapshots:
 
   alien-signals@0.4.14: {}
 
-  alien-signals@3.0.2: {}
+  alien-signals@3.0.3: {}
 
   ansi-escapes@4.3.2:
     dependencies:
