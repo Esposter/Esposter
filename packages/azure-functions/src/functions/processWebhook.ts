@@ -1,4 +1,5 @@
 import type { WebhookQueueMessage } from "@/models/WebhookQueueMessage";
+import type { PushNotificationQueueMessage } from "@esposter/db-schema";
 
 import { PUSH_NOTIFICATION_STORAGE_QUEUE_OUTPUT, WEBHOOK_STORAGE_QUEUE_OUTPUT } from "@/services/constants";
 import { getTableClient } from "@/services/getTableClient";
@@ -24,12 +25,17 @@ app.storageQueue(name, {
       const newMessage = await createMessage(messageClient, messageAscendingClient, webhookCreateMessageInput);
       const webPubSubServiceClient = getWebPubSubServiceClient(AzureWebPubSubHub.Messages);
       await webPubSubServiceClient.group(newMessage.partitionKey).sendToAll(newMessage);
-      context.extraOutputs.set(PUSH_NOTIFICATION_STORAGE_QUEUE_OUTPUT.name, {
-        message: newMessage.message,
+
+      const pushNotificationQueueMessage: PushNotificationQueueMessage = {
+        message: {
+          message: newMessage.message,
+          partitionKey: newMessage.partitionKey,
+          rowKey: newMessage.rowKey,
+          userId: newMessage.userId,
+        },
         notificationOptions: { icon: newMessage.appUser.image, title: newMessage.appUser.name },
-        partitionKey: newMessage.partitionKey,
-        rowKey: newMessage.rowKey,
-      });
+      };
+      context.extraOutputs.set(PUSH_NOTIFICATION_STORAGE_QUEUE_OUTPUT.name, pushNotificationQueueMessage);
       context.log(
         `Queued ${PUSH_NOTIFICATION_STORAGE_QUEUE_OUTPUT.queueName} for message id: ${JSON.stringify({ partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey })}`,
       );

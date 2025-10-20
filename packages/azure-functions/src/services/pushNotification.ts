@@ -1,17 +1,20 @@
-import type { PushNotificationQueueMessage } from "@/models/PushNotificationQueueMessage";
 import type { InvocationContext } from "@azure/functions";
+import type { PushNotificationQueueMessage } from "@esposter/db-schema";
 
 import { db } from "@/services/db";
 import { getCreateMessageNotificationPayload } from "@/services/getCreateMessageNotificationPayload";
 import { webpush } from "@/services/webpush";
 import { pushSubscriptions, usersToRooms } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
-import { and, eq } from "drizzle-orm";
+import { and, eq, ne } from "drizzle-orm";
 import { WebPushError } from "web-push";
 
 export const pushNotification = async (
   context: InvocationContext,
-  { message, notificationOptions: { icon, title }, partitionKey, rowKey }: PushNotificationQueueMessage,
+  {
+    message: { message, partitionKey, rowKey, userId },
+    notificationOptions: { icon, title },
+  }: PushNotificationQueueMessage,
 ): Promise<void> => {
   const payload = getCreateMessageNotificationPayload(message, {
     icon,
@@ -20,6 +23,8 @@ export const pushNotification = async (
   });
   if (!payload) return;
 
+  const wheres = [eq(usersToRooms.roomId, partitionKey)];
+  if (userId) wheres.push(ne(usersToRooms.userId, userId));
   const rows = await db
     .select({
       auth: pushSubscriptions.auth,
@@ -29,10 +34,8 @@ export const pushNotification = async (
       p256dh: pushSubscriptions.p256dh,
     })
     .from(pushSubscriptions)
-    .innerJoin(
-      usersToRooms,
-      and(eq(usersToRooms.userId, pushSubscriptions.userId), eq(usersToRooms.roomId, partitionKey)),
-    );
+    .innerJoin(usersToRooms, eq(usersToRooms.userId, pushSubscriptions.userId))
+    .where(and(...wheres));
   if (rows.length === 0) {
     context.log(`No push subscriptions found for room ${partitionKey}.`);
     return;

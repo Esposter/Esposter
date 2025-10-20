@@ -1,4 +1,4 @@
-import type { PushNotificationQueueMessage } from "@/models/PushNotificationQueueMessage";
+import type { PushNotificationQueueMessage } from "@esposter/db-schema";
 
 import { PUSH_NOTIFICATION_STORAGE_QUEUE_OUTPUT } from "@/services/constants";
 import { pushNotification } from "@/services/pushNotification";
@@ -14,10 +14,12 @@ app.storageQueue(name, {
 
     try {
       await pushNotification(context, pushNotificationQueueMessage);
-      context.log(`Successfully processed push notifications for room ${pushNotificationQueueMessage.partitionKey}.`);
+      context.log(
+        `Successfully processed push notifications for room ${pushNotificationQueueMessage.message.partitionKey}.`,
+      );
     } catch (error) {
       context.error(
-        `Failed to process push notifications for room ${pushNotificationQueueMessage.partitionKey}: `,
+        `Failed to process push notifications for room ${pushNotificationQueueMessage.message.partitionKey}: `,
         error,
       );
       throw error;

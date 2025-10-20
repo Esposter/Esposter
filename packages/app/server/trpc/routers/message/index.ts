@@ -1,4 +1,10 @@
-import type { AzureUpdateEntity, Clause, FileSasEntity, MessageEntity } from "@esposter/db-schema";
+import type {
+  AzureUpdateEntity,
+  Clause,
+  FileSasEntity,
+  MessageEntity,
+  PushNotificationQueueMessage,
+} from "@esposter/db-schema";
 
 import { createTypingInputSchema } from "#shared/models/db/message/CreateTypingInput";
 import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
@@ -154,17 +160,16 @@ export const messageRouter = router({
       messageEventEmitter.emit("createMessage", [[newMessageEntity], { sessionId: ctx.session.session.id }]);
 
       const queueClient = await useQueueClient(QueueName.PushNotifications);
-      await queueClient.sendMessage(
-        JSON.stringify({
+      const pushNotificationQueueMessage: PushNotificationQueueMessage = {
+        message: {
           message: newMessageEntity.message,
-          notificationOptions: {
-            icon: ctx.session.user.image,
-            title: ctx.session.user.name,
-          },
           partitionKey: newMessageEntity.partitionKey,
           rowKey: newMessageEntity.rowKey,
-        }),
-      );
+          userId: newMessageEntity.userId,
+        },
+        notificationOptions: { icon: ctx.session.user.image, title: ctx.session.user.name },
+      };
+      await queueClient.sendMessage(JSON.stringify(pushNotificationQueueMessage));
 
       const updatedRoom = (
         await ctx.db.update(rooms).set({ updatedAt: new Date() }).where(eq(rooms.id, input.roomId)).returning()
