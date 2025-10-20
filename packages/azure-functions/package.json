@@ -1,5 +1,5 @@
 {
-  "name": "@esposter/webhook",
+  "name": "@esposter/azure-functions",
   "description": "A library that contains webhook functionality.",
   "version": "2.16.0",
   "private": true,

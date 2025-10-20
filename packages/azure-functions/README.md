@@ -1,4 +1,4 @@
-# @esposter/webhook
+# @esposter/azure-functions
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 

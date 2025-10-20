@@ -6,10 +6,12 @@ import { selectWebhookSchema, webhookPayloadSchema } from "@esposter/db-schema";
 import { RateLimiterRes } from "rate-limiter-flexible";
 import { z, ZodError } from "zod";
 
-app.http("queueWebhook", {
+const name = "queueWebhook";
+
+app.http(name, {
   extraOutputs: [WEBHOOK_STORAGE_QUEUE_OUTPUT],
   handler: async (request, context) => {
-    context.log(`Webhook trigger function processed a request for URL: ${request.url}`);
+    context.log(`${name} processed a request for URL: ${request.url}`);
 
     try {
       const { id, token } = await selectWebhookSchema.pick({ id: true, token: true }).parseAsync(request.params);
@@ -24,7 +26,7 @@ app.http("queueWebhook", {
       const body = await request.json();
       const payload = await webhookPayloadSchema.parseAsync(body);
       context.extraOutputs.set(WEBHOOK_STORAGE_QUEUE_OUTPUT.name, { payload, webhook });
-      context.log(`Queued job for id: ${id}`);
+      context.log(`Queued ${WEBHOOK_STORAGE_QUEUE_OUTPUT.queueName} for webhook id: ${webhook.id}`);
       return {
         jsonBody: { message: "Webhook accepted and queued for processing." },
         status: 202,
@@ -32,7 +34,7 @@ app.http("queueWebhook", {
     } catch (error) {
       if (error instanceof ZodError) {
         const errors = z.treeifyError(error);
-        context.log("Validation failed:", errors);
+        context.log("Validation failed: ", errors);
         return {
           jsonBody: {
             errors,
@@ -41,13 +43,13 @@ app.http("queueWebhook", {
           status: 400,
         };
       } else if (error instanceof RateLimiterRes) {
-        context.log("Rate limit exceeded:", error);
+        context.log("Rate limit exceeded: ", error);
         return {
           jsonBody: { message: "Rate limit exceeded." },
           status: 429,
         };
       } else {
-        context.error("An internal error occurred:", error);
+        context.error("An internal error occurred: ", error);
         return {
           jsonBody: { message: "An internal server error occurred." },
           status: 500,

@@ -6,3 +6,10 @@ export const WEBHOOK_STORAGE_QUEUE_OUTPUT: StorageQueueOutput = {
   queueName: "webhook-jobs",
   type: "queue",
 };
+
+export const PUSH_NOTIFICATION_STORAGE_QUEUE_OUTPUT: StorageQueueOutput = {
+  connection: "AzureWebJobsStorage",
+  name: "pushNotification",
+  queueName: "push-notifications",
+  type: "queue",
+};

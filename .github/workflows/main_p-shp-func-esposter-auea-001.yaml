@@ -34,10 +34,10 @@ jobs:
           echo inject-workspace-packages=true >> .npmrc
           echo node-linker=hoisted >> .npmrc
           pushd ${{ env.PACKAGE_PATH }}
-          pnpm --filter @esposter/webhook... i --no-frozen-lockfile
-          pnpm --filter @esposter/webhook... build
+          pnpm --filter @esposter/azure-functions... i --no-frozen-lockfile
+          pnpm --filter @esposter/azure-functions... build
           popd
-          pnpm --filter @esposter/webhook deploy ${{ env.OUTPUT_DIRECTORY }}
+          pnpm --filter @esposter/azure-functions deploy ${{ env.OUTPUT_DIRECTORY }}
           cp ${{ env.PACKAGE_PATH }}/host.json ${{ env.OUTPUT_DIRECTORY }}/host.json
 
       - name: 📦 Zip Artifact for Deployment

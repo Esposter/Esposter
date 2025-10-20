@@ -1,21 +1,20 @@
 import type { WebhookQueueMessage } from "@/models/WebhookQueueMessage";
 
-import { WEBHOOK_STORAGE_QUEUE_OUTPUT } from "@/services/constants";
+import { PUSH_NOTIFICATION_STORAGE_QUEUE_OUTPUT, WEBHOOK_STORAGE_QUEUE_OUTPUT } from "@/services/constants";
 import { getTableClient } from "@/services/getTableClient";
 import { getWebhookCreateMessageInput } from "@/services/getWebhookCreateMessageInput";
 import { getWebPubSubServiceClient } from "@/services/getWebPubSubServiceClient";
-import { pushNotification } from "@/services/pushNotification";
 import { app } from "@azure/functions";
 import { createMessage } from "@esposter/db";
 import { AzureTable, AzureWebPubSubHub } from "@esposter/db-schema";
-import webpush from "web-push";
 
-webpush.setVapidDetails(process.env.BASE_URL, process.env.VAPID_PUBLIC_KEY, process.env.VAPID_PRIVATE_KEY);
+const name = "processWebhook";
 
-app.storageQueue("processWebhook", {
+app.storageQueue(name, {
   connection: "AzureWebJobsStorage",
+  extraOutputs: [PUSH_NOTIFICATION_STORAGE_QUEUE_OUTPUT],
   handler: async (queueEntry, context) => {
-    context.log("Queue trigger function processed message: ", queueEntry);
+    context.log(`${name} processed message: `, queueEntry);
     const { payload, webhook } = queueEntry as WebhookQueueMessage;
 
     try {
@@ -24,12 +23,18 @@ app.storageQueue("processWebhook", {
       const webhookCreateMessageInput = getWebhookCreateMessageInput(payload, webhook);
       const newMessage = await createMessage(messageClient, messageAscendingClient, webhookCreateMessageInput);
       const webPubSubServiceClient = getWebPubSubServiceClient(AzureWebPubSubHub.Messages);
-      await Promise.all([
-        webPubSubServiceClient.group(newMessage.partitionKey).sendToAll(newMessage),
-        pushNotification(newMessage),
-      ]);
+      await webPubSubServiceClient.group(newMessage.partitionKey).sendToAll(newMessage);
+      context.extraOutputs.set(PUSH_NOTIFICATION_STORAGE_QUEUE_OUTPUT.name, {
+        message: newMessage.message,
+        notificationOptions: { icon: newMessage.appUser.image, title: newMessage.appUser.name },
+        partitionKey: newMessage.partitionKey,
+        rowKey: newMessage.rowKey,
+      });
+      context.log(
+        `Queued ${PUSH_NOTIFICATION_STORAGE_QUEUE_OUTPUT.queueName} for message id: ${JSON.stringify({ partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey })}`,
+      );
     } catch (error) {
-      context.error("Failed to process webhook queue message:", error);
+      context.error(`${name} failed: `, error);
       throw error;
     }
   },
