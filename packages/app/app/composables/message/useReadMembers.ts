@@ -6,25 +6,27 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 export const useReadMembers = () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
-  const { currentRoomId, memberMap } = storeToRefs(roomStore);
+  const { currentRoomId } = storeToRefs(roomStore);
   const memberStore = useMemberStore();
   const { readItems, readMoreItems } = memberStore;
+  const { count, memberMap } = storeToRefs(memberStore);
   const readUserStatuses = useReadUserStatuses();
-  const readMetadata = (userIds: string[]) => readUserStatuses(userIds);
+  const readMetadata = (memberIds: string[]) => readUserStatuses(memberIds);
   const readMembers = () =>
     readItems(
-      () => {
+      async () => {
         if (!currentRoomId.value)
           throw new InvalidOperationError(
             Operation.Read,
             readMoreMembers.name,
             StandardMessageEntityPropertyNames.partitionKey,
           );
+        count.value = await $trpc.room.countMembers.query({ roomId: currentRoomId.value });
         return $trpc.room.readMembers.useQuery({ roomId: currentRoomId.value });
       },
-      async ({ items }) => {
-        for (const user of items) memberMap.value.set(user.id, user);
-        await readMetadata(items.map(({ id }) => id));
+      ({ items }) => {
+        for (const member of items) memberMap.value.set(member.id, member);
+        readMetadata(items.map(({ id }) => id));
       },
     );
   const readMoreMembers = (onComplete: () => void) =>

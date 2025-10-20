@@ -21,13 +21,13 @@ const emit = defineEmits<{
   "update:select-emoji": [emoji: string];
   "update:update-mode": [value: true];
 }>();
-const isMessageCreator = await useIsMessageCreator(() => message);
-const isEditable = computed(() => isMessageCreator.value && !message.isForward);
+const isCreator = await useIsCreator(() => message);
+const isEditable = computed(() => isCreator.value && !message.isForward);
 const {
   actionMessageItems,
   deleteMessageItem,
   updateMessageMenuItems: updateMessageItems,
-} = useMessageActionItems(message, isEditable, isMessageCreator, {
+} = useMessageActionItems(message, isEditable, isCreator, {
   onDeleteMode: () => emit("update:delete-mode", true),
   onForward: (rowKey) => emit("update:forward", rowKey),
   onPin: (value) => emit("update:pin", value),

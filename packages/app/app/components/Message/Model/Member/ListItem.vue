@@ -4,6 +4,7 @@ import type { ListItemSlot } from "vuetify/lib/components/VList/VListItem.mjs";
 
 import { authClient } from "@/services/auth/authClient";
 import { useRoomStore } from "@/store/message/room";
+import { useMemberStore } from "@/store/message/user/member";
 
 interface MemberListItemProps {
   member: User;
@@ -11,12 +12,13 @@ interface MemberListItemProps {
 
 defineSlots<{ append: (props: ListItemSlot) => VNode }>();
 const { member } = defineProps<MemberListItemProps>();
-const { $trpc } = useNuxtApp();
 const { data: session } = await authClient.useSession(useFetch);
 const roomStore = useRoomStore();
 const { currentRoom, isCreator: isRoomCreator } = storeToRefs(roomStore);
 const isCreator = computed(() => currentRoom.value?.userId === member.id);
 const isKickable = computed(() => isRoomCreator.value && member.id !== session.value?.user.id);
+const memberStore = useMemberStore();
+const { deleteMember } = memberStore;
 </script>
 
 <template>
@@ -45,7 +47,7 @@ const isKickable = computed(() => isRoomCreator.value && member.id !== session.v
                 async (onComplete) => {
                   try {
                     if (!currentRoom) return;
-                    await $trpc.room.deleteMember.mutate({ roomId: currentRoom.id, userId: member.id });
+                    await deleteMember({ roomId: currentRoom.id, userId: member.id });
                   } finally {
                     onComplete();
                   }

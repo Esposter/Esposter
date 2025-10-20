@@ -26,7 +26,7 @@ const { onPlayerInput } = battleSceneStore;
     @update="onPlayerInput($event, controls.getInput())"
     @shutdown="
       async () => {
-        await battleStateMachine.setState(undefined);
+        await battleStateMachine.setState();
       }
     "
   >

@@ -11,7 +11,7 @@ import { Operation } from "@esposter/shared";
 
 export const usePinStore = defineStore("message/pin", () => {
   const roomStore = useRoomStore();
-  const { items, ...rest } = useCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
+  const { items, ...restData } = useCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
   const { createMessage, deleteMessage } = createOperationData(
     items,
     ["partitionKey", "rowKey"],
@@ -30,6 +30,6 @@ export const usePinStore = defineStore("message/pin", () => {
   });
   return {
     messages,
-    ...rest,
+    ...restData,
   };
 });

@@ -1,9 +1,12 @@
 import { useRoomStore } from "@/store/message/room";
+import { useAppUserStore } from "@/store/message/user/appUser";
 
 export const useReadAppUsers = () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
-  const { appUserMap, currentRoomId } = storeToRefs(roomStore);
+  const { currentRoomId } = storeToRefs(roomStore);
+  const appUserStore = useAppUserStore();
+  const { appUserMap } = storeToRefs(appUserStore);
   return async (appUserIds: string[]) => {
     if (!currentRoomId.value) return;
 

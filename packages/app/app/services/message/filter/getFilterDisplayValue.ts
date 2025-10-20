@@ -1,7 +1,7 @@
 /* eslint-disable perfectionist/sort-switch-case */
 import type { Filter } from "@esposter/db-schema";
 
-import { useRoomStore } from "@/store/message/room";
+import { useMemberStore } from "@/store/message/user/member";
 import { FilterType, serializeValue } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, uncapitalize } from "@esposter/shared";
 
@@ -14,9 +14,10 @@ export const getFilterDisplayValue = ({ type, value }: Filter) => {
     case FilterType.Mentions: {
       if (typeof value !== "string")
         throw new InvalidOperationError(Operation.Read, getFilterDisplayValue.name, serializeValue(value));
-      const roomStore = useRoomStore();
-      const { memberMap } = storeToRefs(roomStore);
-      return `${displayType} ${memberMap.value.get(value)?.name ?? value}`;
+      const memberStore = useMemberStore();
+      const { memberMap } = storeToRefs(memberStore);
+      const member = memberMap.value.get(value);
+      return `${displayType} ${member?.name ?? value}`;
     }
     case FilterType.Has:
       if (typeof value !== "string")

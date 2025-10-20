@@ -9,7 +9,8 @@ import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 import { Extension } from "@tiptap/vue-3";
 
 const roomStore = useRoomStore();
-const { currentRoomName } = storeToRefs(roomStore);
+const { currentRoomId } = storeToRefs(roomStore);
+const roomName = useRoomName(currentRoomId);
 const dataStore = useDataStore();
 const { sendMessage } = dataStore;
 const { typings } = storeToRefs(dataStore);
@@ -40,7 +41,7 @@ const uploadFiles = useUploadFiles();
     <MessageModelMessageInputReplyHeader v-if="reply" :reply @close="rowKey = ''" />
     <RichTextEditor
       v-model="input"
-      :placeholder="`Message ${currentRoomName}`"
+      :placeholder="`Message ${roomName}`"
       :limit="MESSAGE_MAX_LENGTH"
       :extensions="[keyboardExtension, mentionExtension]"
       :card-props="reply ? { class: 'rd-t-none' } : undefined"

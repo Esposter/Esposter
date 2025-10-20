@@ -10,6 +10,7 @@
   "search.followSymlinks": false,
   "symlink-follow.autoFollow": true,
   "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.tsserver.maxTsServerMemory": 8000,
   "javascript.updateImportsOnFileMove.enabled": "always",
   "typescript.updateImportsOnFileMove.enabled": "always",
   "[typescript][vue]": {
@@ -29,10 +30,10 @@
     "editor.formatOnSave": false
   },
   "oxc.enable": true,
-  "azureFunctions.deploySubpath": "packages\\webhook",
+  "azureFunctions.deploySubpath": "packages\\azure-functions",
+  "azureFunctions.preDeployTask": "npm prune (functions)",
   "azureFunctions.postDeployTask": "npm install (functions)",
   "azureFunctions.projectLanguage": "JavaScript",
   "azureFunctions.projectRuntime": "~4",
-  "debug.internalConsoleOptions": "neverOpen",
-  "azureFunctions.preDeployTask": "npm prune (functions)"
+  "debug.internalConsoleOptions": "neverOpen"
 }

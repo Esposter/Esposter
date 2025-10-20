@@ -34,7 +34,6 @@ const options = useApexOptions(
 <template>
   <StyledCard size-full>
     <div ref="container" h-full>
-      <!-- @vue-expect-error @TODO: https://github.com/apexcharts/vue3-apexcharts/issues/145 -->
       <VueApexCharts :="data" :options />
     </div>
   </StyledCard>

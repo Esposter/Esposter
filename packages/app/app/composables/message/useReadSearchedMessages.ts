@@ -18,7 +18,7 @@ export const useReadSearchedMessages = () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const searchMessageStore = useSearchMessageStore();
   const { getReadMoreItems } = searchMessageStore;
-  const { isSearching, menu, page, searchQuery, totalItemsLength } = storeToRefs(searchMessageStore);
+  const { count, isSearching, menu, page, searchQuery } = storeToRefs(searchMessageStore);
   const { selectedFilters } = storeToRefs(searchMessageStore);
   const searchHistoryStore = useSearchHistoryStore();
   const { createSearchHistory } = searchHistoryStore;
@@ -35,7 +35,7 @@ export const useReadSearchedMessages = () => {
       isSearching.value = true;
       isRightDrawerOpen.value = true;
       rightDrawer.value = RightDrawer.Search;
-      const { count, data } = await $trpc.message.searchMessages.query({
+      const { count: newCount, data } = await $trpc.message.searchMessages.query({
         filters: dedupeFilters(selectedFilters.value),
         offset,
         query: searchQuery.value,
@@ -50,7 +50,7 @@ export const useReadSearchedMessages = () => {
           roomId: currentRoomId.value,
         });
       }
-      if (count !== undefined) totalItemsLength.value = count;
+      if (newCount !== undefined) count.value = newCount;
       return data;
     },
     () => {

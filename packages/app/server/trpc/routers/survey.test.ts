@@ -31,17 +31,7 @@ describe("survey", () => {
     await mockContext.db.delete(surveys);
   });
 
-  test("creates", async () => {
-    expect.hasAssertions();
-
-    const newSurvey = await caller.createSurvey({ group, model, name });
-
-    expect(newSurvey.name).toBe(name);
-    expect(newSurvey.group).toBe(group);
-    expect(newSurvey.model).toBe(model);
-  });
-
-  test("count", async () => {
+  test("counts", async () => {
     expect.hasAssertions();
 
     const count = await caller.count();
@@ -77,6 +67,16 @@ describe("survey", () => {
     const readSurveys = await caller.readSurveys();
 
     expect(readSurveys).toStrictEqual(getOffsetPaginationData([], 0));
+  });
+
+  test("creates", async () => {
+    expect.hasAssertions();
+
+    const newSurvey = await caller.createSurvey({ group, model, name });
+
+    expect(newSurvey.name).toBe(name);
+    expect(newSurvey.group).toBe(group);
+    expect(newSurvey.model).toBe(model);
   });
 
   test("updates", async () => {

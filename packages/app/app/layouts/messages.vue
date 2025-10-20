@@ -4,15 +4,17 @@ import { useRoomStore } from "@/store/message/room";
 
 useHead({ titleTemplate: (title) => (title ? `${MESSAGE_DISPLAY_NAME} | ${title}` : MESSAGE_DISPLAY_NAME) });
 useSubscribables();
+
 const roomStore = useRoomStore();
-const { currentRoomName } = storeToRefs(roomStore);
+const { currentRoomId } = storeToRefs(roomStore);
+const roomName = useRoomName(currentRoomId);
 </script>
 
 <template>
   <!-- We only want to show the inner scrollbar inside the chat content -->
   <NuxtLayout :footer-style="{ paddingBottom: 0 }" hide-global-scrollbar>
     <Head>
-      <Title>{{ currentRoomName }}</Title>
+      <Title>{{ roomName }}</Title>
     </Head>
     <MessageContent />
     <template #left>
