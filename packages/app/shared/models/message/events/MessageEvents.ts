@@ -2,11 +2,11 @@ import type { Device } from "#shared/models/auth/Device";
 import type { CreateTypingInput } from "#shared/models/db/message/CreateTypingInput";
 import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
 import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessageInput";
-import type { MessageEntity, StandardMessageEntity } from "@esposter/db-schema";
+import type { StandardMessageEntity } from "@esposter/db-schema";
 import type { PartialByKeys } from "@esposter/shared";
 
 export interface MessageEvents {
-  createMessage: [MessageEntity[], Pick<Device, "sessionId"> & { isSendToSelf?: true }][];
+  createMessage: [StandardMessageEntity[], Pick<Device, "sessionId"> & { isSendToSelf?: true }][];
   // We'll allow typing events to also be propagated to separate devices of the same account
   // Why? Because we can. (also it's better UX I suppose)
   createTyping: (CreateTypingInput & Pick<Device, "sessionId">)[];

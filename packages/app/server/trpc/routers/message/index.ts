@@ -333,19 +333,15 @@ export const messageRouter = router({
       }
     }
 
-    for await (const [[data, options]] of on(messageEventEmitter, "createMessage", { signal })) {
-      const dataToYield: MessageEntity[] = [];
+    for await (const [[data, { isSendToSelf, sessionId }]] of on(messageEventEmitter, "createMessage", { signal })) {
+      const dataToYield: StandardMessageEntity[] = [];
 
-      if ("isSendToSelf" in options) {
-        const { isSendToSelf, sessionId } = options;
-
-        for (const newMessage of data as StandardMessageEntity[])
-          if (
-            isRoomId(newMessage.partitionKey, roomId) &&
-            (isSendToSelf || !getIsSameDevice({ sessionId, userId: newMessage.userId }, ctx.session))
-          )
-            dataToYield.push(newMessage);
-      } else dataToYield.push(...data);
+      for (const newMessage of data)
+        if (
+          isRoomId(newMessage.partitionKey, roomId) &&
+          (isSendToSelf || !getIsSameDevice({ sessionId, userId: newMessage.userId }, ctx.session))
+        )
+          dataToYield.push(newMessage);
 
       if (dataToYield.length > 0) {
         const newestMessage = dataToYield[dataToYield.length - 1];
