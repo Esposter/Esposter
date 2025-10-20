@@ -19,7 +19,16 @@ export const useMemberStore = defineStore("message/user/member", () => {
   });
   return {
     members,
-    ...createOperationData(members, ["id"], "Member"),
+    ...createOperationData(
+      computed({
+        get: () => members.value,
+        set: (newMembers) => {
+          items.value = newMembers;
+        },
+      }),
+      ["id"],
+      "Member",
+    ),
     ...rest,
   };
 });
