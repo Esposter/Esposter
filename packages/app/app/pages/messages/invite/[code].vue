@@ -26,7 +26,7 @@ else if (invite.isMember) await navigateTo(RoutePath.Messages(invite.roomId));
 
 const roomStore = useRoomStore();
 const { joinRoom } = roomStore;
-const { name } = useRoomName(invite.room);
+const roomName = useRoomName();
 </script>
 
 <template>
@@ -44,7 +44,7 @@ const { name } = useRoomName(invite.room);
             <div text-center>
               You've been invited to join
               <span font-bold>
-                {{ name }}
+                {{ roomName }}
               </span>
               by
               <div text-2xl font-bold>

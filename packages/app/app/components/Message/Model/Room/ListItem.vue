@@ -11,7 +11,7 @@ interface RoomListItemProps {
 const { room } = defineProps<RoomListItemProps>();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
-const { name } = useRoomName(room);
+const roomName = useRoomName();
 const isActive = computed(() => room.id === currentRoomId.value);
 </script>
 
@@ -19,10 +19,10 @@ const isActive = computed(() => room.id === currentRoomId.value);
   <v-hover #default="{ isHovering, props }">
     <v-list-item :="props" :active="isActive" :value="room.id" @click="navigateTo(RoutePath.Messages(room.id))">
       <template #prepend>
-        <StyledAvatar :image="room.image" :name />
+        <StyledAvatar :image="room.image" :name="roomName" />
       </template>
       <v-list-item-title pr-6>
-        {{ name }}
+        {{ roomName }}
       </v-list-item-title>
       <template #append>
         <MessageModelRoomSettingsDialogButton :room-id="room.id">
