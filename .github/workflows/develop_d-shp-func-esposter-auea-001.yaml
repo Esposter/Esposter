@@ -63,7 +63,7 @@ jobs:
             --account-name ${{ env.STORAGE_ACCOUNT_NAME }} \
             --ip-address ${{ steps.get_ip.outputs.runner_ip }}
 
-      - name: 🚀 Upload Package to Blob Storage and Update App Settings
+      - name: 🚀 Upload Package to Blob Storage
         run: |
           az storage blob upload --account-name ${{ env.STORAGE_ACCOUNT_NAME }} --container-name ${{ env.FUNCTION_APP_NAME }} --name ${{ env.ZIP_FILE_NAME }} --file ${{ env.ZIP_FILE_NAME }} --auth-mode login
 
