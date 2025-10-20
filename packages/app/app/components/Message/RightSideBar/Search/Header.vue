@@ -2,7 +2,7 @@
 import { useSearchMessageStore } from "@/store/message/searchMessage";
 
 const searchMessageStore = useSearchMessageStore();
-const { isSearching, totalItemsLength } = storeToRefs(searchMessageStore);
+const { isSearching, count } = storeToRefs(searchMessageStore);
 </script>
 
 <template>
@@ -19,7 +19,7 @@ const { isSearching, totalItemsLength } = storeToRefs(searchMessageStore);
           </div>
         </template>
         <template v-else>
-          {{ totalItemsLength }} result{{ totalItemsLength === 1 ? "" : "s" }}
+          {{ count }} result{{ count === 1 ? "" : "s" }}
           <v-spacer />
           <StyledHelpTooltip text="New messages may take up to 5 minutes to appear." />
         </template>

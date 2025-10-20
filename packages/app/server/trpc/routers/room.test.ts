@@ -1,6 +1,6 @@
+import type { DeleteMemberInput } from "#shared/models/db/room/DeleteMemberInput";
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
-import type { DeleteMemberInput } from "@@/server/trpc/routers/room";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCode } from "#shared/util/math/random/createCode";
@@ -346,7 +346,7 @@ describe("room", () => {
 
     assert(!data.done);
 
-    expect(data.value).toStrictEqual({ roomId: newRoom.id, sessionId: session.session.id, user: session.user });
+    expect(data.value).toStrictEqual(session.user);
   });
 
   test("leaves", async () => {
@@ -396,7 +396,16 @@ describe("room", () => {
 
     assert(!data.done);
 
-    expect(data.value).toStrictEqual({ roomId: newRoom.id, sessionId: session.session.id, userId: session.user.id });
+    expect(data.value).toBe(session.user.id);
+  });
+
+  test("counts members", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await caller.createRoom({ name });
+    const newCount = await caller.countMembers({ roomId: newRoom.id });
+
+    expect(newCount).toBe(1);
   });
 
   test("reads members", async () => {

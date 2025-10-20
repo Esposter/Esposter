@@ -10,7 +10,7 @@ export const useRoomSubscribables = () => {
   const { storeDeleteRoom, storeUpdateRoom } = roomStore;
   const { rooms } = storeToRefs(roomStore);
   const memberStore = useMemberStore();
-  const { createMember, deleteMember } = memberStore;
+  const { storeCreateMember, storeDeleteMember } = memberStore;
 
   const updateRoomUnsubscribable = ref<Unsubscribable>();
   const deleteRoomUnsubscribable = ref<Unsubscribable>();
@@ -37,10 +37,10 @@ export const useRoomSubscribables = () => {
       onData: getSynchronizedFunction((id) => storeDeleteRoom({ id })),
     });
     joinRoomUnsubscribable.value = $trpc.room.onJoinRoom.subscribe(newRoomIds, {
-      onData: (user) => createMember(user),
+      onData: (user) => storeCreateMember(user),
     });
     leaveRoomUnsubscribable.value = $trpc.room.onLeaveRoom.subscribe(newRoomIds, {
-      onData: (userId) => deleteMember({ id: userId }),
+      onData: (userId) => storeDeleteMember(userId),
     });
   });
 

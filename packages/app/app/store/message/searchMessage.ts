@@ -29,13 +29,14 @@ export const useSearchMessageStore = defineStore("message/searchMessage", () => 
     selectedFilters.value = [];
   };
   const hasFilters = computed(() => selectedFilters.value.length > 0);
-  const { items, ...rest } = useOffsetPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
-  const { data: totalItemsLength } = useDataMap<number>(() => roomStore.currentRoomId, 0);
-  const pageCount = computed(() => Math.ceil(totalItemsLength.value / DEFAULT_READ_LIMIT));
+  const { items, ...restData } = useOffsetPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
+  const { data: count } = useDataMap<number>(() => roomStore.currentRoomId, 0);
+  const pageCount = computed(() => Math.ceil(count.value / DEFAULT_READ_LIMIT));
   const page = ref(1);
   return {
     activeSelectedFilter,
     clearFilters,
+    count,
     createFilter,
     deleteFilter,
     hasFilters,
@@ -47,7 +48,6 @@ export const useSearchMessageStore = defineStore("message/searchMessage", () => 
     pageCount,
     searchQuery,
     selectedFilters,
-    totalItemsLength,
-    ...rest,
+    ...restData,
   };
 });

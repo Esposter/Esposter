@@ -9,18 +9,19 @@ export const useReadMembers = () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const memberStore = useMemberStore();
   const { readItems, readMoreItems } = memberStore;
-  const { memberMap } = storeToRefs(memberStore);
+  const { count, memberMap } = storeToRefs(memberStore);
   const readUserStatuses = useReadUserStatuses();
   const readMetadata = (memberIds: string[]) => readUserStatuses(memberIds);
   const readMembers = () =>
     readItems(
-      () => {
+      async () => {
         if (!currentRoomId.value)
           throw new InvalidOperationError(
             Operation.Read,
             readMoreMembers.name,
             StandardMessageEntityPropertyNames.partitionKey,
           );
+        count.value = await $trpc.room.countMembers.query({ roomId: currentRoomId.value });
         return $trpc.room.readMembers.useQuery({ roomId: currentRoomId.value });
       },
       ({ items }) => {

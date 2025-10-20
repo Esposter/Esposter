@@ -2,6 +2,7 @@ import type { Room, UserToRoom } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
 import { createRoomInputSchema } from "#shared/models/db/room/CreateRoomInput";
+import { deleteMemberInputSchema } from "#shared/models/db/room/DeleteMemberInput";
 import { deleteRoomInputSchema } from "#shared/models/db/room/DeleteRoomInput";
 import { joinRoomInputSchema } from "#shared/models/db/room/JoinRoomInput";
 import { leaveRoomInputSchema } from "#shared/models/db/room/LeaveRoomInput";
@@ -42,7 +43,7 @@ import {
 } from "@esposter/db-schema";
 import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, desc, eq, ilike, inArray, ne, sql } from "drizzle-orm";
+import { and, count, desc, eq, ilike, inArray, ne, sql } from "drizzle-orm";
 import { z } from "zod";
 
 const readRoomInputSchema = selectRoomSchema.shape.id.optional();
@@ -86,14 +87,14 @@ const readMembersByIdsInputSchema = z.object({
 });
 export type ReadMembersByIdsInput = z.infer<typeof readMembersByIdsInputSchema>;
 
+const countMembersInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
+export type CountMembersInput = z.infer<typeof countMembersInputSchema>;
+
 const createMembersInputSchema = z.object({
   roomId: selectRoomSchema.shape.id,
   userIds: selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
 });
 export type CreateMembersInput = z.infer<typeof createMembersInputSchema>;
-
-const deleteMemberInputSchema = z.object({ roomId: selectRoomSchema.shape.id, userId: selectUserSchema.shape.id });
-export type DeleteMemberInput = z.infer<typeof deleteMemberInputSchema>;
 
 const readInviteInputSchema = selectInviteSchema.shape.code;
 export type ReadInviteInput = z.infer<typeof readInviteInputSchema>;
@@ -106,6 +107,10 @@ export type CreateInviteInput = z.infer<typeof createInviteInputSchema>;
 // For room-related queries/mutations we don't need to grab the room user procedure
 // as the SQL clauses inherently contain logic to filter if the user is a member/creator of the room
 export const roomRouter = router({
+  countMembers: getMemberProcedure(countMembersInputSchema, "roomId").query(
+    async ({ ctx, input: { roomId } }) =>
+      (await ctx.db.select({ count: count() }).from(usersToRooms).where(eq(usersToRooms.roomId, roomId)))[0].count,
+  ),
   createInvite: getMemberProcedure(createInviteInputSchema, "roomId").mutation<string>(
     async ({ ctx, input: { roomId } }) => {
       let inviteCode = await readInviteCode(ctx.db, ctx.session.user.id, roomId, true);
