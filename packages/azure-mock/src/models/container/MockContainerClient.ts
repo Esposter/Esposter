@@ -1,4 +1,4 @@
-import type { BlobHierarchyItem } from "@/models/BlobHierarchyItem";
+import type { BlobHierarchyItem } from "@/models/container/BlobHierarchyItem";
 import type { PagedAsyncIterableIterator } from "@/models/PagedAsyncIterableIterator";
 import type {
   AppendBlobClient,
@@ -30,13 +30,13 @@ import type {
 import type { MapValue } from "@esposter/shared";
 import type { Except } from "type-fest";
 
-import { MockBlobBatchClient } from "@/models/MockBlobBatchClient";
-import { MockBlockBlobClient } from "@/models/MockBlockBlobClient";
+import { MockBlobBatchClient } from "@/models/container/MockBlobBatchClient";
+import { MockBlockBlobClient } from "@/models/container/MockBlockBlobClient";
 import { MockRestError } from "@/models/MockRestError";
-import { getBlobItemXml } from "@/services/blob/getBlobItemXml";
-import { getBlobPrefixXml } from "@/services/blob/getBlobPrefixXml";
-import { getListBlobsXml } from "@/services/blob/getListBlobsXml";
-import { toWebResourceLike } from "@/services/blob/toWebResourceLike";
+import { getBlobItemXml } from "@/services/container/getBlobItemXml";
+import { getBlobPrefixXml } from "@/services/container/getBlobPrefixXml";
+import { getListBlobsXml } from "@/services/container/getListBlobsXml";
+import { toWebResourceLike } from "@/services/container/toWebResourceLike";
 import { MockContainerDatabase } from "@/store/MockContainerDatabase";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { createHttpHeaders, createPipelineRequest } from "@azure/core-rest-pipeline";

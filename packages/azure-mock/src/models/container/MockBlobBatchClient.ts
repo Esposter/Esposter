@@ -8,8 +8,8 @@ import type {
 } from "@azure/storage-blob";
 import type { MapValue } from "@esposter/shared";
 
-import { getAzureErrorXml } from "@/services/blob/getAzureErrorXml";
-import { toWebResourceLike } from "@/services/blob/toWebResourceLike";
+import { getAzureErrorXml } from "@/services/container/getAzureErrorXml";
+import { toWebResourceLike } from "@/services/container/toWebResourceLike";
 import { MockContainerDatabase } from "@/store/MockContainerDatabase";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { createHttpHeaders, createPipelineRequest } from "@azure/core-rest-pipeline";

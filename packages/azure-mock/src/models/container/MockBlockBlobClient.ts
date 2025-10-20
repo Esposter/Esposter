@@ -12,9 +12,9 @@ import type {
 } from "@azure/storage-blob";
 import type { Except } from "type-fest";
 
-import { MockBlobClient } from "@/models/MockBlobClient";
-import { bodyToBuffer } from "@/services/blob/bodyToBuffer";
-import { toWebResourceLike } from "@/services/blob/toWebResourceLike";
+import { MockBlobClient } from "@/models/container/MockBlobClient";
+import { bodyToBuffer } from "@/services/container/bodyToBuffer";
+import { toWebResourceLike } from "@/services/container/toWebResourceLike";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { createHttpHeaders, createPipelineRequest } from "@azure/core-rest-pipeline";
 

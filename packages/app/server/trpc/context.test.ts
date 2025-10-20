@@ -5,6 +5,7 @@ import type * as DrizzleKit from "drizzle-kit/api";
 
 import { dayjs } from "#shared/services/dayjs";
 import { useContainerClientMock } from "@@/server/composables/azure/container/useContainerClient.test";
+import { useQueueClientMock } from "@@/server/composables/azure/queue/useQueueClient.test";
 import { useTableClientMock } from "@@/server/composables/azure/table/useTableClient.test";
 import { PGlite } from "@electric-sql/pglite";
 import { messageSchema, schema, users } from "@esposter/db-schema";
@@ -52,6 +53,10 @@ vi.mock(import("@@/server/composables/azure/container/useContainerClient"), () =
 
 vi.mock(import("@@/server/composables/azure/table/useTableClient"), () => ({
   useTableClient: useTableClientMock,
+}));
+
+vi.mock(import("@@/server/composables/azure/queue/useQueueClient"), () => ({
+  useQueueClient: useQueueClientMock,
 }));
 
 export const mockSessionOnce = async (db: Context["db"], mockUser?: Session["user"]) => {

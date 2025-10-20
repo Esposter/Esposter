@@ -2,9 +2,10 @@ import type { PushNotificationQueueMessage } from "@/models/PushNotificationQueu
 import type { InvocationContext } from "@azure/functions";
 
 import { db } from "@/services/db";
+import { getCreateMessageNotificationPayload } from "@/services/getCreateMessageNotificationPayload";
 import { webpush } from "@/services/webpush";
 import { pushSubscriptions, usersToRooms } from "@esposter/db-schema";
-import { getCreateMessageNotificationPayload, RoutePath } from "@esposter/shared";
+import { RoutePath } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 import { WebPushError } from "web-push";
 

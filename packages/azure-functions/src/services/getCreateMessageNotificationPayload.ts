@@ -1,5 +1,5 @@
-import { PUSH_NOTIFICATION_MAX_LENGTH } from "@/services/message/constants";
-import { truncate } from "@/util/text/truncate";
+import { PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH } from "@/services/constants";
+import { truncate } from "@esposter/shared";
 import parse from "node-html-parser";
 
 export const getCreateMessageNotificationPayload = (
@@ -16,7 +16,7 @@ export const getCreateMessageNotificationPayload = (
   if (!textContent) return;
 
   return JSON.stringify({
-    body: truncate(textContent, PUSH_NOTIFICATION_MAX_LENGTH),
+    body: truncate(textContent, PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH),
     data: { url },
     icon,
     title,

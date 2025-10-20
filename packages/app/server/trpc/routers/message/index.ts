@@ -9,7 +9,7 @@ import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MAX_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
-import { useQueueClient } from "@@/server/composables/azure/queue/useWebPubSubServiceClient";
+import { useQueueClient } from "@@/server/composables/azure/queue/useQueueClient";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { useWebPubSubServiceClient } from "@@/server/composables/azure/webPubSub/useWebPubSubServiceClient";
 import { getDeviceId } from "@@/server/services/auth/getDeviceId";
@@ -153,7 +153,7 @@ export const messageRouter = router({
       });
       messageEventEmitter.emit("createMessage", [[newMessageEntity], { sessionId: ctx.session.session.id }]);
 
-      const queueClient = useQueueClient(QueueName.PushNotifications);
+      const queueClient = await useQueueClient(QueueName.PushNotifications);
       await queueClient.sendMessage(
         JSON.stringify({
           message: newMessageEntity.message,

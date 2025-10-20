@@ -15,3 +15,5 @@ export const PUSH_NOTIFICATION_STORAGE_QUEUE_OUTPUT: StorageQueueOutput = {
   queueName: QueueName.PushNotifications,
   type: "queue",
 };
+
+export const PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH = 100;
