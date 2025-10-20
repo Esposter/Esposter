@@ -65,7 +65,7 @@ jobs:
 
       - name: 🚀 Upload Package to Blob Storage
         run: |
-          az storage blob upload --account-name ${{ env.STORAGE_ACCOUNT_NAME }} --container-name ${{ env.FUNCTION_APP_NAME }} --name ${{ env.ZIP_FILE_NAME }} --file ${{ env.ZIP_FILE_NAME }} --auth-mode login
+          az storage blob upload --account-name ${{ env.STORAGE_ACCOUNT_NAME }} --container-name ${{ env.FUNCTION_APP_NAME }} --name ${{ env.ZIP_FILE_NAME }} --file ${{ env.ZIP_FILE_NAME }} --auth-mode login --overwrite
 
       - name: 📡 Remove Runner IP from Storage Account Firewall
         if: always() # This ensures the rule is removed even if deployment fails
