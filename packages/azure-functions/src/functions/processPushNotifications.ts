@@ -25,3 +25,5 @@ app.storageQueue(name, {
   },
   queueName: PUSH_NOTIFICATION_STORAGE_QUEUE_OUTPUT.queueName,
 });
+
+export default {};
