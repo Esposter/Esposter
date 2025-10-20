@@ -65,11 +65,10 @@ jobs:
 
       - name: 🚀 Upload Package to Blob Storage and Update App Settings
         run: |
-          BLOB_NAME="${{ github.sha }}.zip"
           az storage container create --account-name ${{ env.STORAGE_ACCOUNT_NAME }} --name ${{ env.FUNCTION_APP_NAME }} --auth-mode login
-          az storage blob upload --account-name ${{ env.STORAGE_ACCOUNT_NAME }} --container-name ${{ env.FUNCTION_APP_NAME }} --name $BLOB_NAME --file ${{ env.ZIP_FILE_NAME }} --auth-mode login
+          az storage blob upload --account-name ${{ env.STORAGE_ACCOUNT_NAME }} --container-name ${{ env.FUNCTION_APP_NAME }} --name ${{ env.ZIP_FILE_NAME }} --file ${{ env.ZIP_FILE_NAME }} --auth-mode login
 
-          BLOB_URL="https://${{ env.STORAGE_ACCOUNT_NAME }}.blob.core.windows.net/${{ env.FUNCTION_APP_NAME }}/${BLOB_NAME}"
+          BLOB_URL="https://${{ env.STORAGE_ACCOUNT_NAME }}.blob.core.windows.net/${{ env.FUNCTION_APP_NAME }}/${{ env.ZIP_FILE_NAME }}
           az functionapp config appsettings set --name ${{ env.FUNCTION_APP_NAME }} --resource-group ${{ env.RESOURCE_GROUP_NAME }} --settings "WEBSITE_RUN_FROM_PACKAGE=${BLOB_URL}"
 
       - name: 📡 Remove Runner IP from Storage Account Firewall
