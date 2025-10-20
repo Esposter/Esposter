@@ -1,13 +1,12 @@
-import type { ItemEntityType } from "#shared/models/entity/ItemEntityType";
-import type { ToData } from "#shared/models/entity/ToData";
+import type { ItemEntityType, ToData } from "@esposter/shared";
 
-import { createItemEntityTypeSchema } from "#shared/models/entity/ItemEntityType";
 import {
   ATableEditorItemEntity,
   aTableEditorItemEntitySchema,
 } from "#shared/models/tableEditor/data/ATableEditorItemEntity";
 import { TodoListItemType, todoListItemTypeSchema } from "#shared/models/tableEditor/todoList/TodoListItemType";
 import { NOTES_MAX_LENGTH } from "#shared/services/tableEditor/todoList/constants";
+import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
 export class TodoListItem extends ATableEditorItemEntity implements ItemEntityType<TodoListItemType> {

@@ -2,12 +2,10 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { userStatuses } from "#shared/db/schema/userStatuses";
-import { UserStatus } from "#shared/models/db/user/UserStatus";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { userRouter } from "@@/server/trpc/routers/user";
-import { NIL } from "@esposter/shared";
+import { UserStatus, userStatuses } from "@esposter/db-schema";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("user", () => {
@@ -34,12 +32,13 @@ describe("user", () => {
   test("reads empty statuses with default values", async () => {
     expect.hasAssertions();
 
-    const userStatus = (await caller.readStatuses([NIL]))[0];
+    const userId = crypto.randomUUID();
+    const userStatus = (await caller.readStatuses([userId]))[0];
 
     expect(userStatus.expiresAt).toBeNull();
     expect(userStatus.message).toBe("");
     expect(userStatus.status).toBe(UserStatus.Online);
-    expect(userStatus.userId).toBe(NIL);
+    expect(userStatus.userId).toBe(userId);
   });
 
   test("fails read statuses with empty user ids", async () => {

@@ -1,17 +1,24 @@
-import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
-import type { Filter } from "#shared/models/message/Filter";
-import type { FilterType } from "#shared/models/message/FilterType";
+import type { Filter, MessageEntity } from "@esposter/db-schema";
 
+import { getIsSearchQueryEmpty } from "#shared/services/message/getIsSearchQueryEmpty";
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
-import { createDataMap } from "@/services/shared/createDataMap";
-import { createOffsetPaginationDataMap } from "@/services/shared/pagination/offset/createOffsetPaginationDataMap";
 import { useRoomStore } from "@/store/message/room";
+import { FilterType } from "@esposter/db-schema";
 
 export const useSearchMessageStore = defineStore("message/searchMessage", () => {
   const roomStore = useRoomStore();
-  const { data: searchQuery } = createDataMap<string>(() => roomStore.currentRoomId, "");
-  const isSearched = ref(false);
-  const { data: selectedFilters } = createDataMap<Filter[]>(() => roomStore.currentRoomId, []);
+  const { data: searchQuery } = useDataMap<string>(() => roomStore.currentRoomId, "");
+  const menu = ref(false);
+  const isSearching = ref(false);
+  const { data: selectedFilters } = useDataMap<Filter[]>(() => roomStore.currentRoomId, []);
+  const activeSelectedFilter = computed({
+    get: () => selectedFilters.value.at(-1),
+    set: (value) => {
+      if (!value) return;
+      selectedFilters.value[selectedFilters.value.length - 1] = value;
+    },
+  });
+  const isSearchQueryEmpty = computed(() => getIsSearchQueryEmpty(searchQuery.value, selectedFilters.value));
   const createFilter = (type: FilterType) => {
     selectedFilters.value.push({ type, value: "" });
   };
@@ -22,22 +29,25 @@ export const useSearchMessageStore = defineStore("message/searchMessage", () => 
     selectedFilters.value = [];
   };
   const hasFilters = computed(() => selectedFilters.value.length > 0);
-  const { items: messages, ...rest } = createOffsetPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
-  const { data: totalItemsLength } = createDataMap<number>(() => roomStore.currentRoomId, 0);
-  const pageCount = computed(() => Math.ceil(totalItemsLength.value / DEFAULT_READ_LIMIT));
+  const { items, ...restData } = useOffsetPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
+  const { data: count } = useDataMap<number>(() => roomStore.currentRoomId, 0);
+  const pageCount = computed(() => Math.ceil(count.value / DEFAULT_READ_LIMIT));
   const page = ref(1);
   return {
+    activeSelectedFilter,
     clearFilters,
+    count,
     createFilter,
     deleteFilter,
     hasFilters,
-    isSearched,
-    messages,
+    isSearching,
+    isSearchQueryEmpty,
+    items,
+    menu,
     page,
     pageCount,
     searchQuery,
     selectedFilters,
-    totalItemsLength,
-    ...rest,
+    ...restData,
   };
 });

@@ -17,6 +17,7 @@
     "import/max-dependencies": "off",
     "import/group-exports": "off",
     "import/no-anonymous-default-export": "off",
+    "import/no-named-export": "off",
     "import/no-unassigned-import": ["error", { "allow": ["*.css", "*.d.ts", "*.i18n"] }],
     "import/prefer-default-export": "off",
     "init-declarations": "off",
@@ -51,14 +52,19 @@
     "unicorn/no-object-as-default-parameter": "off",
     "unicorn/no-nested-ternary": "off",
     "unicorn/no-null": "off",
+    "unicorn/no-useless-undefined": "off",
     "unicorn/number-literal-case": "off",
     "unicorn/numeric-separators-style": ["error", { "onlyIfContainsSeparator": true }],
+    "unicorn/prefer-at": "off",
     "unicorn/prefer-dom-node-append": "off",
     "unicorn/prefer-dom-node-dataset": "off",
     "unicorn/prefer-event-target": "off",
     "unicorn/prefer-query-selector": "off",
+    "unicorn/require-module-specifiers": "off",
     "unicorn/switch-case-braces": "off",
     "vars-on-top": "off",
+    "vue/define-props-destructuring": "off",
+    "vue/no-required-prop-with-default": "off",
     "yoda": ["error", "never"]
   }
 }

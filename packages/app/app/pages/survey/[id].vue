@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SurveyResponseEntity } from "#shared/models/db/survey/SurveyResponseEntity";
+import type { SurveyResponseEntity } from "@esposter/db-schema";
 
 import { validate } from "@/services/router/validate";
 import { SURVEY_RESPONSE_ID_LOCAL_STORAGE_KEY, THEME_KEY } from "@/services/survey/constants";
@@ -74,6 +74,9 @@ onMounted(async () => {
 
 <template>
   <NuxtLayout>
+    <Head>
+      <Title>Survey Response</Title>
+    </Head>
     <SurveyComponent v-if="!isLoading" :model />
   </NuxtLayout>
 </template>

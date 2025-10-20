@@ -2,10 +2,10 @@
 import type { Editor } from "grapesjs";
 
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
-import { jsonDateParse } from "#shared/util/time/jsonDateParse";
 import { authClient } from "@/services/auth/authClient";
 import { EMAIL_EDITOR_LOCAL_STORAGE_KEY } from "@/services/emailEditor/constants";
 import { useEmailEditorStore } from "@/store/emailEditor";
+import { jsonDateParse } from "@esposter/shared";
 import grapesJS from "grapesjs";
 import grapesJSMJML from "grapesjs-mjml";
 

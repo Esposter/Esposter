@@ -11,7 +11,7 @@ interface InfoContainerProps {
   isEnemy: boolean;
 }
 
-defineSlots<{ default: (props: Record<string, never>) => unknown }>();
+defineSlots<{ default: () => VNode }>();
 const { isEnemy } = defineProps<InfoContainerProps>();
 const store = isEnemy ? useEnemyStore() : useBattlePlayerStore();
 const { initialMonsterInfoContainerPosition } = store;

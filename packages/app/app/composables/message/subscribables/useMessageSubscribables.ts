@@ -1,10 +1,11 @@
 import type { Unsubscribable } from "@trpc/server/observable";
-import type { PushSubscription } from "web-push";
 
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
-import { usePushSubscriptionStore } from "@/store/pushSubscription";
+import { WebPubSubClient } from "@azure/web-pubsub-client";
+import { WebhookMessageEntity } from "@esposter/db-schema";
+import { jsonDateParse } from "@esposter/shared";
 
 export const useMessageSubscribables = () => {
   const { $trpc } = useNuxtApp();
@@ -12,30 +13,18 @@ export const useMessageSubscribables = () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const dataStore = useDataStore();
   const { storeCreateMessage, storeDeleteMessage, storeUpdateMessage } = dataStore;
-  const pushSubscriptionStore = usePushSubscriptionStore();
-  const { pushSubscription } = storeToRefs(pushSubscriptionStore);
 
   const createMessageUnsubscribable = ref<Unsubscribable>();
   const updateMessageUnsubscribable = ref<Unsubscribable>();
   const deleteMessageUnsubscribable = ref<Unsubscribable>();
+  const webPubSubClient = ref<WebPubSubClient>();
 
-  const unsubscribe = () => {
-    createMessageUnsubscribable.value?.unsubscribe();
-    updateMessageUnsubscribable.value?.unsubscribe();
-    deleteMessageUnsubscribable.value?.unsubscribe();
-  };
-
-  const { trigger } = watchTriggerable(pushSubscription, (newPushSubscription) => {
-    unsubscribe();
-
+  onMounted(async () => {
     if (!currentRoomId.value) return;
 
     const roomId = currentRoomId.value;
     createMessageUnsubscribable.value = $trpc.message.onCreateMessage.subscribe(
-      {
-        pushSubscription: newPushSubscription as unknown as PushSubscription,
-        roomId,
-      },
+      { roomId },
       {
         onData: getSynchronizedFunction(async ({ data }) => {
           for (const newMessage of data) await storeCreateMessage(newMessage);
@@ -58,13 +47,27 @@ export const useMessageSubscribables = () => {
         }),
       },
     );
-  });
-
-  onMounted(() => {
-    trigger();
+    webPubSubClient.value = new WebPubSubClient({
+      getClientAccessUrl: (options) =>
+        $trpc.message.getWebPubSubClientAccessUrl.query(
+          { roomId },
+          { signal: options?.abortSignal as AbortSignal | undefined },
+        ),
+    });
+    await webPubSubClient.value.start();
+    webPubSubClient.value.on(
+      "group-message",
+      getSynchronizedFunction(async ({ message: { data } }) => {
+        const entity = new WebhookMessageEntity(jsonDateParse(data as string));
+        await storeCreateMessage(entity);
+      }),
+    );
   });
 
   onUnmounted(() => {
-    unsubscribe();
+    createMessageUnsubscribable.value?.unsubscribe();
+    updateMessageUnsubscribable.value?.unsubscribe();
+    deleteMessageUnsubscribable.value?.unsubscribe();
+    webPubSubClient.value?.stop();
   });
 };

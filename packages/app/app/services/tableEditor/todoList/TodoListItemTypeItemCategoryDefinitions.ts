@@ -1,11 +1,11 @@
 import type { ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
 import type { Except } from "type-fest";
 
-import { ItemEntityTypePropertyNames } from "#shared/models/entity/ItemEntityType";
 import { TodoListItem } from "#shared/models/tableEditor/todoList/TodoListItem";
 import { TodoListItemType } from "#shared/models/tableEditor/todoList/TodoListItemType";
 import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
 import { prettify } from "@/util/text/prettify";
+import { ItemEntityTypePropertyNames } from "@esposter/shared";
 
 const TodoListItemTypeItemCategoryDefinitionMap = {
   [TodoListItemType.Todo]: {

@@ -1,14 +1,13 @@
-import type { FileEntity } from "#shared/models/azure/FileEntity";
 import type { UploadFileUrl } from "@/models/message/file/UploadFileUrl";
+import type { FileEntity } from "@esposter/db-schema";
 
 import { MessageHookMap } from "@/services/message/MessageHookMap";
-import { createDataMap } from "@/services/shared/createDataMap";
 import { useRoomStore } from "@/store/message/room";
 
 export const useUploadFileStore = defineStore("message/uploadFile", () => {
   const roomStore = useRoomStore();
-  const { data: files } = createDataMap<FileEntity[]>(() => roomStore.currentRoomId, []);
-  const { data: fileUrlMap } = createDataMap(() => roomStore.currentRoomId, new Map<string, UploadFileUrl>());
+  const { data: files } = useDataMap<FileEntity[]>(() => roomStore.currentRoomId, []);
+  const { data: fileUrlMap } = useDataMap(() => roomStore.currentRoomId, new Map<string, UploadFileUrl>());
   const isFileLoading = ref(false);
   const removeFileUrl = (id: string) => {
     const uploadFileUrl = fileUrlMap.value.get(id);

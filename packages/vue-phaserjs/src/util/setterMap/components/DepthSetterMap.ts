@@ -12,9 +12,8 @@ export const DepthSetterMap = {
     const i = gameObject.parentContainer.list.findIndex(
       (obj) => "depth" in obj && typeof obj.depth === "number" && obj.depth > gameObject.depth,
     );
-    i === -1
-      ? gameObject.parentContainer.bringToTop(gameObject)
-      : gameObject.parentContainer.moveTo(gameObject, Math.max(i - 1, 0));
+    if (i === -1) gameObject.parentContainer.bringToTop(gameObject);
+    else gameObject.parentContainer.moveTo(gameObject, Math.max(i - 1, 0));
   },
 } as const satisfies SetterMap<
   DepthConfiguration,

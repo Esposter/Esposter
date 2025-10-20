@@ -1,25 +1,18 @@
 <script setup lang="ts">
-import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
-
-import { useMemberStore } from "@/store/message/member";
+import type { MessageEntity } from "@esposter/db-schema";
 
 interface MessageListItemContainerProps {
-  currentMessage: MessageEntity;
+  message: MessageEntity;
   nextMessage?: MessageEntity;
 }
 
-const { currentMessage, nextMessage } = defineProps<MessageListItemContainerProps>();
-const memberStore = useMemberStore();
-const { members } = storeToRefs(memberStore);
-const creator = computed(() => members.value.find(({ id }) => id === currentMessage.userId));
+const { message, nextMessage } = defineProps<MessageListItemContainerProps>();
+const creator = useCreator(() => message);
 </script>
 
 <template>
   <template v-if="creator">
-    <MessageModelMessageListItem :creator :message="currentMessage" :next-message />
-    <MessageModelMessageTimeline
-      :current-message-date="currentMessage.createdAt"
-      :next-message-date="nextMessage?.createdAt"
-    />
+    <MessageModelMessageListItem :creator :message :next-message />
+    <MessageModelMessageTimeline :message-date="message.createdAt" :next-message-date="nextMessage?.createdAt" />
   </template>
 </template>

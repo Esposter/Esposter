@@ -1,21 +1,29 @@
 <script setup lang="ts">
-import type { User } from "#shared/db/schema/users";
-import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
+import type { Creator } from "@/models/message/Creator";
+import type { MessageEntity } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
+import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 import { useMessageStore } from "@/store/message";
 import { useForwardStore } from "@/store/message/forward";
 import { useReplyStore } from "@/store/message/reply";
+import { MessageType } from "@esposter/db-schema";
 
 interface MessageListItemProps {
-  creator: User;
+  creator: Creator;
   message: MessageEntity;
   nextMessage?: MessageEntity;
 }
 
 const { creator, message, nextMessage } = defineProps<MessageListItemProps>();
 const isSameBatch = computed(
-  () => message.userId === nextMessage?.userId && dayjs(message.createdAt).diff(nextMessage.createdAt, "minutes") <= 5,
+  () =>
+    nextMessage &&
+    ((message.type === MessageType.Webhook &&
+      nextMessage.type === MessageType.Webhook &&
+      message.appUser.id === nextMessage.appUser.id) ||
+      message.userId === nextMessage.userId) &&
+    dayjs(message.createdAt).diff(nextMessage.createdAt, "minutes") <= 5,
 );
 const messageStore = useMessageStore();
 const { optionsMenu } = storeToRefs(messageStore);
@@ -28,12 +36,12 @@ const isMessageActive = ref(false);
 const isOptionsActive = ref(false);
 const isOptionsChildrenActive = ref(false);
 const isDisabled = computed(() => optionsMenu.value && optionsMenu.value.rowKey !== message.rowKey);
-const active = computed(
+const isActive = computed(
   () =>
     !isDisabled.value &&
     (isMessageActive.value || isOptionsActive.value || isOptionsChildrenActive.value || isUpdateMode.value),
 );
-const activeAndNotUpdateMode = computed(() => active.value && !isUpdateMode.value);
+const isActiveAndNotUpdateMode = computed(() => isActive.value && !isUpdateMode.value);
 const selectEmoji = await useSelectEmoji(message);
 
 watch(optionsMenu, (newOptionsMenu) => {
@@ -43,17 +51,18 @@ watch(optionsMenu, (newOptionsMenu) => {
 
 <template>
   <MessageModelMessageConfirmDeleteDialog :message>
-    <template #default="{ isOpen, updateIsOpen }">
-      <MessageModelMessage
+    <template #activator="{ isOpen, updateIsOpen }">
+      <component
+        :is="MessageComponentMap[message.type]"
         :id="message.rowKey"
         :mt="isSameBatch ? undefined : 4"
         py-1="!"
         min-h-auto="!"
         :op="message.isLoading ? 50 : undefined"
-        :active="(active || activeReplyRowKey === message.rowKey) && !isOpen"
+        :active="(isActive || activeReplyRowKey === message.rowKey) && !isOpen"
         :creator
+        :is-same-batch
         :message
-        :next-message
         @mouseenter="isMessageActive = true"
         @mouseleave="isMessageActive = false"
         @contextmenu.prevent="
@@ -71,8 +80,8 @@ watch(optionsMenu, (newOptionsMenu) => {
           @update:update-mode="isUpdateMode = $event"
           @update:delete-mode="updateIsOpen"
         />
-      </MessageModelMessage>
-      <div v-if="!message.isLoading" v-show="activeAndNotUpdateMode && !isOpen" relative z-1>
+      </component>
+      <div v-if="!message.isLoading" v-show="isActiveAndNotUpdateMode && !isOpen" relative z-1>
         <div
           absolute
           right-4
@@ -81,23 +90,31 @@ watch(optionsMenu, (newOptionsMenu) => {
           @mouseleave="isOptionsActive = false"
         >
           <v-hover #default="{ isHovering, props: hoverProps }">
-            <MessageModelMessageOptionsMenu
-              :message
-              :is-hovering
-              :hover-props
-              @update:delete-mode="updateIsOpen"
-              @update:forward="forwardRowKey = $event"
-              @update:menu="isOptionsChildrenActive = $event"
-              @update:reply="replyRowKey = $event"
-              @update:select-emoji="selectEmoji"
-              @update:update-mode="isUpdateMode = $event"
-            />
+            <MessageModelMessageConfirmPinDialog :message>
+              <template #activator="{ updateIsOpen: updatePinDialogIsOpen }">
+                <MessageModelMessageOptionsMenu
+                  :message
+                  :is-hovering
+                  :hover-props
+                  @update:delete-mode="updateIsOpen"
+                  @update:forward="forwardRowKey = $event"
+                  @update:menu="isOptionsChildrenActive = $event"
+                  @update:pin="updatePinDialogIsOpen"
+                  @update:reply="replyRowKey = $event"
+                  @update:select-emoji="selectEmoji"
+                  @update:update-mode="isUpdateMode = $event"
+                />
+              </template>
+              <template #messagePreview>
+                <MessageModelMessageType :creator :message :next-message is-preview />
+              </template>
+            </MessageModelMessageConfirmPinDialog>
           </v-hover>
         </div>
       </div>
     </template>
     <template #messagePreview>
-      <MessageModelMessage :creator :message :next-message is-preview />
+      <MessageModelMessageType :creator :message :next-message is-preview />
     </template>
   </MessageModelMessageConfirmDeleteDialog>
 </template>

@@ -1,36 +1,28 @@
 <script setup lang="ts">
-import type { WaypointState } from "vue-waypoint";
-
-import { Going, Waypoint } from "vue-waypoint";
-
 interface StyledWaypointProps {
-  active: boolean;
+  isActive: boolean;
 }
 
-const { active } = defineProps<StyledWaypointProps>();
+defineSlots<{ default: () => VNode }>();
+const { isActive } = defineProps<StyledWaypointProps>();
 const emit = defineEmits<{ change: [onComplete: () => void] }>();
 const isLoading = ref(false);
-const realActive = computed(() => !isLoading.value && active);
+const container = useTemplateRef("container");
+const isVisible = useElementVisibility(container);
+
+watchEffect(() => {
+  if (!isVisible.value || !isActive || isLoading.value) return;
+  isLoading.value = true;
+  emit("change", () => {
+    isLoading.value = false;
+  });
+});
 </script>
 
 <template>
-  <ClientOnly>
-    <Waypoint
-      flex
-      justify-center
-      :active="realActive"
-      @change="
-        ({ going }: WaypointState) => {
-          if (going !== Going.In) return;
-
-          isLoading = true;
-          emit('change', () => {
-            isLoading = false;
-          });
-        }
-      "
-    >
+  <div v-show="isActive" ref="container">
+    <slot>
       <v-progress-circular v-if="isLoading" size="small" indeterminate />
-    </Waypoint>
-  </ClientOnly>
+    </slot>
+  </div>
 </template>

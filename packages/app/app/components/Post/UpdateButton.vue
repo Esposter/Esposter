@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RoutePath } from "#shared/models/router/RoutePath";
+import { RoutePath } from "@esposter/shared";
 
 interface PostUpdateButtonProps {
   postId: string;
@@ -12,7 +12,7 @@ const { postId } = defineProps<PostUpdateButtonProps>();
   <NuxtInvisibleLink :to="RoutePath.PostUpdate(postId)">
     <v-tooltip text="Edit Post">
       <template #activator="{ props }">
-        <v-btn rd-none="!" icon="mdi-pencil" size="small" :="props" />
+        <v-btn icon="mdi-pencil" size="small" tile :="props" />
       </template>
     </v-tooltip>
   </NuxtInvisibleLink>

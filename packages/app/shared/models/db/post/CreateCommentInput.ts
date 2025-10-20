@@ -1,4 +1,4 @@
-import { selectCommentSchema } from "#shared/db/schema/posts";
+import { selectCommentSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
 export const createCommentInputSchema = z.object({

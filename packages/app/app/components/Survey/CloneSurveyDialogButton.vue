@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Survey } from "#shared/db/schema/surveys";
+import type { Survey } from "@esposter/db-schema";
 
 interface CloneSurveyDialogButton {
   group: Survey["group"];
@@ -15,7 +15,7 @@ const { group, model, name } = defineProps<CloneSurveyDialogButton>();
     <template #activator="{ updateIsOpen }">
       <v-tooltip text="Clone Survey">
         <template #activator="{ props }">
-          <v-btn m-0="!" rd-none="!" icon="mdi-file-multiple" size="small" :="props" @click.stop="updateIsOpen(true)" />
+          <v-btn m-0 icon="mdi-file-multiple" size="small" tile :="props" @click.stop="updateIsOpen(true)" />
         </template>
       </v-tooltip>
     </template>

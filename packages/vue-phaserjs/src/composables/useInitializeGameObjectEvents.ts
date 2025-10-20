@@ -11,8 +11,8 @@ export const useInitializeGameObjectEvents = () => {
   const currentInstance = getCurrentInstance();
   const events = new Set(
     Object.keys(currentInstance?.attrs ?? {})
-      .filter(isEvent)
-      .map(getEventName),
+      .filter((key) => isEvent(key))
+      .map((key) => getEventName(key)),
   );
   const gameObjectEvents = Object.keys(GameObjectEventMap).filter((key) =>
     events.has(key),

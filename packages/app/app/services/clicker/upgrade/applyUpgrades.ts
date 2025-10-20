@@ -24,7 +24,7 @@ export const applyUpgrades = (
         boughtBuildings,
       ),
     )
-    .filter(upgradeFilterPredicate);
+    .filter((...args) => upgradeFilterPredicate(...args));
   const allUpgradedEffects = resultUpgrades.flatMap(({ effects }) => effects);
   return applyEffects(basePower, allUpgradedEffects, boughtBuildings);
 };

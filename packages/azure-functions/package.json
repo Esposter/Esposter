@@ -1,0 +1,52 @@
+{
+  "name": "@esposter/azure-functions",
+  "description": "A library that contains webhook functionality.",
+  "version": "2.16.0",
+  "private": true,
+  "type": "module",
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/azure-functions#readme",
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    ".funcignore"
+  ],
+  "keywords": [
+    "webhook"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esposter/Esposter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "scripts": {
+    "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
+    "export:gen": "ctix build --config ../configuration/.ctirc-ts",
+    "lint": "oxlint && eslint .",
+    "lint:fix": "oxlint --fix && eslint --fix .",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@azure/data-tables": "catalog:",
+    "@azure/functions": "catalog:",
+    "@azure/web-pubsub": "catalog:",
+    "@esposter/db": "workspace:*",
+    "@esposter/db-schema": "workspace:*",
+    "@esposter/shared": "workspace:*",
+    "drizzle-orm": "catalog:",
+    "drizzle-zod": "catalog:",
+    "node-html-parser": "catalog:",
+    "postgres": "catalog:",
+    "rate-limiter-flexible": "catalog:",
+    "web-push": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@esposter/configuration": "workspace:*",
+    "@types/web-push": "catalog:"
+  }
+}

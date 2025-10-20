@@ -6,33 +6,54 @@ import { useLayoutStore } from "@/store/layout";
 
 interface DefaultProps {
   footerStyle?: CSSProperties;
+  hideGlobalScrollbar?: true;
   leftNavigationDrawerProps?: VNavigationDrawer["$props"];
   mainStyle?: CSSProperties;
   rightNavigationDrawerProps?: VNavigationDrawer["$props"];
 }
 
-const { footerStyle, leftNavigationDrawerProps, mainStyle, rightNavigationDrawerProps } = defineProps<DefaultProps>();
+const { footerStyle, hideGlobalScrollbar, leftNavigationDrawerProps, mainStyle, rightNavigationDrawerProps } =
+  defineProps<DefaultProps>();
 const slots = defineSlots<{
-  default?: (props: Record<string, never>) => unknown;
-  footer?: (props: Record<string, never>) => unknown;
-  left?: (props: Record<string, never>) => unknown;
-  right?: (props: Record<string, never>) => unknown;
+  default?: () => VNode;
+  footer?: () => VNode;
+  left?: () => VNode;
+  right?: () => VNode;
 }>();
 const layoutStore = useLayoutStore();
-const { leftDrawerOpen, leftDrawerOpenAuto, rightDrawerOpen, rightDrawerOpenAuto } = storeToRefs(layoutStore);
+const { isDesktop, isLeftDrawerOpen, isLeftDrawerOpenAuto, isRightDrawerOpen, isRightDrawerOpenAuto } =
+  storeToRefs(layoutStore);
+const footer = useTemplateRef("footer");
+const bottomOffset = ref(0);
+// Fix the layout structure so navigating does not cause a layout shift
+const { bottom, left, middle, right } = useFixedLayoutStyles(bottomOffset);
+
+useResizeObserver(
+  () => footer.value?.$el,
+  (entries) => {
+    const entry = entries[0];
+    const { bottom } = entry.contentRect;
+    bottomOffset.value = bottom;
+  },
+);
+
+onMounted(() => {
+  isLeftDrawerOpen.value = isLeftDrawerOpenAuto.value = slots.left ? isDesktop.value : false;
+  isRightDrawerOpen.value = isRightDrawerOpenAuto.value = slots.right ? isDesktop.value : false;
+});
 </script>
 
 <template>
   <div contents>
     <v-navigation-drawer
       v-if="slots.left"
-      app
-      :model-value="leftNavigationDrawerProps?.permanent ?? leftDrawerOpen"
+      :style="left"
+      :model-value="leftNavigationDrawerProps?.permanent ?? isLeftDrawerOpen"
       :="leftNavigationDrawerProps"
       @update:model-value="
         (value) => {
-          leftDrawerOpen = value;
-          leftDrawerOpenAuto = value;
+          isLeftDrawerOpen = value;
+          isLeftDrawerOpenAuto = value;
         }
       "
     >
@@ -41,25 +62,25 @@ const { leftDrawerOpen, leftDrawerOpenAuto, rightDrawerOpen, rightDrawerOpenAuto
 
     <v-navigation-drawer
       v-if="slots.right"
-      app
+      :style="right"
+      :model-value="rightNavigationDrawerProps?.permanent ?? isRightDrawerOpen"
       location="right"
-      :model-value="rightNavigationDrawerProps?.permanent ?? rightDrawerOpen"
       :="rightNavigationDrawerProps"
       @update:model-value="
         (value) => {
-          rightDrawerOpen = value;
-          rightDrawerOpenAuto = value;
+          isRightDrawerOpen = value;
+          isRightDrawerOpenAuto = value;
         }
       "
     >
       <slot name="right" />
     </v-navigation-drawer>
-
-    <v-main :style="mainStyle">
+    <!-- Set max height here so we can hide global window scrollbar -->
+    <v-main :style="{ ...middle, ...mainStyle, maxHeight: hideGlobalScrollbar ? '100dvh' : undefined }">
       <slot />
     </v-main>
 
-    <v-footer v-if="slots.footer" :style="footerStyle" app>
+    <v-footer v-if="slots.footer" ref="footer" :style="{ ...bottom, ...footerStyle }" app>
       <slot name="footer" />
     </v-footer>
   </div>
@@ -73,7 +94,7 @@ const { leftDrawerOpen, leftDrawerOpenAuto, rightDrawerOpen, rightDrawerOpenAuto
 // content greater than screen size rather than the entire drawer.
 // Make sure to apply attribute overflow-y-auto for the container
 // that you want to show the scrollbar on in the drawer
-.v-navigation-drawer__content {
+:deep(.v-navigation-drawer__content) {
   display: flex;
   flex-direction: column;
 }

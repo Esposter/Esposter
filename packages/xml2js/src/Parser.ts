@@ -143,7 +143,7 @@ export class Parser {
 
     const ontext = (text: string): Record<string, unknown> | undefined => {
       const object = this.stack.at(-1);
-      if (!object) return undefined;
+      if (!object) return;
 
       object[this.options.charkey] += text;
 

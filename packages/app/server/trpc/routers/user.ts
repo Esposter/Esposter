@@ -1,20 +1,23 @@
-import type { IUserStatus } from "#shared/db/schema/userStatuses";
+import type { IUserStatus } from "@esposter/db-schema";
 import type { ReadableStream } from "node:stream/web";
 import type { SetNonNullable } from "type-fest";
 import type { z } from "zod";
 
-import { selectUserSchema } from "#shared/db/schema/users";
-import { selectUserStatusSchema, userStatuses } from "#shared/db/schema/userStatuses";
-import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
-import { UserStatus } from "#shared/models/db/user/UserStatus";
-import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
-import { useContainerClient } from "@@/server/composables/azure/useContainerClient";
+import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { on } from "@@/server/services/events/on";
 import { userEventEmitter } from "@@/server/services/message/events/userEventEmitter";
 import { getDetectedUserStatus } from "@@/server/services/message/getDetectedUserStatus";
 import { router } from "@@/server/trpc";
-import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
+import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
+import {
+  AzureContainer,
+  DatabaseEntityType,
+  selectUserSchema,
+  selectUserStatusSchema,
+  UserStatus,
+  userStatuses,
+} from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { octetInputParser } from "@trpc/server/http";
@@ -34,7 +37,7 @@ const onUpsertStatusInputSchema = selectUserSchema.shape.id.array().min(1).max(M
 export type OnUpsertStatusInput = z.infer<typeof onUpsertStatusInputSchema>;
 
 export const userRouter = router({
-  connect: authedProcedure.mutation(async ({ ctx }) => {
+  connect: standardAuthedProcedure.mutation(async ({ ctx }) => {
     const upsertedStatus = (
       await ctx.db
         .insert(userStatuses)
@@ -54,7 +57,7 @@ export const userRouter = router({
 
     userEventEmitter.emit("upsertStatus", { ...upsertedStatus, status: getDetectedUserStatus(upsertedStatus) });
   }),
-  disconnect: authedProcedure.mutation(async ({ ctx }) => {
+  disconnect: standardAuthedProcedure.mutation(async ({ ctx }) => {
     const upsertedStatus = (
       await ctx.db
         .insert(userStatuses)
@@ -74,7 +77,7 @@ export const userRouter = router({
 
     userEventEmitter.emit("upsertStatus", { ...upsertedStatus, status: getDetectedUserStatus(upsertedStatus) });
   }),
-  onUpsertStatus: authedProcedure.input(onUpsertStatusInputSchema).subscription(async function* ({
+  onUpsertStatus: standardAuthedProcedure.input(onUpsertStatusInputSchema).subscription(async function* ({
     ctx,
     input,
     signal,
@@ -86,13 +89,13 @@ export const userRouter = router({
       yield data;
     }
   }),
-  readStatuses: authedProcedure.input(readStatusesInputSchema).query(async ({ ctx, input }) => {
+  readStatuses: standardAuthedProcedure.input(readStatusesInputSchema).query(async ({ ctx, input }) => {
     const foundUserStatuses = await ctx.db.select().from(userStatuses).where(inArray(userStatuses.userId, input));
     const resultUserStatuses: SetNonNullable<IUserStatus, "status">[] = [];
-    const userStatusMap = new Map(foundUserStatuses.map((us) => [us.userId, us]));
+    const statusMap = new Map(foundUserStatuses.map((us) => [us.userId, us]));
 
     for (const userId of input) {
-      const foundStatus = userStatusMap.get(userId);
+      const foundStatus = statusMap.get(userId);
       if (foundStatus) resultUserStatuses.push({ ...foundStatus, status: getDetectedUserStatus(foundStatus) });
       else
         // We'll conveniently assume that if they don't have a user status record yet
@@ -111,7 +114,7 @@ export const userRouter = router({
 
     return resultUserStatuses;
   }),
-  uploadProfileImage: authedProcedure.input(octetInputParser).mutation(async ({ ctx, input }) => {
+  uploadProfileImage: standardAuthedProcedure.input(octetInputParser).mutation(async ({ ctx, input }) => {
     const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
     const blobName = `${ctx.session.user.id}/ProfileImage`;
     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
@@ -120,7 +123,7 @@ export const userRouter = router({
     await blockBlobClient.uploadStream(readable);
     return blockBlobClient.url;
   }),
-  upsertStatus: authedProcedure.input(upsertStatusInputSchema).mutation(async ({ ctx, input }) => {
+  upsertStatus: standardAuthedProcedure.input(upsertStatusInputSchema).mutation(async ({ ctx, input }) => {
     const upsertedStatus = (
       await ctx.db
         .insert(userStatuses)

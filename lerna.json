@@ -1,7 +1,7 @@
 {
   "$schema": "node_modules/@lerna-lite/cli/schemas/lerna-schema.json",
-  "version": "2.13.1",
-  "npmClient": "pnpm",
+  "conventionalCommits": true,
   "forcePublish": true,
-  "conventionalCommits": true
+  "npmClient": "pnpm",
+  "version": "2.16.0"
 }

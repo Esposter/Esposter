@@ -17,7 +17,7 @@ export const useWorldSceneStore = defineStore("dungeons/world/scene", () => {
     await nextTick();
   };
   // We will create the tilemap and its metadata in the world scene vue component
-  const tilemap = ref() as Ref<Tilemaps.Tilemap>;
+  const tilemap = ref<Tilemaps.Tilemap>() as Ref<Tilemaps.Tilemap>;
   const tilemapKeyLayerMap = ref(new Map<TilemapKey, Map<string, Tilemaps.TilemapLayer | undefined>>());
   const layerMap = computed({
     get: () => tilemapKeyLayerMap.value.get(tilemapKey.value),

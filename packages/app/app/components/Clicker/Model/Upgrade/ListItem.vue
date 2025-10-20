@@ -35,18 +35,14 @@ const displayFlavorDescription = useDecompileString(upgrade.flavorDescription);
     <template v-if="!isBought" #action>
       <v-spacer />
       <StyledButton
-        :button-props="{
-          disabled: !isAffordable,
-        }"
+        :button-props="{ disabled: !isAffordable, text: 'Buy' }"
         @click="
           () => {
             createBoughtUpgrade(upgrade);
             play();
           }
         "
-      >
-        Buy
-      </StyledButton>
+      />
     </template>
   </ClickerModelItemMenu>
 </template>

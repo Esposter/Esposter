@@ -12,7 +12,7 @@ import { sleep } from "vue-phaserjs";
 
 export const useDialogStore = defineStore("dungeons/dialog", () => {
   const settingsStore = useSettingsStore();
-  const inputPromptCursorX = ref();
+  const inputPromptCursorX = ref<number>();
   const inputPromptCursorDisplayWidth = ref<number>();
   const isInputPromptCursorVisible = ref(false);
   // We need to store a reference to the dialog UI since there could be multiple messages

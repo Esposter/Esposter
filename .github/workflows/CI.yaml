@@ -1,0 +1,31 @@
+name: 🏗️ CI
+
+on:
+  push:
+    branches:
+      - "**"
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v5
+
+      - name: 🔧 Setup Project Dependencies
+        uses: ./.github/actions/setup-project-dependencies
+
+      - name: 📦 Install dependencies
+        run: pnpm i
+
+      - name: 🏗️ Build
+        run: pnpm build
+
+      - name: 🔍 Lint
+        run: pnpm lint
+
+      - name: ✅ Typecheck
+        run: pnpm typecheck
+
+      - name: 🧪 Test
+        run: pnpm test

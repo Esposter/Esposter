@@ -1,4 +1,4 @@
-import type { ToData } from "#shared/models/entity/ToData";
+import type { ToData } from "@esposter/shared";
 import type { ProjectData } from "grapesjs";
 
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";

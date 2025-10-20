@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
+import type { MessageEntity } from "@esposter/db-schema";
 
 interface ConfirmDeleteDialogProps {
   message: MessageEntity;
 }
 
 defineSlots<{
-  default: (props: StyledDialogActivatorSlotProps) => unknown;
-  messagePreview: (props: Record<string, never>) => unknown;
+  activator: (props: StyledDialogActivatorSlotProps) => VNode;
+  messagePreview: () => VNode;
 }>();
 const { message } = defineProps<ConfirmDeleteDialogProps>();
 const { $trpc } = useNuxtApp();
@@ -32,7 +32,7 @@ const { text } = useColors();
     "
   >
     <template #activator="activatorProps">
-      <slot :="activatorProps" />
+      <slot name="activator" :="activatorProps" />
     </template>
     <div class="custom-border" shadow-md py-2 mx-4 rd-lg>
       <slot name="messagePreview" />

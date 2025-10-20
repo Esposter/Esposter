@@ -1,25 +1,25 @@
-import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
+import type { MessageEntity } from "@esposter/db-schema";
 
 import { MessageHookMap } from "@/services/message/MessageHookMap";
-import { createDataMap } from "@/services/shared/createDataMap";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { Operation } from "@esposter/shared";
 
 export const useReplyStore = defineStore("message/reply", () => {
   const roomStore = useRoomStore();
-  const { data: rowKey } = createDataMap(() => roomStore.currentRoomId, "");
+  const { data: rowKey } = useDataMap<string | undefined>(() => roomStore.currentRoomId, undefined);
   MessageHookMap.ResetSend.push(() => {
     rowKey.value = "";
   });
 
   const dataStore = useDataStore();
-  const { data: replyMap } = createDataMap(() => roomStore.currentRoomId, new Map<string, MessageEntity>());
-  MessageHookMap[Operation.Create].push((message) => {
-    if (!message.replyRowKey) return;
-    const reply = dataStore.messages.find(({ rowKey }) => rowKey === message.replyRowKey);
+  // These are all the messages that have been replied to
+  const { data: replyMap } = useDataMap(() => roomStore.currentRoomId, new Map<string, MessageEntity>());
+  MessageHookMap[Operation.Create].push(({ replyRowKey }) => {
+    if (!replyRowKey) return;
+    const reply = dataStore.items.find(({ rowKey }) => rowKey === replyRowKey);
     if (!reply) return;
-    replyMap.value.set(message.replyRowKey, reply);
+    replyMap.value.set(replyRowKey, reply);
   });
   MessageHookMap[Operation.Delete].push(({ rowKey }) => {
     replyMap.value.delete(rowKey);

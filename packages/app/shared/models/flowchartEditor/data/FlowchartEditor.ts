@@ -1,6 +1,6 @@
-import type { ToData } from "#shared/models/entity/ToData";
 import type { GraphEdge } from "#shared/models/flowchartEditor/data/GraphEdge";
 import type { GraphNode } from "#shared/models/flowchartEditor/data/GraphNode";
+import type { ToData } from "@esposter/shared";
 
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
 import { graphEdgeSchema } from "#shared/models/flowchartEditor/data/GraphEdge";

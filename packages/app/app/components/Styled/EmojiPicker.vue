@@ -14,7 +14,7 @@ interface StyledEmojiPickerProps {
   tooltipProps?: VTooltip["$props"];
 }
 
-defineSlots<{ default?: (props: Record<string, unknown>) => unknown }>();
+defineSlots<{ default?: (props: Record<string, unknown>) => VNode }>();
 const { buttonAttrs = {}, buttonProps = {}, tooltipProps = {} } = defineProps<StyledEmojiPickerProps>();
 const emit = defineEmits<{ select: [emoji: string]; "update:menu": [value: boolean] }>();
 const emojiIndex = new EmojiIndex(data);

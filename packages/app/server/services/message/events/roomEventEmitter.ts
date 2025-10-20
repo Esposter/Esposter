@@ -1,13 +1,13 @@
-import type { UserToRoom, UserToRoomWithRelations } from "#shared/db/schema/usersToRooms";
+import type { Device } from "#shared/models/auth/Device";
 import type { UpdateRoomInput } from "#shared/models/db/room/UpdateRoomInput";
-import type { DeviceId } from "@@/server/models/auth/DeviceId";
+import type { UserToRoom, UserToRoomWithRelations } from "@esposter/db-schema";
 
 import { EventEmitter } from "node:events";
 
 interface RoomEvents {
-  deleteRoom: (Pick<DeviceId, "sessionId"> & UserToRoom)[];
-  joinRoom: (Pick<DeviceId, "sessionId"> & Pick<UserToRoomWithRelations, "roomId" | "user">)[];
-  leaveRoom: (Pick<DeviceId, "sessionId"> & UserToRoom)[];
+  deleteRoom: (Pick<Device, "sessionId"> & UserToRoom)[];
+  joinRoom: (Pick<Device, "sessionId"> & Pick<UserToRoomWithRelations, "roomId" | "user">)[];
+  leaveRoom: (Pick<Device, "sessionId"> & UserToRoom)[];
   updateRoom: UpdateRoomInput[];
 }
 

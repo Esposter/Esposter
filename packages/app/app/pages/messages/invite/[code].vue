@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { selectInviteSchema } from "#shared/db/schema/invites";
-import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
-import { RoutePath } from "#shared/models/router/RoutePath";
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
 import { useRoomStore } from "@/store/message/room";
+import { DatabaseEntityType, selectInviteSchema } from "@esposter/db-schema";
+import { RoutePath } from "@esposter/shared";
 
 definePageMeta({
   middleware: "auth",
@@ -58,6 +57,7 @@ const { joinRoom } = roomStore;
           <v-card-actions w-full>
             <StyledButton
               w-full
+              :button-props="{ text: 'Accept Invite' }"
               @click="
                 async () => {
                   const code = $route.params.code;
@@ -65,9 +65,7 @@ const { joinRoom } = roomStore;
                   await joinRoom(code);
                 }
               "
-            >
-              Accept Invite
-            </StyledButton>
+            />
           </v-card-actions>
         </StyledCard>
       </v-dialog>

@@ -15,7 +15,7 @@ interface GameProps {
   configuration: Except<Types.Core.GameConfig, "scene">;
 }
 
-defineSlots<{ default: (props: Record<string, never>) => unknown }>();
+defineSlots<{ default: () => VNode }>();
 const { configuration } = defineProps<GameProps>();
 const phaserStore = usePhaserStore();
 const { game: storeGame } = storeToRefs(phaserStore);

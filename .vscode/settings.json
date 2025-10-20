@@ -10,9 +10,9 @@
   "search.followSymlinks": false,
   "symlink-follow.autoFollow": true,
   "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.tsserver.maxTsServerMemory": 8000,
   "javascript.updateImportsOnFileMove.enabled": "always",
   "typescript.updateImportsOnFileMove.enabled": "always",
-  "vue.updateImportsOnFileMove.enabled": true,
   "[typescript][vue]": {
     "editor.formatOnSave": false,
     "editor.codeActionsOnSave": ["source.organizeImports", "source.fixAll.oxc", "source.fixAll.eslint"]
@@ -29,5 +29,11 @@
   "[xml]": {
     "editor.formatOnSave": false
   },
-  "oxc.enable": true
+  "oxc.enable": true,
+  "azureFunctions.deploySubpath": "packages\\azure-functions",
+  "azureFunctions.preDeployTask": "npm prune (functions)",
+  "azureFunctions.postDeployTask": "npm install (functions)",
+  "azureFunctions.projectLanguage": "JavaScript",
+  "azureFunctions.projectRuntime": "~4",
+  "debug.internalConsoleOptions": "neverOpen"
 }

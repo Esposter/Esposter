@@ -8,8 +8,8 @@ export interface StyledDeleteDialogProps {
 }
 
 defineSlots<{
-  activator: (props: StyledDialogActivatorSlotProps) => unknown;
-  default: (props: Record<string, never>) => unknown;
+  activator: (props: StyledDialogActivatorSlotProps) => VNode;
+  default: () => VNode;
 }>();
 const { cardProps, confirmButtonProps } = defineProps<StyledDeleteDialogProps>();
 const emit = defineEmits<{ delete: [onComplete: () => void] }>();
@@ -18,7 +18,7 @@ const emit = defineEmits<{ delete: [onComplete: () => void] }>();
 <template>
   <StyledDialog
     :card-props
-    :confirm-button-props="{ text: 'Delete', ...confirmButtonProps }"
+    :confirm-button-props="{ color: 'error', text: 'Delete', ...confirmButtonProps }"
     @submit="(_event, onComplete) => emit('delete', onComplete)"
   >
     <template #activator="activatorProps">

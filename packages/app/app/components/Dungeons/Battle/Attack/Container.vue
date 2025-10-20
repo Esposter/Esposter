@@ -6,7 +6,7 @@ interface ContainerProps {
   isToEnemy: boolean;
 }
 
-defineSlots<{ default: (props: Record<string, never>) => unknown }>();
+defineSlots<{ default: () => VNode }>();
 const { isToEnemy } = defineProps<ContainerProps>();
 const isActive = defineModel<boolean>("isActive", { required: true });
 const position = computed(() => getAttackPosition(isToEnemy));

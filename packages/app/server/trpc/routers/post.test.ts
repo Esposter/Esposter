@@ -2,12 +2,12 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { posts } from "#shared/db/schema/posts";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { postRouter } from "@@/server/trpc/routers/post";
-import { NIL } from "@esposter/shared";
+import { DatabaseEntityType, DerivedDatabaseEntityType, posts } from "@esposter/db-schema";
+import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("post", () => {
@@ -49,8 +49,10 @@ describe("post", () => {
   test("fails read with non-existent id", async () => {
     expect.hasAssertions();
 
-    await expect(caller.readPost(NIL)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Post is not found for id: 00000000-0000-0000-0000-000000000000]`,
+    const id = crypto.randomUUID();
+
+    await expect(caller.readPost(id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Post, id).message}]`,
     );
   });
 
@@ -74,8 +76,10 @@ describe("post", () => {
   test("fails update with non-existent id", async () => {
     expect.hasAssertions();
 
-    await expect(caller.updatePost({ description, id: NIL })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Update, name: Post, 00000000-0000-0000-0000-000000000000]`,
+    const id = crypto.randomUUID();
+
+    await expect(caller.updatePost({ description, id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Post, id).message}]`,
     );
   });
 
@@ -86,7 +90,7 @@ describe("post", () => {
     await mockSessionOnce(mockContext.db);
 
     await expect(caller.updatePost({ description, id: newPost.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Update, name: Post, ${newPost.id}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Post, newPost.id).message}]`,
     );
   });
 
@@ -102,8 +106,10 @@ describe("post", () => {
   test("fails delete with non-existent id", async () => {
     expect.hasAssertions();
 
-    await expect(caller.deletePost(NIL)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Delete, name: Post, 00000000-0000-0000-0000-000000000000]`,
+    const id = crypto.randomUUID();
+
+    await expect(caller.deletePost(id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Post, id).message}]`,
     );
   });
 
@@ -114,7 +120,7 @@ describe("post", () => {
     await mockSessionOnce(mockContext.db);
 
     await expect(caller.deletePost(newPost.id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Delete, name: Post, ${newPost.id}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Post, newPost.id).message}]`,
     );
   });
 
@@ -142,8 +148,10 @@ describe("post", () => {
   test("fails create comment with non-existent parent id", async () => {
     expect.hasAssertions();
 
-    await expect(caller.createComment({ description, parentId: NIL })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Post is not found for id: 00000000-0000-0000-0000-000000000000]`,
+    const parentId = crypto.randomUUID();
+
+    await expect(caller.createComment({ description, parentId })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Post, parentId).message}]`,
     );
   });
 
@@ -160,8 +168,10 @@ describe("post", () => {
   test("fails update comment with non-existent id", async () => {
     expect.hasAssertions();
 
-    await expect(caller.updateComment({ description, id: NIL })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Update, name: Comment, 00000000-0000-0000-0000-000000000000]`,
+    const id = crypto.randomUUID();
+
+    await expect(caller.updateComment({ description, id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, DerivedDatabaseEntityType.Comment, id).message}]`,
     );
   });
 
@@ -173,7 +183,7 @@ describe("post", () => {
     await mockSessionOnce(mockContext.db);
 
     await expect(caller.updateComment({ description, id: newComment.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Update, name: Comment, ${newComment.id}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, DerivedDatabaseEntityType.Comment, newComment.id).message}]`,
     );
   });
 
@@ -197,15 +207,17 @@ describe("post", () => {
     await caller.deletePost(newPost.id);
 
     await expect(caller.readPost(newComment.id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Post is not found for id: ${newComment.id}]`,
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Post, newComment.id).message}]`,
     );
   });
 
   test("fails delete comment with non-existent id", async () => {
     expect.hasAssertions();
 
-    await expect(caller.deleteComment(NIL)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Delete, name: Comment, 00000000-0000-0000-0000-000000000000]`,
+    const id = crypto.randomUUID();
+
+    await expect(caller.deleteComment(id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DerivedDatabaseEntityType.Comment, id).message}]`,
     );
   });
 
@@ -217,7 +229,7 @@ describe("post", () => {
     await mockSessionOnce(mockContext.db);
 
     await expect(caller.deleteComment(newComment.id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Delete, name: Comment, ${newComment.id}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DerivedDatabaseEntityType.Comment, newComment.id).message}]`,
     );
   });
 
@@ -227,7 +239,7 @@ describe("post", () => {
     const newPost = await caller.createPost({ title });
 
     await expect(caller.deleteComment(newPost.id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Delete, name: Comment, ${newPost.id}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DerivedDatabaseEntityType.Comment, newPost.id).message}]`,
     );
   });
 });

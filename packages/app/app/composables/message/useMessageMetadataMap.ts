@@ -1,4 +1,4 @@
-import type { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
+import type { MessageMetadataType } from "@esposter/db-schema";
 
 import { createAzureMetadataMap } from "@/services/shared/metadata/createAzureMetadataMap";
 import { useRoomStore } from "@/store/message/room";

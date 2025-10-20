@@ -25,7 +25,7 @@ defaultTextStyle.value = { fontFamily: FileKey.ThirdPartyKenneysAssetsFontsKenne
 </script>
 
 <template>
-  <NuxtLayout :main-style="{ maxHeight: '100dvh' }">
+  <NuxtLayout hide-global-scrollbar>
     <Game
       :configuration="{
         title: 'Dungeons',

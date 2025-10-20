@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Room } from "#shared/db/schema/rooms";
+import type { Room } from "@esposter/db-schema";
 
 import { useForwardStore } from "@/store/message/forward";
 
@@ -10,6 +10,7 @@ interface ForwardRoomListItemProps {
 const { room } = defineProps<ForwardRoomListItemProps>();
 const forwardStore = useForwardStore();
 const { roomIds } = storeToRefs(forwardStore);
+const roomName = useRoomName(() => room.id);
 const isActive = ref(false);
 </script>
 
@@ -31,11 +32,11 @@ const isActive = ref(false);
     @mouseleave="isActive = false"
   >
     <template #prepend>
-      <StyledAvatar :image="room.image" :name="room.name" :avatar-props="{ size: 'small' }" />
+      <StyledAvatar :image="room.image" :name="roomName" :avatar-props="{ size: 'small' }" />
     </template>
     <v-list-item-title flex justify-between items-center>
-      {{ room.name }}
-      <v-checkbox v-model="roomIds" :value="room.id" :ripple="false" density="compact" hide-details @click.prevent="" />
+      {{ roomName }}
+      <v-checkbox v-model="roomIds" :value="room.id" :ripple="false" density="compact" hide-details @click.stop />
     </v-list-item-title>
   </v-list-item>
 </template>

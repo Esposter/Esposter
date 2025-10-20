@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PostWithRelations } from "#shared/db/schema/posts";
+import type { PostWithRelations } from "@esposter/db-schema";
 import type { Editor } from "@tiptap/vue-3";
 
 import { useCommentStore } from "@/store/post/comment";
@@ -36,17 +36,13 @@ const onUpdateComment = async (editor: Editor) => {
 <template>
   <PostDescriptionRichTextEditor v-model="editedDescriptionHtml" height="4rem" placeholder="">
     <template #append-footer="{ editor }">
-      <v-btn variant="outlined" size="small" @click="emit('update:update-mode', false)">Cancel</v-btn>
+      <v-btn size="small" text="Cancel" variant="outlined" @click="emit('update:update-mode', false)" />
       <StyledButton
         v-if="editor"
         ml-2
-        :button-props="{
-          size: 'small',
-        }"
+        :button-props="{ size: 'small', text: 'Save' }"
         @click="onUpdateComment(editor)"
-      >
-        Save
-      </StyledButton>
+      />
     </template>
   </PostDescriptionRichTextEditor>
 </template>

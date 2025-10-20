@@ -1,9 +1,7 @@
 import { db } from "@@/server/db";
-import { schema } from "@@/server/db/schema";
+import { schema } from "@esposter/db-schema";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-
-const runtimeConfig = useRuntimeConfig();
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -13,16 +11,16 @@ export const auth = betterAuth({
   }),
   socialProviders: {
     facebook: {
-      clientId: runtimeConfig.public.facebook.clientId,
-      clientSecret: runtimeConfig.facebook.clientSecret,
+      clientId: process.env.FACEBOOK_CLIENT_ID,
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
     },
     github: {
-      clientId: runtimeConfig.github.clientId,
-      clientSecret: runtimeConfig.github.clientSecret,
+      clientId: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET,
     },
     google: {
-      clientId: runtimeConfig.google.clientId,
-      clientSecret: runtimeConfig.google.clientSecret,
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     },
   },
 });

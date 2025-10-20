@@ -1,17 +1,18 @@
 <script setup lang="ts">
-import { RoutePath } from "#shared/models/router/RoutePath";
-import { useRoomStore } from "@/store/message/room";
+import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
+import { useSearchStore } from "@/store/message/room/search";
+import { RoutePath } from "@esposter/shared";
 
 const emit = defineEmits<{ "update:room": [] }>();
-const roomStore = useRoomStore();
-const { readMoreRoomsSearched } = roomStore;
-const { hasMoreRoomsSearched, roomsSearched } = storeToRefs(roomStore);
+const searchStore = useSearchStore();
+const { readMoreItemsSearched } = searchStore;
+const { hasMore, items } = storeToRefs(searchStore);
 </script>
 
 <template>
   <v-list>
     <NuxtInvisibleLink
-      v-for="{ id, name, image } of roomsSearched"
+      v-for="{ id, name, image } of items"
       :key="id"
       :to="RoutePath.Messages(id)"
       @click="emit('update:room')"
@@ -22,6 +23,8 @@ const { hasMoreRoomsSearched, roomsSearched } = storeToRefs(roomStore);
         </template>
       </v-list-item>
     </NuxtInvisibleLink>
-    <StyledWaypoint :active="hasMoreRoomsSearched" @change="readMoreRoomsSearched" />
+    <StyledWaypoint :is-active="hasMore" @change="readMoreItemsSearched">
+      <MessageModelRoomSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+    </StyledWaypoint>
   </v-list>
 </template>

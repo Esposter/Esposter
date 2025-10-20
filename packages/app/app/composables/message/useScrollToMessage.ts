@@ -1,8 +1,8 @@
-import { RoutePath } from "#shared/models/router/RoutePath";
 import { dayjs } from "#shared/services/dayjs";
 import { useDataStore } from "@/store/message/data";
 import { useReplyStore } from "@/store/message/reply";
 import { useRoomStore } from "@/store/message/room";
+import { RoutePath } from "@esposter/shared";
 
 export const useScrollToMessage = () => {
   const { $trpc } = useNuxtApp();
@@ -11,10 +11,10 @@ export const useScrollToMessage = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const dataStore = useDataStore();
-  const { messages } = storeToRefs(dataStore);
+  const { items } = storeToRefs(dataStore);
   return async (rowKey: string) => {
     if (!currentRoomId.value) return;
-    else if (!messages.value.some((m) => m.rowKey === rowKey)) {
+    else if (!items.value.some((m) => m.rowKey === rowKey)) {
       const messagesByRowKeys = await $trpc.message.readMessagesByRowKeys.query({
         roomId: currentRoomId.value,
         rowKeys: [rowKey],

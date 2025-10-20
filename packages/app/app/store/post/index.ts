@@ -1,15 +1,14 @@
-import type { PostWithRelations } from "#shared/db/schema/posts";
 import type { CreatePostInput } from "#shared/models/db/post/CreatePostInput";
 import type { DeletePostInput } from "#shared/models/db/post/DeletePostInput";
 import type { UpdatePostInput } from "#shared/models/db/post/UpdatePostInput";
+import type { PostWithRelations } from "@esposter/db-schema";
 
-import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createOperationData } from "@/services/shared/createOperationData";
-import { createCursorPaginationData } from "@/services/shared/pagination/cursor/createCursorPaginationData";
+import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const usePostStore = defineStore("post", () => {
   const { $trpc } = useNuxtApp();
-  const { items, ...restData } = createCursorPaginationData<PostWithRelations>();
+  const { items, ...restData } = useCursorPaginationData<PostWithRelations>();
   const {
     createPost: storeCreatePost,
     deletePost: storeDeletePost,
@@ -26,13 +25,14 @@ export const usePostStore = defineStore("post", () => {
     storeUpdatePost(updatedPost);
   };
   const deletePost = async (input: DeletePostInput) => {
-    const deletedPost = await $trpc.post.deletePost.mutate(input);
-    storeDeletePost({ id: deletedPost.id });
+    const { id } = await $trpc.post.deletePost.mutate(input);
+    storeDeletePost({ id });
   };
 
   return {
     createPost,
     deletePost,
+    items,
     updatePost,
     ...restOperationData,
     ...restData,

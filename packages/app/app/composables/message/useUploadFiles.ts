@@ -1,11 +1,11 @@
 import type { UploadFileUrl } from "@/models/message/file/UploadFileUrl";
 
-import { MAX_FILE_LIMIT } from "#shared/services/azure/container/constants";
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
 import { validateFile } from "@/services/file/validateFile";
 import { useAlertStore } from "@/store/alert";
 import { useRoomStore } from "@/store/message/room";
 import { useUploadFileStore } from "@/store/message/uploadFile";
+import { FILE_MAX_LENGTH } from "@esposter/db-schema";
 
 export const useUploadFiles = () => {
   const { $trpc } = useNuxtApp();
@@ -17,8 +17,8 @@ export const useUploadFiles = () => {
   const { files, fileUrlMap, isFileLoading } = storeToRefs(uploadFileStore);
   return async (newFiles: File[] | null) => {
     if (!currentRoomId.value || !newFiles) return;
-    else if (files.value.length + newFiles.length > MAX_FILE_LIMIT) {
-      createAlert(`You can only upload ${MAX_FILE_LIMIT} files at a time!`, "error");
+    else if (files.value.length + newFiles.length > FILE_MAX_LENGTH) {
+      createAlert(`You can only upload ${FILE_MAX_LENGTH} files at a time!`, "error");
       return;
     }
 

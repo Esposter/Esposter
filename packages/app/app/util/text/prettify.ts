@@ -1,5 +1,4 @@
 import type { Prettify } from "@/util/types/Prettify";
-
 // Puts space between word boundaries:
 // 1. lowercase + uppercase/digit
 // 2. digit + lowercase/uppercase

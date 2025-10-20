@@ -1,19 +1,16 @@
 import type { Unsubscribable } from "@trpc/server/observable";
 
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
-import { useMessageStore } from "@/store/message";
-import { useMemberStore } from "@/store/message/member";
 import { useRoomStore } from "@/store/message/room";
+import { useMemberStore } from "@/store/message/user/member";
 
 export const useRoomSubscribables = () => {
   const { $trpc } = useNuxtApp();
-  const messageStore = useMessageStore();
-  const { getUserDataMap, setUserDataMap } = messageStore;
   const roomStore = useRoomStore();
   const { storeDeleteRoom, storeUpdateRoom } = roomStore;
-  const { currentRoomId, rooms } = storeToRefs(roomStore);
+  const { rooms } = storeToRefs(roomStore);
   const memberStore = useMemberStore();
-  const { pushMemberIds } = memberStore;
+  const { storeCreateMember, storeDeleteMember } = memberStore;
 
   const updateRoomUnsubscribable = ref<Unsubscribable>();
   const deleteRoomUnsubscribable = ref<Unsubscribable>();
@@ -34,29 +31,16 @@ export const useRoomSubscribables = () => {
 
     const newRoomIds = newRooms.map(({ id }) => id);
     updateRoomUnsubscribable.value = $trpc.room.onUpdateRoom.subscribe(newRoomIds, {
-      onData: (input) => {
-        storeUpdateRoom(input);
-      },
+      onData: (input) => storeUpdateRoom(input),
     });
     deleteRoomUnsubscribable.value = $trpc.room.onDeleteRoom.subscribe(newRoomIds, {
-      onData: getSynchronizedFunction(async (id) => {
-        await storeDeleteRoom({ id });
-      }),
+      onData: getSynchronizedFunction((id) => storeDeleteRoom({ id })),
     });
     joinRoomUnsubscribable.value = $trpc.room.onJoinRoom.subscribe(newRoomIds, {
-      onData: ({ roomId, user }) => {
-        const userDataMap = getUserDataMap(roomId);
-        if (userDataMap) userDataMap.set(user.id, user);
-        else setUserDataMap(roomId, new Map([[user.id, user]]));
-
-        if (roomId === currentRoomId.value) pushMemberIds(user.id);
-      },
+      onData: (user) => storeCreateMember(user),
     });
     leaveRoomUnsubscribable.value = $trpc.room.onLeaveRoom.subscribe(newRoomIds, {
-      onData: ({ roomId, userId }) => {
-        const userDataMap = getUserDataMap(roomId);
-        userDataMap?.delete(userId);
-      },
+      onData: (userId) => storeDeleteMember(userId),
     });
   });
 

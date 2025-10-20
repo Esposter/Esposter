@@ -1,7 +1,7 @@
 {
   "name": "@esposter/shared",
-  "version": "2.13.1",
   "description": "A library that contains shared typescript code.",
+  "version": "2.16.0",
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/shared#readme",
   "license": "Apache-2.0",
@@ -23,11 +23,20 @@
   },
   "scripts": {
     "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
-    "test": "NODE_OPTIONS=--max-old-space-size=8192 vitest",
     "coverage": "vitest run --coverage",
+    "export:gen": "ctix build --config ../configuration/.ctirc-ts",
     "lint": "oxlint && eslint .",
     "lint:fix": "oxlint --fix && eslint --fix .",
-    "typecheck": "tsc",
-    "export:gen": "ctix build --config ../configuration/.ctirc-ts"
+    "test": "vitest",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@vueuse/core": "catalog:",
+    "node-html-parser": "catalog:",
+    "vue": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@azure/data-tables": "catalog:"
   }
 }

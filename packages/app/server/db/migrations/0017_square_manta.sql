@@ -1,0 +1,5 @@
+-- ALTER TABLE "message"."search_history" DROP CONSTRAINT "search_history_room_id_rooms_id_fk";
+-- --> statement-breakpoint
+-- ALTER TABLE "message"."search_history" DROP COLUMN "filters";--> statement-breakpoint
+-- ALTER TABLE "message"."search_history" DROP COLUMN "room_id";
+-- dummy placeholder as rename schema didn't include adding columns in the migration...

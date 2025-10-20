@@ -1,5 +1,5 @@
-import type { FileEntity } from "#shared/models/azure/FileEntity";
+import type { FileEntity } from "@esposter/db-schema";
 
-import { fileEntitySchema } from "#shared/models/azure/FileEntity";
+import { fileEntitySchema } from "@esposter/db-schema";
 
 export const validateFile = (size: FileEntity["size"]) => fileEntitySchema.shape.size.safeParse(size).success;

@@ -9,8 +9,8 @@ const { replyRowKey } = defineProps<ReplySpineProps>();
 const { border, text } = useColors();
 const replyStore = useReplyStore();
 const { isIndicatorActive } = storeToRefs(replyStore);
-const scrollToMessage = useScrollToMessage();
 const borderColor = computed(() => (isIndicatorActive.value ? text.value : border.value));
+const scrollToMessage = useScrollToMessage();
 </script>
 
 <template>

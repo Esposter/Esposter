@@ -1,77 +1,66 @@
+import type { AsyncData } from "#app";
 import type { AEntity } from "#shared/models/entity/AEntity";
-import type { ToData } from "#shared/models/entity/ToData";
-import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import type { EntityTypeKey } from "@/models/shared/entity/EntityTypeKey";
+import type { ToData } from "@esposter/shared";
+import type { TRPCClientErrorLike, TRPCProcedureOptions } from "@trpc/client";
+import type { InferrableClientTypes } from "@trpc/server/unstable-core-do-not-import";
 
+import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { dayjs } from "#shared/services/dayjs";
-import { createCursorPaginationData } from "@/services/shared/pagination/cursor/createCursorPaginationData";
-import { uncapitalize } from "@esposter/shared";
 
-type SearcherKey<TEntityTypeKey extends EntityTypeKey> =
-  | `${Uncapitalize<TEntityTypeKey>}SearchQuery`
-  | `${Uncapitalize<TEntityTypeKey>}sSearched`
-  | `hasMore${TEntityTypeKey}sSearched`
-  | `readMore${TEntityTypeKey}sSearched`;
-
-export const useCursorSearcher = <TItem extends ToData<AEntity>, TEntityTypeKey extends EntityTypeKey>(
-  query: (searchQuery: string, cursor?: string) => Promise<CursorPaginationData<TItem>>,
-  entityTypeKey: TEntityTypeKey,
+export const useCursorSearcher = <TItem extends ToData<AEntity>, TDef extends InferrableClientTypes>(
+  useQuery: (
+    searchQuery: string,
+    cursor?: string,
+  ) => Promise<Awaited<AsyncData<CursorPaginationData<TItem> | null, TRPCClientErrorLike<TDef>>>>,
+  query: (searchQuery: string, cursor?: string, opts?: TRPCProcedureOptions) => Promise<CursorPaginationData<TItem>>,
   isAutoSearch?: true,
   isIncludeEmptySearchQuery?: true,
 ) => {
   const searchQuery = ref("");
-
-  const { hasMore, initializeCursorPaginationData, items, nextCursor, resetCursorPaginationData } =
-    createCursorPaginationData<TItem>();
-  const readMoreItems = async (onComplete: () => void) => {
-    try {
-      const {
-        hasMore: newHasMore,
-        items: newItems,
-        nextCursor: newNextCursor,
-      } = await query(searchQuery.value, nextCursor.value);
-      nextCursor.value = newNextCursor;
-      hasMore.value = newHasMore;
-      items.value.push(...newItems);
-    } finally {
-      onComplete();
-    }
-  };
+  const { hasMore, initializeCursorPaginationData, items, readItems, readMoreItems, resetCursorPaginationData } =
+    useCursorPaginationData<TItem>();
+  const readItemsSearched = (onComplete: () => void) => readItems(() => useQuery(searchQuery.value), onComplete);
+  const readMoreItemsSearched = (onComplete: () => void) =>
+    readMoreItems((cursor) => query(searchQuery.value, cursor), onComplete);
 
   if (isAutoSearch) {
     const throttledSearchQuery = useThrottle(searchQuery, dayjs.duration(1, "second").asMilliseconds());
-    const isEmptySearchQuery = computed(() => !searchQuery.value.trim());
+    const isSearchQueryEmpty = computed(() => !searchQuery.value.trim());
+    let abortController: AbortController | undefined;
 
-    watch(isEmptySearchQuery, (newIsEmptySearchQuery) => {
-      if (isIncludeEmptySearchQuery || !newIsEmptySearchQuery) return;
+    watch(isSearchQueryEmpty, (newIsSearchQueryEmpty) => {
+      if (isIncludeEmptySearchQuery || !newIsSearchQueryEmpty) return;
+      abortController?.abort();
       resetCursorPaginationData();
     });
 
     watch(
       throttledSearchQuery,
-      async (newThrottledSearchQuery) => {
+      async (newThrottledSearchQuery, oldThrottledSearchQuery) => {
         const sanitizedNewThrottledSearchQuery = newThrottledSearchQuery.trim();
-        if (!(isIncludeEmptySearchQuery || sanitizedNewThrottledSearchQuery)) return;
-        initializeCursorPaginationData(await query(sanitizedNewThrottledSearchQuery));
+        const sanitizedOldThrottledSearchQuery = oldThrottledSearchQuery?.trim();
+        if (
+          sanitizedNewThrottledSearchQuery === sanitizedOldThrottledSearchQuery ||
+          !(isIncludeEmptySearchQuery || sanitizedNewThrottledSearchQuery)
+        )
+          return;
+
+        abortController?.abort();
+        abortController = new AbortController();
+        const cursorPaginationData = await query(sanitizedNewThrottledSearchQuery, undefined, {
+          signal: abortController.signal,
+        });
+        initializeCursorPaginationData(cursorPaginationData);
       },
       { immediate: isIncludeEmptySearchQuery },
     );
   }
 
   return {
-    [`${uncapitalize(entityTypeKey)}SearchQuery`]: searchQuery,
-    [`${uncapitalize(entityTypeKey)}sSearched`]: items,
-    [`hasMore${entityTypeKey}sSearched`]: hasMore,
-    [`readMore${entityTypeKey}sSearched`]: readMoreItems,
-  } as {
-    [P in SearcherKey<TEntityTypeKey>]: P extends `${Uncapitalize<TEntityTypeKey>}SearchQuery`
-      ? typeof searchQuery
-      : P extends `${Uncapitalize<TEntityTypeKey>}sSearched`
-        ? typeof items
-        : P extends `hasMore${TEntityTypeKey}sSearched`
-          ? typeof hasMore
-          : P extends `readMore${TEntityTypeKey}sSearched`
-            ? typeof readMoreItems
-            : never;
+    hasMore,
+    items,
+    readItemsSearched,
+    readMoreItemsSearched,
+    searchQuery,
   };
 };

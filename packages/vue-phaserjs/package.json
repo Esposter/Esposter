@@ -1,7 +1,7 @@
 {
   "name": "vue-phaserjs",
-  "version": "2.13.1",
   "description": "A component library to integrate Phaser Framework with Vue.",
+  "version": "2.16.0",
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/vue-phaserjs#readme",
   "license": "Apache-2.0",
@@ -27,12 +27,13 @@
   },
   "scripts": {
     "build": "pnpm export:gen && vite build",
+    "export:gen": "ctix build --config ../configuration/.ctirc-vue && ctix build --config ../configuration/.ctirc-ts",
     "lint": "oxlint && eslint .",
     "lint:fix": "oxlint --fix && eslint --fix .",
-    "typecheck": "vue-tsc",
-    "export:gen": "ctix build --config ../configuration/.ctirc-vue && ctix build --config ../configuration/.ctirc-ts"
+    "typecheck": "vue-tsc"
   },
   "dependencies": {
+    "@esposter/shared": "workspace:*",
     "parse-tmx": "workspace:*"
   },
   "peerDependencies": {

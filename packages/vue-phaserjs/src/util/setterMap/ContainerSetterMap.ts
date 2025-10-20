@@ -8,6 +8,7 @@ import { BlendModeSetterMap } from "@/util/setterMap/components/BlendModeSetterM
 import { ComputedSizeSetterMap } from "@/util/setterMap/components/ComputedSizeSetterMap";
 import { DepthSetterMap } from "@/util/setterMap/components/DepthSetterMap";
 import { MaskSetterMap } from "@/util/setterMap/components/MaskSetterMap";
+import { ScrollFactorSetterMap } from "@/util/setterMap/components/ScrollFactorSetterMap";
 import { TransformSetterMap } from "@/util/setterMap/components/TransformSetterMap";
 import { VisibleSetterMap } from "@/util/setterMap/components/VisibleSetterMap";
 import { GlobalSetterMap } from "@/util/setterMap/global/GlobalSetterMap";
@@ -18,6 +19,7 @@ export const ContainerSetterMap: SetterMap<ContainerConfiguration, GameObjects.C
     ...BlendModeSetterMap,
     ...ComputedSizeSetterMap,
     ...DepthSetterMap,
+    ...ScrollFactorSetterMap,
     ...MaskSetterMap,
     ...TransformSetterMap,
     ...VisibleSetterMap,

@@ -1,0 +1,24 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "func",
+      "label": "func: host start",
+      "command": "host start",
+      "problemMatcher": "$func-node-watch",
+      "isBackground": true,
+      "dependsOn": "pnpm i (functions)",
+      "options": {
+        "cwd": "${workspaceFolder}/packages\\webhook"
+      }
+    },
+    {
+      "type": "shell",
+      "label": "pnpm i (functions)",
+      "command": "pnpm i",
+      "options": {
+        "cwd": "${workspaceFolder}/packages\\webhook"
+      }
+    }
+  ]
+}

@@ -1,40 +1,36 @@
-import type { CompositeKey } from "#shared/models/azure/CompositeKey";
 import type { AEntity } from "#shared/models/entity/AEntity";
-import type { ToData } from "#shared/models/entity/ToData";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
+import type { Clause, CompositeKey } from "@esposter/db-schema";
+import type { ToData } from "@esposter/shared";
 
-import { CompositeKeyPropertyNames } from "#shared/models/azure/CompositeKey";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { deserialize } from "#shared/services/pagination/cursor/deserialize";
-import { BinaryOperator, capitalize, exhaustiveGuard, NotFoundError, UnaryOperator } from "@esposter/shared";
+import { serializeKey } from "@esposter/db";
+import { BinaryOperator } from "@esposter/db-schema";
+import { exhaustiveGuard, NotFoundError } from "@esposter/shared";
 
 export const getCursorWhereAzureTable = <TItem extends CompositeKey | ToData<AEntity>>(
   serializedCursors: string,
   sortBy: SortItem<keyof TItem & string>[],
-) => {
+): Clause[] => {
   const cursors = deserialize(serializedCursors);
-  const sanitizedSortBy = sortBy.map(({ key, ...rest }) => ({ key: sanitizeKey(key), ...rest }));
-  return Object.entries(cursors)
-    .map(([key, value]) => {
-      const sanitizedKey = sanitizeKey(key);
-      const sortItem = sanitizedSortBy.find((s) => s.key === sanitizedKey);
-      if (!sortItem) throw new NotFoundError(getCursorWhereAzureTable.name, key);
+  const serializedSortBy = sortBy.map(({ key, ...rest }) => ({ key: serializeKey(key), ...rest }));
+  return Object.entries(cursors).map(([key, value]) => {
+    const serializedKey = serializeKey(key);
+    const sortItem = serializedSortBy.find((s) => s.key === serializedKey);
+    if (!sortItem) throw new NotFoundError(getCursorWhereAzureTable.name, key);
 
-      let comparer: BinaryOperator;
-      switch (sortItem.order) {
-        case SortOrder.Asc:
-          comparer = sortItem.isIncludeValue ? BinaryOperator.ge : BinaryOperator.gt;
-          break;
-        case SortOrder.Desc:
-          comparer = sortItem.isIncludeValue ? BinaryOperator.le : BinaryOperator.lt;
-          break;
-        default:
-          exhaustiveGuard(sortItem.order);
-      }
-      return `${sanitizedKey} ${comparer} '${value}'`;
-    })
-    .join(` ${UnaryOperator.and} `);
+    let operator: BinaryOperator;
+    switch (sortItem.order) {
+      case SortOrder.Asc:
+        operator = sortItem.isIncludeValue ? BinaryOperator.ge : BinaryOperator.gt;
+        break;
+      case SortOrder.Desc:
+        operator = sortItem.isIncludeValue ? BinaryOperator.le : BinaryOperator.lt;
+        break;
+      default:
+        exhaustiveGuard(sortItem.order);
+    }
+    return { key, operator, value };
+  });
 };
-// Stupid Azure and Javascript property name casing conventions
-const KeysToCapitalize = new Set<string>([CompositeKeyPropertyNames.partitionKey, CompositeKeyPropertyNames.rowKey]);
-const sanitizeKey = (key: string) => (KeysToCapitalize.has(key) ? capitalize(key) : key);

@@ -5,7 +5,6 @@ export default Object.assign(
     const rules = c.rules ?? {};
     delete rules["@typescript-eslint/no-base-to-string"];
     delete rules["@typescript-eslint/no-empty-object-type"];
-    delete rules["@typescript-eslint/no-unused-vars"];
     delete rules["@typescript-eslint/no-redundant-type-constituents"];
     delete rules["@typescript-eslint/no-unsafe-argument"];
     delete rules["@typescript-eslint/no-unsafe-assignment"];

@@ -2,14 +2,13 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { rooms } from "#shared/db/schema/rooms";
-import { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { messageRouter } from "@@/server/trpc/routers/message";
 import { emojiRouter } from "@@/server/trpc/routers/message/emoji";
 import { roomRouter } from "@@/server/trpc/routers/room";
-import { NIL } from "@esposter/shared";
+import { MessageMetadataType, rooms } from "@esposter/db-schema";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
@@ -68,7 +67,7 @@ describe("emoji", () => {
 
     const roomId = crypto.randomUUID();
 
-    await expect(emojiCaller.readEmojis({ messageRowKeys: [NIL], roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(emojiCaller.readEmojis({ messageRowKeys: [""], roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,
     );
   });
@@ -117,7 +116,7 @@ describe("emoji", () => {
     await expect(
       emojiCaller.createEmoji({ emojiTag, messageRowKey: newMessage.rowKey, partitionKey: newRoom.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Create, name: Emoji, ${JSON.stringify(newEmoji)}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, MessageMetadataType.Emoji, JSON.stringify(newEmoji)).message}]`,
     );
   });
 
@@ -127,7 +126,7 @@ describe("emoji", () => {
     const roomId = crypto.randomUUID();
 
     await expect(
-      emojiCaller.createEmoji({ emojiTag, messageRowKey: NIL, partitionKey: roomId }),
+      emojiCaller.createEmoji({ emojiTag, messageRowKey: "", partitionKey: roomId }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
@@ -242,7 +241,7 @@ describe("emoji", () => {
     expect.hasAssertions();
 
     await expect(
-      emojiCaller.updateEmoji({ messageRowKey: NIL, partitionKey: crypto.randomUUID(), rowKey: NIL }),
+      emojiCaller.updateEmoji({ messageRowKey: "", partitionKey: crypto.randomUUID(), rowKey: "" }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
@@ -271,10 +270,10 @@ describe("emoji", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const input = { messageRowKey: NIL, partitionKey: newRoom.id, rowKey: NIL };
+    const input = { messageRowKey: "", partitionKey: newRoom.id, rowKey: "" };
 
     await expect(emojiCaller.updateEmoji(input)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Read, name: Emoji, ${JSON.stringify(input)}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Read, MessageMetadataType.Emoji, JSON.stringify(input)).message}]`,
     );
   });
 
@@ -361,9 +360,9 @@ describe("emoji", () => {
 
     await expect(
       emojiCaller.deleteEmoji({
-        messageRowKey: NIL,
+        messageRowKey: "",
         partitionKey: crypto.randomUUID(),
-        rowKey: NIL,
+        rowKey: "",
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });

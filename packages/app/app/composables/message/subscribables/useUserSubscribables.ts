@@ -1,16 +1,16 @@
 import type { Unsubscribable } from "@trpc/server/observable";
 
 import { authClient } from "@/services/auth/authClient";
-import { useMemberStore } from "@/store/message/member";
-import { useUserStatusStore } from "@/store/message/userStatus";
+import { useMemberStore } from "@/store/message/user/member";
+import { useStatusStore } from "@/store/message/user/status";
 
 export const useUserSubscribables = () => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
   const memberStore = useMemberStore();
   const { members } = storeToRefs(memberStore);
-  const userStatusStore = useUserStatusStore();
-  const { userStatusMap } = storeToRefs(userStatusStore);
+  const statusStore = useStatusStore();
+  const { statusMap } = storeToRefs(statusStore);
 
   const upsertStatusUnsubscribable = ref<Unsubscribable>();
 
@@ -18,15 +18,15 @@ export const useUserSubscribables = () => {
     upsertStatusUnsubscribable.value?.unsubscribe();
   };
 
-  const { trigger } = watchTriggerable(members, (newMembers) => {
-    unsubscribe();
+  const { trigger } = watchTriggerable([members, () => session.value.data], ([newMembers, newSessionData]) => {
+    if (!newSessionData) return;
 
-    const newMemberIds = newMembers.filter(({ id }) => id !== session.value.data?.user.id).map(({ id }) => id);
+    const newMemberIds = newMembers.filter(({ id }) => id !== newSessionData.user.id).map(({ id }) => id);
     if (newMemberIds.length === 0) return;
 
     upsertStatusUnsubscribable.value = $trpc.user.onUpsertStatus.subscribe(newMemberIds, {
       onData: ({ userId, ...userStatus }) => {
-        userStatusMap.value.set(userId, userStatus);
+        statusMap.value.set(userId, userStatus);
       },
     });
   });

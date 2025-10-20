@@ -9,6 +9,9 @@ export const runtimeConfig: NuxtConfig["runtimeConfig"] = {
       apiKey: process.env.AZURE_SEARCH_API_KEY,
     },
     storageAccountConnectionString: process.env.AZURE_STORAGE_ACCOUNT_CONNECTION_STRING,
+    webPubSub: {
+      connectionString: process.env.AZURE_WEB_PUBSUB_CONNECTION_STRING,
+    },
   },
   database: {
     url: process.env.DATABASE_URL,
@@ -25,6 +28,12 @@ export const runtimeConfig: NuxtConfig["runtimeConfig"] = {
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   },
   public: {
+    appEnv: process.env.APP_ENV,
+    azure: {
+      container: {
+        baseUrl: process.env.AZURE_CONTAINER_BASE_URL,
+      },
+    },
     baseUrl: process.env.BASE_URL,
     facebook: {
       clientId: process.env.FACEBOOK_CLIENT_ID,

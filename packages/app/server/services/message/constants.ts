@@ -1,1 +1,0 @@
-export const PUSH_NOTIFICATION_MAX_LENGTH = 100;

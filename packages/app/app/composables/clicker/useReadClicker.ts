@@ -1,10 +1,10 @@
 import type { RecursiveDeepOmitItemEntity } from "#shared/util/types/RecursiveDeepOmitItemEntity";
 
 import { Clicker } from "#shared/models/clicker/data/Clicker";
-import { jsonDateParse } from "#shared/util/time/jsonDateParse";
 import { CLICKER_LOCAL_STORAGE_KEY } from "@/services/clicker/constants";
 import { omitDeepItemEntity } from "@/services/shared/metadata/omitDeepItemEntity";
 import { useClickerStore } from "@/store/clicker";
+import { jsonDateParse } from "@esposter/shared";
 import deepEqual from "fast-deep-equal";
 
 export const useReadClicker = async () => {

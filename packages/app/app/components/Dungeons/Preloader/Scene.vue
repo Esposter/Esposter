@@ -3,18 +3,17 @@ import type { Loader } from "phaser";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import files from "#shared/generated/phaser/files.json";
-import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
-import { getBlobUrl } from "#shared/services/azure/container/getBlobUrl";
-import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { SpritesheetLoaderMap } from "@/models/dungeons/loader/spritesheet/SpritesheetLoaderMap";
 import { TilemapLoaderMap } from "@/models/dungeons/loader/TilemapLoaderMap";
 import { TilesetLoaderMap } from "@/models/dungeons/loader/TilesetLoaderMap";
 import { prettify } from "@/util/text/prettify";
+import { AzureContainer } from "@esposter/db-schema";
 import { Rectangle, Text, usePhaserStore } from "vue-phaserjs";
 
 const phaserStore = usePhaserStore();
 const { switchToScene } = phaserStore;
+const isProduction = useIsProduction();
 const x = ref<number>();
 const y = ref<number>();
 const percentageText = ref("0%");
@@ -24,6 +23,7 @@ const progressBoxHeight = ref(50);
 const progressBarMaxWidth = ref(300);
 const progressBarWidth = ref(0);
 const progressBarHeight = ref(30);
+const containerBaseUrl = useContainerBaseUrl();
 
 const preload = (scene: SceneWithPlugins) => {
   const { height, width } = scene.cameras.main;
@@ -40,14 +40,14 @@ const preload = (scene: SceneWithPlugins) => {
     })
     .once("complete", async () => {
       scene.load.setBaseURL();
-      await switchToScene(IS_DEVELOPMENT ? SceneKey.Title : SceneKey.Title);
+      await switchToScene(isProduction ? SceneKey.Title : SceneKey.Title);
     });
 
   for (const spritesheetLoader of Object.values(SpritesheetLoaderMap)) spritesheetLoader(scene);
   for (const tilesetLoader of Object.values(TilesetLoaderMap)) tilesetLoader(scene);
   for (const tilemapLoader of Object.values(TilemapLoaderMap)) tilemapLoader(scene);
 
-  scene.load.setBaseURL(`${getBlobUrl()}/${AzureContainer.DungeonsAssets}`);
+  scene.load.setBaseURL(`${containerBaseUrl}/${AzureContainer.DungeonsAssets}`);
   scene.load.pack(files);
 };
 </script>

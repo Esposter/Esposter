@@ -11,7 +11,7 @@ interface TilemapProps {
   onComplete?: (scene: SceneWithPlugins, tilemap: Tilemaps.Tilemap) => void;
 }
 
-defineSlots<{ default: (props: Record<string, never>) => unknown }>();
+defineSlots<{ default: () => VNode }>();
 const { configuration, onComplete } = defineProps<TilemapProps>();
 const sceneKey = useInjectSceneKey();
 const tilemap = ref<Tilemaps.Tilemap>();

@@ -1,0 +1,18 @@
+name: Setup Project Dependencies
+description: "Checkout repository, install pnpm, setup node, and install dependencies"
+inputs:
+  node-version-file:
+    description: "Path to file containing node version"
+    required: false
+    default: package.json
+runs:
+  using: composite
+  steps:
+    - name: 📦 Install pnpm
+      uses: pnpm/action-setup@v4
+
+    - name: 🛠️ Setup node
+      uses: actions/setup-node@v5
+      with:
+        node-version-file: ${{ inputs.node-version-file }}
+        cache: pnpm

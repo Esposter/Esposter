@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
+import type { MessageEntity } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
-import { EMOJI_TEXT } from "@/services/styled/constants";
+import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
 import { useEmojiStore } from "@/store/message/emoji";
 import { emojify } from "node-emoji";
 
 interface MessageEmojiListProps {
+  isPreview?: boolean;
   message: MessageEntity;
 }
 
-const { message } = defineProps<MessageEmojiListProps>();
+const { isPreview, message } = defineProps<MessageEmojiListProps>();
 const { data: session } = await authClient.useSession(useFetch);
 const { backgroundOpacity80, border, info, infoOpacity10, surfaceOpacity80 } = useColors();
 const emojiStore = useEmojiStore();
@@ -59,7 +60,8 @@ const selectEmoji = await useSelectEmoji(message);
       <span class="text-subtitle-2" pl-1>{{ userIds.length }}</span>
     </div>
     <StyledEmojiPicker
-      :tooltip-props="{ text: EMOJI_TEXT }"
+      v-if="!isPreview"
+      :tooltip-props="{ text: EMOJI_PICKER_TOOLTIP_TEXT }"
       :button-props="{ size: 'small', density: 'comfortable' }"
       @select="selectEmoji"
     />

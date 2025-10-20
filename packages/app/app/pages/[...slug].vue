@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RoutePath } from "#shared/models/router/RoutePath";
+import { RoutePath } from "@esposter/shared";
 import { gsap } from "gsap";
 
 const event = useRequestEvent();
@@ -24,7 +24,7 @@ onMounted(() => {
       <div flex flex-col items-center>
         <div class="text-background v-theme--light" text-center text-5xl>Lost in space?</div>
         <NuxtInvisibleLink pt-4 :to="RoutePath.Index">
-          <StyledButton>Go back home</StyledButton>
+          <StyledButton :button-props="{ text: 'Go back home' }" />
         </NuxtInvisibleLink>
       </div>
     </VisualSpaceBackground>

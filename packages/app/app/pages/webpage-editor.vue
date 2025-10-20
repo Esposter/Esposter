@@ -2,10 +2,10 @@
 import type { Editor } from "grapesjs";
 
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
-import { jsonDateParse } from "#shared/util/time/jsonDateParse";
 import { authClient } from "@/services/auth/authClient";
 import { WEBPAGE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/webpageEditor/constants";
 import { useWebpageEditorStore } from "@/store/webpageEditor";
+import { jsonDateParse } from "@esposter/shared";
 import grapesJS, { usePlugin } from "grapesjs";
 import grapesJSBlocksBasic from "grapesjs-blocks-basic";
 import grapesJSComponentCountdown from "grapesjs-component-countdown";

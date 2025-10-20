@@ -1,20 +1,28 @@
+import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
+import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessageInput";
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { DeleteFileInput, DeleteLinkPreviewResponseInput } from "@@/server/trpc/routers/message";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { rooms } from "#shared/db/schema/rooms";
-import { AzureContainer } from "#shared/models/azure/blob/AzureContainer";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { getReverseTickedTimestamp } from "#shared/services/azure/table/getReverseTickedTimestamp";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
-import { getBlobName } from "@@/server/services/azure/container/getBlobName";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { messageRouter } from "@@/server/trpc/routers/message";
 import { roomRouter } from "@@/server/trpc/routers/room";
-import { NIL } from "@esposter/shared";
+import { getBlobName } from "@esposter/db";
+import {
+  AzureContainer,
+  AzureEntityType,
+  getReverseTickedTimestamp,
+  MessageType,
+  rooms,
+  StandardMessageEntity,
+} from "@esposter/db-schema";
+import { MENTION_ID_ATTRIBUTE, MENTION_TYPE, MENTION_TYPE_ATTRIBUTE, NotFoundError } from "@esposter/shared";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
@@ -26,7 +34,8 @@ describe("message", () => {
   const mimetype = "image/jpeg";
   const size = 1000;
   const name = "name";
-  const message = "message";
+  const getMessage = (userId: string) =>
+    `<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}" ${MENTION_ID_ATTRIBUTE}="${userId}" />`;
   const updatedMessage = "updatedMessage";
   const rowKey = "rowKey";
 
@@ -44,7 +53,7 @@ describe("message", () => {
     await mockContext.db.delete(rooms);
   });
 
-  test("reads empty messages", async () => {
+  test("reads empty", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
@@ -53,10 +62,11 @@ describe("message", () => {
     expect(readMessages).toStrictEqual(getCursorPaginationData([], 0, []));
   });
 
-  test("reads messages", async () => {
+  test("reads", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
+    const message = getMessage(getMockSession().user.id);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     const readMessages = await messageCaller.readMessages({ roomId: newRoom.id });
 
@@ -64,10 +74,11 @@ describe("message", () => {
     expect(readMessages.items[0].message).toBe(newMessage.message);
   });
 
-  test("reads messages with cursor and includes value", async () => {
+  test("reads with cursor and includes value", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
+    const message = getMessage(getMockSession().user.id);
     const firstMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     const secondMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     const cursor = serialize({ rowKey: secondMessage.rowKey }, [MESSAGE_ROWKEY_SORT_ITEM]);
@@ -87,10 +98,11 @@ describe("message", () => {
     expect(readMessages.items[1].rowKey).toBe(secondMessage.rowKey);
   });
 
-  test("reads messages in ascending order with cursor and includes value", async () => {
+  test("reads in ascending order with cursor and includes value", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
+    const message = getMessage(getMockSession().user.id);
     const firstMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     const secondMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     // Limit 1 should return oldest first
@@ -122,7 +134,7 @@ describe("message", () => {
     expect(readMessages.items[1].rowKey).toBe(secondMessage.rowKey);
   });
 
-  test("fails read messages with non-existent room id", async () => {
+  test("fails read with non-existent room id", async () => {
     expect.hasAssertions();
 
     const roomId = crypto.randomUUID();
@@ -132,7 +144,7 @@ describe("message", () => {
     );
   });
 
-  test("fails read messages with non-existent member", async () => {
+  test("fails read with non-existent member", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
@@ -143,10 +155,11 @@ describe("message", () => {
     );
   });
 
-  test("reads messages by row keys", async () => {
+  test("reads by row keys", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
+    const message = getMessage(getMockSession().user.id);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     const readMessages = await messageCaller.readMessagesByRowKeys({
       roomId: newRoom.id,
@@ -157,20 +170,21 @@ describe("message", () => {
     expect(readMessages[0].message).toBe(message);
   });
 
-  test("fails read messages by row keys with non-existent room id", async () => {
+  test("fails read by row keys with non-existent room id", async () => {
     expect.hasAssertions();
 
     const roomId = crypto.randomUUID();
 
     await expect(
-      messageCaller.readMessagesByRowKeys({ roomId, rowKeys: [NIL] }),
+      messageCaller.readMessagesByRowKeys({ roomId, rowKeys: [""] }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
-  test("fails read messages by row keys with non-existent member", async () => {
+  test("fails read by row keys with non-existent member", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
+    const message = getMessage(getMockSession().user.id);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     await mockSessionOnce(mockContext.db);
 
@@ -183,15 +197,29 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
+    const userId = getMockSession().user.id;
+    const message = getMessage(userId);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
 
-    expect(newMessage.message).toBe(message);
+    expect(newMessage).toStrictEqual(
+      new StandardMessageEntity({
+        createdAt: newMessage.createdAt,
+        mentions: [userId],
+        message,
+        partitionKey: newRoom.id,
+        rowKey: newMessage.rowKey,
+        type: MessageType.Message,
+        updatedAt: newMessage.updatedAt,
+        userId,
+      }),
+    );
   });
 
   test("fails create with non-existent room id", async () => {
     expect.hasAssertions();
 
     const roomId = crypto.randomUUID();
+    const message = getMessage(getMockSession().user.id);
 
     await expect(messageCaller.createMessage({ message, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,
@@ -202,7 +230,8 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    await mockSessionOnce(mockContext.db);
+    const { user } = await mockSessionOnce(mockContext.db);
+    const message = getMessage(user.id);
 
     await expect(
       messageCaller.createMessage({ message, roomId: newRoom.id }),
@@ -217,6 +246,7 @@ describe("message", () => {
     const { user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInviteCode);
     const onCreateMessage = await messageCaller.onCreateMessage({ roomId: newRoom.id });
+    const message = getMessage(user.id);
     await mockSessionOnce(mockContext.db, user);
     const [data, newMessage] = await Promise.all([
       onCreateMessage[Symbol.asyncIterator]().next(),
@@ -331,6 +361,7 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
+    const message = getMessage(getMockSession().user.id);
     const newMessage = await messageCaller.createMessage({
       files: [{ filename, id: crypto.randomUUID(), mimetype, size }],
       message,
@@ -344,19 +375,19 @@ describe("message", () => {
     const readMessages = await messageCaller.readMessages({ roomId: newRoom.id });
 
     expect(readMessages.items).toHaveLength(1);
-    expect(readMessages.items[0].message).toBe(updatedMessage);
     expect(readMessages.items[0].isEdited).toBe(true);
+    expect(readMessages.items[0].mentions).toHaveLength(0);
+    expect(readMessages.items[0].message).toBe(updatedMessage);
   });
 
   test("fails update with non-existent message", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
+    const input: UpdateMessageInput = { message: updatedMessage, partitionKey: newRoom.id, rowKey };
 
-    await expect(
-      messageCaller.updateMessage({ message: updatedMessage, partitionKey: newRoom.id, rowKey }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Message is not found for id: {"message":"updatedMessage","partitionKey":"${newRoom.id}","rowKey":"rowKey"}]`,
+    await expect(messageCaller.updateMessage(input)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(AzureEntityType.Message, JSON.stringify(input)).message}]`,
     );
   });
 
@@ -364,6 +395,7 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
+    const message = getMessage(getMockSession().user.id);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     await mockSessionOnce(mockContext.db);
 
@@ -380,6 +412,7 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
+    const message = getMessage(getMockSession().user.id);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     const onUpdateMessage = await messageCaller.onUpdateMessage({ roomId: newRoom.id });
     const [data] = await Promise.all([
@@ -421,6 +454,7 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
+    const message = getMessage(getMockSession().user.id);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     await messageCaller.deleteMessage({ partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey });
 
@@ -433,11 +467,10 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
+    const input: DeleteMessageInput = { partitionKey: newRoom.id, rowKey };
 
-    await expect(
-      messageCaller.deleteMessage({ partitionKey: newRoom.id, rowKey }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Message is not found for id: {"partitionKey":"${newRoom.id}","rowKey":"rowKey"}]`,
+    await expect(messageCaller.deleteMessage(input)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(AzureEntityType.Message, JSON.stringify(input)).message}]`,
     );
   });
 
@@ -445,6 +478,7 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
+    const message = getMessage(getMockSession().user.id);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     await mockSessionOnce(mockContext.db);
 
@@ -457,6 +491,7 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
+    const message = getMessage(getMockSession().user.id);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     const onDeleteMessage = await messageCaller.onDeleteMessage({ roomId: newRoom.id });
     const [data] = await Promise.all([
@@ -498,40 +533,42 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
+    const message = getMessage(getMockSession().user.id);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-    const targetRoom = await roomCaller.createRoom({ name });
+    const forwardedRoom = await roomCaller.createRoom({ name });
 
     await messageCaller.forwardMessage({
       partitionKey: newMessage.partitionKey,
-      roomIds: [targetRoom.id],
+      roomIds: [forwardedRoom.id],
       rowKey: newMessage.rowKey,
     });
 
-    const targetMessages = await messageCaller.readMessages({ roomId: targetRoom.id });
+    const forwardedMessages = await messageCaller.readMessages({ roomId: forwardedRoom.id });
 
-    expect(targetMessages.items).toHaveLength(1);
-    expect(targetMessages.items[0].isForward).toBe(true);
+    expect(forwardedMessages.items).toHaveLength(1);
+    expect(forwardedMessages.items[0].isForward).toBe(true);
   });
 
   test("forwards message with optional message", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
+    const message = getMessage(getMockSession().user.id);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-    const targetRoom = await roomCaller.createRoom({ name });
+    const forwardedRoom = await roomCaller.createRoom({ name });
 
     await messageCaller.forwardMessage({
       message,
       partitionKey: newMessage.partitionKey,
-      roomIds: [targetRoom.id],
+      roomIds: [forwardedRoom.id],
       rowKey: newMessage.rowKey,
     });
 
-    const targetMessages = await messageCaller.readMessages({ roomId: targetRoom.id });
+    const forwardedMessages = await messageCaller.readMessages({ roomId: forwardedRoom.id });
 
-    expect(targetMessages.items).toHaveLength(2);
-    expect(targetMessages.items[0].isForward).toBe(true);
-    expect(targetMessages.items[1].isForward).toBeUndefined();
+    expect(forwardedMessages.items).toHaveLength(2);
+    expect(forwardedMessages.items[0].isForward).toBe(true);
+    expect(forwardedMessages.items[1].isForward).toBeUndefined();
   });
 
   test("fails forward messages with non-existent message", async () => {
@@ -542,7 +579,7 @@ describe("message", () => {
     await expect(
       messageCaller.forwardMessage({ partitionKey: newRoom.id, roomIds: [newRoom.id], rowKey }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Message is not found for id: {"partitionKey":"${newRoom.id}","rowKey":"${rowKey}"}]`,
+      `[TRPCError: ${new NotFoundError(AzureEntityType.Message, JSON.stringify({ partitionKey: newRoom.id, rowKey })).message}]`,
     );
   });
 
@@ -550,14 +587,15 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
+    const message = getMessage(getMockSession().user.id);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-    const targetRoom = await roomCaller.createRoom({ name });
+    const forwardedRoom = await roomCaller.createRoom({ name });
     await mockSessionOnce(mockContext.db);
 
     await expect(
       messageCaller.forwardMessage({
         partitionKey: newMessage.partitionKey,
-        roomIds: [targetRoom.id],
+        roomIds: [forwardedRoom.id],
         rowKey: newMessage.rowKey,
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
@@ -567,12 +605,13 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
+    const message = getMessage(getMockSession().user.id);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
 
     await expect(
       messageCaller.forwardMessage({
         partitionKey: newMessage.partitionKey,
-        roomIds: [NIL],
+        roomIds: [crypto.randomUUID()],
         rowKey: newMessage.rowKey,
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
@@ -664,24 +703,24 @@ describe("message", () => {
 
     await messageCaller.deleteFile({ id, partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey });
 
-    const updatedMessage = await messageCaller.readMessagesByRowKeys({
+    const updatedMessages = await messageCaller.readMessagesByRowKeys({
       roomId: newRoom.id,
       rowKeys: [newMessage.rowKey],
     });
 
-    expect(updatedMessage[0].files).toHaveLength(0);
+    expect(updatedMessages).toHaveLength(1);
+    expect(updatedMessages[0].files).toHaveLength(0);
   });
 
   test("fails delete file with non-existent message", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const id = crypto.randomUUID();
+    const input: DeleteFileInput = { id: crypto.randomUUID(), partitionKey: newRoom.id, rowKey };
 
-    await expect(
-      messageCaller.deleteFile({ id, partitionKey: newRoom.id, rowKey }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Message is not found for id: {"partitionKey":"${newRoom.id}","rowKey":"rowKey","id":"${id}"}]`,
+    await expect(messageCaller.deleteFile(input)).rejects.toThrowErrorMatchingInlineSnapshot(
+      // eslint-disable-next-line perfectionist/sort-objects
+      `[TRPCError: ${new NotFoundError(AzureEntityType.Message, JSON.stringify({ partitionKey: newRoom.id, rowKey, id: input.id })).message}]`,
     );
   });
 
@@ -713,20 +752,21 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const id = crypto.randomUUID();
+    const newFileId = crypto.randomUUID();
+    const deleteFileId = crypto.randomUUID();
     const newMessage = await messageCaller.createMessage({
-      files: [{ filename, id, mimetype, size }],
+      files: [{ filename, id: newFileId, mimetype, size }],
       roomId: newRoom.id,
     });
     MockContainerDatabase.set(
       AzureContainer.MessageAssets,
-      new Map([[getBlobName(`${newRoom.id}/${id}`, filename), Buffer.alloc(size)]]),
+      new Map([[getBlobName(`${newRoom.id}/${newFileId}`, filename), Buffer.alloc(size)]]),
     );
 
     await expect(
-      messageCaller.deleteFile({ id: NIL, partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey }),
+      messageCaller.deleteFile({ id: deleteFileId, partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: File is not found for id: 00000000-0000-0000-0000-000000000000]`,
+      `[TRPCError: ${new NotFoundError(AzureEntityType.File, deleteFileId).message}]`,
     );
   });
 
@@ -735,6 +775,7 @@ describe("message", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const id = crypto.randomUUID();
+    const message = getMessage(getMockSession().user.id);
     const newMessage = await messageCaller.createMessage({
       files: [{ filename, id, mimetype, size }],
       message,
@@ -762,13 +803,14 @@ describe("message", () => {
         partitionKey: data.value.data[0].partitionKey,
         rowKey: data.value.data[0].rowKey,
       }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: File is not found for id: ${id}]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${new NotFoundError(AzureEntityType.File, id).message}]`);
   });
 
   test("fails delete file with message without files", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
+    const message = getMessage(getMockSession().user.id);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
 
     await expect(
@@ -784,6 +826,7 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
+    const message = getMessage(getMockSession().user.id);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
 
     await messageCaller.deleteLinkPreviewResponse({
@@ -791,23 +834,23 @@ describe("message", () => {
       rowKey: newMessage.rowKey,
     });
 
-    const updatedMessage = await messageCaller.readMessagesByRowKeys({
+    const updatedMessages = await messageCaller.readMessagesByRowKeys({
       roomId: newRoom.id,
       rowKeys: [newMessage.rowKey],
     });
 
-    expect(updatedMessage[0].linkPreviewResponse).toBeNull();
+    expect(updatedMessages).toHaveLength(1);
+    expect(updatedMessages[0].linkPreviewResponse).toBeNull();
   });
 
   test("fails delete link preview response with non-existent message", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
+    const input: DeleteLinkPreviewResponseInput = { partitionKey: newRoom.id, rowKey };
 
-    await expect(
-      messageCaller.deleteLinkPreviewResponse({ partitionKey: newRoom.id, rowKey }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Message is not found for id: {"partitionKey":"${newRoom.id}","rowKey":"rowKey"}]`,
+    await expect(messageCaller.deleteLinkPreviewResponse(input)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(AzureEntityType.Message, JSON.stringify(input)).message}]`,
     );
   });
 
@@ -815,11 +858,47 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
+    const message = getMessage(getMockSession().user.id);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     await mockSessionOnce(mockContext.db);
 
     await expect(
       messageCaller.deleteLinkPreviewResponse({ partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+  });
+
+  test("pins message and creates system message", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const message = getMessage(getMockSession().user.id);
+    const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
+
+    await messageCaller.pinMessage({ partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey });
+
+    const readMessages = await messageCaller.readMessages({ roomId: newRoom.id });
+
+    expect(readMessages.items).toHaveLength(2);
+    expect(readMessages.items[0].partitionKey).toBe(newMessage.partitionKey);
+    expect(readMessages.items[0].rowKey).toBe(newMessage.rowKey);
+    expect(readMessages.items[0].isPinned).toBe(true);
+    expect(readMessages.items[1].type).toBe(MessageType.PinMessage);
+    expect(readMessages.items[1].replyRowKey).toBe(newMessage.rowKey);
+  });
+
+  test("unpins message", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const message = getMessage(getMockSession().user.id);
+    const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
+
+    await messageCaller.pinMessage({ partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey });
+    await messageCaller.unpinMessage({ partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey });
+
+    const readMessages = await messageCaller.readMessages({ roomId: newRoom.id });
+
+    expect(readMessages.items).toHaveLength(2);
+    expect(readMessages.items[0].isPinned).toBeUndefined();
   });
 });

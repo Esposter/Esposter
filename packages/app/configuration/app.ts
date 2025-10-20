@@ -246,5 +246,10 @@ export const app: NuxtConfig["app"] = {
         rel: "apple-touch-startup-image",
       },
     ],
+    script: [
+      {
+        src: "/sbaPolyfill.js",
+      },
+    ],
   },
 };

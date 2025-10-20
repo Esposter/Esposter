@@ -1,9 +1,9 @@
 <!-- eslint-disable perfectionist/sort-objects -->
 <script setup lang="ts">
-import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 import { authClient } from "@/services/auth/authClient";
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
+import { DatabaseEntityType } from "@esposter/db-schema";
 import deepEqual from "fast-deep-equal";
 
 const { data: session } = await authClient.useSession(useFetch);
@@ -67,19 +67,10 @@ const isUpdated = computed(() => isValid.value && !deepEqual(profileCardRowValue
       </v-container>
       <v-card-actions px-4="!">
         <template v-if="editMode">
-          <v-btn variant="outlined" @click="editMode = false">Cancel</v-btn>
-          <StyledButton
-            type="submit"
-            :button-props="{
-              disabled: !isUpdated,
-            }"
-          >
-            Save
-          </StyledButton>
+          <v-btn text="Cancel" variant="outlined" @click="editMode = false" />
+          <StyledButton type="submit" :button-props="{ disabled: !isUpdated, text: 'Save' }" />
         </template>
-        <v-btn v-else variant="elevated" color="border" @click="editMode = true">
-          <span font-bold>Edit Settings</span>
-        </v-btn>
+        <v-btn v-else font-bold color="border" text="Edit Settings" variant="elevated" @click="editMode = true" />
       </v-card-actions>
     </StyledCard>
   </v-form>

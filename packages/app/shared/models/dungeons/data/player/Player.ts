@@ -11,7 +11,7 @@ import { RespawnLocation, respawnLocationSchema } from "#shared/models/dungeons/
 import { Monster, monsterSchema } from "#shared/models/dungeons/monster/Monster";
 import { getItem } from "#shared/services/dungeons/item/getItem";
 import { getInitialMetadata } from "#shared/services/dungeons/scene/world/getInitialMetadata";
-import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
+import { IS_PRODUCTION } from "#shared/util/environment/constants";
 import { z } from "zod";
 
 export class Player {
@@ -21,19 +21,18 @@ export class Player {
     { id: ItemId.DamagedBall, quantity: 5 },
   ].map(({ id, ...rest }) => ({ ...getItem(id), ...rest }));
   monsters: Monster[] = (() => {
-    if (IS_DEVELOPMENT) {
-      const monsters = [
-        new Monster(FileKey.UIMonstersIguanignite),
-        new Monster(FileKey.UIMonstersCarnodusk),
-        new Monster(FileKey.UIMonstersIgnivolt),
-      ];
-      for (const monster of monsters) {
-        monster.stats.attack = 100;
-        monster.status.hp = 5;
-      }
-      return monsters;
+    if (IS_PRODUCTION) return [new Monster(FileKey.UIMonstersIguanignite)];
+
+    const monsters = [
+      new Monster(FileKey.UIMonstersIguanignite),
+      new Monster(FileKey.UIMonstersCarnodusk),
+      new Monster(FileKey.UIMonstersIgnivolt),
+    ];
+    for (const monster of monsters) {
+      monster.stats.attack = 100;
+      monster.status.hp = 5;
     }
-    return [new Monster(FileKey.UIMonstersIguanignite)];
+    return monsters;
   })();
   position: Position;
   respawnLocation = new RespawnLocation();

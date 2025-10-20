@@ -52,18 +52,14 @@ const displayFlavorDescription = useDecompileString(building.flavorDescription);
     <template #action>
       <v-spacer />
       <StyledButton
-        :button-props="{
-          disabled: !isAffordable,
-        }"
+        :button-props="{ disabled: !isAffordable, text: 'Buy' }"
         @click="
           () => {
             createBoughtBuilding(building);
             play();
           }
         "
-      >
-        Buy
-      </StyledButton>
+      />
     </template>
   </ClickerModelItemMenu>
 </template>

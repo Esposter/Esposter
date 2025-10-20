@@ -1,9 +1,9 @@
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { TRPCLink } from "@trpc/client";
 
-import { RoutePath } from "#shared/models/router/RoutePath";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { useAlertStore } from "@/store/alert";
+import { RoutePath } from "@esposter/shared";
 import { observable } from "@trpc/server/observable";
 
 export const errorLink: TRPCLink<TRPCRouter> =

@@ -3,16 +3,18 @@ import { createOperationData } from "@/services/shared/createOperationData";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(createOperationData, () => {
+  const items = ref<TodoListItem[]>([]);
   let operationData: ReturnType<typeof createOperationData<TodoListItem, ["id"], "Item">>;
 
   beforeEach(() => {
-    operationData = createOperationData(ref<TodoListItem[]>([]), ["id"], "Item");
+    items.value = [];
+    operationData = createOperationData(items, ["id"], "Item");
   });
 
   test("pushes", () => {
     expect.hasAssertions();
 
-    const { items, pushItems } = operationData;
+    const { pushItems } = operationData;
     const newItem = new TodoListItem();
     pushItems(newItem);
 
@@ -23,7 +25,7 @@ describe(createOperationData, () => {
   test("unshifts", () => {
     expect.hasAssertions();
 
-    const { items, unshiftItems } = operationData;
+    const { unshiftItems } = operationData;
     const newItem = new TodoListItem();
     unshiftItems(newItem);
 
@@ -34,7 +36,7 @@ describe(createOperationData, () => {
   test("creates", () => {
     expect.hasAssertions();
 
-    const { createItem, items } = operationData;
+    const { createItem } = operationData;
     const newItem = new TodoListItem();
     createItem(newItem);
 
@@ -45,7 +47,7 @@ describe(createOperationData, () => {
   test("updates", () => {
     expect.hasAssertions();
 
-    const { createItem, items, updateItem } = operationData;
+    const { createItem, updateItem } = operationData;
     const newItem = new TodoListItem();
     const updatedName = "updatedName";
     createItem(newItem);
@@ -60,7 +62,7 @@ describe(createOperationData, () => {
   test("deletes", () => {
     expect.hasAssertions();
 
-    const { createItem, deleteItem, items } = operationData;
+    const { createItem, deleteItem } = operationData;
     const newItem = new TodoListItem();
     createItem(newItem);
     deleteItem({ id: newItem.id });

@@ -1,10 +1,10 @@
 import type { RecursiveDeepOmitItemEntity } from "#shared/util/types/RecursiveDeepOmitItemEntity";
 
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
-import { jsonDateParse } from "#shared/util/time/jsonDateParse";
 import { DASHBOARD_LOCAL_STORAGE_KEY } from "@/services/dashboard/constants";
 import { omitDeepItemEntity } from "@/services/shared/metadata/omitDeepItemEntity";
 import { useDashboardStore } from "@/store/dashboard";
+import { jsonDateParse } from "@esposter/shared";
 import deepEqual from "fast-deep-equal";
 
 export const useReadDashboard = async () => {

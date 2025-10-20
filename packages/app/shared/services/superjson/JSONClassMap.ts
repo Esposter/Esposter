@@ -1,4 +1,4 @@
-import type { Serializable } from "#shared/models/entity/Serializable";
+import type { Serializable } from "@esposter/shared";
 import type { Class } from "type-fest";
 
 import { Clicker } from "#shared/models/clicker/data/Clicker";
@@ -6,9 +6,7 @@ import { BasicChartConfiguration } from "#shared/models/dashboard/data/chart/Bas
 import { Chart } from "#shared/models/dashboard/data/chart/Chart";
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { Visual } from "#shared/models/dashboard/data/Visual";
-import { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
-import { SurveyResponseEntity } from "#shared/models/db/survey/SurveyResponseEntity";
 import { Dungeons } from "#shared/models/dungeons/data/Dungeons";
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { FlowchartEditor } from "#shared/models/flowchartEditor/data/FlowchartEditor";
@@ -17,8 +15,9 @@ import { TableEditorConfiguration } from "#shared/models/tableEditor/data/TableE
 import { TodoListItem } from "#shared/models/tableEditor/todoList/TodoListItem";
 import { VuetifyComponentItem } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
+import { StandardMessageEntity, SurveyResponseEntity, WebhookMessageEntity } from "@esposter/db-schema";
 
-export const JSONClassMap = {
+export const JSONClassMap: Record<string, Class<Serializable>> = {
   BasicChartConfiguration,
   Chart,
   Clicker,
@@ -27,12 +26,13 @@ export const JSONClassMap = {
   EmailEditor,
   FlowchartEditor,
   MessageEmojiMetadataEntity,
-  MessageEntity,
+  StandardMessageEntity,
   SurveyResponseEntity,
   TableEditor,
   TableEditorConfiguration,
   TodoListItem,
   Visual,
   VuetifyComponentItem,
+  WebhookMessageEntity,
   WebpageEditor,
-} as const satisfies Record<string, Class<Serializable>>;
+};

@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { RoutePath } from "#shared/models/router/RoutePath";
 import { useRoomStore } from "@/store/message/room";
+import { RoutePath } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
 const roomStore = useRoomStore();
-const { currentRoomId, currentRoomName } = storeToRefs(roomStore);
+const { currentRoomId } = storeToRefs(roomStore);
 const inviteCode = ref<null | string>(null);
 if (currentRoomId.value) inviteCode.value = await $trpc.room.readInviteCode.query({ roomId: currentRoomId.value });
 
+const roomName = useRoomName(currentRoomId);
 const runtimeConfig = useRuntimeConfig();
 const inviteLink = computed(() =>
   inviteCode.value ? `${runtimeConfig.public.baseUrl}${RoutePath.MessagesInvite(inviteCode.value)}` : "",
@@ -27,7 +28,7 @@ const isCopied = ref(false);
     </template>
     <StyledCard px-4>
       <v-card-title px-0="!">
-        Invite friends to <span font-bold>{{ currentRoomName }}</span>
+        Invite friends to <span font-bold>{{ roomName }}</span>
       </v-card-title>
       <v-card-text px-0="!" py-2="!">
         <div mb-2>Send An Invite Link To A Friend!</div>

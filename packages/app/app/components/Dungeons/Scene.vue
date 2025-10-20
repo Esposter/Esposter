@@ -7,7 +7,7 @@ import { useSettingsStore } from "@/store/dungeons/settings";
 import { useVolumeStore } from "@/store/dungeons/settings/volume";
 import { getScene, Scene } from "vue-phaserjs";
 
-defineSlots<{ default: (props: Record<string, never>) => unknown }>();
+defineSlots<{ default: () => VNode }>();
 const props = defineProps<SceneProps>();
 const emit = defineEmits<{
   create: [SceneWithPlugins];

@@ -1,15 +1,15 @@
+import type { DeleteMemberInput } from "#shared/models/db/room/DeleteMemberInput";
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { rooms } from "#shared/db/schema/rooms";
-import { CODE_LENGTH } from "#shared/services/invite/constants";
 import { createCode } from "#shared/util/math/random/createCode";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { roomRouter } from "@@/server/trpc/routers/room";
-import { NIL } from "@esposter/shared";
+import { CODE_LENGTH, DatabaseEntityType, rooms } from "@esposter/db-schema";
+import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
@@ -47,19 +47,13 @@ describe("room", () => {
     expect(readRoom).toStrictEqual(newRoom);
   });
 
-  test("reads empty rooms", async () => {
-    expect.hasAssertions();
-
-    const readRooms = await caller.readRooms();
-
-    expect(readRooms).toStrictEqual(getCursorPaginationData([], 0, []));
-  });
-
   test("fails read with non-existent id", async () => {
     expect.hasAssertions();
 
-    await expect(caller.readRoom(NIL)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Room is not found for id: 00000000-0000-0000-0000-000000000000]`,
+    const id = crypto.randomUUID();
+
+    await expect(caller.readRoom(id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Room, id).message}]`,
     );
   });
 
@@ -70,7 +64,57 @@ describe("room", () => {
     await mockSessionOnce(mockContext.db);
 
     await expect(caller.readRoom(newRoom.id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Room is not found for id: ${newRoom.id}]`,
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Room, newRoom.id).message}]`,
+    );
+  });
+
+  test("reads empty rooms", async () => {
+    expect.hasAssertions();
+
+    const readRooms = await caller.readRooms();
+
+    expect(readRooms).toStrictEqual(getCursorPaginationData([], 0, []));
+  });
+
+  test("reads multiple with roomId with inclusive filter", async () => {
+    expect.hasAssertions();
+
+    const newRoom1 = await caller.createRoom({ name: `${name}1` });
+    await caller.createRoom({ name: `${name}2` });
+    const readRooms = await caller.readRooms({ filter: { name: "1" }, roomId: newRoom1.id });
+
+    expect(readRooms.items).toHaveLength(1);
+    expect(readRooms.items[0]).toStrictEqual(newRoom1);
+  });
+
+  test("reads multiple with roomId with exclusive filter", async () => {
+    expect.hasAssertions();
+
+    const newRoom1 = await caller.createRoom({ name: `${name}1` });
+    const newRoom2 = await caller.createRoom({ name: `${name}2` });
+    const readRooms = await caller.readRooms({ filter: { name: "2" }, roomId: newRoom1.id });
+
+    expect(readRooms.items).toHaveLength(2);
+    expect(readRooms.items[0]).toStrictEqual(newRoom2);
+    expect(readRooms.items[1]).toStrictEqual(newRoom1);
+  });
+
+  test("fails read multiple with non-existent room", async () => {
+    expect.hasAssertions();
+
+    const roomId = crypto.randomUUID();
+
+    await expect(caller.readRooms({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+  });
+
+  test("fails read multiple with room not joined", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await caller.createRoom({ name });
+    await mockSessionOnce(mockContext.db);
+
+    await expect(caller.readRooms({ roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: UNAUTHORIZED]`,
     );
   });
 
@@ -101,11 +145,22 @@ describe("room", () => {
     expect(updatedRoom.name).toBe(updatedName);
   });
 
+  test("trims name on update", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await caller.createRoom({ name });
+    const updatedRoom = await caller.updateRoom({ id: newRoom.id, name: ` ${updatedName} ` });
+
+    expect(updatedRoom.name).toBe(updatedName);
+  });
+
   test("fails update with non-existent id", async () => {
     expect.hasAssertions();
 
-    await expect(caller.updateRoom({ id: NIL, name })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Update, name: Room, 00000000-0000-0000-0000-000000000000]`,
+    const id = crypto.randomUUID();
+
+    await expect(caller.updateRoom({ id, name })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Room, id).message}]`,
     );
   });
 
@@ -116,7 +171,7 @@ describe("room", () => {
     await mockSessionOnce(mockContext.db);
 
     await expect(caller.updateRoom({ id: newRoom.id, name })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Update, name: Room, ${newRoom.id}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Room, newRoom.id).message}]`,
     );
   });
 
@@ -147,8 +202,10 @@ describe("room", () => {
   test("fails delete with non-existent id", async () => {
     expect.hasAssertions();
 
-    await expect(caller.deleteRoom(NIL)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Delete, name: Room, 00000000-0000-0000-0000-000000000000]`,
+    const id = crypto.randomUUID();
+
+    await expect(caller.deleteRoom(id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Room, id).message}]`,
     );
   });
 
@@ -159,7 +216,7 @@ describe("room", () => {
     await mockSessionOnce(mockContext.db);
 
     await expect(caller.deleteRoom(newRoom.id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Delete, name: Room, ${newRoom.id}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Room, newRoom.id).message}]`,
     );
   });
 
@@ -262,7 +319,7 @@ describe("room", () => {
     const code = createCode(CODE_LENGTH);
 
     await expect(caller.joinRoom(code)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invite is not found for id: ${code}]`,
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Invite, code).message}]`,
     );
   });
 
@@ -273,7 +330,7 @@ describe("room", () => {
     const newInviteCode = await caller.createInvite({ roomId: newRoom.id });
 
     await expect(caller.joinRoom(newInviteCode)).rejects.toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: Failed query: insert into "users_to_rooms" ("roomId", "userId") values ($1, $2) returning "roomId", "userId"
+      [TRPCError: Failed query: insert into "message"."users_to_rooms" ("roomId", "userId") values ($1, $2) returning "roomId", "userId"
       params: ${newRoom.id},${getMockSession().user.id}]
     `);
   });
@@ -289,7 +346,7 @@ describe("room", () => {
 
     assert(!data.done);
 
-    expect(data.value).toStrictEqual({ roomId: newRoom.id, sessionId: session.session.id, user: session.user });
+    expect(data.value).toStrictEqual(session.user);
   });
 
   test("leaves", async () => {
@@ -308,8 +365,10 @@ describe("room", () => {
   test("fails leave with non-existent id", async () => {
     expect.hasAssertions();
 
-    await expect(caller.leaveRoom(NIL)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Delete, name: UserToRoom, "00000000-0000-0000-0000-000000000000"]`,
+    const id = crypto.randomUUID();
+
+    await expect(caller.leaveRoom(id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.UserToRoom, id).message}]`,
     );
   });
 
@@ -320,7 +379,7 @@ describe("room", () => {
     const roomId = await caller.leaveRoom(newRoom.id);
 
     await expect(caller.readRoom(roomId)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Room is not found for id: ${roomId}]`,
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Room, roomId).message}]`,
     );
   });
 
@@ -337,7 +396,16 @@ describe("room", () => {
 
     assert(!data.done);
 
-    expect(data.value).toStrictEqual({ roomId: newRoom.id, sessionId: session.session.id, userId: session.user.id });
+    expect(data.value).toBe(session.user.id);
+  });
+
+  test("counts members", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await caller.createRoom({ name });
+    const newCount = await caller.countMembers({ roomId: newRoom.id });
+
+    expect(newCount).toBe(1);
   });
 
   test("reads members", async () => {
@@ -379,6 +447,18 @@ describe("room", () => {
         }
       ]]
     `);
+  });
+
+  test("fails read members by ids with wrong user", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await caller.createRoom({ name });
+    const userId = getMockSession().user.id;
+    await mockSessionOnce(mockContext.db);
+
+    await expect(
+      caller.readMembersByIds({ ids: [userId], roomId: newRoom.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
   test("creates members", async () => {
@@ -440,7 +520,7 @@ describe("room", () => {
 
     await expect(caller.createMembers({ roomId: newRoom.id, userIds: [getMockSession().user.id] })).rejects
       .toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: Failed query: insert into "users_to_rooms" ("roomId", "userId") values ($1, $2) returning "roomId", "userId"
+      [TRPCError: Failed query: insert into "message"."users_to_rooms" ("roomId", "userId") values ($1, $2) returning "roomId", "userId"
       params: ${newRoom.id},${getMockSession().user.id}]
     `);
   });
@@ -449,20 +529,23 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await caller.createRoom({ name });
+    const userId = crypto.randomUUID();
 
-    await expect(caller.createMembers({ roomId: newRoom.id, userIds: [NIL] })).rejects
+    await expect(caller.createMembers({ roomId: newRoom.id, userIds: [userId] })).rejects
       .toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: Failed query: insert into "users_to_rooms" ("roomId", "userId") values ($1, $2) returning "roomId", "userId"
-      params: ${newRoom.id},${NIL}]
+      [TRPCError: Failed query: insert into "message"."users_to_rooms" ("roomId", "userId") values ($1, $2) returning "roomId", "userId"
+      params: ${newRoom.id},${userId}]
     `);
   });
 
   test("fails create members with non-existent room", async () => {
     expect.hasAssertions();
 
+    const roomId = crypto.randomUUID();
+
     await expect(
-      caller.createMembers({ roomId: NIL, userIds: [getMockSession().user.id] }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: BAD_REQUEST]`);
+      caller.createMembers({ roomId, userIds: [getMockSession().user.id] }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
   test("kicks member with owner", async () => {
@@ -484,9 +567,10 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await caller.createRoom({ name });
+    const input: DeleteMemberInput = { roomId: newRoom.id, userId: crypto.randomUUID() };
 
-    await expect(caller.deleteMember({ roomId: newRoom.id, userId: NIL })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Delete, name: UserToRoom, ${JSON.stringify({ roomId: newRoom.id, userId: NIL })}]`,
+    await expect(caller.deleteMember(input)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.UserToRoom, JSON.stringify(input)).message}]`,
     );
   });
 
@@ -494,11 +578,10 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await caller.createRoom({ name });
+    const input: DeleteMemberInput = { roomId: newRoom.id, userId: getMockSession().user.id };
 
-    await expect(
-      caller.deleteMember({ roomId: newRoom.id, userId: getMockSession().user.id }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Delete, name: UserToRoom, ${JSON.stringify({ roomId: newRoom.id, userId: getMockSession().user.id })}]`,
+    await expect(caller.deleteMember(input)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.UserToRoom, JSON.stringify(input)).message}]`,
     );
   });
 });

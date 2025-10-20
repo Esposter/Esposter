@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T extends ItemEntityType<string>">
-import type { ItemEntityType } from "#shared/models/entity/ItemEntityType";
+import type { ItemEntityType } from "@esposter/shared";
 
 import { prettify } from "@/util/text/prettify";
 
@@ -41,8 +41,9 @@ const dialog = ref(false);
     >
       <v-card-actions flex-wrap gap-y-2>
         <v-spacer />
-        <v-btn variant="outlined" @click="dialog = false">Cancel</v-btn>
+        <v-btn text="Cancel" variant="outlined" @click="dialog = false" />
         <v-btn
+          text="Discard changes"
           variant="outlined"
           @click="
             () => {
@@ -50,19 +51,16 @@ const dialog = ref(false);
               emit('update:edit-form-dialog', false);
             }
           "
-        >
-          Discard changes
-        </v-btn>
+        />
         <StyledButton
+          :button-props="{ text: 'Save changes' }"
           @click="
             () => {
               dialog = false;
               emit('save');
             }
           "
-        >
-          Save changes
-        </StyledButton>
+        />
       </v-card-actions>
     </StyledCard>
   </v-dialog>

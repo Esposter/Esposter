@@ -1,12 +1,11 @@
-import type { PostWithRelations } from "#shared/db/schema/posts";
 import type { CreateCommentInput } from "#shared/models/db/post/CreateCommentInput";
 import type { DeleteCommentInput } from "#shared/models/db/post/DeleteCommentInput";
 import type { UpdateCommentInput } from "#shared/models/db/post/UpdateCommentInput";
+import type { PostWithRelations } from "@esposter/db-schema";
 
-import { DerivedDatabaseEntityType } from "#shared/models/entity/DerivedDatabaseEntityType";
 import { createOperationData } from "@/services/shared/createOperationData";
-import { createCursorPaginationDataMap } from "@/services/shared/pagination/cursor/createCursorPaginationDataMap";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
+import { DerivedDatabaseEntityType } from "@esposter/db-schema";
 import { uuidValidateV4 } from "@esposter/shared";
 
 export const useCommentStore = defineStore("post/comment", () => {
@@ -17,7 +16,7 @@ export const useCommentStore = defineStore("post/comment", () => {
     return typeof postId === "string" && uuidValidateV4(postId) ? postId : undefined;
   });
   const currentPost = ref<PostWithRelations>();
-  const { items, ...restData } = createCursorPaginationDataMap<PostWithRelations>(currentPostId);
+  const { items, ...restData } = useCursorPaginationDataMap<PostWithRelations>(currentPostId);
   const {
     createComment: storeCreateComment,
     deleteComment: storeDeleteComment,
@@ -39,14 +38,15 @@ export const useCommentStore = defineStore("post/comment", () => {
   const deleteComment = async (input: DeleteCommentInput) => {
     if (!currentPost.value) return;
 
-    const deletedComment = await $trpc.post.deleteComment.mutate(input);
-    storeDeleteComment({ id: deletedComment.id });
+    const { id } = await $trpc.post.deleteComment.mutate(input);
+    storeDeleteComment({ id });
     currentPost.value.noComments -= 1;
   };
 
   return {
     createComment,
     deleteComment,
+    items,
     updateComment,
     ...restOperationData,
     currentPost,
