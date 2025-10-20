@@ -8,7 +8,7 @@ const { currentRoomId } = storeToRefs(roomStore);
 const inviteCode = ref<null | string>(null);
 if (currentRoomId.value) inviteCode.value = await $trpc.room.readInviteCode.query({ roomId: currentRoomId.value });
 
-const roomName = useRoomName();
+const roomName = useRoomName(currentRoomId);
 const runtimeConfig = useRuntimeConfig();
 const inviteLink = computed(() =>
   inviteCode.value ? `${runtimeConfig.public.baseUrl}${RoutePath.MessagesInvite(inviteCode.value)}` : "",

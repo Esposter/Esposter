@@ -1,22 +1,21 @@
 import type { MessageEntity } from "@esposter/db-schema";
 
+import { useAppUserStore } from "@/store/message/user/appUser";
 import { useMemberStore } from "@/store/message/user/member";
 import { MessageType } from "@esposter/db-schema";
-import { useAppUserStore } from "~/store/message/user/appUser";
 
 export const useCreator = (message: MaybeRefOrGetter<MessageEntity | undefined>) => {
   const memberStore = useMemberStore();
-  const { members } = storeToRefs(memberStore);
+  const { memberMap } = storeToRefs(memberStore);
   const appUserStore = useAppUserStore();
-  const { items } = storeToRefs(appUserStore);
-  const creator = computed(() => {
+  const { appUserMap } = storeToRefs(appUserStore);
+  return computed(() => {
     const messageValue = toValue(message);
-    if (!messageValue) return undefined;
+    if (!messageValue) return;
 
     if (messageValue.type === MessageType.Webhook) {
-      const appUser = items.value.find(({ id }) => id === messageValue.appUser.id);
+      const appUser = appUserMap.value.get(messageValue.appUser.id);
       return appUser ? { ...appUser, ...messageValue.appUser } : undefined;
-    } else return members.value.find(({ id }) => id === messageValue.userId);
+    } else return memberMap.value.get(messageValue.userId);
   });
-  return creator;
 };

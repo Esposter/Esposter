@@ -8,9 +8,10 @@ export const useReadMembers = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const memberStore = useMemberStore();
-  const { pushMembers, readItems, readMoreItems } = memberStore;
+  const { readItems, readMoreItems } = memberStore;
+  const { memberMap } = storeToRefs(memberStore);
   const readUserStatuses = useReadUserStatuses();
-  const readMetadata = (userIds: string[]) => readUserStatuses(userIds);
+  const readMetadata = (memberIds: string[]) => readUserStatuses(memberIds);
   const readMembers = () =>
     readItems(
       () => {
@@ -22,9 +23,9 @@ export const useReadMembers = () => {
           );
         return $trpc.room.readMembers.useQuery({ roomId: currentRoomId.value });
       },
-      async ({ items }) => {
-        pushMembers(...items);
-        await readMetadata(items.map(({ id }) => id));
+      ({ items }) => {
+        for (const member of items) memberMap.value.set(member.id, member);
+        readMetadata(items.map(({ id }) => id));
       },
     );
   const readMoreMembers = (onComplete: () => void) =>
@@ -36,7 +37,7 @@ export const useReadMembers = () => {
           StandardMessageEntityPropertyNames.partitionKey,
         );
       const cursorPaginationData = await $trpc.room.readMembers.query({ cursor, roomId: currentRoomId.value });
-      pushMembers(...cursorPaginationData.items);
+      for (const member of cursorPaginationData.items) memberMap.value.set(member.id, member);
       await readMetadata(cursorPaginationData.items.map(({ id }) => id));
       return cursorPaginationData;
     }, onComplete);

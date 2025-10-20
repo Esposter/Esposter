@@ -6,7 +6,7 @@ import { parse } from "node-html-parser";
 
 export const useMessageWithMentions = (message: ReadonlyRefOrGetter<string>) => {
   const memberStore = useMemberStore();
-  const { members } = storeToRefs(memberStore);
+  const { memberMap } = storeToRefs(memberStore);
   const mentions = useMentions(message);
   return computed(() => {
     const messageHtml = parse(toValue(message));
@@ -14,7 +14,7 @@ export const useMessageWithMentions = (message: ReadonlyRefOrGetter<string>) => 
     for (const mention of mentions.value) {
       const memberId = mention.getAttribute(MENTION_ID_ATTRIBUTE);
       if (!memberId) continue;
-      const member = members.value.find(({ id }) => id === memberId);
+      const member = memberMap.value.get(memberId);
       if (!member?.name || member.name === mention.textContent.slice(1)) continue;
 
       mention.textContent = `@${member.name}`;

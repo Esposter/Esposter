@@ -3,6 +3,7 @@ import { useMemberStore } from "@/store/message/user/member";
 
 const memberStore = useMemberStore();
 const { members } = storeToRefs(memberStore);
+// @TODO: Add member count endpoint
 const membersCount = computed(() => members.value.length);
 </script>
 

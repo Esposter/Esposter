@@ -22,7 +22,7 @@ export const useReadMessages = () => {
   const { readItems, readMoreItems } = dataStore;
   const { hasMoreNewer, nextCursorNewer } = storeToRefs(dataStore);
   const { unshiftMessages } = dataStore;
-  const readUsers = useReadUsers();
+  const readMembersByIds = useReadMembersByIds();
   const readAppUsers = useReadAppUsers();
   const readReplies = useReadReplies();
   const readFiles = useReadFiles();
@@ -36,7 +36,7 @@ export const useReadMessages = () => {
       else standardMessages.push(message);
 
     await Promise.all([
-      readUsers(standardMessages.map(({ userId }) => userId)),
+      readMembersByIds([...new Set(standardMessages.map(({ userId }) => userId))]),
       readAppUsers(webhookMessages.map(({ appUser }) => appUser.id)),
       readReplies([
         ...new Set(standardMessages.map(({ replyRowKey }) => replyRowKey).filter((value) => value !== undefined)),

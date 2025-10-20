@@ -4,10 +4,13 @@ import { getTypingMessage } from "@/services/message/getTypingMessage";
 import { useDataStore } from "@/store/message/data";
 import { useInputStore } from "@/store/message/input";
 import { useReplyStore } from "@/store/message/reply";
+import { useRoomStore } from "@/store/message/room";
 import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 import { Extension } from "@tiptap/vue-3";
 
-const roomName = useRoomName();
+const roomStore = useRoomStore();
+const { currentRoomId } = storeToRefs(roomStore);
+const roomName = useRoomName(currentRoomId);
 const dataStore = useDataStore();
 const { sendMessage } = dataStore;
 const { typings } = storeToRefs(dataStore);

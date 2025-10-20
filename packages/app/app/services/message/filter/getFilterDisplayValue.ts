@@ -15,8 +15,8 @@ export const getFilterDisplayValue = ({ type, value }: Filter) => {
       if (typeof value !== "string")
         throw new InvalidOperationError(Operation.Read, getFilterDisplayValue.name, serializeValue(value));
       const memberStore = useMemberStore();
-      const { members } = storeToRefs(memberStore);
-      const member = members.value.find(({ id }) => id === value);
+      const { memberMap } = storeToRefs(memberStore);
+      const member = memberMap.value.get(value);
       return `${displayType} ${member?.name ?? value}`;
     }
     case FilterType.Has:

@@ -34,8 +34,8 @@ export const useRoomStore = defineStore("message/room", () => {
     return typeof roomId === "string" && uuidValidateV4(roomId) ? roomId : undefined;
   });
   const currentRoom = computed(() => {
-    if (!currentRoomId.value) return null;
-    return rooms.value.find(({ id }) => id === currentRoomId.value) ?? null;
+    if (!currentRoomId.value) return;
+    return rooms.value.find(({ id }) => id === currentRoomId.value);
   });
   const session = authClient.useSession();
   const isCreator = computed(() => currentRoom.value?.userId === session.value.data?.user.id);

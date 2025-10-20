@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import { MESSAGE_DISPLAY_NAME } from "#shared/services/message/constants";
+import { useRoomStore } from "@/store/message/room";
 
 useHead({ titleTemplate: (title) => (title ? `${MESSAGE_DISPLAY_NAME} | ${title}` : MESSAGE_DISPLAY_NAME) });
 useSubscribables();
-const roomName = useRoomName();
+
+const roomStore = useRoomStore();
+const { currentRoomId } = storeToRefs(roomStore);
+const roomName = useRoomName(currentRoomId);
 </script>
 
 <template>

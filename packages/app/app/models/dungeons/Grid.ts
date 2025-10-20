@@ -54,13 +54,10 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
         const position: Position = { x, y };
         if (this.getValue(position) === value) return position;
       }
-
-    return undefined;
   }
 
   getPositionX(value: TValue, y: number): number | undefined {
     for (let x = 0; x < this.getColumnSize(y); x++) if (this.getValue({ x, y }) === value) return x;
-    return undefined;
   }
 
   getValue({ x, y }: Position) {

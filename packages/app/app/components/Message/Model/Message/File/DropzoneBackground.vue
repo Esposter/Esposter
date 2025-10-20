@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
+import { useRoomStore } from "@/store/message/room";
 
-const roomName = useRoomName();
+const roomStore = useRoomStore();
+const { currentRoomId } = storeToRefs(roomStore);
+const roomName = useRoomName(currentRoomId);
 const uploadFiles = useUploadFiles();
 const { isOverDropZone } = useDropZone(document, getSynchronizedFunction(uploadFiles));
 </script>

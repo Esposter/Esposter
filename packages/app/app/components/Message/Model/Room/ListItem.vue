@@ -9,9 +9,9 @@ interface RoomListItemProps {
 }
 
 const { room } = defineProps<RoomListItemProps>();
+const roomName = useRoomName(() => room.id);
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
-const roomName = useRoomName();
 const isActive = computed(() => room.id === currentRoomId.value);
 </script>
 

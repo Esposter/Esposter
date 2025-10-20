@@ -10,7 +10,7 @@ interface ForwardRoomListItemProps {
 const { room } = defineProps<ForwardRoomListItemProps>();
 const forwardStore = useForwardStore();
 const { roomIds } = storeToRefs(forwardStore);
-const roomName = useRoomName();
+const roomName = useRoomName(() => room.id);
 const isActive = ref(false);
 </script>
 

@@ -1,13 +1,14 @@
-import { useRoomStore } from "@/store/message/room";
+import type { Room } from "@esposter/db-schema";
+
 import { useMemberStore } from "@/store/message/user/member";
 
-export const useRoomPlaceholder = () => {
-  const roomStore = useRoomStore();
-  const { currentRoom } = storeToRefs(roomStore);
+export const useRoomPlaceholder = (room: MaybeRefOrGetter<Room | undefined>) => {
   const memberStore = useMemberStore();
-  const { members } = storeToRefs(memberStore);
+  const { memberMap } = storeToRefs(memberStore);
   return computed(() => {
-    const member = members.value.find(({ id }) => id === currentRoom.value?.userId);
-    return member ? `${member.name}'s Room` : "";
+    const roomValue = toValue(room);
+    if (!roomValue) return "";
+    const creator = memberMap.value.get(roomValue.userId);
+    return creator ? `${creator.name}'s Room` : "";
   });
 };

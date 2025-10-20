@@ -15,7 +15,7 @@ interface FileProps {
 
 const { columnLayout, file, index, isPreview = false, message } = defineProps<FileProps>();
 const { $trpc } = useNuxtApp();
-const isMessageCreator = await useIsMessageCreator(() => message);
+const isCreator = await useIsCreator(() => message);
 const downloadFileStore = useDownloadFileStore();
 const { viewFiles } = downloadFileStore;
 const { fileUrlMap, viewableFiles } = storeToRefs(downloadFileStore);
@@ -42,9 +42,7 @@ const isActive = ref(false);
   >
     <MessageModelFileRenderer :file :is-preview :url />
     <div
-      v-if="
-        !message.isForward && isMessageCreator && (columnLayout.length > 1 || !EMPTY_TEXT_REGEX.test(message.message))
-      "
+      v-if="!message.isForward && isCreator && (columnLayout.length > 1 || !EMPTY_TEXT_REGEX.test(message.message))"
       v-show="isActive"
       absolute
       top-2
