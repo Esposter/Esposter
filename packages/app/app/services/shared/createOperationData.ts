@@ -13,7 +13,7 @@ export const createOperationData = <
   TIdKeys extends EntityIdKeys<TItem>,
   TEntityTypeKey extends EntityTypeKey,
 >(
-  items: WritableComputedRef<TItem[]>,
+  items: Ref<TItem[]>,
   idKeys: [...TIdKeys],
   entityTypeKey: TEntityTypeKey,
 ) => {

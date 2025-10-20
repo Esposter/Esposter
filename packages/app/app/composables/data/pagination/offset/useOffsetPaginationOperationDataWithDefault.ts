@@ -1,6 +1,6 @@
 import { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
 
-export const useOffsetPaginationOperationDataWithDefault = <TItem>(defaultItems: WritableComputedRef<TItem[]>) => {
+export const useOffsetPaginationOperationDataWithDefault = <TItem>(defaultItems: Ref<TItem[]>) => {
   const items = defaultItems;
   const hasMore = ref(false);
 
