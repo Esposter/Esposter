@@ -43,6 +43,7 @@
     "@azure/data-tables": "catalog:",
     "@azure/search-documents": "catalog:",
     "@azure/storage-blob": "catalog:",
+    "@azure/storage-queue": "catalog:",
     "@azure/web-pubsub": "catalog:",
     "@azure/web-pubsub-client": "catalog:",
     "@codemirror/lang-vue": "catalog:",

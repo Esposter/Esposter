@@ -9,10 +9,9 @@ import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MAX_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
+import { useQueueClient } from "@@/server/composables/azure/queue/useWebPubSubServiceClient";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { useWebPubSubServiceClient } from "@@/server/composables/azure/webPubSub/useWebPubSubServiceClient";
-import { useSendCreateMessageNotification } from "@@/server/composables/message/useSendCreateMessageNotification";
-import { pushSubscriptionSchema } from "@@/server/models/PushSubscription";
 import { getDeviceId } from "@@/server/services/auth/getDeviceId";
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { on } from "@@/server/services/events/on";
@@ -51,6 +50,7 @@ import {
   getReverseTickedTimestamp,
   MessageEntityMap,
   MessageType,
+  QueueName,
   rooms,
   selectRoomSchema,
   standardCreateMessageInputSchema,
@@ -114,7 +114,6 @@ export type DeleteLinkPreviewResponseInput = z.infer<typeof deleteLinkPreviewRes
 
 const onstandardCreateMessageInputSchema = z.object({
   lastEventId: z.string().nullish(),
-  pushSubscription: pushSubscriptionSchema.optional(),
   roomId: selectRoomSchema.shape.id,
 });
 export type OnCreateMessageInput = z.infer<typeof onstandardCreateMessageInputSchema>;
@@ -152,10 +151,20 @@ export const messageRouter = router({
         ...input,
         userId: ctx.session.user.id,
       });
-      messageEventEmitter.emit("createMessage", [
-        [newMessageEntity],
-        { image: ctx.session.user.image, name: ctx.session.user.name, sessionId: ctx.session.session.id },
-      ]);
+      messageEventEmitter.emit("createMessage", [[newMessageEntity], { sessionId: ctx.session.session.id }]);
+
+      const queueClient = useQueueClient(QueueName.PushNotifications);
+      await queueClient.sendMessage(
+        JSON.stringify({
+          message: newMessageEntity.message,
+          notificationOptions: {
+            icon: ctx.session.user.image,
+            title: ctx.session.user.name,
+          },
+          partitionKey: newMessageEntity.partitionKey,
+          rowKey: newMessageEntity.rowKey,
+        }),
+      );
 
       const updatedRoom = (
         await ctx.db.update(rooms).set({ updatedAt: new Date() }).where(eq(rooms.id, input.roomId)).returning()
@@ -266,12 +275,7 @@ export const messageRouter = router({
           // so we'll instead rely on the subscription to auto-add the forwarded message for convenience
           messageEventEmitter.emit("createMessage", [
             messages,
-            {
-              image: ctx.session.user.image,
-              isSendToSelf: true,
-              name: ctx.session.user.name,
-              sessionId: ctx.session.session.id,
-            },
+            { isSendToSelf: true, sessionId: ctx.session.session.id },
           ]);
         }),
       );
@@ -303,7 +307,7 @@ export const messageRouter = router({
   ),
   onCreateMessage: getMemberProcedure(onstandardCreateMessageInputSchema, "roomId").subscription(async function* ({
     ctx,
-    input: { lastEventId, pushSubscription, roomId },
+    input: { lastEventId, roomId },
     signal,
   }) {
     if (lastEventId) {
@@ -329,11 +333,8 @@ export const messageRouter = router({
       }
     }
 
-    const sendCreateMessageNotification = useSendCreateMessageNotification(pushSubscription, roomId);
-
     for await (const [[data, options]] of on(messageEventEmitter, "createMessage", { signal })) {
       const dataToYield: MessageEntity[] = [];
-      const { image, name } = options;
 
       if ("isSendToSelf" in options) {
         const { isSendToSelf, sessionId } = options;
@@ -348,10 +349,6 @@ export const messageRouter = router({
 
       if (dataToYield.length > 0) {
         const newestMessage = dataToYield[dataToYield.length - 1];
-        await sendCreateMessageNotification(
-          { message: newestMessage.message, rowKey: newestMessage.rowKey },
-          { image, name },
-        );
         yield tracked(newestMessage.rowKey, dataToYield);
       }
     }
@@ -393,12 +390,7 @@ export const messageRouter = router({
     });
     messageEventEmitter.emit("createMessage", [
       [systemMessage],
-      {
-        image: ctx.session.user.image,
-        isSendToSelf: true,
-        name: ctx.session.user.name,
-        sessionId: ctx.session.session.id,
-      },
+      { isSendToSelf: true, sessionId: ctx.session.session.id },
     ]);
   }),
   readMessages: getMemberProcedure(readMessagesInputSchema, "roomId").query(({ input }) => readMessages(input)),
