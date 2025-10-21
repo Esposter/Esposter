@@ -41,7 +41,6 @@
     "drizzle-zod": "catalog:",
     "node-html-parser": "catalog:",
     "postgres": "catalog:",
-    "rate-limiter-flexible": "catalog:",
     "web-push": "catalog:",
     "zod": "catalog:"
   },
