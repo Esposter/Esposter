@@ -5,6 +5,9 @@ export const runtimeConfig: NuxtConfig["runtimeConfig"] = {
     secret: process.env.AUTH_SECRET,
   },
   azure: {
+    function: {
+      key: process.env.AZURE_FUNCTION_KEY,
+    },
     search: {
       apiKey: process.env.AZURE_SEARCH_API_KEY,
     },
@@ -32,6 +35,9 @@ export const runtimeConfig: NuxtConfig["runtimeConfig"] = {
     azure: {
       container: {
         baseUrl: process.env.AZURE_CONTAINER_BASE_URL,
+      },
+      function: {
+        baseUrl: process.env.AZURE_FUNCTION_BASE_URL,
       },
     },
     baseUrl: process.env.BASE_URL,

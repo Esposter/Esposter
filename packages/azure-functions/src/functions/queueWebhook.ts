@@ -9,6 +9,7 @@ import { z, ZodError } from "zod";
 const name = "queueWebhook";
 
 app.http(name, {
+  authLevel: "function",
   extraOutputs: [WEBHOOK_STORAGE_QUEUE_OUTPUT],
   handler: async (request, context) => {
     context.log(`${name} processed a request for URL: ${request.url}`);

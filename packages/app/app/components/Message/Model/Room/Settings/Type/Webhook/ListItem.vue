@@ -12,8 +12,8 @@ const { roomId, webhook } = defineProps<ListItemProps>();
 const webhookStore = useWebhookStore();
 const { updateWebhook } = webhookStore;
 const name = ref(webhook.name);
-const functionAppBaseUrl = useFunctionAppBaseUrl();
-const source = computed(() => `${functionAppBaseUrl}/api/webhooks/${webhook.id}/${webhook.token}`);
+const runtimeConfig = useRuntimeConfig();
+const source = computed(() => `${runtimeConfig.public.baseUrl}/api/webhooks/${webhook.id}/${webhook.token}`);
 </script>
 
 <template>
