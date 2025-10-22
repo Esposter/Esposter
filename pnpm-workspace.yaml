@@ -165,7 +165,7 @@ catalog:
   sax: ^1.4.1
   show-open-file-picker: ^0.4.0
   sql-highlight: ^6.1.0
-  superjson: ^2.2.2
+  superjson: ^2.2.3
   survey-core: ^2.3.11
   survey-creator-core: ^2.3.11
   survey-creator-vue: ^2.3.11
