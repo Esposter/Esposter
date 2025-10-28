@@ -2,7 +2,7 @@
 import { MESSAGE_DISPLAY_NAME } from "#shared/services/message/constants";
 import { RoutePath } from "@esposter/shared";
 
-definePageMeta({ middleware: "auth" });
+definePageMeta({ middleware: ["auth", "messages-client"] });
 
 useHead({ titleTemplate: MESSAGE_DISPLAY_NAME });
 const { $trpc } = useNuxtApp();
