@@ -91,7 +91,7 @@ catalog:
   codemirror: ^6.0.2
   ctix: ^2.7.1
   data-urls: ^6.0.0
-  dayjs: ^1.11.18
+  dayjs: ^1.11.19
   debug: ^4.4.3
   dedent: ^1.7.0
   defu: ^6.1.4
