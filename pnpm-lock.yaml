@@ -511,8 +511,8 @@ catalogs:
       specifier: ^0.180.0
       version: 0.180.0
     three-globe:
-      specifier: ^2.44.1
-      version: 2.44.1
+      specifier: ^2.45.0
+      version: 2.45.0
     trpc-nuxt:
       specifier: ^1.2.0
       version: 1.2.0
@@ -1001,7 +1001,7 @@ importers:
         version: 0.180.0
       three-globe:
         specifier: 'catalog:'
-        version: 2.44.1(three@0.180.0)
+        version: 2.45.0(three@0.180.0)
       trpc-nuxt:
         specifier: 'catalog:'
         version: 1.2.0(@trpc/client@11.7.1(@trpc/server@11.7.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.7.1(typescript@5.9.3))
@@ -10554,8 +10554,8 @@ packages:
     peerDependencies:
       three: '>=0.72.0'
 
-  three-globe@2.44.1:
-    resolution: {integrity: sha512-v0Q4tgEulvKyjj5P73v9/cH/3CjhStgHhSsoK7owj9ktaf56DiZC+oITi7x8pB3zAmUJlLJjj8I1BOCzzk9RNg==}
+  three-globe@2.45.0:
+    resolution: {integrity: sha512-Ur6BVkezvmHnvsEg8fbq6gIscSZtknSQMWwDRbiJ95o6OSDjDbGTc4oO6nP7mOM9aAA3YrF7YZyOwSkP4T56QA==}
     engines: {node: '>=12'}
     peerDependencies:
       three: '>=0.154'
@@ -22541,7 +22541,7 @@ snapshots:
       earcut: 3.0.2
       three: 0.180.0
 
-  three-globe@2.44.1(three@0.180.0):
+  three-globe@2.45.0(three@0.180.0):
     dependencies:
       '@tweenjs/tween.js': 25.0.0
       accessor-fn: 1.5.3
