@@ -31,7 +31,7 @@ app.eventGrid(AzureFunction.ProcessWebhook, {
         },
         notificationOptions: { icon: newMessage.appUser.image, title: newMessage.appUser.name },
       };
-      eventGridPublisherClient.send([
+      await eventGridPublisherClient.send([
         {
           data,
           dataVersion: "1.0",

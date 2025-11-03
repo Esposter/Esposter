@@ -169,7 +169,7 @@ export const messageRouter = router({
         },
         notificationOptions: { icon: ctx.session.user.image, title: ctx.session.user.name },
       };
-      eventGridPublisherClient.send([
+      await eventGridPublisherClient.send([
         {
           data,
           dataVersion: "1.0",
