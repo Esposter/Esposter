@@ -184,7 +184,6 @@ export const messageRouter = router({
       return newMessageEntity;
     },
   ),
-
   createTyping: getMemberProcedure(createTypingInputSchema, "roomId")
     // Query instead of mutation as there are no concurrency issues with ordering for simply emitting
     .query(({ ctx, input }) => {
