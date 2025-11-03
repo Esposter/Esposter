@@ -5,7 +5,7 @@ interface StyledDatePickerProps {
   datePickerProps?: InstanceType<typeof VueDatePicker>["$props"];
 }
 
-const modelValue = defineModel<InstanceType<typeof VueDatePicker>["modelValue"]>();
+const modelValue = defineModel<Date | null>({ required: true });
 const { datePickerProps } = defineProps<StyledDatePickerProps>();
 defineEmits<InstanceType<typeof VueDatePicker>["$emit"]>();
 const slots = defineSlots<Record<keyof InstanceType<typeof VueDatePicker>["$slots"], () => VNode>>();
