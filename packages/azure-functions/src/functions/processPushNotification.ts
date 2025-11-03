@@ -2,11 +2,11 @@ import type { PushNotificationEventGridData } from "@esposter/db-schema";
 
 import { pushNotification } from "@/services/pushNotification";
 import { app } from "@azure/functions";
-import { EventType } from "@esposter/db-schema";
+import { AzureFunction } from "@esposter/db-schema";
 
-app.eventGrid(EventType.ProcessPushNotification, {
+app.eventGrid(AzureFunction.ProcessPushNotification, {
   handler: async (event, context) => {
-    context.log(`${EventType.ProcessPushNotification} processed message: `, event.data);
+    context.log(`${AzureFunction.ProcessPushNotification} processed message: `, event.data);
     const data = event.data as unknown as PushNotificationEventGridData;
 
     try {

@@ -1,4 +1,4 @@
-export enum EventType {
+export enum AzureFunction {
   ProcessPushNotification = "ProcessPushNotification",
   ProcessWebhook = "ProcessWebhook",
   PushWebhook = "PushWebhook",

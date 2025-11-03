@@ -47,11 +47,11 @@ import {
 import {
   AzureContainer,
   AzureEntityType,
+  AzureFunction,
   AzureTable,
   AzureWebPubSubHub,
   BinaryOperator,
   DatabaseEntityType,
-  EventType,
   FileEntity,
   fileEntitySchema,
   getReverseTickedTimestamp,
@@ -173,7 +173,7 @@ export const messageRouter = router({
         {
           data,
           dataVersion: "1.0",
-          eventType: EventType.ProcessPushNotification,
+          eventType: AzureFunction.ProcessPushNotification,
           subject: `${newMessageEntity.partitionKey}/${newMessageEntity.rowKey}`,
         },
       ]);

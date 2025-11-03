@@ -3,13 +3,13 @@ import type { WebhookEventGridData } from "@/models/WebhookEventGridData";
 import { db } from "@/services/db";
 import { eventGridPublisherClient } from "@/services/eventGridPublisherClient";
 import { app } from "@azure/functions";
-import { EventType, selectWebhookSchema, webhookPayloadSchema } from "@esposter/db-schema";
+import { AzureFunction, selectWebhookSchema, webhookPayloadSchema } from "@esposter/db-schema";
 import { z, ZodError } from "zod";
 
-app.http(EventType.PushWebhook, {
+app.http(AzureFunction.PushWebhook, {
   authLevel: "function",
   handler: async (request, context) => {
-    context.log(`${EventType.PushWebhook} processed a request for URL: ${request.url}`);
+    context.log(`${AzureFunction.PushWebhook} processed a request for URL: ${request.url}`);
 
     try {
       const { id, token } = await selectWebhookSchema.pick({ id: true, token: true }).parseAsync(request.params);
@@ -24,9 +24,9 @@ app.http(EventType.PushWebhook, {
       const payload = await webhookPayloadSchema.parseAsync(body);
       const data: WebhookEventGridData = { payload, webhook };
       eventGridPublisherClient.send([
-        { data, dataVersion: "1.0", eventType: EventType.PushWebhook, subject: webhook.id },
+        { data, dataVersion: "1.0", eventType: AzureFunction.PushWebhook, subject: webhook.id },
       ]);
-      context.log(`Pushed to ${EventType.ProcessWebhook} for webhook id: ${webhook.id}`);
+      context.log(`Pushed to ${AzureFunction.ProcessWebhook} for webhook id: ${webhook.id}`);
       return {
         jsonBody: { message: "Webhook accepted." },
         status: 202,

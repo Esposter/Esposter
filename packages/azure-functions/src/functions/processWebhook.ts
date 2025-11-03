@@ -7,11 +7,11 @@ import { getWebhookCreateMessageInput } from "@/services/getWebhookCreateMessage
 import { getWebPubSubServiceClient } from "@/services/getWebPubSubServiceClient";
 import { app } from "@azure/functions";
 import { createMessage } from "@esposter/db";
-import { AzureTable, AzureWebPubSubHub, EventType } from "@esposter/db-schema";
+import { AzureFunction, AzureTable, AzureWebPubSubHub } from "@esposter/db-schema";
 
-app.eventGrid(EventType.ProcessWebhook, {
+app.eventGrid(AzureFunction.ProcessWebhook, {
   handler: async (event, context) => {
-    context.log(`${EventType.ProcessWebhook} processed message: `, event.data);
+    context.log(`${AzureFunction.ProcessWebhook} processed message: `, event.data);
     const { payload, webhook } = event.data as unknown as WebhookEventGridData;
 
     try {
@@ -35,15 +35,15 @@ app.eventGrid(EventType.ProcessWebhook, {
         {
           data,
           dataVersion: "1.0",
-          eventType: EventType.ProcessPushNotification,
+          eventType: AzureFunction.ProcessPushNotification,
           subject: `${newMessage.partitionKey}/${newMessage.rowKey}`,
         },
       ]);
       context.log(
-        `Pushed to ${EventType.ProcessPushNotification} for message id: ${JSON.stringify({ partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey })}`,
+        `Pushed to ${AzureFunction.ProcessPushNotification} for message id: ${JSON.stringify({ partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey })}`,
       );
     } catch (error) {
-      context.error(`${EventType.ProcessWebhook} failed: `, error);
+      context.error(`${AzureFunction.ProcessWebhook} failed: `, error);
       throw error;
     }
   },
