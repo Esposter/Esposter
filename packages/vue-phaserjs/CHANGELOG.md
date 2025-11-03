@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.17.0](https://github.com/Esposter/Esposter/compare/v2.16.0...v2.17.0) (2025-11-03)
+
+**Note:** Version bump only for package vue-phaserjs
+
 # [2.16.0](https://github.com/Esposter/Esposter/compare/v2.15.1...v2.16.0) (2025-10-19)
 
 ### Bug Fixes
@@ -18,8 +22,11 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * lint ([437f01f](https://github.com/Esposter/Esposter/commit/437f01f31e381d85717db8e97b5e29d516bf92d8))
+
 * move deps back to respective packages properly ([5a55e2d](https://github.com/Esposter/Esposter/commit/5a55e2d29f3de9d88bb68779780e983e9388457f))
+
 * package json ([f3fbfed](https://github.com/Esposter/Esposter/commit/f3fbfedc9772b653d34b2f2621d9dbf2612c3bd1))
+
 * types and lint ([6518c40](https://github.com/Esposter/Esposter/commit/6518c40541d214b22d72e691fbc1aeba56623c70))
 
 ### Features
