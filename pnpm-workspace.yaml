@@ -19,7 +19,7 @@ catalog:
   "@codemirror/state": ^6.5.2
   "@codemirror/theme-one-dark": ^6.1.3
   "@codemirror/view": ^6.38.6
-  "@electric-sql/pglite": ^0.3.11
+  "@electric-sql/pglite": ^0.3.12
   "@eslint/core": ^0.17.0
   "@eslint/json": ^0.13.2
   "@floating-ui/dom": ^1.7.4
@@ -81,7 +81,7 @@ catalog:
   "@vue-pdf-viewer/viewer": ^3.3.0
   "@vue/language-core": ^3.1.3
   "@vue/test-utils": ^2.4.6
-  "@vuepic/vue-datepicker": ^12.0.0
+  "@vuepic/vue-datepicker": ^12.0.1
   "@vueuse/core": ^14.0.0
   "@vueuse/nuxt": ^14.0.0
   ajv: ^8.17.1
@@ -160,7 +160,7 @@ catalog:
   prettier: ^3.6.2
   prosemirror-state: ^1.4.4
   rate-limiter-flexible: ^8.1.0
-  rolldown: ^1.0.0-beta.45
+  rolldown: ^1.0.0-beta.46
   rolldown-plugin-dts: ^0.17.3
   rxjs: ^7.8.2
   sass-embedded: ^1.93.3
