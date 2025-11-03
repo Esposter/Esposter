@@ -24,7 +24,7 @@ app.http(AzureFunction.PushWebhook, {
       const payload = await webhookPayloadSchema.parseAsync(body);
       const data: WebhookEventGridData = { payload, webhook };
       eventGridPublisherClient.send([
-        { data, dataVersion: "1.0", eventType: AzureFunction.PushWebhook, subject: webhook.id },
+        { data, dataVersion: "1.0", eventType: AzureFunction.ProcessWebhook, subject: webhook.id },
       ]);
       context.log(`Pushed to ${AzureFunction.ProcessWebhook} for webhook id: ${webhook.id}`);
       return {
