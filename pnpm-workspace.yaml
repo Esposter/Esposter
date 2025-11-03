@@ -79,7 +79,7 @@ catalog:
   "@vue-pdf-viewer/viewer": ^3.3.0
   "@vue/language-core": ^3.1.2
   "@vue/test-utils": ^2.4.6
-  "@vuepic/vue-datepicker": ^11.0.3
+  "@vuepic/vue-datepicker": ^12.0.0
   "@vueuse/core": ^14.0.0
   "@vueuse/nuxt": ^14.0.0
   ajv: ^8.17.1
@@ -214,7 +214,7 @@ onlyBuiltDependencies:
   - vue-demi
 
 overrides:
-  pdfjs-dist: ^5.4.296
+  pdfjs-dist: ^5.4.394
   vite: npm:rolldown-vite@7.1.20
 
 shellEmulator: true
