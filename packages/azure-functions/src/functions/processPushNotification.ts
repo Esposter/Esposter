@@ -18,5 +18,3 @@ app.eventGrid(AzureFunction.ProcessPushNotification, {
     }
   },
 });
-
-export default {};
