@@ -5,6 +5,11 @@ export const runtimeConfig: NuxtConfig["runtimeConfig"] = {
     secret: process.env.AUTH_SECRET,
   },
   azure: {
+    eventGrid: {
+      topic: {
+        key: process.env.AZURE_EVENT_GRID_TOPIC_KEY,
+      },
+    },
     function: {
       key: process.env.AZURE_FUNCTION_KEY,
     },
@@ -35,6 +40,11 @@ export const runtimeConfig: NuxtConfig["runtimeConfig"] = {
     azure: {
       container: {
         baseUrl: process.env.AZURE_CONTAINER_BASE_URL,
+      },
+      eventGrid: {
+        topic: {
+          endpoint: process.env.AZURE_EVENT_GRID_TOPIC_ENDPOINT,
+        },
       },
       function: {
         baseUrl: process.env.AZURE_FUNCTION_BASE_URL,
