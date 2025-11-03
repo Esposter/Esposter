@@ -48,3 +48,5 @@ app.eventGrid(AzureFunction.ProcessWebhook, {
     }
   },
 });
+
+export default {};
