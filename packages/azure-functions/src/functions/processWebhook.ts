@@ -1,22 +1,18 @@
-import type { WebhookQueueMessage } from "@/models/WebhookQueueMessage";
-import type { PushNotificationQueueMessage } from "@esposter/db-schema";
+import type { WebhookEventGridData } from "@/models/WebhookEventGridData";
+import type { PushNotificationEventGridData } from "@esposter/db-schema";
 
-import { PUSH_NOTIFICATION_STORAGE_QUEUE_OUTPUT, WEBHOOK_STORAGE_QUEUE_OUTPUT } from "@/services/constants";
+import { eventGridPublisherClient } from "@/services/eventGridPublisherClient";
 import { getTableClient } from "@/services/getTableClient";
 import { getWebhookCreateMessageInput } from "@/services/getWebhookCreateMessageInput";
 import { getWebPubSubServiceClient } from "@/services/getWebPubSubServiceClient";
 import { app } from "@azure/functions";
 import { createMessage } from "@esposter/db";
-import { AzureTable, AzureWebPubSubHub } from "@esposter/db-schema";
+import { AzureTable, AzureWebPubSubHub, EventType } from "@esposter/db-schema";
 
-const name = "processWebhook";
-
-app.storageQueue(name, {
-  connection: "AzureWebJobsStorage",
-  extraOutputs: [PUSH_NOTIFICATION_STORAGE_QUEUE_OUTPUT],
-  handler: async (queueEntry, context) => {
-    context.log(`${name} processed message: `, queueEntry);
-    const { payload, webhook } = queueEntry as WebhookQueueMessage;
+app.eventGrid(EventType.ProcessWebhook, {
+  handler: async (event, context) => {
+    context.log(`${EventType.ProcessWebhook} processed message: `, event.data);
+    const { payload, webhook } = event.data as unknown as WebhookEventGridData;
 
     try {
       const messageClient = await getTableClient(AzureTable.Messages);
@@ -26,7 +22,7 @@ app.storageQueue(name, {
       const webPubSubServiceClient = getWebPubSubServiceClient(AzureWebPubSubHub.Messages);
       await webPubSubServiceClient.group(newMessage.partitionKey).sendToAll(newMessage);
 
-      const pushNotificationQueueMessage: PushNotificationQueueMessage = {
+      const data: PushNotificationEventGridData = {
         message: {
           message: newMessage.message,
           partitionKey: newMessage.partitionKey,
@@ -35,16 +31,22 @@ app.storageQueue(name, {
         },
         notificationOptions: { icon: newMessage.appUser.image, title: newMessage.appUser.name },
       };
-      context.extraOutputs.set(PUSH_NOTIFICATION_STORAGE_QUEUE_OUTPUT.name, pushNotificationQueueMessage);
+      eventGridPublisherClient.send([
+        {
+          data,
+          dataVersion: "1.0",
+          eventType: EventType.ProcessPushNotification,
+          subject: `${newMessage.partitionKey}/${newMessage.rowKey}`,
+        },
+      ]);
       context.log(
-        `Queued ${PUSH_NOTIFICATION_STORAGE_QUEUE_OUTPUT.queueName} for message id: ${JSON.stringify({ partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey })}`,
+        `Pushed to ${EventType.ProcessPushNotification} for message id: ${JSON.stringify({ partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey })}`,
       );
     } catch (error) {
-      context.error(`${name} failed: `, error);
+      context.error(`${EventType.ProcessWebhook} failed: `, error);
       throw error;
     }
   },
-  queueName: WEBHOOK_STORAGE_QUEUE_OUTPUT.queueName,
 });
 
 export default {};

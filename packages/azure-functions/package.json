@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@azure/data-tables": "catalog:",
+    "@azure/eventgrid": "catalog:",
     "@azure/functions": "catalog:",
     "@azure/web-pubsub": "catalog:",
     "@esposter/db": "workspace:*",

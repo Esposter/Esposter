@@ -5,6 +5,8 @@ declare global {
     interface ProcessEnv {
       APP_ENV: Environment;
       AZURE_CONTAINER_BASE_URL: string;
+      AZURE_EVENT_GRID_TOPIC_ENDPOINT: string;
+      AZURE_EVENT_GRID_TOPIC_KEY: string;
       AZURE_FUNCTION_BASE_URL: string;
       AZURE_FUNCTION_KEY: string;
       AZURE_SEARCH_API_KEY: string;

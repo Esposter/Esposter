@@ -1,16 +1,17 @@
-import { WEBHOOK_STORAGE_QUEUE_OUTPUT } from "@/services/constants";
+import type { WebhookEventGridData } from "@/models/WebhookEventGridData";
+
 import { db } from "@/services/db";
+import { eventGridPublisherClient } from "@/services/eventGridPublisherClient";
 import { app } from "@azure/functions";
-import { selectWebhookSchema, webhookPayloadSchema } from "@esposter/db-schema";
+import { EventType, selectWebhookSchema, webhookPayloadSchema } from "@esposter/db-schema";
 import { z, ZodError } from "zod";
 
-const name = "queueWebhook";
+const eventType = "pushWebhook";
 
-app.http(name, {
+app.http(eventType, {
   authLevel: "function",
-  extraOutputs: [WEBHOOK_STORAGE_QUEUE_OUTPUT],
   handler: async (request, context) => {
-    context.log(`${name} processed a request for URL: ${request.url}`);
+    context.log(`${eventType} processed a request for URL: ${request.url}`);
 
     try {
       const { id, token } = await selectWebhookSchema.pick({ id: true, token: true }).parseAsync(request.params);
@@ -23,10 +24,11 @@ app.http(name, {
 
       const body = await request.json();
       const payload = await webhookPayloadSchema.parseAsync(body);
-      context.extraOutputs.set(WEBHOOK_STORAGE_QUEUE_OUTPUT.name, { payload, webhook });
-      context.log(`Queued ${WEBHOOK_STORAGE_QUEUE_OUTPUT.queueName} for webhook id: ${webhook.id}`);
+      const data: WebhookEventGridData = { payload, webhook };
+      eventGridPublisherClient.send([{ data, dataVersion: "1.0", eventType, subject: webhook.id }]);
+      context.log(`Pushed to ${EventType.ProcessWebhook} for webhook id: ${webhook.id}`);
       return {
-        jsonBody: { message: "Webhook accepted and queued for processing." },
+        jsonBody: { message: "Webhook accepted." },
         status: 202,
       };
     } catch (error) {

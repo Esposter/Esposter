@@ -1,5 +1,5 @@
 import type { InvocationContext } from "@azure/functions";
-import type { PushNotificationQueueMessage } from "@esposter/db-schema";
+import type { PushNotificationEventGridData } from "@esposter/db-schema";
 
 import { db } from "@/services/db";
 import { getCreateMessageNotificationPayload } from "@/services/getCreateMessageNotificationPayload";
@@ -14,7 +14,7 @@ export const pushNotification = async (
   {
     message: { message, partitionKey, rowKey, userId },
     notificationOptions: { icon, title },
-  }: PushNotificationQueueMessage,
+  }: PushNotificationEventGridData,
 ): Promise<void> => {
   const payload = getCreateMessageNotificationPayload(message, {
     icon,
