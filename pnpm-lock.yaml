@@ -238,8 +238,8 @@ catalogs:
       specifier: ^2.4.6
       version: 2.4.6
     '@vuepic/vue-datepicker':
-      specifier: ^12.0.0
-      version: 12.0.0
+      specifier: ^12.0.1
+      version: 12.0.1
     '@vueuse/core':
       specifier: ^14.0.0
       version: 14.0.0
@@ -797,7 +797,7 @@ importers:
         version: 3.3.0(pdfjs-dist@5.4.394)(rolldown-vite@7.1.20(@types/node@24.10.0)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.93.3)(sass@1.93.3)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
       '@vuepic/vue-datepicker':
         specifier: 'catalog:'
-        version: 12.0.0(vue@3.5.22(typescript@5.9.3))
+        version: 12.0.1(vue@3.5.22(typescript@5.9.3))
       '@vueuse/core':
         specifier: 'catalog:'
         version: 14.0.0(vue@3.5.22(typescript@5.9.3))
@@ -5560,8 +5560,8 @@ packages:
   '@vue/test-utils@2.4.6':
     resolution: {integrity: sha512-FMxEjOpYNYiFe0GkaHsnJPXFHxQ6m4t8vI/ElPGpMWxZKpmRvQ33OIrvRXemy6yha03RxhOlQuy+gZMC3CQSow==}
 
-  '@vuepic/vue-datepicker@12.0.0':
-    resolution: {integrity: sha512-30zphp2HuYOc5t5W7coV79KbwACNa9xFwdIzCGtrnP1m/Z6jcrp4yfej1rHKF8pO1DJJf9/lolw2Z4plYF8KIw==}
+  '@vuepic/vue-datepicker@12.0.1':
+    resolution: {integrity: sha512-I7yWgDfymtGmtvcVxOdK+THOLCbcq0aEfIsRh4IhWyJkk6q+Nf3rCNHEaGy16GNXRDOsZLT2FiTqP/1Upx2Lzg==}
     engines: {node: '>=18.12.0'}
     peerDependencies:
       vue: '>=3.5.0'
@@ -16862,7 +16862,7 @@ snapshots:
       js-beautify: 1.15.4
       vue-component-type-helpers: 2.2.12
 
-  '@vuepic/vue-datepicker@12.0.0(vue@3.5.22(typescript@5.9.3))':
+  '@vuepic/vue-datepicker@12.0.1(vue@3.5.22(typescript@5.9.3))':
     dependencies:
       '@date-fns/tz': 1.4.1
       '@floating-ui/vue': 1.1.9(vue@3.5.22(typescript@5.9.3))
