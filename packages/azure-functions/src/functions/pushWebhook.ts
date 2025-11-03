@@ -6,12 +6,10 @@ import { app } from "@azure/functions";
 import { EventType, selectWebhookSchema, webhookPayloadSchema } from "@esposter/db-schema";
 import { z, ZodError } from "zod";
 
-const eventType = "pushWebhook";
-
-app.http(eventType, {
+app.http(EventType.PushWebhook, {
   authLevel: "function",
   handler: async (request, context) => {
-    context.log(`${eventType} processed a request for URL: ${request.url}`);
+    context.log(`${EventType.PushWebhook} processed a request for URL: ${request.url}`);
 
     try {
       const { id, token } = await selectWebhookSchema.pick({ id: true, token: true }).parseAsync(request.params);
@@ -25,7 +23,9 @@ app.http(eventType, {
       const body = await request.json();
       const payload = await webhookPayloadSchema.parseAsync(body);
       const data: WebhookEventGridData = { payload, webhook };
-      eventGridPublisherClient.send([{ data, dataVersion: "1.0", eventType, subject: webhook.id }]);
+      eventGridPublisherClient.send([
+        { data, dataVersion: "1.0", eventType: EventType.PushWebhook, subject: webhook.id },
+      ]);
       context.log(`Pushed to ${EventType.ProcessWebhook} for webhook id: ${webhook.id}`);
       return {
         jsonBody: { message: "Webhook accepted." },
