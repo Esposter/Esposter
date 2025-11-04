@@ -73,6 +73,7 @@
     "vue-tsc": "catalog:"
   },
   "devDependenciesComments": {
+    "@azure/functions": "https://github.com/Azure/azure-functions-nodejs-library/issues/380",
     "oxlint": "@TODO: https://github.com/oxc-project/oxc/issues/13204"
   },
   "engines": {
