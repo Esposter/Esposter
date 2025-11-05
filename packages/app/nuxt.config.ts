@@ -4,6 +4,7 @@ import { compatibilityDate } from "./configuration/compatibilityDate";
 import { css } from "./configuration/css";
 import { devtools } from "./configuration/devtools";
 import { experimental } from "./configuration/experimental";
+import { future } from "./configuration/future";
 import { imports } from "./configuration/imports";
 import { modules } from "./configuration/modules";
 import { pwa } from "./configuration/pwa";
@@ -22,6 +23,7 @@ export default defineNuxtConfig({
   css,
   devtools,
   experimental,
+  future,
   imports,
   modules,
   pwa,
