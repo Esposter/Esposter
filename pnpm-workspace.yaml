@@ -144,7 +144,7 @@ catalog:
   mjml-browser: ^4.16.1
   node-emoji: ^2.2.0
   node-html-parser: ^7.0.1
-  nuxt: 4.1.2
+  nuxt: ^4.2.0
   nuxt-security: ^2.4.0
   obscenity: ^0.4.5
   omit-deep-lodash: ^1.1.7
@@ -184,7 +184,7 @@ catalog:
   unplugin-auto-import: ^20.2.0
   v-viewer: ^3.0.22
   viewerjs: ^1.11.7
-  vite: npm:rolldown-vite@7.1.20
+  vite: npm:rolldown-vite@7.2.0-beta.2
   vite-plugin-dts: ^4.5.4
   vite-plugin-mkcert: ^1.17.9
   vite-tsconfig-paths: ^5.1.4
@@ -217,6 +217,6 @@ onlyBuiltDependencies:
 
 overrides:
   pdfjs-dist: ^5.4.394
-  vite: npm:rolldown-vite@7.1.20
+  vite: npm:rolldown-vite@7.2.0-beta.2
 
 shellEmulator: true
