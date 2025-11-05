@@ -39,7 +39,7 @@ catalog:
   "@nuxt/scripts": ^0.13.0
   "@nuxt/test-utils": ^3.20.1
   "@nuxtjs/seo": ^3.2.2
-  "@pinia/nuxt": ^0.11.2
+  "@pinia/nuxt": ^0.11.3
   "@prettier/plugin-oxc": ^0.0.4
   "@tiptap/core": ^3.10.1
   "@tiptap/extension-file-handler": ^3.10.1
@@ -154,7 +154,7 @@ catalog:
   pdfjs-dist: ^5.4.394
   phaser: ^4.0.0-rc.5
   phaser3-rex-plugins: ^1.80.17
-  pinia: ^3.0.3
+  pinia: ^3.0.4
   pluralize: ^8.0.0
   postgres: ^3.4.7
   prettier: ^3.6.2
@@ -184,7 +184,7 @@ catalog:
   unplugin-auto-import: ^20.2.0
   v-viewer: ^3.0.22
   viewerjs: ^1.11.7
-  vite: npm:rolldown-vite@7.2.0-beta.2
+  vite: npm:rolldown-vite@7.2.0
   vite-plugin-dts: ^4.5.4
   vite-plugin-mkcert: ^1.17.9
   vite-tsconfig-paths: ^5.1.4
@@ -217,6 +217,6 @@ onlyBuiltDependencies:
 
 overrides:
   pdfjs-dist: ^5.4.394
-  vite: npm:rolldown-vite@7.2.0-beta.2
+  vite: npm:rolldown-vite@7.2.0
 
 shellEmulator: true
