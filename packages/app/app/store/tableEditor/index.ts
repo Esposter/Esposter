@@ -43,12 +43,12 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
   );
   const save = async (isDeleteAction?: true) => {
     if (!editedItem.value) return;
-    // Optionally close the edit form dialog
-    editFormDialog.value = false;
 
     if (isDeleteAction) deleteItem({ id: editedItem.value.id });
     else if (editedIndex.value > -1) updateItem(editedItem.value);
     else createItem(editedItem.value);
+    // Optimistically close the edit form dialog
+    editFormDialog.value = false;
 
     if (session.value.data) {
       saveItemMetadata(tableEditorConfiguration.value);
