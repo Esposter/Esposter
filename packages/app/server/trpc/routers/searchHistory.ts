@@ -1,4 +1,5 @@
 import type { SearchHistory } from "@esposter/db-schema";
+import type { SQL } from "drizzle-orm";
 
 import { createSearchHistoryInputSchema } from "#shared/models/db/searchHistory/CreateSearchHistoryInput";
 import { deleteSearchHistoryInputSchema } from "#shared/models/db/searchHistory/DeleteSearchHistoryInput";
@@ -14,7 +15,7 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import { DatabaseEntityType, searchHistories, selectSearchHistorySchema } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, eq, SQL } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
 const readSearchHistoriesInputSchema = z.object({

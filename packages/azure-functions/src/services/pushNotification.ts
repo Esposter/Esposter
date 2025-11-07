@@ -1,12 +1,13 @@
 import type { InvocationContext } from "@azure/functions";
 import type { PushNotificationEventGridData } from "@esposter/db-schema";
+import type { SQL } from "drizzle-orm";
 
 import { db } from "@/services/db";
 import { getCreateMessageNotificationPayload } from "@/services/getCreateMessageNotificationPayload";
 import { webpush } from "@/services/webpush";
-import { pushSubscriptions, usersToRooms } from "@esposter/db-schema";
-import { RoutePath } from "@esposter/shared";
-import { and, eq, ne } from "drizzle-orm";
+import { NotificationType, pushSubscriptions, usersToRooms } from "@esposter/db-schema";
+import { getMentions, MENTION_ID_ATTRIBUTE, RoutePath } from "@esposter/shared";
+import { and, eq, inArray, ne, or } from "drizzle-orm";
 import { WebPushError } from "web-push";
 
 export const pushNotification = async (
@@ -23,9 +24,24 @@ export const pushNotification = async (
   });
   if (!payload) return;
 
-  const wheres = [eq(usersToRooms.roomId, partitionKey)];
-  if (userId) wheres.push(ne(usersToRooms.userId, userId));
-  const rows = await db
+  const andWheres: (SQL | undefined)[] = [eq(usersToRooms.roomId, partitionKey)];
+  if (userId) andWheres.push(ne(usersToRooms.userId, userId));
+
+  const mentionOrWheres: (SQL | undefined)[] = [eq(usersToRooms.notificationType, NotificationType.All)];
+  const mentions = getMentions(message);
+  if (mentions.length > 0)
+    mentionOrWheres.push(
+      and(
+        eq(usersToRooms.notificationType, NotificationType.DirectMessage),
+        inArray(
+          usersToRooms.userId,
+          mentions.map((m) => m.getAttribute(MENTION_ID_ATTRIBUTE)).filter((id) => id !== undefined),
+        ),
+      ),
+    );
+  andWheres.push(or(...mentionOrWheres));
+
+  const readPushSubscriptions = await db
     .select({
       auth: pushSubscriptions.auth,
       endpoint: pushSubscriptions.endpoint,
@@ -35,14 +51,14 @@ export const pushNotification = async (
     })
     .from(pushSubscriptions)
     .innerJoin(usersToRooms, eq(usersToRooms.userId, pushSubscriptions.userId))
-    .where(and(...wheres));
-  if (rows.length === 0) {
+    .where(and(...andWheres));
+  if (readPushSubscriptions.length === 0) {
     context.log(`No push subscriptions found for room ${partitionKey}.`);
     return;
   }
 
   await Promise.all(
-    rows.map(({ auth, endpoint, expirationTime, id, p256dh }) =>
+    readPushSubscriptions.map(({ auth, endpoint, expirationTime, id, p256dh }) =>
       (async () => {
         try {
           await webpush.sendNotification(

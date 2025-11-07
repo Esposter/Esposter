@@ -15,6 +15,7 @@ import { searchHistoryRouter } from "@@/server/trpc/routers/searchHistory";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
 import { tableEditorRouter } from "@@/server/trpc/routers/tableEditor";
 import { userRouter } from "@@/server/trpc/routers/user";
+import { userToRoomRouter } from "@@/server/trpc/routers/userToRoom";
 import { webhookRouter } from "@@/server/trpc/routers/webhook";
 import { webpageEditorRouter } from "@@/server/trpc/routers/webpageEditor";
 
@@ -35,6 +36,7 @@ export const trpcRouter = router({
   survey: surveyRouter,
   tableEditor: tableEditorRouter,
   user: userRouter,
+  userToRoom: userToRoomRouter,
   webhook: webhookRouter,
   webpageEditor: webpageEditorRouter,
 });
