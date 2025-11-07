@@ -68,7 +68,6 @@
     "typedoc": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vite-tsconfig-paths": "catalog:",
     "vitest": "catalog:",
     "vue-tsc": "catalog:"
   },
