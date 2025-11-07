@@ -2,6 +2,7 @@ import type { Session } from "#shared/models/auth/Session";
 import type { Context } from "@@/server/trpc/context";
 import type { User } from "@esposter/db-schema";
 import type * as DrizzleKit from "drizzle-kit/api";
+import type { PgliteDatabase } from "drizzle-orm/pglite";
 
 import { dayjs } from "#shared/services/dayjs";
 import { useContainerClientMock } from "@@/server/composables/azure/container/useContainerClient.test";
@@ -10,7 +11,7 @@ import { useTableClientMock } from "@@/server/composables/azure/table/useTableCl
 import { PGlite } from "@electric-sql/pglite";
 import { messageSchema, schema, users } from "@esposter/db-schema";
 import { sql } from "drizzle-orm";
-import { drizzle, PgliteDatabase } from "drizzle-orm/pglite";
+import { drizzle } from "drizzle-orm/pglite";
 import { IncomingMessage, ServerResponse } from "node:http";
 import { createRequire } from "node:module";
 import { Socket } from "node:net";

@@ -64,6 +64,7 @@ import {
   StandardMessageEntityPropertyNames,
   standardMessageEntitySchema,
 } from "@esposter/db-schema";
+import { getPushSubscriptionsForMessage } from "@esposter/db-schema/src/services/message/getPushSubscriptionsForMessage";
 import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation } from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
@@ -159,24 +160,27 @@ export const messageRouter = router({
       });
       messageEventEmitter.emit("createMessage", [[newMessageEntity], { sessionId: ctx.session.session.id }]);
 
-      const eventGridPublisherClient = useEventGridPublisherClient();
-      const data: PushNotificationEventGridData = {
-        message: {
-          message: newMessageEntity.message,
-          partitionKey: newMessageEntity.partitionKey,
-          rowKey: newMessageEntity.rowKey,
-          userId: newMessageEntity.userId,
-        },
-        notificationOptions: { icon: ctx.session.user.image, title: ctx.session.user.name },
-      };
-      await eventGridPublisherClient.send([
-        {
-          data,
-          dataVersion: "1.0",
-          eventType: AzureFunction.ProcessPushNotification,
-          subject: `${newMessageEntity.partitionKey}/${newMessageEntity.rowKey}`,
-        },
-      ]);
+      const readPushSubscriptions = await getPushSubscriptionsForMessage(ctx.db, newMessageEntity);
+      if (readPushSubscriptions.length > 0) {
+        const eventGridPublisherClient = useEventGridPublisherClient();
+        const data: PushNotificationEventGridData = {
+          message: {
+            message: newMessageEntity.message,
+            partitionKey: newMessageEntity.partitionKey,
+            rowKey: newMessageEntity.rowKey,
+            userId: newMessageEntity.userId,
+          },
+          notificationOptions: { icon: ctx.session.user.image, title: ctx.session.user.name },
+        };
+        await eventGridPublisherClient.send([
+          {
+            data,
+            dataVersion: "1.0",
+            eventType: AzureFunction.ProcessPushNotification,
+            subject: `${newMessageEntity.partitionKey}/${newMessageEntity.rowKey}`,
+          },
+        ]);
+      }
 
       const updatedRoom = (
         await ctx.db.update(rooms).set({ updatedAt: new Date() }).where(eq(rooms.id, input.roomId)).returning()

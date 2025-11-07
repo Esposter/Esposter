@@ -3,6 +3,7 @@ import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessage
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DeleteFileInput, DeleteLinkPreviewResponseInput } from "@@/server/trpc/routers/message";
+import type { PushNotificationEventGridData } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
@@ -17,13 +18,14 @@ import { getBlobName } from "@esposter/db";
 import {
   AzureContainer,
   AzureEntityType,
+  AzureFunction,
   getReverseTickedTimestamp,
   MessageType,
   rooms,
   StandardMessageEntity,
 } from "@esposter/db-schema";
 import { MENTION_ID_ATTRIBUTE, MENTION_TYPE, MENTION_TYPE_ATTRIBUTE, NotFoundError } from "@esposter/shared";
-import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
+import { MockContainerDatabase, MockEventGridDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("message", () => {
@@ -50,6 +52,7 @@ describe("message", () => {
   afterEach(async () => {
     MockContainerDatabase.clear();
     MockTableDatabase.clear();
+    MockEventGridDatabase.clear();
     await mockContext.db.delete(rooms);
   });
 
@@ -213,6 +216,18 @@ describe("message", () => {
         userId,
       }),
     );
+
+    const processPushNotificationEvents = MockEventGridDatabase.get(AzureFunction.ProcessPushNotification);
+    assert(processPushNotificationEvents);
+
+    expect(processPushNotificationEvents).toHaveLength(1);
+    expect(processPushNotificationEvents[0].data).toHaveLength(1);
+    expect((processPushNotificationEvents[0].data as PushNotificationEventGridData[])[0]).toStrictEqual({
+      message,
+      partitionKey: newRoom.id,
+      rowKey: newMessage.rowKey,
+      userId,
+    });
   });
 
   test("fails create with non-existent room id", async () => {
