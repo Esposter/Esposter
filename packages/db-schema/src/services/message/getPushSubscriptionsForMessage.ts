@@ -1,4 +1,5 @@
 import type { MessageEntity } from "@/models/message/MessageEntity";
+import type { schema } from "@/schema";
 import type { SQL } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
@@ -8,7 +9,7 @@ import { getMentions, MENTION_ID_ATTRIBUTE } from "@esposter/shared";
 import { and, eq, inArray, ne, or } from "drizzle-orm";
 
 export const getPushSubscriptionsForMessage = (
-  db: PostgresJsDatabase<{ pushSubscriptions: typeof pushSubscriptions; usersToRooms: typeof usersToRooms }>,
+  db: PostgresJsDatabase<typeof schema>,
   { message, partitionKey, userId }: Pick<MessageEntity, "message" | "partitionKey" | "userId">,
 ) => {
   const mentions = getMentions(message);

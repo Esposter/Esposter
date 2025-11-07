@@ -54,6 +54,7 @@ import {
   DatabaseEntityType,
   FileEntity,
   fileEntitySchema,
+  getPushSubscriptionsForMessage,
   getReverseTickedTimestamp,
   MessageEntityMap,
   MessageType,
@@ -64,7 +65,6 @@ import {
   StandardMessageEntityPropertyNames,
   standardMessageEntitySchema,
 } from "@esposter/db-schema";
-import { getPushSubscriptionsForMessage } from "@esposter/db-schema/src/services/message/getPushSubscriptionsForMessage";
 import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation } from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
