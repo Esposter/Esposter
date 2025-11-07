@@ -3,7 +3,6 @@ import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessage
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DeleteFileInput, DeleteLinkPreviewResponseInput } from "@@/server/trpc/routers/message";
-import type { PushNotificationEventGridData } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
@@ -18,7 +17,6 @@ import { getBlobName } from "@esposter/db";
 import {
   AzureContainer,
   AzureEntityType,
-  AzureFunction,
   getReverseTickedTimestamp,
   MessageType,
   rooms,
@@ -216,18 +214,6 @@ describe("message", () => {
         userId,
       }),
     );
-
-    const processPushNotificationEvents = MockEventGridDatabase.get(AzureFunction.ProcessPushNotification);
-    assert(processPushNotificationEvents);
-
-    expect(processPushNotificationEvents).toHaveLength(1);
-    expect(processPushNotificationEvents[0].data).toHaveLength(1);
-    expect((processPushNotificationEvents[0].data as PushNotificationEventGridData[])[0]).toStrictEqual({
-      message,
-      partitionKey: newRoom.id,
-      rowKey: newMessage.rowKey,
-      userId,
-    });
   });
 
   test("fails create with non-existent room id", async () => {

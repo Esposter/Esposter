@@ -12,14 +12,12 @@ export const getPushSubscriptionsForMessage = (
   db: PostgresJsDatabase<typeof schema>,
   { message, partitionKey, userId }: Pick<MessageEntity, "message" | "partitionKey" | "userId">,
 ) => {
-  const mentions = getMentions(message);
-  const mentionedUserIds = mentions.map((m) => m.getAttribute(MENTION_ID_ATTRIBUTE)).filter((id) => id !== undefined);
-  if (mentionedUserIds.length === 0) return [];
-
   const andWheres: (SQL | undefined)[] = [eq(usersToRooms.roomId, partitionKey)];
   if (userId) andWheres.push(ne(usersToRooms.userId, userId));
 
   const mentionOrWheres: (SQL | undefined)[] = [eq(usersToRooms.notificationType, NotificationType.All)];
+  const mentions = getMentions(message);
+  const mentionedUserIds = mentions.map((m) => m.getAttribute(MENTION_ID_ATTRIBUTE)).filter((id) => id !== undefined);
   if (mentionedUserIds.length > 0)
     mentionOrWheres.push(
       and(
