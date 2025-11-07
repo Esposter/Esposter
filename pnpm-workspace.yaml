@@ -144,7 +144,7 @@ catalog:
   mjml-browser: ^4.16.1
   node-emoji: ^2.2.0
   node-html-parser: ^7.0.1
-  nuxt: 4.1.3
+  nuxt: ^4.2.1
   nuxt-security: ^2.4.0
   obscenity: ^0.4.5
   omit-deep-lodash: ^1.1.7
