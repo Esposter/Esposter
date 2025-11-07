@@ -67,8 +67,8 @@ catalog:
   "@types/web-push": ^3.6.4
   "@types/ws": ^8.18.1
   "@types/xml2js": ^0.4.14
-  "@unocss/eslint-config": ^66.5.4
-  "@unocss/nuxt": ^66.5.4
+  "@unocss/eslint-config": ^66.5.5
+  "@unocss/nuxt": ^66.5.5
   "@vite-pwa/nuxt": ^1.0.7
   "@vitejs/plugin-vue": ^6.0.1
   "@vitest/coverage-v8": ^4.0.7
@@ -180,7 +180,7 @@ catalog:
   typedoc: ^0.28.14
   typescript: ^5.9.3
   typescript-eslint: ^8.46.3
-  unocss: ^66.5.4
+  unocss: ^66.5.5
   unplugin-auto-import: ^20.2.0
   v-viewer: ^3.0.22
   viewerjs: ^1.11.7
