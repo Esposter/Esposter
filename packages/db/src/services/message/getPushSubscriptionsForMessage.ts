@@ -1,10 +1,8 @@
-import type { MessageEntity } from "@/models/message/MessageEntity";
-import type { schema } from "@/schema";
+import type { MessageEntity, schema } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
-import { pushSubscriptions } from "@/schema/pushSubscriptions";
-import { NotificationType, usersToRooms } from "@/schema/usersToRooms";
+import { NotificationType, pushSubscriptions, usersToRooms } from "@esposter/db-schema";
 import { getMentions, MENTION_ID_ATTRIBUTE } from "@esposter/shared";
 import { and, eq, inArray, ne, or } from "drizzle-orm";
 

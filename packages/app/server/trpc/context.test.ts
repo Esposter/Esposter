@@ -1,7 +1,6 @@
 import type { Session } from "#shared/models/auth/Session";
 import type { Context } from "@@/server/trpc/context";
 import type { User } from "@esposter/db-schema";
-import type * as DrizzleKit from "drizzle-kit/api";
 import type { PgliteDatabase } from "drizzle-orm/pglite";
 
 import { dayjs } from "#shared/services/dayjs";
@@ -10,15 +9,12 @@ import { useEventGridPublisherClientMock } from "@@/server/composables/azure/eve
 import { useTableClientMock } from "@@/server/composables/azure/table/useTableClient.test";
 import { PGlite } from "@electric-sql/pglite";
 import { messageSchema, schema, users } from "@esposter/db-schema";
+import { generateDrizzleJson, generateMigration } from "drizzle-kit/api";
 import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/pglite";
 import { IncomingMessage, ServerResponse } from "node:http";
-import { createRequire } from "node:module";
 import { Socket } from "node:net";
 import { describe, vi } from "vitest";
-// https://github.com/drizzle-team/drizzle-orm/issues/2853
-const require = createRequire(import.meta.url);
-const { generateDrizzleJson, generateMigration } = require("drizzle-kit/api") as typeof DrizzleKit;
 
 const mocks = vi.hoisted(() => {
   const createdAt = new Date();
@@ -109,7 +105,7 @@ export const createMockContext = async (): Promise<Context> => {
     res: new ServerResponse(req),
   };
 };
-// In-memory pglite db supports the same API as a mock for the postgresjs db
+
 const createMockDb = async () => {
   const client = new PGlite();
   const db = drizzle(client, { schema });
