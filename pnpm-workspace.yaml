@@ -41,14 +41,14 @@ catalog:
   "@nuxtjs/seo": ^3.2.2
   "@pinia/nuxt": ^0.11.3
   "@prettier/plugin-oxc": ^0.0.4
-  "@tiptap/core": ^3.10.3
-  "@tiptap/extension-file-handler": ^3.10.3
-  "@tiptap/extension-mention": ^3.10.3
-  "@tiptap/extensions": ^3.10.3
-  "@tiptap/pm": ^3.10.3
-  "@tiptap/starter-kit": ^3.10.3
-  "@tiptap/suggestion": ^3.10.3
-  "@tiptap/vue-3": ^3.10.3
+  "@tiptap/core": ^3.10.4
+  "@tiptap/extension-file-handler": ^3.10.4
+  "@tiptap/extension-mention": ^3.10.4
+  "@tiptap/extensions": ^3.10.4
+  "@tiptap/pm": ^3.10.4
+  "@tiptap/starter-kit": ^3.10.4
+  "@tiptap/suggestion": ^3.10.4
+  "@tiptap/vue-3": ^3.10.4
   "@trpc/client": ^11.7.1
   "@trpc/server": ^11.7.1
   "@types/data-urls": ^3.0.4
