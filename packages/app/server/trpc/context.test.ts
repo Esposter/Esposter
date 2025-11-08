@@ -57,7 +57,6 @@ vi.mock(import("@@/server/composables/azure/table/useTableClient"), () => ({
 }));
 
 export const mockSessionOnce = async (db: Context["db"], mockUser?: Session["user"]) => {
-  const name = "name";
   const createdAt = new Date();
   const user =
     mockUser ??
@@ -69,7 +68,8 @@ export const mockSessionOnce = async (db: Context["db"], mockUser?: Session["use
           email: crypto.randomUUID(),
           emailVerified: true,
           id: crypto.randomUUID(),
-          name,
+          image: crypto.randomUUID(),
+          name: crypto.randomUUID(),
           updatedAt: createdAt,
         })
         .returning()
