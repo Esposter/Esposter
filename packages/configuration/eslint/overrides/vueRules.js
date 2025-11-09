@@ -2,6 +2,7 @@ export default {
   "@typescript-eslint/no-unused-vars": "off",
   "@typescript-eslint/unified-signatures": "off",
   "vue/multi-word-component-names": "off",
+  "vue/no-child-content": "off",
   "vue/no-unused-vars": "off",
   "vue/no-v-html": "off",
   "vue/no-v-text-v-html-on-component": "off",
