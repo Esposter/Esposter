@@ -475,8 +475,8 @@ catalogs:
       specifier: ^1.4.4
       version: 1.4.4
     rate-limiter-flexible:
-      specifier: ^8.1.0
-      version: 8.1.0
+      specifier: ^8.2.0
+      version: 8.2.0
     rolldown:
       specifier: ^1.0.0-beta.47
       version: 1.0.0-beta.47
@@ -971,7 +971,7 @@ importers:
         version: 1.4.4
       rate-limiter-flexible:
         specifier: 'catalog:'
-        version: 8.1.0
+        version: 8.2.0
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -9725,8 +9725,8 @@ packages:
     resolution: {integrity: sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==}
     engines: {node: '>= 0.6'}
 
-  rate-limiter-flexible@8.1.0:
-    resolution: {integrity: sha512-J+4xBdVboibP1h0Imn4nFoCLT+UM9Os9vJaWaRWkLsQxS7jrhLJeLlmzP5hyCEsLwtgFIIY5KcWiJGyyVTMaKg==}
+  rate-limiter-flexible@8.2.0:
+    resolution: {integrity: sha512-lzpvMBP6GpCJftWP90RHzhCAAPFnO3BKaE6STNc6tPsu/uF6Y7kZDczV45a4Ms/H+5G2qqPFp8kg0l8gxCxcsw==}
 
   rc9@2.1.2:
     resolution: {integrity: sha512-btXCnMmRIBINM2LDZoEmOogIZU7Qe7zn4BpomSKZ/ykbLObuBdvG+mFq11DL6fjH1DRwHhrlgtYWG96bJiC7Cg==}
@@ -21692,7 +21692,7 @@ snapshots:
 
   range-parser@1.2.1: {}
 
-  rate-limiter-flexible@8.1.0: {}
+  rate-limiter-flexible@8.2.0: {}
 
   rc9@2.1.2:
     dependencies:
