@@ -95,6 +95,7 @@ describe("pushSubscription", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     await pushSubscriptionCaller.subscribe({ endpoint, keys: { auth, p256dh } });
+    await userToRoomCaller.updateUserToRoom({ notificationType: NotificationType.All, roomId: newRoom.id });
 
     const newInvite = await roomCaller.createInvite({ roomId: newRoom.id });
     const { user } = await mockSessionOnce(mockContext.db);
@@ -102,6 +103,7 @@ describe("pushSubscription", () => {
 
     await mockSessionOnce(mockContext.db, user);
     await pushSubscriptionCaller.subscribe({ endpoint, keys: { auth, p256dh } });
+    await mockSessionOnce(mockContext.db, user);
     await userToRoomCaller.updateUserToRoom({ notificationType: NotificationType.All, roomId: newRoom.id });
 
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
@@ -171,7 +173,6 @@ describe("pushSubscription", () => {
 
     await mockSessionOnce(mockContext.db, user);
     await pushSubscriptionCaller.subscribe({ endpoint, keys: { auth, p256dh } });
-    await mockSessionOnce(mockContext.db, user);
 
     await messageCaller.createMessage({ message, roomId: newRoom.id });
 
