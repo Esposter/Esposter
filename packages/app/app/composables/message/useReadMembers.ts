@@ -1,3 +1,5 @@
+import type { User } from "@esposter/db-schema";
+
 import { useRoomStore } from "@/store/message/room";
 import { useMemberStore } from "@/store/message/user/member";
 import { StandardMessageEntityPropertyNames } from "@esposter/db-schema";
@@ -11,7 +13,7 @@ export const useReadMembers = () => {
   const { readItems, readMoreItems } = memberStore;
   const { count, memberMap } = storeToRefs(memberStore);
   const readUserStatuses = useReadUserStatuses();
-  const readMetadata = (memberIds: string[]) => readUserStatuses(memberIds);
+  const readMetadata = (memberIds: User["id"][]) => readUserStatuses(memberIds);
   const readMembers = () =>
     readItems(
       async () => {

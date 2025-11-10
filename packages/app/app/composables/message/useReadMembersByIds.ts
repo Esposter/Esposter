@@ -1,3 +1,5 @@
+import type { User } from "@esposter/db-schema";
+
 import { useRoomStore } from "@/store/message/room";
 import { useMemberStore } from "@/store/message/user/member";
 
@@ -7,7 +9,7 @@ export const useReadMembersByIds = () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const memberStore = useMemberStore();
   const { memberMap } = storeToRefs(memberStore);
-  return async (memberIds: string[]) => {
+  return async (memberIds: User["id"][]) => {
     if (!currentRoomId.value) return;
 
     const ids = memberIds.filter((id) => !memberMap.value.has(id));

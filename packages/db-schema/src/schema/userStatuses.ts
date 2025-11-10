@@ -15,6 +15,8 @@ export enum UserStatus {
   Online = "Online",
 }
 
+const userStatusSchema = z.enum(UserStatus) satisfies z.ZodType<UserStatus>;
+
 export const userStatusEnum = pgEnum("user_status", UserStatus);
 
 export const userStatuses = pgTable(
@@ -40,7 +42,7 @@ export type IUserStatus = typeof userStatuses.$inferSelect;
 
 export const selectUserStatusSchema = createSelectSchema(userStatuses, {
   message: z.string().max(STATUS_MESSAGE_MAX_LENGTH),
-  status: z.enum(UserStatus).nullable(),
+  status: userStatusSchema.nullable(),
 });
 
 export const userStatusesRelations = relations(userStatuses, ({ one }) => ({

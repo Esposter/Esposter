@@ -6,6 +6,7 @@ import { rooms } from "@/schema/rooms";
 import { users } from "@/schema/users";
 import { relations } from "drizzle-orm";
 import { pgEnum, primaryKey, text, uuid } from "drizzle-orm/pg-core";
+import { z } from "zod";
 
 export enum NotificationType {
   All = "All",
@@ -13,12 +14,14 @@ export enum NotificationType {
   Never = "Never",
 }
 
+export const notificationTypeSchema = z.enum(NotificationType) satisfies z.ZodType<NotificationType>;
+
 export const notificationTypeEnum = pgEnum("notification_type", NotificationType);
 
 export const usersToRooms = messageSchema.table(
   "users_to_rooms",
   {
-    notificationType: notificationTypeEnum("notificationType").notNull().default(NotificationType.All),
+    notificationType: notificationTypeEnum("notificationType").notNull().default(NotificationType.DirectMessage),
     roomId: uuid("roomId")
       .notNull()
       .references(() => rooms.id, { onDelete: "cascade" }),

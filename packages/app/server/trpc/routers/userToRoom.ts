@@ -1,37 +1,25 @@
+import { updateUserToRoomInputSchema } from "#shared/models/db/userToRoom/UpdateUserToRoomInput";
 import { router } from "@@/server/trpc";
+import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
-import { DatabaseEntityType, NotificationType, selectRoomSchema, usersToRooms } from "@esposter/db-schema";
+import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
+import { DatabaseEntityType, selectRoomSchema, usersToRooms } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
-const readUserToRoomInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
-export type ReadUserToRoomInput = z.infer<typeof readUserToRoomInputSchema>;
-
-const updateUserToRoomInputSchema = z.object({
-  notificationType: z.enum(NotificationType),
-  roomId: selectRoomSchema.shape.id,
-});
-export type UpdateUserToRoomInput = z.infer<typeof updateUserToRoomInputSchema>;
+const readUserToRoomsInputSchema = z.object({ roomIds: selectRoomSchema.shape.id.array().min(1) });
+export type ReadUserToRoomsInput = z.infer<typeof readUserToRoomsInputSchema>;
 
 export const userToRoomRouter = router({
-  readUserToRoom: getMemberProcedure(readUserToRoomInputSchema, "roomId").query(async ({ ctx, input }) => {
-    const readUserToRoom = await ctx.db.query.usersToRooms.findFirst({
+  readUserToRooms: standardAuthedProcedure.input(readUserToRoomsInputSchema).query(async ({ ctx, input }) => {
+    await isMember(ctx.db, ctx.session, input.roomIds);
+    return ctx.db.query.usersToRooms.findMany({
       columns: { notificationType: true, roomId: true, userId: true },
-      where: (usersToRooms, { and, eq }) =>
-        and(eq(usersToRooms.roomId, input.roomId), eq(usersToRooms.userId, ctx.session.user.id)),
+      where: (usersToRooms, { and, eq, inArray }) =>
+        and(eq(usersToRooms.userId, ctx.session.user.id), inArray(usersToRooms.roomId, input.roomIds)),
     });
-    if (!readUserToRoom)
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: new InvalidOperationError(
-          Operation.Read,
-          DatabaseEntityType.UserToRoom,
-          JSON.stringify({ roomId: input.roomId, userId: ctx.session.user.id }),
-        ).message,
-      });
-    return readUserToRoom;
   }),
   updateUserToRoom: getMemberProcedure(updateUserToRoomInputSchema, "roomId").mutation(
     async ({ ctx, input: { notificationType, roomId } }) => {

@@ -32,11 +32,12 @@ describe("userToRoom", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const readUserToRoom = await userToRoomCaller.readUserToRoom({ roomId: newRoom.id });
+    const readUserToRooms = await userToRoomCaller.readUserToRooms({ roomIds: [newRoom.id] });
 
-    expect(readUserToRoom.notificationType).toBe(NotificationType.All);
-    expect(readUserToRoom.roomId).toBe(newRoom.id);
-    expect(readUserToRoom.userId).toBe(getMockSession().user.id);
+    expect(readUserToRooms).toHaveLength(1);
+    expect(readUserToRooms[0].roomId).toBe(newRoom.id);
+    expect(readUserToRooms[0].userId).toBe(getMockSession().user.id);
+    expect(readUserToRooms[0].notificationType).toBe(NotificationType.DirectMessage);
   });
 
   test("fails read for non-member", async () => {
@@ -45,9 +46,9 @@ describe("userToRoom", () => {
     const newRoom = await roomCaller.createRoom({ name });
     await mockSessionOnce(mockContext.db);
 
-    await expect(userToRoomCaller.readUserToRoom({ roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: UNAUTHORIZED]`,
-    );
+    await expect(
+      userToRoomCaller.readUserToRooms({ roomIds: [newRoom.id] }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
   test("updates notificationType", async () => {
