@@ -3,6 +3,7 @@ import type { Room } from "@esposter/db-schema";
 
 import { NotificationTypeLabelMap } from "@/services/message/NotificationTypeLabelMap";
 import { useUserToRoomStore } from "@/store/message/userToRoom";
+import { NotificationType } from "@esposter/db-schema";
 
 interface NotificationSettingsDialogButtonProps {
   roomId: Room["id"];
@@ -20,7 +21,7 @@ const { notificationType } = storeToRefs(userToRoomStore);
       <v-tooltip text="Notification Settings">
         <template #activator="{ props }">
           <v-btn :="props" icon variant="text" @click="updateIsOpen(true)">
-            <v-icon>mdi-bell-outline</v-icon>
+            <v-icon :icon="notificationType === NotificationType.All ? 'mdi-bell-outline' : 'mdi-bell-off-outline'" />
           </v-btn>
         </template>
       </v-tooltip>
