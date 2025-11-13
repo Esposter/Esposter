@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { SerializableValue } from "@esposter/db-schema";
-
 import { SearchFilterComponentMap } from "@/services/message/filter/SearchFilterComponentMap";
 import { useSearchMessageStore } from "@/store/message/searchMessage";
 
@@ -27,7 +25,7 @@ const { activeSelectedFilter, menu } = storeToRefs(searchMessageStore);
           activeSelectedFilter && !activeSelectedFilter.value && SearchFilterComponentMap[activeSelectedFilter.type]
         "
         @select="
-          (value: SerializableValue) => {
+          (value) => {
             if (!activeSelectedFilter) return;
             activeSelectedFilter.value = value;
           }

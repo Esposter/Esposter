@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { User } from "@esposter/db-schema";
+import type { VNodeChild } from "vue";
+import type { VHover } from "vuetify/lib/components/VHover/VHover.mjs";
 import type { ListItemSlot } from "vuetify/lib/components/VList/VListItem.mjs";
 
 import { authClient } from "@/services/auth/authClient";
@@ -10,8 +12,13 @@ interface MemberListItemProps {
   member: User;
 }
 
-defineSlots<{ append: (props: ListItemSlot) => VNode }>();
+type VHoverSlotProps = Extract<VHover["v-slot:default"], Function> extends (props: infer P) => VNodeChild ? P : never;
+
+const slots = defineSlots<{
+  append: ({ hoverProps, listItemProps }: { hoverProps: VHoverSlotProps; listItemProps: ListItemSlot }) => VNode;
+}>();
 const { member } = defineProps<MemberListItemProps>();
+const emit = defineEmits<{ click: [event: KeyboardEvent | MouseEvent] }>();
 const { data: session } = await authClient.useSession(useFetch);
 const roomStore = useRoomStore();
 const { currentRoom, isCreator: isRoomCreator } = storeToRefs(roomStore);
@@ -23,7 +30,7 @@ const { deleteMember } = memberStore;
 
 <template>
   <v-hover #default="{ isHovering, props: hoverProps }">
-    <v-list-item :="hoverProps" :value="member.name">
+    <v-list-item :="hoverProps" :value="member.name" @click="emit('click', $event)">
       <template #prepend>
         <MessageModelMemberStatusAvatar :id="member.id" :image="member.image" :name="member.name" />
       </template>
@@ -37,8 +44,8 @@ const { deleteMember } = memberStore;
           </v-tooltip>
         </div>
       </v-list-item-title>
-      <template #append="props">
-        <slot name="append" :="props">
+      <template #append="listItemProps">
+        <slot name="append" :="{ hoverProps: { props: hoverProps, isHovering }, listItemProps }">
           <template v-if="isKickable">
             <StyledDeleteDialog
               :card-props="{ title: 'Kick Member', text: `Are you sure you want to kick ${member.name}?` }"
@@ -59,12 +66,12 @@ const { deleteMember } = memberStore;
                   <template #activator="{ props: tooltipProps }">
                     <v-btn
                       v-show="isHovering"
+                      :="tooltipProps"
                       bg-transparent="!"
                       icon="mdi-close"
                       variant="plain"
                       size="small"
                       :ripple="false"
-                      :="tooltipProps"
                       @click.stop="updateIsOpen(true)"
                     />
                   </template>

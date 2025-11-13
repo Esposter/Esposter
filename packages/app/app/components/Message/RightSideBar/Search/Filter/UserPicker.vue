@@ -17,13 +17,11 @@ const { hasMore, members } = storeToRefs(memberStore);
       <MessageModelMemberSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
     </template>
     <template v-else>
-      <v-hover v-for="member in members" :key="member.id" #default="{ isHovering, props }">
-        <MessageModelMemberListItem :key="member.id" :="props" :member @click="emit('select', member.id)">
-          <template #append>
-            <v-icon :op="isHovering ? undefined : '0!'" icon="mdi-plus" />
-          </template>
-        </MessageModelMemberListItem>
-      </v-hover>
+      <MessageModelMemberListItem v-for="member of members" :key="member.id" :member @click="emit('select', member.id)">
+        <template #append="{ hoverProps: { isHovering } }">
+          <v-icon :op="isHovering ? undefined : '0!'" icon="mdi-plus" />
+        </template>
+      </MessageModelMemberListItem>
       <StyledWaypoint :is-active="hasMore" @change="readMoreMembers">
         <MessageModelMemberSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
       </StyledWaypoint>
