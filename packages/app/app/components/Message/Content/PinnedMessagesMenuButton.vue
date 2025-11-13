@@ -32,7 +32,7 @@ const { hasMore, messages } = storeToRefs(pinStore);
           <v-btn variant="text" density="comfortable" @click="readMorePinnedMessages">Load more</v-btn>
         </div>
         <template #no-data>
-          <div>This direct message doesn't have any pinned messages... yet.</div>
+          <v-container text-center>This direct message doesn't have any pinned messages... yet.</v-container>
         </template>
       </MessageModelMessageSearchList>
     </StyledCard>
