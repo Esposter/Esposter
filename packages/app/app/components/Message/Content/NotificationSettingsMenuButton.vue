@@ -21,9 +21,11 @@ const { notificationType } = storeToRefs(userToRoomStore);
     <template #activator="{ props: menuProps }">
       <v-tooltip text="Notification Settings">
         <template #activator="{ props: tooltipProps }">
-          <v-btn :="mergeProps(menuProps, tooltipProps)" icon variant="text">
-            <v-icon :icon="notificationType === NotificationType.All ? 'mdi-bell' : 'mdi-bell-off'" />
-          </v-btn>
+          <v-btn
+            :="mergeProps(menuProps, tooltipProps)"
+            size="small"
+            :icon="notificationType === NotificationType.All ? 'mdi-bell' : 'mdi-bell-off'"
+          />
         </template>
       </v-tooltip>
     </template>
