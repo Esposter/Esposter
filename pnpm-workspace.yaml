@@ -160,7 +160,7 @@ catalog:
   prettier: ^3.6.2
   prosemirror-state: ^1.4.4
   rate-limiter-flexible: ^8.2.1
-  rolldown: ^1.0.0-beta.47
+  rolldown: ^1.0.0-beta.50
   rolldown-plugin-dts: ^0.17.7
   rxjs: ^7.8.2
   sass-embedded: ^1.93.3
