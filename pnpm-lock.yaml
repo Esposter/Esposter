@@ -412,8 +412,8 @@ catalogs:
       specifier: ^1.15.4
       version: 1.15.4
     link-preview-js:
-      specifier: ^3.2.0
-      version: 3.2.0
+      specifier: ^4.0.0
+      version: 4.0.0
     linkifyjs:
       specifier: ^4.3.2
       version: 4.3.2
@@ -1317,7 +1317,7 @@ importers:
         version: 0.8.3(drizzle-orm@0.44.7(@electric-sql/pglite@0.3.14)(kysely@0.28.8)(postgres@3.4.7))(zod@4.1.12)
       link-preview-js:
         specifier: 'catalog:'
-        version: 3.2.0
+        version: 4.0.0
       linkifyjs:
         specifier: 'catalog:'
         version: 4.3.2
@@ -8565,8 +8565,8 @@ packages:
   linebreak@1.1.0:
     resolution: {integrity: sha512-MHp03UImeVhB7XZtjd0E4n6+3xr5Dq/9xI/5FptGk5FrbDR3zagPa2DS6U8ks/3HjbKWG9Q1M2ufOzxV2qLYSQ==}
 
-  link-preview-js@3.2.0:
-    resolution: {integrity: sha512-FvrLltjOPGbTzt+RugbzM7g8XuUNLPO2U/INSLczrYdAA32E7nZVUrVL1gr61DGOArGJA2QkPGMEvNMLLsXREA==}
+  link-preview-js@4.0.0:
+    resolution: {integrity: sha512-KYYiMVOAguIFNdoVGVjd+6cgknv5XHbr1IuRdj3T5EkN7JNaqUh4a1NSCi5FX6zyZzILI55OQA6+YxBAcPY2wA==}
     engines: {node: '>=18'}
 
   linkify-it@5.0.0:
@@ -9805,9 +9805,6 @@ packages:
     resolution: {integrity: sha512-uxFIHU0YlHYhDQtV4R9J6a52SLx28BCjT+4ieh7IGbgwVJWO+km431c4yRlREUAsAmt/uMjQUyQHNEPf0M39CA==}
     engines: {node: '>=6'}
 
-  punycode@1.3.2:
-    resolution: {integrity: sha512-RofWgt/7fL5wP1Y7fxE7/EmTLzQVnB0ycyibJ0OOHIlJqTNzglYFxVwETOcIoJqJmpDXJ9xImDv+Fq34F/d4Dw==}
-
   punycode@2.3.1:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
@@ -9821,11 +9818,6 @@ packages:
 
   quansync@0.2.11:
     resolution: {integrity: sha512-AifT7QEbW9Nri4tAwR5M/uzpBuqfZf+zwaEM/QkzEjj7NBuFD2rBuy0K3dE+8wltbezDV7JMA0WfnCPYRSYbXA==}
-
-  querystring@0.2.0:
-    resolution: {integrity: sha512-X/xY82scca2tau62i9mDyU9K+I+djTMUsvwf7xnUX5GLvVzgJybOJf4Y6o9Zx3oJK/LSXg5tTZBjwzqVPaPO2g==}
-    engines: {node: '>=0.4.x'}
-    deprecated: The querystring API is considered Legacy. new code should use the URLSearchParams API instead.
 
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
@@ -11177,9 +11169,6 @@ packages:
 
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
-
-  url@0.11.0:
-    resolution: {integrity: sha512-kbailJa29QrtXnxgq+DdCEGlbTeYM2eJUxsz6vjZavrCYPMIFHMKQmSKYAIuUK2i7hgPm28a8piX5NTUtM/LKQ==}
 
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
@@ -20124,10 +20113,9 @@ snapshots:
       base64-js: 0.0.8
       unicode-trie: 2.0.0
 
-  link-preview-js@3.2.0:
+  link-preview-js@4.0.0:
     dependencies:
       cheerio: 1.0.0-rc.11
-      url: 0.11.0
 
   linkify-it@5.0.0:
     dependencies:
@@ -21781,8 +21769,6 @@ snapshots:
 
   punycode.js@2.3.1: {}
 
-  punycode@1.3.2: {}
-
   punycode@2.3.1: {}
 
   pvtsutils@1.3.6:
@@ -21792,8 +21778,6 @@ snapshots:
   pvutils@1.1.5: {}
 
   quansync@0.2.11: {}
-
-  querystring@0.2.0: {}
 
   queue-microtask@1.2.3: {}
 
@@ -23325,11 +23309,6 @@ snapshots:
   uri-js@4.4.1:
     dependencies:
       punycode: 2.3.1
-
-  url@0.11.0:
-    dependencies:
-      punycode: 1.3.2
-      querystring: 0.2.0
 
   util-deprecate@1.0.2: {}
 
