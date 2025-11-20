@@ -114,7 +114,7 @@ catalog:
   filesize: ^11.0.13
   fs-extra: ^11.3.2
   fuse.js: ^7.1.0
-  grapesjs: ^0.22.13
+  grapesjs: ^0.22.14
   grapesjs-blocks-basic: ^1.0.2
   grapesjs-component-countdown: ^1.0.2
   grapesjs-custom-code: ^1.0.2
