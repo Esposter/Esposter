@@ -139,7 +139,7 @@ catalog:
   js-beautify: ^1.15.4
   link-preview-js: ^4.0.0
   linkifyjs: ^4.3.2
-  marked: ^17.0.0
+  marked: ^17.0.1
   mime-types: ^3.0.1
   mjml-browser: ^4.17.1
   node-emoji: ^2.2.0
