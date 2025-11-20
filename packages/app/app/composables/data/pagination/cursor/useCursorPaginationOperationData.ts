@@ -37,6 +37,7 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
     const { data, pending: isPending, status, ...rest } = await useQuery();
     const watchHandle = watchEffect(async () => {
       switch (status.value) {
+        case "idle":
         case "pending":
           return;
         case "success":
