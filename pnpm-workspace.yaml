@@ -107,7 +107,7 @@ catalog:
   eslint-plugin-depend: ^1.4.0
   eslint-plugin-oxlint: ^1.29.0
   eslint-plugin-perfectionist: ^4.15.1
-  eslint-plugin-pinia: ^0.4.1
+  eslint-plugin-pinia: ^0.4.2
   eslint-plugin-prettier: ^5.5.4
   eventemitter3: ^5.0.1
   fast-deep-equal: ^3.1.3
