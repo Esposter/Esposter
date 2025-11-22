@@ -175,6 +175,7 @@
     "@electric-sql/pglite": "catalog:",
     "@nuxt/eslint": "catalog:",
     "@nuxt/fonts": "catalog:",
+    "@nuxt/hints": "catalog:",
     "@nuxt/scripts": "catalog:",
     "@nuxt/test-utils": "catalog:",
     "@nuxtjs/seo": "catalog:",
