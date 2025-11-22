@@ -28,7 +28,7 @@ export const useFixedLayoutStyles = (bottomOffset: Ref<number | string>) => {
       "--v-layout-bottom": `${bottomOffset.value}px`,
       "--v-layout-left": `${middleLeftOffset.value}px`,
       "--v-layout-right": `${middleRightOffset.value}px`,
-      "--v-layout-top": `${APP_BAR_HEIGHT}px !important`,
+      "--v-layout-top": `${APP_BAR_HEIGHT}px`,
     })),
     right: computed<CSSProperties>(() => ({
       height: `calc(100% - ${APP_BAR_HEIGHT}px)`,
