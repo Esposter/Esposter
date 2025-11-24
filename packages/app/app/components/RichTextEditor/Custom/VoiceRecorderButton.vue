@@ -1,22 +1,27 @@
 <script setup lang="ts">
 import { dayjs } from "#shared/services/dayjs";
-import { useAlertStore } from "@/store/alert";
 import { clearInterval, setInterval } from "worker-timers";
 
 const emit = defineEmits<{ "upload-file": [files: File[]] }>();
 const timer = ref(0);
-let timerInterval: null | ReturnType<typeof setInterval> = null;
+let timerInterval: null | number = null;
+const resetTimer = () => {
+  timer.value = 0;
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = null;
+};
 const { data, start, state, stop } = useMediaRecorder({
   constraints: { audio: true },
+  onError: () => {
+    resetTimer();
+  },
   onStart: () => {
-    timer.value = 0;
     timerInterval = setInterval(() => {
       timer.value++;
     }, 1000);
   },
   onStop: () => {
-    if (timerInterval) clearInterval(timerInterval);
-    timerInterval = null;
+    resetTimer();
 
     if (data.value.length === 0) return;
 
@@ -38,7 +43,7 @@ const formattedTimer = computed(() => {
   <v-tooltip :text="isRecording ? 'Stop Recording' : 'Record Voice Message'">
     <template #activator="{ props }">
       <div flex items-center>
-        <span v-if="isRecording" mr-2 text-caption text-error font-bold>
+        <span v-if="isRecording" pr-2 font-bold>
           {{ formattedTimer }}
         </span>
         <v-btn
