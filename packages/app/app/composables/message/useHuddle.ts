@@ -96,49 +96,45 @@ export const useHuddle = () => {
     huddleParticipants.value = participants.map(({ user }) => user);
   };
 
-  watch(currentRoomId, fetchParticipants, { immediate: true });
-  watch(
-    currentRoomId,
-    (roomId) => {
-      if (!roomId) return;
+  watchImmediate(currentRoomId, fetchParticipants);
+  watchImmediate(currentRoomId, (roomId) => {
+    if (!roomId) return;
 
-      const joinSubscription = $trpc.huddle.onJoinHuddle.subscribe(
-        { roomId },
-        {
-          onData: async (input) => {
-            if (!currentRoomId.value || !isHuddleActive.value || !session.value.data?.user.id) return;
+    const joinSubscription = $trpc.huddle.onJoinHuddle.subscribe(
+      { roomId },
+      {
+        onData: async (input) => {
+          if (!currentRoomId.value || !isHuddleActive.value || !session.value.data?.user.id) return;
 
-            await fetchParticipants();
-            const [user] = await $trpc.room.readMembersByIds.query({
-              ids: [input.userId],
-              roomId: currentRoomId.value,
-            });
-            callPeer(input.userId, user);
-          },
+          await fetchParticipants();
+          const [user] = await $trpc.room.readMembersByIds.query({
+            ids: [input.userId],
+            roomId: currentRoomId.value,
+          });
+          callPeer(input.userId, user);
         },
-      );
-      const leaveSubscription = $trpc.huddle.onLeaveHuddle.subscribe(
-        { roomId },
-        {
-          onData: async (input) => {
-            await fetchParticipants();
-            const call = calls.value.get(input.userId);
-            if (call) {
-              call.close();
-              calls.value.delete(input.userId);
-            }
-            peers.value.delete(input.userId);
-          },
+      },
+    );
+    const leaveSubscription = $trpc.huddle.onLeaveHuddle.subscribe(
+      { roomId },
+      {
+        onData: async (input) => {
+          await fetchParticipants();
+          const call = calls.value.get(input.userId);
+          if (call) {
+            call.close();
+            calls.value.delete(input.userId);
+          }
+          peers.value.delete(input.userId);
         },
-      );
+      },
+    );
 
-      return () => {
-        joinSubscription.unsubscribe();
-        leaveSubscription.unsubscribe();
-      };
-    },
-    { immediate: true },
-  );
+    return () => {
+      joinSubscription.unsubscribe();
+      leaveSubscription.unsubscribe();
+    };
+  });
 
   return {
     fetchParticipants,
