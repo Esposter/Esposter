@@ -1,11 +1,8 @@
 <script setup lang="ts">
-const { huddleParticipants, isHuddleActive } = useHuddle();
-const showBanner = computed(() => huddleParticipants.value.length > 0 && !isHuddleActive.value);
+const { huddleUsers, isInHuddle } = useHuddle();
 </script>
 
 <template>
-  <div>
-    <MessageModelRoomHuddleBanner v-if="showBanner" />
-    <MessageModelRoomHuddleActive v-if="isHuddleActive" />
-  </div>
+  <MessageModelRoomHuddleActive v-if="isInHuddle" />
+  <MessageModelRoomHuddleBanner v-else-if="huddleUsers.length > 0" />
 </template>

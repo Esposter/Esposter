@@ -1,15 +1,14 @@
 <script setup lang="ts">
-const { huddleParticipants, isHuddleActive, joinHuddle, leaveHuddle } = useHuddle();
-const isInHuddle = computed(() => isHuddleActive.value || huddleParticipants.value.length > 0);
+const { huddleUsers, isInHuddle, joinHuddle, leaveHuddle } = useHuddle();
 </script>
 
 <template>
-  <v-tooltip v-if="isHuddleActive" text="Leave Huddle">
+  <v-tooltip v-if="isInHuddle" text="Leave Huddle">
     <template #activator="{ props }">
       <v-btn v-bind="props" color="error" icon="mdi-phone-hangup" size="small" variant="tonal" @click="leaveHuddle" />
     </template>
   </v-tooltip>
-  <v-tooltip v-else :text="isInHuddle ? 'Join Huddle' : 'Start Huddle'">
+  <v-tooltip v-else :text="huddleUsers.length > 0 ? 'Join Huddle' : 'Start Huddle'">
     <template #activator="{ props }">
       <v-btn
         v-bind="props"
