@@ -23,36 +23,32 @@ export const useTypingSubscribables = () => {
   useCreateTyping();
 
   onMounted(() => {
-    watchHandle = watchImmediate(
-      currentRoomId,
-      (roomId) => {
-        if (!roomId) return;
+    watchHandle = watchImmediate(currentRoomId, (roomId) => {
+      if (!roomId) return;
 
-        const createTypingUnsubscribable = $trpc.message.onCreateTyping.subscribe(
-          { roomId },
-          {
-            onData: (data) => {
+      const createTypingUnsubscribable = $trpc.message.onCreateTyping.subscribe(
+        { roomId },
+        {
+          onData: (data) => {
+            clearTypingTimeout(data.userId);
+
+            const id = window.setTimeout(() => {
+              typings.value = typings.value.filter(({ userId }) => userId !== data.userId);
               clearTypingTimeout(data.userId);
+            }, dayjs.duration(3, "seconds").asMilliseconds());
 
-              const id = window.setTimeout(() => {
-                typings.value = typings.value.filter(({ userId }) => userId !== data.userId);
-                clearTypingTimeout(data.userId);
-              }, dayjs.duration(3, "seconds").asMilliseconds());
-
-              typingTimeoutIdMap.value.set(data.userId, id);
-              if (!typings.value.some(({ userId }) => userId === data.userId)) typings.value.push(data);
-            },
+            typingTimeoutIdMap.value.set(data.userId, id);
+            if (!typings.value.some(({ userId }) => userId === data.userId)) typings.value.push(data);
           },
-        );
+        },
+      );
 
-        return () => {
-          createTypingUnsubscribable.unsubscribe();
-          for (const userId of typingTimeoutIdMap.value.keys()) clearTypingTimeout(userId);
-          typings.value = [];
-        };
-      },
-      { flush: "post" },
-    );
+      return () => {
+        createTypingUnsubscribable.unsubscribe();
+        for (const userId of typingTimeoutIdMap.value.keys()) clearTypingTimeout(userId);
+        typings.value = [];
+      };
+    });
   });
 
   onUnmounted(() => {

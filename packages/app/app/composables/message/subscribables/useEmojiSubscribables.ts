@@ -12,44 +12,40 @@ export const useEmojiSubscribables = () => {
   let watchHandle: undefined | WatchHandle;
 
   onMounted(() => {
-    watchHandle = watchImmediate(
-      currentRoomId,
-      (roomId) => {
-        if (!roomId) return;
+    watchHandle = watchImmediate(currentRoomId, (roomId) => {
+      if (!roomId) return;
 
-        const createEmojiUnsubscribable = $trpc.emoji.onCreateEmoji.subscribe(
-          { roomId },
-          {
-            onData: (data) => {
-              storeCreateEmoji(data);
-            },
+      const createEmojiUnsubscribable = $trpc.emoji.onCreateEmoji.subscribe(
+        { roomId },
+        {
+          onData: (data) => {
+            storeCreateEmoji(data);
           },
-        );
-        const updateEmojiUnsubscribable = $trpc.emoji.onUpdateEmoji.subscribe(
-          { roomId },
-          {
-            onData: (data) => {
-              storeUpdateEmoji(data);
-            },
+        },
+      );
+      const updateEmojiUnsubscribable = $trpc.emoji.onUpdateEmoji.subscribe(
+        { roomId },
+        {
+          onData: (data) => {
+            storeUpdateEmoji(data);
           },
-        );
-        const deleteEmojiUnsubscribable = $trpc.emoji.onDeleteEmoji.subscribe(
-          { roomId },
-          {
-            onData: (data) => {
-              storeDeleteEmoji(data);
-            },
+        },
+      );
+      const deleteEmojiUnsubscribable = $trpc.emoji.onDeleteEmoji.subscribe(
+        { roomId },
+        {
+          onData: (data) => {
+            storeDeleteEmoji(data);
           },
-        );
+        },
+      );
 
-        return () => {
-          createEmojiUnsubscribable.unsubscribe();
-          updateEmojiUnsubscribable.unsubscribe();
-          deleteEmojiUnsubscribable.unsubscribe();
-        };
-      },
-      { flush: "post" },
-    );
+      return () => {
+        createEmojiUnsubscribable.unsubscribe();
+        updateEmojiUnsubscribable.unsubscribe();
+        deleteEmojiUnsubscribable.unsubscribe();
+      };
+    });
   });
 
   onUnmounted(() => {

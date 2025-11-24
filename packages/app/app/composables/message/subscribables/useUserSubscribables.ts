@@ -14,26 +14,22 @@ export const useUserSubscribables = () => {
   let watchHandle: undefined | WatchHandle;
 
   onMounted(() => {
-    watchHandle = watchImmediate(
-      [members, () => session.value.data],
-      ([newMembers, newSessionData]) => {
-        if (!newSessionData) return;
+    watchHandle = watchImmediate([members, () => session.value.data], ([newMembers, newSessionData]) => {
+      if (!newSessionData) return;
 
-        const newMemberIds = newMembers.filter(({ id }) => id !== newSessionData.user.id).map(({ id }) => id);
-        if (newMemberIds.length === 0) return;
+      const newMemberIds = newMembers.filter(({ id }) => id !== newSessionData.user.id).map(({ id }) => id);
+      if (newMemberIds.length === 0) return;
 
-        const upsertStatusUnsubscribable = $trpc.user.onUpsertStatus.subscribe(newMemberIds, {
-          onData: ({ userId, ...userStatus }) => {
-            statusMap.value.set(userId, userStatus);
-          },
-        });
+      const upsertStatusUnsubscribable = $trpc.user.onUpsertStatus.subscribe(newMemberIds, {
+        onData: ({ userId, ...userStatus }) => {
+          statusMap.value.set(userId, userStatus);
+        },
+      });
 
-        return () => {
-          upsertStatusUnsubscribable.unsubscribe();
-        };
-      },
-      { flush: "post" },
-    );
+      return () => {
+        upsertStatusUnsubscribable.unsubscribe();
+      };
+    });
   });
 
   onUnmounted(() => {
