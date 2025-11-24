@@ -9,6 +9,7 @@ export enum DatabaseEntityType {
   Survey = "Survey",
   User = "User",
   UserStatus = "UserStatus",
+  UserToHuddle = "UserToHuddle",
   UserToRoom = "UserToRoom",
   VerificationToken = "VerificationToken",
   Webhook = "Webhook",

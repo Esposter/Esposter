@@ -31,7 +31,7 @@ export const usersToHuddlesRelations = relations(usersToHuddles, ({ one }) => ({
     references: [users.id],
   }),
 }));
-
+// @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
 export const UserToHuddleRelations = {
   room: true,
   user: true,
