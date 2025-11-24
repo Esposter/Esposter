@@ -1,4 +1,3 @@
-import { useReadUserToRooms } from "@/composables/message/useReadUserToRooms";
 import { useRoomStore } from "@/store/message/room";
 
 export const useReadRooms = () => {

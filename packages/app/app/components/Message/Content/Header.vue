@@ -45,6 +45,7 @@ const placeholder = useRoomPlaceholder(currentRoom);
       <span pl-2>{{ roomName }}</span>
     </StyledEditableNameDialogButton>
     <template #append>
+      <MessageContentStartHuddleButton />
       <MessageContentNotificationSettingsMenuButton :room-id="currentRoom.id" />
       <MessageContentPinnedMessagesMenuButton />
       <MessageContentAddFriendsDialogButton />

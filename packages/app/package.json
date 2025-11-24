@@ -131,6 +131,7 @@
     "parse-tmx": "workspace:*",
     "pathe": "catalog:",
     "pdfjs-dist": "catalog:",
+    "peerjs": "catalog:",
     "phaser": "catalog:",
     "phaser3-rex-plugins": "catalog:",
     "pinia": "catalog:",

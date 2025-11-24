@@ -16,6 +16,7 @@ const roomName = useRoomName(currentRoomId);
     <Head>
       <Title>{{ roomName }}</Title>
     </Head>
+    <MessageModelRoomHuddle />
     <MessageContent />
     <template #left>
       <MessageLeftSideBar />

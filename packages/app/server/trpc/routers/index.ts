@@ -5,6 +5,7 @@ import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
 import { dungeonsRouter } from "@@/server/trpc/routers/dungeons";
 import { emailEditorRouter } from "@@/server/trpc/routers/emailEditor";
 import { flowchartEditorRouter } from "@@/server/trpc/routers/flowchartEditor";
+import { huddleRouter } from "@@/server/trpc/routers/huddle";
 import { likeRouter } from "@@/server/trpc/routers/like";
 import { messageRouter } from "@@/server/trpc/routers/message";
 import { emojiRouter } from "@@/server/trpc/routers/message/emoji";
@@ -27,6 +28,7 @@ export const trpcRouter = router({
   emailEditor: emailEditorRouter,
   emoji: emojiRouter,
   flowchartEditor: flowchartEditorRouter,
+  huddle: huddleRouter,
   like: likeRouter,
   message: messageRouter,
   post: postRouter,

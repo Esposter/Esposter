@@ -11,6 +11,7 @@ import * as sessions from "@/schema/sessions";
 import * as surveys from "@/schema/surveys";
 import * as users from "@/schema/users";
 import * as userStatuses from "@/schema/userStatuses";
+import * as usersToHuddles from "@/schema/usersToHuddles";
 import * as usersToRooms from "@/schema/usersToRooms";
 import * as verifications from "@/schema/verifications";
 import * as webhooks from "@/schema/webhooks";
@@ -29,6 +30,7 @@ export const schema = {
   ...surveys,
   ...users,
   ...userStatuses,
+  ...usersToHuddles,
   ...usersToRooms,
   ...verifications,
   ...webhooks,

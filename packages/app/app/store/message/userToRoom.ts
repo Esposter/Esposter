@@ -1,6 +1,5 @@
 import type { UpdateUserToRoomInput } from "#shared/models/db/userToRoom/UpdateUserToRoomInput";
 
-import { useDataMap } from "@/composables/data/useDataMap";
 import { useRoomStore } from "@/store/message/room";
 import { NotificationType } from "@esposter/db-schema";
 
