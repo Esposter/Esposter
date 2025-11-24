@@ -52,9 +52,9 @@ const uploadFiles = useUploadFiles();
       </template>
       <template #prepend-footer>
         <RichTextEditorCustomUploadFileButton @upload-file="uploadFiles" />
-        <RichTextEditorCustomVoiceRecorderButton @upload-file="uploadFiles" />
       </template>
       <template #append-footer="editorProps">
+        <RichTextEditorCustomVoiceRecorderButton @upload-file="uploadFiles" />
         <RichTextEditorCustomSendMessageButton :="editorProps" />
       </template>
       <template #prepend-outer-footer>
