@@ -7,7 +7,7 @@ export const useHuddleSubscribables = () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
-  const { callPeer, huddleUsers, isInHuddle, removePeerConnection } = useHuddle();
+  const { addPeer, huddleUsers, isInHuddle, removePeer } = useHuddle();
   let readWatchHandle: undefined | WatchHandle;
   let eventWatchHandle: undefined | WatchHandle;
 
@@ -27,7 +27,7 @@ export const useHuddleSubscribables = () => {
         {
           onData: (user) => {
             huddleUsers.value.push(user);
-            if (isInHuddle.value) callPeer(user.id, user);
+            if (isInHuddle.value) addPeer(user);
           },
         },
       );
@@ -36,7 +36,7 @@ export const useHuddleSubscribables = () => {
         {
           onData: ({ userId }) => {
             huddleUsers.value = huddleUsers.value.filter(({ id }) => id !== userId);
-            removePeerConnection(userId);
+            removePeer(userId);
           },
         },
       );
