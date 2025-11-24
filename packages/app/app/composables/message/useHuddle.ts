@@ -15,9 +15,9 @@ export const useHuddle = () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const peer = shallowRef<Peer>();
   const stream = shallowRef<MediaStream>();
-  const calls = ref<Map<string, MediaConnection>>(new Map());
-  const peers = ref<Map<string, { stream: MediaStream; user: User }>>(new Map());
-  const peerList = computed(() => [...peers.value.values()]);
+  const callMap = ref(new Map<string, MediaConnection>());
+  const peerMap = ref(new Map<string, { stream: MediaStream; user: User }>());
+  const peers = computed(() => [...peerMap.value.values()]);
   const isInHuddle = ref(false);
   const huddleUsers = ref<User[]>([]);
 
@@ -42,17 +42,17 @@ export const useHuddle = () => {
       if (!stream.value || !currentRoomId.value) return;
 
       call.answer(stream.value);
-      calls.value.set(call.peer, call);
+      callMap.value.set(call.peer, call);
       const [user] = await $trpc.room.readMembersByIds.query({
         ids: [call.peer],
         roomId: currentRoomId.value,
       });
       call.on("stream", (stream) => {
-        peers.value.set(call.peer, { stream, user });
+        peerMap.value.set(call.peer, { stream, user });
       });
       call.on("close", () => {
-        calls.value.delete(call.peer);
-        peers.value.delete(call.peer);
+        callMap.value.delete(call.peer);
+        peerMap.value.delete(call.peer);
       });
     });
     peer.value.on("error", ({ message }) => {
@@ -66,9 +66,9 @@ export const useHuddle = () => {
     await $trpc.huddle.leaveHuddle.mutate({ roomId: currentRoomId.value });
     for (const track of stream.value?.getTracks() ?? []) track.stop();
     stream.value = undefined;
-    for (const call of calls.value.values()) call.close();
-    calls.value.clear();
-    peers.value.clear();
+    for (const call of callMap.value.values()) call.close();
+    callMap.value.clear();
+    peerMap.value.clear();
     peer.value?.destroy();
     peer.value = undefined;
     isInHuddle.value = false;
@@ -78,18 +78,18 @@ export const useHuddle = () => {
     if (!peer.value || !stream.value) return;
 
     const call = peer.value.call(user.id, stream.value);
-    calls.value.set(user.id, call);
+    callMap.value.set(user.id, call);
     call.on("stream", (stream) => {
-      peers.value.set(user.id, { stream, user });
+      peerMap.value.set(user.id, { stream, user });
     });
     call.on("close", () => {
-      calls.value.delete(user.id);
-      peers.value.delete(user.id);
+      callMap.value.delete(user.id);
+      peerMap.value.delete(user.id);
     });
   };
 
   const removePeer = (userId: string) => {
-    const call = calls.value.get(userId);
+    const call = callMap.value.get(userId);
     if (call) call.close();
   };
 
@@ -99,7 +99,7 @@ export const useHuddle = () => {
     isInHuddle,
     joinHuddle,
     leaveHuddle,
-    peerList,
+    peers,
     removePeer,
     stream,
   };

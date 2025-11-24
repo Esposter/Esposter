@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { leaveHuddle, peerList, stream } = useHuddle();
+const { leaveHuddle, peers, stream } = useHuddle();
 const isMuted = ref(false);
 </script>
 
@@ -10,7 +10,7 @@ const isMuted = ref(false);
       <v-btn icon="mdi-phone-hangup" color="error" variant="text" @click="leaveHuddle" />
     </div>
     <div flex flex-wrap gap-2>
-      <div v-for="peer in peerList" :key="peer.user.id" flex flex-col items-center mr-4>
+      <div v-for="peer in peers" :key="peer.user.id" flex flex-col items-center mr-4>
         <StyledAvatar :image="peer.user.image" :name="peer.user.name" :avatar-props="{ size: '48' }" />
         <span mt-1>{{ peer.user.name }}</span>
         <audio :srcObject="peer.stream" autoplay />
