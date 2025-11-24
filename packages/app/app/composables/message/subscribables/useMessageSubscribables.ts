@@ -1,5 +1,3 @@
-import type { Unsubscribable } from "@trpc/server/observable";
-
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
@@ -14,16 +12,10 @@ export const useMessageSubscribables = () => {
   const dataStore = useDataStore();
   const { storeCreateMessage, storeDeleteMessage, storeUpdateMessage } = dataStore;
 
-  const createMessageUnsubscribable = ref<Unsubscribable>();
-  const updateMessageUnsubscribable = ref<Unsubscribable>();
-  const deleteMessageUnsubscribable = ref<Unsubscribable>();
-  const webPubSubClient = ref<WebPubSubClient>();
+  watchImmediate(currentRoomId, async (roomId) => {
+    if (!roomId) return;
 
-  onMounted(async () => {
-    if (!currentRoomId.value) return;
-
-    const roomId = currentRoomId.value;
-    createMessageUnsubscribable.value = $trpc.message.onCreateMessage.subscribe(
+    const createMessageUnsubscribable = $trpc.message.onCreateMessage.subscribe(
       { roomId },
       {
         onData: getSynchronizedFunction(async ({ data }) => {
@@ -31,7 +23,7 @@ export const useMessageSubscribables = () => {
         }),
       },
     );
-    updateMessageUnsubscribable.value = $trpc.message.onUpdateMessage.subscribe(
+    const updateMessageUnsubscribable = $trpc.message.onUpdateMessage.subscribe(
       { roomId },
       {
         onData: (data) => {
@@ -39,7 +31,7 @@ export const useMessageSubscribables = () => {
         },
       },
     );
-    deleteMessageUnsubscribable.value = $trpc.message.onDeleteMessage.subscribe(
+    const deleteMessageUnsubscribable = $trpc.message.onDeleteMessage.subscribe(
       { roomId },
       {
         onData: getSynchronizedFunction(async (data) => {
@@ -47,27 +39,27 @@ export const useMessageSubscribables = () => {
         }),
       },
     );
-    webPubSubClient.value = new WebPubSubClient({
+    const webPubSubClient = new WebPubSubClient({
       getClientAccessUrl: (options) =>
         $trpc.message.getWebPubSubClientAccessUrl.query(
           { roomId },
           { signal: options?.abortSignal as AbortSignal | undefined },
         ),
     });
-    await webPubSubClient.value.start();
-    webPubSubClient.value.on(
+    await webPubSubClient.start();
+    webPubSubClient.on(
       "group-message",
       getSynchronizedFunction(async ({ message: { data } }) => {
         const entity = new WebhookMessageEntity(jsonDateParse(data as string));
         await storeCreateMessage(entity);
       }),
     );
-  });
 
-  onUnmounted(() => {
-    createMessageUnsubscribable.value?.unsubscribe();
-    updateMessageUnsubscribable.value?.unsubscribe();
-    deleteMessageUnsubscribable.value?.unsubscribe();
-    webPubSubClient.value?.stop();
+    return () => {
+      createMessageUnsubscribable.unsubscribe();
+      updateMessageUnsubscribable.unsubscribe();
+      deleteMessageUnsubscribable.unsubscribe();
+      webPubSubClient.stop();
+    };
   });
 };
