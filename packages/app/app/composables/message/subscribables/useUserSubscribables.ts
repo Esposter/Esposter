@@ -10,20 +10,24 @@ export const useUserSubscribables = () => {
   const statusStore = useStatusStore();
   const { statusMap } = storeToRefs(statusStore);
 
-  watchImmediate([members, () => session.value.data], ([newMembers, newSessionData]) => {
-    if (!newSessionData) return;
+  watchImmediate(
+    [members, () => session.value.data],
+    ([newMembers, newSessionData]) => {
+      if (!newSessionData) return;
 
-    const newMemberIds = newMembers.filter(({ id }) => id !== newSessionData.user.id).map(({ id }) => id);
-    if (newMemberIds.length === 0) return;
+      const newMemberIds = newMembers.filter(({ id }) => id !== newSessionData.user.id).map(({ id }) => id);
+      if (newMemberIds.length === 0) return;
 
-    const upsertStatusUnsubscribable = $trpc.user.onUpsertStatus.subscribe(newMemberIds, {
-      onData: ({ userId, ...userStatus }) => {
-        statusMap.value.set(userId, userStatus);
-      },
-    });
+      const upsertStatusUnsubscribable = $trpc.user.onUpsertStatus.subscribe(newMemberIds, {
+        onData: ({ userId, ...userStatus }) => {
+          statusMap.value.set(userId, userStatus);
+        },
+      });
 
-    return () => {
-      upsertStatusUnsubscribable.unsubscribe();
-    };
-  });
+      return () => {
+        upsertStatusUnsubscribable.unsubscribe();
+      };
+    },
+    { flush: "post" },
+  );
 };
