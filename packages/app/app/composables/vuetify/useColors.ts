@@ -6,9 +6,11 @@ type Colors = {
 
 export const useColors = () => {
   const globalTheme = useGlobalTheme();
-  const colors = Object.keys(globalTheme.current.value.colors).reduce((acc, color) => {
-    acc[color] = computed(() => globalTheme.current.value.colors[color]);
-    return acc;
-  }, {} as Colors);
+  const colors = Object.fromEntries(
+    Object.keys(globalTheme.current.value.colors).map((color) => [
+      color,
+      computed(() => globalTheme.current.value.colors[color]),
+    ]),
+  ) as Colors;
   return colors;
 };

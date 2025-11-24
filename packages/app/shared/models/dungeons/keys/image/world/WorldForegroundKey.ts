@@ -5,11 +5,9 @@ type WorldForegroundKeyMap = {
   [P in WorldForegroundKey]: P;
 };
 
-export const WorldForegroundKey = Object.values(TilemapKey).reduce(
-  (acc, curr) => {
-    const key: WorldForegroundKey = `World${curr}Foreground`;
-    acc[key] = key;
-    return acc;
-  },
-  {} as Record<WorldForegroundKey, WorldForegroundKey>,
+export const WorldForegroundKey = Object.fromEntries(
+  Object.values(TilemapKey).map((k) => {
+    const key: WorldForegroundKey = `World${k}Foreground`;
+    return [key, key];
+  }),
 ) as WorldForegroundKeyMap;

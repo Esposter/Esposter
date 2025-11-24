@@ -26,10 +26,9 @@ const profileCardRows = computed(() => {
 });
 const profileCardRowValues = computed(
   () =>
-    Object.entries(profileCardRows.value).reduce<Record<string, unknown>>((acc, [property, row]) => {
-      acc[property] = row.value;
-      return acc;
-    }, {}) as { [P in keyof typeof profileCardRows.value]: (typeof profileCardRows.value)[P]["value"] },
+    Object.fromEntries(Object.entries(profileCardRows.value).map(([property, row]) => [property, row.value])) as {
+      [P in keyof typeof profileCardRows.value]: (typeof profileCardRows.value)[P]["value"];
+    },
 );
 const editedProfileCardRows = ref(structuredClone(profileCardRowValues.value));
 const editMode = ref(false);

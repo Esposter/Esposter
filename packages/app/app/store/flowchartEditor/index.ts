@@ -16,7 +16,7 @@ export const useFlowchartEditorStore = defineStore("flowchartEditor", () => {
       localStorage.setItem(FLOWCHART_EDITOR_LOCAL_STORAGE_KEY, flowchartEditor.value.toJSON());
     }
   };
-  // @ts-expect-error Type instantiation is excessively deep and possibly infinite. ts(2589)
+  // @ts-expect-error TS2589: Type instantiation is excessively deep and possibly infinite.
   const selectedNodes = computed(() => flowchartEditor.value.nodes.filter(({ selected }) => selected));
   const isSingleNodeSelected = computed(() => selectedNodes.value.length === 1);
   return { flowchartEditor, isSingleNodeSelected, saveFlowchartEditor, selectedNodes };
