@@ -4,16 +4,10 @@ import { useAlertStore } from "@/store/alert";
 import { clearInterval, setInterval } from "worker-timers";
 
 const emit = defineEmits<{ "upload-file": [files: File[]] }>();
-const alertStore = useAlertStore();
-const { createAlert } = alertStore;
 const timer = ref(0);
 let timerInterval: null | ReturnType<typeof setInterval> = null;
 const { data, start, state, stop } = useMediaRecorder({
   constraints: { audio: true },
-  onError: (error) => {
-    createAlert("Failed to access microphone. Please check your permissions.", "error");
-    console.error(error);
-  },
   onStart: () => {
     timer.value = 0;
     timerInterval = setInterval(() => {

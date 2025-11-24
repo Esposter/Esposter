@@ -1,5 +1,6 @@
 import type { ConfigurableNavigator } from "@vueuse/core";
 
+import { useAlertStore } from "@/store/alert";
 import { defu } from "defu";
 
 interface UseMediaRecorderOptions extends ConfigurableNavigator {
@@ -44,6 +45,8 @@ const defaultOptions: UseMediaRecorderOptions = {
 };
 
 export const useMediaRecorder = (options: UseMediaRecorderOptions = {}) => {
+  const alertStore = useAlertStore();
+  const { createAlert } = alertStore;
   const data = ref<Blob[]>([]);
   const mediaRecorder = shallowRef<MediaRecorder>();
   const stream = shallowRef<MediaStream>();
@@ -62,7 +65,6 @@ export const useMediaRecorder = (options: UseMediaRecorderOptions = {}) => {
     () => mediaRecorder.value?.mimeType,
   );
   const { constraints, mediaRecorderOptions } = defu(options, defaultOptions);
-
   const setupMediaRecorder = (newMediaRecorder: MediaRecorder) => {
     newMediaRecorder.ondataavailable = (e) => {
       mimeType.trigger();
@@ -70,7 +72,6 @@ export const useMediaRecorder = (options: UseMediaRecorderOptions = {}) => {
     };
     newMediaRecorder.onstop = (...args) => {
       stream.value?.getTracks().forEach((t) => t.stop());
-      // result.value = data.value
       state.trigger();
       mimeType.trigger();
       options.onStop?.(...args);
@@ -100,7 +101,14 @@ export const useMediaRecorder = (options: UseMediaRecorderOptions = {}) => {
   const start = async (timeslice: number | undefined = undefined) => {
     if (state.value === "recording") return;
     data.value = [];
-    stream.value = await navigator.mediaDevices.getUserMedia(toValue(constraints));
+
+    try {
+      stream.value = await navigator.mediaDevices.getUserMedia(toValue(constraints));
+    } catch (error) {
+      if (error instanceof DOMException) createAlert(error.message, "error");
+      return;
+    }
+
     const newMediaRecorder = new MediaRecorder(stream.value, toValue(mediaRecorderOptions));
     setupMediaRecorder(newMediaRecorder);
     mediaRecorder.value = newMediaRecorder;
