@@ -1,5 +1,3 @@
-import type { Unsubscribable } from "@trpc/server/observable";
-
 import { dayjs } from "#shared/services/dayjs";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
@@ -19,15 +17,12 @@ export const useTypingSubscribables = () => {
     }
   };
 
-  const createTypingUnsubscribable = ref<Unsubscribable>();
-
   useCreateTyping();
 
-  onMounted(() => {
-    if (!currentRoomId.value) return;
+  watchImmediate(currentRoomId, (roomId) => {
+    if (!roomId) return;
 
-    const roomId = currentRoomId.value;
-    createTypingUnsubscribable.value = $trpc.message.onCreateTyping.subscribe(
+    const createTypingUnsubscribable = $trpc.message.onCreateTyping.subscribe(
       { roomId },
       {
         onData: (data) => {
@@ -43,11 +38,11 @@ export const useTypingSubscribables = () => {
         },
       },
     );
-  });
 
-  onUnmounted(() => {
-    createTypingUnsubscribable.value?.unsubscribe();
-    for (const userId of typingTimeoutIdMap.value.keys()) clearTypingTimeout(userId);
-    typings.value = [];
+    return () => {
+      createTypingUnsubscribable.unsubscribe();
+      for (const userId of typingTimeoutIdMap.value.keys()) clearTypingTimeout(userId);
+      typings.value = [];
+    };
   });
 };
