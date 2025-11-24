@@ -5,5 +5,5 @@ const loadMilliseconds = Date.now();
 // Get current epoch time in nanoseconds
 export const now = (): string => {
   const [seconds, nanoseconds] = hrtime(loadNanoseconds);
-  return (BigInt(loadMilliseconds) * BigInt(1e6) + (BigInt(seconds) * BigInt(1e9) + BigInt(nanoseconds))).toString();
+  return (BigInt(loadMilliseconds) * 10n ** 6n + (BigInt(seconds) * 10n ** 9n + BigInt(nanoseconds))).toString();
 };
