@@ -35,6 +35,11 @@ export const useHuddle = () => {
     });
   };
 
+  const removePeerConnection = (userId: string) => {
+    const call = calls.value.get(userId);
+    if (call) call.close();
+  };
+
   const joinHuddle = async () => {
     if (!currentRoomId.value || !session.value.data?.user.id) return;
 
@@ -88,51 +93,14 @@ export const useHuddle = () => {
     isInHuddle.value = false;
   };
 
-  watchImmediate(currentRoomId, async (roomId) => {
-    if (!roomId) return;
-
-    const readHuddleUsers = await $trpc.huddle.readHuddleUsers.query({ roomId });
-    huddleUsers.value = readHuddleUsers.map(({ user }) => user);
-  });
-  watchImmediate(currentRoomId, (roomId) => {
-    if (!roomId) return;
-
-    const joinHuddleSubscription = $trpc.huddle.onJoinHuddle.subscribe(
-      { roomId },
-      {
-        onData: (user) => {
-          huddleUsers.value.push(user);
-          callPeer(user.id, user);
-        },
-      },
-    );
-    const leaveHuddleSubscription = $trpc.huddle.onLeaveHuddle.subscribe(
-      { roomId },
-      {
-        onData: ({ userId }) => {
-          huddleUsers.value = huddleUsers.value.filter(({ id }) => id !== userId);
-          const call = calls.value.get(userId);
-          if (call) {
-            call.close();
-            calls.value.delete(userId);
-          }
-          peers.value.delete(userId);
-        },
-      },
-    );
-
-    return () => {
-      joinHuddleSubscription.unsubscribe();
-      leaveHuddleSubscription.unsubscribe();
-    };
-  });
-
   return {
+    callPeer,
     huddleUsers,
     isInHuddle,
     joinHuddle,
     leaveHuddle,
     peerList,
+    removePeerConnection,
     stream,
   };
 };
