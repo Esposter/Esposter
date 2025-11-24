@@ -16,7 +16,7 @@ const isMuted = ref(false);
         <audio :srcObject="peer.stream" autoplay />
       </div>
     </div>
-    <div flex justify-center mt-4>
+    <div mt-4 flex justify-center>
       <v-btn
         :icon="isMuted ? 'mdi-microphone-off' : 'mdi-microphone'"
         variant="tonal"
