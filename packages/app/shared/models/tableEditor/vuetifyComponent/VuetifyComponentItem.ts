@@ -16,7 +16,7 @@ import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
 export class VuetifyComponentItem extends ATableEditorItemEntity implements ItemEntityType<VuetifyComponentItemType> {
-  component: VuetifyComponentType = VuetifyComponentType["v-alert"];
+  component: VuetifyComponentType = VuetifyComponentType.VAlert;
   props: Record<string, unknown> = {};
   type = VuetifyComponentItemType.VuetifyComponent;
 }

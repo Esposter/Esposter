@@ -5,11 +5,23 @@ import { messageSchema } from "@/schema/messageSchema";
 import { rooms } from "@/schema/rooms";
 import { users } from "@/schema/users";
 import { relations } from "drizzle-orm";
-import { primaryKey, text, uuid } from "drizzle-orm/pg-core";
+import { pgEnum, primaryKey, text, uuid } from "drizzle-orm/pg-core";
+import { z } from "zod";
+
+export enum NotificationType {
+  All = "All",
+  DirectMessage = "DirectMessage",
+  Never = "Never",
+}
+
+export const notificationTypeSchema = z.enum(NotificationType) satisfies z.ZodType<NotificationType>;
+
+export const notificationTypeEnum = pgEnum("notification_type", NotificationType);
 
 export const usersToRooms = messageSchema.table(
   "users_to_rooms",
   {
+    notificationType: notificationTypeEnum("notificationType").notNull().default(NotificationType.DirectMessage),
     roomId: uuid("roomId")
       .notNull()
       .references(() => rooms.id, { onDelete: "cascade" }),
@@ -36,4 +48,5 @@ export const UserToRoomRelations = {
   room: true,
   user: true,
 } as const;
+
 export type UserToRoomWithRelations = UserToRoom & { room: Room; user: User };

@@ -1,12 +1,13 @@
 import type { InvocationContext } from "@azure/functions";
-import type { PushNotificationQueueMessage } from "@esposter/db-schema";
+import type { PushNotificationEventGridData } from "@esposter/db-schema";
 
 import { db } from "@/services/db";
 import { getCreateMessageNotificationPayload } from "@/services/getCreateMessageNotificationPayload";
 import { webpush } from "@/services/webpush";
-import { pushSubscriptions, usersToRooms } from "@esposter/db-schema";
+import { getPushSubscriptionsForMessage } from "@esposter/db";
+import { pushSubscriptions } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
-import { and, eq, ne } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { WebPushError } from "web-push";
 
 export const pushNotification = async (
@@ -14,7 +15,7 @@ export const pushNotification = async (
   {
     message: { message, partitionKey, rowKey, userId },
     notificationOptions: { icon, title },
-  }: PushNotificationQueueMessage,
+  }: PushNotificationEventGridData,
 ): Promise<void> => {
   const payload = getCreateMessageNotificationPayload(message, {
     icon,
@@ -23,26 +24,14 @@ export const pushNotification = async (
   });
   if (!payload) return;
 
-  const wheres = [eq(usersToRooms.roomId, partitionKey)];
-  if (userId) wheres.push(ne(usersToRooms.userId, userId));
-  const rows = await db
-    .select({
-      auth: pushSubscriptions.auth,
-      endpoint: pushSubscriptions.endpoint,
-      expirationTime: pushSubscriptions.expirationTime,
-      id: pushSubscriptions.id,
-      p256dh: pushSubscriptions.p256dh,
-    })
-    .from(pushSubscriptions)
-    .innerJoin(usersToRooms, eq(usersToRooms.userId, pushSubscriptions.userId))
-    .where(and(...wheres));
-  if (rows.length === 0) {
+  const readPushSubscriptions = await getPushSubscriptionsForMessage(db, { message, partitionKey, userId });
+  if (readPushSubscriptions.length === 0) {
     context.log(`No push subscriptions found for room ${partitionKey}.`);
     return;
   }
 
   await Promise.all(
-    rows.map(({ auth, endpoint, expirationTime, id, p256dh }) =>
+    readPushSubscriptions.map(({ auth, endpoint, expirationTime, id, p256dh }) =>
       (async () => {
         try {
           await webpush.sendNotification(

@@ -6,6 +6,7 @@ import { devtools } from "./configuration/devtools";
 import { experimental } from "./configuration/experimental";
 import { imports } from "./configuration/imports";
 import { modules } from "./configuration/modules";
+import { nitro } from "./configuration/nitro";
 import { pwa } from "./configuration/pwa";
 import { runtimeConfig } from "./configuration/runtimeConfig";
 import { security } from "./configuration/security";
@@ -24,6 +25,7 @@ export default defineNuxtConfig({
   experimental,
   imports,
   modules,
+  nitro,
   pwa,
   runtimeConfig,
   security,

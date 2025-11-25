@@ -1,4 +1,5 @@
 import type { Post, PostWithRelations } from "@esposter/db-schema";
+import type { SQL } from "drizzle-orm";
 
 import { createCommentInputSchema } from "#shared/models/db/post/CreateCommentInput";
 import { createPostInputSchema } from "#shared/models/db/post/CreatePostInput";
@@ -25,7 +26,7 @@ import {
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, eq, isNotNull, isNull, SQL } from "drizzle-orm";
+import { and, eq, isNotNull, isNull } from "drizzle-orm";
 import { z } from "zod";
 
 const readPostInputSchema = selectPostSchema.shape.id;

@@ -13,8 +13,8 @@ export const usePushSubscription = () => {
 
   const { trigger } = watchTriggerable(permissionGranted, async (newPermissionGranted) => {
     if (!newPermissionGranted) {
-      await unsubscribe();
       if (pushSubscription.value) await $trpc.pushSubscription.unsubscribe.mutate(pushSubscription.value.endpoint);
+      await unsubscribe();
       return;
     }
 

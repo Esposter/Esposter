@@ -46,6 +46,7 @@ export const security: NuxtConfig["security"] = {
     permissionsPolicy: {
       // @vue-pdf-viewer/viewer
       fullscreen: "self",
+      microphone: "self",
     },
   },
   rateLimiter: false,

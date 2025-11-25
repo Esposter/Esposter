@@ -12,7 +12,7 @@ export const addMessageMetadata = async (
     messageEntity.isEdited = true;
     if (messageEntity.message !== undefined)
       messageEntity.mentions = getMentions(messageEntity.message)
-        .map((mention) => mention.getAttribute(MENTION_ID_ATTRIBUTE))
+        .map((m) => m.getAttribute(MENTION_ID_ATTRIBUTE))
         .filter((id) => id !== undefined);
     return;
   }

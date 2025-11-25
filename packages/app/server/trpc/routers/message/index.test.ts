@@ -23,7 +23,7 @@ import {
   StandardMessageEntity,
 } from "@esposter/db-schema";
 import { MENTION_ID_ATTRIBUTE, MENTION_TYPE, MENTION_TYPE_ATTRIBUTE, NotFoundError } from "@esposter/shared";
-import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
+import { MockContainerDatabase, MockEventGridDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("message", () => {
@@ -50,6 +50,7 @@ describe("message", () => {
   afterEach(async () => {
     MockContainerDatabase.clear();
     MockTableDatabase.clear();
+    MockEventGridDatabase.clear();
     await mockContext.db.delete(rooms);
   });
 

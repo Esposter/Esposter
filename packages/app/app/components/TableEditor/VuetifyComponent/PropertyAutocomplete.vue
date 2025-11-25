@@ -16,8 +16,9 @@ const propertySchemaMap = computed<Record<string, Component>>(() => {
   const result: Record<string, Component> = {};
   const props = VuetifyComponentMap[component].props as Record<string, { type?: Class<unknown> | Class<unknown>[] }>;
 
-  for (const [name, prop] of Object.entries(props).filter((propEntry) => propEntry[1].type))
-    if (Array.isArray(prop.type) && prop.type.length > 0) {
+  for (const [name, prop] of Object.entries(props))
+    if (!prop.type) continue;
+    else if (Array.isArray(prop.type) && prop.type.length > 0) {
       const componentSchema = getPropertySchema(prop.type[0]);
       if (componentSchema) result[name] = markRaw(componentSchema);
     } else {

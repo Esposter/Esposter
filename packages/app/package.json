@@ -1,7 +1,7 @@
 {
   "name": "@esposter/app",
   "description": "An approachable, performant and versatile javascript application powered by Vue.",
-  "version": "2.16.0",
+  "version": "2.17.0",
   "private": true,
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter#readme",
@@ -41,9 +41,9 @@
   },
   "dependencies": {
     "@azure/data-tables": "catalog:",
+    "@azure/eventgrid": "catalog:",
     "@azure/search-documents": "catalog:",
     "@azure/storage-blob": "catalog:",
-    "@azure/storage-queue": "catalog:",
     "@azure/web-pubsub": "catalog:",
     "@azure/web-pubsub-client": "catalog:",
     "@codemirror/lang-vue": "catalog:",
@@ -175,6 +175,7 @@
     "@electric-sql/pglite": "catalog:",
     "@nuxt/eslint": "catalog:",
     "@nuxt/fonts": "catalog:",
+    "@nuxt/hints": "catalog:",
     "@nuxt/scripts": "catalog:",
     "@nuxt/test-utils": "catalog:",
     "@nuxtjs/seo": "catalog:",
@@ -205,8 +206,5 @@
     "sass-embedded": "catalog:",
     "unocss": "catalog:",
     "vuetify-nuxt-module": "catalog:"
-  },
-  "devDependenciesComments": {
-    "nuxt": "@TODO: https://github.com/nuxt/nuxt/issues/33414"
   }
 }

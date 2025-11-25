@@ -35,10 +35,9 @@ const toSixDigitHexColor = (hexColor: string) =>
     : hexColor;
 
 const getBaseColorsExtension = (colors: BaseColors) => {
-  const sanitisedColors = Object.entries(colors).reduce<Record<string, string>>((acc, [color, hex]) => {
-    acc[color] = `${hex[0]}${toSixDigitHexColor(hex.slice(1))}`;
-    return acc;
-  }, {}) as BaseColors;
+  const sanitisedColors = Object.fromEntries(
+    Object.entries(colors).map(([color, hex]) => [color, `${hex[0]}${toSixDigitHexColor(hex.slice(1))}`]),
+  );
   return {
     backgroundOpacity20: `${sanitisedColors.background}33`,
     backgroundOpacity40: `${sanitisedColors.background}66`,

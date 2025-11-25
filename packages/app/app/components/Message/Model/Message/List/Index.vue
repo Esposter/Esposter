@@ -29,7 +29,17 @@ watchOnce(messageContainerElement, (newMessageContainerElement) => {
 </script>
 
 <template>
-  <v-list ref="messageContainer" flex-1 flex pb-0 basis-full flex-col-reverse overflow-y-auto="!" lines="two">
+  <v-list
+    ref="messageContainer"
+    flex-1
+    flex
+    pb-0
+    basis-full
+    flex-col-reverse
+    overflow-x-hidden
+    overflow-y-auto
+    lines="two"
+  >
     <template v-if="isPending">
       <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
     </template>

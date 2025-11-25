@@ -190,6 +190,20 @@
       "when": 1760851057826,
       "tag": "0026_melted_jackal",
       "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1762492516183,
+      "tag": "0027_deep_mimic",
+      "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1762731107652,
+      "tag": "0028_shallow_piledriver",
+      "breakpoints": true
     }
   ]
 }

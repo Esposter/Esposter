@@ -47,7 +47,6 @@ const isDeletable = computed(() => nameTyped.value === name);
           @click="
             () => {
               emit('delete', () => {
-                dialog = false;
                 nameTyped = '';
               });
             }

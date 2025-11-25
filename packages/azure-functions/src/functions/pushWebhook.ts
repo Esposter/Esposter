@@ -1,17 +1,15 @@
-import { WEBHOOK_STORAGE_QUEUE_OUTPUT } from "@/services/constants";
+import type { WebhookEventGridData } from "@/models/WebhookEventGridData";
+
 import { db } from "@/services/db";
-import { rateLimiter } from "@/services/rateLimiter";
+import { eventGridPublisherClient } from "@/services/eventGridPublisherClient";
 import { app } from "@azure/functions";
-import { selectWebhookSchema, webhookPayloadSchema } from "@esposter/db-schema";
-import { RateLimiterRes } from "rate-limiter-flexible";
+import { AzureFunction, selectWebhookSchema, webhookPayloadSchema } from "@esposter/db-schema";
 import { z, ZodError } from "zod";
 
-const name = "queueWebhook";
-
-app.http(name, {
-  extraOutputs: [WEBHOOK_STORAGE_QUEUE_OUTPUT],
+app.http(AzureFunction.PushWebhook, {
+  authLevel: "function",
   handler: async (request, context) => {
-    context.log(`${name} processed a request for URL: ${request.url}`);
+    context.log(`${AzureFunction.PushWebhook} processed a request for URL: ${request.url}`);
 
     try {
       const { id, token } = await selectWebhookSchema.pick({ id: true, token: true }).parseAsync(request.params);
@@ -22,13 +20,15 @@ app.http(name, {
       });
       if (!webhook) return { jsonBody: { message: "Webhook not found." }, status: 404 };
 
-      await rateLimiter.consume(webhook.id);
       const body = await request.json();
       const payload = await webhookPayloadSchema.parseAsync(body);
-      context.extraOutputs.set(WEBHOOK_STORAGE_QUEUE_OUTPUT.name, { payload, webhook });
-      context.log(`Queued ${WEBHOOK_STORAGE_QUEUE_OUTPUT.queueName} for webhook id: ${webhook.id}`);
+      const data: WebhookEventGridData = { payload, webhook };
+      await eventGridPublisherClient.send([
+        { data, dataVersion: "1.0", eventType: AzureFunction.ProcessWebhook, subject: webhook.id },
+      ]);
+      context.log(`Pushed to ${AzureFunction.ProcessWebhook} for webhook id: ${webhook.id}`);
       return {
-        jsonBody: { message: "Webhook accepted and queued for processing." },
+        jsonBody: { message: "Webhook accepted." },
         status: 202,
       };
     } catch (error) {
@@ -36,17 +36,8 @@ app.http(name, {
         const errors = z.treeifyError(error);
         context.log("Validation failed: ", errors);
         return {
-          jsonBody: {
-            errors,
-            message: "Invalid request body.",
-          },
+          jsonBody: { errors, message: "Invalid request body." },
           status: 400,
-        };
-      } else if (error instanceof RateLimiterRes) {
-        context.log("Rate limit exceeded: ", error);
-        return {
-          jsonBody: { message: "Rate limit exceeded." },
-          status: 429,
         };
       } else {
         context.error("An internal error occurred: ", error);

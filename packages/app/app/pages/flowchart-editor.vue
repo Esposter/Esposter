@@ -2,7 +2,6 @@
 import type { GraphEdge } from "#shared/models/flowchartEditor/data/GraphEdge";
 import type { GraphNode } from "#shared/models/flowchartEditor/data/GraphNode";
 
-import { GeneralNodeType } from "#shared/models/flowchartEditor/node/GeneralNodeType";
 import { NodeTypeMap } from "@/services/flowchartEditor/NodeTypeMap";
 import { useFlowchartEditorStore } from "@/store/flowchartEditor";
 import { Background } from "@vue-flow/background";
@@ -26,13 +25,7 @@ onConnect(addEdges);
     <div class="bg-surface" h-full>
       <VueFlow
         :node-types="
-          Object.entries(NodeTypeMap).reduce(
-            (acc, [nodeType, { component }]) => {
-              acc[nodeType] = component;
-              return acc;
-            },
-            {} as Record<GeneralNodeType, Component>,
-          )
+          Object.fromEntries(Object.entries(NodeTypeMap).map(([nodeType, { component }]) => [nodeType, component]))
         "
         :nodes="flowchartEditor.nodes"
         :edges="flowchartEditor.edges"

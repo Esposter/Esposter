@@ -5,13 +5,10 @@ import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
 import { prettify } from "@/util/text/prettify";
 
-const VisualTypeItemCategoryDefinitionMap = Object.values(VisualType).reduce(
-  (acc, curr) => {
-    acc[curr] = {};
-    return acc;
-  },
-  {} as Record<VisualType, Except<SelectItemCategoryDefinition<VisualType>, "title" | "value">>,
-);
+const VisualTypeItemCategoryDefinitionMap = Object.fromEntries(Object.values(VisualType).map((v) => [v, {}])) as Record<
+  VisualType,
+  Except<SelectItemCategoryDefinition<VisualType>, "title" | "value">
+>;
 
 export const visualTypeItemCategoryDefinitions: SelectItemCategoryDefinition<VisualType>[] = parseDictionaryToArray(
   VisualTypeItemCategoryDefinitionMap,

@@ -9,12 +9,12 @@ const { $trpc } = useNuxtApp();
 const layoutStore = useLayoutStore();
 const { isLeftDrawerOpenAuto } = storeToRefs(layoutStore);
 const roomStore = useRoomStore();
-const { currentRoom, currentRoomId, isCreator } = storeToRefs(roomStore);
+const { currentRoom, isCreator } = storeToRefs(roomStore);
 const dataStore = useDataStore();
 const { createMessage } = dataStore;
 const dialogStore = useDialogStore();
 const { isEditRoomDialogOpen } = storeToRefs(dialogStore);
-const roomName = useRoomName(currentRoomId);
+const roomName = useRoomName(() => currentRoom.value?.id);
 const placeholder = useRoomPlaceholder(currentRoom);
 </script>
 
@@ -35,9 +35,9 @@ const placeholder = useRoomPlaceholder(currentRoom);
       :tooltip-props="{ location: 'bottom', text: 'Edit Room' }"
       @submit="
         async (name) => {
-          if (!currentRoomId) return;
-          await $trpc.room.updateRoom.mutate({ id: currentRoomId, name });
-          await createMessage({ roomId: currentRoomId, type: MessageType.EditRoom, message: name });
+          if (!currentRoom) return;
+          await $trpc.room.updateRoom.mutate({ id: currentRoom.id, name });
+          await createMessage({ roomId: currentRoom.id, type: MessageType.EditRoom, message: name });
         }
       "
     >
@@ -45,6 +45,7 @@ const placeholder = useRoomPlaceholder(currentRoom);
       <span pl-2>{{ roomName }}</span>
     </StyledEditableNameDialogButton>
     <template #append>
+      <MessageContentNotificationSettingsMenuButton :room-id="currentRoom.id" />
       <MessageContentPinnedMessagesMenuButton />
       <MessageContentAddFriendsDialogButton />
       <MessageContentShowMemberListButton />

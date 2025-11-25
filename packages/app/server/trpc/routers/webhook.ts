@@ -100,12 +100,12 @@ export const webhookRouter = router({
   ),
   readAppUsersByIds: getMemberProcedure(readAppUsersByIdsInputSchema, "roomId").query(
     async ({ ctx, input: { ids, roomId } }) => {
-      const rows = await ctx.db
+      const readAppUsers = await ctx.db
         .select({ appUser: appUsers })
         .from(appUsers)
         .innerJoin(webhooks, eq(webhooks.userId, appUsers.id))
         .where(and(eq(webhooks.roomId, roomId), inArray(appUsers.id, ids)));
-      return rows.map(({ appUser }) => appUser);
+      return readAppUsers.map(({ appUser }) => appUser);
     },
   ),
   readWebhooks: getCreatorProcedure(readWebhooksInputSchema, "roomId").query(({ ctx, input: { roomId } }) =>

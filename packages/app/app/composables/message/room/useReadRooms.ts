@@ -5,8 +5,17 @@ export const useReadRooms = () => {
   const roomStore = useRoomStore();
   const { readItems, readMoreItems } = roomStore;
   const { currentRoomId } = storeToRefs(roomStore);
-  const readRooms = () => readItems(() => $trpc.room.readRooms.useQuery({ roomId: currentRoomId.value }));
+  const readUserToRoomsMetadata = useReadUserToRooms();
+  const readRooms = () =>
+    readItems(
+      () => $trpc.room.readRooms.useQuery({ roomId: currentRoomId.value }),
+      ({ items }) => readUserToRoomsMetadata(items.map(({ id }) => id)),
+    );
   const readMoreRooms = (onComplete: () => void) =>
-    readMoreItems((cursor) => $trpc.room.readRooms.query({ cursor }), onComplete);
+    readMoreItems(async (cursor) => {
+      const response = await $trpc.room.readRooms.query({ cursor });
+      await readUserToRoomsMetadata(response.items.map(({ id }) => id));
+      return response;
+    }, onComplete);
   return { readMoreRooms, readRooms };
 };

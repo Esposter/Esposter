@@ -1,4 +1,4 @@
-import type { Unsubscribable } from "@trpc/server/observable";
+import type { WatchHandle } from "vue";
 
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { useDataStore } from "@/store/message/data";
@@ -13,61 +13,62 @@ export const useMessageSubscribables = () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const dataStore = useDataStore();
   const { storeCreateMessage, storeDeleteMessage, storeUpdateMessage } = dataStore;
+  let watchHandle: undefined | WatchHandle;
 
-  const createMessageUnsubscribable = ref<Unsubscribable>();
-  const updateMessageUnsubscribable = ref<Unsubscribable>();
-  const deleteMessageUnsubscribable = ref<Unsubscribable>();
-  const webPubSubClient = ref<WebPubSubClient>();
+  onMounted(() => {
+    watchHandle = watchImmediate(currentRoomId, async (roomId) => {
+      if (!roomId) return;
 
-  onMounted(async () => {
-    if (!currentRoomId.value) return;
-
-    const roomId = currentRoomId.value;
-    createMessageUnsubscribable.value = $trpc.message.onCreateMessage.subscribe(
-      { roomId },
-      {
-        onData: getSynchronizedFunction(async ({ data }) => {
-          for (const newMessage of data) await storeCreateMessage(newMessage);
-        }),
-      },
-    );
-    updateMessageUnsubscribable.value = $trpc.message.onUpdateMessage.subscribe(
-      { roomId },
-      {
-        onData: (data) => {
-          storeUpdateMessage(data);
+      const createMessageUnsubscribable = $trpc.message.onCreateMessage.subscribe(
+        { roomId },
+        {
+          onData: getSynchronizedFunction(async ({ data }) => {
+            for (const newMessage of data) await storeCreateMessage(newMessage);
+          }),
         },
-      },
-    );
-    deleteMessageUnsubscribable.value = $trpc.message.onDeleteMessage.subscribe(
-      { roomId },
-      {
-        onData: getSynchronizedFunction(async (data) => {
-          await storeDeleteMessage(data);
+      );
+      const updateMessageUnsubscribable = $trpc.message.onUpdateMessage.subscribe(
+        { roomId },
+        {
+          onData: (data) => {
+            storeUpdateMessage(data);
+          },
+        },
+      );
+      const deleteMessageUnsubscribable = $trpc.message.onDeleteMessage.subscribe(
+        { roomId },
+        {
+          onData: getSynchronizedFunction(async (data) => {
+            await storeDeleteMessage(data);
+          }),
+        },
+      );
+      const webPubSubClient = new WebPubSubClient({
+        getClientAccessUrl: (options) =>
+          $trpc.message.getWebPubSubClientAccessUrl.query(
+            { roomId },
+            { signal: options?.abortSignal as AbortSignal | undefined },
+          ),
+      });
+      await webPubSubClient.start();
+      webPubSubClient.on(
+        "group-message",
+        getSynchronizedFunction(async ({ message: { data } }) => {
+          const entity = new WebhookMessageEntity(jsonDateParse(data as string));
+          await storeCreateMessage(entity);
         }),
-      },
-    );
-    webPubSubClient.value = new WebPubSubClient({
-      getClientAccessUrl: (options) =>
-        $trpc.message.getWebPubSubClientAccessUrl.query(
-          { roomId },
-          { signal: options?.abortSignal as AbortSignal | undefined },
-        ),
+      );
+
+      return () => {
+        createMessageUnsubscribable.unsubscribe();
+        updateMessageUnsubscribable.unsubscribe();
+        deleteMessageUnsubscribable.unsubscribe();
+        webPubSubClient.stop();
+      };
     });
-    await webPubSubClient.value.start();
-    webPubSubClient.value.on(
-      "group-message",
-      getSynchronizedFunction(async ({ message: { data } }) => {
-        const entity = new WebhookMessageEntity(jsonDateParse(data as string));
-        await storeCreateMessage(entity);
-      }),
-    );
   });
 
   onUnmounted(() => {
-    createMessageUnsubscribable.value?.unsubscribe();
-    updateMessageUnsubscribable.value?.unsubscribe();
-    deleteMessageUnsubscribable.value?.unsubscribe();
-    webPubSubClient.value?.stop();
+    watchHandle?.();
   });
 };

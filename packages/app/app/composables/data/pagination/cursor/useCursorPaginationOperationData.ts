@@ -36,9 +36,16 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
   ) => {
     const { data, pending: isPending, status, ...rest } = await useQuery();
     const watchHandle = watchEffect(async () => {
-      if (!(status.value === "success" && data.value)) return;
-      initializeCursorPaginationData(data.value);
-      await onComplete?.(data.value);
+      switch (status.value) {
+        case "idle":
+        case "pending":
+          return;
+        case "success":
+          if (data.value) {
+            initializeCursorPaginationData(data.value);
+            await onComplete?.(data.value);
+          }
+      }
       watchHandle();
     });
     return { data, isPending, status, ...rest };

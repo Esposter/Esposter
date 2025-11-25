@@ -3,7 +3,7 @@ import type {
   Clause,
   FileSasEntity,
   MessageEntity,
-  PushNotificationQueueMessage,
+  PushNotificationEventGridData,
 } from "@esposter/db-schema";
 
 import { createTypingInputSchema } from "#shared/models/db/message/CreateTypingInput";
@@ -15,7 +15,7 @@ import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MAX_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
-import { useQueueClient } from "@@/server/composables/azure/queue/useQueueClient";
+import { useEventGridPublisherClient } from "@@/server/composables/azure/eventGrid/useEventGridPublisherClient";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { useWebPubSubServiceClient } from "@@/server/composables/azure/webPubSub/useWebPubSubServiceClient";
 import { getDeviceId } from "@@/server/services/auth/getDeviceId";
@@ -39,6 +39,7 @@ import {
   generateUploadFileSasEntities,
   getBlobName,
   getEntity,
+  getPushSubscriptionsForMessage,
   getTableNullClause,
   getTopNEntitiesByType,
   serializeClauses,
@@ -47,6 +48,7 @@ import {
 import {
   AzureContainer,
   AzureEntityType,
+  AzureFunction,
   AzureTable,
   AzureWebPubSubHub,
   BinaryOperator,
@@ -56,7 +58,6 @@ import {
   getReverseTickedTimestamp,
   MessageEntityMap,
   MessageType,
-  QueueName,
   rooms,
   selectRoomSchema,
   standardCreateMessageInputSchema,
@@ -159,17 +160,27 @@ export const messageRouter = router({
       });
       messageEventEmitter.emit("createMessage", [[newMessageEntity], { sessionId: ctx.session.session.id }]);
 
-      const queueClient = await useQueueClient(QueueName.PushNotifications);
-      const pushNotificationQueueMessage: PushNotificationQueueMessage = {
-        message: {
-          message: newMessageEntity.message,
-          partitionKey: newMessageEntity.partitionKey,
-          rowKey: newMessageEntity.rowKey,
-          userId: newMessageEntity.userId,
-        },
-        notificationOptions: { icon: ctx.session.user.image, title: ctx.session.user.name },
-      };
-      await queueClient.sendMessage(JSON.stringify(pushNotificationQueueMessage));
+      const readPushSubscriptions = await getPushSubscriptionsForMessage(ctx.db, newMessageEntity);
+      if (readPushSubscriptions.length > 0) {
+        const eventGridPublisherClient = useEventGridPublisherClient();
+        const data: PushNotificationEventGridData = {
+          message: {
+            message: newMessageEntity.message,
+            partitionKey: newMessageEntity.partitionKey,
+            rowKey: newMessageEntity.rowKey,
+            userId: newMessageEntity.userId,
+          },
+          notificationOptions: { icon: ctx.session.user.image, title: ctx.session.user.name },
+        };
+        await eventGridPublisherClient.send([
+          {
+            data,
+            dataVersion: "1.0",
+            eventType: AzureFunction.ProcessPushNotification,
+            subject: `${newMessageEntity.partitionKey}/${newMessageEntity.rowKey}`,
+          },
+        ]);
+      }
 
       const updatedRoom = (
         await ctx.db.update(rooms).set({ updatedAt: new Date() }).where(eq(rooms.id, input.roomId)).returning()
@@ -184,7 +195,6 @@ export const messageRouter = router({
       return newMessageEntity;
     },
   ),
-
   createTyping: getMemberProcedure(createTypingInputSchema, "roomId")
     // Query instead of mutation as there are no concurrency issues with ordering for simply emitting
     .query(({ ctx, input }) => {

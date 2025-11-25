@@ -1,23 +1,20 @@
 import type { Session } from "#shared/models/auth/Session";
 import type { Context } from "@@/server/trpc/context";
 import type { User } from "@esposter/db-schema";
-import type * as DrizzleKit from "drizzle-kit/api";
+import type { PgliteDatabase } from "drizzle-orm/pglite";
 
 import { dayjs } from "#shared/services/dayjs";
 import { useContainerClientMock } from "@@/server/composables/azure/container/useContainerClient.test";
-import { useQueueClientMock } from "@@/server/composables/azure/queue/useQueueClient.test";
+import { useEventGridPublisherClientMock } from "@@/server/composables/azure/eventGrid/useEventGridPublisherClient.test";
 import { useTableClientMock } from "@@/server/composables/azure/table/useTableClient.test";
 import { PGlite } from "@electric-sql/pglite";
 import { messageSchema, schema, users } from "@esposter/db-schema";
+import { generateDrizzleJson, generateMigration } from "drizzle-kit/api";
 import { sql } from "drizzle-orm";
-import { drizzle, PgliteDatabase } from "drizzle-orm/pglite";
+import { drizzle } from "drizzle-orm/pglite";
 import { IncomingMessage, ServerResponse } from "node:http";
-import { createRequire } from "node:module";
 import { Socket } from "node:net";
 import { describe, vi } from "vitest";
-// https://github.com/drizzle-team/drizzle-orm/issues/2853
-const require = createRequire(import.meta.url);
-const { generateDrizzleJson, generateMigration } = require("drizzle-kit/api") as typeof DrizzleKit;
 
 const mocks = vi.hoisted(() => {
   const createdAt = new Date();
@@ -51,16 +48,15 @@ vi.mock(import("@@/server/composables/azure/container/useContainerClient"), () =
   useContainerClient: useContainerClientMock,
 }));
 
+vi.mock(import("@@/server/composables/azure/eventGrid/useEventGridPublisherClient"), () => ({
+  useEventGridPublisherClient: useEventGridPublisherClientMock,
+}));
+
 vi.mock(import("@@/server/composables/azure/table/useTableClient"), () => ({
   useTableClient: useTableClientMock,
 }));
 
-vi.mock(import("@@/server/composables/azure/queue/useQueueClient"), () => ({
-  useQueueClient: useQueueClientMock,
-}));
-
 export const mockSessionOnce = async (db: Context["db"], mockUser?: Session["user"]) => {
-  const name = "name";
   const createdAt = new Date();
   const user =
     mockUser ??
@@ -72,7 +68,8 @@ export const mockSessionOnce = async (db: Context["db"], mockUser?: Session["use
           email: crypto.randomUUID(),
           emailVerified: true,
           id: crypto.randomUUID(),
-          name,
+          image: crypto.randomUUID(),
+          name: crypto.randomUUID(),
           updatedAt: createdAt,
         })
         .returning()
@@ -108,7 +105,7 @@ export const createMockContext = async (): Promise<Context> => {
     res: new ServerResponse(req),
   };
 };
-// In-memory pglite db supports the same API as a mock for the postgresjs db
+
 const createMockDb = async () => {
   const client = new PGlite();
   const db = drizzle(client, { schema });
