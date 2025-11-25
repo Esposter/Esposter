@@ -1,4 +1,5 @@
 import { router } from "@@/server/trpc";
+import { achievementRouter } from "@@/server/trpc/routers/achievement";
 import { appRouter } from "@@/server/trpc/routers/app";
 import { clickerRouter } from "@@/server/trpc/routers/clicker";
 import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
@@ -20,6 +21,7 @@ import { webhookRouter } from "@@/server/trpc/routers/webhook";
 import { webpageEditorRouter } from "@@/server/trpc/routers/webpageEditor";
 
 export const trpcRouter = router({
+  achievement: achievementRouter,
   app: appRouter,
   clicker: clickerRouter,
   dashboard: dashboardRouter,

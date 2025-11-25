@@ -3,6 +3,7 @@ import { likes } from "@/schema/likes";
 import { posts } from "@/schema/posts";
 import { sessions } from "@/schema/sessions";
 import { surveys } from "@/schema/surveys";
+import { userAchievements } from "@/schema/userAchievements";
 import { userStatuses } from "@/schema/userStatuses";
 import { usersToRooms } from "@/schema/usersToRooms";
 import { relations, sql } from "drizzle-orm";
@@ -42,6 +43,7 @@ export const usersRelations = relations(users, ({ many, one }) => ({
   posts: many(posts),
   sessions: many(sessions),
   surveys: many(surveys),
+  userAchievements: many(userAchievements),
   userStatuses: one(userStatuses, {
     fields: [users.id],
     references: [userStatuses.userId],
