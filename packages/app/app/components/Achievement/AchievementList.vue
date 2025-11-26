@@ -1,7 +1,15 @@
 <script setup lang="ts">
+import { useAchievementStore } from "@/store/achievement";
+import { AchievementStatus } from "@@/shared/models/achievement/AchievementStatus";
+
 const achievementStore = useAchievementStore();
 const { lockedAchievements, stats, unlockedAchievements, userAchievements } = storeToRefs(achievementStore);
-const tab = ref("all");
+const tab = ref(AchievementStatus.All);
+const achievementListMap = computed(() => ({
+  [AchievementStatus.All]: userAchievements.value,
+  [AchievementStatus.Locked]: lockedAchievements.value,
+  [AchievementStatus.Unlocked]: unlockedAchievements.value,
+}));
 </script>
 
 <template>
@@ -22,19 +30,11 @@ const tab = ref("all");
         rounded
       />
       <v-tabs v-model="tab" mb-4>
-        <v-tab value="all">All</v-tab>
-        <v-tab value="unlocked">Unlocked</v-tab>
-        <v-tab value="locked">Locked</v-tab>
+        <v-tab v-for="key in Object.values(AchievementStatus)" :key :value="key">{{ key }}</v-tab>
       </v-tabs>
       <v-window v-model="tab">
-        <v-window-item value="all">
-          <AchievementGrid :achievements="userAchievements" />
-        </v-window-item>
-        <v-window-item value="unlocked">
-          <AchievementGrid :achievements="unlockedAchievements" />
-        </v-window-item>
-        <v-window-item value="locked">
-          <AchievementGrid :achievements="lockedAchievements" />
+        <v-window-item v-for="key in Object.values(AchievementStatus)" :key :value="key">
+          <AchievementGrid :achievements="achievementListMap[key]" />
         </v-window-item>
       </v-window>
     </v-card-text>
