@@ -5,7 +5,7 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
 import { achievements, selectUserSchema, userAchievements } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
-import { and, eq, isNotNull } from "drizzle-orm";
+import { and, count, eq, isNotNull } from "drizzle-orm";
 import { z } from "zod";
 
 const readUserAchievementsInputSchema = selectUserSchema.shape.id.optional();
@@ -32,6 +32,7 @@ export const achievementRouter = router({
   readUserAchievements: standardRateLimitedProcedure.input(readUserAchievementsInputSchema).query(({ ctx, input }) => {
     const userId = input ?? ctx.session?.user.id;
     if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
+
     return ctx.db.query.userAchievements.findMany({
       where: (userAchievements, { eq }) => eq(userAchievements.userId, userId),
       with: { achievement: true },
@@ -41,17 +42,17 @@ export const achievementRouter = router({
     const userId = input ?? ctx.session?.user.id;
     if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
 
-    const allAchievements = await ctx.db.select().from(achievements);
-    const userAchievementsList = await ctx.db
-      .select()
-      .from(userAchievements)
-      .leftJoin(achievements, eq(userAchievements.achievementId, achievements.id))
-      .where(and(eq(userAchievements.userId, userId), isNotNull(userAchievements.unlockedAt)));
-    const unlockedIds = new Set(userAchievementsList.map(({ user_achievements }) => user_achievements.achievementId));
-    const unlocked = allAchievements.filter(({ id }) => unlockedIds.has(id));
+    const totalAchievements = (await ctx.db.select({ count: count() }).from(achievements))[0].count;
+    const unlockedAchievements = (
+      await ctx.db
+        .select({ count: count() })
+        .from(userAchievements)
+        .innerJoin(achievements, eq(achievements.id, userAchievements.achievementId))
+        .where(and(eq(userAchievements.userId, userId), isNotNull(userAchievements.unlockedAt)))
+    )[0].count;
     return {
-      totalAchievements: allAchievements.length,
-      unlockedAchievements: unlocked.length,
+      totalAchievements,
+      unlockedAchievements,
     };
   }),
 });
