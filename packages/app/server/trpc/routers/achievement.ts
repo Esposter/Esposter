@@ -7,6 +7,7 @@ import { achievements, selectUserSchema, userAchievements } from "@esposter/db-s
 import { TRPCError } from "@trpc/server";
 import { and, count, eq, isNotNull } from "drizzle-orm";
 import { z } from "zod";
+import { AchievementDefinitionMap } from "~~/server/services/achievement/AchievementDefinitionMap";
 
 const readUserAchievementsInputSchema = selectUserSchema.shape.id.optional();
 export type ReadUserAchievementsInput = z.infer<typeof readUserAchievementsInputSchema>;
@@ -23,26 +24,34 @@ export const achievementRouter = router({
           userAchievement: data,
         };
   }),
-  readAchievements: standardRateLimitedProcedure.query(({ ctx }) =>
-    ctx.db.query.achievements.findMany({
-      where: (achievements, { eq }) => eq(achievements.isHidden, false),
-    }),
-  ),
-  readAllAchievements: standardAuthedProcedure.query(({ ctx }) => ctx.db.query.achievements.findMany()),
-  readUserAchievements: standardRateLimitedProcedure.input(readUserAchievementsInputSchema).query(({ ctx, input }) => {
-    const userId = input ?? ctx.session?.user.id;
-    if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
-
-    return ctx.db.query.userAchievements.findMany({
-      where: (userAchievements, { eq }) => eq(userAchievements.userId, userId),
-      with: { achievement: true },
-    });
+  readAchievements: standardRateLimitedProcedure.query(({ ctx }) => {
+    const achievements = ctx.db.query.achievements.findMany();
+    return achievements.map((a) => ({ ...a, ...AchievementDefinitionMap[a.name] })).filter((a) => !a.isHidden);
   }),
+  readAllAchievements: standardAuthedProcedure.query(({ ctx }) => {
+    const achievements = ctx.db.query.achievements.findMany();
+    return achievements.map((a) => ({ ...a, ...AchievementDefinitionMap[a.name] }));
+  }),
+  readUserAchievements: standardRateLimitedProcedure
+    .input(readUserAchievementsInputSchema)
+    .query(async ({ ctx, input }) => {
+      const userId = input ?? ctx.session?.user.id;
+      if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+      const userAchievements = await ctx.db.query.userAchievements.findMany({
+        where: (userAchievements, { eq }) => eq(userAchievements.userId, userId),
+        with: { achievement: true },
+      });
+      return userAchievements.map((ua) => ({
+        ...ua,
+        achievement: { ...ua.achievement, ...AchievementDefinitionMap[ua.achievement.name] },
+      }));
+    }),
   readUserStats: standardRateLimitedProcedure.input(readUserStatsInputSchema).query(async ({ ctx, input }) => {
     const userId = input ?? ctx.session?.user.id;
     if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
 
-    const totalAchievements = (await ctx.db.select({ count: count() }).from(achievements))[0].count;
+    const totalAchievements = Object.keys(AchievementDefinitionMap).length;
     const unlockedAchievements = (
       await ctx.db
         .select({ count: count() })
