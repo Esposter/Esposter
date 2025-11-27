@@ -102,9 +102,11 @@ export const AchievementDefinitionMap = {
   [AchievementName.NightOwl]: {
     category: AchievementCategory.Milestone,
     conditions: {
-      endHour: 5,
-      startHour: 0,
+      max: 5,
+      min: 0,
+      referenceUnit: "day",
       type: "time",
+      unit: "hour",
     },
     description: "Send a message between midnight and 5 AM",
     icon: "mdi-weather-night",

@@ -1,5 +1,6 @@
 import type { AchievementCondition } from "@@/server/models/achievement/AchievementCondition";
 
+import { dayjs } from "#shared/services/dayjs";
 import { achievementDefinitions } from "@@/server/services/achievement/achievementDefinitions";
 import { achievementEventEmitter } from "@@/server/services/achievement/events/achievementEventEmitter";
 import { middleware } from "@@/server/trpc";
@@ -30,9 +31,10 @@ const checkCondition = (condition: AchievementCondition, eventData: unknown): bo
       }
     }
     case "time": {
-      const { endHour, startHour } = condition;
-      const currentHour = dayjs();
-      return currentHour >= startHour || currentHour < endHour;
+      const { max, min, referenceUnit, unit } = condition;
+      const now = dayjs();
+      const value = now.diff(now.startOf(referenceUnit), unit);
+      return value >= min && value < max;
     }
     case UnaryOperator.and:
       return condition.conditions.every((c) => checkCondition(c, eventData));

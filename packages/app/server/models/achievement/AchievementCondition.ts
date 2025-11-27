@@ -1,3 +1,5 @@
+import type { OpUnitType } from "dayjs";
+
 import { BinaryOperator, UnaryOperator } from "@esposter/db-schema";
 
 export type AchievementCondition =
@@ -10,9 +12,11 @@ export type AchievementCondition =
       type: UnaryOperator.or;
     }
   | {
-      endHour: number;
-      startHour: number;
+      max: number;
+      min: number;
+      referenceUnit: OpUnitType;
       type: "time";
+      unit: OpUnitType;
     }
   | {
       operator: "contains" | BinaryOperator;
