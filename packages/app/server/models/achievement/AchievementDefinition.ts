@@ -1,17 +1,17 @@
 import type { AchievementCategory } from "@@/server/models/achievement/AchievementCategory";
 import type { AchievementCondition } from "@@/server/models/achievement/AchievementCondition";
-import type { TRPCPath } from "@@/server/models/trpc/TRPCPath";
+import type { TRPCPaths } from "@@/server/models/trpc/TRPCPaths";
 import type { AchievementName } from "@esposter/db-schema";
 
-export interface AchievementDefinition {
+export interface AchievementDefinition<TPath extends TRPCPaths> {
   amount?: number;
   category: AchievementCategory;
-  conditions?: AchievementCondition;
+  condition?: AchievementCondition<TPath>;
   description: string;
   icon: string;
   incrementAmount?: number;
   isHidden?: true;
   name: AchievementName;
   points: number;
-  triggerPath: TRPCPath;
+  triggerPath: TPath;
 }

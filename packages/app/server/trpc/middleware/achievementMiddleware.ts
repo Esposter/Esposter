@@ -1,49 +1,11 @@
-import type { AchievementCondition } from "@@/server/models/achievement/AchievementCondition";
-
-import { dayjs } from "#shared/services/dayjs";
 import { achievementDefinitions } from "@@/server/services/achievement/achievementDefinitions";
+import { checkAchievementCondition } from "@@/server/services/achievement/checkAchievementCondition";
 import { achievementEventEmitter } from "@@/server/services/achievement/events/achievementEventEmitter";
 import { middleware } from "@@/server/trpc";
-import { BinaryOperator, DatabaseEntityType, UnaryOperator, userAchievements } from "@esposter/db-schema";
+import { DatabaseEntityType, userAchievements } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
-
-const checkCondition = (condition: AchievementCondition, eventData: unknown): boolean => {
-  switch (condition.type) {
-    case "property": {
-      const value = condition.path.split(".").reduce((o, i) => o?.[i], eventData);
-      switch (condition.operator) {
-        case BinaryOperator.eq:
-          return value === condition.value;
-        case BinaryOperator.ge:
-          return value >= condition.value;
-        case BinaryOperator.gt:
-          return value > condition.value;
-        case BinaryOperator.le:
-          return value <= condition.value;
-        case BinaryOperator.lt:
-          return value < condition.value;
-        case "contains":
-          return typeof value === "string" && value.toLowerCase().includes(condition.value.toLowerCase());
-        default:
-          return false;
-      }
-    }
-    case "time": {
-      const { max, min, referenceUnit, unit } = condition;
-      const now = dayjs();
-      const value = now.diff(now.startOf(referenceUnit), unit);
-      return value >= min && value < max;
-    }
-    case UnaryOperator.and:
-      return condition.conditions.every((c) => checkCondition(c, eventData));
-    case UnaryOperator.or:
-      return condition.conditions.some((c) => checkCondition(c, eventData));
-    default:
-      return false;
-  }
-};
 
 export const achievementMiddleware = middleware(async ({ ctx, next, path, type }) => {
   const result = await next();
@@ -54,7 +16,7 @@ export const achievementMiddleware = middleware(async ({ ctx, next, path, type }
     for (const { amount = 1, conditions, incrementAmount = 1, name } of achievementDefinitions.filter(
       ({ triggerPath }) => triggerPath === path,
     )) {
-      if (conditions && !checkCondition(conditions, eventData)) continue;
+      if (conditions && !checkAchievementCondition(conditions, eventData)) continue;
 
       const achievement = await ctx.db.query.achievements.findFirst({
         where: (achievements, { eq }) => eq(achievements.name, name),

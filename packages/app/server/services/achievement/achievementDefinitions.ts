@@ -17,7 +17,7 @@ export const AchievementDefinitionMap = {
   [AchievementName.ConversationKeeper]: {
     amount: 50,
     category: AchievementCategory.Social,
-    conditions: {
+    condition: {
       operator: BinaryOperator.gt,
       path: "replyRowKey",
       type: "property",
@@ -30,7 +30,7 @@ export const AchievementDefinitionMap = {
   },
   [AchievementName.EssayWriter]: {
     category: AchievementCategory.Milestone,
-    conditions: {
+    condition: {
       operator: BinaryOperator.ge,
       path: "message.length",
       type: "property",
@@ -44,7 +44,7 @@ export const AchievementDefinitionMap = {
   [AchievementName.FileSharer]: {
     amount: 1,
     category: AchievementCategory.Messaging,
-    conditions: {
+    condition: {
       operator: BinaryOperator.gt,
       path: "files.length",
       type: "property",
@@ -66,7 +66,7 @@ export const AchievementDefinitionMap = {
   [AchievementName.MessageForwarder]: {
     amount: 1,
     category: AchievementCategory.Social,
-    conditions: {
+    condition: {
       operator: BinaryOperator.eq,
       path: "isForward",
       type: "property",
@@ -87,7 +87,7 @@ export const AchievementDefinitionMap = {
   },
   [AchievementName.Meta]: {
     category: AchievementCategory.Special,
-    conditions: {
+    condition: {
       operator: "contains",
       path: "message",
       type: "property",
@@ -101,7 +101,7 @@ export const AchievementDefinitionMap = {
   },
   [AchievementName.NightOwl]: {
     category: AchievementCategory.Milestone,
-    conditions: {
+    condition: {
       max: 5,
       min: 0,
       referenceUnit: "day",
@@ -116,7 +116,7 @@ export const AchievementDefinitionMap = {
   [AchievementName.PinCollector]: {
     amount: 10,
     category: AchievementCategory.Messaging,
-    conditions: {
+    condition: {
       operator: BinaryOperator.eq,
       path: "isPinned",
       type: "property",
@@ -159,6 +159,9 @@ export const AchievementDefinitionMap = {
     points: 50,
     triggerPath: "room.joinRoom",
   },
-} as const satisfies Record<AchievementName, Except<AchievementDefinition, "name">>;
+} as const satisfies Record<AchievementName, Except<AchievementDefinition<string>, "name">>;
 
-export const achievementDefinitions: AchievementDefinition[] = parseDictionaryToArray(AchievementDefinitionMap, "name");
+export const achievementDefinitions: AchievementDefinition<string>[] = parseDictionaryToArray(
+  AchievementDefinitionMap,
+  "name",
+);

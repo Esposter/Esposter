@@ -1,14 +1,17 @@
+import type { TRPCPaths } from "@@/server/models/trpc/TRPCPaths";
+import type { TRPCRouterInputs } from "@@/server/models/trpc/TRPCRouterInputs";
 import type { OpUnitType } from "dayjs";
+import type { Paths } from "type-fest";
 
 import { BinaryOperator, UnaryOperator } from "@esposter/db-schema";
 
-export type AchievementCondition =
+export type AchievementCondition<TPath extends TRPCPaths> =
   | {
-      conditions: AchievementCondition[];
+      conditions: AchievementCondition<TPath>[];
       type: UnaryOperator.and;
     }
   | {
-      conditions: AchievementCondition[];
+      conditions: AchievementCondition<TPath>[];
       type: UnaryOperator.or;
     }
   | {
@@ -20,7 +23,7 @@ export type AchievementCondition =
     }
   | {
       operator: "contains" | BinaryOperator;
-      path: string;
+      path: TPath;
       type: "property";
-      value: unknown;
+      value: Paths<TRPCRouterInputs[TPath]> extends infer Path ? TRPCRouterInputs[TPath][Path] : never;
     };
