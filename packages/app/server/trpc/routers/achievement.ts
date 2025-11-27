@@ -38,7 +38,9 @@ export const achievementRouter = router({
         where: (userAchievements, { eq }) => eq(userAchievements.userId, userId),
         with: UserAchievementRelations,
       });
-      const resultUserAchievements: (UserAchievement & { achievement: Achievement & AchievementDefinition })[] = [];
+      const resultUserAchievements: (UserAchievement & {
+        achievement: Achievement & AchievementDefinition;
+      })[] = [];
       for (const userAchievement of userAchievements) {
         const achievementDefinition = AchievementDefinitionMap[userAchievement.achievement.name];
         if (!achievementDefinition) continue;

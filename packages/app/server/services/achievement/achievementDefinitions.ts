@@ -3,18 +3,19 @@ import type { Except } from "type-fest";
 
 import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
 import { AchievementCategory } from "@@/server/models/achievement/AchievementCategory";
+import { defineAchievementDefinition } from "@@/server/services/achievement/defineAchievementDefinition";
 import { AchievementName, BinaryOperator } from "@esposter/db-schema";
 
 export const AchievementDefinitionMap = {
-  [AchievementName.CenturyClub]: {
+  [AchievementName.CenturyClub]: defineAchievementDefinition({
     amount: 100,
     category: AchievementCategory.Messaging,
     description: "Send 100 messages",
     icon: "mdi-message-multiple",
     points: 100,
-    triggerPath: "message.createMessage",
-  },
-  [AchievementName.ConversationKeeper]: {
+    triggerPath: "message.createMessage" as const,
+  }),
+  [AchievementName.ConversationKeeper]: defineAchievementDefinition({
     amount: 50,
     category: AchievementCategory.Social,
     condition: {
@@ -26,9 +27,9 @@ export const AchievementDefinitionMap = {
     description: "Reply to 50 messages",
     icon: "mdi-reply",
     points: 75,
-    triggerPath: "message.createMessage",
-  },
-  [AchievementName.EssayWriter]: {
+    triggerPath: "message.createMessage" as const,
+  }),
+  [AchievementName.EssayWriter]: defineAchievementDefinition({
     category: AchievementCategory.Milestone,
     condition: {
       operator: BinaryOperator.ge,
@@ -39,9 +40,9 @@ export const AchievementDefinitionMap = {
     description: "Send a message with over 1,000 characters",
     icon: "mdi-text-long",
     points: 40,
-    triggerPath: "message.createMessage",
-  },
-  [AchievementName.FileSharer]: {
+    triggerPath: "message.createMessage" as const,
+  }),
+  [AchievementName.FileSharer]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Messaging,
     condition: {
@@ -53,17 +54,17 @@ export const AchievementDefinitionMap = {
     description: "Share your first file",
     icon: "mdi-file-upload",
     points: 20,
-    triggerPath: "message.createMessage",
-  },
-  [AchievementName.FirstMessage]: {
+    triggerPath: "message.createMessage" as const,
+  }),
+  [AchievementName.FirstMessage]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Messaging,
     description: "Send your first message",
     icon: "mdi-message-text",
     points: 10,
-    triggerPath: "message.createMessage",
-  },
-  [AchievementName.MessageForwarder]: {
+    triggerPath: "message.createMessage" as const,
+  }),
+  [AchievementName.MessageForwarder]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Social,
     condition: {
@@ -75,17 +76,17 @@ export const AchievementDefinitionMap = {
     description: "Forward a message to another room",
     icon: "mdi-share",
     points: 15,
-    triggerPath: "message.createMessage",
-  },
-  [AchievementName.MessageMaster]: {
+    triggerPath: "message.createMessage" as const,
+  }),
+  [AchievementName.MessageMaster]: defineAchievementDefinition({
     amount: 1000,
     category: AchievementCategory.Messaging,
     description: "Send 1,000 messages",
     icon: "mdi-message-star",
     points: 500,
-    triggerPath: "message.createMessage",
-  },
-  [AchievementName.Meta]: {
+    triggerPath: "message.createMessage" as const,
+  }),
+  [AchievementName.Meta]: defineAchievementDefinition({
     category: AchievementCategory.Special,
     condition: {
       operator: "contains",
@@ -97,23 +98,21 @@ export const AchievementDefinitionMap = {
     icon: "mdi-trophy",
     isHidden: true,
     points: 100,
-    triggerPath: "message.createMessage",
-  },
-  [AchievementName.NightOwl]: {
+    triggerPath: "message.createMessage" as const,
+  }),
+  [AchievementName.NightOwl]: defineAchievementDefinition({
     category: AchievementCategory.Milestone,
     condition: {
-      max: 5,
-      min: 0,
-      referenceUnit: "day",
+      endHour: 5,
+      startHour: 0,
       type: "time",
-      unit: "hour",
     },
     description: "Send a message between midnight and 5 AM",
     icon: "mdi-weather-night",
     points: 30,
-    triggerPath: "message.createMessage",
-  },
-  [AchievementName.PinCollector]: {
+    triggerPath: "message.createMessage" as const,
+  }),
+  [AchievementName.PinCollector]: defineAchievementDefinition({
     amount: 10,
     category: AchievementCategory.Messaging,
     condition: {
@@ -125,43 +124,40 @@ export const AchievementDefinitionMap = {
     description: "Pin 10 important messages",
     icon: "mdi-pin",
     points: 50,
-    triggerPath: "message.updateMessage",
-  },
-  [AchievementName.ProlificPoster]: {
+    triggerPath: "message.updateMessage" as const,
+  }),
+  [AchievementName.ProlificPoster]: defineAchievementDefinition({
     amount: 25,
     category: AchievementCategory.Milestone,
     description: "Create 25 posts",
     icon: "mdi-magnify",
     points: 35,
-    triggerPath: "post.createPost",
-  },
-  [AchievementName.RoomCreator]: {
+    triggerPath: "post.createPost" as const,
+  }),
+  [AchievementName.RoomCreator]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Social,
     description: "Create your first chat room",
     icon: "mdi-forum",
     points: 25,
-    triggerPath: "room.createRoom",
-  },
-  [AchievementName.SecondThoughts]: {
+    triggerPath: "room.createRoom" as const,
+  }),
+  [AchievementName.SecondThoughts]: defineAchievementDefinition({
     amount: 10,
     category: AchievementCategory.Special,
     description: "Delete 10 of your own messages",
     icon: "mdi-delete",
     points: 20,
-    triggerPath: "message.deleteMessage",
-  },
-  [AchievementName.Socialite]: {
+    triggerPath: "message.deleteMessage" as const,
+  }),
+  [AchievementName.Socialite]: defineAchievementDefinition({
     amount: 5,
     category: AchievementCategory.Social,
     description: "Join 5 different chat rooms",
     icon: "mdi-account-group",
     points: 50,
-    triggerPath: "room.joinRoom",
-  },
-} as const satisfies Record<AchievementName, Except<AchievementDefinition<string>, "name">>;
+    triggerPath: "room.joinRoom" as const,
+  }),
+} as const satisfies Record<AchievementName, Except<AchievementDefinition, "name">>;
 
-export const achievementDefinitions: AchievementDefinition<string>[] = parseDictionaryToArray(
-  AchievementDefinitionMap,
-  "name",
-);
+export const achievementDefinitions = parseDictionaryToArray(AchievementDefinitionMap, "name");
