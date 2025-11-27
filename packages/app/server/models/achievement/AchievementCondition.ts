@@ -10,8 +10,8 @@ export type AchievementCondition =
       type: UnaryOperator.or;
     }
   | {
-      endTime: string;
-      startTime: string;
+      endHour: number;
+      startHour: number;
       type: "time";
     }
   | {

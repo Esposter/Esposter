@@ -1,5 +1,6 @@
 import type { AchievementCategory } from "@@/server/models/achievement/AchievementCategory";
 import type { AchievementCondition } from "@@/server/models/achievement/AchievementCondition";
+import type { TRPCPath } from "@@/server/models/trpc/TRPCPath";
 import type { AchievementName } from "@esposter/db-schema";
 
 export interface AchievementDefinition {
@@ -12,5 +13,5 @@ export interface AchievementDefinition {
   isHidden?: true;
   name: AchievementName;
   points: number;
-  triggerPath: string;
+  triggerPath: TRPCPath;
 }

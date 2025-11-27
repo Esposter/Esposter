@@ -1,7 +1,10 @@
 import type { AchievementDefinition } from "@@/server/models/achievement/AchievementDefinition";
 import type { Achievement, UserAchievement } from "@esposter/db-schema";
 
-import { achievementDefinitions } from "@@/server/services/achievement/achievementDefinitions";
+import {
+  AchievementDefinitionMap,
+  achievementDefinitions,
+} from "@@/server/services/achievement/achievementDefinitions";
 import { achievementEventEmitter } from "@@/server/services/achievement/events/achievementEventEmitter";
 import { on } from "@@/server/services/events/on";
 import { router } from "@@/server/trpc";
@@ -37,13 +40,15 @@ export const achievementRouter = router({
       });
       const resultUserAchievements: (UserAchievement & { achievement: Achievement & AchievementDefinition })[] = [];
       for (const userAchievement of userAchievements) {
-        const achievementDefinition = achievementDefinitions.find(
-          ({ name }) => name === userAchievement.achievement.name,
-        );
+        const achievementDefinition = AchievementDefinitionMap[userAchievement.achievement.name];
         if (!achievementDefinition) continue;
         resultUserAchievements.push({
           ...userAchievement,
-          achievement: { ...userAchievement.achievement, ...achievementDefinition },
+          achievement: {
+            ...userAchievement.achievement,
+            ...achievementDefinition,
+            name: userAchievement.achievement.name,
+          },
         });
       }
       return resultUserAchievements;

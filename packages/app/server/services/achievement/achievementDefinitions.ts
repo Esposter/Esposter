@@ -5,7 +5,7 @@ import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
 import { AchievementCategory } from "@@/server/models/achievement/AchievementCategory";
 import { AchievementName, BinaryOperator } from "@esposter/db-schema";
 
-const AchievementDefinitionMap = {
+export const AchievementDefinitionMap = {
   [AchievementName.CenturyClub]: {
     amount: 100,
     category: AchievementCategory.Messaging,
@@ -102,8 +102,8 @@ const AchievementDefinitionMap = {
   [AchievementName.NightOwl]: {
     category: AchievementCategory.Milestone,
     conditions: {
-      endTime: "",
-      startTime: "",
+      endHour: 5,
+      startHour: 0,
       type: "time",
     },
     description: "Send a message between midnight and 5 AM",
@@ -155,7 +155,7 @@ const AchievementDefinitionMap = {
     description: "Join 5 different chat rooms",
     icon: "mdi-account-group",
     points: 50,
-    triggerPath: "userToRoom.createUserToRoom",
+    triggerPath: "room.joinRoom",
   },
 } as const satisfies Record<AchievementName, Except<AchievementDefinition, "name">>;
 

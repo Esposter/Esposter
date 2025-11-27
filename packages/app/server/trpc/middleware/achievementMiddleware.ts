@@ -29,9 +29,10 @@ const checkCondition = (condition: AchievementCondition, eventData: unknown): bo
           return false;
       }
     }
-    case "date": {
-      const now = new Date();
-      return now >= condition.startDate && now <= condition.endDate;
+    case "time": {
+      const { endHour, startHour } = condition;
+      const currentHour = dayjs();
+      return currentHour >= startHour || currentHour < endHour;
     }
     case UnaryOperator.and:
       return condition.conditions.every((c) => checkCondition(c, eventData));
@@ -44,60 +45,57 @@ const checkCondition = (condition: AchievementCondition, eventData: unknown): bo
 
 export const achievementMiddleware = middleware(async ({ ctx, next, path, type }) => {
   const result = await next();
-  if (type === "mutation" && ctx.session?.user?.id)
-    try {
-      const userId = ctx.session.user.id;
-      const eventData = result.data;
+  if (type === "mutation" && ctx.session?.user?.id) {
+    const userId = ctx.session.user.id;
+    const eventData = result.data;
 
-      for (const { amount = 1, conditions, incrementAmount = 1, name } of achievementDefinitions.filter(
-        ({ triggerPath }) => triggerPath === path,
-      )) {
-        if (conditions && !checkCondition(conditions, eventData)) continue;
+    for (const { amount = 1, conditions, incrementAmount = 1, name } of achievementDefinitions.filter(
+      ({ triggerPath }) => triggerPath === path,
+    )) {
+      if (conditions && !checkCondition(conditions, eventData)) continue;
 
-        const achievement = await ctx.db.query.achievements.findFirst({
-          where: (achievements, { eq }) => eq(achievements.name, name),
-        });
-        if (!achievement) continue;
+      const achievement = await ctx.db.query.achievements.findFirst({
+        where: (achievements, { eq }) => eq(achievements.name, name),
+      });
+      if (!achievement) continue;
 
-        const userAchievement =
-          (await ctx.db.query.userAchievements.findFirst({
-            where: (userAchievements, { and, eq }) =>
-              and(eq(userAchievements.userId, userId), eq(userAchievements.achievementId, achievement.id)),
-          })) ??
-          (
-            await ctx.db
-              .insert(userAchievements)
-              .values({ achievementId: achievement.id, amount: incrementAmount, userId })
-              .returning()
-          ).find(Boolean);
-        if (!userAchievement)
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Achievement, name).message,
-          });
-        else if (userAchievement.unlockedAt) continue;
-
-        const newAmount = userAchievement.amount + incrementAmount;
-        const updatedAchievement = (
+      const userAchievement =
+        (await ctx.db.query.userAchievements.findFirst({
+          where: (userAchievements, { and, eq }) =>
+            and(eq(userAchievements.userId, userId), eq(userAchievements.achievementId, achievement.id)),
+        })) ??
+        (
           await ctx.db
-            .update(userAchievements)
-            .set({
-              amount: newAmount,
-              unlockedAt: newAmount >= amount ? new Date() : undefined,
-            })
-            .where(eq(userAchievements.id, userAchievement.id))
+            .insert(userAchievements)
+            .values({ achievementId: achievement.id, amount: incrementAmount, userId })
             .returning()
         ).find(Boolean);
-        if (!updatedAchievement)
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Achievement, name).message,
-          });
+      if (!userAchievement)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Achievement, name).message,
+        });
+      else if (userAchievement.unlockedAt) continue;
 
-        achievementEventEmitter.emit("unlockAchievement", updatedAchievement);
-      }
-    } catch (error) {
-      console.error("Achievement error:", error);
+      const newAmount = userAchievement.amount + incrementAmount;
+      const updatedAchievement = (
+        await ctx.db
+          .update(userAchievements)
+          .set({
+            amount: newAmount,
+            unlockedAt: newAmount >= amount ? new Date() : undefined,
+          })
+          .where(eq(userAchievements.id, userAchievement.id))
+          .returning()
+      ).find(Boolean);
+      if (!updatedAchievement)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Achievement, name).message,
+        });
+
+      achievementEventEmitter.emit("unlockAchievement", updatedAchievement);
     }
+  }
   return result;
 });
