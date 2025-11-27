@@ -502,8 +502,8 @@ catalogs:
       specifier: ^6.1.0
       version: 6.1.0
     superjson:
-      specifier: ^2.2.5
-      version: 2.2.5
+      specifier: ^2.2.6
+      version: 2.2.6
     survey-core:
       specifier: ^2.4.0
       version: 2.4.0
@@ -987,7 +987,7 @@ importers:
         version: 6.1.0
       superjson:
         specifier: 'catalog:'
-        version: 2.2.5
+        version: 2.2.6
       survey-core:
         specifier: 'catalog:'
         version: 2.4.0
@@ -10616,8 +10616,8 @@ packages:
     peerDependencies:
       postcss: ^8.4.32
 
-  superjson@2.2.5:
-    resolution: {integrity: sha512-zWPTX96LVsA/eVYnqOM2+ofcdPqdS1dAF1LN4TS2/MWuUpfitd9ctTa87wt4xrYnZnkLtS69xpBdSxVBP5Rm6w==}
+  superjson@2.2.6:
+    resolution: {integrity: sha512-H+ue8Zo4vJmV2nRjpx86P35lzwDT3nItnIsocgumgr0hHMQ+ZGq5vrERg9kJBo5AWGmxZDhzDo+WVIJqkB0cGA==}
     engines: {node: '>=16'}
 
   supports-color@10.2.2:
@@ -16912,7 +16912,7 @@ snapshots:
       mitt: 3.0.1
       perfect-debounce: 1.0.0
       speakingurl: 14.0.1
-      superjson: 2.2.5
+      superjson: 2.2.6
 
   '@vue/devtools-kit@8.0.5':
     dependencies:
@@ -16922,7 +16922,7 @@ snapshots:
       mitt: 3.0.1
       perfect-debounce: 2.0.0
       speakingurl: 14.0.1
-      superjson: 2.2.5
+      superjson: 2.2.6
 
   '@vue/devtools-shared@7.7.9':
     dependencies:
@@ -22752,7 +22752,7 @@ snapshots:
       postcss: 8.5.6
       postcss-selector-parser: 7.1.0
 
-  superjson@2.2.5:
+  superjson@2.2.6:
     dependencies:
       copy-anything: 4.0.5
 
