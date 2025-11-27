@@ -12,17 +12,17 @@ export const userAchievements = pgTable(
     achievementId: uuid("achievement_id")
       .notNull()
       .references(() => achievements.id, { onDelete: "cascade" }),
+    amount: integer("amount").notNull(),
     id: uuid("id").primaryKey().defaultRandom(),
-    points: integer("points").default(1),
     unlockedAt: timestamp("unlocked_at"),
     userId: text("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ achievementId, points, userId }) => [
+    extraConfig: ({ achievementId, amount, userId }) => [
       uniqueIndex().on(userId, achievementId),
-      check("points", sql`${points} >= 1`),
+      check("amount", sql`${amount} >= 1`),
     ],
   },
 );
@@ -31,7 +31,7 @@ export type NewUserAchievement = typeof userAchievements.$inferInsert;
 export type UserAchievement = typeof userAchievements.$inferSelect;
 
 export const selectUserAchievementSchema = createSelectSchema(userAchievements, {
-  points: z.int().min(1),
+  amount: z.int().min(1),
 });
 
 export const userAchievementsRelations = relations(userAchievements, ({ one }) => ({

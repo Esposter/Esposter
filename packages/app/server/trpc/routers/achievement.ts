@@ -1,4 +1,3 @@
-import { AchievementDefinitionMap } from "@@/server/services/achievement/AchievementDefinitionMap";
 import { achievementEventEmitter } from "@@/server/services/achievement/events/achievementEventEmitter";
 import { on } from "@@/server/services/events/on";
 import { router } from "@@/server/trpc";
@@ -8,6 +7,7 @@ import { achievements, selectUserSchema, userAchievements } from "@esposter/db-s
 import { TRPCError } from "@trpc/server";
 import { and, count, eq, isNotNull } from "drizzle-orm";
 import { z } from "zod";
+import { AchievementDefinitionMap } from "~~/server/services/achievement/achievementDefinitions";
 
 const readUserAchievementsInputSchema = selectUserSchema.shape.id.optional();
 export type ReadUserAchievementsInput = z.infer<typeof readUserAchievementsInputSchema>;

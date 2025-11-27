@@ -1,10 +1,11 @@
 import type { AchievementDefinition } from "@@/server/models/achievement/AchievementDefinition";
 import type { Except } from "type-fest";
 
+import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
 import { AchievementCategory } from "@@/server/models/achievement/AchievementCategory";
 import { AchievementName, BinaryOperator } from "@esposter/db-schema";
 
-export const AchievementDefinitionMap = {
+const AchievementDefinitionMap = {
   [AchievementName.CenturyClub]: {
     amount: 100,
     category: AchievementCategory.Messaging,
@@ -157,3 +158,5 @@ export const AchievementDefinitionMap = {
     triggerPath: "userToRoom.createUserToRoom",
   },
 } as const satisfies Record<AchievementName, Except<AchievementDefinition, "name">>;
+
+export const achievementDefinitions: AchievementDefinition[] = parseDictionaryToArray(AchievementDefinitionMap, "name");

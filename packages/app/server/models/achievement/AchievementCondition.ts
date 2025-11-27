@@ -1,18 +1,18 @@
-import { BinaryOperator } from "@esposter/db-schema";
+import { BinaryOperator, UnaryOperator } from "@esposter/db-schema";
 
 export type AchievementCondition =
   | {
       conditions: AchievementCondition[];
-      type: "and";
+      type: UnaryOperator.and;
     }
   | {
       conditions: AchievementCondition[];
-      type: "or";
+      type: UnaryOperator.or;
     }
   | {
-      endHour: number;
-      startHour: number;
-      type: "time";
+      endDate: Date;
+      startDate: Date;
+      type: "date";
     }
   | {
       operator: "contains" | BinaryOperator;

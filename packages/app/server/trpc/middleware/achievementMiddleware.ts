@@ -1,15 +1,15 @@
 import type { AchievementCondition } from "@@/server/models/achievement/AchievementCondition";
 
+import { achievementDefinitions } from "@@/server/services/achievement/achievementDefinitions";
 import { achievementEventEmitter } from "@@/server/services/achievement/events/achievementEventEmitter";
-import { getAchievementDefinitionsByTriggerPath } from "@@/server/services/achievement/getAchievementDefinitionsByTriggerPath";
 import { middleware } from "@@/server/trpc";
-import { BinaryOperator, userAchievements } from "@esposter/db-schema";
+import { BinaryOperator, DatabaseEntityType, UnaryOperator, userAchievements } from "@esposter/db-schema";
+import { InvalidOperationError, Operation } from "@esposter/shared";
+import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 
-const checkCondition = (condition: AchievementCondition, eventData: any): boolean => {
+const checkCondition = (condition: AchievementCondition, eventData: unknown): boolean => {
   switch (condition.type) {
-    case "or":
-      return condition.conditions.some((c) => checkCondition(c, eventData));
     case "property": {
       const value = condition.path.split(".").reduce((o, i) => o?.[i], eventData);
       switch (condition.operator) {
@@ -29,12 +29,14 @@ const checkCondition = (condition: AchievementCondition, eventData: any): boolea
           return false;
       }
     }
-    case "and":
-      return condition.conditions.every((c) => checkCondition(c, eventData));
-    case "time": {
-      const hour = new Date().getHours();
-      return hour >= condition.startHour && hour < condition.endHour;
+    case "date": {
+      const now = new Date();
+      return now >= condition.startDate && now <= condition.endDate;
     }
+    case UnaryOperator.and:
+      return condition.conditions.every((c) => checkCondition(c, eventData));
+    case UnaryOperator.or:
+      return condition.conditions.some((c) => checkCondition(c, eventData));
     default:
       return false;
   }
@@ -45,55 +47,54 @@ export const achievementMiddleware = middleware(async ({ ctx, next, path, type }
   if (type === "mutation" && ctx.session?.user?.id)
     try {
       const userId = ctx.session.user.id;
-      const eventData = {
-        input: ctx.rawInput,
-        result: result.data,
-      };
+      const eventData = result.data;
 
-      const definitions = getAchievementDefinitionsByTriggerPath(path);
-
-      for (const definition of definitions) {
-        if (definition.conditions && !checkCondition(definition.conditions, eventData)) continue;
-
-        const increment = definition.incrementAmount ?? 1;
+      for (const { amount = 1, conditions, incrementAmount = 1, name } of achievementDefinitions.filter(
+        ({ triggerPath }) => triggerPath === path,
+      )) {
+        if (conditions && !checkCondition(conditions, eventData)) continue;
 
         const achievement = await ctx.db.query.achievements.findFirst({
-          where: (achievements, { eq }) => eq(achievements.name, definition.name),
+          where: (achievements, { eq }) => eq(achievements.name, name),
         });
-
         if (!achievement) continue;
 
-        let userAchievement = await ctx.db.query.userAchievements.findFirst({
-          where: (userAchievements, { and, eq }) =>
-            and(eq(userAchievements.userId, userId), eq(userAchievements.achievementId, achievement.id)),
-        });
-
+        const userAchievement =
+          (await ctx.db.query.userAchievements.findFirst({
+            where: (userAchievements, { and, eq }) =>
+              and(eq(userAchievements.userId, userId), eq(userAchievements.achievementId, achievement.id)),
+          })) ??
+          (
+            await ctx.db
+              .insert(userAchievements)
+              .values({ achievementId: achievement.id, amount: incrementAmount, userId })
+              .returning()
+          ).find(Boolean);
         if (!userAchievement)
-          [userAchievement] = await ctx.db
-            .insert(userAchievements)
-            .values({ achievementId: achievement.id, userId })
-            .returning();
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Achievement, name).message,
+          });
+        else if (userAchievement.unlockedAt) continue;
 
-        if (userAchievement && !userAchievement.unlockedAt) {
-          const newProgress = (userAchievement.points ?? 0) + increment;
-          const targetProgress = definition.amount ?? 1;
-          const isUnlocked = newProgress >= targetProgress;
-          const [updated] = await ctx.db
+        const newAmount = userAchievement.amount + incrementAmount;
+        const updatedAchievement = (
+          await ctx.db
             .update(userAchievements)
             .set({
-              points: newProgress,
-              unlockedAt: isUnlocked ? new Date() : undefined,
+              amount: newAmount,
+              unlockedAt: newAmount >= amount ? new Date() : undefined,
             })
             .where(eq(userAchievements.id, userAchievement.id))
-            .returning();
+            .returning()
+        ).find(Boolean);
+        if (!updatedAchievement)
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Achievement, name).message,
+          });
 
-          if (updated?.unlockedAt)
-            achievementEventEmitter.emit("unlockAchievement", {
-              ...updated,
-              achievement: { ...achievement, ...definition },
-              userId: ctx.session.user.id,
-            });
-        }
+        achievementEventEmitter.emit("unlockAchievement", updatedAchievement);
       }
     } catch (error) {
       console.error("Achievement error:", error);
