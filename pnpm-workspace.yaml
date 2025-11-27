@@ -169,10 +169,10 @@ catalog:
   show-open-file-picker: ^0.4.0
   sql-highlight: ^6.1.0
   superjson: ^2.2.5
-  survey-core: ^2.3.16
-  survey-creator-core: ^2.3.16
-  survey-creator-vue: ^2.3.16
-  survey-vue3-ui: ^2.3.16
+  survey-core: ^2.4.0
+  survey-creator-core: ^2.4.0
+  survey-creator-vue: ^2.4.0
+  survey-vue3-ui: ^2.4.0
   three: ^0.181.2
   three-globe: ^2.45.0
   trpc-nuxt: ^1.2.0
@@ -185,7 +185,7 @@ catalog:
   unplugin-auto-import: ^20.2.0
   v-viewer: ^3.0.22
   viewerjs: ^1.11.7
-  vite: npm:rolldown-vite@7.2.7
+  vite: npm:rolldown-vite@7.2.8
   vite-plugin-dts: ^4.5.4
   vite-plugin-mkcert: ^1.17.9
   vitest: ^4.0.14
@@ -200,7 +200,7 @@ catalog:
   web-push: ^3.6.7
   worker-timers: ^8.0.25
   ws: ^8.18.3
-  xmlbuilder2: ^4.0.0
+  xmlbuilder2: ^4.0.1
   zod: ^4.1.13
 
 catalogMode: strict
@@ -218,6 +218,6 @@ onlyBuiltDependencies:
 overrides:
   "@nuxt/vite-builder": https://pkg.pr.new/@nuxt/vite-builder@33682
   pdfjs-dist: ^5.4.394
-  vite: npm:rolldown-vite@7.2.7
+  vite: npm:rolldown-vite@7.2.8
 
 shellEmulator: true
