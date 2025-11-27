@@ -102,8 +102,8 @@ const AchievementDefinitionMap = {
   [AchievementName.NightOwl]: {
     category: AchievementCategory.Milestone,
     conditions: {
-      endHour: 5,
-      startHour: 0,
+      endTime: "",
+      startTime: "",
       type: "time",
     },
     description: "Send a message between midnight and 5 AM",

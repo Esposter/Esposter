@@ -10,9 +10,9 @@ export type AchievementCondition =
       type: UnaryOperator.or;
     }
   | {
-      endDate: Date;
-      startDate: Date;
-      type: "date";
+      endTime: string;
+      startTime: string;
+      type: "time";
     }
   | {
       operator: "contains" | BinaryOperator;

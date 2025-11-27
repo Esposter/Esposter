@@ -1,3 +1,5 @@
+import type { Achievement } from "@/schema/achievements";
+
 import { pgTable } from "@/pgTable";
 import { achievements } from "@/schema/achievements";
 import { users } from "@/schema/users";
@@ -27,7 +29,6 @@ export const userAchievements = pgTable(
   },
 );
 
-export type NewUserAchievement = typeof userAchievements.$inferInsert;
 export type UserAchievement = typeof userAchievements.$inferSelect;
 
 export const selectUserAchievementSchema = createSelectSchema(userAchievements, {
@@ -44,3 +45,9 @@ export const userAchievementsRelations = relations(userAchievements, ({ one }) =
     references: [users.id],
   }),
 }));
+// @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
+export const UserAchievementRelations = {
+  achievement: true,
+} as const;
+
+export type UserAchievementWithRelations = UserAchievement & { achievement: Achievement };
