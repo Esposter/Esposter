@@ -48,6 +48,45 @@ describe(checkAchievementCondition, () => {
         data,
       ),
     ).toBe(false);
+
+    expect(
+      checkAchievementCondition(
+        { operator: BinaryOperator.lt, path: "type.length", type: AchievementConditionType.Property, value: 5 },
+        data,
+      ),
+    ).toBe(true);
+    expect(
+      checkAchievementCondition(
+        { operator: BinaryOperator.lt, path: "type.length", type: AchievementConditionType.Property, value: 4 },
+        data,
+      ),
+    ).toBe(false);
+
+    expect(
+      checkAchievementCondition(
+        { operator: BinaryOperator.le, path: "type.length", type: AchievementConditionType.Property, value: 4 },
+        data,
+      ),
+    ).toBe(true);
+    expect(
+      checkAchievementCondition(
+        { operator: BinaryOperator.le, path: "type.length", type: AchievementConditionType.Property, value: 3 },
+        data,
+      ),
+    ).toBe(false);
+
+    expect(
+      checkAchievementCondition(
+        { operator: BinaryOperator.ne, path: "type.length", type: AchievementConditionType.Property, value: 0 },
+        data,
+      ),
+    ).toBe(true);
+    expect(
+      checkAchievementCondition(
+        { operator: BinaryOperator.ne, path: "type.length", type: AchievementConditionType.Property, value: 4 },
+        data,
+      ),
+    ).toBe(false);
   });
 
   test(AchievementConditionType.And, () => {
