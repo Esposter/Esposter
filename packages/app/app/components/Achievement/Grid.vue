@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import type { achievementDefinitions } from "@@/server/services/achievement/achievementDefinitions";
-import type { Achievement, UserAchievement } from "@esposter/db-schema";
+import type { UserAchievementWithDefinition } from "#shared/models/achievement/UserAchievementWithDefinition";
 
 import { getCategoryColor } from "@/services/achievement/getCategoryColor";
 
 interface AchievementGridProps {
-  achievements: (UserAchievement & { achievement: (typeof achievementDefinitions)[number] & Achievement })[];
+  achievements: UserAchievementWithDefinition[];
 }
 
 const { achievements } = defineProps<AchievementGridProps>();

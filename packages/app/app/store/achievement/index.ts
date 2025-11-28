@@ -1,54 +1,63 @@
-import type { Achievement, UserAchievement } from "@esposter/db-schema";
+import type {
+  AchievementDefinitionMap,
+  achievementDefinitions as baseAchievementDefinitions,
+} from "@@/server/services/achievement/achievementDefinitions";
+import type { UserAchievementWithRelations } from "@esposter/db-schema";
+
+import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
 
 export const useAchievementStore = defineStore("achievement", () => {
-  const achievements = ref<Achievement[]>([]);
-  const userAchievements = ref<(UserAchievement & { achievement: Achievement })[]>([]);
-  const stats = ref({
-    totalAchievements: 0,
-    totalPoints: 0,
-    unlockedAchievements: 0,
-    unlockedPoints: 0,
+  const achievementDefinitionMap = ref<typeof AchievementDefinitionMap>();
+  const achievementDefinitions = computed<typeof baseAchievementDefinitions>(() =>
+    achievementDefinitionMap.value ? parseDictionaryToArray(achievementDefinitionMap.value, "name") : [],
+  );
+  const initializeAchievementDefinitionMap = (newAchievementDefinitionMap: typeof AchievementDefinitionMap) => {
+    achievementDefinitionMap.value = newAchievementDefinitionMap;
+  };
+  const userAchievements = ref<UserAchievementWithRelations[]>([]);
+  const stats = computed(() => {
+    const achievementDefinitionMapValue = achievementDefinitionMap.value;
+    if (!achievementDefinitionMapValue)
+      return {
+        totalAchievements: 0,
+        totalPoints: 0,
+        unlockedAchievements: 0,
+        unlockedPoints: 0,
+      };
+
+    const unlockedAchievements = userAchievements.value.filter(({ unlockedAt }) => unlockedAt !== null);
+    return {
+      totalAchievements: achievementDefinitions.value.length,
+      totalPoints: achievementDefinitions.value.reduce((total, { points }) => total + points, 0),
+      unlockedAchievements: unlockedAchievements.length,
+      unlockedPoints: unlockedAchievements.reduce(
+        (total, { achievement: { name } }) => total + achievementDefinitionMapValue[name].points,
+        0,
+      ),
+    };
   });
-  const recentlyUnlocked = ref<null | (UserAchievement & { achievement: Achievement })>(null);
-  const unlockedAchievements = computed(() => userAchievements.value.filter((ua) => ua.unlockedAt !== null));
-  const lockedAchievements = computed(() => userAchievements.value.filter((ua) => ua.unlockedAt === null));
-  const isAchievementUnlocked = (achievementId: string): boolean => {
-    const userAchievement = userAchievements.value.find((ua) => ua.achievementId === achievementId);
+  const recentlyUnlockedUserAchievement = ref<null | UserAchievementWithRelations>();
+  const unlockedAchievements = computed(() => userAchievements.value.filter(({ unlockedAt }) => unlockedAt !== null));
+  const lockedAchievements = computed(() => userAchievements.value.filter(({ unlockedAt }) => unlockedAt === null));
+  const isAchievementUnlocked = (id: string): boolean => {
+    const userAchievement = userAchievements.value.find(({ achievementId }) => achievementId === id);
     return userAchievement?.unlockedAt !== null;
   };
-  const getAchievementProgress = (achievementId: string) => {
-    const userAchievement = userAchievements.value.find((ua) => ua.achievementId === achievementId);
-    if (!userAchievement?.achievement.targetProgress) return { current: 0, target: 1 };
-    return {
-      current: userAchievement.points ?? 0,
-      target: userAchievement.achievement.targetProgress,
-    };
-  };
-  const getProgressPercentage = (achievementId: string): number => {
-    const { current, target } = getAchievementProgress(achievementId);
-    return Math.min(100, Math.round((current / target) * 100));
-  };
-  const handleUnlock = (data: { achievement: Achievement; userAchievement: UserAchievement }) => {
-    const index = userAchievements.value.findIndex((ua) => ua.id === data.userAchievement.id);
-    if (index === -1) userAchievements.value.push({ ...data.userAchievement, achievement: data.achievement });
-    else userAchievements.value[index] = { ...data.userAchievement, achievement: data.achievement };
-
-    recentlyUnlocked.value = { ...data.userAchievement, achievement: data.achievement };
-    stats.value.unlockedAchievements += 1;
-    stats.value.unlockedPoints += data.achievement.points;
-    setTimeout(() => {
-      if (recentlyUnlocked.value?.id === data.userAchievement.id) recentlyUnlocked.value = null;
-    }, 5000);
+  const unlockAchievement = (userAchievement: UserAchievementWithRelations) => {
+    const index = userAchievements.value.findIndex(({ id }) => id === userAchievement.id);
+    if (index === -1) userAchievements.value.push({ ...userAchievement });
+    else userAchievements.value[index] = { ...userAchievement };
+    recentlyUnlockedUserAchievement.value = userAchievement;
   };
   return {
-    achievements,
-    getAchievementProgress,
-    getProgressPercentage,
-    handleUnlock,
+    achievementDefinitionMap,
+    achievementDefinitions,
+    initializeAchievementDefinitionMap,
     isAchievementUnlocked,
     lockedAchievements,
-    recentlyUnlocked,
+    recentlyUnlockedUserAchievement,
     stats,
+    unlockAchievement,
     unlockedAchievements,
     userAchievements,
   };

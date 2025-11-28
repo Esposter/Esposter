@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import { useAchievementStore } from "@/store/achievement";
+
+const { $trpc } = useNuxtApp();
 const achievementStore = useAchievementStore();
-const userAchievements = await useReadUserEntities(() => $trpc.achievement.readUserAchievements);
-const stats = await useReadUserEntities(() => $trpc.achievement.readUserStats);
-achievementStore.userAchievements = userAchievements;
-achievementStore.stats = stats;
+const { initializeAchievementDefinitionMap } = achievementStore;
+const { userAchievements } = storeToRefs(achievementStore);
+initializeAchievementDefinitionMap(await $trpc.achievement.readAllAchievementMap.query());
+userAchievements.value = await $trpc.achievement.readUserAchievements.query();
 </script>
 
 <template>

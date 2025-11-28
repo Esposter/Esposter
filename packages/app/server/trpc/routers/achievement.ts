@@ -1,72 +1,34 @@
-import type { Achievement, UserAchievement } from "@esposter/db-schema";
-
-import {
-  AchievementDefinitionMap,
-  achievementDefinitions,
-} from "@@/server/services/achievement/achievementDefinitions";
+import { AchievementDefinitionMap } from "@@/server/services/achievement/achievementDefinitions";
 import { achievementEventEmitter } from "@@/server/services/achievement/events/achievementEventEmitter";
 import { on } from "@@/server/services/events/on";
 import { router } from "@@/server/trpc";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
-import { achievements, selectUserSchema, UserAchievementRelations, userAchievements } from "@esposter/db-schema";
+import { achievements, selectUserSchema, userAchievements } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
-import { and, count, eq, isNotNull } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
 const readUserAchievementsInputSchema = selectUserSchema.shape.id.optional();
 export type ReadUserAchievementsInput = z.infer<typeof readUserAchievementsInputSchema>;
-
-const readUserStatsInputSchema = selectUserSchema.shape.id.optional();
-export type ReadUserStatsInput = z.infer<typeof readUserStatsInputSchema>;
 
 export const achievementRouter = router({
   onUnlockAchievement: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {
     for await (const [data] of on(achievementEventEmitter, "unlockAchievement", { signal }))
       if (data.userId === ctx.session.user.id) yield data;
   }),
-  readAchievements: standardRateLimitedProcedure.query(() => achievementDefinitions.filter((a) => !a.isHidden)),
-  readAllAchievements: standardAuthedProcedure.query(() => achievementDefinitions),
-  readUserAchievements: standardRateLimitedProcedure
-    .input(readUserAchievementsInputSchema)
-    .query(async ({ ctx, input }) => {
-      const userId = input ?? ctx.session?.user.id;
-      if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
-
-      const userAchievements = await ctx.db.query.userAchievements.findMany({
-        where: (userAchievements, { eq }) => eq(userAchievements.userId, userId),
-        with: UserAchievementRelations,
-      });
-      const resultUserAchievements: (UserAchievement & {
-        achievement: (typeof achievementDefinitions)[number] & Achievement;
-      })[] = [];
-      for (const userAchievement of userAchievements)
-        resultUserAchievements.push({
-          ...userAchievement,
-          achievement: {
-            ...userAchievement.achievement,
-            ...AchievementDefinitionMap[userAchievement.achievement.name],
-            name: userAchievement.achievement.name,
-          },
-        });
-
-      return resultUserAchievements;
-    }),
-  readUserStats: standardRateLimitedProcedure.input(readUserStatsInputSchema).query(async ({ ctx, input }) => {
+  readAchievementMap: standardRateLimitedProcedure.query(() =>
+    Object.fromEntries(Object.entries(AchievementDefinitionMap).filter(([, { isHidden }]) => !isHidden)),
+  ),
+  readAllAchievementMap: standardAuthedProcedure.query(() => AchievementDefinitionMap),
+  readUserAchievements: standardRateLimitedProcedure.input(readUserAchievementsInputSchema).query(({ ctx, input }) => {
     const userId = input ?? ctx.session?.user.id;
     if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
 
-    const totalAchievements = achievementDefinitions.length;
-    const unlockedAchievements = (
-      await ctx.db
-        .select({ count: count() })
-        .from(userAchievements)
-        .innerJoin(achievements, eq(achievements.id, userAchievements.achievementId))
-        .where(and(eq(userAchievements.userId, userId), isNotNull(userAchievements.unlockedAt)))
-    )[0].count;
-    return {
-      totalAchievements,
-      unlockedAchievements,
-    };
+    return ctx.db
+      .select()
+      .from(userAchievements)
+      .innerJoin(achievements, eq(achievements.id, userAchievements.achievementId))
+      .where(and(eq(userAchievements.userId, userId)));
   }),
 });
