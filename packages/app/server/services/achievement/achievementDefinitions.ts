@@ -1,6 +1,3 @@
-import type { AchievementDefinition } from "@@/server/models/achievement/AchievementDefinition";
-import type { Except } from "type-fest";
-
 import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
 import { AchievementCategory } from "@@/server/models/achievement/AchievementCategory";
 import { defineAchievementDefinition } from "@@/server/services/achievement/defineAchievementDefinition";
@@ -19,10 +16,10 @@ export const AchievementDefinitionMap = {
     amount: 50,
     category: AchievementCategory.Social,
     condition: {
-      operator: BinaryOperator.gt,
+      operator: BinaryOperator.ne,
       path: "replyRowKey",
       type: "property",
-      value: null,
+      value: undefined,
     },
     description: "Reply to 50 messages",
     icon: "mdi-reply",
@@ -67,16 +64,10 @@ export const AchievementDefinitionMap = {
   [AchievementName.MessageForwarder]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Social,
-    condition: {
-      operator: BinaryOperator.eq,
-      path: "isForward",
-      type: "property",
-      value: true,
-    },
     description: "Forward a message to another room",
     icon: "mdi-share",
     points: 15,
-    triggerPath: "message.createMessage" as const,
+    triggerPath: "message.forwardMessage" as const,
   }),
   [AchievementName.MessageMaster]: defineAchievementDefinition({
     amount: 1000,
@@ -103,9 +94,11 @@ export const AchievementDefinitionMap = {
   [AchievementName.NightOwl]: defineAchievementDefinition({
     category: AchievementCategory.Milestone,
     condition: {
-      endHour: 5,
-      startHour: 0,
+      max: 5,
+      min: 0,
+      referenceUnit: "day",
       type: "time",
+      unit: "hour",
     },
     description: "Send a message between midnight and 5 AM",
     icon: "mdi-weather-night",
@@ -115,16 +108,10 @@ export const AchievementDefinitionMap = {
   [AchievementName.PinCollector]: defineAchievementDefinition({
     amount: 10,
     category: AchievementCategory.Messaging,
-    condition: {
-      operator: BinaryOperator.eq,
-      path: "isPinned",
-      type: "property",
-      value: true,
-    },
     description: "Pin 10 important messages",
     icon: "mdi-pin",
     points: 50,
-    triggerPath: "message.updateMessage" as const,
+    triggerPath: "message.pinMessage" as const,
   }),
   [AchievementName.ProlificPoster]: defineAchievementDefinition({
     amount: 25,
@@ -158,6 +145,6 @@ export const AchievementDefinitionMap = {
     points: 50,
     triggerPath: "room.joinRoom" as const,
   }),
-} as const satisfies Record<AchievementName, Except<AchievementDefinition, "name">>;
+} as const;
 
 export const achievementDefinitions = parseDictionaryToArray(AchievementDefinitionMap, "name");
