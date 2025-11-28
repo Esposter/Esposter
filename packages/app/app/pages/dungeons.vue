@@ -1,11 +1,6 @@
 <script setup lang="ts">
-<<<<<<< HEAD
 import { FileKey } from "#shared/generated/phaser/FileKey";
 import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
-=======
-import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
-import { FontKey } from "@/models/dungeons/keys/FontKey";
->>>>>>> main
 import { SceneKeyMap } from "@/services/dungeons/scene/SceneKeyMap";
 import { GridEngine } from "grid-engine";
 import isMobile from "is-mobile";

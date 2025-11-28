@@ -1,10 +1,5 @@
 <script setup lang="ts">
-<<<<<<< HEAD
 import { FileKey } from "#shared/generated/phaser/FileKey";
-=======
-import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
-import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
->>>>>>> main
 import { MenuExperienceTextStyle } from "@/assets/dungeons/scene/monsterDetails/styles/MenuExperienceTextStyle";
 import { MenuTextStyle } from "@/assets/dungeons/scene/monsterDetails/styles/MenuTextStyle";
 import { useControlsStore } from "@/store/dungeons/controls";

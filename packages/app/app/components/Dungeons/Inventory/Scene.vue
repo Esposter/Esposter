@@ -1,11 +1,6 @@
 <script setup lang="ts">
-<<<<<<< HEAD
 import { FileKey } from "#shared/generated/phaser/FileKey";
 import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
-=======
-import { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
-import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
->>>>>>> main
 import { useControlsStore } from "@/store/dungeons/controls";
 import { useInventoryInputStore } from "@/store/dungeons/inventory/input";
 import { Image } from "vue-phaserjs";
