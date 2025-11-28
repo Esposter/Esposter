@@ -4,86 +4,159 @@ import { BinaryOperator } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
 describe(checkAchievementCondition, () => {
-  const type = "type";
-  const data = { type };
+  const message = "message";
+  const data = { message };
 
   test(AchievementConditionType.Property, () => {
     expect.hasAssertions();
 
     expect(
       checkAchievementCondition(
-        { operator: BinaryOperator.eq, path: "type.length", type: AchievementConditionType.Property, value: 4 },
+        {
+          operator: BinaryOperator.eq,
+          path: "message.length",
+          type: AchievementConditionType.Property,
+          value: message.length,
+        },
         data,
       ),
     ).toBe(true);
     expect(
       checkAchievementCondition(
-        { operator: BinaryOperator.eq, path: "type.length", type: AchievementConditionType.Property, value: 0 },
+        {
+          operator: BinaryOperator.eq,
+          path: "message.length",
+          type: AchievementConditionType.Property,
+          value: message.length + 1,
+        },
         data,
       ),
     ).toBe(false);
 
     expect(
       checkAchievementCondition(
-        { operator: BinaryOperator.gt, path: "type.length", type: AchievementConditionType.Property, value: 3 },
+        {
+          operator: BinaryOperator.gt,
+          path: "message.length",
+          type: AchievementConditionType.Property,
+          value: message.length - 1,
+        },
         data,
       ),
     ).toBe(true);
     expect(
       checkAchievementCondition(
-        { operator: BinaryOperator.gt, path: "type.length", type: AchievementConditionType.Property, value: 4 },
+        {
+          operator: BinaryOperator.gt,
+          path: "message.length",
+          type: AchievementConditionType.Property,
+          value: message.length,
+        },
         data,
       ),
     ).toBe(false);
 
     expect(
       checkAchievementCondition(
-        { operator: BinaryOperator.ge, path: "type.length", type: AchievementConditionType.Property, value: 3 },
+        {
+          operator: BinaryOperator.ge,
+          path: "message.length",
+          type: AchievementConditionType.Property,
+          value: message.length,
+        },
         data,
       ),
     ).toBe(true);
     expect(
       checkAchievementCondition(
-        { operator: BinaryOperator.ge, path: "type.length", type: AchievementConditionType.Property, value: 4 },
+        {
+          operator: BinaryOperator.ge,
+          path: "message.length",
+          type: AchievementConditionType.Property,
+          value: message.length + 1,
+        },
         data,
       ),
     ).toBe(false);
 
     expect(
       checkAchievementCondition(
-        { operator: BinaryOperator.lt, path: "type.length", type: AchievementConditionType.Property, value: 5 },
+        {
+          operator: BinaryOperator.lt,
+          path: "message.length",
+          type: AchievementConditionType.Property,
+          value: message.length + 1,
+        },
         data,
       ),
     ).toBe(true);
     expect(
       checkAchievementCondition(
-        { operator: BinaryOperator.lt, path: "type.length", type: AchievementConditionType.Property, value: 4 },
+        {
+          operator: BinaryOperator.lt,
+          path: "message.length",
+          type: AchievementConditionType.Property,
+          value: message.length,
+        },
         data,
       ),
     ).toBe(false);
 
     expect(
       checkAchievementCondition(
-        { operator: BinaryOperator.le, path: "type.length", type: AchievementConditionType.Property, value: 4 },
+        {
+          operator: BinaryOperator.le,
+          path: "message.length",
+          type: AchievementConditionType.Property,
+          value: message.length,
+        },
         data,
       ),
     ).toBe(true);
     expect(
       checkAchievementCondition(
-        { operator: BinaryOperator.le, path: "type.length", type: AchievementConditionType.Property, value: 3 },
+        {
+          operator: BinaryOperator.le,
+          path: "message.length",
+          type: AchievementConditionType.Property,
+          value: message.length - 1,
+        },
         data,
       ),
     ).toBe(false);
 
     expect(
       checkAchievementCondition(
-        { operator: BinaryOperator.ne, path: "type.length", type: AchievementConditionType.Property, value: 0 },
+        {
+          operator: BinaryOperator.ne,
+          path: "message.length",
+          type: AchievementConditionType.Property,
+          value: message.length + 1,
+        },
         data,
       ),
     ).toBe(true);
     expect(
       checkAchievementCondition(
-        { operator: BinaryOperator.ne, path: "type.length", type: AchievementConditionType.Property, value: 4 },
+        {
+          operator: BinaryOperator.ne,
+          path: "message.length",
+          type: AchievementConditionType.Property,
+          value: message.length,
+        },
+        data,
+      ),
+    ).toBe(false);
+
+    expect(
+      checkAchievementCondition(
+        { operator: "contains", path: "message", type: AchievementConditionType.Property, value: message },
+        data,
+      ),
+    ).toBe(true);
+    expect(
+      checkAchievementCondition(
+        { operator: "contains", path: "message", type: AchievementConditionType.Property, value: "0" },
         data,
       ),
     ).toBe(false);
@@ -92,51 +165,98 @@ describe(checkAchievementCondition, () => {
   test(AchievementConditionType.And, () => {
     expect.hasAssertions();
 
-    const condition = {
-      conditions: [
+    expect(
+      checkAchievementCondition(
         {
-          operator: BinaryOperator.eq,
-          path: "a",
-          type: AchievementConditionType.Property,
-          value: 1,
+          conditions: [
+            {
+              operator: BinaryOperator.eq,
+              path: "message",
+              type: AchievementConditionType.Property,
+              value: message,
+            },
+            {
+              operator: BinaryOperator.eq,
+              path: "message.length",
+              type: AchievementConditionType.Property,
+              value: message.length,
+            },
+          ],
+          type: AchievementConditionType.And,
         },
+        data,
+      ),
+    ).toBe(true);
+    expect(
+      checkAchievementCondition(
         {
-          operator: BinaryOperator.eq,
-          path: "b",
-          type: AchievementConditionType.Property,
-          value: 2,
+          conditions: [
+            {
+              operator: BinaryOperator.eq,
+              path: "message",
+              type: AchievementConditionType.Property,
+              value: message,
+            },
+            {
+              operator: BinaryOperator.eq,
+              path: "message.length",
+              type: AchievementConditionType.Property,
+              value: message.length + 1,
+            },
+          ],
+          type: AchievementConditionType.And,
         },
-      ],
-      type: AchievementConditionType.And,
-    } as const;
-
-    expect(checkAchievementCondition(condition, { a: 1, b: 2 })).toBe(true);
-    expect(checkAchievementCondition(condition, { a: 1, b: 1 })).toBe(false);
+        data,
+      ),
+    ).toBe(false);
   });
 
   test(AchievementConditionType.Or, () => {
     expect.hasAssertions();
 
-    const condition = {
-      conditions: [
+    expect(
+      checkAchievementCondition(
         {
-          operator: BinaryOperator.eq,
-          path: "a",
-          type: AchievementConditionType.Property,
-          value: 1,
+          conditions: [
+            {
+              operator: BinaryOperator.eq,
+              path: "message.length",
+              type: AchievementConditionType.Property,
+              value: message.length,
+            },
+            {
+              operator: BinaryOperator.eq,
+              path: "message.length",
+              type: AchievementConditionType.Property,
+              value: message.length + 1,
+            },
+          ],
+          type: AchievementConditionType.Or,
         },
+        data,
+      ),
+    ).toBe(true);
+    expect(
+      checkAchievementCondition(
         {
-          operator: BinaryOperator.eq,
-          path: "b",
-          type: AchievementConditionType.Property,
-          value: 2,
+          conditions: [
+            {
+              operator: BinaryOperator.eq,
+              path: "message.length",
+              type: AchievementConditionType.Property,
+              value: message.length + 1,
+            },
+            {
+              operator: BinaryOperator.eq,
+              path: "message.length",
+              type: AchievementConditionType.Property,
+              value: message.length + 1,
+            },
+          ],
+          type: AchievementConditionType.Or,
         },
-      ],
-      type: AchievementConditionType.Or,
-    } as const;
-
-    expect(checkAchievementCondition(condition, { a: 1, b: 0 })).toBe(true);
-    expect(checkAchievementCondition(condition, { a: 0, b: 2 })).toBe(true);
-    expect(checkAchievementCondition(condition, { a: 0, b: 0 })).toBe(false);
+        data,
+      ),
+    ).toBe(false);
   });
 });
