@@ -6,11 +6,11 @@ import { BinaryOperator, UnaryOperator } from "@esposter/db-schema";
 
 export const checkAchievementCondition = <TPath extends TRPCPaths>(
   condition: AchievementCondition<TPath>,
-  eventData: unknown,
+  data: typeof condition.type extends "property" ? typeof condition.value : unknown,
 ): boolean => {
   switch (condition.type) {
     case "property": {
-      const value = condition.path.split(".").reduce((o, i) => o?.[i], eventData);
+      const value = condition.path.split(".").reduce((o, i) => o?.[i], data);
       switch (condition.operator) {
         case BinaryOperator.eq:
           return value === condition.value;
@@ -35,10 +35,8 @@ export const checkAchievementCondition = <TPath extends TRPCPaths>(
       return value >= min && value < max;
     }
     case UnaryOperator.and:
-      return condition.conditions.every((c) => checkAchievementCondition(c, eventData));
+      return condition.conditions.every((c) => checkAchievementCondition(c, data));
     case UnaryOperator.or:
-      return condition.conditions.some((c) => checkAchievementCondition(c, eventData));
-    default:
-      return false;
+      return condition.conditions.some((c) => checkAchievementCondition(c, data));
   }
 };
