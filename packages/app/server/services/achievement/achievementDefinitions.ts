@@ -1,5 +1,5 @@
+import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
 import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
-import { AchievementCategory } from "@@/server/models/achievement/AchievementCategory";
 import { defineAchievementDefinition } from "@@/server/services/achievement/defineAchievementDefinition";
 import { AchievementName, BinaryOperator } from "@esposter/db-schema";
 

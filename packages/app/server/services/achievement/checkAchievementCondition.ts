@@ -1,12 +1,14 @@
 import type { AchievementCondition } from "@@/server/models/achievement/AchievementCondition";
 import type { TRPCPaths } from "@@/server/models/trpc/TRPCPaths";
+import type { TRPCRouterInputs } from "@@/server/models/trpc/TRPCRouterInputs";
+import type { Get } from "type-fest";
 
 import { dayjs } from "#shared/services/dayjs";
 import { BinaryOperator, UnaryOperator } from "@esposter/db-schema";
 
 export const checkAchievementCondition = <TPath extends TRPCPaths>(
   condition: AchievementCondition<TPath>,
-  data: typeof condition.type extends "property" ? typeof condition.value : unknown,
+  data: Get<TRPCRouterInputs, TPath> | unknown,
 ): boolean => {
   switch (condition.type) {
     case "property": {
