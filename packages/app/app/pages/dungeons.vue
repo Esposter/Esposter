@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { FontKey } from "#shared/models/dungeons/keys/FontKey";
 import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
-import { FontKey } from "@/models/dungeons/keys/FontKey";
 import { SceneKeyMap } from "@/services/dungeons/scene/SceneKeyMap";
 import { GridEngine } from "grid-engine";
 import isMobile from "is-mobile";
