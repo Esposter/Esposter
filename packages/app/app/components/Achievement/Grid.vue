@@ -15,7 +15,7 @@ const { achievementDefinitions, userAchievements } = defineProps<GridProps>();
     <AchievementGridItem
       v-for="achievementDefinition in achievementDefinitions"
       :key="achievementDefinition.name"
-      :achievement="achievementDefinition"
+      :achievement-definition
       :user-achievement="userAchievements.find(({ achievement }) => achievement.name === achievementDefinition.name)"
     />
   </v-row>
