@@ -1,4 +1,3 @@
-import type { AchievementDefinition } from "@@/server/models/achievement/AchievementDefinition";
 import type { Achievement, UserAchievement } from "@esposter/db-schema";
 
 import {
@@ -39,20 +38,18 @@ export const achievementRouter = router({
         with: UserAchievementRelations,
       });
       const resultUserAchievements: (UserAchievement & {
-        achievement: Achievement & AchievementDefinition;
+        achievement: (typeof achievementDefinitions)[number] & Achievement;
       })[] = [];
-      for (const userAchievement of userAchievements) {
-        const achievementDefinition = AchievementDefinitionMap[userAchievement.achievement.name];
-        if (!achievementDefinition) continue;
+      for (const userAchievement of userAchievements)
         resultUserAchievements.push({
           ...userAchievement,
           achievement: {
             ...userAchievement.achievement,
-            ...achievementDefinition,
+            ...AchievementDefinitionMap[userAchievement.achievement.name],
             name: userAchievement.achievement.name,
           },
         });
-      }
+
       return resultUserAchievements;
     }),
   readUserStats: standardRateLimitedProcedure.input(readUserStatsInputSchema).query(async ({ ctx, input }) => {

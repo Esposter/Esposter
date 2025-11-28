@@ -37,8 +37,8 @@ describe("recursiveGetProperties type", () => {
     expect.hasAssertions();
 
     expectTypeOf<RecursiveGetProperties<null | string | undefined>>().toEqualTypeOf<{
-      path: "";
-      value: string | undefined;
+      path: "length";
+      value: number;
     }>();
   });
 
