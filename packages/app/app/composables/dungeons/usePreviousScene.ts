@@ -1,4 +1,4 @@
-import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import type { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { useSceneStore } from "@/store/dungeons/scene";

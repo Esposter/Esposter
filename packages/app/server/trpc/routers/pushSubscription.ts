@@ -1,4 +1,4 @@
-import { pushSubscriptionSchema } from "@@/server/models/PushSubscription";
+import { pushSubscriptionSchema } from "@@/server/models/pushSubscription/PushSubscription";
 import { router } from "@@/server/trpc";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { DatabaseEntityType, pushSubscriptions } from "@esposter/db-schema";

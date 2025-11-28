@@ -1,4 +1,4 @@
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
 
 export const SceneKeyMap = {
   [SceneKey.Battle]: defineAsyncComponent(() => import("@/components/Dungeons/Battle/Scene.vue")),
