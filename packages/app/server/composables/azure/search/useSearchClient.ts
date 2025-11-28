@@ -2,7 +2,7 @@ import type { SearchIndex, SearchIndexDocumentMap } from "@esposter/db-schema";
 
 import { useSearchBaseUrl } from "@@/server/composables/azure/search/useSearchBaseUrl";
 import { AzureKeyCredential, SearchClient } from "@azure/search-documents";
-import { useRuntimeConfig } from "nuxt/app";
+import { useRuntimeConfig } from "nitropack/runtime";
 
 export const useSearchClient = <TIndex extends SearchIndex>(
   index: TIndex,

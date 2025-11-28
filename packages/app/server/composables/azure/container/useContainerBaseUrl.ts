@@ -1,4 +1,4 @@
-import { useRuntimeConfig } from "nuxt/app";
+import { useRuntimeConfig } from "nitropack/runtime";
 
 export const useContainerBaseUrl = () => {
   const runtimeConfig = useRuntimeConfig();
