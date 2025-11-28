@@ -1,28 +1,28 @@
 import type { RecursiveGetProperties } from "#shared/util/types/RecursiveGetProperties";
+import type { AchievementConditionType } from "@@/server/models/achievement/AchievementConditionType";
 import type { TRPCPaths } from "@@/server/models/trpc/TRPCPaths";
 import type { TRPCRouterInputs } from "@@/server/models/trpc/TRPCRouterInputs";
+import type { BinaryOperator } from "@esposter/db-schema";
 import type { OpUnitType } from "dayjs";
-import type { Get } from "type-fest";
-
-import { BinaryOperator, UnaryOperator } from "@esposter/db-schema";
+import type { Except, Get } from "type-fest";
 
 export type AchievementCondition<TPath extends TRPCPaths> =
-  | (RecursiveGetProperties<Get<TRPCRouterInputs, TPath>> & {
+  | (Except<RecursiveGetProperties<Get<TRPCRouterInputs, TPath>>, "type"> & {
       operator: "contains" | BinaryOperator;
-      type: "property";
+      type: AchievementConditionType.Property;
     })
   | {
       conditions: AchievementCondition<TPath>[];
-      type: UnaryOperator.and;
+      type: AchievementConditionType.And;
     }
   | {
       conditions: AchievementCondition<TPath>[];
-      type: UnaryOperator.or;
+      type: AchievementConditionType.Or;
     }
   | {
       max: number;
       min: number;
       referenceUnit: OpUnitType;
-      type: "time";
+      type: AchievementConditionType.Time;
       unit: OpUnitType;
     };

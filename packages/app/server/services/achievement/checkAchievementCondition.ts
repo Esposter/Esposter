@@ -1,44 +1,50 @@
-import type { AchievementCondition } from "@@/server/models/achievement/AchievementCondition";
-import type { TRPCPaths } from "@@/server/models/trpc/TRPCPaths";
-import type { TRPCRouterInputs } from "@@/server/models/trpc/TRPCRouterInputs";
-import type { Get } from "type-fest";
-
 import { dayjs } from "#shared/services/dayjs";
-import { BinaryOperator, UnaryOperator } from "@esposter/db-schema";
+import { AchievementConditionType } from "@@/server/models/achievement/AchievementConditionType";
+import { achievementDefinitions } from "@@/server/services/achievement/achievementDefinitions";
+import { BinaryOperator } from "@esposter/db-schema";
+import { exhaustiveGuard } from "@esposter/shared";
 
-export const checkAchievementCondition = <TPath extends TRPCPaths>(
-  condition: AchievementCondition<TPath>,
-  data: Get<TRPCRouterInputs, TPath> | unknown,
+export const checkAchievementCondition = (
+  condition: NonNullable<(typeof achievementDefinitions)[number]["condition"]>,
+  data: unknown,
 ): boolean => {
   switch (condition.type) {
-    case "property": {
-      const value = condition.path.split(".").reduce((o, i) => o?.[i], data);
+    case AchievementConditionType.And:
+      return condition.conditions.every((c) => checkAchievementCondition(c, data));
+    case AchievementConditionType.Or:
+      return condition.conditions.some((c) => checkAchievementCondition(c, data));
+    case AchievementConditionType.Property: {
+      // @ts-expect-error We can assume types are correct as achievementDefinitions is defined properly
+      const value = condition.path.split(".").reduce((property, key) => property[key], data);
       switch (condition.operator) {
         case BinaryOperator.eq:
           return value === condition.value;
         case BinaryOperator.ge:
+          // @ts-expect-error We can assume types are correct as achievementDefinitions is defined properly
           return value >= condition.value;
         case BinaryOperator.gt:
+          // @ts-expect-error We can assume types are correct as achievementDefinitions is defined properly
           return value > condition.value;
         case BinaryOperator.le:
+          // @ts-expect-error We can assume types are correct as achievementDefinitions is defined properly
           return value <= condition.value;
         case BinaryOperator.lt:
+          // @ts-expect-error We can assume types are correct as achievementDefinitions is defined properly
           return value < condition.value;
+        case BinaryOperator.ne:
+          return value !== condition.value;
         case "contains":
           return typeof value === "string" && value.toLowerCase().includes(String(condition.value).toLowerCase());
         default:
-          return false;
+          exhaustiveGuard(condition.operator);
       }
     }
-    case "time": {
+    // oxlint-disable-next-line no-fallthrough
+    case AchievementConditionType.Time: {
       const { max, min, referenceUnit, unit } = condition;
       const now = dayjs();
       const value = now.diff(now.startOf(referenceUnit), unit);
       return value >= min && value < max;
     }
-    case UnaryOperator.and:
-      return condition.conditions.every((c) => checkAchievementCondition(c, data));
-    case UnaryOperator.or:
-      return condition.conditions.some((c) => checkAchievementCondition(c, data));
   }
 };

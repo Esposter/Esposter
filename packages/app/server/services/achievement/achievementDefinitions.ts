@@ -1,5 +1,6 @@
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
 import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
+import { AchievementConditionType } from "@@/server/models/achievement/AchievementConditionType";
 import { defineAchievementDefinition } from "@@/server/services/achievement/defineAchievementDefinition";
 import { AchievementName, BinaryOperator } from "@esposter/db-schema";
 
@@ -18,7 +19,7 @@ export const AchievementDefinitionMap = {
     condition: {
       operator: BinaryOperator.ne,
       path: "replyRowKey",
-      type: "property",
+      type: AchievementConditionType.Property,
       value: undefined,
     },
     description: "Reply to 50 messages",
@@ -31,7 +32,7 @@ export const AchievementDefinitionMap = {
     condition: {
       operator: BinaryOperator.ge,
       path: "message.length",
-      type: "property",
+      type: AchievementConditionType.Property,
       value: 1000,
     },
     description: "Send a message with over 1,000 characters",
@@ -45,7 +46,7 @@ export const AchievementDefinitionMap = {
     condition: {
       operator: BinaryOperator.gt,
       path: "files.length",
-      type: "property",
+      type: AchievementConditionType.Property,
       value: 0,
     },
     description: "Share your first file",
@@ -82,7 +83,7 @@ export const AchievementDefinitionMap = {
     condition: {
       operator: "contains",
       path: "message",
-      type: "property",
+      type: AchievementConditionType.Property,
       value: "achievement unlocked",
     },
     description: 'Send a message containing "achievement unlocked"',
@@ -97,7 +98,7 @@ export const AchievementDefinitionMap = {
       max: 5,
       min: 0,
       referenceUnit: "day",
-      type: "time",
+      type: AchievementConditionType.Time,
       unit: "hour",
     },
     description: "Send a message between midnight and 5 AM",
