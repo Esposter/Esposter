@@ -107,6 +107,21 @@ describe(applyTableFilter, () => {
     expect(filteredTableEntities[0].partitionKey).toBe(partitionKey);
   });
 
+  test(`${BinaryOperator.ge} negative`, () => {
+    expect.hasAssertions();
+
+    const clauses: Clause[] = [
+      {
+        key: TableEntityPropertyNames.partitionKey,
+        operator: BinaryOperator.ge,
+        value: "1",
+      },
+    ];
+    const filteredTableEntities = applyTableFilter(tableEntities, clauses);
+
+    expect(filteredTableEntities).toHaveLength(0);
+  });
+
   test(BinaryOperator.lt, () => {
     expect.hasAssertions();
 
@@ -168,5 +183,51 @@ describe(applyTableFilter, () => {
 
     expect(filteredTableEntities).toHaveLength(1);
     expect(filteredTableEntities[0].partitionKey).toBe(partitionKey);
+  });
+
+  test(`${BinaryOperator.le} negative`, () => {
+    expect.hasAssertions();
+
+    const clauses: Clause[] = [
+      {
+        key: TableEntityPropertyNames.partitionKey,
+        operator: BinaryOperator.le,
+        value: "-1",
+      },
+    ];
+    const filteredTableEntities = applyTableFilter(tableEntities, clauses);
+
+    expect(filteredTableEntities).toHaveLength(0);
+  });
+
+  test(BinaryOperator.ne, () => {
+    expect.hasAssertions();
+
+    const clauses: Clause[] = [
+      {
+        key: TableEntityPropertyNames.partitionKey,
+        operator: BinaryOperator.ne,
+        value: "1",
+      },
+    ];
+    const filteredTableEntities = applyTableFilter(tableEntities, clauses);
+
+    expect(filteredTableEntities).toHaveLength(1);
+    expect(filteredTableEntities[0].partitionKey).toBe(partitionKey);
+  });
+
+  test(`${BinaryOperator.ne} negative`, () => {
+    expect.hasAssertions();
+
+    const clauses: Clause[] = [
+      {
+        key: TableEntityPropertyNames.partitionKey,
+        operator: BinaryOperator.ne,
+        value: partitionKey,
+      },
+    ];
+    const filteredTableEntities = applyTableFilter(tableEntities, clauses);
+
+    expect(filteredTableEntities).toHaveLength(0);
   });
 });
