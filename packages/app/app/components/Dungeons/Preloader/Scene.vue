@@ -2,7 +2,7 @@
 import type { Loader } from "phaser";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
 import { FontLoaderMap } from "@/models/dungeons/loader/FontLoaderMap";
 import { ImageLoaderMap } from "@/models/dungeons/loader/image/ImageLoaderMap";
 import { SoundLoaderMap } from "@/models/dungeons/loader/sound/SoundLoaderMap";

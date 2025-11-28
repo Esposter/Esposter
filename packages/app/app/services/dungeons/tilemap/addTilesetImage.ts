@@ -1,6 +1,6 @@
 import type { BaseTilesetKey } from "#shared/generated/tiled/propertyTypes/enum/BaseTilesetKey";
 import type { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/TilemapKey";
-import type { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
+import type { TilesetKey } from "#shared/models/dungeons/keys/TilesetKey";
 import type { Tilemaps } from "phaser";
 
 import { ignoreWarn } from "@/util/console/ignoreWarn";

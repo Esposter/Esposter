@@ -2,8 +2,8 @@ import type { State } from "@/models/dungeons/state/State";
 import type { PhaserEvents } from "@/services/phaser/events";
 import type { EventEmitter } from "eventemitter3";
 
+import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { phaserEventEmitter } from "@/services/phaser/events";

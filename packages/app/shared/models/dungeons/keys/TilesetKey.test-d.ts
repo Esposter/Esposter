@@ -1,7 +1,7 @@
 import type { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
 import type { SpritesheetKey } from "#shared/models/dungeons/keys/spritesheet/SpritesheetKey";
 
-import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
+import { TilesetKey } from "#shared/models/dungeons/keys/TilesetKey";
 import { describe, expect, expectTypeOf, test } from "vitest";
 
 describe("tilesetKey type", () => {
