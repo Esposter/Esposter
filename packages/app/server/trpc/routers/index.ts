@@ -42,10 +42,11 @@ const trpcRouterWithoutAchievements = router({
   webpageEditor: webpageEditorRouter,
 });
 
+export type TRPCRouterWithoutAchievements = typeof trpcRouterWithoutAchievements;
+
 export const trpcRouter = router({
   achievement: achievementRouter,
   ...trpcRouterWithoutAchievements._def.procedures,
 });
 
 export type TRPCRouter = typeof trpcRouter;
-export type TRPCRouterWithoutAchievements = typeof trpcRouterWithoutAchievements;
