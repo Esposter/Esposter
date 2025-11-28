@@ -21,14 +21,20 @@ export const achievementRouter = router({
     Object.fromEntries(Object.entries(AchievementDefinitionMap).filter(([, { isHidden }]) => !isHidden)),
   ),
   readAllAchievementMap: standardAuthedProcedure.query(() => AchievementDefinitionMap),
-  readUserAchievements: standardRateLimitedProcedure.input(readUserAchievementsInputSchema).query(({ ctx, input }) => {
-    const userId = input ?? ctx.session?.user.id;
-    if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
+  readUserAchievements: standardRateLimitedProcedure
+    .input(readUserAchievementsInputSchema)
+    .query(async ({ ctx, input }) => {
+      const userId = input ?? ctx.session?.user.id;
+      if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
 
-    return ctx.db
-      .select()
-      .from(userAchievements)
-      .innerJoin(achievements, eq(achievements.id, userAchievements.achievementId))
-      .where(and(eq(userAchievements.userId, userId)));
-  }),
+      const joinedUserAchievements = await ctx.db
+        .select()
+        .from(userAchievements)
+        .innerJoin(achievements, eq(achievements.id, userAchievements.achievementId))
+        .where(and(eq(userAchievements.userId, userId)));
+      return joinedUserAchievements.map(({ achievements, user_achievements }) => ({
+        ...user_achievements,
+        achievement: achievements,
+      }));
+    }),
 });
