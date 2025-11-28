@@ -29,12 +29,12 @@ catalog:
   "@fullcalendar/timegrid": ^6.1.19
   "@fullcalendar/vue3": ^6.1.19
   "@koumoul/vjsf": ^3.24.0
-  "@lerna-lite/cli": ^4.9.3
-  "@lerna-lite/publish": ^4.9.3
-  "@lerna-lite/run": ^4.9.3
-  "@lerna-lite/watch": ^4.9.3
+  "@lerna-lite/cli": ^4.9.4
+  "@lerna-lite/publish": ^4.9.4
+  "@lerna-lite/run": ^4.9.4
+  "@lerna-lite/watch": ^4.9.4
   "@mdi/font": ^7.4.47
-  "@nuxt/eslint": ^1.10.0
+  "@nuxt/eslint": ^1.11.0
   "@nuxt/fonts": ^0.12.1
   "@nuxt/hints": ^1.0.0-alpha.2
   "@nuxt/scripts": ^0.13.0
@@ -42,14 +42,14 @@ catalog:
   "@nuxtjs/seo": ^3.2.2
   "@pinia/nuxt": ^0.11.3
   "@prettier/plugin-oxc": ^0.0.5
-  "@tiptap/core": ^3.11.0
-  "@tiptap/extension-file-handler": ^3.11.0
-  "@tiptap/extension-mention": ^3.11.0
-  "@tiptap/extensions": ^3.11.0
-  "@tiptap/pm": ^3.11.0
-  "@tiptap/starter-kit": ^3.11.0
-  "@tiptap/suggestion": ^3.11.0
-  "@tiptap/vue-3": ^3.11.0
+  "@tiptap/core": ^3.11.1
+  "@tiptap/extension-file-handler": ^3.11.1
+  "@tiptap/extension-mention": ^3.11.1
+  "@tiptap/extensions": ^3.11.1
+  "@tiptap/pm": ^3.11.1
+  "@tiptap/starter-kit": ^3.11.1
+  "@tiptap/suggestion": ^3.11.1
+  "@tiptap/vue-3": ^3.11.1
   "@trpc/client": ^11.7.2
   "@trpc/server": ^11.7.2
   "@types/data-urls": ^3.0.4
@@ -70,7 +70,7 @@ catalog:
   "@types/xml2js": ^0.4.14
   "@unocss/eslint-config": ^66.5.9
   "@unocss/nuxt": ^66.5.9
-  "@vite-pwa/nuxt": ^1.0.7
+  "@vite-pwa/nuxt": ^1.1.0
   "@vitejs/plugin-vue": ^6.0.2
   "@vitest/coverage-v8": ^4.0.14
   "@vitest/eslint-plugin": ^1.5.0
@@ -79,12 +79,12 @@ catalog:
   "@vue-flow/core": ^1.48.0
   "@vue-flow/minimap": ^1.5.4
   "@vue-flow/node-resizer": ^1.5.0
-  "@vue-pdf-viewer/viewer": ^3.4.0
+  "@vue-pdf-viewer/viewer": ^3.5.0
   "@vue/language-core": ^3.1.5
   "@vue/test-utils": ^2.4.6
   "@vuepic/vue-datepicker": ^12.0.5
-  "@vueuse/core": ^14.0.0
-  "@vueuse/nuxt": ^14.0.0
+  "@vueuse/core": ^14.1.0
+  "@vueuse/nuxt": ^14.1.0
   ajv: ^8.17.1
   ajv-errors: ^3.0.0
   ajv-formats: ^3.0.1
@@ -134,7 +134,7 @@ catalog:
   grid-layout-plus: ^1.1.1
   gsap: ^3.13.0
   h3: ^1.15.4
-  happy-dom: ^20.0.10
+  happy-dom: ^20.0.11
   howler: ^2.2.4
   is-mobile: ^5.0.0
   js-beautify: ^1.15.4
@@ -168,7 +168,7 @@ catalog:
   sax: ^1.4.3
   show-open-file-picker: ^0.4.0
   sql-highlight: ^6.1.0
-  superjson: ^2.2.5
+  superjson: ^2.2.6
   survey-core: ^2.4.0
   survey-creator-core: ^2.4.0
   survey-creator-vue: ^2.4.0
@@ -182,7 +182,7 @@ catalog:
   typescript: ^5.9.3
   typescript-eslint: ^8.48.0
   unocss: ^66.5.9
-  unplugin-auto-import: ^20.2.0
+  unplugin-auto-import: ^20.3.0
   v-viewer: ^3.0.22
   viewerjs: ^1.11.7
   vite: npm:rolldown-vite@7.2.8

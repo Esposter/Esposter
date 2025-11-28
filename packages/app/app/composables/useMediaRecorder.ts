@@ -56,22 +56,22 @@ export const useMediaRecorder = (options: UseMediaRecorderOptions = {}) => {
       : true,
   );
   const isSupported = useSupported(() => "getUserMedia" in window.navigator.mediaDevices && isMimeTypeSupported.value);
-  const state = computedWithControl<RecordingState | undefined, MediaRecorder | undefined>(
+  const state = computedWithControl<RecordingState | undefined>(
     () => mediaRecorder.value,
     () => mediaRecorder.value?.state,
   );
-  const mimeType = computedWithControl<string | undefined, MediaRecorder | undefined>(
+  const mimeType = computedWithControl<string | undefined>(
     () => mediaRecorder.value,
     () => mediaRecorder.value?.mimeType,
   );
   const { constraints, mediaRecorderOptions } = defu(options, defaultOptions);
   const setupMediaRecorder = (newMediaRecorder: MediaRecorder) => {
-    newMediaRecorder.ondataavailable = (e) => {
+    newMediaRecorder.ondataavailable = (event) => {
       mimeType.trigger();
-      data.value.push(e.data);
+      data.value.push(event.data);
     };
     newMediaRecorder.onstop = (...args) => {
-      stream.value?.getTracks().forEach((t) => t.stop());
+      for (const track of stream.value?.getTracks() ?? []) track.stop();
       state.trigger();
       mimeType.trigger();
       options.onStop?.(...args);
