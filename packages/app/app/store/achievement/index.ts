@@ -1,7 +1,7 @@
 import type {
   AchievementDefinitionMap,
   achievementDefinitions as baseAchievementDefinitions,
-} from "@@/server/services/achievement/achievementDefinitions";
+} from "#shared/services/achievement/achievementDefinitions";
 import type { UserAchievementWithRelations } from "@esposter/db-schema";
 
 import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";

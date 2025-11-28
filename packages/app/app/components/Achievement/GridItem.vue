@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { achievementDefinitions } from "@@/server/services/achievement/achievementDefinitions";
+import type { achievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
 import type { UserAchievementWithRelations } from "@esposter/db-schema";
 
 import { getCategoryColor } from "@/services/achievement/getCategoryColor";

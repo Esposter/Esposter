@@ -1,7 +1,7 @@
+import type { AchievementConditionType } from "#shared/models/achievement/AchievementConditionType";
+import type { TRPCPaths } from "#shared/models/trpc/TRPCPaths";
+import type { TRPCRouterInputs } from "#shared/models/trpc/TRPCRouterInputs";
 import type { RecursiveGetProperties } from "#shared/util/types/RecursiveGetProperties";
-import type { AchievementConditionType } from "@@/server/models/achievement/AchievementConditionType";
-import type { TRPCPaths } from "@@/server/models/trpc/TRPCPaths";
-import type { TRPCRouterInputs } from "@@/server/models/trpc/TRPCRouterInputs";
 import type { BinaryOperator } from "@esposter/db-schema";
 import type { OpUnitType } from "dayjs";
 import type { Except, Get } from "type-fest";

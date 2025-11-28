@@ -1,7 +1,7 @@
 import type { Session } from "#shared/models/auth/Session";
 import type { Context } from "@@/server/trpc/context";
 
-import { achievementDefinitions } from "@@/server/services/achievement/achievementDefinitions";
+import { achievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
 import { checkAchievementCondition } from "@@/server/services/achievement/checkAchievementCondition";
 import { achievementEventEmitter } from "@@/server/services/achievement/events/achievementEventEmitter";
 import { DatabaseEntityType, userAchievements } from "@esposter/db-schema";

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { achievementDefinitions as baseAchievementDefinitions } from "@@/server/services/achievement/achievementDefinitions";
+import type { achievementDefinitions as baseAchievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
 import type { UserAchievementWithRelations } from "@esposter/db-schema";
 
 interface GridProps {

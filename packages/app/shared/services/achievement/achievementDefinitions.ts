@@ -1,7 +1,7 @@
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
+import { AchievementConditionType } from "#shared/models/achievement/AchievementConditionType";
+import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
 import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
-import { AchievementConditionType } from "@@/server/models/achievement/AchievementConditionType";
-import { defineAchievementDefinition } from "@@/server/services/achievement/defineAchievementDefinition";
 import { AchievementName, BinaryOperator } from "@esposter/db-schema";
 
 export const AchievementDefinitionMap = {

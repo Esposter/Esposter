@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { AchievementStatus } from "#shared/models/achievement/AchievementStatus";
 import { useAchievementStore } from "@/store/achievement";
-import { AchievementStatus } from "@@/shared/models/achievement/AchievementStatus";
 
 const achievementStore = useAchievementStore();
 const { achievementDefinitions, stats, userAchievements } = storeToRefs(achievementStore);

@@ -1,4 +1,4 @@
-import { AchievementDefinitionMap } from "@@/server/services/achievement/achievementDefinitions";
+import { AchievementDefinitionMap } from "#shared/services/achievement/achievementDefinitions";
 import { achievementEventEmitter } from "@@/server/services/achievement/events/achievementEventEmitter";
 import { on } from "@@/server/services/events/on";
 import { router } from "@@/server/trpc";

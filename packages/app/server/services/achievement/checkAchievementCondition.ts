@@ -1,6 +1,6 @@
+import { AchievementConditionType } from "#shared/models/achievement/AchievementConditionType";
+import { achievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
 import { dayjs } from "#shared/services/dayjs";
-import { AchievementConditionType } from "@@/server/models/achievement/AchievementConditionType";
-import { achievementDefinitions } from "@@/server/services/achievement/achievementDefinitions";
 import { BinaryOperator } from "@esposter/db-schema";
 import { exhaustiveGuard } from "@esposter/shared";
 
