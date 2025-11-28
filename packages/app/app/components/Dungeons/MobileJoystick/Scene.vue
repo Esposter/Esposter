@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
 </script>
 
 <template>

@@ -1,8 +1,8 @@
 import type { Loader } from "phaser";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
+import { TilesetKey } from "#shared/models/dungeons/keys/TilesetKey";
 import { AXULART_FOLDER_PATH, FIRST_PARTY_FOLDER_PATH } from "#shared/services/app/constants";
-import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
 
 export const TilesetLoaderMap: Record<TilesetKey, (scene: SceneWithPlugins) => Loader.LoaderPlugin> = {
   [TilesetKey.BasicPlains]: (scene) =>

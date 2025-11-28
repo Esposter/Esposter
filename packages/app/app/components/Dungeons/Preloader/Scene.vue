@@ -2,8 +2,15 @@
 import type { Loader } from "phaser";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
+<<<<<<< HEAD
 import files from "#shared/generated/phaser/files.json";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
+=======
+import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
+import { FontLoaderMap } from "@/models/dungeons/loader/FontLoaderMap";
+import { ImageLoaderMap } from "@/models/dungeons/loader/image/ImageLoaderMap";
+import { SoundLoaderMap } from "@/models/dungeons/loader/sound/SoundLoaderMap";
+>>>>>>> main
 import { SpritesheetLoaderMap } from "@/models/dungeons/loader/spritesheet/SpritesheetLoaderMap";
 import { TilemapLoaderMap } from "@/models/dungeons/loader/TilemapLoaderMap";
 import { TilesetLoaderMap } from "@/models/dungeons/loader/TilesetLoaderMap";
