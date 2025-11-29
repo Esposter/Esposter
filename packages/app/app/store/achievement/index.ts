@@ -38,7 +38,7 @@ export const useAchievementStore = defineStore("achievement", () => {
       ),
     };
   });
-  const recentlyUnlockedUserAchievement = ref<null | UserAchievementWithDefinition>();
+  const recentlyUnlockedUserAchievements = ref<UserAchievementWithDefinition[]>([]);
   const isAchievementUnlocked = (name: AchievementName): boolean => {
     const userAchievement = userAchievements.value.find(({ achievement }) => achievement.name === name);
     return userAchievement?.unlockedAt !== null;
@@ -54,14 +54,14 @@ export const useAchievementStore = defineStore("achievement", () => {
     if (index === -1) userAchievements.value.push(userAchievementWithDefinition);
     else userAchievements.value[index] = userAchievementWithDefinition;
     if (userAchievementWithDefinition.unlockedAt !== null)
-      recentlyUnlockedUserAchievement.value = userAchievementWithDefinition;
+      recentlyUnlockedUserAchievements.value.push(userAchievementWithDefinition);
   };
   return {
     achievementDefinitionMap,
     achievementDefinitions,
     initializeAchievementDefinitionMap,
     isAchievementUnlocked,
-    recentlyUnlockedUserAchievement,
+    recentlyUnlockedUserAchievements,
     stats,
     updateAchievement,
     userAchievements,

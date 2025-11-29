@@ -7,7 +7,7 @@
         <AppLoadingIndicator />
         <NuxtPage />
         <StyledAlertList />
-        <AchievementNotification />
+        <AchievementNotificationSnackBarList />
       </v-app>
     </NuxtSEO>
   </NuxtTheme>
