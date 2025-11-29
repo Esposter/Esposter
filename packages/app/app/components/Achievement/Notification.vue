@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useAchievementStore } from "@/store/achievement";
 
-await useAchievementSubscribables();
+useAchievementSubscribables();
 
 const achievementStore = useAchievementStore();
 const { recentlyUnlockedUserAchievement } = storeToRefs(achievementStore);
