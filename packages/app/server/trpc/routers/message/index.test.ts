@@ -776,7 +776,7 @@ describe("message", () => {
     );
   });
 
-  test.todo("fails delete file with forward", async () => {
+  test("fails delete file with forward", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
@@ -792,7 +792,7 @@ describe("message", () => {
       new Map([[getBlobName(`${newRoom.id}/${id}`, filename), Buffer.alloc(size)]]),
     );
     const onCreateMessage = await messageCaller.onCreateMessage({ roomId: newRoom.id });
-    const [data] = await Promise.all([
+    const [trackedData] = await Promise.all([
       onCreateMessage[Symbol.asyncIterator]().next(),
       messageCaller.forwardMessage({
         partitionKey: newMessage.partitionKey,
@@ -801,15 +801,18 @@ describe("message", () => {
       }),
     ]);
 
-    assert(!data.done);
+    assert(!trackedData.done);
 
+    const [, data] = trackedData.value as unknown as TrackedEnvelope<MessageEntity[]>;
+
+    expect(data).toHaveLength(1);
     await expect(
       messageCaller.deleteFile({
         id,
-        partitionKey: data.value.data[0].partitionKey,
-        rowKey: data.value.data[0].rowKey,
+        partitionKey: data[0].partitionKey,
+        rowKey: data[0].rowKey,
       }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${new NotFoundError(AzureEntityType.File, id).message}]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: BAD_REQUEST]`);
   });
 
   test("fails delete file with message without files", async () => {
