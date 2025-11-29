@@ -6,6 +6,7 @@ import type {
 import type { AchievementName, UserAchievementWithRelations } from "@esposter/db-schema";
 
 import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
+import { mapToUserAchievementWithDefinition } from "@/services/achievement/mapToUserAchievementWithDefinition";
 
 export const useAchievementStore = defineStore("achievement", () => {
   const achievementDefinitionMap = ref<typeof AchievementDefinitionMap>();
@@ -45,13 +46,10 @@ export const useAchievementStore = defineStore("achievement", () => {
   const updateAchievement = (userAchievement: UserAchievementWithRelations) => {
     if (!achievementDefinitionMap.value) return;
 
-    const userAchievementWithDefinition: UserAchievementWithDefinition = {
-      ...userAchievement,
-      achievement: {
-        ...achievementDefinitionMap.value[userAchievement.achievement.name],
-        name: userAchievement.achievement.name,
-      },
-    };
+    const userAchievementWithDefinition = mapToUserAchievementWithDefinition(
+      userAchievement,
+      achievementDefinitionMap.value[userAchievement.achievement.name],
+    );
     const index = userAchievements.value.findIndex(({ id }) => id === userAchievement.id);
     if (index === -1) userAchievements.value.push(userAchievementWithDefinition);
     else userAchievements.value[index] = userAchievementWithDefinition;

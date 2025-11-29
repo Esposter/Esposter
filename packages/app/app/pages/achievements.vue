@@ -1,12 +1,16 @@
 <script setup lang="ts">
+import { mapToUserAchievementWithDefinition } from "@/services/achievement/mapToUserAchievementWithDefinition";
 import { useAchievementStore } from "@/store/achievement";
 
 const { $trpc } = useNuxtApp();
 const achievementStore = useAchievementStore();
 const { initializeAchievementDefinitionMap } = achievementStore;
 const { userAchievements } = storeToRefs(achievementStore);
-initializeAchievementDefinitionMap(await $trpc.achievement.readAllAchievementMap.query());
-userAchievements.value = await $trpc.achievement.readUserAchievements.query();
+const newAchievementDefinitionMap = await $trpc.achievement.readAllAchievementMap.query();
+initializeAchievementDefinitionMap(newAchievementDefinitionMap);
+userAchievements.value = (await $trpc.achievement.readUserAchievements.query()).map((achievement) =>
+  mapToUserAchievementWithDefinition(achievement, newAchievementDefinitionMap[achievement.achievement.name]),
+);
 </script>
 
 <template>
