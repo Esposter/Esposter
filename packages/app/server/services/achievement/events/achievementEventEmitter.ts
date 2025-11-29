@@ -1,10 +1,9 @@
-import type { UserAchievement } from "@esposter/db-schema";
+import type { UserAchievementWithRelations } from "@esposter/db-schema";
 
 import { EventEmitter } from "node:events";
 
 interface AchievementEvents {
-  incrementPoints: UserAchievement[];
-  unlockAchievement: UserAchievement[];
+  updateAchievement: UserAchievementWithRelations[];
 }
 
 export const achievementEventEmitter = new EventEmitter<AchievementEvents>();

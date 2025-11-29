@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import type { UserAchievementWithDefinition } from "#shared/models/achievement/UserAchievementWithDefinition";
 import type { achievementDefinitions as baseAchievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
-import type { UserAchievementWithRelations } from "@esposter/db-schema";
 
 interface GridProps {
   achievementDefinitions: (typeof baseAchievementDefinitions)[number][];
-  userAchievements: UserAchievementWithRelations[];
+  userAchievements: UserAchievementWithDefinition[];
 }
 
 const { achievementDefinitions, userAchievements } = defineProps<GridProps>();

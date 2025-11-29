@@ -1,12 +1,12 @@
 <script setup lang="ts">
+import type { UserAchievementWithDefinition } from "#shared/models/achievement/UserAchievementWithDefinition";
 import type { achievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
-import type { UserAchievementWithRelations } from "@esposter/db-schema";
 
 import { getCategoryColor } from "@/services/achievement/getCategoryColor";
 
 interface GridItemProps {
   achievementDefinition: (typeof achievementDefinitions)[number];
-  userAchievement?: UserAchievementWithRelations;
+  userAchievement?: UserAchievementWithDefinition;
 }
 
 const { achievementDefinition, userAchievement } = defineProps<GridItemProps>();

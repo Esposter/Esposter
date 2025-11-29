@@ -13,8 +13,8 @@ const readUserAchievementsInputSchema = selectUserSchema.shape.id.optional();
 export type ReadUserAchievementsInput = z.infer<typeof readUserAchievementsInputSchema>;
 
 export const achievementRouter = router({
-  onUnlockAchievement: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {
-    for await (const [data] of on(achievementEventEmitter, "unlockAchievement", { signal }))
+  onUpdateAchievement: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {
+    for await (const [data] of on(achievementEventEmitter, "updateAchievement", { signal }))
       if (data.userId === ctx.session.user.id) yield data;
   }),
   readAchievementMap: standardRateLimitedProcedure.query(() =>

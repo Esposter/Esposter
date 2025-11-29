@@ -1,8 +1,9 @@
+import type { UserAchievementWithDefinition } from "#shared/models/achievement/UserAchievementWithDefinition";
 import type {
   AchievementDefinitionMap,
   achievementDefinitions as baseAchievementDefinitions,
 } from "#shared/services/achievement/achievementDefinitions";
-import type { UserAchievementWithRelations } from "@esposter/db-schema";
+import type { AchievementName, UserAchievementWithRelations } from "@esposter/db-schema";
 
 import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
 
@@ -14,7 +15,7 @@ export const useAchievementStore = defineStore("achievement", () => {
   const initializeAchievementDefinitionMap = (newAchievementDefinitionMap: typeof AchievementDefinitionMap) => {
     achievementDefinitionMap.value = newAchievementDefinitionMap;
   };
-  const userAchievements = ref<UserAchievementWithRelations[]>([]);
+  const userAchievements = ref<UserAchievementWithDefinition[]>([]);
   const stats = computed(() => {
     const achievementDefinitionMapValue = achievementDefinitionMap.value;
     if (!achievementDefinitionMapValue)
@@ -36,16 +37,25 @@ export const useAchievementStore = defineStore("achievement", () => {
       ),
     };
   });
-  const recentlyUnlockedUserAchievement = ref<null | UserAchievementWithRelations>();
-  const isAchievementUnlocked = (id: string): boolean => {
-    const userAchievement = userAchievements.value.find(({ achievementId }) => achievementId === id);
+  const recentlyUnlockedUserAchievement = ref<null | UserAchievementWithDefinition>();
+  const isAchievementUnlocked = (name: AchievementName): boolean => {
+    const userAchievement = userAchievements.value.find(({ achievement }) => achievement.name === name);
     return userAchievement?.unlockedAt !== null;
   };
-  const unlockAchievement = (userAchievement: UserAchievementWithRelations) => {
+  const updateAchievement = (userAchievement: UserAchievementWithRelations) => {
+    if (!achievementDefinitionMap.value) return;
+
+    const userAchievementWithDefinition: UserAchievementWithDefinition = {
+      ...userAchievement,
+      achievement: {
+        ...achievementDefinitionMap.value[userAchievement.achievement.name],
+        name: userAchievement.achievement.name,
+      },
+    };
     const index = userAchievements.value.findIndex(({ id }) => id === userAchievement.id);
-    if (index === -1) userAchievements.value.push({ ...userAchievement });
-    else userAchievements.value[index] = { ...userAchievement };
-    recentlyUnlockedUserAchievement.value = userAchievement;
+    if (index === -1) userAchievements.value.push(userAchievementWithDefinition);
+    else userAchievements.value[index] = userAchievementWithDefinition;
+    recentlyUnlockedUserAchievement.value = userAchievementWithDefinition;
   };
   return {
     achievementDefinitionMap,
@@ -54,7 +64,7 @@ export const useAchievementStore = defineStore("achievement", () => {
     isAchievementUnlocked,
     recentlyUnlockedUserAchievement,
     stats,
-    unlockAchievement,
+    updateAchievement,
     userAchievements,
   };
 });

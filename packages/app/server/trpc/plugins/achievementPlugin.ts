@@ -25,7 +25,11 @@ export const achievementPlugin = t.procedure.use(async ({ ctx, next, path, type 
     const achievement = await ctx.db.query.achievements.findFirst({
       where: (achievements, { eq }) => eq(achievements.name, name),
     });
-    if (!achievement) continue;
+    if (!achievement)
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: new InvalidOperationError(Operation.Read, DatabaseEntityType.Achievement, name).message,
+      });
 
     const userAchievement =
       (await ctx.db.query.userAchievements.findFirst({
@@ -41,12 +45,12 @@ export const achievementPlugin = t.procedure.use(async ({ ctx, next, path, type 
     if (!userAchievement)
       throw new TRPCError({
         code: "BAD_REQUEST",
-        message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Achievement, name).message,
+        message: new InvalidOperationError(Operation.Create, DatabaseEntityType.UserAchievement, name).message,
       });
     else if (userAchievement.unlockedAt) continue;
 
     const newAmount = userAchievement.amount + incrementAmount;
-    const updatedAchievement = (
+    const updatedUserAchievement = (
       await ctx.db
         .update(userAchievements)
         .set({
@@ -56,13 +60,13 @@ export const achievementPlugin = t.procedure.use(async ({ ctx, next, path, type 
         .where(eq(userAchievements.id, userAchievement.id))
         .returning()
     ).find(Boolean);
-    if (!updatedAchievement)
+    if (!updatedUserAchievement)
       throw new TRPCError({
         code: "BAD_REQUEST",
-        message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Achievement, name).message,
+        message: new InvalidOperationError(Operation.Update, DatabaseEntityType.UserAchievement, name).message,
       });
 
-    achievementEventEmitter.emit("unlockAchievement", updatedAchievement);
+    achievementEventEmitter.emit("updateAchievement", { ...updatedUserAchievement, achievement });
   }
 
   return result;
