@@ -4,6 +4,7 @@ import { uncapitalize } from "@/util/text/uncapitalize";
 
 export const RoutePath: {
   readonly About: "/about";
+  readonly Achievements: "/achievements";
   readonly Anime: "/anime";
   readonly Calendar: "/calendar";
   readonly Clicker: "/clicker";
@@ -31,6 +32,7 @@ export const RoutePath: {
   readonly WebpageEditor: "/webpage-editor";
 } = {
   About: "/about",
+  Achievements: "/achievements",
   Anime: "/anime",
   Calendar: "/calendar",
   Clicker: "/clicker",

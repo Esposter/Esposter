@@ -10,6 +10,16 @@ const { signOut } = authClient;
 const items = computed<ListLinkItem[]>(() => {
   const commonItems: ListLinkItem[] = [
     {
+      href: RoutePath.Achievements,
+      icon: "mdi-trophy",
+      title: "Achievements",
+    },
+    {
+      href: RoutePath.Anime,
+      icon: "custom:anime",
+      title: "Anime",
+    },
+    {
       href: RoutePath.About,
       icon: "mdi-information",
       title: "About",
@@ -20,11 +30,6 @@ const items = computed<ListLinkItem[]>(() => {
       icon: "mdi-book-open-page-variant",
       title: "Documentation",
       trailingSlash: "append",
-    },
-    {
-      href: RoutePath.Anime,
-      icon: "custom:anime",
-      title: "Anime",
     },
     {
       href: RoutePath.PrivacyPolicy,

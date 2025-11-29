@@ -1,4 +1,5 @@
 export enum DatabaseEntityType {
+  Achievement = "Achievement",
   AppUser = "AppUser",
   Invite = "Invite",
   Like = "Like",
@@ -8,6 +9,7 @@ export enum DatabaseEntityType {
   SearchHistory = "SearchHistory",
   Survey = "Survey",
   User = "User",
+  UserAchievement = "UserAchievement",
   UserStatus = "UserStatus",
   UserToRoom = "UserToRoom",
   VerificationToken = "VerificationToken",

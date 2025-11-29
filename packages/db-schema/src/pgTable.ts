@@ -17,7 +17,7 @@ export const pgTable = <
   }: {
     extraConfig?: (self: BuildExtraConfigColumns<TTableName, TColumnsMap, "pg">) => PgTableExtraConfigValue[];
     schema?: TSchema extends string ? PgSchema<TSchema> : undefined;
-  },
+  } = {},
 ) =>
   (schema?.table<TTableName, TColumnsMap & typeof metadataSchema>(
     name,
