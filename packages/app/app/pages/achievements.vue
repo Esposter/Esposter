@@ -2,6 +2,8 @@
 import { mapToUserAchievementWithDefinition } from "@/services/achievement/mapToUserAchievementWithDefinition";
 import { useAchievementStore } from "@/store/achievement";
 
+definePageMeta({ middleware: "auth" });
+
 const { $trpc } = useNuxtApp();
 const achievementStore = useAchievementStore();
 const { initializeAchievementDefinitionMap } = achievementStore;
