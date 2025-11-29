@@ -3,7 +3,8 @@ import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessage
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DeleteFileInput, DeleteLinkPreviewResponseInput } from "@@/server/trpc/routers/message";
-import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
+import type { MessageEntity } from "@esposter/db-schema";
+import type { DecorateRouterRecord, TrackedEnvelope } from "@trpc/server/unstable-core-do-not-import";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
@@ -239,7 +240,7 @@ describe("message", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
-  test.todo("on creates", async () => {
+  test("on creates", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
@@ -249,16 +250,20 @@ describe("message", () => {
     const onCreateMessage = await messageCaller.onCreateMessage({ roomId: newRoom.id });
     const message = getMessage(user.id);
     await mockSessionOnce(mockContext.db, user);
-    const [data, newMessage] = await Promise.all([
+    const [trackedData, newMessage] = await Promise.all([
       onCreateMessage[Symbol.asyncIterator]().next(),
       messageCaller.createMessage({ message, roomId: newRoom.id }),
     ]);
 
-    assert(!data.done);
+    assert(!trackedData.done);
 
-    expect(data.value.id).toBe(newMessage.rowKey);
-    expect(data.value.data).toHaveLength(1);
-    expect(data.value.data[0].message).toBe(message);
+    expect(trackedData.value).toHaveLength(3);
+
+    const [id, data] = trackedData.value as unknown as TrackedEnvelope<MessageEntity[]>;
+
+    expect(id).toBe(newMessage.rowKey);
+    expect(data).toHaveLength(1);
+    expect(data[0]).toStrictEqual(newMessage);
   });
 
   test("fails on creates with non-existent room", async () => {
