@@ -9,7 +9,7 @@ export const AchievementDefinitionMap = {
     amount: 100,
     category: AchievementCategory.Messaging,
     description: "Send 100 messages",
-    icon: "mdi-message-multiple",
+    icon: "mdi-message",
     points: 100,
     triggerPath: "message.createMessage" as const,
   }),

@@ -14,30 +14,32 @@ const { achievementDefinition, userAchievement } = defineProps<GridItemProps>();
 
 <template>
   <v-col cols="12" sm="6" md="4" lg="3">
-    <v-card :disabled="!userAchievement?.unlockedAt" hover>
-      <v-card-text text-center>
-        <v-avatar mb-2 :color="userAchievement?.unlockedAt ? 'success' : 'grey'" size="64">
-          <v-icon :icon="achievementDefinition.icon" size="40" color="white" />
+    <StyledCard h-full hover cursor-auto>
+      <v-card-text h-full flex flex-col items-center text-center>
+        <v-avatar :color="userAchievement?.unlockedAt ? 'success' : 'grey'" size="64">
+          <v-icon :icon="achievementDefinition.icon" color="white" size="40" />
         </v-avatar>
-        <div class="text-h6" font-bold>{{ achievementDefinition.name }}</div>
-        <div class="text-caption" mb-2 text-gray>{{ achievementDefinition.description }}</div>
-        <v-chip mb-2 :color="getCategoryColor(achievementDefinition.category)" size="small">
+        <div class="text-h6" mt-2 font-bold>{{ achievementDefinition.name }}</div>
+        <div class="text-caption">{{ achievementDefinition.description }}</div>
+        <v-spacer />
+        <v-chip mt-2 :color="getCategoryColor(achievementDefinition.category)" size="small">
           {{ achievementDefinition.category }}
         </v-chip>
-        <div class="text-caption" text-yellow font-bold>{{ achievementDefinition.points }} points</div>
-        <div v-if="achievementDefinition.amount && !userAchievement?.unlockedAt" mt-2>
-          <v-progress-linear
-            :model-value="(userAchievement?.amount ?? 0 / achievementDefinition.amount) * 100"
-            :height="6"
-            color="primary"
-            rounded
-          />
-          <div class="text-caption" mt-1>{{ userAchievement?.amount ?? 0 }} / {{ achievementDefinition.amount }}</div>
+        <div mt-2 class="text-caption" text-orange font-bold>{{ achievementDefinition.points }} points</div>
+        <v-progress-linear
+          :model-value="((userAchievement?.amount ?? 0) / (achievementDefinition.amount ?? 1)) * 100"
+          mt-2
+          :height="6"
+          color="primary"
+          rounded
+        />
+        <div class="text-caption" mt-1>
+          {{ userAchievement?.amount ?? 0 }} / {{ achievementDefinition.amount ?? 1 }}
         </div>
         <div v-if="userAchievement?.unlockedAt" class="text-caption" mt-2 text-gray>
-          Unlocked {{ new Date(userAchievement.unlockedAt).toLocaleDateString() }}
+          Unlocked {{ userAchievement.unlockedAt.toLocaleDateString() }}
         </div>
       </v-card-text>
-    </v-card>
+    </StyledCard>
   </v-col>
 </template>

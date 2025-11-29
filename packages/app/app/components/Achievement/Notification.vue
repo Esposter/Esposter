@@ -22,7 +22,7 @@ const snackbar = computed({
         <div class="text-h6" font-bold>Achievement Unlocked!</div>
         <div class="text-subtitle-1">{{ recentlyUnlockedUserAchievement.achievement.name }}</div>
         <div class="text-caption">{{ recentlyUnlockedUserAchievement.achievement.description }}</div>
-        <div class="text-caption" text-yellow font-bold>
+        <div class="text-caption" text-orange font-bold>
           +{{ recentlyUnlockedUserAchievement.achievement.points }} points
         </div>
       </div>

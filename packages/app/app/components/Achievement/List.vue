@@ -6,17 +6,16 @@ const achievementStore = useAchievementStore();
 const { achievementDefinitions, stats, userAchievements } = storeToRefs(achievementStore);
 const achievementListMap = computed(() => {
   const unlockedUserAchievements = userAchievements.value.filter(({ unlockedAt }) => unlockedAt !== null);
-  const lockedUserAchievements = userAchievements.value.filter(({ unlockedAt }) => unlockedAt === null);
   return {
     [AchievementStatus.All]: {
       achievementDefinitions: achievementDefinitions.value,
       userAchievements: userAchievements.value,
     },
     [AchievementStatus.Locked]: {
-      achievementDefinitions: achievementDefinitions.value.filter(({ name }) =>
-        lockedUserAchievements.some(({ achievement }) => achievement.name === name),
+      achievementDefinitions: achievementDefinitions.value.filter(
+        ({ name }) => !unlockedUserAchievements.some(({ achievement }) => achievement.name === name),
       ),
-      userAchievements: lockedUserAchievements,
+      userAchievements: userAchievements.value,
     },
     [AchievementStatus.Unlocked]: {
       achievementDefinitions: achievementDefinitions.value.filter(({ name }) =>
@@ -41,16 +40,15 @@ const tab = ref(AchievementStatus.All);
     <v-card-text>
       <v-progress-linear
         :model-value="(stats.unlockedAchievements / stats.totalAchievements) * 100"
-        mb-4
         :height="8"
         color="primary"
         rounded
       />
-      <v-tabs v-model="tab" mb-4>
+      <v-tabs v-model="tab" mt-4>
         <v-tab v-for="key in Object.values(AchievementStatus)" :key :value="key">{{ key }}</v-tab>
       </v-tabs>
-      <v-window v-model="tab">
-        <v-window-item v-for="key in Object.values(AchievementStatus)" :key :value="key">
+      <v-window v-model="tab" mt-4>
+        <v-window-item v-for="key in Object.values(AchievementStatus)" :key py-2 :value="key">
           <AchievementGrid :="achievementListMap[key]" />
         </v-window-item>
       </v-window>
