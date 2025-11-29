@@ -152,7 +152,7 @@ catalog:
   oxlint: ^1.30.0
   p-progress: ^1.0.0
   pathe: ^2.0.3
-  pdfjs-dist: ^5.4.394
+  pdfjs-dist: ^5.4.449
   phaser: ^4.0.0-rc.5
   phaser3-rex-plugins: ^1.80.17
   pinia: ^3.0.4
