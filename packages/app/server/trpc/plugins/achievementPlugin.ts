@@ -32,6 +32,7 @@ export const achievementPlugin = t.procedure.use(async ({ ctx, next, path, type 
         message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Achievement, name).message,
       });
 
+    let newAmount = incrementAmount;
     let userAchievement = await ctx.db.query.userAchievements.findFirst({
       where: (userAchievements, { and, eq }) =>
         and(eq(userAchievements.userId, userId), eq(userAchievements.achievementId, achievement.id)),
@@ -42,8 +43,8 @@ export const achievementPlugin = t.procedure.use(async ({ ctx, next, path, type 
           .insert(userAchievements)
           .values({
             achievementId: achievement.id,
-            amount: incrementAmount,
-            unlockedAt: incrementAmount >= amount ? new Date() : undefined,
+            amount: newAmount,
+            unlockedAt: newAmount >= amount ? new Date() : undefined,
             userId,
           })
           .returning()
@@ -62,8 +63,8 @@ export const achievementPlugin = t.procedure.use(async ({ ctx, next, path, type 
           ).message,
         });
     } else if (userAchievement.unlockedAt) continue;
+    else newAmount += userAchievement.amount;
 
-    const newAmount = userAchievement.amount + incrementAmount;
     const updatedUserAchievement = (
       await ctx.db
         .update(userAchievements)
