@@ -46,7 +46,7 @@ export const checkAchievementCondition = (
         case BinaryOperator.ne:
           return value !== condition.value;
         default:
-          exhaustiveGuard(condition.operator);
+          exhaustiveGuard(condition);
       }
     }
     // oxlint-disable-next-line no-fallthrough
