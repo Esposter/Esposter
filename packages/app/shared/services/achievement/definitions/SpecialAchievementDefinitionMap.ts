@@ -1,8 +1,8 @@
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
-import { AchievementConditionType } from "#shared/models/achievement/AchievementConditionType";
 import { AchievementOperator } from "#shared/models/achievement/AchievementOperator";
 import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
 import { SpecialAchievementName } from "@esposter/db-schema";
+import { AchievementConditionType } from "~~/shared/models/achievement/type/AchievementConditionType";
 
 export const SpecialAchievementDefinitionMap = {
   [SpecialAchievementName.AllCaps]: defineAchievementDefinition({
@@ -33,6 +33,27 @@ export const SpecialAchievementDefinitionMap = {
     points: 15,
     triggerPath: "message.createMessage" as const,
   }),
+  [SpecialAchievementName.EmojiLover]: defineAchievementDefinition({
+    amount: 1,
+    category: AchievementCategory.Special,
+    condition: {
+      operation: (value) => {
+        const segmenter = new Intl.Segmenter("en-US", { granularity: "grapheme" });
+        const segments = [...segmenter.segment(value)];
+        const emojiCount = segments.filter((segment) =>
+          /\p{Emoji_Presentation}|\p{Extended_Pictographic}/u.test(segment.segment),
+        ).length;
+        return emojiCount >= 10;
+      },
+      operator: AchievementOperator.Operation,
+      path: "message",
+      type: AchievementConditionType.Property,
+    },
+    description: "Send a message with 10+ emojis",
+    icon: "mdi-emoticon-excited",
+    points: 15,
+    triggerPath: "message.createMessage" as const,
+  }),
   [SpecialAchievementName.Meta]: defineAchievementDefinition({
     category: AchievementCategory.Special,
     condition: {
@@ -45,6 +66,20 @@ export const SpecialAchievementDefinitionMap = {
     icon: "mdi-trophy",
     isHidden: true,
     points: 100,
+    triggerPath: "message.createMessage" as const,
+  }),
+  [SpecialAchievementName.NumberEnthusiast]: defineAchievementDefinition({
+    amount: 1,
+    category: AchievementCategory.Special,
+    condition: {
+      operator: AchievementOperator.Matches,
+      path: "message",
+      type: AchievementConditionType.Property,
+      value: /\d{10,}/,
+    },
+    description: "Send a message with 10+ numbers",
+    icon: "mdi-numeric",
+    points: 20,
     triggerPath: "message.createMessage" as const,
   }),
   [SpecialAchievementName.Palindrome]: defineAchievementDefinition({

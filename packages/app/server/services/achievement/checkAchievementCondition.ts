@@ -1,10 +1,10 @@
-import { AchievementConditionType } from "#shared/models/achievement/AchievementConditionType";
 import { AchievementOperator } from "#shared/models/achievement/AchievementOperator";
 import { achievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
 import { dayjs } from "#shared/services/dayjs";
 import { EN_US_SEGMENTER } from "@/services/shared/constants";
 import { BinaryOperator } from "@esposter/db-schema";
 import { exhaustiveGuard } from "@esposter/shared";
+import { AchievementConditionType } from "~~/shared/models/achievement/type/AchievementConditionType";
 
 export const checkAchievementCondition = (
   condition: NonNullable<(typeof achievementDefinitions)[number]["condition"]>,
@@ -29,6 +29,9 @@ export const checkAchievementCondition = (
         case AchievementOperator.Matches:
           if (!(condition.value instanceof RegExp)) return false;
           return typeof value === "string" && condition.value.test(value);
+        case AchievementOperator.Operation:
+          // @ts-expect-error We can assume types are correct as achievementDefinitions is defined properly
+          return condition.operation(value);
         case BinaryOperator.eq:
           return value === condition.value;
         case BinaryOperator.ge:

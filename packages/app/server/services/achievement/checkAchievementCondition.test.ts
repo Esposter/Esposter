@@ -218,6 +218,30 @@ describe(checkAchievementCondition, () => {
         data,
       ),
     ).toBe(false);
+
+    expect(
+      checkAchievementCondition(
+        {
+          operation: (value) => value === message,
+          operator: AchievementOperator.Operation,
+          path: "message",
+          type: AchievementConditionType.Property,
+        },
+        data,
+      ),
+    ).toBe(true);
+
+    expect(
+      checkAchievementCondition(
+        {
+          operation: (value) => value !== message,
+          operator: AchievementOperator.Operation,
+          path: "message",
+          type: AchievementConditionType.Property,
+        },
+        data,
+      ),
+    ).toBe(false);
   });
 
   test(AchievementConditionType.And, () => {
