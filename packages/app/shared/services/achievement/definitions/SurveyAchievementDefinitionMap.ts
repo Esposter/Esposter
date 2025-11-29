@@ -1,0 +1,86 @@
+import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
+import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
+import { AchievementName } from "@esposter/db-schema";
+
+export const SurveyAchievementDefinitionMap = {
+  [AchievementName.DataCollector]: defineAchievementDefinition({
+    amount: 100,
+    category: AchievementCategory.Survey,
+    description: "Receive 100 survey responses",
+    icon: "mdi-database",
+    points: 150,
+    triggerPath: "survey.createSurveyResponse" as const,
+  }),
+  [AchievementName.Modeler]: defineAchievementDefinition({
+    amount: 1,
+    category: AchievementCategory.Survey,
+    description: "Update a survey model",
+    icon: "mdi-form-select",
+    points: 15,
+    triggerPath: "survey.updateSurveyModel" as const,
+  }),
+  [AchievementName.Publisher]: defineAchievementDefinition({
+    amount: 1,
+    category: AchievementCategory.Survey,
+    description: "Publish a survey",
+    icon: "mdi-publish",
+    points: 25,
+    triggerPath: "survey.publishSurvey" as const,
+  }),
+  [AchievementName.Respondent]: defineAchievementDefinition({
+    amount: 1,
+    category: AchievementCategory.Survey,
+    description: "Respond to a survey",
+    icon: "mdi-clipboard-check",
+    points: 10,
+    triggerPath: "survey.createSurveyResponse" as const,
+  }),
+  [AchievementName.ResponseEditor]: defineAchievementDefinition({
+    amount: 1,
+    category: AchievementCategory.Survey,
+    description: "Edit a survey response",
+    icon: "mdi-clipboard-edit",
+    points: 5,
+    triggerPath: "survey.updateSurveyResponse" as const,
+  }),
+  [AchievementName.SurveyDeleter]: defineAchievementDefinition({
+    amount: 1,
+    category: AchievementCategory.Survey,
+    description: "Delete a survey",
+    icon: "mdi-delete-sweep",
+    points: 5,
+    triggerPath: "survey.deleteSurvey" as const,
+  }),
+  [AchievementName.SurveyEditor]: defineAchievementDefinition({
+    amount: 1,
+    category: AchievementCategory.Survey,
+    description: "Edit a survey",
+    icon: "mdi-file-document-edit",
+    points: 5,
+    triggerPath: "survey.updateSurvey" as const,
+  }),
+  [AchievementName.SurveyGuru]: defineAchievementDefinition({
+    amount: 50,
+    category: AchievementCategory.Survey,
+    description: "Publish 50 surveys",
+    icon: "mdi-trophy-variant",
+    points: 200,
+    triggerPath: "survey.publishSurvey" as const,
+  }),
+  [AchievementName.Surveyor]: defineAchievementDefinition({
+    amount: 1,
+    category: AchievementCategory.Survey,
+    description: "Create a survey",
+    icon: "mdi-poll",
+    points: 15,
+    triggerPath: "survey.createSurvey" as const,
+  }),
+  [AchievementName.SurveySays]: defineAchievementDefinition({
+    amount: 10,
+    category: AchievementCategory.Survey,
+    description: "Create 10 surveys",
+    icon: "mdi-clipboard-list",
+    points: 50,
+    triggerPath: "survey.createSurvey" as const,
+  }),
+};

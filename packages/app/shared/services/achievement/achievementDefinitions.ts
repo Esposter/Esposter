@@ -1,151 +1,30 @@
-import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
-import { AchievementConditionType } from "#shared/models/achievement/AchievementConditionType";
-import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
+import { ClickerAchievementDefinitionMap } from "#shared/services/achievement/definitions/ClickerAchievementDefinitionMap";
+import { DungeonsAchievementDefinitionMap } from "#shared/services/achievement/definitions/DungeonsAchievementDefinitionMap";
+import { EmailAchievementDefinitionMap } from "#shared/services/achievement/definitions/EmailAchievementDefinitionMap";
+import { FlowchartAchievementDefinitionMap } from "#shared/services/achievement/definitions/FlowchartAchievementDefinitionMap";
+import { LikeAchievementDefinitionMap } from "#shared/services/achievement/definitions/LikeAchievementDefinitionMap";
+import { MessageAchievementDefinitionMap } from "#shared/services/achievement/definitions/MessageAchievementDefinitionMap";
+import { PostAchievementDefinitionMap } from "#shared/services/achievement/definitions/PostAchievementDefinitionMap";
+import { RoomAchievementDefinitionMap } from "#shared/services/achievement/definitions/RoomAchievementDefinitionMap";
+import { SpecialAchievementDefinitionMap } from "#shared/services/achievement/definitions/SpecialAchievementDefinitionMap";
+import { SurveyAchievementDefinitionMap } from "#shared/services/achievement/definitions/SurveyAchievementDefinitionMap";
+import { TableAchievementDefinitionMap } from "#shared/services/achievement/definitions/TableAchievementDefinitionMap";
+import { WebpageAchievementDefinitionMap } from "#shared/services/achievement/definitions/WebpageAchievementDefinitionMap";
 import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
-import { AchievementName, BinaryOperator } from "@esposter/db-schema";
 
 export const AchievementDefinitionMap = {
-  [AchievementName.CenturyClub]: defineAchievementDefinition({
-    amount: 100,
-    category: AchievementCategory.Messaging,
-    description: "Send 100 messages",
-    icon: "mdi-message",
-    points: 100,
-    triggerPath: "message.createMessage" as const,
-  }),
-  [AchievementName.ConversationKeeper]: defineAchievementDefinition({
-    amount: 50,
-    category: AchievementCategory.Social,
-    condition: {
-      operator: BinaryOperator.ne,
-      path: "replyRowKey",
-      type: AchievementConditionType.Property,
-      value: undefined,
-    },
-    description: "Reply to 50 messages",
-    icon: "mdi-reply",
-    points: 75,
-    triggerPath: "message.createMessage" as const,
-  }),
-  [AchievementName.EssayWriter]: defineAchievementDefinition({
-    category: AchievementCategory.Milestone,
-    condition: {
-      operator: BinaryOperator.ge,
-      path: "message.length",
-      type: AchievementConditionType.Property,
-      value: 1000,
-    },
-    description: "Send a message with over 1,000 characters",
-    icon: "mdi-text-long",
-    points: 40,
-    triggerPath: "message.createMessage" as const,
-  }),
-  [AchievementName.FileSharer]: defineAchievementDefinition({
-    amount: 1,
-    category: AchievementCategory.Messaging,
-    condition: {
-      operator: BinaryOperator.gt,
-      path: "files.length",
-      type: AchievementConditionType.Property,
-      value: 0,
-    },
-    description: "Share your first file",
-    icon: "mdi-file-upload",
-    points: 20,
-    triggerPath: "message.createMessage" as const,
-  }),
-  [AchievementName.FirstMessage]: defineAchievementDefinition({
-    amount: 1,
-    category: AchievementCategory.Messaging,
-    description: "Send your first message",
-    icon: "mdi-message-text",
-    points: 10,
-    triggerPath: "message.createMessage" as const,
-  }),
-  [AchievementName.MessageForwarder]: defineAchievementDefinition({
-    amount: 1,
-    category: AchievementCategory.Social,
-    description: "Forward a message to another room",
-    icon: "mdi-share",
-    points: 15,
-    triggerPath: "message.forwardMessage" as const,
-  }),
-  [AchievementName.MessageMaster]: defineAchievementDefinition({
-    amount: 1000,
-    category: AchievementCategory.Messaging,
-    description: "Send 1,000 messages",
-    icon: "mdi-message-star",
-    points: 500,
-    triggerPath: "message.createMessage" as const,
-  }),
-  [AchievementName.Meta]: defineAchievementDefinition({
-    category: AchievementCategory.Special,
-    condition: {
-      operator: "contains",
-      path: "message",
-      type: AchievementConditionType.Property,
-      value: "achievement unlocked",
-    },
-    description: 'Send a message containing "achievement unlocked"',
-    icon: "mdi-trophy",
-    isHidden: true,
-    points: 100,
-    triggerPath: "message.createMessage" as const,
-  }),
-  [AchievementName.NightOwl]: defineAchievementDefinition({
-    category: AchievementCategory.Milestone,
-    condition: {
-      max: 5,
-      min: 0,
-      referenceUnit: "day",
-      type: AchievementConditionType.Time,
-      unit: "hour",
-    },
-    description: "Send a message between midnight and 5 AM",
-    icon: "mdi-weather-night",
-    points: 30,
-    triggerPath: "message.createMessage" as const,
-  }),
-  [AchievementName.PinCollector]: defineAchievementDefinition({
-    amount: 10,
-    category: AchievementCategory.Messaging,
-    description: "Pin 10 important messages",
-    icon: "mdi-pin",
-    points: 50,
-    triggerPath: "message.pinMessage" as const,
-  }),
-  [AchievementName.ProlificPoster]: defineAchievementDefinition({
-    amount: 25,
-    category: AchievementCategory.Milestone,
-    description: "Create 25 posts",
-    icon: "mdi-magnify",
-    points: 35,
-    triggerPath: "post.createPost" as const,
-  }),
-  [AchievementName.RoomCreator]: defineAchievementDefinition({
-    amount: 1,
-    category: AchievementCategory.Social,
-    description: "Create your first chat room",
-    icon: "mdi-forum",
-    points: 25,
-    triggerPath: "room.createRoom" as const,
-  }),
-  [AchievementName.SecondThoughts]: defineAchievementDefinition({
-    amount: 10,
-    category: AchievementCategory.Special,
-    description: "Delete 10 of your own messages",
-    icon: "mdi-delete",
-    points: 20,
-    triggerPath: "message.deleteMessage" as const,
-  }),
-  [AchievementName.Socialite]: defineAchievementDefinition({
-    amount: 5,
-    category: AchievementCategory.Social,
-    description: "Join 5 different chat rooms",
-    icon: "mdi-account-group",
-    points: 50,
-    triggerPath: "room.joinRoom" as const,
-  }),
+  ...ClickerAchievementDefinitionMap,
+  ...DungeonsAchievementDefinitionMap,
+  ...EmailAchievementDefinitionMap,
+  ...FlowchartAchievementDefinitionMap,
+  ...LikeAchievementDefinitionMap,
+  ...MessageAchievementDefinitionMap,
+  ...PostAchievementDefinitionMap,
+  ...RoomAchievementDefinitionMap,
+  ...SpecialAchievementDefinitionMap,
+  ...SurveyAchievementDefinitionMap,
+  ...TableAchievementDefinitionMap,
+  ...WebpageAchievementDefinitionMap,
 } as const;
 
 export const achievementDefinitions = parseDictionaryToArray(AchievementDefinitionMap, "name");
