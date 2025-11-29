@@ -1,12 +1,12 @@
+import type { AchievementEvents } from "@@/server/services/achievement/events/achievementEventEmitter";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
-import type { AchievementEvents } from "~~/server/services/achievement/events/achievementEventEmitter";
 
 import { AchievementDefinitionMap } from "#shared/services/achievement/achievementDefinitions";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession } from "@@/server/trpc/context.test";
 import { trpcRouter } from "@@/server/trpc/routers";
-import { AchievementName, achievements } from "@esposter/db-schema";
+import { AchievementName, achievements, UserAchievementRelations } from "@esposter/db-schema";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("achievement", () => {
@@ -85,7 +85,7 @@ describe("achievement", () => {
               eq(userAchievements.achievementId, unlockedAchievements[0].achievementId),
               eq(userAchievements.userId, getMockSession().user.id),
             ),
-          with: { achievement: true },
+          with: UserAchievementRelations,
         });
         assert(userAchievement);
 
