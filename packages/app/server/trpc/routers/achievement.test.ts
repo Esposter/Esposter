@@ -24,7 +24,17 @@ describe("achievement", () => {
 
     const result = await caller.readAchievementMap();
 
-    expect(result).toBe(AchievementDefinitionMap);
+    expect(result).toBe(
+      Object.fromEntries(
+        Object.entries(AchievementDefinitionMap).map(([achievementName, achievementDefinition]) => [
+          achievementName,
+          {
+            ...achievementDefinition,
+            description: achievementDefinition.isHidden ? "???" : achievementDefinition.description,
+          },
+        ]),
+      ),
+    );
   });
 
   test("readUserAchievements", async () => {

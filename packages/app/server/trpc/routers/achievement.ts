@@ -27,9 +27,13 @@ export const achievementRouter = router({
     return Object.fromEntries(
       Object.entries(AchievementDefinitionMap).map(([achievementName, achievementDefinition]) => [
         achievementName,
-        achievementDefinition.isHidden && !unlockedUserAchievementNames.some(({ name }) => name === achievementName)
-          ? { ...achievementDefinition, description: "???" }
-          : achievementDefinition,
+        {
+          ...achievementDefinition,
+          description:
+            achievementDefinition.isHidden && !unlockedUserAchievementNames.some(({ name }) => name === achievementName)
+              ? "???"
+              : achievementDefinition.description,
+        },
       ]),
     ) as typeof AchievementDefinitionMap;
   }),
