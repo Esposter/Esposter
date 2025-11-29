@@ -29,7 +29,7 @@ const tab = ref(AchievementStatus.All);
 </script>
 
 <template>
-  <v-card>
+  <StyledCard>
     <v-card-title flex items-center>
       <v-icon icon="mdi-trophy" mr-2 />
       Achievements
@@ -53,5 +53,5 @@ const tab = ref(AchievementStatus.All);
         </v-window-item>
       </v-window>
     </v-card-text>
-  </v-card>
+  </StyledCard>
 </template>

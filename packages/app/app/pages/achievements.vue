@@ -6,10 +6,10 @@ const { $trpc } = useNuxtApp();
 const achievementStore = useAchievementStore();
 const { initializeAchievementDefinitionMap } = achievementStore;
 const { userAchievements } = storeToRefs(achievementStore);
-const newAchievementDefinitionMap = await $trpc.achievement.readAllAchievementMap.query();
-initializeAchievementDefinitionMap(newAchievementDefinitionMap);
+const readAchievementDefinitionMap = await $trpc.achievement.readAchievementMap.query();
+initializeAchievementDefinitionMap(readAchievementDefinitionMap);
 userAchievements.value = (await $trpc.achievement.readUserAchievements.query()).map((achievement) =>
-  mapToUserAchievementWithDefinition(achievement, newAchievementDefinitionMap[achievement.achievement.name]),
+  mapToUserAchievementWithDefinition(achievement, readAchievementDefinitionMap[achievement.achievement.name]),
 );
 </script>
 

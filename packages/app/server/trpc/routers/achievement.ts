@@ -6,7 +6,7 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
 import { achievements, selectUserSchema, userAchievements } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
-import { and, eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { z } from "zod";
 
 const readUserAchievementsInputSchema = selectUserSchema.shape.id.optional();
@@ -17,10 +17,22 @@ export const achievementRouter = router({
     for await (const [data] of on(achievementEventEmitter, "updateAchievement", { signal }))
       if (data.userId === ctx.session.user.id) yield data;
   }),
-  readAchievementMap: standardRateLimitedProcedure.query(() =>
-    Object.fromEntries(Object.entries(AchievementDefinitionMap).filter(([, { isHidden }]) => !isHidden)),
-  ),
-  readAllAchievementMap: standardAuthedProcedure.query(() => AchievementDefinitionMap),
+  readAchievementMap: standardAuthedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session.user.id;
+    const unlockedUserAchievementNames = await ctx.db
+      .select({ name: achievements.name })
+      .from(userAchievements)
+      .innerJoin(achievements, eq(achievements.id, userAchievements.achievementId))
+      .where(and(eq(userAchievements.userId, userId), isNull(userAchievements.unlockedAt)));
+    return Object.fromEntries(
+      Object.entries(AchievementDefinitionMap).map(([achievementName, achievementDefinition]) => [
+        achievementName,
+        achievementDefinition.isHidden && !unlockedUserAchievementNames.some(({ name }) => name === achievementName)
+          ? { ...achievementDefinition, description: "???" }
+          : achievementDefinition,
+      ]),
+    ) as typeof AchievementDefinitionMap;
+  }),
   readUserAchievements: standardRateLimitedProcedure
     .input(readUserAchievementsInputSchema)
     .query(async ({ ctx, input }) => {

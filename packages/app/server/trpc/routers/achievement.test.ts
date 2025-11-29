@@ -24,16 +24,6 @@ describe("achievement", () => {
 
     const result = await caller.readAchievementMap();
 
-    expect(result).toStrictEqual(
-      Object.fromEntries(Object.entries(AchievementDefinitionMap).filter(([, { isHidden }]) => !isHidden)),
-    );
-  });
-
-  test("readAllAchievementMap", async () => {
-    expect.hasAssertions();
-
-    const result = await caller.readAllAchievementMap();
-
     expect(result).toBe(AchievementDefinitionMap);
   });
 

@@ -3,6 +3,7 @@ import type { UserAchievementWithDefinition } from "#shared/models/achievement/U
 import type { achievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
 
 import { getCategoryColor } from "@/services/achievement/getCategoryColor";
+import { prettify } from "@/util/text/prettify";
 
 interface GridItemProps {
   achievementDefinition: (typeof achievementDefinitions)[number];
@@ -19,7 +20,7 @@ const { achievementDefinition, userAchievement } = defineProps<GridItemProps>();
         <v-avatar :color="userAchievement?.unlockedAt ? 'success' : 'grey'" size="64">
           <v-icon :icon="achievementDefinition.icon" color="white" size="40" />
         </v-avatar>
-        <div class="text-h6" mt-2 font-bold>{{ achievementDefinition.name }}</div>
+        <div class="text-h6" mt-2 font-bold>{{ prettify(achievementDefinition.name) }}</div>
         <div class="text-caption">{{ achievementDefinition.description }}</div>
         <v-spacer />
         <v-chip mt-2 :color="getCategoryColor(achievementDefinition.category)" size="small">
