@@ -1,8 +1,23 @@
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
+import { AchievementConditionType } from "#shared/models/achievement/AchievementConditionType";
 import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
-import { AchievementName } from "@esposter/db-schema";
+import { AchievementName, BinaryOperator } from "@esposter/db-schema";
 
 export const PostAchievementDefinitionMap = {
+  [AchievementName.BriefComment]: defineAchievementDefinition({
+    amount: 50,
+    category: AchievementCategory.Post,
+    condition: {
+      operator: BinaryOperator.lt,
+      path: "description.length",
+      type: AchievementConditionType.Property,
+      value: 50,
+    },
+    description: "Create 50 comments under 50 characters",
+    icon: "mdi-comment-flash",
+    points: 40,
+    triggerPath: "post.createComment" as const,
+  }),
   [AchievementName.Commentator]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Post,
@@ -26,6 +41,34 @@ export const PostAchievementDefinitionMap = {
     icon: "mdi-comment-edit",
     points: 5,
     triggerPath: "post.updateComment" as const,
+  }),
+  [AchievementName.DetailedPost]: defineAchievementDefinition({
+    amount: 1,
+    category: AchievementCategory.Post,
+    condition: {
+      operator: BinaryOperator.ge,
+      path: "description.length",
+      type: AchievementConditionType.Property,
+      value: 1000,
+    },
+    description: "Create a post with 1000-4999 characters",
+    icon: "mdi-text-box",
+    points: 30,
+    triggerPath: "post.createPost" as const,
+  }),
+  [AchievementName.Novelist]: defineAchievementDefinition({
+    amount: 1,
+    category: AchievementCategory.Post,
+    condition: {
+      operator: BinaryOperator.ge,
+      path: "description.length",
+      type: AchievementConditionType.Property,
+      value: 5000,
+    },
+    description: "Create a post with 5000+ characters",
+    icon: "mdi-book-open-page-variant",
+    points: 50,
+    triggerPath: "post.createPost" as const,
   }),
   [AchievementName.PostDeleter]: defineAchievementDefinition({
     amount: 1,

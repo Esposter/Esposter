@@ -1,4 +1,5 @@
 import { AchievementConditionType } from "#shared/models/achievement/AchievementConditionType";
+import { AchievementOperator } from "#shared/models/achievement/AchievementOperator";
 import { checkAchievementCondition } from "@@/server/services/achievement/checkAchievementCondition";
 import { BinaryOperator } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
@@ -150,13 +151,70 @@ describe(checkAchievementCondition, () => {
 
     expect(
       checkAchievementCondition(
-        { operator: "contains", path: "message", type: AchievementConditionType.Property, value: message },
+        {
+          operator: AchievementOperator.Contains,
+          path: "message",
+          type: AchievementConditionType.Property,
+          value: message,
+        },
         data,
       ),
     ).toBe(true);
     expect(
       checkAchievementCondition(
-        { operator: "contains", path: "message", type: AchievementConditionType.Property, value: "0" },
+        {
+          operator: AchievementOperator.Contains,
+          path: "message",
+          type: AchievementConditionType.Property,
+          value: "0",
+        },
+        data,
+      ),
+    ).toBe(false);
+
+    expect(
+      checkAchievementCondition(
+        {
+          operator: AchievementOperator.Matches,
+          path: "message",
+          type: AchievementConditionType.Property,
+          value: /^[a-z]+$/,
+        },
+        data,
+      ),
+    ).toBe(true);
+    expect(
+      checkAchievementCondition(
+        {
+          operator: AchievementOperator.Matches,
+          path: "message",
+          type: AchievementConditionType.Property,
+          value: /^[0-9]+$/,
+        },
+        data,
+      ),
+    ).toBe(false);
+
+    expect(
+      checkAchievementCondition(
+        {
+          operator: AchievementOperator.IsPalindrome,
+          path: "message",
+          type: AchievementConditionType.Property,
+          value: true,
+        },
+        { message: "" },
+      ),
+    ).toBe(true);
+
+    expect(
+      checkAchievementCondition(
+        {
+          operator: AchievementOperator.IsPalindrome,
+          path: "message",
+          type: AchievementConditionType.Property,
+          value: true,
+        },
         data,
       ),
     ).toBe(false);

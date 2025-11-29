@@ -1,13 +1,42 @@
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
 import { AchievementConditionType } from "#shared/models/achievement/AchievementConditionType";
+import { AchievementOperator } from "#shared/models/achievement/AchievementOperator";
 import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
 import { AchievementName } from "@esposter/db-schema";
 
 export const SpecialAchievementDefinitionMap = {
+  [AchievementName.AllCaps]: defineAchievementDefinition({
+    amount: 1,
+    category: AchievementCategory.Special,
+    condition: {
+      operator: AchievementOperator.Matches,
+      path: "message",
+      type: AchievementConditionType.Property,
+      value: /^[A-Z\s!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?0-9]*$/,
+    },
+    description: "Send a message in all uppercase",
+    icon: "mdi-format-letter-case-upper",
+    points: 15,
+    triggerPath: "message.createMessage" as const,
+  }),
+  [AchievementName.AllLower]: defineAchievementDefinition({
+    amount: 1,
+    category: AchievementCategory.Special,
+    condition: {
+      operator: AchievementOperator.Matches,
+      path: "message",
+      type: AchievementConditionType.Property,
+      value: /^[a-z\s!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?0-9]*$/,
+    },
+    description: "Send a message in all lowercase",
+    icon: "mdi-format-letter-case-lower",
+    points: 15,
+    triggerPath: "message.createMessage" as const,
+  }),
   [AchievementName.Meta]: defineAchievementDefinition({
     category: AchievementCategory.Special,
     condition: {
-      operator: "contains",
+      operator: AchievementOperator.Contains,
       path: "message",
       type: AchievementConditionType.Property,
       value: "achievement unlocked",
@@ -16,6 +45,21 @@ export const SpecialAchievementDefinitionMap = {
     icon: "mdi-trophy",
     isHidden: true,
     points: 100,
+    triggerPath: "message.createMessage" as const,
+  }),
+  [AchievementName.Palindrome]: defineAchievementDefinition({
+    amount: 1,
+    category: AchievementCategory.Special,
+    condition: {
+      operator: AchievementOperator.IsPalindrome,
+      path: "message",
+      type: AchievementConditionType.Property,
+      value: true,
+    },
+    description: "Send a palindrome message",
+    icon: "mdi-mirror",
+    isHidden: true,
+    points: 50,
     triggerPath: "message.createMessage" as const,
   }),
 };

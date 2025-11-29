@@ -1,6 +1,8 @@
 import { AchievementConditionType } from "#shared/models/achievement/AchievementConditionType";
+import { AchievementOperator } from "#shared/models/achievement/AchievementOperator";
 import { achievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
 import { dayjs } from "#shared/services/dayjs";
+import { EN_US_SEGMENTER } from "@/services/shared/constants";
 import { BinaryOperator } from "@esposter/db-schema";
 import { exhaustiveGuard } from "@esposter/shared";
 
@@ -17,6 +19,16 @@ export const checkAchievementCondition = (
       // @ts-expect-error We can assume types are correct as achievementDefinitions is defined properly
       const value = condition.path.split(".").reduce((property, key) => property[key], data);
       switch (condition.operator) {
+        case AchievementOperator.Contains:
+          return typeof value === "string" && value.toLowerCase().includes(condition.value.toLowerCase());
+        case AchievementOperator.IsPalindrome: {
+          if (typeof value !== "string") return false;
+          const sanitizedValue = value.toLowerCase().replaceAll(/[^a-z0-9]/g, "");
+          return sanitizedValue === [...EN_US_SEGMENTER.segment(sanitizedValue)].toReversed().join("");
+        }
+        case AchievementOperator.Matches:
+          if (!(condition.value instanceof RegExp)) return false;
+          return typeof value === "string" && condition.value.test(value);
         case BinaryOperator.eq:
           return value === condition.value;
         case BinaryOperator.ge:
@@ -33,8 +45,6 @@ export const checkAchievementCondition = (
           return value < condition.value;
         case BinaryOperator.ne:
           return value !== condition.value;
-        case "contains":
-          return typeof value === "string" && value.toLowerCase().includes(String(condition.value).toLowerCase());
         default:
           exhaustiveGuard(condition.operator);
       }

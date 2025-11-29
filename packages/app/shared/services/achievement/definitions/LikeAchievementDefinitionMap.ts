@@ -3,6 +3,14 @@ import { defineAchievementDefinition } from "#shared/services/achievement/define
 import { AchievementName } from "@esposter/db-schema";
 
 export const LikeAchievementDefinitionMap = {
+  [AchievementName.CriticalThinker]: defineAchievementDefinition({
+    amount: 50,
+    category: AchievementCategory.Like,
+    description: "Remove 50 likes",
+    icon: "mdi-thumb-down-outline",
+    points: 40,
+    triggerPath: "like.deleteLike" as const,
+  }),
   [AchievementName.Liker]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Like,

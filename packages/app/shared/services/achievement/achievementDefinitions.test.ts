@@ -10,5 +10,6 @@ describe("achievementDefinitions", () => {
     expect.hasAssertions();
 
     expect(achievementDefinitionNames.difference(achievementNames)).toHaveLength(0);
+    expect(achievementNames.difference(achievementDefinitionNames)).toHaveLength(0);
   });
 });
