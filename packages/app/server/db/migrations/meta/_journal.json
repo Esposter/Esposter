@@ -225,6 +225,13 @@
       "when": 1764407143001,
       "tag": "0031_strange_blindfold",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1764417771860,
+      "tag": "0032_pretty_leo",
+      "breakpoints": true
     }
   ]
 }
