@@ -1,10 +1,10 @@
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
 import { AchievementConditionType } from "#shared/models/achievement/AchievementConditionType";
 import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
-import { AchievementName, BinaryOperator } from "@esposter/db-schema";
+import { BinaryOperator, PostAchievementName } from "@esposter/db-schema";
 
 export const PostAchievementDefinitionMap = {
-  [AchievementName.BriefComment]: defineAchievementDefinition({
+  [PostAchievementName.BriefComment]: defineAchievementDefinition({
     amount: 50,
     category: AchievementCategory.Post,
     condition: {
@@ -18,7 +18,7 @@ export const PostAchievementDefinitionMap = {
     points: 40,
     triggerPath: "post.createComment" as const,
   }),
-  [AchievementName.Commentator]: defineAchievementDefinition({
+  [PostAchievementName.Commentator]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Post,
     description: "Comment on a post",
@@ -26,7 +26,7 @@ export const PostAchievementDefinitionMap = {
     points: 10,
     triggerPath: "post.createComment" as const,
   }),
-  [AchievementName.CommentDeleter]: defineAchievementDefinition({
+  [PostAchievementName.CommentDeleter]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Post,
     description: "Delete a comment",
@@ -34,7 +34,7 @@ export const PostAchievementDefinitionMap = {
     points: 5,
     triggerPath: "post.deleteComment" as const,
   }),
-  [AchievementName.CommentEditor]: defineAchievementDefinition({
+  [PostAchievementName.CommentEditor]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Post,
     description: "Edit a comment",
@@ -42,7 +42,7 @@ export const PostAchievementDefinitionMap = {
     points: 5,
     triggerPath: "post.updateComment" as const,
   }),
-  [AchievementName.DetailedPost]: defineAchievementDefinition({
+  [PostAchievementName.DetailedPost]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Post,
     condition: {
@@ -56,7 +56,7 @@ export const PostAchievementDefinitionMap = {
     points: 30,
     triggerPath: "post.createPost" as const,
   }),
-  [AchievementName.Novelist]: defineAchievementDefinition({
+  [PostAchievementName.Novelist]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Post,
     condition: {
@@ -70,7 +70,7 @@ export const PostAchievementDefinitionMap = {
     points: 50,
     triggerPath: "post.createPost" as const,
   }),
-  [AchievementName.PostDeleter]: defineAchievementDefinition({
+  [PostAchievementName.PostDeleter]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Post,
     description: "Delete a post",
@@ -78,7 +78,7 @@ export const PostAchievementDefinitionMap = {
     points: 5,
     triggerPath: "post.deletePost" as const,
   }),
-  [AchievementName.PostEditor]: defineAchievementDefinition({
+  [PostAchievementName.PostEditor]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Post,
     description: "Edit a post",
@@ -86,7 +86,7 @@ export const PostAchievementDefinitionMap = {
     points: 5,
     triggerPath: "post.updatePost" as const,
   }),
-  [AchievementName.PosterChild]: defineAchievementDefinition({
+  [PostAchievementName.PosterChild]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Post,
     description: "Create a post",
@@ -94,7 +94,7 @@ export const PostAchievementDefinitionMap = {
     points: 10,
     triggerPath: "post.createPost" as const,
   }),
-  [AchievementName.ProlificPoster]: defineAchievementDefinition({
+  [PostAchievementName.ProlificPoster]: defineAchievementDefinition({
     amount: 25,
     category: AchievementCategory.Post,
     description: "Create 25 posts",

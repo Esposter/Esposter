@@ -1,9 +1,9 @@
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
 import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
-import { AchievementName } from "@esposter/db-schema";
+import { DungeonsAchievementName } from "@esposter/db-schema";
 
 export const DungeonsAchievementDefinitionMap = {
-  [AchievementName.DungeonCrawler]: defineAchievementDefinition({
+  [DungeonsAchievementName.DungeonCrawler]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Dungeons,
     description: "Save your dungeon game",
@@ -11,7 +11,7 @@ export const DungeonsAchievementDefinitionMap = {
     points: 10,
     triggerPath: "dungeons.saveDungeons" as const,
   }),
-  [AchievementName.DungeonMaster]: defineAchievementDefinition({
+  [DungeonsAchievementName.DungeonMaster]: defineAchievementDefinition({
     amount: 50,
     category: AchievementCategory.Dungeons,
     description: "Save your dungeon game 50 times",

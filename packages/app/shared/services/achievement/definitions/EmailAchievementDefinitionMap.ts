@@ -1,9 +1,9 @@
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
 import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
-import { AchievementName } from "@esposter/db-schema";
+import { EmailAchievementName } from "@esposter/db-schema";
 
 export const EmailAchievementDefinitionMap = {
-  [AchievementName.EmailMarketer]: defineAchievementDefinition({
+  [EmailAchievementName.EmailMarketer]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Email,
     description: "Save an email template",

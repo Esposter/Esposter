@@ -1,9 +1,9 @@
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
 import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
-import { AchievementName } from "@esposter/db-schema";
+import { LikeAchievementName } from "@esposter/db-schema";
 
 export const LikeAchievementDefinitionMap = {
-  [AchievementName.CriticalThinker]: defineAchievementDefinition({
+  [LikeAchievementName.CriticalThinker]: defineAchievementDefinition({
     amount: 50,
     category: AchievementCategory.Like,
     description: "Remove 50 likes",
@@ -11,7 +11,7 @@ export const LikeAchievementDefinitionMap = {
     points: 40,
     triggerPath: "like.deleteLike" as const,
   }),
-  [AchievementName.Liker]: defineAchievementDefinition({
+  [LikeAchievementName.Liker]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Like,
     description: "Like a post",
@@ -19,7 +19,7 @@ export const LikeAchievementDefinitionMap = {
     points: 5,
     triggerPath: "like.createLike" as const,
   }),
-  [AchievementName.SuperFan]: defineAchievementDefinition({
+  [LikeAchievementName.SuperFan]: defineAchievementDefinition({
     amount: 100,
     category: AchievementCategory.Like,
     description: "Like 100 posts",
@@ -27,7 +27,7 @@ export const LikeAchievementDefinitionMap = {
     points: 75,
     triggerPath: "like.createLike" as const,
   }),
-  [AchievementName.Unliker]: defineAchievementDefinition({
+  [LikeAchievementName.Unliker]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Like,
     description: "Remove a like",

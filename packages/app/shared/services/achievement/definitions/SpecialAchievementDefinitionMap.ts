@@ -2,10 +2,10 @@ import { AchievementCategory } from "#shared/models/achievement/AchievementCateg
 import { AchievementConditionType } from "#shared/models/achievement/AchievementConditionType";
 import { AchievementOperator } from "#shared/models/achievement/AchievementOperator";
 import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
-import { AchievementName } from "@esposter/db-schema";
+import { SpecialAchievementName } from "@esposter/db-schema";
 
 export const SpecialAchievementDefinitionMap = {
-  [AchievementName.AllCaps]: defineAchievementDefinition({
+  [SpecialAchievementName.AllCaps]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Special,
     condition: {
@@ -19,7 +19,7 @@ export const SpecialAchievementDefinitionMap = {
     points: 15,
     triggerPath: "message.createMessage" as const,
   }),
-  [AchievementName.AllLower]: defineAchievementDefinition({
+  [SpecialAchievementName.AllLower]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Special,
     condition: {
@@ -33,7 +33,7 @@ export const SpecialAchievementDefinitionMap = {
     points: 15,
     triggerPath: "message.createMessage" as const,
   }),
-  [AchievementName.Meta]: defineAchievementDefinition({
+  [SpecialAchievementName.Meta]: defineAchievementDefinition({
     category: AchievementCategory.Special,
     condition: {
       operator: AchievementOperator.Contains,
@@ -47,7 +47,7 @@ export const SpecialAchievementDefinitionMap = {
     points: 100,
     triggerPath: "message.createMessage" as const,
   }),
-  [AchievementName.Palindrome]: defineAchievementDefinition({
+  [SpecialAchievementName.Palindrome]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Special,
     condition: {

@@ -1,9 +1,9 @@
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
 import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
-import { AchievementName } from "@esposter/db-schema";
+import { WebpageAchievementName } from "@esposter/db-schema";
 
 export const WebpageAchievementDefinitionMap = {
-  [AchievementName.WebDeveloper]: defineAchievementDefinition({
+  [WebpageAchievementName.WebDeveloper]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Webpage,
     description: "Save a webpage",

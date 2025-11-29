@@ -1,9 +1,9 @@
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
 import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
-import { AchievementName } from "@esposter/db-schema";
+import { RoomAchievementName } from "@esposter/db-schema";
 
 export const RoomAchievementDefinitionMap = {
-  [AchievementName.Inviter]: defineAchievementDefinition({
+  [RoomAchievementName.Inviter]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Room,
     description: "Create an invite link",
@@ -11,7 +11,7 @@ export const RoomAchievementDefinitionMap = {
     points: 10,
     triggerPath: "room.createInvite" as const,
   }),
-  [AchievementName.PartyHost]: defineAchievementDefinition({
+  [RoomAchievementName.PartyHost]: defineAchievementDefinition({
     amount: 10,
     category: AchievementCategory.Room,
     description: "Create 10 rooms",
@@ -19,7 +19,7 @@ export const RoomAchievementDefinitionMap = {
     points: 75,
     triggerPath: "room.createRoom" as const,
   }),
-  [AchievementName.RoomCreator]: defineAchievementDefinition({
+  [RoomAchievementName.RoomCreator]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Room,
     description: "Create your first chat room",
@@ -27,7 +27,7 @@ export const RoomAchievementDefinitionMap = {
     points: 25,
     triggerPath: "room.createRoom" as const,
   }),
-  [AchievementName.RoomDestroyer]: defineAchievementDefinition({
+  [RoomAchievementName.RoomDestroyer]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Room,
     description: "Delete a room",
@@ -35,7 +35,7 @@ export const RoomAchievementDefinitionMap = {
     points: 10,
     triggerPath: "room.deleteRoom" as const,
   }),
-  [AchievementName.RoomHopper]: defineAchievementDefinition({
+  [RoomAchievementName.RoomHopper]: defineAchievementDefinition({
     amount: 20,
     category: AchievementCategory.Room,
     description: "Join 20 rooms",
@@ -43,7 +43,7 @@ export const RoomAchievementDefinitionMap = {
     points: 60,
     triggerPath: "room.joinRoom" as const,
   }),
-  [AchievementName.RoomJoiner]: defineAchievementDefinition({
+  [RoomAchievementName.RoomJoiner]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Room,
     description: "Join a room",
@@ -51,7 +51,7 @@ export const RoomAchievementDefinitionMap = {
     points: 10,
     triggerPath: "room.joinRoom" as const,
   }),
-  [AchievementName.RoomLeaver]: defineAchievementDefinition({
+  [RoomAchievementName.RoomLeaver]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Room,
     description: "Leave a room",
@@ -59,7 +59,7 @@ export const RoomAchievementDefinitionMap = {
     points: 5,
     triggerPath: "room.leaveRoom" as const,
   }),
-  [AchievementName.RoomRenovator]: defineAchievementDefinition({
+  [RoomAchievementName.RoomRenovator]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Room,
     description: "Update a room",
@@ -67,7 +67,7 @@ export const RoomAchievementDefinitionMap = {
     points: 10,
     triggerPath: "room.updateRoom" as const,
   }),
-  [AchievementName.Socialite]: defineAchievementDefinition({
+  [RoomAchievementName.Socialite]: defineAchievementDefinition({
     amount: 5,
     category: AchievementCategory.Room,
     description: "Join 5 different chat rooms",

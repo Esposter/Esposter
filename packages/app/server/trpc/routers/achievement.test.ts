@@ -16,6 +16,7 @@ describe("achievement", () => {
   const name = "name";
   const updatedAchievements = [
     AchievementName.CenturyClub,
+    AchievementName.Chatterbox,
     AchievementName.FirstMessage,
     AchievementName.MessageMaster,
   ];

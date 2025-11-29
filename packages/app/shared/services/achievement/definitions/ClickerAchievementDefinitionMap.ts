@@ -1,9 +1,9 @@
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
 import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
-import { AchievementName } from "@esposter/db-schema";
+import { ClickerAchievementName } from "@esposter/db-schema";
 
 export const ClickerAchievementDefinitionMap = {
-  [AchievementName.ClickerAddict]: defineAchievementDefinition({
+  [ClickerAchievementName.ClickerAddict]: defineAchievementDefinition({
     amount: 100,
     category: AchievementCategory.Clicker,
     description: "Save your clicker game 100 times",
@@ -11,7 +11,7 @@ export const ClickerAchievementDefinitionMap = {
     points: 50,
     triggerPath: "clicker.saveClicker" as const,
   }),
-  [AchievementName.ClickerNovice]: defineAchievementDefinition({
+  [ClickerAchievementName.ClickerNovice]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Clicker,
     description: "Save your clicker game for the first time",
@@ -19,7 +19,7 @@ export const ClickerAchievementDefinitionMap = {
     points: 5,
     triggerPath: "clicker.saveClicker" as const,
   }),
-  [AchievementName.ClickerPro]: defineAchievementDefinition({
+  [ClickerAchievementName.ClickerPro]: defineAchievementDefinition({
     amount: 10,
     category: AchievementCategory.Clicker,
     description: "Save your clicker game 10 times",
@@ -27,7 +27,7 @@ export const ClickerAchievementDefinitionMap = {
     points: 20,
     triggerPath: "clicker.saveClicker" as const,
   }),
-  [AchievementName.ClickerSaver]: defineAchievementDefinition({
+  [ClickerAchievementName.ClickerSaver]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Clicker,
     description: "Save your clicker game",

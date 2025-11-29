@@ -1,9 +1,9 @@
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
 import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
-import { AchievementName } from "@esposter/db-schema";
+import { FlowchartAchievementName } from "@esposter/db-schema";
 
 export const FlowchartAchievementDefinitionMap = {
-  [AchievementName.Flowcharter]: defineAchievementDefinition({
+  [FlowchartAchievementName.Flowcharter]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Flowchart,
     description: "Save a flowchart",

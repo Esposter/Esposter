@@ -1,9 +1,9 @@
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
 import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
-import { AchievementName } from "@esposter/db-schema";
+import { TableAchievementName } from "@esposter/db-schema";
 
 export const TableAchievementDefinitionMap = {
-  [AchievementName.DataAnalyst]: defineAchievementDefinition({
+  [TableAchievementName.DataAnalyst]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Table,
     description: "Save a table configuration",

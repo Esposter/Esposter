@@ -218,6 +218,13 @@
       "when": 1764402761305,
       "tag": "0030_purple_dakota_north",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1764407143001,
+      "tag": "0031_strange_blindfold",
+      "breakpoints": true
     }
   ]
 }

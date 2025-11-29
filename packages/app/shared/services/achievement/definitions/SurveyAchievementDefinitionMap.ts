@@ -1,9 +1,9 @@
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
 import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
-import { AchievementName } from "@esposter/db-schema";
+import { SurveyAchievementName } from "@esposter/db-schema";
 
 export const SurveyAchievementDefinitionMap = {
-  [AchievementName.DataCollector]: defineAchievementDefinition({
+  [SurveyAchievementName.DataCollector]: defineAchievementDefinition({
     amount: 100,
     category: AchievementCategory.Survey,
     description: "Receive 100 survey responses",
@@ -11,7 +11,7 @@ export const SurveyAchievementDefinitionMap = {
     points: 150,
     triggerPath: "survey.createSurveyResponse" as const,
   }),
-  [AchievementName.Modeler]: defineAchievementDefinition({
+  [SurveyAchievementName.Modeler]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Survey,
     description: "Update a survey model",
@@ -19,7 +19,7 @@ export const SurveyAchievementDefinitionMap = {
     points: 15,
     triggerPath: "survey.updateSurveyModel" as const,
   }),
-  [AchievementName.Publisher]: defineAchievementDefinition({
+  [SurveyAchievementName.Publisher]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Survey,
     description: "Publish a survey",
@@ -27,7 +27,7 @@ export const SurveyAchievementDefinitionMap = {
     points: 25,
     triggerPath: "survey.publishSurvey" as const,
   }),
-  [AchievementName.Respondent]: defineAchievementDefinition({
+  [SurveyAchievementName.Respondent]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Survey,
     description: "Respond to a survey",
@@ -35,7 +35,7 @@ export const SurveyAchievementDefinitionMap = {
     points: 10,
     triggerPath: "survey.createSurveyResponse" as const,
   }),
-  [AchievementName.ResponseEditor]: defineAchievementDefinition({
+  [SurveyAchievementName.ResponseEditor]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Survey,
     description: "Edit a survey response",
@@ -43,7 +43,7 @@ export const SurveyAchievementDefinitionMap = {
     points: 5,
     triggerPath: "survey.updateSurveyResponse" as const,
   }),
-  [AchievementName.SurveyDeleter]: defineAchievementDefinition({
+  [SurveyAchievementName.SurveyDeleter]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Survey,
     description: "Delete a survey",
@@ -51,7 +51,7 @@ export const SurveyAchievementDefinitionMap = {
     points: 5,
     triggerPath: "survey.deleteSurvey" as const,
   }),
-  [AchievementName.SurveyEditor]: defineAchievementDefinition({
+  [SurveyAchievementName.SurveyEditor]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Survey,
     description: "Edit a survey",
@@ -59,7 +59,7 @@ export const SurveyAchievementDefinitionMap = {
     points: 5,
     triggerPath: "survey.updateSurvey" as const,
   }),
-  [AchievementName.SurveyGuru]: defineAchievementDefinition({
+  [SurveyAchievementName.SurveyGuru]: defineAchievementDefinition({
     amount: 50,
     category: AchievementCategory.Survey,
     description: "Publish 50 surveys",
@@ -67,7 +67,7 @@ export const SurveyAchievementDefinitionMap = {
     points: 200,
     triggerPath: "survey.publishSurvey" as const,
   }),
-  [AchievementName.Surveyor]: defineAchievementDefinition({
+  [SurveyAchievementName.Surveyor]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Survey,
     description: "Create a survey",
@@ -75,7 +75,7 @@ export const SurveyAchievementDefinitionMap = {
     points: 15,
     triggerPath: "survey.createSurvey" as const,
   }),
-  [AchievementName.SurveySays]: defineAchievementDefinition({
+  [SurveyAchievementName.SurveySays]: defineAchievementDefinition({
     amount: 10,
     category: AchievementCategory.Survey,
     description: "Create 10 surveys",
