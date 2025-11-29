@@ -1,8 +1,8 @@
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
 import { AchievementOperator } from "#shared/models/achievement/AchievementOperator";
+import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
 import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
 import { SpecialAchievementName } from "@esposter/db-schema";
-import { AchievementConditionType } from "~~/shared/models/achievement/type/AchievementConditionType";
 
 export const SpecialAchievementDefinitionMap = {
   [SpecialAchievementName.AllCaps]: defineAchievementDefinition({
@@ -38,6 +38,7 @@ export const SpecialAchievementDefinitionMap = {
     category: AchievementCategory.Special,
     condition: {
       operation: (value) => {
+        if (!value) return false;
         const segmenter = new Intl.Segmenter("en-US", { granularity: "grapheme" });
         const segments = [...segmenter.segment(value)];
         const emojiCount = segments.filter((segment) =>

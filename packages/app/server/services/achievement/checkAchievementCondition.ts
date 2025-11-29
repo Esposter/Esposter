@@ -1,10 +1,10 @@
 import { AchievementOperator } from "#shared/models/achievement/AchievementOperator";
+import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
 import { achievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
 import { dayjs } from "#shared/services/dayjs";
 import { EN_US_SEGMENTER } from "@/services/shared/constants";
 import { BinaryOperator } from "@esposter/db-schema";
 import { exhaustiveGuard } from "@esposter/shared";
-import { AchievementConditionType } from "~~/shared/models/achievement/type/AchievementConditionType";
 
 export const checkAchievementCondition = (
   condition: NonNullable<(typeof achievementDefinitions)[number]["condition"]>,

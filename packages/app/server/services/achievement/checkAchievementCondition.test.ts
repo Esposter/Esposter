@@ -1,5 +1,7 @@
-import { AchievementConditionType } from "#shared/models/achievement/AchievementConditionType";
+import type { PropertyCondition } from "#shared/models/achievement/type/PropertyCondition";
+
 import { AchievementOperator } from "#shared/models/achievement/AchievementOperator";
+import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
 import { checkAchievementCondition } from "@@/server/services/achievement/checkAchievementCondition";
 import { BinaryOperator } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
@@ -226,7 +228,7 @@ describe(checkAchievementCondition, () => {
           operator: AchievementOperator.Operation,
           path: "message",
           type: AchievementConditionType.Property,
-        },
+        } as PropertyCondition<"message.createMessage">,
         data,
       ),
     ).toBe(true);
@@ -238,7 +240,7 @@ describe(checkAchievementCondition, () => {
           operator: AchievementOperator.Operation,
           path: "message",
           type: AchievementConditionType.Property,
-        },
+        } as PropertyCondition<"message.createMessage">,
         data,
       ),
     ).toBe(false);

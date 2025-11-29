@@ -1,8 +1,8 @@
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
 import { AchievementOperator } from "#shared/models/achievement/AchievementOperator";
+import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
 import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
 import { BinaryOperator, MessageAchievementName } from "@esposter/db-schema";
-import { AchievementConditionType } from "~~/shared/models/achievement/type/AchievementConditionType";
 
 export const MessageAchievementDefinitionMap = {
   [MessageAchievementName.CenturyClub]: defineAchievementDefinition({

@@ -7,25 +7,32 @@ import type { BinaryOperator } from "@esposter/db-schema";
 import type { Except, Get } from "type-fest";
 
 export type PropertyCondition<TPath extends TRPCPaths> =
-  | (Except<RecursiveGetProperties<Get<TRPCRouterInputs, TPath>>, "type"> & {
-      operator: BinaryOperator;
-      type: AchievementConditionType.Property;
-    })
-  | (Except<RecursiveGetProperties<Get<TRPCRouterInputs, TPath>>, "type" | "value"> &
-      (
-        | {
-            operator: AchievementOperator.Contains;
-            type: AchievementConditionType.Property;
-            value: string;
-          }
-        | {
-            operator: AchievementOperator.IsPalindrome;
-            type: AchievementConditionType.Property;
-            value: boolean;
-          }
-        | {
-            operator: AchievementOperator.Matches;
-            type: AchievementConditionType.Property;
-            value: RegExp;
-          }
-      ));
+  Except<RecursiveGetProperties<Get<TRPCRouterInputs, TPath>>, "type"> extends { path: infer Path; value: infer Value }
+    ? Path extends string
+      ? {
+          path: Path;
+          type: AchievementConditionType.Property;
+        } & (
+          | {
+              operation: (value: Get<TRPCRouterInputs, `${TPath}.${Path}`>) => boolean;
+              operator: AchievementOperator.Operation;
+            }
+          | {
+              operator: AchievementOperator.Contains;
+              value: string;
+            }
+          | {
+              operator: AchievementOperator.IsPalindrome;
+              value: boolean;
+            }
+          | {
+              operator: AchievementOperator.Matches;
+              value: RegExp;
+            }
+          | {
+              operator: BinaryOperator;
+              value: Value;
+            }
+        )
+      : never
+    : never;
