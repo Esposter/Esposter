@@ -12,5 +12,5 @@ export default defineNuxtRouteMiddleware((to, from) => {
   if (isFromMessages === isToMessages) return;
   // Force a full browser navigation to the destination URL,
   // triggering a request to the Nuxt server
-  window.location.assign(to.fullPath);
+  window.location.replace(to.fullPath);
 });
