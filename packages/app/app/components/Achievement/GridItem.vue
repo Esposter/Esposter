@@ -22,6 +22,9 @@ const { achievementDefinition, userAchievement } = defineProps<GridItemProps>();
         </v-avatar>
         <div class="text-h6" mt-2 font-bold>{{ prettify(achievementDefinition.name) }}</div>
         <div class="text-caption">{{ achievementDefinition.description }}</div>
+        <div v-if="userAchievement?.unlockedAt" class="text-caption" mt-2 text-gray italic font-bold>
+          Unlocked {{ userAchievement.unlockedAt.toLocaleDateString() }}
+        </div>
         <v-spacer />
         <v-chip mt-2 :color="getCategoryColor(achievementDefinition.category)" size="small">
           {{ achievementDefinition.category }}
@@ -36,9 +39,6 @@ const { achievementDefinition, userAchievement } = defineProps<GridItemProps>();
         />
         <div class="text-caption" mt-1>
           {{ userAchievement?.amount ?? 0 }} / {{ achievementDefinition.amount ?? 1 }}
-        </div>
-        <div v-if="userAchievement?.unlockedAt" class="text-caption" mt-2 text-gray>
-          Unlocked {{ userAchievement.unlockedAt.toLocaleDateString() }}
         </div>
       </v-card-text>
     </StyledCard>
