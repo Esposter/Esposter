@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useAchievementStore } from "@/store/achievement";
 
+await useAchievementSubscribables();
+
 const achievementStore = useAchievementStore();
 const { recentlyUnlockedUserAchievement } = storeToRefs(achievementStore);
 const snackbar = computed({
