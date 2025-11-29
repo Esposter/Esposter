@@ -6,8 +6,8 @@ import { AchievementDefinitionMap } from "#shared/services/achievement/achieveme
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession } from "@@/server/trpc/context.test";
 import { trpcRouter } from "@@/server/trpc/routers";
-import { AchievementName } from "@esposter/db-schema";
-import { assert, beforeAll, describe, expect, test } from "vitest";
+import { AchievementName, achievements } from "@esposter/db-schema";
+import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("achievement", () => {
   let caller: DecorateRouterRecord<TRPCRouter["_def"]["procedures"]>;
@@ -24,6 +24,10 @@ describe("achievement", () => {
     const createCaller = createCallerFactory(trpcRouter);
     mockContext = await createMockContext();
     caller = createCaller(mockContext);
+  });
+
+  afterEach(async () => {
+    await mockContext.db.delete(achievements);
   });
 
   test("readAchievementMap", async () => {
