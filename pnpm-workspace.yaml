@@ -41,7 +41,7 @@ catalog:
   "@nuxt/test-utils": ^3.20.1
   "@nuxtjs/seo": ^3.2.2
   "@pinia/nuxt": ^0.11.3
-  "@prettier/plugin-oxc": ^0.0.5
+  "@prettier/plugin-oxc": ^0.1.2
   "@tiptap/core": ^3.11.1
   "@tiptap/extension-file-handler": ^3.11.1
   "@tiptap/extension-mention": ^3.11.1
@@ -158,7 +158,7 @@ catalog:
   pinia: ^3.0.4
   pluralize: ^8.0.0
   postgres: ^3.4.7
-  prettier: ^3.6.2
+  prettier: ^3.7.3
   prosemirror-state: ^1.4.4
   rate-limiter-flexible: ^9.0.0
   rolldown: ^1.0.0-beta.52
@@ -217,7 +217,7 @@ onlyBuiltDependencies:
 
 overrides:
   "@nuxt/vite-builder": https://pkg.pr.new/@nuxt/vite-builder@33682
-  pdfjs-dist: ^5.4.394
+  pdfjs-dist: ^5.4.449
   vite: npm:rolldown-vite@7.2.8
 
 shellEmulator: true

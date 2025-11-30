@@ -6,7 +6,6 @@ import type { Except } from "type-fest";
 import { MessageType } from "@/models/message/MessageType";
 
 export interface WebhookCreateMessageInput
-  extends Except<StandardCreateMessageInput, "type">,
-    ItemEntityType<MessageType.Webhook> {
+  extends Except<StandardCreateMessageInput, "type">, ItemEntityType<MessageType.Webhook> {
   appUser: WebhookMessageEntity["appUser"];
 }
