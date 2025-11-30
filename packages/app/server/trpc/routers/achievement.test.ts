@@ -2,23 +2,19 @@ import type { AchievementEvents } from "@@/server/services/achievement/events/ac
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { AchievementDefinitionMap } from "#shared/services/achievement/achievementDefinitions";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession } from "@@/server/trpc/context.test";
 import { trpcRouter } from "@@/server/trpc/routers";
-import { AchievementName, achievements, UserAchievementRelations } from "@esposter/db-schema";
+import { achievements, UserAchievementRelations, WebpageAchievementName } from "@esposter/db-schema";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("achievement", () => {
   let caller: DecorateRouterRecord<TRPCRouter["_def"]["procedures"]>;
   let mockContext: Awaited<ReturnType<typeof createMockContext>>;
-  const message = "message";
-  const name = "name";
   const updatedAchievements = [
-    AchievementName.CenturyClub,
-    AchievementName.Chatterbox,
-    AchievementName.FirstMessage,
-    AchievementName.MessageMaster,
+    WebpageAchievementName.WebDeveloper,
   ];
 
   beforeAll(async () => {
@@ -60,7 +56,6 @@ describe("achievement", () => {
   test("on updates", async () => {
     expect.hasAssertions();
 
-    const newRoom = await caller.room.createRoom({ name });
     await Promise.all([
       (async () => {
         const onUpdateAchievementIterator = (await caller.achievement.onUpdateAchievement())[Symbol.asyncIterator]();
@@ -76,7 +71,7 @@ describe("achievement", () => {
         }
 
         expect(unlockedAchievements).toHaveLength(1);
-        expect(unlockedAchievements[0].achievement.name).toBe(AchievementName.FirstMessage);
+        expect(unlockedAchievements[0].achievement.name).toBe(WebpageAchievementName.WebDeveloper);
         expect(unlockedAchievements[0].amount).toBe(1);
         expect(unlockedAchievements[0].unlockedAt).toBeInstanceOf(Date);
 
@@ -92,7 +87,7 @@ describe("achievement", () => {
 
         expect(userAchievement).toStrictEqual(unlockedAchievements[0]);
       })(),
-      caller.message.createMessage({ message, roomId: newRoom.id }),
+      caller.webpageEditor.saveWebpageEditor(new WebpageEditor()),
     ]);
   });
 });
