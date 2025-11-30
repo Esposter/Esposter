@@ -13,9 +13,7 @@ import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 describe("achievement", () => {
   let caller: DecorateRouterRecord<TRPCRouter["_def"]["procedures"]>;
   let mockContext: Awaited<ReturnType<typeof createMockContext>>;
-  const updatedAchievements = [
-    WebpageAchievementName.WebDeveloper,
-  ];
+  const updatedAchievements = [WebpageAchievementName.WebDeveloper];
 
   beforeAll(async () => {
     const createCaller = createCallerFactory(trpcRouter);
