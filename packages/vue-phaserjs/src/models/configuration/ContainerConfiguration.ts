@@ -11,7 +11,8 @@ import type { Types } from "phaser";
 import type { Except } from "type-fest";
 
 export interface ContainerConfiguration
-  extends AlphaSingleConfiguration,
+  extends
+    AlphaSingleConfiguration,
     BlendModeConfiguration,
     ComputedSizeConfiguration,
     DepthConfiguration,

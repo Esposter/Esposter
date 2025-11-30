@@ -1,20 +1,19 @@
 // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/desmos/index.d.ts
 declare namespace Desmos {
-  interface BasicCalculator
-    extends Pick<
-      Calculator,
-      | "clearHistory"
-      | "destroy"
-      | "focusFirstExpression"
-      | "getState"
-      | "observeEvent"
-      | "redo"
-      | "resize"
-      | "setBlank"
-      | "setState"
-      | "undo"
-      | "unobserveEvent"
-    > {
+  interface BasicCalculator extends Pick<
+    Calculator,
+    | "clearHistory"
+    | "destroy"
+    | "focusFirstExpression"
+    | "getState"
+    | "observeEvent"
+    | "redo"
+    | "resize"
+    | "setBlank"
+    | "setState"
+    | "undo"
+    | "unobserveEvent"
+  > {
     updateSettings(
       settings: Parameters<typeof FourFunctionCalculator>[1] | Parameters<typeof ScientificCalculator>[1],
     ): void;

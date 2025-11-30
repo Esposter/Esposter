@@ -13,7 +13,8 @@ import type { Types } from "phaser";
 import type { Except } from "type-fest";
 
 export interface NineSliceConfiguration
-  extends AlphaSingleConfiguration,
+  extends
+    AlphaSingleConfiguration,
     BlendModeConfiguration,
     DepthConfiguration,
     Except<Types.GameObjects.NineSlice.NineSliceConfig, "frame" | keyof Types.GameObjects.GameObjectConfig>,
