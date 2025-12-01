@@ -11,6 +11,14 @@ export const ClickerAchievementDefinitionMap = {
     points: 50,
     triggerPath: "clicker.saveClicker" as const,
   }),
+  [ClickerAchievementName.ClickerChampion]: defineAchievementDefinition({
+    amount: 1000,
+    category: AchievementCategory.Clicker,
+    description: "Save your clicker game 1000 times",
+    icon: "mdi-trophy",
+    points: 500,
+    triggerPath: "clicker.saveClicker" as const,
+  }),
   [ClickerAchievementName.ClickerNovice]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Clicker,
