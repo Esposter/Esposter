@@ -22,7 +22,7 @@ export type RecursiveGetProperties<PropertyValue, Prefix extends string | undefi
                       ? PropertySub extends { path: infer SubPath; value: infer SubValue }
                         ? SubPath extends string
                           ? {
-                              path: SubPath;
+                              path: Prefix extends undefined ? SubPath : `${Prefix}.${SubPath}`;
                               value: SubValue;
                             }
                           : never

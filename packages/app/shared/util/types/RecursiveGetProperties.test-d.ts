@@ -6,7 +6,7 @@ describe("recursiveGetProperties type", () => {
   test("array", () => {
     expect.hasAssertions();
 
-    expectTypeOf<RecursiveGetProperties<string[]>>().toEqualTypeOf<{ path: "length"; value: number }>();
+    expectTypeOf<RecursiveGetProperties<unknown[]>>().toEqualTypeOf<{ path: "length"; value: number }>();
   });
 
   test("bigint", () => {
@@ -25,6 +25,25 @@ describe("recursiveGetProperties type", () => {
     expect.hasAssertions();
 
     expectTypeOf<RecursiveGetProperties<Date>>().toEqualTypeOf<never>();
+  });
+
+  test("nested", () => {
+    expect.hasAssertions();
+
+    expectTypeOf<RecursiveGetProperties<{ a: { b: unknown[] } }>>().toEqualTypeOf<
+      | {
+          path: "a";
+          value: { b: unknown[] };
+        }
+      | {
+          path: "a.b";
+          value: unknown[];
+        }
+      | {
+          path: "a.b.length";
+          value: number;
+        }
+    >();
   });
 
   test("null", () => {
