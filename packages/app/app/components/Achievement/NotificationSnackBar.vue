@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import type { UserAchievementWithDefinition } from "#shared/models/achievement/UserAchievementWithDefinition";
-import type { UserAchievement } from "@esposter/db-schema";
 
 interface NotificationListItemProps {
   userAchievement: UserAchievementWithDefinition;
 }
 
 const { userAchievement } = defineProps<NotificationListItemProps>();
-const emit = defineEmits<{ close: [UserAchievement["id"]] }>();
+const emit = defineEmits<{ close: [] }>();
 </script>
 
 <template>
@@ -20,7 +19,7 @@ const emit = defineEmits<{ close: [UserAchievement["id"]] }>();
     @update:model-value="
       (value) => {
         if (value) return;
-        emit('close', userAchievement.id);
+        emit('close');
       }
     "
   >
