@@ -200,7 +200,7 @@ catalog:
   web-push: ^3.6.7
   worker-timers: ^8.0.25
   ws: ^8.18.3
-  xmlbuilder2: ^4.0.1
+  xmlbuilder2: ^4.0.3
   zod: ^4.1.13
 
 catalogMode: strict

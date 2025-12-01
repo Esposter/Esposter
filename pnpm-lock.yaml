@@ -595,8 +595,8 @@ catalogs:
       specifier: ^8.18.3
       version: 8.18.3
     xmlbuilder2:
-      specifier: ^4.0.1
-      version: 4.0.1
+      specifier: ^4.0.3
+      version: 4.0.3
     zod:
       specifier: ^4.1.13
       version: 4.1.13
@@ -1435,7 +1435,7 @@ importers:
         version: 1.4.3
       xmlbuilder2:
         specifier: 'catalog:'
-        version: 4.0.1
+        version: 4.0.3
     devDependencies:
       '@types/sax':
         specifier: 'catalog:'
@@ -11749,8 +11749,8 @@ packages:
     resolution: {integrity: sha512-ICP2e+jsHvAj2E2lIHxa5tjXRlKDJo4IdvPvCXbXQGdzSfmSpNVyIKMvoZHjDY9DP0zV17iI85o90vRFXNccRw==}
     engines: {node: '>=12'}
 
-  xmlbuilder2@4.0.1:
-    resolution: {integrity: sha512-vXeky0YRVjhx5pseJDQLk0F6u7gyA8++ceVOS88r4dWu4lWdY/ZjbL45QrN+g0GzZLg1D5AkzThpikZa98SC/g==}
+  xmlbuilder2@4.0.3:
+    resolution: {integrity: sha512-bx8Q1STctnNaaDymWnkfQLKofs0mGNN7rLLapJlGuV3VlvegD7Ls4ggMjE3aUSWItCCzU0PEv45lI87iSigiCA==}
     engines: {node: '>=20.0'}
 
   xss@1.0.15:
@@ -24115,7 +24115,7 @@ snapshots:
 
   xml-name-validator@4.0.0: {}
 
-  xmlbuilder2@4.0.1:
+  xmlbuilder2@4.0.3:
     dependencies:
       '@oozcitak/dom': 2.0.2
       '@oozcitak/infra': 2.0.2
