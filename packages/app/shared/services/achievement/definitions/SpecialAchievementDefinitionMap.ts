@@ -52,6 +52,7 @@ export const SpecialAchievementDefinitionMap = {
     },
     description: "Send a message with 10+ emojis",
     icon: "mdi-emoticon-excited",
+    isHidden: true,
     points: 15,
     triggerPath: "message.createMessage" as const,
   }),

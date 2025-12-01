@@ -49,6 +49,28 @@ export const MessageAchievementDefinitionMap = {
     points: 25,
     triggerPath: "message.createMessage" as const,
   }),
+  [MessageAchievementName.EmojiMaster]: defineAchievementDefinition({
+    amount: 1,
+    category: AchievementCategory.Message,
+    condition: {
+      operation: (value) => {
+        if (!value) return false;
+        const segmenter = new Intl.Segmenter("en-US", { granularity: "grapheme" });
+        const segments = [...segmenter.segment(value)];
+        const emojiCount = segments.filter((segment) =>
+          /\p{Emoji_Presentation}|\p{Extended_Pictographic}/u.test(segment.segment),
+        ).length;
+        return emojiCount >= 1;
+      },
+      operator: AchievementOperator.Operation,
+      path: "message",
+      type: AchievementConditionType.Property,
+    },
+    description: "Send a message with an emoji",
+    icon: "mdi-emoticon-cool",
+    points: 15,
+    triggerPath: "message.createMessage" as const,
+  }),
   [MessageAchievementName.EssayWriter]: defineAchievementDefinition({
     category: AchievementCategory.Message,
     condition: {

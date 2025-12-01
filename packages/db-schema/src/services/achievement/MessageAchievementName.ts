@@ -3,6 +3,7 @@ export enum MessageAchievementName {
   Chatterbox = "Chatterbox",
   ConversationKeeper = "ConversationKeeper",
   EarlyBird = "EarlyBird",
+  EmojiMaster = "EmojiMaster",
   EssayWriter = "EssayWriter",
   FileSharer = "FileSharer",
   FirstMessage = "FirstMessage",

@@ -4,6 +4,20 @@ import { defineAchievementDefinition } from "#shared/services/achievement/define
 import { BinaryOperator, FlowchartAchievementName } from "@esposter/db-schema";
 
 export const FlowchartAchievementDefinitionMap = {
+  [FlowchartAchievementName.ComplexFlow]: defineAchievementDefinition({
+    amount: 1,
+    category: AchievementCategory.Flowchart,
+    condition: {
+      operator: BinaryOperator.gt,
+      path: "edges.length",
+      type: AchievementConditionType.Property,
+      value: 20,
+    },
+    description: "Save a flowchart with more than 20 edges",
+    icon: "mdi-chart-timeline-variant-shimmer",
+    points: 40,
+    triggerPath: "flowchartEditor.saveFlowchartEditor" as const,
+  }),
   [FlowchartAchievementName.Flowcharter]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Flowchart,

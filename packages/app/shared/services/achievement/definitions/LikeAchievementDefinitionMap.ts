@@ -11,6 +11,14 @@ export const LikeAchievementDefinitionMap = {
     points: 40,
     triggerPath: "like.deleteLike" as const,
   }),
+  [LikeAchievementName.Hater]: defineAchievementDefinition({
+    amount: 10,
+    category: AchievementCategory.Like,
+    description: "Unlike 10 posts",
+    icon: "mdi-thumb-down",
+    points: 15,
+    triggerPath: "like.deleteLike" as const,
+  }),
   [LikeAchievementName.Liker]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Like,
@@ -30,7 +38,7 @@ export const LikeAchievementDefinitionMap = {
   [LikeAchievementName.Unliker]: defineAchievementDefinition({
     amount: 1,
     category: AchievementCategory.Like,
-    description: "Remove a like",
+    description: "Unlike a post",
     icon: "mdi-thumb-down",
     points: 5,
     triggerPath: "like.deleteLike" as const,
