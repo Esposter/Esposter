@@ -14,8 +14,10 @@ export type ReadUserAchievementsInput = z.infer<typeof readUserAchievementsInput
 
 export const achievementRouter = router({
   onUpdateAchievement: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {
-    for await (const [data] of on(achievementEventEmitter, "updateAchievement", { signal }))
-      if (data.userId === ctx.session.user.id) yield data;
+    for await (const [data] of on(achievementEventEmitter, "updateAchievement", { signal })) {
+      const userAchievements = data.filter(({ userId }) => userId === ctx.session.user.id);
+      if (userAchievements.length > 0) yield userAchievements;
+    }
   }),
   readAchievementMap: standardAuthedProcedure.query(async ({ ctx }) => {
     const userId = ctx.session.user.id;

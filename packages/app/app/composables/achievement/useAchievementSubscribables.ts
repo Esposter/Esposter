@@ -18,7 +18,7 @@ export const useAchievementSubscribables = () => {
 
         const updateAchievementUnsubscribable = $trpc.achievement.onUpdateAchievement.subscribe(undefined, {
           onData: (data) => {
-            updateAchievement(data);
+            for (const achievement of data) updateAchievement(achievement);
           },
         });
         return () => {

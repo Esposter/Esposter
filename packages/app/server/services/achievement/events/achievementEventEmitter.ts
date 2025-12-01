@@ -3,7 +3,7 @@ import type { UserAchievementWithRelations } from "@esposter/db-schema";
 import { EventEmitter } from "node:events";
 
 export interface AchievementEvents {
-  updateAchievement: UserAchievementWithRelations[];
+  updateAchievement: UserAchievementWithRelations[][];
 }
 
 export const achievementEventEmitter = new EventEmitter<AchievementEvents>();

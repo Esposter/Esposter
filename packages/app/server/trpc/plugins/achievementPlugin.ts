@@ -1,5 +1,6 @@
 import type { Session } from "#shared/models/auth/Session";
 import type { Context } from "@@/server/trpc/context";
+import type { UserAchievementWithRelations } from "@esposter/db-schema";
 
 import { achievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
 import { checkAchievementCondition } from "@@/server/services/achievement/checkAchievementCondition";
@@ -16,6 +17,7 @@ export const achievementPlugin = t.procedure.use(async ({ ctx, next, path, type 
   if (!result.ok || type !== "mutation") return result;
 
   const userId = ctx.session.user.id;
+  const updatedUserAchievements: UserAchievementWithRelations[] = [];
 
   for (const { amount = 1, condition, incrementAmount = 1, name } of achievementDefinitions.filter(
     ({ triggerPath }) => triggerPath === path,
@@ -81,8 +83,10 @@ export const achievementPlugin = t.procedure.use(async ({ ctx, next, path, type 
         message: new InvalidOperationError(Operation.Update, DatabaseEntityType.UserAchievement, name).message,
       });
 
-    achievementEventEmitter.emit("updateAchievement", { ...updatedUserAchievement, achievement });
+    updatedUserAchievements.push({ ...updatedUserAchievement, achievement });
   }
+
+  if (updatedUserAchievements.length > 0) achievementEventEmitter.emit("updateAchievement", updatedUserAchievements);
 
   return result;
 });

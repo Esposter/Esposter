@@ -54,38 +54,39 @@ describe("achievement", () => {
   test("on updates", async () => {
     expect.hasAssertions();
 
-    await Promise.all([
-      (async () => {
-        const onUpdateAchievementIterator = (await caller.achievement.onUpdateAchievement())[Symbol.asyncIterator]();
-        const unlockedAchievements: AchievementEvents["updateAchievement"] = [];
-
-        for (const updatedAchievement of updatedAchievements) {
-          const data = await onUpdateAchievementIterator.next();
-          assert(!data.done);
-
-          expect(data.value.achievement.name).toBe(updatedAchievement);
-
-          if (data.value.unlockedAt) unlockedAchievements.push(data.value);
-        }
-
-        expect(unlockedAchievements).toHaveLength(1);
-        expect(unlockedAchievements[0].achievement.name).toBe(WebpageAchievementName.WebDeveloper);
-        expect(unlockedAchievements[0].amount).toBe(1);
-        expect(unlockedAchievements[0].unlockedAt).toBeInstanceOf(Date);
-
-        const userAchievement = await mockContext.db.query.userAchievements.findFirst({
-          where: (userAchievements, { and, eq }) =>
-            and(
-              eq(userAchievements.achievementId, unlockedAchievements[0].achievementId),
-              eq(userAchievements.userId, getMockSession().user.id),
-            ),
-          with: UserAchievementRelations,
-        });
-        assert(userAchievement);
-
-        expect(userAchievement).toStrictEqual(unlockedAchievements[0]);
-      })(),
+    const onUpdateAchievement = await caller.achievement.onUpdateAchievement();
+    const [data] = await Promise.all([
+      onUpdateAchievement[Symbol.asyncIterator]().next(),
       caller.webpageEditor.saveWebpageEditor(new WebpageEditor()),
     ]);
+
+    const unlockedAchievements: AchievementEvents["updateAchievement"][number] = [];
+
+    assert(!data.done);
+
+    expect(data.value).toHaveLength(updatedAchievements.length);
+
+    for (const achievement of data.value) {
+      expect(updatedAchievements).toContain(achievement.achievement.name);
+
+      if (achievement.unlockedAt) unlockedAchievements.push(achievement);
+    }
+
+    expect(unlockedAchievements).toHaveLength(1);
+    expect(unlockedAchievements[0].achievement.name).toBe(WebpageAchievementName.WebDeveloper);
+    expect(unlockedAchievements[0].amount).toBe(1);
+    expect(unlockedAchievements[0].unlockedAt).toBeInstanceOf(Date);
+
+    const userAchievement = await mockContext.db.query.userAchievements.findFirst({
+      where: (userAchievements, { and, eq }) =>
+        and(
+          eq(userAchievements.achievementId, unlockedAchievements[0].achievementId),
+          eq(userAchievements.userId, getMockSession().user.id),
+        ),
+      with: UserAchievementRelations,
+    });
+    assert(userAchievement);
+
+    expect(userAchievement).toStrictEqual(unlockedAchievements[0]);
   });
 });
