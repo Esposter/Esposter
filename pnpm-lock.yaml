@@ -109,8 +109,8 @@ catalogs:
       specifier: ^0.12.1
       version: 0.12.1
     '@nuxt/hints':
-      specifier: ^1.0.0-alpha.2
-      version: 1.0.0-alpha.2
+      specifier: ^1.0.0-alpha.3
+      version: 1.0.0-alpha.3
     '@nuxt/scripts':
       specifier: ^0.13.0
       version: 0.13.0
@@ -1060,7 +1060,7 @@ importers:
         version: 0.12.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/storage-blob@12.29.1)(db0@0.3.4(@electric-sql/pglite@0.3.14)(drizzle-orm@0.44.7(@electric-sql/pglite@0.3.14)(kysely@0.28.8)(postgres@3.4.7)))(ioredis@5.8.2)(magicast@0.5.1)(rolldown-vite@7.2.8(@types/node@24.10.1)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.93.3)(sass@1.93.3)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.1))
       '@nuxt/hints':
         specifier: 'catalog:'
-        version: 1.0.0-alpha.2(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/storage-blob@12.29.1)(@electric-sql/pglite@0.3.14)(drizzle-orm@0.44.7(@electric-sql/pglite@0.3.14)(kysely@0.28.8)(postgres@3.4.7))(encoding@0.1.13)(magicast@0.5.1)(rolldown-vite@7.2.8(@types/node@24.10.1)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.93.3)(sass@1.93.3)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.1))(rolldown@1.0.0-beta.52)(vue@3.5.25(typescript@5.9.3))
+        version: 1.0.0-alpha.3(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/storage-blob@12.29.1)(@electric-sql/pglite@0.3.14)(drizzle-orm@0.44.7(@electric-sql/pglite@0.3.14)(kysely@0.28.8)(postgres@3.4.7))(encoding@0.1.13)(magicast@0.5.1)(rolldown-vite@7.2.8(@types/node@24.10.1)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.93.3)(sass@1.93.3)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.1))(rolldown@1.0.0-beta.52)(vue@3.5.25(typescript@5.9.3))
       '@nuxt/scripts':
         specifier: 'catalog:'
         version: 0.13.0(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/storage-blob@12.29.1)(@unhead/vue@2.0.19(vue@3.5.25(typescript@5.9.3)))(db0@0.3.4(@electric-sql/pglite@0.3.14)(drizzle-orm@0.44.7(@electric-sql/pglite@0.3.14)(kysely@0.28.8)(postgres@3.4.7)))(ioredis@5.8.2)(magicast@0.5.1)(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3))
@@ -3473,8 +3473,8 @@ packages:
   '@nuxt/fonts@0.12.1':
     resolution: {integrity: sha512-ALajI/HE+uqqL/PWkWwaSUm1IdpyGPbP3mYGy2U1l26/o4lUZBxjFaduMxaZ85jS5yQeJfCu2eEHANYFjAoujQ==}
 
-  '@nuxt/hints@1.0.0-alpha.2':
-    resolution: {integrity: sha512-VQcqc3qf6xr4HaBdPJnmQdsL5RRLACw5cE0m57U2gu0JYYs0k4+nhczavj+/cS8xmnnHnZmchJh7NHHxZ7BexQ==}
+  '@nuxt/hints@1.0.0-alpha.3':
+    resolution: {integrity: sha512-p1Rid1Ll9iFIFfoBuSJ4+9qVMCCkCHh0N9pG4M6JifCcz7uSiO37RqmSfEbusFLHbB9yFmzAsRESFC2khxym+A==}
 
   '@nuxt/kit@3.20.1':
     resolution: {integrity: sha512-TIslaylfI5kd3AxX5qts0qyrIQ9Uq3HAA1bgIIJ+c+zpDfK338YS+YrCWxBBzDMECRCbAS58mqAd2MtJfG1ENA==}
@@ -14501,13 +14501,15 @@ snapshots:
       - uploadthing
       - vite
 
-  '@nuxt/hints@1.0.0-alpha.2(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/storage-blob@12.29.1)(@electric-sql/pglite@0.3.14)(drizzle-orm@0.44.7(@electric-sql/pglite@0.3.14)(kysely@0.28.8)(postgres@3.4.7))(encoding@0.1.13)(magicast@0.5.1)(rolldown-vite@7.2.8(@types/node@24.10.1)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.93.3)(sass@1.93.3)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.1))(rolldown@1.0.0-beta.52)(vue@3.5.25(typescript@5.9.3))':
+  '@nuxt/hints@1.0.0-alpha.3(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/storage-blob@12.29.1)(@electric-sql/pglite@0.3.14)(drizzle-orm@0.44.7(@electric-sql/pglite@0.3.14)(kysely@0.28.8)(postgres@3.4.7))(encoding@0.1.13)(magicast@0.5.1)(rolldown-vite@7.2.8(@types/node@24.10.1)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.93.3)(sass@1.93.3)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.1))(rolldown@1.0.0-beta.52)(vue@3.5.25(typescript@5.9.3))':
     dependencies:
       '@nuxt/devtools-kit': 3.1.1(magicast@0.5.1)(rolldown-vite@7.2.8(@types/node@24.10.1)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.93.3)(sass@1.93.3)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.1))
       '@nuxt/kit': 4.2.1(magicast@0.5.1)
       h3: 1.15.4
+      knitwork: 1.3.0
       magic-string: 0.30.21
       nitropack: 2.12.9(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/storage-blob@12.29.1)(@electric-sql/pglite@0.3.14)(drizzle-orm@0.44.7(@electric-sql/pglite@0.3.14)(kysely@0.28.8)(postgres@3.4.7))(encoding@0.1.13)(rolldown@1.0.0-beta.52)
+      oxc-parser: 0.99.0
       shiki: 3.17.0
       sirv: 3.0.2
       unplugin: 2.3.11
