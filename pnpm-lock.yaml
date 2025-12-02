@@ -19,8 +19,8 @@ catalogs:
       specifier: ^5.12.0
       version: 5.12.0
     '@azure/functions':
-      specifier: ^4.9.0
-      version: 4.9.0
+      specifier: ^4.10.0
+      version: 4.10.0
     '@azure/identity':
       specifier: ^4.13.0
       version: 4.13.0
@@ -1162,7 +1162,7 @@ importers:
         version: 5.12.0
       '@azure/functions':
         specifier: 'catalog:'
-        version: 4.9.0
+        version: 4.10.0
       '@azure/identity':
         specifier: 'catalog:'
         version: 4.13.0
@@ -1516,8 +1516,8 @@ packages:
     resolution: {integrity: sha512-ncCkHBNQYJa93dBIh+toH0v1iSgCzSo9tr94s6SMBe7DPWREkaWh8cq33A5P4rPSFX1g5W+3SPvIzDr/6/VOWQ==}
     engines: {node: '>=18.0'}
 
-  '@azure/functions@4.9.0':
-    resolution: {integrity: sha512-IlgCl2/OiSXjMaow5oUhtMQMlsxEAZwsk7BXoT44vgzdIaiZz1VjCzGK9D/7pi6bd0FSyDo6H/1mZASzcD0K6A==}
+  '@azure/functions@4.10.0':
+    resolution: {integrity: sha512-hJ58IrZ4vyzcD/2FXTAoBr9iJO1gtb7jUbdU0lCOYOIeQNezVjNXaqLjECuP0GMGVq12RsqZoDfTRNo8xqcLYg==}
     engines: {node: '>=20.0'}
 
   '@azure/identity@4.13.0':
@@ -11954,7 +11954,7 @@ snapshots:
 
   '@azure/functions-extensions-base@0.2.0': {}
 
-  '@azure/functions@4.9.0':
+  '@azure/functions@4.10.0':
     dependencies:
       '@azure/functions-extensions-base': 0.2.0
       cookie: 0.7.2
