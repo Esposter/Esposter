@@ -158,7 +158,7 @@ catalog:
   pinia: ^3.0.4
   pluralize: ^8.0.0
   postgres: ^3.4.7
-  prettier: ^3.7.3
+  prettier: ^3.7.4
   prosemirror-state: ^1.4.4
   rate-limiter-flexible: ^9.0.0
   rolldown: ^1.0.0-beta.52
