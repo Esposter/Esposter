@@ -427,8 +427,8 @@ catalogs:
       specifier: ^3.0.2
       version: 3.0.2
     mjml-browser:
-      specifier: ^4.17.1
-      version: 4.17.1
+      specifier: ^4.17.2
+      version: 4.17.2
     node-emoji:
       specifier: ^2.2.0
       version: 2.2.0
@@ -930,7 +930,7 @@ importers:
         version: 3.0.2
       mjml-browser:
         specifier: 'catalog:'
-        version: 4.17.1
+        version: 4.17.2
       node-emoji:
         specifier: 'catalog:'
         version: 2.2.0
@@ -8889,8 +8889,8 @@ packages:
   mitt@3.0.1:
     resolution: {integrity: sha512-vKivATfr97l2/QBCYAkXYDbrIWPM2IIKEl7YPhjCvKlG3kE2gm+uBo6nEXK3M5/Ffh/FLpKExzOQ3JJoJGFKBw==}
 
-  mjml-browser@4.17.1:
-    resolution: {integrity: sha512-8JYPN3zv5KgkTmvdkKn5IDmSaG2ygWuz1wbVK29m1gvnrX6Y0kwCQdUMW9CCP75apseAqCYaEo2mY0TvpOX4dA==}
+  mjml-browser@4.17.2:
+    resolution: {integrity: sha512-3Sq0wFrWnxEPweK4VNt0rDvAcRIMDMaALoAxpj6mNLu5l1fV+Z8rPWLX4Bb3QKUg31wyIMa5SNj0EMQpNSJJNg==}
 
   mkdirp@3.0.1:
     resolution: {integrity: sha512-+NsyUUAZDmo6YVHzL/stxSu3t9YS1iljliy3BSDrXJ/dkn1KYdmtZODGGjLcc9XLgVVpH4KshHB8XmZgMhaBXg==}
@@ -19311,7 +19311,7 @@ snapshots:
   grapesjs-mjml@1.0.7:
     dependencies:
       '@types/mjml': 4.7.4
-      mjml-browser: 4.17.1
+      mjml-browser: 4.17.2
 
   grapesjs-parser-postcss@1.0.3: {}
 
@@ -20485,7 +20485,7 @@ snapshots:
 
   mitt@3.0.1: {}
 
-  mjml-browser@4.17.1: {}
+  mjml-browser@4.17.2: {}
 
   mkdirp@3.0.1: {}
 
