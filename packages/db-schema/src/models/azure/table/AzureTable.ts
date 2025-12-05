@@ -5,4 +5,5 @@ export enum AzureTable {
   MessagesAscending = "MessagesAscending",
   MessagesMetadata = "MessagesMetadata",
   SurveyResponses = "SurveyResponses",
+  UserActivities = "UserActivities",
 }
