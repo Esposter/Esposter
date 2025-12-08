@@ -132,7 +132,7 @@ catalog:
   grapesjs-typed: ^2.0.1
   grid-engine: ^2.48.2
   grid-layout-plus: ^1.1.1
-  gsap: ^3.13.0
+  gsap: ^3.14.1
   h3: ^1.15.4
   happy-dom: ^20.0.11
   howler: ^2.2.4
