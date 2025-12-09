@@ -8,7 +8,7 @@ import { initTRPC } from "@trpc/server";
 
 const t = initTRPC.context<Context & { session: Session }>().create();
 
-export const userActivityPlugin = t.procedure.use(async ({ ctx, next, path }) => {
+export const userActivityPlugin = t.procedure.use(async ({ ctx, next, path, type }) => {
   const result = await next();
   if (!result.ok) return result;
 
@@ -23,6 +23,7 @@ export const userActivityPlugin = t.procedure.use(async ({ ctx, next, path }) =>
       referer: ctx.req.headers.referer,
       rowKey: getReverseTickedTimestamp(),
       triggerPath: path,
+      type,
       userAgent: ctx.req.headers["user-agent"],
     }),
   );

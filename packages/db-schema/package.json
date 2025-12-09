@@ -54,10 +54,12 @@
   "devDependencies": {
     "@azure/data-tables": "catalog:",
     "@azure/storage-blob": "catalog:",
+    "@trpc/server": "catalog:",
     "drizzle-kit": "catalog:"
   },
   "peerDependencies": {
     "@esposter/shared": "workspace:*",
+    "@trpc/server": "catalog:",
     "drizzle-orm": "catalog:",
     "drizzle-zod": "catalog:",
     "zod": "catalog:"

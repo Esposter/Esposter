@@ -1,5 +1,6 @@
 import type { CompositeKeyEntity } from "@/models/azure/table/CompositeKeyEntity";
 import type { ToData } from "@esposter/shared";
+import type { ProcedureType } from "@trpc/server";
 
 import { AzureEntity, createAzureEntitySchema } from "@/models/azure/table/AzureEntity";
 import { z } from "zod";
@@ -9,6 +10,7 @@ export class UserActivityEntity extends AzureEntity {
   ipAddress?: string;
   referer?: string;
   triggerPath!: string;
+  type!: ProcedureType;
   userAgent?: string;
 
   constructor(init?: Partial<UserActivityEntity> & ToData<CompositeKeyEntity>) {
@@ -20,7 +22,7 @@ export class UserActivityEntity extends AzureEntity {
 export const userActivityEntitySchema = z.object({
   ...createAzureEntitySchema(
     z.object({
-      partitionKey: z.string().uuid(), // userId
+      partitionKey: z.uuid(),
       // reverse-ticked timestamp
       rowKey: z.string(),
     }),
@@ -29,5 +31,6 @@ export const userActivityEntitySchema = z.object({
   ipAddress: z.ipv4().or(z.ipv6()).optional(),
   referer: z.string().optional(),
   triggerPath: z.string(),
+  type: z.literal(["query", "mutation", "subscription"]),
   userAgent: z.string().optional(),
 }) satisfies z.ZodType<ToData<UserActivityEntity>>;

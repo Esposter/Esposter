@@ -1362,6 +1362,9 @@ importers:
       '@azure/storage-blob':
         specifier: 'catalog:'
         version: 12.29.1
+      '@trpc/server':
+        specifier: 'catalog:'
+        version: 11.7.2(typescript@5.9.3)
       drizzle-kit:
         specifier: 'catalog:'
         version: 0.31.8
