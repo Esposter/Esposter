@@ -37,6 +37,7 @@
     "no-nested-ternary": "off",
     "no-ternary": "off",
     "no-unassigned-import": "off",
+    "no-useless-return": "off",
     "prefer-add-event-listener": "off",
     "prefer-destructuring": "off",
     "prefer-global-this": "off",
