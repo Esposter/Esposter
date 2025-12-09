@@ -13,8 +13,8 @@ export const getIsRateLimited = (type: RateLimiterType) =>
     if (!isProduction) return next({ ctx: { session } });
 
     const forwardedFor = ctx.req.headers["x-forwarded-for"] as string | undefined;
-    const ip = forwardedFor ? forwardedFor.split(",")[0].trim() : ctx.req.socket.remoteAddress;
-    if (!ip) {
+    const ipAddress = forwardedFor ? forwardedFor.split(",")[0].trim() : ctx.req.socket.remoteAddress;
+    if (!ipAddress) {
       console.warn(
         "Rate Limiter: Could not determine IP address. Bypassing middleware... This is expected for local production builds.",
       );
@@ -24,7 +24,7 @@ export const getIsRateLimited = (type: RateLimiterType) =>
     const rateLimiter = RateLimiterMap[type];
     try {
       const { msBeforeNext, remainingPoints } = await rateLimiter.consume(
-        session ? session.user.id : `${path}${ID_SEPARATOR}${ip}`,
+        session ? session.user.id : `${path}${ID_SEPARATOR}${ipAddress}`,
       );
       if ("setHeader" in ctx.res) {
         ctx.res.setHeader("Retry-After", msBeforeNext / 1000);
