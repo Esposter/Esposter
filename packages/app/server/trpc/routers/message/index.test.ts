@@ -50,8 +50,8 @@ describe("message", () => {
 
   afterEach(async () => {
     MockContainerDatabase.clear();
-    MockTableDatabase.clear();
     MockEventGridDatabase.clear();
+    MockTableDatabase.clear();
     await mockContext.db.delete(rooms);
   });
 
