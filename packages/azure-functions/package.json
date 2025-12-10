@@ -1,7 +1,7 @@
 {
   "name": "@esposter/azure-functions",
   "description": "A library that contains webhook functionality.",
-  "version": "2.18.1",
+  "version": "2.18.2",
   "private": true,
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/azure-functions#readme",

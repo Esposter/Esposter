@@ -1,7 +1,7 @@
 {
   "name": "@esposter/xml2js",
   "description": "Simple XML to JavaScript object converter.",
-  "version": "2.18.1",
+  "version": "2.18.2",
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/xml2js#readme",
   "license": "Apache-2.0",

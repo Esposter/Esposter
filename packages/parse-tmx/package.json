@@ -1,7 +1,7 @@
 {
   "name": "parse-tmx",
   "description": "A parser for tmx.",
-  "version": "2.18.1",
+  "version": "2.18.2",
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/parse-tmx#readme",
   "license": "Apache-2.0",
