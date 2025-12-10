@@ -1,7 +1,7 @@
 {
   "name": "azure-mock",
   "description": "A library that contains azure mock classes.",
-  "version": "2.18.0",
+  "version": "2.18.1",
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter#readme",
   "license": "Apache-2.0",

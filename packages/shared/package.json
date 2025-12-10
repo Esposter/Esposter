@@ -1,7 +1,7 @@
 {
   "name": "@esposter/shared",
   "description": "A library that contains shared typescript code.",
-  "version": "2.18.0",
+  "version": "2.18.1",
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/shared#readme",
   "license": "Apache-2.0",
