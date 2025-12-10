@@ -490,7 +490,7 @@ catalogs:
       specifier: ^7.8.2
       version: 7.8.2
     sass-embedded:
-      specifier: ^1.93.3
+      specifier: ^1.95.1
       version: 1.95.1
     sax:
       specifier: ^1.4.3
