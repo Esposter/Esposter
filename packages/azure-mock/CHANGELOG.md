@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.18.0](https://github.com/Esposter/Esposter/compare/v2.17.0...v2.18.0) (2025-12-10)
+
+### Bug Fixes
+
+* add remaining tests ([87ad867](https://github.com/Esposter/Esposter/commit/87ad867732a695ad5da028fa700aaaeb3376c692))
+* lint ([5e8eb34](https://github.com/Esposter/Esposter/commit/5e8eb340d6f0e0a090076ddcd01aa4c404b3b894))
+* remove unnecessary tests ([f2829a5](https://github.com/Esposter/Esposter/commit/f2829a5f95f836a0ffc0fb4654c0bff907cb0dbf))
+
 # [2.17.0](https://github.com/Esposter/Esposter/compare/v2.16.0...v2.17.0) (2025-11-03)
 
 ### Features

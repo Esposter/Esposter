@@ -1,7 +1,7 @@
 {
   "name": "vue-phaserjs",
   "description": "A component library to integrate Phaser Framework with Vue.",
-  "version": "2.17.0",
+  "version": "2.18.0",
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/vue-phaserjs#readme",
   "license": "Apache-2.0",

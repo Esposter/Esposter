@@ -1,7 +1,7 @@
 {
   "name": "@esposter/configuration",
   "description": "A library that contains shared configuration.",
-  "version": "2.17.0",
+  "version": "2.18.0",
   "private": true,
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/configuration#readme",

@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.18.0](https://github.com/Esposter/Esposter/compare/v2.17.0...v2.18.0) (2025-12-10)
+
+### Bug Fixes
+
+* add achievement definitions + only show achievement snackbar for authed users ([458b26a](https://github.com/Esposter/Esposter/commit/458b26afbcc53a9e391bb5380ecfc9437b7c004f))
+* add mathwhiz + fix up recursive get props ([294460d](https://github.com/Esposter/Esposter/commit/294460dde615386683fb7bd0de3c5bf0d8e55b90))
+* definitions ([e7d2301](https://github.com/Esposter/Esposter/commit/e7d2301406c39b5cfd58e6537dd4f1786f1ffb3d))
+* imports ([f953ac2](https://github.com/Esposter/Esposter/commit/f953ac249d0881c59e6dfaf2dc7f0581cb333c13))
+* more fixes ([fe2193a](https://github.com/Esposter/Esposter/commit/fe2193ab7831a3b9bc0eab12003f78175417eea1))
+* tests ([be2a1be](https://github.com/Esposter/Esposter/commit/be2a1be6c92da786751c3c58cbbbf4da0a671912))
+* types ([977d0d1](https://github.com/Esposter/Esposter/commit/977d0d1b2d77756a24381cb7ede390bbd0a36875))
+* types ([aada69f](https://github.com/Esposter/Esposter/commit/aada69f31c3e199bd814e013883462b0b7f7fcd5))
+* use esm imports ([e583736](https://github.com/Esposter/Esposter/commit/e5837369bff15c20868d9486d93bf5192c48c58c))
+
+### Features
+
+* Add achievement definitions ([97accb3](https://github.com/Esposter/Esposter/commit/97accb397c869a649855cff7b486b6c6a46de8bc))
+* Add achievements ([b77aa1d](https://github.com/Esposter/Esposter/commit/b77aa1d74af96d1e1445b94417f798b69464a1e4))
+* add activity plugin ([75aab58](https://github.com/Esposter/Esposter/commit/75aab58238f9a64954c2cff870f3a5ffc1536f01))
+* Add endpoints for user room settings ([316ccff](https://github.com/Esposter/Esposter/commit/316ccff0a3fb23f701778b1004a1af0bf0d7de34))
+* Add more definitions ([4d8e17d](https://github.com/Esposter/Esposter/commit/4d8e17d00457ffe5efcbf2bea10c8e11946446e5))
+* Add more definitions ([59623cf](https://github.com/Esposter/Esposter/commit/59623cf708634b9c9c2b7cda75dafde61bf6142c))
+* Add notification settings button ([0f49913](https://github.com/Esposter/Esposter/commit/0f49913a0190ea3784e549a0264ef3711d06338c))
+* Add procedure type ([b63f37d](https://github.com/Esposter/Esposter/commit/b63f37d1512c5a85265527e209580379f33eebda))
+
 # [2.17.0](https://github.com/Esposter/Esposter/compare/v2.16.0...v2.17.0) (2025-11-03)
 
 ### Bug Fixes

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.18.0](https://github.com/Esposter/Esposter/compare/v2.17.0...v2.18.0) (2025-12-10)
+
+### Bug Fixes
+
+* lint ([70399d2](https://github.com/Esposter/Esposter/commit/70399d2428f55466828962d7091ca579a1e7ef5c))
+
+### Features
+
+* Add endpoints for user room settings ([316ccff](https://github.com/Esposter/Esposter/commit/316ccff0a3fb23f701778b1004a1af0bf0d7de34))
+* fix up the UI to be nice ([a02a4ae](https://github.com/Esposter/Esposter/commit/a02a4ae84884fee5824a22caf0f57a8da845394f))
+
 # [2.17.0](https://github.com/Esposter/Esposter/compare/v2.16.0...v2.17.0) (2025-11-03)
 
 ### Features

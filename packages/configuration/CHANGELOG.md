@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.18.0](https://github.com/Esposter/Esposter/compare/v2.17.0...v2.18.0) (2025-12-10)
+
+### Bug Fixes
+
+* revert vue rule, the issue is with the vue parser most likely ([732da00](https://github.com/Esposter/Esposter/commit/732da00b426248b6e1cd670b67a246d604a579b5))
+* turn off time-consuming rule ([3033838](https://github.com/Esposter/Esposter/commit/3033838b2bae9630018f38af0aacd0dc85bd41bb))
+
+### Features
+
+* Migrate to builtin tsconfig paths ([48ba88e](https://github.com/Esposter/Esposter/commit/48ba88ea854157a6c9bde3d99f2f5f6757b85984))
+
 # [2.17.0](https://github.com/Esposter/Esposter/compare/v2.16.0...v2.17.0) (2025-11-03)
 
 ### Bug Fixes

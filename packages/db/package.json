@@ -1,7 +1,7 @@
 {
   "name": "@esposter/db",
   "description": "A library of database utilities that is available in server environment only.",
-  "version": "2.17.0",
+  "version": "2.18.0",
   "private": true,
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/db#readme",
