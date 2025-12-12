@@ -71,7 +71,7 @@ catalog:
   "@unocss/eslint-config": ^66.5.10
   "@unocss/nuxt": ^66.5.10
   "@vite-pwa/nuxt": ^1.1.0
-  "@vitejs/plugin-vue": ^6.0.2
+  "@vitejs/plugin-vue": ^6.0.3
   "@vitest/coverage-v8": ^4.0.15
   "@vitest/eslint-plugin": ^1.5.2
   "@vue-flow/background": ^1.3.2
