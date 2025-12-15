@@ -198,7 +198,7 @@ catalog:
   vuetify: ^3.11.3
   vuetify-nuxt-module: ^0.18.8
   web-push: ^3.6.7
-  worker-timers: ^8.0.25
+  worker-timers: ^8.0.26
   ws: ^8.18.3
   xmlbuilder2: ^4.0.3
   zod: ^4.1.13

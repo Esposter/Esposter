@@ -589,8 +589,8 @@ catalogs:
       specifier: ^3.6.7
       version: 3.6.7
     worker-timers:
-      specifier: ^8.0.25
-      version: 8.0.25
+      specifier: ^8.0.26
+      version: 8.0.26
     ws:
       specifier: ^8.18.3
       version: 8.18.3
@@ -1040,7 +1040,7 @@ importers:
         version: 3.6.7
       worker-timers:
         specifier: 'catalog:'
-        version: 8.0.25
+        version: 8.0.26
       ws:
         specifier: 'catalog:'
         version: 8.18.3
@@ -11800,14 +11800,14 @@ packages:
   worker-factory@7.0.46:
     resolution: {integrity: sha512-Sr1hq2FMgNa04UVhYQacsw+i58BtMimzDb4+CqYphZ97OfefRpURu0UZ+JxMr/H36VVJBfuVkxTK7MytsanC3w==}
 
-  worker-timers-broker@8.0.11:
-    resolution: {integrity: sha512-uwhxKru8BI9m2tsogxr2fB6POZ8LB2xH+Pu3R0mvQnAZLPgLD6K3IX4LNKPTEgTJ/j5VsuQPB+gLI1NBNKkPlg==}
+  worker-timers-broker@8.0.12:
+    resolution: {integrity: sha512-Udml0yZv59tj/5Y2eCW2bYmrBgFSYmg0MXSzlDUdmsjcmf272hJaY8R3TWteetfL6tmL2+yJwRmcJgDtwCcOZg==}
 
   worker-timers-worker@9.0.11:
     resolution: {integrity: sha512-pArb5xtgHWImYpXhjg1OFv7JFG0ubmccb73TFoXHXjG830fFj+16N57q9YeBnZX52dn+itRrMoJZ9HaZBVzDaA==}
 
-  worker-timers@8.0.25:
-    resolution: {integrity: sha512-X7Z5dmM6PlrEnaadtFQOyXHGD/IysPA3HZzaC2koqsU1VI+RvyGmjiiLiUBQixK8PH5R7ilkOzZupWskNRaXmA==}
+  worker-timers@8.0.26:
+    resolution: {integrity: sha512-Yfr8t1SfvA5Qwr5JlvTHVd0aI1r1kQ+dtJQ5aHjNleK/GRIOrwtoEUnGhwumLR9qH6YghFZsqD9w8IzsP7RHwg==}
 
   wrap-ansi@6.2.0:
     resolution: {integrity: sha512-r6lPcBGxZXlIcymEu7InxDMhdW0KDxpLgoFLcguasxCaJ/SOIZwINatK9KY/tf+ZrlywOKU0UDj3ATXUBfxJXA==}
@@ -24212,7 +24212,7 @@ snapshots:
       fast-unique-numbers: 9.0.24
       tslib: 2.8.1
 
-  worker-timers-broker@8.0.11:
+  worker-timers-broker@8.0.12:
     dependencies:
       '@babel/runtime': 7.28.4
       broker-factory: 3.1.10
@@ -24226,11 +24226,11 @@ snapshots:
       tslib: 2.8.1
       worker-factory: 7.0.46
 
-  worker-timers@8.0.25:
+  worker-timers@8.0.26:
     dependencies:
       '@babel/runtime': 7.28.4
       tslib: 2.8.1
-      worker-timers-broker: 8.0.11
+      worker-timers-broker: 8.0.12
       worker-timers-worker: 9.0.11
 
   wrap-ansi@6.2.0:
