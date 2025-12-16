@@ -162,7 +162,7 @@ catalog:
   prosemirror-state: ^1.4.4
   rate-limiter-flexible: ^9.0.1
   rolldown: ^1.0.0-beta.54
-  rolldown-plugin-dts: ^0.18.3
+  rolldown-plugin-dts: ^0.18.4
   rxjs: ^7.8.2
   sass-embedded: ^1.97.0
   sax: ^1.4.3
