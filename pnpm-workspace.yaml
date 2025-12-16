@@ -195,7 +195,7 @@ catalog:
   vue-router: ^4.6.4
   vue-tsc: ^3.1.8
   vue3-apexcharts: ^1.10.0
-  vuetify: ^3.11.3
+  vuetify: ^3.11.4
   vuetify-nuxt-module: ^0.19.0
   web-push: ^3.6.7
   worker-timers: ^8.0.26
