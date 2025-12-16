@@ -201,7 +201,7 @@ catalog:
   worker-timers: ^8.0.26
   ws: ^8.18.3
   xmlbuilder2: ^4.0.3
-  zod: ^4.2.0
+  zod: ^4.2.1
 
 catalogMode: strict
 
