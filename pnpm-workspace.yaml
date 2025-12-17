@@ -96,7 +96,7 @@ catalog:
   data-urls: ^6.0.0
   dayjs: ^1.11.19
   debug: ^4.4.3
-  dedent: ^1.7.0
+  dedent: ^1.7.1
   defu: ^6.1.4
   dotenv: ^17.2.3
   drizzle-kit: ^0.31.8

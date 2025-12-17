@@ -289,8 +289,8 @@ catalogs:
       specifier: ^4.4.3
       version: 4.4.3
     dedent:
-      specifier: ^1.7.0
-      version: 1.7.0
+      specifier: ^1.7.1
+      version: 1.7.1
     defu:
       specifier: ^6.1.4
       version: 6.1.4
@@ -833,7 +833,7 @@ importers:
         version: 4.4.3
       dedent:
         specifier: 'catalog:'
-        version: 1.7.0
+        version: 1.7.1
       defu:
         specifier: 'catalog:'
         version: 6.1.4
@@ -6927,6 +6927,14 @@ packages:
 
   dedent@1.7.0:
     resolution: {integrity: sha512-HGFtf8yhuhGhqO07SV79tRp+br4MnbdjeVxotpn1QBl30pcLLCQjX5b2295ll0fv8RKDKsmWYrl05usHM9CewQ==}
+    peerDependencies:
+      babel-plugin-macros: ^3.1.0
+    peerDependenciesMeta:
+      babel-plugin-macros:
+        optional: true
+
+  dedent@1.7.1:
+    resolution: {integrity: sha512-9JmrhGZpOlEgOLdQgSm0zxFaYoQon408V1v49aqTWuXENVlnCuY9JBZcXZiCsZQWDjTm5Qf/nIvAy77mXDAjEg==}
     peerDependencies:
       babel-plugin-macros: ^3.1.0
     peerDependenciesMeta:
@@ -18546,6 +18554,8 @@ snapshots:
   decimal.js@10.6.0: {}
 
   dedent@1.7.0: {}
+
+  dedent@1.7.1: {}
 
   deep-is@0.1.4: {}
 
