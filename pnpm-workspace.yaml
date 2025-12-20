@@ -175,7 +175,7 @@ catalog:
   survey-vue3-ui: ^2.5.1
   three: ^0.182.0
   three-globe: ^2.45.0
-  trpc-nuxt: ^1.2.0
+  trpc-nuxt: ^2.0.1
   tsx: ^4.21.0
   type-fest: ^5.3.1
   typedoc: ^0.28.15
@@ -198,7 +198,7 @@ catalog:
   vuetify: ^3.11.4
   vuetify-nuxt-module: ^0.19.1
   web-push: ^3.6.7
-  worker-timers: ^8.0.26
+  worker-timers: ^8.0.27
   ws: ^8.18.3
   xmlbuilder2: ^4.0.3
   zod: ^4.2.1
