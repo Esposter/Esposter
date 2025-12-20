@@ -98,7 +98,7 @@ export const useMediaRecorder = (options: UseMediaRecorderOptions = {}) => {
     };
   };
 
-  const start = async (timeslice: number | undefined = undefined) => {
+  const start = async (timeslice: number | undefined) => {
     if (state.value === "recording") return;
     data.value = [];
 

@@ -185,7 +185,7 @@ catalog:
   unplugin-auto-import: ^20.3.0
   v-viewer: ^3.0.22
   viewerjs: ^1.11.7
-  vite: ^8.0.0-beta.3
+  vite: 8.0.0-beta.2
   vite-plugin-dts: ^4.5.4
   vite-plugin-mkcert: ^1.17.9
   vitest: ^4.0.16
@@ -217,6 +217,6 @@ onlyBuiltDependencies:
 
 overrides:
   pdfjs-dist: ^5.4.449
-  vite: ^8.0.0-beta.1
+  vite: 8.0.0-beta.2
 
 shellEmulator: true
