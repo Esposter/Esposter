@@ -180,7 +180,7 @@ catalog:
   type-fest: ^5.3.1
   typedoc: ^0.28.15
   typescript: ^5.9.3
-  typescript-eslint: ^8.49.0
+  typescript-eslint: ^8.50.0
   unocss: ^66.5.10
   unplugin-auto-import: ^20.3.0
   v-viewer: ^3.0.22
