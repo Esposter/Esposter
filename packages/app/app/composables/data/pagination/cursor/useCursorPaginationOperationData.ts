@@ -31,7 +31,7 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
     cursorPaginationData.value = new CursorPaginationData<TItem>();
   };
   const readItems = async <TDef extends InferrableClientTypes>(
-    useQuery: () => Promise<Awaited<AsyncData<CursorPaginationData<TItem> | null, TRPCClientErrorLike<TDef>>>>,
+    useQuery: () => Promise<Awaited<AsyncData<CursorPaginationData<TItem> | undefined, TRPCClientErrorLike<TDef>>>>,
     onComplete?: (data: CursorPaginationData<TItem>) => Promisable<void>,
   ) => {
     const { data, pending: isPending, status, ...rest } = await useQuery();

@@ -11,7 +11,7 @@ export const useCursorSearcher = <TItem extends ToData<AEntity>, TDef extends In
   useQuery: (
     searchQuery: string,
     cursor?: string,
-  ) => Promise<Awaited<AsyncData<CursorPaginationData<TItem> | null, TRPCClientErrorLike<TDef>>>>,
+  ) => Promise<Awaited<AsyncData<CursorPaginationData<TItem> | undefined, TRPCClientErrorLike<TDef>>>>,
   query: (searchQuery: string, cursor?: string, opts?: TRPCProcedureOptions) => Promise<CursorPaginationData<TItem>>,
   isAutoSearch?: true,
   isIncludeEmptySearchQuery?: true,
