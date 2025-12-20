@@ -38,10 +38,10 @@ export default Object.assign(
     // "@typescript-eslint/naming-convention": [
     //   "error",
     //   {
-    //     format: ["camelCase", "PascalCase", "UPPER_CASE"],
-    //     selector: "variable",
-    //     types: ["array", "boolean", "number", "string"],
-    //     leadingUnderscore: "allow",
+    //     Format: ["camelCase", "PascalCase", "UPPER_CASE"],
+    //     Selector: "variable",
+    //     Types: ["array", "boolean", "number", "string"],
+    //     LeadingUnderscore: "allow",
     //   },
     // ],
   },

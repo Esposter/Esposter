@@ -163,7 +163,7 @@ describe("user", () => {
 
     const { user } = await mockSessionOnce(mockContext.db);
     // It's stupid I know, but we need to refresh back to our original user
-    // since we need to listen to a new mock user with a valid id using our original user
+    // Since we need to listen to a new mock user with a valid id using our original user
     getMockSession();
     const onUpsertStatus = await caller.onUpsertStatus([user.id]);
     await mockSessionOnce(mockContext.db, user);

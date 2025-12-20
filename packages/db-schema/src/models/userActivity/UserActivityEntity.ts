@@ -23,7 +23,7 @@ export const userActivityEntitySchema = z.object({
   ...createAzureEntitySchema(
     z.object({
       partitionKey: z.uuid(),
-      // reverse-ticked timestamp
+      // Reverse-ticked timestamp
       rowKey: z.string(),
     }),
   ).shape,

@@ -43,7 +43,7 @@ const animate = () => {
   const savedSettings = { ...calculator.settings };
   calculator.setBlank();
   // Ignore warnings from updateSettings about
-  // unsupported extraneous calculator settings which is fine
+  // Unsupported extraneous calculator settings which is fine
   ignoreWarn(() => {
     calculator?.updateSettings(savedSettings);
   });
@@ -84,7 +84,7 @@ onMounted(() => {
       showYAxis: false,
       trace: false,
     });
-    calculator.setExpressions(expressions.map((e) => ({ ...e, color: e.color ?? Colors.BLACK })));
+    calculator.setExpressions(expressions.map((e) => Object.assign(e, { color: e.color ?? Colors.BLACK })));
     const newExpressionPanel = element.querySelector<HTMLDivElement>(".dcg-exppanel-outer");
     if (!newExpressionPanel) return;
 

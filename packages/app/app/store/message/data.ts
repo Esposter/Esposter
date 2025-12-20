@@ -77,7 +77,7 @@ export const useDataStore = defineStore("message/data", () => {
   });
   const typings = ref<CreateTypingInput[]>([]);
   // We only expose the internal store crud message functions for subscriptions
-  // everything else will directly use trpc mutations that are tracked by the related subscriptions
+  // Everything else will directly use trpc mutations that are tracked by the related subscriptions
   return {
     createMessage,
     files,

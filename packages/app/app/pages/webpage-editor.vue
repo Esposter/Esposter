@@ -378,7 +378,10 @@ const { trigger } = watchTriggerable(session, (newSession) => {
         webpageEditorJson ? new WebpageEditor(jsonDateParse(webpageEditorJson)) : new WebpageEditor(),
       );
     },
-    store: (data) => new Promise(() => localStorage.setItem(WEBPAGE_EDITOR_LOCAL_STORAGE_KEY, JSON.stringify(data))),
+    store: (data) =>
+      new Promise<void>(() => {
+        localStorage.setItem(WEBPAGE_EDITOR_LOCAL_STORAGE_KEY, JSON.stringify(data));
+      }),
   });
   editor.Storage.add("remote", {
     load: () => readWebpageEditor(),

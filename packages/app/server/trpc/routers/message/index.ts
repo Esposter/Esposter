@@ -76,9 +76,9 @@ export const readMetadataInputSchema = z.object({
 });
 export type ReadMetadataInput = z.infer<typeof readMetadataInputSchema>;
 // Azure table storage doesn't actually support sorting but remember that it is internally insert-sorted
-// as we insert our messages with a reverse-ticked timestamp as our rowKey
-// so unfortunately we have to provide a dummy default to keep the consistency here that cursor pagination
-// always requires a sortBy even though we don't actually need the user to specify it
+// As we insert our messages with a reverse-ticked timestamp as our rowKey
+// So unfortunately we have to provide a dummy default to keep the consistency here that cursor pagination
+// Always requires a sortBy even though we don't actually need the user to specify it
 const readMessagesInputSchema = z
   .object({
     ...createCursorPaginationParamsSchema(standardMessageEntitySchema.keyof(), [
@@ -287,7 +287,7 @@ export const messageRouter = router({
             messages.push(newMessageEntity);
           }
           // We don't need visual effects like isLoading when forwarding messages
-          // so we'll instead rely on the subscription to auto-add the forwarded message for convenience
+          // So we'll instead rely on the subscription to auto-add the forwarded message for convenience
           messageEventEmitter.emit("createMessage", [
             messages,
             { isSendToSelf: true, sessionId: ctx.session.session.id },
@@ -341,7 +341,7 @@ export const messageRouter = router({
 
       if (messages.length > 0) {
         // Remember that Azure Table Storage is insert-sorted by rowKey
-        // so the first message is the newest one but we want to yield from oldest to newest
+        // So the first message is the newest one but we want to yield from oldest to newest
         const reversedMessages = messages.toReversed();
         const newestMessage = reversedMessages[reversedMessages.length - 1];
         yield tracked(newestMessage.rowKey, reversedMessages);

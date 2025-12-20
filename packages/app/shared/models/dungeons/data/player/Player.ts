@@ -19,7 +19,7 @@ export class Player {
   inventory: Item[] = [
     { id: ItemId.Potion, quantity: 10 },
     { id: ItemId.DamagedBall, quantity: 5 },
-  ].map(({ id, ...rest }) => ({ ...getItem(id), ...rest }));
+  ].map(({ id, ...rest }) => Object.assign(getItem(id), rest));
   monsters: Monster[] = (() => {
     if (IS_PRODUCTION) return [new Monster(MonsterKey.Iguanignite)];
 

@@ -50,9 +50,8 @@ export const achievementRouter = router({
         .from(userAchievements)
         .innerJoin(achievements, eq(achievements.id, userAchievements.achievementId))
         .where(and(eq(userAchievements.userId, userId)));
-      return joinedUserAchievements.map(({ achievements, user_achievements }) => ({
-        ...user_achievements,
-        achievement: achievements,
-      }));
+      return joinedUserAchievements.map(({ achievements, user_achievements }) =>
+        Object.assign(user_achievements, { achievement: achievements }),
+      );
     }),
 });

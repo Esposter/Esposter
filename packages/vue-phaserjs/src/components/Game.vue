@@ -9,9 +9,9 @@ import { Game } from "phaser";
 
 interface GameProps {
   // We're gonna stop people from being stupid and adding scenes like this
-  // because Phaser automatically starts the first scene under-the-hood
-  // which is totally un-obvious and also the correct way of adding scenes
-  // is to use the vue "Scene" Component which is way neater C:
+  // Because Phaser automatically starts the first scene under-the-hood
+  // Which is totally un-obvious and also the correct way of adding scenes
+  // Is to use the vue "Scene" Component which is way neater C:
   configuration: Except<Types.Core.GameConfig, "scene">;
 }
 

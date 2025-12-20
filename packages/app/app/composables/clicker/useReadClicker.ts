@@ -13,8 +13,8 @@ export const useReadClicker = async () => {
   const { saveClicker } = clickerStore;
   const { clicker } = storeToRefs(clickerStore);
   // This is used for tracking when we should save
-  // i.e. every time the user manually updates the state
-  // which is everything excluding automatic updates like noPoints
+  // I.e. every time the user manually updates the state
+  // Which is everything excluding automatic updates like noPoints
   const virtualClicker = computed<RecursiveDeepOmitItemEntity<Clicker, ["noPoints", "producedValue"]>>(
     (oldVirtualClicker) => {
       const newVirtualClicker = omitDeepItemEntity(clicker.value, "noPoints", "producedValue");

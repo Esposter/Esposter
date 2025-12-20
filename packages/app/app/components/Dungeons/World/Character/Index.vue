@@ -56,7 +56,7 @@ const subscriptionPositionChangeStarted = ref<Subscription>();
 const subscriptionPositionChangeFinished = ref<Subscription>();
 const subscriptionDirectionChanged = ref<Subscription>();
 // We don't need to remove our character here from grid engine
-// since it will automatically be removed when we create a new tilemap
+// Since it will automatically be removed when we create a new tilemap
 onUnmounted(() => {
   subscriptionMovementStarted.value?.unsubscribe();
   subscriptionMovementStopped.value?.unsubscribe();

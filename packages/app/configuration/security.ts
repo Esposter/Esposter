@@ -10,36 +10,36 @@ export const security: NuxtConfig["security"] = {
   headers: {
     contentSecurityPolicy: {
       "img-src": ImageSourceWhitelist,
-      // desmos
+      // Desmos
       "script-src": "'unsafe-eval'",
       "script-src-elem": [
-        // nuxt data hydration
+        // Nuxt data hydration
         "'unsafe-inline'",
-        // nuxt vite client
+        // Nuxt vite client
         "'self'",
         // @vue-pdf-viewer/viewer
         "data:",
-        // desmos
+        // Desmos
         BASE_URL,
-        // grapesjs
+        // Grapesjs
         TUI_BASE_URL,
       ],
       "style-src-elem": [
-        // vuetify
+        // Vuetify
         "'unsafe-inline'",
-        // nuxt
+        // Nuxt
         "'self'",
-        // grapesjs
+        // Grapesjs
         CLOUDFLARE_BASE_URL,
         // @nuxt/fonts
         FONTS_BASE_URL,
-        // grapesjs
+        // Grapesjs
         TUI_BASE_URL,
       ],
       "worker-src": [
-        // pdfjs-dist
+        // Pdfjs-dist
         "'self'",
-        // desmos
+        // Desmos
         "blob:",
       ],
     },

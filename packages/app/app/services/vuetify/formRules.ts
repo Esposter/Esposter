@@ -17,7 +17,7 @@ export const formRules: {
     !value || !profanityMatcher.hasMatch(value) || `This field cannot contain profanity`,
   requireAtMostMaxFileSize: (value: FileFieldValue) =>
     // @TODO: Right now trpc uses application/octet-stream for uploading files which uses the same namespace as normal requests
-    // compared to using multipart/form-data, so we'll apply the same frontend validation for now for simplicity
+    // Compared to using multipart/form-data, so we'll apply the same frontend validation for now for simplicity
     !value ||
     value.size < MAX_REQUEST_SIZE ||
     `This field's file size should be less than ${MAX_REQUEST_SIZE / MEGABYTE} MB`,

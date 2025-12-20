@@ -9,7 +9,7 @@ export const useFixedLayoutStyles = (bottomOffset: Ref<number | string>) => {
   const leftOffset = computed(() => (isLeftDrawerOpen.value ? 0 : -LEFT_DRAWER_WIDTH));
   const rightOffset = computed(() => (isRightDrawerOpen.value ? 0 : -RIGHT_DRAWER_WIDTH));
   // We only need to offset the middle if we are on desktop
-  // as the drawers are floating on non-desktop screens
+  // As the drawers are floating on non-desktop screens
   const middleLeftOffset = computed(() => (isDesktop.value && isLeftDrawerOpen.value ? LEFT_DRAWER_WIDTH : 0));
   const middleRightOffset = computed(() => (isDesktop.value && isRightDrawerOpen.value ? RIGHT_DRAWER_WIDTH : 0));
   return {

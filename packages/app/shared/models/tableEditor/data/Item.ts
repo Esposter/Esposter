@@ -5,8 +5,8 @@ import { aTableEditorItemEntitySchema } from "#shared/models/tableEditor/data/AT
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 // This is not directly used when creating new classes
-// but is only used as a convenient wrapper type for helper functions
-// to enforce that all entities implement Item
+// But is only used as a convenient wrapper type for helper functions
+// To enforce that all entities implement Item
 export type Item = ATableEditorItemEntity & ItemEntityType<string>;
 
 export const itemSchema = z.object({

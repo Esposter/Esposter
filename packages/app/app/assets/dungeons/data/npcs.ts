@@ -47,8 +47,9 @@ const NpcMap: Record<NpcId, PartialByKeys<Except<Npc, "id">, "frame" | "movement
   },
 };
 
-export const npcs: Npc[] = parseDictionaryToArray(NpcMap).map((npc) => ({
-  ...npc,
-  frame: npc.frame ?? 0,
-  movementPattern: npc.movementPattern ?? MovementPattern.Idle,
-}));
+export const npcs: Npc[] = parseDictionaryToArray(NpcMap).map((npc) =>
+  Object.assign(npc, {
+    frame: npc.frame ?? 0,
+    movementPattern: npc.movementPattern ?? MovementPattern.Idle,
+  }),
+);

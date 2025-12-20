@@ -176,7 +176,9 @@ export class Parser {
   }
 
   parseStringPromise<T>(convertableToString: convertableToString): Promise<T> {
-    return new Promise<T>((resolve) => this.parseString(convertableToString, resolve));
+    return new Promise<T>((resolve) => {
+      this.parseString(convertableToString, resolve);
+    });
   }
 
   private assignOrPush(object: Record<string, unknown>, key: string, newValue: unknown): void {

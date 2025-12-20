@@ -15,7 +15,8 @@ export type DeepOmit<T, TKey> = T extends Primitive
               DeepOmitArray<TP, TKey>
             : // Stop recursion for exactly Record<string, unknown>
               Record<string, unknown> extends TP
-              ? TP // Keep it as is
+              ? // Keep it as is
+                TP
               : DeepOmit<TP, TKey>
         : never;
     };

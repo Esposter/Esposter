@@ -5,7 +5,7 @@ import { resolve } from "node:path";
 const minArgv = 3;
 const property = "crossOS";
 if (process.argv.length < minArgv)
-  // pnpm crossOS [args]
+  // Pnpm crossOS [args]
   throw new Error(`${property} requires at least ${minArgv - 2} arguments`);
 
 const script = process.argv[2];

@@ -38,7 +38,7 @@ export class MockBlobBatchClient implements BlobBatchClient {
 
     for (const url of urls) {
       const urlParts = new URL(url);
-      // pathname is like "/container/blob/name.txt"
+      // Pathname is like "/container/blob/name.txt"
       const pathSegments = urlParts.pathname.split("/").filter(Boolean);
       if (pathSegments.length < 2) {
         const errorCode = "InvalidUri";

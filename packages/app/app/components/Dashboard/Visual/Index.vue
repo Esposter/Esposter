@@ -13,7 +13,7 @@ const { chart, type } = defineProps<VisualProps>();
 const container = useTemplateRef("container");
 const height = ref<number>();
 // The div height resizes based on the grid layout plus library css
-// so we have to use the resize observer to listen for its changes
+// So we have to use the resize observer to listen for its changes
 useResizeObserver(container, ([{ target }]) => {
   height.value = (target as HTMLDivElement).clientHeight;
 });

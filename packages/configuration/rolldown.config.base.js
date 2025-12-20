@@ -16,7 +16,7 @@ export default {
   plugins: [
     dts({
       resolve: [
-        // azure-mock
+        // Azure-mock
         "@azure/core-http-compat",
         "@azure/core-rest-pipeline",
         "type-fest",

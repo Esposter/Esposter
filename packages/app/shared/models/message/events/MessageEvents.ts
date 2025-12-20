@@ -11,9 +11,9 @@ export interface MessageEvents {
   // Why? Because we can. (also it's better UX I suppose)
   createTyping: (CreateTypingInput & Pick<Device, "sessionId">)[];
   deleteMessage: DeleteMessageInput[];
-  // updatedAt also gets implicitly updated, but for the sake of my sanity in not wanting to do any more type-massaging
-  // and the fact that we never explicitly use updatedAt anyways (we always update all the properties via Object.assign),
-  // we don't need to strictly declare the type c:
+  // UpdatedAt also gets implicitly updated, but for the sake of my sanity in not wanting to do any more type-massaging
+  // And the fact that we never explicitly use updatedAt anyways (we always update all the properties via Object.assign),
+  // We don't need to strictly declare the type c:
   updateMessage: PartialByKeys<
     Pick<StandardMessageEntity, "files" | "isEdited" | "isPinned" | "linkPreviewResponse"> & UpdateMessageInput,
     "files" | "linkPreviewResponse" | "message"

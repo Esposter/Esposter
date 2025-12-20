@@ -56,7 +56,7 @@ export const readMessages = async ({
         value: getReverseTickedTimestamp(rowKey),
       });
     // We don't need to fetch limit + 1 here because the pagination metadata
-    // is actually determined by the index table, not the message table
+    // Is actually determined by the index table, not the message table
     const messages = await getTopNEntitiesByType(messageClient, limit, MessageEntityMap, {
       filter: serializeClauses(clauses),
     });

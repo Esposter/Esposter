@@ -97,7 +97,7 @@ export class TiledJSONExternalFile extends MultiFile {
 
     for (const [index, tileset] of tilesets.entries()) {
       // Tileset is relative to the tilemap filename, but we will expose our tilesets
-      // in nuxt's public folder, so we just need to get the relative path past that
+      // In nuxt's public folder, so we just need to get the relative path past that
       const publicString = "public";
       const pathIndex = tileset.source.indexOf(publicString);
       if (pathIndex === -1) throw new NotFoundError(this.onFileComplete.name, tileset.source);

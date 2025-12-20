@@ -14,7 +14,7 @@ export const jsonDateParse = (text: string): any =>
 
         if (a) {
           const b = a[1].split(/[-+,.]/);
-          parsedValue = new Date(b[0] ? +b[0] : 0 - +b[1]);
+          parsedValue = new Date(b[0] ? Number(b[0]) : 0 - Number(b[1]));
         }
       }
     }

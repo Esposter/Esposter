@@ -32,7 +32,10 @@ const { trigger } = watchTriggerable(session, (newSession) => {
       const emailEditorJson = localStorage.getItem(EMAIL_EDITOR_LOCAL_STORAGE_KEY);
       return Promise.resolve(emailEditorJson ? new EmailEditor(jsonDateParse(emailEditorJson)) : new EmailEditor());
     },
-    store: (data) => new Promise(() => localStorage.setItem(EMAIL_EDITOR_LOCAL_STORAGE_KEY, JSON.stringify(data))),
+    store: (data) =>
+      new Promise<void>(() => {
+        localStorage.setItem(EMAIL_EDITOR_LOCAL_STORAGE_KEY, JSON.stringify(data));
+      }),
   });
   editor.Storage.add("remote", {
     load: () => readEmailEditor(),

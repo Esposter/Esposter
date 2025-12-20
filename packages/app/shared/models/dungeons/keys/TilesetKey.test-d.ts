@@ -10,7 +10,7 @@ describe("tilesetKey type", () => {
 
     expectTypeOf(TilesetKey).toExtend<
       // TilesetKey uses the same namespace as ImageKey & SpritesheetKey
-      // so we need to validate that we can't have conflicting values
+      // So we need to validate that we can't have conflicting values
       Partial<Record<ImageKey, never>> & Partial<Record<SpritesheetKey, never>> & Record<string, string>
     >();
   });

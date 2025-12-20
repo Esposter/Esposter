@@ -99,7 +99,7 @@ export const userRouter = router({
       if (foundStatus) resultUserStatuses.push({ ...foundStatus, status: getDetectedUserStatus(foundStatus) });
       else
         // We'll conveniently assume that if they don't have a user status record yet
-        // it means that they're still online as we insert a record as soon as they go offline
+        // It means that they're still online as we insert a record as soon as they go offline
         resultUserStatuses.push({
           createdAt: new Date(),
           deletedAt: null,

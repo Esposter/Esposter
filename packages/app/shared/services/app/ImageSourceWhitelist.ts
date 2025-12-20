@@ -11,7 +11,7 @@ import {
 export const ImageSourceWhitelist = [
   // @vite-pwa/nuxt
   "'self'",
-  // phaser, surveyjs
+  // Phaser, surveyjs
   "data:",
   // Upload file createObjectURL preview
   "blob:",
@@ -19,20 +19,20 @@ export const ImageSourceWhitelist = [
   "*.githubusercontent.com",
   // Google user image
   "*.googleusercontent.com",
-  // emoji-mart-vue-fast
+  // Emoji-mart-vue-fast
   "https://unpkg.com/emoji-datasource-apple@15.0.1/img/apple/sheets-256/64.png",
   // Azure
   process.env.AZURE_CONTAINER_BASE_URL,
-  // grapesjs
+  // Grapesjs
   BLOGSPOT_BASE_URL,
-  // grapesjs
+  // Grapesjs
   GRAPESJS_BASE_URL,
-  // grapesjs
+  // Grapesjs
   MAILJET_BASE_URL,
-  // grapesjs
+  // Grapesjs
   PLACEHOLD_BASE_URL,
-  // grapesjs
+  // Grapesjs
   TUI_BASE_URL,
-  // grapesjs
+  // Grapesjs
   WORDPRESS_DESIGNSPELL_BASE_URL,
 ];

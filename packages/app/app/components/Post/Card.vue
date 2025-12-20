@@ -6,7 +6,7 @@ import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
 interface PostCardProps {
   // This is only used for the post card in the comments page to direct it
-  // into looking for post data in the comment store instead
+  // Into looking for post data in the comment store instead
   isCommentStore?: boolean;
   post: PostWithRelations;
 }

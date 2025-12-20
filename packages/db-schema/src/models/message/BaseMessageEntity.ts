@@ -35,7 +35,7 @@ export const baseMessageEntitySchema = z.object({
   ...createAzureEntitySchema(
     z.object({
       partitionKey: selectRoomSchema.shape.id,
-      // reverse-ticked timestamp
+      // Reverse-ticked timestamp
       rowKey: z.string(),
     }),
   ).shape,

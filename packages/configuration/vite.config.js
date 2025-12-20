@@ -12,7 +12,7 @@ export default defineConfig({
       formats: ["es"],
     },
     rolldownOptions: {
-      // vue-phaserjs
+      // Vue-phaserjs
       external: ["phaser", "phaser3-rex-plugins", "pinia", "vue"],
     },
   },

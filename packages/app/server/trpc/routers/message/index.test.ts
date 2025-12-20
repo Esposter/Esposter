@@ -298,7 +298,7 @@ describe("message", () => {
       username: mockSession.user.name,
     });
 
-    // createTyping is a query that emits events, so we just verify it doesn't throw
+    // CreateTyping is a query that emits events, so we just verify it doesn't throw
     expect(true).toBe(true);
   });
 

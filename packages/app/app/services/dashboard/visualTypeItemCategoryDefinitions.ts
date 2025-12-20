@@ -13,4 +13,4 @@ const VisualTypeItemCategoryDefinitionMap = Object.fromEntries(Object.values(Vis
 export const visualTypeItemCategoryDefinitions: SelectItemCategoryDefinition<VisualType>[] = parseDictionaryToArray(
   VisualTypeItemCategoryDefinitionMap,
   "value",
-).map((d) => ({ ...d, title: prettify(d.value) }));
+).map((d) => Object.assign(d, { title: prettify(d.value) }));

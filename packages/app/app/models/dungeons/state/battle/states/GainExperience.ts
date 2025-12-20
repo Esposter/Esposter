@@ -43,7 +43,7 @@ export const GainExperience: State<StateName> = {
 
     if (experienceGain - experienceToNextLevel.value >= 0) {
       // We will implement and thus assume the fact that the level up event
-      // will be triggered by the experience bar once it reaches 100%
+      // Will be triggered by the experience bar once it reaches 100%
       const levelUpListener: PhaserEvents["levelUp"] = getSynchronizedFunction(async ({ key, stats }, onComplete) => {
         const showLevelUpMessage = async () => {
           await showMessages(scene, [`${key} leveled up to ${stats.level}!`]);
