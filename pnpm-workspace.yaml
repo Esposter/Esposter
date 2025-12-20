@@ -175,7 +175,7 @@ catalog:
   survey-vue3-ui: ^2.5.1
   three: ^0.182.0
   three-globe: ^2.45.0
-  trpc-nuxt: ^1.2.0
+  trpc-nuxt: ^2.0.1
   tsx: ^4.21.0
   type-fest: ^5.3.1
   typedoc: ^0.28.15

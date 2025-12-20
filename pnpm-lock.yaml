@@ -523,8 +523,8 @@ catalogs:
       specifier: ^2.45.0
       version: 2.45.0
     trpc-nuxt:
-      specifier: ^1.2.0
-      version: 1.2.0
+      specifier: ^2.0.1
+      version: 2.0.1
     tsx:
       specifier: ^4.21.0
       version: 4.21.0
@@ -1007,7 +1007,7 @@ importers:
         version: 2.45.0(three@0.182.0)
       trpc-nuxt:
         specifier: 'catalog:'
-        version: 1.2.0(@trpc/client@11.8.0(@trpc/server@11.8.0(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.8.0(typescript@5.9.3))
+        version: 2.0.1(@trpc/client@11.8.0(@trpc/server@11.8.0(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.8.0(typescript@5.9.3))
       v-viewer:
         specifier: 'catalog:'
         version: 3.0.22(viewerjs@1.11.7)(vue@3.5.26(typescript@5.9.3))
@@ -11099,9 +11099,9 @@ packages:
     resolution: {integrity: sha512-pkonvlKk8/ZuR0D5tLW8ljt5I8kmxp2XKymhepUeOdCEfKpZaktSArkLHZt76OB1ZvO9bssUsDty4SWhLvZpLg==}
     engines: {node: '>=0.10.0'}
 
-  trpc-nuxt@1.2.0:
-    resolution: {integrity: sha512-UasLY53UL8nIzGo5DJfRmj1MCLiLuMixg4y4wUCaPyaEc6rvBkM1GRmk53biCA/M9ygXgguQk60EtUQLU5AJeg==}
-    engines: {node: '>=20'}
+  trpc-nuxt@2.0.1:
+    resolution: {integrity: sha512-tqxLkT8m4ehtcPbupCDSdgTJ8VEckye6snIxX16mno+mH2zB05zgHMmp6SgbUha6m7+oFhEXaijoHUkDbKPABg==}
+    engines: {node: '>=22'}
     peerDependencies:
       '@trpc/client': ^11.0.0
       '@trpc/server': ^11.0.0
@@ -23493,7 +23493,7 @@ snapshots:
     dependencies:
       escape-string-regexp: 1.0.5
 
-  trpc-nuxt@1.2.0(@trpc/client@11.8.0(@trpc/server@11.8.0(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.8.0(typescript@5.9.3)):
+  trpc-nuxt@2.0.1(@trpc/client@11.8.0(@trpc/server@11.8.0(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.8.0(typescript@5.9.3)):
     dependencies:
       '@trpc/client': 11.8.0(@trpc/server@11.8.0(typescript@5.9.3))(typescript@5.9.3)
       '@trpc/server': 11.8.0(typescript@5.9.3)
