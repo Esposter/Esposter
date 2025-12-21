@@ -151,11 +151,11 @@ catalogs:
       specifier: ^3.14.0
       version: 3.14.0
     '@trpc/client':
-      specifier: ^11.8.0
-      version: 11.8.0
+      specifier: ^11.8.1
+      version: 11.8.1
     '@trpc/server':
-      specifier: ^11.8.0
-      version: 11.8.0
+      specifier: ^11.8.1
+      version: 11.8.1
     '@types/data-urls':
       specifier: ^3.0.4
       version: 3.0.4
@@ -776,10 +776,10 @@ importers:
         version: 3.14.0(@floating-ui/dom@1.7.4)(@tiptap/core@3.14.0(@tiptap/pm@3.14.0))(@tiptap/pm@3.14.0)(vue@3.5.26(typescript@5.9.3))
       '@trpc/client':
         specifier: 'catalog:'
-        version: 11.8.0(@trpc/server@11.8.0(typescript@5.9.3))(typescript@5.9.3)
+        version: 11.8.1(@trpc/server@11.8.1(typescript@5.9.3))(typescript@5.9.3)
       '@trpc/server':
         specifier: 'catalog:'
-        version: 11.8.0(typescript@5.9.3)
+        version: 11.8.1(typescript@5.9.3)
       '@vue-flow/background':
         specifier: 'catalog:'
         version: 1.3.2(@vue-flow/core@1.48.1(vue@3.5.26(typescript@5.9.3)))(vue@3.5.26(typescript@5.9.3))
@@ -1007,7 +1007,7 @@ importers:
         version: 2.45.0(three@0.182.0)
       trpc-nuxt:
         specifier: 'catalog:'
-        version: 2.0.1(@trpc/client@11.8.0(@trpc/server@11.8.0(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.8.0(typescript@5.9.3))
+        version: 2.0.1(@trpc/client@11.8.1(@trpc/server@11.8.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.8.1(typescript@5.9.3))
       v-viewer:
         specifier: 'catalog:'
         version: 3.0.22(viewerjs@1.11.7)(vue@3.5.26(typescript@5.9.3))
@@ -1363,7 +1363,7 @@ importers:
         version: 12.29.1
       '@trpc/server':
         specifier: 'catalog:'
-        version: 11.8.0(typescript@5.9.3)
+        version: 11.8.1(typescript@5.9.3)
       drizzle-kit:
         specifier: 'catalog:'
         version: 0.31.8
@@ -5107,14 +5107,14 @@ packages:
       '@tiptap/pm': ^3.14.0
       vue: ^3.0.0
 
-  '@trpc/client@11.8.0':
-    resolution: {integrity: sha512-imJQeESX1hAapDaC4JB91yvXg41AZfBuTh/scnEiN/hAubZa5s/ikp0n+w29q2GCf+hREkr3WptUFKFJoDAIug==}
+  '@trpc/client@11.8.1':
+    resolution: {integrity: sha512-L/SJFGanr9xGABmuDoeXR4xAdHJmsXsiF9OuH+apecJ+8sUITzVT1EPeqp0ebqA6lBhEl5pPfg3rngVhi/h60Q==}
     peerDependencies:
-      '@trpc/server': 11.8.0
+      '@trpc/server': 11.8.1
       typescript: '>=5.7.2'
 
-  '@trpc/server@11.8.0':
-    resolution: {integrity: sha512-DphyQnLuyX2nwJCQGWQ9zYz4hZGvRhSBqDhQ0SH3tDhQ3PU4u68xofA0pJ741Ir4InEAFD+TtJVLAQy+wVOkiQ==}
+  '@trpc/server@11.8.1':
+    resolution: {integrity: sha512-P4rzZRpEL7zDFgjxK65IdyH0e41FMFfTkQkuq0BA5tKcr7E6v9/v38DEklCpoDN6sPiB1Sigy/PUEzHENhswDA==}
     peerDependencies:
       typescript: '>=5.7.2'
 
@@ -16404,12 +16404,12 @@ snapshots:
       '@tiptap/extension-bubble-menu': 3.14.0(@tiptap/core@3.14.0(@tiptap/pm@3.14.0))(@tiptap/pm@3.14.0)
       '@tiptap/extension-floating-menu': 3.14.0(@floating-ui/dom@1.7.4)(@tiptap/core@3.14.0(@tiptap/pm@3.14.0))(@tiptap/pm@3.14.0)
 
-  '@trpc/client@11.8.0(@trpc/server@11.8.0(typescript@5.9.3))(typescript@5.9.3)':
+  '@trpc/client@11.8.1(@trpc/server@11.8.1(typescript@5.9.3))(typescript@5.9.3)':
     dependencies:
-      '@trpc/server': 11.8.0(typescript@5.9.3)
+      '@trpc/server': 11.8.1(typescript@5.9.3)
       typescript: 5.9.3
 
-  '@trpc/server@11.8.0(typescript@5.9.3)':
+  '@trpc/server@11.8.1(typescript@5.9.3)':
     dependencies:
       typescript: 5.9.3
 
@@ -23416,10 +23416,10 @@ snapshots:
     dependencies:
       escape-string-regexp: 1.0.5
 
-  trpc-nuxt@2.0.1(@trpc/client@11.8.0(@trpc/server@11.8.0(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.8.0(typescript@5.9.3)):
+  trpc-nuxt@2.0.1(@trpc/client@11.8.1(@trpc/server@11.8.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.8.1(typescript@5.9.3)):
     dependencies:
-      '@trpc/client': 11.8.0(@trpc/server@11.8.0(typescript@5.9.3))(typescript@5.9.3)
-      '@trpc/server': 11.8.0(typescript@5.9.3)
+      '@trpc/client': 11.8.1(@trpc/server@11.8.1(typescript@5.9.3))(typescript@5.9.3)
+      '@trpc/server': 11.8.1(typescript@5.9.3)
       h3: 1.15.4
       ofetch: 1.5.1
       ohash: 2.0.11
