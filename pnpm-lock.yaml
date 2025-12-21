@@ -241,8 +241,8 @@ catalogs:
       specifier: ^3.5.2
       version: 3.5.2
     '@vue/language-core':
-      specifier: ^3.1.8
-      version: 3.1.8
+      specifier: ^3.2.0
+      version: 3.2.0
     '@vue/test-utils':
       specifier: ^2.4.6
       version: 2.4.6
@@ -635,7 +635,7 @@ importers:
         version: 4.0.16(vitest@4.0.16(@types/node@25.0.3)(esbuild@0.25.12)(happy-dom@20.0.11)(jiti@2.6.1)(sass-embedded@1.97.1)(sass@1.97.1)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))
       '@vue/language-core':
         specifier: 'catalog:'
-        version: 3.1.8(typescript@5.9.3)
+        version: 3.2.0
       ctix:
         specifier: 'catalog:'
         version: 2.7.2(@types/node@25.0.3)(prettier-plugin-organize-imports@4.3.0(prettier@3.7.4)(typescript@5.9.3)(vue-tsc@3.1.8(typescript@5.9.3)))(prettier@3.7.4)(typescript@5.9.3)
@@ -5818,6 +5818,9 @@ packages:
     peerDependenciesMeta:
       typescript:
         optional: true
+
+  '@vue/language-core@3.2.0':
+    resolution: {integrity: sha512-CHIuDtZ04CIElAgEuLbwmq3p7QcmYoVPmBPqtdvWJCflZE5W3KHT/5DRBvDv1r2TteCjN02uYHiaAEWq9hQNiA==}
 
   '@vue/reactivity@3.5.26':
     resolution: {integrity: sha512-9EnYB1/DIiUYYnzlnUBgwU32NNvLp/nhxLXeWRhHUEeWNTn1ECxX8aGO7RTXeX6PPcxe3LLuNBFoJbV4QZ+CFQ==}
@@ -17364,6 +17367,16 @@ snapshots:
       picomatch: 4.0.3
     optionalDependencies:
       typescript: 5.9.3
+
+  '@vue/language-core@3.2.0':
+    dependencies:
+      '@volar/language-core': 2.4.27
+      '@vue/compiler-dom': 3.5.26
+      '@vue/shared': 3.5.26
+      alien-signals: 3.1.1
+      muggle-string: 0.4.1
+      path-browserify: 1.0.1
+      picomatch: 4.0.3
 
   '@vue/reactivity@3.5.26':
     dependencies:
