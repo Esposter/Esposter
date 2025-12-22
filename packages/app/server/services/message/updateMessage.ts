@@ -4,11 +4,11 @@ import type { AzureUpdateEntity, CustomTableClient, MessageEntity } from "@espos
 import { addMessageMetadata, updateEntity } from "@esposter/db";
 import { Operation } from "@esposter/shared";
 
-export const updateMessage = (
+export const updateMessage = async (
   tableClient: CustomTableClient<MessageEntity>,
   entity: AzureUpdateEntity<MessageEntity>,
   mode?: UpdateMode,
 ) => {
-  addMessageMetadata(entity, Operation.Update);
+  await addMessageMetadata(entity, Operation.Update);
   return updateEntity(tableClient, entity, mode);
 };

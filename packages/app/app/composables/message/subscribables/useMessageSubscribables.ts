@@ -30,9 +30,9 @@ export const useMessageSubscribables = () => {
       const updateMessageUnsubscribable = $trpc.message.onUpdateMessage.subscribe(
         { roomId },
         {
-          onData: (data) => {
-            storeUpdateMessage(data);
-          },
+          onData: getSynchronizedFunction(async (data) => {
+            await storeUpdateMessage(data);
+          }),
         },
       );
       const deleteMessageUnsubscribable = $trpc.message.onDeleteMessage.subscribe(

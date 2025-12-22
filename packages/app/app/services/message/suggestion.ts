@@ -3,6 +3,7 @@ import type { User } from "@esposter/db-schema";
 import type { VirtualElement } from "@floating-ui/dom";
 import type { MentionOptions } from "@tiptap/extension-mention";
 
+import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import MentionList from "@/components/Message/Model/Message/MentionList.vue";
 import { useRoomStore } from "@/store/message/room";
 import { computePosition, flip, shift } from "@floating-ui/dom";
@@ -60,7 +61,7 @@ export const suggestion: Suggestion = {
         return Boolean((component.ref as InstanceType<typeof MentionList>).onKeyDown(props));
       },
 
-      onStart: async (props) => {
+      onStart: getSynchronizedFunction(async (props) => {
         component = new VueRenderer(MentionList, { editor: props.editor, props });
 
         if (!(props.clientRect && component.element)) return;
@@ -69,16 +70,16 @@ export const suggestion: Suggestion = {
         element.style.position = "absolute";
         document.body.appendChild(element);
         await updatePosition(props.editor, element);
-      },
+      }),
 
-      onUpdate: async (props) => {
+      onUpdate: getSynchronizedFunction(async (props) => {
         component?.updateProps(props);
 
         if (!(props.clientRect && component?.element)) return;
 
         const element = component.element as HTMLElement;
         await updatePosition(props.editor, element);
-      },
+      }),
     };
   },
 };

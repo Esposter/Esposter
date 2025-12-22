@@ -26,9 +26,9 @@ export const useReadMembers = () => {
         count.value = await $trpc.room.countMembers.query({ roomId: currentRoomId.value });
         return $trpc.room.readMembers.useQuery({ roomId: currentRoomId.value });
       },
-      ({ items }) => {
+      async ({ items }) => {
         for (const member of items) memberMap.value.set(member.id, member);
-        readMetadata(items.map(({ id }) => id));
+        await readMetadata(items.map(({ id }) => id));
       },
     );
   const readMoreMembers = (onComplete: () => void) =>

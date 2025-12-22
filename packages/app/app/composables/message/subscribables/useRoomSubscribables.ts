@@ -19,16 +19,22 @@ export const useRoomSubscribables = () => {
 
       const newRoomIds = newRooms.map(({ id }) => id);
       const updateRoomUnsubscribable = $trpc.room.onUpdateRoom.subscribe(newRoomIds, {
-        onData: (input) => storeUpdateRoom(input),
+        onData: (input) => {
+          storeUpdateRoom(input);
+        },
       });
       const deleteRoomUnsubscribable = $trpc.room.onDeleteRoom.subscribe(newRoomIds, {
         onData: getSynchronizedFunction((id) => storeDeleteRoom({ id })),
       });
       const joinRoomUnsubscribable = $trpc.room.onJoinRoom.subscribe(newRoomIds, {
-        onData: (user) => storeCreateMember(user),
+        onData: (user) => {
+          storeCreateMember(user);
+        },
       });
       const leaveRoomUnsubscribable = $trpc.room.onLeaveRoom.subscribe(newRoomIds, {
-        onData: (userId) => storeDeleteMember(userId),
+        onData: (userId) => {
+          storeDeleteMember(userId);
+        },
       });
 
       return () => {
