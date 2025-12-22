@@ -72,8 +72,7 @@
     "vue-tsc": "catalog:"
   },
   "devDependenciesComments": {
-    "oxlint": "@TODO: https://github.com/oxc-project/oxc/issues/13204",
-    "vite": "@TODO: https://github.com/rolldown/rolldown/pull/7602"
+    "oxlint": "@TODO: https://github.com/oxc-project/oxc/issues/13204"
   },
   "engines": {
     "node": "^24.12.0"
