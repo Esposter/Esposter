@@ -25,6 +25,7 @@
     "max-lines": "off",
     "max-lines-per-function": "off",
     "max-params": "off",
+    "max-statements": "off",
     "new-cap": "off",
     "no-await-expression-member": "off",
     "no-await-in-loop": "off",

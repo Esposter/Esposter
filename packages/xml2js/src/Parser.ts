@@ -31,8 +31,9 @@ export class Parser {
       this.saxParser.resume();
     };
     this.saxParser.onopentag = (node) => {
-      const newObject: Record<string, unknown> = {};
-      newObject[this.options.charkey] = "";
+      const newObject: Record<string, unknown> = {
+        [this.options.charkey]: "",
+      };
       if (!this.options.ignoreAttrs)
         for (const key in node.attributes)
           if (Object.hasOwn(node.attributes, key)) {
@@ -156,8 +157,8 @@ export class Parser {
         object[this.options.childkey] ??= [];
         const charChild: Record<string, string> = {
           [BUILTIN_NAME_KEY]: TEXT_NODE_NAME,
+          [this.options.charkey]: text,
         };
-        charChild[this.options.charkey] = text;
         if (this.options.normalize)
           charChild[this.options.charkey] = charChild[this.options.charkey].replaceAll(/\s{2,}/g, " ").trim();
 
