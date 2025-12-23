@@ -457,8 +457,8 @@ catalogs:
       specifier: ^2.0.3
       version: 2.0.3
     phaser:
-      specifier: ^4.0.0-rc.5
-      version: 4.0.0-rc.5
+      specifier: ^4.0.0-rc.6
+      version: 4.0.0-rc.6
     phaser3-rex-plugins:
       specifier: ^1.80.17
       version: 1.80.17
@@ -905,7 +905,7 @@ importers:
         version: 2.0.1
       grid-engine:
         specifier: 'catalog:'
-        version: 2.48.2(phaser@4.0.0-rc.5)
+        version: 2.48.2(phaser@4.0.0-rc.6)
       grid-layout-plus:
         specifier: 'catalog:'
         version: 1.1.1(vue@3.5.26(typescript@5.9.3))
@@ -956,7 +956,7 @@ importers:
         version: 5.4.449
       phaser:
         specifier: 'catalog:'
-        version: 4.0.0-rc.5
+        version: 4.0.0-rc.6
       phaser3-rex-plugins:
         specifier: 'catalog:'
         version: 1.80.17(encoding@0.1.13)(graphology-types@0.24.8)
@@ -1419,7 +1419,7 @@ importers:
         version: link:../parse-tmx
       phaser:
         specifier: 'catalog:'
-        version: 4.0.0-rc.5
+        version: 4.0.0-rc.6
       phaser3-rex-plugins:
         specifier: 'catalog:'
         version: 1.80.17(encoding@0.1.13)(graphology-types@0.24.8)
@@ -9698,8 +9698,8 @@ packages:
   phaser3-rex-plugins@1.80.17:
     resolution: {integrity: sha512-0xNgjA2rbh9323hP1dFwasYgKO1CyYJO6PwznnNTaWnn8ksbg9VQhprpAp4ASxSPkfn1ISgzxw8LqWjNJK8Rew==}
 
-  phaser@4.0.0-rc.5:
-    resolution: {integrity: sha512-eLRUcjjQtlC+nGliK24ia+Dt6KDy5mCVq+KxQ4KXKyvAnSJoFOgN5xTgkIQ6L18Bwa83K/Prj5wT/49MXvYz7w==}
+  phaser@4.0.0-rc.6:
+    resolution: {integrity: sha512-36DRtoZVYyKf4Fmm/IlNEpIyM4NLHjI+W1hbA+nji1e1uKCB9Ojj7XryiReB5+e5367gHT/WJpSuJoEp3LeCQw==}
 
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
@@ -19832,10 +19832,10 @@ snapshots:
 
   grapick@0.1.13: {}
 
-  grid-engine@2.48.2(phaser@4.0.0-rc.5):
+  grid-engine@2.48.2(phaser@4.0.0-rc.6):
     dependencies:
       mnemonist: 0.40.3
-      phaser: 4.0.0-rc.5
+      phaser: 4.0.0-rc.6
       rxjs: 7.8.2
       tiled-property-flattener: 1.1.1
 
@@ -21958,7 +21958,7 @@ snapshots:
       - encoding
       - graphology-types
 
-  phaser@4.0.0-rc.5:
+  phaser@4.0.0-rc.6:
     dependencies:
       eventemitter3: 5.0.1
 
