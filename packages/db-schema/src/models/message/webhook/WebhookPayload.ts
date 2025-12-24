@@ -20,7 +20,6 @@ export const webhookPayloadSchema: z.ZodType<WebhookPayload> = z
     username: z.string().max(USER_NAME_MAX_LENGTH).optional(),
   })
   // Ensure at least one of content or embeds exists
-  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   .refine((data) => data.content || (data.embeds && data.embeds.length > 0), {
     message: 'Webhook must have either "content" or "embeds".',
   });
