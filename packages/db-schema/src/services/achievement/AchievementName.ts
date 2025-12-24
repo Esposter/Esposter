@@ -41,4 +41,4 @@ export type AchievementName =
   | TableAchievementName
   | WebpageAchievementName;
 
-export const achievementNameSchema = z.nativeEnum(AchievementName) satisfies z.ZodType<AchievementName>;
+export const achievementNameSchema = z.enum(AchievementName) satisfies z.ZodType<AchievementName>;

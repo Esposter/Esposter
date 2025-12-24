@@ -4,6 +4,7 @@ import type { InferrableClientTypes } from "@trpc/server/unstable-core-do-not-im
 import type { Promisable } from "type-fest";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
+import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 
 export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Ref<CursorPaginationData<TItem>>) => {
   const items = computed({
@@ -35,23 +36,25 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
     onComplete?: (data: CursorPaginationData<TItem>) => Promisable<void>,
   ) => {
     const { data, pending: isPending, status, ...rest } = await useQuery();
-    const watchHandle = watchEffect(async () => {
-      switch (status.value) {
-        case "error":
-          watchHandle();
-          break;
-        case "idle":
-        case "pending":
-          return;
-        case "success":
-          if (data.value) {
-            initializeCursorPaginationData(data.value);
-            await onComplete?.(data.value);
-          }
-          watchHandle();
-          break;
-      }
-    });
+    const watchHandle = watchEffect(
+      getSynchronizedFunction(async () => {
+        switch (status.value) {
+          case "error":
+            watchHandle();
+            break;
+          case "idle":
+          case "pending":
+            return;
+          case "success":
+            if (data.value) {
+              initializeCursorPaginationData(data.value);
+              await onComplete?.(data.value);
+            }
+            watchHandle();
+            break;
+        }
+      }),
+    );
     return { data, isPending, status, ...rest };
   };
   const readMoreItems = async (

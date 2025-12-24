@@ -1,6 +1,7 @@
 import type { Item } from "@/models/shared/Item";
 import type { MessageEntity } from "@esposter/db-schema";
 
+import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { useMessageStore } from "@/store/message";
 import { useRoomStore } from "@/store/message/room";
 import { MessageType } from "@esposter/db-schema";
@@ -55,19 +56,19 @@ export const useMessageActionItems = (
   };
   const copyTextItem: Item = {
     icon: "mdi-content-copy",
-    onClick: () => {
+    onClick: getSynchronizedFunction(async () => {
       const textContent = parse(message.message).textContent.trim();
-      if (textContent) copy(textContent);
-    },
+      if (textContent) await copy(textContent);
+    }),
     title: "Copy Text",
   };
   const pinMessageItem = computed<Item>(() =>
     message.isPinned
       ? {
           icon: "mdi-pin-off",
-          onClick: async () => {
+          onClick: getSynchronizedFunction(async () => {
             await $trpc.message.unpinMessage.mutate({ partitionKey: message.partitionKey, rowKey: message.rowKey });
-          },
+          }),
           title: "Unpin Message",
         }
       : {
@@ -80,11 +81,11 @@ export const useMessageActionItems = (
   );
   const copyMessageLinkItem: Item = {
     icon: "mdi-link-variant",
-    onClick: () => {
+    onClick: getSynchronizedFunction(async () => {
       if (!currentRoomId.value) return;
       const link = `${runtimeConfig.public.baseUrl}${RoutePath.MessagesMessage(currentRoomId.value, message.rowKey)}`;
-      copy(link);
-    },
+      await copy(link);
+    }),
     title: "Copy Message Link",
   };
   const updateMessageItems = computed<Item[]>(() =>
@@ -117,7 +118,9 @@ export const useMessageActionItems = (
       ? {
           color: "error",
           icon: "mdi-delete",
-          onClick: () => onDeleteMode(),
+          onClick: () => {
+            onDeleteMode();
+          },
           title: "Delete Message",
         }
       : undefined,
