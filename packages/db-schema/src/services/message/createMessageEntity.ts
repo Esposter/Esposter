@@ -13,6 +13,7 @@ export const createMessageEntity = <T extends CreateMessageInput>(
 ): InstanceType<MessageEntityMap[T["type"]]> => {
   const createdAt = new Date();
   if (input.type === MessageType.Webhook) {
+    // oxlint-disable-next-line no-unused-vars @typescript-eslint/no-unnecessary-type-assertion
     const { roomId, ...rest } = input as WebhookCreateMessageInput;
     return new WebhookMessageEntity({
       ...rest,
@@ -22,6 +23,7 @@ export const createMessageEntity = <T extends CreateMessageInput>(
       updatedAt: createdAt,
     }) as InstanceType<MessageEntityMap[T["type"]]>;
   } else {
+    // oxlint-disable-next-line no-unused-vars @typescript-eslint/no-unnecessary-type-assertion
     const { roomId, ...rest } = input as ServerCreateMessageInput;
     return new StandardMessageEntity({
       ...rest,
