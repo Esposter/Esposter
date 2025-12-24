@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 import type { CreateMessageInput } from "@/models/message/CreateMessageInput";
 import type { MessageEntityMap } from "@/models/message/MessageEntityMap";
 import type { ServerCreateMessageInput } from "@/models/message/ServerCreateMessageInput";
