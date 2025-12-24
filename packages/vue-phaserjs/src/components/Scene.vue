@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { SceneProps } from "@/models/scene/SceneProps";
 import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { VNode } from "vue";
 
 import { useGame } from "@/composables/useGame";
 import { Lifecycle } from "@/models/lifecycle/Lifecycle";
@@ -13,7 +14,6 @@ import { resetLifecycleListeners } from "@/util/hooks/resetLifecycleListeners";
 import { runLifecycleListeners } from "@/util/hooks/runLifecycleListeners";
 import { InjectionKeyMap } from "@/util/InjectionKeyMap";
 import { Cameras, Scene, Scenes } from "phaser";
-
 defineSlots<{ default: () => VNode }>();
 const { autoStart, sceneKey } = defineProps<SceneProps>();
 const emit = defineEmits<{
