@@ -14,6 +14,7 @@ import { resetLifecycleListeners } from "@/util/hooks/resetLifecycleListeners";
 import { runLifecycleListeners } from "@/util/hooks/runLifecycleListeners";
 import { InjectionKeyMap } from "@/util/InjectionKeyMap";
 import { Cameras, Scene, Scenes } from "phaser";
+
 defineSlots<{ default: () => VNode }>();
 const { autoStart, sceneKey } = defineProps<SceneProps>();
 const emit = defineEmits<{
