@@ -67,6 +67,7 @@
     "type-fest": "catalog:",
     "typedoc": "catalog:",
     "typescript": "catalog:",
+    "unplugin-dts": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",
     "vue-tsc": "catalog:"
