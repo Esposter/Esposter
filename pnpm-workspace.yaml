@@ -79,7 +79,7 @@ catalog:
   "@vue-flow/core": ^1.48.1
   "@vue-flow/minimap": ^1.5.4
   "@vue-flow/node-resizer": ^1.5.0
-  "@vue-pdf-viewer/viewer": ^3.5.2
+  "@vue-pdf-viewer/viewer": ^3.6.0
   "@vue/language-core": ^3.2.1
   "@vue/test-utils": ^2.4.6
   "@vuepic/vue-datepicker": ^12.1.0
@@ -170,10 +170,10 @@ catalog:
   show-open-file-picker: ^0.4.0
   sql-highlight: ^6.1.0
   superjson: ^2.2.6
-  survey-core: ^2.5.1
-  survey-creator-core: ^2.5.1
-  survey-creator-vue: ^2.5.1
-  survey-vue3-ui: ^2.5.1
+  survey-core: ^2.5.2
+  survey-creator-core: ^2.5.2
+  survey-creator-vue: ^2.5.2
+  survey-vue3-ui: ^2.5.2
   three: ^0.182.0
   three-globe: ^2.45.0
   trpc-nuxt: ^2.0.1

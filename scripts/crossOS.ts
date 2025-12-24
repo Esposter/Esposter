@@ -2,7 +2,7 @@ import { spawn } from "node:child_process";
 import { createRequire } from "node:module";
 import { resolve } from "node:path";
 
-import packageJsonType from "../package.json" assert { type: "json" };
+import packageJsonType from "../package.json" with { type: "json" };
 
 const minArgv = 3;
 const property = "crossOS";
