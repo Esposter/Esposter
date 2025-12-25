@@ -186,7 +186,7 @@ catalog:
   unplugin-dts: 1.0.0-beta.6
   v-viewer: ^3.0.22
   viewerjs: ^1.11.7
-  vite: ^8.0.0-beta.4
+  vite: ^8.0.0-beta.5
   vite-plugin-mkcert: ^1.17.9
   vitest: ^4.0.16
   vue: ^3.5.26
