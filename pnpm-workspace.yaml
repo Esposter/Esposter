@@ -79,7 +79,7 @@ catalog:
   "@vue-flow/core": ^1.48.1
   "@vue-flow/minimap": ^1.5.4
   "@vue-flow/node-resizer": ^1.5.0
-  "@vue-pdf-viewer/viewer": ^3.6.0
+  "@vue-pdf-viewer/viewer": ^3.6.1
   "@vue/language-core": ^3.2.1
   "@vue/test-utils": ^2.4.6
   "@vuepic/vue-datepicker": ^12.1.0
