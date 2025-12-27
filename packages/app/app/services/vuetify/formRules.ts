@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
+/* oxlint-disable @typescript-eslint/prefer-nullish-coalescing */
 import type { ValidationRule } from "vuetify";
 
 import { MAX_REQUEST_SIZE, MEGABYTE } from "#shared/services/app/constants";
