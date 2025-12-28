@@ -19,7 +19,7 @@ jobs:
         run: bun --bun i
 
       - name: 🏗️ Build
-        run: bun --bun build
+        run: bun --bun run build
 
       - name: 🔍 Lint
         run: bun --bun lint
