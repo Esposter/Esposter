@@ -14,7 +14,6 @@
   "javascript.updateImportsOnFileMove.enabled": "always",
   "typescript.updateImportsOnFileMove.enabled": "always",
   "[javascript][typescript][vue]": {
-    "editor.formatOnSave": false,
     "editor.codeActionsOnSave": ["source.organizeImports", "source.fixAll.oxc", "source.fixAll.eslint"]
   },
   "[properties]": {
