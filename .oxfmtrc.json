@@ -2,5 +2,5 @@
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
   "printWidth": 120,
   // tsx files are actually xml tileset files
-  "ignorePatterns": ["*.tsx", "*/tilemap.json", "*/auto-imports.d.ts", "*snapshot*", "CHANGELOG*.md"]
+  "ignorePatterns": ["*.tsx", "**/tilemap.json", "**/auto-imports.d.ts", "*snapshot*", "CHANGELOG*.md"]
 }

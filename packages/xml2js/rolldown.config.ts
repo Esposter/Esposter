@@ -7,10 +7,7 @@ import { defineConfig } from "rolldown";
 const rolldownConfiguration: ConfigExport = defineConfig([
   {
     ...rolldownConfigurationBase,
-    plugins: [
-      nodePolyfills(),
-      ...rolldownConfigurationBase.plugins as Plugin[],
-    ],
+    plugins: [nodePolyfills(), ...(rolldownConfigurationBase.plugins as Plugin[])],
   },
 ]);
 
