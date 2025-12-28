@@ -10,7 +10,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { config } from "dotenv";
 import { format } from "oxfmt";
 
-import formatOptions from "../../../../../.oxfmtrc.json";
+import formatOptions from "../../../../../.oxfmtrc.json" with { type: "json" };
 
 export const createFilePack = async () => {
   config();
