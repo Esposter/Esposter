@@ -5,7 +5,6 @@ import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { calculateDamage } from "@/services/dungeons/monster/calculateDamage";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
-import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { prettify } from "@/util/text/prettify";
 import { sleep } from "vue-phaserjs";
@@ -18,8 +17,7 @@ export const PlayerAttack: State<StateName> = {
     const battlePlayerStore = useBattlePlayerStore();
     const { activeMonster } = storeToRefs(battlePlayerStore);
     const attackOptionGrid = useAttackOptionGrid();
-    const enemyStore = useEnemyStore();
-    const { takeDamage } = enemyStore;
+    const takeDamage = useTakeDamage(true);;
     const attack = attackOptionGrid.value;
     if (!attack) return;
 

@@ -7,7 +7,6 @@ import { calculateDamage } from "@/services/dungeons/monster/calculateDamage";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { useBattleDialogStore } from "@/store/dungeons/battle/dialog";
 import { useEnemyStore } from "@/store/dungeons/battle/enemy";
-import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { getRandomValue } from "@/util/math/random/getRandomValue";
 import { prettify } from "@/util/text/prettify";
 import { sleep } from "vue-phaserjs";
@@ -17,8 +16,7 @@ export const EnemyAttack: State<StateName> = {
   onEnter: async (scene) => {
     const battleDialogStore = useBattleDialogStore();
     const { showMessageNoInputRequired } = battleDialogStore;
-    const battlePlayerStore = useBattlePlayerStore();
-    const { takeDamage } = battlePlayerStore;
+    const takeDamage = useTakeDamage(false);;
     const enemyStore = useEnemyStore();
     const { activeMonster } = storeToRefs(enemyStore);
     const randomAttackId = getRandomValue(activeMonster.value.attackIds);
