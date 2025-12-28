@@ -28,6 +28,8 @@
   "scripts": {
     "build": "pnpm export:gen && vite build",
     "export:gen": "ctix build --config ../configuration/.ctirc-vue && ctix build --config ../configuration/.ctirc-ts",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
     "lint": "oxlint && eslint .",
     "lint:fix": "oxlint --fix && eslint --fix .",
     "typecheck": "vue-tsc"
