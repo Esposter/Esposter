@@ -13,7 +13,7 @@
   "typescript.tsserver.maxTsServerMemory": 8000,
   "javascript.updateImportsOnFileMove.enabled": "always",
   "typescript.updateImportsOnFileMove.enabled": "always",
-  "[typescript][vue]": {
+  "[javascript][typescript][vue]": {
     "editor.formatOnSave": false,
     "editor.codeActionsOnSave": ["source.organizeImports", "source.fixAll.oxc", "source.fixAll.eslint"]
   },
