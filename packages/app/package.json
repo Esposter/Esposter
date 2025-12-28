@@ -1,19 +1,19 @@
 {
   "name": "@esposter/app",
-  "description": "An approachable, performant and versatile javascript application powered by Vue.",
   "version": "2.18.2",
   "private": true,
-  "type": "module",
+  "description": "An approachable, performant and versatile javascript application powered by Vue.",
   "homepage": "https://github.com/Esposter/Esposter#readme",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
   "license": "Apache-2.0",
   "author": "Jimmy Chen",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Esposter/Esposter.git"
   },
-  "bugs": {
-    "url": "https://github.com/Esposter/Esposter/issues"
-  },
+  "type": "module",
   "scripts": {
     "analyze": "nuxt analyze",
     "build": "nuxt build",
@@ -35,9 +35,6 @@
     "test": "vitest",
     "tiled:gen": "tsx --tsconfig tsconfig.root.json scripts/tiled/index.ts",
     "typecheck": "nuxt typecheck"
-  },
-  "scriptsComments": {
-    "db:run": "https://github.com/drizzle-team/drizzle-orm/issues/1228"
   },
   "dependencies": {
     "@azure/data-tables": "catalog:",
@@ -163,14 +160,6 @@
     "ws": "catalog:",
     "zod": "catalog:"
   },
-  "dependenciesComments": {
-    "ajv": "https://github.com/json-layout/json-layout/issues/5",
-    "ajv-errors": "https://github.com/json-layout/json-layout/issues/5",
-    "ajv-formats": "https://github.com/json-layout/json-layout/issues/5",
-    "ajv-i18n": "https://github.com/json-layout/json-layout/issues/5",
-    "debug": "https://github.com/json-layout/json-layout/issues/5",
-    "vue-phaserjs": "@TODO: vite dev is broken with vue's new reactive system"
-  },
   "devDependencies": {
     "@electric-sql/pglite": "catalog:",
     "@nuxt/eslint": "catalog:",
@@ -206,5 +195,16 @@
     "sass-embedded": "catalog:",
     "unocss": "catalog:",
     "vuetify-nuxt-module": "catalog:"
+  },
+  "dependenciesComments": {
+    "ajv": "https://github.com/json-layout/json-layout/issues/5",
+    "ajv-errors": "https://github.com/json-layout/json-layout/issues/5",
+    "ajv-formats": "https://github.com/json-layout/json-layout/issues/5",
+    "ajv-i18n": "https://github.com/json-layout/json-layout/issues/5",
+    "debug": "https://github.com/json-layout/json-layout/issues/5",
+    "vue-phaserjs": "@TODO: vite dev is broken with vue's new reactive system"
+  },
+  "scriptsComments": {
+    "db:run": "https://github.com/drizzle-team/drizzle-orm/issues/1228"
   }
 }

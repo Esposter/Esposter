@@ -1,37 +1,36 @@
 {
   "name": "@esposter/db-schema",
-  "description": "A library of database schemas and utilities using Drizzle ORM (PostgreSQL) that is available in both browser and server environments.",
   "version": "2.18.2",
   "private": true,
-  "type": "module",
-  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/db-schema#readme",
-  "license": "Apache-2.0",
-  "author": "Jimmy Chen",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "description": "A library of database schemas and utilities using Drizzle ORM (PostgreSQL) that is available in both browser and server environments.",
   "keywords": [
+    "database",
     "drizzle",
     "orm",
-    "postgresql",
-    "postgres",
     "pg",
-    "sql",
-    "database",
-    "schema",
     "postgres",
-    "typescript",
-    "ts"
+    "postgresql",
+    "schema",
+    "sql",
+    "ts",
+    "typescript"
   ],
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/db-schema#readme",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Esposter/Esposter.git"
   },
-  "bugs": {
-    "url": "https://github.com/Esposter/Esposter/issues"
-  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
     "coverage": "vitest run --coverage",

@@ -1,18 +1,18 @@
 {
   "name": "esposter",
-  "description": "A nice and casual place for posting random things.",
   "version": "1.0.0",
-  "type": "module",
+  "description": "A nice and casual place for posting random things.",
   "homepage": "https://github.com/Esposter/Esposter#readme",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
   "license": "Apache-2.0",
   "author": "Jimmy Chen",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Esposter/Esposter.git"
   },
-  "bugs": {
-    "url": "https://github.com/Esposter/Esposter/issues"
-  },
+  "type": "module",
   "scripts": {
     "build": "pnpm build:packages && pnpm build:docs && pnpm build:app",
     "build:app": "lerna run build --scope=@esposter/app",
@@ -33,18 +33,6 @@
     "typecheck": "tsc && lerna run typecheck",
     "typecheck:packages": "pnpm typecheck --ignore @esposter/app",
     "watch:packages": "lerna watch --ignore @esposter/app -- pnpm build:packages"
-  },
-  "crossOS": {
-    "refresh:lockfile": {
-      "darwin": "sh ./scripts/refreshLockfile.sh",
-      "linux": "./scripts/refreshLockfile.sh",
-      "win32": "pnpm pwsh scripts/refreshLockfile.ps1"
-    },
-    "copyfiles": {
-      "darwin": "cp -f",
-      "linux": "cp -f",
-      "win32": "pnpm pwsh -Command Copy-Item -Force"
-    }
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
@@ -72,11 +60,23 @@
     "vitest": "catalog:",
     "vue-tsc": "catalog:"
   },
-  "devDependenciesComments": {
-    "oxlint": "@TODO: https://github.com/oxc-project/oxc/issues/13204"
-  },
   "engines": {
     "node": "^24.12.0"
   },
-  "packageManager": "pnpm@10.26.2+sha512.0e308ff2005fc7410366f154f625f6631ab2b16b1d2e70238444dd6ae9d630a8482d92a451144debc492416896ed16f7b114a86ec68b8404b2443869e68ffda6"
+  "packageManager": "pnpm@10.26.2+sha512.0e308ff2005fc7410366f154f625f6631ab2b16b1d2e70238444dd6ae9d630a8482d92a451144debc492416896ed16f7b114a86ec68b8404b2443869e68ffda6",
+  "crossOS": {
+    "refresh:lockfile": {
+      "darwin": "sh ./scripts/refreshLockfile.sh",
+      "linux": "./scripts/refreshLockfile.sh",
+      "win32": "pnpm pwsh scripts/refreshLockfile.ps1"
+    },
+    "copyfiles": {
+      "darwin": "cp -f",
+      "linux": "cp -f",
+      "win32": "pnpm pwsh -Command Copy-Item -Force"
+    }
+  },
+  "devDependenciesComments": {
+    "oxlint": "@TODO: https://github.com/oxc-project/oxc/issues/13204"
+  }
 }
