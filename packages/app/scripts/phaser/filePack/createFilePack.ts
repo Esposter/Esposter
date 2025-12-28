@@ -37,6 +37,9 @@ export const createFilePack = async () => {
 
   await Promise.all([
     outputFile(`${enumName}.ts`, createEnumString(enumName, [...fileKeys])),
-    format("files.json", JSON.stringify(files), formatOptions),
+    (async () => {
+      const { code } = await format("files.json", JSON.stringify(files), formatOptions);
+      await outputFile("files.json", code);
+    })(),
   ]);
 };
