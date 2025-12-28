@@ -217,6 +217,6 @@ onlyBuiltDependencies:
 
 overrides:
   pdfjs-dist: ^5.4.449
-  vite: ^8.0.0-beta.4
+  vite: ^8.0.0-beta.5
 
 shellEmulator: true
