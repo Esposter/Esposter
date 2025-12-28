@@ -21,7 +21,7 @@ jobs:
       - name: 🏗️ Build
         run: pnpm build
 
-      - name: �🔍 Lint
+      - name: 🔍 Lint
         run: pnpm lint
 
       - name: 📝 Format
