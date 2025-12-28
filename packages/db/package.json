@@ -36,8 +36,8 @@
     "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
     "coverage": "vitest run --coverage",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts",
-    "lint": "oxlint && eslint .",
-    "lint:fix": "oxlint --fix && eslint --fix .",
+    "lint": "oxlint --type-aware && eslint .",
+    "lint:fix": "oxlint --type-aware --fix && eslint --fix .",
     "test": "vitest",
     "typecheck": "tsc"
   },

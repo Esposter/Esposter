@@ -1,4 +1,4 @@
 import oxlint from "eslint-plugin-oxlint";
 import { defineConfig } from "eslint/config";
 
-export default defineConfig(...oxlint.buildFromOxlintConfigFile("./.oxlintrc.json"));
+export default defineConfig(...oxlint.buildFromOxlintConfigFile("./.oxlintrc.json", { typeAware: true }));
