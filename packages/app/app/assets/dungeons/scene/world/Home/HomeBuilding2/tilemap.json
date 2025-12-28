@@ -1,193 +1,184 @@
-{ "compressionlevel":-1,
- "height":9,
- "infinite":false,
- "layers":[
+{
+  "compressionlevel": -1,
+  "height": 9,
+  "infinite": false,
+  "layers": [
+    {
+      "id": 3,
+      "layers": [
         {
-         "id":3,
-         "layers":[
-                {
-                 "data":[0, 92, 92, 92, 92, 92, 92, 92, 92, 92, 92, 92, 0,
-                    0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 0,
-                    0, 113, 113, 113, 113, 113, 113, 113, 113, 113, 113, 113, 0,
-                    0, 113, 113, 113, 95, 96, 96, 96, 96, 97, 113, 113, 0,
-                    0, 113, 113, 113, 107, 108, 108, 108, 108, 109, 113, 113, 0,
-                    0, 113, 113, 113, 119, 120, 120, 120, 120, 121, 113, 113, 0,
-                    0, 113, 113, 113, 113, 113, 113, 113, 113, 113, 113, 113, 0,
-                    0, 113, 113, 113, 113, 113, 113, 113, 113, 113, 113, 113, 0,
-                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                 "height":9,
-                 "id":6,
-                 "locked":true,
-                 "name":"Background",
-                 "opacity":1,
-                 "type":"tilelayer",
-                 "visible":true,
-                 "width":13,
-                 "x":0,
-                 "y":0
-                }, 
-                {
-                 "data":[0, 0, 0, 0, 0, 2, 47, 48, 2, 0, 0, 0, 0,
-                    0, 17, 18, 0, 0, 26, 59, 60, 26, 73, 91, 0, 0,
-                    0, 29, 30, 0, 0, 62, 62, 62, 62, 0, 0, 0, 0,
-                    0, 0, 0, 0, 0, 0, 43, 44, 0, 0, 0, 0, 0,
-                    0, 0, 0, 0, 0, 65, 55, 56, 53, 0, 0, 0, 0,
-                    0, 0, 0, 0, 0, 0, 67, 68, 0, 0, 0, 0, 0,
-                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                    0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                 "height":9,
-                 "id":5,
-                 "locked":true,
-                 "name":"Decorations",
-                 "opacity":1,
-                 "type":"tilelayer",
-                 "visible":true,
-                 "width":13,
-                 "x":0,
-                 "y":0
-                }, 
-                {
-                 "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                    0, 0, 0, 0, 123, 124, 125, 0, 0, 0, 0, 0, 0,
-                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                 "height":9,
-                 "id":4,
-                 "locked":true,
-                 "name":"Entrance",
-                 "opacity":1,
-                 "type":"tilelayer",
-                 "visible":true,
-                 "width":13,
-                 "x":0,
-                 "y":0
-                }],
-         "locked":true,
-         "name":"MainScene",
-         "opacity":1,
-         "type":"group",
-         "visible":true,
-         "x":0,
-         "y":0
-        }, 
+          "data": [
+            0, 92, 92, 92, 92, 92, 92, 92, 92, 92, 92, 92, 0, 0, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
+            0, 0, 113, 113, 113, 113, 113, 113, 113, 113, 113, 113, 113, 0, 0, 113, 113, 113, 95, 96, 96, 96, 96, 97,
+            113, 113, 0, 0, 113, 113, 113, 107, 108, 108, 108, 108, 109, 113, 113, 0, 0, 113, 113, 113, 119, 120, 120,
+            120, 120, 121, 113, 113, 0, 0, 113, 113, 113, 113, 113, 113, 113, 113, 113, 113, 113, 0, 0, 113, 113, 113,
+            113, 113, 113, 113, 113, 113, 113, 113, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+          ],
+          "height": 9,
+          "id": 6,
+          "locked": true,
+          "name": "Background",
+          "opacity": 1,
+          "type": "tilelayer",
+          "visible": true,
+          "width": 13,
+          "x": 0,
+          "y": 0
+        },
         {
-         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 43, 44, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-         "height":9,
-         "id":2,
-         "locked":true,
-         "name":"Foreground",
-         "opacity":1,
-         "type":"tilelayer",
-         "visible":true,
-         "width":13,
-         "x":0,
-         "y":0
-        }, 
+          "data": [
+            0, 0, 0, 0, 0, 2, 47, 48, 2, 0, 0, 0, 0, 0, 17, 18, 0, 0, 26, 59, 60, 26, 73, 91, 0, 0, 0, 29, 30, 0, 0, 62,
+            62, 62, 62, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 43, 44, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 65, 55, 56, 53, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 67, 68, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 45, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+          ],
+          "height": 9,
+          "id": 5,
+          "locked": true,
+          "name": "Decorations",
+          "opacity": 1,
+          "type": "tilelayer",
+          "visible": true,
+          "width": 13,
+          "x": 0,
+          "y": 0
+        },
         {
-         "data":[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-            1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1,
-            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-            1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-         "height":9,
-         "id":1,
-         "locked":true,
-         "name":"Collision",
-         "opacity":0.5,
-         "type":"tilelayer",
-         "visible":true,
-         "width":13,
-         "x":0,
-         "y":0
-        }, 
+          "data": [
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 123, 124, 125, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+          ],
+          "height": 9,
+          "id": 4,
+          "locked": true,
+          "name": "Entrance",
+          "opacity": 1,
+          "type": "tilelayer",
+          "visible": true,
+          "width": 13,
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "locked": true,
+      "name": "MainScene",
+      "opacity": 1,
+      "type": "group",
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "data": [
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 43, 44, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0
+      ],
+      "height": 9,
+      "id": 2,
+      "locked": true,
+      "name": "Foreground",
+      "opacity": 1,
+      "type": "tilelayer",
+      "visible": true,
+      "width": 13,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "data": [
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1
+      ],
+      "height": 9,
+      "id": 1,
+      "locked": true,
+      "name": "Collision",
+      "opacity": 0.5,
+      "type": "tilelayer",
+      "visible": true,
+      "width": 13,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "draworder": "topdown",
+      "id": 7,
+      "locked": true,
+      "name": "Door",
+      "objects": [
         {
-         "draworder":"topdown",
-         "id":7,
-         "locked":true,
-         "name":"Door",
-         "objects":[
-                {
-                 "gid":126,
-                 "height":64,
-                 "id":2,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"id",
-                         "propertytype":"TeleportId",
-                         "type":"string",
-                         "value":"1"
-                        }, 
-                        {
-                         "name":"target",
-                         "propertytype":"TeleportTarget",
-                         "type":"class",
-                         "value":
-                            {
-                             "id":"2",
-                             "tilemapKey":"Home"
-                            }
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":64,
-                 "x":320,
-                 "y":576
-                }],
-         "opacity":1,
-         "type":"objectgroup",
-         "visible":true,
-         "x":0,
-         "y":0
-        }],
- "nextlayerid":8,
- "nextobjectid":3,
- "orientation":"orthogonal",
- "renderorder":"right-down",
- "tiledversion":"1.11.2",
- "tileheight":64,
- "tilesets":[
-        {
-         "firstgid":1,
-         "source":"..\/..\/..\/..\/..\/..\/..\/public\/tilesets\/firstParty\/Collision.tsx"
-        }, 
-        {
-         "firstgid":2,
-         "source":"..\/..\/..\/..\/..\/..\/..\/public\/tilesets\/axulart\/HouseInterior.tsx"
-        }, 
-        {
-         "firstgid":122,
-         "source":"..\/..\/..\/..\/..\/..\/..\/public\/tilesets\/firstParty\/Encounter.tsx"
-        }, 
-        {
-         "firstgid":123,
-         "source":"..\/..\/..\/..\/..\/..\/..\/public\/tilesets\/firstParty\/Entrance.tsx"
-        }, 
-        {
-         "firstgid":126,
-         "source":"..\/..\/..\/..\/..\/..\/..\/public\/tilesets\/firstParty\/Teleport.tsx"
-        }],
- "tilewidth":64,
- "type":"map",
- "version":"1.10",
- "width":13
+          "gid": 126,
+          "height": 64,
+          "id": 2,
+          "name": "",
+          "properties": [
+            {
+              "name": "id",
+              "propertytype": "TeleportId",
+              "type": "string",
+              "value": "1"
+            },
+            {
+              "name": "target",
+              "propertytype": "TeleportTarget",
+              "type": "class",
+              "value": {
+                "id": "2",
+                "tilemapKey": "Home"
+              }
+            }
+          ],
+          "rotation": 0,
+          "type": "",
+          "visible": true,
+          "width": 64,
+          "x": 320,
+          "y": 576
+        }
+      ],
+      "opacity": 1,
+      "type": "objectgroup",
+      "visible": true,
+      "x": 0,
+      "y": 0
+    }
+  ],
+  "nextlayerid": 8,
+  "nextobjectid": 3,
+  "orientation": "orthogonal",
+  "renderorder": "right-down",
+  "tiledversion": "1.11.2",
+  "tileheight": 64,
+  "tilesets": [
+    {
+      "firstgid": 1,
+      "source": "..\/..\/..\/..\/..\/..\/..\/public\/tilesets\/firstParty\/Collision.tsx"
+    },
+    {
+      "firstgid": 2,
+      "source": "..\/..\/..\/..\/..\/..\/..\/public\/tilesets\/axulart\/HouseInterior.tsx"
+    },
+    {
+      "firstgid": 122,
+      "source": "..\/..\/..\/..\/..\/..\/..\/public\/tilesets\/firstParty\/Encounter.tsx"
+    },
+    {
+      "firstgid": 123,
+      "source": "..\/..\/..\/..\/..\/..\/..\/public\/tilesets\/firstParty\/Entrance.tsx"
+    },
+    {
+      "firstgid": 126,
+      "source": "..\/..\/..\/..\/..\/..\/..\/public\/tilesets\/firstParty\/Teleport.tsx"
+    }
+  ],
+  "tilewidth": 64,
+  "type": "map",
+  "version": "1.10",
+  "width": 13
 }

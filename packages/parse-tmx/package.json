@@ -1,29 +1,29 @@
 {
   "name": "parse-tmx",
-  "description": "A parser for tmx.",
   "version": "2.18.2",
-  "type": "module",
+  "description": "A parser for tmx.",
+  "keywords": [
+    "parser",
+    "tmx"
+  ],
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/parse-tmx#readme",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
   "license": "Apache-2.0",
   "author": "Jimmy Chen",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
-  "keywords": [
-    "tmx",
-    "parser"
-  ],
-  "publishConfig": {
-    "access": "public"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Esposter/Esposter.git"
   },
-  "bugs": {
-    "url": "https://github.com/Esposter/Esposter/issues"
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
