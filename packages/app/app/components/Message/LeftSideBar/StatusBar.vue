@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { authClient } from "@/services/auth/authClient";
-import { useUserStatusStore } from "@/store/message/userStatus";
+import { useStatusStore } from "@/store/message/user/status";
 
 const { data: session } = await authClient.useSession(useFetch);
-const userStatusStore = useUserStatusStore();
-const { getUserStatusEnum } = userStatusStore;
+const statusStore = useStatusStore();
+const { getStatusEnum } = statusStore;
 </script>
 
 <template>
@@ -17,11 +17,15 @@ const { getUserStatusEnum } = userStatusStore;
             {{ session.user.name }}
           </div>
           <div class="text-xs text-gray">
-            {{ getUserStatusEnum(session.user.id) }}
+            {{ getStatusEnum(session.user.id) }}
           </div>
         </div>
         <div flex>
-          <MessageLeftSideBarUserSettingsDialogButton />
+          <MessageLeftSideBarSettingsDialogButton>
+            <template #activator="activatorProps">
+              <v-btn :="activatorProps" icon="mdi-cog" size="small" />
+            </template>
+          </MessageLeftSideBarSettingsDialogButton>
         </div>
       </div>
     </StyledCard>

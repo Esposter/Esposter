@@ -1,0 +1,14 @@
+name: Setup Project Dependencies
+description: Checkout repository, install bun
+inputs:
+  bun-version-file:
+    description: Path to file containing bun version
+    required: false
+    default: package.json
+runs:
+  using: composite
+  steps:
+    - name: 🛠️ Install bun
+      uses: oven-sh/setup-bun@v2
+      with:
+        bun-version-file: ${{ inputs.bun-version-file }}

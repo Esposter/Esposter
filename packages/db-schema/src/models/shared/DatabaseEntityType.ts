@@ -1,0 +1,17 @@
+export enum DatabaseEntityType {
+  Achievement = "Achievement",
+  AppUser = "AppUser",
+  Invite = "Invite",
+  Like = "Like",
+  Post = "Post",
+  PushSubscription = "PushSubscription",
+  Room = "Room",
+  SearchHistory = "SearchHistory",
+  Survey = "Survey",
+  User = "User",
+  UserAchievement = "UserAchievement",
+  UserStatus = "UserStatus",
+  UserToRoom = "UserToRoom",
+  VerificationToken = "VerificationToken",
+  Webhook = "Webhook",
+}

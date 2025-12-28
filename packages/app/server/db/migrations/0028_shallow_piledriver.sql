@@ -1,0 +1,1 @@
+ALTER TABLE "message"."users_to_rooms" ALTER COLUMN "notificationType" SET DEFAULT 'DirectMessage';

@@ -4,6 +4,6 @@
     "allowJs": false,
     "composite": true,
     "isolatedDeclarations": true,
-    "strictNullChecks": true
+    "lib": ["ESNext"]
   }
 }

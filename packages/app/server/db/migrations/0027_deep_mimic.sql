@@ -1,0 +1,2 @@
+CREATE TYPE "public"."notification_type" AS ENUM('All', 'DirectMessage', 'Never');--> statement-breakpoint
+ALTER TABLE "message"."users_to_rooms" ADD COLUMN "notificationType" "notification_type" DEFAULT 'All' NOT NULL;

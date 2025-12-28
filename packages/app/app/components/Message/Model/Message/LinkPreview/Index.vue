@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { LinkPreviewResponse } from "#shared/models/message/linkPreview/LinkPreviewResponse";
+import type { LinkPreviewResponse } from "@esposter/db-schema";
 import type { Component } from "vue";
 
 const props = defineProps<LinkPreviewResponse>();

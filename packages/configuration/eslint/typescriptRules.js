@@ -24,6 +24,7 @@ export default Object.assign(
     delete rules["@typescript-eslint/no-deprecated"];
     delete rules["@typescript-eslint/no-floating-promises"];
     delete rules["@typescript-eslint/no-misused-promises"];
+    delete rules["@typescript-eslint/unified-signatures"];
     return rules;
   }),
   ...tseslint.configs.stylisticTypeChecked.map((c) => {
@@ -37,10 +38,10 @@ export default Object.assign(
     // "@typescript-eslint/naming-convention": [
     //   "error",
     //   {
-    //     format: ["camelCase", "PascalCase", "UPPER_CASE"],
-    //     selector: "variable",
-    //     types: ["array", "boolean", "number", "string"],
-    //     leadingUnderscore: "allow",
+    //     Format: ["camelCase", "PascalCase", "UPPER_CASE"],
+    //     Selector: "variable",
+    //     Types: ["array", "boolean", "number", "string"],
+    //     LeadingUnderscore: "allow",
     //   },
     // ],
   },

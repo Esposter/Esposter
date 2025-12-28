@@ -10,7 +10,6 @@ describe(isPlainObject, () => {
     expect(isPlainObject([])).toBe(false);
     expect(isPlainObject(new Date())).toBe(false);
     expect(isPlainObject(null)).toBe(false);
-    // oxlint-disable-next-line no-useless-undefined
     expect(isPlainObject(undefined)).toBe(false);
     expect(isPlainObject("string")).toBe(false);
     expect(isPlainObject(123)).toBe(false);

@@ -1,26 +1,20 @@
-import type { User } from "#shared/db/schema/users";
-import type { useContainerClient } from "@@/server/composables/azure/useContainerClient";
-import type { useTableClient } from "@@/server/composables/azure/useTableClient";
-import type { Session } from "@@/server/models/auth/Session";
+import type { Session } from "#shared/models/auth/Session";
 import type { Context } from "@@/server/trpc/context";
-import type * as DrizzleKit from "drizzle-kit/api";
+import type { User } from "@esposter/db-schema";
+import type { PgliteDatabase } from "drizzle-orm/pglite";
 
-import { messageSchema } from "#shared/db/schema/messageSchema";
-import { users } from "#shared/db/schema/users";
 import { dayjs } from "#shared/services/dayjs";
-import { useContainerClientMock } from "@@/server/composables/azure/useContainerClient.test";
-import { useTableClientMock } from "@@/server/composables/azure/useTableClient.test";
-import { schema } from "@@/server/db/schema";
+import { useContainerClientMock } from "@@/server/composables/azure/container/useContainerClient.test";
+import { useEventGridPublisherClientMock } from "@@/server/composables/azure/eventGrid/useEventGridPublisherClient.test";
+import { useTableClientMock } from "@@/server/composables/azure/table/useTableClient.test";
 import { PGlite } from "@electric-sql/pglite";
+import { messageSchema, schema, users } from "@esposter/db-schema";
+import { generateDrizzleJson, generateMigration } from "drizzle-kit/api";
 import { sql } from "drizzle-orm";
-import { drizzle, PgliteDatabase } from "drizzle-orm/pglite";
+import { drizzle } from "drizzle-orm/pglite";
 import { IncomingMessage, ServerResponse } from "node:http";
-import { createRequire } from "node:module";
 import { Socket } from "node:net";
 import { describe, vi } from "vitest";
-// https://github.com/drizzle-team/drizzle-orm/issues/2853
-const require = createRequire(import.meta.url);
-const { generateDrizzleJson, generateMigration } = require("drizzle-kit/api") as typeof DrizzleKit;
 
 const mocks = vi.hoisted(() => {
   const createdAt = new Date();
@@ -37,15 +31,12 @@ const mocks = vi.hoisted(() => {
   return {
     getSession: vi.fn<() => Session>(() => {
       const session = createSession(user.id);
-      return {
-        session,
-        user,
-      };
+      return { session, user };
     }),
   };
 });
 
-vi.mock("@@/server/auth", () => ({
+vi.mock(import("@@/server/auth") as unknown as Promise<{ auth: { api: { getSession: () => Session } } }>, () => ({
   auth: {
     api: {
       getSession: mocks.getSession,
@@ -53,16 +44,19 @@ vi.mock("@@/server/auth", () => ({
   },
 }));
 
-vi.mock("@@/server/composables/azure/useContainerClient", () => ({
-  useContainerClient: vi.fn<typeof useContainerClient>(useContainerClientMock),
+vi.mock(import("@@/server/composables/azure/container/useContainerClient"), () => ({
+  useContainerClient: useContainerClientMock,
 }));
 
-vi.mock("@@/server/composables/azure/useTableClient", () => ({
-  useTableClient: vi.fn<typeof useTableClient>(useTableClientMock),
+vi.mock(import("@@/server/composables/azure/eventGrid/useEventGridPublisherClient"), () => ({
+  useEventGridPublisherClient: useEventGridPublisherClientMock,
 }));
 
-export const mockSessionOnce = async (db: Context["db"], mockUser?: User) => {
-  const name = "name";
+vi.mock(import("@@/server/composables/azure/table/useTableClient"), () => ({
+  useTableClient: useTableClientMock,
+}));
+
+export const mockSessionOnce = async (db: Context["db"], mockUser?: Session["user"]) => {
   const createdAt = new Date();
   const user =
     mockUser ??
@@ -74,7 +68,8 @@ export const mockSessionOnce = async (db: Context["db"], mockUser?: User) => {
           email: crypto.randomUUID(),
           emailVerified: true,
           id: crypto.randomUUID(),
-          name,
+          image: crypto.randomUUID(),
+          name: crypto.randomUUID(),
           updatedAt: createdAt,
         })
         .returning()
@@ -110,7 +105,7 @@ export const createMockContext = async (): Promise<Context> => {
     res: new ServerResponse(req),
   };
 };
-// In-memory pglite db supports the same API as a mock for the postgresjs db
+
 const createMockDb = async () => {
   const client = new PGlite();
   const db = drizzle(client, { schema });

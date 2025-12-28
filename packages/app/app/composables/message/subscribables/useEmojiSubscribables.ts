@@ -1,4 +1,4 @@
-import type { Unsubscribable } from "@trpc/server/observable";
+import type { WatchHandle } from "vue";
 
 import { useEmojiStore } from "@/store/message/emoji";
 import { useRoomStore } from "@/store/message/room";
@@ -9,44 +9,46 @@ export const useEmojiSubscribables = () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const emojiStore = useEmojiStore();
   const { storeCreateEmoji, storeDeleteEmoji, storeUpdateEmoji } = emojiStore;
-
-  const createEmojiUnsubscribable = ref<Unsubscribable>();
-  const updateEmojiUnsubscribable = ref<Unsubscribable>();
-  const deleteEmojiUnsubscribable = ref<Unsubscribable>();
+  let watchHandle: undefined | WatchHandle;
 
   onMounted(() => {
-    if (!currentRoomId.value) return;
+    watchHandle = watchImmediate(currentRoomId, (roomId) => {
+      if (!roomId) return;
 
-    const roomId = currentRoomId.value;
-    createEmojiUnsubscribable.value = $trpc.emoji.onCreateEmoji.subscribe(
-      { roomId },
-      {
-        onData: (data) => {
-          storeCreateEmoji(data);
+      const createEmojiUnsubscribable = $trpc.emoji.onCreateEmoji.subscribe(
+        { roomId },
+        {
+          onData: (data) => {
+            storeCreateEmoji(data);
+          },
         },
-      },
-    );
-    updateEmojiUnsubscribable.value = $trpc.emoji.onUpdateEmoji.subscribe(
-      { roomId },
-      {
-        onData: (data) => {
-          storeUpdateEmoji(data);
+      );
+      const updateEmojiUnsubscribable = $trpc.emoji.onUpdateEmoji.subscribe(
+        { roomId },
+        {
+          onData: (data) => {
+            storeUpdateEmoji(data);
+          },
         },
-      },
-    );
-    deleteEmojiUnsubscribable.value = $trpc.emoji.onDeleteEmoji.subscribe(
-      { roomId },
-      {
-        onData: (data) => {
-          storeDeleteEmoji(data);
+      );
+      const deleteEmojiUnsubscribable = $trpc.emoji.onDeleteEmoji.subscribe(
+        { roomId },
+        {
+          onData: (data) => {
+            storeDeleteEmoji(data);
+          },
         },
-      },
-    );
+      );
+
+      return () => {
+        createEmojiUnsubscribable.unsubscribe();
+        updateEmojiUnsubscribable.unsubscribe();
+        deleteEmojiUnsubscribable.unsubscribe();
+      };
+    });
   });
 
   onUnmounted(() => {
-    createEmojiUnsubscribable.value?.unsubscribe();
-    updateEmojiUnsubscribable.value?.unsubscribe();
-    deleteEmojiUnsubscribable.value?.unsubscribe();
+    watchHandle?.();
   });
 };

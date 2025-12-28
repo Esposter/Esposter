@@ -2,8 +2,8 @@ import type { State } from "@/models/dungeons/state/State";
 import type { PhaserEvents } from "@/services/phaser/events";
 import type { EventEmitter } from "eventemitter3";
 
+import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { phaserEventEmitter } from "@/services/phaser/events";
@@ -35,7 +35,7 @@ export const ItemAttempt: State<StateName> = {
         const { previousSceneKey, previousSceneKeyStack } = storeToRefs(sceneStore);
         const { switchToPreviousScene } = usePreviousScene(scene.scene.key);
         // Remove all in-between scenes until we can switch directly back to the battle scene
-        // to avoid epilepsy flashing of multiple scenes when switching
+        // To avoid epilepsy flashing of multiple scenes when switching
         for (let i = 0; i < previousSceneKeyStack.value.length && previousSceneKey.value !== SceneKey.Battle; i++)
           removeScene(scene, previousSceneKey.value);
         switchToPreviousScene(scene);

@@ -1,11 +1,11 @@
-import type { SearchHistory } from "#shared/db/schema/searchHistories";
 import type { CreateSearchHistoryInput } from "#shared/models/db/searchHistory/CreateSearchHistoryInput";
 import type { DeleteSearchHistoryInput } from "#shared/models/db/searchHistory/DeleteSearchHistoryInput";
 import type { UpdateSearchHistoryInput } from "#shared/models/db/searchHistory/UpdateSearchHistoryInput";
+import type { SearchHistory } from "@esposter/db-schema";
 
-import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useRoomStore } from "@/store/message/room";
+import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const useSearchHistoryStore = defineStore("message/searchHistory", () => {
   const roomStore = useRoomStore();

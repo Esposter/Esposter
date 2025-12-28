@@ -1,17 +1,15 @@
-import type { Room } from "#shared/db/schema/rooms";
-import type { User } from "#shared/db/schema/users";
 import type { CreateRoomInput } from "#shared/models/db/room/CreateRoomInput";
 import type { DeleteRoomInput } from "#shared/models/db/room/DeleteRoomInput";
 import type { JoinRoomInput } from "#shared/models/db/room/JoinRoomInput";
 import type { LeaveRoomInput } from "#shared/models/db/room/LeaveRoomInput";
+import type { Room } from "@esposter/db-schema";
 
-import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
-import { RoutePath } from "#shared/models/router/RoutePath";
 import { dayjs } from "#shared/services/dayjs";
-import { getRoomName } from "@/services/message/room/getRoomName";
-import { getRoomPlaceholder } from "@/services/message/room/getRoomPlaceholder";
+import { authClient } from "@/services/auth/authClient";
+import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
-import { uuidValidateV4 } from "@esposter/shared";
+import { DatabaseEntityType, MessageType } from "@esposter/db-schema";
+import { Operation, RoutePath, uuidValidateV4 } from "@esposter/shared";
 
 export const useRoomStore = defineStore("message/room", () => {
   const { $trpc } = useNuxtApp();
@@ -35,17 +33,12 @@ export const useRoomStore = defineStore("message/room", () => {
     const roomId = router.currentRoute.value.params.id;
     return typeof roomId === "string" && uuidValidateV4(roomId) ? roomId : undefined;
   });
-  const {
-    data: memberMap,
-    getDataMap: getMemberDataMap,
-    setDataMap: setMemberDataMap,
-  } = useDataMap(() => currentRoomId.value, new Map<string, User>());
   const currentRoom = computed(() => {
-    if (!currentRoomId.value) return null;
-    return rooms.value.find(({ id }) => id === currentRoomId.value) ?? null;
+    if (!currentRoomId.value) return;
+    return rooms.value.find(({ id }) => id === currentRoomId.value);
   });
-  const placeholderRoomName = computed(() => getRoomPlaceholder(currentRoom.value, memberMap.value));
-  const currentRoomName = computed(() => getRoomName(currentRoom.value, memberMap.value));
+  const session = authClient.useSession();
+  const isCreator = computed(() => currentRoom.value?.userId === session.value.data?.user.id);
 
   const createRoom = async (input: CreateRoomInput) => {
     const newRoom = await $trpc.room.createRoom.mutate(input);
@@ -64,6 +57,10 @@ export const useRoomStore = defineStore("message/room", () => {
     const id = await $trpc.room.leaveRoom.mutate(input);
     await storeDeleteRoom({ id });
   };
+  MessageHookMap[Operation.Create].push(({ message, partitionKey, type }) => {
+    if (type !== MessageType.EditRoom) return;
+    storeUpdateRoom({ id: partitionKey, name: message });
+  });
 
   return {
     createRoom,
@@ -77,10 +74,6 @@ export const useRoomStore = defineStore("message/room", () => {
     ...restData,
     currentRoom,
     currentRoomId,
-    currentRoomName,
-    getMemberDataMap,
-    memberMap,
-    placeholderRoomName,
-    setMemberDataMap,
+    isCreator,
   };
 });

@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
 import { BackgroundMusicKey } from "#shared/models/dungeons/keys/sound/BackgroundMusicKey";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { playDungeonsBackgroundMusic } from "@/services/dungeons/sound/playDungeonsBackgroundMusic";
@@ -26,7 +26,7 @@ const { onPlayerInput } = battleSceneStore;
     @update="onPlayerInput($event, controls.getInput())"
     @shutdown="
       async () => {
-        await battleStateMachine.setState(undefined);
+        await battleStateMachine.setState();
       }
     "
   >

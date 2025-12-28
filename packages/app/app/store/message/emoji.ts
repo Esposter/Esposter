@@ -3,10 +3,11 @@ import type { DeleteEmojiInput } from "#shared/models/db/message/metadata/Delete
 import type { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import type { UpdateEmojiInput } from "#shared/models/db/message/metadata/UpdateEmojiInput";
 
-import { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
+import { getIsEntityIdEqualComparator } from "#shared/services/entity/getIsEntityIdEqualComparator";
 import { createMessageEmojiMetadataEntity } from "#shared/services/message/createMessageEmojiMetadataEntity";
 import { getUpdatedUserIds } from "#shared/services/message/emoji/getUpdatedUserIds";
 import { authClient } from "@/services/auth/authClient";
+import { MessageMetadataType } from "@esposter/db-schema";
 
 export const useEmojiStore = defineStore("message/emoji", () => {
   const session = authClient.useSession();
@@ -37,19 +38,17 @@ export const useEmojiStore = defineStore("message/emoji", () => {
   };
   const storeUpdateEmoji = (input: UpdateEmojiInput) => {
     const emojis = getEmojis(input.messageRowKey);
-    const index = emojis.findIndex(
-      ({ partitionKey, rowKey }) => partitionKey === input.partitionKey && rowKey === input.rowKey,
-    );
+    const index = emojis.findIndex((e) => getIsEntityIdEqualComparator(["partitionKey", "rowKey"], input)(e));
     if (index === -1) return;
 
     Object.assign(emojis[index], input);
     setEmojis(input.messageRowKey, emojis);
   };
-  const storeDeleteEmoji = ({ messageRowKey, partitionKey, rowKey }: DeleteEmojiInput) => {
-    const emojis = getEmojis(messageRowKey);
+  const storeDeleteEmoji = (input: DeleteEmojiInput) => {
+    const emojis = getEmojis(input.messageRowKey);
     setEmojis(
-      messageRowKey,
-      emojis.filter((e) => !(e.partitionKey === partitionKey && e.rowKey === rowKey)),
+      input.messageRowKey,
+      emojis.filter((e) => !getIsEntityIdEqualComparator(["partitionKey", "rowKey"], input)(e)),
     );
   };
 

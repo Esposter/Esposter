@@ -2,7 +2,7 @@
 import type { Chest } from "#shared/models/dungeons/data/world/Chest";
 import type { Position } from "grid-engine";
 
-import { TilesetKey } from "@/models/dungeons/keys/TilesetKey";
+import { TilesetKey } from "#shared/models/dungeons/keys/TilesetKey";
 import { Sprite, useAnimations } from "vue-phaserjs";
 
 interface ChestProps {

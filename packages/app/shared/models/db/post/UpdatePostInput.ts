@@ -1,6 +1,6 @@
 import type { z } from "zod";
 
-import { selectPostSchema } from "#shared/db/schema/posts";
+import { selectPostSchema } from "@esposter/db-schema";
 
 export const updatePostInputSchema = selectPostSchema
   .pick({ description: true, id: true, title: true })

@@ -2,11 +2,12 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { surveys } from "#shared/db/schema/surveys";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
+import { DatabaseEntityType, surveys } from "@esposter/db-schema";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
@@ -30,17 +31,7 @@ describe("survey", () => {
     await mockContext.db.delete(surveys);
   });
 
-  test("creates", async () => {
-    expect.hasAssertions();
-
-    const newSurvey = await caller.createSurvey({ group, model, name });
-
-    expect(newSurvey.name).toBe(name);
-    expect(newSurvey.group).toBe(group);
-    expect(newSurvey.model).toBe(model);
-  });
-
-  test("count", async () => {
+  test("counts", async () => {
     expect.hasAssertions();
 
     const count = await caller.count();
@@ -78,6 +69,16 @@ describe("survey", () => {
     expect(readSurveys).toStrictEqual(getOffsetPaginationData([], 0));
   });
 
+  test("creates", async () => {
+    expect.hasAssertions();
+
+    const newSurvey = await caller.createSurvey({ group, model, name });
+
+    expect(newSurvey.name).toBe(name);
+    expect(newSurvey.group).toBe(group);
+    expect(newSurvey.model).toBe(model);
+  });
+
   test("updates", async () => {
     expect.hasAssertions();
 
@@ -93,7 +94,7 @@ describe("survey", () => {
     const id = crypto.randomUUID();
 
     await expect(caller.updateSurvey({ id, name })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Update, name: Survey, ${id}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Survey, id).message}]`,
     );
   });
 
@@ -104,7 +105,7 @@ describe("survey", () => {
     await mockSessionOnce(mockContext.db);
 
     await expect(caller.updateSurvey({ id: newSurvey.id, name })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Update, name: Survey, ${newSurvey.id}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Survey, newSurvey.id).message}]`,
     );
   });
 
@@ -150,7 +151,13 @@ describe("survey", () => {
     await expect(
       caller.updateSurveyModel({ id: newSurvey.id, model: updatedModel, modelVersion: newSurvey.modelVersion - 1 }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Update, name: Survey, cannot update survey model with old model version]`,
+      `[TRPCError: ${
+        new InvalidOperationError(
+          Operation.Update,
+          DatabaseEntityType.Survey,
+          "cannot update survey model with old model version",
+        ).message
+      }]`,
     );
   });
 
@@ -162,7 +169,7 @@ describe("survey", () => {
     await expect(
       caller.updateSurveyModel({ id: newSurvey.id, model, modelVersion: newSurvey.modelVersion }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Update, name: Survey, duplicate model]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Survey, "duplicate model").message}]`,
     );
   });
 
@@ -181,7 +188,7 @@ describe("survey", () => {
     const id = crypto.randomUUID();
 
     await expect(caller.deleteSurvey(id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Delete, name: Survey, ${id}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Survey, id).message}]`,
     );
   });
 
@@ -192,7 +199,7 @@ describe("survey", () => {
     await mockSessionOnce(mockContext.db);
 
     await expect(caller.deleteSurvey(newSurvey.id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Delete, name: Survey, ${newSurvey.id}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Survey, newSurvey.id).message}]`,
     );
   });
 });

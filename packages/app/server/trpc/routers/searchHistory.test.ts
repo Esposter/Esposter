@@ -2,13 +2,13 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { rooms } from "#shared/db/schema/rooms";
-import { searchHistories } from "#shared/db/schema/searchHistories";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { searchHistoryRouter } from "@@/server/trpc/routers/searchHistory";
+import { DatabaseEntityType, rooms, searchHistories } from "@esposter/db-schema";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("searchHistory", () => {
@@ -120,7 +120,9 @@ describe("searchHistory", () => {
 
     await expect(
       searchHistoryCaller.updateSearchHistory({ id, query: updatedQuery }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Invalid operation: Update, name: SearchHistory, ${id}]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.SearchHistory, id).message}]`,
+    );
   });
 
   test("deletes", async () => {
@@ -139,7 +141,7 @@ describe("searchHistory", () => {
     const id = crypto.randomUUID();
 
     await expect(searchHistoryCaller.deleteSearchHistory(id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Invalid operation: Delete, name: SearchHistory, ${id}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.SearchHistory, id).message}]`,
     );
   });
 });

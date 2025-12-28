@@ -1,6 +1,6 @@
 import type { Npc } from "@/models/dungeons/npc/Npc";
+import type { PartialByKeys } from "@esposter/shared";
 import type { Except } from "type-fest";
-import type { PartialByKeys } from "unocss";
 
 import { NpcId } from "#shared/generated/tiled/propertyTypes/enum/NpcId";
 import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
@@ -47,8 +47,9 @@ const NpcMap: Record<NpcId, PartialByKeys<Except<Npc, "id">, "frame" | "movement
   },
 };
 
-export const npcs: Npc[] = parseDictionaryToArray(NpcMap).map((npc) => ({
-  ...npc,
-  frame: npc.frame ?? 0,
-  movementPattern: npc.movementPattern ?? MovementPattern.Idle,
-}));
+export const npcs: Npc[] = parseDictionaryToArray(NpcMap).map((npc) =>
+  Object.assign(npc, {
+    frame: npc.frame ?? 0,
+    movementPattern: npc.movementPattern ?? MovementPattern.Idle,
+  }),
+);

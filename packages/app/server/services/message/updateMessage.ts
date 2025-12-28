@@ -1,15 +1,14 @@
-import type { AzureUpdateEntity } from "#shared/models/azure/AzureUpdateEntity";
-import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
-import type { CustomTableClient } from "@@/server/models/azure/table/CustomTableClient";
+import type { UpdateMode } from "@azure/data-tables";
+import type { AzureUpdateEntity, CustomTableClient, MessageEntity } from "@esposter/db-schema";
 
-import { updateEntity } from "@@/server/services/azure/table/updateEntity";
-import { addMessageMetadata } from "@@/server/services/message/addMessageMetadata";
+import { addMessageMetadata, updateEntity } from "@esposter/db";
 import { Operation } from "@esposter/shared";
 
-export const updateMessage = (
+export const updateMessage = async (
   tableClient: CustomTableClient<MessageEntity>,
   entity: AzureUpdateEntity<MessageEntity>,
+  mode?: UpdateMode,
 ) => {
-  addMessageMetadata(entity, Operation.Update);
-  return updateEntity(tableClient, entity);
+  await addMessageMetadata(entity, Operation.Update);
+  return updateEntity(tableClient, entity, mode);
 };

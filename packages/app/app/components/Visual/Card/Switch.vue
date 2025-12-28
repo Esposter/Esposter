@@ -2,8 +2,8 @@
 import { CardType } from "@/models/visual/CardType";
 
 const modelValue = defineModel<CardType>({ required: true });
-// false = CardType.Marquee (default)
-// true = CardType.Carousel
+// False = CardType.Marquee (default)
+// True = CardType.Carousel
 const modelSwitch = computed<boolean>({
   get: () => modelValue.value === CardType.Carousel,
   set: (newCardType) => {

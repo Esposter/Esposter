@@ -27,7 +27,7 @@ export const useItemOptionGrid = () => {
     watchDeep(inventory, () => {
       if (unref(ItemOptionGrid.validate(ItemOptionGrid.position.value))) return;
       // If our inventory has changed and we are no longer on a valid item,
-      // simply move down to the next valid item
+      // Simply move down to the next valid item
       ItemOptionGrid.move(Direction.DOWN);
     });
 

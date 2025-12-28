@@ -2,7 +2,7 @@ import type { ReadonlyRefOrGetter } from "@vueuse/core";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 // We want to handle the case where we have a Record<id, CursorPaginationData> scenario
-// where we store multiple different lists for different ids, e.g. comments for post ids
+// Where we store multiple different lists for different ids, e.g. comments for post ids
 export const useCursorPaginationDataMap = <TItem>(
   currentId: ReadonlyRefOrGetter<string | undefined>,
 ): ReturnType<typeof useCursorPaginationOperationData<TItem>> => {

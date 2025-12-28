@@ -1,7 +1,7 @@
-import type { PostWithRelations } from "#shared/db/schema/posts";
 import type { CreateLikeInput } from "#shared/models/db/post/CreateLikeInput";
 import type { DeleteLikeInput } from "#shared/models/db/post/DeleteLikeInput";
 import type { UpdateLikeInput } from "#shared/models/db/post/UpdateLikeInput";
+import type { PostWithRelations } from "@esposter/db-schema";
 import type { ReadonlyRefOrGetter } from "@vueuse/core";
 
 import { authClient } from "@/services/auth/authClient";

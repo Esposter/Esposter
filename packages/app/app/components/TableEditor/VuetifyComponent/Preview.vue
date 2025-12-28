@@ -12,6 +12,7 @@ const { editedItem } = storeToRefs(tableEditorStore);
   <v-col cols="12">Preview</v-col>
   <v-col cols="12">
     <div class="border-sm elevation--1" flex items-center w-full justify-center rd aspect-video>
+      <!-- @vue-expect-error TS2590: Expression produces a union type that is too complex to represent. -->
       <component :is="VuetifyComponentMap[editedItem.component]" v-if="editedItem" :="editedItem.props" />
     </div>
   </v-col>

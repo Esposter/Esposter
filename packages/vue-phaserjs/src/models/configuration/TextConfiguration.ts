@@ -15,7 +15,8 @@ import type { Types } from "phaser";
 import type { Except } from "type-fest";
 
 export interface TextConfiguration
-  extends AlphaConfiguration,
+  extends
+    AlphaConfiguration,
     BlendModeConfiguration,
     ComputedSizeConfiguration,
     DepthConfiguration,

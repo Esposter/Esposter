@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useReplyStore } from "@/store/message/reply";
-import { useRoomStore } from "@/store/message/room";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
+import { MessageType } from "@esposter/db-schema";
 
 interface ReplyProps {
   rowKey: string;
@@ -9,14 +9,12 @@ interface ReplyProps {
 
 const { rowKey } = defineProps<ReplyProps>();
 const { text } = useColors();
-const roomStore = useRoomStore();
-const { memberMap } = storeToRefs(roomStore);
 const replyStore = useReplyStore();
 const { isIndicatorActive, replyMap } = storeToRefs(replyStore);
-const scrollToMessage = useScrollToMessage();
 const reply = computed(() => replyMap.value.get(rowKey));
-const creator = computed(() => (reply.value ? memberMap.value.get(reply.value.userId) : undefined));
+const creator = useCreator(reply);
 const color = computed(() => (isIndicatorActive.value ? text.value : "gray"));
+const scrollToMessage = useScrollToMessage();
 </script>
 
 <template>
@@ -24,6 +22,7 @@ const color = computed(() => (isIndicatorActive.value ? text.value : "gray"));
     <template v-if="reply && creator">
       <StyledAvatar :image="creator.image" :name="creator.name" :avatar-props="{ size: 'x-small' }" />
       <div flex items-center gap-x-1>
+        <MessageModelMessageAppUserBadge v-if="reply.type === MessageType.Webhook" />
         <span text-xs text-gray font-bold>{{ creator.name }}</span>
         <v-icon v-if="reply.isForward" icon="mdi-share" size="small" />
         <span v-if="!EMPTY_TEXT_REGEX.test(reply.message)" text-xs v-html="reply.message" />

@@ -1,7 +1,7 @@
 {
   "name": "azure-mock",
-  "version": "2.14.0",
   "description": "A library that contains azure mock classes.",
+  "version": "2.18.2",
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter#readme",
   "license": "Apache-2.0",
@@ -30,10 +30,21 @@
     "test": "vitest",
     "typecheck": "tsc"
   },
+  "dependencies": {
+    "@esposter/db": "workspace:*",
+    "@esposter/db-schema": "workspace:*",
+    "@esposter/shared": "workspace:*",
+    "drizzle-orm": "catalog:",
+    "drizzle-zod": "catalog:",
+    "fast-deep-equal": "catalog:",
+    "zod": "catalog:"
+  },
   "devDependencies": {
     "@azure/core-http-compat": "catalog:",
     "@azure/core-rest-pipeline": "catalog:",
     "@azure/data-tables": "catalog:",
-    "@azure/storage-blob": "catalog:"
+    "@azure/eventgrid": "catalog:",
+    "@azure/storage-blob": "catalog:",
+    "@azure/storage-queue": "catalog:"
   }
 }

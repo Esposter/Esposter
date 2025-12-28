@@ -1,5 +1,5 @@
-import { RoutePath } from "#shared/models/router/RoutePath";
 import { ImageSourceWhitelist } from "#shared/services/app/ImageSourceWhitelist";
+import { RoutePath } from "@esposter/shared";
 import { defu } from "defu";
 
 export default defineNitroPlugin((nitroApp) => {

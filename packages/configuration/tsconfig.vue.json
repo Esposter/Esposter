@@ -1,11 +1,37 @@
 {
-  "extends": "../app/.nuxt/tsconfig.json",
   "compilerOptions": {
     "baseUrl": "${configDir}/src",
     "paths": {
       "@/*": ["*"]
-    }
+    },
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "target": "ESNext",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitOverride": true,
+    "module": "preserve",
+    "noEmit": true,
+    "lib": ["ESNext", "dom", "dom.iterable", "webworker"],
+    "jsx": "preserve",
+    "jsxImportSource": "vue",
+    "types": [],
+    "moduleResolution": "Bundler",
+    "useDefineForClassFields": true,
+    "noImplicitThis": true,
+    "allowSyntheticDefaultImports": true
   },
-  "include": ["types/*.d.ts", "${configDir}/*.ts", "${configDir}/src/**/*.ts", "${configDir}/src/**/*.vue"],
+  "include": [
+    "types/*.d.ts",
+    "${configDir}/types/*.d.ts",
+    "${configDir}/*.ts",
+    "${configDir}/src/**/*.ts",
+    "${configDir}/src/**/*.vue"
+  ],
   "exclude": ["${configDir}/node_modules"]
 }

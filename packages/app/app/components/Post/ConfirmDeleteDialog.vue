@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
 
-import { RoutePath } from "#shared/models/router/RoutePath";
 import { usePostStore } from "@/store/post";
+import { RoutePath } from "@esposter/shared";
 
 interface PostConfirmDeleteDialogProps {
   postId: string;
 }
 
 defineSlots<{
-  default: (props: StyledDialogActivatorSlotProps) => VNode;
+  activator: (props: StyledDialogActivatorSlotProps) => VNode;
   postPreview: () => VNode;
 }>();
 const { postId } = defineProps<PostConfirmDeleteDialogProps>();
@@ -36,7 +36,7 @@ const { text } = useColors();
     "
   >
     <template #activator="activatorProps">
-      <slot :="activatorProps" />
+      <slot name="activator" :="activatorProps" />
     </template>
     <div class="custom-border" py-2 mx-4 rd-lg shadow-md>
       <slot name="postPreview" />

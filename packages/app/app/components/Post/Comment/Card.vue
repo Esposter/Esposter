@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PostWithRelations } from "#shared/db/schema/posts";
+import type { PostWithRelations } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
 
@@ -10,13 +10,13 @@ interface PostCommentCardProps {
 const { comment } = defineProps<PostCommentCardProps>();
 const { data: session } = await authClient.useSession(useFetch);
 const createdAtTimeAgo = useTimeAgo(() => comment.createdAt);
-const isCreator = computed(() => session.value?.user.id === comment.userId);
+const isCreator = computed(() => comment.userId === session.value?.user.id);
 const isUpdateMode = ref(false);
 </script>
 
 <template>
   <PostCommentConfirmDeleteDialog :comment-id="comment.id">
-    <template #default="{ updateIsOpen }">
+    <template #activator="{ updateIsOpen }">
       <div flex>
         <PostLikeSection pt-2 :post="comment" is-comment-store />
         <v-card px-2="!" pt-2="!" flex-1 shadow-none="!">

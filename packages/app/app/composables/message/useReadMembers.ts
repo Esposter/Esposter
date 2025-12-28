@@ -1,36 +1,44 @@
-import { MessageEntityPropertyNames } from "#shared/models/db/message/MessageEntity";
-import { useMemberStore } from "@/store/message/member";
+import type { User } from "@esposter/db-schema";
+
 import { useRoomStore } from "@/store/message/room";
+import { useMemberStore } from "@/store/message/user/member";
+import { StandardMessageEntityPropertyNames } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const useReadMembers = () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
-  const { currentRoomId, memberMap } = storeToRefs(roomStore);
+  const { currentRoomId } = storeToRefs(roomStore);
   const memberStore = useMemberStore();
   const { readItems, readMoreItems } = memberStore;
+  const { count, memberMap } = storeToRefs(memberStore);
   const readUserStatuses = useReadUserStatuses();
-  const readMetadata = (userIds: string[]) => readUserStatuses(userIds);
+  const readMetadata = (memberIds: User["id"][]) => readUserStatuses(memberIds);
   const readMembers = () =>
     readItems(
-      () => {
+      async () => {
         if (!currentRoomId.value)
           throw new InvalidOperationError(
             Operation.Read,
             readMoreMembers.name,
-            MessageEntityPropertyNames.partitionKey,
+            StandardMessageEntityPropertyNames.partitionKey,
           );
+        count.value = await $trpc.room.countMembers.query({ roomId: currentRoomId.value });
         return $trpc.room.readMembers.useQuery({ roomId: currentRoomId.value });
       },
       async ({ items }) => {
-        for (const user of items) memberMap.value.set(user.id, user);
+        for (const member of items) memberMap.value.set(member.id, member);
         await readMetadata(items.map(({ id }) => id));
       },
     );
   const readMoreMembers = (onComplete: () => void) =>
     readMoreItems(async (cursor) => {
       if (!currentRoomId.value)
-        throw new InvalidOperationError(Operation.Read, readMoreMembers.name, MessageEntityPropertyNames.partitionKey);
+        throw new InvalidOperationError(
+          Operation.Read,
+          readMoreMembers.name,
+          StandardMessageEntityPropertyNames.partitionKey,
+        );
       const cursorPaginationData = await $trpc.room.readMembers.query({ cursor, roomId: currentRoomId.value });
       for (const member of cursorPaginationData.items) memberMap.value.set(member.id, member);
       await readMetadata(cursorPaginationData.items.map(({ id }) => id));

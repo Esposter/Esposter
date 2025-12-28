@@ -11,7 +11,7 @@ import { MonsterKey } from "#shared/models/dungeons/keys/image/UI/MonsterKey";
 import { Monster, monsterSchema } from "#shared/models/dungeons/monster/Monster";
 import { getItem } from "#shared/services/dungeons/item/getItem";
 import { getInitialMetadata } from "#shared/services/dungeons/scene/world/getInitialMetadata";
-import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
+import { IS_PRODUCTION } from "#shared/util/environment/constants";
 import { z } from "zod";
 
 export class Player {
@@ -19,21 +19,20 @@ export class Player {
   inventory: Item[] = [
     { id: ItemId.Potion, quantity: 10 },
     { id: ItemId.DamagedBall, quantity: 5 },
-  ].map(({ id, ...rest }) => ({ ...getItem(id), ...rest }));
+  ].map(({ id, ...rest }) => Object.assign(getItem(id), rest));
   monsters: Monster[] = (() => {
-    if (IS_DEVELOPMENT) {
-      const monsters = [
-        new Monster(MonsterKey.Iguanignite),
-        new Monster(MonsterKey.Carnodusk),
-        new Monster(MonsterKey.Ignivolt),
-      ];
-      for (const monster of monsters) {
-        monster.stats.attack = 100;
-        monster.status.hp = 5;
-      }
-      return monsters;
+    if (IS_PRODUCTION) return [new Monster(MonsterKey.Iguanignite)];
+
+    const monsters = [
+      new Monster(MonsterKey.Iguanignite),
+      new Monster(MonsterKey.Carnodusk),
+      new Monster(MonsterKey.Ignivolt),
+    ];
+    for (const monster of monsters) {
+      monster.stats.attack = 100;
+      monster.status.hp = 5;
     }
-    return [new Monster(MonsterKey.Iguanignite)];
+    return monsters;
   })();
   position: Position;
   respawnLocation = new RespawnLocation();

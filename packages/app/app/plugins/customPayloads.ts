@@ -1,5 +1,5 @@
 import { JSONClassMap } from "#shared/services/superjson/JSONClassMap";
-import { jsonDateParse } from "#shared/util/time/jsonDateParse";
+import { jsonDateParse } from "@esposter/shared";
 
 export default definePayloadPlugin(() => {
   for (const [name, cls] of Object.entries(JSONClassMap)) {

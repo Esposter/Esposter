@@ -1,0 +1,9 @@
+import type { AzureContainer } from "@esposter/db-schema";
+
+import { getContainerClient } from "@esposter/db";
+import { useRuntimeConfig } from "nitropack/runtime";
+
+export const useContainerClient = (azureContainer: AzureContainer) => {
+  const runtimeConfig = useRuntimeConfig();
+  return getContainerClient(runtimeConfig.azure.storageAccountConnectionString, azureContainer);
+};

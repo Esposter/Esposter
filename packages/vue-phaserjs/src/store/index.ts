@@ -23,7 +23,7 @@ export const usePhaserStore = defineStore("phaser", () => {
     const oldSceneKey = sceneKey.value;
     sceneKey.value = newSceneKey;
     // We need to wait until all the vue components for the new scene have been rendered
-    // and the hooks have all been executed before we can tell phaser to start the new scene
+    // And the hooks have all been executed before we can tell phaser to start the new scene
     await nextTick();
     // Cleanup old scene resources
     if (oldSceneKey && game.scene.isActive(oldSceneKey)) game.scene.stop(oldSceneKey);

@@ -1,4 +1,4 @@
-import type { ItemEntityType } from "#shared/models/entity/ItemEntityType";
+import type { ItemEntityType } from "@esposter/shared";
 import type { ApexOptions } from "apexcharts";
 import type { z } from "zod";
 

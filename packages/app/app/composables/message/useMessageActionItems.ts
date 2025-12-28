@@ -1,10 +1,11 @@
-import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
 import type { Item } from "@/models/shared/Item";
+import type { MessageEntity } from "@esposter/db-schema";
 
-import { MessageType } from "#shared/models/db/message/MessageType";
-import { RoutePath } from "#shared/models/router/RoutePath";
+import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { useMessageStore } from "@/store/message";
 import { useRoomStore } from "@/store/message/room";
+import { MessageType } from "@esposter/db-schema";
+import { RoutePath } from "@esposter/shared";
 import { parse } from "node-html-parser";
 
 export const useMessageActionItems = (
@@ -14,15 +15,18 @@ export const useMessageActionItems = (
   {
     onDeleteMode,
     onForward,
+    onPin,
     onReply,
     onUpdateMode,
   }: {
     onDeleteMode?: () => void;
     onForward: (rowKey: string) => void;
+    onPin: (value: true) => void;
     onReply: (rowKey: string) => void;
     onUpdateMode: () => void;
   },
 ) => {
+  const { $trpc } = useNuxtApp();
   const messageStore = useMessageStore();
   const { copy } = messageStore;
   const roomStore = useRoomStore();
@@ -52,42 +56,71 @@ export const useMessageActionItems = (
   };
   const copyTextItem: Item = {
     icon: "mdi-content-copy",
-    onClick: () => {
+    onClick: getSynchronizedFunction(async () => {
       const textContent = parse(message.message).textContent.trim();
-      if (textContent) copy(textContent);
-    },
+      if (textContent) await copy(textContent);
+    }),
     title: "Copy Text",
   };
+  const pinMessageItem = computed<Item>(() =>
+    message.isPinned
+      ? {
+          icon: "mdi-pin-off",
+          onClick: getSynchronizedFunction(async () => {
+            await $trpc.message.unpinMessage.mutate({ partitionKey: message.partitionKey, rowKey: message.rowKey });
+          }),
+          title: "Unpin Message",
+        }
+      : {
+          icon: "mdi-pin",
+          onClick: () => {
+            onPin(true);
+          },
+          title: "Pin Message",
+        },
+  );
   const copyMessageLinkItem: Item = {
     icon: "mdi-link-variant",
-    onClick: () => {
+    onClick: getSynchronizedFunction(async () => {
       if (!currentRoomId.value) return;
       const link = `${runtimeConfig.public.baseUrl}${RoutePath.MessagesMessage(currentRoomId.value, message.rowKey)}`;
-      copy(link);
-    },
+      await copy(link);
+    }),
     title: "Copy Message Link",
   };
   const updateMessageItems = computed<Item[]>(() =>
-    message.type === MessageType.Message
+    message.type === MessageType.Message || message.type === MessageType.Webhook
       ? isEditable.value
         ? [editMessageItem, forwardMessageItem]
         : [replyItem, forwardMessageItem]
       : [],
   );
   const updateMessageMenuItems = computed<Item[]>(() =>
-    message.type === MessageType.Message
+    message.type === MessageType.Message || message.type === MessageType.Webhook
       ? isEditable.value
         ? [editMessageItem, replyItem, forwardMessageItem]
         : [replyItem, forwardMessageItem]
       : [],
   );
-  const actionMessageItems: Item[] = [copyTextItem, copyMessageLinkItem];
+  const actionMessageItems = computed<Item[]>(() => {
+    switch (message.type) {
+      case MessageType.EditRoom:
+        return [copyTextItem, copyMessageLinkItem];
+      case MessageType.Message:
+      case MessageType.Webhook:
+        return [copyTextItem, pinMessageItem.value, copyMessageLinkItem];
+      case MessageType.PinMessage:
+        return [copyMessageLinkItem];
+    }
+  });
   const deleteMessageItem = computed<Item | undefined>(() =>
-    message.type === MessageType.Message && isCreator.value && onDeleteMode
+    (message.type === MessageType.Message || message.type === MessageType.Webhook) && isCreator.value && onDeleteMode
       ? {
           color: "error",
           icon: "mdi-delete",
-          onClick: () => onDeleteMode(),
+          onClick: () => {
+            onDeleteMode();
+          },
           title: "Delete Message",
         }
       : undefined,

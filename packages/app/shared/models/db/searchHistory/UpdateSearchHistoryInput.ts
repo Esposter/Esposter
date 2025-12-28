@@ -1,4 +1,4 @@
-import { selectSearchHistorySchema } from "#shared/db/schema/searchHistories";
+import { selectSearchHistorySchema } from "@esposter/db-schema";
 import { z } from "zod";
 
 export const updateSearchHistoryInputSchema = selectSearchHistorySchema.pick({

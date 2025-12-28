@@ -1,12 +1,12 @@
-import type { Survey } from "#shared/db/schema/surveys";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
+import type { Survey } from "@esposter/db-schema";
 
 import { useSurveyStore } from "@/store/survey";
 
 export const useReadSurveys = () => {
   const { $trpc } = useNuxtApp();
   const surveyStore = useSurveyStore();
-  const { hasMore, items, totalItemsLength } = storeToRefs(surveyStore);
+  const { count, hasMore, items } = storeToRefs(surveyStore);
   const isLoading = ref(false);
   const readSurveys = async ({
     itemsPerPage,
@@ -19,7 +19,7 @@ export const useReadSurveys = () => {
   }) => {
     isLoading.value = true;
     try {
-      const [count, { hasMore: newHasMore, items: newItems }] = await Promise.all([
+      const [newCount, { hasMore: newHasMore, items: newItems }] = await Promise.all([
         $trpc.survey.count.query(),
         $trpc.survey.readSurveys.query({
           limit: itemsPerPage,
@@ -27,7 +27,7 @@ export const useReadSurveys = () => {
           sortBy,
         }),
       ]);
-      totalItemsLength.value = count;
+      count.value = newCount;
       hasMore.value = newHasMore;
       items.value = newItems;
     } finally {

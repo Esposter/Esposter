@@ -1,30 +1,36 @@
 <script setup lang="ts">
-import type { User } from "#shared/db/schema/users";
+import type { User } from "@esposter/db-schema";
+import type { VNodeChild } from "vue";
+import type { VHover } from "vuetify/lib/components/VHover/VHover.mjs";
 import type { ListItemSlot } from "vuetify/lib/components/VList/VListItem.mjs";
 
 import { authClient } from "@/services/auth/authClient";
 import { useRoomStore } from "@/store/message/room";
+import { useMemberStore } from "@/store/message/user/member";
 
 interface MemberListItemProps {
   member: User;
 }
 
-defineSlots<{ append: (props: ListItemSlot) => VNode }>();
+type VHoverSlotProps = Extract<VHover["v-slot:default"], Function> extends (props: infer P) => VNodeChild ? P : never;
+
+const slots = defineSlots<{
+  append: ({ hoverProps, listItemProps }: { hoverProps: VHoverSlotProps; listItemProps: ListItemSlot }) => VNode;
+}>();
 const { member } = defineProps<MemberListItemProps>();
-const { $trpc } = useNuxtApp();
+const emit = defineEmits<{ click: [event: KeyboardEvent | MouseEvent] }>();
 const { data: session } = await authClient.useSession(useFetch);
 const roomStore = useRoomStore();
-const { currentRoom } = storeToRefs(roomStore);
+const { currentRoom, isCreator: isRoomCreator } = storeToRefs(roomStore);
 const isCreator = computed(() => currentRoom.value?.userId === member.id);
-const isKickable = computed(
-  () => currentRoom.value?.userId === session.value?.user.id && member.id !== session.value?.user.id,
-);
-const isHovering = ref(false);
+const isKickable = computed(() => isRoomCreator.value && member.id !== session.value?.user.id);
+const memberStore = useMemberStore();
+const { deleteMember } = memberStore;
 </script>
 
 <template>
-  <div relative @mouseover="isHovering = true" @mouseleave="isHovering = false">
-    <v-list-item :value="member.name">
+  <v-hover #default="{ isHovering, props: hoverProps }">
+    <v-list-item :="hoverProps" :value="member.name" @click="emit('click', $event)">
       <template #prepend>
         <MessageModelMemberStatusAvatar :id="member.id" :image="member.image" :name="member.name" />
       </template>
@@ -38,48 +44,45 @@ const isHovering = ref(false);
           </v-tooltip>
         </div>
       </v-list-item-title>
-      <template #append="props">
-        <slot name="append" :="props" />
+      <template #append="listItemProps">
+        <slot name="append" :="{ hoverProps: { props: hoverProps, isHovering }, listItemProps }">
+          <template v-if="isKickable">
+            <StyledDeleteDialog
+              :card-props="{ title: 'Kick Member', text: `Are you sure you want to kick ${member.name}?` }"
+              :confirm-button-props="{ text: 'Kick' }"
+              @delete="
+                async (onComplete) => {
+                  try {
+                    if (!currentRoom) return;
+                    await deleteMember({ roomId: currentRoom.id, userId: member.id });
+                  } finally {
+                    onComplete();
+                  }
+                }
+              "
+            >
+              <template #activator="{ updateIsOpen }">
+                <v-tooltip :text="`Kick ${member.name}`">
+                  <template #activator="{ props: tooltipProps }">
+                    <v-btn
+                      v-show="isHovering"
+                      :="tooltipProps"
+                      bg-transparent="!"
+                      icon="mdi-close"
+                      variant="plain"
+                      size="small"
+                      :ripple="false"
+                      @click.stop="updateIsOpen(true)"
+                    />
+                  </template>
+                </v-tooltip>
+              </template>
+            </StyledDeleteDialog>
+          </template>
+        </slot>
       </template>
     </v-list-item>
-    <template v-if="isKickable">
-      <StyledDeleteDialog
-        :card-props="{ title: 'Kick Member', text: `Are you sure you want to kick ${member.name}?` }"
-        :confirm-button-props="{ text: 'Kick' }"
-        @delete="
-          async (onComplete) => {
-            try {
-              if (!currentRoom) return;
-              await $trpc.room.deleteMember.mutate({ roomId: currentRoom.id, userId: member.id });
-            } finally {
-              onComplete();
-            }
-          }
-        "
-      >
-        <template #activator="{ updateIsOpen }">
-          <v-tooltip :text="`Kick ${member.name}`">
-            <template #activator="{ props: tooltipProps }">
-              <v-btn
-                v-show="isHovering"
-                absolute
-                top="1/2"
-                right-0
-                translate-y="-1/2"
-                bg-transparent="!"
-                icon="mdi-close"
-                variant="plain"
-                size="small"
-                :ripple="false"
-                :="tooltipProps"
-                @click="updateIsOpen(true)"
-              />
-            </template>
-          </v-tooltip>
-        </template>
-      </StyledDeleteDialog>
-    </template>
-  </div>
+  </v-hover>
 </template>
 
 <style scoped lang="scss">

@@ -6,7 +6,7 @@ const { copied, text } = storeToRefs(messageStore);
 </script>
 
 <template>
-  <div class="bg-surface" relative flex h-full flex-col>
+  <div class="bg-surface" relative h-full flex flex-col>
     <MessageContentHeader />
     <v-divider />
     <MessageContentMessages />

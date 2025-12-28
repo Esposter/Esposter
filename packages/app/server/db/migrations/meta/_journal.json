@@ -148,6 +148,104 @@
       "when": 1759024494037,
       "tag": "0020_young_rattler",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1759921993001,
+      "tag": "0021_absent_phil_sheldon",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1759980269932,
+      "tag": "0022_little_edwin_jarvis",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1760075284939,
+      "tag": "0023_tiny_purple_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1760086141558,
+      "tag": "0024_blue_the_professor",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1760154819076,
+      "tag": "0025_lying_talkback",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1760851057826,
+      "tag": "0026_melted_jackal",
+      "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1762492516183,
+      "tag": "0027_deep_mimic",
+      "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1762731107652,
+      "tag": "0028_shallow_piledriver",
+      "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1764373864099,
+      "tag": "0029_groovy_warbird",
+      "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1764402761305,
+      "tag": "0030_purple_dakota_north",
+      "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1764407143001,
+      "tag": "0031_strange_blindfold",
+      "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1764417771860,
+      "tag": "0032_pretty_leo",
+      "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1764567221283,
+      "tag": "0033_volatile_karen_page",
+      "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1766402734988,
+      "tag": "0034_optimal_charles_xavier",
+      "breakpoints": true
     }
   ]
 }

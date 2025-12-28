@@ -1,7 +1,7 @@
 import { Dungeons } from "#shared/models/dungeons/data/Dungeons";
-import { jsonDateParse } from "#shared/util/time/jsonDateParse";
 import { DUNGEONS_LOCAL_STORAGE_KEY } from "@/services/dungeons/constants";
 import { useDungeonsStore } from "@/store/dungeons";
+import { jsonDateParse } from "@esposter/shared";
 
 export const useReadDungeons = async () => {
   const { $trpc } = useNuxtApp();

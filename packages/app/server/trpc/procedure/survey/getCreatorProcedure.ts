@@ -1,11 +1,11 @@
 import type { inferParser } from "@trpc/server/unstable-core-do-not-import";
 import type { z } from "zod";
 
-import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
+import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { TRPCError } from "@trpc/server";
 
 export const getCreatorProcedure = <T extends z.ZodType>(schema: T, surveyIdKey: keyof inferParser<T>["out"]) =>
-  authedProcedure.input(schema).use(async ({ ctx, input, next }) => {
+  standardAuthedProcedure.input(schema).use(async ({ ctx, input, next }) => {
     const surveyId = input[surveyIdKey];
     if (typeof surveyId !== "string") throw new TRPCError({ code: "BAD_REQUEST" });
 

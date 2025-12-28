@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
+import type { MessageEntity } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
 import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";

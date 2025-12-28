@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import type { Survey } from "#shared/db/schema/surveys";
+import type { Survey } from "@esposter/db-schema";
 import type { ItemSlot } from "vuetify/lib/components/VDataTable/types.mjs";
 
-import { RoutePath } from "#shared/models/router/RoutePath";
 import { SurveyHeaders } from "@/services/survey/SurveyHeaders";
 import { useSurveyStore } from "@/store/survey";
+import { RoutePath } from "@esposter/shared";
 
 const { isLoading, readSurveys } = useReadSurveys();
 const surveyStore = useSurveyStore();
-const { items, searchQuery, totalItemsLength } = storeToRefs(surveyStore);
+const { count, items, searchQuery } = storeToRefs(surveyStore);
 const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Survey>) => navigateTo(RoutePath.Survey(item.id));
 </script>
 
@@ -22,7 +22,7 @@ const onClickRow = (_event: MouseEvent, { item }: ItemSlot<Survey>) => navigateT
         height: '100%',
         headers: SurveyHeaders,
         items,
-        itemsLength: totalItemsLength,
+        itemsLength: count,
         search: searchQuery,
         sortBy: [
           { key: 'name', order: 'asc' },

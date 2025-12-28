@@ -8,17 +8,18 @@ import { useTableEditorStore } from "@/store/tableEditor";
 
 const tableEditorStore = useTableEditorStore<VuetifyComponentItem>();
 const { editedItem } = storeToRefs(tableEditorStore);
-// Optimise performance and paginate
-// because we have too many vuetify components to load in the dropdown all at once
-const vuetifyComponents = computed(() => Object.keys(VuetifyComponentMap));
-const vuetifyComponentsCursor = ref(Math.min(DEFAULT_READ_LIMIT, vuetifyComponents.value.length));
-const displayVuetifyComponents = computed(() => vuetifyComponents.value.slice(0, vuetifyComponentsCursor.value));
+// Optimise performance and paginate because we have too many vuetify components to load in the dropdown all at once
+const vuetifyComponentKeys = computed(() => Object.keys(VuetifyComponentMap));
+const vuetifyComponentKeysCursor = ref(Math.min(DEFAULT_READ_LIMIT, vuetifyComponentKeys.value.length));
+const displayVuetifyComponentKeys = computed(() =>
+  vuetifyComponentKeys.value.slice(0, vuetifyComponentKeysCursor.value),
+);
 const onIntersect = (isIntersecting: boolean) => {
-  if (isIntersecting)
-    vuetifyComponentsCursor.value = Math.min(
-      vuetifyComponentsCursor.value + DEFAULT_READ_LIMIT,
-      vuetifyComponents.value.length,
-    );
+  if (!isIntersecting) return;
+  vuetifyComponentKeysCursor.value = Math.min(
+    vuetifyComponentKeysCursor.value + DEFAULT_READ_LIMIT,
+    vuetifyComponentKeys.value.length,
+  );
 };
 </script>
 
@@ -27,11 +28,11 @@ const onIntersect = (isIntersecting: boolean) => {
     <v-autocomplete
       v-model="editedItem.component"
       label="Component"
-      :items="displayVuetifyComponents"
+      :items="displayVuetifyComponentKeys"
       :rules="[formRules.required]"
       @update:menu="
         (value) => {
-          if (!value) vuetifyComponentsCursor = Math.min(DEFAULT_READ_LIMIT, vuetifyComponents.length);
+          if (!value) vuetifyComponentKeysCursor = Math.min(DEFAULT_READ_LIMIT, vuetifyComponentKeys.length);
         }
       "
     >

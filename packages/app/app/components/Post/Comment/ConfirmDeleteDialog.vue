@@ -8,8 +8,8 @@ interface PostCommentConfirmDeleteDialogProps {
 }
 
 defineSlots<{
+  activator: (props: StyledDialogActivatorSlotProps) => VNode;
   commentPreview: () => VNode;
-  default: (props: StyledDialogActivatorSlotProps) => VNode;
 }>();
 const { commentId } = defineProps<PostCommentConfirmDeleteDialogProps>();
 const commentStore = useCommentStore();
@@ -34,7 +34,7 @@ const { text } = useColors();
     "
   >
     <template #activator="activatorProps">
-      <slot :="activatorProps" />
+      <slot name="activator" :="activatorProps" />
     </template>
     <div class="custom-border" py-2 mx-4 rd-lg shadow-md>
       <slot name="commentPreview" />

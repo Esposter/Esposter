@@ -37,17 +37,18 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
   const tableEditorConfiguration = ref(new TableEditorConfiguration());
   const tableEditorType = ref(TableEditorType.TodoList);
   const tableEditor = computed(() => tableEditorConfiguration.value[tableEditorType.value]);
-  const editFormData = createEditFormData(
+  const { editedIndex, editedItem, editFormDialog, ...rest } = createEditFormData(
     computed(() => tableEditor.value.items as Item[]),
     ["id"],
   );
   const save = async (isDeleteAction?: true) => {
-    const { editedIndex, editedItem, editFormDialog } = editFormData;
     if (!editedItem.value) return;
 
     if (isDeleteAction) deleteItem({ id: editedItem.value.id });
     else if (editedIndex.value > -1) updateItem(editedItem.value);
     else createItem(editedItem.value);
+    // Optimistically close the edit form dialog
+    editFormDialog.value = false;
 
     if (session.value.data) {
       saveItemMetadata(tableEditorConfiguration.value);
@@ -56,15 +57,17 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
       saveItemMetadata(tableEditorConfiguration.value);
       localStorage.setItem(TABLE_EDITOR_LOCAL_STORAGE_KEY, tableEditorConfiguration.value.toJSON());
     }
-    editFormDialog.value = false;
   };
 
   return {
+    editedIndex,
+    editedItem,
+    editFormDialog,
     searchQuery,
     tableEditor,
     tableEditorConfiguration,
     tableEditorType,
-    ...editFormData,
+    ...rest,
     save,
   };
 });

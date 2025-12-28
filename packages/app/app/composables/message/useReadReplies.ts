@@ -1,3 +1,5 @@
+import type { MessageEntity } from "@esposter/db-schema";
+
 import { useReplyStore } from "@/store/message/reply";
 import { useRoomStore } from "@/store/message/room";
 
@@ -7,7 +9,7 @@ export const useReadReplies = () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const replyStore = useReplyStore();
   const { replyMap } = storeToRefs(replyStore);
-  return async (replyRowKeys: string[]) => {
+  return async (replyRowKeys: MessageEntity["rowKey"][]) => {
     if (!currentRoomId.value || replyRowKeys.length === 0) return;
 
     const messagesByRowKeys = await $trpc.message.readMessagesByRowKeys.query({

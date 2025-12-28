@@ -5,7 +5,6 @@ import type { VNavigationDrawer } from "vuetify/components";
 import { useLayoutStore } from "@/store/layout";
 
 interface DefaultProps {
-  bottomOffset?: number;
   footerStyle?: CSSProperties;
   hideGlobalScrollbar?: true;
   leftNavigationDrawerProps?: VNavigationDrawer["$props"];
@@ -13,14 +12,8 @@ interface DefaultProps {
   rightNavigationDrawerProps?: VNavigationDrawer["$props"];
 }
 
-const {
-  bottomOffset,
-  footerStyle,
-  hideGlobalScrollbar,
-  leftNavigationDrawerProps,
-  mainStyle,
-  rightNavigationDrawerProps,
-} = defineProps<DefaultProps>();
+const { footerStyle, hideGlobalScrollbar, leftNavigationDrawerProps, mainStyle, rightNavigationDrawerProps } =
+  defineProps<DefaultProps>();
 const slots = defineSlots<{
   default?: () => VNode;
   footer?: () => VNode;
@@ -30,8 +23,19 @@ const slots = defineSlots<{
 const layoutStore = useLayoutStore();
 const { isDesktop, isLeftDrawerOpen, isLeftDrawerOpenAuto, isRightDrawerOpen, isRightDrawerOpenAuto } =
   storeToRefs(layoutStore);
+const footer = useTemplateRef("footer");
+const bottomOffset = ref(0);
 // Fix the layout structure so navigating does not cause a layout shift
 const { bottom, left, middle, right } = useFixedLayoutStyles(bottomOffset);
+
+useResizeObserver(
+  () => footer.value?.$el,
+  (entries) => {
+    const entry = entries[0];
+    const { bottom } = entry.contentRect;
+    bottomOffset.value = bottom;
+  },
+);
 
 onMounted(() => {
   isLeftDrawerOpen.value = isLeftDrawerOpenAuto.value = slots.left ? isDesktop.value : false;
@@ -76,7 +80,7 @@ onMounted(() => {
       <slot />
     </v-main>
 
-    <v-footer v-if="slots.footer" :style="{ ...bottom, ...footerStyle }" app>
+    <v-footer v-if="slots.footer" ref="footer" :style="{ ...bottom, ...footerStyle }" app>
       <slot name="footer" />
     </v-footer>
   </div>

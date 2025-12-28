@@ -10,7 +10,7 @@ export class StateMachine<TStateName extends string> {
     this.stateMap = stateMap;
   }
 
-  async setState(stateName: TStateName | undefined) {
+  async setState(stateName?: TStateName) {
     if (stateName === this.currentState.name) return;
 
     const state = stateName === undefined ? { name: undefined } : this.stateMap[stateName];

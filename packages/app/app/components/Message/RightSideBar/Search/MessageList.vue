@@ -8,20 +8,14 @@ const { items, page, pageCount } = storeToRefs(searchMessageStore);
 </script>
 
 <template>
-  <template v-if="items.length > 0">
-    <div flex-1 overflow-y-auto="!">
-      <v-list>
-        <MessageRightSideBarSearchMessage v-for="message in items" :key="message.rowKey" :message />
-      </v-list>
-      <div flex justify-center>
-        <v-pagination
-          v-model="page"
-          w-full
-          :length="pageCount"
-          @update:model-value="readSearchedMessages(($event - 1) * DEFAULT_READ_LIMIT)"
-        />
-      </div>
+  <MessageModelMessageSearchList :messages="items">
+    <div flex justify-center>
+      <v-pagination
+        v-model="page"
+        w-full
+        :length="pageCount"
+        @update:model-value="readSearchedMessages(($event - 1) * DEFAULT_READ_LIMIT)"
+      />
     </div>
-  </template>
-  <div v-else pt-6 text-center text-gray>No results</div>
+  </MessageModelMessageSearchList>
 </template>

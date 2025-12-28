@@ -3,7 +3,7 @@ import type { Session } from "@/models/auth/Session";
 import type { VAvatar } from "vuetify/components/VAvatar";
 
 import { StatusBadgePropsMap } from "@/services/message/StatusBadgePropsMap";
-import { useUserStatusStore } from "@/store/message/userStatus";
+import { useStatusStore } from "@/store/message/user/status";
 // @TODO: https://github.com/vuejs/core/issues/11371
 interface StatusAvatarProps {
   avatarProps?: VAvatar["$props"];
@@ -13,10 +13,10 @@ interface StatusAvatarProps {
 }
 
 const { avatarProps, id, image, name } = defineProps<StatusAvatarProps>();
-const userStatusStore = useUserStatusStore();
-const { getUserStatusEnum } = userStatusStore;
+const statusStore = useStatusStore();
+const { getStatusEnum } = statusStore;
 const badgeProps = computed(() => {
-  const userStatusEnum = getUserStatusEnum(id);
+  const userStatusEnum = getStatusEnum(id);
   return StatusBadgePropsMap[userStatusEnum];
 });
 </script>

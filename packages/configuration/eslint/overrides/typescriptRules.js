@@ -16,4 +16,5 @@ export default {
       allowTernary: true,
     },
   ],
+  "@typescript-eslint/unified-signatures": "off",
 };

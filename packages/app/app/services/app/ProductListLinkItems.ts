@@ -1,8 +1,7 @@
 import type { ListLinkItem } from "@/models/shared/ListLinkItem";
 
-import { RoutePath } from "#shared/models/router/RoutePath";
 import { MESSAGE_DISPLAY_NAME } from "#shared/services/message/constants";
-import { SURVEY_DISPLAY_NAME } from "#shared/services/survey/constants";
+import { RoutePath, SURVEY_DISPLAY_NAME } from "@esposter/shared";
 
 export const ProductListLinkItems = [
   {

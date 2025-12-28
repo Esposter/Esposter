@@ -1,13 +1,13 @@
-import type { CompositeKeyEntity } from "#shared/models/azure/CompositeKeyEntity";
-import type { ToData } from "#shared/models/entity/ToData";
+import type { CompositeKeyEntity } from "@esposter/db-schema";
+import type { ToData } from "@esposter/shared";
 
-import { selectUserSchema } from "#shared/db/schema/users";
 import {
   createMessageMetadataEntitySchema,
   MessageMetadataEntity,
-} from "#shared/models/db/message/metadata/MessageMetadataEntity";
-import { MessageMetadataType } from "#shared/models/db/message/metadata/MessageMetadataType";
-import { getPropertyNames } from "#shared/util/getPropertyNames";
+  MessageMetadataType,
+  selectUserSchema,
+} from "@esposter/db-schema";
+import { getPropertyNames } from "@esposter/shared";
 import { z } from "zod";
 
 export class MessageEmojiMetadataEntity extends MessageMetadataEntity<MessageMetadataType.Emoji> {

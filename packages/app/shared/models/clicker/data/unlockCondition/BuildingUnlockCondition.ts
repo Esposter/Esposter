@@ -1,9 +1,9 @@
 import type { BuildingId } from "#shared/models/clicker/data/building/BuildingId";
-import type { ItemEntityType } from "#shared/models/entity/ItemEntityType";
+import type { ItemEntityType } from "@esposter/shared";
 
 import { buildingIdSchema } from "#shared/models/clicker/data/building/BuildingId";
 import { ItemType } from "#shared/models/clicker/data/ItemType";
-import { createItemEntityTypeSchema } from "#shared/models/entity/ItemEntityType";
+import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
 export interface BuildingUnlockCondition extends ItemEntityType<ItemType.Building> {

@@ -2,6 +2,7 @@
 import type { ContainerConfiguration } from "@/models/configuration/ContainerConfiguration";
 import type { ContainerEventEmitsOptions } from "@/models/emit/ContainerEventEmitsOptions";
 import type { GameObjects } from "phaser";
+import type { VNode } from "vue";
 
 import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
 import { InjectionKeyMap } from "@/util/InjectionKeyMap";

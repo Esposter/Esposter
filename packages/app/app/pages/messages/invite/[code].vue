@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { selectInviteSchema } from "#shared/db/schema/invites";
-import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
-import { RoutePath } from "#shared/models/router/RoutePath";
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
 import { useRoomStore } from "@/store/message/room";
+import { DatabaseEntityType, selectInviteSchema } from "@esposter/db-schema";
+import { RoutePath } from "@esposter/shared";
 
 definePageMeta({
   middleware: "auth",
@@ -27,7 +26,6 @@ else if (invite.isMember) await navigateTo(RoutePath.Messages(invite.roomId));
 
 const roomStore = useRoomStore();
 const { joinRoom } = roomStore;
-const { name } = useRoomName(invite.room);
 </script>
 
 <template>
@@ -45,7 +43,7 @@ const { name } = useRoomName(invite.room);
             <div text-center>
               You've been invited to join
               <span font-bold>
-                {{ name }}
+                {{ invite.room.name }}
               </span>
               by
               <div text-2xl font-bold>

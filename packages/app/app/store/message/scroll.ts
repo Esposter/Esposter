@@ -1,7 +1,7 @@
 import type { VList } from "vuetify/components";
 
-import { RoutePath } from "#shared/models/router/RoutePath";
 import { useRoomStore } from "@/store/message/room";
+import { RoutePath } from "@esposter/shared";
 
 export const useScrollStore = defineStore("message/scroll", () => {
   const messageContainer = ref<InstanceType<typeof VList> | null>(null);

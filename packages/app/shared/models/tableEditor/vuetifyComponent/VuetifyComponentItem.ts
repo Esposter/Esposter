@@ -1,7 +1,5 @@
-import type { ItemEntityType } from "#shared/models/entity/ItemEntityType";
-import type { ToData } from "#shared/models/entity/ToData";
+import type { ItemEntityType, ToData } from "@esposter/shared";
 
-import { createItemEntityTypeSchema } from "#shared/models/entity/ItemEntityType";
 import {
   ATableEditorItemEntity,
   aTableEditorItemEntitySchema,
@@ -14,10 +12,11 @@ import {
   VuetifyComponentType,
   vuetifyComponentTypeSchema,
 } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentType";
+import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
 export class VuetifyComponentItem extends ATableEditorItemEntity implements ItemEntityType<VuetifyComponentItemType> {
-  component: VuetifyComponentType = VuetifyComponentType["v-alert"];
+  component: VuetifyComponentType = VuetifyComponentType.VAlert;
   props: Record<string, unknown> = {};
   type = VuetifyComponentItemType.VuetifyComponent;
 }

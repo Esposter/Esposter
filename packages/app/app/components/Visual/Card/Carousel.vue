@@ -68,7 +68,7 @@ interface CardStyleVariables {
 // This can also act as a z index for us to use, which is pretty convenient C:
 const cardIds = ref<number[]>(cards.map((_card, index) => index));
 
-// the active card is the card that's moving from right -> left -> right.
+// The active card is the card that's moving from right -> left -> right.
 const activeCardId = ref<number>();
 const inactiveCardId = ref<number>();
 
@@ -97,7 +97,7 @@ const getClass = (cardId: number): string => {
 const moveCardsTimer = ref<number>();
 
 // This marks the first card as active (which is the top card on the right)
-// then moves it to the end of the array, and after a timeout unmarks it as active.
+// Then moves it to the end of the array, and after a timeout unmarks it as active.
 const moveCards = () => {
   if (cards.length === 0) return;
   else if (cards.length === 1) {
@@ -128,7 +128,7 @@ const gap = computed<string>(() => {
 });
 
 // Every card from right -> left has increasing margin (by 1rem each time)
-// this is scaled by 'scale', so in 1920 it's 1.25rem and in 3840 it's 2.5rem
+// This is scaled by 'scale', so in 1920 it's 1.25rem and in 3840 it's 2.5rem
 const scale = computed<number>(() => {
   let scale = 1;
   if (width.value >= thresholds.value.xxl) scale = 2.5;
@@ -142,8 +142,8 @@ const normalCardStyles = computed<CardStyleVariables[]>(() => {
   const items: CardStyleVariables[] = [];
 
   // Start from the right most card and calculate recursively by moving left
-  // so we are able to use the right-neighbour card's marginRight and scaleY
-  // for the current card's oldMarginRight and oldScaleY
+  // So we are able to use the right-neighbour card's marginRight and scaleY
+  // For the current card's oldMarginRight and oldScaleY
   // Remember that our animation flows from right (old) to left (new)
   // We'll reverse the items at the end so it still maintains LTR chronological order
   for (let i = 0; i < numberOfCards; i++)

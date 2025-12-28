@@ -1,7 +1,7 @@
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
 import { MenuOption } from "@/models/dungeons/scene/monsterParty/MenuOption";
 import { SceneMode } from "@/models/dungeons/scene/monsterParty/SceneMode";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";

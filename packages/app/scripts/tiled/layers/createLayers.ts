@@ -25,7 +25,7 @@ export const createLayers = async (layersData: LayerData[]) => {
     promises.push(createLayerNamesFile(directory, LayerType.layer, layerNames));
   }
   // We need to process object layers later and
-  // merge object layers from all tilemaps together because:
+  // Merge object layers from all tilemaps together because:
   // 1. They MUST have the same behaviour across maps
   // 2. We should NOT be duplicating this behavioural code in our typescript code
   promises.push(createLayerNamesFile(DIRECTORY, LayerType.objectgroup, [...new Set(objectgroupNames)]));

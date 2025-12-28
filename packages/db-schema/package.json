@@ -1,0 +1,67 @@
+{
+  "name": "@esposter/db-schema",
+  "description": "A library of database schemas and utilities using Drizzle ORM (PostgreSQL) that is available in both browser and server environments.",
+  "version": "2.18.2",
+  "private": true,
+  "type": "module",
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/db-schema#readme",
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "drizzle",
+    "orm",
+    "postgresql",
+    "postgres",
+    "pg",
+    "sql",
+    "database",
+    "schema",
+    "postgres",
+    "typescript",
+    "ts"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esposter/Esposter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "scripts": {
+    "build": "bun --bun export:gen && rolldown --config rolldown.config.ts",
+    "coverage": "vitest run --coverage",
+    "db:run": "bun --bun --tsconfig-override tsconfig.root.json ../../node_modules/drizzle-kit/bin.cjs",
+    "db:gen": "bun --bun db:run generate",
+    "db:studio": "bun --bun db:run studio",
+    "db:up": "bun --bun db:run up",
+    "export:gen": "ctix build --config ../configuration/.ctirc-ts",
+    "lint": "oxlint && eslint .",
+    "lint:fix": "oxlint --fix && eslint --fix .",
+    "test": "vitest",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@esposter/shared": "workspace:*",
+    "drizzle-orm": "catalog:",
+    "drizzle-zod": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@azure/data-tables": "catalog:",
+    "@azure/storage-blob": "catalog:",
+    "@trpc/server": "catalog:",
+    "drizzle-kit": "catalog:"
+  },
+  "peerDependencies": {
+    "@esposter/shared": "workspace:*",
+    "@trpc/server": "catalog:",
+    "drizzle-orm": "catalog:",
+    "drizzle-zod": "catalog:",
+    "zod": "catalog:"
+  }
+}

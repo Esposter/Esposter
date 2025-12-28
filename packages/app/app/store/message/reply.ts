@@ -1,4 +1,4 @@
-import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
+import type { MessageEntity } from "@esposter/db-schema";
 
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { useDataStore } from "@/store/message/data";
@@ -7,13 +7,13 @@ import { Operation } from "@esposter/shared";
 
 export const useReplyStore = defineStore("message/reply", () => {
   const roomStore = useRoomStore();
-  // oxlint-disable-next-line no-useless-undefined
   const { data: rowKey } = useDataMap<string | undefined>(() => roomStore.currentRoomId, undefined);
   MessageHookMap.ResetSend.push(() => {
     rowKey.value = "";
   });
 
   const dataStore = useDataStore();
+  // These are all the messages that have been replied to
   const { data: replyMap } = useDataMap(() => roomStore.currentRoomId, new Map<string, MessageEntity>());
   MessageHookMap[Operation.Create].push(({ replyRowKey }) => {
     if (!replyRowKey) return;

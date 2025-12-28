@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
+import type { MessageEntity } from "@esposter/db-schema";
 
-import { authClient } from "@/services/auth/authClient";
-import { EmojiMenuItems } from "@/services/message/EmojiMenuItems";
+import { EmojiMenuItems } from "@/services/message/emoji/EmojiMenuItems";
 import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
 import { unemojify } from "node-emoji";
 
@@ -17,12 +16,12 @@ const emit = defineEmits<{
   "update:delete-mode": [value: true];
   "update:forward": [rowKey: string];
   "update:menu": [value: boolean];
+  "update:pin": [value: true];
   "update:reply": [rowKey: string];
   "update:select-emoji": [emoji: string];
   "update:update-mode": [value: true];
 }>();
-const { data: session } = await authClient.useSession(useFetch);
-const isCreator = computed(() => session.value?.user.id === message.userId);
+const isCreator = await useIsCreator(() => message);
 const isEditable = computed(() => isCreator.value && !message.isForward);
 const {
   actionMessageItems,
@@ -31,6 +30,7 @@ const {
 } = useMessageActionItems(message, isEditable, isCreator, {
   onDeleteMode: () => emit("update:delete-mode", true),
   onForward: (rowKey) => emit("update:forward", rowKey),
+  onPin: (value) => emit("update:pin", value),
   onReply: (rowKey) => emit("update:reply", rowKey),
   onUpdateMode: () => emit("update:update-mode", true),
 });
@@ -57,9 +57,10 @@ const {
       />
       <MessageModelMessageOptionsMenuItems
         :message
-        @update:update-mode="emit('update:update-mode', true)"
-        @update:reply="emit('update:reply', $event)"
+        @update:pin="emit('update:pin', $event)"
         @update:forward="emit('update:forward', $event)"
+        @update:reply="emit('update:reply', $event)"
+        @update:update-mode="emit('update:update-mode', true)"
       />
       <MessageModelMessageOptionsMenuMore
         :row-key="message.rowKey"

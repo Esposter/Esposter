@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
-import { useMemberStore } from "@/store/message/member";
+import { useMemberStore } from "@/store/message/user/member";
 
 const { readMembers, readMoreMembers } = useReadMembers();
 const { isPending } = await readMembers();

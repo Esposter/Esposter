@@ -1,4 +1,4 @@
-import type { FileEntity } from "#shared/models/azure/FileEntity";
+import type { FileEntity } from "@esposter/db-schema";
 
 export interface FileRendererComponentProps {
   file: FileEntity;

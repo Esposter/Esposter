@@ -2,7 +2,7 @@ import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { InfoContainerTextMap } from "@/services/dungeons/scene/settings/InfoContainerTextMap";
 import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsOptionGrid";
@@ -31,7 +31,7 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
   const infoText = computed(() => InfoContainerTextMap[selectedSettingsOption.value]);
   // We need to do 1 of 2 things when the option grid is updated:
   // 1. If the user has changed position "y" (settings option) regardless of keyboard/click/touch,
-  // then we should automatically switch it to the active settings value
+  // Then we should automatically switch it to the active settings value
   // 2. If the user has changed position "x" (updated settings value), then we should setSettings (save the game)
   watch(
     () => SettingsOptionGrid.position.value.y,
@@ -74,7 +74,7 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
     else if (isUpdateThemeModeSetting(justDownInput, selectedSettingsOption.value))
       await updateThemeModeSetting(justDownInput);
     // We ignore validation when moving up/down since we auto update grid x
-    // and this is just updating the settings options being viewed, not the actual values
+    // And this is just updating the settings options being viewed, not the actual values
     else SettingsOptionGrid.move(justDownInput, justDownInput === Direction.UP || justDownInput === Direction.DOWN);
   };
 

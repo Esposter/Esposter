@@ -3,6 +3,77 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.18.2](https://github.com/Esposter/Esposter/compare/v2.18.1...v2.18.2) (2025-12-10)
+
+**Note:** Version bump only for package azure-mock
+
+## [2.18.1](https://github.com/Esposter/Esposter/compare/v2.18.0...v2.18.1) (2025-12-10)
+
+**Note:** Version bump only for package azure-mock
+
+# [2.18.0](https://github.com/Esposter/Esposter/compare/v2.17.0...v2.18.0) (2025-12-10)
+
+### Bug Fixes
+
+* add remaining tests ([87ad867](https://github.com/Esposter/Esposter/commit/87ad867732a695ad5da028fa700aaaeb3376c692))
+* lint ([5e8eb34](https://github.com/Esposter/Esposter/commit/5e8eb340d6f0e0a090076ddcd01aa4c404b3b894))
+* remove unnecessary tests ([f2829a5](https://github.com/Esposter/Esposter/commit/f2829a5f95f836a0ffc0fb4654c0bff907cb0dbf))
+
+# [2.17.0](https://github.com/Esposter/Esposter/compare/v2.16.0...v2.17.0) (2025-11-03)
+
+### Features
+
+* Add mock queue client ([079340a](https://github.com/Esposter/Esposter/commit/079340a01b61f47cb0ac753cc811de5676dc0e65))
+* migrate to event grid instead of storage queue ([6987115](https://github.com/Esposter/Esposter/commit/69871155a7f1114cb62229173c4c70a7f3ce1d81))
+
+# [2.16.0](https://github.com/Esposter/Esposter/compare/v2.15.1...v2.16.0) (2025-10-19)
+
+### Bug Fixes
+
+* peer deps ([6f8d586](https://github.com/Esposter/Esposter/commit/6f8d5860fb6baf483a347cdb3bd74d9bcc83fbe8))
+
+## [2.15.1](https://github.com/Esposter/Esposter/compare/v2.15.0...v2.15.1) (2025-10-10)
+
+### Bug Fixes
+
+* split to db-schema pkg that is browser-friendly ([549fcac](https://github.com/Esposter/Esposter/commit/549fcacfe755039fb2a85e17baaa11f2ddfc6d4f))
+
+# [2.15.0](https://github.com/Esposter/Esposter/compare/v2.14.0...v2.15.0) (2025-10-09)
+
+### Bug Fixes
+
+* bundle libs that are in node to be in node platform ([92c3875](https://github.com/Esposter/Esposter/commit/92c38752e6d5e2a481f0a2107d7143e00fe4e14d))
+
+* deserializing key + make checking length consistent ([736f771](https://github.com/Esposter/Esposter/commit/736f771406a70640b1d81f028e29097aeeb26a5a))
+
+* finally fix up remaining table filter predicate issues ([ae864b9](https://github.com/Esposter/Esposter/commit/ae864b991fae6b29969ee43935666351da36ce17))
+
+* lint ([437f01f](https://github.com/Esposter/Esposter/commit/437f01f31e381d85717db8e97b5e29d516bf92d8))
+
+* move deps back to respective packages properly ([5a55e2d](https://github.com/Esposter/Esposter/commit/5a55e2d29f3de9d88bb68779780e983e9388457f))
+
+* package json ([f3fbfed](https://github.com/Esposter/Esposter/commit/f3fbfedc9772b653d34b2f2621d9dbf2612c3bd1))
+
+* tests + room query + serialize entity ([c184b6a](https://github.com/Esposter/Esposter/commit/c184b6a3b20eb60784e6efa55bc6bebcb9e2be89))
+
+* types ([36a0faa](https://github.com/Esposter/Esposter/commit/36a0faab76fc19bf70becfaf3a730f3cf0a35d1e))
+
+* types ([387f44a](https://github.com/Esposter/Esposter/commit/387f44aa550bb7cd71d00d70dcbc0f40fcb33238))
+
+### Features
+
+* Add has filter ([052999c](https://github.com/Esposter/Esposter/commit/052999cb1e255d2756ac8a0b6405810cd6fb8800))
+
+* Add pin message UI ([bbbc388](https://github.com/Esposter/Esposter/commit/bbbc38815924cb6a3ae07c2cc448a5c47e559395))
+
+* Add pin/unpin messages ([039b7ea](https://github.com/Esposter/Esposter/commit/039b7ea48a0613fb1e6bfaf1e604df683a8695cd))
+
+* migrate to rate limiter drizzle ([00091a2](https://github.com/Esposter/Esposter/commit/00091a2d8b31c16fb6cb749a1a278817e312dd87))
+
+### Reverts
+
+* Revert "refactor: move some things to ts" ([07551a7](https://github.com/Esposter/Esposter/commit/07551a70d016a1f07813b7cec198844e1c418d8b))
+
 # [2.14.0](https://github.com/Esposter/Esposter/compare/v2.13.1...v2.14.0) (2025-09-14)
 
 ### Features
@@ -18,6 +89,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * move is partition key and is row key to shared and fix up some things with search bar ([a3409c4](https://github.com/Esposter/Esposter/commit/a3409c476fed907a2ac9f0c26816c0a621821ca7))
+
 * table filter parse clause ([43e4822](https://github.com/Esposter/Esposter/commit/43e48229351dc83dea5a9e10384b416bc9ce4b8a))
 
 ### Features
@@ -29,8 +101,11 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * docs links ([f6d1bf0](https://github.com/Esposter/Esposter/commit/f6d1bf0d0b369f086bb535bd18211a221e6818b9))
+
 * lint ([62ebe46](https://github.com/Esposter/Esposter/commit/62ebe460155f89f14ffc9c059788181e6dc663ca))
+
 * support null values in azure mock ([ace1439](https://github.com/Esposter/Esposter/commit/ace143964d9b7a587b72450f73ffce698cc3f476))
+
 * support unary operators and ne binary operator ([b70e1b1](https://github.com/Esposter/Esposter/commit/b70e1b16654ad1ddcdf38191acfbfb00141818b4))
 
 # [2.11.0](https://github.com/Esposter/Esposter/compare/v2.10.0...v2.11.0) (2025-08-11)

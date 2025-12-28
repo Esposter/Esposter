@@ -28,6 +28,7 @@ export const useDownloadFileStore = defineStore("message/downloadFile", () => {
     if (!message) return;
     for (const { id } of message.files) fileUrlMap.value.delete(id);
   });
+
   const viewableFiles = computed(() => {
     const viewableFiles: { alt: string; id: string; src: string }[] = [];
     for (const { filename, id, mimetype } of dataStore.files) {
@@ -39,7 +40,6 @@ export const useDownloadFileStore = defineStore("message/downloadFile", () => {
     }
     return viewableFiles;
   });
-
   const viewFiles = (initialViewIndex: number) => {
     viewerApi({ images: viewableFiles.value, options: { initialViewIndex } });
   };

@@ -2,7 +2,7 @@ import type { ReadonlyRefOrGetter } from "@vueuse/core";
 
 import { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
 // We want to handle the case where we have a Record<id, OffsetPaginationData> scenario
-// where we store multiple different lists for different ids, e.g. searched messages for room ids
+// Where we store multiple different lists for different ids, e.g. searched messages for room ids
 export const useOffsetPaginationDataMap = <TItem>(
   currentId: ReadonlyRefOrGetter<string | undefined>,
 ): ReturnType<typeof useOffsetPaginationOperationData<TItem>> => {

@@ -1,14 +1,24 @@
 <script setup lang="ts">
 import type { ListLinkItem } from "@/models/shared/ListLinkItem";
 
-import { RoutePath } from "#shared/models/router/RoutePath";
 import { authClient } from "@/services/auth/authClient";
+import { RoutePath } from "@esposter/shared";
 import { mergeProps } from "vue";
 
 const { data: session } = await authClient.useSession(useFetch);
 const { signOut } = authClient;
 const items = computed<ListLinkItem[]>(() => {
   const commonItems: ListLinkItem[] = [
+    {
+      href: RoutePath.Achievements,
+      icon: "mdi-trophy",
+      title: "Achievements",
+    },
+    {
+      href: RoutePath.Anime,
+      icon: "custom:anime",
+      title: "Anime",
+    },
     {
       href: RoutePath.About,
       icon: "mdi-information",
@@ -20,11 +30,6 @@ const items = computed<ListLinkItem[]>(() => {
       icon: "mdi-book-open-page-variant",
       title: "Documentation",
       trailingSlash: "append",
-    },
-    {
-      href: RoutePath.Anime,
-      icon: "custom:anime",
-      title: "Anime",
     },
     {
       href: RoutePath.PrivacyPolicy,

@@ -2,11 +2,11 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { userStatuses } from "#shared/db/schema/userStatuses";
-import { UserStatus } from "#shared/models/db/user/UserStatus";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { userRouter } from "@@/server/trpc/routers/user";
+import { UserStatus, userStatuses } from "@esposter/db-schema";
+import { MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("user", () => {
@@ -27,6 +27,7 @@ describe("user", () => {
 
   afterEach(async () => {
     vi.useRealTimers();
+    MockTableDatabase.clear();
     await mockContext.db.delete(userStatuses);
   });
 
@@ -62,10 +63,12 @@ describe("user", () => {
   test("connect inserts", async () => {
     expect.hasAssertions();
 
-    const oldUserStatus = (await caller.readStatuses([getMockSession().user.id]))[0];
+    const userId = getMockSession().user.id;
+    const oldUserStatus = (await caller.readStatuses([userId]))[0];
     vi.advanceTimersByTime(1);
     await caller.connect();
-    const newUserStatus = (await caller.readStatuses([getMockSession().user.id]))[0];
+    vi.advanceTimersByTime(1);
+    const newUserStatus = (await caller.readStatuses([userId]))[0];
 
     expect(newUserStatus.updatedAt.getTime()).toBe(oldUserStatus.updatedAt.getTime() + 1);
   });
@@ -73,22 +76,27 @@ describe("user", () => {
   test("connect updates", async () => {
     expect.hasAssertions();
 
+    const userId = getMockSession().user.id;
     await caller.connect();
-    const oldUserStatus = (await caller.readStatuses([getMockSession().user.id]))[0];
+    vi.advanceTimersByTime(1);
+    const oldUserStatus = (await caller.readStatuses([userId]))[0];
     vi.advanceTimersByTime(1);
     await caller.connect();
-    const newUserStatus = (await caller.readStatuses([getMockSession().user.id]))[0];
+    vi.advanceTimersByTime(1);
+    const newUserStatus = (await caller.readStatuses([userId]))[0];
 
-    expect(newUserStatus.updatedAt.getTime()).toBe(oldUserStatus.updatedAt.getTime() + 1);
+    expect(newUserStatus.updatedAt.getTime()).toBe(oldUserStatus.updatedAt.getTime() + 2);
   });
 
   test("disconnect inserts", async () => {
     expect.hasAssertions();
 
-    const oldUserStatus = (await caller.readStatuses([getMockSession().user.id]))[0];
+    const userId = getMockSession().user.id;
+    const oldUserStatus = (await caller.readStatuses([userId]))[0];
     vi.advanceTimersByTime(1);
     await caller.disconnect();
-    const newUserStatus = (await caller.readStatuses([getMockSession().user.id]))[0];
+    vi.advanceTimersByTime(1);
+    const newUserStatus = (await caller.readStatuses([userId]))[0];
 
     expect(newUserStatus.updatedAt.getTime()).toBe(oldUserStatus.updatedAt.getTime() + 1);
   });
@@ -96,26 +104,34 @@ describe("user", () => {
   test("disconnect updates", async () => {
     expect.hasAssertions();
 
+    const userId = getMockSession().user.id;
     await caller.disconnect();
-    const oldUserStatus = (await caller.readStatuses([getMockSession().user.id]))[0];
+    vi.advanceTimersByTime(1);
+    const oldUserStatus = (await caller.readStatuses([userId]))[0];
     vi.advanceTimersByTime(1);
     await caller.disconnect();
-    const newUserStatus = (await caller.readStatuses([getMockSession().user.id]))[0];
+    vi.advanceTimersByTime(1);
+    const newUserStatus = (await caller.readStatuses([userId]))[0];
 
-    expect(newUserStatus.updatedAt.getTime()).toBe(oldUserStatus.updatedAt.getTime() + 1);
+    expect(newUserStatus.updatedAt.getTime()).toBe(oldUserStatus.updatedAt.getTime() + 2);
   });
 
   test("connect disconnect connect", async () => {
     expect.hasAssertions();
 
+    const userId = getMockSession().user.id;
     await caller.connect();
+    vi.advanceTimersByTime(1);
     await caller.disconnect();
-    const oldUserStatus = (await caller.readStatuses([getMockSession().user.id]))[0];
+    vi.advanceTimersByTime(1);
+    const oldUserStatus = (await caller.readStatuses([userId]))[0];
 
     expect(oldUserStatus.status).toBe(UserStatus.Offline);
 
+    vi.advanceTimersByTime(1);
     await caller.connect();
-    const newUserStatus = (await caller.readStatuses([getMockSession().user.id]))[0];
+    vi.advanceTimersByTime(1);
+    const newUserStatus = (await caller.readStatuses([userId]))[0];
 
     expect(newUserStatus.status).toBe(UserStatus.Online);
   });
@@ -124,6 +140,7 @@ describe("user", () => {
     expect.hasAssertions();
 
     await caller.upsertStatus({ message });
+    vi.advanceTimersByTime(1);
     const userStatus = (await caller.readStatuses([getMockSession().user.id]))[0];
 
     expect(userStatus.message).toBe(message);
@@ -133,7 +150,9 @@ describe("user", () => {
     expect.hasAssertions();
 
     await caller.upsertStatus({ message });
+    vi.advanceTimersByTime(1);
     await caller.upsertStatus({ message: updatedMessage });
+    vi.advanceTimersByTime(1);
     const userStatus = (await caller.readStatuses([getMockSession().user.id]))[0];
 
     expect(userStatus.message).toBe(updatedMessage);
@@ -144,7 +163,7 @@ describe("user", () => {
 
     const { user } = await mockSessionOnce(mockContext.db);
     // It's stupid I know, but we need to refresh back to our original user
-    // since we need to listen to a new mock user with a valid id using our original user
+    // Since we need to listen to a new mock user with a valid id using our original user
     getMockSession();
     const onUpsertStatus = await caller.onUpsertStatus([user.id]);
     await mockSessionOnce(mockContext.db, user);

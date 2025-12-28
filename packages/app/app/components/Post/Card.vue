@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { PostWithRelations } from "#shared/db/schema/posts";
+import type { PostWithRelations } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
 interface PostCardProps {
   // This is only used for the post card in the comments page to direct it
-  // into looking for post data in the comment store instead
+  // Into looking for post data in the comment store instead
   isCommentStore?: boolean;
   post: PostWithRelations;
 }
@@ -15,13 +15,13 @@ const { isCommentStore = false, post } = defineProps<PostCardProps>();
 const { data: session } = await authClient.useSession(useFetch);
 const { surfaceOpacity80 } = useColors();
 const createdAtTimeAgo = useTimeAgo(() => post.createdAt);
-const isCreator = computed(() => session.value?.user.id === post.userId);
+const isCreator = computed(() => post.userId === session.value?.user.id);
 const isEmptyDescription = computed(() => EMPTY_TEXT_REGEX.test(post.description));
 </script>
 
 <template>
   <PostConfirmDeleteDialog :post-id="post.id">
-    <template #default="{ updateIsOpen }">
+    <template #activator="{ updateIsOpen }">
       <StyledCard class="card">
         <PostLikeSection absolute top-2 left-2 :post :is-comment-store />
         <v-card px-2="!" pt-2="!">

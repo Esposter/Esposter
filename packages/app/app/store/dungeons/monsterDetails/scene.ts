@@ -2,7 +2,7 @@ import type { Monster } from "#shared/models/dungeons/monster/Monster";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
 import { ATTACK_DISPLAY_LIMIT } from "@/services/dungeons/attack/constants";
 import { getAttack } from "@/services/dungeons/attack/getAttack";

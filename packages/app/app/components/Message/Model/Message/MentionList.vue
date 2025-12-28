@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { User } from "#shared/db/schema/users";
 import type { MentionNodeAttributes } from "@/models/message/MentionNodeAttributes";
+import type { User } from "@esposter/db-schema";
 import type { SuggestionProps } from "@tiptap/suggestion";
 
 const { command, items, query } = defineProps<SuggestionProps<User, MentionNodeAttributes>>();

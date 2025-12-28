@@ -1,8 +1,8 @@
 import type { VAlert } from "vuetify/components";
 
 import { dayjs } from "#shared/services/dayjs";
-import { getIsServer } from "#shared/util/environment/getIsServer";
 import { AlertIconMap } from "@/services/vuetify/AlertIconMap";
+import { getIsServer } from "@esposter/shared";
 
 export const useAlertStore = defineStore("alert", () => {
   const alerts = ref<(VAlert["$props"] & { id: string })[]>([]);

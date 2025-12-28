@@ -1,23 +1,21 @@
 <script setup lang="ts">
-import { MessageType } from "#shared/models/db/message/MessageType";
-import { ROOM_NAME_MAX_LENGTH } from "#shared/services/message/constants";
-import { authClient } from "@/services/auth/authClient";
 import { useLayoutStore } from "@/store/layout";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { useDialogStore } from "@/store/message/room/dialog";
+import { MessageType, ROOM_NAME_MAX_LENGTH } from "@esposter/db-schema";
 
-const { data: session } = await authClient.useSession(useFetch);
 const { $trpc } = useNuxtApp();
 const layoutStore = useLayoutStore();
 const { isLeftDrawerOpenAuto } = storeToRefs(layoutStore);
 const roomStore = useRoomStore();
-const { currentRoom, currentRoomId, currentRoomName, placeholderRoomName } = storeToRefs(roomStore);
-const isCreator = computed(() => currentRoom.value?.userId === session.value?.user.id);
+const { currentRoom, isCreator } = storeToRefs(roomStore);
 const dataStore = useDataStore();
 const { createMessage } = dataStore;
 const dialogStore = useDialogStore();
 const { isEditRoomDialogOpen } = storeToRefs(dialogStore);
+const roomName = useRoomName(() => currentRoom.value?.id);
+const placeholder = useRoomPlaceholder(currentRoom);
 </script>
 
 <template>
@@ -33,20 +31,22 @@ const { isEditRoomDialogOpen } = storeToRefs(dialogStore);
       :is-editable="isCreator"
       :max-length="ROOM_NAME_MAX_LENGTH"
       :name="currentRoom.name"
-      :placeholder="placeholderRoomName"
+      :placeholder
       :tooltip-props="{ location: 'bottom', text: 'Edit Room' }"
       @submit="
         async (name) => {
-          if (!currentRoomId) return;
-          await $trpc.room.updateRoom.mutate({ id: currentRoomId, name });
-          await createMessage({ roomId: currentRoomId, type: MessageType.EditRoom, message: name });
+          if (!currentRoom) return;
+          await $trpc.room.updateRoom.mutate({ id: currentRoom.id, name });
+          await createMessage({ roomId: currentRoom.id, type: MessageType.EditRoom, message: name });
         }
       "
     >
-      <StyledAvatar :image="currentRoom.image" :name="currentRoomName" :avatar-props="{ size: 'x-small' }" />
-      <span pl-2>{{ currentRoomName }}</span>
+      <StyledAvatar :image="currentRoom.image" :name="roomName" :avatar-props="{ size: 'x-small' }" />
+      <span pl-2>{{ roomName }}</span>
     </StyledEditableNameDialogButton>
     <template #append>
+      <MessageContentNotificationSettingsMenuButton :room-id="currentRoom.id" />
+      <MessageContentPinnedMessagesMenuButton />
       <MessageContentAddFriendsDialogButton />
       <MessageContentShowMemberListButton />
       <MessageContentShowSearchButton />

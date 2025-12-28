@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { LoginButtonProps } from "@/components/Login/Button.vue";
 
-import { SITE_NAME } from "#shared/services/app/constants";
+import { SITE_NAME } from "@esposter/shared";
 
 definePageMeta({ middleware: "guest" });
 

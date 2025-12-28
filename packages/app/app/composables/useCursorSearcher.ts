@@ -1,6 +1,6 @@
 import type { AsyncData } from "#app";
 import type { AEntity } from "#shared/models/entity/AEntity";
-import type { ToData } from "#shared/models/entity/ToData";
+import type { ToData } from "@esposter/shared";
 import type { TRPCClientErrorLike, TRPCProcedureOptions } from "@trpc/client";
 import type { InferrableClientTypes } from "@trpc/server/unstable-core-do-not-import";
 
@@ -11,7 +11,7 @@ export const useCursorSearcher = <TItem extends ToData<AEntity>, TDef extends In
   useQuery: (
     searchQuery: string,
     cursor?: string,
-  ) => Promise<Awaited<AsyncData<CursorPaginationData<TItem> | null, TRPCClientErrorLike<TDef>>>>,
+  ) => Promise<Awaited<AsyncData<CursorPaginationData<TItem> | undefined, TRPCClientErrorLike<TDef>>>>,
   query: (searchQuery: string, cursor?: string, opts?: TRPCProcedureOptions) => Promise<CursorPaginationData<TItem>>,
   isAutoSearch?: true,
   isIncludeEmptySearchQuery?: true,

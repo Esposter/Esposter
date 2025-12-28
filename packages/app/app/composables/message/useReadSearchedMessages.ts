@@ -1,4 +1,3 @@
-import { MessageEntityPropertyNames } from "#shared/models/db/message/MessageEntity";
 import { dedupeFilters } from "#shared/services/message/dedupeFilters";
 import { RightDrawer } from "@/models/message/RightDrawer";
 import { useLayoutStore } from "@/store/layout";
@@ -6,6 +5,7 @@ import { useLayoutStore as useMessageLayoutStore } from "@/store/message/layout"
 import { useRoomStore } from "@/store/message/room";
 import { useSearchHistoryStore } from "@/store/message/searchHistory";
 import { useSearchMessageStore } from "@/store/message/searchMessage";
+import { StandardMessageEntityPropertyNames } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const useReadSearchedMessages = () => {
@@ -18,7 +18,7 @@ export const useReadSearchedMessages = () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const searchMessageStore = useSearchMessageStore();
   const { getReadMoreItems } = searchMessageStore;
-  const { isSearching, menu, page, searchQuery, totalItemsLength } = storeToRefs(searchMessageStore);
+  const { count, isSearching, menu, page, searchQuery } = storeToRefs(searchMessageStore);
   const { selectedFilters } = storeToRefs(searchMessageStore);
   const searchHistoryStore = useSearchHistoryStore();
   const { createSearchHistory } = searchHistoryStore;
@@ -28,14 +28,14 @@ export const useReadSearchedMessages = () => {
         throw new InvalidOperationError(
           Operation.Read,
           useReadSearchedMessages.name,
-          MessageEntityPropertyNames.partitionKey,
+          StandardMessageEntityPropertyNames.partitionKey,
         );
 
       menu.value = false;
       isSearching.value = true;
       isRightDrawerOpen.value = true;
       rightDrawer.value = RightDrawer.Search;
-      const { count, data } = await $trpc.message.searchMessages.query({
+      const { count: newCount, data } = await $trpc.message.searchMessages.query({
         filters: dedupeFilters(selectedFilters.value),
         offset,
         query: searchQuery.value,
@@ -50,7 +50,7 @@ export const useReadSearchedMessages = () => {
           roomId: currentRoomId.value,
         });
       }
-      if (count !== undefined) totalItemsLength.value = count;
+      if (newCount !== undefined) count.value = newCount;
       return data;
     },
     () => {

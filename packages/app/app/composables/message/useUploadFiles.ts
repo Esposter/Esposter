@@ -1,11 +1,11 @@
 import type { UploadFileUrl } from "@/models/message/file/UploadFileUrl";
 
-import { FILE_MAX_LENGTH } from "#shared/services/azure/container/constants";
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
 import { validateFile } from "@/services/file/validateFile";
 import { useAlertStore } from "@/store/alert";
 import { useRoomStore } from "@/store/message/room";
 import { useUploadFileStore } from "@/store/message/uploadFile";
+import { FILE_MAX_LENGTH } from "@esposter/db-schema";
 
 export const useUploadFiles = () => {
   const { $trpc } = useNuxtApp();

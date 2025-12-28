@@ -2,12 +2,14 @@
 import type { FooterBarAppendSlotProps, FooterBarPrependSlotProps } from "@/components/RichTextEditor/FooterBar.vue";
 import type { FileHandlePluginOptions } from "@tiptap/extension-file-handler";
 import type { AnyExtension } from "@tiptap/vue-3";
+import type { CSSProperties } from "vue";
 import type { VCard } from "vuetify/components";
 
 import { FileHandler } from "@tiptap/extension-file-handler";
 import { CharacterCount, Placeholder } from "@tiptap/extensions";
 import { StarterKit } from "@tiptap/starter-kit";
 import { EditorContent, useEditor } from "@tiptap/vue-3";
+import { Plugin } from "prosemirror-state";
 
 interface RichTextEditorProps {
   cardProps?: VCard["$props"];
@@ -32,14 +34,66 @@ const {
   placeholder = "Text (optional)",
 } = defineProps<RichTextEditorProps>();
 const emit = defineEmits<{ paste: Parameters<NonNullable<FileHandlePluginOptions["onPaste"]>> }>();
+const linkCursorStyle = ref<CSSProperties["cursor"]>("text");
 const editor = useEditor({
   content: modelValue.value,
   extensions: [
-    StarterKit,
-    Placeholder.configure({ placeholder: () => placeholder }),
     CharacterCount.configure({ limit }),
     FileHandler.configure({
       onPaste: (...args) => emit("paste", ...args),
+    }),
+    Placeholder.configure({ placeholder: () => placeholder }),
+    StarterKit.configure({
+      link: {
+        // @ts-expect-error We can hijack the options property for our own purposes of reactively changing the cursor style
+        cursorStyle: linkCursorStyle,
+        openOnClick: false,
+      },
+    }).extend({
+      addProseMirrorPlugins() {
+        const { editor, options } = this;
+        return [
+          new Plugin({
+            props: {
+              handleClick(_view, _pos, event) {
+                // Check if Ctrl or Cmd key is pressed
+                const isModifierPressed = event.ctrlKey || event.metaKey;
+                // If no modifier key, do nothing and let the editor handle it
+                // (e.g., for selecting text).
+                if (!isModifierPressed) return false;
+
+                const attrs = editor.getAttributes("link");
+                const href = attrs.href;
+
+                if (href) {
+                  // If a link is found at the click position, open it
+                  window.open(href, "_blank", "noopener noreferrer");
+                  // Return true to indicate that we've handled the event
+                  return true;
+                } else
+                  // If no link was found, let the editor continue
+                  return false;
+              },
+              handleDOMEvents: {
+                // When the editor loses focus (e.g., user alt-tabs away)
+                blur: (_view, _event) => {
+                  options.link.cursorStyle.value = "text";
+                  return false;
+                },
+                keydown: (_view, event) => {
+                  if (event.key === "Control" || event.key === "Meta") options.link.cursorStyle.value = "pointer";
+                  // Return false to allow other plugins to handle the event
+                  return false;
+                },
+                keyup: (_view, event) => {
+                  if (event.key === "Control" || event.key === "Meta") options.link.cursorStyle.value = "text";
+                  return false;
+                },
+              },
+            },
+          }),
+        ];
+      },
     }),
     ...(extensions ?? []),
   ],
@@ -105,6 +159,10 @@ onUnmounted(() => editor.value?.destroy());
     float: left;
     opacity: 0.4;
     pointer-events: none;
+  }
+
+  a {
+    cursor: v-bind(linkCursorStyle);
   }
 }
 </style>

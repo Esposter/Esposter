@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { LINKEDIN_PROFILE_URL, SITE_NAME } from "#shared/services/app/constants";
+import { LINKEDIN_PROFILE_URL } from "#shared/services/app/constants";
+import { SITE_NAME } from "@esposter/shared";
 
 const { primary, "primary-darken-1": primaryDarken1 } = useColors();
 </script>

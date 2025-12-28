@@ -1,0 +1,31 @@
+name: 🏗️ CI
+
+on:
+  push:
+    branches:
+      - "**"
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v6
+
+      - name: 🔧 Setup Project Dependencies
+        uses: ./.github/actions/setup-project-dependencies
+
+      - name: 📦 Install dependencies
+        run: bun --bun i
+
+      - name: 🏗️ Build
+        run: bun --bun build
+
+      - name: 🔍 Lint
+        run: bun --bun lint
+
+      - name: ✅ Typecheck
+        run: bun --bun typecheck
+
+      - name: 🧪 Test
+        run: bun --bun test

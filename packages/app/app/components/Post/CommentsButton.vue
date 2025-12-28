@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { PostWithRelations } from "#shared/db/schema/posts";
+import type { PostWithRelations } from "@esposter/db-schema";
 
-import { RoutePath } from "#shared/models/router/RoutePath";
+import { RoutePath } from "@esposter/shared";
 
 interface PostCommentsButtonProps {
   post: PostWithRelations;

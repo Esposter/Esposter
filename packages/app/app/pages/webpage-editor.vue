@@ -2,10 +2,10 @@
 import type { Editor } from "grapesjs";
 
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
-import { jsonDateParse } from "#shared/util/time/jsonDateParse";
 import { authClient } from "@/services/auth/authClient";
 import { WEBPAGE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/webpageEditor/constants";
 import { useWebpageEditorStore } from "@/store/webpageEditor";
+import { jsonDateParse } from "@esposter/shared";
 import grapesJS, { usePlugin } from "grapesjs";
 import grapesJSBlocksBasic from "grapesjs-blocks-basic";
 import grapesJSComponentCountdown from "grapesjs-component-countdown";
@@ -378,7 +378,10 @@ const { trigger } = watchTriggerable(session, (newSession) => {
         webpageEditorJson ? new WebpageEditor(jsonDateParse(webpageEditorJson)) : new WebpageEditor(),
       );
     },
-    store: (data) => new Promise(() => localStorage.setItem(WEBPAGE_EDITOR_LOCAL_STORAGE_KEY, JSON.stringify(data))),
+    store: (data) =>
+      new Promise<void>(() => {
+        localStorage.setItem(WEBPAGE_EDITOR_LOCAL_STORAGE_KEY, JSON.stringify(data));
+      }),
   });
   editor.Storage.add("remote", {
     load: () => readWebpageEditor(),

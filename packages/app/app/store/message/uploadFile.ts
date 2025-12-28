@@ -1,5 +1,5 @@
-import type { FileEntity } from "#shared/models/azure/FileEntity";
 import type { UploadFileUrl } from "@/models/message/file/UploadFileUrl";
+import type { FileEntity } from "@esposter/db-schema";
 
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { useRoomStore } from "@/store/message/room";

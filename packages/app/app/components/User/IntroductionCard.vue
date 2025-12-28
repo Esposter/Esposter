@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { SITE_NAME } from "#shared/services/app/constants";
 import { authClient } from "@/services/auth/authClient";
+import { SITE_NAME } from "@esposter/shared";
 
 const { data: session } = await authClient.useSession(useFetch);
 const createdAt = useDateFormat(() => session.value?.user.createdAt, "MMM D, YYYY");

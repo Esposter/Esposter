@@ -17,7 +17,7 @@ export const applyUpgrades = (
       applyUpgradeEffects(
         bu,
         // We're looking for a special type of "Upgrade Effect"
-        // which enhances the effects of upgrades
+        // Which enhances the effects of upgrades
         allEffects.filter(
           ({ configuration, targets }) => configuration.itemType === Target.Upgrade && targets.includes(bu.id),
         ),

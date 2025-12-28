@@ -11,8 +11,8 @@ import { Container, onCreate, Rectangle, Text } from "vue-phaserjs";
 const controlsStore = useControlsStore();
 const { controls } = storeToRefs(controlsStore);
 // It's unfortunate, but we have to access the internals
-// when we handle confirm inputs since we don't know where it comes from
-// i.e. it could be from this info container or from clicking the monster panel
+// When we handle confirm inputs since we don't know where it comes from
+// I.e. it could be from this info container or from clicking the monster panel
 const dialogStore = useDialogStore();
 const { isWaitingForPlayerSpecialInput } = storeToRefs(dialogStore);
 const monsterPartyOptionGrid = useMonsterPartyOptionGrid();
@@ -28,7 +28,7 @@ onCreate((scene) => {
 
 watchImmediate(cancelButtonActive, (newCancelButtonActive) => {
   // We will keep info text as a ref as it can be set by other things
-  // e.g. when using items
+  // E.g. when using items
   infoDialogMessage.value.text = newCancelButtonActive ? "Go back to previous menu." : DEFAULT_INFO_DIALOG_MESSAGE;
 });
 </script>

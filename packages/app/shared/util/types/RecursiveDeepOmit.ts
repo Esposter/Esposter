@@ -1,5 +1,4 @@
-import type { DeepOmit } from "#shared/util/types/DeepOmit";
-import type { DeepOmitArray } from "#shared/util/types/DeepOmitArray";
+import type { DeepOmit, DeepOmitArray } from "@esposter/shared";
 
 export type RecursiveDeepOmit<T extends object, TKeys extends PropertyKey[]> = TKeys extends [
   infer TKey,

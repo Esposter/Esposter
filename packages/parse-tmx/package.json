@@ -1,7 +1,7 @@
 {
   "name": "parse-tmx",
-  "version": "2.14.0",
   "description": "A parser for tmx.",
+  "version": "2.18.2",
   "type": "module",
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/parse-tmx#readme",
   "license": "Apache-2.0",
@@ -35,8 +35,10 @@
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@esposter/shared": "workspace:*",
     "@esposter/xml2js": "workspace:*",
-    "data-urls": "catalog:"
+    "data-urls": "catalog:",
+    "dayjs": "catalog:"
   },
   "devDependencies": {
     "@types/data-urls": "catalog:",

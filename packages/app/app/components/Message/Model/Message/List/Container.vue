@@ -19,7 +19,7 @@ if (rowKey) {
   <MessageModelMessageListItemContainer
     v-for="(message, index) of items"
     :key="message.rowKey"
-    :current-message="message"
+    :message
     :next-message="items[index + 1]"
   />
 </template>

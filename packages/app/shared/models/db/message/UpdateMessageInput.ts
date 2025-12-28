@@ -1,8 +1,8 @@
 import type { z } from "zod";
 
-import { messageEntitySchema } from "#shared/models/db/message/MessageEntity";
+import { standardMessageEntitySchema } from "@esposter/db-schema";
 
-export const updateMessageInputSchema = messageEntitySchema.pick({
+export const updateMessageInputSchema = standardMessageEntitySchema.pick({
   message: true,
   partitionKey: true,
   rowKey: true,

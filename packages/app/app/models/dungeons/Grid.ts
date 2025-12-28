@@ -14,7 +14,7 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
   validate: (this: Grid<TValue, TGrid>, position: Position) => MaybeRef<boolean>;
   wrap: boolean;
 
-  // going from top-left to bottom-right
+  // Going from top-left to bottom-right
   get index() {
     let index = this.position.value.x;
     for (let i = 0; i < this.position.value.y; i++) index += this.getColumnSize(i);
@@ -54,13 +54,10 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
         const position: Position = { x, y };
         if (this.getValue(position) === value) return position;
       }
-
-    return undefined;
   }
 
   getPositionX(value: TValue, y: number): number | undefined {
     for (let x = 0; x < this.getColumnSize(y); x++) if (this.getValue({ x, y }) === value) return x;
-    return undefined;
   }
 
   getValue({ x, y }: Position) {

@@ -31,8 +31,9 @@ export class Parser {
       this.saxParser.resume();
     };
     this.saxParser.onopentag = (node) => {
-      const newObject: Record<string, unknown> = {};
-      newObject[this.options.charkey] = "";
+      const newObject: Record<string, unknown> = {
+        [this.options.charkey]: "",
+      };
       if (!this.options.ignoreAttrs)
         for (const key in node.attributes)
           if (Object.hasOwn(node.attributes, key)) {
@@ -143,7 +144,7 @@ export class Parser {
 
     const ontext = (text: string): Record<string, unknown> | undefined => {
       const object = this.stack.at(-1);
-      if (!object) return undefined;
+      if (!object) return;
 
       object[this.options.charkey] += text;
 
@@ -156,8 +157,8 @@ export class Parser {
         object[this.options.childkey] ??= [];
         const charChild: Record<string, string> = {
           [BUILTIN_NAME_KEY]: TEXT_NODE_NAME,
+          [this.options.charkey]: text,
         };
-        charChild[this.options.charkey] = text;
         if (this.options.normalize)
           charChild[this.options.charkey] = charChild[this.options.charkey].replaceAll(/\s{2,}/g, " ").trim();
 
@@ -176,7 +177,9 @@ export class Parser {
   }
 
   parseStringPromise<T>(convertableToString: convertableToString): Promise<T> {
-    return new Promise<T>((resolve) => this.parseString(convertableToString, resolve));
+    return new Promise<T>((resolve) => {
+      this.parseString(convertableToString, resolve);
+    });
   }
 
   private assignOrPush(object: Record<string, unknown>, key: string, newValue: unknown): void {

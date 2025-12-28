@@ -1,14 +1,12 @@
-import type { Post, PostWithRelations } from "#shared/db/schema/posts";
+import type { Post, PostWithRelations } from "@esposter/db-schema";
+import type { SQL } from "drizzle-orm";
 
-import { PostRelations, posts, selectPostSchema } from "#shared/db/schema/posts";
 import { createCommentInputSchema } from "#shared/models/db/post/CreateCommentInput";
 import { createPostInputSchema } from "#shared/models/db/post/CreatePostInput";
 import { deleteCommentInputSchema } from "#shared/models/db/post/DeleteCommentInput";
 import { deletePostInputSchema } from "#shared/models/db/post/DeletePostInput";
 import { updateCommentInputSchema } from "#shared/models/db/post/UpdateCommentInput";
 import { updatePostInputSchema } from "#shared/models/db/post/UpdatePostInput";
-import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
-import { DerivedDatabaseEntityType } from "#shared/models/entity/DerivedDatabaseEntityType";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
@@ -16,12 +14,19 @@ import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWh
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { ranking } from "@@/server/services/post/ranking";
 import { router } from "@@/server/trpc";
-import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
-import { rateLimitedProcedure } from "@@/server/trpc/procedure/rateLimitedProcedure";
+import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
+import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
+import {
+  DatabaseEntityType,
+  DerivedDatabaseEntityType,
+  PostRelations,
+  posts,
+  selectPostSchema,
+} from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, eq, isNotNull, isNull, SQL } from "drizzle-orm";
+import { and, eq, isNotNull, isNull } from "drizzle-orm";
 import { z } from "zod";
 
 const readPostInputSchema = selectPostSchema.shape.id;
@@ -127,7 +132,7 @@ export const postRouter = router({
         return newPostWithRelations;
       }),
   ),
-  deleteComment: authedProcedure.input(deleteCommentInputSchema).mutation<Post>(({ ctx, input }) =>
+  deleteComment: standardAuthedProcedure.input(deleteCommentInputSchema).mutation<Post>(({ ctx, input }) =>
     ctx.db.transaction(async (tx) => {
       const deletedComment = (
         await tx
@@ -162,7 +167,7 @@ export const postRouter = router({
       return deletedComment;
     }),
   ),
-  deletePost: authedProcedure.input(deletePostInputSchema).mutation<Post>(async ({ ctx, input }) => {
+  deletePost: standardAuthedProcedure.input(deletePostInputSchema).mutation<Post>(async ({ ctx, input }) => {
     const deletedPost = (
       await ctx.db
         .delete(posts)
@@ -176,7 +181,7 @@ export const postRouter = router({
       });
     return deletedPost;
   }),
-  readPost: rateLimitedProcedure.input(readPostInputSchema).query<PostWithRelations>(async ({ ctx, input }) => {
+  readPost: standardRateLimitedProcedure.input(readPostInputSchema).query<PostWithRelations>(async ({ ctx, input }) => {
     const post = await ctx.db.query.posts.findFirst({
       where: (posts, { eq }) => eq(posts.id, input),
       with: PostRelations,
@@ -185,7 +190,7 @@ export const postRouter = router({
       throw new TRPCError({ code: "NOT_FOUND", message: new NotFoundError(DatabaseEntityType.Post, input).message });
     return post;
   }),
-  readPosts: rateLimitedProcedure
+  readPosts: standardRateLimitedProcedure
     .input(readPostsInputSchema)
     .query(async ({ ctx, input: { cursor, limit, parentId, sortBy } }) => {
       const resultPosts: PostWithRelations[] = await ctx.db.query.posts.findMany({

@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import type { FileEntity } from "#shared/models/azure/FileEntity";
-import type { MessageEntity } from "#shared/models/db/message/MessageEntity";
+import type { FileEntity, MessageEntity } from "@esposter/db-schema";
 
-import { authClient } from "@/services/auth/authClient";
 import { CONTAINER_BORDER_RADIUS } from "@/services/message/file/constants";
 import { useDownloadFileStore } from "@/store/message/downloadFile";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
@@ -16,9 +14,8 @@ interface FileProps {
 }
 
 const { columnLayout, file, index, isPreview = false, message } = defineProps<FileProps>();
-const { data: session } = await authClient.useSession(useFetch);
-const isCreator = computed(() => session.value?.user.id === message.userId);
 const { $trpc } = useNuxtApp();
+const isCreator = await useIsCreator(() => message);
 const downloadFileStore = useDownloadFileStore();
 const { viewFiles } = downloadFileStore;
 const { fileUrlMap, viewableFiles } = storeToRefs(downloadFileStore);
@@ -43,7 +40,7 @@ const isActive = ref(false);
     @mouseenter="isActive = true"
     @mouseleave="isActive = false"
   >
-    <MessageFileRenderer :file :is-preview :url />
+    <MessageModelFileRenderer :file :is-preview :url />
     <div
       v-if="!message.isForward && isCreator && (columnLayout.length > 1 || !EMPTY_TEXT_REGEX.test(message.message))"
       v-show="isActive"

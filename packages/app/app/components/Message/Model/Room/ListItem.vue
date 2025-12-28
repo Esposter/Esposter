@@ -1,52 +1,62 @@
 <script setup lang="ts">
-import type { Room } from "#shared/db/schema/rooms";
+import type { Room } from "@esposter/db-schema";
 
-import { RoutePath } from "#shared/models/router/RoutePath";
 import { useRoomStore } from "@/store/message/room";
+import { RoutePath } from "@esposter/shared";
 
 interface RoomListItemProps {
   room: Room;
 }
 
 const { room } = defineProps<RoomListItemProps>();
+const roomName = useRoomName(() => room.id);
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
-const { name } = useRoomName(room);
-const isHovering = ref(false);
 const isActive = computed(() => room.id === currentRoomId.value);
 </script>
 
 <template>
-  <div relative @mouseover="isHovering = true" @mouseleave="isHovering = false">
-    <NuxtInvisibleLink :to="RoutePath.Messages(room.id)">
-      <v-list-item :active="isActive" :value="room.id">
-        <template #prepend>
-          <StyledAvatar :image="room.image" :name />
-        </template>
-        <v-list-item-title pr-6>
-          {{ name }}
-        </v-list-item-title>
-      </v-list-item>
-    </NuxtInvisibleLink>
-    <MessageModelRoomConfirmDeleteDialog :room-id="room.id" :creator-id="room.userId">
-      <template #default="{ updateIsOpen, tooltipProps }">
-        <v-btn
-          v-show="isHovering"
-          absolute
-          top="1/2"
-          right-0
-          translate-y="-1/2"
-          bg-transparent="!"
-          icon="mdi-close"
-          variant="plain"
-          size="small"
-          :ripple="false"
-          :="tooltipProps"
-          @click="updateIsOpen(true)"
-        />
+  <v-hover #default="{ isHovering, props }">
+    <v-list-item :="props" :active="isActive" :value="room.id" @click="navigateTo(RoutePath.Messages(room.id))">
+      <template #prepend>
+        <StyledAvatar :image="room.image" :name="roomName" />
       </template>
-    </MessageModelRoomConfirmDeleteDialog>
-  </div>
+      <v-list-item-title pr-6>
+        {{ roomName }}
+      </v-list-item-title>
+      <template #append>
+        <MessageModelRoomSettingsDialogButton :room-id="room.id">
+          <template #activator="activatorProps">
+            <v-btn
+              v-show="isActive || isHovering"
+              bg-transparent="!"
+              :="activatorProps"
+              :ripple="false"
+              density="compact"
+              icon="mdi-cog"
+              variant="plain"
+              size="small"
+            />
+          </template>
+        </MessageModelRoomSettingsDialogButton>
+        <MessageModelRoomConfirmDeleteDialog :room-id="room.id" :creator-id="room.userId">
+          <template #activator="{ updateIsOpen, tooltipProps }">
+            <v-btn
+              v-show="isActive || isHovering"
+              bg-transparent="!"
+              density="compact"
+              icon="mdi-close"
+              variant="plain"
+              size="small"
+              :ripple="false"
+              :="tooltipProps"
+              @click.stop="updateIsOpen(true)"
+            />
+          </template>
+        </MessageModelRoomConfirmDeleteDialog>
+      </template>
+    </v-list-item>
+  </v-hover>
 </template>
 
 <style scoped lang="scss">

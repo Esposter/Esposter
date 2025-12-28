@@ -2,8 +2,8 @@ import type { State } from "@/models/dungeons/state/State";
 import type { PhaserEvents } from "@/services/phaser/events";
 import type { EventEmitter } from "eventemitter3";
 
+import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { isMonsterFainted } from "@/services/dungeons/monster/isMonsterFainted";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
@@ -44,7 +44,7 @@ export const SwitchAttempt: State<StateName> = {
       getSynchronizedFunction(async (monster) => {
         const isActiveMonsterFainted = isMonsterFainted(activeMonster.value);
         // If our active monster has fainted, then the death tween would have already been played
-        // so we don't have to play it again
+        // So we don't have to play it again
         if (isActiveMonsterFainted) {
           switchActiveMonster(monster.id);
           await battleStateMachine.setState(StateName.BringOutMonster);

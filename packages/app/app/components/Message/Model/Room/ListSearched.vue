@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { RoutePath } from "#shared/models/router/RoutePath";
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useSearchStore } from "@/store/message/room/search";
+import { RoutePath } from "@esposter/shared";
 
 const emit = defineEmits<{ "update:room": [] }>();
 const searchStore = useSearchStore();

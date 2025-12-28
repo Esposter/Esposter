@@ -3,6 +3,48 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.18.2](https://github.com/Esposter/Esposter/compare/v2.18.1...v2.18.2) (2025-12-10)
+
+**Note:** Version bump only for package parse-tmx
+
+## [2.18.1](https://github.com/Esposter/Esposter/compare/v2.18.0...v2.18.1) (2025-12-10)
+
+**Note:** Version bump only for package parse-tmx
+
+# [2.18.0](https://github.com/Esposter/Esposter/compare/v2.17.0...v2.18.0) (2025-12-10)
+
+**Note:** Version bump only for package parse-tmx
+
+# [2.17.0](https://github.com/Esposter/Esposter/compare/v2.16.0...v2.17.0) (2025-11-03)
+
+**Note:** Version bump only for package parse-tmx
+
+# [2.16.0](https://github.com/Esposter/Esposter/compare/v2.15.1...v2.16.0) (2025-10-19)
+
+### Bug Fixes
+
+* cleanup pkgs and make parse-tmx a bit more browser-friendly ([ebd4702](https://github.com/Esposter/Esposter/commit/ebd47024e2f0676511b5971833935e90b3789ed9))
+
+## [2.15.1](https://github.com/Esposter/Esposter/compare/v2.15.0...v2.15.1) (2025-10-10)
+
+### Bug Fixes
+
+* split to db-schema pkg that is browser-friendly ([549fcac](https://github.com/Esposter/Esposter/commit/549fcacfe755039fb2a85e17baaa11f2ddfc6d4f))
+
+# [2.15.0](https://github.com/Esposter/Esposter/compare/v2.14.0...v2.15.0) (2025-10-09)
+
+### Bug Fixes
+
+* bundle libs that are in node to be in node platform ([92c3875](https://github.com/Esposter/Esposter/commit/92c38752e6d5e2a481f0a2107d7143e00fe4e14d))
+
+* move deps back to respective packages properly ([5a55e2d](https://github.com/Esposter/Esposter/commit/5a55e2d29f3de9d88bb68779780e983e9388457f))
+
+* package json ([f3fbfed](https://github.com/Esposter/Esposter/commit/f3fbfedc9772b653d34b2f2621d9dbf2612c3bd1))
+
+### Features
+
+* Add lerna watch ([495631f](https://github.com/Esposter/Esposter/commit/495631fc018bfe3cf44674b8249378fa29dcc7fd))
+
 # [2.14.0](https://github.com/Esposter/Esposter/compare/v2.13.1...v2.14.0) (2025-09-14)
 
 **Note:** Version bump only for package parse-tmx

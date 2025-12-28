@@ -2,7 +2,7 @@
 import type { SceneProps, SceneWithPlugins } from "vue-phaserjs";
 
 import { SoundSetting } from "#shared/models/dungeons/data/settings/SoundSetting";
-import { SceneKey } from "@/models/dungeons/keys/SceneKey";
+import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useVolumeStore } from "@/store/dungeons/settings/volume";
 import { getScene, Scene } from "vue-phaserjs";

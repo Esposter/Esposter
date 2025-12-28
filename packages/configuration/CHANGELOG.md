@@ -3,6 +3,104 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.18.2](https://github.com/Esposter/Esposter/compare/v2.18.1...v2.18.2) (2025-12-10)
+
+**Note:** Version bump only for package @esposter/configuration
+
+## [2.18.1](https://github.com/Esposter/Esposter/compare/v2.18.0...v2.18.1) (2025-12-10)
+
+**Note:** Version bump only for package @esposter/configuration
+
+# [2.18.0](https://github.com/Esposter/Esposter/compare/v2.17.0...v2.18.0) (2025-12-10)
+
+### Bug Fixes
+
+* revert vue rule, the issue is with the vue parser most likely ([732da00](https://github.com/Esposter/Esposter/commit/732da00b426248b6e1cd670b67a246d604a579b5))
+* turn off time-consuming rule ([3033838](https://github.com/Esposter/Esposter/commit/3033838b2bae9630018f38af0aacd0dc85bd41bb))
+
+### Features
+
+* Migrate to builtin tsconfig paths ([48ba88e](https://github.com/Esposter/Esposter/commit/48ba88ea854157a6c9bde3d99f2f5f6757b85984))
+
+# [2.17.0](https://github.com/Esposter/Esposter/compare/v2.16.0...v2.17.0) (2025-11-03)
+
+### Bug Fixes
+
+* lint ([bdbac7f](https://github.com/Esposter/Esposter/commit/bdbac7fa5e14b2ff333c897fed653090b1a9f975))
+* webhook to be based on room id ([4f0a701](https://github.com/Esposter/Esposter/commit/4f0a7019cad8061bff1077711ff708434cb56283))
+
+### Features
+
+* Add json eslint plugin for now as backup ([28f73f3](https://github.com/Esposter/Esposter/commit/28f73f3238a793f5273b06104c884d8be9b71201))
+
+# [2.16.0](https://github.com/Esposter/Esposter/compare/v2.15.1...v2.16.0) (2025-10-19)
+
+### Bug Fixes
+
+* cleanup pkgs and make parse-tmx a bit more browser-friendly ([ebd4702](https://github.com/Esposter/Esposter/commit/ebd47024e2f0676511b5971833935e90b3789ed9))
+
+### Performance Improvements
+
+* externalise common packages to minimize space ([62b4756](https://github.com/Esposter/Esposter/commit/62b475665ee55ec26f6a698c97df8bd60dd31723))
+
+## [2.15.1](https://github.com/Esposter/Esposter/compare/v2.15.0...v2.15.1) (2025-10-10)
+
+**Note:** Version bump only for package @esposter/configuration
+
+# [2.15.0](https://github.com/Esposter/Esposter/compare/v2.14.0...v2.15.0) (2025-10-09)
+
+### Bug Fixes
+
+* add back json eslint, know the issue now was just imports ([8aeb3f1](https://github.com/Esposter/Esposter/commit/8aeb3f140ecae8f3f8f25fb726593c93351a8c27))
+
+* bundle libs that are in node to be in node platform ([92c3875](https://github.com/Esposter/Esposter/commit/92c38752e6d5e2a481f0a2107d7143e00fe4e14d))
+
+* ignore massive json files ([352092b](https://github.com/Esposter/Esposter/commit/352092b9951288ede10480d202953b2af4d7d9bc))
+
+* lib of ts ([3ee0e66](https://github.com/Esposter/Esposter/commit/3ee0e66a3e188178f3cef88d19832f0b781107fa))
+
+* lint ([437f01f](https://github.com/Esposter/Esposter/commit/437f01f31e381d85717db8e97b5e29d516bf92d8))
+
+* lint ([19c81d7](https://github.com/Esposter/Esposter/commit/19c81d7ba3254365d5d7f00dd384e736d56449fc))
+
+* lint ([8094cb7](https://github.com/Esposter/Esposter/commit/8094cb7c11331bc571ff24954867f319b1c58c05))
+
+* lint and plugins ([402e1fc](https://github.com/Esposter/Esposter/commit/402e1fc09ec98e74f91f05593892a80a1f7b16e4))
+
+* migrate to eslint defineConfig ([4c03b14](https://github.com/Esposter/Esposter/commit/4c03b1485604a24ef404c7bc0452ef6ab82e0f57))
+
+* package json ([f3fbfed](https://github.com/Esposter/Esposter/commit/f3fbfedc9772b653d34b2f2621d9dbf2612c3bd1))
+
+* remove eslint json, too slow sadly ([79bd318](https://github.com/Esposter/Esposter/commit/79bd318acbde1beca27eb86f23a94251b73ad5d7))
+
+* remove extends ([19affaf](https://github.com/Esposter/Esposter/commit/19affaf0581e4763f14ad8a6b7879b05c63fe5e8))
+
+* remove external ([0f546f9](https://github.com/Esposter/Esposter/commit/0f546f9ba1de7b8c80b7018e617d7154c5690ff4))
+
+* remove json eslint for now ([aa2502d](https://github.com/Esposter/Esposter/commit/aa2502ded0fbc60f6c272bc70e7af15ed7d69912))
+
+* remove unnecessary rule ([f44766d](https://github.com/Esposter/Esposter/commit/f44766d24c315f9b3b02b34293a789e47cee21a1))
+
+* satisfy type ([2bdf82a](https://github.com/Esposter/Esposter/commit/2bdf82a592fcbd3cce48753758fda8bb3e6ea8ae))
+
+* set azure functions pkg to be external ([9de5853](https://github.com/Esposter/Esposter/commit/9de58539771a3c781d284238ec11139d1d59ddf2))
+
+* some unused vars ([e90ade6](https://github.com/Esposter/Esposter/commit/e90ade69d806b11879cdfe9dd01d1684696be916))
+
+* tsconfig ([7fc2c46](https://github.com/Esposter/Esposter/commit/7fc2c4655f6c6b559c5b9f7e773b11957c4f8891))
+
+* tsconfig ([024e507](https://github.com/Esposter/Esposter/commit/024e5075519528486f3c8325b7e8b530664fa441))
+
+* types and lint ([6518c40](https://github.com/Esposter/Esposter/commit/6518c40541d214b22d72e691fbc1aeba56623c70))
+
+* use isolated tsconfig ([665b7c2](https://github.com/Esposter/Esposter/commit/665b7c2964f0c36f60564eae3c3e79fcf630c709))
+
+### Features
+
+* Add eslint json + refactor common configs ([ae32da9](https://github.com/Esposter/Esposter/commit/ae32da903db702cab19004a1993f0398a78c2f0d))
+
+* move db schema to package ([39895ca](https://github.com/Esposter/Esposter/commit/39895cab56fbe31d35f6178e2cdd7e5bf0a37ab7))
+
 # [2.14.0](https://github.com/Esposter/Esposter/compare/v2.13.1...v2.14.0) (2025-09-14)
 
 ### Bug Fixes
@@ -18,6 +116,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * migrate to floating ui ([9cbb7f5](https://github.com/Esposter/Esposter/commit/9cbb7f591555605ac6360482188138a222302326))
+
 * pin oxlint to v1.11.2 for now ([95d229b](https://github.com/Esposter/Esposter/commit/95d229be7db767d5cca616d1b772a529f4077de5))
 
 # [2.12.0](https://github.com/Esposter/Esposter/compare/v2.11.0...v2.12.0) (2025-08-15)

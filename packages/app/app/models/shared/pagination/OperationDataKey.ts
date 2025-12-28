@@ -1,4 +1,4 @@
-import type { EntityTypeKey } from "@/models/shared/entity/EntityTypeKey";
+import type { EntityTypeKey } from "@esposter/db-schema";
 import type { Operation } from "@esposter/shared";
 
 export type OperationDataKey<TEntityTypeKey extends EntityTypeKey> =

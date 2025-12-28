@@ -1,21 +1,21 @@
-import type { SearchHistory } from "#shared/db/schema/searchHistories";
+import type { SearchHistory } from "@esposter/db-schema";
+import type { SQL } from "drizzle-orm";
 
-import { searchHistories, selectSearchHistorySchema } from "#shared/db/schema/searchHistories";
 import { createSearchHistoryInputSchema } from "#shared/models/db/searchHistory/CreateSearchHistoryInput";
 import { deleteSearchHistoryInputSchema } from "#shared/models/db/searchHistory/DeleteSearchHistoryInput";
 import { updateSearchHistoryInputSchema } from "#shared/models/db/searchHistory/UpdateSearchHistoryInput";
-import { DatabaseEntityType } from "#shared/models/entity/DatabaseEntityType";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { router } from "@@/server/trpc";
-import { authedProcedure } from "@@/server/trpc/procedure/authedProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
+import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
+import { DatabaseEntityType, searchHistories, selectSearchHistorySchema } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, eq, SQL } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
 const readSearchHistoriesInputSchema = z.object({
@@ -44,7 +44,7 @@ export const searchHistoryRouter = router({
       return newHistory;
     },
   ),
-  deleteSearchHistory: authedProcedure
+  deleteSearchHistory: standardAuthedProcedure
     .input(deleteSearchHistoryInputSchema)
     .mutation<SearchHistory>(async ({ ctx, input }) => {
       const deletedSearchHistory = (
@@ -74,7 +74,7 @@ export const searchHistoryRouter = router({
       return getCursorPaginationData(resultSearchHistories, limit, sortBy);
     },
   ),
-  updateSearchHistory: authedProcedure
+  updateSearchHistory: standardAuthedProcedure
     .input(updateSearchHistoryInputSchema)
     .mutation<SearchHistory>(async ({ ctx, input: { id, query } }) => {
       const updatedSearchHistory = (

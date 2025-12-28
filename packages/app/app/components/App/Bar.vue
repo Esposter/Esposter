@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { RoutePath } from "#shared/models/router/RoutePath";
-import { SITE_NAME } from "#shared/services/app/constants";
+import { RoutePath, SITE_NAME } from "@esposter/shared";
 </script>
 
 <template>

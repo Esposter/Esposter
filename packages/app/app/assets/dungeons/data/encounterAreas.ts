@@ -20,12 +20,11 @@ export const EncounterAreaMap = {
 export const encounterAreas: EncounterArea[] = parseDictionaryToArray(EncounterAreaMap).map(
   ({ encounterableMonsters, ...rest }) => {
     let cumulativeWeight = 0;
-    return {
-      ...rest,
+    return Object.assign(rest, {
       encounterableMonsters: encounterableMonsters.map((em) => {
         cumulativeWeight += em.weight;
-        return { ...em, cumulativeWeight };
+        return Object.assign(em, { cumulativeWeight });
       }),
-    };
+    });
   },
 );
