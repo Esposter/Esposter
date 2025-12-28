@@ -17,7 +17,7 @@ export const PlayerAttack: State<StateName> = {
     const battlePlayerStore = useBattlePlayerStore();
     const { activeMonster } = storeToRefs(battlePlayerStore);
     const attackOptionGrid = useAttackOptionGrid();
-    const takeDamage = useTakeDamage(true);;
+    const takeDamage = useTakeDamage(true);
     const attack = attackOptionGrid.value;
     if (!attack) return;
 
