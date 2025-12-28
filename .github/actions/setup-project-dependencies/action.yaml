@@ -1,5 +1,5 @@
 name: Setup Project Dependencies
-description: Checkout repository, install pnpm, setup node, and install dependencies
+description: Checkout repository, install pnpm and setup node
 inputs:
   node-version-file:
     description: Path to file containing node version
