@@ -803,7 +803,7 @@ importers:
         version: 1.5.0(@vue-flow/core@1.48.1(vue@3.5.26(typescript@5.9.3)))(vue@3.5.26(typescript@5.9.3))
       '@vue-pdf-viewer/viewer':
         specifier: 'catalog:'
-        version: 3.6.1(pdfjs-dist@5.4.449)(typescript@5.9.3)(vite@8.0.0-beta.5(@types/node@25.0.3)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.97.1)(sass@1.97.1)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(vue@3.5.26(typescript@5.9.3))
+        version: 3.6.1(pdfjs-dist@5.4.530)(typescript@5.9.3)(vite@8.0.0-beta.5(@types/node@25.0.3)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.97.1)(sass@1.97.1)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(vue@3.5.26(typescript@5.9.3))
       '@vuepic/vue-datepicker':
         specifier: 'catalog:'
         version: 12.1.0(vue@3.5.26(typescript@5.9.3))
@@ -959,7 +959,7 @@ importers:
         version: 2.0.3
       pdfjs-dist:
         specifier: ^5.4.449
-        version: 5.4.449
+        version: 5.4.530
       phaser:
         specifier: 'catalog:'
         version: 4.0.0-rc.6
@@ -9466,8 +9466,8 @@ packages:
   pathe@2.0.3:
     resolution: {integrity: sha512-WUjGcAqP1gQacoQe+OBJsFA7Ld4DyXuUIjZ5cc75cLHvJ7dtNsTugphxIADwspS+AraAUePCKrSVtPLFj/F88w==}
 
-  pdfjs-dist@5.4.449:
-    resolution: {integrity: sha512-CegnUaT0QwAyQMS+7o2POr4wWUNNe8VaKKlcuoRHeYo98cVnqPpwOXNSx6Trl6szH02JrRcsPgletV6GmF3LtQ==}
+  pdfjs-dist@5.4.530:
+    resolution: {integrity: sha512-r1hWsSIGGmyYUAHR26zSXkxYWLXLMd6AwqcaFYG9YUZ0GBf5GvcjJSeo512tabM4GYFhxhl5pMCmPr7Q72Rq2Q==}
     engines: {node: '>=20.16.0 || >=22.3.0'}
 
   perfect-debounce@1.0.0:
@@ -9716,8 +9716,8 @@ packages:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
 
-  prettier-linter-helpers@1.0.0:
-    resolution: {integrity: sha512-GbK2cP9nraSSUF9N2XwUwqfzlAFlMNYYl+ShE/V+H8a9uNl/oUqB1w2EL54Jh0OlyRSd8RfWYJ3coVS4TROP2w==}
+  prettier-linter-helpers@1.0.1:
+    resolution: {integrity: sha512-SxToR7P8Y2lWmv/kTzVLC1t/GDI2WGjMwNhLLE9qtH8Q13C+aEmuRlzDst4Up4s0Wc8sF2M+J57iB3cMLqftfg==}
     engines: {node: '>=6.0.0'}
 
   prettier-plugin-organize-imports@4.3.0:
@@ -10785,8 +10785,8 @@ packages:
       '@trpc/client': ^11.0.0
       '@trpc/server': ^11.0.0
 
-  ts-api-utils@2.2.0:
-    resolution: {integrity: sha512-L6f5oQRAoLU1RwXz0Ab9mxsE7LtxeVB6AIR1lpkZMsOyg/JXeaxBaXa/FVCBZyNr9S9I4wkHrlZTklX+im+WMw==}
+  ts-api-utils@2.3.0:
+    resolution: {integrity: sha512-6eg3Y9SF7SsAvGzRHQvvc1skDAhwI4YQ32ui1scxD1Ccr0G5qIIbUBT3pFTKX8kmWIQClHobtUdNuaBgwdfdWg==}
     engines: {node: '>=18.12'}
     peerDependencies:
       typescript: '>=4.8.4'
@@ -16191,7 +16191,7 @@ snapshots:
       eslint: 9.39.2(jiti@2.6.1)
       ignore: 7.0.5
       natural-compare: 1.4.0
-      ts-api-utils: 2.2.0(typescript@5.9.3)
+      ts-api-utils: 2.3.0(typescript@5.9.3)
       typescript: 5.9.3
     transitivePeerDependencies:
       - supports-color
@@ -16233,7 +16233,7 @@ snapshots:
       '@typescript-eslint/utils': 8.50.1(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)
       debug: 4.4.3
       eslint: 9.39.2(jiti@2.6.1)
-      ts-api-utils: 2.2.0(typescript@5.9.3)
+      ts-api-utils: 2.3.0(typescript@5.9.3)
       typescript: 5.9.3
     transitivePeerDependencies:
       - supports-color
@@ -16250,7 +16250,7 @@ snapshots:
       minimatch: 9.0.5
       semver: 7.7.3
       tinyglobby: 0.2.15
-      ts-api-utils: 2.2.0(typescript@5.9.3)
+      ts-api-utils: 2.3.0(typescript@5.9.3)
       typescript: 5.9.3
     transitivePeerDependencies:
       - supports-color
@@ -16762,12 +16762,12 @@ snapshots:
     dependencies:
       vue: 3.5.26(typescript@5.9.3)
 
-  '@vue-pdf-viewer/viewer@3.6.1(pdfjs-dist@5.4.449)(typescript@5.9.3)(vite@8.0.0-beta.5(@types/node@25.0.3)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.97.1)(sass@1.97.1)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(vue@3.5.26(typescript@5.9.3))':
+  '@vue-pdf-viewer/viewer@3.6.1(pdfjs-dist@5.4.530)(typescript@5.9.3)(vite@8.0.0-beta.5(@types/node@25.0.3)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.97.1)(sass@1.97.1)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(vue@3.5.26(typescript@5.9.3))':
     dependencies:
       '@vue-pdf-viewer/shared': 1.1.3(vue@3.5.26(typescript@5.9.3))
       '@vueuse/core': 13.9.0(vue@3.5.26(typescript@5.9.3))
       node-forge: 1.3.3
-      pdfjs-dist: 5.4.449
+      pdfjs-dist: 5.4.530
       reka-ui: 2.7.0(typescript@5.9.3)(vue@3.5.26(typescript@5.9.3))
       vite-plugin-css-injected-by-js: 3.5.2(vite@8.0.0-beta.5(@types/node@25.0.3)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.97.1)(sass@1.97.1)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))
       vue: 3.5.26(typescript@5.9.3)
@@ -18644,7 +18644,7 @@ snapshots:
     dependencies:
       eslint: 9.39.2(jiti@2.6.1)
       prettier: 3.7.4
-      prettier-linter-helpers: 1.0.0
+      prettier-linter-helpers: 1.0.1
       synckit: 0.11.11
     optionalDependencies:
       '@types/eslint': 9.6.1
@@ -21332,7 +21332,7 @@ snapshots:
 
   pathe@2.0.3: {}
 
-  pdfjs-dist@5.4.449:
+  pdfjs-dist@5.4.530:
     optionalDependencies:
       '@napi-rs/canvas': 0.1.88
 
@@ -21568,7 +21568,7 @@ snapshots:
 
   prelude-ls@1.2.1: {}
 
-  prettier-linter-helpers@1.0.0:
+  prettier-linter-helpers@1.0.1:
     dependencies:
       fast-diff: 1.3.0
 
@@ -22769,7 +22769,7 @@ snapshots:
       ofetch: 1.5.1
       ohash: 2.0.11
 
-  ts-api-utils@2.2.0(typescript@5.9.3):
+  ts-api-utils@2.3.0(typescript@5.9.3):
     dependencies:
       typescript: 5.9.3
 
@@ -23555,7 +23555,7 @@ snapshots:
 
   vue-pdf-embed@2.1.3(vue@3.5.26(typescript@5.9.3)):
     dependencies:
-      pdfjs-dist: 5.4.449
+      pdfjs-dist: 5.4.530
       vue: 3.5.26(typescript@5.9.3)
 
   vue-router@4.6.4(vue@3.5.26(typescript@5.9.3)):
