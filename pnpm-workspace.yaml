@@ -108,7 +108,7 @@ catalog:
   eslint-config-prettier: ^10.1.8
   eslint-plugin-depend: ^1.4.0
   eslint-plugin-oxlint: ^1.36.0
-  eslint-plugin-perfectionist: ^5.1.0
+  eslint-plugin-perfectionist: ^5.2.0
   eslint-plugin-pinia: ^0.4.2
   eslint-plugin-prettier: ^5.5.4
   eventemitter3: ^5.0.1
