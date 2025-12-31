@@ -202,7 +202,7 @@ catalog:
   worker-timers: ^8.0.27
   ws: ^8.18.3
   xmlbuilder2: ^4.0.3
-  zod: ^4.2.1
+  zod: ^4.3.4
 
 catalogMode: strict
 
@@ -217,7 +217,7 @@ onlyBuiltDependencies:
   - vue-demi
 
 overrides:
-  pdfjs-dist: ^5.4.449
+  pdfjs-dist: ^5.4.530
   vite: ^8.0.0-beta.5
 
 shellEmulator: true
