@@ -24,7 +24,6 @@ export const useBattlePlayerStore = defineStore("dungeons/battle/player", () => 
   const initialMonsterInfoContainerPosition = Object.freeze<Position>({ x: 1200, y: 318 });
   const monsterInfoContainerPosition = ref({ ...initialMonsterInfoContainerPosition });
   const monsterInfoContainerTween = ref<TweenBuilderConfiguration>();
-  const takeDamage = useTakeDamage(false);
   const attacks = computed(() => activeMonster.value.attackIds.map(getAttack));
 
   return {
@@ -37,6 +36,5 @@ export const useBattlePlayerStore = defineStore("dungeons/battle/player", () => 
     monsterPosition,
     monsterTween,
     switchActiveMonster,
-    takeDamage,
   };
 });
