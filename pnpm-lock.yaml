@@ -606,7 +606,7 @@ catalogs:
 
 overrides:
   pdfjs-dist: ^5.4.530
-  vite: ^8.0.0-beta.5
+  vite: ^8.0.0-beta.6
 
 importers:
 
@@ -676,7 +676,7 @@ importers:
         specifier: 'catalog:'
         version: 1.0.0-beta.6(@vue/language-core@3.2.2)(esbuild@0.25.12)(rolldown@1.0.0-beta.59)(rollup@4.55.1)(typescript@5.9.3)(vite@8.0.0-beta.6(@types/node@25.0.3)(esbuild@0.25.12)(jiti@2.6.1)(sass-embedded@1.97.2)(sass@1.97.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2))(webpack@5.104.1(esbuild@0.25.12))
       vite:
-        specifier: ^8.0.0-beta.5
+        specifier: ^8.0.0-beta.6
         version: 8.0.0-beta.6(@types/node@25.0.3)(esbuild@0.25.12)(jiti@2.6.1)(sass-embedded@1.97.2)(sass@1.97.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.2)
       vitest:
         specifier: 'catalog:'
@@ -3449,7 +3449,7 @@ packages:
   '@nuxt/devtools-kit@3.1.1':
     resolution: {integrity: sha512-sjiKFeDCOy1SyqezSgyV4rYNfQewC64k/GhOsuJgRF+wR2qr6KTVhO6u2B+csKs74KrMrnJprQBgud7ejvOXAQ==}
     peerDependencies:
-      vite: ^8.0.0-beta.5
+      vite: ^8.0.0-beta.6
 
   '@nuxt/devtools-wizard@3.1.1':
     resolution: {integrity: sha512-6UORjapNKko2buv+3o57DQp69n5Z91TeJ75qdtNKcTvOfCTJrO78Ew0nZSgMMGrjbIJ4pFsHQEqXfgYLw3pNxg==}
@@ -3460,7 +3460,7 @@ packages:
     hasBin: true
     peerDependencies:
       '@vitejs/devtools': '*'
-      vite: ^8.0.0-beta.5
+      vite: ^8.0.0-beta.6
     peerDependenciesMeta:
       '@vitejs/devtools':
         optional: true
@@ -5375,7 +5375,7 @@ packages:
   '@unocss/astro@66.5.12':
     resolution: {integrity: sha512-ynhlljsTGTHAcQHbpqxe3IXEDXjPm9IdeDWAhPet7UiGXhW230vEZ+1/OoARqLysVSVz4pPb81MDgS167Oo4Nw==}
     peerDependencies:
-      vite: ^8.0.0-beta.5
+      vite: ^8.0.0-beta.6
     peerDependenciesMeta:
       vite:
         optional: true
@@ -5467,7 +5467,7 @@ packages:
   '@unocss/vite@66.5.12':
     resolution: {integrity: sha512-BSbUmUCLF3303Cu0y+gbhibXkXPpcR6lVFNN2g06EXTDNJEoS/1VKvZEUBU8RP8d1mLkv5mqN4FzdltZ+vA3uw==}
     peerDependencies:
-      vite: ^8.0.0-beta.5
+      vite: ^8.0.0-beta.6
 
   '@unocss/webpack@66.5.12':
     resolution: {integrity: sha512-tvj7zB+9W/jdY//dOciYjgkTOA1t311SHDu5Tws0XIBu/HGO4oxVSXHg02TltC9q+aB7ft4z/mk8/op+xMYAPA==}
@@ -5594,14 +5594,14 @@ packages:
     resolution: {integrity: sha512-I6Zr8cYVr5WHMW5gNOP09DNqW9rgO8RX73Wa6Czgq/0ndpTfJM4vfDChfOT1+3KtdrNqilNBtNlFwVeB02ZzGw==}
     engines: {node: ^20.19.0 || >=22.12.0}
     peerDependencies:
-      vite: ^8.0.0-beta.5
+      vite: ^8.0.0-beta.6
       vue: ^3.0.0
 
   '@vitejs/plugin-vue@6.0.3':
     resolution: {integrity: sha512-TlGPkLFLVOY3T7fZrwdvKpjprR3s4fxRln0ORDo1VQ7HHyxJwTlrjKU3kpVWTlaAjIEuCTokmjkZnr8Tpc925w==}
     engines: {node: ^20.19.0 || >=22.12.0}
     peerDependencies:
-      vite: ^8.0.0-beta.5
+      vite: ^8.0.0-beta.6
       vue: ^3.2.25
 
   '@vitest/coverage-v8@4.0.16':
@@ -5633,7 +5633,7 @@ packages:
     resolution: {integrity: sha512-yb6k4AZxJTB+q9ycAvsoxGn+j/po0UaPgajllBgt1PzoMAAmJGYFdDk0uCcRcxb3BrME34I6u8gHZTQlkqSZpg==}
     peerDependencies:
       msw: ^2.4.9
-      vite: ^8.0.0-beta.5
+      vite: ^8.0.0-beta.6
     peerDependenciesMeta:
       msw:
         optional: true
@@ -7698,7 +7698,7 @@ packages:
     resolution: {integrity: sha512-KyvRd732HuVd/XP9iEFTb1w8Q01TPSA5GaCJV9HYmPiEs/ZZg/on2YdrQmlKfi9gDGpmN5Bn27Ze/CHqk0vE+w==}
     engines: {node: '>=18.12.0'}
     peerDependencies:
-      vite: ^8.0.0-beta.5
+      vite: ^8.0.0-beta.6
     peerDependenciesMeta:
       vite:
         optional: true
@@ -11108,7 +11108,7 @@ packages:
     engines: {node: '>=14'}
     peerDependencies:
       '@unocss/webpack': 66.5.12
-      vite: ^8.0.0-beta.5
+      vite: ^8.0.0-beta.6
     peerDependenciesMeta:
       '@unocss/webpack':
         optional: true
@@ -11141,7 +11141,7 @@ packages:
       rolldown: '*'
       rollup: '>=3'
       typescript: '>=4'
-      vite: ^8.0.0-beta.5
+      vite: ^8.0.0-beta.6
       webpack: ^4 || ^5
     peerDependenciesMeta:
       '@microsoft/api-extractor':
@@ -11339,12 +11339,12 @@ packages:
   vite-dev-rpc@1.1.0:
     resolution: {integrity: sha512-pKXZlgoXGoE8sEKiKJSng4hI1sQ4wi5YT24FCrwrLt6opmkjlqPPVmiPWWJn8M8byMxRGzp1CrFuqQs4M/Z39A==}
     peerDependencies:
-      vite: ^8.0.0-beta.5
+      vite: ^8.0.0-beta.6
 
   vite-hot-client@2.1.0:
     resolution: {integrity: sha512-7SpgZmU7R+dDnSmvXE1mfDtnHLHQSisdySVR7lO8ceAXvM0otZeuQQ6C8LrS5d/aYyP/QZ0hI0L+dIPrm4YlFQ==}
     peerDependencies:
-      vite: ^8.0.0-beta.5
+      vite: ^8.0.0-beta.6
 
   vite-node@5.2.0:
     resolution: {integrity: sha512-7UT39YxUukIA97zWPXUGb0SGSiLexEGlavMwU3HDE6+d/HJhKLjLqu4eX2qv6SQiocdhKLRcusroDwXHQ6CnRQ==}
@@ -11362,7 +11362,7 @@ packages:
       oxlint: '>=1'
       stylelint: '>=16'
       typescript: '*'
-      vite: ^8.0.0-beta.5
+      vite: ^8.0.0-beta.6
       vls: '*'
       vti: '*'
       vue-tsc: ~2.2.10 || ^3.0.0
@@ -11391,14 +11391,14 @@ packages:
   vite-plugin-css-injected-by-js@3.5.2:
     resolution: {integrity: sha512-2MpU/Y+SCZyWUB6ua3HbJCrgnF0KACAsmzOQt1UvRVJCGF6S8xdA3ZUhWcWdM9ivG4I5az8PnQmwwrkC2CAQrQ==}
     peerDependencies:
-      vite: ^8.0.0-beta.5
+      vite: ^8.0.0-beta.6
 
   vite-plugin-inspect@11.3.3:
     resolution: {integrity: sha512-u2eV5La99oHoYPHE6UvbwgEqKKOQGz86wMg40CCosP6q8BkB6e5xPneZfYagK4ojPJSj5anHCrnvC20DpwVdRA==}
     engines: {node: '>=14'}
     peerDependencies:
       '@nuxt/kit': '*'
-      vite: ^8.0.0-beta.5
+      vite: ^8.0.0-beta.6
     peerDependenciesMeta:
       '@nuxt/kit':
         optional: true
@@ -11407,14 +11407,14 @@ packages:
     resolution: {integrity: sha512-SwI7yqp2Cq4r2XItarnHRCj2uzHPqevbxFNMLpyN+LDXd5w1vmZeM4l5X/wCZoP4mjPQYN+9+4kmE6e3nPO5fg==}
     engines: {node: '>=v16.7.0'}
     peerDependencies:
-      vite: ^8.0.0-beta.5
+      vite: ^8.0.0-beta.6
 
   vite-plugin-pwa@1.2.0:
     resolution: {integrity: sha512-a2xld+SJshT9Lgcv8Ji4+srFJL4k/1bVbd1x06JIkvecpQkwkvCncD1+gSzcdm3s+owWLpMJerG3aN5jupJEVw==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
       '@vite-pwa/assets-generator': ^1.0.0
-      vite: ^8.0.0-beta.5
+      vite: ^8.0.0-beta.6
       workbox-build: ^7.4.0
       workbox-window: ^7.4.0
     peerDependenciesMeta:
@@ -11424,14 +11424,14 @@ packages:
   vite-plugin-vue-tracer@1.2.0:
     resolution: {integrity: sha512-a9Z/TLpxwmoE9kIcv28wqQmiszM7ec4zgndXWEsVD/2lEZLRGzcg7ONXmplzGF/UP5W59QNtS809OdywwpUWQQ==}
     peerDependencies:
-      vite: ^8.0.0-beta.5
+      vite: ^8.0.0-beta.6
       vue: ^3.5.0
 
   vite-plugin-vuetify@2.1.2:
     resolution: {integrity: sha512-I/wd6QS+DO6lHmuGoi1UTyvvBTQ2KDzQZ9oowJQEJ6OcjWfJnscYXx2ptm6S7fJSASuZT8jGRBL3LV4oS3LpaA==}
     engines: {node: ^18.0.0 || >=20.0.0}
     peerDependencies:
-      vite: ^8.0.0-beta.5
+      vite: ^8.0.0-beta.6
       vue: ^3.0.0
       vuetify: ^3.0.0
 
