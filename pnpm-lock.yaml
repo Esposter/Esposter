@@ -436,8 +436,8 @@ catalogs:
       specifier: ^2.2.0
       version: 2.2.0
     node-html-parser:
-      specifier: ^7.0.1
-      version: 7.0.1
+      specifier: ^7.0.2
+      version: 7.0.2
     nuxt:
       specifier: ^4.2.2
       version: 4.2.2
@@ -941,7 +941,7 @@ importers:
         version: 2.2.0
       node-html-parser:
         specifier: 'catalog:'
-        version: 7.0.1
+        version: 7.0.2
       obscenity:
         specifier: 'catalog:'
         version: 0.4.5
@@ -1191,7 +1191,7 @@ importers:
         version: 0.8.3(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.14)(kysely@0.28.9)(postgres@3.4.8))(zod@4.3.5)
       node-html-parser:
         specifier: 'catalog:'
-        version: 7.0.1
+        version: 7.0.2
       postgres:
         specifier: 'catalog:'
         version: 3.4.8
@@ -1334,7 +1334,7 @@ importers:
         version: 3.0.2
       node-html-parser:
         specifier: 'catalog:'
-        version: 7.0.1
+        version: 7.0.2
       zod:
         specifier: 'catalog:'
         version: 4.3.5
@@ -1400,7 +1400,7 @@ importers:
         version: 14.1.0(vue@3.5.26(typescript@5.9.3))
       node-html-parser:
         specifier: 'catalog:'
-        version: 7.0.1
+        version: 7.0.2
       vue:
         specifier: 'catalog:'
         version: 3.5.26(typescript@5.9.3)
@@ -9153,8 +9153,8 @@ packages:
     engines: {node: ^20.17.0 || >=22.9.0}
     hasBin: true
 
-  node-html-parser@7.0.1:
-    resolution: {integrity: sha512-KGtmPY2kS0thCWGK0VuPyOS+pBKhhe8gXztzA2ilAOhbUbxa9homF1bOyKvhGzMLXUoRds9IOmr/v5lr/lqNmA==}
+  node-html-parser@7.0.2:
+    resolution: {integrity: sha512-DxodLVh7a6JMkYzWyc8nBX9MaF4M0lLFYkJHlWOiu7+9/I6mwNK9u5TbAMC7qfqDJEPX9OIoWA2A9t4C2l1mUQ==}
 
   node-mock-http@1.0.4:
     resolution: {integrity: sha512-8DY+kFsDkNXy1sJglUfuODx1/opAGJGyrTuFqEoN90oRc2Vk0ZbD4K2qmKXBBEhZQzdKHIVfEJpDU8Ak2NJEvQ==}
@@ -20726,7 +20726,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  node-html-parser@7.0.1:
+  node-html-parser@7.0.2:
     dependencies:
       css-select: 5.2.2
       he: 1.2.0

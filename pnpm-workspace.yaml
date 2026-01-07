@@ -145,7 +145,7 @@ catalog:
   mime-types: ^3.0.2
   mjml-browser: ^4.18.0
   node-emoji: ^2.2.0
-  node-html-parser: ^7.0.1
+  node-html-parser: ^7.0.2
   nuxt: ^4.2.2
   nuxt-security: ^2.5.0
   obscenity: ^0.4.5
