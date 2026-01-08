@@ -496,8 +496,8 @@ catalogs:
       specifier: ^1.97.2
       version: 1.97.2
     sax:
-      specifier: ^1.4.3
-      version: 1.4.3
+      specifier: ^1.4.4
+      version: 1.4.4
     show-open-file-picker:
       specifier: ^0.4.0
       version: 0.4.0
@@ -1437,7 +1437,7 @@ importers:
     dependencies:
       sax:
         specifier: 'catalog:'
-        version: 1.4.3
+        version: 1.4.4
       xmlbuilder2:
         specifier: 'catalog:'
         version: 4.0.3
@@ -10333,6 +10333,10 @@ packages:
 
   sax@1.4.3:
     resolution: {integrity: sha512-yqYn1JhPczigF94DMS+shiDMjDowYO6y9+wB/4WgO0Y19jWYk0lQ4tuG5KI7kj4FTp1wxPj5IFfcrz/s1c3jjQ==}
+
+  sax@1.4.4:
+    resolution: {integrity: sha512-1n3r/tGXO6b6VXMdFT54SHzT9ytu9yr7TaELowdYpMqY/Ao7EnlQGmAQ1+RatX7Tkkdm6hONI2owqNx2aZj5Sw==}
+    engines: {node: '>=11.0.0'}
 
   schema-utils@4.3.3:
     resolution: {integrity: sha512-eflK8wEtyOE6+hsaRVPxvUKYCpRgzLqDTb8krvAsRIwOGlHoSgYLgBXoubGgLd2fT41/OUYdb48v4k4WWHQurA==}
@@ -22321,6 +22325,8 @@ snapshots:
       yoga-layout: 3.2.1
 
   sax@1.4.3: {}
+
+  sax@1.4.4: {}
 
   schema-utils@4.3.3:
     dependencies:
