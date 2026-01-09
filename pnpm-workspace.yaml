@@ -199,7 +199,7 @@ catalog:
   vuetify: ^3.11.6
   vuetify-nuxt-module: ^0.19.2
   web-push: ^3.6.7
-  worker-timers: ^8.0.27
+  worker-timers: ^8.0.28
   ws: ^8.19.0
   xmlbuilder2: ^4.0.3
   zod: ^4.3.5
