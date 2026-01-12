@@ -1,5 +1,5 @@
 /** @satisfies {import('typedoc').TypeDocOptions["externalSymbolLinkMappings"]} */
-export default {
+const externalSymbolLinkMappings = {
   "@azure/storage-blob": {
     AppendBlobClient: "#",
     BlobClient: "#",
@@ -17,3 +17,5 @@ export default {
     PageBlobClient: "#",
   },
 };
+
+export default externalSymbolLinkMappings;
