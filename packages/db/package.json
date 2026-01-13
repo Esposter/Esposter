@@ -59,6 +59,9 @@
     "@types/mime-types": "catalog:"
   },
   "peerDependencies": {
+    "@azure/data-tables": "catalog:",
+    "@azure/storage-blob": "catalog:",
+    "@azure/web-pubsub": "catalog:",
     "@esposter/db-schema": "workspace:*"
   }
 }

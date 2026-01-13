@@ -487,8 +487,8 @@ catalogs:
       specifier: ^1.0.0-beta.59
       version: 1.0.0-beta.59
     rolldown-plugin-dts:
-      specifier: ^0.20.0
-      version: 0.20.0
+      specifier: ^0.21.0
+      version: 0.21.0
     rxjs:
       specifier: ^7.8.2
       version: 7.8.2
@@ -659,7 +659,7 @@ importers:
         version: 1.0.0-beta.59
       rolldown-plugin-dts:
         specifier: 'catalog:'
-        version: 0.20.0(rolldown@1.0.0-beta.59)(typescript@5.9.3)(vue-tsc@3.2.2(typescript@5.9.3))
+        version: 0.21.0(rolldown@1.0.0-beta.59)(typescript@5.9.3)(vue-tsc@3.2.2(typescript@5.9.3))
       tsx:
         specifier: 'catalog:'
         version: 4.21.0
@@ -1171,6 +1171,9 @@ importers:
       '@azure/identity':
         specifier: 'catalog:'
         version: 4.13.0
+      '@azure/storage-blob':
+        specifier: 'catalog:'
+        version: 12.29.1
       '@azure/web-pubsub':
         specifier: 'catalog:'
         version: 1.2.0
@@ -1251,6 +1254,9 @@ importers:
       '@azure/storage-queue':
         specifier: 'catalog:'
         version: 12.28.1
+      '@azure/web-pubsub':
+        specifier: 'catalog:'
+        version: 1.2.0
 
   packages/configuration:
     devDependencies:
@@ -10032,8 +10038,8 @@ packages:
   robust-predicates@3.0.2:
     resolution: {integrity: sha512-IXgzBWvWQwE6PrDI05OvmXUIruQTcoMDzRsOd5CDvHCVLcLHMTSYvOK5Cm46kWqlV3yAbuSpBZdJ5oP5OUoStg==}
 
-  rolldown-plugin-dts@0.20.0:
-    resolution: {integrity: sha512-cLAY1kN2ilTYMfZcFlGWbXnu6Nb+8uwUBsi+Mjbh4uIx7IN8uMOmJ7RxrrRgPsO4H7eSz3E+JwGoL1gyugiyUA==}
+  rolldown-plugin-dts@0.21.0:
+    resolution: {integrity: sha512-t/KiDGti8cXD69phhBGWG4mjIlN1BX5auS8iNPrRvkCII6FKccjR+E0lmP5fCwuEvH3lJPaF5iu/CMGUn6nuoQ==}
     engines: {node: '>=20.19.0'}
     peerDependencies:
       '@ts-macro/tsc': ^0.3.6
@@ -21921,7 +21927,7 @@ snapshots:
 
   robust-predicates@3.0.2: {}
 
-  rolldown-plugin-dts@0.20.0(rolldown@1.0.0-beta.59)(typescript@5.9.3)(vue-tsc@3.2.2(typescript@5.9.3)):
+  rolldown-plugin-dts@0.21.0(rolldown@1.0.0-beta.59)(typescript@5.9.3)(vue-tsc@3.2.2(typescript@5.9.3)):
     dependencies:
       '@babel/generator': 7.28.5
       '@babel/parser': 7.28.5
