@@ -178,7 +178,7 @@ catalog:
   three-globe: ^2.45.0
   trpc-nuxt: ^2.0.1
   tsx: ^4.21.0
-  type-fest: ^5.3.1
+  type-fest: ^5.4.0
   typedoc: ^0.28.16
   typescript: ^5.9.3
   typescript-eslint: ^8.52.0

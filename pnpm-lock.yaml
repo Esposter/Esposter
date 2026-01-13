@@ -532,8 +532,8 @@ catalogs:
       specifier: ^4.21.0
       version: 4.21.0
     type-fest:
-      specifier: ^5.3.1
-      version: 5.3.1
+      specifier: ^5.4.0
+      version: 5.4.0
     typedoc:
       specifier: ^0.28.16
       version: 0.28.16
@@ -665,7 +665,7 @@ importers:
         version: 4.21.0
       type-fest:
         specifier: 'catalog:'
-        version: 5.3.1
+        version: 5.4.0
       typedoc:
         specifier: 'catalog:'
         version: 0.28.16(typescript@5.9.3)
@@ -10860,6 +10860,10 @@ packages:
 
   type-fest@5.3.1:
     resolution: {integrity: sha512-VCn+LMHbd4t6sF3wfU/+HKT63C9OoyrSIf4b+vtWHpt2U7/4InZG467YDNMFMR70DdHjAdpPWmw2lzRdg0Xqqg==}
+    engines: {node: '>=20'}
+
+  type-fest@5.4.0:
+    resolution: {integrity: sha512-wfkA6r0tBpVfGiyO+zbf9e10QkRQSlK9F2UvyfnjoCmrvH2bjHyhPzhugSBOuq1dog3P0+FKckqe+Xf6WKVjwg==}
     engines: {node: '>=20'}
 
   type-level-regexp@0.1.17:
@@ -22848,6 +22852,10 @@ snapshots:
       tagged-tag: 1.0.0
 
   type-fest@5.3.1:
+    dependencies:
+      tagged-tag: 1.0.0
+
+  type-fest@5.4.0:
     dependencies:
       tagged-tag: 1.0.0
 
