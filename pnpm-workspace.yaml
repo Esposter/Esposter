@@ -18,7 +18,7 @@ catalog:
   "@codemirror/language-data": ^6.5.2
   "@codemirror/state": ^6.5.3
   "@codemirror/theme-one-dark": ^6.1.3
-  "@codemirror/view": ^6.39.9
+  "@codemirror/view": ^6.39.10
   "@electric-sql/pglite": ^0.3.14
   "@eslint/core": ^1.0.1
   "@eslint/json": ^0.14.0
