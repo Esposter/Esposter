@@ -16,9 +16,9 @@ catalog:
   "@codemirror/lang-vue": ^0.1.3
   "@codemirror/language": ^6.12.1
   "@codemirror/language-data": ^6.5.2
-  "@codemirror/state": ^6.5.3
+  "@codemirror/state": ^6.5.4
   "@codemirror/theme-one-dark": ^6.1.3
-  "@codemirror/view": ^6.39.10
+  "@codemirror/view": ^6.39.11
   "@electric-sql/pglite": ^0.3.14
   "@eslint/core": ^1.0.1
   "@eslint/json": ^0.14.0
