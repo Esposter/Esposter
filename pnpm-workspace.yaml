@@ -69,8 +69,8 @@ catalog:
   "@types/web-push": ^3.6.4
   "@types/ws": ^8.18.1
   "@types/xml2js": ^0.4.14
-  "@unocss/eslint-config": ^66.5.12
-  "@unocss/nuxt": ^66.5.12
+  "@unocss/eslint-config": ^66.6.0
+  "@unocss/nuxt": ^66.6.0
   "@vite-pwa/nuxt": ^1.1.0
   "@vitejs/plugin-vue": ^6.0.3
   "@vitest/coverage-v8": ^4.0.17
@@ -135,7 +135,7 @@ catalog:
   grid-layout-plus: ^1.1.1
   gsap: ^3.14.2
   h3: ^1.15.4
-  happy-dom: ^20.1.0
+  happy-dom: ^20.3.0
   howler: ^2.2.4
   is-mobile: ^5.0.0
   js-beautify: ^1.15.4
@@ -159,7 +159,7 @@ catalog:
   pinia: ^3.0.4
   pluralize: ^8.0.0
   postgres: ^3.4.8
-  prettier: ^3.7.4
+  prettier: ^3.8.0
   prosemirror-state: ^1.4.4
   rate-limiter-flexible: ^9.0.1
   rolldown: ^1.0.0-beta.60
@@ -178,16 +178,16 @@ catalog:
   three-globe: ^2.45.0
   trpc-nuxt: ^2.0.1
   tsx: ^4.21.0
-  type-fest: ^5.4.0
+  type-fest: ^5.4.1
   typedoc: ^0.28.16
   typescript: ^5.9.3
   typescript-eslint: ^8.53.0
-  unocss: ^66.5.12
-  unplugin-auto-import: ^20.3.0
+  unocss: ^66.6.0
+  unplugin-auto-import: ^21.0.0
   unplugin-dts: ^1.0.0-beta.6
   v-viewer: ^3.0.22
   viewerjs: ^1.11.7
-  vite: ^8.0.0-beta.7
+  vite: ^8.0.0-beta.8
   vite-plugin-mkcert: ^1.17.9
   vitest: ^4.0.17
   vue: ^3.5.26
@@ -218,6 +218,6 @@ onlyBuiltDependencies:
 
 overrides:
   pdfjs-dist: ^5.4.530
-  vite: ^8.0.0-beta.7
+  vite: ^8.0.0-beta.8
 
 shellEmulator: true
