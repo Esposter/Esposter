@@ -107,7 +107,7 @@ catalog:
   eslint: ^9.39.2
   eslint-config-prettier: ^10.1.8
   eslint-plugin-depend: ^1.4.0
-  eslint-plugin-oxlint: ^1.38.0
+  eslint-plugin-oxlint: 1.38.0
   eslint-plugin-perfectionist: ^5.3.1
   eslint-plugin-pinia: ^0.4.2
   eslint-plugin-prettier: ^5.5.5
@@ -134,7 +134,7 @@ catalog:
   grid-engine: ^2.48.2
   grid-layout-plus: ^1.1.1
   gsap: ^3.14.2
-  h3: ^1.15.4
+  h3: ^1.15.5
   happy-dom: ^20.3.0
   howler: ^2.2.4
   is-mobile: ^5.0.0
@@ -150,7 +150,7 @@ catalog:
   nuxt-security: ^2.5.0
   obscenity: ^0.4.5
   omit-deep-lodash: ^1.1.7
-  oxlint: ^1.38.0
+  oxlint: 1.38.0
   p-progress: ^1.0.0
   pathe: ^2.0.3
   pdfjs-dist: ^5.4.530
@@ -163,7 +163,7 @@ catalog:
   prosemirror-state: ^1.4.4
   rate-limiter-flexible: ^9.0.1
   rolldown: ^1.0.0-beta.60
-  rolldown-plugin-dts: ^0.21.1
+  rolldown-plugin-dts: ^0.21.2
   rxjs: ^7.8.2
   sass-embedded: ^1.97.2
   sax: ^1.4.4
