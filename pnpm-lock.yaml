@@ -442,8 +442,8 @@ catalogs:
       specifier: ^4.2.2
       version: 4.2.2
     nuxt-security:
-      specifier: ^2.5.0
-      version: 2.5.0
+      specifier: ^2.5.1
+      version: 2.5.1
     obscenity:
       specifier: ^0.4.5
       version: 0.4.5
@@ -1143,7 +1143,7 @@ importers:
         version: 4.2.2(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/storage-blob@12.29.1)(@electric-sql/pglite@0.3.15)(@parcel/watcher@2.5.4)(@types/node@25.0.9)(@vue/compiler-sfc@3.5.26)(cac@6.7.14)(db0@0.3.4(@electric-sql/pglite@0.3.15)(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.15)(kysely@0.28.9)(postgres@3.4.8)))(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.15)(kysely@0.28.9)(postgres@3.4.8))(encoding@0.1.13)(eslint@9.39.2(jiti@2.6.1))(ioredis@5.9.2)(magicast@0.5.1)(meow@13.2.0)(optionator@0.9.4)(oxlint@1.38.0)(rolldown@1.0.0-beta.60)(rollup@4.55.1)(sass-embedded@1.97.2)(sass@1.97.2)(terser@5.46.0)(tsx@4.21.0)(typescript@5.9.3)(vite@8.0.0-beta.8(@types/node@25.0.9)(esbuild@0.23.1)(jiti@2.6.1)(sass-embedded@1.97.2)(sass@1.97.2)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.2(typescript@5.9.3))(yaml@2.8.2)
       nuxt-security:
         specifier: 'catalog:'
-        version: 2.5.0(magicast@0.5.1)(rollup@4.55.1)
+        version: 2.5.1(magicast@0.5.1)(rollup@4.55.1)
       prettier:
         specifier: 'catalog:'
         version: 3.8.0
@@ -9166,8 +9166,8 @@ packages:
       zod:
         optional: true
 
-  nuxt-security@2.5.0:
-    resolution: {integrity: sha512-mfoSXcY1V6DHJwXGVLY99G7W2XnkdGnJ5FgmGe8I2ZkWOb1DVr3rbwl8OgIb1C64CDWTBhwer8eXxgCLCGGLUg==}
+  nuxt-security@2.5.1:
+    resolution: {integrity: sha512-gXUhJiOqgkKkP0FHDAPOuREjoala0p6G/4TIlkti1ZafpJV8TkjjFqCNT6NuiWHxKzVYY00OIR1tbRcZuJ7LmQ==}
     engines: {node: '>=20.0.0'}
 
   nuxt-seo-utils@7.0.19:
@@ -12767,7 +12767,7 @@ snapshots:
     dependencies:
       '@babel/code-frame': 7.28.6
       '@babel/generator': 7.28.6
-      '@babel/parser': 7.27.7
+      '@babel/parser': 7.28.6
       '@babel/template': 7.28.6
       '@babel/types': 7.28.6
       debug: 4.4.3
@@ -20773,7 +20773,7 @@ snapshots:
       - magicast
       - vue
 
-  nuxt-security@2.5.0(magicast@0.5.1)(rollup@4.55.1):
+  nuxt-security@2.5.1(magicast@0.5.1)(rollup@4.55.1):
     dependencies:
       '@nuxt/kit': 4.2.2(magicast@0.5.1)
       basic-auth: 2.0.1
