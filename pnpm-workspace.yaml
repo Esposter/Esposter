@@ -29,10 +29,10 @@ catalog:
   "@fullcalendar/timegrid": ^6.1.20
   "@fullcalendar/vue3": ^6.1.20
   "@koumoul/vjsf": ^3.25.5
-  "@lerna-lite/cli": ^4.10.5
-  "@lerna-lite/publish": ^4.10.5
-  "@lerna-lite/run": ^4.10.5
-  "@lerna-lite/watch": ^4.10.5
+  "@lerna-lite/cli": ^4.11.0
+  "@lerna-lite/publish": ^4.11.0
+  "@lerna-lite/run": ^4.11.0
+  "@lerna-lite/watch": ^4.11.0
   "@mdi/font": ^7.4.47
   "@nuxt/eslint": ^1.12.1
   "@nuxt/fonts": ^0.12.1
