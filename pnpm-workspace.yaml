@@ -148,7 +148,7 @@ catalog:
   node-html-parser: ^7.0.2
   nuxt: ^4.2.2
   nuxt-security: ^2.5.1
-  obscenity: ^0.4.5
+  obscenity: ^0.4.6
   omit-deep-lodash: ^1.1.7
   oxlint: 1.38.0
   p-progress: ^1.0.0
