@@ -2,8 +2,8 @@ import type { TMXObjectNode } from "@/models/tmx/node/TMXObjectNode";
 
 import { Shape } from "@/models/Shape";
 import { TMXNodeType } from "@/models/tmx/node/TMXNodeType";
+import { assertNode } from "@/test/assertNode.test";
 import { parseObjectShape } from "@/util/parseObjectShape";
-import { assertNode } from "@/util/test/assertNode";
 import { describe, expect, test } from "vitest";
 
 describe(parseObjectShape, () => {

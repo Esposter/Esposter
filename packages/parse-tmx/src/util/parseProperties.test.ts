@@ -1,8 +1,8 @@
 import type { TMXPropertyNode } from "@/models/tmx/node/TMXPropertyNode";
 
 import { TMXNodeType } from "@/models/tmx/node/TMXNodeType";
+import { assertNode } from "@/test/assertNode.test";
 import { parseProperties } from "@/util/parseProperties";
-import { assertNode } from "@/util/test/assertNode";
 import { describe, expect, test } from "vitest";
 
 describe(parseProperties, () => {
