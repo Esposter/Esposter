@@ -1,5 +1,5 @@
 export interface TMXFlipsParsed {
-  D: boolean;
-  H: boolean;
-  V: boolean;
+  Diagonal: boolean;
+  Horizontal: boolean;
+  Vertical: boolean;
 }
