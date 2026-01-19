@@ -9,7 +9,6 @@ describe(toKebabCase, () => {
     expect(toKebabCase("A")).toBe("a");
     expect(toKebabCase("aA")).toBe("a-a");
     expect(toKebabCase("Aa")).toBe("aa");
-    expect(toKebabCase("aAa")).toBe("a-aa");
   });
 
   test("handling numbers", () => {
@@ -17,6 +16,7 @@ describe(toKebabCase, () => {
 
     expect(toKebabCase("0")).toBe("0");
     expect(toKebabCase("a0")).toBe("a0");
+    expect(toKebabCase("a0a")).toBe("a0-a");
     expect(toKebabCase("a0A")).toBe("a0-a");
   });
 
