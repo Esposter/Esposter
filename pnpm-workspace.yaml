@@ -94,7 +94,7 @@ catalog:
   better-auth: ^1.4.15
   codemirror: ^6.0.2
   ctix: ^2.7.2
-  data-urls: ^6.0.0
+  data-urls: ^6.0.1
   dayjs: ^1.11.19
   debug: ^4.4.3
   dedent: ^1.7.1
@@ -135,7 +135,7 @@ catalog:
   grid-layout-plus: ^1.1.1
   gsap: ^3.14.2
   h3: ^1.15.5
-  happy-dom: ^20.3.3
+  happy-dom: ^20.3.4
   howler: ^2.2.4
   is-mobile: ^5.0.0
   js-beautify: ^1.15.4
@@ -181,7 +181,7 @@ catalog:
   type-fest: ^5.4.1
   typedoc: ^0.28.16
   typescript: ^5.9.3
-  typescript-eslint: ^8.53.0
+  typescript-eslint: ^8.53.1
   unocss: ^66.6.0
   unplugin-auto-import: ^21.0.0
   unplugin-dts: ^1.0.0-beta.6
@@ -197,7 +197,7 @@ catalog:
   vue-tsc: ^3.2.2
   vue3-apexcharts: ^1.10.0
   vuetify: ^3.11.6
-  vuetify-nuxt-module: ^0.19.2
+  vuetify-nuxt-module: ^0.19.3
   web-push: ^3.6.7
   worker-timers: ^8.0.29
   ws: ^8.19.0
