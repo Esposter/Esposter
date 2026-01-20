@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 describe(getDetectedUserStatus, () => {
   const createdAt = new Date();
   const message = "message";
-  const userId = "userId";
+  const userId = crypto.randomUUID();
 
   beforeEach(() => {
     vi.useFakeTimers();

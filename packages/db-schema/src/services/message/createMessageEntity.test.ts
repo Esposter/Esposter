@@ -17,13 +17,13 @@ describe(createMessageEntity, () => {
   const appUser: AppUser = {
     createdAt,
     deletedAt: null,
-    id: "id",
+    id: crypto.randomUUID(),
     image: "image",
     name: "name",
     updatedAt: createdAt,
   };
-  const roomId = "roomId";
-  const userId = "userId";
+  const roomId = crypto.randomUUID();
+  const userId = crypto.randomUUID();
 
   test("creates", () => {
     expect.hasAssertions();
