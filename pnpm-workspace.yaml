@@ -91,7 +91,7 @@ catalog:
   ajv-formats: ^3.0.1
   ajv-i18n: ^4.2.0
   apexcharts: ^5.3.6
-  better-auth: ^1.4.16
+  better-auth: ^1.4.17
   codemirror: ^6.0.2
   ctix: ^2.7.2
   data-urls: ^6.0.1
