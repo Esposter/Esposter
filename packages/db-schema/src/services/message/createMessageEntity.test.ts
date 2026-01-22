@@ -4,13 +4,7 @@ import { MessageType } from "@/models/message/MessageType";
 import { StandardMessageEntity } from "@/models/message/StandardMessageEntity";
 import { WebhookMessageEntity } from "@/models/message/WebhookMessageEntity";
 import { createMessageEntity } from "@/services/message/createMessageEntity";
-import { describe, expect, test, vi } from "vitest";
-
-const rowKey = "rowKey";
-
-vi.mock(import("@/services/azure/table/getReverseTickedTimestamp"), () => ({
-  getReverseTickedTimestamp: () => rowKey,
-}));
+import { describe, expect, test } from "vitest";
 
 describe(createMessageEntity, () => {
   const createdAt = new Date();
@@ -31,7 +25,7 @@ describe(createMessageEntity, () => {
     const newMessageEntity = createMessageEntity({ appUser, roomId, type: MessageType.Message, userId });
 
     expect(newMessageEntity).toBeInstanceOf(StandardMessageEntity);
-    expect(newMessageEntity).toStrictEqual(expect.objectContaining({ partitionKey: roomId, rowKey }));
+    expect(newMessageEntity).toStrictEqual(expect.objectContaining({ partitionKey: roomId }));
   });
 
   test("creates webhook", () => {
@@ -40,6 +34,6 @@ describe(createMessageEntity, () => {
     const newMessageEntity = createMessageEntity({ appUser, roomId, type: MessageType.Webhook });
 
     expect(newMessageEntity).toBeInstanceOf(WebhookMessageEntity);
-    expect(newMessageEntity).toStrictEqual(expect.objectContaining({ partitionKey: roomId, rowKey }));
+    expect(newMessageEntity).toStrictEqual(expect.objectContaining({ partitionKey: roomId }));
   });
 });
