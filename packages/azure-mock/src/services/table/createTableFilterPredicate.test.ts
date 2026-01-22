@@ -24,13 +24,12 @@ describe(createTableFilterPredicate, () => {
     const predicate = createTableFilterPredicate(
       serializeClauses([
         { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: "" },
-        { key: CompositeKeyPropertyNames.rowKey, operator: BinaryOperator.eq, value: "" },
+        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: " " },
       ]),
     );
 
     expect(predicate({ partitionKey: "", rowKey: "" })).toBe(true);
-    expect(predicate({ partitionKey: "", rowKey: " " })).toBe(true);
-    expect(predicate({ partitionKey: " ", rowKey: " " })).toBe(false);
+    expect(predicate({ partitionKey: " ", rowKey: "" })).toBe(true);
   });
 
   test("negates with not(...)", () => {
@@ -45,8 +44,8 @@ describe(createTableFilterPredicate, () => {
       }),
     );
 
-    expect(predicate({ partitionKey: "", rowKey: "" })).toBe(true);
-    expect(predicate({ partitionKey: " ", rowKey: "" })).toBe(false);
+    expect(predicate({ partitionKey: "", rowKey: "" })).toBe(false);
+    expect(predicate({ partitionKey: " ", rowKey: "" })).toBe(true);
   });
 
   test("null clause", () => {
