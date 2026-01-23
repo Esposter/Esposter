@@ -100,8 +100,8 @@ catalog:
   dedent: ^1.7.1
   defu: ^6.1.4
   dotenv: ^17.2.3
-  drizzle-kit: ^0.31.8
-  drizzle-orm: ^0.45.1
+  drizzle-kit: 1.0.0-beta.12-a5629fb
+  drizzle-orm: 1.0.0-beta.12-a5629fb
   drizzle-zod: ^0.8.3
   emoji-mart-vue-fast: ^15.0.5
   eslint: ^9.39.2
