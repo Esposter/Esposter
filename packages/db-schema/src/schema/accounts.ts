@@ -1,5 +1,4 @@
 import { users } from "@/schema/users";
-import { relations } from "drizzle-orm";
 import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
 
 export const accounts = pgTable("accounts", {
@@ -20,10 +19,3 @@ export const accounts = pgTable("accounts", {
     .notNull()
     .references(() => users.id),
 });
-
-export const accountsRelations = relations(accounts, ({ one }) => ({
-  user: one(users, {
-    fields: [accounts.userId],
-    references: [users.id],
-  }),
-}));
