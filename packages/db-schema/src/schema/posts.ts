@@ -3,9 +3,8 @@ import type { User } from "@/schema/users";
 import type { AnyPgColumn } from "drizzle-orm/pg-core";
 
 import { pgTable } from "@/pgTable";
-import { likes } from "@/schema/likes";
 import { users } from "@/schema/users";
-import { relations, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import { check, doublePrecision, integer, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -47,17 +46,6 @@ export const selectCommentSchema = createSelectSchema(posts, {
   description: z.string().min(1).max(POST_DESCRIPTION_MAX_LENGTH),
 });
 
-export const postsRelations = relations(posts, ({ many, one }) => ({
-  likes: many(likes),
-  parent: one(posts, {
-    fields: [posts.parentId],
-    references: [posts.id],
-  }),
-  user: one(users, {
-    fields: [posts.userId],
-    references: [users.id],
-  }),
-}));
 // @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
 export const PostRelations = {
   likes: true,
