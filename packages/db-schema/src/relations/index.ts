@@ -2,12 +2,6 @@ import { schema } from "@/schema";
 import { defineRelationsPart } from "drizzle-orm";
 
 export const relations = defineRelationsPart(schema, (r) => ({
-  achievements: {
-    users: r.many.users({
-      from: r.achievements.id.through(r.userAchievements.achievementId),
-      to: r.users.id.through(r.userAchievements.userId),
-    }),
-  },
   appUsersInMessage: {
     webhooksInMessages: r.many.webhooksInMessage(),
   },
