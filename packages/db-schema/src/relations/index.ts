@@ -1,7 +1,10 @@
 import { schema } from "@/schema";
 import { defineRelationsPart } from "drizzle-orm";
 
-const relations = defineRelationsPart(schema, (r) => ({
+export const relations = defineRelationsPart(schema, (r) => ({
+  appUsersInMessage: {
+    webhooksInMessages: r.many.webhooksInMessage(),
+  },
   posts: {
     usersViaLikes: r.many.users({
       alias: "posts_id_users_id_via_likes",

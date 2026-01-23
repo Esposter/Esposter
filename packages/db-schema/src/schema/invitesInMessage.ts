@@ -6,14 +6,14 @@ import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { rooms } from "@/schema/rooms";
 import { users } from "@/schema/users";
-import { relations, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import { check, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const CODE_LENGTH = 8;
 
-export const invites = pgTable(
+export const invitesInMessage = pgTable(
   "invites",
   {
     code: text("code").notNull().unique(),
@@ -31,24 +31,14 @@ export const invites = pgTable(
   },
 );
 
-export type Invite = typeof invites.$inferSelect;
+export type InviteInMessage = typeof invitesInMessage.$inferSelect;
 
-export const selectInviteSchema = createSelectSchema(invites, {
+export const selectInviteInMessageSchema = createSelectSchema(invitesInMessage, {
   code: z.string().length(CODE_LENGTH),
 });
 
-export const invitesRelations = relations(invites, ({ one }) => ({
-  room: one(rooms, {
-    fields: [invites.roomId],
-    references: [rooms.id],
-  }),
-  user: one(users, {
-    fields: [invites.userId],
-    references: [users.id],
-  }),
-}));
 // @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
-export const InviteRelations = {
+export const InviteInMessageRelations = {
   room: {
     with: {
       usersToRooms: true,
@@ -56,4 +46,7 @@ export const InviteRelations = {
   },
   user: true,
 } as const;
-export type InviteWithRelations = Invite & { room: Room & { usersToRooms: UserToRoom[] }; user: User };
+export type InviteInMessageWithRelations = InviteInMessage & {
+  room: Room & { usersToRooms: UserToRoom[] };
+  user: User;
+};

@@ -31,10 +31,10 @@ import {
   AzureContainer,
   CODE_LENGTH,
   DatabaseEntityType,
-  InviteRelations,
-  invites,
+  InviteInMessageRelations,
+  invitesInMessage,
   rooms,
-  selectInviteSchema,
+  selectInviteInMessageSchema,
   selectRoomSchema,
   selectUserSchema,
   users,
@@ -96,7 +96,7 @@ const createMembersInputSchema = z.object({
 });
 export type CreateMembersInput = z.infer<typeof createMembersInputSchema>;
 
-const readInviteInputSchema = selectInviteSchema.shape.code;
+const readInviteInputSchema = selectInviteInMessageSchema.shape.code;
 export type ReadInviteInput = z.infer<typeof readInviteInputSchema>;
 
 const readInviteCodeInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
@@ -120,7 +120,7 @@ export const roomRouter = router({
         try {
           // Create non-colliding invite code
           inviteCode = createCode(CODE_LENGTH);
-          await ctx.db.insert(invites).values({ code: inviteCode, roomId, userId: ctx.session.user.id });
+          await ctx.db.insert(invitesInMessage).values({ code: inviteCode, roomId, userId: ctx.session.user.id });
           return inviteCode;
         } catch {
           continue;
@@ -201,11 +201,11 @@ export const roomRouter = router({
   }),
   joinRoom: standardAuthedProcedure.input(joinRoomInputSchema).mutation<Room>(({ ctx, input }) =>
     ctx.db.transaction(async (tx) => {
-      const invite = await tx.query.invites.findFirst({
+      const invite = await tx.query.invitesInMessage.findFirst({
         columns: {
           roomId: true,
         },
-        where: (invites, { eq }) => eq(invites.code, input),
+        where: (invitesInMessage, { eq }) => eq(invitesInMessage.code, input),
       });
       if (!invite)
         throw new TRPCError({
@@ -312,9 +312,9 @@ export const roomRouter = router({
     }
   }),
   readInvite: standardAuthedProcedure.input(readInviteInputSchema).query(async ({ ctx, input }) => {
-    const invite = await ctx.db.query.invites.findFirst({
-      where: (invites, { eq }) => eq(invites.code, input),
-      with: InviteRelations,
+    const invite = await ctx.db.query.invitesInMessage.findFirst({
+      where: (invitesInMessage, { eq }) => eq(invitesInMessage.code, input),
+      with: InviteInMessageRelations,
     });
     if (!invite) return null;
 

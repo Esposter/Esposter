@@ -2,6 +2,7 @@ import type { Room } from "@/schema/rooms";
 import type { User } from "@/schema/users";
 
 import { pgTable } from "@/pgTable";
+import { appUsersInMessage } from "@/schema/appUsersInMessage";
 import { messageSchema } from "@/schema/messageSchema";
 import { rooms } from "@/schema/rooms";
 import { users } from "@/schema/users";

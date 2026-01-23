@@ -8,7 +8,7 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { webhookRouter } from "@@/server/trpc/routers/webhook";
-import { appUsers, DatabaseEntityType, rooms, webhooks } from "@esposter/db-schema";
+import { appUsersInMessage, DatabaseEntityType, rooms, webhooks } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
@@ -30,7 +30,7 @@ describe("webhook", () => {
 
   afterEach(async () => {
     await mockContext.db.delete(webhooks);
-    await mockContext.db.delete(appUsers);
+    await mockContext.db.delete(appUsersInMessage);
     await mockContext.db.delete(rooms);
   });
 
@@ -39,7 +39,7 @@ describe("webhook", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newWebhook = await webhookCaller.createWebhook({ name, roomId: newRoom.id });
-    const appUser = await mockContext.db.query.appUsers.findFirst();
+    const appUser = await mockContext.db.query.appUsersInMessage.findFirst();
 
     assert(appUser);
 
@@ -193,7 +193,7 @@ describe("webhook", () => {
     const newWebhook = await webhookCaller.createWebhook({ name, roomId: newRoom.id });
     const deletedWebhook = await webhookCaller.deleteWebhook({ id: newWebhook.id, roomId: newRoom.id });
     const readWebhooks = await webhookCaller.readWebhooks({ roomId: newRoom.id });
-    const appUser = await mockContext.db.query.appUsers.findFirst();
+    const appUser = await mockContext.db.query.appUsersInMessage.findFirst();
 
     expect(appUser).toBeUndefined();
     expect(deletedWebhook.id).toBe(newWebhook.id);

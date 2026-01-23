@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
 import { useRoomStore } from "@/store/message/room";
-import { DatabaseEntityType, selectInviteSchema } from "@esposter/db-schema";
+import { DatabaseEntityType, selectInviteInMessageSchema } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
 definePageMeta({
   middleware: "auth",
   validate: async (route) => {
     const code = route.params.code;
-    const result = await selectInviteSchema.shape.code.safeParseAsync(code);
+    const result = await selectInviteInMessageSchema.shape.code.safeParseAsync(code);
     return result.success;
   },
 });

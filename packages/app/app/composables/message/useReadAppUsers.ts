@@ -1,4 +1,4 @@
-import type { AppUser } from "@esposter/db-schema";
+import type { AppUserInMessage } from "@esposter/db-schema";
 
 import { useRoomStore } from "@/store/message/room";
 import { useAppUserStore } from "@/store/message/user/appUser";
@@ -9,7 +9,7 @@ export const useReadAppUsers = () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const appUserStore = useAppUserStore();
   const { appUserMap } = storeToRefs(appUserStore);
-  return async (appUserIds: AppUser["id"][]) => {
+  return async (appUserIds: AppUserInMessage["id"][]) => {
     if (!currentRoomId.value) return;
 
     const ids = appUserIds.filter((id) => !appUserMap.value.has(id));

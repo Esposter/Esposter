@@ -12,9 +12,9 @@ import { router } from "@@/server/trpc";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/room/getCreatorProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import {
-  appUsers,
+  appUsersInMessage,
   DatabaseEntityType,
-  selectAppUserSchema,
+  selectAppUserInMessageSchema,
   selectRoomSchema,
   WebhookRelations,
   webhooks,
@@ -28,7 +28,7 @@ const readWebhooksInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type ReadWebhooksInput = z.infer<typeof readWebhooksInputSchema>;
 
 const readAppUsersByIdsInputSchema = z.object({
-  ids: selectAppUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
+  ids: selectAppUserInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
   roomId: selectRoomSchema.shape.id,
 });
 export type ReadAppUsersByIdsInput = z.infer<typeof readAppUsersByIdsInputSchema>;
@@ -49,7 +49,7 @@ export const webhookRouter = router({
           ).message,
         });
 
-      const newAppUser = (await ctx.db.insert(appUsers).values({ name }).returning()).find(Boolean);
+      const newAppUser = (await ctx.db.insert(appUsersInMessage).values({ name }).returning()).find(Boolean);
       if (!newAppUser)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -87,9 +87,9 @@ export const webhookRouter = router({
           message: new NotFoundError(DatabaseEntityType.Webhook, id).message,
         });
 
-      const deletedAppUser = (await ctx.db.delete(appUsers).where(eq(appUsers.id, webhook.userId)).returning()).find(
-        Boolean,
-      );
+      const deletedAppUser = (
+        await ctx.db.delete(appUsersInMessage).where(eq(appUsersInMessage.id, webhook.userId)).returning()
+      ).find(Boolean);
       if (!deletedAppUser)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -101,10 +101,10 @@ export const webhookRouter = router({
   readAppUsersByIds: getMemberProcedure(readAppUsersByIdsInputSchema, "roomId").query(
     async ({ ctx, input: { ids, roomId } }) => {
       const readAppUsers = await ctx.db
-        .select({ appUser: appUsers })
-        .from(appUsers)
-        .innerJoin(webhooks, eq(webhooks.userId, appUsers.id))
-        .where(and(eq(webhooks.roomId, roomId), inArray(appUsers.id, ids)));
+        .select({ appUser: appUsersInMessage })
+        .from(appUsersInMessage)
+        .innerJoin(webhooks, eq(webhooks.userId, appUsersInMessage.id))
+        .where(and(eq(webhooks.roomId, roomId), inArray(appUsersInMessage.id, ids)));
       return readAppUsers.map(({ appUser }) => appUser);
     },
   ),
