@@ -194,7 +194,7 @@ catalog:
   vue-codemirror: ^6.1.1
   vue-pdf-embed: ^2.1.3
   vue-router: ^4.6.4
-  vue-tsc: ^3.2.2
+  vue-tsc: ^3.2.3
   vue3-apexcharts: ^1.10.0
   vuetify: ^3.11.7
   vuetify-nuxt-module: ^0.19.3
