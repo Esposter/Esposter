@@ -35,7 +35,7 @@ catalog:
   "@lerna-lite/watch": ^4.11.0
   "@mdi/font": ^7.4.47
   "@nuxt/eslint": ^1.12.1
-  "@nuxt/fonts": ^0.12.1
+  "@nuxt/fonts": ^0.13.0
   "@nuxt/hints": ^1.0.0-alpha.5
   "@nuxt/scripts": ^0.13.2
   "@nuxt/test-utils": ^3.23.0
@@ -73,7 +73,7 @@ catalog:
   "@unocss/nuxt": ^66.6.0
   "@vite-pwa/nuxt": ^1.1.0
   "@vitejs/plugin-vue": ^6.0.3
-  "@vitest/coverage-v8": ^4.0.17
+  "@vitest/coverage-v8": ^4.0.18
   "@vitest/eslint-plugin": ^1.6.6
   "@vue-flow/background": ^1.3.2
   "@vue-flow/controls": ^1.1.3
@@ -108,7 +108,7 @@ catalog:
   eslint-config-prettier: ^10.1.8
   eslint-plugin-depend: ^1.4.0
   eslint-plugin-oxlint: 1.38.0
-  eslint-plugin-perfectionist: ^5.3.1
+  eslint-plugin-perfectionist: ^5.4.0
   eslint-plugin-pinia: ^0.4.2
   eslint-plugin-prettier: ^5.5.5
   eventemitter3: ^5.0.4
@@ -135,7 +135,7 @@ catalog:
   grid-layout-plus: ^1.1.1
   gsap: ^3.14.2
   h3: ^1.15.5
-  happy-dom: ^20.3.4
+  happy-dom: ^20.3.7
   howler: ^2.2.4
   is-mobile: ^5.0.0
   js-beautify: ^1.15.4
@@ -146,7 +146,7 @@ catalog:
   mjml-browser: ^4.18.0
   node-emoji: ^2.2.0
   node-html-parser: ^7.0.2
-  nuxt: ^4.2.2
+  nuxt: ^4.3.0
   nuxt-security: ^2.5.1
   obscenity: ^0.4.6
   omit-deep-lodash: ^1.1.7
@@ -170,10 +170,10 @@ catalog:
   show-open-file-picker: ^0.4.0
   sql-highlight: ^6.1.0
   superjson: ^2.2.6
-  survey-core: ^2.5.6
-  survey-creator-core: ^2.5.6
-  survey-creator-vue: ^2.5.6
-  survey-vue3-ui: ^2.5.6
+  survey-core: ^2.5.7
+  survey-creator-core: ^2.5.7
+  survey-creator-vue: ^2.5.7
+  survey-vue3-ui: ^2.5.7
   three: ^0.182.0
   three-globe: ^2.45.0
   trpc-nuxt: ^2.0.1
@@ -187,9 +187,9 @@ catalog:
   unplugin-dts: ^1.0.0-beta.6
   v-viewer: ^3.0.22
   viewerjs: ^1.11.7
-  vite: ^8.0.0-beta.8
+  vite: 8.0.0-beta.8
   vite-plugin-mkcert: ^1.17.9
-  vitest: ^4.0.17
+  vitest: ^4.0.18
   vue: ^3.5.27
   vue-codemirror: ^6.1.1
   vue-pdf-embed: ^2.1.3
@@ -202,7 +202,7 @@ catalog:
   worker-timers: ^8.0.29
   ws: ^8.19.0
   xmlbuilder2: ^4.0.3
-  zod: ^4.3.5
+  zod: ^4.3.6
 
 catalogMode: strict
 
@@ -218,6 +218,6 @@ onlyBuiltDependencies:
 
 overrides:
   pdfjs-dist: ^5.4.530
-  vite: ^8.0.0-beta.8
+  vite: 8.0.0-beta.8
 
 shellEmulator: true
