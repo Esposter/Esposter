@@ -9,7 +9,7 @@ import { useEventGridPublisherClientMock } from "@@/server/composables/azure/eve
 import { useTableClientMock } from "@@/server/composables/azure/table/useTableClient.test";
 import { PGlite } from "@electric-sql/pglite";
 import { messageSchema, schema, users } from "@esposter/db-schema";
-import { generateDrizzleJson, generateMigration } from "drizzle-kit/api";
+import { generateDrizzleJson, generateMigration } from "drizzle-kit/api-postgres";
 import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/pglite";
 import { IncomingMessage, ServerResponse } from "node:http";
@@ -108,7 +108,7 @@ export const createMockContext = async (): Promise<Context> => {
 
 const createMockDb = async () => {
   const client = new PGlite();
-  const db = drizzle(client, { schema });
+  const db = drizzle(client, { relations, schema });
   await createSchema(db);
   await pushSchema(db);
   await db.insert(users).values(mocks.getSession().user);

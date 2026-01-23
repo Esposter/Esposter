@@ -3,8 +3,8 @@ import type { Clause, CustomTableClient } from "@esposter/db-schema";
 import { createEmojiInputSchema } from "#shared/models/db/message/metadata/CreateEmojiInput";
 import { deleteEmojiInputSchema } from "#shared/models/db/message/metadata/DeleteEmojiInput";
 import {
-  MessageEmojiMetadataEntity,
-  MessageEmojiMetadataEntityPropertyNames,
+    MessageEmojiMetadataEntity,
+    MessageEmojiMetadataEntityPropertyNames,
 } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import { updateEmojiInputSchema } from "#shared/models/db/message/metadata/UpdateEmojiInput";
 import { createMessageEmojiMetadataEntity } from "#shared/services/message/createMessageEmojiMetadataEntity";
@@ -19,23 +19,23 @@ import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProce
 import { readMetadataInputSchema } from "@@/server/trpc/routers/message";
 import { createEntity, deleteEntity, getEntity, getTopNEntities, serializeClauses, updateEntity } from "@esposter/db";
 import {
-  AZURE_MAX_PAGE_SIZE,
-  AzureTable,
-  BinaryOperator,
-  MessageMetadataType,
-  selectRoomSchema,
+    AZURE_MAX_PAGE_SIZE,
+    AzureTable,
+    BinaryOperator,
+    MessageMetadataType,
+    selectRoomInMessageSchema,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-const onCreateEmojiInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
+const onCreateEmojiInputSchema = z.object({ roomId: selectRoomInMessageSchema.shape.id });
 export type OnCreateEmojiInput = z.infer<typeof onCreateEmojiInputSchema>;
 
-const onUpdateEmojiInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
+const onUpdateEmojiInputSchema = z.object({ roomId: selectRoomInMessageSchema.shape.id });
 export type OnUpdateEmojiInput = z.infer<typeof onUpdateEmojiInputSchema>;
 
-const onDeleteEmojiInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
+const onDeleteEmojiInputSchema = z.object({ roomId: selectRoomInMessageSchema.shape.id });
 export type OnDeleteEmojiInput = z.infer<typeof onDeleteEmojiInputSchema>;
 
 export const emojiRouter = router({

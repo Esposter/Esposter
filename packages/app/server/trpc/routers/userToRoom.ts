@@ -3,13 +3,13 @@ import { router } from "@@/server/trpc";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { DatabaseEntityType, selectRoomSchema, usersToRooms } from "@esposter/db-schema";
+import { DatabaseEntityType, selectRoomInMessageSchema, usersToRooms } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
-const readUserToRoomsInputSchema = z.object({ roomIds: selectRoomSchema.shape.id.array().min(1) });
+const readUserToRoomsInputSchema = z.object({ roomIds: selectRoomInMessageSchema.shape.id.array().min(1) });
 export type ReadUserToRoomsInput = z.infer<typeof readUserToRoomsInputSchema>;
 
 export const userToRoomRouter = router({

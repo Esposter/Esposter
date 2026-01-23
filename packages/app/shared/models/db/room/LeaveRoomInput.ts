@@ -1,6 +1,6 @@
 import type { z } from "zod";
 
-import { selectRoomSchema } from "@esposter/db-schema";
+import { selectRoomInMessageSchema } from "@esposter/db-schema";
 
-export const leaveRoomInputSchema = selectRoomSchema.shape.id;
+export const leaveRoomInputSchema = selectRoomInMessageSchema.shape.id;
 export type LeaveRoomInput = z.infer<typeof leaveRoomInputSchema>;

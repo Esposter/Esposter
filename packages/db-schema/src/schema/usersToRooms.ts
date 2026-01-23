@@ -1,8 +1,8 @@
-import type { Room } from "@/schema/rooms";
+import type { RoomInMessage } from "@/schema/roomsInMessage";
 import type { User } from "@/schema/users";
 
 import { messageSchema } from "@/schema/messageSchema";
-import { rooms } from "@/schema/rooms";
+import { roomsInMessage } from "@/schema/roomsInMessage";
 import { users } from "@/schema/users";
 import { relations } from "drizzle-orm";
 import { pgEnum, primaryKey, text, uuid } from "drizzle-orm/pg-core";
@@ -24,7 +24,7 @@ export const usersToRooms = messageSchema.table(
     notificationType: notificationTypeEnum("notificationType").notNull().default(NotificationType.DirectMessage),
     roomId: uuid("roomId")
       .notNull()
-      .references(() => rooms.id, { onDelete: "cascade" }),
+      .references(() => roomsInMessage.id, { onDelete: "cascade" }),
     userId: text("userId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
@@ -34,9 +34,9 @@ export const usersToRooms = messageSchema.table(
 export type UserToRoom = typeof usersToRooms.$inferSelect;
 
 export const usersToRoomsRelations = relations(usersToRooms, ({ one }) => ({
-  room: one(rooms, {
+  room: one(roomsInMessage, {
     fields: [usersToRooms.roomId],
-    references: [rooms.id],
+    references: [roomsInMessage.id],
   }),
   user: one(users, {
     fields: [usersToRooms.userId],
@@ -48,4 +48,4 @@ export const UserToRoomRelations = {
   room: true,
   user: true,
 } as const;
-export type UserToRoomWithRelations = UserToRoom & { room: Room; user: User };
+export type UserToRoomWithRelations = UserToRoom & { room: RoomInMessage; user: User };

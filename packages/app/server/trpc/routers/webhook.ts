@@ -15,7 +15,7 @@ import {
   appUsersInMessage,
   DatabaseEntityType,
   selectAppUserInMessageSchema,
-  selectRoomSchema,
+  selectRoomInMessageSchema,
   WebhookRelations,
   webhooks,
 } from "@esposter/db-schema";
@@ -24,12 +24,12 @@ import { TRPCError } from "@trpc/server";
 import { and, count, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 
-const readWebhooksInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
+const readWebhooksInputSchema = z.object({ roomId: selectRoomInMessageSchema.shape.id });
 export type ReadWebhooksInput = z.infer<typeof readWebhooksInputSchema>;
 
 const readAppUsersByIdsInputSchema = z.object({
   ids: selectAppUserInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
-  roomId: selectRoomSchema.shape.id,
+  roomId: selectRoomInMessageSchema.shape.id,
 });
 export type ReadAppUsersByIdsInput = z.infer<typeof readAppUsersByIdsInputSchema>;
 

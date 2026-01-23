@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { Room } from "@esposter/db-schema";
 
 import { NotificationTypeLabelMap } from "@/services/message/NotificationTypeLabelMap";
 import { useUserToRoomStore } from "@/store/message/userToRoom";

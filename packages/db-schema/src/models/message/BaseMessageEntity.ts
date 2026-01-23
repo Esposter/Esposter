@@ -6,7 +6,7 @@ import type { Except } from "type-fest";
 import { AzureEntity, createAzureEntitySchema } from "@/models/azure/table/AzureEntity";
 import { fileEntitySchema } from "@/models/azure/table/FileEntity";
 import { MessageType } from "@/models/message/MessageType";
-import { selectRoomSchema } from "@/schema/rooms";
+import { selectRoomInMessageSchema } from "@/schema/roomsInMessage";
 import { selectUserSchema } from "@/schema/users";
 import { FILE_MAX_LENGTH } from "@/services/azure/container/constants";
 import { z } from "zod";
@@ -34,7 +34,7 @@ export class BaseMessageEntity<TType extends MessageType = Exclude<MessageType, 
 export const baseMessageEntitySchema = z.object({
   ...createAzureEntitySchema(
     z.object({
-      partitionKey: selectRoomSchema.shape.id,
+      partitionKey: selectRoomInMessageSchema.shape.id,
       // Reverse-ticked timestamp
       rowKey: z.string(),
     }),

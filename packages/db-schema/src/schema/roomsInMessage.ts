@@ -1,15 +1,14 @@
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { users } from "@/schema/users";
-import { usersToRooms } from "@/schema/usersToRooms";
-import { relations, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import { check, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const ROOM_NAME_MAX_LENGTH = 100;
 
-export const rooms = pgTable(
+export const roomsInMessage = pgTable(
   "rooms",
   {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -25,12 +24,8 @@ export const rooms = pgTable(
   },
 );
 
-export type Room = typeof rooms.$inferSelect;
+export type RoomInMessage = typeof roomsInMessage.$inferSelect;
 
-export const selectRoomSchema = createSelectSchema(rooms, {
+export const selectRoomInMessageSchema = createSelectSchema(roomsInMessage, {
   name: z.string().max(ROOM_NAME_MAX_LENGTH),
 });
-
-export const roomsRelations = relations(rooms, ({ many }) => ({
-  usersToRooms: many(usersToRooms),
-}));

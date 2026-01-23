@@ -6,7 +6,7 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { userToRoomRouter } from "@@/server/trpc/routers/userToRoom";
-import { NotificationType, rooms, usersToRooms } from "@esposter/db-schema";
+import { NotificationType, roomsInMessage, usersToRooms } from "@esposter/db-schema";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("userToRoom", () => {
@@ -25,7 +25,7 @@ describe("userToRoom", () => {
 
   afterEach(async () => {
     await mockContext.db.delete(usersToRooms);
-    await mockContext.db.delete(rooms);
+    await mockContext.db.delete(roomsInMessage);
   });
 
   test("reads", async () => {

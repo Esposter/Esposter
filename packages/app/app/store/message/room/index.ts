@@ -2,7 +2,6 @@ import type { CreateRoomInput } from "#shared/models/db/room/CreateRoomInput";
 import type { DeleteRoomInput } from "#shared/models/db/room/DeleteRoomInput";
 import type { JoinRoomInput } from "#shared/models/db/room/JoinRoomInput";
 import type { LeaveRoomInput } from "#shared/models/db/room/LeaveRoomInput";
-import type { Room } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
 import { authClient } from "@/services/auth/authClient";

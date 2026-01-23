@@ -2,7 +2,7 @@ import type { CreateWebhookInput } from "#shared/models/db/webhook/CreateWebhook
 import type { DeleteWebhookInput } from "#shared/models/db/webhook/DeleteWebhookInput";
 import type { RotateTokenInput } from "#shared/models/db/webhook/RotateTokenInput";
 import type { UpdateWebhookInput } from "#shared/models/db/webhook/UpdateWebhookInput";
-import type { Room, Webhook } from "@esposter/db-schema";
+import type { Webhook } from "@esposter/db-schema";
 import type { Except } from "type-fest";
 
 import { createOperationData } from "@/services/shared/createOperationData";

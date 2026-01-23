@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { Room } from "@esposter/db-schema";
 
 import { useWebhookStore } from "@/store/message/webhook";
 

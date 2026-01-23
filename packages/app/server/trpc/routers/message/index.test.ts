@@ -20,7 +20,7 @@ import {
   AzureEntityType,
   getReverseTickedTimestamp,
   MessageType,
-  rooms,
+  roomsInMessage,
   StandardMessageEntity,
 } from "@esposter/db-schema";
 import { MENTION_ID_ATTRIBUTE, MENTION_TYPE, MENTION_TYPE_ATTRIBUTE, NotFoundError } from "@esposter/shared";
@@ -52,7 +52,7 @@ describe("message", () => {
     MockContainerDatabase.clear();
     MockEventGridDatabase.clear();
     MockTableDatabase.clear();
-    await mockContext.db.delete(rooms);
+    await mockContext.db.delete(roomsInMessage);
   });
 
   test("reads empty", async () => {

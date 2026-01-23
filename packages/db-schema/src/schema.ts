@@ -6,7 +6,7 @@ import * as likes from "@/schema/likes";
 import * as posts from "@/schema/posts";
 import * as pushSubscriptionsInMessage from "@/schema/pushSubscriptionsInMessage";
 import * as rateLimiterFlexible from "@/schema/rateLimiterFlexible";
-import * as rooms from "@/schema/rooms";
+import * as roomsInMessage from "@/schema/roomsInMessage";
 import * as searchHistories from "@/schema/searchHistories";
 import * as sessions from "@/schema/sessions";
 import * as surveys from "@/schema/surveys";
@@ -26,7 +26,7 @@ export const schema = {
   ...posts,
   ...pushSubscriptionsInMessage,
   ...rateLimiterFlexible,
-  ...rooms,
+  ...roomsInMessage,
   ...searchHistories,
   ...sessions,
   ...surveys,

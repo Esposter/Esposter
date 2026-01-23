@@ -8,7 +8,7 @@ import { getCursorPaginationData } from "@@/server/services/pagination/cursor/ge
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { roomRouter } from "@@/server/trpc/routers/room";
-import { CODE_LENGTH, DatabaseEntityType, rooms } from "@esposter/db-schema";
+import { CODE_LENGTH, DatabaseEntityType, roomsInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
@@ -27,7 +27,7 @@ describe("room", () => {
 
   afterEach(async () => {
     MockContainerDatabase.clear();
-    await mockContext.db.delete(rooms);
+    await mockContext.db.delete(roomsInMessage);
   });
 
   test("creates", async () => {

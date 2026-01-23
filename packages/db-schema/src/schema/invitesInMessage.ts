@@ -1,10 +1,9 @@
-import type { Room } from "@/schema/rooms";
 import type { User } from "@/schema/users";
 import type { UserToRoom } from "@/schema/usersToRooms";
 
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
-import { rooms } from "@/schema/rooms";
+import { roomsInMessage } from "@/schema/roomsInMessage";
 import { users } from "@/schema/users";
 import { sql } from "drizzle-orm";
 import { check, text, uuid } from "drizzle-orm/pg-core";
@@ -20,7 +19,7 @@ export const invitesInMessage = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
     roomId: uuid("roomId")
       .notNull()
-      .references(() => rooms.id, { onDelete: "cascade" }),
+      .references(() => roomsInMessage.id, { onDelete: "cascade" }),
     userId: text("userId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),

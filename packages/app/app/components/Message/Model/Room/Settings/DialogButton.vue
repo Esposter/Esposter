@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { Room } from "@esposter/db-schema";
 
 import { SettingsType } from "@/models/message/room/SettingsType";
 import { authClient } from "@/services/auth/authClient";
