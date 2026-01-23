@@ -3,12 +3,11 @@ import type { User } from "@/schema/users";
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { users } from "@/schema/users";
-import { relations } from "drizzle-orm";
 import { text, timestamp, unique, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const pushSubscriptions = pgTable(
+export const pushSubscriptionsInMessage = pgTable(
   "push_subscriptions",
   {
     auth: text("auth").notNull(),
@@ -26,17 +25,10 @@ export const pushSubscriptions = pgTable(
   },
 );
 
-export type PushSubscriptionEntity = typeof pushSubscriptions.$inferSelect;
+export type PushSubscriptionInMessageEntity = typeof pushSubscriptionsInMessage.$inferSelect;
 
-export const selectPushSubscriptionSchema = createSelectSchema(pushSubscriptions, {
+export const selectPushSubscriptionInMessageSchema = createSelectSchema(pushSubscriptionsInMessage, {
   endpoint: z.url(),
 });
 
-export const pushSubscriptionsRelations = relations(pushSubscriptions, ({ one }) => ({
-  user: one(users, {
-    fields: [pushSubscriptions.userId],
-    references: [users.id],
-  }),
-}));
-
-export type PushSubscriptionWithRelations = PushSubscriptionEntity & { user: User };
+export type PushSubscriptionInMessageWithRelations = PushSubscriptionInMessageEntity & { user: User };

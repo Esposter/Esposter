@@ -1,7 +1,7 @@
 import { pushSubscriptionSchema } from "@@/server/models/pushSubscription/PushSubscription";
 import { router } from "@@/server/trpc";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { DatabaseEntityType, pushSubscriptions } from "@esposter/db-schema";
+import { DatabaseEntityType, pushSubscriptionsInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
@@ -18,7 +18,7 @@ export const pushSubscriptionRouter = router({
     }) => {
       const newPushSubscription = (
         await ctx.db
-          .insert(pushSubscriptions)
+          .insert(pushSubscriptionsInMessage)
           .values({
             auth,
             endpoint,
@@ -32,7 +32,7 @@ export const pushSubscriptionRouter = router({
               expirationTime: expirationTime ? new Date(expirationTime) : null,
               p256dh,
             },
-            target: [pushSubscriptions.endpoint, pushSubscriptions.userId],
+            target: [pushSubscriptionsInMessage.endpoint, pushSubscriptionsInMessage.userId],
           })
           .returning()
       ).find(Boolean);
@@ -51,8 +51,13 @@ export const pushSubscriptionRouter = router({
   unsubscribe: standardAuthedProcedure.input(pushSubscriptionSchema.shape.endpoint).mutation(async ({ ctx, input }) => {
     const deletedPushSubscription = (
       await ctx.db
-        .delete(pushSubscriptions)
-        .where(and(eq(pushSubscriptions.endpoint, input), eq(pushSubscriptions.userId, ctx.session.user.id)))
+        .delete(pushSubscriptionsInMessage)
+        .where(
+          and(
+            eq(pushSubscriptionsInMessage.endpoint, input),
+            eq(pushSubscriptionsInMessage.userId, ctx.session.user.id),
+          ),
+        )
         .returning()
     ).find(Boolean);
     if (!deletedPushSubscription)

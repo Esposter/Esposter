@@ -4,7 +4,7 @@ import * as appUsersInMessage from "@/schema/appUsersInMessage";
 import * as invitesInMessage from "@/schema/invitesInMessage";
 import * as likes from "@/schema/likes";
 import * as posts from "@/schema/posts";
-import * as pushSubscriptions from "@/schema/pushSubscriptions";
+import * as pushSubscriptionsInMessage from "@/schema/pushSubscriptionsInMessage";
 import * as rateLimiterFlexible from "@/schema/rateLimiterFlexible";
 import * as rooms from "@/schema/rooms";
 import * as searchHistories from "@/schema/searchHistories";
@@ -24,7 +24,7 @@ export const schema = {
   ...invitesInMessage,
   ...likes,
   ...posts,
-  ...pushSubscriptions,
+  ...pushSubscriptionsInMessage,
   ...rateLimiterFlexible,
   ...rooms,
   ...searchHistories,
