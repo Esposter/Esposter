@@ -8,9 +8,11 @@ export const useReadPostFromRoute = async () => {
   const post = await $trpc.post.readPost.query(postId);
 
   if (post.parentId)
+    // @TODO: https://github.com/nuxt/nuxt/issues/34138
+    // eslint-disable-next-line @typescript-eslint/only-throw-error
     throw createError({
-      message: `${getEntityNotFoundStatusMessage(DatabaseEntityType.Post, postId)}, you might be trying to find a comment`,
-      statusCode: 404,
+      status: 404,
+      statusText: `${getEntityNotFoundStatusMessage(DatabaseEntityType.Post, postId)}, you might be trying to find a comment`,
     });
 
   return post;

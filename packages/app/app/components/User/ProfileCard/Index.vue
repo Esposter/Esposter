@@ -11,7 +11,9 @@ const { updateUser } = authClient;
 const { backgroundOpacity20 } = useColors();
 const profileCardRows = computed(() => {
   if (!session.value)
-    throw createError({ message: getEntityNotFoundStatusMessage(DatabaseEntityType.User), statusCode: 404 });
+    // @TODO: https://github.com/nuxt/nuxt/issues/34138
+    // eslint-disable-next-line @typescript-eslint/only-throw-error
+    throw createError({ statusText: getEntityNotFoundStatusMessage(DatabaseEntityType.User), status: 404 });
 
   return {
     name: {
