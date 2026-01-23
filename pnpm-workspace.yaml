@@ -34,7 +34,7 @@ catalog:
   "@lerna-lite/run": ^4.11.1
   "@lerna-lite/watch": ^4.11.0
   "@mdi/font": ^7.4.47
-  "@nuxt/eslint": ^1.12.1
+  "@nuxt/eslint": ^1.13.0
   "@nuxt/fonts": ^0.13.0
   "@nuxt/hints": ^1.0.0-alpha.5
   "@nuxt/scripts": ^0.13.2
