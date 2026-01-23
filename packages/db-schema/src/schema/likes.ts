@@ -1,6 +1,6 @@
 import { posts } from "@/schema/posts";
 import { users } from "@/schema/users";
-import { relations, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import { check, integer, pgTable, primaryKey, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -27,14 +27,3 @@ export type Like = typeof likes.$inferSelect;
 export const selectLikeSchema = createSelectSchema(likes, {
   value: z.literal([1, -1]),
 });
-
-export const likesRelations = relations(likes, ({ one }) => ({
-  post: one(posts, {
-    fields: [likes.postId],
-    references: [posts.id],
-  }),
-  user: one(users, {
-    fields: [likes.userId],
-    references: [users.id],
-  }),
-}));
