@@ -34,8 +34,9 @@
   "scripts": {
     "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
     "coverage": "vitest run --coverage",
-    "db:run": "tsx node_modules/drizzle-kit/bin.cjs",
     "db:gen": "pnpm db:run generate",
+    "db:pull": "pnpm db:run pull",
+    "db:run": "tsx node_modules/drizzle-kit/bin.cjs",
     "db:studio": "pnpm db:run studio",
     "db:up": "pnpm db:run up",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts",
