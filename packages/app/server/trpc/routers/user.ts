@@ -1,4 +1,4 @@
-import type { IUserStatus } from "@esposter/db-schema";
+import type { UserStatusInMessage } from "@esposter/db-schema";
 import type { ReadableStream } from "node:stream/web";
 import type { SetNonNullable } from "type-fest";
 import type { z } from "zod";
@@ -14,9 +14,9 @@ import {
   AzureContainer,
   DatabaseEntityType,
   selectUserSchema,
-  selectUserStatusSchema,
+  selectUserStatusInMessageSchema,
   UserStatus,
-  userStatuses,
+  userStatusesInMessage,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -27,7 +27,7 @@ import { Readable } from "node:stream";
 const readStatusesInputSchema = selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
 export type ReadStatusesInput = z.infer<typeof readStatusesInputSchema>;
 
-const upsertStatusInputSchema = selectUserStatusSchema
+const upsertStatusInputSchema = selectUserStatusInMessageSchema
   .pick({ message: true, status: true })
   .partial()
   .refine(({ message, status }) => message !== undefined || status !== undefined);
@@ -40,11 +40,11 @@ export const userRouter = router({
   connect: standardAuthedProcedure.mutation(async ({ ctx }) => {
     const upsertedStatus = (
       await ctx.db
-        .insert(userStatuses)
+        .insert(userStatusesInMessage)
         .values({ isConnected: true, userId: ctx.session.user.id })
         .onConflictDoUpdate({
           set: { isConnected: true },
-          target: userStatuses.userId,
+          target: userStatusesInMessage.userId,
         })
         .returning()
     ).find(Boolean);
@@ -60,11 +60,11 @@ export const userRouter = router({
   disconnect: standardAuthedProcedure.mutation(async ({ ctx }) => {
     const upsertedStatus = (
       await ctx.db
-        .insert(userStatuses)
+        .insert(userStatusesInMessage)
         .values({ isConnected: false, userId: ctx.session.user.id })
         .onConflictDoUpdate({
           set: { isConnected: false },
-          target: userStatuses.userId,
+          target: userStatusesInMessage.userId,
         })
         .returning()
     ).find(Boolean);
@@ -90,8 +90,11 @@ export const userRouter = router({
     }
   }),
   readStatuses: standardAuthedProcedure.input(readStatusesInputSchema).query(async ({ ctx, input }) => {
-    const foundUserStatuses = await ctx.db.select().from(userStatuses).where(inArray(userStatuses.userId, input));
-    const resultUserStatuses: SetNonNullable<IUserStatus, "status">[] = [];
+    const foundUserStatuses = await ctx.db
+      .select()
+      .from(userStatusesInMessage)
+      .where(inArray(userStatusesInMessage.userId, input));
+    const resultUserStatuses: SetNonNullable<UserStatusInMessage, "status">[] = [];
     const statusMap = new Map(foundUserStatuses.map((us) => [us.userId, us]));
 
     for (const userId of input) {
@@ -126,11 +129,11 @@ export const userRouter = router({
   upsertStatus: standardAuthedProcedure.input(upsertStatusInputSchema).mutation(async ({ ctx, input }) => {
     const upsertedStatus = (
       await ctx.db
-        .insert(userStatuses)
+        .insert(userStatusesInMessage)
         .values({ ...input, userId: ctx.session.user.id })
         .onConflictDoUpdate({
           set: { ...input },
-          target: userStatuses.userId,
+          target: userStatusesInMessage.userId,
         })
         .returning()
     ).find(Boolean);

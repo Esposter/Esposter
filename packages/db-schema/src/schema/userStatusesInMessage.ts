@@ -1,7 +1,7 @@
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { users } from "@/schema/users";
-import { relations, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import { boolean, check, pgEnum, text, timestamp } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -19,7 +19,7 @@ const userStatusSchema = z.enum(UserStatus) satisfies z.ZodType<UserStatus>;
 
 export const userStatusEnum = pgEnum("user_status", UserStatus);
 
-export const userStatuses = pgTable(
+export const userStatusesInMessage = pgTable(
   "user_statuses",
   {
     expiresAt: timestamp("expiresAt"),
@@ -38,16 +38,9 @@ export const userStatuses = pgTable(
     schema: messageSchema,
   },
 );
-export type IUserStatus = typeof userStatuses.$inferSelect;
+export type UserStatusInMessage = typeof userStatusesInMessage.$inferSelect;
 
-export const selectUserStatusSchema = createSelectSchema(userStatuses, {
+export const selectUserStatusInMessageSchema = createSelectSchema(userStatusesInMessage, {
   message: z.string().max(STATUS_MESSAGE_MAX_LENGTH),
   status: userStatusSchema.nullable(),
 });
-
-export const userStatusesRelations = relations(userStatuses, ({ one }) => ({
-  user: one(users, {
-    fields: [userStatuses.userId],
-    references: [users.id],
-  }),
-}));

@@ -2,12 +2,6 @@ import { schema } from "@/schema";
 import { defineRelationsPart } from "drizzle-orm";
 
 const relations = defineRelationsPart(schema, (r) => ({
-  userStatusesInMessage: {
-    user: r.one.users({
-      from: r.userStatusesInMessage.userId,
-      to: r.users.id,
-    }),
-  },
   webhooksInMessage: {
     appUsersInMessage: r.one.appUsersInMessage({
       from: r.webhooksInMessage.userId,
