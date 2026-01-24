@@ -1,12 +1,4 @@
-import { accounts } from "@/schema/accounts";
-import { likes } from "@/schema/likes";
-import { posts } from "@/schema/posts";
-import { sessions } from "@/schema/sessions";
-import { surveys } from "@/schema/surveys";
-import { userAchievements } from "@/schema/userAchievements";
-import { userStatuses } from "@/schema/userStatuses";
-import { usersToRooms } from "@/schema/usersToRooms";
-import { relations, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import { boolean, check, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -36,17 +28,3 @@ export const selectUserSchema = createSelectSchema(users, {
   email: z.email(),
   name: z.string().min(1).max(USER_NAME_MAX_LENGTH),
 });
-
-export const usersRelations = relations(users, ({ many, one }) => ({
-  accounts: many(accounts),
-  likes: many(likes),
-  posts: many(posts),
-  sessions: many(sessions),
-  surveys: many(surveys),
-  userAchievements: many(userAchievements),
-  userStatuses: one(userStatuses, {
-    fields: [users.id],
-    references: [userStatuses.userId],
-  }),
-  usersToRooms: many(usersToRooms),
-}));

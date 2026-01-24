@@ -6,6 +6,7 @@ import { pushSubscriptionsInMessageRelation } from "@/relations/pushSubscription
 import { roomsInMessageRelation } from "@/relations/roomsInMessageRelation";
 import { sessionsRelation } from "@/relations/sessionsRelation";
 import { surveysRelation } from "@/relations/surveysRelation";
+import { usersRelation } from "@/relations/usersRelation";
 
 export const relations = {
   ...accountsRelation,
@@ -16,4 +17,5 @@ export const relations = {
   ...roomsInMessageRelation,
   ...sessionsRelation,
   ...surveysRelation,
+  ...usersRelation,
 };

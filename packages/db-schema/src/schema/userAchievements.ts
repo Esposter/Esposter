@@ -3,7 +3,7 @@ import type { Achievement } from "@/schema/achievements";
 import { pgTable } from "@/pgTable";
 import { achievements } from "@/schema/achievements";
 import { users } from "@/schema/users";
-import { relations, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import { check, integer, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -35,16 +35,6 @@ export const selectUserAchievementSchema = createSelectSchema(userAchievements, 
   amount: z.int().min(1),
 });
 
-export const userAchievementsRelations = relations(userAchievements, ({ one }) => ({
-  achievement: one(achievements, {
-    fields: [userAchievements.achievementId],
-    references: [achievements.id],
-  }),
-  user: one(users, {
-    fields: [userAchievements.userId],
-    references: [users.id],
-  }),
-}));
 // @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
 export const UserAchievementRelations = {
   achievement: true,
