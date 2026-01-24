@@ -4,8 +4,8 @@ import { defineRelationsPart } from "drizzle-orm";
 export const userStatusesInMessageRelation = defineRelationsPart(schema, (r) => ({
   userStatusesInMessage: {
     user: r.one.users({
-      fields: [r.userStatusesInMessage.userId],
-      references: [r.users.id],
+      from: r.userStatusesInMessage.userId,
+      to: r.users.id,
     }),
   },
 }));

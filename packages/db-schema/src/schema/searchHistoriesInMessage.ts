@@ -5,7 +5,7 @@ import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { roomsInMessage } from "@/schema/roomsInMessage";
 import { users } from "@/schema/users";
-import { relations, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import { check, jsonb, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -34,14 +34,3 @@ export type SearchHistoryInMessage = typeof searchHistoriesInMessage.$inferSelec
 export const selectSearchHistoryInMessageSchema = createSelectSchema(searchHistoriesInMessage, {
   query: z.string().max(MESSAGE_MAX_LENGTH),
 });
-
-export const searchHistoriesInMessageRelations = relations(searchHistoriesInMessage, ({ one }) => ({
-  room: one(roomsInMessage, {
-    fields: [searchHistoriesInMessage.roomId],
-    references: [roomsInMessage.id],
-  }),
-  user: one(users, {
-    fields: [searchHistoriesInMessage.userId],
-    references: [users.id],
-  }),
-}));

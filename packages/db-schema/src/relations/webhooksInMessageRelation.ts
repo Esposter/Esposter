@@ -1,7 +1,7 @@
 import { schema } from "@/schema";
 import { defineRelationsPart } from "drizzle-orm";
 
-const relations = defineRelationsPart(schema, (r) => ({
+export const webhooksInMessageRelation = defineRelationsPart(schema, (r) => ({
   webhooksInMessage: {
     appUsersInMessage: r.one.appUsersInMessage({
       from: r.webhooksInMessage.userId,

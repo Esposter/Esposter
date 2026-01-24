@@ -15,7 +15,7 @@ import * as users from "@/schema/users";
 import * as userStatusesInMessage from "@/schema/userStatusesInMessage";
 import * as usersToRoomsInMessage from "@/schema/usersToRoomsInMessage";
 import * as verifications from "@/schema/verifications";
-import * as webhooks from "@/schema/webhooks";
+import * as webhooksInMessage from "@/schema/webhooksInMessage";
 
 export const schema = {
   ...accounts,
@@ -35,5 +35,5 @@ export const schema = {
   ...userStatusesInMessage,
   ...usersToRoomsInMessage,
   ...verifications,
-  ...webhooks,
+  ...webhooksInMessage,
 };

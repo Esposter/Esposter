@@ -6,14 +6,14 @@ import { appUsersInMessage } from "@/schema/appUsersInMessage";
 import { messageSchema } from "@/schema/messageSchema";
 import { roomsInMessage } from "@/schema/roomsInMessage";
 import { users } from "@/schema/users";
-import { relations, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import { boolean, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const WEBHOOK_NAME_MAX_LENGTH = 100;
 
-export const webhooks = pgTable(
+export const webhooksInMessage = pgTable(
   "webhooks",
   {
     creatorId: text("creator_id")
@@ -40,29 +40,15 @@ export const webhooks = pgTable(
   },
 );
 
-export type Webhook = typeof webhooks.$inferSelect;
+export type WebhookInMessage = typeof webhooksInMessage.$inferSelect;
 
-export const selectWebhookSchema = createSelectSchema(webhooks, {
+export const selectWebhookInMessageSchema = createSelectSchema(webhooksInMessage, {
   name: z.string().min(1).max(WEBHOOK_NAME_MAX_LENGTH),
 });
 
-export const webhooksRelations = relations(webhooks, ({ one }) => ({
-  creator: one(users, {
-    fields: [webhooks.creatorId],
-    references: [users.id],
-  }),
-  room: one(roomsInMessage, {
-    fields: [webhooks.roomId],
-    references: [roomsInMessage.id],
-  }),
-  user: one(appUsersInMessage, {
-    fields: [webhooks.userId],
-    references: [appUsersInMessage.id],
-  }),
-}));
 // @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
-export const WebhookRelations = {
+export const WebhookInMessageRelations = {
   room: true,
   user: true,
 } as const;
-export type WebhookWithRelations = Webhook & { room: RoomInMessage; user: User };
+export type WebhookInMessageWithRelations = WebhookInMessage & { room: RoomInMessage; user: User };
