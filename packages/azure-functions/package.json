@@ -37,6 +37,7 @@
     "@azure/eventgrid": "catalog:",
     "@azure/functions": "catalog:",
     "@azure/identity": "catalog:",
+    "@azure/storage-blob": "catalog:",
     "@azure/web-pubsub": "catalog:",
     "@esposter/db": "workspace:*",
     "@esposter/db-schema": "workspace:*",

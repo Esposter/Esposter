@@ -8,10 +8,10 @@ export const getWeightedRandomValue = <T extends CumulativeWeight>(values: T[]) 
     throw new InvalidOperationError(
       Operation.Read,
       getWeightedRandomValue.name,
-      "Cannot pick weighted random value from empty array",
+      "cannot pick weighted random value from empty values",
     );
 
   const maxCumulativeWeight = values[values.length - 1].cumulativeWeight;
   const randomCumulativeWeight = createRandomNumber(maxCumulativeWeight);
-  return values[values.filter(({ cumulativeWeight }) => cumulativeWeight <= randomCumulativeWeight).length];
+  return values[values.filter(({ cumulativeWeight }) => cumulativeWeight <= randomCumulativeWeight).length - 1];
 };

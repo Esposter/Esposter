@@ -47,6 +47,7 @@
     "@azure/data-tables": "catalog:",
     "@azure/eventgrid": "catalog:",
     "@azure/storage-blob": "catalog:",
-    "@azure/storage-queue": "catalog:"
+    "@azure/storage-queue": "catalog:",
+    "@azure/web-pubsub": "catalog:"
   }
 }
