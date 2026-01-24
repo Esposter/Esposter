@@ -257,9 +257,9 @@ export const roomRouter = router({
           message: new NotFoundError(DatabaseEntityType.UserToRoom, JSON.stringify(userToRoom)).message,
         });
 
-      const { room, roomId, user } = userToRoomWithRelations;
+      const { roomId, roomInMessage, user } = userToRoomWithRelations;
       roomEventEmitter.emit("joinRoom", { roomId, sessionId: ctx.session.session.id, user });
-      return room;
+      return roomInMessage;
     }),
   ),
   leaveRoom: standardAuthedProcedure
