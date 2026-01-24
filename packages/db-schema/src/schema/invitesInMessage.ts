@@ -1,5 +1,6 @@
+import type { RoomInMessage } from "@/schema/roomsInMessage";
 import type { User } from "@/schema/users";
-import type { UserToRoom } from "@/schema/usersToRooms";
+import type { UserToRoomInMessage } from "@/schema/usersToRoomsInMessage";
 
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
@@ -46,6 +47,6 @@ export const InviteInMessageRelations = {
   user: true,
 } as const;
 export type InviteInMessageWithRelations = InviteInMessage & {
-  room: Room & { usersToRooms: UserToRoom[] };
+  room: RoomInMessage & { usersToRooms: UserToRoomInMessage[] };
   user: User;
 };
