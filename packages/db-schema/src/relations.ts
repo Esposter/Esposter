@@ -8,6 +8,7 @@ import { roomsInMessageRelation } from "@/relations/roomsInMessageRelation";
 import { sessionsRelation } from "@/relations/sessionsRelation";
 import { surveysRelation } from "@/relations/surveysRelation";
 import { usersRelation } from "@/relations/usersRelation";
+import { usersToRoomsInMessageRelation } from "@/relations/usersToRoomsInMessageRelation";
 import { webhooksInMessageRelation } from "@/relations/webhooksInMessageRelation";
 
 export const relations = {
@@ -21,5 +22,6 @@ export const relations = {
   ...sessionsRelation,
   ...surveysRelation,
   ...usersRelation,
+  ...usersToRoomsInMessageRelation,
   ...webhooksInMessageRelation,
 };
