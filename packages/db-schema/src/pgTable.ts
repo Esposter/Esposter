@@ -1,12 +1,16 @@
-import type { BuildColumns, BuildExtraConfigColumns } from "drizzle-orm";
-import type { PgColumnBuilderBase, PgSchema, PgTableExtraConfigValue, PgTableWithColumns } from "drizzle-orm/pg-core";
+import type {
+  AnyPgColumnBuilder,
+  PgBuildExtraConfigColumns,
+  PgSchema,
+  PgTableExtraConfigValue,
+} from "drizzle-orm/pg-core";
 
 import { metadataSchema } from "@/metadataSchema";
 import { pgTable as basePgTable } from "drizzle-orm/pg-core";
 
 export const pgTable = <
   TTableName extends string,
-  TColumnsMap extends Record<string, PgColumnBuilderBase>,
+  TColumnsMap extends Record<string, AnyPgColumnBuilder>,
   TSchema extends string | undefined,
 >(
   name: TTableName,
@@ -15,11 +19,11 @@ export const pgTable = <
     extraConfig,
     schema,
   }: {
-    extraConfig?: (self: BuildExtraConfigColumns<TTableName, TColumnsMap, "pg">) => PgTableExtraConfigValue[];
+    extraConfig?: (self: PgBuildExtraConfigColumns<TColumnsMap>) => PgTableExtraConfigValue[];
     schema?: TSchema extends string ? PgSchema<TSchema> : undefined;
   } = {},
 ) =>
-  (schema?.table<TTableName, TColumnsMap & typeof metadataSchema>(
+  schema?.table<TTableName, TColumnsMap & typeof metadataSchema>(
     name,
     {
       ...metadataSchema,
@@ -27,16 +31,11 @@ export const pgTable = <
     },
     extraConfig,
   ) ??
-    basePgTable<TTableName, TColumnsMap & typeof metadataSchema>(
-      name,
-      {
-        ...metadataSchema,
-        ...columns,
-      },
-      extraConfig,
-    )) as PgTableWithColumns<{
-    columns: BuildColumns<TTableName, TColumnsMap & typeof metadataSchema, "pg">;
-    dialect: "pg";
-    name: TTableName;
-    schema: TSchema;
-  }>;
+  basePgTable<TTableName, TColumnsMap & typeof metadataSchema>(
+    name,
+    {
+      ...metadataSchema,
+      ...columns,
+    },
+    extraConfig,
+  );
