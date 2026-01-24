@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import type { RoomInMessage } from "@esposter/db-schema";
 
 import { useRoomStore } from "@/store/message/room";
 import { RoutePath } from "@esposter/shared";
 
 interface RoomListItemProps {
-  room: Room;
+  room: RoomInMessage;
 }
 
 const { room } = defineProps<RoomListItemProps>();

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { RoomInMessage } from "@esposter/db-schema";
 
 import { SettingsType } from "@/models/message/room/SettingsType";
 import { authClient } from "@/services/auth/authClient";
@@ -7,7 +8,7 @@ import { DatabaseEntityType } from "@esposter/db-schema";
 import { mergeProps } from "vue";
 
 interface RoomSettingsDialogButtonProps {
-  roomId: Room["id"];
+  roomId: RoomInMessage["id"];
 }
 
 defineSlots<{ activator: (props: Record<string, unknown>) => VNode }>();

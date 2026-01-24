@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { Webhook } from "@esposter/db-schema";
+import type { RoomInMessage, WebhookInMessage } from "@esposter/db-schema";
 
 import { useWebhookStore } from "@/store/message/webhook";
 
 interface ListItemProps {
-  roomId: Room["id"];
-  webhook: Webhook;
+  roomId: RoomInMessage["id"];
+  webhook: WebhookInMessage;
 }
 
 const { roomId, webhook } = defineProps<ListItemProps>();

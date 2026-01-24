@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { RoomInMessage } from "@esposter/db-schema";
 
 import { NotificationTypeLabelMap } from "@/services/message/NotificationTypeLabelMap";
 import { useUserToRoomStore } from "@/store/message/userToRoom";
@@ -6,7 +7,7 @@ import { NotificationType } from "@esposter/db-schema";
 import { mergeProps } from "vue";
 
 interface NotificationSettingsMenuButtonProps {
-  roomId: Room["id"];
+  roomId: RoomInMessage["id"];
 }
 
 const { roomId } = defineProps<NotificationSettingsMenuButtonProps>();

@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import type { RoomInMessage } from "@esposter/db-schema";
 
 import { useWebhookStore } from "@/store/message/webhook";
 
 interface RotateTokenButtonProps {
   id: string;
-  roomId: Room["id"];
+  roomId: RoomInMessage["id"];
 }
 
 const { id, roomId } = defineProps<RotateTokenButtonProps>();

@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import type { RoomInMessage } from "@esposter/db-schema";
 
 import { useForwardStore } from "@/store/message/forward";
 
 interface ForwardRoomListItemProps {
-  room: Room;
+  room: RoomInMessage;
 }
 
 const { room } = defineProps<ForwardRoomListItemProps>();
