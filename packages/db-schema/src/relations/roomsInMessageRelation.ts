@@ -4,11 +4,13 @@ import { defineRelationsPart } from "drizzle-orm";
 export const roomsInMessageRelation = defineRelationsPart(schema, (r) => ({
   roomsInMessage: {
     user: r.one.users({
-      alias: "roomsInMessage_userId_users_id",
       from: r.roomsInMessage.userId,
       to: r.users.id,
     }),
-    usersToRoomsInMessage: r.many.usersToRoomsInMessage(),
+    usersToRoomsInMessage: r.many.usersToRoomsInMessage({
+      from: r.roomsInMessage.id,
+      to: r.usersToRoomsInMessage.roomId,
+    }),
     usersViaInvitesInMessage: r.many.users({
       alias: "roomsInMessage_id_users_id_via_invitesInMessage",
       from: r.roomsInMessage.id.through(r.invitesInMessage.roomId),
@@ -24,6 +26,9 @@ export const roomsInMessageRelation = defineRelationsPart(schema, (r) => ({
       from: r.roomsInMessage.id.through(r.usersToRoomsInMessage.roomId),
       to: r.users.id.through(r.usersToRoomsInMessage.userId),
     }),
-    webhooksInMessages: r.many.webhooksInMessage(),
+    webhooksInMessages: r.many.webhooksInMessage({
+      from: r.roomsInMessage.id,
+      to: r.webhooksInMessage.roomId,
+    }),
   },
 }));

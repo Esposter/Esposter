@@ -1,14 +1,11 @@
 import { standardMessageEntitySchema } from "@/models/message/StandardMessageEntity";
 import { selectRoomInMessageSchema } from "@/schema/roomsInMessage";
-import { refineMessageSchema } from "@/services/message/refineMessageSchema";
 import { z } from "zod";
 
-export const standardCreateMessageInputSchema = refineMessageSchema(
-  z.object({
-    ...standardMessageEntitySchema
-      .pick({ files: true, message: true, replyRowKey: true, type: true })
-      .partial({ files: true, message: true }).shape,
-    roomId: selectRoomInMessageSchema.shape.id,
-  }),
-);
+export const standardCreateMessageInputSchema = z.object({
+  ...standardMessageEntitySchema
+    .pick({ files: true, message: true, replyRowKey: true, type: true })
+    .partial({ files: true, message: true }).shape,
+  roomId: selectRoomInMessageSchema.shape.id,
+});
 export type StandardCreateMessageInput = z.infer<typeof standardCreateMessageInputSchema>;
