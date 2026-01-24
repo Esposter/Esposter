@@ -5,7 +5,7 @@ import { db } from "@/services/db";
 import { getCreateMessageNotificationPayload } from "@/services/getCreateMessageNotificationPayload";
 import { webpush } from "@/services/webpush";
 import { getPushSubscriptionsForMessage } from "@esposter/db";
-import { pushSubscriptions } from "@esposter/db-schema";
+import { pushSubscriptionsInMessage } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { WebPushError } from "web-push";
@@ -43,7 +43,7 @@ export const pushNotification = async (
             if (error.statusCode === 410) {
               // A 410 GONE status means the subscription is no longer valid and should be deleted
               context.log(`Subscription for endpoint ${endpoint} has expired. Deleting.`);
-              await db.delete(pushSubscriptions).where(eq(pushSubscriptions.id, id));
+              await db.delete(pushSubscriptionsInMessage).where(eq(pushSubscriptionsInMessage.id, id));
             } else context.error(`Failed to send push notification to ${endpoint}: `, error);
         }
       })(),
