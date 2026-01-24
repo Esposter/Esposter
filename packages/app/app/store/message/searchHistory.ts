@@ -1,7 +1,7 @@
 import type { CreateSearchHistoryInput } from "#shared/models/db/searchHistory/CreateSearchHistoryInput";
 import type { DeleteSearchHistoryInput } from "#shared/models/db/searchHistory/DeleteSearchHistoryInput";
 import type { UpdateSearchHistoryInput } from "#shared/models/db/searchHistory/UpdateSearchHistoryInput";
-import type { SearchHistory } from "@esposter/db-schema";
+import type { SearchHistoryInMessage } from "@esposter/db-schema";
 
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useRoomStore } from "@/store/message/room";
@@ -9,7 +9,7 @@ import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const useSearchHistoryStore = defineStore("message/searchHistory", () => {
   const roomStore = useRoomStore();
-  const { items, ...restData } = useCursorPaginationDataMap<SearchHistory>(() => roomStore.currentRoomId);
+  const { items, ...restData } = useCursorPaginationDataMap<SearchHistoryInMessage>(() => roomStore.currentRoomId);
   const {
     createSearchHistory: baseCreateSearchHistory,
     deleteSearchHistory: baseDeleteSearchHistory,

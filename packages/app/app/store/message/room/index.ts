@@ -7,12 +7,12 @@ import { dayjs } from "#shared/services/dayjs";
 import { authClient } from "@/services/auth/authClient";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
-import { DatabaseEntityType, MessageType } from "@esposter/db-schema";
+import { DatabaseEntityType, MessageType, RoomInMessage } from "@esposter/db-schema";
 import { Operation, RoutePath, uuidValidateV4 } from "@esposter/shared";
 
 export const useRoomStore = defineStore("message/room", () => {
   const { $trpc } = useNuxtApp();
-  const { items, ...restData } = useCursorPaginationData<Room>();
+  const { items, ...restData } = useCursorPaginationData<RoomInMessage>();
   const {
     createRoom: storeCreateRoom,
     deleteRoom: baseStoreDeleteRoom,
