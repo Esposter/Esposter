@@ -9,7 +9,7 @@
       "isBackground": true,
       "dependsOn": "pnpm i (functions)",
       "options": {
-        "cwd": "${workspaceFolder}/packages\\webhook"
+        "cwd": "${workspaceFolder}/packages/azure-functions"
       }
     },
     {
@@ -17,7 +17,7 @@
       "label": "pnpm i (functions)",
       "command": "pnpm i",
       "options": {
-        "cwd": "${workspaceFolder}/packages\\webhook"
+        "cwd": "${workspaceFolder}/packages/azure-functions"
       }
     }
   ]
