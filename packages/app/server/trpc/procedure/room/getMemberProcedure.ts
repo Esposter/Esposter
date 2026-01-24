@@ -13,9 +13,15 @@ export const getMemberProcedure = <T extends z.ZodType>(schema: T, roomIdKey: ke
     const value = input[roomIdKey];
     if (!(typeof value === "string" && uuidValidateV4(value))) throw new TRPCError({ code: "BAD_REQUEST" });
 
-    const isMember = await ctx.db.query.usersToRooms.findFirst({
-      where: (usersToRooms, { and, eq }) =>
-        and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, value)),
+    const isMember = await ctx.db.query.usersToRoomsInMessage.findFirst({
+      where: {
+        roomId: {
+          eq: value,
+        },
+        userId: {
+          eq: ctx.session.user.id,
+        },
+      },
     });
     if (!isMember) throw new TRPCError({ code: "UNAUTHORIZED" });
     return next();

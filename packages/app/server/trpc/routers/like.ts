@@ -20,7 +20,11 @@ export const likeRouter = router({
           id: true,
           noLikes: true,
         },
-        where: (posts, { eq }) => eq(posts.id, input.postId),
+        where: {
+          id: {
+            eq: input.postId,
+          },
+        },
       });
       if (!post)
         throw new TRPCError({
@@ -60,7 +64,11 @@ export const likeRouter = router({
           id: true,
           noLikes: true,
         },
-        where: (posts, { eq }) => eq(posts.id, input),
+        where: {
+          id: {
+            eq: input,
+          },
+        },
       });
       if (!post)
         throw new TRPCError({
@@ -100,10 +108,21 @@ export const likeRouter = router({
             id: true,
             noLikes: true,
           },
-          where: (posts, { eq }) => eq(posts.id, postId),
+          where: {
+            id: {
+              eq: postId,
+            },
+          },
         }),
         tx.query.likes.findFirst({
-          where: (likes, { and, eq }) => and(eq(likes.userId, ctx.session.user.id), eq(likes.postId, postId)),
+          where: {
+            postId: {
+              eq: postId,
+            },
+            userId: {
+              eq: ctx.session.user.id,
+            },
+          },
         }),
       ]);
 

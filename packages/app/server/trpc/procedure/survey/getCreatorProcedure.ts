@@ -10,7 +10,14 @@ export const getCreatorProcedure = <T extends z.ZodType>(schema: T, surveyIdKey:
     if (typeof surveyId !== "string") throw new TRPCError({ code: "BAD_REQUEST" });
 
     const survey = await ctx.db.query.surveys.findFirst({
-      where: (surveys, { and, eq }) => and(eq(surveys.id, surveyId), eq(surveys.userId, ctx.session.user.id)),
+      where: {
+        id: {
+          eq: surveyId,
+        },
+        userId: {
+          eq: ctx.session.user.id,
+        },
+      },
     });
     if (!survey) throw new TRPCError({ code: "UNAUTHORIZED" });
     return next({ ctx: { survey } });

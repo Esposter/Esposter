@@ -1,5 +1,5 @@
-import type { Post, PostWithRelations } from "@esposter/db-schema";
-import type { SQL } from "drizzle-orm";
+import type { Post, PostWithRelations, relations } from "@esposter/db-schema";
+import type { RelationsFilter } from "drizzle-orm";
 
 import { createCommentInputSchema } from "#shared/models/db/post/CreateCommentInput";
 import { createPostInputSchema } from "#shared/models/db/post/CreatePostInput";
@@ -50,7 +50,11 @@ export const postRouter = router({
             id: true,
             noComments: true,
           },
-          where: (posts, { eq }) => eq(posts.id, input.parentId),
+          where: {
+            id: {
+              eq: input.parentId,
+            },
+          },
         });
         if (!parentPost)
           throw new TRPCError({
@@ -87,7 +91,11 @@ export const postRouter = router({
           .where(eq(posts.id, parentPost.id));
 
         const newCommentWithRelations = await tx.query.posts.findFirst({
-          where: (posts, { eq }) => eq(posts.id, newComment.id),
+          where: {
+            id: {
+              eq: newComment.id,
+            },
+          },
           with: PostRelations,
         });
         if (!newCommentWithRelations)
@@ -121,7 +129,11 @@ export const postRouter = router({
           });
 
         const newPostWithRelations = await tx.query.posts.findFirst({
-          where: (posts, { eq }) => eq(posts.id, newPost.id),
+          where: {
+            id: {
+              eq: newPost.id,
+            },
+          },
           with: PostRelations,
         });
         if (!newPostWithRelations)
@@ -152,7 +164,11 @@ export const postRouter = router({
           id: true,
           noComments: true,
         },
-        where: (posts, { eq }) => eq(posts.id, postId),
+        where: {
+          id: {
+            eq: postId,
+          },
+        },
       });
       if (!post)
         throw new TRPCError({
@@ -183,7 +199,11 @@ export const postRouter = router({
   }),
   readPost: standardRateLimitedProcedure.input(readPostInputSchema).query<PostWithRelations>(async ({ ctx, input }) => {
     const post = await ctx.db.query.posts.findFirst({
-      where: (posts, { eq }) => eq(posts.id, input),
+      where: {
+        id: {
+          eq: input,
+        },
+      },
       with: PostRelations,
     });
     if (!post)
@@ -193,14 +213,14 @@ export const postRouter = router({
   readPosts: standardRateLimitedProcedure
     .input(readPostsInputSchema)
     .query(async ({ ctx, input: { cursor, limit, parentId, sortBy } }) => {
+      const where: RelationsFilter<(typeof relations)["posts"], typeof relations> = parentId
+        ? { parentId: { eq: parentId } }
+        : { parentId: { isNull: true } };
+      if (cursor) where.RAW = (posts) => getCursorWhere(posts, cursor, sortBy);
       const resultPosts: PostWithRelations[] = await ctx.db.query.posts.findMany({
         limit: limit + 1,
         orderBy: (posts) => parseSortByToSql(posts, sortBy),
-        where: (posts, { and, eq, isNull }) => {
-          const wheres: (SQL | undefined)[] = [parentId ? eq(posts.parentId, parentId) : isNull(posts.parentId)];
-          if (cursor) wheres.push(getCursorWhere(posts, cursor, sortBy));
-          return and(...wheres);
-        },
+        where,
         with: PostRelations,
       });
       return getCursorPaginationData(resultPosts, limit, sortBy);
@@ -222,7 +242,17 @@ export const postRouter = router({
           });
 
         const updatedCommentWithRelations = await tx.query.posts.findFirst({
-          where: (posts, { and, eq }) => and(eq(posts.id, updatedComment.id), eq(posts.userId, ctx.session.user.id)),
+          where: {
+            id: {
+              eq: updatedComment.id,
+            },
+            parentId: {
+              isNotNull: true,
+            },
+            userId: {
+              eq: ctx.session.user.id,
+            },
+          },
           with: PostRelations,
         });
         if (!updatedCommentWithRelations)
@@ -250,7 +280,17 @@ export const postRouter = router({
           });
 
         const updatedPostWithRelations = await tx.query.posts.findFirst({
-          where: (posts, { and, eq }) => and(eq(posts.id, updatedPost.id), eq(posts.userId, ctx.session.user.id)),
+          where: {
+            id: {
+              eq: updatedPost.id,
+            },
+            parentId: {
+              isNull: true,
+            },
+            userId: {
+              eq: ctx.session.user.id,
+            },
+          },
           with: PostRelations,
         });
         if (!updatedPostWithRelations)
