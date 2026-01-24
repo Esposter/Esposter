@@ -26,7 +26,11 @@ export const achievementPlugin = t.procedure.use(async ({ ctx, next, path, type 
 
     const achievement =
       (await ctx.db.query.achievements.findFirst({
-        where: (achievements, { eq }) => eq(achievements.name, name),
+        where: {
+          name: {
+            eq: name,
+          },
+        },
       })) ?? (await ctx.db.insert(achievements).values({ name }).returning()).find(Boolean);
     if (!achievement)
       throw new TRPCError({
@@ -36,8 +40,14 @@ export const achievementPlugin = t.procedure.use(async ({ ctx, next, path, type 
 
     let newAmount = incrementAmount;
     let userAchievement = await ctx.db.query.userAchievements.findFirst({
-      where: (userAchievements, { and, eq }) =>
-        and(eq(userAchievements.userId, userId), eq(userAchievements.achievementId, achievement.id)),
+      where: {
+        achievementId: {
+          eq: achievement.id,
+        },
+        userId: {
+          eq: userId,
+        },
+      },
     });
     if (!userAchievement) {
       userAchievement = (
