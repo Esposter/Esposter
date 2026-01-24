@@ -13,7 +13,7 @@ export const getCursorWhere = <TTable extends TableConfig>(
   sortBy: SortItem<keyof TTable["columns"] & string>[],
 ) => {
   const cursors = deserialize(serializedCursors);
-  const sql = and(
+  const where = and(
     ...Object.entries(cursors).map(([key, value]) => {
       const sortItem = sortBy.find((s) => s.key === key);
       if (!sortItem) throw new NotFoundError(getCursorWhere.name, key);
@@ -32,6 +32,6 @@ export const getCursorWhere = <TTable extends TableConfig>(
       return operator(table[key], value);
     }),
   );
-  if (!sql) throw new InvalidOperationError(Operation.Read, getCursorWhere.name, serializedCursors);
-  return sql;
+  if (!where) throw new InvalidOperationError(Operation.Read, getCursorWhere.name, serializedCursors);
+  return where;
 };

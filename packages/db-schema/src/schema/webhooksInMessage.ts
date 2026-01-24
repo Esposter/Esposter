@@ -48,7 +48,7 @@ export const selectWebhookInMessageSchema = createSelectSchema(webhooksInMessage
 
 // @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
 export const WebhookInMessageRelations = {
-  room: true,
+  roomInMessage: true,
   user: true,
 } as const;
-export type WebhookInMessageWithRelations = WebhookInMessage & { room: RoomInMessage; user: User };
+export type WebhookInMessageWithRelations = WebhookInMessage & { roomInMessage: RoomInMessage; user: User };

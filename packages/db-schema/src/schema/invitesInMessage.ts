@@ -39,14 +39,14 @@ export const selectInviteInMessageSchema = createSelectSchema(invitesInMessage, 
 
 // @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
 export const InviteInMessageRelations = {
-  room: {
+  roomInMessage: {
     with: {
-      usersToRooms: true,
+      usersToRoomsInMessage: true,
     },
   },
   user: true,
 } as const;
 export type InviteInMessageWithRelations = InviteInMessage & {
-  room: RoomInMessage & { usersToRooms: UserToRoomInMessage[] };
+  roomInMessage: RoomInMessage & { usersToRoomsInMessage: UserToRoomInMessage[] };
   user: User;
 };

@@ -7,7 +7,7 @@ export const webhooksInMessageRelation = defineRelationsPart(schema, (r) => ({
       from: r.webhooksInMessage.userId,
       to: r.appUsersInMessage.id,
     }),
-    roomsInMessage: r.one.roomsInMessage({
+    roomInMessage: r.one.roomsInMessage({
       from: r.webhooksInMessage.roomId,
       to: r.roomsInMessage.id,
     }),

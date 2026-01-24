@@ -34,7 +34,7 @@ export type UserToRoomInMessage = typeof usersToRoomsInMessage.$inferSelect;
 
 // @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
 export const UserToRoomInMessageRelations = {
-  room: true,
+  roomInMessage: true,
   user: true,
 } as const;
-export type UserToRoomInMessageWithRelations = UserToRoomInMessage & { room: RoomInMessage; user: User };
+export type UserToRoomInMessageWithRelations = UserToRoomInMessage & { roomInMessage: RoomInMessage; user: User };

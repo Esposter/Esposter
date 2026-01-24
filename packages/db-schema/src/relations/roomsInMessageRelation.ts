@@ -8,6 +8,7 @@ export const roomsInMessageRelation = defineRelationsPart(schema, (r) => ({
       from: r.roomsInMessage.userId,
       to: r.users.id,
     }),
+    usersToRoomsInMessage: r.many.usersToRoomsInMessage(),
     usersViaInvitesInMessage: r.many.users({
       alias: "roomsInMessage_id_users_id_via_invitesInMessage",
       from: r.roomsInMessage.id.through(r.invitesInMessage.roomId),

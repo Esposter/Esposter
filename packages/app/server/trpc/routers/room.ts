@@ -212,7 +212,11 @@ export const roomRouter = router({
         columns: {
           roomId: true,
         },
-        where: (invitesInMessage, { eq }) => eq(invitesInMessage.code, input),
+        where: {
+          code: {
+            eq: input,
+          },
+        },
       });
       if (!invite)
         throw new TRPCError({
@@ -237,8 +241,14 @@ export const roomRouter = router({
         });
 
       const userToRoomWithRelations = await tx.query.usersToRoomsInMessage.findFirst({
-        where: (usersToRoomsInMessage, { and, eq }) =>
-          and(eq(usersToRoomsInMessage.userId, userToRoom.userId), eq(usersToRoomsInMessage.roomId, userToRoom.roomId)),
+        where: {
+          roomId: {
+            eq: userToRoom.roomId,
+          },
+          userId: {
+            eq: userToRoom.userId,
+          },
+        },
         with: UserToRoomInMessageRelations,
       });
       if (!userToRoomWithRelations)
@@ -325,14 +335,20 @@ export const roomRouter = router({
   }),
   readInvite: standardAuthedProcedure.input(readInviteInputSchema).query(async ({ ctx, input }) => {
     const invite = await ctx.db.query.invitesInMessage.findFirst({
-      where: (invitesInMessage, { eq }) => eq(invitesInMessage.code, input),
+      where: { code: { eq: input } },
       with: InviteInMessageRelations,
     });
     if (!invite) return null;
 
     const isMember = await ctx.db.query.usersToRoomsInMessage.findFirst({
-      where: (usersToRoomsInMessage, { and, eq }) =>
-        and(eq(usersToRoomsInMessage.userId, ctx.session.user.id), eq(usersToRoomsInMessage.roomId, invite.roomId)),
+      where: {
+        roomId: {
+          eq: invite.roomId,
+        },
+        userId: {
+          eq: ctx.session.user.id,
+        },
+      },
     });
     return { ...invite, isMember: Boolean(isMember) };
   }),
@@ -372,24 +388,29 @@ export const roomRouter = router({
   readRoom: standardAuthedProcedure.input(readRoomInputSchema).query<null | RoomInMessage>(async ({ ctx, input }) => {
     if (input) {
       const room = await ctx.db.query.roomsInMessage.findFirst({
-        where: (roomsInMessage, { and, eq, exists }) =>
-          and(
-            eq(roomsInMessage.id, input),
-            exists(
-              // Select a constant '1' - we only care if *any* row matches
-              ctx.db
-                .select({ _: sql`1` })
-                .from(usersToRoomsInMessage)
-                .where(
-                  and(
-                    // Condition 1 (Correlation): Link subquery room ID to the outer query room ID
-                    eq(usersToRoomsInMessage.roomId, roomsInMessage.id),
-                    // Condition 2: Ensure the row belongs to the specific user
-                    eq(usersToRoomsInMessage.userId, ctx.session.user.id),
+        where: {
+          RAW: (roomsInMessage, { and, eq, exists }) => {
+            const where = and(
+              eq(roomsInMessage.id, input),
+              exists(
+                // Select a constant '1' - we only care if *any* row matches
+                ctx.db
+                  .select({ _: sql`1` })
+                  .from(usersToRoomsInMessage)
+                  .where(
+                    and(
+                      // Condition 1 (Correlation): Link subquery room ID to the outer query room ID
+                      eq(usersToRoomsInMessage.roomId, roomsInMessage.id),
+                      // Condition 2: Ensure the row belongs to the specific user
+                      eq(usersToRoomsInMessage.userId, ctx.session.user.id),
+                    ),
                   ),
-                ),
-            ),
-          ),
+              ),
+            );
+            if (!where) throw new InvalidOperationError(Operation.Read, DatabaseEntityType.Room, input);
+            return where;
+          },
+        },
       });
       if (!room)
         throw new TRPCError({
