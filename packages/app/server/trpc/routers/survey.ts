@@ -195,7 +195,9 @@ export const surveyRouter = router({
   readSurveyModel: standardRateLimitedProcedure
     .input(readSurveyModelInputSchema)
     .query<string>(async ({ ctx, input }) => {
-      const survey = await ctx.db.query.surveys.findFirst({ where: (surveys, { eq }) => eq(surveys.id, input) });
+      const survey = await ctx.db.query.surveys.findFirst({
+        where: { id: { eq: input } },
+      });
       if (!survey)
         throw new TRPCError({
           code: "NOT_FOUND",
@@ -214,14 +216,12 @@ export const surveyRouter = router({
     .input(readSurveysInputSchema)
     .query(async ({ ctx, input: { limit, offset, sortBy } }) => {
       const resultSurveys = await ctx.db.query.surveys.findMany({
-        columns: {
-          model: false,
-        },
+        columns: { model: false },
         limit: limit + 1,
         offset,
         orderBy: (surveys, { desc }) =>
           sortBy.length > 0 ? parseSortByToSql(surveys, sortBy) : desc(surveys.updatedAt),
-        where: (surveys) => eq(surveys.userId, ctx.session.user.id),
+        where: { userId: { eq: ctx.session.user.id } },
       });
       return getOffsetPaginationData(resultSurveys, limit);
     }),

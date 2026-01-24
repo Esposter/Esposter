@@ -8,7 +8,7 @@ import { useContainerClientMock } from "@@/server/composables/azure/container/us
 import { useEventGridPublisherClientMock } from "@@/server/composables/azure/eventGrid/useEventGridPublisherClient.test";
 import { useTableClientMock } from "@@/server/composables/azure/table/useTableClient.test";
 import { PGlite } from "@electric-sql/pglite";
-import { messageSchema, schema, users } from "@esposter/db-schema";
+import { messageSchema, relations, schema, users } from "@esposter/db-schema";
 import { generateDrizzleJson, generateMigration } from "drizzle-kit/api-postgres";
 import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/pglite";
@@ -108,7 +108,7 @@ export const createMockContext = async (): Promise<Context> => {
 
 const createMockDb = async () => {
   const client = new PGlite();
-  const db = drizzle(client, { relations, schema });
+  const db = drizzle({ client, relations, schema });
   await createSchema(db);
   await pushSchema(db);
   await db.insert(users).values(mocks.getSession().user);
@@ -120,8 +120,8 @@ const createSchema = async (db: PgliteDatabase<typeof schema>) => {
 };
 
 const pushSchema = async (db: PgliteDatabase<typeof schema>) => {
-  const previousJson = generateDrizzleJson({});
-  const currentJson = generateDrizzleJson(schema, previousJson.id);
+  const previousJson = await generateDrizzleJson({});
+  const currentJson = await generateDrizzleJson(schema, previousJson.id);
   const statements = await generateMigration(previousJson, currentJson);
   for (const statement of statements) await db.execute(statement);
 };

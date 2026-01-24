@@ -1,3 +1,5 @@
+import type { WebhookInMessage } from "@esposter/db-schema";
+
 import { createWebhookInputSchema } from "#shared/models/db/webhook/CreateWebhookInput";
 import { deleteWebhookInputSchema } from "#shared/models/db/webhook/DeleteWebhookInput";
 import { rotateTokenInputSchema } from "#shared/models/db/webhook/RotateTokenInput";
@@ -14,7 +16,6 @@ import {
   DatabaseEntityType,
   selectAppUserInMessageSchema,
   selectRoomInMessageSchema,
-  WebhookInMessage,
   WebhookInMessageRelations,
   webhooksInMessage,
 } from "@esposter/db-schema";
@@ -80,7 +81,7 @@ export const webhookRouter = router({
   deleteWebhook: getCreatorProcedure(deleteWebhookInputSchema, "roomId").mutation<WebhookInMessage>(
     async ({ ctx, input: { id, roomId } }) => {
       const webhook = await ctx.db.query.webhooksInMessage.findFirst({
-        where: (webhooksInMessage, { eq }) => and(eq(webhooksInMessage.id, id), eq(webhooksInMessage.roomId, roomId)),
+        where: { id: { eq: id }, roomId: { eq: roomId } },
       });
       if (!webhook)
         throw new TRPCError({
@@ -111,8 +112,8 @@ export const webhookRouter = router({
   ),
   readWebhooks: getCreatorProcedure(readWebhooksInputSchema, "roomId").query(({ ctx, input: { roomId } }) =>
     ctx.db.query.webhooksInMessage.findMany({
-      orderBy: (webhooksInMessage, { desc }) => [desc(webhooksInMessage.createdAt)],
-      where: (webhooksInMessage, { eq }) => eq(webhooksInMessage.roomId, roomId),
+      orderBy: { createdAt: "desc" },
+      where: { roomId: { eq: roomId } },
       with: WebhookInMessageRelations,
     }),
   ),

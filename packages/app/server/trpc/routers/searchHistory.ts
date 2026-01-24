@@ -1,5 +1,5 @@
-import type { SearchHistoryInMessage } from "@esposter/db-schema";
-import type { SQL } from "drizzle-orm";
+import type { relations, SearchHistoryInMessage } from "@esposter/db-schema";
+import type { RelationsFilter } from "drizzle-orm";
 
 import { createSearchHistoryInputSchema } from "#shared/models/db/searchHistory/CreateSearchHistoryInput";
 import { deleteSearchHistoryInputSchema } from "#shared/models/db/searchHistory/DeleteSearchHistoryInput";
@@ -62,14 +62,14 @@ export const searchHistoryRouter = router({
     }),
   readSearchHistories: getMemberProcedure(readSearchHistoriesInputSchema, "roomId").query(
     async ({ ctx, input: { cursor, limit, roomId, sortBy } }) => {
+      const where: RelationsFilter<(typeof relations)["searchHistoriesInMessage"], typeof relations> = {
+        roomId: { eq: roomId },
+      };
+      if (cursor) where.RAW = (searchHistoriesInMessage) => getCursorWhere(searchHistoriesInMessage, cursor, sortBy);
       const resultSearchHistories = await ctx.db.query.searchHistoriesInMessage.findMany({
         limit: limit + 1,
         orderBy: (searchHistoriesInMessage) => parseSortByToSql(searchHistoriesInMessage, sortBy),
-        where: (searchHistoriesInMessage, { and, eq }) => {
-          const wheres: (SQL | undefined)[] = [eq(searchHistoriesInMessage.roomId, roomId)];
-          if (cursor) wheres.push(getCursorWhere(searchHistoriesInMessage, cursor, sortBy));
-          return and(...wheres);
-        },
+        where,
       });
       return getCursorPaginationData(resultSearchHistories, limit, sortBy);
     },
