@@ -8,7 +8,7 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { webhookRouter } from "@@/server/trpc/routers/webhook";
-import { appUsersInMessage, DatabaseEntityType, roomsInMessage, webhooks } from "@esposter/db-schema";
+import { appUsersInMessage, DatabaseEntityType, roomsInMessage, webhooksInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
@@ -29,7 +29,7 @@ describe("webhook", () => {
   });
 
   afterEach(async () => {
-    await mockContext.db.delete(webhooks);
+    await mockContext.db.delete(webhooksInMessage);
     await mockContext.db.delete(appUsersInMessage);
     await mockContext.db.delete(roomsInMessage);
   });

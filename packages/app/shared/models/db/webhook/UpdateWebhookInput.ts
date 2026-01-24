@@ -1,9 +1,10 @@
-import { selectRoomInMessageSchema, selectWebhookSchema } from "@esposter/db-schema";
+import { selectRoomInMessageSchema, selectWebhookInMessageSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
 export const updateWebhookInputSchema = z
   .object({
-    ...selectWebhookSchema.pick({ id: true, isActive: true, name: true }).partial({ isActive: true, name: true }).shape,
+    ...selectWebhookInMessageSchema.pick({ id: true, isActive: true, name: true }).partial({ isActive: true, name: true })
+      .shape,
     roomId: selectRoomInMessageSchema.shape.id,
   })
   .refine(({ isActive, name }) => isActive !== undefined || name !== undefined);
