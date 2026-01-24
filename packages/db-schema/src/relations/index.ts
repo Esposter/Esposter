@@ -2,24 +2,6 @@ import { schema } from "@/schema";
 import { defineRelationsPart } from "drizzle-orm";
 
 const relations = defineRelationsPart(schema, (r) => ({
-  pushSubscriptionsInMessage: {
-    user: r.one.users({
-      from: r.pushSubscriptionsInMessage.userId,
-      to: r.users.id,
-    }),
-  },
-  sessions: {
-    user: r.one.users({
-      from: r.sessions.userId,
-      to: r.users.id,
-    }),
-  },
-  surveys: {
-    user: r.one.users({
-      from: r.surveys.userId,
-      to: r.users.id,
-    }),
-  },
   users: {
     accounts: r.many.accounts(),
     achievements: r.many.achievements(),

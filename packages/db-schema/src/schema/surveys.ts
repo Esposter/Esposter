@@ -1,6 +1,6 @@
 import { pgTable } from "@/pgTable";
 import { users } from "@/schema/users";
-import { relations, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import { check, integer, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -34,9 +34,4 @@ export const selectSurveySchema = createSelectSchema(surveys, {
   name: z.string().min(1).max(SURVEY_NAME_MAX_LENGTH),
 });
 
-export const surveysRelations = relations(surveys, ({ one }) => ({
-  user: one(users, {
-    fields: [surveys.userId],
-    references: [users.id],
-  }),
-}));
+
