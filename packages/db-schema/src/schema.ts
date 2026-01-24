@@ -13,7 +13,7 @@ import * as surveys from "@/schema/surveys";
 import * as userAchievements from "@/schema/userAchievements";
 import * as users from "@/schema/users";
 import * as userStatusesInMessage from "@/schema/userStatusesInMessage";
-import * as usersToRooms from "@/schema/usersToRooms";
+import * as usersToRoomsInMessage from "@/schema/usersToRoomsInMessage";
 import * as verifications from "@/schema/verifications";
 import * as webhooks from "@/schema/webhooks";
 
@@ -33,7 +33,7 @@ export const schema = {
   ...userAchievements,
   ...users,
   ...userStatusesInMessage,
-  ...usersToRooms,
+  ...usersToRoomsInMessage,
   ...verifications,
   ...webhooks,
 };

@@ -4,7 +4,6 @@ import type { User } from "@/schema/users";
 import { messageSchema } from "@/schema/messageSchema";
 import { roomsInMessage } from "@/schema/roomsInMessage";
 import { users } from "@/schema/users";
-import { relations } from "drizzle-orm";
 import { pgEnum, primaryKey, text, uuid } from "drizzle-orm/pg-core";
 import { z } from "zod";
 
@@ -18,7 +17,7 @@ export const notificationTypeSchema = z.enum(NotificationType) satisfies z.ZodTy
 
 export const notificationTypeEnum = pgEnum("notification_type", NotificationType);
 
-export const usersToRooms = messageSchema.table(
+export const usersToRoomsInMessage = messageSchema.table(
   "users_to_rooms",
   {
     notificationType: notificationTypeEnum("notificationType").notNull().default(NotificationType.DirectMessage),
@@ -31,21 +30,11 @@ export const usersToRooms = messageSchema.table(
   },
   ({ roomId, userId }) => [primaryKey({ columns: [userId, roomId] })],
 );
-export type UserToRoom = typeof usersToRooms.$inferSelect;
+export type UserToRoomInMessage = typeof usersToRoomsInMessage.$inferSelect;
 
-export const usersToRoomsRelations = relations(usersToRooms, ({ one }) => ({
-  room: one(roomsInMessage, {
-    fields: [usersToRooms.roomId],
-    references: [roomsInMessage.id],
-  }),
-  user: one(users, {
-    fields: [usersToRooms.userId],
-    references: [users.id],
-  }),
-}));
 // @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
-export const UserToRoomRelations = {
+export const UserToRoomInMessageRelations = {
   room: true,
   user: true,
 } as const;
-export type UserToRoomWithRelations = UserToRoom & { room: RoomInMessage; user: User };
+export type UserToRoomInMessageWithRelations = UserToRoomInMessage & { room: RoomInMessage; user: User };
