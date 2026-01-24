@@ -1,4 +1,4 @@
-import type { SearchHistory } from "@esposter/db-schema";
+import type { SearchHistoryInMessage } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
 import { createSearchHistoryInputSchema } from "#shared/models/db/searchHistory/CreateSearchHistoryInput";
@@ -12,26 +12,26 @@ import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSor
 import { router } from "@@/server/trpc";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { DatabaseEntityType, searchHistories, selectSearchHistorySchema } from "@esposter/db-schema";
+import { DatabaseEntityType, searchHistoriesInMessage, selectSearchHistoryInMessageSchema } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
 const readSearchHistoriesInputSchema = z.object({
-  ...createCursorPaginationParamsSchema(selectSearchHistorySchema.keyof(), [
+  ...createCursorPaginationParamsSchema(selectSearchHistoryInMessageSchema.keyof(), [
     { key: "createdAt", order: SortOrder.Desc },
   ]).shape,
-  roomId: selectSearchHistorySchema.shape.roomId,
+  roomId: selectSearchHistoryInMessageSchema.shape.roomId,
 });
 export type ReadSearchHistoriesInput = z.infer<typeof readSearchHistoriesInputSchema>;
 
 export const searchHistoryRouter = router({
-  createSearchHistory: getMemberProcedure(createSearchHistoryInputSchema, "roomId").mutation<SearchHistory>(
+  createSearchHistory: getMemberProcedure(createSearchHistoryInputSchema, "roomId").mutation<SearchHistoryInMessage>(
     async ({ ctx, input }) => {
       const newHistory = (
         await ctx.db
-          .insert(searchHistories)
+          .insert(searchHistoriesInMessage)
           .values({ ...input, userId: ctx.session.user.id })
           .returning()
       ).find(Boolean);
@@ -46,11 +46,11 @@ export const searchHistoryRouter = router({
   ),
   deleteSearchHistory: standardAuthedProcedure
     .input(deleteSearchHistoryInputSchema)
-    .mutation<SearchHistory>(async ({ ctx, input }) => {
+    .mutation<SearchHistoryInMessage>(async ({ ctx, input }) => {
       const deletedSearchHistory = (
         await ctx.db
-          .delete(searchHistories)
-          .where(and(eq(searchHistories.id, input), eq(searchHistories.userId, ctx.session.user.id)))
+          .delete(searchHistoriesInMessage)
+          .where(and(eq(searchHistoriesInMessage.id, input), eq(searchHistoriesInMessage.userId, ctx.session.user.id)))
           .returning()
       ).find(Boolean);
       if (!deletedSearchHistory)
@@ -62,12 +62,12 @@ export const searchHistoryRouter = router({
     }),
   readSearchHistories: getMemberProcedure(readSearchHistoriesInputSchema, "roomId").query(
     async ({ ctx, input: { cursor, limit, roomId, sortBy } }) => {
-      const resultSearchHistories = await ctx.db.query.searchHistories.findMany({
+      const resultSearchHistories = await ctx.db.query.searchHistoriesInMessage.findMany({
         limit: limit + 1,
-        orderBy: (searchHistories) => parseSortByToSql(searchHistories, sortBy),
-        where: (searchHistories, { and, eq }) => {
-          const wheres: (SQL | undefined)[] = [eq(searchHistories.roomId, roomId)];
-          if (cursor) wheres.push(getCursorWhere(searchHistories, cursor, sortBy));
+        orderBy: (searchHistoriesInMessage) => parseSortByToSql(searchHistoriesInMessage, sortBy),
+        where: (searchHistoriesInMessage, { and, eq }) => {
+          const wheres: (SQL | undefined)[] = [eq(searchHistoriesInMessage.roomId, roomId)];
+          if (cursor) wheres.push(getCursorWhere(searchHistoriesInMessage, cursor, sortBy));
           return and(...wheres);
         },
       });
@@ -76,12 +76,12 @@ export const searchHistoryRouter = router({
   ),
   updateSearchHistory: standardAuthedProcedure
     .input(updateSearchHistoryInputSchema)
-    .mutation<SearchHistory>(async ({ ctx, input: { id, query } }) => {
+    .mutation<SearchHistoryInMessage>(async ({ ctx, input: { id, query } }) => {
       const updatedSearchHistory = (
         await ctx.db
-          .update(searchHistories)
+          .update(searchHistoriesInMessage)
           .set({ query })
-          .where(and(eq(searchHistories.id, id), eq(searchHistories.userId, ctx.session.user.id)))
+          .where(and(eq(searchHistoriesInMessage.id, id), eq(searchHistoriesInMessage.userId, ctx.session.user.id)))
           .returning()
       ).find(Boolean);
       if (!updatedSearchHistory)

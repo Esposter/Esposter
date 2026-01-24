@@ -3,10 +3,10 @@ import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { getIsSearchQueryEmpty } from "#shared/services/message/getIsSearchQueryEmpty";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import {
-    filterSchema,
-    selectRoomInMessageSchema,
-    selectSearchHistorySchema,
-    standardMessageEntitySchema,
+  filterSchema,
+  selectRoomInMessageSchema,
+  selectSearchHistoryInMessageSchema,
+  standardMessageEntitySchema,
 } from "@esposter/db-schema";
 import { ItemMetadataPropertyNames } from "@esposter/shared";
 import { z } from "zod";
@@ -17,7 +17,7 @@ export const searchMessagesInputSchema = z
       { key: ItemMetadataPropertyNames.createdAt, order: SortOrder.Desc },
     ]).shape,
     filters: filterSchema.array().max(MAX_READ_LIMIT).default([]),
-    query: selectSearchHistorySchema.shape.query,
+    query: selectSearchHistoryInMessageSchema.shape.query,
     roomId: selectRoomInMessageSchema.shape.id,
   })
   .refine(({ filters, query }) => !getIsSearchQueryEmpty(query, filters));

@@ -7,7 +7,7 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { searchHistoryRouter } from "@@/server/trpc/routers/searchHistory";
-import { DatabaseEntityType, roomsInMessage, searchHistories } from "@esposter/db-schema";
+import { DatabaseEntityType, roomsInMessage, searchHistoriesInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
@@ -28,7 +28,7 @@ describe("searchHistory", () => {
   });
 
   afterEach(async () => {
-    await mockContext.db.delete(searchHistories);
+    await mockContext.db.delete(searchHistoriesInMessage);
     await mockContext.db.delete(roomsInMessage);
   });
 

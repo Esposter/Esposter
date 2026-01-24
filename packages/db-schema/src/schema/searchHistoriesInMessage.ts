@@ -10,7 +10,7 @@ import { check, jsonb, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const searchHistories = pgTable(
+export const searchHistoriesInMessage = pgTable(
   "search_histories",
   {
     filters: jsonb("filters").notNull().$type<Filter[]>().default([]),
@@ -29,19 +29,19 @@ export const searchHistories = pgTable(
   },
 );
 
-export type SearchHistory = typeof searchHistories.$inferSelect;
+export type SearchHistoryInMessage = typeof searchHistoriesInMessage.$inferSelect;
 
-export const selectSearchHistorySchema = createSelectSchema(searchHistories, {
+export const selectSearchHistoryInMessageSchema = createSelectSchema(searchHistoriesInMessage, {
   query: z.string().max(MESSAGE_MAX_LENGTH),
 });
 
-export const searchHistoriesRelations = relations(searchHistories, ({ one }) => ({
-  room: one(rooms, {
-    fields: [searchHistories.roomId],
-    references: [rooms.id],
+export const searchHistoriesInMessageRelations = relations(searchHistoriesInMessage, ({ one }) => ({
+  room: one(roomsInMessage, {
+    fields: [searchHistoriesInMessage.roomId],
+    references: [roomsInMessage.id],
   }),
   user: one(users, {
-    fields: [searchHistories.userId],
+    fields: [searchHistoriesInMessage.userId],
     references: [users.id],
   }),
 }));
