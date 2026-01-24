@@ -33,5 +33,3 @@ export type Survey = typeof surveys.$inferSelect;
 export const selectSurveySchema = createSelectSchema(surveys, {
   name: z.string().min(1).max(SURVEY_NAME_MAX_LENGTH),
 });
-
-
