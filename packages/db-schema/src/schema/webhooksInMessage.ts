@@ -1,6 +1,3 @@
-import type { RoomInMessage } from "@/schema/roomsInMessage";
-import type { User } from "@/schema/users";
-
 import { pgTable } from "@/pgTable";
 import { appUsersInMessage } from "@/schema/appUsersInMessage";
 import { messageSchema } from "@/schema/messageSchema";
@@ -45,10 +42,3 @@ export type WebhookInMessage = typeof webhooksInMessage.$inferSelect;
 export const selectWebhookInMessageSchema = createSelectSchema(webhooksInMessage, {
   name: z.string().min(1).max(WEBHOOK_NAME_MAX_LENGTH),
 });
-
-// @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
-export const WebhookInMessageRelations = {
-  roomInMessage: true,
-  user: true,
-} as const;
-export type WebhookInMessageWithRelations = WebhookInMessage & { roomInMessage: RoomInMessage; user: User };

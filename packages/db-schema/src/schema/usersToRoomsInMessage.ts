@@ -1,6 +1,3 @@
-import type { RoomInMessage } from "@/schema/roomsInMessage";
-import type { User } from "@/schema/users";
-
 import { messageSchema } from "@/schema/messageSchema";
 import { roomsInMessage } from "@/schema/roomsInMessage";
 import { users } from "@/schema/users";
@@ -31,10 +28,3 @@ export const usersToRoomsInMessage = messageSchema.table(
   ({ roomId, userId }) => [primaryKey({ columns: [userId, roomId] })],
 );
 export type UserToRoomInMessage = typeof usersToRoomsInMessage.$inferSelect;
-
-// @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
-export const UserToRoomInMessageRelations = {
-  roomInMessage: true,
-  user: true,
-} as const;
-export type UserToRoomInMessageWithRelations = UserToRoomInMessage & { roomInMessage: RoomInMessage; user: User };

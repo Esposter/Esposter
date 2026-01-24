@@ -1,3 +1,7 @@
+import type { RoomInMessage } from "@/schema/roomsInMessage";
+import type { User } from "@/schema/users";
+import type { UserToRoomInMessage } from "@/schema/usersToRoomsInMessage";
+
 import { schema } from "@/schema";
 import { defineRelationsPart } from "drizzle-orm";
 
@@ -13,3 +17,9 @@ export const usersToRoomsInMessageRelation = defineRelationsPart(schema, (r) => 
     }),
   },
 }));
+// @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
+export const UserToRoomInMessageRelations = {
+  roomInMessage: true,
+  user: true,
+} as const;
+export type UserToRoomInMessageWithRelations = UserToRoomInMessage & { roomInMessage: RoomInMessage; user: User };

@@ -1,3 +1,6 @@
+import type { Achievement } from "@/schema/achievements";
+import type { UserAchievement } from "@/schema/userAchievements";
+
 import { schema } from "@/schema";
 import { defineRelationsPart } from "drizzle-orm";
 
@@ -13,3 +16,8 @@ export const userAchievementsRelation = defineRelationsPart(schema, (r) => ({
     }),
   },
 }));
+// @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
+export const UserAchievementRelations = {
+  achievement: true,
+} as const;
+export type UserAchievementWithRelations = UserAchievement & { achievement: Achievement };

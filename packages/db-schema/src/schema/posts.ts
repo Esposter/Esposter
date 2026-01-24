@@ -1,5 +1,3 @@
-import type { Like } from "@/schema/likes";
-import type { User } from "@/schema/users";
 import type { AnyPgColumn } from "drizzle-orm/pg-core";
 
 import { pgTable } from "@/pgTable";
@@ -45,10 +43,3 @@ export const selectPostSchema = createSelectSchema(posts, {
 export const selectCommentSchema = createSelectSchema(posts, {
   description: z.string().min(1).max(POST_DESCRIPTION_MAX_LENGTH),
 });
-
-// @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
-export const PostRelations = {
-  likes: true,
-  user: true,
-} as const;
-export type PostWithRelations = Post & { likes: Like[]; user: User };

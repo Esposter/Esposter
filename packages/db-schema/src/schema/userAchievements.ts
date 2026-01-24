@@ -1,5 +1,3 @@
-import type { Achievement } from "@/schema/achievements";
-
 import { pgTable } from "@/pgTable";
 import { achievements } from "@/schema/achievements";
 import { users } from "@/schema/users";
@@ -34,9 +32,3 @@ export type UserAchievement = typeof userAchievements.$inferSelect;
 export const selectUserAchievementSchema = createSelectSchema(userAchievements, {
   amount: z.int().min(1),
 });
-
-// @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
-export const UserAchievementRelations = {
-  achievement: true,
-} as const;
-export type UserAchievementWithRelations = UserAchievement & { achievement: Achievement };
