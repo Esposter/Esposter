@@ -130,28 +130,28 @@ catalogs:
       specifier: ^1.0.0
       version: 1.0.0
     '@tiptap/core':
-      specifier: ^3.17.0
+      specifier: ^3.17.1
       version: 3.17.1
     '@tiptap/extension-file-handler':
-      specifier: ^3.17.0
+      specifier: ^3.17.1
       version: 3.17.1
     '@tiptap/extension-mention':
-      specifier: ^3.17.0
+      specifier: ^3.17.1
       version: 3.17.1
     '@tiptap/extensions':
-      specifier: ^3.17.0
+      specifier: ^3.17.1
       version: 3.17.1
     '@tiptap/pm':
-      specifier: ^3.17.0
+      specifier: ^3.17.1
       version: 3.17.1
     '@tiptap/starter-kit':
-      specifier: ^3.17.0
+      specifier: ^3.17.1
       version: 3.17.1
     '@tiptap/suggestion':
-      specifier: ^3.17.0
+      specifier: ^3.17.1
       version: 3.17.1
     '@tiptap/vue-3':
-      specifier: ^3.17.0
+      specifier: ^3.17.1
       version: 3.17.1
     '@trpc/client':
       specifier: ^11.8.1
