@@ -577,7 +577,7 @@ catalogs:
       specifier: ^4.6.4
       version: 4.6.4
     vue-tsc:
-      specifier: ^3.2.3
+      specifier: ^3.2.4
       version: 3.2.4
     vue3-apexcharts:
       specifier: ^1.10.0
