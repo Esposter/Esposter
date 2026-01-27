@@ -107,7 +107,7 @@ catalog:
   eslint: ^9.39.2
   eslint-config-prettier: ^10.1.8
   eslint-plugin-depend: ^1.4.0
-  eslint-plugin-oxlint: ^1.41.0
+  eslint-plugin-oxlint: ^1.42.0
   eslint-plugin-perfectionist: ^5.4.0
   eslint-plugin-pinia: ^0.4.2
   eslint-plugin-prettier: ^5.5.5
@@ -150,7 +150,7 @@ catalog:
   nuxt-security: ^2.5.1
   obscenity: ^0.4.6
   omit-deep-lodash: ^1.1.7
-  oxlint: ^1.41.0
+  oxlint: ^1.42.0
   p-progress: ^1.0.0
   pathe: ^2.0.3
   pdfjs-dist: ^5.4.530
@@ -181,7 +181,7 @@ catalog:
   type-fest: ^5.4.1
   typedoc: ^0.28.16
   typescript: ^5.9.3
-  typescript-eslint: ^8.53.1
+  typescript-eslint: ^8.54.0
   unocss: ^66.6.0
   unplugin-auto-import: ^21.0.0
   unplugin-dts: ^1.0.0-beta.6
