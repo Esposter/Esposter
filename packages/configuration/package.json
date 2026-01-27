@@ -24,8 +24,8 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "lint": "oxlint && eslint .",
-    "lint:fix": "oxlint --fix && eslint --fix .",
+    "lint": "oxlint --type-aware && eslint .",
+    "lint:fix": "oxlint --type-aware --fix && eslint --fix .",
     "typecheck": "tsc"
   },
   "devDependencies": {
