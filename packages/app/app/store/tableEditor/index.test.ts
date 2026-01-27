@@ -2,9 +2,9 @@ import { TodoListItem } from "#shared/models/tableEditor/todoList/TodoListItem";
 import { ID_QUERY_PARAMETER_KEY } from "@/services/shared/constants";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { useItemStore } from "@/store/tableEditor/item";
-import { expectToBeDefined } from "@/util/test/expectToBeDefined";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
+import { expectToBeDefined } from "~~/shared/test/expectToBeDefined";
 
 describe(useTableEditorStore, () => {
   beforeEach(() => {

@@ -49,5 +49,4 @@ export const userAchievementsRelations = relations(userAchievements, ({ one }) =
 export const UserAchievementRelations = {
   achievement: true,
 } as const;
-
 export type UserAchievementWithRelations = UserAchievement & { achievement: Achievement };

@@ -48,5 +48,4 @@ export const UserToRoomRelations = {
   room: true,
   user: true,
 } as const;
-
 export type UserToRoomWithRelations = UserToRoom & { room: Room; user: User };

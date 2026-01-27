@@ -18,9 +18,11 @@ const route = useRoute();
 const code = route.params.code as string;
 const invite = await $trpc.room.readInvite.query(code);
 if (!invite)
+  // @TODO: https://github.com/nuxt/nuxt/issues/34138
+  // eslint-disable-next-line @typescript-eslint/only-throw-error
   throw createError({
-    message: getEntityNotFoundStatusMessage(DatabaseEntityType.Invite, code),
-    statusCode: 404,
+    status: 404,
+    statusText: getEntityNotFoundStatusMessage(DatabaseEntityType.Invite, code),
   });
 else if (invite.isMember) await navigateTo(RoutePath.Messages(invite.roomId));
 

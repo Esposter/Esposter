@@ -8,7 +8,7 @@ const { clicker } = storeToRefs(clickerStore);
 const buildingStore = useBuildingStore();
 const { allBuildingPower } = storeToRefs(buildingStore);
 const clickerItemProperties = useClickerItemProperties();
-const displayNoPointsHtml = computed(() => formatNumberLong(clicker.value.noPoints, 3).replaceAll(/\s/g, "<br/>"));
+const displayNoPointsHtml = computed(() => formatNumberLong(clicker.value.noPoints, 3).replaceAll(/\s/g, "<br />"));
 const displayAllBuildingPower = computed(() => formatNumberLong(allBuildingPower.value));
 </script>
 

@@ -1,3 +1,5 @@
+// oxlint-disable-next-line ban-ts-comment
+// @ts-nocheck
 import { app } from "./configuration/app";
 import { build } from "./configuration/build";
 import { compatibilityDate } from "./configuration/compatibilityDate";

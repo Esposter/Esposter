@@ -1,28 +1,28 @@
 {
   "name": "@esposter/azure-functions",
-  "description": "A library that contains webhook functionality.",
   "version": "2.18.2",
   "private": true,
-  "type": "module",
-  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/azure-functions#readme",
-  "license": "Apache-2.0",
-  "author": "Jimmy Chen",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist",
-    ".funcignore"
-  ],
+  "description": "A library that contains webhook functionality.",
   "keywords": [
     "webhook"
   ],
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/azure-functions#readme",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Esposter/Esposter.git"
   },
-  "bugs": {
-    "url": "https://github.com/Esposter/Esposter/issues"
-  },
+  "files": [
+    ".funcignore",
+    "dist"
+  ],
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts",
@@ -35,6 +35,7 @@
     "@azure/eventgrid": "catalog:",
     "@azure/functions": "catalog:",
     "@azure/identity": "catalog:",
+    "@azure/storage-blob": "catalog:",
     "@azure/web-pubsub": "catalog:",
     "@esposter/db": "workspace:*",
     "@esposter/db-schema": "workspace:*",

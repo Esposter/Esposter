@@ -14,6 +14,6 @@ const VALUE_REGEX = [
 ].join("|");
 // oxlint-disable-next-line typescript/no-inferrable-types
 export const CLAUSE_REGEX: RegExp = new RegExp(
-  `^(?<not>not\\s+)?(?<key>[A-Za-z0-9_]+)\\s+(?<operator>${Object.values(BinaryOperator).join("|")})\\s+(?<value>${VALUE_REGEX})$`,
+  `^(?<not>not\\s+)?(?<key>[A-Za-z0-9_]*)\\s*(?<operator>${Object.values(BinaryOperator).join("|")})\\s+(?<value>${VALUE_REGEX})$`,
   "i",
 );

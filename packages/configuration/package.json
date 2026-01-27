@@ -1,14 +1,8 @@
 {
   "name": "@esposter/configuration",
-  "description": "A library that contains shared configuration.",
   "version": "2.18.2",
   "private": true,
-  "type": "module",
-  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/configuration#readme",
-  "license": "Apache-2.0",
-  "author": "Jimmy Chen",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "description": "A library that contains shared configuration.",
   "keywords": [
     "ctix",
     "eslint",
@@ -16,13 +10,19 @@
     "typescript",
     "vite"
   ],
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/configuration#readme",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Esposter/Esposter.git"
   },
-  "bugs": {
-    "url": "https://github.com/Esposter/Esposter/issues"
-  },
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "lint": "oxlint --type-aware && eslint .",
     "lint:fix": "oxlint --type-aware --fix && eslint --fix .",

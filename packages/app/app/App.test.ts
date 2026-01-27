@@ -1,9 +1,6 @@
 import { trimFileExtension } from "@/util/trimFileExtension";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
-import { createVuetify } from "vuetify";
-
-const vuetify = createVuetify();
 
 describe("app", () => {
   test("snapshots", async () => {
@@ -24,11 +21,7 @@ describe("app", () => {
           },
         ),
       ).map(async ([filepath, component]) => {
-        const mountedComponent = await mountSuspended(component, {
-          global: {
-            plugins: [vuetify],
-          },
-        });
+        const mountedComponent = await mountSuspended(component);
         const filename = trimFileExtension(filepath);
 
         await expect(mountedComponent.html()).toMatchFileSnapshot(`__snapshots__/${filename}.html`);

@@ -1,25 +1,25 @@
 {
   "name": "azure-mock",
-  "description": "A library that contains azure mock classes.",
   "version": "2.18.2",
-  "type": "module",
+  "description": "A library that contains azure mock classes.",
   "homepage": "https://github.com/Esposter/Esposter#readme",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
   "license": "Apache-2.0",
   "author": "Jimmy Chen",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
-  "publishConfig": {
-    "access": "public"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Esposter/Esposter.git"
   },
-  "bugs": {
-    "url": "https://github.com/Esposter/Esposter/issues"
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
@@ -45,6 +45,7 @@
     "@azure/data-tables": "catalog:",
     "@azure/eventgrid": "catalog:",
     "@azure/storage-blob": "catalog:",
-    "@azure/storage-queue": "catalog:"
+    "@azure/storage-queue": "catalog:",
+    "@azure/web-pubsub": "catalog:"
   }
 }

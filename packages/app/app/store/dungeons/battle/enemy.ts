@@ -10,7 +10,6 @@ export const useEnemyStore = defineStore("dungeons/battle/enemy", () => {
   const initialMonsterInfoContainerPosition: Position = Object.freeze<Position>({ x: -600, y: 0 });
   const monsterInfoContainerPosition = ref({ ...initialMonsterInfoContainerPosition });
   const monsterInfoContainerTween = ref<TweenBuilderConfiguration>();
-  const takeDamage = useTakeDamage(true);
   return {
     activeMonster: activeMonster as Ref<Monster>,
     initialMonsterInfoContainerPosition,
@@ -19,6 +18,5 @@ export const useEnemyStore = defineStore("dungeons/battle/enemy", () => {
     monsterInfoContainerTween,
     monsterPosition,
     monsterTween,
-    takeDamage,
   };
 });
