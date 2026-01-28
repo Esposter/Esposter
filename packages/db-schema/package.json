@@ -58,7 +58,6 @@
   },
   "peerDependencies": {
     "@esposter/shared": "workspace:*",
-    "@trpc/server": "catalog:",
     "drizzle-orm": "catalog:",
     "drizzle-zod": "catalog:",
     "zod": "catalog:"
