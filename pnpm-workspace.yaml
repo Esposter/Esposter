@@ -79,7 +79,7 @@ catalog:
   "@vue-flow/controls": ^1.1.3
   "@vue-flow/core": ^1.48.2
   "@vue-flow/minimap": ^1.5.4
-  "@vue-flow/node-resizer": ^1.5.0
+  "@vue-flow/node-resizer": ^1.5.1
   "@vue-pdf-viewer/viewer": ^3.6.2
   "@vue/language-core": ^3.2.4
   "@vue/test-utils": ^2.4.6

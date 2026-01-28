@@ -238,8 +238,8 @@ catalogs:
       specifier: ^1.5.4
       version: 1.5.4
     '@vue-flow/node-resizer':
-      specifier: ^1.5.0
-      version: 1.5.0
+      specifier: ^1.5.1
+      version: 1.5.1
     '@vue-pdf-viewer/viewer':
       specifier: ^3.6.2
       version: 3.6.2
@@ -800,7 +800,7 @@ importers:
         version: 1.5.4(@vue-flow/core@1.48.2(vue@3.5.27(typescript@5.9.3)))(vue@3.5.27(typescript@5.9.3))
       '@vue-flow/node-resizer':
         specifier: 'catalog:'
-        version: 1.5.0(@vue-flow/core@1.48.2(vue@3.5.27(typescript@5.9.3)))(vue@3.5.27(typescript@5.9.3))
+        version: 1.5.1(@vue-flow/core@1.48.2(vue@3.5.27(typescript@5.9.3)))(vue@3.5.27(typescript@5.9.3))
       '@vue-pdf-viewer/viewer':
         specifier: 'catalog:'
         version: 3.6.2(pdfjs-dist@5.4.530)(typescript@5.9.3)(vite@8.0.0-beta.10(@types/node@25.0.10)(esbuild@0.27.2)(jiti@2.6.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(vue@3.5.27(typescript@5.9.3))
@@ -5675,8 +5675,8 @@ packages:
       '@vue-flow/core': ^1.23.0
       vue: ^3.3.0
 
-  '@vue-flow/node-resizer@1.5.0':
-    resolution: {integrity: sha512-FmvOZ6+yVrBEf+8oJcCU20PUZ105QsyM01iiP4vTKHGJ01hzoh9d0/wP9iJkxkIpvBU59CyOHyTKQZlDr4qDhA==}
+  '@vue-flow/node-resizer@1.5.1':
+    resolution: {integrity: sha512-DNYgXTF39GXPAygVMFmgn5azgFztaWfqbWvv8D/X0HGgeunRrexJ0W94DyXH1rnndGyYAJ0KexEjyelsb+Nlbg==}
     peerDependencies:
       '@vue-flow/core': ^1.23.0
       vue: ^3.3.0
@@ -16748,7 +16748,7 @@ snapshots:
       d3-zoom: 3.0.0
       vue: 3.5.27(typescript@5.9.3)
 
-  '@vue-flow/node-resizer@1.5.0(@vue-flow/core@1.48.2(vue@3.5.27(typescript@5.9.3)))(vue@3.5.27(typescript@5.9.3))':
+  '@vue-flow/node-resizer@1.5.1(@vue-flow/core@1.48.2(vue@3.5.27(typescript@5.9.3)))(vue@3.5.27(typescript@5.9.3))':
     dependencies:
       '@vue-flow/core': 1.48.2(vue@3.5.27(typescript@5.9.3))
       d3-drag: 3.0.0
