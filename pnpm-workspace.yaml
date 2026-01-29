@@ -187,7 +187,7 @@ catalog:
   unplugin-dts: ^1.0.0-beta.6
   v-viewer: ^3.0.22
   viewerjs: ^1.11.7
-  vite: ^8.0.0-beta.10
+  vite: ^8.0.0-beta.11
   vite-plugin-mkcert: ^1.17.9
   vitest: ^4.0.18
   vue: ^3.5.27
@@ -197,7 +197,7 @@ catalog:
   vue-tsc: ^3.2.4
   vue3-apexcharts: ^1.10.0
   vuetify: ^3.11.8
-  vuetify-nuxt-module: ^0.19.3
+  vuetify-nuxt-module: ^0.19.5
   web-push: ^3.6.7
   worker-timers: ^8.0.29
   ws: ^8.19.0
@@ -218,6 +218,6 @@ onlyBuiltDependencies:
 
 overrides:
   pdfjs-dist: ^5.4.530
-  vite: ^8.0.0-beta.10
+  vite: ^8.0.0-beta.11
 
 shellEmulator: true
