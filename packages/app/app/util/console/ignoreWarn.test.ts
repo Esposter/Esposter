@@ -6,7 +6,9 @@ describe(ignoreWarn, () => {
     expect.hasAssertions();
 
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
-    ignoreWarn(() => console.warn());
+    ignoreWarn(() => {
+      console.warn();
+    });
 
     expect(warn).not.toHaveBeenCalled();
 
