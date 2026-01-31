@@ -84,8 +84,8 @@ catalog:
   "@vue/language-core": ^3.2.4
   "@vue/test-utils": ^2.4.6
   "@vuepic/vue-datepicker": ^12.1.0
-  "@vueuse/core": ^14.1.0
-  "@vueuse/nuxt": ^14.1.0
+  "@vueuse/core": ^14.2.0
+  "@vueuse/nuxt": ^14.2.0
   ajv: ^8.17.1
   ajv-errors: ^3.0.0
   ajv-formats: ^3.0.1
