@@ -1,7 +1,9 @@
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
+const prefix = "on";
+
 export const getEventName = (event: string): string => {
-  const [, eventName] = event.split("on");
-  if (!eventName) throw new InvalidOperationError(Operation.Read, getEventName.name, event);
-  return eventName.toLowerCase();
+  if (!event.startsWith(prefix) || event.length <= prefix.length)
+    throw new InvalidOperationError(Operation.Read, getEventName.name, event);
+  return event.slice(prefix.length).toLowerCase();
 };

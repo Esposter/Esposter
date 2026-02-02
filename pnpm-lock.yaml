@@ -57,6 +57,12 @@ catalogs:
     '@codemirror/view':
       specifier: ^6.39.12
       version: 6.39.12
+    '@dxup/nuxt':
+      specifier: ^0.3.2
+      version: 0.3.2
+    '@dxup/unimport':
+      specifier: ^0.1.2
+      version: 0.1.2
     '@electric-sql/pglite':
       specifier: ^0.3.15
       version: 0.3.15
@@ -636,9 +642,6 @@ importers:
       '@vitest/coverage-v8':
         specifier: 'catalog:'
         version: 4.0.18(vitest@4.0.18(@types/node@25.2.0)(esbuild@0.27.2)(happy-dom@20.4.0)(jiti@2.6.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
-      '@vue/language-core':
-        specifier: 'catalog:'
-        version: 3.2.4
       ctix:
         specifier: 'catalog:'
         version: 2.7.2(@types/node@25.2.0)(prettier-plugin-organize-imports@4.3.0(prettier@3.8.1)(typescript@5.9.3)(vue-tsc@3.2.4(typescript@5.9.3)))(prettier@3.8.1)(typescript@5.9.3)
@@ -672,9 +675,6 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
-      unplugin-dts:
-        specifier: 'catalog:'
-        version: 1.0.0-beta.6(@vue/language-core@3.2.4)(esbuild@0.27.2)(rolldown@1.0.0-rc.2)(rollup@4.57.1)(typescript@5.9.3)(vite@8.0.0-beta.10(@types/node@25.2.0)(esbuild@0.27.2)(jiti@2.6.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(webpack@5.104.1(esbuild@0.27.2))
       vite:
         specifier: 8.0.0-beta.10
         version: 8.0.0-beta.10(@types/node@25.2.0)(esbuild@0.27.2)(jiti@2.6.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
@@ -1260,6 +1260,12 @@ importers:
 
   packages/configuration:
     devDependencies:
+      '@dxup/nuxt':
+        specifier: 'catalog:'
+        version: 0.3.2(magicast@0.5.1)
+      '@dxup/unimport':
+        specifier: 'catalog:'
+        version: 0.1.2
       '@eslint/core':
         specifier: 'catalog:'
         version: 1.1.0
@@ -1275,6 +1281,9 @@ importers:
       '@vitest/eslint-plugin':
         specifier: 'catalog:'
         version: 1.6.6(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)(vitest@4.0.18(@types/node@25.2.0)(esbuild@0.27.2)(happy-dom@20.4.0)(jiti@2.6.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
+      '@vue/language-core':
+        specifier: 'catalog:'
+        version: 3.2.4
       eslint-config-prettier:
         specifier: 'catalog:'
         version: 10.1.8(eslint@9.39.2(jiti@2.6.1))
@@ -1299,6 +1308,9 @@ importers:
       unplugin-auto-import:
         specifier: 'catalog:'
         version: 21.0.0(@nuxt/kit@4.3.0(magicast@0.5.1))(@vueuse/core@14.2.0(vue@3.5.27(typescript@5.9.3)))
+      unplugin-dts:
+        specifier: 'catalog:'
+        version: 1.0.0-beta.6(@vue/language-core@3.2.4)(esbuild@0.27.2)(rolldown@1.0.0-rc.2)(rollup@4.57.1)(typescript@5.9.3)(vite@8.0.0-beta.10(@types/node@25.2.0)(esbuild@0.27.2)(jiti@2.6.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(webpack@5.104.1(esbuild@0.27.2))
       vite-plugin-mkcert:
         specifier: 'catalog:'
         version: 1.17.9(vite@8.0.0-beta.10(@types/node@25.2.0)(esbuild@0.27.2)(jiti@2.6.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
