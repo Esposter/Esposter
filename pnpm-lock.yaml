@@ -559,8 +559,8 @@ catalogs:
       specifier: ^1.0.0-beta.6
       version: 1.0.0-beta.6
     v-viewer:
-      specifier: ^3.0.22
-      version: 3.0.22
+      specifier: ^3.0.23
+      version: 3.0.23
     viewerjs:
       specifier: ^1.11.7
       version: 1.11.7
@@ -1016,7 +1016,7 @@ importers:
         version: 2.0.1(@trpc/client@11.9.0(@trpc/server@11.9.0(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.9.0(typescript@5.9.3))
       v-viewer:
         specifier: 'catalog:'
-        version: 3.0.22(viewerjs@1.11.7)(vue@3.5.27(typescript@5.9.3))
+        version: 3.0.23(viewerjs@1.11.7)(vue@3.5.27(typescript@5.9.3))
       viewerjs:
         specifier: 'catalog:'
         version: 1.11.7
@@ -11363,8 +11363,8 @@ packages:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
     hasBin: true
 
-  v-viewer@3.0.22:
-    resolution: {integrity: sha512-uYyP5FPT4K/Sd5D1mhB2HMVV8jnf6zYy2HD1PHCNAO6s2Iway+Wls60pwh7y4F3e2Nlc9549Pvy2HXaq8PKrAg==}
+  v-viewer@3.0.23:
+    resolution: {integrity: sha512-u/Zd/FXTdtdE2k2YeYMf6mU4oL0ILEZ9STHnZT7myyfRwQot68GO3O+6DwxNnHTaATiiAJTrz2MXjaqYKoB7iA==}
     peerDependencies:
       viewerjs: ^1.11.0
       vue: ^3.0.0
@@ -23418,7 +23418,7 @@ snapshots:
 
   uuid@8.3.2: {}
 
-  v-viewer@3.0.22(viewerjs@1.11.7)(vue@3.5.27(typescript@5.9.3)):
+  v-viewer@3.0.23(viewerjs@1.11.7)(vue@3.5.27(typescript@5.9.3)):
     dependencies:
       lodash-es: 4.17.23
       viewerjs: 1.11.7
