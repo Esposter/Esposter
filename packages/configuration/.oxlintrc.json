@@ -47,8 +47,6 @@
     "sort-imports": "off",
     "sort-keys": "off",
     "typescript/ban-types": "off",
-    // @TODO: https://github.com/oxc-project/oxc/issues/17944
-    "typescript/consistent-indexed-object-style": "off",
     "typescript/consistent-type-imports": "off",
     "typescript/no-empty-interface": "off",
     "typescript/no-unsafe-function-type": "off",
