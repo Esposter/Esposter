@@ -12,7 +12,9 @@
     "moduleDetection": "force",
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
+    "allowArbitraryExtensions": true,
     "strict": true,
+    "noUncheckedIndexedAccess": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitOverride": true,
     "module": "preserve",
@@ -24,7 +26,15 @@
     "moduleResolution": "Bundler",
     "useDefineForClassFields": true,
     "noImplicitThis": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "plugins": [
+      {
+        "name": "@dxup/unimport"
+      },
+      {
+        "name": "@dxup/nuxt"
+      }
+    ]
   },
   "include": [
     "types/*.d.ts",

@@ -34,6 +34,7 @@ import { MockContainerDatabase } from "@/store/MockContainerDatabase";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { createHttpHeaders, createPipelineRequest } from "@azure/core-rest-pipeline";
 import { AnonymousCredential } from "@azure/storage-blob";
+import { takeOne } from "@esposter/shared";
 import { Readable } from "node:stream";
 
 export class MockBlobClient implements Except<BlobClient, "accountName"> {
@@ -74,7 +75,7 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
     const pathSegments = url.pathname.split("/").filter(Boolean);
     if (pathSegments.length < 2) throw new MockRestError("Invalid copy source URL format", 400);
 
-    const sourceContainerName = pathSegments[0];
+    const sourceContainerName = takeOne(pathSegments);
     const sourceBlobName = pathSegments.slice(1).join("/");
     const sourceContainer = MockContainerDatabase.get(sourceContainerName);
     if (!sourceContainer) throw new MockRestError("Source container not found", 404);

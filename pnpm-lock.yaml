@@ -1441,6 +1441,9 @@ importers:
 
   packages/xml2js:
     dependencies:
+      '@esposter/shared':
+        specifier: workspace:*
+        version: link:../shared
       sax:
         specifier: 'catalog:'
         version: 1.4.4

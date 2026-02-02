@@ -6,13 +6,13 @@ import type {
   BlobDeleteOptions,
   StorageSharedKeyCredential,
 } from "@azure/storage-blob";
-import type { MapValue } from "@esposter/shared";
 
 import { getAzureErrorXml } from "@/services/container/getAzureErrorXml";
 import { toWebResourceLike } from "@/services/container/toWebResourceLike";
 import { MockContainerDatabase } from "@/store/MockContainerDatabase";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { createHttpHeaders, createPipelineRequest } from "@azure/core-rest-pipeline";
+import { type MapValue, takeOne } from "@esposter/shared";
 
 export class MockBlobBatchClient implements BlobBatchClient {
   url: string;
@@ -54,7 +54,7 @@ export class MockBlobBatchClient implements BlobBatchClient {
         subResponsesFailedCount++;
       }
 
-      const containerName = pathSegments[0];
+      const containerName = takeOne(pathSegments);
       const blobName = pathSegments.slice(1).join("/");
       const container = this.getContainer(containerName);
 

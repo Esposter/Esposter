@@ -33,6 +33,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@esposter/shared": "workspace:*",
     "sax": "catalog:",
     "xmlbuilder2": "catalog:"
   },

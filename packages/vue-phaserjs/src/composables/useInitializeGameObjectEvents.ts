@@ -5,6 +5,7 @@ import type { SetupContext } from "vue";
 import { GameObjectEventMap } from "@/util/emit/GameObjectEventMap";
 import { getEventName } from "@/util/emit/getEventName";
 import { isEvent } from "@/util/emit/isEvent";
+import { takeOne } from "@esposter/shared";
 import ClickOutside from "phaser3-rex-plugins/plugins/clickoutside.js";
 
 export const useInitializeGameObjectEvents = () => {
@@ -31,7 +32,8 @@ export const useInitializeGameObjectEvents = () => {
     for (const gameObjectEvent of gameObjectEvents) {
       const context = GameObjectEventMap[gameObjectEvent];
       const eventListener = (...args: Types.Input.EventData[]) => {
-        if ("eventIndex" in context) args[0].stopPropagation = args[context.eventIndex].stopPropagation;
+        if ("eventIndex" in context)
+          takeOne(args, 0).stopPropagation = takeOne(args, context.eventIndex).stopPropagation;
         emit(gameObjectEvent, ...args);
       };
 
