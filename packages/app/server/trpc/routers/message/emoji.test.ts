@@ -8,7 +8,7 @@ import { messageRouter } from "@@/server/trpc/routers/message";
 import { emojiRouter } from "@@/server/trpc/routers/message/emoji";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { MessageMetadataType, rooms } from "@esposter/db-schema";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
@@ -59,7 +59,7 @@ describe("emoji", () => {
     const readEmojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId: newRoom.id });
 
     expect(readEmojis).toHaveLength(1);
-    expect(readEmojis[0]).toStrictEqual(newEmoji);
+    expect(takeOne(readEmojis)).toStrictEqual(newEmoji);
   });
 
   test("fails read emojis with non-existent room id", async () => {
@@ -203,7 +203,7 @@ describe("emoji", () => {
     const readEmojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId: newRoom.id });
 
     expect(readEmojis).toHaveLength(1);
-    expect(readEmojis[0].userIds).toStrictEqual([getMockSession().user.id, user.id]);
+    expect(takeOne(readEmojis).userIds).toStrictEqual([getMockSession().user.id, user.id]);
   });
 
   test("updates twice removes user id", async () => {
@@ -234,7 +234,7 @@ describe("emoji", () => {
     const readEmojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId: newRoom.id });
 
     expect(readEmojis).toHaveLength(1);
-    expect(readEmojis[0].userIds).toStrictEqual([getMockSession().user.id]);
+    expect(takeOne(readEmojis).userIds).toStrictEqual([getMockSession().user.id]);
   });
 
   test("fails update emoji with non-existent room", async () => {

@@ -4,7 +4,7 @@ import { useAlertStore } from "@/store/alert";
 import { useDataStore } from "@/store/message/data";
 import { useForwardStore } from "@/store/message/forward";
 import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
-import { RoutePath } from "@esposter/shared";
+import { RoutePath, takeOne } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
 const alertStore = useAlertStore();
@@ -88,7 +88,7 @@ const {
               const { partitionKey, rowKey } = forward;
               await $trpc.message.forwardMessage.mutate({ partitionKey, rowKey, roomIds, message: messageInput });
               if (roomIds.length === 1) {
-                await navigateTo(RoutePath.Messages(roomIds[0]));
+                await navigateTo(RoutePath.Messages(takeOne(roomIds)));
                 createAlert('Message forwarded!', 'success', { location: 'top center', icon: 'mdi-share' });
               }
               dialog = false;

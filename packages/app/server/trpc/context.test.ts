@@ -9,6 +9,7 @@ import { useEventGridPublisherClientMock } from "@@/server/composables/azure/eve
 import { useTableClientMock } from "@@/server/composables/azure/table/useTableClient.test";
 import { PGlite } from "@electric-sql/pglite";
 import { messageSchema, schema, users } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
 import { generateDrizzleJson, generateMigration } from "drizzle-kit/api";
 import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/pglite";
@@ -60,7 +61,7 @@ export const mockSessionOnce = async (db: Context["db"], mockUser?: Session["use
   const createdAt = new Date();
   const user =
     mockUser ??
-    (
+    takeOne(
       await db
         .insert(users)
         .values({
@@ -72,8 +73,8 @@ export const mockSessionOnce = async (db: Context["db"], mockUser?: Session["use
           name: crypto.randomUUID(),
           updatedAt: createdAt,
         })
-        .returning()
-    )[0];
+        .returning(),
+    );
   const session = { session: createSession(user.id), user };
   mocks.getSession.mockImplementationOnce(() => session);
   return session;

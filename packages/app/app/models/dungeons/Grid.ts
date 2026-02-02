@@ -3,7 +3,7 @@ import type { Position } from "grid-engine";
 import type { SetRequired } from "type-fest";
 import type { UnwrapRef } from "vue";
 
-import { exhaustiveGuard, InvalidOperationError, Operation } from "@esposter/shared";
+import { exhaustiveGuard, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { Direction } from "grid-engine";
 
 export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
@@ -25,7 +25,7 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
   }
 
   get value() {
-    return unref(this.grid)[this.position.value.y][this.position.value.x];
+    return takeOne(takeOne(unref(this.grid), this.position.value.y), this.position.value.x);
   }
 
   constructor({ grid, position, validate, wrap }: SetRequired<Partial<Grid<TValue, TGrid>>, "grid">) {
@@ -45,7 +45,7 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
   getColumnSize(rowIndex: number) {
     if (rowIndex > this.rowSize - 1)
       throw new InvalidOperationError(Operation.Read, this.constructor.name, `row index: ${rowIndex}`);
-    return unref(this.grid)[rowIndex].length;
+    return takeOne(unref(this.grid), rowIndex).length;
   }
 
   getPosition(value: TValue): Position | undefined {
@@ -63,7 +63,7 @@ export class Grid<TValue, TGrid extends readonly (readonly TValue[])[]> {
   getValue({ x, y }: Position) {
     if (x > this.getColumnSize(y))
       throw new InvalidOperationError(Operation.Read, this.constructor.name, `position: { x: ${x}, y: ${y} }`);
-    return unref(this.grid)[y][x];
+    return takeOne(takeOne(unref(this.grid), y), x);
   }
 
   move(direction: Direction, isSkipValidation?: boolean) {

@@ -9,6 +9,11 @@ describe(takeOne, () => {
     expect(takeOne([""])).toBe("");
   });
 
+  test("returns item with index", () => {
+    expect.hasAssertions();
+    expect(takeOne({ "": "" }, "")).toBe("");
+  });
+
   test("throws if item is undefined", () => {
     expect.hasAssertions();
     expect(() => takeOne([])).toThrowError(

@@ -6,6 +6,7 @@ import { useAlertStore } from "@/store/alert";
 import { useRoomStore } from "@/store/message/room";
 import { useUploadFileStore } from "@/store/message/uploadFile";
 import { FILE_MAX_LENGTH } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
 
 export const useUploadFiles = () => {
   const { $trpc } = useNuxtApp();
@@ -30,8 +31,8 @@ export const useUploadFiles = () => {
     isFileLoading.value = true;
     // Populate the file metadata first before uploading the blocks so that vue can render them properly in the UI
     for (let i = 0; i < newFiles.length; i++) {
-      const file = newFiles[i];
-      const { id } = fileSasEntities[i];
+      const file = takeOne(newFiles, i);
+      const { id } = takeOne(fileSasEntities, i);
       files.value.push({ filename: file.name, id, mimetype: file.type, size: file.size });
     }
 
@@ -39,7 +40,7 @@ export const useUploadFiles = () => {
       newFiles
         .filter(({ size }) => validateFile(size))
         .map(async (file, index) => {
-          const { id, sasUrl } = fileSasEntities[index];
+          const { id, sasUrl } = takeOne(fileSasEntities, index);
           const uploadFileUrl = reactive<UploadFileUrl>({ progress: 0, url: URL.createObjectURL(file) });
           fileUrlMap.value.set(id, uploadFileUrl);
           await uploadBlocks(file, sasUrl, (progress) => {

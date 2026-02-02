@@ -114,7 +114,7 @@ describe("pushSubscription", () => {
     const mockUser = getMockSession().user;
 
     expect(processPushNotificationEvents).toHaveLength(1);
-    expect(processPushNotificationEvents[0].data as PushNotificationEventGridData).toStrictEqual({
+    expect(takeOne(processPushNotificationEvents).data as PushNotificationEventGridData).toStrictEqual({
       message: {
         message,
         partitionKey: newRoom.id,
@@ -150,7 +150,7 @@ describe("pushSubscription", () => {
     const mockUser = getMockSession().user;
 
     expect(processPushNotificationEvents).toHaveLength(1);
-    expect(processPushNotificationEvents[0].data as PushNotificationEventGridData).toStrictEqual({
+    expect(takeOne(processPushNotificationEvents).data as PushNotificationEventGridData).toStrictEqual({
       message: {
         message,
         partitionKey: newRoom.id,

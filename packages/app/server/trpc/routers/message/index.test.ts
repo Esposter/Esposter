@@ -23,7 +23,7 @@ import {
   rooms,
   StandardMessageEntity,
 } from "@esposter/db-schema";
-import { MENTION_ID_ATTRIBUTE, MENTION_TYPE, MENTION_TYPE_ATTRIBUTE, NotFoundError } from "@esposter/shared";
+import { MENTION_ID_ATTRIBUTE, MENTION_TYPE, MENTION_TYPE_ATTRIBUTE, NotFoundError, takeOne } from "@esposter/shared";
 import { MockContainerDatabase, MockEventGridDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
@@ -73,7 +73,7 @@ describe("message", () => {
     const readMessages = await messageCaller.readMessages({ roomId: newRoom.id });
 
     expect(readMessages.items).toHaveLength(1);
-    expect(readMessages.items[0].message).toBe(newMessage.message);
+    expect(takeOne(readMessages.items).message).toBe(newMessage.message);
   });
 
   test("reads with cursor and includes value", async () => {
@@ -87,7 +87,7 @@ describe("message", () => {
     let readMessages = await messageCaller.readMessages({ cursor, roomId: newRoom.id });
 
     expect(readMessages.items).toHaveLength(1);
-    expect(readMessages.items[0].rowKey).toBe(firstMessage.rowKey);
+    expect(takeOne(readMessages.items).rowKey).toBe(firstMessage.rowKey);
 
     readMessages = await messageCaller.readMessages({
       cursor,
@@ -96,8 +96,8 @@ describe("message", () => {
     });
 
     expect(readMessages.items).toHaveLength(2);
-    expect(readMessages.items[0].rowKey).toBe(firstMessage.rowKey);
-    expect(readMessages.items[1].rowKey).toBe(secondMessage.rowKey);
+    expect(takeOne(readMessages.items).rowKey).toBe(firstMessage.rowKey);
+    expect(takeOne(readMessages.items, 1).rowKey).toBe(secondMessage.rowKey);
   });
 
   test("reads in ascending order with cursor and includes value", async () => {
@@ -111,7 +111,7 @@ describe("message", () => {
     let readMessages = await messageCaller.readMessages({ limit: 1, order: SortOrder.Asc, roomId: newRoom.id });
 
     expect(readMessages.items).toHaveLength(1);
-    expect(readMessages.items[0].rowKey).toBe(firstMessage.rowKey);
+    expect(takeOne(readMessages.items).rowKey).toBe(firstMessage.rowKey);
 
     let cursor = serialize({ rowKey: getReverseTickedTimestamp(firstMessage.rowKey) }, [MESSAGE_ROWKEY_SORT_ITEM]);
     readMessages = await messageCaller.readMessages({
@@ -121,7 +121,7 @@ describe("message", () => {
     });
 
     expect(readMessages.items).toHaveLength(1);
-    expect(readMessages.items[0].rowKey).toBe(secondMessage.rowKey);
+    expect(takeOne(readMessages.items).rowKey).toBe(secondMessage.rowKey);
 
     cursor = serialize({ rowKey: getReverseTickedTimestamp(firstMessage.rowKey) }, [MESSAGE_ROWKEY_SORT_ITEM]);
     readMessages = await messageCaller.readMessages({
@@ -132,8 +132,8 @@ describe("message", () => {
     });
 
     expect(readMessages.items).toHaveLength(2);
-    expect(readMessages.items[0].rowKey).toBe(firstMessage.rowKey);
-    expect(readMessages.items[1].rowKey).toBe(secondMessage.rowKey);
+    expect(takeOne(readMessages.items).rowKey).toBe(firstMessage.rowKey);
+    expect(takeOne(readMessages.items, 1).rowKey).toBe(secondMessage.rowKey);
   });
 
   test("fails read with non-existent room id", async () => {
@@ -169,7 +169,7 @@ describe("message", () => {
     });
 
     expect(readMessages).toHaveLength(1);
-    expect(readMessages[0].message).toBe(message);
+    expect(takeOne(readMessages).message).toBe(message);
   });
 
   test("fails read by row keys with non-existent room id", async () => {
@@ -263,7 +263,7 @@ describe("message", () => {
 
     expect(id).toBe(newMessage.rowKey);
     expect(data).toHaveLength(1);
-    expect(data[0]).toStrictEqual(newMessage);
+    expect(takeOne(data)).toStrictEqual(newMessage);
   });
 
   test("fails on creates with non-existent room", async () => {
@@ -381,9 +381,9 @@ describe("message", () => {
     const readMessages = await messageCaller.readMessages({ roomId: newRoom.id });
 
     expect(readMessages.items).toHaveLength(1);
-    expect(readMessages.items[0].isEdited).toBe(true);
-    expect(readMessages.items[0].mentions).toHaveLength(0);
-    expect(readMessages.items[0].message).toBe(updatedMessage);
+    expect(takeOne(readMessages.items).isEdited).toBe(true);
+    expect(takeOne(readMessages.items).mentions).toHaveLength(0);
+    expect(takeOne(readMessages.items).message).toBe(updatedMessage);
   });
 
   test("fails update with non-existent message", async () => {
@@ -552,7 +552,7 @@ describe("message", () => {
     const forwardedMessages = await messageCaller.readMessages({ roomId: forwardedRoom.id });
 
     expect(forwardedMessages.items).toHaveLength(1);
-    expect(forwardedMessages.items[0].isForward).toBe(true);
+    expect(takeOne(forwardedMessages.items).isForward).toBe(true);
   });
 
   test("forwards message with optional message", async () => {
@@ -573,8 +573,8 @@ describe("message", () => {
     const forwardedMessages = await messageCaller.readMessages({ roomId: forwardedRoom.id });
 
     expect(forwardedMessages.items).toHaveLength(2);
-    expect(forwardedMessages.items[0].isForward).toBe(true);
-    expect(forwardedMessages.items[1].isForward).toBeUndefined();
+    expect(takeOne(forwardedMessages.items).isForward).toBe(true);
+    expect(takeOne(forwardedMessages.items, 1).isForward).toBeUndefined();
   });
 
   test("fails forward messages with non-existent message", async () => {
@@ -715,7 +715,7 @@ describe("message", () => {
     });
 
     expect(updatedMessages).toHaveLength(1);
-    expect(updatedMessages[0].files).toHaveLength(0);
+    expect(takeOne(updatedMessages).files).toHaveLength(0);
   });
 
   test("fails delete file with non-existent message", async () => {
@@ -809,8 +809,8 @@ describe("message", () => {
     await expect(
       messageCaller.deleteFile({
         id,
-        partitionKey: data[0].partitionKey,
-        rowKey: data[0].rowKey,
+        partitionKey: takeOne(data).partitionKey,
+        rowKey: takeOne(data).rowKey,
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: BAD_REQUEST]`);
   });
@@ -849,7 +849,7 @@ describe("message", () => {
     });
 
     expect(updatedMessages).toHaveLength(1);
-    expect(updatedMessages[0].linkPreviewResponse).toBeNull();
+    expect(takeOne(updatedMessages).linkPreviewResponse).toBeNull();
   });
 
   test("fails delete link preview response with non-existent message", async () => {
@@ -888,11 +888,11 @@ describe("message", () => {
     const readMessages = await messageCaller.readMessages({ roomId: newRoom.id });
 
     expect(readMessages.items).toHaveLength(2);
-    expect(readMessages.items[0].partitionKey).toBe(newMessage.partitionKey);
-    expect(readMessages.items[0].rowKey).toBe(newMessage.rowKey);
-    expect(readMessages.items[0].isPinned).toBe(true);
-    expect(readMessages.items[1].type).toBe(MessageType.PinMessage);
-    expect(readMessages.items[1].replyRowKey).toBe(newMessage.rowKey);
+    expect(takeOne(readMessages.items).partitionKey).toBe(newMessage.partitionKey);
+    expect(takeOne(readMessages.items).rowKey).toBe(newMessage.rowKey);
+    expect(takeOne(readMessages.items).isPinned).toBe(true);
+    expect(takeOne(readMessages.items, 1).type).toBe(MessageType.PinMessage);
+    expect(takeOne(readMessages.items, 1).replyRowKey).toBe(newMessage.rowKey);
   });
 
   test("unpins message", async () => {
@@ -908,6 +908,6 @@ describe("message", () => {
     const readMessages = await messageCaller.readMessages({ roomId: newRoom.id });
 
     expect(readMessages.items).toHaveLength(2);
-    expect(readMessages.items[0].isPinned).toBeUndefined();
+    expect(takeOne(readMessages.items).isPinned).toBeUndefined();
   });
 });

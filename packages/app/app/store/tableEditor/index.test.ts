@@ -2,6 +2,7 @@ import { TodoListItem } from "#shared/models/tableEditor/todoList/TodoListItem";
 import { ID_QUERY_PARAMETER_KEY } from "@/services/shared/constants";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { useItemStore } from "@/store/tableEditor/item";
+import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 import { expectToBeDefined } from "~~/shared/test/expectToBeDefined";
@@ -75,7 +76,7 @@ describe(useTableEditorStore, () => {
     await save();
 
     expect(tableEditor.value.items).toHaveLength(1);
-    expect(tableEditor.value.items[0]).toStrictEqual(newItem);
+    expect(takeOne(tableEditor.value.items)).toStrictEqual(newItem);
   });
 
   test("save update item", async () => {
@@ -91,14 +92,14 @@ describe(useTableEditorStore, () => {
 
     createItem(newItem);
 
-    expect(tableEditor.value.items[0].name).not.toBe(updatedName);
+    expect(takeOne(tableEditor.value.items).name).not.toBe(updatedName);
 
     await editItem({ id: newItem.id });
     expectToBeDefined(editedItem.value);
     editedItem.value.name = updatedName;
     await save();
 
-    expect(tableEditor.value.items[0].name).toBe(updatedName);
+    expect(takeOne(tableEditor.value.items).name).toBe(updatedName);
   });
 
   test("save delete item", async () => {

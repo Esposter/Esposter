@@ -41,7 +41,7 @@ import {
   usersToRooms,
   UserToRoomRelations,
 } from "@esposter/db-schema";
-import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation } from "@esposter/shared";
+import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, count, desc, eq, ilike, inArray, ne, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -109,7 +109,7 @@ export type CreateInviteInput = z.infer<typeof createInviteInputSchema>;
 export const roomRouter = router({
   countMembers: getMemberProcedure(countMembersInputSchema, "roomId").query(
     async ({ ctx, input: { roomId } }) =>
-      (await ctx.db.select({ count: count() }).from(usersToRooms).where(eq(usersToRooms.roomId, roomId)))[0].count,
+      takeOne(await ctx.db.select({ count: count() }).from(usersToRooms).where(eq(usersToRooms.roomId, roomId))).count,
   ),
   createInvite: getMemberProcedure(createInviteInputSchema, "roomId").mutation<string>(
     async ({ ctx, input: { roomId } }) => {

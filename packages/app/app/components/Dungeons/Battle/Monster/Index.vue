@@ -7,7 +7,8 @@ interface MonsterProps {
   // By default, this will be the player
   isEnemy?: boolean;
 }
-
+// @TODO: Remove this once the defineProps LooseRequired type is fixed
+// eslint-disable-next-line @typescript-eslint/no-useless-default-assignment
 const { isEnemy = false } = defineProps<MonsterProps>();
 const store = isEnemy ? useEnemyStore() : useBattlePlayerStore();
 const { initialMonsterPosition } = store;

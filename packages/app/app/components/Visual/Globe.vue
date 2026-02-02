@@ -8,6 +8,7 @@ import data from "@/assets/about/data.json";
 import { features } from "@/assets/about/globe.json";
 import { ARC_STROKES, COLORS } from "@/services/visual/constants";
 import { getRandomValues } from "@/util/math/random/getRandomValues";
+import { takeOne } from "@esposter/shared";
 import { AmbientLight, Color, DirectionalLight, Fog, PerspectiveCamera, PointLight, Scene, WebGLRenderer } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
@@ -105,9 +106,9 @@ onMounted(async () => {
     .arcStartLng((d) => (d as Data).startLng)
     .arcEndLat((d) => (d as Data).endLat)
     .arcEndLng((d) => (d as Data).endLng)
-    .arcColor(() => COLORS[createRandomInteger(COLORS.length - 1)])
+    .arcColor(() => takeOne(COLORS, createRandomInteger(COLORS.length - 1)))
     .arcAltitude((e) => (e as Data).arcAlt)
-    .arcStroke(() => ARC_STROKES[createRandomInteger(ARC_STROKES.length - 1)])
+    .arcStroke(() => takeOne(ARC_STROKES, createRandomInteger(ARC_STROKES.length - 1)))
     .arcDashLength(arcLength)
     .arcDashInitialGap((e) => (e as Data).order)
     .arcDashGap(15)
@@ -122,12 +123,12 @@ onMounted(async () => {
     .labelResolution(6)
     .labelAltitude(0.01)
     .pointsData(countries)
-    .pointColor(() => COLORS[createRandomInteger(COLORS.length - 1)])
+    .pointColor(() => takeOne(COLORS, createRandomInteger(COLORS.length - 1)))
     .pointsMerge(true)
     .pointAltitude(0)
     .pointRadius(1)
     .ringsData(getRandomValues(countries, rings))
-    .ringColor(() => COLORS[createRandomInteger(COLORS.length - 1)])
+    .ringColor(() => takeOne(COLORS, createRandomInteger(COLORS.length - 1)))
     .ringMaxRadius(ringMaxRadius)
     .ringPropagationSpeed(3)
     .ringRepeatPeriod(arcTime * arcLength);
