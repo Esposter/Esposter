@@ -42,7 +42,7 @@ export const getCursorWhere: GetCursorWhere = <TTable extends TableConfig>(
         default:
           exhaustiveGuard(sortItem.order);
       }
-      return operator(takeOne<TTable["columns"][string]>(table, key), value);
+      return operator(takeOne<string, TTable["columns"][string]>(table, key), value);
     }),
   );
 };
