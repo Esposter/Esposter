@@ -39,7 +39,7 @@ import {
   surveyResponseEntitySchema,
   surveys,
 } from "@esposter/db-schema";
-import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
+import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, count, eq } from "drizzle-orm";
 import { z } from "zod";
@@ -95,7 +95,8 @@ export type UpdateSurveyResponseInput = z.infer<typeof updateSurveyResponseInput
 export const surveyRouter = router({
   count: standardAuthedProcedure.query(
     async ({ ctx }) =>
-      (await ctx.db.select({ count: count() }).from(surveys).where(eq(surveys.userId, ctx.session.user.id)))[0].count,
+      takeOne(await ctx.db.select({ count: count() }).from(surveys).where(eq(surveys.userId, ctx.session.user.id)))
+        .count,
   ),
   createSurvey: standardAuthedProcedure.input(createSurveyInputSchema).mutation<Survey>(async ({ ctx, input }) => {
     const newSurvey = (

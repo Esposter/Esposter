@@ -3,6 +3,7 @@ import type { CSSProperties } from "vue";
 import type { VNavigationDrawer } from "vuetify/components";
 
 import { useLayoutStore } from "@/store/layout";
+import { takeOne } from "@esposter/shared";
 
 interface DefaultProps {
   footerStyle?: CSSProperties;
@@ -31,7 +32,7 @@ const { bottom, left, middle, right } = useFixedLayoutStyles(bottomOffset);
 useResizeObserver(
   () => footer.value?.$el,
   (entries) => {
-    const entry = entries[0];
+    const entry = takeOne(entries);
     const { bottom } = entry.contentRect;
     bottomOffset.value = bottom;
   },

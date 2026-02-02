@@ -4,7 +4,7 @@ import type { PgTableWithColumns } from "drizzle-orm/pg-core";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { deserialize } from "#shared/services/pagination/cursor/deserialize";
-import { exhaustiveGuard, NotFoundError } from "@esposter/shared";
+import { exhaustiveGuard, NotFoundError, takeOne } from "@esposter/shared";
 import { and, gt, gte, lt, lte } from "drizzle-orm";
 
 interface GetCursorWhere {
@@ -42,7 +42,7 @@ export const getCursorWhere: GetCursorWhere = <TTable extends TableConfig>(
         default:
           exhaustiveGuard(sortItem.order);
       }
-      return operator(table[key], value);
+      return operator(takeOne(table, key), value);
     }),
   );
 };

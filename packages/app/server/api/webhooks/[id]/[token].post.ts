@@ -1,10 +1,19 @@
 import { webhookRateLimiter } from "@@/server/services/rateLimiter/webhookRateLimiter";
 import { RestError } from "@azure/storage-blob";
+import { selectWebhookSchema } from "@esposter/db-schema";
 import { RateLimiterRes } from "rate-limiter-flexible";
 
 export default defineEventHandler(async (event) => {
+  const { id: rawId, token: rawToken } = getRouterParams(event);
+  const { data: id, success: idSuccess } = selectWebhookSchema.shape.id.safeParse(rawId);
+  const { data: token, success: tokenSuccess } = selectWebhookSchema.shape.token.safeParse(rawToken);
+
+  if (!(idSuccess && tokenSuccess)) {
+    setResponseStatus(event, 400);
+    return { message: "Invalid parameters." };
+  }
+
   const runtimeConfig = useRuntimeConfig(event);
-  const { id, token } = getRouterParams(event);
   const body = await readBody(event);
 
   try {

@@ -3,16 +3,21 @@ import { Operation } from "@/models/shared/Operation";
 
 interface TakeOne {
   <T>(values: readonly T[], index?: number): T;
-  <TKey extends number | string, TValue>(values: Record<TKey, TValue>, index: TKey): TValue;
+  <TKey extends PropertyKey, TValue>(values: Record<TKey, TValue>, index: TKey): TValue;
+  <T extends object, TKey extends keyof T>(values: T, index: TKey): T[TKey];
 }
 // We'll cheat a little bit here since the syntax for index accessing and key accessing is the same
 // And we're able to restrict the values passed in based on the overloaded types of the function
-export const takeOne: TakeOne = <TKey extends number | string, T>(
+export const takeOne: TakeOne = <TKey extends PropertyKey, T>(
   values: readonly T[] | Record<TKey, T>,
   index: number | TKey = 0,
 ) => {
   const value = values[index as keyof typeof values];
   if (value === undefined)
-    throw new InvalidOperationError(Operation.Read, takeOne.name, `Values: ${values}, index: ${index} out of bounds`);
+    throw new InvalidOperationError(
+      Operation.Read,
+      takeOne.name,
+      `Values: ${values}, index: ${index.toString()} out of bounds`,
+    );
   return value;
 };

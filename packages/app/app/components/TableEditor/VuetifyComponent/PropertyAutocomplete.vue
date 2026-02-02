@@ -15,7 +15,6 @@ const propertySchemaMap = computed<Record<string, Component>>(() => {
   if (!component) return {};
 
   const result: Record<string, Component> = {};
-  // @ts-expect-error TS2590: Expression produces a union type that is too complex to represent.
   const props = takeOne(VuetifyComponentMap, component).props as Record<
     string,
     { type?: Class<unknown> | Class<unknown>[] }
