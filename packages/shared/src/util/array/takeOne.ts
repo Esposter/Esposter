@@ -4,7 +4,6 @@ import { Operation } from "@/models/shared/Operation";
 interface TakeOne {
   <T>(values: readonly T[], index?: number): T;
   <TKey extends PropertyKey, TValue>(values: Record<TKey, TValue>, index: TKey): TValue;
-  <T extends object, TKey extends keyof T>(values: T, index: TKey): T[TKey];
 }
 // We'll cheat a little bit here since the syntax for index accessing and key accessing is the same
 // And we're able to restrict the values passed in based on the overloaded types of the function
