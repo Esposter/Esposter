@@ -12,12 +12,12 @@ import { router } from "@@/server/trpc";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/room/getCreatorProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import {
-  appUsers,
-  DatabaseEntityType,
-  selectAppUserSchema,
-  selectRoomSchema,
-  WebhookRelations,
-  webhooks,
+    appUsers,
+    DatabaseEntityType,
+    selectAppUserSchema,
+    selectRoomSchema,
+    WebhookRelations,
+    webhooks,
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -49,7 +49,7 @@ export const webhookRouter = router({
           ).message,
         });
 
-      const newAppUser = (await ctx.db.insert(appUsers).values({ name }).returning()).find(Boolean);
+      const newAppUser = (await ctx.db.insert(appUsers).values({ name }).returning())[0];
       if (!newAppUser)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -63,7 +63,7 @@ export const webhookRouter = router({
           .insert(webhooks)
           .values({ creatorId: ctx.session.user.id, isActive: true, name, roomId, token, userId: newAppUser.id })
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!newWebhook)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -124,7 +124,7 @@ export const webhookRouter = router({
           .set({ token })
           .where(and(eq(webhooks.id, id), eq(webhooks.roomId, roomId)))
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!updatedWebhook)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -141,7 +141,7 @@ export const webhookRouter = router({
           .set(rest)
           .where(and(eq(webhooks.id, id), eq(webhooks.roomId, roomId)))
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!updatedWebhook)
         throw new TRPCError({
           code: "BAD_REQUEST",

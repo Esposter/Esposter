@@ -104,7 +104,7 @@ export const surveyRouter = router({
         .insert(surveys)
         .values({ ...input, userId: ctx.session.user.id })
         .returning()
-    ).find(Boolean);
+    )[0];
     if (!newSurvey)
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -137,7 +137,7 @@ export const surveyRouter = router({
         .delete(surveys)
         .where(and(eq(surveys.id, input), eq(surveys.userId, ctx.session.user.id)))
         .returning()
-    ).find(Boolean);
+    )[0];
     if (!deletedSurvey)
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -235,7 +235,7 @@ export const surveyRouter = router({
           .set(rest)
           .where(and(eq(surveys.id, id), eq(surveys.userId, ctx.session.user.id)))
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!updatedSurvey)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -268,7 +268,7 @@ export const surveyRouter = router({
           .set(rest)
           .where(and(eq(surveys.id, id), eq(surveys.userId, ctx.session.user.id)))
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!updatedSurvey)
         throw new TRPCError({
           code: "BAD_REQUEST",

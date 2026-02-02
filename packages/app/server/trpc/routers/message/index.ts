@@ -184,7 +184,7 @@ export const messageRouter = router({
 
       const updatedRoom = (
         await ctx.db.update(rooms).set({ updatedAt: new Date() }).where(eq(rooms.id, input.roomId)).returning()
-      ).find(Boolean);
+      )[0];
       if (!updatedRoom)
         throw new TRPCError({
           code: "BAD_REQUEST",
