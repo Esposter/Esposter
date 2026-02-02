@@ -65,7 +65,7 @@ import {
   StandardMessageEntityPropertyNames,
   standardMessageEntitySchema,
 } from "@esposter/db-schema";
-import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation } from "@esposter/shared";
+import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
@@ -184,7 +184,7 @@ export const messageRouter = router({
 
       const updatedRoom = (
         await ctx.db.update(rooms).set({ updatedAt: new Date() }).where(eq(rooms.id, input.roomId)).returning()
-      ).find(Boolean);
+      )[0];
       if (!updatedRoom)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -214,7 +214,7 @@ export const messageRouter = router({
       const containerClient = await useContainerClient(AzureContainer.MessageAssets);
       const blobName = getBlobName(
         `${messageEntity.partitionKey}/${id}`,
-        messageEntity.files.splice(index, 1)[0].filename,
+        takeOne(messageEntity.files.splice(index, 1)).filename,
       );
       const updatedMessageEntity: AzureUpdateEntity<StandardMessageEntity> = {
         files: messageEntity.files,
@@ -343,7 +343,7 @@ export const messageRouter = router({
         // Remember that Azure Table Storage is insert-sorted by rowKey
         // So the first message is the newest one but we want to yield from oldest to newest
         const reversedMessages = messages.toReversed();
-        const newestMessage = reversedMessages[reversedMessages.length - 1];
+        const newestMessage = takeOne(reversedMessages, reversedMessages.length - 1);
         yield tracked(newestMessage.rowKey, reversedMessages);
       }
     }
@@ -359,7 +359,7 @@ export const messageRouter = router({
           dataToYield.push(newMessage);
 
       if (dataToYield.length > 0) {
-        const newestMessage = dataToYield[dataToYield.length - 1];
+        const newestMessage = takeOne(dataToYield, dataToYield.length - 1);
         yield tracked(newestMessage.rowKey, dataToYield);
       }
     }

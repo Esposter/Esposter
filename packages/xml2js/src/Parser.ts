@@ -6,6 +6,7 @@ import { BUILTIN_NAME_KEY, TEXT_NODE_NAME } from "@/constants";
 import { DefaultParserOptions } from "@/DefaultParserOptions";
 import { normalize } from "@/processors";
 import { stripBOM } from "@/stripBOM";
+import { takeOne } from "@esposter/shared";
 import { parser } from "sax";
 
 export class Parser {
@@ -40,7 +41,7 @@ export class Parser {
             if (!(this.options.attrkey in newObject) && !this.options.mergeAttrs) newObject[this.options.attrkey] = {};
 
             const newValue = this.options.attrValueProcessors
-              ? processItem(this.options.attrValueProcessors, (node as Tag).attributes[key], key)
+              ? processItem(this.options.attrValueProcessors, takeOne((node as Tag).attributes, key), key)
               : node.attributes[key];
             const processedKey = this.options.attrNameProcessors
               ? processItem(this.options.attrNameProcessors, key, "")
@@ -160,7 +161,9 @@ export class Parser {
           [this.options.charkey]: text,
         };
         if (this.options.normalize)
-          charChild[this.options.charkey] = charChild[this.options.charkey].replaceAll(/\s{2,}/g, " ").trim();
+          charChild[this.options.charkey] = takeOne(charChild, this.options.charkey)
+            .replaceAll(/\s{2,}/g, " ")
+            .trim();
 
         (object[this.options.childkey] as Record<string, string>[]).push(charChild);
       }

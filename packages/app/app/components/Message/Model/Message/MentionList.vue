@@ -3,6 +3,8 @@ import type { MentionNodeAttributes } from "@/models/message/MentionNodeAttribut
 import type { User } from "@esposter/db-schema";
 import type { SuggestionProps } from "@tiptap/suggestion";
 
+import { takeOne } from "@esposter/shared";
+
 const { command, items, query } = defineProps<SuggestionProps<User, MentionNodeAttributes>>();
 const title = computed(() => {
   const title = "MEMBERS";
@@ -10,7 +12,7 @@ const title = computed(() => {
 });
 const selectedIndex = ref(0);
 const selectItem = (index: number) => {
-  const item = items[index];
+  const item = takeOne(items, index);
   command({ id: item.id, label: item.name });
 };
 const onKeyDown = ({ event }: { event: KeyboardEvent }) => {

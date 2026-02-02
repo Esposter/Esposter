@@ -8,6 +8,7 @@ import { createMessageEmojiMetadataEntity } from "#shared/services/message/creat
 import { getUpdatedUserIds } from "#shared/services/message/emoji/getUpdatedUserIds";
 import { authClient } from "@/services/auth/authClient";
 import { MessageMetadataType } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
 
 export const useEmojiStore = defineStore("message/emoji", () => {
   const session = authClient.useSession();
@@ -41,7 +42,7 @@ export const useEmojiStore = defineStore("message/emoji", () => {
     const index = emojis.findIndex((e) => getIsEntityIdEqualComparator(["partitionKey", "rowKey"], input)(e));
     if (index === -1) return;
 
-    Object.assign(emojis[index], input);
+    Object.assign(takeOne(emojis, index), input);
     setEmojis(input.messageRowKey, emojis);
   };
   const storeDeleteEmoji = (input: DeleteEmojiInput) => {

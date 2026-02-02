@@ -35,7 +35,7 @@ export const pushSubscriptionRouter = router({
             target: [pushSubscriptions.endpoint, pushSubscriptions.userId],
           })
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!newPushSubscription)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -54,7 +54,7 @@ export const pushSubscriptionRouter = router({
         .delete(pushSubscriptions)
         .where(and(eq(pushSubscriptions.endpoint, input), eq(pushSubscriptions.userId, ctx.session.user.id)))
         .returning()
-    ).find(Boolean);
+    )[0];
     if (!deletedPushSubscription)
       throw new TRPCError({
         code: "BAD_REQUEST",

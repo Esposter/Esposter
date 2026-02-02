@@ -5,7 +5,7 @@ import type { EntityTypeKey } from "@esposter/db-schema";
 import type { ToData } from "@esposter/shared";
 
 import { getIsEntityIdEqualComparator } from "#shared/services/entity/getIsEntityIdEqualComparator";
-import { Operation, uncapitalize } from "@esposter/shared";
+import { Operation, takeOne, uncapitalize } from "@esposter/shared";
 
 export const createOperationData = <
   TItem extends ToData<AEntity>,
@@ -31,7 +31,7 @@ export const createOperationData = <
     const index = items.value.findIndex((i) => getIsEntityIdEqualComparator(idKeys, updatedItem)(i));
     if (index === -1) return;
 
-    Object.assign(items.value[index], updatedItem);
+    Object.assign(takeOne(items.value, index), updatedItem);
   };
   const deleteItem = (ids: { [P in keyof TItem & TIdKeys[number]]: TItem[P] }) => {
     items.value = items.value.filter((i) => !getIsEntityIdEqualComparator(idKeys, ids)(i));

@@ -29,11 +29,14 @@
     "typecheck": "tsc"
   },
   "devDependencies": {
+    "@dxup/nuxt": "catalog:",
+    "@dxup/unimport": "catalog:",
     "@eslint/core": "catalog:",
     "@eslint/json": "catalog:",
     "@unocss/eslint-config": "catalog:",
     "@vitejs/plugin-vue": "catalog:",
     "@vitest/eslint-plugin": "catalog:",
+    "@vue/language-core": "catalog:",
     "eslint-config-prettier": "catalog:",
     "eslint-plugin-depend": "catalog:",
     "eslint-plugin-oxlint": "catalog:",
@@ -42,6 +45,7 @@
     "eslint-plugin-prettier": "catalog:",
     "typescript-eslint": "catalog:",
     "unplugin-auto-import": "catalog:",
+    "unplugin-dts": "catalog:",
     "vite-plugin-mkcert": "catalog:"
   }
 }
