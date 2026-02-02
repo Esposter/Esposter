@@ -25,7 +25,7 @@ import {
   MessageMetadataType,
   selectRoomSchema,
 } from "@esposter/db-schema";
-import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -157,7 +157,7 @@ export const emojiRouter = router({
         code: "BAD_REQUEST",
         message: new InvalidOperationError(Operation.Read, MessageMetadataType.Emoji, JSON.stringify(input)).message,
       });
-    else if (readEmoji.userIds.length === 1 && takeOne(readEmoji.userIds) === ctx.session.user.id)
+    else if (readEmoji.userIds.length === 1 && readEmoji.userIds[0] === ctx.session.user.id)
       throw new TRPCError({
         code: "BAD_REQUEST",
         message: new InvalidOperationError(Operation.Update, MessageMetadataType.Emoji, JSON.stringify(readEmoji))
