@@ -11,12 +11,12 @@ import { getDetectedUserStatus } from "@@/server/services/message/getDetectedUse
 import { router } from "@@/server/trpc";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import {
-    AzureContainer,
-    DatabaseEntityType,
-    selectUserSchema,
-    selectUserStatusSchema,
-    UserStatus,
-    userStatuses,
+  AzureContainer,
+  DatabaseEntityType,
+  selectUserSchema,
+  selectUserStatusSchema,
+  UserStatus,
+  userStatuses,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
