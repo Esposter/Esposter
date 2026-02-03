@@ -21,7 +21,7 @@
 
 - **Engine**: UnoCSS (Attributify Mode)
 - **Components**: Vuetify 3 (Material Design), Custom Components
-- **Preprocessors**: Sass
+- **Preprocessors**: Sass (Always use `lang="scss"` in Vue components)
 
 ### State & Data
 
@@ -94,9 +94,11 @@ The application relies on environment variables defined in `packages/app/configu
 
 ### Styling (UnoCSS)
 
-- **Attributify Mode**: ENABLED.
-  - **Preferred**: `<div text-red p-4>` (Props directly on elements).
-  - **Avoid**: `class="text-red p-4"` unless necessary for dynamic bindings or specific edge cases.
+- **Attributify Mode**: ENABLED & MANDATORY.
+  - **Rule**: Use prop-based styling (e.g., `<div text-red p-4>`) for ALL static styles.
+  - **Rule**: Use `flex` instead of `d-flex`.
+  - **Rule**: Use the `size` attribute (or `width`/`height` props) instead of `w-<number>` or `h-<number>` utility classes where possible.
+  - **Exception**: Only use `class="..."` when technically impossible (e.g., dynamic bindings `:class`, some external component limitations).
 - **Configuration**: `packages/app/configuration/unocss.ts`
 
 ### TypeScript & Linting
@@ -114,3 +116,18 @@ The application relies on environment variables defined in `packages/app/configu
   - `app.ts`: Head config, PWA manifest.
   - `runtimeConfig.ts`: Environment variables.
   - `unocss.ts`, `vuetify.ts`, `vite.ts`: Tool-specific configs.
+
+### Formatting
+
+- **Variable Assignments**: Group variable assignments together without blank lines between them.
+- **Vue Templates**: Avoid unnecessary blank lines within templates.
+- **Self-Closing Tags**: Always use self-closing tags (void tags) for components/elements without content (e.g., `<Component />`).
+
+### Resource Management
+
+- **Explicit Cleanup**: Always use `onUnmounted` to clean up resources such as:
+  - `setInterval` / `setTimeout` IDs.
+  - `window.requestAnimationFrame` IDs.
+  - Three.js objects (geometries, materials, renderers, controls).
+  - Global event listeners.
+- **Simplicity**: Prefer explicit `onMounted`/`onUnmounted` pairs over complex composable abstractions for simple resource management to maintain readability and avoid hidden behavior.

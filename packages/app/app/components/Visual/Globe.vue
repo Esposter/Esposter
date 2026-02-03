@@ -44,11 +44,15 @@ const {
 const id = "globe";
 const { width } = useWindowSize();
 const height = computed(() => width.value);
+let renderer: WebGLRenderer;
+let controls: OrbitControls;
+let animationFrameId: number;
+let intervalId: number;
 
 onMounted(async () => {
   const canvas = document.getElementById(id) as HTMLCanvasElement | null;
   if (!canvas) return;
-  const renderer = new WebGLRenderer({ antialias: true, canvas });
+  renderer = new WebGLRenderer({ antialias: true, canvas });
   renderer.setClearColor(0x000, 0);
   renderer.setSize(width.value, height.value);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -78,7 +82,7 @@ onMounted(async () => {
   scene.add(camera);
   scene.fog = new Fog(0x535ef3, 400, 2000);
 
-  const controls = new OrbitControls(camera, canvas);
+  controls = new OrbitControls(camera, canvas);
   controls.enableDamping = true;
   controls.enablePan = false;
   controls.minDistance = 300;
@@ -143,7 +147,7 @@ onMounted(async () => {
   const animate = () => {
     controls.update();
     renderer.render(scene, camera);
-    requestAnimationFrame(animate);
+    animationFrameId = requestAnimationFrame(animate);
   };
   animate();
 
@@ -153,9 +157,16 @@ onMounted(async () => {
     renderer.setSize(width.value, height.value);
   });
 
-  window.setInterval(() => {
+  intervalId = window.setInterval(() => {
     globe.ringsData(getRandomValues(countries, rings));
   }, dayjs.duration(2, "seconds").asMilliseconds());
+});
+
+onUnmounted(() => {
+  window.cancelAnimationFrame(animationFrameId);
+  window.clearInterval(intervalId);
+  renderer.dispose();
+  controls.dispose();
 });
 </script>
 

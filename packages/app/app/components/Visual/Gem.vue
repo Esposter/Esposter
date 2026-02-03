@@ -19,6 +19,9 @@ const isReady = ref(false);
 const id = "gem";
 const width = 200;
 const height = 200;
+let renderer: WebGLRenderer;
+let controls: OrbitControls;
+let animationFrameId: number;
 
 onMounted(() => {
   const canvas = document.getElementById(id) as HTMLCanvasElement | null;
@@ -58,7 +61,7 @@ onMounted(() => {
   camera.position.set(2, 2, 6);
   scene.add(camera);
 
-  const controls = new OrbitControls(camera, canvas);
+  controls = new OrbitControls(camera, canvas);
   controls.enableZoom = false;
   controls.target.set(0, 0.75, 0);
   controls.enableDamping = true;
@@ -66,7 +69,7 @@ onMounted(() => {
   controls.minPolarAngle = Math.PI / 2;
   controls.maxPolarAngle = Math.PI / 2;
 
-  const renderer = new WebGLRenderer({ alpha: true, antialias: true, canvas });
+  renderer = new WebGLRenderer({ alpha: true, antialias: true, canvas });
   renderer.setClearColor(0x000000, 0);
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = PCFSoftShadowMap;
@@ -79,9 +82,15 @@ onMounted(() => {
     if (gem) gem.rotation.y = 1.1 * elapsedTime;
     controls.update();
     renderer.render(scene, camera);
-    window.requestAnimationFrame(animate);
+    animationFrameId = window.requestAnimationFrame(animate);
   };
   animate();
+});
+
+onUnmounted(() => {
+  window.cancelAnimationFrame(animationFrameId);
+  renderer.dispose();
+  controls.dispose();
 });
 </script>
 
