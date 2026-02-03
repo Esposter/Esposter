@@ -1,7 +1,4 @@
-interface TakeOne {
-  <T extends readonly unknown[]>(values: T, index?: number): T[number];
-  <T extends Record<PropertyKey, unknown>>(values: T, index: keyof T): T[keyof T];
-}
+import type { TakeOne } from "@/models/shared/TakeOne";
 // Workaround for noUncheckedIndexedAccess
 export const takeOne: TakeOne = <T extends readonly unknown[] | Record<PropertyKey, unknown>>(
   values: T,

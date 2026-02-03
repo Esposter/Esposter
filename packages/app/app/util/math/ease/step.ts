@@ -1,9 +1,6 @@
-import { takeOne } from "@esposter/shared";
+import type { Threshold } from "@/models/math/Threshold";
 
-export interface Threshold {
-  speed: number;
-  threshold?: number;
-}
+import { takeOne } from "@esposter/shared";
 
 export const step = (value: number, thresholds: Threshold[]): number => {
   for (const { speed, threshold } of thresholds) if (threshold && value <= threshold) return speed;
