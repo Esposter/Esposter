@@ -42,7 +42,6 @@ export const RoutePath: {
   Dungeons: "/dungeons",
   EmailEditor: "/email-editor",
   FlowchartEditor: "/flowchart-editor",
-  GalaxySimulation: "/galaxy-simulation",
   Github: `https://github.com/${SITE_NAME}/${SITE_NAME}`,
   Index: "/",
   Login: "/login",
