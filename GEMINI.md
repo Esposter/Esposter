@@ -21,7 +21,7 @@
 
 - **Engine**: UnoCSS (Attributify Mode)
 - **Components**: Vuetify 3 (Material Design), Custom Components
-- **Preprocessors**: Sass
+- **Preprocessors**: Sass (Always use `lang="scss"` in Vue components)
 
 ### State & Data
 

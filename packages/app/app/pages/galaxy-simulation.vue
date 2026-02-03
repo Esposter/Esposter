@@ -145,7 +145,7 @@ watch(
 
 <template>
   <div ref="containerRef" relative w-full h-full bg-black overflow-hidden>
-    <canvas ref="canvasRef" block w-full h-full></canvas>
+    <canvas ref="canvasRef" block w-full h-full />
     <v-navigation-drawer
       v-model="drawer"
       location="right"
@@ -159,11 +159,9 @@ watch(
       <div pa-4>
         <div text-h6 font-weight-bold mb-4 flex align-center justify-space-between>
           <span>Galaxy Generator</span>
-          <v-icon icon="mdi-creation" color="primary"></v-icon>
+          <v-icon icon="mdi-creation" color="primary" />
         </div>
-
         <v-divider mb-4 />
-
         <v-slider
           v-model="parameters.count"
           label="Star Count"
@@ -175,7 +173,6 @@ watch(
           hide-details
           mb-4
         />
-
         <v-slider
           v-model="parameters.size"
           label="Star Size"
@@ -251,9 +248,8 @@ watch(
             hide-canvas
             width="100%"
             elevation-0
-          ></v-color-picker>
+          />
         </div>
-
         <div mb-4>
           <div text-subtitle-2 mb-2>Outside Color</div>
           <v-color-picker
@@ -263,9 +259,8 @@ watch(
             hide-canvas
             width="100%"
             elevation-0
-          ></v-color-picker>
+          />
         </div>
-
         <v-slider
           v-model="parameters.speed"
           label="Rotation Speed"
@@ -275,11 +270,9 @@ watch(
           thumb-label
           color="error"
           hide-details
-        ></v-slider>
+        />
       </div>
     </v-navigation-drawer>
-
-    <!-- Toggle Button -->
     <v-btn
       icon="mdi-cog"
       position="absolute"
@@ -292,10 +285,3 @@ watch(
     />
   </div>
 </template>
-
-<style scoped>
-/* Ensure canvas fits */
-canvas {
-  outline: none;
-}
-</style>
