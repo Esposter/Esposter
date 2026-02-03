@@ -2,6 +2,7 @@
 import { takeOne } from "@esposter/shared";
 import { useResizeObserver } from "@vueuse/core";
 import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 const canvasRef = ref<HTMLCanvasElement | null>(null);
 const containerRef = ref<HTMLDivElement | null>(null);
@@ -22,6 +23,7 @@ const parameters = ref({
 let scene: THREE.Scene;
 let camera: THREE.PerspectiveCamera;
 let renderer: THREE.WebGLRenderer;
+let controls: OrbitControls;
 let geometry: THREE.BufferGeometry;
 let material: THREE.PointsMaterial;
 let points: THREE.Points | undefined;
@@ -91,6 +93,7 @@ const tick = () => {
 
   if (points) points.rotation.y = elapsedTime * (parameters.value.speed * 0.2);
 
+  controls.update();
   renderer.render(scene, camera);
   animationFrameId = requestAnimationFrame(tick);
 };
@@ -103,9 +106,8 @@ onMounted(() => {
   camera.position.x = 3;
   camera.position.y = 3;
   camera.position.z = 3;
-  camera.lookAt(0, 0, 0); // Need OrbitControls effectively but doing simple lookAt for now or adding interaction??
+  // Need OrbitControls effectively but doing simple lookAt for now or adding interaction??
   // Let's stick to simple rotation for now, maybe add OrbitControls if user wants interaction.
-  // Actually, let's implement basic OrbitControls logic or just camera movement if requested.
   // For now, static camera looking at center, galaxy rotates.
   renderer = new THREE.WebGLRenderer({
     alpha: true,
@@ -114,6 +116,9 @@ onMounted(() => {
   });
   renderer.setSize(width, height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  controls = new OrbitControls(camera, canvasRef.value);
+  controls.enableDamping = true;
 
   generateGalaxy();
   tick();
@@ -133,6 +138,7 @@ onUnmounted(() => {
   geometry.dispose();
   material.dispose();
   renderer.dispose();
+  controls.dispose();
 });
 
 watch(
