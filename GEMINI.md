@@ -94,9 +94,9 @@ The application relies on environment variables defined in `packages/app/configu
 
 ### Styling (UnoCSS)
 
-- **Attributify Mode**: ENABLED.
-  - **Preferred**: `<div text-red p-4>` (Props directly on elements).
-  - **Avoid**: `class="text-red p-4"` unless necessary for dynamic bindings or specific edge cases.
+- **Attributify Mode**: ENABLED & MANDATORY.
+  - **Rule**: Use prop-based styling (e.g., `<div text-red p-4>`) for ALL static styles.
+  - **Exception**: Only use `class="..."` when technically impossible (e.g., dynamic bindings `:class`, some external component limitations).
 - **Configuration**: `packages/app/configuration/unocss.ts`
 
 ### TypeScript & Linting
