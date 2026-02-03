@@ -37,6 +37,7 @@
     "no-multi-assign": "off",
     "no-namespace": "off",
     "no-nested-ternary": "off",
+    "no-nodejs-modules": "off",
     "no-ternary": "off",
     "no-unassigned-import": "off",
     "no-useless-return": "off",
