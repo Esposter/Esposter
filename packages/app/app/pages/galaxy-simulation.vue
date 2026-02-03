@@ -19,7 +19,6 @@ const parameters = ref({
   speed: 1,
   spin: 1,
 });
-
 let scene: THREE.Scene;
 let camera: THREE.PerspectiveCamera;
 let renderer: THREE.WebGLRenderer;
@@ -30,7 +29,6 @@ let points: THREE.Points | undefined;
 let animationFrameId: number;
 const clock = new THREE.Clock();
 
-// --- Galaxy Generation ---
 const generateGalaxy = () => {
   if (points) {
     geometry.dispose();
@@ -97,6 +95,7 @@ const tick = () => {
   renderer.render(scene, camera);
   animationFrameId = requestAnimationFrame(tick);
 };
+
 onMounted(() => {
   if (!canvasRef.value || !containerRef.value) return;
   scene = new THREE.Scene();
@@ -106,9 +105,6 @@ onMounted(() => {
   camera.position.x = 3;
   camera.position.y = 3;
   camera.position.z = 3;
-  // Need OrbitControls effectively but doing simple lookAt for now or adding interaction??
-  // Let's stick to simple rotation for now, maybe add OrbitControls if user wants interaction.
-  // For now, static camera looking at center, galaxy rotates.
   renderer = new THREE.WebGLRenderer({
     alpha: true,
     antialias: true,
@@ -116,13 +112,10 @@ onMounted(() => {
   });
   renderer.setSize(width, height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
   controls = new OrbitControls(camera, canvasRef.value);
   controls.enableDamping = true;
-
   generateGalaxy();
   tick();
-
   useResizeObserver(containerRef, (entries) => {
     const entry = takeOne(entries);
     const { height, width } = entry.contentRect;
@@ -153,8 +146,6 @@ watch(
 <template>
   <div ref="containerRef" relative w-full h-full bg-black overflow-hidden>
     <canvas ref="canvasRef" block w-full h-full></canvas>
-
-    <!-- Controls Drawer -->
     <v-navigation-drawer
       v-model="drawer"
       location="right"
@@ -166,12 +157,12 @@ watch(
       floating
     >
       <div pa-4>
-        <div text-h6 font-weight-bold mb-4 d-flex align-center justify-space-between>
+        <div text-h6 font-weight-bold mb-4 flex align-center justify-space-between>
           <span>Galaxy Generator</span>
           <v-icon icon="mdi-creation" color="primary"></v-icon>
         </div>
 
-        <v-divider mb-4></v-divider>
+        <v-divider mb-4 />
 
         <v-slider
           v-model="parameters.count"
@@ -183,7 +174,7 @@ watch(
           color="primary"
           hide-details
           mb-4
-        ></v-slider>
+        />
 
         <v-slider
           v-model="parameters.size"
@@ -195,8 +186,7 @@ watch(
           color="primary"
           hide-details
           mb-4
-        ></v-slider>
-
+        />
         <v-slider
           v-model="parameters.radius"
           label="Radius"
@@ -207,8 +197,7 @@ watch(
           color="secondary"
           hide-details
           mb-4
-        ></v-slider>
-
+        />
         <v-slider
           v-model="parameters.branches"
           label="Branches"
@@ -219,8 +208,7 @@ watch(
           color="secondary"
           hide-details
           mb-4
-        ></v-slider>
-
+        />
         <v-slider
           v-model="parameters.spin"
           label="Spin"
@@ -231,8 +219,7 @@ watch(
           color="info"
           hide-details
           mb-4
-        ></v-slider>
-
+        />
         <v-slider
           v-model="parameters.randomness"
           label="Randomness"
@@ -243,8 +230,7 @@ watch(
           color="warning"
           hide-details
           mb-4
-        ></v-slider>
-
+        />
         <v-slider
           v-model="parameters.randomnessPower"
           label="Randomness Power"
@@ -255,8 +241,7 @@ watch(
           color="warning"
           hide-details
           mb-4
-        ></v-slider>
-
+        />
         <div mb-4>
           <div text-subtitle-2 mb-2>Inside Color</div>
           <v-color-picker
@@ -304,7 +289,7 @@ watch(
       color="white"
       z-index-100
       @click="drawer = !drawer"
-    ></v-btn>
+    />
   </div>
 </template>
 

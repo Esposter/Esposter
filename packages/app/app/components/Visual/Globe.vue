@@ -44,7 +44,6 @@ const {
 const id = "globe";
 const { width } = useWindowSize();
 const height = computed(() => width.value);
-
 let renderer: WebGLRenderer;
 let controls: OrbitControls;
 let animationFrameId: number;

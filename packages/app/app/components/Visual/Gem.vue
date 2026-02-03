@@ -19,7 +19,6 @@ const isReady = ref(false);
 const id = "gem";
 const width = 200;
 const height = 200;
-
 let renderer: WebGLRenderer;
 let controls: OrbitControls;
 let animationFrameId: number;
