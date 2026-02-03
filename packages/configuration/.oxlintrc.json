@@ -18,6 +18,7 @@
     "import/group-exports": "off",
     "import/no-anonymous-default-export": "off",
     "import/no-named-export": "off",
+    "import/no-nodejs-modules": "off",
     "import/no-unassigned-import": ["error", { "allow": ["*.css", "*.d.ts", "*.i18n"] }],
     "import/prefer-default-export": "off",
     "init-declarations": "off",
