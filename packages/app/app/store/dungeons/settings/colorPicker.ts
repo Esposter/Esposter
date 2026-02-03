@@ -4,6 +4,7 @@ import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOp
 import { ThemeModeSetting } from "#shared/models/dungeons/data/settings/ThemeModeSetting";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { mod } from "@/util/math/mod";
+import { takeOne } from "@esposter/shared";
 import { Direction } from "grid-engine";
 
 export const useColorPickerStore = defineStore("dungeons/settings/colorPicker", () => {
@@ -18,9 +19,9 @@ export const useColorPickerStore = defineStore("dungeons/settings/colorPicker", 
     for (const [index, setting] of themeModeSettings.entries())
       if (setting === themeModeSetting.value) {
         if (direction === Direction.LEFT)
-          await setThemeModeSetting(themeModeSettings[mod(index - 1, themeModeSettings.length)]);
+          await setThemeModeSetting(takeOne(themeModeSettings, mod(index - 1, themeModeSettings.length)));
         else if (direction === Direction.RIGHT)
-          await setThemeModeSetting(themeModeSettings[(index + 1) % themeModeSettings.length]);
+          await setThemeModeSetting(takeOne(themeModeSettings, (index + 1) % themeModeSettings.length));
         return;
       }
   };

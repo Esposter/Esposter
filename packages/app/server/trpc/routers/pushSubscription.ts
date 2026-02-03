@@ -35,7 +35,7 @@ export const pushSubscriptionRouter = router({
             target: [pushSubscriptionsInMessage.endpoint, pushSubscriptionsInMessage.userId],
           })
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!newPushSubscription)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -59,7 +59,7 @@ export const pushSubscriptionRouter = router({
           ),
         )
         .returning()
-    ).find(Boolean);
+    )[0];
     if (!deletedPushSubscription)
       throw new TRPCError({
         code: "BAD_REQUEST",

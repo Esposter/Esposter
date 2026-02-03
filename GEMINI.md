@@ -1,0 +1,116 @@
+# GEMINI.md
+
+## Repository Overview
+
+**Project**: Esposter
+**Description**: A comprehensive social platform monorepo ("A nice and casual place for posting random things").
+**Architecture**: Monorepo using pnpm workspaces and Lerna for package management.
+**Language**: TypeScript (Strict Mode)
+**Runtime**: Node.js `^24.13.0`
+**Package Manager**: pnpm `^10.28.1` (with Catalog protocol)
+
+## Technology Stack
+
+### Core
+
+- **Framework**: Nuxt 4 (Beta/RC)
+- **UI Library**: Vue 3.5+
+- **Build System**: Vite, Rolldown
+
+### Styling
+
+- **Engine**: UnoCSS (Attributify Mode)
+- **Components**: Vuetify 3 (Material Design), Custom Components
+- **Preprocessors**: Sass
+
+### State & Data
+
+- **State Management**: Pinia
+- **API**: tRPC (Client & Server), Nuxt Server Routes
+- **Database**:
+  - **ORM**: Drizzle ORM
+  - **Relational**: PostgreSQL
+  - **NoSQL**: Azure Table Storage, Azure Blob Storage
+
+### Infrastructure & Backend
+
+- **Server**: Azure Functions (Serverless), Node.js
+- **Cloud Provider**: Microsoft Azure (Event Grid, Web PubSub, Search, Storage)
+
+### Testing & Quality
+
+- **Unit/Integration**: Vitest
+- **Linting**: Oxlint (Performance), ESLint (Rules)
+- **Documentation**: TypeDoc
+
+## Monorepo Structure
+
+| Package Path               | Package Name                | Description                                                                                            |
+| :------------------------- | :-------------------------- | :----------------------------------------------------------------------------------------------------- |
+| `packages/app`             | `@esposter/app`             | Main Nuxt 4 web application. Contains frontend UI, server routes overlay, and tRPC client integration. |
+| `packages/azure-functions` | `@esposter/azure-functions` | Serverless backend functions triggered by Azure events (Event Grid, Timers, HTTP).                     |
+| `packages/db-schema`       | `@esposter/db-schema`       | **Source of Truth** for Database. Contains Drizzle ORM schemas, relations, and migration scripts.      |
+| `packages/db`              | `@esposter/db`              | Database connection logic and client initialization.                                                   |
+| `packages/shared`          | `@esposter/shared`          | Shared TypeScript types, utility functions, and constants used across the monorepo.                    |
+| `packages/configuration`   | `@esposter/configuration`   | Shared configuration files (TSConfig, ESLint, Prettier) to ensure consistency.                         |
+| `packages/vue-phaserjs`    | `@esposter/vue-phaserjs`    | Integration layer for Phaser game engine components within Vue.                                        |
+| `packages/parse-tmx`       | `@esposter/parse-tmx`       | Utility for parsing Tiled Map Editor (TMX) files.                                                      |
+| `packages/azure-mock`      | `@esposter/azure-mock`      | Mock implementations of Azure services for local development and testing.                              |
+
+## Key Concepts & Workflows
+
+### Database Management
+
+Database schemas are defined in `packages/db-schema/src/schema`.
+**Commands** (Run from `packages/db-schema`):
+
+- `pnpm db:gen`: Generate SQL migration files from schema changes.
+- `pnpm db:up`: Apply pending migrations to the database.
+- `pnpm db:studio`: Launch Drizzle Studio to visualize and edit database content.
+
+_Note: Migrations are output to `../app/server/db/migrations`._
+
+### Development Workflow
+
+- **Start Dev Server**: `pnpm dev` (in root) or `pnpm start` (starts `@esposter/app`).
+- **Build All**: `pnpm build` (Builds packages -> Docs -> App).
+- **Barrel Files**: Uses `ctix` to automatically generate `index.ts` exports.
+  - Run `pnpm export:gen` in specific packages to regenerate exports.
+- **Lerna**: Used for orchestrating scripts across packages.
+  - Example: `lerna run test --scope=@esposter/shared`
+
+### Environment Configuration
+
+The application relies on environment variables defined in `packages/app/configuration/runtimeConfig.ts`.
+**Critical Variables**:
+
+- `DATABASE_URL`: Connection string for PostgreSQL.
+- `AUTH_SECRET`: Secret for authentication signing.
+- `AZURE_STORAGE_ACCOUNT_CONNECTION_STRING`: Access to Azure Storage.
+- `AZURE_SEARCH_API_KEY`: Authentication for Azure Search.
+- `AZURE_FUNCTION_KEY`: Security key for invoking Azure Functions.
+
+## Coding Conventions
+
+### Styling (UnoCSS)
+
+- **Attributify Mode**: ENABLED.
+  - **Preferred**: `<div text-red p-4>` (Props directly on elements).
+  - **Avoid**: `class="text-red p-4"` unless necessary for dynamic bindings or specific edge cases.
+- **Configuration**: `packages/app/configuration/unocss.ts`
+
+### TypeScript & Linting
+
+- **Strictness**: High (`strictTypeChecked`).
+- **Rules**:
+  - `Omit` is **BANNED**. Use `Except` (from `type-fest`) instead.
+  - `import/no-unassigned-import`: Strict (allows `.css`, `.d.ts`).
+  - Many "unsafe" rules are relaxed for DX.
+- **Linter**: `oxlint` runs first for speed, followed by `eslint`.
+
+### Component Architecture
+
+- **Nuxt Config**: Modularized in `packages/app/configuration/`.
+  - `app.ts`: Head config, PWA manifest.
+  - `runtimeConfig.ts`: Environment variables.
+  - `unocss.ts`, `vuetify.ts`, `vite.ts`: Tool-specific configs.

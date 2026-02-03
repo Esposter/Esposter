@@ -7,6 +7,7 @@ import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/tr
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { userToRoomRouter } from "@@/server/trpc/routers/userToRoom";
 import { NotificationType, roomsInMessage, usersToRoomsInMessage } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("userToRoom", () => {
@@ -35,9 +36,9 @@ describe("userToRoom", () => {
     const readUserToRooms = await userToRoomCaller.readUserToRooms({ roomIds: [newRoom.id] });
 
     expect(readUserToRooms).toHaveLength(1);
-    expect(readUserToRooms[0].roomId).toBe(newRoom.id);
-    expect(readUserToRooms[0].userId).toBe(getMockSession().user.id);
-    expect(readUserToRooms[0].notificationType).toBe(NotificationType.DirectMessage);
+    expect(takeOne(readUserToRooms).roomId).toBe(newRoom.id);
+    expect(takeOne(readUserToRooms).userId).toBe(getMockSession().user.id);
+    expect(takeOne(readUserToRooms).notificationType).toBe(NotificationType.DirectMessage);
   });
 
   test("fails read for non-member", async () => {

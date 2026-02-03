@@ -19,7 +19,7 @@ import {
   WebhookInMessageRelations,
   webhooksInMessage,
 } from "@esposter/db-schema";
-import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
+import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, count, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
@@ -39,9 +39,9 @@ export const webhookRouter = router({
     "roomId",
     RateLimiterType.Slow,
   ).mutation<WebhookInMessage>(async ({ ctx, input: { name, roomId } }) => {
-    const webhookCount = (
-      await ctx.db.select({ count: count() }).from(webhooksInMessage).where(eq(webhooksInMessage.roomId, roomId))
-    )[0].count;
+    const webhookCount = takeOne(
+      await ctx.db.select({ count: count() }).from(webhooksInMessage).where(eq(webhooksInMessage.roomId, roomId)),
+    ).count;
     if (webhookCount >= WEBHOOK_MAX_LENGTH)
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -126,7 +126,7 @@ export const webhookRouter = router({
           .set({ token })
           .where(and(eq(webhooksInMessage.id, id), eq(webhooksInMessage.roomId, roomId)))
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!updatedWebhook)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -143,7 +143,7 @@ export const webhookRouter = router({
           .set(rest)
           .where(and(eq(webhooksInMessage.id, id), eq(webhooksInMessage.roomId, roomId)))
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!updatedWebhook)
         throw new TRPCError({
           code: "BAD_REQUEST",

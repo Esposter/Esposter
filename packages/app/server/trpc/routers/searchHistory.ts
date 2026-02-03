@@ -34,7 +34,7 @@ export const searchHistoryRouter = router({
           .insert(searchHistoriesInMessage)
           .values({ ...input, userId: ctx.session.user.id })
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!newHistory)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -52,7 +52,7 @@ export const searchHistoryRouter = router({
           .delete(searchHistoriesInMessage)
           .where(and(eq(searchHistoriesInMessage.id, input), eq(searchHistoriesInMessage.userId, ctx.session.user.id)))
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!deletedSearchHistory)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -83,7 +83,7 @@ export const searchHistoryRouter = router({
           .set({ query })
           .where(and(eq(searchHistoriesInMessage.id, id), eq(searchHistoriesInMessage.userId, ctx.session.user.id)))
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!updatedSearchHistory)
         throw new TRPCError({
           code: "BAD_REQUEST",

@@ -4,7 +4,6 @@ export const nitro: NitroConfig = {
   typescript: {
     tsConfig: {
       compilerOptions: {
-        noUncheckedIndexedAccess: false,
         verbatimModuleSyntax: true,
       },
     },

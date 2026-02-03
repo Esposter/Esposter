@@ -74,7 +74,7 @@ export const postRouter = router({
               userId: ctx.session.user.id,
             })
             .returning({ id: posts.id })
-        ).find(Boolean);
+        )[0];
         if (!newComment)
           throw new TRPCError({
             code: "BAD_REQUEST",
@@ -120,7 +120,7 @@ export const postRouter = router({
               userId: ctx.session.user.id,
             })
             .returning({ id: posts.id })
-        ).find(Boolean);
+        )[0];
         if (!newPost)
           throw new TRPCError({
             code: "BAD_REQUEST",
@@ -151,7 +151,7 @@ export const postRouter = router({
           .delete(posts)
           .where(and(eq(posts.id, input), eq(posts.userId, ctx.session.user.id), isNotNull(posts.parentId)))
           .returning()
-      ).find(Boolean);
+      )[0];
       const postId = deletedComment?.parentId;
       if (!postId)
         throw new TRPCError({
@@ -189,7 +189,7 @@ export const postRouter = router({
         .delete(posts)
         .where(and(eq(posts.id, input), eq(posts.userId, ctx.session.user.id), isNull(posts.parentId)))
         .returning()
-    ).find(Boolean);
+    )[0];
     if (!deletedPost)
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -234,7 +234,7 @@ export const postRouter = router({
             .set(rest)
             .where(and(eq(posts.id, id), eq(posts.userId, ctx.session.user.id)))
             .returning({ id: posts.id })
-        ).find(Boolean);
+        )[0];
         if (!updatedComment)
           throw new TRPCError({
             code: "BAD_REQUEST",
@@ -272,7 +272,7 @@ export const postRouter = router({
             .set(rest)
             .where(and(eq(posts.id, id), isNull(posts.parentId), eq(posts.userId, ctx.session.user.id)))
             .returning({ id: posts.id })
-        ).find(Boolean);
+        )[0];
         if (!updatedPost)
           throw new TRPCError({
             code: "BAD_REQUEST",

@@ -8,6 +8,7 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession } from "@@/server/trpc/context.test";
 import { trpcRouter } from "@@/server/trpc/routers";
 import { achievements, UserAchievementRelations, WebpageAchievementName } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("achievement", () => {
@@ -60,7 +61,7 @@ describe("achievement", () => {
       caller.webpageEditor.saveWebpageEditor(new WebpageEditor()),
     ]);
 
-    const unlockedAchievements: AchievementEvents["updateAchievement"][number] = [];
+    const unlockedAchievements = [] as unknown as AchievementEvents["updateAchievement"][0];
 
     assert(!data.done);
 
@@ -73,14 +74,14 @@ describe("achievement", () => {
     }
 
     expect(unlockedAchievements).toHaveLength(1);
-    expect(unlockedAchievements[0].achievement.name).toBe(WebpageAchievementName.WebDeveloper);
-    expect(unlockedAchievements[0].amount).toBe(1);
-    expect(unlockedAchievements[0].unlockedAt).toBeInstanceOf(Date);
+    expect(takeOne(unlockedAchievements).achievement.name).toBe(WebpageAchievementName.WebDeveloper);
+    expect(takeOne(unlockedAchievements).amount).toBe(1);
+    expect(takeOne(unlockedAchievements).unlockedAt).toBeInstanceOf(Date);
 
     const userAchievement = await mockContext.db.query.userAchievements.findFirst({
       where: {
         achievementId: {
-          eq: unlockedAchievements[0].achievementId,
+          eq: takeOne(unlockedAchievements).achievementId,
         },
         userId: {
           eq: getMockSession().user.id,
@@ -90,6 +91,6 @@ describe("achievement", () => {
     });
     assert(userAchievement);
 
-    expect(userAchievement).toStrictEqual(unlockedAchievements[0]);
+    expect(userAchievement).toStrictEqual(takeOne(unlockedAchievements));
   });
 });

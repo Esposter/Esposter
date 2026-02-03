@@ -41,7 +41,7 @@ import {
   usersToRoomsInMessage,
   UserToRoomInMessageRelations,
 } from "@esposter/db-schema";
-import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation } from "@esposter/shared";
+import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, count, desc, eq, ilike, inArray, ne, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -109,12 +109,12 @@ export type CreateInviteInput = z.infer<typeof createInviteInputSchema>;
 export const roomRouter = router({
   countMembers: getMemberProcedure(countMembersInputSchema, "roomId").query(
     async ({ ctx, input: { roomId } }) =>
-      (
+      takeOne(
         await ctx.db
           .select({ count: count() })
           .from(usersToRoomsInMessage)
-          .where(eq(usersToRoomsInMessage.roomId, roomId))
-      )[0].count,
+          .where(eq(usersToRoomsInMessage.roomId, roomId)),
+      ).count,
   ),
   createInvite: getMemberProcedure(createInviteInputSchema, "roomId").mutation<string>(
     async ({ ctx, input: { roomId } }) => {
@@ -142,9 +142,7 @@ export const roomRouter = router({
       ctx.db.transaction(async (tx) => {
         const newMembers: UserToRoomInMessage[] = [];
         for (const userId of userIds) {
-          const newMember = (await tx.insert(usersToRoomsInMessage).values({ roomId, userId }).returning()).find(
-            Boolean,
-          );
+          const newMember = (await tx.insert(usersToRoomsInMessage).values({ roomId, userId }).returning())[0];
           if (!newMember) continue;
           newMembers.push(newMember);
         }
@@ -158,7 +156,7 @@ export const roomRouter = router({
           .insert(roomsInMessage)
           .values({ ...input, userId: ctx.session.user.id })
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!newRoom)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -186,7 +184,7 @@ export const roomRouter = router({
           .delete(usersToRoomsInMessage)
           .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, userId)))
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!deletedMember)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -229,7 +227,7 @@ export const roomRouter = router({
           .insert(usersToRoomsInMessage)
           .values({ roomId: invite.roomId, userId: ctx.session.user.id })
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!userToRoom)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -274,7 +272,7 @@ export const roomRouter = router({
             .delete(usersToRoomsInMessage)
             .where(and(eq(usersToRoomsInMessage.roomId, input), eq(usersToRoomsInMessage.userId, ctx.session.user.id)))
             .returning()
-        ).find(Boolean);
+        )[0];
         if (!userToRoom)
           throw new TRPCError({
             code: "BAD_REQUEST",
@@ -428,7 +426,7 @@ export const roomRouter = router({
         .where(eq(usersToRoomsInMessage.userId, ctx.session.user.id))
         .orderBy(desc(roomsInMessage.updatedAt))
         .limit(1)
-    ).find(Boolean);
+    )[0];
     return readRoom?.room ?? null;
   }),
   readRooms: getMemberProcedure(readRoomsInputSchema, "roomId").query(
@@ -446,7 +444,7 @@ export const roomRouter = router({
             .from(roomsInMessage)
             .innerJoin(usersToRoomsInMessage, innerJoinCondition)
             .where(eq(roomsInMessage.id, roomId))
-        ).find(Boolean)?.room;
+        )[0]?.room;
         if (!pinnedRoom)
           throw new TRPCError({
             code: "BAD_REQUEST",
@@ -484,7 +482,7 @@ export const roomRouter = router({
           .set({ ...rest, name })
           .where(and(eq(roomsInMessage.id, id), eq(roomsInMessage.userId, ctx.session.user.id)))
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!updatedRoom)
         throw new TRPCError({
           code: "BAD_REQUEST",

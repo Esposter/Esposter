@@ -9,7 +9,7 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { CODE_LENGTH, DatabaseEntityType, roomsInMessage } from "@esposter/db-schema";
-import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
+import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
@@ -84,7 +84,7 @@ describe("room", () => {
     const readRooms = await caller.readRooms({ filter: { name: "1" }, roomId: newRoom1.id });
 
     expect(readRooms.items).toHaveLength(1);
-    expect(readRooms.items[0]).toStrictEqual(newRoom1);
+    expect(takeOne(readRooms.items)).toStrictEqual(newRoom1);
   });
 
   test("reads multiple with roomId with exclusive filter", async () => {
@@ -95,8 +95,8 @@ describe("room", () => {
     const readRooms = await caller.readRooms({ filter: { name: "2" }, roomId: newRoom1.id });
 
     expect(readRooms.items).toHaveLength(2);
-    expect(readRooms.items[0]).toStrictEqual(newRoom2);
-    expect(readRooms.items[1]).toStrictEqual(newRoom1);
+    expect(takeOne(readRooms.items)).toStrictEqual(newRoom2);
+    expect(takeOne(readRooms.items, 1)).toStrictEqual(newRoom1);
   });
 
   test("fails read multiple with non-existent room", async () => {
@@ -415,7 +415,7 @@ describe("room", () => {
     const members = await caller.readMembers({ roomId: newRoom.id });
     const user = getMockSession().user;
 
-    expect(members.items[0]).toStrictEqual(user);
+    expect(takeOne(members.items)).toStrictEqual(user);
   });
 
   test("reads members by ids", async () => {
@@ -425,7 +425,7 @@ describe("room", () => {
     const user = getMockSession().user;
     const members = await caller.readMembersByIds({ ids: [user.id], roomId: newRoom.id });
 
-    expect(members[0]).toStrictEqual(user);
+    expect(takeOne(members)).toStrictEqual(user);
   });
 
   test("fails read members by empty ids", async () => {
@@ -471,14 +471,14 @@ describe("room", () => {
     const newMember = await caller.createMembers({ roomId: newRoom.id, userIds: [user.id] });
 
     expect(newMember).toHaveLength(1);
-    expect(newMember[0].roomId).toBe(newRoom.id);
-    expect(newMember[0].userId).toBe(user.id);
+    expect(takeOne(newMember).roomId).toBe(newRoom.id);
+    expect(takeOne(newMember).userId).toBe(user.id);
 
     const members = await caller.readMembers({ roomId: newRoom.id });
 
     expect(members.items).toHaveLength(2);
-    expect(members.items[0]).toStrictEqual(user);
-    expect(members.items[1].id).toBe(userId);
+    expect(takeOne(members.items)).toStrictEqual(user);
+    expect(takeOne(members.items, 1).id).toBe(userId);
   });
 
   test("fails create members with empty ids", async () => {

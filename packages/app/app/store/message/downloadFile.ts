@@ -4,7 +4,7 @@ import { getInferredMimetype } from "@/services/file/getInferredMimetype";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
-import { Operation } from "@esposter/shared";
+import { Operation, takeOne } from "@esposter/shared";
 import { api as viewerApi } from "v-viewer";
 
 export const useDownloadFileStore = defineStore("message/downloadFile", () => {
@@ -21,7 +21,7 @@ export const useDownloadFileStore = defineStore("message/downloadFile", () => {
     });
 
     for (let i = 0; i < message.files.length; i++)
-      fileUrlMap.value.set(message.files[i].id, { url: downloadFileSasUrls[i] });
+      fileUrlMap.value.set(takeOne(message.files, i).id, { url: takeOne(downloadFileSasUrls, i) });
   });
   MessageHookMap[Operation.Delete].push((input) => {
     const message = dataStore.items.find(({ rowKey }) => rowKey === input.rowKey);

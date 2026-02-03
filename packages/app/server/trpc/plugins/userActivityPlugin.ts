@@ -4,6 +4,7 @@ import type { Context } from "@@/server/trpc/context";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { createEntity } from "@esposter/db";
 import { AzureTable, getReverseTickedTimestamp, UserActivityEntity } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
 import { initTRPC } from "@trpc/server";
 
 const t = initTRPC.context<Context & { session: Session }>().create();
@@ -18,7 +19,7 @@ export const userActivityPlugin = t.procedure.use(async ({ ctx, next, path, type
     userActivitiesTableClient,
     new UserActivityEntity({
       acceptLanguage: ctx.req.headers["accept-language"],
-      ipAddress: forwardedFor ? forwardedFor.split(",")[0].trim() : ctx.req.socket.remoteAddress,
+      ipAddress: forwardedFor ? takeOne(forwardedFor.split(",")).trim() : ctx.req.socket.remoteAddress,
       partitionKey: ctx.session.user.id,
       referer: ctx.req.headers.referer,
       rowKey: getReverseTickedTimestamp(),

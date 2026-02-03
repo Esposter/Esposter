@@ -10,7 +10,7 @@ import { pushSubscriptionRouter } from "@@/server/trpc/routers/pushSubscription"
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { userToRoomRouter } from "@@/server/trpc/routers/userToRoom";
 import { NotificationType, pushSubscriptionsInMessage, roomsInMessage } from "@esposter/db-schema";
-import { MENTION_ID_ATTRIBUTE, MENTION_TYPE, MENTION_TYPE_ATTRIBUTE } from "@esposter/shared";
+import { MENTION_ID_ATTRIBUTE, MENTION_TYPE, MENTION_TYPE_ATTRIBUTE, takeOne } from "@esposter/shared";
 import { MockEventGridDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
@@ -114,7 +114,7 @@ describe("pushSubscription", () => {
     const mockUser = getMockSession().user;
 
     expect(processPushNotificationEvents).toHaveLength(1);
-    expect(processPushNotificationEvents[0].data as PushNotificationEventGridData).toStrictEqual({
+    expect(takeOne(processPushNotificationEvents).data as PushNotificationEventGridData).toStrictEqual({
       message: {
         message,
         partitionKey: newRoom.id,
@@ -150,7 +150,7 @@ describe("pushSubscription", () => {
     const mockUser = getMockSession().user;
 
     expect(processPushNotificationEvents).toHaveLength(1);
-    expect(processPushNotificationEvents[0].data as PushNotificationEventGridData).toStrictEqual({
+    expect(takeOne(processPushNotificationEvents).data as PushNotificationEventGridData).toStrictEqual({
       message: {
         message,
         partitionKey: newRoom.id,

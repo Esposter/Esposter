@@ -4,6 +4,7 @@ import type { FileEntity, MessageEntity } from "@esposter/db-schema";
 import { CONTAINER_BORDER_RADIUS } from "@/services/message/file/constants";
 import { useDownloadFileStore } from "@/store/message/downloadFile";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
+import { takeOne } from "@esposter/shared";
 
 interface FileProps {
   columnLayout: number[];
@@ -13,7 +14,7 @@ interface FileProps {
   message: MessageEntity;
 }
 
-const { columnLayout, file, index, isPreview = false, message } = defineProps<FileProps>();
+const { columnLayout, file, index, isPreview, message } = defineProps<FileProps>();
 const { $trpc } = useNuxtApp();
 const isCreator = await useIsCreator(() => message);
 const downloadFileStore = useDownloadFileStore();
@@ -28,9 +29,9 @@ const isActive = ref(false);
   <StyledCard
     :style="{
       borderTopLeftRadius: index === 0 ? CONTAINER_BORDER_RADIUS : undefined,
-      borderTopRightRadius: index === 12 / columnLayout[0] - 1 ? CONTAINER_BORDER_RADIUS : undefined,
+      borderTopRightRadius: index === 12 / takeOne(columnLayout) - 1 ? CONTAINER_BORDER_RADIUS : undefined,
       borderBottomLeftRadius:
-        index === columnLayout.length - 1 - (12 / columnLayout[columnLayout.length - 1] - 1)
+        index === columnLayout.length - 1 - (12 / takeOne(columnLayout, columnLayout.length - 1) - 1)
           ? CONTAINER_BORDER_RADIUS
           : undefined,
       borderBottomRightRadius: index === columnLayout.length - 1 ? CONTAINER_BORDER_RADIUS : undefined,

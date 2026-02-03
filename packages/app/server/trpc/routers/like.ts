@@ -37,7 +37,7 @@ export const likeRouter = router({
           .insert(likes)
           .values({ ...input, userId: ctx.session.user.id })
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!newLike)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -81,7 +81,7 @@ export const likeRouter = router({
           .delete(likes)
           .where(and(eq(likes.userId, ctx.session.user.id), eq(likes.postId, input)))
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!deletedLike)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -153,7 +153,7 @@ export const likeRouter = router({
           .set({ value })
           .where(and(eq(likes.userId, ctx.session.user.id), eq(likes.postId, postId)))
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!updatedLike)
         throw new TRPCError({
           code: "BAD_REQUEST",

@@ -9,7 +9,7 @@ import { authClient } from "@/services/auth/authClient";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { DatabaseEntityType, MessageType } from "@esposter/db-schema";
-import { Operation, RoutePath, uuidValidateV4 } from "@esposter/shared";
+import { Operation, RoutePath, takeOne, uuidValidateV4 } from "@esposter/shared";
 
 export const useRoomStore = defineStore("message/room", () => {
   const { $trpc } = useNuxtApp();
@@ -24,7 +24,7 @@ export const useRoomStore = defineStore("message/room", () => {
   const storeDeleteRoom = async (...args: Parameters<typeof baseStoreDeleteRoom>) => {
     baseStoreDeleteRoom(...args);
     await router.push({
-      path: rooms.value.length > 0 ? RoutePath.Messages(rooms.value[0].id) : RoutePath.MessagesIndex,
+      path: rooms.value.length > 0 ? RoutePath.Messages(takeOne(rooms.value).id) : RoutePath.MessagesIndex,
       replace: true,
     });
   };

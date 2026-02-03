@@ -2,6 +2,7 @@ import type { BuilderOptions } from "xml2js";
 import type { XMLBuilder } from "xmlbuilder2/lib/interfaces";
 
 import { DefaultBuilderOptions } from "@/DefaultBuilderOptions";
+import { takeOne } from "@esposter/shared";
 import { create } from "xmlbuilder2";
 
 export class Builder {
@@ -18,7 +19,7 @@ export class Builder {
     let rootObject = rootObj;
     if (Object.keys(rootObject).length === 1 && this.options.rootName === DefaultBuilderOptions.rootName) {
       // We'll take the first element as the root element
-      rootName = Object.keys(rootObject)[0];
+      rootName = takeOne(Object.keys(rootObject));
       rootObject = rootObject[rootName] as Record<string, unknown>;
     }
 

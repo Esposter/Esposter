@@ -4,7 +4,7 @@ import type { SetNonNullable } from "type-fest";
 import { EventEmitter } from "node:events";
 
 interface UserEvents {
-  upsertStatus: SetNonNullable<UserStatusInMessage, "status">[];
+  upsertStatus: [SetNonNullable<UserStatusInMessage, "status">];
 }
 
 export const userEventEmitter = new EventEmitter<UserEvents>();

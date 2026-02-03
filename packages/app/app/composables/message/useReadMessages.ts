@@ -11,7 +11,7 @@ import {
   StandardMessageEntityPropertyNames,
   WebhookMessageEntity,
 } from "@esposter/db-schema";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 
 export const useReadMessages = () => {
   const route = useRoute();
@@ -62,7 +62,7 @@ export const useReadMessages = () => {
           const messagesByRowKeys = await $trpc.message.readMessagesByRowKeys.query({ roomId, rowKeys: [rowKey] });
           if (messagesByRowKeys.length > 0) {
             const response = await $trpc.message.readMessages.useQuery({
-              cursor: serialize({ rowKey: messagesByRowKeys[0].rowKey }, [MESSAGE_ROWKEY_SORT_ITEM]),
+              cursor: serialize({ rowKey: takeOne(messagesByRowKeys).rowKey }, [MESSAGE_ROWKEY_SORT_ITEM]),
               isIncludeValue: true,
               roomId,
             });

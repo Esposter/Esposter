@@ -28,7 +28,7 @@ export const userToRoomRouter = router({
           .set({ notificationType })
           .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, ctx.session.user.id)))
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!updatedUserToRoom)
         throw new TRPCError({
           code: "BAD_REQUEST",

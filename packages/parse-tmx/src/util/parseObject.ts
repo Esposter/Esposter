@@ -5,6 +5,7 @@ import { parseFlips } from "@/util/parseFlips";
 import { parseObjectShape } from "@/util/parseObjectShape";
 import { parseProperties } from "@/util/parseProperties";
 import { parseTileId } from "@/util/parseTileId";
+import { takeOne } from "@esposter/shared";
 
 export const parseObject = (node: TMXObjectNode): TMXObjectParsed => {
   const { $, polygon, properties, text } = node;
@@ -14,13 +15,17 @@ export const parseObject = (node: TMXObjectNode): TMXObjectParsed => {
   if (properties) object.properties = parseProperties(properties);
 
   if (polygon)
-    object.points = polygon[0].$.points.split(" ").map((point) => {
-      const [x, y] = point.split(",");
-      return [parseFloat(x), parseFloat(y)];
-    });
+    object.points = takeOne(polygon)
+      .$.points.split(" ")
+      .map((point) => {
+        const points = point.split(",");
+        const x = takeOne(points);
+        const y = takeOne(points, 1);
+        return [parseFloat(x), parseFloat(y)];
+      });
 
   if (text) {
-    const textNode = text[0];
+    const textNode = takeOne(text);
     object.text = textNode._;
     object.properties = Object.assign({}, ...(object.properties ?? []), textNode.$);
   }

@@ -1,5 +1,6 @@
 import { MENTION_ID_ATTRIBUTE, MENTION_TYPE, MENTION_TYPE_ATTRIBUTE } from "@/services/message/constants";
 import { getMentions } from "@/services/message/getMentions";
+import { takeOne } from "@/util/array/takeOne";
 import { describe, expect, test } from "vitest";
 
 describe(getMentions, () => {
@@ -17,6 +18,6 @@ describe(getMentions, () => {
     );
 
     expect(mentions).toHaveLength(1);
-    expect(mentions[0].getAttribute(MENTION_ID_ATTRIBUTE)).toBe("id");
+    expect(takeOne(mentions).getAttribute(MENTION_ID_ATTRIBUTE)).toBe("id");
   });
 });

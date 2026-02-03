@@ -5,10 +5,10 @@ import type { UserToRoomInMessage, UserToRoomInMessageWithRelations } from "@esp
 import { EventEmitter } from "node:events";
 
 interface RoomEvents {
-  deleteRoom: (Pick<Device, "sessionId"> & Pick<UserToRoomInMessage, "roomId" | "userId">)[];
-  joinRoom: (Pick<Device, "sessionId"> & Pick<UserToRoomInMessageWithRelations, "roomId" | "user">)[];
-  leaveRoom: (Pick<Device, "sessionId"> & Pick<UserToRoomInMessage, "roomId" | "userId">)[];
-  updateRoom: UpdateRoomInput[];
+  deleteRoom: [Pick<Device, "sessionId"> & Pick<UserToRoomInMessage, "roomId" | "userId">];
+  joinRoom: [Pick<Device, "sessionId"> & Pick<UserToRoomInMessageWithRelations, "roomId" | "user">];
+  leaveRoom: [Pick<Device, "sessionId"> & Pick<UserToRoomInMessage, "roomId" | "userId">];
+  updateRoom: [UpdateRoomInput];
 }
 
 export const roomEventEmitter = new EventEmitter<RoomEvents>();
