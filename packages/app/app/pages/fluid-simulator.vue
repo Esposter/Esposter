@@ -163,7 +163,6 @@ onUnmounted(() => {
   pmremGenerator.dispose();
   renderTarget?.dispose();
   controls.dispose();
-  renderer.dispose();
 });
 </script>
 
