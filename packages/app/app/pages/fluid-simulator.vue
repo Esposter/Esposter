@@ -14,8 +14,7 @@ import {
   PerspectiveCamera,
   PlaneGeometry,
   PMREMGenerator,
-  // @ts-expect-error - RenderPipeline is not exported from three/webgpu
-  RenderPipeline,
+  PostProcessing,
   RepeatWrapping,
   Scene,
   TextureLoader,
@@ -42,7 +41,7 @@ onMounted(async () => {
   const camera = new PerspectiveCamera(55, window.innerWidth / window.innerHeight, 1, 20000);
   camera.position.set(30, 30, 100);
 
-  const renderPipeline = new RenderPipeline(renderer);
+  const renderPipeline = new PostProcessing(renderer);
   const scenePass = pass(scene, camera);
   const scenePassColor = scenePass.getTextureNode("output");
   const bloomPass = bloom(scenePassColor);
