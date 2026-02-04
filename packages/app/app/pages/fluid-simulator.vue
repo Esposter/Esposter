@@ -4,8 +4,6 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { Inspector } from "three/examples/jsm/inspector/Inspector.js";
 import { SkyMesh } from "three/examples/jsm/objects/SkyMesh.js";
 import { WaterMesh } from "three/examples/jsm/objects/WaterMesh.js";
-import { bloom } from "three/examples/jsm/tsl/display/BloomNode.js";
-import { pass } from "three/tsl";
 import {
   ACESFilmicToneMapping,
   BoxGeometry,
@@ -15,7 +13,6 @@ import {
   PerspectiveCamera,
   PlaneGeometry,
   PMREMGenerator,
-  PostProcessing,
   RepeatWrapping,
   Scene,
   TextureLoader,
@@ -42,14 +39,14 @@ onMounted(async () => {
   const camera = new PerspectiveCamera(55, window.innerWidth / window.innerHeight, 1, 20000);
   camera.position.set(30, 30, 100);
 
-  const renderPipeline = new PostProcessing(renderer);
-  const scenePass = pass(scene, camera);
-  const scenePassColor = scenePass.getTextureNode("output");
-  const bloomPass = bloom(scenePassColor);
-  bloomPass.threshold.value = 0;
-  bloomPass.strength.value = 0.1;
-  bloomPass.radius.value = 0;
-  renderPipeline.outputNode = scenePassColor.add(bloomPass);
+  // Const renderPipeline = new RenderPipeline(renderer);
+  // Const scenePass = pass(scene, camera);
+  // Const scenePassColor = scenePass.getTextureNode("output");
+  // Const bloomPass = bloom(scenePassColor);
+  // BloomPass.threshold.value = 0;
+  // BloomPass.strength.value = 0.1;
+  // BloomPass.radius.value = 0;
+  // RenderPipeline.outputNode = scenePassColor.add(bloomPass);
 
   const sun = new Vector3();
   const waterGeometry = new PlaneGeometry(10000, 10000);
@@ -118,9 +115,9 @@ onMounted(async () => {
   const folderWater = gui.addFolder("Water");
   folderWater.add(water.distortionScale, "value", 0, 8, 0.1).name("distortionScale");
   folderWater.add(water.size, "value", 0.1, 10, 0.1).name("size");
-  const folderBloom = gui.addFolder("Bloom");
-  folderBloom.add(bloomPass.strength, "value", 0, 3, 0.01).name("strength");
-  folderBloom.add(bloomPass.radius, "value", 0, 1, 0.01).name("radius");
+  // Const folderBloom = gui.addFolder("Bloom");
+  // FolderBloom.add(bloomPass.strength, "value", 0, 3, 0.01).name("strength");
+  // FolderBloom.add(bloomPass.radius, "value", 0, 1, 0.01).name("radius");
   // Const folderClouds = gui.addFolder("Clouds");
   // FolderClouds.add(sky.cloudCoverage, "value", 0, 1, 0.01).name("coverage");
   // FolderClouds.add(sky.cloudDensity, "value", 0, 1, 0.01).name("density");
@@ -137,7 +134,7 @@ onMounted(async () => {
     mesh.position.y = Math.sin(time) * 20 + 5;
     mesh.rotation.x = time * 0.5;
     mesh.rotation.z = time * 0.51;
-    renderPipeline.render();
+    renderer.render(scene, camera);
   };
 
   renderer.setAnimationLoop(render);
