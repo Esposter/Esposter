@@ -27,8 +27,7 @@ let roughnessTexture: Texture;
 let animationFrameId: number;
 
 onMounted(async () => {
-  const canvas = document.getElementById(id) as HTMLCanvasElement | null;
-  if (!canvas) return;
+  const canvas = document.getElementById(id) as HTMLCanvasElement;
   scene = new Scene();
   let light: Light;
   let gem: Mesh<BufferGeometry, MeshBasicMaterial & MeshStandardMaterial> | undefined;

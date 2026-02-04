@@ -71,8 +71,7 @@ watch(componentsToRender, (newComponentsToRender) => {
 });
 
 onMounted(() => {
-  const element = document.getElementById(id) as HTMLDivElement | null;
-  if (!element) return;
+  const element = document.getElementById(id) as HTMLDivElement;
 
   onLoaded(async ({ GraphingCalculator }) => {
     calculator = await GraphingCalculator(element, {
