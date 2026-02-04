@@ -53,6 +53,9 @@ catalog:
   "@tiptap/starter-kit": ^3.19.0
   "@tiptap/suggestion": ^3.19.0
   "@tiptap/vue-3": ^3.19.0
+  "@tresjs/cientos": ^5.2.5
+  "@tresjs/core": ^5.3.3
+  "@tresjs/nuxt": ^5.1.7
   "@trpc/client": ^11.9.0
   "@trpc/server": ^11.9.0
   "@types/data-urls": ^3.0.4
