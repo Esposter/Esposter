@@ -109,6 +109,8 @@ The application relies on environment variables defined in `packages/app/configu
   - `import/no-unassigned-import`: Strict (allows `.css`, `.d.ts`).
   - Many "unsafe" rules are relaxed for DX.
 - **Linter**: `oxlint` runs first for speed, followed by `eslint`.
+- **Imports**: Always use named imports from libraries where possible.
+- **Types**: Explicitly define variables with proper types. `any` is **BANNED**.
 
 ### Component Architecture
 
@@ -122,6 +124,8 @@ The application relies on environment variables defined in `packages/app/configu
 - **Variable Assignments**: Group variable assignments together without blank lines between them.
 - **Vue Templates**: Avoid unnecessary blank lines within templates.
 - **Self-Closing Tags**: Always use self-closing tags (void tags) for components/elements without content (e.g., `<Component />`).
+- **Comments**: Remove comments from the code. Make variable names descriptive instead.
+- **Whitespace**: Minimize blank lines. Group related code tightly.
 
 ### Resource Management
 
@@ -131,3 +135,4 @@ The application relies on environment variables defined in `packages/app/configu
   - Three.js objects (geometries, materials, renderers, controls).
   - Global event listeners.
 - **Simplicity**: Prefer explicit `onMounted`/`onUnmounted` pairs over complex composable abstractions for simple resource management to maintain readability and avoid hidden behavior.
+- **Composables**: Prioritize using `VueUse` or existing composables (e.g., `useWindowSize`, `useEventListener`) over manual event listeners/logic when possible, unless it conflicts with simplicity or explicit cleanup requirements.
