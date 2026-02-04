@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { BufferGeometry, Light, MeshBasicMaterial, MeshStandardMaterial } from "three";
+import type { BufferGeometry, Light, MeshBasicMaterial, MeshStandardMaterial, Texture } from "three/webgpu";
 
 import { GEM_GLTF_PATH, ROUGHNESS_TEXTURE_PATH } from "@/services/visual/constants";
 import { Mesh } from "three";
@@ -23,7 +23,7 @@ const height = 200;
 let renderer: WebGPURenderer;
 let controls: OrbitControls;
 let scene: Scene;
-let gem: Mesh<BufferGeometry, MeshBasicMaterial & MeshStandardMaterial> | undefined;
+let roughnessTexture: Texture;
 let animationFrameId: number;
 
 onMounted(async () => {
@@ -31,6 +31,7 @@ onMounted(async () => {
   if (!canvas) return;
   scene = new Scene();
   let light: Light;
+  let gem: Mesh<BufferGeometry, MeshBasicMaterial & MeshStandardMaterial> | undefined;
 
   const gltfLoader = new GLTFLoader();
   gltfLoader.load(GEM_GLTF_PATH, (gltf) => {
@@ -38,7 +39,7 @@ onMounted(async () => {
     scene.add(light);
 
     const textureLoader = new TextureLoader();
-    const roughnessTexture = textureLoader.load(ROUGHNESS_TEXTURE_PATH);
+    roughnessTexture = textureLoader.load(ROUGHNESS_TEXTURE_PATH);
     gem = gltf.scene.children[0] as Mesh<BufferGeometry, MeshBasicMaterial & MeshStandardMaterial>;
     gem.material.roughnessMap = roughnessTexture;
     gem.material.displacementScale = 0.15;
@@ -100,6 +101,7 @@ onUnmounted(() => {
     if (Array.isArray(object.material)) for (const { dispose } of object.material) dispose();
     else object.material.dispose();
   });
+  roughnessTexture.dispose();
 });
 </script>
 
