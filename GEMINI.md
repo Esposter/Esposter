@@ -107,6 +107,9 @@ The application relies on environment variables defined in `packages/app/configu
 - **Rules**:
   - `Omit` is **BANNED**. Use `Except` (from `type-fest`) instead.
   - `import/no-unassigned-import`: Strict (allows `.css`, `.d.ts`).
+  - **Assertions**: Non-null assertions (`!`) are **BANNED**. Use optional chaining or guard clauses.
+  - **Loops**: Use `for...of` syntax. `.forEach()` is **BANNED**.
+  - **Control Flow**: Prioritize guard clauses (e.g., `if (!condition) return`) over nested `if` statements.
   - Many "unsafe" rules are relaxed for DX.
 - **Linter**: `oxlint` runs first for speed, followed by `eslint`.
 - **Imports**: Always use named imports from libraries where possible.
@@ -134,5 +137,10 @@ The application relies on environment variables defined in `packages/app/configu
   - `window.requestAnimationFrame` IDs.
   - Three.js objects (geometries, materials, renderers, controls).
   - Global event listeners.
+- **GPU Resource Disposal**:
+  - **Traversal**: Use `scene.traverse()` to dispose of all `Mesh` geometries and materials.
+  - **Looping**: Use `for (const { dispose } of object.material) dispose()` for material arrays.
+  - **Renderers & Controls**: Ensure `renderer.dispose()` and `controls.dispose()` are called.
+  - **Guards**: Use `if (!(object instanceof Mesh)) return;` patterns inside traversals.
 - **Simplicity**: Prefer explicit `onMounted`/`onUnmounted` pairs over complex composable abstractions for simple resource management to maintain readability and avoid hidden behavior.
 - **Composables**: Prioritize using `VueUse` or existing composables (e.g., `useWindowSize`, `useEventListener`) over manual event listeners/logic when possible, unless it conflicts with simplicity or explicit cleanup requirements.
