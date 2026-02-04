@@ -32,7 +32,7 @@
     "lint": "oxlint --type-aware && eslint .",
     "lint:fix": "oxlint --type-aware --fix && eslint --fix .",
     "test": "vitest",
-    "typecheck": "tsc"
+    "typecheck": "tsgo"
   },
   "dependencies": {
     "@esposter/shared": "workspace:*",

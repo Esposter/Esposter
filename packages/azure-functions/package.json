@@ -28,7 +28,7 @@
     "export:gen": "ctix build --config ../configuration/.ctirc-ts",
     "lint": "oxlint --type-aware && eslint .",
     "lint:fix": "oxlint --type-aware --fix && eslint --fix .",
-    "typecheck": "tsc"
+    "typecheck": "tsgo"
   },
   "dependencies": {
     "@azure/data-tables": "catalog:",

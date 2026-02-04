@@ -30,7 +30,7 @@
     "release": "pnpm build:packages && pnpm lint:fix:packages && pnpm typecheck:packages && lerna publish --yes",
     "start": "lerna run start --scope=@esposter/app",
     "test": "lerna run test",
-    "typecheck": "tsc && lerna run typecheck",
+    "typecheck": "tsgo && lerna run typecheck",
     "typecheck:packages": "pnpm typecheck --ignore @esposter/app",
     "watch:packages": "lerna watch --ignore @esposter/app -- pnpm build:packages"
   },
@@ -42,6 +42,7 @@
     "@lerna-lite/watch": "catalog:",
     "@prettier/plugin-oxc": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native-preview": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "ctix": "catalog:",
     "dotenv": "catalog:",

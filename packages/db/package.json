@@ -38,7 +38,7 @@
     "lint": "oxlint --type-aware && eslint .",
     "lint:fix": "oxlint --type-aware --fix && eslint --fix .",
     "test": "vitest",
-    "typecheck": "tsc"
+    "typecheck": "tsgo"
   },
   "dependencies": {
     "@azure/data-tables": "catalog:",
@@ -56,6 +56,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@azure/core-client": "catalog:",
     "@types/mime-types": "catalog:"
   },
   "peerDependencies": {
