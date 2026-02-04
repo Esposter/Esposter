@@ -23,7 +23,7 @@ let renderer: WebGPURenderer;
 let controls: OrbitControls;
 let animationFrameId: number;
 
-onMounted(() => {
+onMounted(async () => {
   const canvas = document.getElementById(id) as HTMLCanvasElement | null;
   if (!canvas) return;
   const scene = new Scene();
