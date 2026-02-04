@@ -7,23 +7,23 @@ import { shallowRef } from "vue";
 const gemRef = shallowRef<Mesh<BufferGeometry, MeshBasicMaterial & MeshStandardMaterial>>();
 const { state: gltf } = useGLTF(GEM_GLTF_PATH);
 const { state: roughnessMap } = useTexture(ROUGHNESS_TEXTURE_PATH);
-const gem = computed(() => {
-  const gem = gltf.value?.scene.children[0] as
-    | Mesh<BufferGeometry, MeshBasicMaterial & MeshStandardMaterial>
-    | undefined;
-  if (!gem) return undefined;
-  gem.material.roughnessMap = roughnessMap.value;
-  gem.material.displacementScale = 0.15;
-  gem.material.emissiveIntensity = 0;
-  gem.material.refractionRatio = 1;
-  return gem;
-});
+const gem = computed(
+  () => gltf.value?.scene.children[0] as Mesh<BufferGeometry, MeshBasicMaterial & MeshStandardMaterial> | undefined,
+);
 const light = computed(() => gltf.value?.scene.children[6]);
 const { onRender } = useLoop();
 
 onRender(({ elapsed }) => {
   if (!gemRef.value) return;
   gemRef.value.rotation.y = 1.1 * elapsed;
+});
+
+watch(gem, (newGem) => {
+  if (!newGem) return;
+  newGem.material.roughnessMap = roughnessMap.value;
+  newGem.material.displacementScale = 0.15;
+  newGem.material.emissiveIntensity = 0;
+  newGem.material.refractionRatio = 1;
 });
 </script>
 
