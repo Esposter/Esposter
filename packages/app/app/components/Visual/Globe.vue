@@ -7,7 +7,6 @@ import { features } from "@/assets/about/globe.json";
 import { ARC_STROKES, COLORS } from "@/services/visual/constants";
 import { getRandomValues } from "@/util/math/random/getRandomValues";
 import { takeOne } from "@esposter/shared";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import {
   AmbientLight,
   DirectionalLight,
@@ -16,8 +15,9 @@ import {
   PerspectiveCamera,
   PointLight,
   Scene,
-  WebGPURenderer,
-} from "three/webgpu";
+  WebGLRenderer,
+} from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 type Data = (typeof data)[number];
 
@@ -51,7 +51,7 @@ const {
 const id = "globe";
 const { width } = useWindowSize();
 const height = computed(() => width.value);
-let renderer: WebGPURenderer;
+let renderer: WebGLRenderer;
 let controls: OrbitControls;
 let animationFrameId: number;
 let intervalId: number;
@@ -59,7 +59,7 @@ let intervalId: number;
 onMounted(async () => {
   const canvas = document.getElementById(id) as HTMLCanvasElement | null;
   if (!canvas) return;
-  renderer = new WebGPURenderer({ antialias: true, canvas });
+  renderer = new WebGLRenderer({ antialias: true, canvas });
   renderer.setClearColor(0x000, 0);
   renderer.setSize(width.value, height.value);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -151,7 +151,6 @@ onMounted(async () => {
     renderer.render(scene, camera);
     animationFrameId = requestAnimationFrame(animate);
   };
-  await renderer.init();
   animate();
 
   useEventListener("resize", () => {

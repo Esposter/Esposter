@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Stats from "three/addons/libs/stats.module.js";
+import { WATERS_NORMALS_TEXTURE_PATH } from "@/services/visual/constants";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { Inspector } from "three/examples/jsm/inspector/Inspector.js";
 import { SkyMesh } from "three/examples/jsm/objects/SkyMesh.js";
@@ -27,7 +27,6 @@ const containerRef = ref<HTMLElement | null>(null);
 const parameters = { azimuth: 180, elevation: 2, exposure: 0.1 };
 let renderer: WebGPURenderer;
 let controls: OrbitControls;
-let stats: Stats;
 
 onMounted(async () => {
   if (!containerRef.value) return;
@@ -38,9 +37,6 @@ onMounted(async () => {
   renderer.toneMappingExposure = 0.1;
   renderer.inspector = new Inspector();
   containerRef.value.appendChild(renderer.domElement);
-
-  stats = new Stats();
-  containerRef.value.appendChild(stats.dom);
 
   const scene = new Scene();
   const camera = new PerspectiveCamera(55, window.innerWidth / window.innerHeight, 1, 20000);
@@ -58,7 +54,7 @@ onMounted(async () => {
   const sun = new Vector3();
   const waterGeometry = new PlaneGeometry(10000, 10000);
   const loader = new TextureLoader();
-  const waterNormals = loader.load("textures/waternormals.jpg");
+  const waterNormals = loader.load(WATERS_NORMALS_TEXTURE_PATH);
   waterNormals.wrapS = waterNormals.wrapT = RepeatWrapping;
   const water = new WaterMesh(waterGeometry, {
     distortionScale: 3.7,
@@ -142,7 +138,6 @@ onMounted(async () => {
     mesh.rotation.x = time * 0.5;
     mesh.rotation.z = time * 0.51;
     renderPipeline.render();
-    stats.update();
   };
 
   renderer.setAnimationLoop(render);
