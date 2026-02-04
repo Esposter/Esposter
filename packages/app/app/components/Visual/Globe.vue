@@ -112,8 +112,6 @@ onMounted(async () => {
     .atmosphereColor(atmosphereColor)
     .atmosphereAltitude(atmosphereAltitude)
     .hexPolygonColor(() => hexPolygonColor)
-    .rotateY(-Math.PI * (5 / 9))
-    .rotateZ(-Math.PI / 6)
     .arcsData(data)
     .arcStartLat((d) => (d as Data).startLat)
     .arcStartLng((d) => (d as Data).startLng)
@@ -145,6 +143,7 @@ onMounted(async () => {
     .ringMaxRadius(ringMaxRadius)
     .ringPropagationSpeed(3)
     .ringRepeatPeriod(arcTime * arcLength);
+  globe.rotateY(-Math.PI * (5 / 9)).rotateZ(-Math.PI / 6);
   scene.add(globe);
 
   const animate = () => {
