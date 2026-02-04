@@ -19,6 +19,7 @@ import {
   RenderTarget,
   RepeatWrapping,
   Scene,
+  Texture,
   TextureLoader,
   Vector3,
   WebGPURenderer,
@@ -28,6 +29,11 @@ const containerRef = ref<HTMLElement | null>(null);
 const parameters = { azimuth: 180, elevation: 2, exposure: 0.5 };
 let renderer: WebGPURenderer;
 let controls: OrbitControls;
+let scene: Scene;
+let renderPipeline: PostProcessing;
+let waterNormals: Texture;
+let pmremGenerator: PMREMGenerator;
+let renderTarget: RenderTarget | undefined;
 
 onMounted(async () => {
   if (!containerRef.value) return;
@@ -39,11 +45,11 @@ onMounted(async () => {
   renderer.inspector = new Inspector();
   containerRef.value.appendChild(renderer.domElement);
 
-  const scene = new Scene();
+  scene = new Scene();
   const camera = new PerspectiveCamera(55, window.innerWidth / window.innerHeight, 1, 20000);
   camera.position.set(30, 30, 100);
 
-  const renderPipeline = new PostProcessing(renderer);
+  renderPipeline = new PostProcessing(renderer);
   const scenePass = pass(scene, camera);
   const scenePassColor = scenePass.getTextureNode("output");
   const bloomPass = bloom(scenePassColor);
@@ -54,8 +60,8 @@ onMounted(async () => {
 
   const sun = new Vector3();
   const waterGeometry = new PlaneGeometry(10000, 10000);
-  const loader = new TextureLoader();
-  const waterNormals = loader.load(WATERS_NORMALS_TEXTURE_PATH);
+  const textureLoader = new TextureLoader();
+  waterNormals = textureLoader.load(WATERS_NORMALS_TEXTURE_PATH);
   waterNormals.wrapS = waterNormals.wrapT = RepeatWrapping;
   const water = new WaterMesh(waterGeometry, {
     distortionScale: 3.7,
@@ -78,9 +84,8 @@ onMounted(async () => {
   // Sky.cloudDensity.value = 0.5;
   // Sky.cloudElevation.value = 0.5;
 
-  const pmremGenerator = new PMREMGenerator(renderer);
+  pmremGenerator = new PMREMGenerator(renderer);
   const sceneEnv = new Scene();
-  let renderTarget: RenderTarget | undefined;
 
   const updateSun = () => {
     const phi = MathUtils.degToRad(90 - parameters.elevation);
@@ -98,10 +103,10 @@ onMounted(async () => {
   await renderer.init();
   updateSun();
 
-  const geometry = new BoxGeometry(30, 30, 30);
-  const material = new MeshStandardMaterial({ roughness: 0 });
-  const mesh = new Mesh(geometry, material);
-  scene.add(mesh);
+  const boxGeometry = new BoxGeometry(30, 30, 30);
+  const boxMaterial = new MeshStandardMaterial({ roughness: 0 });
+  const box = new Mesh(boxGeometry, boxMaterial);
+  scene.add(box);
 
   controls = new OrbitControls(camera, renderer.domElement);
   controls.maxPolarAngle = Math.PI * 0.495;
@@ -136,10 +141,10 @@ onMounted(async () => {
 
   const render = () => {
     const time = performance.now() * 0.001;
-    mesh.position.y = Math.sin(time) * 20 + 5;
-    mesh.rotation.x = time * 0.5;
-    mesh.rotation.z = time * 0.51;
-    renderer.render(scene, camera);
+    box.position.y = Math.sin(time) * 20 + 5;
+    box.rotation.x = time * 0.5;
+    box.rotation.z = time * 0.51;
+    renderPipeline.render();
   };
 
   renderer.setAnimationLoop(render);
@@ -149,6 +154,16 @@ onUnmounted(() => {
   renderer.setAnimationLoop(null);
   renderer.dispose();
   controls.dispose();
+  renderPipeline.dispose();
+  scene.traverse((object) => {
+    if (!(object instanceof Mesh)) return;
+    object.geometry.dispose();
+    if (Array.isArray(object.material)) for (const { dispose } of object.material) dispose();
+    else object.material.dispose();
+  });
+  waterNormals.dispose();
+  pmremGenerator.dispose();
+  renderTarget?.dispose();
 });
 </script>
 

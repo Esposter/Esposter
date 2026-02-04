@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import type { BufferGeometry, Light, Mesh, MeshBasicMaterial, MeshStandardMaterial } from "three";
+import type { BufferGeometry, Light, MeshBasicMaterial, MeshStandardMaterial } from "three";
 
 import { GEM_GLTF_PATH, ROUGHNESS_TEXTURE_PATH } from "@/services/visual/constants";
+import { Mesh } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import {
@@ -21,13 +22,14 @@ const width = 200;
 const height = 200;
 let renderer: WebGPURenderer;
 let controls: OrbitControls;
+let scene: Scene;
+let gem: Mesh<BufferGeometry, MeshBasicMaterial & MeshStandardMaterial> | undefined;
 let animationFrameId: number;
 
 onMounted(async () => {
   const canvas = document.getElementById(id) as HTMLCanvasElement | null;
   if (!canvas) return;
-  const scene = new Scene();
-  let gem: Mesh<BufferGeometry, MeshBasicMaterial & MeshStandardMaterial> | undefined;
+  scene = new Scene();
   let light: Light;
 
   const gltfLoader = new GLTFLoader();
@@ -92,6 +94,12 @@ onUnmounted(() => {
   window.cancelAnimationFrame(animationFrameId);
   renderer.dispose();
   controls.dispose();
+  scene.traverse((object) => {
+    if (!(object instanceof Mesh)) return;
+    object.geometry.dispose();
+    if (Array.isArray(object.material)) for (const { dispose } of object.material) dispose();
+    else object.material.dispose();
+  });
 });
 </script>
 

@@ -11,6 +11,7 @@ import {
   AmbientLight,
   DirectionalLight,
   Fog,
+  Mesh,
   MeshPhongMaterial,
   PerspectiveCamera,
   PointLight,
@@ -53,6 +54,7 @@ const { width } = useWindowSize();
 const height = computed(() => width.value);
 let renderer: WebGLRenderer;
 let controls: OrbitControls;
+let scene: Scene;
 let animationFrameId: number;
 let intervalId: number;
 
@@ -64,7 +66,7 @@ onMounted(async () => {
   renderer.setSize(width.value, height.value);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-  const scene = new Scene();
+  scene = new Scene();
   scene.add(new AmbientLight(0xbbb, 0.3));
 
   const camera = new PerspectiveCamera();
@@ -169,6 +171,12 @@ onUnmounted(() => {
   window.clearInterval(intervalId);
   renderer.dispose();
   controls.dispose();
+  scene.traverse((object) => {
+    if (!(object instanceof Mesh)) return;
+    object.geometry.dispose();
+    if (Array.isArray(object.material)) for (const { dispose } of object.material) dispose();
+    else object.material.dispose();
+  });
 });
 </script>
 
