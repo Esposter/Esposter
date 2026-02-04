@@ -6,6 +6,7 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createContext } from "@@/server/trpc/context";
 import { trpcRouter } from "@@/server/trpc/routers";
 import { userRouter } from "@@/server/trpc/routers/user";
+import { TRPCError } from "@trpc/server";
 import { applyWSSHandler } from "@trpc/server/adapters/ws";
 import { WebSocketServer } from "ws";
 
@@ -30,15 +31,19 @@ export default defineEventHandler((event) => {
     getSynchronizedFunction(async (ws, req) => {
       const context = createContext({ req, res: ws } as CreateWSSContextFnOptions);
       const caller = createCaller(context);
-      await caller.connect();
-      console.log(`Connection opened, client size: ${wss.clients.size}`);
-      ws.once(
-        "close",
-        getSynchronizedFunction(async () => {
-          await caller.disconnect();
-          console.log(`Connection closed, client size: ${wss.clients.size}`);
-        }),
-      );
+      try {
+        await caller.connect();
+        console.log(`Connection opened, client size: ${wss.clients.size}`);
+        ws.once(
+          "close",
+          getSynchronizedFunction(async () => {
+            await caller.disconnect();
+            console.log(`Connection closed, client size: ${wss.clients.size}`);
+          }),
+        );
+      } catch (error) {
+        if (error instanceof TRPCError && error.code !== "UNAUTHORIZED") throw error;
+      }
     }),
   );
   process.on("SIGTERM", () => {
