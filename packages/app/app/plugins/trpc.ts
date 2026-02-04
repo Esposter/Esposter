@@ -25,7 +25,8 @@ export default defineNuxtPlugin(() => {
   });
 
   if (getIsServer()) links.push(httpSplitLink);
-  else {
+  // @TODO: Disabling for local development since it currently gives an infinite loop of invalid frame headers when trying to connect via ws
+  else if (isProduction) {
     const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const wsClient = createWSClient({ url: `${wsProtocol}//${window.location.host}` });
     links.push(

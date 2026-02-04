@@ -19,7 +19,7 @@
     "build": "nuxt build",
     "cleanup": "nuxt cleanup",
     "coverage": "vitest run --coverage",
-    "dev": "nuxt dev --no-fork",
+    "dev": "nuxt dev",
     "env:gen": "pnpx gen-env-types .env -o shared/types/env.d.ts -e .",
     "generate": "nuxt generate",
     "generate-pwa-assets": "pnpx pwa-asset-generator https://pshpstespauea001.blob.core.windows.net/esposter-assets/logo.png public/pwa -o false -f -i public/pwa/index.html -m public/pwa/manifest.json",

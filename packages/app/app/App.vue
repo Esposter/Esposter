@@ -36,4 +36,8 @@ p:empty::before {
 canvas {
   display: block;
 }
+// three.js profiler
+#profiler-mini-panel {
+  z-index: 0;
+}
 </style>
