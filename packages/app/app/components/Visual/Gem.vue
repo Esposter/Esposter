@@ -2,6 +2,8 @@
 import type { BufferGeometry, Light, Mesh, MeshBasicMaterial, MeshStandardMaterial } from "three";
 
 import { GEM_GLTF_PATH, ROUGHNESS_TEXTURE_PATH } from "@/services/visual/constants";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import {
   AmbientLight,
   Clock,
@@ -10,16 +12,14 @@ import {
   PerspectiveCamera,
   Scene,
   TextureLoader,
-  WebGLRenderer,
-} from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+  WebGPURenderer,
+} from "three/webgpu";
 
 const isReady = ref(false);
 const id = "gem";
 const width = 200;
 const height = 200;
-let renderer: WebGLRenderer;
+let renderer: WebGPURenderer;
 let controls: OrbitControls;
 let animationFrameId: number;
 
@@ -69,7 +69,7 @@ onMounted(() => {
   controls.minPolarAngle = Math.PI / 2;
   controls.maxPolarAngle = Math.PI / 2;
 
-  renderer = new WebGLRenderer({ alpha: true, antialias: true, canvas });
+  renderer = new WebGPURenderer({ alpha: true, antialias: true, canvas });
   renderer.setClearColor(0x000000, 0);
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = PCFSoftShadowMap;

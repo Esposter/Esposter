@@ -9,8 +9,17 @@ import { features } from "@/assets/about/globe.json";
 import { ARC_STROKES, COLORS } from "@/services/visual/constants";
 import { getRandomValues } from "@/util/math/random/getRandomValues";
 import { takeOne } from "@esposter/shared";
-import { AmbientLight, Color, DirectionalLight, Fog, PerspectiveCamera, PointLight, Scene, WebGLRenderer } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import {
+  AmbientLight,
+  Color,
+  DirectionalLight,
+  Fog,
+  PerspectiveCamera,
+  PointLight,
+  Scene,
+  WebGPURenderer,
+} from "three/webgpu";
 
 type Data = (typeof data)[number];
 
@@ -44,7 +53,7 @@ const {
 const id = "globe";
 const { width } = useWindowSize();
 const height = computed(() => width.value);
-let renderer: WebGLRenderer;
+let renderer: WebGPURenderer;
 let controls: OrbitControls;
 let animationFrameId: number;
 let intervalId: number;
@@ -52,7 +61,7 @@ let intervalId: number;
 onMounted(async () => {
   const canvas = document.getElementById(id) as HTMLCanvasElement | null;
   if (!canvas) return;
-  renderer = new WebGLRenderer({ antialias: true, canvas });
+  renderer = new WebGPURenderer({ antialias: true, canvas });
   renderer.setClearColor(0x000, 0);
   renderer.setSize(width.value, height.value);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
