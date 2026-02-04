@@ -40,8 +40,6 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
       getSynchronizedFunction(async () => {
         switch (status.value) {
           case "error":
-            watchHandle();
-            break;
           case "idle":
           case "pending":
             return;
