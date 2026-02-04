@@ -13,6 +13,7 @@ import {
   PerspectiveCamera,
   PlaneGeometry,
   PMREMGenerator,
+  RenderTarget,
   RepeatWrapping,
   Scene,
   TextureLoader,
@@ -31,7 +32,7 @@ onMounted(async () => {
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.toneMapping = ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 0.1;
+  renderer.toneMappingExposure = parameters.exposure;
   renderer.inspector = new Inspector();
   containerRef.value.appendChild(renderer.domElement);
 
@@ -76,6 +77,7 @@ onMounted(async () => {
 
   const pmremGenerator = new PMREMGenerator(renderer);
   const sceneEnv = new Scene();
+  let renderTarget: RenderTarget | undefined;
 
   const updateSun = () => {
     const phi = MathUtils.degToRad(90 - parameters.elevation);
@@ -83,11 +85,11 @@ onMounted(async () => {
     sun.setFromSphericalCoords(1, phi, theta);
     sky.sunPosition.value.copy(sun);
     water.sunDirection.value.copy(sun).normalize();
+    renderTarget?.dispose();
     sceneEnv.add(sky);
-    const renderTarget = pmremGenerator.fromScene(sceneEnv);
+    renderTarget = pmremGenerator.fromScene(sceneEnv);
     scene.add(sky);
     scene.environment = renderTarget.texture;
-    renderTarget.dispose();
   };
 
   await renderer.init();
