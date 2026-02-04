@@ -31,6 +31,6 @@ watchEffect(() => {
   <TresAmbientLight :intensity="4" />
   <TresDirectionalLight :intensity="6" :position="[1, 1, 1]" />
   <TresDirectionalLight :intensity="6" :position="[-1, -1, -1]" />
-  <primitive v-if="gem" ref="gemRef" :object="gem" />
+  <primitive v-if="gem" ref="gemRef" :object="gem" @dispose="" />
   <primitive v-if="light" :object="light" />
 </template>
