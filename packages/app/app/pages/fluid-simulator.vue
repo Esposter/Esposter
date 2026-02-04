@@ -77,12 +77,9 @@ onMounted(async () => {
   sky.rayleigh.value = 2;
   sky.mieCoefficient.value = 0.005;
   sky.mieDirectionalG.value = 0.8;
-  // @ts-expect-error - SkyMesh extends Mesh but these props might be missing in type definition
-  sky.cloudCoverage.value = 0.4;
-  // @ts-expect-error - SkyMesh extends Mesh but these props might be missing in type definition
-  sky.cloudDensity.value = 0.5;
-  // @ts-expect-error - SkyMesh extends Mesh but these props might be missing in type definition
-  sky.cloudElevation.value = 0.5;
+  // Sky.cloudCoverage.value = 0.4;
+  // Sky.cloudDensity.value = 0.5;
+  // Sky.cloudElevation.value = 0.5;
 
   const pmremGenerator = new PMREMGenerator(renderer);
   const sceneEnv = new Scene();
@@ -128,13 +125,10 @@ onMounted(async () => {
   const folderBloom = gui.addFolder("Bloom");
   folderBloom.add(bloomPass.strength, "value", 0, 3, 0.01).name("strength");
   folderBloom.add(bloomPass.radius, "value", 0, 1, 0.01).name("radius");
-  const folderClouds = gui.addFolder("Clouds");
-  // @ts-expect-error - SkyMesh extends Mesh but these props might be missing in type definition
-  folderClouds.add(sky.cloudCoverage, "value", 0, 1, 0.01).name("coverage");
-  // @ts-expect-error - SkyMesh extends Mesh but these props might be missing in type definition
-  folderClouds.add(sky.cloudDensity, "value", 0, 1, 0.01).name("density");
-  // @ts-expect-error - SkyMesh extends Mesh but these props might be missing in type definition
-  folderClouds.add(sky.cloudElevation, "value", 0, 1, 0.01).name("elevation");
+  // Const folderClouds = gui.addFolder("Clouds");
+  // FolderClouds.add(sky.cloudCoverage, "value", 0, 1, 0.01).name("coverage");
+  // FolderClouds.add(sky.cloudDensity, "value", 0, 1, 0.01).name("density");
+  // FolderClouds.add(sky.cloudElevation, "value", 0, 1, 0.01).name("elevation");
 
   useEventListener("resize", () => {
     camera.aspect = window.innerWidth / window.innerHeight;
@@ -162,5 +156,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div ref="containerRef" />
+  <NuxtLayout>
+    <div ref="containerRef" />
+  </NuxtLayout>
 </template>
