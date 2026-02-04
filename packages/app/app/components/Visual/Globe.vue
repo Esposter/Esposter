@@ -168,14 +168,14 @@ onMounted(async () => {
 onUnmounted(() => {
   window.cancelAnimationFrame(animationFrameId);
   window.clearInterval(intervalId);
-  renderer.dispose();
-  controls.dispose();
   scene.traverse((object) => {
     if (!(object instanceof Mesh)) return;
     object.geometry.dispose();
     if (Array.isArray(object.material)) for (const { dispose } of object.material) dispose();
     else object.material.dispose();
   });
+  controls.dispose();
+  renderer.dispose();
 });
 </script>
 

@@ -152,8 +152,6 @@ onMounted(async () => {
 
 onUnmounted(() => {
   renderer.setAnimationLoop(null);
-  renderer.dispose();
-  controls.dispose();
   renderPipeline.dispose();
   scene.traverse((object) => {
     if (!(object instanceof Mesh)) return;
@@ -164,6 +162,8 @@ onUnmounted(() => {
   waterNormals.dispose();
   pmremGenerator.dispose();
   renderTarget?.dispose();
+  controls.dispose();
+  renderer.dispose();
 });
 </script>
 

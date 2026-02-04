@@ -92,8 +92,6 @@ onMounted(async () => {
 
 onUnmounted(() => {
   window.cancelAnimationFrame(animationFrameId);
-  renderer.dispose();
-  controls.dispose();
   scene.traverse((object) => {
     if (!(object instanceof Mesh)) return;
     object.geometry.dispose();
@@ -101,6 +99,8 @@ onUnmounted(() => {
     else object.material.dispose();
   });
   roughnessTexture.dispose();
+  controls.dispose();
+  renderer.dispose();
 });
 </script>
 
