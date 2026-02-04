@@ -1,34 +1,36 @@
 <script setup lang="ts">
-import type { BufferGeometry, Light, Mesh, MeshBasicMaterial, MeshStandardMaterial } from "three";
+import type { BufferGeometry, Light, MeshBasicMaterial, MeshStandardMaterial, Texture } from "three/webgpu";
 
 import { GEM_GLTF_PATH, ROUGHNESS_TEXTURE_PATH } from "@/services/visual/constants";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import {
   AmbientLight,
   Clock,
   DirectionalLight,
+  Mesh,
   PCFSoftShadowMap,
   PerspectiveCamera,
   Scene,
   TextureLoader,
-  WebGLRenderer,
-} from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+  WebGPURenderer,
+} from "three/webgpu";
 
 const isReady = ref(false);
 const id = "gem";
 const width = 200;
 const height = 200;
-let renderer: WebGLRenderer;
+let renderer: WebGPURenderer;
 let controls: OrbitControls;
+let scene: Scene;
+let roughnessTexture: Texture;
 let animationFrameId: number;
 
-onMounted(() => {
-  const canvas = document.getElementById(id) as HTMLCanvasElement | null;
-  if (!canvas) return;
-  const scene = new Scene();
-  let gem: Mesh<BufferGeometry, MeshBasicMaterial & MeshStandardMaterial> | undefined;
+onMounted(async () => {
+  const canvas = document.getElementById(id) as HTMLCanvasElement;
+  scene = new Scene();
   let light: Light;
+  let gem: Mesh<BufferGeometry, MeshBasicMaterial & MeshStandardMaterial> | undefined;
 
   const gltfLoader = new GLTFLoader();
   gltfLoader.load(GEM_GLTF_PATH, (gltf) => {
@@ -36,7 +38,7 @@ onMounted(() => {
     scene.add(light);
 
     const textureLoader = new TextureLoader();
-    const roughnessTexture = textureLoader.load(ROUGHNESS_TEXTURE_PATH);
+    roughnessTexture = textureLoader.load(ROUGHNESS_TEXTURE_PATH);
     gem = gltf.scene.children[0] as Mesh<BufferGeometry, MeshBasicMaterial & MeshStandardMaterial>;
     gem.material.roughnessMap = roughnessTexture;
     gem.material.displacementScale = 0.15;
@@ -69,7 +71,7 @@ onMounted(() => {
   controls.minPolarAngle = Math.PI / 2;
   controls.maxPolarAngle = Math.PI / 2;
 
-  renderer = new WebGLRenderer({ alpha: true, antialias: true, canvas });
+  renderer = new WebGPURenderer({ alpha: true, antialias: true, canvas });
   renderer.setClearColor(0x000000, 0);
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = PCFSoftShadowMap;
@@ -84,6 +86,7 @@ onMounted(() => {
     renderer.render(scene, camera);
     animationFrameId = window.requestAnimationFrame(animate);
   };
+  await renderer.init();
   animate();
 });
 
@@ -91,6 +94,13 @@ onUnmounted(() => {
   window.cancelAnimationFrame(animationFrameId);
   renderer.dispose();
   controls.dispose();
+  scene.traverse((object) => {
+    if (!(object instanceof Mesh)) return;
+    object.geometry.dispose();
+    if (Array.isArray(object.material)) for (const { dispose } of object.material) dispose();
+    else object.material.dispose();
+  });
+  roughnessTexture.dispose();
 });
 </script>
 

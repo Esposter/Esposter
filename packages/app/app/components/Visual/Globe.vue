@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { MeshPhongMaterial } from "three";
-
 import { dayjs } from "#shared/services/dayjs";
 import { createRandomInteger } from "#shared/util/math/random/createRandomInteger";
 import countries from "@/assets/about/countries.json";
@@ -9,7 +7,17 @@ import { features } from "@/assets/about/globe.json";
 import { ARC_STROKES, COLORS } from "@/services/visual/constants";
 import { getRandomValues } from "@/util/math/random/getRandomValues";
 import { takeOne } from "@esposter/shared";
-import { AmbientLight, Color, DirectionalLight, Fog, PerspectiveCamera, PointLight, Scene, WebGLRenderer } from "three";
+import {
+  AmbientLight,
+  DirectionalLight,
+  Fog,
+  Mesh,
+  MeshPhongMaterial,
+  PerspectiveCamera,
+  PointLight,
+  Scene,
+  WebGLRenderer,
+} from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 type Data = (typeof data)[number];
@@ -19,9 +27,9 @@ const {
   arcTime,
   atmosphereAltitude,
   atmosphereColor,
+  color,
   emissive,
   emissiveIntensity,
-  globeColor,
   hexPolygonColor,
   ringMaxRadius,
   rings,
@@ -32,9 +40,9 @@ const {
   arcTime: dayjs.duration(2, "second").asMilliseconds(),
   atmosphereAltitude: 0.25,
   atmosphereColor: "#3a228a",
+  color: "#3a228a",
   emissive: "#220038",
   emissiveIntensity: 0.1,
-  globeColor: "#3a228a",
   hexPolygonColor: "rgba(255,255,255,0.7)",
   ringMaxRadius: 3,
   rings: 3,
@@ -46,18 +54,18 @@ const { width } = useWindowSize();
 const height = computed(() => width.value);
 let renderer: WebGLRenderer;
 let controls: OrbitControls;
+let scene: Scene;
 let animationFrameId: number;
 let intervalId: number;
 
 onMounted(async () => {
-  const canvas = document.getElementById(id) as HTMLCanvasElement | null;
-  if (!canvas) return;
+  const canvas = document.getElementById(id) as HTMLCanvasElement;
   renderer = new WebGLRenderer({ antialias: true, canvas });
   renderer.setClearColor(0x000, 0);
   renderer.setSize(width.value, height.value);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-  const scene = new Scene();
+  scene = new Scene();
   scene.add(new AmbientLight(0xbbb, 0.3));
 
   const camera = new PerspectiveCamera();
@@ -94,17 +102,18 @@ onMounted(async () => {
   controls.maxPolarAngle = Math.PI - Math.PI / 3;
 
   const ThreeGlobe = (await import("three-globe")).default;
+  const globeMaterial = new MeshPhongMaterial({ color, emissive, emissiveIntensity, shininess });
   const globe = new ThreeGlobe({ animateIn: true, waitForGlobeReady: true })
+    .globeMaterial(globeMaterial)
     .hexPolygonsData(features)
     .hexPolygonResolution(3)
     .hexPolygonMargin(0.7)
     .showAtmosphere(showAtmosphere)
     .atmosphereColor(atmosphereColor)
     .atmosphereAltitude(atmosphereAltitude)
-    .hexPolygonColor(() => hexPolygonColor);
-  globe.rotateY(-Math.PI * (5 / 9));
-  globe.rotateZ(-Math.PI / 6);
-  globe
+    .hexPolygonColor(() => hexPolygonColor)
+    .rotateY(-Math.PI * (5 / 9))
+    .rotateZ(-Math.PI / 6)
     .arcsData(data)
     .arcStartLat((d) => (d as Data).startLat)
     .arcStartLng((d) => (d as Data).startLng)
@@ -136,12 +145,6 @@ onMounted(async () => {
     .ringMaxRadius(ringMaxRadius)
     .ringPropagationSpeed(3)
     .ringRepeatPeriod(arcTime * arcLength);
-
-  const globeMaterial = globe.globeMaterial() as MeshPhongMaterial;
-  globeMaterial.color = new Color(globeColor);
-  globeMaterial.emissive = new Color(emissive);
-  globeMaterial.emissiveIntensity = emissiveIntensity;
-  globeMaterial.shininess = shininess;
   scene.add(globe);
 
   const animate = () => {
@@ -167,6 +170,12 @@ onUnmounted(() => {
   window.clearInterval(intervalId);
   renderer.dispose();
   controls.dispose();
+  scene.traverse((object) => {
+    if (!(object instanceof Mesh)) return;
+    object.geometry.dispose();
+    if (Array.isArray(object.material)) for (const { dispose } of object.material) dispose();
+    else object.material.dispose();
+  });
 });
 </script>
 
