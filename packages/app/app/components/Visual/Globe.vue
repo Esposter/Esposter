@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type ThreeGlobe from "three-globe";
+
 import { dayjs } from "#shared/services/dayjs";
 import { createRandomInteger } from "#shared/util/math/random/createRandomInteger";
 import countries from "@/assets/about/countries.json";
@@ -11,7 +13,6 @@ import {
   AmbientLight,
   DirectionalLight,
   Fog,
-  Mesh,
   MeshPhongMaterial,
   PerspectiveCamera,
   PointLight,
@@ -54,7 +55,11 @@ const { width } = useWindowSize();
 const height = computed(() => width.value);
 let renderer: WebGLRenderer;
 let controls: OrbitControls;
-let scene: Scene;
+let ambientLight: AmbientLight;
+let directionLight: DirectionalLight;
+let directionLight1: DirectionalLight;
+let pointLight: PointLight;
+let globe: ThreeGlobe;
 let animationFrameId: number;
 let intervalId: number;
 
@@ -65,8 +70,9 @@ onMounted(async () => {
   renderer.setSize(width.value, height.value);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-  scene = new Scene();
-  scene.add(new AmbientLight(0xbbb, 0.3));
+  const scene = new Scene();
+  ambientLight = new AmbientLight(0xbbb, 0.3);
+  scene.add(ambientLight);
 
   const camera = new PerspectiveCamera();
   camera.aspect = width.value / height.value;
@@ -75,17 +81,17 @@ onMounted(async () => {
   camera.position.x = 0;
   camera.position.y = 0;
 
-  const dLight = new DirectionalLight(0xfff, 0.8);
-  dLight.position.set(-800, 2000, 400);
-  camera.add(dLight);
+  directionLight = new DirectionalLight(0xfff, 0.8);
+  directionLight.position.set(-800, 2000, 400);
+  camera.add(directionLight);
 
-  const dLight1 = new DirectionalLight(0x7982f6, 1);
-  dLight1.position.set(-200, 500, 200);
-  camera.add(dLight1);
+  directionLight1 = new DirectionalLight(0x7982f6, 1);
+  directionLight1.position.set(-200, 500, 200);
+  camera.add(directionLight1);
 
-  const dLight2 = new PointLight(0x8566cc, 0.5);
-  dLight2.position.set(-200, 500, 200);
-  camera.add(dLight2);
+  pointLight = new PointLight(0x8566cc, 0.5);
+  pointLight.position.set(-200, 500, 200);
+  camera.add(pointLight);
 
   scene.add(camera);
   scene.fog = new Fog(0x535ef3, 400, 2000);
@@ -103,7 +109,7 @@ onMounted(async () => {
 
   const ThreeGlobe = (await import("three-globe")).default;
   const globeMaterial = new MeshPhongMaterial({ color, emissive, emissiveIntensity, shininess });
-  const globe = new ThreeGlobe({ animateIn: true, waitForGlobeReady: true })
+  globe = new ThreeGlobe({ animateIn: true, waitForGlobeReady: true })
     .globeMaterial(globeMaterial)
     .hexPolygonsData(features)
     .hexPolygonResolution(3)
@@ -167,12 +173,11 @@ onMounted(async () => {
 onUnmounted(() => {
   window.cancelAnimationFrame(animationFrameId);
   window.clearInterval(intervalId);
-  scene.traverse((object) => {
-    if (!(object instanceof Mesh)) return;
-    object.geometry.dispose();
-    if (Array.isArray(object.material)) for (const { dispose } of object.material) dispose();
-    else object.material.dispose();
-  });
+  ambientLight.dispose();
+  directionLight.dispose();
+  directionLight1.dispose();
+  pointLight.dispose();
+  globe.globeMaterial().dispose();
   controls.dispose();
   renderer.dispose();
 });
