@@ -20,6 +20,11 @@ const items = computed<ListLinkItem[]>(() => {
       title: "Anime",
     },
     {
+      href: RoutePath.FluidSimulator,
+      icon: "mdi-water",
+      title: "Fluid Simulator",
+    },
+    {
       href: RoutePath.About,
       icon: "mdi-information",
       title: "About",
