@@ -2,13 +2,13 @@
 import type { BufferGeometry, Light, MeshBasicMaterial, MeshStandardMaterial, Texture } from "three/webgpu";
 
 import { GEM_GLTF_PATH, ROUGHNESS_TEXTURE_PATH } from "@/services/visual/constants";
-import { Mesh } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import {
   AmbientLight,
   Clock,
   DirectionalLight,
+  Mesh,
   PCFSoftShadowMap,
   PerspectiveCamera,
   Scene,
