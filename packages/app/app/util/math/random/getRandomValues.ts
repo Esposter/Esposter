@@ -1,3 +1,5 @@
+import { takeOne } from "@esposter/shared";
+
 // https://stackoverflow.com/questions/19269545/how-to-get-a-number-of-random-elements-from-an-array
 export const getRandomValues = <T>(values: T[], takenLength: number) => {
   if (!Number.isInteger(takenLength)) throw new TypeError(`${getRandomValues.name}: taken length must be an integer`);
@@ -12,8 +14,8 @@ export const getRandomValues = <T>(values: T[], takenLength: number) => {
 
   while (takenLength--) {
     const x = Math.floor(Math.random() * length);
-    resultValues[takenLength] = values[x in takenValues ? takenValues[x] : x];
-    takenValues[x] = --length in takenValues ? takenValues[length] : length;
+    resultValues[takenLength] = takeOne(values, x in takenValues ? takeOne(takenValues, x) : x);
+    takenValues[x] = --length in takenValues ? takeOne(takenValues, length) : length;
   }
 
   return resultValues;

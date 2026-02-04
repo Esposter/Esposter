@@ -36,4 +36,8 @@ p:empty::before {
 canvas {
   display: block;
 }
+// three.js profiler blocks the app menus since it is set to z-index 9999
+#profiler-mini-panel {
+  z-index: 0 !important;
+}
 </style>

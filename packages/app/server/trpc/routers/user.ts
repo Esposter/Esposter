@@ -47,7 +47,7 @@ export const userRouter = router({
           target: userStatuses.userId,
         })
         .returning()
-    ).find(Boolean);
+    )[0];
     if (!upsertedStatus)
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -67,7 +67,7 @@ export const userRouter = router({
           target: userStatuses.userId,
         })
         .returning()
-    ).find(Boolean);
+    )[0];
     if (!upsertedStatus)
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -133,7 +133,7 @@ export const userRouter = router({
           target: userStatuses.userId,
         })
         .returning()
-    ).find(Boolean);
+    )[0];
     if (!upsertedStatus)
       throw new TRPCError({
         code: "BAD_REQUEST",

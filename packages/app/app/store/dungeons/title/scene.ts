@@ -9,7 +9,7 @@ import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInpu
 import { PlayerTitleMenuOptionGrid } from "@/services/dungeons/scene/title/menu/PlayerTitleMenuOptionGrid";
 import { isPlayerSpecialInput } from "@/services/dungeons/UI/input/isPlayerSpecialInput";
 import { useDungeonsStore } from "@/store/dungeons";
-import { exhaustiveGuard } from "@esposter/shared";
+import { exhaustiveGuard, takeOne } from "@esposter/shared";
 
 export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
   const dungeonsStore = useDungeonsStore();
@@ -25,7 +25,7 @@ export const useTitleSceneStore = defineStore("dungeons/title/scene", () => {
     if (playerSpecialInput === PlayerSpecialInput.Confirm)
       switch (PlayerTitleMenuOptionGrid.value) {
         case PlayerTitleMenuOption.Continue:
-          dungeonsStore.save = dungeonsStore.dungeons.saves[0];
+          dungeonsStore.save = takeOne(dungeonsStore.dungeons.saves);
           fadeSwitchToScene(scene, SceneKey.World);
           return;
         case PlayerTitleMenuOption.Settings:

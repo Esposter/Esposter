@@ -19,7 +19,7 @@ import {
   WebhookRelations,
   webhooks,
 } from "@esposter/db-schema";
-import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
+import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, count, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
@@ -36,9 +36,9 @@ export type ReadAppUsersByIdsInput = z.infer<typeof readAppUsersByIdsInputSchema
 export const webhookRouter = router({
   createWebhook: getCreatorProcedure(createWebhookInputSchema, "roomId", RateLimiterType.Slow).mutation<Webhook>(
     async ({ ctx, input: { name, roomId } }) => {
-      const webhookCount = (
-        await ctx.db.select({ count: count() }).from(webhooks).where(eq(webhooks.roomId, roomId))
-      )[0].count;
+      const webhookCount = takeOne(
+        await ctx.db.select({ count: count() }).from(webhooks).where(eq(webhooks.roomId, roomId)),
+      ).count;
       if (webhookCount >= WEBHOOK_MAX_LENGTH)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -49,7 +49,7 @@ export const webhookRouter = router({
           ).message,
         });
 
-      const newAppUser = (await ctx.db.insert(appUsers).values({ name }).returning()).find(Boolean);
+      const newAppUser = (await ctx.db.insert(appUsers).values({ name }).returning())[0];
       if (!newAppUser)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -63,7 +63,7 @@ export const webhookRouter = router({
           .insert(webhooks)
           .values({ creatorId: ctx.session.user.id, isActive: true, name, roomId, token, userId: newAppUser.id })
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!newWebhook)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -124,7 +124,7 @@ export const webhookRouter = router({
           .set({ token })
           .where(and(eq(webhooks.id, id), eq(webhooks.roomId, roomId)))
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!updatedWebhook)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -141,7 +141,7 @@ export const webhookRouter = router({
           .set(rest)
           .where(and(eq(webhooks.id, id), eq(webhooks.roomId, roomId)))
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!updatedWebhook)
         throw new TRPCError({
           code: "BAD_REQUEST",

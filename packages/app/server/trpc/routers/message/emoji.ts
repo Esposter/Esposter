@@ -69,7 +69,7 @@ export const emojiRouter = router({
       await getTopNEntities(messagesMetadataClient, 1, MessageEmojiMetadataEntity, {
         filter: serializeClauses(clauses),
       })
-    ).find(Boolean);
+    )[0];
     if (foundEmoji)
       throw new TRPCError({
         code: "BAD_REQUEST",

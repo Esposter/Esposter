@@ -3,12 +3,11 @@ import type { Clause } from "@esposter/db-schema";
 
 import { applyTableFilter } from "@/services/table/applyTableFilter";
 import { BinaryOperator } from "@esposter/db-schema";
-import { getPropertyNames } from "@esposter/shared";
+import { getPropertyNames, takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const TableEntityPropertyNames = getPropertyNames<TableEntity>();
-
 describe(applyTableFilter, () => {
+  const TableEntityPropertyNames = getPropertyNames<TableEntity>();
   const partitionKey = "0";
   const rowKey = "0";
   const tableEntities: TableEntity[] = [{ partitionKey, rowKey }];
@@ -26,7 +25,7 @@ describe(applyTableFilter, () => {
     const filteredTableEntities = applyTableFilter(tableEntities, clauses);
 
     expect(filteredTableEntities).toHaveLength(1);
-    expect(filteredTableEntities[0].partitionKey).toBe(partitionKey);
+    expect(takeOne(filteredTableEntities).partitionKey).toBe(partitionKey);
   });
 
   test(`${BinaryOperator.eq} negative`, () => {
@@ -57,7 +56,7 @@ describe(applyTableFilter, () => {
     const filteredTableEntities = applyTableFilter(tableEntities, clauses);
 
     expect(filteredTableEntities).toHaveLength(1);
-    expect(filteredTableEntities[0].partitionKey).toBe(partitionKey);
+    expect(takeOne(filteredTableEntities).partitionKey).toBe(partitionKey);
   });
 
   test(`${BinaryOperator.gt} negative`, () => {
@@ -88,7 +87,7 @@ describe(applyTableFilter, () => {
     const filteredTableEntities = applyTableFilter(tableEntities, clauses);
 
     expect(filteredTableEntities).toHaveLength(1);
-    expect(filteredTableEntities[0].partitionKey).toBe(partitionKey);
+    expect(takeOne(filteredTableEntities).partitionKey).toBe(partitionKey);
   });
 
   test(`${BinaryOperator.ge} negative`, () => {
@@ -119,7 +118,7 @@ describe(applyTableFilter, () => {
     const filteredTableEntities = applyTableFilter(tableEntities, clauses);
 
     expect(filteredTableEntities).toHaveLength(1);
-    expect(filteredTableEntities[0].partitionKey).toBe(partitionKey);
+    expect(takeOne(filteredTableEntities).partitionKey).toBe(partitionKey);
   });
 
   test(`${BinaryOperator.lt} negative`, () => {
@@ -150,7 +149,7 @@ describe(applyTableFilter, () => {
     const filteredTableEntities = applyTableFilter(tableEntities, clauses);
 
     expect(filteredTableEntities).toHaveLength(1);
-    expect(filteredTableEntities[0].partitionKey).toBe(partitionKey);
+    expect(takeOne(filteredTableEntities).partitionKey).toBe(partitionKey);
   });
 
   test(`${BinaryOperator.le} negative`, () => {
@@ -181,7 +180,7 @@ describe(applyTableFilter, () => {
     const filteredTableEntities = applyTableFilter(tableEntities, clauses);
 
     expect(filteredTableEntities).toHaveLength(1);
-    expect(filteredTableEntities[0].partitionKey).toBe(partitionKey);
+    expect(takeOne(filteredTableEntities).partitionKey).toBe(partitionKey);
   });
 
   test(`${BinaryOperator.ne} negative`, () => {

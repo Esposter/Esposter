@@ -8,7 +8,7 @@ import { parseFlips } from "@/util/parseFlips";
 import { parseProperties } from "@/util/parseProperties";
 import { parseTileId } from "@/util/parseTileId";
 import { unpackTileBytes } from "@/util/unpackTileBytes";
-import { exhaustiveGuard } from "@esposter/shared";
+import { exhaustiveGuard, takeOne } from "@esposter/shared";
 import { gunzip, inflate } from "node:zlib";
 
 export const parseTileLayer = async (
@@ -23,7 +23,7 @@ export const parseTileLayer = async (
   layer.type = node["#name"] as string;
   if (properties) layer.properties = parseProperties(properties);
 
-  const nodeData = data[0];
+  const nodeData = takeOne(data);
   // Xml Deprecated
   if (isTMXEmbeddedTilesetNode(nodeData)) layer.data = nodeData.tile?.map(({ $ }) => $.gid ?? 0) ?? [];
   else {

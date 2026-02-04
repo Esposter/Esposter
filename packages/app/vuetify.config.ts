@@ -27,14 +27,14 @@ const BaseColorsMap = {
   },
 } as const satisfies Record<ThemeMode, Partial<Colors>>;
 
-type BaseColors = (typeof BaseColorsMap)[ThemeMode];
+export type BaseColors = (typeof BaseColorsMap)[ThemeMode];
 
 const toSixDigitHexColor = (hexColor: string) =>
   hexColor.length === 3
     ? [...EN_US_SEGMENTER.segment(hexColor)].map((s) => s.segment).reduce((acc, curr) => `${acc}${curr}${curr}`, "")
     : hexColor;
 
-const getBaseColorsExtension = (colors: BaseColors) => {
+export const getBaseColorsExtension = (colors: BaseColors) => {
   const sanitisedColors = Object.fromEntries(
     Object.entries(colors).map(([color, hex]) => [color, `${hex[0]}${toSixDigitHexColor(hex.slice(1))}`]),
   );

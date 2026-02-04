@@ -5,6 +5,7 @@ import type { Component } from "vue";
 
 import { dayjs } from "#shared/services/dayjs";
 import CardBase from "@/components/Visual/Card/Base.vue";
+import { takeOne } from "@esposter/shared";
 
 interface VisualCardCarouselProps {
   cards: Card[];
@@ -106,7 +107,7 @@ const moveCards = () => {
   }
 
   inactiveCardId.value = activeCardId.value;
-  activeCardId.value = cardIds.value[0];
+  activeCardId.value = takeOne(cardIds.value);
   // "Rotate" the cards
   cardIds.value = cardIds.value.map((id) => (id + 1) % cards.length);
 };
@@ -150,8 +151,8 @@ const normalCardStyles = computed<CardStyleVariables[]>(() => {
     items.push({
       marginRight: `${i * scale.value}rem`,
       // Normal cards talk about how they move from their position to the next one
-      oldMarginRight: i === 0 ? inactiveCardStyle.value.marginRight : items[items.length - 1].marginRight,
-      oldScaleY: i === 0 ? inactiveCardStyle.value.scaleY : items[items.length - 1].scaleY,
+      oldMarginRight: i === 0 ? inactiveCardStyle.value.marginRight : takeOne(items, items.length - 1).marginRight,
+      oldScaleY: i === 0 ? inactiveCardStyle.value.scaleY : takeOne(items, items.length - 1).scaleY,
       // We lose 10% for each shift
       scaleY: `${1 - Math.max(0, cardScaleYRatioLoss * (numberOfCards - 1 - i))}`,
     });
@@ -164,7 +165,7 @@ const normalCardStyles = computed<CardStyleVariables[]>(() => {
 });
 
 const activeCardStyle = computed<CardStyleVariables>(() => ({
-  oldMarginRight: normalCardStyles.value.length > 0 ? normalCardStyles.value[0].marginRight : "0",
+  oldMarginRight: normalCardStyles.value.length > 0 ? takeOne(normalCardStyles.value).marginRight : "0",
 }));
 
 const inactiveCardStyle = computed<CardStyleVariables>(() => {
@@ -322,21 +323,21 @@ watch(
 // this sadly means that we need to list all variables here.
 // This is quite ugly, but does solve having to list out each class manually...
 .force-vue-to-pickup-bindings {
-  left: v-bind("normalCardStyles[0].marginRight");
-  left: v-bind("normalCardStyles[0].oldMarginRight");
-  left: v-bind("normalCardStyles[0].scaleY");
-  left: v-bind("normalCardStyles[0].oldScaleY");
-  left: v-bind("normalCardStyles[1].marginRight");
-  left: v-bind("normalCardStyles[1].oldMarginRight");
-  left: v-bind("normalCardStyles[1].scaleY");
-  left: v-bind("normalCardStyles[1].oldScaleY");
-  left: v-bind("normalCardStyles[2].marginRight");
-  left: v-bind("normalCardStyles[2].oldMarginRight");
-  left: v-bind("normalCardStyles[2].scaleY");
-  left: v-bind("normalCardStyles[2].oldScaleY");
-  left: v-bind("normalCardStyles[3].marginRight");
-  left: v-bind("normalCardStyles[3].oldMarginRight");
-  left: v-bind("normalCardStyles[3].scaleY");
-  left: v-bind("normalCardStyles[3].oldScaleY");
+  left: v-bind("takeOne(normalCardStyles).marginRight");
+  left: v-bind("takeOne(normalCardStyles).oldMarginRight");
+  left: v-bind("takeOne(normalCardStyles).scaleY");
+  left: v-bind("takeOne(normalCardStyles).oldScaleY");
+  left: v-bind("takeOne(normalCardStyles).marginRight");
+  left: v-bind("takeOne(normalCardStyles).oldMarginRight");
+  left: v-bind("takeOne(normalCardStyles, 1).scaleY");
+  left: v-bind("takeOne(normalCardStyles, 1).oldScaleY");
+  left: v-bind("takeOne(normalCardStyles, 2).marginRight");
+  left: v-bind("takeOne(normalCardStyles, 2).oldMarginRight");
+  left: v-bind("takeOne(normalCardStyles, 2).scaleY");
+  left: v-bind("takeOne(normalCardStyles, 2).oldScaleY");
+  left: v-bind("takeOne(normalCardStyles, 3).marginRight");
+  left: v-bind("takeOne(normalCardStyles, 3).oldMarginRight");
+  left: v-bind("takeOne(normalCardStyles, 3).scaleY");
+  left: v-bind("takeOne(normalCardStyles, 3).oldScaleY");
 }
 </style>

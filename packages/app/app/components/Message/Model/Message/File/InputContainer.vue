@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useUploadFileStore } from "@/store/message/uploadFile";
+import { takeOne } from "@esposter/shared";
 
 const uploadFileStore = useUploadFileStore();
 const { removeFileUrl } = uploadFileStore;
@@ -17,7 +18,7 @@ const { files, fileUrlMap } = storeToRefs(uploadFileStore);
         :upload-file-url="fileUrlMap.get(file.id)"
         @delete="
           (index) => {
-            const { id } = files.splice(index, 1)[0];
+            const { id } = takeOne(files.splice(index, 1));
             removeFileUrl(id);
           }
         "
