@@ -84,6 +84,7 @@ onMounted(() => {
     renderer.render(scene, camera);
     animationFrameId = window.requestAnimationFrame(animate);
   };
+  await renderer.init();
   animate();
 });
 

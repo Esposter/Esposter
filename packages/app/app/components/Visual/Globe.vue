@@ -158,6 +158,7 @@ onMounted(async () => {
     renderer.render(scene, camera);
     animationFrameId = requestAnimationFrame(animate);
   };
+  await renderer.init();
   animate();
 
   useEventListener("resize", () => {
