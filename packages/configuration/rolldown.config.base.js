@@ -19,7 +19,7 @@ const rolldownOptions = {
   ],
   input: "src/index.ts",
   output: { dir: "dist", format: "es" },
-  plugins: [dts({ tsconfig: "tsconfig.build.json" })],
+  plugins: [dts({ tsconfig: "tsconfig.build.json", tsgo: true })],
   tsconfig: "tsconfig.build.json",
 };
 

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
+/* oxlint-disable no-unused-vars @typescript-eslint/no-unnecessary-type-assertion @typescript-eslint/no-unused-vars */
 import type { CreateMessageInput } from "@/models/message/CreateMessageInput";
 import type { MessageEntityMap } from "@/models/message/MessageEntityMap";
 import type { ServerCreateMessageInput } from "@/models/message/ServerCreateMessageInput";

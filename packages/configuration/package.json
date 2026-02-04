@@ -24,9 +24,9 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "lint": "oxlint && eslint .",
-    "lint:fix": "oxlint --fix && eslint --fix .",
-    "typecheck": "tsc"
+    "lint": "oxlint --type-aware && eslint .",
+    "lint:fix": "oxlint --type-aware --fix && eslint --fix .",
+    "typecheck": "tsgo"
   },
   "devDependencies": {
     "@dxup/nuxt": "catalog:",
