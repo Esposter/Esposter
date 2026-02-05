@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.19.0](https://github.com/Esposter/Esposter/compare/v2.18.2...v2.19.0) (2026-02-05)
+
+### Bug Fixes
+
+* add todo ([8200943](https://github.com/Esposter/Esposter/commit/8200943c77705cfcc3ead98f5520942ff4dda906))
+* finally fix up all type issues ([179e963](https://github.com/Esposter/Esposter/commit/179e9639f3cfdf05e08aff88e4844748158f0a1c))
+* lint ([20f1fa4](https://github.com/Esposter/Esposter/commit/20f1fa4f098406c552958404e7ea5ce5c3302415))
+* oxlint ([3df2ec1](https://github.com/Esposter/Esposter/commit/3df2ec1ad17f36d77780656e27d3034cd3ac32de))
+
+### Features
+
+* **test:** add more parse tests ([202cfcf](https://github.com/Esposter/Esposter/commit/202cfcf7ed9ca2e313aea4b45b2ff9616d908aac))
+* **test:** add more tests + some refactors ([a0ec126](https://github.com/Esposter/Esposter/commit/a0ec12663c8b42ec91d6e87b949c7a21ce744cf1))
+* **test:** Add some misc tests ([704bdca](https://github.com/Esposter/Esposter/commit/704bdca66fff695fee12bd2f507b99783eeb0336))
+* **test:** add some parse tests ([bcfa373](https://github.com/Esposter/Esposter/commit/bcfa373755b26f2a607db4607a758aa081b04fc9))
+
 ## [2.18.2](https://github.com/Esposter/Esposter/compare/v2.18.1...v2.18.2) (2025-12-10)
 
 **Note:** Version bump only for package parse-tmx

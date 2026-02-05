@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.19.0](https://github.com/Esposter/Esposter/compare/v2.18.2...v2.19.0) (2026-02-05)
+
+### Bug Fixes
+
+* finally fix up all type issues ([179e963](https://github.com/Esposter/Esposter/commit/179e9639f3cfdf05e08aff88e4844748158f0a1c))
+* oxlint ([3df2ec1](https://github.com/Esposter/Esposter/commit/3df2ec1ad17f36d77780656e27d3034cd3ac32de))
+* plugins + getEventName ([543b801](https://github.com/Esposter/Esposter/commit/543b801c7b11acde7081334b68bcf07b1786f7be))
+
+### Features
+
+* migrate to unplugin-dts ([2bedfa3](https://github.com/Esposter/Esposter/commit/2bedfa301872a9c371434e1a061e27757129609d))
+
 ## [2.18.2](https://github.com/Esposter/Esposter/compare/v2.18.1...v2.18.2) (2025-12-10)
 
 **Note:** Version bump only for package vue-phaserjs

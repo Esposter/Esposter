@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.19.0](https://github.com/Esposter/Esposter/compare/v2.18.2...v2.19.0) (2026-02-05)
+
+### Bug Fixes
+
+* update rolldown-plugin-dts and remove resolve option ([251fe7d](https://github.com/Esposter/Esposter/commit/251fe7d7811121e514fcadaafeafd20a6460dca4))
+
 ## [2.18.2](https://github.com/Esposter/Esposter/compare/v2.18.1...v2.18.2) (2025-12-10)
 
 **Note:** Version bump only for package @esposter/azure-functions

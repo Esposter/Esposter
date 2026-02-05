@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.19.0](https://github.com/Esposter/Esposter/compare/v2.18.2...v2.19.0) (2026-02-05)
+
+### Bug Fixes
+
+* finally fix up all type issues ([179e963](https://github.com/Esposter/Esposter/commit/179e9639f3cfdf05e08aff88e4844748158f0a1c))
+* fmt ([c82c27a](https://github.com/Esposter/Esposter/commit/c82c27aec78300189a6da0d4a8b71a15ac1a48e7))
+* my lord polyfill node url for xml2js so things don't bloody break ([edc32da](https://github.com/Esposter/Esposter/commit/edc32dac55a5b261ee2d5c79e9f555a40ab2c774))
+* oxlint ([3df2ec1](https://github.com/Esposter/Esposter/commit/3df2ec1ad17f36d77780656e27d3034cd3ac32de))
+
 ## [2.18.2](https://github.com/Esposter/Esposter/compare/v2.18.1...v2.18.2) (2025-12-10)
 
 **Note:** Version bump only for package @esposter/xml2js

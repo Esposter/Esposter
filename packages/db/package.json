@@ -1,6 +1,6 @@
 {
   "name": "@esposter/db",
-  "version": "2.18.2",
+  "version": "2.19.0",
   "private": true,
   "description": "A library of database utilities that is available in server environment only.",
   "keywords": [

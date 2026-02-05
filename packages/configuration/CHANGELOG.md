@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.19.0](https://github.com/Esposter/Esposter/compare/v2.18.2...v2.19.0) (2026-02-05)
+
+### Bug Fixes
+
+* finally fix up all type issues ([179e963](https://github.com/Esposter/Esposter/commit/179e9639f3cfdf05e08aff88e4844748158f0a1c))
+* lint ([cbe435c](https://github.com/Esposter/Esposter/commit/cbe435cd043ed53734efac8ae72058434ee2869b))
+* lint ([e9c15a4](https://github.com/Esposter/Esposter/commit/e9c15a42d958fbc960ba343822808cd1ab6c92b3))
+* lint ([37dc547](https://github.com/Esposter/Esposter/commit/37dc5471141f1823c88b522ae7c9083843b562e6))
+* lint ([735fdaf](https://github.com/Esposter/Esposter/commit/735fdafcfae087a1325de4688342fbe4d92f2350))
+* lint rule name ([cf238a9](https://github.com/Esposter/Esposter/commit/cf238a9cc7b6049edbd7d7e62e9c0ab335abc190))
+* oxlint ([3df2ec1](https://github.com/Esposter/Esposter/commit/3df2ec1ad17f36d77780656e27d3034cd3ac32de))
+* plugins + getEventName ([543b801](https://github.com/Esposter/Esposter/commit/543b801c7b11acde7081334b68bcf07b1786f7be))
+* turn off rule ([0a8a5a6](https://github.com/Esposter/Esposter/commit/0a8a5a60f46178198e5063abdaa84bf02958919a))
+* update rolldown-plugin-dts and remove resolve option ([251fe7d](https://github.com/Esposter/Esposter/commit/251fe7d7811121e514fcadaafeafd20a6460dca4))
+
+### Features
+
+* migrate to unplugin-dts ([2bedfa3](https://github.com/Esposter/Esposter/commit/2bedfa301872a9c371434e1a061e27757129609d))
+* update eslint plugin perfectionist ([83ac04f](https://github.com/Esposter/Esposter/commit/83ac04f92b2c2e23d5fbbd1256658c431e0933ef))
+
 ## [2.18.2](https://github.com/Esposter/Esposter/compare/v2.18.1...v2.18.2) (2025-12-10)
 
 **Note:** Version bump only for package @esposter/configuration
