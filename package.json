@@ -76,6 +76,6 @@
   },
   "devDependenciesComments": {
     "oxlint": "@TODO: https://github.com/oxc-project/oxc/issues/13204",
-    "@vite": "@TODO: v8.0.0-beta.11 breaks build"
+    "vite": "@TODO: v8.0.0-beta.11 breaks build"
   }
 }
