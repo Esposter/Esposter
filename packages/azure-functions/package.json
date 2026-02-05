@@ -1,6 +1,6 @@
 {
   "name": "@esposter/azure-functions",
-  "version": "2.19.1",
+  "version": "2.19.2",
   "private": true,
   "description": "A library that contains webhook functionality.",
   "keywords": [
