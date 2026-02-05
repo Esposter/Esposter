@@ -1,6 +1,6 @@
 {
   "name": "@esposter/app",
-  "version": "2.19.0",
+  "version": "2.19.1",
   "private": true,
   "description": "An approachable, performant and versatile javascript application powered by Vue.",
   "homepage": "https://github.com/Esposter/Esposter#readme",
