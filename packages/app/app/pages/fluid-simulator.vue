@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { APP_BAR_HEIGHT } from "#shared/services/app/constants";
 import { WATERS_NORMALS_TEXTURE_PATH } from "@/services/visual/constants";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { Inspector } from "three/examples/jsm/inspector/Inspector.js";
@@ -34,6 +35,8 @@ let sky: SkyMesh;
 let box: Mesh<BoxGeometry, MeshStandardMaterial>;
 let pmremGenerator: PMREMGenerator;
 let renderTarget: RenderTarget | undefined;
+const toggleTop = `${APP_BAR_HEIGHT + 15}px`;
+const miniPanelTop = `${APP_BAR_HEIGHT + 60}px`;
 
 onMounted(async () => {
   if (!containerRef.value) return;
@@ -171,3 +174,14 @@ onUnmounted(() => {
     <div ref="containerRef" />
   </NuxtLayout>
 </template>
+
+<style lang="scss">
+#profiler-toggle {
+  top: v-bind(toggleTop) !important;
+}
+// three.js profiler blocks the app menus since it is set to z-index 9999
+#profiler-mini-panel {
+  top: v-bind(miniPanelTop) !important;
+  z-index: 0 !important;
+}
+</style>
