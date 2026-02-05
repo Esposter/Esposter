@@ -1,25 +1,6 @@
-<script setup lang="ts">
-import type { TresRendererSetupContext } from "@tresjs/core";
-
-import { WebGPURenderer } from "three/webgpu";
-</script>
-
 <template>
   <div size-48>
-    <TresCanvas
-      :renderer="
-        (ctx: TresRendererSetupContext) => {
-          const renderer = new WebGPURenderer({
-            canvas: toValue(ctx.canvas),
-            alpha: true,
-            antialias: true,
-          });
-          return renderer;
-        }
-      "
-      :clear-alpha="0"
-      shadows
-    >
+    <TresCanvas :clear-alpha="0" shadows>
       <TresPerspectiveCamera :far="100" :fov="75" :look-at="[0, 0.75, 0]" :position="[2, 2, 6]" />
       <OrbitControls
         :enable-pan="false"
