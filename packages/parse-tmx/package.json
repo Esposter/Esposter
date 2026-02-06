@@ -40,9 +40,6 @@
     "data-urls": "catalog:",
     "dayjs": "catalog:"
   },
-  "dependenciesCommon": {
-    "data-urls": "@TODO: https://github.com/rolldown/rolldown/issues/8172"
-  },
   "devDependencies": {
     "@types/data-urls": "catalog:",
     "@types/xml2js": "catalog:"
