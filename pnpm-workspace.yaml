@@ -225,5 +225,6 @@ onlyBuiltDependencies:
 overrides:
   pdfjs-dist: ^5.4.624
   vite: 8.0.0-beta.10
+  vue-router: ^5.0.2
 
 shellEmulator: true
