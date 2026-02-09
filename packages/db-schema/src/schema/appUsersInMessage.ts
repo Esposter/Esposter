@@ -2,7 +2,7 @@ import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { sql } from "drizzle-orm";
 import { check, text, uuid } from "drizzle-orm/pg-core";
-import { createSelectSchema } from "drizzle-zod";
+import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
 
 export const APP_USER_NAME_MAX_LENGTH = 100;

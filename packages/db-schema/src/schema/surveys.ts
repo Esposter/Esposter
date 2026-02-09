@@ -2,7 +2,7 @@ import { pgTable } from "@/pgTable";
 import { users } from "@/schema/users";
 import { sql } from "drizzle-orm";
 import { check, integer, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import { createSelectSchema } from "drizzle-zod";
+import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
 
 export const SURVEY_NAME_MAX_LENGTH = 100;

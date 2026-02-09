@@ -11,7 +11,6 @@ const { updateUser } = authClient;
 const { backgroundOpacity20 } = useColors();
 const profileCardRows = computed(() => {
   if (!session.value)
-    // @TODO: https://github.com/nuxt/nuxt/issues/34138
     throw createError({ statusText: getEntityNotFoundStatusMessage(DatabaseEntityType.User), status: 404 });
 
   return {

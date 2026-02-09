@@ -1,7 +1,7 @@
 import { pgTable } from "@/pgTable";
 import { AchievementName, achievementNameSchema } from "@/services/achievement/AchievementName";
 import { pgEnum, uuid } from "drizzle-orm/pg-core";
-import { createSelectSchema } from "drizzle-zod";
+import { createSelectSchema } from "drizzle-orm/zod";
 
 export const achievementNameEnum = pgEnum("achievement_name", AchievementName);
 

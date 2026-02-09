@@ -3,6 +3,88 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.19.2](https://github.com/Esposter/Esposter/compare/v2.19.1...v2.19.2) (2026-02-05)
+
+**Note:** Version bump only for package @esposter/app
+
+## [2.19.1](https://github.com/Esposter/Esposter/compare/v2.19.0...v2.19.1) (2026-02-05)
+
+**Note:** Version bump only for package @esposter/app
+
+# [2.19.0](https://github.com/Esposter/Esposter/compare/v2.18.2...v2.19.0) (2026-02-05)
+
+### Bug Fixes
+
+* add back test files ([7ed6168](https://github.com/Esposter/Esposter/commit/7ed6168d5c88bf1f7896593bf8171c8c8cd97d60))
+* add back transpile ([f202230](https://github.com/Esposter/Esposter/commit/f20223041c58a9be20bb85c269ad20914de00c69))
+* add comments and fixup takeOne to just be semantically the same ([d0f74d7](https://github.com/Esposter/Esposter/commit/d0f74d747bd63b968c2a6739fd8a3815430233f7))
+* add layout + remove for unused props for now ([a6d7198](https://github.com/Esposter/Esposter/commit/a6d71983eaee56feca33c841b342b02820c86739))
+* add more fixes ([01d99c3](https://github.com/Esposter/Esposter/commit/01d99c3999de559c97947d9548ee6d2926c2dc36))
+* add todo ([8200943](https://github.com/Esposter/Esposter/commit/8200943c77705cfcc3ead98f5520942ff4dda906))
+* circular deps ([c6aabb4](https://github.com/Esposter/Esposter/commit/c6aabb4e48263cc10e1b13abe521ac23da753ed1))
+* cleanup to have interface in type folder ([e2ddc57](https://github.com/Esposter/Esposter/commit/e2ddc57fbaee004ae656c40aa18d13c06f83b13b))
+* comment ([b6801c6](https://github.com/Esposter/Esposter/commit/b6801c68614fb170a1189c501996712f313e7d4d))
+* dev command ([4b59de9](https://github.com/Esposter/Esposter/commit/4b59de9cf3129fbcadba9662407d47141aedaa02))
+* dev env + profiler z index + no longer need to transpile trpc-nuxt ([cc7ba75](https://github.com/Esposter/Esposter/commit/cc7ba755c0244cb0b7716bbfe35c7510c97b4ed5))
+* directly use index access instead of find boolean ([69fdae5](https://github.com/Esposter/Esposter/commit/69fdae5efd850805ce06595e973c90bed4ddb430))
+* dispose renderer last ([4d6bcf0](https://github.com/Esposter/Esposter/commit/4d6bcf09d98521ebd4b7234b9627094cdfbdfdab))
+* don't dispose renderer when we're using the inspector, it's not reliable sadly ([70a1a61](https://github.com/Esposter/Esposter/commit/70a1a61a6712f70e6863f1aa75ff91b8b4448cf8))
+* don't throw if unauthorized ([a9fb19f](https://github.com/Esposter/Esposter/commit/a9fb19f0f5a1d2e076f55d1ba5d84d97f82af743))
+* don't use watch handle on error ([4e64179](https://github.com/Esposter/Esposter/commit/4e6417919269c1dca70b2ebbba0f4ed7583a1bd1))
+* events ([f813789](https://github.com/Esposter/Esposter/commit/f813789bcf9f7b9212cd08bbbfbcca560bc0f1f0))
+* finally fix up all type issues ([179e963](https://github.com/Esposter/Esposter/commit/179e9639f3cfdf05e08aff88e4844748158f0a1c))
+* globe material ([ff56b5a](https://github.com/Esposter/Esposter/commit/ff56b5a00c9f2ecc341ec110f4d73bc38584ba3c))
+* globe switch back to webgl and fix up water normals texture ([1f54c11](https://github.com/Esposter/Esposter/commit/1f54c115e89ff4d6ecca059d91cb709c4e2a1def))
+* imports ([3e82b87](https://github.com/Esposter/Esposter/commit/3e82b87a25d22e13040564ca911050dff99faa3e))
+* init renderer ([5a14181](https://github.com/Esposter/Esposter/commit/5a1418164545c08239499779951128be83bc6b1b))
+* inspector styles ([beae59f](https://github.com/Esposter/Esposter/commit/beae59f069357baf1b115569aecb1397b3857ef1))
+* just dispose manually ([0ca77b0](https://github.com/Esposter/Esposter/commit/0ca77b02a7bf9d88f1bd8015db1aa03f81f09927))
+* lint ([5b8b46c](https://github.com/Esposter/Esposter/commit/5b8b46ca0040cea474d7b6147fb096431949af93))
+* lint ([e9c15a4](https://github.com/Esposter/Esposter/commit/e9c15a42d958fbc960ba343822808cd1ab6c92b3))
+* lint ([8ae8505](https://github.com/Esposter/Esposter/commit/8ae850534e5ef18b8d86c1ab1813497775d4fc24))
+* lint ([7ace84b](https://github.com/Esposter/Esposter/commit/7ace84b2f3add94d5f555c17d5f3751864f0427b))
+* lint ([3d91154](https://github.com/Esposter/Esposter/commit/3d9115421346a98f3bc3791c4ae7c9f8febdd6be))
+* make async ([e654b8b](https://github.com/Esposter/Esposter/commit/e654b8b614f7afec5f9e541ac719fbc00b12bc9d))
+* material ([b0572b3](https://github.com/Esposter/Esposter/commit/b0572b3cf4800b495c94fda9696434a17df8709f))
+* more cleanups ([2ccffef](https://github.com/Esposter/Esposter/commit/2ccffefe3592e991644609eb1d9d908b7923643c))
+* oxlint ([3df2ec1](https://github.com/Esposter/Esposter/commit/3df2ec1ad17f36d77780656e27d3034cd3ac32de))
+* pin vite ver for now ([71b41f3](https://github.com/Esposter/Esposter/commit/71b41f3084b8c38e9166ad894867c25c56475cf8))
+* remaining type issues ([8d87ab9](https://github.com/Esposter/Esposter/commit/8d87ab99a01f59fd70a05a0980a3180416e15bd6))
+* remove event ([0dd1132](https://github.com/Esposter/Esposter/commit/0dd1132d9f59b0dd09ceb72a93560925901e5658))
+* remove page ([b287b34](https://github.com/Esposter/Esposter/commit/b287b34cf1d899b1c304c300eb74f549dbf43506))
+* remove todo ([fb1b9c1](https://github.com/Esposter/Esposter/commit/fb1b9c1b1efcac210c7cfb39df13a5fc64c2faba))
+* remove unnecessary checks ([5f9f9d7](https://github.com/Esposter/Esposter/commit/5f9f9d77eb125091e042ed7763972c33a21d4d64))
+* render target ([68a2606](https://github.com/Esposter/Esposter/commit/68a260628b7771920de940075350830802a42493))
+* replace with takeOne ([845c9ed](https://github.com/Esposter/Esposter/commit/845c9ed7d1fd9d8b9a4d5e730f2f92ad03e3085d))
+* revert emoji changes ([4863e3a](https://github.com/Esposter/Esposter/commit/4863e3ac4bf237d8c48ccef49ce5a4e2d6f6db1a))
+* settings ([97791c1](https://github.com/Esposter/Esposter/commit/97791c1ff2625eed0c85923f46542a9624b5f2d5))
+* snapshots ([c12e75e](https://github.com/Esposter/Esposter/commit/c12e75ec5fc9e0756d7f9ccb0a3cc205050f8673))
+* stick to old version for now ([d015e80](https://github.com/Esposter/Esposter/commit/d015e805c7504d9c62b9dd44323bb6a555a96f8c))
+* texture disposal ([df7c6ab](https://github.com/Esposter/Esposter/commit/df7c6abf59d7e5c93f293aeb80277361ad58704e))
+* todos and cleanup unnecessary vuetify plugin ([f8375ae](https://github.com/Esposter/Esposter/commit/f8375aea3a1187686e400292844975843bfa3df9))
+* type ([af790ae](https://github.com/Esposter/Esposter/commit/af790aef9369ec23897e83c7fc167d8aa306ac8c))
+* types ([5282fc2](https://github.com/Esposter/Esposter/commit/5282fc2d52e0164921aa553008e2438aa4b25423))
+* types ([e5a09cb](https://github.com/Esposter/Esposter/commit/e5a09cb992a60d1ec5fcee7ff631d5e93ed28b1c))
+* use back renderer ([b5bfee8](https://github.com/Esposter/Esposter/commit/b5bfee8c5dd372e397cb448973b33474637c747b))
+* use post processing which is render pipeline ([c4d181d](https://github.com/Esposter/Esposter/commit/c4d181d34e0fe24839a552e12e391a5034259d75))
+
+### Features
+
+* Add fluid simulator ([6c37027](https://github.com/Esposter/Esposter/commit/6c370272187d3892c5bcf97ce6230fa8000d5248))
+* Add orbit controls and dispose ([d416a5a](https://github.com/Esposter/Esposter/commit/d416a5a512d3c548ca461501922d55b32c81dd85))
+* Add page ([d186eba](https://github.com/Esposter/Esposter/commit/d186eba58e1e8b1417d0831722876acfee3b67b3))
+* Add stats ([40e9bc8](https://github.com/Esposter/Esposter/commit/40e9bc8a77012f0018dc64fb9477fb27f8be4cd9))
+* migrate gem to tresjs ([4ecaa76](https://github.com/Esposter/Esposter/commit/4ecaa7625bbd2ce83a7f00915642881ed654c63f))
+* test webgpu ([d1beadb](https://github.com/Esposter/Esposter/commit/d1beadbb2f3050ffa5d823fadccc0118e813d5b5))
+* **test:** Add misc tests ([bcd0a9c](https://github.com/Esposter/Esposter/commit/bcd0a9c847f45a4686e126e2a10d5b8a9a704c10))
+* **test:** add more tests + some refactors ([a0ec126](https://github.com/Esposter/Esposter/commit/a0ec12663c8b42ec91d6e87b949c7a21ce744cf1))
+* **test:** Add some misc tests ([704bdca](https://github.com/Esposter/Esposter/commit/704bdca66fff695fee12bd2f507b99783eeb0336))
+* **Test:** Add some more tests ([9adee7d](https://github.com/Esposter/Esposter/commit/9adee7da9ebc9f06bb0f8f959b2fb994c4ef800c))
+* **test:** add some more text tests ([d6bec50](https://github.com/Esposter/Esposter/commit/d6bec5086b1e88c6829e04d49a2fb36dab27de75))
+* **test:** Add some omit tests ([0a44737](https://github.com/Esposter/Esposter/commit/0a44737e9535ed6de24533d40a670e41cdffdd73))
+* **test:** Add some pagination tests ([8fef0c5](https://github.com/Esposter/Esposter/commit/8fef0c51115d1a122bc975eaa5ff2509e0982d45))
+* upgrade nuxt ([caed6cb](https://github.com/Esposter/Esposter/commit/caed6cbd85ea4c2ca32494d7e3e45f217ce568c2))
+
 ## [2.18.2](https://github.com/Esposter/Esposter/compare/v2.18.1...v2.18.2) (2025-12-10)
 
 **Note:** Version bump only for package @esposter/app

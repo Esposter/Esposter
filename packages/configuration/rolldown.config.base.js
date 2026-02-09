@@ -14,7 +14,7 @@ const rolldownOptions = {
     "drizzle-orm/pg-core",
     // @esposter/db
     "drizzle-orm/postgres-js",
-    "drizzle-zod",
+    "drizzle-orm/zod",
     "zod",
   ],
   input: "src/index.ts",
