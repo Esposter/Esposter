@@ -14,6 +14,7 @@ export const RoutePath: {
   readonly Dungeons: "/dungeons";
   readonly EmailEditor: "/email-editor";
   readonly FlowchartEditor: "/flowchart-editor";
+  readonly FluidSimulator: "/fluid-simulator";
   readonly Github: "https://github.com/Esposter/Esposter";
   readonly Index: "/";
   readonly Login: "/login";
@@ -42,6 +43,7 @@ export const RoutePath: {
   Dungeons: "/dungeons",
   EmailEditor: "/email-editor",
   FlowchartEditor: "/flowchart-editor",
+  FluidSimulator: "/fluid-simulator",
   Github: `https://github.com/${SITE_NAME}/${SITE_NAME}`,
   Index: "/",
   Login: "/login",

@@ -2,6 +2,7 @@
 import { Target } from "#shared/models/clicker/data/Target";
 import { dayjs } from "#shared/services/dayjs";
 import { useClickerStore } from "@/store/clicker";
+import { takeOne } from "@esposter/shared";
 import { filename } from "pathe/utils";
 
 const clickerStore = useClickerStore();
@@ -22,8 +23,8 @@ const animateCursors = (amount: number) => {
   const initialRotationOffsets = Array.from({ length: amount }, (_value, index) => (360 / amount) * index);
 
   for (let i = 0; i < amount; i++) {
-    const rotationOffset = initialRotationOffsets[i];
-    const rotatingDivId = rotatingDivIds.value[i];
+    const rotationOffset = takeOne(initialRotationOffsets, i);
+    const rotatingDivId = takeOne(rotatingDivIds.value, i);
     const rotatingDiv = document.getElementById(rotatingDivId);
     if (!rotatingDiv) continue;
 

@@ -2,6 +2,7 @@
 import type { Visual } from "#shared/models/dashboard/data/Visual";
 
 import { VisualTypeDemoDataMap } from "@/services/dashboard/demo/VisualTypeDemoDataMap";
+import { takeOne } from "@esposter/shared";
 import VueApexCharts from "vue3-apexcharts";
 
 interface VisualProps {
@@ -14,8 +15,9 @@ const container = useTemplateRef("container");
 const height = ref<number>();
 // The div height resizes based on the grid layout plus library css
 // So we have to use the resize observer to listen for its changes
-useResizeObserver(container, ([{ target }]) => {
-  height.value = (target as HTMLDivElement).clientHeight;
+useResizeObserver(container, (entries) => {
+  const entry = takeOne(entries);
+  height.value = entry.target.clientHeight;
 });
 
 const data = computed(() => VisualTypeDemoDataMap[type](chart.type));

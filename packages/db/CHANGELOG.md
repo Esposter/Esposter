@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.19.2](https://github.com/Esposter/Esposter/compare/v2.19.1...v2.19.2) (2026-02-05)
+
+**Note:** Version bump only for package @esposter/db
+
+## [2.19.1](https://github.com/Esposter/Esposter/compare/v2.19.0...v2.19.1) (2026-02-05)
+
+**Note:** Version bump only for package @esposter/db
+
+# [2.19.0](https://github.com/Esposter/Esposter/compare/v2.18.2...v2.19.0) (2026-02-05)
+
+### Bug Fixes
+
+* directly use index access instead of find boolean ([69fdae5](https://github.com/Esposter/Esposter/commit/69fdae5efd850805ce06595e973c90bed4ddb430))
+* empty key tests ([d849357](https://github.com/Esposter/Esposter/commit/d849357f5f354425ebe105f628f3372d9f264b9b))
+* explicit types ([5f602c5](https://github.com/Esposter/Esposter/commit/5f602c56958184bffd305c1f45d4f64e3ede109e))
+* finally fix up all type issues ([179e963](https://github.com/Esposter/Esposter/commit/179e9639f3cfdf05e08aff88e4844748158f0a1c))
+* oxlint ([3df2ec1](https://github.com/Esposter/Esposter/commit/3df2ec1ad17f36d77780656e27d3034cd3ac32de))
+* update rolldown-plugin-dts and remove resolve option ([251fe7d](https://github.com/Esposter/Esposter/commit/251fe7d7811121e514fcadaafeafd20a6460dca4))
+
 ## [2.18.2](https://github.com/Esposter/Esposter/compare/v2.18.1...v2.18.2) (2025-12-10)
 
 **Note:** Version bump only for package @esposter/db

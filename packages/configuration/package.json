@@ -1,6 +1,6 @@
 {
   "name": "@esposter/configuration",
-  "version": "2.18.2",
+  "version": "2.19.2",
   "private": true,
   "description": "A library that contains shared configuration.",
   "keywords": [
@@ -31,17 +31,21 @@
     "typecheck": "tsc"
   },
   "devDependencies": {
+    "@dxup/nuxt": "catalog:",
+    "@dxup/unimport": "catalog:",
     "@eslint/core": "catalog:",
     "@eslint/json": "catalog:",
     "@unocss/eslint-config": "catalog:",
     "@vitejs/plugin-vue": "catalog:",
     "@vitest/eslint-plugin": "catalog:",
+    "@vue/language-core": "catalog:",
     "eslint-plugin-depend": "catalog:",
     "eslint-plugin-oxlint": "catalog:",
     "eslint-plugin-perfectionist": "catalog:",
     "eslint-plugin-pinia": "catalog:",
     "typescript-eslint": "catalog:",
     "unplugin-auto-import": "catalog:",
+    "unplugin-dts": "catalog:",
     "vite-plugin-mkcert": "catalog:"
   }
 }

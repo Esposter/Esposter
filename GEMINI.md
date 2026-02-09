@@ -21,7 +21,7 @@
 
 - **Engine**: UnoCSS (Attributify Mode)
 - **Components**: Vuetify 3 (Material Design), Custom Components
-- **Preprocessors**: Sass
+- **Preprocessors**: Sass (Always use `lang="scss"` in Vue components)
 
 ### State & Data
 
@@ -94,9 +94,11 @@ The application relies on environment variables defined in `packages/app/configu
 
 ### Styling (UnoCSS)
 
-- **Attributify Mode**: ENABLED.
-  - **Preferred**: `<div text-red p-4>` (Props directly on elements).
-  - **Avoid**: `class="text-red p-4"` unless necessary for dynamic bindings or specific edge cases.
+- **Attributify Mode**: ENABLED & MANDATORY.
+  - **Rule**: Use prop-based styling (e.g., `<div text-red p-4>`) for ALL static styles.
+  - **Rule**: Use `flex` instead of `d-flex`.
+  - **Rule**: Use the `size` attribute (or `width`/`height` props) instead of `w-<number>` or `h-<number>` utility classes where possible.
+  - **Exception**: Only use `class="..."` when technically impossible (e.g., dynamic bindings `:class`, some external component limitations).
 - **Configuration**: `packages/app/configuration/unocss.ts`
 
 ### TypeScript & Linting
@@ -105,8 +107,13 @@ The application relies on environment variables defined in `packages/app/configu
 - **Rules**:
   - `Omit` is **BANNED**. Use `Except` (from `type-fest`) instead.
   - `import/no-unassigned-import`: Strict (allows `.css`, `.d.ts`).
+  - **Assertions**: Non-null assertions (`!`) are **BANNED**. Use optional chaining or guard clauses.
+  - **Loops**: Use `for...of` syntax. `.forEach()` is **BANNED**.
+  - **Control Flow**: Prioritize guard clauses (e.g., `if (!condition) return`) over nested `if` statements.
   - Many "unsafe" rules are relaxed for DX.
 - **Linter**: `oxlint` runs first for speed, followed by `eslint`.
+- **Imports**: Always use named imports from libraries where possible.
+- **Types**: Explicitly define variables with proper types. `any` is **BANNED**.
 
 ### Component Architecture
 
@@ -114,3 +121,26 @@ The application relies on environment variables defined in `packages/app/configu
   - `app.ts`: Head config, PWA manifest.
   - `runtimeConfig.ts`: Environment variables.
   - `unocss.ts`, `vuetify.ts`, `vite.ts`: Tool-specific configs.
+
+### Formatting
+
+- **Variable Assignments**: Group variable assignments together without blank lines between them.
+- **Vue Templates**: Avoid unnecessary blank lines within templates.
+- **Self-Closing Tags**: Always use self-closing tags (void tags) for components/elements without content (e.g., `<Component />`).
+- **Comments**: Remove comments from the code. Make variable names descriptive instead.
+- **Whitespace**: Minimize blank lines. Group related code tightly.
+
+### Resource Management
+
+- **Explicit Cleanup**: Always use `onUnmounted` to clean up resources such as:
+  - `setInterval` / `setTimeout` IDs.
+  - `window.requestAnimationFrame` IDs.
+  - Three.js objects (geometries, materials, renderers, controls).
+  - Global event listeners.
+- **GPU Resource Disposal**:
+  - **Traversal**: Use `scene.traverse()` to dispose of all `Mesh` geometries and materials.
+  - **Looping**: Use `for (const { dispose } of object.material) dispose()` for material arrays.
+  - **Renderers & Controls**: Ensure `renderer.dispose()` and `controls.dispose()` are called.
+  - **Guards**: Use `if (!(object instanceof Mesh)) return;` patterns inside traversals.
+- **Simplicity**: Prefer explicit `onMounted`/`onUnmounted` pairs over complex composable abstractions for simple resource management to maintain readability and avoid hidden behavior.
+- **Composables**: Prioritize using `VueUse` or existing composables (e.g., `useWindowSize`, `useEventListener`) over manual event listeners/logic when possible, unless it conflicts with simplicity or explicit cleanup requirements.

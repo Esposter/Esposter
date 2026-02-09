@@ -2,6 +2,7 @@ import type { FileEntity } from "@esposter/db-schema";
 
 import { useDownloadFileStore } from "@/store/message/downloadFile";
 import { useRoomStore } from "@/store/message/room";
+import { takeOne } from "@esposter/shared";
 
 export const useReadFiles = () => {
   const { $trpc } = useNuxtApp();
@@ -19,6 +20,7 @@ export const useReadFiles = () => {
       files: newFiles.map(({ filename, id, mimetype }) => ({ filename, id, mimetype })),
       roomId: currentRoomId.value,
     });
-    for (let i = 0; i < newFiles.length; i++) fileUrlMap.value.set(newFiles[i].id, { url: downloadFileSasUrls[i] });
+    for (let i = 0; i < newFiles.length; i++)
+      fileUrlMap.value.set(takeOne(newFiles, i).id, { url: takeOne(downloadFileSasUrls, i) });
   };
 };

@@ -24,7 +24,8 @@ export default defineNuxtPlugin(() => {
     true: httpLink({ transformer, url: TRPC_CLIENT_PATH }),
   });
 
-  if (getIsServer()) links.push(httpSplitLink);
+  if (getIsServer() || !isProduction) links.push(httpSplitLink);
+  // @TODO: Disabling for local development since it currently gives an infinite loop of invalid frame headers when trying to connect via ws
   else {
     const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const wsClient = createWSClient({ url: `${wsProtocol}//${window.location.host}` });

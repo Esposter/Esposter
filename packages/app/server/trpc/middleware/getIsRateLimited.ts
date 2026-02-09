@@ -3,7 +3,7 @@ import { useIsProduction } from "@@/server/composables/useIsProduction";
 import { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterType";
 import { RateLimiterMap } from "@@/server/services/rateLimiter/RateLimiterMap";
 import { middleware } from "@@/server/trpc";
-import { ID_SEPARATOR } from "@esposter/shared";
+import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
 export const getIsRateLimited = (type: RateLimiterType) =>
@@ -13,7 +13,7 @@ export const getIsRateLimited = (type: RateLimiterType) =>
     if (!isProduction) return next({ ctx: { session } });
 
     const forwardedFor = ctx.req.headers["x-forwarded-for"] as string | undefined;
-    const ipAddress = forwardedFor ? forwardedFor.split(",")[0].trim() : ctx.req.socket.remoteAddress;
+    const ipAddress = forwardedFor ? takeOne(forwardedFor.split(",")).trim() : ctx.req.socket.remoteAddress;
     if (!ipAddress) {
       console.warn(
         "Rate Limiter: Could not determine IP address. Bypassing middleware... This is expected for local production builds.",

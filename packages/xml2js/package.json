@@ -1,6 +1,6 @@
 {
   "name": "@esposter/xml2js",
-  "version": "2.18.2",
+  "version": "2.19.2",
   "description": "Simple XML to JavaScript object converter.",
   "keywords": [
     "json",
@@ -35,6 +35,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@esposter/shared": "workspace:*",
     "sax": "catalog:",
     "xmlbuilder2": "catalog:"
   },

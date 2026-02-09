@@ -1,4 +1,4 @@
-import type { Threshold } from "@/util/math/ease/step";
+import type { Threshold } from "@/models/math/Threshold";
 
 import { step } from "@/util/math/ease/step";
 import { describe, expect, test } from "vitest";

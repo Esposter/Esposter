@@ -27,7 +27,7 @@ export const achievementPlugin = t.procedure.use(async ({ ctx, next, path, type 
     const achievement =
       (await ctx.db.query.achievements.findFirst({
         where: (achievements, { eq }) => eq(achievements.name, name),
-      })) ?? (await ctx.db.insert(achievements).values({ name }).returning()).find(Boolean);
+      })) ?? (await ctx.db.insert(achievements).values({ name }).returning())[0];
     if (!achievement)
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -50,7 +50,7 @@ export const achievementPlugin = t.procedure.use(async ({ ctx, next, path, type 
             userId,
           })
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!userAchievement)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -76,7 +76,7 @@ export const achievementPlugin = t.procedure.use(async ({ ctx, next, path, type 
         })
         .where(eq(userAchievements.id, userAchievement.id))
         .returning()
-    ).find(Boolean);
+    )[0];
     if (!updatedUserAchievement)
       throw new TRPCError({
         code: "BAD_REQUEST",

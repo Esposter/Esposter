@@ -6,6 +6,7 @@ import AnimateButton from "@/components/Visual/Desmos/AnimateButton.vue";
 import WindowControls from "@/components/Visual/Desmos/WindowControls.vue";
 import { Colors } from "@/models/desmos/Colors";
 import { ignoreWarn } from "@/util/console/ignoreWarn";
+import { takeOne } from "@esposter/shared";
 
 interface VisualDesmosDisplayGraphProps {
   expressions: Expression[];
@@ -51,7 +52,7 @@ const animate = () => {
   const drawingTime = dayjs.duration(5, "seconds").asMilliseconds();
   let i = 0;
   const { pause } = useIntervalFn(() => {
-    const expression = expressions[i++];
+    const expression = takeOne(expressions, i++);
     calculator?.setExpression({ ...expression, color: expression.color ?? Colors.BLACK });
     if (i === expressions.length) {
       pause();
@@ -70,8 +71,7 @@ watch(componentsToRender, (newComponentsToRender) => {
 });
 
 onMounted(() => {
-  const element = document.getElementById(id) as HTMLDivElement | null;
-  if (!element) return;
+  const element = document.getElementById(id) as HTMLDivElement;
 
   onLoaded(async ({ GraphingCalculator }) => {
     calculator = await GraphingCalculator(element, {

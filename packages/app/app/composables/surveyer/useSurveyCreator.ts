@@ -8,7 +8,7 @@ import { validateFile } from "@/services/file/validateFile";
 import { THEME_KEY } from "@/services/survey/constants";
 import { getActions } from "@/services/survey/getActions";
 import { parseSurveyModel } from "@/services/survey/parseSurveyModel";
-import { getPropertyNames } from "@esposter/shared";
+import { getPropertyNames, takeOne } from "@esposter/shared";
 import { ImageItemValue, QuestionImageModel, QuestionImagePickerModel } from "survey-core";
 import { LogoImageViewModel, SurveyCreatorModel } from "survey-creator-core";
 import { DefaultDark, SC2020 } from "survey-creator-core/themes";
@@ -33,7 +33,7 @@ export const useSurveyCreator = (survey: Ref<Survey>) => {
   const { $trpc } = useNuxtApp();
   const deleteFile = useDeleteFile(survey.value.id);
   creator.onUploadFile.add(async (_creator, { callback, element, files, propertyName }) => {
-    const file = files[0];
+    const file = takeOne(files);
 
     if (!validateFile(file.size)) {
       useEmptyFileAlert();
@@ -42,23 +42,23 @@ export const useSurveyCreator = (survey: Ref<Survey>) => {
     }
 
     try {
-      const { id, sasUrl } = (
+      const { id, sasUrl } = takeOne(
         await $trpc.survey.generateUploadFileSasEntities.query({
           files: [{ filename: file.name, mimetype: file.type }],
           surveyId: survey.value.id,
-        })
-      )[0];
+        }),
+      );
       await uploadBlocks(file, sasUrl);
 
       const oldDownloadFileSasUrl = (element as Base).getPropertyValue(propertyName.toString());
       if (oldDownloadFileSasUrl) await deleteFile(oldDownloadFileSasUrl);
 
-      const downloadFileSasUrl = (
+      const downloadFileSasUrl = takeOne(
         await $trpc.survey.generateDownloadFileSasUrls.query({
           files: [{ filename: file.name, id, mimetype: file.type }],
           surveyId: survey.value.id,
-        })
-      )[0];
+        }),
+      );
       callback("success", downloadFileSasUrl);
     } catch {
       callback("error");

@@ -6,6 +6,7 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { userRouter } from "@@/server/trpc/routers/user";
 import { UserStatus, userStatuses } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -35,7 +36,7 @@ describe("user", () => {
     expect.hasAssertions();
 
     const userId = crypto.randomUUID();
-    const userStatus = (await caller.readStatuses([userId]))[0];
+    const userStatus = takeOne(await caller.readStatuses([userId]));
 
     expect(userStatus.expiresAt).toBeNull();
     expect(userStatus.message).toBe("");
@@ -64,11 +65,11 @@ describe("user", () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
-    const oldUserStatus = (await caller.readStatuses([userId]))[0];
+    const oldUserStatus = takeOne(await caller.readStatuses([userId]));
     vi.advanceTimersByTime(1);
     await caller.connect();
     vi.advanceTimersByTime(1);
-    const newUserStatus = (await caller.readStatuses([userId]))[0];
+    const newUserStatus = takeOne(await caller.readStatuses([userId]));
 
     expect(newUserStatus.updatedAt.getTime()).toBe(oldUserStatus.updatedAt.getTime() + 1);
   });
@@ -79,11 +80,11 @@ describe("user", () => {
     const userId = getMockSession().user.id;
     await caller.connect();
     vi.advanceTimersByTime(1);
-    const oldUserStatus = (await caller.readStatuses([userId]))[0];
+    const oldUserStatus = takeOne(await caller.readStatuses([userId]));
     vi.advanceTimersByTime(1);
     await caller.connect();
     vi.advanceTimersByTime(1);
-    const newUserStatus = (await caller.readStatuses([userId]))[0];
+    const newUserStatus = takeOne(await caller.readStatuses([userId]));
 
     expect(newUserStatus.updatedAt.getTime()).toBe(oldUserStatus.updatedAt.getTime() + 2);
   });
@@ -92,11 +93,11 @@ describe("user", () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
-    const oldUserStatus = (await caller.readStatuses([userId]))[0];
+    const oldUserStatus = takeOne(await caller.readStatuses([userId]));
     vi.advanceTimersByTime(1);
     await caller.disconnect();
     vi.advanceTimersByTime(1);
-    const newUserStatus = (await caller.readStatuses([userId]))[0];
+    const newUserStatus = takeOne(await caller.readStatuses([userId]));
 
     expect(newUserStatus.updatedAt.getTime()).toBe(oldUserStatus.updatedAt.getTime() + 1);
   });
@@ -107,11 +108,11 @@ describe("user", () => {
     const userId = getMockSession().user.id;
     await caller.disconnect();
     vi.advanceTimersByTime(1);
-    const oldUserStatus = (await caller.readStatuses([userId]))[0];
+    const oldUserStatus = takeOne(await caller.readStatuses([userId]));
     vi.advanceTimersByTime(1);
     await caller.disconnect();
     vi.advanceTimersByTime(1);
-    const newUserStatus = (await caller.readStatuses([userId]))[0];
+    const newUserStatus = takeOne(await caller.readStatuses([userId]));
 
     expect(newUserStatus.updatedAt.getTime()).toBe(oldUserStatus.updatedAt.getTime() + 2);
   });
@@ -124,14 +125,14 @@ describe("user", () => {
     vi.advanceTimersByTime(1);
     await caller.disconnect();
     vi.advanceTimersByTime(1);
-    const oldUserStatus = (await caller.readStatuses([userId]))[0];
+    const oldUserStatus = takeOne(await caller.readStatuses([userId]));
 
     expect(oldUserStatus.status).toBe(UserStatus.Offline);
 
     vi.advanceTimersByTime(1);
     await caller.connect();
     vi.advanceTimersByTime(1);
-    const newUserStatus = (await caller.readStatuses([userId]))[0];
+    const newUserStatus = takeOne(await caller.readStatuses([userId]));
 
     expect(newUserStatus.status).toBe(UserStatus.Online);
   });
@@ -141,7 +142,7 @@ describe("user", () => {
 
     await caller.upsertStatus({ message });
     vi.advanceTimersByTime(1);
-    const userStatus = (await caller.readStatuses([getMockSession().user.id]))[0];
+    const userStatus = takeOne(await caller.readStatuses([getMockSession().user.id]));
 
     expect(userStatus.message).toBe(message);
   });
@@ -153,7 +154,7 @@ describe("user", () => {
     vi.advanceTimersByTime(1);
     await caller.upsertStatus({ message: updatedMessage });
     vi.advanceTimersByTime(1);
-    const userStatus = (await caller.readStatuses([getMockSession().user.id]))[0];
+    const userStatus = takeOne(await caller.readStatuses([getMockSession().user.id]));
 
     expect(userStatus.message).toBe(updatedMessage);
   });

@@ -41,7 +41,7 @@ import {
   usersToRooms,
   UserToRoomRelations,
 } from "@esposter/db-schema";
-import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation } from "@esposter/shared";
+import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, count, desc, eq, ilike, inArray, ne, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -109,7 +109,7 @@ export type CreateInviteInput = z.infer<typeof createInviteInputSchema>;
 export const roomRouter = router({
   countMembers: getMemberProcedure(countMembersInputSchema, "roomId").query(
     async ({ ctx, input: { roomId } }) =>
-      (await ctx.db.select({ count: count() }).from(usersToRooms).where(eq(usersToRooms.roomId, roomId)))[0].count,
+      takeOne(await ctx.db.select({ count: count() }).from(usersToRooms).where(eq(usersToRooms.roomId, roomId))).count,
   ),
   createInvite: getMemberProcedure(createInviteInputSchema, "roomId").mutation<string>(
     async ({ ctx, input: { roomId } }) => {
@@ -137,7 +137,7 @@ export const roomRouter = router({
       ctx.db.transaction(async (tx) => {
         const newMembers: UserToRoom[] = [];
         for (const userId of userIds) {
-          const newMember = (await tx.insert(usersToRooms).values({ roomId, userId }).returning()).find(Boolean);
+          const newMember = (await tx.insert(usersToRooms).values({ roomId, userId }).returning())[0];
           if (!newMember) continue;
           newMembers.push(newMember);
         }
@@ -151,7 +151,7 @@ export const roomRouter = router({
           .insert(rooms)
           .values({ ...input, userId: ctx.session.user.id })
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!newRoom)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -179,7 +179,7 @@ export const roomRouter = router({
           .delete(usersToRooms)
           .where(and(eq(usersToRooms.roomId, roomId), eq(usersToRooms.userId, userId)))
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!deletedMember)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -215,7 +215,7 @@ export const roomRouter = router({
 
       const userToRoom = (
         await tx.insert(usersToRooms).values({ roomId: invite.roomId, userId: ctx.session.user.id }).returning()
-      ).find(Boolean);
+      )[0];
       if (!userToRoom)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -252,7 +252,7 @@ export const roomRouter = router({
           .delete(usersToRooms)
           .where(and(eq(usersToRooms.roomId, input), eq(usersToRooms.userId, ctx.session.user.id)))
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!userToRoom)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -395,7 +395,7 @@ export const roomRouter = router({
         .where(eq(usersToRooms.userId, ctx.session.user.id))
         .orderBy(desc(rooms.updatedAt))
         .limit(1)
-    ).find(Boolean);
+    )[0];
     return readRoom?.room ?? null;
   }),
   readRooms: getMemberProcedure(readRoomsInputSchema, "roomId").query(
@@ -410,7 +410,7 @@ export const roomRouter = router({
             .from(rooms)
             .innerJoin(usersToRooms, innerJoinCondition)
             .where(eq(rooms.id, roomId))
-        ).find(Boolean)?.room;
+        )[0]?.room;
         if (!pinnedRoom)
           throw new TRPCError({
             code: "BAD_REQUEST",
@@ -448,7 +448,7 @@ export const roomRouter = router({
           .set({ ...rest, name })
           .where(and(eq(rooms.id, id), eq(rooms.userId, ctx.session.user.id)))
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!updatedRoom)
         throw new TRPCError({
           code: "BAD_REQUEST",

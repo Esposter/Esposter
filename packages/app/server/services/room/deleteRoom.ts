@@ -13,7 +13,7 @@ export const deleteRoom = async (db: Context["db"], session: Session, id: string
       .delete(rooms)
       .where(and(eq(rooms.id, id), eq(rooms.userId, session.user.id)))
       .returning()
-  ).find(Boolean);
+  )[0];
   if (!deletedRoom)
     throw new TRPCError({
       code: "BAD_REQUEST",

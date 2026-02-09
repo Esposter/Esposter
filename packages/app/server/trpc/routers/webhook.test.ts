@@ -9,7 +9,7 @@ import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test"
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { webhookRouter } from "@@/server/trpc/routers/webhook";
 import { appUsers, DatabaseEntityType, rooms, webhooks } from "@esposter/db-schema";
-import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
+import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("webhook", () => {
@@ -230,7 +230,7 @@ describe("webhook", () => {
     const newWebhook = await webhookCaller.createWebhook({ name, roomId: newRoom.id });
     const users = await webhookCaller.readAppUsersByIds({ ids: [newWebhook.userId], roomId: newRoom.id });
 
-    expect(users[0].id).toBe(newWebhook.userId);
+    expect(takeOne(users).id).toBe(newWebhook.userId);
   });
 
   test("fails read app users by empty ids", async () => {
