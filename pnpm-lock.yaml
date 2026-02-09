@@ -163,8 +163,8 @@ catalogs:
       specifier: ^3.19.0
       version: 3.19.0
     '@tresjs/cientos':
-      specifier: ^5.3.0
-      version: 5.3.0
+      specifier: ^5.3.1
+      version: 5.3.1
     '@tresjs/core':
       specifier: ^5.4.0
       version: 5.4.0
@@ -792,7 +792,7 @@ importers:
         version: 3.19.0(@floating-ui/dom@1.7.5)(@tiptap/core@3.19.0(@tiptap/pm@3.19.0))(@tiptap/pm@3.19.0)(vue@3.5.27(typescript@5.9.3))
       '@tresjs/cientos':
         specifier: 'catalog:'
-        version: 5.3.0(@tresjs/core@5.4.0(three@0.182.0)(vue@3.5.27(typescript@5.9.3)))(@types/three@0.182.0)(three@0.182.0)(vue@3.5.27(typescript@5.9.3))
+        version: 5.3.1(@tresjs/core@5.4.0(three@0.182.0)(vue@3.5.27(typescript@5.9.3)))(@types/three@0.182.0)(three@0.182.0)(vue@3.5.27(typescript@5.9.3))
       '@tresjs/core':
         specifier: 'catalog:'
         version: 5.4.0(three@0.182.0)(vue@3.5.27(typescript@5.9.3))
@@ -5443,10 +5443,10 @@ packages:
       y-protocols: ^1.0.1
       yjs: ^13.5.38
 
-  '@tresjs/cientos@5.3.0':
-    resolution: {integrity: sha512-dNatV4zkaB2aDdM7BvKiUU0f6TmQbV1d6+qXp/f0ntWtQZESpLdqbqNPWA74CBBqFGPtDKj8YkRwsYv1awkh7g==}
+  '@tresjs/cientos@5.3.1':
+    resolution: {integrity: sha512-RnbPVIoqRms9FjROcmd+jKxeejhGfpKUAmc+fmS8kmtMSAeWZ8ZEGnTTbRgOyG3N+udO2t07uIKsHccxiMoN7Q==}
     peerDependencies:
-      '@tresjs/core': 5.4.0
+      '@tresjs/core': 5.4.1
       three: '>=0.133'
       vue: '>=3.5.17'
 
@@ -17142,7 +17142,7 @@ snapshots:
       y-protocols: 1.0.7(yjs@13.6.29)
       yjs: 13.6.29
 
-  '@tresjs/cientos@5.3.0(@tresjs/core@5.4.0(three@0.182.0)(vue@3.5.27(typescript@5.9.3)))(@types/three@0.182.0)(three@0.182.0)(vue@3.5.27(typescript@5.9.3))':
+  '@tresjs/cientos@5.3.1(@tresjs/core@5.4.0(three@0.182.0)(vue@3.5.27(typescript@5.9.3)))(@types/three@0.182.0)(three@0.182.0)(vue@3.5.27(typescript@5.9.3))':
     dependencies:
       '@tresjs/core': 5.4.0(three@0.182.0)(vue@3.5.27(typescript@5.9.3))
       '@vueuse/core': 13.9.0(vue@3.5.27(typescript@5.9.3))
