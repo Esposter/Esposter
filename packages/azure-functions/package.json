@@ -26,6 +26,8 @@
   "scripts": {
     "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
     "lint": "oxlint && eslint .",
     "lint:fix": "oxlint --fix && eslint --fix .",
     "typecheck": "tsc"

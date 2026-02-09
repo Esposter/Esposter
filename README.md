@@ -199,7 +199,7 @@ We highly recommend you take a look at the [documentation](https://esposter.com/
 | -------------------------- | ------------------------------------------------------------------------------ |
 | Vue - Official (Volar)     | https://marketplace.visualstudio.com/items?itemName=Vue.volar                  |
 | ESLint                     | https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint     |
-| Prettier - Code formatter  | https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode     |
+| Oxfmt - Code formatter     | https://marketplace.visualstudio.com/items?itemName=oxc.oxc-vscode             |
 | GitLens — Git supercharged | https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens            |
 | Powershell                 | https://marketplace.visualstudio.com/items?itemName=ms-vscode.PowerShell       |
 | Material Icon Theme        | https://marketplace.visualstudio.com/items?itemName=PKief.material-icon-theme  |
