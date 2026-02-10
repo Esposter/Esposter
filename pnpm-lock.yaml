@@ -274,8 +274,8 @@ catalogs:
       specifier: ^14.2.1
       version: 14.2.1
     '@vueuse/nuxt':
-      specifier: ^14.2.0
-      version: 14.2.0
+      specifier: ^14.2.1
+      version: 14.2.1
     ajv:
       specifier: ^8.17.1
       version: 8.17.1
@@ -1144,7 +1144,7 @@ importers:
         version: 2.4.6
       '@vueuse/nuxt':
         specifier: 'catalog:'
-        version: 14.2.0(magicast@0.5.2)(nuxt@4.3.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/storage-blob@12.30.0)(@electric-sql/pglite@0.3.15)(@parcel/watcher@2.5.6)(@types/node@25.2.2)(@vue/compiler-sfc@3.5.28)(cac@6.7.14)(db0@0.3.4(@electric-sql/pglite@0.3.15)(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.15)(kysely@0.28.11)(postgres@3.4.8)))(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.15)(kysely@0.28.11)(postgres@3.4.8))(encoding@0.1.13)(eslint@10.0.0(jiti@2.6.1))(ioredis@5.9.2)(magicast@0.5.2)(meow@13.2.0)(optionator@0.9.4)(oxlint@1.43.0)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.28(typescript@5.9.3)))(rolldown@1.0.0-rc.3)(rollup@4.57.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(typescript@5.9.3)(vite@8.0.0-beta.10(@types/node@25.2.2)(esbuild@0.25.12)(jiti@2.6.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.4(typescript@5.9.3))(yaml@2.8.2))(vue@3.5.28(typescript@5.9.3))
+        version: 14.2.1(magicast@0.5.2)(nuxt@4.3.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/storage-blob@12.30.0)(@electric-sql/pglite@0.3.15)(@parcel/watcher@2.5.6)(@types/node@25.2.2)(@vue/compiler-sfc@3.5.28)(cac@6.7.14)(db0@0.3.4(@electric-sql/pglite@0.3.15)(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.15)(kysely@0.28.11)(postgres@3.4.8)))(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.15)(kysely@0.28.11)(postgres@3.4.8))(encoding@0.1.13)(eslint@10.0.0(jiti@2.6.1))(ioredis@5.9.2)(magicast@0.5.2)(meow@13.2.0)(optionator@0.9.4)(oxlint@1.43.0)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.28(typescript@5.9.3)))(rolldown@1.0.0-rc.3)(rollup@4.57.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(typescript@5.9.3)(vite@8.0.0-beta.10(@types/node@25.2.2)(esbuild@0.25.12)(jiti@2.6.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.4(typescript@5.9.3))(yaml@2.8.2))(vue@3.5.28(typescript@5.9.3))
       azure-mock:
         specifier: workspace:*
         version: link:../azure-mock
@@ -6277,8 +6277,8 @@ packages:
   '@vueuse/metadata@14.2.1':
     resolution: {integrity: sha512-1ButlVtj5Sb/HDtIy1HFr1VqCP4G6Ypqt5MAo0lCgjokrk2mvQKsK2uuy0vqu/Ks+sHfuHo0B9Y9jn9xKdjZsw==}
 
-  '@vueuse/nuxt@14.2.0':
-    resolution: {integrity: sha512-MpxTYd7/W0izL6DgMEYUUTYkm1q0aqE0kfMr6oBcj5R0TIrdPJAJIwVaqs5pbSjQUPjNNgQ7mCRvx9RKFUq+VQ==}
+  '@vueuse/nuxt@14.2.1':
+    resolution: {integrity: sha512-DHgFMUpyH98M1YM9pbnRjFXMAMKEsHntJeOp8rOXs8QN2cvJBzEZ+TTWIBSPESNFOEwM02RA6BDsaTL35OK4Mw==}
     peerDependencies:
       nuxt: ^3.0.0 || ^4.0.0-0
       vue: ^3.5.0
@@ -18287,11 +18287,11 @@ snapshots:
 
   '@vueuse/metadata@14.2.1': {}
 
-  '@vueuse/nuxt@14.2.0(magicast@0.5.2)(nuxt@4.3.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/storage-blob@12.30.0)(@electric-sql/pglite@0.3.15)(@parcel/watcher@2.5.6)(@types/node@25.2.2)(@vue/compiler-sfc@3.5.28)(cac@6.7.14)(db0@0.3.4(@electric-sql/pglite@0.3.15)(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.15)(kysely@0.28.11)(postgres@3.4.8)))(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.15)(kysely@0.28.11)(postgres@3.4.8))(encoding@0.1.13)(eslint@10.0.0(jiti@2.6.1))(ioredis@5.9.2)(magicast@0.5.2)(meow@13.2.0)(optionator@0.9.4)(oxlint@1.43.0)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.28(typescript@5.9.3)))(rolldown@1.0.0-rc.3)(rollup@4.57.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(typescript@5.9.3)(vite@8.0.0-beta.10(@types/node@25.2.2)(esbuild@0.25.12)(jiti@2.6.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.4(typescript@5.9.3))(yaml@2.8.2))(vue@3.5.28(typescript@5.9.3))':
+  '@vueuse/nuxt@14.2.1(magicast@0.5.2)(nuxt@4.3.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/storage-blob@12.30.0)(@electric-sql/pglite@0.3.15)(@parcel/watcher@2.5.6)(@types/node@25.2.2)(@vue/compiler-sfc@3.5.28)(cac@6.7.14)(db0@0.3.4(@electric-sql/pglite@0.3.15)(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.15)(kysely@0.28.11)(postgres@3.4.8)))(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.15)(kysely@0.28.11)(postgres@3.4.8))(encoding@0.1.13)(eslint@10.0.0(jiti@2.6.1))(ioredis@5.9.2)(magicast@0.5.2)(meow@13.2.0)(optionator@0.9.4)(oxlint@1.43.0)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.28(typescript@5.9.3)))(rolldown@1.0.0-rc.3)(rollup@4.57.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(typescript@5.9.3)(vite@8.0.0-beta.10(@types/node@25.2.2)(esbuild@0.25.12)(jiti@2.6.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.4(typescript@5.9.3))(yaml@2.8.2))(vue@3.5.28(typescript@5.9.3))':
     dependencies:
       '@nuxt/kit': 4.3.1(magicast@0.5.2)
-      '@vueuse/core': 14.2.0(vue@3.5.28(typescript@5.9.3))
-      '@vueuse/metadata': 14.2.0
+      '@vueuse/core': 14.2.1(vue@3.5.28(typescript@5.9.3))
+      '@vueuse/metadata': 14.2.1
       local-pkg: 1.1.2
       nuxt: 4.3.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/storage-blob@12.30.0)(@electric-sql/pglite@0.3.15)(@parcel/watcher@2.5.6)(@types/node@25.2.2)(@vue/compiler-sfc@3.5.28)(cac@6.7.14)(db0@0.3.4(@electric-sql/pglite@0.3.15)(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.15)(kysely@0.28.11)(postgres@3.4.8)))(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.15)(kysely@0.28.11)(postgres@3.4.8))(encoding@0.1.13)(eslint@10.0.0(jiti@2.6.1))(ioredis@5.9.2)(magicast@0.5.2)(meow@13.2.0)(optionator@0.9.4)(oxlint@1.43.0)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.28(typescript@5.9.3)))(rolldown@1.0.0-rc.3)(rollup@4.57.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(typescript@5.9.3)(vite@8.0.0-beta.10(@types/node@25.2.2)(esbuild@0.25.12)(jiti@2.6.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.4(typescript@5.9.3))(yaml@2.8.2)
       vue: 3.5.28(typescript@5.9.3)
