@@ -37,7 +37,7 @@ catalog:
   "@lerna-lite/run": ^4.11.2
   "@lerna-lite/watch": ^4.11.2
   "@mdi/font": ^7.4.47
-  "@nuxt/eslint": ^1.14.0
+  "@nuxt/eslint": ^1.15.0
   "@nuxt/fonts": ^0.13.0
   "@nuxt/hints": ^1.0.0-alpha.6
   "@nuxt/scripts": ^0.13.2
@@ -90,7 +90,7 @@ catalog:
   "@vue/language-core": ^3.2.4
   "@vue/test-utils": ^2.4.6
   "@vuepic/vue-datepicker": ^12.1.0
-  "@vueuse/core": ^14.2.0
+  "@vueuse/core": ^14.2.1
   "@vueuse/nuxt": ^14.2.0
   ajv: ^8.17.1
   ajv-errors: ^3.0.0
@@ -141,7 +141,7 @@ catalog:
   grid-layout-plus: ^1.1.1
   gsap: ^3.14.2
   h3: ^1.15.5
-  happy-dom: ^20.5.5
+  happy-dom: ^20.6.0
   howler: ^2.2.4
   is-mobile: ^5.0.0
   js-beautify: ^1.15.4
