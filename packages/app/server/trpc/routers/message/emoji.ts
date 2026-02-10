@@ -3,8 +3,8 @@ import type { Clause, CustomTableClient } from "@esposter/db-schema";
 import { createEmojiInputSchema } from "#shared/models/db/message/metadata/CreateEmojiInput";
 import { deleteEmojiInputSchema } from "#shared/models/db/message/metadata/DeleteEmojiInput";
 import {
-    MessageEmojiMetadataEntity,
-    MessageEmojiMetadataEntityPropertyNames,
+  MessageEmojiMetadataEntity,
+  MessageEmojiMetadataEntityPropertyNames,
 } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import { updateEmojiInputSchema } from "#shared/models/db/message/metadata/UpdateEmojiInput";
 import { createMessageEmojiMetadataEntity } from "#shared/services/message/createMessageEmojiMetadataEntity";
@@ -19,11 +19,11 @@ import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProce
 import { readMetadataInputSchema } from "@@/server/trpc/routers/message";
 import { createEntity, deleteEntity, getEntity, getTopNEntities, serializeClauses, updateEntity } from "@esposter/db";
 import {
-    AZURE_MAX_PAGE_SIZE,
-    AzureTable,
-    BinaryOperator,
-    MessageMetadataType,
-    selectRoomInMessageSchema,
+  AZURE_MAX_PAGE_SIZE,
+  AzureTable,
+  BinaryOperator,
+  MessageMetadataType,
+  selectRoomInMessageSchema,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
