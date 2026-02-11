@@ -10,7 +10,7 @@ catalog:
   "@azure/functions": ^4.11.2
   "@azure/identity": ^4.13.0
   "@azure/search-documents": ^12.2.0
-  "@azure/storage-blob": ^12.30.0
+  "@azure/storage-blob": ^12.31.0
   "@azure/storage-queue": ^12.29.0
   "@azure/web-pubsub": ^1.2.0
   "@azure/web-pubsub-client": ^1.0.2
