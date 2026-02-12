@@ -113,7 +113,7 @@ catalog:
   eslint: ^10.0.0
   eslint-config-prettier: ^10.1.8
   eslint-plugin-depend: ^1.4.0
-  eslint-plugin-oxlint: ^1.43.0
+  eslint-plugin-oxlint: ^1.46.0
   eslint-plugin-perfectionist: ^5.5.0
   eslint-plugin-pinia: ^0.4.2
   eslint-plugin-prettier: ^5.5.5
@@ -156,7 +156,7 @@ catalog:
   nuxt-security: ^2.5.1
   obscenity: ^0.4.6
   omit-deep-lodash: ^1.1.7
-  oxlint: ^1.43.0
+  oxlint: ^1.46.0
   p-progress: ^1.0.0
   pathe: ^2.0.3
   pdfjs-dist: ^5.4.624
