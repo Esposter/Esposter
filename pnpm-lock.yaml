@@ -316,8 +316,8 @@ catalogs:
       specifier: ^6.1.4
       version: 6.1.4
     dotenv:
-      specifier: ^17.2.4
-      version: 17.2.4
+      specifier: ^17.3.1
+      version: 17.3.1
     drizzle-kit:
       specifier: ^0.31.9
       version: 0.31.9
@@ -657,7 +657,7 @@ importers:
         version: 2.7.2(@types/node@25.2.3)(prettier-plugin-organize-imports@4.3.0(prettier@3.8.1)(typescript@5.9.3)(vue-tsc@3.2.4(typescript@5.9.3)))(prettier@3.8.1)(typescript@5.9.3)
       dotenv:
         specifier: 'catalog:'
-        version: 17.2.4
+        version: 17.3.1
       eslint:
         specifier: 'catalog:'
         version: 10.0.0(jiti@2.6.1)
@@ -7561,6 +7561,10 @@ packages:
 
   dotenv@17.2.4:
     resolution: {integrity: sha512-mudtfb4zRB4bVvdj0xRo+e6duH1csJRM8IukBqfTRvHotn9+LBXB8ynAidP9zHqoRC/fsllXgk4kCKlR21fIhw==}
+    engines: {node: '>=12'}
+
+  dotenv@17.3.1:
+    resolution: {integrity: sha512-IO8C/dzEb6O3F9/twg6ZLXz164a2fhTnEWb95H23Dm4OuN+92NmEAlTrupP9VW6Jm3sO26tQlqyvyi4CsnY9GA==}
     engines: {node: '>=12'}
 
   draco3d@1.5.7:
@@ -14611,7 +14615,7 @@ snapshots:
       '@lerna-lite/init': 4.11.2(@types/node@25.2.3)
       '@lerna-lite/npmlog': 4.11.0
       dedent: 1.7.1
-      dotenv: 17.2.4
+      dotenv: 17.3.1
       import-local: 3.2.0
       load-json-file: 7.0.1
       yargs: 18.0.0
@@ -19670,6 +19674,8 @@ snapshots:
       is-obj: 2.0.0
 
   dotenv@17.2.4: {}
+
+  dotenv@17.3.1: {}
 
   draco3d@1.5.7: {}
 
