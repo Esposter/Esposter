@@ -55,7 +55,7 @@ catalog:
   "@tiptap/suggestion": ^3.19.0
   "@tiptap/vue-3": ^3.19.0
   "@tresjs/cientos": ^5.4.0
-  "@tresjs/core": ^5.4.1
+  "@tresjs/core": ^5.5.0
   "@tresjs/nuxt": ^5.2.1
   "@trpc/client": ^11.10.0
   "@trpc/server": ^11.10.0
