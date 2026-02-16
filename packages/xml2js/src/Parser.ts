@@ -7,7 +7,7 @@ import { DefaultParserOptions } from "@/DefaultParserOptions";
 import { normalize } from "@/processors";
 import { stripBOM } from "@/stripBOM";
 import { takeOne } from "@esposter/shared";
-import { parser as createSaxParser } from "sax";
+import { parser } from "sax";
 
 export class Parser {
   get xmlnsKey(): string {
@@ -27,7 +27,7 @@ export class Parser {
       this.options.tagNameProcessors.unshift(normalize);
     }
 
-    this.saxParser = createSaxParser(this.options.strict, { normalize: false, trim: false, xmlns: this.options.xmlns });
+    this.saxParser = parser(this.options.strict, { normalize: false, trim: false, xmlns: this.options.xmlns });
     this.saxParser.onerror = () => {
       this.saxParser.resume();
     };

@@ -38,6 +38,7 @@
     "no-multi-assign": "off",
     "no-namespace": "off",
     "no-nested-ternary": "off",
+    "no-shadow": "off",
     "no-ternary": "off",
     "no-unassigned-import": "off",
     "no-useless-return": "off",
