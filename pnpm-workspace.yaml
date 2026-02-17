@@ -96,7 +96,7 @@ catalog:
   ajv-errors: ^3.0.0
   ajv-formats: ^3.0.1
   ajv-i18n: ^4.2.0
-  apexcharts: ^5.4.0
+  apexcharts: ^5.6.0
   better-auth: ^1.4.18
   codemirror: ^6.0.2
   ctix: ^2.7.2
@@ -141,13 +141,13 @@ catalog:
   grid-layout-plus: ^1.1.1
   gsap: ^3.14.2
   h3: ^1.15.5
-  happy-dom: ^20.6.1
+  happy-dom: ^20.6.2
   howler: ^2.2.4
   is-mobile: ^5.0.0
   js-beautify: ^1.15.4
   link-preview-js: ^4.0.0
   linkifyjs: ^4.3.2
-  marked: ^17.0.2
+  marked: ^17.0.3
   mime-types: ^3.0.2
   mjml-browser: ^4.18.0
   node-emoji: ^2.2.0
