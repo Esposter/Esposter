@@ -343,8 +343,8 @@ catalogs:
       specifier: ^1.48.0
       version: 1.48.0
     eslint-plugin-perfectionist:
-      specifier: ^5.5.0
-      version: 5.5.0
+      specifier: ^5.6.0
+      version: 5.6.0
     eslint-plugin-pinia:
       specifier: ^0.4.2
       version: 0.4.2
@@ -1314,7 +1314,7 @@ importers:
         version: 1.48.0
       eslint-plugin-perfectionist:
         specifier: 'catalog:'
-        version: 5.5.0(eslint@10.0.0(jiti@2.6.1))(typescript@5.9.3)
+        version: 5.6.0(eslint@10.0.0(jiti@2.6.1))(typescript@5.9.3)
       eslint-plugin-pinia:
         specifier: 'catalog:'
         version: 0.4.2(@typescript-eslint/utils@8.56.0(eslint@10.0.0(jiti@2.6.1))(typescript@5.9.3))(eslint@10.0.0(jiti@2.6.1))
@@ -7987,11 +7987,11 @@ packages:
   eslint-plugin-oxlint@1.48.0:
     resolution: {integrity: sha512-sLpnJsXstJ9+RRlmgaUrYBjH4I9Y9GgQiFbbVY3HRdkZXXJReEJFeywMk8HLBM5cKV5I4tUzyjPTOI/czExwtg==}
 
-  eslint-plugin-perfectionist@5.5.0:
-    resolution: {integrity: sha512-lZX2KUpwOQf7J27gAg/6vt8ugdPULOLmelM8oDJPMbaN7P2zNNeyS9yxGSmJcKX0SF9qR/962l9RWM2Z5jpPzg==}
+  eslint-plugin-perfectionist@5.6.0:
+    resolution: {integrity: sha512-pxrLrfRp5wl1Vol1fAEa/G5yTXxefTPJjz07qC7a8iWFXcOZNuWBItMQ2OtTzfQIvMq6bMyYcrzc3Wz++na55Q==}
     engines: {node: ^20.0.0 || >=22.0.0}
     peerDependencies:
-      eslint: '>=8.45.0'
+      eslint: ^8.45.0 || ^9.0.0 || ^10.0.0
 
   eslint-plugin-pinia@0.4.2:
     resolution: {integrity: sha512-Bf6x2iMa+NOP52OsW66ewg5Xn7rkoolxnWWBud0yFoUF6xVk/rm9F88GsSIMyNajobYws4DweEzL1sWKZg+YNQ==}
@@ -20197,9 +20197,9 @@ snapshots:
     dependencies:
       jsonc-parser: 3.3.1
 
-  eslint-plugin-perfectionist@5.5.0(eslint@10.0.0(jiti@2.6.1))(typescript@5.9.3):
+  eslint-plugin-perfectionist@5.6.0(eslint@10.0.0(jiti@2.6.1))(typescript@5.9.3):
     dependencies:
-      '@typescript-eslint/utils': 8.55.0(eslint@10.0.0(jiti@2.6.1))(typescript@5.9.3)
+      '@typescript-eslint/utils': 8.56.0(eslint@10.0.0(jiti@2.6.1))(typescript@5.9.3)
       eslint: 10.0.0(jiti@2.6.1)
       natural-orderby: 5.0.0
     transitivePeerDependencies:
