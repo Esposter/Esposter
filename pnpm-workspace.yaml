@@ -180,7 +180,7 @@ catalog:
   survey-creator-core: ^2.5.10
   survey-creator-vue: ^2.5.10
   survey-vue3-ui: ^2.5.10
-  three: ^0.182.0
+  three: ^0.183.0
   three-globe: ^2.45.0
   trpc-nuxt: ^2.0.1
   tsx: ^4.21.0

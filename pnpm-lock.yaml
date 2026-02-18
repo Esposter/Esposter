@@ -538,8 +538,8 @@ catalogs:
       specifier: ^2.5.10
       version: 2.5.10
     three:
-      specifier: ^0.182.0
-      version: 0.182.0
+      specifier: ^0.183.0
+      version: 0.183.0
     three-globe:
       specifier: ^2.45.0
       version: 2.45.0
@@ -792,13 +792,13 @@ importers:
         version: 3.20.0(@floating-ui/dom@1.7.5)(@tiptap/core@3.20.0(@tiptap/pm@3.20.0))(@tiptap/pm@3.20.0)(vue@3.5.28(typescript@5.9.3))
       '@tresjs/cientos':
         specifier: 'catalog:'
-        version: 5.4.0(@tresjs/core@5.5.0(three@0.182.0)(vue@3.5.28(typescript@5.9.3)))(@types/three@0.182.0)(three@0.182.0)(vue@3.5.28(typescript@5.9.3))
+        version: 5.4.0(@tresjs/core@5.5.0(three@0.183.0)(vue@3.5.28(typescript@5.9.3)))(@types/three@0.182.0)(three@0.183.0)(vue@3.5.28(typescript@5.9.3))
       '@tresjs/core':
         specifier: 'catalog:'
-        version: 5.5.0(three@0.182.0)(vue@3.5.28(typescript@5.9.3))
+        version: 5.5.0(three@0.183.0)(vue@3.5.28(typescript@5.9.3))
       '@tresjs/nuxt':
         specifier: 'catalog:'
-        version: 5.3.0(76e3c546b7724a0e0cc9e404aa17e744)
+        version: 5.3.0(9cff0e39e309b43e268e97fccba6b428)
       '@trpc/client':
         specifier: 'catalog:'
         version: 11.10.0(@trpc/server@11.10.0(typescript@5.9.3))(typescript@5.9.3)
@@ -1026,10 +1026,10 @@ importers:
         version: 2.5.10(survey-core@2.5.10)(vue@3.5.28(typescript@5.9.3))
       three:
         specifier: 'catalog:'
-        version: 0.182.0
+        version: 0.183.0
       three-globe:
         specifier: 'catalog:'
-        version: 2.45.0(three@0.182.0)
+        version: 2.45.0(three@0.183.0)
       trpc-nuxt:
         specifier: 'catalog:'
         version: 2.0.1(@trpc/client@11.10.0(@trpc/server@11.10.0(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.10.0(typescript@5.9.3))
@@ -11589,8 +11589,8 @@ packages:
     peerDependencies:
       three: '>=0.128.0'
 
-  three@0.182.0:
-    resolution: {integrity: sha512-GbHabT+Irv+ihI1/f5kIIsZ+Ef9Sl5A1Y7imvS5RQjWgtTPfPnZ43JmlYI7NtCRDK9zir20lQpfg8/9Yd02OvQ==}
+  three@0.183.0:
+    resolution: {integrity: sha512-G6SH2jfefIVa2YI4JL2VbgQhrrbp1A8dRc7lr3PW827kdVyaX2RgH6M5FmjmdVFLgSHppyg3OYOZdTfWElle+g==}
 
   through2@0.6.5:
     resolution: {integrity: sha512-RkK/CCESdTKQZHdmKICijdKKsCRVHs5KsLZ6pACAmF/1GPUQhonHSXWNERctxEp7RmvjdNbZTL5z9V7nSCXKcg==}
@@ -17338,43 +17338,43 @@ snapshots:
       y-protocols: 1.0.7(yjs@13.6.29)
       yjs: 13.6.29
 
-  '@tresjs/cientos@5.4.0(@tresjs/core@5.5.0(three@0.182.0)(vue@3.5.28(typescript@5.9.3)))(@types/three@0.182.0)(three@0.182.0)(vue@3.5.28(typescript@5.9.3))':
+  '@tresjs/cientos@5.4.0(@tresjs/core@5.5.0(three@0.183.0)(vue@3.5.28(typescript@5.9.3)))(@types/three@0.182.0)(three@0.183.0)(vue@3.5.28(typescript@5.9.3))':
     dependencies:
-      '@tresjs/core': 5.5.0(three@0.182.0)(vue@3.5.28(typescript@5.9.3))
+      '@tresjs/core': 5.5.0(three@0.183.0)(vue@3.5.28(typescript@5.9.3))
       '@vueuse/core': 13.9.0(vue@3.5.28(typescript@5.9.3))
-      camera-controls: 2.10.1(three@0.182.0)
-      stats-gl: 2.4.2(@types/three@0.182.0)(three@0.182.0)
+      camera-controls: 2.10.1(three@0.183.0)
+      stats-gl: 2.4.2(@types/three@0.182.0)(three@0.183.0)
       stats.js: 0.17.0
-      three: 0.182.0
-      three-custom-shader-material: 5.4.0(three@0.182.0)
-      three-mesh-bvh: 0.9.8(three@0.182.0)
-      three-stdlib: 2.36.1(three@0.182.0)
+      three: 0.183.0
+      three-custom-shader-material: 5.4.0(three@0.183.0)
+      three-mesh-bvh: 0.9.8(three@0.183.0)
+      three-stdlib: 2.36.1(three@0.183.0)
       vue: 3.5.28(typescript@5.9.3)
     transitivePeerDependencies:
       - '@react-three/fiber'
       - '@types/three'
       - react
 
-  '@tresjs/core@5.5.0(three@0.182.0)(vue@3.5.28(typescript@5.9.3))':
+  '@tresjs/core@5.5.0(three@0.183.0)(vue@3.5.28(typescript@5.9.3))':
     dependencies:
       '@pmndrs/pointer-events': 6.6.29
       '@vue/devtools-api': 7.7.9
       '@vueuse/core': 13.9.0(vue@3.5.28(typescript@5.9.3))
       radashi: 12.7.1
-      three: 0.182.0
+      three: 0.183.0
       vue: 3.5.28(typescript@5.9.3)
 
-  '@tresjs/nuxt@5.3.0(76e3c546b7724a0e0cc9e404aa17e744)':
+  '@tresjs/nuxt@5.3.0(9cff0e39e309b43e268e97fccba6b428)':
     dependencies:
       '@nuxt/kit': 4.1.2(magicast@0.5.2)
       '@nuxt/ui': 4.4.0(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/storage-blob@12.31.0)(@tiptap/extensions@3.20.0(@tiptap/core@3.20.0(@tiptap/pm@3.20.0))(@tiptap/pm@3.20.0))(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.29))(yjs@13.6.29))(axios@1.13.5(debug@4.4.3))(change-case@5.4.4)(db0@0.3.4(@electric-sql/pglite@0.3.15)(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.15)(kysely@0.28.11)(postgres@3.4.8)))(embla-carousel@8.6.0)(ioredis@5.9.3)(magicast@0.5.2)(tailwindcss@4.1.18)(typescript@5.9.3)(valibot@1.2.0(typescript@5.9.3))(vite@8.0.0-beta.10(@types/node@25.2.3)(esbuild@0.25.12)(jiti@2.6.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(vue-router@5.0.2(@vue/compiler-sfc@3.5.28)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.28(typescript@5.9.3)))(vue@3.5.28(typescript@5.9.3)))(vue@3.5.28(typescript@5.9.3))(yjs@13.6.29)(zod@4.3.6)
-      '@tresjs/core': 5.5.0(three@0.182.0)(vue@3.5.28(typescript@5.9.3))
+      '@tresjs/core': 5.5.0(three@0.183.0)(vue@3.5.28(typescript@5.9.3))
       defu: 6.1.4
       mlly: 1.8.0
       ohash: 2.0.11
       pkg-types: 2.3.0
       sirv: 3.0.2
-      three: 0.182.0
+      three: 0.183.0
       vite-plugin-glsl: 1.5.5(@rollup/pluginutils@5.3.0(rollup@4.57.1))(esbuild@0.25.12)(vite@8.0.0-beta.10(@types/node@25.2.3)(esbuild@0.25.12)(jiti@2.6.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
     transitivePeerDependencies:
       - '@azure/app-configuration'
@@ -19110,9 +19110,9 @@ snapshots:
 
   camelize@1.0.1: {}
 
-  camera-controls@2.10.1(three@0.182.0):
+  camera-controls@2.10.1(three@0.183.0):
     dependencies:
-      three: 0.182.0
+      three: 0.183.0
 
   caniuse-api@3.0.0:
     dependencies:
@@ -24142,10 +24142,10 @@ snapshots:
 
   standard-as-callback@2.1.0: {}
 
-  stats-gl@2.4.2(@types/three@0.182.0)(three@0.182.0):
+  stats-gl@2.4.2(@types/three@0.182.0)(three@0.183.0):
     dependencies:
       '@types/three': 0.182.0
-      three: 0.182.0
+      three: 0.183.0
 
   stats.js@0.17.0: {}
 
@@ -24410,7 +24410,7 @@ snapshots:
     transitivePeerDependencies:
       - react-native-b4a
 
-  three-conic-polygon-geometry@2.1.2(three@0.182.0):
+  three-conic-polygon-geometry@2.1.2(three@0.183.0):
     dependencies:
       '@turf/boolean-point-in-polygon': 7.3.4
       d3-array: 3.2.4
@@ -24419,24 +24419,24 @@ snapshots:
       d3-scale: 4.0.2
       delaunator: 5.0.1
       earcut: 3.0.2
-      three: 0.182.0
+      three: 0.183.0
 
-  three-custom-shader-material@5.4.0(three@0.182.0):
+  three-custom-shader-material@5.4.0(three@0.183.0):
     dependencies:
       glsl-token-functions: 1.0.1
       glsl-token-string: 1.0.1
       glsl-tokenizer: 2.1.5
       object-hash: 3.0.0
-      three: 0.182.0
+      three: 0.183.0
 
-  three-geojson-geometry@2.1.1(three@0.182.0):
+  three-geojson-geometry@2.1.1(three@0.183.0):
     dependencies:
       d3-geo: 3.1.1
       d3-interpolate: 3.0.1
       earcut: 3.0.2
-      three: 0.182.0
+      three: 0.183.0
 
-  three-globe@2.45.0(three@0.182.0):
+  three-globe@2.45.0(three@0.183.0):
     dependencies:
       '@tweenjs/tween.js': 25.0.0
       accessor-fn: 1.5.3
@@ -24451,24 +24451,24 @@ snapshots:
       h3-js: 4.4.0
       index-array-by: 1.4.2
       kapsule: 1.16.3
-      three: 0.182.0
-      three-conic-polygon-geometry: 2.1.2(three@0.182.0)
-      three-geojson-geometry: 2.1.1(three@0.182.0)
-      three-slippy-map-globe: 1.0.4(three@0.182.0)
+      three: 0.183.0
+      three-conic-polygon-geometry: 2.1.2(three@0.183.0)
+      three-geojson-geometry: 2.1.1(three@0.183.0)
+      three-slippy-map-globe: 1.0.4(three@0.183.0)
       tinycolor2: 1.6.0
 
-  three-mesh-bvh@0.9.8(three@0.182.0):
+  three-mesh-bvh@0.9.8(three@0.183.0):
     dependencies:
-      three: 0.182.0
+      three: 0.183.0
 
-  three-slippy-map-globe@1.0.4(three@0.182.0):
+  three-slippy-map-globe@1.0.4(three@0.183.0):
     dependencies:
       d3-geo: 3.1.1
       d3-octree: 1.1.0
       d3-scale: 4.0.2
-      three: 0.182.0
+      three: 0.183.0
 
-  three-stdlib@2.36.1(three@0.182.0):
+  three-stdlib@2.36.1(three@0.183.0):
     dependencies:
       '@types/draco3d': 1.4.10
       '@types/offscreencanvas': 2019.7.3
@@ -24476,9 +24476,9 @@ snapshots:
       draco3d: 1.5.7
       fflate: 0.6.10
       potpack: 1.0.2
-      three: 0.182.0
+      three: 0.183.0
 
-  three@0.182.0: {}
+  three@0.183.0: {}
 
   through2@0.6.5:
     dependencies:
