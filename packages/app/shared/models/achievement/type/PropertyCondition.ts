@@ -9,10 +9,7 @@ import type { Except, Get } from "type-fest";
 export type PropertyCondition<TPath extends TRPCPaths> =
   Except<RecursiveGetProperties<Get<TRPCRouterInputs, TPath>>, "type"> extends { path: infer Path; value: infer Value }
     ? Path extends string
-      ? {
-          path: Path;
-          type: AchievementConditionType.Property;
-        } & (
+      ? (
           | {
               operation: (value: Get<TRPCRouterInputs, `${TPath}.${Path}`>) => boolean;
               operator: AchievementOperator.Operation;
@@ -33,6 +30,9 @@ export type PropertyCondition<TPath extends TRPCPaths> =
               operator: BinaryOperator;
               value: Value;
             }
-        )
+        ) & {
+          path: Path;
+          type: AchievementConditionType.Property;
+        }
       : never
     : never;
