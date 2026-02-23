@@ -39,7 +39,7 @@ catalog:
   "@mdi/font": ^7.4.47
   "@nuxt/eslint": ^1.15.1
   "@nuxt/fonts": ^0.14.0
-  "@nuxt/hints": ^1.0.0-alpha.7
+  "@nuxt/hints": ^1.0.0-alpha.8
   "@nuxt/scripts": ^0.13.2
   "@nuxt/test-utils": 3.23.0
   "@nuxtjs/seo": ^3.4.0
@@ -110,10 +110,10 @@ catalog:
   drizzle-orm: ^0.45.1
   drizzle-zod: ^0.8.3
   emoji-mart-vue-fast: ^15.0.5
-  eslint: ^10.0.1
+  eslint: ^10.0.2
   eslint-config-prettier: ^10.1.8
   eslint-plugin-depend: ^1.4.0
-  eslint-plugin-oxlint: ^1.49.0
+  eslint-plugin-oxlint: ^1.50.0
   eslint-plugin-perfectionist: ^5.6.0
   eslint-plugin-pinia: ^0.4.2
   eslint-plugin-prettier: ^5.5.5
@@ -156,7 +156,7 @@ catalog:
   nuxt-security: ^2.5.1
   obscenity: ^0.4.6
   omit-deep-lodash: ^1.1.7
-  oxlint: ^1.49.0
+  oxlint: ^1.50.0
   p-progress: ^1.0.0
   pathe: ^2.0.3
   pdfjs-dist: ^5.4.624
@@ -187,7 +187,7 @@ catalog:
   type-fest: ^5.4.4
   typedoc: ^0.28.17
   typescript: ^5.9.3
-  typescript-eslint: ^8.56.0
+  typescript-eslint: ^8.56.1
   unocss: ^66.6.0
   unplugin-auto-import: ^21.0.0
   unplugin-dts: ^1.0.0-beta.6
