@@ -1,6 +1,10 @@
 @use "vuetify";
 // https://vuetifyjs.com/en/getting-started/upgrade-guide/#css-reset
 @layer vuetify-core.reset {
+  p {
+    margin: 0;
+  }
+
   button {
     background-color: transparent;
     border-style: none;

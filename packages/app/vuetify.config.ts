@@ -96,6 +96,7 @@ const defaults: DefaultsOptions = {
   VSelect: { variant: "outlined" },
   VTextarea: { variant: "outlined" },
   VTextField: { variant: "outlined" },
+  VToolbar: { color: "surface" },
   VToolbarTitle: {
     style: {
       marginInlineStart: 0,

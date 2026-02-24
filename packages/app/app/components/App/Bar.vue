@@ -3,7 +3,7 @@ import { RoutePath, SITE_NAME } from "@esposter/shared";
 </script>
 
 <template>
-  <v-app-bar pl-2 color="surface" density="comfortable">
+  <v-app-bar pl-2 density="comfortable">
     <template #prepend>
       <NuxtInvisibleLink :to="RoutePath.Index">
         <AppLogo />
