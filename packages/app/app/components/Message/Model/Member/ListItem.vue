@@ -67,7 +67,7 @@ const { deleteMember } = memberStore;
                     <v-btn
                       v-show="isHovering"
                       :="tooltipProps"
-                      bg-transparent="!"
+                      bg-transparent
                       icon="mdi-close"
                       variant="plain"
                       size="small"

@@ -29,7 +29,7 @@ const isActive = computed(() => room.id === currentRoomId.value);
           <template #activator="activatorProps">
             <v-btn
               v-show="isActive || isHovering"
-              bg-transparent="!"
+              bg-transparent
               :="activatorProps"
               :ripple="false"
               density="compact"
@@ -43,7 +43,7 @@ const isActive = computed(() => room.id === currentRoomId.value);
           <template #activator="{ updateIsOpen, tooltipProps }">
             <v-btn
               v-show="isActive || isHovering"
-              bg-transparent="!"
+              bg-transparent
               density="compact"
               icon="mdi-close"
               variant="plain"

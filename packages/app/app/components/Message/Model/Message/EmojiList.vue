@@ -35,7 +35,7 @@ const selectEmoji = await useSelectEmoji(message);
       v-for="{ partitionKey, rowKey, userIds, isReacted, emoji } of emojis"
       :key="rowKey"
       :class="isReacted ? 'reacted' : 'not-reacted'"
-      rd-full="!"
+      rd-full
       flex
       items-center
       px-2

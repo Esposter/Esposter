@@ -38,10 +38,10 @@ const {
 
 <template>
   <StyledCard :card-props="{ elevation: isHovering ? 12 : 2, ...hoverProps }">
-    <v-card-actions p-0="!" gap-0 min-h-auto="!">
+    <v-card-actions p-0 gap-0 min-h-auto>
       <v-tooltip v-for="emoji of EmojiMenuItems" :key="emoji">
         <template #activator="{ props }">
-          <v-btn m-0 size-10="!" :text="emoji" icon tile :="props" @click="emit('update:select-emoji', emoji)" />
+          <v-btn m-0 size-10 :text="emoji" icon tile :="props" @click="emit('update:select-emoji', emoji)" />
         </template>
         <div flex flex-col text-center>
           <div font-bold>{{ unemojify(emoji) }}</div>

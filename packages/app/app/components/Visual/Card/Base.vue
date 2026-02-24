@@ -12,7 +12,7 @@ const { sm, xs } = useDisplay();
 <template>
   <StyledCard
     :class="xs ? 'text-title-large' : sm ? 'text-headline-small' : 'text-headline-large'"
-    flex="!"
+    flex
     font="[Montserrat] italic"
     justify-center
     items-center

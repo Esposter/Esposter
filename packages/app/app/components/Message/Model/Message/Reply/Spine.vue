@@ -16,8 +16,8 @@ const scrollToMessage = useScrollToMessage();
 <template>
   <div
     class="custom-border"
-    b-l-2="!"
-    b-t-2="!"
+    b-l-2
+    b-t-2
     cursor-pointer
     w-8
     h-3

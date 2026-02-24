@@ -16,9 +16,9 @@ const isActive = ref(false);
 
 <template>
   <v-list-item
-    px-2="!"
-    py-0="!"
-    rd="!"
+    px-2
+    py-0
+    rd
     cursor-pointer
     :active="isActive"
     :ripple="false"

@@ -21,8 +21,8 @@ const menu = ref(false);
     <template #activator="{ props: menuProps }">
       <v-tooltip location="bottom" text="Menu">
         <template #activator="{ props: tooltipProps }">
-          <v-avatar color="background">
-            <v-btn icon="mdi-dots-grid" :="mergeProps(menuProps, tooltipProps)" />
+          <v-avatar>
+            <v-btn color="background" icon="mdi-dots-grid" :="mergeProps(menuProps, tooltipProps)" />
           </v-avatar>
         </template>
       </v-tooltip>
@@ -35,7 +35,7 @@ const menu = ref(false);
               <v-icon :icon />
             </v-avatar>
           </template>
-          <v-list-item-title font-bold="!">{{ title }}</v-list-item-title>
+          <v-list-item-title font-bold>{{ title }}</v-list-item-title>
         </v-list-item>
       </NuxtInvisibleLink>
     </v-list>

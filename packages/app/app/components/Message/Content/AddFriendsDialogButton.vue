@@ -27,10 +27,10 @@ const isCopied = ref(false);
       </v-tooltip>
     </template>
     <StyledCard px-4>
-      <v-card-title px-0="!">
+      <v-card-title px-0>
         Invite friends to <span font-bold>{{ roomName }}</span>
       </v-card-title>
-      <v-card-text px-0="!" py-2="!">
+      <v-card-text px-0 py-2>
         <div mb-2>Send An Invite Link To A Friend!</div>
         <v-text-field
           v-model="inviteLink"

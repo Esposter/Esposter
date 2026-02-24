@@ -24,20 +24,20 @@ const isEmptyDescription = computed(() => EMPTY_TEXT_REGEX.test(post.description
     <template #activator="{ updateIsOpen }">
       <StyledCard class="card">
         <PostLikeSection absolute top-2 left-2 :post :is-comment-store />
-        <v-card px-2="!" pt-2="!">
+        <v-card px-2 pt-2>
           <StyledAvatar :image="post.user.image" :name="post.user.name" />
           Posted by <span font-bold>{{ post.user.name }}</span> <span text-gray>{{ createdAtTimeAgo }}</span>
-          <v-card-title class="text-title-large" px-0="!" font-bold="!" whitespace="normal!">
+          <v-card-title class="text-title-large" px-0 font-bold whitespace="normal!">
             {{ post.title }}
           </v-card-title>
           <v-card-text
             v-if="!isEmptyDescription"
             class="text-body-large card-content"
-            px-0="!"
-            pb-0="!"
+            px-0
+            pb-0
             v-html="post.description"
           />
-          <v-card-actions p-0="!">
+          <v-card-actions p-0>
             <PostCommentsButton :post />
             <PostUpdateButton v-if="isCreator" :post-id="post.id" />
             <PostDeleteButton v-if="isCreator" @update:delete-mode="updateIsOpen" />
@@ -46,17 +46,17 @@ const isEmptyDescription = computed(() => EMPTY_TEXT_REGEX.test(post.description
       </StyledCard>
     </template>
     <template #postPreview>
-      <v-card px-2="!" shadow-none="!">
+      <v-card px-2 shadow-none>
         <StyledAvatar :image="post.user.image" :name="post.user.name" />
         Posted by <span font-bold>{{ post.user.name }}</span> <span text-gray>{{ createdAtTimeAgo }}</span>
-        <v-card-title class="text-title-large" px-0="!" font-bold="!" whitespace-normal="!">
+        <v-card-title class="text-title-large" px-0 font-bold whitespace-normal>
           {{ post.title }}
         </v-card-title>
         <v-card-text
           v-if="!isEmptyDescription"
           class="text-body-large card-content"
-          px-0="!"
-          pb-0="!"
+          px-0
+          pb-0
           v-html="post.description"
         />
       </v-card>

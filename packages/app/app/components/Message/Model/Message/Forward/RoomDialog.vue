@@ -58,7 +58,7 @@ const {
           hide-details
         />
       </v-card-title>
-      <v-card-text p-4="!" overflow-y-auto>
+      <v-card-text p-4 overflow-y-auto>
         <v-list py-0>
           <MessageModelMessageForwardRoomListItem v-for="room of itemsSearched" :key="room.id" :room />
           <StyledWaypoint :is-active="hasMore" @change="readMoreItemsSearched">

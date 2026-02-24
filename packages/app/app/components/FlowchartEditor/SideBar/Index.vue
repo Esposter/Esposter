@@ -25,7 +25,7 @@ const { height, width } = useWindowSize();
                   <component
                     :is="NodeTypeMap[nodeType].preview"
                     rd-1
-                    size-auto="!"
+                    size-auto
                     :draggable="true"
                     :="props"
                     @dragstart="onDragStart($event)"
