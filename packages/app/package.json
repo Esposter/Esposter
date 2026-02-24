@@ -189,6 +189,7 @@
     "@vue/test-utils": "catalog:",
     "@vueuse/nuxt": "catalog:",
     "azure-mock": "workspace:*",
+    "crossws": "catalog:",
     "drizzle-kit": "catalog:",
     "fs-extra": "catalog:",
     "h3": "catalog:",

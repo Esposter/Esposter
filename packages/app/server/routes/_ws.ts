@@ -31,11 +31,11 @@ const getReq = (peer: Peer): IncomingMessage =>
 
 export default defineWebSocketHandler({
   close: async (peer, event) => {
-    if (!peer._wsAdapter) return;
-    peer._wsAdapter.readyState = peer._wsAdapter.CLOSED;
-    peer._wsAdapter.emit("close", event.code, event.reason);
+    if (!peer.wsAdapter) return;
+    peer.wsAdapter.readyState = peer.wsAdapter.CLOSED;
+    peer.wsAdapter.emit("close", event.code, event.reason);
     const req = getReq(peer);
-    const caller = createCaller(createContext({ req, res: peer._wsAdapter } as CreateWSSContextFnOptions));
+    const caller = createCaller(createContext({ req, res: peer.wsAdapter } as CreateWSSContextFnOptions));
     try {
       await caller.disconnect();
       console.log(`WS connection closed, clients: ${wss.clients.size}`);
@@ -45,18 +45,18 @@ export default defineWebSocketHandler({
   },
 
   error(peer, error) {
-    peer._wsAdapter?.emit("error", error);
+    peer.wsAdapter?.emit("error", error);
   },
 
   message(peer, message) {
-    peer._wsAdapter?.emit("message", Buffer.from(message.text()), false);
+    peer.wsAdapter?.emit("message", Buffer.from(message.text()), false);
   },
 
   open: async (peer) => {
     const req = getReq(peer);
-    peer._wsAdapter = new WsAdapter(peer);
-    wss.addConnection(peer._wsAdapter, req);
-    const caller = createCaller(createContext({ req, res: peer._wsAdapter } as CreateWSSContextFnOptions));
+    peer.wsAdapter = new WsAdapter(peer);
+    wss.addConnection(peer.wsAdapter, req);
+    const caller = createCaller(createContext({ req, res: peer.wsAdapter } as CreateWSSContextFnOptions));
     try {
       await caller.connect();
       console.log(`WS connection opened, clients: ${wss.clients.size}`);
