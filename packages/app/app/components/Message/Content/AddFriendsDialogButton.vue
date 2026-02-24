@@ -55,7 +55,7 @@ const isCopied = ref(false);
             />
           </template>
         </v-text-field>
-        <div v-if="inviteLink" class="text-subtitle-2" text-gray pt-2>Your invite link expires in 24 hours.</div>
+        <div v-if="inviteLink" class="text-title-small" text-gray pt-2>Your invite link expires in 24 hours.</div>
       </v-card-text>
     </StyledCard>
   </v-dialog>

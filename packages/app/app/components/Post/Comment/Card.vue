@@ -29,7 +29,7 @@ const isUpdateMode = ref(false);
             @update:update-mode="isUpdateMode = $event"
             @update:delete-mode="updateIsOpen"
           />
-          <v-card-text v-else class="text-subtitle-1 card-content" px-0="!" pb-0="!" v-html="comment.description" />
+          <v-card-text v-else class="text-body-large card-content" px-0="!" pb-0="!" v-html="comment.description" />
           <v-card-actions p-0="!">
             <PostCommentUpdateButton v-if="isCreator" @update:update-mode="isUpdateMode = $event" />
             <PostCommentDeleteButton v-if="isCreator" @update:delete-mode="updateIsOpen" />
@@ -41,7 +41,7 @@ const isUpdateMode = ref(false);
       <v-card px-2="!" shadow-none="!">
         <StyledAvatar :image="comment.user.image" :name="comment.user.name" />
         Posted by <span font-bold>{{ comment.user.name }}</span> <span text-gray>{{ createdAtTimeAgo }}</span>
-        <v-card-text class="text-subtitle-1 card-content" px-0="!" pb-0="!" v-html="comment.description" />
+        <v-card-text class="text-body-large card-content" px-0="!" pb-0="!" v-html="comment.description" />
       </v-card>
     </template>
   </PostCommentConfirmDeleteDialog>

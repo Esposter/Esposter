@@ -27,7 +27,7 @@ const cardType = ref(CardType.Marquee);
         </v-col>
       </v-row>
       <v-row pt-12>
-        <v-col class="text-h5" flex justify-center text-center font="[Montserrat]" cols="12">
+        <v-col class="text-headline-small" flex justify-center text-center font="[Montserrat]" cols="12">
           Thanks to all these lovely people for making this possible! 💖
         </v-col>
         <v-col cols="12" flex justify-end>
@@ -41,7 +41,7 @@ const cardType = ref(CardType.Marquee);
         </v-col>
       </v-row>
       <v-row pt-12>
-        <v-col class="text-h5" flex justify-center text-center font="[Montserrat]" cols="12">
+        <v-col class="text-headline-small" flex justify-center text-center font="[Montserrat]" cols="12">
           Here's a globe for you to play around with if you are bored 🙂
         </v-col>
         <v-col flex justify-center>

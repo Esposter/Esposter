@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "mcp__vuetify-mcp__get_v4_breaking_changes",
-      "mcp__vuetify-mcp__get_exposed_exports"
+      "mcp__vuetify-mcp__get_exposed_exports",
+      "Bash(find:*)"
     ]
   }
 }
