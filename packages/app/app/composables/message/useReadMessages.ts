@@ -1,4 +1,4 @@
-import type { MessageEntity } from "@esposter/db-schema";
+import type { MessageEntity, StandardMessageEntity } from "@esposter/db-schema";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
@@ -7,7 +7,6 @@ import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import {
   getReverseTickedTimestamp,
-  StandardMessageEntity,
   StandardMessageEntityPropertyNames,
   WebhookMessageEntity,
 } from "@esposter/db-schema";
