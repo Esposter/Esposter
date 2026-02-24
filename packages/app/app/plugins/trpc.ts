@@ -5,7 +5,14 @@ import { transformer } from "#shared/services/trpc/transformer";
 import { TRPC_CLIENT_PATH } from "@/services/trpc/constants";
 import { errorLink } from "@/services/trpc/errorLink";
 import { getIsServer } from "@esposter/shared";
-import { createWSClient, isNonJsonSerializable, loggerLink, splitLink, wsLink } from "@trpc/client";
+import {
+  createWSClient,
+  httpSubscriptionLink,
+  isNonJsonSerializable,
+  loggerLink,
+  splitLink,
+  wsLink,
+} from "@trpc/client";
 import { createTRPCNuxtClient, httpBatchLink, httpLink } from "trpc-nuxt/client";
 
 export default defineNuxtPlugin(() => {
@@ -32,7 +39,10 @@ export default defineNuxtPlugin(() => {
       splitLink({
         condition: ({ type }) => type === "subscription",
         false: httpSplitLink,
-        true: wsLink({ client: wsClient, transformer }),
+        true: isProduction
+          ? wsLink({ client: wsClient, transformer })
+          : // Disabling for local development since it currently gives an infinite loop of invalid frame headers when trying to connect via ws
+            httpSubscriptionLink({ transformer, url: TRPC_CLIENT_PATH }),
       }),
     );
   }
