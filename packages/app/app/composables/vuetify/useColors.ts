@@ -2,9 +2,7 @@ import type { Colors as BaseVuetifyColors } from "vuetify/lib/composables/theme.
 
 import { takeOne } from "@esposter/shared";
 
-import type { BaseColors } from "../../../vuetify.config";
-
-import { getBaseColorsExtension } from "../../../vuetify.config";
+import type { BaseColors, getBaseColorsExtension } from "../../../vuetify.config";
 
 type Colors = {
   [P in keyof UnifiedColors]: ComputedRef<UnifiedColors[P]>;
