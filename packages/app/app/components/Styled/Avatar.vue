@@ -8,7 +8,7 @@ interface StyledAvatarProps {
   name: Session["user"]["name"];
 }
 
-const { avatarProps, image } = defineProps<StyledAvatarProps>();
+const { avatarProps, image, name } = defineProps<StyledAvatarProps>();
 </script>
 
 <template>
