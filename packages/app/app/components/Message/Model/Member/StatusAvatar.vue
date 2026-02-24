@@ -22,7 +22,9 @@ const badgeProps = computed(() => {
 </script>
 
 <template>
-  <v-badge location="bottom end" dot :="badgeProps">
-    <StyledAvatar :image :name :="avatarProps" />
-  </v-badge>
+  <StyledAvatar :image :name :="avatarProps">
+    <template #badge>
+      <v-badge location="bottom end" dot :="badgeProps" />
+    </template>
+  </StyledAvatar>
 </template>
