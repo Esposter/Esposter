@@ -1,1 +1,8 @@
 @use "vuetify";
+
+@layer vuetify-core.reset {
+  button {
+    background-color: transparent;
+    border-style: none;
+  }
+}
