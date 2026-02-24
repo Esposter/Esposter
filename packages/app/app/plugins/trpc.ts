@@ -5,14 +5,7 @@ import { transformer } from "#shared/services/trpc/transformer";
 import { TRPC_CLIENT_PATH } from "@/services/trpc/constants";
 import { errorLink } from "@/services/trpc/errorLink";
 import { getIsServer } from "@esposter/shared";
-import {
-  createWSClient,
-  httpSubscriptionLink,
-  isNonJsonSerializable,
-  loggerLink,
-  splitLink,
-  wsLink,
-} from "@trpc/client";
+import { createWSClient, isNonJsonSerializable, loggerLink, splitLink, wsLink } from "@trpc/client";
 import { createTRPCNuxtClient, httpBatchLink, httpLink } from "trpc-nuxt/client";
 
 export default defineNuxtPlugin(() => {
@@ -31,7 +24,8 @@ export default defineNuxtPlugin(() => {
     true: httpLink({ transformer, url: TRPC_CLIENT_PATH }),
   });
 
-  if (getIsServer()) links.push(httpSplitLink);
+  if (getIsServer() || !isProduction) links.push(httpSplitLink);
+  // @TODO: Disabling for local development since it currently gives an infinite loop of invalid frame headers when trying to connect via ws
   else {
     const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const wsClient = createWSClient({ url: `${wsProtocol}//${window.location.host}` });
@@ -39,10 +33,7 @@ export default defineNuxtPlugin(() => {
       splitLink({
         condition: ({ type }) => type === "subscription",
         false: httpSplitLink,
-        true: isProduction
-          ? wsLink({ client: wsClient, transformer })
-          : // Disabling for local development since it currently gives an infinite loop of invalid frame headers when trying to connect via ws
-            httpSubscriptionLink({ transformer, url: TRPC_CLIENT_PATH }),
+        true: wsLink({ client: wsClient, transformer }),
       }),
     );
   }
