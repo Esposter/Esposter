@@ -8,7 +8,7 @@ export const useReadRooms = () => {
   const readUserToRoomsMetadata = useReadUserToRooms();
   const readRooms = () =>
     readItems(
-      () => $trpc.room.readRooms.useQuery({ roomId: currentRoomId.value }),
+      () => $trpc.room.readRooms.query({ roomId: currentRoomId.value }),
       ({ items }) => readUserToRoomsMetadata(items.map(({ id }) => id)),
     );
   const readMoreRooms = (onComplete: () => void) =>

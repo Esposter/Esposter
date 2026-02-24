@@ -1,10 +1,6 @@
-import type { AsyncData } from "#app";
-import type { TRPCClientErrorLike } from "@trpc/client";
-import type { InferrableClientTypes } from "@trpc/server/unstable-core-do-not-import";
 import type { Promisable } from "type-fest";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 
 export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Ref<CursorPaginationData<TItem>>) => {
   const items = computed({
@@ -31,29 +27,23 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
   const resetCursorPaginationData = () => {
     cursorPaginationData.value = new CursorPaginationData<TItem>();
   };
-  const readItems = async <TDef extends InferrableClientTypes>(
-    useQuery: () => Promise<Awaited<AsyncData<CursorPaginationData<TItem> | undefined, TRPCClientErrorLike<TDef>>>>,
+  const readItems = async (
+    query: () => Promise<CursorPaginationData<TItem>>,
     onComplete?: (data: CursorPaginationData<TItem>) => Promisable<void>,
   ) => {
-    const { data, pending: isPending, status, ...rest } = await useQuery();
-    const watchHandle = watchEffect(
-      getSynchronizedFunction(async () => {
-        switch (status.value) {
-          case "error":
-          case "idle":
-          case "pending":
-            return;
-          case "success":
-            if (data.value) {
-              initializeCursorPaginationData(data.value);
-              await onComplete?.(data.value);
-            }
-            watchHandle();
-            break;
-        }
-      }),
-    );
-    return { data, isPending, status, ...rest };
+    const isPending = ref(true);
+    const refresh = async () => {
+      isPending.value = true;
+      try {
+        const data = await query();
+        initializeCursorPaginationData(data);
+        await onComplete?.(data);
+      } finally {
+        isPending.value = false;
+      }
+    };
+    await refresh();
+    return { isPending, refresh };
   };
   const readMoreItems = async (
     query: (cursor?: string) => Promise<CursorPaginationData<TItem>>,
