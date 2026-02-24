@@ -37,7 +37,7 @@ catalog:
   "@lerna-lite/run": ^4.11.3
   "@lerna-lite/watch": ^4.11.3
   "@mdi/font": ^7.4.47
-  "@nuxt/eslint": ^1.15.1
+  "@nuxt/eslint": ^1.15.2
   "@nuxt/fonts": ^0.14.0
   "@nuxt/hints": ^1.0.0-alpha.8
   "@nuxt/scripts": ^0.13.2
@@ -99,6 +99,7 @@ catalog:
   apexcharts: ^5.6.0
   better-auth: ^1.4.19
   codemirror: ^6.0.2
+  crossws: ^0.4.4
   ctix: ^2.7.2
   data-urls: ^7.0.0
   dayjs: ^1.11.19
@@ -176,10 +177,10 @@ catalog:
   show-open-file-picker: ^0.4.0
   sql-highlight: ^6.1.0
   superjson: ^2.2.6
-  survey-core: ^2.5.11
-  survey-creator-core: ^2.5.11
-  survey-creator-vue: ^2.5.11
-  survey-vue3-ui: ^2.5.11
+  survey-core: ^2.5.12
+  survey-creator-core: ^2.5.12
+  survey-creator-vue: ^2.5.12
+  survey-vue3-ui: ^2.5.12
   three: ^0.183.1
   three-globe: ^2.45.0
   trpc-nuxt: ^2.0.1
@@ -223,6 +224,7 @@ onlyBuiltDependencies:
   - vue-demi
 
 overrides:
+  crossws: ^0.4.4
   pdfjs-dist: ^5.4.624
   vite: ^8.0.0-beta.15
   vue-router: ^5.0.3

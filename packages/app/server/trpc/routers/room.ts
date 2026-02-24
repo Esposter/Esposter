@@ -349,6 +349,7 @@ export const roomRouter = router({
   ),
   readMembersByIds: getMemberProcedure(readMembersByIdsInputSchema, "roomId").query(
     async ({ ctx, input: { ids, roomId } }) => {
+      console.log(ids);
       const readUsers = await ctx.db
         .select({ user: users })
         .from(users)

@@ -189,6 +189,7 @@
     "@vue/test-utils": "catalog:",
     "@vueuse/nuxt": "catalog:",
     "azure-mock": "workspace:*",
+    "crossws": "catalog:",
     "drizzle-kit": "catalog:",
     "fs-extra": "catalog:",
     "h3": "catalog:",
@@ -211,7 +212,6 @@
     "@nuxt/test-utils": "@TODO: v4 breaks createMockContext with type is not defined for nuxt seo og schema"
   },
   "scriptsComments": {
-    "db:run": "https://github.com/drizzle-team/drizzle-orm/issues/1228",
-    "dev": "https://github.com/nuxt/nuxt/issues/32685"
+    "db:run": "https://github.com/drizzle-team/drizzle-orm/issues/1228"
   }
 }

@@ -1,16 +1,11 @@
-import type { MessageEntity } from "@esposter/db-schema";
+import type { MessageEntity, StandardMessageEntity, WebhookMessageEntity } from "@esposter/db-schema";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
-import {
-  getReverseTickedTimestamp,
-  StandardMessageEntity,
-  StandardMessageEntityPropertyNames,
-  WebhookMessageEntity,
-} from "@esposter/db-schema";
+import { getReverseTickedTimestamp, MessageType, StandardMessageEntityPropertyNames } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 
 export const useReadMessages = () => {
@@ -32,7 +27,7 @@ export const useReadMessages = () => {
     const standardMessages: StandardMessageEntity[] = [];
 
     for (const message of messages)
-      if (message instanceof WebhookMessageEntity) webhookMessages.push(message);
+      if (message.type === MessageType.Webhook) webhookMessages.push(message);
       else standardMessages.push(message);
 
     await Promise.all([
