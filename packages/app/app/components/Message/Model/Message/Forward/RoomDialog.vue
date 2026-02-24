@@ -28,11 +28,6 @@ const {
   readMoreItemsSearched,
   searchQuery,
 } = useCursorSearcher(
-  (searchQuery, cursor) =>
-    $trpc.room.readRooms.useQuery({
-      cursor,
-      filter: { name: searchQuery },
-    }),
   (searchQuery, cursor, opts) =>
     $trpc.room.readRooms.query(
       {

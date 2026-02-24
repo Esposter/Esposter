@@ -61,7 +61,7 @@ export const useReadMessages = () => {
         if (rowKey) {
           const messagesByRowKeys = await $trpc.message.readMessagesByRowKeys.query({ roomId, rowKeys: [rowKey] });
           if (messagesByRowKeys.length > 0) {
-            const response = await $trpc.message.readMessages.useQuery({
+            const response = await $trpc.message.readMessages.query({
               cursor: serialize({ rowKey: takeOne(messagesByRowKeys).rowKey }, [MESSAGE_ROWKEY_SORT_ITEM]),
               isIncludeValue: true,
               roomId,
@@ -74,7 +74,7 @@ export const useReadMessages = () => {
           }
         }
 
-        const response = await $trpc.message.readMessages.useQuery({ roomId });
+        const response = await $trpc.message.readMessages.query({ roomId });
         hasMoreNewer.value = false;
         nextCursorNewer.value = undefined;
         return response;
