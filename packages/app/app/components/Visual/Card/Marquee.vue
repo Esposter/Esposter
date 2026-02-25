@@ -17,7 +17,7 @@ const { "on-surface": onSurface, surface } = useColors();
       '--active': 0,
     }"
     class="window"
-    p-4="!"
+    p-4
   >
     <div class="scene" h-64>
       <div class="grid" px-4 h-full grid gap-x-4 list-none>

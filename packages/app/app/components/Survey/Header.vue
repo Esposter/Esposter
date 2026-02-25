@@ -8,7 +8,7 @@ const survey = defineModel<Survey>({ required: true });
 </script>
 
 <template>
-  <v-toolbar class="border-b-sm" color="surface" density="comfortable">
+  <v-toolbar class="border-b-sm" density="comfortable">
     <StyledEditableNameDialogButton
       :button-props="{ class: 'ml-4' }"
       :card-props="{ title: 'Edit Survey Name' }"
@@ -32,6 +32,6 @@ const survey = defineModel<Survey>({ required: true });
 <style scoped lang="scss">
 :deep(.v-toolbar__content) {
   min-height: $app-bar-height;
-  height: auto !important;
+  height: auto;
 }
 </style>

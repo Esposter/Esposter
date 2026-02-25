@@ -23,7 +23,7 @@ initializeBuildingMap(await $trpc.clicker.readBuildingMap.query());
 </script>
 
 <template>
-  <v-list overflow-y-auto="!">
+  <v-list overflow-y-auto>
     <ClickerModelUpgradeListGroup :upgrades="unlockedStoreUpgrades" />
     <ClickerModelBuildingListGroup :buildings />
   </v-list>

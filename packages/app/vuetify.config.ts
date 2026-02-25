@@ -25,9 +25,9 @@ const BaseColorsMap = {
     surface: "#fff",
     text: "#000",
   },
-} as const satisfies Record<ThemeMode, Partial<Colors>>;
+} as const satisfies Partial<Record<ThemeMode, Partial<Colors>>>;
 
-export type BaseColors = (typeof BaseColorsMap)[ThemeMode];
+export type BaseColors = (typeof BaseColorsMap)[Exclude<ThemeMode, ThemeMode.system>];
 
 const toSixDigitHexColor = (hexColor: string) =>
   hexColor.length === 3
@@ -96,11 +96,7 @@ const defaults: DefaultsOptions = {
   VSelect: { variant: "outlined" },
   VTextarea: { variant: "outlined" },
   VTextField: { variant: "outlined" },
-  VToolbar: {
-    style: {
-      backgroundColor: "transparent",
-    },
-  },
+  VToolbar: { color: "surface" },
   VToolbarTitle: {
     style: {
       marginInlineStart: 0,

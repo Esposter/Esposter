@@ -54,7 +54,7 @@ const upgradeIcon = computed(() => {
             :alt="id"
           />
         </template>
-        <v-list-item-subtitle op-100="!" flex="!" items-center>
+        <v-list-item-subtitle op-100 flex items-center>
           {{ displayPrice }}
           <div pl-2>
             <ClickerModelItem size-4 />
@@ -68,7 +68,7 @@ const upgradeIcon = computed(() => {
       </v-list-item>
     </template>
     <StyledCard>
-      <v-card-title flex="!" font-bold>
+      <v-card-title flex font-bold>
         <div>
           <v-img width="2rem" height="2rem" :src="type === Target.Building ? menuIcon : upgradeIcon" :alt="id" />
         </div>

@@ -20,7 +20,7 @@ if (typeof itemId === "string" && uuidValidateV4(itemId)) await editItem({ id: i
 <template>
   <NuxtLayout>
     <v-container h-full fluid>
-      <StyledCard flex="!" flex-col size-full>
+      <StyledCard flex flex-col size-full>
         <DashboardEditorHeader />
         <DashboardEditorContent />
       </StyledCard>

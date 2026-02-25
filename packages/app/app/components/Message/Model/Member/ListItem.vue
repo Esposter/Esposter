@@ -67,7 +67,7 @@ const { deleteMember } = memberStore;
                     <v-btn
                       v-show="isHovering"
                       :="tooltipProps"
-                      bg-transparent="!"
+                      bg-transparent
                       icon="mdi-close"
                       variant="plain"
                       size="small"
@@ -87,6 +87,6 @@ const { deleteMember } = memberStore;
 
 <style scoped lang="scss">
 :deep(.v-list-item__prepend > .v-list-item__spacer) {
-  width: 0.5rem !important;
+  width: 0.5rem;
 }
 </style>

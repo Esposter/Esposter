@@ -1,5 +1,11 @@
 <script setup lang="ts">
-const isDark = useIsDark();
+import type { ThemeMode } from "@/models/vuetify/ThemeMode";
+
+import { ThemeModeIconMap } from "@/services/vuetify/ThemeModeIconMap";
+import { ThemeModeTooltipMap } from "@/services/vuetify/ThemeModeTooltipMap";
+
+const globalTheme = useGlobalTheme();
+const currentTheme = computed(() => globalTheme.name.value as ThemeMode);
 const button = useTemplateRef("button");
 const baseToggleTheme = useToggleTheme();
 const toggleTheme = async () => {
@@ -34,11 +40,11 @@ const toggleTheme = async () => {
 </script>
 
 <template>
-  <v-tooltip location="bottom" text="Dark Mode">
+  <v-tooltip location="bottom" :text="ThemeModeTooltipMap[currentTheme]">
     <template #activator="{ props }">
       <v-avatar color="background">
         <div ref="button">
-          <v-btn :icon="isDark ? 'mdi-weather-night' : 'mdi-white-balance-sunny'" :="props" @click="toggleTheme" />
+          <v-btn :icon="ThemeModeIconMap[currentTheme]" :="props" @click="toggleTheme" />
         </div>
       </v-avatar>
     </template>

@@ -15,14 +15,12 @@ interface StatusAvatarProps {
 const { avatarProps, id, image, name } = defineProps<StatusAvatarProps>();
 const statusStore = useStatusStore();
 const { getStatusEnum } = statusStore;
-const badgeProps = computed(() => {
+const badge = computed(() => {
   const userStatusEnum = getStatusEnum(id);
   return StatusBadgePropsMap[userStatusEnum];
 });
 </script>
 
 <template>
-  <v-badge location="bottom end" dot :="badgeProps">
-    <StyledAvatar :image :name :="avatarProps" />
-  </v-badge>
+  <StyledAvatar :badge="{ ...badge, location: 'bottom end' }" :image :name :="avatarProps" />
 </template>

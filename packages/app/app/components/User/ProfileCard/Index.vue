@@ -37,8 +37,8 @@ const isUpdated = computed(() => isValid.value && !deepEqual(profileCardRowValue
 </script>
 
 <template>
-  <div class="text-h6" font-bold>Profile</div>
-  <div class="text-subtitle-1">Your personal information</div>
+  <div class="text-title-large" font-bold>Profile</div>
+  <div class="text-body-large">Your personal information</div>
   <v-form
     v-model="isValid"
     @submit.prevent="
@@ -53,7 +53,7 @@ const isUpdated = computed(() => isValid.value && !deepEqual(profileCardRowValue
         <div font-bold>Personal Information</div>
         <v-divider mt-2 />
       </v-card-title>
-      <v-container px-0="!" py-6="!">
+      <v-container px-0 py-6>
         <UserProfileCardRow
           v-for="(row, title) of profileCardRows"
           :key="title"
@@ -64,7 +64,7 @@ const isUpdated = computed(() => isValid.value && !deepEqual(profileCardRowValue
           :title
         />
       </v-container>
-      <v-card-actions px-4="!">
+      <v-card-actions px-4>
         <template v-if="editMode">
           <v-btn text="Cancel" variant="outlined" @click="editMode = false" />
           <StyledButton type="submit" :button-props="{ disabled: !isUpdated, text: 'Save' }" />

@@ -20,7 +20,7 @@ currentPost.value = post;
       <Title>{{ post.title }}</Title>
     </Head>
     <v-container v-if="currentPost" h-full flex flex-col flex-1>
-      <v-row flex-none="!">
+      <v-row flex-none>
         <v-col>
           <PostCard :post="currentPost" is-comment-store />
         </v-col>

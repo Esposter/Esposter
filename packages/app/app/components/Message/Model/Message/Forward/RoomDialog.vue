@@ -49,7 +49,7 @@ const {
           Forward To
           <v-btn density="comfortable" icon="mdi-close" @click="dialog = false" />
         </div>
-        <div class="text-subtitle-2" text-gray pb-2>Select where you want to share this message.</div>
+        <div class="text-title-small" text-gray pb-2>Select where you want to share this message.</div>
         <v-text-field
           v-model="searchQuery"
           append-inner-icon="mdi-magnify"
@@ -58,7 +58,7 @@ const {
           hide-details
         />
       </v-card-title>
-      <v-card-text p-4="!" overflow-y-auto>
+      <v-card-text p-4 overflow-y-auto>
         <v-list py-0>
           <MessageModelMessageForwardRoomListItem v-for="room of itemsSearched" :key="room.id" :room />
           <StyledWaypoint :is-active="hasMore" @change="readMoreItemsSearched">

@@ -11,7 +11,7 @@ import { ProductListLinkItems } from "@/services/app/ProductListLinkItems";
             <v-icon :icon />
           </v-avatar>
         </template>
-        <v-list-item-title font-bold="!">{{ title }}</v-list-item-title>
+        <v-list-item-title font-bold>{{ title }}</v-list-item-title>
       </v-list-item>
     </NuxtInvisibleLink>
   </v-list>
