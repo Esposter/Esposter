@@ -52,6 +52,6 @@ const component = computed(() => (editedItem.value ? useEditFormComponent(edited
 
 <style scoped lang="scss">
 :deep(.v-toolbar__content) {
-  height: auto !important;
+  height: auto;
 }
 </style>

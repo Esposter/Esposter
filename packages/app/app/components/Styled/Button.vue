@@ -19,6 +19,6 @@ const slots = defineSlots<Record<keyof VBtn["$slots"], () => VNode>>();
 
 <style scoped lang="scss">
 .button {
-  background-image: $midnight-bloom !important;
+  background-image: $midnight-bloom;
 }
 </style>

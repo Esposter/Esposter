@@ -25,6 +25,6 @@ const { backgroundOpacity40 } = useColors();
 }
 
 :deep(.v-data-table__td) {
-  background-color: transparent !important;
+  background-color: transparent;
 }
 </style>

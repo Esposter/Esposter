@@ -50,6 +50,6 @@ const { visualType } = storeToRefs(visualStore);
 
 <style scoped lang="scss">
 :deep(.v-toolbar__content) {
-  height: auto !important;
+  height: auto;
 }
 </style>

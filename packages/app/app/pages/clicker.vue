@@ -34,6 +34,6 @@ const displayNoPoints = computed(() => formatNumberLong(clicker.value.noPoints, 
 
 <style scoped lang="scss">
 :deep(.v-list-group__items > .v-list-item) {
-  padding-inline-start: 1rem !important;
+  padding-inline-start: 1rem;
 }
 </style>
