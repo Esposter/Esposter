@@ -2,7 +2,7 @@
 import { usePostStore } from "@/store/post";
 
 const { readMorePosts, readPosts } = useReadPosts();
-const { isPending, refresh } = await readPosts();
+const { refresh } = await readPosts();
 const postStore = usePostStore();
 const { hasMore, items } = storeToRefs(postStore);
 </script>
@@ -10,7 +10,7 @@ const { hasMore, items } = storeToRefs(postStore);
 <template>
   <NuxtLayout>
     <v-pull-to-refresh
-      style="min-height: 64px"
+      min-h-16
       @load="
         async ({ done }) => {
           await refresh();
@@ -19,14 +19,12 @@ const { hasMore, items } = storeToRefs(postStore);
       "
     >
       <v-container>
-        <template v-if="!isPending">
-          <v-row>
-            <v-col v-for="post of items" :key="post.id" cols="12">
-              <PostCard :post />
-            </v-col>
-          </v-row>
-          <StyledWaypoint flex justify-center :is-active="hasMore" @change="readMorePosts" />
-        </template>
+        <v-row>
+          <v-col v-for="post of items" :key="post.id" cols="12">
+            <PostCard :post />
+          </v-col>
+        </v-row>
+        <StyledWaypoint flex justify-center :is-active="hasMore" @change="readMorePosts" />
       </v-container>
     </v-pull-to-refresh>
     <template #left>
