@@ -10,6 +10,7 @@ const { hasMore, items } = storeToRefs(postStore);
 <template>
   <NuxtLayout>
     <v-pull-to-refresh
+      style="min-height: 64px"
       @load="
         async ({ done }) => {
           await refresh();
