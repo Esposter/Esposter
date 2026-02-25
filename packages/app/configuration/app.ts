@@ -5,6 +5,22 @@ import { PWA_PUBLIC_FOLDER_PATH } from "../shared/services/app/constants";
 export const app: NuxtConfig["app"] = {
   head: {
     htmlAttrs: { lang: "en" },
+    // Vuetify v4 theme composable injects `@layer vuetify-utilities { ... }` as a dynamic
+    // <style> tag at runtime (head.push, priority 100). Without this declaration, that style
+    // is the first CSS the browser sees, placing vuetify-utilities before vuetify-core in the
+    // cascade layer order — giving utilities lower priority than core (wrong).
+    // By injecting the full layer ordering at critical priority (-2), we ensure the correct
+    // order: vuetify-core < vuetify-components < vuetify-overrides < vuetify-utilities < vuetify-final
+    // See: vuetify/lib/composables/theme.js and vuetify/lib/styles/generic/_layers.scss
+    style: [
+      {
+        id: "vuetify-layer-order",
+        // Match exactly what _layers.scss declares so sub-layer order is also preserved
+        innerHTML:
+          "@layer vuetify-core { @layer reset, base; } @layer vuetify-components; @layer vuetify-overrides; @layer vuetify-utilities { @layer theme-base; @layer typography; @layer helpers; @layer theme-background; @layer theme-foreground; } @layer vuetify-final { @layer transitions, trumps; }",
+        tagPriority: "critical",
+      },
+    ],
     link: [
       {
         href: `${PWA_PUBLIC_FOLDER_PATH}/favicon-196.png`,
