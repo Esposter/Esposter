@@ -195,7 +195,7 @@ catalog:
   v-viewer: ^3.0.23
   viewerjs: ^1.11.7
   vite: ^8.0.0-beta.15
-  vite-plugin-mkcert: ^1.17.9
+  vite-plugin-mkcert: ^1.17.10
   vitest: ^4.0.18
   vue: ^3.5.29
   vue-codemirror: ^6.1.1

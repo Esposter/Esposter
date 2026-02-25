@@ -577,8 +577,8 @@ catalogs:
       specifier: ^1.11.7
       version: 1.11.7
     vite-plugin-mkcert:
-      specifier: ^1.17.9
-      version: 1.17.9
+      specifier: ^1.17.10
+      version: 1.17.10
     vitest:
       specifier: ^4.0.18
       version: 4.0.18
@@ -1336,7 +1336,7 @@ importers:
         version: 1.0.0-beta.6(@vue/language-core@3.2.5)(esbuild@0.27.3)(rolldown@1.0.0-rc.5)(rollup@4.59.0)(typescript@5.9.3)(vite@8.0.0-beta.15(@types/node@25.3.0)(esbuild@0.27.3)(jiti@2.6.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(webpack@5.105.2(esbuild@0.27.3))
       vite-plugin-mkcert:
         specifier: 'catalog:'
-        version: 1.17.9(vite@8.0.0-beta.15(@types/node@25.3.0)(esbuild@0.27.3)(jiti@2.6.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
+        version: 1.17.10(vite@8.0.0-beta.15(@types/node@25.3.0)(esbuild@0.27.3)(jiti@2.6.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
 
   packages/db:
     dependencies:
@@ -11940,8 +11940,8 @@ packages:
       '@nuxt/kit':
         optional: true
 
-  vite-plugin-mkcert@1.17.9:
-    resolution: {integrity: sha512-SwI7yqp2Cq4r2XItarnHRCj2uzHPqevbxFNMLpyN+LDXd5w1vmZeM4l5X/wCZoP4mjPQYN+9+4kmE6e3nPO5fg==}
+  vite-plugin-mkcert@1.17.10:
+    resolution: {integrity: sha512-703hecAoGZYgNrkY76OIbo0M9j0tfGIIM6n7c0sYvhaczQMPwD0nFi+bS44d8kwdbCtV7885FYBWnTzhsaC7QQ==}
     engines: {node: '>=v16.7.0'}
     peerDependencies:
       vite: ^8.0.0-beta.15
@@ -24647,7 +24647,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  vite-plugin-mkcert@1.17.9(vite@8.0.0-beta.15(@types/node@25.3.0)(esbuild@0.27.3)(jiti@2.6.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)):
+  vite-plugin-mkcert@1.17.10(vite@8.0.0-beta.15(@types/node@25.3.0)(esbuild@0.27.3)(jiti@2.6.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)):
     dependencies:
       axios: 1.13.5(debug@4.4.3)
       debug: 4.4.3
