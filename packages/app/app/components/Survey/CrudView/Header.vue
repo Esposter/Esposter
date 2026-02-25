@@ -9,9 +9,3 @@
     </v-toolbar-title>
   </v-toolbar>
 </template>
-
-<style scoped lang="scss">
-:deep(.v-toolbar__content) {
-  height: auto;
-}
-</style>
