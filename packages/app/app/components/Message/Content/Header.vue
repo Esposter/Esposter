@@ -53,10 +53,3 @@ const placeholder = useRoomPlaceholder(currentRoom);
     </template>
   </v-toolbar>
 </template>
-
-<style scoped lang="scss">
-:deep(.v-toolbar__content) {
-  min-height: $app-bar-height;
-  height: auto;
-}
-</style>

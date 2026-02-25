@@ -49,9 +49,3 @@ const component = computed(() => (editedItem.value ? useEditFormComponent(edited
     </StyledEditFormDialog>
   </v-toolbar>
 </template>
-
-<style scoped lang="scss">
-:deep(.v-toolbar__content) {
-  height: auto;
-}
-</style>
