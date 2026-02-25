@@ -22,7 +22,7 @@ const menu = ref(false);
       <v-tooltip location="bottom" text="Menu">
         <template #activator="{ props: tooltipProps }">
           <v-avatar color="background">
-            <v-btn icon="mdi-dots-grid" variant="elevated" :="mergeProps(menuProps, tooltipProps)" />
+            <v-btn icon="mdi-dots-grid" :="mergeProps(menuProps, tooltipProps)" />
           </v-avatar>
         </template>
       </v-tooltip>
