@@ -9,7 +9,9 @@
       "Bash(file:*)",
       "Bash(head:*)",
       "mcp__vuetify-mcp__get_installation_guide",
-      "Bash(curl -s \"https://vuetify-nuxt-module.netlify.app/guide/nuxt-configuration.html\" 2>/dev/null | grep -A 5 \"disableVuetifyStyles\\\\|styles\" | head -40 || echo \"Cannot fetch\")"
+      "Bash(curl -s \"https://vuetify-nuxt-module.netlify.app/guide/nuxt-configuration.html\" 2>/dev/null | grep -A 5 \"disableVuetifyStyles\\\\|styles\" | head -40 || echo \"Cannot fetch\")",
+      "WebFetch(domain:github.com)",
+      "Bash(grep:*)"
     ]
   }
 }
