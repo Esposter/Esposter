@@ -7,12 +7,12 @@ export default defineVitestConfig({
     environment: "nuxt",
     hookTimeout: dayjs.duration(60, "seconds").asMilliseconds(),
     projects: [
-      // V4 schema-org tags:afterResolve unhandled rejection fixed by using node environment for server/** tests via environmentMatchGlobs
+      // V4 schema-org tags:afterResolve unhandled rejection fixed by using node environment for server/** tests
       {
         test: {
-          name: "node",
-          include: ["server/**"],
           environment: "node",
+          include: ["server/**"],
+          name: "node",
         },
       },
     ],
