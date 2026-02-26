@@ -5,5 +5,6 @@ import { dayjs } from "./shared/services/dayjs";
 export default defineVitestConfig({
   test: {
     hookTimeout: dayjs.duration(60, "seconds").asMilliseconds(),
+    setupFiles: ["./vitest.setup.ts"],
   },
 });
