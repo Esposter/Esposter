@@ -57,8 +57,8 @@ catalog:
   "@tresjs/cientos": ^5.4.0
   "@tresjs/core": ^5.5.0
   "@tresjs/nuxt": ^5.3.0
-  "@trpc/client": ^11.10.0
-  "@trpc/server": ^11.10.0
+  "@trpc/client": ^11.11.0
+  "@trpc/server": ^11.11.0
   "@types/data-urls": ^3.0.5
   "@types/dedent": ^0.7.2
   "@types/deep-equal": ^1.0.4
@@ -96,7 +96,7 @@ catalog:
   ajv-errors: ^3.0.0
   ajv-formats: ^3.0.1
   ajv-i18n: ^4.2.0
-  apexcharts: ^5.6.0
+  apexcharts: ^5.7.0
   better-auth: ^1.4.20
   codemirror: ^6.0.2
   crossws: ^0.4.4
@@ -104,7 +104,7 @@ catalog:
   data-urls: ^7.0.0
   dayjs: ^1.11.19
   debug: ^4.4.3
-  dedent: ^1.7.1
+  dedent: ^1.7.2
   defu: ^6.1.4
   dotenv: ^17.3.1
   drizzle-kit: ^0.31.9
@@ -160,7 +160,7 @@ catalog:
   oxlint: ^1.50.0
   p-progress: ^1.0.0
   pathe: ^2.0.3
-  pdfjs-dist: ^5.4.624
+  pdfjs-dist: ^5.5.207
   phaser: ^4.0.0-rc.6
   phaser3-rex-plugins: ^1.80.19
   pinia: ^3.0.4
@@ -173,7 +173,7 @@ catalog:
   rolldown-plugin-dts: ^0.22.2
   rxjs: ^7.8.2
   sass-embedded: ^1.97.3
-  sax: ^1.4.4
+  sax: ^1.5.0
   show-open-file-picker: ^0.4.0
   sql-highlight: ^6.1.0
   superjson: ^2.2.6
@@ -225,7 +225,7 @@ onlyBuiltDependencies:
 
 overrides:
   crossws: ^0.4.4
-  pdfjs-dist: ^5.4.624
+  pdfjs-dist: ^5.5.207
   vite: 8.0.0-beta.15
   vue-router: ^5.0.3
 
