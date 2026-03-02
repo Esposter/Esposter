@@ -79,7 +79,7 @@ export const mockSessionOnce = async (db: Context["db"], mockUser?: User): Promi
         })
         .returning(),
     );
-  const getSessionPayload: GetSessionPayload = { session: createSession(user.id), user };
+  const getSessionPayload = { session: createSession(user.id), user } as const satisfies GetSessionPayload;
   mocks.getSession.mockImplementationOnce(() => getSessionPayload);
   return getSessionPayload;
 };
