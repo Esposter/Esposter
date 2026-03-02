@@ -97,7 +97,7 @@ catalog:
   ajv-formats: ^3.0.1
   ajv-i18n: ^4.2.0
   apexcharts: ^5.7.0
-  better-auth: ^1.4.20
+  better-auth: ^1.5.1
   codemirror: ^6.0.2
   crossws: ^0.4.4
   ctix: ^2.7.2
