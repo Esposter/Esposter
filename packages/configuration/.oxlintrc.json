@@ -85,8 +85,5 @@
     "vue/define-props-destructuring": "off",
     "vue/no-required-prop-with-default": "off",
     "yoda": ["error", "never"]
-  },
-  "options": {
-    "typeAware": true
   }
 }

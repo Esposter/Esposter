@@ -1,5 +1,8 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "extends": ["packages/configuration/.oxlintrc.json"],
-  "ignorePatterns": ["packages"]
+  "ignorePatterns": ["packages"],
+  "options": {
+    "typeAware": true
+  }
 }
