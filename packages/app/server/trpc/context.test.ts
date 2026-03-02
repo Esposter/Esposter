@@ -1,6 +1,7 @@
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { Context } from "@@/server/trpc/context";
-import type { Session, User } from "better-auth";
+import type { User } from "@esposter/db-schema";
+import type { Session } from "better-auth";
 import type { PgliteDatabase } from "drizzle-orm/pglite";
 
 import { dayjs } from "#shared/services/dayjs";
@@ -21,6 +22,7 @@ const mocks = vi.hoisted(() => {
   const createdAt = new Date();
   const user: User = {
     createdAt,
+    deletedAt: null,
     email: "",
     emailVerified: true,
     id: crypto.randomUUID(),
