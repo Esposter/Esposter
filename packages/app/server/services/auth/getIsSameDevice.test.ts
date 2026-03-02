@@ -40,21 +40,23 @@ describe(getIsSameDevice, () => {
   test("different", () => {
     expect.hasAssertions();
 
-    const device = { sessionId, userId };
-    const session = {
-      session: {
-        createdAt,
-        expiresAt: createdAt,
-        id: sessionId,
-        ipAddress: "",
-        token: "",
-        updatedAt: createdAt,
-        userAgent: "",
-        userId: "",
-      },
-      user: { createdAt, email: "", emailVerified: false, id: "", image: "", name: "", updatedAt: createdAt },
-    };
-
-    expect(getIsSameDevice(device, session)).toBe(false);
+    expect(
+      getIsSameDevice(
+        { sessionId, userId },
+        {
+          session: {
+            createdAt,
+            expiresAt: createdAt,
+            id: sessionId,
+            ipAddress: "",
+            token: "",
+            updatedAt: createdAt,
+            userAgent: "",
+            userId: "",
+          },
+          user: { createdAt, email: "", emailVerified: false, id: "", image: "", name: "", updatedAt: createdAt },
+        },
+      ),
+    ).toBe(false);
   });
 });

@@ -8,9 +8,9 @@ import { TRPCError } from "@trpc/server";
 
 export const getIsRateLimited = (type: RateLimiterType) =>
   middleware(async ({ ctx, next, path }) => {
-    const session = await auth.api.getSession({ headers: ctx.headers });
+    const getSessionPayload = await auth.api.getSession({ headers: ctx.headers });
     const isProduction = useIsProduction();
-    if (!isProduction) return next({ ctx: { session } });
+    if (!isProduction) return next({ ctx: { getSessionPayload } });
 
     const forwardedFor = ctx.req.headers["x-forwarded-for"] as string | undefined;
     const ipAddress = forwardedFor ? takeOne(forwardedFor.split(",")).trim() : ctx.req.socket.remoteAddress;
@@ -18,13 +18,13 @@ export const getIsRateLimited = (type: RateLimiterType) =>
       console.warn(
         "Rate Limiter: Could not determine IP address. Bypassing middleware... This is expected for local production builds.",
       );
-      return next({ ctx: { session } });
+      return next({ ctx: { getSessionPayload } });
     }
 
     const rateLimiter = RateLimiterMap[type];
     try {
       const { msBeforeNext, remainingPoints } = await rateLimiter.consume(
-        session ? session.user.id : `${path}${ID_SEPARATOR}${ipAddress}`,
+        getSessionPayload ? getSessionPayload.user.id : `${path}${ID_SEPARATOR}${ipAddress}`,
       );
       if ("setHeader" in ctx.res) {
         ctx.res.setHeader("Retry-After", msBeforeNext / 1000);
@@ -36,5 +36,5 @@ export const getIsRateLimited = (type: RateLimiterType) =>
       throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
     }
 
-    return next({ ctx: { session } });
+    return next({ ctx: { getSessionPayload } });
   });

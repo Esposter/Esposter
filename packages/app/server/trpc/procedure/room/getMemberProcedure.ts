@@ -15,7 +15,7 @@ export const getMemberProcedure = <T extends z.ZodType>(schema: T, roomIdKey: ke
 
     const isMember = await ctx.db.query.usersToRooms.findFirst({
       where: (usersToRooms, { and, eq }) =>
-        and(eq(usersToRooms.userId, ctx.session.user.id), eq(usersToRooms.roomId, value)),
+        and(eq(usersToRooms.userId, ctx.getSessionPayload.user.id), eq(usersToRooms.roomId, value)),
     });
     if (!isMember) throw new TRPCError({ code: "UNAUTHORIZED" });
     return next();

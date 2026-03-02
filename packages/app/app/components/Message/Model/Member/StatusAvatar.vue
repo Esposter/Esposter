@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Session } from "@/models/auth/Session";
+import type { User } from "better-auth";
 import type { VAvatar } from "vuetify/components/VAvatar";
 
 import { StatusBadgePropsMap } from "@/services/message/StatusBadgePropsMap";
@@ -7,9 +7,9 @@ import { useStatusStore } from "@/store/message/user/status";
 // @TODO: https://github.com/vuejs/core/issues/11371
 interface StatusAvatarProps {
   avatarProps?: VAvatar["$props"];
-  id: Session["user"]["id"];
-  image: Session["user"]["image"];
-  name: Session["user"]["name"];
+  id: User["id"];
+  image: User["image"];
+  name: User["name"];
 }
 
 const { avatarProps, id, image, name } = defineProps<StatusAvatarProps>();
