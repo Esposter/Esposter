@@ -212,7 +212,7 @@ export const postRouter = router({
           await tx
             .update(posts)
             .set(rest)
-            .where(and(eq(posts.id, id), eq(posts.userId, ctx.session.user.id)))
+            .where(and(eq(posts.id, id), isNotNull(posts.parentId), eq(posts.userId, ctx.session.user.id)))
             .returning({ id: posts.id })
         )[0];
         if (!updatedComment)
