@@ -3,8 +3,8 @@ import type { Clause, CustomTableClient } from "@esposter/db-schema";
 import { createEmojiInputSchema } from "#shared/models/db/message/metadata/CreateEmojiInput";
 import { deleteEmojiInputSchema } from "#shared/models/db/message/metadata/DeleteEmojiInput";
 import {
-    MessageEmojiMetadataEntity,
-    MessageEmojiMetadataEntityPropertyNames,
+  MessageEmojiMetadataEntity,
+  MessageEmojiMetadataEntityPropertyNames,
 } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import { updateEmojiInputSchema } from "#shared/models/db/message/metadata/UpdateEmojiInput";
 import { createMessageEmojiMetadataEntity } from "#shared/services/message/createMessageEmojiMetadataEntity";
@@ -19,11 +19,11 @@ import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProce
 import { readMetadataInputSchema } from "@@/server/trpc/routers/message";
 import { createEntity, deleteEntity, getEntity, getTopNEntities, serializeClauses, updateEntity } from "@esposter/db";
 import {
-    AZURE_MAX_PAGE_SIZE,
-    AzureTable,
-    BinaryOperator,
-    MessageMetadataType,
-    selectRoomSchema,
+  AZURE_MAX_PAGE_SIZE,
+  AzureTable,
+  BinaryOperator,
+  MessageMetadataType,
+  selectRoomSchema,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -88,7 +88,10 @@ export const emojiRouter = router({
   deleteEmoji: getMemberProcedure(deleteEmojiInputSchema, "partitionKey").mutation(async ({ ctx, input }) => {
     const messagesMetadataClient = await useTableClient(AzureTable.MessagesMetadata);
     await deleteEntity(messagesMetadataClient, input.partitionKey, input.rowKey);
-    emojiEventEmitter.emit("deleteEmoji", [input, { sessionId: ctx.getSessionPayload.session.id, userId: ctx.getSessionPayload.user.id }]);
+    emojiEventEmitter.emit("deleteEmoji", [
+      input,
+      { sessionId: ctx.getSessionPayload.session.id, userId: ctx.getSessionPayload.user.id },
+    ]);
   }),
   onCreateEmoji: getMemberProcedure(onCreateEmojiInputSchema, "roomId").subscription(async function* ({
     ctx,

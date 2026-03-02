@@ -20,24 +20,24 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/survey/getCreatorProcedure";
 import {
-    cloneBlobUrls,
-    createEntity,
-    deleteDirectory,
-    generateDownloadFileSasUrls,
-    generateUploadFileSasEntities,
-    getEntity,
-    updateEntity,
+  cloneBlobUrls,
+  createEntity,
+  deleteDirectory,
+  generateDownloadFileSasUrls,
+  generateUploadFileSasEntities,
+  getEntity,
+  updateEntity,
 } from "@esposter/db";
 import {
-    AzureContainer,
-    AzureEntityType,
-    AzureTable,
-    DatabaseEntityType,
-    fileEntitySchema,
-    selectSurveySchema,
-    SurveyResponseEntity,
-    surveyResponseEntitySchema,
-    surveys,
+  AzureContainer,
+  AzureEntityType,
+  AzureTable,
+  DatabaseEntityType,
+  fileEntitySchema,
+  selectSurveySchema,
+  SurveyResponseEntity,
+  surveyResponseEntitySchema,
+  surveys,
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -95,8 +95,9 @@ export type UpdateSurveyResponseInput = z.infer<typeof updateSurveyResponseInput
 export const surveyRouter = router({
   count: standardAuthedProcedure.query(
     async ({ ctx }) =>
-      takeOne(await ctx.db.select({ count: count() }).from(surveys).where(eq(surveys.userId, ctx.getSessionPayload.user.id)))
-        .count,
+      takeOne(
+        await ctx.db.select({ count: count() }).from(surveys).where(eq(surveys.userId, ctx.getSessionPayload.user.id)),
+      ).count,
   ),
   createSurvey: standardAuthedProcedure.input(createSurveyInputSchema).mutation<Survey>(async ({ ctx, input }) => {
     const newSurvey = (

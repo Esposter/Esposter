@@ -1,6 +1,6 @@
 import {
-    TableEditorConfiguration,
-    tableEditorConfigurationSchema,
+  TableEditorConfiguration,
+  tableEditorConfigurationSchema,
 } from "#shared/models/tableEditor/data/TableEditorConfiguration";
 import { useDownload } from "@@/server/composables/azure/container/useDownload";
 import { useUpload } from "@@/server/composables/azure/container/useUpload";

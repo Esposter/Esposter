@@ -18,11 +18,11 @@ import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfani
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
 import {
-    DatabaseEntityType,
-    DerivedDatabaseEntityType,
-    PostRelations,
-    posts,
-    selectPostSchema,
+  DatabaseEntityType,
+  DerivedDatabaseEntityType,
+  PostRelations,
+  posts,
+  selectPostSchema,
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -222,7 +222,8 @@ export const postRouter = router({
           });
 
         const updatedCommentWithRelations = await tx.query.posts.findFirst({
-          where: (posts, { and, eq }) => and(eq(posts.id, updatedComment.id), eq(posts.userId, ctx.getSessionPayload.user.id)),
+          where: (posts, { and, eq }) =>
+            and(eq(posts.id, updatedComment.id), eq(posts.userId, ctx.getSessionPayload.user.id)),
           with: PostRelations,
         });
         if (!updatedCommentWithRelations)
@@ -250,7 +251,8 @@ export const postRouter = router({
           });
 
         const updatedPostWithRelations = await tx.query.posts.findFirst({
-          where: (posts, { and, eq }) => and(eq(posts.id, updatedPost.id), eq(posts.userId, ctx.getSessionPayload.user.id)),
+          where: (posts, { and, eq }) =>
+            and(eq(posts.id, updatedPost.id), eq(posts.userId, ctx.getSessionPayload.user.id)),
           with: PostRelations,
         });
         if (!updatedPostWithRelations)

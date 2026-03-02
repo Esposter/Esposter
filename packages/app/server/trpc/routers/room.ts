@@ -214,7 +214,10 @@ export const roomRouter = router({
         });
 
       const userToRoom = (
-        await tx.insert(usersToRooms).values({ roomId: invite.roomId, userId: ctx.getSessionPayload.user.id }).returning()
+        await tx
+          .insert(usersToRooms)
+          .values({ roomId: invite.roomId, userId: ctx.getSessionPayload.user.id })
+          .returning()
       )[0];
       if (!userToRoom)
         throw new TRPCError({
@@ -401,7 +404,10 @@ export const roomRouter = router({
   }),
   readRooms: getMemberProcedure(readRoomsInputSchema, "roomId").query(
     async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
-      const innerJoinCondition = and(eq(usersToRooms.roomId, rooms.id), eq(usersToRooms.userId, ctx.getSessionPayload.user.id));
+      const innerJoinCondition = and(
+        eq(usersToRooms.roomId, rooms.id),
+        eq(usersToRooms.userId, ctx.getSessionPayload.user.id),
+      );
       let pinnedRoom: Room | undefined;
 
       if (roomId) {
