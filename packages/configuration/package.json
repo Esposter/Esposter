@@ -1,6 +1,6 @@
 {
   "name": "@esposter/configuration",
-  "version": "2.18.2",
+  "version": "2.19.2",
   "private": true,
   "description": "A library that contains shared configuration.",
   "keywords": [
@@ -24,8 +24,8 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "lint": "oxlint --type-aware && eslint .",
-    "lint:fix": "oxlint --type-aware --fix && eslint --fix .",
+    "lint": "oxlint && eslint .",
+    "lint:fix": "oxlint --fix && eslint --fix .",
     "typecheck": "tsgo"
   },
   "devDependencies": {

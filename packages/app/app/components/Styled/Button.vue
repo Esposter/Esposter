@@ -10,7 +10,7 @@ const slots = defineSlots<Record<keyof VBtn["$slots"], () => VNode>>();
 </script>
 
 <template>
-  <v-btn class="button" un-color-white="!" :="buttonProps">
+  <v-btn class="button" un-color-white :="buttonProps">
     <template v-for="(_slot, name) of slots" #[name]>
       <slot :name />
     </template>
@@ -19,6 +19,6 @@ const slots = defineSlots<Record<keyof VBtn["$slots"], () => VNode>>();
 
 <style scoped lang="scss">
 .button {
-  background-image: $midnight-bloom !important;
+  background-image: $midnight-bloom;
 }
 </style>

@@ -1,19 +1,24 @@
+import type { Router } from "vue-router";
+
 import { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import { useEmojiStore } from "@/store/message/emoji";
 import { getMockSession } from "@@/server/trpc/context.test";
 import { MockContainerDatabase } from "azure-mock";
 import { createPinia, setActivePinia } from "pinia";
-import { afterEach, beforeEach, describe, expect, test } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe(useEmojiStore, () => {
+  let router: Router;
   const partitionKey = "partitionKey";
   const rowKey = "rowKey";
   const messageRowKey = "messageRowKey";
 
+  beforeAll(() => {
+    router = useRouter();
+  });
+
   beforeEach(() => {
     setActivePinia(createPinia());
-
-    const router = useRouter();
     router.currentRoute.value.params.id = crypto.randomUUID();
   });
 

@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.19.2](https://github.com/Esposter/Esposter/compare/v2.19.1...v2.19.2) (2026-02-05)
+
+**Note:** Version bump only for package @esposter/db-schema
+
+## [2.19.1](https://github.com/Esposter/Esposter/compare/v2.19.0...v2.19.1) (2026-02-05)
+
+**Note:** Version bump only for package @esposter/db-schema
+
+# [2.19.0](https://github.com/Esposter/Esposter/compare/v2.18.2...v2.19.0) (2026-02-05)
+
+### Bug Fixes
+
+* lint ([8de2c97](https://github.com/Esposter/Esposter/commit/8de2c976c7ead4bb24607b7f28a2d50006ab7202))
+* lint ([7ace84b](https://github.com/Esposter/Esposter/commit/7ace84b2f3add94d5f555c17d5f3751864f0427b))
+* oxlint ([3df2ec1](https://github.com/Esposter/Esposter/commit/3df2ec1ad17f36d77780656e27d3034cd3ac32de))
+
+### Features
+
+* **test:** add message tests ([3673b8e](https://github.com/Esposter/Esposter/commit/3673b8e6f0923a5761c058a333425617e639414d))
+* **test:** Add misc tests ([bcd0a9c](https://github.com/Esposter/Esposter/commit/bcd0a9c847f45a4686e126e2a10d5b8a9a704c10))
+* **test:** Add some omit tests ([0a44737](https://github.com/Esposter/Esposter/commit/0a44737e9535ed6de24533d40a670e41cdffdd73))
+* **test:** add some text tests ([1e251d1](https://github.com/Esposter/Esposter/commit/1e251d1b31a66127e4fb379bed5bc20274cd26b1))
+
 ## [2.18.2](https://github.com/Esposter/Esposter/compare/v2.18.1...v2.18.2) (2025-12-10)
 
 **Note:** Version bump only for package @esposter/db-schema

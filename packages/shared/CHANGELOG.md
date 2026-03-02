@@ -3,6 +3,43 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.19.2](https://github.com/Esposter/Esposter/compare/v2.19.1...v2.19.2) (2026-02-05)
+
+**Note:** Version bump only for package @esposter/shared
+
+## [2.19.1](https://github.com/Esposter/Esposter/compare/v2.19.0...v2.19.1) (2026-02-05)
+
+**Note:** Version bump only for package @esposter/shared
+
+# [2.19.0](https://github.com/Esposter/Esposter/compare/v2.18.2...v2.19.0) (2026-02-05)
+
+### Bug Fixes
+
+* add comments and fixup takeOne to just be semantically the same ([d0f74d7](https://github.com/Esposter/Esposter/commit/d0f74d747bd63b968c2a6739fd8a3815430233f7))
+* add more fixes ([01d99c3](https://github.com/Esposter/Esposter/commit/01d99c3999de559c97947d9548ee6d2926c2dc36))
+* cleanup to have interface in type folder ([e2ddc57](https://github.com/Esposter/Esposter/commit/e2ddc57fbaee004ae656c40aa18d13c06f83b13b))
+* directly use index access instead of find boolean ([69fdae5](https://github.com/Esposter/Esposter/commit/69fdae5efd850805ce06595e973c90bed4ddb430))
+* finally fix up all type issues ([179e963](https://github.com/Esposter/Esposter/commit/179e9639f3cfdf05e08aff88e4844748158f0a1c))
+* oxlint ([3df2ec1](https://github.com/Esposter/Esposter/commit/3df2ec1ad17f36d77780656e27d3034cd3ac32de))
+* remaining type issues ([8d87ab9](https://github.com/Esposter/Esposter/commit/8d87ab99a01f59fd70a05a0980a3180416e15bd6))
+* remove page ([cc94539](https://github.com/Esposter/Esposter/commit/cc94539eab89680f927f8d6c9f95bd40af34677e))
+* remove page ([b287b34](https://github.com/Esposter/Esposter/commit/b287b34cf1d899b1c304c300eb74f549dbf43506))
+* replace with takeOne ([845c9ed](https://github.com/Esposter/Esposter/commit/845c9ed7d1fd9d8b9a4d5e730f2f92ad03e3085d))
+
+### Features
+
+* Add fluid simulator ([6c37027](https://github.com/Esposter/Esposter/commit/6c370272187d3892c5bcf97ce6230fa8000d5248))
+* Add page ([d186eba](https://github.com/Esposter/Esposter/commit/d186eba58e1e8b1417d0831722876acfee3b67b3))
+* Add takeOne ([0924a39](https://github.com/Esposter/Esposter/commit/0924a3914d1d8cf2f863070d1e0dc98e13c2d1c4))
+* **test:** add basic tests ([c8779c4](https://github.com/Esposter/Esposter/commit/c8779c4e77457df8f2520d4cc9d08c120493d7e4))
+* **test:** add basic tests for text ([95af749](https://github.com/Esposter/Esposter/commit/95af749e61d30fa2daf4a5129190e013966624cd))
+* **test:** add basic tests for time ([0f4d55c](https://github.com/Esposter/Esposter/commit/0f4d55c42e524c9ec2bcc67d4964b2c73fa17b2f))
+* **test:** add message tests ([3673b8e](https://github.com/Esposter/Esposter/commit/3673b8e6f0923a5761c058a333425617e639414d))
+* **test:** Add misc tests ([bcd0a9c](https://github.com/Esposter/Esposter/commit/bcd0a9c847f45a4686e126e2a10d5b8a9a704c10))
+* **test:** add more tests + some refactors ([a0ec126](https://github.com/Esposter/Esposter/commit/a0ec12663c8b42ec91d6e87b949c7a21ce744cf1))
+* **test:** Add some misc tests ([593b66f](https://github.com/Esposter/Esposter/commit/593b66fdd1a6f3fc0d8d731a0316d4e0b861dc62))
+* **test:** add some text tests ([1e251d1](https://github.com/Esposter/Esposter/commit/1e251d1b31a66127e4fb379bed5bc20274cd26b1))
+
 ## [2.18.2](https://github.com/Esposter/Esposter/compare/v2.18.1...v2.18.2) (2025-12-10)
 
 **Note:** Version bump only for package @esposter/shared

@@ -21,6 +21,10 @@ const slots = defineSlots<{
   left?: () => VNode;
   right?: () => VNode;
 }>();
+const container = useTemplateRef("container");
+defineExpose({
+  container: computed<HTMLElement>(() => container.value?.$el),
+});
 const layoutStore = useLayoutStore();
 const { isDesktop, isLeftDrawerOpen, isLeftDrawerOpenAuto, isRightDrawerOpen, isRightDrawerOpenAuto } =
   storeToRefs(layoutStore);
@@ -77,7 +81,7 @@ onMounted(() => {
       <slot name="right" />
     </v-navigation-drawer>
     <!-- Set max height here so we can hide global window scrollbar -->
-    <v-main :style="{ ...middle, ...mainStyle, maxHeight: hideGlobalScrollbar ? '100dvh' : undefined }">
+    <v-main ref="container" :style="{ ...middle, ...mainStyle, maxHeight: hideGlobalScrollbar ? '100dvh' : undefined }">
       <slot />
     </v-main>
 

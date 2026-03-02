@@ -1,6 +1,6 @@
 {
   "name": "@esposter/azure-functions",
-  "version": "2.18.2",
+  "version": "2.19.2",
   "private": true,
   "description": "A library that contains webhook functionality.",
   "keywords": [
@@ -26,8 +26,8 @@
   "scripts": {
     "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts",
-    "lint": "oxlint --type-aware && eslint .",
-    "lint:fix": "oxlint --type-aware --fix && eslint --fix .",
+    "lint": "oxlint && eslint .",
+    "lint:fix": "oxlint --fix && eslint --fix .",
     "typecheck": "tsgo"
   },
   "dependencies": {

@@ -61,7 +61,14 @@ export const webhookRouter = router({
       const newWebhook = (
         await ctx.db
           .insert(webhooks)
-          .values({ creatorId: ctx.session.user.id, isActive: true, name, roomId, token, userId: newAppUser.id })
+          .values({
+            creatorId: ctx.getSessionPayload.user.id,
+            isActive: true,
+            name,
+            roomId,
+            token,
+            userId: newAppUser.id,
+          })
           .returning()
       )[0];
       if (!newWebhook)

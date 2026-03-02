@@ -24,7 +24,7 @@ export const pushSubscriptionRouter = router({
             endpoint,
             expirationTime: expirationTime ? new Date(expirationTime) : null,
             p256dh,
-            userId: ctx.session.user.id,
+            userId: ctx.getSessionPayload.user.id,
           })
           .onConflictDoUpdate({
             set: {
@@ -52,7 +52,7 @@ export const pushSubscriptionRouter = router({
     const deletedPushSubscription = (
       await ctx.db
         .delete(pushSubscriptions)
-        .where(and(eq(pushSubscriptions.endpoint, input), eq(pushSubscriptions.userId, ctx.session.user.id)))
+        .where(and(eq(pushSubscriptions.endpoint, input), eq(pushSubscriptions.userId, ctx.getSessionPayload.user.id)))
         .returning()
     )[0];
     if (!deletedPushSubscription)

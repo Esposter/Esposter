@@ -15,12 +15,12 @@ export type ReadUserAchievementsInput = z.infer<typeof readUserAchievementsInput
 export const achievementRouter = router({
   onUpdateAchievement: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {
     for await (const [data] of on(achievementEventEmitter, "updateAchievement", { signal })) {
-      const userAchievements = data.filter(({ userId }) => userId === ctx.session.user.id);
+      const userAchievements = data.filter(({ userId }) => userId === ctx.getSessionPayload.user.id);
       if (userAchievements.length > 0) yield userAchievements;
     }
   }),
   readAchievementMap: standardAuthedProcedure.query(async ({ ctx }) => {
-    const userId = ctx.session.user.id;
+    const userId = ctx.getSessionPayload.user.id;
     const unlockedUserAchievementNames = await ctx.db
       .select({ name: achievements.name })
       .from(userAchievements)
@@ -42,7 +42,7 @@ export const achievementRouter = router({
   readUserAchievements: standardRateLimitedProcedure
     .input(readUserAchievementsInputSchema)
     .query(async ({ ctx, input }) => {
-      const userId = input ?? ctx.session?.user.id;
+      const userId = input ?? ctx.getSessionPayload?.user.id;
       if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
 
       const joinedUserAchievements = await ctx.db

@@ -6,7 +6,7 @@ const { isLeftDrawerOpen, isLeftDrawerOpenAuto, isRightDrawerOpen, isRightDrawer
 </script>
 
 <template>
-  <v-toolbar>
+  <v-toolbar bg-transparent>
     <template v-if="!isLeftDrawerOpenAuto" #prepend>
       <v-tooltip text="Store">
         <template #activator="{ props }">

@@ -12,7 +12,7 @@ const { hasMore, members } = storeToRefs(memberStore);
 </script>
 
 <template>
-  <v-list density="compact" py-0 overflow-y-auto="!">
+  <v-list density="compact" py-0 overflow-y-auto>
     <template v-if="isPending">
       <MessageModelMemberSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
     </template>

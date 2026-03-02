@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import type DefaultLayout from "@/layouts/default.vue";
+import type { RenderTarget } from "three/webgpu";
+
+import { APP_BAR_HEIGHT } from "#shared/services/app/constants";
 import { WATERS_NORMALS_TEXTURE_PATH } from "@/services/visual/constants";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { Inspector } from "three/examples/jsm/inspector/Inspector.js";
@@ -15,8 +19,7 @@ import {
   PerspectiveCamera,
   PlaneGeometry,
   PMREMGenerator,
-  PostProcessing,
-  RenderTarget,
+  RenderPipeline,
   RepeatWrapping,
   Scene,
   TextureLoader,
@@ -24,32 +27,36 @@ import {
   WebGPURenderer,
 } from "three/webgpu";
 
-const containerRef = ref<HTMLElement | null>(null);
+const layout = useTemplateRef<{ layoutRef: InstanceType<typeof DefaultLayout> }>("layout");
 const parameters = { azimuth: 180, elevation: 2, exposure: 0.5 };
 let renderer: WebGPURenderer;
 let controls: OrbitControls;
-let renderPipeline: PostProcessing;
+let renderPipeline: RenderPipeline;
 let water: WaterMesh;
 let sky: SkyMesh;
 let box: Mesh<BoxGeometry, MeshStandardMaterial>;
 let pmremGenerator: PMREMGenerator;
 let renderTarget: RenderTarget | undefined;
+const toggleTop = `${APP_BAR_HEIGHT + 15}px`;
+const miniPanelTop = `${APP_BAR_HEIGHT + 60}px`;
+const getHeight = () => window.innerHeight - APP_BAR_HEIGHT;
 
 onMounted(async () => {
-  if (!containerRef.value) return;
+  const container = layout.value?.layoutRef.container;
+  if (!container) return;
   renderer = new WebGPURenderer();
   renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(window.innerWidth, getHeight());
   renderer.toneMapping = ACESFilmicToneMapping;
   renderer.toneMappingExposure = parameters.exposure;
   renderer.inspector = new Inspector();
-  containerRef.value.appendChild(renderer.domElement);
+  container.appendChild(renderer.domElement);
 
   const scene = new Scene();
-  const camera = new PerspectiveCamera(55, window.innerWidth / window.innerHeight, 1, 20000);
+  const camera = new PerspectiveCamera(55, window.innerWidth / getHeight(), 1, 20000);
   camera.position.set(30, 30, 100);
 
-  renderPipeline = new PostProcessing(renderer);
+  renderPipeline = new RenderPipeline(renderer);
   const scenePass = pass(scene, camera);
   const scenePassColor = scenePass.getTextureNode("output");
   const bloomPass = bloom(scenePassColor);
@@ -80,9 +87,9 @@ onMounted(async () => {
   sky.rayleigh.value = 2;
   sky.mieCoefficient.value = 0.005;
   sky.mieDirectionalG.value = 0.8;
-  // Sky.cloudCoverage.value = 0.4;
-  // Sky.cloudDensity.value = 0.5;
-  // Sky.cloudElevation.value = 0.5;
+  sky.cloudCoverage.value = 0.4;
+  sky.cloudDensity.value = 0.5;
+  sky.cloudElevation.value = 0.5;
 
   pmremGenerator = new PMREMGenerator(renderer);
   const sceneEnv = new Scene();
@@ -128,15 +135,15 @@ onMounted(async () => {
   const folderBloom = gui.addFolder("Bloom");
   folderBloom.add(bloomPass.strength, "value", 0, 3, 0.01).name("strength");
   folderBloom.add(bloomPass.radius, "value", 0, 1, 0.01).name("radius");
-  // Const folderClouds = gui.addFolder("Clouds");
-  // FolderClouds.add(sky.cloudCoverage, "value", 0, 1, 0.01).name("coverage");
-  // FolderClouds.add(sky.cloudDensity, "value", 0, 1, 0.01).name("density");
-  // FolderClouds.add(sky.cloudElevation, "value", 0, 1, 0.01).name("elevation");
+  const folderClouds = gui.addFolder("Clouds");
+  folderClouds.add(sky.cloudCoverage, "value", 0, 1, 0.01).name("coverage");
+  folderClouds.add(sky.cloudDensity, "value", 0, 1, 0.01).name("density");
+  folderClouds.add(sky.cloudElevation, "value", 0, 1, 0.01).name("elevation");
 
   useEventListener("resize", () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.aspect = window.innerWidth / getHeight();
     camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(window.innerWidth, getHeight());
   });
 
   const render = () => {
@@ -167,7 +174,16 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <NuxtLayout>
-    <div ref="containerRef" />
-  </NuxtLayout>
+  <NuxtLayout ref="layout" />
 </template>
+
+<style lang="scss">
+#profiler-toggle {
+  top: v-bind(toggleTop) !important;
+}
+// three.js profiler blocks the app menus since it is set to z-index 9999
+#profiler-mini-panel {
+  top: v-bind(miniPanelTop) !important;
+  z-index: 0 !important;
+}
+</style>

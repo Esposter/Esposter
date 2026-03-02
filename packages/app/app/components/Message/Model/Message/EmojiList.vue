@@ -35,7 +35,7 @@ const selectEmoji = await useSelectEmoji(message);
       v-for="{ partitionKey, rowKey, userIds, isReacted, emoji } of emojis"
       :key="rowKey"
       :class="isReacted ? 'reacted' : 'not-reacted'"
-      rd-full="!"
+      rd-full
       flex
       items-center
       px-2
@@ -57,7 +57,7 @@ const selectEmoji = await useSelectEmoji(message);
       "
     >
       {{ emoji }}
-      <span class="text-subtitle-2" pl-1>{{ userIds.length }}</span>
+      <span class="text-title-small" pl-1>{{ userIds.length }}</span>
     </div>
     <StyledEmojiPicker
       v-if="!isPreview"

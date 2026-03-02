@@ -3,7 +3,7 @@ const { "primary-lighten-1": primaryLighten1 } = useColors();
 </script>
 
 <template>
-  <NuxtLoadingIndicator class="loading-indicator" :height="2" :color="primaryLighten1" />
+  <NuxtLoadingIndicator class="loading-indicator" :height="2" :color="primaryLighten1?.toString()" />
 </template>
 
 <style scoped lang="scss">

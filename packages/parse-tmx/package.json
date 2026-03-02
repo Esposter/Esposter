@@ -1,6 +1,6 @@
 {
   "name": "parse-tmx",
-  "version": "2.18.2",
+  "version": "2.19.2",
   "description": "A parser for tmx.",
   "keywords": [
     "parser",
@@ -29,8 +29,8 @@
     "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
     "coverage": "vitest run --coverage",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts",
-    "lint": "oxlint --type-aware && eslint .",
-    "lint:fix": "oxlint --type-aware --fix && eslint --fix .",
+    "lint": "oxlint && eslint .",
+    "lint:fix": "oxlint --fix && eslint --fix .",
     "test": "vitest",
     "typecheck": "tsgo"
   },
@@ -39,9 +39,6 @@
     "@esposter/xml2js": "workspace:*",
     "data-urls": "catalog:",
     "dayjs": "catalog:"
-  },
-  "dependenciesCommon": {
-    "data-urls": "@TODO: https://github.com/rolldown/rolldown/issues/8172"
   },
   "devDependencies": {
     "@types/data-urls": "catalog:",

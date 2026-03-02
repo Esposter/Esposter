@@ -14,7 +14,7 @@ import { useVolumeStore } from "@/store/dungeons/settings/volume";
 import { exhaustiveGuard } from "@esposter/shared";
 import { Direction } from "grid-engine";
 
-let autoUpdateGridX = false;
+let isAutoUpdateGridX = false;
 
 export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () => {
   const dungeonsStore = useDungeonsStore();
@@ -43,15 +43,15 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
       if (x === undefined) return;
 
       SettingsOptionGrid.position.value.x = x;
-      autoUpdateGridX = true;
+      isAutoUpdateGridX = true;
     },
   );
 
   watch(
     () => SettingsOptionGrid.position.value.x,
     async () => {
-      if (autoUpdateGridX) {
-        autoUpdateGridX = false;
+      if (isAutoUpdateGridX) {
+        isAutoUpdateGridX = false;
         return;
       } else if (selectedSettingsOption.value === SettingsOption.Close) return;
 

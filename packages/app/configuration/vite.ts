@@ -5,6 +5,7 @@ import { commonjsDeps } from "@koumoul/vjsf/utils/build.js";
 export const vite: NuxtConfig["vite"] = {
   build: {
     // Fix phaser "Local data URIs are not supported"
+    // https://www.andrewzigler.com/blog/using-phaser-3-with-nuxt
     assetsInlineLimit: 0,
     // https://koumoul-dev.github.io/vuetify-jsonschema-form/latest/getting-started
     commonjsOptions: {

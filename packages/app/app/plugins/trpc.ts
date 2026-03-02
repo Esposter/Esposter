@@ -1,6 +1,7 @@
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { TRPCLink } from "@trpc/client";
 
+import { TRPC_WS_PATH } from "#shared/services/trpc/constants";
 import { transformer } from "#shared/services/trpc/transformer";
 import { TRPC_CLIENT_PATH } from "@/services/trpc/constants";
 import { errorLink } from "@/services/trpc/errorLink";
@@ -25,10 +26,9 @@ export default defineNuxtPlugin(() => {
   });
 
   if (getIsServer()) links.push(httpSplitLink);
-  // @TODO: Disabling for local development since it currently gives an infinite loop of invalid frame headers when trying to connect via ws
-  else if (isProduction) {
+  else {
     const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const wsClient = createWSClient({ url: `${wsProtocol}//${window.location.host}` });
+    const wsClient = createWSClient({ url: `${wsProtocol}//${window.location.host}${TRPC_WS_PATH}` });
     links.push(
       splitLink({
         condition: ({ type }) => type === "subscription",
