@@ -61,7 +61,7 @@ vi.mock(import("@@/server/composables/azure/table/useTableClient"), () => ({
   useTableClient: useTableClientMock,
 }));
 
-export const mockSessionOnce = async (db: Context["db"], mockUser?: User) => {
+export const mockSessionOnce = async (db: Context["db"], mockUser?: User): Promise<GetSessionPayload> => {
   const createdAt = new Date();
   const user =
     mockUser ??
@@ -79,9 +79,9 @@ export const mockSessionOnce = async (db: Context["db"], mockUser?: User) => {
         })
         .returning(),
     );
-  const session = { session: createSession(user.id), user };
-  mocks.getSession.mockImplementationOnce(() => session);
-  return session;
+  const getSessionPayload: GetSessionPayload = { session: createSession(user.id), user };
+  mocks.getSession.mockImplementationOnce(() => getSessionPayload);
+  return getSessionPayload;
 };
 
 export const getMockSession = () => mocks.getSession();
