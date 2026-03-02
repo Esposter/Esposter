@@ -1,5 +1,3 @@
-import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
-
 import { auth } from "@@/server/auth";
 import { useIsProduction } from "@@/server/composables/useIsProduction";
 import { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterType";
@@ -9,7 +7,7 @@ import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
 export const getIsRateLimited = (type: RateLimiterType) =>
-  middleware<AuthedContext>(async ({ ctx, next, path }) => {
+  middleware(async ({ ctx, next, path }) => {
     const getSessionPayload = await auth.api.getSession({ headers: ctx.headers });
     const isProduction = useIsProduction();
     if (!isProduction) return next({ ctx: { getSessionPayload } });
