@@ -1,9 +1,9 @@
 import type {
-  AzureUpdateEntity,
-  Clause,
-  FileSasEntity,
-  MessageEntity,
-  PushNotificationEventGridData,
+    AzureUpdateEntity,
+    Clause,
+    FileSasEntity,
+    MessageEntity,
+    PushNotificationEventGridData,
 } from "@esposter/db-schema";
 
 import { createTypingInputSchema } from "#shared/models/db/message/CreateTypingInput";
@@ -32,38 +32,38 @@ import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/message/getCreatorProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import {
-  cloneFiles,
-  createMessage,
-  deleteFiles,
-  generateDownloadFileSasUrls,
-  generateUploadFileSasEntities,
-  getBlobName,
-  getEntity,
-  getPushSubscriptionsForMessage,
-  getTableNullClause,
-  getTopNEntitiesByType,
-  serializeClauses,
-  updateEntity,
+    cloneFiles,
+    createMessage,
+    deleteFiles,
+    generateDownloadFileSasUrls,
+    generateUploadFileSasEntities,
+    getBlobName,
+    getEntity,
+    getPushSubscriptionsForMessage,
+    getTableNullClause,
+    getTopNEntitiesByType,
+    serializeClauses,
+    updateEntity,
 } from "@esposter/db";
 import {
-  AzureContainer,
-  AzureEntityType,
-  AzureFunction,
-  AzureTable,
-  AzureWebPubSubHub,
-  BinaryOperator,
-  DatabaseEntityType,
-  FileEntity,
-  fileEntitySchema,
-  getReverseTickedTimestamp,
-  MessageEntityMap,
-  MessageType,
-  rooms,
-  selectRoomSchema,
-  standardCreateMessageInputSchema,
-  StandardMessageEntity,
-  StandardMessageEntityPropertyNames,
-  standardMessageEntitySchema,
+    AzureContainer,
+    AzureEntityType,
+    AzureFunction,
+    AzureTable,
+    AzureWebPubSubHub,
+    BinaryOperator,
+    DatabaseEntityType,
+    FileEntity,
+    fileEntitySchema,
+    getReverseTickedTimestamp,
+    MessageEntityMap,
+    MessageType,
+    rooms,
+    selectRoomSchema,
+    standardCreateMessageInputSchema,
+    StandardMessageEntity,
+    StandardMessageEntityPropertyNames,
+    standardMessageEntitySchema,
 } from "@esposter/db-schema";
 import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
@@ -156,9 +156,9 @@ export const messageRouter = router({
       const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
       const newMessageEntity = await createMessage(messageClient, messageAscendingClient, {
         ...input,
-        userId: ctx.session.user.id,
+        userId: ctx.getSessionPayload.user.id,
       });
-      messageEventEmitter.emit("createMessage", [[newMessageEntity], { sessionId: ctx.session.session.id }]);
+      messageEventEmitter.emit("createMessage", [[newMessageEntity], { sessionId: ctx.getSessionPayload.session.id }]);
 
       const readPushSubscriptions = await getPushSubscriptionsForMessage(ctx.db, newMessageEntity);
       if (readPushSubscriptions.length > 0) {
@@ -170,7 +170,7 @@ export const messageRouter = router({
             rowKey: newMessageEntity.rowKey,
             userId: newMessageEntity.userId,
           },
-          notificationOptions: { icon: ctx.session.user.image, title: ctx.session.user.name },
+          notificationOptions: { icon: ctx.getSessionPayload.user.image, title: ctx.getSessionPayload.user.name },
         };
         await eventGridPublisherClient.send([
           {
@@ -198,7 +198,7 @@ export const messageRouter = router({
   createTyping: getMemberProcedure(createTypingInputSchema, "roomId")
     // Query instead of mutation as there are no concurrency issues with ordering for simply emitting
     .query(({ ctx, input }) => {
-      messageEventEmitter.emit("createTyping", { ...input, sessionId: ctx.session.session.id });
+      messageEventEmitter.emit("createTyping", { ...input, sessionId: ctx.getSessionPayload.session.id });
     }),
   deleteFile: getCreatorProcedure(deleteFileInputSchema).mutation(
     async ({ ctx: { messageClient, messageEntity }, input: { id, partitionKey, rowKey } }) => {
@@ -249,7 +249,7 @@ export const messageRouter = router({
   ),
   forwardMessage: getMemberProcedure(forwardMessageInputSchema, "partitionKey").mutation(
     async ({ ctx, input: { message, partitionKey, roomIds, rowKey } }) => {
-      await isMember(ctx.db, ctx.session, roomIds);
+      await isMember(ctx.db, ctx.getSessionPayload, roomIds);
 
       const messageClient = await useTableClient(AzureTable.Messages);
       const messageEntity = await getEntity(messageClient, StandardMessageEntity, partitionKey, rowKey);
@@ -273,7 +273,7 @@ export const messageRouter = router({
             replyRowKey: undefined,
             roomId,
             type: MessageType.Message,
-            userId: ctx.session.user.id,
+            userId: ctx.getSessionPayload.user.id,
           });
           const messages = [forward];
 
@@ -282,7 +282,7 @@ export const messageRouter = router({
               message,
               roomId,
               type: MessageType.Message,
-              userId: ctx.session.user.id,
+              userId: ctx.getSessionPayload.user.id,
             });
             messages.push(newMessageEntity);
           }
@@ -290,7 +290,7 @@ export const messageRouter = router({
           // So we'll instead rely on the subscription to auto-add the forwarded message for convenience
           messageEventEmitter.emit("createMessage", [
             messages,
-            { isSendToSelf: true, sessionId: ctx.session.session.id },
+            { isSendToSelf: true, sessionId: ctx.getSessionPayload.session.id },
           ]);
         }),
       );
@@ -315,7 +315,7 @@ export const messageRouter = router({
         abortSignal: signal,
         groups: [roomId],
         roles: [`webPubSub.joinLeaveGroup.${roomId}`],
-        userId: getDeviceId({ sessionId: ctx.session.session.id, userId: ctx.session.user.id }),
+        userId: getDeviceId({ sessionId: ctx.getSessionPayload.session.id, userId: ctx.getSessionPayload.user.id }),
       });
       return url;
     },
@@ -354,7 +354,7 @@ export const messageRouter = router({
       for (const newMessage of data)
         if (
           isRoomId(newMessage.partitionKey, roomId) &&
-          (isSendToSelf || !getIsSameDevice({ sessionId, userId: newMessage.userId }, ctx.session))
+          (isSendToSelf || !getIsSameDevice({ sessionId, userId: newMessage.userId }, ctx.getSessionPayload))
         )
           dataToYield.push(newMessage);
 
@@ -370,7 +370,7 @@ export const messageRouter = router({
     signal,
   }) {
     for await (const [data] of on(messageEventEmitter, "createTyping", { signal }))
-      if (data.roomId === input.roomId && !getIsSameDevice(data, ctx.session)) yield data;
+      if (data.roomId === input.roomId && !getIsSameDevice(data, ctx.getSessionPayload)) yield data;
   }),
   onDeleteMessage: getMemberProcedure(onDeleteMessageInputSchema, "roomId").subscription(async function* ({
     input,
@@ -397,11 +397,11 @@ export const messageRouter = router({
       replyRowKey: input.rowKey,
       roomId: input.partitionKey,
       type: MessageType.PinMessage,
-      userId: ctx.session.user.id,
+      userId: ctx.getSessionPayload.user.id,
     });
     messageEventEmitter.emit("createMessage", [
       [systemMessage],
-      { isSendToSelf: true, sessionId: ctx.session.session.id },
+      { isSendToSelf: true, sessionId: ctx.getSessionPayload.session.id },
     ]);
   }),
   readMessages: getMemberProcedure(readMessagesInputSchema, "roomId").query(({ input }) => readMessages(input)),

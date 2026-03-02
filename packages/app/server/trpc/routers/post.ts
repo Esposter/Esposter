@@ -18,11 +18,11 @@ import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfani
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
 import {
-  DatabaseEntityType,
-  DerivedDatabaseEntityType,
-  PostRelations,
-  posts,
-  selectPostSchema,
+    DatabaseEntityType,
+    DerivedDatabaseEntityType,
+    PostRelations,
+    posts,
+    selectPostSchema,
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -67,7 +67,7 @@ export const postRouter = router({
               createdAt,
               depth: parentPost.depth + 1,
               ranking: ranking(0, createdAt),
-              userId: ctx.session.user.id,
+              userId: ctx.getSessionPayload.user.id,
             })
             .returning({ id: posts.id })
         )[0];
@@ -109,7 +109,7 @@ export const postRouter = router({
               ...input,
               createdAt,
               ranking: ranking(0, createdAt),
-              userId: ctx.session.user.id,
+              userId: ctx.getSessionPayload.user.id,
             })
             .returning({ id: posts.id })
         )[0];
@@ -137,7 +137,7 @@ export const postRouter = router({
       const deletedComment = (
         await tx
           .delete(posts)
-          .where(and(eq(posts.id, input), eq(posts.userId, ctx.session.user.id), isNotNull(posts.parentId)))
+          .where(and(eq(posts.id, input), eq(posts.userId, ctx.getSessionPayload.user.id), isNotNull(posts.parentId)))
           .returning()
       )[0];
       const postId = deletedComment?.parentId;
@@ -171,7 +171,7 @@ export const postRouter = router({
     const deletedPost = (
       await ctx.db
         .delete(posts)
-        .where(and(eq(posts.id, input), eq(posts.userId, ctx.session.user.id), isNull(posts.parentId)))
+        .where(and(eq(posts.id, input), eq(posts.userId, ctx.getSessionPayload.user.id), isNull(posts.parentId)))
         .returning()
     )[0];
     if (!deletedPost)
@@ -212,7 +212,7 @@ export const postRouter = router({
           await tx
             .update(posts)
             .set(rest)
-            .where(and(eq(posts.id, id), eq(posts.userId, ctx.session.user.id)))
+            .where(and(eq(posts.id, id), eq(posts.userId, ctx.getSessionPayload.user.id)))
             .returning({ id: posts.id })
         )[0];
         if (!updatedComment)
@@ -222,7 +222,7 @@ export const postRouter = router({
           });
 
         const updatedCommentWithRelations = await tx.query.posts.findFirst({
-          where: (posts, { and, eq }) => and(eq(posts.id, updatedComment.id), eq(posts.userId, ctx.session.user.id)),
+          where: (posts, { and, eq }) => and(eq(posts.id, updatedComment.id), eq(posts.userId, ctx.getSessionPayload.user.id)),
           with: PostRelations,
         });
         if (!updatedCommentWithRelations)
@@ -240,7 +240,7 @@ export const postRouter = router({
           await tx
             .update(posts)
             .set(rest)
-            .where(and(eq(posts.id, id), isNull(posts.parentId), eq(posts.userId, ctx.session.user.id)))
+            .where(and(eq(posts.id, id), isNull(posts.parentId), eq(posts.userId, ctx.getSessionPayload.user.id)))
             .returning({ id: posts.id })
         )[0];
         if (!updatedPost)
@@ -250,7 +250,7 @@ export const postRouter = router({
           });
 
         const updatedPostWithRelations = await tx.query.posts.findFirst({
-          where: (posts, { and, eq }) => and(eq(posts.id, updatedPost.id), eq(posts.userId, ctx.session.user.id)),
+          where: (posts, { and, eq }) => and(eq(posts.id, updatedPost.id), eq(posts.userId, ctx.getSessionPayload.user.id)),
           with: PostRelations,
         });
         if (!updatedPostWithRelations)

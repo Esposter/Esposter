@@ -12,12 +12,12 @@ import { router } from "@@/server/trpc";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/room/getCreatorProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import {
-  appUsers,
-  DatabaseEntityType,
-  selectAppUserSchema,
-  selectRoomSchema,
-  WebhookRelations,
-  webhooks,
+    appUsers,
+    DatabaseEntityType,
+    selectAppUserSchema,
+    selectRoomSchema,
+    WebhookRelations,
+    webhooks,
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -61,7 +61,7 @@ export const webhookRouter = router({
       const newWebhook = (
         await ctx.db
           .insert(webhooks)
-          .values({ creatorId: ctx.session.user.id, isActive: true, name, roomId, token, userId: newAppUser.id })
+          .values({ creatorId: ctx.getSessionPayload.user.id, isActive: true, name, roomId, token, userId: newAppUser.id })
           .returning()
       )[0];
       if (!newWebhook)
