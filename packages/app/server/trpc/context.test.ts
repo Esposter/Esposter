@@ -61,7 +61,7 @@ vi.mock(import("@@/server/composables/azure/table/useTableClient"), () => ({
   useTableClient: useTableClientMock,
 }));
 
-export const mockSessionOnce = async (db: Context["db"], mockUser?: User): Promise<GetSessionPayload> => {
+export const mockSessionOnce = async (db: Context["db"], mockUser?: User) => {
   const createdAt = new Date();
   const user =
     mockUser ??
