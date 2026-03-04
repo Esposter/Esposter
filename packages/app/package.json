@@ -43,6 +43,7 @@
     "@azure/storage-blob": "catalog:",
     "@azure/web-pubsub": "catalog:",
     "@azure/web-pubsub-client": "catalog:",
+    "@better-auth/drizzle-adapter": "catalog:",
     "@codemirror/lang-vue": "catalog:",
     "@codemirror/language": "catalog:",
     "@codemirror/language-data": "catalog:",
