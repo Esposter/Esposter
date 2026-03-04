@@ -39,7 +39,7 @@ catalog:
   "@fullcalendar/interaction": ^6.1.20
   "@fullcalendar/timegrid": ^6.1.20
   "@fullcalendar/vue3": ^6.1.20
-  "@koumoul/vjsf": ^3.26.1
+  "@koumoul/vjsf": ^4.0.0
   "@lerna-lite/cli": ^4.11.3
   "@lerna-lite/publish": ^4.11.3
   "@lerna-lite/run": ^4.11.3
@@ -83,8 +83,8 @@ catalog:
   "@types/web-push": ^3.6.4
   "@types/ws": ^8.18.1
   "@types/xml2js": ^0.4.14
-  "@unocss/eslint-config": ^66.6.4
-  "@unocss/nuxt": ^66.6.4
+  "@unocss/eslint-config": ^66.6.5
+  "@unocss/nuxt": ^66.6.5
   "@vite-pwa/nuxt": ^1.1.1
   "@vitejs/plugin-vue": ^6.0.4
   "@vitest/coverage-v8": ^4.0.18
@@ -104,8 +104,8 @@ catalog:
   ajv-errors: ^3.0.0
   ajv-formats: ^3.0.1
   ajv-i18n: ^4.2.0
-  apexcharts: ^5.10.0
-  better-auth: ^1.5.2
+  apexcharts: ^5.10.1
+  better-auth: ^1.5.3
   codemirror: ^6.0.2
   crossws: ^0.4.4
   ctix: ^2.7.5
@@ -185,10 +185,10 @@ catalog:
   show-open-file-picker: ^0.4.0
   sql-highlight: ^6.1.0
   superjson: ^2.2.6
-  survey-core: ^2.5.13
-  survey-creator-core: ^2.5.13
-  survey-creator-vue: ^2.5.13
-  survey-vue3-ui: ^2.5.13
+  survey-core: ^2.5.14
+  survey-creator-core: ^2.5.14
+  survey-creator-vue: ^2.5.14
+  survey-vue3-ui: ^2.5.14
   three: ^0.183.2
   three-globe: ^2.45.0
   trpc-nuxt: ^2.0.1
@@ -197,7 +197,7 @@ catalog:
   typedoc: ^0.28.17
   typescript: ^5.9.3
   typescript-eslint: ^8.56.1
-  unocss: ^66.6.4
+  unocss: ^66.6.5
   unplugin-auto-import: ^21.0.0
   unplugin-dts: ^1.0.0-beta.6
   v-viewer: ^3.0.23
@@ -211,7 +211,7 @@ catalog:
   vue-router: ^5.0.3
   vue-tsc: ^3.2.5
   vue3-apexcharts: ^1.11.1
-  vuetify: ^4.0.0
+  vuetify: ^4.0.1
   vuetify-nuxt-module: ^0.19.5
   web-push: ^3.6.7
   worker-timers: ^8.0.30
