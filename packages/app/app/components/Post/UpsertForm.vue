@@ -45,7 +45,7 @@ const isValid = ref(true);
         </v-row>
         <v-row>
           <v-col flex justify-end>
-            <StyledButton type="submit" :button-props="{ disabled: !isValid, text: 'Post' }" />
+            <StyledButton type="submit" :button-props="{ disabled: !isValid, text: 'Edit Post' }" />
           </v-col>
         </v-row>
       </v-container>

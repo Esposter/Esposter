@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { UserAchievementWithDefinition } from "#shared/models/achievement/UserAchievementWithDefinition";
 
+import { prettify } from "@/util/text/prettify";
+
 interface NotificationListItemProps {
   userAchievement: UserAchievementWithDefinition;
 }
@@ -27,7 +29,7 @@ const emit = defineEmits<{ close: [] }>();
       <v-icon mr-3 :icon="userAchievement.achievement.icon" size="large" />
       <div>
         <div class="text-title-large" font-bold>Achievement Unlocked!</div>
-        <div class="text-body-large">{{ userAchievement.achievement.name }}</div>
+        <div class="text-body-large">{{ prettify(userAchievement.achievement.name) }}</div>
         <div class="text-body-small">{{ userAchievement.achievement.description }}</div>
         <div class="text-body-small" text-orange font-bold>+{{ userAchievement.achievement.points }} points</div>
       </div>
