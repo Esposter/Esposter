@@ -67,7 +67,7 @@ declare module "nitropack/types" {
 declare module "nuxt/schema" {
   interface NuxtConfig {
     pwa?: PwaModuleOptions;
-    security?: SecurityModuleOptions;
+    security?: Partial<SecurityModuleOptions>;
     site?: Partial<ModuleOptions>;
     unocss?: UnocssNuxtOptions;
     vuetify?: VuetifyModuleOptions;
