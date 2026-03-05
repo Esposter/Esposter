@@ -119,7 +119,7 @@ const moveOneCard = () => {
 };
 
 // Everytime the screen changes we animate, this is to avoid the cards getting stuck in weird positions.
-const { thresholds, width } = useDisplay();
+const { thresholds, width } = useVDisplay();
 
 const gap = computed<string>(() => {
   let gap = 2;

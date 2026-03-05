@@ -5,7 +5,7 @@ import { RoutePath } from "@esposter/shared";
 
 definePageMeta({ middleware: "auth" });
 
-const { smAndDown } = useDisplay();
+const { smAndDown } = useVDisplay();
 const sections: SideBarItem[] = [{ href: RoutePath.UserSettings, title: "General" }];
 </script>
 
