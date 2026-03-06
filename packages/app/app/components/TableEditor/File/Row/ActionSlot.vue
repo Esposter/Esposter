@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { Column } from "#shared/models/tableEditor/file/Column";
+import type { ColumnItem } from "#shared/models/tableEditor/file/ColumnItem";
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 
 interface ActionSlotProps {
-  columns: Column[];
+  columns: ColumnItem[];
   index: number;
   row: DataSource["rows"][number];
 }

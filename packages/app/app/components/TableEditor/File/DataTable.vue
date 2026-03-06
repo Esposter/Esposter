@@ -3,7 +3,7 @@ import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 
 const { dataSource } = defineProps<{ dataSource: DataSource }>();
 const headers = computed(() => [
-  ...dataSource.columns.map((column) => ({ key: column.fieldName, title: column.sourceFieldName })),
+  ...dataSource.columns.map((column) => ({ key: column.name, title: column.sourceName })),
   { key: "actions", sortable: false, title: "Actions" },
 ]);
 </script>

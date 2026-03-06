@@ -40,7 +40,7 @@ const accept = computed(() => {
             :label="`Select ${selectedDataSourceType} file`"
             density="compact"
             hide-details
-            @update:model-value="file = $event ?? null"
+            @update:model-value="file = Array.isArray($event) ? ($event[0] ?? null) : ($event ?? null)"
           />
         </v-col>
         <v-col v-if="selectedDataSourceType === DataSourceType.Csv" cols="12">

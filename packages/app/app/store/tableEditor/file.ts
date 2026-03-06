@@ -21,11 +21,11 @@ export const useFileTableEditorStore = defineStore("tableEditor/file", () => {
     rows[index] = updated;
     dataSource.value = { ...dataSource.value, rows };
   };
-  const deleteColumn = (fieldName: string) => {
+  const deleteColumn = (name: string) => {
     if (!dataSource.value) return;
-    const columns = dataSource.value.columns.filter((column) => column.fieldName !== fieldName);
+    const columns = dataSource.value.columns.filter((column) => column.name !== name);
     const rows = dataSource.value.rows.map((row) => {
-      const { [fieldName]: _, ...rest } = row;
+      const { [name]: _, ...rest } = row;
       return rest;
     });
     dataSource.value = { ...dataSource.value, columns, rows };

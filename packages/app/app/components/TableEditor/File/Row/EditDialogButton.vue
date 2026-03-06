@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { Column } from "#shared/models/tableEditor/file/Column";
+import type { ColumnItem } from "#shared/models/tableEditor/file/ColumnItem";
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { useFileTableEditorStore } from "@/store/tableEditor/file";
 
 interface EditDialogButtonProps {
-  columns: Column[];
+  columns: ColumnItem[];
   index: number;
   row: DataSource["rows"][number];
 }
@@ -35,17 +35,17 @@ const editedRow = ref({ ...row });
       </v-tooltip>
     </template>
     <v-container fluid>
-      <v-row v-for="column of columns" :key="column.fieldName">
+      <v-row v-for="column of columns" :key="column.name">
         <v-col cols="12">
           <v-checkbox
             v-if="column.type === ColumnType.Boolean"
-            v-model="editedRow[column.fieldName]"
-            :label="column.sourceFieldName"
+            v-model="editedRow[column.name]"
+            :label="column.sourceName"
           />
           <v-text-field
             v-else
-            v-model="editedRow[column.fieldName]"
-            :label="column.sourceFieldName"
+            v-model="editedRow[column.name]"
+            :label="column.sourceName"
             :type="column.type === ColumnType.Number ? 'number' : column.type === ColumnType.Date ? 'date' : 'text'"
             density="compact"
           />

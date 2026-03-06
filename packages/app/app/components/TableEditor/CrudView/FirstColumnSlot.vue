@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ColumnItem } from "#shared/models/tableEditor/file/ColumnItem";
 import type { TodoListItem } from "#shared/models/tableEditor/todoList/TodoListItem";
 import type { VuetifyComponentItem } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 
@@ -7,7 +8,7 @@ import { getItemCategoryDefinition } from "@/services/tableEditor/getItemCategor
 import { useTableEditorStore } from "@/store/tableEditor";
 
 interface TableEditorCrudViewFirstColumnSlotProps {
-  item: TodoListItem | VuetifyComponentItem;
+  item: ColumnItem | TodoListItem | VuetifyComponentItem;
 }
 
 const { item } = defineProps<TableEditorCrudViewFirstColumnSlotProps>();
