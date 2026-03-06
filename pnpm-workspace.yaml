@@ -48,7 +48,6 @@ catalog:
   "@mdi/font": ^7.4.47
   "@nuxt/eslint": ^1.15.2
   "@nuxt/fonts": ^0.14.0
-  "@nuxt/hints": ^1.0.0-alpha.10
   "@nuxt/scripts": ^0.13.2
   "@nuxt/test-utils": ^4.0.0
   "@nuxtjs/seo": ^3.4.0

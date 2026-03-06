@@ -120,9 +120,6 @@ catalogs:
     '@nuxt/fonts':
       specifier: ^0.14.0
       version: 0.14.0
-    '@nuxt/hints':
-      specifier: ^1.0.0-alpha.10
-      version: 1.0.0-alpha.10
     '@nuxt/scripts':
       specifier: ^0.13.2
       version: 0.13.2
@@ -1089,9 +1086,6 @@ importers:
       '@nuxt/fonts':
         specifier: 'catalog:'
         version: 0.14.0(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/storage-blob@12.31.0)(db0@0.3.4(@electric-sql/pglite@0.3.15)(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.15)(@prisma/client@7.4.2(prisma@7.4.2(@types/react@19.2.14)(magicast@0.5.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3))(typescript@5.9.3))(kysely@0.28.11)(mysql2@3.15.3)(postgres@3.4.8)(prisma@7.4.2(@types/react@19.2.14)(magicast@0.5.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3)))(mysql2@3.15.3))(ioredis@5.10.0)(magicast@0.5.2)(srvx@0.11.8)(vite@8.0.0-beta.16(@types/node@25.3.5)(esbuild@0.27.3)(jiti@2.6.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
-      '@nuxt/hints':
-        specifier: 'catalog:'
-        version: 1.0.0-alpha.10(761229cfc742ba0cdcde83cfdf48c110)
       '@nuxt/scripts':
         specifier: 'catalog:'
         version: 0.13.2(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/storage-blob@12.31.0)(@unhead/vue@2.1.10(vue@3.5.29(typescript@5.9.3)))(db0@0.3.4(@electric-sql/pglite@0.3.15)(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.15)(@prisma/client@7.4.2(prisma@7.4.2(@types/react@19.2.14)(magicast@0.5.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3))(typescript@5.9.3))(kysely@0.28.11)(mysql2@3.15.3)(postgres@3.4.8)(prisma@7.4.2(@types/react@19.2.14)(magicast@0.5.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3)))(mysql2@3.15.3))(ioredis@5.10.0)(magicast@0.5.2)(srvx@0.11.8)(typescript@5.9.3)(vue@3.5.29(typescript@5.9.3))
@@ -3514,9 +3508,6 @@ packages:
 
   '@nuxt/fonts@0.14.0':
     resolution: {integrity: sha512-4uXQl9fa5F4ibdgU8zomoOcyMdnwgdem+Pi8JEqeDYI5yPR32Kam6HnuRr47dTb97CstaepAvXPWQUUHMtjsFQ==}
-
-  '@nuxt/hints@1.0.0-alpha.10':
-    resolution: {integrity: sha512-XwHJ+CWodaUYDACcOQNH3MFCdAquWn/pSb0ciZRLzr1mUQUl/9+6XKU2j+fLFfaULcBtaIoJS4RAYkOQqf/2kQ==}
 
   '@nuxt/icon@2.2.1':
     resolution: {integrity: sha512-GI840yYGuvHI0BGDQ63d6rAxGzG96jQcWrnaWIQKlyQo/7sx9PjXkSHckXUXyX1MCr9zY6U25Td6OatfY6Hklw==}
@@ -12524,9 +12515,6 @@ packages:
     engines: {node: '>= 16'}
     hasBin: true
 
-  web-vitals@5.1.0:
-    resolution: {integrity: sha512-ArI3kx5jI0atlTtmV0fWU3fjpLmq/nD3Zr1iFFlJLaqa5wLBkUSzINwBPySCX/8jRyjlmy1Volw1kz1g9XE4Jg==}
-
   webfontloader@1.6.28:
     resolution: {integrity: sha512-Egb0oFEga6f+nSgasH3E0M405Pzn6y3/9tOVanv/DLfa1YBIgcv90L18YyWnvXkRbIM17v5Kv6IT2N6g1x5tvQ==}
 
@@ -15519,61 +15507,6 @@ snapshots:
       - srvx
       - uploadthing
       - vite
-
-  '@nuxt/hints@1.0.0-alpha.10(761229cfc742ba0cdcde83cfdf48c110)':
-    dependencies:
-      '@nuxt/devtools-kit': 3.2.2(magicast@0.5.2)(vite@8.0.0-beta.16(@types/node@25.3.5)(esbuild@0.27.3)(jiti@2.6.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
-      '@nuxt/kit': 4.3.1(magicast@0.5.2)
-      consola: 3.4.2
-      h3: 1.15.5(srvx@0.11.8)
-      knitwork: 1.3.0
-      magic-string: 0.30.21
-      nitropack: 2.13.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/storage-blob@12.31.0)(@electric-sql/pglite@0.3.15)(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.15)(@prisma/client@7.4.2(prisma@7.4.2(@types/react@19.2.14)(magicast@0.5.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3))(typescript@5.9.3))(kysely@0.28.11)(mysql2@3.15.3)(postgres@3.4.8)(prisma@7.4.2(@types/react@19.2.14)(magicast@0.5.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3)))(mysql2@3.15.3)(rolldown@1.0.0-rc.7)(srvx@0.11.8)
-      oxc-parser: 0.115.0
-      sirv: 3.0.2
-      unplugin: 3.0.0
-      unstorage: 1.17.4(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/storage-blob@12.31.0)(db0@0.3.4(@electric-sql/pglite@0.3.15)(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.15)(@prisma/client@7.4.2(prisma@7.4.2(@types/react@19.2.14)(magicast@0.5.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3))(typescript@5.9.3))(kysely@0.28.11)(mysql2@3.15.3)(postgres@3.4.8)(prisma@7.4.2(@types/react@19.2.14)(magicast@0.5.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3)))(mysql2@3.15.3))(ioredis@5.10.0)(srvx@0.11.8)
-      valibot: 1.2.0(typescript@5.9.3)
-      vite-plugin-vue-tracer: 1.2.0(vite@8.0.0-beta.16(@types/node@25.3.5)(esbuild@0.27.3)(jiti@2.6.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(vue@3.5.29(typescript@5.9.3))
-      web-vitals: 5.1.0
-    transitivePeerDependencies:
-      - '@azure/app-configuration'
-      - '@azure/cosmos'
-      - '@azure/data-tables'
-      - '@azure/identity'
-      - '@azure/keyvault-secrets'
-      - '@azure/storage-blob'
-      - '@capacitor/preferences'
-      - '@deno/kv'
-      - '@electric-sql/pglite'
-      - '@libsql/client'
-      - '@netlify/blobs'
-      - '@planetscale/database'
-      - '@upstash/redis'
-      - '@vercel/blob'
-      - '@vercel/functions'
-      - '@vercel/kv'
-      - aws4fetch
-      - bare-abort-controller
-      - bare-buffer
-      - better-sqlite3
-      - db0
-      - drizzle-orm
-      - encoding
-      - idb-keyval
-      - ioredis
-      - magicast
-      - mysql2
-      - react-native-b4a
-      - rolldown
-      - sqlite3
-      - srvx
-      - supports-color
-      - typescript
-      - uploadthing
-      - vite
-      - vue
-      - xml2js
 
   '@nuxt/icon@2.2.1(magicast@0.5.2)(vite@8.0.0-beta.16(@types/node@25.3.5)(esbuild@0.27.3)(jiti@2.6.1)(sass-embedded@1.97.3)(sass@1.97.3)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(vue@3.5.29(typescript@5.9.3))':
     dependencies:
@@ -25532,8 +25465,6 @@ snapshots:
       minimist: 1.2.8
     transitivePeerDependencies:
       - supports-color
-
-  web-vitals@5.1.0: {}
 
   webfontloader@1.6.28: {}
 
