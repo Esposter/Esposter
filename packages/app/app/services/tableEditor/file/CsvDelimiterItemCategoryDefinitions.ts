@@ -11,5 +11,7 @@ const CsvDelimiterItemCategoryDefinitionMap = {
   [CsvDelimiter.Tab]: { title: "Tab" },
 } as const satisfies Record<CsvDelimiter, Except<SelectItemCategoryDefinition<CsvDelimiter>, "value">>;
 
-export const CsvDelimiterItemCategoryDefinitions: SelectItemCategoryDefinition<CsvDelimiter>[] =
-  parseDictionaryToArray(CsvDelimiterItemCategoryDefinitionMap, "value");
+export const CsvDelimiterItemCategoryDefinitions: SelectItemCategoryDefinition<CsvDelimiter>[] = parseDictionaryToArray(
+  CsvDelimiterItemCategoryDefinitionMap,
+  "value",
+);

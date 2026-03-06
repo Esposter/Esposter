@@ -34,5 +34,7 @@ const ColumnItemTypeItemCategoryDefinitionMap = {
   },
 } as const satisfies Record<ColumnType, Except<ItemCategoryDefinition<ColumnItem>, "value">>;
 
-export const ColumnItemTypeItemCategoryDefinitions: ItemCategoryDefinition<ColumnItem>[] =
-  parseDictionaryToArray(ColumnItemTypeItemCategoryDefinitionMap, "value");
+export const ColumnItemTypeItemCategoryDefinitions: ItemCategoryDefinition<ColumnItem>[] = parseDictionaryToArray(
+  ColumnItemTypeItemCategoryDefinitionMap,
+  "value",
+);

@@ -1,9 +1,12 @@
+import type { ColumnValue } from "#shared/models/tableEditor/file/ColumnValue";
+
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { BOOLEAN_VALUES } from "@/services/tableEditor/file/constants";
 
-export const coerceValue = (raw: string, type: ColumnType): boolean | null | number | string => {
-  if (raw.trim() === "") return null;
-  else if (type === ColumnType.Boolean) return BOOLEAN_VALUES.has(raw.toLowerCase());
-  else if (type === ColumnType.Number) return Number(raw);
-  else return raw;
+export const coerceValue = (value: string, type: ColumnType): ColumnValue => {
+  const sanitizedValue = value.trim();
+  if (!sanitizedValue) return null;
+  else if (type === ColumnType.Boolean) return BOOLEAN_VALUES.has(sanitizedValue.toLowerCase());
+  else if (type === ColumnType.Number) return Number(sanitizedValue);
+  else return sanitizedValue;
 };
