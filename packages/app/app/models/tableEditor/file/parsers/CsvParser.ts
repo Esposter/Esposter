@@ -33,15 +33,13 @@ export class CsvParser implements Parser<CsvDataSourceItem> {
     const columns = sourceNames.map(
       (sourceName, index) =>
         new CsvColumn({
-          columnType: inferColumnType(rawRows.map((row) => row[index] ?? "")),
           name: sourceName,
           sourceName,
+          type: inferColumnType(rawRows.map((row) => row[index] ?? "")),
         }),
     );
     const rows = rawRows.map((rawRow) =>
-      Object.fromEntries(
-        columns.map((column, index) => [column.name, coerceValue(rawRow[index] ?? "", column.columnType)]),
-      ),
+      Object.fromEntries(columns.map((column, index) => [column.name, coerceValue(rawRow[index] ?? "", column.type)])),
     );
 
     return {
