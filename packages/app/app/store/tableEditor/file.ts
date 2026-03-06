@@ -29,11 +29,5 @@ export const useFileTableEditorStore = defineStore("tableEditor/file", () => {
     });
     dataSource.value = { ...dataSource.value, columns, rows };
   };
-  const setDataSource = (source: DataSource) => {
-    dataSource.value = source;
-  };
-  const reset = () => {
-    dataSource.value = null;
-  };
   return { dataSource, deleteColumn, deleteRow, importFile, reset, selectedDataSourceType, setDataSource, updateRow };
 });
