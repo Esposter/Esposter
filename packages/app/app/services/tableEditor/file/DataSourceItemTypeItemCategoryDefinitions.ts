@@ -4,6 +4,7 @@ import type { Except } from "type-fest";
 import { ADataSourceItem } from "#shared/models/tableEditor/file/ADataSourceItem";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
+import { prettify } from "@/util/text/prettify";
 import { ItemEntityTypePropertyNames } from "@esposter/shared";
 
 const DataSourceItemTypeItemCategoryDefinitionMap = {
@@ -11,7 +12,7 @@ const DataSourceItemTypeItemCategoryDefinitionMap = {
     create: () => new CsvDataSourceItem(),
     icon: "mdi-file-delimited",
     targetTypeKey: ItemEntityTypePropertyNames.type,
-    title: "CSV",
+    title: prettify(DataSourceType.Csv),
   },
 } as const satisfies Partial<
   Record<DataSourceType, Except<ItemCategoryDefinition<ADataSourceItem<DataSourceType>>, "value">>
