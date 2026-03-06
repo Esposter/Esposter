@@ -85,6 +85,17 @@
 - All files must use **LF** line endings (`\n`), not CRLF.
 - After creating files on Windows, run `sed -i 's/\r$//' <file>` to strip CR.
 
+### Pinia Store Usage
+
+- Always assign the store first: `const store = useStore()`
+- Methods: destructure directly — `const { methodName } = store`
+- Refs/computeds: use `storeToRefs` — `const { refValue } = storeToRefs(store)`
+
+### Props Interface Naming
+
+- Always use `interface {ComponentName}Props` (e.g. `interface DialogProps`, `interface EditDialogButtonProps`)
+- Always call `defineProps<{ComponentName}Props>()`
+
 ### Vue / Formatting
 
 - `<script setup lang="ts">` at the top of every SFC.

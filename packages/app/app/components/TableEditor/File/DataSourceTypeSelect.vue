@@ -2,7 +2,8 @@
 import { DataSourceTypeItemCategoryDefinitions } from "@/services/tableEditor/file/DataSourceTypeItemCategoryDefinitions";
 import { useFileTableEditorStore } from "@/store/tableEditor/file";
 
-const { selectedDataSourceType } = storeToRefs(useFileTableEditorStore());
+const store = useFileTableEditorStore();
+const { selectedDataSourceType } = storeToRefs(store);
 </script>
 
 <template>

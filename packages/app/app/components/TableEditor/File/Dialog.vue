@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import type { CsvColumn } from "#shared/models/tableEditor/file/CsvColumn";
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 
-import { ADataSourceItem } from "#shared/models/tableEditor/file/ADataSourceItem";
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { CsvDataSourceItem } from "#shared/models/tableEditor/file/CsvDataSourceItem";
 import { CsvParser } from "@/models/tableEditor/file/parsers/CsvParser";
+import { CsvColumnHeaders } from "@/services/tableEditor/file/CsvColumnHeaders";
 import { formComponentMap } from "@/services/tableEditor/file/formComponentMap";
 import { useFileTableEditorStore } from "@/store/tableEditor/file";
 
@@ -15,19 +14,14 @@ interface DialogProps {
 }
 
 const { dataSourceType } = defineProps<DialogProps>();
-const modelValue = defineModel<ADataSourceItem<DataSourceType>>();
-const fileTableEditorStore = useFileTableEditorStore();
-const { dataSource } = storeToRefs(fileTableEditorStore);
+const modelValue = defineModel<boolean>();
+const store = useFileTableEditorStore();
+const { dataSource } = storeToRefs(store);
 const file = ref<File | null>(null);
 // Fix this up
 const formRef = ref<null | { accept?: string }>(null);
 const formComponent = computed(() => formComponentMap[dataSourceType]);
 const accept = computed(() => formRef.value?.accept);
-const columnHeaders = [
-  { key: "sourceName", title: "Source Field" },
-  { key: "name", title: "Name" },
-  { key: "type", title: "Type" },
-];
 </script>
 
 <template>
@@ -54,7 +48,7 @@ const columnHeaders = [
           <component :is="formComponent" ref="formRef" v-model="modelValue" />
         </v-col>
         <v-col cols="12">
-          <v-data-table :headers="columnHeaders" :items="dataSource.columns" density="compact" hide-default-footer>
+          <v-data-table :headers="CsvColumnHeaders" :items="dataSource.columns" density="compact" hide-default-footer>
             <template #[`item.type`]="{ item: column }">
               <v-chip :color="column.type === ColumnType.String ? undefined : 'primary'" label size="small">
                 {{ column.type }}

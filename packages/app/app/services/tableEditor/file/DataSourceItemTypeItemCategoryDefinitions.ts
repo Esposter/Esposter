@@ -2,6 +2,7 @@ import type { ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDe
 import type { Except } from "type-fest";
 
 import { ADataSourceItem } from "#shared/models/tableEditor/file/ADataSourceItem";
+import { CsvDataSourceItem } from "#shared/models/tableEditor/file/CsvDataSourceItem";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
 import { ItemEntityTypePropertyNames } from "@esposter/shared";

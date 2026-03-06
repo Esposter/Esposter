@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { useFileTableEditorStore } from "@/store/tableEditor/file";
 
-const { dataSource } = storeToRefs(useFileTableEditorStore());
+const store = useFileTableEditorStore();
+const { dataSource } = storeToRefs(store);
 </script>
 
 <template>

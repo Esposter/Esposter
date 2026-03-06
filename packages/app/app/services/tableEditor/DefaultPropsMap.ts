@@ -1,5 +1,5 @@
 import { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType";
-import { DataSourceItemHeaders } from "@/services/tableEditor/file/DataSourceItemHeaders";
+import { FileTableEditorHeaders } from "@/services/tableEditor/file/FileTableEditorHeaders";
 import { DataSourceItemTypeItemCategoryDefinitions } from "@/services/tableEditor/file/DataSourceItemTypeItemCategoryDefinitions";
 import { TableEditorHeaders } from "@/services/tableEditor/TableEditorHeaders";
 import { TodoListHeaders } from "@/services/tableEditor/todoList/TodoListHeaders";
@@ -8,7 +8,7 @@ import { VuetifyComponentItemTypeItemCategoryDefinitions } from "@/services/tabl
 
 export const DefaultPropsMap = {
   [TableEditorType.File]: {
-    headers: DataSourceItemHeaders,
+    headers: FileTableEditorHeaders,
     itemCategoryDefinitions: DataSourceItemTypeItemCategoryDefinitions,
   },
   [TableEditorType.TodoList]: {

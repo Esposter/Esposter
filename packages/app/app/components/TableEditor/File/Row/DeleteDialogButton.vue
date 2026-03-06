@@ -1,8 +1,13 @@
 <script setup lang="ts">
 import { useFileTableEditorStore } from "@/store/tableEditor/file";
 
-const { index } = defineProps<{ index: number }>();
-const { deleteRow } = useFileTableEditorStore();
+interface DeleteDialogButtonProps {
+  index: number;
+}
+
+const { index } = defineProps<DeleteDialogButtonProps>();
+const store = useFileTableEditorStore();
+const { deleteRow } = store;
 </script>
 
 <template>

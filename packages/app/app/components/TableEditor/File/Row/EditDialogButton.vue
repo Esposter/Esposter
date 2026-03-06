@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import type { CsvColumn } from "#shared/models/tableEditor/file/CsvColumn";
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { useFileTableEditorStore } from "@/store/tableEditor/file";
 
 interface EditDialogButtonProps {
-  columns: CsvColumn[];
+  columns: DataSource["columns"];
   index: number;
   row: DataSource["rows"][number];
 }
 
 const { columns, index, row } = defineProps<EditDialogButtonProps>();
-const { updateRow } = useFileTableEditorStore();
+const store = useFileTableEditorStore();
+const { updateRow } = store;
 const editedRow = ref({ ...row });
 </script>
 

@@ -10,11 +10,11 @@ import { DefaultPropsMap } from "@/services/tableEditor/DefaultPropsMap";
 import { getItemCategoryDefinition } from "@/services/tableEditor/getItemCategoryDefinition";
 import { useTableEditorStore } from "@/store/tableEditor";
 
-interface TableEditorCrudViewFirstColumnSlotProps {
+interface FirstColumnSlotProps {
   item: ADataSourceItem<DataSourceType> | TodoListItem | VuetifyComponentItem;
 }
 
-const { item } = defineProps<TableEditorCrudViewFirstColumnSlotProps>();
+const { item } = defineProps<FirstColumnSlotProps>();
 const tableEditorStore = useTableEditorStore();
 const { tableEditorType } = storeToRefs(tableEditorStore);
 const props = computed(() => DefaultPropsMap[tableEditorType.value]);
