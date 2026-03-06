@@ -69,6 +69,7 @@
 ### Inline Functions
 
 - **Inline arrow functions** where argument types can be inferred from context — don't extract single-use, trivially-typed lambdas into named functions.
+- **`defineModel`**: don't pass `{ default: false }` for booleans — omit the options entirely (`defineModel<boolean>()`).
 - **No abbreviated parameter names** — use full descriptive names (e.g. `event` not `e`, `column` not `col`). Exception: simple iteration callbacks where the meaning is obvious from context (e.g. `.filter((row, index) => ...)`).
 
 

@@ -1,4 +1,4 @@
-export const parseCsvLine = (line: string): string[] => {
+export const parseCsvLine = (line: string, delimiter: string): string[] => {
   const fields: string[] = [];
   let current = "";
   let inQuotes = false;
@@ -10,7 +10,7 @@ export const parseCsvLine = (line: string): string[] => {
         current += '"';
         i++;
       } else inQuotes = !inQuotes;
-    else if (char === "," && !inQuotes) {
+    else if (char === delimiter && !inQuotes) {
       fields.push(current.trim());
       current = "";
     } else current += char;

@@ -6,10 +6,8 @@ const { dataSource } = storeToRefs(useFileTableEditorStore());
 
 <template>
   <v-container h-full flex flex-col fluid>
+    <TableEditorFileHeader />
     <TableEditorFileDataTable v-if="dataSource" :data-source="dataSource" flex flex-1 flex-col />
-    <template v-else>
-      <TableEditorFileHeader />
-      <TableEditorFileEmptyState />
-    </template>
+    <TableEditorFileEmptyState v-else />
   </v-container>
 </template>

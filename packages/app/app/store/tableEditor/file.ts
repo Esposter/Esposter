@@ -1,15 +1,19 @@
+import type { CsvOptions } from "#shared/models/tableEditor/file/CsvOptions";
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 
+import { CsvDelimiter } from "#shared/models/tableEditor/file/CsvDelimiter";
+import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { CsvParser } from "@/models/tableEditor/file/parsers/CsvParser";
 
 export const useFileTableEditorStore = defineStore("tableEditor/file", () => {
   const dataSource = ref<DataSource | null>(null);
-  const importFile = async (file: File) => {
-    dataSource.value = await new CsvParser().parse(file);
+  const selectedDataSourceType = ref<DataSourceType>(DataSourceType.Csv);
+  const importFile = async (file: File, options: CsvOptions = { delimiter: CsvDelimiter.Comma }) => {
+    dataSource.value = await new CsvParser().parse(file, options);
   };
   const deleteRow = (index: number) => {
     if (!dataSource.value) return;
-    dataSource.value = { ...dataSource.value, rows: dataSource.value.rows.filter((_, i) => i !== index) };
+    dataSource.value = { ...dataSource.value, rows: dataSource.value.rows.filter((_, rowIndex) => rowIndex !== index) };
   };
   const updateRow = (index: number, updated: DataSource["rows"][number]) => {
     if (!dataSource.value) return;
@@ -19,7 +23,7 @@ export const useFileTableEditorStore = defineStore("tableEditor/file", () => {
   };
   const deleteColumn = (fieldName: string) => {
     if (!dataSource.value) return;
-    const columns = dataSource.value.columns.filter((c) => c.fieldName !== fieldName);
+    const columns = dataSource.value.columns.filter((column) => column.fieldName !== fieldName);
     const rows = dataSource.value.rows.map((row) => {
       const { [fieldName]: _, ...rest } = row;
       return rest;
@@ -29,5 +33,5 @@ export const useFileTableEditorStore = defineStore("tableEditor/file", () => {
   const reset = () => {
     dataSource.value = null;
   };
-  return { dataSource, deleteColumn, deleteRow, importFile, reset, updateRow };
+  return { dataSource, deleteColumn, deleteRow, importFile, reset, selectedDataSourceType, updateRow };
 });

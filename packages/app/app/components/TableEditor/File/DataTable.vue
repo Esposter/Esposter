@@ -19,9 +19,6 @@ const headers = computed(() => [
       items: dataSource.rows,
     }"
   >
-    <template #top>
-      <TableEditorFileHeader />
-    </template>
     <template #[`item.actions`]="{ item, index }">
       <TableEditorFileRowActionSlot :columns="dataSource.columns" :index :row="item" />
     </template>
