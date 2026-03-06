@@ -1,4 +1,5 @@
 import type { Item } from "#shared/models/tableEditor/data/Item";
+import type { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import type { TodoListItem } from "#shared/models/tableEditor/todoList/TodoListItem";
 import type { VuetifyComponentItem } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 import type { ToData } from "@esposter/shared";
@@ -7,7 +8,7 @@ import type { PartialDeep } from "type-fest";
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
 import { createTableEditorSchema, TableEditor } from "#shared/models/tableEditor/data/TableEditor";
 import { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType";
-import { ColumnItem, columnItemSchema } from "#shared/models/tableEditor/file/ColumnItem";
+import { ADataSourceItem, aDataSourceItemSchema } from "#shared/models/tableEditor/file/ADataSourceItem";
 import { todoListItemSchema } from "#shared/models/tableEditor/todoList/TodoListItem";
 import { vuetifyComponentItemSchema } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 import { z } from "zod";
@@ -15,7 +16,7 @@ import { z } from "zod";
 type TableEditorTypes = Record<keyof typeof TableEditorType, TableEditor<Item>>;
 
 export class TableEditorConfiguration extends AItemEntity implements TableEditorTypes {
-  [TableEditorType.File] = new TableEditor<ColumnItem>();
+  [TableEditorType.File] = new TableEditor<ADataSourceItem<DataSourceType>>();
   [TableEditorType.TodoList] = new TableEditor<TodoListItem>();
   [TableEditorType.VuetifyComponent] = new TableEditor<VuetifyComponentItem>();
 
@@ -31,7 +32,7 @@ export class TableEditorConfiguration extends AItemEntity implements TableEditor
 
 export const tableEditorConfigurationSchema = z.object({
   ...aItemEntitySchema.shape,
-  [TableEditorType.File]: createTableEditorSchema(columnItemSchema),
+  [TableEditorType.File]: createTableEditorSchema(aDataSourceItemSchema),
   [TableEditorType.TodoList]: createTableEditorSchema(todoListItemSchema),
   [TableEditorType.VuetifyComponent]: createTableEditorSchema(vuetifyComponentItemSchema),
 }) satisfies z.ZodType<ToData<TableEditorConfiguration>>;

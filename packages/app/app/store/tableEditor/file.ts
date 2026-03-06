@@ -1,15 +1,14 @@
-import type { CsvOptions } from "#shared/models/tableEditor/file/CsvOptions";
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 
-import { CsvDelimiter } from "#shared/models/tableEditor/file/CsvDelimiter";
+import { CsvDataSourceItem } from "#shared/models/tableEditor/file/CsvDataSourceItem";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { CsvParser } from "@/models/tableEditor/file/parsers/CsvParser";
 
 export const useFileTableEditorStore = defineStore("tableEditor/file", () => {
   const dataSource = ref<DataSource | null>(null);
   const selectedDataSourceType = ref<DataSourceType>(DataSourceType.Csv);
-  const importFile = async (file: File, options: CsvOptions = { delimiter: CsvDelimiter.Comma }) => {
-    dataSource.value = await new CsvParser().parse(file, options);
+  const importFile = async (file: File, item: CsvDataSourceItem = new CsvDataSourceItem()) => {
+    dataSource.value = await new CsvParser().parse(file, item);
   };
   const deleteRow = (index: number) => {
     if (!dataSource.value) return;
@@ -30,8 +29,11 @@ export const useFileTableEditorStore = defineStore("tableEditor/file", () => {
     });
     dataSource.value = { ...dataSource.value, columns, rows };
   };
+  const setDataSource = (source: DataSource) => {
+    dataSource.value = source;
+  };
   const reset = () => {
     dataSource.value = null;
   };
-  return { dataSource, deleteColumn, deleteRow, importFile, reset, selectedDataSourceType, updateRow };
+  return { dataSource, deleteColumn, deleteRow, importFile, reset, selectedDataSourceType, setDataSource, updateRow };
 });

@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import type { CsvOptions } from "#shared/models/tableEditor/file/CsvOptions";
+import type { CsvDataSourceItem } from "#shared/models/tableEditor/file/CsvDataSourceItem";
 
 import { CsvDelimiterItemCategoryDefinitions } from "@/services/tableEditor/file/CsvDelimiterItemCategoryDefinitions";
 
-const modelValue = defineModel<CsvOptions>({ required: true });
+const modelValue = defineModel<CsvDataSourceItem>({ required: true });
+
+defineExpose({ accept: ".csv" });
 </script>
 
 <template>

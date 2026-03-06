@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { CsvColumn } from "#shared/models/tableEditor/file/CsvColumn";
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 
 const { dataSource } = defineProps<{ dataSource: DataSource }>();
@@ -20,7 +21,11 @@ const headers = computed(() => [
     }"
   >
     <template #[`item.actions`]="{ item, index }">
-      <TableEditorFileRowActionSlot :columns="dataSource.columns" :index :row="item" />
+      <TableEditorFileRowActionSlot
+        :columns="dataSource.columns as CsvColumn[]"
+        :index
+        :row="item"
+      />
     </template>
   </StyledDataTable>
 </template>

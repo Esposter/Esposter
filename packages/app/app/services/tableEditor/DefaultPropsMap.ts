@@ -1,6 +1,6 @@
 import { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType";
-import { ColumnItemHeaders } from "@/services/tableEditor/file/ColumnItemHeaders";
-import { ColumnItemTypeItemCategoryDefinitions } from "@/services/tableEditor/file/ColumnItemTypeItemCategoryDefinitions";
+import { DataSourceItemHeaders } from "@/services/tableEditor/file/DataSourceItemHeaders";
+import { DataSourceItemTypeItemCategoryDefinitions } from "@/services/tableEditor/file/DataSourceItemTypeItemCategoryDefinitions";
 import { TableEditorHeaders } from "@/services/tableEditor/TableEditorHeaders";
 import { TodoListHeaders } from "@/services/tableEditor/todoList/TodoListHeaders";
 import { TodoListItemTypeItemCategoryDefinitions } from "@/services/tableEditor/todoList/TodoListItemTypeItemCategoryDefinitions";
@@ -8,8 +8,8 @@ import { VuetifyComponentItemTypeItemCategoryDefinitions } from "@/services/tabl
 
 export const DefaultPropsMap = {
   [TableEditorType.File]: {
-    headers: ColumnItemHeaders,
-    itemCategoryDefinitions: ColumnItemTypeItemCategoryDefinitions,
+    headers: DataSourceItemHeaders,
+    itemCategoryDefinitions: DataSourceItemTypeItemCategoryDefinitions,
   },
   [TableEditorType.TodoList]: {
     headers: TodoListHeaders,

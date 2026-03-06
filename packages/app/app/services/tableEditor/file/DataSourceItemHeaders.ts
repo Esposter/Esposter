@@ -1,10 +1,10 @@
-import type { ColumnItem } from "#shared/models/tableEditor/file/ColumnItem";
+import type { CsvColumn } from "#shared/models/tableEditor/file/CsvColumn";
 import type { DataTableHeader } from "@/models/vuetify/DataTableHeader";
 
 import { TableEditorHeaders } from "@/services/tableEditor/TableEditorHeaders";
 
-export const ColumnItemHeaders: DataTableHeader<ColumnItem>[] = [
+export const DataSourceItemHeaders: DataTableHeader<CsvColumn>[] = [
   ...TableEditorHeaders,
   { key: "sourceName", title: "Source Field" },
-  { key: "dataSourceType", title: "Source Type" },
+  { key: "type", title: "Column Type" },
 ];
