@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import { useTableEditorStore } from "@/store/tableEditor";
 
-defineSlots<{
-  "append-header": () => VNode;
-}>();
-
+defineSlots<{ "append-header": () => VNode }>();
 const tableEditorStore = useTableEditorStore();
 const { resetItem, save } = tableEditorStore;
 const { editedItem, editFormDialog, editFormRef, isEditFormValid, isFullScreenDialog, isSavable, originalItem } =

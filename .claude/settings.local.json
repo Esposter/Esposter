@@ -13,7 +13,11 @@
       "WebFetch(domain:github.com)",
       "Bash(grep:*)",
       "Bash(pnpm typecheck:*)",
-      "Bash(echo EXIT: $?:*)"
+      "Bash(echo EXIT: $?:*)",
+      "Bash(read f:packages/app/**)",
+      "Bash(read f:plugins/**)",
+      "Bash(read f:package.json)",
+      "Bash(pnpm vitest:*)"
     ]
   }
 }
