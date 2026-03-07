@@ -3,9 +3,9 @@ import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 
 import { CsvColumn } from "#shared/models/tableEditor/file/CsvColumn";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
-import { inferColumnType } from "@/services/tableEditor/file/inferColumnType";
 import { coerceValue } from "@/services/tableEditor/file/csv/coerceValue";
 import { parseCsvLine } from "@/services/tableEditor/file/csv/parseCsvLine";
+import { inferColumnType } from "@/services/tableEditor/file/inferColumnType";
 import { takeOne } from "@esposter/shared";
 
 export const parseCsv = async (file: File, item: CsvDataSourceItem): Promise<DataSource> => {
