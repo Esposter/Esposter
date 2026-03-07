@@ -74,6 +74,28 @@
     [P in keyof DataSourceItemTypeMap]: DataSourceConfiguration<DataSourceItemTypeMap[P]>;
   }>;
   ```
+- **Generic Zod schemas** — when an abstract class has a generic type parameter (e.g. `ADataSourceItem<TType, TConfig>`), its schema must also be generic. Export a `create*Schema` function that takes typed zod schemas as parameters and returns the composed schema. Never hardcode type-specific values in a base schema:
+  ```typescript
+  // WRONG — hardcodes type, missing configuration
+  export const aDataSourceItemSchema = z.object({ ...base.shape, type: dataSourceTypeSchema });
+  // CORRECT — generic function, concrete schemas passed by callers
+  export const createDataSourceItemSchema = <
+    TType extends z.ZodType<keyof DataSourceConfigurationTypeMap>,
+    TConfiguration extends z.ZodType<object>,
+  >(typeSchema: TType, configurationSchema: TConfiguration) =>
+    z.object({ ...aTableEditorItemEntitySchema.shape, configuration: configurationSchema, type: typeSchema });
+  // Caller:
+  export const csvDataSourceItemSchema = createDataSourceItemSchema(
+    z.literal(DataSourceType.Csv),
+    csvDataSourceConfigurationSchema,
+  ) satisfies z.ZodType<ToData<CsvDataSourceItem>>;
+  ```
+  For the union schema used by parent models (e.g. `TableEditorConfiguration`), create a separate `*ItemSchema.ts` file using `z.discriminatedUnion`:
+  ```typescript
+  // DataSourceItemSchema.ts
+  export const dataSourceItemSchema = z.discriminatedUnion("type", [csvDataSourceItemSchema]);
+  ```
+  Adding a new type = add its schema to the discriminated union array.
 - **Generic Vue components** — use `<script setup lang="ts" generic="T extends SomeBase">` to make components type-safe over a specific subtype. Pass the typed value AND its associated generic config/interface as props so the parent resolves the concrete types and the child stays fully typed without lookups or casts:
   ```vue
   <!-- Parent (knows concrete type): -->

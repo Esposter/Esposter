@@ -8,7 +8,8 @@ import type { PartialDeep } from "type-fest";
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
 import { createTableEditorSchema, TableEditor } from "#shared/models/tableEditor/data/TableEditor";
 import { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType";
-import { ADataSourceItem, aDataSourceItemSchema } from "#shared/models/tableEditor/file/ADataSourceItem";
+import { ADataSourceItem } from "#shared/models/tableEditor/file/ADataSourceItem";
+import { dataSourceItemSchema } from "#shared/models/tableEditor/file/DataSourceItemSchema";
 import { todoListItemSchema } from "#shared/models/tableEditor/todoList/TodoListItem";
 import { vuetifyComponentItemSchema } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 import { z } from "zod";
@@ -32,7 +33,7 @@ export class TableEditorConfiguration extends AItemEntity implements TableEditor
 
 export const tableEditorConfigurationSchema = z.object({
   ...aItemEntitySchema.shape,
-  [TableEditorType.File]: createTableEditorSchema(aDataSourceItemSchema),
+  [TableEditorType.File]: createTableEditorSchema(dataSourceItemSchema),
   [TableEditorType.TodoList]: createTableEditorSchema(todoListItemSchema),
   [TableEditorType.VuetifyComponent]: createTableEditorSchema(vuetifyComponentItemSchema),
 }) satisfies z.ZodType<ToData<TableEditorConfiguration>>;

@@ -1,6 +1,5 @@
-<script setup lang="ts" generic="TDataSourceItem extends ADataSourceItem<DataSourceType>">
-import type { ADataSourceItem } from "#shared/models/tableEditor/file/ADataSourceItem";
-import type { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
+<script setup lang="ts" generic="TDataSourceItem extends DataSourceItemTypeMap[keyof DataSourceItemTypeMap]">
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 
 import { zodToJsonSchema } from "@/services/dashboard/jsonSchema/zodToJsonSchema";
 import { DataSourceConfigurationMap } from "@/services/tableEditor/file/DataSourceConfigurationMap";
