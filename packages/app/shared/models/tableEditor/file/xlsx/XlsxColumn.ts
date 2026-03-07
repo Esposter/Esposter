@@ -1,12 +1,9 @@
 import type { ToData } from "@esposter/shared";
 
 import { AColumn, aColumnSchema } from "#shared/models/tableEditor/file/AColumn";
-import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { z } from "zod";
 
-export class XlsxColumn extends AColumn<ColumnType> {
-  override readonly type = ColumnType.String;
-
+export class XlsxColumn extends AColumn {
   constructor(init?: Partial<XlsxColumn>) {
     super();
     Object.assign(this, init);

@@ -7,12 +7,9 @@ import {
 import { ColumnType, columnTypeSchema } from "#shared/models/tableEditor/file/ColumnType";
 import { z } from "zod";
 
-export abstract class AColumn<TColumnType extends ColumnType>
-  extends ATableEditorItemEntity
-  implements ItemEntityType<TColumnType>
-{
+export abstract class AColumn extends ATableEditorItemEntity implements ItemEntityType<ColumnType> {
   readonly sourceName: string = "";
-  abstract readonly type: TColumnType;
+  readonly type: ColumnType = ColumnType.String;
 }
 
 export const aColumnSchema = z.object({
