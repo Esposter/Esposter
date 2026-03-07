@@ -15,7 +15,7 @@ interface EditDialogButtonProps {
 const { column, schema } = defineProps<EditDialogButtonProps>();
 const fileTableEditorStore = useFileTableEditorStore();
 const { updateColumn } = fileTableEditorStore;
-
+// eslint-disable-next-line @typescript-eslint/no-misused-spread
 const editedColumn = ref({ ...column });
 const jsonSchema = computed(() => zodToJsonSchema(schema));
 const isUpdated = computed(() => !deepEqual(column, editedColumn.value));
