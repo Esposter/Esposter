@@ -5,8 +5,8 @@ import { z } from "zod";
 const pickedSchema = aColumnSchema.pick({ name: true, sourceName: true, type: true });
 
 const columnSchema = pickedSchema.extend({
-  name: pickedSchema.shape.name.describe("Field"),
-  sourceName: pickedSchema.shape.sourceName.describe("Source Field"),
+  name: pickedSchema.shape.name.meta({ title: "Field" }),
+  sourceName: pickedSchema.shape.sourceName.meta({ title: "Source Field" }),
 });
 
 export const ColumnSchemaMap = {
