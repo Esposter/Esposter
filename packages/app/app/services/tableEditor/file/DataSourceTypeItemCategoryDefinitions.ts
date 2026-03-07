@@ -1,15 +1,22 @@
-import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
+import type { ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
 import type { Except } from "type-fest";
 
+import { ADataSourceItem } from "#shared/models/tableEditor/file/ADataSourceItem";
+import { CsvDataSourceItem } from "#shared/models/tableEditor/file/CsvDataSourceItem";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
+import { ItemEntityTypePropertyNames } from "@esposter/shared";
 
 const DataSourceTypeItemCategoryDefinitionMap = {
-  [DataSourceType.Api]: { title: "API" },
-  [DataSourceType.Csv]: { title: "CSV" },
-  [DataSourceType.Excel]: { title: "Excel" },
-  [DataSourceType.Sql]: { title: "SQL" },
-} as const satisfies Record<DataSourceType, Except<SelectItemCategoryDefinition<DataSourceType>, "value">>;
+  [DataSourceType.Csv]: {
+    create: () => new CsvDataSourceItem(),
+    icon: "mdi-file-delimited",
+    targetTypeKey: ItemEntityTypePropertyNames.type,
+    title: DataSourceType.Csv,
+  },
+} as const satisfies Partial<
+  Record<DataSourceType, Except<ItemCategoryDefinition<ADataSourceItem<DataSourceType>>, "value">>
+>;
 
-export const DataSourceTypeItemCategoryDefinitions: SelectItemCategoryDefinition<DataSourceType>[] =
+export const DataSourceTypeItemCategoryDefinitions: ItemCategoryDefinition<ADataSourceItem<DataSourceType>>[] =
   parseDictionaryToArray(DataSourceTypeItemCategoryDefinitionMap, "value");

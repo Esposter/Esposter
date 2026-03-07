@@ -52,6 +52,7 @@
 - `.forEach()` is **BANNED** — use `for...of`.
 - Always use named imports from libraries.
 - Explicitly type variables with proper types.
+- **No `current*` variable caching of `.value`** — don't assign `const currentX = x.value` just to use it once. If TypeScript narrowing is needed after a guard, assign with a descriptive name (`const selectedFile = file.value`). Prefer plain `const` over `computed()` when the source value is already non-reactive (e.g. a `readonly` prop field).
 
 ### Control Flow
 
@@ -73,12 +74,25 @@
     [P in keyof DataSourceItemTypeMap]: DataSourceConfiguration<DataSourceItemTypeMap[P]>;
   }>;
   ```
+- **Generic Vue components** — use `<script setup lang="ts" generic="T extends SomeBase">` to make components type-safe over a specific subtype. Pass the typed value AND its associated generic config/interface as props so the parent resolves the concrete types and the child stays fully typed without lookups or casts:
+  ```vue
+  <!-- Parent (knows concrete type): -->
+  <FilePicker :item="modelValue" :configuration="DataSourceConfigurationMap[DataSourceType.Csv]" />
+  <!-- Child: -->
+  <script setup lang="ts" generic="TDataSourceItem extends ADataSourceItem<DataSourceType>">
+  interface FilePickerProps {
+    configuration: DataSourceConfiguration<TDataSourceItem>;
+    item: TDataSourceItem;
+  }
+  </script>
+  ```
 - **Generic browser utilities** go in `app/utils/` (e.g., `readFileAsText.ts`).
 - **Feature folders**: related models/services/components are grouped under a feature subfolder (e.g., `tableEditor/file/`).
 
 ### Inline Functions
 
 - **Inline arrow functions** where argument types can be inferred from context — don't extract single-use, trivially-typed lambdas into named functions.
+- **Inline Vue event handlers** — always write handlers directly in the template (`@submit="async (_, onComplete) => { ... }"`). This lets Vue infer event argument types automatically. Only extract to a named function if the same logic is reused in multiple places.
 - **`defineModel`**: don't pass `{ default: false }` for booleans — omit the options entirely (`defineModel<boolean>()`).
 - **No abbreviated parameter names** — use full descriptive names (e.g. `event` not `e`, `column` not `col`, `configuration` not `config`). Exception: simple iteration callbacks where the meaning is obvious from context (e.g. `.filter((row, index) => ...)`).
 
@@ -124,6 +138,7 @@
 - No blank lines between `const` assignments — group them tightly together.
 - Remove comments — make variable names descriptive instead.
 - Minimise blank lines; group related code tightly.
+- **Blank line after a closing `}`** of an `if`, `for`, or other block statement — unless it is the last statement in its scope or is immediately followed by another opening block.
 
 ### Resource Management
 

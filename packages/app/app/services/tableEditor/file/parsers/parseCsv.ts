@@ -24,6 +24,7 @@ export const parseCsv = async (file: File, item: CsvDataSourceItem): Promise<Dat
       },
       rows: [],
     };
+
   const sourceNames = parseCsvLine(takeOne(lines), item.delimiter);
   const rawRows = lines.slice(1).map((line) => parseCsvLine(line, item.delimiter));
   const columns = sourceNames.map(
