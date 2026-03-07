@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { AColumn } from "#shared/models/tableEditor/file/AColumn";
-import type { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import type { z } from "zod";
 
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
@@ -9,7 +8,7 @@ import { Vjsf } from "@koumoul/vjsf";
 import deepEqual from "fast-deep-equal";
 
 interface EditDialogButtonProps {
-  column: AColumn<ColumnType>;
+  column: AColumn;
   schema: z.ZodObject;
 }
 

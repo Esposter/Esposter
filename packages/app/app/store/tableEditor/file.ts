@@ -1,5 +1,4 @@
 import type { AColumn } from "#shared/models/tableEditor/file/AColumn";
-import type { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 
 import { takeOne } from "@esposter/shared";
@@ -20,7 +19,7 @@ export const useFileTableEditorStore = defineStore("tableEditor/file", () => {
     if (!dataSource.value || index === -1) return;
     Object.assign(takeOne(dataSource.value.rows, index), updated);
   };
-  const updateColumn = (originalName: string, updated: Partial<AColumn<ColumnType>>) => {
+  const updateColumn = (originalName: string, updated: Partial<AColumn>) => {
     if (!dataSource.value) return;
     const column = dataSource.value.columns.find((column) => column.name === originalName);
     if (!column) return;
