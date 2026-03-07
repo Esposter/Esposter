@@ -3,8 +3,8 @@ import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { ColumnHeaders } from "@/services/tableEditor/file/ColumnHeaders";
 import { useFileTableEditorStore } from "@/store/tableEditor/file";
 
-const store = useFileTableEditorStore();
-const { dataSource } = storeToRefs(store);
+const fileTableEditorStore = useFileTableEditorStore();
+const { dataSource } = storeToRefs(fileTableEditorStore);
 </script>
 
 <template>

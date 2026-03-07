@@ -11,8 +11,8 @@ interface EditDialogButtonProps {
 }
 
 const { columns, index, row } = defineProps<EditDialogButtonProps>();
-const store = useFileTableEditorStore();
-const { updateRow } = store;
+const fileTableEditorStore = useFileTableEditorStore();
+const { updateRow } = fileTableEditorStore;
 const editedRow = ref({ ...row });
 </script>
 

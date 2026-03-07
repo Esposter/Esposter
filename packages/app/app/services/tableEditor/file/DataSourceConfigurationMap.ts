@@ -1,15 +1,16 @@
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 import type { DataSourceConfiguration } from "@/models/tableEditor/file/DataSourceConfiguration";
 
 import { CsvDataSourceItem } from "#shared/models/tableEditor/file/CsvDataSourceItem";
 import { CsvDelimiter } from "#shared/models/tableEditor/file/CsvDelimiter";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
-import { CsvParser } from "@/models/tableEditor/file/parsers/CsvParser";
+import { parseCsv } from "@/services/tableEditor/file/parsers/parseCsv";
 
 export const DataSourceConfigurationMap = {
   [DataSourceType.Csv]: {
     accept: ".csv",
     createItem: () => new CsvDataSourceItem(),
-    parse: (file, item) => new CsvParser().parse(file, item),
+    parse: parseCsv,
     schema: {
       properties: {
         delimiter: {
@@ -26,4 +27,6 @@ export const DataSourceConfigurationMap = {
       type: "object",
     },
   },
-} as const satisfies Partial<Record<DataSourceType, DataSourceConfiguration>>;
+} as const satisfies Partial<{
+  [P in keyof DataSourceItemTypeMap]: DataSourceConfiguration<DataSourceItemTypeMap[P]>;
+}>;

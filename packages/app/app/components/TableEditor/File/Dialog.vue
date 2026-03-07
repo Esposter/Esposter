@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import type { ADataSourceItem } from "#shared/models/tableEditor/file/ADataSourceItem";
 import type { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 
 import { DataSourceConfigurationMap } from "@/services/tableEditor/file/DataSourceConfigurationMap";
+import { useTableEditorStore } from "@/store/tableEditor";
 import { useFileTableEditorStore } from "@/store/tableEditor/file";
 import { Vjsf } from "@koumoul/vjsf";
 
@@ -9,31 +11,40 @@ interface DialogProps {
   dataSourceType: DataSourceType;
 }
 
+const modelValue = defineModel<boolean>({ required: true });
 const { dataSourceType } = defineProps<DialogProps>();
-const store = useFileTableEditorStore();
-const { saveItem } = store;
+const tableEditorStore = useTableEditorStore<ADataSourceItem<DataSourceType>>();
+const { save } = tableEditorStore;
+const fileTableEditorStore = useFileTableEditorStore();
+const { reset } = fileTableEditorStore;
 const dataSourceConfiguration = computed(() => DataSourceConfigurationMap[dataSourceType]);
 const getInitialOptions = () => {
   const defaultItem = dataSourceConfiguration.value.createItem();
-  const { properties } = dataSourceConfiguration.value.schema;
-  return Object.fromEntries(Object.keys(properties).map((key) => [key, defaultItem[key]]));
+  const properties = dataSourceConfiguration.value.schema.properties;
+  return Object.fromEntries(Object.keys(properties).map((key) => [key, defaultItem[key as keyof typeof defaultItem]]));
 };
-const itemOptions = ref<Record<string, unknown>>(getInitialOptions());
+const itemOptions = ref(getInitialOptions());
+
+watch(modelValue, async (isOpen) => {
+  if (isOpen) return;
+  await reset();
+});
 </script>
 
 <template>
   <StyledDialog
+    v-model="modelValue"
     :card-props="{ title: dataSourceType }"
     @submit="
       (_, onComplete) => {
-        saveItem();
+        save();
         onComplete();
       }
     "
   >
     <v-container fluid>
       <v-row>
-        <v-col v-if="dataSourceConfiguration?.schema && Object.keys(itemOptions).length > 0" cols="12">
+        <v-col cols="12">
           <Vjsf v-model="itemOptions" :schema="dataSourceConfiguration.schema" :options="{ removeAdditional: true }" />
         </v-col>
         <v-col cols="12">

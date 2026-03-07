@@ -6,8 +6,8 @@ interface DeleteDialogButtonProps {
 }
 
 const { index } = defineProps<DeleteDialogButtonProps>();
-const store = useFileTableEditorStore();
-const { deleteRow } = store;
+const fileTableEditorStore = useFileTableEditorStore();
+const { deleteRow } = fileTableEditorStore;
 </script>
 
 <template>
