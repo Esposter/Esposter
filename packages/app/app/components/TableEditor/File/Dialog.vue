@@ -1,60 +1,46 @@
 <script setup lang="ts">
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 
-import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
-import { CsvDataSourceItem } from "#shared/models/tableEditor/file/CsvDataSourceItem";
-import { CsvParser } from "@/models/tableEditor/file/parsers/CsvParser";
-import { CsvColumnHeaders } from "@/services/tableEditor/file/CsvColumnHeaders";
-import { formComponentMap } from "@/services/tableEditor/file/formComponentMap";
+import { DataSourceConfigurationMap } from "@/services/tableEditor/file/DataSourceConfigurationMap";
 import { useFileTableEditorStore } from "@/store/tableEditor/file";
+import { Vjsf } from "@koumoul/vjsf";
 
 interface DialogProps {
   dataSourceType: DataSourceType;
 }
 
 const { dataSourceType } = defineProps<DialogProps>();
-const modelValue = defineModel<boolean>();
 const store = useFileTableEditorStore();
-const { dataSource } = storeToRefs(store);
-const file = ref<File | null>(null);
-// Fix this up
-const formRef = ref<null | { accept?: string }>(null);
-const formComponent = computed(() => formComponentMap[dataSourceType]);
-const accept = computed(() => formRef.value?.accept);
+const { saveItem } = store;
+const dataSourceConfiguration = computed(() => DataSourceConfigurationMap[dataSourceType]);
+const getInitialOptions = () => {
+  const defaultItem = dataSourceConfiguration.value.createItem();
+  const { properties } = dataSourceConfiguration.value.schema;
+  return Object.fromEntries(Object.keys(properties).map((key) => [key, defaultItem[key]]));
+};
+const itemOptions = ref<Record<string, unknown>>(getInitialOptions());
 </script>
 
 <template>
   <StyledDialog
     :card-props="{ title: dataSourceType }"
     @submit="
-      (_event, onComplete) => {
+      (_, onComplete) => {
+        saveItem();
         onComplete();
       }
     "
   >
     <v-container fluid>
       <v-row>
-        <v-col cols="12">
-          <v-file-input
-            :accept
-            :label="`Select ${dataSourceType} file`"
-            density="compact"
-            hide-details
-            @update:model-value="file = Array.isArray($event) ? ($event[0] ?? null) : ($event ?? null)"
-          />
-        </v-col>
-        <v-col v-if="formComponent" cols="12">
-          <component :is="formComponent" ref="formRef" v-model="modelValue" />
+        <v-col v-if="dataSourceConfiguration?.schema && Object.keys(itemOptions).length > 0" cols="12">
+          <Vjsf v-model="itemOptions" :schema="dataSourceConfiguration.schema" :options="{ removeAdditional: true }" />
         </v-col>
         <v-col cols="12">
-          <v-data-table :headers="CsvColumnHeaders" :items="dataSource.columns" density="compact" hide-default-footer>
-            <template #[`item.type`]="{ item: column }">
-              <v-chip :color="column.type === ColumnType.String ? undefined : 'primary'" label size="small">
-                {{ column.type }}
-              </v-chip>
-            </template>
-          </v-data-table>
+          <TableEditorFileFilePicker :data-source-type :item-options />
+        </v-col>
+        <v-col cols="12">
+          <TableEditorFileColumnTable />
         </v-col>
       </v-row>
     </v-container>

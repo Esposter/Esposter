@@ -60,9 +60,10 @@
 
 ### File & Folder Organisation
 
-- **One function per file** — each exported function lives in its own file.
+- **One export per file** — each exported function, class, or interface lives in its own file. Exception: Zod schemas may be co-located with their interface/type since they are tightly coupled.
 - **One class per file** — classes belong in a `models/` folder (e.g., `app/models/`, `shared/models/`).
 - **Constants go in `constants.ts`** — all module-level constants in a `constants.ts` file alongside the files that use them.
+- **Constant maps use PascalCase** with `as const satisfies` — e.g. `export const DataSourceConfigurationMap = { ... } as const satisfies Partial<Record<...>>`.
 - **Generic browser utilities** go in `app/utils/` (e.g., `readFileAsText.ts`).
 - **Feature folders**: related models/services/components are grouped under a feature subfolder (e.g., `tableEditor/file/`).
 
@@ -70,7 +71,7 @@
 
 - **Inline arrow functions** where argument types can be inferred from context — don't extract single-use, trivially-typed lambdas into named functions.
 - **`defineModel`**: don't pass `{ default: false }` for booleans — omit the options entirely (`defineModel<boolean>()`).
-- **No abbreviated parameter names** — use full descriptive names (e.g. `event` not `e`, `column` not `col`). Exception: simple iteration callbacks where the meaning is obvious from context (e.g. `.filter((row, index) => ...)`).
+- **No abbreviated parameter names** — use full descriptive names (e.g. `event` not `e`, `column` not `col`, `configuration` not `config`). Exception: simple iteration callbacks where the meaning is obvious from context (e.g. `.filter((row, index) => ...)`).
 
 
 ### Styling (UnoCSS Attributify Mode — MANDATORY)
@@ -90,6 +91,7 @@
 - Always assign the store first: `const store = useStore()`
 - Methods: destructure directly — `const { methodName } = store`
 - Refs/computeds: use `storeToRefs` — `const { refValue } = storeToRefs(store)`
+- **Store-to-store**: declare at the root of the setup function, access via `store.property` / `store.method()` — do NOT destructure inside methods.
 
 ### Props Interface Naming
 

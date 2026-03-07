@@ -4,8 +4,4 @@ import type { DataTableHeader } from "@/models/vuetify/DataTableHeader";
 
 import { TableEditorHeaders } from "@/services/tableEditor/TableEditorHeaders";
 
-export const FileTableEditorHeaders: DataTableHeader<ADataSourceItem<DataSourceType>>[] = [
-  ...TableEditorHeaders,
-  { key: "sourceName", title: "Source Field" },
-  { key: "type", title: "Column Type" },
-];
+export const FileTableEditorHeaders: DataTableHeader<ADataSourceItem<DataSourceType>>[] = [...TableEditorHeaders];
