@@ -11,7 +11,7 @@
 
 ## Technology Stack
 
-- **Framework**: Nuxt 4 (Beta/RC)
+- **Framework**: Nuxt 4
 - **UI Library**: Vue 3.5+
 - **Build System**: Vite, Rolldown
 - **Styling**: UnoCSS (Attributify Mode), Vuetify 3, Sass
@@ -46,7 +46,7 @@
 
 ### TypeScript
 
-- Strict mode (`strictTypeChecked`). `any` is **BANNED**.
+- TypeScript compiler: `strict` mode enabled. ESLint: `tseslint.configs.strictTypeChecked`. `any` is **BANNED**.
 - `Omit` is **BANNED** — use `Except` from `type-fest`.
 - Non-null assertions (`!`) are **BANNED** — use optional chaining or guard clauses.
 - `.forEach()` is **BANNED** — use `for...of`.
