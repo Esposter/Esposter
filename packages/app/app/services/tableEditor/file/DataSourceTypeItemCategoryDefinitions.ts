@@ -2,7 +2,8 @@ import type { ADataSourceItem } from "#shared/models/tableEditor/file/ADataSourc
 import type { ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
 import type { Except } from "type-fest";
 
-import { CsvDataSourceItem } from "#shared/models/tableEditor/file/CsvDataSourceItem";
+import { CsvDataSourceItem } from "#shared/models/tableEditor/file/csv/CsvDataSourceItem";
+import { XlsxDataSourceItem } from "#shared/models/tableEditor/file/xlsx/XlsxDataSourceItem";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
 import { ItemEntityTypePropertyNames } from "@esposter/shared";
@@ -13,6 +14,12 @@ const DataSourceTypeItemCategoryDefinitionMap = {
     icon: "mdi-file-delimited",
     targetTypeKey: ItemEntityTypePropertyNames.type,
     title: DataSourceType.Csv,
+  },
+  [DataSourceType.Xlsx]: {
+    create: () => new XlsxDataSourceItem(),
+    icon: "mdi-file-excel",
+    targetTypeKey: ItemEntityTypePropertyNames.type,
+    title: DataSourceType.Xlsx,
   },
 } as const satisfies Partial<
   Record<DataSourceType, Except<ItemCategoryDefinition<ADataSourceItem<DataSourceType>>, "value">>

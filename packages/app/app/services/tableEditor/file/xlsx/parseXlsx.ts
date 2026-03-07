@@ -1,22 +1,20 @@
-import type { CsvDataSourceItem } from "#shared/models/tableEditor/file/csv/CsvDataSourceItem";
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { XlsxDataSourceItem } from "#shared/models/tableEditor/file/xlsx/XlsxDataSourceItem";
 
-import { CsvColumn } from "#shared/models/tableEditor/file/csv/CsvColumn";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
+import { XlsxColumn } from "#shared/models/tableEditor/file/xlsx/XlsxColumn";
 import { coerceValue } from "@/services/tableEditor/file/csv/coerceValue";
-import { parseCsvLine } from "@/services/tableEditor/file/csv/parseCsvLine";
 import { inferColumnType } from "@/services/tableEditor/file/inferColumnType";
-import { takeOne } from "@esposter/shared";
+import readXlsxFile from "read-excel-file/browser";
 
-export const parseCsv = async (file: File, item: CsvDataSourceItem): Promise<DataSource> => {
-  const text = await file.text();
-  const lines = text.split(/\r?\n/).filter((line) => line.trim() !== "");
-  if (lines.length === 0)
+export const parseXlsx = async (file: File, item: XlsxDataSourceItem): Promise<DataSource> => {
+  const rawData = await readXlsxFile(file, { sheet: item.configuration.sheetIndex + 1 });
+  if (rawData.length === 0)
     return {
       columns: [],
       metadata: {
         columnCount: 0,
-        dataSourceType: DataSourceType.Csv,
+        dataSourceType: DataSourceType.Xlsx,
         importedAt: new Date(),
         name: file.name,
         rowCount: 0,
@@ -25,24 +23,24 @@ export const parseCsv = async (file: File, item: CsvDataSourceItem): Promise<Dat
       rows: [],
     };
 
-  const sourceNames = parseCsvLine(takeOne(lines), item.configuration.delimiter);
-  const rawRows = lines.slice(1).map((line) => parseCsvLine(line, item.configuration.delimiter));
+  const sourceNames = (rawData[0] ?? []).map((cell) => cell?.toString());
+  const bodyRows = rawData.slice(1).map((row) => row.map((cell) => cell?.toString()));
   const columns = sourceNames.map(
     (sourceName, index) =>
-      new CsvColumn({
+      new XlsxColumn({
         name: sourceName,
         sourceName,
-        type: inferColumnType(rawRows.map((row) => row[index] ?? "")),
+        type: inferColumnType(bodyRows.map((row) => row[index] ?? "")),
       }),
   );
-  const rows = rawRows.map((rawRow) =>
+  const rows = bodyRows.map((rawRow) =>
     Object.fromEntries(columns.map((column, index) => [column.name, coerceValue(rawRow[index] ?? "", column.type)])),
   );
   return {
     columns,
     metadata: {
       columnCount: columns.length,
-      dataSourceType: DataSourceType.Csv,
+      dataSourceType: DataSourceType.Xlsx,
       importedAt: new Date(),
       name: file.name,
       rowCount: rows.length,
