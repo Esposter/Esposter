@@ -7,6 +7,10 @@ export const coerceValue = (value: string, type: ColumnType): ColumnValue => {
   const sanitizedValue = value.trim();
   if (!sanitizedValue) return null;
   else if (type === ColumnType.Boolean) return BOOLEAN_VALUES.has(sanitizedValue.toLowerCase());
-  else if (type === ColumnType.Number) return Number(sanitizedValue);
+  else if (type === ColumnType.Number) {
+    const number = Number(sanitizedValue);
+    return Number.isNaN(number) ? null : number;
+  }
+  else if (type === ColumnType.Date) return sanitizedValue;
   else return sanitizedValue;
 };

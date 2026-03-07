@@ -144,7 +144,9 @@
 
 ### Vue Hooks
 
-- Always put a blank line before `watch`, `onMounted`, `onUnmounted`, and other Vue lifecycle hooks/watchers to visually separate them from regular `const` assignments.
+- Always place `watch`, `onMounted`, `onUnmounted`, and other Vue lifecycle hooks/watchers at the **bottom** of `<script setup>`, after all `const` assignments.
+- Always put a blank line before them to visually separate them from regular `const` assignments.
+- Always wrap the callback in an explicit arrow function — never pass a function reference directly. This avoids scope/binding issues and prevents accidental argument forwarding: `onUnmounted(() => { reset(); })` not `onUnmounted(reset)`.
 
 ### Props Interface Naming
 

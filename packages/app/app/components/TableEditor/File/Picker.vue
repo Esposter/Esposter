@@ -33,10 +33,13 @@ const formattedFileSize = computed(() => {
           return;
         }
 
-        const result = await configuration.parse(file, modelValue);
-        modelValue.name = result.metadata.name;
-        setDataSource(result);
-        onComplete();
+        try {
+          const result = await configuration.parse(file, modelValue);
+          modelValue.name = result.metadata.name;
+          setDataSource(result);
+        } finally {
+          onComplete();
+        }
       }
     "
   >

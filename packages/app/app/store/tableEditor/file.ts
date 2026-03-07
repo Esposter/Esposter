@@ -1,16 +1,13 @@
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 
-import { useTableEditorStore } from "@/store/tableEditor";
 import { takeOne } from "@esposter/shared";
 
 export const useFileTableEditorStore = defineStore("tableEditor/file", () => {
-  const tableEditorStore = useTableEditorStore();
   const dataSource = ref<DataSource | null>(null);
   const setDataSource = (value: DataSource) => {
     dataSource.value = value;
   };
-  const reset = async () => {
-    await tableEditorStore.resetItem();
+  const reset = () => {
     dataSource.value = null;
   };
   const deleteRow = (index: number) => {

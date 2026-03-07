@@ -8,9 +8,14 @@ import { Vjsf } from "@koumoul/vjsf";
 
 const modelValue = defineModel<TDataSourceItem>({ required: true });
 const fileTableEditorStore = useFileTableEditorStore();
+const { reset } = fileTableEditorStore;
 const { dataSource } = storeToRefs(fileTableEditorStore);
 const configuration = computed(() => DataSourceConfigurationMap[modelValue.value.type]);
 const schema = computed(() => zodToJsonSchema(configuration.value.schema));
+
+onUnmounted(() => {
+  reset();
+});
 </script>
 
 <template>
