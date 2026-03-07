@@ -27,7 +27,9 @@ const formattedDate = computed(() =>
           <v-chip label size="small" prepend-icon="mdi-table-row">{{ metadata.rowCount }} rows</v-chip>
           <v-chip label size="small" prepend-icon="mdi-table-column">{{ metadata.columnCount }} columns</v-chip>
           <v-chip v-if="formattedSize" label size="small" prepend-icon="mdi-database">{{ formattedSize }}</v-chip>
-          <v-chip label size="small" prepend-icon="mdi-file-outline">{{ metadata.dataSourceType.toUpperCase() }}</v-chip>
+          <v-chip label size="small" prepend-icon="mdi-file-outline">
+            {{ metadata.dataSourceType.toUpperCase() }}
+          </v-chip>
         </div>
       </template>
     </v-card-item>

@@ -3,7 +3,7 @@ import type { AColumn } from "#shared/models/tableEditor/file/AColumn";
 import type { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import type { z } from "zod";
 
-import { zodToJsonSchema } from "@/services/dashboard/jsonSchema/zodToJsonSchema";
+import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { useFileTableEditorStore } from "@/store/tableEditor/file";
 import { Vjsf } from "@koumoul/vjsf";
 import deepEqual from "fast-deep-equal";
@@ -16,7 +16,7 @@ interface EditDialogButtonProps {
 const { column, schema } = defineProps<EditDialogButtonProps>();
 const fileTableEditorStore = useFileTableEditorStore();
 const { updateColumn } = fileTableEditorStore;
-// eslint-disable-next-line @typescript-eslint/no-misused-spread
+
 const editedColumn = ref({ ...column });
 const jsonSchema = computed(() => zodToJsonSchema(schema));
 const isUpdated = computed(() => !deepEqual(column, editedColumn.value));

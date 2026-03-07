@@ -1,7 +1,7 @@
 <script setup lang="ts" generic="TDataSourceItem extends DataSourceItemTypeMap[keyof DataSourceItemTypeMap]">
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 
-import { zodToJsonSchema } from "@/services/dashboard/jsonSchema/zodToJsonSchema";
+import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { DataSourceConfigurationMap } from "@/services/tableEditor/file/DataSourceConfigurationMap";
 import { useFileTableEditorStore } from "@/store/tableEditor/file";
 import { Vjsf } from "@koumoul/vjsf";

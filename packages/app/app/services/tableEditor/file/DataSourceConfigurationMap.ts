@@ -2,8 +2,8 @@ import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/Data
 import type { DataSourceConfiguration } from "@/models/tableEditor/file/DataSourceConfiguration";
 
 import { csvDataSourceConfigurationSchema } from "#shared/models/tableEditor/file/csv/CsvDataSourceConfiguration";
-import { xlsxDataSourceConfigurationSchema } from "#shared/models/tableEditor/file/xlsx/XlsxDataSourceConfiguration";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
+import { xlsxDataSourceConfigurationSchema } from "#shared/models/tableEditor/file/xlsx/XlsxDataSourceConfiguration";
 import { parseCsv } from "@/services/tableEditor/file/csv/parseCsv";
 import { parseXlsx } from "@/services/tableEditor/file/xlsx/parseXlsx";
 

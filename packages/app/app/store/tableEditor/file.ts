@@ -25,12 +25,12 @@ export const useFileTableEditorStore = defineStore("tableEditor/file", () => {
     const column = dataSource.value.columns.find((column) => column.name === originalName);
     if (!column) return;
     const newName = updated.name;
-    if (newName !== undefined && newName !== originalName) {
+    if (newName !== undefined && newName !== originalName)
       dataSource.value.rows = dataSource.value.rows.map((row) => {
         const { [originalName]: value, ...rest } = row;
         return { ...rest, [newName]: value };
       });
-    }
+
     Object.assign(column, updated);
   };
   const deleteColumn = (name: string) => {
@@ -46,8 +46,8 @@ export const useFileTableEditorStore = defineStore("tableEditor/file", () => {
     deleteColumn,
     deleteRow,
     reset,
-    updateColumn,
     setDataSource,
+    updateColumn,
     updateRow,
   };
 });

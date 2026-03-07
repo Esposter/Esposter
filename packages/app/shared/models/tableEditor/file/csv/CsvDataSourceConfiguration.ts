@@ -6,5 +6,10 @@ export interface CsvDataSourceConfiguration {
 }
 
 export const csvDataSourceConfigurationSchema = z.object({
-  delimiter: z.enum(CsvDelimiter),
+  delimiter: z.union([
+    z.literal(CsvDelimiter.Comma).describe("Comma (,)"),
+    z.literal(CsvDelimiter.Pipe).describe("Pipe (|)"),
+    z.literal(CsvDelimiter.Semicolon).describe("Semicolon (;)"),
+    z.literal(CsvDelimiter.Tab).describe("Tab"),
+  ]),
 }) satisfies z.ZodType<CsvDataSourceConfiguration>;
