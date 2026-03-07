@@ -6,5 +6,5 @@ import type { z } from "zod";
 export interface DataSourceConfiguration<TDataSourceItem extends ADataSourceItem<DataSourceType>> {
   accept: string;
   parse(file: File, item: TDataSourceItem): Promise<DataSource>;
-  schema: z.core.JSONSchema.JSONSchema;
+  schema: z.ZodObject;
 }
