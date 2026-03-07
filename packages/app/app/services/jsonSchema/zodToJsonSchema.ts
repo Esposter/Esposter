@@ -7,15 +7,14 @@ export const zodToJsonSchema = (schema: z.ZodObject) => {
   // For integrating with vjsf, we only need the type and properties
   const { properties, type } = z.toJSONSchema(schema) as z.core.JSONSchema.ObjectSchema;
   recurseProperties(properties, {
-    objectHooks: [
-      (key, property) => {
-        console.log(property);
-        property.anyOf ??= toTitleCase(prettify(key));
-      },
-    ],
     otherHooks: [
       (key, property) => {
         property.title ??= toTitleCase(prettify(key));
+        // Migrate anyOf to oneOf since we just need to support enums properly for vjsf
+        if (property.anyOf) {
+          property.oneOf = property.anyOf;
+          delete property.anyOf;
+        }
       },
     ],
   });
