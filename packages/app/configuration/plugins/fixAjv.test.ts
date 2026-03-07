@@ -201,6 +201,26 @@ describe("fixAjv", () => {
         expect(result).toContain('import * as _fn_ns from "./fn";\n');
         expect(result).toContain("const fn = (_fn_ns.default ?? _fn_ns);\n");
       });
+
+      test("does not unwrap read-only require var", () => {
+        expect.hasAssertions();
+
+        // Property read (utils.foo) must not trigger unwrap — only assignment/call does.
+        const code = 'const utils = require("./utils");\nconst x = utils.foo;\n';
+
+        expect(transform(code, AJV_ID)).toBe('import * as utils from "./utils";\nconst x = utils.foo;\n');
+      });
+
+      test("does not unwrap require var whose name is a suffix of another identifier", () => {
+        expect.hasAssertions();
+
+        // 'fn' must not be flagged because 'ifn.bar = 1' contains it — \\b prevents the false match.
+        const code = 'const fn = require("./fn");\nconst ifn = {};\nifn.bar = 1;\n';
+
+        expect(transform(code, AJV_ID)).toBe(
+          'import * as fn from "./fn";\nconst ifn = {};\nifn.bar = 1;\n',
+        );
+      });
     });
 
     describe("step 5: inline require() → extracted import prepended at top", () => {

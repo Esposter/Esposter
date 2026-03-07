@@ -107,9 +107,11 @@ export const fixAjv = {
     // Creates a non-callable plain object (e.g. equal.js: `const equal = require("fast-deep-equal");
     // Equal.code = '...'` — equal must stay callable).
     const needsUnwrapVars = new Set<string>();
-    for (const [varName] of requireMap)
-      if (new RegExp(`\\b${varName}\\.[\\w$]+ =(?!=)`).test(code) || new RegExp(`\\b${varName}\\s*\\(`).test(code))
+    for (const [varName] of requireMap) {
+      const escaped = varName.replaceAll(/[$()*+.?[\\\]^{|}]/g, "\\$&");
+      if (new RegExp(`\\b${escaped}\\.[\\w$]+ =(?!=)`).test(code) || new RegExp(`\\b${escaped}\\s*\\(`).test(code))
         needsUnwrapVars.add(varName);
+    }
     // Collect inline require() calls not already covered by a top-level `const/var X = require(Y)`.
     const handledPaths = new Set(requireMap.values());
     const inlineRequireMap = new Map<string, string>(); // Path → varName
