@@ -10,7 +10,6 @@ export const coerceValue = (value: string, type: ColumnType): ColumnValue => {
   else if (type === ColumnType.Number) {
     const number = Number(sanitizedValue);
     return Number.isNaN(number) ? null : number;
-  }
-  else if (type === ColumnType.Date) return sanitizedValue;
+  } else if (type === ColumnType.Date) return sanitizedValue;
   else return sanitizedValue;
 };

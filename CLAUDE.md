@@ -169,16 +169,6 @@
 - Always clean up in `onUnmounted`: intervals, timeouts, animation frames, event listeners.
 - Prefer `VueUse` composables over manual event listeners where possible.
 
-### Immutability (CRITICAL)
-
-- NEVER mutate arrays/objects directly — always create new ones:
-  ```typescript
-  // WRONG
-  items.push(newItem)
-  // CORRECT
-  const updated = [...items, newItem]
-  ```
-
 ### CRUD Store Patterns
 
 Follow `createOperationData` conventions exactly when writing store update/delete methods:
