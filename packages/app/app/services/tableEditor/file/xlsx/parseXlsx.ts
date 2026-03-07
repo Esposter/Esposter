@@ -2,7 +2,7 @@ import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { XlsxDataSourceItem } from "#shared/models/tableEditor/file/xlsx/XlsxDataSourceItem";
 
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
-import { XlsxColumn } from "#shared/models/tableEditor/file/xlsx/XlsxColumn";
+import { Column } from "#shared/models/tableEditor/file/Column";
 import { coerceValue } from "@/services/tableEditor/file/csv/coerceValue";
 import { inferColumnType } from "@/services/tableEditor/file/inferColumnType";
 import readXlsxFile from "read-excel-file/browser";
@@ -27,7 +27,7 @@ export const parseXlsx = async (file: File, item: XlsxDataSourceItem): Promise<D
   const bodyRows = rawData.slice(1).map((row) => row.map((cell) => cell?.toString()));
   const columns = sourceNames.map(
     (sourceName, index) =>
-      new XlsxColumn({
+      new Column({
         name: sourceName,
         sourceName,
         type: inferColumnType(bodyRows.map((row) => row[index] ?? "")),

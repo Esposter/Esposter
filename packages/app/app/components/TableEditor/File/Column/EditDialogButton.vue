@@ -1,31 +1,30 @@
 <script setup lang="ts">
-import type { AColumn } from "#shared/models/tableEditor/file/AColumn";
-import type { z } from "zod";
+import type { Column } from "#shared/models/tableEditor/file/Column";
 
+import { columnSchema } from "#shared/models/tableEditor/file/Column";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { useFileTableEditorStore } from "@/store/tableEditor/file";
 import { Vjsf } from "@koumoul/vjsf";
 import deepEqual from "fast-deep-equal";
 
 interface EditDialogButtonProps {
-  column: AColumn;
-  schema: z.ZodObject;
+  column: Column;
 }
 
-const { column, schema } = defineProps<EditDialogButtonProps>();
+const { column } = defineProps<EditDialogButtonProps>();
 const fileTableEditorStore = useFileTableEditorStore();
 const { updateColumn } = fileTableEditorStore;
+const jsonSchema = zodToJsonSchema(columnSchema);
 // eslint-disable-next-line @typescript-eslint/no-misused-spread
 const editedColumn = ref({ ...column });
-const jsonSchema = computed(() => zodToJsonSchema(schema));
-const isUpdated = computed(() => !deepEqual(column, editedColumn.value));
+const disabled = computed(() => deepEqual(column, editedColumn.value));
 </script>
 
 <template>
   <StyledDialog
     :card-props="{ title: `Edit ${column.sourceName} Field` }"
     :confirm-button-props="{ text: 'Save & Close' }"
-    :confirm-button-attrs="{ disabled: !isUpdated }"
+    :confirm-button-attrs="{ disabled }"
     @submit="
       (_event, onComplete) => {
         updateColumn(column.name, editedColumn);

@@ -7,12 +7,17 @@ import {
 import { ColumnType, columnTypeSchema } from "#shared/models/tableEditor/file/ColumnType";
 import { z } from "zod";
 
-export abstract class AColumn extends ATableEditorItemEntity implements ItemEntityType<ColumnType> {
+export class Column extends ATableEditorItemEntity implements ItemEntityType<ColumnType> {
   readonly sourceName: string = "";
   readonly type: ColumnType = ColumnType.String;
+
+  constructor(init?: Partial<Column>) {
+    super();
+    Object.assign(this, init);
+  }
 }
 
-export const aColumnSchema = z.object({
+export const columnSchema = z.object({
   ...aTableEditorItemEntitySchema.shape,
   sourceName: z.string().readonly(),
   type: columnTypeSchema.readonly(),

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ColumnHeaders } from "@/services/tableEditor/file/ColumnHeaders";
-import { ColumnSchemaMap } from "@/services/tableEditor/file/ColumnSchemaMap";
 import { ColumnTypeColorMap } from "@/services/tableEditor/file/ColumnTypeColorMap";
 import { useFileTableEditorStore } from "@/store/tableEditor/file";
 
@@ -22,7 +21,7 @@ const { dataSource } = storeToRefs(fileTableEditorStore);
       </v-chip>
     </template>
     <template #[`item.actions`]="{ item: column }">
-      <TableEditorFileColumnEditDialogButton :column :schema="ColumnSchemaMap[dataSource.metadata.dataSourceType]" />
+      <TableEditorFileColumnEditDialogButton :column />
     </template>
   </v-data-table>
 </template>

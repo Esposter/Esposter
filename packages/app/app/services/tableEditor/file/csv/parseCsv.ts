@@ -1,7 +1,7 @@
 import type { CsvDataSourceItem } from "#shared/models/tableEditor/file/csv/CsvDataSourceItem";
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 
-import { CsvColumn } from "#shared/models/tableEditor/file/csv/CsvColumn";
+import { Column } from "#shared/models/tableEditor/file/Column";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { coerceValue } from "@/services/tableEditor/file/csv/coerceValue";
 import { parseCsvLine } from "@/services/tableEditor/file/csv/parseCsvLine";
@@ -29,7 +29,7 @@ export const parseCsv = async (file: File, item: CsvDataSourceItem): Promise<Dat
   const rawRows = lines.slice(1).map((line) => parseCsvLine(line, item.configuration.delimiter));
   const columns = sourceNames.map(
     (sourceName, index) =>
-      new CsvColumn({
+      new Column({
         name: sourceName,
         sourceName,
         type: inferColumnType(rawRows.map((row) => row[index] ?? "")),
