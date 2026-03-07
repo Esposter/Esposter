@@ -4,6 +4,6 @@ import type { DataTableHeader } from "@/models/vuetify/DataTableHeader";
 
 export const ColumnHeaders: DataTableHeader<AColumn<ColumnType>>[] = [
   { key: "sourceName", title: "Source Field" },
-  { key: "name", title: "Name" },
+  { key: "name", title: "Field" },
   { key: "type", title: "Type" },
 ];
