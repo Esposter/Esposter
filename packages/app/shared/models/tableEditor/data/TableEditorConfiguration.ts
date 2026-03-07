@@ -1,4 +1,5 @@
 import type { Item } from "#shared/models/tableEditor/data/Item";
+import type { ADataSourceItem } from "#shared/models/tableEditor/file/ADataSourceItem";
 import type { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import type { TodoListItem } from "#shared/models/tableEditor/todoList/TodoListItem";
 import type { VuetifyComponentItem } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
@@ -8,7 +9,6 @@ import type { PartialDeep } from "type-fest";
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
 import { createTableEditorSchema, TableEditor } from "#shared/models/tableEditor/data/TableEditor";
 import { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType";
-import { ADataSourceItem } from "#shared/models/tableEditor/file/ADataSourceItem";
 import { dataSourceItemSchema } from "#shared/models/tableEditor/file/DataSourceItemSchema";
 import { todoListItemSchema } from "#shared/models/tableEditor/todoList/TodoListItem";
 import { vuetifyComponentItemSchema } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
