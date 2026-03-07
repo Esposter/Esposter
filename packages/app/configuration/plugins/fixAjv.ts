@@ -108,7 +108,7 @@ export const fixAjv = {
     // Equal.code = '...'` — equal must stay callable).
     const needsUnwrapVars = new Set<string>();
     for (const [varName] of requireMap) {
-      const escaped = varName.replaceAll(/[$()*+.?[\\\]^{|}]/g, "\\$&");
+      const escaped = varName.replaceAll(/[$()*+.?[\\\]^{|}]/g, String.raw`\$&`);
       if (new RegExp(`\\b${escaped}\\.[\\w$]+ =(?!=)`).test(code) || new RegExp(`\\b${escaped}\\s*\\(`).test(code))
         needsUnwrapVars.add(varName);
     }
