@@ -217,9 +217,7 @@ describe("fixAjv", () => {
         // 'fn' must not be flagged because 'ifn.bar = 1' contains it — \\b prevents the false match.
         const code = 'const fn = require("./fn");\nconst ifn = {};\nifn.bar = 1;\n';
 
-        expect(transform(code, AJV_ID)).toBe(
-          'import * as fn from "./fn";\nconst ifn = {};\nifn.bar = 1;\n',
-        );
+        expect(transform(code, AJV_ID)).toBe('import * as fn from "./fn";\nconst ifn = {};\nifn.bar = 1;\n');
       });
     });
 
