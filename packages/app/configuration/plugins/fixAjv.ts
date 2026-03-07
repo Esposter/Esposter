@@ -8,8 +8,7 @@ import type { ViteOptions } from "nuxt/schema";
 //   2. Remove `Object.defineProperty(exports, "__esModule", {...});`
 //   3. Remove `exports.X = ... = void 0;` init chains
 //   4. `const/var X = require("Y");` → `import * as X from "Y";`
-//      Mutated vars (X.prop = val) get a mutable copy: `Object.assign(Object.create(null), ns)`
-//      Callable vars (X(...)) get the unwrapped default: `ns.default ?? ns`
+//      Mutated (X.prop = val) or callable (X(...)) vars get the unwrapped value: `ns.default ?? ns`
 //   5. Inline `require("Y")` → extracted `import * as Y from "Y";` prepended at top
 //   6. `module.exports = exports = X;` → (removed)
 //   7. `module.exports = X;` → `export default X;`
@@ -22,6 +21,10 @@ import type { ViteOptions } from "nuxt/schema";
 //  14. `exports.X = <expr>;` → `export const X = <expr>;` (single-line and multiline blocks)
 //  15. TypeScript enum IIFEs: `})(NAME || (exports.NAME = NAME = {}));` → `export { NAME };`
 //  16. Remaining `exports.X` reads → `X`
+//
+// Debug/src/common.js — purpose-built transform:
+//   Extracts non-relative inline requires (e.g. `require('ms')`) as ESM imports,
+//   Then emits `export default setup;` from `module.exports = setup`.
 //
 // Debug/src/browser.js — purpose-built transform:
 //   Uses `module.exports = require('./common')(exports)` with `exports.X` for cross-references.
@@ -65,6 +68,24 @@ export const fixAjv: NonNullable<ViteOptions["plugins"]>[number] = {
       return `${imports}const _exports = {}\n${result}`;
     }
 
+    // ── debug/src/common.js ──────────────────────────────────────────────────
+    if (cleanId.includes("/debug/") && cleanId.endsWith("/src/common.js")) {
+      // Collect non-relative inline requires (only `require('ms')` in practice).
+      const pkgRequireMap = new Map<string, string>();
+      for (const [, path] of code.matchAll(INLINE_REQUIRE_RE)) {
+        if (!path || path.startsWith(".") || pkgRequireMap.has(path)) continue;
+        pkgRequireMap.set(path, path.replaceAll(/[^a-zA-Z0-9_$]/g, "_"));
+      }
+      const result = code
+        .replaceAll(INLINE_REQUIRE_RE, (_, path: string) => {
+          const vn = pkgRequireMap.get(path);
+          return vn ? `(${vn}.default ?? ${vn})` : `require("${path}")`;
+        })
+        .replace(/^module\.exports = ([\w$]+);?\n/m, (_, x) => `${x}.default = ${x};\nexport default ${x};\n`);
+      const imports = [...pkgRequireMap.entries()].map(([path, vn]) => `import * as ${vn} from "${path}";\n`).join("");
+      return `${imports}${result}`;
+    }
+
     // ── Generic ajv transform ────────────────────────────────────────────────
     if (
       !(
@@ -85,14 +106,15 @@ export const fixAjv: NonNullable<ViteOptions["plugins"]>[number] = {
       if (!varName || !modPath) continue;
       requireMap.set(varName, modPath);
     }
-    // Mutated vars need a mutable copy since `import * as` namespace objects are sealed.
-    const mutatedRequireVars = new Set<string>();
+    // Vars that are mutated (X.prop = val) or called as functions (X(...)) need the actual
+    // exported value rather than the sealed namespace — use `(ns.default ?? ns)` to unwrap.
+    // Note: mutated vars must NOT use Object.assign(Object.create(null), fn) because that
+    // Creates a non-callable plain object (e.g. equal.js: `const equal = require("fast-deep-equal");
+    // Equal.code = '...'` — equal must stay callable).
+    const needsUnwrapVars = new Set<string>();
     for (const [varName] of requireMap)
-      if (new RegExp(`\\b${varName}\\.[\\w$]+ =(?!=)`).test(code)) mutatedRequireVars.add(varName);
-    // Callable vars need the unwrapped default so the value is callable.
-    const callableRequireVars = new Set<string>();
-    for (const [varName] of requireMap)
-      if (new RegExp(`\\b${varName}\\s*\\(`).test(code)) callableRequireVars.add(varName);
+      if (new RegExp(`\\b${varName}\\.[\\w$]+ =(?!=)`).test(code) || new RegExp(`\\b${varName}\\s*\\(`).test(code))
+        needsUnwrapVars.add(varName);
 
     // Collect inline require() calls not already covered by a top-level `const/var X = require(Y)`.
     const handledPaths = new Set(requireMap.values());
@@ -116,9 +138,7 @@ export const fixAjv: NonNullable<ViteOptions["plugins"]>[number] = {
       .replaceAll(/^(?:exports\.[\w$]+ = )+void 0;\n/gm, "")
       // Step 4: top-level require() → import
       .replace(REQUIRE_RE, (_m: string, _kw: string, vName: string, modPath: string) => {
-        if (mutatedRequireVars.has(vName))
-          return `import * as _${vName}_ns from "${modPath}";\nconst ${vName} = Object.assign(Object.create(null), _${vName}_ns.default ?? _${vName}_ns);\n`;
-        if (callableRequireVars.has(vName))
+        if (needsUnwrapVars.has(vName))
           return `import * as _${vName}_ns from "${modPath}";\nconst ${vName} = (_${vName}_ns.default ?? _${vName}_ns);\n`;
         return `import * as ${vName} from "${modPath}";\n`;
       })
