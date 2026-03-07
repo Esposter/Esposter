@@ -27,7 +27,6 @@ useConfirmBeforeNavigation(isDirty);
     <Head>
       <Title>{{ tableEditorTypeName }}</Title>
     </Head>
-    <TableEditorFileIndex v-if="tableEditorType === TableEditorType.File" />
-    <TableEditorCrudView v-else />
+    <TableEditorCrudView />
   </NuxtLayout>
 </template>

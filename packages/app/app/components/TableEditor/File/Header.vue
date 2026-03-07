@@ -32,11 +32,7 @@ const openDialog = (type: DataSourceType) => {
             />
           </v-list>
         </v-menu>
-        <TableEditorFileDialog
-          v-if="selectedType"
-          v-model="isDialogOpen"
-          :data-source-type="selectedType"
-        />
+        <TableEditorFileDialog v-if="selectedType" v-model="isDialogOpen" :data-source-type="selectedType" />
       </div>
     </v-toolbar-title>
   </v-toolbar>
