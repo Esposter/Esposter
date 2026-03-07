@@ -1,5 +1,4 @@
-import type { ViteOptions } from "nuxt/schema";
-
+import type { Plugin } from "vite";
 // Vite 8 (rolldown) skips the CJS-to-ESM transform for modules that set `__esModule: true`.
 // The ajv family of packages all hit this. This plugin converts them to proper ESM before rolldown.
 //
@@ -36,13 +35,12 @@ const INLINE_REQUIRE_RE = /\brequire\(["']([^"']+)["']\)/g;
 const ODP_REEXPORT_RE =
   /^Object\.defineProperty\(exports, "([\w$]+)", \{ enumerable: true, get: function \(\) \{ return (\w+)\.([\w$]+); \} \}\);\n/gm;
 
-export const fixAjv: NonNullable<ViteOptions["plugins"]>[number] = {
+export const fixAjv = {
   enforce: "pre",
   name: "fix-ajv",
-  transform(code, id) {
+  transform: (code: string, id: string) => {
     const cleanId = id.split("?")[0]?.replaceAll("\\", "/");
     if (!cleanId) return;
-
     // ── debug/src/browser.js ────────────────────────────────────────────────
     if (cleanId.includes("/debug/") && cleanId.endsWith("/src/browser.js")) {
       const inlineRequireMap = new Map<string, string>();
@@ -67,7 +65,6 @@ export const fixAjv: NonNullable<ViteOptions["plugins"]>[number] = {
         .join("");
       return `${imports}const _exports = {}\n${result}`;
     }
-
     // ── debug/src/common.js ──────────────────────────────────────────────────
     if (cleanId.includes("/debug/") && cleanId.endsWith("/src/common.js")) {
       // Collect non-relative inline requires (only `require('ms')` in practice).
@@ -85,7 +82,6 @@ export const fixAjv: NonNullable<ViteOptions["plugins"]>[number] = {
       const imports = [...pkgRequireMap.entries()].map(([path, vn]) => `import * as ${vn} from "${path}";\n`).join("");
       return `${imports}${result}`;
     }
-
     // ── Generic ajv transform ────────────────────────────────────────────────
     if (
       !(
@@ -98,7 +94,6 @@ export const fixAjv: NonNullable<ViteOptions["plugins"]>[number] = {
       )
     )
       return;
-
     // Build variable → module-path map for top-level requires (used by ODP re-export resolver).
     const requireMap = new Map<string, string>();
     // oxlint-disable-next-line unicorn/no-unreadable-array-destructuring
@@ -115,7 +110,6 @@ export const fixAjv: NonNullable<ViteOptions["plugins"]>[number] = {
     for (const [varName] of requireMap)
       if (new RegExp(`\\b${varName}\\.[\\w$]+ =(?!=)`).test(code) || new RegExp(`\\b${varName}\\s*\\(`).test(code))
         needsUnwrapVars.add(varName);
-
     // Collect inline require() calls not already covered by a top-level `const/var X = require(Y)`.
     const handledPaths = new Set(requireMap.values());
     const inlineRequireMap = new Map<string, string>(); // Path → varName
@@ -182,7 +176,6 @@ export const fixAjv: NonNullable<ViteOptions["plugins"]>[number] = {
       )
       // Step 16: clean up remaining exports.X reads (internal references after step 14)
       .replaceAll(/\bexports\.([\w$]+)\b/g, "$1");
-
     // Prepend imports for inline requires extracted in step 5.
     if (inlineRequireMap.size > 0) {
       const imports = [...inlineRequireMap.entries()]
@@ -190,14 +183,12 @@ export const fixAjv: NonNullable<ViteOptions["plugins"]>[number] = {
         .join("");
       result = imports + result;
     }
-
     // Set `.default = self` on default-exported identifiers so consumers that call `X.default(...)`
     // (expecting old CJS interop wrapping) continue to work alongside `X(...)` callers.
     result = result.replace(
       /^export default ([\w$]+);\n/m,
       (_, name) => `${name}.default = ${name};\nexport default ${name};\n`,
     );
-
     return result;
   },
-};
+} as const satisfies Plugin;
