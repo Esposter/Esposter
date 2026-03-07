@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { ColumnHeaders } from "@/services/tableEditor/file/ColumnHeaders";
+import { ColumnSchemaMap } from "@/services/tableEditor/file/ColumnSchemaMap";
+import { ColumnTypeColorMap } from "@/services/tableEditor/file/ColumnTypeColorMap";
 import { useFileTableEditorStore } from "@/store/tableEditor/file";
 
 const fileTableEditorStore = useFileTableEditorStore();
@@ -16,9 +17,12 @@ const { dataSource } = storeToRefs(fileTableEditorStore);
     hide-default-footer
   >
     <template #[`item.type`]="{ item: column }">
-      <v-chip :color="column.type === ColumnType.String ? undefined : 'primary'" label size="small">
+      <v-chip :color="ColumnTypeColorMap[column.type]" label size="small">
         {{ column.type }}
       </v-chip>
+    </template>
+    <template #[`item.actions`]="{ item: column }">
+      <TableEditorFileColumnEditDialogButton :column :schema="ColumnSchemaMap[dataSource.metadata.dataSourceType]" />
     </template>
   </v-data-table>
 </template>

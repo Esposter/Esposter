@@ -12,11 +12,11 @@ export abstract class AColumn<TColumnType extends ColumnType>
   implements ItemEntityType<TColumnType>
 {
   readonly sourceName: string = "";
-  abstract type: TColumnType;
+  abstract readonly type: TColumnType;
 }
 
 export const aColumnSchema = z.object({
   ...aTableEditorItemEntitySchema.shape,
-  sourceName: z.string(),
-  type: columnTypeSchema,
+  sourceName: z.string().readonly(),
+  type: columnTypeSchema.readonly(),
 });

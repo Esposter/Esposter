@@ -5,7 +5,7 @@ import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { z } from "zod";
 
 export class CsvColumn extends AColumn<ColumnType> {
-  override type = ColumnType.String;
+  override readonly type = ColumnType.String;
 
   constructor(init?: Partial<CsvColumn>) {
     super();

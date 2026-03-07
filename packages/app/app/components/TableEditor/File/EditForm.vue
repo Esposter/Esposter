@@ -12,6 +12,7 @@ const { reset } = fileTableEditorStore;
 const { dataSource } = storeToRefs(fileTableEditorStore);
 const configuration = computed(() => DataSourceConfigurationMap[modelValue.value.type]);
 const schema = computed(() => zodToJsonSchema(configuration.value.schema));
+const openPanels = ref(["fields", "data"]);
 
 onUnmounted(() => {
   reset();
@@ -31,14 +32,22 @@ onUnmounted(() => {
         <TableEditorFileMetadataBar :metadata="dataSource.metadata" />
       </v-col>
       <v-col cols="12">
-        <TableEditorFileColumnTable />
-      </v-col>
-      <v-col cols="12">
-        <TableEditorFileDataTable :data-source />
+        <v-expansion-panels v-model="openPanels" multiple>
+          <v-expansion-panel title="Fields" value="fields">
+            <v-expansion-panel-text>
+              <TableEditorFileColumnTable />
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+          <v-expansion-panel title="Data" value="data">
+            <v-expansion-panel-text>
+              <TableEditorFileDataTable :data-source />
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+        </v-expansion-panels>
       </v-col>
     </template>
     <v-col v-else cols="12">
-      <TableEditorFileEmptyState />
+      <TableEditorFileEmptyState :type="modelValue.type" />
     </v-col>
   </v-row>
 </template>

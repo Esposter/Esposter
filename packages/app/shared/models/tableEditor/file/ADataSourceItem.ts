@@ -25,5 +25,5 @@ export const createDataSourceItemSchema = <
   z.object({
     ...aTableEditorItemEntitySchema.shape,
     configuration: configurationSchema,
-    type: typeSchema,
+    type: typeSchema.readonly(),
   });
