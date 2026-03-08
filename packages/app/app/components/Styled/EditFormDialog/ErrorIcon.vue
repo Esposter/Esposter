@@ -1,19 +1,23 @@
 <script setup lang="ts">
 import type { VForm } from "vuetify/components";
 
+import { takeOne } from "@esposter/shared";
+
 interface ErrorIconProps {
   editFormRef: InstanceType<typeof VForm> | undefined;
+  formError: string;
   isEditFormValid: boolean;
 }
 
-const { editFormRef, isEditFormValid } = defineProps<ErrorIconProps>();
+const { editFormRef, formError, isEditFormValid } = defineProps<ErrorIconProps>();
 const errorMessage = computed(() => {
   const error = editFormRef?.errors[0];
-  if (!error) return "";
+  if (error) {
+    const element = document.querySelector(`label[for="${error.id}"]`);
+    if (element) return `${element.textContent}: ${takeOne(error.errorMessages)}`;
+  }
 
-  const element = document.querySelector(`label[for="${error.id}"]`);
-  if (!element) return "";
-  return `${element.textContent}: ${editFormRef.errors[0]?.errorMessages[0]}`;
+  return formError;
 });
 </script>
 

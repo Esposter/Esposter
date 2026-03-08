@@ -2,16 +2,13 @@
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 import type { DataSourceConfiguration } from "@/models/tableEditor/file/DataSourceConfiguration";
 
-import { useFileTableEditorStore } from "@/store/tableEditor/file";
-
 interface FilePickerProps {
   configuration: DataSourceConfiguration<TDataSourceItem>;
 }
 
 const modelValue = defineModel<TDataSourceItem>({ required: true });
 const { configuration } = defineProps<FilePickerProps>();
-const fileTableEditorStore = useFileTableEditorStore();
-const { setDataSource } = fileTableEditorStore;
+const { setDataSource } = useEditedItemDataSource();
 const file = ref<File | null>(null);
 const formattedFileSize = computed(() => {
   if (!file.value) return null;

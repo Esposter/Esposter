@@ -7,6 +7,7 @@ import { prettify } from "@/util/text/prettify";
 interface HeaderProps<T> {
   editedItem: T;
   editFormRef: InstanceType<typeof VForm> | undefined;
+  formError: string;
   isEditFormValid: boolean;
   isFullScreenDialog: boolean;
   isSavable: boolean;
@@ -14,7 +15,7 @@ interface HeaderProps<T> {
   originalItem?: T;
 }
 
-const { editedItem, editFormRef, isEditFormValid, isFullScreenDialog, isSavable, name, originalItem } =
+const { editedItem, editFormRef, formError, isEditFormValid, isFullScreenDialog, isSavable, name, originalItem } =
   defineProps<HeaderProps<T>>();
 const itemType = computed(() => prettify(editedItem.type));
 const emit = defineEmits<{
@@ -28,7 +29,7 @@ const emit = defineEmits<{
 <template>
   <v-toolbar flex-none pl-4 :title="`Configuration - ${itemType}`">
     <v-spacer />
-    <StyledEditFormDialogErrorIcon :edit-form-ref :is-edit-form-valid />
+    <StyledEditFormDialogErrorIcon :edit-form-ref :form-error :is-edit-form-valid />
     <StyledEditFormDialogSaveButton :is-savable />
     <StyledEditFormDialogConfirmDeleteDialogButton :name :original-item @delete="emit('delete', $event)" />
     <v-divider mx-2 thickness="2" vertical inset />

@@ -1,4 +1,4 @@
-import { CsvDelimiter } from "#shared/models/tableEditor/file/CsvDelimiter";
+import { CsvDelimiter } from "#shared/models/tableEditor/file/csv/CsvDelimiter";
 import { z } from "zod";
 
 export interface CsvDataSourceConfiguration {

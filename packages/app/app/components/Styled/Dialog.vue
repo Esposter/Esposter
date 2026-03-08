@@ -18,6 +18,7 @@ export interface StyledDialogProps {
 defineSlots<{
   activator: (props: StyledDialogActivatorSlotProps) => VNode;
   default: () => VNode;
+  "prepend-actions": () => VNode;
 }>();
 const { cardProps = {}, confirmButtonAttrs = {}, confirmButtonProps = {} } = defineProps<StyledDialogProps>();
 const emit = defineEmits<{ submit: [event: SubmitEventPromise, onComplete: () => void] }>();
@@ -41,6 +42,7 @@ const isValid = ref(true);
       <StyledCard :card-props>
         <slot />
         <v-card-actions>
+          <slot name="prepend-actions" />
           <v-spacer />
           <v-btn text-3 text="Cancel" variant="outlined" @click="modelValue = false" />
           <v-btn

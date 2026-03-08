@@ -1,21 +1,18 @@
 <script setup lang="ts" generic="TDataSourceItem extends DataSourceItemTypeMap[keyof DataSourceItemTypeMap]">
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
+import type { DataSourceConfiguration } from "@/models/tableEditor/file/DataSourceConfiguration";
 
-import { zodToJsonSchema } from "@/services/dashboard/jsonSchema/zodToJsonSchema";
+import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { DataSourceConfigurationMap } from "@/services/tableEditor/file/DataSourceConfigurationMap";
-import { useFileTableEditorStore } from "@/store/tableEditor/file";
 import { Vjsf } from "@koumoul/vjsf";
 
 const modelValue = defineModel<TDataSourceItem>({ required: true });
-const fileTableEditorStore = useFileTableEditorStore();
-const { reset } = fileTableEditorStore;
-const { dataSource } = storeToRefs(fileTableEditorStore);
-const configuration = computed(() => DataSourceConfigurationMap[modelValue.value.type]);
+const { dataSource } = useEditedItemDataSource();
+const configuration = computed(
+  () => DataSourceConfigurationMap[modelValue.value.type] as DataSourceConfiguration<TDataSourceItem>,
+);
 const schema = computed(() => zodToJsonSchema(configuration.value.schema));
-
-onUnmounted(() => {
-  reset();
-});
+const openPanels = ref(["fields", "data"]);
 </script>
 
 <template>
@@ -31,14 +28,27 @@ onUnmounted(() => {
         <TableEditorFileMetadataBar :metadata="dataSource.metadata" />
       </v-col>
       <v-col cols="12">
-        <TableEditorFileColumnTable />
-      </v-col>
-      <v-col cols="12">
-        <TableEditorFileDataTable :data-source />
+        <v-expansion-panels v-model="openPanels" multiple>
+          <v-expansion-panel title="Fields" value="fields">
+            <v-expansion-panel-text>
+              <TableEditorFileColumnTable />
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+          <v-expansion-panel value="data">
+            <template #title>
+              Data
+              <v-spacer />
+              <TableEditorFileStatsBar :stats="dataSource.stats" />
+            </template>
+            <v-expansion-panel-text>
+              <TableEditorFileDataTable :data-source />
+            </v-expansion-panel-text>
+          </v-expansion-panel>
+        </v-expansion-panels>
       </v-col>
     </template>
     <v-col v-else cols="12">
-      <TableEditorFileEmptyState />
+      <TableEditorFileEmptyState :type="modelValue.type" />
     </v-col>
   </v-row>
 </template>

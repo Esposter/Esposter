@@ -3,8 +3,8 @@ import type { VisualType } from "#shared/models/dashboard/data/VisualType";
 import type { ReadonlyRefOrGetter } from "@vueuse/core";
 
 import { getActiveChartTypeResolvers } from "@/services/dashboard/chart/getActiveChartTypeResolvers";
-import { zodToJsonSchema } from "@/services/dashboard/jsonSchema/zodToJsonSchema";
 import { getActiveVisualTypeResolvers } from "@/services/dashboard/visual/getActiveVisualTypeResolvers";
+import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { z } from "zod";
 
 export const useSchema = (chartType: ReadonlyRefOrGetter<ChartType>, visualType: ReadonlyRefOrGetter<VisualType>) =>

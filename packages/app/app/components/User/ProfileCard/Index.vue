@@ -33,7 +33,7 @@ const profileCardRowValues = computed(
 const editedProfileCardRows = ref(structuredClone(profileCardRowValues.value));
 const editMode = ref(false);
 const isValid = ref(true);
-const isUpdated = computed(() => isValid.value && !deepEqual(profileCardRowValues.value, editedProfileCardRows.value));
+const disabled = computed(() => !isValid.value || deepEqual(profileCardRowValues.value, editedProfileCardRows.value));
 </script>
 
 <template>
@@ -67,7 +67,7 @@ const isUpdated = computed(() => isValid.value && !deepEqual(profileCardRowValue
       <v-card-actions px-4>
         <template v-if="editMode">
           <v-btn text="Cancel" variant="outlined" @click="editMode = false" />
-          <StyledButton type="submit" :button-props="{ disabled: !isUpdated, text: 'Save' }" />
+          <StyledButton type="submit" :button-props="{ disabled, text: 'Save' }" />
         </template>
         <v-btn v-else font-bold color="border" text="Edit Settings" variant="elevated" @click="editMode = true" />
       </v-card-actions>

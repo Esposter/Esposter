@@ -6,6 +6,7 @@ import { dayjs } from "#shared/services/dayjs";
 
 interface EditFormDialogProps<T> {
   editedItem: T;
+  formError: string;
   isEditFormValid: boolean;
   isFullScreenDialog: boolean;
   isSavable: boolean;
@@ -14,7 +15,7 @@ interface EditFormDialogProps<T> {
 }
 
 defineSlots<{ default: () => VNode }>();
-const { editedItem, isEditFormValid, isFullScreenDialog, isSavable, name, originalItem } =
+const { editedItem, formError, isEditFormValid, isFullScreenDialog, isSavable, name, originalItem } =
   defineProps<EditFormDialogProps<T>>();
 const dialog = defineModel<boolean>({ required: true });
 const emit = defineEmits<{
@@ -49,6 +50,7 @@ watch(editFormRef, (newEditFormRef) => {
           :edited-item
           :original-item
           :edit-form-ref
+          :form-error
           :is-edit-form-valid
           :is-full-screen-dialog
           :is-savable

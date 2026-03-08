@@ -74,6 +74,8 @@
     [P in keyof DataSourceItemTypeMap]: DataSourceConfiguration<DataSourceItemTypeMap[P]>;
   }>;
   ```
+- **Zod imports** — always use the `z` export: `z.ZodType`, `z.ZodError`, etc. Never use named imports like `import type { ZodType }`.
+- **Zod `.default()`** — do not combine `.optional().default(value)`; `.default()` already handles `undefined` input, so `.optional()` is redundant.
 - **Generic Zod schemas** — when an abstract class has a generic type parameter (e.g. `ADataSourceItem<TType, TConfig>`), its schema must also be generic. Export a `create*Schema` function that takes typed zod schemas as parameters and returns the composed schema. Never hardcode type-specific values in a base schema:
   ```typescript
   // WRONG — hardcodes type, missing configuration
@@ -111,12 +113,16 @@
 - **Generic browser utilities** go in `app/utils/` (e.g., `readFileAsText.ts`).
 - **Feature folders**: related models/services/components are grouped under a feature subfolder (e.g., `tableEditor/file/`).
 
+### Helper Functions
+
+- **Don't extract helpers that add no value** — if a helper function just wraps an inline object literal or a single expression without reuse or meaningful abstraction, return/use the value directly. Three lines of inline code is better than a named wrapper used once.
+
 ### Inline Functions
 
 - **Inline arrow functions** where argument types can be inferred from context — don't extract single-use, trivially-typed lambdas into named functions.
 - **Inline Vue event handlers** — always write handlers directly in the template (`@submit="async (_, onComplete) => { ... }"`). This lets Vue infer event argument types automatically. Only extract to a named function if the same logic is reused in multiple places.
 - **`defineModel`**: don't pass `{ default: false }` for booleans — omit the options entirely (`defineModel<boolean>()`).
-- **No abbreviated parameter names** — use full descriptive names (e.g. `event` not `e`, `column` not `col`, `configuration` not `config`). Exception: simple iteration callbacks where the meaning is obvious from context (e.g. `.filter((row, index) => ...)`).
+- **No abbreviated parameter names** — use full descriptive names (e.g. `event` not `e`, `column` not `col`, `configuration` not `config`, `dataSource` not `source`). Exception: simple iteration callbacks where the meaning is obvious from context (e.g. `.filter((row, index) => ...)`).
 
 
 ### Styling (UnoCSS Attributify Mode — MANDATORY)
@@ -124,7 +130,7 @@
 - Use prop-based styling: `<div text-red p-4>` for ALL static styles.
 - Use `flex` not `d-flex`.
 - Use `size` attribute (or `width`/`height` props) instead of `w-<n>` / `h-<n>` where possible.
-- Only use `class="..."` when technically required (dynamic `:class` bindings, external component limits).
+- Only use `class="..."` when technically required (dynamic `:class` bindings, Vuetify-specific typography/colour classes like `text-overline`, `text-medium-emphasis`, `text-wrap`). UnoCSS utilities (spacing, flex, sizing) must always be attributes even when mixed with Vuetify classes: `<div class="text-overline" mb-2>`.
 
 ### Line Endings
 
@@ -147,6 +153,7 @@
 - Always place `watch`, `onMounted`, `onUnmounted`, and other Vue lifecycle hooks/watchers at the **bottom** of `<script setup>`, after all `const` assignments.
 - Always put a blank line before them to visually separate them from regular `const` assignments.
 - Always wrap the callback in an explicit arrow function — never pass a function reference directly. This avoids scope/binding issues and prevents accidental argument forwarding: `onUnmounted(() => { reset(); })` not `onUnmounted(reset)`.
+- This applies everywhere — `.map()`, `.filter()`, `.forEach()`, event handlers, lifecycle hooks, etc. Always use `array.map((item) => fn(item))` not `array.map(fn)`.
 
 ### Props Interface Naming
 

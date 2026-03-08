@@ -3,7 +3,7 @@ import { z } from "zod";
 export enum DataSourceType {
   // Api = "Api",
   Csv = "Csv",
-  // Excel = "Excel",
+  Xlsx = "Xlsx",
   // Sql = "Sql",
 }
 

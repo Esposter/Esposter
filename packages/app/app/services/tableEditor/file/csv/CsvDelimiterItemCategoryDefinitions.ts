@@ -1,7 +1,7 @@
 import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
 import type { Except } from "type-fest";
 
-import { CsvDelimiter } from "#shared/models/tableEditor/file/CsvDelimiter";
+import { CsvDelimiter } from "#shared/models/tableEditor/file/csv/CsvDelimiter";
 import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
 
 const CsvDelimiterItemCategoryDefinitionMap = {
