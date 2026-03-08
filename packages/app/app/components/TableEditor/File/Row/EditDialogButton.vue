@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
-import type { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
 
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { dayjs } from "#shared/services/dayjs";
-import { isDateColumn } from "@/services/tableEditor/file/isDateColumn";
 import { takeOne } from "@esposter/shared";
 
 interface EditDialogButtonProps {
@@ -49,7 +47,7 @@ const editedRow = ref({ ...row });
             :model-value="
               (() => {
                 const value = takeOne(editedRow, column.name);
-                if (isDateColumn(column) && typeof value === 'string') {
+                if (column.type === ColumnType.Date && typeof value === 'string') {
                   const date = dayjs(value, column.format, true);
                   if (date.isValid()) return date.format('YYYY-MM-DD');
                   return value;
@@ -60,7 +58,8 @@ const editedRow = ref({ ...row });
             :type="column.type === ColumnType.Number ? 'number' : column.type === ColumnType.Date ? 'date' : 'text'"
             density="compact"
             @update:model-value="
-              editedRow[column.name] = isDateColumn(column) ? dayjs($event, 'YYYY-MM-DD').format(column.format) : $event
+              editedRow[column.name] =
+                column.type === ColumnType.Date ? dayjs($event, 'YYYY-MM-DD').format(column.format) : $event
             "
           />
         </v-col>
