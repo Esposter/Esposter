@@ -21,6 +21,7 @@ import { TABLE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/tableEditor/constants
 import { TableEditorTypeItemSchemaMap } from "@/services/tableEditor/TableEditorTypeItemSchemaMap";
 import { useAlertStore } from "@/store/alert";
 import { useItemStore } from "@/store/tableEditor/item";
+import { toRawDeep } from "@esposter/shared";
 import { z } from "zod";
 
 type TableEditorStoreState<
@@ -52,7 +53,7 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
   const save = async (isDeleteAction?: true) => {
     if (!editedItem.value) return;
 
-    const snapshot = structuredClone(toRaw(tableEditorConfiguration.value));
+    const snapshot = structuredClone(toRawDeep(tableEditorConfiguration.value));
 
     if (isDeleteAction) deleteItem({ id: editedItem.value.id });
     else if (editedIndex.value > -1) updateItem(editedItem.value);
