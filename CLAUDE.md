@@ -74,6 +74,8 @@
     [P in keyof DataSourceItemTypeMap]: DataSourceConfiguration<DataSourceItemTypeMap[P]>;
   }>;
   ```
+- **Zod imports** — always use the `z` export: `z.ZodType`, `z.ZodError`, etc. Never use named imports like `import type { ZodType }`.
+- **Zod `.default()`** — do not combine `.optional().default(value)`; `.default()` already handles `undefined` input, so `.optional()` is redundant.
 - **Generic Zod schemas** — when an abstract class has a generic type parameter (e.g. `ADataSourceItem<TType, TConfig>`), its schema must also be generic. Export a `create*Schema` function that takes typed zod schemas as parameters and returns the composed schema. Never hardcode type-specific values in a base schema:
   ```typescript
   // WRONG — hardcodes type, missing configuration
@@ -120,7 +122,7 @@
 - **Inline arrow functions** where argument types can be inferred from context — don't extract single-use, trivially-typed lambdas into named functions.
 - **Inline Vue event handlers** — always write handlers directly in the template (`@submit="async (_, onComplete) => { ... }"`). This lets Vue infer event argument types automatically. Only extract to a named function if the same logic is reused in multiple places.
 - **`defineModel`**: don't pass `{ default: false }` for booleans — omit the options entirely (`defineModel<boolean>()`).
-- **No abbreviated parameter names** — use full descriptive names (e.g. `event` not `e`, `column` not `col`, `configuration` not `config`). Exception: simple iteration callbacks where the meaning is obvious from context (e.g. `.filter((row, index) => ...)`).
+- **No abbreviated parameter names** — use full descriptive names (e.g. `event` not `e`, `column` not `col`, `configuration` not `config`, `dataSource` not `source`). Exception: simple iteration callbacks where the meaning is obvious from context (e.g. `.filter((row, index) => ...)`).
 
 
 ### Styling (UnoCSS Attributify Mode — MANDATORY)

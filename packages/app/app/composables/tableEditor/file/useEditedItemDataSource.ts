@@ -14,13 +14,28 @@ export const useEditedItemDataSource = () => {
     if (!editedItem.value) return;
     editedItem.value.dataSource = value;
   };
+  const getValueSize = (value: DataSource["rows"][number][string]): number =>
+    JSON.stringify(value ?? null).length;
+  const syncStats = (dataSource: DataSource) => {
+    dataSource.stats.columnCount = dataSource.columns.length;
+    dataSource.stats.rowCount = dataSource.rows.length;
+    dataSource.stats.size = dataSource.columns.reduce((total, column) => total + column.size, 0);
+  };
   const deleteRow = (index: number) => {
     if (!editedItem.value?.dataSource) return;
+    const row = takeOne(editedItem.value.dataSource.rows, index);
+    for (const column of editedItem.value.dataSource.columns)
+      column.size -= getValueSize(takeOne(row, column.name));
     editedItem.value.dataSource.rows = editedItem.value.dataSource.rows.filter((_, rowIndex) => rowIndex !== index);
+    syncStats(editedItem.value.dataSource);
   };
   const updateRow = (index: number, updated: DataSource["rows"][number]) => {
     if (!editedItem.value?.dataSource || index === -1) return;
-    Object.assign(takeOne(editedItem.value.dataSource.rows, index), updated);
+    const row = takeOne(editedItem.value.dataSource.rows, index);
+    for (const column of editedItem.value.dataSource.columns)
+      column.size += getValueSize(takeOne(updated, column.name)) - getValueSize(takeOne(row, column.name));
+    Object.assign(row, updated);
+    syncStats(editedItem.value.dataSource);
   };
   const updateColumn = (originalName: string, updated: Partial<Column>) => {
     if (!editedItem.value?.dataSource) return;
@@ -40,6 +55,7 @@ export const useEditedItemDataSource = () => {
     editedItem.value.dataSource.rows = editedItem.value.dataSource.rows.map((row) =>
       Object.fromEntries(Object.entries(row).filter(([key]) => key !== name)),
     );
+    syncStats(editedItem.value.dataSource);
   };
   return { dataSource, deleteColumn, deleteRow, setDataSource, updateColumn, updateRow };
 };

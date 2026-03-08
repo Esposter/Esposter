@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
 
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
+import { dayjs } from "#shared/services/dayjs";
+import { takeOne } from "@esposter/shared";
 
 interface EditDialogButtonProps {
   columns: DataSource["columns"];
@@ -12,6 +15,7 @@ interface EditDialogButtonProps {
 const { columns, index, row } = defineProps<EditDialogButtonProps>();
 const { updateRow } = useEditedItemDataSource();
 const editedRow = ref({ ...row });
+const isDateColumn = (column: DataSource["columns"][number]): column is DateColumn => column.type === ColumnType.Date;
 </script>
 
 <template>
@@ -42,10 +46,17 @@ const editedRow = ref({ ...row });
           />
           <v-text-field
             v-else
-            v-model="editedRow[column.name]"
+            :model-value="
+              (() => {
+                const value = takeOne(editedRow, column.name);
+                if (isDateColumn(column) && typeof value === 'string') return dayjs(value, column.format);
+                else return value;
+              })()
+            "
             :label="column.sourceName"
             :type="column.type === ColumnType.Number ? 'number' : column.type === ColumnType.Date ? 'date' : 'text'"
             density="compact"
+            @update:model-value="editedRow[column.name] = $event"
           />
         </v-col>
       </v-row>

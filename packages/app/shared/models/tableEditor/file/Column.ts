@@ -8,6 +8,7 @@ import { ColumnType, columnTypeSchema } from "#shared/models/tableEditor/file/Co
 import { z } from "zod";
 
 export class Column extends ATableEditorItemEntity implements ItemEntityType<ColumnType> {
+  size: number = 0;
   readonly sourceName: string = "";
   readonly type: ColumnType = ColumnType.String;
 
@@ -19,6 +20,7 @@ export class Column extends ATableEditorItemEntity implements ItemEntityType<Col
 
 export const columnSchema = z.object({
   ...aTableEditorItemEntitySchema.shape,
+  size: z.number().default(0),
   sourceName: z.string().readonly(),
   type: columnTypeSchema.readonly(),
 });
