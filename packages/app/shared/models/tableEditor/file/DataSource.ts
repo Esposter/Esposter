@@ -1,8 +1,8 @@
 import type { Column } from "#shared/models/tableEditor/file/Column";
 import type { ColumnValue } from "#shared/models/tableEditor/file/ColumnValue";
 import type { Metadata } from "#shared/models/tableEditor/file/Metadata";
-import type { Except } from "type-fest";
 import type { ToData } from "@esposter/shared";
+import type { Except } from "type-fest";
 
 import { columnSchema } from "#shared/models/tableEditor/file/Column";
 import { columnValueSchema } from "#shared/models/tableEditor/file/ColumnValue";
