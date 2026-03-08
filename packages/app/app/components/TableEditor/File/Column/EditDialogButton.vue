@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Column } from "#shared/models/tableEditor/file/Column";
 
-import { columnSchema } from "#shared/models/tableEditor/file/Column";
+import { columnFormSchema } from "#shared/models/tableEditor/file/Column";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { Vjsf } from "@koumoul/vjsf";
 import deepEqual from "fast-deep-equal";
@@ -12,8 +12,8 @@ interface EditDialogButtonProps {
 
 const { column } = defineProps<EditDialogButtonProps>();
 const { updateColumn } = useEditedItemDataSource();
-const jsonSchema = zodToJsonSchema(columnSchema);
-// eslint-disable-next-line @typescript-eslint/no-misused-spread
+const jsonSchema = zodToJsonSchema(columnFormSchema);
+
 const editedColumn = ref({ ...column });
 const disabled = computed(() => deepEqual(column, editedColumn.value));
 </script>

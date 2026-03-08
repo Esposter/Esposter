@@ -1,5 +1,5 @@
-import type { DataSourceConfigurationTypeMap } from "#shared/models/tableEditor/file/DataSourceConfigurationTypeMap";
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { DataSourceConfigurationTypeMap } from "#shared/models/tableEditor/file/DataSourceConfigurationTypeMap";
 import type { ItemEntityType } from "@esposter/shared";
 
 import {
@@ -13,8 +13,8 @@ export abstract class ADataSourceItem<TDataSourceType extends keyof DataSourceCo
   extends ATableEditorItemEntity
   implements ItemEntityType<TDataSourceType>
 {
-  dataSource: DataSource | null = null;
   abstract configuration: DataSourceConfigurationTypeMap[TDataSourceType];
+  dataSource: DataSource | null = null;
   abstract readonly type: TDataSourceType;
 }
 

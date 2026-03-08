@@ -22,3 +22,9 @@ export const columnSchema = z.object({
   sourceName: z.string().readonly(),
   type: columnTypeSchema.readonly(),
 });
+
+export const columnFormSchema = columnSchema.pick({ name: true, sourceName: true, type: true }).extend({
+  name: columnSchema.shape.name.meta({ title: "Field" }),
+  sourceName: columnSchema.shape.sourceName.meta({ title: "Source Field" }),
+  type: columnSchema.shape.type.meta({ title: "Type" }),
+});

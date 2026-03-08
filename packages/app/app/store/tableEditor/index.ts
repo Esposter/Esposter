@@ -8,10 +8,14 @@ import type {
   Store,
 } from "pinia";
 
-import { TableEditorConfiguration } from "#shared/models/tableEditor/data/TableEditorConfiguration";
+import {
+  TableEditorConfiguration,
+  tableEditorConfigurationSchema,
+} from "#shared/models/tableEditor/data/TableEditorConfiguration";
 import { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType";
 import { authClient } from "@/services/auth/authClient";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
+import { saveToLocalStorage } from "@/services/shared/localStorage/saveToLocalStorage";
 import { saveItemMetadata } from "@/services/shared/metadata/saveItemMetadata";
 import { TABLE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/tableEditor/constants";
 import { useItemStore } from "@/store/tableEditor/item";
@@ -55,7 +59,11 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
       await $trpc.tableEditor.saveTableEditorConfiguration.mutate(tableEditorConfiguration.value);
     } else {
       saveItemMetadata(tableEditorConfiguration.value);
-      localStorage.setItem(TABLE_EDITOR_LOCAL_STORAGE_KEY, tableEditorConfiguration.value.toJSON());
+      saveToLocalStorage(
+        TABLE_EDITOR_LOCAL_STORAGE_KEY,
+        tableEditorConfigurationSchema,
+        tableEditorConfiguration.value,
+      );
     }
   };
 
