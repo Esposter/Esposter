@@ -21,7 +21,7 @@ import { TABLE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/tableEditor/constants
 import { TableEditorTypeItemSchemaMap } from "@/services/tableEditor/TableEditorTypeItemSchemaMap";
 import { useAlertStore } from "@/store/alert";
 import { useItemStore } from "@/store/tableEditor/item";
-import { toRawDeep } from "@esposter/shared";
+import { InvalidOperationError, toRawDeep } from "@esposter/shared";
 import { z } from "zod";
 
 type TableEditorStoreState<
@@ -70,11 +70,19 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
       }
     } else {
       saveItemMetadata(tableEditorConfiguration.value);
-      saveToLocalStorage(
-        TABLE_EDITOR_LOCAL_STORAGE_KEY,
-        tableEditorConfigurationSchema,
-        tableEditorConfiguration.value,
-      );
+      try {
+        saveToLocalStorage(
+          TABLE_EDITOR_LOCAL_STORAGE_KEY,
+          tableEditorConfigurationSchema,
+          tableEditorConfiguration.value,
+        );
+      } catch (error) {
+        tableEditorConfiguration.value = new TableEditorConfiguration(snapshot);
+        alertStore.createAlert(
+          error instanceof InvalidOperationError ? error.message : "Failed to save. Your changes have been reverted.",
+          "error",
+        );
+      }
     }
   };
 
