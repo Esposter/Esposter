@@ -4,8 +4,16 @@ import { useTableEditorStore } from "@/store/tableEditor";
 defineSlots<{ "append-header": () => VNode }>();
 const tableEditorStore = useTableEditorStore();
 const { resetItem, save } = tableEditorStore;
-const { editedItem, editFormDialog, editFormRef, formError, isEditFormValid, isFullScreenDialog, isSavable, originalItem } =
-  storeToRefs(tableEditorStore);
+const {
+  editedItem,
+  editFormDialog,
+  editFormRef,
+  formError,
+  isEditFormValid,
+  isFullScreenDialog,
+  isSavable,
+  originalItem,
+} = storeToRefs(tableEditorStore);
 const component = computed(() => (editedItem.value ? useEditFormComponent(editedItem.value.type) : undefined));
 </script>
 
