@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { VForm } from "vuetify/components";
 
+import { takeOne } from "@esposter/shared";
+
 interface ErrorIconProps {
   editFormRef: InstanceType<typeof VForm> | undefined;
   formError: string;
