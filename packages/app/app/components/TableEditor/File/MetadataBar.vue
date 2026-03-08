@@ -15,7 +15,7 @@ const formattedDate = computed(() => dayjs(metadata.importedAt).format("MMM D, Y
 <template>
   <v-card variant="tonal">
     <v-card-item>
-      <v-card-title class="text-wrap">{{ metadata.name }}</v-card-title>
+      <v-card-title text-wrap>{{ metadata.name }}</v-card-title>
       <v-card-subtitle>Imported {{ formattedDate }}</v-card-subtitle>
       <template #append>
         <div flex flex-wrap gap-2>

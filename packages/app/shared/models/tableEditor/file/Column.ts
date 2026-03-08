@@ -4,13 +4,16 @@ import {
   ATableEditorItemEntity,
   aTableEditorItemEntitySchema,
 } from "#shared/models/tableEditor/data/ATableEditorItemEntity";
-import { ColumnType, columnTypeSchema } from "#shared/models/tableEditor/file/ColumnType";
+import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { z } from "zod";
 
-export class Column extends ATableEditorItemEntity implements ItemEntityType<ColumnType> {
+export class Column<TColumnType extends ColumnType = Exclude<ColumnType, ColumnType.Date>>
+  extends ATableEditorItemEntity
+  implements ItemEntityType<ColumnType>
+{
   size = 0;
   readonly sourceName: string = "";
-  readonly type: Exclude<ColumnType, ColumnType.Date> = ColumnType.String;
+  readonly type: TColumnType = ColumnType.String as TColumnType;
 
   constructor(init?: Partial<Column>) {
     super();
