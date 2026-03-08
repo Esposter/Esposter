@@ -41,6 +41,13 @@ const disabled = computed(() => deepEqual(column, editedColumn.value) || isNameC
         </template>
       </v-tooltip>
     </template>
+    <template v-if="isNameConflict" #prepend-actions>
+      <v-tooltip text="Field name already exists">
+        <template #activator="{ props: tooltipProps }">
+          <v-icon color="error" icon="mdi-alert-octagon" start :="tooltipProps" />
+        </template>
+      </v-tooltip>
+    </template>
     <v-container fluid>
       <Vjsf v-model="editedColumn" :schema="jsonSchema" />
     </v-container>
