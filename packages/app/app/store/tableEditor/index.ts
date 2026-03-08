@@ -15,13 +15,12 @@ import {
 import { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType";
 import { authClient } from "@/services/auth/authClient";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
-import { saveToLocalStorage } from "@/services/shared/localStorage/saveToLocalStorage";
 import { saveItemMetadata } from "@/services/shared/metadata/saveItemMetadata";
 import { TABLE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/tableEditor/constants";
 import { TableEditorTypeItemSchemaMap } from "@/services/tableEditor/TableEditorTypeItemSchemaMap";
 import { useAlertStore } from "@/store/alert";
 import { useItemStore } from "@/store/tableEditor/item";
-import { InvalidOperationError, toRawDeep } from "@esposter/shared";
+import { toRawDeep } from "@esposter/shared";
 import { z } from "zod";
 
 type TableEditorStoreState<
@@ -40,6 +39,7 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
   const alertStore = useAlertStore();
+  const saveToLocalStorage = useSaveToLocalStorage();
   const itemStore = useItemStore();
   const { createItem, deleteItem, updateItem } = itemStore;
   const searchQuery = ref("");
@@ -60,30 +60,22 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
     else createItem(editedItem.value);
     editFormDialog.value = false;
 
-    if (session.value.data) {
-      saveItemMetadata(tableEditorConfiguration.value);
+    saveItemMetadata(tableEditorConfiguration.value);
+    if (session.value.data)
       try {
         await $trpc.tableEditor.saveTableEditorConfiguration.mutate(tableEditorConfiguration.value);
       } catch {
         tableEditorConfiguration.value = new TableEditorConfiguration(snapshot);
         alertStore.createAlert("Failed to save. Your changes have been reverted.", "error");
       }
-    } else {
-      saveItemMetadata(tableEditorConfiguration.value);
-      try {
-        saveToLocalStorage(
-          TABLE_EDITOR_LOCAL_STORAGE_KEY,
-          tableEditorConfigurationSchema,
-          tableEditorConfiguration.value,
-        );
-      } catch (error) {
-        tableEditorConfiguration.value = new TableEditorConfiguration(snapshot);
-        alertStore.createAlert(
-          error instanceof InvalidOperationError ? error.message : "Failed to save. Your changes have been reverted.",
-          "error",
-        );
-      }
-    }
+    else if (
+      !saveToLocalStorage(
+        TABLE_EDITOR_LOCAL_STORAGE_KEY,
+        tableEditorConfigurationSchema,
+        tableEditorConfiguration.value,
+      )
+    )
+      tableEditorConfiguration.value = new TableEditorConfiguration(snapshot);
   };
 
   watch(
