@@ -25,7 +25,7 @@ const openPanels = ref(["fields", "data"]);
     </v-col>
     <template v-if="dataSource">
       <v-col cols="12">
-        <TableEditorFileMetadataBar :metadata="dataSource.metadata" :stats="dataSource.stats" />
+        <TableEditorFileMetadataBar :metadata="dataSource.metadata" />
       </v-col>
       <v-col cols="12">
         <v-expansion-panels v-model="openPanels" multiple>
@@ -34,7 +34,12 @@ const openPanels = ref(["fields", "data"]);
               <TableEditorFileColumnTable />
             </v-expansion-panel-text>
           </v-expansion-panel>
-          <v-expansion-panel title="Data" value="data">
+          <v-expansion-panel value="data">
+            <template #title>
+              Data
+              <v-spacer />
+              <TableEditorFileStatsBar :stats="dataSource.stats" />
+            </template>
             <v-expansion-panel-text>
               <TableEditorFileDataTable :data-source />
             </v-expansion-panel-text>

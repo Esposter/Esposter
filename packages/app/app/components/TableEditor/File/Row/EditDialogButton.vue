@@ -21,7 +21,7 @@ const isDateColumn = (column: DataSource["columns"][number]): column is DateColu
 <template>
   <StyledDialog
     :card-props="{ title: 'Edit Row' }"
-    :confirm-button-props="{ text: 'Save' }"
+    :confirm-button-props="{ text: 'Save & Close' }"
     @submit="
       (_event, onComplete) => {
         updateRow(index, editedRow);
@@ -49,14 +49,19 @@ const isDateColumn = (column: DataSource["columns"][number]): column is DateColu
             :model-value="
               (() => {
                 const value = takeOne(editedRow, column.name);
-                if (isDateColumn(column) && typeof value === 'string') return dayjs(value, column.format);
-                else return value;
+                if (isDateColumn(column) && typeof value === 'string') {
+                  const date = dayjs(value, column.format, true);
+                  if (date.isValid()) return date.format('YYYY-MM-DD');
+                  return value;
+                } else return value;
               })()
             "
             :label="column.sourceName"
             :type="column.type === ColumnType.Number ? 'number' : column.type === ColumnType.Date ? 'date' : 'text'"
             density="compact"
-            @update:model-value="editedRow[column.name] = $event"
+            @update:model-value="
+              editedRow[column.name] = isDateColumn(column) ? dayjs($event, 'YYYY-MM-DD').format(column.format) : $event
+            "
           />
         </v-col>
       </v-row>

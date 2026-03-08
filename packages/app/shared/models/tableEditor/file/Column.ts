@@ -8,7 +8,7 @@ import { ColumnType, columnTypeSchema } from "#shared/models/tableEditor/file/Co
 import { z } from "zod";
 
 export class Column extends ATableEditorItemEntity implements ItemEntityType<ColumnType> {
-  size: number = 0;
+  size = 0;
   readonly sourceName: string = "";
   readonly type: ColumnType = ColumnType.String;
 

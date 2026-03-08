@@ -20,7 +20,7 @@ export const parseXlsx = async (file: File, item: XlsxDataSourceItem): Promise<D
         dataSourceType: DataSourceType.Xlsx,
         importedAt: new Date(),
         name: file.name,
-        originalSize: file.size,
+        size: file.size,
       },
       rows: [],
       stats: { columnCount: 0, rowCount: 0, size: 0 },
@@ -47,7 +47,7 @@ export const parseXlsx = async (file: File, item: XlsxDataSourceItem): Promise<D
       dataSourceType: DataSourceType.Xlsx,
       importedAt: new Date(),
       name: file.name,
-      originalSize: file.size,
+      size: file.size,
     },
     rows,
     stats: {

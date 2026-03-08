@@ -21,7 +21,7 @@ export const parseCsv = async (file: File, item: CsvDataSourceItem): Promise<Dat
         dataSourceType: DataSourceType.Csv,
         importedAt: new Date(),
         name: file.name,
-        originalSize: file.size,
+        size: file.size,
       },
       rows: [],
       stats: { columnCount: 0, rowCount: 0, size: 0 },
@@ -46,7 +46,7 @@ export const parseCsv = async (file: File, item: CsvDataSourceItem): Promise<Dat
       dataSourceType: DataSourceType.Csv,
       importedAt: new Date(),
       name: file.name,
-      originalSize: file.size,
+      size: file.size,
     },
     rows,
     stats: {

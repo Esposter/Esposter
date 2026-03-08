@@ -7,12 +7,12 @@ export interface Metadata {
   dataSourceType: DataSourceType;
   importedAt: Date;
   name: string;
-  originalSize: number;
+  size: number;
 }
 
 export const metadataSchema = z.object({
   dataSourceType: dataSourceTypeSchema,
   importedAt: z.date(),
   name: z.string(),
-  originalSize: z.number(),
+  size: z.number(),
 }) satisfies z.ZodType<Metadata>;

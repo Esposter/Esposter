@@ -1,12 +1,12 @@
 import type { ToData } from "@esposter/shared";
 
-import { Column, columnSchema } from "#shared/models/tableEditor/file/Column";
+import { Column, columnFormSchema, columnSchema } from "#shared/models/tableEditor/file/Column";
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { z } from "zod";
 
 export class DateColumn extends Column {
-  format: string = "";
-  override readonly type: ColumnType = ColumnType.Date;
+  format = "";
+  override readonly type = ColumnType.Date;
 
   constructor(init?: Partial<DateColumn>) {
     super();
@@ -19,3 +19,7 @@ export const dateColumnSchema = z.object({
   format: z.string().default(""),
   type: z.literal(ColumnType.Date).readonly(),
 }) satisfies z.ZodType<ToData<DateColumn>>;
+
+export const dateColumnFormSchema = columnFormSchema.extend({
+  format: dateColumnSchema.shape.format.meta({ title: "Format" }),
+});
