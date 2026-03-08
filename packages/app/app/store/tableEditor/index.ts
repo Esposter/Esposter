@@ -18,6 +18,7 @@ import { createEditFormData } from "@/services/shared/editForm/createEditFormDat
 import { saveToLocalStorage } from "@/services/shared/localStorage/saveToLocalStorage";
 import { saveItemMetadata } from "@/services/shared/metadata/saveItemMetadata";
 import { TABLE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/tableEditor/constants";
+import { useAlertStore } from "@/store/alert";
 import { useItemStore } from "@/store/tableEditor/item";
 
 type TableEditorStoreState<
@@ -35,6 +36,7 @@ const id = "tableEditor";
 const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id, () => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
+  const alertStore = useAlertStore();
   const itemStore = useItemStore();
   const { createItem, deleteItem, updateItem } = itemStore;
   const searchQuery = ref("");
@@ -48,22 +50,32 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
   const save = async (isDeleteAction?: true) => {
     if (!editedItem.value) return;
 
+    const snapshot = structuredClone(toRaw(tableEditorConfiguration.value));
+
     if (isDeleteAction) deleteItem({ id: editedItem.value.id });
     else if (editedIndex.value > -1) updateItem(editedItem.value);
     else createItem(editedItem.value);
-    // Optimistically close the edit form dialog
     editFormDialog.value = false;
 
     if (session.value.data) {
       saveItemMetadata(tableEditorConfiguration.value);
-      await $trpc.tableEditor.saveTableEditorConfiguration.mutate(tableEditorConfiguration.value);
+      try {
+        await $trpc.tableEditor.saveTableEditorConfiguration.mutate(tableEditorConfiguration.value);
+      } catch {
+        tableEditorConfiguration.value = new TableEditorConfiguration(snapshot);
+        alertStore.createAlert("Failed to save. Your changes have been reverted.", "error");
+      }
     } else {
       saveItemMetadata(tableEditorConfiguration.value);
-      saveToLocalStorage(
+      const isSuccessful = saveToLocalStorage(
         TABLE_EDITOR_LOCAL_STORAGE_KEY,
         tableEditorConfigurationSchema,
         tableEditorConfiguration.value,
       );
+      if (!isSuccessful) {
+        tableEditorConfiguration.value = new TableEditorConfiguration(snapshot);
+        alertStore.createAlert("Failed to save. Your changes have been reverted.", "error");
+      }
     }
   };
 
