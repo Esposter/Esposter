@@ -2,7 +2,6 @@
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
-import { useFileTableEditorStore } from "@/store/tableEditor/file";
 
 interface EditDialogButtonProps {
   columns: DataSource["columns"];
@@ -11,8 +10,7 @@ interface EditDialogButtonProps {
 }
 
 const { columns, index, row } = defineProps<EditDialogButtonProps>();
-const fileTableEditorStore = useFileTableEditorStore();
-const { updateRow } = fileTableEditorStore;
+const { updateRow } = useEditedItemDataSource();
 const editedRow = ref({ ...row });
 </script>
 

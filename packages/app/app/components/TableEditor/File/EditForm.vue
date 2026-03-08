@@ -4,22 +4,15 @@ import type { DataSourceConfiguration } from "@/models/tableEditor/file/DataSour
 
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { DataSourceConfigurationMap } from "@/services/tableEditor/file/DataSourceConfigurationMap";
-import { useFileTableEditorStore } from "@/store/tableEditor/file";
 import { Vjsf } from "@koumoul/vjsf";
 
 const modelValue = defineModel<TDataSourceItem>({ required: true });
-const fileTableEditorStore = useFileTableEditorStore();
-const { reset } = fileTableEditorStore;
-const { dataSource } = storeToRefs(fileTableEditorStore);
+const { dataSource } = useEditedItemDataSource();
 const configuration = computed(
   () => DataSourceConfigurationMap[modelValue.value.type] as DataSourceConfiguration<TDataSourceItem>,
 );
 const schema = computed(() => zodToJsonSchema(configuration.value.schema));
 const openPanels = ref(["fields", "data"]);
-
-onUnmounted(() => {
-  reset();
-});
 </script>
 
 <template>
