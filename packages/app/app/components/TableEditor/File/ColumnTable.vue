@@ -20,6 +20,7 @@ const { dataSource } = useEditedItemDataSource();
     </template>
     <template #[`item.actions`]="{ item: column }">
       <TableEditorFileColumnEditDialogButton :column />
+      <TableEditorFileColumnDeleteDialogButton :name="column.name" />
     </template>
   </v-data-table>
 </template>

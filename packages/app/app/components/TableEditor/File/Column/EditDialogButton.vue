@@ -1,19 +1,18 @@
 <script setup lang="ts">
-import type { Column } from "#shared/models/tableEditor/file/Column";
+import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 
-import { columnFormSchema } from "#shared/models/tableEditor/file/Column";
+import { ColumnTypeFormSchemaMap } from "#shared/models/tableEditor/file/ColumnTypeFormSchemaMap";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { Vjsf } from "@koumoul/vjsf";
 import deepEqual from "fast-deep-equal";
 
 interface EditDialogButtonProps {
-  column: Column;
+  column: DataSource["columns"][number];
 }
 
 const { column } = defineProps<EditDialogButtonProps>();
 const { updateColumn } = useEditedItemDataSource();
-const jsonSchema = zodToJsonSchema(columnFormSchema);
-
+const jsonSchema = computed(() => zodToJsonSchema(ColumnTypeFormSchemaMap[column.type]));
 const editedColumn = ref({ ...column });
 const disabled = computed(() => deepEqual(column, editedColumn.value));
 </script>
