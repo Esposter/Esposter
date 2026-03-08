@@ -14,7 +14,7 @@ const { deleteColumn } = useEditedItemDataSource();
       text: 'Are you sure you want to delete this field?',
     }"
     @delete="
-      async (onComplete) => {
+      (onComplete) => {
         deleteColumn(name);
         onComplete();
       }
