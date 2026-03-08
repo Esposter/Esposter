@@ -1,8 +1,8 @@
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { XlsxDataSourceItem } from "#shared/models/tableEditor/file/xlsx/XlsxDataSourceItem";
 
-import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { Column } from "#shared/models/tableEditor/file/Column";
+import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { coerceValue } from "@/services/tableEditor/file/csv/coerceValue";
 import { inferColumnType } from "@/services/tableEditor/file/inferColumnType";
 import readXlsxFile from "read-excel-file/browser";

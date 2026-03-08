@@ -15,7 +15,6 @@ const { column } = defineProps<EditDialogButtonProps>();
 const fileTableEditorStore = useFileTableEditorStore();
 const { updateColumn } = fileTableEditorStore;
 const jsonSchema = zodToJsonSchema(columnSchema);
-// eslint-disable-next-line @typescript-eslint/no-misused-spread
 const editedColumn = ref({ ...column });
 const disabled = computed(() => deepEqual(column, editedColumn.value));
 </script>

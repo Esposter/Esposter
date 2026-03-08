@@ -25,10 +25,9 @@ export const useFileTableEditorStore = defineStore("tableEditor/file", () => {
     if (!column) return;
     const newName = updated.name;
     if (newName !== undefined && newName !== originalName)
-      dataSource.value.rows = dataSource.value.rows.map((row) => {
-        const { [originalName]: value, ...rest } = row;
-        return { ...rest, [newName]: value };
-      });
+      dataSource.value.rows = dataSource.value.rows.map((row) =>
+        Object.fromEntries(Object.entries(row).map(([key, value]) => [key === originalName ? newName : key, value])),
+      );
 
     Object.assign(column, updated);
   };
