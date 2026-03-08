@@ -10,7 +10,7 @@ import { z } from "zod";
 export class Column extends ATableEditorItemEntity implements ItemEntityType<ColumnType> {
   size = 0;
   readonly sourceName: string = "";
-  readonly type: ColumnType = ColumnType.String;
+  readonly type: Exclude<ColumnType, ColumnType.Date> = ColumnType.String;
 
   constructor(init?: Partial<Column>) {
     super();
@@ -22,7 +22,7 @@ export const columnSchema = z.object({
   ...aTableEditorItemEntitySchema.shape,
   size: z.number().default(0),
   sourceName: z.string().readonly(),
-  type: columnTypeSchema.readonly(),
+  type: z.enum([ColumnType.Boolean, ColumnType.Number, ColumnType.String]).readonly(),
 });
 
 export const columnFormSchema = columnSchema.pick({ name: true, sourceName: true, type: true }).extend({

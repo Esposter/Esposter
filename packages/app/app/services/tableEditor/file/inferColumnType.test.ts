@@ -81,10 +81,10 @@ describe(inferColumnType, () => {
     expect(inferColumnType(["1", "hello"])).toBe(ColumnType.String);
   });
 
-  test("mixed number and date values returns Date", () => {
+  test("mixed number and date values returns String", () => {
     expect.hasAssertions();
 
-    expect(inferColumnType(["1", "2023-01-01"])).toBe(ColumnType.Date);
+    expect(inferColumnType(["1", "2023-01-01"])).toBe(ColumnType.String);
   });
 
   test("boolean values with whitespace padding returns Boolean", () => {

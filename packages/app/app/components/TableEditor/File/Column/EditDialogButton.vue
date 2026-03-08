@@ -11,10 +11,15 @@ interface EditDialogButtonProps {
 }
 
 const { column } = defineProps<EditDialogButtonProps>();
-const { updateColumn } = useEditedItemDataSource();
+const { dataSource, updateColumn } = useEditedItemDataSource();
 const jsonSchema = computed(() => zodToJsonSchema(ColumnTypeFormSchemaMap[column.type]));
 const editedColumn = ref({ ...column });
-const disabled = computed(() => deepEqual(column, editedColumn.value));
+const isNameConflict = computed(
+  () =>
+    editedColumn.value.name !== column.name &&
+    (dataSource.value?.columns.some(({ name }) => name === editedColumn.value.name) ?? false),
+);
+const disabled = computed(() => deepEqual(column, editedColumn.value) || isNameConflict.value);
 </script>
 
 <template>

@@ -1,10 +1,10 @@
+import { DATE_FORMATS } from "#shared/models/tableEditor/file/constants";
 import { dayjs } from "#shared/services/dayjs";
-import { DATE_FORMATS } from "@/services/tableEditor/file/constants";
 import { takeOne } from "@esposter/shared";
 
 export const inferDateFormat = (values: string[]): string => {
-  const trimmedValues = values.map((v) => v.trim()).filter(Boolean);
+  const trimmedValues = values.map((value) => value.trim()).filter(Boolean);
   for (const format of DATE_FORMATS)
-    if (trimmedValues.every((v) => dayjs(v, format, true).isValid())) return format;
+    if (trimmedValues.every((value) => dayjs(value, format, true).isValid())) return format;
   return takeOne(DATE_FORMATS);
 };

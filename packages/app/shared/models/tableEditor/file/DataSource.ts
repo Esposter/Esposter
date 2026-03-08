@@ -6,10 +6,9 @@ import type { Metadata } from "#shared/models/tableEditor/file/Metadata";
 import type { ToData } from "@esposter/shared";
 import type { Except } from "type-fest";
 
-import { columnSchema } from "#shared/models/tableEditor/file/Column";
+import { columnItemSchema } from "#shared/models/tableEditor/file/ColumnItemSchema";
 import { columnValueSchema } from "#shared/models/tableEditor/file/ColumnValue";
 import { dataSourceStatsSchema } from "#shared/models/tableEditor/file/DataSourceStats";
-import { dateColumnSchema } from "#shared/models/tableEditor/file/DateColumn";
 import { metadataSchema } from "#shared/models/tableEditor/file/Metadata";
 import { z } from "zod";
 
@@ -21,7 +20,7 @@ export interface DataSource {
 }
 
 export const dataSourceSchema = z.object({
-  columns: z.array(z.union([dateColumnSchema, columnSchema])),
+  columns: z.array(columnItemSchema),
   metadata: metadataSchema,
   rows: z.array(z.record(z.string(), columnValueSchema)),
   stats: dataSourceStatsSchema,

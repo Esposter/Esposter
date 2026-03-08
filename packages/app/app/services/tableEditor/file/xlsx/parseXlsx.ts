@@ -26,7 +26,7 @@ export const parseXlsx = async (file: File, item: XlsxDataSourceItem): Promise<D
       stats: { columnCount: 0, rowCount: 0, size: 0 },
     };
 
-  const sourceNames = takeOne(rawData).map((cell) => cell?.toString());
+  const sourceNames = takeOne(rawData).map((cell, index) => cell?.toString().trim() || `Column ${index + 1}`);
   const bodyRows = rawData.slice(1).map((row) => row.map((cell) => cell?.toString()));
   const columns = sourceNames.map((sourceName, index) => {
     const values = bodyRows.map((row) => takeOne(row, index) ?? "");
