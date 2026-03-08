@@ -51,10 +51,16 @@ describe(inferColumnType, () => {
     expect(inferColumnType(["2023-01-01", "2024-06-15"])).toBe(ColumnType.Date);
   });
 
-  test("slash date values returns Date", () => {
+  test("slash date values MM/DD/YYYY returns Date", () => {
     expect.hasAssertions();
 
     expect(inferColumnType(["01/15/2023", "06/20/2024"])).toBe(ColumnType.Date);
+  });
+
+  test("slash date values DD/MM/YYYY returns Date", () => {
+    expect.hasAssertions();
+
+    expect(inferColumnType(["25/12/2023", "01/06/2024"])).toBe(ColumnType.Date);
   });
 
   test("text values returns String", () => {

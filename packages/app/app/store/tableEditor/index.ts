@@ -87,7 +87,7 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
       }
 
       const schema = TableEditorTypeItemSchemaMap[tableEditorType.value];
-      const result = schema.safeParse(toRaw(item));
+      const result = schema.safeParse(toRawDeep(item));
       formError.value = result.success ? "" : z.prettifyError(result.error);
     },
     { deep: true, immediate: true },
