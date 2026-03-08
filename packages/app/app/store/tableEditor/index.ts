@@ -18,8 +18,10 @@ import { createEditFormData } from "@/services/shared/editForm/createEditFormDat
 import { saveToLocalStorage } from "@/services/shared/localStorage/saveToLocalStorage";
 import { saveItemMetadata } from "@/services/shared/metadata/saveItemMetadata";
 import { TABLE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/tableEditor/constants";
+import { TableEditorTypeItemSchemaMap } from "@/services/tableEditor/TableEditorTypeItemSchemaMap";
 import { useAlertStore } from "@/store/alert";
 import { useItemStore } from "@/store/tableEditor/item";
+import { z } from "zod";
 
 type TableEditorStoreState<
   TItem extends Item = Item,
@@ -43,7 +45,7 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
   const tableEditorConfiguration = ref(new TableEditorConfiguration());
   const tableEditorType = ref(TableEditorType.TodoList);
   const tableEditor = computed(() => tableEditorConfiguration.value[tableEditorType.value]);
-  const { editedIndex, editedItem, editFormDialog, ...rest } = createEditFormData(
+  const { editedIndex, editedItem, editFormDialog, formError, ...rest } = createEditFormData(
     computed(() => tableEditor.value.items as Item[]),
     ["id"],
   );
@@ -67,22 +69,34 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
       }
     } else {
       saveItemMetadata(tableEditorConfiguration.value);
-      const isSuccessful = saveToLocalStorage(
+      saveToLocalStorage(
         TABLE_EDITOR_LOCAL_STORAGE_KEY,
         tableEditorConfigurationSchema,
         tableEditorConfiguration.value,
       );
-      if (!isSuccessful) {
-        tableEditorConfiguration.value = new TableEditorConfiguration(snapshot);
-        alertStore.createAlert("Failed to save. Your changes have been reverted.", "error");
-      }
     }
   };
+
+  watch(
+    editedItem,
+    (item) => {
+      if (!item) {
+        formError.value = "";
+        return;
+      }
+
+      const schema = TableEditorTypeItemSchemaMap[tableEditorType.value];
+      const result = schema.safeParse(toRaw(item));
+      formError.value = result.success ? "" : z.prettifyError(result.error);
+    },
+    { deep: true, immediate: true },
+  );
 
   return {
     editedIndex,
     editedItem,
     editFormDialog,
+    formError,
     searchQuery,
     tableEditor,
     tableEditorConfiguration,

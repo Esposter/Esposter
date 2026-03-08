@@ -5,6 +5,7 @@ import { Column } from "#shared/models/tableEditor/file/Column";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { coerceValue } from "@/services/tableEditor/file/csv/coerceValue";
 import { inferColumnType } from "@/services/tableEditor/file/inferColumnType";
+import { takeOne } from "@esposter/shared";
 import readXlsxFile from "read-excel-file/browser";
 
 export const parseXlsx = async (file: File, item: XlsxDataSourceItem): Promise<DataSource> => {
@@ -23,18 +24,20 @@ export const parseXlsx = async (file: File, item: XlsxDataSourceItem): Promise<D
       rows: [],
     };
 
-  const sourceNames = (rawData[0] ?? []).map((cell) => cell?.toString());
+  const sourceNames = takeOne(rawData).map((cell) => cell?.toString());
   const bodyRows = rawData.slice(1).map((row) => row.map((cell) => cell?.toString()));
   const columns = sourceNames.map(
     (sourceName, index) =>
       new Column({
         name: sourceName,
         sourceName,
-        type: inferColumnType(bodyRows.map((row) => row[index] ?? "")),
+        type: inferColumnType(bodyRows.map((row) => takeOne(row, index) ?? "")),
       }),
   );
   const rows = bodyRows.map((rawRow) =>
-    Object.fromEntries(columns.map((column, index) => [column.name, coerceValue(rawRow[index] ?? "", column.type)])),
+    Object.fromEntries(
+      columns.map((column, index) => [column.name, coerceValue(takeOne(rawRow, index) ?? "", column.type)]),
+    ),
   );
   return {
     columns,

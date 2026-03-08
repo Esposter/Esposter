@@ -4,9 +4,9 @@ export const parseCsvLine = (line: string, delimiter: string): string[] => {
   let isInQuotes = false;
 
   for (let i = 0; i < line.length; i++) {
-    const char = line[i];
+    const char = line.charAt(i);
     if (char === '"')
-      if (isInQuotes && line[i + 1] === '"') {
+      if (isInQuotes && line.charAt(i + 1) === '"') {
         current += '"';
         i++;
       } else isInQuotes = !isInQuotes;

@@ -32,11 +32,11 @@ export const parseCsv = async (file: File, item: CsvDataSourceItem): Promise<Dat
       new Column({
         name: sourceName,
         sourceName,
-        type: inferColumnType(rawRows.map((row) => row[index] ?? "")),
+        type: inferColumnType(rawRows.map((row) => takeOne(row, index))),
       }),
   );
   const rows = rawRows.map((rawRow) =>
-    Object.fromEntries(columns.map((column, index) => [column.name, coerceValue(rawRow[index] ?? "", column.type)])),
+    Object.fromEntries(columns.map((column, index) => [column.name, coerceValue(takeOne(rawRow, index), column.type)])),
   );
   return {
     columns,
