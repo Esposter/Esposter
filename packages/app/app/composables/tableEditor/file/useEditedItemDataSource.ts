@@ -4,8 +4,10 @@ import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import type { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
 
-import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { dayjs } from "#shared/services/dayjs";
+import { getValueSize } from "@/services/tableEditor/file/getValueSize";
+import { isDateColumn } from "@/services/tableEditor/file/isDateColumn";
+import { syncStats } from "@/services/tableEditor/file/syncStats";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { takeOne } from "@esposter/shared";
 
@@ -17,20 +19,11 @@ export const useEditedItemDataSource = () => {
     if (!editedItem.value) return;
     editedItem.value.dataSource = value;
   };
-  const getValueSize = (value: DataSource["rows"][number][string]): number =>
-    JSON.stringify(value ?? null).length;
-  const isDateColumn = (column: DataSource["columns"][number]): column is DateColumn =>
-    column.type === ColumnType.Date;
-  const syncStats = (dataSource: DataSource) => {
-    dataSource.stats.columnCount = dataSource.columns.length;
-    dataSource.stats.rowCount = dataSource.rows.length;
-    dataSource.stats.size = dataSource.columns.reduce((total, column) => total + column.size, 0);
-  };
+
   const deleteRow = (index: number) => {
     if (!editedItem.value?.dataSource) return;
     const row = takeOne(editedItem.value.dataSource.rows, index);
-    for (const column of editedItem.value.dataSource.columns)
-      column.size -= getValueSize(takeOne(row, column.name));
+    for (const column of editedItem.value.dataSource.columns) column.size -= getValueSize(takeOne(row, column.name));
     editedItem.value.dataSource.rows = editedItem.value.dataSource.rows.filter((_, rowIndex) => rowIndex !== index);
     syncStats(editedItem.value.dataSource);
   };
@@ -59,9 +52,9 @@ export const useEditedItemDataSource = () => {
       editedItem.value.dataSource.rows = editedItem.value.dataSource.rows.map((row) => {
         const value = takeOne(row, effectiveName);
         if (typeof value !== "string") return row;
-        const parsed = dayjs(value, oldFormat, true);
-        if (!parsed.isValid()) return row;
-        return { ...row, [effectiveName]: parsed.format(newFormat) };
+        const parsedValue = dayjs(value, oldFormat, true);
+        if (!parsedValue.isValid()) return row;
+        return { ...row, [effectiveName]: parsedValue.format(newFormat) };
       });
       column.size = editedItem.value.dataSource.rows.reduce(
         (total, row) => total + getValueSize(takeOne(row, effectiveName)),

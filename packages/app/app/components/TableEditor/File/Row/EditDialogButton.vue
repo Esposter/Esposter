@@ -4,6 +4,7 @@ import type { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
 
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { dayjs } from "#shared/services/dayjs";
+import { isDateColumn } from "@/services/tableEditor/file/isDateColumn";
 import { takeOne } from "@esposter/shared";
 
 interface EditDialogButtonProps {
@@ -15,7 +16,6 @@ interface EditDialogButtonProps {
 const { columns, index, row } = defineProps<EditDialogButtonProps>();
 const { updateRow } = useEditedItemDataSource();
 const editedRow = ref({ ...row });
-const isDateColumn = (column: DataSource["columns"][number]): column is DateColumn => column.type === ColumnType.Date;
 </script>
 
 <template>
