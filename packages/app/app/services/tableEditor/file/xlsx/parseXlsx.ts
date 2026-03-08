@@ -26,12 +26,13 @@ export const parseXlsx = async (file: File, item: XlsxDataSourceItem): Promise<D
       stats: { columnCount: 0, rowCount: 0, size: 0 },
     };
 
-  const sourceNames = takeOne(rawData).map((cell, index) => cell?.toString().trim() || `Column ${index + 1}`);
+  const sourceNames = takeOne(rawData).map((cell, index) => cell?.toString().trim() ?? `Column ${index + 1}`);
   const bodyRows = rawData.slice(1).map((row) => row.map((cell) => cell?.toString()));
   const columns = sourceNames.map((sourceName, index) => {
     const values = bodyRows.map((row) => takeOne(row, index) ?? "");
     const type = inferColumnType(values);
-    if (type === ColumnType.Date) return new DateColumn({ name: sourceName, sourceName, format: inferDateFormat(values) });
+    if (type === ColumnType.Date)
+      return new DateColumn({ format: inferDateFormat(values), name: sourceName, sourceName });
     return new Column({ name: sourceName, sourceName, type });
   });
   const rows = bodyRows.map((rawRow) =>

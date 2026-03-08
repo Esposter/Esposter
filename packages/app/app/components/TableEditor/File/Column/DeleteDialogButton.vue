@@ -10,7 +10,7 @@ const { deleteColumn } = useEditedItemDataSource();
 <template>
   <StyledConfirmDeleteDialogButton
     :card-props="{
-      title: 'Delete Field',
+      title: `Delete ${name}`,
       text: 'Are you sure you want to delete this field?',
     }"
     @delete="

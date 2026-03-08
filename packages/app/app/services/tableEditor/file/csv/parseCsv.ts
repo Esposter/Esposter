@@ -34,7 +34,8 @@ export const parseCsv = async (file: File, item: CsvDataSourceItem): Promise<Dat
   const columns = sourceNames.map((sourceName, index) => {
     const values = rawRows.map((row) => takeOne(row, index));
     const type = inferColumnType(values);
-    if (type === ColumnType.Date) return new DateColumn({ name: sourceName, sourceName, format: inferDateFormat(values) });
+    if (type === ColumnType.Date)
+      return new DateColumn({ format: inferDateFormat(values), name: sourceName, sourceName });
     return new Column({ name: sourceName, sourceName, type });
   });
   const rows = rawRows.map((rawRow) =>
