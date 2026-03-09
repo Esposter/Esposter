@@ -16,7 +16,6 @@ const { createAlert } = alertStore;
   <v-tooltip text="Import configuration">
     <template #activator="{ props }">
       <v-btn
-        icon="mdi-import"
         variant="elevated"
         :flat="false"
         :="props"
@@ -38,7 +37,9 @@ const { createAlert } = alertStore;
             }
           }
         "
-      />
+      >
+        <v-icon icon="mdi-import" />
+      </v-btn>
     </template>
   </v-tooltip>
 </template>

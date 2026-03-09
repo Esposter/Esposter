@@ -9,13 +9,9 @@ const { tableEditorConfiguration, tableEditorType } = storeToRefs(tableEditorSto
 <template>
   <v-tooltip text="Export configuration">
     <template #activator="{ props }">
-      <v-btn
-        icon="mdi-export"
-        variant="elevated"
-        :flat="false"
-        :="props"
-        @click="downloadJsonFile(tableEditorType, tableEditorConfiguration[tableEditorType])"
-      />
+      <v-btn variant="elevated" :flat="false" :="props" @click="downloadJsonFile(tableEditorType, tableEditorConfiguration[tableEditorType])">
+        <v-icon icon="mdi-export" />
+      </v-btn>
     </template>
   </v-tooltip>
 </template>

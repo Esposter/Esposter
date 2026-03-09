@@ -24,7 +24,8 @@ const component = computed(() => (editedItem.value ? useEditFormComponent(edited
       <div pt-2>
         <TableEditorSearchBar />
       </div>
-      <div pt-2 flex flex-wrap gap-2>
+      <div py-2 flex flex-wrap gap-2>
+        <v-spacer />
         <TableEditorCreateItemButton />
         <TableEditorExportButton />
         <TableEditorImportButton />
