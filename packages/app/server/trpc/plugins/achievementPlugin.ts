@@ -11,17 +11,18 @@ import { eq } from "drizzle-orm";
 
 const t = initTRPC.context<AuthedContext>().create();
 
-export const achievementPlugin = t.procedure.use(async ({ ctx, next, path, type }) => {
+export const achievementPlugin = t.procedure.use(async ({ ctx, getRawInput, next, path, type }) => {
   const result = await next();
   if (!result.ok || type !== "mutation") return result;
 
+  const rawInput = await getRawInput();
   const userId = ctx.getSessionPayload.user.id;
   const updatedUserAchievements: UserAchievementWithRelations[] = [];
 
   for (const { amount = 1, condition, incrementAmount = 1, name } of achievementDefinitions.filter(
     ({ triggerPath }) => triggerPath === path,
   )) {
-    if (condition && !checkAchievementCondition(condition, result.data)) continue;
+    if (condition && !checkAchievementCondition(condition, rawInput)) continue;
 
     const achievement =
       (await ctx.db.query.achievements.findFirst({
