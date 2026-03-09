@@ -10,5 +10,7 @@ import { TableEditorTypeItemSchemaMap } from "@/services/tableEditor/TableEditor
 export const TableEditorTypeTableEditorSchemaMap = {
   [TableEditorType.File]: createTableEditorSchema(TableEditorTypeItemSchemaMap[TableEditorType.File]),
   [TableEditorType.TodoList]: createTableEditorSchema(TableEditorTypeItemSchemaMap[TableEditorType.TodoList]),
-  [TableEditorType.VuetifyComponent]: createTableEditorSchema(TableEditorTypeItemSchemaMap[TableEditorType.VuetifyComponent]),
-} satisfies Record<TableEditorType, z.ZodType<Partial<TableEditor<ToData<Item>>>>>;
+  [TableEditorType.VuetifyComponent]: createTableEditorSchema(
+    TableEditorTypeItemSchemaMap[TableEditorType.VuetifyComponent],
+  ),
+} satisfies Record<TableEditorType, z.ZodType<ToData<TableEditor<Item>>>>;
