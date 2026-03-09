@@ -13,4 +13,4 @@ export const TableEditorTypeTableEditorSchemaMap = {
   [TableEditorType.VuetifyComponent]: createTableEditorSchema(
     TableEditorTypeItemSchemaMap[TableEditorType.VuetifyComponent],
   ),
-} satisfies Record<TableEditorType, z.ZodType<ToData<TableEditor<Item>>>>;
+} as const satisfies Record<TableEditorType, z.ZodType<ToData<TableEditor<Item>>>>;
