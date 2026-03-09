@@ -15,7 +15,7 @@ const { tableEditor, tableEditorType } = storeToRefs(tableEditorStore);
         :="props"
         @click="downloadJsonFile(tableEditorType, tableEditor.toJSON())"
       >
-        <v-icon icon="mdi-export" />
+        <v-icon icon="mdi-download" />
       </v-btn>
     </template>
   </v-tooltip>

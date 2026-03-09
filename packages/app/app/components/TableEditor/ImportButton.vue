@@ -38,7 +38,7 @@ const { createAlert } = alertStore;
           }
         "
       >
-        <v-icon icon="mdi-import" />
+        <v-icon icon="mdi-upload" />
       </v-btn>
     </template>
   </v-tooltip>
