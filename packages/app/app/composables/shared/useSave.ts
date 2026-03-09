@@ -1,4 +1,5 @@
 import type { ItemMetadata } from "@esposter/shared";
+import type { Resolver, TRPCResolverDef } from "@trpc/client";
 import type { MaybeRefOrGetter } from "vue";
 import type { z } from "zod";
 
@@ -6,23 +7,23 @@ import { authClient } from "@/services/auth/authClient";
 import { saveItemMetadata } from "@/services/shared/metadata/saveItemMetadata";
 import { useAlertStore } from "@/store/alert";
 
-interface UseSaveAuthOptions<T> {
-  save: (value: T) => Promise<unknown>;
+interface UseSaveAuthOptions<TDef extends TRPCResolverDef> {
+  save: Resolver<TDef>;
 }
 
-interface UseSaveOptions<T, TOutput> {
-  auth?: UseSaveAuthOptions<T>;
-  unauth?: UseSaveUnauthOptions<TOutput>;
+interface UseSaveOptions<T extends ItemMetadata, TDef extends TRPCResolverDef> {
+  auth?: UseSaveAuthOptions<TDef>;
+  unauth?: UseSaveUnauthOptions<T>;
 }
 
-interface UseSaveUnauthOptions<TOutput> {
+interface UseSaveUnauthOptions<T extends ItemMetadata> {
   key: string;
-  schema: z.ZodType<TOutput>;
+  schema: z.ZodType<T>;
 }
 
-export const useSave = <T extends ItemMetadata & TOutput, TOutput = unknown>(
+export const useSave = <T extends ItemMetadata, TDef extends TRPCResolverDef>(
   maybeValue: MaybeRefOrGetter<T>,
-  { auth, unauth }: UseSaveOptions<T, TOutput>,
+  { auth, unauth }: UseSaveOptions<T, TDef>,
 ) => {
   const session = authClient.useSession();
   const alertStore = useAlertStore();
