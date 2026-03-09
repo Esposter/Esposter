@@ -14,12 +14,9 @@ import {
   tableEditorConfigurationSchema,
 } from "#shared/models/tableEditor/data/TableEditorConfiguration";
 import { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType";
-import { authClient } from "@/services/auth/authClient";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
-import { saveItemMetadata } from "@/services/shared/metadata/saveItemMetadata";
 import { TABLE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/tableEditor/constants";
 import { TableEditorTypeItemSchemaMap } from "@/services/tableEditor/TableEditorTypeItemSchemaMap";
-import { useAlertStore } from "@/store/alert";
 import { useItemStore } from "@/store/tableEditor/item";
 import { toRawDeep } from "@esposter/shared";
 import { z } from "zod";
@@ -38,10 +35,7 @@ type TableEditorStoreState<
 
 const id = "tableEditor";
 const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id, () => {
-  const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
-  const alertStore = useAlertStore();
-  const saveToLocalStorage = useSaveToLocalStorage();
   const itemStore = useItemStore();
   const { createItem, deleteItem, updateItem } = itemStore;
   const searchQuery = ref("");
@@ -52,23 +46,14 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
     computed(() => tableEditor.value.items as Item[]),
     ["id"],
   );
-  const saveConfiguration = async (snapshot: TableEditorConfiguration, errorMessage: string) => {
-    saveItemMetadata(tableEditorConfiguration.value);
-    if (session.value.data)
-      try {
-        await $trpc.tableEditor.saveTableEditorConfiguration.mutate(tableEditorConfiguration.value);
-      } catch {
-        tableEditorConfiguration.value = new TableEditorConfiguration(snapshot);
-        alertStore.createAlert(errorMessage, "error");
-      }
-    else if (
-      !saveToLocalStorage(
-        TABLE_EDITOR_LOCAL_STORAGE_KEY,
-        tableEditorConfigurationSchema,
-        tableEditorConfiguration.value,
-      )
-    )
-      tableEditorConfiguration.value = new TableEditorConfiguration(snapshot);
+  const saveTableEditorConfiguration = useSave(tableEditorConfiguration, {
+    auth: { save: $trpc.tableEditor.saveTableEditorConfiguration.mutate },
+    unauth: { key: TABLE_EDITOR_LOCAL_STORAGE_KEY, schema: tableEditorConfigurationSchema },
+  });
+
+  const saveConfiguration = async (snapshot: TableEditorConfiguration) => {
+    const isSuccessful = await saveTableEditorConfiguration();
+    if (!isSuccessful) tableEditorConfiguration.value = new TableEditorConfiguration(snapshot);
   };
 
   const save = async (isDeleteAction?: true) => {
@@ -81,13 +66,13 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
     else createItem(editedItem.value);
     editFormDialog.value = false;
 
-    await saveConfiguration(snapshot, "Failed to save. Your changes have been reverted.");
+    await saveConfiguration(snapshot);
   };
 
   const importConfiguration = async (data: Partial<TableEditor<ToData<Item>>>) => {
     const snapshot = structuredClone(toRawDeep(tableEditorConfiguration.value));
     Object.assign(tableEditorConfiguration.value[tableEditorType.value], data);
-    await saveConfiguration(snapshot, "Failed to import. Your changes have been reverted.");
+    await saveConfiguration(snapshot);
   };
 
   watch(

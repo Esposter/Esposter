@@ -4,7 +4,7 @@ import type { SurveyCreatorModel } from "survey-creator-core";
 import { THEME_KEY } from "@/services/survey/constants";
 import { useSurveyStore } from "@/store/survey";
 
-export const useSave = (survey: Ref<Survey>, creator: SurveyCreatorModel) => {
+export const useSurveySave = (survey: Ref<Survey>, creator: SurveyCreatorModel) => {
   const surveyStore = useSurveyStore();
   const { updateSurveyModel } = surveyStore;
   return async (saveNo: number, callback: (saveNo: number, isSuccessful: boolean) => void) => {

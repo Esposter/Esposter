@@ -26,7 +26,7 @@ export const useSurveyCreator = (survey: Ref<Survey>) => {
   const { [THEME_KEY]: theme, ...model } = parseSurveyModel(survey.value.model);
   creator.JSON = model;
   if (theme) creator.theme = theme;
-  const save = useSave(survey, creator);
+  const save = useSurveySave(survey, creator);
   creator.saveSurveyFunc = save;
   creator.saveThemeFunc = save;
 
