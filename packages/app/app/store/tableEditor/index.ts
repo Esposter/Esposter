@@ -1,6 +1,7 @@
 import type { EntityIdKeys } from "#shared/models/entity/EntityIdKeys";
 import type { Item } from "#shared/models/tableEditor/data/Item";
 import type { TableEditor } from "#shared/models/tableEditor/data/TableEditor";
+import type { ToData } from "@esposter/shared";
 import type {
   _ExtractActionsFromSetupStore,
   _ExtractGettersFromSetupStore,
@@ -27,6 +28,7 @@ type TableEditorStoreState<
   TItem extends Item = Item,
   TIdKeys extends EntityIdKeys<TItem> = EntityIdKeys<TItem>,
 > = ReturnType<typeof createEditFormData<TItem, TIdKeys>> & {
+  importConfiguration: (data: Partial<TableEditor<ToData<Item>>>) => Promise<void>;
   save: (isDeleteAction?: true) => Promise<void>;
   searchQuery: Ref<string>;
   tableEditor: ComputedRef<TableEditor<TItem>>;
@@ -78,6 +80,27 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
       tableEditorConfiguration.value = new TableEditorConfiguration(snapshot);
   };
 
+  const importConfiguration = async (data: Partial<TableEditor<ToData<Item>>>) => {
+    const snapshot = structuredClone(toRawDeep(tableEditorConfiguration.value));
+    Object.assign(tableEditorConfiguration.value[tableEditorType.value], data);
+    saveItemMetadata(tableEditorConfiguration.value);
+    if (session.value.data)
+      try {
+        await $trpc.tableEditor.saveTableEditorConfiguration.mutate(tableEditorConfiguration.value);
+      } catch {
+        tableEditorConfiguration.value = new TableEditorConfiguration(snapshot);
+        alertStore.createAlert("Failed to import. Your changes have been reverted.", "error");
+      }
+    else if (
+      !saveToLocalStorage(
+        TABLE_EDITOR_LOCAL_STORAGE_KEY,
+        tableEditorConfigurationSchema,
+        tableEditorConfiguration.value,
+      )
+    )
+      tableEditorConfiguration.value = new TableEditorConfiguration(snapshot);
+  };
+
   watch(
     editedItem,
     (item) => {
@@ -103,6 +126,7 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
     tableEditorConfiguration,
     tableEditorType,
     ...rest,
+    importConfiguration,
     save,
   };
 });
