@@ -42,6 +42,6 @@ export const useSave = <T extends ItemMetadata, TDef extends TRPCResolverDef>(
       }
 
     if (unauth) return saveToLocalStorage(unauth.key, unauth.schema, value);
-    return true;
+    return false;
   };
 };
