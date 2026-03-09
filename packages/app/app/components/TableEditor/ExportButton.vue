@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { downloadJsonFile } from "@/services/file/downloadJsonFile";
 import { useTableEditorStore } from "@/store/tableEditor";
-import { toRawDeep } from "@esposter/shared";
 
 const tableEditorStore = useTableEditorStore();
 const { tableEditorConfiguration, tableEditorType } = storeToRefs(tableEditorStore);
