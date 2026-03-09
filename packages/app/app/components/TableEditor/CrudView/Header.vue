@@ -21,10 +21,14 @@ const component = computed(() => (editedItem.value ? useEditFormComponent(edited
   <v-toolbar pt-4>
     <v-toolbar-title px-4>
       <TableEditorTypeSelect />
-      <div pt-4 flex items-center>
+      <div pt-2>
         <TableEditorSearchBar />
-        <v-divider mx-4 thickness="2" vertical inset />
+      </div>
+      <div py-2 flex flex-wrap gap-2>
+        <v-spacer />
         <TableEditorCreateItemButton />
+        <TableEditorExportButton />
+        <TableEditorImportButton />
         <slot name="append-header" />
       </div>
     </v-toolbar-title>

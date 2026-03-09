@@ -9,9 +9,7 @@ const { tableEditorType } = storeToRefs(tableEditorStore);
 <template>
   <TableEditorCrudViewHeader>
     <template v-if="tableEditorType === TableEditorType.TodoList" #append-header>
-      <div pl-4>
-        <TableEditorTodoListCalendarButton />
-      </div>
+      <TableEditorTodoListCalendarButton />
     </template>
   </TableEditorCrudViewHeader>
 </template>
