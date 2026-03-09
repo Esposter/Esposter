@@ -108,7 +108,7 @@ catalog:
   better-auth: ^1.5.3
   codemirror: ^6.0.2
   crossws: ^0.4.4
-  ctix: ^2.7.5
+  ctix: 2.7.2
   data-urls: ^7.0.0
   dayjs: ^1.11.19
   debug: ^4.4.3
