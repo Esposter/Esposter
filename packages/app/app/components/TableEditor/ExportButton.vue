@@ -15,7 +15,7 @@ const { tableEditorConfiguration, tableEditorType } = storeToRefs(tableEditorSto
         variant="elevated"
         :flat="false"
         :="props"
-        @click="downloadJsonFile(`${tableEditorType}-config.json`, toRawDeep(tableEditorConfiguration)[tableEditorType])"
+        @click="downloadJsonFile(tableEditorType, tableEditorConfiguration[tableEditorType])"
       />
     </template>
   </v-tooltip>

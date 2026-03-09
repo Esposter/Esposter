@@ -3,7 +3,7 @@ export const downloadJsonFile = (filename: string, data: unknown) => {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = filename;
+  a.download = `${filename}.json`;
   a.click();
   a.remove();
   URL.revokeObjectURL(url);

@@ -2,6 +2,7 @@
 import { TableEditorTypeTableEditorSchemaMap } from "@/services/tableEditor/TableEditorTypeTableEditorSchemaMap";
 import { useAlertStore } from "@/store/alert";
 import { useTableEditorStore } from "@/store/tableEditor";
+import { jsonDateParse } from "@esposter/shared";
 import { showOpenFilePicker } from "show-open-file-picker";
 
 const tableEditorStore = useTableEditorStore();
@@ -24,8 +25,9 @@ const { createAlert } = alertStore;
             const [handle] = await showOpenFilePicker({ types: [{ accept: { 'application/json': ['.json'] } }] });
             if (!handle) return;
             const file = await handle.getFile();
+            const fileText = await file.text();
             try {
-              const result = TableEditorTypeTableEditorSchemaMap[tableEditorType].safeParse(JSON.parse(await file.text()));
+              const result = TableEditorTypeTableEditorSchemaMap[tableEditorType].safeParse(jsonDateParse(fileText));
               if (!result.success) {
                 createAlert('Invalid configuration file.', 'error');
                 return;
