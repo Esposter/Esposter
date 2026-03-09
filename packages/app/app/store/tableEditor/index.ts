@@ -52,23 +52,14 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
     computed(() => tableEditor.value.items as Item[]),
     ["id"],
   );
-  const save = async (isDeleteAction?: true) => {
-    if (!editedItem.value) return;
-
-    const snapshot = structuredClone(toRawDeep(tableEditorConfiguration.value));
-
-    if (isDeleteAction) deleteItem({ id: editedItem.value.id });
-    else if (editedIndex.value > -1) updateItem(editedItem.value);
-    else createItem(editedItem.value);
-    editFormDialog.value = false;
-
+  const saveConfiguration = async (snapshot: TableEditorConfiguration, errorMessage: string) => {
     saveItemMetadata(tableEditorConfiguration.value);
     if (session.value.data)
       try {
         await $trpc.tableEditor.saveTableEditorConfiguration.mutate(tableEditorConfiguration.value);
       } catch {
         tableEditorConfiguration.value = new TableEditorConfiguration(snapshot);
-        alertStore.createAlert("Failed to save. Your changes have been reverted.", "error");
+        alertStore.createAlert(errorMessage, "error");
       }
     else if (
       !saveToLocalStorage(
@@ -80,25 +71,23 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
       tableEditorConfiguration.value = new TableEditorConfiguration(snapshot);
   };
 
+  const save = async (isDeleteAction?: true) => {
+    if (!editedItem.value) return;
+
+    const snapshot = structuredClone(toRawDeep(tableEditorConfiguration.value));
+
+    if (isDeleteAction) deleteItem({ id: editedItem.value.id });
+    else if (editedIndex.value > -1) updateItem(editedItem.value);
+    else createItem(editedItem.value);
+    editFormDialog.value = false;
+
+    await saveConfiguration(snapshot, "Failed to save. Your changes have been reverted.");
+  };
+
   const importConfiguration = async (data: Partial<TableEditor<ToData<Item>>>) => {
     const snapshot = structuredClone(toRawDeep(tableEditorConfiguration.value));
     Object.assign(tableEditorConfiguration.value[tableEditorType.value], data);
-    saveItemMetadata(tableEditorConfiguration.value);
-    if (session.value.data)
-      try {
-        await $trpc.tableEditor.saveTableEditorConfiguration.mutate(tableEditorConfiguration.value);
-      } catch {
-        tableEditorConfiguration.value = new TableEditorConfiguration(snapshot);
-        alertStore.createAlert("Failed to import. Your changes have been reverted.", "error");
-      }
-    else if (
-      !saveToLocalStorage(
-        TABLE_EDITOR_LOCAL_STORAGE_KEY,
-        tableEditorConfigurationSchema,
-        tableEditorConfiguration.value,
-      )
-    )
-      tableEditorConfiguration.value = new TableEditorConfiguration(snapshot);
+    await saveConfiguration(snapshot, "Failed to import. Your changes have been reverted.");
   };
 
   watch(
