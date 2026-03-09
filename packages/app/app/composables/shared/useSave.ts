@@ -22,7 +22,7 @@ interface UseSaveUnauthOptions<T extends ItemMetadata> {
 }
 
 export const useSave = <T extends ItemMetadata, TDef extends TRPCResolverDef>(
-  maybeValue: MaybeRefOrGetter<T>,
+  maybeValue: NoInfer<MaybeRefOrGetter<T>>,
   { auth, unauth }: UseSaveOptions<T, TDef>,
 ) => {
   const session = authClient.useSession();

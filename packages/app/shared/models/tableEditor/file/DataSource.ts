@@ -4,7 +4,6 @@ import type { DataSourceStats } from "#shared/models/tableEditor/file/DataSource
 import type { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
 import type { Metadata } from "#shared/models/tableEditor/file/Metadata";
 import type { ToData } from "@esposter/shared";
-import type { Except } from "type-fest";
 
 import { columnItemSchema } from "#shared/models/tableEditor/file/ColumnItemSchema";
 import { columnValueSchema } from "#shared/models/tableEditor/file/ColumnValue";
@@ -24,4 +23,4 @@ export const dataSourceSchema = z.object({
   metadata: metadataSchema,
   rows: z.array(z.record(z.string(), columnValueSchema)),
   stats: dataSourceStatsSchema,
-}) satisfies z.ZodType<Except<DataSource, "columns"> & { columns: (ToData<Column> | ToData<DateColumn>)[] }>;
+}) satisfies z.ZodType<ToData<DataSource>>;
