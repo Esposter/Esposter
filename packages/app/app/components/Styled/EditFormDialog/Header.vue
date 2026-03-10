@@ -15,6 +15,7 @@ interface HeaderProps<T> {
   originalItem?: T;
 }
 
+defineSlots<{ "prepend-actions": () => VNode }>();
 const { editedItem, editFormRef, formError, isEditFormValid, isFullScreenDialog, isSavable, name, originalItem } =
   defineProps<HeaderProps<T>>();
 const itemType = computed(() => prettify(editedItem.type));
@@ -30,6 +31,7 @@ const emit = defineEmits<{
   <v-toolbar flex-none pl-4 :title="`Configuration - ${itemType}`">
     <v-spacer />
     <StyledEditFormDialogErrorIcon :edit-form-ref :form-error :is-edit-form-valid />
+    <slot name="prepend-actions" />
     <StyledEditFormDialogSaveButton :is-savable />
     <StyledEditFormDialogConfirmDeleteDialogButton :name :original-item @delete="emit('delete', $event)" />
     <v-divider mx-2 thickness="2" vertical inset />

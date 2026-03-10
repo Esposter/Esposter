@@ -5,6 +5,8 @@ import type { z } from "zod";
 
 export interface DataSourceConfiguration<TDataSourceItem extends ADataSourceItem<DataSourceType>> {
   accept: string;
-  parse(file: File, item: TDataSourceItem): Promise<DataSource>;
+  deserialize(file: File, item: TDataSourceItem): Promise<DataSource>;
+  mimeType: string;
   schema: z.ZodObject;
+  serialize(dataSource: DataSource, item: TDataSourceItem, mimeType: string): Promise<Blob>;
 }

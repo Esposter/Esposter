@@ -1,23 +1,29 @@
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
+import type { ADataSourceItem } from "#shared/models/tableEditor/file/ADataSourceItem";
 import type { DataSourceConfiguration } from "@/models/tableEditor/file/DataSourceConfiguration";
 
 import { csvDataSourceConfigurationSchema } from "#shared/models/tableEditor/file/csv/CsvDataSourceConfiguration";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { xlsxDataSourceConfigurationSchema } from "#shared/models/tableEditor/file/xlsx/XlsxDataSourceConfiguration";
-import { parseCsv } from "@/services/tableEditor/file/csv/parseCsv";
-import { parseXlsx } from "@/services/tableEditor/file/xlsx/parseXlsx";
-
-export const DataSourceConfigurationMap = {
+import { deserializeCsv } from "@/services/tableEditor/file/csv/deserializeCsv";
+import { serializeCsv } from "@/services/tableEditor/file/csv/serializeCsv";
+import { deserializeXlsx } from "@/services/tableEditor/file/xlsx/deserializeXlsx";
+import { serializeXlsx } from "@/services/tableEditor/file/xlsx/serializeXlsx";
+export const DataSourceConfigurationMap: Record<
+  DataSourceType,
+  DataSourceConfiguration<ADataSourceItem<DataSourceType>>
+> = {
   [DataSourceType.Csv]: {
     accept: ".csv",
-    parse: parseCsv,
+    deserialize: deserializeCsv,
+    mimeType: "text/csv",
     schema: csvDataSourceConfigurationSchema,
+    serialize: serializeCsv,
   },
   [DataSourceType.Xlsx]: {
     accept: ".xlsx",
-    parse: parseXlsx,
+    deserialize: deserializeXlsx,
+    mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     schema: xlsxDataSourceConfigurationSchema,
+    serialize: serializeXlsx,
   },
-} as const satisfies {
-  [P in keyof DataSourceItemTypeMap]: DataSourceConfiguration<DataSourceItemTypeMap[P]>;
 };

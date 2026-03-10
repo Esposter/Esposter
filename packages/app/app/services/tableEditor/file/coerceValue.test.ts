@@ -1,5 +1,5 @@
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
-import { coerceValue } from "@/services/tableEditor/file/csv/coerceValue";
+import { coerceValue } from "@/services/tableEditor/file/coerceValue";
 import { describe, expect, test } from "vitest";
 
 describe(coerceValue, () => {

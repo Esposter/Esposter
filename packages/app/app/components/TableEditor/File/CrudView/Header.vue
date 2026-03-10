@@ -1,0 +1,17 @@
+<script setup lang="ts" generic="TDataSourceItem extends DataSourceItemTypeMap[keyof DataSourceItemTypeMap]">
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
+
+import { useTableEditorStore } from "@/store/tableEditor";
+
+const tableEditorStore = useTableEditorStore<TDataSourceItem>();
+const { editedItem } = storeToRefs(tableEditorStore);
+</script>
+
+<template>
+  <TableEditorCrudViewHeader>
+    <template v-if="editedItem" #prepend-actions>
+      <TableEditorFileImportButton v-model="editedItem" />
+      <TableEditorFileExportButton :edited-item />
+    </template>
+  </TableEditorCrudViewHeader>
+</template>

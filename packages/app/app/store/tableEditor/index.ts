@@ -22,7 +22,7 @@ import { toRawDeep } from "@esposter/shared";
 import { z } from "zod";
 
 type TableEditorStoreState<
-  TItem extends Item = Item,
+  TItem extends ToData<Item> = ToData<Item>,
   TIdKeys extends EntityIdKeys<TItem> = EntityIdKeys<TItem>,
 > = ReturnType<typeof createEditFormData<TItem, TIdKeys>> & {
   importConfiguration: (data: Partial<TableEditor<ToData<Item>>>) => Promise<void>;
@@ -105,7 +105,7 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
   };
 });
 
-export const useTableEditorStore = <TItem extends Item = Item>() =>
+export const useTableEditorStore = <TItem extends ToData<Item> = ToData<Item>>() =>
   useBaseTableEditorStore() as unknown as Store<
     typeof id,
     _ExtractStateFromSetupStore<TableEditorStoreState<TItem>>,

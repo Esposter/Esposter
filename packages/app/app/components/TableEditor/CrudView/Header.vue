@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useTableEditorStore } from "@/store/tableEditor";
 
-defineSlots<{ "append-header": () => VNode }>();
+const slots = defineSlots<{ "append-header": () => VNode; "prepend-actions": () => VNode }>();
 const tableEditorStore = useTableEditorStore();
 const { resetItem, save } = tableEditorStore;
 const {
@@ -53,6 +53,9 @@ const component = computed(() => (editedItem.value ? useEditFormComponent(edited
       @update:edit-form-ref="editFormRef = $event"
       @update:fullscreen-dialog="isFullScreenDialog = $event"
     >
+      <template v-if="slots['prepend-actions']" #prepend-actions>
+        <slot name="prepend-actions" />
+      </template>
       <v-container v-if="editedItem" overflow-y-auto fluid>
         <component :is="component" v-model="editedItem" />
       </v-container>

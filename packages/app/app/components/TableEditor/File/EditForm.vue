@@ -1,16 +1,12 @@
 <script setup lang="ts" generic="TDataSourceItem extends DataSourceItemTypeMap[keyof DataSourceItemTypeMap]">
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
-import type { DataSourceConfiguration } from "@/models/tableEditor/file/DataSourceConfiguration";
 
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
-import { DataSourceConfigurationMap } from "@/services/tableEditor/file/DataSourceConfigurationMap";
 import { Vjsf } from "@koumoul/vjsf";
 
 const modelValue = defineModel<TDataSourceItem>({ required: true });
 const { dataSource } = useEditedItemDataSource();
-const configuration = computed(
-  () => DataSourceConfigurationMap[modelValue.value.type] as DataSourceConfiguration<TDataSourceItem>,
-);
+const configuration = useDataSourceConfiguration(modelValue);
 const schema = computed(() => zodToJsonSchema(configuration.value.schema));
 const openPanels = ref(["fields", "data"]);
 </script>
@@ -18,10 +14,10 @@ const openPanels = ref(["fields", "data"]);
 <template>
   <v-row>
     <v-col cols="12">
-      <Vjsf v-model="modelValue.configuration" :schema />
+      <v-text-field v-model="modelValue.name" label="Name" />
     </v-col>
     <v-col cols="12">
-      <TableEditorFilePicker v-model="modelValue" :configuration />
+      <Vjsf v-model="modelValue.configuration" :schema />
     </v-col>
     <template v-if="dataSource">
       <v-col cols="12">

@@ -21,9 +21,7 @@ const DataSourceTypeItemCategoryDefinitionMap = {
     targetTypeKey: ItemEntityTypePropertyNames.type,
     title: DataSourceType.Xlsx,
   },
-} as const satisfies Partial<
-  Record<DataSourceType, Except<ItemCategoryDefinition<ADataSourceItem<DataSourceType>>, "value">>
->;
+} as const satisfies Record<DataSourceType, Except<ItemCategoryDefinition<ADataSourceItem<DataSourceType>>, "value">>;
 
 export const DataSourceTypeItemCategoryDefinitions: ItemCategoryDefinition<ADataSourceItem<DataSourceType>>[] =
   parseDictionaryToArray(DataSourceTypeItemCategoryDefinitionMap, "value");

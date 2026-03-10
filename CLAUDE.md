@@ -24,16 +24,16 @@
 
 ## Monorepo Structure
 
-| Package Path               | Description                                                        |
-| :------------------------- | :----------------------------------------------------------------- |
-| `packages/app`             | Main Nuxt 4 web application (frontend, server routes, tRPC)        |
-| `packages/azure-functions` | Serverless backend (Azure Event Grid, Timers, HTTP)                |
-| `packages/db-schema`       | Source of truth for DB: Drizzle ORM schemas, migrations            |
-| `packages/db`              | Database connection logic                                          |
-| `packages/shared`          | Shared TypeScript types, utilities, constants                      |
-| `packages/configuration`   | Shared config (TSConfig, ESLint, Prettier)                         |
-| `packages/vue-phaserjs`    | Phaser game engine Vue integration                                 |
-| `packages/azure-mock`      | Mock Azure services for local dev/testing                          |
+| Package Path               | Description                                                 |
+| :------------------------- | :---------------------------------------------------------- |
+| `packages/app`             | Main Nuxt 4 web application (frontend, server routes, tRPC) |
+| `packages/azure-functions` | Serverless backend (Azure Event Grid, Timers, HTTP)         |
+| `packages/db-schema`       | Source of truth for DB: Drizzle ORM schemas, migrations     |
+| `packages/db`              | Database connection logic                                   |
+| `packages/shared`          | Shared TypeScript types, utilities, constants               |
+| `packages/configuration`   | Shared config (TSConfig, ESLint, Prettier)                  |
+| `packages/vue-phaserjs`    | Phaser game engine Vue integration                          |
+| `packages/azure-mock`      | Mock Azure services for local dev/testing                   |
 
 ## Development Workflow
 
@@ -64,15 +64,27 @@
 - **One export per file** — each exported function, class, or interface lives in its own file. Exception: Zod schemas may be co-located with their interface/type since they are tightly coupled.
 - **One class per file** — classes belong in a `models/` folder (e.g., `app/models/`, `shared/models/`).
 - **Constants go in `constants.ts`** — all module-level constants in a `constants.ts` file alongside the files that use them.
-- **Constant maps use PascalCase** with `as const satisfies` — e.g. `export const DataSourceConfigurationMap = { ... } as const satisfies Partial<Record<...>>`.
+- **Constant maps use PascalCase** with `as const satisfies` — e.g. `export const DataSourceConfigurationMap = { ... } as const satisfies Record<...>`.
 - **Generic type maps for polymorphic dispatch** — when a constant map needs to associate a discriminant key (e.g. `DataSourceType`) with a type-parameterised generic (e.g. `DataSourceConfiguration<TItem>`), define an explicit type map first, then use a mapped type in `satisfies` to get per-entry type safety without any `as` casts:
   ```typescript
   // 1. Explicit type map (one file, in models/)
   type DataSourceItemTypeMap = { [DataSourceType.Csv]: CsvDataSourceItem };
   // 2. Satisfies mapped type — each entry is checked against its specific type param
-  export const DataSourceConfigurationMap = { ... } as const satisfies Partial<{
-    [P in keyof DataSourceItemTypeMap]: DataSourceConfiguration<DataSourceItemTypeMap[P]>;
-  }>;
+  export const DataSourceConfigurationMap: Record<
+    DataSourceType,
+    DataSourceConfiguration<ADataSourceItem<DataSourceType>>
+  > = { ... };
+  ```
+- **Generic map lookup composables** — when a component needs to look up a typed configuration from a generic map using a discriminant key on a generic item, extract the lookup into a composable. Use `MaybeRefOrGetter<TItem>` with `toValue()` so callers can pass refs or plain values. Hide the single internal `as` cast and expose a fully typed API:
+  ```typescript
+  export const useDataSourceConfiguration = <
+    TDataSourceItem extends DataSourceItemTypeMap[keyof DataSourceItemTypeMap],
+  >(
+    item: MaybeRefOrGetter<TDataSourceItem>,
+  ): ComputedRef<DataSourceConfiguration<TDataSourceItem>> =>
+    computed(() => DataSourceConfigurationMap[toValue(item).type] as DataSourceConfiguration<TDataSourceItem>);
+  // Caller (no cast needed):
+  const dataSourceConfiguration = useDataSourceConfiguration(modelValue);
   ```
 - **Zod imports** — always use the `z` export: `z.ZodType`, `z.ZodError`, etc. Never use named imports like `import type { ZodType }`.
 - **Zod `.default()`** — do not combine `.optional().default(value)`; `.default()` already handles `undefined` input, so `.optional()` is redundant.
@@ -84,8 +96,10 @@
   export const createDataSourceItemSchema = <
     TType extends z.ZodType<keyof DataSourceConfigurationTypeMap>,
     TConfiguration extends z.ZodType<object>,
-  >(typeSchema: TType, configurationSchema: TConfiguration) =>
-    z.object({ ...aTableEditorItemEntitySchema.shape, configuration: configurationSchema, type: typeSchema });
+  >(
+    typeSchema: TType,
+    configurationSchema: TConfiguration,
+  ) => z.object({ ...aTableEditorItemEntitySchema.shape, configuration: configurationSchema, type: typeSchema });
   // Caller:
   export const csvDataSourceItemSchema = createDataSourceItemSchema(
     z.literal(DataSourceType.Csv),
@@ -122,8 +136,18 @@
 - **Inline arrow functions** where argument types can be inferred from context — don't extract single-use, trivially-typed lambdas into named functions.
 - **Inline Vue event handlers** — always write handlers directly in the template (`@submit="async (_, onComplete) => { ... }"`). This lets Vue infer event argument types automatically. Only extract to a named function if the same logic is reused in multiple places.
 - **`defineModel`**: don't pass `{ default: false }` for booleans — omit the options entirely (`defineModel<boolean>()`).
+- **`defineSlots`**: always assign to a variable — `const slots = defineSlots<{ ... }>()`.
 - **No abbreviated parameter names** — use full descriptive names (e.g. `event` not `e`, `column` not `col`, `configuration` not `config`, `dataSource` not `source`). Exception: simple iteration callbacks where the meaning is obvious from context (e.g. `.filter((row, index) => ...)`).
+- **`@click` shorthands** — if a click handler is a single async call, use `@click="myAsyncFn(args)"` directly — no need to wrap in `async () => { await myAsyncFn(args) }`.
 
+### Composables
+
+- **Single-function composables return the function directly** — when a composable only exposes one function, return it directly instead of wrapping in an object: `return async (...) => { ... }`. Callers use `const fn = useX()` instead of `const { fn } = useX()`.
+- **`Promise.resolve(value)` for sync-to-async** — when a sync expression needs to satisfy a `Promise<T>` return type, use `Promise.resolve(value)` instead of `async () => value`.
+
+### MIME Types
+
+- Use `lookup` from `mime-types` — never hardcode MIME type strings like `"application/json"` or `"text/csv"`. Use `lookup(".json") || ""`, `lookup(".csv") || ""` etc. instead.
 
 ### Styling (UnoCSS Attributify Mode — MANDATORY)
 
@@ -142,9 +166,9 @@
 - **Naming**: use the full store name — `const fileTableEditorStore = useFileTableEditorStore()`, not `const store = ...` or abbreviated names.
 - **In Vue components**: always destructure, and keep each store's lines grouped together in this order — no mixing across stores:
   1. `const xyzStore = useXyzStore()`
-  2. `const { ref1, ref2 } = storeToRefs(xyzStore)` *(omit if no refs/computeds needed)*
-  3. `const { method1 } = xyzStore` *(omit if no methods needed)*
-  4. *(repeat for next store)*
+  2. `const { ref1, ref2 } = storeToRefs(xyzStore)` _(omit if no refs/computeds needed)_
+  3. `const { method1 } = xyzStore` _(omit if no methods needed)_
+  4. _(repeat for next store)_
 - Never use dot-access (`store.method()`) in components.
 - **Store-to-store** (inside a Pinia store file): declare nested stores at the root of the setup function, access via `store.property` / `store.method()` — do NOT destructure (Pinia requires dot-access for store-to-store to maintain reactivity).
 
@@ -167,6 +191,7 @@
 - Use self-closing tags for components/elements without content: `<Component />`.
 - No blank lines within Vue templates.
 - No blank lines between `const` assignments — group them tightly together.
+- No blank line before `return` when it immediately follows a `const` assignment in a small function.
 - Remove comments — make variable names descriptive instead.
 - Minimise blank lines; group related code tightly.
 - **Blank line after a closing `}`** of an `if`, `for`, or other block statement — unless it is the last statement in its scope or is immediately followed by another opening block.
