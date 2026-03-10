@@ -18,7 +18,7 @@ const isValid = ref(true);
 const disabled = computed(() => deepEqual(column, editedColumn.value) || !isValid.value);
 const uniqueNameRule = (value: string) =>
   value === column.name ||
-  !(dataSource.value?.columns.some(({ name }) => name === value) ?? false) ||
+  !dataSource.value?.columns.some(({ name }) => name === value) ||
   "Field name already exists";
 </script>
 
