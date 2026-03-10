@@ -5,18 +5,24 @@ import { csvDataSourceConfigurationSchema } from "#shared/models/tableEditor/fil
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { xlsxDataSourceConfigurationSchema } from "#shared/models/tableEditor/file/xlsx/XlsxDataSourceConfiguration";
 import { parseCsv } from "@/services/tableEditor/file/csv/parseCsv";
+import { serializeCsv } from "@/services/tableEditor/file/csv/serializeCsv";
 import { parseXlsx } from "@/services/tableEditor/file/xlsx/parseXlsx";
+import { serializeXlsx } from "@/services/tableEditor/file/xlsx/serializeXlsx";
 
 export const DataSourceConfigurationMap = {
   [DataSourceType.Csv]: {
     accept: ".csv",
-    parse: parseCsv,
+    deserialize: parseCsv,
+    mimeType: "text/csv",
     schema: csvDataSourceConfigurationSchema,
+    serialize: serializeCsv,
   },
   [DataSourceType.Xlsx]: {
     accept: ".xlsx",
-    parse: parseXlsx,
+    deserialize: parseXlsx,
+    mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     schema: xlsxDataSourceConfigurationSchema,
+    serialize: serializeXlsx,
   },
 } as const satisfies {
   [P in keyof DataSourceItemTypeMap]: DataSourceConfiguration<DataSourceItemTypeMap[P]>;

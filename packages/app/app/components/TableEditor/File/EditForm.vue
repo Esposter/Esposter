@@ -18,10 +18,10 @@ const openPanels = ref(["fields", "data"]);
 <template>
   <v-row>
     <v-col cols="12">
-      <Vjsf v-model="modelValue.configuration" :schema />
+      <v-text-field v-model="modelValue.name" label="Name" />
     </v-col>
     <v-col cols="12">
-      <TableEditorFilePicker v-model="modelValue" :configuration />
+      <Vjsf v-model="modelValue.configuration" :schema />
     </v-col>
     <template v-if="dataSource">
       <v-col cols="12">

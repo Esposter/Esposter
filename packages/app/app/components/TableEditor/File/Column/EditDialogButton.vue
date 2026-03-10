@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 
-import { ColumnTypeFormSchemaMap } from "#shared/models/tableEditor/file/ColumnTypeFormSchemaMap";
+import { ColumnTypeFormSchemaWithoutNameMap } from "#shared/models/tableEditor/file/ColumnTypeFormSchemaMap";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { Vjsf } from "@koumoul/vjsf";
 import deepEqual from "fast-deep-equal";
@@ -12,14 +12,14 @@ interface EditDialogButtonProps {
 
 const { column } = defineProps<EditDialogButtonProps>();
 const { dataSource, updateColumn } = useEditedItemDataSource();
-const jsonSchema = computed(() => zodToJsonSchema(ColumnTypeFormSchemaMap[column.type]));
+const jsonSchema = computed(() => zodToJsonSchema(ColumnTypeFormSchemaWithoutNameMap[column.type]));
 const editedColumn = ref({ ...column });
-const isNameConflict = computed(
-  () =>
-    editedColumn.value.name !== column.name &&
-    (dataSource.value?.columns.some(({ name }) => name === editedColumn.value.name) ?? false),
-);
-const disabled = computed(() => deepEqual(column, editedColumn.value) || isNameConflict.value);
+const isValid = ref(true);
+const disabled = computed(() => deepEqual(column, editedColumn.value) || !isValid.value);
+const uniqueNameRule = (value: string) =>
+  value === column.name ||
+  !(dataSource.value?.columns.some(({ name }) => name === value) ?? false) ||
+  "Field name already exists";
 </script>
 
 <template>
@@ -41,15 +41,11 @@ const disabled = computed(() => deepEqual(column, editedColumn.value) || isNameC
         </template>
       </v-tooltip>
     </template>
-    <template v-if="isNameConflict" #prepend-actions>
-      <v-tooltip text="Field name already exists">
-        <template #activator="{ props: tooltipProps }">
-          <v-icon color="error" icon="mdi-alert-octagon" start :="tooltipProps" />
-        </template>
-      </v-tooltip>
-    </template>
     <v-container fluid>
-      <Vjsf v-model="editedColumn" :schema="jsonSchema" />
+      <v-form v-model="isValid">
+        <v-text-field v-model="editedColumn.name" label="Field" :rules="[uniqueNameRule]" />
+        <Vjsf v-model="editedColumn" :schema="jsonSchema" />
+      </v-form>
     </v-container>
   </StyledDialog>
 </template>

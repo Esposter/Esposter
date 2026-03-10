@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { DataSourceConfigurationMap } from "@/services/tableEditor/file/DataSourceConfigurationMap";
 import { useTableEditorStore } from "@/store/tableEditor";
 
 defineSlots<{ "append-header": () => VNode }>();
@@ -15,6 +16,7 @@ const {
   originalItem,
 } = storeToRefs(tableEditorStore);
 const component = computed(() => (editedItem.value ? useEditFormComponent(editedItem.value.type) : undefined));
+const isFileItem = computed(() => !!editedItem.value && editedItem.value.type in DataSourceConfigurationMap);
 </script>
 
 <template>
@@ -53,6 +55,10 @@ const component = computed(() => (editedItem.value ? useEditFormComponent(edited
       @update:edit-form-ref="editFormRef = $event"
       @update:fullscreen-dialog="isFullScreenDialog = $event"
     >
+      <template v-if="isFileItem" #prepend-actions>
+        <TableEditorFileImportButton />
+        <TableEditorFileExportButton />
+      </template>
       <v-container v-if="editedItem" overflow-y-auto fluid>
         <component :is="component" v-model="editedItem" />
       </v-container>

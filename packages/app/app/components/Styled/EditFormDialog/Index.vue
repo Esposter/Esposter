@@ -14,7 +14,7 @@ interface EditFormDialogProps<T> {
   originalItem?: T;
 }
 
-defineSlots<{ default: () => VNode }>();
+defineSlots<{ "prepend-actions": () => VNode; default: () => VNode }>();
 const { editedItem, formError, isEditFormValid, isFullScreenDialog, isSavable, name, originalItem } =
   defineProps<EditFormDialogProps<T>>();
 const dialog = defineModel<boolean>({ required: true });
@@ -58,7 +58,11 @@ watch(editFormRef, (newEditFormRef) => {
           @update:fullscreen-dialog="emit('update:fullscreen-dialog', $event)"
           @save="emit('save')"
           @delete="emit('delete', $event)"
-        />
+        >
+          <template v-if="$slots['prepend-actions']" #prepend-actions>
+            <slot name="prepend-actions" />
+          </template>
+        </StyledEditFormDialogHeader>
         <v-divider thickness="2" />
         <slot />
       </StyledCard>

@@ -163,6 +163,7 @@
     "worker-timers": "catalog:",
     "ws": "catalog:",
     "read-excel-file": "catalog:",
+    "write-excel-file": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
