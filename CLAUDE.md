@@ -74,17 +74,14 @@
     [P in keyof DataSourceItemTypeMap]: DataSourceConfiguration<DataSourceItemTypeMap[P]>;
   }>;
   ```
-- **Generic map lookup composables** — when a component needs to look up a typed configuration from a generic map using a discriminant key on a generic item, extract the lookup into a composable. The composable takes a `Ref<TItem>` and returns `ComputedRef<Config<TItem> | null>`, hiding the single internal `as` cast and exposing a fully typed API to callers:
+- **Generic map lookup composables** — when a component needs to look up a typed configuration from a generic map using a discriminant key on a generic item, extract the lookup into a composable. Use `MaybeRefOrGetter<TItem>` with `toValue()` so callers can pass refs or plain values. Hide the single internal `as` cast and expose a fully typed API:
   ```typescript
   export const useDataSourceConfiguration = <TDataSourceItem extends DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>(
-    item: Ref<TDataSourceItem | null | undefined>,
-  ): ComputedRef<DataSourceConfiguration<TDataSourceItem> | null> =>
-    computed(() => {
-      if (!item.value) return null;
-      return DataSourceConfigurationMap[item.value.type] as DataSourceConfiguration<TDataSourceItem>;
-    });
+    item: MaybeRefOrGetter<TDataSourceItem>,
+  ): ComputedRef<DataSourceConfiguration<TDataSourceItem>> =>
+    computed(() => DataSourceConfigurationMap[toValue(item).type] as DataSourceConfiguration<TDataSourceItem>);
   // Caller (no cast needed):
-  const dataSourceConfiguration = useDataSourceConfiguration(editedItem);
+  const dataSourceConfiguration = useDataSourceConfiguration(modelValue);
   ```
 - **Zod imports** — always use the `z` export: `z.ZodType`, `z.ZodError`, etc. Never use named imports like `import type { ZodType }`.
 - **Zod `.default()`** — do not combine `.optional().default(value)`; `.default()` already handles `undefined` input, so `.optional()` is redundant.

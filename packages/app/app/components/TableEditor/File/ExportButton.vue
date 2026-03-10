@@ -27,15 +27,15 @@ const { dataSource } = useEditedItemDataSource();
     </template>
     <v-list>
       <v-list-item
-        v-for="{ value, icon, title, serializeDataSource } of DataSourceTypeItemCategoryDefinitions"
+        v-for="{ value, icon, title, create } of DataSourceTypeItemCategoryDefinitions"
         :key="value"
         @click="
           async () => {
-            if (!dataSource || !editedItem) return;
+            if (!dataSource) return;
             const dataSourceValue = dataSource;
             const configuration = DataSourceConfigurationMap[value];
             await exportFile(
-              () => serializeDataSource(dataSourceValue),
+              () => configuration.serialize(dataSourceValue, create()),
               editedItem.name,
               configuration.mimeType,
               configuration.accept,

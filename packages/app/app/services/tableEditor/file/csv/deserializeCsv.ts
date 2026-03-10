@@ -6,7 +6,7 @@ import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
 import { coerceValue } from "@/services/tableEditor/file/coerceValue";
-import { parseCsvLine } from "@/services/tableEditor/file/csv/parseCsvLine";
+import { deserializeCsvLine } from "@/services/tableEditor/file/csv/deserializeCsvLine";
 import { inferColumnType } from "@/services/tableEditor/file/inferColumnType";
 import { inferDateFormat } from "@/services/tableEditor/file/inferDateFormat";
 import { takeOne } from "@esposter/shared";
@@ -27,10 +27,10 @@ export const deserializeCsv = async (file: File, item: CsvDataSourceItem): Promi
       stats: { columnCount: 0, rowCount: 0, size: 0 },
     };
 
-  const sourceNames = parseCsvLine(takeOne(lines), item.configuration.delimiter).map(
+  const sourceNames = deserializeCsvLine(takeOne(lines), item.configuration.delimiter).map(
     (sourceName, index) => sourceName.trim() || `Column ${index + 1}`,
   );
-  const rawRows = lines.slice(1).map((line) => parseCsvLine(line, item.configuration.delimiter));
+  const rawRows = lines.slice(1).map((line) => deserializeCsvLine(line, item.configuration.delimiter));
   const columns = sourceNames.map((sourceName, index) => {
     const values = rawRows.map((row) => takeOne(row, index));
     const type = inferColumnType(values);

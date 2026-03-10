@@ -1,16 +1,12 @@
 <script setup lang="ts" generic="TDataSourceItem extends DataSourceItemTypeMap[keyof DataSourceItemTypeMap]">
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
-import type { DataSourceConfiguration } from "@/models/tableEditor/file/DataSourceConfiguration";
 
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
-import { DataSourceConfigurationMap } from "@/services/tableEditor/file/DataSourceConfigurationMap";
 import { Vjsf } from "@koumoul/vjsf";
 
 const modelValue = defineModel<TDataSourceItem>({ required: true });
 const { dataSource } = useEditedItemDataSource();
-const configuration = computed(
-  () => DataSourceConfigurationMap[modelValue.value.type] as DataSourceConfiguration<TDataSourceItem>,
-);
+const configuration = useDataSourceConfiguration(modelValue);
 const schema = computed(() => zodToJsonSchema(configuration.value.schema));
 const openPanels = ref(["fields", "data"]);
 </script>

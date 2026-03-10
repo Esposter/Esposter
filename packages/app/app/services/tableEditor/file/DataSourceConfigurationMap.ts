@@ -1,4 +1,4 @@
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
+import type { ADataSourceItem } from "#shared/models/tableEditor/file/ADataSourceItem";
 import type { DataSourceConfiguration } from "@/models/tableEditor/file/DataSourceConfiguration";
 
 import { csvDataSourceConfigurationSchema } from "#shared/models/tableEditor/file/csv/CsvDataSourceConfiguration";
@@ -10,7 +10,10 @@ import { deserializeXlsx } from "@/services/tableEditor/file/xlsx/deserializeXls
 import { serializeXlsx } from "@/services/tableEditor/file/xlsx/serializeXlsx";
 import { lookup } from "mime-types";
 
-export const DataSourceConfigurationMap = {
+export const DataSourceConfigurationMap: Record<
+  DataSourceType,
+  DataSourceConfiguration<ADataSourceItem<DataSourceType>>
+> = {
   [DataSourceType.Csv]: {
     accept: ".csv",
     deserialize: deserializeCsv,
@@ -25,6 +28,4 @@ export const DataSourceConfigurationMap = {
     schema: xlsxDataSourceConfigurationSchema,
     serialize: serializeXlsx,
   },
-} as const satisfies {
-  [P in keyof DataSourceItemTypeMap]: DataSourceConfiguration<DataSourceItemTypeMap[P]>;
 };

@@ -1,4 +1,4 @@
-export const parseCsvLine = (line: string, delimiter: string): string[] => {
+export const deserializeCsvLine = (line: string, delimiter: string): string[] => {
   const fields: string[] = [];
   let current = "";
   let isInQuotes = false;
