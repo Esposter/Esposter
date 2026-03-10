@@ -4,23 +4,24 @@ import type { DataSourceConfiguration } from "@/models/tableEditor/file/DataSour
 import { csvDataSourceConfigurationSchema } from "#shared/models/tableEditor/file/csv/CsvDataSourceConfiguration";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { xlsxDataSourceConfigurationSchema } from "#shared/models/tableEditor/file/xlsx/XlsxDataSourceConfiguration";
-import { parseCsv } from "@/services/tableEditor/file/csv/parseCsv";
+import { deserializeCsv } from "@/services/tableEditor/file/csv/deserializeCsv";
 import { serializeCsv } from "@/services/tableEditor/file/csv/serializeCsv";
-import { parseXlsx } from "@/services/tableEditor/file/xlsx/parseXlsx";
+import { deserializeXlsx } from "@/services/tableEditor/file/xlsx/deserializeXlsx";
 import { serializeXlsx } from "@/services/tableEditor/file/xlsx/serializeXlsx";
+import { lookup } from "mime-types";
 
 export const DataSourceConfigurationMap = {
   [DataSourceType.Csv]: {
     accept: ".csv",
-    deserialize: parseCsv,
-    mimeType: "text/csv",
+    deserialize: deserializeCsv,
+    mimeType: lookup(".csv") || "",
     schema: csvDataSourceConfigurationSchema,
     serialize: serializeCsv,
   },
   [DataSourceType.Xlsx]: {
     accept: ".xlsx",
-    deserialize: parseXlsx,
-    mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    deserialize: deserializeXlsx,
+    mimeType: lookup(".xlsx") || "",
     schema: xlsxDataSourceConfigurationSchema,
     serialize: serializeXlsx,
   },

@@ -123,6 +123,16 @@
 - **Inline Vue event handlers** — always write handlers directly in the template (`@submit="async (_, onComplete) => { ... }"`). This lets Vue infer event argument types automatically. Only extract to a named function if the same logic is reused in multiple places.
 - **`defineModel`**: don't pass `{ default: false }` for booleans — omit the options entirely (`defineModel<boolean>()`).
 - **No abbreviated parameter names** — use full descriptive names (e.g. `event` not `e`, `column` not `col`, `configuration` not `config`, `dataSource` not `source`). Exception: simple iteration callbacks where the meaning is obvious from context (e.g. `.filter((row, index) => ...)`).
+- **`@click` shorthands** — if a click handler is a single async call, use `@click="myAsyncFn(args)"` directly — no need to wrap in `async () => { await myAsyncFn(args) }`.
+
+### Composables
+
+- **Single-function composables return the function directly** — when a composable only exposes one function, return it directly instead of wrapping in an object: `return async (...) => { ... }`. Callers use `const fn = useX()` instead of `const { fn } = useX()`.
+- **`Promise.resolve(value)` for sync-to-async** — when a sync expression needs to satisfy a `Promise<T>` return type, use `Promise.resolve(value)` instead of `async () => value`.
+
+### MIME Types
+
+- Use `lookup` from `mime-types` — never hardcode MIME type strings like `"application/json"` or `"text/csv"`. Use `lookup(".json") || ""`, `lookup(".csv") || ""` etc. instead.
 
 
 ### Styling (UnoCSS Attributify Mode — MANDATORY)
@@ -167,6 +177,7 @@
 - Use self-closing tags for components/elements without content: `<Component />`.
 - No blank lines within Vue templates.
 - No blank lines between `const` assignments — group them tightly together.
+- No blank line before `return` when it immediately follows a `const` assignment in a small function.
 - Remove comments — make variable names descriptive instead.
 - Minimise blank lines; group related code tightly.
 - **Blank line after a closing `}`** of an `if`, `for`, or other block statement — unless it is the last statement in its scope or is immediately followed by another opening block.

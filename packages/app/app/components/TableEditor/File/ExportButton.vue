@@ -1,16 +1,12 @@
-<script setup lang="ts">
-import type { ADataSourceItem } from "#shared/models/tableEditor/file/ADataSourceItem";
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
-import type { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
+<script setup lang="ts" generic="TDataSourceItem extends DataSourceItemTypeMap[keyof DataSourceItemTypeMap]">
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 
 import { DataSourceConfigurationMap } from "@/services/tableEditor/file/DataSourceConfigurationMap";
 import { DataSourceTypeItemCategoryDefinitions } from "@/services/tableEditor/file/DataSourceTypeItemCategoryDefinitions";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { mergeProps } from "vue";
 
-type SerializeFn = (dataSource: DataSource, item: ADataSourceItem<DataSourceType>) => Promise<Blob>;
-
-const tableEditorStore = useTableEditorStore();
+const tableEditorStore = useTableEditorStore<TDataSourceItem>();
 const { editedItem } = storeToRefs(tableEditorStore);
 const exportFile = useExportFile();
 const { dataSource } = useEditedItemDataSource();
@@ -34,9 +30,10 @@ const { dataSource } = useEditedItemDataSource();
         @click="
           async () => {
             if (!dataSource || !editedItem) return;
+            const dataSourceValue = dataSource;
             const configuration = DataSourceConfigurationMap[value];
             await exportFile(
-              () => (configuration.serialize as SerializeFn)(dataSource, create()),
+              () => configuration.serialize(dataSourceValue, create()),
               editedItem.name,
               configuration.mimeType,
               configuration.accept,

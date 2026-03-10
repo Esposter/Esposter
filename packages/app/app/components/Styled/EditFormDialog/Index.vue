@@ -14,7 +14,7 @@ interface EditFormDialogProps<T> {
   originalItem?: T;
 }
 
-defineSlots<{ "prepend-actions": () => VNode; default: () => VNode }>();
+defineSlots<{ default: () => VNode; "prepend-actions": () => VNode }>();
 const { editedItem, formError, isEditFormValid, isFullScreenDialog, isSavable, name, originalItem } =
   defineProps<EditFormDialogProps<T>>();
 const dialog = defineModel<boolean>({ required: true });

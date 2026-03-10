@@ -5,13 +5,13 @@ import { Column } from "#shared/models/tableEditor/file/Column";
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
-import { coerceValue } from "@/services/tableEditor/file/csv/coerceValue";
+import { coerceValue } from "@/services/tableEditor/file/coerceValue";
 import { parseCsvLine } from "@/services/tableEditor/file/csv/parseCsvLine";
 import { inferColumnType } from "@/services/tableEditor/file/inferColumnType";
 import { inferDateFormat } from "@/services/tableEditor/file/inferDateFormat";
 import { takeOne } from "@esposter/shared";
 
-export const parseCsv = async (file: File, item: CsvDataSourceItem): Promise<DataSource> => {
+export const deserializeCsv = async (file: File, item: CsvDataSourceItem): Promise<DataSource> => {
   const text = await file.text();
   const lines = text.split(/\r?\n/).filter((line) => line.trim() !== "");
   if (lines.length === 0)
