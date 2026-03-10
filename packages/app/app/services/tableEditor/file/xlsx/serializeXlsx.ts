@@ -3,10 +3,8 @@ import type { XlsxDataSourceItem } from "#shared/models/tableEditor/file/xlsx/Xl
 
 import writeXlsxFile from "write-excel-file/browser";
 
-export const serializeXlsx =  (dataSource: DataSource, _item: XlsxDataSourceItem): Promise<Blob> => {
+export const serializeXlsx = (dataSource: DataSource, _item: XlsxDataSourceItem): Promise<Blob> => {
   const headerRow = dataSource.columns.map((column) => column.name);
-  const dataRows = dataSource.rows.map((row) =>
-    dataSource.columns.map((column) => row[column.name] ?? null),
-  );
+  const dataRows = dataSource.rows.map((row) => dataSource.columns.map((column) => row[column.name] ?? null));
   return writeXlsxFile([headerRow, ...dataRows], {});
 };

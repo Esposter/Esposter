@@ -11,6 +11,11 @@ export const exportFile = async (blob: Blob, fileName: string, mimeType: string,
     ],
   });
   const writable = await fileHandle.createWritable();
-  await writable.write(blob);
-  await writable.close();
+  try {
+    await writable.write(blob);
+    await writable.close();
+  } catch (error) {
+    await writable.abort();
+    throw error;
+  }
 };

@@ -9,7 +9,7 @@ export const getActions = (
   creator: SurveyCreatorModel,
   dialog: Ref<boolean>,
   importJsonFile: (onSelect: (file: File) => Promise<void>) => Promise<void>,
-  exportJsonFile: (fileName: string, data: string | unknown) => Promise<void>,
+  exportJsonFile: (fileName: string, data: unknown) => Promise<void>,
 ): Action[] => [
   new Action({
     action: getSynchronizedFunction(async () => {
