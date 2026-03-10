@@ -3,11 +3,13 @@ import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/Data
 
 import { DataSourceConfigurationMap } from "@/services/tableEditor/file/DataSourceConfigurationMap";
 import { DataSourceTypeItemCategoryDefinitions } from "@/services/tableEditor/file/DataSourceTypeItemCategoryDefinitions";
-import { useTableEditorStore } from "@/store/tableEditor";
 import { mergeProps } from "vue";
 
-const tableEditorStore = useTableEditorStore<TDataSourceItem>();
-const { editedItem } = storeToRefs(tableEditorStore);
+interface ExportButtonProps {
+  editedItem: TDataSourceItem;
+}
+
+const { editedItem } = defineProps<ExportButtonProps>();
 const exportFile = useExportFile();
 const { dataSource } = useEditedItemDataSource();
 </script>
@@ -25,7 +27,7 @@ const { dataSource } = useEditedItemDataSource();
     </template>
     <v-list>
       <v-list-item
-        v-for="{ value, icon, title, create } of DataSourceTypeItemCategoryDefinitions"
+        v-for="{ value, icon, title, serializeDataSource } of DataSourceTypeItemCategoryDefinitions"
         :key="value"
         @click="
           async () => {
@@ -33,7 +35,7 @@ const { dataSource } = useEditedItemDataSource();
             const dataSourceValue = dataSource;
             const configuration = DataSourceConfigurationMap[value];
             await exportFile(
-              () => configuration.serialize(dataSourceValue, create()),
+              () => serializeDataSource(dataSourceValue),
               editedItem.name,
               configuration.mimeType,
               configuration.accept,

@@ -74,6 +74,18 @@
     [P in keyof DataSourceItemTypeMap]: DataSourceConfiguration<DataSourceItemTypeMap[P]>;
   }>;
   ```
+- **Generic map lookup composables** — when a component needs to look up a typed configuration from a generic map using a discriminant key on a generic item, extract the lookup into a composable. The composable takes a `Ref<TItem>` and returns `ComputedRef<Config<TItem> | null>`, hiding the single internal `as` cast and exposing a fully typed API to callers:
+  ```typescript
+  export const useDataSourceConfiguration = <TDataSourceItem extends DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>(
+    item: Ref<TDataSourceItem | null | undefined>,
+  ): ComputedRef<DataSourceConfiguration<TDataSourceItem> | null> =>
+    computed(() => {
+      if (!item.value) return null;
+      return DataSourceConfigurationMap[item.value.type] as DataSourceConfiguration<TDataSourceItem>;
+    });
+  // Caller (no cast needed):
+  const dataSourceConfiguration = useDataSourceConfiguration(editedItem);
+  ```
 - **Zod imports** — always use the `z` export: `z.ZodType`, `z.ZodError`, etc. Never use named imports like `import type { ZodType }`.
 - **Zod `.default()`** — do not combine `.optional().default(value)`; `.default()` already handles `undefined` input, so `.optional()` is redundant.
 - **Generic Zod schemas** — when an abstract class has a generic type parameter (e.g. `ADataSourceItem<TType, TConfig>`), its schema must also be generic. Export a `create*Schema` function that takes typed zod schemas as parameters and returns the composed schema. Never hardcode type-specific values in a base schema:
@@ -122,6 +134,7 @@
 - **Inline arrow functions** where argument types can be inferred from context — don't extract single-use, trivially-typed lambdas into named functions.
 - **Inline Vue event handlers** — always write handlers directly in the template (`@submit="async (_, onComplete) => { ... }"`). This lets Vue infer event argument types automatically. Only extract to a named function if the same logic is reused in multiple places.
 - **`defineModel`**: don't pass `{ default: false }` for booleans — omit the options entirely (`defineModel<boolean>()`).
+- **`defineSlots`**: always assign to a variable — `const slots = defineSlots<{ ... }>()`.
 - **No abbreviated parameter names** — use full descriptive names (e.g. `event` not `e`, `column` not `col`, `configuration` not `config`, `dataSource` not `source`). Exception: simple iteration callbacks where the meaning is obvious from context (e.g. `.filter((row, index) => ...)`).
 - **`@click` shorthands** — if a click handler is a single async call, use `@click="myAsyncFn(args)"` directly — no need to wrap in `async () => { await myAsyncFn(args) }`.
 

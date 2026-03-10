@@ -105,7 +105,7 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
   };
 });
 
-export const useTableEditorStore = <TItem extends Item = Item>() =>
+export const useTableEditorStore = <TItem extends ToData<Item> = ToData<Item>>() =>
   useBaseTableEditorStore() as unknown as Store<
     typeof id,
     _ExtractStateFromSetupStore<TableEditorStoreState<TItem>>,
