@@ -1,4 +1,4 @@
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
+import type { ADataSourceItem } from "#shared/models/tableEditor/file/ADataSourceItem";
 import type { ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
 import type { Except } from "type-fest";
 
@@ -21,10 +21,9 @@ const DataSourceTypeItemCategoryDefinitionMap = {
     targetTypeKey: ItemEntityTypePropertyNames.type,
     title: DataSourceType.Xlsx,
   },
-} as const satisfies {
-  [P in keyof DataSourceItemTypeMap]: Except<ItemCategoryDefinition<DataSourceItemTypeMap[P]>, "value">;
-};
+} as const satisfies Partial<
+  Record<DataSourceType, Except<ItemCategoryDefinition<ADataSourceItem<DataSourceType>>, "value">>
+>;
 
-export const DataSourceTypeItemCategoryDefinitions: ItemCategoryDefinition<
-  DataSourceItemTypeMap[keyof DataSourceItemTypeMap]
->[] = parseDictionaryToArray(DataSourceTypeItemCategoryDefinitionMap, "value");
+export const DataSourceTypeItemCategoryDefinitions: ItemCategoryDefinition<ADataSourceItem<DataSourceType>>[] =
+  parseDictionaryToArray(DataSourceTypeItemCategoryDefinitionMap, "value");
