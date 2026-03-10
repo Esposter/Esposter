@@ -8,8 +8,6 @@ import { deserializeCsv } from "@/services/tableEditor/file/csv/deserializeCsv";
 import { serializeCsv } from "@/services/tableEditor/file/csv/serializeCsv";
 import { deserializeXlsx } from "@/services/tableEditor/file/xlsx/deserializeXlsx";
 import { serializeXlsx } from "@/services/tableEditor/file/xlsx/serializeXlsx";
-import { lookup } from "mime-types";
-
 export const DataSourceConfigurationMap: Record<
   DataSourceType,
   DataSourceConfiguration<ADataSourceItem<DataSourceType>>
@@ -17,14 +15,14 @@ export const DataSourceConfigurationMap: Record<
   [DataSourceType.Csv]: {
     accept: ".csv",
     deserialize: deserializeCsv,
-    mimeType: lookup(".csv") || "",
+    mimeType: "text/csv",
     schema: csvDataSourceConfigurationSchema,
     serialize: serializeCsv,
   },
   [DataSourceType.Xlsx]: {
     accept: ".xlsx",
     deserialize: deserializeXlsx,
-    mimeType: lookup(".xlsx") || "",
+    mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     schema: xlsxDataSourceConfigurationSchema,
     serialize: serializeXlsx,
   },

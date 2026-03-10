@@ -8,5 +8,5 @@ export interface DataSourceConfiguration<TDataSourceItem extends ADataSourceItem
   deserialize(file: File, item: TDataSourceItem): Promise<DataSource>;
   mimeType: string;
   schema: z.ZodObject;
-  serialize(dataSource: DataSource, item: TDataSourceItem): Promise<Blob>;
+  serialize(dataSource: DataSource, item: TDataSourceItem, mimeType: string): Promise<Blob>;
 }

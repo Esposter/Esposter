@@ -35,7 +35,7 @@ const { dataSource } = useEditedItemDataSource();
             const dataSourceValue = dataSource;
             const configuration = DataSourceConfigurationMap[value];
             await exportFile(
-              () => configuration.serialize(dataSourceValue, create()),
+              (mimeType) => configuration.serialize(dataSourceValue, create(), mimeType),
               editedItem.name,
               configuration.mimeType,
               configuration.accept,
