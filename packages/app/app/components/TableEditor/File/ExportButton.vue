@@ -19,9 +19,7 @@ const { dataSource } = useEditedItemDataSource();
     <template #activator="{ props: menuProps }">
       <v-tooltip text="Export">
         <template #activator="{ props: tooltipProps }">
-          <v-btn :disabled="!dataSource" :="mergeProps(menuProps, tooltipProps)">
-            <v-icon icon="mdi-download" />
-          </v-btn>
+          <v-btn icon="mdi-download" :disabled="!dataSource" :="mergeProps(menuProps, tooltipProps)" />
         </template>
       </v-tooltip>
     </template>
