@@ -17,12 +17,12 @@ const editedColumn = ref({ ...column });
 const isValid = ref(true);
 const disabled = computed(() => deepEqual(column, editedColumn.value) || !isValid.value);
 const uniqueNameRule = (value: string) =>
-  value === column.name || !dataSource.value?.columns.some(({ name }) => name === value) || "Field name already exists";
+  value === column.name || !dataSource.value?.columns.some(({ name }) => name === value) || "Column already exists";
 </script>
 
 <template>
   <StyledDialog
-    :card-props="{ title: `Edit ${column.sourceName} Field` }"
+    :card-props="{ title: `Edit ${column.sourceName} Column` }"
     :confirm-button-props="{ text: 'Save & Close' }"
     :confirm-button-attrs="{ disabled }"
     @submit="
@@ -33,7 +33,7 @@ const uniqueNameRule = (value: string) =>
     "
   >
     <template #activator="{ updateIsOpen }">
-      <v-tooltip text="Edit Field">
+      <v-tooltip text="Edit Column">
         <template #activator="{ props: tooltipProps }">
           <v-btn m-0 icon="mdi-pencil" size="small" tile :="tooltipProps" @click.stop="updateIsOpen(true)" />
         </template>
@@ -41,7 +41,7 @@ const uniqueNameRule = (value: string) =>
     </template>
     <v-container fluid>
       <v-form v-model="isValid">
-        <v-text-field v-model="editedColumn.name" label="Field" :rules="[uniqueNameRule]" />
+        <v-text-field v-model="editedColumn.name" label="Column" :rules="[uniqueNameRule]" />
         <Vjsf v-model="editedColumn" :schema="jsonSchema" />
       </v-form>
     </v-container>
