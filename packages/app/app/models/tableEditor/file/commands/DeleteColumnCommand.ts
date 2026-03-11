@@ -11,7 +11,7 @@ export class DeleteColumnCommand extends ADataSourceCommand {
   readonly name = "DeleteColumnCommand";
 
   get description() {
-    return `Delete column "${this.originalColumn.name}"`;
+    return `Delete "${this.originalColumn.name}" Column`;
   }
 
   private readonly columnIndex: number;

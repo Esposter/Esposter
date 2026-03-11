@@ -26,7 +26,7 @@ export class UpdateColumnCommand extends ADataSourceCommand {
     )
       changes.push(`format: ${this.originalColumn.format} → ${this.updatedColumn.format}`);
     const detail = changes.length > 0 ? ` (${changes.join(", ")})` : "";
-    return `Update column "${this.originalName}"${detail}`;
+    return `Edit Column${detail}`;
   }
 
   private readonly originalColumn: Column | DateColumn;

@@ -5,12 +5,13 @@ interface DeleteDialogButtonProps {
 
 const { name } = defineProps<DeleteDialogButtonProps>();
 const { deleteColumn } = useEditedItemDataSource();
+const title = computed(() => `Delete "${name}" Column`);
 </script>
 
 <template>
   <StyledConfirmDeleteDialogButton
     :card-props="{
-      title: `Delete ${name} Column`,
+      title,
       text: 'Are you sure you want to delete this column?',
     }"
     @delete="

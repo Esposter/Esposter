@@ -10,7 +10,7 @@ export class UpdateRowCommand extends ADataSourceCommand {
   readonly name = "UpdateRowCommand";
 
   get description() {
-    return `Update row #${this.index + 1}`;
+    return `Edit row #${this.index + 1}`;
   }
 
   private readonly index: number;
