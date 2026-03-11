@@ -126,6 +126,10 @@
   ```
 - **Generic browser utilities** go in `app/utils/` (e.g., `readFileAsText.ts`).
 - **Feature folders**: related models/services/components are grouped under a feature subfolder (e.g., `tableEditor/file/`).
+- **Functions go in `services/`** — factory functions, command creators, and other exported functions belong in `services/`, not `models/`. `models/` is strictly for classes and interfaces/types.
+- **Command Pattern** — use factory functions returning plain objects with `execute`/`undo` arrow properties instead of classes. Interfaces for command contracts go in `models/`; factory functions go in `services/` (e.g., `services/tableEditor/file/commands/createDeleteRowCommand.ts`).
+- **Boolean computed naming** — use `is*` prefix for boolean computed refs (e.g., `isUndoable`, `isRedoable`, `isSavable`). Do not use `can*`.
+- **Single-responsibility keyboard shortcut components** — when a button has an associated keyboard shortcut, extract it into its own component that owns both the `v-btn` and the `onKeyStroke` handler. This keeps each component focused on one action (e.g., `UndoButton.vue`, `RedoButton.vue`).
 
 ### Helper Functions
 
@@ -138,6 +142,7 @@
 - **`defineModel`**: don't pass `{ default: false }` for booleans — omit the options entirely (`defineModel<boolean>()`).
 - **`defineSlots`**: always assign to a variable — `const slots = defineSlots<{ ... }>()`.
 - **No abbreviated parameter names** — use full descriptive names (e.g. `event` not `e`, `column` not `col`, `configuration` not `config`, `dataSource` not `source`). Exception: simple iteration callbacks where the meaning is obvious from context (e.g. `.filter((row, index) => ...)`).
+- **Destructure event parameters** — when only specific properties of an event are needed, destructure them directly in the parameter list instead of accessing via `event.property` repeatedly: `({ ctrlKey, metaKey, preventDefault }) => { ... }` not `(event) => { event.ctrlKey ... }`.
 - **`@click` shorthands** — if a click handler is a single async call, use `@click="myAsyncFn(args)"` directly — no need to wrap in `async () => { await myAsyncFn(args) }`.
 
 ### Composables

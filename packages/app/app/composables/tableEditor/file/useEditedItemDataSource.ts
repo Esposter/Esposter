@@ -5,77 +5,85 @@ import type { DataSourceType } from "#shared/models/tableEditor/file/DataSourceT
 import type { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
 import type { ToData } from "@esposter/shared";
 
-import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
-import { dayjs } from "#shared/services/dayjs";
-import { getValueSize } from "@/services/tableEditor/file/getValueSize";
-import { syncStats } from "@/services/tableEditor/file/syncStats";
+import { createDeleteColumnCommand } from "@/services/tableEditor/file/commands/createDeleteColumnCommand";
+import { createDeleteRowCommand } from "@/services/tableEditor/file/commands/createDeleteRowCommand";
+import { createUpdateColumnCommand } from "@/services/tableEditor/file/commands/createUpdateColumnCommand";
+import { createUpdateRowCommand } from "@/services/tableEditor/file/commands/createUpdateRowCommand";
+import { useDataSourceHistory } from "@/composables/tableEditor/file/useDataSourceHistory";
 import { useTableEditorStore } from "@/store/tableEditor";
-import { takeOne } from "@esposter/shared";
+import { takeOne, toRawDeep } from "@esposter/shared";
 
 export const useEditedItemDataSource = () => {
   const tableEditorStore = useTableEditorStore<ADataSourceItem<DataSourceType>>();
   const { editedItem } = storeToRefs(tableEditorStore);
   const dataSource = computed(() => editedItem.value?.dataSource ?? null);
+  const dataSourceHistory = useDataSourceHistory();
+  const { future, history, isRedoable, isUndoable } = dataSourceHistory;
+
   const setDataSource = (value: DataSource) => {
     if (!editedItem.value) return;
     editedItem.value.dataSource = value;
+    dataSourceHistory.clear();
   };
 
   const deleteRow = (index: number) => {
     if (!editedItem.value?.dataSource) return;
-    const row = takeOne(editedItem.value.dataSource.rows, index);
-    for (const column of editedItem.value.dataSource.columns) column.size -= getValueSize(takeOne(row, column.name));
-    editedItem.value.dataSource.rows = editedItem.value.dataSource.rows.filter((_, rowIndex) => rowIndex !== index);
-    syncStats(editedItem.value.dataSource);
+    const row = structuredClone(toRawDeep(takeOne(editedItem.value.dataSource.rows, index)));
+    const command = createDeleteRowCommand(index, row);
+    command.execute(editedItem.value);
+    dataSourceHistory.push(command);
   };
+
   const updateRow = (index: number, updated: DataSource["rows"][number]) => {
     if (!editedItem.value?.dataSource || index === -1) return;
-    const row = takeOne(editedItem.value.dataSource.rows, index);
-    for (const column of editedItem.value.dataSource.columns)
-      column.size += getValueSize(takeOne(updated, column.name)) - getValueSize(takeOne(row, column.name));
-    Object.assign(row, updated);
-    syncStats(editedItem.value.dataSource);
+    const before = structuredClone(toRawDeep(takeOne(editedItem.value.dataSource.rows, index)));
+    const command = createUpdateRowCommand(index, before, updated);
+    command.execute(editedItem.value);
+    dataSourceHistory.push(command);
   };
+
   const updateColumn = (originalName: string, updatedColumn: ToData<Column | DateColumn>) => {
     if (!editedItem.value?.dataSource) return;
-    const column = editedItem.value.dataSource.columns.find(({ name }) => name === originalName);
-    if (!column) return;
-    const newName = updatedColumn.name;
-    if (newName !== originalName)
-      editedItem.value.dataSource.rows = editedItem.value.dataSource.rows.map((row) =>
-        Object.fromEntries(Object.entries(row).map(([key, value]) => [key === originalName ? newName : key, value])),
-      );
-
-    if (
-      column.type === ColumnType.Date &&
-      updatedColumn.type === ColumnType.Date &&
-      updatedColumn.format !== column.format
-    ) {
-      const oldFormat = column.format;
-      const newFormat = updatedColumn.format;
-      editedItem.value.dataSource.rows = editedItem.value.dataSource.rows.map((row) => {
-        const value = takeOne(row, newName);
-        if (typeof value !== "string") return row;
-        const parsedValue = dayjs(value, oldFormat, true);
-        if (!parsedValue.isValid()) return row;
-        return { ...row, [newName]: parsedValue.format(newFormat) };
-      });
-      column.size = editedItem.value.dataSource.rows.reduce(
-        (total, row) => total + getValueSize(takeOne(row, newName)),
-        0,
-      );
-    }
-
-    Object.assign(column, updatedColumn);
-    syncStats(editedItem.value.dataSource);
+    const columnIndex = editedItem.value.dataSource.columns.findIndex(({ name }) => name === originalName);
+    if (columnIndex === -1) return;
+    const originalColumn = structuredClone(toRawDeep(takeOne(editedItem.value.dataSource.columns, columnIndex)));
+    const originalRowValues = editedItem.value.dataSource.rows.map((row) => takeOne(toRawDeep(row), originalName));
+    const command = createUpdateColumnCommand(originalName, originalColumn, updatedColumn, originalRowValues);
+    command.execute(editedItem.value);
+    dataSourceHistory.push(command);
   };
+
   const deleteColumn = (name: string) => {
     if (!editedItem.value?.dataSource) return;
-    editedItem.value.dataSource.columns = editedItem.value.dataSource.columns.filter((column) => column.name !== name);
-    editedItem.value.dataSource.rows = editedItem.value.dataSource.rows.map((row) =>
-      Object.fromEntries(Object.entries(row).filter(([key]) => key !== name)),
-    );
-    syncStats(editedItem.value.dataSource);
+    const columnIndex = editedItem.value.dataSource.columns.findIndex((column) => column.name === name);
+    if (columnIndex === -1) return;
+    const column = structuredClone(toRawDeep(takeOne(editedItem.value.dataSource.columns, columnIndex)));
+    const rowValues = editedItem.value.dataSource.rows.map((row) => takeOne(toRawDeep(row), name));
+    const command = createDeleteColumnCommand(columnIndex, column, rowValues);
+    command.execute(editedItem.value);
+    dataSourceHistory.push(command);
   };
-  return { dataSource, deleteColumn, deleteRow, setDataSource, updateColumn, updateRow };
+
+  const undo = () => {
+    if (!editedItem.value || !isUndoable.value) return;
+    const command = takeOne(history.value, history.value.length - 1);
+    history.value.pop();
+    future.value.push(command);
+    command.undo(editedItem.value);
+  };
+
+  const redo = () => {
+    if (!editedItem.value || !isRedoable.value) return;
+    const command = takeOne(future.value, future.value.length - 1);
+    future.value.pop();
+    history.value.push(command);
+    command.execute(editedItem.value);
+  };
+
+  watch(
+    () => editedItem.value?.id,
+    () => dataSourceHistory.clear(),
+  );
+
+  return { dataSource, deleteColumn, deleteRow, isRedoable, isUndoable, redo, setDataSource, undo, updateColumn, updateRow };
 };
