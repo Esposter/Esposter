@@ -218,6 +218,7 @@
 ### Testing Conventions (Vitest)
 
 - **`describe(functionRef, ...)`** — pass the function reference directly, not a string name.
+- **Declare `const` inside `describe`** — all shared test constants (e.g. `HEADER`, reusable values) must be declared inside the `describe` callback scope, not at module level, so they are scoped and cleaned up correctly.
 - **`expect.hasAssertions()`** — always include at the top of every test body.
 - **Canonical test values** — always use minimal, meaningful values:
   - Boolean: `"true"`, `"false"` — test both together in one test

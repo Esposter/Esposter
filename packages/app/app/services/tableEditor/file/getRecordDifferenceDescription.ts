@@ -19,5 +19,5 @@ export const getRecordDifferenceDescription = (original: object, updated: object
     }
   }
   if (rows.length === 0) return "";
-  return ["key | original | updated", "--- | --- | ---", ...rows].join("\n");
+  return ["key | original | updated", ":---: | :---: | :---:", ...rows].join("\n");
 };

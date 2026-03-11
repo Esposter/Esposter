@@ -2,7 +2,7 @@ import { getRecordDifferenceDescription } from "@/services/tableEditor/file/getR
 import { describe, expect, test } from "vitest";
 
 describe(getRecordDifferenceDescription, () => {
-  const HEADER = "key | original | updated\n--- | --- | ---";
+  const HEADER = "key | original | updated\n:---: | :---: | :---:";
 
   test("identical objects returns empty string", () => {
     expect.hasAssertions();
