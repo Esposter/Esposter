@@ -29,9 +29,7 @@ export const createColumnSchema = <T extends z.ZodType<ColumnType>>(typeSchema: 
     type: typeSchema.readonly(),
   });
 
-export const columnSchema = createColumnSchema(
-  z.enum([ColumnType.Boolean, ColumnType.Number, ColumnType.String]),
-);
+export const columnSchema = createColumnSchema(z.enum([ColumnType.Boolean, ColumnType.Number, ColumnType.String]));
 
 export const createColumnFormSchema = <T extends z.ZodType<ColumnType>>(typeSchema: T) =>
   columnSchema.pick({ name: true, sourceName: true }).extend({
