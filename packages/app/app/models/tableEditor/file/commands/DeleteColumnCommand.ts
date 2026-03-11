@@ -16,7 +16,6 @@ export class DeleteColumnCommand extends ADataSourceCommand {
 
   private readonly columnIndex: number;
   private readonly originalColumn: Column | DateColumn;
-
   private readonly originalRowValues: ColumnValue[];
 
   constructor(columnIndex: number, originalColumn: Column | DateColumn, originalRowValues: ColumnValue[]) {
