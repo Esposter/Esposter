@@ -13,7 +13,7 @@ export const zodToJsonSchema = (schema: z.ZodObject) => {
         props: { rules: meta.rules },
       };
     },
-  }) as z.core.JSONSchema.ObjectSchema;
+  });
   recurseProperties(properties, {
     otherHooks: [
       (key, property) => {
