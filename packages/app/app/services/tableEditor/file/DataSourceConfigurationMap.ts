@@ -3,11 +3,15 @@ import type { DataSourceConfiguration } from "@/models/tableEditor/file/DataSour
 
 import { csvDataSourceConfigurationSchema } from "#shared/models/tableEditor/file/csv/CsvDataSourceConfiguration";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
+import { jsonDataSourceConfigurationSchema } from "#shared/models/tableEditor/file/json/JsonDataSourceConfiguration";
 import { xlsxDataSourceConfigurationSchema } from "#shared/models/tableEditor/file/xlsx/XlsxDataSourceConfiguration";
 import { deserializeCsv } from "@/services/tableEditor/file/csv/deserializeCsv";
 import { serializeCsv } from "@/services/tableEditor/file/csv/serializeCsv";
+import { deserializeJson } from "@/services/tableEditor/file/json/deserializeJson";
+import { serializeJson } from "@/services/tableEditor/file/json/serializeJson";
 import { deserializeXlsx } from "@/services/tableEditor/file/xlsx/deserializeXlsx";
 import { serializeXlsx } from "@/services/tableEditor/file/xlsx/serializeXlsx";
+
 export const DataSourceConfigurationMap: Record<
   DataSourceType,
   DataSourceConfiguration<ADataSourceItem<DataSourceType>>
@@ -18,6 +22,13 @@ export const DataSourceConfigurationMap: Record<
     mimeType: "text/csv",
     schema: csvDataSourceConfigurationSchema,
     serialize: serializeCsv,
+  },
+  [DataSourceType.Json]: {
+    accept: ".json",
+    deserialize: deserializeJson,
+    mimeType: "application/json",
+    schema: jsonDataSourceConfigurationSchema,
+    serialize: serializeJson,
   },
   [DataSourceType.Xlsx]: {
     accept: ".xlsx",
