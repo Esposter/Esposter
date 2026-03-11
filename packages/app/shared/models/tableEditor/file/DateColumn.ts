@@ -15,8 +15,8 @@ export class DateColumn extends Column<ColumnType.Date> {
   }
 }
 
-export const dateColumnSchema = createColumnSchema(z.literal(ColumnType.Date)).extend({
-  format: z.union(DATE_FORMATS.map((format) => z.literal(format))),
+export const dateColumnSchema = createColumnSchema(z.literal(ColumnType.Date).readonly()).extend({
+  format: z.enum(DATE_FORMATS),
 }) satisfies z.ZodType<ToData<DateColumn>>;
 
 export const dateColumnFormSchema = createColumnFormSchema(z.literal(ColumnType.Date).readonly()).extend({
