@@ -22,7 +22,7 @@ const uniqueNameRule = (value: string) =>
 
 <template>
   <StyledDialog
-    :card-props="{ title: `Edit ${column.sourceName} Column` }"
+    :card-props="{ title: `Edit ${column.name} Column` }"
     :confirm-button-props="{ text: 'Save & Close' }"
     :confirm-button-attrs="{ disabled }"
     @submit="

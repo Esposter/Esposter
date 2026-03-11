@@ -8,6 +8,7 @@ import type { ToData } from "@esposter/shared";
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { dayjs } from "#shared/services/dayjs";
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
+import { getRecordDifferenceDescription } from "@/services/tableEditor/file/getRecordDifferenceDescription";
 import { getValueSize } from "@/services/tableEditor/file/getValueSize";
 import { takeOne } from "@esposter/shared";
 
@@ -15,17 +16,8 @@ export class UpdateColumnCommand extends ADataSourceCommand {
   readonly name = "UpdateColumnCommand";
 
   get description() {
-    const changes: string[] = [];
-    if (this.updatedColumn.name !== this.originalName) changes.push(`renamed to "${this.updatedColumn.name}"`);
-    if (this.updatedColumn.type !== this.originalColumn.type)
-      changes.push(`type: ${this.originalColumn.type} → ${this.updatedColumn.type}`);
-    if (
-      this.originalColumn.type === ColumnType.Date &&
-      this.updatedColumn.type === ColumnType.Date &&
-      this.updatedColumn.format !== this.originalColumn.format
-    )
-      changes.push(`format: ${this.originalColumn.format} → ${this.updatedColumn.format}`);
-    const detail = changes.length > 0 ? ` (${changes.join(", ")})` : "";
+    const recordDifferenceDescription = getRecordDifferenceDescription(this.originalColumn, this.updatedColumn);
+    const detail = recordDifferenceDescription ? `\n\n${recordDifferenceDescription}` : "";
     return `Edit Column${detail}`;
   }
 

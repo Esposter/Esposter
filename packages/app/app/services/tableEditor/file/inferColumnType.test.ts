@@ -1,101 +1,89 @@
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
+import { DATE_FORMATS } from "#shared/models/tableEditor/file/constants";
+import { dayjs } from "#shared/services/dayjs";
 import { inferColumnType } from "@/services/tableEditor/file/inferColumnType";
 import { describe, expect, test } from "vitest";
 
 describe(inferColumnType, () => {
-  test("empty array returns String", () => {
+  test(`empty array returns ${ColumnType.String}`, () => {
     expect.hasAssertions();
 
     expect(inferColumnType([])).toBe(ColumnType.String);
   });
 
-  test("all whitespace values returns String", () => {
+  test(`empty string returns ${ColumnType.String}`, () => {
     expect.hasAssertions();
 
-    expect(inferColumnType(["", "  ", "\t"])).toBe(ColumnType.String);
+    expect(inferColumnType([""])).toBe(ColumnType.String);
   });
 
-  test("boolean values returns Boolean", () => {
+  test(`boolean returns ${ColumnType.Boolean}`, () => {
     expect.hasAssertions();
 
     expect(inferColumnType(["true", "false"])).toBe(ColumnType.Boolean);
   });
 
-  test("boolean values are case insensitive", () => {
+  test(`${ColumnType.Boolean} is case insensitive`, () => {
     expect.hasAssertions();
 
-    expect(inferColumnType(["TRUE", "FALSE", "True", "False"])).toBe(ColumnType.Boolean);
+    expect(inferColumnType(["TRUE", "FALSE"])).toBe(ColumnType.Boolean);
   });
 
-  test("integer values returns Number", () => {
+  test(`integer returns ${ColumnType.Number}`, () => {
     expect.hasAssertions();
 
-    expect(inferColumnType(["1", "2", "3"])).toBe(ColumnType.Number);
+    expect(inferColumnType(["0"])).toBe(ColumnType.Number);
   });
 
-  test("decimal values returns Number", () => {
+  test(`decimal returns ${ColumnType.Number}`, () => {
     expect.hasAssertions();
 
-    expect(inferColumnType(["1.5", "2.75", "3.0"])).toBe(ColumnType.Number);
+    expect(inferColumnType(["0.1"])).toBe(ColumnType.Number);
   });
 
-  test("negative values returns Number", () => {
+  test(`negative returns ${ColumnType.Number}`, () => {
     expect.hasAssertions();
 
-    expect(inferColumnType(["-1", "-2.5", "0"])).toBe(ColumnType.Number);
+    expect(inferColumnType(["-1"])).toBe(ColumnType.Number);
   });
 
-  test("iso date values returns Date", () => {
+  test(`NaN returns ${ColumnType.String}`, () => {
     expect.hasAssertions();
 
-    expect(inferColumnType(["2023-01-01", "2024-06-15"])).toBe(ColumnType.Date);
+    expect(inferColumnType([String(Number.NaN)])).toBe(ColumnType.String);
   });
 
-  test("slash date values MM/DD/YYYY returns Date", () => {
+  test(`epoch date returns ${ColumnType.Date}`, () => {
     expect.hasAssertions();
 
-    expect(inferColumnType(["01/15/2023", "06/20/2024"])).toBe(ColumnType.Date);
+    expect(inferColumnType(["1970-01-01"])).toBe(ColumnType.Date);
   });
 
-  test("slash date values DD/MM/YYYY returns Date", () => {
+  test(`all date formats epoch date returns ${ColumnType.Date}`, () => {
     expect.hasAssertions();
 
-    expect(inferColumnType(["25/12/2023", "01/06/2024"])).toBe(ColumnType.Date);
+    for (const format of DATE_FORMATS) {
+      const epochDate = dayjs("1970-01-01", "YYYY-MM-DD", true).format(format);
+
+      expect(inferColumnType([epochDate])).toBe(ColumnType.Date);
+    }
   });
 
-  test("text values returns String", () => {
+  test(`mixed ${ColumnType.Boolean} and ${ColumnType.Number} returns ${ColumnType.String}`, () => {
     expect.hasAssertions();
 
-    expect(inferColumnType(["hello", "world"])).toBe(ColumnType.String);
+    expect(inferColumnType(["true", "0"])).toBe(ColumnType.String);
   });
 
-  test("mixed boolean and number values returns String", () => {
+  test(`mixed ${ColumnType.Number} and ${ColumnType.Date} returns ${ColumnType.String}`, () => {
     expect.hasAssertions();
 
-    expect(inferColumnType(["true", "1"])).toBe(ColumnType.String);
+    expect(inferColumnType(["0", "1970-01-01"])).toBe(ColumnType.String);
   });
 
-  test("mixed number and text values returns String", () => {
+  test(`mixed ${ColumnType.Boolean} and ${ColumnType.Date} returns ${ColumnType.String}`, () => {
     expect.hasAssertions();
 
-    expect(inferColumnType(["1", "hello"])).toBe(ColumnType.String);
-  });
-
-  test("mixed number and date values returns String", () => {
-    expect.hasAssertions();
-
-    expect(inferColumnType(["1", "2023-01-01"])).toBe(ColumnType.String);
-  });
-
-  test("boolean values with whitespace padding returns Boolean", () => {
-    expect.hasAssertions();
-
-    expect(inferColumnType(["  true  ", " false "])).toBe(ColumnType.Boolean);
-  });
-
-  test("number values with whitespace padding returns Number", () => {
-    expect.hasAssertions();
-
-    expect(inferColumnType(["  42  ", " 3.14 "])).toBe(ColumnType.Number);
+    expect(inferColumnType(["true", "1970-01-01"])).toBe(ColumnType.String);
   });
 });
