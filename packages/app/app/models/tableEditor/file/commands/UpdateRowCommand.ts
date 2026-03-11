@@ -3,6 +3,7 @@ import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
+import { getRecordDifferenceDescription } from "@/services/tableEditor/file/getRecordDifferenceDescription";
 import { getValueSize } from "@/services/tableEditor/file/getValueSize";
 import { takeOne } from "@esposter/shared";
 
@@ -10,7 +11,9 @@ export class UpdateRowCommand extends ADataSourceCommand {
   readonly name = "UpdateRowCommand";
 
   get description() {
-    return `Edit row #${this.index + 1}`;
+    const recordDifferenceDescription = getRecordDifferenceDescription(this.originalRow, this.updatedRow);
+    const detail = recordDifferenceDescription.length > 0 ? ` (${recordDifferenceDescription.join(", ")})` : "";
+    return `Edit Row #${this.index + 1}${detail}`;
   }
 
   private readonly index: number;

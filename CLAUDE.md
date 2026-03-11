@@ -153,7 +153,7 @@
 
 ### MIME Types
 
-- Use `lookup` from `mime-types` — never hardcode MIME type strings like `"application/json"` or `"text/csv"`. Use `lookup(".json") || ""`, `lookup(".csv") || ""` etc. instead.
+- Store MIME type strings in the relevant configuration map (e.g. `DataSourceConfigurationMap`) rather than calling `mime-types` `lookup` at runtime — `mime-types` uses Node.js `path.extname` which is not available in the browser. Access `mimeType` through the configuration map at the call site.
 
 ### Styling (UnoCSS Attributify Mode — MANDATORY)
 
@@ -210,6 +210,24 @@
 
 - Always clean up in `onUnmounted`: intervals, timeouts, animation frames, event listeners.
 - Prefer `VueUse` composables over manual event listeners where possible.
+
+### Testing Conventions (Vitest)
+
+- **`describe(functionRef, ...)`** — pass the function reference directly, not a string name.
+- **`expect.hasAssertions()`** — always include at the top of every test body.
+- **Canonical test values** — always use minimal, meaningful values:
+  - Boolean: `"true"`, `"false"` — test both together in one test
+  - Integer: `"0"` / number `0`
+  - Decimal: `"0.1"` / number `0.1`
+  - Negative: `"-1"` / number `-1`
+  - NaN: `String(Number.NaN)`
+  - Date (epoch): `"1970-01-01"` (YYYY-MM-DD); second date: `"1970-01-02"`
+  - String: `""` as base value; use `" "` for a different value. Only use `"a"` when a space would be trimmed to `""` (making it identical to base). Never use named strings like `"Alice"` / `"Bob"`.
+  - Object keys in tests: use `""` as base key, `" "` as a second key — never use semantic names like `"name"` / `"age"`.
+  - Number diff values: `0`, `1`, `2`, etc.
+- **Date format tests** — when testing all date formats, use a `for...of` loop inside a single test, converting epoch via `dayjs("1970-01-01", "YYYY-MM-DD", true).format(format)`. Never use `test.each` for date format iteration.
+- **Interpolated descriptions** — use template literals with enum values: `` `boolean returns ${ColumnType.Boolean}` ``.
+- **Human-readable names** — use plain English: "integer", "decimal", "negative", "epoch date", "NaN".
 
 ### CRUD Store Patterns
 

@@ -1,14 +1,31 @@
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
+import { DATE_FORMATS } from "#shared/models/tableEditor/file/constants";
+import { dayjs } from "#shared/services/dayjs";
 import { coerceValue } from "@/services/tableEditor/file/coerceValue";
 import { describe, expect, test } from "vitest";
 
 describe(coerceValue, () => {
-  test("empty string returns null for any type", () => {
+  test(`empty string returns null for ${ColumnType.Boolean}`, () => {
     expect.hasAssertions();
 
     expect(coerceValue("", ColumnType.Boolean)).toBeNull();
+  });
+
+  test(`empty string returns null for ${ColumnType.Number}`, () => {
+    expect.hasAssertions();
+
     expect(coerceValue("", ColumnType.Number)).toBeNull();
+  });
+
+  test(`empty string returns null for ${ColumnType.Date}`, () => {
+    expect.hasAssertions();
+
     expect(coerceValue("", ColumnType.Date)).toBeNull();
+  });
+
+  test(`empty string returns null for ${ColumnType.String}`, () => {
+    expect.hasAssertions();
+
     expect(coerceValue("", ColumnType.String)).toBeNull();
   });
 
@@ -21,19 +38,19 @@ describe(coerceValue, () => {
     expect(coerceValue("   ", ColumnType.String)).toBeNull();
   });
 
-  test("'true' coerces to boolean true", () => {
+  test(`"true" coerces to ${ColumnType.Boolean} true`, () => {
     expect.hasAssertions();
 
     expect(coerceValue("true", ColumnType.Boolean)).toBe(true);
   });
 
-  test("'false' coerces to boolean false", () => {
+  test(`"false" coerces to ${ColumnType.Boolean} false`, () => {
     expect.hasAssertions();
 
     expect(coerceValue("false", ColumnType.Boolean)).toBe(false);
   });
 
-  test("boolean coercion is case insensitive", () => {
+  test(`${ColumnType.Boolean} coercion is case insensitive`, () => {
     expect.hasAssertions();
 
     expect(coerceValue("TRUE", ColumnType.Boolean)).toBe(true);
@@ -42,37 +59,46 @@ describe(coerceValue, () => {
     expect(coerceValue("False", ColumnType.Boolean)).toBe(false);
   });
 
-  test("integer string coerces to number", () => {
+  test(`integer coerces to ${ColumnType.Number}`, () => {
     expect.hasAssertions();
 
-    expect(coerceValue("42", ColumnType.Number)).toBe(42);
+    expect(coerceValue("0", ColumnType.Number)).toBe(0);
   });
 
-  test("decimal string coerces to number", () => {
+  test(`decimal coerces to ${ColumnType.Number}`, () => {
     expect.hasAssertions();
 
-    expect(coerceValue("3.14", ColumnType.Number)).toBe(3.14);
+    expect(coerceValue("0.1", ColumnType.Number)).toBe(0.1);
   });
 
-  test("negative number string coerces to number", () => {
+  test(`negative coerces to ${ColumnType.Number}`, () => {
     expect.hasAssertions();
 
-    expect(coerceValue("-5", ColumnType.Number)).toBe(-5);
+    expect(coerceValue("-1", ColumnType.Number)).toBe(-1);
   });
 
-  test("invalid number string returns null", () => {
+  test(`NaN returns null for ${ColumnType.Number}`, () => {
     expect.hasAssertions();
 
-    expect(coerceValue("not-a-number", ColumnType.Number)).toBeNull();
+    expect(coerceValue(String(Number.NaN), ColumnType.Number)).toBeNull();
   });
 
-  test("date string stays as string", () => {
+  test(`epoch date stays as ${ColumnType.Date} string`, () => {
     expect.hasAssertions();
 
-    expect(coerceValue("2023-01-01", ColumnType.Date)).toBe("2023-01-01");
+    expect(coerceValue("1970-01-01", ColumnType.Date)).toBe("1970-01-01");
   });
 
-  test("plain string stays as string", () => {
+  test(`all date formats epoch date stays as ${ColumnType.Date} string`, () => {
+    expect.hasAssertions();
+
+    for (const format of DATE_FORMATS) {
+      const epochDate = dayjs("1970-01-01", "YYYY-MM-DD", true).format(format);
+      expect(coerceValue(epochDate, ColumnType.Date)).toBe(epochDate);
+    }
+  });
+
+  test(`plain string stays as ${ColumnType.String}`, () => {
     expect.hasAssertions();
 
     expect(coerceValue("hello", ColumnType.String)).toBe("hello");
@@ -81,7 +107,7 @@ describe(coerceValue, () => {
   test("whitespace is trimmed before coercion", () => {
     expect.hasAssertions();
 
-    expect(coerceValue("  42  ", ColumnType.Number)).toBe(42);
+    expect(coerceValue("  0  ", ColumnType.Number)).toBe(0);
     expect(coerceValue("  true  ", ColumnType.Boolean)).toBe(true);
     expect(coerceValue("  false  ", ColumnType.Boolean)).toBe(false);
   });
