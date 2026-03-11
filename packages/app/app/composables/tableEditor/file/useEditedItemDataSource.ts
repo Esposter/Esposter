@@ -6,7 +6,6 @@ import type { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
 import type { DataSourceCommand } from "@/models/tableEditor/file/commands/DataSourceCommand";
 import type { ToData } from "@esposter/shared";
 
-import { useDataSourceHistory } from "@/composables/tableEditor/file/useDataSourceHistory";
 import { createDeleteColumnCommand } from "@/services/tableEditor/file/commands/createDeleteColumnCommand";
 import { createDeleteRowCommand } from "@/services/tableEditor/file/commands/createDeleteRowCommand";
 import { createUpdateColumnCommand } from "@/services/tableEditor/file/commands/createUpdateColumnCommand";
