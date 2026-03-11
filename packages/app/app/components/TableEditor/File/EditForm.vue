@@ -8,7 +8,7 @@ const modelValue = defineModel<TDataSourceItem>({ required: true });
 const { dataSource } = useEditedItemDataSource();
 const configuration = useDataSourceConfiguration(modelValue);
 const schema = computed(() => zodToJsonSchema(configuration.value.schema));
-const openPanels = ref(["fields", "data"]);
+const openPanels = ref(["columns", "data"]);
 </script>
 
 <template>
@@ -25,7 +25,7 @@ const openPanels = ref(["fields", "data"]);
       </v-col>
       <v-col cols="12">
         <v-expansion-panels v-model="openPanels" multiple>
-          <v-expansion-panel title="Fields" value="fields">
+          <v-expansion-panel title="Columns" value="columns">
             <v-expansion-panel-text>
               <TableEditorFileColumnTable />
             </v-expansion-panel-text>
