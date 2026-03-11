@@ -10,6 +10,8 @@ const { editedItem } = storeToRefs(tableEditorStore);
 <template>
   <TableEditorCrudViewHeader>
     <template v-if="editedItem" #prepend-actions>
+      <TableEditorFileUndoButton />
+      <TableEditorFileRedoButton />
       <TableEditorFileImportButton v-model="editedItem" />
       <TableEditorFileExportButton :edited-item />
     </template>

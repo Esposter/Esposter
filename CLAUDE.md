@@ -48,6 +48,7 @@
 
 - TypeScript compiler: `strict` mode enabled. ESLint: `tseslint.configs.strictTypeChecked`. `any` is **BANNED**.
 - `Omit` is **BANNED** — use `Except` from `type-fest`.
+- **No parameter properties** — never use `constructor(private readonly foo: T)`. Always declare class properties explicitly and assign in the constructor body: `private readonly foo: T; constructor(foo: T) { super(); this.foo = foo; }`.
 - Non-null assertions (`!`) are **BANNED** — use optional chaining or guard clauses.
 - `.forEach()` is **BANNED** — use `for...of`.
 - Always use named imports from libraries.
@@ -63,7 +64,7 @@
 
 - **One export per file** — each exported function, class, or interface lives in its own file. Exception: Zod schemas may be co-located with their interface/type since they are tightly coupled.
 - **One class per file** — classes belong in a `models/` folder (e.g., `app/models/`, `shared/models/`).
-- **Constants go in `constants.ts`** — all module-level constants in a `constants.ts` file alongside the files that use them.
+- **Constants go in `constants.ts`** — all module-level constants in a `constants.ts` file under `services/` alongside the files that use them. Never put `constants.ts` inside `composables/`.
 - **Constant maps use PascalCase** with `as const satisfies` — e.g. `export const DataSourceConfigurationMap = { ... } as const satisfies Record<...>`.
 - **Generic type maps for polymorphic dispatch** — when a constant map needs to associate a discriminant key (e.g. `DataSourceType`) with a type-parameterised generic (e.g. `DataSourceConfiguration<TItem>`), define an explicit type map first, then use a mapped type in `satisfies` to get per-entry type safety without any `as` casts:
   ```typescript
@@ -126,6 +127,10 @@
   ```
 - **Generic browser utilities** go in `app/utils/` (e.g., `readFileAsText.ts`).
 - **Feature folders**: related models/services/components are grouped under a feature subfolder (e.g., `tableEditor/file/`).
+- **Functions go in `services/`** — factory functions, command creators, and other exported functions belong in `services/`, not `models/`. `models/` is strictly for classes and interfaces/types.
+- **Command Pattern** — use factory functions returning plain objects with `execute`/`undo` arrow properties instead of classes. Interfaces for command contracts go in `models/`; factory functions go in `services/` (e.g., `services/tableEditor/file/commands/createDeleteRowCommand.ts`).
+- **Boolean computed naming** — use `is*` prefix for boolean computed refs (e.g., `isUndoable`, `isRedoable`, `isSavable`). Do not use `can*`.
+- **Single-responsibility keyboard shortcut components** — when a button has an associated keyboard shortcut, extract it into its own component that owns both the `v-btn` and the `onKeyStroke` handler. This keeps each component focused on one action (e.g., `UndoButton.vue`, `RedoButton.vue`).
 
 ### Helper Functions
 
@@ -138,6 +143,7 @@
 - **`defineModel`**: don't pass `{ default: false }` for booleans — omit the options entirely (`defineModel<boolean>()`).
 - **`defineSlots`**: always assign to a variable — `const slots = defineSlots<{ ... }>()`.
 - **No abbreviated parameter names** — use full descriptive names (e.g. `event` not `e`, `column` not `col`, `configuration` not `config`, `dataSource` not `source`). Exception: simple iteration callbacks where the meaning is obvious from context (e.g. `.filter((row, index) => ...)`).
+- **Destructure event parameters** — when only specific properties of an event are needed, destructure them directly in the parameter list instead of accessing via `event.property` repeatedly: `({ ctrlKey, metaKey, preventDefault }) => { ... }` not `(event) => { event.ctrlKey ... }`.
 - **`@click` shorthands** — if a click handler is a single async call, use `@click="myAsyncFn(args)"` directly — no need to wrap in `async () => { await myAsyncFn(args) }`.
 
 ### Composables
@@ -183,6 +189,10 @@
 
 - Always use `interface {ComponentName}Props` (e.g. `interface DialogProps`, `interface EditDialogButtonProps`)
 - Always call `defineProps<{ComponentName}Props>()`
+
+### Vue Directives
+
+- **Always use `:` shorthand** instead of `v-bind:propName` — write `:disabled="..."` not `v-bind:disabled="..."`. The object-spread form `v-bind="object"` has no shorthand and stays as-is.
 
 ### Vue / Formatting
 
