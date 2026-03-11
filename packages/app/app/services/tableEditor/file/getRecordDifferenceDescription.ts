@@ -1,10 +1,11 @@
-export const getRecordDifferenceDescription = <T extends object, U extends object>(original: T, updated: U): string[] => {
+export const getRecordDifferenceDescription = <T extends object, U extends object>(original: T, updated: U): string => {
   const keys = new Set([...Object.keys(original), ...Object.keys(updated)]);
-  const changes: string[] = [];
+  const rows: string[] = [];
   for (const key of keys) {
     const originalValue = (original as Record<string, unknown>)[key];
     const updatedValue = (updated as Record<string, unknown>)[key];
-    if (originalValue !== updatedValue) changes.push(`${key}: ${String(originalValue)} → ${String(updatedValue)}`);
+    if (originalValue !== updatedValue) rows.push(`${key} | ${String(originalValue)} | ${String(updatedValue)}`);
   }
-  return changes;
+  if (rows.length === 0) return "";
+  return ["key | original | updated", "--- | --- | ---", ...rows].join("\n");
 };

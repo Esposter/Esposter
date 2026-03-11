@@ -1,5 +1,12 @@
 <script setup lang="ts">
+import { marked } from "marked";
+
 const { isRedoable, redo, redoDescription } = useEditedItemDataSource();
+const tooltipHtml = computed(() => {
+  const [title, ...rest] = (redoDescription.value ?? "").split("\n\n");
+  const parts = [`Redo: ${title} *(Ctrl+Shift+Z)*`, ...rest];
+  return marked.parse(parts.join("\n\n"), { async: false });
+});
 
 onKeyStroke(["z", "Z"], ({ ctrlKey, metaKey, preventDefault, shiftKey }) => {
   if ((!ctrlKey && !metaKey) || !shiftKey) return;
@@ -15,9 +22,10 @@ onKeyStroke(["y", "Y"], ({ ctrlKey, metaKey, preventDefault }) => {
 </script>
 
 <template>
-  <v-tooltip location="bottom" :text="`Redo: ${redoDescription} (Ctrl+Shift+Z)`">
+  <v-tooltip location="bottom">
     <template #activator="{ props }">
       <v-btn :disabled="!isRedoable" icon="mdi-redo" variant="text" v-bind="props" @click="redo()" />
     </template>
+    <div v-html="tooltipHtml" />
   </v-tooltip>
 </template>

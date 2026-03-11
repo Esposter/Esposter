@@ -1,5 +1,12 @@
 <script setup lang="ts">
+import { marked } from "marked";
+
 const { isUndoable, undo, undoDescription } = useEditedItemDataSource();
+const tooltipHtml = computed(() => {
+  const [title, ...rest] = (undoDescription.value ?? "").split("\n\n");
+  const parts = [`Undo: ${title} *(Ctrl+Z)*`, ...rest];
+  return marked.parse(parts.join("\n\n"), { async: false });
+});
 
 onKeyStroke(["z", "Z"], ({ ctrlKey, metaKey, preventDefault, shiftKey }) => {
   if ((!ctrlKey && !metaKey) || shiftKey) return;
@@ -9,9 +16,10 @@ onKeyStroke(["z", "Z"], ({ ctrlKey, metaKey, preventDefault, shiftKey }) => {
 </script>
 
 <template>
-  <v-tooltip location="bottom" :text="`Undo: ${undoDescription} (Ctrl+Z)`">
+  <v-tooltip location="bottom">
     <template #activator="{ props }">
       <v-btn :disabled="!isUndoable" icon="mdi-undo" variant="text" v-bind="props" @click="undo()" />
     </template>
+    <div v-html="tooltipHtml" />
   </v-tooltip>
 </template>

@@ -1,75 +1,76 @@
 import { getRecordDifferenceDescription } from "@/services/tableEditor/file/getRecordDifferenceDescription";
 import { describe, expect, test } from "vitest";
 
+const HEADER = "key | original | updated\n--- | --- | ---";
+
 describe(getRecordDifferenceDescription, () => {
-  test("identical objects returns empty array", () => {
+  test("identical objects returns empty string", () => {
     expect.hasAssertions();
 
-    expect(getRecordDifferenceDescription({ "": "" }, { "": "" })).toEqual([]);
+    expect(getRecordDifferenceDescription({ "": "" }, { "": "" })).toBe("");
   });
 
-  test("changed string value produces diff entry", () => {
+  test("changed string value produces table", () => {
     expect.hasAssertions();
 
-    expect(getRecordDifferenceDescription({ "": "" }, { "": " " })).toEqual([":  →  "]);
+    expect(getRecordDifferenceDescription({ "": "" }, { "": " " })).toBe(`${HEADER}\n |  |  `);
   });
 
-  test("changed number value produces diff entry", () => {
+  test("changed number value produces table", () => {
     expect.hasAssertions();
 
-    expect(getRecordDifferenceDescription({ "": 0 }, { "": 1 })).toEqual([": 0 → 1"]);
+    expect(getRecordDifferenceDescription({ "": 0 }, { "": 1 })).toBe(`${HEADER}\n | 0 | 1`);
   });
 
-  test("changed boolean value produces diff entry", () => {
+  test("changed boolean value produces table", () => {
     expect.hasAssertions();
 
-    expect(getRecordDifferenceDescription({ "": true }, { "": false })).toEqual([": true → false"]);
+    expect(getRecordDifferenceDescription({ "": true }, { "": false })).toBe(`${HEADER}\n | true | false`);
   });
 
-  test("changed date string value produces diff entry", () => {
+  test("changed date string value produces table", () => {
     expect.hasAssertions();
 
-    expect(getRecordDifferenceDescription({ "": "1970-01-01" }, { "": "1970-01-02" })).toEqual([
-      ": 1970-01-01 → 1970-01-02",
-    ]);
+    expect(getRecordDifferenceDescription({ "": "1970-01-01" }, { "": "1970-01-02" })).toBe(
+      `${HEADER}\n | 1970-01-01 | 1970-01-02`,
+    );
   });
 
-  test("null value produces diff entry", () => {
+  test("null value produces table", () => {
     expect.hasAssertions();
 
-    expect(getRecordDifferenceDescription({ "": null }, { "": "" })).toEqual([": null → "]);
+    expect(getRecordDifferenceDescription({ "": null }, { "": "" })).toBe(`${HEADER}\n | null | `);
   });
 
-  test("multiple changed values produces multiple diff entries", () => {
+  test("multiple changed values produces multiple rows", () => {
     expect.hasAssertions();
 
-    expect(getRecordDifferenceDescription({ "": "", " ": 0 }, { "": " ", " ": 1 })).toEqual([
-      ":  →  ",
-      " : 0 → 1",
-    ]);
+    expect(getRecordDifferenceDescription({ "": "", " ": 0 }, { "": " ", " ": 1 })).toBe(
+      `${HEADER}\n |  |  \n  | 0 | 1`,
+    );
   });
 
-  test("unchanged keys are excluded from diff", () => {
+  test("unchanged keys are excluded", () => {
     expect.hasAssertions();
 
-    expect(getRecordDifferenceDescription({ "": "", " ": 0 }, { "": " ", " ": 0 })).toEqual([":  →  "]);
+    expect(getRecordDifferenceDescription({ "": "", " ": 0 }, { "": " ", " ": 0 })).toBe(`${HEADER}\n |  |  `);
   });
 
-  test("key only in updated produces diff entry", () => {
+  test("key only in updated produces table", () => {
     expect.hasAssertions();
 
-    expect(getRecordDifferenceDescription({}, { "": "" })).toEqual([": undefined → "]);
+    expect(getRecordDifferenceDescription({}, { "": "" })).toBe(`${HEADER}\n | undefined | `);
   });
 
-  test("key only in original produces diff entry", () => {
+  test("key only in original produces table", () => {
     expect.hasAssertions();
 
-    expect(getRecordDifferenceDescription({ "": "" }, {})).toEqual([":  → undefined"]);
+    expect(getRecordDifferenceDescription({ "": "" }, {})).toBe(`${HEADER}\n |  | undefined`);
   });
 
-  test("empty objects returns empty array", () => {
+  test("empty objects returns empty string", () => {
     expect.hasAssertions();
 
-    expect(getRecordDifferenceDescription({}, {})).toEqual([]);
+    expect(getRecordDifferenceDescription({}, {})).toBe("");
   });
 });

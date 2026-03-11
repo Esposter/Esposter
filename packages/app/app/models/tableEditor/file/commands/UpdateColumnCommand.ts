@@ -17,7 +17,7 @@ export class UpdateColumnCommand extends ADataSourceCommand {
 
   get description() {
     const recordDifferenceDescription = getRecordDifferenceDescription(this.originalColumn, this.updatedColumn);
-    const detail = recordDifferenceDescription.length > 0 ? ` (${recordDifferenceDescription.join(", ")})` : "";
+    const detail = recordDifferenceDescription ? `\n\n${recordDifferenceDescription}` : "";
     return `Edit Column${detail}`;
   }
 
