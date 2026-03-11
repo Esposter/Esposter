@@ -5,31 +5,29 @@ import type { DataSourceType } from "#shared/models/tableEditor/file/DataSourceT
 import type { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
 import type { DataSourceCommand } from "@/models/tableEditor/file/commands/DataSourceCommand";
 
-import { syncStats } from "@/services/tableEditor/file/syncStats";
 import { takeOne } from "@esposter/shared";
 
 export const createDeleteColumnCommand = (
   columnIndex: number,
-  column: Column | DateColumn,
-  rowValues: ColumnValue[],
+  originalColumn: Column | DateColumn,
+  originalRowValues: ColumnValue[],
 ): DataSourceCommand => ({
   execute: (item: ADataSourceItem<DataSourceType>) => {
     if (!item.dataSource) return;
-    item.dataSource.columns = item.dataSource.columns.filter((col) => col.name !== column.name);
+    item.dataSource.columns = item.dataSource.columns.filter((column) => column.name !== originalColumn.name);
     item.dataSource.rows = item.dataSource.rows.map((row) =>
-      Object.fromEntries(Object.entries(row).filter(([key]) => key !== column.name)),
+      Object.fromEntries(Object.entries(row).filter(([key]) => key !== originalColumn.name)),
     );
-    syncStats(item.dataSource);
   },
 
   undo: (item: ADataSourceItem<DataSourceType>) => {
     if (!item.dataSource) return;
     item.dataSource.columns = [
       ...item.dataSource.columns.slice(0, columnIndex),
-      column,
+      originalColumn,
       ...item.dataSource.columns.slice(columnIndex),
     ];
-    for (const [index, row] of item.dataSource.rows.entries()) row[column.name] = takeOne(rowValues, index);
-    syncStats(item.dataSource);
+    for (const [index, row] of item.dataSource.rows.entries())
+      row[originalColumn.name] = takeOne(originalRowValues, index);
   },
 });

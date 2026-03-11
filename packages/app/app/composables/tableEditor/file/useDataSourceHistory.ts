@@ -1,6 +1,6 @@
 import type { DataSourceCommand } from "@/models/tableEditor/file/commands/DataSourceCommand";
 
-import { MAX_HISTORY_SIZE } from "@/composables/tableEditor/file/constants";
+import { MAX_HISTORY_SIZE } from "@/services/tableEditor/file/constants";
 import { createSharedComposable } from "@vueuse/core";
 
 export const useDataSourceHistory = createSharedComposable(() => {
