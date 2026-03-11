@@ -89,7 +89,7 @@
   ```
 - **Zod imports** — always use the `z` export: `z.ZodType`, `z.ZodError`, etc. Never use named imports like `import type { ZodType }`.
 - **Zod `.default()`** — do not combine `.optional().default(value)`; `.default()` already handles `undefined` input, so `.optional()` is redundant.
-- **Generic Zod schemas** — when an abstract class has a generic type parameter (e.g. `ADataSourceItem<TType, TConfig>`), its schema must also be generic. Export a `create*Schema` function that takes typed zod schemas as parameters and returns the composed schema. Never hardcode type-specific values in a base schema:
+- **Generic Zod schemas** — when an abstract class has a generic type parameter (e.g. `ADataSourceItem<TType, TConfig>`), its schema must also be generic. Export a `create*Schema` function that takes typed zod schemas as parameters and returns the composed schema. Never hardcode type-specific values in a base schema. Use `T` for a single type parameter, descriptive `T*` names (e.g. `TType`, `TConfiguration`) for multiple:
   ```typescript
   // WRONG — hardcodes type, missing configuration
   export const aDataSourceItemSchema = z.object({ ...base.shape, type: dataSourceTypeSchema });

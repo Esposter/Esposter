@@ -21,15 +21,25 @@ export class Column<TColumnType extends ColumnType = Exclude<ColumnType, ColumnT
   }
 }
 
-export const columnSchema = z.object({
-  ...aTableEditorItemEntitySchema.shape,
-  size: z.number().default(0),
-  sourceName: z.string().default("").readonly(),
-  type: z.enum([ColumnType.Boolean, ColumnType.Number, ColumnType.String]).readonly(),
-});
+export const createColumnSchema = <T extends z.ZodType<ColumnType>>(typeSchema: T) =>
+  z.object({
+    ...aTableEditorItemEntitySchema.shape,
+    size: z.number().default(0),
+    sourceName: z.string().default("").readonly(),
+    type: typeSchema.readonly(),
+  });
 
-export const columnFormSchema = columnSchema.pick({ name: true, sourceName: true, type: true }).extend({
-  name: columnSchema.shape.name.meta({ title: "Column" }),
-  sourceName: columnSchema.shape.sourceName.meta({ title: "Source Column" }),
-  type: columnSchema.shape.type.meta({ title: "Type" }),
-});
+export const columnSchema = createColumnSchema(
+  z.enum([ColumnType.Boolean, ColumnType.Number, ColumnType.String]),
+);
+
+export const createColumnFormSchema = <T extends z.ZodType<ColumnType>>(typeSchema: T) =>
+  columnSchema.pick({ name: true, sourceName: true }).extend({
+    name: columnSchema.shape.name.meta({ title: "Column" }),
+    sourceName: columnSchema.shape.sourceName.meta({ title: "Source Column" }),
+    type: typeSchema.meta({ title: "Type" }),
+  });
+
+export const columnFormSchema = createColumnFormSchema(
+  z.enum([ColumnType.Boolean, ColumnType.Number, ColumnType.String]),
+);

@@ -1,6 +1,6 @@
 import type { ToData } from "@esposter/shared";
 
-import { Column, columnFormSchema, columnSchema } from "#shared/models/tableEditor/file/Column";
+import { Column, createColumnFormSchema, createColumnSchema } from "#shared/models/tableEditor/file/Column";
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { DATE_FORMATS } from "#shared/models/tableEditor/file/constants";
 import { z } from "zod";
@@ -15,13 +15,10 @@ export class DateColumn extends Column<ColumnType.Date> {
   }
 }
 
-export const dateColumnSchema = z.object({
-  ...columnSchema.shape,
+export const dateColumnSchema = createColumnSchema(z.literal(ColumnType.Date)).extend({
   format: z.union(DATE_FORMATS.map((format) => z.literal(format))),
-  type: z.literal(ColumnType.Date).readonly(),
 }) satisfies z.ZodType<ToData<DateColumn>>;
 
-export const dateColumnFormSchema = columnFormSchema.extend({
+export const dateColumnFormSchema = createColumnFormSchema(z.literal(ColumnType.Date).readonly()).extend({
   format: dateColumnSchema.shape.format.meta({ title: "Format" }),
-  type: dateColumnSchema.shape.type,
 });
