@@ -14,12 +14,12 @@
       "Bash(read f:packages/app/**)",
       "Bash(read f:plugins/**)",
       "Bash(xargs:*)",
-      "WebFetch(domain:github.com)",
       "mcp__vuetify-mcp__get_exposed_exports",
       "mcp__vuetify-mcp__get_feature_guide",
       "mcp__vuetify-mcp__get_installation_guide",
       "mcp__vuetify-mcp__get_v4_breaking_changes",
-      "Bash(pnpm install:*)"
+      "Bash(pnpm install:*)",
+      "WebFetch(domain:koumoul-dev.github.io)"
     ]
   }
 }

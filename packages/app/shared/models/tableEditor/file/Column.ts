@@ -29,7 +29,7 @@ export const columnSchema = z.object({
 });
 
 export const columnFormSchema = columnSchema.pick({ name: true, sourceName: true, type: true }).extend({
-  name: columnSchema.shape.name.meta({ title: "Field" }),
-  sourceName: columnSchema.shape.sourceName.meta({ title: "Source Field" }),
+  name: columnSchema.shape.name.meta({ title: "Column" }),
+  sourceName: columnSchema.shape.sourceName.meta({ title: "Source Column" }),
   type: columnSchema.shape.type.meta({ title: "Type" }),
 });
