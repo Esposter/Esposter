@@ -48,6 +48,7 @@
 
 - TypeScript compiler: `strict` mode enabled. ESLint: `tseslint.configs.strictTypeChecked`. `any` is **BANNED**.
 - `Omit` is **BANNED** — use `Except` from `type-fest`.
+- **No parameter properties** — never use `constructor(private readonly foo: T)`. Always declare class properties explicitly and assign in the constructor body: `private readonly foo: T; constructor(foo: T) { super(); this.foo = foo; }`.
 - Non-null assertions (`!`) are **BANNED** — use optional chaining or guard clauses.
 - `.forEach()` is **BANNED** — use `for...of`.
 - Always use named imports from libraries.
@@ -188,6 +189,10 @@
 
 - Always use `interface {ComponentName}Props` (e.g. `interface DialogProps`, `interface EditDialogButtonProps`)
 - Always call `defineProps<{ComponentName}Props>()`
+
+### Vue Directives
+
+- **Always use `:` shorthand** instead of `v-bind:propName` — write `:disabled="..."` not `v-bind:disabled="..."`. The object-spread form `v-bind="object"` has no shorthand and stays as-is.
 
 ### Vue / Formatting
 

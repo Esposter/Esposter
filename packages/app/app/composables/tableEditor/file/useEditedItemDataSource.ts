@@ -3,13 +3,13 @@ import type { Column } from "#shared/models/tableEditor/file/Column";
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import type { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
-import type { DataSourceCommand } from "@/models/tableEditor/file/commands/DataSourceCommand";
+import type { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import type { ToData } from "@esposter/shared";
 
-import { createDeleteColumnCommand } from "@/services/tableEditor/file/commands/createDeleteColumnCommand";
-import { createDeleteRowCommand } from "@/services/tableEditor/file/commands/createDeleteRowCommand";
-import { createUpdateColumnCommand } from "@/services/tableEditor/file/commands/createUpdateColumnCommand";
-import { createUpdateRowCommand } from "@/services/tableEditor/file/commands/createUpdateRowCommand";
+import { DeleteColumnCommand } from "@/models/tableEditor/file/commands/DeleteColumnCommand";
+import { DeleteRowCommand } from "@/models/tableEditor/file/commands/DeleteRowCommand";
+import { UpdateColumnCommand } from "@/models/tableEditor/file/commands/UpdateColumnCommand";
+import { UpdateRowCommand } from "@/models/tableEditor/file/commands/UpdateRowCommand";
 import { withSyncStats } from "@/services/tableEditor/file/commands/withSyncStats";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { takeOne, toRawDeep } from "@esposter/shared";
@@ -19,9 +19,9 @@ export const useEditedItemDataSource = () => {
   const { editedItem } = storeToRefs(tableEditorStore);
   const dataSource = computed(() => editedItem.value?.dataSource ?? null);
   const dataSourceHistory = useDataSourceHistory();
-  const { future, history, isRedoable, isUndoable } = dataSourceHistory;
+  const { future, history, isRedoable, isUndoable, redoDescription, undoDescription } = dataSourceHistory;
 
-  const executeAndRecord = (command: DataSourceCommand) => {
+  const executeAndRecord = (command: ADataSourceCommand) => {
     if (!editedItem.value) return;
     command.execute(editedItem.value);
     dataSourceHistory.push(command);
@@ -36,13 +36,13 @@ export const useEditedItemDataSource = () => {
   const deleteRow = (index: number) => {
     if (!editedItem.value?.dataSource) return;
     const originalRow = structuredClone(toRawDeep(takeOne(editedItem.value.dataSource.rows, index)));
-    executeAndRecord(withSyncStats(createDeleteRowCommand(index, originalRow)));
+    executeAndRecord(withSyncStats(new DeleteRowCommand(index, originalRow)));
   };
 
   const updateRow = (index: number, updatedRow: DataSource["rows"][number]) => {
     if (!editedItem.value?.dataSource || index === -1) return;
     const originalRow = structuredClone(toRawDeep(takeOne(editedItem.value.dataSource.rows, index)));
-    executeAndRecord(withSyncStats(createUpdateRowCommand(index, originalRow, updatedRow)));
+    executeAndRecord(withSyncStats(new UpdateRowCommand(index, originalRow, updatedRow)));
   };
 
   const updateColumn = (originalName: string, updatedColumn: ToData<Column | DateColumn>) => {
@@ -52,7 +52,7 @@ export const useEditedItemDataSource = () => {
     const originalColumn = structuredClone(toRawDeep(takeOne(editedItem.value.dataSource.columns, columnIndex)));
     const originalRowValues = editedItem.value.dataSource.rows.map((row) => takeOne(toRawDeep(row), originalName));
     executeAndRecord(
-      withSyncStats(createUpdateColumnCommand(originalName, originalColumn, updatedColumn, originalRowValues)),
+      withSyncStats(new UpdateColumnCommand(originalName, originalColumn, updatedColumn, originalRowValues)),
     );
   };
 
@@ -62,7 +62,7 @@ export const useEditedItemDataSource = () => {
     if (columnIndex === -1) return;
     const originalColumn = structuredClone(toRawDeep(takeOne(editedItem.value.dataSource.columns, columnIndex)));
     const originalRowValues = editedItem.value.dataSource.rows.map((row) => takeOne(toRawDeep(row), name));
-    executeAndRecord(withSyncStats(createDeleteColumnCommand(columnIndex, originalColumn, originalRowValues)));
+    executeAndRecord(withSyncStats(new DeleteColumnCommand(columnIndex, originalColumn, originalRowValues)));
   };
 
   const undo = () => {
@@ -93,8 +93,10 @@ export const useEditedItemDataSource = () => {
     isRedoable,
     isUndoable,
     redo,
+    redoDescription,
     setDataSource,
     undo,
+    undoDescription,
     updateColumn,
     updateRow,
   };
