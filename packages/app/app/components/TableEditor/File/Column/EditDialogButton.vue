@@ -37,6 +37,9 @@ const disabled = computed(() => deepEqual(column, editedColumn.value) || !isVali
     </template>
     <v-container fluid>
       <v-form v-model="isValid">
+        <<<<<<< HEAD =======
+        <v-text-field v-model="editedColumn.name" label="Column" :rules="[uniqueNameRule]" />
+        >>>>>>> main
         <Vjsf v-model="editedColumn" :schema="jsonSchema" />
       </v-form>
     </v-container>
