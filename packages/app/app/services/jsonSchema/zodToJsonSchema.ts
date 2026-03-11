@@ -5,7 +5,15 @@ import { z } from "zod";
 
 export const zodToJsonSchema = (schema: z.ZodObject) => {
   // For integrating with vjsf, we only need the type and properties
-  const { properties, type } = z.toJSONSchema(schema) as z.core.JSONSchema.ObjectSchema;
+  const { properties, type } = z.toJSONSchema(schema, {
+    override: (ctx) => {
+      const meta = (ctx.zodSchema as z.ZodObject).meta();
+      if (!meta?.rules?.length) return;
+      (ctx.jsonSchema as Record<string, unknown>).layout = {
+        props: { rules: meta.rules, variant: "outlined" },
+      };
+    },
+  }) as z.core.JSONSchema.ObjectSchema;
   recurseProperties(properties, {
     otherHooks: [
       (key, property) => {
