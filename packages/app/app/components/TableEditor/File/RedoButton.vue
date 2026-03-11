@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { marked } from "marked";
+import sanitizeHtml from "sanitize-html";
 
 const { isRedoable, redo, redoDescription } = useEditedItemDataSource();
 const tooltipHtml = computed(() => {
   const [title, ...rest] = (redoDescription.value ?? "").split("\n\n");
   const parts = [`Redo: ${title} *(Ctrl+Shift+Z)*`, ...rest];
-  return marked.parse(parts.join("\n\n"), { async: false });
+  return sanitizeHtml(marked.parse(parts.join("\n\n"), { async: false }));
 });
 
 onKeyStroke(["z", "Z"], ({ ctrlKey, metaKey, preventDefault, shiftKey }) => {

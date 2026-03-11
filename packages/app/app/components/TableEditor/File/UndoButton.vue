@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { marked } from "marked";
+import sanitizeHtml from "sanitize-html";
 
 const { isUndoable, undo, undoDescription } = useEditedItemDataSource();
 const tooltipHtml = computed(() => {
   const [title, ...rest] = (undoDescription.value ?? "").split("\n\n");
   const parts = [`Undo: ${title} *(Ctrl+Z)*`, ...rest];
-  return marked.parse(parts.join("\n\n"), { async: false });
+  return sanitizeHtml(marked.parse(parts.join("\n\n"), { async: false }));
 });
 
 onKeyStroke(["z", "Z"], ({ ctrlKey, metaKey, preventDefault, shiftKey }) => {
