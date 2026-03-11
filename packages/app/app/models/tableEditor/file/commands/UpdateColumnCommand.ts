@@ -47,7 +47,7 @@ export class UpdateColumnCommand extends ADataSourceCommand {
     this.originalRowValues = originalRowValues;
   }
 
-  execute(item: ADataSourceItem<DataSourceType>) {
+  protected doExecute(item: ADataSourceItem<DataSourceType>) {
     if (!item.dataSource) return;
     const column = item.dataSource.columns.find(({ name }) => name === this.originalName);
     if (!column) return;
@@ -82,7 +82,7 @@ export class UpdateColumnCommand extends ADataSourceCommand {
     Object.assign(column, this.updatedColumn);
   }
 
-  undo(item: ADataSourceItem<DataSourceType>) {
+  protected doUndo(item: ADataSourceItem<DataSourceType>) {
     if (!item.dataSource) return;
     const updatedName = this.updatedColumn.name;
     const column = item.dataSource.columns.find(({ name }) => name === updatedName);

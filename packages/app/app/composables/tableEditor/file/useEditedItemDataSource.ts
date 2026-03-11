@@ -10,7 +10,6 @@ import { DeleteColumnCommand } from "@/models/tableEditor/file/commands/DeleteCo
 import { DeleteRowCommand } from "@/models/tableEditor/file/commands/DeleteRowCommand";
 import { UpdateColumnCommand } from "@/models/tableEditor/file/commands/UpdateColumnCommand";
 import { UpdateRowCommand } from "@/models/tableEditor/file/commands/UpdateRowCommand";
-import { withSyncStats } from "@/services/tableEditor/file/commands/withSyncStats";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
@@ -36,13 +35,13 @@ export const useEditedItemDataSource = () => {
   const deleteRow = (index: number) => {
     if (!editedItem.value?.dataSource) return;
     const originalRow = structuredClone(toRawDeep(takeOne(editedItem.value.dataSource.rows, index)));
-    executeAndRecord(withSyncStats(new DeleteRowCommand(index, originalRow)));
+    executeAndRecord(new DeleteRowCommand(index, originalRow));
   };
 
   const updateRow = (index: number, updatedRow: DataSource["rows"][number]) => {
     if (!editedItem.value?.dataSource || index === -1) return;
     const originalRow = structuredClone(toRawDeep(takeOne(editedItem.value.dataSource.rows, index)));
-    executeAndRecord(withSyncStats(new UpdateRowCommand(index, originalRow, updatedRow)));
+    executeAndRecord(new UpdateRowCommand(index, originalRow, updatedRow));
   };
 
   const updateColumn = (originalName: string, updatedColumn: ToData<Column | DateColumn>) => {
@@ -51,9 +50,7 @@ export const useEditedItemDataSource = () => {
     if (columnIndex === -1) return;
     const originalColumn = structuredClone(toRawDeep(takeOne(editedItem.value.dataSource.columns, columnIndex)));
     const originalRowValues = editedItem.value.dataSource.rows.map((row) => takeOne(toRawDeep(row), originalName));
-    executeAndRecord(
-      withSyncStats(new UpdateColumnCommand(originalName, originalColumn, updatedColumn, originalRowValues)),
-    );
+    executeAndRecord(new UpdateColumnCommand(originalName, originalColumn, updatedColumn, originalRowValues));
   };
 
   const deleteColumn = (name: string) => {
@@ -62,7 +59,7 @@ export const useEditedItemDataSource = () => {
     if (columnIndex === -1) return;
     const originalColumn = structuredClone(toRawDeep(takeOne(editedItem.value.dataSource.columns, columnIndex)));
     const originalRowValues = editedItem.value.dataSource.rows.map((row) => takeOne(toRawDeep(row), name));
-    executeAndRecord(withSyncStats(new DeleteColumnCommand(columnIndex, originalColumn, originalRowValues)));
+    executeAndRecord(new DeleteColumnCommand(columnIndex, originalColumn, originalRowValues));
   };
 
   const undo = () => {

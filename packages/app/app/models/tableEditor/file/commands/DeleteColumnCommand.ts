@@ -25,7 +25,7 @@ export class DeleteColumnCommand extends ADataSourceCommand {
     this.originalRowValues = originalRowValues;
   }
 
-  execute(item: ADataSourceItem<DataSourceType>) {
+  protected doExecute(item: ADataSourceItem<DataSourceType>) {
     if (!item.dataSource) return;
     item.dataSource.columns = item.dataSource.columns.filter((column) => column.name !== this.originalColumn.name);
     item.dataSource.rows = item.dataSource.rows.map((row) =>
@@ -33,7 +33,7 @@ export class DeleteColumnCommand extends ADataSourceCommand {
     );
   }
 
-  undo(item: ADataSourceItem<DataSourceType>) {
+  protected doUndo(item: ADataSourceItem<DataSourceType>) {
     if (!item.dataSource) return;
     item.dataSource.columns = [
       ...item.dataSource.columns.slice(0, this.columnIndex),

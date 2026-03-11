@@ -22,14 +22,14 @@ export class DeleteRowCommand extends ADataSourceCommand {
     this.originalRow = originalRow;
   }
 
-  execute(item: ADataSourceItem<DataSourceType>) {
+  protected doExecute(item: ADataSourceItem<DataSourceType>) {
     if (!item.dataSource) return;
     const row = takeOne(item.dataSource.rows, this.index);
     for (const column of item.dataSource.columns) column.size -= getValueSize(takeOne(row, column.name));
     item.dataSource.rows = item.dataSource.rows.filter((_, i) => i !== this.index);
   }
 
-  undo(item: ADataSourceItem<DataSourceType>) {
+  protected doUndo(item: ADataSourceItem<DataSourceType>) {
     if (!item.dataSource) return;
     for (const column of item.dataSource.columns) column.size += getValueSize(takeOne(this.originalRow, column.name));
     item.dataSource.rows = [

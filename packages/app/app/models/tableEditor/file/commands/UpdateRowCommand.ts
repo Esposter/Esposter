@@ -24,7 +24,7 @@ export class UpdateRowCommand extends ADataSourceCommand {
     this.updatedRow = updatedRow;
   }
 
-  execute(item: ADataSourceItem<DataSourceType>) {
+  protected doExecute(item: ADataSourceItem<DataSourceType>) {
     if (!item.dataSource || this.index === -1) return;
     const row = takeOne(item.dataSource.rows, this.index);
     for (const column of item.dataSource.columns)
@@ -32,7 +32,7 @@ export class UpdateRowCommand extends ADataSourceCommand {
     Object.assign(row, this.updatedRow);
   }
 
-  undo(item: ADataSourceItem<DataSourceType>) {
+  protected doUndo(item: ADataSourceItem<DataSourceType>) {
     if (!item.dataSource || this.index === -1) return;
     const row = takeOne(item.dataSource.rows, this.index);
     for (const column of item.dataSource.columns)
