@@ -10,7 +10,7 @@ export const zodToJsonSchema = (schema: z.ZodObject) => {
       const meta = (ctx.zodSchema as z.ZodObject).meta();
       if (!meta?.rules?.length) return;
       (ctx.jsonSchema as Record<string, unknown>).layout = {
-        props: { rules: meta.rules, variant: "outlined" },
+        props: { rules: meta.rules },
       };
     },
   }) as z.core.JSONSchema.ObjectSchema;
