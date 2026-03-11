@@ -24,7 +24,7 @@ export class Column<TColumnType extends ColumnType = Exclude<ColumnType, ColumnT
 export const columnSchema = z.object({
   ...aTableEditorItemEntitySchema.shape,
   size: z.number().default(0),
-  sourceName: z.string().readonly(),
+  sourceName: z.string().default("").readonly(),
   type: z.enum([ColumnType.Boolean, ColumnType.Number, ColumnType.String]).readonly(),
 });
 

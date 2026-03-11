@@ -17,10 +17,11 @@ export class DateColumn extends Column<ColumnType.Date> {
 
 export const dateColumnSchema = z.object({
   ...columnSchema.shape,
-  format: z.string().default(""),
+  format: z.union(DATE_FORMATS.map((format) => z.literal(format))),
   type: z.literal(ColumnType.Date).readonly(),
 }) satisfies z.ZodType<ToData<DateColumn>>;
 
 export const dateColumnFormSchema = columnFormSchema.extend({
-  format: z.union(DATE_FORMATS.map((format) => z.literal(format))).meta({ title: "Format" }),
+  format: dateColumnSchema.shape.format.meta({ title: "Format" }),
+  type: dateColumnSchema.shape.type,
 });
