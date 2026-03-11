@@ -7,7 +7,7 @@ interface DataTableProps {
 
 const { dataSource } = defineProps<DataTableProps>();
 const headers = computed(() => [
-  ...dataSource.columns.map((column) => ({ key: column.name, title: column.sourceName })),
+  ...dataSource.columns.map((column) => ({ key: column.name, title: column.name })),
   { key: "actions", sortable: false, title: "Actions" },
 ]);
 </script>

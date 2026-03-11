@@ -37,11 +37,7 @@ const editedRow = ref({ ...row });
     <v-container fluid>
       <v-row v-for="column of columns" :key="column.name">
         <v-col cols="12">
-          <v-checkbox
-            v-if="column.type === ColumnType.Boolean"
-            v-model="editedRow[column.name]"
-            :label="column.sourceName"
-          />
+          <v-checkbox v-if="column.type === ColumnType.Boolean" v-model="editedRow[column.name]" :label="column.name" />
           <v-text-field
             v-else
             :model-value="
@@ -54,7 +50,7 @@ const editedRow = ref({ ...row });
                 } else return value;
               })()
             "
-            :label="column.sourceName"
+            :label="column.name"
             :type="column.type === ColumnType.Number ? 'number' : column.type === ColumnType.Date ? 'date' : 'text'"
             density="compact"
             @update:model-value="
