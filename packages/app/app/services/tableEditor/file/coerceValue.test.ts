@@ -94,6 +94,7 @@ describe(coerceValue, () => {
 
     for (const format of DATE_FORMATS) {
       const epochDate = dayjs("1970-01-01", "YYYY-MM-DD", true).format(format);
+
       expect(coerceValue(epochDate, ColumnType.Date)).toBe(epochDate);
     }
   });

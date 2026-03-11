@@ -6,7 +6,7 @@ import { DATE_FORMATS } from "#shared/models/tableEditor/file/constants";
 import { z } from "zod";
 
 export class DateColumn extends Column<ColumnType.Date> {
-  format = "";
+  format: (typeof DATE_FORMATS)[number] = DATE_FORMATS[0];
   override readonly type = ColumnType.Date;
 
   constructor(init?: Partial<DateColumn>) {

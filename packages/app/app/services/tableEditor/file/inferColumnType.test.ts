@@ -64,6 +64,7 @@ describe(inferColumnType, () => {
 
     for (const format of DATE_FORMATS) {
       const epochDate = dayjs("1970-01-01", "YYYY-MM-DD", true).format(format);
+
       expect(inferColumnType([epochDate])).toBe(ColumnType.Date);
     }
   });

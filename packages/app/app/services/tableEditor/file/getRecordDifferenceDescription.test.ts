@@ -1,9 +1,9 @@
 import { getRecordDifferenceDescription } from "@/services/tableEditor/file/getRecordDifferenceDescription";
 import { describe, expect, test } from "vitest";
 
-const HEADER = "key | original | updated\n--- | --- | ---";
-
 describe(getRecordDifferenceDescription, () => {
+  const HEADER = "key | original | updated\n--- | --- | ---";
+
   test("identical objects returns empty string", () => {
     expect.hasAssertions();
 
