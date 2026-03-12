@@ -4,7 +4,6 @@ import type { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADat
 
 import { MAX_HISTORY_SIZE } from "@/services/tableEditor/file/constants";
 import { takeOne } from "@esposter/shared";
-import { createSharedComposable } from "@vueuse/core";
 
 export const useDataSourceHistory = createSharedComposable(() => {
   const history = ref<ADataSourceCommand[]>([]);

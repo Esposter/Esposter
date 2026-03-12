@@ -10,7 +10,7 @@ type Colors = {
 
 type UnifiedColors = BaseColors & BaseVuetifyColors & ReturnType<typeof getBaseColorsExtension>;
 
-export const useColors = () => {
+export const useColors = createSharedComposable(() => {
   const globalTheme = useGlobalTheme();
   const colors = Object.fromEntries(
     Object.keys(globalTheme.current.value.colors).map((color) => [
@@ -19,4 +19,4 @@ export const useColors = () => {
     ]),
   ) as Colors;
   return colors;
-};
+});

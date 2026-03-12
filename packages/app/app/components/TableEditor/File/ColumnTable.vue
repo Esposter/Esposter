@@ -19,7 +19,7 @@ const { dataSource } = defineProps<ColumnTableProps>();
       </v-chip>
     </template>
     <template #[`item.actions`]="{ item: column }">
-      <TableEditorFileColumnEditDialogButton :column />
+      <TableEditorFileColumnEditDialogButton :data-source :column />
       <TableEditorFileColumnDeleteDialogButton :name="column.name" />
     </template>
   </v-data-table>
