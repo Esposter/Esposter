@@ -49,7 +49,7 @@ watch(isOpen, (open) => {
   >
     <v-container fluid>
       <v-checkbox
-        v-for="{ id, name } of dataSource.value?.columns ?? []"
+        v-for="{ id, name } of dataSource?.columns ?? []"
         :key="id"
         v-model="selectedColumnIds"
         :label="name"
