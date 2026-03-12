@@ -23,7 +23,9 @@ export const buildDataSource = (
     return new Column({ name: sourceName, sourceName, type });
   });
   const rows = bodyRows.map((bodyRow) =>
-    Object.fromEntries(columns.map((column, index) => [column.name, coerceValue(takeOne(bodyRow, index), column.type)])),
+    Object.fromEntries(
+      columns.map((column, index) => [column.name, coerceValue(takeOne(bodyRow, index), column.type)]),
+    ),
   );
   for (const column of columns)
     column.size = rows.reduce((total, row) => total + JSON.stringify(row[column.name] ?? null).length, 0);

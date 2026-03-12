@@ -1,5 +1,5 @@
-import type { JsonDataSourceItem } from "#shared/models/tableEditor/file/json/JsonDataSourceItem";
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { JsonDataSourceItem } from "#shared/models/tableEditor/file/json/JsonDataSourceItem";
 
 export const serializeJson = (dataSource: DataSource, _item: JsonDataSourceItem, mimeType: string): Promise<Blob> => {
   const rows = dataSource.rows.map((row) =>
