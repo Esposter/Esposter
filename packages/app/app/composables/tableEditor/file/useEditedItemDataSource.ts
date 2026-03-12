@@ -16,8 +16,7 @@ import { takeOne, toRawDeep } from "@esposter/shared";
 export const useEditedItemDataSource = () => {
   const tableEditorStore = useTableEditorStore<ADataSourceItem<DataSourceType>>();
   const { editedItem } = storeToRefs(tableEditorStore);
-  const { clear, future, history, isRedoable, isUndoable, push, redoDescription, undoDescription } =
-    useDataSourceHistory();
+  const { clear, isRedoable, isUndoable, push, redo, redoDescription, undo, undoDescription } = useDataSourceHistory();
 
   const executeAndRecord = (command: ADataSourceCommand) => {
     if (!editedItem.value) return;
@@ -61,22 +60,6 @@ export const useEditedItemDataSource = () => {
     executeAndRecord(new DeleteColumnCommand(columnIndex, originalColumn, originalRowValues));
   };
 
-  const undo = () => {
-    if (!editedItem.value || !isUndoable.value) return;
-    const command = takeOne(history.value, history.value.length - 1);
-    history.value.pop();
-    future.value.push(command);
-    command.undo(editedItem.value);
-  };
-
-  const redo = () => {
-    if (!editedItem.value || !isRedoable.value) return;
-    const command = takeOne(future.value, future.value.length - 1);
-    future.value.pop();
-    history.value.push(command);
-    command.execute(editedItem.value);
-  };
-
   watch(
     () => editedItem.value?.id,
     () => clear(),
@@ -87,10 +70,10 @@ export const useEditedItemDataSource = () => {
     deleteRow,
     isRedoable,
     isUndoable,
-    redo,
+    redo: () => redo(editedItem.value),
     redoDescription,
     setDataSource,
-    undo,
+    undo: () => undo(editedItem.value),
     undoDescription,
     updateColumn,
     updateRow,
