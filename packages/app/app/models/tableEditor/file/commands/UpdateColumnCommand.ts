@@ -1,7 +1,6 @@
-import type { ADataSourceItem } from "#shared/models/tableEditor/file/ADataSourceItem";
 import type { Column } from "#shared/models/tableEditor/file/Column";
 import type { ColumnValue } from "#shared/models/tableEditor/file/ColumnValue";
-import type { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 import type { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
 import type { ToData } from "@esposter/shared";
 
@@ -39,7 +38,7 @@ export class UpdateColumnCommand extends ADataSourceCommand {
     this.originalRowValues = originalRowValues;
   }
 
-  protected doExecute(item: ADataSourceItem<DataSourceType>) {
+  protected doExecute(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
     if (!item.dataSource) return;
     const column = item.dataSource.columns.find(({ name }) => name === this.originalName);
     if (!column) return;
@@ -74,7 +73,7 @@ export class UpdateColumnCommand extends ADataSourceCommand {
     Object.assign(column, this.updatedColumn);
   }
 
-  protected doUndo(item: ADataSourceItem<DataSourceType>) {
+  protected doUndo(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
     if (!item.dataSource) return;
     const updatedName = this.updatedColumn.name;
     const column = item.dataSource.columns.find(({ name }) => name === updatedName);

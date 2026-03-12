@@ -5,7 +5,6 @@ import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { Vjsf } from "@koumoul/vjsf";
 
 const modelValue = defineModel<TDataSourceItem>({ required: true });
-const { dataSource } = useEditedItemDataSource();
 const configuration = useDataSourceConfiguration(modelValue);
 const schema = computed(() => zodToJsonSchema(configuration.value.schema));
 const openPanels = ref(["columns", "data"]);
@@ -19,25 +18,25 @@ const openPanels = ref(["columns", "data"]);
     <v-col cols="12">
       <Vjsf v-model="modelValue.configuration" :schema />
     </v-col>
-    <template v-if="dataSource">
+    <template v-if="modelValue.dataSource">
       <v-col cols="12">
-        <TableEditorFileMetadataBar :metadata="dataSource.metadata" />
+        <TableEditorFileMetadataBar :metadata="modelValue.dataSource.metadata" />
       </v-col>
       <v-col cols="12">
         <v-expansion-panels v-model="openPanels" multiple>
           <v-expansion-panel title="Columns" value="columns">
             <v-expansion-panel-text>
-              <TableEditorFileColumnTable />
+              <TableEditorFileColumnTable :data-source="modelValue.dataSource" />
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel value="data">
             <template #title>
               Data
               <v-spacer />
-              <TableEditorFileStatsBar :stats="dataSource.stats" />
+              <TableEditorFileStatsBar :stats="modelValue.dataSource.stats" />
             </template>
             <v-expansion-panel-text>
-              <TableEditorFileDataTable :data-source />
+              <TableEditorFileDataTable :data-source="modelValue.dataSource" />
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>

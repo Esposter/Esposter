@@ -1,7 +1,6 @@
-import type { ADataSourceItem } from "#shared/models/tableEditor/file/ADataSourceItem";
 import type { Column } from "#shared/models/tableEditor/file/Column";
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
-import type { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 import type { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
 import type { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import type { ToData } from "@esposter/shared";
@@ -14,22 +13,20 @@ import { useTableEditorStore } from "@/store/tableEditor";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
 export const useEditedItemDataSource = () => {
-  const tableEditorStore = useTableEditorStore<ADataSourceItem<DataSourceType>>();
+  const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
   const { editedItem } = storeToRefs(tableEditorStore);
-  const dataSource = computed(() => editedItem.value?.dataSource ?? null);
-  const dataSourceHistory = useDataSourceHistory();
-  const { future, history, isRedoable, isUndoable, redoDescription, undoDescription } = dataSourceHistory;
+  const { clear, isRedoable, isUndoable, push, redo, redoDescription, undo, undoDescription } = useDataSourceHistory();
 
   const executeAndRecord = (command: ADataSourceCommand) => {
     if (!editedItem.value) return;
     command.execute(editedItem.value);
-    dataSourceHistory.push(command);
+    push(command);
   };
 
   const setDataSource = (value: DataSource) => {
     if (!editedItem.value) return;
     editedItem.value.dataSource = value;
-    dataSourceHistory.clear();
+    clear();
   };
 
   const deleteRow = (index: number) => {
@@ -62,37 +59,20 @@ export const useEditedItemDataSource = () => {
     executeAndRecord(new DeleteColumnCommand(columnIndex, originalColumn, originalRowValues));
   };
 
-  const undo = () => {
-    if (!editedItem.value || !isUndoable.value) return;
-    const command = takeOne(history.value, history.value.length - 1);
-    history.value.pop();
-    future.value.push(command);
-    command.undo(editedItem.value);
-  };
-
-  const redo = () => {
-    if (!editedItem.value || !isRedoable.value) return;
-    const command = takeOne(future.value, future.value.length - 1);
-    future.value.pop();
-    history.value.push(command);
-    command.execute(editedItem.value);
-  };
-
   watch(
     () => editedItem.value?.id,
-    () => dataSourceHistory.clear(),
+    () => clear(),
   );
 
   return {
-    dataSource,
     deleteColumn,
     deleteRow,
     isRedoable,
     isUndoable,
-    redo,
+    redo: () => redo(editedItem.value),
     redoDescription,
     setDataSource,
-    undo,
+    undo: () => undo(editedItem.value),
     undoDescription,
     updateColumn,
     updateRow,

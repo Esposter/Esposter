@@ -5,7 +5,7 @@ import { NameMap } from "@/services/clicker/properties/NameMap";
 import { PluralNameMap } from "@/services/clicker/properties/PluralNameMap";
 import { useClickerStore } from "@/store/clicker";
 
-export const useClickerItemProperties = () => {
+export const useClickerItemProperties = createSharedComposable(() => {
   const clickerStore = useClickerStore();
   const { clicker } = storeToRefs(clickerStore);
   const clickerItemColor = useClickerItemColor();
@@ -16,4 +16,4 @@ export const useClickerItemProperties = () => {
     pluralName: PluralNameMap[clicker.value.type],
   }));
   return clickerItemProperties;
-};
+});

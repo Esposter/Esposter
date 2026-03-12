@@ -44,6 +44,6 @@
 ## Export Enhancements
 
 - [ ] **Filtered export** — export only currently visible (filtered) rows
-- [ ] **Column subset export** — choose which columns to include in the export
+- [x] **Column subset export** — choose which columns to include in the export
 - [x] **JSON export** — export as a JSON array
 - [ ] **Copy to clipboard** — copy selected rows as tab-separated text

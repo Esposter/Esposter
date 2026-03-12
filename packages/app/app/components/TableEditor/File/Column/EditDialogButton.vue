@@ -8,16 +8,17 @@ import deepEqual from "fast-deep-equal";
 
 interface EditDialogButtonProps {
   column: DataSource["columns"][number];
+  dataSource: DataSource;
 }
 
-const { column } = defineProps<EditDialogButtonProps>();
-const { dataSource, updateColumn } = useEditedItemDataSource();
+const { column, dataSource } = defineProps<EditDialogButtonProps>();
+const { updateColumn } = useEditedItemDataSource();
 const jsonSchema = computed(() => zodToJsonSchema(ColumnTypeFormSchemaWithoutNameMap[column.type]));
 const editedColumn = ref({ ...column });
 const isValid = ref(true);
 const disabled = computed(() => deepEqual(column, editedColumn.value) || !isValid.value);
 const uniqueNameRule = (value: string) =>
-  value === column.name || !dataSource.value?.columns.some(({ name }) => name === value) || "Column already exists";
+  value === column.name || !dataSource.columns.some(({ name }) => name === value) || "Column already exists";
 </script>
 
 <template>

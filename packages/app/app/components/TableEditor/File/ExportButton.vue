@@ -1,7 +1,7 @@
 <script setup lang="ts" generic="TDataSourceItem extends DataSourceItemTypeMap[keyof DataSourceItemTypeMap]">
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 
-import { DataSourceConfigurationMap } from "@/services/tableEditor/file/DataSourceConfigurationMap";
+import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { DataSourceTypeItemCategoryDefinitions } from "@/services/tableEditor/file/DataSourceTypeItemCategoryDefinitions";
 import { mergeProps } from "vue";
 
@@ -10,8 +10,8 @@ interface ExportButtonProps {
 }
 
 const { editedItem } = defineProps<ExportButtonProps>();
-const exportFile = useExportFile();
-const { dataSource } = useEditedItemDataSource();
+const isExportDialogOpen = ref(false);
+const dataSourceType = ref(DataSourceType.Csv);
 </script>
 
 <template>
@@ -19,7 +19,7 @@ const { dataSource } = useEditedItemDataSource();
     <template #activator="{ props: menuProps }">
       <v-tooltip text="Export">
         <template #activator="{ props: tooltipProps }">
-          <v-btn icon="mdi-download" :disabled="!dataSource" :="mergeProps(menuProps, tooltipProps)" />
+          <v-btn icon="mdi-download" :disabled="!editedItem.dataSource" :="mergeProps(menuProps, tooltipProps)" />
         </template>
       </v-tooltip>
     </template>
@@ -28,16 +28,9 @@ const { dataSource } = useEditedItemDataSource();
         v-for="{ value, icon, title } of DataSourceTypeItemCategoryDefinitions"
         :key="value"
         @click="
-          async () => {
-            if (!dataSource) return;
-            const dataSourceValue = dataSource;
-            const configuration = DataSourceConfigurationMap[value];
-            await exportFile(
-              (mimeType) => configuration.serialize(dataSourceValue, editedItem, mimeType),
-              editedItem.name,
-              configuration.mimeType,
-              configuration.accept,
-            );
+          () => {
+            dataSourceType = value;
+            isExportDialogOpen = true;
           }
         "
       >
@@ -46,4 +39,5 @@ const { dataSource } = useEditedItemDataSource();
       </v-list-item>
     </v-list>
   </v-menu>
+  <TableEditorFileExportDialog v-model="isExportDialogOpen" :edited-item :data-source-type />
 </template>

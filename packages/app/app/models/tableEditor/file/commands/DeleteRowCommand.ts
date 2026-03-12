@@ -1,6 +1,5 @@
-import type { ADataSourceItem } from "#shared/models/tableEditor/file/ADataSourceItem";
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
-import type { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import { getValueSize } from "@/services/tableEditor/file/getValueSize";
@@ -22,14 +21,14 @@ export class DeleteRowCommand extends ADataSourceCommand {
     this.originalRow = originalRow;
   }
 
-  protected doExecute(item: ADataSourceItem<DataSourceType>) {
+  protected doExecute(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
     if (!item.dataSource) return;
     const row = takeOne(item.dataSource.rows, this.index);
     for (const column of item.dataSource.columns) column.size -= getValueSize(takeOne(row, column.name));
     item.dataSource.rows = item.dataSource.rows.filter((_, i) => i !== this.index);
   }
 
-  protected doUndo(item: ADataSourceItem<DataSourceType>) {
+  protected doUndo(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
     if (!item.dataSource) return;
     for (const column of item.dataSource.columns) column.size += getValueSize(takeOne(this.originalRow, column.name));
     item.dataSource.rows = [
