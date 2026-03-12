@@ -47,13 +47,15 @@ watch(isOpen, (open) => {
       }
     "
   >
-    <v-container fluid>
+    <v-container py-0 fluid>
       <v-checkbox
         v-for="{ id, name } of dataSource?.columns ?? []"
         :key="id"
         v-model="selectedColumnIds"
         :label="name"
         :value="id"
+        density="compact"
+        hide-details
       />
     </v-container>
   </StyledDialog>
