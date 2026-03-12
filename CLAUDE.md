@@ -144,6 +144,19 @@
 
 - **Don't extract helpers that add no value** — if a helper function just wraps an inline object literal or a single expression without reuse or meaningful abstraction, return/use the value directly. Three lines of inline code is better than a named wrapper used once.
 
+### `v-for` Destructuring
+
+- **Always destructure `v-for` bindings** when properties are accessed in the template — avoids repetitive dot access: `v-for="{ value, icon, title } of items"` not `v-for="item of items"` + `item.value`.
+- Only keep a full reference when the whole object is needed (e.g. passed as a prop or stored in a ref). In that case, name the loop variable to match the prop it will be passed to, enabling `:propName` shorthand.
+
+### `v-model` Usage
+
+- **Never declare `defineModel` unless the value is actually used** in script (e.g. in a `watch`, `computed`, or passed somewhere). Don't create a model just to forward it — use `:prop` + `@event` instead.
+
+### Prop Shorthand Naming
+
+- **Name local variables to match their target prop** so Vue's `:propName` shorthand (`<Foo :propName />`) works without explicit assignment. For example, if the prop is `dataSourceType`, the local variable must also be `dataSourceType`.
+
 ### Inline Functions
 
 - **Inline arrow functions** where argument types can be inferred from context — don't extract single-use, trivially-typed lambdas into named functions.
