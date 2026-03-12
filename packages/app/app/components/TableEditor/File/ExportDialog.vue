@@ -14,13 +14,12 @@ interface ExportDialogProps {
 const { dataSourceType, editedItem } = defineProps<ExportDialogProps>();
 const isOpen = defineModel<boolean>();
 const exportFile = useExportFile();
-const { dataSource } = useEditedItemDataSource();
 const fileExportTableEditorStore = useFileExportTableEditorStore();
 const { selectedColumnIds } = storeToRefs(fileExportTableEditorStore);
 
 watch(isOpen, (open) => {
   if (!open) return;
-  const columnIds = dataSource.value?.columns.map(({ id }) => id) ?? [];
+  const columnIds = editedItem.dataSource?.columns.map(({ id }) => id) ?? [];
   const validColumnIds = selectedColumnIds.value.filter((id) => columnIds.includes(id));
   selectedColumnIds.value = validColumnIds.length > 0 ? validColumnIds : columnIds;
 });
@@ -34,9 +33,9 @@ watch(isOpen, (open) => {
     :confirm-button-attrs="{ disabled: selectedColumnIds.length === 0 }"
     @submit="
       async (_event, onComplete) => {
-        if (!dataSource) return;
+        if (!editedItem.dataSource) return;
         const configuration = DataSourceConfigurationMap[dataSourceType];
-        const filteredDataSource = filterDataSourceColumns(dataSource, selectedColumnIds);
+        const filteredDataSource = filterDataSourceColumns(editedItem.dataSource, selectedColumnIds);
         await exportFile(
           (mimeType) => configuration.serialize(filteredDataSource, editedItem, mimeType),
           editedItem.name,
@@ -49,7 +48,7 @@ watch(isOpen, (open) => {
   >
     <v-container py-0 fluid>
       <v-checkbox
-        v-for="{ id, name } of dataSource?.columns ?? []"
+        v-for="{ id, name } of editedItem.dataSource?.columns ?? []"
         :key="id"
         v-model="selectedColumnIds"
         :label="name"

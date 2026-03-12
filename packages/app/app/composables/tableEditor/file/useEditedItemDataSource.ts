@@ -16,20 +16,19 @@ import { takeOne, toRawDeep } from "@esposter/shared";
 export const useEditedItemDataSource = () => {
   const tableEditorStore = useTableEditorStore<ADataSourceItem<DataSourceType>>();
   const { editedItem } = storeToRefs(tableEditorStore);
-  const dataSource = computed(() => editedItem.value?.dataSource ?? null);
-  const dataSourceHistory = useDataSourceHistory();
-  const { future, history, isRedoable, isUndoable, redoDescription, undoDescription } = dataSourceHistory;
+  const { clear, future, history, isRedoable, isUndoable, push, redoDescription, undoDescription } =
+    useDataSourceHistory();
 
   const executeAndRecord = (command: ADataSourceCommand) => {
     if (!editedItem.value) return;
     command.execute(editedItem.value);
-    dataSourceHistory.push(command);
+    push(command);
   };
 
   const setDataSource = (value: DataSource) => {
     if (!editedItem.value) return;
     editedItem.value.dataSource = value;
-    dataSourceHistory.clear();
+    clear();
   };
 
   const deleteRow = (index: number) => {
@@ -80,11 +79,10 @@ export const useEditedItemDataSource = () => {
 
   watch(
     () => editedItem.value?.id,
-    () => dataSourceHistory.clear(),
+    () => clear(),
   );
 
   return {
-    dataSource,
     deleteColumn,
     deleteRow,
     isRedoable,

@@ -10,7 +10,6 @@ interface ExportButtonProps {
 }
 
 const { editedItem } = defineProps<ExportButtonProps>();
-const { dataSource } = useEditedItemDataSource();
 const isExportDialogOpen = ref(false);
 const dataSourceType = ref(DataSourceType.Csv);
 </script>
@@ -20,7 +19,7 @@ const dataSourceType = ref(DataSourceType.Csv);
     <template #activator="{ props: menuProps }">
       <v-tooltip text="Export">
         <template #activator="{ props: tooltipProps }">
-          <v-btn icon="mdi-download" :disabled="!dataSource" :="mergeProps(menuProps, tooltipProps)" />
+          <v-btn icon="mdi-download" :disabled="!editedItem.dataSource" :="mergeProps(menuProps, tooltipProps)" />
         </template>
       </v-tooltip>
     </template>

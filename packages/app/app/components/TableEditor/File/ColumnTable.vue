@@ -1,18 +1,18 @@
 <script setup lang="ts">
+import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+
 import { ColumnHeaders } from "@/services/tableEditor/file/ColumnHeaders";
 import { ColumnTypeColorMap } from "@/services/tableEditor/file/ColumnTypeColorMap";
 
-const { dataSource } = useEditedItemDataSource();
+interface ColumnTableProps {
+  dataSource: DataSource;
+}
+
+const { dataSource } = defineProps<ColumnTableProps>();
 </script>
 
 <template>
-  <v-data-table
-    v-if="dataSource"
-    :headers="ColumnHeaders"
-    :items="dataSource.columns"
-    density="compact"
-    hide-default-footer
-  >
+  <v-data-table :headers="ColumnHeaders" :items="dataSource.columns" density="compact" hide-default-footer>
     <template #[`item.type`]="{ item: column }">
       <v-chip :color="ColumnTypeColorMap[column.type]" label size="small">
         {{ column.type }}
