@@ -4,7 +4,6 @@ import type { DataSourceType } from "#shared/models/tableEditor/file/DataSourceT
 
 import { DataSourceConfigurationMap } from "@/services/tableEditor/file/DataSourceConfigurationMap";
 import { filterDataSourceColumns } from "@/services/tableEditor/file/filterDataSourceColumns";
-import { useFileExportTableEditorStore } from "@/store/tableEditor/file/export";
 
 interface ExportDialogProps {
   dataSourceType: DataSourceType;
@@ -14,15 +13,16 @@ interface ExportDialogProps {
 const { dataSourceType, editedItem } = defineProps<ExportDialogProps>();
 const isOpen = defineModel<boolean>();
 const exportFile = useExportFile();
-const fileExportTableEditorStore = useFileExportTableEditorStore();
-const { selectedColumnIds } = storeToRefs(fileExportTableEditorStore);
+const selectedColumnIds = ref<string[]>([]);
 
-watch(isOpen, (open) => {
-  if (!open) return;
-  const columnIds = editedItem.dataSource?.columns.map(({ id }) => id) ?? [];
-  const validColumnIds = selectedColumnIds.value.filter((id) => columnIds.includes(id));
-  selectedColumnIds.value = validColumnIds.length > 0 ? validColumnIds : columnIds;
-});
+watch(
+  () => editedItem.dataSource,
+  (newDataSource) => {
+    const columnIds = newDataSource?.columns.map(({ id }) => id) ?? [];
+    const validColumnIds = selectedColumnIds.value.filter((id) => columnIds.includes(id));
+    selectedColumnIds.value = validColumnIds.length > 0 ? validColumnIds : columnIds;
+  },
+);
 </script>
 
 <template>
@@ -33,7 +33,11 @@ watch(isOpen, (open) => {
     :confirm-button-attrs="{ disabled: selectedColumnIds.length === 0 }"
     @submit="
       async (_event, onComplete) => {
-        if (!editedItem.dataSource) return;
+        if (!editedItem.dataSource) {
+          onComplete();
+          return;
+        }
+
         const configuration = DataSourceConfigurationMap[dataSourceType];
         const filteredDataSource = filterDataSourceColumns(editedItem.dataSource, selectedColumnIds);
         await exportFile(
