@@ -7,6 +7,8 @@ import type { ToData } from "@esposter/shared";
 
 import { DeleteColumnCommand } from "@/models/tableEditor/file/commands/DeleteColumnCommand";
 import { DeleteRowCommand } from "@/models/tableEditor/file/commands/DeleteRowCommand";
+import { MoveColumnCommand } from "@/models/tableEditor/file/commands/MoveColumnCommand";
+import { MoveRowCommand } from "@/models/tableEditor/file/commands/MoveRowCommand";
 import { UpdateColumnCommand } from "@/models/tableEditor/file/commands/UpdateColumnCommand";
 import { UpdateRowCommand } from "@/models/tableEditor/file/commands/UpdateRowCommand";
 import { useTableEditorStore } from "@/store/tableEditor";
@@ -27,6 +29,28 @@ export const useEditedItemDataSource = () => {
     if (!editedItem.value) return;
     editedItem.value.dataSource = value;
     clear();
+  };
+
+  const reorderColumns = (newColumns: (Column | DateColumn)[]) => {
+    if (!editedItem.value?.dataSource) return;
+    const oldColumns = editedItem.value.dataSource.columns;
+    const movedColumn = newColumns.find((column, index) => column.id !== oldColumns[index]?.id);
+    if (!movedColumn) return;
+    const fromIndex = oldColumns.findIndex(({ id }) => id === movedColumn.id);
+    const toIndex = newColumns.findIndex(({ id }) => id === movedColumn.id);
+    if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return;
+    executeAndRecord(new MoveColumnCommand(fromIndex, toIndex, movedColumn.name));
+  };
+
+  const reorderRows = (newRows: DataSource["rows"]) => {
+    if (!editedItem.value?.dataSource) return;
+    const oldRows = editedItem.value.dataSource.rows;
+    const movedRow = newRows.find((row, index) => row !== oldRows[index]);
+    if (!movedRow) return;
+    const fromIndex = oldRows.indexOf(movedRow);
+    const toIndex = newRows.indexOf(movedRow);
+    if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return;
+    executeAndRecord(new MoveRowCommand(fromIndex, toIndex));
   };
 
   const deleteRow = (index: number) => {
@@ -71,6 +95,8 @@ export const useEditedItemDataSource = () => {
     isUndoable,
     redo: () => redo(editedItem.value),
     redoDescription,
+    reorderColumns,
+    reorderRows,
     setDataSource,
     undo: () => undo(editedItem.value),
     undoDescription,

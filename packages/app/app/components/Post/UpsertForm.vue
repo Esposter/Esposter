@@ -15,12 +15,12 @@ const emit = defineEmits<{
 }>();
 const title = ref(initialValues.title);
 const description = ref(initialValues.description);
-const isValid = ref(true);
+const isEditFormValid = ref(true);
 </script>
 
 <template>
   <StyledCard>
-    <v-form v-model="isValid" @submit.prevent="emit('submit', $event, { title, description })">
+    <v-form v-model="isEditFormValid" @submit.prevent="emit('submit', $event, { title, description })">
       <v-container>
         <v-row>
           <v-col>
@@ -45,7 +45,7 @@ const isValid = ref(true);
         </v-row>
         <v-row>
           <v-col flex justify-end>
-            <StyledButton type="submit" :button-props="{ disabled: !isValid, text: 'Edit Post' }" />
+            <StyledButton type="submit" :button-props="{ disabled: !isEditFormValid, text: 'Edit Post' }" />
           </v-col>
         </v-row>
       </v-container>

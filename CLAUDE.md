@@ -138,6 +138,7 @@
 - **Functions go in `services/`** — factory functions, command creators, and other exported functions belong in `services/`, not `models/`. `models/` is strictly for classes and interfaces/types.
 - **Command Pattern** — use factory functions returning plain objects with `execute`/`undo` arrow properties instead of classes. Interfaces for command contracts go in `models/`; factory functions go in `services/` (e.g., `services/tableEditor/file/commands/createDeleteRowCommand.ts`).
 - **Boolean computed naming** — use `is*` prefix for boolean computed refs (e.g., `isUndoable`, `isRedoable`, `isSavable`). Do not use `can*`.
+- **Dialog form validity** — always name the form validity ref `isEditFormValid`. Disable Save & Close via `:confirm-button-attrs="{ disabled: !isEditFormValid }"` (combined with other conditions as needed). Never use try/catch in submit handlers — prevent invalid submission through form validation rules so state is always consistent. Use `StyledEditFormDialogErrorIcon` with `:edit-form-ref :form-error="''" :is-edit-form-valid="isEditFormValid"` in the `#prepend-actions` slot to surface field-level validation errors.
 - **Single-responsibility keyboard shortcut components** — when a button has an associated keyboard shortcut, extract it into its own component that owns both the `v-btn` and the `onKeyStroke` handler. This keeps each component focused on one action (e.g., `UndoButton.vue`, `RedoButton.vue`).
 
 ### Helper Functions

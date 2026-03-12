@@ -15,12 +15,11 @@ const isOpen = defineModel<boolean>();
 const exportFile = useExportFile();
 const selectedColumnIds = ref<string[]>([]);
 
-watch(
-  () => editedItem.dataSource,
-  (newDataSource) => {
-    const columnIds = newDataSource?.columns.map(({ id }) => id) ?? [];
-    const validColumnIds = selectedColumnIds.value.filter((id) => columnIds.includes(id));
-    selectedColumnIds.value = validColumnIds.length > 0 ? validColumnIds : columnIds;
+watchImmediate(
+  () => editedItem.dataSource?.columns.map(({ id }) => id) ?? [],
+  (newColumnIds) => {
+    const validColumnIds = selectedColumnIds.value.filter((id) => newColumnIds.includes(id));
+    selectedColumnIds.value = validColumnIds.length > 0 ? validColumnIds : newColumnIds;
   },
 );
 </script>

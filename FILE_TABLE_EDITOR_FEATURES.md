@@ -17,7 +17,7 @@
 
 ## Column Enhancements
 
-- [ ] **Column reordering** — drag-and-drop to reorder columns (affects export order)
+- [x] **Column reordering** — drag-and-drop to reorder columns (affects export order)
 - [ ] **Computed/derived columns** — define a formula (e.g., `price * quantity`) that generates a read-only column
 - [ ] **Column visibility toggle** — hide columns from the data table view without deleting them
 - [ ] **Column descriptions/annotations** — a free-text notes field per column
@@ -31,8 +31,8 @@
 
 ## Filtering & Sorting
 
-- [ ] **Column sorting** — click column header to sort rows ascending/descending in the UI (without mutating the data)
-- [ ] **Row filtering** — per-column filter chips (string contains, number range, boolean, date range)
+- [x] **Column sorting** — click column header to sort rows ascending/descending in the UI (without mutating the data) — handled by v-data-table
+- [ ] **Row filtering** — per-column filter chips
 - [ ] **Saved filter presets** — name and persist a set of active filters
 
 ## Statistics & Analysis

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { VForm } from "vuetify/components";
 
 import { ColumnTypeFormSchemaWithoutNameMap } from "#shared/models/tableEditor/file/ColumnTypeFormSchemaMap";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
@@ -15,8 +16,9 @@ const { column, dataSource } = defineProps<EditDialogButtonProps>();
 const { updateColumn } = useEditedItemDataSource();
 const jsonSchema = computed(() => zodToJsonSchema(ColumnTypeFormSchemaWithoutNameMap[column.type]));
 const editedColumn = ref({ ...column });
-const isValid = ref(true);
-const disabled = computed(() => deepEqual(column, editedColumn.value) || !isValid.value);
+const editFormRef = ref<InstanceType<typeof VForm>>();
+const isEditFormValid = ref(true);
+const disabled = computed(() => deepEqual(column, editedColumn.value) || !isEditFormValid.value);
 const uniqueNameRule = (value: string) =>
   value === column.name || !dataSource.columns.some(({ name }) => name === value) || "Column already exists";
 </script>
@@ -40,11 +42,14 @@ const uniqueNameRule = (value: string) =>
         </template>
       </v-tooltip>
     </template>
-    <v-container fluid>
-      <v-form v-model="isValid">
+    <template #prepend-actions>
+      <StyledEditFormDialogErrorIcon :edit-form-ref :form-error="''" :is-edit-form-valid="isEditFormValid" />
+    </template>
+    <v-form ref="editFormRef" v-model="isEditFormValid">
+      <v-container fluid>
         <v-text-field v-model="editedColumn.name" label="Column" :rules="[uniqueNameRule]" />
         <Vjsf v-model="editedColumn" :schema="jsonSchema" />
-      </v-form>
-    </v-container>
+      </v-container>
+    </v-form>
   </StyledDialog>
 </template>
