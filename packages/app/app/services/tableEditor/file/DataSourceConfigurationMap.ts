@@ -1,4 +1,4 @@
-import type { ADataSourceItem } from "#shared/models/tableEditor/file/ADataSourceItem";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 import type { DataSourceConfiguration } from "@/models/tableEditor/file/DataSourceConfiguration";
 
 import { csvDataSourceConfigurationSchema } from "#shared/models/tableEditor/file/csv/CsvDataSourceConfiguration";
@@ -14,7 +14,7 @@ import { serializeXlsx } from "@/services/tableEditor/file/xlsx/serializeXlsx";
 
 export const DataSourceConfigurationMap: Record<
   DataSourceType,
-  DataSourceConfiguration<ADataSourceItem<DataSourceType>>
+  DataSourceConfiguration<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>
 > = {
   [DataSourceType.Csv]: {
     accept: ".csv",

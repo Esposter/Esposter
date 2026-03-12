@@ -1,7 +1,6 @@
-import type { ADataSourceItem } from "#shared/models/tableEditor/file/ADataSourceItem";
 import type { Column } from "#shared/models/tableEditor/file/Column";
 import type { ColumnValue } from "#shared/models/tableEditor/file/ColumnValue";
-import type { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 import type { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
 
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
@@ -25,7 +24,7 @@ export class DeleteColumnCommand extends ADataSourceCommand {
     this.originalRowValues = originalRowValues;
   }
 
-  protected doExecute(item: ADataSourceItem<DataSourceType>) {
+  protected doExecute(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
     if (!item.dataSource) return;
     item.dataSource.columns = item.dataSource.columns.filter((column) => column.name !== this.originalColumn.name);
     item.dataSource.rows = item.dataSource.rows.map((row) =>
@@ -33,7 +32,7 @@ export class DeleteColumnCommand extends ADataSourceCommand {
     );
   }
 
-  protected doUndo(item: ADataSourceItem<DataSourceType>) {
+  protected doUndo(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
     if (!item.dataSource) return;
     item.dataSource.columns = [
       ...item.dataSource.columns.slice(0, this.columnIndex),

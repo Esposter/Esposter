@@ -1,6 +1,5 @@
-import type { ADataSourceItem } from "#shared/models/tableEditor/file/ADataSourceItem";
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
-import type { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import { getRecordDifferenceDescription } from "@/services/tableEditor/file/getRecordDifferenceDescription";
@@ -27,7 +26,7 @@ export class UpdateRowCommand extends ADataSourceCommand {
     this.updatedRow = updatedRow;
   }
 
-  protected doExecute(item: ADataSourceItem<DataSourceType>) {
+  protected doExecute(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
     if (!item.dataSource || this.index === -1) return;
     const row = takeOne(item.dataSource.rows, this.index);
     for (const column of item.dataSource.columns)
@@ -35,7 +34,7 @@ export class UpdateRowCommand extends ADataSourceCommand {
     Object.assign(row, this.updatedRow);
   }
 
-  protected doUndo(item: ADataSourceItem<DataSourceType>) {
+  protected doUndo(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
     if (!item.dataSource || this.index === -1) return;
     const row = takeOne(item.dataSource.rows, this.index);
     for (const column of item.dataSource.columns)

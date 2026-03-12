@@ -81,7 +81,7 @@
   // 2. Satisfies mapped type — each entry is checked against its specific type param
   export const DataSourceConfigurationMap: Record<
     DataSourceType,
-    DataSourceConfiguration<ADataSourceItem<DataSourceType>>
+    DataSourceConfiguration<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>
   > = { ... };
   ```
 - **Generic map lookup composables** — when a component needs to look up a typed configuration from a generic map using a discriminant key on a generic item, extract the lookup into a composable. Use `MaybeRefOrGetter<TItem>` with `toValue()` so callers can pass refs or plain values. Hide the single internal `as` cast and expose a fully typed API:
@@ -126,7 +126,7 @@
   <!-- Parent (knows concrete type): -->
   <FilePicker :item="modelValue" :configuration="DataSourceConfigurationMap[DataSourceType.Csv]" />
   <!-- Child: -->
-  <script setup lang="ts" generic="TDataSourceItem extends ADataSourceItem<DataSourceType>">
+  <script setup lang="ts" generic="TDataSourceItem extends DataSourceItemTypeMap[keyof DataSourceItemTypeMap]">
   interface FilePickerProps {
     configuration: DataSourceConfiguration<TDataSourceItem>;
     item: TDataSourceItem;

@@ -1,5 +1,4 @@
-import type { ADataSourceItem } from "#shared/models/tableEditor/file/ADataSourceItem";
-import type { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 import type { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 
 import { MAX_HISTORY_SIZE } from "@/services/tableEditor/file/constants";
@@ -28,7 +27,7 @@ export const useDataSourceHistory = createSharedComposable(() => {
     future.value = [];
   };
 
-  const undo = (item: ADataSourceItem<DataSourceType> | undefined) => {
+  const undo = (item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap] | undefined) => {
     if (!item || !isUndoable.value) return;
     const command = takeOne(history.value, history.value.length - 1);
     history.value.pop();
@@ -36,7 +35,7 @@ export const useDataSourceHistory = createSharedComposable(() => {
     command.undo(item);
   };
 
-  const redo = (item: ADataSourceItem<DataSourceType> | undefined) => {
+  const redo = (item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap] | undefined) => {
     if (!item || !isRedoable.value) return;
     const command = takeOne(future.value, future.value.length - 1);
     future.value.pop();

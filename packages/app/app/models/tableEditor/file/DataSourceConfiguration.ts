@@ -1,9 +1,8 @@
-import type { ADataSourceItem } from "#shared/models/tableEditor/file/ADataSourceItem";
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
-import type { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 import type { z } from "zod";
 
-export interface DataSourceConfiguration<TDataSourceItem extends ADataSourceItem<DataSourceType>> {
+export interface DataSourceConfiguration<TDataSourceItem extends DataSourceItemTypeMap[keyof DataSourceItemTypeMap]> {
   accept: string;
   deserialize(file: File, item: TDataSourceItem): Promise<DataSource>;
   mimeType: string;
