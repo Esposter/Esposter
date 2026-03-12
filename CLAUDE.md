@@ -144,6 +144,20 @@
 
 - **Don't extract helpers that add no value** — if a helper function just wraps an inline object literal or a single expression without reuse or meaningful abstraction, return/use the value directly. Three lines of inline code is better than a named wrapper used once.
 
+### Enum Refs
+
+- **Never use `ref<EnumType | null>(null)`** — always default to a sensible first enum value: `ref(DataSourceType.Csv)`, `ref(ColumnType.String)`, etc.
+
+### Stable Identifiers for Selections
+
+- **Track selections by stable ID, not by name or index** — column names change, indices shift on delete/reorder. Always use `entity.id` (UUID) as the key when storing which items are selected/active. A stale ID in a selection is harmless; a stale name or index is a bug.
+
+### `SelectItemCategoryDefinition` and Vuetify Selects
+
+- When building items for `v-autocomplete` / `v-select`, use `SelectItemCategoryDefinition<T>` (`{ title: string, value: T }`) from `@/models/vuetify/SelectItemCategoryDefinition`.
+- **Never specify `item-title` or `item-value` props** — Vuetify's defaults are already `"title"` and `"value"`, which match `SelectItemCategoryDefinition` exactly.
+- Name the items computed to reflect what the value represents — e.g. `columnIds` for `SelectItemCategoryDefinition<string>[]` where each `value` is a column ID.
+
 ### `v-for` Destructuring
 
 - **Always destructure `v-for` bindings** when properties are accessed in the template — avoids repetitive dot access: `v-for="{ value, icon, title } of items"` not `v-for="item of items"` + `item.value`.

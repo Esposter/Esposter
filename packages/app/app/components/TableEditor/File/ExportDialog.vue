@@ -4,6 +4,7 @@ import type { DataSourceType } from "#shared/models/tableEditor/file/DataSourceT
 
 import { DataSourceConfigurationMap } from "@/services/tableEditor/file/DataSourceConfigurationMap";
 import { filterDataSourceColumns } from "@/services/tableEditor/file/filterDataSourceColumns";
+import { useFileExportTableEditorStore } from "@/store/tableEditor/file/export";
 
 interface ExportDialogProps {
   dataSourceType: DataSourceType;
@@ -14,11 +15,14 @@ const { dataSourceType, editedItem } = defineProps<ExportDialogProps>();
 const isOpen = defineModel<boolean>();
 const exportFile = useExportFile();
 const { dataSource } = useEditedItemDataSource();
-const columnNames = computed(() => dataSource.value?.columns.map((column) => column.name) ?? []);
-const selectedColumnNames = ref<string[]>([]);
+const fileExportTableEditorStore = useFileExportTableEditorStore();
+const { selectedColumnIds } = storeToRefs(fileExportTableEditorStore);
 
 watch(isOpen, (open) => {
-  if (open) selectedColumnNames.value = columnNames.value;
+  if (!open) return;
+  const columnIds = dataSource.value?.columns.map(({ id }) => id) ?? [];
+  const validColumnIds = selectedColumnIds.value.filter((id) => columnIds.includes(id));
+  selectedColumnIds.value = validColumnIds.length > 0 ? validColumnIds : columnIds;
 });
 </script>
 
@@ -27,12 +31,12 @@ watch(isOpen, (open) => {
     v-model="isOpen"
     :card-props="{ title: `Export as ${dataSourceType}` }"
     :confirm-button-props="{ text: 'Export' }"
-    :confirm-button-attrs="{ disabled: selectedColumnNames.length === 0 }"
+    :confirm-button-attrs="{ disabled: selectedColumnIds.length === 0 }"
     @submit="
       async (_event, onComplete) => {
         if (!dataSource) return;
         const configuration = DataSourceConfigurationMap[dataSourceType];
-        const filteredDataSource = filterDataSourceColumns(dataSource, selectedColumnNames);
+        const filteredDataSource = filterDataSourceColumns(dataSource, selectedColumnIds);
         await exportFile(
           (mimeType) => configuration.serialize(filteredDataSource, editedItem, mimeType),
           editedItem.name,
@@ -44,13 +48,12 @@ watch(isOpen, (open) => {
     "
   >
     <v-container fluid>
-      <v-autocomplete
-        v-model="selectedColumnNames"
-        :items="columnNames"
-        label="Columns"
-        multiple
-        chips
-        closable-chips
+      <v-checkbox
+        v-for="{ id, name } of dataSource.value?.columns ?? []"
+        :key="id"
+        v-model="selectedColumnIds"
+        :label="name"
+        :value="id"
       />
     </v-container>
   </StyledDialog>

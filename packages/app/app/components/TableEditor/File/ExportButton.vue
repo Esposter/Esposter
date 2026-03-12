@@ -1,7 +1,7 @@
 <script setup lang="ts" generic="TDataSourceItem extends DataSourceItemTypeMap[keyof DataSourceItemTypeMap]">
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
-import type { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 
+import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { DataSourceTypeItemCategoryDefinitions } from "@/services/tableEditor/file/DataSourceTypeItemCategoryDefinitions";
 import { mergeProps } from "vue";
 
@@ -12,7 +12,7 @@ interface ExportButtonProps {
 const { editedItem } = defineProps<ExportButtonProps>();
 const { dataSource } = useEditedItemDataSource();
 const isExportDialogOpen = ref(false);
-const dataSourceType = ref<DataSourceType | null>(null);
+const dataSourceType = ref(DataSourceType.Csv);
 </script>
 
 <template>
@@ -40,10 +40,5 @@ const dataSourceType = ref<DataSourceType | null>(null);
       </v-list-item>
     </v-list>
   </v-menu>
-  <TableEditorFileExportDialog
-    v-if="dataSourceType !== null"
-    v-model="isExportDialogOpen"
-    :edited-item
-    :data-source-type
-  />
+  <TableEditorFileExportDialog v-model="isExportDialogOpen" :edited-item :data-source-type />
 </template>
