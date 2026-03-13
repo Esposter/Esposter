@@ -11,7 +11,7 @@ import { useEditedItemDataSourceOperations } from "@/composables/tableEditor/fil
 import { useTableEditorStore } from "@/store/tableEditor";
 import { useItemStore } from "@/store/tableEditor/item";
 import { takeOne, toRawDeep } from "@esposter/shared";
-import { createPinia, setActivePinia, storeToRefs } from "pinia";
+import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useEditedItemDataSourceOperations, () => {
