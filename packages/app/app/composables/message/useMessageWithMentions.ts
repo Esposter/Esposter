@@ -1,4 +1,3 @@
-
 import { useMemberStore } from "@/store/message/user/member";
 import { MENTION_ID_ATTRIBUTE, MENTION_LABEL_ATTRIBUTE } from "@esposter/shared";
 import { parse } from "node-html-parser";

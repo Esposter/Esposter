@@ -2,7 +2,7 @@
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
-import { Row, rowSchema } from "#shared/models/tableEditor/file/Row";
+import { rowSchema } from "#shared/models/tableEditor/file/Row";
 import { dayjs } from "#shared/services/dayjs";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
@@ -14,7 +14,7 @@ interface EditDialogButtonProps {
 
 const { columns, index, row } = defineProps<EditDialogButtonProps>();
 const { updateRow } = useEditedItemDataSourceOperations();
-const editedRow = ref(new Row(structuredClone(toRawDeep(row))));
+const editedRow = ref(structuredClone(toRawDeep(row)));
 </script>
 
 <template>

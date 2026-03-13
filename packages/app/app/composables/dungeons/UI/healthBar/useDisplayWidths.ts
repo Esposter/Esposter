@@ -1,4 +1,3 @@
-
 export const useVDisplayWidths = (totalDisplayWidth: MaybeRefOrGetter<number>, displayWidth: Ref<number>) => {
   const totalLeftCapDisplayWidth = ref<number>();
   const leftCapDisplayWidth = ref<number>();

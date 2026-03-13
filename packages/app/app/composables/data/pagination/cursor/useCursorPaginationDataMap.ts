@@ -1,4 +1,3 @@
-
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 // We want to handle the case where we have a Record<id, CursorPaginationData> scenario
 // Where we store multiple different lists for different ids, e.g. comments for post ids

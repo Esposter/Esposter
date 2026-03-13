@@ -2,7 +2,6 @@ import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 
 import { Column } from "#shared/models/tableEditor/file/Column";
-import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { CsvDataSourceItem } from "#shared/models/tableEditor/file/csv/CsvDataSourceItem";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { Row } from "#shared/models/tableEditor/file/Row";
@@ -22,8 +21,7 @@ describe(useEditedItemDataSourceOperations, () => {
     stats: { columnCount: columns.length, rowCount: rows.length, size: 0 },
   });
 
-  const createColumn = (name: string, type: ColumnType = ColumnType.String): Column =>
-    new Column({ name, size: 0, sourceName: name, type: type as Exclude<ColumnType, ColumnType.Date> });
+  const createColumn = (name: string): Column => new Column({ name, size: 0, sourceName: name });
 
   const createRow = (data: Record<string, boolean | null | number | string>): Row => new Row({ data });
 

@@ -28,6 +28,7 @@ export class DeleteColumnCommand extends ADataSourceCommand<CommandType.DeleteCo
   protected doExecute(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
     if (!item.dataSource) return;
     item.dataSource.columns = item.dataSource.columns.filter((column) => column.name !== this.originalColumn.name);
+    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
     for (const row of item.dataSource.rows) delete row.data[this.originalColumn.name];
   }
 

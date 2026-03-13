@@ -1,4 +1,3 @@
-
 import { INITIAL_SETTINGS_POSITION, SETTINGS_POSITION_INCREMENT } from "@/services/dungeons/scene/settings/constants";
 
 export const useSettingsCursorDimensions = (rowIndex: MaybeRefOrGetter<number>) => {
