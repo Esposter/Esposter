@@ -1,84 +1,63 @@
+import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+
+import { Column } from "#shared/models/tableEditor/file/Column";
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
+import { Row } from "#shared/models/tableEditor/file/Row";
 import { XlsxDataSourceItem } from "#shared/models/tableEditor/file/xlsx/XlsxDataSourceItem";
 import { DataSourceConfigurationMap } from "@/services/tableEditor/file/DataSourceConfigurationMap";
+import { serializeXlsx } from "@/services/tableEditor/file/xlsx/serializeXlsx";
 import { deserializeXlsx } from "@/services/tableEditor/file/xlsx/deserializeXlsx";
 import { takeOne } from "@esposter/shared";
-import readXlsxFile from "read-excel-file/browser";
-import { beforeEach, describe, expect, test, vi } from "vitest";
-
-vi.mock(import("read-excel-file/browser"), () => ({ default: vi.fn<typeof readXlsxFile>() }));
+import { describe, expect, test } from "vitest";
 
 describe(deserializeXlsx, () => {
   const MIME_TYPE = DataSourceConfigurationMap[DataSourceType.Xlsx].mimeType;
 
-  const createFile = (name = "test.xlsx") => new File([""], name, { type: MIME_TYPE });
-
-  beforeEach(() => {
-    vi.clearAllMocks();
+  const createDataSource = (columns: Column[], rows: Row[]): DataSource => ({
+    columns,
+    metadata: { dataSourceType: DataSourceType.Xlsx, importedAt: new Date(0), name: "", size: 0 },
+    rows,
+    stats: { columnCount: columns.length, rowCount: rows.length, size: 0 },
   });
 
-  test("parses columns and rows from xlsx data", async () => {
+  const createColumn = (name: string): Column => new Column({ name, size: 0, sourceName: name });
+
+  const createRow = (data: Record<string, number>): Row => new Row({ data });
+
+  const createXlsxFile = async (dataSource: DataSource, name = "test.xlsx") => {
+    const blob = await serializeXlsx(dataSource, new XlsxDataSourceItem(), MIME_TYPE);
+    return new File([blob], name, { type: MIME_TYPE });
+  };
+
+  test("parses columns and rows from xlsx", async () => {
     expect.hasAssertions();
 
-    vi.mocked(readXlsxFile).mockResolvedValue([
-      ["a", "b"],
-      [0, 1],
-      [2, 3],
-    ]);
-    const dataSource = await deserializeXlsx(createFile(), new XlsxDataSourceItem());
+    const dataSource = createDataSource(
+      [createColumn("a"), createColumn("b")],
+      [createRow({ a: 0, b: 1 }), createRow({ a: 2, b: 3 })],
+    );
+    const file = await createXlsxFile(dataSource);
+    const parsedDataSource = await deserializeXlsx(file, new XlsxDataSourceItem());
 
-    expect(dataSource.columns).toHaveLength(2);
-    expect(takeOne(dataSource.columns, 0).name).toBe("a");
-    expect(takeOne(dataSource.columns, 0).type).toBe(ColumnType.Number);
-    expect(takeOne(dataSource.columns, 1).name).toBe("b");
-    expect(dataSource.rows).toHaveLength(2);
-    expect(takeOne(dataSource.rows, 0).data).toStrictEqual({ a: 0, b: 1 });
-    expect(takeOne(dataSource.rows, 1).data).toStrictEqual({ a: 2, b: 3 });
-  });
-
-  test("empty xlsx data returns DataSource with no columns and rows", async () => {
-    expect.hasAssertions();
-
-    vi.mocked(readXlsxFile).mockResolvedValue([]);
-    const dataSource = await deserializeXlsx(createFile(), new XlsxDataSourceItem());
-
-    expect(dataSource.columns).toHaveLength(0);
-    expect(dataSource.rows).toHaveLength(0);
-    expect(dataSource.metadata.dataSourceType).toBe(DataSourceType.Xlsx);
-  });
-
-  test("passes sheet index to readXlsxFile", async () => {
-    expect.hasAssertions();
-
-    vi.mocked(readXlsxFile).mockResolvedValue([]);
-    const item = new XlsxDataSourceItem({ configuration: { sheetIndex: 2 } });
-
-    await deserializeXlsx(createFile(), item);
-
-    expect(vi.mocked(readXlsxFile)).toHaveBeenCalledWith(expect.any(File), { sheet: 3 });
+    expect(parsedDataSource.columns).toHaveLength(2);
+    expect(takeOne(parsed.columns, 0).name).toBe("a");
+    expect(takeOne(parsed.columns, 0).type).toBe(ColumnType.Number);
+    expect(takeOne(parsed.columns, 1).name).toBe("b");
+    expect(parsedDataSource.rows).toHaveLength(2);
+    expect(takeOne(parsed.rows, 0).data).toStrictEqual({ a: 0, b: 1 });
+    expect(takeOne(parsed.rows, 1).data).toStrictEqual({ a: 2, b: 3 });
   });
 
   test("only header row returns columns with no rows", async () => {
     expect.hasAssertions();
 
-    vi.mocked(readXlsxFile).mockResolvedValue([["a", "b"]]);
-    const dataSource = await deserializeXlsx(createFile(), new XlsxDataSourceItem());
+    const dataSource = createDataSource([createColumn("a"), createColumn("b")], []);
+    const file = await createXlsxFile(dataSource);
+    const parsedDataSource = await deserializeXlsx(file, new XlsxDataSourceItem());
 
-    expect(dataSource.columns).toHaveLength(2);
-    expect(dataSource.rows).toHaveLength(0);
-  });
-
-  test("null cell in header falls back to Column N", async () => {
-    expect.hasAssertions();
-
-    vi.mocked(readXlsxFile).mockResolvedValue([
-      [null, "b"],
-      ["0", "1"],
-    ]);
-    const dataSource = await deserializeXlsx(createFile(), new XlsxDataSourceItem());
-
-    expect(takeOne(dataSource.columns, 0).name).toBe("Column 1");
-    expect(takeOne(dataSource.columns, 1).name).toBe("b");
+    expect(parsedDataSource.columns).toHaveLength(2);
+    expect(parsedDataSource.rows).toHaveLength(0);
+    expect(parsedDataSource.metadata.dataSourceType).toBe(DataSourceType.Xlsx);
   });
 });

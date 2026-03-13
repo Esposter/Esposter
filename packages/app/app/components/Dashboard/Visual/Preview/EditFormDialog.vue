@@ -4,6 +4,7 @@ import type { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualTypeChartTypesMap } from "@/services/dashboard/chart/VisualTypeChartTypesMap";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { useVisualStore } from "@/store/dashboard/visual";
+import { toRawDeep } from "@esposter/shared";
 import { Vjsf } from "@koumoul/vjsf";
 
 const editedItem = defineModel<Visual>({ required: true });
@@ -16,17 +17,24 @@ const schema = useZodSchema(
   () => editedItem.value.type,
 );
 const jsonSchema = computed(() => zodToJsonSchema(schema.value));
-// ToRaw() prevents Vjsf's internal watcher from seeing a proxy reference change
-// On every render: Pinia wraps the emitted plain object in reactive(), so without
-// ToRaw() Vjsf would receive a different reference each cycle and loop indefinitely.
-const chartConfiguration = computed({
-  get: () => toRaw(editedItem.value.chart.configuration),
-  set: (value) => {
-    editedItem.value.chart.configuration = value;
-  },
-});
+// shallowRef breaks the reactive proxy feedback loop caused by removeAdditional: true.
+// Vjsf creates a new object on every processing cycle; if the v-model is backed by a
+// Pinia reactive, each new reference triggers another cycle. shallowRef.value is never
+// wrapped in reactive, so Vjsf always receives back the exact reference it last emitted.
+const chartConfiguration = shallowRef(toRawDeep(editedItem.value.chart.configuration));
 
 useConfirmBeforeNavigation(isDirty);
+
+watch(
+  () => editedItem.value.chart.type,
+  () => {
+    chartConfiguration.value = toRawDeep(editedItem.value.chart.configuration);
+  },
+);
+
+watch(chartConfiguration, (value) => {
+  editedItem.value.chart.configuration = value;
+});
 </script>
 
 <template>
