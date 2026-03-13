@@ -39,8 +39,10 @@ const disabled = computed(() => !(errorIconRef.value?.isValid ?? true) || deepEq
     <template #prepend-actions>
       <StyledEditFormDialogErrorIcon ref="errorIcon" :edit-form-ref :is-edit-form-valid :schema :edited-value />
     </template>
-    <v-form ref="editFormRef" v-model="isEditFormValid">
-      <slot />
-    </v-form>
+    <v-container overflow-y-auto fluid>
+      <v-form ref="editFormRef" v-model="isEditFormValid">
+        <slot />
+      </v-form>
+    </v-container>
   </StyledDialog>
 </template>

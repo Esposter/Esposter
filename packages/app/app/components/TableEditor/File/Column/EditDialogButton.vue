@@ -6,7 +6,6 @@ import { ColumnTypeFormSchemaWithoutNameMap } from "#shared/models/tableEditor/f
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { toRawDeep } from "@esposter/shared";
 import { Vjsf } from "@koumoul/vjsf";
-import deepEqual from "fast-deep-equal";
 
 interface EditDialogButtonProps {
   column: DataSource["columns"][number];
@@ -18,23 +17,14 @@ const { updateColumn } = useEditedItemDataSourceOperations();
 const schema = computed(() => ColumnTypeFormSchemaMap[column.type]);
 const jsonSchema = computed(() => zodToJsonSchema(ColumnTypeFormSchemaWithoutNameMap[column.type]));
 const editedColumn = ref(structuredClone(toRawDeep(column)));
-const disabled = computed(() => deepEqual(column, editedColumn.value));
 const uniqueNameRule = (value: string) =>
   value === column.name || !dataSource.columns.some(({ name }) => name === value) || "Column already exists";
-
-watch(
-  () => column,
-  (newColumn) => {
-    editedColumn.value = structuredClone(toRawDeep(newColumn));
-  },
-);
 </script>
 
 <template>
   <TableEditorFileEditDialogButton
     :title="`Edit ${column.name} Column`"
     tooltip-text="Edit Column"
-    :disabled
     :schema
     :value="column"
     :edited-value="editedColumn"
@@ -45,9 +35,7 @@ watch(
       }
     "
   >
-    <v-container fluid>
-      <v-text-field v-model="editedColumn.name" label="Column" :rules="[uniqueNameRule]" />
-      <Vjsf v-model="editedColumn" :schema="jsonSchema" />
-    </v-container>
+    <v-text-field v-model="editedColumn.name" label="Column" :rules="[uniqueNameRule]" />
+    <Vjsf v-model="editedColumn" :schema="jsonSchema" />
   </TableEditorFileEditDialogButton>
 </template>

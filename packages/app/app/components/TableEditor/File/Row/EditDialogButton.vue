@@ -31,36 +31,34 @@ const editedRow = ref(new Row(structuredClone(toRawDeep(row))));
       }
     "
   >
-    <v-container fluid>
-      <v-row v-for="column of columns" :key="column.name">
-        <v-col cols="12">
-          <v-checkbox
-            v-if="column.type === ColumnType.Boolean"
-            v-model="editedRow.data[column.name]"
-            :label="column.name"
-          />
-          <v-text-field
-            v-else
-            :model-value="
-              (() => {
-                const value = takeOne(editedRow.data, column.name);
-                if (column.type === ColumnType.Date && typeof value === 'string') {
-                  const date = dayjs(value, column.format, true);
-                  if (date.isValid()) return date.format('YYYY-MM-DD');
-                  return value;
-                } else return value;
-              })()
-            "
-            :label="column.name"
-            :type="column.type === ColumnType.Number ? 'number' : column.type === ColumnType.Date ? 'date' : 'text'"
-            density="compact"
-            @update:model-value="
-              editedRow.data[column.name] =
-                column.type === ColumnType.Date ? dayjs($event, 'YYYY-MM-DD').format(column.format) : $event
-            "
-          />
-        </v-col>
-      </v-row>
-    </v-container>
+    <v-row v-for="column of columns" :key="column.name">
+      <v-col cols="12">
+        <v-checkbox
+          v-if="column.type === ColumnType.Boolean"
+          v-model="editedRow.data[column.name]"
+          :label="column.name"
+        />
+        <v-text-field
+          v-else
+          :model-value="
+            (() => {
+              const value = takeOne(editedRow.data, column.name);
+              if (column.type === ColumnType.Date && typeof value === 'string') {
+                const date = dayjs(value, column.format, true);
+                if (date.isValid()) return date.format('YYYY-MM-DD');
+                return value;
+              } else return value;
+            })()
+          "
+          :label="column.name"
+          :type="column.type === ColumnType.Number ? 'number' : column.type === ColumnType.Date ? 'date' : 'text'"
+          density="compact"
+          @update:model-value="
+            editedRow.data[column.name] =
+              column.type === ColumnType.Date ? dayjs($event, 'YYYY-MM-DD').format(column.format) : $event
+          "
+        />
+      </v-col>
+    </v-row>
   </TableEditorFileEditDialogButton>
 </template>
