@@ -19,11 +19,7 @@
       "mcp__vuetify-mcp__get_feature_guide",
       "mcp__vuetify-mcp__get_installation_guide",
       "mcp__vuetify-mcp__get_v4_breaking_changes",
-      "Bash(pnpm install:*)",
-      "Bash(for f:*)",
-      "Bash(do echo:*)",
-      "Read(//c/Users/jimmyc/Documents/Esposter/**)",
-      "Bash(cd C:/Users/jimmyc/Documents/Esposter && sed -i 's/\\\\r$//' packages/app/app/composables/tableEditor/file/useEditedItemDataSourceOperations.test.ts)"
+      "Bash(pnpm install:*)"
     ]
   }
 }
