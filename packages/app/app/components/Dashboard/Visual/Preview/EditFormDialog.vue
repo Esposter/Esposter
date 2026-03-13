@@ -34,9 +34,9 @@ useConfirmBeforeNavigation(isDirty);
     @update:edit-form-ref="editFormRef = $event"
     @update:fullscreen-dialog="isFullScreenDialog = $event"
   >
-    <v-container overflow-y-auto fluid>
+    <template #prepend-form>
       <v-select v-model="editedItem.chart.type" :items="VisualTypeChartTypesMap[editedItem.type]" label="Chart Type" />
-      <Vjsf v-model="editedItem.chart.configuration" :schema="jsonSchema" :options="{ removeAdditional: true }" />
-    </v-container>
+    </template>
+    <Vjsf v-model="editedItem.chart.configuration" :schema="jsonSchema" :options="{ removeAdditional: true }" />
   </StyledEditFormDialog>
 </template>

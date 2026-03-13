@@ -2,7 +2,6 @@ import type { ChartType } from "#shared/models/dashboard/data/chart/type/ChartTy
 import type { VisualType } from "#shared/models/dashboard/data/VisualType";
 import type { ReadonlyRefOrGetter } from "@vueuse/core";
 
-import { chartTypeSchema } from "#shared/models/dashboard/data/chart/type/ChartType";
 import { getActiveChartTypeResolvers } from "@/services/dashboard/chart/getActiveChartTypeResolvers";
 import { getActiveVisualTypeResolvers } from "@/services/dashboard/visual/getActiveVisualTypeResolvers";
 import { z } from "zod";
@@ -18,5 +17,5 @@ export const useZodSchema = (chartType: ReadonlyRefOrGetter<ChartType>, visualTy
     const visualTypeResolvers = getActiveVisualTypeResolvers(visualTypeValue);
     for (const visualTypeResolver of visualTypeResolvers) schema = visualTypeResolver.handleSchema(schema);
 
-    return z.object({ type: chartTypeSchema, ...schema.shape });
+    return schema;
   });

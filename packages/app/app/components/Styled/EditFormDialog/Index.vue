@@ -15,7 +15,7 @@ interface EditFormDialogProps<T> {
   schema: z.ZodType;
 }
 
-defineSlots<{ default: () => VNode; "prepend-actions": () => VNode }>();
+defineSlots<{ default: () => VNode; "prepend-actions": () => VNode; "prepend-form": () => VNode }>();
 const dialog = defineModel<boolean>({ required: true });
 const { editedItem, isEditFormValid, isFullScreenDialog, isSavable, name, originalItem, schema } =
   defineProps<EditFormDialogProps<T>>();
@@ -44,29 +44,32 @@ watch(editFormRef, (newEditFormRef) => {
 
 <template>
   <v-dialog v-model="dialog" :fullscreen="isFullScreenDialog" :width="isFullScreenDialog ? '100%' : 800" persistent>
-    <v-form ref="editFormRef" @submit.prevent="emit('save')">
-      <StyledCard>
-        <StyledEditFormDialogHeader
-          :name
-          :edited-item
-          :original-item
-          :edit-form-ref
-          :is-edit-form-valid
-          :schema
-          :is-full-screen-dialog
-          :is-savable
-          @update:edit-form-dialog="dialog = $event"
-          @update:fullscreen-dialog="emit('update:fullscreen-dialog', $event)"
-          @save="emit('save')"
-          @delete="emit('delete', $event)"
-        >
-          <template v-if="$slots['prepend-actions']" #prepend-actions>
-            <slot name="prepend-actions" />
-          </template>
-        </StyledEditFormDialogHeader>
-        <v-divider thickness="2" />
-        <slot />
-      </StyledCard>
-    </v-form>
+    <StyledCard>
+      <StyledEditFormDialogHeader
+        :name
+        :edited-item
+        :original-item
+        :edit-form-ref
+        :is-edit-form-valid
+        :schema
+        :is-full-screen-dialog
+        :is-savable
+        @update:edit-form-dialog="dialog = $event"
+        @update:fullscreen-dialog="emit('update:fullscreen-dialog', $event)"
+        @save="emit('save')"
+        @delete="emit('delete', $event)"
+      >
+        <template v-if="$slots['prepend-actions']" #prepend-actions>
+          <slot name="prepend-actions" />
+        </template>
+      </StyledEditFormDialogHeader>
+      <v-divider thickness="2" />
+      <v-container overflow-y-auto fluid>
+        <slot name="prepend-form" />
+        <v-form ref="editFormRef" @submit.prevent="emit('save')">
+          <slot />
+        </v-form>
+      </v-container>
+    </StyledCard>
   </v-dialog>
 </template>

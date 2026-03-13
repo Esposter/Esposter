@@ -58,9 +58,7 @@ const schema = computed(() => TableEditorTypeItemSchemaMap[tableEditorType.value
       <template v-if="slots['prepend-actions']" #prepend-actions>
         <slot name="prepend-actions" />
       </template>
-      <v-container v-if="editedItem" overflow-y-auto fluid>
-        <component :is="component" v-model="editedItem" />
-      </v-container>
+      <component :is="component" v-model="editedItem" />
     </StyledEditFormDialog>
   </v-toolbar>
 </template>
