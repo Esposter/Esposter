@@ -1,6 +1,7 @@
+import type { ColumnForm } from "#shared/models/tableEditor/file/ColumnForm";
 import type { z } from "zod";
 
-import { ColumnForm, columnFormSchema } from "#shared/models/tableEditor/file/ColumnForm";
+import { columnFormSchema } from "#shared/models/tableEditor/file/ColumnForm";
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { dateColumnFormSchema } from "#shared/models/tableEditor/file/DateColumn";
 

@@ -10,7 +10,7 @@ interface ExportDialogProps {
   editedItem: TDataSourceItem;
 }
 
-const isOpen = defineModel<boolean>();
+const isOpen = defineModel<boolean>({ default: false });
 const { dataSourceType, editedItem } = defineProps<ExportDialogProps>();
 const exportFile = useExportFile();
 const selectedColumnIds = ref<string[]>([]);

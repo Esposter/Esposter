@@ -13,7 +13,7 @@ interface HeaderProps<T> {
   isSavable: boolean;
   name: string;
   originalItem?: T;
-  schema?: z.ZodType;
+  schema: z.ZodType;
 }
 
 defineSlots<{ "prepend-actions": () => VNode }>();
@@ -31,7 +31,7 @@ const emit = defineEmits<{
 <template>
   <v-toolbar flex-none pl-4 :title="`Configuration - ${itemType}`">
     <v-spacer />
-    <StyledEditFormDialogErrorIcon :edit-form-ref :is-edit-form-valid :schema :value="editedItem" />
+    <StyledEditFormDialogErrorIcon :edit-form-ref :is-edit-form-valid :schema :edited-value="editedItem" />
     <slot name="prepend-actions" />
     <StyledEditFormDialogSaveButton :is-savable />
     <StyledEditFormDialogConfirmDeleteDialogButton :name :original-item @delete="emit('delete', $event)" />

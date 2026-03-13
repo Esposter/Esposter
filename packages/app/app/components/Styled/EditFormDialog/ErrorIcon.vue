@@ -6,15 +6,14 @@ import { takeOne } from "@esposter/shared";
 import { z as zod } from "zod";
 
 interface ErrorIconProps {
+  editedValue: unknown;
   editFormRef: InstanceType<typeof VForm> | undefined;
   isEditFormValid: boolean;
-  schema?: z.ZodType;
-  value?: unknown;
+  schema: z.ZodType;
 }
 
-const { editFormRef, isEditFormValid, schema, value } = defineProps<ErrorIconProps>();
-const schemaError = ref("");
-const isValid = computed(() => isEditFormValid && !schemaError.value);
+const { editedValue, editFormRef, isEditFormValid, schema } = defineProps<ErrorIconProps>();
+const emit = defineEmits<{ "update:edited-value": [value: unknown] }>();
 const errorMessage = computed(() => {
   const error = editFormRef?.errors[0];
   if (error) {
@@ -22,21 +21,10 @@ const errorMessage = computed(() => {
     if (element) return `${element.textContent}: ${takeOne(error.errorMessages)}`;
   }
 
-  return schemaError.value;
+  const result = schema.safeParse(editedValue);
+  return result.success ? "" : zod.prettifyError(result.error);
 });
-
-watchDeep(
-  () => [schema, value] as const,
-  ([newSchema, newValue]) => {
-    if (!newSchema) {
-      schemaError.value = "";
-      return;
-    }
-
-    const result = newSchema.safeParse(newValue);
-    schemaError.value = result.success ? "" : zod.prettifyError(result.error);
-  },
-);
+const isValid = computed(() => isEditFormValid && !errorMessage.value);
 </script>
 
 <template>

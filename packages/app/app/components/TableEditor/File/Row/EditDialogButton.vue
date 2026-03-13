@@ -21,6 +21,8 @@ const editedRow = ref(new Row(structuredClone(toRawDeep(row))));
   <TableEditorFileEditDialogButton
     title="Edit Row"
     tooltip-text="Edit Row"
+    :value="row"
+    :edited-value="editedRow"
     @submit="
       (onComplete) => {
         updateRow(index, editedRow);

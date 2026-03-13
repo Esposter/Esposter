@@ -36,7 +36,8 @@ watch(
     tooltip-text="Edit Column"
     :disabled
     :schema
-    :value="editedColumn"
+    :value="column"
+    :edited-value="editedColumn"
     @submit="
       (onComplete) => {
         updateColumn(column.name, editedColumn);

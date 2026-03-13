@@ -2,39 +2,29 @@
 import type { VForm } from "vuetify/components";
 import type { z } from "zod";
 
+import deepEqual from "fast-deep-equal";
+
 interface EditDialogButtonProps {
-  disabled?: boolean;
-  schema?: z.ZodType;
+  editedValue: unknown;
+  schema: z.ZodType;
   title: string;
   tooltipText: string;
-  value?: unknown;
+  value: unknown;
 }
 
 defineSlots<{ default: () => VNode }>();
-const { disabled = false, schema, title, tooltipText, value } = defineProps<EditDialogButtonProps>();
+const { editedValue, schema, title, tooltipText, value } = defineProps<EditDialogButtonProps>();
 const emit = defineEmits<{ submit: [onComplete: () => void] }>();
 const editFormRef = ref<InstanceType<typeof VForm>>();
 const isEditFormValid = ref(true);
-const schemaError = ref("");
-
-watchDeep(
-  () => [schema, value] as const,
-  ([newSchema, newValue]) => {
-    if (!newSchema) {
-      schemaError.value = "";
-      return;
-    }
-    const result = newSchema.safeParse(newValue);
-    schemaError.value = result.success ? "" : result.error.message;
-  },
-);
+const disabled = computed(() => !isEditFormValid.value || deepEqual(value, editedValue));
 </script>
 
 <template>
   <StyledDialog
     :card-props="{ title }"
     :confirm-button-props="{ text: 'Save & Close' }"
-    :confirm-button-attrs="{ disabled: !isEditFormValid || !!schemaError || disabled }"
+    :confirm-button-attrs="{ disabled }"
     @submit="(_event, onComplete) => emit('submit', onComplete)"
   >
     <template #activator="{ updateIsOpen }">
@@ -45,7 +35,7 @@ watchDeep(
       </v-tooltip>
     </template>
     <template #prepend-actions>
-      <StyledEditFormDialogErrorIcon :edit-form-ref :is-edit-form-valid :schema :value />
+      <StyledEditFormDialogErrorIcon :edit-form-ref :is-edit-form-valid :schema :edited-value />
     </template>
     <v-form ref="editFormRef" v-model="isEditFormValid">
       <slot />
