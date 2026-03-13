@@ -31,7 +31,7 @@ export const buildDataSource = (
     return row;
   });
   for (const column of columns)
-    column.size = rows.reduce((total, row) => total + JSON.stringify(row.data[column.name] ?? null).length, 0);
+    column.size = rows.reduce((total, row) => total + JSON.stringify(takeOne(row.data, column.name)).length, 0);
   return {
     columns,
     metadata: { dataSourceType, importedAt: new Date(), name: file.name, size: file.size },

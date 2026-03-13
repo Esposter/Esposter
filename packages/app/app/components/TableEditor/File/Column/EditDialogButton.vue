@@ -4,7 +4,7 @@ import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import { ColumnTypeFormSchemaMap } from "#shared/models/tableEditor/file/ColumnTypeFormSchemaMap";
 import { ColumnTypeFormSchemaWithoutNameMap } from "#shared/models/tableEditor/file/ColumnTypeFormSchemaWithoutNameMap";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
-import { toRawDeep } from "@esposter/shared";
+import { takeOne, toRawDeep } from "@esposter/shared";
 import { Vjsf } from "@koumoul/vjsf";
 
 interface EditDialogButtonProps {
@@ -14,8 +14,8 @@ interface EditDialogButtonProps {
 
 const { column, dataSource } = defineProps<EditDialogButtonProps>();
 const { updateColumn } = useEditedItemDataSourceOperations();
-const schema = computed(() => ColumnTypeFormSchemaMap[column.type]);
-const jsonSchema = computed(() => zodToJsonSchema(ColumnTypeFormSchemaWithoutNameMap[column.type]));
+const schema = computed(() => takeOne(ColumnTypeFormSchemaMap, column.type));
+const jsonSchema = computed(() => zodToJsonSchema(takeOne(ColumnTypeFormSchemaWithoutNameMap, column.type)));
 const editedColumn = ref(structuredClone(toRawDeep(column)));
 const uniqueNameRule = (value: string) =>
   value === column.name || !dataSource.columns.some(({ name }) => name === value) || "Column already exists";

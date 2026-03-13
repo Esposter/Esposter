@@ -3,6 +3,7 @@ import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { Row } from "#shared/models/tableEditor/file/Row";
 
 import { DRAG_HANDLE_CLASS } from "@/services/tableEditor/file/constants";
+import { takeOne } from "@esposter/shared";
 import { VueDraggable } from "vue-draggable-plus";
 
 interface DataTableProps {
@@ -16,7 +17,7 @@ const headers = computed(() => [
   ...dataSource.columns.map((column) => ({
     key: column.name,
     title: column.name,
-    value: (row: Row) => row.data[column.name],
+    value: (row: Row) => takeOne(row.data, column.name),
   })),
   { key: "actions", sortable: false, title: "Actions" },
 ]);

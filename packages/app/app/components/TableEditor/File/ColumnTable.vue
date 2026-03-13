@@ -4,6 +4,7 @@ import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import { ColumnHeaders } from "@/services/tableEditor/file/ColumnHeaders";
 import { ColumnTypeColorMap } from "@/services/tableEditor/file/ColumnTypeColorMap";
 import { DRAG_HANDLE_CLASS } from "@/services/tableEditor/file/constants";
+import { takeOne } from "@esposter/shared";
 import { VueDraggable } from "vue-draggable-plus";
 
 interface ColumnTableProps {
@@ -25,7 +26,7 @@ const dragColumns = computed({
         <v-icon :class="DRAG_HANDLE_CLASS" icon="mdi-drag" cursor-move />
       </template>
       <template #[`item.type`]="{ item: column }">
-        <v-chip :color="ColumnTypeColorMap[column.type]" label size="small">{{ column.type }}</v-chip>
+        <v-chip :color="takeOne(ColumnTypeColorMap, column.type)" label size="small">{{ column.type }}</v-chip>
       </template>
       <template #[`item.actions`]="{ item: column }">
         <TableEditorFileColumnEditDialogButton :data-source :column />
