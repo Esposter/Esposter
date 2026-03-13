@@ -72,7 +72,14 @@ export const useEditedItemDataSourceOperations = () => {
     if (columnIndex === -1) return;
     const originalColumn = structuredClone(toRawDeep(takeOne(editedItem.value.dataSource.columns, columnIndex)));
     const originalRowValues = editedItem.value.dataSource.rows.map((row) => takeOne(toRawDeep(row).data, originalName));
-    executeAndRecord(new UpdateColumnCommand(originalName, originalColumn, structuredClone(toRawDeep(updatedColumn)), originalRowValues));
+    executeAndRecord(
+      new UpdateColumnCommand(
+        originalName,
+        originalColumn,
+        structuredClone(toRawDeep(updatedColumn)),
+        originalRowValues,
+      ),
+    );
   };
 
   const deleteColumn = (name: string) => {

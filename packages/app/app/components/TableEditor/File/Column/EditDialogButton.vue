@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 
-import {
-  ColumnTypeFormSchemaMap,
-  ColumnTypeFormSchemaWithoutNameMap,
-} from "#shared/models/tableEditor/file/ColumnTypeFormSchemaMap";
+import { ColumnTypeFormSchemaMap } from "#shared/models/tableEditor/file/ColumnTypeFormSchemaMap";
+import { ColumnTypeFormSchemaWithoutNameMap } from "#shared/models/tableEditor/file/ColumnTypeFormSchemaWithoutNameMap";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { toRawDeep } from "@esposter/shared";
 import { Vjsf } from "@koumoul/vjsf";
@@ -23,6 +21,13 @@ const editedColumn = ref(structuredClone(toRawDeep(column)));
 const disabled = computed(() => deepEqual(column, editedColumn.value));
 const uniqueNameRule = (value: string) =>
   value === column.name || !dataSource.columns.some(({ name }) => name === value) || "Column already exists";
+
+watch(
+  () => column,
+  (newColumn) => {
+    editedColumn.value = structuredClone(toRawDeep(newColumn));
+  },
+);
 </script>
 
 <template>

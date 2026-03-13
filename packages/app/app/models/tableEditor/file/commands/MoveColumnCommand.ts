@@ -2,6 +2,7 @@ import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/Data
 
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
+import { takeOne } from "@esposter/shared";
 
 export class MoveColumnCommand extends ADataSourceCommand<CommandType.MoveColumn> {
   readonly type = CommandType.MoveColumn;
@@ -31,7 +32,7 @@ export class MoveColumnCommand extends ADataSourceCommand<CommandType.MoveColumn
     columns.splice(this.toIndex, 0, moved);
     item.dataSource.columns = columns;
     for (const row of item.dataSource.rows)
-      row.data = Object.fromEntries(columns.map(({ name }) => [name, row.data[name] ?? null]));
+      row.data = Object.fromEntries(columns.map(({ name }) => [name, takeOne(row.data, name)]));
   }
 
   protected doUndo(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
@@ -42,6 +43,6 @@ export class MoveColumnCommand extends ADataSourceCommand<CommandType.MoveColumn
     columns.splice(this.fromIndex, 0, moved);
     item.dataSource.columns = columns;
     for (const row of item.dataSource.rows)
-      row.data = Object.fromEntries(columns.map(({ name }) => [name, row.data[name] ?? null]));
+      row.data = Object.fromEntries(columns.map(({ name }) => [name, takeOne(row.data, name)]));
   }
 }

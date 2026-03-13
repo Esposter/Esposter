@@ -31,7 +31,8 @@ export class DeleteRowCommand extends ADataSourceCommand<CommandType.DeleteRow> 
 
   protected doUndo(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
     if (!item.dataSource) return;
-    for (const column of item.dataSource.columns) column.size += getValueSize(takeOne(this.originalRow.data, column.name));
+    for (const column of item.dataSource.columns)
+      column.size += getValueSize(takeOne(this.originalRow.data, column.name));
     item.dataSource.rows = [
       ...item.dataSource.rows.slice(0, this.index),
       this.originalRow,

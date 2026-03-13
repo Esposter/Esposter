@@ -10,10 +10,3 @@ export const ColumnTypeFormSchemaMap = {
   [ColumnType.Number]: columnFormSchema,
   [ColumnType.String]: columnFormSchema,
 } as const satisfies Record<ColumnType, z.ZodType>;
-
-export const ColumnTypeFormSchemaWithoutNameMap = {
-  [ColumnType.Boolean]: columnFormSchema.omit({ name: true }),
-  [ColumnType.Date]: dateColumnFormSchema.omit({ name: true }),
-  [ColumnType.Number]: columnFormSchema.omit({ name: true }),
-  [ColumnType.String]: columnFormSchema.omit({ name: true }),
-} as const satisfies Record<ColumnType, z.ZodType>;
