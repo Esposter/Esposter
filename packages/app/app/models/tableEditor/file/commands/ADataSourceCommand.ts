@@ -1,10 +1,16 @@
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
+import type { ItemEntityType } from "@esposter/shared";
 
 import { AItemEntity } from "#shared/models/entity/AItemEntity";
+import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
 import { syncStats } from "@/services/tableEditor/file/syncStats";
 
-export abstract class ADataSourceCommand extends AItemEntity {
-  abstract readonly name: string;
+export abstract class ADataSourceCommand<T extends CommandType = CommandType>
+  extends AItemEntity
+  implements ItemEntityType<T>
+{
+  abstract readonly type: T;
+
   abstract get description(): string;
 
   execute(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {

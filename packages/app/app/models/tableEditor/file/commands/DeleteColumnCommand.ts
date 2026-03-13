@@ -4,10 +4,11 @@ import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/Data
 import type { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
 
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
+import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
 import { takeOne } from "@esposter/shared";
 
-export class DeleteColumnCommand extends ADataSourceCommand {
-  readonly name = "DeleteColumnCommand";
+export class DeleteColumnCommand extends ADataSourceCommand<CommandType.DeleteColumn> {
+  readonly type = CommandType.DeleteColumn;
 
   get description() {
     return `Delete "${this.originalColumn.name}" Column`;
@@ -27,9 +28,8 @@ export class DeleteColumnCommand extends ADataSourceCommand {
   protected doExecute(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
     if (!item.dataSource) return;
     item.dataSource.columns = item.dataSource.columns.filter((column) => column.name !== this.originalColumn.name);
-    item.dataSource.rows = item.dataSource.rows.map((row) =>
-      Object.fromEntries(Object.entries(row).filter(([key]) => key !== this.originalColumn.name)),
-    );
+    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+    for (const row of item.dataSource.rows) delete row.data[this.originalColumn.name];
   }
 
   protected doUndo(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
@@ -40,6 +40,6 @@ export class DeleteColumnCommand extends ADataSourceCommand {
       ...item.dataSource.columns.slice(this.columnIndex),
     ];
     for (const [index, row] of item.dataSource.rows.entries())
-      row[this.originalColumn.name] = takeOne(this.originalRowValues, index);
+      row.data[this.originalColumn.name] = takeOne(this.originalRowValues, index);
   }
 }

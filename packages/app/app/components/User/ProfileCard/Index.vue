@@ -32,15 +32,17 @@ const profileCardRowValues = computed(
 );
 const editedProfileCardRows = ref(structuredClone(profileCardRowValues.value));
 const editMode = ref(false);
-const isValid = ref(true);
-const disabled = computed(() => !isValid.value || deepEqual(profileCardRowValues.value, editedProfileCardRows.value));
+const isEditFormValid = ref(true);
+const disabled = computed(
+  () => !isEditFormValid.value || deepEqual(profileCardRowValues.value, editedProfileCardRows.value),
+);
 </script>
 
 <template>
   <div class="text-title-large" font-bold>Profile</div>
   <div class="text-body-large">Your personal information</div>
   <v-form
-    v-model="isValid"
+    v-model="isEditFormValid"
     @submit.prevent="
       async () => {
         await updateUser(editedProfileCardRows);

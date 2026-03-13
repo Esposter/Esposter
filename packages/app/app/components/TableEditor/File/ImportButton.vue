@@ -4,7 +4,7 @@ import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/Data
 import { trimFileExtension } from "@/util/trimFileExtension";
 
 const modelValue = defineModel<TDataSourceItem>({ required: true });
-const { setDataSource } = useEditedItemDataSource();
+const { setDataSource } = useEditedItemDataSourceOperations();
 const importFile = useImportFile();
 const dataSourceConfiguration = useDataSourceConfiguration(modelValue);
 </script>

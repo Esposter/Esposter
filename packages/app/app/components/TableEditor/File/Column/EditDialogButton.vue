@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 
-import { ColumnTypeFormSchemaWithoutNameMap } from "#shared/models/tableEditor/file/ColumnTypeFormSchemaMap";
+import { ColumnTypeFormSchemaMap } from "#shared/models/tableEditor/file/ColumnTypeFormSchemaMap";
+import { ColumnTypeFormSchemaWithoutNameMap } from "#shared/models/tableEditor/file/ColumnTypeFormSchemaWithoutNameMap";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
+import { takeOne, toRawDeep } from "@esposter/shared";
 import { Vjsf } from "@koumoul/vjsf";
-import deepEqual from "fast-deep-equal";
 
 interface EditDialogButtonProps {
   column: DataSource["columns"][number];
@@ -12,39 +13,29 @@ interface EditDialogButtonProps {
 }
 
 const { column, dataSource } = defineProps<EditDialogButtonProps>();
-const { updateColumn } = useEditedItemDataSource();
-const jsonSchema = computed(() => zodToJsonSchema(ColumnTypeFormSchemaWithoutNameMap[column.type]));
-const editedColumn = ref({ ...column });
-const isValid = ref(true);
-const disabled = computed(() => deepEqual(column, editedColumn.value) || !isValid.value);
+const { updateColumn } = useEditedItemDataSourceOperations();
+const schema = computed(() => takeOne(ColumnTypeFormSchemaMap, column.type));
+const jsonSchema = computed(() => zodToJsonSchema(takeOne(ColumnTypeFormSchemaWithoutNameMap, column.type)));
+const editedColumn = ref(structuredClone(toRawDeep(column)));
 const uniqueNameRule = (value: string) =>
   value === column.name || !dataSource.columns.some(({ name }) => name === value) || "Column already exists";
 </script>
 
 <template>
-  <StyledDialog
-    :card-props="{ title: `Edit ${column.name} Column` }"
-    :confirm-button-props="{ text: 'Save & Close' }"
-    :confirm-button-attrs="{ disabled }"
+  <TableEditorFileEditDialogButton
+    :title="`Edit ${column.name} Column`"
+    tooltip-text="Edit Column"
+    :schema
+    :value="column"
+    :edited-value="editedColumn"
     @submit="
-      (_event, onComplete) => {
+      (onComplete) => {
         updateColumn(column.name, editedColumn);
         onComplete();
       }
     "
   >
-    <template #activator="{ updateIsOpen }">
-      <v-tooltip text="Edit Column">
-        <template #activator="{ props: tooltipProps }">
-          <v-btn m-0 icon="mdi-pencil" size="small" tile :="tooltipProps" @click.stop="updateIsOpen(true)" />
-        </template>
-      </v-tooltip>
-    </template>
-    <v-container fluid>
-      <v-form v-model="isValid">
-        <v-text-field v-model="editedColumn.name" label="Column" :rules="[uniqueNameRule]" />
-        <Vjsf v-model="editedColumn" :schema="jsonSchema" />
-      </v-form>
-    </v-container>
-  </StyledDialog>
+    <v-text-field v-model="editedColumn.name" label="Column" :rules="[uniqueNameRule]" />
+    <Vjsf v-model="editedColumn" :schema="jsonSchema" />
+  </TableEditorFileEditDialogButton>
 </template>

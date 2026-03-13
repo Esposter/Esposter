@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { TableEditorTypeItemSchemaMap } from "@/services/tableEditor/TableEditorTypeItemSchemaMap";
 import { useTableEditorStore } from "@/store/tableEditor";
 
 const slots = defineSlots<{ "append-header": () => VNode; "prepend-actions": () => VNode }>();
@@ -6,15 +7,16 @@ const tableEditorStore = useTableEditorStore();
 const { resetItem, save } = tableEditorStore;
 const {
   editedItem,
+  editForm,
   editFormDialog,
-  editFormRef,
-  formError,
   isEditFormValid,
   isFullScreenDialog,
   isSavable,
   originalItem,
+  tableEditorType,
 } = storeToRefs(tableEditorStore);
 const component = computed(() => (editedItem.value ? useEditFormComponent(editedItem.value.type) : undefined));
+const schema = computed(() => TableEditorTypeItemSchemaMap[tableEditorType.value]);
 </script>
 
 <template>
@@ -37,9 +39,9 @@ const component = computed(() => (editedItem.value ? useEditFormComponent(edited
       v-model="editFormDialog"
       :name="originalItem?.name ?? ''"
       :edited-item
-      :form-error
       :original-item
       :is-edit-form-valid
+      :schema
       :is-full-screen-dialog
       :is-savable
       @close="resetItem()"
@@ -50,15 +52,13 @@ const component = computed(() => (editedItem.value ? useEditFormComponent(edited
         }
       "
       @save="save()"
-      @update:edit-form-ref="editFormRef = $event"
+      @update:edit-form="editForm = $event"
       @update:fullscreen-dialog="isFullScreenDialog = $event"
     >
       <template v-if="slots['prepend-actions']" #prepend-actions>
         <slot name="prepend-actions" />
       </template>
-      <v-container v-if="editedItem" overflow-y-auto fluid>
-        <component :is="component" v-model="editedItem" />
-      </v-container>
+      <component :is="component" v-model="editedItem" />
     </StyledEditFormDialog>
   </v-toolbar>
 </template>

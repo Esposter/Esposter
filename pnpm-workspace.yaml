@@ -179,12 +179,11 @@ catalog:
   prosemirror-state: ^1.4.4
   rate-limiter-flexible: ^9.1.1
   read-excel-file: ^7.0.2
-  write-excel-file: ^3.0.6
   rolldown: ^1.0.0-rc.9
   rolldown-plugin-dts: ^0.22.5
   rxjs: ^7.8.2
-  sass-embedded: ^1.98.0
   sanitize-html: ^2.17.1
+  sass-embedded: ^1.98.0
   sax: ^1.5.0
   show-open-file-picker: ^0.4.0
   sql-highlight: ^6.1.0
@@ -211,6 +210,7 @@ catalog:
   vitest: ^4.1.0
   vue: ^3.5.30
   vue-codemirror: ^6.1.1
+  vue-draggable-plus: ^0.6.1
   vue-pdf-embed: ^2.1.4
   vue-router: ^5.0.3
   vue-tsc: ^3.2.5
@@ -219,6 +219,7 @@ catalog:
   vuetify-nuxt-module: ^1.0.0-alpha.5
   web-push: ^3.6.7
   worker-timers: ^8.0.30
+  write-excel-file: ^3.0.6
   ws: ^8.19.0
   xmlbuilder2: ^4.0.3
   zod: ^4.3.6

@@ -51,9 +51,10 @@
 - **No parameter properties** — never use `constructor(private readonly foo: T)`. Always declare class properties explicitly and assign in the constructor body: `private readonly foo: T; constructor(foo: T) { super(); this.foo = foo; }`.
 - Non-null assertions (`!`) are **BANNED** — use optional chaining or guard clauses.
 - `.forEach()` is **BANNED** — use `for...of`.
-- Always use named imports from libraries.
+- Always use named imports from libraries — only when not already auto-imported by Nuxt or Nuxt modules (e.g. `ref`, `computed`, `watch` from Vue; `storeToRefs` from Pinia; VueUse composables are all auto-imported and must not be manually imported).
 - Explicitly type variables with proper types.
 - **No `current*` variable caching of `.value`** — don't assign `const currentX = x.value` just to use it once. If TypeScript narrowing is needed after a guard, assign with a descriptive name (`const selectedFile = file.value`). Prefer plain `const` over `computed()` when the source value is already non-reactive (e.g. a `readonly` prop field).
+- **Cloning objects** — use `structuredClone(obj)` for deep clones; use `Object.assign(structuredClone(obj), { ...updates })` to clone and override fields. Never use `{ ...spread }` to clone a class instance — spread creates a plain object losing the prototype.
 
 ### Error Handling
 
@@ -74,6 +75,8 @@
 - **One class per file** — classes belong in a `models/` folder (e.g., `app/models/`, `shared/models/`).
 - **Constants go in `constants.ts`** — all module-level constants in a `constants.ts` file under `services/` alongside the files that use them. Never put `constants.ts` inside `composables/`.
 - **Constant maps use PascalCase** with `as const satisfies` — e.g. `export const DataSourceConfigurationMap = { ... } as const satisfies Record<...>`.
+- **One constant map per file, named after the constant** — `ColumnTypeFormSchemaMap.ts` exports only `ColumnTypeFormSchemaMap`. Never co-locate multiple maps in one file. When a map is a transformation of another (e.g. omitting a key), derive it directly rather than repeating the source values: `[ColumnType.Boolean]: ColumnTypeFormSchemaMap[ColumnType.Boolean].omit({ name: true })`.
+
 - **Generic type maps for polymorphic dispatch** — when a constant map needs to associate a discriminant key (e.g. `DataSourceType`) with a type-parameterised generic (e.g. `DataSourceConfiguration<TItem>`), define an explicit type map first, then use a mapped type in `satisfies` to get per-entry type safety without any `as` casts:
   ```typescript
   // 1. Explicit type map (one file, in models/)
@@ -136,8 +139,14 @@
 - **Generic browser utilities** go in `app/utils/` (e.g., `readFileAsText.ts`).
 - **Feature folders**: related models/services/components are grouped under a feature subfolder (e.g., `tableEditor/file/`).
 - **Functions go in `services/`** — factory functions, command creators, and other exported functions belong in `services/`, not `models/`. `models/` is strictly for classes and interfaces/types.
-- **Command Pattern** — use factory functions returning plain objects with `execute`/`undo` arrow properties instead of classes. Interfaces for command contracts go in `models/`; factory functions go in `services/` (e.g., `services/tableEditor/file/commands/createDeleteRowCommand.ts`).
+- **Command Pattern** — commands are classes extending `ADataSourceCommand<T extends CommandType>`. Each command declares `readonly type = CommandType.X` (no `name` — the base class provides `get name() { return this.type; }`). `CommandType` enum lives in `models/tableEditor/file/commands/CommandType.ts`. Class field ordering within a command: `readonly type` → blank line → `get description()` → blank line → all `private readonly` fields grouped together (no blank lines between same-level fields) → blank line → constructor → blank line between each method.
+- **No magic strings** — always use enums instead of string literals for discriminants, command types, and other categorical values.
 - **Boolean computed naming** — use `is*` prefix for boolean computed refs (e.g., `isUndoable`, `isRedoable`, `isSavable`). Do not use `can*`.
+- **Template refs** — use `useTemplateRef<InstanceType<typeof ComponentName>>("name")`. Never suffix the variable with `Ref` — `const errorIcon = useTemplateRef(...)` not `const errorIconRef = useTemplateRef(...)`.
+- **Dialog form validity** — always name the form validity ref `isEditFormValid`. Bind it via `v-model` on `<v-form>` and use `ref(true)` for optimistic initial state. Disable Save & Close via `:confirm-button-attrs="{ disabled: !isEditFormValid }"` (combined with other conditions as needed). Never use try/catch in submit handlers — prevent invalid submission through form validation rules so state is always consistent. Use `StyledEditFormDialogErrorIcon` with `:edit-form-ref :is-edit-form-valid` (plus optional `:schema :value` for Zod schema validation) in the `#prepend-actions` slot. `editFormRef` is a required prop typed `InstanceType<typeof VForm> | undefined` (always passed; `| undefined` reflects the ref being uninitialized before mount). `isEditFormValid` is field-level only (from `<v-form v-model>`); schema errors are computed internally inside `StyledEditFormDialogErrorIcon` via `watchDeep` on `value`.
+- **Boolean casting** — never use `!!` to cast to boolean. Always use `Boolean(value)`.
+- **Vue macro ordering** — `defineSlots` → `defineModel` → `defineProps` → `defineEmits` (in this order), then all `const` assignments, then `defineExpose` last (preceded by a blank line, before any `watch`/lifecycle hooks).
+- **Watch aliases** — prefer `watchDeep(source, cb)` over `watch(source, cb, { deep: true })` and `watchImmediate(source, cb)` over `watch(source, cb, { immediate: true })`. When both flags are needed, use `watchDeep(source, cb, { immediate: true })` (alphabetical: deep before immediate).
 - **Single-responsibility keyboard shortcut components** — when a button has an associated keyboard shortcut, extract it into its own component that owns both the `v-btn` and the `onKeyStroke` handler. This keeps each component focused on one action (e.g., `UndoButton.vue`, `RedoButton.vue`).
 
 ### Helper Functions
@@ -175,8 +184,8 @@
 
 - **Inline arrow functions** where argument types can be inferred from context — don't extract single-use, trivially-typed lambdas into named functions.
 - **Inline Vue event handlers** — always write handlers directly in the template (`@submit="async (_, onComplete) => { ... }"`). This lets Vue infer event argument types automatically. Only extract to a named function if the same logic is reused in multiple places.
-- **`defineModel`**: don't pass `{ default: false }` for booleans — omit the options entirely (`defineModel<boolean>()`).
-- **`defineSlots`**: always assign to a variable — `const slots = defineSlots<{ ... }>()`.
+- **`defineModel`**: always type explicitly. For booleans, you must pass `{ default: false }` so the type does not implicitly include `undefined` (`defineModel<boolean>({ default: false })`).
+- **`defineSlots`**: only assign to a variable when `slots` is actually referenced in script — `const slots = defineSlots<{ ... }>()`. If `slots` is not used in script (e.g. the template uses `<slot>` tags directly), call `defineSlots<...>()` without assignment.
 - **No abbreviated parameter names** — use full descriptive names (e.g. `event` not `e`, `column` not `col`, `configuration` not `config`, `dataSource` not `source`). Exception: simple iteration callbacks where the meaning is obvious from context (e.g. `.filter((row, index) => ...)`).
 - **Destructure event parameters** — when only specific properties of an event are needed, destructure them directly in the parameter list instead of accessing via `event.property` repeatedly: `({ ctrlKey, metaKey, preventDefault }) => { ... }` not `(event) => { event.ctrlKey ... }`.
 - **`@click` shorthands** — if a click handler is a single async call, use `@click="myAsyncFn(args)"` directly — no need to wrap in `async () => { await myAsyncFn(args) }`.
@@ -252,7 +261,7 @@
 
 ### Testing Conventions (Vitest)
 
-- **`describe(functionRef, ...)`** — pass the function reference directly, not a string name.
+- **`describe(functionRef, ...)`** — pass the function reference directly, not a string name. Only use a string when there is no importable function reference (e.g. methods on a composable's return object).
 - **Declare `const` inside `describe`** — all shared test constants (e.g. `HEADER`, reusable values) must be declared inside the `describe` callback scope, not at module level, so they are scoped and cleaned up correctly.
 - **`expect.hasAssertions()`** — always include at the top of every test body.
 - **Canonical test values** — always use minimal, meaningful values:
@@ -268,6 +277,10 @@
 - **Date format tests** — when testing all date formats, use a `for...of` loop inside a single test, converting epoch via `dayjs("1970-01-01", "YYYY-MM-DD", true).format(format)`. Never use `test.each` for date format iteration.
 - **Interpolated descriptions** — use template literals with enum values: `` `boolean returns ${ColumnType.Boolean}` ``.
 - **Human-readable names** — use plain English: "integer", "decimal", "negative", "epoch date", "NaN".
+- **Array index access** — always use `takeOne(arr, index)` from `@esposter/shared` instead of `arr[index]` or `arr[index]?.` — `noUncheckedIndexedAccess` makes direct index access return `T | undefined`, and `takeOne` throws on out-of-bounds while keeping the type non-nullable.
+- **Destructure from stores and composables** — always destructure return values: `const { deleteRow, undo, isUndoable } = operations` rather than calling `operations.deleteRow(...)`. Same for stores: `const { editedItem } = storeToRefs(store)` and `const { methodName } = store`. This applies inside `beforeEach` too — never chain `useX().method()` inline; always `const { method } = useX()` first.
+- **Cloning in tests** — use `structuredClone(obj)` for deep clones; use `Object.assign(structuredClone(obj), { ...updates })` to clone and override fields. Never use `{ ...spread }` syntax to clone — it creates a plain object losing the prototype. Pass `new Foo({ ... })` directly when a fresh instance already suffices (no need to clone or spread it).
+- **Assertions after all assignments** — put all `expect` and `expectToBeDefined` calls after all operation calls and local assignments for that phase, separated by a blank line. For multi-phase tests (e.g. undo then redo), each phase is its own block: operations + `const local = reactive.value?.x`, blank line, then assertions on `local`. Never interleave expects with assignments.
 
 ### CRUD Store Patterns
 

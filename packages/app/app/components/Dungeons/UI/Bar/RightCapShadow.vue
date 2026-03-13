@@ -9,8 +9,8 @@ interface RightCapShadowProps {
   scaleY: number;
 }
 
-const { imagePosition, scaleY } = defineProps<RightCapShadowProps>();
 const displayWidth = defineModel<number | undefined>("displayWidth", { required: true });
+const { imagePosition, scaleY } = defineProps<RightCapShadowProps>();
 </script>
 
 <template>

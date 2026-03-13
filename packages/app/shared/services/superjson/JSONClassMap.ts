@@ -15,6 +15,7 @@ import { TableEditorConfiguration } from "#shared/models/tableEditor/data/TableE
 import { Column } from "#shared/models/tableEditor/file/Column";
 import { CsvDataSourceItem } from "#shared/models/tableEditor/file/csv/CsvDataSourceItem";
 import { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
+import { Row } from "#shared/models/tableEditor/file/Row";
 import { XlsxDataSourceItem } from "#shared/models/tableEditor/file/xlsx/XlsxDataSourceItem";
 import { TodoListItem } from "#shared/models/tableEditor/todoList/TodoListItem";
 import { VuetifyComponentItem } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
@@ -33,6 +34,7 @@ export const JSONClassMap: Record<string, Class<Serializable>> = {
   EmailEditor,
   FlowchartEditor,
   MessageEmojiMetadataEntity,
+  Row,
   StandardMessageEntity,
   SurveyResponseEntity,
   TableEditor,

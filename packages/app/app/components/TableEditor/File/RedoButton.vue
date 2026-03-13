@@ -2,7 +2,7 @@
 import { marked } from "marked";
 import sanitizeHtml from "sanitize-html";
 
-const { isRedoable, redo, redoDescription } = useEditedItemDataSource();
+const { isRedoable, redo, redoDescription } = useEditedItemDataSourceOperations();
 const tooltipHtml = computed(() => {
   const [title, ...rest] = (redoDescription.value ?? "").split("\n\n");
   const parts = [`Redo: ${title} *(Ctrl+Shift+Z)*`, ...rest];

@@ -1,6 +1,5 @@
 import type { ItemMetadata } from "@esposter/shared";
 import type { Resolver, TRPCResolverDef } from "@trpc/client";
-import type { MaybeRefOrGetter } from "vue";
 import type { z } from "zod";
 
 import { authClient } from "@/services/auth/authClient";

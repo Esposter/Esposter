@@ -3,6 +3,7 @@
 ## UX / Workflow
 
 - [x] **Undo/redo** — history stack for row/column mutations (Ctrl+Z / Ctrl+Shift+Z)
+- [x] **Row drag-and-drop** — drag rows to reorder them; recorded in undo/redo history
 - [ ] **Add row manually** — form to insert a new blank row with typed fields
 - [ ] **Add column manually** — create a new column with a default value for all rows
 - [ ] **Bulk row selection + delete** — checkboxes in the data table to delete multiple rows at once
@@ -17,7 +18,7 @@
 
 ## Column Enhancements
 
-- [ ] **Column reordering** — drag-and-drop to reorder columns (affects export order)
+- [x] **Column reordering** — drag-and-drop to reorder columns (affects export order)
 - [ ] **Computed/derived columns** — define a formula (e.g., `price * quantity`) that generates a read-only column
 - [ ] **Column visibility toggle** — hide columns from the data table view without deleting them
 - [ ] **Column descriptions/annotations** — a free-text notes field per column
@@ -31,8 +32,8 @@
 
 ## Filtering & Sorting
 
-- [ ] **Column sorting** — click column header to sort rows ascending/descending in the UI (without mutating the data)
-- [ ] **Row filtering** — per-column filter chips (string contains, number range, boolean, date range)
+- [x] **Column sorting** — click column header to sort rows ascending/descending in the UI (without mutating the data) — handled by v-data-table
+- [ ] **Row filtering** — per-column filter chips
 - [ ] **Saved filter presets** — name and persist a set of active filters
 
 ## Statistics & Analysis

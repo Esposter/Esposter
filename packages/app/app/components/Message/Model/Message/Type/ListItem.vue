@@ -8,8 +8,8 @@ interface ListItemProps extends Pick<MessageComponentProps<StandardMessageEntity
   active?: boolean;
 }
 
-const { active, isPreview = false } = defineProps<ListItemProps>();
 const slots = defineSlots<Record<keyof VListItem["$slots"], () => VNode>>();
+const { active, isPreview = false } = defineProps<ListItemProps>();
 const style = computed<CSSProperties>(() =>
   isPreview ? { pointerEvents: "none", userSelect: "none" } : { pointerEvents: "auto", userSelect: "auto" },
 );

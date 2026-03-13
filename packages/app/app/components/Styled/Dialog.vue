@@ -20,10 +20,10 @@ defineSlots<{
   default: () => VNode;
   "prepend-actions": () => VNode;
 }>();
+const modelValue = defineModel<boolean>({ default: false });
 const { cardProps = {}, confirmButtonAttrs = {}, confirmButtonProps = {} } = defineProps<StyledDialogProps>();
 const emit = defineEmits<{ submit: [event: SubmitEventPromise, onComplete: () => void] }>();
-const modelValue = defineModel<boolean>({ default: false });
-const isValid = ref(true);
+const isEditFormValid = ref(true);
 </script>
 
 <template>
@@ -32,7 +32,7 @@ const isValid = ref(true);
       <slot name="activator" :is-open="modelValue" :update-is-open="(value) => (modelValue = value)" />
     </template>
     <v-form
-      v-model="isValid"
+      v-model="isEditFormValid"
       @submit.prevent="
         emit('submit', $event, () => {
           modelValue = false;
@@ -50,14 +50,14 @@ const isValid = ref(true);
             text-3
             type="submit"
             variant="outlined"
-            :disabled="!isValid"
+            :disabled="!isEditFormValid"
             :="mergeProps(confirmButtonProps, confirmButtonAttrs)"
           />
           <StyledButton
             v-else
             text-3
             type="submit"
-            :disabled="!isValid"
+            :disabled="!isEditFormValid"
             :="mergeProps(confirmButtonProps, confirmButtonAttrs)"
           />
         </v-card-actions>

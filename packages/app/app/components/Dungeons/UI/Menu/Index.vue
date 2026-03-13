@@ -11,8 +11,8 @@ interface MenuProps {
   position: Position;
 }
 
-const { grid, position } = defineProps<MenuProps>();
 const menu = defineModel<boolean>("menu", { required: true });
+const { grid, position } = defineProps<MenuProps>();
 const { border, primary } = useDungeonsColors();
 const menuHeight = computed(() => getMenuHeight(grid.rowSize));
 </script>

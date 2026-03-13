@@ -5,8 +5,8 @@ interface StyledDataTableProps {
   dataTableProps: VDataTable["$props"];
 }
 
-const { dataTableProps } = defineProps<StyledDataTableProps>();
 const slots = defineSlots<Record<keyof VDataTable["$slots"], Function>>();
+const { dataTableProps } = defineProps<StyledDataTableProps>();
 const { backgroundOpacity40 } = useColors();
 </script>
 
