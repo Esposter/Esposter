@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import type StyledEditFormDialogErrorIcon from "@/components/Styled/EditFormDialog/ErrorIcon.vue";
 import type { VForm } from "vuetify/components";
 import type { z } from "zod";
 
-import StyledEditFormDialogErrorIcon from "@/components/Styled/EditFormDialog/ErrorIcon.vue";
 import deepEqual from "fast-deep-equal";
 
 interface EditDialogButtonProps {

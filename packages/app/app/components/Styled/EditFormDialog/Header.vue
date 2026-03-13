@@ -1,4 +1,5 @@
 <script setup lang="ts" generic="T extends ItemEntityType<string>">
+import type StyledEditFormDialogErrorIcon from "@/components/Styled/EditFormDialog/ErrorIcon.vue";
 import type { ItemEntityType } from "@esposter/shared";
 import type { VForm } from "vuetify/components";
 import type { z } from "zod";
@@ -22,7 +23,7 @@ const { editedItem, editForm, formId, isEditFormValid, isFullScreenDialog, isSav
   defineProps<HeaderProps<T>>();
 const itemType = computed(() => prettify(editedItem.type));
 const errorIcon = useTemplateRef<InstanceType<typeof StyledEditFormDialogErrorIcon>>("errorIcon");
-const isSchemaValid = computed(() => errorIcon.value?.isValid.value ?? true);
+const isValid = computed(() => errorIcon.value?.isValid ?? true);
 const emit = defineEmits<{
   delete: [onComplete: () => void];
   save: [];
@@ -36,7 +37,7 @@ const emit = defineEmits<{
     <v-spacer />
     <StyledEditFormDialogErrorIcon ref="errorIcon" :edit-form :is-edit-form-valid :schema :edited-value="editedItem" />
     <slot name="prepend-actions" />
-    <StyledEditFormDialogSaveButton :form-id :is-savable="isSavable && isSchemaValid" />
+    <StyledEditFormDialogSaveButton :form-id :is-savable="isSavable && isValid" />
     <StyledEditFormDialogConfirmDeleteDialogButton :name :original-item @delete="emit('delete', $event)" />
     <v-divider mx-2 thickness="2" vertical inset />
     <StyledEditFormDialogToggleFullScreenDialogButton
