@@ -2,6 +2,7 @@
 import type { VForm } from "vuetify/components";
 import type { z } from "zod";
 
+import StyledEditFormDialogErrorIcon from "@/components/Styled/EditFormDialog/ErrorIcon.vue";
 import deepEqual from "fast-deep-equal";
 
 interface EditDialogButtonProps {
@@ -17,8 +18,8 @@ const { editedValue, schema, title, tooltipText, value } = defineProps<EditDialo
 const emit = defineEmits<{ submit: [onComplete: () => void] }>();
 const editFormRef = ref<InstanceType<typeof VForm>>();
 const isEditFormValid = ref(true);
-const errorIconRef = useTemplateRef("errorIcon");
-const disabled = computed(() => !(errorIconRef.value?.isValid.value ?? true) || deepEqual(value, editedValue));
+const errorIconRef = useTemplateRef<InstanceType<typeof StyledEditFormDialogErrorIcon>>("errorIcon");
+const disabled = computed(() => !(errorIconRef.value?.isValid ?? true) || deepEqual(value, editedValue));
 </script>
 
 <template>

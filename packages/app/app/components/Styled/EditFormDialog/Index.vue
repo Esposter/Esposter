@@ -12,7 +12,7 @@ interface EditFormDialogProps<T> {
   isSavable: boolean;
   name: string;
   originalItem?: T;
-  schema?: z.ZodType;
+  schema: z.ZodType;
 }
 
 defineSlots<{ default: () => VNode; "prepend-actions": () => VNode }>();
