@@ -13,10 +13,6 @@ export abstract class ADataSourceCommand<T extends CommandType = CommandType>
 
   abstract get description(): string;
 
-  get name() {
-    return this.type;
-  }
-
   execute(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
     this.doExecute(item);
     if (item.dataSource) syncStats(item.dataSource);
