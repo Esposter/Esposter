@@ -1,15 +1,18 @@
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { XlsxDataSourceItem } from "#shared/models/tableEditor/file/xlsx/XlsxDataSourceItem";
+import { DataSourceConfigurationMap } from "@/services/tableEditor/file/DataSourceConfigurationMap";
 import { deserializeXlsx } from "@/services/tableEditor/file/xlsx/deserializeXlsx";
 import { takeOne } from "@esposter/shared";
-import { beforeEach, describe, expect, test, vi } from "vitest";
 import readXlsxFile from "read-excel-file/browser";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
-vi.mock("read-excel-file/browser", () => ({ default: vi.fn() }));
+vi.mock(import("read-excel-file/browser"), () => ({ default: vi.fn<typeof readXlsxFile>() }));
 
 describe(deserializeXlsx, () => {
-  const createFile = (name = "test.xlsx") => new File([""], name);
+  const MIME_TYPE = DataSourceConfigurationMap[DataSourceType.Xlsx].mimeType;
+
+  const createFile = (name = "test.xlsx") => new File([""], name, { type: MIME_TYPE });
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -18,7 +21,11 @@ describe(deserializeXlsx, () => {
   test("parses columns and rows from xlsx data", async () => {
     expect.hasAssertions();
 
-    vi.mocked(readXlsxFile).mockResolvedValue([["a", "b"], [0, 1], [2, 3]]);
+    vi.mocked(readXlsxFile).mockResolvedValue([
+      ["a", "b"],
+      [0, 1],
+      [2, 3],
+    ]);
     const dataSource = await deserializeXlsx(createFile(), new XlsxDataSourceItem());
 
     expect(dataSource.columns).toHaveLength(2);
@@ -65,7 +72,10 @@ describe(deserializeXlsx, () => {
   test("null cell in header falls back to Column N", async () => {
     expect.hasAssertions();
 
-    vi.mocked(readXlsxFile).mockResolvedValue([[null, "b"], ["0", "1"]]);
+    vi.mocked(readXlsxFile).mockResolvedValue([
+      [null, "b"],
+      ["0", "1"],
+    ]);
     const dataSource = await deserializeXlsx(createFile(), new XlsxDataSourceItem());
 
     expect(takeOne(dataSource.columns, 0).name).toBe("Column 1");

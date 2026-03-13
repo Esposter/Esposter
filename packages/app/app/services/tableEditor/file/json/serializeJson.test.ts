@@ -2,8 +2,8 @@ import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 
 import { Column } from "#shared/models/tableEditor/file/Column";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
-import { Row } from "#shared/models/tableEditor/file/Row";
 import { JsonDataSourceItem } from "#shared/models/tableEditor/file/json/JsonDataSourceItem";
+import { Row } from "#shared/models/tableEditor/file/Row";
 import { DataSourceConfigurationMap } from "@/services/tableEditor/file/DataSourceConfigurationMap";
 import { serializeJson } from "@/services/tableEditor/file/json/serializeJson";
 import { describe, expect, test } from "vitest";

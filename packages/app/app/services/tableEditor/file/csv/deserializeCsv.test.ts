@@ -7,7 +7,9 @@ import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(deserializeCsv, () => {
-  const createFile = (content: string, name = "test.csv") => new File([content], name, { type: "text/csv" });
+  const MIME_TYPE = DataSourceConfigurationMap[DataSourceType.Csv].mimeType;
+
+  const createFile = (content: string, name = "test.csv") => new File([content], name, { type: MIME_TYPE });
 
   test("parses columns and rows from CSV", async () => {
     expect.hasAssertions();

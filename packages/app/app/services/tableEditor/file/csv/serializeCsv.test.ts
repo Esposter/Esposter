@@ -5,8 +5,8 @@ import { CsvDataSourceItem } from "#shared/models/tableEditor/file/csv/CsvDataSo
 import { CsvDelimiter } from "#shared/models/tableEditor/file/csv/CsvDelimiter";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { Row } from "#shared/models/tableEditor/file/Row";
-import { DataSourceConfigurationMap } from "@/services/tableEditor/file/DataSourceConfigurationMap";
 import { serializeCsv } from "@/services/tableEditor/file/csv/serializeCsv";
+import { DataSourceConfigurationMap } from "@/services/tableEditor/file/DataSourceConfigurationMap";
 import { describe, expect, test } from "vitest";
 
 describe(serializeCsv, () => {
@@ -40,10 +40,7 @@ describe(serializeCsv, () => {
   test("uses specified delimiter", async () => {
     expect.hasAssertions();
 
-    const dataSource = createDataSource(
-      [createColumn("a"), createColumn("b")],
-      [createRow({ a: 0, b: 1 })],
-    );
+    const dataSource = createDataSource([createColumn("a"), createColumn("b")], [createRow({ a: 0, b: 1 })]);
     const item = new CsvDataSourceItem({ configuration: { delimiter: CsvDelimiter.Semicolon } });
     const blob = await serializeCsv(dataSource, item, MIME_TYPE);
     const text = await blob.text();
@@ -54,10 +51,7 @@ describe(serializeCsv, () => {
   test("escapes cells containing the delimiter", async () => {
     expect.hasAssertions();
 
-    const dataSource = createDataSource(
-      [createColumn("a")],
-      [new Row({ data: { a: "0,1" } })],
-    );
+    const dataSource = createDataSource([createColumn("a")], [new Row({ data: { a: "0,1" } })]);
     const item = new CsvDataSourceItem();
     const blob = await serializeCsv(dataSource, item, MIME_TYPE);
     const text = await blob.text();
@@ -68,10 +62,7 @@ describe(serializeCsv, () => {
   test("escapes cells containing double quotes", async () => {
     expect.hasAssertions();
 
-    const dataSource = createDataSource(
-      [createColumn("a")],
-      [new Row({ data: { a: 'say "hi"' } })],
-    );
+    const dataSource = createDataSource([createColumn("a")], [new Row({ data: { a: 'say "hi"' } })]);
     const item = new CsvDataSourceItem();
     const blob = await serializeCsv(dataSource, item, MIME_TYPE);
     const text = await blob.text();
@@ -82,10 +73,7 @@ describe(serializeCsv, () => {
   test("escapes cells containing newlines", async () => {
     expect.hasAssertions();
 
-    const dataSource = createDataSource(
-      [createColumn("a")],
-      [new Row({ data: { a: "0\n1" } })],
-    );
+    const dataSource = createDataSource([createColumn("a")], [new Row({ data: { a: "0\n1" } })]);
     const item = new CsvDataSourceItem();
     const blob = await serializeCsv(dataSource, item, MIME_TYPE);
     const text = await blob.text();

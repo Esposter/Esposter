@@ -7,9 +7,8 @@ import { XlsxDataSourceItem } from "#shared/models/tableEditor/file/xlsx/XlsxDat
 import { DataSourceConfigurationMap } from "@/services/tableEditor/file/DataSourceConfigurationMap";
 import { serializeXlsx } from "@/services/tableEditor/file/xlsx/serializeXlsx";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import writeXlsxFile from "write-excel-file/browser";
-
-vi.mock("write-excel-file/browser", () => ({ default: vi.fn() }));
+import writeXlsxFile from 'write-excel-file/browser';
+import type { SheetData } from 'write-excel-file/browser';
 
 describe(serializeXlsx, () => {
   const MIME_TYPE = DataSourceConfigurationMap[DataSourceType.Xlsx].mimeType;
@@ -41,7 +40,14 @@ describe(serializeXlsx, () => {
 
     await serializeXlsx(dataSource, new XlsxDataSourceItem(), MIME_TYPE);
 
-    expect(vi.mocked(writeXlsxFile)).toHaveBeenCalledWith([["a", "b"], [0, 1], [2, 3]], {});
+    expect(vi.mocked(writeXlsxFile)).toHaveBeenCalledWith(
+      [
+        ["a", "b"],
+        [0, 1],
+        [2, 3],
+      ],
+      {},
+    );
   });
 
   test("returns blob from writeXlsxFile", async () => {

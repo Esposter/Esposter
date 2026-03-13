@@ -1,18 +1,25 @@
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { JsonDataSourceItem } from "#shared/models/tableEditor/file/json/JsonDataSourceItem";
+import { DataSourceConfigurationMap } from "@/services/tableEditor/file/DataSourceConfigurationMap";
 import { deserializeJson } from "@/services/tableEditor/file/json/deserializeJson";
 import { InvalidOperationError, takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(deserializeJson, () => {
-  const createFile = (content: string, name = "test.json") =>
-    new File([content], name, { type: "application/json" });
+  const MIME_TYPE = DataSourceConfigurationMap[DataSourceType.Json].mimeType;
+
+  const createFile = (content: string, name = "test.json") => new File([content], name, { type: MIME_TYPE });
 
   test("parses columns and rows from JSON array", async () => {
     expect.hasAssertions();
 
-    const file = createFile(JSON.stringify([{ a: 0, b: 1 }, { a: 2, b: 3 }]));
+    const file = createFile(
+      JSON.stringify([
+        { a: 0, b: 1 },
+        { a: 2, b: 3 },
+      ]),
+    );
     const dataSource = await deserializeJson(file, new JsonDataSourceItem());
 
     expect(dataSource.columns).toHaveLength(2);
