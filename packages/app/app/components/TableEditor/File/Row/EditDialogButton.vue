@@ -4,7 +4,7 @@ import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { Row } from "#shared/models/tableEditor/file/Row";
 import { dayjs } from "#shared/services/dayjs";
-import { takeOne } from "@esposter/shared";
+import { takeOne, toRawDeep } from "@esposter/shared";
 
 interface EditDialogButtonProps {
   columns: DataSource["columns"];
@@ -14,7 +14,7 @@ interface EditDialogButtonProps {
 
 const { columns, index, row } = defineProps<EditDialogButtonProps>();
 const { updateRow } = useEditedItemDataSourceOperations();
-const editedRow = ref(new Row({ ...row, data: { ...row.data } }));
+const editedRow = ref(new Row(structuredClone(toRawDeep(row))));
 </script>
 
 <template>

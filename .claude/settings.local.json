@@ -22,7 +22,8 @@
       "Bash(pnpm install:*)",
       "Bash(for f:*)",
       "Bash(do echo:*)",
-      "Read(//c/Users/jimmyc/Documents/Esposter/**)"
+      "Read(//c/Users/jimmyc/Documents/Esposter/**)",
+      "Bash(cd C:/Users/jimmyc/Documents/Esposter && sed -i 's/\\\\r$//' packages/app/app/composables/tableEditor/file/useEditedItemDataSourceOperations.test.ts)"
     ]
   }
 }

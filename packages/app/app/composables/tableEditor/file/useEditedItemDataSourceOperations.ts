@@ -63,7 +63,7 @@ export const useEditedItemDataSourceOperations = () => {
   const updateRow = (index: number, updatedRow: DataSource["rows"][number]) => {
     if (!editedItem.value?.dataSource || index === -1) return;
     const originalRow = structuredClone(toRawDeep(takeOne(editedItem.value.dataSource.rows, index)));
-    executeAndRecord(new UpdateRowCommand(index, originalRow, updatedRow));
+    executeAndRecord(new UpdateRowCommand(index, originalRow, structuredClone(toRawDeep(updatedRow))));
   };
 
   const updateColumn = (originalName: string, updatedColumn: ToData<Column | DateColumn>) => {
@@ -72,7 +72,7 @@ export const useEditedItemDataSourceOperations = () => {
     if (columnIndex === -1) return;
     const originalColumn = structuredClone(toRawDeep(takeOne(editedItem.value.dataSource.columns, columnIndex)));
     const originalRowValues = editedItem.value.dataSource.rows.map((row) => takeOne(toRawDeep(row).data, originalName));
-    executeAndRecord(new UpdateColumnCommand(originalName, originalColumn, updatedColumn, originalRowValues));
+    executeAndRecord(new UpdateColumnCommand(originalName, originalColumn, structuredClone(toRawDeep(updatedColumn)), originalRowValues));
   };
 
   const deleteColumn = (name: string) => {

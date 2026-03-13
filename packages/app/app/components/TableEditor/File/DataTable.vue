@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { Row } from "#shared/models/tableEditor/file/Row";
 
 import { DRAG_HANDLE_CLASS } from "@/services/tableEditor/file/constants";
 import { VueDraggable } from "vue-draggable-plus";
@@ -12,7 +13,11 @@ const { dataSource } = defineProps<DataTableProps>();
 const { reorderRows } = useEditedItemDataSourceOperations();
 const headers = computed(() => [
   { key: "drag", sortable: false, title: "" },
-  ...dataSource.columns.map((column) => ({ key: column.name, title: column.name })),
+  ...dataSource.columns.map((column) => ({
+    key: column.name,
+    title: column.name,
+    value: (row: Row) => row.data[column.name],
+  })),
   { key: "actions", sortable: false, title: "Actions" },
 ]);
 const dragRows = computed<DataSource["rows"]>({
