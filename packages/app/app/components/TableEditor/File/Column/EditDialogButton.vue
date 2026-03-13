@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 
-import { ColumnTypeFormSchemaWithoutNameMap } from "#shared/models/tableEditor/file/ColumnTypeFormSchemaMap";
+import {
+  ColumnTypeFormSchemaMap,
+  ColumnTypeFormSchemaWithoutNameMap,
+} from "#shared/models/tableEditor/file/ColumnTypeFormSchemaMap";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { toRawDeep } from "@esposter/shared";
 import { Vjsf } from "@koumoul/vjsf";
@@ -14,8 +17,8 @@ interface EditDialogButtonProps {
 
 const { column, dataSource } = defineProps<EditDialogButtonProps>();
 const { updateColumn } = useEditedItemDataSourceOperations();
-const schema = computed(() => ColumnTypeFormSchemaWithoutNameMap[column.type]);
-const jsonSchema = computed(() => zodToJsonSchema(schema.value));
+const schema = computed(() => ColumnTypeFormSchemaMap[column.type]);
+const jsonSchema = computed(() => zodToJsonSchema(ColumnTypeFormSchemaWithoutNameMap[column.type]));
 const editedColumn = ref(structuredClone(toRawDeep(column)));
 const disabled = computed(() => deepEqual(column, editedColumn.value));
 const uniqueNameRule = (value: string) =>

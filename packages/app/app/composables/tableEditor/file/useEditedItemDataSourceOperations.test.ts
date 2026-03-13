@@ -66,6 +66,7 @@ describe(useEditedItemDataSourceOperations, () => {
       const editedItemValue = editedItem.value;
 
       expectToBeDefined(editedItemValue);
+
       expect(editedItemValue.dataSource).toBe(dataSource);
     });
 
@@ -106,6 +107,7 @@ describe(useEditedItemDataSourceOperations, () => {
       const dataSource = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSource);
+
       expect(dataSource.rows).toHaveLength(1);
       expect(takeOne(dataSource.rows, 0).data[""]).toBe(2);
     });
@@ -120,6 +122,7 @@ describe(useEditedItemDataSourceOperations, () => {
       const dataSource = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSource);
+
       expect(dataSource.rows).toHaveLength(2);
       expect(takeOne(dataSource.rows, 0).data[""]).toBe(0);
     });
@@ -135,6 +138,7 @@ describe(useEditedItemDataSourceOperations, () => {
       const dataSource = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSource);
+
       expect(dataSource.rows).toHaveLength(1);
       expect(takeOne(dataSource.rows, 0).data[""]).toBe(2);
     });
@@ -169,6 +173,7 @@ describe(useEditedItemDataSourceOperations, () => {
       const dataSource = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSource);
+
       expect(takeOne(dataSource.rows, 0).data[""]).toBe(10);
       expect(takeOne(dataSource.rows, 0).data[" "]).toBe(11);
     });
@@ -183,6 +188,7 @@ describe(useEditedItemDataSourceOperations, () => {
       const dataSource = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSource);
+
       expect(takeOne(dataSource.rows, 0).data[""]).toBe(0);
       expect(takeOne(dataSource.rows, 0).data[" "]).toBe(1);
     });
@@ -198,6 +204,7 @@ describe(useEditedItemDataSourceOperations, () => {
       const dataSource = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSource);
+
       expect(takeOne(dataSource.rows, 0).data[""]).toBe(10);
     });
 
@@ -243,6 +250,7 @@ describe(useEditedItemDataSourceOperations, () => {
       const dataSourceAfterUndo = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSourceAfterUndo);
+
       expect(takeOne(dataSourceAfterUndo.rows, 0).data[""]).toBe(0);
       expect(takeOne(dataSourceAfterUndo.rows, 0).data[" "]).toBe(1);
 
@@ -250,6 +258,7 @@ describe(useEditedItemDataSourceOperations, () => {
       const dataSourceAfterRedo = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSourceAfterRedo);
+
       expect(takeOne(dataSourceAfterRedo.rows, 0).data[""]).toBe(10);
       expect(takeOne(dataSourceAfterRedo.rows, 0).data[" "]).toBe(11);
     });
@@ -265,6 +274,7 @@ describe(useEditedItemDataSourceOperations, () => {
       const dataSource = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSource);
+
       expect(dataSource.columns).toHaveLength(1);
       expect(takeOne(dataSource.columns, 0).name).toBe(" ");
       expect(takeOne(dataSource.rows, 0).data[""]).toBeUndefined();
@@ -280,6 +290,7 @@ describe(useEditedItemDataSourceOperations, () => {
       const dataSource = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSource);
+
       expect(dataSource.columns).toHaveLength(2);
       expect(takeOne(dataSource.columns, 0).name).toBe("");
       expect(takeOne(dataSource.rows, 0).data[""]).toBe(0);
@@ -297,6 +308,7 @@ describe(useEditedItemDataSourceOperations, () => {
       const dataSource = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSource);
+
       expect(dataSource.columns).toHaveLength(1);
       expect(takeOne(dataSource.rows, 0).data[""]).toBeUndefined();
     });
@@ -342,6 +354,7 @@ describe(useEditedItemDataSourceOperations, () => {
       const dataSource = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSource);
+
       expect(takeOne(dataSource.columns, 0).name).toBe("renamed");
       expect(takeOne(dataSource.rows, 0).data.renamed).toBe(0);
       expect(takeOne(dataSource.rows, 0).data[""]).toBeUndefined();
@@ -358,6 +371,7 @@ describe(useEditedItemDataSourceOperations, () => {
       const dataSource = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSource);
+
       expect(takeOne(dataSource.columns, 0).name).toBe("");
       expect(takeOne(dataSource.rows, 0).data[""]).toBe(0);
       expect(takeOne(dataSource.rows, 0).data.renamed).toBeUndefined();
@@ -375,6 +389,7 @@ describe(useEditedItemDataSourceOperations, () => {
       const dataSource = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSource);
+
       expect(takeOne(dataSource.columns, 0).name).toBe("renamed");
       expect(takeOne(dataSource.rows, 0).data.renamed).toBe(0);
     });
@@ -421,12 +436,14 @@ describe(useEditedItemDataSourceOperations, () => {
       const dataSourceAfterUndo = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSourceAfterUndo);
+
       expect(takeOne(dataSourceAfterUndo.columns, 0).name).toBe("");
 
       redo();
       const dataSourceAfterRedo = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSourceAfterRedo);
+
       expect(takeOne(dataSourceAfterRedo.columns, 0).name).toBe("renamed");
     });
   });
@@ -443,6 +460,7 @@ describe(useEditedItemDataSourceOperations, () => {
       const dataSource = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSource);
+
       expect(takeOne(dataSource.columns, 0).name).toBe(" ");
       expect(takeOne(dataSource.columns, 1).name).toBe("");
     });
@@ -459,6 +477,7 @@ describe(useEditedItemDataSourceOperations, () => {
       const dataSource = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSource);
+
       expect(takeOne(dataSource.columns, 0).name).toBe("");
       expect(takeOne(dataSource.columns, 1).name).toBe(" ");
     });
@@ -476,6 +495,7 @@ describe(useEditedItemDataSourceOperations, () => {
       const dataSource = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSource);
+
       expect(takeOne(dataSource.columns, 0).name).toBe(" ");
       expect(takeOne(dataSource.columns, 1).name).toBe("");
     });
@@ -495,6 +515,7 @@ describe(useEditedItemDataSourceOperations, () => {
       const dataSource = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSource);
+
       expect(takeOne(dataSource.columns, 0).name).toBe("b");
       expect(takeOne(dataSource.columns, 1).name).toBe("a");
       expect(takeOne(dataSource.columns, 2).name).toBe("c");
@@ -543,6 +564,7 @@ describe(useEditedItemDataSourceOperations, () => {
       const dataSource = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSource);
+
       expect(takeOne(dataSource.rows, 0).data[""]).toBe(2);
       expect(takeOne(dataSource.rows, 1).data[""]).toBe(0);
     });
@@ -559,6 +581,7 @@ describe(useEditedItemDataSourceOperations, () => {
       const dataSource = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSource);
+
       expect(takeOne(dataSource.rows, 0).data[""]).toBe(0);
       expect(takeOne(dataSource.rows, 1).data[""]).toBe(2);
     });
@@ -576,6 +599,7 @@ describe(useEditedItemDataSourceOperations, () => {
       const dataSource = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSource);
+
       expect(takeOne(dataSource.rows, 0).data[""]).toBe(2);
       expect(takeOne(dataSource.rows, 1).data[""]).toBe(0);
     });
@@ -595,6 +619,7 @@ describe(useEditedItemDataSourceOperations, () => {
       const dataSource = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSource);
+
       expect(takeOne(dataSource.rows, 0).data[""]).toBe(2);
       expect(takeOne(dataSource.rows, 1).data[""]).toBe(0);
       expect(takeOne(dataSource.rows, 2).data[""]).toBe(1);
@@ -675,6 +700,7 @@ describe(useEditedItemDataSourceOperations, () => {
       const dataSource = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSource);
+
       expect(dataSource.rows).toHaveLength(rowCountBefore);
       expect(isUndoable.value).toBe(false);
     });
@@ -689,6 +715,7 @@ describe(useEditedItemDataSourceOperations, () => {
       const dataSource = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSource);
+
       expect(dataSource.rows).toHaveLength(rowCountBefore);
       expect(isRedoable.value).toBe(false);
     });
@@ -727,6 +754,7 @@ describe(useEditedItemDataSourceOperations, () => {
       deleteRow(0);
 
       expectToBeDefined(undoDescription.value);
+
       expect(undoDescription.value).toContain("Delete");
     });
 
@@ -748,6 +776,7 @@ describe(useEditedItemDataSourceOperations, () => {
       undo();
 
       expectToBeDefined(redoDescription.value);
+
       expect(redoDescription.value).toContain("Delete");
     });
   });
@@ -790,12 +819,14 @@ describe(useEditedItemDataSourceOperations, () => {
       const dataSourceAfterDeletes = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSourceAfterDeletes);
+
       expect(dataSourceAfterDeletes.rows).toHaveLength(0);
 
       undo();
       const dataSourceAfterUndo1 = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSourceAfterUndo1);
+
       expect(dataSourceAfterUndo1.rows).toHaveLength(1);
       expect(takeOne(dataSourceAfterUndo1.rows, 0).data[""]).toBe(0);
 
@@ -803,6 +834,7 @@ describe(useEditedItemDataSourceOperations, () => {
       const dataSourceAfterUndo2 = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSourceAfterUndo2);
+
       expect(dataSourceAfterUndo2.rows).toHaveLength(2);
       expect(takeOne(dataSourceAfterUndo2.rows, 0).data[""]).toBe(0);
       expect(takeOne(dataSourceAfterUndo2.rows, 1).data[""]).toBe(2);
@@ -818,6 +850,7 @@ describe(useEditedItemDataSourceOperations, () => {
       const dataSourceAfterOps = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSourceAfterOps);
+
       expect(dataSourceAfterOps.rows).toHaveLength(1);
       expect(dataSourceAfterOps.columns).toHaveLength(1);
 
@@ -825,24 +858,28 @@ describe(useEditedItemDataSourceOperations, () => {
       const dataSourceAfterUndo1 = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSourceAfterUndo1);
+
       expect(dataSourceAfterUndo1.columns).toHaveLength(2);
 
       undo();
       const dataSourceAfterUndo2 = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSourceAfterUndo2);
+
       expect(dataSourceAfterUndo2.rows).toHaveLength(2);
 
       redo();
       const dataSourceAfterRedo1 = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSourceAfterRedo1);
+
       expect(dataSourceAfterRedo1.rows).toHaveLength(1);
 
       redo();
       const dataSourceAfterRedo2 = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSourceAfterRedo2);
+
       expect(dataSourceAfterRedo2.columns).toHaveLength(1);
     });
   });
