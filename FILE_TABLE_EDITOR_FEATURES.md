@@ -3,6 +3,7 @@
 ## UX / Workflow
 
 - [x] **Undo/redo** — history stack for row/column mutations (Ctrl+Z / Ctrl+Shift+Z)
+- [x] **Row drag-and-drop** — drag rows to reorder them; recorded in undo/redo history
 - [ ] **Add row manually** — form to insert a new blank row with typed fields
 - [ ] **Add column manually** — create a new column with a default value for all rows
 - [ ] **Bulk row selection + delete** — checkboxes in the data table to delete multiple rows at once

@@ -2,12 +2,13 @@ import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
+import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
 import { getRecordDifferenceDescription } from "@/services/tableEditor/file/getRecordDifferenceDescription";
 import { getValueSize } from "@/services/tableEditor/file/getValueSize";
 import { takeOne } from "@esposter/shared";
 
-export class UpdateRowCommand extends ADataSourceCommand {
-  readonly name = "UpdateRowCommand";
+export class UpdateRowCommand extends ADataSourceCommand<CommandType.UpdateRow> {
+  readonly type = CommandType.UpdateRow;
 
   get description() {
     const recordDifferenceDescription = getRecordDifferenceDescription(this.originalRow, this.updatedRow);

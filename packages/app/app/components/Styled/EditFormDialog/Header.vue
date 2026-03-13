@@ -1,22 +1,23 @@
 <script setup lang="ts" generic="T extends ItemEntityType<string>">
 import type { ItemEntityType } from "@esposter/shared";
 import type { VForm } from "vuetify/components";
+import type { z } from "zod";
 
 import { prettify } from "@/util/text/prettify";
 
 interface HeaderProps<T> {
   editedItem: T;
-  editFormRef: InstanceType<typeof VForm> | undefined;
-  formError: string;
+  editFormRef?: InstanceType<typeof VForm> | undefined;
   isEditFormValid: boolean;
   isFullScreenDialog: boolean;
   isSavable: boolean;
   name: string;
   originalItem?: T;
+  schema?: z.ZodType;
 }
 
 defineSlots<{ "prepend-actions": () => VNode }>();
-const { editedItem, editFormRef, formError, isEditFormValid, isFullScreenDialog, isSavable, name, originalItem } =
+const { editedItem, editFormRef, isEditFormValid, isFullScreenDialog, isSavable, name, originalItem, schema } =
   defineProps<HeaderProps<T>>();
 const itemType = computed(() => prettify(editedItem.type));
 const emit = defineEmits<{
@@ -30,7 +31,7 @@ const emit = defineEmits<{
 <template>
   <v-toolbar flex-none pl-4 :title="`Configuration - ${itemType}`">
     <v-spacer />
-    <StyledEditFormDialogErrorIcon :edit-form-ref :form-error :is-edit-form-valid />
+    <StyledEditFormDialogErrorIcon :edit-form-ref :is-edit-form-valid :schema :value="editedItem" />
     <slot name="prepend-actions" />
     <StyledEditFormDialogSaveButton :is-savable />
     <StyledEditFormDialogConfirmDeleteDialogButton :name :original-item @delete="emit('delete', $event)" />

@@ -12,7 +12,7 @@ interface EditDialogButtonProps {
 }
 
 const { columns, index, row } = defineProps<EditDialogButtonProps>();
-const { updateRow } = useEditedItemDataSource();
+const { updateRow } = useEditedItemDataSourceOperations();
 const editedRow = ref({ ...row });
 </script>
 

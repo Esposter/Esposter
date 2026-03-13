@@ -2,7 +2,7 @@
 import { marked } from "marked";
 import sanitizeHtml from "sanitize-html";
 
-const { isUndoable, undo, undoDescription } = useEditedItemDataSource();
+const { isUndoable, undo, undoDescription } = useEditedItemDataSourceOperations();
 const tooltipHtml = computed(() => {
   const [title, ...rest] = (undoDescription.value ?? "").split("\n\n");
   const parts = [`Undo: ${title} *(Ctrl+Z)*`, ...rest];

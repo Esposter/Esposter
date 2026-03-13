@@ -7,12 +7,13 @@ import type { ToData } from "@esposter/shared";
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { dayjs } from "#shared/services/dayjs";
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
+import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
 import { getRecordDifferenceDescription } from "@/services/tableEditor/file/getRecordDifferenceDescription";
 import { getValueSize } from "@/services/tableEditor/file/getValueSize";
 import { takeOne } from "@esposter/shared";
 
-export class UpdateColumnCommand extends ADataSourceCommand {
-  readonly name = "UpdateColumnCommand";
+export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateColumn> {
+  readonly type = CommandType.UpdateColumn;
 
   get description() {
     const recordDifferenceDescription = getRecordDifferenceDescription(this.originalColumn, this.updatedColumn);

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { TableEditorTypeItemSchemaMap } from "@/services/tableEditor/TableEditorTypeItemSchemaMap";
 import { useTableEditorStore } from "@/store/tableEditor";
 
 const slots = defineSlots<{ "append-header": () => VNode; "prepend-actions": () => VNode }>();
@@ -8,13 +9,14 @@ const {
   editedItem,
   editFormDialog,
   editFormRef,
-  formError,
   isEditFormValid,
   isFullScreenDialog,
   isSavable,
   originalItem,
+  tableEditorType,
 } = storeToRefs(tableEditorStore);
 const component = computed(() => (editedItem.value ? useEditFormComponent(editedItem.value.type) : undefined));
+const schema = computed(() => TableEditorTypeItemSchemaMap[tableEditorType.value]);
 </script>
 
 <template>
@@ -37,9 +39,9 @@ const component = computed(() => (editedItem.value ? useEditFormComponent(edited
       v-model="editFormDialog"
       :name="originalItem?.name ?? ''"
       :edited-item
-      :form-error
       :original-item
       :is-edit-form-valid
+      :schema
       :is-full-screen-dialog
       :is-savable
       @close="resetItem()"

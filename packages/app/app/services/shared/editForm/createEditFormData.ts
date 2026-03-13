@@ -22,12 +22,8 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
       ? items.value.find((i) => getIsEntityIdEqualComparator(idKeys, editedItemValue)(i))
       : undefined;
   });
-  const formError = ref("");
   const isFullScreenDialog = ref(false);
-  // The form is "valid" if there's no form open/no errors and no schema error
-  const isEditFormValid = computed(
-    () => !editFormRef.value || (editFormRef.value.errors.length === 0 && !formError.value),
-  );
+  const isEditFormValid = computed(() => !editFormRef.value || editFormRef.value.errors.length === 0);
   const isSavable = computed(
     () =>
       // For the form to be savable, it has to:
@@ -68,7 +64,6 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
     editFormDialog,
     editFormRef,
     editItem,
-    formError,
     isDirty,
     isEditFormValid,
     isFullScreenDialog,

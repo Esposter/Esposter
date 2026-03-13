@@ -1,9 +1,15 @@
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
+import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
 
-export class MoveRowCommand extends ADataSourceCommand {
-  readonly name = "MoveRowCommand";
+export class MoveRowCommand extends ADataSourceCommand<CommandType.MoveRow> {
+  readonly type = CommandType.MoveRow;
+
+  get description() {
+    return `Move Row ${this.fromIndex + 1} to ${this.toIndex + 1}`;
+  }
+
   private readonly fromIndex: number;
   private readonly toIndex: number;
 
@@ -11,10 +17,6 @@ export class MoveRowCommand extends ADataSourceCommand {
     super();
     this.fromIndex = fromIndex;
     this.toIndex = toIndex;
-  }
-
-  get description() {
-    return `Move Row ${this.fromIndex + 1} to ${this.toIndex + 1}`;
   }
 
   protected doExecute(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {

@@ -1,22 +1,23 @@
 <script setup lang="ts" generic="T extends ItemEntityType<string>">
 import type { ItemEntityType } from "@esposter/shared";
 import type { VForm } from "vuetify/components";
+import type { z } from "zod";
 
 import { dayjs } from "#shared/services/dayjs";
 
 interface EditFormDialogProps<T> {
   editedItem: T;
-  formError: string;
   isEditFormValid: boolean;
   isFullScreenDialog: boolean;
   isSavable: boolean;
   name: string;
   originalItem?: T;
+  schema?: z.ZodType;
 }
 
 defineSlots<{ default: () => VNode; "prepend-actions": () => VNode }>();
 const dialog = defineModel<boolean>({ required: true });
-const { editedItem, formError, isEditFormValid, isFullScreenDialog, isSavable, name, originalItem } =
+const { editedItem, isEditFormValid, isFullScreenDialog, isSavable, name, originalItem, schema } =
   defineProps<EditFormDialogProps<T>>();
 const emit = defineEmits<{
   close: [];
@@ -50,8 +51,8 @@ watch(editFormRef, (newEditFormRef) => {
           :edited-item
           :original-item
           :edit-form-ref
-          :form-error
           :is-edit-form-valid
+          :schema
           :is-full-screen-dialog
           :is-savable
           @update:edit-form-dialog="dialog = $event"

@@ -12,7 +12,7 @@ interface EditDialogButtonProps {
 }
 
 const { column, dataSource } = defineProps<EditDialogButtonProps>();
-const { updateColumn } = useEditedItemDataSource();
+const { updateColumn } = useEditedItemDataSourceOperations();
 const jsonSchema = computed(() => zodToJsonSchema(ColumnTypeFormSchemaWithoutNameMap[column.type]));
 const editedColumn = ref({ ...column });
 const disabled = computed(() => deepEqual(column, editedColumn.value));

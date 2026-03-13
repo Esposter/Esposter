@@ -11,7 +11,7 @@ interface ColumnTableProps {
 }
 
 const { dataSource } = defineProps<ColumnTableProps>();
-const { reorderColumns } = useEditedItemDataSource();
+const { reorderColumns } = useEditedItemDataSourceOperations();
 const dragColumns = computed({
   get: () => dataSource.columns,
   set: reorderColumns,

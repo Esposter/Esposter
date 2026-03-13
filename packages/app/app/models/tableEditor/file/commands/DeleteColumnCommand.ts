@@ -4,10 +4,11 @@ import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/Data
 import type { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
 
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
+import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
 import { takeOne } from "@esposter/shared";
 
-export class DeleteColumnCommand extends ADataSourceCommand {
-  readonly name = "DeleteColumnCommand";
+export class DeleteColumnCommand extends ADataSourceCommand<CommandType.DeleteColumn> {
+  readonly type = CommandType.DeleteColumn;
 
   get description() {
     return `Delete "${this.originalColumn.name}" Column`;

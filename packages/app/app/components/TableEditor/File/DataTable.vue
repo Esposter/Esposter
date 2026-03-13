@@ -9,7 +9,7 @@ interface DataTableProps {
 }
 
 const { dataSource } = defineProps<DataTableProps>();
-const { reorderRows } = useEditedItemDataSource();
+const { reorderRows } = useEditedItemDataSourceOperations();
 const headers = computed(() => [
   { key: "drag", sortable: false, title: "" },
   ...dataSource.columns.map((column) => ({ key: column.name, title: column.name })),

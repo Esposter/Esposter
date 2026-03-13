@@ -14,7 +14,7 @@ import { UpdateRowCommand } from "@/models/tableEditor/file/commands/UpdateRowCo
 import { useTableEditorStore } from "@/store/tableEditor";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
-export const useEditedItemDataSource = () => {
+export const useEditedItemDataSourceOperations = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
   const { editedItem } = storeToRefs(tableEditorStore);
   const { clear, isRedoable, isUndoable, push, redo, redoDescription, undo, undoDescription } = useDataSourceHistory();
@@ -39,7 +39,8 @@ export const useEditedItemDataSource = () => {
     const fromIndex = oldColumns.findIndex(({ id }) => id === movedColumn.id);
     const toIndex = newColumns.findIndex(({ id }) => id === movedColumn.id);
     if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return;
-    executeAndRecord(new MoveColumnCommand(fromIndex, toIndex, movedColumn.name));
+    const toColumnName = oldColumns[toIndex]?.name ?? "";
+    executeAndRecord(new MoveColumnCommand(fromIndex, toIndex, movedColumn.name, toColumnName));
   };
 
   const reorderRows = (newRows: DataSource["rows"]) => {

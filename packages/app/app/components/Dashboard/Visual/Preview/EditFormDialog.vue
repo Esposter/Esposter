@@ -8,7 +8,7 @@ import { Vjsf } from "@koumoul/vjsf";
 const editedItem = defineModel<Visual>({ required: true });
 const visualStore = useVisualStore();
 const { resetItem, save } = visualStore;
-const { editFormDialog, editFormRef, formError, isDirty, isEditFormValid, isFullScreenDialog, isSavable } =
+const { editFormDialog, editFormRef, isDirty, isEditFormValid, isFullScreenDialog, isSavable } =
   storeToRefs(visualStore);
 const schema = useSchema(
   () => editedItem.value.chart.type,
@@ -23,7 +23,6 @@ useConfirmBeforeNavigation(isDirty);
     v-model="editFormDialog"
     :name="`${editedItem.chart.type} ${editedItem.type} Visual`"
     :edited-item
-    :form-error
     :is-edit-form-valid
     :is-full-screen-dialog
     :is-savable
