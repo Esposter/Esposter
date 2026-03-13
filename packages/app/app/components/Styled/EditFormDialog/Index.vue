@@ -23,10 +23,10 @@ const emit = defineEmits<{
   close: [];
   delete: [onComplete: () => void];
   save: [];
-  "update:edit-form-ref": [value: InstanceType<typeof VForm>];
+  "update:edit-form": [value: InstanceType<typeof VForm>];
   "update:fullscreen-dialog": [value: boolean];
 }>();
-const editFormRef = ref<InstanceType<typeof VForm>>();
+const editForm = ref<InstanceType<typeof VForm>>();
 const formId = useId();
 
 watch(dialog, (newDialog) => {
@@ -36,9 +36,9 @@ watch(dialog, (newDialog) => {
   }, dayjs.duration(0.3, "seconds").asMilliseconds());
 });
 
-watch(editFormRef, (newEditFormRef) => {
-  if (!newEditFormRef) return;
-  emit("update:edit-form-ref", newEditFormRef);
+watch(editForm, (newEditForm) => {
+  if (!newEditForm) return;
+  emit("update:edit-form", newEditForm);
 });
 </script>
 
@@ -49,7 +49,7 @@ watch(editFormRef, (newEditFormRef) => {
         :name
         :edited-item
         :original-item
-        :edit-form-ref
+        :edit-form
         :form-id
         :is-edit-form-valid
         :schema
@@ -67,7 +67,7 @@ watch(editFormRef, (newEditFormRef) => {
       <v-divider thickness="2" />
       <v-container overflow-y-auto fluid>
         <slot name="prepend-form" />
-        <v-form :id="formId" ref="editFormRef" @submit.prevent="emit('save')">
+        <v-form :id="formId" ref="editForm" @submit.prevent="emit('save')">
           <slot />
         </v-form>
       </v-container>

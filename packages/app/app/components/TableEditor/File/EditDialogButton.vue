@@ -16,10 +16,10 @@ interface EditDialogButtonProps {
 defineSlots<{ default: () => VNode }>();
 const { editedValue, schema, title, tooltipText, value } = defineProps<EditDialogButtonProps>();
 const emit = defineEmits<{ submit: [onComplete: () => void] }>();
-const editFormRef = ref<InstanceType<typeof VForm>>();
+const editForm = ref<InstanceType<typeof VForm>>();
 const isEditFormValid = ref(true);
-const errorIconRef = useTemplateRef<InstanceType<typeof StyledEditFormDialogErrorIcon>>("errorIcon");
-const disabled = computed(() => !(errorIconRef.value?.isValid ?? true) || deepEqual(value, editedValue));
+const errorIcon = useTemplateRef<InstanceType<typeof StyledEditFormDialogErrorIcon>>("errorIcon");
+const disabled = computed(() => !(errorIcon.value?.isValid ?? true) || deepEqual(value, editedValue));
 </script>
 
 <template>
@@ -37,10 +37,10 @@ const disabled = computed(() => !(errorIconRef.value?.isValid ?? true) || deepEq
       </v-tooltip>
     </template>
     <template #prepend-actions>
-      <StyledEditFormDialogErrorIcon ref="errorIcon" :edit-form-ref :is-edit-form-valid :schema :edited-value />
+      <StyledEditFormDialogErrorIcon ref="errorIcon" :edit-form :is-edit-form-valid :schema :edited-value />
     </template>
     <v-container overflow-y-auto fluid>
-      <v-form ref="editFormRef" v-model="isEditFormValid">
+      <v-form ref="editForm" v-model="isEditFormValid">
         <slot />
       </v-form>
     </v-container>

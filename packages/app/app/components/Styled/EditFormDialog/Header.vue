@@ -7,7 +7,7 @@ import { prettify } from "@/util/text/prettify";
 
 interface HeaderProps<T> {
   editedItem: T;
-  editFormRef: InstanceType<typeof VForm> | undefined;
+  editForm: InstanceType<typeof VForm> | undefined;
   formId: string;
   isEditFormValid: boolean;
   isFullScreenDialog: boolean;
@@ -18,9 +18,11 @@ interface HeaderProps<T> {
 }
 
 defineSlots<{ "prepend-actions": () => VNode }>();
-const { editedItem, editFormRef, formId, isEditFormValid, isFullScreenDialog, isSavable, name, originalItem, schema } =
+const { editedItem, editForm, formId, isEditFormValid, isFullScreenDialog, isSavable, name, originalItem, schema } =
   defineProps<HeaderProps<T>>();
 const itemType = computed(() => prettify(editedItem.type));
+const errorIcon = useTemplateRef<InstanceType<typeof StyledEditFormDialogErrorIcon>>("errorIcon");
+const isSchemaValid = computed(() => errorIcon.value?.isValid.value ?? true);
 const emit = defineEmits<{
   delete: [onComplete: () => void];
   save: [];
@@ -32,9 +34,9 @@ const emit = defineEmits<{
 <template>
   <v-toolbar flex-none pl-4 :title="`Configuration - ${itemType}`">
     <v-spacer />
-    <StyledEditFormDialogErrorIcon :edit-form-ref :is-edit-form-valid :schema :edited-value="editedItem" />
+    <StyledEditFormDialogErrorIcon ref="errorIcon" :edit-form :is-edit-form-valid :schema :edited-value="editedItem" />
     <slot name="prepend-actions" />
-    <StyledEditFormDialogSaveButton :form-id :is-savable />
+    <StyledEditFormDialogSaveButton :form-id :is-savable="isSavable && isSchemaValid" />
     <StyledEditFormDialogConfirmDeleteDialogButton :name :original-item @delete="emit('delete', $event)" />
     <v-divider mx-2 thickness="2" vertical inset />
     <StyledEditFormDialogToggleFullScreenDialogButton

@@ -7,14 +7,14 @@ import { z as zod } from "zod";
 
 interface ErrorIconProps {
   editedValue: unknown;
-  editFormRef: InstanceType<typeof VForm> | undefined;
+  editForm: InstanceType<typeof VForm> | undefined;
   isEditFormValid: boolean;
   schema: z.ZodType;
 }
 
-const { editedValue, editFormRef, isEditFormValid, schema } = defineProps<ErrorIconProps>();
+const { editedValue, editForm, isEditFormValid, schema } = defineProps<ErrorIconProps>();
 const errorMessage = computed(() => {
-  const error = editFormRef?.errors[0];
+  const error = editForm?.errors[0];
   if (error) {
     const element = document.querySelector(`label[for="${error.id}"]`);
     if (element) return `${element.textContent}: ${takeOne(error.errorMessages)}`;

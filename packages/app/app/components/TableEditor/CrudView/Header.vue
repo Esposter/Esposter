@@ -7,8 +7,8 @@ const tableEditorStore = useTableEditorStore();
 const { resetItem, save } = tableEditorStore;
 const {
   editedItem,
+  editForm,
   editFormDialog,
-  editFormRef,
   isEditFormValid,
   isFullScreenDialog,
   isSavable,
@@ -52,7 +52,7 @@ const schema = computed(() => TableEditorTypeItemSchemaMap[tableEditorType.value
         }
       "
       @save="save()"
-      @update:edit-form-ref="editFormRef = $event"
+      @update:edit-form="editForm = $event"
       @update:fullscreen-dialog="isFullScreenDialog = $event"
     >
       <template v-if="slots['prepend-actions']" #prepend-actions>

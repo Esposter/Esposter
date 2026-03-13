@@ -9,7 +9,7 @@ import { Vjsf } from "@koumoul/vjsf";
 const editedItem = defineModel<Visual>({ required: true });
 const visualStore = useVisualStore();
 const { resetItem, save } = visualStore;
-const { editFormDialog, editFormRef, isDirty, isEditFormValid, isFullScreenDialog, isSavable } =
+const { editForm, editFormDialog, isDirty, isEditFormValid, isFullScreenDialog, isSavable } =
   storeToRefs(visualStore);
 const schema = useZodSchema(
   () => editedItem.value.chart.type,
@@ -31,7 +31,7 @@ useConfirmBeforeNavigation(isDirty);
     :schema
     @close="resetItem()"
     @save="save(editedItem)"
-    @update:edit-form-ref="editFormRef = $event"
+    @update:edit-form="editForm = $event"
     @update:fullscreen-dialog="isFullScreenDialog = $event"
   >
     <template #prepend-form>
