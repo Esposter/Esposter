@@ -55,7 +55,11 @@ const editedRow = ref(structuredClone(toRawDeep(row)));
           density="compact"
           @update:model-value="
             editedRow.data[column.name] =
-              column.type === ColumnType.Date ? dayjs($event, 'YYYY-MM-DD').format(column.format) : $event
+              column.type === ColumnType.Date
+                ? $event
+                  ? dayjs($event, 'YYYY-MM-DD').format(column.format)
+                  : $event
+                : $event
           "
         />
       </v-col>
