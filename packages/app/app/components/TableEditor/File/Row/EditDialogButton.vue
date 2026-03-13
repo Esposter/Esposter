@@ -2,7 +2,7 @@
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
-import { Row } from "#shared/models/tableEditor/file/Row";
+import { Row, rowSchema } from "#shared/models/tableEditor/file/Row";
 import { dayjs } from "#shared/services/dayjs";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
@@ -23,6 +23,7 @@ const editedRow = ref(new Row(structuredClone(toRawDeep(row))));
     tooltip-text="Edit Row"
     :value="row"
     :edited-value="editedRow"
+    :schema="rowSchema"
     @submit="
       (onComplete) => {
         updateRow(index, editedRow);

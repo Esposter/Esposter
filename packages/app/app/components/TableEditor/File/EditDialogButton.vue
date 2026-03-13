@@ -17,7 +17,8 @@ const { editedValue, schema, title, tooltipText, value } = defineProps<EditDialo
 const emit = defineEmits<{ submit: [onComplete: () => void] }>();
 const editFormRef = ref<InstanceType<typeof VForm>>();
 const isEditFormValid = ref(true);
-const disabled = computed(() => !isEditFormValid.value || deepEqual(value, editedValue));
+const errorIconRef = useTemplateRef("errorIcon");
+const disabled = computed(() => !(errorIconRef.value?.isValid.value ?? true) || deepEqual(value, editedValue));
 </script>
 
 <template>
@@ -35,7 +36,7 @@ const disabled = computed(() => !isEditFormValid.value || deepEqual(value, edite
       </v-tooltip>
     </template>
     <template #prepend-actions>
-      <StyledEditFormDialogErrorIcon :edit-form-ref :is-edit-form-valid :schema :edited-value />
+      <StyledEditFormDialogErrorIcon ref="errorIcon" :edit-form-ref :is-edit-form-valid :schema :edited-value />
     </template>
     <v-form ref="editFormRef" v-model="isEditFormValid">
       <slot />

@@ -13,7 +13,6 @@ interface ErrorIconProps {
 }
 
 const { editedValue, editFormRef, isEditFormValid, schema } = defineProps<ErrorIconProps>();
-const emit = defineEmits<{ "update:edited-value": [value: unknown] }>();
 const errorMessage = computed(() => {
   const error = editFormRef?.errors[0];
   if (error) {
@@ -25,6 +24,8 @@ const errorMessage = computed(() => {
   return result.success ? "" : zod.prettifyError(result.error);
 });
 const isValid = computed(() => isEditFormValid && !errorMessage.value);
+
+defineExpose({ isValid });
 </script>
 
 <template>
