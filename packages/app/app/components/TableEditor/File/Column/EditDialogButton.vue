@@ -14,7 +14,8 @@ interface EditDialogButtonProps {
 
 const { column, dataSource } = defineProps<EditDialogButtonProps>();
 const { updateColumn } = useEditedItemDataSourceOperations();
-const jsonSchema = computed(() => zodToJsonSchema(ColumnTypeFormSchemaWithoutNameMap[column.type]));
+const schema = computed(() => ColumnTypeFormSchemaWithoutNameMap[column.type]);
+const jsonSchema = computed(() => zodToJsonSchema(schema.value));
 const editedColumn = ref(structuredClone(toRawDeep(column)));
 const disabled = computed(() => deepEqual(column, editedColumn.value));
 const uniqueNameRule = (value: string) =>
@@ -26,6 +27,8 @@ const uniqueNameRule = (value: string) =>
     :title="`Edit ${column.name} Column`"
     tooltip-text="Edit Column"
     :disabled
+    :schema
+    :value="editedColumn"
     @submit="
       (onComplete) => {
         updateColumn(column.name, editedColumn);

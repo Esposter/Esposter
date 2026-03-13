@@ -62,21 +62,18 @@ describe(useEditedItemDataSourceOperations, () => {
       const { editedItem } = setupEditedItem();
       const { setDataSource } = useEditedItemDataSourceOperations();
       const dataSource = createDataSource();
-
       setDataSource(dataSource);
+      const editedItemValue = editedItem.value;
 
-      expectToBeDefined(editedItem.value);
-
-      expect(editedItem.value.dataSource).toBe(dataSource);
+      expectToBeDefined(editedItemValue);
+      expect(editedItemValue.dataSource).toBe(dataSource);
     });
 
     test("clears history after setting data source", () => {
       expect.hasAssertions();
 
-      const { editedItem, operations } = setupWithDataSource();
+      const { operations } = setupWithDataSource();
       const { deleteRow, isUndoable, setDataSource } = operations;
-      expectToBeDefined(editedItem.value?.dataSource);
-
       deleteRow(0);
 
       expect(isUndoable.value).toBe(true);
@@ -105,13 +102,12 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { editedItem, operations } = setupWithDataSource();
       const { deleteRow } = operations;
-
       deleteRow(0);
+      const dataSource = editedItem.value?.dataSource;
 
-      expectToBeDefined(editedItem.value?.dataSource);
-
-      expect(editedItem.value.dataSource.rows).toHaveLength(1);
-      expect(takeOne(editedItem.value.dataSource.rows, 0).data[""]).toBe(2);
+      expectToBeDefined(dataSource);
+      expect(dataSource.rows).toHaveLength(1);
+      expect(takeOne(dataSource.rows, 0).data[""]).toBe(2);
     });
 
     test("undo restores deleted row", () => {
@@ -119,14 +115,13 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { editedItem, operations } = setupWithDataSource();
       const { deleteRow, undo } = operations;
-
       deleteRow(0);
       undo();
+      const dataSource = editedItem.value?.dataSource;
 
-      expectToBeDefined(editedItem.value?.dataSource);
-
-      expect(editedItem.value.dataSource.rows).toHaveLength(2);
-      expect(takeOne(editedItem.value.dataSource.rows, 0).data[""]).toBe(0);
+      expectToBeDefined(dataSource);
+      expect(dataSource.rows).toHaveLength(2);
+      expect(takeOne(dataSource.rows, 0).data[""]).toBe(0);
     });
 
     test("redo re-applies delete after undo", () => {
@@ -134,15 +129,14 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { editedItem, operations } = setupWithDataSource();
       const { deleteRow, redo, undo } = operations;
-
       deleteRow(0);
       undo();
       redo();
+      const dataSource = editedItem.value?.dataSource;
 
-      expectToBeDefined(editedItem.value?.dataSource);
-
-      expect(editedItem.value.dataSource.rows).toHaveLength(1);
-      expect(takeOne(editedItem.value.dataSource.rows, 0).data[""]).toBe(2);
+      expectToBeDefined(dataSource);
+      expect(dataSource.rows).toHaveLength(1);
+      expect(takeOne(dataSource.rows, 0).data[""]).toBe(2);
     });
 
     test("no-op when editedItem is undefined", () => {
@@ -171,13 +165,12 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { editedItem, operations } = setupWithDataSource();
       const { updateRow } = operations;
-
       updateRow(0, createRow({ "": 10, " ": 11 }));
+      const dataSource = editedItem.value?.dataSource;
 
-      expectToBeDefined(editedItem.value?.dataSource);
-
-      expect(takeOne(editedItem.value.dataSource.rows, 0).data[""]).toBe(10);
-      expect(takeOne(editedItem.value.dataSource.rows, 0).data[" "]).toBe(11);
+      expectToBeDefined(dataSource);
+      expect(takeOne(dataSource.rows, 0).data[""]).toBe(10);
+      expect(takeOne(dataSource.rows, 0).data[" "]).toBe(11);
     });
 
     test("undo restores original row data", () => {
@@ -185,14 +178,13 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { editedItem, operations } = setupWithDataSource();
       const { undo, updateRow } = operations;
-
       updateRow(0, createRow({ "": 10, " ": 11 }));
       undo();
+      const dataSource = editedItem.value?.dataSource;
 
-      expectToBeDefined(editedItem.value?.dataSource);
-
-      expect(takeOne(editedItem.value.dataSource.rows, 0).data[""]).toBe(0);
-      expect(takeOne(editedItem.value.dataSource.rows, 0).data[" "]).toBe(1);
+      expectToBeDefined(dataSource);
+      expect(takeOne(dataSource.rows, 0).data[""]).toBe(0);
+      expect(takeOne(dataSource.rows, 0).data[" "]).toBe(1);
     });
 
     test("redo re-applies update after undo", () => {
@@ -200,14 +192,13 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { editedItem, operations } = setupWithDataSource();
       const { redo, undo, updateRow } = operations;
-
       updateRow(0, createRow({ "": 10, " ": 11 }));
       undo();
       redo();
+      const dataSource = editedItem.value?.dataSource;
 
-      expectToBeDefined(editedItem.value?.dataSource);
-
-      expect(takeOne(editedItem.value.dataSource.rows, 0).data[""]).toBe(10);
+      expectToBeDefined(dataSource);
+      expect(takeOne(dataSource.rows, 0).data[""]).toBe(10);
     });
 
     test("no-op when index is -1", () => {
@@ -215,7 +206,6 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { operations } = setupWithDataSource();
       const { isUndoable, updateRow } = operations;
-
       updateRow(-1, createRow({ "": 10 }));
 
       expect(isUndoable.value).toBe(false);
@@ -246,25 +236,22 @@ describe(useEditedItemDataSourceOperations, () => {
       const { editedItem, operations } = setupWithDataSource();
       const { redo, undo, updateRow } = operations;
       const updatedRow = reactive(createRow({ "": 10, " ": 11 }));
-
       updateRow(0, updatedRow);
-
       updatedRow.data[""] = 99;
       updatedRow.data[" "] = 99;
-
       undo();
+      const dataSourceAfterUndo = editedItem.value?.dataSource;
 
-      expectToBeDefined(editedItem.value?.dataSource);
-
-      expect(takeOne(editedItem.value.dataSource.rows, 0).data[""]).toBe(0);
-      expect(takeOne(editedItem.value.dataSource.rows, 0).data[" "]).toBe(1);
+      expectToBeDefined(dataSourceAfterUndo);
+      expect(takeOne(dataSourceAfterUndo.rows, 0).data[""]).toBe(0);
+      expect(takeOne(dataSourceAfterUndo.rows, 0).data[" "]).toBe(1);
 
       redo();
+      const dataSourceAfterRedo = editedItem.value?.dataSource;
 
-      expectToBeDefined(editedItem.value?.dataSource);
-
-      expect(takeOne(editedItem.value.dataSource.rows, 0).data[""]).toBe(10);
-      expect(takeOne(editedItem.value.dataSource.rows, 0).data[" "]).toBe(11);
+      expectToBeDefined(dataSourceAfterRedo);
+      expect(takeOne(dataSourceAfterRedo.rows, 0).data[""]).toBe(10);
+      expect(takeOne(dataSourceAfterRedo.rows, 0).data[" "]).toBe(11);
     });
   });
 
@@ -274,14 +261,13 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { editedItem, operations } = setupWithDataSource();
       const { deleteColumn } = operations;
-
       deleteColumn("");
+      const dataSource = editedItem.value?.dataSource;
 
-      expectToBeDefined(editedItem.value?.dataSource);
-
-      expect(editedItem.value.dataSource.columns).toHaveLength(1);
-      expect(takeOne(editedItem.value.dataSource.columns, 0).name).toBe(" ");
-      expect(takeOne(editedItem.value.dataSource.rows, 0).data[""]).toBeUndefined();
+      expectToBeDefined(dataSource);
+      expect(dataSource.columns).toHaveLength(1);
+      expect(takeOne(dataSource.columns, 0).name).toBe(" ");
+      expect(takeOne(dataSource.rows, 0).data[""]).toBeUndefined();
     });
 
     test("undo restores deleted column and row values", () => {
@@ -289,16 +275,15 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { editedItem, operations } = setupWithDataSource();
       const { deleteColumn, undo } = operations;
-
       deleteColumn("");
       undo();
+      const dataSource = editedItem.value?.dataSource;
 
-      expectToBeDefined(editedItem.value?.dataSource);
-
-      expect(editedItem.value.dataSource.columns).toHaveLength(2);
-      expect(takeOne(editedItem.value.dataSource.columns, 0).name).toBe("");
-      expect(takeOne(editedItem.value.dataSource.rows, 0).data[""]).toBe(0);
-      expect(takeOne(editedItem.value.dataSource.rows, 1).data[""]).toBe(2);
+      expectToBeDefined(dataSource);
+      expect(dataSource.columns).toHaveLength(2);
+      expect(takeOne(dataSource.columns, 0).name).toBe("");
+      expect(takeOne(dataSource.rows, 0).data[""]).toBe(0);
+      expect(takeOne(dataSource.rows, 1).data[""]).toBe(2);
     });
 
     test("redo re-applies delete after undo", () => {
@@ -306,15 +291,14 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { editedItem, operations } = setupWithDataSource();
       const { deleteColumn, redo, undo } = operations;
-
       deleteColumn("");
       undo();
       redo();
+      const dataSource = editedItem.value?.dataSource;
 
-      expectToBeDefined(editedItem.value?.dataSource);
-
-      expect(editedItem.value.dataSource.columns).toHaveLength(1);
-      expect(takeOne(editedItem.value.dataSource.rows, 0).data[""]).toBeUndefined();
+      expectToBeDefined(dataSource);
+      expect(dataSource.columns).toHaveLength(1);
+      expect(takeOne(dataSource.rows, 0).data[""]).toBeUndefined();
     });
 
     test("no-op when column name not found", () => {
@@ -322,7 +306,6 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { operations } = setupWithDataSource();
       const { deleteColumn, isUndoable } = operations;
-
       deleteColumn("nonexistent");
 
       expect(isUndoable.value).toBe(false);
@@ -355,15 +338,13 @@ describe(useEditedItemDataSourceOperations, () => {
       const { editedItem, operations } = setupWithDataSource();
       const { updateColumn } = operations;
       const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
-      expectToBeDefined(column);
-
       updateColumn("", Object.assign(structuredClone(column), { name: "renamed" }));
+      const dataSource = editedItem.value?.dataSource;
 
-      expectToBeDefined(editedItem.value?.dataSource);
-
-      expect(takeOne(editedItem.value.dataSource.columns, 0).name).toBe("renamed");
-      expect(takeOne(editedItem.value.dataSource.rows, 0).data.renamed).toBe(0);
-      expect(takeOne(editedItem.value.dataSource.rows, 0).data[""]).toBeUndefined();
+      expectToBeDefined(dataSource);
+      expect(takeOne(dataSource.columns, 0).name).toBe("renamed");
+      expect(takeOne(dataSource.rows, 0).data.renamed).toBe(0);
+      expect(takeOne(dataSource.rows, 0).data[""]).toBeUndefined();
     });
 
     test("undo restores original column name and row keys", () => {
@@ -372,16 +353,14 @@ describe(useEditedItemDataSourceOperations, () => {
       const { editedItem, operations } = setupWithDataSource();
       const { undo, updateColumn } = operations;
       const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
-      expectToBeDefined(column);
-
       updateColumn("", Object.assign(structuredClone(column), { name: "renamed" }));
       undo();
+      const dataSource = editedItem.value?.dataSource;
 
-      expectToBeDefined(editedItem.value?.dataSource);
-
-      expect(takeOne(editedItem.value.dataSource.columns, 0).name).toBe("");
-      expect(takeOne(editedItem.value.dataSource.rows, 0).data[""]).toBe(0);
-      expect(takeOne(editedItem.value.dataSource.rows, 0).data.renamed).toBeUndefined();
+      expectToBeDefined(dataSource);
+      expect(takeOne(dataSource.columns, 0).name).toBe("");
+      expect(takeOne(dataSource.rows, 0).data[""]).toBe(0);
+      expect(takeOne(dataSource.rows, 0).data.renamed).toBeUndefined();
     });
 
     test("redo re-applies update after undo", () => {
@@ -390,16 +369,14 @@ describe(useEditedItemDataSourceOperations, () => {
       const { editedItem, operations } = setupWithDataSource();
       const { redo, undo, updateColumn } = operations;
       const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
-      expectToBeDefined(column);
-
       updateColumn("", Object.assign(structuredClone(column), { name: "renamed" }));
       undo();
       redo();
+      const dataSource = editedItem.value?.dataSource;
 
-      expectToBeDefined(editedItem.value?.dataSource);
-
-      expect(takeOne(editedItem.value.dataSource.columns, 0).name).toBe("renamed");
-      expect(takeOne(editedItem.value.dataSource.rows, 0).data.renamed).toBe(0);
+      expectToBeDefined(dataSource);
+      expect(takeOne(dataSource.columns, 0).name).toBe("renamed");
+      expect(takeOne(dataSource.rows, 0).data.renamed).toBe(0);
     });
 
     test("no-op when original column name not found", () => {
@@ -407,7 +384,6 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { operations } = setupWithDataSource();
       const { isUndoable, updateColumn } = operations;
-
       updateColumn("nonexistent", new Column({ name: "nonexistent" }));
 
       expect(isUndoable.value).toBe(false);
@@ -438,22 +414,20 @@ describe(useEditedItemDataSourceOperations, () => {
       const { editedItem, operations } = setupWithDataSource();
       const { redo, undo, updateColumn } = operations;
       const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
-      expectToBeDefined(column);
       const updatedColumn = reactive(Object.assign(structuredClone(column), { name: "renamed" }));
-
       updateColumn("", updatedColumn);
       updatedColumn.name = "mutated";
       undo();
+      const dataSourceAfterUndo = editedItem.value?.dataSource;
 
-      expectToBeDefined(editedItem.value?.dataSource);
-
-      expect(takeOne(editedItem.value.dataSource.columns, 0).name).toBe("");
+      expectToBeDefined(dataSourceAfterUndo);
+      expect(takeOne(dataSourceAfterUndo.columns, 0).name).toBe("");
 
       redo();
+      const dataSourceAfterRedo = editedItem.value?.dataSource;
 
-      expectToBeDefined(editedItem.value.dataSource);
-
-      expect(takeOne(editedItem.value.dataSource.columns, 0).name).toBe("renamed");
+      expectToBeDefined(dataSourceAfterRedo);
+      expect(takeOne(dataSourceAfterRedo.columns, 0).name).toBe("renamed");
     });
   });
 
@@ -463,16 +437,14 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { editedItem, operations } = setupWithDataSource();
       const { reorderColumns } = operations;
-      expectToBeDefined(editedItem.value?.dataSource);
-      const { columns } = editedItem.value.dataSource;
+      const columns = editedItem.value?.dataSource?.columns ?? [];
       const newColumns = [takeOne(columns, 1), takeOne(columns, 0)] as Column[];
-
       reorderColumns(newColumns);
+      const dataSource = editedItem.value?.dataSource;
 
-      expectToBeDefined(editedItem.value?.dataSource);
-
-      expect(takeOne(editedItem.value.dataSource.columns, 0).name).toBe(" ");
-      expect(takeOne(editedItem.value.dataSource.columns, 1).name).toBe("");
+      expectToBeDefined(dataSource);
+      expect(takeOne(dataSource.columns, 0).name).toBe(" ");
+      expect(takeOne(dataSource.columns, 1).name).toBe("");
     });
 
     test("undo restores original column order", () => {
@@ -480,17 +452,15 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { editedItem, operations } = setupWithDataSource();
       const { reorderColumns, undo } = operations;
-      expectToBeDefined(editedItem.value?.dataSource);
-      const { columns } = editedItem.value.dataSource;
+      const columns = editedItem.value?.dataSource?.columns ?? [];
       const newColumns = [takeOne(columns, 1), takeOne(columns, 0)] as Column[];
-
       reorderColumns(newColumns);
       undo();
+      const dataSource = editedItem.value?.dataSource;
 
-      expectToBeDefined(editedItem.value?.dataSource);
-
-      expect(takeOne(editedItem.value.dataSource.columns, 0).name).toBe("");
-      expect(takeOne(editedItem.value.dataSource.columns, 1).name).toBe(" ");
+      expectToBeDefined(dataSource);
+      expect(takeOne(dataSource.columns, 0).name).toBe("");
+      expect(takeOne(dataSource.columns, 1).name).toBe(" ");
     });
 
     test("redo re-applies reorder after undo", () => {
@@ -498,18 +468,16 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { editedItem, operations } = setupWithDataSource();
       const { redo, reorderColumns, undo } = operations;
-      expectToBeDefined(editedItem.value?.dataSource);
-      const { columns } = editedItem.value.dataSource;
+      const columns = editedItem.value?.dataSource?.columns ?? [];
       const newColumns = [takeOne(columns, 1), takeOne(columns, 0)] as Column[];
-
       reorderColumns(newColumns);
       undo();
       redo();
+      const dataSource = editedItem.value?.dataSource;
 
-      expectToBeDefined(editedItem.value?.dataSource);
-
-      expect(takeOne(editedItem.value.dataSource.columns, 0).name).toBe(" ");
-      expect(takeOne(editedItem.value.dataSource.columns, 1).name).toBe("");
+      expectToBeDefined(dataSource);
+      expect(takeOne(dataSource.columns, 0).name).toBe(" ");
+      expect(takeOne(dataSource.columns, 1).name).toBe("");
     });
 
     test("moves column backward (index 1 to 0) with three columns", () => {
@@ -521,17 +489,15 @@ describe(useEditedItemDataSourceOperations, () => {
       );
       const { editedItem, operations } = setupWithDataSource(threeColumnDs);
       const { reorderColumns } = operations;
-      expectToBeDefined(editedItem.value?.dataSource);
-      const { columns } = editedItem.value.dataSource;
+      const columns = editedItem.value?.dataSource?.columns ?? [];
       const newColumns = [takeOne(columns, 1), takeOne(columns, 0), takeOne(columns, 2)] as Column[];
-
       reorderColumns(newColumns);
+      const dataSource = editedItem.value?.dataSource;
 
-      expectToBeDefined(editedItem.value?.dataSource);
-
-      expect(takeOne(editedItem.value.dataSource.columns, 0).name).toBe("b");
-      expect(takeOne(editedItem.value.dataSource.columns, 1).name).toBe("a");
-      expect(takeOne(editedItem.value.dataSource.columns, 2).name).toBe("c");
+      expectToBeDefined(dataSource);
+      expect(takeOne(dataSource.columns, 0).name).toBe("b");
+      expect(takeOne(dataSource.columns, 1).name).toBe("a");
+      expect(takeOne(dataSource.columns, 2).name).toBe("c");
     });
 
     test("no-op when order unchanged", () => {
@@ -539,9 +505,8 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { editedItem, operations } = setupWithDataSource();
       const { isUndoable, reorderColumns } = operations;
-      expectToBeDefined(editedItem.value?.dataSource);
-
-      reorderColumns([...editedItem.value.dataSource.columns]);
+      const columns = editedItem.value?.dataSource?.columns ?? [];
+      reorderColumns([...columns]);
 
       expect(isUndoable.value).toBe(false);
     });
@@ -572,16 +537,14 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { editedItem, operations } = setupWithDataSource();
       const { reorderRows } = operations;
-      expectToBeDefined(editedItem.value?.dataSource);
-      const { rows } = editedItem.value.dataSource;
+      const rows = editedItem.value?.dataSource?.rows ?? [];
       const newRows = [takeOne(rows, 1), takeOne(rows, 0)] as Row[];
-
       reorderRows(newRows);
+      const dataSource = editedItem.value?.dataSource;
 
-      expectToBeDefined(editedItem.value?.dataSource);
-
-      expect(takeOne(editedItem.value.dataSource.rows, 0).data[""]).toBe(2);
-      expect(takeOne(editedItem.value.dataSource.rows, 1).data[""]).toBe(0);
+      expectToBeDefined(dataSource);
+      expect(takeOne(dataSource.rows, 0).data[""]).toBe(2);
+      expect(takeOne(dataSource.rows, 1).data[""]).toBe(0);
     });
 
     test("undo restores original row order", () => {
@@ -589,17 +552,15 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { editedItem, operations } = setupWithDataSource();
       const { reorderRows, undo } = operations;
-      expectToBeDefined(editedItem.value?.dataSource);
-      const { rows } = editedItem.value.dataSource;
+      const rows = editedItem.value?.dataSource?.rows ?? [];
       const newRows = [takeOne(rows, 1), takeOne(rows, 0)] as Row[];
-
       reorderRows(newRows);
       undo();
+      const dataSource = editedItem.value?.dataSource;
 
-      expectToBeDefined(editedItem.value?.dataSource);
-
-      expect(takeOne(editedItem.value.dataSource.rows, 0).data[""]).toBe(0);
-      expect(takeOne(editedItem.value.dataSource.rows, 1).data[""]).toBe(2);
+      expectToBeDefined(dataSource);
+      expect(takeOne(dataSource.rows, 0).data[""]).toBe(0);
+      expect(takeOne(dataSource.rows, 1).data[""]).toBe(2);
     });
 
     test("redo re-applies reorder after undo", () => {
@@ -607,18 +568,16 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { editedItem, operations } = setupWithDataSource();
       const { redo, reorderRows, undo } = operations;
-      expectToBeDefined(editedItem.value?.dataSource);
-      const { rows } = editedItem.value.dataSource;
+      const rows = editedItem.value?.dataSource?.rows ?? [];
       const newRows = [takeOne(rows, 1), takeOne(rows, 0)] as Row[];
-
       reorderRows(newRows);
       undo();
       redo();
+      const dataSource = editedItem.value?.dataSource;
 
-      expectToBeDefined(editedItem.value?.dataSource);
-
-      expect(takeOne(editedItem.value.dataSource.rows, 0).data[""]).toBe(2);
-      expect(takeOne(editedItem.value.dataSource.rows, 1).data[""]).toBe(0);
+      expectToBeDefined(dataSource);
+      expect(takeOne(dataSource.rows, 0).data[""]).toBe(2);
+      expect(takeOne(dataSource.rows, 1).data[""]).toBe(0);
     });
 
     test("moves row backward (index 2 to 0) with three rows", () => {
@@ -630,17 +589,15 @@ describe(useEditedItemDataSourceOperations, () => {
       );
       const { editedItem, operations } = setupWithDataSource(threeRowDs);
       const { reorderRows } = operations;
-      expectToBeDefined(editedItem.value?.dataSource);
-      const { rows } = editedItem.value.dataSource;
+      const rows = editedItem.value?.dataSource?.rows ?? [];
       const newRows = [takeOne(rows, 2), takeOne(rows, 0), takeOne(rows, 1)] as Row[];
-
       reorderRows(newRows);
+      const dataSource = editedItem.value?.dataSource;
 
-      expectToBeDefined(editedItem.value?.dataSource);
-
-      expect(takeOne(editedItem.value.dataSource.rows, 0).data[""]).toBe(2);
-      expect(takeOne(editedItem.value.dataSource.rows, 1).data[""]).toBe(0);
-      expect(takeOne(editedItem.value.dataSource.rows, 2).data[""]).toBe(1);
+      expectToBeDefined(dataSource);
+      expect(takeOne(dataSource.rows, 0).data[""]).toBe(2);
+      expect(takeOne(dataSource.rows, 1).data[""]).toBe(0);
+      expect(takeOne(dataSource.rows, 2).data[""]).toBe(1);
     });
 
     test("no-op when order unchanged", () => {
@@ -648,9 +605,8 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { editedItem, operations } = setupWithDataSource();
       const { isUndoable, reorderRows } = operations;
-      expectToBeDefined(editedItem.value?.dataSource);
-
-      reorderRows([...editedItem.value.dataSource.rows]);
+      const rows = editedItem.value?.dataSource?.rows ?? [];
+      reorderRows([...rows]);
 
       expect(isUndoable.value).toBe(false);
     });
@@ -691,7 +647,6 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { operations } = setupWithDataSource();
       const { deleteRow, isRedoable, isUndoable } = operations;
-
       deleteRow(0);
 
       expect(isUndoable.value).toBe(true);
@@ -703,7 +658,6 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { operations } = setupWithDataSource();
       const { deleteRow, isRedoable, isUndoable, undo } = operations;
-
       deleteRow(0);
       undo();
 
@@ -716,14 +670,12 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { editedItem, operations } = setupWithDataSource();
       const { isUndoable, undo } = operations;
-      expectToBeDefined(editedItem.value?.dataSource);
-      const rowCountBefore = editedItem.value.dataSource.rows.length;
-
+      const rowCountBefore = editedItem.value?.dataSource?.rows.length ?? 0;
       undo();
+      const dataSource = editedItem.value?.dataSource;
 
-      expectToBeDefined(editedItem.value?.dataSource);
-
-      expect(editedItem.value.dataSource.rows).toHaveLength(rowCountBefore);
+      expectToBeDefined(dataSource);
+      expect(dataSource.rows).toHaveLength(rowCountBefore);
       expect(isUndoable.value).toBe(false);
     });
 
@@ -732,14 +684,12 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { editedItem, operations } = setupWithDataSource();
       const { isRedoable, redo } = operations;
-      expectToBeDefined(editedItem.value?.dataSource);
-      const rowCountBefore = editedItem.value.dataSource.rows.length;
-
+      const rowCountBefore = editedItem.value?.dataSource?.rows.length ?? 0;
       redo();
+      const dataSource = editedItem.value?.dataSource;
 
-      expectToBeDefined(editedItem.value?.dataSource);
-
-      expect(editedItem.value.dataSource.rows).toHaveLength(rowCountBefore);
+      expectToBeDefined(dataSource);
+      expect(dataSource.rows).toHaveLength(rowCountBefore);
       expect(isRedoable.value).toBe(false);
     });
 
@@ -748,7 +698,6 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { operations } = setupWithDataSource();
       const { deleteRow, isRedoable, undo } = operations;
-
       deleteRow(0);
       undo();
 
@@ -775,11 +724,9 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { operations } = setupWithDataSource();
       const { deleteRow, undoDescription } = operations;
-
       deleteRow(0);
 
       expectToBeDefined(undoDescription.value);
-
       expect(undoDescription.value).toContain("Delete");
     });
 
@@ -797,12 +744,10 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { operations } = setupWithDataSource();
       const { deleteRow, redoDescription, undo } = operations;
-
       deleteRow(0);
       undo();
 
       expectToBeDefined(redoDescription.value);
-
       expect(redoDescription.value).toContain("Delete");
     });
   });
@@ -820,7 +765,6 @@ describe(useEditedItemDataSourceOperations, () => {
       createItem(item1);
       createItem(item2);
       editedItem.value = item1;
-
       const operations = useEditedItemDataSourceOperations();
       const { deleteRow, isUndoable, setDataSource } = operations;
       setDataSource(createDataSource([createColumn("")], [createRow({ "": 0 }), createRow({ "": 1 })]));
@@ -841,26 +785,27 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { editedItem, operations } = setupWithDataSource();
       const { deleteRow, undo } = operations;
-
       deleteRow(1);
       deleteRow(0);
+      const dataSourceAfterDeletes = editedItem.value?.dataSource;
 
-      expectToBeDefined(editedItem.value?.dataSource);
-
-      expect(editedItem.value.dataSource.rows).toHaveLength(0);
-
-      undo();
-      expectToBeDefined(editedItem.value?.dataSource);
-
-      expect(editedItem.value.dataSource.rows).toHaveLength(1);
-      expect(takeOne(editedItem.value.dataSource.rows, 0).data[""]).toBe(0);
+      expectToBeDefined(dataSourceAfterDeletes);
+      expect(dataSourceAfterDeletes.rows).toHaveLength(0);
 
       undo();
-      expectToBeDefined(editedItem.value?.dataSource);
+      const dataSourceAfterUndo1 = editedItem.value?.dataSource;
 
-      expect(editedItem.value.dataSource.rows).toHaveLength(2);
-      expect(takeOne(editedItem.value.dataSource.rows, 0).data[""]).toBe(0);
-      expect(takeOne(editedItem.value.dataSource.rows, 1).data[""]).toBe(2);
+      expectToBeDefined(dataSourceAfterUndo1);
+      expect(dataSourceAfterUndo1.rows).toHaveLength(1);
+      expect(takeOne(dataSourceAfterUndo1.rows, 0).data[""]).toBe(0);
+
+      undo();
+      const dataSourceAfterUndo2 = editedItem.value?.dataSource;
+
+      expectToBeDefined(dataSourceAfterUndo2);
+      expect(dataSourceAfterUndo2.rows).toHaveLength(2);
+      expect(takeOne(dataSourceAfterUndo2.rows, 0).data[""]).toBe(0);
+      expect(takeOne(dataSourceAfterUndo2.rows, 1).data[""]).toBe(2);
     });
 
     test("mixed operations undo/redo correctly", () => {
@@ -868,34 +813,37 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { editedItem, operations } = setupWithDataSource();
       const { deleteColumn, deleteRow, redo, undo } = operations;
-
       deleteRow(0);
       deleteColumn(" ");
+      const dataSourceAfterOps = editedItem.value?.dataSource;
 
-      expectToBeDefined(editedItem.value?.dataSource);
-
-      expect(editedItem.value.dataSource.rows).toHaveLength(1);
-      expect(editedItem.value.dataSource.columns).toHaveLength(1);
-
-      undo();
-      expectToBeDefined(editedItem.value?.dataSource);
-
-      expect(editedItem.value.dataSource.columns).toHaveLength(2);
+      expectToBeDefined(dataSourceAfterOps);
+      expect(dataSourceAfterOps.rows).toHaveLength(1);
+      expect(dataSourceAfterOps.columns).toHaveLength(1);
 
       undo();
-      expectToBeDefined(editedItem.value?.dataSource);
+      const dataSourceAfterUndo1 = editedItem.value?.dataSource;
 
-      expect(editedItem.value.dataSource.rows).toHaveLength(2);
+      expectToBeDefined(dataSourceAfterUndo1);
+      expect(dataSourceAfterUndo1.columns).toHaveLength(2);
+
+      undo();
+      const dataSourceAfterUndo2 = editedItem.value?.dataSource;
+
+      expectToBeDefined(dataSourceAfterUndo2);
+      expect(dataSourceAfterUndo2.rows).toHaveLength(2);
 
       redo();
-      expectToBeDefined(editedItem.value?.dataSource);
+      const dataSourceAfterRedo1 = editedItem.value?.dataSource;
 
-      expect(editedItem.value.dataSource.rows).toHaveLength(1);
+      expectToBeDefined(dataSourceAfterRedo1);
+      expect(dataSourceAfterRedo1.rows).toHaveLength(1);
 
       redo();
-      expectToBeDefined(editedItem.value?.dataSource);
+      const dataSourceAfterRedo2 = editedItem.value?.dataSource;
 
-      expect(editedItem.value.dataSource.columns).toHaveLength(1);
+      expectToBeDefined(dataSourceAfterRedo2);
+      expect(dataSourceAfterRedo2.columns).toHaveLength(1);
     });
   });
 });
