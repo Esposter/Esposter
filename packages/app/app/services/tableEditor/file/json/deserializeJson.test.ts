@@ -20,26 +20,26 @@ describe(deserializeJson, () => {
         { a: 2, b: 3 },
       ]),
     );
-    const dataSource = await deserializeJson(file, new JsonDataSourceItem());
+    const { columns, rows } = await deserializeJson(file, new JsonDataSourceItem());
 
-    expect(dataSource.columns).toHaveLength(2);
-    expect(takeOne(dataSource.columns, 0).name).toBe("a");
-    expect(takeOne(dataSource.columns, 0).type).toBe(ColumnType.Number);
-    expect(takeOne(dataSource.columns, 1).name).toBe("b");
-    expect(dataSource.rows).toHaveLength(2);
-    expect(takeOne(dataSource.rows, 0).data).toStrictEqual({ a: 0, b: 1 });
-    expect(takeOne(dataSource.rows, 1).data).toStrictEqual({ a: 2, b: 3 });
+    expect(columns).toHaveLength(2);
+    expect(takeOne(columns, 0).name).toBe("a");
+    expect(takeOne(columns, 0).type).toBe(ColumnType.Number);
+    expect(takeOne(columns, 1).name).toBe("b");
+    expect(rows).toHaveLength(2);
+    expect(takeOne(rows, 0).data).toStrictEqual({ a: 0, b: 1 });
+    expect(takeOne(rows, 1).data).toStrictEqual({ a: 2, b: 3 });
   });
 
   test("empty array returns DataSource with no columns and rows", async () => {
     expect.hasAssertions();
 
     const file = createFile("[]");
-    const dataSource = await deserializeJson(file, new JsonDataSourceItem());
+    const { columns, metadata, rows } = await deserializeJson(file, new JsonDataSourceItem());
 
-    expect(dataSource.columns).toHaveLength(0);
-    expect(dataSource.rows).toHaveLength(0);
-    expect(dataSource.metadata.dataSourceType).toBe(DataSourceType.Json);
+    expect(columns).toHaveLength(0);
+    expect(rows).toHaveLength(0);
+    expect(metadata.dataSourceType).toBe(DataSourceType.Json);
   });
 
   test("throws InvalidOperationError on non-array JSON", async () => {

@@ -6,8 +6,8 @@ import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { Row } from "#shared/models/tableEditor/file/Row";
 import { XlsxDataSourceItem } from "#shared/models/tableEditor/file/xlsx/XlsxDataSourceItem";
 import { DataSourceConfigurationMap } from "@/services/tableEditor/file/DataSourceConfigurationMap";
-import { serializeXlsx } from "@/services/tableEditor/file/xlsx/serializeXlsx";
 import { deserializeXlsx } from "@/services/tableEditor/file/xlsx/deserializeXlsx";
+import { serializeXlsx } from "@/services/tableEditor/file/xlsx/serializeXlsx";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -38,15 +38,15 @@ describe(deserializeXlsx, () => {
       [createRow({ a: 0, b: 1 }), createRow({ a: 2, b: 3 })],
     );
     const file = await createXlsxFile(dataSource);
-    const parsedDataSource = await deserializeXlsx(file, new XlsxDataSourceItem());
+    const { columns, rows } = await deserializeXlsx(file, new XlsxDataSourceItem());
 
-    expect(parsedDataSource.columns).toHaveLength(2);
-    expect(takeOne(parsed.columns, 0).name).toBe("a");
-    expect(takeOne(parsed.columns, 0).type).toBe(ColumnType.Number);
-    expect(takeOne(parsed.columns, 1).name).toBe("b");
-    expect(parsedDataSource.rows).toHaveLength(2);
-    expect(takeOne(parsed.rows, 0).data).toStrictEqual({ a: 0, b: 1 });
-    expect(takeOne(parsed.rows, 1).data).toStrictEqual({ a: 2, b: 3 });
+    expect(columns).toHaveLength(2);
+    expect(takeOne(columns, 0).name).toBe("a");
+    expect(takeOne(columns, 0).type).toBe(ColumnType.Number);
+    expect(takeOne(columns, 1).name).toBe("b");
+    expect(rows).toHaveLength(2);
+    expect(takeOne(rows, 0).data).toStrictEqual({ a: 0, b: 1 });
+    expect(takeOne(rows, 1).data).toStrictEqual({ a: 2, b: 3 });
   });
 
   test("only header row returns columns with no rows", async () => {
@@ -54,10 +54,10 @@ describe(deserializeXlsx, () => {
 
     const dataSource = createDataSource([createColumn("a"), createColumn("b")], []);
     const file = await createXlsxFile(dataSource);
-    const parsedDataSource = await deserializeXlsx(file, new XlsxDataSourceItem());
+    const { columns, metadata, rows } = await deserializeXlsx(file, new XlsxDataSourceItem());
 
-    expect(parsedDataSource.columns).toHaveLength(2);
-    expect(parsedDataSource.rows).toHaveLength(0);
-    expect(parsedDataSource.metadata.dataSourceType).toBe(DataSourceType.Xlsx);
+    expect(columns).toHaveLength(2);
+    expect(rows).toHaveLength(0);
+    expect(metadata.dataSourceType).toBe(DataSourceType.Xlsx);
   });
 });
