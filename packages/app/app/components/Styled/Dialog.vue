@@ -20,9 +20,9 @@ defineSlots<{
   default: () => VNode;
   "prepend-actions": () => VNode;
 }>();
+const modelValue = defineModel<boolean>({ default: false });
 const { cardProps = {}, confirmButtonAttrs = {}, confirmButtonProps = {} } = defineProps<StyledDialogProps>();
 const emit = defineEmits<{ submit: [event: SubmitEventPromise, onComplete: () => void] }>();
-const modelValue = defineModel<boolean>({ default: false });
 const isEditFormValid = ref(true);
 </script>
 

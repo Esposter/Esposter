@@ -14,12 +14,12 @@ type ItemMenuProps = Partial<Pick<BuildingWithStats, "amount">> &
   Pick<BuildingWithStats | Upgrade, "id"> &
   Pick<Upgrade, "flavorDescription" | "price"> & { isAffordable: boolean; menuProps: VMenu["$props"]; type: ItemType };
 
-const { amount, description, flavorDescription, id, isAffordable, menuProps, price, type } =
-  defineProps<ItemMenuProps>();
 const slots = defineSlots<{
   action?: () => VNode;
   "append-text"?: () => VNode;
 }>();
+const { amount, description, flavorDescription, id, isAffordable, menuProps, price, type } =
+  defineProps<ItemMenuProps>();
 const { error } = useColors();
 const descriptionHtml = computed(() => (description ? marked.parse(description, { async: false }) : ""));
 const flavorDescriptionHtml = computed(() => marked.parse(`"${flavorDescription}"`, { async: false }));
