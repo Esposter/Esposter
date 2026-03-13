@@ -1,8 +1,7 @@
-import type { ReadonlyRefOrGetter } from "@vueuse/core";
 
 import { INITIAL_SETTINGS_POSITION, SETTINGS_POSITION_INCREMENT } from "@/services/dungeons/scene/settings/constants";
 
-export const useSettingsCursorDimensions = (rowIndex: ReadonlyRefOrGetter<number>) => {
+export const useSettingsCursorDimensions = (rowIndex: MaybeRefOrGetter<number>) => {
   useSettingsMenuWidth((settingsMenuWidth) => (width.value = settingsMenuWidth - INITIAL_SETTINGS_POSITION.x));
   const width = ref<number>();
   return {
