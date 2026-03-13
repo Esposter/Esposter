@@ -1,0 +1,65 @@
+# File & Folder Organisation
+
+## Files and Exports
+
+- **One export per file** — each exported function, class, or interface lives in its own file. Exception: Zod schemas may be co-located with their interface/type since they are tightly coupled.
+- **One class per file** — classes belong in a `models/` folder (e.g., `app/models/`, `shared/models/`).
+- **Constants go in `constants.ts`** — all module-level constants in a `constants.ts` file under `services/` alongside the files that use them. Never put `constants.ts` inside `composables/`.
+- **Functions go in `services/`** — factory functions, command creators, and other exported functions belong in `services/`, not `models/`. `models/` is strictly for classes and interfaces/types.
+- **Generic browser utilities** go in `app/utils/` (e.g., `readFileAsText.ts`).
+- **Feature folders**: related models/services/components are grouped under a feature subfolder (e.g., `tableEditor/file/`).
+- **No magic strings** — always use enums instead of string literals for discriminants, command types, and other categorical values.
+
+## Constant Maps
+
+- **Constant maps use PascalCase** with `as const satisfies` — e.g. `export const DataSourceConfigurationMap = { ... } as const satisfies Record<...>`.
+- **One constant map per file, named after the constant** — `ColumnTypeFormSchemaMap.ts` exports only `ColumnTypeFormSchemaMap`. Never co-locate multiple maps in one file. When a map is a transformation of another (e.g. omitting a key), derive it directly rather than repeating the source values: `[ColumnType.Boolean]: ColumnTypeFormSchemaMap[ColumnType.Boolean].omit({ name: true })`.
+- **Generic type maps for polymorphic dispatch** — when a constant map needs to associate a discriminant key (e.g. `DataSourceType`) with a type-parameterised generic (e.g. `DataSourceConfiguration<TItem>`), define an explicit type map first, then use a mapped type in `satisfies` to get per-entry type safety without any `as` casts:
+  ```typescript
+  // 1. Explicit type map (one file, in models/)
+  type DataSourceItemTypeMap = { [DataSourceType.Csv]: CsvDataSourceItem };
+  // 2. Satisfies mapped type — each entry is checked against its specific type param
+  export const DataSourceConfigurationMap: Record<
+    DataSourceType,
+    DataSourceConfiguration<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>
+  > = { ... };
+  ```
+- **Generic map lookup composables** — when a component needs to look up a typed configuration from a generic map using a discriminant key on a generic item, extract the lookup into a composable. Use `MaybeRefOrGetter<TItem>` with `toValue()` so callers can pass refs or plain values. Hide the single internal `as` cast and expose a fully typed API:
+  ```typescript
+  export const useDataSourceConfiguration = <
+    TDataSourceItem extends DataSourceItemTypeMap[keyof DataSourceItemTypeMap],
+  >(
+    item: MaybeRefOrGetter<TDataSourceItem>,
+  ): ComputedRef<DataSourceConfiguration<TDataSourceItem>> =>
+    computed(() => DataSourceConfigurationMap[toValue(item).type] as DataSourceConfiguration<TDataSourceItem>);
+  // Caller (no cast needed):
+  const dataSourceConfiguration = useDataSourceConfiguration(modelValue);
+  ```
+
+## Generic Vue Components
+
+Use `<script setup lang="ts" generic="T extends SomeBase">` to make components type-safe over a specific subtype. Pass the typed value AND its associated generic config/interface as props so the parent resolves the concrete types and the child stays fully typed without lookups or casts:
+```vue
+<!-- Parent (knows concrete type): -->
+<FilePicker :item="modelValue" :configuration="DataSourceConfigurationMap[DataSourceType.Csv]" />
+<!-- Child: -->
+<script setup lang="ts" generic="TDataSourceItem extends DataSourceItemTypeMap[keyof DataSourceItemTypeMap]">
+interface FilePickerProps {
+  configuration: DataSourceConfiguration<TDataSourceItem>;
+  item: TDataSourceItem;
+}
+</script>
+```
+
+## Command Pattern
+
+Commands are classes extending `ADataSourceCommand<T extends CommandType>`. Each command declares `readonly type = CommandType.X` (no `name` — the base class provides `get name() { return this.type; }`). `CommandType` enum lives in `models/tableEditor/file/commands/CommandType.ts`. Class field ordering within a command: `readonly type` → blank line → `get description()` → blank line → all `private readonly` fields grouped together (no blank lines between same-level fields) → blank line → constructor → blank line between each method.
+
+## MIME Types
+
+Store MIME type strings in the relevant configuration map (e.g. `DataSourceConfigurationMap`) rather than calling `mime-types` `lookup` at runtime — `mime-types` uses Node.js `path.extname` which is not available in the browser. Access `mimeType` through the configuration map at the call site.
+
+## Line Endings
+
+- All files must use **LF** line endings (`\n`), not CRLF.
+- After creating files on Windows, convert with a tool that supports LF output — do not use `sed -i` on Windows Git Bash as it empties files.
