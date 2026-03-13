@@ -1,3 +1,3 @@
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { ColumnValue } from "#shared/models/tableEditor/file/ColumnValue";
 
-export const getValueSize = (value: DataSource["rows"][number][string]): number => JSON.stringify(value ?? null).length;
+export const getValueSize = (value: ColumnValue | undefined): number => JSON.stringify(value ?? null).length;

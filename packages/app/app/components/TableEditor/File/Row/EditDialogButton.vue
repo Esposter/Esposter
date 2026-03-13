@@ -2,6 +2,7 @@
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
+import { Row } from "#shared/models/tableEditor/file/Row";
 import { dayjs } from "#shared/services/dayjs";
 import { takeOne } from "@esposter/shared";
 
@@ -13,7 +14,7 @@ interface EditDialogButtonProps {
 
 const { columns, index, row } = defineProps<EditDialogButtonProps>();
 const { updateRow } = useEditedItemDataSourceOperations();
-const editedRow = ref({ ...row });
+const editedRow = ref(new Row({ ...row, data: { ...row.data } }));
 </script>
 
 <template>
@@ -30,12 +31,16 @@ const editedRow = ref({ ...row });
     <v-container fluid>
       <v-row v-for="column of columns" :key="column.name">
         <v-col cols="12">
-          <v-checkbox v-if="column.type === ColumnType.Boolean" v-model="editedRow[column.name]" :label="column.name" />
+          <v-checkbox
+            v-if="column.type === ColumnType.Boolean"
+            v-model="editedRow.data[column.name]"
+            :label="column.name"
+          />
           <v-text-field
             v-else
             :model-value="
               (() => {
-                const value = takeOne(editedRow, column.name);
+                const value = takeOne(editedRow.data, column.name);
                 if (column.type === ColumnType.Date && typeof value === 'string') {
                   const date = dayjs(value, column.format, true);
                   if (date.isValid()) return date.format('YYYY-MM-DD');
@@ -47,7 +52,7 @@ const editedRow = ref({ ...row });
             :type="column.type === ColumnType.Number ? 'number' : column.type === ColumnType.Date ? 'date' : 'text'"
             density="compact"
             @update:model-value="
-              editedRow[column.name] =
+              editedRow.data[column.name] =
                 column.type === ColumnType.Date ? dayjs($event, 'YYYY-MM-DD').format(column.format) : $event
             "
           />

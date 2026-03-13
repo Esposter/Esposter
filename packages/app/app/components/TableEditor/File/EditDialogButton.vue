@@ -7,7 +7,7 @@ interface EditDialogButtonProps {
   tooltipText: string;
 }
 
-const slots = defineSlots<{ default: () => VNode }>();
+defineSlots<{ default: () => VNode }>();
 const { disabled = false } = defineProps<EditDialogButtonProps>();
 const emit = defineEmits<{ submit: [onComplete: () => void] }>();
 const editFormRef = ref<InstanceType<typeof VForm>>();

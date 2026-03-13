@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 
-import { DRAG_HANDLE_ID } from "@/services/tableEditor/file/constants";
 import { VueDraggable } from "vue-draggable-plus";
 
 interface DataTableProps {
@@ -22,7 +21,7 @@ const dragRows = computed<DataSource["rows"]>({
 </script>
 
 <template>
-  <VueDraggable v-model="dragRows" target="tbody" :handle="`#${DRAG_HANDLE_ID}`">
+  <VueDraggable v-model="dragRows" target="tbody" handle=".drag-handle">
     <StyledDataTable
       flex
       flex-1
@@ -34,7 +33,7 @@ const dragRows = computed<DataSource["rows"]>({
       }"
     >
       <template #[`item.drag`]>
-        <v-icon :id="DRAG_HANDLE_ID" icon="mdi-drag" cursor-move />
+        <v-icon class="drag-handle" icon="mdi-drag" cursor-move />
       </template>
       <template #[`item.actions`]="{ item, index }">
         <TableEditorFileRowActionSlot :columns="dataSource.columns" :index :row="item" />

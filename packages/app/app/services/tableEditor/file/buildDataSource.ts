@@ -4,6 +4,7 @@ import type { DataSourceType } from "#shared/models/tableEditor/file/DataSourceT
 import { Column } from "#shared/models/tableEditor/file/Column";
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
+import { Row } from "#shared/models/tableEditor/file/Row";
 import { coerceValue } from "@/services/tableEditor/file/coerceValue";
 import { inferColumnType } from "@/services/tableEditor/file/inferColumnType";
 import { inferDateFormat } from "@/services/tableEditor/file/inferDateFormat";
@@ -22,13 +23,15 @@ export const buildDataSource = (
       return new DateColumn({ format: inferDateFormat(values), name: sourceName, sourceName });
     return new Column({ name: sourceName, sourceName, type });
   });
-  const rows = bodyRows.map((bodyRow) =>
-    Object.fromEntries(
+  const rows = bodyRows.map((bodyRow) => {
+    const row = new Row();
+    row.data = Object.fromEntries(
       columns.map((column, index) => [column.name, coerceValue(takeOne(bodyRow, index), column.type)]),
-    ),
-  );
+    );
+    return row;
+  });
   for (const column of columns)
-    column.size = rows.reduce((total, row) => total + JSON.stringify(row[column.name] ?? null).length, 0);
+    column.size = rows.reduce((total, row) => total + JSON.stringify(row.data[column.name] ?? null).length, 0);
   return {
     columns,
     metadata: { dataSourceType, importedAt: new Date(), name: file.name, size: file.size },

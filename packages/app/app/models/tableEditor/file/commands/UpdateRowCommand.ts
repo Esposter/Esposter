@@ -11,7 +11,7 @@ export class UpdateRowCommand extends ADataSourceCommand<CommandType.UpdateRow> 
   readonly type = CommandType.UpdateRow;
 
   get description() {
-    const recordDifferenceDescription = getRecordDifferenceDescription(this.originalRow, this.updatedRow);
+    const recordDifferenceDescription = getRecordDifferenceDescription(this.originalRow.data, this.updatedRow.data);
     const detail = recordDifferenceDescription ? `\n\n${recordDifferenceDescription}` : "";
     return `Edit Row #${this.index + 1}${detail}`;
   }
@@ -31,15 +31,17 @@ export class UpdateRowCommand extends ADataSourceCommand<CommandType.UpdateRow> 
     if (!item.dataSource || this.index === -1) return;
     const row = takeOne(item.dataSource.rows, this.index);
     for (const column of item.dataSource.columns)
-      column.size += getValueSize(takeOne(this.updatedRow, column.name)) - getValueSize(takeOne(row, column.name));
-    Object.assign(row, this.updatedRow);
+      column.size +=
+        getValueSize(takeOne(this.updatedRow.data, column.name)) - getValueSize(takeOne(row.data, column.name));
+    row.data = { ...this.updatedRow.data };
   }
 
   protected doUndo(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
     if (!item.dataSource || this.index === -1) return;
     const row = takeOne(item.dataSource.rows, this.index);
     for (const column of item.dataSource.columns)
-      column.size += getValueSize(takeOne(this.originalRow, column.name)) - getValueSize(takeOne(row, column.name));
-    Object.assign(row, this.originalRow);
+      column.size +=
+        getValueSize(takeOne(this.originalRow.data, column.name)) - getValueSize(takeOne(row.data, column.name));
+    row.data = { ...this.originalRow.data };
   }
 }

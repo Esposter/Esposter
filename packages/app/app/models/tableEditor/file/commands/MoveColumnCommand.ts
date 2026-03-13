@@ -30,9 +30,8 @@ export class MoveColumnCommand extends ADataSourceCommand<CommandType.MoveColumn
     if (!moved) return;
     columns.splice(this.toIndex, 0, moved);
     item.dataSource.columns = columns;
-    item.dataSource.rows = item.dataSource.rows.map((row) =>
-      Object.fromEntries(columns.map(({ name }) => [name, row[name] ?? null])),
-    );
+    for (const row of item.dataSource.rows)
+      row.data = Object.fromEntries(columns.map(({ name }) => [name, row.data[name] ?? null]));
   }
 
   protected doUndo(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
@@ -42,8 +41,7 @@ export class MoveColumnCommand extends ADataSourceCommand<CommandType.MoveColumn
     if (!moved) return;
     columns.splice(this.fromIndex, 0, moved);
     item.dataSource.columns = columns;
-    item.dataSource.rows = item.dataSource.rows.map((row) =>
-      Object.fromEntries(columns.map(({ name }) => [name, row[name] ?? null])),
-    );
+    for (const row of item.dataSource.rows)
+      row.data = Object.fromEntries(columns.map(({ name }) => [name, row.data[name] ?? null]));
   }
 }

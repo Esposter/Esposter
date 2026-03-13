@@ -14,7 +14,7 @@ interface MemberListItemProps {
 
 type VHoverSlotProps = Extract<VHover["v-slot:default"], Function> extends (props: infer P) => VNodeChild ? P : never;
 
-const slots = defineSlots<{
+defineSlots<{
   append: ({ hoverProps, listItemProps }: { hoverProps: VHoverSlotProps; listItemProps: ListItemSlot }) => VNode;
 }>();
 const { member } = defineProps<MemberListItemProps>();

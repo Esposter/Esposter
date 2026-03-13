@@ -28,9 +28,7 @@ export class DeleteColumnCommand extends ADataSourceCommand<CommandType.DeleteCo
   protected doExecute(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
     if (!item.dataSource) return;
     item.dataSource.columns = item.dataSource.columns.filter((column) => column.name !== this.originalColumn.name);
-    item.dataSource.rows = item.dataSource.rows.map((row) =>
-      Object.fromEntries(Object.entries(row).filter(([key]) => key !== this.originalColumn.name)),
-    );
+    for (const row of item.dataSource.rows) delete row.data[this.originalColumn.name];
   }
 
   protected doUndo(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
@@ -41,6 +39,6 @@ export class DeleteColumnCommand extends ADataSourceCommand<CommandType.DeleteCo
       ...item.dataSource.columns.slice(this.columnIndex),
     ];
     for (const [index, row] of item.dataSource.rows.entries())
-      row[this.originalColumn.name] = takeOne(this.originalRowValues, index);
+      row.data[this.originalColumn.name] = takeOne(this.originalRowValues, index);
   }
 }

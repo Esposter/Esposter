@@ -25,13 +25,13 @@ export class DeleteRowCommand extends ADataSourceCommand<CommandType.DeleteRow> 
   protected doExecute(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
     if (!item.dataSource) return;
     const row = takeOne(item.dataSource.rows, this.index);
-    for (const column of item.dataSource.columns) column.size -= getValueSize(takeOne(row, column.name));
+    for (const column of item.dataSource.columns) column.size -= getValueSize(takeOne(row.data, column.name));
     item.dataSource.rows = item.dataSource.rows.filter((_, i) => i !== this.index);
   }
 
   protected doUndo(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
     if (!item.dataSource) return;
-    for (const column of item.dataSource.columns) column.size += getValueSize(takeOne(this.originalRow, column.name));
+    for (const column of item.dataSource.columns) column.size += getValueSize(takeOne(this.originalRow.data, column.name));
     item.dataSource.rows = [
       ...item.dataSource.rows.slice(0, this.index),
       this.originalRow,

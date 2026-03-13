@@ -26,14 +26,14 @@ const errorMessage = computed(() => {
 });
 
 watchDeep(
-  () => value,
-  (newValue) => {
-    if (!schema) {
+  () => [schema, value] as const,
+  ([newSchema, newValue]) => {
+    if (!newSchema) {
       schemaError.value = "";
       return;
     }
 
-    const result = schema.safeParse(newValue);
+    const result = newSchema.safeParse(newValue);
     schemaError.value = result.success ? "" : zod.prettifyError(result.error);
   },
 );

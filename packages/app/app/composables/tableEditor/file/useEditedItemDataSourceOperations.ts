@@ -46,10 +46,10 @@ export const useEditedItemDataSourceOperations = () => {
   const reorderRows = (newRows: DataSource["rows"]) => {
     if (!editedItem.value?.dataSource) return;
     const oldRows = editedItem.value.dataSource.rows;
-    const movedRow = newRows.find((row, index) => row !== oldRows[index]);
+    const movedRow = newRows.find((row, index) => row.id !== oldRows[index]?.id);
     if (!movedRow) return;
-    const fromIndex = oldRows.indexOf(movedRow);
-    const toIndex = newRows.indexOf(movedRow);
+    const fromIndex = oldRows.findIndex(({ id }) => id === movedRow.id);
+    const toIndex = newRows.findIndex(({ id }) => id === movedRow.id);
     if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return;
     executeAndRecord(new MoveRowCommand(fromIndex, toIndex));
   };
@@ -71,7 +71,7 @@ export const useEditedItemDataSourceOperations = () => {
     const columnIndex = editedItem.value.dataSource.columns.findIndex(({ name }) => name === originalName);
     if (columnIndex === -1) return;
     const originalColumn = structuredClone(toRawDeep(takeOne(editedItem.value.dataSource.columns, columnIndex)));
-    const originalRowValues = editedItem.value.dataSource.rows.map((row) => takeOne(toRawDeep(row), originalName));
+    const originalRowValues = editedItem.value.dataSource.rows.map((row) => takeOne(toRawDeep(row).data, originalName));
     executeAndRecord(new UpdateColumnCommand(originalName, originalColumn, updatedColumn, originalRowValues));
   };
 
@@ -80,7 +80,7 @@ export const useEditedItemDataSourceOperations = () => {
     const columnIndex = editedItem.value.dataSource.columns.findIndex((column) => column.name === name);
     if (columnIndex === -1) return;
     const originalColumn = structuredClone(toRawDeep(takeOne(editedItem.value.dataSource.columns, columnIndex)));
-    const originalRowValues = editedItem.value.dataSource.rows.map((row) => takeOne(toRawDeep(row), name));
+    const originalRowValues = editedItem.value.dataSource.rows.map((row) => takeOne(toRawDeep(row).data, name));
     executeAndRecord(new DeleteColumnCommand(columnIndex, originalColumn, originalRowValues));
   };
 
