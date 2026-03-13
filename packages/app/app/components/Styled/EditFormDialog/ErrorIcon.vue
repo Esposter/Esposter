@@ -6,7 +6,7 @@ import { takeOne } from "@esposter/shared";
 import { z as zod } from "zod";
 
 interface ErrorIconProps {
-  editFormRef?: InstanceType<typeof VForm> | undefined;
+  editFormRef: InstanceType<typeof VForm> | undefined;
   isEditFormValid: boolean;
   schema?: z.ZodType;
   value?: unknown;

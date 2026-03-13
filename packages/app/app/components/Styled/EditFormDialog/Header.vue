@@ -7,7 +7,7 @@ import { prettify } from "@/util/text/prettify";
 
 interface HeaderProps<T> {
   editedItem: T;
-  editFormRef?: InstanceType<typeof VForm> | undefined;
+  editFormRef: InstanceType<typeof VForm> | undefined;
   isEditFormValid: boolean;
   isFullScreenDialog: boolean;
   isSavable: boolean;
