@@ -1,6 +1,7 @@
 import type { ToData } from "@esposter/shared";
 
-import { Column, createColumnFormSchema, createColumnSchema } from "#shared/models/tableEditor/file/Column";
+import { Column, createColumnSchema } from "#shared/models/tableEditor/file/Column";
+import { createColumnFormSchema } from "#shared/models/tableEditor/file/ColumnForm";
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { DATE_FORMATS } from "#shared/models/tableEditor/file/constants";
 import { z } from "zod";

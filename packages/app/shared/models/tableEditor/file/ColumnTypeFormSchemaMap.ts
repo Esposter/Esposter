@@ -1,6 +1,6 @@
 import type { z } from "zod";
 
-import { columnFormSchema } from "#shared/models/tableEditor/file/Column";
+import { ColumnForm, columnFormSchema } from "#shared/models/tableEditor/file/ColumnForm";
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { dateColumnFormSchema } from "#shared/models/tableEditor/file/DateColumn";
 
@@ -9,4 +9,4 @@ export const ColumnTypeFormSchemaMap = {
   [ColumnType.Date]: dateColumnFormSchema,
   [ColumnType.Number]: columnFormSchema,
   [ColumnType.String]: columnFormSchema,
-} as const satisfies Record<ColumnType, z.ZodType>;
+} as const satisfies Record<ColumnType, z.ZodType<ColumnForm>>;
