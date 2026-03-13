@@ -37,6 +37,11 @@ useConfirmBeforeNavigation(isDirty);
     <template #prepend-form>
       <v-select v-model="editedItem.chart.type" :items="VisualTypeChartTypesMap[editedItem.type]" label="Chart Type" />
     </template>
-    <Vjsf v-model="editedItem.chart.configuration" :schema="jsonSchema" :options="{ removeAdditional: true }" />
+    <Vjsf
+      :key="editedItem.chart.type"
+      v-model="editedItem.chart.configuration"
+      :schema="jsonSchema"
+      :options="{ removeAdditional: true }"
+    />
   </StyledEditFormDialog>
 </template>

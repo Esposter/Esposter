@@ -15,7 +15,7 @@ interface EditFormDialogProps<T> {
   schema: z.ZodType;
 }
 
-defineSlots<{ default: () => VNode; "prepend-actions": () => VNode; "prepend-form": () => VNode }>();
+const slots = defineSlots<{ default: () => VNode; "prepend-actions": () => VNode; "prepend-form": () => VNode }>();
 const dialog = defineModel<boolean>({ required: true });
 const { editedItem, isEditFormValid, isFullScreenDialog, isSavable, name, originalItem, schema } =
   defineProps<EditFormDialogProps<T>>();
@@ -26,6 +26,8 @@ const emit = defineEmits<{
   "update:edit-form-ref": [value: InstanceType<typeof VForm>];
   "update:fullscreen-dialog": [value: boolean];
 }>();
+const editFormRef = ref<InstanceType<typeof VForm>>();
+const formId = useId();
 
 watch(dialog, (newDialog) => {
   if (newDialog) return;
@@ -33,8 +35,6 @@ watch(dialog, (newDialog) => {
     emit("close");
   }, dayjs.duration(0.3, "seconds").asMilliseconds());
 });
-
-const editFormRef = ref<InstanceType<typeof VForm>>();
 
 watch(editFormRef, (newEditFormRef) => {
   if (!newEditFormRef) return;
@@ -50,6 +50,7 @@ watch(editFormRef, (newEditFormRef) => {
         :edited-item
         :original-item
         :edit-form-ref
+        :form-id
         :is-edit-form-valid
         :schema
         :is-full-screen-dialog
@@ -66,7 +67,7 @@ watch(editFormRef, (newEditFormRef) => {
       <v-divider thickness="2" />
       <v-container overflow-y-auto fluid>
         <slot name="prepend-form" />
-        <v-form ref="editFormRef" @submit.prevent="emit('save')">
+        <v-form :id="formId" ref="editFormRef" @submit.prevent="emit('save')">
           <slot />
         </v-form>
       </v-container>
