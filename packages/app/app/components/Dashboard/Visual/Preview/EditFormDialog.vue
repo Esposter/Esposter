@@ -16,6 +16,15 @@ const schema = useZodSchema(
   () => editedItem.value.type,
 );
 const jsonSchema = computed(() => zodToJsonSchema(schema.value));
+// ToRaw() prevents Vjsf's internal watcher from seeing a proxy reference change
+// On every render: Pinia wraps the emitted plain object in reactive(), so without
+// ToRaw() Vjsf would receive a different reference each cycle and loop indefinitely.
+const chartConfiguration = computed({
+  get: () => toRaw(editedItem.value.chart.configuration),
+  set: (value) => {
+    editedItem.value.chart.configuration = value;
+  },
+});
 
 useConfirmBeforeNavigation(isDirty);
 </script>
@@ -39,7 +48,7 @@ useConfirmBeforeNavigation(isDirty);
     </template>
     <Vjsf
       :key="editedItem.chart.type"
-      v-model="editedItem.chart.configuration"
+      v-model="chartConfiguration"
       :schema="jsonSchema"
       :options="{ removeAdditional: true }"
     />

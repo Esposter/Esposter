@@ -6,10 +6,11 @@ import { CsvDataSourceItem } from "#shared/models/tableEditor/file/csv/CsvDataSo
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { Row } from "#shared/models/tableEditor/file/Row";
 import { expectToBeDefined } from "#shared/test/expectToBeDefined";
+import { useDataSourceHistory } from "@/composables/tableEditor/file/useDataSourceHistory";
 import { useEditedItemDataSourceOperations } from "@/composables/tableEditor/file/useEditedItemDataSourceOperations";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { useItemStore } from "@/store/tableEditor/item";
-import { takeOne } from "@esposter/shared";
+import { takeOne, toRawDeep } from "@esposter/shared";
 import { createPinia, setActivePinia, storeToRefs } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
@@ -50,7 +51,9 @@ describe(useEditedItemDataSourceOperations, () => {
   };
 
   beforeEach(() => {
+    const { clear } = useDataSourceHistory();
     setActivePinia(createPinia());
+    clear();
   });
 
   describe("setDataSource", () => {
@@ -65,7 +68,7 @@ describe(useEditedItemDataSourceOperations, () => {
 
       expectToBeDefined(editedItemValue);
 
-      expect(editedItemValue.dataSource).toBe(dataSource);
+      expect(editedItemValue.dataSource).toStrictEqual(dataSource);
     });
 
     test("clears history after setting data source", () => {
@@ -348,7 +351,7 @@ describe(useEditedItemDataSourceOperations, () => {
       const { editedItem, operations } = setupWithDataSource();
       const { updateColumn } = operations;
       const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
-      updateColumn("", Object.assign(structuredClone(column), { name: "renamed" }));
+      updateColumn("", Object.assign(structuredClone(toRawDeep(column)), { name: "renamed" }));
       const dataSource = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSource);
@@ -364,7 +367,7 @@ describe(useEditedItemDataSourceOperations, () => {
       const { editedItem, operations } = setupWithDataSource();
       const { undo, updateColumn } = operations;
       const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
-      updateColumn("", Object.assign(structuredClone(column), { name: "renamed" }));
+      updateColumn("", Object.assign(structuredClone(toRawDeep(column)), { name: "renamed" }));
       undo();
       const dataSource = editedItem.value?.dataSource;
 
@@ -381,7 +384,7 @@ describe(useEditedItemDataSourceOperations, () => {
       const { editedItem, operations } = setupWithDataSource();
       const { redo, undo, updateColumn } = operations;
       const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
-      updateColumn("", Object.assign(structuredClone(column), { name: "renamed" }));
+      updateColumn("", Object.assign(structuredClone(toRawDeep(column)), { name: "renamed" }));
       undo();
       redo();
       const dataSource = editedItem.value?.dataSource;
@@ -427,7 +430,7 @@ describe(useEditedItemDataSourceOperations, () => {
       const { editedItem, operations } = setupWithDataSource();
       const { redo, undo, updateColumn } = operations;
       const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
-      const updatedColumn = reactive(Object.assign(structuredClone(column), { name: "renamed" }));
+      const updatedColumn = reactive(Object.assign(structuredClone(toRawDeep(column)), { name: "renamed" }));
       updateColumn("", updatedColumn);
       updatedColumn.name = "mutated";
       undo();
