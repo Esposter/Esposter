@@ -16,4 +16,4 @@ Author
 Q16solver
 4 minutes ago
 we'll just keep it incase they want duplicate rows
-- we'll instead add a button to clear the form
+- we'll instead add a button to reset the form
