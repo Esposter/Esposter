@@ -61,9 +61,9 @@
     "vue-tsc": "catalog:"
   },
   "engines": {
-    "node": "^24.13.0"
+    "node": "^24.14.0"
   },
-  "packageManager": "pnpm@10.29.2+sha512.bef43fa759d91fd2da4b319a5a0d13ef7a45bb985a3d7342058470f9d2051a3ba8674e629672654686ef9443ad13a82da2beb9eeb3e0221c87b8154fff9d74b8",
+  "packageManager": "pnpm@10.32.1+sha512.a706938f0e89ac1456b6563eab4edf1d1faf3368d1191fc5c59790e96dc918e4456ab2e67d613de1043d2e8c81f87303e6b40d4ffeca9df15ef1ad567348f2be",
   "crossOS": {
     "refresh:lockfile": {
       "darwin": "sh ./scripts/refreshLockfile.sh",
@@ -75,9 +75,5 @@
       "linux": "cp -f",
       "win32": "pnpm pwsh -Command Copy-Item -Force"
     }
-  },
-  "devDependenciesComments": {
-    "oxlint": "@TODO: https://github.com/oxc-project/oxc/issues/13204",
-    "vite": "@TODO: v8.0.0-beta.11 breaks build"
   }
 }

@@ -19,7 +19,7 @@ export class FunnelResolver extends AVisualTypeResolver {
       },
       apexOptions.chart,
     );
-    apexOptions.dataLabels = defu<ApexDataLabels, (ApexDataLabels | undefined)[]>(
+    apexOptions.dataLabels = defu<NonNullable<ApexOptions["dataLabels"]>, ApexOptions["dataLabels"][]>(
       {
         dropShadow: {
           enabled: true,
@@ -46,13 +46,13 @@ export class FunnelResolver extends AVisualTypeResolver {
       },
       apexOptions.plotOptions,
     );
-    apexOptions.subtitle = defu<ApexTitleSubtitle, (ApexTitleSubtitle | undefined)[]>(
+    apexOptions.subtitle = defu<NonNullable<ApexOptions["subtitle"]>, ApexOptions["subtitle"][]>(
       {
         align: "center",
       },
       apexOptions.subtitle,
     );
-    apexOptions.title = defu<ApexTitleSubtitle, (ApexTitleSubtitle | undefined)[]>(
+    apexOptions.title = defu<NonNullable<ApexOptions["title"]>, ApexOptions["title"][]>(
       {
         align: "center",
       },

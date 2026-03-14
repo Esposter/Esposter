@@ -14,13 +14,16 @@ const { visualType } = storeToRefs(visualStore);
 const itemType = route.query[ITEM_TYPE_QUERY_PARAMETER_KEY];
 if (Object.values(VisualType).some((type) => type === itemType)) visualType.value = itemType as VisualType;
 const itemId = route.query[ID_QUERY_PARAMETER_KEY];
-if (typeof itemId === "string" && uuidValidateV4(itemId)) await editItem({ id: itemId });
+
+onMounted(async () => {
+  if (typeof itemId === "string" && uuidValidateV4(itemId)) await editItem({ id: itemId });
+});
 </script>
 
 <template>
   <NuxtLayout>
     <v-container h-full fluid>
-      <StyledCard flex="!" flex-col size-full>
+      <StyledCard flex flex-col size-full>
         <DashboardEditorHeader />
         <DashboardEditorContent />
       </StyledCard>

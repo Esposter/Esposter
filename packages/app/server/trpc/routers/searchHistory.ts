@@ -32,7 +32,7 @@ export const searchHistoryRouter = router({
       const newHistory = (
         await ctx.db
           .insert(searchHistories)
-          .values({ ...input, userId: ctx.session.user.id })
+          .values({ ...input, userId: ctx.getSessionPayload.user.id })
           .returning()
       )[0];
       if (!newHistory)
@@ -50,7 +50,7 @@ export const searchHistoryRouter = router({
       const deletedSearchHistory = (
         await ctx.db
           .delete(searchHistories)
-          .where(and(eq(searchHistories.id, input), eq(searchHistories.userId, ctx.session.user.id)))
+          .where(and(eq(searchHistories.id, input), eq(searchHistories.userId, ctx.getSessionPayload.user.id)))
           .returning()
       )[0];
       if (!deletedSearchHistory)
@@ -81,7 +81,7 @@ export const searchHistoryRouter = router({
         await ctx.db
           .update(searchHistories)
           .set({ query })
-          .where(and(eq(searchHistories.id, id), eq(searchHistories.userId, ctx.session.user.id)))
+          .where(and(eq(searchHistories.id, id), eq(searchHistories.userId, ctx.getSessionPayload.user.id)))
           .returning()
       )[0];
       if (!updatedSearchHistory)

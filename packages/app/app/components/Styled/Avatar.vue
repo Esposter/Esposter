@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import type { Session } from "@/models/auth/Session";
+import type { User } from "better-auth";
 import type { VAvatar } from "vuetify/components";
 // @TODO: https://github.com/vuejs/core/issues/11371
 interface StyledAvatarProps {
   avatarProps?: VAvatar["$props"];
-  image: Session["user"]["image"];
-  name: Session["user"]["name"];
+  image: User["image"];
+  name: User["name"];
 }
 
-const { avatarProps, image } = defineProps<StyledAvatarProps>();
+const { avatarProps, image, name } = defineProps<StyledAvatarProps>();
 </script>
 
 <template>

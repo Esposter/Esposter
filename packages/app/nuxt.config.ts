@@ -1,3 +1,4 @@
+// @TODO: This should not be required once nuxt fixes its types
 // oxlint-disable-next-line ban-ts-comment
 // @ts-nocheck
 import { app } from "./configuration/app";

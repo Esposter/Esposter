@@ -7,7 +7,7 @@ const inventoryUpgrades = computed(() => clicker.value.boughtUpgrades.toSorted((
 </script>
 
 <template>
-  <v-list overflow-y-auto="!">
+  <v-list overflow-y-auto>
     <ClickerModelUpgradeListGroup :upgrades="inventoryUpgrades" is-bought />
   </v-list>
 </template>

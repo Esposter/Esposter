@@ -41,7 +41,7 @@ export const userRouter = router({
     const upsertedStatus = (
       await ctx.db
         .insert(userStatuses)
-        .values({ isConnected: true, userId: ctx.session.user.id })
+        .values({ isConnected: true, userId: ctx.getSessionPayload.user.id })
         .onConflictDoUpdate({
           set: { isConnected: true },
           target: userStatuses.userId,
@@ -61,7 +61,7 @@ export const userRouter = router({
     const upsertedStatus = (
       await ctx.db
         .insert(userStatuses)
-        .values({ isConnected: false, userId: ctx.session.user.id })
+        .values({ isConnected: false, userId: ctx.getSessionPayload.user.id })
         .onConflictDoUpdate({
           set: { isConnected: false },
           target: userStatuses.userId,
@@ -82,7 +82,7 @@ export const userRouter = router({
     input,
     signal,
   }) {
-    if (input.includes(ctx.session.user.id)) throw new TRPCError({ code: "BAD_REQUEST" });
+    if (input.includes(ctx.getSessionPayload.user.id)) throw new TRPCError({ code: "BAD_REQUEST" });
 
     for await (const [data] of on(userEventEmitter, "upsertStatus", { signal })) {
       if (!input.includes(data.userId)) continue;
@@ -116,7 +116,7 @@ export const userRouter = router({
   }),
   uploadProfileImage: standardAuthedProcedure.input(octetInputParser).mutation(async ({ ctx, input }) => {
     const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
-    const blobName = `${ctx.session.user.id}/ProfileImage`;
+    const blobName = `${ctx.getSessionPayload.user.id}/ProfileImage`;
     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
     // @TODO: https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/65542
     const readable = Readable.fromWeb(input as ReadableStream);
@@ -127,7 +127,7 @@ export const userRouter = router({
     const upsertedStatus = (
       await ctx.db
         .insert(userStatuses)
-        .values({ ...input, userId: ctx.session.user.id })
+        .values({ ...input, userId: ctx.getSessionPayload.user.id })
         .onConflictDoUpdate({
           set: { ...input },
           target: userStatuses.userId,

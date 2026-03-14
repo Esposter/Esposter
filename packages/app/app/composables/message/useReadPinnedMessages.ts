@@ -17,7 +17,7 @@ export const useReadPinnedMessages = () => {
           readPinnedMessages.name,
           StandardMessageEntityPropertyNames.partitionKey,
         );
-      return $trpc.message.readMessages.useQuery({ filter: { isPinned: true }, roomId: currentRoomId.value });
+      return $trpc.message.readMessages.query({ filter: { isPinned: true }, roomId: currentRoomId.value });
     });
   const readMorePinnedMessages = () =>
     readMoreItems((cursor) => {

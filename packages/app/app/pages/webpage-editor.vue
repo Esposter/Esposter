@@ -69,7 +69,7 @@ const { trigger } = watchTriggerable(session, (newSession) => {
           const css = editor.getCss();
           return css ? `${htmlFormat(html)}<style>\n${cssFormat(css)}</style>` : htmlFormat(html);
         },
-        modalImportLabel: '<div class="text-subtitle-2" mb-2.5>Paste here your HTML/CSS and click Import</div>',
+        modalImportLabel: '<div class="text-title-small" mb-2.5>Paste here your HTML/CSS and click Import</div>',
         modalImportTitle: "Import Template",
       }),
     ],

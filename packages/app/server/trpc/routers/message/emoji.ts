@@ -77,18 +77,21 @@ export const emojiRouter = router({
           .message,
       });
 
-    const newEmoji = createMessageEmojiMetadataEntity({ ...input, userIds: [ctx.session.user.id] });
+    const newEmoji = createMessageEmojiMetadataEntity({ ...input, userIds: [ctx.getSessionPayload.user.id] });
     await createEntity(messagesMetadataClient, newEmoji);
     emojiEventEmitter.emit("createEmoji", [
       newEmoji,
-      { sessionId: ctx.session.session.id, userId: ctx.session.user.id },
+      { sessionId: ctx.getSessionPayload.session.id, userId: ctx.getSessionPayload.user.id },
     ]);
     return newEmoji;
   }),
   deleteEmoji: getMemberProcedure(deleteEmojiInputSchema, "partitionKey").mutation(async ({ ctx, input }) => {
     const messagesMetadataClient = await useTableClient(AzureTable.MessagesMetadata);
     await deleteEntity(messagesMetadataClient, input.partitionKey, input.rowKey);
-    emojiEventEmitter.emit("deleteEmoji", [input, { sessionId: ctx.session.session.id, userId: ctx.session.user.id }]);
+    emojiEventEmitter.emit("deleteEmoji", [
+      input,
+      { sessionId: ctx.getSessionPayload.session.id, userId: ctx.getSessionPayload.user.id },
+    ]);
   }),
   onCreateEmoji: getMemberProcedure(onCreateEmojiInputSchema, "roomId").subscription(async function* ({
     ctx,
@@ -96,7 +99,7 @@ export const emojiRouter = router({
     signal,
   }) {
     for await (const [[data, device]] of on(emojiEventEmitter, "createEmoji", { signal }))
-      if (isRoomId(data.partitionKey, input.roomId) && !getIsSameDevice(device, ctx.session)) yield data;
+      if (isRoomId(data.partitionKey, input.roomId) && !getIsSameDevice(device, ctx.getSessionPayload)) yield data;
   }),
   onDeleteEmoji: getMemberProcedure(onDeleteEmojiInputSchema, "roomId").subscription(async function* ({
     ctx,
@@ -104,7 +107,7 @@ export const emojiRouter = router({
     signal,
   }) {
     for await (const [[data, device]] of on(emojiEventEmitter, "deleteEmoji", { signal }))
-      if (isRoomId(data.partitionKey, input.roomId) && !getIsSameDevice(device, ctx.session)) yield data;
+      if (isRoomId(data.partitionKey, input.roomId) && !getIsSameDevice(device, ctx.getSessionPayload)) yield data;
   }),
   onUpdateEmoji: getMemberProcedure(onUpdateEmojiInputSchema, "roomId").subscription(async function* ({
     ctx,
@@ -112,7 +115,7 @@ export const emojiRouter = router({
     signal,
   }) {
     for await (const [[data, device]] of on(emojiEventEmitter, "updateEmoji", { signal }))
-      if (isRoomId(data.partitionKey, input.roomId) && !getIsSameDevice(device, ctx.session)) yield data;
+      if (isRoomId(data.partitionKey, input.roomId) && !getIsSameDevice(device, ctx.getSessionPayload)) yield data;
   }),
   readEmojis: getMemberProcedure(readMetadataInputSchema, "roomId").query(
     async ({ input: { messageRowKeys, roomId } }) => {
@@ -157,18 +160,18 @@ export const emojiRouter = router({
         code: "BAD_REQUEST",
         message: new InvalidOperationError(Operation.Read, MessageMetadataType.Emoji, JSON.stringify(input)).message,
       });
-    else if (readEmoji.userIds.length === 1 && readEmoji.userIds[0] === ctx.session.user.id)
+    else if (readEmoji.userIds.length === 1 && readEmoji.userIds[0] === ctx.getSessionPayload.user.id)
       throw new TRPCError({
         code: "BAD_REQUEST",
         message: new InvalidOperationError(Operation.Update, MessageMetadataType.Emoji, JSON.stringify(readEmoji))
           .message,
       });
 
-    const updatedEmoji = { ...input, userIds: getUpdatedUserIds(readEmoji.userIds, ctx.session.user.id) };
+    const updatedEmoji = { ...input, userIds: getUpdatedUserIds(readEmoji.userIds, ctx.getSessionPayload.user.id) };
     await updateEntity(messagesMetadataClient, updatedEmoji);
     emojiEventEmitter.emit("updateEmoji", [
       updatedEmoji,
-      { sessionId: ctx.session.session.id, userId: ctx.session.user.id },
+      { sessionId: ctx.getSessionPayload.session.id, userId: ctx.getSessionPayload.user.id },
     ]);
   }),
 });

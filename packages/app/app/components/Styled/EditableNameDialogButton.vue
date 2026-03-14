@@ -16,8 +16,15 @@ interface EditableNameDialogButtonProps {
 
 defineSlots<{ default?: () => VNode }>();
 const modelValue = defineModel<boolean>({ default: false });
-const { buttonProps, cardProps, isEditable, maxLength, name, placeholder, tooltipProps } =
-  defineProps<EditableNameDialogButtonProps>();
+const {
+  buttonProps,
+  cardProps,
+  isEditable = true,
+  maxLength,
+  name,
+  placeholder,
+  tooltipProps,
+} = defineProps<EditableNameDialogButtonProps>();
 const emit = defineEmits<{ submit: [name: string] }>();
 const editedName = ref(name);
 const displayName = computed(() => name || placeholder);

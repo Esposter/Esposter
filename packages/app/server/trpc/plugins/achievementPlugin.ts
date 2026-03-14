@@ -1,5 +1,4 @@
-import type { Session } from "#shared/models/auth/Session";
-import type { Context } from "@@/server/trpc/context";
+import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
 import type { UserAchievementWithRelations } from "@esposter/db-schema";
 
 import { achievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
@@ -10,19 +9,20 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { initTRPC, TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 
-const t = initTRPC.context<Context & { session: Session }>().create();
+const t = initTRPC.context<AuthedContext>().create();
 
-export const achievementPlugin = t.procedure.use(async ({ ctx, next, path, type }) => {
+export const achievementPlugin = t.procedure.use(async ({ ctx, getRawInput, next, path, type }) => {
   const result = await next();
   if (!result.ok || type !== "mutation") return result;
 
-  const userId = ctx.session.user.id;
+  const rawInput = await getRawInput();
+  const userId = ctx.getSessionPayload.user.id;
   const updatedUserAchievements: UserAchievementWithRelations[] = [];
 
   for (const { amount = 1, condition, incrementAmount = 1, name } of achievementDefinitions.filter(
     ({ triggerPath }) => triggerPath === path,
   )) {
-    if (condition && !checkAchievementCondition(condition, result.data)) continue;
+    if (condition && !checkAchievementCondition(condition, rawInput)) continue;
 
     const achievement =
       (await ctx.db.query.achievements.findFirst({

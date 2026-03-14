@@ -16,7 +16,7 @@ export const getCreatorProcedure = <T extends z.ZodType>(
     const value = input[roomIdKey];
     if (!(typeof value === "string" && uuidValidateV4(value))) throw new TRPCError({ code: "BAD_REQUEST" });
 
-    const isCreator = await getIsCreator(ctx.db, ctx.session, value);
+    const isCreator = await getIsCreator(ctx.db, ctx.getSessionPayload, value);
     if (!isCreator) throw new TRPCError({ code: "UNAUTHORIZED" });
     return next();
   });

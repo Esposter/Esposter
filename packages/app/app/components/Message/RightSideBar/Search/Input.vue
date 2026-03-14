@@ -80,7 +80,7 @@ const blur = () => (document.activeElement as HTMLElement | null)?.blur();
       }
     "
   >
-    <template #chip="{ item: { raw } }">
+    <template #chip="{ internalItem: { raw } }">
       <v-chip>
         {{ getFilterDisplayValue(raw) }}
       </v-chip>

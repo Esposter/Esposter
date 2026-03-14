@@ -18,7 +18,7 @@ const hasBuildings = computed(() => buildings.length > 0);
             <v-icon icon="mdi-domain" />
           </v-avatar>
         </template>
-        <v-list-item-title font-bold="!">Buildings</v-list-item-title>
+        <v-list-item-title font-bold>Buildings</v-list-item-title>
       </v-list-item>
     </template>
     <ClickerModelBuildingListItem v-for="building of buildings" :key="building.id" :building />

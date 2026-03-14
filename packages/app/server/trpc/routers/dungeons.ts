@@ -10,7 +10,7 @@ import { jsonDateParse, streamToText } from "@esposter/shared";
 export const dungeonsRouter = router({
   readDungeons: standardAuthedProcedure.query<Dungeons>(async ({ ctx }) => {
     try {
-      const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
+      const blobName = `${ctx.getSessionPayload.user.id}/${SAVE_FILENAME}`;
       const { readableStreamBody } = await useDownload(AzureContainer.DungeonsAssets, blobName);
       if (!readableStreamBody) return new Dungeons();
 
@@ -21,7 +21,7 @@ export const dungeonsRouter = router({
     }
   }),
   saveDungeons: standardAuthedProcedure.input(dungeonsSchema).mutation(async ({ ctx, input }) => {
-    const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
+    const blobName = `${ctx.getSessionPayload.user.id}/${SAVE_FILENAME}`;
     await useUpload(AzureContainer.DungeonsAssets, blobName, JSON.stringify(input));
   }),
 });

@@ -13,6 +13,6 @@ const { border } = useColors();
 
 <style scoped lang="scss">
 .border-color {
-  border-color: v-bind(border) !important;
+  border-color: v-bind(border);
 }
 </style>

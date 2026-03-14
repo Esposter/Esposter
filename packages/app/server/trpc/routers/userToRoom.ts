@@ -14,11 +14,11 @@ export type ReadUserToRoomsInput = z.infer<typeof readUserToRoomsInputSchema>;
 
 export const userToRoomRouter = router({
   readUserToRooms: standardAuthedProcedure.input(readUserToRoomsInputSchema).query(async ({ ctx, input }) => {
-    await isMember(ctx.db, ctx.session, input.roomIds);
+    await isMember(ctx.db, ctx.getSessionPayload, input.roomIds);
     return ctx.db.query.usersToRooms.findMany({
       columns: { notificationType: true, roomId: true, userId: true },
       where: (usersToRooms, { and, eq, inArray }) =>
-        and(eq(usersToRooms.userId, ctx.session.user.id), inArray(usersToRooms.roomId, input.roomIds)),
+        and(eq(usersToRooms.userId, ctx.getSessionPayload.user.id), inArray(usersToRooms.roomId, input.roomIds)),
     });
   }),
   updateUserToRoom: getMemberProcedure(updateUserToRoomInputSchema, "roomId").mutation(
@@ -27,7 +27,7 @@ export const userToRoomRouter = router({
         await ctx.db
           .update(usersToRooms)
           .set({ notificationType })
-          .where(and(eq(usersToRooms.roomId, roomId), eq(usersToRooms.userId, ctx.session.user.id)))
+          .where(and(eq(usersToRooms.roomId, roomId), eq(usersToRooms.userId, ctx.getSessionPayload.user.id)))
           .returning()
       )[0];
       if (!updatedUserToRoom)

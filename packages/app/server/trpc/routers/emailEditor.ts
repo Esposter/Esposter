@@ -10,7 +10,7 @@ import { jsonDateParse, streamToText } from "@esposter/shared";
 export const emailEditorRouter = router({
   readEmailEditor: standardAuthedProcedure.query<EmailEditor>(async ({ ctx }) => {
     try {
-      const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
+      const blobName = `${ctx.getSessionPayload.user.id}/${SAVE_FILENAME}`;
       const { readableStreamBody } = await useDownload(AzureContainer.EmailEditorAssets, blobName);
       if (!readableStreamBody) return new EmailEditor();
 
@@ -21,7 +21,7 @@ export const emailEditorRouter = router({
     }
   }),
   saveEmailEditor: standardAuthedProcedure.input(emailEditorSchema).mutation(async ({ ctx, input }) => {
-    const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
+    const blobName = `${ctx.getSessionPayload.user.id}/${SAVE_FILENAME}`;
     await useUpload(AzureContainer.EmailEditorAssets, blobName, JSON.stringify(input));
   }),
 });

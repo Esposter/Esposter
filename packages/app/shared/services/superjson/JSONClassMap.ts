@@ -12,6 +12,11 @@ import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { FlowchartEditor } from "#shared/models/flowchartEditor/data/FlowchartEditor";
 import { TableEditor } from "#shared/models/tableEditor/data/TableEditor";
 import { TableEditorConfiguration } from "#shared/models/tableEditor/data/TableEditorConfiguration";
+import { Column } from "#shared/models/tableEditor/file/Column";
+import { CsvDataSourceItem } from "#shared/models/tableEditor/file/csv/CsvDataSourceItem";
+import { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
+import { Row } from "#shared/models/tableEditor/file/Row";
+import { XlsxDataSourceItem } from "#shared/models/tableEditor/file/xlsx/XlsxDataSourceItem";
 import { TodoListItem } from "#shared/models/tableEditor/todoList/TodoListItem";
 import { VuetifyComponentItem } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
@@ -21,11 +26,15 @@ export const JSONClassMap: Record<string, Class<Serializable>> = {
   BasicChartConfiguration,
   Chart,
   Clicker,
+  Column,
+  CsvDataSourceItem,
   Dashboard,
+  DateColumn,
   Dungeons,
   EmailEditor,
   FlowchartEditor,
   MessageEmojiMetadataEntity,
+  Row,
   StandardMessageEntity,
   SurveyResponseEntity,
   TableEditor,
@@ -35,4 +44,5 @@ export const JSONClassMap: Record<string, Class<Serializable>> = {
   VuetifyComponentItem,
   WebhookMessageEntity,
   WebpageEditor,
+  XlsxDataSourceItem,
 };

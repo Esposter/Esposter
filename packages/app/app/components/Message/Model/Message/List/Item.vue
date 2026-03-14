@@ -56,8 +56,8 @@ watch(optionsMenu, (newOptionsMenu) => {
         :is="MessageComponentMap[message.type]"
         :id="message.rowKey"
         :mt="isSameBatch ? undefined : 4"
-        py-1="!"
-        min-h-auto="!"
+        py-1
+        min-h-auto
         :op="message.isLoading ? 50 : undefined"
         :active="(isActive || activeReplyRowKey === message.rowKey) && !isOpen"
         :creator

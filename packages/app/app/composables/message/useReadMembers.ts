@@ -24,7 +24,7 @@ export const useReadMembers = () => {
             StandardMessageEntityPropertyNames.partitionKey,
           );
         count.value = await $trpc.room.countMembers.query({ roomId: currentRoomId.value });
-        return $trpc.room.readMembers.useQuery({ roomId: currentRoomId.value });
+        return $trpc.room.readMembers.query({ roomId: currentRoomId.value });
       },
       async ({ items }) => {
         for (const member of items) memberMap.value.set(member.id, member);

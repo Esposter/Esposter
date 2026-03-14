@@ -1,26 +1,37 @@
 <script setup lang="ts">
 import type { VForm } from "vuetify/components";
+import type { z } from "zod";
+
+import { takeOne } from "@esposter/shared";
+import { z as zod } from "zod";
 
 interface ErrorIconProps {
-  editFormRef: InstanceType<typeof VForm> | undefined;
+  editedValue: unknown;
+  editForm: InstanceType<typeof VForm> | undefined;
   isEditFormValid: boolean;
+  schema: z.ZodType;
 }
 
-const { editFormRef, isEditFormValid } = defineProps<ErrorIconProps>();
+const { editedValue, editForm, isEditFormValid, schema } = defineProps<ErrorIconProps>();
 const errorMessage = computed(() => {
-  const error = editFormRef?.errors[0];
-  if (!error) return "";
+  const error = editForm?.errors[0];
+  if (error) {
+    const element = document.querySelector(`label[for="${error.id}"]`);
+    if (element) return `${element.textContent}: ${takeOne(error.errorMessages)}`;
+  }
 
-  const element = document.querySelector(`label[for="${error.id}"]`);
-  if (!element) return "";
-  return `${element.textContent}: ${editFormRef.errors[0]?.errorMessages[0]}`;
+  const result = schema.safeParse(editedValue);
+  return result.success ? "" : zod.prettifyError(result.error);
 });
+const isValid = computed(() => isEditFormValid && !errorMessage.value);
+
+defineExpose({ isValid });
 </script>
 
 <template>
   <v-tooltip :text="errorMessage" :disabled="!errorMessage">
     <template #activator="{ props }">
-      <v-icon icon="mdi-alert-octagon" :color="isEditFormValid ? 'border' : 'error'" start :="props" />
+      <v-icon icon="mdi-alert-octagon" :color="isValid ? 'border' : 'error'" start :="props" />
     </template>
   </v-tooltip>
 </template>

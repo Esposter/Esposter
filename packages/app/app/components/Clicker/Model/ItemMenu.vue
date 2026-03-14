@@ -14,12 +14,12 @@ type ItemMenuProps = Partial<Pick<BuildingWithStats, "amount">> &
   Pick<BuildingWithStats | Upgrade, "id"> &
   Pick<Upgrade, "flavorDescription" | "price"> & { isAffordable: boolean; menuProps: VMenu["$props"]; type: ItemType };
 
-const { amount, description, flavorDescription, id, isAffordable, menuProps, price, type } =
-  defineProps<ItemMenuProps>();
 const slots = defineSlots<{
   action?: () => VNode;
   "append-text"?: () => VNode;
 }>();
+const { amount, description, flavorDescription, id, isAffordable, menuProps, price, type } =
+  defineProps<ItemMenuProps>();
 const { error } = useColors();
 const descriptionHtml = computed(() => (description ? marked.parse(description, { async: false }) : ""));
 const flavorDescriptionHtml = computed(() => marked.parse(`"${flavorDescription}"`, { async: false }));
@@ -54,7 +54,7 @@ const upgradeIcon = computed(() => {
             :alt="id"
           />
         </template>
-        <v-list-item-subtitle op-100="!" flex="!" items-center>
+        <v-list-item-subtitle op-100 flex items-center>
           {{ displayPrice }}
           <div pl-2>
             <ClickerModelItem size-4 />
@@ -68,7 +68,7 @@ const upgradeIcon = computed(() => {
       </v-list-item>
     </template>
     <StyledCard>
-      <v-card-title flex="!" font-bold>
+      <v-card-title flex font-bold>
         <div>
           <v-img width="2rem" height="2rem" :src="type === Target.Building ? menuIcon : upgradeIcon" :alt="id" />
         </div>

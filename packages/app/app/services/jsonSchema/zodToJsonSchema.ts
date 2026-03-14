@@ -1,0 +1,28 @@
+import { recurseProperties } from "@/services/jsonSchema/recurseProperties";
+import { prettify } from "@/util/text/prettify";
+import { toTitleCase } from "@/util/text/toTitleCase";
+import { z } from "zod";
+
+export const zodToJsonSchema = (schema: z.ZodObject) => {
+  // For integrating with vjsf, we only need the type and properties
+  const { properties, type } = z.toJSONSchema(schema) as z.core.JSONSchema.ObjectSchema;
+  recurseProperties(properties, {
+    otherHooks: [
+      (key, property) => {
+        property.title ??= toTitleCase(prettify(key));
+        // Support z.union => anyOf
+        // Vjsf doesn't support anyOf since it can have different values
+        // But we know it will always come from the same enum
+        // We just need to use z.union to define metadata with z.literal so we migrate anyOf to oneOf
+        if (property.anyOf) {
+          property.oneOf = property.anyOf;
+          delete property.anyOf;
+        }
+        // Support z.literal => const
+        // Vjsf component doesn't show up with const
+        if (property.const) delete property.const;
+      },
+    ],
+  });
+  return { properties, type };
+};

@@ -4,9 +4,9 @@ import { Serializable } from "@esposter/shared";
 import { z } from "zod";
 
 export class BasicChartConfiguration extends Serializable {
-  dataLabels?: boolean;
-  subtitle?: string;
-  title?: string;
+  dataLabels = false;
+  subtitle = "";
+  title = "";
 }
 
 export const basicChartConfigurationSchema = z.object({

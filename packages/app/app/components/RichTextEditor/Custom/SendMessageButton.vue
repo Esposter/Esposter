@@ -23,7 +23,7 @@ const backgroundColor = computed(() => (disabled.value ? "transparent" : "curren
       <v-btn
         icon="mdi-send"
         size="small"
-        bg-transparent="!"
+        bg-transparent
         :disabled
         :="props"
         @click="
