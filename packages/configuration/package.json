@@ -24,6 +24,8 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
     "lint": "oxlint && eslint .",
     "lint:fix": "oxlint --fix && eslint --fix .",
     "typecheck": "tsc"
@@ -37,12 +39,10 @@
     "@vitejs/plugin-vue": "catalog:",
     "@vitest/eslint-plugin": "catalog:",
     "@vue/language-core": "catalog:",
-    "eslint-config-prettier": "catalog:",
     "eslint-plugin-depend": "catalog:",
     "eslint-plugin-oxlint": "catalog:",
     "eslint-plugin-perfectionist": "catalog:",
     "eslint-plugin-pinia": "catalog:",
-    "eslint-plugin-prettier": "catalog:",
     "typescript-eslint": "catalog:",
     "unplugin-auto-import": "catalog:",
     "unplugin-dts": "catalog:",

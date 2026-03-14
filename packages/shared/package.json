@@ -25,6 +25,8 @@
     "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
     "coverage": "vitest run --coverage",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
     "lint": "oxlint && eslint .",
     "lint:fix": "oxlint --fix && eslint --fix .",
     "test": "vitest",
