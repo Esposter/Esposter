@@ -19,7 +19,8 @@
       "mcp__vuetify-mcp__get_feature_guide",
       "mcp__vuetify-mcp__get_installation_guide",
       "mcp__vuetify-mcp__get_v4_breaking_changes",
-      "Bash(pnpm install:*)"
+      "Bash(pnpm install:*)",
+      "Bash(pnpm refresh:lockfile 2>&1)"
     ]
   }
 }

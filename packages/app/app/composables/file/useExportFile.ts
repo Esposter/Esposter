@@ -1,3 +1,5 @@
+import type { MimeType } from "#shared/models/file/MimeType";
+
 import { useAlertStore } from "@/store/alert";
 import { showSaveFilePicker } from "show-open-file-picker";
 
@@ -5,9 +7,9 @@ export const useExportFile = () => {
   const alertStore = useAlertStore();
   const { createAlert } = alertStore;
   return async (
-    serialize: (type: string) => Promise<Blob>,
+    serialize: (type: MimeType) => Promise<Blob>,
     fileName: string,
-    mimeType: string,
+    mimeType: MimeType,
     accept: string,
   ): Promise<void> => {
     try {

@@ -1,6 +1,7 @@
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 import type { DataSourceConfiguration } from "@/models/tableEditor/file/DataSourceConfiguration";
 
+import { MimeType } from "#shared/models/file/MimeType";
 import { csvDataSourceConfigurationSchema } from "#shared/models/tableEditor/file/csv/CsvDataSourceConfiguration";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { jsonDataSourceConfigurationSchema } from "#shared/models/tableEditor/file/json/JsonDataSourceConfiguration";
@@ -19,21 +20,21 @@ export const DataSourceConfigurationMap: Record<
   [DataSourceType.Csv]: {
     accept: ".csv",
     deserialize: deserializeCsv,
-    mimeType: "text/csv",
+    mimeType: MimeType.Csv,
     schema: csvDataSourceConfigurationSchema,
     serialize: serializeCsv,
   },
   [DataSourceType.Json]: {
     accept: ".json",
     deserialize: deserializeJson,
-    mimeType: "application/json",
+    mimeType: MimeType.Json,
     schema: jsonDataSourceConfigurationSchema,
     serialize: serializeJson,
   },
   [DataSourceType.Xlsx]: {
     accept: ".xlsx",
     deserialize: deserializeXlsx,
-    mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    mimeType: MimeType.Xlsx,
     schema: xlsxDataSourceConfigurationSchema,
     serialize: serializeXlsx,
   },
