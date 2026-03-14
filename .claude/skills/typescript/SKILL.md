@@ -38,6 +38,7 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 ## Helper Functions
 
 - **Don't extract helpers that add no value** — if a helper function just wraps an inline object literal or a single expression without reuse or meaningful abstraction, return/use the value directly. Three lines of inline code is better than a named wrapper used once.
+- **Function naming prefixes** — use `get*` for functions that derive or compute a display value (e.g. `getVisibilityTooltip`, `getRowTitle`). Use CRUD prefixes (`create*`, `update*`, `delete*`) for heavier operations that interact with data or stores.
 
 ## Enum Refs
 

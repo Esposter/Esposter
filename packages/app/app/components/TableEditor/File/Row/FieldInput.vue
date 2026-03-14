@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { ColumnValue } from "#shared/models/tableEditor/file/ColumnValue";
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
 
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
-import { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
 import { dayjs } from "#shared/services/dayjs";
 
 interface RowFieldInputProps {
@@ -12,7 +12,7 @@ interface RowFieldInputProps {
 
 const { column } = defineProps<RowFieldInputProps>();
 const modelValue = defineModel<ColumnValue>({ required: true });
-const dateFormat = computed(() => (column.type === ColumnType.Date ? (column as DateColumn).format : ""));
+const dateFormat = computed(() => (column.type === ColumnType.Date ? (column).format : ""));
 const textFieldType = computed(() => {
   if (column.type === ColumnType.Number) return "number";
   if (column.type === ColumnType.Date) return "date";

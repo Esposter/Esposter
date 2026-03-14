@@ -3,13 +3,14 @@ import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 
 interface ActionSlotProps {
   columns: DataSource["columns"];
+  index: number;
   row: DataSource["rows"][number];
 }
 
-const { columns, row } = defineProps<ActionSlotProps>();
+const { columns, index, row } = defineProps<ActionSlotProps>();
 </script>
 
 <template>
-  <TableEditorFileRowEditDialogButton :columns :row />
-  <TableEditorFileRowDeleteDialogButton :id="row.id" />
+  <TableEditorFileRowEditDialogButton :columns :index :row />
+  <TableEditorFileRowDeleteDialogButton :id="row.id" :index />
 </template>

@@ -2,6 +2,7 @@
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 
 import { Row, rowSchema } from "#shared/models/tableEditor/file/Row";
+import { takeOne } from "@esposter/shared";
 
 interface CreateDialogButtonProps {
   dataSource: DataSource;
@@ -29,7 +30,11 @@ const editedRow = ref(new Row({ data: Object.fromEntries(dataSource.columns.map(
   >
     <v-row v-for="column of dataSource.columns.filter((column) => !column.hidden)" :key="column.id">
       <v-col cols="12">
-        <TableEditorFileRowFieldInput v-model="editedRow.data[column.name]" :column />
+        <TableEditorFileRowFieldInput
+          :model-value="takeOne(editedRow.data, column.name)"
+          :column
+          @update:model-value="editedRow.data[column.name] = $event"
+        />
       </v-col>
     </v-row>
   </TableEditorFileEditDialogButton>

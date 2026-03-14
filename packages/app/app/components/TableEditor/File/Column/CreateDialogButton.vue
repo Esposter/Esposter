@@ -26,7 +26,9 @@ const uniqueNameRule = useColumnNameRule(() => dataSource.columns);
 watch(columnType, (newType, oldType) => {
   if (newType === oldType) return;
   const name = editedColumn.value.name;
-  editedColumn.value = structuredClone(newType === ColumnType.Date ? new DateColumn({ name }) : new Column({ name, type: newType }));
+  editedColumn.value = structuredClone(
+    newType === ColumnType.Date ? new DateColumn({ name }) : new Column({ name, type: newType }),
+  );
 });
 </script>
 

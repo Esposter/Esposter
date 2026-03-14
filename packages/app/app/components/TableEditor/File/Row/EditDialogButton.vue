@@ -6,18 +6,20 @@ import { toRawDeep } from "@esposter/shared";
 
 interface EditDialogButtonProps {
   columns: DataSource["columns"];
+  index: number;
   row: DataSource["rows"][number];
 }
 
-const { columns, row } = defineProps<EditDialogButtonProps>();
+const { columns, index, row } = defineProps<EditDialogButtonProps>();
 const { updateRow } = useEditedItemDataSourceOperations();
+const title = computed(() => `Edit Row ${index + 1}`);
 const editedRow = ref(structuredClone(toRawDeep(row)));
 </script>
 
 <template>
   <TableEditorFileEditDialogButton
-    title="Edit Row"
-    tooltip-text="Edit Row"
+    :title
+    :tooltip-text="title"
     :value="row"
     :edited-value="editedRow"
     :schema="rowSchema"

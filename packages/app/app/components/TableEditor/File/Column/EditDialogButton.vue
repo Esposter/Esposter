@@ -17,13 +17,14 @@ const { updateColumn } = useEditedItemDataSourceOperations();
 const schema = computed(() => takeOne(ColumnTypeFormSchemaMap, column.type));
 const jsonSchema = computed(() => zodToJsonSchema(takeOne(EditFormSchemaMap, column.type)));
 const editedColumn = ref(structuredClone(toRawDeep(column)));
+const title = computed(() => `Edit "${column.name}" Column`);
 const uniqueNameRule = useColumnNameRule(() => dataSource.columns, column.name);
 </script>
 
 <template>
   <TableEditorFileEditDialogButton
-    :title="`Edit ${column.name} Column`"
-    tooltip-text="Edit Column"
+    :title
+    :tooltip-text="title"
     :schema
     :value="column"
     :edited-value="editedColumn"
