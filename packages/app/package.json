@@ -204,5 +204,5 @@
     "sass-embedded": "catalog:",
     "unocss": "catalog:",
     "vuetify-nuxt-module": "catalog:"
-  },
+  }
 }

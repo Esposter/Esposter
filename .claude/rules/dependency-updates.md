@@ -11,10 +11,7 @@ All version numbers live in the `catalog:` section of `pnpm-workspace.yaml` at t
 
 2. **Update versions** in `pnpm-workspace.yaml` — all non-pinned packages must have a `^` caret prefix.
 
-3. **Refresh the lockfile** (run from repo root):
-   ```
-   pnpm refresh:lockfile
-   ```
+3. **Refresh the lockfile manually** — run `pnpm refresh:lockfile` from the repo root yourself after updating versions.
 
 ## Pinned packages (do not update)
 
