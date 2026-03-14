@@ -4,8 +4,8 @@
 
 - [x] **Undo/redo** — history stack for row/column mutations (Ctrl+Z / Ctrl+Shift+Z)
 - [x] **Row drag-and-drop** — drag rows to reorder them; recorded in undo/redo history
-- [ ] **Add row manually** — form to insert a new blank row with typed fields
-- [ ] **Add column manually** — create a new column with a default value for all rows
+- [x] **Add row manually** — dialog form with per-column typed inputs (respects hidden columns)
+- [x] **Add column manually** — dialog form with name, type selector, and vjsf for description/sourceName
 - [ ] **Bulk row selection + delete** — checkboxes in the data table to delete multiple rows at once
 - [x] **Pagination config** — handled by v-data-table
 

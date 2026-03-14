@@ -3,9 +3,9 @@ import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 
 import { Column } from "#shared/models/tableEditor/file/Column";
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
+import { ColumnTypeFormSchemaMap } from "#shared/models/tableEditor/file/ColumnTypeFormSchemaMap";
 import { CreateFormSchemaMap } from "#shared/models/tableEditor/file/CreateFormSchemaMap";
 import { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
-import { EditFormSchemaMap } from "#shared/models/tableEditor/file/EditFormSchemaMap";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { takeOne } from "@esposter/shared";
 import { Vjsf } from "@koumoul/vjsf";
@@ -17,8 +17,8 @@ interface CreateDialogButtonProps {
 const { dataSource } = defineProps<CreateDialogButtonProps>();
 const { createColumn } = useEditedItemDataSourceOperations();
 const editedColumn = ref<Column | DateColumn>(new Column());
-const schema = computed(() => takeOne(CreateFormSchemaMap, editedColumn.value.type));
-const jsonSchema = computed(() => zodToJsonSchema(takeOne(EditFormSchemaMap, editedColumn.value.type)));
+const schema = computed(() => takeOne(ColumnTypeFormSchemaMap, editedColumn.value.type));
+const jsonSchema = computed(() => zodToJsonSchema(takeOne(CreateFormSchemaMap, editedColumn.value.type)));
 const uniqueNameRule = useColumnNameRule(() => dataSource.columns);
 
 watch(

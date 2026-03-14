@@ -3,9 +3,8 @@ import type { ValidationRule } from "vuetify";
 
 import { MAX_REQUEST_SIZE, MEGABYTE } from "#shared/services/app/constants";
 import { profanityMatcher } from "#shared/services/obscenity/profanityMatcher";
-
-type FileFieldValue = File | undefined;
-type TextFieldValue = null | string;
+import type { FileFieldValue } from "@/models/vuetify/FileFieldValue";
+import type { TextFieldValue } from "@/models/vuetify/TextFieldValue";
 
 export const formRules: {
   isNotProfanity: ValidationRule;

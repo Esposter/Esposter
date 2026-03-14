@@ -23,7 +23,7 @@ const headers = computed(() => [
     })),
   { key: "actions", sortable: false, title: "Actions" },
 ]);
-const dragRows = computed<DataSource["rows"]>({
+const dragRows = computed({
   get: () => dataSource.rows,
   set: reorderRows,
 });

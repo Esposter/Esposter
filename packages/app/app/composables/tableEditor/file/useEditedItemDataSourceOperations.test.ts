@@ -584,6 +584,21 @@ describe(useEditedItemDataSourceOperations, () => {
       expect(takeOne(dataSource.rows, 2).data[" "]).toBeNull();
     });
 
+    test("appends a pre-built row with provided data", () => {
+      expect.hasAssertions();
+
+      const { editedItem, operations } = setupWithDataSource();
+      const { createRow } = operations;
+      createRow(new Row({ data: { "": 0, " ": 1 } }));
+      const dataSource = editedItem.value?.dataSource;
+
+      expectToBeDefined(dataSource);
+
+      expect(dataSource.rows).toHaveLength(3);
+      expect(takeOne(dataSource.rows, 2).data[""]).toBe(0);
+      expect(takeOne(dataSource.rows, 2).data[" "]).toBe(1);
+    });
+
     test("undo removes the created row", () => {
       expect.hasAssertions();
 

@@ -31,6 +31,10 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 - **Guard clauses first**: always use `if (!condition) return` to exit early instead of wrapping the main body in an `if` block. Reduce nesting aggressively — if the body of an `if` is the rest of the function, invert the condition and return early instead.
 - **Always use `if/else if/else` from the very first branch** when a function has multiple conditional returns — no standalone `if` followed by `else if`.
 
+## Return Type Annotations
+
+- **Prefer inferred return types** — don't annotate a function's return type when TypeScript can infer it correctly. Only add explicit return type annotations when: (a) the inferred type is too broad and you want to enforce a narrower contract (e.g. `ComputedRef<ValidationRule>` instead of `ComputedRef<(value: string) => string | true>`), or (b) the function is part of a public API boundary. Never add redundant annotations just for documentation.
+
 ## Helper Functions
 
 - **Don't extract helpers that add no value** — if a helper function just wraps an inline object literal or a single expression without reuse or meaningful abstraction, return/use the value directly. Three lines of inline code is better than a named wrapper used once.

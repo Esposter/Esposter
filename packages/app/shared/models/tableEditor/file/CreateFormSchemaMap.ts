@@ -1,13 +1,10 @@
-import type { ColumnForm } from "#shared/models/tableEditor/file/ColumnForm";
-import type { z } from "zod";
+import type { columnFormSchema } from "#shared/models/tableEditor/file/ColumnForm";
 
-import { columnFormSchema } from "#shared/models/tableEditor/file/ColumnForm";
-import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
-import { dateColumnFormSchema } from "#shared/models/tableEditor/file/DateColumn";
+import { ColumnTypeFormSchemaMap } from "#shared/models/tableEditor/file/ColumnTypeFormSchemaMap";
 
-export const CreateFormSchemaMap = {
-  [ColumnType.Boolean]: columnFormSchema,
-  [ColumnType.Date]: dateColumnFormSchema,
-  [ColumnType.Number]: columnFormSchema,
-  [ColumnType.String]: columnFormSchema,
-} as const satisfies Record<ColumnType, z.ZodType<ColumnForm>>;
+export const CreateFormSchemaMap = Object.fromEntries(
+  Object.entries(ColumnTypeFormSchemaMap).map(([type, schema]) => [
+    type,
+    (schema as typeof columnFormSchema).omit({ name: true, type: true }),
+  ]),
+);

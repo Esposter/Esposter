@@ -59,11 +59,13 @@ export const useEditedItemDataSourceOperations = () => {
     executeAndRecord(new MoveRowCommand(fromIndex, toIndex));
   };
 
-  const createRow = () => {
+  const createRow = (row?: Row) => {
     if (!editedItem.value?.dataSource) return;
-    const newRow = new Row({
-      data: Object.fromEntries(editedItem.value.dataSource.columns.map((column) => [column.name, null])),
-    });
+    const newRow =
+      row ??
+      new Row({
+        data: Object.fromEntries(editedItem.value.dataSource.columns.map((column) => [column.name, null])),
+      });
     const index = editedItem.value.dataSource.rows.length;
     executeAndRecord(new CreateRowCommand(index, newRow));
   };
