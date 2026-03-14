@@ -20,7 +20,7 @@
 
 - [x] **Column reordering** — drag-and-drop to reorder columns (affects export order)
 - [ ] **Computed/derived columns** — define a formula (e.g., `price * quantity`) that generates a read-only column
-- [ ] **Column visibility toggle** — hide columns from the data table view without deleting them
+- [x] **Column visibility toggle** — hide columns from the data table view without deleting them
 - [ ] **Column descriptions/annotations** — a free-text notes field per column
 
 ## Data Import

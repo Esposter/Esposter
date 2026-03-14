@@ -14,11 +14,13 @@ const { dataSource } = defineProps<DataTableProps>();
 const { reorderRows } = useEditedItemDataSourceOperations();
 const headers = computed(() => [
   { key: "drag", sortable: false, title: "" },
-  ...dataSource.columns.map((column) => ({
-    key: column.name,
-    title: column.name,
-    value: (row: Row) => takeOne(row.data, column.name),
-  })),
+  ...dataSource.columns
+    .filter((column) => !column.hidden)
+    .map((column) => ({
+      key: column.name,
+      title: column.name,
+      value: (row: Row) => takeOne(row.data, column.name),
+    })),
   { key: "actions", sortable: false, title: "Actions" },
 ]);
 const dragRows = computed<DataSource["rows"]>({

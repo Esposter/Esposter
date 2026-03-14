@@ -3,6 +3,7 @@ export enum CommandType {
   DeleteRow = "DeleteRow",
   MoveColumn = "MoveColumn",
   MoveRow = "MoveRow",
+  ToggleColumnVisibility = "ToggleColumnVisibility",
   UpdateColumn = "UpdateColumn",
   UpdateRow = "UpdateRow",
 }

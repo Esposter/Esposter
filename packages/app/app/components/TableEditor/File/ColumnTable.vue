@@ -12,7 +12,7 @@ interface ColumnTableProps {
 }
 
 const { dataSource } = defineProps<ColumnTableProps>();
-const { reorderColumns } = useEditedItemDataSourceOperations();
+const { reorderColumns, toggleColumnVisibility } = useEditedItemDataSourceOperations();
 const dragColumns = computed({
   get: () => dataSource.columns,
   set: reorderColumns,
@@ -29,6 +29,17 @@ const dragColumns = computed({
         <v-chip :color="takeOne(ColumnTypeColorMap, column.type)" label size="small">{{ column.type }}</v-chip>
       </template>
       <template #[`item.actions`]="{ item: column }">
+        <v-tooltip :text="column.hidden ? 'Show column' : 'Hide column'">
+          <template #activator="{ props }">
+            <v-btn
+              :icon="column.hidden ? 'mdi-eye-off' : 'mdi-eye'"
+              density="compact"
+              variant="text"
+              :="props"
+              @click="toggleColumnVisibility(column.id)"
+            />
+          </template>
+        </v-tooltip>
         <TableEditorFileColumnEditDialogButton :data-source :column />
         <TableEditorFileColumnDeleteDialogButton :name="column.name" />
       </template>

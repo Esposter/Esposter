@@ -9,6 +9,7 @@ import { DeleteColumnCommand } from "@/models/tableEditor/file/commands/DeleteCo
 import { DeleteRowCommand } from "@/models/tableEditor/file/commands/DeleteRowCommand";
 import { MoveColumnCommand } from "@/models/tableEditor/file/commands/MoveColumnCommand";
 import { MoveRowCommand } from "@/models/tableEditor/file/commands/MoveRowCommand";
+import { ToggleColumnVisibilityCommand } from "@/models/tableEditor/file/commands/ToggleColumnVisibilityCommand";
 import { UpdateColumnCommand } from "@/models/tableEditor/file/commands/UpdateColumnCommand";
 import { UpdateRowCommand } from "@/models/tableEditor/file/commands/UpdateRowCommand";
 import { useTableEditorStore } from "@/store/tableEditor";
@@ -82,6 +83,13 @@ export const useEditedItemDataSourceOperations = () => {
     );
   };
 
+  const toggleColumnVisibility = (id: string) => {
+    if (!editedItem.value?.dataSource) return;
+    const column = editedItem.value.dataSource.columns.find((column) => column.id === id);
+    if (!column) return;
+    executeAndRecord(new ToggleColumnVisibilityCommand(id, column.name, column.hidden));
+  };
+
   const deleteColumn = (name: string) => {
     if (!editedItem.value?.dataSource) return;
     const columnIndex = editedItem.value.dataSource.columns.findIndex((column) => column.name === name);
@@ -106,6 +114,7 @@ export const useEditedItemDataSourceOperations = () => {
     reorderColumns,
     reorderRows,
     setDataSource,
+    toggleColumnVisibility,
     undo: () => undo(editedItem.value),
     undoDescription,
     updateColumn,

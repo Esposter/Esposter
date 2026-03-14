@@ -11,6 +11,7 @@ export class Column<TColumnType extends ColumnType = Exclude<ColumnType, ColumnT
   extends ATableEditorItemEntity
   implements ItemEntityType<ColumnType>
 {
+  hidden = false;
   size = 0;
   readonly sourceName: string = "";
   readonly type: TColumnType = ColumnType.String as TColumnType;
@@ -24,6 +25,7 @@ export class Column<TColumnType extends ColumnType = Exclude<ColumnType, ColumnT
 export const createColumnSchema = <T extends z.ZodType<ColumnType>>(typeSchema: T) =>
   z.object({
     ...aTableEditorItemEntitySchema.shape,
+    hidden: z.boolean().default(false),
     size: z.number().default(0),
     sourceName: z.string().default("").readonly(),
     type: typeSchema.readonly(),
