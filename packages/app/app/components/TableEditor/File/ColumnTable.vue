@@ -25,6 +25,16 @@ const dragColumns = computed({
       <template #[`item.drag`]>
         <v-icon :class="DRAG_HANDLE_CLASS" icon="mdi-drag" cursor-move />
       </template>
+      <template #[`item.name`]="{ item: column }">
+        <div flex items-center gap-1>
+          <span>{{ column.name }}</span>
+          <v-tooltip v-if="column.description" :text="column.description">
+            <template #activator="{ props }">
+              <v-icon icon="mdi-information-outline" size="small" :="props" />
+            </template>
+          </v-tooltip>
+        </div>
+      </template>
       <template #[`item.type`]="{ item: column }">
         <v-chip :color="takeOne(ColumnTypeColorMap, column.type)" label size="small">{{ column.type }}</v-chip>
       </template>

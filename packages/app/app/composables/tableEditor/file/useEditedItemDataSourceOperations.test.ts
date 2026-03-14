@@ -363,9 +363,7 @@ describe(useEditedItemDataSourceOperations, () => {
       expect.hasAssertions();
 
       const hiddenColumn = new Column({ hidden: true, name: "" });
-      const { editedItem, operations } = setupWithDataSource(
-        createDataSource([hiddenColumn], [createRow({ "": 0 })]),
-      );
+      const { editedItem, operations } = setupWithDataSource(createDataSource([hiddenColumn], [createRow({ "": 0 })]));
       const { toggleColumnVisibility } = operations;
       toggleColumnVisibility(hiddenColumn.id);
       const dataSource = editedItem.value?.dataSource;
@@ -437,6 +435,35 @@ describe(useEditedItemDataSourceOperations, () => {
   });
 
   describe("updateColumn", () => {
+    test("sets description on column", () => {
+      expect.hasAssertions();
+
+      const { editedItem, operations } = setupWithDataSource();
+      const { updateColumn } = operations;
+      const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
+      updateColumn("", Object.assign(structuredClone(toRawDeep(column)), { description: " " }));
+      const dataSource = editedItem.value?.dataSource;
+
+      expectToBeDefined(dataSource);
+
+      expect(takeOne(dataSource.columns, 0).description).toBe(" ");
+    });
+
+    test("undo restores original description", () => {
+      expect.hasAssertions();
+
+      const { editedItem, operations } = setupWithDataSource();
+      const { undo, updateColumn } = operations;
+      const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
+      updateColumn("", Object.assign(structuredClone(toRawDeep(column)), { description: " " }));
+      undo();
+      const dataSource = editedItem.value?.dataSource;
+
+      expectToBeDefined(dataSource);
+
+      expect(takeOne(dataSource.columns, 0).description).toBe("");
+    });
+
     test("renames column and updates row keys", () => {
       expect.hasAssertions();
 
