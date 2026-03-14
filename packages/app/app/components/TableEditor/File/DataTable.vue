@@ -44,8 +44,8 @@ const dragRows = computed({
       <template #[`item.drag`]>
         <v-icon :class="DRAG_HANDLE_CLASS" icon="mdi-drag" cursor-move />
       </template>
-      <template #[`item.actions`]="{ item, index }">
-        <TableEditorFileRowActionSlot :columns="dataSource.columns" :index :row="item" />
+      <template #[`item.actions`]="{ item }">
+        <TableEditorFileRowActionSlot :columns="dataSource.columns" :row="item" />
       </template>
     </StyledDataTable>
   </VueDraggable>

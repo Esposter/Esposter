@@ -42,6 +42,7 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 ## Enum Refs
 
 - **Never use `ref<EnumType | null>(null)`** — always default to a sensible first enum value: `ref(DataSourceType.Csv)`, `ref(ColumnType.String)`, etc.
+- **Never write `ref<EnumType>(EnumValue)`** — TypeScript infers the enum type from the value. Write `ref(ColumnType.String)`, not `ref<ColumnType>(ColumnType.String)`.
 
 ## Stable Identifiers for Selections
 

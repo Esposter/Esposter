@@ -1,7 +1,10 @@
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { ValidationRule } from "vuetify";
 
-export const useColumnNameRule = (columns: MaybeRefOrGetter<DataSource["columns"]>, currentName?: string): ComputedRef<ValidationRule> =>
+export const useColumnNameRule = (
+  columns: MaybeRefOrGetter<DataSource["columns"]>,
+  currentName?: string,
+): ComputedRef<ValidationRule> =>
   computed<ValidationRule>(() => {
     const columnsValue = toValue(columns);
     return (value: string) => {

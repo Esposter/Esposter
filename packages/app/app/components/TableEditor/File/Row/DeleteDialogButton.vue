@@ -1,9 +1,9 @@
 <script setup lang="ts">
 interface DeleteDialogButtonProps {
-  index: number;
+  id: string;
 }
 
-const { index } = defineProps<DeleteDialogButtonProps>();
+const { id } = defineProps<DeleteDialogButtonProps>();
 const { deleteRow } = useEditedItemDataSourceOperations();
 </script>
 
@@ -14,8 +14,8 @@ const { deleteRow } = useEditedItemDataSourceOperations();
       text: 'Are you sure you want to delete this row?',
     }"
     @delete="
-      async (onComplete) => {
-        deleteRow(index);
+      (onComplete) => {
+        deleteRow(id);
         onComplete();
       }
     "

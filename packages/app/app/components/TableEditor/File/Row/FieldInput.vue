@@ -41,11 +41,7 @@ const textFieldValue = computed(() => {
     density="compact"
     @update:model-value="
       modelValue =
-        column.type === ColumnType.Date
-          ? $event
-            ? dayjs($event, 'YYYY-MM-DD').format(dateFormat)
-            : $event
-          : $event
+        column.type === ColumnType.Date ? ($event ? dayjs($event, 'YYYY-MM-DD').format(dateFormat) : $event) : $event
     "
   />
 </template>

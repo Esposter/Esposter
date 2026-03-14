@@ -6,11 +6,10 @@ import { toRawDeep } from "@esposter/shared";
 
 interface EditDialogButtonProps {
   columns: DataSource["columns"];
-  index: number;
   row: DataSource["rows"][number];
 }
 
-const { columns, index, row } = defineProps<EditDialogButtonProps>();
+const { columns, row } = defineProps<EditDialogButtonProps>();
 const { updateRow } = useEditedItemDataSourceOperations();
 const editedRow = ref(structuredClone(toRawDeep(row)));
 </script>
@@ -24,7 +23,7 @@ const editedRow = ref(structuredClone(toRawDeep(row)));
     :schema="rowSchema"
     @submit="
       (onComplete) => {
-        updateRow(index, editedRow);
+        updateRow(row.id, editedRow);
         onComplete();
       }
     "

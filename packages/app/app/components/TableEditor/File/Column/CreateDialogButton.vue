@@ -7,6 +7,7 @@ import { ColumnTypeFormSchemaMap } from "#shared/models/tableEditor/file/ColumnT
 import { CreateFormSchemaMap } from "#shared/models/tableEditor/file/CreateFormSchemaMap";
 import { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
+import { ColumnTypeItemCategoryDefinitions } from "@/services/tableEditor/file/ColumnTypeItemCategoryDefinitions";
 import { takeOne } from "@esposter/shared";
 import { Vjsf } from "@koumoul/vjsf";
 
@@ -16,19 +17,17 @@ interface CreateDialogButtonProps {
 
 const { dataSource } = defineProps<CreateDialogButtonProps>();
 const { createColumn } = useEditedItemDataSourceOperations();
-const editedColumn = ref<Column | DateColumn>(new Column());
-const schema = computed(() => takeOne(ColumnTypeFormSchemaMap, editedColumn.value.type));
-const jsonSchema = computed(() => zodToJsonSchema(takeOne(CreateFormSchemaMap, editedColumn.value.type)));
+const columnType = ref(ColumnType.String);
+const editedColumn = ref<Column | DateColumn>(structuredClone(new Column<Exclude<ColumnType, ColumnType.Date>>()));
+const schema = computed(() => takeOne(ColumnTypeFormSchemaMap, columnType.value));
+const jsonSchema = computed(() => zodToJsonSchema(takeOne(CreateFormSchemaMap, columnType.value)));
 const uniqueNameRule = useColumnNameRule(() => dataSource.columns);
 
-watch(
-  () => editedColumn.value.type,
-  (newType, oldType) => {
-    if (newType === oldType) return;
-    const name = editedColumn.value.name;
-    editedColumn.value = newType === ColumnType.Date ? new DateColumn({ name }) : new Column({ name, type: newType });
-  },
-);
+watch(columnType, (newType, oldType) => {
+  if (newType === oldType) return;
+  const name = editedColumn.value.name;
+  editedColumn.value = structuredClone(newType === ColumnType.Date ? new DateColumn({ name }) : new Column({ name, type: newType }));
+});
 </script>
 
 <template>
@@ -46,6 +45,7 @@ watch(
       }
     "
   >
+    <v-select v-model="columnType" :items="ColumnTypeItemCategoryDefinitions" label="Type" />
     <v-text-field v-model="editedColumn.name" label="Column" :rules="[uniqueNameRule]" />
     <Vjsf v-model="editedColumn" :schema="jsonSchema" />
   </TableEditorFileEditDialogButton>

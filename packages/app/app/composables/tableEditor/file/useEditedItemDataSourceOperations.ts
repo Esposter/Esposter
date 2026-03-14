@@ -70,14 +70,18 @@ export const useEditedItemDataSourceOperations = () => {
     executeAndRecord(new CreateRowCommand(index, newRow));
   };
 
-  const deleteRow = (index: number) => {
+  const deleteRow = (id: string) => {
     if (!editedItem.value?.dataSource) return;
+    const index = editedItem.value.dataSource.rows.findIndex((row) => row.id === id);
+    if (index === -1) return;
     const originalRow = structuredClone(toRawDeep(takeOne(editedItem.value.dataSource.rows, index)));
     executeAndRecord(new DeleteRowCommand(index, originalRow));
   };
 
-  const updateRow = (index: number, updatedRow: DataSource["rows"][number]) => {
-    if (!editedItem.value?.dataSource || index === -1) return;
+  const updateRow = (id: string, updatedRow: DataSource["rows"][number]) => {
+    if (!editedItem.value?.dataSource) return;
+    const index = editedItem.value.dataSource.rows.findIndex((row) => row.id === id);
+    if (index === -1) return;
     const originalRow = structuredClone(toRawDeep(takeOne(editedItem.value.dataSource.rows, index)));
     executeAndRecord(new UpdateRowCommand(index, originalRow, structuredClone(toRawDeep(updatedRow))));
   };

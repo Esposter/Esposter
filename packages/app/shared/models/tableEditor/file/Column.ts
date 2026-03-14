@@ -18,7 +18,7 @@ export class Column<TColumnType extends ColumnType = Exclude<ColumnType, ColumnT
   readonly sourceName: string = "";
   readonly type: TColumnType = ColumnType.String as TColumnType;
 
-  constructor(init?: Partial<Column>) {
+  constructor(init?: Partial<Column<TColumnType>>) {
     super();
     Object.assign(this, init);
   }

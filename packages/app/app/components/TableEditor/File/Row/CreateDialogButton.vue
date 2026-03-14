@@ -9,9 +9,7 @@ interface CreateDialogButtonProps {
 
 const { dataSource } = defineProps<CreateDialogButtonProps>();
 const { createRow } = useEditedItemDataSourceOperations();
-const editedRow = ref(
-  new Row({ data: Object.fromEntries(dataSource.columns.map((column) => [column.name, null])) }),
-);
+const editedRow = ref(new Row({ data: Object.fromEntries(dataSource.columns.map((column) => [column.name, null])) }));
 </script>
 
 <template>
