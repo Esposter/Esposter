@@ -1,6 +1,6 @@
+import type { MimeType } from "#shared/models/file/MimeType";
 import type { CsvDataSourceItem } from "#shared/models/tableEditor/file/csv/CsvDataSourceItem";
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
-import type { MimeType } from "#shared/models/file/MimeType";
 
 import { takeOne } from "@esposter/shared";
 
