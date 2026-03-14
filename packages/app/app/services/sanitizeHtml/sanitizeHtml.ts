@@ -1,7 +1,7 @@
 import baseSanitizeHtml from "sanitize-html";
 
-export const sanitizeHtml = (...[html, options]: Parameters<typeof baseSanitizeHtml>) => {
-  return baseSanitizeHtml(html, {
+export const sanitizeHtml = (...[html, options]: Parameters<typeof baseSanitizeHtml>) =>
+  baseSanitizeHtml(html, {
     ...options,
     allowedAttributes: {
       ...options?.allowedAttributes,
@@ -11,15 +11,13 @@ export const sanitizeHtml = (...[html, options]: Parameters<typeof baseSanitizeH
     },
     transformTags: {
       ...options?.transformTags,
-      table: (tagName, attribs) => {
-        return {
-          attribs: {
-            ...attribs,
-            style: "width:100%; border-collapse: collapse;",
-          },
-          tagName,
-        };
-      },
+      table: (tagName, attribs) => ({
+        attribs: {
+          ...attribs,
+          style: "width:100%; border-collapse: collapse;",
+        },
+        tagName,
+      }),
       td: (tagName, attribs) => {
         if (attribs.align) {
           attribs.style = `text-align:${attribs.align}`;
@@ -36,4 +34,3 @@ export const sanitizeHtml = (...[html, options]: Parameters<typeof baseSanitizeH
       },
     },
   });
-};
