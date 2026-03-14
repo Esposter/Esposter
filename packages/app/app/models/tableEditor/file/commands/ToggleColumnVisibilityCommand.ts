@@ -2,12 +2,13 @@ import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/Data
 
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
+import { getToggleColumnVisibilityDescription } from "@/services/tableEditor/file/getToggleColumnVisibilityDescription";
 
 export class ToggleColumnVisibilityCommand extends ADataSourceCommand<CommandType.ToggleColumnVisibility> {
   readonly type = CommandType.ToggleColumnVisibility;
 
   get description() {
-    return `${this.hidden ? "Show" : "Hide"} "${this.columnName}" Column`;
+    return getToggleColumnVisibilityDescription(this.columnName, this.hidden);
   }
 
   private readonly columnId: string;

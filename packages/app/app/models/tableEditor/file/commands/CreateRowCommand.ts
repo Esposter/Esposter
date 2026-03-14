@@ -10,7 +10,7 @@ export class CreateRowCommand extends ADataSourceCommand<CommandType.CreateRow> 
   readonly type = CommandType.CreateRow;
 
   get description() {
-    return `Create Row #${this.index + 1}`;
+    return `Create Row ${this.index + 1}`;
   }
 
   private readonly index: number;

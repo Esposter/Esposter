@@ -4,6 +4,7 @@ import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import { ColumnHeaders } from "@/services/tableEditor/file/ColumnHeaders";
 import { ColumnTypeColorMap } from "@/services/tableEditor/file/ColumnTypeColorMap";
 import { DRAG_HANDLE_CLASS } from "@/services/tableEditor/file/constants";
+import { getToggleColumnVisibilityDescription } from "@/services/tableEditor/file/getToggleColumnVisibilityDescription";
 import { takeOne } from "@esposter/shared";
 import { VueDraggable } from "vue-draggable-plus";
 
@@ -13,8 +14,6 @@ interface ColumnTableProps {
 
 const { dataSource } = defineProps<ColumnTableProps>();
 const { reorderColumns, toggleColumnVisibility } = useEditedItemDataSourceOperations();
-const getVisibilityTooltip = ({ hidden, name }: DataSource["columns"][number]) =>
-  hidden ? `Show "${name}" Column` : `Hide "${name}" Column`;
 const dragColumns = computed({
   get: () => dataSource.columns,
   set: reorderColumns,
@@ -41,7 +40,7 @@ const dragColumns = computed({
         <v-chip :color="takeOne(ColumnTypeColorMap, column.type)" label size="small">{{ column.type }}</v-chip>
       </template>
       <template #[`item.actions`]="{ item: column }">
-        <v-tooltip :text="getVisibilityTooltip(column)">
+        <v-tooltip :text="getToggleColumnVisibilityDescription(column.name, column.hidden)">
           <template #activator="{ props }">
             <v-btn
               :icon="column.hidden ? 'mdi-eye-off' : 'mdi-eye'"

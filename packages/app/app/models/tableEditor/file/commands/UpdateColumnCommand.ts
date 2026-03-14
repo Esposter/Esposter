@@ -18,7 +18,7 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
   get description() {
     const recordDifferenceDescription = getRecordDifferenceDescription(this.originalColumn, this.updatedColumn);
     const detail = recordDifferenceDescription ? `\n\n${recordDifferenceDescription}` : "";
-    return `Edit Column${detail}`;
+    return `Edit "${this.originalColumn.name}" Column${detail}`;
   }
 
   private readonly originalColumn: Column | DateColumn;
