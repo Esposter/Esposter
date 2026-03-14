@@ -568,6 +568,139 @@ describe(useEditedItemDataSourceOperations, () => {
     });
   });
 
+  describe("createRow", () => {
+    test("appends a new row with null values for all columns", () => {
+      expect.hasAssertions();
+
+      const { editedItem, operations } = setupWithDataSource();
+      const { createRow } = operations;
+      createRow();
+      const dataSource = editedItem.value?.dataSource;
+
+      expectToBeDefined(dataSource);
+
+      expect(dataSource.rows).toHaveLength(3);
+      expect(takeOne(dataSource.rows, 2).data[""]).toBeNull();
+      expect(takeOne(dataSource.rows, 2).data[" "]).toBeNull();
+    });
+
+    test("undo removes the created row", () => {
+      expect.hasAssertions();
+
+      const { editedItem, operations } = setupWithDataSource();
+      const { createRow, undo } = operations;
+      createRow();
+      undo();
+      const dataSource = editedItem.value?.dataSource;
+
+      expectToBeDefined(dataSource);
+
+      expect(dataSource.rows).toHaveLength(2);
+    });
+
+    test("redo re-applies create after undo", () => {
+      expect.hasAssertions();
+
+      const { editedItem, operations } = setupWithDataSource();
+      const { createRow, redo, undo } = operations;
+      createRow();
+      undo();
+      redo();
+      const dataSource = editedItem.value?.dataSource;
+
+      expectToBeDefined(dataSource);
+
+      expect(dataSource.rows).toHaveLength(3);
+    });
+
+    test("no-op when editedItem is undefined", () => {
+      expect.hasAssertions();
+
+      const { createRow, isUndoable } = useEditedItemDataSourceOperations();
+      createRow();
+
+      expect(isUndoable.value).toBe(false);
+    });
+
+    test("no-op when dataSource is null", () => {
+      expect.hasAssertions();
+
+      setupEditedItem();
+      const { createRow, isUndoable } = useEditedItemDataSourceOperations();
+      createRow();
+
+      expect(isUndoable.value).toBe(false);
+    });
+  });
+
+  describe("createColumn", () => {
+    test("appends a new column with null values for all rows", () => {
+      expect.hasAssertions();
+
+      const { editedItem, operations } = setupWithDataSource();
+      const { createColumn } = operations;
+      createColumn(new Column({ name: "new", sourceName: "new" }));
+      const dataSource = editedItem.value?.dataSource;
+
+      expectToBeDefined(dataSource);
+
+      expect(dataSource.columns).toHaveLength(3);
+      expect(takeOne(dataSource.columns, 2).name).toBe("new");
+      expect(takeOne(dataSource.rows, 0).data.new).toBeNull();
+      expect(takeOne(dataSource.rows, 1).data.new).toBeNull();
+    });
+
+    test("undo removes the created column and its row values", () => {
+      expect.hasAssertions();
+
+      const { editedItem, operations } = setupWithDataSource();
+      const { createColumn, undo } = operations;
+      createColumn(new Column({ name: "new", sourceName: "new" }));
+      undo();
+      const dataSource = editedItem.value?.dataSource;
+
+      expectToBeDefined(dataSource);
+
+      expect(dataSource.columns).toHaveLength(2);
+      expect(takeOne(dataSource.rows, 0).data.new).toBeUndefined();
+    });
+
+    test("redo re-applies create after undo", () => {
+      expect.hasAssertions();
+
+      const { editedItem, operations } = setupWithDataSource();
+      const { createColumn, redo, undo } = operations;
+      createColumn(new Column({ name: "new", sourceName: "new" }));
+      undo();
+      redo();
+      const dataSource = editedItem.value?.dataSource;
+
+      expectToBeDefined(dataSource);
+
+      expect(dataSource.columns).toHaveLength(3);
+      expect(takeOne(dataSource.rows, 0).data.new).toBeNull();
+    });
+
+    test("no-op when editedItem is undefined", () => {
+      expect.hasAssertions();
+
+      const { createColumn, isUndoable } = useEditedItemDataSourceOperations();
+      createColumn(new Column({ name: "new", sourceName: "new" }));
+
+      expect(isUndoable.value).toBe(false);
+    });
+
+    test("no-op when dataSource is null", () => {
+      expect.hasAssertions();
+
+      setupEditedItem();
+      const { createColumn, isUndoable } = useEditedItemDataSourceOperations();
+      createColumn(new Column({ name: "new", sourceName: "new" }));
+
+      expect(isUndoable.value).toBe(false);
+    });
+  });
+
   describe("reorderColumns", () => {
     test("moves column forward (index 0 to 1)", () => {
       expect.hasAssertions();

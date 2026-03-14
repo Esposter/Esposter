@@ -17,8 +17,7 @@ const { updateColumn } = useEditedItemDataSourceOperations();
 const schema = computed(() => takeOne(ColumnTypeFormSchemaMap, column.type));
 const jsonSchema = computed(() => zodToJsonSchema(takeOne(ColumnTypeFormSchemaWithoutNameMap, column.type)));
 const editedColumn = ref(structuredClone(toRawDeep(column)));
-const uniqueNameRule = (value: string) =>
-  value === column.name || !dataSource.columns.some(({ name }) => name === value) || "Column already exists";
+const uniqueNameRule = useColumnNameRule(() => dataSource.columns, column.name);
 </script>
 
 <template>

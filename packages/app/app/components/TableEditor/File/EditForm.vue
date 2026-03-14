@@ -24,7 +24,12 @@ const openPanels = ref(["columns", "data"]);
       </v-col>
       <v-col cols="12">
         <v-expansion-panels v-model="openPanels" multiple>
-          <v-expansion-panel title="Columns" value="columns">
+          <v-expansion-panel value="columns">
+            <template #title>
+              Columns
+              <v-spacer />
+              <TableEditorFileColumnCreateDialogButton :data-source="modelValue.dataSource" />
+            </template>
             <v-expansion-panel-text>
               <TableEditorFileColumnTable :data-source="modelValue.dataSource" />
             </v-expansion-panel-text>
@@ -34,6 +39,7 @@ const openPanels = ref(["columns", "data"]);
               Data
               <v-spacer />
               <TableEditorFileStatsBar :stats="modelValue.dataSource.stats" />
+              <TableEditorFileRowCreateButton />
             </template>
             <v-expansion-panel-text>
               <TableEditorFileDataTable :data-source="modelValue.dataSource" />
