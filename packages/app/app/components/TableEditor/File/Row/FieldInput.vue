@@ -12,7 +12,7 @@ interface RowFieldInputProps {
 
 const { column } = defineProps<RowFieldInputProps>();
 const modelValue = defineModel<ColumnValue>({ required: true });
-const dateFormat = computed(() => (column.type === ColumnType.Date ? (column).format : ""));
+const dateFormat = computed(() => (column.type === ColumnType.Date ? column.format : ""));
 const textFieldType = computed(() => {
   if (column.type === ColumnType.Number) return "number";
   if (column.type === ColumnType.Date) return "date";

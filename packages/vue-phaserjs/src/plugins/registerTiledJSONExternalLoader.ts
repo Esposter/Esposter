@@ -9,8 +9,13 @@ const FileTypesManager = Loader.FileTypesManager;
 export const registerTiledJSONExternalLoader = () => {
   FileTypesManager.register(
     TILEMAP_TILED_JSON_EXTERNAL_KEY,
-    function (this: Loader.LoaderPlugin, ...args: TupleSlice<ConstructorParameters<typeof TiledJSONExternalFile>, 1>) {
-      const [key, tilemapURL, path, baseURL, tilemapXhrSettings, tilesetXhrSettings] = args;
+    function (
+      this: Loader.LoaderPlugin,
+      ...[key, tilemapURL, path, baseURL, tilemapXhrSettings, tilesetXhrSettings]: TupleSlice<
+        ConstructorParameters<typeof TiledJSONExternalFile>,
+        1
+      >
+    ) {
       //  Supports an Object file definition in the key argument
       //  Or an array of objects in the key argument
       //  Or a single entry where all arguments have been defined
