@@ -41,10 +41,10 @@ catalog:
   "@fullcalendar/timegrid": ^6.1.20
   "@fullcalendar/vue3": ^6.1.20
   "@koumoul/vjsf": ^4.1.1
-  "@lerna-lite/cli": ^4.11.4
-  "@lerna-lite/publish": ^4.11.4
-  "@lerna-lite/run": ^4.11.4
-  "@lerna-lite/watch": ^4.11.4
+  "@lerna-lite/cli": ^4.11.5
+  "@lerna-lite/publish": ^4.11.5
+  "@lerna-lite/run": ^4.11.5
+  "@lerna-lite/watch": ^4.11.5
   "@mdi/font": ^7.4.47
   "@nuxt/eslint": ^1.15.2
   "@nuxt/fonts": ^0.14.0
@@ -65,8 +65,8 @@ catalog:
   "@tresjs/cientos": ^5.6.0
   "@tresjs/core": ^5.7.0
   "@tresjs/nuxt": ^5.5.0
-  "@trpc/client": ^11.12.0
-  "@trpc/server": ^11.12.0
+  "@trpc/client": ^11.12.1
+  "@trpc/server": ^11.12.1
   "@types/data-urls": ^3.0.5
   "@types/dedent": ^0.7.2
   "@types/deep-equal": ^1.0.4
@@ -105,7 +105,7 @@ catalog:
   ajv-errors: ^3.0.0
   ajv-formats: ^3.0.1
   ajv-i18n: ^4.2.0
-  apexcharts: ^5.10.3
+  apexcharts: ^5.10.4
   better-auth: ^1.5.5
   codemirror: ^6.0.2
   crossws: ^0.4.4
@@ -177,7 +177,7 @@ catalog:
   postgres: ^3.4.8
   prettier: ^3.8.1
   prosemirror-state: ^1.4.4
-  rate-limiter-flexible: ^9.1.1
+  rate-limiter-flexible: ^10.0.0
   read-excel-file: ^7.0.2
   rolldown: ^1.0.0-rc.9
   rolldown-plugin-dts: ^0.22.5
@@ -199,7 +199,7 @@ catalog:
   type-fest: ^5.4.4
   typedoc: ^0.28.17
   typescript: ^5.9.3
-  typescript-eslint: ^8.56.1
+  typescript-eslint: ^8.57.0
   unocss: ^66.6.6
   unplugin-auto-import: ^21.0.0
   unplugin-dts: ^1.0.0-beta.6
@@ -215,8 +215,8 @@ catalog:
   vue-router: ^5.0.3
   vue-tsc: ^3.2.5
   vue3-apexcharts: ^1.11.1
-  vuetify: ^4.0.1
-  vuetify-nuxt-module: ^1.0.0-alpha.5
+  vuetify: ^4.0.2
+  vuetify-nuxt-module: ^1.0.0-alpha.6
   web-push: ^3.6.7
   worker-timers: ^8.0.30
   write-excel-file: ^3.0.6

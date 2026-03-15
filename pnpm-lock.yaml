@@ -100,16 +100,16 @@ catalogs:
       specifier: ^4.1.1
       version: 4.1.1
     '@lerna-lite/cli':
-      specifier: ^4.11.4
+      specifier: ^4.11.5
       version: 4.11.5
     '@lerna-lite/publish':
-      specifier: ^4.11.4
+      specifier: ^4.11.5
       version: 4.11.5
     '@lerna-lite/run':
-      specifier: ^4.11.4
+      specifier: ^4.11.5
       version: 4.11.5
     '@lerna-lite/watch':
-      specifier: ^4.11.4
+      specifier: ^4.11.5
       version: 4.11.5
     '@mdi/font':
       specifier: ^7.4.47
@@ -172,11 +172,11 @@ catalogs:
       specifier: ^5.5.0
       version: 5.5.0
     '@trpc/client':
-      specifier: ^11.12.0
-      version: 11.12.0
+      specifier: ^11.12.1
+      version: 11.12.1
     '@trpc/server':
-      specifier: ^11.12.0
-      version: 11.12.0
+      specifier: ^11.12.1
+      version: 11.12.1
     '@types/data-urls':
       specifier: ^3.0.5
       version: 3.0.5
@@ -292,8 +292,8 @@ catalogs:
       specifier: ^4.2.0
       version: 4.2.0
     apexcharts:
-      specifier: ^5.10.3
-      version: 5.10.3
+      specifier: ^5.10.4
+      version: 5.10.4
     better-auth:
       specifier: ^1.5.5
       version: 1.5.5
@@ -502,8 +502,8 @@ catalogs:
       specifier: ^1.4.4
       version: 1.4.4
     rate-limiter-flexible:
-      specifier: ^9.1.1
-      version: 9.1.1
+      specifier: ^10.0.0
+      version: 10.0.0
     read-excel-file:
       specifier: ^7.0.2
       version: 7.0.2
@@ -568,7 +568,7 @@ catalogs:
       specifier: ^5.9.3
       version: 5.9.3
     typescript-eslint:
-      specifier: ^8.56.1
+      specifier: ^8.57.0
       version: 8.57.0
     unocss:
       specifier: ^66.6.6
@@ -610,11 +610,11 @@ catalogs:
       specifier: ^1.11.1
       version: 1.11.1
     vuetify:
-      specifier: ^4.0.1
+      specifier: ^4.0.2
       version: 4.0.2
     vuetify-nuxt-module:
-      specifier: ^1.0.0-alpha.5
-      version: 1.0.0-alpha.5
+      specifier: ^1.0.0-alpha.6
+      version: 1.0.0-alpha.6
     web-push:
       specifier: ^3.6.7
       version: 3.6.7
@@ -733,7 +733,7 @@ importers:
         version: 1.0.2
       '@better-auth/drizzle-adapter':
         specifier: 'catalog:'
-        version: 1.5.5(@better-auth/core@1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.1.1))(@better-auth/utils@0.3.1)(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.16)(kysely@0.28.12)(postgres@3.4.8))
+        version: 1.5.5(@better-auth/core@1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.2.0))(@better-auth/utils@0.3.1)(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.16)(kysely@0.28.12)(postgres@3.4.8))
       '@codemirror/lang-vue':
         specifier: 'catalog:'
         version: 0.1.3
@@ -817,13 +817,13 @@ importers:
         version: 5.7.0(three@0.183.2)(vue@3.5.30(typescript@5.9.3))
       '@tresjs/nuxt':
         specifier: 'catalog:'
-        version: 5.5.0(8ddfa055c48a8c75275bd4c1571bafe0)
+        version: 5.5.0(5b4322d395858f21b67fc58a2ff0c26c)
       '@trpc/client':
         specifier: 'catalog:'
-        version: 11.12.0(@trpc/server@11.12.0(typescript@5.9.3))(typescript@5.9.3)
+        version: 11.12.1(@trpc/server@11.12.1(typescript@5.9.3))(typescript@5.9.3)
       '@trpc/server':
         specifier: 'catalog:'
-        version: 11.12.0(typescript@5.9.3)
+        version: 11.12.1(typescript@5.9.3)
       '@vue-flow/background':
         specifier: 'catalog:'
         version: 1.3.2(@vue-flow/core@1.48.2(vue@3.5.30(typescript@5.9.3)))(vue@3.5.30(typescript@5.9.3))
@@ -862,7 +862,7 @@ importers:
         version: 4.2.0(ajv@8.18.0)
       apexcharts:
         specifier: 'catalog:'
-        version: 5.10.3
+        version: 5.10.4
       better-auth:
         specifier: 'catalog:'
         version: 1.5.5(drizzle-kit@0.31.9)(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.16)(kysely@0.28.12)(postgres@3.4.8))(mongodb@7.1.0(socks@2.8.7))(vitest@4.1.0(@types/node@25.5.0)(happy-dom@20.8.4)(vite@8.0.0(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)))(vue@3.5.30(typescript@5.9.3))
@@ -1018,7 +1018,7 @@ importers:
         version: 1.4.4
       rate-limiter-flexible:
         specifier: 'catalog:'
-        version: 9.1.1
+        version: 10.0.0
       read-excel-file:
         specifier: 'catalog:'
         version: 7.0.2
@@ -1057,7 +1057,7 @@ importers:
         version: 2.45.1(three@0.183.2)
       trpc-nuxt:
         specifier: 'catalog:'
-        version: 2.0.2(@trpc/client@11.12.0(@trpc/server@11.12.0(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.12.0(typescript@5.9.3))(srvx@0.11.9)
+        version: 2.0.2(@trpc/client@11.12.1(@trpc/server@11.12.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.12.1(typescript@5.9.3))(srvx@0.11.9)
       v-viewer:
         specifier: 'catalog:'
         version: 3.0.23(viewerjs@1.11.7)(vue@3.5.30(typescript@5.9.3))
@@ -1084,7 +1084,7 @@ importers:
         version: 5.0.3(@vue/compiler-sfc@3.5.30)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.30(typescript@5.9.3)))(vue@3.5.30(typescript@5.9.3))
       vue3-apexcharts:
         specifier: 'catalog:'
-        version: 1.11.1(apexcharts@5.10.3)(vue@3.5.30(typescript@5.9.3))
+        version: 1.11.1(apexcharts@5.10.4)(vue@3.5.30(typescript@5.9.3))
       vuetify:
         specifier: 'catalog:'
         version: 4.0.2(typescript@5.9.3)(vite-plugin-vuetify@2.1.3)(vue@3.5.30(typescript@5.9.3))
@@ -1208,7 +1208,7 @@ importers:
         version: 66.6.6(@unocss/webpack@66.6.6(webpack@5.105.4(esbuild@0.27.4)))(vite@8.0.0(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
       vuetify-nuxt-module:
         specifier: 'catalog:'
-        version: 1.0.0-alpha.5(magicast@0.5.2)(typescript@5.9.3)(vite@8.0.0(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(vue@3.5.30(typescript@5.9.3))
+        version: 1.0.0-alpha.6(magicast@0.5.2)(typescript@5.9.3)(vite@8.0.0(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(vue@3.5.30(typescript@5.9.3))
 
   packages/azure-functions:
     dependencies:
@@ -1440,7 +1440,7 @@ importers:
         version: 12.31.0
       '@trpc/server':
         specifier: 'catalog:'
-        version: 11.12.0(typescript@5.9.3)
+        version: 11.12.1(typescript@5.9.3)
       drizzle-kit:
         specifier: 'catalog:'
         version: 0.31.9
@@ -3022,8 +3022,8 @@ packages:
     resolution: {integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==}
     engines: {node: '>=18.18'}
 
-  '@iconify/collections@1.0.660':
-    resolution: {integrity: sha512-7SG+ZacgqAhZdjSv4+eyFtJ+amI2PzIrg6NrZ2T5qdRpWOBv0Px1SB0C+4CsGxHenhhWjGMfSHG1vzkPgF0PyA==}
+  '@iconify/collections@1.0.661':
+    resolution: {integrity: sha512-r5dwSQHdwNxfjx8AZiHfn8IuafVYTl850xzN9gKVMi8L9sXyd/XNawTr1qIJQZbJxouCETielBRP8TM9YmiSEA==}
 
   '@iconify/types@2.0.0':
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
@@ -5512,14 +5512,14 @@ packages:
     peerDependencies:
       three: '>=0.133'
 
-  '@trpc/client@11.12.0':
-    resolution: {integrity: sha512-zTwFKQdE99pvNm7kXFdHo5xIQpGqpQJHtqVkT9o+i8h/0fbDOUBEEbFVICiMsNA+GiXskoaDRX2l+z6ir+Ug3w==}
+  '@trpc/client@11.12.1':
+    resolution: {integrity: sha512-WwGVdNAME4tpXYrDguXLCLfLQiLZJ+hxYIPcb4On5ry8NU3XD4hx8nZdHGcqVjf4Qm2SWEeoVKLZxNHVSaPsgg==}
     peerDependencies:
-      '@trpc/server': 11.12.0
+      '@trpc/server': 11.12.1
       typescript: '>=5.7.2'
 
-  '@trpc/server@11.12.0':
-    resolution: {integrity: sha512-rpZnf5FUjNndE/AjGIy+FvEHR52iBd0u0wySqWCwXj67wraj3qCuBr5Opcf0Te/g67C/YztqceFkLoG0r4mp4Q==}
+  '@trpc/server@11.12.1':
+    resolution: {integrity: sha512-CVxJxsVazFid8CZ5az7w8nbnLDlbyjpDECjDlNeYiJJoiqFYM5nTsRCHRyN+UYimNaJa6BQ7pTyZN34sPCzTYQ==}
     peerDependencies:
       typescript: '>=5.7.2'
 
@@ -6380,9 +6380,6 @@ packages:
   '@xtuc/long@4.2.2':
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
 
-  '@yr/monotone-cubic-spline@1.0.3':
-    resolution: {integrity: sha512-FQXkOta0XBSUPHndIKON2Y9JeQz5ZeMqLYZVVK93FliNBFm7LNMIZmY6FrMEB9XPcDbE2bekMbZD6kzDkxwYjA==}
-
   abbrev@2.0.0:
     resolution: {integrity: sha512-6/mh1E2u2YgEsCHdY0Yx5oW+61gZU+1vXaoiHHrpKeuRNNgFvS+/jrwHiQhB5apAf5oB7UB7E19ol2R2LKH8hQ==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
@@ -6500,8 +6497,8 @@ packages:
     resolution: {integrity: sha512-KMReFUr0B4t+D+OBkjR3KYqvocp2XaSzO55UcB6mgQMd3KbcE+mWTyvVV7D/zsdEbNnV6acZUutkiHQXvTr1Rw==}
     engines: {node: '>= 8'}
 
-  apexcharts@5.10.3:
-    resolution: {integrity: sha512-wwvkSLsodNOc/rHo5MJsn3GPM4Krc5Gs0zKX4Lfzq4LohcTbyKylYUGEqJFmXXxGR7yLbZQz31sB5RTqT5mv1g==}
+  apexcharts@5.10.4:
+    resolution: {integrity: sha512-gt0VUqZ2+mr25ScbUcKZgJr96jKYm4vjOcxEWCEh/E5F4dWqhyo3dBhPRvNNnkKiWxkMd2cBwj3ZYH3rK39fkA==}
 
   aproba@2.1.0:
     resolution: {integrity: sha512-tLIEcj5GuR2RSTnxNKdkK0dJ/GrC7P38sUkiDmDuHfsHmbagTFAxDVIBltoklXEVIQ/f14IL8IMJ5pn9Hez1Ew==}
@@ -6678,8 +6675,8 @@ packages:
   base64-js@1.5.1:
     resolution: {integrity: sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==}
 
-  baseline-browser-mapping@2.10.7:
-    resolution: {integrity: sha512-1ghYO3HnxGec0TCGBXiDLVns4eCSx4zJpxnHrlqFQajmhfKMQBzUGDdkMK7fUW7PTHTeLf+j87aTuKuuwWzMGw==}
+  baseline-browser-mapping@2.10.8:
+    resolution: {integrity: sha512-PCLz/LXGBsNTErbtB6i5u4eLpHeMfi93aUv5duMmj6caNu6IphS4q6UevDnL36sZQv9lrP11dbPKGMaXPwMKfQ==}
     engines: {node: '>=6.0.0'}
     hasBin: true
 
@@ -6893,8 +6890,8 @@ packages:
   caniuse-api@3.0.0:
     resolution: {integrity: sha512-bsTwuIg/BZZK/vreVTYYbSWoe2F+71P7K5QGEX+pT250DZbfU1MQ5prOKpPR+LL6uWKK3KMwMCAS74QB3Um1uw==}
 
-  caniuse-lite@1.0.30001778:
-    resolution: {integrity: sha512-PN7uxFL+ExFJO61aVmP1aIEG4i9whQd4eoSCebav62UwDyp5OHh06zN4jqKSMePVgxHifCw1QJxdRkA1Pisekg==}
+  caniuse-lite@1.0.30001779:
+    resolution: {integrity: sha512-U5og2PN7V4DMgF50YPNtnZJGWVLFjjsN3zb6uMT5VGYIewieDj1upwfuVNXf4Kor+89c3iCRJnSzMD5LmTvsfA==}
 
   capital-case@1.0.4:
     resolution: {integrity: sha512-ds37W8CytHgwnhGGTi88pcPyR15qoNkOpYwmMMfnWqqWgESapLqvDx6huFjQ5vqWSn2Z06173XNA7LtMOeUh1A==}
@@ -8622,8 +8619,8 @@ packages:
   hookable@5.5.3:
     resolution: {integrity: sha512-Yc+BQe8SvoXH1643Qez1zqLRmbA5rCL+sSmk6TVos0LWVfNIB7PGncdlId77WzLGSIB5KaWgTaNTs2lNVEI6VQ==}
 
-  hookable@6.0.1:
-    resolution: {integrity: sha512-uKGyY8BuzN/a5gvzvA+3FVWo0+wUjgtfSdnmjtrOVwQCZPHpHDH2WRO3VZSOeluYrHoDCiXFffZXs8Dj1ULWtw==}
+  hookable@6.1.0:
+    resolution: {integrity: sha512-ZoKZSJgu8voGK2geJS+6YtYjvIzu9AOM/KZXsBxr83uhLL++e9pEv/dlgwgy3dvHg06kTz6JOh1hk3C8Ceiymw==}
 
   hosted-git-info@8.1.0:
     resolution: {integrity: sha512-Rw/B2DNQaPBICNXEm8balFz9a6WpZrkCGpcWFpy7nCj+NyhSdqXipmfvtmWt9xGfp0wZnBxB+iVpLmQMYt47Tw==}
@@ -9728,8 +9725,8 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
-  nanostores@1.1.1:
-    resolution: {integrity: sha512-EYJqS25r2iBeTtGQCHidXl1VfZ1jXM7Q04zXJOrMlxVVmD0ptxJaNux92n1mJ7c5lN3zTq12MhH/8x59nP+qmg==}
+  nanostores@1.2.0:
+    resolution: {integrity: sha512-F0wCzbsH80G7XXo0Jd9/AVQC7ouWY6idUCTnMwW5t/Rv9W8qmO6endavDwg7TNp5GbugwSukFMVZqzPSrSMndg==}
     engines: {node: ^20.0.0 || >=22.0.0}
 
   nanotar@0.2.1:
@@ -10619,8 +10616,8 @@ packages:
     resolution: {integrity: sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==}
     engines: {node: '>= 0.6'}
 
-  rate-limiter-flexible@9.1.1:
-    resolution: {integrity: sha512-imxFjzPCmvDLMe7d2tsgiSQvs5EI2fI9SNymmslAfOqznZhsZ+PqbIjIYKpuSbd3pKovR1aMG47qfCLIO/adVg==}
+  rate-limiter-flexible@10.0.0:
+    resolution: {integrity: sha512-+XgS+25UfodHJGXaTTfaFOyzVzk1zy9gH4hCyzOPcqywnE2DSEgEYS8GV8X+GiKRdNRp2F/hiY9m2S0z5Qbl1Q==}
 
   rc9@2.1.2:
     resolution: {integrity: sha512-btXCnMmRIBINM2LDZoEmOogIZU7Qe7zn4BpomSKZ/ykbLObuBdvG+mFq11DL6fjH1DRwHhrlgtYWG96bJiC7Cg==}
@@ -12103,8 +12100,8 @@ packages:
     peerDependencies:
       vite: ^8.0.0
 
-  vite-plugin-glsl@1.5.5:
-    resolution: {integrity: sha512-6NM2P4JkM+1hNSqMhM4eagX03bmhEoTyrOrk68y3Q6KXfdF73QIuCb6BmRZvwLPgXTCOBM3Zc8gL1WxctYnrUQ==}
+  vite-plugin-glsl@1.5.6:
+    resolution: {integrity: sha512-h3RfTiaI4cC8hICFZk5TBAAxmIuM0b/qkdrjYpqPtaL8bcxNEoEFXXdlISPGmDQ09eP0aJC8V2/BgTmPXspC8w==}
     engines: {node: '>= 20.17.0', npm: '>= 10.8.3'}
     peerDependencies:
       '@rollup/pluginutils': ^5.x
@@ -12326,8 +12323,8 @@ packages:
       typescript:
         optional: true
 
-  vuetify-nuxt-module@1.0.0-alpha.5:
-    resolution: {integrity: sha512-l9p9/8mmiiPiaTeYpgT2VjjyURJ/DBJ4wyM0VJql0OPFYS72DU7I3ko1P2NlEc+4SWsnxg5F8EsTQ2CIPLK6ZA==}
+  vuetify-nuxt-module@1.0.0-alpha.6:
+    resolution: {integrity: sha512-5Y8lCWDZHOoZKOvWh76BfJPPBdW+FKY2gENnmnxGX9/aFWN/Q4Br1uFwKWfE8nZAHmDQHcyM6TznO2sbcjYDBg==}
 
   vuetify@4.0.2:
     resolution: {integrity: sha512-klgSGmfXoLajdTuuxreilzDQjp0ojzL2U5v6Z3ZbMYtpihPPXT9rkd/FxWL3dIGevnWdgaP2Kpwoz6aS/MISDA==}
@@ -12653,8 +12650,8 @@ packages:
     resolution: {integrity: sha512-4UEqdc2RYGHZc7Doyqkrqiln3p9X2DZVxaGbwhn2pi7MrRagKaOcIKe8L3OxYcbhXLgLFUS3zAYuQjKBQgmuNg==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=23}
 
-  yjs@13.6.29:
-    resolution: {integrity: sha512-kHqDPdltoXH+X4w1lVmMtddE3Oeqq48nM40FD5ojTd8xYhQpzIDcfE2keMSU5bAgRPJBe225WTUdyUgj1DtbiQ==}
+  yjs@13.6.30:
+    resolution: {integrity: sha512-vv/9h42eCMC81ZHDFswuu/MKzkl/vyq1BhaNGfHyOonwlG4CJbQF4oiBBJPvfdeCt/PlVDWh7Nov9D34YY09uQ==}
     engines: {node: '>=16.0.0', npm: '>=8.0.0'}
 
   yocto-queue@0.1.0:
@@ -13652,7 +13649,7 @@ snapshots:
 
   '@bcoe/v8-coverage@1.0.2': {}
 
-  '@better-auth/core@1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.1.1)':
+  '@better-auth/core@1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.2.0)':
     dependencies:
       '@better-auth/utils': 0.3.1
       '@better-fetch/fetch': 1.1.21
@@ -13660,41 +13657,41 @@ snapshots:
       better-call: 1.3.2(zod@4.3.6)
       jose: 6.2.1
       kysely: 0.28.12
-      nanostores: 1.1.1
+      nanostores: 1.2.0
       zod: 4.3.6
 
-  '@better-auth/drizzle-adapter@1.5.5(@better-auth/core@1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.1.1))(@better-auth/utils@0.3.1)(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.16)(kysely@0.28.12)(postgres@3.4.8))':
+  '@better-auth/drizzle-adapter@1.5.5(@better-auth/core@1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.2.0))(@better-auth/utils@0.3.1)(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.16)(kysely@0.28.12)(postgres@3.4.8))':
     dependencies:
-      '@better-auth/core': 1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.1.1)
+      '@better-auth/core': 1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.2.0)
       '@better-auth/utils': 0.3.1
     optionalDependencies:
       drizzle-orm: 0.45.1(@electric-sql/pglite@0.3.16)(kysely@0.28.12)(postgres@3.4.8)
 
-  '@better-auth/kysely-adapter@1.5.5(@better-auth/core@1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.1.1))(@better-auth/utils@0.3.1)(kysely@0.28.12)':
+  '@better-auth/kysely-adapter@1.5.5(@better-auth/core@1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.2.0))(@better-auth/utils@0.3.1)(kysely@0.28.12)':
     dependencies:
-      '@better-auth/core': 1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.1.1)
+      '@better-auth/core': 1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.2.0)
       '@better-auth/utils': 0.3.1
       kysely: 0.28.12
 
-  '@better-auth/memory-adapter@1.5.5(@better-auth/core@1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.1.1))(@better-auth/utils@0.3.1)':
+  '@better-auth/memory-adapter@1.5.5(@better-auth/core@1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.2.0))(@better-auth/utils@0.3.1)':
     dependencies:
-      '@better-auth/core': 1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.1.1)
+      '@better-auth/core': 1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.2.0)
       '@better-auth/utils': 0.3.1
 
-  '@better-auth/mongo-adapter@1.5.5(@better-auth/core@1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.1.1))(@better-auth/utils@0.3.1)(mongodb@7.1.0(socks@2.8.7))':
+  '@better-auth/mongo-adapter@1.5.5(@better-auth/core@1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.2.0))(@better-auth/utils@0.3.1)(mongodb@7.1.0(socks@2.8.7))':
     dependencies:
-      '@better-auth/core': 1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.1.1)
+      '@better-auth/core': 1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.2.0)
       '@better-auth/utils': 0.3.1
       mongodb: 7.1.0(socks@2.8.7)
 
-  '@better-auth/prisma-adapter@1.5.5(@better-auth/core@1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.1.1))(@better-auth/utils@0.3.1)':
+  '@better-auth/prisma-adapter@1.5.5(@better-auth/core@1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.2.0))(@better-auth/utils@0.3.1)':
     dependencies:
-      '@better-auth/core': 1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.1.1)
+      '@better-auth/core': 1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.2.0)
       '@better-auth/utils': 0.3.1
 
-  '@better-auth/telemetry@1.5.5(@better-auth/core@1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.1.1))':
+  '@better-auth/telemetry@1.5.5(@better-auth/core@1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.2.0))':
     dependencies:
-      '@better-auth/core': 1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.1.1)
+      '@better-auth/core': 1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.2.0)
       '@better-auth/utils': 0.3.1
       '@better-fetch/fetch': 1.1.21
 
@@ -14422,7 +14419,7 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.3': {}
 
-  '@iconify/collections@1.0.660':
+  '@iconify/collections@1.0.661':
     dependencies:
       '@iconify/types': 2.0.0
 
@@ -15172,7 +15169,7 @@ snapshots:
       execa: 8.0.1
       fast-npm-meta: 1.4.2
       get-port-please: 3.2.0
-      hookable: 6.0.1
+      hookable: 6.1.0
       image-meta: 0.2.2
       is-installed-globally: 1.0.0
       launch-editor: 2.13.1
@@ -15311,7 +15308,7 @@ snapshots:
 
   '@nuxt/icon@2.2.1(magicast@0.5.2)(vite@8.0.0(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(vue@3.5.30(typescript@5.9.3))':
     dependencies:
-      '@iconify/collections': 1.0.660
+      '@iconify/collections': 1.0.661
       '@iconify/types': 2.0.0
       '@iconify/utils': 3.1.0
       '@iconify/vue': 5.0.0(vue@3.5.30(typescript@5.9.3))
@@ -15612,7 +15609,7 @@ snapshots:
       - typescript
       - vite
 
-  '@nuxt/ui@4.5.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/storage-blob@12.31.0)(@tiptap/extensions@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1))(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.29))(yjs@13.6.29))(axios@1.13.6(debug@4.4.3))(change-case@5.4.4)(db0@0.3.4(@electric-sql/pglite@0.3.16)(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.16)(kysely@0.28.12)(postgres@3.4.8)))(embla-carousel@8.6.0)(ioredis@5.10.0)(magicast@0.5.2)(srvx@0.11.9)(tailwindcss@4.2.1)(typescript@5.9.3)(valibot@1.2.0(typescript@5.9.3))(vite@8.0.0(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(vue-router@5.0.3(@vue/compiler-sfc@3.5.30)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.30(typescript@5.9.3)))(vue@3.5.30(typescript@5.9.3)))(vue@3.5.30(typescript@5.9.3))(yjs@13.6.29)(zod@4.3.6)':
+  '@nuxt/ui@4.5.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/storage-blob@12.31.0)(@tiptap/extensions@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1))(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.30))(yjs@13.6.30))(axios@1.13.6(debug@4.4.3))(change-case@5.4.4)(db0@0.3.4(@electric-sql/pglite@0.3.16)(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.16)(kysely@0.28.12)(postgres@3.4.8)))(embla-carousel@8.6.0)(ioredis@5.10.0)(magicast@0.5.2)(srvx@0.11.9)(tailwindcss@4.2.1)(typescript@5.9.3)(valibot@1.2.0(typescript@5.9.3))(vite@8.0.0(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(vue-router@5.0.3(@vue/compiler-sfc@3.5.30)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.30(typescript@5.9.3)))(vue@3.5.30(typescript@5.9.3)))(vue@3.5.30(typescript@5.9.3))(yjs@13.6.30)(zod@4.3.6)':
     dependencies:
       '@floating-ui/dom': 1.7.6
       '@iconify/vue': 5.0.0(vue@3.5.30(typescript@5.9.3))
@@ -15631,9 +15628,9 @@ snapshots:
       '@tiptap/core': 3.20.1(@tiptap/pm@3.20.1)
       '@tiptap/extension-bubble-menu': 3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)
       '@tiptap/extension-code': 3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))
-      '@tiptap/extension-collaboration': 3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.29))(yjs@13.6.29))(yjs@13.6.29)
-      '@tiptap/extension-drag-handle': 3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/extension-collaboration@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.29))(yjs@13.6.29))(yjs@13.6.29))(@tiptap/extension-node-range@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.29))(yjs@13.6.29))
-      '@tiptap/extension-drag-handle-vue-3': 3.20.1(@tiptap/extension-drag-handle@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/extension-collaboration@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.29))(yjs@13.6.29))(yjs@13.6.29))(@tiptap/extension-node-range@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.29))(yjs@13.6.29)))(@tiptap/pm@3.20.1)(@tiptap/vue-3@3.20.1(@floating-ui/dom@1.7.6)(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(vue@3.5.30(typescript@5.9.3)))(vue@3.5.30(typescript@5.9.3))
+      '@tiptap/extension-collaboration': 3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.30))(yjs@13.6.30))(yjs@13.6.30)
+      '@tiptap/extension-drag-handle': 3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/extension-collaboration@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.30))(yjs@13.6.30))(yjs@13.6.30))(@tiptap/extension-node-range@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.30))(yjs@13.6.30))
+      '@tiptap/extension-drag-handle-vue-3': 3.20.1(@tiptap/extension-drag-handle@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/extension-collaboration@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.30))(yjs@13.6.30))(yjs@13.6.30))(@tiptap/extension-node-range@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.30))(yjs@13.6.30)))(@tiptap/pm@3.20.1)(@tiptap/vue-3@3.20.1(@floating-ui/dom@1.7.6)(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(vue@3.5.30(typescript@5.9.3)))(vue@3.5.30(typescript@5.9.3))
       '@tiptap/extension-floating-menu': 3.20.1(@floating-ui/dom@1.7.6)(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)
       '@tiptap/extension-horizontal-rule': 3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)
       '@tiptap/extension-image': 3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))
@@ -16949,32 +16946,32 @@ snapshots:
     dependencies:
       '@tiptap/core': 3.20.1(@tiptap/pm@3.20.1)
 
-  '@tiptap/extension-collaboration@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.29))(yjs@13.6.29))(yjs@13.6.29)':
+  '@tiptap/extension-collaboration@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.30))(yjs@13.6.30))(yjs@13.6.30)':
     dependencies:
       '@tiptap/core': 3.20.1(@tiptap/pm@3.20.1)
       '@tiptap/pm': 3.20.1
-      '@tiptap/y-tiptap': 3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.29))(yjs@13.6.29)
-      yjs: 13.6.29
+      '@tiptap/y-tiptap': 3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.30))(yjs@13.6.30)
+      yjs: 13.6.30
 
   '@tiptap/extension-document@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))':
     dependencies:
       '@tiptap/core': 3.20.1(@tiptap/pm@3.20.1)
 
-  '@tiptap/extension-drag-handle-vue-3@3.20.1(@tiptap/extension-drag-handle@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/extension-collaboration@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.29))(yjs@13.6.29))(yjs@13.6.29))(@tiptap/extension-node-range@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.29))(yjs@13.6.29)))(@tiptap/pm@3.20.1)(@tiptap/vue-3@3.20.1(@floating-ui/dom@1.7.6)(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(vue@3.5.30(typescript@5.9.3)))(vue@3.5.30(typescript@5.9.3))':
+  '@tiptap/extension-drag-handle-vue-3@3.20.1(@tiptap/extension-drag-handle@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/extension-collaboration@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.30))(yjs@13.6.30))(yjs@13.6.30))(@tiptap/extension-node-range@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.30))(yjs@13.6.30)))(@tiptap/pm@3.20.1)(@tiptap/vue-3@3.20.1(@floating-ui/dom@1.7.6)(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(vue@3.5.30(typescript@5.9.3)))(vue@3.5.30(typescript@5.9.3))':
     dependencies:
-      '@tiptap/extension-drag-handle': 3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/extension-collaboration@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.29))(yjs@13.6.29))(yjs@13.6.29))(@tiptap/extension-node-range@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.29))(yjs@13.6.29))
+      '@tiptap/extension-drag-handle': 3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/extension-collaboration@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.30))(yjs@13.6.30))(yjs@13.6.30))(@tiptap/extension-node-range@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.30))(yjs@13.6.30))
       '@tiptap/pm': 3.20.1
       '@tiptap/vue-3': 3.20.1(@floating-ui/dom@1.7.6)(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(vue@3.5.30(typescript@5.9.3))
       vue: 3.5.30(typescript@5.9.3)
 
-  '@tiptap/extension-drag-handle@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/extension-collaboration@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.29))(yjs@13.6.29))(yjs@13.6.29))(@tiptap/extension-node-range@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.29))(yjs@13.6.29))':
+  '@tiptap/extension-drag-handle@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/extension-collaboration@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.30))(yjs@13.6.30))(yjs@13.6.30))(@tiptap/extension-node-range@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.30))(yjs@13.6.30))':
     dependencies:
       '@floating-ui/dom': 1.7.6
       '@tiptap/core': 3.20.1(@tiptap/pm@3.20.1)
-      '@tiptap/extension-collaboration': 3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.29))(yjs@13.6.29))(yjs@13.6.29)
+      '@tiptap/extension-collaboration': 3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.30))(yjs@13.6.30))(yjs@13.6.30)
       '@tiptap/extension-node-range': 3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)
       '@tiptap/pm': 3.20.1
-      '@tiptap/y-tiptap': 3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.29))(yjs@13.6.29)
+      '@tiptap/y-tiptap': 3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.30))(yjs@13.6.30)
 
   '@tiptap/extension-dropcursor@3.20.1(@tiptap/extensions@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1))':
     dependencies:
@@ -17149,14 +17146,14 @@ snapshots:
       '@tiptap/extension-bubble-menu': 3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)
       '@tiptap/extension-floating-menu': 3.20.1(@floating-ui/dom@1.7.6)(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1)
 
-  '@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.29))(yjs@13.6.29)':
+  '@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.30))(yjs@13.6.30)':
     dependencies:
       lib0: 0.2.117
       prosemirror-model: 1.25.4
       prosemirror-state: 1.4.4
       prosemirror-view: 1.41.6
-      y-protocols: 1.0.7(yjs@13.6.29)
-      yjs: 13.6.29
+      y-protocols: 1.0.7(yjs@13.6.30)
+      yjs: 13.6.30
 
   '@tresjs/cientos@5.6.0(@tresjs/core@5.7.0(three@0.183.2)(vue@3.5.30(typescript@5.9.3)))(@types/three@0.183.1)(three@0.183.2)(vue@3.5.30(typescript@5.9.3))':
     dependencies:
@@ -17184,10 +17181,10 @@ snapshots:
       three: 0.183.2
       vue: 3.5.30(typescript@5.9.3)
 
-  '@tresjs/nuxt@5.5.0(8ddfa055c48a8c75275bd4c1571bafe0)':
+  '@tresjs/nuxt@5.5.0(5b4322d395858f21b67fc58a2ff0c26c)':
     dependencies:
       '@nuxt/kit': 4.1.2(magicast@0.5.2)
-      '@nuxt/ui': 4.5.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/storage-blob@12.31.0)(@tiptap/extensions@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1))(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.29))(yjs@13.6.29))(axios@1.13.6(debug@4.4.3))(change-case@5.4.4)(db0@0.3.4(@electric-sql/pglite@0.3.16)(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.16)(kysely@0.28.12)(postgres@3.4.8)))(embla-carousel@8.6.0)(ioredis@5.10.0)(magicast@0.5.2)(srvx@0.11.9)(tailwindcss@4.2.1)(typescript@5.9.3)(valibot@1.2.0(typescript@5.9.3))(vite@8.0.0(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(vue-router@5.0.3(@vue/compiler-sfc@3.5.30)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.30(typescript@5.9.3)))(vue@3.5.30(typescript@5.9.3)))(vue@3.5.30(typescript@5.9.3))(yjs@13.6.29)(zod@4.3.6)
+      '@nuxt/ui': 4.5.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/storage-blob@12.31.0)(@tiptap/extensions@3.20.1(@tiptap/core@3.20.1(@tiptap/pm@3.20.1))(@tiptap/pm@3.20.1))(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.6)(y-protocols@1.0.7(yjs@13.6.30))(yjs@13.6.30))(axios@1.13.6(debug@4.4.3))(change-case@5.4.4)(db0@0.3.4(@electric-sql/pglite@0.3.16)(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.16)(kysely@0.28.12)(postgres@3.4.8)))(embla-carousel@8.6.0)(ioredis@5.10.0)(magicast@0.5.2)(srvx@0.11.9)(tailwindcss@4.2.1)(typescript@5.9.3)(valibot@1.2.0(typescript@5.9.3))(vite@8.0.0(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(vue-router@5.0.3(@vue/compiler-sfc@3.5.30)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.30(typescript@5.9.3)))(vue@3.5.30(typescript@5.9.3)))(vue@3.5.30(typescript@5.9.3))(yjs@13.6.30)(zod@4.3.6)
       '@tresjs/core': 5.7.0(three@0.183.2)(vue@3.5.30(typescript@5.9.3))
       defu: 6.1.4
       mlly: 1.8.1
@@ -17195,7 +17192,7 @@ snapshots:
       pkg-types: 2.3.0
       sirv: 3.0.2
       three: 0.183.2
-      vite-plugin-glsl: 1.5.5(@rollup/pluginutils@5.3.0(rollup@4.59.0))(esbuild@0.27.4)(vite@8.0.0(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
+      vite-plugin-glsl: 1.5.6(@rollup/pluginutils@5.3.0(rollup@4.59.0))(esbuild@0.27.4)(vite@8.0.0(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
     transitivePeerDependencies:
       - '@azure/app-configuration'
       - '@azure/cosmos'
@@ -17251,12 +17248,12 @@ snapshots:
       - yup
       - zod
 
-  '@trpc/client@11.12.0(@trpc/server@11.12.0(typescript@5.9.3))(typescript@5.9.3)':
+  '@trpc/client@11.12.1(@trpc/server@11.12.1(typescript@5.9.3))(typescript@5.9.3)':
     dependencies:
-      '@trpc/server': 11.12.0(typescript@5.9.3)
+      '@trpc/server': 11.12.1(typescript@5.9.3)
       typescript: 5.9.3
 
-  '@trpc/server@11.12.0(typescript@5.9.3)':
+  '@trpc/server@11.12.1(typescript@5.9.3)':
     dependencies:
       typescript: 5.9.3
 
@@ -17585,7 +17582,7 @@ snapshots:
 
   '@unhead/vue@2.1.12(vue@3.5.30(typescript@5.9.3))':
     dependencies:
-      hookable: 6.0.1
+      hookable: 6.1.0
       unhead: 2.1.12
       vue: 3.5.30(typescript@5.9.3)
 
@@ -18354,8 +18351,6 @@ snapshots:
 
   '@xtuc/long@4.2.2': {}
 
-  '@yr/monotone-cubic-spline@1.0.3': {}
-
   abbrev@2.0.0: {}
 
   abbrev@3.0.1: {}
@@ -18447,9 +18442,7 @@ snapshots:
       normalize-path: 3.0.0
       picomatch: 2.3.1
 
-  apexcharts@5.10.3:
-    dependencies:
-      '@yr/monotone-cubic-spline': 1.0.3
+  apexcharts@5.10.4: {}
 
   aproba@2.1.0: {}
 
@@ -18564,7 +18557,7 @@ snapshots:
   autoprefixer@10.4.27(postcss@8.5.8):
     dependencies:
       browserslist: 4.28.1
-      caniuse-lite: 1.0.30001778
+      caniuse-lite: 1.0.30001779
       fraction.js: 5.3.4
       picocolors: 1.1.1
       postcss: 8.5.8
@@ -18658,7 +18651,7 @@ snapshots:
 
   base64-js@1.5.1: {}
 
-  baseline-browser-mapping@2.10.7: {}
+  baseline-browser-mapping@2.10.8: {}
 
   basic-auth@2.0.1:
     dependencies:
@@ -18668,13 +18661,13 @@ snapshots:
 
   better-auth@1.5.5(drizzle-kit@0.31.9)(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.16)(kysely@0.28.12)(postgres@3.4.8))(mongodb@7.1.0(socks@2.8.7))(vitest@4.1.0(@types/node@25.5.0)(happy-dom@20.8.4)(vite@8.0.0(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)))(vue@3.5.30(typescript@5.9.3)):
     dependencies:
-      '@better-auth/core': 1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.1.1)
-      '@better-auth/drizzle-adapter': 1.5.5(@better-auth/core@1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.1.1))(@better-auth/utils@0.3.1)(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.16)(kysely@0.28.12)(postgres@3.4.8))
-      '@better-auth/kysely-adapter': 1.5.5(@better-auth/core@1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.1.1))(@better-auth/utils@0.3.1)(kysely@0.28.12)
-      '@better-auth/memory-adapter': 1.5.5(@better-auth/core@1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.1.1))(@better-auth/utils@0.3.1)
-      '@better-auth/mongo-adapter': 1.5.5(@better-auth/core@1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.1.1))(@better-auth/utils@0.3.1)(mongodb@7.1.0(socks@2.8.7))
-      '@better-auth/prisma-adapter': 1.5.5(@better-auth/core@1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.1.1))(@better-auth/utils@0.3.1)
-      '@better-auth/telemetry': 1.5.5(@better-auth/core@1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.1.1))
+      '@better-auth/core': 1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.2.0)
+      '@better-auth/drizzle-adapter': 1.5.5(@better-auth/core@1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.2.0))(@better-auth/utils@0.3.1)(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.16)(kysely@0.28.12)(postgres@3.4.8))
+      '@better-auth/kysely-adapter': 1.5.5(@better-auth/core@1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.2.0))(@better-auth/utils@0.3.1)(kysely@0.28.12)
+      '@better-auth/memory-adapter': 1.5.5(@better-auth/core@1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.2.0))(@better-auth/utils@0.3.1)
+      '@better-auth/mongo-adapter': 1.5.5(@better-auth/core@1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.2.0))(@better-auth/utils@0.3.1)(mongodb@7.1.0(socks@2.8.7))
+      '@better-auth/prisma-adapter': 1.5.5(@better-auth/core@1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.2.0))(@better-auth/utils@0.3.1)
+      '@better-auth/telemetry': 1.5.5(@better-auth/core@1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.2.0))
       '@better-auth/utils': 0.3.1
       '@better-fetch/fetch': 1.1.21
       '@noble/ciphers': 2.1.1
@@ -18683,7 +18676,7 @@ snapshots:
       defu: 6.1.4
       jose: 6.2.1
       kysely: 0.28.12
-      nanostores: 1.1.1
+      nanostores: 1.2.0
       zod: 4.3.6
     optionalDependencies:
       drizzle-kit: 0.31.9
@@ -18752,8 +18745,8 @@ snapshots:
 
   browserslist@4.28.1:
     dependencies:
-      baseline-browser-mapping: 2.10.7
-      caniuse-lite: 1.0.30001778
+      baseline-browser-mapping: 2.10.8
+      caniuse-lite: 1.0.30001779
       electron-to-chromium: 1.5.313
       node-releases: 2.0.36
       update-browserslist-db: 1.2.3(browserslist@4.28.1)
@@ -18855,11 +18848,11 @@ snapshots:
   caniuse-api@3.0.0:
     dependencies:
       browserslist: 4.28.1
-      caniuse-lite: 1.0.30001778
+      caniuse-lite: 1.0.30001779
       lodash.memoize: 4.1.2
       lodash.uniq: 4.5.0
 
-  caniuse-lite@1.0.30001778: {}
+  caniuse-lite@1.0.30001779: {}
 
   capital-case@1.0.4:
     dependencies:
@@ -20718,7 +20711,7 @@ snapshots:
 
   hookable@5.5.3: {}
 
-  hookable@6.0.1: {}
+  hookable@6.1.0: {}
 
   hosted-git-info@8.1.0:
     dependencies:
@@ -21746,7 +21739,7 @@ snapshots:
 
   nanoid@3.3.11: {}
 
-  nanostores@1.1.1: {}
+  nanostores@1.2.0: {}
 
   nanotar@0.2.1: {}
 
@@ -23119,7 +23112,7 @@ snapshots:
 
   range-parser@1.2.1: {}
 
-  rate-limiter-flexible@9.1.1: {}
+  rate-limiter-flexible@10.0.0: {}
 
   rc9@2.1.2:
     dependencies:
@@ -24216,10 +24209,10 @@ snapshots:
     dependencies:
       escape-string-regexp: 1.0.5
 
-  trpc-nuxt@2.0.2(@trpc/client@11.12.0(@trpc/server@11.12.0(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.12.0(typescript@5.9.3))(srvx@0.11.9):
+  trpc-nuxt@2.0.2(@trpc/client@11.12.1(@trpc/server@11.12.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.12.1(typescript@5.9.3))(srvx@0.11.9):
     dependencies:
-      '@trpc/client': 11.12.0(@trpc/server@11.12.0(typescript@5.9.3))(typescript@5.9.3)
-      '@trpc/server': 11.12.0(typescript@5.9.3)
+      '@trpc/client': 11.12.1(@trpc/server@11.12.1(typescript@5.9.3))(typescript@5.9.3)
+      '@trpc/server': 11.12.1(typescript@5.9.3)
       h3: 1.15.6(srvx@0.11.9)
       ofetch: 1.5.1
       ohash: 2.0.11
@@ -24381,7 +24374,7 @@ snapshots:
 
   unhead@2.1.12:
     dependencies:
-      hookable: 6.0.1
+      hookable: 6.1.0
 
   unicode-canonical-property-names-ecmascript@2.0.1: {}
 
@@ -24771,7 +24764,7 @@ snapshots:
     dependencies:
       vite: 8.0.0(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
 
-  vite-plugin-glsl@1.5.5(@rollup/pluginutils@5.3.0(rollup@4.59.0))(esbuild@0.27.4)(vite@8.0.0(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)):
+  vite-plugin-glsl@1.5.6(@rollup/pluginutils@5.3.0(rollup@4.59.0))(esbuild@0.27.4)(vite@8.0.0(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)):
     dependencies:
       vite: 8.0.0(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2)
     optionalDependencies:
@@ -24979,9 +24972,9 @@ snapshots:
       '@vue/language-core': 3.2.5
       typescript: 5.9.3
 
-  vue3-apexcharts@1.11.1(apexcharts@5.10.3)(vue@3.5.30(typescript@5.9.3)):
+  vue3-apexcharts@1.11.1(apexcharts@5.10.4)(vue@3.5.30(typescript@5.9.3)):
     dependencies:
-      apexcharts: 5.10.3
+      apexcharts: 5.10.4
       vue: 3.5.30(typescript@5.9.3)
 
   vue@3.5.30(typescript@5.9.3):
@@ -24994,7 +24987,7 @@ snapshots:
     optionalDependencies:
       typescript: 5.9.3
 
-  vuetify-nuxt-module@1.0.0-alpha.5(magicast@0.5.2)(typescript@5.9.3)(vite@8.0.0(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(vue@3.5.30(typescript@5.9.3)):
+  vuetify-nuxt-module@1.0.0-alpha.6(magicast@0.5.2)(typescript@5.9.3)(vite@8.0.0(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(vue@3.5.30(typescript@5.9.3)):
     dependencies:
       '@nuxt/kit': 4.4.2(magicast@0.5.2)
       defu: 6.1.4
@@ -25401,10 +25394,10 @@ snapshots:
 
   xtend@4.0.2: {}
 
-  y-protocols@1.0.7(yjs@13.6.29):
+  y-protocols@1.0.7(yjs@13.6.30):
     dependencies:
       lib0: 0.2.117
-      yjs: 13.6.29
+      yjs: 13.6.30
 
   y18n@5.0.8: {}
 
@@ -25441,7 +25434,7 @@ snapshots:
       y18n: 5.0.8
       yargs-parser: 22.0.0
 
-  yjs@13.6.29:
+  yjs@13.6.30:
     dependencies:
       lib0: 0.2.117
 
