@@ -13,7 +13,7 @@ export class UpdateRowCommand extends ADataSourceCommand<CommandType.UpdateRow> 
   get description() {
     const recordDifferenceDescription = getRecordDifferenceDescription(this.originalRow.data, this.updatedRow.data);
     const detail = recordDifferenceDescription ? `\n\n${recordDifferenceDescription}` : "";
-    return `Edit Row #${this.index + 1}${detail}`;
+    return `Edit Row ${this.index + 1}${detail}`;
   }
 
   private readonly index: number;

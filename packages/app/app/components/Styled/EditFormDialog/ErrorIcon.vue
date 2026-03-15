@@ -16,8 +16,9 @@ const { editedValue, editForm, isEditFormValid, schema } = defineProps<ErrorIcon
 const errorMessage = computed(() => {
   const error = editForm?.errors[0];
   if (error) {
+    const errorText = takeOne(error.errorMessages);
     const element = document.querySelector(`label[for="${error.id}"]`);
-    if (element) return `${element.textContent}: ${takeOne(error.errorMessages)}`;
+    return element ? `${element.textContent}: ${errorText}` : errorText;
   }
 
   const result = schema.safeParse(editedValue);

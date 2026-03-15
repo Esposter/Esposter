@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { sanitizeHtml } from "@/services/sanitizeHtml/sanitizeHtml";
 import { marked } from "marked";
-import sanitizeHtml from "sanitize-html";
 
 const { isUndoable, undo, undoDescription } = useEditedItemDataSourceOperations();
 const tooltipHtml = computed(() => {

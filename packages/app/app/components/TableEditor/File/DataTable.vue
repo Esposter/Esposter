@@ -14,14 +14,16 @@ const { dataSource } = defineProps<DataTableProps>();
 const { reorderRows } = useEditedItemDataSourceOperations();
 const headers = computed(() => [
   { key: "drag", sortable: false, title: "" },
-  ...dataSource.columns.map((column) => ({
-    key: column.name,
-    title: column.name,
-    value: (row: Row) => takeOne(row.data, column.name),
-  })),
+  ...dataSource.columns
+    .filter((column) => !column.hidden)
+    .map((column) => ({
+      key: column.name,
+      title: column.name,
+      value: (row: Row) => takeOne(row.data, column.name),
+    })),
   { key: "actions", sortable: false, title: "Actions" },
 ]);
-const dragRows = computed<DataSource["rows"]>({
+const dragRows = computed({
   get: () => dataSource.rows,
   set: reorderRows,
 });
@@ -42,8 +44,12 @@ const dragRows = computed<DataSource["rows"]>({
       <template #[`item.drag`]>
         <v-icon :class="DRAG_HANDLE_CLASS" icon="mdi-drag" cursor-move />
       </template>
-      <template #[`item.actions`]="{ item, index }">
-        <TableEditorFileRowActionSlot :columns="dataSource.columns" :index :row="item" />
+      <template #[`item.actions`]="{ item }">
+        <TableEditorFileRowActionSlot
+          :columns="dataSource.columns"
+          :index="dataSource.rows.findIndex((row) => row.id === item.id)"
+          :row="item"
+        />
       </template>
     </StyledDataTable>
   </VueDraggable>

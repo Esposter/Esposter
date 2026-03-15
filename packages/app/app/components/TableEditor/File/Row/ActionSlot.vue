@@ -12,5 +12,5 @@ const { columns, index, row } = defineProps<ActionSlotProps>();
 
 <template>
   <TableEditorFileRowEditDialogButton :columns :index :row />
-  <TableEditorFileRowDeleteDialogButton :index />
+  <TableEditorFileRowDeleteDialogButton :id="row.id" :index />
 </template>

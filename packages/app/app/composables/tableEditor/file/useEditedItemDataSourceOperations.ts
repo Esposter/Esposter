@@ -1,14 +1,19 @@
-import type { Column } from "#shared/models/tableEditor/file/Column";
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
-import type { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
 import type { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import type { ToData } from "@esposter/shared";
 
+import { Column } from "#shared/models/tableEditor/file/Column";
+import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
+import { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
+import { Row } from "#shared/models/tableEditor/file/Row";
+import { CreateColumnCommand } from "@/models/tableEditor/file/commands/CreateColumnCommand";
+import { CreateRowCommand } from "@/models/tableEditor/file/commands/CreateRowCommand";
 import { DeleteColumnCommand } from "@/models/tableEditor/file/commands/DeleteColumnCommand";
 import { DeleteRowCommand } from "@/models/tableEditor/file/commands/DeleteRowCommand";
 import { MoveColumnCommand } from "@/models/tableEditor/file/commands/MoveColumnCommand";
 import { MoveRowCommand } from "@/models/tableEditor/file/commands/MoveRowCommand";
+import { ToggleColumnVisibilityCommand } from "@/models/tableEditor/file/commands/ToggleColumnVisibilityCommand";
 import { UpdateColumnCommand } from "@/models/tableEditor/file/commands/UpdateColumnCommand";
 import { UpdateRowCommand } from "@/models/tableEditor/file/commands/UpdateRowCommand";
 import { useTableEditorStore } from "@/store/tableEditor";
@@ -54,14 +59,29 @@ export const useEditedItemDataSourceOperations = () => {
     executeAndRecord(new MoveRowCommand(fromIndex, toIndex));
   };
 
-  const deleteRow = (index: number) => {
+  const createRow = (row?: Row) => {
     if (!editedItem.value?.dataSource) return;
+    const newRow =
+      row ??
+      new Row({
+        data: Object.fromEntries(editedItem.value.dataSource.columns.map((column) => [column.name, null])),
+      });
+    const index = editedItem.value.dataSource.rows.length;
+    executeAndRecord(new CreateRowCommand(index, newRow));
+  };
+
+  const deleteRow = (id: string) => {
+    if (!editedItem.value?.dataSource) return;
+    const index = editedItem.value.dataSource.rows.findIndex((row) => row.id === id);
+    if (index === -1) return;
     const originalRow = structuredClone(toRawDeep(takeOne(editedItem.value.dataSource.rows, index)));
     executeAndRecord(new DeleteRowCommand(index, originalRow));
   };
 
-  const updateRow = (index: number, updatedRow: DataSource["rows"][number]) => {
-    if (!editedItem.value?.dataSource || index === -1) return;
+  const updateRow = (id: string, updatedRow: DataSource["rows"][number]) => {
+    if (!editedItem.value?.dataSource) return;
+    const index = editedItem.value.dataSource.rows.findIndex((row) => row.id === id);
+    if (index === -1) return;
     const originalRow = structuredClone(toRawDeep(takeOne(editedItem.value.dataSource.rows, index)));
     executeAndRecord(new UpdateRowCommand(index, originalRow, structuredClone(toRawDeep(updatedRow))));
   };
@@ -82,6 +102,23 @@ export const useEditedItemDataSourceOperations = () => {
     );
   };
 
+  const toggleColumnVisibility = (id: string) => {
+    if (!editedItem.value?.dataSource) return;
+    const column = editedItem.value.dataSource.columns.find((column) => column.id === id);
+    if (!column) return;
+    executeAndRecord(new ToggleColumnVisibilityCommand(id, column.name, column.hidden));
+  };
+
+  const createColumn = (formData: ToData<Column | DateColumn>) => {
+    if (!editedItem.value?.dataSource) return;
+    const newColumn =
+      formData.type === ColumnType.Date
+        ? new DateColumn(formData as Partial<DateColumn>)
+        : new Column(formData as Partial<Column>);
+    const columnIndex = editedItem.value.dataSource.columns.length;
+    executeAndRecord(new CreateColumnCommand(columnIndex, newColumn));
+  };
+
   const deleteColumn = (name: string) => {
     if (!editedItem.value?.dataSource) return;
     const columnIndex = editedItem.value.dataSource.columns.findIndex((column) => column.name === name);
@@ -97,6 +134,8 @@ export const useEditedItemDataSourceOperations = () => {
   );
 
   return {
+    createColumn,
+    createRow,
     deleteColumn,
     deleteRow,
     isRedoable,
@@ -106,6 +145,7 @@ export const useEditedItemDataSourceOperations = () => {
     reorderColumns,
     reorderRows,
     setDataSource,
+    toggleColumnVisibility,
     undo: () => undo(editedItem.value),
     undoDescription,
     updateColumn,

@@ -10,7 +10,7 @@ export class DeleteRowCommand extends ADataSourceCommand<CommandType.DeleteRow> 
   readonly type = CommandType.DeleteRow;
 
   get description() {
-    return `Delete row #${this.index + 1}`;
+    return `Delete Row ${this.index + 1}`;
   }
 
   private readonly index: number;
