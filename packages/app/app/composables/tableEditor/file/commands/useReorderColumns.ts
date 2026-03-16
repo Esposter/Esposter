@@ -3,6 +3,7 @@ import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/Data
 
 import { MoveColumnCommand } from "@/models/tableEditor/file/commands/MoveColumnCommand";
 import { useTableEditorStore } from "@/store/tableEditor";
+import { takeOne } from "@esposter/shared";
 
 export const useReorderColumns = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
@@ -12,11 +13,20 @@ export const useReorderColumns = () => {
   return (newColumns: DataSource["columns"]) => {
     if (!editedItem.value?.dataSource) return;
     const oldColumns = editedItem.value.dataSource.columns;
-    const movedColumn = newColumns.find((column, index) => column.id !== oldColumns[index]?.id);
-    if (!movedColumn) return;
-    const fromIndex = oldColumns.findIndex(({ id }) => id === movedColumn.id);
-    const toIndex = newColumns.findIndex(({ id }) => id === movedColumn.id);
+    let fromIndex = -1;
+    let toIndex = -1;
+    let maxDisplacement = 0;
+    for (const [oldIdx, column] of oldColumns.entries()) {
+      const newIdx = newColumns.findIndex(({ id }) => id === column.id);
+      const displacement = Math.abs(newIdx - oldIdx);
+      if (displacement > maxDisplacement) {
+        maxDisplacement = displacement;
+        fromIndex = oldIdx;
+        toIndex = newIdx;
+      }
+    }
     if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return;
+    const movedColumn = takeOne(oldColumns, fromIndex);
     const toColumnName = oldColumns[toIndex]?.name ?? "";
     const command = new MoveColumnCommand(fromIndex, toIndex, movedColumn.name, toColumnName);
     command.execute(editedItem.value);

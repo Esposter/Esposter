@@ -92,6 +92,27 @@ describe(useReorderColumns, () => {
     expect(takeOne(dataSource.columns, 2).name).toBe("c");
   });
 
+  test("moves column forward non-adjacent (index 0 to 2) with three columns", () => {
+    expect.hasAssertions();
+
+    const threeColumnDs = makeDataSource(
+      [makeColumn("a"), makeColumn("b"), makeColumn("c")],
+      [makeRow({ a: 0, b: 1, c: 2 })],
+    );
+    const { editedItem } = setupWithDataSource(threeColumnDs);
+    const reorderColumns = useReorderColumns();
+    const columns = editedItem.value?.dataSource?.columns ?? [];
+    const newColumns = [takeOne(columns, 1), takeOne(columns, 2), takeOne(columns, 0)] as Column[];
+    reorderColumns(newColumns);
+    const dataSource = editedItem.value?.dataSource;
+
+    expectToBeDefined(dataSource);
+
+    expect(takeOne(dataSource.columns, 0).name).toBe("b");
+    expect(takeOne(dataSource.columns, 1).name).toBe("c");
+    expect(takeOne(dataSource.columns, 2).name).toBe("a");
+  });
+
   test("no-op when order unchanged", () => {
     expect.hasAssertions();
 

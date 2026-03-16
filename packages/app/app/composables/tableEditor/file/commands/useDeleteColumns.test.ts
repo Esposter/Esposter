@@ -51,8 +51,8 @@ describe(useDeleteColumns, () => {
 
     expectToBeDefined(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data).not.toHaveProperty("");
-    expect(takeOne(dataSource.rows, 1).data).not.toHaveProperty("");
+    expect(takeOne(dataSource.rows, 0).data[""]).toBeUndefined();
+    expect(takeOne(dataSource.rows, 1).data[""]).toBeUndefined();
   });
 
   test("undo restores all deleted columns at their original positions", () => {

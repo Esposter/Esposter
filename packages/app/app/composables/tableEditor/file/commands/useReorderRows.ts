@@ -12,10 +12,18 @@ export const useReorderRows = () => {
   return (newRows: DataSource["rows"]) => {
     if (!editedItem.value?.dataSource) return;
     const oldRows = editedItem.value.dataSource.rows;
-    const movedRow = newRows.find((row, index) => row.id !== oldRows[index]?.id);
-    if (!movedRow) return;
-    const fromIndex = oldRows.findIndex(({ id }) => id === movedRow.id);
-    const toIndex = newRows.findIndex(({ id }) => id === movedRow.id);
+    let fromIndex = -1;
+    let toIndex = -1;
+    let maxDisplacement = 0;
+    for (const [oldIdx, row] of oldRows.entries()) {
+      const newIdx = newRows.findIndex(({ id }) => id === row.id);
+      const displacement = Math.abs(newIdx - oldIdx);
+      if (displacement > maxDisplacement) {
+        maxDisplacement = displacement;
+        fromIndex = oldIdx;
+        toIndex = newIdx;
+      }
+    }
     if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return;
     const command = new MoveRowCommand(fromIndex, toIndex);
     command.execute(editedItem.value);

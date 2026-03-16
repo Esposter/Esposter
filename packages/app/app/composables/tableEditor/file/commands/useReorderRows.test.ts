@@ -89,6 +89,24 @@ describe(useReorderRows, () => {
     expect(takeOne(dataSource.rows, 2).data[""]).toBe(1);
   });
 
+  test("moves row forward non-adjacent (index 0 to 2) with three rows", () => {
+    expect.hasAssertions();
+
+    const threeRowDs = makeDataSource([makeColumn("")], [makeRow({ "": 0 }), makeRow({ "": 1 }), makeRow({ "": 2 })]);
+    const { editedItem } = setupWithDataSource(threeRowDs);
+    const reorderRows = useReorderRows();
+    const rows = editedItem.value?.dataSource?.rows ?? [];
+    const newRows = [takeOne(rows, 1), takeOne(rows, 2), takeOne(rows, 0)] as Row[];
+    reorderRows(newRows);
+    const dataSource = editedItem.value?.dataSource;
+
+    expectToBeDefined(dataSource);
+
+    expect(takeOne(dataSource.rows, 0).data[""]).toBe(1);
+    expect(takeOne(dataSource.rows, 1).data[""]).toBe(2);
+    expect(takeOne(dataSource.rows, 2).data[""]).toBe(0);
+  });
+
   test("no-op when order unchanged", () => {
     expect.hasAssertions();
 
