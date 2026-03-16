@@ -11,7 +11,8 @@ interface DataTableProps {
 }
 
 const { dataSource } = defineProps<DataTableProps>();
-const { reorderRows } = useEditedItemDataSourceOperations();
+const { deleteRows, reorderRows } = useEditedItemDataSourceOperations();
+const selectedRowIds = ref<string[]>([]);
 const headers = computed(() => [
   { key: "drag", sortable: false, title: "" },
   ...dataSource.columns
@@ -36,11 +37,36 @@ const dragRows = computed({
       flex-1
       flex-col
       :data-table-props="{
-        height: '100%',
+        density: 'compact',
         headers,
         items: dragRows,
+        modelValue: selectedRowIds,
+        showSelect: true,
+        'onUpdate:modelValue': (newSelectedIds) => {
+          selectedRowIds = newSelectedIds as string[];
+        },
       }"
     >
+      <template v-if="selectedRowIds.length > 0" #top>
+        <v-toolbar>
+          <v-toolbar-title pl-3>
+            {{ selectedRowIds.length }} row{{ selectedRowIds.length === 1 ? "" : "s" }} selected
+          </v-toolbar-title>
+          <StyledConfirmDeleteDialogButton
+            :card-props="{
+              title: `Delete ${selectedRowIds.length} Row${selectedRowIds.length === 1 ? '' : 's'}`,
+              text: `Are you sure you want to delete ${selectedRowIds.length} selected row${selectedRowIds.length === 1 ? '' : 's'}?`,
+            }"
+            @delete="
+              (onComplete) => {
+                deleteRows(selectedRowIds);
+                selectedRowIds = [];
+                onComplete();
+              }
+            "
+          />
+        </v-toolbar>
+      </template>
       <template #[`item.drag`]>
         <v-icon :class="DRAG_HANDLE_CLASS" icon="mdi-drag" cursor-move />
       </template>

@@ -1,3 +1,4 @@
+import type { ColumnValue } from "#shared/models/tableEditor/file/ColumnValue";
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 import type { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
@@ -10,7 +11,9 @@ import { Row } from "#shared/models/tableEditor/file/Row";
 import { CreateColumnCommand } from "@/models/tableEditor/file/commands/CreateColumnCommand";
 import { CreateRowCommand } from "@/models/tableEditor/file/commands/CreateRowCommand";
 import { DeleteColumnCommand } from "@/models/tableEditor/file/commands/DeleteColumnCommand";
+import { DeleteColumnsCommand } from "@/models/tableEditor/file/commands/DeleteColumnsCommand";
 import { DeleteRowCommand } from "@/models/tableEditor/file/commands/DeleteRowCommand";
+import { DeleteRowsCommand } from "@/models/tableEditor/file/commands/DeleteRowsCommand";
 import { MoveColumnCommand } from "@/models/tableEditor/file/commands/MoveColumnCommand";
 import { MoveRowCommand } from "@/models/tableEditor/file/commands/MoveRowCommand";
 import { ToggleColumnVisibilityCommand } from "@/models/tableEditor/file/commands/ToggleColumnVisibilityCommand";
@@ -77,6 +80,19 @@ export const useEditedItemDataSourceOperations = () => {
     executeAndRecord(new DeleteRowCommand(index, originalRow));
   };
 
+  const deleteRows = (ids: string[]) => {
+    const dataSource = editedItem.value?.dataSource;
+    if (!dataSource) return;
+    const indexedRows: { index: number; row: DataSource["rows"][number] }[] = [];
+    for (const id of ids) {
+      const index = dataSource.rows.findIndex((row) => row.id === id);
+      if (index === -1) continue;
+      indexedRows.push({ index, row: structuredClone(toRawDeep(takeOne(dataSource.rows, index))) });
+    }
+    if (indexedRows.length === 0) return;
+    executeAndRecord(new DeleteRowsCommand(indexedRows));
+  };
+
   const updateRow = (updatedRow: Row) => {
     if (!editedItem.value?.dataSource) return;
     const index = editedItem.value.dataSource.rows.findIndex((row) => row.id === updatedRow.id);
@@ -128,6 +144,21 @@ export const useEditedItemDataSourceOperations = () => {
     executeAndRecord(new DeleteColumnCommand(columnIndex, originalColumn, originalRowValues));
   };
 
+  const deleteColumns = (ids: string[]) => {
+    const dataSource = editedItem.value?.dataSource;
+    if (!dataSource) return;
+    const indexedColumns: { columnIndex: number; originalColumn: DataSource["columns"][number]; originalRowValues: ColumnValue[] }[] = [];
+    for (const id of ids) {
+      const columnIndex = dataSource.columns.findIndex((column) => column.id === id);
+      if (columnIndex === -1) continue;
+      const originalColumn = structuredClone(toRawDeep(takeOne(dataSource.columns, columnIndex)));
+      const originalRowValues = dataSource.rows.map((row) => takeOne(toRawDeep(row).data, originalColumn.name));
+      indexedColumns.push({ columnIndex, originalColumn, originalRowValues });
+    }
+    if (indexedColumns.length === 0) return;
+    executeAndRecord(new DeleteColumnsCommand(indexedColumns));
+  };
+
   watch(
     () => editedItem.value?.id,
     () => clear(),
@@ -137,7 +168,9 @@ export const useEditedItemDataSourceOperations = () => {
     createColumn,
     createRow,
     deleteColumn,
+    deleteColumns,
     deleteRow,
+    deleteRows,
     isRedoable,
     isUndoable,
     redo: () => redo(editedItem.value),

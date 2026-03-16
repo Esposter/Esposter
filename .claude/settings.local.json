@@ -21,7 +21,8 @@
       "Bash(pnpm install:*)",
       "Bash(pnpm outdated:*)",
       "Bash(cd:*)",
-      "Bash(pnpm test:*)"
+      "Bash(pnpm test:*)",
+      "mcp__vuetify-mcp__get_component_api_by_version"
     ]
   }
 }

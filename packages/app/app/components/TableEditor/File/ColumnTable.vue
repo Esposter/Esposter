@@ -13,7 +13,8 @@ interface ColumnTableProps {
 }
 
 const { dataSource } = defineProps<ColumnTableProps>();
-const { reorderColumns, toggleColumnVisibility } = useEditedItemDataSourceOperations();
+const { deleteColumns, reorderColumns, toggleColumnVisibility } = useEditedItemDataSourceOperations();
+const selectedColumnIds = ref<string[]>([]);
 const dragColumns = computed({
   get: () => dataSource.columns,
   set: reorderColumns,
@@ -22,7 +23,39 @@ const dragColumns = computed({
 
 <template>
   <VueDraggable v-model="dragColumns" target="tbody" :handle="`.${DRAG_HANDLE_CLASS}`">
-    <v-data-table :headers="ColumnHeaders" :items="dragColumns" density="compact" hide-default-footer>
+    <StyledDataTable
+      :data-table-props="{
+        density: 'compact',
+        headers: ColumnHeaders,
+        hideDefaultFooter: true,
+        items: dragColumns,
+        modelValue: selectedColumnIds,
+        showSelect: true,
+        'onUpdate:modelValue': (newSelectedIds) => {
+          selectedColumnIds = newSelectedIds as string[];
+        },
+      }"
+    >
+      <template v-if="selectedColumnIds.length > 0" #top>
+        <v-toolbar>
+          <v-toolbar-title pl-3>
+            {{ selectedColumnIds.length }} column{{ selectedColumnIds.length === 1 ? "" : "s" }} selected
+          </v-toolbar-title>
+          <StyledConfirmDeleteDialogButton
+            :card-props="{
+              title: `Delete ${selectedColumnIds.length} Column${selectedColumnIds.length === 1 ? '' : 's'}`,
+              text: `Are you sure you want to delete ${selectedColumnIds.length} selected column${selectedColumnIds.length === 1 ? '' : 's'}?`,
+            }"
+            @delete="
+              (onComplete) => {
+                deleteColumns(selectedColumnIds);
+                selectedColumnIds = [];
+                onComplete();
+              }
+            "
+          />
+        </v-toolbar>
+      </template>
       <template #[`item.drag`]>
         <v-icon :class="DRAG_HANDLE_CLASS" icon="mdi-drag" cursor-move />
       </template>
@@ -54,6 +87,6 @@ const dragColumns = computed({
         <TableEditorFileColumnEditDialogButton :data-source :column />
         <TableEditorFileColumnDeleteDialogButton :name="column.name" />
       </template>
-    </v-data-table>
+    </StyledDataTable>
   </VueDraggable>
 </template>
