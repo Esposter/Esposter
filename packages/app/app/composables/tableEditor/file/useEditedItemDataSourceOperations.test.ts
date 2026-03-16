@@ -170,7 +170,8 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { editedItem, operations } = setupWithDataSource();
       const { updateRow } = operations;
-      updateRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id, createRow({ "": 10, " ": 11 }));
+      const originalRow = takeOne(editedItem.value?.dataSource?.rows ?? [], 0);
+      updateRow(new Row(Object.assign(structuredClone(toRawDeep(originalRow)), { data: { "": 10, " ": 11 } })));
       const dataSource = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSource);
@@ -184,7 +185,8 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { editedItem, operations } = setupWithDataSource();
       const { undo, updateRow } = operations;
-      updateRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id, createRow({ "": 10, " ": 11 }));
+      const originalRow = takeOne(editedItem.value?.dataSource?.rows ?? [], 0);
+      updateRow(new Row(Object.assign(structuredClone(toRawDeep(originalRow)), { data: { "": 10, " ": 11 } })));
       undo();
       const dataSource = editedItem.value?.dataSource;
 
@@ -199,7 +201,8 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { editedItem, operations } = setupWithDataSource();
       const { redo, undo, updateRow } = operations;
-      updateRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id, createRow({ "": 10, " ": 11 }));
+      const originalRow = takeOne(editedItem.value?.dataSource?.rows ?? [], 0);
+      updateRow(new Row(Object.assign(structuredClone(toRawDeep(originalRow)), { data: { "": 10, " ": 11 } })));
       undo();
       redo();
       const dataSource = editedItem.value?.dataSource;
@@ -214,7 +217,7 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { operations } = setupWithDataSource();
       const { isUndoable, updateRow } = operations;
-      updateRow("nonexistent", createRow({ "": 10 }));
+      updateRow(new Row({ data: { "": 10 } }));
 
       expect(isUndoable.value).toBe(false);
     });
@@ -223,7 +226,7 @@ describe(useEditedItemDataSourceOperations, () => {
       expect.hasAssertions();
 
       const { isUndoable, updateRow } = useEditedItemDataSourceOperations();
-      updateRow("", createRow({ "": 10 }));
+      updateRow(new Row({ data: { "": 10 } }));
 
       expect(isUndoable.value).toBe(false);
     });
@@ -233,7 +236,7 @@ describe(useEditedItemDataSourceOperations, () => {
 
       setupEditedItem();
       const { isUndoable, updateRow } = useEditedItemDataSourceOperations();
-      updateRow("", createRow({ "": 10 }));
+      updateRow(new Row({ data: { "": 10 } }));
 
       expect(isUndoable.value).toBe(false);
     });
@@ -243,8 +246,11 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { editedItem, operations } = setupWithDataSource();
       const { redo, undo, updateRow } = operations;
-      const updatedRow = reactive(createRow({ "": 10, " ": 11 }));
-      updateRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id, updatedRow);
+      const originalRow = takeOne(editedItem.value?.dataSource?.rows ?? [], 0);
+      const updatedRow = reactive(
+        new Row(Object.assign(structuredClone(toRawDeep(originalRow)), { data: { "": 10, " ": 11 } })),
+      );
+      updateRow(updatedRow);
       updatedRow.data[""] = 99;
       updatedRow.data[" "] = 99;
       undo();
@@ -642,9 +648,16 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const firstRow = takeOne(dataSource.rows, 2);
       const secondRow = takeOne(dataSource.rows, 3);
+
       expect(dataSource.rows).toHaveLength(4);
       expect(firstRow.id).not.toBe(secondRow.id);
-      expect(firstRow).toStrictEqual({ ...secondRow, id: firstRow.id, createdAt: firstRow.createdAt, updatedAt: firstRow.updatedAt });
+      expect(firstRow).toStrictEqual(
+        Object.assign(secondRow, {
+          createdAt: firstRow.createdAt,
+          id: firstRow.id,
+          updatedAt: firstRow.updatedAt,
+        }),
+      );
     });
 
     test("no-op when editedItem is undefined", () => {
@@ -673,7 +686,8 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { editedItem, operations } = setupWithDataSource();
       const { createColumn } = operations;
-      createColumn(new Column({ name: "new", sourceName: "new" }));
+      const newColumn = new Column({ name: "new", sourceName: "new" });
+      createColumn(newColumn);
       const dataSource = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSource);
@@ -689,7 +703,8 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { editedItem, operations } = setupWithDataSource();
       const { createColumn, undo } = operations;
-      createColumn(new Column({ name: "new", sourceName: "new" }));
+      const newColumn = new Column({ name: "new", sourceName: "new" });
+      createColumn(newColumn);
       undo();
       const dataSource = editedItem.value?.dataSource;
 
@@ -704,7 +719,8 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { editedItem, operations } = setupWithDataSource();
       const { createColumn, redo, undo } = operations;
-      createColumn(new Column({ name: "new", sourceName: "new" }));
+      const newColumn = new Column({ name: "new", sourceName: "new" });
+      createColumn(newColumn);
       undo();
       redo();
       const dataSource = editedItem.value?.dataSource;
@@ -720,25 +736,33 @@ describe(useEditedItemDataSourceOperations, () => {
 
       const { editedItem, operations } = setupWithDataSource();
       const { createColumn } = operations;
-      const column = new Column({ name: "new", sourceName: "new" });
-      createColumn(column);
-      createColumn(column);
+      const newColumn = new Column({ name: "new", sourceName: "new" });
+      createColumn(newColumn);
+      createColumn(newColumn);
       const dataSource = editedItem.value?.dataSource;
 
       expectToBeDefined(dataSource);
 
       const firstColumn = takeOne(dataSource.columns, 2);
       const secondColumn = takeOne(dataSource.columns, 3);
+
       expect(dataSource.columns).toHaveLength(4);
       expect(firstColumn.id).not.toBe(secondColumn.id);
-      expect(firstColumn).toStrictEqual({ ...secondColumn, id: firstColumn.id, createdAt: firstColumn.createdAt, updatedAt: firstColumn.updatedAt });
+      expect(firstColumn).toStrictEqual(
+        Object.assign(secondColumn, {
+          createdAt: firstColumn.createdAt,
+          id: firstColumn.id,
+          updatedAt: firstColumn.updatedAt,
+        }),
+      );
     });
 
     test("no-op when editedItem is undefined", () => {
       expect.hasAssertions();
 
       const { createColumn, isUndoable } = useEditedItemDataSourceOperations();
-      createColumn(new Column({ name: "new", sourceName: "new" }));
+      const newColumn = new Column({ name: "new", sourceName: "new" });
+      createColumn(newColumn);
 
       expect(isUndoable.value).toBe(false);
     });
@@ -748,7 +772,8 @@ describe(useEditedItemDataSourceOperations, () => {
 
       setupEditedItem();
       const { createColumn, isUndoable } = useEditedItemDataSourceOperations();
-      createColumn(new Column({ name: "new", sourceName: "new" }));
+      const newColumn = new Column({ name: "new", sourceName: "new" });
+      createColumn(newColumn);
 
       expect(isUndoable.value).toBe(false);
     });
@@ -1103,7 +1128,7 @@ describe(useEditedItemDataSourceOperations, () => {
       const operations = useEditedItemDataSourceOperations();
       const { deleteRow, isUndoable, setDataSource } = operations;
       setDataSource(createDataSource([createColumn("")], [createRow({ "": 0 }), createRow({ "": 1 })]));
-      deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
+      deleteRow(takeOne(editedItem.value.dataSource?.rows ?? [], 0).id);
 
       expect(isUndoable.value).toBe(true);
 

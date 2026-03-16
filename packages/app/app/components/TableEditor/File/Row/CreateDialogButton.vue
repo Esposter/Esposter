@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
-import type { Except } from "type-fest";
 
 import { Row, rowSchema } from "#shared/models/tableEditor/file/Row";
 import { takeOne } from "@esposter/shared";
@@ -11,11 +10,9 @@ interface CreateDialogButtonProps {
 
 const { dataSource } = defineProps<CreateDialogButtonProps>();
 const { createRow } = useEditedItemDataSourceOperations();
-const rowData = ref<Except<Row, "id">>(
-  new Row({ data: Object.fromEntries(dataSource.columns.map((column) => [column.name, null])) }),
-);
+const editedRow = ref(new Row({ data: Object.fromEntries(dataSource.columns.map((column) => [column.name, null])) }));
 const resetForm = () => {
-  rowData.value = new Row({ data: Object.fromEntries(dataSource.columns.map((column) => [column.name, null])) });
+  editedRow.value = new Row({ data: Object.fromEntries(dataSource.columns.map((column) => [column.name, null])) });
 };
 </script>
 
@@ -26,10 +23,10 @@ const resetForm = () => {
     icon="mdi-table-row-plus-after"
     :schema="rowSchema"
     :value="null"
-    :edited-value="rowData"
+    :edited-value="editedRow"
     @submit="
       (onComplete) => {
-        createRow(rowData);
+        createRow(editedRow);
         onComplete();
       }
     "
@@ -44,9 +41,9 @@ const resetForm = () => {
     <v-row v-for="column of dataSource.columns.filter((column) => !column.hidden)" :key="column.id">
       <v-col cols="12">
         <TableEditorFileRowFieldInput
-          :model-value="takeOne(rowData.data, column.name)"
+          :model-value="takeOne(editedRow.data, column.name)"
           :column
-          @update:model-value="rowData.data[column.name] = $event"
+          @update:model-value="editedRow.data[column.name] = $event"
         />
       </v-col>
     </v-row>

@@ -8,7 +8,7 @@ import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { DESCRIPTION_MAX_LENGTH } from "#shared/services/constants";
 import { z } from "zod";
 
-export class Column<TColumnType extends ColumnType = Exclude<ColumnType, ColumnType.Date>>
+export class Column<TColumnType extends ColumnType = ColumnType.String>
   extends ATableEditorItemEntity
   implements ItemEntityType<ColumnType>
 {

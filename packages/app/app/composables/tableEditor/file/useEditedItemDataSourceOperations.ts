@@ -2,7 +2,6 @@ import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 import type { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import type { ToData } from "@esposter/shared";
-import type { Except } from "type-fest";
 
 import { Column } from "#shared/models/tableEditor/file/Column";
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
@@ -37,7 +36,7 @@ export const useEditedItemDataSourceOperations = () => {
     clear();
   };
 
-  const reorderColumns = (newColumns: (Column | DateColumn)[]) => {
+  const reorderColumns = (newColumns: DataSource["columns"]) => {
     if (!editedItem.value?.dataSource) return;
     const oldColumns = editedItem.value.dataSource.columns;
     const movedColumn = newColumns.find((column, index) => column.id !== oldColumns[index]?.id);
@@ -60,14 +59,14 @@ export const useEditedItemDataSourceOperations = () => {
     executeAndRecord(new MoveRowCommand(fromIndex, toIndex));
   };
 
-  const createRow = (rowData?: Except<Row, "id">) => {
+  const createRow = (newRow?: Row) => {
     if (!editedItem.value?.dataSource) return;
-    const newRow = new Row({
+    const createdRow = new Row({
       data:
-        rowData?.data ?? Object.fromEntries(editedItem.value.dataSource.columns.map((column) => [column.name, null])),
+        newRow?.data ?? Object.fromEntries(editedItem.value.dataSource.columns.map((column) => [column.name, null])),
     });
     const index = editedItem.value.dataSource.rows.length;
-    executeAndRecord(new CreateRowCommand(index, newRow));
+    executeAndRecord(new CreateRowCommand(index, createdRow));
   };
 
   const deleteRow = (id: string) => {
@@ -78,15 +77,15 @@ export const useEditedItemDataSourceOperations = () => {
     executeAndRecord(new DeleteRowCommand(index, originalRow));
   };
 
-  const updateRow = (id: string, rowData: Except<Row, "id">) => {
+  const updateRow = (updatedRow: Row) => {
     if (!editedItem.value?.dataSource) return;
-    const index = editedItem.value.dataSource.rows.findIndex((row) => row.id === id);
+    const index = editedItem.value.dataSource.rows.findIndex((row) => row.id === updatedRow.id);
     if (index === -1) return;
     const originalRow = structuredClone(toRawDeep(takeOne(editedItem.value.dataSource.rows, index)));
-    executeAndRecord(new UpdateRowCommand(index, originalRow, structuredClone(toRawDeep(rowData))));
+    executeAndRecord(new UpdateRowCommand(index, originalRow, structuredClone(toRawDeep(updatedRow))));
   };
 
-  const updateColumn = (originalName: string, updatedColumn: ToData<Column | DateColumn>) => {
+  const updateColumn = (originalName: string, updatedColumn: ToData<DataSource["columns"][number]>) => {
     if (!editedItem.value?.dataSource) return;
     const columnIndex = editedItem.value.dataSource.columns.findIndex(({ name }) => name === originalName);
     if (columnIndex === -1) return;
@@ -109,15 +108,15 @@ export const useEditedItemDataSourceOperations = () => {
     executeAndRecord(new ToggleColumnVisibilityCommand(id, column.name, column.hidden));
   };
 
-  const createColumn = (columnData: Except<Column | DateColumn, "id">) => {
+  const createColumn = (newColumn: DataSource["columns"][number]) => {
     if (!editedItem.value?.dataSource) return;
-    const { id: _id, ...columnDataWithoutId } = columnData as Column | DateColumn;
-    const newColumn =
-      columnData.type === ColumnType.Date
-        ? new DateColumn(columnDataWithoutId as Partial<DateColumn>)
-        : new Column(columnDataWithoutId as Partial<Column>);
+    const { id: _id, ...newColumnWithoutId } = newColumn;
+    const createdColumn =
+      newColumnWithoutId.type === ColumnType.Date
+        ? new DateColumn(newColumnWithoutId)
+        : (new Column(newColumnWithoutId) as DataSource["columns"][number]);
     const columnIndex = editedItem.value.dataSource.columns.length;
-    executeAndRecord(new CreateColumnCommand(columnIndex, newColumn));
+    executeAndRecord(new CreateColumnCommand(columnIndex, createdColumn));
   };
 
   const deleteColumn = (name: string) => {

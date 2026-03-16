@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
-import type { Except } from "type-fest";
 
-import { Row, rowSchema } from "#shared/models/tableEditor/file/Row";
+import { rowSchema } from "#shared/models/tableEditor/file/Row";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
 interface EditDialogButtonProps {
@@ -14,7 +13,7 @@ interface EditDialogButtonProps {
 const { columns, index, row } = defineProps<EditDialogButtonProps>();
 const { updateRow } = useEditedItemDataSourceOperations();
 const title = computed(() => `Edit Row ${index + 1}`);
-const rowData = ref<Except<Row, "id">>(structuredClone(toRawDeep(row)));
+const editedRow = ref(structuredClone(toRawDeep(row)));
 </script>
 
 <template>
@@ -22,11 +21,11 @@ const rowData = ref<Except<Row, "id">>(structuredClone(toRawDeep(row)));
     :title
     :tooltip-text="title"
     :value="row"
-    :edited-value="rowData"
+    :edited-value="editedRow"
     :schema="rowSchema"
     @submit="
       (onComplete) => {
-        updateRow(row.id, rowData);
+        updateRow(editedRow);
         onComplete();
       }
     "
@@ -34,9 +33,9 @@ const rowData = ref<Except<Row, "id">>(structuredClone(toRawDeep(row)));
     <v-row v-for="column of columns.filter((column) => !column.hidden)" :key="column.id">
       <v-col cols="12">
         <TableEditorFileRowFieldInput
-          :model-value="takeOne(rowData.data, column.name)"
+          :model-value="takeOne(editedRow.data, column.name)"
           :column
-          @update:model-value="rowData.data[column.name] = $event"
+          @update:model-value="editedRow.data[column.name] = $event"
         />
       </v-col>
     </v-row>

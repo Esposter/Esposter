@@ -21,7 +21,7 @@ export const buildDataSource = (
     const type = inferColumnType(values);
     if (type === ColumnType.Date)
       return new DateColumn({ format: inferDateFormat(values), name: sourceName, sourceName });
-    return new Column({ name: sourceName, sourceName, type });
+    return new Column({ name: sourceName, sourceName, type }) as DataSource["columns"][number];
   });
   const rows = bodyRows.map((bodyRow) => {
     const row = new Row();

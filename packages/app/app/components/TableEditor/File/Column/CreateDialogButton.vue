@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
-import type { Except } from "type-fest";
 
 import { Column } from "#shared/models/tableEditor/file/Column";
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
@@ -19,10 +18,9 @@ interface CreateDialogButtonProps {
 const { dataSource } = defineProps<CreateDialogButtonProps>();
 const { createColumn } = useEditedItemDataSourceOperations();
 const columnType = ref(ColumnType.String);
+const column = new Column();
 // StructuredClone is required here: Vjsf does not work with class instances and needs a plain object
-const editedColumn = ref<Except<Column | DateColumn, "id">>(
-  structuredClone(new Column<Exclude<ColumnType, ColumnType.Date>>()),
-);
+const editedColumn = ref(structuredClone<DataSource["columns"][number]>(column));
 const schema = computed(() => takeOne(ColumnTypeFormSchemaMap, columnType.value));
 const jsonSchema = computed(() => zodToJsonSchema(takeOne(CreateFormSchemaMap, columnType.value)));
 const uniqueNameRule = useColumnNameRule(() => dataSource.columns);
@@ -32,7 +30,9 @@ watch(columnType, (newType, oldType) => {
   const name = editedColumn.value.name;
   // StructuredClone is required here: Vjsf does not work with class instances and needs a plain object
   editedColumn.value = structuredClone(
-    newType === ColumnType.Date ? new DateColumn({ name }) : new Column({ name, type: newType }),
+    newType === ColumnType.Date
+      ? new DateColumn({ name })
+      : (new Column({ name, type: newType }) as DataSource["columns"][number]),
   );
 });
 </script>

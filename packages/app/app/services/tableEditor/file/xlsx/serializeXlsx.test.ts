@@ -18,7 +18,7 @@ describe(serializeXlsx, () => {
     stats: { columnCount: columns.length, rowCount: rows.length, size: 0 },
   });
 
-  const createColumn = (name: string): Column => new Column({ name, size: 0, sourceName: name });
+  const createColumn = (name: string) => new Column({ name, size: 0, sourceName: name });
 
   const createRow = (data: Record<string, number>): Row => new Row({ data });
 

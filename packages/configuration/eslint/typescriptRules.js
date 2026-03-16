@@ -29,6 +29,7 @@ export default Object.assign(
   }),
   ...tseslint.configs.stylisticTypeChecked.map((c) => {
     const rules = c.rules ?? {};
+    delete rules["@typescript-eslint/no-dynamic-delete"];
     delete rules["@typescript-eslint/no-empty-function"];
     return rules;
   }),

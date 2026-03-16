@@ -1,6 +1,5 @@
-import type { Column } from "#shared/models/tableEditor/file/Column";
+import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
-import type { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
 
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
@@ -14,9 +13,9 @@ export class CreateColumnCommand extends ADataSourceCommand<CommandType.CreateCo
   }
 
   private readonly columnIndex: number;
-  private readonly newColumn: Column | DateColumn;
+  private readonly newColumn: DataSource["columns"][number];
 
-  constructor(columnIndex: number, newColumn: Column | DateColumn) {
+  constructor(columnIndex: number, newColumn: DataSource["columns"][number]) {
     super();
     this.columnIndex = columnIndex;
     this.newColumn = newColumn;
@@ -36,7 +35,6 @@ export class CreateColumnCommand extends ADataSourceCommand<CommandType.CreateCo
   protected doUndo(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
     if (!item.dataSource) return;
     item.dataSource.columns = item.dataSource.columns.filter((column) => column.name !== this.newColumn.name);
-    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
     for (const row of item.dataSource.rows) delete row.data[this.newColumn.name];
   }
 }

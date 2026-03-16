@@ -1,8 +1,7 @@
-import type { Column } from "#shared/models/tableEditor/file/Column";
-import type { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
+import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { DataTableHeader } from "@/models/vuetify/DataTableHeader";
 
-export const ColumnHeaders: DataTableHeader<Column | DateColumn>[] = [
+export const ColumnHeaders: DataTableHeader<DataSource["columns"][number]>[] = [
   { key: "drag", sortable: false, title: "" },
   { key: "sourceName", title: "Source Column" },
   { key: "name", title: "Column" },
