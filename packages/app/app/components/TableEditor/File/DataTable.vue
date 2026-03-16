@@ -29,6 +29,7 @@ const dragRows = computed({
   get: () => dataSource.rows,
   set: reorderRows,
 });
+const rowIndexIdMap = computed(() => new Map(dataSource.rows.map((row, index) => [row.id, index])));
 </script>
 
 <template>
@@ -74,7 +75,7 @@ const dragRows = computed({
       <template #[`item.actions`]="{ item }">
         <TableEditorFileRowActionSlot
           :columns="dataSource.columns"
-          :index="dataSource.rows.findIndex((row) => row.id === item.id)"
+          :index="rowIndexIdMap.get(item.id) ?? -1"
           :row="item"
         />
       </template>

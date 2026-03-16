@@ -32,20 +32,25 @@ describe(useSetDataSource, () => {
     expect(editedItemValue.dataSource).toStrictEqual(dataSource);
   });
 
-  test("clears history after setting data source", () => {
+  test("clears undo and redo history after setting data source", () => {
     expect.hasAssertions();
 
     const { editedItem } = setupWithDataSource();
     const deleteRow = useDeleteRow();
     const setDataSource = useSetDataSource();
-    const { isUndoable } = useDataSourceHistory();
+    const { isRedoable, isUndoable, undo } = useDataSourceHistory();
     deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
 
     expect(isUndoable.value).toBe(true);
 
+    undo(editedItem.value);
+
+    expect(isRedoable.value).toBe(true);
+
     setDataSource(makeDataSource());
 
     expect(isUndoable.value).toBe(false);
+    expect(isRedoable.value).toBe(false);
   });
 
   test("no-op when editedItem is undefined", () => {
