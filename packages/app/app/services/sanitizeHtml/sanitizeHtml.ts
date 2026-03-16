@@ -14,20 +14,20 @@ export const sanitizeHtml = (...[html, options]: Parameters<typeof baseSanitizeH
       table: (tagName, attribs) => ({
         attribs: {
           ...attribs,
-          style: "width:100%; border-collapse: collapse;",
+          style: `${attribs.style ? `${attribs.style}; ` : ""}width:100%; border-collapse: collapse;`,
         },
         tagName,
       }),
       td: (tagName, attribs) => {
         if (attribs.align) {
-          attribs.style = `text-align:${attribs.align}`;
+          attribs.style = `${attribs.style ? `${attribs.style}; ` : ""}text-align:${attribs.align}`;
           delete attribs.align;
         }
         return { attribs, tagName };
       },
       th: (tagName, attribs) => {
         if (attribs.align) {
-          attribs.style = `text-align:${attribs.align}`;
+          attribs.style = `${attribs.style ? `${attribs.style}; ` : ""}text-align:${attribs.align}`;
           delete attribs.align;
         }
         return { attribs, tagName };
