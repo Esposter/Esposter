@@ -6,8 +6,8 @@ import { beforeEach, describe, expect, test } from "vitest";
 
 describe("multiple sequential operations", () => {
   beforeEach(() => {
-    const { clear } = useDataSourceHistory();
     setActivePinia(createPinia());
+    const { clear } = useDataSourceHistory();
     clear();
   });
 

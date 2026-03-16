@@ -11,8 +11,8 @@ import { beforeEach, describe, expect, test } from "vitest";
 
 describe("updateRow", () => {
   beforeEach(() => {
-    const { clear } = useDataSourceHistory();
     setActivePinia(createPinia());
+    const { clear } = useDataSourceHistory();
     clear();
   });
 

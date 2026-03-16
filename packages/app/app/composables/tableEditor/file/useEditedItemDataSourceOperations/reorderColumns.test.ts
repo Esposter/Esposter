@@ -14,8 +14,8 @@ import { beforeEach, describe, expect, test } from "vitest";
 
 describe("reorderColumns", () => {
   beforeEach(() => {
-    const { clear } = useDataSourceHistory();
     setActivePinia(createPinia());
+    const { clear } = useDataSourceHistory();
     clear();
   });
 

@@ -7,8 +7,8 @@ import { beforeEach, describe, expect, test } from "vitest";
 
 describe("isUndoable and isRedoable state transitions", () => {
   beforeEach(() => {
-    const { clear } = useDataSourceHistory();
     setActivePinia(createPinia());
+    const { clear } = useDataSourceHistory();
     clear();
   });
 

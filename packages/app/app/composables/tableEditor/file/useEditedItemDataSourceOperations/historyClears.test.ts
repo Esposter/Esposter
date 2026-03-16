@@ -10,13 +10,13 @@ import {
 import { useTableEditorStore } from "@/store/tableEditor";
 import { useItemStore } from "@/store/tableEditor/item";
 import { takeOne } from "@esposter/shared";
-import { createPinia, setActivePinia, storeToRefs } from "pinia";
+import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe("history clears when editedItem.id changes", () => {
   beforeEach(() => {
-    const { clear } = useDataSourceHistory();
     setActivePinia(createPinia());
+    const { clear } = useDataSourceHistory();
     clear();
   });
 

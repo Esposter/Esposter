@@ -9,13 +9,13 @@ import {
 } from "@/composables/tableEditor/file/useEditedItemDataSourceOperations/testUtils.test";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { takeOne } from "@esposter/shared";
-import { createPinia, setActivePinia, storeToRefs } from "pinia";
+import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe("setDataSource", () => {
   beforeEach(() => {
-    const { clear } = useDataSourceHistory();
     setActivePinia(createPinia());
+    const { clear } = useDataSourceHistory();
     clear();
   });
 

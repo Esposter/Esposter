@@ -7,8 +7,8 @@ import { beforeEach, describe, expect, test } from "vitest";
 
 describe("undoDescription and redoDescription", () => {
   beforeEach(() => {
-    const { clear } = useDataSourceHistory();
     setActivePinia(createPinia());
+    const { clear } = useDataSourceHistory();
     clear();
   });
 
