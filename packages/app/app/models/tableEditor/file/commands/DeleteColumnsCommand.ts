@@ -6,11 +6,11 @@ import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSour
 import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
 import { takeOne } from "@esposter/shared";
 
-type IndexedColumn = {
+interface IndexedColumn {
   columnIndex: number;
   originalColumn: DataSource["columns"][number];
   originalRowValues: ColumnValue[];
-};
+}
 
 export class DeleteColumnsCommand extends ADataSourceCommand<CommandType.DeleteColumns> {
   readonly type = CommandType.DeleteColumns;
@@ -23,7 +23,7 @@ export class DeleteColumnsCommand extends ADataSourceCommand<CommandType.DeleteC
 
   constructor(indexedColumns: IndexedColumn[]) {
     super();
-    this.indexedColumns = [...indexedColumns].sort((a, b) => b.columnIndex - a.columnIndex);
+    this.indexedColumns = indexedColumns.toSorted((a, b) => b.columnIndex - a.columnIndex);
   }
 
   protected doExecute(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
@@ -36,7 +36,7 @@ export class DeleteColumnsCommand extends ADataSourceCommand<CommandType.DeleteC
 
   protected doUndo(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
     if (!item.dataSource) return;
-    const ascendingColumns = [...this.indexedColumns].sort((a, b) => a.columnIndex - b.columnIndex);
+    const ascendingColumns = this.indexedColumns.toSorted((a, b) => a.columnIndex - b.columnIndex);
     for (const { columnIndex, originalColumn, originalRowValues } of ascendingColumns) {
       item.dataSource.columns = [
         ...item.dataSource.columns.slice(0, columnIndex),

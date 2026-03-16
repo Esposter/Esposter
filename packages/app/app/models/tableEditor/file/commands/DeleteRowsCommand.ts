@@ -6,7 +6,10 @@ import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
 import { getValueSize } from "@/services/tableEditor/file/getValueSize";
 import { takeOne } from "@esposter/shared";
 
-type IndexedRow = { index: number; row: DataSource["rows"][number] };
+interface IndexedRow {
+  index: number;
+  row: DataSource["rows"][number];
+}
 
 export class DeleteRowsCommand extends ADataSourceCommand<CommandType.DeleteRows> {
   readonly type = CommandType.DeleteRows;
@@ -19,7 +22,7 @@ export class DeleteRowsCommand extends ADataSourceCommand<CommandType.DeleteRows
 
   constructor(indexedRows: IndexedRow[]) {
     super();
-    this.indexedRows = [...indexedRows].sort((a, b) => b.index - a.index);
+    this.indexedRows = indexedRows.toSorted((a, b) => b.index - a.index);
   }
 
   protected doExecute(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
@@ -32,7 +35,7 @@ export class DeleteRowsCommand extends ADataSourceCommand<CommandType.DeleteRows
 
   protected doUndo(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
     if (!item.dataSource) return;
-    const ascendingRows = [...this.indexedRows].sort((a, b) => a.index - b.index);
+    const ascendingRows = this.indexedRows.toSorted((a, b) => a.index - b.index);
     for (const { index, row } of ascendingRows) {
       for (const column of item.dataSource.columns) column.size += getValueSize(takeOne(row.data, column.name));
       item.dataSource.rows = [

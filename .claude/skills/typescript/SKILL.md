@@ -12,6 +12,8 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 - **No parameter properties** — never use `constructor(private readonly foo: T)`. Always declare class properties explicitly and assign in the constructor body: `private readonly foo: T; constructor(foo: T) { super(); this.foo = foo; }`.
 - Non-null assertions (`!`) are **BANNED** — use optional chaining or guard clauses.
 - `.forEach()` is **BANNED** — use `for...of`.
+- `type` aliases for object shapes are **BANNED** — always use `interface` for object type declarations.
+- `Array#sort()` is **BANNED** — use `Array#toSorted()` instead. This returns a new array without mutating the original, so replace `[...arr].sort(fn)` with `arr.toSorted(fn)`.
 - Always use named imports from libraries — only when not already auto-imported by Nuxt or Nuxt modules (e.g. `ref`, `computed`, `watch` from Vue; `storeToRefs` from Pinia; VueUse composables are all auto-imported and must not be manually imported).
 - Explicitly type variables with proper types.
 - **No `current*` variable caching of `.value`** — don't assign `const currentX = x.value` just to use it once. If TypeScript narrowing is needed after a guard, assign with a descriptive name (`const selectedFile = file.value`). Prefer plain `const` over `computed()` when the source value is already non-reactive (e.g. a `readonly` prop field).
