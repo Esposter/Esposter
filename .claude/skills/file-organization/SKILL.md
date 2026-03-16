@@ -5,6 +5,10 @@ description: Esposter file and folder organisation — one export per file, mode
 
 # File & Folder Organisation
 
+## Imports
+
+- **Always use `@/` alias imports** — never use relative imports (`./`, `../`), even for files in the same folder. Example: `import { ... } from "@/composables/tableEditor/file/useEditedItemDataSourceOperations/testUtils"` not `"./testUtils"`.
+
 ## Files and Exports
 
 - **One export per file** — each exported function, class, or interface lives in its own file. Exception: Zod schemas may be co-located with their interface/type since they are tightly coupled.
