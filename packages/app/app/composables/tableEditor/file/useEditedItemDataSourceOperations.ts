@@ -2,6 +2,7 @@ import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 import type { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import type { ToData } from "@esposter/shared";
+import type { Except } from "type-fest";
 
 import { Column } from "#shared/models/tableEditor/file/Column";
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
@@ -59,13 +60,12 @@ export const useEditedItemDataSourceOperations = () => {
     executeAndRecord(new MoveRowCommand(fromIndex, toIndex));
   };
 
-  const createRow = (row?: Row) => {
+  const createRow = (rowData?: Except<Row, "id">) => {
     if (!editedItem.value?.dataSource) return;
-    const newRow =
-      row ??
-      new Row({
-        data: Object.fromEntries(editedItem.value.dataSource.columns.map((column) => [column.name, null])),
-      });
+    const newRow = new Row({
+      data:
+        rowData?.data ?? Object.fromEntries(editedItem.value.dataSource.columns.map((column) => [column.name, null])),
+    });
     const index = editedItem.value.dataSource.rows.length;
     executeAndRecord(new CreateRowCommand(index, newRow));
   };
@@ -78,12 +78,12 @@ export const useEditedItemDataSourceOperations = () => {
     executeAndRecord(new DeleteRowCommand(index, originalRow));
   };
 
-  const updateRow = (id: string, updatedRow: DataSource["rows"][number]) => {
+  const updateRow = (id: string, rowData: Except<Row, "id">) => {
     if (!editedItem.value?.dataSource) return;
     const index = editedItem.value.dataSource.rows.findIndex((row) => row.id === id);
     if (index === -1) return;
     const originalRow = structuredClone(toRawDeep(takeOne(editedItem.value.dataSource.rows, index)));
-    executeAndRecord(new UpdateRowCommand(index, originalRow, structuredClone(toRawDeep(updatedRow))));
+    executeAndRecord(new UpdateRowCommand(index, originalRow, structuredClone(toRawDeep(rowData))));
   };
 
   const updateColumn = (originalName: string, updatedColumn: ToData<Column | DateColumn>) => {
@@ -109,12 +109,13 @@ export const useEditedItemDataSourceOperations = () => {
     executeAndRecord(new ToggleColumnVisibilityCommand(id, column.name, column.hidden));
   };
 
-  const createColumn = (formData: ToData<Column | DateColumn>) => {
+  const createColumn = (columnData: Except<Column | DateColumn, "id">) => {
     if (!editedItem.value?.dataSource) return;
+    const { id: _id, ...columnDataWithoutId } = columnData as Column | DateColumn;
     const newColumn =
-      formData.type === ColumnType.Date
-        ? new DateColumn(formData as Partial<DateColumn>)
-        : new Column(formData as Partial<Column>);
+      columnData.type === ColumnType.Date
+        ? new DateColumn(columnDataWithoutId as Partial<DateColumn>)
+        : new Column(columnDataWithoutId as Partial<Column>);
     const columnIndex = editedItem.value.dataSource.columns.length;
     executeAndRecord(new CreateColumnCommand(columnIndex, newColumn));
   };

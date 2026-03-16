@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { Except } from "type-fest";
 
 import { Row, rowSchema } from "#shared/models/tableEditor/file/Row";
 import { takeOne } from "@esposter/shared";
@@ -10,7 +11,12 @@ interface CreateDialogButtonProps {
 
 const { dataSource } = defineProps<CreateDialogButtonProps>();
 const { createRow } = useEditedItemDataSourceOperations();
-const editedRow = ref(new Row({ data: Object.fromEntries(dataSource.columns.map((column) => [column.name, null])) }));
+const rowData = ref<Except<Row, "id">>(
+  new Row({ data: Object.fromEntries(dataSource.columns.map((column) => [column.name, null])) }),
+);
+const resetForm = () => {
+  rowData.value = new Row({ data: Object.fromEntries(dataSource.columns.map((column) => [column.name, null])) });
+};
 </script>
 
 <template>
@@ -20,20 +26,27 @@ const editedRow = ref(new Row({ data: Object.fromEntries(dataSource.columns.map(
     icon="mdi-table-row-plus-after"
     :schema="rowSchema"
     :value="null"
-    :edited-value="editedRow"
+    :edited-value="rowData"
     @submit="
       (onComplete) => {
-        createRow(editedRow);
+        createRow(rowData);
         onComplete();
       }
     "
   >
+    <template #prepend-actions>
+      <v-tooltip text="Reset form to default values">
+        <template #activator="{ props: tooltipProps }">
+          <v-btn text="Reset" :="tooltipProps" @click="resetForm()" />
+        </template>
+      </v-tooltip>
+    </template>
     <v-row v-for="column of dataSource.columns.filter((column) => !column.hidden)" :key="column.id">
       <v-col cols="12">
         <TableEditorFileRowFieldInput
-          :model-value="takeOne(editedRow.data, column.name)"
+          :model-value="takeOne(rowData.data, column.name)"
           :column
-          @update:model-value="editedRow.data[column.name] = $event"
+          @update:model-value="rowData.data[column.name] = $event"
         />
       </v-col>
     </v-row>

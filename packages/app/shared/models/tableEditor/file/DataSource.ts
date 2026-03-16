@@ -12,7 +12,7 @@ import { rowSchema } from "#shared/models/tableEditor/file/Row";
 import { z } from "zod";
 
 export interface DataSource {
-  columns: (Column | DateColumn)[];
+  columns: (Column<ColumnType.Boolean> | Column<ColumnType.Number> | Column<ColumnType.String> | DateColumn)[];
   metadata: Metadata;
   rows: Row[];
   stats: DataSourceStats;

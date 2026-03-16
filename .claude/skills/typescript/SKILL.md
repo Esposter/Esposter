@@ -8,14 +8,14 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 ## Core Rules
 
 - TypeScript compiler: `strict` mode enabled. ESLint: `tseslint.configs.strictTypeChecked`. `any` is **BANNED**.
-- `Omit` is **BANNED** — use `Except` from `type-fest`.
+- `Omit` is **BANNED** — use `Except` from `type-fest` (`import type { Except } from "type-fest"`). Note: `Except` is not re-exported from `@esposter/shared` — always import directly from `type-fest`.
 - **No parameter properties** — never use `constructor(private readonly foo: T)`. Always declare class properties explicitly and assign in the constructor body: `private readonly foo: T; constructor(foo: T) { super(); this.foo = foo; }`.
 - Non-null assertions (`!`) are **BANNED** — use optional chaining or guard clauses.
 - `.forEach()` is **BANNED** — use `for...of`.
 - Always use named imports from libraries — only when not already auto-imported by Nuxt or Nuxt modules (e.g. `ref`, `computed`, `watch` from Vue; `storeToRefs` from Pinia; VueUse composables are all auto-imported and must not be manually imported).
 - Explicitly type variables with proper types.
 - **No `current*` variable caching of `.value`** — don't assign `const currentX = x.value` just to use it once. If TypeScript narrowing is needed after a guard, assign with a descriptive name (`const selectedFile = file.value`). Prefer plain `const` over `computed()` when the source value is already non-reactive (e.g. a `readonly` prop field).
-- **Cloning objects** — use `structuredClone(obj)` for deep clones; use `Object.assign(structuredClone(obj), { ...updates })` to clone and override fields. Never use `{ ...spread }` to clone a class instance — spread creates a plain object losing the prototype.
+- **Cloning objects** — use `structuredClone(obj)` for deep clones; use `Object.assign(structuredClone(obj), { ...updates })` to clone and override fields. Never use `{ ...spread }` to clone a class instance — spread creates a plain object losing the prototype. **Exception**: `structuredClone(new ClassName(...))` is intentional when a plain object is explicitly required (e.g. Vjsf does not accept class instances — must use `structuredClone` to strip the prototype). Always add a comment explaining why.
 - **Boolean casting** — never use `!!` to cast to boolean. Always use `Boolean(value)`.
 
 ## Error Handling

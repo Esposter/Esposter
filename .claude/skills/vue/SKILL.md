@@ -1,6 +1,6 @@
 ---
 name: vue
-description: Esposter Vue 3 SFC conventions — macro ordering, template patterns, watch aliases, composable return style, Vuetify selects, and dialog form validity. Apply when writing .vue files or composables.
+description: Esposter Vue 3 SFC conventions — macro ordering, template patterns, watch aliases, composable return style, component type correctness, and co-location. Apply when writing .vue files or composables.
 ---
 
 # Vue Conventions
@@ -49,6 +49,43 @@ description: Esposter Vue 3 SFC conventions — macro ordering, template pattern
 - **Template refs** — use `useTemplateRef<InstanceType<typeof ComponentName>>("name")`. Never suffix the variable with `Ref` — `const errorIcon = useTemplateRef(...)` not `const errorIconRef = useTemplateRef(...)`.
 - **Boolean computed naming** — use `is*` prefix for boolean computed refs (e.g., `isUndoable`, `isRedoable`, `isSavable`). Do not use `can*`.
 - **Computed for reused expressions** — extract a `computed` (named to match the prop, e.g. `title`) when the same derived value is bound to two or more props. This enables the `:propName` shorthand for one binding and avoids repeating the expression: `const title = computed(() => ...)` → `:title :tooltip-text="title"`. No need for a computed if the value is only used in one place.
+- **Inline prop values** — inline prop values directly in the template to take advantage of Vue TypeScript inference. Only extract to a `computed` when the same logic is reused in multiple places. Single-use derived values stay inline.
+- **Map lookups over computed** — when a value depends on an enum/discriminant key, use a `Map[type]` lookup directly in the template instead of a computed. If multiple properties are needed from the same map entry, use `Map[type].value`. Only fall back to computed when the same map lookup is duplicated in two or more places.
+
+## Conditional Logic
+
+When branching on a type/discriminant, use in this priority order:
+
+1. **Map lookup** — `Map[type]` inline in template (preferred)
+2. **`switch` expression** — use a `switch` in script when a map is impractical
+3. **`if / else if / else`** — explicit branches for complex conditions
+4. **Never** chain standalone `if` statements for mutually exclusive conditions. Always use `else if` / `else` or a `switch`.
+
+## Generic SFC Components
+
+When a component's model value type (or other prop type) depends on an enum/discriminant key, make the component generic:
+
+```vue
+<script setup lang="ts" generic="TKey extends SomeEnum">
+// SomeEnum is a string enum (e.g. SomeEnum.A = "A"), so interface keys are string literals:
+interface ModelValueMap {
+  A: boolean | null;
+  B: string | null;
+}
+
+const modelValue = defineModel<ModelValueMap[TKey]>({ required: true });
+</script>
+```
+
+- Use `interface` (not `type`) for the value map — string enum values map directly to string literal interface keys
+- Define the interface locally in the component (not exported unless reused elsewhere)
+- The map type drives inference at call sites where the key type is statically known
+- For `as const satisfies` maps, use `Record<Exclude<TEnum, ExcludedVariant>, ValueType>` to explicitly exclude variants that use a different component path (e.g. Boolean → checkbox, not text field)
+- If TypeScript cannot narrow the generic type parameter `TKey` in template v-if/v-else branches (correlated generics limitation), fall back to the union type of all possible values (e.g. `ColumnValue`) for `defineModel` — the prop type still provides inference at call sites
+
+## Type Checking
+
+**Do not run `pnpm typecheck` during development** — it takes too long. The user (developer) runs it manually after reviewing all code changes. Write correct TypeScript and let the developer verify with typecheck when ready.
 
 ## Watch Aliases
 
@@ -71,30 +108,22 @@ Prefer `watchDeep(source, cb)` over `watch(source, cb, { deep: true })` and `wat
 - **Single-function composables return the function directly** — when a composable only exposes one function, return it directly instead of wrapping in an object: `return async (...) => { ... }`. Callers use `const fn = useX()` instead of `const { fn } = useX()`.
 - **`Promise.resolve(value)` for sync-to-async** — when a sync expression needs to satisfy a `Promise<T>` return type, use `Promise.resolve(value)` instead of `async () => value`.
 
-## Vuetify Selects
+## Vuetify
 
-- When building items for `v-autocomplete` / `v-select`, use `SelectItemCategoryDefinition<T>` (`{ title: string, value: T }`) from `@/models/vuetify/SelectItemCategoryDefinition`.
-- **Never specify `item-title` or `item-value` props** — Vuetify's defaults are already `"title"` and `"value"`, which match `SelectItemCategoryDefinition` exactly.
-- Name the items computed to reflect what the value represents — e.g. `columnIds` for `SelectItemCategoryDefinition<string>[]` where each `value` is a column ID.
+See the **vuetify** skill for all Vuetify-specific conventions: `v-btn` tooltips, select items, dialog form validity, and keyboard shortcut components.
 
-## Dialog Form Validity
+## Component Type Correctness
 
-Always name the form validity ref `isEditFormValid`. Bind it via `v-model` on `<v-form>` and use `ref(true)` for optimistic initial state. Disable Save & Close via `:confirm-button-attrs="{ disabled: !isEditFormValid }"` (combined with other conditions as needed). Never use try/catch in submit handlers — prevent invalid submission through form validation rules so state is always consistent. Use `StyledEditFormDialogErrorIcon` with `:edit-form-ref :is-edit-form-valid` (plus optional `:schema :value` for Zod schema validation) in the `#prepend-actions` slot. `editFormRef` is a required prop typed `InstanceType<typeof VForm> | undefined` (always passed; `| undefined` reflects the ref being uninitialized before mount). `isEditFormValid` is field-level only (from `<v-form v-model>`); schema errors are computed internally inside `StyledEditFormDialogErrorIcon` via `watchDeep` on `value`.
+**Match each component's props and model types exactly to the data it handles** — don't mix concerns by using union types and compensating with `v-if` + null-coalescing inside a single component.
 
-## Button Conventions
+- If logic differs per variant (e.g. date formatting for `DateColumn` vs plain text for `Column<String>`), split into separate focused components (`FieldInputDate.vue`, `FieldInputText.vue`)
+- Each component should access its props directly without defensive coalescing (e.g. `column.format` not `column.type === ColumnType.Date ? column.format : ""`)
+- A **dispatcher** component (e.g. `FieldInput.vue`) is acceptable at the routing level to delegate to the right sub-component — type casts in the dispatcher are necessary at that boundary and acceptable
 
-- **Every `v-btn` must have a `v-tooltip`** — wrap with `v-tooltip` and a descriptive `text` prop. The only exception is when the button already contains visible label text that makes its purpose self-evident (rare — most icon buttons need tooltips).
-- Standard pattern:
-  ```vue
-  <v-tooltip text="Descriptive action">
-    <template #activator="{ props: tooltipProps }">
-      <v-btn icon="mdi-some-icon" size="small" tile :="tooltipProps" @click="doSomething()" />
-    </template>
-  </v-tooltip>
-  ```
-- **`#activator` slot always first** — the `#activator` template must be the first child in `v-tooltip` (and `v-menu`).
-- **Icon choice for create actions** — use the semantically specific MDI icon when available: `mdi-table-row-plus-after` for adding rows, `mdi-table-column-plus-after` for adding columns. Fall back to `mdi-plus` for generic create actions.
+## Component Co-location (Folder = Auto-import Prefix)
 
-## Keyboard Shortcut Components
+**Group components with the same prefix into a folder** — Nuxt auto-imports components with the folder path as prefix, so co-located components share the prefix automatically without repeating it in filenames.
 
-When a button has an associated keyboard shortcut, extract it into its own component that owns both the `v-btn` and the `onKeyStroke` handler. This keeps each component focused on one action (e.g., `UndoButton.vue`, `RedoButton.vue`).
+- `components/TableEditor/File/Row/FieldInput.vue` → auto-import: `TableEditorFileRowFieldInput`
+- `components/TableEditor/File/Row/FieldInputDate.vue` → auto-import: `TableEditorFileRowFieldInputDate`
+- The folder `Row/` provides the `TableEditorFileRow` prefix — no need to repeat in the filename

@@ -628,6 +628,25 @@ describe(useEditedItemDataSourceOperations, () => {
       expect(dataSource.rows).toHaveLength(3);
     });
 
+    test("creates a unique id when the same row instance is passed multiple times", () => {
+      expect.hasAssertions();
+
+      const { editedItem, operations } = setupWithDataSource();
+      const { createRow } = operations;
+      const row = new Row({ data: { "": 0, " ": 1 } });
+      createRow(row);
+      createRow(row);
+      const dataSource = editedItem.value?.dataSource;
+
+      expectToBeDefined(dataSource);
+
+      const firstRow = takeOne(dataSource.rows, 2);
+      const secondRow = takeOne(dataSource.rows, 3);
+      expect(dataSource.rows).toHaveLength(4);
+      expect(firstRow.id).not.toBe(secondRow.id);
+      expect(firstRow).toStrictEqual({ ...secondRow, id: firstRow.id, createdAt: firstRow.createdAt, updatedAt: firstRow.updatedAt });
+    });
+
     test("no-op when editedItem is undefined", () => {
       expect.hasAssertions();
 
@@ -694,6 +713,25 @@ describe(useEditedItemDataSourceOperations, () => {
 
       expect(dataSource.columns).toHaveLength(3);
       expect(takeOne(dataSource.rows, 0).data.new).toBeNull();
+    });
+
+    test("creates a unique id when the same column instance is passed multiple times", () => {
+      expect.hasAssertions();
+
+      const { editedItem, operations } = setupWithDataSource();
+      const { createColumn } = operations;
+      const column = new Column({ name: "new", sourceName: "new" });
+      createColumn(column);
+      createColumn(column);
+      const dataSource = editedItem.value?.dataSource;
+
+      expectToBeDefined(dataSource);
+
+      const firstColumn = takeOne(dataSource.columns, 2);
+      const secondColumn = takeOne(dataSource.columns, 3);
+      expect(dataSource.columns).toHaveLength(4);
+      expect(firstColumn.id).not.toBe(secondColumn.id);
+      expect(firstColumn).toStrictEqual({ ...secondColumn, id: firstColumn.id, createdAt: firstColumn.createdAt, updatedAt: firstColumn.updatedAt });
     });
 
     test("no-op when editedItem is undefined", () => {

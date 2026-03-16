@@ -14,7 +14,7 @@ interface EditDialogButtonProps {
   value: unknown;
 }
 
-defineSlots<{ default: () => VNode }>();
+defineSlots<{ default: () => VNode; "prepend-actions"?: () => VNode }>();
 const { editedValue, icon = "mdi-pencil", schema, title, tooltipText, value } = defineProps<EditDialogButtonProps>();
 const emit = defineEmits<{ submit: [onComplete: () => void] }>();
 const styledDialog = useTemplateRef<InstanceType<typeof StyledDialog>>("styledDialog");
@@ -45,6 +45,7 @@ const disabled = computed(() => !(errorIcon.value?.isValid ?? true) || deepEqual
         :schema
         :edited-value
       />
+      <slot name="prepend-actions" />
     </template>
     <v-container overflow-y-auto fluid>
       <slot />
