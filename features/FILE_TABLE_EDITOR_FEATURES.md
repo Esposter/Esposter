@@ -6,7 +6,7 @@
 - [x] **Row drag-and-drop** — drag rows to reorder them; recorded in undo/redo history
 - [x] **Add row manually** — dialog form with per-column typed inputs (respects hidden columns)
 - [x] **Add column manually** — dialog form with name, type selector, and vjsf for description/sourceName
-- [x] **Bulk row selection + delete** — checkboxes in the data table to delete multiple rows at once
+- [x] **Bulk row selection + delete** — checkboxes in the data table and column table to select and delete multiple rows or columns at once; single undoable command with full undo/redo support
 - [x] **Pagination config** — handled by v-data-table
 
 ## Data Quality & Cleaning
