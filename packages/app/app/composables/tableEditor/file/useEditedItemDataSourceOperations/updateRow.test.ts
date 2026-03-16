@@ -4,8 +4,7 @@ import { useEditedItemDataSourceOperations } from "@/composables/tableEditor/fil
 import {
   setupEditedItem,
   setupWithDataSource,
-  useDataSourceHistory,
-} from "@/composables/tableEditor/file/useEditedItemDataSourceOperations/testUtils";
+} from "@/composables/tableEditor/file/useEditedItemDataSourceOperations/testUtils.test";
 import { takeOne, toRawDeep } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";

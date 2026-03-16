@@ -29,3 +29,7 @@ description: Esposter Vitest testing conventions — describe with function refs
 ## Running Tests
 
 - **Do not run tests on Windows** — Vitest currently fails on Windows with `TypeError: The argument 'filename' must be a file URL object, file URL string, or absolute path string. Received 'file:///__uno.css'`. This is a known environment issue with UnoCSS + happy-dom. Write tests but skip running them; the user runs them manually.
+
+## Test Utility Files
+
+Shared test helpers (factory functions, setup helpers, etc.) must live in `.test.ts` files, never plain `.ts` files. To prevent Vitest from treating the file as a test suite, add `describe.todo("testUtils")` at the very bottom of the file.

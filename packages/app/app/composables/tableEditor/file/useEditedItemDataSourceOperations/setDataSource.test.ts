@@ -6,8 +6,7 @@ import {
   makeDataSource,
   setupEditedItem,
   setupWithDataSource,
-  useDataSourceHistory,
-} from "@/composables/tableEditor/file/useEditedItemDataSourceOperations/testUtils";
+} from "@/composables/tableEditor/file/useEditedItemDataSourceOperations/testUtils.test";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia, storeToRefs } from "pinia";

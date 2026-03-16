@@ -5,11 +5,10 @@ import { Column } from "#shared/models/tableEditor/file/Column";
 import { CsvDataSourceItem } from "#shared/models/tableEditor/file/csv/CsvDataSourceItem";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { Row } from "#shared/models/tableEditor/file/Row";
-import { useDataSourceHistory } from "@/composables/tableEditor/file/useDataSourceHistory";
 import { useEditedItemDataSourceOperations } from "@/composables/tableEditor/file/useEditedItemDataSourceOperations";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { useItemStore } from "@/store/tableEditor/item";
-import { storeToRefs } from "pinia";
+import { describe } from "vitest";
 
 export const makeDataSource = (columns: Column[] = [], rows: Row[] = []): DataSource => ({
   columns,
@@ -43,4 +42,4 @@ export const setupWithDataSource = (dataSource?: DataSource) => {
   return { editedItem, item, operations };
 };
 
-export { useDataSourceHistory };
+describe.todo("testUtils");

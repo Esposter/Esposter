@@ -1,8 +1,7 @@
 import { expectToBeDefined } from "#shared/test/expectToBeDefined";
 import {
   setupWithDataSource,
-  useDataSourceHistory,
-} from "@/composables/tableEditor/file/useEditedItemDataSourceOperations/testUtils";
+} from "@/composables/tableEditor/file/useEditedItemDataSourceOperations/testUtils.test";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";

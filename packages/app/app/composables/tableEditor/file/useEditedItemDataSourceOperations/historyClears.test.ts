@@ -6,8 +6,7 @@ import {
   makeColumn,
   makeDataSource,
   makeRow,
-  useDataSourceHistory,
-} from "@/composables/tableEditor/file/useEditedItemDataSourceOperations/testUtils";
+} from "@/composables/tableEditor/file/useEditedItemDataSourceOperations/testUtils.test";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { useItemStore } from "@/store/tableEditor/item";
 import { takeOne } from "@esposter/shared";
