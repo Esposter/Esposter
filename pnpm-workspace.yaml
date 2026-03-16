@@ -95,7 +95,7 @@ catalog:
   "@vue-flow/core": ^1.48.2
   "@vue-flow/minimap": ^1.5.4
   "@vue-flow/node-resizer": ^1.5.1
-  "@vue-pdf-viewer/viewer": ^3.10.0
+  "@vue-pdf-viewer/viewer": ^3.11.0
   "@vue/language-core": ^3.2.5
   "@vue/test-utils": ^2.4.6
   "@vuepic/vue-datepicker": ^12.1.0
@@ -123,7 +123,7 @@ catalog:
   eslint: ^10.0.3
   eslint-config-prettier: ^10.1.8
   eslint-plugin-depend: ^1.5.0
-  eslint-plugin-oxlint: ^1.55.0
+  eslint-plugin-oxlint: ^1.56.0
   eslint-plugin-perfectionist: ^5.6.0
   eslint-plugin-pinia: ^0.4.2
   eslint-plugin-prettier: ^5.5.5
@@ -166,7 +166,7 @@ catalog:
   nuxt-security: ^2.5.1
   obscenity: ^0.4.6
   omit-deep-lodash: ^1.1.7
-  oxlint: ^1.55.0
+  oxlint: ^1.56.0
   p-progress: ^1.0.0
   pathe: ^2.0.3
   pdfjs-dist: ^5.5.207
