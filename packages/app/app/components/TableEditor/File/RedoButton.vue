@@ -30,7 +30,7 @@ onKeyStroke(["y", "Y"], ({ ctrlKey, metaKey, preventDefault }) => {
 <template>
   <v-tooltip location="bottom">
     <template #activator="{ props }">
-      <v-btn :disabled="!isRedoable" icon="mdi-redo" variant="text" :="props" @click="redo(editedItem.value)" />
+      <v-btn :disabled="!isRedoable" icon="mdi-redo" variant="text" :="props" @click="redo(editedItem)" />
     </template>
     <div v-html="tooltipHtml" />
   </v-tooltip>

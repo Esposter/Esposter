@@ -24,7 +24,7 @@ onKeyStroke(["z", "Z"], ({ ctrlKey, metaKey, preventDefault, shiftKey }) => {
 <template>
   <v-tooltip location="bottom">
     <template #activator="{ props }">
-      <v-btn :disabled="!isUndoable" icon="mdi-undo" variant="text" :="props" @click="undo(editedItem.value)" />
+      <v-btn :disabled="!isUndoable" icon="mdi-undo" variant="text" :="props" @click="undo(editedItem)" />
     </template>
     <div v-html="tooltipHtml" />
   </v-tooltip>
