@@ -1,18 +1,17 @@
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 
 import { expectToBeDefined } from "#shared/test/expectToBeDefined";
-import { useEditedItemDataSourceOperations } from "@/composables/tableEditor/file/useEditedItemDataSourceOperations";
 import {
   makeDataSource,
   setupEditedItem,
   setupWithDataSource,
-} from "@/composables/tableEditor/file/useEditedItemDataSourceOperations/testUtils.test";
+} from "@/composables/tableEditor/file/commands/testUtils.test";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
-describe("setDataSource", () => {
+describe(useSetDataSource, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     const { clear } = useDataSourceHistory();
@@ -23,7 +22,7 @@ describe("setDataSource", () => {
     expect.hasAssertions();
 
     const { editedItem } = setupEditedItem();
-    const { setDataSource } = useEditedItemDataSourceOperations();
+    const setDataSource = useSetDataSource();
     const dataSource = makeDataSource();
     setDataSource(dataSource);
     const editedItemValue = editedItem.value;
@@ -36,8 +35,10 @@ describe("setDataSource", () => {
   test("clears history after setting data source", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { deleteRow, isUndoable, setDataSource } = operations;
+    const { editedItem } = setupWithDataSource();
+    const deleteRow = useDeleteRow();
+    const setDataSource = useSetDataSource();
+    const { isUndoable } = useDataSourceHistory();
     deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
 
     expect(isUndoable.value).toBe(true);
@@ -50,7 +51,7 @@ describe("setDataSource", () => {
   test("no-op when editedItem is undefined", () => {
     expect.hasAssertions();
 
-    const { setDataSource } = useEditedItemDataSourceOperations();
+    const setDataSource = useSetDataSource();
     setDataSource(makeDataSource());
 
     const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();

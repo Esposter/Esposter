@@ -13,7 +13,7 @@ interface EditDialogButtonProps {
 }
 
 const { column, dataSource } = defineProps<EditDialogButtonProps>();
-const { updateColumn } = useEditedItemDataSourceOperations();
+const updateColumn = useUpdateColumn();
 const schema = computed(() => takeOne(ColumnTypeFormSchemaMap, column.type));
 const jsonSchema = computed(() => zodToJsonSchema(takeOne(EditFormSchemaMap, column.type)));
 const editedColumn = ref(structuredClone(toRawDeep(column)));

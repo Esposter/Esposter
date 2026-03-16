@@ -5,7 +5,7 @@ interface DeleteDialogButtonProps {
 }
 
 const { id, index } = defineProps<DeleteDialogButtonProps>();
-const { deleteRow } = useEditedItemDataSourceOperations();
+const deleteRow = useDeleteRow();
 </script>
 
 <template>

@@ -1,6 +1,5 @@
 import { expectToBeDefined } from "#shared/test/expectToBeDefined";
-import { useEditedItemDataSourceOperations } from "@/composables/tableEditor/file/useEditedItemDataSourceOperations";
-import { setupWithDataSource } from "@/composables/tableEditor/file/useEditedItemDataSourceOperations/testUtils.test";
+import { setupWithDataSource } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
@@ -16,7 +15,7 @@ describe("isUndoable and isRedoable state transitions", () => {
     expect.hasAssertions();
 
     setupWithDataSource();
-    const { isRedoable, isUndoable } = useEditedItemDataSourceOperations();
+    const { isRedoable, isUndoable } = useDataSourceHistory();
 
     expect(isUndoable.value).toBe(false);
     expect(isRedoable.value).toBe(false);
@@ -25,8 +24,9 @@ describe("isUndoable and isRedoable state transitions", () => {
   test("becomes undoable after an operation", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { deleteRow, isRedoable, isUndoable } = operations;
+    const { editedItem } = setupWithDataSource();
+    const deleteRow = useDeleteRow();
+    const { isRedoable, isUndoable } = useDataSourceHistory();
     deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
 
     expect(isUndoable.value).toBe(true);
@@ -36,10 +36,11 @@ describe("isUndoable and isRedoable state transitions", () => {
   test("becomes redoable after undo", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { deleteRow, isRedoable, isUndoable, undo } = operations;
+    const { editedItem } = setupWithDataSource();
+    const deleteRow = useDeleteRow();
+    const { isRedoable, isUndoable, undo } = useDataSourceHistory();
     deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
-    undo();
+    undo(editedItem.value);
 
     expect(isUndoable.value).toBe(false);
     expect(isRedoable.value).toBe(true);
@@ -48,10 +49,10 @@ describe("isUndoable and isRedoable state transitions", () => {
   test("undo no-op when history is empty", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { isUndoable, undo } = operations;
+    const { editedItem } = setupWithDataSource();
+    const { isUndoable, undo } = useDataSourceHistory();
     const rowCountBefore = editedItem.value?.dataSource?.rows.length ?? 0;
-    undo();
+    undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
     expectToBeDefined(dataSource);
@@ -63,10 +64,10 @@ describe("isUndoable and isRedoable state transitions", () => {
   test("redo no-op when future is empty", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { isRedoable, redo } = operations;
+    const { editedItem } = setupWithDataSource();
+    const { isRedoable, redo } = useDataSourceHistory();
     const rowCountBefore = editedItem.value?.dataSource?.rows.length ?? 0;
-    redo();
+    redo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
     expectToBeDefined(dataSource);
@@ -78,10 +79,11 @@ describe("isUndoable and isRedoable state transitions", () => {
   test("new operation after undo clears redo history", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { deleteRow, isRedoable, undo } = operations;
+    const { editedItem } = setupWithDataSource();
+    const deleteRow = useDeleteRow();
+    const { isRedoable, undo } = useDataSourceHistory();
     deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
-    undo();
+    undo(editedItem.value);
 
     expect(isRedoable.value).toBe(true);
 

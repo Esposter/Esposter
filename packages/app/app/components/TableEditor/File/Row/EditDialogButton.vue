@@ -11,7 +11,7 @@ interface EditDialogButtonProps {
 }
 
 const { columns, index, row } = defineProps<EditDialogButtonProps>();
-const { updateRow } = useEditedItemDataSourceOperations();
+const updateRow = useUpdateRow();
 const title = computed(() => `Edit Row ${index + 1}`);
 const editedRow = ref(structuredClone(toRawDeep(row)));
 </script>

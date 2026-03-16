@@ -1,17 +1,16 @@
 import { Column } from "#shared/models/tableEditor/file/Column";
 import { expectToBeDefined } from "#shared/test/expectToBeDefined";
-import { useEditedItemDataSourceOperations } from "@/composables/tableEditor/file/useEditedItemDataSourceOperations";
 import {
   makeDataSource,
   makeRow,
   setupEditedItem,
   setupWithDataSource,
-} from "@/composables/tableEditor/file/useEditedItemDataSourceOperations/testUtils.test";
+} from "@/composables/tableEditor/file/commands/testUtils.test";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
-describe("toggleColumnVisibility", () => {
+describe(useToggleColumnVisibility, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     const { clear } = useDataSourceHistory();
@@ -21,8 +20,8 @@ describe("toggleColumnVisibility", () => {
   test("hides a visible column", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { toggleColumnVisibility } = operations;
+    const { editedItem } = setupWithDataSource();
+    const toggleColumnVisibility = useToggleColumnVisibility();
     const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
     toggleColumnVisibility(column.id);
     const dataSource = editedItem.value?.dataSource;
@@ -36,8 +35,8 @@ describe("toggleColumnVisibility", () => {
     expect.hasAssertions();
 
     const hiddenColumn = new Column({ hidden: true, name: "" });
-    const { editedItem, operations } = setupWithDataSource(makeDataSource([hiddenColumn], [makeRow({ "": 0 })]));
-    const { toggleColumnVisibility } = operations;
+    const { editedItem } = setupWithDataSource(makeDataSource([hiddenColumn], [makeRow({ "": 0 })]));
+    const toggleColumnVisibility = useToggleColumnVisibility();
     toggleColumnVisibility(hiddenColumn.id);
     const dataSource = editedItem.value?.dataSource;
 
@@ -49,11 +48,12 @@ describe("toggleColumnVisibility", () => {
   test("undo restores original visibility", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { toggleColumnVisibility, undo } = operations;
+    const { editedItem } = setupWithDataSource();
+    const toggleColumnVisibility = useToggleColumnVisibility();
+    const { undo } = useDataSourceHistory();
     const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
     toggleColumnVisibility(column.id);
-    undo();
+    undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
     expectToBeDefined(dataSource);
@@ -64,12 +64,13 @@ describe("toggleColumnVisibility", () => {
   test("redo re-applies toggle after undo", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { redo, toggleColumnVisibility, undo } = operations;
+    const { editedItem } = setupWithDataSource();
+    const toggleColumnVisibility = useToggleColumnVisibility();
+    const { redo, undo } = useDataSourceHistory();
     const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
     toggleColumnVisibility(column.id);
-    undo();
-    redo();
+    undo(editedItem.value);
+    redo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
     expectToBeDefined(dataSource);
@@ -80,8 +81,9 @@ describe("toggleColumnVisibility", () => {
   test("no-op when column id not found", () => {
     expect.hasAssertions();
 
-    const { operations } = setupWithDataSource();
-    const { isUndoable, toggleColumnVisibility } = operations;
+    setupWithDataSource();
+    const toggleColumnVisibility = useToggleColumnVisibility();
+    const { isUndoable } = useDataSourceHistory();
     toggleColumnVisibility("nonexistent");
 
     expect(isUndoable.value).toBe(false);
@@ -90,7 +92,8 @@ describe("toggleColumnVisibility", () => {
   test("no-op when editedItem is undefined", () => {
     expect.hasAssertions();
 
-    const { isUndoable, toggleColumnVisibility } = useEditedItemDataSourceOperations();
+    const toggleColumnVisibility = useToggleColumnVisibility();
+    const { isUndoable } = useDataSourceHistory();
     toggleColumnVisibility("");
 
     expect(isUndoable.value).toBe(false);
@@ -100,7 +103,8 @@ describe("toggleColumnVisibility", () => {
     expect.hasAssertions();
 
     setupEditedItem();
-    const { isUndoable, toggleColumnVisibility } = useEditedItemDataSourceOperations();
+    const toggleColumnVisibility = useToggleColumnVisibility();
+    const { isUndoable } = useDataSourceHistory();
     toggleColumnVisibility("");
 
     expect(isUndoable.value).toBe(false);

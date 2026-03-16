@@ -5,7 +5,6 @@ import { Column } from "#shared/models/tableEditor/file/Column";
 import { CsvDataSourceItem } from "#shared/models/tableEditor/file/csv/CsvDataSourceItem";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { Row } from "#shared/models/tableEditor/file/Row";
-import { useEditedItemDataSourceOperations } from "@/composables/tableEditor/file/useEditedItemDataSourceOperations";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { useItemStore } from "@/store/tableEditor/item";
 import { describe } from "vitest";
@@ -37,9 +36,9 @@ export const setupWithDataSource = (dataSource?: DataSource) => {
   const ds =
     dataSource ??
     makeDataSource([makeColumn(""), makeColumn(" ")], [makeRow({ "": 0, " ": 1 }), makeRow({ "": 2, " ": 3 })]);
-  const operations = useEditedItemDataSourceOperations();
-  operations.setDataSource(ds);
-  return { editedItem, item, operations };
+  const setDataSource = useSetDataSource();
+  setDataSource(ds);
+  return { editedItem, item };
 };
 
 describe.todo("testUtils");

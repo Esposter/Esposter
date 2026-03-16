@@ -7,6 +7,7 @@ export default Object.assign(
     delete rules["@typescript-eslint/no-dynamic-delete"];
     delete rules["@typescript-eslint/no-empty-object-type"];
     delete rules["@typescript-eslint/no-redundant-type-constituents"];
+    delete rules["@typescript-eslint/no-unnecessary-condition"];
     delete rules["@typescript-eslint/no-unsafe-argument"];
     delete rules["@typescript-eslint/no-unsafe-assignment"];
     delete rules["@typescript-eslint/no-unsafe-call"];

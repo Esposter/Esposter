@@ -13,7 +13,9 @@ interface ColumnTableProps {
 }
 
 const { dataSource } = defineProps<ColumnTableProps>();
-const { deleteColumns, reorderColumns, toggleColumnVisibility } = useEditedItemDataSourceOperations();
+const deleteColumns = useDeleteColumns();
+const reorderColumns = useReorderColumns();
+const toggleColumnVisibility = useToggleColumnVisibility();
 const selectedColumnIds = ref<string[]>([]);
 const dragColumns = computed({
   get: () => dataSource.columns,

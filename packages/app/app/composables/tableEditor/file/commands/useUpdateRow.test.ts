@@ -1,15 +1,11 @@
 import { Row } from "#shared/models/tableEditor/file/Row";
 import { expectToBeDefined } from "#shared/test/expectToBeDefined";
-import { useEditedItemDataSourceOperations } from "@/composables/tableEditor/file/useEditedItemDataSourceOperations";
-import {
-  setupEditedItem,
-  setupWithDataSource,
-} from "@/composables/tableEditor/file/useEditedItemDataSourceOperations/testUtils.test";
+import { setupEditedItem, setupWithDataSource } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { takeOne, toRawDeep } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
-describe("updateRow", () => {
+describe(useUpdateRow, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     const { clear } = useDataSourceHistory();
@@ -19,8 +15,8 @@ describe("updateRow", () => {
   test("updates row data at given index", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { updateRow } = operations;
+    const { editedItem } = setupWithDataSource();
+    const updateRow = useUpdateRow();
     const originalRow = takeOne(editedItem.value?.dataSource?.rows ?? [], 0);
     updateRow(new Row(Object.assign(structuredClone(toRawDeep(originalRow)), { data: { "": 10, " ": 11 } })));
     const dataSource = editedItem.value?.dataSource;
@@ -34,11 +30,12 @@ describe("updateRow", () => {
   test("undo restores original row data", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { undo, updateRow } = operations;
+    const { editedItem } = setupWithDataSource();
+    const updateRow = useUpdateRow();
+    const { undo } = useDataSourceHistory();
     const originalRow = takeOne(editedItem.value?.dataSource?.rows ?? [], 0);
     updateRow(new Row(Object.assign(structuredClone(toRawDeep(originalRow)), { data: { "": 10, " ": 11 } })));
-    undo();
+    undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
     expectToBeDefined(dataSource);
@@ -50,12 +47,13 @@ describe("updateRow", () => {
   test("redo re-applies update after undo", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { redo, undo, updateRow } = operations;
+    const { editedItem } = setupWithDataSource();
+    const updateRow = useUpdateRow();
+    const { redo, undo } = useDataSourceHistory();
     const originalRow = takeOne(editedItem.value?.dataSource?.rows ?? [], 0);
     updateRow(new Row(Object.assign(structuredClone(toRawDeep(originalRow)), { data: { "": 10, " ": 11 } })));
-    undo();
-    redo();
+    undo(editedItem.value);
+    redo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
     expectToBeDefined(dataSource);
@@ -66,8 +64,9 @@ describe("updateRow", () => {
   test("no-op when row id not found", () => {
     expect.hasAssertions();
 
-    const { operations } = setupWithDataSource();
-    const { isUndoable, updateRow } = operations;
+    setupWithDataSource();
+    const updateRow = useUpdateRow();
+    const { isUndoable } = useDataSourceHistory();
     updateRow(new Row({ data: { "": 10 } }));
 
     expect(isUndoable.value).toBe(false);
@@ -76,7 +75,8 @@ describe("updateRow", () => {
   test("no-op when editedItem is undefined", () => {
     expect.hasAssertions();
 
-    const { isUndoable, updateRow } = useEditedItemDataSourceOperations();
+    const updateRow = useUpdateRow();
+    const { isUndoable } = useDataSourceHistory();
     updateRow(new Row({ data: { "": 10 } }));
 
     expect(isUndoable.value).toBe(false);
@@ -86,7 +86,8 @@ describe("updateRow", () => {
     expect.hasAssertions();
 
     setupEditedItem();
-    const { isUndoable, updateRow } = useEditedItemDataSourceOperations();
+    const updateRow = useUpdateRow();
+    const { isUndoable } = useDataSourceHistory();
     updateRow(new Row({ data: { "": 10 } }));
 
     expect(isUndoable.value).toBe(false);
@@ -95,8 +96,9 @@ describe("updateRow", () => {
   test("snapshot immutability - mutating passed object after call does not affect undo history", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { redo, undo, updateRow } = operations;
+    const { editedItem } = setupWithDataSource();
+    const updateRow = useUpdateRow();
+    const { redo, undo } = useDataSourceHistory();
     const originalRow = takeOne(editedItem.value?.dataSource?.rows ?? [], 0);
     const updatedRow = reactive(
       new Row(Object.assign(structuredClone(toRawDeep(originalRow)), { data: { "": 10, " ": 11 } })),
@@ -104,7 +106,7 @@ describe("updateRow", () => {
     updateRow(updatedRow);
     updatedRow.data[""] = 99;
     updatedRow.data[" "] = 99;
-    undo();
+    undo(editedItem.value);
     const dataSourceAfterUndo = editedItem.value?.dataSource;
 
     expectToBeDefined(dataSourceAfterUndo);
@@ -112,7 +114,7 @@ describe("updateRow", () => {
     expect(takeOne(dataSourceAfterUndo.rows, 0).data[""]).toBe(0);
     expect(takeOne(dataSourceAfterUndo.rows, 0).data[" "]).toBe(1);
 
-    redo();
+    redo(editedItem.value);
     const dataSourceAfterRedo = editedItem.value?.dataSource;
 
     expectToBeDefined(dataSourceAfterRedo);

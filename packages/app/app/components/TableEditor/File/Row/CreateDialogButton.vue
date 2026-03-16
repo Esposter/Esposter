@@ -9,7 +9,7 @@ interface CreateDialogButtonProps {
 }
 
 const { dataSource } = defineProps<CreateDialogButtonProps>();
-const { createRow } = useEditedItemDataSourceOperations();
+const createRow = useCreateRow();
 const editedRow = ref(new Row({ data: Object.fromEntries(dataSource.columns.map((column) => [column.name, null])) }));
 const resetForm = () => {
   editedRow.value = new Row({ data: Object.fromEntries(dataSource.columns.map((column) => [column.name, null])) });

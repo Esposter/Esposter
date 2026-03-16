@@ -1,14 +1,10 @@
 import { expectToBeDefined } from "#shared/test/expectToBeDefined";
-import { useEditedItemDataSourceOperations } from "@/composables/tableEditor/file/useEditedItemDataSourceOperations";
-import {
-  setupEditedItem,
-  setupWithDataSource,
-} from "@/composables/tableEditor/file/useEditedItemDataSourceOperations/testUtils.test";
+import { setupEditedItem, setupWithDataSource } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
-describe("deleteRow", () => {
+describe(useDeleteRow, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     const { clear } = useDataSourceHistory();
@@ -18,8 +14,8 @@ describe("deleteRow", () => {
   test("removes row at given index", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { deleteRow } = operations;
+    const { editedItem } = setupWithDataSource();
+    const deleteRow = useDeleteRow();
     deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
     const dataSource = editedItem.value?.dataSource;
 
@@ -32,10 +28,11 @@ describe("deleteRow", () => {
   test("undo restores deleted row", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { deleteRow, undo } = operations;
+    const { editedItem } = setupWithDataSource();
+    const deleteRow = useDeleteRow();
+    const { undo } = useDataSourceHistory();
     deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
-    undo();
+    undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
     expectToBeDefined(dataSource);
@@ -47,11 +44,12 @@ describe("deleteRow", () => {
   test("redo re-applies delete after undo", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { deleteRow, redo, undo } = operations;
+    const { editedItem } = setupWithDataSource();
+    const deleteRow = useDeleteRow();
+    const { redo, undo } = useDataSourceHistory();
     deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
-    undo();
-    redo();
+    undo(editedItem.value);
+    redo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
     expectToBeDefined(dataSource);
@@ -63,7 +61,8 @@ describe("deleteRow", () => {
   test("no-op when editedItem is undefined", () => {
     expect.hasAssertions();
 
-    const { deleteRow, isUndoable } = useEditedItemDataSourceOperations();
+    const deleteRow = useDeleteRow();
+    const { isUndoable } = useDataSourceHistory();
     deleteRow("");
 
     expect(isUndoable.value).toBe(false);
@@ -73,7 +72,8 @@ describe("deleteRow", () => {
     expect.hasAssertions();
 
     setupEditedItem();
-    const { deleteRow, isUndoable } = useEditedItemDataSourceOperations();
+    const deleteRow = useDeleteRow();
+    const { isUndoable } = useDataSourceHistory();
     deleteRow("");
 
     expect(isUndoable.value).toBe(false);

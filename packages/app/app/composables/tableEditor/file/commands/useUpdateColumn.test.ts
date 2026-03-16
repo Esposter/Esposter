@@ -1,15 +1,11 @@
 import { Column } from "#shared/models/tableEditor/file/Column";
 import { expectToBeDefined } from "#shared/test/expectToBeDefined";
-import { useEditedItemDataSourceOperations } from "@/composables/tableEditor/file/useEditedItemDataSourceOperations";
-import {
-  setupEditedItem,
-  setupWithDataSource,
-} from "@/composables/tableEditor/file/useEditedItemDataSourceOperations/testUtils.test";
+import { setupEditedItem, setupWithDataSource } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { takeOne, toRawDeep } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
-describe("updateColumn", () => {
+describe(useUpdateColumn, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     const { clear } = useDataSourceHistory();
@@ -19,8 +15,8 @@ describe("updateColumn", () => {
   test("sets description on column", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { updateColumn } = operations;
+    const { editedItem } = setupWithDataSource();
+    const updateColumn = useUpdateColumn();
     const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
     updateColumn("", Object.assign(structuredClone(toRawDeep(column)), { description: " " }));
     const dataSource = editedItem.value?.dataSource;
@@ -33,11 +29,12 @@ describe("updateColumn", () => {
   test("undo restores original description", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { undo, updateColumn } = operations;
+    const { editedItem } = setupWithDataSource();
+    const updateColumn = useUpdateColumn();
+    const { undo } = useDataSourceHistory();
     const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
     updateColumn("", Object.assign(structuredClone(toRawDeep(column)), { description: " " }));
-    undo();
+    undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
     expectToBeDefined(dataSource);
@@ -48,8 +45,8 @@ describe("updateColumn", () => {
   test("renames column and updates row keys", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { updateColumn } = operations;
+    const { editedItem } = setupWithDataSource();
+    const updateColumn = useUpdateColumn();
     const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
     updateColumn("", Object.assign(structuredClone(toRawDeep(column)), { name: "renamed" }));
     const dataSource = editedItem.value?.dataSource;
@@ -64,11 +61,12 @@ describe("updateColumn", () => {
   test("undo restores original column name and row keys", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { undo, updateColumn } = operations;
+    const { editedItem } = setupWithDataSource();
+    const updateColumn = useUpdateColumn();
+    const { undo } = useDataSourceHistory();
     const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
     updateColumn("", Object.assign(structuredClone(toRawDeep(column)), { name: "renamed" }));
-    undo();
+    undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
     expectToBeDefined(dataSource);
@@ -81,12 +79,13 @@ describe("updateColumn", () => {
   test("redo re-applies update after undo", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { redo, undo, updateColumn } = operations;
+    const { editedItem } = setupWithDataSource();
+    const updateColumn = useUpdateColumn();
+    const { redo, undo } = useDataSourceHistory();
     const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
     updateColumn("", Object.assign(structuredClone(toRawDeep(column)), { name: "renamed" }));
-    undo();
-    redo();
+    undo(editedItem.value);
+    redo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
     expectToBeDefined(dataSource);
@@ -98,8 +97,9 @@ describe("updateColumn", () => {
   test("no-op when original column name not found", () => {
     expect.hasAssertions();
 
-    const { operations } = setupWithDataSource();
-    const { isUndoable, updateColumn } = operations;
+    setupWithDataSource();
+    const updateColumn = useUpdateColumn();
+    const { isUndoable } = useDataSourceHistory();
     updateColumn("nonexistent", new Column({ name: "nonexistent" }));
 
     expect(isUndoable.value).toBe(false);
@@ -108,7 +108,8 @@ describe("updateColumn", () => {
   test("no-op when editedItem is undefined", () => {
     expect.hasAssertions();
 
-    const { isUndoable, updateColumn } = useEditedItemDataSourceOperations();
+    const updateColumn = useUpdateColumn();
+    const { isUndoable } = useDataSourceHistory();
     updateColumn("", new Column({ name: "" }));
 
     expect(isUndoable.value).toBe(false);
@@ -118,7 +119,8 @@ describe("updateColumn", () => {
     expect.hasAssertions();
 
     setupEditedItem();
-    const { isUndoable, updateColumn } = useEditedItemDataSourceOperations();
+    const updateColumn = useUpdateColumn();
+    const { isUndoable } = useDataSourceHistory();
     updateColumn("", new Column({ name: "" }));
 
     expect(isUndoable.value).toBe(false);
@@ -127,20 +129,21 @@ describe("updateColumn", () => {
   test("snapshot immutability - mutating passed object after call does not affect undo history", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { redo, undo, updateColumn } = operations;
+    const { editedItem } = setupWithDataSource();
+    const updateColumn = useUpdateColumn();
+    const { redo, undo } = useDataSourceHistory();
     const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
     const updatedColumn = reactive(Object.assign(structuredClone(toRawDeep(column)), { name: "renamed" }));
     updateColumn("", updatedColumn);
     updatedColumn.name = "mutated";
-    undo();
+    undo(editedItem.value);
     const dataSourceAfterUndo = editedItem.value?.dataSource;
 
     expectToBeDefined(dataSourceAfterUndo);
 
     expect(takeOne(dataSourceAfterUndo.columns, 0).name).toBe("");
 
-    redo();
+    redo(editedItem.value);
     const dataSourceAfterRedo = editedItem.value?.dataSource;
 
     expectToBeDefined(dataSourceAfterRedo);

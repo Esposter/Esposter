@@ -1,6 +1,5 @@
 import { expectToBeDefined } from "#shared/test/expectToBeDefined";
-import { useEditedItemDataSourceOperations } from "@/composables/tableEditor/file/useEditedItemDataSourceOperations";
-import { setupWithDataSource } from "@/composables/tableEditor/file/useEditedItemDataSourceOperations/testUtils.test";
+import { setupWithDataSource } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
@@ -16,7 +15,7 @@ describe("undoDescription and redoDescription", () => {
     expect.hasAssertions();
 
     setupWithDataSource();
-    const { undoDescription } = useEditedItemDataSourceOperations();
+    const { undoDescription } = useDataSourceHistory();
 
     expect(undoDescription.value).toBeNull();
   });
@@ -24,8 +23,9 @@ describe("undoDescription and redoDescription", () => {
   test("undoDescription reflects last command", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { deleteRow, undoDescription } = operations;
+    const { editedItem } = setupWithDataSource();
+    const deleteRow = useDeleteRow();
+    const { undoDescription } = useDataSourceHistory();
     deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
 
     expectToBeDefined(undoDescription.value);
@@ -37,7 +37,7 @@ describe("undoDescription and redoDescription", () => {
     expect.hasAssertions();
 
     setupWithDataSource();
-    const { redoDescription } = useEditedItemDataSourceOperations();
+    const { redoDescription } = useDataSourceHistory();
 
     expect(redoDescription.value).toBeNull();
   });
@@ -45,10 +45,11 @@ describe("undoDescription and redoDescription", () => {
   test("redoDescription reflects undone command", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { deleteRow, redoDescription, undo } = operations;
+    const { editedItem } = setupWithDataSource();
+    const deleteRow = useDeleteRow();
+    const { redoDescription, undo } = useDataSourceHistory();
     deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
-    undo();
+    undo(editedItem.value);
 
     expectToBeDefined(redoDescription.value);
 

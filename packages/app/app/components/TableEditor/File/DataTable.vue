@@ -11,7 +11,8 @@ interface DataTableProps {
 }
 
 const { dataSource } = defineProps<DataTableProps>();
-const { deleteRows, reorderRows } = useEditedItemDataSourceOperations();
+const deleteRows = useDeleteRows();
+const reorderRows = useReorderRows();
 const selectedRowIds = ref<string[]>([]);
 const headers = computed(() => [
   { key: "drag", sortable: false, title: "" },

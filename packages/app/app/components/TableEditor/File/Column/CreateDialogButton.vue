@@ -16,7 +16,7 @@ interface CreateDialogButtonProps {
 }
 
 const { dataSource } = defineProps<CreateDialogButtonProps>();
-const { createColumn } = useEditedItemDataSourceOperations();
+const createColumn = useCreateColumn();
 const columnType = ref(ColumnType.String);
 const column = new Column();
 // StructuredClone is required here: Vjsf does not work with class instances and needs a plain object

@@ -1,18 +1,17 @@
 import { Column } from "#shared/models/tableEditor/file/Column";
 import { expectToBeDefined } from "#shared/test/expectToBeDefined";
-import { useEditedItemDataSourceOperations } from "@/composables/tableEditor/file/useEditedItemDataSourceOperations";
 import {
   makeColumn,
   makeDataSource,
   makeRow,
   setupEditedItem,
   setupWithDataSource,
-} from "@/composables/tableEditor/file/useEditedItemDataSourceOperations/testUtils.test";
+} from "@/composables/tableEditor/file/commands/testUtils.test";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
-describe("reorderColumns", () => {
+describe(useReorderColumns, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     const { clear } = useDataSourceHistory();
@@ -22,8 +21,8 @@ describe("reorderColumns", () => {
   test("moves column forward (index 0 to 1)", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { reorderColumns } = operations;
+    const { editedItem } = setupWithDataSource();
+    const reorderColumns = useReorderColumns();
     const columns = editedItem.value?.dataSource?.columns ?? [];
     const newColumns = [takeOne(columns, 1), takeOne(columns, 0)] as Column[];
     reorderColumns(newColumns);
@@ -38,12 +37,13 @@ describe("reorderColumns", () => {
   test("undo restores original column order", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { reorderColumns, undo } = operations;
+    const { editedItem } = setupWithDataSource();
+    const reorderColumns = useReorderColumns();
+    const { undo } = useDataSourceHistory();
     const columns = editedItem.value?.dataSource?.columns ?? [];
     const newColumns = [takeOne(columns, 1), takeOne(columns, 0)] as Column[];
     reorderColumns(newColumns);
-    undo();
+    undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
     expectToBeDefined(dataSource);
@@ -55,13 +55,14 @@ describe("reorderColumns", () => {
   test("redo re-applies reorder after undo", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { redo, reorderColumns, undo } = operations;
+    const { editedItem } = setupWithDataSource();
+    const reorderColumns = useReorderColumns();
+    const { redo, undo } = useDataSourceHistory();
     const columns = editedItem.value?.dataSource?.columns ?? [];
     const newColumns = [takeOne(columns, 1), takeOne(columns, 0)] as Column[];
     reorderColumns(newColumns);
-    undo();
-    redo();
+    undo(editedItem.value);
+    redo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
     expectToBeDefined(dataSource);
@@ -77,8 +78,8 @@ describe("reorderColumns", () => {
       [makeColumn("a"), makeColumn("b"), makeColumn("c")],
       [makeRow({ a: 0, b: 1, c: 2 })],
     );
-    const { editedItem, operations } = setupWithDataSource(threeColumnDs);
-    const { reorderColumns } = operations;
+    const { editedItem } = setupWithDataSource(threeColumnDs);
+    const reorderColumns = useReorderColumns();
     const columns = editedItem.value?.dataSource?.columns ?? [];
     const newColumns = [takeOne(columns, 1), takeOne(columns, 0), takeOne(columns, 2)] as Column[];
     reorderColumns(newColumns);
@@ -94,8 +95,9 @@ describe("reorderColumns", () => {
   test("no-op when order unchanged", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { isUndoable, reorderColumns } = operations;
+    const { editedItem } = setupWithDataSource();
+    const reorderColumns = useReorderColumns();
+    const { isUndoable } = useDataSourceHistory();
     const columns = editedItem.value?.dataSource?.columns ?? [];
     reorderColumns([...columns]);
 
@@ -105,7 +107,8 @@ describe("reorderColumns", () => {
   test("no-op when editedItem is undefined", () => {
     expect.hasAssertions();
 
-    const { isUndoable, reorderColumns } = useEditedItemDataSourceOperations();
+    const reorderColumns = useReorderColumns();
+    const { isUndoable } = useDataSourceHistory();
     reorderColumns([]);
 
     expect(isUndoable.value).toBe(false);
@@ -115,7 +118,8 @@ describe("reorderColumns", () => {
     expect.hasAssertions();
 
     setupEditedItem();
-    const { isUndoable, reorderColumns } = useEditedItemDataSourceOperations();
+    const reorderColumns = useReorderColumns();
+    const { isUndoable } = useDataSourceHistory();
     reorderColumns([]);
 
     expect(isUndoable.value).toBe(false);

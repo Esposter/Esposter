@@ -38,11 +38,7 @@ export class DeleteRowsCommand extends ADataSourceCommand<CommandType.DeleteRows
     const ascendingRows = this.indexedRows.toSorted((a, b) => a.index - b.index);
     for (const { index, row } of ascendingRows) {
       for (const column of item.dataSource.columns) column.size += getValueSize(takeOne(row.data, column.name));
-      item.dataSource.rows = [
-        ...item.dataSource.rows.slice(0, index),
-        row,
-        ...item.dataSource.rows.slice(index),
-      ];
+      item.dataSource.rows = [...item.dataSource.rows.slice(0, index), row, ...item.dataSource.rows.slice(index)];
     }
   }
 }

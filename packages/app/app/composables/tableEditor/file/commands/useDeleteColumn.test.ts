@@ -1,14 +1,10 @@
 import { expectToBeDefined } from "#shared/test/expectToBeDefined";
-import { useEditedItemDataSourceOperations } from "@/composables/tableEditor/file/useEditedItemDataSourceOperations";
-import {
-  setupEditedItem,
-  setupWithDataSource,
-} from "@/composables/tableEditor/file/useEditedItemDataSourceOperations/testUtils.test";
+import { setupEditedItem, setupWithDataSource } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
-describe("deleteColumn", () => {
+describe(useDeleteColumn, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     const { clear } = useDataSourceHistory();
@@ -18,8 +14,8 @@ describe("deleteColumn", () => {
   test("removes column by name", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { deleteColumn } = operations;
+    const { editedItem } = setupWithDataSource();
+    const deleteColumn = useDeleteColumn();
     deleteColumn("");
     const dataSource = editedItem.value?.dataSource;
 
@@ -33,10 +29,11 @@ describe("deleteColumn", () => {
   test("undo restores deleted column and row values", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { deleteColumn, undo } = operations;
+    const { editedItem } = setupWithDataSource();
+    const deleteColumn = useDeleteColumn();
+    const { undo } = useDataSourceHistory();
     deleteColumn("");
-    undo();
+    undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
     expectToBeDefined(dataSource);
@@ -50,11 +47,12 @@ describe("deleteColumn", () => {
   test("redo re-applies delete after undo", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { deleteColumn, redo, undo } = operations;
+    const { editedItem } = setupWithDataSource();
+    const deleteColumn = useDeleteColumn();
+    const { redo, undo } = useDataSourceHistory();
     deleteColumn("");
-    undo();
-    redo();
+    undo(editedItem.value);
+    redo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
     expectToBeDefined(dataSource);
@@ -66,8 +64,9 @@ describe("deleteColumn", () => {
   test("no-op when column name not found", () => {
     expect.hasAssertions();
 
-    const { operations } = setupWithDataSource();
-    const { deleteColumn, isUndoable } = operations;
+    setupWithDataSource();
+    const deleteColumn = useDeleteColumn();
+    const { isUndoable } = useDataSourceHistory();
     deleteColumn("nonexistent");
 
     expect(isUndoable.value).toBe(false);
@@ -76,7 +75,8 @@ describe("deleteColumn", () => {
   test("no-op when editedItem is undefined", () => {
     expect.hasAssertions();
 
-    const { deleteColumn, isUndoable } = useEditedItemDataSourceOperations();
+    const deleteColumn = useDeleteColumn();
+    const { isUndoable } = useDataSourceHistory();
     deleteColumn("");
 
     expect(isUndoable.value).toBe(false);
@@ -86,7 +86,8 @@ describe("deleteColumn", () => {
     expect.hasAssertions();
 
     setupEditedItem();
-    const { deleteColumn, isUndoable } = useEditedItemDataSourceOperations();
+    const deleteColumn = useDeleteColumn();
+    const { isUndoable } = useDataSourceHistory();
     deleteColumn("");
 
     expect(isUndoable.value).toBe(false);

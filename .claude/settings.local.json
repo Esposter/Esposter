@@ -22,7 +22,11 @@
       "Bash(pnpm outdated:*)",
       "Bash(cd:*)",
       "Bash(pnpm test:*)",
-      "mcp__vuetify-mcp__get_component_api_by_version"
+      "mcp__vuetify-mcp__get_component_api_by_version",
+      "Bash(for f:*)",
+      "Bash(do echo:*)",
+      "Read(//c/Users/jimmy/Desktop/Software/Esposter/packages/app/app/components/TableEditor/File/**)",
+      "Bash(done)"
     ]
   }
 }

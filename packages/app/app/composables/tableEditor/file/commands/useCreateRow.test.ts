@@ -1,15 +1,11 @@
 import { Row } from "#shared/models/tableEditor/file/Row";
 import { expectToBeDefined } from "#shared/test/expectToBeDefined";
-import { useEditedItemDataSourceOperations } from "@/composables/tableEditor/file/useEditedItemDataSourceOperations";
-import {
-  setupEditedItem,
-  setupWithDataSource,
-} from "@/composables/tableEditor/file/useEditedItemDataSourceOperations/testUtils.test";
+import { setupEditedItem, setupWithDataSource } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
-describe("createRow", () => {
+describe(useCreateRow, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     const { clear } = useDataSourceHistory();
@@ -19,8 +15,8 @@ describe("createRow", () => {
   test("appends a new row with null values for all columns", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { createRow } = operations;
+    const { editedItem } = setupWithDataSource();
+    const createRow = useCreateRow();
     createRow();
     const dataSource = editedItem.value?.dataSource;
 
@@ -34,8 +30,8 @@ describe("createRow", () => {
   test("appends a pre-built row with provided data", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { createRow } = operations;
+    const { editedItem } = setupWithDataSource();
+    const createRow = useCreateRow();
     createRow(new Row({ data: { "": 0, " ": 1 } }));
     const dataSource = editedItem.value?.dataSource;
 
@@ -49,10 +45,11 @@ describe("createRow", () => {
   test("undo removes the created row", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { createRow, undo } = operations;
+    const { editedItem } = setupWithDataSource();
+    const createRow = useCreateRow();
+    const { undo } = useDataSourceHistory();
     createRow();
-    undo();
+    undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
     expectToBeDefined(dataSource);
@@ -63,11 +60,12 @@ describe("createRow", () => {
   test("redo re-applies create after undo", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { createRow, redo, undo } = operations;
+    const { editedItem } = setupWithDataSource();
+    const createRow = useCreateRow();
+    const { redo, undo } = useDataSourceHistory();
     createRow();
-    undo();
-    redo();
+    undo(editedItem.value);
+    redo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
     expectToBeDefined(dataSource);
@@ -78,8 +76,8 @@ describe("createRow", () => {
   test("creates a unique id when the same row instance is passed multiple times", () => {
     expect.hasAssertions();
 
-    const { editedItem, operations } = setupWithDataSource();
-    const { createRow } = operations;
+    const { editedItem } = setupWithDataSource();
+    const createRow = useCreateRow();
     const row = new Row({ data: { "": 0, " ": 1 } });
     createRow(row);
     createRow(row);
@@ -104,7 +102,8 @@ describe("createRow", () => {
   test("no-op when editedItem is undefined", () => {
     expect.hasAssertions();
 
-    const { createRow, isUndoable } = useEditedItemDataSourceOperations();
+    const createRow = useCreateRow();
+    const { isUndoable } = useDataSourceHistory();
     createRow();
 
     expect(isUndoable.value).toBe(false);
@@ -114,7 +113,8 @@ describe("createRow", () => {
     expect.hasAssertions();
 
     setupEditedItem();
-    const { createRow, isUndoable } = useEditedItemDataSourceOperations();
+    const createRow = useCreateRow();
+    const { isUndoable } = useDataSourceHistory();
     createRow();
 
     expect(isUndoable.value).toBe(false);
