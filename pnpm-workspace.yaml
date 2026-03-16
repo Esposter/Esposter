@@ -65,8 +65,8 @@ catalog:
   "@tresjs/cientos": ^5.6.0
   "@tresjs/core": ^5.7.0
   "@tresjs/nuxt": ^5.5.0
-  "@trpc/client": ^11.12.1
-  "@trpc/server": ^11.12.1
+  "@trpc/client": ^11.13.4
+  "@trpc/server": ^11.13.4
   "@types/data-urls": ^3.0.5
   "@types/dedent": ^0.7.2
   "@types/deep-equal": ^1.0.4
