@@ -11,20 +11,25 @@ interface DataTableProps {
 }
 
 const { dataSource } = defineProps<DataTableProps>();
-const { reorderRows } = useEditedItemDataSourceOperations();
+const deleteRows = useDeleteRows();
+const reorderRows = useReorderRows();
+const selectedRowIds = ref<string[]>([]);
 const headers = computed(() => [
   { key: "drag", sortable: false, title: "" },
-  ...dataSource.columns.map((column) => ({
-    key: column.name,
-    title: column.name,
-    value: (row: Row) => takeOne(row.data, column.name),
-  })),
+  ...dataSource.columns
+    .filter((column) => !column.hidden)
+    .map((column) => ({
+      key: column.name,
+      title: column.name,
+      value: (row: Row) => takeOne(row.data, column.name),
+    })),
   { key: "actions", sortable: false, title: "Actions" },
 ]);
-const dragRows = computed<DataSource["rows"]>({
+const dragRows = computed({
   get: () => dataSource.rows,
   set: reorderRows,
 });
+const rowIndexIdMap = computed(() => new Map(dataSource.rows.map((row, index) => [row.id, index])));
 </script>
 
 <template>
@@ -34,16 +39,45 @@ const dragRows = computed<DataSource["rows"]>({
       flex-1
       flex-col
       :data-table-props="{
-        height: '100%',
+        density: 'compact',
         headers,
         items: dragRows,
+        modelValue: selectedRowIds,
+        showSelect: true,
+        'onUpdate:modelValue': (newSelectedIds) => {
+          selectedRowIds = newSelectedIds as string[];
+        },
       }"
     >
+      <template v-if="selectedRowIds.length > 0" #top>
+        <v-toolbar>
+          <v-toolbar-title pl-3>
+            {{ selectedRowIds.length }} row{{ selectedRowIds.length === 1 ? "" : "s" }} selected
+          </v-toolbar-title>
+          <StyledConfirmDeleteDialogButton
+            :card-props="{
+              title: `Delete ${selectedRowIds.length} Row${selectedRowIds.length === 1 ? '' : 's'}`,
+              text: `Are you sure you want to delete ${selectedRowIds.length} selected row${selectedRowIds.length === 1 ? '' : 's'}?`,
+            }"
+            @delete="
+              (onComplete) => {
+                deleteRows(selectedRowIds);
+                selectedRowIds = [];
+                onComplete();
+              }
+            "
+          />
+        </v-toolbar>
+      </template>
       <template #[`item.drag`]>
         <v-icon :class="DRAG_HANDLE_CLASS" icon="mdi-drag" cursor-move />
       </template>
-      <template #[`item.actions`]="{ item, index }">
-        <TableEditorFileRowActionSlot :columns="dataSource.columns" :index :row="item" />
+      <template #[`item.actions`]="{ item }">
+        <TableEditorFileRowActionSlot
+          :columns="dataSource.columns"
+          :index="rowIndexIdMap.get(item.id) ?? -1"
+          :row="item"
+        />
       </template>
     </StyledDataTable>
   </VueDraggable>

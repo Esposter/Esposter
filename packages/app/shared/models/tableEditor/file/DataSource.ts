@@ -1,4 +1,5 @@
 import type { Column } from "#shared/models/tableEditor/file/Column";
+import type { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import type { DataSourceStats } from "#shared/models/tableEditor/file/DataSourceStats";
 import type { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
 import type { Metadata } from "#shared/models/tableEditor/file/Metadata";
@@ -12,7 +13,7 @@ import { rowSchema } from "#shared/models/tableEditor/file/Row";
 import { z } from "zod";
 
 export interface DataSource {
-  columns: (Column | DateColumn)[];
+  columns: (Column | Column<ColumnType.Boolean> | Column<ColumnType.Number> | DateColumn)[];
   metadata: Metadata;
   rows: Row[];
   stats: DataSourceStats;

@@ -5,6 +5,12 @@ import { useTableEditorStore } from "@/store/tableEditor";
 
 const tableEditorStore = useTableEditorStore<TDataSourceItem>();
 const { editedItem } = storeToRefs(tableEditorStore);
+const { clear } = useDataSourceHistory();
+
+watch(
+  () => editedItem.value?.id,
+  () => clear(),
+);
 </script>
 
 <template>

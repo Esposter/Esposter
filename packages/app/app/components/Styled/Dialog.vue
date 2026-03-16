@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { SubmitEventPromise } from "vuetify";
-import type { VBtn, VCard } from "vuetify/components";
+import type { VBtn, VCard, VForm } from "vuetify/components";
 
 import { mergeProps } from "vue";
 
@@ -23,7 +23,10 @@ defineSlots<{
 const modelValue = defineModel<boolean>({ default: false });
 const { cardProps = {}, confirmButtonAttrs = {}, confirmButtonProps = {} } = defineProps<StyledDialogProps>();
 const emit = defineEmits<{ submit: [event: SubmitEventPromise, onComplete: () => void] }>();
+const editForm = ref<InstanceType<typeof VForm>>();
 const isEditFormValid = ref(true);
+
+defineExpose({ editForm, isEditFormValid });
 </script>
 
 <template>
@@ -32,6 +35,7 @@ const isEditFormValid = ref(true);
       <slot name="activator" :is-open="modelValue" :update-is-open="(value) => (modelValue = value)" />
     </template>
     <v-form
+      ref="editForm"
       v-model="isEditFormValid"
       @submit.prevent="
         emit('submit', $event, () => {

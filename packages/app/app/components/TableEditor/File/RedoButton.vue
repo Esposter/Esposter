@@ -1,8 +1,13 @@
 <script setup lang="ts">
-import { marked } from "marked";
-import sanitizeHtml from "sanitize-html";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 
-const { isRedoable, redo, redoDescription } = useEditedItemDataSourceOperations();
+import { sanitizeHtml } from "@/services/sanitizeHtml/sanitizeHtml";
+import { useTableEditorStore } from "@/store/tableEditor";
+import { marked } from "marked";
+
+const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
+const { editedItem } = storeToRefs(tableEditorStore);
+const { isRedoable, redo, redoDescription } = useDataSourceHistory();
 const tooltipHtml = computed(() => {
   const [title, ...rest] = (redoDescription.value ?? "").split("\n\n");
   const parts = [`Redo: ${title} *(Ctrl+Shift+Z)*`, ...rest];
@@ -12,20 +17,20 @@ const tooltipHtml = computed(() => {
 onKeyStroke(["z", "Z"], ({ ctrlKey, metaKey, preventDefault, shiftKey }) => {
   if ((!ctrlKey && !metaKey) || !shiftKey) return;
   preventDefault();
-  redo();
+  redo(editedItem.value);
 });
 
 onKeyStroke(["y", "Y"], ({ ctrlKey, metaKey, preventDefault }) => {
   if (!ctrlKey && !metaKey) return;
   preventDefault();
-  redo();
+  redo(editedItem.value);
 });
 </script>
 
 <template>
   <v-tooltip location="bottom">
     <template #activator="{ props }">
-      <v-btn :disabled="!isRedoable" icon="mdi-redo" variant="text" :="props" @click="redo()" />
+      <v-btn :disabled="!isRedoable" icon="mdi-redo" variant="text" :="props" @click="redo(editedItem)" />
     </template>
     <div v-html="tooltipHtml" />
   </v-tooltip>

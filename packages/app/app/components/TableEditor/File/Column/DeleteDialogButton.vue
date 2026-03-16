@@ -4,7 +4,7 @@ interface DeleteDialogButtonProps {
 }
 
 const { name } = defineProps<DeleteDialogButtonProps>();
-const { deleteColumn } = useEditedItemDataSourceOperations();
+const deleteColumn = useDeleteColumn();
 const title = computed(() => `Delete "${name}" Column`);
 </script>
 

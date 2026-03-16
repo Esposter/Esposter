@@ -11,14 +11,14 @@ import { describe, expect, test } from "vitest";
 describe(serializeJson, () => {
   const MIME_TYPE = DataSourceConfigurationMap[DataSourceType.Json].mimeType;
 
-  const createDataSource = (columns: Column[], rows: Row[]): DataSource => ({
+  const createDataSource = (columns: DataSource["columns"], rows: Row[]): DataSource => ({
     columns,
     metadata: { dataSourceType: DataSourceType.Json, importedAt: new Date(0), name: "", size: 0 },
     rows,
     stats: { columnCount: columns.length, rowCount: rows.length, size: 0 },
   });
 
-  const createColumn = (name: string): Column => new Column({ name, size: 0, sourceName: name });
+  const createColumn = (name: string) => new Column({ name, size: 0, sourceName: name });
 
   const createRow = (data: Record<string, number>): Row => new Row({ data });
 

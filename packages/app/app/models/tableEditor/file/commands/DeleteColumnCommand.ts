@@ -1,7 +1,6 @@
-import type { Column } from "#shared/models/tableEditor/file/Column";
 import type { ColumnValue } from "#shared/models/tableEditor/file/ColumnValue";
+import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
-import type { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
 
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
@@ -15,10 +14,10 @@ export class DeleteColumnCommand extends ADataSourceCommand<CommandType.DeleteCo
   }
 
   private readonly columnIndex: number;
-  private readonly originalColumn: Column | DateColumn;
+  private readonly originalColumn: DataSource["columns"][number];
   private readonly originalRowValues: ColumnValue[];
 
-  constructor(columnIndex: number, originalColumn: Column | DateColumn, originalRowValues: ColumnValue[]) {
+  constructor(columnIndex: number, originalColumn: DataSource["columns"][number], originalRowValues: ColumnValue[]) {
     super();
     this.columnIndex = columnIndex;
     this.originalColumn = originalColumn;
@@ -28,7 +27,6 @@ export class DeleteColumnCommand extends ADataSourceCommand<CommandType.DeleteCo
   protected doExecute(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
     if (!item.dataSource) return;
     item.dataSource.columns = item.dataSource.columns.filter((column) => column.name !== this.originalColumn.name);
-    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
     for (const row of item.dataSource.rows) delete row.data[this.originalColumn.name];
   }
 
