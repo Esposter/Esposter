@@ -2,13 +2,17 @@ import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/Data
 
 import { CsvDataSourceItem } from "#shared/models/tableEditor/file/csv/CsvDataSourceItem";
 import { useEditedItemDataSourceOperations } from "@/composables/tableEditor/file/useEditedItemDataSourceOperations";
+import {
+  makeColumn,
+  makeDataSource,
+  makeRow,
+  useDataSourceHistory,
+} from "@/composables/tableEditor/file/useEditedItemDataSourceOperations/testUtils";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { useItemStore } from "@/store/tableEditor/item";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia, storeToRefs } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
-
-import { makeColumn, makeDataSource, makeRow, useDataSourceHistory } from "@/composables/tableEditor/file/useEditedItemDataSourceOperations/testUtils";
 
 describe("history clears when editedItem.id changes", () => {
   beforeEach(() => {

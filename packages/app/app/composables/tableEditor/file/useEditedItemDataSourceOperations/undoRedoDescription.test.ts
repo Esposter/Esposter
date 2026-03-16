@@ -1,10 +1,12 @@
 import { expectToBeDefined } from "#shared/test/expectToBeDefined";
 import { useEditedItemDataSourceOperations } from "@/composables/tableEditor/file/useEditedItemDataSourceOperations";
+import {
+  setupWithDataSource,
+  useDataSourceHistory,
+} from "@/composables/tableEditor/file/useEditedItemDataSourceOperations/testUtils";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
-
-import { setupWithDataSource, useDataSourceHistory } from "@/composables/tableEditor/file/useEditedItemDataSourceOperations/testUtils";
 
 describe("undoDescription and redoDescription", () => {
   beforeEach(() => {

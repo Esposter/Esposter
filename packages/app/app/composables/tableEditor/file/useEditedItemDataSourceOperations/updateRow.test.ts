@@ -1,11 +1,14 @@
 import { Row } from "#shared/models/tableEditor/file/Row";
 import { expectToBeDefined } from "#shared/test/expectToBeDefined";
 import { useEditedItemDataSourceOperations } from "@/composables/tableEditor/file/useEditedItemDataSourceOperations";
+import {
+  setupEditedItem,
+  setupWithDataSource,
+  useDataSourceHistory,
+} from "@/composables/tableEditor/file/useEditedItemDataSourceOperations/testUtils";
 import { takeOne, toRawDeep } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
-
-import { setupEditedItem, setupWithDataSource, useDataSourceHistory } from "@/composables/tableEditor/file/useEditedItemDataSourceOperations/testUtils";
 
 describe("updateRow", () => {
   beforeEach(() => {

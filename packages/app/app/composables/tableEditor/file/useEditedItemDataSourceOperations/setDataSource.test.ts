@@ -1,12 +1,17 @@
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 
+import { expectToBeDefined } from "#shared/test/expectToBeDefined";
 import { useEditedItemDataSourceOperations } from "@/composables/tableEditor/file/useEditedItemDataSourceOperations";
+import {
+  makeDataSource,
+  setupEditedItem,
+  setupWithDataSource,
+  useDataSourceHistory,
+} from "@/composables/tableEditor/file/useEditedItemDataSourceOperations/testUtils";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia, storeToRefs } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
-
-import { makeDataSource, setupEditedItem, setupWithDataSource, useDataSourceHistory } from "@/composables/tableEditor/file/useEditedItemDataSourceOperations/testUtils";
 
 describe("setDataSource", () => {
   beforeEach(() => {

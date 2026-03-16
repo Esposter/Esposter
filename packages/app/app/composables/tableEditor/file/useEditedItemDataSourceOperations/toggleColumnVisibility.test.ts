@@ -1,11 +1,16 @@
 import { Column } from "#shared/models/tableEditor/file/Column";
 import { expectToBeDefined } from "#shared/test/expectToBeDefined";
 import { useEditedItemDataSourceOperations } from "@/composables/tableEditor/file/useEditedItemDataSourceOperations";
+import {
+  makeDataSource,
+  makeRow,
+  setupEditedItem,
+  setupWithDataSource,
+  useDataSourceHistory,
+} from "@/composables/tableEditor/file/useEditedItemDataSourceOperations/testUtils";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
-
-import { makeDataSource, makeRow, setupEditedItem, setupWithDataSource, useDataSourceHistory } from "@/composables/tableEditor/file/useEditedItemDataSourceOperations/testUtils";
 
 describe("toggleColumnVisibility", () => {
   beforeEach(() => {
