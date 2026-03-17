@@ -2,7 +2,6 @@ import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/Data
 
 import { findMatchingCells } from "@/services/tableEditor/file/commands/findMatchingCells";
 import { useTableEditorStore } from "@/store/tableEditor";
-import { storeToRefs } from "pinia";
 
 export const useFindReplaceState = createSharedComposable(() => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();

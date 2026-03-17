@@ -4,7 +4,6 @@ import { NormalizeStringsCommand } from "@/models/tableEditor/file/commands/Norm
 import { NormalizeStringMode } from "@/models/tableEditor/file/NormalizeStringMode";
 import { getStringColumnsAffectedCells } from "@/services/tableEditor/file/commands/getStringColumnsAffectedCells";
 import { useTableEditorStore } from "@/store/tableEditor";
-import { storeToRefs } from "pinia";
 
 export const useNormalizeStrings = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();

@@ -4,7 +4,6 @@ import { KeepDuplicateMode } from "@/models/tableEditor/file/KeepDuplicateMode";
 import { DeleteRowsCommand } from "@/models/tableEditor/file/commands/DeleteRowsCommand";
 import { findDuplicateRows } from "@/services/tableEditor/file/commands/findDuplicateRows";
 import { useTableEditorStore } from "@/store/tableEditor";
-import { storeToRefs } from "pinia";
 
 export const useDeleteDuplicateRows = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();

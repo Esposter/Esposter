@@ -2,12 +2,15 @@
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
+import { useFileTableEditorStore } from "@/store/tableEditor/file";
 import { Vjsf } from "@koumoul/vjsf";
 
 const modelValue = defineModel<TDataSourceItem>({ required: true });
 const configuration = useDataSourceConfiguration(modelValue);
 const schema = computed(() => zodToJsonSchema(configuration.value.schema));
 const openPanels = ref(["columns", "data"]);
+const fileTableEditorStore = useFileTableEditorStore();
+const { selectedRowIds } = storeToRefs(fileTableEditorStore);
 </script>
 
 <template>
@@ -39,7 +42,7 @@ const openPanels = ref(["columns", "data"]);
               Data
               <v-spacer />
               <TableEditorFileStatsBar mr-4 :stats="modelValue.dataSource.stats" />
-              <TableEditorFileCopyToClipboardButton />
+              <TableEditorFileCopyToClipboardButton :row-ids="selectedRowIds.length > 0 ? selectedRowIds : undefined" />
               <TableEditorFilePasteFromClipboardButton />
               <TableEditorFileFindReplaceDialogButton />
               <TableEditorFileNormalizeStringsDialogButton />

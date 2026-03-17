@@ -7,6 +7,7 @@ description: Esposter Pinia store conventions — full store name, destructure w
 
 ## Usage in Vue Components
 
+- **`storeToRefs` is auto-imported** — never write `import { storeToRefs } from "pinia"`. Same applies to `defineStore` and `storeToRefs` in `.vue` and composable files.
 - **Naming**: use the full store name — `const fileTableEditorStore = useFileTableEditorStore()`, not `const store = ...` or abbreviated names.
 - **In Vue components**: always destructure, and keep each store's lines grouped together in this order — no mixing across stores:
   1. `const xyzStore = useXyzStore()`

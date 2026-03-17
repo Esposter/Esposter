@@ -3,7 +3,6 @@ import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/Data
 import { FindReplaceCommand } from "@/models/tableEditor/file/commands/FindReplaceCommand";
 import { findMatchingCells } from "@/services/tableEditor/file/commands/findMatchingCells";
 import { useTableEditorStore } from "@/store/tableEditor";
-import { storeToRefs } from "pinia";
 
 export const useFindReplace = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();

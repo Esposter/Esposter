@@ -3,7 +3,6 @@ import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/Data
 import { parseClipboardRows } from "@/services/tableEditor/file/commands/parseClipboardRows";
 import { useAlertStore } from "@/store/alert";
 import { useTableEditorStore } from "@/store/tableEditor";
-import { storeToRefs } from "pinia";
 
 export const usePasteFromClipboard = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
