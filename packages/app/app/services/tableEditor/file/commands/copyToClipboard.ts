@@ -10,12 +10,12 @@ export const copyToClipboard = async (
   item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap],
   rowIds?: string[],
 ): Promise<void> => {
-  if (item.dataSourceType === DataSourceType.Xlsx)
+  if (item.type === DataSourceType.Xlsx)
     throw new InvalidOperationError(Operation.Read, "clipboard", "Clipboard copy is not supported for XLSX format");
   const visibleColumns = dataSource.columns.filter((column) => !column.hidden);
   const rows = rowIds ? dataSource.rows.filter((row) => rowIds.includes(row.id)) : dataSource.rows;
   const filteredDataSource = { ...dataSource, columns: visibleColumns, rows };
-  const { mimeType, serialize } = DataSourceConfigurationMap[item.dataSourceType];
+  const { mimeType, serialize } = DataSourceConfigurationMap[item.type];
   const blob = await serialize(filteredDataSource, item, mimeType);
   return navigator.clipboard.writeText(await blob.text());
 };
