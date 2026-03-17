@@ -42,9 +42,9 @@ const getCellText = (item: Row, columnName: string): string => {
   return value === null ? "" : String(value);
 };
 
-watch(currentOccurrence, async (occurrence) => {
-  if (!occurrence) return;
-  const targetPage = Math.floor(occurrence.rowIndex / itemsPerPage.value) + 1;
+watch([currentOccurrence, itemsPerPage], async ([newCurrentOccurrence, newItemsPerPage]) => {
+  if (!newCurrentOccurrence) return;
+  const targetPage = Math.floor(newCurrentOccurrence.rowIndex / newItemsPerPage) + 1;
   if (page.value !== targetPage) page.value = targetPage;
   await nextTick();
   document.querySelector("[data-find-replace-current]")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
