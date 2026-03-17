@@ -112,7 +112,7 @@ describe(useDeleteColumns, () => {
 
     const deleteColumns = useDeleteColumns();
     const { isUndoable } = useDataSourceHistory();
-    deleteColumns(["some-id"]);
+    deleteColumns(["-1"]);
 
     expect(isUndoable.value).toBe(false);
   });
@@ -123,7 +123,7 @@ describe(useDeleteColumns, () => {
     setupEditedItem();
     const deleteColumns = useDeleteColumns();
     const { isUndoable } = useDataSourceHistory();
-    deleteColumns(["some-id"]);
+    deleteColumns(["-1"]);
 
     expect(isUndoable.value).toBe(false);
   });
@@ -145,7 +145,7 @@ describe(useDeleteColumns, () => {
     setupWithDataSource();
     const deleteColumns = useDeleteColumns();
     const { isUndoable } = useDataSourceHistory();
-    deleteColumns(["non-existent-id"]);
+    deleteColumns(["-1"]);
 
     expect(isUndoable.value).toBe(false);
   });

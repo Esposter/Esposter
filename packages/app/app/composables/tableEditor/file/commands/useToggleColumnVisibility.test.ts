@@ -84,7 +84,7 @@ describe(useToggleColumnVisibility, () => {
     setupWithDataSource();
     const toggleColumnVisibility = useToggleColumnVisibility();
     const { isUndoable } = useDataSourceHistory();
-    toggleColumnVisibility("nonexistent");
+    toggleColumnVisibility("-1");
 
     expect(isUndoable.value).toBe(false);
   });

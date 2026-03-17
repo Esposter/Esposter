@@ -1,0 +1,28 @@
+import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { AffectedCell } from "@/models/tableEditor/file/commands/FindReplaceCommand";
+
+import { takeOne } from "@esposter/shared";
+
+export const findMatchingCells = (
+  dataSource: DataSource,
+  findValue: string,
+  specificCell?: { columnName: string; rowIndex: number },
+): AffectedCell[] => {
+  const { rows } = dataSource;
+  const visibleColumns = specificCell
+    ? dataSource.columns.filter((column) => !column.hidden && column.name === specificCell.columnName)
+    : dataSource.columns.filter((column) => !column.hidden);
+  const result: AffectedCell[] = [];
+  const rowStart = specificCell ? specificCell.rowIndex : 0;
+  const rowEnd = specificCell ? specificCell.rowIndex + 1 : rows.length;
+  for (let rowIndex = rowStart; rowIndex < rowEnd; rowIndex++) {
+    const row = takeOne(rows, rowIndex);
+    for (const column of visibleColumns) {
+      const cellValue = takeOne(row.data, column.name);
+      if (cellValue === null) continue;
+      const cellString = String(cellValue);
+      if (cellString.includes(findValue)) result.push({ columnName: column.name, originalValue: cellValue, rowIndex });
+    }
+  }
+  return result;
+};

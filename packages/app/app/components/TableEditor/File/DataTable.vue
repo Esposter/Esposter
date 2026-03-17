@@ -14,6 +14,8 @@ const { dataSource } = defineProps<DataTableProps>();
 const deleteRows = useDeleteRows();
 const reorderRows = useReorderRows();
 const selectedRowIds = ref<string[]>([]);
+const page = ref(1);
+const itemsPerPage = ref(10);
 const headers = computed(() => [
   { key: "drag", sortable: false, title: "" },
   ...dataSource.columns
@@ -30,9 +32,30 @@ const dragRows = computed({
   set: reorderRows,
 });
 const rowIndexIdMap = computed(() => new Map(dataSource.rows.map((row, index) => [row.id, index])));
+const { currentOccurrenceIndex, findValue, isOpen, occurrences } = useFindReplaceState();
+const highlightableColumns = computed(() =>
+  findValue.value ? dataSource.columns.filter((column) => !column.hidden) : [],
+);
+const currentOccurrence = computed(() => occurrences.value.at(currentOccurrenceIndex.value));
+const getCellText = (item: Row, columnName: string): string => {
+  const value = takeOne(item.data, columnName);
+  return value === null ? "" : String(value);
+};
+
+watch(currentOccurrenceIndex, async () => {
+  const occurrence = occurrences.value.at(currentOccurrenceIndex.value);
+  if (!occurrence) return;
+  const targetPage = Math.floor(occurrence.rowIndex / itemsPerPage.value) + 1;
+  if (page.value !== targetPage) page.value = targetPage;
+  await nextTick();
+  document.querySelector("[data-find-replace-current]")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+});
 </script>
 
 <template>
+  <v-expand-transition>
+    <TableEditorFileFindReplaceBar v-if="isOpen" />
+  </v-expand-transition>
   <VueDraggable v-model="dragRows" target="tbody" :handle="`.${DRAG_HANDLE_CLASS}`">
     <StyledDataTable
       flex
@@ -41,11 +64,19 @@ const rowIndexIdMap = computed(() => new Map(dataSource.rows.map((row, index) =>
       :data-table-props="{
         density: 'compact',
         headers,
+        itemsPerPage,
         items: dragRows,
         modelValue: selectedRowIds,
+        page,
         showSelect: true,
-        'onUpdate:modelValue': (newSelectedIds) => {
-          selectedRowIds = newSelectedIds as string[];
+        'onUpdate:itemsPerPage': (newItemsPerPage) => {
+          itemsPerPage = newItemsPerPage;
+        },
+        'onUpdate:modelValue': (newModelValue) => {
+          selectedRowIds = newModelValue as string[];
+        },
+        'onUpdate:page': (newPage) => {
+          page = newPage;
         },
       }"
     >
@@ -77,6 +108,15 @@ const rowIndexIdMap = computed(() => new Map(dataSource.rows.map((row, index) =>
           :columns="dataSource.columns"
           :index="rowIndexIdMap.get(item.id) ?? -1"
           :row="item"
+        />
+      </template>
+      <template v-for="column of highlightableColumns" :key="column.id" #[`item.${column.name}`]="{ item }">
+        <TableEditorFileFindReplaceHighlight
+          :text="getCellText(item, column.name)"
+          :search="findValue"
+          :is-current="
+            currentOccurrence?.rowIndex === rowIndexIdMap.get(item.id) && currentOccurrence?.columnName === column.name
+          "
         />
       </template>
     </StyledDataTable>

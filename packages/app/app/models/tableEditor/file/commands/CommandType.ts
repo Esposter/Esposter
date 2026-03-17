@@ -5,6 +5,7 @@ export enum CommandType {
   DeleteColumns = "DeleteColumns",
   DeleteRow = "DeleteRow",
   DeleteRows = "DeleteRows",
+  FindReplace = "FindReplace",
   MoveColumn = "MoveColumn",
   MoveRow = "MoveRow",
   ToggleColumnVisibility = "ToggleColumnVisibility",

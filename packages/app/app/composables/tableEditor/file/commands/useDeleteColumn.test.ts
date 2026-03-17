@@ -67,7 +67,7 @@ describe(useDeleteColumn, () => {
     setupWithDataSource();
     const deleteColumn = useDeleteColumn();
     const { isUndoable } = useDataSourceHistory();
-    deleteColumn("nonexistent");
+    deleteColumn("-1");
 
     expect(isUndoable.value).toBe(false);
   });

@@ -14,7 +14,7 @@
 - [ ] **Null/empty value strategy** — per-column setting to replace empty cells with a default value, "N/A", or drop the row entirely
 - [ ] **Duplicate row detection** — highlight/remove rows that are identical across all or selected columns
 - [ ] **Trim/normalize strings** — bulk operation to strip extra whitespace, normalize casing (lowercase, title case, UPPER) across string columns
-- [ ] **Find & replace** — search for a value across all rows in a column and replace it
+- [x] **Find & replace** — global search and replace across all rows and columns; live per-character highlighting, prev/next occurrence navigation, replace current or replace all, full undo/redo support
 
 ## Column Enhancements
 
