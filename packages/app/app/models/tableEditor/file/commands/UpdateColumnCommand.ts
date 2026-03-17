@@ -55,14 +55,13 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
       }
     }
 
-    const formatChanged =
-      column.type === ColumnType.Date &&
-      this.updatedColumn.type === ColumnType.Date &&
-      this.updatedColumn.format !== column.format;
-    const oldFormat = column.format;
-    const newFormat = this.updatedColumn.format;
+    const dateFormatChange =
+      column.type === ColumnType.Date && this.updatedColumn.type === ColumnType.Date
+        ? { newFormat: this.updatedColumn.format, oldFormat: column.format }
+        : null;
     Object.assign(column, this.updatedColumn);
-    if (formatChanged) {
+    if (dateFormatChange !== null && dateFormatChange.oldFormat !== dateFormatChange.newFormat) {
+      const { newFormat, oldFormat } = dateFormatChange;
       let size = 0;
       for (const row of item.dataSource.rows) {
         const value = takeOne(row.data, updatedName);
