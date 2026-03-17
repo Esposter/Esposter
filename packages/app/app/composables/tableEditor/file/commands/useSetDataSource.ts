@@ -7,7 +7,6 @@ export const useSetDataSource = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
   const { editedItem } = storeToRefs(tableEditorStore);
   const { clear } = useDataSourceHistory();
-
   return (value: DataSource) => {
     if (!editedItem.value) return;
     editedItem.value.dataSource = value;

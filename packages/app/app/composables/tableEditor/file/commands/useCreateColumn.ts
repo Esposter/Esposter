@@ -11,7 +11,6 @@ export const useCreateColumn = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
   const { editedItem } = storeToRefs(tableEditorStore);
   const { push } = useDataSourceHistory();
-
   return (newColumn: DataSource["columns"][number]) => {
     if (!editedItem.value?.dataSource) return;
     const { id: _id, ...newColumnWithoutId } = newColumn;

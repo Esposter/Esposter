@@ -8,7 +8,6 @@ export const useCreateRow = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
   const { editedItem } = storeToRefs(tableEditorStore);
   const { push } = useDataSourceHistory();
-
   return (newRow?: Row) => {
     if (!editedItem.value?.dataSource) return;
     const createdRow = new Row({

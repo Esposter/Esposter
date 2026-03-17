@@ -7,7 +7,6 @@ export const useToggleColumnVisibility = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
   const { editedItem } = storeToRefs(tableEditorStore);
   const { push } = useDataSourceHistory();
-
   return (id: string) => {
     if (!editedItem.value?.dataSource) return;
     const column = editedItem.value.dataSource.columns.find((column) => column.id === id);

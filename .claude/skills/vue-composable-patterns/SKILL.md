@@ -7,6 +7,28 @@ description: Esposter-specific Vue 3 composable and form patterns. Use when writ
 
 Patterns learned through development of the Esposter project. Apply these whenever writing Vue composables, validation rules, or form dialogs.
 
+## When to Use `MaybeRefOrGetter` vs Function Argument
+
+Use `MaybeRefOrGetter<T>` when the composable **internally reacts** to the value — i.e., it's used inside a `computed` or `watch`. The composable needs to observe changes between calls.
+
+Use a plain **function argument** on the returned function when the value is just a **pass-through** evaluated at call time. The composable has no internal reactive dependency on it.
+
+```typescript
+// CORRECT: MaybeRefOrGetter — composable computes based on the value
+export const useColumnNameRule = (columns: MaybeRefOrGetter<DataSource['columns']>) =>
+  computed(() => {
+    const columnsValue = toValue(columns) // reactive, re-evaluates on change
+    return (value: string) => columnsValue.some(...) ? 'exists' : true
+  })
+
+// CORRECT: plain argument — value is just passed through at call time
+export const useCopyToClipboard = () => {
+  return async (rowIds?: string[]) => { // rowIds evaluated at click time
+    await copyToClipboard(dataSource, item, rowIds)
+  }
+}
+```
+
 ## MaybeRefOrGetter Composables
 
 When a composable argument should work with a plain value, a `ref`, or a getter function, type it as `MaybeRefOrGetter<T>` and unwrap with `toValue()`.

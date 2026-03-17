@@ -13,6 +13,7 @@ description: Esposter Vue 3 SFC conventions — macro ordering, template pattern
 - No blank lines within Vue templates.
 - No blank lines between `const` assignments — group them tightly together.
 - No blank line before `return` when it immediately follows a `const` assignment in a small function.
+- **Composables that return a function directly**: no blank line between the last `const` assignment and the `return` — the `return` line immediately follows the last setup line with no gap.
 - Remove comments — make variable names descriptive instead.
 - Minimise blank lines; group related code tightly.
 - **Blank line after a closing `}`** of an `if`, `for`, or other block statement — unless it is the last statement in its scope or is immediately followed by another opening block.

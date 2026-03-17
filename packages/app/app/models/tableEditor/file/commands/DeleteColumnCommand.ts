@@ -37,7 +37,12 @@ export class DeleteColumnCommand extends ADataSourceCommand<CommandType.DeleteCo
       this.originalColumn,
       ...item.dataSource.columns.slice(this.columnIndex),
     ];
-    for (const [index, row] of item.dataSource.rows.entries())
+    const restoredColumnNames = item.dataSource.columns.map(({ name }) => name);
+    for (const [index, row] of item.dataSource.rows.entries()) {
       row.data[this.originalColumn.name] = takeOne(this.originalRowValues, index);
+      const newData: typeof row.data = {};
+      for (const name of restoredColumnNames) newData[name] = takeOne(row.data, name);
+      row.data = newData;
+    }
   }
 }

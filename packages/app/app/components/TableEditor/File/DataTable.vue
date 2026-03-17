@@ -3,6 +3,7 @@ import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { Row } from "#shared/models/tableEditor/file/Row";
 
 import { DRAG_HANDLE_CLASS } from "@/services/tableEditor/file/constants";
+import { useFileTableEditorStore } from "@/store/tableEditor/file";
 import { takeOne } from "@esposter/shared";
 import { VueDraggable } from "vue-draggable-plus";
 
@@ -11,9 +12,10 @@ interface DataTableProps {
 }
 
 const { dataSource } = defineProps<DataTableProps>();
+const fileTableEditorStore = useFileTableEditorStore();
+const { selectedRowIds } = storeToRefs(fileTableEditorStore);
 const deleteRows = useDeleteRows();
 const reorderRows = useReorderRows();
-const selectedRowIds = ref<string[]>([]);
 const page = ref(1);
 const itemsPerPage = ref(10);
 const headers = computed(() => [

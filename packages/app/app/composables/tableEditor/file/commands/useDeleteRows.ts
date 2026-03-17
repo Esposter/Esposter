@@ -14,7 +14,6 @@ export const useDeleteRows = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
   const { editedItem } = storeToRefs(tableEditorStore);
   const { push } = useDataSourceHistory();
-
   return (ids: string[]) => {
     if (!editedItem.value?.dataSource) return;
     const dataSource = editedItem.value.dataSource;

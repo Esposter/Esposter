@@ -1,5 +1,11 @@
 import { expectToBeDefined } from "#shared/test/expectToBeDefined";
-import { setupEditedItem, setupWithDataSource } from "@/composables/tableEditor/file/commands/testUtils.test";
+import {
+  makeColumn,
+  makeDataSource,
+  makeRow,
+  setupEditedItem,
+  setupWithDataSource,
+} from "@/composables/tableEditor/file/commands/testUtils.test";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
@@ -148,5 +154,42 @@ describe(useDeleteColumns, () => {
     deleteColumns(["-1"]);
 
     expect(isUndoable.value).toBe(false);
+  });
+
+  test("undo preserves row.data key order matching restored column order", () => {
+    expect.hasAssertions();
+
+    const ds = makeDataSource([makeColumn("a"), makeColumn("b"), makeColumn("c")], [makeRow({ a: 1, b: 2, c: 3 })]);
+    const { editedItem } = setupWithDataSource(ds);
+    const deleteColumns = useDeleteColumns();
+    const { undo } = useDataSourceHistory();
+    const columns = editedItem.value?.dataSource?.columns ?? [];
+    deleteColumns([takeOne(columns, 1).id]);
+    undo(editedItem.value);
+    const dataSource = editedItem.value?.dataSource;
+
+    expectToBeDefined(dataSource);
+
+    expect(Object.keys(takeOne(dataSource.rows, 0).data)).toStrictEqual(["a", "b", "c"]);
+  });
+
+  test("undo preserves row.data key order when restoring multiple deleted columns", () => {
+    expect.hasAssertions();
+
+    const ds = makeDataSource(
+      [makeColumn("a"), makeColumn("b"), makeColumn("c"), makeColumn("d")],
+      [makeRow({ a: 1, b: 2, c: 3, d: 4 })],
+    );
+    const { editedItem } = setupWithDataSource(ds);
+    const deleteColumns = useDeleteColumns();
+    const { undo } = useDataSourceHistory();
+    const columns = editedItem.value?.dataSource?.columns ?? [];
+    deleteColumns([takeOne(columns, 1).id, takeOne(columns, 3).id]);
+    undo(editedItem.value);
+    const dataSource = editedItem.value?.dataSource;
+
+    expectToBeDefined(dataSource);
+
+    expect(Object.keys(takeOne(dataSource.rows, 0).data)).toStrictEqual(["a", "b", "c", "d"]);
   });
 });
