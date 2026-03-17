@@ -16,13 +16,13 @@ export const useReorderColumns = () => {
     let fromIndex = -1;
     let toIndex = -1;
     let maxDisplacement = 0;
-    for (const [oldIdx, column] of oldColumns.entries()) {
-      const newIdx = newColumns.findIndex(({ id }) => id === column.id);
-      const displacement = Math.abs(newIdx - oldIdx);
+    for (const [oldIndex, column] of oldColumns.entries()) {
+      const newIndex = newColumns.findIndex(({ id }) => id === column.id);
+      const displacement = Math.abs(newIndex - oldIndex);
       if (displacement > maxDisplacement) {
         maxDisplacement = displacement;
-        fromIndex = oldIdx;
-        toIndex = newIdx;
+        fromIndex = oldIndex;
+        toIndex = newIndex;
       }
     }
     if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return;
