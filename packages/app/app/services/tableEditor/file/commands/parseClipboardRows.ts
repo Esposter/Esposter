@@ -13,14 +13,15 @@ export const parseClipboardRows = async (
   const { deserialize, mimeType } = DataSourceConfigurationMap[item.type];
   const file = new File([text], "clipboard", { type: mimeType });
   const newDataSource = await deserialize(file, item);
-  return newDataSource.rows.map((newRow) =>
-    new Row({
-      data: Object.fromEntries(
-        dataSource.columns.map((column) => [
-          column.name,
-          coerceValue(String(newRow.data[column.name] ?? ""), column.type),
-        ]),
-      ),
-    }),
+  return newDataSource.rows.map(
+    (newRow) =>
+      new Row({
+        data: Object.fromEntries(
+          dataSource.columns.map((column) => [
+            column.name,
+            coerceValue(String(newRow.data[column.name] ?? ""), column.type),
+          ]),
+        ),
+      }),
   );
 };

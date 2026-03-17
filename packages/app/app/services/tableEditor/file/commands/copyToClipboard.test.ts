@@ -13,7 +13,13 @@ describe(copyToClipboard, () => {
 
     const dataSource = makeDataSource([makeColumn("a"), makeColumn("b")], [makeRow({ a: "0", b: "1" })]);
     let written = "";
-    vi.stubGlobal("navigator", { clipboard: { writeText: (text: string) => { written = text; } } });
+    vi.stubGlobal("navigator", {
+      clipboard: {
+        writeText: (text: string) => {
+          written = text;
+        },
+      },
+    });
     await copyToClipboard(dataSource, csvItem);
     const lines = written.split("\n");
 
@@ -26,7 +32,13 @@ describe(copyToClipboard, () => {
 
     const dataSource = makeDataSource([makeColumn("a")], [makeRow({ a: "0" })]);
     let written = "";
-    vi.stubGlobal("navigator", { clipboard: { writeText: (text: string) => { written = text; } } });
+    vi.stubGlobal("navigator", {
+      clipboard: {
+        writeText: (text: string) => {
+          written = text;
+        },
+      },
+    });
     await copyToClipboard(dataSource, csvItem, []);
     const lines = written.split("\n");
 
@@ -40,7 +52,13 @@ describe(copyToClipboard, () => {
     const row = makeRow({ a: "0" });
     const dataSource = makeDataSource([makeColumn("a")], [row, makeRow({ a: "1" })]);
     let written = "";
-    vi.stubGlobal("navigator", { clipboard: { writeText: (text: string) => { written = text; } } });
+    vi.stubGlobal("navigator", {
+      clipboard: {
+        writeText: (text: string) => {
+          written = text;
+        },
+      },
+    });
     await copyToClipboard(dataSource, csvItem, [row.id]);
     const lines = written.split("\n");
 
@@ -54,7 +72,13 @@ describe(copyToClipboard, () => {
     const tabItem = new CsvDataSourceItem({ configuration: { delimiter: CsvDelimiter.Tab } });
     const dataSource = makeDataSource([makeColumn("a"), makeColumn("b")], [makeRow({ a: "0", b: "1" })]);
     let written = "";
-    vi.stubGlobal("navigator", { clipboard: { writeText: (text: string) => { written = text; } } });
+    vi.stubGlobal("navigator", {
+      clipboard: {
+        writeText: (text: string) => {
+          written = text;
+        },
+      },
+    });
     await copyToClipboard(dataSource, tabItem);
 
     expect(takeOne(written.split("\n"), 0)).toBe("a\tb");
