@@ -12,24 +12,6 @@ const goToNext = () => {
   if (occurrences.value.length === 0) return;
   currentOccurrenceIndex.value = (currentOccurrenceIndex.value + 1) % occurrences.value.length;
 };
-
-const replaceCurrent = () => {
-  const occurrence = occurrences.value.at(currentOccurrenceIndex.value);
-  if (!occurrence) return;
-  findReplace(findValue.value, replaceValue.value, occurrence);
-};
-
-const replaceAll = () => {
-  findReplace(findValue.value, replaceValue.value);
-};
-
-const onFindKeydown = ({ key, preventDefault, shiftKey }: KeyboardEvent) => {
-  if (key === "Enter") {
-    preventDefault();
-    if (shiftKey) goToPrevious();
-    else goToNext();
-  } else if (key === "Escape") isOpen.value = false;
-};
 </script>
 
 <template>
@@ -44,7 +26,15 @@ const onFindKeydown = ({ key, preventDefault, shiftKey }: KeyboardEvent) => {
         label="Find"
         max-w-52
         variant="outlined"
-        @keydown="onFindKeydown"
+        @keydown="
+          (event: KeyboardEvent) => {
+            if (event.key === 'Enter') {
+              event.preventDefault();
+              if (event.shiftKey) goToPrevious();
+              else goToNext();
+            } else if (event.key === 'Escape') isOpen = false;
+          }
+        "
       />
       <v-text-field
         v-model="replaceValue"
@@ -90,14 +80,19 @@ const onFindKeydown = ({ key, preventDefault, shiftKey }: KeyboardEvent) => {
         density="compact"
         text="Replace"
         variant="text"
-        @click="replaceCurrent()"
+        @click="
+          () => {
+            const occurrence = occurrences.at(currentOccurrenceIndex);
+            if (occurrence) findReplace(findValue, replaceValue, occurrence);
+          }
+        "
       />
       <v-btn
         :disabled="occurrences.length === 0"
         density="compact"
         text="Replace All"
         variant="text"
-        @click="replaceAll()"
+        @click="findReplace(findValue, replaceValue)"
       />
       <v-spacer />
       <v-btn density="compact" icon="mdi-close" variant="text" @click="isOpen = false" />

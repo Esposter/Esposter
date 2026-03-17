@@ -14,10 +14,10 @@ export const usePopupStore = defineStore("clicker/popup", () => {
   const { incrementPoints } = pointStore;
   const popups = ref<Popup[]>([]);
   const duration = dayjs.duration(10, "seconds").asMilliseconds();
-  const onClick = ({ pageX, pageY }: MouseEvent) => {
+  const onClick = (event: MouseEvent) => {
     const id = crypto.randomUUID();
     incrementPoints(mouseStore.mousePower);
-    popups.value.push({ duration, id, left: pageX, points: mouseStore.mousePower, top: pageY });
+    popups.value.push({ duration, id, left: event.pageX, points: mouseStore.mousePower, top: event.pageY });
     useTimeoutFn((id: string) => {
       const index = popups.value.findIndex((p) => p.id === id);
       if (index === -1) return;
