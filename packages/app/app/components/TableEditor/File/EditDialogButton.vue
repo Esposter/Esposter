@@ -16,10 +16,11 @@ interface EditDialogButtonProps {
 
 defineSlots<{ default: () => VNode; "prepend-actions"?: () => VNode }>();
 const { editedValue, icon = "mdi-pencil", schema, title, tooltipText, value } = defineProps<EditDialogButtonProps>();
-const emit = defineEmits<{ submit: [onComplete: () => void] }>();
+const emit = defineEmits<{ reset: []; submit: [onComplete: () => void] }>();
 const styledDialog = useTemplateRef<InstanceType<typeof StyledDialog>>("styledDialog");
 const errorIcon = useTemplateRef<InstanceType<typeof StyledEditFormDialogErrorIcon>>("errorIcon");
-const disabled = computed(() => !(errorIcon.value?.isValid ?? true) || deepEqual(value, editedValue));
+const isEqual = computed(() => deepEqual(value, editedValue));
+const disabled = computed(() => !(errorIcon.value?.isValid ?? true) || isEqual.value);
 </script>
 
 <template>
@@ -45,6 +46,11 @@ const disabled = computed(() => !(errorIcon.value?.isValid ?? true) || deepEqual
         :schema
         :edited-value
       />
+      <v-tooltip text="Reset changes">
+        <template #activator="{ props: tooltipProps }">
+          <v-btn :disabled="isEqual" text="Reset" :="tooltipProps" @click="emit('reset')" />
+        </template>
+      </v-tooltip>
       <slot name="prepend-actions" />
     </template>
     <v-container overflow-y-auto fluid>

@@ -29,11 +29,13 @@ description: Esposter Vue 3 SFC conventions — macro ordering, template pattern
 ## Inline Functions & Macros
 
 - **Inline arrow functions** where argument types can be inferred from context — don't extract single-use, trivially-typed lambdas into named functions.
-- **Inline Vue event handlers** — always write handlers directly in the template (`@submit="async (_, onComplete) => { ... }"`). This lets Vue infer event argument types automatically. Only extract to a named function if the same logic is reused in multiple places.
+- **Inline Vue event handlers** — always write handlers directly in the template (`@submit="async (_, onComplete) => { ... }"`). This lets Vue infer event argument types automatically. Only extract to a named function if the same logic is reused in multiple places (e.g. called from both a button click AND a keydown handler). Single-use handlers must always be inlined, no exceptions.
 - **`defineModel`**: always type explicitly. For booleans, you must pass `{ default: false }` so the type does not implicitly include `undefined` (`defineModel<boolean>({ default: false })`).
 - **`defineSlots`**: only assign to a variable when `slots` is actually referenced in script — `const slots = defineSlots<{ ... }>()`. If `slots` is not used in script (e.g. the template uses `<slot>` tags directly), call `defineSlots<...>()` without assignment.
 - **No abbreviated parameter names** — use full descriptive names (e.g. `event` not `e`, `column` not `col`, `configuration` not `config`, `dataSource` not `source`). Exception: simple iteration callbacks where the meaning is obvious from context (e.g. `.filter((row, index) => ...)`).
-- **Destructure event parameters** — when only specific properties of an event are needed, destructure them directly in the parameter list instead of accessing via `event.property` repeatedly: `({ ctrlKey, metaKey, preventDefault }) => { ... }` not `(event) => { event.ctrlKey ... }`.
+- **No abbreviated function names** — use full descriptive names (e.g. `goToPrevious` not `goToPrev`, `initialize` not `init`, `calculate` not `calc`).
+- **`onUpdate:*` handler parameters** — always name the parameter `new{PropName}` in camelCase: `'onUpdate:itemsPerPage': (newItemsPerPage) => { ... }`, `'onUpdate:page': (newPage) => { ... }`, `'onUpdate:modelValue': (newModelValue) => { ... }`.
+- **Never destructure event parameters** — always use `(event: KeyboardEvent) => { event.key ... }` not `({ key }: KeyboardEvent) => { key ... }`. Destructuring event methods (e.g. `preventDefault`, `stopPropagation`) causes "Illegal invocation" because they lose their `this` binding. Keep the full `event` object for consistency even when only accessing properties.
 - **`@click` shorthands** — if a click handler is a single async call, use `@click="myAsyncFn(args)"` directly — no need to wrap in `async () => { await myAsyncFn(args) }`.
 - **Never declare `defineModel` unless the value is actually used** in script (e.g. in a `watch`, `computed`, or passed somewhere). Don't create a model just to forward it — use `:prop` + `@event` instead.
 

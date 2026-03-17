@@ -80,7 +80,7 @@ describe(useDeleteRows, () => {
 
     const deleteRows = useDeleteRows();
     const { isUndoable } = useDataSourceHistory();
-    deleteRows(["some-id"]);
+    deleteRows(["-1"]);
 
     expect(isUndoable.value).toBe(false);
   });
@@ -91,7 +91,7 @@ describe(useDeleteRows, () => {
     setupEditedItem();
     const deleteRows = useDeleteRows();
     const { isUndoable } = useDataSourceHistory();
-    deleteRows(["some-id"]);
+    deleteRows(["-1"]);
 
     expect(isUndoable.value).toBe(false);
   });
@@ -113,7 +113,7 @@ describe(useDeleteRows, () => {
     setupWithDataSource();
     const deleteRows = useDeleteRows();
     const { isUndoable } = useDataSourceHistory();
-    deleteRows(["non-existent-id"]);
+    deleteRows(["-1"]);
 
     expect(isUndoable.value).toBe(false);
   });

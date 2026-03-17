@@ -15,13 +15,13 @@ export const useReorderRows = () => {
     let fromIndex = -1;
     let toIndex = -1;
     let maxDisplacement = 0;
-    for (const [oldIdx, row] of oldRows.entries()) {
-      const newIdx = newRows.findIndex(({ id }) => id === row.id);
-      const displacement = Math.abs(newIdx - oldIdx);
+    for (const [oldIndex, row] of oldRows.entries()) {
+      const newIndex = newRows.findIndex(({ id }) => id === row.id);
+      const displacement = Math.abs(newIndex - oldIndex);
       if (displacement > maxDisplacement) {
         maxDisplacement = displacement;
-        fromIndex = oldIdx;
-        toIndex = newIdx;
+        fromIndex = oldIndex;
+        toIndex = newIndex;
       }
     }
     if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return;

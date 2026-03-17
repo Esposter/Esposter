@@ -19,6 +19,9 @@ const jsonSchema = computed(() => zodToJsonSchema(takeOne(EditFormSchemaMap, col
 const editedColumn = ref(structuredClone(toRawDeep(column)));
 const title = computed(() => `Edit "${column.name}" Column`);
 const uniqueNameRule = useColumnNameRule(() => dataSource.columns, column.name);
+const resetForm = () => {
+  editedColumn.value = structuredClone(toRawDeep(column));
+};
 </script>
 
 <template>
@@ -28,6 +31,7 @@ const uniqueNameRule = useColumnNameRule(() => dataSource.columns, column.name);
     :schema
     :value="column"
     :edited-value="editedColumn"
+    @reset="resetForm()"
     @submit="
       (onComplete) => {
         updateColumn(column.name, editedColumn);

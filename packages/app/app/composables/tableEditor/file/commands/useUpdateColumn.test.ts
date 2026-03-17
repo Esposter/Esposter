@@ -100,7 +100,7 @@ describe(useUpdateColumn, () => {
     setupWithDataSource();
     const updateColumn = useUpdateColumn();
     const { isUndoable } = useDataSourceHistory();
-    updateColumn("nonexistent", new Column({ name: "nonexistent" }));
+    updateColumn("-1", new Column({ name: "-1" }));
 
     expect(isUndoable.value).toBe(false);
   });
