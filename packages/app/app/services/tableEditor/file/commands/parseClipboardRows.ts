@@ -1,27 +1,34 @@
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 
 import { Row } from "#shared/models/tableEditor/file/Row";
 import { coerceValue } from "@/services/tableEditor/file/column/coerceValue";
-import { DataSourceConfigurationMap } from "@/services/tableEditor/file/dataSource/DataSourceConfigurationMap";
+import { takeOne } from "@esposter/shared";
 
-export const parseClipboardRows = async (
-  text: string,
-  dataSource: DataSource,
-  item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap],
-): Promise<DataSource["rows"]> => {
-  const { deserialize, mimeType } = DataSourceConfigurationMap[item.type];
-  const file = new File([text], "clipboard", { type: mimeType });
-  const newDataSource = await deserialize(file, item);
-  return newDataSource.rows.map(
-    (newRow) =>
-      new Row({
-        data: Object.fromEntries(
-          dataSource.columns.map((column) => [
-            column.name,
-            coerceValue(String(newRow.data[column.name] ?? ""), column.type),
-          ]),
-        ),
-      }),
-  );
+const parseMarkdownRow = (line: string): string[] =>
+  line
+    .split("|")
+    .slice(1, -1)
+    .map((cell) => cell.trim().replaceAll(String.raw`\|`, "|"));
+
+const isSeparatorRow = (cells: string[]): boolean => cells.every((cell) => /^:?-+:?$/.test(cell));
+
+export const parseClipboardRows = (text: string, dataSource: DataSource): DataSource["rows"] => {
+  const allRows = text
+    .split(/\r?\n/)
+    .filter((line) => line.trim() !== "")
+    .map((line) => parseMarkdownRow(line));
+  const dataRows = allRows.filter((cells) => !isSeparatorRow(cells));
+  if (dataRows.length < 2) return [];
+  const headers = takeOne(dataRows, 0);
+  return dataRows.slice(1).map((cells) => {
+    const valueByHeader = new Map(headers.map((header, index) => [header, cells[index] ?? ""]));
+    return new Row({
+      data: Object.fromEntries(
+        dataSource.columns.map((column) => [
+          column.name,
+          coerceValue(valueByHeader.get(column.name) ?? "", column.type),
+        ]),
+      ),
+    });
+  });
 };

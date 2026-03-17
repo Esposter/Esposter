@@ -13,7 +13,7 @@ export const useCopyToClipboard = () => {
   return async (rowIds?: string[]) => {
     if (!editedItem.value?.dataSource) return;
     try {
-      await copyToClipboard(editedItem.value.dataSource, editedItem.value, rowIds);
+      await copyToClipboard(editedItem.value.dataSource, rowIds);
     } catch (error) {
       createAlert(error instanceof Error ? error.message : "Failed to copy to clipboard", "error");
     }
