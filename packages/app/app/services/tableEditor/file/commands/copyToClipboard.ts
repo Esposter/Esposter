@@ -1,24 +1,21 @@
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 
-import { takeOne } from "@esposter/shared";
+import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
+import { DataSourceConfigurationMap } from "@/services/tableEditor/file/dataSource/DataSourceConfigurationMap";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 
-const escapeCell = (value: string): string => {
-  if (value.includes("\t") || value.includes('"') || value.includes("\n"))
-    return `"${value.replaceAll('"', '""')}"`;
-  return value;
-};
-
-export const copyToClipboard = (dataSource: DataSource, rowIds?: string[]): Promise<void> => {
+export const copyToClipboard = async (
+  dataSource: DataSource,
+  item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap],
+  rowIds?: string[],
+): Promise<void> => {
+  if (item.dataSourceType === DataSourceType.Xlsx)
+    throw new InvalidOperationError(Operation.Read, "clipboard", "Clipboard copy is not supported for XLSX format");
   const visibleColumns = dataSource.columns.filter((column) => !column.hidden);
   const rows = rowIds ? dataSource.rows.filter((row) => rowIds.includes(row.id)) : dataSource.rows;
-  const headerRow = visibleColumns.map((column) => escapeCell(column.name)).join("\t");
-  const dataRows = rows.map((row) =>
-    visibleColumns
-      .map((column) => {
-        const value = takeOne(row.data, column.name);
-        return escapeCell(value === null ? "" : String(value));
-      })
-      .join("\t"),
-  );
-  return navigator.clipboard.writeText([headerRow, ...dataRows].join("\n"));
+  const filteredDataSource = { ...dataSource, columns: visibleColumns, rows };
+  const { mimeType, serialize } = DataSourceConfigurationMap[item.dataSourceType];
+  const blob = await serialize(filteredDataSource, item, mimeType);
+  return navigator.clipboard.writeText(await blob.text());
 };

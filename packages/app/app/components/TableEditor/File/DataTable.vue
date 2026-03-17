@@ -2,7 +2,6 @@
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { Row } from "#shared/models/tableEditor/file/Row";
 
-import { copyToClipboard } from "@/services/tableEditor/file/commands/copyToClipboard";
 import { DRAG_HANDLE_CLASS } from "@/services/tableEditor/file/constants";
 import { takeOne } from "@esposter/shared";
 import { VueDraggable } from "vue-draggable-plus";
@@ -12,6 +11,7 @@ interface DataTableProps {
 }
 
 const { dataSource } = defineProps<DataTableProps>();
+const copyToClipboard = useCopyToClipboard();
 const deleteRows = useDeleteRows();
 const reorderRows = useReorderRows();
 const selectedRowIds = ref<string[]>([]);
@@ -93,7 +93,7 @@ watch([currentOccurrence, itemsPerPage], async ([newCurrentOccurrence, newItemsP
                 size="small"
                 tile
                 :="tooltipProps"
-                @click="copyToClipboard(dataSource, selectedRowIds)"
+                @click="copyToClipboard(selectedRowIds)"
               />
             </template>
           </v-tooltip>

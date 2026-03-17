@@ -9,7 +9,7 @@ const normalizeStrings = useNormalizeStrings();
     <template #activator="{ props: menuProps }">
       <v-tooltip text="Normalize Strings">
         <template #activator="{ props: tooltipProps }">
-          <v-btn m-0 icon="mdi-format-letter-case" size="small" tile :="{ ...menuProps, ...tooltipProps }" @click.stop />
+          <v-btn m-0 icon="mdi-format-letter-case" size="small" tile :="{ ...menuProps, ...tooltipProps }" />
         </template>
       </v-tooltip>
     </template>

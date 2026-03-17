@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
+import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 
 import { KeepDuplicateMode } from "@/models/tableEditor/file/KeepDuplicateMode";
 import { findDuplicateRows } from "@/services/tableEditor/file/commands/findDuplicateRows";
 import { useTableEditorStore } from "@/store/tableEditor";
+import { takeOne } from "@esposter/shared";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 
 const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
 const { editedItem } = storeToRefs(tableEditorStore);
@@ -11,9 +13,28 @@ const isOpen = ref(false);
 const keepMode = ref(KeepDuplicateMode.First);
 const deleteDuplicateRows = useDeleteDuplicateRows();
 
-const duplicateCount = computed(() =>
-  editedItem.value?.dataSource ? findDuplicateRows(editedItem.value.dataSource).length : 0,
+type DuplicateRowEntry = { index: number; row: DataSource["rows"][number] };
+
+const duplicateRowEntries = computed<DuplicateRowEntry[]>(() =>
+  editedItem.value?.dataSource ? findDuplicateRows(editedItem.value.dataSource, keepMode.value) : [],
 );
+const duplicateCount = computed(() => duplicateRowEntries.value.length);
+const duplicateHeaders = computed(() => {
+  if (!editedItem.value?.dataSource) return [];
+  return [
+    { key: "index", title: "#", value: (entry: DuplicateRowEntry) => entry.index },
+    ...editedItem.value.dataSource.columns
+      .filter((column) => !column.hidden)
+      .map((column) => ({
+        key: column.name,
+        title: column.name,
+        value: (entry: DuplicateRowEntry) => {
+          const value = takeOne(entry.row.data, column.name);
+          return value === null ? "" : String(value);
+        },
+      })),
+  ];
+});
 
 const onConfirm = () => {
   deleteDuplicateRows(keepMode.value);
@@ -27,16 +48,25 @@ const onConfirm = () => {
       <v-btn m-0 icon="mdi-table-row-remove" size="small" tile :="tooltipProps" @click.stop="isOpen = true" />
     </template>
   </v-tooltip>
-  <v-dialog v-model="isOpen" max-width="400">
+  <v-dialog v-model="isOpen" max-width="700">
     <v-card>
       <v-card-title>Duplicate Rows</v-card-title>
       <v-card-text>
         <p v-if="duplicateCount === 0">No duplicate rows found.</p>
-        <p v-else>{{ duplicateCount }} duplicate row{{ duplicateCount === 1 ? "" : "s" }} will be deleted.</p>
-        <v-btn-toggle v-model="keepMode" density="compact" mandatory mt-4>
-          <v-btn :value="KeepDuplicateMode.First">Keep First</v-btn>
-          <v-btn :value="KeepDuplicateMode.Last">Keep Last</v-btn>
-        </v-btn-toggle>
+        <template v-else>
+          <p>{{ duplicateCount }} duplicate row{{ duplicateCount === 1 ? "" : "s" }} will be deleted.</p>
+          <v-btn-toggle v-model="keepMode" density="compact" mandatory mt-4>
+            <v-btn :value="KeepDuplicateMode.First">Keep First</v-btn>
+            <v-btn :value="KeepDuplicateMode.Last">Keep Last</v-btn>
+          </v-btn-toggle>
+          <v-data-table
+            mt-4
+            density="compact"
+            item-value="index"
+            :headers="duplicateHeaders"
+            :items="duplicateRowEntries"
+          />
+        </template>
       </v-card-text>
       <v-card-actions>
         <v-spacer />
