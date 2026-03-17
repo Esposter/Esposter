@@ -1,6 +1,7 @@
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 import type { AffectedCell } from "@/models/tableEditor/file/commands/AffectedCell";
 
+import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
 import { coerceValue } from "@/services/tableEditor/file/coerceValue";
@@ -34,7 +35,8 @@ export class FindReplaceCommand extends ADataSourceCommand<CommandType.FindRepla
       const row = takeOne(item.dataSource.rows, rowIndex);
       const column = columnsByNameMap.get(columnName);
       if (!column) continue;
-      const newValue = coerceValue(String(originalValue).replaceAll(this.findValue, this.replaceValue), column.type);
+      const replacedString = String(originalValue).replaceAll(this.findValue, this.replaceValue);
+      const newValue = column.type === ColumnType.String ? replacedString : coerceValue(replacedString, column.type);
       column.size += getValueSize(newValue) - getValueSize(takeOne(row.data, columnName));
       row.data[columnName] = newValue;
     }
