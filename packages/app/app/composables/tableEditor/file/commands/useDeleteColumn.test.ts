@@ -1,5 +1,11 @@
 import { expectToBeDefined } from "#shared/test/expectToBeDefined";
-import { setupEditedItem, setupWithDataSource } from "@/composables/tableEditor/file/commands/testUtils.test";
+import {
+  makeColumn,
+  makeDataSource,
+  makeRow,
+  setupEditedItem,
+  setupWithDataSource,
+} from "@/composables/tableEditor/file/commands/testUtils.test";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
@@ -59,6 +65,25 @@ describe(useDeleteColumn, () => {
 
     expect(dataSource.columns).toHaveLength(1);
     expect(takeOne(dataSource.rows, 0).data[""]).toBeUndefined();
+  });
+
+  test("undo preserves row.data key order after restore", () => {
+    expect.hasAssertions();
+
+    const ds = makeDataSource(
+      [makeColumn("a"), makeColumn("b"), makeColumn("c")],
+      [makeRow({ a: 1, b: 2, c: 3 })],
+    );
+    const { editedItem } = setupWithDataSource(ds);
+    const deleteColumn = useDeleteColumn();
+    const { undo } = useDataSourceHistory();
+    deleteColumn("b");
+    undo(editedItem.value);
+    const dataSource = editedItem.value?.dataSource;
+
+    expectToBeDefined(dataSource);
+
+    expect(Object.keys(takeOne(dataSource.rows, 0).data)).toStrictEqual(["a", "b", "c"]);
   });
 
   test("no-op when column name not found", () => {
