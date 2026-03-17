@@ -12,7 +12,9 @@ import { bench, describe } from "vitest";
 
 const originalColumn = takeOne(benchColumns, 0);
 const originalName = originalColumn.name;
-const updatedColumn = Object.assign(originalColumn, { name: `${originalName}_renamed` });
+const updatedColumn = Object.assign(Object.create(Object.getPrototypeOf(originalColumn)), originalColumn, {
+  name: `${originalName}_renamed`,
+});
 
 const makeRenameCommand = (rows: typeof benchRows1k) =>
   new UpdateColumnCommand(originalName, originalColumn, updatedColumn, makeOriginalRowValues(rows, originalName));

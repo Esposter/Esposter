@@ -1,16 +1,10 @@
-import type { ColumnValue } from "#shared/models/tableEditor/file/ColumnValue";
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
+import type { IndexedColumn } from "@/models/tableEditor/file/commands/IndexedColumn";
 
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
 import { takeOne } from "@esposter/shared";
-
-interface IndexedColumn {
-  columnIndex: number;
-  originalColumn: DataSource["columns"][number];
-  originalRowValues: ColumnValue[];
-}
 
 export class DeleteColumnsCommand extends ADataSourceCommand<CommandType.DeleteColumns> {
   readonly type = CommandType.DeleteColumns;
@@ -30,8 +24,7 @@ export class DeleteColumnsCommand extends ADataSourceCommand<CommandType.DeleteC
     if (!item.dataSource) return;
     const namesToDelete = new Set(this.indexedColumns.map(({ originalColumn }) => originalColumn.name));
     item.dataSource.columns = item.dataSource.columns.filter((column) => !namesToDelete.has(column.name));
-    for (const row of item.dataSource.rows)
-      for (const name of namesToDelete) delete row.data[name];
+    for (const row of item.dataSource.rows) for (const name of namesToDelete) delete row.data[name];
   }
 
   protected doUndo(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
@@ -51,8 +44,13 @@ export class DeleteColumnsCommand extends ADataSourceCommand<CommandType.DeleteC
       existingIndex++;
     }
     item.dataSource.columns = result;
-    for (const [rowIndex, row] of item.dataSource.rows.entries())
+    const restoredColumnNames = result.map(({ name }) => name);
+    for (const [rowIndex, row] of item.dataSource.rows.entries()) {
       for (const { originalColumn, originalRowValues } of ascendingColumns)
         row.data[originalColumn.name] = takeOne(originalRowValues, rowIndex);
+      const newData: typeof row.data = {};
+      for (const name of restoredColumnNames) newData[name] = takeOne(row.data, name);
+      row.data = newData;
+    }
   }
 }

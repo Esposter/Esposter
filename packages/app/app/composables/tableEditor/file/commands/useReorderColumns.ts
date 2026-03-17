@@ -9,7 +9,6 @@ export const useReorderColumns = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
   const { editedItem } = storeToRefs(tableEditorStore);
   const { push } = useDataSourceHistory();
-
   return (newColumns: DataSource["columns"]) => {
     if (!editedItem.value?.dataSource) return;
     const oldColumns = editedItem.value.dataSource.columns;

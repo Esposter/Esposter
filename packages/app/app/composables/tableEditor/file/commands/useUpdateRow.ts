@@ -9,7 +9,6 @@ export const useUpdateRow = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
   const { editedItem } = storeToRefs(tableEditorStore);
   const { push } = useDataSourceHistory();
-
   return (updatedRow: Row) => {
     if (!editedItem.value?.dataSource) return;
     const index = editedItem.value.dataSource.rows.findIndex((row) => row.id === updatedRow.id);

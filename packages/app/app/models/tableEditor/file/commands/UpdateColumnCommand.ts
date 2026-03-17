@@ -43,11 +43,15 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
     const column = item.dataSource.columns.find(({ name }) => name === this.originalName);
     if (!column) return;
     const updatedName = this.updatedColumn.name;
-    if (updatedName !== this.originalName)
+    if (updatedName !== this.originalName) {
+      const newColumnNames = item.dataSource.columns.map(({ name }) => (name === this.originalName ? updatedName : name));
       for (const row of item.dataSource.rows) {
-        row.data[updatedName] = takeOne(row.data, this.originalName);
-        delete row.data[this.originalName];
+        const newData: typeof row.data = {};
+        for (const name of newColumnNames)
+          newData[name] = name === updatedName ? takeOne(row.data, this.originalName) : takeOne(row.data, name);
+        row.data = newData;
       }
+    }
 
     if (
       column.type === ColumnType.Date &&
@@ -81,12 +85,21 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
     const updatedName = this.updatedColumn.name;
     const column = item.dataSource.columns.find(({ name }) => name === updatedName);
     if (!column) return;
-    const nameChanged = updatedName !== this.originalName;
+    const newColumnNames =
+      updatedName !== this.originalName
+        ? item.dataSource.columns.map(({ name }) => (name === updatedName ? this.originalName : name))
+        : null;
     let size = 0;
     for (const [index, row] of item.dataSource.rows.entries()) {
-      if (nameChanged) delete row.data[updatedName];
       const value = takeOne(this.originalRowValues, index);
-      row.data[this.originalName] = value;
+      if (newColumnNames) {
+        const newData: typeof row.data = {};
+        for (const name of newColumnNames)
+          newData[name] = name === this.originalName ? value : takeOne(row.data, name);
+        row.data = newData;
+      } else {
+        row.data[this.originalName] = value;
+      }
       size += getValueSize(value);
     }
     column.size = size;

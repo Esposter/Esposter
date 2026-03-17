@@ -8,7 +8,6 @@ export const useCreateRows = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
   const { editedItem } = storeToRefs(tableEditorStore);
   const { push } = useDataSourceHistory();
-
   return (rows: DataSource["rows"]) => {
     if (!editedItem.value?.dataSource || rows.length === 0) return;
     const startIndex = editedItem.value.dataSource.rows.length;

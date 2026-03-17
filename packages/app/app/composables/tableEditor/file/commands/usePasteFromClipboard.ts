@@ -10,7 +10,6 @@ export const usePasteFromClipboard = () => {
   const alertStore = useAlertStore();
   const { createAlert } = alertStore;
   const createRows = useCreateRows();
-
   return async () => {
     if (!editedItem.value?.dataSource) return;
     try {

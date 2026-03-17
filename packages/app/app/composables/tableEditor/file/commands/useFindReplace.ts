@@ -8,7 +8,6 @@ export const useFindReplace = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
   const { editedItem } = storeToRefs(tableEditorStore);
   const { push } = useDataSourceHistory();
-
   return (findValue: string, replaceValue: string, specificCell?: { columnName: string; rowIndex: number }) => {
     if (!editedItem.value?.dataSource || !findValue || findValue === replaceValue) return;
     const affectedCells = findMatchingCells(editedItem.value.dataSource, findValue, specificCell);

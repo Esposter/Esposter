@@ -9,7 +9,6 @@ export const useNormalizeStrings = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
   const { editedItem } = storeToRefs(tableEditorStore);
   const { push } = useDataSourceHistory();
-
   return (mode: NormalizeStringMode) => {
     if (!editedItem.value?.dataSource) return;
     const affectedCells = getStringColumnsAffectedCells(editedItem.value.dataSource);
