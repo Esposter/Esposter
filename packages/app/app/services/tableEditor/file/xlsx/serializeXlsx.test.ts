@@ -4,7 +4,7 @@ import { Column } from "#shared/models/tableEditor/file/Column";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { Row } from "#shared/models/tableEditor/file/Row";
 import { XlsxDataSourceItem } from "#shared/models/tableEditor/file/xlsx/XlsxDataSourceItem";
-import { DataSourceConfigurationMap } from "@/services/tableEditor/file/DataSourceConfigurationMap";
+import { DataSourceConfigurationMap } from "@/services/tableEditor/file/dataSource/DataSourceConfigurationMap";
 import { serializeXlsx } from "@/services/tableEditor/file/xlsx/serializeXlsx";
 import { describe, expect, test } from "vitest";
 

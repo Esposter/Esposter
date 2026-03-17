@@ -1,6 +1,6 @@
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 
-import { findMatchingCells } from "@/services/tableEditor/file/findMatchingCells";
+import { findMatchingCells } from "@/services/tableEditor/file/commands/findMatchingCells";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { storeToRefs } from "pinia";
 

@@ -5,7 +5,7 @@ import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { Row } from "#shared/models/tableEditor/file/Row";
 import { XlsxDataSourceItem } from "#shared/models/tableEditor/file/xlsx/XlsxDataSourceItem";
-import { DataSourceConfigurationMap } from "@/services/tableEditor/file/DataSourceConfigurationMap";
+import { DataSourceConfigurationMap } from "@/services/tableEditor/file/dataSource/DataSourceConfigurationMap";
 import { deserializeXlsx } from "@/services/tableEditor/file/xlsx/deserializeXlsx";
 import { serializeXlsx } from "@/services/tableEditor/file/xlsx/serializeXlsx";
 import { takeOne } from "@esposter/shared";

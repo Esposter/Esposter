@@ -3,7 +3,7 @@ import type { ItemEntityType } from "@esposter/shared";
 
 import { AItemEntity } from "#shared/models/entity/AItemEntity";
 import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
-import { syncStats } from "@/services/tableEditor/file/syncStats";
+import { syncStats } from "@/services/tableEditor/file/commands/syncStats";
 
 export abstract class ADataSourceCommand<T extends CommandType = CommandType>
   extends AItemEntity

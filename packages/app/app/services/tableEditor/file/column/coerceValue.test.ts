@@ -1,7 +1,7 @@
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { DATE_FORMATS } from "#shared/models/tableEditor/file/constants";
 import { dayjs } from "#shared/services/dayjs";
-import { coerceValue } from "@/services/tableEditor/file/coerceValue";
+import { coerceValue } from "@/services/tableEditor/file/column/coerceValue";
 import { describe, expect, test } from "vitest";
 
 describe(coerceValue, () => {

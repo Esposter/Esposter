@@ -1,4 +1,4 @@
-import { getRecordDifferenceDescription } from "@/services/tableEditor/file/getRecordDifferenceDescription";
+import { getRecordDifferenceDescription } from "@/services/tableEditor/file/commands/getRecordDifferenceDescription";
 import { describe, expect, test } from "vitest";
 
 describe(getRecordDifferenceDescription, () => {

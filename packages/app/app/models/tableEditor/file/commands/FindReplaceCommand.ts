@@ -4,8 +4,8 @@ import type { AffectedCell } from "@/models/tableEditor/file/commands/AffectedCe
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
-import { coerceValue } from "@/services/tableEditor/file/coerceValue";
-import { getValueSize } from "@/services/tableEditor/file/getValueSize";
+import { coerceValue } from "@/services/tableEditor/file/column/coerceValue";
+import { getValueSize } from "@/services/tableEditor/file/commands/getValueSize";
 import { takeOne } from "@esposter/shared";
 
 export class FindReplaceCommand extends ADataSourceCommand<CommandType.FindReplace> {

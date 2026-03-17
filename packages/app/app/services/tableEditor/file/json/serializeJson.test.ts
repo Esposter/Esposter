@@ -4,7 +4,7 @@ import { Column } from "#shared/models/tableEditor/file/Column";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { JsonDataSourceItem } from "#shared/models/tableEditor/file/json/JsonDataSourceItem";
 import { Row } from "#shared/models/tableEditor/file/Row";
-import { DataSourceConfigurationMap } from "@/services/tableEditor/file/DataSourceConfigurationMap";
+import { DataSourceConfigurationMap } from "@/services/tableEditor/file/dataSource/DataSourceConfigurationMap";
 import { serializeJson } from "@/services/tableEditor/file/json/serializeJson";
 import { describe, expect, test } from "vitest";
 

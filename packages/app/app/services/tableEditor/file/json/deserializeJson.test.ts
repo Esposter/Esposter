@@ -1,7 +1,7 @@
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { JsonDataSourceItem } from "#shared/models/tableEditor/file/json/JsonDataSourceItem";
-import { DataSourceConfigurationMap } from "@/services/tableEditor/file/DataSourceConfigurationMap";
+import { DataSourceConfigurationMap } from "@/services/tableEditor/file/dataSource/DataSourceConfigurationMap";
 import { deserializeJson } from "@/services/tableEditor/file/json/deserializeJson";
 import { InvalidOperationError, takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";

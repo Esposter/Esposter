@@ -2,7 +2,7 @@
 import type { Column } from "#shared/models/tableEditor/file/Column";
 
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
-import { FieldInputTypeMap } from "@/services/tableEditor/file/FieldInputTypeMap";
+import { FieldInputTypeMap } from "@/services/tableEditor/file/column/FieldInputTypeMap";
 
 interface FieldInputTextProps {
   column: Column<ColumnType.Number | ColumnType.String>;

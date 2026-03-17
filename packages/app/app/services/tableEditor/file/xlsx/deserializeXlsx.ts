@@ -2,7 +2,7 @@ import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { XlsxDataSourceItem } from "#shared/models/tableEditor/file/xlsx/XlsxDataSourceItem";
 
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
-import { buildDataSource } from "@/services/tableEditor/file/buildDataSource";
+import { buildDataSource } from "@/services/tableEditor/file/dataSource/buildDataSource";
 import { takeOne } from "@esposter/shared";
 import readXlsxFile from "read-excel-file/browser";
 

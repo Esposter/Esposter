@@ -3,7 +3,7 @@ import type { ColumnTypeColumnMap } from "@/models/tableEditor/file/ColumnTypeCo
 import type { ColumnTypeModelValueMap } from "@/models/tableEditor/file/ColumnTypeModelValueMap";
 
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
-import { FieldInputComponentMap } from "@/services/tableEditor/file/FieldInputComponentMap";
+import { FieldInputComponentMap } from "@/services/tableEditor/file/column/FieldInputComponentMap";
 
 interface FieldInputProps {
   column: ColumnTypeColumnMap[TColumnType];

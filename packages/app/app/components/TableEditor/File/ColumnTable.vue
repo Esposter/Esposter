@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 
-import { ColumnHeaders } from "@/services/tableEditor/file/ColumnHeaders";
-import { ColumnTypeColorMap } from "@/services/tableEditor/file/ColumnTypeColorMap";
+import { ColumnHeaders } from "@/services/tableEditor/file/column/ColumnHeaders";
+import { ColumnTypeColorMap } from "@/services/tableEditor/file/column/ColumnTypeColorMap";
 import { DRAG_HANDLE_CLASS } from "@/services/tableEditor/file/constants";
-import { getToggleColumnVisibilityDescription } from "@/services/tableEditor/file/getToggleColumnVisibilityDescription";
+import { getToggleColumnVisibilityDescription } from "@/services/tableEditor/file/commands/getToggleColumnVisibilityDescription";
 import { takeOne } from "@esposter/shared";
 import { VueDraggable } from "vue-draggable-plus";
 

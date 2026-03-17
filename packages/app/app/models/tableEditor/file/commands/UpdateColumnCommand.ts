@@ -7,8 +7,8 @@ import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { dayjs } from "#shared/services/dayjs";
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
-import { getRecordDifferenceDescription } from "@/services/tableEditor/file/getRecordDifferenceDescription";
-import { getValueSize } from "@/services/tableEditor/file/getValueSize";
+import { getRecordDifferenceDescription } from "@/services/tableEditor/file/commands/getRecordDifferenceDescription";
+import { getValueSize } from "@/services/tableEditor/file/commands/getValueSize";
 import { takeOne } from "@esposter/shared";
 
 export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateColumn> {

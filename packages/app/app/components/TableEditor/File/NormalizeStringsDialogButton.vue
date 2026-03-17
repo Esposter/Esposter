@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NormalizeStringModeItemCategoryDefinitions } from "@/services/tableEditor/file/NormalizeStringModeItemCategoryDefinitions";
+import { NormalizeStringModeItemCategoryDefinitions } from "@/services/tableEditor/file/commands/NormalizeStringModeItemCategoryDefinitions";
 
 const normalizeStrings = useNormalizeStrings();
 </script>
