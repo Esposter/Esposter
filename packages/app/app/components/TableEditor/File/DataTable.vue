@@ -30,7 +30,11 @@ const headers = computed(() => [
   { key: "actions", sortable: false, title: "Actions" },
 ]);
 const dragRows = computed({
-  get: () => dataSource.rows,
+  get: () => {
+    if (itemsPerPage.value === -1) return dataSource.rows;
+    const startIndex = (page.value - 1) * itemsPerPage.value;
+    return dataSource.rows.slice(startIndex, startIndex + itemsPerPage.value);
+  },
   set: reorderRows,
 });
 const rowIndexIdMap = computed(() => new Map(dataSource.rows.map((row, index) => [row.id, index])));
@@ -66,7 +70,7 @@ watch([currentOccurrence, itemsPerPage], async ([newCurrentOccurrence, newItemsP
         density: 'compact',
         headers,
         itemsPerPage,
-        items: dragRows,
+        items: dataSource.rows,
         modelValue: selectedRowIds,
         page,
         showSelect: true,

@@ -30,7 +30,7 @@ const dragColumns = computed({
         density: 'compact',
         headers: ColumnHeaders,
         hideDefaultFooter: true,
-        items: dragColumns,
+        items: dataSource.columns,
         modelValue: selectedColumnIds,
         showSelect: true,
         'onUpdate:modelValue': (newSelectedIds) => {

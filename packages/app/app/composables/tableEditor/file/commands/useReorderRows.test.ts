@@ -107,6 +107,56 @@ describe(useReorderRows, () => {
     expect(takeOne(dataSource.rows, 2).data[""]).toBe(0);
   });
 
+  test("moves row forward on paginated page (index 2 to 4 with only page rows passed)", () => {
+    expect.hasAssertions();
+
+    const sixRowDs = makeDataSource(
+      [makeColumn("")],
+      [makeRow({ "": 0 }), makeRow({ "": 1 }), makeRow({ "": 2 }), makeRow({ "": 3 }), makeRow({ "": 4 }), makeRow({ "": 5 })],
+    );
+    const { editedItem } = setupWithDataSource(sixRowDs);
+    const reorderRows = useReorderRows();
+    const rows = editedItem.value?.dataSource?.rows ?? [];
+    // Simulate page 2 showing rows [2,3,4] — move row 2 to the end of the page
+    const newRows = [takeOne(rows, 3), takeOne(rows, 4), takeOne(rows, 2)] as Row[];
+    reorderRows(newRows);
+    const dataSource = editedItem.value?.dataSource;
+
+    expectToBeDefined(dataSource);
+
+    expect(takeOne(dataSource.rows, 0).data[""]).toBe(0);
+    expect(takeOne(dataSource.rows, 1).data[""]).toBe(1);
+    expect(takeOne(dataSource.rows, 2).data[""]).toBe(3);
+    expect(takeOne(dataSource.rows, 3).data[""]).toBe(4);
+    expect(takeOne(dataSource.rows, 4).data[""]).toBe(2);
+    expect(takeOne(dataSource.rows, 5).data[""]).toBe(5);
+  });
+
+  test("moves row backward on paginated page (index 4 to 2 with only page rows passed)", () => {
+    expect.hasAssertions();
+
+    const sixRowDs = makeDataSource(
+      [makeColumn("")],
+      [makeRow({ "": 0 }), makeRow({ "": 1 }), makeRow({ "": 2 }), makeRow({ "": 3 }), makeRow({ "": 4 }), makeRow({ "": 5 })],
+    );
+    const { editedItem } = setupWithDataSource(sixRowDs);
+    const reorderRows = useReorderRows();
+    const rows = editedItem.value?.dataSource?.rows ?? [];
+    // Simulate page 2 showing rows [2,3,4] — move row 4 to the start of the page
+    const newRows = [takeOne(rows, 4), takeOne(rows, 2), takeOne(rows, 3)] as Row[];
+    reorderRows(newRows);
+    const dataSource = editedItem.value?.dataSource;
+
+    expectToBeDefined(dataSource);
+
+    expect(takeOne(dataSource.rows, 0).data[""]).toBe(0);
+    expect(takeOne(dataSource.rows, 1).data[""]).toBe(1);
+    expect(takeOne(dataSource.rows, 2).data[""]).toBe(4);
+    expect(takeOne(dataSource.rows, 3).data[""]).toBe(2);
+    expect(takeOne(dataSource.rows, 4).data[""]).toBe(3);
+    expect(takeOne(dataSource.rows, 5).data[""]).toBe(5);
+  });
+
   test("no-op when order unchanged", () => {
     expect.hasAssertions();
 

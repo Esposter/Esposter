@@ -9,7 +9,6 @@ export const useCopyToClipboard = () => {
   const { editedItem } = storeToRefs(tableEditorStore);
   const alertStore = useAlertStore();
   const { createAlert } = alertStore;
-
   return async (rowIds?: string[]) => {
     if (!editedItem.value?.dataSource) return;
     try {
