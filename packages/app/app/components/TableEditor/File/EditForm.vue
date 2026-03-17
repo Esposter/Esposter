@@ -40,6 +40,7 @@ const openPanels = ref(["columns", "data"]);
               <v-spacer />
               <TableEditorFileStatsBar mr-4 :stats="modelValue.dataSource.stats" />
               <TableEditorFileFindReplaceDialogButton />
+              <TableEditorFileNormalizeStringsDialogButton />
               <TableEditorFileRowCreateDialogButton :data-source="modelValue.dataSource" />
             </template>
             <v-expansion-panel-text>

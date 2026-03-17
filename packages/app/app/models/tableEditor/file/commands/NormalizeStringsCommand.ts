@@ -3,26 +3,24 @@ import type { AffectedCell } from "@/models/tableEditor/file/commands/AffectedCe
 
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
+import { NormalizeStringMode } from "@/models/tableEditor/file/NormalizeStringMode";
+import { applyNormalizeStringMode } from "@/services/tableEditor/file/applyNormalizeStringMode";
 import { getValueSize } from "@/services/tableEditor/file/getValueSize";
 import { takeOne } from "@esposter/shared";
 
-export class FindReplaceCommand extends ADataSourceCommand<CommandType.FindReplace> {
-  readonly type = CommandType.FindReplace;
+export class NormalizeStringsCommand extends ADataSourceCommand<CommandType.NormalizeStrings> {
+  readonly type = CommandType.NormalizeStrings;
 
   get description() {
-    const uniqueRowIndices = new Set(this.affectedCells.map((cell) => cell.rowIndex));
-    const location = uniqueRowIndices.size === 1 ? ` on row ${takeOne(this.affectedCells, 0).rowIndex + 1}` : " (all)";
-    return `Find & Replace "${this.findValue}" → "${this.replaceValue}"${location}`;
+    return `Normalize Strings (${this.mode})`;
   }
 
   private readonly affectedCells: AffectedCell[];
-  private readonly findValue: string;
-  private readonly replaceValue: string;
+  private readonly mode: NormalizeStringMode;
 
-  constructor(findValue: string, replaceValue: string, affectedCells: AffectedCell[]) {
+  constructor(mode: NormalizeStringMode, affectedCells: AffectedCell[]) {
     super();
-    this.findValue = findValue;
-    this.replaceValue = replaceValue;
+    this.mode = mode;
     this.affectedCells = affectedCells;
   }
 
@@ -32,7 +30,7 @@ export class FindReplaceCommand extends ADataSourceCommand<CommandType.FindRepla
       const row = takeOne(item.dataSource.rows, rowIndex);
       const column = item.dataSource.columns.find((column) => column.name === columnName);
       if (!column) continue;
-      const newValue = String(originalValue).replaceAll(this.findValue, this.replaceValue);
+      const newValue = applyNormalizeStringMode(String(originalValue), this.mode);
       column.size += getValueSize(newValue) - getValueSize(takeOne(row.data, columnName));
       row.data[columnName] = newValue;
     }

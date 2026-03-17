@@ -1,6 +1,6 @@
 ---
 name: file-organization
-description: Esposter file and folder organisation — one export per file, models vs services vs constants, command pattern field ordering, constant maps with as-const-satisfies, generic Vue components, MIME types, and LF line endings.
+description: Esposter file and folder organisation — one export per file, no export{} syntax, models vs services vs constants, command pattern field ordering, constant maps with as-const-satisfies, generic Vue components, MIME types, and LF line endings.
 ---
 
 # File & Folder Organisation
@@ -13,6 +13,7 @@ description: Esposter file and folder organisation — one export per file, mode
 
 - **One export per file** — each exported function, class, or interface lives in its own file. Exception: Zod schemas may be co-located with their interface/type since they are tightly coupled.
 - **One class per file** — classes belong in a `models/` folder (e.g., `app/models/`, `shared/models/`).
+- **Never use `export { }` syntax** — always use `export const`, `export class`, `export interface`, `export type`, or `export function` at the declaration site. The only valid exceptions are empty `export {}` in `.d.ts` files (to mark them as a module) and `ctix`-generated barrel files (pinned package). If you see `export { ... }` in a hand-written `.ts` file, it is wrong — inline the `export` keyword at each declaration instead.
 - **Constants go in `constants.ts`** — all module-level constants in a `constants.ts` file under `services/` alongside the files that use them. Never put `constants.ts` inside `composables/`.
 - **Functions go in `services/`** — factory functions, command creators, and other exported functions belong in `services/`, not `models/`. `models/` is strictly for classes and interfaces/types.
 - **Generic browser utilities** go in `app/utils/` (e.g., `readFileAsText.ts`).

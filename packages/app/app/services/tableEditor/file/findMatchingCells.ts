@@ -1,5 +1,5 @@
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
-import type { AffectedCell } from "@/models/tableEditor/file/commands/FindReplaceCommand";
+import type { AffectedCell } from "@/models/tableEditor/file/commands/AffectedCell";
 
 import { takeOne } from "@esposter/shared";
 

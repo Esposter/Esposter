@@ -18,9 +18,14 @@ interface CreateDialogButtonProps {
 const { dataSource } = defineProps<CreateDialogButtonProps>();
 const createColumn = useCreateColumn();
 const columnType = ref(ColumnType.String);
-const column = new Column();
+const defaultColumn = new Column();
 // StructuredClone is required here: Vjsf does not work with class instances and needs a plain object
-const editedColumn = ref(structuredClone<DataSource["columns"][number]>(column));
+const editedColumn = ref(structuredClone<DataSource["columns"][number]>(defaultColumn));
+const resetForm = () => {
+  columnType.value = ColumnType.String;
+  const defaultColumn = new Column();
+  editedColumn.value = structuredClone<DataSource["columns"][number]>(defaultColumn);
+};
 const schema = computed(() => takeOne(ColumnTypeFormSchemaMap, columnType.value));
 const jsonSchema = computed(() => zodToJsonSchema(takeOne(CreateFormSchemaMap, columnType.value)));
 const uniqueNameRule = useColumnNameRule(() => dataSource.columns);
@@ -45,6 +50,7 @@ watch(columnType, (newType, oldType) => {
     :schema
     :value="null"
     :edited-value="editedColumn"
+    @reset="resetForm()"
     @submit="
       (onComplete) => {
         createColumn(editedColumn);

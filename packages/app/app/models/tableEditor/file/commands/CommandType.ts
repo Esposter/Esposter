@@ -8,6 +8,7 @@ export enum CommandType {
   FindReplace = "FindReplace",
   MoveColumn = "MoveColumn",
   MoveRow = "MoveRow",
+  NormalizeStrings = "NormalizeStrings",
   ToggleColumnVisibility = "ToggleColumnVisibility",
   UpdateColumn = "UpdateColumn",
   UpdateRow = "UpdateRow",

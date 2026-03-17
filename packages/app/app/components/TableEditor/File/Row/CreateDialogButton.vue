@@ -24,6 +24,7 @@ const resetForm = () => {
     :schema="rowSchema"
     :value="null"
     :edited-value="editedRow"
+    @reset="resetForm()"
     @submit="
       (onComplete) => {
         createRow(editedRow);
@@ -31,13 +32,6 @@ const resetForm = () => {
       }
     "
   >
-    <template #prepend-actions>
-      <v-tooltip text="Reset form to default values">
-        <template #activator="{ props: tooltipProps }">
-          <v-btn text="Reset" :="tooltipProps" @click="resetForm()" />
-        </template>
-      </v-tooltip>
-    </template>
     <v-row v-for="column of dataSource.columns.filter((column) => !column.hidden)" :key="column.id">
       <v-col cols="12">
         <TableEditorFileRowFieldInput

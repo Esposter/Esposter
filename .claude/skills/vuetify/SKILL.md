@@ -1,6 +1,6 @@
 ---
 name: vuetify
-description: Esposter Vuetify 3 conventions — v-btn tooltips, select items, dialog form validity, and keyboard shortcut components. Apply when writing Vuetify components or dialogs.
+description: Esposter Vuetify 3 conventions — v-btn tooltips, typed SelectItemCategoryDefinition for selects/lists/menus, enum-value-as-display-title pattern, dialog form validity, and keyboard shortcut components. Apply when writing Vuetify components or dialogs.
 ---
 
 # Vuetify Conventions
@@ -19,11 +19,12 @@ description: Esposter Vuetify 3 conventions — v-btn tooltips, select items, di
 - **`#activator` slot always first** — the `#activator` template must be the first child in `v-tooltip` (and `v-menu`).
 - **Icon choice for create actions** — use the semantically specific MDI icon when available: `mdi-table-row-plus-after` for adding rows, `mdi-table-column-plus-after` for adding columns. Fall back to `mdi-plus` for generic create actions.
 
-## Vuetify Selects
+## Vuetify Selects and List Items
 
-- When building items for `v-autocomplete` / `v-select`, use `SelectItemCategoryDefinition<T>` (`{ title: string, value: T }`) from `@/models/vuetify/SelectItemCategoryDefinition`.
+- When building items for `v-autocomplete`, `v-select`, or `v-list-item` (in a `v-menu` / `v-list`), always type them as `SelectItemCategoryDefinition<T>[]` (`{ title: string, value: T }`) from `@/models/vuetify/SelectItemCategoryDefinition`. Never inline untyped `{ title, value }` arrays — always extract to a typed constant.
 - **Never specify `item-title` or `item-value` props** — Vuetify's defaults are already `"title"` and `"value"`, which match `SelectItemCategoryDefinition` exactly.
-- Name the items computed to reflect what the value represents — e.g. `columnIds` for `SelectItemCategoryDefinition<string>[]` where each `value` is a column ID.
+- Name the items constant to reflect what the value represents — e.g. `columnIds` for `SelectItemCategoryDefinition<string>[]` where each `value` is a column ID.
+- **Prefer enum values as display titles** — when the enum string value IS the display label, use `Object.values(EnumType).map((v) => ({ title: v, value: v }))` (`ColumnTypeItemCategoryDefinitions` pattern). When the display must differ from the enum value (rare), use a `const Map = { ... } as const satisfies Record<Enum, Except<SelectItemCategoryDefinition<Enum>, "value">>` + `parseDictionaryToArray` (`CsvDelimiterItemCategoryDefinitions` pattern). Update enum string values to match their display label when reasonable, to keep enum key and value the same string.
 
 ## Dialog Form Validity
 
