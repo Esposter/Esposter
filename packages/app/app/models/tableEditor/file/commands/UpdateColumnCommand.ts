@@ -55,13 +55,14 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
       }
     }
 
-    if (
+    const formatChanged =
       column.type === ColumnType.Date &&
       this.updatedColumn.type === ColumnType.Date &&
-      this.updatedColumn.format !== column.format
-    ) {
-      const oldFormat = column.format;
-      const newFormat = this.updatedColumn.format;
+      this.updatedColumn.format !== column.format;
+    const oldFormat = column.format;
+    const newFormat = this.updatedColumn.format;
+    Object.assign(column, this.updatedColumn);
+    if (formatChanged) {
       let size = 0;
       for (const row of item.dataSource.rows) {
         const value = takeOne(row.data, updatedName);
@@ -78,8 +79,6 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
       }
       column.size = size;
     }
-
-    Object.assign(column, this.updatedColumn);
   }
 
   protected doUndo(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {

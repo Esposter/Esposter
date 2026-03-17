@@ -39,10 +39,7 @@ describe(useDeleteDuplicateRows, () => {
   test("removes duplicate rows keeping last occurrence", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource(
-      [makeColumn("a")],
-      [makeRow({ a: 1 }), makeRow({ a: 2 }), makeRow({ a: 1 })],
-    );
+    const ds = makeDataSource([makeColumn("a")], [makeRow({ a: 1 }), makeRow({ a: 2 }), makeRow({ a: 1 })]);
     const { editedItem } = setupWithDataSource(ds);
     const deleteDuplicateRows = useDeleteDuplicateRows();
     deleteDuplicateRows(KeepDuplicateMode.Last);

@@ -12,7 +12,7 @@ import { bench, describe } from "vitest";
 
 const originalColumn = takeOne(benchColumns, 0);
 const originalName = originalColumn.name;
-const updatedColumn = Object.assign(Object.create(Object.getPrototypeOf(originalColumn)), originalColumn, {
+const updatedColumn = Object.assign(structuredClone(originalColumn), {
   name: `${originalName}_renamed`,
 });
 

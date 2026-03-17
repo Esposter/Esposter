@@ -5,6 +5,7 @@ import { Column } from "#shared/models/tableEditor/file/Column";
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { CsvDataSourceItem } from "#shared/models/tableEditor/file/csv/CsvDataSourceItem";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
+import { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
 import { Row } from "#shared/models/tableEditor/file/Row";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { useItemStore } from "@/store/tableEditor/item";
@@ -21,6 +22,9 @@ export const makeColumn = (name: string): Column => new Column({ name, size: 0, 
 
 export const makeNumberColumn = (name: string): Column<ColumnType.Number> =>
   new Column({ name, size: 0, sourceName: name, type: ColumnType.Number });
+
+export const makeDateColumn = (name: string, format: DateColumn["format"]): DateColumn =>
+  new DateColumn({ format, name, size: 0, sourceName: name });
 
 export const makeRow = (data: Record<string, boolean | null | number | string>): Row => new Row({ data });
 

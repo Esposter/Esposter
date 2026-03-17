@@ -1,15 +1,17 @@
 import { Column } from "#shared/models/tableEditor/file/Column";
+import { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
 import { expectToBeDefined } from "#shared/test/expectToBeDefined";
 import {
   makeColumn,
   makeDataSource,
+  makeDateColumn,
   makeRow,
   setupEditedItem,
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { takeOne, toRawDeep } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { assert, beforeEach, describe, expect, test } from "vitest";
 
 describe(useUpdateColumn, () => {
   beforeEach(() => {
@@ -162,6 +164,53 @@ describe(useUpdateColumn, () => {
     expectToBeDefined(dataSource);
 
     expect(Object.keys(takeOne(dataSource.rows, 0).data)).toStrictEqual(["a", "b", "c"]);
+  });
+
+  test("reformats date values when format changes", () => {
+    expect.hasAssertions();
+
+    const ds = makeDataSource(
+      [makeDateColumn("date", "YYYY-MM-DD")],
+      [makeRow({ date: "2024-01-15" }), makeRow({ date: "2024-06-30" })],
+    );
+    const { editedItem } = setupWithDataSource(ds);
+    const updateColumn = useUpdateColumn();
+    const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
+    updateColumn("date", Object.assign(structuredClone(toRawDeep(column)), { format: "DD/MM/YYYY" }));
+    const dataSource = editedItem.value?.dataSource;
+
+    expectToBeDefined(dataSource);
+
+    expect(takeOne(dataSource.rows, 0).data.date).toBe("15/01/2024");
+    expect(takeOne(dataSource.rows, 1).data.date).toBe("30/06/2024");
+    expect(takeOne(dataSource.columns, 0).size).toBeGreaterThan(0);
+  });
+
+  test("undo restores original date values after format change", () => {
+    expect.hasAssertions();
+
+    const ds = makeDataSource(
+      [makeDateColumn("date", "YYYY-MM-DD")],
+      [makeRow({ date: "2024-01-15" }), makeRow({ date: "2024-06-30" })],
+    );
+    const { editedItem } = setupWithDataSource(ds);
+    const updateColumn = useUpdateColumn();
+    const { undo } = useDataSourceHistory();
+    const originalColumn = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
+    updateColumn("date", Object.assign(structuredClone(toRawDeep(originalColumn)), { format: "DD/MM/YYYY" }));
+    undo(editedItem.value);
+    const dataSource = editedItem.value?.dataSource;
+
+    expectToBeDefined(dataSource);
+
+    expect(takeOne(dataSource.rows, 0).data.date).toBe("2024-01-15");
+    expect(takeOne(dataSource.rows, 1).data.date).toBe("2024-06-30");
+
+    const updatedColumn = takeOne(dataSource.columns, 0);
+
+    assert.instanceOf(updatedColumn, DateColumn);
+
+    expect(updatedColumn.format).toBe("YYYY-MM-DD");
   });
 
   test("snapshot immutability - mutating passed object after call does not affect undo history", () => {
