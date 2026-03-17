@@ -27,7 +27,7 @@
 
 - [x] **JSON file support** — new `DataSourceType.Json`, handles flat arrays of objects
 - [ ] **Multi-sheet XLSX** — allow importing multiple sheets as separate data sources or merged
-- [ ] **Paste from clipboard** — paste tabular data copied from Excel/Google Sheets directly
+- [x] **Paste from clipboard** — paste tabular data copied from Excel/Google Sheets directly
 - [ ] **URL import** — fetch a remote CSV/JSON URL instead of uploading a file
 
 ## Filtering & Sorting
@@ -47,4 +47,4 @@
 - [ ] **Filtered export** — export only currently visible (filtered) rows
 - [x] **Column subset export** — choose which columns to include in the export
 - [x] **JSON export** — export as a JSON array
-- [ ] **Copy to clipboard** — copy selected rows as tab-separated text
+- [x] **Copy to clipboard** — copy selected rows as tab-separated text
