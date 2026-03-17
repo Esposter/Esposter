@@ -34,7 +34,7 @@ describe(parseClipboardRows, () => {
     const dataSource = makeDataSource([makeColumn("a")]);
     const rows = await parseClipboardRows("a,extra\n0,ignored", dataSource, csvItem);
 
-    expect(Object.keys(takeOne(rows, 0).data)).toEqual(["a"]);
+    expect(Object.keys(takeOne(rows, 0).data)).toStrictEqual(["a"]);
   });
 
   test("matching is case-sensitive", async () => {

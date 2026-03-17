@@ -70,10 +70,7 @@ describe(useDeleteColumn, () => {
   test("undo preserves row.data key order after restore", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource(
-      [makeColumn("a"), makeColumn("b"), makeColumn("c")],
-      [makeRow({ a: 1, b: 2, c: 3 })],
-    );
+    const ds = makeDataSource([makeColumn("a"), makeColumn("b"), makeColumn("c")], [makeRow({ a: 1, b: 2, c: 3 })]);
     const { editedItem } = setupWithDataSource(ds);
     const deleteColumn = useDeleteColumn();
     const { undo } = useDataSourceHistory();

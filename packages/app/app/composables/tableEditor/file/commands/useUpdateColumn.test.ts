@@ -135,10 +135,7 @@ describe(useUpdateColumn, () => {
   test("preserves row.data key order after rename", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource(
-      [makeColumn("a"), makeColumn("b"), makeColumn("c")],
-      [makeRow({ a: 1, b: 2, c: 3 })],
-    );
+    const ds = makeDataSource([makeColumn("a"), makeColumn("b"), makeColumn("c")], [makeRow({ a: 1, b: 2, c: 3 })]);
     const { editedItem } = setupWithDataSource(ds);
     const updateColumn = useUpdateColumn();
     const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 1);
@@ -153,10 +150,7 @@ describe(useUpdateColumn, () => {
   test("undo preserves row.data key order after rename restore", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource(
-      [makeColumn("a"), makeColumn("b"), makeColumn("c")],
-      [makeRow({ a: 1, b: 2, c: 3 })],
-    );
+    const ds = makeDataSource([makeColumn("a"), makeColumn("b"), makeColumn("c")], [makeRow({ a: 1, b: 2, c: 3 })]);
     const { editedItem } = setupWithDataSource(ds);
     const updateColumn = useUpdateColumn();
     const { undo } = useDataSourceHistory();
