@@ -15,8 +15,8 @@ describe(parseClipboardRows, () => {
     const rows = await parseClipboardRows("a,b\n0,1", dataSource, csvItem);
 
     expect(rows).toHaveLength(1);
-    expect(takeOne(rows, 0).data["a"]).toBe("0");
-    expect(takeOne(rows, 0).data["b"]).toBe("1");
+    expect(takeOne(rows, 0).data.a).toBe("0");
+    expect(takeOne(rows, 0).data.b).toBe("1");
   });
 
   test("initializes unmatched columns to null", async () => {
@@ -25,7 +25,7 @@ describe(parseClipboardRows, () => {
     const dataSource = makeDataSource([makeColumn("a"), makeColumn("b")]);
     const rows = await parseClipboardRows("a\n0", dataSource, csvItem);
 
-    expect(takeOne(rows, 0).data["b"]).toBeNull();
+    expect(takeOne(rows, 0).data.b).toBeNull();
   });
 
   test("ignores extra columns not in dataSource", async () => {
@@ -43,7 +43,7 @@ describe(parseClipboardRows, () => {
     const dataSource = makeDataSource([makeColumn("a")]);
     const rows = await parseClipboardRows("A\n0", dataSource, csvItem);
 
-    expect(takeOne(rows, 0).data["a"]).toBeNull();
+    expect(takeOne(rows, 0).data.a).toBeNull();
   });
 
   test("returns empty array when no data rows", async () => {
@@ -62,6 +62,6 @@ describe(parseClipboardRows, () => {
     const dataSource = makeDataSource([makeColumn("a"), makeColumn("b")]);
     const rows = await parseClipboardRows("a\tb\n0\t1", dataSource, tabItem);
 
-    expect(takeOne(rows, 0).data["a"]).toBe("0");
+    expect(takeOne(rows, 0).data.a).toBe("0");
   });
 });

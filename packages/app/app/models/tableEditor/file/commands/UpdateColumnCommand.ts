@@ -44,7 +44,9 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
     if (!column) return;
     const updatedName = this.updatedColumn.name;
     if (updatedName !== this.originalName) {
-      const newColumnNames = item.dataSource.columns.map(({ name }) => (name === this.originalName ? updatedName : name));
+      const newColumnNames = item.dataSource.columns.map(({ name }) =>
+        name === this.originalName ? updatedName : name,
+      );
       for (const row of item.dataSource.rows) {
         const newData: typeof row.data = {};
         for (const name of newColumnNames)
@@ -85,24 +87,11 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
     const updatedName = this.updatedColumn.name;
     const column = item.dataSource.columns.find(({ name }) => name === updatedName);
     if (!column) return;
-    const newColumnNames =
-      updatedName !== this.originalName
-        ? item.dataSource.columns.map(({ name }) => (name === updatedName ? this.originalName : name))
-        : null;
-    let size = 0;
+    const nameChanged = updatedName !== this.originalName;
     for (const [index, row] of item.dataSource.rows.entries()) {
-      const value = takeOne(this.originalRowValues, index);
-      if (newColumnNames) {
-        const newData: typeof row.data = {};
-        for (const name of newColumnNames)
-          newData[name] = name === this.originalName ? value : takeOne(row.data, name);
-        row.data = newData;
-      } else {
-        row.data[this.originalName] = value;
-      }
-      size += getValueSize(value);
+      if (nameChanged) delete row.data[updatedName];
+      row.data[this.originalName] = takeOne(this.originalRowValues, index);
     }
-    column.size = size;
     Object.assign(column, this.originalColumn);
   }
 }

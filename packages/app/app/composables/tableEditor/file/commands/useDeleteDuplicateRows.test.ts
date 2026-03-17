@@ -57,10 +57,7 @@ describe(useDeleteDuplicateRows, () => {
   test("undo restores deleted duplicate rows", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource(
-      [makeColumn("")],
-      [makeRow({ "": 0 }), makeRow({ "": 0 })],
-    );
+    const ds = makeDataSource([makeColumn("")], [makeRow({ "": 0 }), makeRow({ "": 0 })]);
     const { editedItem } = setupWithDataSource(ds);
     const deleteDuplicateRows = useDeleteDuplicateRows();
     const { undo } = useDataSourceHistory();
@@ -80,10 +77,7 @@ describe(useDeleteDuplicateRows, () => {
   test("redo re-applies after undo", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource(
-      [makeColumn("")],
-      [makeRow({ "": 0 }), makeRow({ "": 0 })],
-    );
+    const ds = makeDataSource([makeColumn("")], [makeRow({ "": 0 }), makeRow({ "": 0 })]);
     const { editedItem } = setupWithDataSource(ds);
     const deleteDuplicateRows = useDeleteDuplicateRows();
     const { redo, undo } = useDataSourceHistory();

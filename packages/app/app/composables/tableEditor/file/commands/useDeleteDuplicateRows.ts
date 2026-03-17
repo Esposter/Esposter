@@ -1,7 +1,7 @@
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 
-import { KeepDuplicateMode } from "@/models/tableEditor/file/KeepDuplicateMode";
 import { DeleteRowsCommand } from "@/models/tableEditor/file/commands/DeleteRowsCommand";
+import { KeepDuplicateMode } from "@/models/tableEditor/file/KeepDuplicateMode";
 import { findDuplicateRows } from "@/services/tableEditor/file/commands/findDuplicateRows";
 import { useTableEditorStore } from "@/store/tableEditor";
 

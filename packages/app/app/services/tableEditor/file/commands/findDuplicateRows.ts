@@ -1,15 +1,12 @@
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
-
-import { KeepDuplicateMode } from "@/models/tableEditor/file/KeepDuplicateMode";
 import type { IndexedRow } from "@/models/tableEditor/file/commands/IndexedRow";
 
-const getRowKey = (row: DataSource["rows"][number]): string =>
-  JSON.stringify(Object.fromEntries(Object.entries(row.data).sort(([a], [b]) => a.localeCompare(b))));
+import { KeepDuplicateMode } from "@/models/tableEditor/file/KeepDuplicateMode";
 
-export const findDuplicateRows = (
-  dataSource: DataSource,
-  keepMode = KeepDuplicateMode.First,
-): IndexedRow[] => {
+export const findDuplicateRows = (dataSource: DataSource, keepMode = KeepDuplicateMode.First): IndexedRow[] => {
+  const sortedKeys = dataSource.columns.map(({ name }) => name).toSorted((a, b) => a.localeCompare(b));
+  const getRowKey = (row: DataSource["rows"][number]): string => JSON.stringify(sortedKeys.map((key) => row.data[key]));
+
   if (keepMode === KeepDuplicateMode.First) {
     const seen = new Set<string>();
     const duplicates: IndexedRow[] = [];
@@ -22,7 +19,7 @@ export const findDuplicateRows = (
   }
 
   const entries = dataSource.rows.map((row, index) => ({ index, key: getRowKey(row), row }));
-  const lastIndexByKey = new Map(entries.map(({ key, index }) => [key, index]));
+  const lastIndexByKey = new Map(entries.map(({ index, key }) => [key, index]));
   return entries
     .filter(({ index, key }) => lastIndexByKey.get(key) !== index)
     .map(({ index, row }) => ({ index, row }));
