@@ -42,8 +42,7 @@ const getCellText = (item: Row, columnName: string): string => {
   return value === null ? "" : String(value);
 };
 
-watch(currentOccurrenceIndex, async () => {
-  const occurrence = occurrences.value.at(currentOccurrenceIndex.value);
+watch(currentOccurrence, async (occurrence) => {
   if (!occurrence) return;
   const targetPage = Math.floor(occurrence.rowIndex / itemsPerPage.value) + 1;
   if (page.value !== targetPage) page.value = targetPage;

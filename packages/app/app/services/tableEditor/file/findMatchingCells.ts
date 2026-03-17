@@ -15,8 +15,8 @@ export const findMatchingCells = (
   const result: AffectedCell[] = [];
   const rowStart = specificCell ? specificCell.rowIndex : 0;
   const rowEnd = specificCell ? specificCell.rowIndex + 1 : rows.length;
-  for (let rowIndex = rowStart; rowIndex < rowEnd; rowIndex++) {
-    const row = takeOne(rows, rowIndex);
+  for (const [i, row] of rows.slice(rowStart, rowEnd).entries()) {
+    const rowIndex = rowStart + i;
     for (const column of visibleColumns) {
       const cellValue = takeOne(row.data, column.name);
       if (cellValue === null) continue;

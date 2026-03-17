@@ -26,9 +26,10 @@ export class NormalizeStringsCommand extends ADataSourceCommand<CommandType.Norm
 
   protected doExecute(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
     if (!item.dataSource) return;
+    const columnsByNameMap = new Map(item.dataSource.columns.map((column) => [column.name, column]));
     for (const { columnName, originalValue, rowIndex } of this.affectedCells) {
       const row = takeOne(item.dataSource.rows, rowIndex);
-      const column = item.dataSource.columns.find((column) => column.name === columnName);
+      const column = columnsByNameMap.get(columnName);
       if (!column) continue;
       const newValue = applyNormalizeStringMode(String(originalValue), this.mode);
       column.size += getValueSize(newValue) - getValueSize(takeOne(row.data, columnName));
@@ -38,9 +39,10 @@ export class NormalizeStringsCommand extends ADataSourceCommand<CommandType.Norm
 
   protected doUndo(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
     if (!item.dataSource) return;
+    const columnsByNameMap = new Map(item.dataSource.columns.map((column) => [column.name, column]));
     for (const { columnName, originalValue, rowIndex } of this.affectedCells) {
       const row = takeOne(item.dataSource.rows, rowIndex);
-      const column = item.dataSource.columns.find((column) => column.name === columnName);
+      const column = columnsByNameMap.get(columnName);
       if (!column) continue;
       column.size += getValueSize(originalValue) - getValueSize(takeOne(row.data, columnName));
       row.data[columnName] = originalValue;

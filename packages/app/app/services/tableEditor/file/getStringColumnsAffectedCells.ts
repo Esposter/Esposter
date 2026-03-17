@@ -9,8 +9,7 @@ export const getStringColumnsAffectedCells = (dataSource: DataSource): AffectedC
     (column) => !column.hidden && column.type === ColumnType.String,
   );
   const result: AffectedCell[] = [];
-  for (let rowIndex = 0; rowIndex < dataSource.rows.length; rowIndex++) {
-    const row = takeOne(dataSource.rows, rowIndex);
+  for (const [rowIndex, row] of dataSource.rows.entries()) {
     for (const column of visibleStringColumns) {
       const cellValue = takeOne(row.data, column.name);
       if (cellValue === null) continue;
