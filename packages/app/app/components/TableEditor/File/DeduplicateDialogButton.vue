@@ -1,45 +1,37 @@
 <script setup lang="ts">
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
+import type { IndexedRow } from "@/models/tableEditor/file/commands/IndexedRow";
 
 import { KeepDuplicateMode } from "@/models/tableEditor/file/KeepDuplicateMode";
 import { findDuplicateRows } from "@/services/tableEditor/file/commands/findDuplicateRows";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { takeOne } from "@esposter/shared";
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 
 const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
 const { editedItem } = storeToRefs(tableEditorStore);
 const isOpen = ref(false);
 const keepMode = ref(KeepDuplicateMode.First);
 const deleteDuplicateRows = useDeleteDuplicateRows();
-
-type DuplicateRowEntry = { index: number; row: DataSource["rows"][number] };
-
-const duplicateRowEntries = computed<DuplicateRowEntry[]>(() =>
+const duplicateRowEntries = computed<IndexedRow[]>(() =>
   editedItem.value?.dataSource ? findDuplicateRows(editedItem.value.dataSource, keepMode.value) : [],
 );
 const duplicateCount = computed(() => duplicateRowEntries.value.length);
 const duplicateHeaders = computed(() => {
   if (!editedItem.value?.dataSource) return [];
   return [
-    { key: "index", title: "#", value: (entry: DuplicateRowEntry) => entry.index },
+    { key: "index", title: "#", value: (entry: IndexedRow) => entry.index },
     ...editedItem.value.dataSource.columns
       .filter((column) => !column.hidden)
       .map((column) => ({
         key: column.name,
         title: column.name,
-        value: (entry: DuplicateRowEntry) => {
+        value: (entry: IndexedRow) => {
           const value = takeOne(entry.row.data, column.name);
           return value === null ? "" : String(value);
         },
       })),
   ];
 });
-
-const onConfirm = () => {
-  deleteDuplicateRows(keepMode.value);
-  isOpen.value = false;
-};
 </script>
 
 <template>
@@ -71,7 +63,18 @@ const onConfirm = () => {
       <v-card-actions>
         <v-spacer />
         <v-btn @click="isOpen = false">Cancel</v-btn>
-        <v-btn color="error" :disabled="duplicateCount === 0" @click="onConfirm">Delete Duplicates</v-btn>
+        <v-btn
+          color="error"
+          :disabled="duplicateCount === 0"
+          @click="
+            () => {
+              deleteDuplicateRows(keepMode);
+              isOpen = false;
+            }
+          "
+        >
+          Delete Duplicates
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

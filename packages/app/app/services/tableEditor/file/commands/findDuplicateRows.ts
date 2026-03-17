@@ -1,6 +1,7 @@
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 
 import { KeepDuplicateMode } from "@/models/tableEditor/file/KeepDuplicateMode";
+import type { IndexedRow } from "@/models/tableEditor/file/commands/IndexedRow";
 
 const getRowKey = (row: DataSource["rows"][number]): string =>
   JSON.stringify(Object.fromEntries(Object.entries(row.data).sort(([a], [b]) => a.localeCompare(b))));
@@ -8,10 +9,10 @@ const getRowKey = (row: DataSource["rows"][number]): string =>
 export const findDuplicateRows = (
   dataSource: DataSource,
   keepMode = KeepDuplicateMode.First,
-): { index: number; row: DataSource["rows"][number] }[] => {
+): IndexedRow[] => {
   if (keepMode === KeepDuplicateMode.First) {
     const seen = new Set<string>();
-    const duplicates: { index: number; row: DataSource["rows"][number] }[] = [];
+    const duplicates: IndexedRow[] = [];
     for (const [index, row] of dataSource.rows.entries()) {
       const key = getRowKey(row);
       if (seen.has(key)) duplicates.push({ index, row });
