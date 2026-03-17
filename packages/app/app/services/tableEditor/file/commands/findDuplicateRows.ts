@@ -7,7 +7,7 @@ export const findDuplicateRows = (
   dataSource: DataSource,
   keepMode = KeepDuplicateMode.First,
 ): IndexedRow[] => {
-  const sortedKeys = dataSource.columns.map(({ name }) => name).sort((a, b) => a.localeCompare(b));
+  const sortedKeys = dataSource.columns.map(({ name }) => name).toSorted((a, b) => a.localeCompare(b));
   const getRowKey = (row: DataSource["rows"][number]): string =>
     JSON.stringify(sortedKeys.map((key) => row.data[key]));
 
