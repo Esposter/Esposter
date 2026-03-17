@@ -218,7 +218,7 @@ catalog:
   vuetify: ^4.0.2
   vuetify-nuxt-module: ^1.0.0-beta.1
   web-push: ^3.6.7
-  worker-timers: ^8.0.30
+  worker-timers: ^8.0.31
   write-excel-file: ^3.0.6
   ws: ^8.19.0
   xmlbuilder2: ^4.0.3
