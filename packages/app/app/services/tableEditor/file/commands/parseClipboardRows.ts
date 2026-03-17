@@ -4,7 +4,6 @@ import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/Data
 import { Row } from "#shared/models/tableEditor/file/Row";
 import { coerceValue } from "@/services/tableEditor/file/column/coerceValue";
 import { DataSourceConfigurationMap } from "@/services/tableEditor/file/dataSource/DataSourceConfigurationMap";
-import { takeOne } from "@esposter/shared";
 
 export const parseClipboardRows = async (
   text: string,
@@ -14,15 +13,14 @@ export const parseClipboardRows = async (
   const { deserialize, mimeType } = DataSourceConfigurationMap[item.type];
   const file = new File([text], "clipboard", { type: mimeType });
   const newDataSource = await deserialize(file, item);
-  const columnByNameMap = new Map(dataSource.columns.map((column) => [column.name.toLowerCase(), column]));
-  return newDataSource.rows.map((newRow) => {
-    const row = new Row();
-    for (const newColumn of newDataSource.columns) {
-      const existingColumn = columnByNameMap.get(newColumn.name.toLowerCase());
-      if (!existingColumn) continue;
-      const value = takeOne(newRow.data, newColumn.name);
-      row.data[existingColumn.name] = coerceValue(value === null ? "" : String(value), existingColumn.type);
-    }
-    return row;
-  });
+  return newDataSource.rows.map((newRow) =>
+    new Row({
+      data: Object.fromEntries(
+        dataSource.columns.map((column) => [
+          column.name,
+          coerceValue(String(newRow.data[column.name] ?? ""), column.type),
+        ]),
+      ),
+    }),
+  );
 };
