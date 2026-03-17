@@ -16,7 +16,9 @@ export class FindReplaceCommand extends ADataSourceCommand<CommandType.FindRepla
   readonly type = CommandType.FindReplace;
 
   get description() {
-    return `Find "${this.findValue}" → "${this.replaceValue}"`;
+    const uniqueRowIndices = new Set(this.affectedCells.map((cell) => cell.rowIndex));
+    const location = uniqueRowIndices.size === 1 ? ` on row ${takeOne(this.affectedCells, 0).rowIndex + 1}` : " (all)";
+    return `Find & Replace "${this.findValue}" → "${this.replaceValue}"${location}`;
   }
 
   private readonly affectedCells: AffectedCell[];

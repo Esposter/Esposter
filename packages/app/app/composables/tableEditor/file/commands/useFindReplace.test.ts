@@ -155,4 +155,28 @@ describe(useFindReplace, () => {
 
     expect(isUndoable.value).toBe(false);
   });
+
+  test("description shows row number when replacing a single occurrence", () => {
+    expect.hasAssertions();
+
+    const ds = makeDataSource([makeColumn("")], [makeRow({ "": " " }), makeRow({ "": 0 })]);
+    setupWithDataSource(ds);
+    const findReplace = useFindReplace();
+    const { undoDescription } = useDataSourceHistory();
+    findReplace(" ", "", { columnName: "", rowIndex: 0 });
+
+    expect(undoDescription.value).toBe(`Find & Replace " " → "" on row 1`);
+  });
+
+  test("description shows all when replacing across multiple rows", () => {
+    expect.hasAssertions();
+
+    const ds = makeDataSource([makeColumn("")], [makeRow({ "": " " }), makeRow({ "": " " })]);
+    setupWithDataSource(ds);
+    const findReplace = useFindReplace();
+    const { undoDescription } = useDataSourceHistory();
+    findReplace(" ", "");
+
+    expect(undoDescription.value).toBe(`Find & Replace " " → "" (all)`);
+  });
 });
