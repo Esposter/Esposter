@@ -6,6 +6,7 @@ import {
   setupEditedItem,
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
+import { KeepDuplicateMode } from "@/models/tableEditor/file/KeepDuplicateMode";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
@@ -33,6 +34,25 @@ describe(useDeleteDuplicateRows, () => {
 
     expect(dataSource.rows).toHaveLength(1);
     expect(takeOne(dataSource.rows, 0).data[""]).toBe(0);
+  });
+
+  test("removes duplicate rows keeping last occurrence", () => {
+    expect.hasAssertions();
+
+    const ds = makeDataSource(
+      [makeColumn("a")],
+      [makeRow({ a: 1 }), makeRow({ a: 2 }), makeRow({ a: 1 })],
+    );
+    const { editedItem } = setupWithDataSource(ds);
+    const deleteDuplicateRows = useDeleteDuplicateRows();
+    deleteDuplicateRows(KeepDuplicateMode.Last);
+    const dataSource = editedItem.value?.dataSource;
+
+    expectToBeDefined(dataSource);
+
+    expect(dataSource.rows).toHaveLength(2);
+    expect(takeOne(dataSource.rows, 0).data.a).toBe(2);
+    expect(takeOne(dataSource.rows, 1).data.a).toBe(1);
   });
 
   test("keeps rows that differ in at least one column", () => {
