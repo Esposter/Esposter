@@ -1,3 +1,4 @@
+import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
@@ -22,18 +23,30 @@ export class DeleteRowsCommand extends ADataSourceCommand<CommandType.DeleteRows
 
   protected doExecute(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
     if (!item.dataSource) return;
-    for (const { index, row } of this.indexedRows) {
+    const indexSet = new Set(this.indexedRows.map(({ index }) => index));
+    for (const { row } of this.indexedRows)
       for (const column of item.dataSource.columns) column.size -= getValueSize(takeOne(row.data, column.name));
-      item.dataSource.rows = item.dataSource.rows.filter((_, i) => i !== index);
-    }
+    item.dataSource.rows = item.dataSource.rows.filter((_, index) => !indexSet.has(index));
   }
 
   protected doUndo(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
     if (!item.dataSource) return;
     const ascendingRows = this.indexedRows.toSorted((a, b) => a.index - b.index);
-    for (const { index, row } of ascendingRows) {
+    for (const { row } of ascendingRows)
       for (const column of item.dataSource.columns) column.size += getValueSize(takeOne(row.data, column.name));
-      item.dataSource.rows = [...item.dataSource.rows.slice(0, index), row, ...item.dataSource.rows.slice(index)];
+    const result: DataSource["rows"] = [];
+    let existingIndex = 0;
+    for (const { index, row } of ascendingRows) {
+      while (result.length < index) {
+        result.push(takeOne(item.dataSource.rows, existingIndex));
+        existingIndex++;
+      }
+      result.push(row);
     }
+    while (existingIndex < item.dataSource.rows.length) {
+      result.push(takeOne(item.dataSource.rows, existingIndex));
+      existingIndex++;
+    }
+    item.dataSource.rows = result;
   }
 }

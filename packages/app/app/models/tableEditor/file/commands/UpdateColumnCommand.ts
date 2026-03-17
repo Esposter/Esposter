@@ -44,10 +44,10 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
     if (!column) return;
     const updatedName = this.updatedColumn.name;
     if (updatedName !== this.originalName)
-      for (const row of item.dataSource.rows)
-        row.data = Object.fromEntries(
-          Object.entries(row.data).map(([key, value]) => [key === this.originalName ? updatedName : key, value]),
-        );
+      for (const row of item.dataSource.rows) {
+        row.data[updatedName] = takeOne(row.data, this.originalName);
+        delete row.data[this.originalName];
+      }
 
     if (
       column.type === ColumnType.Date &&
@@ -56,17 +56,21 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
     ) {
       const oldFormat = column.format;
       const newFormat = this.updatedColumn.format;
+      let size = 0;
       for (const row of item.dataSource.rows) {
         const value = takeOne(row.data, updatedName);
-        if (typeof value !== "string") continue;
-        const parsedValue = dayjs(value, oldFormat, true);
-        if (!parsedValue.isValid()) continue;
-        row.data[updatedName] = parsedValue.format(newFormat);
+        if (typeof value === "string") {
+          const parsedValue = dayjs(value, oldFormat, true);
+          if (parsedValue.isValid()) {
+            const newValue = parsedValue.format(newFormat);
+            row.data[updatedName] = newValue;
+            size += getValueSize(newValue);
+            continue;
+          }
+        }
+        size += getValueSize(value);
       }
-      column.size = item.dataSource.rows.reduce<number>(
-        (total, row) => total + getValueSize(takeOne(row.data, updatedName)),
-        0,
-      );
+      column.size = size;
     }
 
     Object.assign(column, this.updatedColumn);
@@ -77,15 +81,15 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
     const updatedName = this.updatedColumn.name;
     const column = item.dataSource.columns.find(({ name }) => name === updatedName);
     if (!column) return;
-    if (updatedName !== this.originalName)
-      for (const row of item.dataSource.rows)
-        row.data = Object.fromEntries(
-          Object.entries(row.data).map(([key, value]) => [key === updatedName ? this.originalName : key, value]),
-        );
-
-    for (const [index, row] of item.dataSource.rows.entries())
-      row.data[this.originalName] = takeOne(this.originalRowValues, index);
-    column.size = this.originalRowValues.reduce<number>((total, value) => total + getValueSize(value), 0);
+    const nameChanged = updatedName !== this.originalName;
+    let size = 0;
+    for (const [index, row] of item.dataSource.rows.entries()) {
+      if (nameChanged) delete row.data[updatedName];
+      const value = takeOne(this.originalRowValues, index);
+      row.data[this.originalName] = value;
+      size += getValueSize(value);
+    }
+    column.size = size;
     Object.assign(column, this.originalColumn);
   }
 }

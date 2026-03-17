@@ -9,7 +9,8 @@ export const copyToClipboard = async (
   rowIds?: string[],
 ): Promise<void> => {
   const visibleColumns = dataSource.columns.filter((column) => !column.hidden);
-  const rows = rowIds ? dataSource.rows.filter((row) => rowIds.includes(row.id)) : dataSource.rows;
+  const rowIdSet = rowIds ? new Set(rowIds) : null;
+  const rows = rowIdSet ? dataSource.rows.filter((row) => rowIdSet.has(row.id)) : dataSource.rows;
   const filteredDataSource = { ...dataSource, columns: visibleColumns, rows };
   const { mimeType, serialize } = DataSourceConfigurationMap[item.type];
   const blob = await serialize(filteredDataSource, item, mimeType);

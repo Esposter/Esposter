@@ -21,9 +21,9 @@ export const findDuplicateRows = (
     return duplicates;
   }
 
-  const lastIndexByKey = new Map<string, number>();
-  for (const [index, row] of dataSource.rows.entries()) lastIndexByKey.set(getRowKey(row), index);
-  return dataSource.rows
-    .map((row, index) => ({ index, row }))
-    .filter(({ index, row }) => lastIndexByKey.get(getRowKey(row)) !== index);
+  const entries = dataSource.rows.map((row, index) => ({ index, key: getRowKey(row), row }));
+  const lastIndexByKey = new Map(entries.map(({ key, index }) => [key, index]));
+  return entries
+    .filter(({ index, key }) => lastIndexByKey.get(key) !== index)
+    .map(({ index, row }) => ({ index, row }));
 };

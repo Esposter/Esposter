@@ -32,6 +32,7 @@
     "preview": "nuxt preview",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted",
     "start": "node .output/server/index.mjs",
+    "bench": "vitest bench",
     "test": "vitest",
     "tiled:gen": "tsx --tsconfig tsconfig.root.json scripts/tiled/index.ts",
     "typecheck": "nuxt typecheck"

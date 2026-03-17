@@ -24,20 +24,22 @@ export class CreateRowsCommand extends ADataSourceCommand<CommandType.CreateRows
 
   protected doExecute(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
     if (!item.dataSource) return;
-    for (const [offset, row] of this.rows.entries()) {
-      const index = this.startIndex + offset;
+    for (const row of this.rows)
       for (const column of item.dataSource.columns) column.size += getValueSize(takeOne(row.data, column.name));
-      item.dataSource.rows = [...item.dataSource.rows.slice(0, index), row, ...item.dataSource.rows.slice(index)];
-    }
+    item.dataSource.rows = [
+      ...item.dataSource.rows.slice(0, this.startIndex),
+      ...this.rows,
+      ...item.dataSource.rows.slice(this.startIndex),
+    ];
   }
 
   protected doUndo(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
     if (!item.dataSource) return;
-    for (let offset = this.rows.length - 1; offset >= 0; offset--) {
-      const index = this.startIndex + offset;
-      const row = takeOne(item.dataSource.rows, index);
+    for (const row of this.rows)
       for (const column of item.dataSource.columns) column.size -= getValueSize(takeOne(row.data, column.name));
-      item.dataSource.rows = item.dataSource.rows.filter((_, i) => i !== index);
-    }
+    item.dataSource.rows = [
+      ...item.dataSource.rows.slice(0, this.startIndex),
+      ...item.dataSource.rows.slice(this.startIndex + this.rows.length),
+    ];
   }
 }
