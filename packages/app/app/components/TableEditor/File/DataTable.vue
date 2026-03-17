@@ -2,6 +2,7 @@
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { Row } from "#shared/models/tableEditor/file/Row";
 
+import { copyToClipboard } from "@/services/tableEditor/file/commands/copyToClipboard";
 import { DRAG_HANDLE_CLASS } from "@/services/tableEditor/file/constants";
 import { takeOne } from "@esposter/shared";
 import { VueDraggable } from "vue-draggable-plus";
@@ -84,6 +85,18 @@ watch([currentOccurrence, itemsPerPage], async ([newCurrentOccurrence, newItemsP
           <v-toolbar-title pl-3>
             {{ selectedRowIds.length }} row{{ selectedRowIds.length === 1 ? "" : "s" }} selected
           </v-toolbar-title>
+          <v-tooltip text="Copy Selected Rows">
+            <template #activator="{ props: tooltipProps }">
+              <v-btn
+                m-0
+                icon="mdi-content-copy"
+                size="small"
+                tile
+                :="tooltipProps"
+                @click="copyToClipboard(dataSource, selectedRowIds)"
+              />
+            </template>
+          </v-tooltip>
           <StyledConfirmDeleteDialogButton
             :card-props="{
               title: `Delete ${selectedRowIds.length} Row${selectedRowIds.length === 1 ? '' : 's'}`,

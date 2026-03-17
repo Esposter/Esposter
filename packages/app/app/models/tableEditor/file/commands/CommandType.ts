@@ -1,6 +1,7 @@
 export enum CommandType {
   CreateColumn = "CreateColumn",
   CreateRow = "CreateRow",
+  CreateRows = "CreateRows",
   DeleteColumn = "DeleteColumn",
   DeleteColumns = "DeleteColumns",
   DeleteRow = "DeleteRow",
