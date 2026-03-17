@@ -2,7 +2,7 @@
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
-import { DataSourceTypeItemCategoryDefinitions } from "@/services/tableEditor/file/DataSourceTypeItemCategoryDefinitions";
+import { DataSourceTypeItemCategoryDefinitions } from "@/services/tableEditor/file/dataSource/DataSourceTypeItemCategoryDefinitions";
 import { mergeProps } from "vue";
 
 interface ExportButtonProps {

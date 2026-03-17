@@ -5,9 +5,9 @@ import { Column } from "#shared/models/tableEditor/file/Column";
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
 import { Row } from "#shared/models/tableEditor/file/Row";
-import { coerceValue } from "@/services/tableEditor/file/coerceValue";
-import { inferColumnType } from "@/services/tableEditor/file/inferColumnType";
-import { inferDateFormat } from "@/services/tableEditor/file/inferDateFormat";
+import { coerceValue } from "@/services/tableEditor/file/column/coerceValue";
+import { inferColumnType } from "@/services/tableEditor/file/column/inferColumnType";
+import { inferDateFormat } from "@/services/tableEditor/file/column/inferDateFormat";
 import { takeOne } from "@esposter/shared";
 
 export const buildDataSource = (

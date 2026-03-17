@@ -1,5 +1,5 @@
 import { NormalizeStringMode } from "@/models/tableEditor/file/NormalizeStringMode";
-import { applyNormalizeStringMode } from "@/services/tableEditor/file/applyNormalizeStringMode";
+import { applyNormalizeStringMode } from "@/services/tableEditor/file/commands/applyNormalizeStringMode";
 import { describe, expect, test } from "vitest";
 
 describe(applyNormalizeStringMode, () => {

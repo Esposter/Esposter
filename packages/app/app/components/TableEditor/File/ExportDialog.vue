@@ -2,8 +2,8 @@
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 import type { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 
-import { DataSourceConfigurationMap } from "@/services/tableEditor/file/DataSourceConfigurationMap";
-import { filterDataSourceColumns } from "@/services/tableEditor/file/filterDataSourceColumns";
+import { DataSourceConfigurationMap } from "@/services/tableEditor/file/dataSource/DataSourceConfigurationMap";
+import { filterDataSourceColumns } from "@/services/tableEditor/file/dataSource/filterDataSourceColumns";
 
 interface ExportDialogProps {
   dataSourceType: DataSourceType;

@@ -6,7 +6,7 @@ import { CsvDelimiter } from "#shared/models/tableEditor/file/csv/CsvDelimiter";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { Row } from "#shared/models/tableEditor/file/Row";
 import { serializeCsv } from "@/services/tableEditor/file/csv/serializeCsv";
-import { DataSourceConfigurationMap } from "@/services/tableEditor/file/DataSourceConfigurationMap";
+import { DataSourceConfigurationMap } from "@/services/tableEditor/file/dataSource/DataSourceConfigurationMap";
 import { describe, expect, test } from "vitest";
 
 describe(serializeCsv, () => {

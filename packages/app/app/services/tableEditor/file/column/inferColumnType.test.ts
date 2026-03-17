@@ -1,7 +1,7 @@
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { DATE_FORMATS } from "#shared/models/tableEditor/file/constants";
 import { dayjs } from "#shared/services/dayjs";
-import { inferColumnType } from "@/services/tableEditor/file/inferColumnType";
+import { inferColumnType } from "@/services/tableEditor/file/column/inferColumnType";
 import { describe, expect, test } from "vitest";
 
 describe(inferColumnType, () => {

@@ -7,7 +7,7 @@ import { ColumnTypeFormSchemaMap } from "#shared/models/tableEditor/file/ColumnT
 import { CreateFormSchemaMap } from "#shared/models/tableEditor/file/CreateFormSchemaMap";
 import { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
-import { ColumnTypeItemCategoryDefinitions } from "@/services/tableEditor/file/ColumnTypeItemCategoryDefinitions";
+import { ColumnTypeItemCategoryDefinitions } from "@/services/tableEditor/file/column/ColumnTypeItemCategoryDefinitions";
 import { takeOne } from "@esposter/shared";
 import { Vjsf } from "@koumoul/vjsf";
 

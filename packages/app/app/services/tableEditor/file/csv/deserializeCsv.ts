@@ -2,8 +2,8 @@ import type { CsvDataSourceItem } from "#shared/models/tableEditor/file/csv/CsvD
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
-import { buildDataSource } from "@/services/tableEditor/file/buildDataSource";
 import { deserializeCsvLine } from "@/services/tableEditor/file/csv/deserializeCsvLine";
+import { buildDataSource } from "@/services/tableEditor/file/dataSource/buildDataSource";
 import { takeOne } from "@esposter/shared";
 
 export const deserializeCsv = async (file: File, item: CsvDataSourceItem): Promise<DataSource> => {
