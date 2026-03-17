@@ -11,7 +11,7 @@ export const useFindReplace = () => {
   const { push } = useDataSourceHistory();
 
   return (findValue: string, replaceValue: string, specificCell?: { columnName: string; rowIndex: number }) => {
-    if (!editedItem.value?.dataSource || !findValue) return;
+    if (!editedItem.value?.dataSource || !findValue || findValue === replaceValue) return;
     const affectedCells = findMatchingCells(editedItem.value.dataSource, findValue, specificCell);
     if (affectedCells.length === 0) return;
     const command = new FindReplaceCommand(findValue, replaceValue, affectedCells);

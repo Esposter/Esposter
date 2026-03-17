@@ -3,6 +3,7 @@ import type { AffectedCell } from "@/models/tableEditor/file/commands/AffectedCe
 
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
+import { coerceValue } from "@/services/tableEditor/file/coerceValue";
 import { getValueSize } from "@/services/tableEditor/file/getValueSize";
 import { takeOne } from "@esposter/shared";
 
@@ -32,7 +33,7 @@ export class FindReplaceCommand extends ADataSourceCommand<CommandType.FindRepla
       const row = takeOne(item.dataSource.rows, rowIndex);
       const column = item.dataSource.columns.find((column) => column.name === columnName);
       if (!column) continue;
-      const newValue = String(originalValue).replaceAll(this.findValue, this.replaceValue);
+      const newValue = coerceValue(String(originalValue).replaceAll(this.findValue, this.replaceValue), column.type);
       column.size += getValueSize(newValue) - getValueSize(takeOne(row.data, columnName));
       row.data[columnName] = newValue;
     }

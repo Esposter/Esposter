@@ -2,6 +2,7 @@ import { expectToBeDefined } from "#shared/test/expectToBeDefined";
 import {
   makeColumn,
   makeDataSource,
+  makeNumberColumn,
   makeRow,
   setupEditedItem,
   setupWithDataSource,
@@ -106,6 +107,36 @@ describe(useFindReplace, () => {
 
     expect(takeOne(dataSource.rows, 0).data[""]).toBe("");
     expect(takeOne(dataSource.rows, 0).data[" "]).toBe(" ");
+  });
+
+  test("no-op when find value equals replace value", () => {
+    expect.hasAssertions();
+
+    const ds = makeDataSource([makeColumn("")], [makeRow({ "": " " })]);
+    const { editedItem } = setupWithDataSource(ds);
+    const findReplace = useFindReplace();
+    const { isUndoable } = useDataSourceHistory();
+    findReplace(" ", " ");
+    const dataSource = editedItem.value?.dataSource;
+
+    expectToBeDefined(dataSource);
+
+    expect(takeOne(dataSource.rows, 0).data[""]).toBe(" ");
+    expect(isUndoable.value).toBe(false);
+  });
+
+  test("preserves number type after replace", () => {
+    expect.hasAssertions();
+
+    const ds = makeDataSource([makeNumberColumn("")], [makeRow({ "": 1 })]);
+    const { editedItem } = setupWithDataSource(ds);
+    const findReplace = useFindReplace();
+    findReplace("1", "2");
+    const dataSource = editedItem.value?.dataSource;
+
+    expectToBeDefined(dataSource);
+
+    expect(takeOne(dataSource.rows, 0).data[""]).toBe(2);
   });
 
   test("no-op when find value is empty", () => {

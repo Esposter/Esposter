@@ -46,7 +46,7 @@ const disabled = computed(() => !(errorIcon.value?.isValid ?? true) || isEqual.v
         :schema
         :edited-value
       />
-      <v-tooltip text="Reset to default values">
+      <v-tooltip text="Reset changes">
         <template #activator="{ props: tooltipProps }">
           <v-btn :disabled="isEqual" text="Reset" :="tooltipProps" @click="emit('reset')" />
         </template>
