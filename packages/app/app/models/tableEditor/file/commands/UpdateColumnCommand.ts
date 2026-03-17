@@ -87,10 +87,17 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
     const updatedName = this.updatedColumn.name;
     const column = item.dataSource.columns.find(({ name }) => name === updatedName);
     if (!column) return;
-    const nameChanged = updatedName !== this.originalName;
+    const newColumnNames =
+      updatedName === this.originalName
+        ? null
+        : item.dataSource.columns.map(({ name }) => (name === updatedName ? this.originalName : name));
     for (const [index, row] of item.dataSource.rows.entries()) {
-      if (nameChanged) delete row.data[updatedName];
-      row.data[this.originalName] = takeOne(this.originalRowValues, index);
+      const value = takeOne(this.originalRowValues, index);
+      if (newColumnNames) {
+        const newData: typeof row.data = {};
+        for (const name of newColumnNames) newData[name] = name === this.originalName ? value : takeOne(row.data, name);
+        row.data = newData;
+      } else row.data[this.originalName] = value;
     }
     Object.assign(column, this.originalColumn);
   }
