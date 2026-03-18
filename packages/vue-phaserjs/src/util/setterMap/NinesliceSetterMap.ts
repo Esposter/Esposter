@@ -1,5 +1,5 @@
-import type { NineSliceConfiguration } from "@/models/configuration/NineSliceConfiguration";
-import type { NineSliceEventEmitsOptions } from "@/models/emit/NineSliceEventEmitsOptions";
+import type { NinesliceConfiguration } from "@/models/configuration/NinesliceConfiguration";
+import type { NinesliceEventEmitsOptions } from "@/models/emit/NinesliceEventEmitsOptions";
 import type { SetterMap } from "@/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
@@ -15,7 +15,7 @@ import { TransformSetterMap } from "@/util/setterMap/components/TransformSetterM
 import { VisibleSetterMap } from "@/util/setterMap/components/VisibleSetterMap";
 import { GlobalSetterMap } from "@/util/setterMap/global/GlobalSetterMap";
 
-export const NineSliceSetterMap: SetterMap<NineSliceConfiguration, GameObjects.NineSlice, NineSliceEventEmitsOptions> =
+export const NinesliceSetterMap: SetterMap<NinesliceConfiguration, GameObjects.NineSlice, NinesliceEventEmitsOptions> =
   {
     height: (gameObject) => (value) => {
       if (value === undefined) return;

@@ -12,7 +12,7 @@ import type { GlobalConfiguration } from "@/models/configuration/global/GlobalCo
 import type { Types } from "phaser";
 import type { Except } from "type-fest";
 
-export interface NineSliceConfiguration
+export interface NinesliceConfiguration
   extends
     AlphaSingleConfiguration,
     BlendModeConfiguration,

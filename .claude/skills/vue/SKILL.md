@@ -42,6 +42,7 @@ description: Esposter Vue 3 SFC conventions — macro ordering, template pattern
 
 ## Template Conventions
 
+- **No bare function references in `@event` bindings** — always wrap in an explicit arrow function: `@complete="(scene, tilemap) => useCreateTilemapAssets(scene, tilemap)"` not `@complete="useCreateTilemapAssets"`. Bare references cause accidental argument forwarding (extra Vue-internal args get passed). This mirrors the TypeScript rule: never pass a naked function reference.
 - **`v-for` destructuring** — always destructure `v-for` bindings when properties are accessed in the template: `v-for="{ value, icon, title } of items"` not `v-for="item of items"` + `item.value`. Only keep a full reference when the whole object is needed (e.g. passed as a prop or stored in a ref). In that case, name the loop variable to match the prop it will be passed to, enabling `:propName` shorthand.
 - **Prop shorthand naming** — name local variables to match their target prop so Vue's `:propName` shorthand works without explicit assignment. For example, if the prop is `dataSourceType`, the local variable must also be `dataSourceType`.
 - **`#activator` always first** — in components that use both `#activator` and other slots (e.g. `v-tooltip`, `v-menu`), always place the `#activator` template as the first child.
