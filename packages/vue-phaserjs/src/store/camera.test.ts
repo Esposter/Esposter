@@ -12,13 +12,14 @@ describe(useCameraStore, () => {
     setActivePinia(getTestPinia());
 
     const cameraStore = useCameraStore();
-    const inputStore = useInputStore();
     const { isFading } = storeToRefs(cameraStore);
+    const { fadeOut } = cameraStore;
+    const inputStore = useInputStore();
     const scene = startTestScene(sceneKey);
     const fadeOutSpy = vi.spyOn(scene.cameras.main, "fadeOut");
 
     inputStore.isInputActive = true;
-    cameraStore.fadeOut(scene, 500);
+    fadeOut(scene, 500);
 
     expect(isFading.value).toBe(true);
     expect(inputStore.isInputActive).toBe(false);
@@ -33,13 +34,14 @@ describe(useCameraStore, () => {
     setActivePinia(getTestPinia());
 
     const cameraStore = useCameraStore();
-    const inputStore = useInputStore();
     const { isFading } = storeToRefs(cameraStore);
+    const { fadeIn } = cameraStore;
+    const inputStore = useInputStore();
     const scene = startTestScene(sceneKey);
     const fadeInSpy = vi.spyOn(scene.cameras.main, "fadeIn");
 
     inputStore.isInputActive = true;
-    cameraStore.fadeIn(scene, 500);
+    fadeIn(scene, 500);
 
     expect(isFading.value).toBe(true);
     expect(inputStore.isInputActive).toBe(false);
