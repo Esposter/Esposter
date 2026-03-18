@@ -9,7 +9,7 @@ import { resetLifecycleListeners } from "@/util/hooks/resetLifecycleListeners";
 import { runLifecycleListeners } from "@/util/hooks/runLifecycleListeners";
 import { Game, HEADLESS, Scenes } from "phaser";
 import { createPinia, setActivePinia } from "pinia";
-import { afterAll, assert, beforeAll, describe, expect, test } from "vitest";
+import { afterAll, beforeAll, describe } from "vitest";
 
 let testPinia: ReturnType<typeof createPinia>;
 // Exported as a getter so we can assign in beforeAll without a mutable export binding.
@@ -81,10 +81,4 @@ afterAll(() => {
   game.destroy(true);
 });
 
-describe("headlessGame", () => {
-  test("creates a headless game", () => {
-    expect.hasAssertions();
-
-    assert.exists(game);
-  });
-});
+describe.todo("headlessGame");

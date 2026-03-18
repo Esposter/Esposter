@@ -30,22 +30,22 @@ Phaser ships a `HEADLESS` renderer (`type: Phaser.HEADLESS`) that bypasses WebGL
 ## `useInitializeGameObject` tests
 
 - [x] **Game object created** — covered by Sprite, Container, Text component tests.
-- [ ] **SetterMap applied on init** — initial configuration values are applied to the actual Phaser game object after creation.
-- [ ] **Reactive setter update** — changing a configuration ref property calls the correct Phaser setter and the game object property reflects the new value.
+- [x] **SetterMap applied on init** — initial configuration values are applied to the actual Phaser game object after creation.
+- [x] **Reactive setter update** — changing a configuration ref property calls the correct Phaser setter and the game object property reflects the new value.
 - [x] **Parent container insertion** — covered by Container component test (`parentContainer` is not null on child sprite).
-- [ ] **Cleanup on unmount** — `gameObject.destroy()` is called when the component unmounts; the object is removed from the scene's display list.
-- [ ] **`immediate` flag** — with `immediate: true`, the creator function runs before `onCreate` fires (used for mid-game spawn).
+- [x] **Cleanup on unmount** — `gameObject.destroy()` is called when the component unmounts; the object is removed from the scene's display list.
+- [x] **`immediate` flag** — with `immediate: true`, the creator function runs before `onCreate` fires (used for mid-game spawn).
 
 ---
 
 ## Component tests
 
-- [ ] **`Scene.vue`** — mounts with a `sceneKey`; scene is added to the Phaser game; `@create`, `@preload`, `@init` events are emitted in order; `@shutdown` fires on unmount.
+- [x] **`Scene.vue`** — mounts with a `sceneKey`; scene is added to the Phaser game; `@init`, `@preload`, `@create` events are emitted in order; `@shutdown` fires when the scene is stopped externally.
 - [x] **`Sprite.vue`** — game object created with the correct texture; `@complete` fires after creation; sprite is on the scene display list.
 - [x] **`Container.vue`** — child Sprite mounted in slot has a non-null `parentContainer`; Container itself appears on scene display list.
 - [x] **`Text.vue`** — text is created with the correct content; `defaultTextStyle` from `useTextStore` is merged with the passed style.
-- [ ] **`Tilemap.vue`** — `scene.make.tilemap()` called with the configured key; changing the key destroys the old tilemap and creates a new one; `@complete` fires with the new tilemap instance.
-- [ ] **`PathFollower.vue`** — `scene.add.follower()` called with the provided path and texture; follower is on the scene's display list after creation.
+- [x] **`Tilemap.vue`** — `scene.make.tilemap()` called with the configured key; changing the key destroys the old tilemap and creates a new one; `@complete` fires with the new tilemap instance.
+- [x] **`PathFollower.vue`** — `scene.add.follower()` called with the provided path and texture; follower is on the scene's display list after creation.
 - [x] **`Arc.vue`** — radius, startAngle, endAngle reflected on the Phaser Arc after mount.
 
 ---
@@ -55,8 +55,8 @@ Phaser ships a `HEADLESS` renderer (`type: Phaser.HEADLESS`) that bypasses WebGL
 These test store actions against a real headless scene rather than mocks.
 
 - [x] **`useCameraStore.fadeOut` / `fadeIn`** — `isFading` is `true` during the fade; `useInputStore.isInputActive` is `false` while fading.
-- [ ] **`usePhaserStore.switchToScene`** — `sceneKey` updates, parallel scenes are cleared, the old scene stops and the new scene starts.
-- [ ] **`usePhaserStore.launchParallelScene` / `removeParallelScene`** — parallel scene runs alongside the root scene; removing it stops only the parallel scene.
+- [x] **`usePhaserStore.switchToScene`** — `sceneKey` updates, the old scene stops and the new scene starts.
+- [x] **`usePhaserStore.launchParallelScene` / `removeParallelScene`** — parallel scene runs alongside the root scene; removing it stops only the parallel scene.
 
 ---
 

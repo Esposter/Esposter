@@ -1,6 +1,6 @@
 import { Row } from "#shared/models/tableEditor/file/Row";
 import { setupEditedItem, setupWithDataSource } from "@/composables/tableEditor/file/commands/testUtils.test";
-import { takeOne } from "@esposter/shared"
+import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeEach, describe, expect, test } from "vitest";
 
