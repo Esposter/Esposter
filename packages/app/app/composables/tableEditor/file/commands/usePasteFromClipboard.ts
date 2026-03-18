@@ -14,7 +14,7 @@ export const usePasteFromClipboard = () => {
     if (!editedItem.value?.dataSource) return;
     try {
       const text = await navigator.clipboard.readText();
-      const rows = parseClipboardRows(text, editedItem.value.dataSource, editedItem.value);
+      const rows = parseClipboardRows(text, editedItem.value.dataSource);
       createRows(rows);
     } catch (error) {
       createAlert(error instanceof Error ? error.message : "Failed to paste from clipboard", "error");
