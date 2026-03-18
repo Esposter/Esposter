@@ -1,13 +1,13 @@
 import { Column } from "#shared/models/tableEditor/file/Column";
-import { expectToBeDefined, takeOne } from "@esposter/shared";
 import {
   makeDataSource,
   makeRow,
   setupEditedItem,
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
+import { takeOne } from "@esposter/shared"
 import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { assert, beforeEach, describe, expect, test } from "vitest";
 
 describe(useToggleColumnVisibility, () => {
   beforeEach(() => {
@@ -25,7 +25,7 @@ describe(useToggleColumnVisibility, () => {
     toggleColumnVisibility(column.id);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.columns, 0).hidden).toBe(true);
   });
@@ -39,7 +39,7 @@ describe(useToggleColumnVisibility, () => {
     toggleColumnVisibility(hiddenColumn.id);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.columns, 0).hidden).toBe(false);
   });
@@ -55,7 +55,7 @@ describe(useToggleColumnVisibility, () => {
     undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.columns, 0).hidden).toBe(false);
   });
@@ -72,7 +72,7 @@ describe(useToggleColumnVisibility, () => {
     redo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.columns, 0).hidden).toBe(true);
   });

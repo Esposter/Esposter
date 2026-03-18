@@ -1,5 +1,4 @@
 import { Column } from "#shared/models/tableEditor/file/Column";
-import { expectToBeDefined, takeOne } from "@esposter/shared";
 import {
   makeColumn,
   makeDataSource,
@@ -7,8 +6,9 @@ import {
   setupEditedItem,
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
+import { takeOne } from "@esposter/shared"
 import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { assert, beforeEach, describe, expect, test } from "vitest";
 
 describe(useReorderColumns, () => {
   beforeEach(() => {
@@ -27,7 +27,7 @@ describe(useReorderColumns, () => {
     reorderColumns(newColumns);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.columns, 0).name).toBe(" ");
     expect(takeOne(dataSource.columns, 1).name).toBe("");
@@ -45,7 +45,7 @@ describe(useReorderColumns, () => {
     undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.columns, 0).name).toBe("");
     expect(takeOne(dataSource.columns, 1).name).toBe(" ");
@@ -64,7 +64,7 @@ describe(useReorderColumns, () => {
     redo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.columns, 0).name).toBe(" ");
     expect(takeOne(dataSource.columns, 1).name).toBe("");
@@ -84,7 +84,7 @@ describe(useReorderColumns, () => {
     reorderColumns(newColumns);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.columns, 0).name).toBe("b");
     expect(takeOne(dataSource.columns, 1).name).toBe("a");
@@ -105,7 +105,7 @@ describe(useReorderColumns, () => {
     reorderColumns(newColumns);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.columns, 0).name).toBe("b");
     expect(takeOne(dataSource.columns, 1).name).toBe("c");

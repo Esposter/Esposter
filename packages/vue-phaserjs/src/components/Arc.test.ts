@@ -4,9 +4,8 @@ import type { GameObjects } from "phaser";
 import Arc from "@/components/Arc.vue";
 import { getTestPinia, startTestScene } from "@/test/fixtures/headlessGame.test";
 import { InjectionKeyMap } from "@/util/InjectionKeyMap";
-import { expectToBeDefined } from "@esposter/shared";
 import { mount } from "@vue/test-utils";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 describe("arc", () => {
   const sceneKey = "sceneKey";
@@ -33,7 +32,7 @@ describe("arc", () => {
 
     startTestScene(sceneKey);
 
-    expectToBeDefined(capturedArc);
+    assert.exists(capturedArc);
 
     expect(capturedArc.radius).toBe(0);
     expect(capturedArc.startAngle).toBe(0);

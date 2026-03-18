@@ -1,14 +1,14 @@
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 
-import { expectToBeDefined, takeOne } from "@esposter/shared";
 import {
   makeDataSource,
   setupEditedItem,
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { useTableEditorStore } from "@/store/tableEditor";
+import { takeOne } from "@esposter/shared"
 import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { assert, beforeEach, describe, expect, test } from "vitest";
 
 describe(useSetDataSource, () => {
   beforeEach(() => {
@@ -26,7 +26,7 @@ describe(useSetDataSource, () => {
     setDataSource(dataSource);
     const editedItemValue = editedItem.value;
 
-    expectToBeDefined(editedItemValue);
+    assert.exists(editedItemValue);
 
     expect(editedItemValue.dataSource).toStrictEqual(dataSource);
   });

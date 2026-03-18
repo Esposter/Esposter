@@ -1,5 +1,4 @@
 import { Row } from "#shared/models/tableEditor/file/Row";
-import { expectToBeDefined, takeOne } from "@esposter/shared";
 import {
   makeColumn,
   makeDataSource,
@@ -7,8 +6,9 @@ import {
   setupEditedItem,
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
+import { takeOne } from "@esposter/shared"
 import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { assert, beforeEach, describe, expect, test } from "vitest";
 
 describe(useReorderRows, () => {
   beforeEach(() => {
@@ -27,7 +27,7 @@ describe(useReorderRows, () => {
     reorderRows(newRows);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows, 0).data[""]).toBe(2);
     expect(takeOne(dataSource.rows, 1).data[""]).toBe(0);
@@ -45,7 +45,7 @@ describe(useReorderRows, () => {
     undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows, 0).data[""]).toBe(0);
     expect(takeOne(dataSource.rows, 1).data[""]).toBe(2);
@@ -64,7 +64,7 @@ describe(useReorderRows, () => {
     redo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows, 0).data[""]).toBe(2);
     expect(takeOne(dataSource.rows, 1).data[""]).toBe(0);
@@ -81,7 +81,7 @@ describe(useReorderRows, () => {
     reorderRows(newRows);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows, 0).data[""]).toBe(2);
     expect(takeOne(dataSource.rows, 1).data[""]).toBe(0);
@@ -99,7 +99,7 @@ describe(useReorderRows, () => {
     reorderRows(newRows);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows, 0).data[""]).toBe(1);
     expect(takeOne(dataSource.rows, 1).data[""]).toBe(2);
@@ -128,7 +128,7 @@ describe(useReorderRows, () => {
     reorderRows(newRows);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows, 0).data[""]).toBe(0);
     expect(takeOne(dataSource.rows, 1).data[""]).toBe(1);
@@ -160,7 +160,7 @@ describe(useReorderRows, () => {
     reorderRows(newRows);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows, 0).data[""]).toBe(0);
     expect(takeOne(dataSource.rows, 1).data[""]).toBe(1);

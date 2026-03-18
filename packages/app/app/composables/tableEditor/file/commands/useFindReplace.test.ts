@@ -1,4 +1,3 @@
-import { expectToBeDefined, takeOne } from "@esposter/shared";
 import {
   makeColumn,
   makeDataSource,
@@ -7,8 +6,9 @@ import {
   setupEditedItem,
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
+import { takeOne } from "@esposter/shared"
 import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { assert, beforeEach, describe, expect, test } from "vitest";
 
 describe(useFindReplace, () => {
   beforeEach(() => {
@@ -29,7 +29,7 @@ describe(useFindReplace, () => {
     findReplace(" ", "");
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows, 0).data[""]).toBe("");
     expect(takeOne(dataSource.rows, 0).data[" "]).toBe("");
@@ -46,7 +46,7 @@ describe(useFindReplace, () => {
     findReplace(" ", "");
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows, 0).data[""]).toBe("a");
   });
@@ -60,13 +60,13 @@ describe(useFindReplace, () => {
     const { undo } = useDataSourceHistory();
     const editedItemValue = editedItem.value;
 
-    expectToBeDefined(editedItemValue);
+    assert.exists(editedItemValue);
 
     findReplace(" ", "");
     undo(editedItemValue);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows, 0).data[""]).toBe(" ");
     expect(takeOne(dataSource.rows, 1).data[""]).toBe(" ");
@@ -81,14 +81,14 @@ describe(useFindReplace, () => {
     const { redo, undo } = useDataSourceHistory();
     const editedItemValue = editedItem.value;
 
-    expectToBeDefined(editedItemValue);
+    assert.exists(editedItemValue);
 
     findReplace(" ", "");
     undo(editedItemValue);
     redo(editedItemValue);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows, 0).data[""]).toBe("");
   });
@@ -102,7 +102,7 @@ describe(useFindReplace, () => {
     findReplace(" ", "", { columnName: "", rowIndex: 0 });
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows, 0).data[""]).toBe("");
     expect(takeOne(dataSource.rows, 0).data[" "]).toBe(" ");
@@ -118,7 +118,7 @@ describe(useFindReplace, () => {
     findReplace(" ", " ");
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows, 0).data[""]).toBe(" ");
     expect(isUndoable.value).toBe(false);
@@ -133,7 +133,7 @@ describe(useFindReplace, () => {
     findReplace("1", "2");
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows, 0).data[""]).toBe(2);
   });
@@ -148,7 +148,7 @@ describe(useFindReplace, () => {
     findReplace("", "b");
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows, 0).data[""]).toBe(" ");
     expect(isUndoable.value).toBe(false);

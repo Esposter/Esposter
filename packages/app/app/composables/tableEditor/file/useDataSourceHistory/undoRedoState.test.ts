@@ -1,7 +1,7 @@
-import { expectToBeDefined, takeOne } from "@esposter/shared";
 import { setupWithDataSource } from "@/composables/tableEditor/file/commands/testUtils.test";
+import { takeOne } from "@esposter/shared"
 import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { assert, beforeEach, describe, expect, test } from "vitest";
 
 describe("isUndoable and isRedoable state transitions", () => {
   beforeEach(() => {
@@ -54,7 +54,7 @@ describe("isUndoable and isRedoable state transitions", () => {
     undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(dataSource.rows).toHaveLength(rowCountBefore);
     expect(isUndoable.value).toBe(false);
@@ -69,7 +69,7 @@ describe("isUndoable and isRedoable state transitions", () => {
     redo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(dataSource.rows).toHaveLength(rowCountBefore);
     expect(isRedoable.value).toBe(false);

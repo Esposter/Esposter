@@ -16,18 +16,31 @@ Object.defineProperty(HTMLImageElement.prototype, "src", {
 });
 // Happy-dom does not implement canvas rendering — stub getContext before Phaser loads
 // To satisfy Phaser's CanvasFeatures detection which runs at module initialisation time
-HTMLCanvasElement.prototype.getContext = function (contextId: string) {
-  if (contextId === "2d") {
-    const imageData = { data: new Uint8ClampedArray(4) };
-    return {
-      clearRect: () => {},
-      drawImage: () => {},
-      fillRect: () => {},
-      fillStyle: "",
-      getImageData: () => imageData,
-      globalCompositeOperation: "",
-      putImageData: () => {},
-    } as unknown as CanvasRenderingContext2D;
-  }
-  return null;
-} as typeof HTMLCanvasElement.prototype.getContext;
+HTMLCanvasElement.prototype.getContext = ((contextId: string) =>
+  contextId === "2d"
+    ? ({
+        beginPath: () => {},
+        clearRect: () => {},
+        clip: () => {},
+        drawImage: () => {},
+        fillRect: () => {},
+        fillStyle: "",
+        fillText: () => {},
+        font: "",
+        getImageData: () => ({ data: new Uint8ClampedArray(4) }),
+        globalCompositeOperation: "",
+        measureText: () => ({ actualBoundingBoxAscent: 0, actualBoundingBoxDescent: 0, width: 0 }),
+        putImageData: () => {},
+        restore: () => {},
+        rotate: () => {},
+        save: () => {},
+        scale: () => {},
+        setLineDash: () => {},
+        setTransform: () => {},
+        stroke: () => {},
+        strokeRect: () => {},
+        strokeText: () => {},
+        transform: () => {},
+        translate: () => {},
+      } as unknown as CanvasRenderingContext2D)
+    : null) as typeof HTMLCanvasElement.prototype.getContext;

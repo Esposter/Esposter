@@ -1,8 +1,8 @@
 import { Row } from "#shared/models/tableEditor/file/Row";
-import { expectToBeDefined, takeOne, toRawDeep } from "@esposter/shared";
 import { setupEditedItem, setupWithDataSource } from "@/composables/tableEditor/file/commands/testUtils.test";
+import { takeOne, toRawDeep } from "@esposter/shared"
 import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { assert, beforeEach, describe, expect, test } from "vitest";
 
 describe(useUpdateRow, () => {
   beforeEach(() => {
@@ -20,7 +20,7 @@ describe(useUpdateRow, () => {
     updateRow(new Row(Object.assign(structuredClone(toRawDeep(originalRow)), { data: { "": 10, " ": 11 } })));
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows, 0).data[""]).toBe(10);
     expect(takeOne(dataSource.rows, 0).data[" "]).toBe(11);
@@ -37,7 +37,7 @@ describe(useUpdateRow, () => {
     undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows, 0).data[""]).toBe(0);
     expect(takeOne(dataSource.rows, 0).data[" "]).toBe(1);
@@ -55,7 +55,7 @@ describe(useUpdateRow, () => {
     redo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows, 0).data[""]).toBe(10);
   });
@@ -108,7 +108,7 @@ describe(useUpdateRow, () => {
     undo(editedItem.value);
     const dataSourceAfterUndo = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSourceAfterUndo);
+    assert.exists(dataSourceAfterUndo);
 
     expect(takeOne(dataSourceAfterUndo.rows, 0).data[""]).toBe(0);
     expect(takeOne(dataSourceAfterUndo.rows, 0).data[" "]).toBe(1);
@@ -116,7 +116,7 @@ describe(useUpdateRow, () => {
     redo(editedItem.value);
     const dataSourceAfterRedo = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSourceAfterRedo);
+    assert.exists(dataSourceAfterRedo);
 
     expect(takeOne(dataSourceAfterRedo.rows, 0).data[""]).toBe(10);
     expect(takeOne(dataSourceAfterRedo.rows, 0).data[" "]).toBe(11);

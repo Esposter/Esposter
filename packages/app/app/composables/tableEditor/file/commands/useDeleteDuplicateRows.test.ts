@@ -1,4 +1,3 @@
-import { expectToBeDefined, takeOne } from "@esposter/shared";
 import {
   makeColumn,
   makeDataSource,
@@ -7,8 +6,9 @@ import {
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { KeepDuplicateMode } from "@/models/tableEditor/file/KeepDuplicateMode";
+import { takeOne } from "@esposter/shared"
 import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { assert, beforeEach, describe, expect, test } from "vitest";
 
 describe(useDeleteDuplicateRows, () => {
   beforeEach(() => {
@@ -29,7 +29,7 @@ describe(useDeleteDuplicateRows, () => {
     deleteDuplicateRows();
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(dataSource.rows).toHaveLength(1);
     expect(takeOne(dataSource.rows, 0).data[""]).toBe(0);
@@ -44,7 +44,7 @@ describe(useDeleteDuplicateRows, () => {
     deleteDuplicateRows(KeepDuplicateMode.Last);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(dataSource.rows).toHaveLength(2);
     expect(takeOne(dataSource.rows, 0).data.a).toBe(2);
@@ -64,7 +64,7 @@ describe(useDeleteDuplicateRows, () => {
     deleteDuplicateRows();
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(dataSource.rows).toHaveLength(2);
     expect(isUndoable.value).toBe(false);
@@ -79,13 +79,13 @@ describe(useDeleteDuplicateRows, () => {
     const { undo } = useDataSourceHistory();
     const editedItemValue = editedItem.value;
 
-    expectToBeDefined(editedItemValue);
+    assert.exists(editedItemValue);
 
     deleteDuplicateRows();
     undo(editedItemValue);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(dataSource.rows).toHaveLength(2);
   });
@@ -99,14 +99,14 @@ describe(useDeleteDuplicateRows, () => {
     const { redo, undo } = useDataSourceHistory();
     const editedItemValue = editedItem.value;
 
-    expectToBeDefined(editedItemValue);
+    assert.exists(editedItemValue);
 
     deleteDuplicateRows();
     undo(editedItemValue);
     redo(editedItemValue);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(dataSource.rows).toHaveLength(1);
   });

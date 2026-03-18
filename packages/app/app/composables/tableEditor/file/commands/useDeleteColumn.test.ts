@@ -1,4 +1,3 @@
-import { expectToBeDefined, takeOne } from "@esposter/shared";
 import {
   makeColumn,
   makeDataSource,
@@ -6,8 +5,9 @@ import {
   setupEditedItem,
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
+import { takeOne } from "@esposter/shared"
 import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { assert, beforeEach, describe, expect, test } from "vitest";
 
 describe(useDeleteColumn, () => {
   beforeEach(() => {
@@ -24,7 +24,7 @@ describe(useDeleteColumn, () => {
     deleteColumn("");
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(dataSource.columns).toHaveLength(1);
     expect(takeOne(dataSource.columns, 0).name).toBe(" ");
@@ -41,7 +41,7 @@ describe(useDeleteColumn, () => {
     undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(dataSource.columns).toHaveLength(2);
     expect(takeOne(dataSource.columns, 0).name).toBe("");
@@ -60,7 +60,7 @@ describe(useDeleteColumn, () => {
     redo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(dataSource.columns).toHaveLength(1);
     expect(takeOne(dataSource.rows, 0).data[""]).toBeUndefined();
@@ -77,7 +77,7 @@ describe(useDeleteColumn, () => {
     undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(Object.keys(takeOne(dataSource.rows, 0).data)).toStrictEqual(["a", "b", "c"]);
   });

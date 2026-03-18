@@ -1,6 +1,5 @@
 import { Column } from "#shared/models/tableEditor/file/Column";
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
-import { expectToBeDefined, takeOne } from "@esposter/shared";
 import {
   makeColumn,
   makeDataSource,
@@ -9,8 +8,9 @@ import {
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { NormalizeStringMode } from "@/models/tableEditor/file/NormalizeStringMode";
+import { takeOne } from "@esposter/shared"
 import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { assert, beforeEach, describe, expect, test } from "vitest";
 
 describe(useNormalizeStrings, () => {
   beforeEach(() => {
@@ -31,7 +31,7 @@ describe(useNormalizeStrings, () => {
     normalizeStrings(NormalizeStringMode.Trim);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows, 0).data[""]).toBe("");
     expect(takeOne(dataSource.rows, 0).data[" "]).toBe("");
@@ -48,7 +48,7 @@ describe(useNormalizeStrings, () => {
     normalizeStrings(NormalizeStringMode.Lowercase);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows, 0).data[""]).toBe("a");
   });
@@ -62,7 +62,7 @@ describe(useNormalizeStrings, () => {
     normalizeStrings(NormalizeStringMode.Uppercase);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows, 0).data[""]).toBe("A");
   });
@@ -83,7 +83,7 @@ describe(useNormalizeStrings, () => {
     normalizeStrings(NormalizeStringMode.Trim);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows, 0).data[""]).toBe(0);
     expect(isUndoable.value).toBe(false);
@@ -100,7 +100,7 @@ describe(useNormalizeStrings, () => {
     normalizeStrings(NormalizeStringMode.Trim);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows, 0).data[""]).toBe(" ");
     expect(isUndoable.value).toBe(false);
@@ -115,13 +115,13 @@ describe(useNormalizeStrings, () => {
     const { undo } = useDataSourceHistory();
     const editedItemValue = editedItem.value;
 
-    expectToBeDefined(editedItemValue);
+    assert.exists(editedItemValue);
 
     normalizeStrings(NormalizeStringMode.Trim);
     undo(editedItemValue);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows, 0).data[""]).toBe(" ");
     expect(takeOne(dataSource.rows, 1).data[""]).toBe(" ");
@@ -136,14 +136,14 @@ describe(useNormalizeStrings, () => {
     const { redo, undo } = useDataSourceHistory();
     const editedItemValue = editedItem.value;
 
-    expectToBeDefined(editedItemValue);
+    assert.exists(editedItemValue);
 
     normalizeStrings(NormalizeStringMode.Trim);
     undo(editedItemValue);
     redo(editedItemValue);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows, 0).data[""]).toBe("");
   });

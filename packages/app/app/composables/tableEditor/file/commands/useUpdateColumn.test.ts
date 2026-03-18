@@ -1,6 +1,5 @@
 import { Column } from "#shared/models/tableEditor/file/Column";
 import { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
-import { expectToBeDefined, takeOne, toRawDeep } from "@esposter/shared";
 import {
   makeColumn,
   makeDataSource,
@@ -9,6 +8,7 @@ import {
   setupEditedItem,
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
+import { takeOne, toRawDeep } from "@esposter/shared"
 import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeEach, describe, expect, test } from "vitest";
 
@@ -28,7 +28,7 @@ describe(useUpdateColumn, () => {
     updateColumn("", Object.assign(structuredClone(toRawDeep(column)), { description: " " }));
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.columns, 0).description).toBe(" ");
   });
@@ -44,7 +44,7 @@ describe(useUpdateColumn, () => {
     undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.columns, 0).description).toBe("");
   });
@@ -58,7 +58,7 @@ describe(useUpdateColumn, () => {
     updateColumn("", Object.assign(structuredClone(toRawDeep(column)), { name: "renamed" }));
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.columns, 0).name).toBe("renamed");
     expect(takeOne(dataSource.rows, 0).data.renamed).toBe(0);
@@ -76,7 +76,7 @@ describe(useUpdateColumn, () => {
     undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.columns, 0).name).toBe("");
     expect(takeOne(dataSource.rows, 0).data[""]).toBe(0);
@@ -95,7 +95,7 @@ describe(useUpdateColumn, () => {
     redo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.columns, 0).name).toBe("renamed");
     expect(takeOne(dataSource.rows, 0).data.renamed).toBe(0);
@@ -143,7 +143,7 @@ describe(useUpdateColumn, () => {
     updateColumn("b", Object.assign(structuredClone(toRawDeep(column)), { name: "b_renamed" }));
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(Object.keys(takeOne(dataSource.rows, 0).data)).toStrictEqual(["a", "b_renamed", "c"]);
   });
@@ -160,7 +160,7 @@ describe(useUpdateColumn, () => {
     undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(Object.keys(takeOne(dataSource.rows, 0).data)).toStrictEqual(["a", "b", "c"]);
   });
@@ -178,7 +178,7 @@ describe(useUpdateColumn, () => {
     updateColumn("date", Object.assign(structuredClone(toRawDeep(column)), { format: "DD/MM/YYYY" }));
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows, 0).data.date).toBe("15/01/2024");
     expect(takeOne(dataSource.rows, 1).data.date).toBe("30/06/2024");
@@ -200,7 +200,7 @@ describe(useUpdateColumn, () => {
     undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows, 0).data.date).toBe("2024-01-15");
     expect(takeOne(dataSource.rows, 1).data.date).toBe("2024-06-30");
@@ -225,14 +225,14 @@ describe(useUpdateColumn, () => {
     undo(editedItem.value);
     const dataSourceAfterUndo = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSourceAfterUndo);
+    assert.exists(dataSourceAfterUndo);
 
     expect(takeOne(dataSourceAfterUndo.columns, 0).name).toBe("");
 
     redo(editedItem.value);
     const dataSourceAfterRedo = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSourceAfterRedo);
+    assert.exists(dataSourceAfterRedo);
 
     expect(takeOne(dataSourceAfterRedo.columns, 0).name).toBe("renamed");
   });

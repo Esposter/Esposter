@@ -30,7 +30,9 @@
       "Bash(npm info:*)",
       "Bash(pnpm export:gen)",
       "Bash(pnpm search:*)",
-      "Bash(npm search:*)"
+      "Bash(npm search:*)",
+      "Bash(pnpm lint:*)",
+      "Bash(pnpm lint:fix)"
     ]
   }
 }

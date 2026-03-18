@@ -1,7 +1,7 @@
-import { expectToBeDefined, takeOne } from "@esposter/shared";
 import { setupWithDataSource } from "@/composables/tableEditor/file/commands/testUtils.test";
+import { takeOne } from "@esposter/shared"
 import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { assert, beforeEach, describe, expect, test } from "vitest";
 
 describe("undoDescription and redoDescription", () => {
   beforeEach(() => {
@@ -27,7 +27,7 @@ describe("undoDescription and redoDescription", () => {
     const { undoDescription } = useDataSourceHistory();
     deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
 
-    expectToBeDefined(undoDescription.value);
+    assert.exists(undoDescription.value);
 
     expect(undoDescription.value).toContain("Delete");
   });
@@ -50,7 +50,7 @@ describe("undoDescription and redoDescription", () => {
     deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
     undo(editedItem.value);
 
-    expectToBeDefined(redoDescription.value);
+    assert.exists(redoDescription.value);
 
     expect(redoDescription.value).toContain("Delete");
   });

@@ -2,7 +2,7 @@
 
 ## Missing Components (config + SetterMap already exist)
 
-- [ ] **`<Arc>`** — `ArcConfiguration` and `ArcSetterMap` are fully implemented; only `Arc.vue` is missing. Mirrors the `Circle.vue` pattern with `scene.add.arc()`.
+- [x] **`<Arc>`** — `ArcConfiguration` and `ArcSetterMap` are fully implemented; only `Arc.vue` is missing. Mirrors the `Circle.vue` pattern with `scene.add.arc()`.
 
 ## New Game Object Components
 

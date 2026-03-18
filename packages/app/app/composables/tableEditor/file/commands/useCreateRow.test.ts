@@ -1,8 +1,8 @@
 import { Row } from "#shared/models/tableEditor/file/Row";
-import { expectToBeDefined, takeOne } from "@esposter/shared";
 import { setupEditedItem, setupWithDataSource } from "@/composables/tableEditor/file/commands/testUtils.test";
+import { takeOne } from "@esposter/shared"
 import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { assert, beforeEach, describe, expect, test } from "vitest";
 
 describe(useCreateRow, () => {
   beforeEach(() => {
@@ -19,7 +19,7 @@ describe(useCreateRow, () => {
     createRow();
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(dataSource.rows).toHaveLength(3);
     expect(takeOne(dataSource.rows, 2).data[""]).toBeNull();
@@ -34,7 +34,7 @@ describe(useCreateRow, () => {
     createRow(new Row({ data: { "": 0, " ": 1 } }));
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(dataSource.rows).toHaveLength(3);
     expect(takeOne(dataSource.rows, 2).data[""]).toBe(0);
@@ -51,7 +51,7 @@ describe(useCreateRow, () => {
     undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(dataSource.rows).toHaveLength(2);
   });
@@ -67,7 +67,7 @@ describe(useCreateRow, () => {
     redo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(dataSource.rows).toHaveLength(3);
   });
@@ -82,7 +82,7 @@ describe(useCreateRow, () => {
     createRow(row);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     const firstRow = takeOne(dataSource.rows, 2);
     const secondRow = takeOne(dataSource.rows, 3);

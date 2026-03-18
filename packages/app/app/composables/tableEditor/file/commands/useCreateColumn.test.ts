@@ -1,8 +1,8 @@
 import { Column } from "#shared/models/tableEditor/file/Column";
 import { setupEditedItem, setupWithDataSource } from "@/composables/tableEditor/file/commands/testUtils.test";
-import { expectToBeDefined, takeOne } from "@esposter/shared";
+import { takeOne } from "@esposter/shared"
 import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { assert, beforeEach, describe, expect, test } from "vitest";
 
 describe(useCreateColumn, () => {
   beforeEach(() => {
@@ -20,7 +20,7 @@ describe(useCreateColumn, () => {
     createColumn(newColumn);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(dataSource.columns).toHaveLength(3);
     expect(takeOne(dataSource.columns, 2).name).toBe("new");
@@ -39,7 +39,7 @@ describe(useCreateColumn, () => {
     undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(dataSource.columns).toHaveLength(2);
     expect(takeOne(dataSource.rows, 0).data.new).toBeUndefined();
@@ -57,7 +57,7 @@ describe(useCreateColumn, () => {
     redo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     expect(dataSource.columns).toHaveLength(3);
     expect(takeOne(dataSource.rows, 0).data.new).toBeNull();
@@ -73,7 +73,7 @@ describe(useCreateColumn, () => {
     createColumn(newColumn);
     const dataSource = editedItem.value?.dataSource;
 
-    expectToBeDefined(dataSource);
+    assert.exists(dataSource);
 
     const firstColumn = takeOne(dataSource.columns, 2);
     const secondColumn = takeOne(dataSource.columns, 3);
