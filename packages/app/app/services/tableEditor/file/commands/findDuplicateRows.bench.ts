@@ -3,7 +3,7 @@ import {
   benchDataSource10kHalfDuplicates,
   benchDataSource100HalfDuplicates,
 } from "@/composables/tableEditor/file/commands/testUtils.bench";
-import { KeepDuplicateMode } from "@/models/tableEditor/file/KeepDuplicateMode";
+import { KeepDuplicateMode } from "@/models/tableEditor/file/commands/KeepDuplicateMode";
 import { findDuplicateRows } from "@/services/tableEditor/file/commands/findDuplicateRows";
 import { bench, describe } from "vitest";
 

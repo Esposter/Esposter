@@ -1,4 +1,4 @@
-import { NormalizeStringMode } from "@/models/tableEditor/file/NormalizeStringMode";
+import { NormalizeStringMode } from "@/models/tableEditor/file/commands/NormalizeStringMode";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const applyNormalizeStringMode = (value: string, mode: NormalizeStringMode): string => {

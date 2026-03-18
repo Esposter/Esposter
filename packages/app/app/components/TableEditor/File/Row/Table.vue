@@ -14,7 +14,6 @@ interface DataTableProps {
 const { dataSource } = defineProps<DataTableProps>();
 const fileTableEditorStore = useFileTableEditorStore();
 const { selectedRowIds } = storeToRefs(fileTableEditorStore);
-const deleteRows = useDeleteRows();
 const reorderRows = useReorderRows();
 const page = ref(1);
 const itemsPerPage = ref(10);
@@ -86,24 +85,7 @@ watch([currentOccurrence, itemsPerPage], async ([newCurrentOccurrence, newItemsP
       }"
     >
       <template v-if="selectedRowIds.length > 0" #top>
-        <v-toolbar>
-          <v-toolbar-title pl-3>
-            {{ selectedRowIds.length }} row{{ selectedRowIds.length === 1 ? "" : "s" }} selected
-          </v-toolbar-title>
-          <StyledConfirmDeleteDialogButton
-            :card-props="{
-              title: `Delete ${selectedRowIds.length} Row${selectedRowIds.length === 1 ? '' : 's'}`,
-              text: `Are you sure you want to delete ${selectedRowIds.length} selected row${selectedRowIds.length === 1 ? '' : 's'}?`,
-            }"
-            @delete="
-              (onComplete) => {
-                deleteRows(selectedRowIds);
-                selectedRowIds = [];
-                onComplete();
-              }
-            "
-          />
-        </v-toolbar>
+        <TableEditorFileRowTopSlot />
       </template>
       <template #[`item.drag`]>
         <v-icon :class="DRAG_HANDLE_CLASS" icon="mdi-drag" cursor-move />

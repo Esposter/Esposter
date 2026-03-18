@@ -1,7 +1,7 @@
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 
 import { NormalizeStringsCommand } from "@/models/tableEditor/file/commands/NormalizeStringsCommand";
-import { NormalizeStringMode } from "@/models/tableEditor/file/NormalizeStringMode";
+import { NormalizeStringMode } from "@/models/tableEditor/file/commands/NormalizeStringMode";
 import { getStringColumnsAffectedCells } from "@/services/tableEditor/file/commands/getStringColumnsAffectedCells";
 import { useTableEditorStore } from "@/store/tableEditor";
 

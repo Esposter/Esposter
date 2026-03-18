@@ -1,4 +1,4 @@
-import { NormalizeStringMode } from "@/models/tableEditor/file/NormalizeStringMode";
+import { NormalizeStringMode } from "@/models/tableEditor/file/commands/NormalizeStringMode";
 import { applyNormalizeStringMode } from "@/services/tableEditor/file/commands/applyNormalizeStringMode";
 import { describe, expect, test } from "vitest";
 

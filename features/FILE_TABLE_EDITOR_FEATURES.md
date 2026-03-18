@@ -12,7 +12,7 @@
 ## Data Quality & Cleaning
 
 - [ ] **Null/empty value strategy** — per-column setting to replace empty cells with a default value, "N/A", or drop the row entirely
-- [ ] **Duplicate row detection** — highlight/remove rows that are identical across all or selected columns
+- [x] **Duplicate row detection** — highlight/remove rows that are identical across all or selected columns
 - [x] **Trim/normalize strings** — bulk operation to strip extra whitespace, normalize casing (lowercase, title case, UPPER) across string columns
 - [x] **Find & replace** — global search and replace across all rows and columns; live per-character highlighting, prev/next occurrence navigation, replace current or replace all, full undo/redo support
 
@@ -38,7 +38,7 @@
 
 ## Statistics & Analysis
 
-- [ ] **Per-column stats panel** — min/max/avg for number columns, unique value count, null count, value frequency histogram
+- [x] **Per-column stats panel** — min/max/avg for number columns, unique value count, null count (histogram excluded)
 - [ ] **Data preview chart** — quick bar/line chart visualization of numeric columns using the existing chart infrastructure
 - [ ] **Outlier detection** — flag numeric values that are > N standard deviations from the mean
 

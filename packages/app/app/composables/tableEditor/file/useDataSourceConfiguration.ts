@@ -1,5 +1,5 @@
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
-import type { DataSourceConfiguration } from "@/models/tableEditor/file/DataSourceConfiguration";
+import type { DataSourceConfiguration } from "@/models/tableEditor/file/dataSource/DataSourceConfiguration";
 
 import { DataSourceConfigurationMap } from "@/services/tableEditor/file/dataSource/DataSourceConfigurationMap";
 

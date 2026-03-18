@@ -51,3 +51,14 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 ## Stable Identifiers for Selections
 
 - **Track selections by stable ID, not by name or index** — column names change, indices shift on delete/reorder. Always use `entity.id` (UUID) as the key when storing which items are selected/active. A stale ID in a selection is harmless; a stale name or index is a bug.
+
+## Filter-Based Type Narrowing
+
+- **No redundant type guards after a filtering condition** — if a `.filter()` predicate already narrows the type (e.g. `filter((v) => typeof v === "number")`), the resulting array is already typed `number[]`. Do NOT add a separate type guard (`: v is number`) or cast inside the callback — the filter itself is sufficient.
+  ```ts
+  // WRONG — redundant guard
+  values.filter((v): v is number => typeof v === "number")
+  // CORRECT — filter condition narrows the type
+  values.filter((v) => typeof v === "number")
+  ```
+  Exception: when the predicate is a function reference (e.g. `filter(Boolean)`) that TypeScript cannot narrow automatically, a type predicate is still needed.

@@ -6,7 +6,6 @@ interface FindReplaceHighlightProps {
 }
 
 const { isCurrent, search, text } = defineProps<FindReplaceHighlightProps>();
-
 const parts = computed(() => {
   if (!search) return [{ isMatch: false, text }];
   const result: { isMatch: boolean; text: string }[] = [];

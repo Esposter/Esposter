@@ -3,7 +3,7 @@ import type { AffectedCell } from "@/models/tableEditor/file/commands/AffectedCe
 
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
-import { NormalizeStringMode } from "@/models/tableEditor/file/NormalizeStringMode";
+import { NormalizeStringMode } from "@/models/tableEditor/file/commands/NormalizeStringMode";
 import { applyNormalizeStringMode } from "@/services/tableEditor/file/commands/applyNormalizeStringMode";
 import { getValueSize } from "@/services/tableEditor/file/commands/getValueSize";
 import { takeOne } from "@esposter/shared";

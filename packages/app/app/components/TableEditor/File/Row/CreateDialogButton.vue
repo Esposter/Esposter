@@ -17,7 +17,7 @@ const resetForm = () => {
 </script>
 
 <template>
-  <TableEditorFileEditDialogButton
+  <TableEditorFileCrudViewEditDialogButton
     title="Create Row"
     tooltip-text="Add Row"
     icon="mdi-table-row-plus-after"
@@ -41,5 +41,5 @@ const resetForm = () => {
         />
       </v-col>
     </v-row>
-  </TableEditorFileEditDialogButton>
+  </TableEditorFileCrudViewEditDialogButton>
 </template>

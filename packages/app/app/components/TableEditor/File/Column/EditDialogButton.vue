@@ -25,7 +25,7 @@ const resetForm = () => {
 </script>
 
 <template>
-  <TableEditorFileEditDialogButton
+  <TableEditorFileCrudViewEditDialogButton
     :title
     :tooltip-text="title"
     :schema
@@ -41,5 +41,5 @@ const resetForm = () => {
   >
     <v-text-field v-model="editedColumn.name" label="Column" :rules="[uniqueNameRule]" />
     <Vjsf v-model="editedColumn" :schema="jsonSchema" />
-  </TableEditorFileEditDialogButton>
+  </TableEditorFileCrudViewEditDialogButton>
 </template>

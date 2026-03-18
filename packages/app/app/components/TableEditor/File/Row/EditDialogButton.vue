@@ -20,7 +20,7 @@ const resetForm = () => {
 </script>
 
 <template>
-  <TableEditorFileEditDialogButton
+  <TableEditorFileCrudViewEditDialogButton
     :title
     :tooltip-text="title"
     :value="row"
@@ -43,5 +43,5 @@ const resetForm = () => {
         />
       </v-col>
     </v-row>
-  </TableEditorFileEditDialogButton>
+  </TableEditorFileCrudViewEditDialogButton>
 </template>
