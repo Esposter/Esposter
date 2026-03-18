@@ -322,8 +322,8 @@ catalogs:
       specifier: ^17.3.1
       version: 17.3.1
     drizzle-kit:
-      specifier: ^0.31.9
-      version: 0.31.9
+      specifier: ^0.31.10
+      version: 0.31.10
     drizzle-orm:
       specifier: ^0.45.1
       version: 0.45.1
@@ -865,7 +865,7 @@ importers:
         version: 5.10.4
       better-auth:
         specifier: 'catalog:'
-        version: 1.5.5(drizzle-kit@0.31.9)(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.16)(kysely@0.28.12)(postgres@3.4.8))(mongodb@7.1.0(socks@2.8.7))(vitest@4.1.0(@types/node@25.5.0)(happy-dom@20.8.4)(vite@8.0.0(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.2)))(vue@3.5.30(typescript@5.9.3))
+        version: 1.5.5(drizzle-kit@0.31.10)(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.16)(kysely@0.28.12)(postgres@3.4.8))(mongodb@7.1.0(socks@2.8.7))(vitest@4.1.0(@types/node@25.5.0)(happy-dom@20.8.4)(vite@8.0.0(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.2)))(vue@3.5.30(typescript@5.9.3))
       codemirror:
         specifier: 'catalog:'
         version: 6.0.2
@@ -1184,7 +1184,7 @@ importers:
         version: 0.4.4(srvx@0.11.12)
       drizzle-kit:
         specifier: 'catalog:'
-        version: 0.31.9
+        version: 0.31.10
       fs-extra:
         specifier: 'catalog:'
         version: 11.3.4
@@ -1443,7 +1443,7 @@ importers:
         version: 11.13.4(typescript@5.9.3)
       drizzle-kit:
         specifier: 'catalog:'
-        version: 0.31.9
+        version: 0.31.10
 
   packages/parse-tmx:
     dependencies:
@@ -7647,8 +7647,8 @@ packages:
   draco3d@1.5.7:
     resolution: {integrity: sha512-m6WCKt/erDXcw+70IJXnG7M3awwQPAsZvJGX5zY7beBqpELw6RDGkYVU0W43AFxye4pDZ5i2Lbyc/NNGqwjUVQ==}
 
-  drizzle-kit@0.31.9:
-    resolution: {integrity: sha512-GViD3IgsXn7trFyBUUHyTFBpH/FsHTxYJ66qdbVggxef4UBPHRYxQaRzYLTuekYnk9i5FIEL9pbBIwMqX/Uwrg==}
+  drizzle-kit@0.31.10:
+    resolution: {integrity: sha512-7OZcmQUrdGI+DUNNsKBn1aW8qSoKuTH7d0mYgSP8bAzdFzKoovxEFnoGQp2dVs82EOJeYycqRtciopszwUf8bw==}
     hasBin: true
 
   drizzle-orm@0.45.1:
@@ -7921,11 +7921,6 @@ packages:
   es-to-primitive@1.3.0:
     resolution: {integrity: sha512-w+5mJ3GuFL+NjVtJlvydShqE1eN3h3PbI7/5LAsYJP/2qtuMXjfL2LpHSRqo4b4eSF5K/DH1JXKUAHSB2UW50g==}
     engines: {node: '>= 0.4'}
-
-  esbuild-register@3.6.0:
-    resolution: {integrity: sha512-H2/S7Pm8a9CL1uhp9OvjwrBh5Pvx0H8qVOxNu8Wed9Y7qv56MPtq+GGM8RJpq6glYJn9Wspr8uw7l55uyinNeg==}
-    peerDependencies:
-      esbuild: '>=0.12 <1'
 
   esbuild@0.18.20:
     resolution: {integrity: sha512-ceqxoedUrcayh7Y7ZX6NdbbDzGROiyVBgC4PriJThBKSVPWnnFHZAkfI1lJT8QFkOwH4qOS2SJkS4wvpGl8BpA==}
@@ -18867,7 +18862,7 @@ snapshots:
 
   before-after-hook@4.0.0: {}
 
-  better-auth@1.5.5(drizzle-kit@0.31.9)(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.16)(kysely@0.28.12)(postgres@3.4.8))(mongodb@7.1.0(socks@2.8.7))(vitest@4.1.0(@types/node@25.5.0)(happy-dom@20.8.4)(vite@8.0.0(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.2)))(vue@3.5.30(typescript@5.9.3)):
+  better-auth@1.5.5(drizzle-kit@0.31.10)(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.16)(kysely@0.28.12)(postgres@3.4.8))(mongodb@7.1.0(socks@2.8.7))(vitest@4.1.0(@types/node@25.5.0)(happy-dom@20.8.4)(vite@8.0.0(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.2)))(vue@3.5.30(typescript@5.9.3)):
     dependencies:
       '@better-auth/core': 1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.2.0)
       '@better-auth/drizzle-adapter': 1.5.5(@better-auth/core@1.5.5(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.2.1)(kysely@0.28.12)(nanostores@1.2.0))(@better-auth/utils@0.3.1)(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.16)(kysely@0.28.12)(postgres@3.4.8))
@@ -18887,7 +18882,7 @@ snapshots:
       nanostores: 1.2.0
       zod: 4.3.6
     optionalDependencies:
-      drizzle-kit: 0.31.9
+      drizzle-kit: 0.31.10
       drizzle-orm: 0.45.1(@electric-sql/pglite@0.3.16)(kysely@0.28.12)(postgres@3.4.8)
       mongodb: 7.1.0(socks@2.8.7)
       vitest: 4.1.0(@types/node@25.5.0)(happy-dom@20.8.4)(vite@8.0.0(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.2))
@@ -19747,14 +19742,12 @@ snapshots:
 
   draco3d@1.5.7: {}
 
-  drizzle-kit@0.31.9:
+  drizzle-kit@0.31.10:
     dependencies:
       '@drizzle-team/brocli': 0.10.2
       '@esbuild-kit/esm-loader': 2.6.5
       esbuild: 0.25.12
-      esbuild-register: 3.6.0(esbuild@0.25.12)
-    transitivePeerDependencies:
-      - supports-color
+      tsx: 4.21.0
 
   drizzle-orm@0.45.1(@electric-sql/pglite@0.3.16)(kysely@0.28.12)(postgres@3.4.8):
     optionalDependencies:
@@ -19959,13 +19952,6 @@ snapshots:
       is-callable: 1.2.7
       is-date-object: 1.1.0
       is-symbol: 1.1.1
-
-  esbuild-register@3.6.0(esbuild@0.25.12):
-    dependencies:
-      debug: 4.4.3
-      esbuild: 0.25.12
-    transitivePeerDependencies:
-      - supports-color
 
   esbuild@0.18.20:
     optionalDependencies:
