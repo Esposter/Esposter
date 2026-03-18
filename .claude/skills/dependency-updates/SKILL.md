@@ -28,7 +28,6 @@ All version numbers live in the `catalog:` section of `pnpm-workspace.yaml` at t
 
 - **`oxlint`** — has `^`; open issue https://github.com/oxc-project/oxc/issues/13204.
 - **`ajv`, `ajv-errors`, `ajv-formats`, `ajv-i18n`, `debug`** — required by `@koumoul/vjsf`; tracked at https://github.com/json-layout/json-layout/issues/5.
-- **`vue-phaserjs`** — `workspace:*`; vite dev is broken with Vue's new reactive system.
 - **`db:run` script** — workaround for https://github.com/drizzle-team/drizzle-orm/issues/1228.
 
 ## Caret rules
