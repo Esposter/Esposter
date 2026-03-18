@@ -1,6 +1,6 @@
 import { Column } from "#shared/models/tableEditor/file/Column";
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
-import { expectToBeDefined } from "#shared/test/expectToBeDefined";
+import { expectToBeDefined, takeOne } from "@esposter/shared";
 import {
   makeColumn,
   makeDataSource,
@@ -9,7 +9,6 @@ import {
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { NormalizeStringMode } from "@/models/tableEditor/file/NormalizeStringMode";
-import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 

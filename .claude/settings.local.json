@@ -27,7 +27,10 @@
       "Bash(do echo:*)",
       "Bash(done)",
       "Bash(git log:*)",
-      "Bash(npm info:*)"
+      "Bash(npm info:*)",
+      "Bash(pnpm export:gen)",
+      "Bash(pnpm search:*)",
+      "Bash(npm search:*)"
     ]
   }
 }

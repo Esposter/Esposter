@@ -1,4 +1,4 @@
-import { expectToBeDefined } from "#shared/test/expectToBeDefined";
+import { expectToBeDefined, takeOne } from "@esposter/shared";
 import {
   makeColumn,
   makeDataSource,
@@ -7,7 +7,6 @@ import {
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { KeepDuplicateMode } from "@/models/tableEditor/file/KeepDuplicateMode";
-import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 

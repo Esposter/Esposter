@@ -1,6 +1,6 @@
 import { Column } from "#shared/models/tableEditor/file/Column";
 import { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
-import { expectToBeDefined } from "#shared/test/expectToBeDefined";
+import { expectToBeDefined, takeOne, toRawDeep } from "@esposter/shared";
 import {
   makeColumn,
   makeDataSource,
@@ -9,7 +9,6 @@ import {
   setupEditedItem,
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
-import { takeOne, toRawDeep } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeEach, describe, expect, test } from "vitest";
 

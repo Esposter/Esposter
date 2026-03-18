@@ -1,5 +1,5 @@
 import { Column } from "#shared/models/tableEditor/file/Column";
-import { expectToBeDefined } from "#shared/test/expectToBeDefined";
+import { expectToBeDefined, takeOne } from "@esposter/shared";
 import {
   makeColumn,
   makeDataSource,
@@ -7,7 +7,6 @@ import {
   setupEditedItem,
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
-import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
