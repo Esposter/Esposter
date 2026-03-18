@@ -26,6 +26,8 @@ description: Esposter Vitest testing conventions — describe with function refs
 - **Destructure from stores and composables** — always destructure return values: `const { deleteRow, undo, isUndoable } = operations` rather than calling `operations.deleteRow(...)`. Same for stores: `const { editedItem } = storeToRefs(store)` and `const { methodName } = store`. This applies inside `beforeEach` too — never chain `useX().method()` inline; always `const { method } = useX()` first.
 - **Cloning in tests** — use `structuredClone(obj)` for deep clones; use `Object.assign(structuredClone(obj), { ...updates })` to clone and override fields. Never use `{ ...spread }` syntax to clone — it creates a plain object losing the prototype. Pass `new Foo({ ... })` directly when a fresh instance already suffices (no need to clone or spread it).
 - **Assertions after all assignments** — put all `expect` and `expectToBeDefined` calls after all operation calls and local assignments for that phase, separated by a blank line. For multi-phase tests (e.g. undo then redo), each phase is its own block: operations + `const local = reactive.value?.x`, blank line, then assertions on `local`. Never interleave expects with assignments.
+- **Always use `toStrictEqual`** — never use `toEqual`. `toStrictEqual` checks object types and class instances correctly; `toEqual` silently ignores prototype differences.
+- **Reuse test utilities** — always check `testUtils.test.ts` for existing helpers (e.g. `makeDataSource`, `makeRow`, `makeColumn`, `makeNumberColumn`, `setupWithDataSource`) before writing local equivalents.
 
 ## Running Tests
 
