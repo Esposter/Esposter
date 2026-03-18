@@ -6,9 +6,10 @@ import { Lifecycle } from "@/models/lifecycle/Lifecycle";
 import { usePhaserStore } from "@/store";
 import { ExternalSceneStore } from "@/store/scene";
 import { runLifecycleListeners } from "@/util/hooks/runLifecycleListeners";
+import { expectToBeDefined } from "@esposter/shared";
 import { Game, HEADLESS, Scene } from "phaser";
 import { createPinia, setActivePinia } from "pinia";
-import { afterAll, beforeAll } from "vitest";
+import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
 let testPinia: ReturnType<typeof createPinia>;
 // Exported as a getter so we can assign in beforeAll without a mutable export binding.
@@ -66,4 +67,12 @@ beforeAll(() => {
 
 afterAll(() => {
   game.destroy(true);
+});
+
+describe("headlessGame", () => {
+  test("creates a headless game", () => {
+    expect.hasAssertions();
+
+    expectToBeDefined(game);
+  });
 });
