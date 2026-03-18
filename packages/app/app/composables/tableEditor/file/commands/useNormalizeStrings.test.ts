@@ -8,7 +8,7 @@ import {
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { NormalizeStringMode } from "@/models/tableEditor/file/NormalizeStringMode";
-import { takeOne } from "@esposter/shared"
+import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeEach, describe, expect, test } from "vitest";
 

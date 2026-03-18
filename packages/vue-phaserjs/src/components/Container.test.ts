@@ -62,7 +62,7 @@ describe("container", () => {
     const scene = startTestScene(sceneKey);
     const container = scene.children.list.find((obj) => obj instanceof GameObjects.Container);
 
-    assert.exists(container);
+    expect(container).toBeDefined();
 
     wrapper.unmount();
     removeTestScene(sceneKey);

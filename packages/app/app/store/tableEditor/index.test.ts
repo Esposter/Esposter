@@ -4,7 +4,7 @@ import { TodoListItem } from "#shared/models/tableEditor/todoList/TodoListItem";
 import { ID_QUERY_PARAMETER_KEY } from "@/services/shared/constants";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { useItemStore } from "@/store/tableEditor/item";
-import { takeOne } from "@esposter/shared"
+import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
