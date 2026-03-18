@@ -424,8 +424,8 @@ catalogs:
       specifier: ^3.14.2
       version: 3.14.2
     h3:
-      specifier: ^1.15.6
-      version: 1.15.6
+      specifier: ^1.15.8
+      version: 1.15.8
     happy-dom:
       specifier: ^20.8.4
       version: 20.8.4
@@ -1190,7 +1190,7 @@ importers:
         version: 11.3.4
       h3:
         specifier: 'catalog:'
-        version: 1.15.6(srvx@0.11.12)
+        version: 1.15.8(srvx@0.11.12)
       nuxt:
         specifier: 'catalog:'
         version: 4.3.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/storage-blob@12.31.0)(@electric-sql/pglite@0.3.16)(@parcel/watcher@2.5.6)(@types/node@25.5.0)(@vue/compiler-sfc@3.5.30)(cac@6.7.14)(db0@0.3.4(@electric-sql/pglite@0.3.16)(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.16)(kysely@0.28.12)(postgres@3.4.8)))(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.16)(kysely@0.28.12)(postgres@3.4.8))(eslint@10.0.3(jiti@2.6.1))(ioredis@5.10.0)(magicast@0.5.2)(meow@13.2.0)(optionator@0.9.4)(oxlint@1.56.0)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.30(typescript@5.9.3)))(rolldown@1.0.0-rc.9)(rollup@4.59.0)(sass-embedded@1.98.0)(sass@1.98.0)(srvx@0.11.12)(terser@5.46.1)(tsx@4.21.0)(typescript@5.9.3)(vite@8.0.0(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.2))(vue-tsc@3.2.5(typescript@5.9.3))(yaml@2.8.2)
@@ -8654,8 +8654,8 @@ packages:
     resolution: {integrity: sha512-DvJh07MhGgY2KcC4OeZc8SSyA+ZXpdvoh6uCzGpoKvWtZxJB+g6VXXC1+eWYkaMIsLz7J/ErhOalHCpcs1KYog==}
     engines: {node: '>=4', npm: '>=3', yarn: '>=1.3.0'}
 
-  h3@1.15.6:
-    resolution: {integrity: sha512-oi15ESLW5LRthZ+qPCi5GNasY/gvynSKUQxgiovrY63bPAtG59wtM+LSrlcwvOHAXzGrXVLnI97brbkdPF9WoQ==}
+  h3@1.15.8:
+    resolution: {integrity: sha512-iOH6Vl8mGd9nNfu9C0IZ+GuOAfJHcyf3VriQxWaSWIB76Fg4BnFuk4cxBxjmQSSxJS664+pgjP6e7VBnUzFfcg==}
 
   h3@2.0.1-rc.11:
     resolution: {integrity: sha512-2myzjCqy32c1As9TjZW9fNZXtLqNedjFSrdFy2AjFBQQ3LzrnGoDdFDYfC0tV2e4vcyfJ2Sfo/F6NQhO2Ly/Mw==}
@@ -14415,7 +14415,7 @@ snapshots:
       chokidar: 5.0.0
       esbuild: 0.27.4
       eslint: 10.0.3(jiti@2.6.1)
-      h3: 1.15.6(srvx@0.11.12)
+      h3: 1.15.8(srvx@0.11.12)
       tinyglobby: 0.2.15
       ws: 8.19.0
     transitivePeerDependencies:
@@ -15369,7 +15369,7 @@ snapshots:
       consola: 3.4.2
       defu: 6.1.4
       fontless: 0.2.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.0)(@azure/storage-blob@12.31.0)(db0@0.3.4(@electric-sql/pglite@0.3.16)(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.16)(kysely@0.28.12)(postgres@3.4.8)))(ioredis@5.10.0)(srvx@0.11.12)(vite@8.0.0(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.2))
-      h3: 1.15.6(srvx@0.11.12)
+      h3: 1.15.8(srvx@0.11.12)
       magic-regexp: 0.10.0
       ofetch: 1.5.1
       pathe: 2.0.3
@@ -15540,7 +15540,7 @@ snapshots:
       errx: 0.1.0
       escape-string-regexp: 5.0.0
       exsolve: 1.0.8
-      h3: 1.15.6(srvx@0.11.12)
+      h3: 1.15.8(srvx@0.11.12)
       impound: 1.1.5
       klona: 2.0.6
       mocked-exports: 0.1.1
@@ -15617,7 +15617,7 @@ snapshots:
       '@vueuse/core': 14.2.1(vue@3.5.30(typescript@5.9.3))
       consola: 3.4.2
       defu: 6.1.4
-      h3: 1.15.6(srvx@0.11.12)
+      h3: 1.15.8(srvx@0.11.12)
       magic-string: 0.30.21
       ofetch: 1.5.1
       ohash: 2.0.11
@@ -15676,7 +15676,7 @@ snapshots:
       exsolve: 1.0.8
       fake-indexeddb: 6.2.5
       get-port-please: 3.2.0
-      h3: 1.15.6(srvx@0.11.12)
+      h3: 1.15.8(srvx@0.11.12)
       h3-next: h3@2.0.1-rc.11(crossws@0.4.4(srvx@0.11.12))
       local-pkg: 1.1.2
       magic-string: 0.30.21
@@ -15897,7 +15897,7 @@ snapshots:
       '@nuxt/kit': 4.4.2(magicast@0.5.2)
       consola: 3.4.2
       defu: 6.1.4
-      h3: 1.15.6(srvx@0.11.12)
+      h3: 1.15.8(srvx@0.11.12)
       nuxt-site-config: 3.2.21(magicast@0.5.2)(srvx@0.11.12)(vite@8.0.0(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.2))(vue@3.5.30(typescript@5.9.3))
       pathe: 2.0.3
       pkg-types: 2.3.0
@@ -20853,7 +20853,7 @@ snapshots:
 
   h3-js@4.4.0: {}
 
-  h3@1.15.6(srvx@0.11.12):
+  h3@1.15.8(srvx@0.11.12):
     dependencies:
       cookie-es: 1.2.2
       crossws: 0.4.4(srvx@0.11.12)
@@ -21630,7 +21630,7 @@ snapshots:
       crossws: 0.4.4(srvx@0.11.12)
       defu: 6.1.4
       get-port-please: 3.2.0
-      h3: 1.15.6(srvx@0.11.12)
+      h3: 1.15.8(srvx@0.11.12)
       http-shutdown: 1.2.2
       jiti: 2.6.1
       mlly: 1.8.1
@@ -22009,7 +22009,7 @@ snapshots:
       exsolve: 1.0.8
       globby: 16.1.1
       gzip-size: 7.0.0
-      h3: 1.15.6(srvx@0.11.12)
+      h3: 1.15.8(srvx@0.11.12)
       hookable: 5.5.3
       httpxy: 0.1.7
       ioredis: 5.10.0
@@ -22376,7 +22376,7 @@ snapshots:
     dependencies:
       '@nuxt/devtools-kit': 3.2.3(magicast@0.5.2)(vite@8.0.0(@types/node@25.5.0)(esbuild@0.27.4)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.2))
       '@nuxt/kit': 4.4.2(magicast@0.5.2)
-      h3: 1.15.6(srvx@0.11.12)
+      h3: 1.15.8(srvx@0.11.12)
       nuxt-site-config-kit: 3.2.21(magicast@0.5.2)(vue@3.5.30(typescript@5.9.3))
       pathe: 2.0.3
       pkg-types: 2.3.0
@@ -22412,7 +22412,7 @@ snapshots:
       errx: 0.1.0
       escape-string-regexp: 5.0.0
       exsolve: 1.0.8
-      h3: 1.15.6(srvx@0.11.12)
+      h3: 1.15.8(srvx@0.11.12)
       hookable: 5.5.3
       ignore: 7.0.5
       impound: 1.1.5
@@ -24436,7 +24436,7 @@ snapshots:
     dependencies:
       '@trpc/client': 11.13.4(@trpc/server@11.13.4(typescript@5.9.3))(typescript@5.9.3)
       '@trpc/server': 11.13.4(typescript@5.9.3)
-      h3: 1.15.6(srvx@0.11.12)
+      h3: 1.15.8(srvx@0.11.12)
       ofetch: 1.5.1
       ohash: 2.0.11
     transitivePeerDependencies:
@@ -24831,7 +24831,7 @@ snapshots:
       anymatch: 3.1.3
       chokidar: 5.0.0
       destr: 2.0.5
-      h3: 1.15.6(srvx@0.11.12)
+      h3: 1.15.8(srvx@0.11.12)
       lru-cache: 11.2.7
       node-fetch-native: 1.6.7
       ofetch: 1.5.1
