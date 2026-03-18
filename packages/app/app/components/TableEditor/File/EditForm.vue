@@ -42,7 +42,9 @@ const { selectedRowIds } = storeToRefs(fileTableEditorStore);
               Data
               <v-spacer />
               <TableEditorFileStatsBar mr-4 :stats="modelValue.dataSource.stats" />
-              <TableEditorFileRowCopyToClipboardButton :row-ids="selectedRowIds.length > 0 ? selectedRowIds : undefined" />
+              <TableEditorFileRowCopyToClipboardButton
+                :row-ids="selectedRowIds.length > 0 ? selectedRowIds : undefined"
+              />
               <TableEditorFileRowPasteFromClipboardButton />
               <TableEditorFileFindReplaceDialogButton />
               <TableEditorFileColumnStatsDialogButton />
