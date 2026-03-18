@@ -112,7 +112,14 @@ describe(useReorderRows, () => {
 
     const sixRowDs = makeDataSource(
       [makeColumn("")],
-      [makeRow({ "": 0 }), makeRow({ "": 1 }), makeRow({ "": 2 }), makeRow({ "": 3 }), makeRow({ "": 4 }), makeRow({ "": 5 })],
+      [
+        makeRow({ "": 0 }),
+        makeRow({ "": 1 }),
+        makeRow({ "": 2 }),
+        makeRow({ "": 3 }),
+        makeRow({ "": 4 }),
+        makeRow({ "": 5 }),
+      ],
     );
     const { editedItem } = setupWithDataSource(sixRowDs);
     const reorderRows = useReorderRows();
@@ -137,7 +144,14 @@ describe(useReorderRows, () => {
 
     const sixRowDs = makeDataSource(
       [makeColumn("")],
-      [makeRow({ "": 0 }), makeRow({ "": 1 }), makeRow({ "": 2 }), makeRow({ "": 3 }), makeRow({ "": 4 }), makeRow({ "": 5 })],
+      [
+        makeRow({ "": 0 }),
+        makeRow({ "": 1 }),
+        makeRow({ "": 2 }),
+        makeRow({ "": 3 }),
+        makeRow({ "": 4 }),
+        makeRow({ "": 5 }),
+      ],
     );
     const { editedItem } = setupWithDataSource(sixRowDs);
     const reorderRows = useReorderRows();
