@@ -1,15 +1,33 @@
 import { makeColumn, makeDataSource, makeRow } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { copyToClipboard } from "@/services/tableEditor/file/commands/copyToClipboard";
 import { takeOne } from "@esposter/shared";
-import { describe, expect, test, vi } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(copyToClipboard, () => {
+  let written = "";
+
+  beforeAll(() => {
+    vi.stubGlobal("navigator", {
+      clipboard: {
+        writeText: (text: string) => {
+          written = text;
+        },
+      },
+    });
+  });
+
+  beforeEach(() => {
+    written = "";
+  });
+
+  afterAll(() => {
+    vi.unstubAllGlobals();
+  });
+
   test("copies all rows when no rowIds passed", async () => {
     expect.hasAssertions();
 
     const dataSource = makeDataSource([makeColumn("a"), makeColumn("b")], [makeRow({ a: "0", b: "1" })]);
-    let written = "";
-    vi.stubGlobal("navigator", { clipboard: { writeText: (text: string) => { written = text; } } });
     await copyToClipboard(dataSource);
     const lines = written.split("\n");
 
@@ -21,8 +39,6 @@ describe(copyToClipboard, () => {
     expect.hasAssertions();
 
     const dataSource = makeDataSource([makeColumn("a")], [makeRow({ a: "0" })]);
-    let written = "";
-    vi.stubGlobal("navigator", { clipboard: { writeText: (text: string) => { written = text; } } });
     await copyToClipboard(dataSource, []);
     const lines = written.split("\n");
 
@@ -35,8 +51,6 @@ describe(copyToClipboard, () => {
 
     const row = makeRow({ a: "0" });
     const dataSource = makeDataSource([makeColumn("a")], [row, makeRow({ a: "1" })]);
-    let written = "";
-    vi.stubGlobal("navigator", { clipboard: { writeText: (text: string) => { written = text; } } });
     await copyToClipboard(dataSource, [row.id]);
     const lines = written.split("\n");
 
