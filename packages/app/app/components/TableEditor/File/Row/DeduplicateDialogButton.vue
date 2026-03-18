@@ -2,7 +2,7 @@
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 import type { IndexedRow } from "@/models/tableEditor/file/commands/IndexedRow";
 
-import { KeepDuplicateMode } from "@/models/tableEditor/file/KeepDuplicateMode";
+import { KeepDuplicateMode } from "@/models/tableEditor/file/commands/KeepDuplicateMode";
 import { findDuplicateRows } from "@/services/tableEditor/file/commands/findDuplicateRows";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { takeOne } from "@esposter/shared";

@@ -39,5 +39,5 @@ const dataSourceType = ref(DataSourceType.Csv);
       </v-list-item>
     </v-list>
   </v-menu>
-  <TableEditorFileExportDialog v-model="isExportDialogOpen" :edited-item :data-source-type />
+  <TableEditorFileCrudViewExportDialog v-model="isExportDialogOpen" :edited-item :data-source-type />
 </template>

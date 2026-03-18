@@ -12,7 +12,7 @@ const { columns, index, row } = defineProps<ActionSlotProps>();
 
 <template>
   <div flex>
-    <TableEditorFileCopyToClipboardButton :row-ids="[row.id]" />
+    <TableEditorFileRowCopyToClipboardButton :row-ids="[row.id]" />
     <TableEditorFileRowEditDialogButton :columns :index :row />
     <TableEditorFileRowDeleteDialogButton :id="row.id" :index />
   </div>

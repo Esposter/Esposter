@@ -1,5 +1,5 @@
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
-import type { DataSourceConfiguration } from "@/models/tableEditor/file/DataSourceConfiguration";
+import type { DataSourceConfiguration } from "@/models/tableEditor/file/dataSource/DataSourceConfiguration";
 
 import { MimeType } from "#shared/models/file/MimeType";
 import { csvDataSourceConfigurationSchema } from "#shared/models/tableEditor/file/csv/CsvDataSourceConfiguration";

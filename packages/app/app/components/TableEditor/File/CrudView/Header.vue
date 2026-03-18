@@ -16,10 +16,10 @@ watch(
 <template>
   <TableEditorCrudViewHeader>
     <template v-if="editedItem" #prepend-actions>
-      <TableEditorFileUndoButton />
-      <TableEditorFileRedoButton />
-      <TableEditorFileImportButton v-model="editedItem" />
-      <TableEditorFileExportButton :edited-item />
+      <TableEditorFileCrudViewUndoButton />
+      <TableEditorFileCrudViewRedoButton />
+      <TableEditorFileCrudViewImportButton v-model="editedItem" />
+      <TableEditorFileCrudViewExportButton :edited-item />
     </template>
   </TableEditorCrudViewHeader>
 </template>

@@ -17,11 +17,11 @@
 
 ## Camera
 
-- [ ] **`flashCamera()`** — `camera.flash(duration, r, g, b)` effect in `useCameraStore`; white/colour flash on hit or transition.
-- [ ] **`shakeCamera()`** — `camera.shake(duration, intensity)` in `useCameraStore`; screen shake for impacts or explosions.
-- [ ] **`panCamera()`** — `camera.pan(x, y, duration, ease)` in `useCameraStore`; smooth pan to a world coordinate.
-- [ ] **`zoomCamera()`** — `camera.zoomTo(zoom, duration, ease)` in `useCameraStore`; animated zoom in/out.
-- [ ] **`rotateTo()`** — `camera.rotateTo(radians, shortestPath, duration, ease)` in `useCameraStore`.
+- ~~**`flashCamera()`**~~ — Not currently used in the codebase.
+- ~~**`shakeCamera()`**~~ — Not currently used in the codebase.
+- ~~**`panCamera()`**~~ — Not currently used in the codebase.
+- ~~**`zoomCamera()`**~~ — Not currently used in the codebase.
+- ~~**`rotateTo()`**~~ — Not currently used in the codebase.
 - [ ] **Multiple cameras** — `scene.cameras.add()` for split-screen or minimap; a `<Camera>` component providing a camera context to children for bounds/follow configuration.
 
 ## Tilemap
@@ -31,7 +31,7 @@
 
 ## Sound
 
-- [ ] **`useSound()`** — Composable wrapping `scene.sound`; exposes `play(key, config?)`, `stop(key)`, `fadeIn(key, duration)`, `fadeOut(key, duration)`, and `setVolume(value)`. Cleans up on `onShutdown`. Currently callers call `scene.sound.*` directly in multiple places.
+- ~~**`useSound()`**~~ — Sound is managed via service functions (`getDungeonsSound`, `getDungeonsSoundEffect`) that pass `scene` explicitly; a composable-based approach would create a competing pattern without replacing any existing call sites.
 
 ## Input
 
@@ -42,11 +42,11 @@
 ## Tweens & Timelines
 
 - [ ] **`useTimeline()`** — Composable wrapping `scene.tweens.chain()` (Phaser 3.60+) or `scene.tweens.timeline()` for sequencing multiple tweens; currently chaining is done via nested `onComplete` callbacks.
-- [ ] **`<Tween>`** — Declarative component that creates a tween on mount and destroys it on unmount; binds `configuration` as a `TweenBuilderConfiguration` prop (model already exists).
+- ~~**`<Tween>`**~~ — Redundant with `useTween`; the existing composable integrates with the SetterMap/configuration system and is already used throughout the codebase.
 
 ## Scene Management
 
-- [ ] **`useSceneData()`** — Typed composable for accessing `scene.sys.settings.data` (init data passed between scenes via `scene.start(key, data)`); removes the need for stores to carry cross-scene init state.
+- ~~**`useSceneData()`**~~ — Not needed; scene init data is managed via Pinia stores instead of being passed between scenes.
 - [ ] **Scene transition effects** — Extend `switchToScene()` in `usePhaserStore` with transition types beyond the current fade (slide, wipe, cross-fade between two scenes simultaneously).
 
 ## Physics

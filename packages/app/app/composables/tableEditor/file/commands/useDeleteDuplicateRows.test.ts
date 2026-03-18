@@ -5,7 +5,7 @@ import {
   setupEditedItem,
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
-import { KeepDuplicateMode } from "@/models/tableEditor/file/KeepDuplicateMode";
+import { KeepDuplicateMode } from "@/models/tableEditor/file/commands/KeepDuplicateMode";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeEach, describe, expect, test } from "vitest";

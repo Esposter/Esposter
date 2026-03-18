@@ -1,7 +1,7 @@
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { IndexedRow } from "@/models/tableEditor/file/commands/IndexedRow";
 
-import { KeepDuplicateMode } from "@/models/tableEditor/file/KeepDuplicateMode";
+import { KeepDuplicateMode } from "@/models/tableEditor/file/commands/KeepDuplicateMode";
 
 export const findDuplicateRows = (dataSource: DataSource, keepMode = KeepDuplicateMode.First): IndexedRow[] => {
   const sortedKeys = dataSource.columns.map(({ name }) => name).toSorted((a, b) => a.localeCompare(b));

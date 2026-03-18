@@ -43,7 +43,7 @@ watch(columnType, (newType, oldType) => {
 </script>
 
 <template>
-  <TableEditorFileEditDialogButton
+  <TableEditorFileCrudViewEditDialogButton
     title="Create Column"
     tooltip-text="Add Column"
     icon="mdi-table-column-plus-after"
@@ -61,5 +61,5 @@ watch(columnType, (newType, oldType) => {
     <v-select v-model="columnType" :items="ColumnTypeItemCategoryDefinitions" label="Type" />
     <v-text-field v-model="editedColumn.name" label="Column" :rules="[uniqueNameRule]" />
     <Vjsf v-model="editedColumn" :schema="jsonSchema" />
-  </TableEditorFileEditDialogButton>
+  </TableEditorFileCrudViewEditDialogButton>
 </template>

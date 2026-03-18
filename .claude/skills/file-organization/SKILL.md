@@ -80,3 +80,9 @@ Store MIME type strings in the relevant configuration map (e.g. `DataSourceConfi
   ```bash
   find "path/to/dir" -name "*.md" | xargs -I{} sed -i 's/\r//' "{}"
   ```
+
+## File Length
+
+- **Target 50–100 lines per `.ts` file** — a file over 100 lines is a yellow flag that a helper, sub-service, or model extraction is overdue.
+- Each file should have a single clear responsibility. If a file grows because it handles multiple concerns, split it.
+- Exceptions: generated files, large constant maps with many entries, and files where co-location of tightly coupled logic (e.g. a Zod schema next to its interface) is intentional.
