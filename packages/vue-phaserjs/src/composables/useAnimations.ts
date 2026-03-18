@@ -12,7 +12,7 @@ export const useAnimations = (
   createConfigurations: (scene: SceneWithPlugins) => Types.Animations.Animation[],
   immediate?: true,
 ) => {
-  const animations = shallowRef<Types.Animations.Animation[]>([]);
+  const animations = ref<Types.Animations.Animation[]>([]);
 
   if (immediate) {
     const sceneKey = useInjectSceneKey();

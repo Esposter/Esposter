@@ -17,7 +17,7 @@ interface ContainerProps {
 defineSlots<{ default: () => VNode }>();
 const { configuration = {} } = defineProps<ContainerProps>();
 const emit = defineEmits<ContainerEmits>();
-const container = shallowRef<GameObjects.Container>();
+const container = ref<GameObjects.Container>();
 
 useInitializeGameObject(
   (scene) => {

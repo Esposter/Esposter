@@ -62,7 +62,7 @@ const onSliderBarClick = async ({ x }: Input.Pointer) => {
     }"
     :on-complete="
       (scene, rectangle) => {
-        volumeSlider = useSlider(scene, rectangle, {
+        volumeSlider = markRaw(useSlider(scene, rectangle, {
           endPoints: [
             { x: VOLUME_SLIDER_START_X, y: baseY + 17 },
             { x: VOLUME_SLIDER_END_X, y: baseY + 17 },
@@ -71,7 +71,7 @@ const onSliderBarClick = async ({ x }: Input.Pointer) => {
           // We want the sliding of the volume cursor to be smooth
           // so it will only be handled by the plugin instead of our store
           valuechangeCallback: (newValue) => setVolume(Math.floor(newValue * 100), false),
-        });
+        }));
       }
     "
     @[`${Input.Events.GAMEOBJECT_POINTER_UP}`]="

@@ -13,7 +13,7 @@ export const useCreateTilemapAssets = (scene: SceneWithPlugins, newTilemap: Tile
   const worldSceneStore = useWorldSceneStore();
   const { objectLayerMap, tilemap, tilemapKey, worldData } = storeToRefs(worldSceneStore);
 
-  tilemap.value = newTilemap;
+  tilemap.value = markRaw(newTilemap);
   UseCreateTilemapMetadataMap[tilemapKey.value]();
   const chestObjectLayer = objectLayerMap.value?.get(ObjectgroupName.Chest);
   if (chestObjectLayer) {
