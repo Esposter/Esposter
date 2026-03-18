@@ -31,7 +31,7 @@ catalog:
   "@codemirror/view": ^6.40.0
   "@dxup/nuxt": ^0.4.0
   "@dxup/unimport": ^0.1.2
-  "@electric-sql/pglite": ^0.3.16
+  "@electric-sql/pglite": ^0.4.0
   "@eslint/core": ^1.1.1
   "@eslint/json": ^1.1.0
   "@floating-ui/dom": ^1.7.6
@@ -84,8 +84,8 @@ catalog:
   "@types/web-push": ^3.6.4
   "@types/ws": ^8.18.1
   "@types/xml2js": ^0.4.14
-  "@unocss/eslint-config": ^66.6.6
-  "@unocss/nuxt": ^66.6.6
+  "@unocss/eslint-config": ^66.6.7
+  "@unocss/nuxt": ^66.6.7
   "@vite-pwa/nuxt": ^1.1.1
   "@vitejs/plugin-vue": ^6.0.5
   "@vitest/coverage-v8": ^4.1.0
@@ -124,7 +124,7 @@ catalog:
   eslint-config-prettier: ^10.1.8
   eslint-plugin-depend: ^1.5.0
   eslint-plugin-oxlint: ^1.56.0
-  eslint-plugin-perfectionist: ^5.6.0
+  eslint-plugin-perfectionist: ^5.7.0
   eslint-plugin-pinia: ^0.4.2
   eslint-plugin-prettier: ^5.5.5
   eventemitter3: ^5.0.4
@@ -200,7 +200,7 @@ catalog:
   typedoc: ^0.28.17
   typescript: ^5.9.3
   typescript-eslint: ^8.57.1
-  unocss: ^66.6.6
+  unocss: ^66.6.7
   unplugin-auto-import: ^21.0.0
   unplugin-dts: ^1.0.0-beta.6
   v-viewer: ^3.0.23
