@@ -1,13 +1,14 @@
 import type { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 
 export interface ColumnStats {
-  avg: null | number;
+  average: null | number;
   columnName: string;
   columnType: ColumnType;
   falseCount: null | number;
-  max: null | number;
-  min: null | number;
+  maximum: null | number;
+  minimum: null | number;
   nullCount: number;
+  standardDeviation: null | number;
   trueCount: null | number;
   uniqueCount: null | number;
 }

@@ -10,7 +10,8 @@ const { column, dataSource } = defineProps<ActionSlotProps>();
 </script>
 
 <template>
-  <div flex items-center>
+  <div flex>
+    <TableEditorFileColumnChartDialogButton :column :data-source />
     <TableEditorFileColumnToggleVisibilityButton
       :column-id="column.id"
       :column-name="column.name"

@@ -2,7 +2,9 @@
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { Row } from "#shared/models/tableEditor/file/Row";
 
+import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { DRAG_HANDLE_CLASS } from "@/services/tableEditor/file/constants";
+import { getCellId } from "@/services/tableEditor/file/getCellId";
 import { useFileTableEditorStore } from "@/store/tableEditor/file";
 import { takeOne } from "@esposter/shared";
 import { VueDraggable } from "vue-draggable-plus";
@@ -38,14 +40,21 @@ const dragRows = computed({
 });
 const rowIndexIdMap = computed(() => new Map(dataSource.rows.map((row, index) => [row.id, index])));
 const { currentOccurrenceIndex, findValue, isOpen, occurrences } = useFindReplaceState();
-const highlightableColumns = computed(() =>
-  findValue.value ? dataSource.columns.filter((column) => !column.hidden) : [],
-);
+const { isOutlierHighlightEnabled, outlierCells } = useOutlierState();
 const currentOccurrence = computed(() => occurrences.value.at(currentOccurrenceIndex.value));
 const getCellText = (item: Row, columnName: string): string => {
   const value = takeOne(item.data, columnName);
   return value === null ? "" : String(value);
 };
+const isOutlierCell = (rowId: string, columnName: string) => outlierCells.value.has(getCellId(rowId, columnName));
+const slottedColumns = computed(() => {
+  const findColumns = findValue.value ? dataSource.columns.filter((column) => !column.hidden) : [];
+  const outlierColumns = isOutlierHighlightEnabled.value
+    ? dataSource.columns.filter((column) => column.type === ColumnType.Number && !column.hidden)
+    : [];
+  const seen = new Set<string>();
+  return [...findColumns, ...outlierColumns].filter(({ id }) => !seen.has(id) && seen.add(id));
+});
 
 watch([currentOccurrence, itemsPerPage], async ([newCurrentOccurrence, newItemsPerPage]) => {
   if (!newCurrentOccurrence) return;
@@ -97,13 +106,20 @@ watch([currentOccurrence, itemsPerPage], async ([newCurrentOccurrence, newItemsP
           :row="item"
         />
       </template>
-      <template v-for="column of highlightableColumns" :key="column.id" #[`item.${column.name}`]="{ item }">
+      <template v-for="column of slottedColumns" :key="column.id" #[`item.${column.name}`]="{ item }">
         <TableEditorFileFindReplaceHighlight
-          :text="getCellText(item, column.name)"
-          :search="findValue"
+          v-if="findValue"
+          :class="{ 'bg-orange-100 ring-1 ring-orange-400': isOutlierCell(item.id, column.name) }"
           :is-current="
             currentOccurrence?.rowIndex === rowIndexIdMap.get(item.id) && currentOccurrence?.columnName === column.name
           "
+          :search="findValue"
+          :text="getCellText(item, column.name)"
+        />
+        <TableEditorFileRowOutlierHighlight
+          v-else
+          :is-outlier="isOutlierCell(item.id, column.name)"
+          :text="getCellText(item, column.name)"
         />
       </template>
     </StyledDataTable>

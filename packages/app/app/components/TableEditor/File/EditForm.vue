@@ -48,6 +48,7 @@ const { selectedRowIds } = storeToRefs(fileTableEditorStore);
               <TableEditorFileRowPasteFromClipboardButton />
               <TableEditorFileFindReplaceDialogButton />
               <TableEditorFileColumnStatsDialogButton />
+              <TableEditorFileRowOutlierToggleButton />
               <TableEditorFileRowNormalizeStringsDialogButton />
               <TableEditorFileRowDeduplicateDialogButton />
               <TableEditorFileRowCreateDialogButton :data-source="modelValue.dataSource" />

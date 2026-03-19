@@ -15,9 +15,10 @@ const toggleColumnVisibility = useToggleColumnVisibility();
   <v-tooltip :text="getToggleColumnVisibilityDescription(columnName, hidden)">
     <template #activator="{ props }">
       <v-btn
+        m-0
+        size="small"
+        tile
         :icon="hidden ? 'mdi-eye-off' : 'mdi-eye'"
-        density="compact"
-        variant="text"
         :="props"
         @click="toggleColumnVisibility(columnId)"
       />
