@@ -32,6 +32,5 @@ export const computeColumnChartData = (columnStats: ColumnStats): ColumnChartDat
       series: [columnStats.trueCount ?? 0, columnStats.falseCount ?? 0, columnStats.nullCount],
       type: "pie",
     };
-
   return null;
 };

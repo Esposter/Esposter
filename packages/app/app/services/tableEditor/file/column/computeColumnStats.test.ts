@@ -34,6 +34,30 @@ describe(computeColumnStats, () => {
     });
   });
 
+  test(`number column with repeating decimal mean computes standardDeviation precisely`, () => {
+    expect.hasAssertions();
+
+    // Mean = 1/3 (repeating decimal); variance = 2/9 ≈ 0.2222; std = √(2/9) ≈ 0.4714
+    // Using raw mean avoids rounding error accumulation in the variance sum
+    const dataSource = makeDataSource(
+      [makeNumberColumn("")],
+      [makeRow({ "": 0 }), makeRow({ "": 0 }), makeRow({ "": 1 })],
+    );
+
+    expect(takeOne(computeColumnStats(dataSource), 0)).toStrictEqual({
+      average: 0.33,
+      columnName: "",
+      columnType: ColumnType.Number,
+      falseCount: null,
+      maximum: 1,
+      minimum: 0,
+      nullCount: 0,
+      standardDeviation: 0.47,
+      trueCount: null,
+      uniqueCount: 2,
+    });
+  });
+
   test(`number column with single value has standardDeviation of 0`, () => {
     expect.hasAssertions();
 

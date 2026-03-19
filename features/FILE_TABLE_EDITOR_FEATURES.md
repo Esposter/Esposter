@@ -33,7 +33,7 @@
 ## Filtering & Sorting
 
 - [x] **Column sorting** — click column header to sort rows ascending/descending in the UI (without mutating the data) — handled by v-data-table
-- [ ] **Row filtering** — per-column filter chips
+- [x] **Row filtering** — per-column filter text inputs in table headers; case-insensitive contains match; clear filters button in toolbar; resets pagination on change
 - [ ] **Saved filter presets** — name and persist a set of active filters
 
 ## Statistics & Analysis
@@ -44,7 +44,7 @@
 
 ## Export Enhancements
 
-- [ ] **Filtered export** — export only currently visible (filtered) rows
+- [x] **Filtered export** — export only currently visible (filtered) rows
 - [x] **Column subset export** — choose which columns to include in the export
 - [x] **JSON export** — export as a JSON array
 - [x] **Copy to clipboard** — copy selected rows as tab-separated text

@@ -2,9 +2,8 @@
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { Row } from "#shared/models/tableEditor/file/Row";
 
-import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { DRAG_HANDLE_CLASS } from "@/services/tableEditor/file/constants";
-import { getCellId } from "@/services/tableEditor/file/getCellId";
+import { filterDataSourceRows } from "@/services/tableEditor/file/dataSource/filterDataSourceRows";
 import { useFileTableEditorStore } from "@/store/tableEditor/file";
 import { takeOne } from "@esposter/shared";
 import { VueDraggable } from "vue-draggable-plus";
@@ -15,54 +14,32 @@ interface DataTableProps {
 
 const { dataSource } = defineProps<DataTableProps>();
 const fileTableEditorStore = useFileTableEditorStore();
-const { selectedRowIds } = storeToRefs(fileTableEditorStore);
+const { columnFilters, selectedRowIds } = storeToRefs(fileTableEditorStore);
 const reorderRows = useReorderRows();
+const filteredDataSource = computed(() => filterDataSourceRows(dataSource, columnFilters.value));
+const displayColumns = computed(() => dataSource.columns.filter((column) => !column.hidden));
 const page = ref(1);
 const itemsPerPage = ref(10);
 const headers = computed(() => [
   { key: "drag", sortable: false, title: "" },
-  ...dataSource.columns
-    .filter((column) => !column.hidden)
-    .map((column) => ({
-      key: column.name,
-      title: column.name,
-      value: (row: Row) => takeOne(row.data, column.name),
-    })),
+  ...displayColumns.value.map((column) => ({
+    key: column.name,
+    title: column.name,
+    value: (row: Row) => takeOne(row.data, column.name),
+  })),
   { key: "actions", sortable: false, title: "Actions" },
 ]);
 const dragRows = computed({
   get: () => {
-    if (itemsPerPage.value === -1) return dataSource.rows;
+    if (itemsPerPage.value === -1) return filteredDataSource.value.rows;
     const startIndex = (page.value - 1) * itemsPerPage.value;
-    return dataSource.rows.slice(startIndex, startIndex + itemsPerPage.value);
+    return filteredDataSource.value.rows.slice(startIndex, startIndex + itemsPerPage.value);
   },
   set: reorderRows,
 });
-const rowIndexIdMap = computed(() => new Map(dataSource.rows.map((row, index) => [row.id, index])));
-const { currentOccurrenceIndex, findValue, isOpen, occurrences } = useFindReplaceState();
-const { isOutlierHighlightEnabled, outlierCells } = useOutlierState();
-const currentOccurrence = computed(() => occurrences.value.at(currentOccurrenceIndex.value));
-const getCellText = (item: Row, columnName: string): string => {
-  const value = takeOne(item.data, columnName);
-  return value === null ? "" : String(value);
-};
-const isOutlierCell = (rowId: string, columnName: string) => outlierCells.value.has(getCellId(rowId, columnName));
-const slottedColumns = computed(() => {
-  const findColumns = findValue.value ? dataSource.columns.filter((column) => !column.hidden) : [];
-  const outlierColumns = isOutlierHighlightEnabled.value
-    ? dataSource.columns.filter((column) => column.type === ColumnType.Number && !column.hidden)
-    : [];
-  const seen = new Set<string>();
-  return [...findColumns, ...outlierColumns].filter(({ id }) => !seen.has(id) && seen.add(id));
-});
+const rowIndexIdMap = computed(() => new Map(filteredDataSource.value.rows.map((row, index) => [row.id, index])));
+const { isOpen } = useFindReplaceState();
 
-watch([currentOccurrence, itemsPerPage], async ([newCurrentOccurrence, newItemsPerPage]) => {
-  if (!newCurrentOccurrence) return;
-  const targetPage = Math.floor(newCurrentOccurrence.rowIndex / newItemsPerPage) + 1;
-  if (page.value !== targetPage) page.value = targetPage;
-  await nextTick();
-  document.querySelector("[data-find-replace-current]")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-});
 </script>
 
 <template>
@@ -78,7 +55,7 @@ watch([currentOccurrence, itemsPerPage], async ([newCurrentOccurrence, newItemsP
         density: 'compact',
         headers,
         itemsPerPage,
-        items: dataSource.rows,
+        items: filteredDataSource.rows,
         modelValue: selectedRowIds,
         page,
         showSelect: true,
@@ -106,20 +83,27 @@ watch([currentOccurrence, itemsPerPage], async ([newCurrentOccurrence, newItemsP
           :row="item"
         />
       </template>
-      <template v-for="column of slottedColumns" :key="column.id" #[`item.${column.name}`]="{ item }">
-        <TableEditorFileFindReplaceHighlight
-          v-if="findValue"
-          :class="{ 'bg-orange-100 ring-1 ring-orange-400': isOutlierCell(item.id, column.name) }"
-          :is-current="
-            currentOccurrence?.rowIndex === rowIndexIdMap.get(item.id) && currentOccurrence?.columnName === column.name
-          "
-          :search="findValue"
-          :text="getCellText(item, column.name)"
+      <template
+        v-for="column of displayColumns"
+        :key="column.id"
+        #[`header.${column.name}`]="{ column: headerColumn, getSortIcon, isSorted, toggleSort }"
+      >
+        <TableEditorFileRowHeaderSlot
+          v-model:page="page"
+          :column
+          :getSortIcon
+          :headerColumn
+          :isSorted
+          :toggleSort
         />
-        <TableEditorFileRowOutlierHighlight
-          v-else
-          :is-outlier="isOutlierCell(item.id, column.name)"
-          :text="getCellText(item, column.name)"
+      </template>
+      <template v-for="column of displayColumns" :key="column.id" #[`item.${column.name}`]="{ item }">
+        <TableEditorFileRowCellSlot
+          v-model:page="page"
+          :column
+          :item
+          :itemsPerPage
+          :rowIndex="rowIndexIdMap.get(item.id) ?? -1"
         />
       </template>
     </StyledDataTable>
