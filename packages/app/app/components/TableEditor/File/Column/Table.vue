@@ -44,16 +44,16 @@ const dragColumns = computed({
       <template v-if="selectedColumnIds.length > 0" #top>
         <TableEditorFileColumnTopSlot v-model="selectedColumnIds" />
       </template>
-      <template #item.drag>
+      <template #[`item.drag`]>
         <v-icon v-if="sortBy.length === 0" :class="DRAG_HANDLE_CLASS" icon="mdi-drag" cursor-move />
       </template>
-      <template #item.name="{ item: column }">
+      <template #[`item.name`]="{ item: column }">
         <TableEditorFileColumnItemSlot :column />
       </template>
-      <template #item.type="{ item: column }">
+      <template #[`item.type`]="{ item: column }">
         <v-chip :color="takeOne(ColumnTypeColorMap, column.type)" label size="small">{{ column.type }}</v-chip>
       </template>
-      <template #item.actions="{ item: column }">
+      <template #[`item.actions`]="{ item: column }">
         <TableEditorFileColumnActionSlot :data-source :column />
       </template>
     </StyledDataTable>

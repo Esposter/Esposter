@@ -74,7 +74,7 @@ const rowIndexIdMap = computed(() => new Map(filteredDataSource.value.rows.map((
       <template v-if="selectedRowIds.length > 0" #top>
         <TableEditorFileRowTopSlot />
       </template>
-      <template #item.drag>
+      <template #[`item.drag`]>
         <v-icon
           v-if="sortBy.length === 0 && filteredDataSource === dataSource"
           :class="DRAG_HANDLE_CLASS"
@@ -82,7 +82,7 @@ const rowIndexIdMap = computed(() => new Map(filteredDataSource.value.rows.map((
           cursor-move
         />
       </template>
-      <template #item.actions="{ item }">
+      <template #[`item.actions`]="{ item }">
         <TableEditorFileRowActionSlot
           :columns="dataSource.columns"
           :index="rowIndexIdMap.get(item.id) ?? -1"
