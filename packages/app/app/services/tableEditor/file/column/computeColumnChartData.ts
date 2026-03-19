@@ -23,7 +23,7 @@ export const computeColumnChartData = (columnStats: ColumnStats): ColumnChartDat
     };
   }
 
-  if (columnStats.columnType === ColumnType.Boolean) 
+  if (columnStats.columnType === ColumnType.Boolean)
     return {
       options: {
         chart: { toolbar: { show: false } },
@@ -32,7 +32,6 @@ export const computeColumnChartData = (columnStats: ColumnStats): ColumnChartDat
       series: [columnStats.trueCount ?? 0, columnStats.falseCount ?? 0, columnStats.nullCount],
       type: "pie",
     };
-  
 
   return null;
 };

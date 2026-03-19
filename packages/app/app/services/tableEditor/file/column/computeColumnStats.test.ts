@@ -1,7 +1,12 @@
 import { Column } from "#shared/models/tableEditor/file/Column";
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { DATE_FORMATS } from "#shared/models/tableEditor/file/constants";
-import { makeDataSource, makeDateColumn, makeNumberColumn, makeRow } from "@/composables/tableEditor/file/commands/testUtils.test";
+import {
+  makeDataSource,
+  makeDateColumn,
+  makeNumberColumn,
+  makeRow,
+} from "@/composables/tableEditor/file/commands/testUtils.test";
 import { computeColumnStats } from "@/services/tableEditor/file/column/computeColumnStats";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -97,7 +102,12 @@ describe(computeColumnStats, () => {
 
     const dataSource = makeDataSource(
       [makeDateColumn("", takeOne(DATE_FORMATS, 0))],
-      [makeRow({ "": "1970-01-01" }), makeRow({ "": "1970-01-02" }), makeRow({ "": "1970-01-01" }), makeRow({ "": null })],
+      [
+        makeRow({ "": "1970-01-01" }),
+        makeRow({ "": "1970-01-02" }),
+        makeRow({ "": "1970-01-01" }),
+        makeRow({ "": null }),
+      ],
     );
 
     expect(takeOne(computeColumnStats(dataSource), 0)).toStrictEqual({

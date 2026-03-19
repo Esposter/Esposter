@@ -35,7 +35,7 @@ export const computeColumnStats = (dataSource: DataSource): ColumnStats[] =>
         average !== null && nonNull.length > 0
           ? nonNull.reduce((sum, v) => sum + (v - average) ** 2, 0) / nonNull.length
           : null;
-      const standardDeviation = variance !== null ? Math.round(Math.sqrt(variance) * 100) / 100 : null;
+      const standardDeviation = variance === null ? null : Math.round(Math.sqrt(variance) * 100) / 100;
       return {
         average,
         columnName: column.name,

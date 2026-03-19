@@ -24,6 +24,6 @@ const columnStats = computed(() => {
         <v-btn m-0 icon="mdi-chart-bar" size="small" tile :="tooltipProps" @click.stop="isOpen = true" />
       </template>
     </v-tooltip>
-    <TableEditorFileColumnChartDialog v-model="isOpen" :column-stats="columnStats" />
+    <TableEditorFileColumnChartDialog v-model="isOpen" :column-stats />
   </template>
 </template>

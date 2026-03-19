@@ -36,7 +36,7 @@ describe(computeColumnChartData, () => {
   test(`number column returns bar chart with minimum, average, maximum`, () => {
     expect.hasAssertions();
 
-    const result = computeColumnChartData(makeNumberStats({ minimum: 0, average: 1, maximum: 2 }));
+    const result = computeColumnChartData(makeNumberStats({ average: 1, maximum: 2, minimum: 0 }));
 
     expect(result?.type).toBe("bar");
     expect(result?.series).toStrictEqual([{ data: [0, 1, 2], name: "" }]);
@@ -53,13 +53,13 @@ describe(computeColumnChartData, () => {
   test(`number column with all null stats returns null`, () => {
     expect.hasAssertions();
 
-    expect(computeColumnChartData(makeNumberStats({ minimum: null, average: null, maximum: null }))).toBeNull();
+    expect(computeColumnChartData(makeNumberStats({ average: null, maximum: null, minimum: null }))).toBeNull();
   });
 
   test(`boolean column returns pie chart with trueCount, falseCount, nullCount`, () => {
     expect.hasAssertions();
 
-    const result = computeColumnChartData(makeBooleanStats({ trueCount: 2, falseCount: 1, nullCount: 1 }));
+    const result = computeColumnChartData(makeBooleanStats({ falseCount: 1, nullCount: 1, trueCount: 2 }));
 
     expect(result?.type).toBe("pie");
     expect(result?.series).toStrictEqual([2, 1, 1]);
@@ -87,7 +87,7 @@ describe(computeColumnChartData, () => {
   test(`boolean column with null trueCount and falseCount defaults to 0`, () => {
     expect.hasAssertions();
 
-    const result = computeColumnChartData(makeBooleanStats({ trueCount: null, falseCount: null, nullCount: 2 }));
+    const result = computeColumnChartData(makeBooleanStats({ falseCount: null, nullCount: 2, trueCount: null }));
 
     expect(result?.series).toStrictEqual([0, 0, 2]);
   });

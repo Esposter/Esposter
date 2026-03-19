@@ -1,11 +1,11 @@
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
-import { OUTLIER_STANDARD_DEVIATION_MULTIPLIER } from "@/services/tableEditor/file/constants";
 import { computeColumnStats } from "@/services/tableEditor/file/column/computeColumnStats";
+import { OUTLIER_STANDARD_DEVIATION_MULTIPLIER } from "@/services/tableEditor/file/constants";
 import { getCellId } from "@/services/tableEditor/file/getCellId";
-import { useFileTableEditorStore } from "@/store/tableEditor/file";
 import { useTableEditorStore } from "@/store/tableEditor";
+import { useFileTableEditorStore } from "@/store/tableEditor/file";
 import { takeOne } from "@esposter/shared";
 
 export const useOutlierState = createSharedComposable(() => {

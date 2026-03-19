@@ -182,16 +182,16 @@ catalog:
   rolldown: ^1.0.0-rc.10
   rolldown-plugin-dts: ^0.22.5
   rxjs: ^7.8.2
-  sanitize-html: ^2.17.1
+  sanitize-html: ^2.17.2
   sass-embedded: ^1.98.0
   sax: ^1.6.0
   show-open-file-picker: ^0.4.0
   sql-highlight: ^6.1.0
   superjson: ^2.2.6
-  survey-core: ^2.5.15
-  survey-creator-core: ^2.5.15
-  survey-creator-vue: ^2.5.15
-  survey-vue3-ui: ^2.5.15
+  survey-core: ^2.5.16
+  survey-creator-core: ^2.5.16
+  survey-creator-vue: ^2.5.16
+  survey-vue3-ui: ^2.5.16
   three: ^0.183.2
   three-globe: ^2.45.1
   trpc-nuxt: ^2.0.2
