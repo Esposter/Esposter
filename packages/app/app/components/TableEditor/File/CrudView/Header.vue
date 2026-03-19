@@ -2,15 +2,11 @@
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 
 import { useTableEditorStore } from "@/store/tableEditor";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 
 const tableEditorStore = useTableEditorStore<TDataSourceItem>();
 const { editedItem } = storeToRefs(tableEditorStore);
-const { clear } = useDataSourceHistory();
-
-watch(
-  () => editedItem.value?.id,
-  () => clear(),
-);
+useFileHistoryStore();
 </script>
 
 <template>

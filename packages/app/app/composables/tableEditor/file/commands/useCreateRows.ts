@@ -3,11 +3,12 @@ import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/Data
 
 import { CreateRowsCommand } from "@/models/tableEditor/file/commands/CreateRowsCommand";
 import { useTableEditorStore } from "@/store/tableEditor";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 
 export const useCreateRows = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
   const { editedItem } = storeToRefs(tableEditorStore);
-  const { push } = useDataSourceHistory();
+  const { push } = useFileHistoryStore();
   return (rows: DataSource["rows"]) => {
     if (!editedItem.value?.dataSource || rows.length === 0) return;
     const startIndex = editedItem.value.dataSource.rows.length;

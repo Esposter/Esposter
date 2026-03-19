@@ -1,12 +1,14 @@
 import { setupWithDataSource } from "@/composables/tableEditor/file/commands/testUtils.test";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeEach, describe, expect, test } from "vitest";
 
-describe("isUndoable and isRedoable state transitions", () => {
+describe(useFileHistoryStore, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
-    const { clear } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { clear } = fileHistoryStore;
     clear();
   });
 
@@ -14,7 +16,8 @@ describe("isUndoable and isRedoable state transitions", () => {
     expect.hasAssertions();
 
     setupWithDataSource();
-    const { isRedoable, isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isRedoable, isUndoable } = storeToRefs(fileHistoryStore);
 
     expect(isUndoable.value).toBe(false);
     expect(isRedoable.value).toBe(false);
@@ -25,7 +28,8 @@ describe("isUndoable and isRedoable state transitions", () => {
 
     const { editedItem } = setupWithDataSource();
     const deleteRow = useDeleteRow();
-    const { isRedoable, isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isRedoable, isUndoable } = storeToRefs(fileHistoryStore);
     deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
 
     expect(isUndoable.value).toBe(true);
@@ -37,7 +41,9 @@ describe("isUndoable and isRedoable state transitions", () => {
 
     const { editedItem } = setupWithDataSource();
     const deleteRow = useDeleteRow();
-    const { isRedoable, isUndoable, undo } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isRedoable, isUndoable } = storeToRefs(fileHistoryStore);
+    const { undo } = fileHistoryStore;
     deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
     undo(editedItem.value);
 
@@ -49,7 +55,9 @@ describe("isUndoable and isRedoable state transitions", () => {
     expect.hasAssertions();
 
     const { editedItem } = setupWithDataSource();
-    const { isUndoable, undo } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
+    const { undo } = fileHistoryStore;
     const rowCountBefore = editedItem.value?.dataSource?.rows.length ?? 0;
     undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
@@ -64,7 +72,9 @@ describe("isUndoable and isRedoable state transitions", () => {
     expect.hasAssertions();
 
     const { editedItem } = setupWithDataSource();
-    const { isRedoable, redo } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isRedoable } = storeToRefs(fileHistoryStore);
+    const { redo } = fileHistoryStore;
     const rowCountBefore = editedItem.value?.dataSource?.rows.length ?? 0;
     redo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
@@ -80,7 +90,9 @@ describe("isUndoable and isRedoable state transitions", () => {
 
     const { editedItem } = setupWithDataSource();
     const deleteRow = useDeleteRow();
-    const { isRedoable, undo } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isRedoable } = storeToRefs(fileHistoryStore);
+    const { undo } = fileHistoryStore;
     deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
     undo(editedItem.value);
 

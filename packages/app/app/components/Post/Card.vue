@@ -2,6 +2,7 @@
 import type { PostWithRelations } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
+import { useColorsStore } from "@/store/colors";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
 interface PostCardProps {
@@ -13,7 +14,8 @@ interface PostCardProps {
 
 const { isCommentStore = false, post } = defineProps<PostCardProps>();
 const { data: session } = await authClient.useSession(useFetch);
-const { surfaceOpacity80 } = useColors();
+const colorsStore = useColorsStore();
+const { surfaceOpacity80 } = storeToRefs(colorsStore);
 const createdAtTimeAgo = useTimeAgo(() => post.createdAt);
 const isCreator = computed(() => post.userId === session.value?.user.id);
 const isEmptyDescription = computed(() => EMPTY_TEXT_REGEX.test(post.description));

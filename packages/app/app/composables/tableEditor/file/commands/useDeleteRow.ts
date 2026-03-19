@@ -2,12 +2,13 @@ import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/Data
 
 import { DeleteRowCommand } from "@/models/tableEditor/file/commands/DeleteRowCommand";
 import { useTableEditorStore } from "@/store/tableEditor";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
 export const useDeleteRow = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
   const { editedItem } = storeToRefs(tableEditorStore);
-  const { push } = useDataSourceHistory();
+  const { push } = useFileHistoryStore();
   return (id: string) => {
     if (!editedItem.value?.dataSource) return;
     const index = editedItem.value.dataSource.rows.findIndex((row) => row.id === id);

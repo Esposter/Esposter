@@ -2,11 +2,12 @@ import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/Data
 
 import { ToggleColumnVisibilityCommand } from "@/models/tableEditor/file/commands/ToggleColumnVisibilityCommand";
 import { useTableEditorStore } from "@/store/tableEditor";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 
 export const useToggleColumnVisibility = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
   const { editedItem } = storeToRefs(tableEditorStore);
-  const { push } = useDataSourceHistory();
+  const { push } = useFileHistoryStore();
   return (id: string) => {
     if (!editedItem.value?.dataSource) return;
     const column = editedItem.value.dataSource.columns.find((column) => column.id === id);

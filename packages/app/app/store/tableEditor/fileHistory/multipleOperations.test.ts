@@ -1,12 +1,14 @@
 import { setupWithDataSource } from "@/composables/tableEditor/file/commands/testUtils.test";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeEach, describe, expect, test } from "vitest";
 
-describe("multiple sequential operations", () => {
+describe(useFileHistoryStore, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
-    const { clear } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { clear } = fileHistoryStore;
     clear();
   });
 
@@ -15,7 +17,8 @@ describe("multiple sequential operations", () => {
 
     const { editedItem } = setupWithDataSource();
     const deleteRow = useDeleteRow();
-    const { undo } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { undo } = fileHistoryStore;
     deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 1).id);
     deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
     const dataSourceAfterDeletes = editedItem.value?.dataSource;
@@ -48,7 +51,8 @@ describe("multiple sequential operations", () => {
     const { editedItem } = setupWithDataSource();
     const deleteRow = useDeleteRow();
     const deleteColumn = useDeleteColumn();
-    const { redo, undo } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { redo, undo } = fileHistoryStore;
     deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
     deleteColumn(" ");
     const dataSourceAfterOps = editedItem.value?.dataSource;

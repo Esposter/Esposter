@@ -6,6 +6,7 @@ import {
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { KeepDuplicateMode } from "@/models/tableEditor/file/commands/KeepDuplicateMode";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeEach, describe, expect, test } from "vitest";
@@ -13,7 +14,8 @@ import { assert, beforeEach, describe, expect, test } from "vitest";
 describe(useDeleteDuplicateRows, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
-    const { clear } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { clear } = fileHistoryStore;
     clear();
   });
 
@@ -60,7 +62,8 @@ describe(useDeleteDuplicateRows, () => {
     );
     const { editedItem } = setupWithDataSource(ds);
     const deleteDuplicateRows = useDeleteDuplicateRows();
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     deleteDuplicateRows();
     const dataSource = editedItem.value?.dataSource;
 
@@ -76,7 +79,8 @@ describe(useDeleteDuplicateRows, () => {
     const ds = makeDataSource([makeColumn("")], [makeRow({ "": 0 }), makeRow({ "": 0 })]);
     const { editedItem } = setupWithDataSource(ds);
     const deleteDuplicateRows = useDeleteDuplicateRows();
-    const { undo } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { undo } = fileHistoryStore;
     const editedItemValue = editedItem.value;
 
     assert.exists(editedItemValue);
@@ -96,7 +100,8 @@ describe(useDeleteDuplicateRows, () => {
     const ds = makeDataSource([makeColumn("")], [makeRow({ "": 0 }), makeRow({ "": 0 })]);
     const { editedItem } = setupWithDataSource(ds);
     const deleteDuplicateRows = useDeleteDuplicateRows();
-    const { redo, undo } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { redo, undo } = fileHistoryStore;
     const editedItemValue = editedItem.value;
 
     assert.exists(editedItemValue);
@@ -114,7 +119,8 @@ describe(useDeleteDuplicateRows, () => {
   test("no-op when editedItem is undefined", () => {
     expect.hasAssertions();
 
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     const deleteDuplicateRows = useDeleteDuplicateRows();
     deleteDuplicateRows();
 
@@ -125,7 +131,8 @@ describe(useDeleteDuplicateRows, () => {
     expect.hasAssertions();
 
     setupEditedItem();
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     const deleteDuplicateRows = useDeleteDuplicateRows();
     deleteDuplicateRows();
 
@@ -137,7 +144,8 @@ describe(useDeleteDuplicateRows, () => {
 
     const ds = makeDataSource([makeColumn("")], [makeRow({ "": 0 }), makeRow({ "": 1 })]);
     setupWithDataSource(ds);
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     const deleteDuplicateRows = useDeleteDuplicateRows();
     deleteDuplicateRows();
 

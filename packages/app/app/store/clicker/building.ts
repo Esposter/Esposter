@@ -14,7 +14,6 @@ export const useBuildingStore = defineStore("clicker/building", () => {
   const clickerStore = useClickerStore();
   const pointStore = usePointStore();
   const { decrementPoints } = pointStore;
-  const clickerItemProperties = useClickerItemProperties();
 
   const buildingMap = ref<typeof BuildingMap>();
   const buildings = computed<Building[]>(() => (buildingMap.value ? parseDictionaryToArray(buildingMap.value) : []));
@@ -39,14 +38,14 @@ export const useBuildingStore = defineStore("clicker/building", () => {
     const buildingPower = getBoughtBuildingPower(boughtBuilding);
     return [
       `- Each ${boughtBuilding.id} produces **${formatNumberLong(buildingPower / boughtBuilding.amount)} ${
-        clickerItemProperties.value.pluralName
+        clickerStore.clickerItemProperties.pluralName
       }** per second`,
       `- ${boughtBuilding.amount} ${boughtBuilding.id}s producing **${formatNumberLong(buildingPower)} ${
-        clickerItemProperties.value.pluralName
+        clickerStore.clickerItemProperties.pluralName
       }** per second (**${formatNumberLong((buildingPower / allBuildingPower.value) * 100)}%** of total ${getInitials(
-        clickerItemProperties.value.pluralName,
+        clickerStore.clickerItemProperties.pluralName,
       )}pS)`,
-      `- **${formatNumberLong(boughtBuilding.producedValue, 3)}** ${clickerItemProperties.value.pluralName} produced so far`,
+      `- **${formatNumberLong(boughtBuilding.producedValue, 3)}** ${clickerStore.clickerItemProperties.pluralName} produced so far`,
     ];
   };
   const getBuildingPrice = (building: Building) => {

@@ -2,15 +2,24 @@
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
-import { useFileTableEditorStore } from "@/store/tableEditor/file";
+import { filterDataSourceRows } from "@/services/tableEditor/file/dataSource/filterDataSourceRows";
+import { useFilterStore } from "@/store/tableEditor/file/filter";
+import { useRowStore } from "@/store/tableEditor/file/row";
 import { Vjsf } from "@koumoul/vjsf";
 
 const modelValue = defineModel<TDataSourceItem>({ required: true });
 const configuration = useDataSourceConfiguration(modelValue);
 const schema = computed(() => zodToJsonSchema(configuration.value.schema));
 const openPanels = ref(["columns", "data"]);
-const fileTableEditorStore = useFileTableEditorStore();
-const { selectedRowIds } = storeToRefs(fileTableEditorStore);
+const rowStore = useRowStore();
+const { selectedRowIds } = storeToRefs(rowStore);
+const filterStore = useFilterStore();
+const { columnFilters } = storeToRefs(filterStore);
+const filteredRowCount = computed(() =>
+  modelValue.value.dataSource
+    ? filterDataSourceRows(modelValue.value.dataSource, columnFilters.value).rows.length
+    : undefined,
+);
 </script>
 
 <template>
@@ -41,13 +50,15 @@ const { selectedRowIds } = storeToRefs(fileTableEditorStore);
             <template #title>
               Data
               <v-spacer />
-              <TableEditorFileStatsBar mr-4 :stats="modelValue.dataSource.stats" />
+              <TableEditorFileStatsBar mr-4 :filtered-row-count :stats="modelValue.dataSource.stats" />
               <TableEditorFileRowCopyToClipboardButton
                 :row-ids="selectedRowIds.length > 0 ? selectedRowIds : undefined"
               />
               <TableEditorFileRowPasteFromClipboardButton />
               <TableEditorFileFindReplaceDialogButton />
               <TableEditorFileColumnStatsDialogButton />
+              <TableEditorFileRowOutlierToggleButton />
+              <TableEditorFileRowClearFiltersButton />
               <TableEditorFileRowNormalizeStringsDialogButton />
               <TableEditorFileRowDeduplicateDialogButton />
               <TableEditorFileRowCreateDialogButton :data-source="modelValue.dataSource" />

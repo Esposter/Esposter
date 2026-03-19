@@ -6,6 +6,7 @@ import {
   setupEditedItem,
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeEach, describe, expect, test } from "vitest";
@@ -13,7 +14,8 @@ import { assert, beforeEach, describe, expect, test } from "vitest";
 describe(useFindReplace, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
-    const { clear } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { clear } = fileHistoryStore;
     clear();
   });
 
@@ -57,7 +59,8 @@ describe(useFindReplace, () => {
     const ds = makeDataSource([makeColumn("")], [makeRow({ "": " " }), makeRow({ "": " " })]);
     const { editedItem } = setupWithDataSource(ds);
     const findReplace = useFindReplace();
-    const { undo } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { undo } = fileHistoryStore;
     const editedItemValue = editedItem.value;
 
     assert.exists(editedItemValue);
@@ -78,7 +81,8 @@ describe(useFindReplace, () => {
     const ds = makeDataSource([makeColumn("")], [makeRow({ "": " " })]);
     const { editedItem } = setupWithDataSource(ds);
     const findReplace = useFindReplace();
-    const { redo, undo } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { redo, undo } = fileHistoryStore;
     const editedItemValue = editedItem.value;
 
     assert.exists(editedItemValue);
@@ -114,7 +118,8 @@ describe(useFindReplace, () => {
     const ds = makeDataSource([makeColumn("")], [makeRow({ "": " " })]);
     const { editedItem } = setupWithDataSource(ds);
     const findReplace = useFindReplace();
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     findReplace(" ", " ");
     const dataSource = editedItem.value?.dataSource;
 
@@ -144,7 +149,8 @@ describe(useFindReplace, () => {
     const ds = makeDataSource([makeColumn("")], [makeRow({ "": " " })]);
     const { editedItem } = setupWithDataSource(ds);
     const findReplace = useFindReplace();
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     findReplace("", "b");
     const dataSource = editedItem.value?.dataSource;
 
@@ -157,7 +163,8 @@ describe(useFindReplace, () => {
   test("no-op when no matches found", () => {
     expect.hasAssertions();
 
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     setupWithDataSource();
     const findReplace = useFindReplace();
     findReplace("-1", "");
@@ -168,7 +175,8 @@ describe(useFindReplace, () => {
   test("no-op when editedItem is undefined", () => {
     expect.hasAssertions();
 
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     const findReplace = useFindReplace();
     findReplace(" ", "");
 
@@ -179,7 +187,8 @@ describe(useFindReplace, () => {
     expect.hasAssertions();
 
     setupEditedItem();
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     const findReplace = useFindReplace();
     findReplace(" ", "");
 
@@ -192,7 +201,8 @@ describe(useFindReplace, () => {
     const ds = makeDataSource([makeColumn("")], [makeRow({ "": " " }), makeRow({ "": 0 })]);
     setupWithDataSource(ds);
     const findReplace = useFindReplace();
-    const { undoDescription } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { undoDescription } = storeToRefs(fileHistoryStore);
     findReplace(" ", "", { columnName: "", rowIndex: 0 });
 
     expect(undoDescription.value).toBe(`Find & Replace " " → "" on row 1`);
@@ -204,7 +214,8 @@ describe(useFindReplace, () => {
     const ds = makeDataSource([makeColumn("")], [makeRow({ "": " " }), makeRow({ "": " " })]);
     setupWithDataSource(ds);
     const findReplace = useFindReplace();
-    const { undoDescription } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { undoDescription } = storeToRefs(fileHistoryStore);
     findReplace(" ", "");
 
     expect(undoDescription.value).toBe(`Find & Replace " " → "" (all)`);

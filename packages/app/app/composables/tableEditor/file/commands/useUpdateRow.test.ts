@@ -1,5 +1,6 @@
 import { Row } from "#shared/models/tableEditor/file/Row";
 import { setupEditedItem, setupWithDataSource } from "@/composables/tableEditor/file/commands/testUtils.test";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne, toRawDeep } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeEach, describe, expect, test } from "vitest";
@@ -7,7 +8,8 @@ import { assert, beforeEach, describe, expect, test } from "vitest";
 describe(useUpdateRow, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
-    const { clear } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { clear } = fileHistoryStore;
     clear();
   });
 
@@ -31,7 +33,8 @@ describe(useUpdateRow, () => {
 
     const { editedItem } = setupWithDataSource();
     const updateRow = useUpdateRow();
-    const { undo } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { undo } = fileHistoryStore;
     const originalRow = takeOne(editedItem.value?.dataSource?.rows ?? [], 0);
     updateRow(new Row(Object.assign(structuredClone(toRawDeep(originalRow)), { data: { "": 10, " ": 11 } })));
     undo(editedItem.value);
@@ -48,7 +51,8 @@ describe(useUpdateRow, () => {
 
     const { editedItem } = setupWithDataSource();
     const updateRow = useUpdateRow();
-    const { redo, undo } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { redo, undo } = fileHistoryStore;
     const originalRow = takeOne(editedItem.value?.dataSource?.rows ?? [], 0);
     updateRow(new Row(Object.assign(structuredClone(toRawDeep(originalRow)), { data: { "": 10, " ": 11 } })));
     undo(editedItem.value);
@@ -65,7 +69,8 @@ describe(useUpdateRow, () => {
 
     setupWithDataSource();
     const updateRow = useUpdateRow();
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     updateRow(new Row({ data: { "": 10 } }));
 
     expect(isUndoable.value).toBe(false);
@@ -75,7 +80,8 @@ describe(useUpdateRow, () => {
     expect.hasAssertions();
 
     const updateRow = useUpdateRow();
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     updateRow(new Row({ data: { "": 10 } }));
 
     expect(isUndoable.value).toBe(false);
@@ -86,7 +92,8 @@ describe(useUpdateRow, () => {
 
     setupEditedItem();
     const updateRow = useUpdateRow();
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     updateRow(new Row({ data: { "": 10 } }));
 
     expect(isUndoable.value).toBe(false);
@@ -97,7 +104,8 @@ describe(useUpdateRow, () => {
 
     const { editedItem } = setupWithDataSource();
     const updateRow = useUpdateRow();
-    const { redo, undo } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { redo, undo } = fileHistoryStore;
     const originalRow = takeOne(editedItem.value?.dataSource?.rows ?? [], 0);
     const updatedRow = reactive(
       new Row(Object.assign(structuredClone(toRawDeep(originalRow)), { data: { "": 10, " ": 11 } })),

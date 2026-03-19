@@ -46,12 +46,15 @@ description: Esposter Vue 3 SFC conventions — macro ordering, template pattern
 - **`v-for` destructuring** — always destructure `v-for` bindings when properties are accessed in the template: `v-for="{ value, icon, title } of items"` not `v-for="item of items"` + `item.value`. Only keep a full reference when the whole object is needed (e.g. passed as a prop or stored in a ref). In that case, name the loop variable to match the prop it will be passed to, enabling `:propName` shorthand.
 - **Prop shorthand naming** — name local variables to match their target prop so Vue's `:propName` shorthand works without explicit assignment. For example, if the prop is `dataSourceType`, the local variable must also be `dataSourceType`.
 - **`#activator` always first** — in components that use both `#activator` and other slots (e.g. `v-tooltip`, `v-menu`), always place the `#activator` template as the first child.
+- **Slot names with dots always use dynamic binding** — Vue does not support dots in static slot names, so Vuetify item slots always require the bracket syntax: `#[`item.drag`]`, `#[`item.actions`]`. Only plain names without dots can be static (e.g. `#top`, `#activator`).
 - **Always use `:` shorthand** instead of `v-bind:propName` — write `:disabled="..."` not `v-bind:disabled="..."`. The object-spread form `v-bind="object"` has no shorthand and stays as-is.
 - **Never use `.value` in templates** — Vue auto-unwraps refs in template expressions. Writing `ref.value` in a template accesses `.value` on the already-unwrapped object (not on the ref), which is almost always `undefined`. Write `fn(ref)` not `fn(ref.value)`. `.value` is only needed in `<script setup>` (outside template expressions).
 
 ## Refs & Computed
 
-- **Template refs** — use `useTemplateRef<InstanceType<typeof ComponentName>>("name")`. Never suffix the variable with `Ref` — `const errorIcon = useTemplateRef(...)` not `const errorIconRef = useTemplateRef(...)`.
+- **Template refs** — always use `useTemplateRef` for both component and HTML element refs. Never suffix the variable with `Ref` — `const errorIcon = useTemplateRef(...)` not `const errorIconRef = useTemplateRef(...)`.
+  - Components: `useTemplateRef<InstanceType<typeof ComponentName>>("name")`
+  - HTML elements: `useTemplateRef("container")` — no explicit type annotation needed, Vue infers it. Use a generic semantic name like `"container"`, never the element tag name (not `"spanRef"`, not `"divRef"`).
 - **Boolean computed naming** — use `is*` prefix for boolean computed refs (e.g., `isUndoable`, `isRedoable`, `isSavable`). Do not use `can*`.
 - **Computed for reused expressions** — extract a `computed` (named to match the prop, e.g. `title`) when the same derived value is bound to two or more props. This enables the `:propName` shorthand for one binding and avoids repeating the expression: `const title = computed(() => ...)` → `:title :tooltip-text="title"`. No need for a computed if the value is only used in one place.
 - **Inline prop values** — inline prop values directly in the template to take advantage of Vue TypeScript inference. Only extract to a `computed` when the same logic is reused in multiple places. Single-use derived values stay inline.
@@ -110,6 +113,7 @@ Prefer `watchDeep(source, cb)` over `watch(source, cb, { deep: true })` and `wat
 
 ## Composables
 
+- **Never use `createSharedComposable`** — VueUse's `createSharedComposable` creates global singletons that bypass Pinia's devtools, HMR, and reactive reset behavior. All shared reactive state must live in a Pinia store (`defineStore`). Composables that previously used `createSharedComposable` should be either replaced by a store entirely, or made thin wrappers that delegate to the corresponding store.
 - **Single-function composables return the function directly** — when a composable only exposes one function, return it directly instead of wrapping in an object: `return async (...) => { ... }`. Callers use `const fn = useX()` instead of `const { fn } = useX()`.
 - **`Promise.resolve(value)` for sync-to-async** — when a sync expression needs to satisfy a `Promise<T>` return type, use `Promise.resolve(value)` instead of `async () => value`.
 

@@ -33,18 +33,18 @@
 ## Filtering & Sorting
 
 - [x] **Column sorting** — click column header to sort rows ascending/descending in the UI (without mutating the data) — handled by v-data-table
-- [ ] **Row filtering** — per-column filter chips
+- [x] **Row filtering** — per-column filter text inputs in table headers; case-insensitive contains match; clear filters button in toolbar; resets pagination on change
 - [ ] **Saved filter presets** — name and persist a set of active filters
 
 ## Statistics & Analysis
 
 - [x] **Per-column stats panel** — min/max/avg for number columns, unique value count, null count (histogram excluded)
-- [ ] **Data preview chart** — quick bar/line chart visualization of numeric columns using the existing chart infrastructure
-- [ ] **Outlier detection** — flag numeric values that are > N standard deviations from the mean
+- [x] **Data preview chart** — bar chart for numeric columns (min/avg/max), pie chart for boolean columns; accessible from column action row and column statistics dialog
+- [x] **Outlier detection** — flag numeric values that are > 2 standard deviations from the mean; toggle button in the data toolbar highlights outlier cells in orange
 
 ## Export Enhancements
 
-- [ ] **Filtered export** — export only currently visible (filtered) rows
+- [x] **Filtered export** — export only currently visible (filtered) rows
 - [x] **Column subset export** — choose which columns to include in the export
 - [x] **JSON export** — export as a JSON array
 - [x] **Copy to clipboard** — copy selected rows as tab-separated text

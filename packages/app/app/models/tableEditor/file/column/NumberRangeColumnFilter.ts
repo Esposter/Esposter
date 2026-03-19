@@ -1,0 +1,7 @@
+import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
+
+export interface NumberRangeColumnFilter {
+  maximum: string;
+  minimum: string;
+  type: ColumnType.Number;
+}

@@ -1,4 +1,5 @@
 import { setupEditedItem, setupWithDataSource } from "@/composables/tableEditor/file/commands/testUtils.test";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeEach, describe, expect, test } from "vitest";
@@ -6,7 +7,8 @@ import { assert, beforeEach, describe, expect, test } from "vitest";
 describe(useDeleteRow, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
-    const { clear } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { clear } = fileHistoryStore;
     clear();
   });
 
@@ -29,7 +31,8 @@ describe(useDeleteRow, () => {
 
     const { editedItem } = setupWithDataSource();
     const deleteRow = useDeleteRow();
-    const { undo } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { undo } = fileHistoryStore;
     deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
     undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
@@ -45,7 +48,8 @@ describe(useDeleteRow, () => {
 
     const { editedItem } = setupWithDataSource();
     const deleteRow = useDeleteRow();
-    const { redo, undo } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { redo, undo } = fileHistoryStore;
     deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
     undo(editedItem.value);
     redo(editedItem.value);
@@ -61,7 +65,8 @@ describe(useDeleteRow, () => {
     expect.hasAssertions();
 
     const deleteRow = useDeleteRow();
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     deleteRow("");
 
     expect(isUndoable.value).toBe(false);
@@ -72,7 +77,8 @@ describe(useDeleteRow, () => {
 
     setupEditedItem();
     const deleteRow = useDeleteRow();
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     deleteRow("");
 
     expect(isUndoable.value).toBe(false);

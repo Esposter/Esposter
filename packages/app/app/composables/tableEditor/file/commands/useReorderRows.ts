@@ -3,11 +3,12 @@ import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/Data
 
 import { MoveRowCommand } from "@/models/tableEditor/file/commands/MoveRowCommand";
 import { useTableEditorStore } from "@/store/tableEditor";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 
 export const useReorderRows = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
   const { editedItem } = storeToRefs(tableEditorStore);
-  const { push } = useDataSourceHistory();
+  const { push } = useFileHistoryStore();
   return (newRows: DataSource["rows"]) => {
     if (!editedItem.value?.dataSource) return;
     const oldRows = editedItem.value.dataSource.rows;

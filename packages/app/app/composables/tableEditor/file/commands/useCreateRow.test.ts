@@ -1,5 +1,6 @@
 import { Row } from "#shared/models/tableEditor/file/Row";
 import { setupEditedItem, setupWithDataSource } from "@/composables/tableEditor/file/commands/testUtils.test";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeEach, describe, expect, test } from "vitest";
@@ -7,7 +8,8 @@ import { assert, beforeEach, describe, expect, test } from "vitest";
 describe(useCreateRow, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
-    const { clear } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { clear } = fileHistoryStore;
     clear();
   });
 
@@ -46,7 +48,8 @@ describe(useCreateRow, () => {
 
     const { editedItem } = setupWithDataSource();
     const createRow = useCreateRow();
-    const { undo } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { undo } = fileHistoryStore;
     createRow();
     undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
@@ -61,7 +64,8 @@ describe(useCreateRow, () => {
 
     const { editedItem } = setupWithDataSource();
     const createRow = useCreateRow();
-    const { redo, undo } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { redo, undo } = fileHistoryStore;
     createRow();
     undo(editedItem.value);
     redo(editedItem.value);
@@ -102,7 +106,8 @@ describe(useCreateRow, () => {
     expect.hasAssertions();
 
     const createRow = useCreateRow();
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     createRow();
 
     expect(isUndoable.value).toBe(false);
@@ -113,7 +118,8 @@ describe(useCreateRow, () => {
 
     setupEditedItem();
     const createRow = useCreateRow();
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     createRow();
 
     expect(isUndoable.value).toBe(false);

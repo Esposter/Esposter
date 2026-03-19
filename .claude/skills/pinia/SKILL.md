@@ -1,6 +1,6 @@
 ---
 name: pinia
-description: Esposter Pinia store conventions — full store name, destructure with storeToRefs, store-to-store dot-access, and CRUD patterns (findIndex guard, Object.assign update, filter delete). Apply when using or writing Pinia stores.
+description: Esposter Pinia store conventions — full store name, destructure with storeToRefs, store-to-store dot-access for refs (methods may be destructured), and CRUD patterns (findIndex guard, Object.assign update, filter delete). Apply when using or writing Pinia stores.
 ---
 
 # Pinia Store Conventions
@@ -15,7 +15,7 @@ description: Esposter Pinia store conventions — full store name, destructure w
   3. `const { method1 } = xyzStore` _(omit if no methods needed)_
   4. _(repeat for next store)_
 - Never use dot-access (`store.method()`) in components.
-- **Store-to-store** (inside a Pinia store file): declare nested stores at the root of the setup function, access via `store.property` / `store.method()` — do NOT destructure (Pinia requires dot-access for store-to-store to maintain reactivity).
+- **Store-to-store** (inside a Pinia store file): declare nested stores at the root of the setup function. Access refs/computeds via dot syntax (`otherStore.someRef`) to maintain reactivity — do NOT use `storeToRefs`. Methods may still be destructured: `const { methodName } = otherStore`.
 
 ## CRUD Store Patterns
 

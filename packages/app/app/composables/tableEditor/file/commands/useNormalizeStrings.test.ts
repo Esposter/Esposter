@@ -8,6 +8,7 @@ import {
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { NormalizeStringMode } from "@/models/tableEditor/file/commands/NormalizeStringMode";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeEach, describe, expect, test } from "vitest";
@@ -15,7 +16,8 @@ import { assert, beforeEach, describe, expect, test } from "vitest";
 describe(useNormalizeStrings, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
-    const { clear } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { clear } = fileHistoryStore;
     clear();
   });
 
@@ -79,7 +81,8 @@ describe(useNormalizeStrings, () => {
     const ds = makeDataSource([numberColumn], [makeRow({ "": 0 })]);
     const { editedItem } = setupWithDataSource(ds);
     const normalizeStrings = useNormalizeStrings();
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     normalizeStrings(NormalizeStringMode.Trim);
     const dataSource = editedItem.value?.dataSource;
 
@@ -96,7 +99,8 @@ describe(useNormalizeStrings, () => {
     const ds = makeDataSource([hiddenColumn], [makeRow({ "": " " })]);
     const { editedItem } = setupWithDataSource(ds);
     const normalizeStrings = useNormalizeStrings();
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     normalizeStrings(NormalizeStringMode.Trim);
     const dataSource = editedItem.value?.dataSource;
 
@@ -112,7 +116,8 @@ describe(useNormalizeStrings, () => {
     const ds = makeDataSource([makeColumn("")], [makeRow({ "": " " }), makeRow({ "": " " })]);
     const { editedItem } = setupWithDataSource(ds);
     const normalizeStrings = useNormalizeStrings();
-    const { undo } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { undo } = fileHistoryStore;
     const editedItemValue = editedItem.value;
 
     assert.exists(editedItemValue);
@@ -133,7 +138,8 @@ describe(useNormalizeStrings, () => {
     const ds = makeDataSource([makeColumn("")], [makeRow({ "": " " })]);
     const { editedItem } = setupWithDataSource(ds);
     const normalizeStrings = useNormalizeStrings();
-    const { redo, undo } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { redo, undo } = fileHistoryStore;
     const editedItemValue = editedItem.value;
 
     assert.exists(editedItemValue);
@@ -151,7 +157,8 @@ describe(useNormalizeStrings, () => {
   test("no-op when editedItem is undefined", () => {
     expect.hasAssertions();
 
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     const normalizeStrings = useNormalizeStrings();
     normalizeStrings(NormalizeStringMode.Trim);
 
@@ -162,7 +169,8 @@ describe(useNormalizeStrings, () => {
     expect.hasAssertions();
 
     setupEditedItem();
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     const normalizeStrings = useNormalizeStrings();
     normalizeStrings(NormalizeStringMode.Trim);
 
@@ -175,7 +183,8 @@ describe(useNormalizeStrings, () => {
     const ds = makeDataSource([makeColumn("")], [makeRow({ "": " " })]);
     setupWithDataSource(ds);
     const normalizeStrings = useNormalizeStrings();
-    const { undoDescription } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { undoDescription } = storeToRefs(fileHistoryStore);
     normalizeStrings(NormalizeStringMode.Trim);
 
     expect(undoDescription.value).toBe(`Normalize Strings (${NormalizeStringMode.Trim})`);

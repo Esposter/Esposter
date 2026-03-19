@@ -3,11 +3,14 @@ import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/Data
 
 import { sanitizeHtml } from "@/services/sanitizeHtml/sanitizeHtml";
 import { useTableEditorStore } from "@/store/tableEditor";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { marked } from "marked";
 
 const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
 const { editedItem } = storeToRefs(tableEditorStore);
-const { isRedoable, redo, redoDescription } = useDataSourceHistory();
+const fileHistoryStore = useFileHistoryStore();
+const { redo } = fileHistoryStore;
+const { isRedoable, redoDescription } = storeToRefs(fileHistoryStore);
 const tooltipHtml = computed(() => {
   const [title, ...rest] = (redoDescription.value ?? "").split("\n\n");
   const parts = [`Redo: ${title} *(Ctrl+Shift+Z)*`, ...rest];

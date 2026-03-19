@@ -12,13 +12,14 @@ export const computeColumnStats = (dataSource: DataSource): ColumnStats[] =>
     if (column.type === ColumnType.Boolean) {
       const nonNull = values.filter((v) => typeof v === "boolean");
       return {
-        avg: null,
+        average: null,
         columnName: column.name,
         columnType: ColumnType.Boolean,
         falseCount: nonNull.filter((v) => !v).length,
-        max: null,
-        min: null,
+        maximum: null,
+        minimum: null,
         nullCount,
+        standardDeviation: null,
         trueCount: nonNull.filter(Boolean).length,
         uniqueCount: null,
       };
@@ -26,18 +27,25 @@ export const computeColumnStats = (dataSource: DataSource): ColumnStats[] =>
 
     if (column.type === ColumnType.Number) {
       const nonNull = values.filter((v) => typeof v === "number");
-      const min = nonNull.length > 0 ? nonNull.reduce((m, v) => Math.min(m, v), Infinity) : null;
-      const max = nonNull.length > 0 ? nonNull.reduce((m, v) => Math.max(m, v), -Infinity) : null;
-      const avg =
-        nonNull.length > 0 ? Math.round((nonNull.reduce((sum, v) => sum + v, 0) / nonNull.length) * 100) / 100 : null;
+      const minimum = nonNull.length > 0 ? nonNull.reduce((m, v) => Math.min(m, v), Infinity) : null;
+      const maximum = nonNull.length > 0 ? nonNull.reduce((m, v) => Math.max(m, v), -Infinity) : null;
+      const sum = nonNull.reduce((s, v) => s + v, 0);
+      const rawAverage = nonNull.length > 0 ? sum / nonNull.length : null;
+      const average = rawAverage === null ? null : Math.round(rawAverage * 100) / 100;
+      const variance =
+        rawAverage === null || nonNull.length === 0
+          ? null
+          : nonNull.reduce((s, v) => s + (v - rawAverage) ** 2, 0) / nonNull.length;
+      const standardDeviation = variance === null ? null : Math.round(Math.sqrt(variance) * 100) / 100;
       return {
-        avg,
+        average,
         columnName: column.name,
         columnType: ColumnType.Number,
         falseCount: null,
-        max,
-        min,
+        maximum,
+        minimum,
         nullCount,
+        standardDeviation,
         trueCount: null,
         uniqueCount: new Set(nonNull).size,
       };
@@ -45,13 +53,14 @@ export const computeColumnStats = (dataSource: DataSource): ColumnStats[] =>
 
     const nonNull = values.filter((v) => typeof v === "string");
     return {
-      avg: null,
+      average: null,
       columnName: column.name,
       columnType: column.type,
       falseCount: null,
-      max: null,
-      min: null,
+      maximum: null,
+      minimum: null,
       nullCount,
+      standardDeviation: null,
       trueCount: null,
       uniqueCount: new Set(nonNull).size,
     };

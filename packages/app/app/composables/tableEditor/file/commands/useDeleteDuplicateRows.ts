@@ -4,11 +4,12 @@ import { DeleteRowsCommand } from "@/models/tableEditor/file/commands/DeleteRows
 import { KeepDuplicateMode } from "@/models/tableEditor/file/commands/KeepDuplicateMode";
 import { findDuplicateRows } from "@/services/tableEditor/file/commands/findDuplicateRows";
 import { useTableEditorStore } from "@/store/tableEditor";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 
 export const useDeleteDuplicateRows = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
   const { editedItem } = storeToRefs(tableEditorStore);
-  const { push } = useDataSourceHistory();
+  const { push } = useFileHistoryStore();
   return (keepMode = KeepDuplicateMode.First) => {
     if (!editedItem.value?.dataSource) return;
     const duplicateRows = findDuplicateRows(editedItem.value.dataSource, keepMode);

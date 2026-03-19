@@ -32,7 +32,8 @@
       "Bash(pnpm search:*)",
       "Bash(npm search:*)",
       "Bash(pnpm lint:*)",
-      "Bash(pnpm lint:fix)"
+      "Bash(pnpm lint:fix)",
+      "Bash(ls:*)"
     ]
   }
 }

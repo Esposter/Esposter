@@ -6,6 +6,7 @@ import {
   setupEditedItem,
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeEach, describe, expect, test } from "vitest";
@@ -13,7 +14,8 @@ import { assert, beforeEach, describe, expect, test } from "vitest";
 describe(useReorderColumns, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
-    const { clear } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { clear } = fileHistoryStore;
     clear();
   });
 
@@ -38,7 +40,8 @@ describe(useReorderColumns, () => {
 
     const { editedItem } = setupWithDataSource();
     const reorderColumns = useReorderColumns();
-    const { undo } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { undo } = fileHistoryStore;
     const columns = editedItem.value?.dataSource?.columns ?? [];
     const newColumns = [takeOne(columns, 1), takeOne(columns, 0)] as Column[];
     reorderColumns(newColumns);
@@ -56,7 +59,8 @@ describe(useReorderColumns, () => {
 
     const { editedItem } = setupWithDataSource();
     const reorderColumns = useReorderColumns();
-    const { redo, undo } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { redo, undo } = fileHistoryStore;
     const columns = editedItem.value?.dataSource?.columns ?? [];
     const newColumns = [takeOne(columns, 1), takeOne(columns, 0)] as Column[];
     reorderColumns(newColumns);
@@ -117,7 +121,8 @@ describe(useReorderColumns, () => {
 
     const { editedItem } = setupWithDataSource();
     const reorderColumns = useReorderColumns();
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     const columns = editedItem.value?.dataSource?.columns ?? [];
     reorderColumns([...columns]);
 
@@ -128,7 +133,8 @@ describe(useReorderColumns, () => {
     expect.hasAssertions();
 
     const reorderColumns = useReorderColumns();
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     reorderColumns([]);
 
     expect(isUndoable.value).toBe(false);
@@ -139,7 +145,8 @@ describe(useReorderColumns, () => {
 
     setupEditedItem();
     const reorderColumns = useReorderColumns();
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     reorderColumns([]);
 
     expect(isUndoable.value).toBe(false);
