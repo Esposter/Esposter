@@ -15,7 +15,7 @@ export const useOutlierStore = defineStore("tableEditor/file/outlier", () => {
     const dataSource = tableEditorStore.editedItem.dataSource;
     const result = new Set<string>();
     for (const { average, columnName, columnType, standardDeviation } of computeColumnStats(dataSource)) {
-      if (columnType !== ColumnType.Number || average === null || standardDeviation === null || standardDeviation === 0)
+      if (columnType !== ColumnType.Number || average === null || standardDeviation === null || standardDeviation <= 0)
         continue;
       const threshold = OUTLIER_STANDARD_DEVIATION_MULTIPLIER * standardDeviation;
       for (const row of dataSource.rows) {

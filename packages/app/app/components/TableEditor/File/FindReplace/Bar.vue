@@ -50,7 +50,7 @@ const goToNext = () => {
           max-w-52
           variant="outlined"
         />
-        <span w-16 text-right class="text-sm text-medium-emphasis">
+        <span w-16 text-right text-sm class="text-medium-emphasis">
           <template v-if="findValue && occurrences.length === 0">No matches</template>
           <template v-else-if="occurrences.length > 0"
             >{{ currentOccurrenceIndex + 1 }} / {{ occurrences.length }}</template
