@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { SortItem } from "vuetify/lib/components/VDataTable/composables/sort.mjs";
 
 import { ColumnHeaders } from "@/services/tableEditor/file/column/ColumnHeaders";
 import { ColumnTypeColorMap } from "@/services/tableEditor/file/column/ColumnTypeColorMap";
@@ -14,6 +15,7 @@ interface ColumnTableProps {
 const { dataSource } = defineProps<ColumnTableProps>();
 const reorderColumns = useReorderColumns();
 const selectedColumnIds = ref<string[]>([]);
+const sortBy = ref<readonly SortItem[]>([]);
 const dragColumns = computed({
   get: () => dataSource.columns,
   set: reorderColumns,
@@ -30,8 +32,12 @@ const dragColumns = computed({
         items: dataSource.columns,
         modelValue: selectedColumnIds,
         showSelect: true,
+        sortBy,
         'onUpdate:modelValue': (newSelectedIds) => {
           selectedColumnIds = newSelectedIds as string[];
+        },
+        'onUpdate:sortBy': (newSortBy) => {
+          sortBy = newSortBy;
         },
       }"
     >
@@ -39,7 +45,7 @@ const dragColumns = computed({
         <TableEditorFileColumnTopSlot v-model="selectedColumnIds" />
       </template>
       <template #[`item.drag`]>
-        <v-icon :class="DRAG_HANDLE_CLASS" icon="mdi-drag" cursor-move />
+        <v-icon v-if="sortBy.length === 0" :class="DRAG_HANDLE_CLASS" icon="mdi-drag" cursor-move />
       </template>
       <template #[`item.name`]="{ item: column }">
         <div flex items-center gap-1>

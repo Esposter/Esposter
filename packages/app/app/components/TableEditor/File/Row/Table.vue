@@ -15,7 +15,7 @@ interface DataTableProps {
 
 const { dataSource } = defineProps<DataTableProps>();
 const rowStore = useRowStore();
-const { itemsPerPage, page, selectedRowIds } = storeToRefs(rowStore);
+const { itemsPerPage, page, selectedRowIds, sortBy } = storeToRefs(rowStore);
 const filterStore = useFilterStore();
 const { columnFilters } = storeToRefs(filterStore);
 const reorderRows = useReorderRows();
@@ -56,6 +56,7 @@ const rowIndexIdMap = computed(() => new Map(filteredDataSource.value.rows.map((
         modelValue: selectedRowIds,
         page,
         showSelect: true,
+        sortBy,
         'onUpdate:itemsPerPage': (newItemsPerPage) => {
           itemsPerPage = newItemsPerPage;
         },
@@ -65,13 +66,21 @@ const rowIndexIdMap = computed(() => new Map(filteredDataSource.value.rows.map((
         'onUpdate:page': (newPage) => {
           page = newPage;
         },
+        'onUpdate:sortBy': (newSortBy) => {
+          sortBy = newSortBy;
+        },
       }"
     >
       <template v-if="selectedRowIds.length > 0" #top>
         <TableEditorFileRowTopSlot />
       </template>
       <template #[`item.drag`]>
-        <v-icon :class="DRAG_HANDLE_CLASS" icon="mdi-drag" cursor-move />
+        <v-icon
+          v-if="sortBy.length === 0 && filteredDataSource === dataSource"
+          :class="DRAG_HANDLE_CLASS"
+          icon="mdi-drag"
+          cursor-move
+        />
       </template>
       <template #[`item.actions`]="{ item }">
         <TableEditorFileRowActionSlot

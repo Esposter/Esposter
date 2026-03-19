@@ -1,8 +1,8 @@
+import type { StoreDefinition } from "pinia";
 import type { Colors as BaseVuetifyColors } from "vuetify/lib/composables/theme.mjs";
 
 import { takeOne } from "@esposter/shared";
 
-import type { StoreDefinition } from "pinia";
 import type { BaseColors, getBaseColorsExtension } from "../../vuetify.config";
 
 type Colors = {
@@ -11,7 +11,8 @@ type Colors = {
 
 type UnifiedColors = BaseColors & BaseVuetifyColors & ReturnType<typeof getBaseColorsExtension>;
 
-export const useColorsStore = defineStore("colors", () => {
+const id = "colors";
+const useBaseColorsStore = defineStore<typeof id, Colors>(id, () => {
   const globalTheme = useGlobalTheme();
   const colors = Object.fromEntries(
     Object.keys(globalTheme.current.value.colors).map((color) => [
@@ -20,4 +21,6 @@ export const useColorsStore = defineStore("colors", () => {
     ]),
   ) as Colors;
   return colors;
-}) as StoreDefinition<"colors", Colors>;
+});
+
+export const useColorsStore = () => useBaseColorsStore() as unknown as StoreDefinition<"colors", Colors>;
