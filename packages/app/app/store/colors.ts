@@ -2,6 +2,7 @@ import type { Colors as BaseVuetifyColors } from "vuetify/lib/composables/theme.
 
 import { takeOne } from "@esposter/shared";
 
+import type { StoreDefinition } from "pinia";
 import type { BaseColors, getBaseColorsExtension } from "../../vuetify.config";
 
 type Colors = {
@@ -19,4 +20,4 @@ export const useColorsStore = defineStore("colors", () => {
     ]),
   ) as Colors;
   return colors;
-});
+}) as StoreDefinition<"colors", Colors>;
