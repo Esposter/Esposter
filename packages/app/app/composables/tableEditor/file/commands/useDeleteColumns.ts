@@ -2,8 +2,8 @@ import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/Data
 import type { IndexedColumn } from "@/models/tableEditor/file/commands/IndexedColumn";
 
 import { DeleteColumnsCommand } from "@/models/tableEditor/file/commands/DeleteColumnsCommand";
-import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { useTableEditorStore } from "@/store/tableEditor";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
 export const useDeleteColumns = () => {

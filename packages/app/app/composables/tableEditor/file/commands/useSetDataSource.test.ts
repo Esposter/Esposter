@@ -1,9 +1,9 @@
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 
 import {
-    makeDataSource,
-    setupEditedItem,
-    setupWithDataSource,
+  makeDataSource,
+  setupEditedItem,
+  setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";

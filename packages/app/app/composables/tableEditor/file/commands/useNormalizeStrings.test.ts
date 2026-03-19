@@ -1,11 +1,11 @@
 import { Column } from "#shared/models/tableEditor/file/Column";
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import {
-    makeColumn,
-    makeDataSource,
-    makeRow,
-    setupEditedItem,
-    setupWithDataSource,
+  makeColumn,
+  makeDataSource,
+  makeRow,
+  setupEditedItem,
+  setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { NormalizeStringMode } from "@/models/tableEditor/file/commands/NormalizeStringMode";
 import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";

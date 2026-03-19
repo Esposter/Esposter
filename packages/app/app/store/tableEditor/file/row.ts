@@ -22,9 +22,8 @@ export const useRowStore = defineStore("tableEditor/file/row", () => {
     page.value = Math.floor(occurrence.rowIndex / itemsPerPage.value) + 1;
   };
 
-  watch(
-    [itemsPerPage, () => findReplaceStore.currentOccurrenceIndex, () => findReplaceStore.occurrences],
-    () => navigateToCurrentOccurrence(),
+  watch([itemsPerPage, () => findReplaceStore.currentOccurrenceIndex, () => findReplaceStore.occurrences], () =>
+    navigateToCurrentOccurrence(),
   );
 
   return { itemsPerPage, page, selectedRowIds };

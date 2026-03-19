@@ -2,8 +2,8 @@ import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/Data
 
 import { Row } from "#shared/models/tableEditor/file/Row";
 import { CreateRowCommand } from "@/models/tableEditor/file/commands/CreateRowCommand";
-import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { useTableEditorStore } from "@/store/tableEditor";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 
 export const useCreateRow = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();

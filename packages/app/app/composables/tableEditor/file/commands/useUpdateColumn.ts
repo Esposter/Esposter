@@ -3,8 +3,8 @@ import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/Data
 import type { ToData } from "@esposter/shared";
 
 import { UpdateColumnCommand } from "@/models/tableEditor/file/commands/UpdateColumnCommand";
-import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { useTableEditorStore } from "@/store/tableEditor";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
 export const useUpdateColumn = () => {

@@ -55,8 +55,22 @@ const stringValue = computed({
     variant="underlined"
   />
   <div v-else-if="column.type === ColumnType.Number" flex gap-1>
-    <v-text-field v-model="minimumValue" density="compact" hide-details placeholder="Min" type="number" variant="underlined" />
-    <v-text-field v-model="maximumValue" density="compact" hide-details placeholder="Max" type="number" variant="underlined" />
+    <v-text-field
+      v-model="minimumValue"
+      density="compact"
+      hide-details
+      placeholder="Min"
+      type="number"
+      variant="underlined"
+    />
+    <v-text-field
+      v-model="maximumValue"
+      density="compact"
+      hide-details
+      placeholder="Max"
+      type="number"
+      variant="underlined"
+    />
   </div>
   <v-text-field
     v-else

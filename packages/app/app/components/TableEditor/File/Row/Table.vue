@@ -85,20 +85,10 @@ const rowIndexIdMap = computed(() => new Map(filteredDataSource.value.rows.map((
         :key="column.id"
         #[`header.${column.name}`]="{ column: headerColumn, getSortIcon, isSorted, toggleSort }"
       >
-        <TableEditorFileRowHeaderSlot
-          :column
-          :getSortIcon
-          :headerColumn
-          :isSorted
-          :toggleSort
-        />
+        <TableEditorFileRowHeaderSlot :column :get-sort-icon :header-column :is-sorted :toggle-sort />
       </template>
       <template v-for="column of displayColumns" :key="column.id" #[`item.${column.name}`]="{ item }">
-        <TableEditorFileRowCellSlot
-          :column
-          :item
-          :rowIndex="rowIndexIdMap.get(item.id) ?? -1"
-        />
+        <TableEditorFileRowCellSlot :column :item :row-index="rowIndexIdMap.get(item.id) ?? -1" />
       </template>
     </StyledDataTable>
   </VueDraggable>

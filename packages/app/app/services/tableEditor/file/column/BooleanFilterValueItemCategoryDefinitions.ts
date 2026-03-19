@@ -1,5 +1,5 @@
-import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
 import type { BooleanFilterValue } from "@/models/tableEditor/file/column/BooleanFilterValue";
+import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
 
 export const BooleanFilterValueItemCategoryDefinitions: SelectItemCategoryDefinition<BooleanFilterValue>[] = [
   { title: "All", value: "" },

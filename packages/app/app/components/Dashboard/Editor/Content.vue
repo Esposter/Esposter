@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useVisualStore } from "@/store/dashboard/visual";
 import { useColorsStore } from "@/store/colors";
+import { useVisualStore } from "@/store/dashboard/visual";
 import { GridItem, GridLayout } from "grid-layout-plus";
 
 const visualStore = useVisualStore();

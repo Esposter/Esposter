@@ -1,9 +1,9 @@
 import { Column } from "#shared/models/tableEditor/file/Column";
 import {
-    makeDataSource,
-    makeRow,
-    setupEditedItem,
-    setupWithDataSource,
+  makeDataSource,
+  makeRow,
+  setupEditedItem,
+  setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne } from "@esposter/shared";

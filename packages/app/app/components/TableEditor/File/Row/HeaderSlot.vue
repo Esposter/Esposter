@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { InternalDataTableHeader } from "vuetify/lib/components/VDataTable/types.mjs";
+import type { IconValue } from "vuetify/lib/composables/icons.mjs";
 
 import { useFilterStore } from "@/store/tableEditor/file/filter";
-import type { IconValue } from "vuetify/lib/composables/icons.mjs";
 
 interface HeaderSlotProps {
   column: DataSource["columns"][number];
@@ -24,7 +24,8 @@ const { columnFilters } = storeToRefs(filterStore);
     <div class="group" flex cursor-pointer select-none items-center gap-1 @click="toggleSort(headerColumn)">
       <span>{{ column.name }}</span>
       <v-icon
-        transition-opacity duration-200
+        transition-opacity
+        duration-200
         :class="isSorted(headerColumn) ? '' : 'opacity-0 group-hover:opacity-50'"
         :icon="getSortIcon(headerColumn)"
       />

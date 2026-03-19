@@ -11,10 +11,12 @@ export const useFindReplaceStore = defineStore("tableEditor/file/findReplace", (
   const replaceValue = ref("");
   const occurrences = computed(() => {
     if (!findValue.value || !tableEditorStore.editedItem?.dataSource) return [];
-    return findMatchingCells(tableEditorStore.editedItem.dataSource, findValue.value).map(({ columnName, rowIndex }) => ({
-      columnName,
-      rowIndex,
-    }));
+    return findMatchingCells(tableEditorStore.editedItem.dataSource, findValue.value).map(
+      ({ columnName, rowIndex }) => ({
+        columnName,
+        rowIndex,
+      }),
+    );
   });
 
   watch(findValue, () => {

@@ -1,12 +1,12 @@
 import { Column } from "#shared/models/tableEditor/file/Column";
 import { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
 import {
-    makeColumn,
-    makeDataSource,
-    makeDateColumn,
-    makeRow,
-    setupEditedItem,
-    setupWithDataSource,
+  makeColumn,
+  makeDataSource,
+  makeDateColumn,
+  makeRow,
+  setupEditedItem,
+  setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne, toRawDeep } from "@esposter/shared";

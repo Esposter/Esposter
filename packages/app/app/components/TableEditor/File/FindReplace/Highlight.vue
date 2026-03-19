@@ -22,11 +22,14 @@ const parts = computed(() => {
   return result;
 });
 
-watch(() => isCurrentOccurrence, async (newIsCurrentOccurrence) => {
-  if (!newIsCurrentOccurrence) return;
-  await nextTick();
-  container.value?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-});
+watch(
+  () => isCurrentOccurrence,
+  async (newIsCurrentOccurrence) => {
+    if (!newIsCurrentOccurrence) return;
+    await nextTick();
+    container.value?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  },
+);
 </script>
 
 <template>

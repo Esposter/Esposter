@@ -1,5 +1,5 @@
-import { useColorsStore } from "@/store/colors";
 import { suggestion } from "@/services/message/suggestion";
+import { useColorsStore } from "@/store/colors";
 import { Mention } from "@tiptap/extension-mention";
 
 export const useMentionExtension = () => {

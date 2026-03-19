@@ -2,8 +2,8 @@ import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/Data
 
 import { FindReplaceCommand } from "@/models/tableEditor/file/commands/FindReplaceCommand";
 import { findMatchingCells } from "@/services/tableEditor/file/commands/findMatchingCells";
-import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { useTableEditorStore } from "@/store/tableEditor";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 
 export const useFindReplace = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();

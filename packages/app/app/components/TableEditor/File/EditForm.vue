@@ -1,8 +1,8 @@
 <script setup lang="ts" generic="TDataSourceItem extends DataSourceItemTypeMap[keyof DataSourceItemTypeMap]">
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 
-import { filterDataSourceRows } from "@/services/tableEditor/file/dataSource/filterDataSourceRows";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
+import { filterDataSourceRows } from "@/services/tableEditor/file/dataSource/filterDataSourceRows";
 import { useFilterStore } from "@/store/tableEditor/file/filter";
 import { useRowStore } from "@/store/tableEditor/file/row";
 import { Vjsf } from "@koumoul/vjsf";
@@ -50,7 +50,7 @@ const filteredRowCount = computed(() =>
             <template #title>
               Data
               <v-spacer />
-              <TableEditorFileStatsBar mr-4 :filteredRowCount :stats="modelValue.dataSource.stats" />
+              <TableEditorFileStatsBar mr-4 :filtered-row-count :stats="modelValue.dataSource.stats" />
               <TableEditorFileRowCopyToClipboardButton
                 :row-ids="selectedRowIds.length > 0 ? selectedRowIds : undefined"
               />

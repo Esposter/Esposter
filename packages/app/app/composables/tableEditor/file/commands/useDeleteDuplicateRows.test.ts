@@ -1,9 +1,9 @@
 import {
-    makeColumn,
-    makeDataSource,
-    makeRow,
-    setupEditedItem,
-    setupWithDataSource,
+  makeColumn,
+  makeDataSource,
+  makeRow,
+  setupEditedItem,
+  setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { KeepDuplicateMode } from "@/models/tableEditor/file/commands/KeepDuplicateMode";
 import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
