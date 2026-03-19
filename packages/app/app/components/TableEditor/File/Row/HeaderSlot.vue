@@ -24,7 +24,7 @@ const { columnFilters } = storeToRefs(filterStore);
     <div class="group" flex cursor-pointer select-none items-center gap-1 @click="toggleSort(headerColumn)">
       <span>{{ column.name }}</span>
       <v-icon
-        class="transition-opacity duration-200"
+        transition-opacity duration-200
         :class="isSorted(headerColumn) ? '' : 'opacity-0 group-hover:opacity-50'"
         :icon="getSortIcon(headerColumn)"
       />

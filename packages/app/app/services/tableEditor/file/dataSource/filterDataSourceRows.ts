@@ -23,6 +23,7 @@ export const filterDataSourceRows = (
       if (filter.type === ColumnType.Number) {
         if (cellValue === null) return false;
         const numValue = Number(cellValue);
+        if (Number.isNaN(numValue)) return false;
         if (filter.minimum !== "" && numValue < Number(filter.minimum)) return false;
         if (filter.maximum !== "" && numValue > Number(filter.maximum)) return false;
         return true;

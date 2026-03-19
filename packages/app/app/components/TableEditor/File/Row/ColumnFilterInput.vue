@@ -22,14 +22,14 @@ const minimumValue = computed({
   get: () => (modelValue.value?.type === ColumnType.Number ? modelValue.value.minimum : ""),
   set: (minimum) => {
     const maximum = modelValue.value?.type === ColumnType.Number ? modelValue.value.maximum : "";
-    modelValue.value = minimum || maximum ? { maximum, minimum, type: ColumnType.Number } : undefined;
+    modelValue.value = minimum !== "" || maximum !== "" ? { maximum, minimum, type: ColumnType.Number } : undefined;
   },
 });
 const maximumValue = computed({
   get: () => (modelValue.value?.type === ColumnType.Number ? modelValue.value.maximum : ""),
   set: (maximum) => {
     const minimum = modelValue.value?.type === ColumnType.Number ? modelValue.value.minimum : "";
-    modelValue.value = minimum || maximum ? { maximum, minimum, type: ColumnType.Number } : undefined;
+    modelValue.value = minimum !== "" || maximum !== "" ? { maximum, minimum, type: ColumnType.Number } : undefined;
   },
 });
 const stringValue = computed({

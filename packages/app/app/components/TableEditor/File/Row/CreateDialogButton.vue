@@ -10,9 +10,10 @@ interface CreateDialogButtonProps {
 
 const { dataSource } = defineProps<CreateDialogButtonProps>();
 const createRow = useCreateRow();
-const editedRow = ref(new Row({ data: Object.fromEntries(dataSource.columns.map((column) => [column.name, null])) }));
+const blankRow = ref(new Row({ data: Object.fromEntries(dataSource.columns.map((column) => [column.name, null])) }));
+const editedRow = ref(new Row(blankRow.value));
 const resetForm = () => {
-  editedRow.value = new Row({ data: Object.fromEntries(dataSource.columns.map((column) => [column.name, null])) });
+  editedRow.value = new Row(blankRow.value);
 };
 </script>
 
@@ -22,7 +23,7 @@ const resetForm = () => {
     tooltip-text="Add Row"
     icon="mdi-table-row-plus-after"
     :schema="rowSchema"
-    :value="null"
+    :value="blankRow"
     :edited-value="editedRow"
     @reset="resetForm()"
     @submit="
