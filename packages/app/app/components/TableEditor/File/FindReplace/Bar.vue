@@ -2,8 +2,7 @@
 import { useFindReplaceStore } from "@/store/tableEditor/file/findReplace";
 
 const findReplaceStore = useFindReplaceStore();
-const { isFindReplaceOpen } = findReplaceStore;
-const { currentOccurrenceIndex, findValue, occurrences, replaceValue } = storeToRefs(findReplaceStore);
+const { currentOccurrenceIndex, findValue, isFindReplaceOpen, occurrences, replaceValue } = storeToRefs(findReplaceStore);
 const findReplace = useFindReplace();
 
 const goToPrevious = () => {

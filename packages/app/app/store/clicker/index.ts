@@ -16,7 +16,11 @@ export const useClickerStore = defineStore("clicker", () => {
     auth: { save: $trpc.clicker.saveClicker.mutate },
     unauth: { key: CLICKER_LOCAL_STORAGE_KEY, schema: clickerSchema },
   });
-  const clickerItemColor = computed(() => getColorMap(colorsStore)[clicker.value.type]);
+  const clickerItemColor = computed(() =>
+    getColorMap({ error: colorsStore.error, info: colorsStore.info, primary: colorsStore.primary })[
+      clicker.value.type
+    ],
+  );
   const clickerItemProperties = computed<ClickerItemProperties>(() => ({
     color: clickerItemColor.value,
     iconComponent: IconComponentMap[clicker.value.type],

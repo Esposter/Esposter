@@ -2,7 +2,7 @@
 import { useFindReplaceStore } from "@/store/tableEditor/file/findReplace";
 
 const findReplaceStore = useFindReplaceStore();
-const { isFindReplaceOpen } = findReplaceStore;
+const { isFindReplaceOpen } = storeToRefs(findReplaceStore);
 </script>
 
 <template>

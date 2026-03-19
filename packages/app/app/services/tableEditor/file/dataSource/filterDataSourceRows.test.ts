@@ -219,7 +219,7 @@ describe(filterDataSourceRows, () => {
 
     const result = filterDataSourceRows(dataSource, { "": { type: ColumnType.String, value: "abc" } });
 
-    expect(result.columns).toStrictEqual(columns);
+    expect(result.columns).toBe(columns);
   });
 });
 
