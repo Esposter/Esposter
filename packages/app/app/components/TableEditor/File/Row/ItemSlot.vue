@@ -3,18 +3,18 @@ import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { Row } from "#shared/models/tableEditor/file/Row";
 
 import { OUTLIER_HIGHLIGHT_CLASS } from "@/services/tableEditor/file/constants";
-import { getCellId } from "@/services/tableEditor/file/getCellId";
+import { getItemId } from "@/services/tableEditor/file/getItemId";
 import { useFindReplaceStore } from "@/store/tableEditor/file/findReplace";
 import { useOutlierStore } from "@/store/tableEditor/file/outlier";
 import { takeOne } from "@esposter/shared";
 
-interface CellSlotProps {
+interface ItemSlotProps {
   column: DataSource["columns"][number];
   item: Row;
   rowIndex: number;
 }
 
-const { column, item, rowIndex } = defineProps<CellSlotProps>();
+const { column, item, rowIndex } = defineProps<ItemSlotProps>();
 const findReplaceStore = useFindReplaceStore();
 const { currentOccurrenceIndex, findValue, occurrences } = storeToRefs(findReplaceStore);
 const outlierStore = useOutlierStore();
@@ -27,7 +27,7 @@ const text = computed(() => {
 const isCurrentOccurrence = computed(
   () => currentOccurrence.value?.rowIndex === rowIndex && currentOccurrence.value?.columnName === column.name,
 );
-const isOutlier = computed(() => outlierCells.value.has(getCellId(item.id, column.name)));
+const isOutlier = computed(() => outlierCells.value.has(getItemId(item.id, column.name)));
 </script>
 
 <template>

@@ -3,7 +3,7 @@ import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/Data
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { computeColumnStats } from "@/services/tableEditor/file/column/computeColumnStats";
 import { OUTLIER_STANDARD_DEVIATION_MULTIPLIER } from "@/services/tableEditor/file/constants";
-import { getCellId } from "@/services/tableEditor/file/getCellId";
+import { getItemId } from "@/services/tableEditor/file/getItemId";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { takeOne } from "@esposter/shared";
 
@@ -21,7 +21,7 @@ export const useOutlierStore = defineStore("tableEditor/file/outlier", () => {
       for (const row of dataSource.rows) {
         const value = takeOne(row.data, columnName);
         if (typeof value === "number" && Math.abs(value - average) > threshold)
-          result.add(getCellId(row.id, columnName));
+          result.add(getItemId(row.id, columnName));
       }
     }
     return result;

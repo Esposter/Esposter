@@ -74,7 +74,7 @@ const rowIndexIdMap = computed(() => new Map(filteredDataSource.value.rows.map((
       <template v-if="selectedRowIds.length > 0" #top>
         <TableEditorFileRowTopSlot />
       </template>
-      <template #[`item.drag`]>
+      <template #item.drag>
         <v-icon
           v-if="sortBy.length === 0 && filteredDataSource === dataSource"
           :class="DRAG_HANDLE_CLASS"
@@ -82,7 +82,7 @@ const rowIndexIdMap = computed(() => new Map(filteredDataSource.value.rows.map((
           cursor-move
         />
       </template>
-      <template #[`item.actions`]="{ item }">
+      <template #item.actions="{ item }">
         <TableEditorFileRowActionSlot
           :columns="dataSource.columns"
           :index="rowIndexIdMap.get(item.id) ?? -1"
@@ -97,7 +97,7 @@ const rowIndexIdMap = computed(() => new Map(filteredDataSource.value.rows.map((
         <TableEditorFileRowHeaderSlot :column :get-sort-icon :header-column :is-sorted :toggle-sort />
       </template>
       <template v-for="column of displayColumns" :key="column.id" #[`item.${column.name}`]="{ item }">
-        <TableEditorFileRowCellSlot :column :item :row-index="rowIndexIdMap.get(item.id) ?? -1" />
+        <TableEditorFileRowItemSlot :column :item :row-index="rowIndexIdMap.get(item.id) ?? -1" />
       </template>
     </StyledDataTable>
   </VueDraggable>
