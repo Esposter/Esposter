@@ -1,5 +1,6 @@
 import { Column } from "#shared/models/tableEditor/file/Column";
 import { setupEditedItem, setupWithDataSource } from "@/composables/tableEditor/file/commands/testUtils.test";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeEach, describe, expect, test } from "vitest";
@@ -7,7 +8,8 @@ import { assert, beforeEach, describe, expect, test } from "vitest";
 describe(useCreateColumn, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
-    const { clear } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { clear } = fileHistoryStore;
     clear();
   });
 
@@ -33,7 +35,8 @@ describe(useCreateColumn, () => {
 
     const { editedItem } = setupWithDataSource();
     const createColumn = useCreateColumn();
-    const { undo } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { undo } = fileHistoryStore;
     const newColumn = new Column({ name: "new", sourceName: "new" });
     createColumn(newColumn);
     undo(editedItem.value);
@@ -50,7 +53,8 @@ describe(useCreateColumn, () => {
 
     const { editedItem } = setupWithDataSource();
     const createColumn = useCreateColumn();
-    const { redo, undo } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { redo, undo } = fileHistoryStore;
     const newColumn = new Column({ name: "new", sourceName: "new" });
     createColumn(newColumn);
     undo(editedItem.value);
@@ -93,7 +97,8 @@ describe(useCreateColumn, () => {
     expect.hasAssertions();
 
     const createColumn = useCreateColumn();
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     const newColumn = new Column({ name: "new", sourceName: "new" });
     createColumn(newColumn);
 
@@ -105,7 +110,8 @@ describe(useCreateColumn, () => {
 
     setupEditedItem();
     const createColumn = useCreateColumn();
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     const newColumn = new Column({ name: "new", sourceName: "new" });
     createColumn(newColumn);
 

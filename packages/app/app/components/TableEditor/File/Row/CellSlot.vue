@@ -4,45 +4,39 @@ import type { Row } from "#shared/models/tableEditor/file/Row";
 
 import { OUTLIER_HIGHLIGHT_CLASS } from "@/services/tableEditor/file/constants";
 import { getCellId } from "@/services/tableEditor/file/getCellId";
+import { useFindReplaceStore } from "@/store/tableEditor/file/findReplace";
+import { useOutlierStore } from "@/store/tableEditor/file/outlier";
 import { takeOne } from "@esposter/shared";
 
 interface CellSlotProps {
   column: DataSource["columns"][number];
   item: Row;
-  itemsPerPage: number;
   rowIndex: number;
 }
 
-const { column, item, itemsPerPage, rowIndex } = defineProps<CellSlotProps>();
-const page = defineModel<number>("page", { required: true });
-const { currentOccurrenceIndex, findValue, occurrences } = useFindReplaceState();
-const { outlierCells } = useOutlierState();
+const { column, item, rowIndex } = defineProps<CellSlotProps>();
+const findReplaceStore = useFindReplaceStore();
+const { currentOccurrenceIndex, findValue, occurrences } = storeToRefs(findReplaceStore);
+const outlierStore = useOutlierStore();
+const { outlierCells } = storeToRefs(outlierStore);
 const currentOccurrence = computed(() => occurrences.value.at(currentOccurrenceIndex.value));
-const cellText = computed(() => {
+const text = computed(() => {
   const value = takeOne(item.data, column.name);
   return value === null ? "" : String(value);
 });
-const isOutlier = computed(() => outlierCells.value.has(getCellId(item.id, column.name)));
-const isCurrent = computed(
+const isCurrentOccurrence = computed(
   () => currentOccurrence.value?.rowIndex === rowIndex && currentOccurrence.value?.columnName === column.name,
 );
-
-watchImmediate(isCurrent, async (newIsCurrent) => {
-  if (!newIsCurrent) return;
-  const targetPage = Math.floor(rowIndex / itemsPerPage) + 1;
-  if (page.value !== targetPage) page.value = targetPage;
-  await nextTick();
-  document.querySelector("[data-find-replace-current]")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-});
+const isOutlier = computed(() => outlierCells.value.has(getCellId(item.id, column.name)));
 </script>
 
 <template>
   <TableEditorFileFindReplaceHighlight
     v-if="findValue"
     :class="{ [OUTLIER_HIGHLIGHT_CLASS]: isOutlier }"
-    :is-current="isCurrent"
+    :is-current-occurrence
     :search="findValue"
-    :text="cellText"
+    :text
   />
-  <TableEditorFileRowOutlierHighlight v-else :is-outlier="isOutlier" :text="cellText" />
+  <TableEditorFileRowOutlierHighlight v-else :is-outlier :text />
 </template>

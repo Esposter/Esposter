@@ -1,4 +1,5 @@
 import { setupEditedItem, setupWithDataSource } from "@/composables/tableEditor/file/commands/testUtils.test";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeEach, describe, expect, test } from "vitest";
@@ -6,7 +7,8 @@ import { assert, beforeEach, describe, expect, test } from "vitest";
 describe(useDeleteRows, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
-    const { clear } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { clear } = fileHistoryStore;
     clear();
   });
 
@@ -44,7 +46,8 @@ describe(useDeleteRows, () => {
 
     const { editedItem } = setupWithDataSource();
     const deleteRows = useDeleteRows();
-    const { undo } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { undo } = fileHistoryStore;
     const rows = editedItem.value?.dataSource?.rows ?? [];
     deleteRows([takeOne(rows, 0).id, takeOne(rows, 1).id]);
     undo(editedItem.value);
@@ -62,7 +65,8 @@ describe(useDeleteRows, () => {
 
     const { editedItem } = setupWithDataSource();
     const deleteRows = useDeleteRows();
-    const { redo, undo } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { redo, undo } = fileHistoryStore;
     const rows = editedItem.value?.dataSource?.rows ?? [];
     deleteRows([takeOne(rows, 0).id, takeOne(rows, 1).id]);
     undo(editedItem.value);
@@ -78,7 +82,8 @@ describe(useDeleteRows, () => {
     expect.hasAssertions();
 
     const deleteRows = useDeleteRows();
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     deleteRows(["-1"]);
 
     expect(isUndoable.value).toBe(false);
@@ -89,7 +94,8 @@ describe(useDeleteRows, () => {
 
     setupEditedItem();
     const deleteRows = useDeleteRows();
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     deleteRows(["-1"]);
 
     expect(isUndoable.value).toBe(false);
@@ -100,7 +106,8 @@ describe(useDeleteRows, () => {
 
     setupWithDataSource();
     const deleteRows = useDeleteRows();
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     deleteRows([]);
 
     expect(isUndoable.value).toBe(false);
@@ -111,7 +118,8 @@ describe(useDeleteRows, () => {
 
     setupWithDataSource();
     const deleteRows = useDeleteRows();
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     deleteRows(["-1"]);
 
     expect(isUndoable.value).toBe(false);

@@ -1,12 +1,14 @@
 import { setupWithDataSource } from "@/composables/tableEditor/file/commands/testUtils.test";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
-import { assert, beforeEach, describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test } from "vitest";
 
-describe("undoDescription and redoDescription", () => {
+describe(useFileHistoryStore, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
-    const { clear } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { clear } = fileHistoryStore;
     clear();
   });
 
@@ -14,7 +16,8 @@ describe("undoDescription and redoDescription", () => {
     expect.hasAssertions();
 
     setupWithDataSource();
-    const { undoDescription } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { undoDescription } = storeToRefs(fileHistoryStore);
 
     expect(undoDescription.value).toBeNull();
   });
@@ -24,19 +27,19 @@ describe("undoDescription and redoDescription", () => {
 
     const { editedItem } = setupWithDataSource();
     const deleteRow = useDeleteRow();
-    const { undoDescription } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { undoDescription } = storeToRefs(fileHistoryStore);
     deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
 
-    assert.exists(undoDescription.value);
-
-    expect(undoDescription.value).toContain("Delete");
+    expect(undoDescription.value).toMatchInlineSnapshot(`"Delete Row 1"`);
   });
 
   test("redoDescription is null when no future", () => {
     expect.hasAssertions();
 
     setupWithDataSource();
-    const { redoDescription } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { redoDescription } = storeToRefs(fileHistoryStore);
 
     expect(redoDescription.value).toBeNull();
   });
@@ -46,12 +49,12 @@ describe("undoDescription and redoDescription", () => {
 
     const { editedItem } = setupWithDataSource();
     const deleteRow = useDeleteRow();
-    const { redoDescription, undo } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { redoDescription } = storeToRefs(fileHistoryStore);
+    const { undo } = fileHistoryStore;
     deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
     undo(editedItem.value);
 
-    assert.exists(redoDescription.value);
-
-    expect(redoDescription.value).toContain("Delete");
+    expect(redoDescription.value).toMatchInlineSnapshot(`"Delete Row 1"`);
   });
 });

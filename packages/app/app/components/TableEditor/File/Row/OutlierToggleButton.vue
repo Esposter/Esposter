@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useFileTableEditorStore } from "@/store/tableEditor/file";
+import { useOutlierStore } from "@/store/tableEditor/file/outlier";
 
-const fileTableEditorStore = useFileTableEditorStore();
-const { isOutlierHighlightEnabled } = storeToRefs(fileTableEditorStore);
+const outlierStore = useOutlierStore();
+const { isOutlierHighlightEnabled } = storeToRefs(outlierStore);
 </script>
 
 <template>

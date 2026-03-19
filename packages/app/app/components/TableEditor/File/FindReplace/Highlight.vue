@@ -1,11 +1,12 @@
 <script setup lang="ts">
 interface FindReplaceHighlightProps {
-  isCurrent: boolean;
+  isCurrentOccurrence: boolean;
   search: string;
   text: string;
 }
 
-const { isCurrent, search, text } = defineProps<FindReplaceHighlightProps>();
+const { isCurrentOccurrence, search, text } = defineProps<FindReplaceHighlightProps>();
+const container = useTemplateRef("container");
 const parts = computed(() => {
   if (!search) return [{ isMatch: false, text }];
   const result: { isMatch: boolean; text: string }[] = [];
@@ -20,15 +21,21 @@ const parts = computed(() => {
   if (remaining) result.push({ isMatch: false, text: remaining });
   return result;
 });
+
+watch(() => isCurrentOccurrence, async (newIsCurrentOccurrence) => {
+  if (!newIsCurrentOccurrence) return;
+  await nextTick();
+  container.value?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+});
 </script>
 
 <template>
-  <span>
+  <span ref="container">
     <template v-for="({ isMatch, text: part }, partIndex) of parts" :key="partIndex">
       <mark
         v-if="isMatch"
-        :class="isCurrent ? 'bg-amber-400' : 'bg-yellow-200'"
-        :data-find-replace-current="isCurrent || undefined"
+        :class="isCurrentOccurrence ? 'bg-amber-400' : 'bg-yellow-200'"
+        :data-find-replace-current="isCurrentOccurrence || undefined"
       >
         {{ part }}
       </mark>

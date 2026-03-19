@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import { useColorsStore } from "@/store/colors";
+
 const emit = defineEmits<{ close: [event: MouseEvent] }>();
-const { border } = useColors();
+const colorsStore = useColorsStore();
+const { border } = storeToRefs(colorsStore);
 </script>
 
 <template>

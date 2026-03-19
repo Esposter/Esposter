@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { isActiveColumnFilter } from "@/services/tableEditor/file/column/isActiveColumnFilter";
-import { useFileTableEditorStore } from "@/store/tableEditor/file";
+import { useFilterStore } from "@/store/tableEditor/file/filter";
 
-const fileTableEditorStore = useFileTableEditorStore();
-const { clearColumnFilters } = fileTableEditorStore;
-const { columnFilters } = storeToRefs(fileTableEditorStore);
+const filterStore = useFilterStore();
+const { clearColumnFilters } = filterStore;
+const { columnFilters } = storeToRefs(filterStore);
 const hasActiveFilters = computed(() => Object.values(columnFilters.value).some((filter) => isActiveColumnFilter(filter)));
 </script>
 

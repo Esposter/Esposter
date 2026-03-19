@@ -12,7 +12,6 @@ interface ColumnFilterInputProps {
 
 const { column } = defineProps<ColumnFilterInputProps>();
 const modelValue = defineModel<ColumnFilter | undefined>({ required: true });
-const page = defineModel<number>("page", { required: true });
 const booleanValue = computed<BooleanFilterValue>({
   get: () => (modelValue.value?.type === ColumnType.Boolean ? modelValue.value.value : ""),
   set: (value) => {
@@ -43,10 +42,6 @@ const stringValue = computed({
     if (column.type !== ColumnType.Boolean && column.type !== ColumnType.Number)
       modelValue.value = value ? { type: column.type, value } : undefined;
   },
-});
-
-watch(modelValue, () => {
-  page.value = 1;
 });
 </script>
 

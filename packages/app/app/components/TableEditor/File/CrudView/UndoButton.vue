@@ -2,12 +2,15 @@
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 
 import { sanitizeHtml } from "@/services/sanitizeHtml/sanitizeHtml";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { marked } from "marked";
 
 const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
 const { editedItem } = storeToRefs(tableEditorStore);
-const { isUndoable, undo, undoDescription } = useDataSourceHistory();
+const fileHistoryStore = useFileHistoryStore();
+const { undo } = fileHistoryStore;
+const { isUndoable, undoDescription } = storeToRefs(fileHistoryStore);
 const tooltipHtml = computed(() => {
   const [title, ...rest] = (undoDescription.value ?? "").split("\n\n");
   const parts = [`Undo: ${title} *(Ctrl+Z)*`, ...rest];

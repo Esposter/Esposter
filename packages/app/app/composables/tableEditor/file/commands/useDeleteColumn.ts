@@ -1,13 +1,14 @@
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 
 import { DeleteColumnCommand } from "@/models/tableEditor/file/commands/DeleteColumnCommand";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
 export const useDeleteColumn = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
   const { editedItem } = storeToRefs(tableEditorStore);
-  const { push } = useDataSourceHistory();
+  const { push } = useFileHistoryStore();
   return (name: string) => {
     if (!editedItem.value?.dataSource) return;
     const columnIndex = editedItem.value.dataSource.columns.findIndex((column) => column.name === name);

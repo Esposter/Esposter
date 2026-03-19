@@ -3,15 +3,18 @@ import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/Data
 
 import { filterDataSourceRows } from "@/services/tableEditor/file/dataSource/filterDataSourceRows";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
-import { useFileTableEditorStore } from "@/store/tableEditor/file";
+import { useFilterStore } from "@/store/tableEditor/file/filter";
+import { useRowStore } from "@/store/tableEditor/file/row";
 import { Vjsf } from "@koumoul/vjsf";
 
 const modelValue = defineModel<TDataSourceItem>({ required: true });
 const configuration = useDataSourceConfiguration(modelValue);
 const schema = computed(() => zodToJsonSchema(configuration.value.schema));
 const openPanels = ref(["columns", "data"]);
-const fileTableEditorStore = useFileTableEditorStore();
-const { columnFilters, selectedRowIds } = storeToRefs(fileTableEditorStore);
+const rowStore = useRowStore();
+const { selectedRowIds } = storeToRefs(rowStore);
+const filterStore = useFilterStore();
+const { columnFilters } = storeToRefs(filterStore);
 const filteredRowCount = computed(() =>
   modelValue.value.dataSource
     ? filterDataSourceRows(modelValue.value.dataSource, columnFilters.value).rows.length

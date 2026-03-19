@@ -1,10 +1,11 @@
 import {
-  makeColumn,
-  makeDataSource,
-  makeRow,
-  setupEditedItem,
-  setupWithDataSource,
+    makeColumn,
+    makeDataSource,
+    makeRow,
+    setupEditedItem,
+    setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeEach, describe, expect, test } from "vitest";
@@ -12,7 +13,8 @@ import { assert, beforeEach, describe, expect, test } from "vitest";
 describe(useDeleteColumn, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
-    const { clear } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { clear } = fileHistoryStore;
     clear();
   });
 
@@ -36,7 +38,8 @@ describe(useDeleteColumn, () => {
 
     const { editedItem } = setupWithDataSource();
     const deleteColumn = useDeleteColumn();
-    const { undo } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { undo } = fileHistoryStore;
     deleteColumn("");
     undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
@@ -54,7 +57,8 @@ describe(useDeleteColumn, () => {
 
     const { editedItem } = setupWithDataSource();
     const deleteColumn = useDeleteColumn();
-    const { redo, undo } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { redo, undo } = fileHistoryStore;
     deleteColumn("");
     undo(editedItem.value);
     redo(editedItem.value);
@@ -72,7 +76,8 @@ describe(useDeleteColumn, () => {
     const ds = makeDataSource([makeColumn("a"), makeColumn("b"), makeColumn("c")], [makeRow({ a: 1, b: 2, c: 3 })]);
     const { editedItem } = setupWithDataSource(ds);
     const deleteColumn = useDeleteColumn();
-    const { undo } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { undo } = fileHistoryStore;
     deleteColumn("b");
     undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
@@ -87,7 +92,8 @@ describe(useDeleteColumn, () => {
 
     setupWithDataSource();
     const deleteColumn = useDeleteColumn();
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     deleteColumn("-1");
 
     expect(isUndoable.value).toBe(false);
@@ -97,7 +103,8 @@ describe(useDeleteColumn, () => {
     expect.hasAssertions();
 
     const deleteColumn = useDeleteColumn();
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     deleteColumn("");
 
     expect(isUndoable.value).toBe(false);
@@ -108,7 +115,8 @@ describe(useDeleteColumn, () => {
 
     setupEditedItem();
     const deleteColumn = useDeleteColumn();
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     deleteColumn("");
 
     expect(isUndoable.value).toBe(false);

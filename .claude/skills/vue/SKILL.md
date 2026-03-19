@@ -51,7 +51,9 @@ description: Esposter Vue 3 SFC conventions — macro ordering, template pattern
 
 ## Refs & Computed
 
-- **Template refs** — use `useTemplateRef<InstanceType<typeof ComponentName>>("name")`. Never suffix the variable with `Ref` — `const errorIcon = useTemplateRef(...)` not `const errorIconRef = useTemplateRef(...)`.
+- **Template refs** — always use `useTemplateRef` for both component and HTML element refs. Never suffix the variable with `Ref` — `const errorIcon = useTemplateRef(...)` not `const errorIconRef = useTemplateRef(...)`.
+  - Components: `useTemplateRef<InstanceType<typeof ComponentName>>("name")`
+  - HTML elements: `useTemplateRef("container")` — no explicit type annotation needed, Vue infers it. Use a generic semantic name like `"container"`, never the element tag name (not `"spanRef"`, not `"divRef"`).
 - **Boolean computed naming** — use `is*` prefix for boolean computed refs (e.g., `isUndoable`, `isRedoable`, `isSavable`). Do not use `can*`.
 - **Computed for reused expressions** — extract a `computed` (named to match the prop, e.g. `title`) when the same derived value is bound to two or more props. This enables the `:propName` shorthand for one binding and avoids repeating the expression: `const title = computed(() => ...)` → `:title :tooltip-text="title"`. No need for a computed if the value is only used in one place.
 - **Inline prop values** — inline prop values directly in the template to take advantage of Vue TypeScript inference. Only extract to a `computed` when the same logic is reused in multiple places. Single-use derived values stay inline.
@@ -110,6 +112,7 @@ Prefer `watchDeep(source, cb)` over `watch(source, cb, { deep: true })` and `wat
 
 ## Composables
 
+- **Never use `createSharedComposable`** — VueUse's `createSharedComposable` creates global singletons that bypass Pinia's devtools, HMR, and reactive reset behavior. All shared reactive state must live in a Pinia store (`defineStore`). Composables that previously used `createSharedComposable` should be either replaced by a store entirely, or made thin wrappers that delegate to the corresponding store.
 - **Single-function composables return the function directly** — when a composable only exposes one function, return it directly instead of wrapping in an object: `return async (...) => { ... }`. Callers use `const fn = useX()` instead of `const { fn } = useX()`.
 - **`Promise.resolve(value)` for sync-to-async** — when a sync expression needs to satisfy a `Promise<T>` return type, use `Promise.resolve(value)` instead of `async () => value`.
 

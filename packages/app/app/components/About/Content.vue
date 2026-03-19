@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { LINKEDIN_PROFILE_URL } from "#shared/services/app/constants";
+import { useColorsStore } from "@/store/colors";
 import { SITE_NAME } from "@esposter/shared";
 
-const { primary, "primary-darken-1": primaryDarken1 } = useColors();
+const colorsStore = useColorsStore();
+const { primary, "primary-darken-1": primaryDarken1 } = storeToRefs(colorsStore);
 </script>
 
 <template>

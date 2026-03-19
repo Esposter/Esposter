@@ -2,7 +2,7 @@
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { InternalDataTableHeader } from "vuetify/lib/components/VDataTable/types.mjs";
 
-import { useFileTableEditorStore } from "@/store/tableEditor/file";
+import { useFilterStore } from "@/store/tableEditor/file/filter";
 import type { IconValue } from "vuetify/lib/composables/icons.mjs";
 
 interface HeaderSlotProps {
@@ -14,10 +14,9 @@ interface HeaderSlotProps {
 }
 
 const { column, getSortIcon, headerColumn, isSorted, toggleSort } = defineProps<HeaderSlotProps>();
-const page = defineModel<number>("page", { required: true });
-const fileTableEditorStore = useFileTableEditorStore();
-const { setColumnFilter } = fileTableEditorStore;
-const { columnFilters } = storeToRefs(fileTableEditorStore);
+const filterStore = useFilterStore();
+const { setColumnFilter } = filterStore;
+const { columnFilters } = storeToRefs(filterStore);
 </script>
 
 <template>
@@ -31,7 +30,6 @@ const { columnFilters } = storeToRefs(fileTableEditorStore);
       />
     </div>
     <TableEditorFileRowColumnFilterInput
-      v-model:page="page"
       :column
       :model-value="columnFilters[column.name]"
       @update:model-value="setColumnFilter(column.name, $event)"

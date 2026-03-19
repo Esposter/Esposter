@@ -3,12 +3,13 @@ import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/Data
 import { NormalizeStringMode } from "@/models/tableEditor/file/commands/NormalizeStringMode";
 import { NormalizeStringsCommand } from "@/models/tableEditor/file/commands/NormalizeStringsCommand";
 import { getStringColumnsAffectedCells } from "@/services/tableEditor/file/commands/getStringColumnsAffectedCells";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { useTableEditorStore } from "@/store/tableEditor";
 
 export const useNormalizeStrings = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
   const { editedItem } = storeToRefs(tableEditorStore);
-  const { push } = useDataSourceHistory();
+  const { push } = useFileHistoryStore();
   return (mode: NormalizeStringMode) => {
     if (!editedItem.value?.dataSource) return;
     const affectedCells = getStringColumnsAffectedCells(editedItem.value.dataSource);

@@ -1,10 +1,11 @@
 import { Column } from "#shared/models/tableEditor/file/Column";
 import {
-  makeDataSource,
-  makeRow,
-  setupEditedItem,
-  setupWithDataSource,
+    makeDataSource,
+    makeRow,
+    setupEditedItem,
+    setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeEach, describe, expect, test } from "vitest";
@@ -12,7 +13,8 @@ import { assert, beforeEach, describe, expect, test } from "vitest";
 describe(useToggleColumnVisibility, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
-    const { clear } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { clear } = fileHistoryStore;
     clear();
   });
 
@@ -49,7 +51,8 @@ describe(useToggleColumnVisibility, () => {
 
     const { editedItem } = setupWithDataSource();
     const toggleColumnVisibility = useToggleColumnVisibility();
-    const { undo } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { undo } = fileHistoryStore;
     const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
     toggleColumnVisibility(column.id);
     undo(editedItem.value);
@@ -65,7 +68,8 @@ describe(useToggleColumnVisibility, () => {
 
     const { editedItem } = setupWithDataSource();
     const toggleColumnVisibility = useToggleColumnVisibility();
-    const { redo, undo } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { redo, undo } = fileHistoryStore;
     const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
     toggleColumnVisibility(column.id);
     undo(editedItem.value);
@@ -82,7 +86,8 @@ describe(useToggleColumnVisibility, () => {
 
     setupWithDataSource();
     const toggleColumnVisibility = useToggleColumnVisibility();
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     toggleColumnVisibility("-1");
 
     expect(isUndoable.value).toBe(false);
@@ -92,7 +97,8 @@ describe(useToggleColumnVisibility, () => {
     expect.hasAssertions();
 
     const toggleColumnVisibility = useToggleColumnVisibility();
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     toggleColumnVisibility("");
 
     expect(isUndoable.value).toBe(false);
@@ -103,7 +109,8 @@ describe(useToggleColumnVisibility, () => {
 
     setupEditedItem();
     const toggleColumnVisibility = useToggleColumnVisibility();
-    const { isUndoable } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
     toggleColumnVisibility("");
 
     expect(isUndoable.value).toBe(false);

@@ -3,13 +3,14 @@ import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/Data
 import type { ToData } from "@esposter/shared";
 
 import { UpdateColumnCommand } from "@/models/tableEditor/file/commands/UpdateColumnCommand";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
 export const useUpdateColumn = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
   const { editedItem } = storeToRefs(tableEditorStore);
-  const { push } = useDataSourceHistory();
+  const { push } = useFileHistoryStore();
   return (originalName: string, updatedColumn: ToData<DataSource["columns"][number]>) => {
     if (!editedItem.value?.dataSource) return;
     const columnIndex = editedItem.value.dataSource.columns.findIndex(({ name }) => name === originalName);

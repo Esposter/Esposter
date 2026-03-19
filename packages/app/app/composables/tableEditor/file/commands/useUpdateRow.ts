@@ -2,13 +2,14 @@ import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/Data
 
 import { Row } from "#shared/models/tableEditor/file/Row";
 import { UpdateRowCommand } from "@/models/tableEditor/file/commands/UpdateRowCommand";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
 export const useUpdateRow = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
   const { editedItem } = storeToRefs(tableEditorStore);
-  const { push } = useDataSourceHistory();
+  const { push } = useFileHistoryStore();
   return (updatedRow: Row) => {
     if (!editedItem.value?.dataSource) return;
     const index = editedItem.value.dataSource.rows.findIndex((row) => row.id === updatedRow.id);

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useFileTableEditorStore } from "@/store/tableEditor/file";
+import { useRowStore } from "@/store/tableEditor/file/row";
 
-const fileTableEditorStore = useFileTableEditorStore();
-const { selectedRowIds } = storeToRefs(fileTableEditorStore);
+const rowStore = useRowStore();
+const { selectedRowIds } = storeToRefs(rowStore);
 const deleteRows = useDeleteRows();
 </script>
 

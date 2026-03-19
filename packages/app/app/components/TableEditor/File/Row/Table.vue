@@ -4,7 +4,8 @@ import type { Row } from "#shared/models/tableEditor/file/Row";
 
 import { DRAG_HANDLE_CLASS } from "@/services/tableEditor/file/constants";
 import { filterDataSourceRows } from "@/services/tableEditor/file/dataSource/filterDataSourceRows";
-import { useFileTableEditorStore } from "@/store/tableEditor/file";
+import { useFilterStore } from "@/store/tableEditor/file/filter";
+import { useRowStore } from "@/store/tableEditor/file/row";
 import { takeOne } from "@esposter/shared";
 import { VueDraggable } from "vue-draggable-plus";
 
@@ -13,13 +14,13 @@ interface DataTableProps {
 }
 
 const { dataSource } = defineProps<DataTableProps>();
-const fileTableEditorStore = useFileTableEditorStore();
-const { columnFilters, selectedRowIds } = storeToRefs(fileTableEditorStore);
+const rowStore = useRowStore();
+const { itemsPerPage, page, selectedRowIds } = storeToRefs(rowStore);
+const filterStore = useFilterStore();
+const { columnFilters } = storeToRefs(filterStore);
 const reorderRows = useReorderRows();
 const filteredDataSource = computed(() => filterDataSourceRows(dataSource, columnFilters.value));
 const displayColumns = computed(() => dataSource.columns.filter((column) => !column.hidden));
-const page = ref(1);
-const itemsPerPage = ref(10);
 const headers = computed(() => [
   { key: "drag", sortable: false, title: "" },
   ...displayColumns.value.map((column) => ({
@@ -38,14 +39,10 @@ const dragRows = computed({
   set: reorderRows,
 });
 const rowIndexIdMap = computed(() => new Map(filteredDataSource.value.rows.map((row, index) => [row.id, index])));
-const { isOpen } = useFindReplaceState();
-
 </script>
 
 <template>
-  <v-expand-transition>
-    <TableEditorFileFindReplaceBar v-if="isOpen" />
-  </v-expand-transition>
+  <TableEditorFileFindReplaceBar />
   <VueDraggable v-model="dragRows" target="tbody" :handle="`.${DRAG_HANDLE_CLASS}`">
     <StyledDataTable
       flex
@@ -89,7 +86,6 @@ const { isOpen } = useFindReplaceState();
         #[`header.${column.name}`]="{ column: headerColumn, getSortIcon, isSorted, toggleSort }"
       >
         <TableEditorFileRowHeaderSlot
-          v-model:page="page"
           :column
           :getSortIcon
           :headerColumn
@@ -99,10 +95,8 @@ const { isOpen } = useFindReplaceState();
       </template>
       <template v-for="column of displayColumns" :key="column.id" #[`item.${column.name}`]="{ item }">
         <TableEditorFileRowCellSlot
-          v-model:page="page"
           :column
           :item
-          :itemsPerPage
           :rowIndex="rowIndexIdMap.get(item.id) ?? -1"
         />
       </template>

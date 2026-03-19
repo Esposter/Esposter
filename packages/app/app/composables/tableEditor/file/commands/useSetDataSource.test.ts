@@ -1,11 +1,12 @@
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 
 import {
-  makeDataSource,
-  setupEditedItem,
-  setupWithDataSource,
+    makeDataSource,
+    setupEditedItem,
+    setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { useTableEditorStore } from "@/store/tableEditor";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeEach, describe, expect, test } from "vitest";
@@ -13,7 +14,8 @@ import { assert, beforeEach, describe, expect, test } from "vitest";
 describe(useSetDataSource, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
-    const { clear } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { clear } = fileHistoryStore;
     clear();
   });
 
@@ -37,7 +39,9 @@ describe(useSetDataSource, () => {
     const { editedItem } = setupWithDataSource();
     const deleteRow = useDeleteRow();
     const setDataSource = useSetDataSource();
-    const { isRedoable, isUndoable, undo } = useDataSourceHistory();
+    const fileHistoryStore = useFileHistoryStore();
+    const { isRedoable, isUndoable } = storeToRefs(fileHistoryStore);
+    const { undo } = fileHistoryStore;
     deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
 
     expect(isUndoable.value).toBe(true);
