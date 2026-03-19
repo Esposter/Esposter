@@ -1,4 +1,4 @@
-import type { StoreDefinition } from "pinia";
+import type { Store } from "pinia";
 import type { Colors as BaseVuetifyColors } from "vuetify/lib/composables/theme.mjs";
 
 import { takeOne } from "@esposter/shared";
@@ -23,4 +23,4 @@ const useBaseColorsStore = defineStore<typeof id, Colors>(id, () => {
   return colors;
 });
 
-export const useColorsStore = () => useBaseColorsStore() as unknown as StoreDefinition<"colors", Colors>;
+export const useColorsStore = () => useBaseColorsStore() as Store<"colors", Colors>;
