@@ -198,6 +198,19 @@ describe(filterDataSourceRows, () => {
     expect(result.rows).toHaveLength(1);
   });
 
+  test("number filter excludes NaN cell values", () => {
+    expect.hasAssertions();
+
+    const dataSource = makeDataSource(
+      [makeNumberColumn("")],
+      [makeRow({ "": String(Number.NaN) }), makeRow({ "": 1 })],
+    );
+
+    const result = filterDataSourceRows(dataSource, { "": { maximum: "", minimum: "0", type: ColumnType.Number } });
+
+    expect(result.rows).toHaveLength(1);
+  });
+
   test("columns are preserved unchanged in result", () => {
     expect.hasAssertions();
 
