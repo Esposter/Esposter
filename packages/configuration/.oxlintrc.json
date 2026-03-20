@@ -8,8 +8,7 @@
   },
   "ignorePatterns": ["public"],
   "options": {
-    "typeAware": true,
-    "typeCheck": true
+    "typeAware": true
   },
   "plugins": ["import", "oxc", "typescript", "unicorn", "vue"],
   "rules": {
