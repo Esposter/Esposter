@@ -14,7 +14,7 @@ description: Esposter Vue 3 SFC conventions — macro ordering, template pattern
 - No blank lines between `const` assignments — group them tightly together.
 - No blank line before `return` when it immediately follows a `const` assignment in a small function.
 - **Composables that return a function directly**: no blank line between the last `const` assignment and the `return` — the `return` line immediately follows the last setup line with no gap.
-- Remove comments — make variable names descriptive instead.
+- Remove comments — make variable names descriptive instead. When comments are necessary, no blank line before or after the comment — attach it directly to the code it describes.
 - Minimise blank lines; group related code tightly.
 - **Blank line after a closing `}`** of an `if`, `for`, or other block statement — unless it is the last statement in its scope or is immediately followed by another opening block.
 
@@ -106,10 +106,55 @@ Prefer `watchDeep(source, cb)` over `watch(source, cb, { deep: true })` and `wat
 - Always wrap the callback in an explicit arrow function — never pass a function reference directly. This avoids scope/binding issues and prevents accidental argument forwarding: `onUnmounted(() => { reset(); })` not `onUnmounted(reset)`.
 - This applies everywhere — `.map()`, `.filter()`, event handlers, lifecycle hooks, etc. Always use `array.map((item) => fn(item))` not `array.map(fn)`.
 
+## Unwrapping Reactive Proxies
+
+- **Always use `toRawDeep` from `@esposter/shared`** instead of Vue's `toRaw` — `toRaw` only unwraps one level, while `toRawDeep` recursively unwraps all nested reactive proxies. This is critical when passing reactive data to APIs that require plain objects (e.g. IndexedDB `store.put()`, `structuredClone`, postMessage).
+
 ## Resource Management
 
 - Always clean up in `onUnmounted`: intervals, timeouts, animation frames, event listeners.
 - Prefer `VueUse` composables over manual event listeners where possible.
+
+## Online/Offline Detection
+
+- **Always use `useOnline()` from VueUse** — never use `navigator.onLine` directly or `getIsServer()` + `navigator.onLine` guards
+- `useOnline()` returns a reactive `Ref<boolean>` that updates on `online`/`offline` events
+- SSR-safe: defaults to `true` on the server (no `navigator` access, no crash)
+- For subscribables (tRPC subscriptions, WebSocket connections), use `useOnlineSubscribable` which combines `useOnline()` + `onMounted` + `watchImmediate` + `onUnmounted` cleanup into a single composable — see `composables/shared/useOnlineSubscribable.ts`
+
+## Browser-Only Composables (SSR Safety)
+
+Regular `watch`/`watchDeep` are SSR-safe — they don't fire until the source changes (which only happens client-side). Set them up directly in `setup()`, not inside `onMounted`. Vue automatically scopes them to the component and disposes them on unmount — no manual `WatchHandle[]` + `onUnmounted` cleanup needed.
+
+```ts
+export const useBrowserFeature = () => {
+  const store = useSomeStore();
+  const { someRef } = storeToRefs(store);
+  const online = useOnline();
+
+  // Safe: watchDeep/watch only fire on changes (client-side)
+  watchDeep(someRef, (value) => {
+    // Safe to use indexedDB, etc. here
+  });
+
+  watch(someOtherRef, async (value) => {
+    if (!value || online.value) return;
+    // ...
+  });
+};
+```
+
+**`watchImmediate` is the SSR concern** — it executes the callback during `setup()`, which runs on the server. If the callback accesses browser APIs, use `watchTriggerable` + `onMounted` to defer the first execution (see `useOnlineSubscribable`):
+
+```ts
+const { trigger } = watchTriggerable(source, (value) => {
+  // Browser-only logic
+});
+
+onMounted(async () => {
+  await trigger();
+});
+```
 
 ## Composables
 
