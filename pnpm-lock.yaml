@@ -175,11 +175,11 @@ catalogs:
       specifier: ^5.5.0
       version: 5.5.0
     '@trpc/client':
-      specifier: ^11.13.4
-      version: 11.13.4
+      specifier: ^11.14.1
+      version: 11.14.1
     '@trpc/server':
-      specifier: ^11.13.4
-      version: 11.13.4
+      specifier: ^11.14.1
+      version: 11.14.1
     '@types/data-urls':
       specifier: ^3.0.5
       version: 3.0.5
@@ -844,10 +844,10 @@ importers:
         version: 5.5.0(8d2bf215be1ca67b9e0275e6be20852b)
       '@trpc/client':
         specifier: 'catalog:'
-        version: 11.13.4(@trpc/server@11.13.4(typescript@5.9.3))(typescript@5.9.3)
+        version: 11.14.1(@trpc/server@11.14.1(typescript@5.9.3))(typescript@5.9.3)
       '@trpc/server':
         specifier: 'catalog:'
-        version: 11.13.4(typescript@5.9.3)
+        version: 11.14.1(typescript@5.9.3)
       '@vue-flow/background':
         specifier: 'catalog:'
         version: 1.3.2(@vue-flow/core@1.48.2(vue@3.5.30(typescript@5.9.3)))(vue@3.5.30(typescript@5.9.3))
@@ -1084,7 +1084,7 @@ importers:
         version: 2.45.1(three@0.183.2)
       trpc-nuxt:
         specifier: 'catalog:'
-        version: 2.0.2(@trpc/client@11.13.4(@trpc/server@11.13.4(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.13.4(typescript@5.9.3))(srvx@0.11.12)
+        version: 2.0.2(@trpc/client@11.14.1(@trpc/server@11.14.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.14.1(typescript@5.9.3))(srvx@0.11.12)
       v-viewer:
         specifier: 'catalog:'
         version: 3.0.23(viewerjs@1.11.7)(vue@3.5.30(typescript@5.9.3))
@@ -1470,7 +1470,7 @@ importers:
         version: 12.31.0
       '@trpc/server':
         specifier: 'catalog:'
-        version: 11.13.4(typescript@5.9.3)
+        version: 11.14.1(typescript@5.9.3)
       drizzle-kit:
         specifier: 'catalog:'
         version: 0.31.10
@@ -5700,14 +5700,16 @@ packages:
     peerDependencies:
       three: '>=0.133'
 
-  '@trpc/client@11.13.4':
-    resolution: {integrity: sha512-AOM7u2blAjjpAzEyDXm4bk8f1HML0sFLuSXPsqZHQX3XCIVo7+mlArEAGMbwEtTwW8hUocI0i3/9tVYUF4Nu0g==}
+  '@trpc/client@11.14.1':
+    resolution: {integrity: sha512-zjIq7JGm50/hIfo7/WR2BQEyngB0SDVlHJi9J3o5cLrOhUAxArYC6F8xpch1a1vatsN9rkayc6hJ3OXHDUOWow==}
+    hasBin: true
     peerDependencies:
-      '@trpc/server': 11.13.4
+      '@trpc/server': 11.14.1
       typescript: '>=5.7.2'
 
-  '@trpc/server@11.13.4':
-    resolution: {integrity: sha512-SZmLwi43KSp1D3jp2aPuzqhC644gIy87hgFuD9xWCTwFspH9Pr5DO2/JmpWjCqybTG2fTuKYzxFYLUGjTY5LGg==}
+  '@trpc/server@11.14.1':
+    resolution: {integrity: sha512-5sl9cpbrFm1mnDW0/SoOSQBNmwj+cal/JDUNLmLBp1thPvsbN7UerTZjeyLu0BCNxG/FKhnF12BgqYY8SEtCWw==}
+    hasBin: true
     peerDependencies:
       typescript: '>=5.7.2'
 
@@ -17420,12 +17422,12 @@ snapshots:
       - yup
       - zod
 
-  '@trpc/client@11.13.4(@trpc/server@11.13.4(typescript@5.9.3))(typescript@5.9.3)':
+  '@trpc/client@11.14.1(@trpc/server@11.14.1(typescript@5.9.3))(typescript@5.9.3)':
     dependencies:
-      '@trpc/server': 11.13.4(typescript@5.9.3)
+      '@trpc/server': 11.14.1(typescript@5.9.3)
       typescript: 5.9.3
 
-  '@trpc/server@11.13.4(typescript@5.9.3)':
+  '@trpc/server@11.14.1(typescript@5.9.3)':
     dependencies:
       typescript: 5.9.3
 
@@ -24333,10 +24335,10 @@ snapshots:
     dependencies:
       escape-string-regexp: 1.0.5
 
-  trpc-nuxt@2.0.2(@trpc/client@11.13.4(@trpc/server@11.13.4(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.13.4(typescript@5.9.3))(srvx@0.11.12):
+  trpc-nuxt@2.0.2(@trpc/client@11.14.1(@trpc/server@11.14.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.14.1(typescript@5.9.3))(srvx@0.11.12):
     dependencies:
-      '@trpc/client': 11.13.4(@trpc/server@11.13.4(typescript@5.9.3))(typescript@5.9.3)
-      '@trpc/server': 11.13.4(typescript@5.9.3)
+      '@trpc/client': 11.14.1(@trpc/server@11.14.1(typescript@5.9.3))(typescript@5.9.3)
+      '@trpc/server': 11.14.1(typescript@5.9.3)
       h3: 1.15.9(srvx@0.11.12)
       ofetch: 1.5.1
       ohash: 2.0.11
