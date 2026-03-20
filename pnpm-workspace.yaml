@@ -16,7 +16,7 @@ catalog:
   "@azure/data-tables": ^13.3.2
   "@azure/eventgrid": ^5.12.0
   "@azure/functions": ^4.11.2
-  "@azure/identity": ^4.13.0
+  "@azure/identity": ^4.13.1
   "@azure/search-documents": ^12.2.0
   "@azure/storage-blob": ^12.31.0
   "@azure/storage-queue": ^12.29.0
@@ -196,7 +196,7 @@ catalog:
   three-globe: ^2.45.1
   trpc-nuxt: ^2.0.2
   tsx: ^4.21.0
-  type-fest: ^5.4.4
+  type-fest: ^5.5.0
   typedoc: ^0.28.17
   typescript: ^5.9.3
   typescript-eslint: ^8.57.1
@@ -212,10 +212,10 @@ catalog:
   vue-codemirror: ^6.1.1
   vue-draggable-plus: ^0.6.1
   vue-pdf-embed: ^2.1.4
-  vue-router: ^5.0.3
+  vue-router: ^5.0.4
   vue-tsc: ^3.2.6
   vue3-apexcharts: ^1.11.1
-  vuetify: ^4.0.2
+  vuetify: ^4.0.3
   vuetify-nuxt-module: ^1.0.0-beta.1
   web-push: ^3.6.7
   worker-timers: ^8.0.31
@@ -232,6 +232,6 @@ overrides:
   crossws: ^0.4.4
   pdfjs-dist: ^5.5.207
   vite: ^8.0.0
-  vue-router: ^5.0.3
+  vue-router: ^5.0.4
 
 shellEmulator: true
