@@ -126,6 +126,7 @@ describe(useMessageCache, () => {
     await writeCachedMessages(partitionKey, [new StandardMessageEntity({ message, partitionKey, rowKey, userId })]);
     goOffline();
     const dataStore = useDataStore();
+    router.currentRoute.value.params.id = crypto.randomUUID();
     await mountCache();
     router.currentRoute.value.params.id = partitionKey;
     router.currentRoute.value.params.id = crypto.randomUUID();
