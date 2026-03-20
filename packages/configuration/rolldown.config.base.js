@@ -19,7 +19,8 @@ const rolldownOptions = {
   ],
   input: "src/index.ts",
   output: { dir: "dist", format: "es" },
-  plugins: [dts({ tsconfig: "tsconfig.build.json", tsgo: true })],
+  // @TODO: https://github.com/qmhc/unplugin-dts/issues/458
+  plugins: [dts({ tsconfig: "tsconfig.build.json" })],
   tsconfig: "tsconfig.build.json",
 };
 
