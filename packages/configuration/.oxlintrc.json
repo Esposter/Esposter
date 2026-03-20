@@ -7,6 +7,10 @@
     "perf": "error"
   },
   "ignorePatterns": ["public"],
+  "options": {
+    "typeAware": true,
+    "typeCheck": true
+  },
   "plugins": ["import", "oxc", "typescript", "unicorn", "vue"],
   "rules": {
     "curly": ["error", "multi"],
