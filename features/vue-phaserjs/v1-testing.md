@@ -1,5 +1,14 @@
 # vue-phaserjs — Testing Roadmap
 
+Testing Phaser in a Node/Vitest environment is possible at different levels of cost and confidence:
+
+- [ ] **SetterMap unit tests** — SetterMaps are pure functions `(gameObject, emit) => (value) => void`. The game object can be a plain mock object (`{ setX: vi.fn(), ... }`). No Phaser or canvas needed; straightforward Vitest.
+- [ ] **`pushGameObject` unit test** — Pure depth-sorting insertion logic; testable with mock container and game object objects.
+- [ ] **Pinia store unit tests** (`usePhaserStore`, `useCameraStore`, `useInputStore`) — Use `createTestingPinia()` from `@pinia/testing`; mock Phaser scene/camera methods on the store's game ref.
+- [ ] **Phaser headless component tests** — Phaser ships a `HEADLESS` renderer (`type: Phaser.HEADLESS`) that skips canvas and WebGL entirely. A `beforeAll` fixture can boot a headless `Phaser.Game`, register a test scene, and mount vue-phaserjs components via Vue Test Utils against it. `happy-dom` supports enough of the DOM API for headless Phaser to initialise. High setup cost; best reserved for testing `Scene.vue` lifecycle, `useInitializeGameObject`, and hook ordering.
+
+---
+
 All tests run against a real headless Phaser game. Testing SetterMaps or stores in isolation with mock objects provides little value — the real signal comes from mounting a component against an actual scene and asserting that Phaser state changed correctly.
 
 Phaser ships a `HEADLESS` renderer (`type: Phaser.HEADLESS`) that bypasses WebGL and canvas entirely. `happy-dom` provides enough DOM API for Phaser to initialise.
