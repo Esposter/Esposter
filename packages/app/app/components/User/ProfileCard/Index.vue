@@ -3,12 +3,14 @@
 import { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 import { authClient } from "@/services/auth/authClient";
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
+import { useColorsStore } from "@/store/colors";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import deepEqual from "fast-deep-equal";
 
 const { data: session } = await authClient.useSession(useFetch);
 const { updateUser } = authClient;
-const { backgroundOpacity20 } = useColors();
+const colorsStore = useColorsStore();
+const { backgroundOpacity20 } = storeToRefs(colorsStore);
 const profileCardRows = computed(() => {
   if (!session.value)
     throw createError({ statusText: getEntityNotFoundStatusMessage(DatabaseEntityType.User), status: 404 });
@@ -32,15 +34,17 @@ const profileCardRowValues = computed(
 );
 const editedProfileCardRows = ref(structuredClone(profileCardRowValues.value));
 const editMode = ref(false);
-const isValid = ref(true);
-const isUpdated = computed(() => isValid.value && !deepEqual(profileCardRowValues.value, editedProfileCardRows.value));
+const isEditFormValid = ref(true);
+const disabled = computed(
+  () => !isEditFormValid.value || deepEqual(profileCardRowValues.value, editedProfileCardRows.value),
+);
 </script>
 
 <template>
   <div class="text-title-large" font-bold>Profile</div>
   <div class="text-body-large">Your personal information</div>
   <v-form
-    v-model="isValid"
+    v-model="isEditFormValid"
     @submit.prevent="
       async () => {
         await updateUser(editedProfileCardRows);
@@ -67,7 +71,7 @@ const isUpdated = computed(() => isValid.value && !deepEqual(profileCardRowValue
       <v-card-actions px-4>
         <template v-if="editMode">
           <v-btn text="Cancel" variant="outlined" @click="editMode = false" />
-          <StyledButton type="submit" :button-props="{ disabled: !isUpdated, text: 'Save' }" />
+          <StyledButton type="submit" :button-props="{ disabled, text: 'Save' }" />
         </template>
         <v-btn v-else font-bold color="border" text="Edit Settings" variant="elevated" @click="editMode = true" />
       </v-card-actions>

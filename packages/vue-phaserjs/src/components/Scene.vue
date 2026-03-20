@@ -9,11 +9,12 @@ import { usePhaserStore } from "@/store";
 import { useCameraStore } from "@/store/camera";
 import { useInputStore } from "@/store/input";
 import { ExternalSceneStore } from "@/store/scene";
+import { createSceneClass } from "@/util/createSceneClass";
 import { getScene } from "@/util/getScene";
 import { resetLifecycleListeners } from "@/util/hooks/resetLifecycleListeners";
 import { runLifecycleListeners } from "@/util/hooks/runLifecycleListeners";
 import { InjectionKeyMap } from "@/util/InjectionKeyMap";
-import { Cameras, Scene, Scenes } from "phaser";
+import { Cameras, Scenes } from "phaser";
 
 defineSlots<{ default: () => VNode }>();
 const { autoStart, sceneKey } = defineProps<SceneProps>();
@@ -32,35 +33,6 @@ const inputStore = useInputStore();
 const { isInputActive } = storeToRefs(inputStore);
 const { parallelSceneKeys } = storeToRefs(phaserStore);
 const isActive = computed(() => isSameScene(sceneKey) || parallelSceneKeys.value.includes(sceneKey));
-const NewScene = class extends Scene {
-  create(this: SceneWithPlugins) {
-    emit("create", this);
-    runLifecycleListeners(this, Lifecycle.Create);
-    this.cameras.main.on(Cameras.Scene2D.Events.FADE_IN_COMPLETE, fadeInCompleteListener);
-    this.cameras.main.on(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, fadeOutCompleteListener);
-    if (!isInputActive.value) isInputActive.value = true;
-  }
-
-  init(this: SceneWithPlugins) {
-    emit("init", this);
-    runLifecycleListeners(this, Lifecycle.Init);
-  }
-
-  preload(this: SceneWithPlugins) {
-    emit("preload", this);
-    runLifecycleListeners(this, Lifecycle.Preload);
-  }
-
-  override update(this: SceneWithPlugins, ...args: Parameters<SceneWithPlugins["update"]>) {
-    emit("update", this, ...args);
-    runLifecycleListeners(this, Lifecycle.Update, false);
-    runLifecycleListeners(this, Lifecycle.NextTick);
-  }
-};
-
-const readyListener = () => {
-  ExternalSceneStore.sceneReadyMap.set(sceneKey, true);
-};
 
 const fadeInCompleteListener = () => {
   isFading.value = false;
@@ -70,6 +42,22 @@ const fadeInCompleteListener = () => {
 const fadeOutCompleteListener = () => {
   isFading.value = false;
   if (!isInputActive.value) isInputActive.value = true;
+};
+
+const NewScene = createSceneClass(sceneKey, {
+  onCreate: (scene) => {
+    emit("create", scene);
+    scene.cameras.main.on(Cameras.Scene2D.Events.FADE_IN_COMPLETE, fadeInCompleteListener);
+    scene.cameras.main.on(Cameras.Scene2D.Events.FADE_OUT_COMPLETE, fadeOutCompleteListener);
+    if (!isInputActive.value) isInputActive.value = true;
+  },
+  onInit: (scene) => emit("init", scene),
+  onPreload: (scene) => emit("preload", scene),
+  onUpdate: (scene, time, delta) => emit("update", scene, time, delta),
+});
+
+const readyListener = () => {
+  ExternalSceneStore.sceneReadyMap.set(sceneKey, true);
 };
 
 const shutdownListener = () => {

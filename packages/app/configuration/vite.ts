@@ -2,6 +2,8 @@ import type { NuxtConfig } from "nuxt/schema";
 
 import { commonjsDeps } from "@koumoul/vjsf/utils/build.js";
 
+import { fixAjv } from "./plugins/fixAjv";
+
 export const vite: NuxtConfig["vite"] = {
   build: {
     // Fix phaser "Local data URIs are not supported"
@@ -26,6 +28,7 @@ export const vite: NuxtConfig["vite"] = {
   optimizeDeps: {
     // https://github.com/vue-pdf-viewer/starter-vpv-nuxt-ts/blob/main/nuxt.config.ts
     exclude: ["@vue-pdf-viewer/viewer"],
-    include: [...commonjsDeps, "pdfjs-dist"],
+    include: [...commonjsDeps, "pdfjs-dist", "debug"],
   },
+  plugins: [fixAjv],
 };

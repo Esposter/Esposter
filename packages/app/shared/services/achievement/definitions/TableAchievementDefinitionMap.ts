@@ -1,5 +1,6 @@
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
 import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
+import { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType";
 import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
 import { BinaryOperator, TableAchievementName } from "@esposter/db-schema";
 
@@ -16,20 +17,12 @@ export const TableAchievementDefinitionMap = {
     amount: 1,
     category: AchievementCategory.Table,
     condition: {
-      conditions: [
-        {
-          operator: BinaryOperator.ge,
-          path: "TodoList.items.length",
-          type: AchievementConditionType.Property,
-          value: 5,
-        },
-        {
-          operator: BinaryOperator.ge,
-          path: "VuetifyComponent.items.length",
-          type: AchievementConditionType.Property,
-          value: 5,
-        },
-      ],
+      conditions: Object.values(TableEditorType).map((tableEditorType) => ({
+        operator: BinaryOperator.ge,
+        path: `${tableEditorType}.items.length` as const,
+        type: AchievementConditionType.Property,
+        value: 5,
+      })),
       type: AchievementConditionType.Or,
     },
     description: "Create a table with at least 5 rows",

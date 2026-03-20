@@ -4,8 +4,10 @@ export default Object.assign(
   ...tseslint.configs.strictTypeChecked.map((c) => {
     const rules = c.rules ?? {};
     delete rules["@typescript-eslint/no-base-to-string"];
+    delete rules["@typescript-eslint/no-dynamic-delete"];
     delete rules["@typescript-eslint/no-empty-object-type"];
     delete rules["@typescript-eslint/no-redundant-type-constituents"];
+    delete rules["@typescript-eslint/no-unnecessary-condition"];
     delete rules["@typescript-eslint/no-unsafe-argument"];
     delete rules["@typescript-eslint/no-unsafe-assignment"];
     delete rules["@typescript-eslint/no-unsafe-call"];

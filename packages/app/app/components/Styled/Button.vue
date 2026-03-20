@@ -5,8 +5,8 @@ interface StyledButtonProps {
   buttonProps?: VBtn["$props"];
 }
 
-const { buttonProps } = defineProps<StyledButtonProps>();
 const slots = defineSlots<Record<keyof VBtn["$slots"], () => VNode>>();
+const { buttonProps } = defineProps<StyledButtonProps>();
 </script>
 
 <template>

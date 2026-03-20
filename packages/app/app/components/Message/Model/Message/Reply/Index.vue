@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useColorsStore } from "@/store/colors";
 import { useReplyStore } from "@/store/message/reply";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { MessageType } from "@esposter/db-schema";
@@ -8,7 +9,8 @@ interface ReplyProps {
 }
 
 const { rowKey } = defineProps<ReplyProps>();
-const { text } = useColors();
+const colorsStore = useColorsStore();
+const { text } = storeToRefs(colorsStore);
 const replyStore = useReplyStore();
 const { isIndicatorActive, replyMap } = storeToRefs(replyStore);
 const reply = computed(() => replyMap.value.get(rowKey));

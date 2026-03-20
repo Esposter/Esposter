@@ -20,10 +20,10 @@ export const useBattlePlayerStore = defineStore("dungeons/battle/player", () => 
   };
 
   const initialMonsterPosition = Object.freeze<Position>({ x: -150, y: 316 });
-  const monsterPosition = ref({ ...initialMonsterPosition });
+  const monsterPosition = ref(structuredClone<Position>(initialMonsterPosition));
   const monsterTween = ref<TweenBuilderConfiguration>();
   const initialMonsterInfoContainerPosition = Object.freeze<Position>({ x: 1200, y: 318 });
-  const monsterInfoContainerPosition = ref({ ...initialMonsterInfoContainerPosition });
+  const monsterInfoContainerPosition = ref(structuredClone<Position>(initialMonsterInfoContainerPosition));
   const monsterInfoContainerTween = ref<TweenBuilderConfiguration>();
   const attacks = computed(() => activeMonster.value.attackIds.map(getAttack));
 

@@ -2,7 +2,7 @@
 import { VUEJS_LOGO_UWU_PATH } from "#shared/services/app/constants";
 
 const isDark = useIsDark();
-const { smAndDown } = useDisplay();
+const { smAndDown } = useVDisplay();
 </script>
 
 <template>

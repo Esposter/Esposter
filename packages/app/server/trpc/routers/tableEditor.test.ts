@@ -26,12 +26,17 @@ describe("tableEditor", () => {
     expect.hasAssertions();
 
     const tableEditorConfiguration = await caller.readTableEditorConfiguration();
-    const { createdAt, id, TodoList, updatedAt, VuetifyComponent } = tableEditorConfiguration;
+    const { createdAt, File, id, TodoList, updatedAt, VuetifyComponent } = tableEditorConfiguration;
 
     expect(tableEditorConfiguration).toStrictEqual(
       new TableEditorConfiguration({
         createdAt,
         id,
+        [TableEditorType.File]: Object.assign(File, {
+          createdAt: File.createdAt,
+          id: File.id,
+          updatedAt: File.updatedAt,
+        }),
         [TableEditorType.TodoList]: Object.assign(TodoList, {
           createdAt: TodoList.createdAt,
           id: TodoList.id,

@@ -27,7 +27,7 @@ process.on("SIGTERM", () => {
 
 const getReq = (peer: Peer): IncomingMessage =>
   (peer.context.node as undefined | { req: IncomingMessage })?.req ??
-  ({ headers: Object.fromEntries(peer.request.headers.entries()) } as unknown as IncomingMessage);
+  ({ headers: Object.fromEntries(peer.request.headers.entries()) } as IncomingMessage);
 
 export default defineWebSocketHandler({
   close: async (peer, event) => {

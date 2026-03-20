@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { ADataSourceItem } from "#shared/models/tableEditor/file/ADataSourceItem";
+import type { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import type { TodoListItem } from "#shared/models/tableEditor/todoList/TodoListItem";
 import type { VuetifyComponentItem } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 
@@ -6,11 +8,11 @@ import { DefaultPropsMap } from "@/services/tableEditor/DefaultPropsMap";
 import { getItemCategoryDefinition } from "@/services/tableEditor/getItemCategoryDefinition";
 import { useTableEditorStore } from "@/store/tableEditor";
 
-interface TableEditorCrudViewFirstColumnSlotProps {
-  item: TodoListItem | VuetifyComponentItem;
+interface FirstColumnSlotProps {
+  item: ADataSourceItem<DataSourceType> | TodoListItem | VuetifyComponentItem;
 }
 
-const { item } = defineProps<TableEditorCrudViewFirstColumnSlotProps>();
+const { item } = defineProps<FirstColumnSlotProps>();
 const tableEditorStore = useTableEditorStore();
 const { tableEditorType } = storeToRefs(tableEditorStore);
 const props = computed(() => DefaultPropsMap[tableEditorType.value]);

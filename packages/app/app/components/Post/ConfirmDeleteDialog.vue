@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
 
+import { useColorsStore } from "@/store/colors";
 import { usePostStore } from "@/store/post";
 import { RoutePath } from "@esposter/shared";
 
@@ -15,7 +16,8 @@ defineSlots<{
 const { postId } = defineProps<PostConfirmDeleteDialogProps>();
 const postStore = usePostStore();
 const { deletePost } = postStore;
-const { text } = useColors();
+const colorsStore = useColorsStore();
+const { text } = storeToRefs(colorsStore);
 </script>
 
 <template>

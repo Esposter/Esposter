@@ -1,25 +1,36 @@
 <script setup lang="ts">
+import { TableEditorTypeItemSchemaMap } from "@/services/tableEditor/TableEditorTypeItemSchemaMap";
 import { useTableEditorStore } from "@/store/tableEditor";
 
-defineSlots<{
-  "append-header": () => VNode;
-}>();
-
+const slots = defineSlots<{ "append-header": () => VNode; "prepend-actions": () => VNode }>();
 const tableEditorStore = useTableEditorStore();
 const { resetItem, save } = tableEditorStore;
-const { editedItem, editFormDialog, editFormRef, isEditFormValid, isFullScreenDialog, isSavable, originalItem } =
-  storeToRefs(tableEditorStore);
+const {
+  editedItem,
+  editForm,
+  editFormDialog,
+  isEditFormValid,
+  isFullScreenDialog,
+  isSavable,
+  originalItem,
+  tableEditorType,
+} = storeToRefs(tableEditorStore);
 const component = computed(() => (editedItem.value ? useEditFormComponent(editedItem.value.type) : undefined));
+const schema = computed(() => TableEditorTypeItemSchemaMap[tableEditorType.value]);
 </script>
 
 <template>
   <v-toolbar pt-4>
     <v-toolbar-title px-4>
       <TableEditorTypeSelect />
-      <div pt-4 flex items-center>
+      <div pt-2>
         <TableEditorSearchBar />
-        <v-divider mx-4 thickness="2" vertical inset />
+      </div>
+      <div py-2 flex flex-wrap gap-2>
+        <v-spacer />
         <TableEditorCreateItemButton />
+        <TableEditorExportButton />
+        <TableEditorImportButton />
         <slot name="append-header" />
       </div>
     </v-toolbar-title>
@@ -30,6 +41,7 @@ const component = computed(() => (editedItem.value ? useEditFormComponent(edited
       :edited-item
       :original-item
       :is-edit-form-valid
+      :schema
       :is-full-screen-dialog
       :is-savable
       @close="resetItem()"
@@ -40,12 +52,13 @@ const component = computed(() => (editedItem.value ? useEditFormComponent(edited
         }
       "
       @save="save()"
-      @update:edit-form-ref="editFormRef = $event"
+      @update:edit-form="editForm = $event"
       @update:fullscreen-dialog="isFullScreenDialog = $event"
     >
-      <v-container v-if="editedItem" overflow-y-auto fluid>
-        <component :is="component" v-model="editedItem" />
-      </v-container>
+      <template v-if="slots['prepend-actions']" #prepend-actions>
+        <slot name="prepend-actions" />
+      </template>
+      <component :is="component" v-model="editedItem" />
     </StyledEditFormDialog>
   </v-toolbar>
 </template>

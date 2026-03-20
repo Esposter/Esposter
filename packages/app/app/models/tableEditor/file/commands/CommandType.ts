@@ -1,0 +1,16 @@
+export enum CommandType {
+  CreateColumn = "CreateColumn",
+  CreateRow = "CreateRow",
+  CreateRows = "CreateRows",
+  DeleteColumn = "DeleteColumn",
+  DeleteColumns = "DeleteColumns",
+  DeleteRow = "DeleteRow",
+  DeleteRows = "DeleteRows",
+  FindReplace = "FindReplace",
+  MoveColumn = "MoveColumn",
+  MoveRow = "MoveRow",
+  NormalizeStrings = "NormalizeStrings",
+  ToggleColumnVisibility = "ToggleColumnVisibility",
+  UpdateColumn = "UpdateColumn",
+  UpdateRow = "UpdateRow",
+}

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
 
+import { useColorsStore } from "@/store/colors";
 import { useCommentStore } from "@/store/post/comment";
 
 interface PostCommentConfirmDeleteDialogProps {
@@ -14,7 +15,8 @@ defineSlots<{
 const { commentId } = defineProps<PostCommentConfirmDeleteDialogProps>();
 const commentStore = useCommentStore();
 const { deleteComment } = commentStore;
-const { text } = useColors();
+const colorsStore = useColorsStore();
+const { text } = storeToRefs(colorsStore);
 </script>
 
 <template>

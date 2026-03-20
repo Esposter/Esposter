@@ -66,10 +66,10 @@ watch(optionsMenu, (newOptionsMenu) => {
         @mouseenter="isMessageActive = true"
         @mouseleave="isMessageActive = false"
         @contextmenu.prevent="
-          ({ clientX, clientY }: MouseEvent) => {
+          (event: MouseEvent) => {
             optionsMenu = {
               rowKey: message.rowKey,
-              target: [clientX, clientY],
+              target: [event.clientX, event.clientY],
             };
           }
         "

@@ -1,0 +1,17 @@
+import { Column, columnSchema } from "#shared/models/tableEditor/file/Column";
+import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
+import { z } from "zod";
+
+export interface ColumnForm extends Pick<Column<ColumnType>, "description" | "name" | "sourceName" | "type"> {}
+
+export const createColumnFormSchema = <T extends z.ZodType<ColumnType>>(typeSchema: T) =>
+  columnSchema.pick({ description: true, name: true, sourceName: true }).extend({
+    description: columnSchema.shape.description.meta({ title: "Description" }),
+    name: columnSchema.shape.name.meta({ title: "Column" }),
+    sourceName: columnSchema.shape.sourceName.meta({ title: "Source Column" }),
+    type: typeSchema.meta({ title: "Type" }),
+  });
+
+export const columnFormSchema = createColumnFormSchema(
+  z.enum([ColumnType.Boolean, ColumnType.Number, ColumnType.String]).readonly(),
+) satisfies z.ZodType<ColumnForm>;
