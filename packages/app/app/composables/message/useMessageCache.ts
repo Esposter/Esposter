@@ -1,5 +1,4 @@
 import type { MessageEntity } from "@esposter/db-schema";
-import type { WatchHandle } from "vue";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { readCachedMessages } from "@/services/message/cache/readCachedMessages";
@@ -13,35 +12,24 @@ export const useMessageCache = () => {
   const dataStore = useDataStore();
   const { items } = storeToRefs(dataStore);
   const online = useOnline();
-  const watchHandles: WatchHandle[] = [];
   let pendingOperation: Promise<void> = Promise.resolve();
 
-  onMounted(() => {
-    watchHandles.push(
-      watchDeep(items, (messages) => {
-        if (!currentRoomId.value || messages.length === 0) return;
-        pendingOperation = writeCachedMessages(currentRoomId.value, messages);
-      }),
-    );
-
-    watchHandles.push(
-      watch(currentRoomId, (roomId) => {
-        if (!roomId || online.value) return;
-        pendingOperation = (async () => {
-          const cachedMessages = await readCachedMessages(roomId);
-          if (currentRoomId.value !== roomId || items.value.length > 0 || cachedMessages.length === 0) return;
-
-          const cachedData = new CursorPaginationData<MessageEntity>();
-          cachedData.items = cachedMessages;
-          cachedData.hasMore = true;
-          dataStore.initializeCursorPaginationData(cachedData);
-        })();
-      }),
-    );
+  watchDeep(items, (messages) => {
+    if (!currentRoomId.value || messages.length === 0) return;
+    pendingOperation = writeCachedMessages(currentRoomId.value, messages);
   });
 
-  onUnmounted(() => {
-    for (const watchHandle of watchHandles) watchHandle();
+  watch(currentRoomId, (roomId) => {
+    if (!roomId || online.value) return;
+    pendingOperation = (async () => {
+      const cachedMessages = await readCachedMessages(roomId);
+      if (currentRoomId.value !== roomId || items.value.length > 0 || cachedMessages.length === 0) return;
+
+      const cachedData = new CursorPaginationData<MessageEntity>();
+      cachedData.items = cachedMessages;
+      cachedData.hasMore = true;
+      dataStore.initializeCursorPaginationData(cachedData);
+    })();
   });
 
   const flush = () => pendingOperation;
