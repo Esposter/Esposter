@@ -20,7 +20,12 @@ describe(useOnlineSubscribable, () => {
   };
   const mountSubscribable = async () => {
     wrapper = await mountSuspended(
-      defineComponent({ render: () => h("div"), setup: () => useOnlineSubscribable(source, callback) }),
+      defineComponent({
+        render: () => h("div"),
+        setup: () => {
+          useOnlineSubscribable(source, callback);
+        },
+      }),
     );
   };
 

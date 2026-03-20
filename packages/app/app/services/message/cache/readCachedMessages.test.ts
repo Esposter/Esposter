@@ -20,9 +20,15 @@ describe(readCachedMessages, () => {
           (database) =>
             new Promise<void>((resolve, reject) => {
               const request = indexedDB.deleteDatabase(database.name);
-              request.onsuccess = () => resolve();
-              request.onerror = () => reject(request.error ?? new Error("Failed to delete database"));
-              request.onblocked = () => resolve();
+              request.onsuccess = () => {
+                resolve();
+              };
+              request.onerror = () => {
+                reject(request.error ?? new Error("Failed to delete database"));
+              };
+              request.onblocked = () => {
+                resolve();
+              };
             }),
         ),
     );
