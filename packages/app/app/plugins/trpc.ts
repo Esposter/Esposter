@@ -13,7 +13,7 @@ import { createTRPCNuxtClient, httpBatchLink, httpLink } from "trpc-nuxt/client"
 
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.hook("vue:error", (error) => {
-    if (error instanceof TRPCOfflineClientError) return false;
+    if (error instanceof TRPCOfflineClientError) return;
   });
   if (!getIsServer())
     window.addEventListener("unhandledrejection", (event) => {

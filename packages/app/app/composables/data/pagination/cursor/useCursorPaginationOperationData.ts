@@ -37,7 +37,8 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
       try {
         const data = await query();
         initializeCursorPaginationData(data);
-        await onComplete?.(data);
+        // Absorbs onComplete errors so data already set above is never lost
+        await Promise.allSettled([onComplete?.(data)]);
       } finally {
         isPending.value = false;
       }
