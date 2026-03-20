@@ -3,18 +3,18 @@ import type { MultiWatchSources, WatchHandle, WatchSource } from "vue";
 
 export function useOnlineSubscribable<T extends Readonly<MultiWatchSources>>(
   source: [...T],
-  callback: (
-    value: { -readonly [K in keyof T]: T[K] extends WatchSource<infer V> ? V : never },
-  ) => Promisable<(() => void) | void>,
+  callback: (value: { -readonly [K in keyof T]: T[K] extends WatchSource<infer V> ? V : never }) => Promisable<
+    (() => void) | undefined
+  >,
 ): void;
 export function useOnlineSubscribable<TSource>(
   source: WatchSource<TSource>,
-  callback: (value: TSource) => Promisable<(() => void) | void>,
+  callback: (value: TSource) => Promisable<(() => void) | undefined>,
 ): void;
 export function useOnlineSubscribable(
   source: MultiWatchSources | WatchSource,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  callback: (value: any) => Promisable<(() => void) | void>,
+  callback: (value: any) => Promisable<(() => void) | undefined>,
 ) {
   const online = useOnline();
   let watchHandle: undefined | WatchHandle;

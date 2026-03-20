@@ -6,6 +6,9 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useOnlineSubscribable, () => {
   let wrapper: VueWrapper;
+  let source: Ref<string>;
+  let callback: ReturnType<typeof vi.fn<(value: string) => (() => void) | undefined>>;
+  let cleanup: ReturnType<typeof vi.fn<() => void>>;
   const goOffline = () => {
     vi.spyOn(navigator, "onLine", "get").mockReturnValue(false);
     window.dispatchEvent(new Event("offline"));
@@ -14,13 +17,16 @@ describe(useOnlineSubscribable, () => {
     vi.spyOn(navigator, "onLine", "get").mockReturnValue(true);
     window.dispatchEvent(new Event("online"));
   };
-  const mountSubscribable = async (source: Ref<string>, callback: (value: string) => (() => void) | void) => {
+  const mountSubscribable = async () => {
     wrapper = await mountSuspended(
       defineComponent({ render: () => h("div"), setup: () => useOnlineSubscribable(source, callback) }),
     );
   };
 
   beforeEach(() => {
+    source = ref("");
+    cleanup = vi.fn<() => void>();
+    callback = vi.fn<(value: string) => (() => void) | undefined>();
     goOnline();
   });
 
@@ -32,9 +38,7 @@ describe(useOnlineSubscribable, () => {
   test("calls callback when online", async () => {
     expect.hasAssertions();
 
-    const callback = vi.fn();
-    const source = ref("");
-    await mountSubscribable(source, callback);
+    await mountSubscribable();
     await flushPromises();
 
     expect(callback).toHaveBeenCalledWith("");
@@ -44,9 +48,7 @@ describe(useOnlineSubscribable, () => {
     expect.hasAssertions();
 
     goOffline();
-    const callback = vi.fn();
-    const source = ref("");
-    await mountSubscribable(source, callback);
+    await mountSubscribable();
     await flushPromises();
 
     expect(callback).not.toHaveBeenCalled();
@@ -55,9 +57,7 @@ describe(useOnlineSubscribable, () => {
   test("re-calls callback when source changes while online", async () => {
     expect.hasAssertions();
 
-    const callback = vi.fn();
-    const source = ref("");
-    await mountSubscribable(source, callback);
+    await mountSubscribable();
     await flushPromises();
     source.value = " ";
     await flushPromises();
@@ -69,10 +69,8 @@ describe(useOnlineSubscribable, () => {
   test("calls cleanup when going offline", async () => {
     expect.hasAssertions();
 
-    const cleanup = vi.fn();
-    const callback = vi.fn(() => cleanup);
-    const source = ref("");
-    await mountSubscribable(source, callback);
+    callback = vi.fn<(value: string) => () => void>(() => cleanup);
+    await mountSubscribable();
     await flushPromises();
     goOffline();
     await flushPromises();
@@ -83,9 +81,7 @@ describe(useOnlineSubscribable, () => {
   test("re-establishes callback when coming back online", async () => {
     expect.hasAssertions();
 
-    const callback = vi.fn();
-    const source = ref("");
-    await mountSubscribable(source, callback);
+    await mountSubscribable();
     await flushPromises();
     goOffline();
     await flushPromises();
@@ -98,10 +94,8 @@ describe(useOnlineSubscribable, () => {
   test("calls cleanup on unmount", async () => {
     expect.hasAssertions();
 
-    const cleanup = vi.fn();
-    const callback = vi.fn(() => cleanup);
-    const source = ref("");
-    await mountSubscribable(source, callback);
+    callback = vi.fn<(value: string) => () => void>(() => cleanup);
+    await mountSubscribable();
     await flushPromises();
     wrapper.unmount();
 
