@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
+/* oxlint-disable @typescript-eslint/prefer-nullish-coalescing */
 import type { FileFieldValue } from "@/models/vuetify/FileFieldValue";
 import type { TextFieldValue } from "@/models/vuetify/TextFieldValue";
 import type { ValidationRule } from "vuetify";

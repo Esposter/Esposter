@@ -43,7 +43,9 @@ export const useFileHistoryStore = defineStore("tableEditor/file/history", () =>
 
   watch(
     () => tableEditorStore.editedItem?.id,
-    () => clear(),
+    () => {
+      clear();
+    },
   );
 
   return { clear, isRedoable, isUndoable, push, redo, redoDescription, undo, undoDescription };
