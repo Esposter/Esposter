@@ -19,6 +19,7 @@ description: Esposter Vitest testing conventions — describe with function refs
   - Object keys in tests: use `""` as base key, `" "` as a second key — never use semantic names like `"name"` / `"age"`.
   - Number diff values: `0`, `1`, `2`, etc.
   - Non-existent / sentinel values: use `"-1"` for a nonexistent string ID, `-1` for a nonexistent numeric ID. Never use verbose strings like `"non-existent-id"`, `"nonexistent"`, `"some-id"`, `"fake-..."`, etc.
+  - Entity fields: use the field name as the literal value — `const partitionKey = "partitionKey"`, `const rowKey = "rowKey"`, `const message = "message"`. Use `crypto.randomUUID()` for `userId` and other ID fields that require UUIDs. Never inline constructor args — always declare shared constants and reference them.
 - **Date format tests** — when testing all date formats, use a `for...of` loop inside a single test, converting epoch via `dayjs("1970-01-01", "YYYY-MM-DD", true).format(format)`. Never use `test.each` for date format iteration.
 - **Interpolated descriptions** — use template literals with enum values: `` `boolean returns ${ColumnType.Boolean}` ``.
 - **Human-readable names** — use plain English: "integer", "decimal", "negative", "epoch date", "NaN".
@@ -32,6 +33,36 @@ description: Esposter Vitest testing conventions — describe with function refs
 ## Running Tests
 
 - **Do not run tests on Windows** — Vitest currently fails on Windows with `TypeError: The argument 'filename' must be a file URL object, file URL string, or absolute path string. Received 'file:///__uno.css'`. This is a known environment issue with UnoCSS + happy-dom. Write tests but skip running them; the user runs them manually.
+
+## Testing Composables with Lifecycle Hooks
+
+Composables that use `onMounted`/`onUnmounted` require a component lifecycle to trigger. Use `mountSuspended` from `@nuxt/test-utils/runtime` with a minimal wrapper:
+
+```ts
+import type { VueWrapper } from "@vue/test-utils";
+import { mountSuspended } from "@nuxt/test-utils/runtime";
+
+describe(useMyComposable, () => {
+  let wrapper: VueWrapper;
+  const mountComposable = async () => {
+    wrapper = await mountSuspended(defineComponent({ render: () => h("div"), setup: () => useMyComposable() }));
+  };
+
+  afterEach(() => {
+    wrapper?.unmount();
+  });
+
+  test("example", async () => {
+    expect.hasAssertions();
+    await mountComposable();
+    await flushPromises();
+    // assertions...
+  });
+});
+```
+
+- Always unmount in `afterEach` to trigger `onUnmounted` cleanup
+- When re-mounting mid-test (e.g. to simulate offline restart), call `wrapper.unmount()` before `await mountComposable()`
 
 ## Test Utility Files
 

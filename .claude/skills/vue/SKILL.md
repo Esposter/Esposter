@@ -111,6 +111,50 @@ Prefer `watchDeep(source, cb)` over `watch(source, cb, { deep: true })` and `wat
 - Always clean up in `onUnmounted`: intervals, timeouts, animation frames, event listeners.
 - Prefer `VueUse` composables over manual event listeners where possible.
 
+## Online/Offline Detection
+
+- **Always use `useOnline()` from VueUse** — never use `navigator.onLine` directly or `getIsServer()` + `navigator.onLine` guards
+- `useOnline()` returns a reactive `Ref<boolean>` that updates on `online`/`offline` events
+- SSR-safe: defaults to `true` on the server (no `navigator` access, no crash)
+- For subscribables (tRPC subscriptions, WebSocket connections), use `useOnlineSubscribable` which combines `useOnline()` + `onMounted` + `watchImmediate` + `onUnmounted` cleanup into a single composable — see `composables/shared/useOnlineSubscribable.ts`
+
+## Browser-Only Composables (SSR Safety)
+
+When a composable uses browser-only APIs (`indexedDB`, `window`, subscriptions, etc.), wrap watchers inside `onMounted` and clean up with `onUnmounted`:
+
+```ts
+export const useBrowserFeature = () => {
+  // Store/ref setup can stay outside onMounted (SSR-safe)
+  const store = useSomeStore();
+  const { someRef } = storeToRefs(store);
+  const online = useOnline();
+  const watchHandles: WatchHandle[] = [];
+
+  onMounted(() => {
+    watchHandles.push(
+      watchDeep(someRef, (value) => {
+        // Safe to use indexedDB, etc. here
+      }),
+    );
+
+    watchHandles.push(
+      watch(someOtherRef, async (value) => {
+        if (!value || online.value) return;
+        // ...
+      }),
+    );
+  });
+
+  onUnmounted(() => {
+    for (const watchHandle of watchHandles) watchHandle();
+  });
+};
+```
+
+- Use `WatchHandle[]` array when multiple watchers need cleanup (single watcher can use `let watchHandle: undefined | WatchHandle`)
+- Store/composable initialization stays outside `onMounted` — only the browser-dependent logic goes inside
+- This pattern prevents SSR crashes from accessing `document`, `indexedDB`, etc. during server-side rendering
+
 ## Composables
 
 - **Never use `createSharedComposable`** — VueUse's `createSharedComposable` creates global singletons that bypass Pinia's devtools, HMR, and reactive reset behavior. All shared reactive state must live in a Pinia store (`defineStore`). Composables that previously used `createSharedComposable` should be either replaced by a store entirely, or made thin wrappers that delegate to the corresponding store.

@@ -33,7 +33,10 @@
       "Bash(npm search:*)",
       "Bash(pnpm lint:*)",
       "Bash(pnpm lint:fix)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(pnpm list:*)",
+      "WebFetch(domain:nuxt.com)",
+      "WebFetch(domain:vueuse.org)"
     ]
   }
 }

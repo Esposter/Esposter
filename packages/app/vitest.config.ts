@@ -8,6 +8,13 @@ export default defineVitestConfig({
       outputJson: "./bench/results.json",
     },
     environment: "nuxt",
+    environmentOptions: {
+      nuxt: {
+        mock: {
+          indexedDb: true,
+        },
+      },
+    },
     hookTimeout: dayjs.duration(60, "seconds").asMilliseconds(),
   },
 });

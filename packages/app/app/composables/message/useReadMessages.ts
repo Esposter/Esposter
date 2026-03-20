@@ -1,8 +1,10 @@
 import type { MessageEntity, StandardMessageEntity, WebhookMessageEntity } from "@esposter/db-schema";
 
+import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
+import { readCachedMessages } from "@/services/message/cache/readCachedMessages";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { getReverseTickedTimestamp, MessageType, StandardMessageEntityPropertyNames } from "@esposter/db-schema";
@@ -16,6 +18,7 @@ export const useReadMessages = () => {
   const dataStore = useDataStore();
   const { readItems, readMoreItems } = dataStore;
   const { hasMoreNewer, nextCursorNewer } = storeToRefs(dataStore);
+  const online = useOnline();
   const { unshiftMessages } = dataStore;
   const readMembersByIds = useReadMembersByIds();
   const readAppUsers = useReadAppUsers();
@@ -51,6 +54,14 @@ export const useReadMessages = () => {
             StandardMessageEntityPropertyNames.partitionKey,
           );
         const roomId = currentRoomId.value;
+
+        if (!online.value) {
+          const cachedMessages = await readCachedMessages(roomId);
+          const cachedData = new CursorPaginationData<MessageEntity>();
+          cachedData.items = cachedMessages;
+          return cachedData;
+        }
+
         const rowKey = route.params.rowKey as string | undefined;
 
         if (rowKey) {
