@@ -28,6 +28,10 @@ describe(useMessageCache, () => {
     vi.spyOn(navigator, "onLine", "get").mockReturnValue(true);
     window.dispatchEvent(new Event("online"));
   };
+  const flushCache = async () => {
+    await flushPromises();
+    await flush();
+  };
   // router.currentRoute is a shallowRef, so mutating params.id does not trigger
   // reactivity — this helper replaces the mutation and forces dependents to update
   const setRouteId = (id: string) => {
@@ -76,8 +80,7 @@ describe(useMessageCache, () => {
 
     await mountCache();
     items.value = [new StandardMessageEntity({ message, partitionKey, rowKey, userId })];
-    await flushPromises();
-    await flush();
+    await flushCache();
     const cached = await readCachedMessages(partitionKey);
 
     expect(cached).toHaveLength(1);
@@ -89,10 +92,9 @@ describe(useMessageCache, () => {
 
     await mountCache();
     items.value = [new StandardMessageEntity({ message, partitionKey, rowKey, userId })];
-    await flushPromises();
-    await flush();
+    await flushCache();
     setRouteId(crypto.randomUUID());
-    await flushPromises();
+    await flushCache();
     const cached = await readCachedMessages(partitionKey);
 
     expect(cached).toHaveLength(1);
@@ -103,7 +105,7 @@ describe(useMessageCache, () => {
 
     await mountCache("");
     items.value = [new StandardMessageEntity({ message, partitionKey, rowKey, userId })];
-    await flushPromises();
+    await flushCache();
     const cached = await readCachedMessages(partitionKey);
 
     expect(cached).toHaveLength(0);
@@ -119,8 +121,7 @@ describe(useMessageCache, () => {
     goOffline();
     await mountCache();
     setRouteId(secondPartitionKey);
-    await flushPromises();
-    await flush();
+    await flushCache();
 
     expect(items.value).toHaveLength(1);
     expect(items.value[0]).toMatchObject({ message: " " });
@@ -136,7 +137,7 @@ describe(useMessageCache, () => {
     goOnline();
     await mountCache();
     setRouteId(secondPartitionKey);
-    await flushPromises();
+    await flushCache();
 
     expect(items.value).toHaveLength(0);
   });
@@ -149,7 +150,7 @@ describe(useMessageCache, () => {
     await mountCache(crypto.randomUUID());
     setRouteId(partitionKey);
     setRouteId(crypto.randomUUID());
-    await flushPromises();
+    await flushCache();
 
     expect(items.value).toHaveLength(0);
   });
