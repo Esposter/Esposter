@@ -32,14 +32,14 @@ describe(useMessageCache, () => {
     await flushPromises();
     await flush();
   };
-  // router.currentRoute is a shallowRef, so mutating params.id does not trigger
-  // reactivity — this helper replaces the mutation and forces dependents to update
+  // Router.currentRoute is a shallowRef, so mutating params.id does not trigger
+  // Reactivity — this helper replaces the mutation and forces dependents to update
   const setRouteId = (id: string) => {
     router.currentRoute.value.params.id = id;
     triggerRef(router.currentRoute);
   };
   // Capture router and pinia from inside the mounted component's scope
-  // because mountSuspended creates its own context
+  // Because mountSuspended creates its own context
   const mountCache = async (initialRouteId: string = partitionKey) => {
     wrapper = await mountSuspended(
       defineComponent({

@@ -124,40 +124,37 @@ Prefer `watchDeep(source, cb)` over `watch(source, cb, { deep: true })` and `wat
 
 ## Browser-Only Composables (SSR Safety)
 
-When a composable uses browser-only APIs (`indexedDB`, `window`, subscriptions, etc.), wrap watchers inside `onMounted` and clean up with `onUnmounted`:
+Regular `watch`/`watchDeep` are SSR-safe — they don't fire until the source changes (which only happens client-side). Set them up directly in `setup()`, not inside `onMounted`. Vue automatically scopes them to the component and disposes them on unmount — no manual `WatchHandle[]` + `onUnmounted` cleanup needed.
 
 ```ts
 export const useBrowserFeature = () => {
-  // Store/ref setup can stay outside onMounted (SSR-safe)
   const store = useSomeStore();
   const { someRef } = storeToRefs(store);
   const online = useOnline();
-  const watchHandles: WatchHandle[] = [];
 
-  onMounted(() => {
-    watchHandles.push(
-      watchDeep(someRef, (value) => {
-        // Safe to use indexedDB, etc. here
-      }),
-    );
-
-    watchHandles.push(
-      watch(someOtherRef, async (value) => {
-        if (!value || online.value) return;
-        // ...
-      }),
-    );
+  // Safe: watchDeep/watch only fire on changes (client-side)
+  watchDeep(someRef, (value) => {
+    // Safe to use indexedDB, etc. here
   });
 
-  onUnmounted(() => {
-    for (const watchHandle of watchHandles) watchHandle();
+  watch(someOtherRef, async (value) => {
+    if (!value || online.value) return;
+    // ...
   });
 };
 ```
 
-- Use `WatchHandle[]` array when multiple watchers need cleanup (single watcher can use `let watchHandle: undefined | WatchHandle`)
-- Store/composable initialization stays outside `onMounted` — only the browser-dependent logic goes inside
-- This pattern prevents SSR crashes from accessing `document`, `indexedDB`, etc. during server-side rendering
+**`watchImmediate` is the SSR concern** — it executes the callback during `setup()`, which runs on the server. If the callback accesses browser APIs, use `watchTriggerable` + `onMounted` to defer the first execution (see `useOnlineSubscribable`):
+
+```ts
+const { trigger } = watchTriggerable(source, (value) => {
+  // Browser-only logic
+});
+
+onMounted(async () => {
+  await trigger();
+});
+```
 
 ## Composables
 
