@@ -13,7 +13,19 @@ describe(readCachedMessages, () => {
   afterEach(async () => {
     await resetMessageCacheDatabase();
     const databases = await indexedDB.databases();
-    for (const database of databases) if (database.name) indexedDB.deleteDatabase(database.name);
+    await Promise.all(
+      databases
+        .filter((database): database is IDBDatabaseInfo & { name: string } => database.name !== undefined)
+        .map(
+          (database) =>
+            new Promise<void>((resolve, reject) => {
+              const request = indexedDB.deleteDatabase(database.name);
+              request.onsuccess = () => resolve();
+              request.onerror = () => reject(request.error ?? new Error("Failed to delete database"));
+              request.onblocked = () => resolve();
+            }),
+        ),
+    );
   });
 
   test("returns empty array when no cached messages", async () => {

@@ -53,7 +53,19 @@ describe(useMessageCache, () => {
     vi.restoreAllMocks();
     await resetMessageCacheDatabase();
     const databases = await indexedDB.databases();
-    for (const database of databases) if (database.name) indexedDB.deleteDatabase(database.name);
+    await Promise.all(
+      databases
+        .filter((database): database is IDBDatabaseInfo & { name: string } => database.name !== undefined)
+        .map(
+          (database) =>
+            new Promise<void>((resolve, reject) => {
+              const request = indexedDB.deleteDatabase(database.name);
+              request.onsuccess = () => resolve();
+              request.onerror = () => reject(request.error ?? new Error("Failed to delete database"));
+              request.onblocked = () => resolve();
+            }),
+        ),
+    );
   });
 
   test("persists messages to cache when items change", async () => {
@@ -87,7 +99,7 @@ describe(useMessageCache, () => {
     expect(cached).toHaveLength(1);
   });
 
-  test("does not write to cache when room id is undefined", async () => {
+  test("does not write to cache when room id is empty", async () => {
     expect.hasAssertions();
 
     router.currentRoute.value.params.id = "";
