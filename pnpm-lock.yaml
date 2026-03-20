@@ -76,8 +76,8 @@ catalogs:
       specifier: ^1.1.1
       version: 1.1.1
     '@eslint/json':
-      specifier: ^1.1.0
-      version: 1.1.0
+      specifier: ^1.2.0
+      version: 1.2.0
     '@floating-ui/dom':
       specifier: ^1.7.6
       version: 1.7.6
@@ -1324,7 +1324,7 @@ importers:
         version: 1.1.1
       '@eslint/json':
         specifier: 'catalog:'
-        version: 1.1.0
+        version: 1.2.0
       '@unocss/eslint-config':
         specifier: 'catalog:'
         version: 66.6.7(eslint@10.0.3(jiti@2.6.1))(typescript@5.9.3)
@@ -2965,8 +2965,8 @@ packages:
     resolution: {integrity: sha512-nE7DEIchvtiFTwBw4Lfbu59PG+kCofhjsKaCWzxTpt4lfRjRMqG6uMBzKXuEcyXhOHoUp9riAm7/aWYGhXZ9cw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@eslint/json@1.1.0':
-    resolution: {integrity: sha512-noH9FUYqyhZSDf3Yq5HswsjDH/MWJAatMooWwT5YgQ0XHMekoFc/iyEufP+7kD1kaOj9qwFiXySqHsKii3zmlw==}
+  '@eslint/json@1.2.0':
+    resolution: {integrity: sha512-CEFEyNgvzu8zn5QwVYDg3FaG+ZKUeUsNYitFpMYJAqoAlnw68EQgNbUfheSmexZr4n0wZPrAkPLuvsLaXO6wRw==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
 
   '@eslint/object-schema@3.0.3':
@@ -14270,7 +14270,7 @@ snapshots:
 
   '@eslint/js@9.39.4': {}
 
-  '@eslint/json@1.1.0':
+  '@eslint/json@1.2.0':
     dependencies:
       '@eslint/core': 1.1.1
       '@eslint/plugin-kit': 0.6.1
