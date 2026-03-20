@@ -200,6 +200,7 @@
     "azure-mock": "workspace:*",
     "crossws": "catalog:",
     "drizzle-kit": "catalog:",
+    "fake-indexeddb": "catalog:",
     "fs-extra": "catalog:",
     "h3": "catalog:",
     "nuxt": "catalog:",

@@ -8,20 +8,11 @@ export default defineVitestConfig({
       outputJson: "./bench/results.json",
     },
     environment: "nuxt",
-    environmentOptions: {
-      nuxt: {
-        mock: {
-          indexedDb: true,
-        },
-      },
-    },
     hookTimeout: dayjs.duration(60, "seconds").asMilliseconds(),
-    server: {
-      deps: {
-        // Inline idb so it runs inside the fake-indexeddb test environment
-        // Instead of being externalized to native Node where indexedDB is unavailable
-        inline: ["idb"],
-      },
-    },
+    // Fake-indexeddb/auto polyfills ALL IndexedDB globals (IDBDatabase, IDBObjectStore, etc.)
+    // The nuxt mock `indexedDb: true` only sets `indexedDB` itself, but the `idb` library's
+    // Proxy mechanism also requires the class constructors (IDBDatabase, IDBObjectStore, etc.)
+    // To be available as globals — without them, idb operations silently fail
+    setupFiles: ["fake-indexeddb/auto"],
   },
 });
