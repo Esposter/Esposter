@@ -31,6 +31,10 @@ description: Esposter Vitest testing conventions — describe with function refs
 - **Minimize per-test setup** — declare shared mutable state (`source`, `callback`, `cleanup`, etc.) as `let` variables inside `describe`, initialize them in `beforeEach`. Mount helpers should take no arguments when all state is pre-initialized. Only reassign in the test body when a test needs a different variant (e.g. `callback = vi.fn(() => cleanup)` for cleanup tests).
 - **Reuse test utilities** — always check `testUtils.test.ts` for existing helpers (e.g. `makeDataSource`, `makeRow`, `makeColumn`, `makeNumberColumn`, `setupWithDataSource`) before writing local equivalents.
 
+## Running Validation Commands
+
+- **Always run `pnpm lint`, `pnpm typecheck`, and test commands in the background** — use `run_in_background: true` on the Bash tool so the main conversation is not blocked. These commands can take over 2 minutes. Continue addressing other tasks while waiting for results.
+
 ## Running Tests
 
 - **Do not run tests on Windows** — Vitest currently fails on Windows with `TypeError: The argument 'filename' must be a file URL object, file URL string, or absolute path string. Received 'file:///__uno.css'`. This is a known environment issue with UnoCSS + happy-dom. Write tests but skip running them; the user runs them manually.

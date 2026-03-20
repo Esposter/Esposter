@@ -1,4 +1,5 @@
 import type { VueWrapper } from "@vue/test-utils";
+import type { Promisable } from "type-fest";
 
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
@@ -7,7 +8,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 describe(useOnlineSubscribable, () => {
   let wrapper: VueWrapper;
   let source: Ref<string>;
-  let callback: ReturnType<typeof vi.fn<(value: string) => (() => void) | undefined>>;
+  let callback: ReturnType<typeof vi.fn<(value: string) => Promisable<(() => void) | undefined>>>;
   let cleanup: ReturnType<typeof vi.fn<() => void>>;
   const goOffline = () => {
     vi.spyOn(navigator, "onLine", "get").mockReturnValue(false);
@@ -26,7 +27,7 @@ describe(useOnlineSubscribable, () => {
   beforeEach(() => {
     source = ref("");
     cleanup = vi.fn<() => void>();
-    callback = vi.fn<(value: string) => (() => void) | undefined>();
+    callback = vi.fn<(value: string) => Promisable<(() => void) | undefined>>();
     goOnline();
   });
 
@@ -69,7 +70,7 @@ describe(useOnlineSubscribable, () => {
   test("calls cleanup when going offline", async () => {
     expect.hasAssertions();
 
-    callback = vi.fn<(value: string) => () => void>(() => cleanup);
+    callback = vi.fn<(value: string) => Promisable<(() => void) | undefined>>(() => cleanup);
     await mountSubscribable();
     await flushPromises();
     goOffline();
@@ -94,7 +95,30 @@ describe(useOnlineSubscribable, () => {
   test("calls cleanup on unmount", async () => {
     expect.hasAssertions();
 
-    callback = vi.fn<(value: string) => () => void>(() => cleanup);
+    callback = vi.fn<(value: string) => Promisable<(() => void) | undefined>>(() => cleanup);
+    await mountSubscribable();
+    await flushPromises();
+    wrapper.unmount();
+
+    expect(cleanup).toHaveBeenCalledWith();
+  });
+
+  test("calls cleanup from async callback when going offline", async () => {
+    expect.hasAssertions();
+
+    callback = vi.fn<(value: string) => Promisable<(() => void) | undefined>>(() => Promise.resolve(cleanup));
+    await mountSubscribable();
+    await flushPromises();
+    goOffline();
+    await flushPromises();
+
+    expect(cleanup).toHaveBeenCalledWith();
+  });
+
+  test("calls cleanup from async callback on unmount", async () => {
+    expect.hasAssertions();
+
+    callback = vi.fn<(value: string) => Promisable<(() => void) | undefined>>(() => Promise.resolve(cleanup));
     await mountSubscribable();
     await flushPromises();
     wrapper.unmount();

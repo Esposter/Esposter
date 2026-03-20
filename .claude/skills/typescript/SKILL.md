@@ -21,6 +21,11 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 - **Cloning objects** — use `structuredClone(obj)` for deep clones; use `Object.assign(structuredClone(obj), { ...updates })` to clone and override fields. Never use `{ ...spread }` to clone a class instance — spread creates a plain object losing the prototype. **Exception**: `structuredClone(new ClassName(...))` is intentional when a plain object is explicitly required (e.g. Vjsf does not accept class instances — must use `structuredClone` to strip the prototype). Always add a comment explaining why.
 - **Boolean casting** — never use `!!` to cast to boolean. Always use `Boolean(value)`.
 
+## Promise Style
+
+- **Always use `async`/`await`** — never use `.then()` or `.catch()` promise chains. Use `try`/`catch` blocks for error handling.
+- When fire-and-forgetting an async operation, extract to a named `async` function and call it without `await`.
+
 ## Error Handling
 
 - **Never use `new Error(...)`** — always throw `new InvalidOperationError(operation, name, message)` from `@esposter/shared`.

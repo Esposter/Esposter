@@ -1,5 +1,5 @@
 import type { Promisable } from "type-fest";
-import type { MultiWatchSources, WatchHandle, WatchSource } from "vue";
+import type { MultiWatchSources, WatchSource } from "vue";
 
 export function useOnlineSubscribable<T extends Readonly<MultiWatchSources>>(
   source: [...T],
@@ -17,18 +17,26 @@ export function useOnlineSubscribable(
   callback: (value: any) => Promisable<(() => void) | undefined>,
 ) {
   const online = useOnline();
-  let watchHandle: undefined | WatchHandle;
+  const sources = (Array.isArray(source) ? [...source, online] : [source, online]) as MultiWatchSources;
+  const { trigger } = watchTriggerable(sources, async (values, _oldValues, onCleanup) => {
+    if (!online.value) return;
+    const value = (Array.isArray(source) ? values.slice(0, -1) : values[0]) as unknown;
 
-  onMounted(() => {
-    const sources = (Array.isArray(source) ? [...source, online] : [source, online]) as MultiWatchSources;
-    watchHandle = watchImmediate(sources, (values) => {
-      if (!online.value) return;
-      const value = (Array.isArray(source) ? values.slice(0, -1) : values[0]) as unknown;
-      return callback(value);
+    let isCurrent = true;
+    let cleanupFn: (() => void) | undefined;
+
+    onCleanup(() => {
+      isCurrent = false;
+      cleanupFn?.();
     });
+
+    const cleanup = await callback(value);
+
+    if (isCurrent) cleanupFn = cleanup;
+    else cleanup?.();
   });
 
-  onUnmounted(() => {
-    watchHandle?.();
+  onMounted(async () => {
+    await trigger();
   });
 }

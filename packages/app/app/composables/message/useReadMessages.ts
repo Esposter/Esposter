@@ -59,6 +59,8 @@ export const useReadMessages = () => {
           const cachedMessages = await readCachedMessages(roomId);
           const cachedData = new CursorPaginationData<MessageEntity>();
           cachedData.items = cachedMessages;
+          hasMoreNewer.value = false;
+          nextCursorNewer.value = undefined;
           return cachedData;
         }
 
