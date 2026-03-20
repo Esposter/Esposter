@@ -14,6 +14,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vi
 describe(useMessageCache, () => {
   let router: Router;
   let wrapper: VueWrapper;
+  let flush: () => Promise<void>;
   const partitionKey = crypto.randomUUID();
   const rowKey = "rowKey";
   const message = "message";
@@ -27,7 +28,15 @@ describe(useMessageCache, () => {
     window.dispatchEvent(new Event("online"));
   };
   const mountCache = async () => {
-    wrapper = await mountSuspended(defineComponent({ render: () => h("div"), setup: () => useMessageCache() }));
+    wrapper = await mountSuspended(
+      defineComponent({
+        render: () => h("div"),
+        setup: () => {
+          const { flush: flushCache } = useMessageCache();
+          flush = flushCache;
+        },
+      }),
+    );
   };
 
   beforeAll(() => {
@@ -51,9 +60,11 @@ describe(useMessageCache, () => {
     expect.hasAssertions();
 
     const dataStore = useDataStore();
+    const { items } = storeToRefs(dataStore);
     await mountCache();
-    dataStore.items = [new StandardMessageEntity({ message, partitionKey, rowKey, userId })];
+    items.value = [new StandardMessageEntity({ message, partitionKey, rowKey, userId })];
     await flushPromises();
+    await flush();
     const cached = await readCachedMessages(partitionKey);
 
     expect(cached).toHaveLength(1);
@@ -64,9 +75,11 @@ describe(useMessageCache, () => {
     expect.hasAssertions();
 
     const dataStore = useDataStore();
+    const { items } = storeToRefs(dataStore);
     await mountCache();
-    dataStore.items = [new StandardMessageEntity({ message, partitionKey, rowKey, userId })];
+    items.value = [new StandardMessageEntity({ message, partitionKey, rowKey, userId })];
     await flushPromises();
+    await flush();
     router.currentRoute.value.params.id = crypto.randomUUID();
     await flushPromises();
     const cached = await readCachedMessages(partitionKey);
@@ -79,8 +92,9 @@ describe(useMessageCache, () => {
 
     router.currentRoute.value.params.id = "";
     const dataStore = useDataStore();
+    const { items } = storeToRefs(dataStore);
     await mountCache();
-    dataStore.items = [new StandardMessageEntity({ message, partitionKey, rowKey, userId })];
+    items.value = [new StandardMessageEntity({ message, partitionKey, rowKey, userId })];
     await flushPromises();
     const cached = await readCachedMessages(partitionKey);
 
@@ -96,12 +110,14 @@ describe(useMessageCache, () => {
     ]);
     goOffline();
     const dataStore = useDataStore();
+    const { items } = storeToRefs(dataStore);
     await mountCache();
     router.currentRoute.value.params.id = secondPartitionKey;
     await flushPromises();
+    await flush();
 
-    expect(dataStore.items).toHaveLength(1);
-    expect(dataStore.items[0]).toMatchObject({ message: " " });
+    expect(items.value).toHaveLength(1);
+    expect(items.value[0]).toMatchObject({ message: " " });
   });
 
   test("does not populate store from cache when switching rooms online", async () => {
@@ -113,11 +129,12 @@ describe(useMessageCache, () => {
     ]);
     goOnline();
     const dataStore = useDataStore();
+    const { items } = storeToRefs(dataStore);
     await mountCache();
     router.currentRoute.value.params.id = secondPartitionKey;
     await flushPromises();
 
-    expect(dataStore.items).toHaveLength(0);
+    expect(items.value).toHaveLength(0);
   });
 
   test("does not populate store if room changed during async read", async () => {
@@ -126,12 +143,13 @@ describe(useMessageCache, () => {
     await writeCachedMessages(partitionKey, [new StandardMessageEntity({ message, partitionKey, rowKey, userId })]);
     goOffline();
     const dataStore = useDataStore();
+    const { items } = storeToRefs(dataStore);
     router.currentRoute.value.params.id = crypto.randomUUID();
     await mountCache();
     router.currentRoute.value.params.id = partitionKey;
     router.currentRoute.value.params.id = crypto.randomUUID();
     await flushPromises();
 
-    expect(dataStore.items).toHaveLength(0);
+    expect(items.value).toHaveLength(0);
   });
 });

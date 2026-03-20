@@ -6,7 +6,6 @@ import { readCachedMessages } from "@/services/message/cache/readCachedMessages"
 import { writeCachedMessages } from "@/services/message/cache/writeCachedMessages";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
-
 // @TODO: Cached messages flash then disappear on offline room switch — root cause still unknown
 export const useMessageCache = () => {
   const roomStore = useRoomStore();
@@ -15,25 +14,28 @@ export const useMessageCache = () => {
   const { items } = storeToRefs(dataStore);
   const online = useOnline();
   const watchHandles: WatchHandle[] = [];
+  let pendingOperation: Promise<void> = Promise.resolve();
 
   onMounted(() => {
     watchHandles.push(
       watchDeep(items, (messages) => {
         if (!currentRoomId.value || messages.length === 0) return;
-        writeCachedMessages(currentRoomId.value, messages);
+        pendingOperation = writeCachedMessages(currentRoomId.value, messages);
       }),
     );
 
     watchHandles.push(
-      watch(currentRoomId, async (roomId) => {
+      watch(currentRoomId, (roomId) => {
         if (!roomId || online.value) return;
-        const cachedMessages = await readCachedMessages(roomId);
-        if (currentRoomId.value !== roomId || items.value.length > 0 || cachedMessages.length === 0) return;
+        pendingOperation = (async () => {
+          const cachedMessages = await readCachedMessages(roomId);
+          if (currentRoomId.value !== roomId || items.value.length > 0 || cachedMessages.length === 0) return;
 
-        const cachedData = new CursorPaginationData<MessageEntity>();
-        cachedData.items = cachedMessages;
-        cachedData.hasMore = true;
-        dataStore.initializeCursorPaginationData(cachedData);
+          const cachedData = new CursorPaginationData<MessageEntity>();
+          cachedData.items = cachedMessages;
+          cachedData.hasMore = true;
+          dataStore.initializeCursorPaginationData(cachedData);
+        })();
       }),
     );
   });
@@ -41,4 +43,7 @@ export const useMessageCache = () => {
   onUnmounted(() => {
     for (const watchHandle of watchHandles) watchHandle();
   });
+
+  const flush = () => pendingOperation;
+  return { flush };
 };
