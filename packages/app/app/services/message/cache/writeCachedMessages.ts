@@ -1,6 +1,10 @@
 import type { MessageEntity } from "@esposter/db-schema";
 
-import { MESSAGE_CACHE_LIMIT, MESSAGE_PARTITION_KEY_INDEX, MESSAGE_STORE_NAME } from "@/services/message/cache/constants";
+import {
+  MESSAGE_CACHE_LIMIT,
+  MESSAGE_PARTITION_KEY_INDEX,
+  MESSAGE_STORE_NAME,
+} from "@/services/message/cache/constants";
 import { openMessageCacheDatabase } from "@/services/message/cache/openMessageCacheDatabase";
 
 export const writeCachedMessages = async (roomId: string, messages: MessageEntity[]) => {

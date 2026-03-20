@@ -42,7 +42,8 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
         isPending.value = false;
       }
     };
-    await refresh();
+    // Absorbs query errors so component setup never fails — errors are handled by the tRPC link chain
+    await Promise.allSettled([refresh()]);
     return { isPending, refresh };
   };
   const readMoreItems = async (
