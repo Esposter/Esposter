@@ -9,8 +9,7 @@ import { useDataStore } from "@/store/message/data";
 import { StandardMessageEntity } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { createPinia, setActivePinia } from "pinia";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(useMessageCache, () => {
   let router: Router;
@@ -29,30 +28,28 @@ describe(useMessageCache, () => {
     vi.spyOn(navigator, "onLine", "get").mockReturnValue(true);
     window.dispatchEvent(new Event("online"));
   };
-  // Capture refs from inside the mounted component's scope
-  // Because mountSuspended creates its own Pinia instance
-  const mountCache = async () => {
+  // router.currentRoute is a shallowRef, so mutating params.id does not trigger
+  // reactivity — this helper replaces the mutation and forces dependents to update
+  const setRouteId = (id: string) => {
+    router.currentRoute.value.params.id = id;
+    triggerRef(router.currentRoute);
+  };
+  // Capture router and pinia from inside the mounted component's scope
+  // because mountSuspended creates its own context
+  const mountCache = async (initialRouteId: string = partitionKey) => {
     wrapper = await mountSuspended(
       defineComponent({
         render: () => h("div"),
         setup: () => {
-          const { flush: flushCache } = useMessageCache();
-          flush = flushCache;
+          router = useRouter();
+          router.currentRoute.value.params.id = initialRouteId;
           const dataStore = useDataStore();
           ({ items } = storeToRefs(dataStore));
+          ({ flush } = useMessageCache());
         },
       }),
     );
   };
-
-  beforeAll(() => {
-    router = useRouter();
-  });
-
-  beforeEach(() => {
-    setActivePinia(createPinia());
-    router.currentRoute.value.params.id = partitionKey;
-  });
 
   afterEach(async () => {
     wrapper?.unmount();
@@ -94,7 +91,7 @@ describe(useMessageCache, () => {
     items.value = [new StandardMessageEntity({ message, partitionKey, rowKey, userId })];
     await flushPromises();
     await flush();
-    router.currentRoute.value.params.id = crypto.randomUUID();
+    setRouteId(crypto.randomUUID());
     await flushPromises();
     const cached = await readCachedMessages(partitionKey);
 
@@ -104,8 +101,7 @@ describe(useMessageCache, () => {
   test("does not write to cache when room id is empty", async () => {
     expect.hasAssertions();
 
-    router.currentRoute.value.params.id = "";
-    await mountCache();
+    await mountCache("");
     items.value = [new StandardMessageEntity({ message, partitionKey, rowKey, userId })];
     await flushPromises();
     const cached = await readCachedMessages(partitionKey);
@@ -122,7 +118,7 @@ describe(useMessageCache, () => {
     ]);
     goOffline();
     await mountCache();
-    router.currentRoute.value.params.id = secondPartitionKey;
+    setRouteId(secondPartitionKey);
     await flushPromises();
     await flush();
 
@@ -139,7 +135,7 @@ describe(useMessageCache, () => {
     ]);
     goOnline();
     await mountCache();
-    router.currentRoute.value.params.id = secondPartitionKey;
+    setRouteId(secondPartitionKey);
     await flushPromises();
 
     expect(items.value).toHaveLength(0);
@@ -150,10 +146,9 @@ describe(useMessageCache, () => {
 
     await writeCachedMessages(partitionKey, [new StandardMessageEntity({ message, partitionKey, rowKey, userId })]);
     goOffline();
-    router.currentRoute.value.params.id = crypto.randomUUID();
-    await mountCache();
-    router.currentRoute.value.params.id = partitionKey;
-    router.currentRoute.value.params.id = crypto.randomUUID();
+    await mountCache(crypto.randomUUID());
+    setRouteId(partitionKey);
+    setRouteId(crypto.randomUUID());
     await flushPromises();
 
     expect(items.value).toHaveLength(0);

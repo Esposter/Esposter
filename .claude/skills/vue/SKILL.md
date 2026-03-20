@@ -106,6 +106,10 @@ Prefer `watchDeep(source, cb)` over `watch(source, cb, { deep: true })` and `wat
 - Always wrap the callback in an explicit arrow function — never pass a function reference directly. This avoids scope/binding issues and prevents accidental argument forwarding: `onUnmounted(() => { reset(); })` not `onUnmounted(reset)`.
 - This applies everywhere — `.map()`, `.filter()`, event handlers, lifecycle hooks, etc. Always use `array.map((item) => fn(item))` not `array.map(fn)`.
 
+## Unwrapping Reactive Proxies
+
+- **Always use `toRawDeep` from `@esposter/shared`** instead of Vue's `toRaw` — `toRaw` only unwraps one level, while `toRawDeep` recursively unwraps all nested reactive proxies. This is critical when passing reactive data to APIs that require plain objects (e.g. IndexedDB `store.put()`, `structuredClone`, postMessage).
+
 ## Resource Management
 
 - Always clean up in `onUnmounted`: intervals, timeouts, animation frames, event listeners.
