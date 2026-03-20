@@ -1,6 +1,5 @@
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { TRPCLink } from "@trpc/client";
-import type { Ref } from "vue";
 
 import { TRPCOfflineClientError } from "@/models/trpc/TRPCOfflineClientError";
 import { observable } from "@trpc/server/observable";

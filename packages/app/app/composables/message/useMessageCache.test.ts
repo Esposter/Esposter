@@ -1,3 +1,4 @@
+import type { MessageEntity } from "@esposter/db-schema";
 import type { VueWrapper } from "@vue/test-utils";
 import type { Router } from "vue-router";
 
@@ -15,6 +16,7 @@ describe(useMessageCache, () => {
   let router: Router;
   let wrapper: VueWrapper;
   let flush: () => Promise<void>;
+  let items: Ref<MessageEntity[]>;
   const partitionKey = crypto.randomUUID();
   const rowKey = "rowKey";
   const message = "message";
@@ -27,6 +29,8 @@ describe(useMessageCache, () => {
     vi.spyOn(navigator, "onLine", "get").mockReturnValue(true);
     window.dispatchEvent(new Event("online"));
   };
+  // Capture refs from inside the mounted component's scope
+  // Because mountSuspended creates its own Pinia instance
   const mountCache = async () => {
     wrapper = await mountSuspended(
       defineComponent({
@@ -34,6 +38,8 @@ describe(useMessageCache, () => {
         setup: () => {
           const { flush: flushCache } = useMessageCache();
           flush = flushCache;
+          const dataStore = useDataStore();
+          ({ items } = storeToRefs(dataStore));
         },
       }),
     );
@@ -71,8 +77,6 @@ describe(useMessageCache, () => {
   test("persists messages to cache when items change", async () => {
     expect.hasAssertions();
 
-    const dataStore = useDataStore();
-    const { items } = storeToRefs(dataStore);
     await mountCache();
     items.value = [new StandardMessageEntity({ message, partitionKey, rowKey, userId })];
     await flushPromises();
@@ -86,8 +90,6 @@ describe(useMessageCache, () => {
   test("does not clear cache when items become empty on room switch", async () => {
     expect.hasAssertions();
 
-    const dataStore = useDataStore();
-    const { items } = storeToRefs(dataStore);
     await mountCache();
     items.value = [new StandardMessageEntity({ message, partitionKey, rowKey, userId })];
     await flushPromises();
@@ -103,8 +105,6 @@ describe(useMessageCache, () => {
     expect.hasAssertions();
 
     router.currentRoute.value.params.id = "";
-    const dataStore = useDataStore();
-    const { items } = storeToRefs(dataStore);
     await mountCache();
     items.value = [new StandardMessageEntity({ message, partitionKey, rowKey, userId })];
     await flushPromises();
@@ -121,8 +121,6 @@ describe(useMessageCache, () => {
       new StandardMessageEntity({ message: " ", partitionKey: secondPartitionKey, rowKey, userId }),
     ]);
     goOffline();
-    const dataStore = useDataStore();
-    const { items } = storeToRefs(dataStore);
     await mountCache();
     router.currentRoute.value.params.id = secondPartitionKey;
     await flushPromises();
@@ -140,8 +138,6 @@ describe(useMessageCache, () => {
       new StandardMessageEntity({ message: " ", partitionKey: secondPartitionKey, rowKey, userId }),
     ]);
     goOnline();
-    const dataStore = useDataStore();
-    const { items } = storeToRefs(dataStore);
     await mountCache();
     router.currentRoute.value.params.id = secondPartitionKey;
     await flushPromises();
@@ -154,8 +150,6 @@ describe(useMessageCache, () => {
 
     await writeCachedMessages(partitionKey, [new StandardMessageEntity({ message, partitionKey, rowKey, userId })]);
     goOffline();
-    const dataStore = useDataStore();
-    const { items } = storeToRefs(dataStore);
     router.currentRoute.value.params.id = crypto.randomUUID();
     await mountCache();
     router.currentRoute.value.params.id = partitionKey;
