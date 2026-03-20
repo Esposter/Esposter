@@ -17,7 +17,7 @@ export const writeCachedMessages = async (roomId: string, messages: MessageEntit
     const existingKeys = await index.getAllKeys(roomId);
     for (const key of existingKeys) await store.delete(key);
     const messagesToCache = messages.filter((message) => !message.isLoading).slice(0, MESSAGE_CACHE_LIMIT);
-    // toRawDeep unwraps Vue reactive proxies so IndexedDB's structured clone can handle them
+    // ToRawDeep unwraps Vue reactive proxies so IndexedDB's structured clone can handle them
     for (const message of messagesToCache) await store.put(toRawDeep(message));
     await transaction.done;
   } catch {
