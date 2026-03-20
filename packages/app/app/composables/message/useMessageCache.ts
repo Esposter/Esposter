@@ -7,6 +7,7 @@ import { writeCachedMessages } from "@/services/message/cache/writeCachedMessage
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 
+// @TODO: Cached messages flash then disappear on offline room switch — root cause still unknown
 export const useMessageCache = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
