@@ -1,3 +1,4 @@
+import { resetMessageCacheDatabase } from "@/services/message/cache/openMessageCacheDatabase";
 import { readCachedMessages } from "@/services/message/cache/readCachedMessages";
 import { writeCachedMessages } from "@/services/message/cache/writeCachedMessages";
 import { StandardMessageEntity } from "@esposter/db-schema";
@@ -10,6 +11,7 @@ describe(readCachedMessages, () => {
   const userId = crypto.randomUUID();
 
   afterEach(async () => {
+    await resetMessageCacheDatabase();
     const databases = await indexedDB.databases();
     for (const database of databases) if (database.name) indexedDB.deleteDatabase(database.name);
   });

@@ -16,5 +16,12 @@ export default defineVitestConfig({
       },
     },
     hookTimeout: dayjs.duration(60, "seconds").asMilliseconds(),
+    server: {
+      deps: {
+        // Inline idb so it runs inside the fake-indexeddb test environment
+        // instead of being externalized to native Node where indexedDB is unavailable
+        inline: ["idb"],
+      },
+    },
   },
 });

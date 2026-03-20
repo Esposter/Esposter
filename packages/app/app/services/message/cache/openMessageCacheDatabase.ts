@@ -21,3 +21,11 @@ export const openMessageCacheDatabase = () => {
   });
   return databasePromise;
 };
+
+export const resetMessageCacheDatabase = async () => {
+  if (databasePromise) {
+    const database = await databasePromise;
+    database.close();
+    databasePromise = undefined;
+  }
+};

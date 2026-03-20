@@ -18,25 +18,33 @@ export function useOnlineSubscribable(
 ) {
   const online = useOnline();
   const sources = (Array.isArray(source) ? [...source, online] : [source, online]) as MultiWatchSources;
+  let currentCleanup: (() => void) | undefined;
+  let isDisposed = false;
   const { trigger } = watchTriggerable(sources, async (values, _oldValues, onCleanup) => {
     if (!online.value) return;
     const value = (Array.isArray(source) ? values.slice(0, -1) : values[0]) as unknown;
 
     let isCurrent = true;
-    let cleanupFn: (() => void) | undefined;
 
     onCleanup(() => {
       isCurrent = false;
-      cleanupFn?.();
+      currentCleanup?.();
+      currentCleanup = undefined;
     });
 
     const cleanup = await callback(value);
 
-    if (isCurrent) cleanupFn = cleanup;
+    if (isCurrent && !isDisposed) currentCleanup = cleanup;
     else cleanup?.();
   });
 
   onMounted(async () => {
     await trigger();
+  });
+
+  onScopeDispose(() => {
+    isDisposed = true;
+    currentCleanup?.();
+    currentCleanup = undefined;
   });
 }

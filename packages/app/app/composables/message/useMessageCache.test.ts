@@ -1,6 +1,7 @@
 import type { VueWrapper } from "@vue/test-utils";
 import type { Router } from "vue-router";
 
+import { resetMessageCacheDatabase } from "@/services/message/cache/openMessageCacheDatabase";
 import { readCachedMessages } from "@/services/message/cache/readCachedMessages";
 import { writeCachedMessages } from "@/services/message/cache/writeCachedMessages";
 import { useDataStore } from "@/store/message/data";
@@ -41,6 +42,7 @@ describe(useMessageCache, () => {
   afterEach(async () => {
     wrapper?.unmount();
     vi.restoreAllMocks();
+    await resetMessageCacheDatabase();
     const databases = await indexedDB.databases();
     for (const database of databases) if (database.name) indexedDB.deleteDatabase(database.name);
   });
