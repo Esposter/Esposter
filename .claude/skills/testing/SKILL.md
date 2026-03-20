@@ -19,7 +19,7 @@ description: Esposter Vitest testing conventions — describe with function refs
   - Object keys in tests: use `""` as base key, `" "` as a second key — never use semantic names like `"name"` / `"age"`.
   - Number diff values: `0`, `1`, `2`, etc.
   - Non-existent / sentinel values: use `"-1"` for a nonexistent string ID, `-1` for a nonexistent numeric ID. Never use verbose strings like `"non-existent-id"`, `"nonexistent"`, `"some-id"`, `"fake-..."`, etc.
-  - Entity fields: use the field name as the literal value — `const partitionKey = "partitionKey"`, `const rowKey = "rowKey"`, `const message = "message"`. Use `crypto.randomUUID()` for `userId` and other ID fields that require UUIDs. Never inline constructor args — always declare shared constants and reference them.
+  - Entity fields: use the field name as the literal value — `const partitionKey = "partitionKey"`, `const rowKey = "rowKey"`, `const message = "message"`. Use `crypto.randomUUID()` for ID fields (`userId`, `partitionKey` when used as a room/entity ID, route params) to match real-world UUID-based IDs. Never inline constructor args — always declare shared constants and reference them.
 - **Date format tests** — when testing all date formats, use a `for...of` loop inside a single test, converting epoch via `dayjs("1970-01-01", "YYYY-MM-DD", true).format(format)`. Never use `test.each` for date format iteration.
 - **Interpolated descriptions** — use template literals with enum values: `` `boolean returns ${ColumnType.Boolean}` ``.
 - **Human-readable names** — use plain English: "integer", "decimal", "negative", "epoch date", "NaN".

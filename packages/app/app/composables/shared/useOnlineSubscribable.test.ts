@@ -77,7 +77,7 @@ describe(useOnlineSubscribable, () => {
     goOffline();
     await flushPromises();
 
-    expect(cleanup).toHaveBeenCalled();
+    expect(cleanup).toHaveBeenCalledWith();
   });
 
   test("re-establishes callback when coming back online", async () => {
@@ -105,6 +105,6 @@ describe(useOnlineSubscribable, () => {
     await flushPromises();
     wrapper.unmount();
 
-    expect(cleanup).toHaveBeenCalled();
+    expect(cleanup).toHaveBeenCalledWith();
   });
 });

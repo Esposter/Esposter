@@ -40,8 +40,14 @@ describe(writeCachedMessages, () => {
   test("filters out loading messages", async () => {
     expect.hasAssertions();
 
-    const normalMessage = new StandardMessageEntity({ message, partitionKey, rowKey: "0", userId });
-    const loadingMessage = new StandardMessageEntity({ isLoading: true, message: " ", partitionKey, rowKey: "1", userId });
+    const normalMessage = new StandardMessageEntity({ message, partitionKey, rowKey, userId });
+    const loadingMessage = new StandardMessageEntity({
+      isLoading: true,
+      message: " ",
+      partitionKey,
+      rowKey,
+      userId,
+    });
     await writeCachedMessages(partitionKey, [normalMessage, loadingMessage]);
     const messages = await readCachedMessages(partitionKey);
 
@@ -52,8 +58,9 @@ describe(writeCachedMessages, () => {
   test("trims to MESSAGE_CACHE_LIMIT", async () => {
     expect.hasAssertions();
 
-    const messages = Array.from({ length: MESSAGE_CACHE_LIMIT + 10 }, (_, index) =>
-      new StandardMessageEntity({ message, partitionKey, rowKey: String(index), userId }),
+    const messages = Array.from(
+      { length: MESSAGE_CACHE_LIMIT + 10 },
+      (_, index) => new StandardMessageEntity({ message, partitionKey, rowKey: String(index), userId }),
     );
     await writeCachedMessages(partitionKey, messages);
     const cachedMessages = await readCachedMessages(partitionKey);

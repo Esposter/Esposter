@@ -1,7 +1,7 @@
 import type { MultiWatchSources, WatchHandle, WatchSource } from "vue";
 
 export const useOnlineSubscribable = <TSource>(
-  source: WatchSource<TSource> | MultiWatchSources,
+  source: MultiWatchSources | WatchSource<TSource>,
   callback: (value: TSource) => (() => void) | void,
 ) => {
   const online = useOnline();
