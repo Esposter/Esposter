@@ -22,7 +22,9 @@ description: Esposter file and folder organisation — one export per file, no e
 
 ## Constant Maps
 
-- **Constant maps use PascalCase** with `as const satisfies` — e.g. `export const DataSourceConfigurationMap = { ... } as const satisfies Record<...>`.
+- **Constant maps and arrays use PascalCase** matching the filename with `as const satisfies` — e.g. `export const DataSourceConfigurationMap = { ... } as const satisfies Record<...>` and `export const ColumnStatDefinitions = [ ... ] as const satisfies readonly ColumnStatDefinition[]`.
+  - **Exception**: for generic definition arrays where the `format` (or similar) callback is contravariant over the union of entry types, `satisfies` will fail with a type error. In that case, use `as const` alone and cast at the call site with `as never`. See `.claude/skills/typescript/SKILL.md` — "Generic Definition Arrays".
+- **Destructure in `v-for` unless passing the base item as component props** — `v-for="{ key, format } of ColumnStatDefinitions"` is preferred over `v-for="def of ColumnStatDefinitions"` when you only need specific fields. Exception: if the item itself must be passed as a prop to a child component (e.g. `<SomeCard :item="def" />`), keep the variable name undestructured.
 - **One constant map per file, named after the constant** — `ColumnTypeFormSchemaMap.ts` exports only `ColumnTypeFormSchemaMap`. Never co-locate multiple maps in one file. When a map is a transformation of another (e.g. omitting a key), derive it directly rather than repeating the source values: `[ColumnType.Boolean]: ColumnTypeFormSchemaMap[ColumnType.Boolean].omit({ name: true })`.
 - **Generic type maps for polymorphic dispatch** — when a constant map needs to associate a discriminant key (e.g. `DataSourceType`) with a type-parameterised generic (e.g. `DataSourceConfiguration<TItem>`), define an explicit type map first, then use a mapped type in `satisfies` to get per-entry type safety without any `as` casts:
   ```typescript

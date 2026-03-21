@@ -54,6 +54,7 @@ const rowIndexIdMap = computed(() => new Map(filteredDataSource.value.rows.map((
         itemsPerPage,
         items: filteredDataSource.rows,
         modelValue: selectedRowIds,
+        multiSort: true,
         page,
         showSelect: true,
         sortBy,
@@ -98,6 +99,9 @@ const rowIndexIdMap = computed(() => new Map(filteredDataSource.value.rows.map((
       </template>
       <template v-for="column of displayColumns" :key="column.id" #[`item.${column.name}`]="{ item }">
         <TableEditorFileRowItemSlot :column :item :row-index="rowIndexIdMap.get(item.id) ?? -1" />
+      </template>
+      <template #tfoot>
+        <TableEditorFileRowFooterSlot :data-source />
       </template>
     </StyledDataTable>
   </VueDraggable>

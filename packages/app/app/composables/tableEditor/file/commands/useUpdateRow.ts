@@ -11,12 +11,13 @@ export const useUpdateRow = () => {
   const { editedItem } = storeToRefs(tableEditorStore);
   const { push } = useFileHistoryStore();
   return (updatedRow: Row) => {
-    if (!editedItem.value?.dataSource) return;
+    if (!editedItem.value?.dataSource) return ;
     const index = editedItem.value.dataSource.rows.findIndex((row) => row.id === updatedRow.id);
-    if (index === -1) return;
+    if (index === -1) return ;
     const originalRow = structuredClone(toRawDeep(takeOne(editedItem.value.dataSource.rows, index)));
     const command = new UpdateRowCommand(index, originalRow, structuredClone(toRawDeep(updatedRow)));
     command.execute(editedItem.value);
     push(command);
+    return;
   };
 };

@@ -14,21 +14,7 @@ const chartData = computed(() => (columnStats ? computeColumnChartData(columnSta
 </script>
 
 <template>
-  <v-dialog v-model="isOpen" max-width="600">
-    <v-card>
-      <v-card-title>{{ columnStats?.columnName }} — Chart</v-card-title>
-      <v-card-text>
-        <VueApexCharts
-          v-if="chartData"
-          :options="chartData.options"
-          :series="chartData.series"
-          :type="chartData.type"
-        />
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer />
-        <v-btn @click="isOpen = false">Close</v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+  <TableEditorDialog v-model="isOpen" :title="`${columnStats?.columnName} — Chart`">
+    <VueApexCharts v-if="chartData" :options="chartData.options" :series="chartData.series" :type="chartData.type" />
+  </TableEditorDialog>
 </template>

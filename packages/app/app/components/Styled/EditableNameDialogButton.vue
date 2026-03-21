@@ -38,7 +38,7 @@ watch(
 </script>
 
 <template>
-  <StyledDialog
+  <StyledFormDialog
     v-model="modelValue"
     :card-props
     :confirm-button-props="{ text: 'Save', disabled: editedName === name }"
@@ -89,7 +89,7 @@ watch(
         </v-col>
       </v-row>
     </v-container>
-  </StyledDialog>
+  </StyledFormDialog>
 </template>
 
 <style scoped lang="scss">

@@ -47,7 +47,7 @@ const { deleteMember } = memberStore;
       <template #append="listItemProps">
         <slot name="append" :="{ hoverProps: { props: hoverProps, isHovering }, listItemProps }">
           <template v-if="isKickable">
-            <StyledDeleteDialog
+            <StyledDeleteFormDialog
               :card-props="{ title: 'Kick Member', text: `Are you sure you want to kick ${member.name}?` }"
               :confirm-button-props="{ text: 'Kick' }"
               @delete="
@@ -77,7 +77,7 @@ const { deleteMember } = memberStore;
                   </template>
                 </v-tooltip>
               </template>
-            </StyledDeleteDialog>
+            </StyledDeleteFormDialog>
           </template>
         </slot>
       </template>

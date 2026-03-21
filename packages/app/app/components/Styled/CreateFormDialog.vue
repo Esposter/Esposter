@@ -2,7 +2,7 @@
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
 import type { VBtn, VCard } from "vuetify/components";
 
-export interface StyledCreateDialogProps {
+export interface StyledCreateFormDialogProps {
   cardProps?: VCard["$props"];
   confirmButtonProps?: VBtn["$props"];
 }
@@ -11,12 +11,12 @@ defineSlots<{
   activator: (props: StyledDialogActivatorSlotProps) => VNode;
   default: () => VNode;
 }>();
-const { cardProps, confirmButtonProps } = defineProps<StyledCreateDialogProps>();
+const { cardProps, confirmButtonProps } = defineProps<StyledCreateFormDialogProps>();
 const emit = defineEmits<{ create: [onComplete: () => void] }>();
 </script>
 
 <template>
-  <StyledDialog
+  <StyledFormDialog
     :card-props
     :confirm-button-props="{ text: 'Create', ...confirmButtonProps }"
     @submit="(_event, onComplete) => emit('create', onComplete)"
@@ -25,5 +25,5 @@ const emit = defineEmits<{ create: [onComplete: () => void] }>();
       <slot name="activator" :="activatorProps" />
     </template>
     <slot />
-  </StyledDialog>
+  </StyledFormDialog>
 </template>

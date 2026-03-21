@@ -7,6 +7,7 @@ import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { dayjs } from "#shared/services/dayjs";
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
+import { coerceValue } from "@/services/tableEditor/file/column/coerceValue";
 import { getRecordDifferenceDescription } from "@/services/tableEditor/file/commands/getRecordDifferenceDescription";
 import { getValueSize } from "@/services/tableEditor/file/commands/getValueSize";
 import { takeOne } from "@esposter/shared";
@@ -55,6 +56,7 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
       }
     }
 
+    const originalType = column.type;
     const dateFormatChange =
       column.type === ColumnType.Date && this.updatedColumn.type === ColumnType.Date
         ? { newFormat: this.updatedColumn.format, oldFormat: column.format }
@@ -75,6 +77,15 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
           }
         }
         size += getValueSize(value);
+      }
+      column.size = size;
+    } else if (originalType !== this.updatedColumn.type) {
+      let size = 0;
+      for (const row of item.dataSource.rows) {
+        const value = takeOne(row.data, updatedName);
+        const newValue = coerceValue(value === null ? "" : String(value), this.updatedColumn.type);
+        row.data[updatedName] = newValue;
+        size += getValueSize(newValue);
       }
       column.size = size;
     }

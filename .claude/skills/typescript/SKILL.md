@@ -57,6 +57,29 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 
 - **Track selections by stable ID, not by name or index** — column names change, indices shift on delete/reorder. Always use `entity.id` (UUID) as the key when storing which items are selected/active. A stale ID in a selection is harmless; a stale name or index is a bug.
 
+## Generic Definition Arrays — `as const` Without `satisfies`
+
+When a definition array has entries typed as `Definition<T>` where the generic `T` controls a **contravariant** position (e.g. a callback parameter like `format: (value: ColumnStats[T]) => string`), using `satisfies readonly Definition[]` widens each entry to `Definition<KeyUnion>`, which fails due to contravariance.
+
+**Fix**: drop `satisfies` and use `as const` alone. Each entry retains its specific `Definition<"specificKey">` type, inferred by the `define*` helper.
+
+```ts
+// ColumnStatDefinition<T> has format: (value: ColumnStats[T]) => string  — contravariant in T
+// satisfies readonly ColumnStatDefinition[] FAILS (widens T → ColumnStatKey → function param too broad)
+// as const alone PASSES — preserves ColumnStatDefinition<"nullCount">, etc.
+export const ColumnStatDefinitions = [
+  defineColumnStat({ key: "nullCount", format: (value) => String(value), ... }),
+  ...
+] as const;  // NOT "satisfies readonly ColumnStatDefinition[]"
+```
+
+At call sites where the entry is destructured from the array (losing key↔format correlation), cast the value with `as never`:
+
+```ts
+// key and format are destructured — TypeScript loses their correlation
+format(item[key] as never); // safe: key and format always come from the same definition entry
+```
+
 ## Filter-Based Type Narrowing
 
 - **No redundant type guards after a filtering condition** — if a `.filter()` predicate already narrows the type (e.g. `filter((v) => typeof v === "number")`), the resulting array is already typed `number[]`. Do NOT add a separate type guard (`: v is number`) or cast inside the callback — the filter itself is sufficient.

@@ -21,7 +21,7 @@ const { text } = storeToRefs(colorsStore);
 </script>
 
 <template>
-  <StyledDeleteDialog
+  <StyledDeleteFormDialog
     :card-props="{
       title: 'Delete Post',
       text: 'Are you sure you want to delete this post?',
@@ -43,7 +43,7 @@ const { text } = storeToRefs(colorsStore);
     <div class="custom-border" py-2 mx-4 rd-lg shadow-md>
       <slot name="postPreview" />
     </div>
-  </StyledDeleteDialog>
+  </StyledDeleteFormDialog>
 </template>
 <!-- @TODO: https://github.com/vuejs/core/issues/7312 -->
 <style scoped lang="scss">
