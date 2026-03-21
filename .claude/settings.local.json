@@ -36,7 +36,8 @@
       "Bash(ls:*)",
       "Bash(pnpm list:*)",
       "WebFetch(domain:nuxt.com)",
-      "WebFetch(domain:vueuse.org)"
+      "WebFetch(domain:vueuse.org)",
+      "Bash(pnpm format:*)"
     ]
   }
 }

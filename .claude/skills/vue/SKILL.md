@@ -31,6 +31,7 @@ description: Esposter Vue 3 SFC conventions — macro ordering, template pattern
 
 - **Inline arrow functions** where argument types can be inferred from context — don't extract single-use, trivially-typed lambdas into named functions.
 - **Inline Vue event handlers** — always write handlers directly in the template (`@submit="async (_, onComplete) => { ... }"`). This lets Vue infer event argument types automatically. Only extract to a named function if the same logic is reused in multiple places (e.g. called from both a button click AND a keydown handler). Single-use handlers must always be inlined, no exceptions.
+- **IME composition guard** — when handling `@keydown.enter` on text inputs, guard inline against IME composition so that confirming a CJK candidate doesn't prematurely commit: `@keydown.enter.stop="!$event.isComposing && commitEdit()"`.
 - **`defineModel`**: always type explicitly. For booleans, you must pass `{ default: false }` so the type does not implicitly include `undefined` (`defineModel<boolean>({ default: false })`).
 - **`defineSlots`**: only assign to a variable when `slots` is actually referenced in script — `const slots = defineSlots<{ ... }>()`. If `slots` is not used in script (e.g. the template uses `<slot>` tags directly), call `defineSlots<...>()` without assignment.
 - **No abbreviated parameter names** — use full descriptive names (e.g. `event` not `e`, `column` not `col`, `configuration` not `config`, `dataSource` not `source`, `relativePosition` not `relPos`, `position` not `pos`, `previous` not `prev`). Exception: simple iteration callbacks where the meaning is obvious from context (e.g. `.filter((row, index) => ...)`).
@@ -91,9 +92,10 @@ const modelValue = defineModel<ModelValueMap[TKey]>({ required: true });
 - For `as const satisfies` maps, use `Record<Exclude<TEnum, ExcludedVariant>, ValueType>` to explicitly exclude variants that use a different component path (e.g. Boolean → checkbox, not text field)
 - If TypeScript cannot narrow the generic type parameter `TKey` in template v-if/v-else branches (correlated generics limitation), fall back to the union type of all possible values (e.g. `ColumnValue`) for `defineModel` — the prop type still provides inference at call sites
 
-## Type Checking
+## After Finishing Code Changes
 
-**Do not run `pnpm typecheck` during development** — it takes too long. The user (developer) runs it manually after reviewing all code changes. Write correct TypeScript and let the developer verify with typecheck when ready.
+1. Run `pnpm format` from the **repo root** — formats all packages at once (~1.6s, oxfmt).
+2. Run `pnpm typecheck` in `packages/app` as a background task — takes too long to block on. The user reviews results when ready.
 
 ## Watch Aliases
 

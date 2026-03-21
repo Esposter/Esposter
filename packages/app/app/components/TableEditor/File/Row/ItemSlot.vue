@@ -53,7 +53,12 @@ const cancelEdit = () => {
 </script>
 
 <template>
-  <div v-if="isEditing" @blur.capture="commitEdit" @keydown.enter.stop="commitEdit" @keydown.esc.stop="cancelEdit">
+  <div
+    v-if="isEditing"
+    @blur.capture="commitEdit"
+    @keydown.enter.stop="!$event.isComposing && commitEdit()"
+    @keydown.esc.stop="cancelEdit"
+  >
     <TableEditorFileRowFieldInput v-model="localValue" :column autofocus hide-details inline />
   </div>
   <div v-else @dblclick.stop="startEditing">
