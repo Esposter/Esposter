@@ -6,6 +6,6 @@ const { url } = defineProps<FileRendererComponentProps>();
 
 <template>
   <video size-full controls>
-    <source :src="url" />
+    <source :src="url" >
   </video>
 </template>

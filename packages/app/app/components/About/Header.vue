@@ -10,10 +10,10 @@ const { smAndDown } = useVDisplay();
     <div :class="{ accent: isDark }" font="[Inter] black" leading-tight :text="smAndDown ? '5xl' : '7xl'">
       The
       <span :class="{ accent: !isDark }">Progressive</span>
-      <br />
+      <br >
       JavaScript Application
     </div>
-    <br />
+    <br >
     <div text-gray text-2xl>An approachable, performant and versatile javascript application powered by</div>
     <v-img id="uwu" width="100%" max-width="45rem" :src="VUEJS_LOGO_UWU_PATH" alt="uwu" />
   </div>
