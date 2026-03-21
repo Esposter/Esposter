@@ -7,7 +7,7 @@ import { OUTLIER_HIGHLIGHT_CLASS } from "@/services/tableEditor/file/constants";
 import { getItemId } from "@/services/tableEditor/file/getItemId";
 import { useFindReplaceStore } from "@/store/tableEditor/file/findReplace";
 import { useOutlierStore } from "@/store/tableEditor/file/outlier";
-import { takeOne } from "@esposter/shared";
+import { takeOne, toRawDeep } from "@esposter/shared";
 
 interface ItemSlotProps {
   column: DataSource["columns"][number];
@@ -42,7 +42,7 @@ const commitEdit = () => {
   if (!isEditing.value) return;
   isEditing.value = false;
   if (localValue.value === (takeOne(item.data, column.name) ?? null)) return;
-  updateRow(new Row(Object.assign({}, item, { data: { ...item.data, [column.name]: localValue.value } })));
+  updateRow(Object.assign(structuredClone(toRawDeep(item)), { data: { ...item.data, [column.name]: localValue.value } }));
 };
 
 const cancelEdit = () => {
