@@ -7,7 +7,7 @@ import type { GameObjects } from "phaser";
 import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
 import { ArcSetterMap } from "@/util/setterMap/ArcSetterMap";
 
-interface ArcEmits extends /** @vue-ignore */ ArcEventEmitsOptions {}
+interface ArcEmits  extends /** @vue-ignore */ ArcEventEmitsOptions {}
 
 interface ArcProps {
   configuration: Partial<ArcConfiguration>;

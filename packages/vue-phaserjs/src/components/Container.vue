@@ -9,7 +9,7 @@ import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
 import { InjectionKeyMap } from "@/util/InjectionKeyMap";
 import { ContainerSetterMap } from "@/util/setterMap/ContainerSetterMap";
 
-interface ContainerEmits extends /** @vue-ignore */ ContainerEventEmitsOptions {}
+interface ContainerEmits  extends /** @vue-ignore */ ContainerEventEmitsOptions {}
 
 interface ContainerProps {
   configuration?: Partial<ContainerConfiguration>;

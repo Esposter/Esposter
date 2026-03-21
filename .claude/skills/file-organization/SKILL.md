@@ -49,6 +49,7 @@ description: Esposter file and folder organisation — one export per file, no e
 ## Generic Vue Components
 
 Use `<script setup lang="ts" generic="T extends SomeBase">` to make components type-safe over a specific subtype. Pass the typed value AND its associated generic config/interface as props so the parent resolves the concrete types and the child stays fully typed without lookups or casts:
+
 ```vue
 <!-- Parent (knows concrete type): -->
 <FilePicker :item="modelValue" :configuration="DataSourceConfigurationMap[DataSourceType.Csv]" />

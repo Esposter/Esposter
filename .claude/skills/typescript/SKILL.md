@@ -62,8 +62,8 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 - **No redundant type guards after a filtering condition** — if a `.filter()` predicate already narrows the type (e.g. `filter((v) => typeof v === "number")`), the resulting array is already typed `number[]`. Do NOT add a separate type guard (`: v is number`) or cast inside the callback — the filter itself is sufficient.
   ```ts
   // WRONG — redundant guard
-  values.filter((v): v is number => typeof v === "number")
+  values.filter((v): v is number => typeof v === "number");
   // CORRECT — filter condition narrows the type
-  values.filter((v) => typeof v === "number")
+  values.filter((v) => typeof v === "number");
   ```
   Exception: when the predicate is a function reference (e.g. `filter(Boolean)`) that TypeScript cannot narrow automatically, a type predicate is still needed.

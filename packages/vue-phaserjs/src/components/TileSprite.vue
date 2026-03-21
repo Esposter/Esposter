@@ -14,7 +14,7 @@ export interface TileSpriteProps {
   onComplete?: (scene: SceneWithPlugins, tileSprite: GameObjects.TileSprite) => void;
 }
 
-interface TileSpriteEmits extends /** @vue-ignore */ TileSpriteEventEmitsOptions {}
+interface TileSpriteEmits  extends /** @vue-ignore */ TileSpriteEventEmitsOptions {}
 
 const { configuration, immediate, onComplete } = defineProps<TileSpriteProps>();
 const emit = defineEmits<TileSpriteEmits>();
