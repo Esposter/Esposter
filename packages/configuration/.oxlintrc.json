@@ -2,9 +2,9 @@
   "$schema": "../../node_modules/oxlint/configuration_schema.json",
   "categories": {
     "pedantic": "error",
-    "suspicious": "error",
+    "perf": "error",
     "style": "error",
-    "perf": "error"
+    "suspicious": "error"
   },
   "ignorePatterns": ["public"],
   "options": {
@@ -17,8 +17,8 @@
     "id-length": "off",
     "import/default": "off",
     "import/exports-last": "off",
-    "import/max-dependencies": "off",
     "import/group-exports": "off",
+    "import/max-dependencies": "off",
     "import/no-anonymous-default-export": "off",
     "import/no-named-export": "off",
     "import/no-nodejs-modules": "off",
@@ -70,9 +70,9 @@
     "typescript/switch-exhaustiveness-check": "off",
     "typescript/unbound-method": "off",
     "unicorn/filename-case": "off",
-    "unicorn/no-object-as-default-parameter": "off",
     "unicorn/no-nested-ternary": "off",
     "unicorn/no-null": "off",
+    "unicorn/no-object-as-default-parameter": "off",
     "unicorn/no-useless-undefined": "off",
     "unicorn/number-literal-case": "off",
     "unicorn/numeric-separators-style": ["error", { "onlyIfContainsSeparator": true }],

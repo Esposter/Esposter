@@ -1,32 +1,25 @@
 {
   "compilerOptions": {
+    "allowArbitraryExtensions": true,
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "jsxImportSource": "vue",
+    "lib": ["ESNext", "dom", "dom.iterable", "webworker"],
+    "module": "preserve",
+    "moduleDetection": "force",
+    "moduleResolution": "Bundler",
+    "noEmit": true,
+    "noImplicitOverride": true,
+    "noImplicitThis": true,
+    "noUncheckedIndexedAccess": true,
     "paths": {
       "*": ["${configDir}/src/*"],
       "@/*": ["${configDir}/src/*"]
     },
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "target": "ESNext",
-    "allowJs": true,
-    "resolveJsonModule": true,
-    "moduleDetection": "force",
-    "isolatedModules": true,
-    "verbatimModuleSyntax": true,
-    "allowArbitraryExtensions": true,
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "forceConsistentCasingInFileNames": true,
-    "noImplicitOverride": true,
-    "module": "preserve",
-    "noEmit": true,
-    "lib": ["ESNext", "dom", "dom.iterable", "webworker"],
-    "jsx": "preserve",
-    "jsxImportSource": "vue",
-    "types": [],
-    "moduleResolution": "Bundler",
-    "useDefineForClassFields": true,
-    "noImplicitThis": true,
-    "allowSyntheticDefaultImports": true,
     "plugins": [
       {
         "name": "@dxup/unimport"
@@ -34,14 +27,21 @@
       {
         "name": "@dxup/nuxt"
       }
-    ]
+    ],
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "ESNext",
+    "types": [],
+    "useDefineForClassFields": true,
+    "verbatimModuleSyntax": true
   },
+  "exclude": ["${configDir}/node_modules"],
   "include": [
     "types/*.d.ts",
     "${configDir}/types/*.d.ts",
     "${configDir}/*.ts",
     "${configDir}/src/**/*.ts",
     "${configDir}/src/**/*.vue"
-  ],
-  "exclude": ["${configDir}/node_modules"]
+  ]
 }
