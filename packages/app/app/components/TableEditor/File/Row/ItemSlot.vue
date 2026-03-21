@@ -42,7 +42,9 @@ const commitEdit = () => {
   if (!isEditing.value) return;
   isEditing.value = false;
   if (localValue.value === (takeOne(item.data, column.name) ?? null)) return;
-  updateRow(Object.assign(structuredClone(toRawDeep(item)), { data: { ...item.data, [column.name]: localValue.value } }));
+  updateRow(
+    Object.assign(structuredClone(toRawDeep(item)), { data: { ...item.data, [column.name]: localValue.value } }),
+  );
 };
 
 const cancelEdit = () => {
@@ -51,18 +53,10 @@ const cancelEdit = () => {
 </script>
 
 <template>
-  <div
-    v-if="isEditing"
-    @blur.capture="commitEdit"
-    @keydown.enter.stop="commitEdit"
-    @keydown.esc.stop="cancelEdit"
-  >
+  <div v-if="isEditing" @blur.capture="commitEdit" @keydown.enter.stop="commitEdit" @keydown.esc.stop="cancelEdit">
     <TableEditorFileRowFieldInput v-model="localValue" :column autofocus hide-details inline />
   </div>
-  <div
-    v-else
-    @dblclick.stop="startEditing"
-  >
+  <div v-else @dblclick.stop="startEditing">
     <TableEditorFileFindReplaceHighlight
       v-if="findValue"
       :class="{ [OUTLIER_HIGHLIGHT_CLASS]: isOutlier }"

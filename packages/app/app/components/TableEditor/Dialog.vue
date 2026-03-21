@@ -13,10 +13,7 @@ const isFullScreen = ref(false);
   <v-dialog v-model="isOpen" :fullscreen="isFullScreen" max-width="900">
     <v-card :title>
       <template #append>
-        <StyledToggleFullScreenDialogButton
-          :is-full-screen-dialog="isFullScreen"
-          @click="isFullScreen = $event"
-        />
+        <StyledToggleFullScreenDialogButton :is-full-screen-dialog="isFullScreen" @click="isFullScreen = $event" />
       </template>
       <v-card-text>
         <slot />

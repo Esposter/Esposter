@@ -74,9 +74,10 @@ export const ColumnStatDefinitions = [
 ```
 
 At call sites where the entry is destructured from the array (losing key↔format correlation), cast the value with `as never`:
+
 ```ts
 // key and format are destructured — TypeScript loses their correlation
-format(item[key] as never)  // safe: key and format always come from the same definition entry
+format(item[key] as never); // safe: key and format always come from the same definition entry
 ```
 
 ## Filter-Based Type Narrowing

@@ -39,19 +39,19 @@ const isFullScreen = ref(false);
         <slot name="prepend-actions" />
         <v-spacer />
         <v-btn text-3 text="Cancel" variant="outlined" @click="modelValue = false" />
-          <v-btn
-            v-if="confirmButtonProps.color"
-            text-3
-            variant="outlined"
-            :="mergeProps(confirmButtonProps, confirmButtonAttrs)"
-            @click="emit('confirm', () => (modelValue = false))"
-          />
-          <StyledButton
-            v-else
-            text-3
-            :="mergeProps(confirmButtonProps, confirmButtonAttrs)"
-            @click="emit('confirm', () => (modelValue = false))"
-          />
+        <v-btn
+          v-if="confirmButtonProps.color"
+          text-3
+          variant="outlined"
+          :="mergeProps(confirmButtonProps, confirmButtonAttrs)"
+          @click="emit('confirm', () => (modelValue = false))"
+        />
+        <StyledButton
+          v-else
+          text-3
+          :="mergeProps(confirmButtonProps, confirmButtonAttrs)"
+          @click="emit('confirm', () => (modelValue = false))"
+        />
       </v-card-actions>
     </StyledCard>
   </v-dialog>

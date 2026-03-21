@@ -193,6 +193,7 @@ See the **vuetify** skill for all Vuetify-specific conventions: `v-btn` tooltips
 When a component has many named slots where each slot's content is non-trivial, extract each slot's content into its own dedicated component. Name the component after the slot it fills (e.g. `#tfoot` → `FooterSlot.vue`, `#top` → `TopSlot.vue`, `#[item.actions]` → `ActionSlot.vue`).
 
 The extracted component:
+
 - Receives the minimum props needed to derive its content (e.g. `dataSource`)
 - Pulls shared state from the same stores the parent uses (e.g. `useFilterStore`)
 - Lives in the same folder as the parent so the auto-import prefix is shared

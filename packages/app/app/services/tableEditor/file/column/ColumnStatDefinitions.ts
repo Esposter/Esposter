@@ -35,12 +35,12 @@ export const ColumnStatDefinitions = [
       for (const value of nonNullStrings) countMap.set(value, (countMap.get(value) ?? 0) + 1);
       let mostFrequent: null | string = null;
       let maxCount = 0;
-      for (const [value, count] of countMap) 
+      for (const [value, count] of countMap)
         if (count > maxCount) {
           maxCount = count;
           mostFrequent = value;
         }
-      
+
       return mostFrequent;
     },
     format: formatNullable,

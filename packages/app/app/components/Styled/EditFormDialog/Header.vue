@@ -40,10 +40,7 @@ const emit = defineEmits<{
     <StyledEditFormDialogSaveButton :form-id :is-savable="isSavable && isValid" />
     <StyledEditFormDialogConfirmDeleteDialogButton :name :original-item @delete="emit('delete', $event)" />
     <v-divider mx-2 thickness="2" vertical inset />
-    <StyledToggleFullScreenDialogButton
-      :is-full-screen-dialog
-      @click="emit('update:fullscreen-dialog', $event)"
-    />
+    <StyledToggleFullScreenDialogButton :is-full-screen-dialog @click="emit('update:fullscreen-dialog', $event)" />
     <StyledEditFormDialogConfirmCloseDialogButton
       :edited-item
       :is-savable

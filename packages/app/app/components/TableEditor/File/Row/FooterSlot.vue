@@ -31,7 +31,8 @@ const columnSummaries = computed(() => {
 
 <template>
   <tr>
-    <td /><td />
+    <td />
+    <td />
     <td v-for="column of displayColumns" :key="column.id" font-weight-bold>
       {{ columnSummaries.get(column.name) ?? "" }}
     </td>
