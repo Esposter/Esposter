@@ -3,14 +3,14 @@ import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/Data
 
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
-import { getValueSize } from "@/services/tableEditor/file/getValueSize";
+import { getValueSize } from "@/services/tableEditor/file/commands/getValueSize";
 import { takeOne } from "@esposter/shared";
 
 export class DeleteRowCommand extends ADataSourceCommand<CommandType.DeleteRow> {
   readonly type = CommandType.DeleteRow;
 
   get description() {
-    return `Delete row #${this.index + 1}`;
+    return `Delete Row ${this.index + 1}`;
   }
 
   private readonly index: number;

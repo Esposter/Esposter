@@ -1,15 +1,14 @@
-import type { Column } from "#shared/models/tableEditor/file/Column";
 import type { ColumnValue } from "#shared/models/tableEditor/file/ColumnValue";
+import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
-import type { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
 import type { ToData } from "@esposter/shared";
 
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { dayjs } from "#shared/services/dayjs";
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
-import { getRecordDifferenceDescription } from "@/services/tableEditor/file/getRecordDifferenceDescription";
-import { getValueSize } from "@/services/tableEditor/file/getValueSize";
+import { getRecordDifferenceDescription } from "@/services/tableEditor/file/commands/getRecordDifferenceDescription";
+import { getValueSize } from "@/services/tableEditor/file/commands/getValueSize";
 import { takeOne } from "@esposter/shared";
 
 export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateColumn> {
@@ -18,18 +17,18 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
   get description() {
     const recordDifferenceDescription = getRecordDifferenceDescription(this.originalColumn, this.updatedColumn);
     const detail = recordDifferenceDescription ? `\n\n${recordDifferenceDescription}` : "";
-    return `Edit Column${detail}`;
+    return `Edit "${this.originalColumn.name}" Column${detail}`;
   }
 
-  private readonly originalColumn: Column | DateColumn;
+  private readonly originalColumn: DataSource["columns"][number];
   private readonly originalName: string;
   private readonly originalRowValues: ColumnValue[];
-  private readonly updatedColumn: ToData<Column | DateColumn>;
+  private readonly updatedColumn: ToData<DataSource["columns"][number]>;
 
   constructor(
     originalName: string,
-    originalColumn: Column | DateColumn,
-    updatedColumn: ToData<Column | DateColumn>,
+    originalColumn: DataSource["columns"][number],
+    updatedColumn: ToData<DataSource["columns"][number]>,
     originalRowValues: ColumnValue[],
   ) {
     super();
@@ -44,33 +43,41 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
     const column = item.dataSource.columns.find(({ name }) => name === this.originalName);
     if (!column) return;
     const updatedName = this.updatedColumn.name;
-    if (updatedName !== this.originalName)
-      for (const row of item.dataSource.rows)
-        row.data = Object.fromEntries(
-          Object.entries(row.data).map(([key, value]) => [key === this.originalName ? updatedName : key, value]),
-        );
-
-    if (
-      column.type === ColumnType.Date &&
-      this.updatedColumn.type === ColumnType.Date &&
-      this.updatedColumn.format !== column.format
-    ) {
-      const oldFormat = column.format;
-      const newFormat = this.updatedColumn.format;
-      for (const row of item.dataSource.rows) {
-        const value = takeOne(row.data, updatedName);
-        if (typeof value !== "string") continue;
-        const parsedValue = dayjs(value, oldFormat, true);
-        if (!parsedValue.isValid()) continue;
-        row.data[updatedName] = parsedValue.format(newFormat);
-      }
-      column.size = item.dataSource.rows.reduce<number>(
-        (total, row) => total + getValueSize(takeOne(row.data, updatedName)),
-        0,
+    if (updatedName !== this.originalName) {
+      const newColumnNames = item.dataSource.columns.map(({ name }) =>
+        name === this.originalName ? updatedName : name,
       );
+      for (const row of item.dataSource.rows) {
+        const newData: typeof row.data = {};
+        for (const name of newColumnNames)
+          newData[name] = name === updatedName ? takeOne(row.data, this.originalName) : takeOne(row.data, name);
+        row.data = newData;
+      }
     }
 
+    const dateFormatChange =
+      column.type === ColumnType.Date && this.updatedColumn.type === ColumnType.Date
+        ? { newFormat: this.updatedColumn.format, oldFormat: column.format }
+        : null;
     Object.assign(column, this.updatedColumn);
+    if (dateFormatChange !== null && dateFormatChange.oldFormat !== dateFormatChange.newFormat) {
+      const { newFormat, oldFormat } = dateFormatChange;
+      let size = 0;
+      for (const row of item.dataSource.rows) {
+        const value = takeOne(row.data, updatedName);
+        if (typeof value === "string") {
+          const parsedValue = dayjs(value, oldFormat, true);
+          if (parsedValue.isValid()) {
+            const newValue = parsedValue.format(newFormat);
+            row.data[updatedName] = newValue;
+            size += getValueSize(newValue);
+            continue;
+          }
+        }
+        size += getValueSize(value);
+      }
+      column.size = size;
+    }
   }
 
   protected doUndo(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
@@ -78,15 +85,18 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
     const updatedName = this.updatedColumn.name;
     const column = item.dataSource.columns.find(({ name }) => name === updatedName);
     if (!column) return;
-    if (updatedName !== this.originalName)
-      for (const row of item.dataSource.rows)
-        row.data = Object.fromEntries(
-          Object.entries(row.data).map(([key, value]) => [key === updatedName ? this.originalName : key, value]),
-        );
-
-    for (const [index, row] of item.dataSource.rows.entries())
-      row.data[this.originalName] = takeOne(this.originalRowValues, index);
-    column.size = this.originalRowValues.reduce<number>((total, value) => total + getValueSize(value), 0);
+    const newColumnNames =
+      updatedName === this.originalName
+        ? null
+        : item.dataSource.columns.map(({ name }) => (name === updatedName ? this.originalName : name));
+    for (const [index, row] of item.dataSource.rows.entries()) {
+      const value = takeOne(this.originalRowValues, index);
+      if (newColumnNames) {
+        const newData: typeof row.data = {};
+        for (const name of newColumnNames) newData[name] = name === this.originalName ? value : takeOne(row.data, name);
+        row.data = newData;
+      } else row.data[this.originalName] = value;
+    }
     Object.assign(column, this.originalColumn);
   }
 }

@@ -24,7 +24,6 @@ export const bodyToBuffer = async (body: HttpRequestBody): Promise<Buffer> => {
   else if (body instanceof ReadableStream) {
     const reader = body.getReader();
     const chunks: Uint8Array[] = [];
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;

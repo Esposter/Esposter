@@ -1,5 +1,8 @@
 <script setup lang="ts">
-const { "primary-lighten-1": primaryLighten1 } = useColors();
+import { useColorsStore } from "@/store/colors";
+
+const colorsStore = useColorsStore();
+const { "primary-lighten-1": primaryLighten1 } = storeToRefs(colorsStore);
 </script>
 
 <template>

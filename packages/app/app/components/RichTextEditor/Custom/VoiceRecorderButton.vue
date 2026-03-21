@@ -27,7 +27,9 @@ const { data, start, state, stop } = useMediaRecorder({
     if (data.value.length === 0) return;
 
     const blob = new Blob(data.value, { type: MimeType.AudioWebm });
-    const file = new File([blob], `Voice Message - ${dayjs().format("YYYY-MM-DD HH:mm:ss")}.webm`, { type: MimeType.AudioWebm });
+    const file = new File([blob], `Voice Message - ${dayjs().format("YYYY-MM-DD HH:mm:ss")}.webm`, {
+      type: MimeType.AudioWebm,
+    });
     emit("upload-file", [file]);
   },
 });

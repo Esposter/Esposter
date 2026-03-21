@@ -1,10 +1,10 @@
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { ColumnValue } from "#shared/models/tableEditor/file/ColumnValue";
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
-import { getRecordDifferenceDescription } from "@/services/tableEditor/file/getRecordDifferenceDescription";
-import { getValueSize } from "@/services/tableEditor/file/getValueSize";
+import { getRecordDifferenceDescription } from "@/services/tableEditor/file/commands/getRecordDifferenceDescription";
+import { getValueSize } from "@/services/tableEditor/file/commands/getValueSize";
 import { takeOne } from "@esposter/shared";
 
 export class UpdateRowCommand extends ADataSourceCommand<CommandType.UpdateRow> {
@@ -13,14 +13,18 @@ export class UpdateRowCommand extends ADataSourceCommand<CommandType.UpdateRow> 
   get description() {
     const recordDifferenceDescription = getRecordDifferenceDescription(this.originalRow.data, this.updatedRow.data);
     const detail = recordDifferenceDescription ? `\n\n${recordDifferenceDescription}` : "";
-    return `Edit Row #${this.index + 1}${detail}`;
+    return `Edit Row ${this.index + 1}${detail}`;
   }
 
   private readonly index: number;
-  private readonly originalRow: DataSource["rows"][number];
-  private readonly updatedRow: DataSource["rows"][number];
+  private readonly originalRow: { data: Record<string, ColumnValue> };
+  private readonly updatedRow: { data: Record<string, ColumnValue> };
 
-  constructor(index: number, originalRow: DataSource["rows"][number], updatedRow: DataSource["rows"][number]) {
+  constructor(
+    index: number,
+    originalRow: { data: Record<string, ColumnValue> },
+    updatedRow: { data: Record<string, ColumnValue> },
+  ) {
     super();
     this.index = index;
     this.originalRow = originalRow;

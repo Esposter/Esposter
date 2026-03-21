@@ -6,20 +6,20 @@ import { CsvDelimiter } from "#shared/models/tableEditor/file/csv/CsvDelimiter";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { Row } from "#shared/models/tableEditor/file/Row";
 import { serializeCsv } from "@/services/tableEditor/file/csv/serializeCsv";
-import { DataSourceConfigurationMap } from "@/services/tableEditor/file/DataSourceConfigurationMap";
+import { DataSourceConfigurationMap } from "@/services/tableEditor/file/dataSource/DataSourceConfigurationMap";
 import { describe, expect, test } from "vitest";
 
 describe(serializeCsv, () => {
   const MIME_TYPE = DataSourceConfigurationMap[DataSourceType.Csv].mimeType;
 
-  const createDataSource = (columns: Column[], rows: Row[]): DataSource => ({
+  const createDataSource = (columns: DataSource["columns"], rows: Row[]): DataSource => ({
     columns,
     metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(0), name: "", size: 0 },
     rows,
     stats: { columnCount: columns.length, rowCount: rows.length, size: 0 },
   });
 
-  const createColumn = (name: string): Column => new Column({ name, size: 0, sourceName: name });
+  const createColumn = (name: string) => new Column({ name, size: 0, sourceName: name });
 
   const createRow = (data: Record<string, number>): Row => new Row({ data });
 

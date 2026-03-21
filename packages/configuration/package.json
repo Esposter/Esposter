@@ -28,7 +28,7 @@
     "format:check": "oxfmt --check",
     "lint": "oxlint && eslint .",
     "lint:fix": "oxlint --fix && eslint --fix .",
-    "typecheck": "tsc"
+    "typecheck": "tsgo"
   },
   "devDependencies": {
     "@dxup/nuxt": "catalog:",

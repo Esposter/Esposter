@@ -23,9 +23,9 @@ export const getActions = (
     visible: new ComputedUpdater(() => creator.activeTab === "designer"),
   }),
   new Action({
-    action: async () => {
+    action: getSynchronizedFunction(async () => {
       await exportJsonFile(survey.value.name, creator.JSON);
-    },
+    }),
     iconName: "icon-download-24x24",
     id: "download-survey",
     tooltip: "Export",

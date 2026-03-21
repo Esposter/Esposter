@@ -2,6 +2,8 @@
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
 import type { MessageEntity } from "@esposter/db-schema";
 
+import { useColorsStore } from "@/store/colors";
+
 interface ConfirmDeleteDialogProps {
   message: MessageEntity;
 }
@@ -12,7 +14,8 @@ defineSlots<{
 }>();
 const { message } = defineProps<ConfirmDeleteDialogProps>();
 const { $trpc } = useNuxtApp();
-const { text } = useColors();
+const colorsStore = useColorsStore();
+const { text } = storeToRefs(colorsStore);
 </script>
 
 <template>

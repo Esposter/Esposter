@@ -95,7 +95,7 @@ onShutdown((scene) => {
     "
     :on-complete="
       (scene, newSprite) => {
-        sprite = newSprite;
+        sprite = markRaw(newSprite);
         scene.cameras.main.startFollow(sprite, true);
         scene.cameras.main.setFollowOffset(-sprite.width, -sprite.height);
       }

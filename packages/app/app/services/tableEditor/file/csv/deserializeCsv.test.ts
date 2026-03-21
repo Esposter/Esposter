@@ -3,7 +3,7 @@ import { CsvDataSourceItem } from "#shared/models/tableEditor/file/csv/CsvDataSo
 import { CsvDelimiter } from "#shared/models/tableEditor/file/csv/CsvDelimiter";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { deserializeCsv } from "@/services/tableEditor/file/csv/deserializeCsv";
-import { DataSourceConfigurationMap } from "@/services/tableEditor/file/DataSourceConfigurationMap";
+import { DataSourceConfigurationMap } from "@/services/tableEditor/file/dataSource/DataSourceConfigurationMap";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 

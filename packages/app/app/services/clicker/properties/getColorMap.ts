@@ -2,9 +2,9 @@ import type { Color } from "vuetify/lib/util/colorUtils.mjs";
 
 import { ClickerType } from "#shared/models/clicker/data/ClickerType";
 
-export const getColorMap = ({ error, info, primary }: ReturnType<typeof useColors>) =>
+export const getColorMap = ({ error, info, primary }: { error: Color; info: Color; primary: Color }) =>
   ({
-    [ClickerType.Default]: primary.value,
-    [ClickerType.Magical]: info.value,
-    [ClickerType.Physical]: error.value,
+    [ClickerType.Default]: primary,
+    [ClickerType.Magical]: info,
+    [ClickerType.Physical]: error,
   }) as const satisfies Record<ClickerType, Color>;

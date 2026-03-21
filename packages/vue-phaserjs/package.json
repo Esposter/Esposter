@@ -32,11 +32,18 @@
     "format:check": "oxfmt --check",
     "lint": "oxlint && eslint .",
     "lint:fix": "oxlint --fix && eslint --fix .",
+    "test": "vitest",
     "typecheck": "vue-tsc"
   },
   "dependencies": {
     "@esposter/shared": "workspace:*",
     "parse-tmx": "workspace:*"
+  },
+  "devDependencies": {
+    "@esposter/configuration": "workspace:*",
+    "@vitejs/plugin-vue": "catalog:",
+    "@vue/test-utils": "catalog:",
+    "unplugin-auto-import": "catalog:"
   },
   "peerDependencies": {
     "phaser": "catalog:",

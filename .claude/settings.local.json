@@ -14,14 +14,29 @@
       "Bash(read f:packages/app/**)",
       "Bash(read f:plugins/**)",
       "Bash(xargs:*)",
-      "WebFetch(domain:github.com)",
       "mcp__vuetify-mcp__get_exposed_exports",
       "mcp__vuetify-mcp__get_feature_guide",
       "mcp__vuetify-mcp__get_installation_guide",
       "mcp__vuetify-mcp__get_v4_breaking_changes",
       "Bash(pnpm install:*)",
-      "Bash(pnpm refresh:lockfile 2>&1)",
-      "Bash(pnpm outdated:*)"
+      "Bash(pnpm outdated:*)",
+      "Bash(cd:*)",
+      "Bash(pnpm test:*)",
+      "mcp__vuetify-mcp__get_component_api_by_version",
+      "Bash(for f:*)",
+      "Bash(do echo:*)",
+      "Bash(done)",
+      "Bash(git log:*)",
+      "Bash(npm info:*)",
+      "Bash(pnpm export:gen)",
+      "Bash(pnpm search:*)",
+      "Bash(npm search:*)",
+      "Bash(pnpm lint:*)",
+      "Bash(pnpm lint:fix)",
+      "Bash(ls:*)",
+      "Bash(pnpm list:*)",
+      "WebFetch(domain:nuxt.com)",
+      "WebFetch(domain:vueuse.org)"
     ]
   }
 }

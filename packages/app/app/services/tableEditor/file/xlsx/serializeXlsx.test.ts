@@ -4,7 +4,7 @@ import { Column } from "#shared/models/tableEditor/file/Column";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { Row } from "#shared/models/tableEditor/file/Row";
 import { XlsxDataSourceItem } from "#shared/models/tableEditor/file/xlsx/XlsxDataSourceItem";
-import { DataSourceConfigurationMap } from "@/services/tableEditor/file/DataSourceConfigurationMap";
+import { DataSourceConfigurationMap } from "@/services/tableEditor/file/dataSource/DataSourceConfigurationMap";
 import { serializeXlsx } from "@/services/tableEditor/file/xlsx/serializeXlsx";
 import { describe, expect, test } from "vitest";
 
@@ -18,7 +18,7 @@ describe(serializeXlsx, () => {
     stats: { columnCount: columns.length, rowCount: rows.length, size: 0 },
   });
 
-  const createColumn = (name: string): Column => new Column({ name, size: 0, sourceName: name });
+  const createColumn = (name: string) => new Column({ name, size: 0, sourceName: name });
 
   const createRow = (data: Record<string, number>): Row => new Row({ data });
 

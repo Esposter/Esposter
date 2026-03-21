@@ -11,6 +11,9 @@ const { columns, index, row } = defineProps<ActionSlotProps>();
 </script>
 
 <template>
-  <TableEditorFileRowEditDialogButton :columns :index :row />
-  <TableEditorFileRowDeleteDialogButton :index />
+  <div flex>
+    <TableEditorFileRowCopyToClipboardButton :row-ids="[row.id]" />
+    <TableEditorFileRowEditDialogButton :columns :index :row />
+    <TableEditorFileRowDeleteDialogButton :id="row.id" :index />
+  </div>
 </template>

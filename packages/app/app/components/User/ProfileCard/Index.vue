@@ -3,12 +3,14 @@
 import { RowValueType } from "@/models/user/ProfileCard/RowValueType";
 import { authClient } from "@/services/auth/authClient";
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
+import { useColorsStore } from "@/store/colors";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import deepEqual from "fast-deep-equal";
 
 const { data: session } = await authClient.useSession(useFetch);
 const { updateUser } = authClient;
-const { backgroundOpacity20 } = useColors();
+const colorsStore = useColorsStore();
+const { backgroundOpacity20 } = storeToRefs(colorsStore);
 const profileCardRows = computed(() => {
   if (!session.value)
     throw createError({ statusText: getEntityNotFoundStatusMessage(DatabaseEntityType.User), status: 404 });
