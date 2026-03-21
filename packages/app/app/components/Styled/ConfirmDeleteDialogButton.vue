@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { StyledDeleteFormDialogProps } from "@/components/Styled/DeleteFormDialog.vue";
 
-const { cardProps } = defineProps<StyledDeleteFormDialogProps>();
+const { cardProps, confirmButtonProps } = defineProps<StyledDeleteFormDialogProps>();
 const emit = defineEmits<{ delete: [onComplete: () => void] }>();
 </script>
 
 <template>
-  <StyledDeleteFormDialog :card-props @delete="emit('delete', $event)">
+  <StyledDeleteFormDialog :card-props :confirm-button-props @delete="emit('delete', $event)">
     <template #activator="{ updateIsOpen }">
       <v-tooltip :text="cardProps?.title?.toString()">
         <template #activator="{ props }">

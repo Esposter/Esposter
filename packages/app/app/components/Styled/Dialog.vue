@@ -43,13 +43,13 @@ const isFullScreen = ref(false);
             v-if="confirmButtonProps.color"
             text-3
             variant="outlined"
-            :="mergeProps(confirmButtonProps, confirmButtonAttrs ?? {})"
+            :="mergeProps(confirmButtonProps, confirmButtonAttrs)"
             @click="emit('confirm', () => (modelValue = false))"
           />
           <StyledButton
             v-else
             text-3
-            :="mergeProps(confirmButtonProps, confirmButtonAttrs ?? {})"
+            :="mergeProps(confirmButtonProps, confirmButtonAttrs)"
             @click="emit('confirm', () => (modelValue = false))"
           />
       </v-card-actions>

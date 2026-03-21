@@ -4,7 +4,7 @@ interface TableEditorDialogProps {
   title: string;
 }
 
-const isOpen = defineModel<boolean>();
+const isOpen = defineModel<boolean>({ default: false });
 const { closeButtonText = "Close" } = defineProps<TableEditorDialogProps>();
 const isFullScreen = ref(false);
 </script>

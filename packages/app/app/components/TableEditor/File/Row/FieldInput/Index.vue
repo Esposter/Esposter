@@ -7,12 +7,13 @@ import { FieldInputComponentMap } from "@/services/tableEditor/file/column/Field
 
 interface FieldInputProps {
   column: ColumnTypeColumnMap[TColumnType];
+  inline?: boolean;
 }
 
-const { column } = defineProps<FieldInputProps>();
+const { column, inline = false } = defineProps<FieldInputProps>();
 const modelValue = defineModel<ColumnTypeModelValueMap[TColumnType]>({ required: true });
 </script>
 
 <template>
-  <component :is="FieldInputComponentMap[column.type] as Component" v-model="modelValue" :column />
+  <component :is="FieldInputComponentMap[column.type] as Component" v-model="modelValue" :column :inline />
 </template>

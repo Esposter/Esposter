@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import type { ColumnValue } from "#shared/models/tableEditor/file/ColumnValue";
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
-import type { Row } from "#shared/models/tableEditor/file/Row";
 
-import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
-import { Row as RowClass } from "#shared/models/tableEditor/file/Row";
+import { Row } from "#shared/models/tableEditor/file/Row";
 import { OUTLIER_HIGHLIGHT_CLASS } from "@/services/tableEditor/file/constants";
 import { getItemId } from "@/services/tableEditor/file/getItemId";
 import { useFindReplaceStore } from "@/store/tableEditor/file/findReplace";
@@ -44,7 +42,7 @@ const commitEdit = () => {
   if (!isEditing.value) return;
   isEditing.value = false;
   if (localValue.value === (takeOne(item.data, column.name) ?? null)) return;
-  updateRow(new RowClass({ ...item, data: { ...item.data, [column.name]: localValue.value } }));
+  updateRow(new Row(Object.assign({}, item, { data: { ...item.data, [column.name]: localValue.value } })));
 };
 
 const cancelEdit = () => {
@@ -55,20 +53,14 @@ const cancelEdit = () => {
 <template>
   <div
     v-if="isEditing"
-    min-w-32
     @blur.capture="commitEdit"
     @keydown.enter.stop="commitEdit"
     @keydown.esc.stop="cancelEdit"
   >
-    <TableEditorFileRowFieldInputIndex
-      v-model="localValue"
-      :column
-      autofocus
-    />
+    <TableEditorFileRowFieldInput v-model="localValue" :column autofocus hide-details inline />
   </div>
   <div
     v-else
-    cursor-text
     @dblclick.stop="startEditing"
   >
     <TableEditorFileFindReplaceHighlight

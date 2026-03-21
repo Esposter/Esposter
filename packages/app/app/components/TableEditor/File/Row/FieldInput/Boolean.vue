@@ -5,12 +5,13 @@ import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 
 interface FieldInputBooleanProps {
   column: Column<ColumnType.Boolean>;
+  inline?: boolean;
 }
 
-const { column } = defineProps<FieldInputBooleanProps>();
-const modelValue = defineModel<boolean>({ required: true });
+const { column, inline = false } = defineProps<FieldInputBooleanProps>();
+const modelValue = defineModel<boolean | null>({ required: true });
 </script>
 
 <template>
-  <v-checkbox v-model="modelValue" :label="column.name" />
+  <v-checkbox v-model="modelValue" :hide-details="inline" :label="inline ? '' : column.name" />
 </template>

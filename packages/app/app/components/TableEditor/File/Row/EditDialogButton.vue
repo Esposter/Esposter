@@ -14,6 +14,15 @@ const { columns, index, row } = defineProps<EditDialogButtonProps>();
 const updateRow = useUpdateRow();
 const title = computed(() => `Edit Row ${index + 1}`);
 const editedRow = ref(structuredClone(toRawDeep(row)));
+
+watch(
+  () => row,
+  (newRow) => {
+    editedRow.value = structuredClone(toRawDeep(newRow));
+  },
+  { deep: true },
+);
+
 const resetForm = () => {
   editedRow.value = structuredClone(toRawDeep(row));
 };
