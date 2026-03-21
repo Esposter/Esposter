@@ -2,7 +2,7 @@
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
 import type { VBtn, VCard } from "vuetify/components";
 
-export interface StyledDeleteDialogProps {
+export interface StyledDeleteFormDialogProps {
   cardProps?: VCard["$props"];
   confirmButtonProps?: VBtn["$props"];
 }
@@ -11,12 +11,12 @@ defineSlots<{
   activator: (props: StyledDialogActivatorSlotProps) => VNode;
   default: () => VNode;
 }>();
-const { cardProps, confirmButtonProps } = defineProps<StyledDeleteDialogProps>();
+const { cardProps, confirmButtonProps } = defineProps<StyledDeleteFormDialogProps>();
 const emit = defineEmits<{ delete: [onComplete: () => void] }>();
 </script>
 
 <template>
-  <StyledDialog
+  <StyledFormDialog
     :card-props
     :confirm-button-props="{ color: 'error', text: 'Delete', ...confirmButtonProps }"
     @submit="(_event, onComplete) => emit('delete', onComplete)"
@@ -25,5 +25,5 @@ const emit = defineEmits<{ delete: [onComplete: () => void] }>();
       <slot name="activator" :="activatorProps" />
     </template>
     <slot />
-  </StyledDialog>
+  </StyledFormDialog>
 </template>

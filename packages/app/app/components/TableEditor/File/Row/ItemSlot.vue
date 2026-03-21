@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import type { ColumnValue } from "#shared/models/tableEditor/file/ColumnValue";
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { Row } from "#shared/models/tableEditor/file/Row";
 
+import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
+import { Row as RowClass } from "#shared/models/tableEditor/file/Row";
 import { OUTLIER_HIGHLIGHT_CLASS } from "@/services/tableEditor/file/constants";
 import { getItemId } from "@/services/tableEditor/file/getItemId";
 import { useFindReplaceStore } from "@/store/tableEditor/file/findReplace";
@@ -19,6 +22,7 @@ const findReplaceStore = useFindReplaceStore();
 const { currentOccurrenceIndex, findValue, occurrences } = storeToRefs(findReplaceStore);
 const outlierStore = useOutlierStore();
 const { outlierCells } = storeToRefs(outlierStore);
+const updateRow = useUpdateRow();
 const currentOccurrence = computed(() => occurrences.value.at(currentOccurrenceIndex.value));
 const text = computed(() => {
   const value = takeOne(item.data, column.name);
@@ -28,15 +32,52 @@ const isCurrentOccurrence = computed(
   () => currentOccurrence.value?.rowIndex === rowIndex && currentOccurrence.value?.columnName === column.name,
 );
 const isOutlier = computed(() => outlierCells.value.has(getItemId(item.id, column.name)));
+const isEditing = ref(false);
+const localValue = ref<ColumnValue>(null);
+
+const startEditing = () => {
+  localValue.value = takeOne(item.data, column.name) ?? null;
+  isEditing.value = true;
+};
+
+const commitEdit = () => {
+  if (!isEditing.value) return;
+  isEditing.value = false;
+  if (localValue.value === (takeOne(item.data, column.name) ?? null)) return;
+  updateRow(new RowClass({ ...item, data: { ...item.data, [column.name]: localValue.value } }));
+};
+
+const cancelEdit = () => {
+  isEditing.value = false;
+};
 </script>
 
 <template>
-  <TableEditorFileFindReplaceHighlight
-    v-if="findValue"
-    :class="{ [OUTLIER_HIGHLIGHT_CLASS]: isOutlier }"
-    :is-current-occurrence
-    :search="findValue"
-    :text
-  />
-  <TableEditorFileRowOutlierHighlight v-else :is-outlier :text />
+  <div
+    v-if="isEditing"
+    min-w-32
+    @blur.capture="commitEdit"
+    @keydown.enter.stop="commitEdit"
+    @keydown.esc.stop="cancelEdit"
+  >
+    <TableEditorFileRowFieldInputIndex
+      v-model="localValue"
+      :column
+      autofocus
+    />
+  </div>
+  <div
+    v-else
+    cursor-text
+    @dblclick.stop="startEditing"
+  >
+    <TableEditorFileFindReplaceHighlight
+      v-if="findValue"
+      :class="{ [OUTLIER_HIGHLIGHT_CLASS]: isOutlier }"
+      :is-current-occurrence
+      :search="findValue"
+      :text
+    />
+    <TableEditorFileRowOutlierHighlight v-else :is-outlier :text />
+  </div>
 </template>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type StyledDialog from "@/components/Styled/Dialog.vue";
 import type StyledEditFormDialogErrorIcon from "@/components/Styled/EditFormDialog/ErrorIcon.vue";
+import type StyledFormDialog from "@/components/Styled/FormDialog.vue";
 import type { z } from "zod";
 
 import deepEqual from "fast-deep-equal";
@@ -17,14 +17,14 @@ interface EditDialogButtonProps {
 defineSlots<{ default: () => VNode; "prepend-actions"?: () => VNode }>();
 const { editedValue, icon = "mdi-pencil", schema, title, tooltipText, value } = defineProps<EditDialogButtonProps>();
 const emit = defineEmits<{ reset: []; submit: [onComplete: () => void] }>();
-const styledDialog = useTemplateRef<InstanceType<typeof StyledDialog>>("styledDialog");
+const styledDialog = useTemplateRef<InstanceType<typeof StyledFormDialog>>("styledDialog");
 const errorIcon = useTemplateRef<InstanceType<typeof StyledEditFormDialogErrorIcon>>("errorIcon");
 const isEqual = computed(() => deepEqual(value, editedValue));
 const disabled = computed(() => !(errorIcon.value?.isValid ?? true) || isEqual.value);
 </script>
 
 <template>
-  <StyledDialog
+  <StyledFormDialog
     ref="styledDialog"
     :card-props="{ title }"
     :confirm-button-props="{ text: 'Save & Close' }"
@@ -56,5 +56,5 @@ const disabled = computed(() => !(errorIcon.value?.isValid ?? true) || isEqual.v
     <v-container overflow-y-auto fluid>
       <slot />
     </v-container>
-  </StyledDialog>
+  </StyledFormDialog>
 </template>

@@ -1,9 +1,11 @@
 import { Column } from "#shared/models/tableEditor/file/Column";
+import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
 import { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
 import {
   makeColumn,
   makeDataSource,
   makeDateColumn,
+  makeNumberColumn,
   makeRow,
   setupEditedItem,
   setupWithDataSource,
@@ -220,6 +222,91 @@ describe(useUpdateColumn, () => {
     assert.instanceOf(updatedColumn, DateColumn);
 
     expect(updatedColumn.format).toBe("YYYY-MM-DD");
+  });
+
+  test("recasts String values to Number when type changes", () => {
+    expect.hasAssertions();
+
+    const ds = makeDataSource([makeColumn("score")], [makeRow({ score: "42" }), makeRow({ score: "7" })]);
+    const { editedItem } = setupWithDataSource(ds);
+    const updateColumn = useUpdateColumn();
+    const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
+    updateColumn("score", Object.assign(structuredClone(toRawDeep(column)), { type: ColumnType.Number }));
+    const dataSource = editedItem.value?.dataSource;
+
+    assert.exists(dataSource);
+
+    expect(takeOne(dataSource.rows, 0).data.score).toBe(42);
+    expect(takeOne(dataSource.rows, 1).data.score).toBe(7);
+  });
+
+  test("recasts Number values to String when type changes", () => {
+    expect.hasAssertions();
+
+    const ds = makeDataSource([makeNumberColumn("score")], [makeRow({ score: 42 }), makeRow({ score: 7 })]);
+    const { editedItem } = setupWithDataSource(ds);
+    const updateColumn = useUpdateColumn();
+    const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
+    updateColumn("score", Object.assign(structuredClone(toRawDeep(column)), { type: ColumnType.String }));
+    const dataSource = editedItem.value?.dataSource;
+
+    assert.exists(dataSource);
+
+    expect(takeOne(dataSource.rows, 0).data.score).toBe("42");
+    expect(takeOne(dataSource.rows, 1).data.score).toBe("7");
+  });
+
+  test("recasts String values to Boolean when type changes", () => {
+    expect.hasAssertions();
+
+    const ds = makeDataSource([makeColumn("flag")], [makeRow({ flag: "true" }), makeRow({ flag: "false" })]);
+    const { editedItem } = setupWithDataSource(ds);
+    const updateColumn = useUpdateColumn();
+    const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
+    updateColumn("flag", Object.assign(structuredClone(toRawDeep(column)), { type: ColumnType.Boolean }));
+    const dataSource = editedItem.value?.dataSource;
+
+    assert.exists(dataSource);
+
+    expect(takeOne(dataSource.rows, 0).data.flag).toBe(true);
+    expect(takeOne(dataSource.rows, 1).data.flag).toBe(false);
+  });
+
+  test("undo restores original values after type recast", () => {
+    expect.hasAssertions();
+
+    const ds = makeDataSource([makeColumn("score")], [makeRow({ score: "42" }), makeRow({ score: "7" })]);
+    const { editedItem } = setupWithDataSource(ds);
+    const updateColumn = useUpdateColumn();
+    const fileHistoryStore = useFileHistoryStore();
+    const { undo } = fileHistoryStore;
+    const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
+    updateColumn("score", Object.assign(structuredClone(toRawDeep(column)), { type: ColumnType.Number }));
+    undo(editedItem.value);
+    const dataSource = editedItem.value?.dataSource;
+
+    assert.exists(dataSource);
+
+    expect(takeOne(dataSource.rows, 0).data.score).toBe("42");
+    expect(takeOne(dataSource.rows, 1).data.score).toBe("7");
+    expect(takeOne(dataSource.columns, 0).type).toBe(ColumnType.String);
+  });
+
+  test("does not recast values when type is unchanged", () => {
+    expect.hasAssertions();
+
+    const ds = makeDataSource([makeNumberColumn("score")], [makeRow({ score: 42 })]);
+    const { editedItem } = setupWithDataSource(ds);
+    const updateColumn = useUpdateColumn();
+    const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
+    const originalSize = column.size;
+    updateColumn("score", Object.assign(structuredClone(toRawDeep(column)), { description: "updated" }));
+    const dataSource = editedItem.value?.dataSource;
+
+    assert.exists(dataSource);
+
+    expect(takeOne(dataSource.rows, 0).data.score).toBe(42);
+    expect(takeOne(dataSource.columns, 0).size).toBe(originalSize);
   });
 
   test("snapshot immutability - mutating passed object after call does not affect undo history", () => {

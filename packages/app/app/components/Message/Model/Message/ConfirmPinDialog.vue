@@ -25,8 +25,8 @@ const { text } = storeToRefs(colorsStore);
       text: 'Hey, just double-checking that you want to pin this message to the current room for posterity and greatness?',
     }"
     :confirm-button-props="{ text: 'Oh yeah. Pin it' }"
-    @submit="
-      async (_event, onComplete) => {
+    @confirm="
+      async (onComplete) => {
         try {
           await $trpc.message.pinMessage.mutate({ partitionKey: message.partitionKey, rowKey: message.rowKey });
         } finally {

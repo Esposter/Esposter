@@ -20,7 +20,7 @@ const { deleteRoom, leaveRoom } = roomStore;
 </script>
 
 <template>
-  <StyledDeleteDialog
+  <StyledDeleteFormDialog
     :card-props="
       isCreator
         ? { title: 'Delete Room', text: 'Are you sure you want to delete this room?' }
@@ -44,5 +44,5 @@ const { deleteRoom, leaveRoom } = roomStore;
         </template>
       </v-tooltip>
     </template>
-  </StyledDeleteDialog>
+  </StyledDeleteFormDialog>
 </template>

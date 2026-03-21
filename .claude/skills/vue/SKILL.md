@@ -187,3 +187,28 @@ See the **vuetify** skill for all Vuetify-specific conventions: `v-btn` tooltips
 - **Target 50–100 lines per `.vue` file** — a file consistently over 100 lines is a yellow flag that a slot, sub-component, or composable extraction is overdue.
 - Extract toolbar/header buttons into a dedicated slot component (e.g. `TopSlot.vue`), row/column action menus into an `ActionSlot.vue`, and logically grouped controls into their own focused component.
 - Complex or rare layout components (e.g. a rich data table with drag-and-drop, pagination, and find/replace) may exceed 100 lines — treat it as a prompt to reconsider, not an absolute rule.
+
+## Slot Extraction (Complex Components)
+
+When a component has many named slots where each slot's content is non-trivial, extract each slot's content into its own dedicated component. Name the component after the slot it fills (e.g. `#tfoot` → `FooterSlot.vue`, `#top` → `TopSlot.vue`, `#[item.actions]` → `ActionSlot.vue`).
+
+The extracted component:
+- Receives the minimum props needed to derive its content (e.g. `dataSource`)
+- Pulls shared state from the same stores the parent uses (e.g. `useFilterStore`)
+- Lives in the same folder as the parent so the auto-import prefix is shared
+
+```vue
+<!-- Before: inline slot content in Table.vue -->
+<template #tfoot>
+  <tr>
+    <td v-for="column of displayColumns" :key="column.id">{{ summaries.get(column.name) }}</td>
+  </tr>
+</template>
+
+<!-- After: extracted to FooterSlot.vue, used in Table.vue -->
+<template #tfoot>
+  <TableEditorFileRowFooterSlot :data-source="dataSource" />
+</template>
+```
+
+This keeps the parent component lean and makes each slot independently readable and testable.

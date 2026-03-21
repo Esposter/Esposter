@@ -33,8 +33,8 @@ watchImmediate(
     :card-props="{ title: `Export as ${dataSourceType}` }"
     :confirm-button-props="{ text: 'Export' }"
     :confirm-button-attrs="{ disabled: selectedColumnIds.length === 0 }"
-    @submit="
-      async (_event, onComplete) => {
+    @confirm="
+      async (onComplete) => {
         if (!editedItem.dataSource) {
           onComplete();
           return;
