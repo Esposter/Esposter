@@ -37,25 +37,27 @@ When a composable argument should work with a plain value, a `ref`, or a getter 
 
 ```typescript
 // composables/tableEditor/file/useColumnNameRule.ts
-import type { DataSource } from '#shared/models/tableEditor/file/DataSource'
+import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 
-export const useColumnNameRule = (columns: MaybeRefOrGetter<DataSource['columns']>, currentName?: string) =>
+export const useColumnNameRule = (columns: MaybeRefOrGetter<DataSource["columns"]>, currentName?: string) =>
   computed(() => {
-    const columnsValue = toValue(columns)
+    const columnsValue = toValue(columns);
     return (value: string): string | true => {
-      if (value !== currentName && columnsValue.some(({ name }) => name === value)) return 'Column already exists'
-      return true
-    }
-  })
+      if (value !== currentName && columnsValue.some(({ name }) => name === value)) return "Column already exists";
+      return true;
+    };
+  });
 ```
 
 **Callers pass a getter to stay reactive to prop changes:**
+
 ```typescript
-const uniqueNameRule = useColumnNameRule(() => dataSource.columns, column.name) // edit
-const uniqueNameRule = useColumnNameRule(() => dataSource.columns)               // create
+const uniqueNameRule = useColumnNameRule(() => dataSource.columns, column.name); // edit
+const uniqueNameRule = useColumnNameRule(() => dataSource.columns); // create
 ```
 
 **Rules:**
+
 - Don't explicitly annotate composable return types — let TypeScript infer. Only annotate if inference fails or a specific contract must be enforced.
 - Vue auto-unwraps computed refs in templates, so `:rules="[uniqueNameRule]"` correctly passes the function value.
 
@@ -102,14 +104,13 @@ The `TableEditorFileEditDialogButton` component exposes a `#prepend-form` slot r
 When switching a form object's type (e.g., column type change), preserve unchanged fields (like `name`) and reset type-specific fields to defaults by constructing a new class instance:
 
 ```typescript
-const columnType = ref(ColumnType.String)
-const editedColumn = ref<Column | DateColumn>(new Column())
+const columnType = ref(ColumnType.String);
+const editedColumn = ref<Column | DateColumn>(new Column());
 
 watch(columnType, (newType) => {
-  const name = editedColumn.value.name  // preserve name
-  editedColumn.value =
-    newType === ColumnType.Date ? new DateColumn({ name }) : new Column({ name, type: newType })
-})
+  const name = editedColumn.value.name; // preserve name
+  editedColumn.value = newType === ColumnType.Date ? new DateColumn({ name }) : new Column({ name, type: newType });
+});
 ```
 
 Note use of `name` (not `currentName`) to enable object shorthand `{ name }`.

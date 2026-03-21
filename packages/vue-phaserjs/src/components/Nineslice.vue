@@ -14,7 +14,7 @@ export interface NinesliceProps {
   onComplete?: (scene: SceneWithPlugins, nineSlice: GameObjects.NineSlice) => void;
 }
 
-interface NinesliceEmits extends /** @vue-ignore */ NinesliceEventEmitsOptions {}
+interface NinesliceEmits  extends /** @vue-ignore */ NinesliceEventEmitsOptions {}
 
 const { configuration, immediate, onComplete } = defineProps<NinesliceProps>();
 const emit = defineEmits<NinesliceEmits>();

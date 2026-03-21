@@ -53,7 +53,7 @@ catalog:
   "@nuxtjs/seo": ^4.0.2
   "@pinia/nuxt": ^0.11.3
   "@rolldown/plugin-node-polyfills": ^1.0.3
-  '@takumi-rs/core': ^0.73.1
+  "@takumi-rs/core": ^0.73.1
   "@tiptap/core": ^3.20.4
   "@tiptap/extension-file-handler": ^3.20.4
   "@tiptap/extension-mention": ^3.20.4
