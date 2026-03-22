@@ -167,6 +167,7 @@ catalog:
   nuxt-security: ^2.5.1
   obscenity: ^0.4.6
   omit-deep-lodash: ^1.1.7
+  lint-staged: ^16.4.0
   oxfmt: ^0.41.0
   oxlint: ^1.56.0
   oxlint-tsgolint: ^0.17.1
