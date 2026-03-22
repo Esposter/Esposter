@@ -630,6 +630,9 @@ catalogs:
     write-excel-file:
       specifier: ^3.0.6
       version: 3.0.6
+    ws:
+      specifier: ^8.20.0
+      version: 8.20.0
     xmlbuilder2:
       specifier: ^4.0.3
       version: 4.0.3
@@ -1112,6 +1115,9 @@ importers:
       write-excel-file:
         specifier: 'catalog:'
         version: 3.0.6
+      ws:
+        specifier: 'catalog:'
+        version: 8.20.0
       zod:
         specifier: 'catalog:'
         version: 4.3.6

@@ -222,6 +222,7 @@ catalog:
   web-push: ^3.6.7
   worker-timers: ^8.0.31
   write-excel-file: ^3.0.6
+  ws: ^8.20.0
   xmlbuilder2: ^4.0.3
   zod: ^4.3.6
 

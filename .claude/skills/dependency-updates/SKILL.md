@@ -24,7 +24,6 @@ All version numbers live in the `catalog:` section of `pnpm-workspace.yaml` at t
 - **`nuxt`** — no `^`, manually managed (infrastructure, coordinates with `h3` and Nuxt modules).
 - **`h3`** — skip major/RC bumps; only update minor/patch within the current major.
 - **`ctix`** — pinned (no `^`) due to open issue https://github.com/imjuni/ctix/issues/192.
-- **`survey-core`, `survey-vue3-ui`, `survey-creator-core`, `survey-creator-vue`** — pinned to `2.5.15` (no `^`); `2.5.16` broke type declarations for `survey-creator-core/themes`.
 
 ## Tracked issues (update normally, but watch these)
 
