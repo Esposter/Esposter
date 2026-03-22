@@ -171,7 +171,6 @@
     "web-push": "catalog:",
     "worker-timers": "catalog:",
     "write-excel-file": "catalog:",
-    "ws": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
