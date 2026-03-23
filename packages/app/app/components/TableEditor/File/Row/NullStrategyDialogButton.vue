@@ -17,7 +17,7 @@ const nullStrategy = useNullStrategy();
       <v-list-item
         v-for="{ title, value } of NullStrategyItemCategoryDefinitions"
         :key="value"
-        :title="title"
+        :title
         @click="nullStrategy(value)"
       />
     </v-list>
