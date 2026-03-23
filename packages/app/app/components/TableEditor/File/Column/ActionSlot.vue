@@ -12,6 +12,7 @@ const { column, dataSource } = defineProps<ActionSlotProps>();
 <template>
   <div flex>
     <TableEditorFileColumnChartDialogButton :column :data-source />
+    <TableEditorFileColumnTogglePinButton :column-id="column.id" :column-name="column.name" :fixed="column.fixed" />
     <TableEditorFileColumnToggleVisibilityButton
       :column-id="column.id"
       :column-name="column.name"

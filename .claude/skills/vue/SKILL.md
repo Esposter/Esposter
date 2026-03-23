@@ -41,6 +41,32 @@ description: Esposter Vue 3 SFC conventions — macro ordering, template pattern
 - **`@click` shorthands** — if a click handler is a single async call, use `@click="myAsyncFn(args)"` directly — no need to wrap in `async () => { await myAsyncFn(args) }`.
 - **Never declare `defineModel` unless the value is actually used** in script (e.g. in a `watch`, `computed`, or passed somewhere). Don't create a model just to forward it — use `:prop` + `@event` instead.
 
+## Template Attribute Ordering
+
+Within any element or component tag, order attributes as follows:
+
+1. **`v-model`** (or **`v-for`** + **`:key`**) — binding/iteration directives first
+2. **`class`** — static class string (if any)
+3. **UnoCSS attributify props** — shorthand utility classes used as props (e.g. `ma-2`, `flex`, `flex-col`)
+4. **Component props with values** — `:prop="value"` or `prop="string"` (alphabetical within this group)
+5. **Shorthand boolean props** — bare prop names that default to `true` (e.g. `clearable`, `hide-details`, `single-line`)
+6. **Event handlers** — `@event="..."` last
+
+Example:
+
+```vue
+<v-text-field
+  v-model="search"
+  ma-2
+  density="compact"
+  label="Search"
+  variant="outlined"
+  clearable
+  hide-details
+  @keydown.enter.stop="submit()"
+/>
+```
+
 ## Template Conventions
 
 - **No bare function references in `@event` bindings** — always wrap in an explicit arrow function: `@complete="(scene, tilemap) => useCreateTilemapAssets(scene, tilemap)"` not `@complete="useCreateTilemapAssets"`. Bare references cause accidental argument forwarding (extra Vue-internal args get passed). This mirrors the TypeScript rule: never pass a naked function reference.

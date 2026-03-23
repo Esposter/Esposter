@@ -1,5 +1,8 @@
 <script setup lang="ts">
-const selectedColumnIds = defineModel<string[]>({ required: true });
+import { useColumnStore } from "@/store/tableEditor/file/column";
+
+const columnStore = useColumnStore();
+const { selectedColumnIds } = storeToRefs(columnStore);
 const deleteColumns = useDeleteColumns();
 </script>
 
