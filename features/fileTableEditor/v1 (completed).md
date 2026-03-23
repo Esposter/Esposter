@@ -22,7 +22,6 @@
 ## Column Enhancements
 
 - [x] **Column reordering** — drag-and-drop to reorder columns (affects export order)
-- [ ] **Computed/derived columns** — define a formula (e.g., `price * quantity`) that generates a read-only column
 - [x] **Column visibility toggle** — hide columns from the data table view without deleting them
 - [x] **Column descriptions/annotations** — a free-text notes field per column; shown as info-icon tooltip in column table, native tooltip on data table headers
 - [x] **Column type recast on change** ⚡ — when a user changes a column type, automatically re-coerce all existing cell values to the new type (e.g. String → Number converts "42" to 42); without this, type changes leave cells in a broken state

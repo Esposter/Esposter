@@ -130,8 +130,8 @@ Regular `watch`/`watchDeep` are SSR-safe — they don't fire until the source ch
 
 ```ts
 export const useBrowserFeature = () => {
-  const store = useSomeStore();
-  const { someRef } = storeToRefs(store);
+  const someStore = useSomeStore();
+  const { someRef } = storeToRefs(someStore);
   const online = useOnline();
 
   // Safe: watchDeep/watch only fire on changes (client-side)

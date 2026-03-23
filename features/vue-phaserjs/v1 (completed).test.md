@@ -1,25 +1,16 @@
 # vue-phaserjs — Testing Roadmap
 
-Testing Phaser in a Node/Vitest environment is possible at different levels of cost and confidence:
+All tests run against a real headless Phaser game (`type: Phaser.HEADLESS`). Testing SetterMaps or stores in isolation with mock objects provides little value — the real signal comes from mounting a component against an actual scene and asserting that Phaser state changed correctly. SetterMap behaviour is covered generically via the "SetterMap applied on init" and "Reactive setter update" tests in `useInitializeGameObject`; there is no value in repeating the same test for every setter.
 
-- [ ] **SetterMap unit tests** — SetterMaps are pure functions `(gameObject, emit) => (value) => void`. The game object can be a plain mock object (`{ setX: vi.fn(), ... }`). No Phaser or canvas needed; straightforward Vitest.
-- [ ] **`pushGameObject` unit test** — Pure depth-sorting insertion logic; testable with mock container and game object objects.
-- [ ] **Pinia store unit tests** (`usePhaserStore`, `useCameraStore`, `useInputStore`) — Use `createTestingPinia()` from `@pinia/testing`; mock Phaser scene/camera methods on the store's game ref.
-- [ ] **Phaser headless component tests** — Phaser ships a `HEADLESS` renderer (`type: Phaser.HEADLESS`) that skips canvas and WebGL entirely. A `beforeAll` fixture can boot a headless `Phaser.Game`, register a test scene, and mount vue-phaserjs components via Vue Test Utils against it. `happy-dom` supports enough of the DOM API for headless Phaser to initialise. High setup cost; best reserved for testing `Scene.vue` lifecycle, `useInitializeGameObject`, and hook ordering.
+`happy-dom` does not provide enough DOM API for Phaser out of the box — a `setupCanvas.ts` global setup stubs the missing canvas 2D context methods. `game.step()` is not usable in headless mode (renderer is null) — use `stepScene(scene, n)` which calls lifecycle listeners directly.
 
 ---
 
-All tests run against a real headless Phaser game. Testing SetterMaps or stores in isolation with mock objects provides little value — the real signal comes from mounting a component against an actual scene and asserting that Phaser state changed correctly.
+## Infrastructure
 
-Phaser ships a `HEADLESS` renderer (`type: Phaser.HEADLESS`) that bypasses WebGL and canvas entirely. `happy-dom` provides enough DOM API for Phaser to initialise.
-
----
-
-## Infrastructure (do first)
-
-- [x] **Vitest config for `vue-phaserjs`** — add `vitest.config.ts` to `packages/vue-phaserjs` with `environment: 'happy-dom'` and a global setup file.
+- [x] **Vitest config for `vue-phaserjs`** — `vitest.config.ts` with `environment: 'happy-dom'` and a global setup file.
 - [x] **Headless game fixture** — `test/fixtures/headlessGame.ts`; boots `new Phaser.Game({ type: Phaser.HEADLESS, audio: { noAudio: true }, scene: [] })` in `beforeAll`, calls `game.destroy(true)` in `afterAll`. Exposes a `startTestScene(key, config)` helper that adds a minimal scene and waits for its `create` event.
-- [x] **Scene advance helper** — `stepScene(n)` calls `game.step(performance.now(), 16)` n times so `onUpdate` / `onNextTick` handlers fire in tests.
+- [x] **Scene advance helper** — `stepScene(scene, n)` calls lifecycle listeners directly n times so `onUpdate` / `onNextTick` handlers fire in tests.
 - [x] **Vue Test Utils wrapper** — thin helper that mounts a component inside the injection context required by vue-phaserjs (`SceneKey` injection, `usePhaserStore` seeded with the headless game).
 
 ---
@@ -78,7 +69,5 @@ These test store actions against a real headless scene rather than mocks.
 ## Known unknowns (resolved)
 
 - ~~Phaser headless in happy-dom has not been validated~~ — confirmed working with happy-dom + canvas stub.
-- `game.step()` is not usable in headless mode (renderer is null). Use `stepScene(scene, n)` which calls lifecycle listeners directly.
-- `stepScene` passes the `SceneWithPlugins` instance (returned by `startTestScene`) rather than the game.
 - Asset loading (`onPreload` / `scene.load.*`) will fail in headless without real files; preload tests should either skip asset assertions or use `scene.textures.addBase64()` stubs.
 - Phaser's `Text` game object requires a fuller canvas 2D context mock than other objects (`scale`, `rotate`, `translate`, `measureText`, etc.) — all now stubbed in `setupCanvas.ts`.

@@ -23,7 +23,7 @@
     "crossOS": "node scripts/crossOS.ts",
     "dev:docker": "docker compose -f docker-compose.dev.yaml up",
     "format": "oxfmt",
-    "prepare": "git config core.hooksPath .githooks",
+    "prepare": "git config core.hooksPath .githooks || true",
     "format:check": "oxfmt --check",
     "lint": "oxlint --disable-nested-config && eslint . && lerna run lint",
     "lint:fix": "oxlint --disable-nested-config --fix && eslint --fix . && lerna run lint:fix",

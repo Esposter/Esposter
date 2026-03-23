@@ -15,8 +15,8 @@ export const openMessageCacheDatabase = () => {
   if (databasePromise) return databasePromise;
   databasePromise = openDB<MessageCacheDatabase>(MESSAGE_CACHE_DATABASE_NAME, MESSAGE_CACHE_DATABASE_VERSION, {
     upgrade(db) {
-      const store = db.createObjectStore(MESSAGE_STORE_NAME, { keyPath: ["partitionKey", "rowKey"] });
-      store.createIndex(MESSAGE_PARTITION_KEY_INDEX, MESSAGE_PARTITION_KEY_INDEX);
+      const objectStore = db.createObjectStore(MESSAGE_STORE_NAME, { keyPath: ["partitionKey", "rowKey"] });
+      objectStore.createIndex(MESSAGE_PARTITION_KEY_INDEX, MESSAGE_PARTITION_KEY_INDEX);
     },
   });
   return databasePromise;
