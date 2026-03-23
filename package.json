@@ -50,7 +50,7 @@
     "dotenv": "catalog:",
     "eslint": "catalog:",
     "happy-dom": "catalog:",
-    "lint-staged": "catalog:",
+    "nano-staged": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "oxlint-tsgolint": "catalog:",
@@ -64,7 +64,7 @@
     "vitest": "catalog:",
     "vue-tsc": "catalog:"
   },
-  "lint-staged": {
+  "nano-staged": {
     "*": "oxfmt"
   },
   "engines": {
