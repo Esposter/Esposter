@@ -16,6 +16,7 @@ const { dataSource } = defineProps<ColumnTableProps>();
 const columnStore = useColumnStore();
 const { search, selectedColumnIds, sortBy } = storeToRefs(columnStore);
 const reorderColumns = useReorderColumns();
+const isDraggable = computed(() => !search.value && sortBy.value.length === 0);
 const dragColumns = computed({
   get: () => dataSource.columns,
   set: reorderColumns,
@@ -27,7 +28,7 @@ const dragColumns = computed({
     <template #text>
       <TableEditorFileColumnTextSlot />
     </template>
-    <VueDraggable v-model="dragColumns" target="tbody" :handle="`.${DRAG_HANDLE_CLASS}`">
+    <VueDraggable v-model="dragColumns" target="tbody" :disabled="!isDraggable" :handle="`.${DRAG_HANDLE_CLASS}`">
       <StyledDataTable
         :data-table-props="{
           density: 'compact',
@@ -50,7 +51,7 @@ const dragColumns = computed({
           <TableEditorFileColumnTopSlot />
         </template>
         <template #[`item.drag`]>
-          <v-icon v-if="sortBy.length === 0" :class="DRAG_HANDLE_CLASS" icon="mdi-drag" cursor-move />
+          <v-icon v-if="isDraggable" :class="DRAG_HANDLE_CLASS" icon="mdi-drag" cursor-move />
         </template>
         <template #[`item.name`]="{ item: column }">
           <TableEditorFileColumnItemSlot :column />

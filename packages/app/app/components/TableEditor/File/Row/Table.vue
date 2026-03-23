@@ -42,6 +42,9 @@ const dragRows = computed({
   },
   set: reorderRows,
 });
+const isDraggable = computed(
+  () => !search.value && sortBy.value.length === 0 && filteredDataSource.value === dataSource,
+);
 const rowIndexIdMap = computed(() => new Map(filteredDataSource.value.rows.map((row, index) => [row.id, index])));
 </script>
 
@@ -50,7 +53,7 @@ const rowIndexIdMap = computed(() => new Map(filteredDataSource.value.rows.map((
     <template #text>
       <TableEditorFileRowTextSlot />
     </template>
-    <VueDraggable v-model="dragRows" target="tbody" :handle="`.${DRAG_HANDLE_CLASS}`">
+    <VueDraggable v-model="dragRows" target="tbody" :disabled="!isDraggable" :handle="`.${DRAG_HANDLE_CLASS}`">
       <StyledDataTable
         flex
         flex-1
@@ -87,12 +90,7 @@ const rowIndexIdMap = computed(() => new Map(filteredDataSource.value.rows.map((
           {{ (rowIndexIdMap.get(item.id) ?? -1) + 1 }}
         </template>
         <template #[`item.drag`]>
-          <v-icon
-            v-if="sortBy.length === 0 && filteredDataSource === dataSource"
-            :class="DRAG_HANDLE_CLASS"
-            icon="mdi-drag"
-            cursor-move
-          />
+          <v-icon v-if="isDraggable" :class="DRAG_HANDLE_CLASS" icon="mdi-drag" cursor-move />
         </template>
         <template #[`item.actions`]="{ item }">
           <TableEditorFileRowActionSlot
