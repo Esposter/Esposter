@@ -9,7 +9,8 @@ import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 export const useDeleteDuplicateRows = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
   const { editedItem } = storeToRefs(tableEditorStore);
-  const { push } = useFileHistoryStore();
+  const fileHistoryStore = useFileHistoryStore();
+  const { push } = fileHistoryStore;
   return (keepMode = KeepDuplicateMode.First) => {
     if (!editedItem.value?.dataSource) return;
     const duplicateRows = findDuplicateRows(editedItem.value.dataSource, keepMode);

@@ -10,6 +10,7 @@ export enum CommandType {
   MoveColumn = "MoveColumn",
   MoveRow = "MoveRow",
   NormalizeStrings = "NormalizeStrings",
+  NullStrategy = "NullStrategy",
   ToggleColumnVisibility = "ToggleColumnVisibility",
   UpdateColumn = "UpdateColumn",
   UpdateRow = "UpdateRow",

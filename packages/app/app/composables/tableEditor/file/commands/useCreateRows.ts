@@ -8,7 +8,8 @@ import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 export const useCreateRows = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
   const { editedItem } = storeToRefs(tableEditorStore);
-  const { push } = useFileHistoryStore();
+  const fileHistoryStore = useFileHistoryStore();
+  const { push } = fileHistoryStore;
   return (rows: DataSource["rows"]) => {
     if (!editedItem.value?.dataSource || rows.length === 0) return;
     const startIndex = editedItem.value.dataSource.rows.length;

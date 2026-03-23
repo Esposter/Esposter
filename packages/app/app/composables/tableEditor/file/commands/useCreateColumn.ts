@@ -11,7 +11,8 @@ import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 export const useCreateColumn = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
   const { editedItem } = storeToRefs(tableEditorStore);
-  const { push } = useFileHistoryStore();
+  const fileHistoryStore = useFileHistoryStore();
+  const { push } = fileHistoryStore;
   return (newColumn: DataSource["columns"][number]) => {
     if (!editedItem.value?.dataSource) return;
     const { id: _id, ...newColumnWithoutId } = newColumn;

@@ -8,7 +8,8 @@ import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 export const useFindReplace = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
   const { editedItem } = storeToRefs(tableEditorStore);
-  const { push } = useFileHistoryStore();
+  const fileHistoryStore = useFileHistoryStore();
+  const { push } = fileHistoryStore;
   return (findValue: string, replaceValue: string, specificCell?: { columnName: string; rowIndex: number }) => {
     if (!editedItem.value?.dataSource || !findValue || findValue === replaceValue) return;
     const affectedCells = findMatchingCells(editedItem.value.dataSource, findValue, specificCell);

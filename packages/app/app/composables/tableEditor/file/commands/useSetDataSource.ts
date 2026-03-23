@@ -7,7 +7,8 @@ import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 export const useSetDataSource = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
   const { editedItem } = storeToRefs(tableEditorStore);
-  const { clear } = useFileHistoryStore();
+  const fileHistoryStore = useFileHistoryStore();
+  const { clear } = fileHistoryStore;
   return (value: DataSource) => {
     if (!editedItem.value) return;
     editedItem.value.dataSource = value;
