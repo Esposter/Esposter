@@ -14,7 +14,12 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 - Non-null assertions (`!`) are **BANNED** — use optional chaining or guard clauses.
 - `.forEach()` is **BANNED** — use `for...of`.
 - `type` aliases for object shapes are **BANNED** — always use `interface` for object type declarations.
-- `Array#sort()` is **BANNED** — use `Array#toSorted()` instead. This returns a new array without mutating the original, so replace `[...arr].sort(fn)` with `arr.toSorted(fn)`.
+- **Always prefer non-mutating array methods** — use the copy versions that return a new array instead of mutating in place:
+  - `arr.toSorted(fn)` instead of `[...arr].sort(fn)` — `sort()` is **BANNED**
+  - `arr.toReversed()` instead of `[...arr].reverse()` — `reverse()` is **BANNED**
+  - `arr.toSpliced(start, deleteCount, ...items)` instead of manual splice + spread — `splice()` is **BANNED** for producing new arrays (it is still allowed for in-place mutation of store/reactive arrays)
+  - `arr.with(index, value)` instead of `[...arr.slice(0, i), value, ...arr.slice(i + 1)]`
+- **Only use `new Set` when deduplication is actually needed** — do not wrap an array in `Set` just to call `.has()` if the values are already unique. Use `.some()` instead: `arr.some(({ id }) => id === targetId)`. Only reach for `Set` when: (a) the source array may contain duplicates and deduplication is the goal, or (b) the collection is large enough that repeated O(n) `.some()` calls would materially hurt performance.
 - Always use named imports from libraries — only when not already auto-imported by Nuxt or Nuxt modules (e.g. `ref`, `computed`, `watch` from Vue; `storeToRefs` from Pinia; VueUse composables are all auto-imported and must not be manually imported).
 - Explicitly type variables with proper types.
 - **No `current*` variable caching of `.value`** — don't assign `const currentX = x.value` just to use it once. If TypeScript narrowing is needed after a guard, assign with a descriptive name (`const selectedFile = file.value`). Prefer plain `const` over `computed()` when the source value is already non-reactive (e.g. a `readonly` prop field).

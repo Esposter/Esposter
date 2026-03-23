@@ -44,7 +44,9 @@ export class NullStrategyCommand extends ADataSourceCommand<CommandType.NullStra
           const column = columnsByNameMap.get(columnName);
           if (column) column.size -= getValueSize(value);
         }
-      for (const { index } of [...this.affectedRows].reverse()) item.dataSource.rows.splice(index, 1);
+      item.dataSource.rows = item.dataSource.rows.filter(
+        ({ id }) => !this.affectedRows.some(({ row }) => row.id === id),
+      );
     }
   }
 
