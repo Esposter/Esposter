@@ -2,6 +2,7 @@
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { Row } from "#shared/models/tableEditor/file/Row";
 
+import { toColumnKey } from "@/services/tableEditor/file/column/toColumnKey";
 import { DRAG_HANDLE_CLASS } from "@/services/tableEditor/file/constants";
 import { filterDataSourceRows } from "@/services/tableEditor/file/dataSource/filterDataSourceRows";
 import { useFilterStore } from "@/store/tableEditor/file/filter";
@@ -23,8 +24,9 @@ const filteredDataSource = computed(() => filterDataSourceRows(dataSource, colum
 const displayColumns = computed(() => dataSource.columns.filter((column) => !column.hidden));
 const headers = computed(() => [
   { key: "drag", sortable: false, title: "" },
+  { key: "#", sortable: false, title: "#" },
   ...displayColumns.value.map((column) => ({
-    key: column.name,
+    key: toColumnKey(column.name),
     title: column.name,
     value: (row: Row) => takeOne(row.data, column.name),
   })),
@@ -75,6 +77,9 @@ const rowIndexIdMap = computed(() => new Map(filteredDataSource.value.rows.map((
       <template v-if="selectedRowIds.length > 0" #top>
         <TableEditorFileRowTopSlot />
       </template>
+      <template #[`item.#`]="{ item }">
+        {{ (rowIndexIdMap.get(item.id) ?? -1) + 1 }}
+      </template>
       <template #[`item.drag`]>
         <v-icon
           v-if="sortBy.length === 0 && filteredDataSource === dataSource"
@@ -93,11 +98,11 @@ const rowIndexIdMap = computed(() => new Map(filteredDataSource.value.rows.map((
       <template
         v-for="column of displayColumns"
         :key="column.id"
-        #[`header.${column.name}`]="{ column: headerColumn, getSortIcon, isSorted, toggleSort }"
+        #[`header.${toColumnKey(column.name)}`]="{ column: headerColumn, getSortIcon, isSorted, toggleSort }"
       >
         <TableEditorFileRowHeaderSlot :column :get-sort-icon :header-column :is-sorted :toggle-sort />
       </template>
-      <template v-for="column of displayColumns" :key="column.id" #[`item.${column.name}`]="{ item }">
+      <template v-for="column of displayColumns" :key="column.id" #[`item.${toColumnKey(column.name)}`]="{ item }">
         <TableEditorFileRowItemSlot :column :item :row-index="rowIndexIdMap.get(item.id) ?? -1" />
       </template>
       <template #tfoot>

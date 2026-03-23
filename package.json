@@ -23,6 +23,7 @@
     "crossOS": "node scripts/crossOS.ts",
     "dev:docker": "docker compose -f docker-compose.dev.yaml up",
     "format": "oxfmt",
+    "prepare": "git config core.hooksPath .githooks",
     "format:check": "oxfmt --check",
     "lint": "oxlint --disable-nested-config && eslint . && lerna run lint",
     "lint:fix": "oxlint --disable-nested-config --fix && eslint --fix . && lerna run lint:fix",
@@ -49,6 +50,7 @@
     "dotenv": "catalog:",
     "eslint": "catalog:",
     "happy-dom": "catalog:",
+    "nano-staged": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "oxlint-tsgolint": "catalog:",
@@ -61,6 +63,9 @@
     "vite": "catalog:",
     "vitest": "catalog:",
     "vue-tsc": "catalog:"
+  },
+  "nano-staged": {
+    "*": "oxfmt"
   },
   "engines": {
     "node": "^24.14.0"

@@ -7,7 +7,8 @@ import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 export const useToggleColumnVisibility = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
   const { editedItem } = storeToRefs(tableEditorStore);
-  const { push } = useFileHistoryStore();
+  const fileHistoryStore = useFileHistoryStore();
+  const { push } = fileHistoryStore;
   return (id: string) => {
     if (!editedItem.value?.dataSource) return;
     const column = editedItem.value.dataSource.columns.find((column) => column.id === id);

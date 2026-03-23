@@ -9,7 +9,8 @@ import { takeOne, toRawDeep } from "@esposter/shared";
 export const useDeleteColumns = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
   const { editedItem } = storeToRefs(tableEditorStore);
-  const { push } = useFileHistoryStore();
+  const fileHistoryStore = useFileHistoryStore();
+  const { push } = fileHistoryStore;
   return (ids: string[]) => {
     if (!editedItem.value?.dataSource) return;
     const dataSource = editedItem.value.dataSource;

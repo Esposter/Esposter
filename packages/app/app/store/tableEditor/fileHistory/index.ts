@@ -2,11 +2,9 @@ import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/Data
 import type { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 
 import { MAX_HISTORY_SIZE } from "@/services/tableEditor/file/constants";
-import { useTableEditorStore } from "@/store/tableEditor";
 import { takeOne } from "@esposter/shared";
 
 export const useFileHistoryStore = defineStore("tableEditor/file/history", () => {
-  const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
   const history = ref<ADataSourceCommand[]>([]);
   const future = ref<ADataSourceCommand[]>([]);
   const isRedoable = computed(() => future.value.length > 0);
@@ -40,13 +38,6 @@ export const useFileHistoryStore = defineStore("tableEditor/file/history", () =>
     future.value.push(command);
     command.undo(item);
   };
-
-  watch(
-    () => tableEditorStore.editedItem?.id,
-    () => {
-      clear();
-    },
-  );
 
   return { clear, isRedoable, isUndoable, push, redo, redoDescription, undo, undoDescription };
 });

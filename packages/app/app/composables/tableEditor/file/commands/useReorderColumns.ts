@@ -9,7 +9,8 @@ import { takeOne } from "@esposter/shared";
 export const useReorderColumns = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
   const { editedItem } = storeToRefs(tableEditorStore);
-  const { push } = useFileHistoryStore();
+  const fileHistoryStore = useFileHistoryStore();
+  const { push } = fileHistoryStore;
   return (newColumns: DataSource["columns"]) => {
     if (!editedItem.value?.dataSource) return;
     const oldColumns = editedItem.value.dataSource.columns;

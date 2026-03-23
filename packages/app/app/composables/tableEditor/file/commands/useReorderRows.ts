@@ -8,7 +8,8 @@ import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 export const useReorderRows = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
   const { editedItem } = storeToRefs(tableEditorStore);
-  const { push } = useFileHistoryStore();
+  const fileHistoryStore = useFileHistoryStore();
+  const { push } = fileHistoryStore;
   return (newRows: DataSource["rows"]) => {
     if (!editedItem.value?.dataSource) return;
     const oldRows = editedItem.value.dataSource.rows;
