@@ -12,17 +12,15 @@ import { createPinia, setActivePinia } from "pinia";
 import { afterAll, beforeAll, describe } from "vitest";
 
 let testPinia: ReturnType<typeof createPinia>;
-// Exported as a getter so we can assign in beforeAll without a mutable export binding.
 export const getTestPinia = (): ReturnType<typeof createPinia> => testPinia;
-export const getTestGame = (): Game => game;
-
-let game: Game;
+let testGame: Game;
+export const getTestGame = (): Game => testGame;
 
 export const startTestScene = (key: string): SceneWithPlugins => {
   const Scene = createSceneClass(key);
   // Add without autoStart so READY/SHUTDOWN listeners are in place before the scene boots.
-  game.scene.add(key, Scene, false);
-  const scene = game.scene.getScene(key) as SceneWithPlugins;
+  testGame.scene.add(key, Scene, false);
+  const scene = testGame.scene.getScene(key) as SceneWithPlugins;
   const readyListener = () => {
     ExternalSceneStore.sceneReadyMap.set(key, true);
   };
@@ -34,7 +32,7 @@ export const startTestScene = (key: string): SceneWithPlugins => {
   };
   scene.events.on(Scenes.Events.READY, readyListener);
   scene.events.on(Scenes.Events.SHUTDOWN, shutdownListener);
-  game.scene.start(key);
+  testGame.scene.start(key);
   return scene;
 };
 /**
@@ -50,7 +48,7 @@ export const stepScene = (scene: SceneWithPlugins, n = 1): void => {
 };
 
 export const removeTestScene = (key: string): void => {
-  if (game.scene.getScene(key)) game.scene.remove(key);
+  if (testGame.scene.getScene(key)) testGame.scene.remove(key);
   for (const listenersMap of ExternalSceneStore.lifecycleListenersMap.values()) listenersMap.delete(key);
   ExternalSceneStore.sceneReadyMap.delete(key);
 };
@@ -60,25 +58,25 @@ beforeAll(() => {
   testPinia = createPinia();
   app.use(testPinia);
   setActivePinia(testPinia);
-  game = new Game({
+  testGame = new Game({
     audio: { noAudio: true },
     scene: [],
     type: HEADLESS,
   });
   // Document.readyState is stubbed to 'complete' in setupCanvas.ts so Phaser boots
   // Synchronously inside the constructor — check isBooted instead of waiting for 'ready'
-  if (!game.isBooted) throw new Error("Phaser game failed to boot synchronously");
+  if (!testGame.isBooted) throw new Error("Phaser game failed to boot synchronously");
   // Stop the automatic Request Animation Frame (RAF) loop — the browser API that drives
-  // Phaser's game loop — so it never fires game.step() unexpectedly during tests.
-  game.loop.sleep();
+  // Phaser's game loop — so it never fires testGame.step() unexpectedly during tests.
+  testGame.loop.sleep();
 
-  const store = usePhaserStore();
-  const { game: gameRef } = storeToRefs(store);
-  gameRef.value = game;
+  const phaserStore = usePhaserStore();
+  const { game } = storeToRefs(phaserStore);
+  game.value = testGame;
 });
 
 afterAll(() => {
-  game.destroy(true);
+  testGame.destroy(true);
 });
 
 describe.todo("headlessGame");
