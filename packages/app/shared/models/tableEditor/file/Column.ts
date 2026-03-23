@@ -13,6 +13,7 @@ export class Column<TColumnType extends ColumnType = ColumnType.String>
   implements ItemEntityType<ColumnType>
 {
   description = "";
+  fixed = false;
   hidden = false;
   size = 0;
   readonly sourceName: string = "";
@@ -28,6 +29,7 @@ export const createColumnSchema = <T extends z.ZodType<ColumnType>>(typeSchema: 
   z.object({
     ...aTableEditorItemEntitySchema.shape,
     description: z.string().max(DESCRIPTION_MAX_LENGTH).default(""),
+    fixed: z.boolean().default(false),
     hidden: z.boolean().default(false),
     size: z.number().default(0),
     sourceName: z.string().default("").readonly(),

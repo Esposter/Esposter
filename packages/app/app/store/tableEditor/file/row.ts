@@ -8,6 +8,7 @@ export const useRowStore = defineStore("tableEditor/file/row", () => {
   const findReplaceStore = useFindReplaceStore();
   const itemsPerPage = ref(10);
   const page = ref(1);
+  const search = ref("");
   const sortBy = ref<readonly SortItem[]>([]);
   const selectedRowIds = ref<string[]>([]);
 
@@ -29,5 +30,5 @@ export const useRowStore = defineStore("tableEditor/file/row", () => {
     navigateToCurrentOccurrence();
   });
 
-  return { itemsPerPage, page, selectedRowIds, sortBy };
+  return { itemsPerPage, page, search, selectedRowIds, sortBy };
 });
