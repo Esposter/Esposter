@@ -5,6 +5,23 @@ description: Esposter Vuetify 3 conventions — v-btn tooltips, typed SelectItem
 
 # Vuetify Conventions
 
+## Global Defaults (vuetify.config.ts)
+
+The following variants are set globally and must **never** be repeated on individual components:
+
+| Component       | Default                        |
+| --------------- | ------------------------------ |
+| `VAutocomplete` | `variant="outlined"`           |
+| `VColorInput`   | `variant="outlined"`           |
+| `VCombobox`     | `variant="outlined"`           |
+| `VFileInput`    | `variant="outlined"`           |
+| `VSelect`       | `variant="outlined"`           |
+| `VTextarea`     | `variant="outlined"`           |
+| `VTextField`    | `variant="outlined"`           |
+| `VBtn`          | `flat`, transparent background |
+| `VDialog`       | `maxWidth="100%"`, `width=500` |
+| `VTooltip`      | `location="top"`               |
+
 ## Button Conventions
 
 - **Every `v-btn` must have a `v-tooltip`** — wrap with `v-tooltip` and a descriptive `text` prop. This applies to all buttons, including those with visible label text.
