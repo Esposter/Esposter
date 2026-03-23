@@ -150,7 +150,7 @@ catalog:
   grid-engine: ^2.48.2
   grid-layout-plus: ^1.1.1
   gsap: ^3.14.2
-  h3: ^1.15.8
+  h3: ^1.15.10
   happy-dom: ^20.8.4
   howler: ^2.2.4
   idb: ^8.0.3
@@ -234,7 +234,7 @@ cleanupUnusedCatalogs: true
 overrides:
   crossws: ^0.4.4
   pdfjs-dist: ^5.5.207
-  vite: ^8.0.0
+  vite: ^8.0.1
   vue-router: ^5.0.4
 
 shellEmulator: true
