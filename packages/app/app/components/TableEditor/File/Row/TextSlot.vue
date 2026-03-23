@@ -6,6 +6,6 @@ const { search } = storeToRefs(rowStore);
 </script>
 
 <template>
-  <v-text-field v-model="search" prepend-inner-icon="mdi-magnify" variant="outlined" hide-details single-line />
+  <v-text-field v-model="search" prepend-inner-icon="mdi-magnify" hide-details single-line />
   <TableEditorFileFindReplaceBar />
 </template>
