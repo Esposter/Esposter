@@ -15,7 +15,7 @@ const editedColumn = ref(structuredClone(defaultColumn));
 const uniqueNameRule = useColumnNameRule(() => dataSource.columns);
 
 const resetForm = () => {
-  editedColumn.value = structuredClone(new ComputedColumn());
+  editedColumn.value = structuredClone(defaultColumn);
 };
 </script>
 
@@ -23,9 +23,9 @@ const resetForm = () => {
   <TableEditorFileCrudViewEditDialogButton
     title="Create Computed Column"
     tooltip-text="Add Computed Column"
-    icon="mdi-table-column-plus-after"
+    icon="mdi-function-variant"
     :schema="computedColumnSchema"
-    :value="null"
+    :value="defaultColumn"
     :edited-value="editedColumn"
     @reset="resetForm()"
     @submit="

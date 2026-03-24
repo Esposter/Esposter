@@ -18,14 +18,13 @@ const { dataSource } = defineProps<CreateDialogButtonProps>();
 const createColumn = useCreateColumn();
 const columnType = ref<Exclude<ColumnType, ColumnType.Computed>>(ColumnType.String);
 // StructuredClone is required here: Vjsf does not work with class instances and needs a plain object
-const editedColumn = ref<DataSource["columns"][number]>(
-  structuredClone(ColumnTypeCreateMap[ColumnType.String].create()),
-);
+const defaultColumn = computed(() => ColumnTypeCreateMap[columnType.value].create());
+const editedColumn = ref<DataSource["columns"][number]>(structuredClone(defaultColumn.value));
 const schema = computed(() => takeOne(ColumnTypeFormSchemaMap, columnType.value));
 const jsonSchema = computed(() => zodToJsonSchema(takeOne(CreateFormSchemaMap, columnType.value)));
 const uniqueNameRule = useColumnNameRule(() => dataSource.columns);
 const resetForm = () => {
-  editedColumn.value = structuredClone(ColumnTypeCreateMap[columnType.value].create());
+  editedColumn.value = structuredClone(defaultColumn.value);
 };
 
 watch(columnType, (newType) => {
@@ -40,7 +39,7 @@ watch(columnType, (newType) => {
     tooltip-text="Add Column"
     icon="mdi-table-column-plus-after"
     :schema
-    :value="null"
+    :value="defaultColumn"
     :edited-value="editedColumn"
     @reset="resetForm()"
     @submit="
