@@ -7,6 +7,7 @@ import FieldInputText from "@/components/TableEditor/File/Row/FieldInput/Text.vu
 
 export const FieldInputComponentMap = {
   [ColumnType.Boolean]: FieldInputBoolean,
+  [ColumnType.Computed]: FieldInputText,
   [ColumnType.Date]: FieldInputDate,
   [ColumnType.Number]: FieldInputText,
   [ColumnType.String]: FieldInputText,

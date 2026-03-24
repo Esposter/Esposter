@@ -2,6 +2,7 @@
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 
 import { Row, rowSchema } from "#shared/models/tableEditor/file/Row";
+import { isEditableColumn } from "@/services/tableEditor/file/column/isEditableColumn";
 import { takeOne } from "@esposter/shared";
 
 interface CreateDialogButtonProps {
@@ -10,7 +11,8 @@ interface CreateDialogButtonProps {
 
 const { dataSource } = defineProps<CreateDialogButtonProps>();
 const createRow = useCreateRow();
-const blankRow = new Row({ data: Object.fromEntries(dataSource.columns.map((column) => [column.name, null])) });
+const editableColumns = computed(() => dataSource.columns.filter(isEditableColumn));
+const blankRow = new Row({ data: Object.fromEntries(editableColumns.value.map((column) => [column.name, null])) });
 const editedRow = ref(new Row({ ...blankRow, data: { ...blankRow.data } }));
 const resetForm = () => {
   editedRow.value = new Row({ ...blankRow, data: { ...blankRow.data } });
@@ -33,7 +35,7 @@ const resetForm = () => {
       }
     "
   >
-    <v-row v-for="column of dataSource.columns.filter((column) => !column.hidden)" :key="column.id">
+    <v-row v-for="column of editableColumns.filter((column) => !column.hidden)" :key="column.id">
       <v-col cols="12">
         <TableEditorFileRowFieldInput
           :model-value="takeOne(editedRow.data, column.name)"

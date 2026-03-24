@@ -3,11 +3,11 @@ import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { Row } from "#shared/models/tableEditor/file/Row";
 
 import { toColumnKey } from "@/services/tableEditor/file/column/toColumnKey";
+import { resolveValue } from "@/services/tableEditor/file/column/resolveValue";
 import { DRAG_HANDLE_CLASS } from "@/services/tableEditor/file/constants";
 import { filterDataSourceRows } from "@/services/tableEditor/file/dataSource/filterDataSourceRows";
 import { useFilterStore } from "@/store/tableEditor/file/filter";
 import { useRowStore } from "@/store/tableEditor/file/row";
-import { takeOne } from "@esposter/shared";
 import { VueDraggable } from "vue-draggable-plus";
 
 interface DataTableProps {
@@ -30,7 +30,7 @@ const headers = computed(() => [
     fixed: column.fixed ? ("start" as const) : false,
     key: toColumnKey(column.name),
     title: column.name,
-    value: (row: Row) => takeOne(row.data, column.name),
+    value: (row: Row) => resolveValue(row, dataSource.columns, column),
   })),
   { key: "actions", sortable: false, title: "Actions" },
 ]);
@@ -107,7 +107,12 @@ const rowIndexIdMap = computed(() => new Map(filteredDataSource.value.rows.map((
           <TableEditorFileRowHeaderSlot :column :get-sort-icon :header-column :is-sorted :toggle-sort />
         </template>
         <template v-for="column of displayColumns" :key="column.id" #[`item.${toColumnKey(column.name)}`]="{ item }">
-          <TableEditorFileRowItemSlot :column :item :row-index="rowIndexIdMap.get(item.id) ?? -1" />
+          <TableEditorFileRowItemSlot
+            :column
+            :columns="dataSource.columns"
+            :item
+            :row-index="rowIndexIdMap.get(item.id) ?? -1"
+          />
         </template>
         <template #tfoot>
           <TableEditorFileRowFooterSlot :data-source />

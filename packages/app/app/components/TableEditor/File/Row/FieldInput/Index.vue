@@ -1,4 +1,4 @@
-<script setup lang="ts" generic="TColumnType extends ColumnType">
+<script setup lang="ts" generic="TColumnType extends Exclude<ColumnType, ColumnType.Computed>">
 import type { ColumnTypeColumnMap } from "@/models/tableEditor/file/ColumnTypeColumnMap";
 import type { ColumnTypeModelValueMap } from "@/models/tableEditor/file/ColumnTypeModelValueMap";
 

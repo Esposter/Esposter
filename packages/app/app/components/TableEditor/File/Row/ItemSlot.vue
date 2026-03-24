@@ -3,6 +3,8 @@ import type { ColumnValue } from "#shared/models/tableEditor/file/ColumnValue";
 import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 
 import { Row } from "#shared/models/tableEditor/file/Row";
+import { isEditableColumn } from "@/services/tableEditor/file/column/isEditableColumn";
+import { resolveValue } from "@/services/tableEditor/file/column/resolveValue";
 import { OUTLIER_HIGHLIGHT_CLASS } from "@/services/tableEditor/file/constants";
 import { getItemId } from "@/services/tableEditor/file/getItemId";
 import { useFindReplaceStore } from "@/store/tableEditor/file/findReplace";
@@ -11,19 +13,21 @@ import { takeOne, toRawDeep } from "@esposter/shared";
 
 interface ItemSlotProps {
   column: DataSource["columns"][number];
+  columns: DataSource["columns"];
   item: Row;
   rowIndex: number;
 }
 
-const { column, item, rowIndex } = defineProps<ItemSlotProps>();
+const { column, columns, item, rowIndex } = defineProps<ItemSlotProps>();
 const findReplaceStore = useFindReplaceStore();
 const { currentOccurrenceIndex, findValue, occurrences } = storeToRefs(findReplaceStore);
 const outlierStore = useOutlierStore();
 const { outlierCells } = storeToRefs(outlierStore);
 const updateRow = useUpdateRow();
+const editableColumn = computed(() => (isEditableColumn(column) ? column : null));
 const currentOccurrence = computed(() => occurrences.value.at(currentOccurrenceIndex.value));
 const text = computed(() => {
-  const value = takeOne(item.data, column.name);
+  const value = resolveValue(item, columns, column);
   return value === null ? "" : String(value);
 });
 const isCurrentOccurrence = computed(
@@ -34,6 +38,7 @@ const isEditing = ref(false);
 const localValue = ref<ColumnValue>(null);
 
 const startEditing = () => {
+  if (!editableColumn.value) return;
   localValue.value = takeOne(item.data, column.name) ?? null;
   isEditing.value = true;
 };
@@ -54,12 +59,12 @@ const cancelEdit = () => {
 
 <template>
   <div
-    v-if="isEditing"
+    v-if="isEditing && editableColumn"
     @blur.capture="commitEdit"
     @keydown.enter.stop="!$event.isComposing && commitEdit()"
     @keydown.esc.stop="cancelEdit"
   >
-    <TableEditorFileRowFieldInput v-model="localValue" :column autofocus hide-details inline />
+    <TableEditorFileRowFieldInput v-model="localValue" :column="editableColumn" autofocus hide-details inline />
   </div>
   <div v-else @dblclick.stop="startEditing">
     <TableEditorFileFindReplaceHighlight

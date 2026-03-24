@@ -7,6 +7,7 @@ import { dateColumnFormSchema } from "#shared/models/tableEditor/file/DateColumn
 
 export const ColumnTypeFormSchemaMap = {
   [ColumnType.Boolean]: columnFormSchema,
+  [ColumnType.Computed]: columnFormSchema,
   [ColumnType.Date]: dateColumnFormSchema,
   [ColumnType.Number]: columnFormSchema,
   [ColumnType.String]: columnFormSchema,

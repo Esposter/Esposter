@@ -2,7 +2,10 @@ import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
 
 import { Column } from "#shared/models/tableEditor/file/Column";
+import { type ColumnTransformation } from "#shared/models/tableEditor/file/ColumnTransformation";
+import { ColumnTransformationType } from "#shared/models/tableEditor/file/ColumnTransformationType";
 import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
+import { ComputedColumn } from "#shared/models/tableEditor/file/ComputedColumn";
 import { CsvDataSourceItem } from "#shared/models/tableEditor/file/csv/CsvDataSourceItem";
 import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
 import { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
@@ -25,6 +28,12 @@ export const makeNumberColumn = (name: string): Column<ColumnType.Number> =>
 
 export const makeDateColumn = (name: string, format: DateColumn["format"]): DateColumn =>
   new DateColumn({ format, name, size: 0, sourceName: name });
+
+export const makeComputedColumn = (
+  name: string,
+  sourceColumnId: string,
+  transformation: ColumnTransformation = { type: ColumnTransformationType.ConvertTo, targetType: ColumnType.String },
+): ComputedColumn => new ComputedColumn({ name, size: 0, sourceName: name, sourceColumnId, transformation });
 
 export const makeRow = (data: Record<string, boolean | null | number | string>): Row => new Row({ data });
 
