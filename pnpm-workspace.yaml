@@ -54,14 +54,14 @@ catalog:
   "@pinia/nuxt": ^0.11.3
   "@rolldown/plugin-node-polyfills": ^1.0.3
   "@takumi-rs/core": ^0.73.1
-  "@tiptap/core": ^3.20.4
-  "@tiptap/extension-file-handler": ^3.20.4
-  "@tiptap/extension-mention": ^3.20.4
-  "@tiptap/extensions": ^3.20.4
-  "@tiptap/pm": ^3.20.4
-  "@tiptap/starter-kit": ^3.20.4
-  "@tiptap/suggestion": ^3.20.4
-  "@tiptap/vue-3": ^3.20.4
+  "@tiptap/core": ^3.20.5
+  "@tiptap/extension-file-handler": ^3.20.5
+  "@tiptap/extension-mention": ^3.20.5
+  "@tiptap/extensions": ^3.20.5
+  "@tiptap/pm": ^3.20.5
+  "@tiptap/starter-kit": ^3.20.5
+  "@tiptap/suggestion": ^3.20.5
+  "@tiptap/vue-3": ^3.20.5
   "@tresjs/cientos": ^5.6.0
   "@tresjs/core": ^5.7.0
   "@tresjs/nuxt": ^5.5.0
