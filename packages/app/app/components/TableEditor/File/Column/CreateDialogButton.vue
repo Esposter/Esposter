@@ -18,7 +18,7 @@ const { dataSource } = defineProps<CreateDialogButtonProps>();
 const createColumn = useCreateColumn();
 const columnType = ref<Exclude<ColumnType, ColumnType.Computed>>(ColumnType.String);
 // StructuredClone is required here: Vjsf does not work with class instances and needs a plain object,
-// and fast-deep-equal checks constructors so class instances never equal their plain object clones
+// And fast-deep-equal checks constructors so class instances never equal their plain object clones
 const defaultColumn = computed(() => structuredClone(ColumnTypeCreateMap[columnType.value].create()));
 const editedColumn = ref<DataSource["columns"][number]>(structuredClone(defaultColumn.value));
 const schema = computed(() => takeOne(ColumnTypeFormSchemaMap, columnType.value));
