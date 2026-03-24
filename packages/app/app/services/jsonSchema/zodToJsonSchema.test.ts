@@ -49,7 +49,7 @@ describe(zodToJsonSchema, () => {
     test("removes const from literal properties", () => {
       expect.hasAssertions();
 
-      const schema = z.object({ type: z.literal("") });
+      const schema = z.object({ type: z.literal("a") });
       const result = zodToJsonSchema(schema) as { properties: Record<string, Record<string, unknown>> };
 
       expect(result.properties.type).not.toHaveProperty("const");
