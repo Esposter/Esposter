@@ -1,4 +1,4 @@
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 import type { IndexedRow } from "@/models/tableEditor/file/commands/IndexedRow";
 
 import { KeepDuplicateMode } from "@/models/tableEditor/file/commands/KeepDuplicateMode";

@@ -1,6 +1,6 @@
-import type { ColumnValue } from "#shared/models/tableEditor/file/ColumnValue";
+import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
 
-import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
+import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 
 export const coerceValue = (value: string, type: ColumnType): ColumnValue => {
   const sanitizedValue = value.trim();

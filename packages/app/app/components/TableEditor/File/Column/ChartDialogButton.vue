@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
-import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
+import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { computeColumnStats } from "@/services/tableEditor/file/column/computeColumnStats";
 
 interface ChartDialogButtonProps {

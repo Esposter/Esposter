@@ -1,8 +1,11 @@
 import type { JsonDataSourceConfiguration } from "#shared/models/tableEditor/file/json/JsonDataSourceConfiguration";
 import type { ToData } from "@esposter/shared";
 
-import { ADataSourceItem, createDataSourceItemSchema } from "#shared/models/tableEditor/file/ADataSourceItem";
-import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
+import {
+  ADataSourceItem,
+  createDataSourceItemSchema,
+} from "#shared/models/tableEditor/file/datasource/ADataSourceItem";
+import { DataSourceType } from "#shared/models/tableEditor/file/datasource/DataSourceType";
 import { jsonDataSourceConfigurationSchema } from "#shared/models/tableEditor/file/json/JsonDataSourceConfiguration";
 import { z } from "zod";
 

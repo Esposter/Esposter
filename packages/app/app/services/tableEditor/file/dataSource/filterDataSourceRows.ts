@@ -1,7 +1,7 @@
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 import type { ColumnFilter } from "@/models/tableEditor/file/column/ColumnFilter";
 
-import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
+import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { isActiveColumnFilter } from "@/services/tableEditor/file/column/isActiveColumnFilter";
 import { takeOne } from "@esposter/shared";
 

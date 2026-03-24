@@ -1,4 +1,4 @@
-import type { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
+import type { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 
 export interface ColumnStats {
   average: null | number;

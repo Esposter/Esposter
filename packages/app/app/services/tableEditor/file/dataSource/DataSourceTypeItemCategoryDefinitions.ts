@@ -1,9 +1,9 @@
-import type { ADataSourceItem } from "#shared/models/tableEditor/file/ADataSourceItem";
+import type { ADataSourceItem } from "#shared/models/tableEditor/file/datasource/ADataSourceItem";
 import type { ItemCategoryDefinition } from "@/models/tableEditor/ItemCategoryDefinition";
 import type { Except } from "type-fest";
 
 import { CsvDataSourceItem } from "#shared/models/tableEditor/file/csv/CsvDataSourceItem";
-import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
+import { DataSourceType } from "#shared/models/tableEditor/file/datasource/DataSourceType";
 import { JsonDataSourceItem } from "#shared/models/tableEditor/file/json/JsonDataSourceItem";
 import { XlsxDataSourceItem } from "#shared/models/tableEditor/file/xlsx/XlsxDataSourceItem";
 import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";

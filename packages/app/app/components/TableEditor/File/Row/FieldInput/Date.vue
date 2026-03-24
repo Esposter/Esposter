@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
+import type { DateColumn } from "#shared/models/tableEditor/file/column/DateColumn";
 
 import { dayjs } from "#shared/services/dayjs";
 

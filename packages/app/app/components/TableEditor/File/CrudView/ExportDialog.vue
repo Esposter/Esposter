@@ -1,6 +1,6 @@
 <script setup lang="ts" generic="TDataSourceItem extends DataSourceItemTypeMap[keyof DataSourceItemTypeMap]">
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
-import type { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
+import type { DataSourceType } from "#shared/models/tableEditor/file/datasource/DataSourceType";
 
 import { DataSourceConfigurationMap } from "@/services/tableEditor/file/dataSource/DataSourceConfigurationMap";
 import { filterDataSourceColumns } from "@/services/tableEditor/file/dataSource/filterDataSourceColumns";

@@ -1,7 +1,7 @@
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 import type { AffectedCell } from "@/models/tableEditor/file/commands/AffectedCell";
 
-import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
+import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { takeOne } from "@esposter/shared";
 
 export const getNullAffectedCells = (dataSource: DataSource): AffectedCell[] => {

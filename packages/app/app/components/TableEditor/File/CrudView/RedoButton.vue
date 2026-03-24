@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
 
 import { sanitizeHtml } from "@/services/sanitizeHtml/sanitizeHtml";
 import { useTableEditorStore } from "@/store/tableEditor";

@@ -1,4 +1,4 @@
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
 
 import { FindReplaceCommand } from "@/models/tableEditor/file/commands/FindReplaceCommand";
 import { findMatchingCells } from "@/services/tableEditor/file/commands/findMatchingCells";

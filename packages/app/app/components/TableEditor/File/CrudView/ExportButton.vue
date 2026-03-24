@@ -1,7 +1,7 @@
 <script setup lang="ts" generic="TDataSourceItem extends DataSourceItemTypeMap[keyof DataSourceItemTypeMap]">
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
 
-import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
+import { DataSourceType } from "#shared/models/tableEditor/file/datasource/DataSourceType";
 import { DataSourceTypeItemCategoryDefinitions } from "@/services/tableEditor/file/dataSource/DataSourceTypeItemCategoryDefinitions";
 import { mergeProps } from "vue";
 

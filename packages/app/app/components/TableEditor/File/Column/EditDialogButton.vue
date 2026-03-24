@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
-import { ColumnTypeFormSchemaMap } from "#shared/models/tableEditor/file/ColumnTypeFormSchemaMap";
-import { EditFormSchemaMap } from "#shared/models/tableEditor/file/EditFormSchemaMap";
+import { ColumnTypeFormSchemaMap } from "#shared/models/tableEditor/file/column/ColumnTypeFormSchemaMap";
+import { EditFormSchemaMap } from "#shared/models/tableEditor/file/column/EditFormSchemaMap";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { takeOne, toRawDeep } from "@esposter/shared";
 import { Vjsf } from "@koumoul/vjsf";

@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
-import { Row, rowSchema } from "#shared/models/tableEditor/file/Row";
+import { Row, rowSchema } from "#shared/models/tableEditor/file/datasource/Row";
+import { isEditableColumnValue } from "@/services/tableEditor/file/column/isEditableColumnValue";
 import { takeOne } from "@esposter/shared";
 
 interface CreateDialogButtonProps {
@@ -10,10 +11,14 @@ interface CreateDialogButtonProps {
 
 const { dataSource } = defineProps<CreateDialogButtonProps>();
 const createRow = useCreateRow();
-const blankRow = new Row({ data: Object.fromEntries(dataSource.columns.map((column) => [column.name, null])) });
-const editedRow = ref(new Row({ ...blankRow, data: { ...blankRow.data } }));
+const editableColumns = computed(() => dataSource.columns.filter(isEditableColumnValue));
+// StructuredClone is required here: fast-deep-equal checks constructors so class instances never equal their plain object clones
+const blankRow = structuredClone(
+  new Row({ data: Object.fromEntries(editableColumns.value.map((column) => [column.name, null])) }),
+);
+const editedRow = ref(structuredClone(blankRow));
 const resetForm = () => {
-  editedRow.value = new Row({ ...blankRow, data: { ...blankRow.data } });
+  editedRow.value = structuredClone(blankRow);
 };
 </script>
 
@@ -33,7 +38,7 @@ const resetForm = () => {
       }
     "
   >
-    <v-row v-for="column of dataSource.columns.filter((column) => !column.hidden)" :key="column.id">
+    <v-row v-for="column of editableColumns.filter((column) => !column.hidden)" :key="column.id">
       <v-col cols="12">
         <TableEditorFileRowFieldInput
           :model-value="takeOne(editedRow.data, column.name)"

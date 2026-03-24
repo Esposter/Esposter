@@ -1,7 +1,7 @@
-import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
+import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { CsvDataSourceItem } from "#shared/models/tableEditor/file/csv/CsvDataSourceItem";
 import { CsvDelimiter } from "#shared/models/tableEditor/file/csv/CsvDelimiter";
-import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
+import { DataSourceType } from "#shared/models/tableEditor/file/datasource/DataSourceType";
 import { deserializeCsv } from "@/services/tableEditor/file/csv/deserializeCsv";
 import { DataSourceConfigurationMap } from "@/services/tableEditor/file/dataSource/DataSourceConfigurationMap";
 import { takeOne } from "@esposter/shared";

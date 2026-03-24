@@ -1,4 +1,4 @@
-import type { Row } from "#shared/models/tableEditor/file/Row";
+import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import type { IndexedRow } from "@/models/tableEditor/file/commands/IndexedRow";
 
 import { CsvDataSourceItem } from "#shared/models/tableEditor/file/csv/CsvDataSourceItem";

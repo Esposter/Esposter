@@ -1,5 +1,5 @@
-import type { ColumnValue } from "#shared/models/tableEditor/file/ColumnValue";
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
+import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
 
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import { CommandType } from "@/models/tableEditor/file/commands/CommandType";

@@ -1,4 +1,4 @@
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
 export const syncStats = (dataSource: DataSource) => {
   dataSource.stats.columnCount = dataSource.columns.length;

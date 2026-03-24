@@ -1,9 +1,9 @@
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
 import type { DataSourceConfiguration } from "@/models/tableEditor/file/dataSource/DataSourceConfiguration";
 
 import { MimeType } from "#shared/models/file/MimeType";
 import { csvDataSourceConfigurationSchema } from "#shared/models/tableEditor/file/csv/CsvDataSourceConfiguration";
-import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
+import { DataSourceType } from "#shared/models/tableEditor/file/datasource/DataSourceType";
 import { jsonDataSourceConfigurationSchema } from "#shared/models/tableEditor/file/json/JsonDataSourceConfiguration";
 import { xlsxDataSourceConfigurationSchema } from "#shared/models/tableEditor/file/xlsx/XlsxDataSourceConfiguration";
 import { deserializeCsv } from "@/services/tableEditor/file/csv/deserializeCsv";

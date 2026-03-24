@@ -1,4 +1,4 @@
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
 
 import { NormalizeStringMode } from "@/models/tableEditor/file/commands/NormalizeStringMode";
 import { NormalizeStringsCommand } from "@/models/tableEditor/file/commands/NormalizeStringsCommand";

@@ -1,5 +1,6 @@
 export enum CommandType {
   CreateColumn = "CreateColumn",
+  CreateComputedColumn = "CreateComputedColumn",
   CreateRow = "CreateRow",
   CreateRows = "CreateRows",
   DeleteColumn = "DeleteColumn",
@@ -11,7 +12,6 @@ export enum CommandType {
   MoveRow = "MoveRow",
   NormalizeStrings = "NormalizeStrings",
   NullStrategy = "NullStrategy",
-  ToggleColumnPin = "ToggleColumnPin",
   ToggleColumnVisibility = "ToggleColumnVisibility",
   UpdateColumn = "UpdateColumn",
   UpdateRow = "UpdateRow",

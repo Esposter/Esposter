@@ -1,8 +1,8 @@
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 import type { ColumnStatComputeContext } from "@/models/tableEditor/file/column/ColumnStatComputeContext";
 import type { ColumnStats } from "@/models/tableEditor/file/column/ColumnStats";
 
-import { ColumnStatDefinitions } from "@/services/tableEditor/file/column/ColumnStatDefinitions";
+import { ColumnStatDefinitionMap } from "@/services/tableEditor/file/column/ColumnStatDefinitionMap";
 import { takeOne } from "@esposter/shared";
 
 export const computeColumnStats = (dataSource: DataSource): ColumnStats[] =>
@@ -20,7 +20,7 @@ export const computeColumnStats = (dataSource: DataSource): ColumnStats[] =>
       columnName: column.name,
       columnType: column.type,
       ...Object.fromEntries(
-        ColumnStatDefinitions.map(({ appliesTo, compute, key }) => [
+        Object.values(ColumnStatDefinitionMap).map(({ appliesTo, compute, key }) => [
           key,
           appliesTo.includes(column.type) ? compute(context) : null,
         ]),

@@ -1,6 +1,6 @@
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
-import { Row } from "#shared/models/tableEditor/file/Row";
+import { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import { coerceValue } from "@/services/tableEditor/file/column/coerceValue";
 import { takeOne } from "@esposter/shared";
 

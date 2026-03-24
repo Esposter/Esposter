@@ -1,4 +1,4 @@
-import type { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
+import type { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import type { ColumnStatComputeContext } from "@/models/tableEditor/file/column/ColumnStatComputeContext";
 import type { ColumnStatKey } from "@/models/tableEditor/file/column/ColumnStatKey";
 import type { ColumnStats } from "@/models/tableEditor/file/column/ColumnStats";

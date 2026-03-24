@@ -1,4 +1,4 @@
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
 
 import { parseClipboardRows } from "@/services/tableEditor/file/commands/parseClipboardRows";
 import { useAlertStore } from "@/store/alert";

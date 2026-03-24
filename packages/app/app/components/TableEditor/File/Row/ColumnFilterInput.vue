@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 import type { BooleanFilterValue } from "@/models/tableEditor/file/column/BooleanFilterValue";
 import type { ColumnFilter } from "@/models/tableEditor/file/column/ColumnFilter";
 
-import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
+import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { BooleanFilterValueItemCategoryDefinitions } from "@/services/tableEditor/file/column/BooleanFilterValueItemCategoryDefinitions";
 
 interface ColumnFilterInputProps {
@@ -39,7 +39,7 @@ const stringValue = computed({
     return "";
   },
   set: (value) => {
-    if (column.type !== ColumnType.Boolean && column.type !== ColumnType.Number)
+    if (column.type !== ColumnType.Boolean && column.type !== ColumnType.Computed && column.type !== ColumnType.Number)
       modelValue.value = value ? { type: column.type, value } : undefined;
   },
 });

@@ -1,5 +1,5 @@
-import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
-import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
+import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
+import { DataSourceType } from "#shared/models/tableEditor/file/datasource/DataSourceType";
 import { JsonDataSourceItem } from "#shared/models/tableEditor/file/json/JsonDataSourceItem";
 import { DataSourceConfigurationMap } from "@/services/tableEditor/file/dataSource/DataSourceConfigurationMap";
 import { deserializeJson } from "@/services/tableEditor/file/json/deserializeJson";

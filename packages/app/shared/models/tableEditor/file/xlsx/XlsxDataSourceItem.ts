@@ -1,8 +1,11 @@
 import type { XlsxDataSourceConfiguration } from "#shared/models/tableEditor/file/xlsx/XlsxDataSourceConfiguration";
 import type { ToData } from "@esposter/shared";
 
-import { ADataSourceItem, createDataSourceItemSchema } from "#shared/models/tableEditor/file/ADataSourceItem";
-import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
+import {
+  ADataSourceItem,
+  createDataSourceItemSchema,
+} from "#shared/models/tableEditor/file/datasource/ADataSourceItem";
+import { DataSourceType } from "#shared/models/tableEditor/file/datasource/DataSourceType";
 import { xlsxDataSourceConfigurationSchema } from "#shared/models/tableEditor/file/xlsx/XlsxDataSourceConfiguration";
 import { z } from "zod";
 

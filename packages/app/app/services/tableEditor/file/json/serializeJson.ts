@@ -1,5 +1,5 @@
 import type { MimeType } from "#shared/models/file/MimeType";
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 import type { JsonDataSourceItem } from "#shared/models/tableEditor/file/json/JsonDataSourceItem";
 
 import { takeOne } from "@esposter/shared";

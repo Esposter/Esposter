@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
 import { ColumnHeaders } from "@/services/tableEditor/file/column/ColumnHeaders";
 import { ColumnTypeColorMap } from "@/services/tableEditor/file/column/ColumnTypeColorMap";

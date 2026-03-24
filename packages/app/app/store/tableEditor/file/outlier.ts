@@ -1,6 +1,6 @@
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
 
-import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
+import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { computeColumnStats } from "@/services/tableEditor/file/column/computeColumnStats";
 import { OUTLIER_STANDARD_DEVIATION_MULTIPLIER } from "@/services/tableEditor/file/constants";
 import { getItemId } from "@/services/tableEditor/file/getItemId";

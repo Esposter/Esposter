@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
-import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
+import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
+import { resolveValue } from "@/services/tableEditor/file/column/resolveValue";
 import { filterDataSourceRows } from "@/services/tableEditor/file/dataSource/filterDataSourceRows";
 import { useFilterStore } from "@/store/tableEditor/file/filter";
-import { takeOne } from "@esposter/shared";
 
 interface FooterSlotProps {
   dataSource: DataSource;
@@ -20,7 +20,7 @@ const columnSummaries = computed(() => {
   for (const column of displayColumns.value) {
     if (column.type !== ColumnType.Number) continue;
     const sum = filteredRows.value.reduce((acc, row) => {
-      const value = takeOne(row.data, column.name);
+      const value = resolveValue(row, dataSource.columns, column);
       return typeof value === "number" ? acc + value : acc;
     }, 0);
     result.set(column.name, `Σ ${Math.round(sum * 100) / 100}`);

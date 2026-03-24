@@ -1,7 +1,7 @@
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 import type { JsonDataSourceItem } from "#shared/models/tableEditor/file/json/JsonDataSourceItem";
 
-import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
+import { DataSourceType } from "#shared/models/tableEditor/file/datasource/DataSourceType";
 import { buildDataSource } from "@/services/tableEditor/file/dataSource/buildDataSource";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { z } from "zod";

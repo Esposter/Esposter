@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { DataSourceStats } from "#shared/models/tableEditor/file/DataSourceStats";
+import type { DataSourceStats } from "#shared/models/tableEditor/file/datasource/DataSourceStats";
 
 import { formatSize } from "@/util/formatSize";
 

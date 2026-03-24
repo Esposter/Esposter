@@ -1,8 +1,8 @@
-<script setup lang="ts" generic="TColumnType extends ColumnType">
-import type { ColumnTypeColumnMap } from "@/models/tableEditor/file/ColumnTypeColumnMap";
-import type { ColumnTypeModelValueMap } from "@/models/tableEditor/file/ColumnTypeModelValueMap";
+<script setup lang="ts" generic="TColumnType extends Exclude<ColumnType, ColumnType.Computed>">
+import type { ColumnTypeColumnMap } from "@/models/tableEditor/file/column/ColumnTypeColumnMap";
+import type { ColumnTypeModelValueMap } from "@/models/tableEditor/file/column/ColumnTypeModelValueMap";
 
-import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
+import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { FieldInputComponentMap } from "@/services/tableEditor/file/column/FieldInputComponentMap";
 
 interface FieldInputProps {

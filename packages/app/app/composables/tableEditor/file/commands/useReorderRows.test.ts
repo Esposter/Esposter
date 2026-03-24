@@ -1,4 +1,4 @@
-import { Row } from "#shared/models/tableEditor/file/Row";
+import { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import {
   makeColumn,
   makeDataSource,

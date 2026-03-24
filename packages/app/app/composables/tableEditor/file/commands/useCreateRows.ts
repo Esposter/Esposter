@@ -1,5 +1,5 @@
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
 
 import { CreateRowsCommand } from "@/models/tableEditor/file/commands/CreateRowsCommand";
 import { useTableEditorStore } from "@/store/tableEditor";

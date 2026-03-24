@@ -1,4 +1,4 @@
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
 
 import { NullStrategy } from "@/models/tableEditor/file/commands/NullStrategy";
 import { NullStrategyCommand } from "@/models/tableEditor/file/commands/NullStrategyCommand";
