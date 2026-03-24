@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
-import { isEditableColumn } from "@/services/tableEditor/file/column/isEditableColumn";
-
 interface ActionSlotProps {
   column: DataSource["columns"][number];
   dataSource: DataSource;
@@ -19,7 +17,7 @@ const { column, dataSource } = defineProps<ActionSlotProps>();
       :column-name="column.name"
       :hidden="column.hidden"
     />
-    <TableEditorFileColumnEditDialogButton v-if="isEditableColumn(column)" :data-source :column />
+    <TableEditorFileColumnEditDialogButton :data-source :column />
     <TableEditorFileColumnDeleteDialogButton :name="column.name" />
   </div>
 </template>

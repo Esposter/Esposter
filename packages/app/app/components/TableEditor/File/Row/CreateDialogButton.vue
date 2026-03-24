@@ -2,7 +2,7 @@
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
 import { Row, rowSchema } from "#shared/models/tableEditor/file/datasource/Row";
-import { isEditableColumn } from "@/services/tableEditor/file/column/isEditableColumn";
+import { isEditableColumnValue } from "@/services/tableEditor/file/column/isEditableColumnValue";
 import { takeOne } from "@esposter/shared";
 
 interface CreateDialogButtonProps {
@@ -11,8 +11,11 @@ interface CreateDialogButtonProps {
 
 const { dataSource } = defineProps<CreateDialogButtonProps>();
 const createRow = useCreateRow();
-const editableColumns = computed(() => dataSource.columns.filter(isEditableColumn));
-const blankRow = new Row({ data: Object.fromEntries(editableColumns.value.map((column) => [column.name, null])) });
+const editableColumns = computed(() => dataSource.columns.filter(isEditableColumnValue));
+// StructuredClone is required here: fast-deep-equal checks constructors so class instances never equal their plain object clones
+const blankRow = structuredClone(
+  new Row({ data: Object.fromEntries(editableColumns.value.map((column) => [column.name, null])) }),
+);
 const editedRow = ref(structuredClone(blankRow));
 const resetForm = () => {
   editedRow.value = structuredClone(blankRow);

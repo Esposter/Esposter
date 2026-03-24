@@ -3,7 +3,7 @@ import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnV
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
 import { Row } from "#shared/models/tableEditor/file/datasource/Row";
-import { isEditableColumn } from "@/services/tableEditor/file/column/isEditableColumn";
+import { isEditableColumnValue } from "@/services/tableEditor/file/column/isEditableColumnValue";
 import { resolveValue } from "@/services/tableEditor/file/column/resolveValue";
 import { OUTLIER_HIGHLIGHT_CLASS } from "@/services/tableEditor/file/constants";
 import { getItemId } from "@/services/tableEditor/file/getItemId";
@@ -24,7 +24,7 @@ const { currentOccurrenceIndex, findValue, occurrences } = storeToRefs(findRepla
 const outlierStore = useOutlierStore();
 const { outlierCells } = storeToRefs(outlierStore);
 const updateRow = useUpdateRow();
-const editableColumn = computed(() => (isEditableColumn(column) ? column : null));
+const editableColumn = computed(() => (isEditableColumnValue(column) ? column : null));
 const currentOccurrence = computed(() => occurrences.value.at(currentOccurrenceIndex.value));
 const text = computed(() => {
   const value = resolveValue(item, columns, column);

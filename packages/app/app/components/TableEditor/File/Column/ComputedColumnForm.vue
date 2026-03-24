@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import type { ComputedColumn } from "#shared/models/tableEditor/file/column/ComputedColumn";
 
-import { ComputedColumnTransformationFormSchemaMap } from "#shared/models/tableEditor/file/column/transformation/ComputedColumnTransformationFormSchemaMap";
+import { columnTransformationSchema } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformation";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { ColumnTransformationTypeCreateMap } from "@/services/tableEditor/file/column/transformation/ColumnTransformationTypeCreateMap";
 import { ColumnTransformationTypeItemCategoryDefinitions } from "@/services/tableEditor/file/column/transformation/ColumnTransformationTypeItemCategoryDefinitions";
-import { takeOne } from "@esposter/shared";
 import { Vjsf } from "@koumoul/vjsf";
 
 const editedColumn = defineModel<ComputedColumn>({ required: true });
@@ -16,9 +15,7 @@ const transformationType = computed({
     editedColumn.value.transformation = { ...ColumnTransformationTypeCreateMap[newType].create(), sourceColumnId };
   },
 });
-const transformationJsonSchema = computed(() =>
-  zodToJsonSchema(takeOne(ComputedColumnTransformationFormSchemaMap, transformationType.value)),
-);
+const columnTransformationJsonSchema = zodToJsonSchema(columnTransformationSchema);
 </script>
 
 <template>
@@ -27,5 +24,5 @@ const transformationJsonSchema = computed(() =>
     :items="ColumnTransformationTypeItemCategoryDefinitions"
     label="Transformation"
   />
-  <Vjsf v-model="editedColumn.transformation" :schema="transformationJsonSchema" />
+  <Vjsf v-model="editedColumn.transformation" :schema="columnTransformationJsonSchema" />
 </template>
