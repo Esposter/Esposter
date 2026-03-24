@@ -3,18 +3,9 @@ import { prettify } from "@/util/text/prettify";
 import { toTitleCase } from "@/util/text/toTitleCase";
 import { z } from "zod";
 
-const convertAnyOfToOneOf = (jsonSchema: Record<string, unknown>): Record<string, unknown> => {
-  if (!Array.isArray(jsonSchema.anyOf)) return jsonSchema;
-  const { anyOf, ...rest } = jsonSchema;
-  return { ...rest, oneOf: (anyOf as Record<string, unknown>[]).map((branch) => convertAnyOfToOneOf(branch)) };
-};
-
-export const zodToJsonSchema = (schema: z.ZodType) => {
-  const jsonSchema = z.toJSONSchema(schema) as Record<string, unknown>;
-  // Support z.discriminatedUnion => anyOf at top level
-  // Recursively convert anyOf → oneOf so Vjsf can use the discriminant const fields
-  if (Array.isArray(jsonSchema.anyOf)) return convertAnyOfToOneOf(jsonSchema);
-  const { properties, type } = jsonSchema as z.core.JSONSchema.ObjectSchema;
+export const zodToJsonSchema = (schema: z.ZodObject) => {
+  // For integrating with vjsf, we only need the type and properties
+  const { properties, type } = z.toJSONSchema(schema) as z.core.JSONSchema.ObjectSchema;
   recurseProperties(properties, {
     otherHooks: [
       (key, property) => {
