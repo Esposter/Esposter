@@ -8,8 +8,12 @@ export const zodToJsonSchema = (schema: z.ZodObject) => {
   const { properties, type } = z.toJSONSchema(schema, {
     override: (ctx) => {
       const meta = (ctx.zodSchema as z.ZodObject).meta();
-      if (!meta?.getProps) return;
-      (ctx.jsonSchema as Record<string, unknown>).layout = { getProps: meta.getProps };
+      if (!meta?.comp && !meta?.getProps && !meta?.getItems) return;
+      const layout: Record<string, unknown> = {};
+      if (meta.comp) layout.comp = meta.comp;
+      if (meta.getProps) layout.getProps = meta.getProps;
+      if (meta.getItems) layout.getItems = meta.getItems;
+      (ctx.jsonSchema as Record<string, unknown>).layout = layout;
     },
   });
   recurseProperties(properties, {

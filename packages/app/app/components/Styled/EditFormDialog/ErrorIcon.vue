@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import type { VForm } from "vuetify/components";
-import type { z } from "zod";
 
 import { takeOne } from "@esposter/shared";
-import { z as zod } from "zod";
+import { z } from "zod";
 
 interface ErrorIconProps {
   editedValue: unknown;
@@ -22,7 +21,7 @@ const errorMessage = computed(() => {
   }
 
   const result = schema.safeParse(editedValue);
-  return result.success ? "" : zod.prettifyError(result.error);
+  return result.success ? "" : z.prettifyError(result.error);
 });
 const isValid = computed(() => isEditFormValid && !errorMessage.value);
 

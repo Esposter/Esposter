@@ -37,6 +37,6 @@ const resetForm = () => {
     "
   >
     <v-text-field v-model="editedColumn.name" label="Column" :rules="[uniqueNameRule]" />
-    <TableEditorFileColumnComputedColumnForm v-model="editedColumn" />
+    <TableEditorFileColumnComputedColumnForm v-model="editedColumn" :data-source="dataSource" />
   </TableEditorFileCrudViewEditDialogButton>
 </template>

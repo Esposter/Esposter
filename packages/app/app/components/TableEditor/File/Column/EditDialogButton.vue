@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
+import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ColumnTypeFormSchemaMap } from "#shared/models/tableEditor/file/column/ColumnTypeFormSchemaMap";
 import { takeOne, toRawDeep } from "@esposter/shared";
 import { Vjsf } from "@koumoul/vjsf";
@@ -37,5 +38,10 @@ const resetForm = () => {
     "
   >
     <Vjsf v-model="editedColumn" :schema="jsonSchema" :options />
+    <TableEditorFileColumnComputedColumnForm
+      v-if="editedColumn.type === ColumnType.Computed"
+      v-model="editedColumn"
+      :data-source
+    />
   </TableEditorFileCrudViewEditDialogButton>
 </template>
