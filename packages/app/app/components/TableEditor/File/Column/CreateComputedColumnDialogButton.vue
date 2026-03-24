@@ -9,8 +9,9 @@ interface CreateComputedColumnDialogButtonProps {
 
 const { dataSource } = defineProps<CreateComputedColumnDialogButtonProps>();
 const createComputedColumn = useCreateComputedColumn();
-const defaultColumn = new ComputedColumn();
-// StructuredClone is required here: Vjsf does not work with class instances and needs a plain object
+// StructuredClone is required here: Vjsf does not work with class instances and needs a plain object,
+// and fast-deep-equal checks constructors so class instances never equal their plain object clones
+const defaultColumn = structuredClone(new ComputedColumn());
 const editedColumn = ref(structuredClone(defaultColumn));
 const uniqueNameRule = useColumnNameRule(() => dataSource.columns);
 
