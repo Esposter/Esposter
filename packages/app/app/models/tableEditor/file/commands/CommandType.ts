@@ -12,7 +12,6 @@ export enum CommandType {
   MoveRow = "MoveRow",
   NormalizeStrings = "NormalizeStrings",
   NullStrategy = "NullStrategy",
-  ToggleColumnPin = "ToggleColumnPin",
   ToggleColumnVisibility = "ToggleColumnVisibility",
   UpdateColumn = "UpdateColumn",
   UpdateRow = "UpdateRow",

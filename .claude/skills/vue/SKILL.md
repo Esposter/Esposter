@@ -127,6 +127,62 @@ const modelValue = defineModel<ModelValueMap[TKey]>({ required: true });
 
 Prefer `watchDeep(source, cb)` over `watch(source, cb, { deep: true })` and `watchImmediate(source, cb)` over `watch(source, cb, { immediate: true })`. When both flags are needed, use `watchDeep(source, cb, { immediate: true })` (alphabetical: deep before immediate).
 
+## Type-Driven State Reset: Watch + Create Map
+
+When a "discriminant" ref (type selector) changes and should **reinitialize** a related mutable ref, use `watch` with a **create map** that abstracts the per-type construction logic. This follows the same pattern as `DataSourceConfigurationMap`.
+
+**Step 1 — define a create map in services:**
+
+```ts
+// ColumnTypeCreateMap.ts
+export const ColumnTypeCreateMap = {
+  [ColumnType.Boolean]: { create: (name = "") => new Column<ColumnType.Boolean>({ name, type: ColumnType.Boolean }) },
+  [ColumnType.Date]: { create: (name = "") => new DateColumn({ name }) },
+  [ColumnType.Number]: { create: (name = "") => new Column<ColumnType.Number>({ name, type: ColumnType.Number }) },
+  [ColumnType.String]: { create: (name = "") => new Column({ name }) },
+} as const satisfies Record<
+  Exclude<ColumnType, ColumnType.Computed>,
+  { create: (name?: string) => DataSource["columns"][number] }
+>;
+```
+
+**Step 2 — use watch + map in the component:**
+
+```ts
+const columnType = ref<Exclude<ColumnType, ColumnType.Computed>>(ColumnType.String);
+const editedColumn = ref(structuredClone(ColumnTypeCreateMap[ColumnType.String].create()));
+const resetForm = () => {
+  editedColumn.value = structuredClone(ColumnTypeCreateMap[columnType.value].create());
+};
+
+watch(columnType, (newType) => {
+  const name = editedColumn.value.name;
+  editedColumn.value = structuredClone(ColumnTypeCreateMap[newType].create(name));
+});
+```
+
+For **external sync** (when a parent can reset the model): add a second watch on the discriminant field of the model to keep the local ref in sync.
+
+```ts
+const transformationType = ref(editedColumn.value.transformation.type);
+watch(transformationType, (newType) => {
+  editedColumn.value.transformation = ColumnTransformationTypeCreateMap[newType].create();
+});
+watch(
+  () => editedColumn.value.transformation.type,
+  (newType) => {
+    transformationType.value = newType;
+  },
+);
+```
+
+**Writable computed is NOT the right tool here** — it requires a backing `_ref` (leaking internal state), and still needs an external sync watch anyway when a parent can reset the model. The map + watch approach is simpler and more idiomatic.
+
+**Notes**:
+
+- Always initialize the local type ref from the current model value (`editedColumn.value.transformation.type`), not a hardcoded default — this handles future edit-mode scenarios
+- `if (newType === oldType) return;` in a watch callback is always redundant — Vue only fires when the value changes
+
 ## Vue Hooks
 
 - Always place `watch`, `onMounted`, `onUnmounted`, and other Vue lifecycle hooks/watchers at the **bottom** of `<script setup>`, after all `const` assignments.

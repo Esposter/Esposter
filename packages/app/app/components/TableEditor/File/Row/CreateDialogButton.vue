@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
-import { Row, rowSchema } from "#shared/models/tableEditor/file/Row";
+import { Row, rowSchema } from "#shared/models/tableEditor/file/datasource/Row";
 import { isEditableColumn } from "@/services/tableEditor/file/column/isEditableColumn";
 import { takeOne } from "@esposter/shared";
 
@@ -13,9 +13,9 @@ const { dataSource } = defineProps<CreateDialogButtonProps>();
 const createRow = useCreateRow();
 const editableColumns = computed(() => dataSource.columns.filter(isEditableColumn));
 const blankRow = new Row({ data: Object.fromEntries(editableColumns.value.map((column) => [column.name, null])) });
-const editedRow = ref(new Row({ ...blankRow, data: { ...blankRow.data } }));
+const editedRow = ref(structuredClone(blankRow));
 const resetForm = () => {
-  editedRow.value = new Row({ ...blankRow, data: { ...blankRow.data } });
+  editedRow.value = structuredClone(blankRow);
 };
 </script>
 

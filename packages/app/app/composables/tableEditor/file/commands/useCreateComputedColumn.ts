@@ -1,6 +1,6 @@
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
 
-import { ComputedColumn } from "#shared/models/tableEditor/file/ComputedColumn";
+import { ComputedColumn } from "#shared/models/tableEditor/file/column/ComputedColumn";
 import { CreateComputedColumnCommand } from "@/models/tableEditor/file/commands/CreateComputedColumnCommand";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";

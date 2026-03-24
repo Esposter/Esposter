@@ -1,4 +1,4 @@
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
 
 import { DeleteRowsCommand } from "@/models/tableEditor/file/commands/DeleteRowsCommand";
 import { KeepDuplicateMode } from "@/models/tableEditor/file/commands/KeepDuplicateMode";

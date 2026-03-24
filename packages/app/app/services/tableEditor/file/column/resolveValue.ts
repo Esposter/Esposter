@@ -1,10 +1,10 @@
-import type { ColumnValue } from "#shared/models/tableEditor/file/ColumnValue";
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
-import type { Row } from "#shared/models/tableEditor/file/Row";
+import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
+import type { ComputedColumn } from "#shared/models/tableEditor/file/column/ComputedColumn";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
+import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
 
-import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
-import { type ComputedColumn } from "#shared/models/tableEditor/file/ComputedColumn";
-import { evaluateColumnTransformation } from "@/services/tableEditor/file/column/evaluateColumnTransformation";
+import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
+import { computeColumnTransformation } from "@/services/tableEditor/file/column/transformation/computeColumnTransformation";
 import { takeOne } from "@esposter/shared";
 
 const isComputedColumn = (column: DataSource["columns"][number]): column is ComputedColumn =>
@@ -15,9 +15,9 @@ export const resolveValue = (
   columns: DataSource["columns"],
   column: DataSource["columns"][number],
 ): ColumnValue => {
-  if (!isComputedColumn(column)) return takeOne(row.data, column.name) ?? null;
-  const sourceColumn = columns.find((candidate) => candidate.id === column.sourceColumnId);
+  if (!isComputedColumn(column)) return takeOne(row.data, column.name);
+  const sourceColumn = columns.find(({ id }) => id === column.transformation.sourceColumnId);
   if (!sourceColumn || sourceColumn.type === ColumnType.Computed) return null;
-  const sourceValue = takeOne(row.data, sourceColumn.name) ?? null;
-  return evaluateColumnTransformation(sourceValue, column.transformation);
+  const sourceValue = takeOne(row.data, sourceColumn.name);
+  return computeColumnTransformation(sourceValue, column.transformation);
 };

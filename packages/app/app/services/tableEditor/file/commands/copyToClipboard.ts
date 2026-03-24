@@ -1,4 +1,4 @@
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
 import { serializeToMarkdown } from "@/services/tableEditor/file/commands/serializeToMarkdown";
 

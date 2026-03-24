@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
-import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
+import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { resolveValue } from "@/services/tableEditor/file/column/resolveValue";
 import { filterDataSourceRows } from "@/services/tableEditor/file/dataSource/filterDataSourceRows";
 import { useFilterStore } from "@/store/tableEditor/file/filter";

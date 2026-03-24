@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
 import type { IndexedRow } from "@/models/tableEditor/file/commands/IndexedRow";
 
 import { KeepDuplicateMode } from "@/models/tableEditor/file/commands/KeepDuplicateMode";

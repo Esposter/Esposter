@@ -1,10 +1,10 @@
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
-import type { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
+import type { DataSourceType } from "#shared/models/tableEditor/file/datasource/DataSourceType";
 
-import { Column } from "#shared/models/tableEditor/file/Column";
-import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
-import { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
-import { Row } from "#shared/models/tableEditor/file/Row";
+import { Column } from "#shared/models/tableEditor/file/column/Column";
+import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
+import { DateColumn } from "#shared/models/tableEditor/file/column/DateColumn";
+import { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import { coerceValue } from "@/services/tableEditor/file/column/coerceValue";
 import { inferColumnType } from "@/services/tableEditor/file/column/inferColumnType";
 import { inferDateFormat } from "@/services/tableEditor/file/column/inferDateFormat";

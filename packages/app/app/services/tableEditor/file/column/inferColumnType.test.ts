@@ -1,4 +1,4 @@
-import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
+import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { DATE_FORMATS } from "#shared/models/tableEditor/file/constants";
 import { dayjs } from "#shared/services/dayjs";
 import { inferColumnType } from "@/services/tableEditor/file/column/inferColumnType";

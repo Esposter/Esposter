@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
-import { rowSchema } from "#shared/models/tableEditor/file/Row";
+import { rowSchema } from "#shared/models/tableEditor/file/datasource/Row";
 import { isEditableColumn } from "@/services/tableEditor/file/column/isEditableColumn";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
@@ -12,7 +12,7 @@ interface EditDialogButtonProps {
 }
 
 const { columns, index, row } = defineProps<EditDialogButtonProps>();
-const editableColumns = computed(() => columns.filter(isEditableColumn));
+const editableColumns = computed(() => columns.filter((column) => isEditableColumn(column)));
 const updateRow = useUpdateRow();
 const title = computed(() => `Edit Row ${index + 1}`);
 const editedRow = ref(structuredClone(toRawDeep(row)));

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { ADataSourceItem } from "#shared/models/tableEditor/file/ADataSourceItem";
-import type { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
+import type { ADataSourceItem } from "#shared/models/tableEditor/file/datasource/ADataSourceItem";
+import type { DataSourceType } from "#shared/models/tableEditor/file/datasource/DataSourceType";
 import type { TodoListItem } from "#shared/models/tableEditor/todoList/TodoListItem";
 import type { VuetifyComponentItem } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 

@@ -95,3 +95,70 @@ format(item[key] as never); // safe: key and format always come from the same de
   values.filter((v) => typeof v === "number");
   ```
   Exception: when the predicate is a function reference (e.g. `filter(Boolean)`) that TypeScript cannot narrow automatically, a type predicate is still needed.
+
+## Polymorphic Dispatch — No Switch Statements
+
+**NEVER** write a function that switches over a discriminant enum to call different logic for each case. This anti-pattern (a "type switch dispatcher") concentrates all variant logic in one place, prevents co-location, and forces every new variant to touch the central function.
+
+**Instead, use a `*TypeComputeMap` (or `*TypeMap`) with a `compute` property per entry** — mirroring the `compute` property used in `ColumnStatDefinitions`:
+
+```ts
+// BAD — all logic in one place, hard to extend:
+const computeColumnTransformation = (value, transformation) => {
+  switch (transformation.type) {
+    case ColumnTransformationType.ConvertTo: /* ... big block ... */
+    case ColumnTransformationType.DatePart: /* ... big block ... */
+  }
+};
+
+// GOOD — each type's logic lives co-located with its own type definition:
+// services/column/transformation/computeConvertToTransformation.ts
+export const computeConvertToTransformation = (value, t: ConvertToTransformation) => ...;
+
+// services/column/transformation/ColumnTransformationTypeComputeMap.ts
+export const ColumnTransformationTypeComputeMap = {
+  [ColumnTransformationType.ConvertTo]: { compute: computeConvertToTransformation },
+  [ColumnTransformationType.DatePart]:  { compute: computeDatePartTransformation },
+  ...
+} as const;
+
+// Dispatcher is now a one-liner:
+export const computeColumnTransformation = (value, transformation) =>
+  ColumnTransformationTypeComputeMap[transformation.type].compute(value, transformation as never);
+```
+
+**Rules:**
+
+- Each per-type function lives in `services/<feature>/transformation/compute<TypeName>Transformation.ts`, co-located with its schema
+- The map file (`<Noun>TypeComputeMap.ts`) imports all per-type functions and re-exports as entries
+- Use `as const satisfies Record<TheType, { compute: (value: TValue, transformation: never) => TResult }>` — `never` as the parameter type satisfies contravariance (every specific function accepts something ≥ `never`); cast at the call site with `as never`
+- Adding a new variant only requires: (1) a new per-type function file, (2) one new entry in the map
+
+## Opt-In Shared Interfaces for Discriminated Union Members
+
+When some (but not all) members of a discriminated union share a common field, define a shared interface and Zod schema that members **opt into** by extending — never force the field onto all members.
+
+```ts
+// shared/models/.../WithSourceColumn.ts — opt-in base
+export interface WithSourceColumn { sourceColumnId: string; }
+export const withSourceColumnSchema = z.object({ sourceColumnId: z.string() });
+
+// Each transformation that needs a source column extends the base:
+export const convertToTransformationSchema = withSourceColumnSchema.extend({
+  type: z.literal(ColumnTransformationType.ConvertTo),
+  targetType: z.enum([...]),
+});
+
+// A future static transformation that needs NO source column simply doesn't extend it:
+export const staticValueTransformationSchema = z.object({
+  type: z.literal(ColumnTransformationType.StaticValue),
+  value: z.string(),
+});
+```
+
+**Rules:**
+
+- The shared interface/schema lives in its own file (one export per file rule)
+- Members that need the shared field use `.extend()` on the base schema
+- Members that don't need it just use `z.object({...})` directly
+- This pattern scales to multiple shared interfaces (e.g. `WithSourceColumns` for multi-input transformations)

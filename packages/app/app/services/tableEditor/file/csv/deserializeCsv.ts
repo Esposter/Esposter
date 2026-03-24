@@ -1,7 +1,7 @@
 import type { CsvDataSourceItem } from "#shared/models/tableEditor/file/csv/CsvDataSourceItem";
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
-import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
+import { DataSourceType } from "#shared/models/tableEditor/file/datasource/DataSourceType";
 import { deserializeCsvLine } from "@/services/tableEditor/file/csv/deserializeCsvLine";
 import { buildDataSource } from "@/services/tableEditor/file/dataSource/buildDataSource";
 import { takeOne } from "@esposter/shared";

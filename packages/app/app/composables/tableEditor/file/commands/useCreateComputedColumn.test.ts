@@ -1,6 +1,6 @@
-import { ColumnTransformationType } from "#shared/models/tableEditor/file/ColumnTransformationType";
-import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
-import { ComputedColumn } from "#shared/models/tableEditor/file/ComputedColumn";
+import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
+import { ComputedColumn } from "#shared/models/tableEditor/file/column/ComputedColumn";
+import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import {
   makeColumn,
   makeDataSource,
@@ -31,8 +31,11 @@ describe(useCreateComputedColumn, () => {
     const createComputedColumn = useCreateComputedColumn();
     const newColumn = new ComputedColumn({
       name: " ",
-      sourceColumnId: sourceColumn.id,
-      transformation: { type: ColumnTransformationType.ConvertTo, targetType: ColumnType.String },
+      transformation: {
+        sourceColumnId: sourceColumn.id,
+        targetType: ColumnType.String,
+        type: ColumnTransformationType.ConvertTo,
+      },
     });
     createComputedColumn(newColumn);
     const dataSource = editedItem.value?.dataSource;
@@ -51,8 +54,11 @@ describe(useCreateComputedColumn, () => {
     const createComputedColumn = useCreateComputedColumn();
     const newColumn = new ComputedColumn({
       name: " ",
-      sourceColumnId: sourceColumn.id,
-      transformation: { type: ColumnTransformationType.ConvertTo, targetType: ColumnType.String },
+      transformation: {
+        sourceColumnId: sourceColumn.id,
+        targetType: ColumnType.String,
+        type: ColumnTransformationType.ConvertTo,
+      },
     });
     createComputedColumn(newColumn);
     const dataSource = editedItem.value?.dataSource;
@@ -72,8 +78,11 @@ describe(useCreateComputedColumn, () => {
     const { undo } = fileHistoryStore;
     const newColumn = new ComputedColumn({
       name: " ",
-      sourceColumnId: sourceColumn.id,
-      transformation: { type: ColumnTransformationType.ConvertTo, targetType: ColumnType.String },
+      transformation: {
+        sourceColumnId: sourceColumn.id,
+        targetType: ColumnType.String,
+        type: ColumnTransformationType.ConvertTo,
+      },
     });
     createComputedColumn(newColumn);
     undo(editedItem.value);
@@ -94,8 +103,11 @@ describe(useCreateComputedColumn, () => {
     const { redo, undo } = fileHistoryStore;
     const newColumn = new ComputedColumn({
       name: " ",
-      sourceColumnId: sourceColumn.id,
-      transformation: { type: ColumnTransformationType.ConvertTo, targetType: ColumnType.String },
+      transformation: {
+        sourceColumnId: sourceColumn.id,
+        targetType: ColumnType.String,
+        type: ColumnTransformationType.ConvertTo,
+      },
     });
     createComputedColumn(newColumn);
     undo(editedItem.value);

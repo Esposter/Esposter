@@ -1,4 +1,4 @@
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
 
 import { copyToClipboard } from "@/services/tableEditor/file/commands/copyToClipboard";
 import { useAlertStore } from "@/store/alert";

@@ -1,4 +1,4 @@
-import { Column } from "#shared/models/tableEditor/file/Column";
+import { Column } from "#shared/models/tableEditor/file/column/Column";
 import { setupEditedItem, setupWithDataSource } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne } from "@esposter/shared";

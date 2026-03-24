@@ -1,7 +1,7 @@
 import type { ColumnStats } from "@/models/tableEditor/file/column/ColumnStats";
 import type { ApexAxisChartSeries, ApexNonAxisChartSeries, ApexOptions } from "apexcharts";
 
-import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
+import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 
 export interface ColumnChartData {
   options: ApexOptions;

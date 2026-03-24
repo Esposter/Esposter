@@ -1,6 +1,6 @@
 import type { ColumnStats } from "@/models/tableEditor/file/column/ColumnStats";
 
-import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
+import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { computeColumnChartData } from "@/services/tableEditor/file/column/computeColumnChartData";
 import { describe, expect, test } from "vitest";
 

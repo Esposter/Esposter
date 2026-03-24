@@ -1,4 +1,4 @@
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
 import type { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 
 import { MAX_HISTORY_SIZE } from "@/services/tableEditor/file/constants";

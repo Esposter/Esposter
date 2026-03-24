@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 import type { InternalDataTableHeader } from "vuetify/lib/components/VDataTable/types.mjs";
 import type { IconValue } from "vuetify/lib/composables/icons.mjs";
 

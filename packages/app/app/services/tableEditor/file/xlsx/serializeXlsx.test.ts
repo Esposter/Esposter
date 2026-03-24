@@ -1,8 +1,8 @@
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
-import { Column } from "#shared/models/tableEditor/file/Column";
-import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
-import { Row } from "#shared/models/tableEditor/file/Row";
+import { Column } from "#shared/models/tableEditor/file/column/Column";
+import { DataSourceType } from "#shared/models/tableEditor/file/datasource/DataSourceType";
+import { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import { XlsxDataSourceItem } from "#shared/models/tableEditor/file/xlsx/XlsxDataSourceItem";
 import { DataSourceConfigurationMap } from "@/services/tableEditor/file/dataSource/DataSourceConfigurationMap";
 import { serializeXlsx } from "@/services/tableEditor/file/xlsx/serializeXlsx";

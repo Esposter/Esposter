@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
 import { isEditableColumn } from "@/services/tableEditor/file/column/isEditableColumn";
 
@@ -14,7 +14,6 @@ const { column, dataSource } = defineProps<ActionSlotProps>();
 <template>
   <div flex>
     <TableEditorFileColumnChartDialogButton :column :data-source />
-    <TableEditorFileColumnTogglePinButton :column-id="column.id" :column-name="column.name" :fixed="column.fixed" />
     <TableEditorFileColumnToggleVisibilityButton
       :column-id="column.id"
       :column-name="column.name"

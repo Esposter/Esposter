@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
-import { ComputedColumn, computedColumnSchema } from "#shared/models/tableEditor/file/ComputedColumn";
+import { ComputedColumn, computedColumnSchema } from "#shared/models/tableEditor/file/column/ComputedColumn";
 
 interface CreateComputedColumnDialogButtonProps {
   dataSource: DataSource;
@@ -36,6 +36,6 @@ const resetForm = () => {
     "
   >
     <v-text-field v-model="editedColumn.name" label="Column" :rules="[uniqueNameRule]" />
-    <TableEditorFileColumnComputedColumnForm v-model="editedColumn" :data-source />
+    <TableEditorFileColumnComputedColumnForm v-model="editedColumn" />
   </TableEditorFileCrudViewEditDialogButton>
 </template>

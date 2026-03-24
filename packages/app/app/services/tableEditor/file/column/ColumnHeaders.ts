@@ -1,4 +1,4 @@
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 import type { DataTableHeader } from "@/models/vuetify/DataTableHeader";
 
 export const ColumnHeaders: DataTableHeader<DataSource["columns"][number]>[] = [

@@ -1,9 +1,9 @@
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
 
-import { Column } from "#shared/models/tableEditor/file/Column";
-import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
-import { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
+import { Column } from "#shared/models/tableEditor/file/column/Column";
+import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
+import { DateColumn } from "#shared/models/tableEditor/file/column/DateColumn";
 import { CreateColumnCommand } from "@/models/tableEditor/file/commands/CreateColumnCommand";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";

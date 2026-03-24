@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
+import type { DataSourceType } from "#shared/models/tableEditor/file/datasource/DataSourceType";
 
 interface EmptyStateProps {
   type: DataSourceType;

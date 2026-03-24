@@ -1,6 +1,6 @@
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
-import { Row } from "#shared/models/tableEditor/file/Row";
+import { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
 export const filterDataSourceColumns = (dataSource: DataSource, columnIds: string[]): DataSource => {

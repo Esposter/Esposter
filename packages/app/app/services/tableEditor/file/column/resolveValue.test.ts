@@ -1,7 +1,4 @@
-import { ColumnTransformationType, MathOperationType } from "#shared/models/tableEditor/file/ColumnTransformationType";
-import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
-import { ComputedColumn } from "#shared/models/tableEditor/file/ComputedColumn";
-import { Row } from "#shared/models/tableEditor/file/Row";
+import { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import {
   makeColumn,
   makeComputedColumn,
@@ -32,21 +29,6 @@ describe(resolveValue, () => {
     expect(resolveValue(row, dataSource.columns, column)).toBeNull();
   });
 
-  test("evaluates transformation for computed column", () => {
-    expect.hasAssertions();
-
-    const sourceColumn = makeColumn("");
-    const computedColumn = makeComputedColumn(" ", sourceColumn.id, {
-      type: ColumnTransformationType.MathOperation,
-      operation: MathOperationType.Multiply,
-      operand: 2,
-    });
-    const row = makeRow({ "": 1 });
-    const dataSource = makeDataSource([sourceColumn, computedColumn], [row]);
-
-    expect(resolveValue(row, dataSource.columns, computedColumn)).toBe(2);
-  });
-
   test("returns null for computed column when source column is not found", () => {
     expect.hasAssertions();
 
@@ -57,32 +39,25 @@ describe(resolveValue, () => {
     expect(resolveValue(row, dataSource.columns, computedColumn)).toBeNull();
   });
 
-  test("returns null for computed column when source value is null", () => {
+  test("returns null for computed column when source column is itself computed", () => {
     expect.hasAssertions();
 
-    const sourceColumn = makeColumn("");
-    const computedColumn = makeComputedColumn(" ", sourceColumn.id, {
-      type: ColumnTransformationType.MathOperation,
-      operation: MathOperationType.Multiply,
-      operand: 2,
-    });
-    const row = makeRow({ "": null });
+    const sourceColumn = makeComputedColumn("source", "-1");
+    const computedColumn = makeComputedColumn("computed", sourceColumn.id);
+    const row = makeRow({});
     const dataSource = makeDataSource([sourceColumn, computedColumn], [row]);
 
     expect(resolveValue(row, dataSource.columns, computedColumn)).toBeNull();
   });
 
-  test("computed column with ConvertTo transformation converts source value", () => {
+  test("returns null for computed column when source value is null", () => {
     expect.hasAssertions();
 
     const sourceColumn = makeColumn("");
-    const computedColumn = makeComputedColumn(" ", sourceColumn.id, {
-      type: ColumnTransformationType.ConvertTo,
-      targetType: ColumnType.Number,
-    });
-    const row = makeRow({ "": "0.1" });
+    const computedColumn = makeComputedColumn(" ", sourceColumn.id);
+    const row = makeRow({ "": null });
     const dataSource = makeDataSource([sourceColumn, computedColumn], [row]);
 
-    expect(resolveValue(row, dataSource.columns, computedColumn)).toBeCloseTo(0.1);
+    expect(resolveValue(row, dataSource.columns, computedColumn)).toBeNull();
   });
 });

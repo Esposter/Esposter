@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
-import type { Row } from "#shared/models/tableEditor/file/Row";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
+import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
 
-import { toColumnKey } from "@/services/tableEditor/file/column/toColumnKey";
 import { resolveValue } from "@/services/tableEditor/file/column/resolveValue";
+import { toColumnKey } from "@/services/tableEditor/file/column/toColumnKey";
 import { DRAG_HANDLE_CLASS } from "@/services/tableEditor/file/constants";
 import { filterDataSourceRows } from "@/services/tableEditor/file/dataSource/filterDataSourceRows";
 import { useFilterStore } from "@/store/tableEditor/file/filter";
@@ -22,12 +22,10 @@ const { columnFilters } = storeToRefs(filterStore);
 const reorderRows = useReorderRows();
 const filteredDataSource = computed(() => filterDataSourceRows(dataSource, columnFilters.value));
 const displayColumns = computed(() => dataSource.columns.filter((column) => !column.hidden));
-const hasPinnedColumns = computed(() => displayColumns.value.some((column) => column.fixed));
 const headers = computed(() => [
-  { fixed: hasPinnedColumns.value ? ("start" as const) : false, key: "drag", sortable: false, title: "" },
-  { fixed: hasPinnedColumns.value ? ("start" as const) : false, key: "#", sortable: false, title: "#" },
+  { key: "drag", sortable: false, title: "" },
+  { key: "#", sortable: false, title: "#" },
   ...displayColumns.value.map((column) => ({
-    fixed: column.fixed ? ("start" as const) : false,
     key: toColumnKey(column.name),
     title: column.name,
     value: (row: Row) => resolveValue(row, dataSource.columns, column),

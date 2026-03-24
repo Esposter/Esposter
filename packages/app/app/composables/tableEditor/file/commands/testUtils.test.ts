@@ -1,15 +1,15 @@
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
+import type { ColumnTransformation } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformation";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
 
-import { Column } from "#shared/models/tableEditor/file/Column";
-import { type ColumnTransformation } from "#shared/models/tableEditor/file/ColumnTransformation";
-import { ColumnTransformationType } from "#shared/models/tableEditor/file/ColumnTransformationType";
-import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
-import { ComputedColumn } from "#shared/models/tableEditor/file/ComputedColumn";
+import { Column } from "#shared/models/tableEditor/file/column/Column";
+import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
+import { ComputedColumn } from "#shared/models/tableEditor/file/column/ComputedColumn";
+import { DateColumn } from "#shared/models/tableEditor/file/column/DateColumn";
+import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import { CsvDataSourceItem } from "#shared/models/tableEditor/file/csv/CsvDataSourceItem";
-import { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
-import { DateColumn } from "#shared/models/tableEditor/file/DateColumn";
-import { Row } from "#shared/models/tableEditor/file/Row";
+import { DataSourceType } from "#shared/models/tableEditor/file/datasource/DataSourceType";
+import { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { useItemStore } from "@/store/tableEditor/item";
 import { describe } from "vitest";
@@ -32,8 +32,12 @@ export const makeDateColumn = (name: string, format: DateColumn["format"]): Date
 export const makeComputedColumn = (
   name: string,
   sourceColumnId: string,
-  transformation: ColumnTransformation = { type: ColumnTransformationType.ConvertTo, targetType: ColumnType.String },
-): ComputedColumn => new ComputedColumn({ name, size: 0, sourceName: name, sourceColumnId, transformation });
+  transformation: ColumnTransformation = {
+    sourceColumnId,
+    targetType: ColumnType.String,
+    type: ColumnTransformationType.ConvertTo,
+  },
+): ComputedColumn => new ComputedColumn({ name, size: 0, sourceName: name, transformation });
 
 export const makeRow = (data: Record<string, boolean | null | number | string>): Row => new Row({ data });
 

@@ -1,4 +1,4 @@
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
 import type { IndexedColumn } from "@/models/tableEditor/file/commands/IndexedColumn";
 
 import { DeleteColumnsCommand } from "@/models/tableEditor/file/commands/DeleteColumnsCommand";

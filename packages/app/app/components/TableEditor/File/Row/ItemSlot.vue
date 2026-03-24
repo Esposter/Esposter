@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { ColumnValue } from "#shared/models/tableEditor/file/ColumnValue";
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
-import { Row } from "#shared/models/tableEditor/file/Row";
+import { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import { isEditableColumn } from "@/services/tableEditor/file/column/isEditableColumn";
 import { resolveValue } from "@/services/tableEditor/file/column/resolveValue";
 import { OUTLIER_HIGHLIGHT_CLASS } from "@/services/tableEditor/file/constants";
