@@ -1,24 +1,29 @@
 <script setup lang="ts" generic="T extends ItemEntityType<string>">
+import type StyledEditFormDialogErrorIcon from "@/components/Styled/EditFormDialog/ErrorIcon.vue";
 import type { ItemEntityType } from "@esposter/shared";
 import type { VForm } from "vuetify/components";
+import type { z } from "zod";
 
 import { prettify } from "@/util/text/prettify";
 
 interface HeaderProps<T> {
   editedItem: T;
-  editFormRef: InstanceType<typeof VForm> | undefined;
-  formError: string;
+  editForm: InstanceType<typeof VForm> | undefined;
+  formId: string;
   isEditFormValid: boolean;
   isFullScreenDialog: boolean;
   isSavable: boolean;
   name: string;
   originalItem?: T;
+  schema: z.ZodType;
 }
 
 defineSlots<{ "prepend-actions": () => VNode }>();
-const { editedItem, editFormRef, formError, isEditFormValid, isFullScreenDialog, isSavable, name, originalItem } =
+const { editedItem, editForm, formId, isEditFormValid, isFullScreenDialog, isSavable, name, originalItem, schema } =
   defineProps<HeaderProps<T>>();
 const itemType = computed(() => prettify(editedItem.type));
+const errorIcon = useTemplateRef<InstanceType<typeof StyledEditFormDialogErrorIcon>>("errorIcon");
+const isValid = computed(() => errorIcon.value?.isValid ?? true);
 const emit = defineEmits<{
   delete: [onComplete: () => void];
   save: [];
@@ -30,15 +35,12 @@ const emit = defineEmits<{
 <template>
   <v-toolbar flex-none pl-4 :title="`Configuration - ${itemType}`">
     <v-spacer />
-    <StyledEditFormDialogErrorIcon :edit-form-ref :form-error :is-edit-form-valid />
+    <StyledEditFormDialogErrorIcon ref="errorIcon" :edit-form :is-edit-form-valid :schema :edited-value="editedItem" />
     <slot name="prepend-actions" />
-    <StyledEditFormDialogSaveButton :is-savable />
+    <StyledEditFormDialogSaveButton :form-id :is-savable="isSavable && isValid" />
     <StyledEditFormDialogConfirmDeleteDialogButton :name :original-item @delete="emit('delete', $event)" />
     <v-divider mx-2 thickness="2" vertical inset />
-    <StyledEditFormDialogToggleFullScreenDialogButton
-      :is-full-screen-dialog
-      @click="emit('update:fullscreen-dialog', $event)"
-    />
+    <StyledToggleFullScreenDialogButton :is-full-screen-dialog @click="emit('update:fullscreen-dialog', $event)" />
     <StyledEditFormDialogConfirmCloseDialogButton
       :edited-item
       :is-savable

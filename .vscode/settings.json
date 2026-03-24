@@ -1,20 +1,5 @@
 {
-  "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.gotoLocation.multipleDefinitions": "goto",
-  "files.associations": {
-    ".env": "env",
-    ".env.example": "env",
-    ".tsx": "xml"
-  },
-  "search.followSymlinks": false,
-  "symlink-follow.autoFollow": true,
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.tsserver.maxTsServerMemory": 8000,
-  "javascript.updateImportsOnFileMove.enabled": "always",
-  "typescript.updateImportsOnFileMove.enabled": "always",
   "[javascript][typescript][vue]": {
-    "editor.formatOnSave": false,
     "editor.codeActionsOnSave": ["source.organizeImports", "source.fixAll.oxc", "source.fixAll.eslint"]
   },
   "[properties]": {
@@ -29,11 +14,25 @@
   "[xml]": {
     "editor.formatOnSave": false
   },
-  "oxc.enable": true,
   "azureFunctions.deploySubpath": "packages\\azure-functions",
-  "azureFunctions.preDeployTask": "npm prune (functions)",
   "azureFunctions.postDeployTask": "npm install (functions)",
+  "azureFunctions.preDeployTask": "npm prune (functions)",
   "azureFunctions.projectLanguage": "JavaScript",
   "azureFunctions.projectRuntime": "~4",
-  "debug.internalConsoleOptions": "neverOpen"
+  "debug.internalConsoleOptions": "neverOpen",
+  "editor.defaultFormatter": "oxc.oxc-vscode",
+  "editor.formatOnSave": true,
+  "editor.gotoLocation.multipleDefinitions": "goto",
+  "files.associations": {
+    ".env": "env",
+    ".env.example": "env",
+    ".tsx": "xml"
+  },
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "oxc.enable": true,
+  "search.followSymlinks": false,
+  "symlink-follow.autoFollow": true,
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.tsserver.maxTsServerMemory": 8000,
+  "typescript.updateImportsOnFileMove.enabled": "always"
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Metadata } from "#shared/models/tableEditor/file/Metadata";
+import type { Metadata } from "#shared/models/tableEditor/file/datasource/Metadata";
 
 import { dayjs } from "#shared/services/dayjs";
 import { formatSize } from "@/util/formatSize";

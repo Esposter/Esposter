@@ -1,3 +1,4 @@
+import { MimeType } from "#shared/models/file/MimeType";
 import { webhookRateLimiter } from "@@/server/services/rateLimiter/webhookRateLimiter";
 import { RestError } from "@azure/storage-blob";
 import { selectWebhookSchema } from "@esposter/db-schema";
@@ -23,7 +24,7 @@ export default defineEventHandler(async (event) => {
       {
         body,
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": MimeType.Json,
           "x-functions-key": runtimeConfig.azure.function.key,
         },
         method: "POST",

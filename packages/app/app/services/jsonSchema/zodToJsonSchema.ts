@@ -8,21 +8,25 @@ export const zodToJsonSchema = (schema: z.ZodObject) => {
   const { properties, type } = z.toJSONSchema(schema, {
     override: (ctx) => {
       const meta = (ctx.zodSchema as z.ZodObject).meta();
-      if (!meta?.rules?.length) return;
-      (ctx.jsonSchema as Record<string, unknown>).layout = {
-        props: { rules: meta.rules },
-      };
+      if (!meta?.getProps) return;
+      (ctx.jsonSchema as Record<string, unknown>).layout = { getProps: meta.getProps };
     },
   });
   recurseProperties(properties, {
     otherHooks: [
       (key, property) => {
         property.title ??= toTitleCase(prettify(key));
-        // Migrate anyOf to oneOf since we just need to support enums properly for vjsf
+        // Support z.union => anyOf
+        // Vjsf doesn't support anyOf since it can have different values
+        // But we know it will always come from the same enum
+        // We just need to use z.union to define metadata with z.literal so we migrate anyOf to oneOf
         if (property.anyOf) {
           property.oneOf = property.anyOf;
           delete property.anyOf;
         }
+        // Support z.literal => const
+        // Vjsf component doesn't show up with const
+        if (property.const) delete property.const;
       },
     ],
   });

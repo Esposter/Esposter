@@ -2,6 +2,8 @@
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
 import type { MessageEntity } from "@esposter/db-schema";
 
+import { useColorsStore } from "@/store/colors";
+
 interface ConfirmPinDialogProps {
   message: MessageEntity;
 }
@@ -12,7 +14,8 @@ defineSlots<{
 }>();
 const { message } = defineProps<ConfirmPinDialogProps>();
 const { $trpc } = useNuxtApp();
-const { text } = useColors();
+const colorsStore = useColorsStore();
+const { text } = storeToRefs(colorsStore);
 </script>
 
 <template>
@@ -22,8 +25,8 @@ const { text } = useColors();
       text: 'Hey, just double-checking that you want to pin this message to the current room for posterity and greatness?',
     }"
     :confirm-button-props="{ text: 'Oh yeah. Pin it' }"
-    @submit="
-      async (_event, onComplete) => {
+    @confirm="
+      async (onComplete) => {
         try {
           await $trpc.message.pinMessage.mutate({ partitionKey: message.partitionKey, rowKey: message.rowKey });
         } finally {

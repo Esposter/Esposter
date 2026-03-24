@@ -11,13 +11,13 @@ const survey = defineModel<Survey>("survey", { required: true });
     v-model="dialog"
     :card-props="{ title: 'Publish Survey' }"
     :confirm-button-props="{ text: 'Publish' }"
-    @submit="
-      async () => {
+    @confirm="
+      async (onComplete) => {
         Object.assign(
           survey,
           await $trpc.survey.publishSurvey.mutate({ id: survey.id, publishVersion: survey.publishVersion }),
         );
-        dialog = false;
+        onComplete();
       }
     "
   >

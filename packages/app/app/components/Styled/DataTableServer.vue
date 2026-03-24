@@ -1,13 +1,15 @@
 <script setup lang="ts">
+import { useColorsStore } from "@/store/colors";
 import { VDataTableServer } from "vuetify/components/VDataTable";
 
 interface StyledDataTableServerProps {
   dataTableServerProps: VDataTableServer["$props"];
 }
 
-const { dataTableServerProps } = defineProps<StyledDataTableServerProps>();
 const slots = defineSlots<Record<keyof VDataTableServer["$slots"], Function>>();
-const { backgroundOpacity40 } = useColors();
+const { dataTableServerProps } = defineProps<StyledDataTableServerProps>();
+const colorsStore = useColorsStore();
+const { backgroundOpacity40 } = storeToRefs(colorsStore);
 </script>
 
 <template>

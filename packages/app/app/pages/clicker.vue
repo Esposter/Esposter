@@ -5,8 +5,7 @@ import { useClickerStore } from "@/store/clicker";
 await useReadClicker();
 useTimers();
 const clickerStore = useClickerStore();
-const { clicker } = storeToRefs(clickerStore);
-const clickerItemProperties = useClickerItemProperties();
+const { clicker, clickerItemProperties } = storeToRefs(clickerStore);
 const displayNoPoints = computed(() => formatNumberLong(clicker.value.noPoints, 3));
 </script>
 

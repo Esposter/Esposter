@@ -73,8 +73,7 @@ export const useMonsterPartyInputStore = defineStore("dungeons/monsterParty/inpu
       }
       default: {
         const monsterDetailsSceneStore = useMonsterDetailsSceneStore();
-        const { selectedMonster } = storeToRefs(monsterDetailsSceneStore);
-        selectedMonster.value = value;
+        monsterDetailsSceneStore.selectedMonster = value;
         launchScene(scene, SceneKey.MonsterDetails);
         return;
       }

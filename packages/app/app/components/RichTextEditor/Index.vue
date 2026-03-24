@@ -19,7 +19,7 @@ interface RichTextEditorProps {
   placeholder?: string;
 }
 
-const slots = defineSlots<{
+defineSlots<{
   "append-footer": (props: FooterBarAppendSlotProps) => VNode;
   "prepend-footer": (props: FooterBarPrependSlotProps) => VNode;
   "prepend-inner-header": () => VNode;

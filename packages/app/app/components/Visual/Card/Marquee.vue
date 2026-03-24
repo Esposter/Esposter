@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import type { Card } from "@/models/visual/Card";
 
+import { useColorsStore } from "@/store/colors";
+
 interface VisualCardMarqueeProps {
   cards: Card[];
 }
 
 const { cards } = defineProps<VisualCardMarqueeProps>();
-const { "on-surface": onSurface, surface } = useColors();
+const colorsStore = useColorsStore();
+const { "on-surface": onSurface, surface } = storeToRefs(colorsStore);
 </script>
 
 <template>

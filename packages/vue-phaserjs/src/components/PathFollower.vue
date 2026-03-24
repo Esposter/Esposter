@@ -13,7 +13,7 @@ export interface PathFollowerProps {
   onComplete?: (scene: SceneWithPlugins, pathFollower: GameObjects.PathFollower) => void;
 }
 
-interface PathFollowerEmits extends /** @vue-ignore */ PathFollowerEventEmitsOptions {}
+interface PathFollowerEmits  extends /** @vue-ignore */ PathFollowerEventEmitsOptions {}
 
 const { configuration, onComplete } = defineProps<PathFollowerProps>();
 const emit = defineEmits<PathFollowerEmits>();

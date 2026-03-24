@@ -16,10 +16,8 @@ import {
 import { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
 import { TABLE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/tableEditor/constants";
-import { TableEditorTypeItemSchemaMap } from "@/services/tableEditor/TableEditorTypeItemSchemaMap";
 import { useItemStore } from "@/store/tableEditor/item";
 import { toRawDeep } from "@esposter/shared";
-import { z } from "zod";
 
 type TableEditorStoreState<
   TItem extends ToData<Item> = ToData<Item>,
@@ -42,7 +40,7 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
   const tableEditorConfiguration = ref(new TableEditorConfiguration());
   const tableEditorType = ref(TableEditorType.TodoList);
   const tableEditor = computed(() => tableEditorConfiguration.value[tableEditorType.value]);
-  const { editedIndex, editedItem, editFormDialog, formError, ...rest } = createEditFormData(
+  const { editedIndex, editedItem, editFormDialog, ...rest } = createEditFormData(
     computed(() => tableEditor.value.items as Item[]),
     ["id"],
   );
@@ -75,26 +73,10 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
     await saveConfiguration(snapshot);
   };
 
-  watch(
-    editedItem,
-    (item) => {
-      if (!item) {
-        formError.value = "";
-        return;
-      }
-
-      const schema = TableEditorTypeItemSchemaMap[tableEditorType.value];
-      const result = schema.safeParse(toRawDeep(item));
-      formError.value = result.success ? "" : z.prettifyError(result.error);
-    },
-    { deep: true, immediate: true },
-  );
-
   return {
     editedIndex,
     editedItem,
     editFormDialog,
-    formError,
     searchQuery,
     tableEditor,
     tableEditorConfiguration,

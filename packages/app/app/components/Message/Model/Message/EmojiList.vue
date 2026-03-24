@@ -3,6 +3,7 @@ import type { MessageEntity } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
 import { EMOJI_PICKER_TOOLTIP_TEXT } from "@/services/styled/constants";
+import { useColorsStore } from "@/store/colors";
 import { useEmojiStore } from "@/store/message/emoji";
 import { emojify } from "node-emoji";
 
@@ -13,7 +14,8 @@ interface MessageEmojiListProps {
 
 const { isPreview, message } = defineProps<MessageEmojiListProps>();
 const { data: session } = await authClient.useSession(useFetch);
-const { backgroundOpacity80, border, info, infoOpacity10, surfaceOpacity80 } = useColors();
+const colorsStore = useColorsStore();
+const { backgroundOpacity80, border, info, infoOpacity10, surfaceOpacity80 } = storeToRefs(colorsStore);
 const emojiStore = useEmojiStore();
 const { deleteEmoji, getEmojis, updateEmoji } = emojiStore;
 const emojis = computed(() =>

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
-import { ColumnType } from "#shared/models/tableEditor/file/ColumnType";
-import { dayjs } from "#shared/services/dayjs";
-import { takeOne } from "@esposter/shared";
+import { rowSchema } from "#shared/models/tableEditor/file/datasource/Row";
+import { isEditableColumnValue } from "@/services/tableEditor/file/column/isEditableColumnValue";
+import { takeOne, toRawDeep } from "@esposter/shared";
 
 interface EditDialogButtonProps {
   columns: DataSource["columns"];
@@ -12,58 +12,46 @@ interface EditDialogButtonProps {
 }
 
 const { columns, index, row } = defineProps<EditDialogButtonProps>();
-const { updateRow } = useEditedItemDataSource();
-const editedRow = ref({ ...row });
+const editableColumns = computed(() => columns.filter((column) => isEditableColumnValue(column)));
+const updateRow = useUpdateRow();
+const title = computed(() => `Edit Row ${index + 1}`);
+const editedRow = ref(structuredClone(toRawDeep(row)));
+const resetForm = () => {
+  editedRow.value = structuredClone(toRawDeep(row));
+};
+
+watch(
+  () => row,
+  (newRow) => {
+    editedRow.value = structuredClone(toRawDeep(newRow));
+  },
+  { deep: true },
+);
 </script>
 
 <template>
-  <StyledDialog
-    :card-props="{ title: 'Edit Row' }"
-    :confirm-button-props="{ text: 'Save & Close' }"
+  <TableEditorFileCrudViewEditDialogButton
+    :title
+    :tooltip-text="title"
+    :value="row"
+    :edited-value="editedRow"
+    :schema="rowSchema"
     @submit="
-      (_event, onComplete) => {
-        updateRow(index, editedRow);
+      (onComplete) => {
+        updateRow(editedRow);
         onComplete();
       }
     "
+    @reset="resetForm()"
   >
-    <template #activator="{ updateIsOpen }">
-      <v-tooltip text="Edit Row">
-        <template #activator="{ props: tooltipProps }">
-          <v-btn m-0 icon="mdi-pencil" size="small" tile :="tooltipProps" @click.stop="updateIsOpen(true)" />
-        </template>
-      </v-tooltip>
-    </template>
-    <v-container fluid>
-      <v-row v-for="column of columns" :key="column.name">
-        <v-col cols="12">
-          <v-checkbox
-            v-if="column.type === ColumnType.Boolean"
-            v-model="editedRow[column.name]"
-            :label="column.sourceName"
-          />
-          <v-text-field
-            v-else
-            :model-value="
-              (() => {
-                const value = takeOne(editedRow, column.name);
-                if (column.type === ColumnType.Date && typeof value === 'string') {
-                  const date = dayjs(value, column.format, true);
-                  if (date.isValid()) return date.format('YYYY-MM-DD');
-                  return value;
-                } else return value;
-              })()
-            "
-            :label="column.sourceName"
-            :type="column.type === ColumnType.Number ? 'number' : column.type === ColumnType.Date ? 'date' : 'text'"
-            density="compact"
-            @update:model-value="
-              editedRow[column.name] =
-                column.type === ColumnType.Date ? dayjs($event, 'YYYY-MM-DD').format(column.format) : $event
-            "
-          />
-        </v-col>
-      </v-row>
-    </v-container>
-  </StyledDialog>
+    <v-row v-for="column of editableColumns.filter((column) => !column.hidden)" :key="column.id">
+      <v-col cols="12">
+        <TableEditorFileRowFieldInput
+          :model-value="takeOne(editedRow.data, column.name)"
+          :column
+          @update:model-value="editedRow.data[column.name] = $event"
+        />
+      </v-col>
+    </v-row>
+  </TableEditorFileCrudViewEditDialogButton>
 </template>

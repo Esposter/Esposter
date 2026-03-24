@@ -46,6 +46,16 @@ export class TiledJSONExternalFile extends MultiFile {
 
     const [tilemapFile, ...tilesetFiles] = this.files;
     if (!(tilemapFile.type === "json" && Object.hasOwn(tilemapFile.data, "tilesets"))) return;
+    // Capture everything we need from `this` and the files before the first await.
+    // Phaser doesn't await addToCache(), so its synchronous lifecycle runs between awaits:
+    // PendingDestroy() nulls tilemapFile.data, and loader cleanup nulls this.loader.
+    const tilemapData = tilemapFile.data;
+    const tilemapKey = tilemapFile.key;
+    const loader = this.loader;
+    const files = this.files;
+    // Prevent a concurrent second call before we finish (complete is normally set at the end,
+    // But Phaser may call addToCache again for each tileset file completing).
+    this.complete = true;
 
     for (const tilesetFile of tilesetFiles) {
       const responseText = tilesetFile.xhrLoader?.responseText;
@@ -55,7 +65,7 @@ export class TiledJSONExternalFile extends MultiFile {
       const responseData = await parseXmlString<{ tileset: TMXEmbeddedTilesetNode }>(responseText);
       const tilesetData = parseTileset(responseData.tileset) as TMXEmbeddedTilesetParsed;
       const index = tilesetFile.tilesetIndex;
-      Object.assign(tilemapFile.data.tilesets[index], tilesetData, {
+      Object.assign(tilemapData.tilesets[index], tilesetData, {
         imageheight: tilesetData.image.height,
         imagewidth: tilesetData.image.width,
         // Avoid throwing in tilemap creator
@@ -63,13 +73,12 @@ export class TiledJSONExternalFile extends MultiFile {
       });
     }
 
-    this.loader.cacheManager.tilemap.add(tilemapFile.key, {
-      data: tilemapFile.data,
+    loader.cacheManager.tilemap.add(tilemapKey, {
+      data: tilemapData,
       format: Tilemaps.Formats.TILED_JSON,
     });
-    this.complete = true;
 
-    for (const file of this.files) file.pendingDestroy();
+    for (const file of files) file.pendingDestroy();
   }
 
   override onFileComplete(file: TilemapFile) {

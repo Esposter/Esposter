@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { formatNumberLong } from "@/services/clicker/format";
+import { useClickerStore } from "@/store/clicker";
 
 export interface PointsPopupProps {
   duration: number;
@@ -9,12 +10,13 @@ export interface PointsPopupProps {
 }
 
 const { duration, left, points, top } = defineProps<PointsPopupProps>();
-const clickerItemProperties = useClickerItemProperties();
+const clickerStore = useClickerStore();
+const { clickerItemProperties } = storeToRefs(clickerStore);
 const color = computed(() => clickerItemProperties.value.color);
 const displayPoints = computed(() => formatNumberLong(points));
-const topPx = computed(() => `${top}px`);
-const leftPx = computed(() => `${left}px`);
 const durationMs = computed(() => `${duration}ms`);
+const leftPx = computed(() => `${left}px`);
+const topPx = computed(() => `${top}px`);
 </script>
 
 <template>

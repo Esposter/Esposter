@@ -19,7 +19,27 @@
       "mcp__vuetify-mcp__get_installation_guide",
       "mcp__vuetify-mcp__get_v4_breaking_changes",
       "Bash(pnpm install:*)",
-      "WebFetch(domain:koumoul-dev.github.io)"
+      "WebFetch(domain:koumoul-dev.github.io)",
+      "Bash(pnpm outdated:*)",
+      "Bash(cd:*)",
+      "Bash(pnpm test:*)",
+      "mcp__vuetify-mcp__get_component_api_by_version",
+      "Bash(for f:*)",
+      "Bash(do echo:*)",
+      "Bash(done)",
+      "Bash(git log:*)",
+      "Bash(npm info:*)",
+      "Bash(pnpm export:gen)",
+      "Bash(pnpm search:*)",
+      "Bash(npm search:*)",
+      "Bash(pnpm lint:*)",
+      "Bash(pnpm lint:fix)",
+      "Bash(ls:*)",
+      "Bash(pnpm list:*)",
+      "WebFetch(domain:nuxt.com)",
+      "WebFetch(domain:vueuse.org)",
+      "Bash(pnpm format:*)",
+      "Bash(npm show:*)"
     ]
   }
 }

@@ -1,42 +1,51 @@
-import type { ADataSourceItem } from "#shared/models/tableEditor/file/ADataSourceItem";
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
-import type { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
+import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
 
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
-import { getValueSize } from "@/services/tableEditor/file/getValueSize";
+import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
+import { getRecordDifferenceDescription } from "@/services/tableEditor/file/commands/getRecordDifferenceDescription";
+import { getValueSize } from "@/services/tableEditor/file/commands/getValueSize";
 import { takeOne } from "@esposter/shared";
 
-export class UpdateRowCommand extends ADataSourceCommand {
-  readonly name = "UpdateRowCommand";
+export class UpdateRowCommand extends ADataSourceCommand<CommandType.UpdateRow> {
+  readonly type = CommandType.UpdateRow;
 
   get description() {
-    return `Update row #${this.index + 1}`;
+    const recordDifferenceDescription = getRecordDifferenceDescription(this.originalRow.data, this.updatedRow.data);
+    const detail = recordDifferenceDescription ? `\n\n${recordDifferenceDescription}` : "";
+    return `Edit Row ${this.index + 1}${detail}`;
   }
 
   private readonly index: number;
-  private readonly originalRow: DataSource["rows"][number];
-  private readonly updatedRow: DataSource["rows"][number];
+  private readonly originalRow: { data: Record<string, ColumnValue> };
+  private readonly updatedRow: { data: Record<string, ColumnValue> };
 
-  constructor(index: number, originalRow: DataSource["rows"][number], updatedRow: DataSource["rows"][number]) {
+  constructor(
+    index: number,
+    originalRow: { data: Record<string, ColumnValue> },
+    updatedRow: { data: Record<string, ColumnValue> },
+  ) {
     super();
     this.index = index;
     this.originalRow = originalRow;
     this.updatedRow = updatedRow;
   }
 
-  protected doExecute(item: ADataSourceItem<DataSourceType>) {
+  protected doExecute(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
     if (!item.dataSource || this.index === -1) return;
     const row = takeOne(item.dataSource.rows, this.index);
     for (const column of item.dataSource.columns)
-      column.size += getValueSize(takeOne(this.updatedRow, column.name)) - getValueSize(takeOne(row, column.name));
-    Object.assign(row, this.updatedRow);
+      column.size +=
+        getValueSize(takeOne(this.updatedRow.data, column.name)) - getValueSize(takeOne(row.data, column.name));
+    row.data = { ...this.updatedRow.data };
   }
 
-  protected doUndo(item: ADataSourceItem<DataSourceType>) {
+  protected doUndo(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
     if (!item.dataSource || this.index === -1) return;
     const row = takeOne(item.dataSource.rows, this.index);
     for (const column of item.dataSource.columns)
-      column.size += getValueSize(takeOne(this.originalRow, column.name)) - getValueSize(takeOne(row, column.name));
-    Object.assign(row, this.originalRow);
+      column.size +=
+        getValueSize(takeOne(this.originalRow.data, column.name)) - getValueSize(takeOne(row.data, column.name));
+    row.data = { ...this.originalRow.data };
   }
 }

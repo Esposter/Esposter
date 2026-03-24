@@ -1,19 +1,24 @@
-import type { columnFormSchema } from "#shared/models/tableEditor/file/Column";
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
-import type { z } from "zod";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
-import { ColumnTypeFormSchemaMap } from "#shared/models/tableEditor/file/ColumnTypeFormSchemaMap";
+import { ColumnTypeFormSchemaMap } from "#shared/models/tableEditor/file/column/ColumnTypeFormSchemaMap";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 
-export const useColumnTypeFormJsonSchema = (column: MaybeRefOrGetter<DataSource["columns"][number]>) => {
-  const { dataSource } = useEditedItemDataSource();
-  return computed(() => {
+const GET_PROPS = `{ rules: [(value) => value === context.currentName || !context.columnNames.includes(value) || 'Column already exists'] }`;
+
+export const useColumnTypeFormJsonSchema = (
+  column: MaybeRefOrGetter<DataSource["columns"][number]>,
+  dataSource: MaybeRefOrGetter<DataSource>,
+) => {
+  const jsonSchema = computed(() => {
     const columnValue = toValue(column);
     const schema = ColumnTypeFormSchemaMap[columnValue.type];
-    const uniqueColumnNameRule = (value: z.infer<typeof columnFormSchema.shape.name>) =>
-      value === columnValue.name ||
-      !dataSource.value?.columns.some(({ name }) => name === value) ||
-      "Column already exists";
-    return zodToJsonSchema(schema.extend({ name: schema.shape.name.meta({ rules: [uniqueColumnNameRule] }) }));
+    return zodToJsonSchema(schema.extend({ name: schema.shape.name.meta({ getProps: GET_PROPS }) }));
   });
+  const options = computed(() => ({
+    context: {
+      columnNames: toValue(dataSource).columns.map(({ name }) => name),
+      currentName: toValue(column).name,
+    },
+  }));
+  return { jsonSchema, options };
 };

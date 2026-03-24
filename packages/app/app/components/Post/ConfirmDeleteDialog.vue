@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
 
+import { useColorsStore } from "@/store/colors";
 import { usePostStore } from "@/store/post";
 import { RoutePath } from "@esposter/shared";
 
@@ -15,11 +16,12 @@ defineSlots<{
 const { postId } = defineProps<PostConfirmDeleteDialogProps>();
 const postStore = usePostStore();
 const { deletePost } = postStore;
-const { text } = useColors();
+const colorsStore = useColorsStore();
+const { text } = storeToRefs(colorsStore);
 </script>
 
 <template>
-  <StyledDeleteDialog
+  <StyledDeleteFormDialog
     :card-props="{
       title: 'Delete Post',
       text: 'Are you sure you want to delete this post?',
@@ -41,7 +43,7 @@ const { text } = useColors();
     <div class="custom-border" py-2 mx-4 rd-lg shadow-md>
       <slot name="postPreview" />
     </div>
-  </StyledDeleteDialog>
+  </StyledDeleteFormDialog>
 </template>
 <!-- @TODO: https://github.com/vuejs/core/issues/7312 -->
 <style scoped lang="scss">

@@ -1,14 +1,25 @@
 <script setup lang="ts" generic="TDataSourceItem extends DataSourceItemTypeMap[keyof DataSourceItemTypeMap]">
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/DataSourceItemTypeMap";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
 
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
+import { filterDataSourceRows } from "@/services/tableEditor/file/dataSource/filterDataSourceRows";
+import { useFilterStore } from "@/store/tableEditor/file/filter";
+import { useRowStore } from "@/store/tableEditor/file/row";
 import { Vjsf } from "@koumoul/vjsf";
 
 const modelValue = defineModel<TDataSourceItem>({ required: true });
-const { dataSource } = useEditedItemDataSource();
 const configuration = useDataSourceConfiguration(modelValue);
 const schema = computed(() => zodToJsonSchema(configuration.value.schema));
 const openPanels = ref(["columns", "data"]);
+const rowStore = useRowStore();
+const { selectedRowIds } = storeToRefs(rowStore);
+const filterStore = useFilterStore();
+const { columnFilters } = storeToRefs(filterStore);
+const filteredRowCount = computed(() =>
+  modelValue.value.dataSource
+    ? filterDataSourceRows(modelValue.value.dataSource, columnFilters.value).rows.length
+    : undefined,
+);
 </script>
 
 <template>
@@ -19,25 +30,43 @@ const openPanels = ref(["columns", "data"]);
     <v-col cols="12">
       <Vjsf v-model="modelValue.configuration" :schema />
     </v-col>
-    <template v-if="dataSource">
+    <template v-if="modelValue.dataSource">
       <v-col cols="12">
-        <TableEditorFileMetadataBar :metadata="dataSource.metadata" />
+        <TableEditorFileMetadataBar :metadata="modelValue.dataSource.metadata" />
       </v-col>
       <v-col cols="12">
         <v-expansion-panels v-model="openPanels" multiple>
-          <v-expansion-panel title="Columns" value="columns">
+          <v-expansion-panel value="columns">
+            <template #title>
+              Columns
+              <v-spacer />
+              <TableEditorFileColumnCreateDialogButton :data-source="modelValue.dataSource" />
+              <TableEditorFileColumnCreateComputedColumnDialogButton :data-source="modelValue.dataSource" />
+            </template>
             <v-expansion-panel-text>
-              <TableEditorFileColumnTable />
+              <TableEditorFileColumnTable :data-source="modelValue.dataSource" />
             </v-expansion-panel-text>
           </v-expansion-panel>
           <v-expansion-panel value="data">
             <template #title>
               Data
               <v-spacer />
-              <TableEditorFileStatsBar :stats="dataSource.stats" />
+              <TableEditorFileStatsBar mr-4 :filtered-row-count :stats="modelValue.dataSource.stats" />
+              <TableEditorFileRowCopyToClipboardButton
+                :row-ids="selectedRowIds.length > 0 ? selectedRowIds : undefined"
+              />
+              <TableEditorFileRowPasteFromClipboardButton />
+              <TableEditorFileFindReplaceDialogButton />
+              <TableEditorFileColumnStatsDialogButton />
+              <TableEditorFileRowOutlierToggleButton />
+              <TableEditorFileRowClearFiltersButton />
+              <TableEditorFileRowNormalizeStringsDialogButton />
+              <TableEditorFileRowNullStrategyDialogButton />
+              <TableEditorFileRowDeduplicateDialogButton />
+              <TableEditorFileRowCreateDialogButton :data-source="modelValue.dataSource" />
             </template>
             <v-expansion-panel-text>
-              <TableEditorFileDataTable :data-source />
+              <TableEditorFileRowTable :data-source="modelValue.dataSource" />
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>

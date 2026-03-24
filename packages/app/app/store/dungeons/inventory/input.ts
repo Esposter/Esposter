@@ -11,6 +11,7 @@ import { useEnemyStore } from "@/store/dungeons/battle/enemy";
 import { exhaustiveGuard } from "@esposter/shared";
 
 export const useInventoryInputStore = defineStore("dungeons/inventory/input", () => {
+  const enemyStore = useEnemyStore();
   const itemOptionGrid = useItemOptionGrid();
   const { launchScene, switchToPreviousScene } = usePreviousScene(SceneKey.Inventory);
 
@@ -30,9 +31,7 @@ export const useInventoryInputStore = defineStore("dungeons/inventory/input", ()
           switch (itemOptionGrid.value.effect.type) {
             // We assume that you can only call capture items in the battle scene (which is the previous scene)
             case ItemEffectType.Capture: {
-              const enemyStore = useEnemyStore();
-              const { activeMonster } = storeToRefs(enemyStore);
-              await useItem(scene, toRef(itemOptionGrid.value), activeMonster);
+              await useItem(scene, toRef(itemOptionGrid.value), toRef(enemyStore, "activeMonster"));
               break;
             }
             case ItemEffectType.Heal:

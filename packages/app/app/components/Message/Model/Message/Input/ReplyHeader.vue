@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import type { MessageEntity } from "@esposter/db-schema";
 
+import { useColorsStore } from "@/store/colors";
+
 interface ReplyHeaderProps {
   reply: MessageEntity;
 }
 
 const { reply } = defineProps<ReplyHeaderProps>();
 const emit = defineEmits<{ close: [] }>();
-const { text } = useColors();
+const colorsStore = useColorsStore();
+const { text } = storeToRefs(colorsStore);
 const creator = useCreator(() => reply);
 </script>
 

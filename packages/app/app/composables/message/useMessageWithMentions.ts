@@ -1,10 +1,8 @@
-import type { ReadonlyRefOrGetter } from "@vueuse/core";
-
 import { useMemberStore } from "@/store/message/user/member";
 import { MENTION_ID_ATTRIBUTE, MENTION_LABEL_ATTRIBUTE } from "@esposter/shared";
 import { parse } from "node-html-parser";
 
-export const useMessageWithMentions = (message: ReadonlyRefOrGetter<string>) => {
+export const useMessageWithMentions = (message: MaybeRefOrGetter<string>) => {
   const memberStore = useMemberStore();
   const { memberMap } = storeToRefs(memberStore);
   const mentions = useMentions(message);

@@ -1,16 +1,16 @@
-import type { ADataSourceItem } from "#shared/models/tableEditor/file/ADataSourceItem";
-import type { DataSource } from "#shared/models/tableEditor/file/DataSource";
-import type { DataSourceType } from "#shared/models/tableEditor/file/DataSourceType";
+import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
+import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
 
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
-import { getValueSize } from "@/services/tableEditor/file/getValueSize";
+import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
+import { getValueSize } from "@/services/tableEditor/file/commands/getValueSize";
 import { takeOne } from "@esposter/shared";
 
-export class DeleteRowCommand extends ADataSourceCommand {
-  readonly name = "DeleteRowCommand";
+export class DeleteRowCommand extends ADataSourceCommand<CommandType.DeleteRow> {
+  readonly type = CommandType.DeleteRow;
 
   get description() {
-    return `Delete row #${this.index + 1}`;
+    return `Delete Row ${this.index + 1}`;
   }
 
   private readonly index: number;
@@ -22,16 +22,17 @@ export class DeleteRowCommand extends ADataSourceCommand {
     this.originalRow = originalRow;
   }
 
-  protected doExecute(item: ADataSourceItem<DataSourceType>) {
+  protected doExecute(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
     if (!item.dataSource) return;
     const row = takeOne(item.dataSource.rows, this.index);
-    for (const column of item.dataSource.columns) column.size -= getValueSize(takeOne(row, column.name));
+    for (const column of item.dataSource.columns) column.size -= getValueSize(takeOne(row.data, column.name));
     item.dataSource.rows = item.dataSource.rows.filter((_, i) => i !== this.index);
   }
 
-  protected doUndo(item: ADataSourceItem<DataSourceType>) {
+  protected doUndo(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
     if (!item.dataSource) return;
-    for (const column of item.dataSource.columns) column.size += getValueSize(takeOne(this.originalRow, column.name));
+    for (const column of item.dataSource.columns)
+      column.size += getValueSize(takeOne(this.originalRow.data, column.name));
     item.dataSource.rows = [
       ...item.dataSource.rows.slice(0, this.index),
       this.originalRow,

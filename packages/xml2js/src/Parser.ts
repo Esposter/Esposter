@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-dynamic-delete */
 import type { QualifiedTag, SAXParser, Tag } from "sax";
 import type { convertableToString, ParserOptions } from "xml2js";
 

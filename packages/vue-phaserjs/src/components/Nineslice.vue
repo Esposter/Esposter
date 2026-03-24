@@ -1,24 +1,28 @@
 <script setup lang="ts">
-import type { NineSliceConfiguration } from "@/models/configuration/NineSliceConfiguration";
-import type { NineSliceEventEmitsOptions } from "@/models/emit/NineSliceEventEmitsOptions";
+import type { NinesliceConfiguration } from "@/models/configuration/NinesliceConfiguration";
+import type { NinesliceEventEmitsOptions } from "@/models/emit/NinesliceEventEmitsOptions";
+import type { SceneWithPlugins } from "@/models/scene/SceneWithPlugins";
+import type { GameObjects } from "phaser";
 import type { SetRequired } from "type-fest";
 
 import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
-import { NineSliceSetterMap } from "@/util/setterMap/NineSliceSetterMap";
+import { NinesliceSetterMap } from "@/util/setterMap/NinesliceSetterMap";
 
-export interface NineSliceProps {
-  configuration: SetRequired<Partial<NineSliceConfiguration>, "texture">;
+export interface NinesliceProps {
+  configuration: SetRequired<Partial<NinesliceConfiguration>, "texture">;
+  immediate?: true;
+  onComplete?: (scene: SceneWithPlugins, nineSlice: GameObjects.NineSlice) => void;
 }
 
-interface NineSliceEmits extends /** @vue-ignore */ NineSliceEventEmitsOptions {}
+interface NinesliceEmits  extends /** @vue-ignore */ NinesliceEventEmitsOptions {}
 
-const { configuration } = defineProps<NineSliceProps>();
-const emit = defineEmits<NineSliceEmits>();
+const { configuration, immediate, onComplete } = defineProps<NinesliceProps>();
+const emit = defineEmits<NinesliceEmits>();
 
 useInitializeGameObject(
   (scene) => {
     const { bottomHeight, frame, height, leftWidth, rightWidth, texture, topHeight, width, x, y } = configuration;
-    return scene.add.nineslice(
+    const nineSlice = scene.add.nineslice(
       x ?? 0,
       y ?? 0,
       texture,
@@ -30,10 +34,13 @@ useInitializeGameObject(
       topHeight,
       bottomHeight,
     );
+    onComplete?.(scene, nineSlice);
+    return nineSlice;
   },
   () => configuration,
   emit,
-  NineSliceSetterMap,
+  NinesliceSetterMap,
+  immediate,
 );
 </script>
 
