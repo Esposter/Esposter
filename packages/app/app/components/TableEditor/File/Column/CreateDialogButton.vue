@@ -2,12 +2,9 @@
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import { ColumnTypeFormSchemaMap } from "#shared/models/tableEditor/file/column/ColumnTypeFormSchemaMap";
-import { CreateFormSchemaMap } from "#shared/models/tableEditor/file/column/CreateFormSchemaMap";
+import { columnTypeFormSchema } from "#shared/models/tableEditor/file/column/ColumnTypeForm";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { ColumnTypeCreateMap } from "@/services/tableEditor/file/column/ColumnTypeCreateMap";
-import { ColumnTypeItemCategoryDefinitions } from "@/services/tableEditor/file/column/ColumnTypeItemCategoryDefinitions";
-import { takeOne } from "@esposter/shared";
 import { Vjsf } from "@koumoul/vjsf";
 
 interface CreateDialogButtonProps {
@@ -16,26 +13,22 @@ interface CreateDialogButtonProps {
 
 const { dataSource } = defineProps<CreateDialogButtonProps>();
 const createColumn = useCreateColumn();
-const columnType = ref<Exclude<ColumnType, ColumnType.Computed>>(ColumnType.String);
+const columnType = ref(ColumnType.String);
 // StructuredClone is required here: Vjsf does not work with class instances and needs a plain object,
 // And fast-deep-equal checks constructors so class instances never equal their plain object clones
 const defaultColumn = computed(() => structuredClone(ColumnTypeCreateMap[columnType.value].create()));
 const editedColumn = ref<DataSource["columns"][number]>(structuredClone(defaultColumn.value));
-const schema = computed(() => takeOne(ColumnTypeFormSchemaMap, columnType.value));
-const jsonSchema = computed(() => zodToJsonSchema(takeOne(CreateFormSchemaMap, columnType.value)));
+const jsonSchema = zodToJsonSchema(columnTypeFormSchema);
 const options = computed(() => ({
   context: {
     columnNames: dataSource.columns.map(({ name }) => name),
+    currentName: editedColumn.value.name,
+    sourceColumnItems: dataSource.columns.map(({ id, name }) => ({ title: name, value: id })),
   },
 }));
 const resetForm = () => {
   editedColumn.value = structuredClone(defaultColumn.value);
 };
-
-watch(columnType, (newType) => {
-  const name = editedColumn.value.name;
-  editedColumn.value = structuredClone(ColumnTypeCreateMap[newType].create(name));
-});
 </script>
 
 <template>
@@ -43,7 +36,7 @@ watch(columnType, (newType) => {
     title="Create Column"
     tooltip-text="Add Column"
     icon="mdi-table-column-plus-after"
-    :schema
+    :schema="columnTypeFormSchema"
     :value="defaultColumn"
     :edited-value="editedColumn"
     @reset="resetForm()"
@@ -54,7 +47,6 @@ watch(columnType, (newType) => {
       }
     "
   >
-    <v-select v-model="columnType" :items="ColumnTypeItemCategoryDefinitions" label="Type" />
     <Vjsf v-model="editedColumn" :schema="jsonSchema" :options />
   </TableEditorFileCrudViewEditDialogButton>
 </template>

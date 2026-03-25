@@ -3,9 +3,29 @@ import { prettify } from "@/util/text/prettify";
 import { toTitleCase } from "@/util/text/toTitleCase";
 import { z } from "zod";
 
-export const zodToJsonSchema = (schema: z.ZodObject) => {
+const applyPropertyHooks = (properties: z.core.JSONSchema.JSONSchema["properties"]) => {
+  recurseProperties(properties, {
+    otherHooks: [
+      (key, property) => {
+        // Apply prettify so enum values like "ConvertTo" become "Convert To"
+        property.title = toTitleCase(prettify(property.title ?? key));
+        // Support z.union => anyOf
+        // Vjsf doesn't support anyOf since it can have different values
+        // But we know it will always come from the same enum
+        // We just need to use z.union to define metadata with z.literal so we migrate anyOf to oneOf
+        if (property.anyOf) {
+          property.oneOf = property.anyOf;
+          delete property.anyOf;
+        }
+      },
+    ],
+  });
+};
+
+export const zodToJsonSchema = (schema: z.ZodType) => {
   // Only get the minimal information required to integrate with vjsf
-  const { properties, required, type } = z.toJSONSchema(schema, {
+  // $schema is stripped because vjsf's internal Ajv2019 instance does not have the draft 2020-12 meta-schema loaded
+  const { $schema: _, ...result } = z.toJSONSchema(schema, {
     override: (ctx) => {
       const meta = (ctx.zodSchema as z.ZodObject).meta();
       if (!meta?.comp && !meta?.getProps && !meta?.getItems) return;
@@ -16,23 +36,11 @@ export const zodToJsonSchema = (schema: z.ZodObject) => {
       (ctx.jsonSchema as Record<string, unknown>).layout = layout;
     },
   });
-  recurseProperties(properties, {
-    otherHooks: [
-      (key, property) => {
-        property.title ??= toTitleCase(prettify(key));
-        // Support z.union => anyOf
-        // Vjsf doesn't support anyOf since it can have different values
-        // But we know it will always come from the same enum
-        // We just need to use z.union to define metadata with z.literal so we migrate anyOf to oneOf
-        if (property.anyOf) {
-          property.oneOf = property.anyOf;
-          delete property.anyOf;
-        }
-        // Support z.literal => const
-        // Vjsf component doesn't show up with const
-        if (property.const) delete property.const;
-      },
-    ],
-  });
-  return { properties, required, type };
+  if (result.oneOf)
+    for (const variant of result.oneOf)
+      if (typeof variant !== "boolean") {
+        if (variant.title) variant.title = toTitleCase(prettify(variant.title));
+        applyPropertyHooks(variant.properties);
+      } else applyPropertyHooks(result.properties);
+  return result;
 };

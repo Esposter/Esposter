@@ -1,7 +1,14 @@
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
+import { prettify } from "@/util/text/prettify";
+import { toTitleCase } from "@/util/text/toTitleCase";
+import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
+
+interface EvaluatedProps {
+  rules: ((value: string) => boolean | string)[];
+}
 
 describe(zodToJsonSchema, () => {
   describe("flat object schema", () => {
@@ -24,7 +31,7 @@ describe(zodToJsonSchema, () => {
       const schema = z.object({ firstName: z.string() });
       const result = zodToJsonSchema(schema) as { properties: Record<string, { title?: string }> };
 
-      expect(result.properties.firstName?.title).toBe("First Name");
+      expect(result.properties.firstName?.title).toBe(toTitleCase(prettify("firstName")));
     });
 
     test("preserves meta title over generated title", () => {
@@ -34,6 +41,15 @@ describe(zodToJsonSchema, () => {
       const result = zodToJsonSchema(schema) as { properties: Record<string, { title?: string }> };
 
       expect(result.properties.name?.title).toBe("Full Name");
+    });
+
+    test("prettifies enum-style meta title to spaced title case", () => {
+      expect.hasAssertions();
+
+      const schema = z.object({ type: z.string().meta({ title: ColumnTransformationType.ConvertTo }) });
+      const result = zodToJsonSchema(schema) as { properties: Record<string, { title?: string }> };
+
+      expect(result.properties.type?.title).toBe(toTitleCase(prettify(ColumnTransformationType.ConvertTo)));
     });
 
     test("converts anyOf to oneOf within properties", () => {
@@ -55,6 +71,45 @@ describe(zodToJsonSchema, () => {
       const result = zodToJsonSchema(schema) as { properties: Record<string, Record<string, unknown>> };
 
       expect(result.properties.type).not.toHaveProperty("const");
+    });
+  });
+
+  describe("discriminated union schema", () => {
+    test("returns oneOf instead of properties", () => {
+      expect.hasAssertions();
+
+      const schema = z.discriminatedUnion("type", [
+        z.object({ type: z.literal("a"), name: z.string() }),
+        z.object({ type: z.literal("b"), count: z.number() }),
+      ]);
+      const result = zodToJsonSchema(schema);
+
+      expect(result).toHaveProperty("oneOf");
+      expect(result).not.toHaveProperty("properties");
+    });
+
+    test("prettifies enum-style variant root title", () => {
+      expect.hasAssertions();
+
+      const schema = z.discriminatedUnion("type", [
+        z.object({ type: z.literal("a") }).meta({ title: ColumnTransformationType.ConvertTo }),
+        z.object({ type: z.literal("b") }).meta({ title: ColumnTransformationType.DatePart }),
+      ]);
+      const result = zodToJsonSchema(schema) as { oneOf: { title?: string }[] };
+
+      expect(takeOne(result.oneOf, 0).title).toBe(toTitleCase(prettify(ColumnTransformationType.ConvertTo)));
+      expect(takeOne(result.oneOf, 1).title).toBe(toTitleCase(prettify(ColumnTransformationType.DatePart)));
+    });
+
+    test("sets property titles within each variant", () => {
+      expect.hasAssertions();
+
+      const schema = z.discriminatedUnion("type", [z.object({ type: z.literal("a"), firstName: z.string() })]);
+      const result = zodToJsonSchema(schema) as {
+        oneOf: { properties: Record<string, { title?: string }> }[];
+      };
+
+      expect(takeOne(result.oneOf, 0).properties.firstName?.title).toBe(toTitleCase(prettify("firstName")));
     });
   });
 
@@ -147,11 +202,8 @@ describe(zodToJsonSchema, () => {
       const schema = z.object({ name: z.string().meta({ getProps: getPropsStr }) });
       const result = zodToJsonSchema(schema) as { properties: Record<string, { layout?: { getProps?: string } }> };
       const storedGetProps = result.properties.name?.layout?.getProps ?? "";
-
-      type EvaluatedProps = { rules: ((value: string) => boolean | string)[] };
-
       const evaluate = (columnNames: string[]): EvaluatedProps =>
-        // eslint-disable-next-line @typescript-eslint/no-implied-eval
+        // oxlint-disable-next-line @typescript-eslint/no-implied-eval
         new Function("context", `return ${storedGetProps}`)({ columnNames }) as EvaluatedProps;
 
       const withEmpty = evaluate([""]);

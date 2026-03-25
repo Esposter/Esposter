@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
-import { ColumnTypeFormSchemaMap } from "#shared/models/tableEditor/file/column/ColumnTypeFormSchemaMap";
+import { columnTypeFormSchema } from "#shared/models/tableEditor/file/column/ColumnTypeForm";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
-import { takeOne, toRawDeep } from "@esposter/shared";
+import { toRawDeep } from "@esposter/shared";
 import { Vjsf } from "@koumoul/vjsf";
 
 interface EditDialogButtonProps {
@@ -13,8 +13,7 @@ interface EditDialogButtonProps {
 
 const { column, dataSource } = defineProps<EditDialogButtonProps>();
 const updateColumn = useUpdateColumn();
-const schema = computed(() => takeOne(ColumnTypeFormSchemaMap, column.type));
-const jsonSchema = computed(() => zodToJsonSchema(takeOne(ColumnTypeFormSchemaMap, column.type)));
+const jsonSchema = zodToJsonSchema(columnTypeFormSchema);
 const options = computed(() => ({
   context: {
     columnNames: dataSource.columns.map(({ name }) => name),
@@ -33,7 +32,7 @@ const resetForm = () => {
   <TableEditorFileCrudViewEditDialogButton
     :title
     :tooltip-text="title"
-    :schema
+    :schema="columnTypeFormSchema"
     :value="column"
     :edited-value="editedColumn"
     @reset="resetForm()"
