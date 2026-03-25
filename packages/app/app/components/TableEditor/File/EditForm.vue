@@ -41,7 +41,6 @@ const filteredRowCount = computed(() =>
               Columns
               <v-spacer />
               <TableEditorFileColumnCreateDialogButton :data-source="modelValue.dataSource" />
-              <TableEditorFileColumnCreateComputedColumnDialogButton :data-source="modelValue.dataSource" />
             </template>
             <v-expansion-panel-text>
               <TableEditorFileColumnTable :data-source="modelValue.dataSource" />

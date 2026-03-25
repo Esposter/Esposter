@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
-import { ColumnTypeFormSchemaMap } from "#shared/models/tableEditor/file/column/ColumnTypeFormSchemaMap";
-import { EditFormSchemaMap } from "#shared/models/tableEditor/file/column/EditFormSchemaMap";
+import { columnTypeFormSchema } from "#shared/models/tableEditor/file/column/ColumnTypeForm";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
-import { takeOne, toRawDeep } from "@esposter/shared";
+import { toRawDeep } from "@esposter/shared";
 import { Vjsf } from "@koumoul/vjsf";
 
 interface EditDialogButtonProps {
@@ -14,11 +13,16 @@ interface EditDialogButtonProps {
 
 const { column, dataSource } = defineProps<EditDialogButtonProps>();
 const updateColumn = useUpdateColumn();
-const schema = computed(() => takeOne(ColumnTypeFormSchemaMap, column.type));
-const jsonSchema = computed(() => zodToJsonSchema(takeOne(EditFormSchemaMap, column.type)));
+const jsonSchema = zodToJsonSchema(columnTypeFormSchema);
+const options = computed(() => ({
+  context: {
+    columnNames: dataSource.columns.map(({ name }) => name),
+    currentName: column.name,
+    sourceColumnItems: dataSource.columns.map(({ id, name }) => ({ title: name, value: id })),
+  },
+}));
 const editedColumn = ref(structuredClone(toRawDeep(column)));
 const title = computed(() => `Edit "${column.name}" Column`);
-const uniqueNameRule = useColumnNameRule(() => dataSource.columns, column.name);
 const resetForm = () => {
   editedColumn.value = structuredClone(toRawDeep(column));
 };
@@ -28,7 +32,7 @@ const resetForm = () => {
   <TableEditorFileCrudViewEditDialogButton
     :title
     :tooltip-text="title"
-    :schema
+    :schema="columnTypeFormSchema"
     :value="column"
     :edited-value="editedColumn"
     @reset="resetForm()"
@@ -39,7 +43,6 @@ const resetForm = () => {
       }
     "
   >
-    <v-text-field v-model="editedColumn.name" label="Column" :rules="[uniqueNameRule]" />
-    <Vjsf v-model="editedColumn" :schema="jsonSchema" />
+    <Vjsf v-model="editedColumn" :schema="jsonSchema" :options />
   </TableEditorFileCrudViewEditDialogButton>
 </template>

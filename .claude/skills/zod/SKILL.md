@@ -36,6 +36,34 @@ Always use the `z` namespace export: `z.ZodType`, `z.ZodError`, etc. Never use n
   ```
   Adding a new type = add its schema to the discriminated union array.
 - **vjsf form schemas** — never pass a full entity schema to `zodToJsonSchema()` if it contains `z.date()` fields — vjsf will throw. Create a separate `*FormSchema` co-located in the same file using `.pick().extend()` to add `.meta()` titles. The form schema picks only user-editable fields (no entity metadata like `id`, `createdAt`, `updatedAt`).
+- **`.meta({ title })` values** — use enum values directly rather than string literals; `zodToJsonSchema` runs `toTitleCase(prettify(...))` on all titles automatically, so `ColumnTransformationType.ConvertTo` (`"ConvertTo"`) renders as `"Convert To"` in the UI. Always prefer `meta({ title: ColumnTransformationType.X })` over a hand-written string.
+- **vjsf `.meta()` layout properties** — put `comp`, `getProps`, and `getItems` directly on the field's `.meta()` in the schema definition. Do not inject them dynamically via `schema.extend()` in a composable. `GlobalMeta` for these is typed as `string` — they are vjsf JavaScript expression strings evaluated at runtime against the vjsf `context` (passed via `:options`). Example:
+  ```typescript
+  name: z.string().meta({
+    getProps: `{ rules: [(value) => value === context.currentName || !context.columnNames.includes(value) || 'Already exists'] }`,
+    title: "Name",
+  }),
+  sourceColumnId: z.string().meta({ comp: "select", getItems: "context.sourceColumnItems", title: "Source Column" }),
+  ```
+  Components pass the runtime data via `options.context` to vjsf — no separate composable is needed just to inject `getProps`/`getItems`.
+- **`zodToJsonSchema` in components** — always expose two separate computeds: `schema` (the Zod schema, used for `StyledEditFormDialogErrorIcon` validation) and `jsonSchema` (passed to vjsf). Derive `jsonSchema` from `schema.value` — do NOT call `takeOne` twice. Never create a precomputed JSON schema map file; the `*TypeFormSchemaMap` is the source of truth.
+  ```typescript
+  // WRONG — unnecessary intermediate JSON schema map file
+  export const ColumnTypeJsonSchemaMap = {
+    [ColumnType.String]: zodToJsonSchema(ColumnTypeFormSchemaMap[ColumnType.String]),
+  };
+  // WRONG — calls takeOne twice instead of reusing schema.value
+  const schema = computed(() => takeOne(ColumnTypeFormSchemaMap, columnType.value));
+  const jsonSchema = computed(() => zodToJsonSchema(takeOne(ColumnTypeFormSchemaMap, columnType.value)));
+  // CORRECT — schema.value reused for jsonSchema
+  const schema = computed(() => takeOne(ColumnTypeFormSchemaMap, columnType.value));
+  const jsonSchema = computed(() => zodToJsonSchema(schema.value));
+  ```
+  In edit dialogs where the type comes from a prop (not a ref), use the prop field directly:
+  ```typescript
+  const schema = computed(() => takeOne(ColumnTypeFormSchemaMap, column.type));
+  const jsonSchema = computed(() => zodToJsonSchema(schema.value));
+  ```
 - **`satisfies z.ZodType<T>` with class types** — when a schema output has plain objects but the interface uses class instances (with `toJSON`), use `Except` + `ToData` in the satisfies to strip `toJSON` from nested classes:
   ```typescript
   export const dataSourceSchema = z.object({...})
