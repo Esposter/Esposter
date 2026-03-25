@@ -162,3 +162,27 @@ export const staticValueTransformationSchema = z.object({
 - Members that need the shared field use `.extend()` on the base schema
 - Members that don't need it just use `z.object({...})` directly
 - This pattern scales to multiple shared interfaces (e.g. `WithSourceColumns` for multi-input transformations)
+
+## Configuration Interfaces — `Pick` from Source Types
+
+When a configuration interface re-declares properties that already exist on a source type (e.g. a Phaser `GameObjects.X`), use `Pick<SourceType, "prop1" | "prop2">` in the `extends` clause instead of re-declaring each property individually.
+
+```ts
+// BAD — re-declares types that already exist on GameObjects.Arc
+export interface ArcConfiguration extends ShapeConfiguration {
+  closePath: GameObjects.Arc["closePath"];
+  endAngle: GameObjects.Arc["endAngle"];
+  radius: GameObjects.Arc["radius"];
+  startAngle: GameObjects.Arc["startAngle"];
+}
+
+// GOOD — Pick directly from the source type
+export interface ArcConfiguration
+  extends ShapeConfiguration, Pick<GameObjects.Arc, "closePath" | "endAngle" | "radius" | "startAngle"> {}
+```
+
+Use `Pick` for all properties whose types are derived directly from the source type. Keep explicit property declarations only for:
+
+- `Parameters<SourceType["method"]>` tuples — no readable property to pick
+- `Parameters<SourceType["method"]>[n]` — same
+- Plain primitives (`number`, `string`) representing constructor arguments with no matching readable property on the source type
