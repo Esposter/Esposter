@@ -65,13 +65,13 @@ describe(zodToJsonSchema, () => {
       const schema = z.object({ name: z.string(), value: z.number() });
       const result = zodToJsonSchema(schema);
 
-      expect(result.required).toEqual(expect.arrayContaining(["name", "value"]));
+      expect(result.required).toStrictEqual(expect.arrayContaining(["name", "value"]));
     });
 
     test("omits optional fields from required", () => {
       expect.hasAssertions();
 
-      const schema = z.object({ name: z.string(), description: z.string().optional() });
+      const schema = z.object({ description: z.string().optional(), name: z.string() });
       const result = zodToJsonSchema(schema);
 
       expect(result.required).toContain("name");
@@ -125,7 +125,7 @@ describe(zodToJsonSchema, () => {
       });
       const result = zodToJsonSchema(schema) as { properties: Record<string, { layout?: Record<string, unknown> }> };
 
-      expect(result.properties.sourceColumnId?.layout).toEqual({
+      expect(result.properties.sourceColumnId?.layout).toStrictEqual({
         comp: "select",
         getItems: "context.sourceColumnItems",
       });
@@ -149,15 +149,18 @@ describe(zodToJsonSchema, () => {
       const storedGetProps = result.properties.name?.layout?.getProps ?? "";
 
       type EvaluatedProps = { rules: ((value: string) => boolean | string)[] };
-      // eslint-disable-next-line no-new-func
+
       const evaluate = (columnNames: string[]): EvaluatedProps =>
+        // eslint-disable-next-line @typescript-eslint/no-implied-eval
         new Function("context", `return ${storedGetProps}`)({ columnNames }) as EvaluatedProps;
 
       const withEmpty = evaluate([""]);
+
       expect(takeOne(withEmpty.rules, 0)("")).toBe("Column already exists");
       expect(takeOne(withEmpty.rules, 0)(" ")).toBe(true);
 
       const withSpace = evaluate([" "]);
+
       expect(takeOne(withSpace.rules, 0)("")).toBe(true);
       expect(takeOne(withSpace.rules, 0)(" ")).toBe("Column already exists");
     });

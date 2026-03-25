@@ -35,7 +35,7 @@ defineExpose({ editForm, isEditFormValid });
       mergeProps(confirmButtonAttrs, {
         type: 'submit',
         form: formId,
-        disabled: !!confirmButtonAttrs.disabled || isEditFormValid === false,
+        disabled: Boolean(confirmButtonAttrs.disabled) || isEditFormValid === false,
       })
     "
   >
