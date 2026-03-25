@@ -1,7 +1,7 @@
+import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { prettify } from "@/util/text/prettify";
 import { toTitleCase } from "@/util/text/toTitleCase";
-import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
@@ -79,8 +79,8 @@ describe(zodToJsonSchema, () => {
       expect.hasAssertions();
 
       const schema = z.discriminatedUnion("type", [
-        z.object({ type: z.literal("a"), name: z.string() }),
-        z.object({ type: z.literal("b"), count: z.number() }),
+        z.object({ name: z.string(), type: z.literal("a") }),
+        z.object({ count: z.number(), type: z.literal("b") }),
       ]);
       const result = zodToJsonSchema(schema);
 
@@ -104,7 +104,7 @@ describe(zodToJsonSchema, () => {
     test("sets property titles within each variant", () => {
       expect.hasAssertions();
 
-      const schema = z.discriminatedUnion("type", [z.object({ type: z.literal("a"), firstName: z.string() })]);
+      const schema = z.discriminatedUnion("type", [z.object({ firstName: z.string(), type: z.literal("a") })]);
       const result = zodToJsonSchema(schema) as {
         oneOf: { properties: Record<string, { title?: string }> }[];
       };

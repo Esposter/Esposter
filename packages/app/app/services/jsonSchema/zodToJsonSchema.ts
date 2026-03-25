@@ -38,9 +38,10 @@ export const zodToJsonSchema = (schema: z.ZodType) => {
   });
   if (result.oneOf)
     for (const variant of result.oneOf)
-      if (typeof variant !== "boolean") {
+      if (typeof variant === "boolean") applyPropertyHooks(result.properties);
+      else {
         if (variant.title) variant.title = toTitleCase(prettify(variant.title));
         applyPropertyHooks(variant.properties);
-      } else applyPropertyHooks(result.properties);
+      }
   return result;
 };
