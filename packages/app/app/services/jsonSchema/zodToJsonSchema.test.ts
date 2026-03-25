@@ -4,7 +4,7 @@ import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { prettify } from "@/util/text/prettify";
 import { toTitleCase } from "@/util/text/toTitleCase";
 import { takeOne } from "@esposter/shared";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 import { z } from "zod";
 
 interface EvaluatedProps {
@@ -193,11 +193,11 @@ describe(zodToJsonSchema, () => {
       const getPropsStr = `{ rules: [(value) => !context.columnNames.includes(value) || 'Column already exists'] }`;
       const schema = z.object({ name: z.string().meta({ getProps: getPropsStr }) });
       const result = zodToJsonSchema(schema) as { properties: Record<string, { layout?: { getProps?: string } }> };
-      const storedGetProps = result.properties.name?.layout?.getProps ?? "";
+      const storedGetProps = result.properties.name?.layout?.getProps;
+      assert.exists(storedGetProps);
       const evaluate = (columnNames: string[]): EvaluatedProps =>
         // eslint-disable-next-line @typescript-eslint/no-implied-eval
         new Function("context", `return ${storedGetProps}`)({ columnNames }) as EvaluatedProps;
-
       const withEmpty = evaluate([""]);
 
       expect(takeOne(withEmpty.rules, 0)("")).toBe("Column already exists");
