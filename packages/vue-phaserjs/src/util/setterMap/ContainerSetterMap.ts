@@ -5,7 +5,6 @@ import type { GameObjects } from "phaser";
 
 import { AlphaSingleSetterMap } from "@/util/setterMap/components/AlphaSingleSetterMap";
 import { BlendModeSetterMap } from "@/util/setterMap/components/BlendModeSetterMap";
-import { ComputedSizeSetterMap } from "@/util/setterMap/components/ComputedSizeSetterMap";
 import { DepthSetterMap } from "@/util/setterMap/components/DepthSetterMap";
 import { MaskSetterMap } from "@/util/setterMap/components/MaskSetterMap";
 import { ScrollFactorSetterMap } from "@/util/setterMap/components/ScrollFactorSetterMap";
@@ -17,7 +16,6 @@ export const ContainerSetterMap: SetterMap<ContainerConfiguration, GameObjects.C
   {
     ...AlphaSingleSetterMap,
     ...BlendModeSetterMap,
-    ...ComputedSizeSetterMap,
     ...DepthSetterMap,
     ...ScrollFactorSetterMap,
     ...MaskSetterMap,
