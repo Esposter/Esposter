@@ -1,3 +1,4 @@
+/* oxlint-disable no-new-func */
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { prettify } from "@/util/text/prettify";
