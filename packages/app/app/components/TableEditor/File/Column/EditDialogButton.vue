@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
-import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ColumnTypeFormSchemaMap } from "#shared/models/tableEditor/file/column/ColumnTypeFormSchemaMap";
+import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { takeOne, toRawDeep } from "@esposter/shared";
 import { Vjsf } from "@koumoul/vjsf";
 
@@ -14,7 +14,14 @@ interface EditDialogButtonProps {
 const { column, dataSource } = defineProps<EditDialogButtonProps>();
 const updateColumn = useUpdateColumn();
 const schema = computed(() => takeOne(ColumnTypeFormSchemaMap, column.type));
-const { jsonSchema, options } = useColumnTypeFormJsonSchema(column, () => dataSource);
+const jsonSchema = computed(() => zodToJsonSchema(takeOne(ColumnTypeFormSchemaMap, column.type)));
+const options = computed(() => ({
+  context: {
+    columnNames: dataSource.columns.map(({ name }) => name),
+    currentName: column.name,
+    sourceColumnItems: dataSource.columns.map(({ id, name }) => ({ title: name, value: id })),
+  },
+}));
 const editedColumn = ref(structuredClone(toRawDeep(column)));
 const title = computed(() => `Edit "${column.name}" Column`);
 const resetForm = () => {
@@ -38,10 +45,5 @@ const resetForm = () => {
     "
   >
     <Vjsf v-model="editedColumn" :schema="jsonSchema" :options />
-    <TableEditorFileColumnComputedColumnForm
-      v-if="editedColumn.type === ColumnType.Computed"
-      v-model="editedColumn"
-      :data-source
-    />
   </TableEditorFileCrudViewEditDialogButton>
 </template>

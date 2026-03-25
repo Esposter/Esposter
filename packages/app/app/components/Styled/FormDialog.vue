@@ -31,7 +31,13 @@ defineExpose({ editForm, isEditFormValid });
     v-model="modelValue"
     :card-props
     :confirm-button-props
-    :confirm-button-attrs="mergeProps(confirmButtonAttrs, { type: 'submit', form: formId, disabled: !isEditFormValid })"
+    :confirm-button-attrs="
+      mergeProps(confirmButtonAttrs, {
+        type: 'submit',
+        form: formId,
+        disabled: !!confirmButtonAttrs.disabled || isEditFormValid === false,
+      })
+    "
   >
     <template #activator="activatorProps">
       <slot name="activator" :="activatorProps" />

@@ -5,6 +5,6 @@ import { ColumnTypeFormSchemaMap } from "#shared/models/tableEditor/file/column/
 export const CreateFormSchemaMap = Object.fromEntries(
   Object.entries(ColumnTypeFormSchemaMap).map(([type, schema]) => [
     type,
-    (schema as typeof columnFormSchema).omit({ name: true, type: true }),
+    (schema as typeof columnFormSchema).omit({ type: true }),
   ]),
 );

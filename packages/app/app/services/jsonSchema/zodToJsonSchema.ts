@@ -4,8 +4,8 @@ import { toTitleCase } from "@/util/text/toTitleCase";
 import { z } from "zod";
 
 export const zodToJsonSchema = (schema: z.ZodObject) => {
-  // For integrating with vjsf, we only need the type and properties
-  const { properties, type } = z.toJSONSchema(schema, {
+  // Only get the minimal information required to integrate with vjsf
+  const { properties, required, type } = z.toJSONSchema(schema, {
     override: (ctx) => {
       const meta = (ctx.zodSchema as z.ZodObject).meta();
       if (!meta?.comp && !meta?.getProps && !meta?.getItems) return;
@@ -34,5 +34,5 @@ export const zodToJsonSchema = (schema: z.ZodObject) => {
       },
     ],
   });
-  return { properties, type };
+  return { properties, required, type };
 };

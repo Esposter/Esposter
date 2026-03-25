@@ -7,7 +7,10 @@ export interface ColumnForm extends Pick<Column<ColumnType>, "description" | "na
 export const createColumnFormSchema = <T extends z.ZodType<ColumnType>>(typeSchema: T) =>
   columnSchema.pick({ description: true, name: true, sourceName: true }).extend({
     description: columnSchema.shape.description.meta({ title: "Description" }),
-    name: columnSchema.shape.name.meta({ title: "Column" }),
+    name: columnSchema.shape.name.meta({
+      getProps: `{ rules: [(value) => value === context.currentName || !context.columnNames.includes(value) || 'Column already exists'] }`,
+      title: "Column",
+    }),
     sourceName: columnSchema.shape.sourceName.meta({ title: "Source Column" }),
     type: typeSchema.meta({ title: "Type" }),
   });

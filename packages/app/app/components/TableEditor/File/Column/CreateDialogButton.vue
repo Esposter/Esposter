@@ -23,7 +23,11 @@ const defaultColumn = computed(() => structuredClone(ColumnTypeCreateMap[columnT
 const editedColumn = ref<DataSource["columns"][number]>(structuredClone(defaultColumn.value));
 const schema = computed(() => takeOne(ColumnTypeFormSchemaMap, columnType.value));
 const jsonSchema = computed(() => zodToJsonSchema(takeOne(CreateFormSchemaMap, columnType.value)));
-const uniqueNameRule = useColumnNameRule(() => dataSource.columns);
+const options = computed(() => ({
+  context: {
+    columnNames: dataSource.columns.map(({ name }) => name),
+  },
+}));
 const resetForm = () => {
   editedColumn.value = structuredClone(defaultColumn.value);
 };
@@ -51,7 +55,6 @@ watch(columnType, (newType) => {
     "
   >
     <v-select v-model="columnType" :items="ColumnTypeItemCategoryDefinitions" label="Type" />
-    <v-text-field v-model="editedColumn.name" label="Column" :rules="[uniqueNameRule]" />
-    <Vjsf v-model="editedColumn" :schema="jsonSchema" />
+    <Vjsf v-model="editedColumn" :schema="jsonSchema" :options />
   </TableEditorFileCrudViewEditDialogButton>
 </template>

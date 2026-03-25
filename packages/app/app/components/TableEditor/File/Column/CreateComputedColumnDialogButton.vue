@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
-import { ComputedColumn, computedColumnSchema } from "#shared/models/tableEditor/file/column/ComputedColumn";
+import {
+  ComputedColumn,
+  computedColumnFormSchema,
+  computedColumnSchema,
+} from "#shared/models/tableEditor/file/column/ComputedColumn";
+import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
+import { Vjsf } from "@koumoul/vjsf";
 
 interface CreateComputedColumnDialogButtonProps {
   dataSource: DataSource;
@@ -13,7 +19,13 @@ const createComputedColumn = useCreateComputedColumn();
 // And fast-deep-equal checks constructors so class instances never equal their plain object clones
 const defaultColumn = structuredClone(new ComputedColumn());
 const editedColumn = ref(structuredClone(defaultColumn));
-const uniqueNameRule = useColumnNameRule(() => dataSource.columns);
+const jsonSchema = zodToJsonSchema(computedColumnFormSchema.omit({ type: true }));
+const options = computed(() => ({
+  context: {
+    columnNames: dataSource.columns.map(({ name }) => name),
+    sourceColumnItems: dataSource.columns.map(({ id, name }) => ({ title: name, value: id })),
+  },
+}));
 
 const resetForm = () => {
   editedColumn.value = structuredClone(defaultColumn);
@@ -36,7 +48,6 @@ const resetForm = () => {
       }
     "
   >
-    <v-text-field v-model="editedColumn.name" label="Column" :rules="[uniqueNameRule]" />
-    <TableEditorFileColumnComputedColumnForm v-model="editedColumn" :data-source />
+    <Vjsf v-model="editedColumn" :schema="jsonSchema" :options />
   </TableEditorFileCrudViewEditDialogButton>
 </template>
