@@ -6,8 +6,8 @@ export interface WithSourceColumn {
 
 export const withSourceColumnSchema = z.object({
   sourceColumnId: z.string().meta({
-    title: "Source Column",
     comp: "select",
     getItems: "context.sourceColumnItems",
+    title: "Source Column",
   }),
 });
