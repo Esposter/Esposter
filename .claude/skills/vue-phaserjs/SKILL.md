@@ -1,9 +1,49 @@
 ---
 name: vue-phaserjs
-description: Esposter vue-phaserjs integration patterns — markRaw for Phaser objects in Pinia stores. Apply when writing Phaser game objects, stores, or vue-phaserjs components.
+description: Esposter vue-phaserjs integration patterns — component inventory, markRaw for Phaser objects in Pinia stores, configuration Pick pattern. Apply when writing Phaser game objects, stores, or vue-phaserjs components.
 ---
 
 # vue-phaserjs Conventions
+
+## Implemented Components (v1 complete)
+
+All game object components follow the same 4-file pattern: `{Name}Configuration.ts`, `{Name}EventEmitsOptions.ts`, `{Name}SetterMap.ts`, `{Name}.vue`.
+
+**Sprites / Images**: `<Sprite>`, `<Image>`, `<NineSlice>`, `<TileSprite>`, `<PathFollower>`
+
+**Text**: `<Text>`, `<BitmapText>`
+
+**Shapes** (all extend `ShapeConfiguration`): `<Arc>`, `<Circle>`, `<Rectangle>`, `<Ellipse>`, `<Line>`, `<Triangle>`, `<Polygon>`, `<Star>`, `<Curve>`, `<IsoBox>`, `<IsoTriangle>`
+
+**Effects / Rendering**: `<Graphics>`, `<RenderTexture>`, `<Particles>`, `<Video>`
+
+**Structure**: `<Container>`, `<Zone>`, `<Tilemap>`, `<Scene>`
+
+**Not implemented** (crossed off with rationale in `features/vue-phaserjs/v1 (completed).md`):
+
+- `<Group>` — extends `EventEmitter` not `GameObject`; `v-for` handles grouping in Vue
+- `<Layer>` — extends `List<GameObject>` not `GameObject`; incompatible with `useInitializeGameObject`
+- Input composables (`usePointer`, `useGamepad`, `useDrag`) — per-frame reactive polling adds overhead; use `onUpdate` directly
+- `useTimeline`, physics, camera components, tilemap layer components — app-specific or don't map to Vue component model
+
+## Configuration Interfaces — `Pick` from Game Object Types
+
+When a configuration interface re-declares properties that exist on the Phaser game object, use `Pick<GameObjects.X, "prop1" | "prop2">` in `extends` instead of re-declaring each property individually:
+
+```ts
+// ✅ Correct
+export interface ArcConfiguration
+  extends ShapeConfiguration, Pick<GameObjects.Arc, "closePath" | "endAngle" | "radius" | "startAngle"> {}
+
+// ❌ Wrong — redundant re-declaration
+export interface ArcConfiguration extends ShapeConfiguration {
+  closePath: GameObjects.Arc["closePath"];
+  endAngle: GameObjects.Arc["endAngle"];
+  // ...
+}
+```
+
+Keep explicit declarations only for `Parameters<GameObjects.X["method"]>` tuples and plain primitives (`number`, `string`) that are constructor args without a matching readable property.
 
 ## Phaser Objects in Pinia Stores
 

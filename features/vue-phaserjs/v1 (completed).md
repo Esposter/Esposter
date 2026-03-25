@@ -28,12 +28,12 @@
 - ~~**`panCamera()`**~~ — Not currently used in the codebase.
 - ~~**`zoomCamera()`**~~ — Not currently used in the codebase.
 - ~~**`rotateTo()`**~~ — Not currently used in the codebase.
-- [ ] **Multiple cameras** — `scene.cameras.add()` for split-screen or minimap; a `<Camera>` component providing a camera context to children for bounds/follow configuration.
+- ~~**Multiple cameras**~~ — Cameras aren't game objects; setup is one-time imperative config already doable via `onComplete` on `<Scene>`. No meaningful Vue component hierarchy maps to camera ownership.
 
 ## Tilemap
 
-- [ ] **`<TilemapLayer>`** — Wraps `tilemap.createLayer()` as a declarative child of `<Tilemap>`; takes `layerName` and `tileset` props. Currently all layer creation is manual and imperative in `useCreateTilemapAssets`.
-- [ ] **`<TilemapObjectLayer>`** — Reads an object layer from the Tiled JSON and emits objects as typed data (position, custom properties) via a `@objects` event, removing the need for manual `getObjects()` calls in composables.
+- ~~**`<TilemapLayer>`**~~ — Layer creation has strict imperative ordering (depends on tileset add order). The `onComplete` callback on `<Tilemap>` already exposes the tilemap for direct `createLayer()` calls; a Vue wrapper would obscure the ordering constraints without adding value.
+- ~~**`<TilemapObjectLayer>`**~~ — Object layer data is best read directly via `tilemap.getObjectLayer()` in `onComplete`; no Vue-specific benefit from wrapping it as a component.
 
 ## Sound
 
@@ -41,20 +41,20 @@
 
 ## Input
 
-- [ ] **`usePointer()`** — Reactive composable exposing `scene.input.activePointer` position and button state; updates on `onUpdate` so components can track cursor world position without manual event listeners.
-- [ ] **`useGamepad()`** — Wraps `scene.input.gamepad`; exposes button/axis refs updated each frame via `onUpdate`.
-- [ ] **`useDrag()`** — Composable that calls `scene.input.setDraggable()` and exposes `onDragStart`, `onDrag`, `onDragEnd` callbacks without needing to touch `useInitializeGameObjectEvents` directly.
+- ~~**`usePointer()`**~~ — Polling reactive refs every frame adds Vue reactivity overhead with no benefit over reading `scene.input.activePointer` directly in an `onUpdate` handler.
+- ~~**`useGamepad()`**~~ — Same concern as `usePointer()`; per-frame gamepad polling doesn't benefit from Vue reactivity.
+- ~~**`useDrag()`**~~ — `useInitializeGameObjectEvents` already exposes game object events including drag; a separate composable would be a thin wrapper around existing functionality.
 
 ## Tweens & Timelines
 
-- [ ] **`useTimeline()`** — Composable wrapping `scene.tweens.chain()` (Phaser 3.60+) or `scene.tweens.timeline()` for sequencing multiple tweens; currently chaining is done via nested `onComplete` callbacks.
+- ~~**`useTimeline()`**~~ — Direct `scene.tweens.chain()` in `onComplete` or a composable is sufficient; timeline chaining is app-specific and doesn't benefit from a library abstraction.
 - ~~**`<Tween>`**~~ — Redundant with `useTween`; the existing composable integrates with the SetterMap/configuration system and is already used throughout the codebase.
 
 ## Scene Management
 
 - ~~**`useSceneData()`**~~ — Not needed; scene init data is managed via Pinia stores instead of being passed between scenes.
-- [ ] **Scene transition effects** — Extend `switchToScene()` in `usePhaserStore` with transition types beyond the current fade (slide, wipe, cross-fade between two scenes simultaneously).
+- ~~**Scene transition effects**~~ — App-specific; the caller should own transition logic. The library's `switchToScene()` provides the hook; transition variants belong in the consuming app.
 
 ## Physics
 
-- [ ] **`useArcadePhysics()`** — Composable enabling `scene.physics.add.sprite()` / `.image()` and exposing `body` refs with velocity, acceleration, gravity overrides, and `onCollide`/`onOverlap` hooks. Requires Arcade physics enabled in the game config — low viability until there is a specific use case.
+- ~~**`useArcadePhysics()`**~~ — Low viability until there is a specific use case; Arcade physics requires game config changes and is deeply app-specific.
