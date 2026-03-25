@@ -170,20 +170,20 @@ catalog:
   nano-staged: ^0.9.0
   oxfmt: ^0.42.0
   oxlint: ^1.57.0
-  oxlint-tsgolint: ^0.17.3
+  oxlint-tsgolint: ^0.17.4
   p-progress: ^1.0.0
   pathe: ^2.0.3
   pdfjs-dist: ^5.5.207
-  phaser: ^4.0.0-rc.6
+  phaser: ^4.0.0-rc.7
   phaser3-rex-plugins: ^1.80.19
   pinia: ^3.0.4
   pluralize: ^8.0.0
   postgres: ^3.4.8
   prosemirror-state: ^1.4.4
   rate-limiter-flexible: ^10.0.1
-  read-excel-file: ^7.0.2
-  rolldown: ^1.0.0-rc.11
-  rolldown-plugin-dts: ^0.22.5
+  read-excel-file: ^7.0.3
+  rolldown: ^1.0.0-rc.12
+  rolldown-plugin-dts: ^0.23.0
   rxjs: ^7.8.2
   sanitize-html: ^2.17.2
   sass-embedded: ^1.98.0
@@ -211,7 +211,7 @@ catalog:
   vite: ^8.0.2
   vite-plugin-mkcert: ^1.17.10
   vitest: ^4.1.1
-  vue: ^3.5.30
+  vue: ^3.5.31
   vue-codemirror: ^6.1.1
   vue-draggable-plus: ^0.6.1
   vue-pdf-embed: ^2.1.4

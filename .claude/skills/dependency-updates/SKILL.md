@@ -17,13 +17,15 @@ All version numbers live in the `catalog:` section of `pnpm-workspace.yaml` at t
 
 2. **Update versions** in `pnpm-workspace.yaml` — all non-pinned packages must have a `^` caret prefix.
 
-3. **Refresh the lockfile manually** — run `pnpm refresh:lockfile` from the repo root yourself after updating versions.
+3. **Tell the user to refresh the lockfile** — do NOT run this yourself. Instruct the user to run `pnpm refresh:lockfile` from the repo root.
 
 ## Pinned packages (do not update)
 
 - **`nuxt`** — no `^`, manually managed (infrastructure, coordinates with `h3` and Nuxt modules).
 - **`h3`** — skip major/RC bumps; only update minor/patch within the current major.
 - **`ctix`** — pinned (no `^`) due to open issue https://github.com/imjuni/ctix/issues/192.
+- **`typescript`** — skip; user manages manually (major version bumps need explicit review).
+- **`@typescript/native-preview`** — skip; user manages manually (dev preview channel, updated on demand).
 
 ## Tracked issues (update normally, but watch these)
 
