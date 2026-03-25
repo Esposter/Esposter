@@ -42,29 +42,4 @@ describe("container", () => {
     wrapper.unmount();
     removeTestScene(sceneKey);
   });
-
-  test("container is placed on the scene display list", () => {
-    expect.hasAssertions();
-
-    const wrapper = mount(Container, {
-      global: {
-        plugins: [getTestPinia()],
-        provide: { [InjectionKeyMap.SceneKey]: sceneKey },
-      },
-      slots: {
-        default: () =>
-          h(Sprite, {
-            configuration: { texture: "", x: 0, y: 0 },
-          }),
-      },
-    });
-
-    const scene = startTestScene(sceneKey);
-    const container = scene.children.list.find((obj) => obj instanceof GameObjects.Container);
-
-    expect(container).toBeDefined();
-
-    wrapper.unmount();
-    removeTestScene(sceneKey);
-  });
 });

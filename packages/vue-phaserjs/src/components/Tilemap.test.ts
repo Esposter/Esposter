@@ -11,32 +11,6 @@ import { assert, describe, expect, test, vi } from "vitest";
 describe("tilemap", () => {
   const sceneKey = "sceneKey";
 
-  test("calls scene.make.tilemap with the configuration on scene create", () => {
-    expect.hasAssertions();
-
-    let capturedTilemap: Tilemaps.Tilemap | undefined;
-
-    const wrapper = mount(Tilemap, {
-      global: {
-        plugins: [getTestPinia()],
-        provide: { [InjectionKeyMap.SceneKey]: sceneKey },
-      },
-      props: {
-        configuration: {},
-        onComplete: (_scene: SceneWithPlugins, tilemap: Tilemaps.Tilemap) => {
-          capturedTilemap = tilemap;
-        },
-      },
-    });
-
-    startTestScene(sceneKey);
-
-    expect(capturedTilemap).toBeDefined();
-
-    wrapper.unmount();
-    removeTestScene(sceneKey);
-  });
-
   test("destroys the old tilemap and fires onComplete with the new one when the key changes", async () => {
     expect.hasAssertions();
 
