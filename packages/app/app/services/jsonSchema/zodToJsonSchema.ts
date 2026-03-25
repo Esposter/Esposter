@@ -36,12 +36,12 @@ export const zodToJsonSchema = (schema: z.ZodType) => {
       (ctx.jsonSchema as Record<string, unknown>).layout = layout;
     },
   });
+  if (result.properties) applyPropertyHooks(result.properties);
   if (result.oneOf)
-    for (const variant of result.oneOf)
-      if (typeof variant === "boolean") applyPropertyHooks(result.properties);
-      else {
-        if (variant.title) variant.title = toTitleCase(prettify(variant.title));
-        applyPropertyHooks(variant.properties);
-      }
+    for (const variant of result.oneOf) {
+      if (typeof variant === "boolean") continue;
+      if (variant.title) variant.title = toTitleCase(prettify(variant.title));
+      if (variant.properties) applyPropertyHooks(variant.properties);
+    }
   return result;
 };

@@ -203,7 +203,7 @@ describe(zodToJsonSchema, () => {
       const result = zodToJsonSchema(schema) as { properties: Record<string, { layout?: { getProps?: string } }> };
       const storedGetProps = result.properties.name?.layout?.getProps ?? "";
       const evaluate = (columnNames: string[]): EvaluatedProps =>
-        // oxlint-disable-next-line @typescript-eslint/no-implied-eval
+        // eslint-disable-next-line @typescript-eslint/no-implied-eval
         new Function("context", `return ${storedGetProps}`)({ columnNames }) as EvaluatedProps;
 
       const withEmpty = evaluate([""]);

@@ -12,6 +12,6 @@ export const convertToTransformationSchema = withSourceColumnSchema
     }),
     type: z.literal(ColumnTransformationType.ConvertTo),
   })
-  .meta({ title: "Convert To" });
+  .meta({ title: ColumnTransformationType.ConvertTo });
 
 export type ConvertToTransformation = z.infer<typeof convertToTransformationSchema>;

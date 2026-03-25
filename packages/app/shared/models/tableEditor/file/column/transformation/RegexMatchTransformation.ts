@@ -8,6 +8,6 @@ export const regexMatchTransformationSchema = withSourceColumnSchema
     pattern: z.string().meta({ title: "Pattern" }),
     type: z.literal(ColumnTransformationType.RegexMatch),
   })
-  .meta({ title: "Regex Match" });
+  .meta({ title: ColumnTransformationType.RegexMatch });
 
 export type RegexMatchTransformation = z.infer<typeof regexMatchTransformationSchema>;

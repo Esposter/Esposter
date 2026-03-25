@@ -9,6 +9,6 @@ export const mathOperationTransformationSchema = withSourceColumnSchema
     operation: z.enum(MathOperationType).meta({ title: "Operation" }),
     type: z.literal(ColumnTransformationType.MathOperation),
   })
-  .meta({ title: "Math Operation" });
+  .meta({ title: ColumnTransformationType.MathOperation });
 
 export type MathOperationTransformation = z.infer<typeof mathOperationTransformationSchema>;
