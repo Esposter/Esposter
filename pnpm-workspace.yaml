@@ -15,7 +15,7 @@ catalog:
   "@azure/core-rest-pipeline": ^1.23.0
   "@azure/data-tables": ^13.3.2
   "@azure/eventgrid": ^5.12.0
-  "@azure/functions": ^4.11.2
+  "@azure/functions": ^4.12.0
   "@azure/identity": ^4.13.1
   "@azure/search-documents": ^12.2.0
   "@azure/storage-blob": ^12.31.0
@@ -40,7 +40,7 @@ catalog:
   "@fullcalendar/interaction": ^6.1.20
   "@fullcalendar/timegrid": ^6.1.20
   "@fullcalendar/vue3": ^6.1.20
-  "@koumoul/vjsf": ^4.1.5
+  "@koumoul/vjsf": ^4.2.0
   "@lerna-lite/cli": ^4.11.5
   "@lerna-lite/publish": ^4.11.5
   "@lerna-lite/run": ^4.11.5
@@ -65,8 +65,8 @@ catalog:
   "@tresjs/cientos": ^5.6.0
   "@tresjs/core": ^5.7.0
   "@tresjs/nuxt": ^5.5.0
-  "@trpc/client": ^11.14.1
-  "@trpc/server": ^11.14.1
+  "@trpc/client": ^11.15.0
+  "@trpc/server": ^11.15.0
   "@types/data-urls": ^3.0.5
   "@types/dedent": ^0.7.2
   "@types/deep-equal": ^1.0.4
@@ -84,7 +84,7 @@ catalog:
   "@types/web-push": ^3.6.4
   "@types/ws": ^8.18.1
   "@types/xml2js": ^0.4.14
-  "@typescript/native-preview": 7.0.0-dev.20260320.1
+  "@typescript/native-preview": ^7.0.0-dev.20260324.1
   "@unocss/eslint-config": ^66.6.7
   "@unocss/nuxt": ^66.6.7
   "@vite-pwa/nuxt": ^1.1.1
@@ -123,7 +123,7 @@ catalog:
   emoji-mart-vue-fast: ^15.0.5
   eslint: ^10.1.0
   eslint-plugin-depend: ^1.5.0
-  eslint-plugin-oxlint: ^1.56.0
+  eslint-plugin-oxlint: ^1.57.0
   eslint-plugin-perfectionist: ^5.7.0
   eslint-plugin-pinia: ^0.4.2
   eventemitter3: ^5.0.4
@@ -168,8 +168,8 @@ catalog:
   obscenity: ^0.4.6
   omit-deep-lodash: ^1.1.7
   nano-staged: ^0.9.0
-  oxfmt: ^0.41.0
-  oxlint: ^1.56.0
+  oxfmt: ^0.42.0
+  oxlint: ^1.57.0
   oxlint-tsgolint: ^0.17.3
   p-progress: ^1.0.0
   pathe: ^2.0.3
@@ -191,10 +191,10 @@ catalog:
   show-open-file-picker: ^0.4.0
   sql-highlight: ^6.1.0
   superjson: ^2.2.6
-  survey-core: ^3.0.0-beta.0
-  survey-creator-core: ^3.0.0-beta.0
-  survey-creator-vue: ^3.0.0-beta.0
-  survey-vue3-ui: ^3.0.0-beta.0
+  survey-core: 3.0.0-beta.0
+  survey-creator-core: 3.0.0-beta.0
+  survey-creator-vue: 3.0.0-beta.0
+  survey-vue3-ui: 3.0.0-beta.0
   three: ^0.183.2
   three-globe: ^2.45.1
   trpc-nuxt: ^2.0.2
@@ -218,8 +218,8 @@ catalog:
   vue-router: ^5.0.4
   vue-tsc: ^3.2.6
   vue3-apexcharts: ^1.11.1
-  vuetify: ^4.0.3
-  vuetify-nuxt-module: ^1.0.0-beta.1
+  vuetify: ^4.0.4
+  vuetify-nuxt-module: ^1.0.0-beta.2
   web-push: ^3.6.7
   worker-timers: ^8.0.31
   write-excel-file: ^3.0.6
@@ -234,7 +234,7 @@ cleanupUnusedCatalogs: true
 overrides:
   crossws: ^0.4.4
   pdfjs-dist: ^5.5.207
-  vite: ^8.0.1
+  vite: ^8.0.2
   vue-router: ^5.0.4
 
 shellEmulator: true
