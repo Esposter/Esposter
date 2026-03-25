@@ -1,3 +1,4 @@
+import type { ColumnForm } from "#shared/models/tableEditor/file/column/ColumnForm";
 import type { ColumnTransformation } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformation";
 import type { ToData } from "@esposter/shared";
 
@@ -28,4 +29,4 @@ export const computedColumnSchema = createColumnSchema(z.literal(ColumnType.Comp
 
 export const computedColumnFormSchema = createColumnFormSchema(z.literal(ColumnType.Computed).readonly()).extend({
   transformation: columnTransformationSchema,
-});
+}) satisfies z.ZodType<ColumnForm>;

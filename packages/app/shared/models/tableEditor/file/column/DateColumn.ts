@@ -1,3 +1,4 @@
+import type { ColumnForm } from "#shared/models/tableEditor/file/column/ColumnForm";
 import type { ToData } from "@esposter/shared";
 
 import { Column, createColumnSchema } from "#shared/models/tableEditor/file/column/Column";
@@ -22,4 +23,4 @@ export const dateColumnSchema = createColumnSchema(z.literal(ColumnType.Date)).e
 
 export const dateColumnFormSchema = createColumnFormSchema(z.literal(ColumnType.Date).readonly()).extend({
   format: dateColumnSchema.shape.format.meta({ title: "Format" }),
-});
+}) satisfies z.ZodType<ColumnForm>;
