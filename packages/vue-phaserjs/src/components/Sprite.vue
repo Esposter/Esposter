@@ -14,7 +14,7 @@ export interface SpriteProps {
   onComplete?: (scene: SceneWithPlugins, sprite: GameObjects.Sprite) => void;
 }
 
-interface SpriteEmits  extends /** @vue-ignore */ SpriteEventEmitsOptions {}
+interface SpriteEmits extends /** @vue-ignore */ SpriteEventEmitsOptions {}
 
 const { configuration, immediate, onComplete } = defineProps<SpriteProps>();
 const emit = defineEmits<SpriteEmits>();

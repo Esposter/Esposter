@@ -13,7 +13,7 @@ export interface ImageProps {
   onComplete?: (scene: SceneWithPlugins, image: GameObjects.Image) => void;
 }
 
-interface ImageEmits  extends /** @vue-ignore */ ImageEventEmitsOptions {}
+interface ImageEmits extends /** @vue-ignore */ ImageEventEmitsOptions {}
 
 const { configuration, onComplete } = defineProps<ImageProps>();
 const emit = defineEmits<ImageEmits>();

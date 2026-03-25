@@ -6,7 +6,7 @@ import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
 import { useTextStore } from "@/store/text";
 import { TextSetterMap } from "@/util/setterMap/TextSetterMap";
 
-interface TextEmits  extends /** @vue-ignore */ TextEventEmitsOptions {}
+interface TextEmits extends /** @vue-ignore */ TextEventEmitsOptions {}
 
 const { configuration, immediate } = defineProps<TextProps>();
 const emit = defineEmits<TextEmits>();
