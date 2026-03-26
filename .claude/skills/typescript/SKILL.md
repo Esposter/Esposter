@@ -42,6 +42,21 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 ## Control Flow
 
 - **Guard clauses first**: always use `if (!condition) return` to exit early instead of wrapping the main body in an `if` block. Reduce nesting aggressively — if the body of an `if` is the rest of the function, invert the condition and return early instead.
+- **Combine consecutive guards with `||`** — when two or more consecutive early-return guards share the same return value (typically `return` or `return null`), combine them into a single `if` with `||`. Never write two separate `if` statements that both `return` when they can be one:
+
+  ```ts
+  // BAD — two separate guards
+  if (!editedItem.value?.dataSource) return;
+  if (editedItem.value.dataSource.columns.some(({ name }) => name === newColumn.name)) return;
+
+  // GOOD — combined with ||
+  if (!editedItem.value?.dataSource || editedItem.value.dataSource.columns.some(({ name }) => name === newColumn.name))
+    return;
+  ```
+
+  Exception: when the second check has side effects or requires complex destructuring that depends on the first passing, separate guards are acceptable.
+
+- **Use `switch` for type-based branching** — when branching on an enum or discriminant with multiple cases, use `switch` (with `exhaustiveGuard` in the default) instead of a chain of `if/else if`. Use `if/else if/else` only when conditions are non-enum expressions or when there are exactly two branches.
 - **Always use `if/else if/else` from the very first branch** when a function has multiple conditional returns — no standalone `if` followed by `else if`.
 
 ## Return Type Annotations

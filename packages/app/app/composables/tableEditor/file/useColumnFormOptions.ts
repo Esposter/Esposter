@@ -14,14 +14,14 @@ export const useColumnFormOptions = (dataSource: MaybeRefOrGetter<DataSource>, c
         columnNames: dataSourceValue.columns.map(({ name }) => name),
         currentName: currentNameValue,
         dateSourceColumnItems: dataSourceValue.columns
-          .filter(({ type }) => type === ColumnType.Date)
+          .filter(({ type }) => type === ColumnType.Date || type === ColumnType.Computed)
           .map(({ id, name }) => ({ title: name, value: id })),
         numberSourceColumnItems: dataSourceValue.columns
-          .filter(({ type }) => type === ColumnType.Number)
+          .filter(({ type }) => type === ColumnType.Number || type === ColumnType.Computed)
           .map(({ id, name }) => ({ title: name, value: id })),
         sourceColumnItems: dataSourceValue.columns.map(({ id, name }) => ({ title: name, value: id })),
         stringSourceColumnItems: dataSourceValue.columns
-          .filter(({ type }) => type === ColumnType.String)
+          .filter(({ type }) => type === ColumnType.String || type === ColumnType.Computed)
           .map(({ id, name }) => ({ title: name, value: id })),
       },
     };
