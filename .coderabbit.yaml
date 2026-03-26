@@ -1,0 +1,92 @@
+language: en-US
+reviews:
+  profile: chill
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - main
+  path_filters:
+    # Claude Code skill documentation
+    - "!.claude/skills/**"
+    # pnpm lock/workspace (dependency bumps)
+    - "!pnpm-lock.yaml"
+    - "!pnpm-workspace.yaml"
+    # Root-level MessageType.ts — whitespace only
+    - "!MessageType.ts"
+    # Vue components — import type renames only (DataSource["columns"][number] → Column, DataSourceItemTypeMap → DataSourceItem)
+    - "!packages/app/app/components/TableEditor/File/Column/ActionSlot.vue"
+    - "!packages/app/app/components/TableEditor/File/Column/ChartDialogButton.vue"
+    - "!packages/app/app/components/TableEditor/File/Column/ItemSlot.vue"
+    - "!packages/app/app/components/TableEditor/File/Column/StatsDialog.vue"
+    - "!packages/app/app/components/TableEditor/File/CrudView/ExportButton.vue"
+    - "!packages/app/app/components/TableEditor/File/CrudView/ExportDialog.vue"
+    - "!packages/app/app/components/TableEditor/File/CrudView/Header.vue"
+    - "!packages/app/app/components/TableEditor/File/CrudView/ImportButton.vue"
+    - "!packages/app/app/components/TableEditor/File/EditForm.vue"
+    - "!packages/app/app/components/TableEditor/File/Row/ColumnFilterInput.vue"
+    - "!packages/app/app/components/TableEditor/File/Row/CopyToClipboardButton.vue"
+    - "!packages/app/app/components/TableEditor/File/Row/DeduplicateDialogButton.vue"
+    - "!packages/app/app/components/TableEditor/File/Row/FieldInput/Boolean.vue"
+    - "!packages/app/app/components/TableEditor/File/Row/FieldInput/Text.vue"
+    - "!packages/app/app/components/TableEditor/File/Row/HeaderSlot.vue"
+    - "!packages/app/app/components/TableEditor/File/Row/ItemSlot.vue"
+    # Composable commands — import type renames only (DataSourceItemTypeMap → DataSourceItem, Column → typed subclasses)
+    - "!packages/app/app/composables/tableEditor/file/commands/useCreateRow.ts"
+    - "!packages/app/app/composables/tableEditor/file/commands/useCreateRows.ts"
+    - "!packages/app/app/composables/tableEditor/file/commands/useDeleteColumn.ts"
+    - "!packages/app/app/composables/tableEditor/file/commands/useDeleteColumns.ts"
+    - "!packages/app/app/composables/tableEditor/file/commands/useDeleteDuplicateRows.ts"
+    - "!packages/app/app/composables/tableEditor/file/commands/useDeleteRow.ts"
+    - "!packages/app/app/composables/tableEditor/file/commands/useDeleteRows.ts"
+    - "!packages/app/app/composables/tableEditor/file/commands/useFindReplace.ts"
+    - "!packages/app/app/composables/tableEditor/file/commands/useNormalizeStrings.ts"
+    - "!packages/app/app/composables/tableEditor/file/commands/useNullStrategy.ts"
+    - "!packages/app/app/composables/tableEditor/file/commands/usePasteFromClipboard.ts"
+    - "!packages/app/app/composables/tableEditor/file/commands/useReorderColumns.ts"
+    - "!packages/app/app/composables/tableEditor/file/commands/useReorderRows.ts"
+    - "!packages/app/app/composables/tableEditor/file/commands/useSetDataSource.ts"
+    - "!packages/app/app/composables/tableEditor/file/commands/useToggleColumnVisibility.ts"
+    - "!packages/app/app/composables/tableEditor/file/commands/useUpdateColumn.ts"
+    # Test files — constructor/import renames only (Column → StringColumn/BooleanColumn/NumberColumn)
+    - "!packages/app/app/composables/tableEditor/file/commands/useCreateColumn.test.ts"
+    - "!packages/app/app/composables/tableEditor/file/commands/useNullStrategy.test.ts"
+    - "!packages/app/app/composables/tableEditor/file/commands/useReorderColumns.test.ts"
+    - "!packages/app/app/composables/tableEditor/file/commands/useSetDataSource.test.ts"
+    - "!packages/app/app/composables/tableEditor/file/commands/useToggleColumnVisibility.test.ts"
+    - "!packages/app/app/composables/tableEditor/file/commands/useUpdateColumn.test.ts"
+    - "!packages/app/app/services/tableEditor/file/column/coerceValue.test.ts"
+    - "!packages/app/app/services/tableEditor/file/column/computeColumnStats.test.ts"
+    - "!packages/app/app/services/tableEditor/file/column/inferColumnType.test.ts"
+    - "!packages/app/app/services/tableEditor/file/csv/serializeCsv.test.ts"
+    - "!packages/app/app/services/tableEditor/file/dataSource/filterDataSourceRows.test.ts"
+    - "!packages/app/app/services/tableEditor/file/json/serializeJson.test.ts"
+    - "!packages/app/app/services/tableEditor/file/xlsx/deserializeXlsx.test.ts"
+    - "!packages/app/app/services/tableEditor/file/xlsx/serializeXlsx.test.ts"
+    # Store files — import type renames only
+    - "!packages/app/app/store/tableEditor/file/findReplace.ts"
+    - "!packages/app/app/store/tableEditor/file/outlier.ts"
+    - "!packages/app/app/store/tableEditor/fileHistory/index.ts"
+    # Service files — import renames + DATE_FORMATS → Object.values(DateFormat) (same values, no logic change)
+    - "!packages/app/app/services/tableEditor/file/column/computeColumnStats.ts"
+    - "!packages/app/app/services/tableEditor/file/column/inferColumnType.ts"
+    - "!packages/app/app/services/tableEditor/file/column/inferDateFormat.ts"
+    - "!packages/app/app/services/tableEditor/file/column/isEditableColumnValue.ts"
+    # Shared models — import renames or satisfies z.ZodType<T> pattern migration (no semantic change)
+    - "!packages/app/shared/models/db/webhook/CreateWebhookInput.ts"
+    - "!packages/app/shared/models/db/webhook/DeleteWebhookInput.ts"
+    - "!packages/app/shared/models/db/webhook/RotateTokenInput.ts"
+    - "!packages/app/shared/models/dungeons/keys/TilemapKey.ts"
+    - "!packages/app/shared/models/tableEditor/data/TableEditorConfiguration.ts"
+    - "!packages/app/shared/models/tableEditor/data/TableEditorType.ts"
+    - "!packages/app/shared/services/superjson/JSONClassMap.ts"
+    - "!packages/app/shared/types/zod.d.ts"
+    # db-schema — satisfies z.ZodType<T> pattern migration only (no semantic change)
+    - "!packages/db-schema/src/models/message/MessageType.ts"
+    - "!packages/db-schema/src/models/message/filter/Filter.ts"
+    - "!packages/db-schema/src/models/message/filter/FilterType.ts"
+    - "!packages/db-schema/src/models/message/webhook/Embed.ts"
+    - "!packages/db-schema/src/models/message/webhook/EmbedAuthor.ts"
+    - "!packages/db-schema/src/models/message/webhook/EmbedField.ts"
+    - "!packages/db-schema/src/models/message/webhook/EmbedFooter.ts"
+    - "!packages/db-schema/src/models/message/webhook/WebhookPayload.ts"
