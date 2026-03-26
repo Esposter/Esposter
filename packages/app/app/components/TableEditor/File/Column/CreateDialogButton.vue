@@ -1,14 +1,25 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
+import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import { columnTypeFormSchema } from "#shared/models/tableEditor/file/column/ColumnTypeForm";
+import { ColumnTypeFormSchemaMap } from "#shared/models/tableEditor/file/column/ColumnTypeFormSchemaMap";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { ColumnTypeCreateMap } from "@/services/tableEditor/file/column/ColumnTypeCreateMap";
-import { Vjsf } from "@koumoul/vjsf";
+import { ColumnTypeItemCategoryDefinitions } from "@/services/tableEditor/file/column/ColumnTypeItemCategoryDefinitions";
+import { type Options, Vjsf } from "@koumoul/vjsf";
 
 interface CreateDialogButtonProps {
   dataSource: DataSource;
+}
+
+interface ColumnFormVjsfContext {
+  columnNames: string[];
+  currentName: string;
+  dateSourceColumnItems: SelectItemCategoryDefinition<string>[];
+  numberSourceColumnItems: SelectItemCategoryDefinition<string>[];
+  sourceColumnItems: SelectItemCategoryDefinition<string>[];
+  stringSourceColumnItems: SelectItemCategoryDefinition<string>[];
 }
 
 const { dataSource } = defineProps<CreateDialogButtonProps>();
@@ -18,8 +29,9 @@ const columnType = ref(ColumnType.String);
 // And fast-deep-equal checks constructors so class instances never equal their plain object clones
 const defaultColumn = computed(() => structuredClone(ColumnTypeCreateMap[columnType.value].create()));
 const editedColumn = ref<DataSource["columns"][number]>(structuredClone(defaultColumn.value));
-const jsonSchema = zodToJsonSchema(columnTypeFormSchema);
-const options = computed(() => ({
+const schema = computed(() => ColumnTypeFormSchemaMap[columnType.value]);
+const jsonSchema = computed(() => zodToJsonSchema(schema.value));
+const options = computed((): Options & { context: ColumnFormVjsfContext } => ({
   context: {
     columnNames: dataSource.columns.map(({ name }) => name),
     currentName: editedColumn.value.name,
@@ -45,7 +57,7 @@ const resetForm = () => {
     title="Create Column"
     tooltip-text="Add Column"
     icon="mdi-table-column-plus-after"
-    :schema="columnTypeFormSchema"
+    :schema
     :value="defaultColumn"
     :edited-value="editedColumn"
     @reset="resetForm()"
@@ -56,6 +68,12 @@ const resetForm = () => {
       }
     "
   >
+    <v-select
+      v-model="columnType"
+      :items="ColumnTypeItemCategoryDefinitions"
+      label="Type"
+      @update:model-value="resetForm()"
+    />
     <Vjsf v-model="editedColumn" :schema="jsonSchema" :options />
   </TableEditorFileCrudViewEditDialogButton>
 </template>

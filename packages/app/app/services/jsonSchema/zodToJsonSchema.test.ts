@@ -19,11 +19,7 @@ describe(zodToJsonSchema, () => {
       const schema = z.object({ name: z.string() });
       const result = zodToJsonSchema(schema);
 
-      expect(result).toMatchObject({
-        properties: expect.objectContaining({ name: expect.any(Object) }),
-        required: expect.arrayContaining(["name"]),
-        type: "object",
-      });
+      expect(result).toMatchInlineSnapshot();
     });
 
     test("generates title from camelCase key when no meta title", () => {

@@ -2,8 +2,10 @@
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import { columnTypeFormSchema } from "#shared/models/tableEditor/file/column/ColumnTypeForm";
+import { ColumnTypeFormSchemaMap } from "#shared/models/tableEditor/file/column/ColumnTypeFormSchemaMap";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
+import { ColumnTypeCreateMap } from "@/services/tableEditor/file/column/ColumnTypeCreateMap";
+import { ColumnTypeItemCategoryDefinitions } from "@/services/tableEditor/file/column/ColumnTypeItemCategoryDefinitions";
 import { toRawDeep } from "@esposter/shared";
 import { Vjsf } from "@koumoul/vjsf";
 
@@ -14,7 +16,9 @@ interface EditDialogButtonProps {
 
 const { column, dataSource } = defineProps<EditDialogButtonProps>();
 const updateColumn = useUpdateColumn();
-const jsonSchema = zodToJsonSchema(columnTypeFormSchema);
+const columnType = ref(column.type);
+const schema = computed(() => ColumnTypeFormSchemaMap[columnType.value]);
+const jsonSchema = computed(() => zodToJsonSchema(schema.value));
 const options = computed(() => ({
   context: {
     columnNames: dataSource.columns.map(({ name }) => name),
@@ -35,6 +39,7 @@ const editedColumn = ref(structuredClone(toRawDeep(column)));
 const title = computed(() => `Edit "${column.name}" Column`);
 const resetForm = () => {
   editedColumn.value = structuredClone(toRawDeep(column));
+  columnType.value = column.type;
 };
 </script>
 
@@ -42,7 +47,7 @@ const resetForm = () => {
   <TableEditorFileCrudViewEditDialogButton
     :title
     :tooltip-text="title"
-    :schema="columnTypeFormSchema"
+    :schema
     :value="column"
     :edited-value="editedColumn"
     @reset="resetForm()"
@@ -53,6 +58,12 @@ const resetForm = () => {
       }
     "
   >
+    <v-select
+      v-model="columnType"
+      :items="ColumnTypeItemCategoryDefinitions"
+      label="Type"
+      @update:model-value="editedColumn = ColumnTypeCreateMap[$event].create()"
+    />
     <Vjsf v-model="editedColumn" :schema="jsonSchema" :options />
   </TableEditorFileCrudViewEditDialogButton>
 </template>

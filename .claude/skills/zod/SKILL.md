@@ -123,6 +123,25 @@ Always use the `z` namespace export: `z.ZodType`, `z.ZodError`, etc. Never use n
   const schema = computed(() => takeOne(ColumnTypeFormSchemaMap, column.type));
   const jsonSchema = computed(() => zodToJsonSchema(schema.value));
   ```
+- **Vjsf discriminated union — auto-detection limitation**: Vjsf can only auto-detect which `oneOf` variant matches the current value when the discriminant property has a single `const` value (e.g. `z.literal(ColumnType.Date).readonly()`). `z.enum([...])` or `z.union([z.literal(...), ...])` on the discriminant do NOT produce a single `const` — Vjsf cannot determine the variant and shows a blank variant selector instead of pre-filling the form. **Do not use a discriminated union schema for forms where the variant must be pre-selected from existing data.** Instead, use a `*TypeFormSchemaMap` (a `Record<EnumType, z.ZodType>`) and select the schema per entry at the call site:
+
+  ```typescript
+  // shared/models/.../ColumnTypeFormSchemaMap.ts
+  export const ColumnTypeFormSchemaMap = {
+    [ColumnType.Boolean]: columnFormSchema,
+    [ColumnType.Computed]: computedColumnFormSchema,
+    [ColumnType.Date]: dateColumnFormSchema,
+    [ColumnType.Number]: columnFormSchema,
+    [ColumnType.String]: columnFormSchema,
+  };
+
+  // In component:
+  const schema = computed(() => ColumnTypeFormSchemaMap[column.type]);
+  const jsonSchema = computed(() => zodToJsonSchema(schema.value));
+  ```
+
+  For create forms (no existing value), use an external `v-select` (bound to a `columnType` ref) to control which schema is active — changing the selector resets the form and remounts Vjsf via `:key`. The selector items map category names ("Standard", "Date", "Computed") to canonical enum values used as map keys (`ColumnType.String`, `ColumnType.Date`, `ColumnType.Computed`).
+
 - **Snapshot tests for vjsf schemas** — for schemas that are passed to `zodToJsonSchema()` and rendered by Vjsf in components, add a `toMatchInlineSnapshot()` test co-located directly next to the schema file (same folder, same base name):
 
   ```
