@@ -8,7 +8,7 @@ export const convertToTransformationSchema = withSourceColumnIdSchema
     targetType: z.enum([ColumnType.Boolean, ColumnType.Date, ColumnType.Number, ColumnType.String]).meta({
       title: "Target Type",
     }),
-    type: z.literal(ColumnTransformationType.ConvertTo),
+    type: z.literal(ColumnTransformationType.ConvertTo).readonly(),
   })
   .meta({ title: ColumnTransformationType.ConvertTo });
 

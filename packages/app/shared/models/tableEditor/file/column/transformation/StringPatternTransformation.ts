@@ -19,7 +19,7 @@ export const stringPatternTransformationSchema = withSourceColumnIdsSchema
       )
       .default([])
       .meta({ title: "Source Columns" }),
-    type: z.literal(ColumnTransformationType.StringPattern),
+    type: z.literal(ColumnTransformationType.StringPattern).readonly(),
   })
   .meta({ applicableColumnTypes: [ColumnType.String], title: ColumnTransformationType.StringPattern });
 

@@ -12,6 +12,7 @@ description: Esposter file and folder organisation — one export per file, no e
 ## Files and Exports
 
 - **One export per file** — each exported function, class, or interface lives in its own file. Exception: Zod schemas may be co-located with their interface/type since they are tightly coupled.
+- **Interfaces go in `models/`** — never define an exported interface inline inside a `.vue` component. Extract it to `app/models/<feature>/InterfaceName.ts`. This makes it reusable (e.g. a Vjsf context interface shared between create and edit dialogs lives in `app/models/tableEditor/file/column/ColumnFormVjsfContext.ts`, not inside either component).
 - **One class per file** — classes belong in a `models/` folder (e.g., `app/models/`, `shared/models/`).
 - **Never use `export { }` syntax** — always use `export const`, `export class`, `export interface`, `export type`, or `export function` at the declaration site. The only valid exceptions are empty `export {}` in `.d.ts` files (to mark them as a module) and `ctix`-generated barrel files (pinned package). If you see `export { ... }` in a hand-written `.ts` file, it is wrong — inline the `export` keyword at each declaration instead.
 - **Constants go in `constants.ts`** — all module-level constants in a `constants.ts` file under `services/` alongside the files that use them. Never put `constants.ts` inside `composables/`.

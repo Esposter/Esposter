@@ -10,7 +10,7 @@ export const regexMatchTransformationSchema = withSourceColumnIdSchema
     sourceColumnId: withSourceColumnIdSchema.shape.sourceColumnId.meta({
       getItems: "context.stringSourceColumnItems",
     }),
-    type: z.literal(ColumnTransformationType.RegexMatch),
+    type: z.literal(ColumnTransformationType.RegexMatch).readonly(),
   })
   .meta({ applicableColumnTypes: [ColumnType.String], title: ColumnTransformationType.RegexMatch });
 

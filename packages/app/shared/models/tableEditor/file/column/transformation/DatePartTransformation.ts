@@ -10,7 +10,7 @@ export const datePartTransformationSchema = withSourceColumnIdSchema
     sourceColumnId: withSourceColumnIdSchema.shape.sourceColumnId.meta({
       getItems: "context.dateSourceColumnItems",
     }),
-    type: z.literal(ColumnTransformationType.DatePart),
+    type: z.literal(ColumnTransformationType.DatePart).readonly(),
   })
   .meta({ applicableColumnTypes: [ColumnType.Date], title: ColumnTransformationType.DatePart });
 

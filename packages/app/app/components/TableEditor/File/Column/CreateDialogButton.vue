@@ -1,25 +1,17 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
-import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
+import type { ColumnFormVjsfContext } from "@/models/tableEditor/file/column/ColumnFormVjsfContext";
+import type { VjsfOptions } from "@/models/vjsf/VjsfOptions";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ColumnTypeFormSchemaMap } from "#shared/models/tableEditor/file/column/ColumnTypeFormSchemaMap";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { ColumnTypeCreateMap } from "@/services/tableEditor/file/column/ColumnTypeCreateMap";
 import { ColumnTypeItemCategoryDefinitions } from "@/services/tableEditor/file/column/ColumnTypeItemCategoryDefinitions";
-import { type Options, Vjsf } from "@koumoul/vjsf";
+import { Vjsf } from "@koumoul/vjsf";
 
 interface CreateDialogButtonProps {
   dataSource: DataSource;
-}
-
-interface ColumnFormVjsfContext {
-  columnNames: string[];
-  currentName: string;
-  dateSourceColumnItems: SelectItemCategoryDefinition<string>[];
-  numberSourceColumnItems: SelectItemCategoryDefinition<string>[];
-  sourceColumnItems: SelectItemCategoryDefinition<string>[];
-  stringSourceColumnItems: SelectItemCategoryDefinition<string>[];
 }
 
 const { dataSource } = defineProps<CreateDialogButtonProps>();
@@ -31,7 +23,7 @@ const defaultColumn = computed(() => structuredClone(ColumnTypeCreateMap[columnT
 const editedColumn = ref<DataSource["columns"][number]>(structuredClone(defaultColumn.value));
 const schema = computed(() => ColumnTypeFormSchemaMap[columnType.value]);
 const jsonSchema = computed(() => zodToJsonSchema(schema.value));
-const options = computed((): Options & { context: ColumnFormVjsfContext } => ({
+const options = computed<VjsfOptions<ColumnFormVjsfContext>>(() => ({
   context: {
     columnNames: dataSource.columns.map(({ name }) => name),
     currentName: editedColumn.value.name,

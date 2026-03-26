@@ -57,7 +57,8 @@ Always use the `z` namespace export: `z.ZodType`, `z.ZodError`, etc. Never use n
   ```
 
 - **Vjsf discriminated union type discriminant** — the `type` field used as the discriminant behaves differently depending on how it's typed:
-  - `z.literal(ColumnType.Computed).readonly()` — Vjsf reads `const: "Computed"` from JSON schema and automatically sets `type = "Computed"` when switching to that variant. ✓
+  - `z.literal(ColumnType.Computed).readonly()` — Vjsf reads `const: "Computed"` from JSON schema and automatically sets `type = "Computed"` when switching to that variant, AND auto-detects the active variant when pre-populating a form. ✓ **Always add `.readonly()` to literal discriminants in form schemas.**
+  - `z.literal(ColumnType.Computed)` (no `.readonly()`) — **BROKEN for auto-detection**: Vjsf cannot pre-select the correct variant when editing existing data. The blank variant selector appears. **Never omit `.readonly()` from a literal discriminant in a form schema.**
   - `z.enum([ColumnType.Boolean, ColumnType.Number, ColumnType.String])` (no `.readonly()`) — Vjsf renders a select input for the field. When switching to this variant, Vjsf uses the first enum value as default. ✓
   - `z.enum([...]).readonly()` — **BROKEN**: the field has `readOnly: true` in JSON schema but no `const`, so Vjsf cannot determine what value to set when switching to this variant. The old discriminant value persists. **Never use `.readonly()` on an enum discriminant field.**
 
@@ -76,7 +77,7 @@ Always use the `z` namespace export: `z.ZodType`, `z.ZodError`, etc. Never use n
     .meta({ applicableColumnTypes: [ColumnType.Date], title: ColumnTransformationType.DatePart });
 
   // In the Vue component — pass pre-filtered lists in options.context:
-  const options = computed(() => ({
+  const options = computed((): Options & { context: ColumnFormVjsfContext } => ({
     context: {
       sourceColumnItems: dataSource.columns.map(({ id, name }) => ({ title: name, value: id })),
       dateSourceColumnItems: dataSource.columns
@@ -97,6 +98,7 @@ Always use the `z` namespace export: `z.ZodType`, `z.ZodError`, etc. Never use n
   `getItems` is a JS expression string, so spread syntax works for multiple types: `"[...context.dateSourceColumnItems, ...context.numberSourceColumnItems]"`.
 
 - **vjsf `.meta()` layout properties** — put `comp`, `getProps`, and `getItems` directly on the field's `.meta()` in the schema definition. Do not inject them dynamically via `schema.extend()` in a composable. `GlobalMeta` for these is typed as `string` — they are vjsf JavaScript expression strings evaluated at runtime against the vjsf `context` (passed via `:options`). Example:
+
   ```typescript
   name: z.string().meta({
     getProps: `{ rules: [(value) => value === context.currentName || !context.columnNames.includes(value) || 'Already exists'] }`,
@@ -104,25 +106,33 @@ Always use the `z` namespace export: `z.ZodType`, `z.ZodError`, etc. Never use n
   }),
   sourceColumnId: z.string().meta({ comp: "select", getItems: "context.sourceColumnItems", title: "Source Column" }),
   ```
+
   Components pass the runtime data via `options.context` to vjsf — no separate composable is needed just to inject `getProps`/`getItems`.
-- **`zodToJsonSchema` in components** — always expose two separate computeds: `schema` (the Zod schema, used for `StyledEditFormDialogErrorIcon` validation) and `jsonSchema` (passed to vjsf). Derive `jsonSchema` from `schema.value` — do NOT call `takeOne` twice. Never create a precomputed JSON schema map file; the `*TypeFormSchemaMap` is the source of truth.
+
+- **`zodToJsonSchema` in components** — always expose two separate computeds: `schema` (the Zod schema, used for form validation) and `jsonSchema` (passed to vjsf). Derive `jsonSchema` from `schema.value`. Never create a precomputed JSON schema map file; the `*TypeFormSchemaMap` is the source of truth.
+
   ```typescript
   // WRONG — unnecessary intermediate JSON schema map file
   export const ColumnTypeJsonSchemaMap = {
     [ColumnType.String]: zodToJsonSchema(ColumnTypeFormSchemaMap[ColumnType.String]),
   };
-  // WRONG — calls takeOne twice instead of reusing schema.value
-  const schema = computed(() => takeOne(ColumnTypeFormSchemaMap, columnType.value));
-  const jsonSchema = computed(() => zodToJsonSchema(takeOne(ColumnTypeFormSchemaMap, columnType.value)));
   // CORRECT — schema.value reused for jsonSchema
-  const schema = computed(() => takeOne(ColumnTypeFormSchemaMap, columnType.value));
+  const schema = computed(() => ColumnTypeFormSchemaMap[columnType.value]);
   const jsonSchema = computed(() => zodToJsonSchema(schema.value));
   ```
-  In edit dialogs where the type comes from a prop (not a ref), use the prop field directly:
+
+- **Vjsf options typing** — type the `options` computed as `VjsfOptions<ContextType>` where `VjsfOptions` is from `app/models/vjsf/VjsfOptions.ts` and the context interface lives in `app/models/<feature>/ContextInterface.ts` (one interface per file, reusable across create/edit dialogs for the same form):
+
   ```typescript
-  const schema = computed(() => takeOne(ColumnTypeFormSchemaMap, column.type));
-  const jsonSchema = computed(() => zodToJsonSchema(schema.value));
+  import type { ColumnFormVjsfContext } from "@/models/tableEditor/file/column/ColumnFormVjsfContext";
+  import type { VjsfOptions } from "@/models/vjsf/VjsfOptions";
+  import { Vjsf } from "@koumoul/vjsf";
+
+  const options = computed<VjsfOptions<ColumnFormVjsfContext>>(() => ({
+    context: { columnNames: ..., currentName: ..., ... },
+  }));
   ```
+
 - **Vjsf discriminated union — auto-detection limitation**: Vjsf can only auto-detect which `oneOf` variant matches the current value when the discriminant property has a single `const` value (e.g. `z.literal(ColumnType.Date).readonly()`). `z.enum([...])` or `z.union([z.literal(...), ...])` on the discriminant do NOT produce a single `const` — Vjsf cannot determine the variant and shows a blank variant selector instead of pre-filling the form. **Do not use a discriminated union schema for forms where the variant must be pre-selected from existing data.** Instead, use a `*TypeFormSchemaMap` (a `Record<EnumType, z.ZodType>`) and select the schema per entry at the call site:
 
   ```typescript
@@ -135,33 +145,60 @@ Always use the `z` namespace export: `z.ZodType`, `z.ZodError`, etc. Never use n
     [ColumnType.String]: columnFormSchema,
   };
 
-  // In component:
-  const schema = computed(() => ColumnTypeFormSchemaMap[column.type]);
+  // In edit dialog — schema driven by the column's own type (ref initialized from prop):
+  const columnType = ref(column.type);
+  const schema = computed(() => ColumnTypeFormSchemaMap[columnType.value]);
   const jsonSchema = computed(() => zodToJsonSchema(schema.value));
+  // Type selector in template — changing type resets the form inline (structuredClone required: Vjsf needs plain objects):
+  // @update:model-value="editedColumn = structuredClone(ColumnTypeCreateMap[$event].create())"
+
+  // In create dialog — schema driven by a columnType ref (starts at ColumnType.String):
+  const columnType = ref(ColumnType.String);
+  const schema = computed(() => ColumnTypeFormSchemaMap[columnType.value]);
+  const jsonSchema = computed(() => zodToJsonSchema(schema.value));
+  // Type selector in template — changing type calls resetForm():
+  // @update:model-value="resetForm()"
   ```
 
-  For create forms (no existing value), use an external `v-select` (bound to a `columnType` ref) to control which schema is active — changing the selector resets the form and remounts Vjsf via `:key`. The selector items map category names ("Standard", "Date", "Computed") to canonical enum values used as map keys (`ColumnType.String`, `ColumnType.Date`, `ColumnType.Computed`).
-
-- **Snapshot tests for vjsf schemas** — for schemas that are passed to `zodToJsonSchema()` and rendered by Vjsf in components, add a `toMatchInlineSnapshot()` test co-located directly next to the schema file (same folder, same base name):
-
-  ```
-  shared/models/tableEditor/file/column/ColumnTypeForm.ts
-  shared/models/tableEditor/file/column/ColumnTypeForm.test.ts   ← co-located
-  shared/models/tableEditor/file/column/transformation/MathOperationTransformation.ts
-  shared/models/tableEditor/file/column/transformation/MathOperationTransformation.test.ts  ← co-located
-  ```
-
-  The test imports `zodToJsonSchema` from `@/services/jsonSchema/zodToJsonSchema` (app alias works in the Nuxt vitest environment). Run `pnpm vitest run --update` to fill the snapshot. These tests catch regressions in title prettification, nested `oneOf` handling, and `getItems`/`layout` injection.
+  The selector items are defined in `*ItemCategoryDefinitions.ts` (e.g. `ColumnTypeItemCategoryDefinitions`) mapping display names to canonical enum values:
 
   ```typescript
-  import { columnTypeFormSchema } from "#shared/models/tableEditor/file/column/ColumnTypeForm";
+  export const ColumnTypeItemCategoryDefinitions: SelectItemCategoryDefinition<ColumnType>[] = [
+    { title: "Standard", value: ColumnType.String },
+    { title: ColumnType.Date, value: ColumnType.Date },
+    { title: ColumnType.Computed, value: ColumnType.Computed },
+  ];
+  ```
+
+  Factory defaults come from `*TypeCreateMap` (e.g. `ColumnTypeCreateMap`) which accepts `Except<Partial<SpecificType>, "type">` as init and pins the `type`:
+
+  ```typescript
+  export const ColumnTypeCreateMap = {
+    [ColumnType.String]: {
+      create: (init?: Except<Partial<Column<ColumnType.String>>, "type">) =>
+        new Column({ ...init, type: ColumnType.String }),
+    },
+    [ColumnType.Date]: {
+      create: (init?: Except<Partial<DateColumn>, "type">) => new DateColumn({ ...init }),
+    },
+    // ...
+  } as const satisfies Record<
+    ColumnType,
+    { create: (init?: Except<Partial<Column>, "type">) => DataSource["columns"][number] }
+  >;
+  ```
+
+- **Snapshot tests for vjsf schemas** — for schemas passed to `zodToJsonSchema()` and rendered by Vjsf, add a `toMatchInlineSnapshot()` test co-located next to the schema file (same folder, same base name). Run `pnpm vitest run --update` to fill the snapshot.
+
+  ```typescript
+  import { dateColumnFormSchema } from "#shared/models/tableEditor/file/column/DateColumn";
   import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
   import { describe, expect, test } from "vitest";
 
-  describe("ColumnTypeForm", () => {
+  describe("DateColumn", () => {
     test("produces correct json schema for vjsf", () => {
       expect.hasAssertions();
-      expect(zodToJsonSchema(columnTypeFormSchema)).toMatchInlineSnapshot();
+      expect(zodToJsonSchema(dateColumnFormSchema)).toMatchInlineSnapshot();
     });
   });
   ```

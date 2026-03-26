@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
+import type { ColumnFormVjsfContext } from "@/models/tableEditor/file/column/ColumnFormVjsfContext";
+import type { VjsfOptions } from "@/models/vjsf/VjsfOptions";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ColumnTypeFormSchemaMap } from "#shared/models/tableEditor/file/column/ColumnTypeFormSchemaMap";
@@ -19,7 +21,7 @@ const updateColumn = useUpdateColumn();
 const columnType = ref(column.type);
 const schema = computed(() => ColumnTypeFormSchemaMap[columnType.value]);
 const jsonSchema = computed(() => zodToJsonSchema(schema.value));
-const options = computed(() => ({
+const options = computed<VjsfOptions<ColumnFormVjsfContext>>(() => ({
   context: {
     columnNames: dataSource.columns.map(({ name }) => name),
     currentName: column.name,
@@ -40,6 +42,9 @@ const title = computed(() => `Edit "${column.name}" Column`);
 const resetForm = () => {
   editedColumn.value = structuredClone(toRawDeep(column));
   columnType.value = column.type;
+};
+const onColumnTypeUpdate = (type: ColumnType) => {
+  editedColumn.value = structuredClone(ColumnTypeCreateMap[type].create());
 };
 </script>
 
@@ -62,7 +67,7 @@ const resetForm = () => {
       v-model="columnType"
       :items="ColumnTypeItemCategoryDefinitions"
       label="Type"
-      @update:model-value="editedColumn = ColumnTypeCreateMap[$event].create()"
+      @update:model-value="onColumnTypeUpdate($event)"
     />
     <Vjsf v-model="editedColumn" :schema="jsonSchema" :options />
   </TableEditorFileCrudViewEditDialogButton>

@@ -14,12 +14,12 @@ export const mathOperandSchema = z
           getItems: "context.numberSourceColumnItems",
           title: "Column",
         }),
-        type: z.literal(MathOperandType.Column),
+        type: z.literal(MathOperandType.Column).readonly(),
       })
       .meta({ title: MathOperandType.Column }),
     z
       .object({
-        type: z.literal(MathOperandType.Constant),
+        type: z.literal(MathOperandType.Constant).readonly(),
         value: z.number().meta({ title: "Value" }),
       })
       .meta({ title: MathOperandType.Constant }),
@@ -32,14 +32,14 @@ export const mathStepSchema = z.discriminatedUnion("type", [
   z
     .object({
       operation: z.enum(UnaryMathOperationType).meta({ title: "Operation" }),
-      type: z.literal(MathStepType.Unary),
+      type: z.literal(MathStepType.Unary).readonly(),
     })
     .meta({ title: MathStepType.Unary }),
   z
     .object({
       operand: mathOperandSchema,
       operation: z.enum(BinaryMathOperationType).meta({ title: "Operation" }),
-      type: z.literal(MathStepType.Binary),
+      type: z.literal(MathStepType.Binary).readonly(),
     })
     .meta({ title: MathStepType.Binary }),
 ]);
@@ -50,7 +50,7 @@ export const mathOperationTransformationSchema = z
   .object({
     first: mathOperandSchema.meta({ title: "First" }),
     steps: z.array(mathStepSchema).default([]).meta({ title: "Steps" }),
-    type: z.literal(ColumnTransformationType.MathOperation),
+    type: z.literal(ColumnTransformationType.MathOperation).readonly(),
   })
   .meta({ title: ColumnTransformationType.MathOperation });
 
