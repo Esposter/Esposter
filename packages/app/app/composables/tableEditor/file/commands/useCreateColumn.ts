@@ -14,7 +14,7 @@ export const useCreateColumn = () => {
     if (!editedItem.value?.dataSource) return;
     const { id: _id, ...newColumnWithoutId } = newColumn;
     const columnIndex = editedItem.value.dataSource.columns.length;
-    const command = ColumnTypeCommandMap[newColumnWithoutId.type](columnIndex, newColumnWithoutId);
+    const command = ColumnTypeCommandMap[newColumnWithoutId.type](columnIndex, newColumnWithoutId as never);
     command.execute(editedItem.value);
     push(command);
   };

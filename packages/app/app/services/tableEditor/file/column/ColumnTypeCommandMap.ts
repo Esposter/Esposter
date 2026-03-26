@@ -9,20 +9,19 @@ import { NumberColumn } from "#shared/models/tableEditor/file/column/NumberColum
 import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 import { CreateColumnCommand } from "@/models/tableEditor/file/commands/CreateColumnCommand";
 import { CreateComputedColumnCommand } from "@/models/tableEditor/file/commands/CreateComputedColumnCommand";
-import type { ToData } from "@esposter/shared";
 import type { Except } from "type-fest";
 
-type ColumnWithoutId = Except<ToData<Column>, "id">;
-
 export const ColumnTypeCommandMap = {
-  [ColumnType.Boolean]: (columnIndex: number, data: ColumnWithoutId) =>
-    new CreateColumnCommand(columnIndex, new BooleanColumn(data as Partial<BooleanColumn>)),
-  [ColumnType.Computed]: (columnIndex: number, data: ColumnWithoutId) =>
-    new CreateComputedColumnCommand(columnIndex, new ComputedColumn(data as Partial<ComputedColumn>)),
-  [ColumnType.Date]: (columnIndex: number, data: ColumnWithoutId) =>
-    new CreateColumnCommand(columnIndex, new DateColumn(data as Partial<DateColumn>)),
-  [ColumnType.Number]: (columnIndex: number, data: ColumnWithoutId) =>
-    new CreateColumnCommand(columnIndex, new NumberColumn(data as Partial<NumberColumn>)),
-  [ColumnType.String]: (columnIndex: number, data: ColumnWithoutId) =>
-    new CreateColumnCommand(columnIndex, new StringColumn(data as Partial<StringColumn>)),
-} as const satisfies Record<ColumnType, (columnIndex: number, data: ColumnWithoutId) => ADataSourceCommand>;
+  [ColumnType.Boolean]: (columnIndex: number, data: Except<Extract<Column, { type: ColumnType.Boolean }>, "id">) =>
+    new CreateColumnCommand(columnIndex, new BooleanColumn(data)),
+  [ColumnType.Computed]: (columnIndex: number, data: Except<Extract<Column, { type: ColumnType.Computed }>, "id">) =>
+    new CreateComputedColumnCommand(columnIndex, new ComputedColumn(data)),
+  [ColumnType.Date]: (columnIndex: number, data: Except<Extract<Column, { type: ColumnType.Date }>, "id">) =>
+    new CreateColumnCommand(columnIndex, new DateColumn(data)),
+  [ColumnType.Number]: (columnIndex: number, data: Except<Extract<Column, { type: ColumnType.Number }>, "id">) =>
+    new CreateColumnCommand(columnIndex, new NumberColumn(data)),
+  [ColumnType.String]: (columnIndex: number, data: Except<Extract<Column, { type: ColumnType.String }>, "id">) =>
+    new CreateColumnCommand(columnIndex, new StringColumn(data)),
+} as const satisfies {
+  [K in ColumnType]: (columnIndex: number, data: Except<Extract<Column, { type: K }>, "id">) => ADataSourceCommand;
+};
