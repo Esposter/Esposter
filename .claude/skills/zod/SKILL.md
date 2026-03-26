@@ -123,6 +123,30 @@ Always use the `z` namespace export: `z.ZodType`, `z.ZodError`, etc. Never use n
   const schema = computed(() => takeOne(ColumnTypeFormSchemaMap, column.type));
   const jsonSchema = computed(() => zodToJsonSchema(schema.value));
   ```
+- **Snapshot tests for vjsf schemas** — for schemas that are passed to `zodToJsonSchema()` and rendered by Vjsf in components, add a `toMatchInlineSnapshot()` test co-located directly next to the schema file (same folder, same base name):
+
+  ```
+  shared/models/tableEditor/file/column/ColumnTypeForm.ts
+  shared/models/tableEditor/file/column/ColumnTypeForm.test.ts   ← co-located
+  shared/models/tableEditor/file/column/transformation/MathOperationTransformation.ts
+  shared/models/tableEditor/file/column/transformation/MathOperationTransformation.test.ts  ← co-located
+  ```
+
+  The test imports `zodToJsonSchema` from `@/services/jsonSchema/zodToJsonSchema` (app alias works in the Nuxt vitest environment). Run `pnpm vitest run --update` to fill the snapshot. These tests catch regressions in title prettification, nested `oneOf` handling, and `getItems`/`layout` injection.
+
+  ```typescript
+  import { columnTypeFormSchema } from "#shared/models/tableEditor/file/column/ColumnTypeForm";
+  import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
+  import { describe, expect, test } from "vitest";
+
+  describe("ColumnTypeForm", () => {
+    test("produces correct json schema for vjsf", () => {
+      expect.hasAssertions();
+      expect(zodToJsonSchema(columnTypeFormSchema)).toMatchInlineSnapshot();
+    });
+  });
+  ```
+
 - **`satisfies z.ZodType<T>` with class types** — when a schema output has plain objects but the interface uses class instances (with `toJSON`), use `Except` + `ToData` in the satisfies to strip `toJSON` from nested classes:
   ```typescript
   export const dataSourceSchema = z.object({...})

@@ -2,7 +2,7 @@ import { columnTypeFormSchema } from "#shared/models/tableEditor/file/column/Col
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { describe, expect, test } from "vitest";
 
-describe("columnTypeFormSchema", () => {
+describe("ColumnTypeForm", () => {
   test("produces correct json schema for vjsf", () => {
     expect.hasAssertions();
 
