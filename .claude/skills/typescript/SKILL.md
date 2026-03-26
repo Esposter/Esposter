@@ -53,6 +53,36 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 - **Don't extract helpers that add no value** — if a helper function just wraps an inline object literal or a single expression without reuse or meaningful abstraction, return/use the value directly. Three lines of inline code is better than a named wrapper used once.
 - **Function naming prefixes** — use `get*` for functions that derive or compute a display value (e.g. `getVisibilityTooltip`, `getRowTitle`). Use CRUD prefixes (`create*`, `update*`, `delete*`) for heavier operations that interact with data or stores.
 
+## Exhaustive Switch Guards
+
+**Every `switch` on an enum or discriminated union discriminant must have a `default: exhaustiveGuard(value)` (or `return exhaustiveGuard(value)` when the switch is in a return-position).** Import `exhaustiveGuard` from `@esposter/shared`. This ensures TypeScript surfaces a compile error when a new enum variant is added without updating the switch.
+
+```ts
+// BAD — no default, silently misses new variants
+switch (step.type) {
+  case MathStepType.Unary: ...
+  case MathStepType.Binary: ...
+}
+
+// GOOD
+switch (step.type) {
+  case MathStepType.Unary: ...; break;
+  case MathStepType.Binary: ...; break;
+  default: exhaustiveGuard(step.type);
+}
+
+// GOOD — return-position switch
+switch (transformation.part) {
+  case DatePartType.Day: return parsedDate.date();
+  // ...
+  default: return exhaustiveGuard(transformation.part);
+}
+```
+
+Applies to nested switches too (each inner switch on an enum needs its own guard).
+
+**Exception**: switches on non-enum values (strings, numbers, class instances) do not need an exhaustive guard.
+
 ## Enum Naming
 
 - **Never abbreviate enum value names** — use the full word: `Absolute` not `Abs`, `Subtract` not `Sub`, `Configuration` not `Config`. This applies to both the enum key and string value. Abbreviated names save nothing and hurt readability.

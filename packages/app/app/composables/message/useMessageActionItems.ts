@@ -5,7 +5,7 @@ import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { useMessageStore } from "@/store/message";
 import { useRoomStore } from "@/store/message/room";
 import { MessageType } from "@esposter/db-schema";
-import { RoutePath } from "@esposter/shared";
+import { exhaustiveGuard, RoutePath } from "@esposter/shared";
 import { parse } from "node-html-parser";
 
 export const useMessageActionItems = (
@@ -111,6 +111,8 @@ export const useMessageActionItems = (
         return [copyTextItem, pinMessageItem.value, copyMessageLinkItem];
       case MessageType.PinMessage:
         return [copyMessageLinkItem];
+      default:
+        return exhaustiveGuard(message.type);
     }
   });
   const deleteMessageItem = computed<Item | undefined>(() =>

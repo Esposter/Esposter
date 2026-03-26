@@ -4,6 +4,7 @@ import type { DatePartTransformation } from "#shared/models/tableEditor/file/col
 
 import { DatePartType } from "#shared/models/tableEditor/file/column/transformation/DatePartType";
 import { dayjs } from "#shared/services/dayjs";
+import { exhaustiveGuard } from "@esposter/shared";
 
 export const computeDatePartTransformation = (
   value: ColumnValue,
@@ -26,5 +27,7 @@ export const computeDatePartTransformation = (
       return parsedDate.day();
     case DatePartType.Year:
       return parsedDate.year();
+    default:
+      return exhaustiveGuard(transformation.part);
   }
 };

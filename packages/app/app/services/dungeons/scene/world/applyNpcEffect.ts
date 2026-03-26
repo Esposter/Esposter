@@ -4,6 +4,7 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { dayjs } from "#shared/services/dayjs";
 import { EffectType } from "@/models/dungeons/npc/effect/EffectType";
+import { exhaustiveGuard } from "@esposter/shared";
 import { EFFECT_COMPLETE_EVENT_KEY_SUFFIX } from "@/services/phaser/constants";
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
@@ -46,7 +47,7 @@ export const applyNpcEffect = async (scene: SceneWithPlugins, npc: Npc, effect: 
       });
       return;
     default:
-      break;
+      exhaustiveGuard(effect.type);
   }
 
   onComplete();
