@@ -15,7 +15,7 @@ import { z } from "zod";
 export const MENTION_MAX_LENGTH = 100;
 export const MESSAGE_MAX_LENGTH = 10000;
 
-export class BaseMessageEntity<TType extends StandardMessageType = StandardMessageType>
+export class BaseMessageEntity<TType extends MessageType = StandardMessageType>
   extends AzureEntity
   implements ItemEntityType<TType>
 {
