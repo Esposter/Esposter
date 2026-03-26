@@ -33,8 +33,8 @@ const resetForm = () => {
     :title
     :tooltip-text="title"
     :schema="columnFormSchema"
-    :value="column"
-    :edited-value="editedColumn"
+    :value="columnFormSchema.safeParse(column).data"
+    :edited-value="columnFormSchema.safeParse(editedColumn).data"
     @reset="resetForm()"
     @submit="
       (onComplete) => {

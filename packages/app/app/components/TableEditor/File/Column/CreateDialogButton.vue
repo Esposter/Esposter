@@ -34,8 +34,8 @@ const resetForm = () => {
     tooltip-text="Add Column"
     icon="mdi-table-column-plus-after"
     :schema="columnFormSchema"
-    :value="defaultColumn"
-    :edited-value="editedColumn"
+    :value="columnFormSchema.safeParse(defaultColumn).data"
+    :edited-value="columnFormSchema.safeParse(editedColumn).data"
     @reset="resetForm()"
     @submit="
       (onComplete) => {
