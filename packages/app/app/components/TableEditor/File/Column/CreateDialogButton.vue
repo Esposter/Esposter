@@ -21,7 +21,7 @@ const editedColumn = ref<Column>(structuredClone(defaultColumn));
 const jsonSchema = zodToJsonSchema(columnFormSchema);
 const options = useColumnFormOptions(
   () => dataSource,
-  () => editedColumn.value.name,
+  () => "",
 );
 const resetForm = () => {
   editedColumn.value = structuredClone(defaultColumn);
