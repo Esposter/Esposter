@@ -1,9 +1,9 @@
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import { MathOperationType } from "#shared/models/tableEditor/file/column/transformation/MathOperationType";
-import { withSourceColumnSchema } from "#shared/models/tableEditor/file/column/transformation/WithSourceColumn";
+import { withSourceColumnIdSchema } from "#shared/models/tableEditor/file/column/transformation/WithSourceColumnId";
 import { z } from "zod";
 
-export const mathOperationTransformationSchema = withSourceColumnSchema
+export const mathOperationTransformationSchema = withSourceColumnIdSchema
   .extend({
     operand: z.number().optional().meta({ title: "Operand" }),
     operation: z.enum(MathOperationType).meta({ title: "Operation" }),
