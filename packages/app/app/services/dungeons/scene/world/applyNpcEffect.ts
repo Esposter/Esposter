@@ -8,7 +8,6 @@ import { EFFECT_COMPLETE_EVENT_KEY_SUFFIX } from "@/services/phaser/constants";
 import { phaserEventEmitter } from "@/services/phaser/events";
 import { useWorldDialogStore } from "@/store/dungeons/world/dialog";
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";
-import { exhaustiveGuard } from "@esposter/shared";
 import { Cameras } from "phaser";
 import { sleep } from "vue-phaserjs";
 
@@ -46,8 +45,6 @@ export const applyNpcEffect = async (scene: SceneWithPlugins, npc: Npc, effect: 
         });
       });
       return;
-    default:
-      exhaustiveGuard(effect.type);
   }
 
   onComplete();

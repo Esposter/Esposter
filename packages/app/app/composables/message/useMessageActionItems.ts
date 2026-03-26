@@ -112,7 +112,7 @@ export const useMessageActionItems = (
       case MessageType.PinMessage:
         return [copyMessageLinkItem];
       default:
-        return exhaustiveGuard(message.type);
+        return exhaustiveGuard(message);
     }
   });
   const deleteMessageItem = computed<Item | undefined>(() =>
