@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export enum NumberFormat {
   Compact = "Compact",
   Currency = "Currency",
@@ -5,3 +7,5 @@ export enum NumberFormat {
   Plain = "Plain",
   Scientific = "Scientific",
 }
+
+export const numberFormatSchema = z.enum(NumberFormat);

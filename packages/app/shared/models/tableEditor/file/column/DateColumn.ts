@@ -15,6 +15,7 @@ export class DateColumn extends AColumn<ColumnType.Date> {
   }
 }
 
-export const dateColumnSchema = createAColumnSchema(z.literal(ColumnType.Date)).extend({
+export const dateColumnSchema = z.object({
+  ...createAColumnSchema(z.literal(ColumnType.Date)).shape,
   format: z.enum(DATE_FORMATS),
 }) satisfies z.ZodType<ToData<DateColumn>>;

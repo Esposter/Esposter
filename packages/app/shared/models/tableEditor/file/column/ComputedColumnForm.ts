@@ -10,8 +10,9 @@ export interface ComputedColumnForm extends AColumnForm<ColumnType.Computed> {
   transformation: ColumnTransformation;
 }
 
-export const computedColumnFormSchema = createAColumnFormSchema(z.literal(ColumnType.Computed).readonly())
-  .extend({
+export const computedColumnFormSchema = z
+  .object({
+    ...createAColumnFormSchema(z.literal(ColumnType.Computed).readonly()).shape,
     transformation: columnTransformationSchema,
   })
   .meta({ title: ColumnType.Computed }) satisfies z.ZodType<ComputedColumnForm>;

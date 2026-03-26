@@ -1,8 +1,8 @@
-import type { z } from "zod";
-
 import { selectRoomSchema, selectWebhookSchema } from "@esposter/db-schema";
+import { z } from "zod";
 
-export const rotateTokenInputSchema = selectWebhookSchema.pick({ id: true }).extend({
+export const rotateTokenInputSchema = z.object({
+  ...selectWebhookSchema.pick({ id: true }).shape,
   roomId: selectRoomSchema.shape.id,
 });
 export type RotateTokenInput = z.infer<typeof rotateTokenInputSchema>;

@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export enum DatePartType {
   Day = "Day",
   Hour = "Hour",
@@ -6,3 +8,5 @@ export enum DatePartType {
   Weekday = "Weekday",
   Year = "Year",
 }
+
+export const datePartTypeSchema = z.enum(DatePartType);

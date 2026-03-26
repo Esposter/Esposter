@@ -21,6 +21,7 @@ export class ComputedColumn extends AColumn<ColumnType.Computed> {
   }
 }
 
-export const computedColumnSchema = createAColumnSchema(z.literal(ColumnType.Computed)).extend({
+export const computedColumnSchema = z.object({
+  ...createAColumnSchema(z.literal(ColumnType.Computed)).shape,
   transformation: columnTransformationSchema,
 }) satisfies z.ZodType<ToData<ComputedColumn>>;

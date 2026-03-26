@@ -11,7 +11,7 @@ export interface AColumnForm<TColumnType extends ColumnType = ColumnType> extend
 
 export const createAColumnFormSchema = <T extends z.ZodType<ColumnType>>(typeSchema: T) => {
   const aColumnSchema = createAColumnSchema(typeSchema);
-  return aColumnSchema.pick({ description: true, name: true, sourceName: true }).extend({
+  return z.object({
     description: aColumnSchema.shape.description.meta({ title: "Description" }),
     name: aColumnSchema.shape.name.meta({
       getProps: `{ rules: [(value) => value === context.currentName || !context.columnNames.includes(value) || 'Column already exists'] }`,
