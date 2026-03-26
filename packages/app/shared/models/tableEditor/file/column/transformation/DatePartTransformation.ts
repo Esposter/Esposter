@@ -4,7 +4,7 @@ import type { WithSourceColumnId } from "#shared/models/tableEditor/file/column/
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
-import { DatePartType } from "#shared/models/tableEditor/file/column/transformation/DatePartType";
+import { DatePartType, datePartTypeSchema } from "#shared/models/tableEditor/file/column/transformation/DatePartType";
 import { withSourceColumnIdSchema } from "#shared/models/tableEditor/file/column/transformation/WithSourceColumnId";
 import { z } from "zod";
 
@@ -16,7 +16,7 @@ export const datePartTransformationSchema = z
   .object({
     ...withSourceColumnIdSchema.shape,
     ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.DatePart).readonly()).shape,
-    part: z.enum(DatePartType).meta({ title: "Part" }),
+    part: datePartTypeSchema,
     sourceColumnId: withSourceColumnIdSchema.shape.sourceColumnId.meta({
       getItems: "context.dateSourceColumnItems",
     }),

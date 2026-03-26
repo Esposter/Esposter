@@ -7,4 +7,4 @@ export enum BinaryMathOperationType {
   Subtract = "Subtract",
 }
 
-export const binaryMathOperationTypeSchema = z.enum(BinaryMathOperationType);
+export const binaryMathOperationTypeSchema = z.enum(BinaryMathOperationType).meta({ title: "Operation" });

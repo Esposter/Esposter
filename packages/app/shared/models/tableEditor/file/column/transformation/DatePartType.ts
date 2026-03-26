@@ -9,4 +9,4 @@ export enum DatePartType {
   Year = "Year",
 }
 
-export const datePartTypeSchema = z.enum(DatePartType);
+export const datePartTypeSchema = z.enum(DatePartType).meta({ title: "Part" });

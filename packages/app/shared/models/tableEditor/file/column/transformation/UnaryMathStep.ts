@@ -2,7 +2,10 @@ import type { ItemEntityType } from "@esposter/shared";
 
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { MathStepType } from "#shared/models/tableEditor/file/column/transformation/MathStepType";
-import { UnaryMathOperationType } from "#shared/models/tableEditor/file/column/transformation/UnaryMathOperationType";
+import {
+  UnaryMathOperationType,
+  unaryMathOperationTypeSchema,
+} from "#shared/models/tableEditor/file/column/transformation/UnaryMathOperationType";
 import { z } from "zod";
 
 export interface UnaryMathStep extends ItemEntityType<MathStepType.Unary> {
@@ -12,6 +15,6 @@ export interface UnaryMathStep extends ItemEntityType<MathStepType.Unary> {
 export const unaryMathStepSchema = z
   .object({
     ...createItemEntityTypeSchema(z.literal(MathStepType.Unary).readonly()).shape,
-    operation: z.enum(UnaryMathOperationType).meta({ title: "Operation" }),
+    operation: unaryMathOperationTypeSchema,
   })
   .meta({ title: MathStepType.Unary }) satisfies z.ZodType<UnaryMathStep>;
