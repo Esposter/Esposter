@@ -1,7 +1,7 @@
-import type { WithAppliesTo } from "#shared/models/tableEditor/file/column/transformation/WithAppliesTo";
+import type { WithApplicableColumnTypes } from "#shared/models/tableEditor/file/column/transformation/WithApplicableColumnTypes";
 
 declare module "zod" {
-  interface GlobalMeta extends Partial<WithAppliesTo> {
+  interface GlobalMeta extends Partial<WithApplicableColumnTypes> {
     comp?: string;
     getItems?: string;
     getProps?: string;

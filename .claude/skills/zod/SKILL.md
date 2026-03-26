@@ -37,6 +37,12 @@ Always use the `z` namespace export: `z.ZodType`, `z.ZodError`, etc. Never use n
   Adding a new type = add its schema to the discriminated union array.
 - **vjsf form schemas** — never pass a full entity schema to `zodToJsonSchema()` if it contains `z.date()` fields — vjsf will throw. Create a separate `*FormSchema` co-located in the same file using `.pick().extend()` to add `.meta()` titles. The form schema picks only user-editable fields (no entity metadata like `id`, `createdAt`, `updatedAt`).
 - **`.meta({ title })` values** — use enum values directly rather than string literals; `zodToJsonSchema` runs `toTitleCase(prettify(...))` on all titles automatically, so `ColumnTransformationType.ConvertTo` (`"ConvertTo"`) renders as `"Convert To"` in the UI. Always prefer `meta({ title: ColumnTransformationType.X })` over a hand-written string.
+- **`.meta({ applicableColumnTypes })`** — when a transformation schema only applies to certain source column types, declare `applicableColumnTypes: ColumnType[]` in `.meta()`. This field is typed via `GlobalMeta extends Partial<WithApplicableColumnTypes>` in `shared/types/zod.d.ts`. The UI uses it to filter source column dropdowns to matching types:
+  ```typescript
+  .meta({ applicableColumnTypes: [ColumnType.Date], title: ColumnTransformationType.DatePart })
+  .meta({ applicableColumnTypes: [ColumnType.String], title: ColumnTransformationType.RegexMatch })
+  // No applicableColumnTypes = transformation accepts any source column type
+  ```
 - **vjsf `.meta()` layout properties** — put `comp`, `getProps`, and `getItems` directly on the field's `.meta()` in the schema definition. Do not inject them dynamically via `schema.extend()` in a composable. `GlobalMeta` for these is typed as `string` — they are vjsf JavaScript expression strings evaluated at runtime against the vjsf `context` (passed via `:options`). Example:
   ```typescript
   name: z.string().meta({

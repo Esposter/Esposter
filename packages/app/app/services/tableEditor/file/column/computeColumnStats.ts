@@ -20,9 +20,9 @@ export const computeColumnStats = (dataSource: DataSource): ColumnStats[] =>
       columnName: column.name,
       columnType: column.type,
       ...Object.fromEntries(
-        Object.values(ColumnStatDefinitionMap).map(({ appliesTo, compute, key }) => [
+        Object.values(ColumnStatDefinitionMap).map(({ applicableColumnTypes, compute, key }) => [
           key,
-          appliesTo.includes(column.type) ? compute(context) : null,
+          applicableColumnTypes.includes(column.type) ? compute(context) : null,
         ]),
       ),
     } as ColumnStats;

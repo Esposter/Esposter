@@ -1,3 +1,6 @@
+import { ComputedColumn } from "#shared/models/tableEditor/file/column/ComputedColumn";
+import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
+import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import {
   makeColumn,
   makeComputedColumn,
@@ -37,5 +40,27 @@ describe(resolveValue, () => {
     const dataSource = makeDataSource([sourceColumn, computedColumn], [row]);
 
     expect(resolveValue(row, dataSource.columns, computedColumn)).toBeNull();
+  });
+
+  test("returns null when two computed columns form a cycle", () => {
+    expect.hasAssertions();
+
+    const columnA = makeComputedColumn("a", "");
+    const columnB = makeComputedColumn("b", columnA.id);
+    const columnAWithCycle = new ComputedColumn({
+      id: columnA.id,
+      name: "a",
+      size: 0,
+      sourceName: "a",
+      transformation: {
+        sourceColumnId: columnB.id,
+        targetType: ColumnType.String,
+        type: ColumnTransformationType.ConvertTo,
+      },
+    });
+    const row = makeRow({});
+    const dataSource = makeDataSource([columnAWithCycle, columnB], [row]);
+
+    expect(resolveValue(row, dataSource.columns, columnAWithCycle)).toBeNull();
   });
 });

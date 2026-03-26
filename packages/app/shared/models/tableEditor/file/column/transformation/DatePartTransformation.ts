@@ -9,6 +9,6 @@ export const datePartTransformationSchema = withSourceColumnIdSchema
     part: z.enum(DatePartType).meta({ title: "Part" }),
     type: z.literal(ColumnTransformationType.DatePart),
   })
-  .meta({ appliesTo: [ColumnType.Date], title: ColumnTransformationType.DatePart });
+  .meta({ applicableColumnTypes: [ColumnType.Date], title: ColumnTransformationType.DatePart });
 
 export type DatePartTransformation = z.infer<typeof datePartTransformationSchema>;

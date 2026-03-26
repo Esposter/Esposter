@@ -130,8 +130,8 @@ export const ColumnTransformationResolveMap = {
 
   [ColumnTransformationType.DatePart]: (transformation, { resolveSource, findSource }) => {
     const sourceColumn = findSource(transformation.sourceColumnId);
-    if (!sourceColumn || sourceColumn.type !== ColumnType.Date) return null;
-    // TypeScript narrows sourceColumn to DateColumn via discriminant — sourceColumn.format is accessible
+    if (sourceColumn?.type !== ColumnType.Date) return null;
+    // TypeScript narrows sourceColumn to DateColumn via optional chaining + discriminant — sourceColumn.format is accessible
     return computeDatePartTransformation(resolveSource(transformation.sourceColumnId), transformation, sourceColumn.format);
   },
   // ...
@@ -186,7 +186,26 @@ export const mathOperationTransformationSchema = z.object({
 - Members that need the shared field use `.extend()` on the base schema
 - Members that don't need it just use `z.object({...})` directly
 - Use `WithSourceColumnId` (singular) for single-source, `WithSourceColumnIds` (plural) for multi-source
-- Transformations with column type constraints declare `appliesTo: ColumnType[]` in `.meta()` — used by the UI to filter source column dropdowns and by the resolve map to guard against wrong-type sources
+- Transformations with column type constraints declare `applicableColumnTypes: ColumnType[]` in `.meta()` — used by the UI to filter source column dropdowns. This comes from `GlobalMeta extends Partial<WithApplicableColumnTypes>` in `shared/types/zod.d.ts`
+- **`WithApplicableColumnTypes`** — interface in `shared/models/.../WithApplicableColumnTypes.ts` with `readonly applicableColumnTypes: ColumnType[]`. Both Zod `.meta()` (via `GlobalMeta`) and non-schema definitions (e.g. `ColumnStatDefinition`) extend this interface so the same field name is used everywhere:
+
+  ```ts
+  // shared/models/.../WithApplicableColumnTypes.ts
+  export interface WithApplicableColumnTypes {
+    readonly applicableColumnTypes: ColumnType[];
+  }
+
+  // app/models/.../ColumnStatDefinition.ts
+  export interface ColumnStatDefinition<T extends ColumnStatKey> extends WithApplicableColumnTypes { ... }
+
+  // shared/types/zod.d.ts — makes it optional in schema .meta()
+  interface GlobalMeta extends Partial<WithApplicableColumnTypes> { ... }
+
+  // Usage in schema:
+  .meta({ applicableColumnTypes: [ColumnType.Date], title: "..." })
+  // Usage in stat definition:
+  defineColumnStat({ applicableColumnTypes: [ColumnType.Number], ... })
+  ```
 
 ## Configuration Interfaces — `Pick` from Source Types
 
