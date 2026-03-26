@@ -39,10 +39,10 @@ export const zodToJsonSchema = (schema: z.ZodType) => {
   const { $schema: _, ...result } = z.toJSONSchema(schema, {
     override: (ctx) => {
       const zodSchema = ctx.zodSchema as z.ZodObject;
+      const jsonSchema = ctx.jsonSchema as Record<string, unknown>;
       // Add discriminator for discriminated unions so vjsf auto-selects the active variant
       const def = zodSchema.def;
-      if ("discriminator" in def && def.discriminator)
-        (ctx.jsonSchema as Record<string, unknown>).discriminator = { propertyName: def.discriminator };
+      if ("discriminator" in def && def.discriminator) jsonSchema.discriminator = { propertyName: def.discriminator };
 
       const meta = zodSchema.meta();
       if (!meta?.comp && !meta?.getProps && !meta?.getItems) return;
@@ -50,7 +50,7 @@ export const zodToJsonSchema = (schema: z.ZodType) => {
       if (meta.comp) layout.comp = meta.comp;
       if (meta.getProps) layout.getProps = meta.getProps;
       if (meta.getItems) layout.getItems = meta.getItems;
-      (ctx.jsonSchema as Record<string, unknown>).layout = layout;
+      jsonSchema.layout = layout;
     },
   });
   if (result.properties) applyPropertyHooks(result.properties);

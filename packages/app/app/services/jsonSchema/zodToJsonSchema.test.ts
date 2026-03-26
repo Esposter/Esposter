@@ -152,6 +152,9 @@ describe(zodToJsonSchema, () => {
 
       expect(result).toMatchInlineSnapshot(`
         {
+          "discriminator": {
+            "propertyName": "type",
+          },
           "oneOf": [
             {
               "additionalProperties": false,
@@ -207,6 +210,9 @@ describe(zodToJsonSchema, () => {
 
       expect(result).toMatchInlineSnapshot(`
         {
+          "discriminator": {
+            "propertyName": "type",
+          },
           "oneOf": [
             {
               "additionalProperties": false,
@@ -251,6 +257,9 @@ describe(zodToJsonSchema, () => {
 
       expect(result).toMatchInlineSnapshot(`
         {
+          "discriminator": {
+            "propertyName": "type",
+          },
           "oneOf": [
             {
               "additionalProperties": false,
