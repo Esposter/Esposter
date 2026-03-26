@@ -6,4 +6,6 @@ export enum AggregationTransformationType {
   RunningSum = "RunningSum",
 }
 
-export const aggregationTransformationTypeSchema = z.enum(AggregationTransformationType);
+export const aggregationTransformationTypeSchema = z.enum(
+  AggregationTransformationType,
+) satisfies z.ZodType<AggregationTransformationType>;

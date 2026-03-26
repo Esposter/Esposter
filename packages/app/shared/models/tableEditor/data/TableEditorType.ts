@@ -6,4 +6,4 @@ export enum TableEditorType {
   VuetifyComponent = "VuetifyComponent",
 }
 
-export const tableEditorTypeSchema = z.enum(TableEditorType);
+export const tableEditorTypeSchema = z.enum(TableEditorType) satisfies z.ZodType<TableEditorType>;

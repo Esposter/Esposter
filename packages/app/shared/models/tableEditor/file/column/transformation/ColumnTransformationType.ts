@@ -8,4 +8,6 @@ export enum ColumnTransformationType {
   StringPattern = "StringPattern",
 }
 
-export const columnTransformationTypeSchema = z.enum(ColumnTransformationType);
+export const columnTransformationTypeSchema = z.enum(
+  ColumnTransformationType,
+) satisfies z.ZodType<ColumnTransformationType>;

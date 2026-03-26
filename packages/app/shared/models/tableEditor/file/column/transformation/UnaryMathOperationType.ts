@@ -7,4 +7,6 @@ export enum UnaryMathOperationType {
   Round = "Round",
 }
 
-export const unaryMathOperationTypeSchema = z.enum(UnaryMathOperationType).meta({ title: "Operation" });
+export const unaryMathOperationTypeSchema = z
+  .enum(UnaryMathOperationType)
+  .meta({ title: "Operation" }) satisfies z.ZodType<UnaryMathOperationType>;

@@ -6,4 +6,4 @@ export enum BooleanFormat {
   YesNo = "YesNo",
 }
 
-export const booleanFormatSchema = z.enum(BooleanFormat);
+export const booleanFormatSchema = z.enum(BooleanFormat) satisfies z.ZodType<BooleanFormat>;

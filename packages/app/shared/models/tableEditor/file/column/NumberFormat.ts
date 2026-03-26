@@ -8,4 +8,4 @@ export enum NumberFormat {
   Scientific = "Scientific",
 }
 
-export const numberFormatSchema = z.enum(NumberFormat);
+export const numberFormatSchema = z.enum(NumberFormat) satisfies z.ZodType<NumberFormat>;

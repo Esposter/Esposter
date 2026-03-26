@@ -5,4 +5,4 @@ export enum MathStepType {
   Unary = "Unary",
 }
 
-export const mathStepTypeSchema = z.enum(MathStepType);
+export const mathStepTypeSchema = z.enum(MathStepType) satisfies z.ZodType<MathStepType>;

@@ -5,4 +5,4 @@ export enum MathOperandType {
   Constant = "Constant",
 }
 
-export const mathOperandTypeSchema = z.enum(MathOperandType);
+export const mathOperandTypeSchema = z.enum(MathOperandType) satisfies z.ZodType<MathOperandType>;

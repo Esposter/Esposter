@@ -5,7 +5,7 @@ import type { Except } from "type-fest";
 
 import { AzureEntity, createAzureEntitySchema } from "@/models/azure/table/AzureEntity";
 import { fileEntitySchema } from "@/models/azure/table/FileEntity";
-import { MessageType } from "@/models/message/MessageType";
+import { MessageType, standardMessageTypeSchema } from "@/models/message/MessageType";
 import { selectRoomSchema } from "@/schema/rooms";
 import { selectUserSchema } from "@/schema/users";
 import { FILE_MAX_LENGTH } from "@/services/azure/container/constants";
@@ -28,7 +28,7 @@ export class BaseMessageEntity<TType extends MessageType = Exclude<MessageType, 
   mentions: string[] = [];
   message!: string;
   replyRowKey?: string;
-  type!: TType;
+  type = MessageType.Message as TType;
 }
 
 export const baseMessageEntitySchema = z.object({
@@ -46,6 +46,6 @@ export const baseMessageEntitySchema = z.object({
   mentions: selectUserSchema.shape.id.array().max(MENTION_MAX_LENGTH).default([]),
   message: z.string().max(MESSAGE_MAX_LENGTH).default(""),
   replyRowKey: z.string().optional(),
-  type: z.enum(Object.values(MessageType).filter((type) => type !== MessageType.Webhook)).default(MessageType.Message),
+  type: standardMessageTypeSchema.default(MessageType.Message),
   userId: selectUserSchema.shape.id,
 }) satisfies z.ZodType<ToData<Except<BaseMessageEntity, "linkPreviewResponse">>>; // We only generate link preview responses via the backend, so we can safely exclude it from the schema

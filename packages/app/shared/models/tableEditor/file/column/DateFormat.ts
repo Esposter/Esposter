@@ -17,4 +17,4 @@ export enum DateFormat {
   "YYYY-MM-DDTHH:mm:ssZ" = "YYYY-MM-DDTHH:mm:ssZ",
 }
 
-export const dateFormatSchema = z.enum(DateFormat);
+export const dateFormatSchema = z.enum(DateFormat) satisfies z.ZodType<DateFormat>;

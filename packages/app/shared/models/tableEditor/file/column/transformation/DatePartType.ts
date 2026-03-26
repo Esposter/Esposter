@@ -9,4 +9,4 @@ export enum DatePartType {
   Year = "Year",
 }
 
-export const datePartTypeSchema = z.enum(DatePartType).meta({ title: "Part" });
+export const datePartTypeSchema = z.enum(DatePartType).meta({ title: "Part" }) satisfies z.ZodType<DatePartType>;

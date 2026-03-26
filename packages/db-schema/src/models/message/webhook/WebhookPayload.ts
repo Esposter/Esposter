@@ -12,7 +12,7 @@ export interface WebhookPayload {
   username?: string;
 }
 
-export const webhookPayloadSchema: z.ZodType<WebhookPayload> = z
+export const webhookPayloadSchema = z
   .object({
     avatar_url: z.url().optional(),
     content: z.string().max(2000).optional(),
@@ -23,4 +23,4 @@ export const webhookPayloadSchema: z.ZodType<WebhookPayload> = z
   // oxlint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   .refine((data) => data.content || (data.embeds && data.embeds.length > 0), {
     message: 'Webhook must have either "content" or "embeds".',
-  });
+  }) satisfies z.ZodType<WebhookPayload>;
