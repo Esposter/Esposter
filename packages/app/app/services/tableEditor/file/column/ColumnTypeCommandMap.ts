@@ -9,7 +9,10 @@ import { NumberColumn } from "#shared/models/tableEditor/file/column/NumberColum
 import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 import { CreateColumnCommand } from "@/models/tableEditor/file/commands/CreateColumnCommand";
 import { CreateComputedColumnCommand } from "@/models/tableEditor/file/commands/CreateComputedColumnCommand";
-type ColumnWithoutId = Omit<Column, "id">;
+import type { ToData } from "@esposter/shared";
+import type { Except } from "type-fest";
+
+type ColumnWithoutId = Except<ToData<Column>, "id">;
 
 export const ColumnTypeCommandMap = {
   [ColumnType.Boolean]: (columnIndex: number, data: ColumnWithoutId) =>
