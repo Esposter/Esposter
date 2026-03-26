@@ -1,4 +1,6 @@
 /* eslint-disable perfectionist/sort-enums */
+import { z } from "zod";
+
 export enum DateFormat {
   // Slash-separated
   "D/M/YYYY" = "D/M/YYYY",
@@ -14,3 +16,5 @@ export enum DateFormat {
   "YYYY-MM-DDTHH:mm:ss" = "YYYY-MM-DDTHH:mm:ss",
   "YYYY-MM-DDTHH:mm:ssZ" = "YYYY-MM-DDTHH:mm:ssZ",
 }
+
+export const dateFormatSchema = z.enum(DateFormat);
