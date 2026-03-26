@@ -17,7 +17,6 @@ export const stringPatternTransformationSchema = z
     ...withSourceColumnIdsSchema.shape,
     ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.StringPattern).readonly()).shape,
     pattern: z.string().meta({
-      comp: "PatternInput",
       title: "Pattern",
     }),
     sourceColumnIds: z

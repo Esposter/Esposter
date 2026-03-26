@@ -7,7 +7,7 @@ import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { marked } from "marked";
 
 const tableEditorStore = useTableEditorStore<DataSourceItem>();
-const { editedItem } = storeToRefs(tableEditorStore);
+const { editedItem, editForm } = storeToRefs(tableEditorStore);
 const fileHistoryStore = useFileHistoryStore();
 const { redo } = fileHistoryStore;
 const { isRedoable, redoDescription } = storeToRefs(fileHistoryStore);
@@ -17,17 +17,25 @@ const tooltipHtml = computed(() => {
   return sanitizeHtml(marked.parse(parts.join("\n\n"), { async: false }));
 });
 
-onKeyStroke(["z", "Z"], ({ ctrlKey, metaKey, preventDefault, shiftKey }) => {
-  if ((!ctrlKey && !metaKey) || !shiftKey) return;
-  preventDefault();
-  redo(editedItem.value);
-});
+onKeyStroke(
+  ["z", "Z"],
+  (event) => {
+    if ((!event.ctrlKey && !event.metaKey) || !event.shiftKey) return;
+    event.preventDefault();
+    redo(editedItem.value);
+  },
+  { target: () => editForm.value?.$el },
+);
 
-onKeyStroke(["y", "Y"], ({ ctrlKey, metaKey, preventDefault }) => {
-  if (!ctrlKey && !metaKey) return;
-  preventDefault();
-  redo(editedItem.value);
-});
+onKeyStroke(
+  ["y", "Y"],
+  (event) => {
+    if (!event.ctrlKey && !event.metaKey) return;
+    event.preventDefault();
+    redo(editedItem.value);
+  },
+  { target: () => editForm.value?.$el },
+);
 </script>
 
 <template>
