@@ -1,3 +1,4 @@
+import { BooleanValue } from "#shared/models/tableEditor/file/column/BooleanValue";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { DateFormat } from "#shared/models/tableEditor/file/column/DateFormat";
 import { dayjs } from "#shared/services/dayjs";
@@ -41,13 +42,13 @@ describe(coerceValue, () => {
   test(`"true" coerces to ${ColumnType.Boolean} true`, () => {
     expect.hasAssertions();
 
-    expect(coerceValue("true", ColumnType.Boolean)).toBe(true);
+    expect(coerceValue(BooleanValue.True, ColumnType.Boolean)).toBe(true);
   });
 
   test(`"false" coerces to ${ColumnType.Boolean} false`, () => {
     expect.hasAssertions();
 
-    expect(coerceValue("false", ColumnType.Boolean)).toBe(false);
+    expect(coerceValue(BooleanValue.False, ColumnType.Boolean)).toBe(false);
   });
 
   test(`${ColumnType.Boolean} coercion is case insensitive`, () => {
@@ -93,7 +94,7 @@ describe(coerceValue, () => {
     expect.hasAssertions();
 
     for (const format of Object.values(DateFormat)) {
-      const epochDate = dayjs("1970-01-01", "YYYY-MM-DD", true).format(format);
+      const epochDate = dayjs("1970-01-01", DateFormat["YYYY-MM-DD"], true).format(format);
 
       expect(coerceValue(epochDate, ColumnType.Date)).toBe(epochDate);
     }

@@ -1,4 +1,5 @@
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
+import { DateFormat } from "#shared/models/tableEditor/file/column/DateFormat";
 import { DatePartType } from "#shared/models/tableEditor/file/column/transformation/DatePartType";
 import { computeDatePartTransformation } from "@/services/tableEditor/file/column/transformation/computeDatePartTransformation";
 import { describe, expect, test } from "vitest";
@@ -10,7 +11,7 @@ describe(computeDatePartTransformation, () => {
       computeDatePartTransformation(
         "1970-01-01",
         { part: DatePartType.Year, sourceColumnId: "", type: ColumnTransformationType.DatePart },
-        "YYYY-MM-DD",
+        DateFormat["YYYY-MM-DD"],
       ),
     ).toBe(1970);
   });
@@ -21,7 +22,7 @@ describe(computeDatePartTransformation, () => {
       computeDatePartTransformation(
         "1970-01-01",
         { part: DatePartType.Month, sourceColumnId: "", type: ColumnTransformationType.DatePart },
-        "YYYY-MM-DD",
+        DateFormat["YYYY-MM-DD"],
       ),
     ).toBe(1);
   });
@@ -32,7 +33,7 @@ describe(computeDatePartTransformation, () => {
       computeDatePartTransformation(
         "1970-01-02",
         { part: DatePartType.Day, sourceColumnId: "", type: ColumnTransformationType.DatePart },
-        "YYYY-MM-DD",
+        DateFormat["YYYY-MM-DD"],
       ),
     ).toBe(2);
   });
@@ -43,7 +44,7 @@ describe(computeDatePartTransformation, () => {
       computeDatePartTransformation(
         "1970-01-01T00:00:00",
         { part: DatePartType.Hour, sourceColumnId: "", type: ColumnTransformationType.DatePart },
-        "YYYY-MM-DDTHH:mm:ss",
+        DateFormat["YYYY-MM-DDTHH:mm:ss"],
       ),
     ).toBe(0);
   });
@@ -54,7 +55,7 @@ describe(computeDatePartTransformation, () => {
       computeDatePartTransformation(
         "1970-01-01T00:00:00",
         { part: DatePartType.Minute, sourceColumnId: "", type: ColumnTransformationType.DatePart },
-        "YYYY-MM-DDTHH:mm:ss",
+        DateFormat["YYYY-MM-DDTHH:mm:ss"],
       ),
     ).toBe(0);
   });
@@ -65,7 +66,7 @@ describe(computeDatePartTransformation, () => {
       computeDatePartTransformation(
         "not-a-date",
         { part: DatePartType.Year, sourceColumnId: "", type: ColumnTransformationType.DatePart },
-        "YYYY-MM-DD",
+        DateFormat["YYYY-MM-DD"],
       ),
     ).toBeNull();
   });
@@ -76,7 +77,7 @@ describe(computeDatePartTransformation, () => {
       computeDatePartTransformation(
         0,
         { part: DatePartType.Year, sourceColumnId: "", type: ColumnTransformationType.DatePart },
-        "YYYY-MM-DD",
+        DateFormat["YYYY-MM-DD"],
       ),
     ).toBeNull();
   });

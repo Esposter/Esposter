@@ -1,4 +1,5 @@
 import { BooleanColumn } from "#shared/models/tableEditor/file/column/BooleanColumn";
+import { BooleanValue } from "#shared/models/tableEditor/file/column/BooleanValue";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import {
   makeColumn,
@@ -99,7 +100,7 @@ describe(filterDataSourceRows, () => {
       [makeRow({ "": true }), makeRow({ "": false }), makeRow({ "": null })],
     );
 
-    const result = filterDataSourceRows(dataSource, { "": { type: ColumnType.Boolean, value: "true" } });
+    const result = filterDataSourceRows(dataSource, { "": { type: ColumnType.Boolean, value: BooleanValue.True } });
 
     expect(result.rows).toHaveLength(1);
     expect(takeOne(takeOne(result.rows, 0).data, "")).toBe(true);
@@ -113,7 +114,7 @@ describe(filterDataSourceRows, () => {
       [makeRow({ "": true }), makeRow({ "": false }), makeRow({ "": null })],
     );
 
-    const result = filterDataSourceRows(dataSource, { "": { type: ColumnType.Boolean, value: "false" } });
+    const result = filterDataSourceRows(dataSource, { "": { type: ColumnType.Boolean, value: BooleanValue.False } });
 
     expect(result.rows).toHaveLength(1);
     expect(takeOne(takeOne(result.rows, 0).data, "")).toBe(false);
@@ -236,7 +237,7 @@ describe(isActiveColumnFilter, () => {
 
   test("boolean filter with non-empty value is active", () => {
     expect.hasAssertions();
-    expect(isActiveColumnFilter({ type: ColumnType.Boolean, value: "true" })).toBe(true);
+    expect(isActiveColumnFilter({ type: ColumnType.Boolean, value: BooleanValue.True })).toBe(true);
   });
 
   test("boolean filter with empty value is inactive", () => {

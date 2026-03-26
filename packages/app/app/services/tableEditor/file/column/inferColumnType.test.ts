@@ -1,3 +1,4 @@
+import { BooleanValue } from "#shared/models/tableEditor/file/column/BooleanValue";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { DateFormat } from "#shared/models/tableEditor/file/column/DateFormat";
 import { dayjs } from "#shared/services/dayjs";
@@ -20,7 +21,7 @@ describe(inferColumnType, () => {
   test(`boolean returns ${ColumnType.Boolean}`, () => {
     expect.hasAssertions();
 
-    expect(inferColumnType(["true", "false"])).toBe(ColumnType.Boolean);
+    expect(inferColumnType([BooleanValue.True, BooleanValue.False])).toBe(ColumnType.Boolean);
   });
 
   test(`${ColumnType.Boolean} is case insensitive`, () => {
@@ -63,7 +64,7 @@ describe(inferColumnType, () => {
     expect.hasAssertions();
 
     for (const format of Object.values(DateFormat)) {
-      const epochDate = dayjs("1970-01-01", "YYYY-MM-DD", true).format(format);
+      const epochDate = dayjs("1970-01-01", DateFormat["YYYY-MM-DD"], true).format(format);
 
       expect(inferColumnType([epochDate])).toBe(ColumnType.Date);
     }

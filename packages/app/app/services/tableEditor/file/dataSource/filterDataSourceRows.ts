@@ -1,6 +1,7 @@
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 import type { ColumnFilter } from "@/models/tableEditor/file/column/ColumnFilter";
 
+import { BooleanValue } from "#shared/models/tableEditor/file/column/BooleanValue";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { isActiveColumnFilter } from "@/services/tableEditor/file/column/isActiveColumnFilter";
 import { takeOne } from "@esposter/shared";
@@ -16,8 +17,8 @@ export const filterDataSourceRows = (
       const cellValue = takeOne(row.data, columnName);
       if (filter.type === ColumnType.Boolean) {
         if (filter.value === "null") return cellValue === null;
-        if (filter.value === "true") return cellValue === true;
-        if (filter.value === "false") return cellValue === false;
+        if (filter.value === BooleanValue.True) return cellValue === true;
+        if (filter.value === BooleanValue.False) return cellValue === false;
         return true;
       }
       if (filter.type === ColumnType.Number) {
