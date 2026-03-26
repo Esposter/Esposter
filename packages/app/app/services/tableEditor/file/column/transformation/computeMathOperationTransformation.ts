@@ -33,7 +33,7 @@ export const computeMathOperationTransformation = (
             result -= right;
             break;
           default:
-            exhaustiveGuard(step.operation);
+            exhaustiveGuard(step);
         }
         break;
       }
@@ -52,11 +52,11 @@ export const computeMathOperationTransformation = (
             result = Math.round(result);
             break;
           default:
-            exhaustiveGuard(step.operation);
+            exhaustiveGuard(step);
         }
         break;
       default:
-        exhaustiveGuard(step.type);
+        exhaustiveGuard(step);
     }
   }
   return result;

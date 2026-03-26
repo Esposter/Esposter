@@ -1,10 +1,8 @@
+import type { UnaryMathOperationType } from "#shared/models/tableEditor/file/column/transformation/UnaryMathOperationType";
 import type { ItemEntityType } from "@esposter/shared";
 
 import { MathStepType } from "#shared/models/tableEditor/file/column/transformation/MathStepType";
-import {
-  UnaryMathOperationType,
-  unaryMathOperationTypeSchema,
-} from "#shared/models/tableEditor/file/column/transformation/UnaryMathOperationType";
+import { unaryMathOperationTypeSchema } from "#shared/models/tableEditor/file/column/transformation/UnaryMathOperationType";
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
