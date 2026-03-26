@@ -1,4 +1,4 @@
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
+import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 import type { ItemEntityType } from "@esposter/shared";
 
 import { AItemEntity } from "#shared/models/entity/AItemEntity";
@@ -13,16 +13,16 @@ export abstract class ADataSourceCommand<T extends CommandType = CommandType>
 
   abstract get description(): string;
 
-  execute(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
+  execute(item: DataSourceItem) {
     this.doExecute(item);
     if (item.dataSource) syncStats(item.dataSource);
   }
 
-  undo(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
+  undo(item: DataSourceItem) {
     this.doUndo(item);
     if (item.dataSource) syncStats(item.dataSource);
   }
 
-  protected abstract doExecute(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]): void;
-  protected abstract doUndo(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]): void;
+  protected abstract doExecute(item: DataSourceItem): void;
+  protected abstract doUndo(item: DataSourceItem): void;
 }

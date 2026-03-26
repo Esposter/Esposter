@@ -1,5 +1,5 @@
 import type { Item } from "#shared/models/tableEditor/data/Item";
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
+import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 import type { TodoListItem } from "#shared/models/tableEditor/todoList/TodoListItem";
 import type { VuetifyComponentItem } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 import type { ToData } from "@esposter/shared";
@@ -8,7 +8,7 @@ import type { PartialDeep } from "type-fest";
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
 import { createTableEditorSchema, TableEditor } from "#shared/models/tableEditor/data/TableEditor";
 import { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType";
-import { dataSourceItemSchema } from "#shared/models/tableEditor/file/datasource/DataSourceItemSchema";
+import { dataSourceItemSchema } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 import { todoListItemSchema } from "#shared/models/tableEditor/todoList/TodoListItem";
 import { vuetifyComponentItemSchema } from "#shared/models/tableEditor/vuetifyComponent/VuetifyComponentItem";
 import { z } from "zod";
@@ -16,7 +16,7 @@ import { z } from "zod";
 type TableEditorTypes = Record<keyof typeof TableEditorType, TableEditor<Item>>;
 
 export class TableEditorConfiguration extends AItemEntity implements TableEditorTypes {
-  [TableEditorType.File] = new TableEditor<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
+  [TableEditorType.File] = new TableEditor<DataSourceItem>();
   [TableEditorType.TodoList] = new TableEditor<TodoListItem>();
   [TableEditorType.VuetifyComponent] = new TableEditor<VuetifyComponentItem>();
 

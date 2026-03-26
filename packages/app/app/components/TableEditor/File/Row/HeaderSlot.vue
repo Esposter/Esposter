@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
+import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { InternalDataTableHeader } from "vuetify/lib/components/VDataTable/types.mjs";
 import type { IconValue } from "vuetify/lib/composables/icons.mjs";
 
 import { useFilterStore } from "@/store/tableEditor/file/filter";
 
 interface HeaderSlotProps {
-  column: DataSource["columns"][number];
+  column: Column;
   getSortIcon: (column: InternalDataTableHeader) => IconValue;
   headerColumn: InternalDataTableHeader;
   isSorted: (column: InternalDataTableHeader) => boolean;

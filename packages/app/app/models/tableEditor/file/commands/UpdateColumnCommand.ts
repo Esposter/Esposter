@@ -1,6 +1,6 @@
+import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
-import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
+import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 import type { ToData } from "@esposter/shared";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
@@ -8,6 +8,7 @@ import { dayjs } from "#shared/services/dayjs";
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
 import { coerceValue } from "@/services/tableEditor/file/column/coerceValue";
+import { ColumnTypeCreateMap } from "@/services/tableEditor/file/column/ColumnTypeCreateMap";
 import { getRecordDifferenceDescription } from "@/services/tableEditor/file/commands/getRecordDifferenceDescription";
 import { getValueSize } from "@/services/tableEditor/file/commands/getValueSize";
 import { takeOne } from "@esposter/shared";
@@ -21,15 +22,15 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
     return `Edit "${this.originalColumn.name}" Column${detail}`;
   }
 
-  private readonly originalColumn: DataSource["columns"][number];
+  private readonly originalColumn: Column;
   private readonly originalName: string;
   private readonly originalRowValues: ColumnValue[];
-  private readonly updatedColumn: ToData<DataSource["columns"][number]>;
+  private readonly updatedColumn: ToData<Column>;
 
   constructor(
     originalName: string,
-    originalColumn: DataSource["columns"][number],
-    updatedColumn: ToData<DataSource["columns"][number]>,
+    originalColumn: Column,
+    updatedColumn: ToData<Column>,
     originalRowValues: ColumnValue[],
   ) {
     super();
@@ -39,10 +40,11 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
     this.originalRowValues = originalRowValues;
   }
 
-  protected doExecute(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
+  protected doExecute(item: DataSourceItem) {
     if (!item.dataSource) return;
-    const column = item.dataSource.columns.find(({ name }) => name === this.originalName);
-    if (!column) return;
+    const columnIndex = item.dataSource.columns.findIndex(({ name }) => name === this.originalName);
+    if (columnIndex === -1) return;
+    const column = takeOne(item.dataSource.columns, columnIndex);
     const updatedName = this.updatedColumn.name;
     if (updatedName !== this.originalName) {
       const newColumnNames = item.dataSource.columns.map(({ name }) =>
@@ -61,7 +63,9 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
       column.type === ColumnType.Date && this.updatedColumn.type === ColumnType.Date
         ? { newFormat: this.updatedColumn.format, oldFormat: column.format }
         : null;
-    Object.assign(column, this.updatedColumn);
+    const newColumn = ColumnTypeCreateMap[this.updatedColumn.type].create();
+    Object.assign(newColumn, this.updatedColumn);
+    item.dataSource.columns[columnIndex] = newColumn;
     if (dateFormatChange !== null && dateFormatChange.oldFormat !== dateFormatChange.newFormat) {
       const { newFormat, oldFormat } = dateFormatChange;
       let size = 0;
@@ -78,7 +82,7 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
         }
         size += getValueSize(value);
       }
-      column.size = size;
+      newColumn.size = size;
     } else if (originalType !== this.updatedColumn.type) {
       let size = 0;
       for (const row of item.dataSource.rows) {
@@ -87,15 +91,15 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
         row.data[updatedName] = newValue;
         size += getValueSize(newValue);
       }
-      column.size = size;
+      newColumn.size = size;
     }
   }
 
-  protected doUndo(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
+  protected doUndo(item: DataSourceItem) {
     if (!item.dataSource) return;
     const updatedName = this.updatedColumn.name;
-    const column = item.dataSource.columns.find(({ name }) => name === updatedName);
-    if (!column) return;
+    const columnIndex = item.dataSource.columns.findIndex(({ name }) => name === updatedName);
+    if (columnIndex === -1) return;
     const newColumnNames =
       updatedName === this.originalName
         ? null
@@ -108,6 +112,8 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
         row.data = newData;
       } else row.data[this.originalName] = value;
     }
-    Object.assign(column, this.originalColumn);
+    const restoredColumn = ColumnTypeCreateMap[this.originalColumn.type].create();
+    Object.assign(restoredColumn, this.originalColumn);
+    item.dataSource.columns[columnIndex] = restoredColumn;
   }
 }

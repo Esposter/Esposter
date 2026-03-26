@@ -1,5 +1,5 @@
-import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
+import type { Column } from "#shared/models/tableEditor/file/column/Column";
+import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 import type { ToData } from "@esposter/shared";
 
 import { UpdateColumnCommand } from "@/models/tableEditor/file/commands/UpdateColumnCommand";
@@ -8,11 +8,11 @@ import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
 export const useUpdateColumn = () => {
-  const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
+  const tableEditorStore = useTableEditorStore<DataSourceItem>();
   const { editedItem } = storeToRefs(tableEditorStore);
   const fileHistoryStore = useFileHistoryStore();
   const { push } = fileHistoryStore;
-  return (originalName: string, updatedColumn: ToData<DataSource["columns"][number]>) => {
+  return (originalName: string, updatedColumn: ToData<Column>) => {
     if (!editedItem.value?.dataSource) return;
     const columnIndex = editedItem.value.dataSource.columns.findIndex(({ name }) => name === originalName);
     if (columnIndex === -1) return;

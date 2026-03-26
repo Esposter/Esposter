@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
+import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { BooleanFilterValue } from "@/models/tableEditor/file/column/BooleanFilterValue";
 import type { ColumnFilter } from "@/models/tableEditor/file/column/ColumnFilter";
 
@@ -7,7 +7,7 @@ import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { BooleanFilterValueItemCategoryDefinitions } from "@/services/tableEditor/file/column/BooleanFilterValueItemCategoryDefinitions";
 
 interface ColumnFilterInputProps {
-  column: DataSource["columns"][number];
+  column: Column;
 }
 
 const { column } = defineProps<ColumnFilterInputProps>();

@@ -1,7 +1,7 @@
+import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { EditableColumnValue } from "#shared/models/tableEditor/file/column/EditableColumnValue";
-import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 
-export const isEditableColumnValue = (column: DataSource["columns"][number]): column is EditableColumnValue =>
+export const isEditableColumnValue = (column: Column): column is EditableColumnValue =>
   column.type !== ColumnType.Computed;

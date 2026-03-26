@@ -1,14 +1,22 @@
+import type { MathOperand } from "#shared/models/tableEditor/file/column/transformation/MathOperand";
+import type { MathStep } from "#shared/models/tableEditor/file/column/transformation/MathStep";
+import type { ItemEntityType } from "@esposter/shared";
+
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
-import { MathOperationType } from "#shared/models/tableEditor/file/column/transformation/MathOperationType";
-import { withSourceColumnIdSchema } from "#shared/models/tableEditor/file/column/transformation/WithSourceColumnId";
+import { mathOperandSchema } from "#shared/models/tableEditor/file/column/transformation/MathOperand";
+import { mathStepSchema } from "#shared/models/tableEditor/file/column/transformation/MathStep";
+import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
-export const mathOperationTransformationSchema = withSourceColumnIdSchema
-  .extend({
-    operand: z.number().optional().meta({ title: "Operand" }),
-    operation: z.enum(MathOperationType).meta({ title: "Operation" }),
-    type: z.literal(ColumnTransformationType.MathOperation),
-  })
-  .meta({ title: ColumnTransformationType.MathOperation });
+export interface MathOperationTransformation extends ItemEntityType<ColumnTransformationType.MathOperation> {
+  first: MathOperand;
+  steps: MathStep[];
+}
 
-export type MathOperationTransformation = z.infer<typeof mathOperationTransformationSchema>;
+export const mathOperationTransformationSchema = z
+  .object({
+    ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.MathOperation).readonly()).shape,
+    first: mathOperandSchema.meta({ title: "First" }),
+    steps: z.array(mathStepSchema).default([]).meta({ title: "Steps" }),
+  })
+  .meta({ title: ColumnTransformationType.MathOperation }) satisfies z.ZodType<MathOperationTransformation>;

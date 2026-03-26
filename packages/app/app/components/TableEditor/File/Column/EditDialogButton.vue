@@ -1,28 +1,28 @@
 <script setup lang="ts">
+import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
-import { columnTypeFormSchema } from "#shared/models/tableEditor/file/column/ColumnTypeForm";
+import { columnFormSchema } from "#shared/models/tableEditor/file/column/ColumnForm";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { toRawDeep } from "@esposter/shared";
 import { Vjsf } from "@koumoul/vjsf";
 
 interface EditDialogButtonProps {
-  column: DataSource["columns"][number];
+  column: Column;
   dataSource: DataSource;
 }
 
 const { column, dataSource } = defineProps<EditDialogButtonProps>();
 const updateColumn = useUpdateColumn();
-const jsonSchema = zodToJsonSchema(columnTypeFormSchema);
-const options = computed(() => ({
-  context: {
-    columnNames: dataSource.columns.map(({ name }) => name),
-    currentName: column.name,
-    sourceColumnItems: dataSource.columns.map(({ id, name }) => ({ title: name, value: id })),
-  },
-}));
+// StructuredClone is required here: Vjsf does not work with class instances and needs a plain object,
+// And fast-deep-equal checks constructors so class instances never equal their plain object clones
 const editedColumn = ref(structuredClone(toRawDeep(column)));
 const title = computed(() => `Edit "${column.name}" Column`);
+const jsonSchema = zodToJsonSchema(columnFormSchema);
+const options = useColumnFormOptions(
+  () => dataSource,
+  () => column.name,
+);
 const resetForm = () => {
   editedColumn.value = structuredClone(toRawDeep(column));
 };
@@ -32,9 +32,9 @@ const resetForm = () => {
   <TableEditorFileCrudViewEditDialogButton
     :title
     :tooltip-text="title"
-    :schema="columnTypeFormSchema"
-    :value="column"
-    :edited-value="editedColumn"
+    :schema="columnFormSchema"
+    :value="columnFormSchema.safeParse(column).data"
+    :edited-value="columnFormSchema.safeParse(editedColumn).data"
     @reset="resetForm()"
     @submit="
       (onComplete) => {

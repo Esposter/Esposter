@@ -1,4 +1,4 @@
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
+import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 import type { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 
 import { MAX_HISTORY_SIZE } from "@/services/tableEditor/file/constants";
@@ -24,14 +24,14 @@ export const useFileHistoryStore = defineStore("tableEditor/file/history", () =>
     if (history.value.length > MAX_HISTORY_SIZE) history.value.shift();
     future.value = [];
   };
-  const redo = (item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap] | undefined) => {
+  const redo = (item: DataSourceItem | undefined) => {
     if (!item || !isRedoable.value) return;
     const command = takeOne(future.value, future.value.length - 1);
     future.value.pop();
     history.value.push(command);
     command.execute(item);
   };
-  const undo = (item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap] | undefined) => {
+  const undo = (item: DataSourceItem | undefined) => {
     if (!item || !isUndoable.value) return;
     const command = takeOne(history.value, history.value.length - 1);
     history.value.pop();

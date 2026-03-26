@@ -1,13 +1,29 @@
+import type { WithSourceColumnId } from "#shared/models/tableEditor/file/column/transformation/WithSourceColumnId";
+import type { ItemEntityType } from "@esposter/shared";
+
+import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import { withSourceColumnIdSchema } from "#shared/models/tableEditor/file/column/transformation/WithSourceColumnId";
+import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
-export const regexMatchTransformationSchema = withSourceColumnIdSchema
-  .extend({
+export interface RegexMatchTransformation
+  extends ItemEntityType<ColumnTransformationType.RegexMatch>, WithSourceColumnId {
+  groupIndex: number;
+  pattern: string;
+}
+
+export const regexMatchTransformationSchema = z
+  .object({
+    ...withSourceColumnIdSchema.shape,
+    ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.RegexMatch).readonly()).shape,
     groupIndex: z.number().int().nonnegative().meta({ title: "Group Index" }),
     pattern: z.string().meta({ title: "Pattern" }),
-    type: z.literal(ColumnTransformationType.RegexMatch),
+    sourceColumnId: withSourceColumnIdSchema.shape.sourceColumnId.meta({
+      getItems: "context.stringSourceColumnItems",
+    }),
   })
-  .meta({ title: ColumnTransformationType.RegexMatch });
-
-export type RegexMatchTransformation = z.infer<typeof regexMatchTransformationSchema>;
+  .meta({
+    applicableColumnTypes: [ColumnType.String],
+    title: ColumnTransformationType.RegexMatch,
+  }) satisfies z.ZodType<RegexMatchTransformation>;

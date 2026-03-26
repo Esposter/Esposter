@@ -1,6 +1,6 @@
-import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
+import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
 
 export interface IndexedRow {
   index: number;
-  row: DataSource["rows"][number];
+  row: Row;
 }

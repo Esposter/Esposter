@@ -1,15 +1,27 @@
+import type { WithSourceColumnId } from "#shared/models/tableEditor/file/column/transformation/WithSourceColumnId";
+import type { ItemEntityType } from "@esposter/shared";
+
+import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
-import { DatePartType } from "#shared/models/tableEditor/file/column/transformation/DatePartType";
+import { DatePartType, datePartTypeSchema } from "#shared/models/tableEditor/file/column/transformation/DatePartType";
 import { withSourceColumnIdSchema } from "#shared/models/tableEditor/file/column/transformation/WithSourceColumnId";
-import { DATE_FORMATS } from "#shared/models/tableEditor/file/constants";
+import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
-export const datePartTransformationSchema = withSourceColumnIdSchema
-  .extend({
-    inputFormat: z.enum(DATE_FORMATS).meta({ title: "Input Format" }),
-    part: z.enum(DatePartType).meta({ title: "Part" }),
-    type: z.literal(ColumnTransformationType.DatePart),
-  })
-  .meta({ title: ColumnTransformationType.DatePart });
+export interface DatePartTransformation extends ItemEntityType<ColumnTransformationType.DatePart>, WithSourceColumnId {
+  part: DatePartType;
+}
 
-export type DatePartTransformation = z.infer<typeof datePartTransformationSchema>;
+export const datePartTransformationSchema = z
+  .object({
+    ...withSourceColumnIdSchema.shape,
+    ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.DatePart).readonly()).shape,
+    part: datePartTypeSchema,
+    sourceColumnId: withSourceColumnIdSchema.shape.sourceColumnId.meta({
+      getItems: "context.dateSourceColumnItems",
+    }),
+  })
+  .meta({
+    applicableColumnTypes: [ColumnType.Date],
+    title: ColumnTransformationType.DatePart,
+  }) satisfies z.ZodType<DatePartTransformation>;

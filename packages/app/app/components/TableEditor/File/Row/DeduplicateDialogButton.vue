@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
+import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 import type { IndexedRow } from "@/models/tableEditor/file/commands/IndexedRow";
 
 import { KeepDuplicateMode } from "@/models/tableEditor/file/commands/KeepDuplicateMode";
@@ -7,7 +7,7 @@ import { findDuplicateRows } from "@/services/tableEditor/file/commands/findDupl
 import { useTableEditorStore } from "@/store/tableEditor";
 import { takeOne } from "@esposter/shared";
 
-const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
+const tableEditorStore = useTableEditorStore<DataSourceItem>();
 const { editedItem } = storeToRefs(tableEditorStore);
 const isOpen = ref(false);
 const keepMode = ref(KeepDuplicateMode.First);

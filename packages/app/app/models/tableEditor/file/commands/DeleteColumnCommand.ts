@@ -1,6 +1,6 @@
+import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
-import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
+import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
@@ -14,23 +14,23 @@ export class DeleteColumnCommand extends ADataSourceCommand<CommandType.DeleteCo
   }
 
   private readonly columnIndex: number;
-  private readonly originalColumn: DataSource["columns"][number];
+  private readonly originalColumn: Column;
   private readonly originalRowValues: ColumnValue[];
 
-  constructor(columnIndex: number, originalColumn: DataSource["columns"][number], originalRowValues: ColumnValue[]) {
+  constructor(columnIndex: number, originalColumn: Column, originalRowValues: ColumnValue[]) {
     super();
     this.columnIndex = columnIndex;
     this.originalColumn = originalColumn;
     this.originalRowValues = originalRowValues;
   }
 
-  protected doExecute(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
+  protected doExecute(item: DataSourceItem) {
     if (!item.dataSource) return;
     item.dataSource.columns = item.dataSource.columns.filter((column) => column.name !== this.originalColumn.name);
     for (const row of item.dataSource.rows) delete row.data[this.originalColumn.name];
   }
 
-  protected doUndo(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
+  protected doUndo(item: DataSourceItem) {
     if (!item.dataSource) return;
     item.dataSource.columns = [
       ...item.dataSource.columns.slice(0, this.columnIndex),

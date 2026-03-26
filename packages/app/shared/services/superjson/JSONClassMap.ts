@@ -12,8 +12,10 @@ import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { FlowchartEditor } from "#shared/models/flowchartEditor/data/FlowchartEditor";
 import { TableEditor } from "#shared/models/tableEditor/data/TableEditor";
 import { TableEditorConfiguration } from "#shared/models/tableEditor/data/TableEditorConfiguration";
-import { Column } from "#shared/models/tableEditor/file/column/Column";
+import { BooleanColumn } from "#shared/models/tableEditor/file/column/BooleanColumn";
 import { DateColumn } from "#shared/models/tableEditor/file/column/DateColumn";
+import { NumberColumn } from "#shared/models/tableEditor/file/column/NumberColumn";
+import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 import { CsvDataSourceItem } from "#shared/models/tableEditor/file/csv/CsvDataSourceItem";
 import { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import { XlsxDataSourceItem } from "#shared/models/tableEditor/file/xlsx/XlsxDataSourceItem";
@@ -24,9 +26,9 @@ import { StandardMessageEntity, SurveyResponseEntity, WebhookMessageEntity } fro
 
 export const JSONClassMap: Record<string, Class<Serializable>> = {
   BasicChartConfiguration,
+  BooleanColumn,
   Chart,
   Clicker,
-  Column,
   CsvDataSourceItem,
   Dashboard,
   DateColumn,
@@ -34,8 +36,10 @@ export const JSONClassMap: Record<string, Class<Serializable>> = {
   EmailEditor,
   FlowchartEditor,
   MessageEmojiMetadataEntity,
+  NumberColumn,
   Row,
   StandardMessageEntity,
+  StringColumn,
   SurveyResponseEntity,
   TableEditor,
   TableEditorConfiguration,

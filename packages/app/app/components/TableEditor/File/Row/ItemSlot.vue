@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
-import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
 import { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import { isEditableColumnValue } from "@/services/tableEditor/file/column/isEditableColumnValue";
@@ -12,8 +12,8 @@ import { useOutlierStore } from "@/store/tableEditor/file/outlier";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
 interface ItemSlotProps {
-  column: DataSource["columns"][number];
-  columns: DataSource["columns"];
+  column: Column;
+  columns: Column[];
   item: Row;
   rowIndex: number;
 }

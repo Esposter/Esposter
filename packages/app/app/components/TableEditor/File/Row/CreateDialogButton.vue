@@ -24,12 +24,13 @@ const resetForm = () => {
 
 <template>
   <TableEditorFileCrudViewEditDialogButton
-    title="Create Row"
-    tooltip-text="Add Row"
+    :edited-value="editedRow"
     icon="mdi-table-row-plus-after"
     :schema="rowSchema"
+    title="Create Row"
+    tooltip-text="Add Row"
     :value="blankRow"
-    :edited-value="editedRow"
+    is-create
     @reset="resetForm()"
     @submit="
       (onComplete) => {

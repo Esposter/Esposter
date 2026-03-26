@@ -1,3 +1,4 @@
+import { BooleanValue } from "#shared/models/tableEditor/file/column/BooleanValue";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import { computeConvertToTransformation } from "@/services/tableEditor/file/column/transformation/computeConvertToTransformation";
@@ -18,14 +19,14 @@ describe(computeConvertToTransformation, () => {
   test("converts string to boolean", () => {
     expect.hasAssertions();
     expect(
-      computeConvertToTransformation("true", {
+      computeConvertToTransformation(BooleanValue.True, {
         sourceColumnId: "",
         targetType: ColumnType.Boolean,
         type: ColumnTransformationType.ConvertTo,
       }),
     ).toBe(true);
     expect(
-      computeConvertToTransformation("false", {
+      computeConvertToTransformation(BooleanValue.False, {
         sourceColumnId: "",
         targetType: ColumnType.Boolean,
         type: ColumnTransformationType.ConvertTo,

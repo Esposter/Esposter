@@ -1,4 +1,4 @@
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
+import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { computeColumnStats } from "@/services/tableEditor/file/column/computeColumnStats";
@@ -8,7 +8,7 @@ import { useTableEditorStore } from "@/store/tableEditor";
 import { takeOne } from "@esposter/shared";
 
 export const useOutlierStore = defineStore("tableEditor/file/outlier", () => {
-  const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
+  const tableEditorStore = useTableEditorStore<DataSourceItem>();
   const isOutlierHighlightEnabled = ref(false);
   const outlierCells = computed<Set<string>>(() => {
     if (!isOutlierHighlightEnabled.value || !tableEditorStore.editedItem?.dataSource) return new Set();

@@ -1,6 +1,7 @@
-import { Column } from "#shared/models/tableEditor/file/column/Column";
+import { BooleanColumn } from "#shared/models/tableEditor/file/column/BooleanColumn";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import { DATE_FORMATS } from "#shared/models/tableEditor/file/constants";
+import { DateFormat } from "#shared/models/tableEditor/file/column/DateFormat";
+import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 import {
   makeDataSource,
   makeDateColumn,
@@ -87,7 +88,7 @@ describe(computeColumnStats, () => {
     expect.hasAssertions();
 
     const dataSource = makeDataSource(
-      [new Column({ name: "", type: ColumnType.Boolean })],
+      [new BooleanColumn({ name: "" })],
       [makeRow({ "": true }), makeRow({ "": true }), makeRow({ "": false }), makeRow({ "": null })],
     );
 
@@ -111,7 +112,7 @@ describe(computeColumnStats, () => {
     expect.hasAssertions();
 
     const dataSource = makeDataSource(
-      [new Column({ name: "", type: ColumnType.String })],
+      [new StringColumn({ name: "" })],
       [makeRow({ "": "" }), makeRow({ "": " " }), makeRow({ "": "" }), makeRow({ "": null })],
     );
 
@@ -135,7 +136,7 @@ describe(computeColumnStats, () => {
     expect.hasAssertions();
 
     const dataSource = makeDataSource(
-      [makeDateColumn("", takeOne(DATE_FORMATS, 0))],
+      [makeDateColumn("", takeOne(Object.values(DateFormat), 0))],
       [
         makeRow({ "": "1970-01-01" }),
         makeRow({ "": "1970-01-02" }),
@@ -205,10 +206,7 @@ describe(computeColumnStats, () => {
   test("string column with all null values returns null mostFrequentValue and 100 emptyPercent", () => {
     expect.hasAssertions();
 
-    const dataSource = makeDataSource(
-      [new Column({ name: "", type: ColumnType.String })],
-      [makeRow({ "": null }), makeRow({ "": null })],
-    );
+    const dataSource = makeDataSource([new StringColumn({ name: "" })], [makeRow({ "": null }), makeRow({ "": null })]);
 
     expect(takeOne(computeColumnStats(dataSource), 0)).toStrictEqual({
       average: null,
@@ -229,7 +227,7 @@ describe(computeColumnStats, () => {
   test("string column with no rows returns null emptyPercent", () => {
     expect.hasAssertions();
 
-    const dataSource = makeDataSource([new Column({ name: "", type: ColumnType.String })], []);
+    const dataSource = makeDataSource([new StringColumn({ name: "" })], []);
 
     expect(takeOne(computeColumnStats(dataSource), 0)).toStrictEqual({
       average: null,
@@ -251,7 +249,7 @@ describe(computeColumnStats, () => {
     expect.hasAssertions();
 
     const dataSource = makeDataSource(
-      [new Column({ name: "", type: ColumnType.String })],
+      [new StringColumn({ name: "" })],
       [makeRow({ "": "a" }), makeRow({ "": "b" }), makeRow({ "": "c" })],
     );
 

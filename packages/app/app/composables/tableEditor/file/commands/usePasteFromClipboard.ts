@@ -1,11 +1,11 @@
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
+import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 
 import { parseClipboardRows } from "@/services/tableEditor/file/commands/parseClipboardRows";
 import { useAlertStore } from "@/store/alert";
 import { useTableEditorStore } from "@/store/tableEditor";
 
 export const usePasteFromClipboard = () => {
-  const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
+  const tableEditorStore = useTableEditorStore<DataSourceItem>();
   const { editedItem } = storeToRefs(tableEditorStore);
   const alertStore = useAlertStore();
   const { createAlert } = alertStore;

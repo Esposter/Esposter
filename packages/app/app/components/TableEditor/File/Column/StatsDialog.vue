@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
+import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 import type { ColumnStats } from "@/models/tableEditor/file/column/ColumnStats";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
@@ -8,7 +8,7 @@ import { computeColumnStats } from "@/services/tableEditor/file/column/computeCo
 import { useTableEditorStore } from "@/store/tableEditor";
 
 const isOpen = defineModel<boolean>();
-const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
+const tableEditorStore = useTableEditorStore<DataSourceItem>();
 const { editedItem } = storeToRefs(tableEditorStore);
 const isChartOpen = ref(false);
 const selectedStats = ref<ColumnStats | null>(null);

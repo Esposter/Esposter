@@ -29,14 +29,13 @@ export class BaseMessageEntity<TType extends MessageType = StandardMessageType>
   mentions: string[] = [];
   message!: string;
   replyRowKey?: string;
-  type!: TType;
+  type = MessageType.Message as TType;
 }
 
 export const baseMessageEntitySchema = z.object({
   ...createAzureEntitySchema(
     z.object({
-      partitionKey: selectRoomSchema.shape.id,
-      // Reverse-ticked timestamp
+      partitionKey: selectRoomSchema.shape.id, // Reverse-ticked timestamp
       rowKey: z.string(),
     }),
   ).shape,
@@ -49,4 +48,4 @@ export const baseMessageEntitySchema = z.object({
   replyRowKey: z.string().optional(),
   type: standardMessageTypeSchema.default(MessageType.Message),
   userId: selectUserSchema.shape.id,
-}) satisfies z.ZodType<ToData<Except<BaseMessageEntity, "linkPreviewResponse">>>; // We only generate link preview responses via the backend, so we can safely exclude it from the schema
+}) satisfies z.ZodType<ToData<Except<BaseMessageEntity, "linkPreviewResponse">>>;

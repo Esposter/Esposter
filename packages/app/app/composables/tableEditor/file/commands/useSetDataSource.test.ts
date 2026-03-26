@@ -1,4 +1,4 @@
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
+import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 
 import {
   makeDataSource,
@@ -62,7 +62,7 @@ describe(useSetDataSource, () => {
     const setDataSource = useSetDataSource();
     setDataSource(makeDataSource());
 
-    const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
+    const tableEditorStore = useTableEditorStore<DataSourceItem>();
     const { editedItem } = storeToRefs(tableEditorStore);
 
     expect(editedItem.value).toBeUndefined();

@@ -3,6 +3,15 @@ import { prettify } from "@/util/text/prettify";
 import { toTitleCase } from "@/util/text/toTitleCase";
 import { z } from "zod";
 
+const applyOneOfVariantTitles = (oneOf: z.core.JSONSchema.JSONSchema["oneOf"]) => {
+  if (!oneOf) return;
+  for (const variant of oneOf) {
+    if (typeof variant === "boolean") continue;
+    if (variant.title) variant.title = toTitleCase(prettify(variant.title));
+    if (variant.properties) applyPropertyHooks(variant.properties);
+  }
+};
+
 const applyPropertyHooks = (properties: z.core.JSONSchema.JSONSchema["properties"]) => {
   recurseProperties(properties, {
     otherHooks: [
@@ -17,6 +26,8 @@ const applyPropertyHooks = (properties: z.core.JSONSchema.JSONSchema["properties
           property.oneOf = property.anyOf;
           delete property.anyOf;
         }
+        // Handle nested discriminated unions (properties that are oneOf rather than type: "object")
+        if (property.oneOf) applyOneOfVariantTitles(property.oneOf);
       },
     ],
   });
@@ -27,21 +38,22 @@ export const zodToJsonSchema = (schema: z.ZodType) => {
   // $schema is stripped because vjsf's internal Ajv2019 instance does not have the draft 2020-12 meta-schema loaded
   const { $schema: _, ...result } = z.toJSONSchema(schema, {
     override: (ctx) => {
-      const meta = (ctx.zodSchema as z.ZodObject).meta();
+      const zodSchema = ctx.zodSchema as z.ZodObject;
+      const jsonSchema = ctx.jsonSchema as Record<string, unknown>;
+      // Add discriminator for discriminated unions so vjsf auto-selects the active variant
+      const def = zodSchema.def;
+      if ("discriminator" in def && def.discriminator) jsonSchema.discriminator = { propertyName: def.discriminator };
+
+      const meta = zodSchema.meta();
       if (!meta?.comp && !meta?.getProps && !meta?.getItems) return;
       const layout: Record<string, unknown> = {};
       if (meta.comp) layout.comp = meta.comp;
       if (meta.getProps) layout.getProps = meta.getProps;
       if (meta.getItems) layout.getItems = meta.getItems;
-      (ctx.jsonSchema as Record<string, unknown>).layout = layout;
+      jsonSchema.layout = layout;
     },
   });
   if (result.properties) applyPropertyHooks(result.properties);
-  if (result.oneOf)
-    for (const variant of result.oneOf) {
-      if (typeof variant === "boolean") continue;
-      if (variant.title) variant.title = toTitleCase(prettify(variant.title));
-      if (variant.properties) applyPropertyHooks(variant.properties);
-    }
+  if (result.oneOf) applyOneOfVariantTitles(result.oneOf);
   return result;
 };

@@ -42,6 +42,21 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 ## Control Flow
 
 - **Guard clauses first**: always use `if (!condition) return` to exit early instead of wrapping the main body in an `if` block. Reduce nesting aggressively — if the body of an `if` is the rest of the function, invert the condition and return early instead.
+- **Combine consecutive guards with `||`** — when two or more consecutive early-return guards share the same return value (typically `return` or `return null`), combine them into a single `if` with `||`. Never write two separate `if` statements that both `return` when they can be one:
+
+  ```ts
+  // BAD — two separate guards
+  if (!editedItem.value?.dataSource) return;
+  if (editedItem.value.dataSource.columns.some(({ name }) => name === newColumn.name)) return;
+
+  // GOOD — combined with ||
+  if (!editedItem.value?.dataSource || editedItem.value.dataSource.columns.some(({ name }) => name === newColumn.name))
+    return;
+  ```
+
+  Exception: when the second check has side effects or requires complex destructuring that depends on the first passing, separate guards are acceptable.
+
+- **Use `switch` for type-based branching** — when branching on an enum or discriminant with multiple cases, use `switch` (with `exhaustiveGuard` in the default) instead of a chain of `if/else if`. Use `if/else if/else` only when conditions are non-enum expressions or when there are exactly two branches.
 - **Always use `if/else if/else` from the very first branch** when a function has multiple conditional returns — no standalone `if` followed by `else if`.
 
 ## Return Type Annotations
@@ -52,6 +67,44 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 
 - **Don't extract helpers that add no value** — if a helper function just wraps an inline object literal or a single expression without reuse or meaningful abstraction, return/use the value directly. Three lines of inline code is better than a named wrapper used once.
 - **Function naming prefixes** — use `get*` for functions that derive or compute a display value (e.g. `getVisibilityTooltip`, `getRowTitle`). Use CRUD prefixes (`create*`, `update*`, `delete*`) for heavier operations that interact with data or stores.
+
+## Exhaustive Switch Guards
+
+**Every `switch` on an enum or discriminated union discriminant must have a `default: exhaustiveGuard(value)` (or `return exhaustiveGuard(value)` when the switch is in a return-position).** Import `exhaustiveGuard` from `@esposter/shared`. This ensures TypeScript surfaces a compile error when a new enum variant is added without updating the switch.
+
+```ts
+// BAD — no default, silently misses new variants
+switch (step.type) {
+  case MathStepType.Unary: ...
+  case MathStepType.Binary: ...
+}
+
+// GOOD
+switch (step.type) {
+  case MathStepType.Unary: ...; break;
+  case MathStepType.Binary: ...; break;
+  default: exhaustiveGuard(step.type);
+}
+
+// GOOD — return-position switch
+switch (transformation.part) {
+  case DatePartType.Day: return parsedDate.date();
+  // ...
+  default: return exhaustiveGuard(transformation.part);
+}
+```
+
+Applies to nested switches too (each inner switch on an enum needs its own guard).
+
+**Exception**: switches on non-enum values (strings, numbers, class instances) do not need an exhaustive guard.
+
+## Enum Naming
+
+- **Never abbreviate enum value names** — use the full word: `Absolute` not `Abs`, `Subtract` not `Sub`, `Configuration` not `Config`. This applies to both the enum key and string value. Abbreviated names save nothing and hurt readability.
+
+## Enum Values Array
+
+- **Never alias `Object.values(Enum)` as a constant** — use `Object.values(MyEnum)` directly at each call site. Never export a constant like `export const MY_FORMATS = Object.values(MyEnum)` just to avoid repeating `Object.values(...)`.
 
 ## Enum Refs
 
@@ -100,38 +153,57 @@ format(item[key] as never); // safe: key and format always come from the same de
 
 **NEVER** write a function that switches over a discriminant enum to call different logic for each case. This anti-pattern (a "type switch dispatcher") concentrates all variant logic in one place, prevents co-location, and forces every new variant to touch the central function.
 
-**Instead, use a `*TypeComputeMap` (or `*TypeMap`) with a `compute` property per entry** — mirroring the `compute` property used in `ColumnStatDefinitions`:
+**Instead, use a `*ResolveMap` (or `*TypeMap`) where each entry is a resolver function** — receives the typed transformation and a context object:
 
 ```ts
-// BAD — all logic in one place, hard to extend:
-const computeColumnTransformation = (value, transformation) => {
-  switch (transformation.type) {
-    case ColumnTransformationType.ConvertTo: /* ... big block ... */
-    case ColumnTransformationType.DatePart: /* ... big block ... */
-  }
+// BAD — if/switch chains in one place, hard to extend:
+export const resolveValue = (...) => {
+  if (transformation.type === ConvertTo) { /* ... */ }
+  else if (transformation.type === DatePart) { /* ... */ }
 };
 
-// GOOD — each type's logic lives co-located with its own type definition:
+// GOOD — per-type compute functions stay co-located with their schema:
 // services/column/transformation/computeConvertToTransformation.ts
 export const computeConvertToTransformation = (value, t: ConvertToTransformation) => ...;
 
-// services/column/transformation/ColumnTransformationTypeComputeMap.ts
-export const ColumnTransformationTypeComputeMap = {
-  [ColumnTransformationType.ConvertTo]: { compute: computeConvertToTransformation },
-  [ColumnTransformationType.DatePart]:  { compute: computeDatePartTransformation },
-  ...
-} as const;
+// services/column/transformation/ColumnTransformationResolveMap.ts
+export interface ResolveContext {
+  resolveSource: (sourceColumnId: string) => ColumnValue;
+  findSource: (sourceColumnId: string) => DataSource["columns"][number] | undefined;
+}
 
-// Dispatcher is now a one-liner:
-export const computeColumnTransformation = (value, transformation) =>
-  ColumnTransformationTypeComputeMap[transformation.type].compute(value, transformation as never);
+type TransformationResolver<T extends ColumnTransformation> = (
+  transformation: T,
+  context: ResolveContext,
+) => ColumnValue;
+
+export const ColumnTransformationResolveMap = {
+  [ColumnTransformationType.ConvertTo]: (transformation, { resolveSource }) =>
+    computeConvertToTransformation(resolveSource(transformation.sourceColumnId), transformation),
+
+  [ColumnTransformationType.DatePart]: (transformation, { resolveSource, findSource }) => {
+    const sourceColumn = findSource(transformation.sourceColumnId);
+    if (sourceColumn?.type !== ColumnType.Date) return null;
+    // TypeScript narrows sourceColumn to DateColumn via optional chaining + discriminant — sourceColumn.format is accessible
+    return computeDatePartTransformation(resolveSource(transformation.sourceColumnId), transformation, sourceColumn.format);
+  },
+  // ...
+} as const satisfies {
+  [K in ColumnTransformationType]: TransformationResolver<Extract<ColumnTransformation, { type: K }>>;
+};
+
+// Dispatcher builds the context closure and calls the map — one expression:
+return ColumnTransformationResolveMap[column.transformation.type](column.transformation as never, { findSource, resolveSource });
 ```
 
 **Rules:**
 
-- Each per-type function lives in `services/<feature>/transformation/compute<TypeName>Transformation.ts`, co-located with its schema
-- The map file (`<Noun>TypeComputeMap.ts`) imports all per-type functions and re-exports as entries
-- Use `as const satisfies Record<TheType, { compute: (value: TValue, transformation: never) => TResult }>` — `never` as the parameter type satisfies contravariance (every specific function accepts something ≥ `never`); cast at the call site with `as never`
+- Each per-type compute function lives in `services/<feature>/transformation/compute<TypeName>Transformation.ts`
+- The map file (`<Noun>ResolveMap.ts`) imports all per-type functions; each entry is a resolver function
+- The `ResolveContext` interface is exported so callers can implement it
+- Use `as const satisfies { [K in TheType]: TransformationResolver<Extract<Union, { type: K }>> }` — each resolver entry is typed to its specific transformation subtype
+- Call site uses `as never` on the transformation — TypeScript cannot correlate the discriminant key with the map entry's expected parameter type
+- TypeScript discriminant narrowing (e.g. `someColumn.type !== ColumnType.Date`) provides type-safe access to subtype fields inside resolvers without explicit casts
 - Adding a new variant only requires: (1) a new per-type function file, (2) one new entry in the map
 
 ## Opt-In Shared Interfaces for Discriminated Union Members
@@ -139,29 +211,54 @@ export const computeColumnTransformation = (value, transformation) =>
 When some (but not all) members of a discriminated union share a common field, define a shared interface and Zod schema that members **opt into** by extending — never force the field onto all members.
 
 ```ts
-// shared/models/.../WithSourceColumn.ts — opt-in base
-export interface WithSourceColumn { sourceColumnId: string; }
-export const withSourceColumnSchema = z.object({ sourceColumnId: z.string() });
+// shared/models/.../WithSourceColumnId.ts — opt-in base for single-source transformations
+export interface WithSourceColumnId { sourceColumnId: string; }
+export const withSourceColumnIdSchema = z.object({ sourceColumnId: z.string() });
+
+// shared/models/.../WithSourceColumnIds.ts — opt-in base for multi-source transformations
+export interface WithSourceColumnIds { sourceColumnIds: string[]; }
+export const withSourceColumnIdsSchema = z.object({ sourceColumnIds: z.array(z.string()).default([]) });
 
 // Each transformation that needs a source column extends the base:
-export const convertToTransformationSchema = withSourceColumnSchema.extend({
+export const convertToTransformationSchema = withSourceColumnIdSchema.extend({
   type: z.literal(ColumnTransformationType.ConvertTo),
   targetType: z.enum([...]),
 });
 
-// A future static transformation that needs NO source column simply doesn't extend it:
-export const staticValueTransformationSchema = z.object({
-  type: z.literal(ColumnTransformationType.StaticValue),
-  value: z.string(),
+// A transformation needing no source column uses z.object({...}) directly:
+export const mathOperationTransformationSchema = z.object({
+  first: mathOperandSchema,
+  steps: z.array(mathStepSchema).default([]),
+  type: z.literal(ColumnTransformationType.MathOperation),
 });
 ```
 
 **Rules:**
 
-- The shared interface/schema lives in its own file (one export per file rule)
+- Each shared interface/schema lives in its own file (one export per file rule)
 - Members that need the shared field use `.extend()` on the base schema
 - Members that don't need it just use `z.object({...})` directly
-- This pattern scales to multiple shared interfaces (e.g. `WithSourceColumns` for multi-input transformations)
+- Use `WithSourceColumnId` (singular) for single-source, `WithSourceColumnIds` (plural) for multi-source
+- Transformations with column type constraints declare `applicableColumnTypes: ColumnType[]` in `.meta()` — used by the UI to filter source column dropdowns. This comes from `GlobalMeta extends Partial<WithApplicableColumnTypes>` in `shared/types/zod.d.ts`
+- **`WithApplicableColumnTypes`** — interface in `shared/models/.../WithApplicableColumnTypes.ts` with `readonly applicableColumnTypes: ColumnType[]`. Both Zod `.meta()` (via `GlobalMeta`) and non-schema definitions (e.g. `ColumnStatDefinition`) extend this interface so the same field name is used everywhere:
+
+  ```ts
+  // shared/models/.../WithApplicableColumnTypes.ts
+  export interface WithApplicableColumnTypes {
+    readonly applicableColumnTypes: ColumnType[];
+  }
+
+  // app/models/.../ColumnStatDefinition.ts
+  export interface ColumnStatDefinition<T extends ColumnStatKey> extends WithApplicableColumnTypes { ... }
+
+  // shared/types/zod.d.ts — makes it optional in schema .meta()
+  interface GlobalMeta extends Partial<WithApplicableColumnTypes> { ... }
+
+  // Usage in schema:
+  .meta({ applicableColumnTypes: [ColumnType.Date], title: "..." })
+  // Usage in stat definition:
+  defineColumnStat({ applicableColumnTypes: [ColumnType.Number], ... })
+  ```
 
 ## Configuration Interfaces — `Pick` from Source Types
 

@@ -8,6 +8,7 @@ import deepEqual from "fast-deep-equal";
 interface EditDialogButtonProps {
   editedValue: unknown;
   icon?: string;
+  isCreate?: boolean;
   schema: z.ZodType;
   title: string;
   tooltipText: string;
@@ -15,20 +16,28 @@ interface EditDialogButtonProps {
 }
 
 defineSlots<{ default: () => VNode; "prepend-actions"?: () => VNode }>();
-const { editedValue, icon = "mdi-pencil", schema, title, tooltipText, value } = defineProps<EditDialogButtonProps>();
+const {
+  editedValue,
+  icon = "mdi-pencil",
+  isCreate = false,
+  schema,
+  title,
+  tooltipText,
+  value,
+} = defineProps<EditDialogButtonProps>();
 const emit = defineEmits<{ reset: []; submit: [onComplete: () => void] }>();
 const styledDialog = useTemplateRef<InstanceType<typeof StyledFormDialog>>("styledDialog");
 const errorIcon = useTemplateRef<InstanceType<typeof StyledEditFormDialogErrorIcon>>("errorIcon");
 const isEqual = computed(() => deepEqual(value, editedValue));
-const disabled = computed(() => !(errorIcon.value?.isValid ?? true) || isEqual.value);
+const disabled = computed(() => !(errorIcon.value?.isValid ?? true) || (!isCreate && isEqual.value));
 </script>
 
 <template>
   <StyledFormDialog
     ref="styledDialog"
     :card-props="{ title }"
-    :confirm-button-props="{ text: 'Save & Close' }"
     :confirm-button-attrs="{ disabled }"
+    :confirm-button-props="{ text: 'Save & Close' }"
     @submit="(_event, onComplete) => emit('submit', onComplete)"
   >
     <template #activator="{ updateIsOpen }">
@@ -41,10 +50,10 @@ const disabled = computed(() => !(errorIcon.value?.isValid ?? true) || isEqual.v
     <template #prepend-actions>
       <StyledEditFormDialogErrorIcon
         ref="errorIcon"
+        :edited-value
         :edit-form="styledDialog?.editForm"
         :is-edit-form-valid="styledDialog?.isEditFormValid ?? true"
         :schema
-        :edited-value
       />
       <v-tooltip text="Reset changes">
         <template #activator="{ props: tooltipProps }">

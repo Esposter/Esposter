@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import type { Column } from "#shared/models/tableEditor/file/column/Column";
+import type { NumberColumn } from "#shared/models/tableEditor/file/column/NumberColumn";
+import type { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { FieldInputTypeMap } from "@/services/tableEditor/file/column/FieldInputTypeMap";
 
 interface FieldInputTextProps {
-  column: Column<ColumnType.Number | ColumnType.String>;
+  column: NumberColumn | StringColumn;
   inline?: boolean;
 }
 

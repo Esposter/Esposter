@@ -1,20 +1,22 @@
-import { Column, columnSchema } from "#shared/models/tableEditor/file/column/Column";
-import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
+import type { BooleanColumnForm } from "#shared/models/tableEditor/file/column/BooleanColumnForm";
+import type { ComputedColumnForm } from "#shared/models/tableEditor/file/column/ComputedColumnForm";
+import type { DateColumnForm } from "#shared/models/tableEditor/file/column/DateColumnForm";
+import type { NumberColumnForm } from "#shared/models/tableEditor/file/column/NumberColumnForm";
+import type { StringColumnForm } from "#shared/models/tableEditor/file/column/StringColumnForm";
+
+import { booleanColumnFormSchema } from "#shared/models/tableEditor/file/column/BooleanColumnForm";
+import { computedColumnFormSchema } from "#shared/models/tableEditor/file/column/ComputedColumnForm";
+import { dateColumnFormSchema } from "#shared/models/tableEditor/file/column/DateColumnForm";
+import { numberColumnFormSchema } from "#shared/models/tableEditor/file/column/NumberColumnForm";
+import { stringColumnFormSchema } from "#shared/models/tableEditor/file/column/StringColumnForm";
 import { z } from "zod";
 
-export interface ColumnForm extends Pick<Column<ColumnType>, "description" | "name" | "sourceName" | "type"> {}
+export type ColumnForm = BooleanColumnForm | ComputedColumnForm | DateColumnForm | NumberColumnForm | StringColumnForm;
 
-export const createColumnFormSchema = <T extends z.ZodType<ColumnType>>(typeSchema: T) =>
-  columnSchema.pick({ description: true, name: true, sourceName: true }).extend({
-    description: columnSchema.shape.description.meta({ title: "Description" }),
-    name: columnSchema.shape.name.meta({
-      getProps: `{ rules: [(value) => value === context.currentName || !context.columnNames.includes(value) || 'Column already exists'] }`,
-      title: "Column",
-    }),
-    sourceName: columnSchema.shape.sourceName.meta({ title: "Source Column" }),
-    type: typeSchema.meta({ title: "Type" }),
-  });
-
-export const columnFormSchema = createColumnFormSchema(
-  z.enum([ColumnType.Boolean, ColumnType.Number, ColumnType.String]).readonly(),
-) satisfies z.ZodType<ColumnForm>;
+export const columnFormSchema = z.discriminatedUnion("type", [
+  booleanColumnFormSchema,
+  computedColumnFormSchema,
+  dateColumnFormSchema,
+  numberColumnFormSchema,
+  stringColumnFormSchema,
+]) satisfies z.ZodType<ColumnForm>;

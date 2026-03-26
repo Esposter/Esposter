@@ -1,4 +1,4 @@
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
+import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 import type { AffectedCell } from "@/models/tableEditor/file/commands/AffectedCell";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
@@ -28,7 +28,7 @@ export class FindReplaceCommand extends ADataSourceCommand<CommandType.FindRepla
     this.affectedCells = affectedCells;
   }
 
-  protected doExecute(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
+  protected doExecute(item: DataSourceItem) {
     if (!item.dataSource) return;
     const columnsByNameMap = new Map(item.dataSource.columns.map((column) => [column.name, column]));
     for (const { columnName, originalValue, rowIndex } of this.affectedCells) {
@@ -42,7 +42,7 @@ export class FindReplaceCommand extends ADataSourceCommand<CommandType.FindRepla
     }
   }
 
-  protected doUndo(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
+  protected doUndo(item: DataSourceItem) {
     if (!item.dataSource) return;
     const columnsByNameMap = new Map(item.dataSource.columns.map((column) => [column.name, column]));
     for (const { columnName, originalValue, rowIndex } of this.affectedCells) {

@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
+import { columnFormSchema } from "#shared/models/tableEditor/file/column/ColumnForm";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import { columnTypeFormSchema } from "#shared/models/tableEditor/file/column/ColumnTypeForm";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { ColumnTypeCreateMap } from "@/services/tableEditor/file/column/ColumnTypeCreateMap";
 import { Vjsf } from "@koumoul/vjsf";
@@ -13,32 +14,29 @@ interface CreateDialogButtonProps {
 
 const { dataSource } = defineProps<CreateDialogButtonProps>();
 const createColumn = useCreateColumn();
-const columnType = ref(ColumnType.String);
 // StructuredClone is required here: Vjsf does not work with class instances and needs a plain object,
 // And fast-deep-equal checks constructors so class instances never equal their plain object clones
-const defaultColumn = computed(() => structuredClone(ColumnTypeCreateMap[columnType.value].create()));
-const editedColumn = ref<DataSource["columns"][number]>(structuredClone(defaultColumn.value));
-const jsonSchema = zodToJsonSchema(columnTypeFormSchema);
-const options = computed(() => ({
-  context: {
-    columnNames: dataSource.columns.map(({ name }) => name),
-    currentName: editedColumn.value.name,
-    sourceColumnItems: dataSource.columns.map(({ id, name }) => ({ title: name, value: id })),
-  },
-}));
+const defaultColumn = structuredClone(ColumnTypeCreateMap[ColumnType.String].create());
+const editedColumn = ref<Column>(structuredClone(defaultColumn));
+const jsonSchema = zodToJsonSchema(columnFormSchema);
+const options = useColumnFormOptions(
+  () => dataSource,
+  () => "",
+);
 const resetForm = () => {
-  editedColumn.value = structuredClone(defaultColumn.value);
+  editedColumn.value = structuredClone(defaultColumn);
 };
 </script>
 
 <template>
   <TableEditorFileCrudViewEditDialogButton
+    icon="mdi-table-column-plus-after"
     title="Create Column"
     tooltip-text="Add Column"
-    icon="mdi-table-column-plus-after"
-    :schema="columnTypeFormSchema"
-    :value="defaultColumn"
-    :edited-value="editedColumn"
+    :edited-value="columnFormSchema.safeParse(editedColumn).data"
+    :schema="columnFormSchema"
+    :value="columnFormSchema.safeParse(defaultColumn).data"
+    is-create
     @reset="resetForm()"
     @submit="
       (onComplete) => {

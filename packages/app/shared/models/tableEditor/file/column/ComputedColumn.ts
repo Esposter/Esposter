@@ -1,15 +1,13 @@
-import type { ColumnForm } from "#shared/models/tableEditor/file/column/ColumnForm";
 import type { ColumnTransformation } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformation";
 import type { ToData } from "@esposter/shared";
 
-import { Column, createColumnSchema } from "#shared/models/tableEditor/file/column/Column";
-import { createColumnFormSchema } from "#shared/models/tableEditor/file/column/ColumnForm";
+import { AColumn, createAColumnSchema } from "#shared/models/tableEditor/file/column/AColumn";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { columnTransformationSchema } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformation";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import { z } from "zod";
 
-export class ComputedColumn extends Column<ColumnType.Computed> {
+export class ComputedColumn extends AColumn<ColumnType.Computed> {
   transformation: ColumnTransformation = {
     sourceColumnId: "",
     targetType: ColumnType.String,
@@ -23,10 +21,7 @@ export class ComputedColumn extends Column<ColumnType.Computed> {
   }
 }
 
-export const computedColumnSchema = createColumnSchema(z.literal(ColumnType.Computed)).extend({
+export const computedColumnSchema = z.object({
+  ...createAColumnSchema(z.literal(ColumnType.Computed)).shape,
   transformation: columnTransformationSchema,
 }) satisfies z.ZodType<ToData<ComputedColumn>>;
-
-export const computedColumnFormSchema = createColumnFormSchema(z.literal(ColumnType.Computed).readonly()).extend({
-  transformation: columnTransformationSchema,
-}) satisfies z.ZodType<ColumnForm>;

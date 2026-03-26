@@ -1,6 +1,8 @@
-import { Column } from "#shared/models/tableEditor/file/column/Column";
+import { BooleanValue } from "#shared/models/tableEditor/file/column/BooleanValue";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { DateColumn } from "#shared/models/tableEditor/file/column/DateColumn";
+import { DateFormat } from "#shared/models/tableEditor/file/column/DateFormat";
+import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 import {
   makeColumn,
   makeDataSource,
@@ -115,7 +117,7 @@ describe(useUpdateColumn, () => {
     const updateColumn = useUpdateColumn();
     const fileHistoryStore = useFileHistoryStore();
     const { isUndoable } = storeToRefs(fileHistoryStore);
-    updateColumn("-1", new Column({ name: "-1" }));
+    updateColumn("-1", new StringColumn({ name: "-1" }));
 
     expect(isUndoable.value).toBe(false);
   });
@@ -126,7 +128,7 @@ describe(useUpdateColumn, () => {
     const updateColumn = useUpdateColumn();
     const fileHistoryStore = useFileHistoryStore();
     const { isUndoable } = storeToRefs(fileHistoryStore);
-    updateColumn("", new Column({ name: "" }));
+    updateColumn("", new StringColumn({ name: "" }));
 
     expect(isUndoable.value).toBe(false);
   });
@@ -138,7 +140,7 @@ describe(useUpdateColumn, () => {
     const updateColumn = useUpdateColumn();
     const fileHistoryStore = useFileHistoryStore();
     const { isUndoable } = storeToRefs(fileHistoryStore);
-    updateColumn("", new Column({ name: "" }));
+    updateColumn("", new StringColumn({ name: "" }));
 
     expect(isUndoable.value).toBe(false);
   });
@@ -180,13 +182,13 @@ describe(useUpdateColumn, () => {
     expect.hasAssertions();
 
     const ds = makeDataSource(
-      [makeDateColumn("date", "YYYY-MM-DD")],
+      [makeDateColumn("date", DateFormat["YYYY-MM-DD"])],
       [makeRow({ date: "2024-01-15" }), makeRow({ date: "2024-06-30" })],
     );
     const { editedItem } = setupWithDataSource(ds);
     const updateColumn = useUpdateColumn();
     const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
-    updateColumn("date", Object.assign(structuredClone(toRawDeep(column)), { format: "DD/MM/YYYY" }));
+    updateColumn("date", Object.assign(structuredClone(toRawDeep(column)), { format: DateFormat["DD/MM/YYYY"] }));
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
@@ -200,7 +202,7 @@ describe(useUpdateColumn, () => {
     expect.hasAssertions();
 
     const ds = makeDataSource(
-      [makeDateColumn("date", "YYYY-MM-DD")],
+      [makeDateColumn("date", DateFormat["YYYY-MM-DD"])],
       [makeRow({ date: "2024-01-15" }), makeRow({ date: "2024-06-30" })],
     );
     const { editedItem } = setupWithDataSource(ds);
@@ -208,7 +210,10 @@ describe(useUpdateColumn, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { undo } = fileHistoryStore;
     const originalColumn = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
-    updateColumn("date", Object.assign(structuredClone(toRawDeep(originalColumn)), { format: "DD/MM/YYYY" }));
+    updateColumn(
+      "date",
+      Object.assign(structuredClone(toRawDeep(originalColumn)), { format: DateFormat["DD/MM/YYYY"] }),
+    );
     undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
@@ -221,7 +226,7 @@ describe(useUpdateColumn, () => {
 
     assert.instanceOf(updatedColumn, DateColumn);
 
-    expect(updatedColumn.format).toBe("YYYY-MM-DD");
+    expect(updatedColumn.format).toBe(DateFormat["YYYY-MM-DD"]);
   });
 
   test("recasts String values to Number when type changes", () => {
@@ -259,7 +264,10 @@ describe(useUpdateColumn, () => {
   test("recasts String values to Boolean when type changes", () => {
     expect.hasAssertions();
 
-    const ds = makeDataSource([makeColumn("flag")], [makeRow({ flag: "true" }), makeRow({ flag: "false" })]);
+    const ds = makeDataSource(
+      [makeColumn("flag")],
+      [makeRow({ flag: BooleanValue.True }), makeRow({ flag: BooleanValue.False })],
+    );
     const { editedItem } = setupWithDataSource(ds);
     const updateColumn = useUpdateColumn();
     const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
