@@ -7,8 +7,6 @@ reviews:
     base_branches:
       - main
   path_filters:
-    # Claude Code skill documentation
-    - "!.claude/skills/**"
     # pnpm lock/workspace (dependency bumps)
     - "!pnpm-lock.yaml"
     - "!pnpm-workspace.yaml"
