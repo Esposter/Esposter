@@ -1,3 +1,4 @@
+import type { DateFormat } from "#shared/models/tableEditor/file/column/DateFormat";
 import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
 import type { DatePartTransformation } from "#shared/models/tableEditor/file/column/transformation/DatePartTransformation";
 
@@ -7,22 +8,23 @@ import { dayjs } from "#shared/services/dayjs";
 export const computeDatePartTransformation = (
   value: ColumnValue,
   transformation: DatePartTransformation,
+  inputFormat: DateFormat,
 ): ColumnValue => {
   if (typeof value !== "string") return null;
-  const parsed = dayjs(value, transformation.inputFormat, true);
-  if (!parsed.isValid()) return null;
+  const parsedDate = dayjs(value, inputFormat, true);
+  if (!parsedDate.isValid()) return null;
   switch (transformation.part) {
     case DatePartType.Day:
-      return parsed.date();
+      return parsedDate.date();
     case DatePartType.Hour:
-      return parsed.hour();
+      return parsedDate.hour();
     case DatePartType.Minute:
-      return parsed.minute();
+      return parsedDate.minute();
     case DatePartType.Month:
-      return parsed.month() + 1;
+      return parsedDate.month() + 1;
     case DatePartType.Weekday:
-      return parsed.day();
+      return parsedDate.day();
     case DatePartType.Year:
-      return parsed.year();
+      return parsedDate.year();
   }
 };

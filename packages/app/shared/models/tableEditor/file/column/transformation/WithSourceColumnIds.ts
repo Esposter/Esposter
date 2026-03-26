@@ -5,9 +5,14 @@ export interface WithSourceColumnIds {
 }
 
 export const withSourceColumnIdsSchema = z.object({
-  sourceColumnIds: z.array(z.string()).meta({
-    comp: "select",
-    getItems: "context.sourceColumnItems",
-    title: "Source Columns",
-  }),
+  sourceColumnIds: z
+    .array(
+      z.string().meta({
+        comp: "select",
+        getItems: "context.sourceColumnItems",
+        title: "Source Column",
+      }),
+    )
+    .default([])
+    .meta({ title: "Source Columns" }),
 });

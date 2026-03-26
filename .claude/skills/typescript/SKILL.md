@@ -100,38 +100,57 @@ format(item[key] as never); // safe: key and format always come from the same de
 
 **NEVER** write a function that switches over a discriminant enum to call different logic for each case. This anti-pattern (a "type switch dispatcher") concentrates all variant logic in one place, prevents co-location, and forces every new variant to touch the central function.
 
-**Instead, use a `*TypeComputeMap` (or `*TypeMap`) with a `compute` property per entry** — mirroring the `compute` property used in `ColumnStatDefinitions`:
+**Instead, use a `*ResolveMap` (or `*TypeMap`) where each entry is a resolver function** — receives the typed transformation and a context object:
 
 ```ts
-// BAD — all logic in one place, hard to extend:
-const computeColumnTransformation = (value, transformation) => {
-  switch (transformation.type) {
-    case ColumnTransformationType.ConvertTo: /* ... big block ... */
-    case ColumnTransformationType.DatePart: /* ... big block ... */
-  }
+// BAD — if/switch chains in one place, hard to extend:
+export const resolveValue = (...) => {
+  if (transformation.type === ConvertTo) { /* ... */ }
+  else if (transformation.type === DatePart) { /* ... */ }
 };
 
-// GOOD — each type's logic lives co-located with its own type definition:
+// GOOD — per-type compute functions stay co-located with their schema:
 // services/column/transformation/computeConvertToTransformation.ts
 export const computeConvertToTransformation = (value, t: ConvertToTransformation) => ...;
 
-// services/column/transformation/ColumnTransformationTypeComputeMap.ts
-export const ColumnTransformationTypeComputeMap = {
-  [ColumnTransformationType.ConvertTo]: { compute: computeConvertToTransformation },
-  [ColumnTransformationType.DatePart]:  { compute: computeDatePartTransformation },
-  ...
-} as const;
+// services/column/transformation/ColumnTransformationResolveMap.ts
+export interface ResolveContext {
+  resolveSource: (sourceColumnId: string) => ColumnValue;
+  findSource: (sourceColumnId: string) => DataSource["columns"][number] | undefined;
+}
 
-// Dispatcher is now a one-liner:
-export const computeColumnTransformation = (value, transformation) =>
-  ColumnTransformationTypeComputeMap[transformation.type].compute(value, transformation as never);
+type TransformationResolver<T extends ColumnTransformation> = (
+  transformation: T,
+  context: ResolveContext,
+) => ColumnValue;
+
+export const ColumnTransformationResolveMap = {
+  [ColumnTransformationType.ConvertTo]: (transformation, { resolveSource }) =>
+    computeConvertToTransformation(resolveSource(transformation.sourceColumnId), transformation),
+
+  [ColumnTransformationType.DatePart]: (transformation, { resolveSource, findSource }) => {
+    const sourceColumn = findSource(transformation.sourceColumnId);
+    if (!sourceColumn || sourceColumn.type !== ColumnType.Date) return null;
+    // TypeScript narrows sourceColumn to DateColumn via discriminant — sourceColumn.format is accessible
+    return computeDatePartTransformation(resolveSource(transformation.sourceColumnId), transformation, sourceColumn.format);
+  },
+  // ...
+} as const satisfies {
+  [K in ColumnTransformationType]: TransformationResolver<Extract<ColumnTransformation, { type: K }>>;
+};
+
+// Dispatcher builds the context closure and calls the map — one expression:
+return ColumnTransformationResolveMap[column.transformation.type](column.transformation as never, { findSource, resolveSource });
 ```
 
 **Rules:**
 
-- Each per-type function lives in `services/<feature>/transformation/compute<TypeName>Transformation.ts`, co-located with its schema
-- The map file (`<Noun>TypeComputeMap.ts`) imports all per-type functions and re-exports as entries
-- Use `as const satisfies Record<TheType, { compute: (value: TValue, transformation: never) => TResult }>` — `never` as the parameter type satisfies contravariance (every specific function accepts something ≥ `never`); cast at the call site with `as never`
+- Each per-type compute function lives in `services/<feature>/transformation/compute<TypeName>Transformation.ts`
+- The map file (`<Noun>ResolveMap.ts`) imports all per-type functions; each entry is a resolver function
+- The `ResolveContext` interface is exported so callers can implement it
+- Use `as const satisfies { [K in TheType]: TransformationResolver<Extract<Union, { type: K }>> }` — each resolver entry is typed to its specific transformation subtype
+- Call site uses `as never` on the transformation — TypeScript cannot correlate the discriminant key with the map entry's expected parameter type
+- TypeScript discriminant narrowing (e.g. `someColumn.type !== ColumnType.Date`) provides type-safe access to subtype fields inside resolvers without explicit casts
 - Adding a new variant only requires: (1) a new per-type function file, (2) one new entry in the map
 
 ## Opt-In Shared Interfaces for Discriminated Union Members
@@ -139,29 +158,35 @@ export const computeColumnTransformation = (value, transformation) =>
 When some (but not all) members of a discriminated union share a common field, define a shared interface and Zod schema that members **opt into** by extending — never force the field onto all members.
 
 ```ts
-// shared/models/.../WithSourceColumn.ts — opt-in base
-export interface WithSourceColumn { sourceColumnId: string; }
-export const withSourceColumnSchema = z.object({ sourceColumnId: z.string() });
+// shared/models/.../WithSourceColumnId.ts — opt-in base for single-source transformations
+export interface WithSourceColumnId { sourceColumnId: string; }
+export const withSourceColumnIdSchema = z.object({ sourceColumnId: z.string() });
+
+// shared/models/.../WithSourceColumnIds.ts — opt-in base for multi-source transformations
+export interface WithSourceColumnIds { sourceColumnIds: string[]; }
+export const withSourceColumnIdsSchema = z.object({ sourceColumnIds: z.array(z.string()).default([]) });
 
 // Each transformation that needs a source column extends the base:
-export const convertToTransformationSchema = withSourceColumnSchema.extend({
+export const convertToTransformationSchema = withSourceColumnIdSchema.extend({
   type: z.literal(ColumnTransformationType.ConvertTo),
   targetType: z.enum([...]),
 });
 
-// A future static transformation that needs NO source column simply doesn't extend it:
-export const staticValueTransformationSchema = z.object({
-  type: z.literal(ColumnTransformationType.StaticValue),
-  value: z.string(),
+// A transformation needing no source column uses z.object({...}) directly:
+export const mathOperationTransformationSchema = z.object({
+  first: mathOperandSchema,
+  steps: z.array(mathStepSchema).default([]),
+  type: z.literal(ColumnTransformationType.MathOperation),
 });
 ```
 
 **Rules:**
 
-- The shared interface/schema lives in its own file (one export per file rule)
+- Each shared interface/schema lives in its own file (one export per file rule)
 - Members that need the shared field use `.extend()` on the base schema
 - Members that don't need it just use `z.object({...})` directly
-- This pattern scales to multiple shared interfaces (e.g. `WithSourceColumns` for multi-input transformations)
+- Use `WithSourceColumnId` (singular) for single-source, `WithSourceColumnIds` (plural) for multi-source
+- Transformations with column type constraints declare `appliesTo: ColumnType[]` in `.meta()` — used by the UI to filter source column dropdowns and by the resolve map to guard against wrong-type sources
 
 ## Configuration Interfaces — `Pick` from Source Types
 

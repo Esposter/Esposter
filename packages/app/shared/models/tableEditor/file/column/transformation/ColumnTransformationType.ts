@@ -3,4 +3,5 @@ export enum ColumnTransformationType {
   DatePart = "DatePart",
   MathOperation = "MathOperation",
   RegexMatch = "RegexMatch",
+  StringPattern = "StringPattern",
 }

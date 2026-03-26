@@ -1,30 +1,54 @@
 import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
-import type { MathOperationTransformation } from "#shared/models/tableEditor/file/column/transformation/MathOperationTransformation";
+import type {
+  MathOperand,
+  MathOperationTransformation,
+} from "#shared/models/tableEditor/file/column/transformation/MathOperationTransformation";
 
-import { MathOperationType } from "#shared/models/tableEditor/file/column/transformation/MathOperationType";
+import { BinaryMathOperationType } from "#shared/models/tableEditor/file/column/transformation/BinaryMathOperationType";
+import { MathStepType } from "#shared/models/tableEditor/file/column/transformation/MathStepType";
+import { UnaryMathOperationType } from "#shared/models/tableEditor/file/column/transformation/UnaryMathOperationType";
 
 export const computeMathOperationTransformation = (
-  value: ColumnValue,
   transformation: MathOperationTransformation,
+  resolveOperand: (operand: MathOperand) => ColumnValue,
 ): ColumnValue => {
-  if (typeof value !== "number") return null;
-  const { operand } = transformation;
-  switch (transformation.operation) {
-    case MathOperationType.Abs:
-      return Math.abs(value);
-    case MathOperationType.Add:
-      return operand === undefined ? null : value + operand;
-    case MathOperationType.Ceil:
-      return Math.ceil(value);
-    case MathOperationType.Divide:
-      return operand === undefined || operand === 0 ? null : value / operand;
-    case MathOperationType.Floor:
-      return Math.floor(value);
-    case MathOperationType.Multiply:
-      return operand === undefined ? null : value * operand;
-    case MathOperationType.Round:
-      return Math.round(value);
-    case MathOperationType.Subtract:
-      return operand === undefined ? null : value - operand;
+  let result = resolveOperand(transformation.first);
+  for (const step of transformation.steps) {
+    if (typeof result !== "number") return null;
+    if (step.type === MathStepType.Unary) {
+      switch (step.operation) {
+        case UnaryMathOperationType.Abs:
+          result = Math.abs(result);
+          break;
+        case UnaryMathOperationType.Ceil:
+          result = Math.ceil(result);
+          break;
+        case UnaryMathOperationType.Floor:
+          result = Math.floor(result);
+          break;
+        case UnaryMathOperationType.Round:
+          result = Math.round(result);
+          break;
+      }
+    } else {
+      const right = resolveOperand(step.operand);
+      if (typeof right !== "number") return null;
+      switch (step.operation) {
+        case BinaryMathOperationType.Add:
+          result = result + right;
+          break;
+        case BinaryMathOperationType.Divide:
+          if (right === 0) return null;
+          result = result / right;
+          break;
+        case BinaryMathOperationType.Multiply:
+          result = result * right;
+          break;
+        case BinaryMathOperationType.Subtract:
+          result = result - right;
+          break;
+      }
+    }
   }
+  return result;
 };

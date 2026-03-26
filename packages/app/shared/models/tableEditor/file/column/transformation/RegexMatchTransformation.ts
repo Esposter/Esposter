@@ -1,3 +1,4 @@
+import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import { withSourceColumnIdSchema } from "#shared/models/tableEditor/file/column/transformation/WithSourceColumnId";
 import { z } from "zod";
@@ -8,6 +9,6 @@ export const regexMatchTransformationSchema = withSourceColumnIdSchema
     pattern: z.string().meta({ title: "Pattern" }),
     type: z.literal(ColumnTransformationType.RegexMatch),
   })
-  .meta({ title: ColumnTransformationType.RegexMatch });
+  .meta({ appliesTo: [ColumnType.String], title: ColumnTransformationType.RegexMatch });
 
 export type RegexMatchTransformation = z.infer<typeof regexMatchTransformationSchema>;

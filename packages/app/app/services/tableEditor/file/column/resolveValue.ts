@@ -4,7 +4,7 @@ import type { DataSource } from "#shared/models/tableEditor/file/datasource/Data
 import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import { computeColumnTransformation } from "@/services/tableEditor/file/column/transformation/computeColumnTransformation";
+import { ColumnTransformationResolveMap } from "@/services/tableEditor/file/column/transformation/ColumnTransformationResolveMap";
 import { takeOne } from "@esposter/shared";
 
 const isComputedColumn = (column: DataSource["columns"][number]): column is ComputedColumn =>
@@ -14,10 +14,19 @@ export const resolveValue = (
   row: Row,
   columns: DataSource["columns"],
   column: DataSource["columns"][number],
+  visited = new Set<string>(),
 ): ColumnValue => {
   if (!isComputedColumn(column)) return takeOne(row.data, column.name);
-  const sourceColumn = columns.find(({ id }) => id === column.transformation.sourceColumnId);
-  if (!sourceColumn || sourceColumn.type === ColumnType.Computed) return null;
-  const sourceValue = takeOne(row.data, sourceColumn.name);
-  return computeColumnTransformation(sourceValue, column.transformation);
+  else if (visited.has(column.id)) return null;
+  else {
+    visited.add(column.id);
+    return ColumnTransformationResolveMap[column.transformation.type](column.transformation as never, {
+      findSource: (sourceColumnId) => columns.find(({ id }) => id === sourceColumnId),
+      resolveSource: (sourceColumnId) => {
+        const sourceColumn = columns.find(({ id }) => id === sourceColumnId);
+        if (!sourceColumn) return null;
+        return resolveValue(row, columns, sourceColumn, visited);
+      },
+    });
+  }
 };
