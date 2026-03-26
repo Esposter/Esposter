@@ -11,11 +11,7 @@ export const useCreateColumn = () => {
   const fileHistoryStore = useFileHistoryStore();
   const { push } = fileHistoryStore;
   return (newColumn: Column) => {
-    if (
-      !editedItem.value?.dataSource ||
-      editedItem.value.dataSource.columns.some(({ name }) => name === newColumn.name)
-    )
-      return;
+    if (!editedItem.value?.dataSource) return;
     const { id: _id, ...newColumnWithoutId } = newColumn;
     const columnIndex = editedItem.value.dataSource.columns.length;
     const command = ColumnTypeCommandMap[newColumnWithoutId.type](columnIndex, newColumnWithoutId as never);
