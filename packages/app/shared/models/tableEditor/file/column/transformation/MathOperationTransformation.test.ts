@@ -11,6 +11,9 @@ describe("mathOperationTransformation", () => {
         "additionalProperties": false,
         "properties": {
           "first": {
+            "discriminator": {
+              "propertyName": "type",
+            },
             "oneOf": [
               {
                 "additionalProperties": false,
@@ -66,6 +69,9 @@ describe("mathOperationTransformation", () => {
           "steps": {
             "default": [],
             "items": {
+              "discriminator": {
+                "propertyName": "type",
+              },
               "oneOf": [
                 {
                   "additionalProperties": false,
@@ -97,6 +103,9 @@ describe("mathOperationTransformation", () => {
                   "additionalProperties": false,
                   "properties": {
                     "operand": {
+                      "discriminator": {
+                        "propertyName": "type",
+                      },
                       "oneOf": [
                         {
                           "additionalProperties": false,
