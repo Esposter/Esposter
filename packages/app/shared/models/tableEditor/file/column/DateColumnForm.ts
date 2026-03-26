@@ -2,8 +2,8 @@ import type { AColumnForm } from "#shared/models/tableEditor/file/column/AColumn
 
 import { createAColumnFormSchema } from "#shared/models/tableEditor/file/column/AColumnForm";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import { DateFormat } from "#shared/models/tableEditor/file/column/DateFormat";
 import { dateColumnSchema } from "#shared/models/tableEditor/file/column/DateColumn";
+import { DateFormat } from "#shared/models/tableEditor/file/column/DateFormat";
 import { z } from "zod";
 
 export interface DateColumnForm extends AColumnForm<ColumnType.Date> {

@@ -1,7 +1,7 @@
 import { BooleanColumn } from "#shared/models/tableEditor/file/column/BooleanColumn";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 import { DateFormat } from "#shared/models/tableEditor/file/column/DateFormat";
+import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 import {
   makeDataSource,
   makeDateColumn,

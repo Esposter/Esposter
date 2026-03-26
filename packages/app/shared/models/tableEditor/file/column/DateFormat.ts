@@ -1,3 +1,4 @@
+/* eslint-disable perfectionist/sort-enums */
 export enum DateFormat {
   // Slash-separated
   "D/M/YYYY" = "D/M/YYYY",
