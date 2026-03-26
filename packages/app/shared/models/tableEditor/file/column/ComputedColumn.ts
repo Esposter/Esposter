@@ -27,6 +27,8 @@ export const computedColumnSchema = createColumnSchema(z.literal(ColumnType.Comp
   transformation: columnTransformationSchema,
 }) satisfies z.ZodType<ToData<ComputedColumn>>;
 
-export const computedColumnFormSchema = createColumnFormSchema(z.literal(ColumnType.Computed).readonly()).extend({
-  transformation: columnTransformationSchema,
-}) satisfies z.ZodType<ColumnForm>;
+export const computedColumnFormSchema = createColumnFormSchema(z.literal(ColumnType.Computed).readonly())
+  .extend({
+    transformation: columnTransformationSchema,
+  })
+  .meta({ title: ColumnType.Computed }) satisfies z.ZodType<ColumnForm>;

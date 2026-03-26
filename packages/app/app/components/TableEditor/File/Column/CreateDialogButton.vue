@@ -23,7 +23,16 @@ const options = computed(() => ({
   context: {
     columnNames: dataSource.columns.map(({ name }) => name),
     currentName: editedColumn.value.name,
+    dateSourceColumnItems: dataSource.columns
+      .filter(({ type }) => type === ColumnType.Date)
+      .map(({ id, name }) => ({ title: name, value: id })),
+    numberSourceColumnItems: dataSource.columns
+      .filter(({ type }) => type === ColumnType.Number)
+      .map(({ id, name }) => ({ title: name, value: id })),
     sourceColumnItems: dataSource.columns.map(({ id, name }) => ({ title: name, value: id })),
+    stringSourceColumnItems: dataSource.columns
+      .filter(({ type }) => type === ColumnType.String)
+      .map(({ id, name }) => ({ title: name, value: id })),
   },
 }));
 const resetForm = () => {

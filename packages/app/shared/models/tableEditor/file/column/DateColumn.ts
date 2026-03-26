@@ -21,6 +21,8 @@ export const dateColumnSchema = createColumnSchema(z.literal(ColumnType.Date)).e
   format: z.enum(DATE_FORMATS),
 }) satisfies z.ZodType<ToData<DateColumn>>;
 
-export const dateColumnFormSchema = createColumnFormSchema(z.literal(ColumnType.Date).readonly()).extend({
-  format: dateColumnSchema.shape.format.meta({ title: "Format" }),
-}) satisfies z.ZodType<ColumnForm>;
+export const dateColumnFormSchema = createColumnFormSchema(z.literal(ColumnType.Date).readonly())
+  .extend({
+    format: dateColumnSchema.shape.format.meta({ title: "Format" }),
+  })
+  .meta({ title: ColumnType.Date }) satisfies z.ZodType<ColumnForm>;

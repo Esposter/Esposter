@@ -3,6 +3,15 @@ import { prettify } from "@/util/text/prettify";
 import { toTitleCase } from "@/util/text/toTitleCase";
 import { z } from "zod";
 
+const applyOneOfVariantTitles = (oneOf: z.core.JSONSchema.JSONSchema["oneOf"]) => {
+  if (!oneOf) return;
+  for (const variant of oneOf) {
+    if (typeof variant === "boolean") continue;
+    if (variant.title) variant.title = toTitleCase(prettify(variant.title));
+    if (variant.properties) applyPropertyHooks(variant.properties);
+  }
+};
+
 const applyPropertyHooks = (properties: z.core.JSONSchema.JSONSchema["properties"]) => {
   recurseProperties(properties, {
     otherHooks: [
@@ -17,6 +26,8 @@ const applyPropertyHooks = (properties: z.core.JSONSchema.JSONSchema["properties
           property.oneOf = property.anyOf;
           delete property.anyOf;
         }
+        // Handle nested discriminated unions (properties that are oneOf rather than type: "object")
+        if (property.oneOf) applyOneOfVariantTitles(property.oneOf);
       },
     ],
   });
@@ -37,11 +48,6 @@ export const zodToJsonSchema = (schema: z.ZodType) => {
     },
   });
   if (result.properties) applyPropertyHooks(result.properties);
-  if (result.oneOf)
-    for (const variant of result.oneOf) {
-      if (typeof variant === "boolean") continue;
-      if (variant.title) variant.title = toTitleCase(prettify(variant.title));
-      if (variant.properties) applyPropertyHooks(variant.properties);
-    }
+  if (result.oneOf) applyOneOfVariantTitles(result.oneOf);
   return result;
 };

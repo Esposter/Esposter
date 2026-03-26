@@ -43,6 +43,59 @@ Always use the `z` namespace export: `z.ZodType`, `z.ZodError`, etc. Never use n
   .meta({ applicableColumnTypes: [ColumnType.String], title: ColumnTransformationType.RegexMatch })
   // No applicableColumnTypes = transformation accepts any source column type
   ```
+- **Vjsf discriminated union variant titles** — every variant in a `z.discriminatedUnion` that will be rendered by Vjsf must have `.meta({ title: ... })` on the variant object (not just on individual fields). Without it, Vjsf shows "Option 1", "Option 2", etc. Title values are run through `toTitleCase(prettify(...))` automatically in `zodToJsonSchema`, so use enum values directly:
+
+  ```typescript
+  export const columnTransformationSchema = z.discriminatedUnion("type", [
+    convertToTransformationSchema.meta({ title: ColumnTransformationType.ConvertTo }),
+    datePartTransformationSchema.meta({ title: ColumnTransformationType.DatePart }),
+  ]);
+  // OR: set .meta({ title }) on the schema at definition time (preferred):
+  export const datePartTransformationSchema = withSourceColumnIdSchema
+    .extend({ ... })
+    .meta({ title: ColumnTransformationType.DatePart }); // ← on the variant schema itself
+  ```
+
+- **Vjsf discriminated union type discriminant** — the `type` field used as the discriminant behaves differently depending on how it's typed:
+  - `z.literal(ColumnType.Computed).readonly()` — Vjsf reads `const: "Computed"` from JSON schema and automatically sets `type = "Computed"` when switching to that variant. ✓
+  - `z.enum([ColumnType.Boolean, ColumnType.Number, ColumnType.String])` (no `.readonly()`) — Vjsf renders a select input for the field. When switching to this variant, Vjsf uses the first enum value as default. ✓
+  - `z.enum([...]).readonly()` — **BROKEN**: the field has `readOnly: true` in JSON schema but no `const`, so Vjsf cannot determine what value to set when switching to this variant. The old discriminant value persists. **Never use `.readonly()` on an enum discriminant field.**
+
+- **Vjsf `getItems` filtering by column type** — when a `sourceColumnId` or `sourceColumnIds` field should only show columns of specific types, override `getItems` in the `.extend()` call to reference a pre-filtered context key. Do not use the generic `context.sourceColumnItems` for type-restricted fields:
+
+  ```typescript
+  // In the transformation schema — override sourceColumnId.getItems:
+  export const datePartTransformationSchema = withSourceColumnIdSchema
+    .extend({
+      sourceColumnId: withSourceColumnIdSchema.shape.sourceColumnId.meta({
+        getItems: "context.dateSourceColumnItems", // only Date columns
+      }),
+      part: z.enum(DatePartType).meta({ title: "Part" }),
+      type: z.literal(ColumnTransformationType.DatePart),
+    })
+    .meta({ applicableColumnTypes: [ColumnType.Date], title: ColumnTransformationType.DatePart });
+
+  // In the Vue component — pass pre-filtered lists in options.context:
+  const options = computed(() => ({
+    context: {
+      sourceColumnItems: dataSource.columns.map(({ id, name }) => ({ title: name, value: id })),
+      dateSourceColumnItems: dataSource.columns
+        .filter(({ type }) => type === ColumnType.Date)
+        .map(({ id, name }) => ({ title: name, value: id })),
+      numberSourceColumnItems: dataSource.columns
+        .filter(({ type }) => type === ColumnType.Number)
+        .map(({ id, name }) => ({ title: name, value: id })),
+      stringSourceColumnItems: dataSource.columns
+        .filter(({ type }) => type === ColumnType.String)
+        .map(({ id, name }) => ({ title: name, value: id })),
+    },
+  }));
+  ```
+
+  The `.meta({ getItems: "..." })` call on an existing field merges with existing meta (preserving `comp` and `title`) — only `getItems` is overridden.
+
+  `getItems` is a JS expression string, so spread syntax works for multiple types: `"[...context.dateSourceColumnItems, ...context.numberSourceColumnItems]"`.
+
 - **vjsf `.meta()` layout properties** — put `comp`, `getProps`, and `getItems` directly on the field's `.meta()` in the schema definition. Do not inject them dynamically via `schema.extend()` in a composable. `GlobalMeta` for these is typed as `string` — they are vjsf JavaScript expression strings evaluated at runtime against the vjsf `context` (passed via `:options`). Example:
   ```typescript
   name: z.string().meta({

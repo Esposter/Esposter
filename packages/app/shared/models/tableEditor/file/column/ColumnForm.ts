@@ -16,5 +16,5 @@ export const createColumnFormSchema = <T extends z.ZodType<ColumnType>>(typeSche
   });
 
 export const columnFormSchema = createColumnFormSchema(
-  z.enum([ColumnType.Boolean, ColumnType.Number, ColumnType.String]).readonly(),
-) satisfies z.ZodType<ColumnForm>;
+  z.enum([ColumnType.Boolean, ColumnType.Number, ColumnType.String]),
+).meta({ title: "Standard" }) satisfies z.ZodType<ColumnForm>;

@@ -147,7 +147,7 @@ describe(computeMathOperationTransformation, () => {
       computeMathOperationTransformation(
         {
           first: constantOperand(-1),
-          steps: [{ operation: UnaryMathOperationType.Abs, type: MathStepType.Unary }],
+          steps: [{ operation: UnaryMathOperationType.Absolute, type: MathStepType.Unary }],
           type: ColumnTransformationType.MathOperation,
         },
         (operand) => (operand.type === MathOperandType.Constant ? operand.value : null),

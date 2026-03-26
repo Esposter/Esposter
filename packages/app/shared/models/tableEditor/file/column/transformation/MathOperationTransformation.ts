@@ -7,18 +7,22 @@ import { z } from "zod";
 
 export const mathOperandSchema = z
   .discriminatedUnion("type", [
-    z.object({
-      sourceColumnId: z.string().meta({
-        comp: "select",
-        getItems: "context.sourceColumnItems",
-        title: "Column",
-      }),
-      type: z.literal(MathOperandType.Column),
-    }),
-    z.object({
-      type: z.literal(MathOperandType.Constant),
-      value: z.number().meta({ title: "Value" }),
-    }),
+    z
+      .object({
+        sourceColumnId: z.string().meta({
+          comp: "select",
+          getItems: "context.numberSourceColumnItems",
+          title: "Column",
+        }),
+        type: z.literal(MathOperandType.Column),
+      })
+      .meta({ title: MathOperandType.Column }),
+    z
+      .object({
+        type: z.literal(MathOperandType.Constant),
+        value: z.number().meta({ title: "Value" }),
+      })
+      .meta({ title: MathOperandType.Constant }),
   ])
   .meta({ title: "Operand" });
 

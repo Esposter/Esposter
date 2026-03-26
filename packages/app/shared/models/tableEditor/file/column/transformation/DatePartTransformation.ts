@@ -7,6 +7,9 @@ import { z } from "zod";
 export const datePartTransformationSchema = withSourceColumnIdSchema
   .extend({
     part: z.enum(DatePartType).meta({ title: "Part" }),
+    sourceColumnId: withSourceColumnIdSchema.shape.sourceColumnId.meta({
+      getItems: "context.dateSourceColumnItems",
+    }),
     type: z.literal(ColumnTransformationType.DatePart),
   })
   .meta({ applicableColumnTypes: [ColumnType.Date], title: ColumnTransformationType.DatePart });

@@ -7,6 +7,9 @@ export const regexMatchTransformationSchema = withSourceColumnIdSchema
   .extend({
     groupIndex: z.number().int().nonnegative().meta({ title: "Group Index" }),
     pattern: z.string().meta({ title: "Pattern" }),
+    sourceColumnId: withSourceColumnIdSchema.shape.sourceColumnId.meta({
+      getItems: "context.stringSourceColumnItems",
+    }),
     type: z.literal(ColumnTransformationType.RegexMatch),
   })
   .meta({ applicableColumnTypes: [ColumnType.String], title: ColumnTransformationType.RegexMatch });

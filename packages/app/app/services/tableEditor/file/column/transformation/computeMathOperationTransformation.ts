@@ -17,7 +17,7 @@ export const computeMathOperationTransformation = (
     if (typeof result !== "number") return null;
     if (step.type === MathStepType.Unary) {
       switch (step.operation) {
-        case UnaryMathOperationType.Abs:
+        case UnaryMathOperationType.Absolute:
           result = Math.abs(result);
           break;
         case UnaryMathOperationType.Ceil:

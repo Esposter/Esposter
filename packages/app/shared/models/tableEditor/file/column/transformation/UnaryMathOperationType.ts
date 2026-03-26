@@ -1,5 +1,5 @@
 export enum UnaryMathOperationType {
-  Abs = "Abs",
+  Absolute = "Absolute",
   Ceil = "Ceil",
   Floor = "Floor",
   Round = "Round",

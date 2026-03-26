@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
+import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { columnTypeFormSchema } from "#shared/models/tableEditor/file/column/ColumnTypeForm";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { toRawDeep } from "@esposter/shared";
@@ -18,7 +19,16 @@ const options = computed(() => ({
   context: {
     columnNames: dataSource.columns.map(({ name }) => name),
     currentName: column.name,
+    dateSourceColumnItems: dataSource.columns
+      .filter(({ type }) => type === ColumnType.Date)
+      .map(({ id, name }) => ({ title: name, value: id })),
+    numberSourceColumnItems: dataSource.columns
+      .filter(({ type }) => type === ColumnType.Number)
+      .map(({ id, name }) => ({ title: name, value: id })),
     sourceColumnItems: dataSource.columns.map(({ id, name }) => ({ title: name, value: id })),
+    stringSourceColumnItems: dataSource.columns
+      .filter(({ type }) => type === ColumnType.String)
+      .map(({ id, name }) => ({ title: name, value: id })),
   },
 }));
 const editedColumn = ref(structuredClone(toRawDeep(column)));
