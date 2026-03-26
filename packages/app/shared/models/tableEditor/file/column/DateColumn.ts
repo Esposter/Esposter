@@ -2,11 +2,11 @@ import type { ToData } from "@esposter/shared";
 
 import { AColumn, createAColumnSchema } from "#shared/models/tableEditor/file/column/AColumn";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import { DATE_FORMATS } from "#shared/models/tableEditor/file/constants";
+import { DateFormat } from "#shared/models/tableEditor/file/column/DateFormat";
 import { z } from "zod";
 
 export class DateColumn extends AColumn<ColumnType.Date> {
-  format: (typeof DATE_FORMATS)[number] = DATE_FORMATS[0];
+  format: DateFormat = DateFormat["D/M/YYYY"];
   override readonly type = ColumnType.Date;
 
   constructor(init?: Partial<DateColumn>) {
@@ -17,5 +17,5 @@ export class DateColumn extends AColumn<ColumnType.Date> {
 
 export const dateColumnSchema = z.object({
   ...createAColumnSchema(z.literal(ColumnType.Date)).shape,
-  format: z.enum(DATE_FORMATS),
+  format: z.enum(DateFormat),
 }) satisfies z.ZodType<ToData<DateColumn>>;

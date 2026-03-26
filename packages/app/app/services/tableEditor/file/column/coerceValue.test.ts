@@ -1,5 +1,5 @@
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import { DATE_FORMATS } from "#shared/models/tableEditor/file/constants";
+import { DateFormat } from "#shared/models/tableEditor/file/column/DateFormat";
 import { dayjs } from "#shared/services/dayjs";
 import { coerceValue } from "@/services/tableEditor/file/column/coerceValue";
 import { describe, expect, test } from "vitest";
@@ -92,7 +92,7 @@ describe(coerceValue, () => {
   test(`all date formats epoch date stays as ${ColumnType.Date} string`, () => {
     expect.hasAssertions();
 
-    for (const format of DATE_FORMATS) {
+    for (const format of Object.values(DateFormat)) {
       const epochDate = dayjs("1970-01-01", "YYYY-MM-DD", true).format(format);
 
       expect(coerceValue(epochDate, ColumnType.Date)).toBe(epochDate);

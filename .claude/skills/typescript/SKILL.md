@@ -87,6 +87,10 @@ Applies to nested switches too (each inner switch on an enum needs its own guard
 
 - **Never abbreviate enum value names** — use the full word: `Absolute` not `Abs`, `Subtract` not `Sub`, `Configuration` not `Config`. This applies to both the enum key and string value. Abbreviated names save nothing and hurt readability.
 
+## Enum Values Array
+
+- **Never alias `Object.values(Enum)` as a constant** — use `Object.values(MyEnum)` directly at each call site. Never export a constant like `export const MY_FORMATS = Object.values(MyEnum)` just to avoid repeating `Object.values(...)`.
+
 ## Enum Refs
 
 - **Never use `ref<EnumType | null>(null)`** — always default to a sensible first enum value: `ref(DataSourceType.Csv)`, `ref(ColumnType.String)`, etc.

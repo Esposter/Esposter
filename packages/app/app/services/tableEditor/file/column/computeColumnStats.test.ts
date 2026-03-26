@@ -1,7 +1,7 @@
 import { BooleanColumn } from "#shared/models/tableEditor/file/column/BooleanColumn";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
-import { DATE_FORMATS } from "#shared/models/tableEditor/file/constants";
+import { DateFormat } from "#shared/models/tableEditor/file/column/DateFormat";
 import {
   makeDataSource,
   makeDateColumn,
@@ -136,7 +136,7 @@ describe(computeColumnStats, () => {
     expect.hasAssertions();
 
     const dataSource = makeDataSource(
-      [makeDateColumn("", takeOne(DATE_FORMATS, 0))],
+      [makeDateColumn("", takeOne(Object.values(DateFormat), 0))],
       [
         makeRow({ "": "1970-01-01" }),
         makeRow({ "": "1970-01-02" }),
