@@ -1,3 +1,4 @@
+import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
 import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
@@ -11,7 +12,7 @@ import { describe, expect, test } from "vitest";
 describe(serializeJson, () => {
   const MIME_TYPE = DataSourceConfigurationMap[DataSourceType.Json].mimeType;
 
-  const createDataSource = (columns: DataSource["columns"], rows: Row[]): DataSource => ({
+  const createDataSource = (columns: Column[], rows: Row[]): DataSource => ({
     columns,
     metadata: { dataSourceType: DataSourceType.Json, importedAt: new Date(0), name: "", size: 0 },
     rows,

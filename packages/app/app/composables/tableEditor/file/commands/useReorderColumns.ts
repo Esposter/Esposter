@@ -1,4 +1,4 @@
-import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
+import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 
 import { MoveColumnCommand } from "@/models/tableEditor/file/commands/MoveColumnCommand";
@@ -11,7 +11,7 @@ export const useReorderColumns = () => {
   const { editedItem } = storeToRefs(tableEditorStore);
   const fileHistoryStore = useFileHistoryStore();
   const { push } = fileHistoryStore;
-  return (newColumns: DataSource["columns"]) => {
+  return (newColumns: Column[]) => {
     if (!editedItem.value?.dataSource) return;
     const oldColumns = editedItem.value.dataSource.columns;
     let fromIndex = -1;

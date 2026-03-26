@@ -12,7 +12,7 @@ const parseMarkdownRow = (line: string): string[] =>
 
 const isSeparatorRow = (cells: string[]): boolean => cells.every((cell) => /^:?-+:?$/.test(cell));
 
-export const parseClipboardRows = (text: string, dataSource: DataSource): DataSource["rows"] => {
+export const parseClipboardRows = (text: string, dataSource: DataSource): Row[] => {
   const allRows = text
     .split(/\r?\n/)
     .filter((line) => line.trim() !== "")

@@ -1,5 +1,5 @@
-import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
+import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
 
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
@@ -13,10 +13,10 @@ export class CreateRowsCommand extends ADataSourceCommand<CommandType.CreateRows
     return `Create ${this.rows.length} Row${this.rows.length === 1 ? "" : "s"}`;
   }
 
-  private readonly rows: DataSource["rows"];
+  private readonly rows: Row[];
   private readonly startIndex: number;
 
-  constructor(startIndex: number, rows: DataSource["rows"]) {
+  constructor(startIndex: number, rows: Row[]) {
     super();
     this.startIndex = startIndex;
     this.rows = rows;

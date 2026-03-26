@@ -1,4 +1,4 @@
-import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
+import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 import type { IndexedColumn } from "@/models/tableEditor/file/commands/IndexedColumn";
 
@@ -30,7 +30,7 @@ export class DeleteColumnsCommand extends ADataSourceCommand<CommandType.DeleteC
   protected doUndo(item: DataSourceItem) {
     if (!item.dataSource) return;
     const ascendingColumns = this.indexedColumns.toSorted((a, b) => a.columnIndex - b.columnIndex);
-    const result: DataSource["columns"] = [];
+    const result: Column[] = [];
     let existingIndex = 0;
     for (const { columnIndex, originalColumn } of ascendingColumns) {
       while (result.length < columnIndex) {

@@ -1,5 +1,5 @@
-import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
+import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import type { IndexedRow } from "@/models/tableEditor/file/commands/IndexedRow";
 
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
@@ -34,7 +34,7 @@ export class DeleteRowsCommand extends ADataSourceCommand<CommandType.DeleteRows
     const ascendingRows = this.indexedRows.toSorted((a, b) => a.index - b.index);
     for (const { row } of ascendingRows)
       for (const column of item.dataSource.columns) column.size += getValueSize(takeOne(row.data, column.name));
-    const result: DataSource["rows"] = [];
+    const result: Row[] = [];
     let existingIndex = 0;
     for (const { index, row } of ascendingRows) {
       while (result.length < index) {

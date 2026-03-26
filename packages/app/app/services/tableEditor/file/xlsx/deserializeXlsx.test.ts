@@ -1,3 +1,4 @@
+import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
@@ -14,7 +15,7 @@ import { describe, expect, test } from "vitest";
 describe(deserializeXlsx, () => {
   const MIME_TYPE = DataSourceConfigurationMap[DataSourceType.Xlsx].mimeType;
 
-  const createDataSource = (columns: DataSource["columns"], rows: Row[]): DataSource => ({
+  const createDataSource = (columns: Column[], rows: Row[]): DataSource => ({
     columns,
     metadata: { dataSourceType: DataSourceType.Xlsx, importedAt: new Date(0), name: "", size: 0 },
     rows,

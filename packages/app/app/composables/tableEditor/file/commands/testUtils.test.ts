@@ -1,3 +1,4 @@
+import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { ColumnTransformation } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformation";
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
@@ -16,7 +17,7 @@ import { useTableEditorStore } from "@/store/tableEditor";
 import { useItemStore } from "@/store/tableEditor/item";
 import { describe } from "vitest";
 
-export const makeDataSource = (columns: DataSource["columns"] = [], rows: Row[] = []): DataSource => ({
+export const makeDataSource = (columns: Column[] = [], rows: Row[] = []): DataSource => ({
   columns,
   metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(0), name: "", size: 0 },
   rows,

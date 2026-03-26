@@ -1,5 +1,5 @@
-import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
+import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
 
 import { MoveRowCommand } from "@/models/tableEditor/file/commands/MoveRowCommand";
 import { useTableEditorStore } from "@/store/tableEditor";
@@ -10,7 +10,7 @@ export const useReorderRows = () => {
   const { editedItem } = storeToRefs(tableEditorStore);
   const fileHistoryStore = useFileHistoryStore();
   const { push } = fileHistoryStore;
-  return (newRows: DataSource["rows"]) => {
+  return (newRows: Row[]) => {
     if (!editedItem.value?.dataSource) return;
     const oldRows = editedItem.value.dataSource.rows;
     const oldIndexById = new Map(oldRows.map((row, index) => [row.id, index]));

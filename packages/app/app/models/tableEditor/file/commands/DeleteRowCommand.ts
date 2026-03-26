@@ -1,5 +1,5 @@
-import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
+import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
 
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
@@ -14,9 +14,9 @@ export class DeleteRowCommand extends ADataSourceCommand<CommandType.DeleteRow> 
   }
 
   private readonly index: number;
-  private readonly originalRow: DataSource["rows"][number];
+  private readonly originalRow: Row;
 
-  constructor(index: number, originalRow: DataSource["rows"][number]) {
+  constructor(index: number, originalRow: Row) {
     super();
     this.index = index;
     this.originalRow = originalRow;

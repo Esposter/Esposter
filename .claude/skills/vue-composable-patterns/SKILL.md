@@ -241,7 +241,3 @@ watch(
 - Always initialize the local type ref from the current model value, not a hardcoded default
 - `if (newType === oldType) return;` in a watch callback is always redundant — Vue only fires when the value changes
 - Writable computed is NOT the right tool here — it requires a backing `_ref` and still needs an external sync watch when a parent can reset the model
-
-```
-
-```
