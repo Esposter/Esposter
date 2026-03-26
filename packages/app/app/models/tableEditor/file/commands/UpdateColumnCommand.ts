@@ -1,5 +1,5 @@
+import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
-import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
 import type { ToData } from "@esposter/shared";
 
@@ -21,15 +21,15 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
     return `Edit "${this.originalColumn.name}" Column${detail}`;
   }
 
-  private readonly originalColumn: DataSource["columns"][number];
+  private readonly originalColumn: Column;
   private readonly originalName: string;
   private readonly originalRowValues: ColumnValue[];
-  private readonly updatedColumn: ToData<DataSource["columns"][number]>;
+  private readonly updatedColumn: ToData<Column>;
 
   constructor(
     originalName: string,
-    originalColumn: DataSource["columns"][number],
-    updatedColumn: ToData<DataSource["columns"][number]>,
+    originalColumn: Column,
+    updatedColumn: ToData<Column>,
     originalRowValues: ColumnValue[],
   ) {
     super();

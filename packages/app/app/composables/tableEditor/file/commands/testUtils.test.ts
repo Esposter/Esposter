@@ -2,10 +2,12 @@ import type { ColumnTransformation } from "#shared/models/tableEditor/file/colum
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
 
-import { Column } from "#shared/models/tableEditor/file/column/Column";
+import { BooleanColumn } from "#shared/models/tableEditor/file/column/BooleanColumn";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ComputedColumn } from "#shared/models/tableEditor/file/column/ComputedColumn";
 import { DateColumn } from "#shared/models/tableEditor/file/column/DateColumn";
+import { NumberColumn } from "#shared/models/tableEditor/file/column/NumberColumn";
+import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import { CsvDataSourceItem } from "#shared/models/tableEditor/file/csv/CsvDataSourceItem";
 import { DataSourceType } from "#shared/models/tableEditor/file/datasource/DataSourceType";
@@ -21,10 +23,12 @@ export const makeDataSource = (columns: DataSource["columns"] = [], rows: Row[] 
   stats: { columnCount: columns.length, rowCount: rows.length, size: 0 },
 });
 
-export const makeColumn = (name: string): Column => new Column({ name, size: 0, sourceName: name });
+export const makeColumn = (name: string): StringColumn => new StringColumn({ name, size: 0, sourceName: name });
 
-export const makeNumberColumn = (name: string): Column<ColumnType.Number> =>
-  new Column({ name, size: 0, sourceName: name, type: ColumnType.Number });
+export const makeNumberColumn = (name: string): NumberColumn => new NumberColumn({ name, size: 0, sourceName: name });
+
+export const makeBooleanColumn = (name: string): BooleanColumn =>
+  new BooleanColumn({ name, size: 0, sourceName: name });
 
 export const makeDateColumn = (name: string, format: DateColumn["format"]): DateColumn =>
   new DateColumn({ format, name, size: 0, sourceName: name });

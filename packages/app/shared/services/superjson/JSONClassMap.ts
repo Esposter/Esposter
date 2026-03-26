@@ -12,8 +12,10 @@ import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { FlowchartEditor } from "#shared/models/flowchartEditor/data/FlowchartEditor";
 import { TableEditor } from "#shared/models/tableEditor/data/TableEditor";
 import { TableEditorConfiguration } from "#shared/models/tableEditor/data/TableEditorConfiguration";
-import { Column } from "#shared/models/tableEditor/file/column/Column";
+import { BooleanColumn } from "#shared/models/tableEditor/file/column/BooleanColumn";
 import { DateColumn } from "#shared/models/tableEditor/file/column/DateColumn";
+import { NumberColumn } from "#shared/models/tableEditor/file/column/NumberColumn";
+import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 import { CsvDataSourceItem } from "#shared/models/tableEditor/file/csv/CsvDataSourceItem";
 import { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import { XlsxDataSourceItem } from "#shared/models/tableEditor/file/xlsx/XlsxDataSourceItem";
@@ -26,10 +28,12 @@ export const JSONClassMap: Record<string, Class<Serializable>> = {
   BasicChartConfiguration,
   Chart,
   Clicker,
-  Column,
+  BooleanColumn,
   CsvDataSourceItem,
   Dashboard,
   DateColumn,
+  NumberColumn,
+  StringColumn,
   Dungeons,
   EmailEditor,
   FlowchartEditor,

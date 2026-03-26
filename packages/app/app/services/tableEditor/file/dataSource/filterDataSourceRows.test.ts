@@ -1,4 +1,4 @@
-import { Column } from "#shared/models/tableEditor/file/column/Column";
+import { BooleanColumn } from "#shared/models/tableEditor/file/column/BooleanColumn";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import {
   makeColumn,
@@ -95,7 +95,7 @@ describe(filterDataSourceRows, () => {
     expect.hasAssertions();
 
     const dataSource = makeDataSource(
-      [new Column({ name: "", type: ColumnType.Boolean })],
+      [new BooleanColumn({ name: "" })],
       [makeRow({ "": true }), makeRow({ "": false }), makeRow({ "": null })],
     );
 
@@ -109,7 +109,7 @@ describe(filterDataSourceRows, () => {
     expect.hasAssertions();
 
     const dataSource = makeDataSource(
-      [new Column({ name: "", type: ColumnType.Boolean })],
+      [new BooleanColumn({ name: "" })],
       [makeRow({ "": true }), makeRow({ "": false }), makeRow({ "": null })],
     );
 
@@ -123,7 +123,7 @@ describe(filterDataSourceRows, () => {
     expect.hasAssertions();
 
     const dataSource = makeDataSource(
-      [new Column({ name: "", type: ColumnType.Boolean })],
+      [new BooleanColumn({ name: "" })],
       [makeRow({ "": true }), makeRow({ "": false }), makeRow({ "": null })],
     );
 
@@ -137,7 +137,7 @@ describe(filterDataSourceRows, () => {
     expect.hasAssertions();
 
     const dataSource = makeDataSource(
-      [new Column({ name: "", type: ColumnType.Boolean })],
+      [new BooleanColumn({ name: "" })],
       [makeRow({ "": true }), makeRow({ "": false }), makeRow({ "": null })],
     );
 

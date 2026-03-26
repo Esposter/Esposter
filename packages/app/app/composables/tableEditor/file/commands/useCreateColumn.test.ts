@@ -1,5 +1,5 @@
-import { Column } from "#shared/models/tableEditor/file/column/Column";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
+import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 import { ComputedColumn } from "#shared/models/tableEditor/file/column/ComputedColumn";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import {
@@ -29,7 +29,7 @@ describe(useCreateColumn, () => {
 
     const { editedItem } = setupWithDataSource();
     const createColumn = useCreateColumn();
-    const newColumn = new Column({ name: "new", sourceName: "new" });
+    const newColumn = new StringColumn({ name: "new", sourceName: "new" });
     createColumn(newColumn);
     const dataSource = editedItem.value?.dataSource;
 
@@ -48,7 +48,7 @@ describe(useCreateColumn, () => {
     const createColumn = useCreateColumn();
     const fileHistoryStore = useFileHistoryStore();
     const { undo } = fileHistoryStore;
-    const newColumn = new Column({ name: "new", sourceName: "new" });
+    const newColumn = new StringColumn({ name: "new", sourceName: "new" });
     createColumn(newColumn);
     undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
@@ -66,7 +66,7 @@ describe(useCreateColumn, () => {
     const createColumn = useCreateColumn();
     const fileHistoryStore = useFileHistoryStore();
     const { redo, undo } = fileHistoryStore;
-    const newColumn = new Column({ name: "new", sourceName: "new" });
+    const newColumn = new StringColumn({ name: "new", sourceName: "new" });
     createColumn(newColumn);
     undo(editedItem.value);
     redo(editedItem.value);
@@ -83,7 +83,7 @@ describe(useCreateColumn, () => {
 
     const { editedItem } = setupWithDataSource();
     const createColumn = useCreateColumn();
-    const newColumn = new Column({ name: "new", sourceName: "new" });
+    const newColumn = new StringColumn({ name: "new", sourceName: "new" });
     createColumn(newColumn);
     createColumn(newColumn);
     const dataSource = editedItem.value?.dataSource;
@@ -110,7 +110,7 @@ describe(useCreateColumn, () => {
     const createColumn = useCreateColumn();
     const fileHistoryStore = useFileHistoryStore();
     const { isUndoable } = storeToRefs(fileHistoryStore);
-    const newColumn = new Column({ name: "new", sourceName: "new" });
+    const newColumn = new StringColumn({ name: "new", sourceName: "new" });
     createColumn(newColumn);
 
     expect(isUndoable.value).toBe(false);
@@ -123,7 +123,7 @@ describe(useCreateColumn, () => {
     const createColumn = useCreateColumn();
     const fileHistoryStore = useFileHistoryStore();
     const { isUndoable } = storeToRefs(fileHistoryStore);
-    const newColumn = new Column({ name: "new", sourceName: "new" });
+    const newColumn = new StringColumn({ name: "new", sourceName: "new" });
     createColumn(newColumn);
 
     expect(isUndoable.value).toBe(false);

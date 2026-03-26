@@ -1,7 +1,7 @@
+import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
 import type { ColumnTransformation } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformation";
 import type { MathOperand } from "#shared/models/tableEditor/file/column/transformation/MathOperationTransformation";
-import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
@@ -13,7 +13,7 @@ import { computeRegexMatchTransformation } from "@/services/tableEditor/file/col
 import { computeStringPatternTransformation } from "@/services/tableEditor/file/column/transformation/computeStringPatternTransformation";
 
 export interface ResolveContext {
-  findSource: (sourceColumnId: string) => DataSource["columns"][number] | undefined;
+  findSource: (sourceColumnId: string) => Column | undefined;
   resolveSource: (sourceColumnId: string) => ColumnValue;
 }
 

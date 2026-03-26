@@ -1,4 +1,4 @@
-import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
+import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
 
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
@@ -13,9 +13,9 @@ export class CreateColumnCommand extends ADataSourceCommand<CommandType.CreateCo
   }
 
   private readonly columnIndex: number;
-  private readonly newColumn: DataSource["columns"][number];
+  private readonly newColumn: Column;
 
-  constructor(columnIndex: number, newColumn: DataSource["columns"][number]) {
+  constructor(columnIndex: number, newColumn: Column) {
     super();
     this.columnIndex = columnIndex;
     this.newColumn = newColumn;

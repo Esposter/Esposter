@@ -1,9 +1,11 @@
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 import type { DataSourceType } from "#shared/models/tableEditor/file/datasource/DataSourceType";
 
-import { Column } from "#shared/models/tableEditor/file/column/Column";
+import { BooleanColumn } from "#shared/models/tableEditor/file/column/BooleanColumn";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { DateColumn } from "#shared/models/tableEditor/file/column/DateColumn";
+import { NumberColumn } from "#shared/models/tableEditor/file/column/NumberColumn";
+import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 import { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import { coerceValue } from "@/services/tableEditor/file/column/coerceValue";
 import { inferColumnType } from "@/services/tableEditor/file/column/inferColumnType";
@@ -19,9 +21,16 @@ export const buildDataSource = (
   const columns = sourceNames.map((sourceName, index) => {
     const values = bodyRows.map((row) => takeOne(row, index));
     const type = inferColumnType(values);
-    if (type === ColumnType.Date)
-      return new DateColumn({ format: inferDateFormat(values), name: sourceName, sourceName });
-    return new Column({ name: sourceName, sourceName, type }) as DataSource["columns"][number];
+    switch (type) {
+      case ColumnType.Date:
+        return new DateColumn({ format: inferDateFormat(values), name: sourceName, sourceName });
+      case ColumnType.Boolean:
+        return new BooleanColumn({ name: sourceName, sourceName });
+      case ColumnType.Number:
+        return new NumberColumn({ name: sourceName, sourceName });
+      default:
+        return new StringColumn({ name: sourceName, sourceName });
+    }
   });
   const rows = bodyRows.map((bodyRow) => {
     const row = new Row();

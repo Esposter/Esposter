@@ -1,4 +1,4 @@
-import { Column } from "#shared/models/tableEditor/file/column/Column";
+import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 import {
   makeColumn,
   makeDataSource,
@@ -69,7 +69,7 @@ describe(useNullStrategy, () => {
   test(`${NullStrategy.ReplaceWithNA} skips hidden columns`, () => {
     expect.hasAssertions();
 
-    const hiddenColumn = new Column({ hidden: true, name: "", size: 0, sourceName: "" });
+    const hiddenColumn = new StringColumn({ hidden: true, name: "", size: 0, sourceName: "" });
     const ds = makeDataSource([hiddenColumn], [makeRow({ "": null })]);
     const { editedItem } = setupWithDataSource(ds);
     const nullStrategy = useNullStrategy();
@@ -120,7 +120,7 @@ describe(useNullStrategy, () => {
   test(`${NullStrategy.DropRow} skips hidden columns`, () => {
     expect.hasAssertions();
 
-    const hiddenColumn = new Column({ hidden: true, name: "", size: 0, sourceName: "" });
+    const hiddenColumn = new StringColumn({ hidden: true, name: "", size: 0, sourceName: "" });
     const ds = makeDataSource([hiddenColumn], [makeRow({ "": null })]);
     const { editedItem } = setupWithDataSource(ds);
     const nullStrategy = useNullStrategy();

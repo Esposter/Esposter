@@ -1,5 +1,5 @@
-import { Column } from "#shared/models/tableEditor/file/column/Column";
-import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
+import { NumberColumn } from "#shared/models/tableEditor/file/column/NumberColumn";
+import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 import {
   makeColumn,
   makeDataSource,
@@ -72,12 +72,7 @@ describe(useNormalizeStrings, () => {
   test("skips non-string columns", () => {
     expect.hasAssertions();
 
-    const numberColumn = new Column({
-      name: "",
-      size: 0,
-      sourceName: "",
-      type: ColumnType.Number,
-    }) as unknown as Column;
+    const numberColumn = new NumberColumn({ name: "", size: 0, sourceName: "" });
     const ds = makeDataSource([numberColumn], [makeRow({ "": 0 })]);
     const { editedItem } = setupWithDataSource(ds);
     const normalizeStrings = useNormalizeStrings();
@@ -95,7 +90,7 @@ describe(useNormalizeStrings, () => {
   test("skips hidden columns", () => {
     expect.hasAssertions();
 
-    const hiddenColumn = new Column({ hidden: true, name: "", size: 0, sourceName: "" });
+    const hiddenColumn = new StringColumn({ hidden: true, name: "", size: 0, sourceName: "" });
     const ds = makeDataSource([hiddenColumn], [makeRow({ "": " " })]);
     const { editedItem } = setupWithDataSource(ds);
     const normalizeStrings = useNormalizeStrings();

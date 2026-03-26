@@ -1,6 +1,6 @@
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
-import { Column } from "#shared/models/tableEditor/file/column/Column";
+import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 import { DataSourceType } from "#shared/models/tableEditor/file/datasource/DataSourceType";
 import { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import { JsonDataSourceItem } from "#shared/models/tableEditor/file/json/JsonDataSourceItem";
@@ -18,7 +18,7 @@ describe(serializeJson, () => {
     stats: { columnCount: columns.length, rowCount: rows.length, size: 0 },
   });
 
-  const createColumn = (name: string) => new Column({ name, size: 0, sourceName: name });
+  const createColumn = (name: string) => new StringColumn({ name, size: 0, sourceName: name });
 
   const createRow = (data: Record<string, number>): Row => new Row({ data });
 

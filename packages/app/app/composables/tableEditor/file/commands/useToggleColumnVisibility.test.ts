@@ -1,4 +1,4 @@
-import { Column } from "#shared/models/tableEditor/file/column/Column";
+import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 import {
   makeDataSource,
   makeRow,
@@ -35,7 +35,7 @@ describe(useToggleColumnVisibility, () => {
   test("shows a hidden column", () => {
     expect.hasAssertions();
 
-    const hiddenColumn = new Column({ hidden: true, name: "" });
+    const hiddenColumn = new StringColumn({ hidden: true, name: "" });
     const { editedItem } = setupWithDataSource(makeDataSource([hiddenColumn], [makeRow({ "": 0 })]));
     const toggleColumnVisibility = useToggleColumnVisibility();
     toggleColumnVisibility(hiddenColumn.id);

@@ -1,4 +1,4 @@
-import { Column } from "#shared/models/tableEditor/file/column/Column";
+import type { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 import {
   makeColumn,
   makeDataSource,
@@ -25,7 +25,7 @@ describe(useReorderColumns, () => {
     const { editedItem } = setupWithDataSource();
     const reorderColumns = useReorderColumns();
     const columns = editedItem.value?.dataSource?.columns ?? [];
-    const newColumns = [takeOne(columns, 1), takeOne(columns, 0)] as Column[];
+    const newColumns = [takeOne(columns, 1), takeOne(columns, 0)] as StringColumn[];
     reorderColumns(newColumns);
     const dataSource = editedItem.value?.dataSource;
 
@@ -43,7 +43,7 @@ describe(useReorderColumns, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { undo } = fileHistoryStore;
     const columns = editedItem.value?.dataSource?.columns ?? [];
-    const newColumns = [takeOne(columns, 1), takeOne(columns, 0)] as Column[];
+    const newColumns = [takeOne(columns, 1), takeOne(columns, 0)] as StringColumn[];
     reorderColumns(newColumns);
     undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
@@ -62,7 +62,7 @@ describe(useReorderColumns, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { redo, undo } = fileHistoryStore;
     const columns = editedItem.value?.dataSource?.columns ?? [];
-    const newColumns = [takeOne(columns, 1), takeOne(columns, 0)] as Column[];
+    const newColumns = [takeOne(columns, 1), takeOne(columns, 0)] as StringColumn[];
     reorderColumns(newColumns);
     undo(editedItem.value);
     redo(editedItem.value);
@@ -84,7 +84,7 @@ describe(useReorderColumns, () => {
     const { editedItem } = setupWithDataSource(threeColumnDs);
     const reorderColumns = useReorderColumns();
     const columns = editedItem.value?.dataSource?.columns ?? [];
-    const newColumns = [takeOne(columns, 1), takeOne(columns, 0), takeOne(columns, 2)] as Column[];
+    const newColumns = [takeOne(columns, 1), takeOne(columns, 0), takeOne(columns, 2)] as StringColumn[];
     reorderColumns(newColumns);
     const dataSource = editedItem.value?.dataSource;
 
@@ -105,7 +105,7 @@ describe(useReorderColumns, () => {
     const { editedItem } = setupWithDataSource(threeColumnDs);
     const reorderColumns = useReorderColumns();
     const columns = editedItem.value?.dataSource?.columns ?? [];
-    const newColumns = [takeOne(columns, 1), takeOne(columns, 2), takeOne(columns, 0)] as Column[];
+    const newColumns = [takeOne(columns, 1), takeOne(columns, 2), takeOne(columns, 0)] as StringColumn[];
     reorderColumns(newColumns);
     const dataSource = editedItem.value?.dataSource;
 

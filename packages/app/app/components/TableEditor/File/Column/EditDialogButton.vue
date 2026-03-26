@@ -1,50 +1,30 @@
 <script setup lang="ts">
+import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
-import type { ColumnFormVjsfContext } from "@/models/tableEditor/file/column/ColumnFormVjsfContext";
-import type { VjsfOptions } from "@/models/vjsf/VjsfOptions";
 
-import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import { ColumnTypeFormSchemaMap } from "#shared/models/tableEditor/file/column/ColumnTypeFormSchemaMap";
+import { columnFormSchema } from "#shared/models/tableEditor/file/column/ColumnForm";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
-import { ColumnTypeCreateMap } from "@/services/tableEditor/file/column/ColumnTypeCreateMap";
-import { ColumnTypeItemCategoryDefinitions } from "@/services/tableEditor/file/column/ColumnTypeItemCategoryDefinitions";
 import { toRawDeep } from "@esposter/shared";
 import { Vjsf } from "@koumoul/vjsf";
 
 interface EditDialogButtonProps {
-  column: DataSource["columns"][number];
+  column: Column;
   dataSource: DataSource;
 }
 
 const { column, dataSource } = defineProps<EditDialogButtonProps>();
 const updateColumn = useUpdateColumn();
-const columnType = ref(column.type);
-const schema = computed(() => ColumnTypeFormSchemaMap[columnType.value]);
-const jsonSchema = computed(() => zodToJsonSchema(schema.value));
-const options = computed<VjsfOptions<ColumnFormVjsfContext>>(() => ({
-  context: {
-    columnNames: dataSource.columns.map(({ name }) => name),
-    currentName: column.name,
-    dateSourceColumnItems: dataSource.columns
-      .filter(({ type }) => type === ColumnType.Date)
-      .map(({ id, name }) => ({ title: name, value: id })),
-    numberSourceColumnItems: dataSource.columns
-      .filter(({ type }) => type === ColumnType.Number)
-      .map(({ id, name }) => ({ title: name, value: id })),
-    sourceColumnItems: dataSource.columns.map(({ id, name }) => ({ title: name, value: id })),
-    stringSourceColumnItems: dataSource.columns
-      .filter(({ type }) => type === ColumnType.String)
-      .map(({ id, name }) => ({ title: name, value: id })),
-  },
-}));
+// StructuredClone is required here: Vjsf does not work with class instances and needs a plain object,
+// And fast-deep-equal checks constructors so class instances never equal their plain object clones
 const editedColumn = ref(structuredClone(toRawDeep(column)));
 const title = computed(() => `Edit "${column.name}" Column`);
+const jsonSchema = zodToJsonSchema(columnFormSchema);
+const options = useColumnFormOptions(
+  () => dataSource,
+  () => column.name,
+);
 const resetForm = () => {
   editedColumn.value = structuredClone(toRawDeep(column));
-  columnType.value = column.type;
-};
-const onColumnTypeUpdate = (type: ColumnType) => {
-  editedColumn.value = structuredClone(ColumnTypeCreateMap[type].create());
 };
 </script>
 
@@ -52,7 +32,7 @@ const onColumnTypeUpdate = (type: ColumnType) => {
   <TableEditorFileCrudViewEditDialogButton
     :title
     :tooltip-text="title"
-    :schema
+    :schema="columnFormSchema"
     :value="column"
     :edited-value="editedColumn"
     @reset="resetForm()"
@@ -63,12 +43,6 @@ const onColumnTypeUpdate = (type: ColumnType) => {
       }
     "
   >
-    <v-select
-      v-model="columnType"
-      :items="ColumnTypeItemCategoryDefinitions"
-      label="Type"
-      @update:model-value="onColumnTypeUpdate($event)"
-    />
     <Vjsf v-model="editedColumn" :schema="jsonSchema" :options />
   </TableEditorFileCrudViewEditDialogButton>
 </template>

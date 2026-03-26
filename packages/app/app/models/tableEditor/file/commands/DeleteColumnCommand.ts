@@ -1,5 +1,5 @@
+import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
-import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
 
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
@@ -14,10 +14,10 @@ export class DeleteColumnCommand extends ADataSourceCommand<CommandType.DeleteCo
   }
 
   private readonly columnIndex: number;
-  private readonly originalColumn: DataSource["columns"][number];
+  private readonly originalColumn: Column;
   private readonly originalRowValues: ColumnValue[];
 
-  constructor(columnIndex: number, originalColumn: DataSource["columns"][number], originalRowValues: ColumnValue[]) {
+  constructor(columnIndex: number, originalColumn: Column, originalRowValues: ColumnValue[]) {
     super();
     this.columnIndex = columnIndex;
     this.originalColumn = originalColumn;

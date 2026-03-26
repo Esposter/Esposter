@@ -1,5 +1,5 @@
-import { Column } from "#shared/models/tableEditor/file/column/Column";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
+import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 import { DateColumn } from "#shared/models/tableEditor/file/column/DateColumn";
 import {
   makeColumn,
@@ -115,7 +115,7 @@ describe(useUpdateColumn, () => {
     const updateColumn = useUpdateColumn();
     const fileHistoryStore = useFileHistoryStore();
     const { isUndoable } = storeToRefs(fileHistoryStore);
-    updateColumn("-1", new Column({ name: "-1" }));
+    updateColumn("-1", new StringColumn({ name: "-1" }));
 
     expect(isUndoable.value).toBe(false);
   });
@@ -126,7 +126,7 @@ describe(useUpdateColumn, () => {
     const updateColumn = useUpdateColumn();
     const fileHistoryStore = useFileHistoryStore();
     const { isUndoable } = storeToRefs(fileHistoryStore);
-    updateColumn("", new Column({ name: "" }));
+    updateColumn("", new StringColumn({ name: "" }));
 
     expect(isUndoable.value).toBe(false);
   });
@@ -138,7 +138,7 @@ describe(useUpdateColumn, () => {
     const updateColumn = useUpdateColumn();
     const fileHistoryStore = useFileHistoryStore();
     const { isUndoable } = storeToRefs(fileHistoryStore);
-    updateColumn("", new Column({ name: "" }));
+    updateColumn("", new StringColumn({ name: "" }));
 
     expect(isUndoable.value).toBe(false);
   });

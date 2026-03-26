@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
+import type { Column } from "#shared/models/tableEditor/file/column/Column";
 
 interface ColumnItemSlotProps {
-  column: DataSource["columns"][number];
+  column: Column;
 }
 
 const { column } = defineProps<ColumnItemSlotProps>();

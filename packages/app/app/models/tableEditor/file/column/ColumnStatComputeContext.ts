@@ -1,8 +1,8 @@
+import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
-import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
 export interface ColumnStatComputeContext {
-  column: DataSource["columns"][number];
+  column: Column;
   nonNullBooleans: boolean[];
   nonNullNumbers: number[];
   nonNullStrings: string[];

@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import type { Column } from "#shared/models/tableEditor/file/column/Column";
-
-import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
+import type { BooleanColumn } from "#shared/models/tableEditor/file/column/BooleanColumn";
 
 interface FieldInputBooleanProps {
-  column: Column<ColumnType.Boolean>;
+  column: BooleanColumn;
   inline?: boolean;
 }
 
