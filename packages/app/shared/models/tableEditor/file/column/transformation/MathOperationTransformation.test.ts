@@ -2,7 +2,7 @@ import { mathOperationTransformationSchema } from "#shared/models/tableEditor/fi
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { describe, expect, test } from "vitest";
 
-describe("MathOperationTransformation", () => {
+describe("mathOperationTransformation", () => {
   test("produces correct json schema for vjsf", () => {
     expect.hasAssertions();
 

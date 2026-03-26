@@ -1,10 +1,9 @@
-import type { ToData } from "@esposter/shared";
-
 import type { BooleanColumn } from "#shared/models/tableEditor/file/column/BooleanColumn";
 import type { ComputedColumn } from "#shared/models/tableEditor/file/column/ComputedColumn";
 import type { DateColumn } from "#shared/models/tableEditor/file/column/DateColumn";
 import type { NumberColumn } from "#shared/models/tableEditor/file/column/NumberColumn";
 import type { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
+import type { ToData } from "@esposter/shared";
 
 import { booleanColumnSchema } from "#shared/models/tableEditor/file/column/BooleanColumn";
 import { computedColumnSchema } from "#shared/models/tableEditor/file/column/ComputedColumn";

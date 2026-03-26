@@ -1,14 +1,14 @@
-import type { ItemEntityType } from "@esposter/shared";
 import type { WithSourceColumnId } from "#shared/models/tableEditor/file/column/transformation/WithSourceColumnId";
+import type { ItemEntityType } from "@esposter/shared";
 
-import { createItemEntityTypeSchema } from "@esposter/shared";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import { DatePartType, datePartTypeSchema } from "#shared/models/tableEditor/file/column/transformation/DatePartType";
 import { withSourceColumnIdSchema } from "#shared/models/tableEditor/file/column/transformation/WithSourceColumnId";
+import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
-export interface DatePartTransformation extends WithSourceColumnId, ItemEntityType<ColumnTransformationType.DatePart> {
+export interface DatePartTransformation extends ItemEntityType<ColumnTransformationType.DatePart>, WithSourceColumnId {
   part: DatePartType;
 }
 

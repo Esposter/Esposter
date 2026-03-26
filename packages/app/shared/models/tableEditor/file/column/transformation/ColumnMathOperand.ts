@@ -1,7 +1,7 @@
 import type { ItemEntityType } from "@esposter/shared";
 
-import { createItemEntityTypeSchema } from "@esposter/shared";
 import { MathOperandType } from "#shared/models/tableEditor/file/column/transformation/MathOperandType";
+import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
 export interface ColumnMathOperand extends ItemEntityType<MathOperandType.Column> {

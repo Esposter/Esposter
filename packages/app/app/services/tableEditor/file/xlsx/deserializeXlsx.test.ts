@@ -1,7 +1,7 @@
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
-import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
+import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 import { DataSourceType } from "#shared/models/tableEditor/file/datasource/DataSourceType";
 import { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import { XlsxDataSourceItem } from "#shared/models/tableEditor/file/xlsx/XlsxDataSourceItem";

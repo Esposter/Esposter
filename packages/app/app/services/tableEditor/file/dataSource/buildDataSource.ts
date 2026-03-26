@@ -22,10 +22,10 @@ export const buildDataSource = (
     const values = bodyRows.map((row) => takeOne(row, index));
     const type = inferColumnType(values);
     switch (type) {
-      case ColumnType.Date:
-        return new DateColumn({ format: inferDateFormat(values), name: sourceName, sourceName });
       case ColumnType.Boolean:
         return new BooleanColumn({ name: sourceName, sourceName });
+      case ColumnType.Date:
+        return new DateColumn({ format: inferDateFormat(values), name: sourceName, sourceName });
       case ColumnType.Number:
         return new NumberColumn({ name: sourceName, sourceName });
       default:

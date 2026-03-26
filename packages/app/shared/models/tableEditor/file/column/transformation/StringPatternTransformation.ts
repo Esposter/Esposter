@@ -1,14 +1,14 @@
-import type { ItemEntityType } from "@esposter/shared";
 import type { WithSourceColumnIds } from "#shared/models/tableEditor/file/column/transformation/WithSourceColumnIds";
+import type { ItemEntityType } from "@esposter/shared";
 
-import { createItemEntityTypeSchema } from "@esposter/shared";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import { withSourceColumnIdsSchema } from "#shared/models/tableEditor/file/column/transformation/WithSourceColumnIds";
+import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
 export interface StringPatternTransformation
-  extends WithSourceColumnIds, ItemEntityType<ColumnTransformationType.StringPattern> {
+  extends ItemEntityType<ColumnTransformationType.StringPattern>, WithSourceColumnIds {
   pattern: string;
 }
 

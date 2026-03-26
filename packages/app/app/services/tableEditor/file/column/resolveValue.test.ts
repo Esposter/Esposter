@@ -1,5 +1,5 @@
-import { ComputedColumn } from "#shared/models/tableEditor/file/column/ComputedColumn";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
+import { ComputedColumn } from "#shared/models/tableEditor/file/column/ComputedColumn";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import {
   makeColumn,

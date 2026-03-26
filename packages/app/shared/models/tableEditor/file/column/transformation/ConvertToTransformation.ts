@@ -1,14 +1,14 @@
-import type { ItemEntityType } from "@esposter/shared";
 import type { WithSourceColumnId } from "#shared/models/tableEditor/file/column/transformation/WithSourceColumnId";
+import type { ItemEntityType } from "@esposter/shared";
 
-import { createItemEntityTypeSchema } from "@esposter/shared";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import { withSourceColumnIdSchema } from "#shared/models/tableEditor/file/column/transformation/WithSourceColumnId";
+import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
 export interface ConvertToTransformation
-  extends WithSourceColumnId, ItemEntityType<ColumnTransformationType.ConvertTo> {
+  extends ItemEntityType<ColumnTransformationType.ConvertTo>, WithSourceColumnId {
   targetType: ColumnType.Boolean | ColumnType.Date | ColumnType.Number | ColumnType.String;
 }
 

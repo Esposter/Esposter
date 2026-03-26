@@ -15,24 +15,6 @@ export const computeMathOperationTransformation = (
   for (const step of transformation.steps) {
     if (typeof result !== "number") return null;
     switch (step.type) {
-      case MathStepType.Unary:
-        switch (step.operation) {
-          case UnaryMathOperationType.Absolute:
-            result = Math.abs(result);
-            break;
-          case UnaryMathOperationType.Ceil:
-            result = Math.ceil(result);
-            break;
-          case UnaryMathOperationType.Floor:
-            result = Math.floor(result);
-            break;
-          case UnaryMathOperationType.Round:
-            result = Math.round(result);
-            break;
-          default:
-            exhaustiveGuard(step.operation);
-        }
-        break;
       case MathStepType.Binary: {
         const right = resolveOperand(step.operand);
         if (typeof right !== "number") return null;
@@ -55,6 +37,24 @@ export const computeMathOperationTransformation = (
         }
         break;
       }
+      case MathStepType.Unary:
+        switch (step.operation) {
+          case UnaryMathOperationType.Absolute:
+            result = Math.abs(result);
+            break;
+          case UnaryMathOperationType.Ceil:
+            result = Math.ceil(result);
+            break;
+          case UnaryMathOperationType.Floor:
+            result = Math.floor(result);
+            break;
+          case UnaryMathOperationType.Round:
+            result = Math.round(result);
+            break;
+          default:
+            exhaustiveGuard(step.operation);
+        }
+        break;
       default:
         exhaustiveGuard(step.type);
     }

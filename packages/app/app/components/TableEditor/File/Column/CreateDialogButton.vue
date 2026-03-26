@@ -3,9 +3,9 @@ import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
 import { columnFormSchema } from "#shared/models/tableEditor/file/column/ColumnForm";
-import { ColumnTypeCreateMap } from "@/services/tableEditor/file/column/ColumnTypeCreateMap";
-import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
+import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
+import { ColumnTypeCreateMap } from "@/services/tableEditor/file/column/ColumnTypeCreateMap";
 import { Vjsf } from "@koumoul/vjsf";
 
 interface CreateDialogButtonProps {

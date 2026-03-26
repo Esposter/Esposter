@@ -5,7 +5,7 @@ import { binaryMathStepSchema } from "#shared/models/tableEditor/file/column/tra
 import { unaryMathStepSchema } from "#shared/models/tableEditor/file/column/transformation/UnaryMathStep";
 import { z } from "zod";
 
-export type MathStep = UnaryMathStep | BinaryMathStep;
+export type MathStep = BinaryMathStep | UnaryMathStep;
 
 export const mathStepSchema = z.discriminatedUnion("type", [
   unaryMathStepSchema,

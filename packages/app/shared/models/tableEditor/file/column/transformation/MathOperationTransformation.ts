@@ -1,11 +1,11 @@
-import type { ItemEntityType } from "@esposter/shared";
 import type { MathOperand } from "#shared/models/tableEditor/file/column/transformation/MathOperand";
 import type { MathStep } from "#shared/models/tableEditor/file/column/transformation/MathStep";
+import type { ItemEntityType } from "@esposter/shared";
 
-import { createItemEntityTypeSchema } from "@esposter/shared";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import { mathOperandSchema } from "#shared/models/tableEditor/file/column/transformation/MathOperand";
 import { mathStepSchema } from "#shared/models/tableEditor/file/column/transformation/MathStep";
+import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
 export interface MathOperationTransformation extends ItemEntityType<ColumnTransformationType.MathOperation> {

@@ -25,7 +25,7 @@ type TransformationResolver<T extends ColumnTransformation> = (
 export const ColumnTransformationResolveMap = {
   [ColumnTransformationType.ConvertTo]: (transformation, { resolveSource }) =>
     computeConvertToTransformation(resolveSource(transformation.sourceColumnId), transformation),
-  [ColumnTransformationType.DatePart]: (transformation, { resolveSource, findSource }) => {
+  [ColumnTransformationType.DatePart]: (transformation, { findSource, resolveSource }) => {
     const sourceColumn = findSource(transformation.sourceColumnId);
     if (sourceColumn?.type !== ColumnType.Date) return null;
     return computeDatePartTransformation(

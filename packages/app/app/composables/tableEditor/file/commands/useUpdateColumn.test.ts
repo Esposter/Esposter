@@ -1,6 +1,6 @@
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 import { DateColumn } from "#shared/models/tableEditor/file/column/DateColumn";
+import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 import {
   makeColumn,
   makeDataSource,

@@ -1,5 +1,6 @@
 import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
+import type { Except } from "type-fest";
 
 import { BooleanColumn } from "#shared/models/tableEditor/file/column/BooleanColumn";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
@@ -9,7 +10,6 @@ import { NumberColumn } from "#shared/models/tableEditor/file/column/NumberColum
 import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 import { CreateColumnCommand } from "@/models/tableEditor/file/commands/CreateColumnCommand";
 import { CreateComputedColumnCommand } from "@/models/tableEditor/file/commands/CreateComputedColumnCommand";
-import type { Except } from "type-fest";
 
 export const ColumnTypeCommandMap = {
   [ColumnType.Boolean]: (columnIndex: number, data: Except<Extract<Column, { type: ColumnType.Boolean }>, "id">) =>

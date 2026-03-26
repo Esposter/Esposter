@@ -1,4 +1,6 @@
 import type { Column } from "#shared/models/tableEditor/file/column/Column";
+import type { ToData } from "@esposter/shared";
+import type { Except } from "type-fest";
 
 import { BooleanColumn } from "#shared/models/tableEditor/file/column/BooleanColumn";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
@@ -6,8 +8,6 @@ import { ComputedColumn } from "#shared/models/tableEditor/file/column/ComputedC
 import { DateColumn } from "#shared/models/tableEditor/file/column/DateColumn";
 import { NumberColumn } from "#shared/models/tableEditor/file/column/NumberColumn";
 import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
-import type { ToData } from "@esposter/shared";
-import type { Except } from "type-fest";
 
 export const ColumnTypeCreateMap = {
   [ColumnType.Boolean]: {
