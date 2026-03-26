@@ -38,7 +38,13 @@ export const zodToJsonSchema = (schema: z.ZodType) => {
   // $schema is stripped because vjsf's internal Ajv2019 instance does not have the draft 2020-12 meta-schema loaded
   const { $schema: _, ...result } = z.toJSONSchema(schema, {
     override: (ctx) => {
-      const meta = (ctx.zodSchema as z.ZodObject).meta();
+      const zodSchema = ctx.zodSchema as z.ZodObject;
+      // Add discriminator for discriminated unions so vjsf auto-selects the active variant
+      const def = zodSchema.def;
+      if ("discriminator" in def && def.discriminator)
+        (ctx.jsonSchema as Record<string, unknown>).discriminator = { propertyName: def.discriminator };
+
+      const meta = zodSchema.meta();
       if (!meta?.comp && !meta?.getProps && !meta?.getItems) return;
       const layout: Record<string, unknown> = {};
       if (meta.comp) layout.comp = meta.comp;
