@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
+import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 
 import { useTableEditorStore } from "@/store/tableEditor";
 
@@ -9,7 +9,7 @@ interface CopyToClipboardButtonProps {
 
 const { rowIds } = defineProps<CopyToClipboardButtonProps>();
 const copyToClipboard = useCopyToClipboard();
-const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
+const tableEditorStore = useTableEditorStore<DataSourceItem>();
 const { editedItem } = storeToRefs(tableEditorStore);
 const text = computed(() => {
   if (!rowIds) return "Copy all rows to Clipboard";

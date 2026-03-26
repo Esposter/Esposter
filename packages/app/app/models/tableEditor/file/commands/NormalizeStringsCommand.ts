@@ -1,4 +1,4 @@
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
+import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 import type { AffectedCell } from "@/models/tableEditor/file/commands/AffectedCell";
 
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
@@ -24,7 +24,7 @@ export class NormalizeStringsCommand extends ADataSourceCommand<CommandType.Norm
     this.affectedCells = affectedCells;
   }
 
-  protected doExecute(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
+  protected doExecute(item: DataSourceItem) {
     if (!item.dataSource) return;
     const columnsByNameMap = new Map(item.dataSource.columns.map((column) => [column.name, column]));
     for (const { columnName, originalValue, rowIndex } of this.affectedCells) {
@@ -37,7 +37,7 @@ export class NormalizeStringsCommand extends ADataSourceCommand<CommandType.Norm
     }
   }
 
-  protected doUndo(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
+  protected doUndo(item: DataSourceItem) {
     if (!item.dataSource) return;
     const columnsByNameMap = new Map(item.dataSource.columns.map((column) => [column.name, column]));
     for (const { columnName, originalValue, rowIndex } of this.affectedCells) {

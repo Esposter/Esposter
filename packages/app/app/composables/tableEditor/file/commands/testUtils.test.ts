@@ -1,6 +1,6 @@
 import type { ColumnTransformation } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformation";
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
+import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 
 import { BooleanColumn } from "#shared/models/tableEditor/file/column/BooleanColumn";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
@@ -46,7 +46,7 @@ export const makeComputedColumn = (
 export const makeRow = (data: Record<string, boolean | null | number | string>): Row => new Row({ data });
 
 export const setupEditedItem = () => {
-  const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
+  const tableEditorStore = useTableEditorStore<DataSourceItem>();
   const { editedItem } = storeToRefs(tableEditorStore);
   const itemStore = useItemStore();
   const { createItem } = itemStore;

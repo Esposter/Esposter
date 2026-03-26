@@ -19,4 +19,4 @@ export const columnSchema = z.discriminatedUnion("type", [
   dateColumnSchema,
   numberColumnSchema,
   stringColumnSchema,
-]);
+]) satisfies z.ZodType<Column>;

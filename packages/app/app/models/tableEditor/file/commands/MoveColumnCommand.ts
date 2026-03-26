@@ -1,4 +1,4 @@
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
+import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
@@ -24,7 +24,7 @@ export class MoveColumnCommand extends ADataSourceCommand<CommandType.MoveColumn
     this.toIndex = toIndex;
   }
 
-  protected doExecute(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
+  protected doExecute(item: DataSourceItem) {
     if (!item.dataSource) return;
     const columns = [...item.dataSource.columns];
     const [moved] = columns.splice(this.fromIndex, 1);
@@ -39,7 +39,7 @@ export class MoveColumnCommand extends ADataSourceCommand<CommandType.MoveColumn
     }
   }
 
-  protected doUndo(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
+  protected doUndo(item: DataSourceItem) {
     if (!item.dataSource) return;
     const columns = [...item.dataSource.columns];
     const [moved] = columns.splice(this.toIndex, 1);

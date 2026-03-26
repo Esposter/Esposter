@@ -1,4 +1,4 @@
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
+import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 import type { AffectedCell } from "@/models/tableEditor/file/commands/AffectedCell";
 import type { IndexedRow } from "@/models/tableEditor/file/commands/IndexedRow";
 
@@ -26,7 +26,7 @@ export class NullStrategyCommand extends ADataSourceCommand<CommandType.NullStra
     this.affectedRows = affectedRows;
   }
 
-  protected doExecute(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
+  protected doExecute(item: DataSourceItem) {
     if (!item.dataSource) return;
     if (this.mode === NullStrategy.ReplaceWithNA) {
       const columnsByNameMap = new Map(item.dataSource.columns.map((column) => [column.name, column]));
@@ -50,7 +50,7 @@ export class NullStrategyCommand extends ADataSourceCommand<CommandType.NullStra
     }
   }
 
-  protected doUndo(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
+  protected doUndo(item: DataSourceItem) {
     if (!item.dataSource) return;
     if (this.mode === NullStrategy.ReplaceWithNA) {
       const columnsByNameMap = new Map(item.dataSource.columns.map((column) => [column.name, column]));

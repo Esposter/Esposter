@@ -1,5 +1,5 @@
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
+import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 
 import { DeleteRowsCommand } from "@/models/tableEditor/file/commands/DeleteRowsCommand";
 import { useTableEditorStore } from "@/store/tableEditor";
@@ -12,7 +12,7 @@ interface IndexedRow {
 }
 
 export const useDeleteRows = () => {
-  const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
+  const tableEditorStore = useTableEditorStore<DataSourceItem>();
   const { editedItem } = storeToRefs(tableEditorStore);
   const fileHistoryStore = useFileHistoryStore();
   const { push } = fileHistoryStore;

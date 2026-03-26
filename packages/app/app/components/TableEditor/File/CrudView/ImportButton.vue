@@ -1,6 +1,6 @@
-<script setup lang="ts" generic="TDataSourceItem extends DataSourceItemTypeMap[keyof DataSourceItemTypeMap]">
+<script setup lang="ts" generic="TDataSourceItem extends DataSourceItem">
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
+import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
 
 import { trimFileExtension } from "@/util/trimFileExtension";

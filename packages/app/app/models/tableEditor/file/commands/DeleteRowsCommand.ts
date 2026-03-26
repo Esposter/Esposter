@@ -1,5 +1,5 @@
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
+import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 import type { IndexedRow } from "@/models/tableEditor/file/commands/IndexedRow";
 
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
@@ -21,7 +21,7 @@ export class DeleteRowsCommand extends ADataSourceCommand<CommandType.DeleteRows
     this.indexedRows = indexedRows.toSorted((a, b) => b.index - a.index);
   }
 
-  protected doExecute(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
+  protected doExecute(item: DataSourceItem) {
     if (!item.dataSource) return;
     const indexSet = new Set(this.indexedRows.map(({ index }) => index));
     for (const { row } of this.indexedRows)
@@ -29,7 +29,7 @@ export class DeleteRowsCommand extends ADataSourceCommand<CommandType.DeleteRows
     item.dataSource.rows = item.dataSource.rows.filter((_, index) => !indexSet.has(index));
   }
 
-  protected doUndo(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
+  protected doUndo(item: DataSourceItem) {
     if (!item.dataSource) return;
     const ascendingRows = this.indexedRows.toSorted((a, b) => a.index - b.index);
     for (const { row } of ascendingRows)

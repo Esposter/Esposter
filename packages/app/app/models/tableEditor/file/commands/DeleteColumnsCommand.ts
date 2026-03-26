@@ -1,5 +1,5 @@
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
+import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 import type { IndexedColumn } from "@/models/tableEditor/file/commands/IndexedColumn";
 
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
@@ -20,14 +20,14 @@ export class DeleteColumnsCommand extends ADataSourceCommand<CommandType.DeleteC
     this.indexedColumns = indexedColumns.toSorted((a, b) => b.columnIndex - a.columnIndex);
   }
 
-  protected doExecute(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
+  protected doExecute(item: DataSourceItem) {
     if (!item.dataSource) return;
     const namesToDelete = new Set(this.indexedColumns.map(({ originalColumn }) => originalColumn.name));
     item.dataSource.columns = item.dataSource.columns.filter((column) => !namesToDelete.has(column.name));
     for (const row of item.dataSource.rows) for (const name of namesToDelete) delete row.data[name];
   }
 
-  protected doUndo(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
+  protected doUndo(item: DataSourceItem) {
     if (!item.dataSource) return;
     const ascendingColumns = this.indexedColumns.toSorted((a, b) => a.columnIndex - b.columnIndex);
     const result: DataSource["columns"] = [];

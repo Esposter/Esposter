@@ -1,9 +1,7 @@
-import type { AColumnForm } from "#shared/models/tableEditor/file/column/ColumnForm";
 import type { ColumnTransformation } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformation";
 import type { ToData } from "@esposter/shared";
 
 import { AColumn, createAColumnSchema } from "#shared/models/tableEditor/file/column/AColumn";
-import { createAColumnFormSchema } from "#shared/models/tableEditor/file/column/ColumnForm";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { columnTransformationSchema } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformation";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
@@ -26,9 +24,3 @@ export class ComputedColumn extends AColumn<ColumnType.Computed> {
 export const computedColumnSchema = createAColumnSchema(z.literal(ColumnType.Computed)).extend({
   transformation: columnTransformationSchema,
 }) satisfies z.ZodType<ToData<ComputedColumn>>;
-
-export const computedColumnFormSchema = createAColumnFormSchema(z.literal(ColumnType.Computed).readonly())
-  .extend({
-    transformation: columnTransformationSchema,
-  })
-  .meta({ title: ColumnType.Computed }) satisfies z.ZodType<AColumnForm>;

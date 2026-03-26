@@ -1,4 +1,4 @@
-import type { MathOperand } from "#shared/models/tableEditor/file/column/transformation/MathOperationTransformation";
+import type { MathOperand } from "#shared/models/tableEditor/file/column/transformation/MathOperand";
 
 import { BinaryMathOperationType } from "#shared/models/tableEditor/file/column/transformation/BinaryMathOperationType";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";

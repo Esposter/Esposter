@@ -1,7 +1,7 @@
 import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
 import type { ColumnTransformation } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformation";
-import type { MathOperand } from "#shared/models/tableEditor/file/column/transformation/MathOperationTransformation";
+import type { MathOperand } from "#shared/models/tableEditor/file/column/transformation/MathOperand";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";

@@ -1,4 +1,4 @@
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
+import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 import type { DataSourceConfiguration } from "@/models/tableEditor/file/dataSource/DataSourceConfiguration";
 
 import { MimeType } from "#shared/models/file/MimeType";
@@ -15,7 +15,7 @@ import { serializeXlsx } from "@/services/tableEditor/file/xlsx/serializeXlsx";
 
 export const DataSourceConfigurationMap: Record<
   DataSourceType,
-  DataSourceConfiguration<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>
+  DataSourceConfiguration<DataSourceItem>
 > = {
   [DataSourceType.Csv]: {
     accept: ".csv",

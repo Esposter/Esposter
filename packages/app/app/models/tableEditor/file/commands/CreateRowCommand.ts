@@ -1,5 +1,5 @@
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
+import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
@@ -22,7 +22,7 @@ export class CreateRowCommand extends ADataSourceCommand<CommandType.CreateRow> 
     this.newRow = newRow;
   }
 
-  protected doExecute(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
+  protected doExecute(item: DataSourceItem) {
     if (!item.dataSource) return;
     for (const column of item.dataSource.columns) column.size += getValueSize(takeOne(this.newRow.data, column.name));
     item.dataSource.rows = [
@@ -32,7 +32,7 @@ export class CreateRowCommand extends ADataSourceCommand<CommandType.CreateRow> 
     ];
   }
 
-  protected doUndo(item: DataSourceItemTypeMap[keyof DataSourceItemTypeMap]) {
+  protected doUndo(item: DataSourceItem) {
     if (!item.dataSource) return;
     const row = takeOne(item.dataSource.rows, this.index);
     for (const column of item.dataSource.columns) column.size -= getValueSize(takeOne(row.data, column.name));

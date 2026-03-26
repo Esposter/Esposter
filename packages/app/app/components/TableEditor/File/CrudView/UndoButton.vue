@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { DataSourceItemTypeMap } from "#shared/models/tableEditor/file/datasource/DataSourceItemTypeMap";
+import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 
 import { sanitizeHtml } from "@/services/sanitizeHtml/sanitizeHtml";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { marked } from "marked";
 
-const tableEditorStore = useTableEditorStore<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>();
+const tableEditorStore = useTableEditorStore<DataSourceItem>();
 const { editedItem } = storeToRefs(tableEditorStore);
 const fileHistoryStore = useFileHistoryStore();
 const { undo } = fileHistoryStore;

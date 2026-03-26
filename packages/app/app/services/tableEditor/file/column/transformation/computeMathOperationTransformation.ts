@@ -1,8 +1,6 @@
 import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
-import type {
-  MathOperand,
-  MathOperationTransformation,
-} from "#shared/models/tableEditor/file/column/transformation/MathOperationTransformation";
+import type { MathOperand } from "#shared/models/tableEditor/file/column/transformation/MathOperand";
+import type { MathOperationTransformation } from "#shared/models/tableEditor/file/column/transformation/MathOperationTransformation";
 
 import { BinaryMathOperationType } from "#shared/models/tableEditor/file/column/transformation/BinaryMathOperationType";
 import { MathStepType } from "#shared/models/tableEditor/file/column/transformation/MathStepType";
