@@ -12,8 +12,8 @@ export const computeMathOperationTransformation = (
   resolveOperand: (operand: MathOperand) => ColumnValue,
 ): ColumnValue => {
   let result = resolveOperand(transformation.first);
-  for (const step of transformation.steps) {
-    if (typeof result !== "number") return null;
+  if (typeof result !== "number") return null;
+  for (const step of transformation.steps)
     switch (step.type) {
       case MathStepType.Binary: {
         const right = resolveOperand(step.operand);
@@ -58,6 +58,5 @@ export const computeMathOperationTransformation = (
       default:
         exhaustiveGuard(step);
     }
-  }
   return result;
 };

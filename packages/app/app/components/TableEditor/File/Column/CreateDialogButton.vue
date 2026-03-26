@@ -30,12 +30,13 @@ const resetForm = () => {
 
 <template>
   <TableEditorFileCrudViewEditDialogButton
+    icon="mdi-table-column-plus-after"
     title="Create Column"
     tooltip-text="Add Column"
-    icon="mdi-table-column-plus-after"
+    :edited-value="columnFormSchema.safeParse(editedColumn).data"
     :schema="columnFormSchema"
     :value="columnFormSchema.safeParse(defaultColumn).data"
-    :edited-value="columnFormSchema.safeParse(editedColumn).data"
+    is-create
     @reset="resetForm()"
     @submit="
       (onComplete) => {
