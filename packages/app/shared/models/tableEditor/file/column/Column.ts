@@ -1,3 +1,5 @@
+import type { ToData } from "@esposter/shared";
+
 import type { BooleanColumn } from "#shared/models/tableEditor/file/column/BooleanColumn";
 import type { ComputedColumn } from "#shared/models/tableEditor/file/column/ComputedColumn";
 import type { DateColumn } from "#shared/models/tableEditor/file/column/DateColumn";
@@ -19,4 +21,4 @@ export const columnSchema = z.discriminatedUnion("type", [
   dateColumnSchema,
   numberColumnSchema,
   stringColumnSchema,
-]) satisfies z.ZodType<Column>;
+]) satisfies z.ZodType<ToData<Column>>;

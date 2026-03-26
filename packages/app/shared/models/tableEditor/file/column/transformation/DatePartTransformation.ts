@@ -1,8 +1,15 @@
+import type { WithSourceColumnId } from "#shared/models/tableEditor/file/column/transformation/WithSourceColumnId";
+
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import { DatePartType } from "#shared/models/tableEditor/file/column/transformation/DatePartType";
 import { withSourceColumnIdSchema } from "#shared/models/tableEditor/file/column/transformation/WithSourceColumnId";
 import { z } from "zod";
+
+export interface DatePartTransformation extends WithSourceColumnId {
+  part: DatePartType;
+  readonly type: ColumnTransformationType.DatePart;
+}
 
 export const datePartTransformationSchema = withSourceColumnIdSchema
   .extend({
@@ -12,6 +19,7 @@ export const datePartTransformationSchema = withSourceColumnIdSchema
     }),
     type: z.literal(ColumnTransformationType.DatePart).readonly(),
   })
-  .meta({ applicableColumnTypes: [ColumnType.Date], title: ColumnTransformationType.DatePart });
-
-export type DatePartTransformation = z.infer<typeof datePartTransformationSchema>;
+  .meta({
+    applicableColumnTypes: [ColumnType.Date],
+    title: ColumnTransformationType.DatePart,
+  }) satisfies z.ZodType<DatePartTransformation>;

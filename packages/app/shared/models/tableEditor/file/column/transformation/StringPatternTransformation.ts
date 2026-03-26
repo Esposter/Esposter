@@ -1,7 +1,14 @@
+import type { WithSourceColumnIds } from "#shared/models/tableEditor/file/column/transformation/WithSourceColumnIds";
+
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import { withSourceColumnIdsSchema } from "#shared/models/tableEditor/file/column/transformation/WithSourceColumnIds";
 import { z } from "zod";
+
+export interface StringPatternTransformation extends WithSourceColumnIds {
+  pattern: string;
+  readonly type: ColumnTransformationType.StringPattern;
+}
 
 export const stringPatternTransformationSchema = withSourceColumnIdsSchema
   .extend({
@@ -21,6 +28,7 @@ export const stringPatternTransformationSchema = withSourceColumnIdsSchema
       .meta({ title: "Source Columns" }),
     type: z.literal(ColumnTransformationType.StringPattern).readonly(),
   })
-  .meta({ applicableColumnTypes: [ColumnType.String], title: ColumnTransformationType.StringPattern });
-
-export type StringPatternTransformation = z.infer<typeof stringPatternTransformationSchema>;
+  .meta({
+    applicableColumnTypes: [ColumnType.String],
+    title: ColumnTransformationType.StringPattern,
+  }) satisfies z.ZodType<StringPatternTransformation>;

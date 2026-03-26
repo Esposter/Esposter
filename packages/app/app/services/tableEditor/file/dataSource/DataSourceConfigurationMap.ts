@@ -13,10 +13,7 @@ import { serializeJson } from "@/services/tableEditor/file/json/serializeJson";
 import { deserializeXlsx } from "@/services/tableEditor/file/xlsx/deserializeXlsx";
 import { serializeXlsx } from "@/services/tableEditor/file/xlsx/serializeXlsx";
 
-export const DataSourceConfigurationMap: Record<
-  DataSourceType,
-  DataSourceConfiguration<DataSourceItem>
-> = {
+export const DataSourceConfigurationMap: Record<DataSourceType, DataSourceConfiguration<DataSourceItem>> = {
   [DataSourceType.Csv]: {
     accept: ".csv",
     deserialize: deserializeCsv,

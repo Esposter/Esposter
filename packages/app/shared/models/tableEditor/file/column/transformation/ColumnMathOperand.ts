@@ -1,6 +1,11 @@
 import { MathOperandType } from "#shared/models/tableEditor/file/column/transformation/MathOperandType";
 import { z } from "zod";
 
+export interface ColumnMathOperand {
+  sourceColumnId: string;
+  readonly type: MathOperandType.Column;
+}
+
 export const columnMathOperandSchema = z
   .object({
     sourceColumnId: z.string().meta({
@@ -10,6 +15,4 @@ export const columnMathOperandSchema = z
     }),
     type: z.literal(MathOperandType.Column).readonly(),
   })
-  .meta({ title: MathOperandType.Column });
-
-export type ColumnMathOperand = z.infer<typeof columnMathOperandSchema>;
+  .meta({ title: MathOperandType.Column }) satisfies z.ZodType<ColumnMathOperand>;
