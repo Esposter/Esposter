@@ -17,7 +17,7 @@ const filterStore = useFilterStore();
 const { columnFilters } = storeToRefs(filterStore);
 const filteredRowCount = computed(() =>
   modelValue.value.dataSource
-    ? filterDataSourceRows(modelValue.value.dataSource, columnFilters.value).rows.length
+    ? filterDataSourceRows(modelValue.value.dataSource.rows, columnFilters.value).length
     : undefined,
 );
 </script>

@@ -3,7 +3,6 @@
     "allow": [
       "Bash(cat:*)",
       "Bash(cd:*)",
-      "Bash(curl -s \"https://vuetify-nuxt-module.netlify.app/guide/nuxt-configuration.html\" 2>/dev/null | grep -A 5 \"disableVuetifyStyles\\\\|styles\" | head -40 || echo \"Cannot fetch\")",
       "Bash(do echo:*)",
       "Bash(done)",
       "Bash(echo EXIT: $?:*)",
@@ -14,9 +13,6 @@
       "Bash(git log:*)",
       "Bash(head:*)",
       "Bash(ls:*)",
-      "Bash(npm info:*)",
-      "Bash(npm search:*)",
-      "Bash(npm show:*)",
       "Bash(pnpm export:gen)",
       "Bash(pnpm format:*)",
       "Bash(pnpm install:*)",
@@ -24,7 +20,9 @@
       "Bash(pnpm lint:fix)",
       "Bash(pnpm list:*)",
       "Bash(pnpm outdated:*)",
+      "Bash(pnpm info:*)",
       "Bash(pnpm search:*)",
+      "Bash(pnpm show:*)",
       "Bash(pnpm test:*)",
       "Bash(pnpm typecheck:*)",
       "Bash(pnpm vitest:*)",
@@ -38,7 +36,8 @@
       "mcp__vuetify-mcp__get_installation_guide",
       "mcp__vuetify-mcp__get_v4_breaking_changes",
       "WebFetch(domain:nuxt.com)",
-      "WebFetch(domain:vueuse.org)"
+      "WebFetch(domain:vueuse.org)",
+      "Bash(echo \"EXIT:$?\")"
     ]
   }
 }

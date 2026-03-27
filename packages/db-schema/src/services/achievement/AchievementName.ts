@@ -42,3 +42,5 @@ export type AchievementName =
   | WebpageAchievementName;
 
 export const achievementNameSchema = z.enum(AchievementName) satisfies z.ZodType<AchievementName>;
+
+export const AchievementNames: ReadonlySet<AchievementName> = new Set(Object.values(AchievementName));

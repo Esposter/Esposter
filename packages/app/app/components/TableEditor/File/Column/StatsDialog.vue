@@ -3,7 +3,7 @@ import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/
 import type { ColumnStats } from "@/models/tableEditor/file/column/ColumnStats";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import { ColumnStatDefinitionMap } from "@/services/tableEditor/file/column/ColumnStatDefinitionMap";
+import { ColumnStatDefinitions } from "@/services/tableEditor/file/column/ColumnStatDefinitionMap";
 import { computeColumnStats } from "@/services/tableEditor/file/column/computeColumnStats";
 import { useTableEditorStore } from "@/store/tableEditor";
 
@@ -19,7 +19,7 @@ const headers = [
   { key: "chart", sortable: false, title: "" },
   { key: "columnName", sortable: false, title: "Column" },
   { key: "columnType", sortable: false, title: "Type" },
-  ...Object.values(ColumnStatDefinitionMap).map(({ key, sortable, title }) => ({ key, sortable, title })),
+  ...[...ColumnStatDefinitions].map(({ key, sortable, title }) => ({ key, sortable, title })),
 ];
 const openChart = (stats: ColumnStats) => {
   selectedStats.value = stats;
@@ -40,7 +40,7 @@ const openChart = (stats: ColumnStats) => {
           </template>
         </v-tooltip>
       </template>
-      <template v-for="{ key, format } of Object.values(ColumnStatDefinitionMap)" :key #[`item.${key}`]="{ item }">
+      <template v-for="{ key, format } of ColumnStatDefinitions" :key #[`item.${key}`]="{ item }">
         {{ format(item[key] as never) }}
       </template>
     </v-data-table>

@@ -12,7 +12,7 @@ Always use the `z` namespace export: `z.ZodType`, `z.ZodError`, etc. Never use n
 ## Schema Rules
 
 - **`z.enum` with native enums (Zod 4)** — use `z.enum(MyEnum)` directly for TypeScript string enums; `z.nativeEnum` is Zod 3 only.
-- **Never alias `Object.values(Enum)`** — use `Object.values(MyEnum)` directly at each call site; never export a constant like `export const MY_VALUES = Object.values(MyEnum)` as an alias.
+- **Schema must match its type exactly** — if a field's TypeScript type is `ColumnFormat`, use `columnFormatSchema` (defined alongside `ColumnFormat`), never inline the equivalent union `z.union([booleanFormatSchema, dateFormatSchema, numberFormatSchema])`. Every named type must have exactly one named schema; never reconstruct a union inline when a schema for that union already exists or should exist.
 - **`.default()`** — do not combine `.optional().default(value)`; `.default()` already handles `undefined` input, so `.optional()` is redundant.
 - **Generic schemas** — when an abstract class has a generic type parameter (e.g. `ADataSourceItem<TType, TConfig>`), its schema must also be generic. Export a `create*Schema` function that takes typed zod schemas as parameters and returns the composed schema. Never hardcode type-specific values in a base schema. Use `T` for a single type parameter, descriptive `T*` names (e.g. `TType`, `TConfiguration`) for multiple:
   ```typescript

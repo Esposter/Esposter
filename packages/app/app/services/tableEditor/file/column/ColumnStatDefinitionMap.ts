@@ -106,3 +106,7 @@ export const ColumnStatDefinitionMap = {
     title: "Unique",
   }),
 } as const satisfies { [K in ColumnStatKey]: ColumnStatDefinition<K> };
+
+export const ColumnStatDefinitions: ReadonlySet<
+  (typeof ColumnStatDefinitionMap)[keyof typeof ColumnStatDefinitionMap]
+> = new Set(Object.values(ColumnStatDefinitionMap));

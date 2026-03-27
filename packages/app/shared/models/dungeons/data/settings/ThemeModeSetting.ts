@@ -7,3 +7,5 @@ export enum ThemeModeSetting {
 }
 
 export const themeModeSettingSchema = z.enum(ThemeModeSetting) satisfies z.ZodType<ThemeModeSetting>;
+
+export const ThemeModeSettings: ReadonlySet<ThemeModeSetting> = new Set(Object.values(ThemeModeSetting));

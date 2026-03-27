@@ -9,3 +9,5 @@ export enum NumberFormat {
 }
 
 export const numberFormatSchema = z.enum(NumberFormat) satisfies z.ZodType<NumberFormat>;
+
+export const NumberFormats: ReadonlySet<NumberFormat> = new Set(Object.values(NumberFormat));

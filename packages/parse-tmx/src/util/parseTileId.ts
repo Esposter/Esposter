@@ -1,4 +1,5 @@
-import { Flipped } from "@/models/Flipped";
+import { Flippeds } from "@/models/Flipped";
 
-export const parseTileId = (gid: number): number =>
-  (gid &= ~Object.values(Flipped).reduce((acc, curr) => acc | (curr as Flipped), 0));
+const FLIPPED_MASK = ~[...Flippeds].reduce((acc, curr) => acc | (curr as number), 0);
+
+export const parseTileId = (gid: number): number => gid & FLIPPED_MASK;

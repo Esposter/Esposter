@@ -3,8 +3,8 @@ import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
 
 import { Row } from "#shared/models/tableEditor/file/datasource/Row";
+import { computeValue } from "@/services/tableEditor/file/column/computeValue";
 import { isEditableColumnValue } from "@/services/tableEditor/file/column/isEditableColumnValue";
-import { resolveValue } from "@/services/tableEditor/file/column/resolveValue";
 import { OUTLIER_HIGHLIGHT_CLASS } from "@/services/tableEditor/file/constants";
 import { getItemId } from "@/services/tableEditor/file/getItemId";
 import { useFindReplaceStore } from "@/store/tableEditor/file/findReplace";
@@ -16,9 +16,10 @@ interface ItemSlotProps {
   columns: Column[];
   item: Row;
   rowIndex: number;
+  rows: Row[];
 }
 
-const { column, columns, item, rowIndex } = defineProps<ItemSlotProps>();
+const { column, columns, item, rowIndex, rows } = defineProps<ItemSlotProps>();
 const findReplaceStore = useFindReplaceStore();
 const { currentOccurrenceIndex, findValue, occurrences } = storeToRefs(findReplaceStore);
 const outlierStore = useOutlierStore();
@@ -27,7 +28,7 @@ const updateRow = useUpdateRow();
 const editableColumn = computed(() => (isEditableColumnValue(column) ? column : null));
 const currentOccurrence = computed(() => occurrences.value.at(currentOccurrenceIndex.value));
 const text = computed(() => {
-  const value = resolveValue(item, columns, column);
+  const value = computeValue(rows, item, columns, column, rowIndex);
   return value === null ? "" : String(value);
 });
 const isCurrentOccurrence = computed(

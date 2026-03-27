@@ -1,6 +1,7 @@
 /* eslint-disable perfectionist/sort-switch-case */
 import type { Clause, Filter } from "@esposter/db-schema";
 
+import { ContentTypes } from "@/models/ContentType";
 import { getSearchNonNullClause } from "@/services/azure/search/getSearchNonNullClause";
 import { dayjs } from "@/services/dayjs";
 import {
@@ -13,9 +14,10 @@ import {
   StandardMessageEntityPropertyNames,
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
-import { types } from "mime-types";
 
-const ContentTypes = Object.values(types);
+const IMAGE_CONTENT_TYPES = [...ContentTypes].filter((contentType) => contentType.startsWith("image/"));
+const VIDEO_CONTENT_TYPES = [...ContentTypes].filter((contentType) => contentType.startsWith("video/"));
+const AUDIO_CONTENT_TYPES = [...ContentTypes].filter((contentType) => contentType.startsWith("audio/"));
 
 export const filtersToClauses = (filters: Filter[]): Clause[] => {
   const clauses: Clause[] = [];
@@ -50,21 +52,21 @@ export const filtersToClauses = (filters: Filter[]): Clause[] => {
               clauses.push({
                 key: `${StandardMessageEntityPropertyNames.files}/${FileEntityPropertyNames.mimetype}`,
                 operator: SearchOperator.arrayContains,
-                value: ContentTypes.filter((contentType) => contentType.startsWith("image/")),
+                value: IMAGE_CONTENT_TYPES,
               });
               break;
             case FilterTypeHas.Video:
               clauses.push({
                 key: `${StandardMessageEntityPropertyNames.files}/${FileEntityPropertyNames.mimetype}`,
                 operator: SearchOperator.arrayContains,
-                value: ContentTypes.filter((contentType) => contentType.startsWith("video/")),
+                value: VIDEO_CONTENT_TYPES,
               });
               break;
             case FilterTypeHas.Sound:
               clauses.push({
                 key: `${StandardMessageEntityPropertyNames.files}/${FileEntityPropertyNames.mimetype}`,
                 operator: SearchOperator.arrayContains,
-                value: ContentTypes.filter((contentType) => contentType.startsWith("audio/")),
+                value: AUDIO_CONTENT_TYPES,
               });
               break;
             case FilterTypeHas.Forward:

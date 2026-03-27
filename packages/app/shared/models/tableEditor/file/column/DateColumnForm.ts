@@ -13,6 +13,6 @@ export interface DateColumnForm extends AColumnForm<ColumnType.Date> {
 export const dateColumnFormSchema = z
   .object({
     ...createAColumnFormSchema(z.literal(ColumnType.Date).readonly()).shape,
-    format: dateColumnSchema.shape.format.meta({ title: "Format" }),
+    format: dateColumnSchema.shape.format,
   })
   .meta({ title: ColumnType.Date }) satisfies z.ZodType<DateColumnForm>;

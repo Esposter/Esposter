@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { getFilterDisplayValue } from "@/services/message/filter/getFilterDisplayValue";
 import { useSearchMessageStore } from "@/store/message/searchMessage";
-import { FilterType } from "@esposter/db-schema";
+import { FilterTypes } from "@esposter/db-schema";
 
 const readSearchedMessages = useReadSearchedMessages();
 const searchMessageStore = useSearchMessageStore();
@@ -9,7 +9,7 @@ const { createFilter } = searchMessageStore;
 const { activeSelectedFilter, isSearchQueryEmpty, menu, searchQuery, selectedFilters } =
   storeToRefs(searchMessageStore);
 const searchQueryOnFocus = ref("");
-const filterTypes = Object.values(FilterType);
+const filterTypes = [...FilterTypes];
 const blur = () => (document.activeElement as HTMLElement | null)?.blur();
 </script>
 
