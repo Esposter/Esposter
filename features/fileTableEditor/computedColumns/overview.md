@@ -86,19 +86,19 @@ resolveValue(row, columns, column):
 
 ### App services
 
-| File                                                                                        | Notes                                             |
-| ------------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| `app/services/tableEditor/file/column/resolveValue.ts`                                      | Lazy resolver                                     |
-| `app/services/tableEditor/file/column/detectColumnCycle.ts`                                 | DFS cycle detection (v3)                          |
-| `app/services/tableEditor/file/column/computeAggregationValue.ts`                           | `(rows, column, rowIndex) → ColumnValue` (v3)     |
-| `app/services/tableEditor/file/column/formatValue.ts`                                       | Display-layer format application (v3)             |
-| `app/services/tableEditor/file/column/transformation/computeColumnTransformation.ts`        | Dispatch via `ColumnTransformationTypeComputeMap` |
-| `app/services/tableEditor/file/column/transformation/ColumnTransformationTypeComputeMap.ts` |                                                   |
-| `app/services/tableEditor/file/column/transformation/computeConvertToTransformation.ts`     |                                                   |
-| `app/services/tableEditor/file/column/transformation/computeDatePartTransformation.ts`      |                                                   |
-| `app/services/tableEditor/file/column/transformation/computeRegexMatchTransformation.ts`    |                                                   |
-| `app/services/tableEditor/file/column/transformation/computeMathOperationTransformation.ts` | Fold-left over `steps` (v3)                       |
-| `app/services/tableEditor/file/column/transformation/computeStringPatternTransformation.ts` | `{N}` token substitution (v3)                     |
+| File                                                                                        | Notes                                                             |
+| ------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `app/services/tableEditor/file/column/resolveValue.ts`                                      | Lazy resolver                                                     |
+| `app/services/tableEditor/file/column/detectColumnCycle.ts`                                 | DFS cycle detection (v3)                                          |
+| `app/services/tableEditor/file/column/computeAggregationValue.ts`                           | `(rows, findSource, transformation, rowIndex) → ColumnValue` (v3) |
+| `app/services/tableEditor/file/column/formatValue.ts`                                       | Display-layer format application (v3)                             |
+| `app/services/tableEditor/file/column/transformation/computeColumnTransformation.ts`        | Dispatch via `ColumnTransformationTypeComputeMap`                 |
+| `app/services/tableEditor/file/column/transformation/ColumnTransformationTypeComputeMap.ts` |                                                                   |
+| `app/services/tableEditor/file/column/transformation/computeConvertToTransformation.ts`     |                                                                   |
+| `app/services/tableEditor/file/column/transformation/computeDatePartTransformation.ts`      |                                                                   |
+| `app/services/tableEditor/file/column/transformation/computeRegexMatchTransformation.ts`    |                                                                   |
+| `app/services/tableEditor/file/column/transformation/computeMathOperationTransformation.ts` | Fold-left over `steps` (v3)                                       |
+| `app/services/tableEditor/file/column/transformation/computeStringPatternTransformation.ts` | `{N}` token substitution (v3)                                     |
 
 ### App commands + composables
 
