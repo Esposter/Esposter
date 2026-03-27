@@ -39,7 +39,12 @@ const stringValue = computed({
     return "";
   },
   set: (value) => {
-    if (column.type !== ColumnType.Boolean && column.type !== ColumnType.Computed && column.type !== ColumnType.Number)
+    if (
+      column.type !== ColumnType.Aggregation &&
+      column.type !== ColumnType.Boolean &&
+      column.type !== ColumnType.Computed &&
+      column.type !== ColumnType.Number
+    )
       modelValue.value = value ? { type: column.type, value } : undefined;
   },
 });

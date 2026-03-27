@@ -1,6 +1,7 @@
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 
 export const ColumnTypeColorMap = {
+  [ColumnType.Aggregation]: "error",
   [ColumnType.Boolean]: "success",
   [ColumnType.Computed]: "secondary",
   [ColumnType.Date]: "warning",

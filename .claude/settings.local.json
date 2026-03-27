@@ -38,7 +38,8 @@
       "mcp__vuetify-mcp__get_installation_guide",
       "mcp__vuetify-mcp__get_v4_breaking_changes",
       "WebFetch(domain:nuxt.com)",
-      "WebFetch(domain:vueuse.org)"
+      "WebFetch(domain:vueuse.org)",
+      "Bash(npx tsc:*)"
     ]
   }
 }

@@ -6,6 +6,7 @@ import FieldInputDate from "@/components/TableEditor/File/Row/FieldInput/Date.vu
 import FieldInputText from "@/components/TableEditor/File/Row/FieldInput/Text.vue";
 
 export const FieldInputComponentMap = {
+  [ColumnType.Aggregation]: FieldInputText,
   [ColumnType.Boolean]: FieldInputBoolean,
   [ColumnType.Computed]: FieldInputText,
   [ColumnType.Date]: FieldInputDate,

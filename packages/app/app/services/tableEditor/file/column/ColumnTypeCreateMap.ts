@@ -2,6 +2,7 @@ import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { ToData } from "@esposter/shared";
 import type { Except } from "type-fest";
 
+import { AggregationColumn } from "#shared/models/tableEditor/file/column/AggregationColumn";
 import { BooleanColumn } from "#shared/models/tableEditor/file/column/BooleanColumn";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ComputedColumn } from "#shared/models/tableEditor/file/column/ComputedColumn";
@@ -10,6 +11,9 @@ import { NumberColumn } from "#shared/models/tableEditor/file/column/NumberColum
 import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 
 export const ColumnTypeCreateMap = {
+  [ColumnType.Aggregation]: {
+    create: (init?: ToData<Except<Partial<AggregationColumn>, "type">>) => new AggregationColumn({ ...init }),
+  },
   [ColumnType.Boolean]: {
     create: (init?: ToData<Except<Partial<BooleanColumn>, "type">>) => new BooleanColumn({ ...init }),
   },
@@ -25,4 +29,7 @@ export const ColumnTypeCreateMap = {
   [ColumnType.String]: {
     create: (init?: ToData<Except<Partial<StringColumn>, "type">>) => new StringColumn({ ...init }),
   },
-} as const satisfies Record<ColumnType, { create: (init?: ToData<Except<Partial<BooleanColumn>, "type">>) => Column }>;
+} as const satisfies Record<
+  ColumnType,
+  { create: (init?: ToData<Except<Partial<AggregationColumn>, "type">>) => Column }
+>;
