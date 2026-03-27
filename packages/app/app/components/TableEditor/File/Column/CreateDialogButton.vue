@@ -23,8 +23,12 @@ const options = useColumnFormOptions(
   () => dataSource,
   () => "",
 );
+// Toggled on reset to force Vjsf to remount — replacing editedColumn alone does not reset
+// Vjsf's internal discriminated-union selection (e.g. the type dropdown stays on the old value)
+const vjsfKey = ref(false);
 const resetForm = () => {
   editedColumn.value = structuredClone(defaultColumn);
+  vjsfKey.value = !vjsfKey.value;
 };
 </script>
 
@@ -45,6 +49,6 @@ const resetForm = () => {
       }
     "
   >
-    <Vjsf v-model="editedColumn" :schema="jsonSchema" :options />
+    <Vjsf :key="vjsfKey.toString()" v-model="editedColumn" :schema="jsonSchema" :options />
   </TableEditorFileCrudViewEditDialogButton>
 </template>
