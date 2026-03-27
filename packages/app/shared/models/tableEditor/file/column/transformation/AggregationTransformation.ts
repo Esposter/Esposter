@@ -1,3 +1,4 @@
+import type { SourceColumnId } from "#shared/models/tableEditor/file/column/transformation/SourceColumnId";
 import type { ItemEntityType } from "@esposter/shared";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
@@ -6,8 +7,6 @@ import {
   aggregationTransformationTypeSchema,
 } from "#shared/models/tableEditor/file/column/transformation/AggregationTransformationType";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
-import type { SourceColumnId } from "#shared/models/tableEditor/file/column/transformation/SourceColumnId";
-
 import { sourceColumnIdSchema } from "#shared/models/tableEditor/file/column/transformation/SourceColumnId";
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";

@@ -2,7 +2,7 @@
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
 
-import { resolveValue } from "@/services/tableEditor/file/column/resolveValue";
+import { computeValue } from "@/services/tableEditor/file/column/computeValue";
 import { toColumnKey } from "@/services/tableEditor/file/column/toColumnKey";
 import { DRAG_HANDLE_CLASS } from "@/services/tableEditor/file/constants";
 import { filterDataSourceRows } from "@/services/tableEditor/file/dataSource/filterDataSourceRows";
@@ -28,7 +28,7 @@ const headers = computed(() => [
   ...displayColumns.value.map((column) => ({
     key: toColumnKey(column.name),
     title: column.name,
-    value: (row: Row) => resolveValue(row, dataSource.columns, column),
+    value: (row: Row) => computeValue(row, dataSource.columns, column),
   })),
   { key: "actions", sortable: false, title: "Actions" },
 ]);

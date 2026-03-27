@@ -2,7 +2,7 @@
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import { resolveValue } from "@/services/tableEditor/file/column/resolveValue";
+import { computeValue } from "@/services/tableEditor/file/column/computeValue";
 import { filterDataSourceRows } from "@/services/tableEditor/file/dataSource/filterDataSourceRows";
 import { useFilterStore } from "@/store/tableEditor/file/filter";
 
@@ -20,7 +20,7 @@ const columnSummaries = computed(() => {
   for (const column of displayColumns.value) {
     if (column.type !== ColumnType.Number) continue;
     const sum = filteredRows.value.reduce((acc, row) => {
-      const value = resolveValue(row, dataSource.columns, column);
+      const value = computeValue(row, dataSource.columns, column);
       return typeof value === "number" ? acc + value : acc;
     }, 0);
     result.set(column.name, `Σ ${Math.round(sum * 100) / 100}`);

@@ -4,7 +4,7 @@ import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnV
 
 import { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import { isEditableColumnValue } from "@/services/tableEditor/file/column/isEditableColumnValue";
-import { resolveValue } from "@/services/tableEditor/file/column/resolveValue";
+import { computeValue } from "@/services/tableEditor/file/column/computeValue";
 import { OUTLIER_HIGHLIGHT_CLASS } from "@/services/tableEditor/file/constants";
 import { getItemId } from "@/services/tableEditor/file/getItemId";
 import { useFindReplaceStore } from "@/store/tableEditor/file/findReplace";
@@ -27,7 +27,7 @@ const updateRow = useUpdateRow();
 const editableColumn = computed(() => (isEditableColumnValue(column) ? column : null));
 const currentOccurrence = computed(() => occurrences.value.at(currentOccurrenceIndex.value));
 const text = computed(() => {
-  const value = resolveValue(item, columns, column);
+  const value = computeValue(item, columns, column);
   return value === null ? "" : String(value);
 });
 const isCurrentOccurrence = computed(

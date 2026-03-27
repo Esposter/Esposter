@@ -7,10 +7,10 @@ import {
   makeDataSource,
   makeRow,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
-import { resolveValue } from "@/services/tableEditor/file/column/resolveValue";
+import { computeValue } from "@/services/tableEditor/file/column/computeValue";
 import { describe, expect, test } from "vitest";
 
-describe(resolveValue, () => {
+describe(computeValue, () => {
   test("returns row.data value for non-computed column", () => {
     expect.hasAssertions();
 
@@ -18,7 +18,7 @@ describe(resolveValue, () => {
     const row = makeRow({ "": 0 });
     const dataSource = makeDataSource([column], [row]);
 
-    expect(resolveValue(row, dataSource.columns, column)).toBe(0);
+    expect(computeValue(row, dataSource.columns, column)).toBe(0);
   });
 
   test("returns null for computed column when source column is not found", () => {
@@ -28,7 +28,7 @@ describe(resolveValue, () => {
     const row = makeRow({});
     const dataSource = makeDataSource([computedColumn], [row]);
 
-    expect(resolveValue(row, dataSource.columns, computedColumn)).toBeNull();
+    expect(computeValue(row, dataSource.columns, computedColumn)).toBeNull();
   });
 
   test("returns null for computed column when source column is itself computed", () => {
@@ -39,7 +39,7 @@ describe(resolveValue, () => {
     const row = makeRow({});
     const dataSource = makeDataSource([sourceColumn, computedColumn], [row]);
 
-    expect(resolveValue(row, dataSource.columns, computedColumn)).toBeNull();
+    expect(computeValue(row, dataSource.columns, computedColumn)).toBeNull();
   });
 
   test("returns null when two computed columns form a cycle", () => {
@@ -61,6 +61,6 @@ describe(resolveValue, () => {
     const row = makeRow({});
     const dataSource = makeDataSource([columnAWithCycle, columnB], [row]);
 
-    expect(resolveValue(row, dataSource.columns, columnAWithCycle)).toBeNull();
+    expect(computeValue(row, dataSource.columns, columnAWithCycle)).toBeNull();
   });
 });

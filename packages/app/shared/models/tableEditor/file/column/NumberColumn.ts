@@ -2,7 +2,7 @@ import type { ToData } from "@esposter/shared";
 
 import { AColumn, createAColumnSchema } from "#shared/models/tableEditor/file/column/AColumn";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import { Format, createFormatSchema } from "#shared/models/tableEditor/file/column/Format";
+import { createFormatSchema, Format } from "#shared/models/tableEditor/file/column/Format";
 import { NumberFormat, numberFormatSchema } from "#shared/models/tableEditor/file/column/NumberFormat";
 import { z } from "zod";
 

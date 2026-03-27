@@ -167,11 +167,11 @@ format(item[key] as never); // safe: key and format always come from the same de
 
 **NEVER** write a function that switches over a discriminant enum to call different logic for each case. This anti-pattern (a "type switch dispatcher") concentrates all variant logic in one place, prevents co-location, and forces every new variant to touch the central function.
 
-**Instead, use a `*ResolveMap` (or `*TypeMap`) where each entry is a resolver function** — receives the typed transformation and a context object:
+**Instead, use a `*ComputeMap` where each entry is a compute function** — receives the typed transformation and a context object:
 
 ```ts
 // BAD — if/switch chains in one place, hard to extend:
-export const resolveValue = (...) => {
+export const computeValue = (...) => {
   if (transformation.type === ConvertTo) { /* ... */ }
   else if (transformation.type === DatePart) { /* ... */ }
 };
@@ -180,44 +180,44 @@ export const resolveValue = (...) => {
 // services/column/transformation/computeConvertToTransformation.ts
 export const computeConvertToTransformation = (value, t: ConvertToTransformation) => ...;
 
-// services/column/transformation/ColumnTransformationResolveMap.ts
-export interface ResolveContext {
-  resolveSource: (sourceColumnId: string) => ColumnValue;
+// services/column/transformation/ColumnTransformationComputeMap.ts
+export interface ComputeContext {
+  computeSource: (sourceColumnId: string) => ColumnValue;
   findSource: (sourceColumnId: string) => DataSource["columns"][number] | undefined;
 }
 
-type TransformationResolver<T extends ColumnTransformation> = (
+type TransformationComputer<T extends ColumnTransformation> = (
   transformation: T,
-  context: ResolveContext,
+  context: ComputeContext,
 ) => ColumnValue;
 
-export const ColumnTransformationResolveMap = {
-  [ColumnTransformationType.ConvertTo]: (transformation, { resolveSource }) =>
-    computeConvertToTransformation(resolveSource(transformation.sourceColumnId), transformation),
+export const ColumnTransformationComputeMap = {
+  [ColumnTransformationType.ConvertTo]: (transformation, { computeSource }) =>
+    computeConvertToTransformation(computeSource(transformation.sourceColumnId), transformation),
 
-  [ColumnTransformationType.DatePart]: (transformation, { resolveSource, findSource }) => {
+  [ColumnTransformationType.DatePart]: (transformation, { computeSource, findSource }) => {
     const sourceColumn = findSource(transformation.sourceColumnId);
     if (sourceColumn?.type !== ColumnType.Date) return null;
     // TypeScript narrows sourceColumn to DateColumn via optional chaining + discriminant — sourceColumn.format is accessible
-    return computeDatePartTransformation(resolveSource(transformation.sourceColumnId), transformation, sourceColumn.format);
+    return computeDatePartTransformation(computeSource(transformation.sourceColumnId), transformation, sourceColumn.format);
   },
   // ...
 } as const satisfies {
-  [K in ColumnTransformationType]: TransformationResolver<Extract<ColumnTransformation, { type: K }>>;
+  [K in ColumnTransformationType]: TransformationComputer<Extract<ColumnTransformation, { type: K }>>;
 };
 
 // Dispatcher builds the context closure and calls the map — one expression:
-return ColumnTransformationResolveMap[column.transformation.type](column.transformation as never, { findSource, resolveSource });
+return ColumnTransformationComputeMap[column.transformation.type](column.transformation as never, { computeSource, findSource });
 ```
 
 **Rules:**
 
 - Each per-type compute function lives in `services/<feature>/transformation/compute<TypeName>Transformation.ts`
-- The map file (`<Noun>ResolveMap.ts`) imports all per-type functions; each entry is a resolver function
-- The `ResolveContext` interface is exported so callers can implement it
-- Use `as const satisfies { [K in TheType]: TransformationResolver<Extract<Union, { type: K }>> }` — each resolver entry is typed to its specific transformation subtype
+- The map file (`<Noun>ComputeMap.ts`) imports all per-type functions; each entry is a compute function
+- The `ComputeContext` interface is exported so callers can implement it
+- Use `as const satisfies { [K in TheType]: TransformationComputer<Extract<Union, { type: K }>> }` — each entry is typed to its specific transformation subtype
 - Call site uses `as never` on the transformation — TypeScript cannot correlate the discriminant key with the map entry's expected parameter type
-- TypeScript discriminant narrowing (e.g. `someColumn.type !== ColumnType.Date`) provides type-safe access to subtype fields inside resolvers without explicit casts
+- TypeScript discriminant narrowing (e.g. `someColumn.type !== ColumnType.Date`) provides type-safe access to subtype fields inside computers without explicit casts
 - Adding a new variant only requires: (1) a new per-type function file, (2) one new entry in the map
 
 ## Opt-In Shared Interfaces for Discriminated Union Members

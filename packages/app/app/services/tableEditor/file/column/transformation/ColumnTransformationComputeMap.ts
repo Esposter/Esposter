@@ -14,45 +14,45 @@ import { computeMathOperationTransformation } from "@/services/tableEditor/file/
 import { computeRegexMatchTransformation } from "@/services/tableEditor/file/column/transformation/computeRegexMatchTransformation";
 import { computeStringPatternTransformation } from "@/services/tableEditor/file/column/transformation/computeStringPatternTransformation";
 
-export interface ResolveContext {
+export interface ComputeContext {
+  computeSource: (sourceColumnId: string) => ColumnValue;
   findSource: (sourceColumnId: string) => Column | undefined;
-  resolveSource: (sourceColumnId: string) => ColumnValue;
   rowIndex?: number;
   rows?: Row[];
 }
 
-type TransformationResolver<T extends ColumnTransformation> = (
+type TransformationComputer<T extends ColumnTransformation> = (
   transformation: T,
-  context: ResolveContext,
+  context: ComputeContext,
 ) => ColumnValue;
 
-export const ColumnTransformationResolveMap = {
+export const ColumnTransformationComputeMap = {
   [ColumnTransformationType.Aggregation]: (transformation, { findSource, rowIndex, rows }) => {
     if (!rows || rowIndex === undefined) return null;
     return computeAggregationValue(rows, findSource, transformation, rowIndex);
   },
-  [ColumnTransformationType.ConvertTo]: (transformation, { resolveSource }) =>
-    computeConvertToTransformation(resolveSource(transformation.sourceColumnId), transformation),
-  [ColumnTransformationType.DatePart]: (transformation, { findSource, resolveSource }) => {
+  [ColumnTransformationType.ConvertTo]: (transformation, { computeSource }) =>
+    computeConvertToTransformation(computeSource(transformation.sourceColumnId), transformation),
+  [ColumnTransformationType.DatePart]: (transformation, { findSource, computeSource }) => {
     const sourceColumn = findSource(transformation.sourceColumnId);
     if (sourceColumn?.type !== ColumnType.Date) return null;
     return computeDatePartTransformation(
-      resolveSource(transformation.sourceColumnId),
+      computeSource(transformation.sourceColumnId),
       transformation,
       sourceColumn.format,
     );
   },
-  [ColumnTransformationType.MathOperation]: (transformation, { resolveSource }) => {
-    const resolveOperand = (operand: MathOperand): ColumnValue =>
-      operand.type === MathOperandType.Constant ? operand.value : resolveSource(operand.sourceColumnId);
-    return computeMathOperationTransformation(transformation, resolveOperand);
+  [ColumnTransformationType.MathOperation]: (transformation, { computeSource }) => {
+    const computeOperand = (operand: MathOperand): ColumnValue =>
+      operand.type === MathOperandType.Constant ? operand.value : computeSource(operand.sourceColumnId);
+    return computeMathOperationTransformation(transformation, computeOperand);
   },
-  [ColumnTransformationType.RegexMatch]: (transformation, { resolveSource }) =>
-    computeRegexMatchTransformation(resolveSource(transformation.sourceColumnId), transformation),
-  [ColumnTransformationType.StringPattern]: (transformation, { resolveSource }) => {
-    const values = transformation.sourceColumnIds.map(resolveSource);
+  [ColumnTransformationType.RegexMatch]: (transformation, { computeSource }) =>
+    computeRegexMatchTransformation(computeSource(transformation.sourceColumnId), transformation),
+  [ColumnTransformationType.StringPattern]: (transformation, { computeSource }) => {
+    const values = transformation.sourceColumnIds.map(computeSource);
     return computeStringPatternTransformation(values, transformation.pattern);
   },
 } as const satisfies {
-  [K in ColumnTransformationType]: TransformationResolver<Extract<ColumnTransformation, { type: K }>>;
+  [K in ColumnTransformationType]: TransformationComputer<Extract<ColumnTransformation, { type: K }>>;
 };
