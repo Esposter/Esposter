@@ -2,8 +2,8 @@ import type { AColumnForm } from "#shared/models/tableEditor/file/column/AColumn
 import type { BooleanFormat } from "#shared/models/tableEditor/file/column/BooleanFormat";
 
 import { createAColumnFormSchema } from "#shared/models/tableEditor/file/column/AColumnForm";
-import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { booleanColumnSchema } from "#shared/models/tableEditor/file/column/BooleanColumn";
+import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { z } from "zod";
 
 export interface BooleanColumnForm extends AColumnForm<ColumnType.Boolean> {

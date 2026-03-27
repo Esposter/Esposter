@@ -1,11 +1,11 @@
 import type { ToData } from "@esposter/shared";
 
 import { AColumn, createAColumnSchema } from "#shared/models/tableEditor/file/column/AColumn";
-import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import {
   AggregationTransformationType,
   aggregationTransformationTypeSchema,
 } from "#shared/models/tableEditor/file/column/AggregationTransformationType";
+import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { NumberFormat, numberFormatSchema } from "#shared/models/tableEditor/file/column/NumberFormat";
 import { z } from "zod";
 

@@ -1,10 +1,10 @@
-import type { ColumnTransformation } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformation";
 import type { ColumnFormat } from "#shared/models/tableEditor/file/column/ColumnFormat";
+import type { ColumnTransformation } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformation";
 import type { ToData } from "@esposter/shared";
 
 import { AColumn, createAColumnSchema } from "#shared/models/tableEditor/file/column/AColumn";
-import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { booleanFormatSchema } from "#shared/models/tableEditor/file/column/BooleanFormat";
+import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { dateFormatSchema } from "#shared/models/tableEditor/file/column/DateFormat";
 import { numberFormatSchema } from "#shared/models/tableEditor/file/column/NumberFormat";
 import { columnTransformationSchema } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformation";
