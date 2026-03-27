@@ -7,8 +7,10 @@ export enum MessageType {
   Webhook = "Webhook",
 }
 
+export const MessageTypes = new Set(Object.values(MessageType));
+
 export type StandardMessageType = Exclude<MessageType, MessageType.Webhook>;
 
 export const standardMessageTypeSchema = z.enum(
-  Object.values(MessageType).filter((type) => type !== MessageType.Webhook),
+  [...MessageTypes].filter((type) => type !== MessageType.Webhook),
 ) satisfies z.ZodType<StandardMessageType>;

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AchievementStatus } from "#shared/models/achievement/AchievementStatus";
+import { AchievementStatus, AchievementStatuses } from "#shared/models/achievement/AchievementStatus";
 import { useAchievementStore } from "@/store/achievement";
 
 const achievementStore = useAchievementStore();
@@ -45,10 +45,10 @@ const tab = ref(AchievementStatus.All);
         rounded
       />
       <v-tabs v-model="tab" mt-4>
-        <v-tab v-for="key in Object.values(AchievementStatus)" :key :value="key">{{ key }}</v-tab>
+        <v-tab v-for="key in AchievementStatuses" :key :value="key">{{ key }}</v-tab>
       </v-tabs>
       <v-window v-model="tab" mt-4>
-        <v-window-item v-for="key in Object.values(AchievementStatus)" :key py-2 :value="key">
+        <v-window-item v-for="key in AchievementStatuses" :key py-2 :value="key">
           <AchievementGrid :="achievementListMap[key]" />
         </v-window-item>
       </v-window>

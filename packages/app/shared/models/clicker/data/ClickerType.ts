@@ -7,3 +7,5 @@ export enum ClickerType {
 }
 
 export const clickerTypeSchema = z.enum(ClickerType) satisfies z.ZodType<ClickerType>;
+
+export const ClickerTypes = new Set(Object.values(ClickerType));

@@ -7,3 +7,5 @@ export enum TableEditorType {
 }
 
 export const tableEditorTypeSchema = z.enum(TableEditorType) satisfies z.ZodType<TableEditorType>;
+
+export const TableEditorTypes = new Set(Object.values(TableEditorType));

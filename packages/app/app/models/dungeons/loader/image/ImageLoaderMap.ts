@@ -14,3 +14,5 @@ export const ImageLoaderMap = mergeObjectsStrict(
   WorldLoaderMap,
   UIImageLoaderMap,
 );
+
+export const ImageLoaders = new Set(Object.values(ImageLoaderMap));

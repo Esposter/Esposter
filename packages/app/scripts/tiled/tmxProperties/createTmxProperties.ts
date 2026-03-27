@@ -1,7 +1,7 @@
 import type { LayerData } from "@@/scripts/tiled/models/LayerData";
 import type { TMXExternalTilesetParsed } from "parse-tmx";
 
-import { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/TilemapKey";
+import { TilemapKeys } from "#shared/models/dungeons/keys/TilemapKey";
 import { WORLD_ROOT_DIRECTORY } from "@@/scripts/tiled/constants";
 import { createLayers } from "@@/scripts/tiled/layers/createLayers";
 import { createBaseTilesetKey } from "@@/scripts/tiled/tmxProperties/createBaseTilesetKey";
@@ -13,7 +13,7 @@ export const createTmxProperties = async () => {
   const layersData: LayerData[] = [];
   const externalTilesets: TMXExternalTilesetParsed[] = [];
 
-  for (const key of Object.values(TilemapKey)) {
+  for (const key of TilemapKeys) {
     const {
       map: { layers, tilesets },
     } = await parseTmx(await readFile(`${WORLD_ROOT_DIRECTORY}/${getTilemapDirectory(key)}/index.tmx`, "utf8"));

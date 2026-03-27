@@ -2,3 +2,5 @@ import { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/TilemapKe
 import { z } from "zod";
 
 export const tilemapKeySchema = z.enum(TilemapKey) satisfies z.ZodType<TilemapKey>;
+
+export const TilemapKeys = new Set(Object.values(TilemapKey));

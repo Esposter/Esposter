@@ -13,3 +13,5 @@ export enum FilterType {
 }
 
 export const filterTypeSchema = z.enum(FilterType) satisfies z.ZodType<FilterType>;
+
+export const FilterTypes = new Set(Object.values(FilterType));

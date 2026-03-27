@@ -7,3 +7,5 @@ export enum BooleanFormat {
 }
 
 export const booleanFormatSchema = z.enum(BooleanFormat) satisfies z.ZodType<BooleanFormat>;
+
+export const BooleanFormats = new Set(Object.values(BooleanFormat));

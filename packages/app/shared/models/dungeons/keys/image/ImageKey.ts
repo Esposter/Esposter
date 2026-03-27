@@ -11,3 +11,5 @@ export const ImageKey = mergeObjectsStrict(BattleKey, InventoryKey, MonsterParty
 export type ImageKey = BattleKey | InventoryKey | MonsterPartyKey | TitleKey | UIImageKey | WorldKey;
 
 export const imageKeySchema = z.enum(ImageKey) satisfies z.ZodType<ImageKey>;
+
+export const ImageKeys = new Set(Object.values(ImageKey));

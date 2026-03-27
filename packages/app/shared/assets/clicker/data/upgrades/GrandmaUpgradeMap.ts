@@ -225,3 +225,5 @@ export const GrandmaUpgradeMap = {
     unlockConditions: [{ type: Target.Building, id: Target.Grandma, amount: 550 }],
   },
 } as const satisfies Record<GrandmaUpgradeId, Except<Upgrade<GrandmaUpgradeId>, "id">>;
+
+export const GrandmaUpgrades = new Set(Object.values(GrandmaUpgradeMap));

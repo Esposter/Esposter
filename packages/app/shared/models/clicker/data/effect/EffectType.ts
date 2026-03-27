@@ -10,3 +10,5 @@ export enum EffectType {
 }
 
 export const effectTypeSchema = z.enum(EffectType) satisfies z.ZodType<EffectType>;
+
+export const EffectTypes = new Set(Object.values(EffectType));

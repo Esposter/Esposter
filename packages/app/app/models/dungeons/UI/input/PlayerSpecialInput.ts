@@ -3,3 +3,5 @@ export enum PlayerSpecialInput {
   Confirm = "Confirm",
   Enter = "Enter",
 }
+
+export const PlayerSpecialInputs = new Set(Object.values(PlayerSpecialInput));

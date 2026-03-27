@@ -105,7 +105,18 @@ Applies to nested switches too (each inner switch on an enum needs its own guard
 
 ## Enum Values Array
 
-- **Never alias `Object.values(Enum)` as a constant** — use `Object.values(MyEnum)` directly at each call site. Never export a constant like `export const MY_FORMATS = Object.values(MyEnum)` just to avoid repeating `Object.values(...)`.
+- **Always export a pluralized `Set` constant from the enum's definition file** — add `export const EnumNames = new Set(Object.values(EnumName))` at the bottom of the file (after the Zod schema, if any). Use this exported constant at every call site instead of `Object.values(EnumName)`.
+  ```ts
+  // BooleanFormat.ts
+  export const BooleanFormats = new Set(Object.values(BooleanFormat));
+
+  // call sites
+  BooleanFormats.has(format)          // O(1) lookup
+  for (const f of BooleanFormats)     // iteration (Set is iterable)
+  [...BooleanFormats].map(fn)         // spread when array methods are needed
+  ```
+- **Never write `Object.values(SomeEnum)` inline** — always use the exported `Set` constant.
+- **Never use `new Set` just to call `.has()` on a small non-enum array** — if the values are already unique and the array is small, use `.some()` instead. Only `Set` when the source is an enum or the collection is large enough that O(n) repeated lookups would hurt performance.
 
 ## Enum Refs
 
@@ -212,16 +223,17 @@ return ColumnTransformationResolveMap[column.transformation.type](column.transfo
 When some (but not all) members of a discriminated union share a common field, define a shared interface and Zod schema that members **opt into** by extending — never force the field onto all members.
 
 ```ts
-// shared/models/.../WithSourceColumnId.ts — opt-in base for single-source transformations
-export interface WithSourceColumnId { sourceColumnId: string; }
-export const withSourceColumnIdSchema = z.object({ sourceColumnId: z.string() });
+// shared/models/.../SourceColumnId.ts — opt-in base for single-source transformations
+export interface SourceColumnId { sourceColumnId: string; }
+export const sourceColumnIdSchema = z.object({ sourceColumnId: z.string() });
 
-// shared/models/.../WithSourceColumnIds.ts — opt-in base for multi-source transformations
-export interface WithSourceColumnIds { sourceColumnIds: string[]; }
-export const withSourceColumnIdsSchema = z.object({ sourceColumnIds: z.array(z.string()).default([]) });
+// shared/models/.../SourceColumnIds.ts — opt-in base for multi-source transformations
+export interface SourceColumnIds { sourceColumnIds: string[]; }
+export const sourceColumnIdsSchema = z.object({ sourceColumnIds: z.array(z.string()).default([]) });
 
-// Each transformation that needs a source column extends the base:
-export const convertToTransformationSchema = withSourceColumnIdSchema.extend({
+// Each transformation that needs a source column spreads the base schema's .shape:
+export const convertToTransformationSchema = z.object({
+  ...sourceColumnIdSchema.shape,
   type: z.literal(ColumnTransformationType.ConvertTo),
   targetType: z.enum([...]),
 });
@@ -237,23 +249,24 @@ export const mathOperationTransformationSchema = z.object({
 **Rules:**
 
 - Each shared interface/schema lives in its own file (one export per file rule)
-- Members that need the shared field use `.extend()` on the base schema
-- Members that don't need it just use `z.object({...})` directly
-- Use `WithSourceColumnId` (singular) for single-source, `WithSourceColumnIds` (plural) for multi-source
-- Transformations with column type constraints declare `applicableColumnTypes: ColumnType[]` in `.meta()` — used by the UI to filter source column dropdowns. This comes from `GlobalMeta extends Partial<WithApplicableColumnTypes>` in `shared/types/zod.d.ts`
-- **`WithApplicableColumnTypes`** — interface in `shared/models/.../WithApplicableColumnTypes.ts` with `readonly applicableColumnTypes: ColumnType[]`. Both Zod `.meta()` (via `GlobalMeta`) and non-schema definitions (e.g. `ColumnStatDefinition`) extend this interface so the same field name is used everywhere:
+- No `With` prefix on mixin interface names — `SourceColumnId` not `WithSourceColumnId`; schema variables follow: `sourceColumnIdSchema` not `withSourceColumnIdSchema`
+- Members spread `.shape` from the base schema (never `.extend()`) — see zod skill
+- Members that don't need the shared field just use `z.object({...})` directly
+- Use `SourceColumnId` (singular) for single-source, `SourceColumnIds` (plural) for multi-source
+- Transformations with column type constraints declare `applicableColumnTypes: ColumnType[]` in `.meta()` — used by the UI to filter source column dropdowns. This comes from `GlobalMeta extends Partial<ApplicableColumnTypes>` in `shared/types/zod.d.ts`
+- **`ApplicableColumnTypes`** — interface in `shared/models/.../ApplicableColumnTypes.ts` with `readonly applicableColumnTypes: ColumnType[]`. Both Zod `.meta()` (via `GlobalMeta`) and non-schema definitions (e.g. `ColumnStatDefinition`) extend this interface so the same field name is used everywhere:
 
   ```ts
-  // shared/models/.../WithApplicableColumnTypes.ts
-  export interface WithApplicableColumnTypes {
+  // shared/models/.../ApplicableColumnTypes.ts
+  export interface ApplicableColumnTypes {
     readonly applicableColumnTypes: ColumnType[];
   }
 
   // app/models/.../ColumnStatDefinition.ts
-  export interface ColumnStatDefinition<T extends ColumnStatKey> extends WithApplicableColumnTypes { ... }
+  export interface ColumnStatDefinition<T extends ColumnStatKey> extends ApplicableColumnTypes { ... }
 
   // shared/types/zod.d.ts — makes it optional in schema .meta()
-  interface GlobalMeta extends Partial<WithApplicableColumnTypes> { ... }
+  interface GlobalMeta extends Partial<ApplicableColumnTypes> { ... }
 
   // Usage in schema:
   .meta({ applicableColumnTypes: [ColumnType.Date], title: "..." })

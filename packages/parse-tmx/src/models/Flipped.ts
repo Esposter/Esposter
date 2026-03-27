@@ -3,3 +3,5 @@ export enum Flipped {
   Vertically = 0x40000000,
   Horizontally = 0x80000000,
 }
+
+export const Flippeds = new Set(Object.values(Flipped));

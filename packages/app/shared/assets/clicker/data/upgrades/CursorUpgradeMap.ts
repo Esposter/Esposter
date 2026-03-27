@@ -230,3 +230,5 @@ export const CursorUpgradeMap = {
     unlockConditions: [{ id: Target.Cursor, type: Target.Building, amount: 500 }],
   },
 } as const satisfies Record<CursorUpgradeId, Except<Upgrade<CursorUpgradeId>, "id">>;
+
+export const CursorUpgrades = new Set(Object.values(CursorUpgradeMap));

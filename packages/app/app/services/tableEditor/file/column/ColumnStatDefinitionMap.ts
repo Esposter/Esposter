@@ -106,3 +106,5 @@ export const ColumnStatDefinitionMap = {
     title: "Unique",
   }),
 } as const satisfies { [K in ColumnStatKey]: ColumnStatDefinition<K> };
+
+export const ColumnStatDefinitions = new Set(Object.values(ColumnStatDefinitionMap));

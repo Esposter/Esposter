@@ -2,7 +2,7 @@
 import type { SerializableValue } from "@esposter/db-schema";
 
 import { FilterTypeHasIconMap } from "@/models/message/FilterTypeHasIconMap";
-import { FilterTypeHas } from "@esposter/db-schema";
+import { FilterTypeHas, FilterTypeHases } from "@esposter/db-schema";
 
 const emit = defineEmits<{ select: [value: SerializableValue] }>();
 </script>
@@ -10,7 +10,7 @@ const emit = defineEmits<{ select: [value: SerializableValue] }>();
 <template>
   <v-list density="compact" py-0>
     <v-hover
-      v-for="filterTypeHas in Object.values(FilterTypeHas)"
+      v-for="filterTypeHas in FilterTypeHases"
       :key="filterTypeHas"
       #default="{ isHovering, props }"
     >

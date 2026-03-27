@@ -6,3 +6,5 @@ export enum BinaryOperator {
   lt = "lt",
   ne = "ne",
 }
+
+export const BinaryOperators = new Set(Object.values(BinaryOperator));

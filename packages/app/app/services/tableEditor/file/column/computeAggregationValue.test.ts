@@ -74,10 +74,11 @@ describe(computeAggregationValue, () => {
 
     const transformation = makeAggregationTransformation(AggregationTransformationType.PercentOfTotal);
     const rowsWithNull = [makeRow({ "": null }), makeRow({ "": 10 })];
-    const dsWithNull = makeDataSource([sourceColumn], rowsWithNull);
-    const findSourceWithNull = (sourceColumnId: string) => dsWithNull.columns.find(({ id }) => id === sourceColumnId);
+    const dataSourceWithNull = makeDataSource([sourceColumn], rowsWithNull);
+    const findSourceWithNull = (sourceColumnId: string) =>
+      dataSourceWithNull.columns.find(({ id }) => id === sourceColumnId);
 
-    expect(computeAggregationValue(dsWithNull.rows, findSourceWithNull, transformation, 0)).toBeNull();
+    expect(computeAggregationValue(dataSourceWithNull.rows, findSourceWithNull, transformation, 0)).toBeNull();
   });
 
   test(`${AggregationTransformationType.PercentOfTotal} returns null when total is zero`, () => {
@@ -85,10 +86,11 @@ describe(computeAggregationValue, () => {
 
     const transformation = makeAggregationTransformation(AggregationTransformationType.PercentOfTotal);
     const zeroRows = [makeRow({ "": 0 }), makeRow({ "": 0 })];
-    const dsZero = makeDataSource([sourceColumn], zeroRows);
-    const findSourceZero = (sourceColumnId: string) => dsZero.columns.find(({ id }) => id === sourceColumnId);
+    const dataSourceZero = makeDataSource([sourceColumn], zeroRows);
+    const findSourceZero = (sourceColumnId: string) =>
+      dataSourceZero.columns.find(({ id }) => id === sourceColumnId);
 
-    expect(computeAggregationValue(dsZero.rows, findSourceZero, transformation, 0)).toBeNull();
+    expect(computeAggregationValue(dataSourceZero.rows, findSourceZero, transformation, 0)).toBeNull();
   });
 
   test(`${AggregationTransformationType.RunningSum} skips null values`, () => {
@@ -96,10 +98,11 @@ describe(computeAggregationValue, () => {
 
     const transformation = makeAggregationTransformation(AggregationTransformationType.RunningSum);
     const rowsWithNull = [makeRow({ "": 10 }), makeRow({ "": null }), makeRow({ "": 20 })];
-    const dsWithNull = makeDataSource([sourceColumn], rowsWithNull);
-    const findSourceWithNull = (sourceColumnId: string) => dsWithNull.columns.find(({ id }) => id === sourceColumnId);
+    const dataSourceWithNull = makeDataSource([sourceColumn], rowsWithNull);
+    const findSourceWithNull = (sourceColumnId: string) =>
+      dataSourceWithNull.columns.find(({ id }) => id === sourceColumnId);
 
-    expect(computeAggregationValue(dsWithNull.rows, findSourceWithNull, transformation, 0)).toBe(10);
-    expect(computeAggregationValue(dsWithNull.rows, findSourceWithNull, transformation, 2)).toBe(30);
+    expect(computeAggregationValue(dataSourceWithNull.rows, findSourceWithNull, transformation, 0)).toBe(10);
+    expect(computeAggregationValue(dataSourceWithNull.rows, findSourceWithNull, transformation, 2)).toBe(30);
   });
 });

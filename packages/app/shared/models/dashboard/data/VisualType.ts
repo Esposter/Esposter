@@ -22,3 +22,5 @@ export enum VisualType {
 }
 
 export const visualTypeSchema = z.enum(VisualType) satisfies z.ZodType<VisualType>;
+
+export const VisualTypes = new Set(Object.values(VisualType));
