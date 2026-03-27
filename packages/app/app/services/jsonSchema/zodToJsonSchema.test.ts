@@ -394,7 +394,7 @@ describe(zodToJsonSchema, () => {
     test("sets layout.getItems from meta", () => {
       expect.hasAssertions();
 
-      const schema = z.object({ sourceColumnId: z.string().meta({ getItems: "context.sourceColumnItems" }) });
+      const schema = z.object({ sourceColumnId: z.string().meta({ getItems: "context.columnItems" }) });
       const result = zodToJsonSchema(schema);
 
       expect(result).toMatchInlineSnapshot(`
@@ -402,9 +402,9 @@ describe(zodToJsonSchema, () => {
           "additionalProperties": false,
           "properties": {
             "sourceColumnId": {
-              "getItems": "context.sourceColumnItems",
+              "getItems": "context.columnItems",
               "layout": {
-                "getItems": "context.sourceColumnItems",
+                "getItems": "context.columnItems",
               },
               "title": "Source Column Id",
               "type": "string",
@@ -450,7 +450,7 @@ describe(zodToJsonSchema, () => {
       expect.hasAssertions();
 
       const schema = z.object({
-        sourceColumnId: z.string().meta({ comp: "select", getItems: "context.sourceColumnItems" }),
+        sourceColumnId: z.string().meta({ comp: "select", getItems: "context.columnItems" }),
       });
       const result = zodToJsonSchema(schema);
 
@@ -460,10 +460,10 @@ describe(zodToJsonSchema, () => {
           "properties": {
             "sourceColumnId": {
               "comp": "select",
-              "getItems": "context.sourceColumnItems",
+              "getItems": "context.columnItems",
               "layout": {
                 "comp": "select",
-                "getItems": "context.sourceColumnItems",
+                "getItems": "context.columnItems",
               },
               "title": "Source Column Id",
               "type": "string",

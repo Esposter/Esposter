@@ -22,7 +22,7 @@ export const aggregationTransformationSchema = z
     ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.Aggregation).readonly()).shape,
     aggregationType: aggregationTransformationTypeSchema.meta({ title: "Aggregation" }),
     sourceColumnId: sourceColumnIdSchema.shape.sourceColumnId.meta({
-      getItems: "context.numberSourceColumnItems",
+      getItems: "context.numberColumnItems",
     }),
   })
   .meta({

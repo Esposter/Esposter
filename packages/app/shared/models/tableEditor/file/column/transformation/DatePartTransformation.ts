@@ -18,7 +18,7 @@ export const datePartTransformationSchema = z
     ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.DatePart).readonly()).shape,
     part: datePartTypeSchema,
     sourceColumnId: sourceColumnIdSchema.shape.sourceColumnId.meta({
-      getItems: "context.dateSourceColumnItems",
+      getItems: "context.dateColumnItems",
     }),
   })
   .meta({

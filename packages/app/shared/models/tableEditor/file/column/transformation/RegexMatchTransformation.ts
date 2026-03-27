@@ -19,7 +19,7 @@ export const regexMatchTransformationSchema = z
     groupIndex: z.number().int().nonnegative().meta({ title: "Group Index" }),
     pattern: z.string().meta({ title: "Pattern" }),
     sourceColumnId: sourceColumnIdSchema.shape.sourceColumnId.meta({
-      getItems: "context.stringSourceColumnItems",
+      getItems: "context.stringColumnItems",
     }),
   })
   .meta({

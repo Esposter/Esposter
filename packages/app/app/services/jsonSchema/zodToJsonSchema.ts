@@ -33,6 +33,8 @@ const applyPropertyHooks = (properties: z.core.JSONSchema.JSONSchema["properties
   });
 };
 
+const layoutProperties = ["comp", "getProps", "getItems"] as const;
+
 export const zodToJsonSchema = (schema: z.ZodType) => {
   // Only get the minimal information required to integrate with vjsf
   // $schema is stripped because vjsf's internal Ajv2019 instance does not have the draft 2020-12 meta-schema loaded
@@ -45,11 +47,11 @@ export const zodToJsonSchema = (schema: z.ZodType) => {
       if ("discriminator" in def && def.discriminator) jsonSchema.discriminator = { propertyName: def.discriminator };
 
       const meta = zodSchema.meta();
-      if (!meta?.comp && !meta?.getProps && !meta?.getItems) return;
-      const layout: Record<string, unknown> = {};
-      if (meta.comp) layout.comp = meta.comp;
-      if (meta.getProps) layout.getProps = meta.getProps;
-      if (meta.getItems) layout.getItems = meta.getItems;
+      if (!meta) return;
+      const layout = Object.fromEntries(
+        layoutProperties.filter((key) => meta[key] !== undefined).map((key) => [key, meta[key]]),
+      );
+      if (Object.keys(layout).length === 0) return;
       jsonSchema.layout = layout;
     },
   });

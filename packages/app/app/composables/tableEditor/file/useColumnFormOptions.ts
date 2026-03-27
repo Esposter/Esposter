@@ -11,16 +11,16 @@ export const useColumnFormOptions = (dataSource: MaybeRefOrGetter<DataSource>, c
     const currentNameValue = toValue(currentName);
     return {
       context: {
+        columnItems: dataSourceValue.columns.map(({ id, name }) => ({ title: name, value: id })),
         columnNames: dataSourceValue.columns.map(({ name }) => name),
         currentName: currentNameValue,
-        dateSourceColumnItems: dataSourceValue.columns
+        dateColumnItems: dataSourceValue.columns
           .filter(({ type }) => type === ColumnType.Date || type === ColumnType.Computed)
           .map(({ id, name }) => ({ title: name, value: id })),
-        numberSourceColumnItems: dataSourceValue.columns
+        numberColumnItems: dataSourceValue.columns
           .filter(({ type }) => type === ColumnType.Number || type === ColumnType.Computed)
           .map(({ id, name }) => ({ title: name, value: id })),
-        sourceColumnItems: dataSourceValue.columns.map(({ id, name }) => ({ title: name, value: id })),
-        stringSourceColumnItems: dataSourceValue.columns
+        stringColumnItems: dataSourceValue.columns
           .filter(({ type }) => type === ColumnType.String || type === ColumnType.Computed)
           .map(({ id, name }) => ({ title: name, value: id })),
       },

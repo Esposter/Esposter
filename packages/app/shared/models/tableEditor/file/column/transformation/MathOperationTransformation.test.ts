@@ -20,10 +20,10 @@ describe("mathOperationTransformation", () => {
                 "properties": {
                   "sourceColumnId": {
                     "comp": "select",
-                    "getItems": "context.numberSourceColumnItems",
+                    "getItems": "context.numberColumnItems",
                     "layout": {
                       "comp": "select",
-                      "getItems": "context.numberSourceColumnItems",
+                      "getItems": "context.numberColumnItems",
                     },
                     "title": "Column",
                     "type": "string",
@@ -112,10 +112,10 @@ describe("mathOperationTransformation", () => {
                           "properties": {
                             "sourceColumnId": {
                               "comp": "select",
-                              "getItems": "context.numberSourceColumnItems",
+                              "getItems": "context.numberColumnItems",
                               "layout": {
                                 "comp": "select",
-                                "getItems": "context.numberSourceColumnItems",
+                                "getItems": "context.numberColumnItems",
                               },
                               "title": "Column",
                               "type": "string",

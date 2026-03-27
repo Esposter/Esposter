@@ -7,7 +7,7 @@ export interface SourceColumnId {
 export const sourceColumnIdSchema = z.object({
   sourceColumnId: z.string().meta({
     comp: "select",
-    getItems: "context.sourceColumnItems",
+    getItems: "context.columnItems",
     title: "Source Column",
   }),
 });

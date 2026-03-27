@@ -13,7 +13,7 @@ export const columnMathOperandSchema = z
     ...createItemEntityTypeSchema(z.literal(MathOperandType.Column).readonly()).shape,
     sourceColumnId: z.string().meta({
       comp: "select",
-      getItems: "context.numberSourceColumnItems",
+      getItems: "context.numberColumnItems",
       title: "Column",
     }),
   })

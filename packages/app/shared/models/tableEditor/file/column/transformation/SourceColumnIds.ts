@@ -9,7 +9,7 @@ export const sourceColumnIdsSchema = z.object({
     .array(
       z.string().meta({
         comp: "select",
-        getItems: "context.sourceColumnItems",
+        getItems: "context.columnItems",
         title: "Source Column",
       }),
     )

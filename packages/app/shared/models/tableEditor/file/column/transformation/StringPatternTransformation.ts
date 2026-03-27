@@ -23,7 +23,7 @@ export const stringPatternTransformationSchema = z
       .array(
         z.string().meta({
           comp: "select",
-          getItems: "context.stringSourceColumnItems",
+          getItems: "context.stringColumnItems",
           title: "Source Column",
         }),
       )

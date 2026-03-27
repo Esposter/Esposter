@@ -1,10 +1,10 @@
 import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
 
 export interface ColumnFormVjsfContext {
+  columnItems: SelectItemCategoryDefinition<string>[];
   columnNames: string[];
   currentName: string;
-  dateSourceColumnItems: SelectItemCategoryDefinition<string>[];
-  numberSourceColumnItems: SelectItemCategoryDefinition<string>[];
-  sourceColumnItems: SelectItemCategoryDefinition<string>[];
-  stringSourceColumnItems: SelectItemCategoryDefinition<string>[];
+  dateColumnItems: SelectItemCategoryDefinition<string>[];
+  numberColumnItems: SelectItemCategoryDefinition<string>[];
+  stringColumnItems: SelectItemCategoryDefinition<string>[];
 }
