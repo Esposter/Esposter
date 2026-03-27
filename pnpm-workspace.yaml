@@ -152,7 +152,7 @@ catalog:
   grid-layout-plus: ^1.1.1
   gsap: ^3.14.2
   h3: ^1.15.10
-  happy-dom: ^20.8.8
+  happy-dom: ^20.8.9
   howler: ^2.2.4
   idb: ^8.0.3
   is-mobile: ^5.0.0
