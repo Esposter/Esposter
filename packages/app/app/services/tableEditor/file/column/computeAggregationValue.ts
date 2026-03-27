@@ -15,7 +15,7 @@ interface AggregationComputeContext {
 type AggregationTransformationComputer = (context: AggregationComputeContext) => ColumnValue;
 
 const AggregationTransformationComputeMap = {
-  [AggregationTransformationType.PercentOfTotal]: ({ rows, rowIndex, getNumber }) => {
+  [AggregationTransformationType.PercentOfTotal]: ({ getNumber, rowIndex, rows }) => {
     const currentValue = getNumber(takeOne(rows, rowIndex));
     if (currentValue === null) return null;
     const total = rows.reduce<number>((sum, row) => {
@@ -24,14 +24,14 @@ const AggregationTransformationComputeMap = {
     }, 0);
     return total === 0 ? null : (currentValue / total) * 100;
   },
-  [AggregationTransformationType.Rank]: ({ rows, rowIndex, getNumber }) => {
+  [AggregationTransformationType.Rank]: ({ getNumber, rowIndex, rows }) => {
     const currentValue = getNumber(takeOne(rows, rowIndex));
     if (currentValue === null) return null;
     const allValues = rows.map((row) => getNumber(row)).filter((value) => value !== null);
     const sorted = allValues.toSorted((a, b) => b - a);
     return sorted.indexOf(currentValue) + 1;
   },
-  [AggregationTransformationType.RunningSum]: ({ rows, rowIndex, getNumber }) => {
+  [AggregationTransformationType.RunningSum]: ({ getNumber, rowIndex, rows }) => {
     let sum = 0;
     for (let index = 0; index <= rowIndex; index++) {
       const value = getNumber(takeOne(rows, index));

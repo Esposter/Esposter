@@ -3,8 +3,8 @@ import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
 
 import { Row } from "#shared/models/tableEditor/file/datasource/Row";
-import { isEditableColumnValue } from "@/services/tableEditor/file/column/isEditableColumnValue";
 import { computeValue } from "@/services/tableEditor/file/column/computeValue";
+import { isEditableColumnValue } from "@/services/tableEditor/file/column/isEditableColumnValue";
 import { OUTLIER_HIGHLIGHT_CLASS } from "@/services/tableEditor/file/constants";
 import { getItemId } from "@/services/tableEditor/file/getItemId";
 import { useFindReplaceStore } from "@/store/tableEditor/file/findReplace";

@@ -1,8 +1,8 @@
 import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
-import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import type { ColumnTransformation } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformation";
 import type { MathOperand } from "#shared/models/tableEditor/file/column/transformation/MathOperand";
+import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
@@ -33,7 +33,7 @@ export const ColumnTransformationComputeMap = {
   },
   [ColumnTransformationType.ConvertTo]: (transformation, { computeSource }) =>
     computeConvertToTransformation(computeSource(transformation.sourceColumnId), transformation),
-  [ColumnTransformationType.DatePart]: (transformation, { findSource, computeSource }) => {
+  [ColumnTransformationType.DatePart]: (transformation, { computeSource, findSource }) => {
     const sourceColumn = findSource(transformation.sourceColumnId);
     if (sourceColumn?.type !== ColumnType.Date) return null;
     return computeDatePartTransformation(

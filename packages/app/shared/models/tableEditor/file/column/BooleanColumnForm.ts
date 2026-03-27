@@ -7,7 +7,7 @@ import { booleanColumnSchema } from "#shared/models/tableEditor/file/column/Bool
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { z } from "zod";
 
-export interface BooleanColumnForm extends AColumnForm<ColumnType.Boolean>, Format<BooleanFormat> {}
+export interface BooleanColumnForm extends AColumnForm<ColumnType.Boolean>, Partial<Format<BooleanFormat>> {}
 
 export const booleanColumnFormSchema = z
   .object({

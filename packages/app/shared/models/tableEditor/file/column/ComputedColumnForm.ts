@@ -9,7 +9,7 @@ import { computedColumnSchema } from "#shared/models/tableEditor/file/column/Com
 import { columnTransformationSchema } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformation";
 import { z } from "zod";
 
-export interface ComputedColumnForm extends AColumnForm<ColumnType.Computed>, Format<ColumnFormat> {
+export interface ComputedColumnForm extends AColumnForm<ColumnType.Computed>, Partial<Format<ColumnFormat>> {
   transformation: ColumnTransformation;
 }
 

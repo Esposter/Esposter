@@ -7,7 +7,7 @@ import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { numberColumnSchema } from "#shared/models/tableEditor/file/column/NumberColumn";
 import { z } from "zod";
 
-export interface NumberColumnForm extends AColumnForm<ColumnType.Number>, Format<NumberFormat> {}
+export interface NumberColumnForm extends AColumnForm<ColumnType.Number>, Partial<Format<NumberFormat>> {}
 
 export const numberColumnFormSchema = z
   .object({
