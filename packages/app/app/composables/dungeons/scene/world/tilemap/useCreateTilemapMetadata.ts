@@ -1,7 +1,7 @@
 import type { Tilemaps } from "phaser";
 
 import { LayerName } from "#shared/generated/tiled/layers/Home/LayerName";
-import { ObjectgroupName, ObjectgroupNames } from "#shared/generated/tiled/layers/ObjectgroupName";
+import { ObjectgroupNames } from "#shared/generated/tiled/layers/ObjectgroupName";
 import { BaseTilesetKeys } from "#shared/generated/tiled/propertyTypes/enum/BaseTilesetKey";
 import { addTilesetImage } from "@/services/dungeons/tilemap/addTilesetImage";
 import { createLayer } from "@/services/dungeons/tilemap/createLayer";
