@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { type ImageKey, ImageKeys } from "#shared/models/dungeons/keys/image/ImageKey";
+import { ImageKeys } from "#shared/models/dungeons/keys/image/ImageKey";
+import type { ImageKey } from "#shared/models/dungeons/keys/image/ImageKey";
 import { useWorldPlayerStore } from "@/store/dungeons/world/player";
 import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 import { Image } from "vue-phaserjs";
