@@ -105,16 +105,18 @@ Applies to nested switches too (each inner switch on an enum needs its own guard
 
 ## Enum Values Array
 
-- **Always export a pluralized `Set` constant from the enum's definition file** — add `export const EnumNames = new Set(Object.values(EnumName))` at the bottom of the file (after the Zod schema, if any). Use this exported constant at every call site instead of `Object.values(EnumName)`.
+- **Export a pluralized `Set` constant from the enum's definition file only when `Object.values` is actually used** — add `export const EnumNames = new Set(Object.values(EnumName))` at the bottom of the file (after the Zod schema, if any). Do not pre-emptively add it if the enum values are never iterated or checked. Use this exported constant at every call site instead of `Object.values(EnumName)`.
+
   ```ts
   // BooleanFormat.ts
   export const BooleanFormats = new Set(Object.values(BooleanFormat));
 
   // call sites
-  BooleanFormats.has(format)          // O(1) lookup
-  for (const f of BooleanFormats)     // iteration (Set is iterable)
-  [...BooleanFormats].map(fn)         // spread when array methods are needed
+  BooleanFormats.has(format); // O(1) lookup
+  for (const f of BooleanFormats) // iteration (Set is iterable)
+    [...BooleanFormats].map(fn); // spread when array methods are needed
   ```
+
 - **Never write `Object.values(SomeEnum)` inline** — always use the exported `Set` constant.
 - **Never use `new Set` just to call `.has()` on a small non-enum array** — if the values are already unique and the array is small, use `.some()` instead. Only `Set` when the source is an enum or the collection is large enough that O(n) repeated lookups would hurt performance.
 

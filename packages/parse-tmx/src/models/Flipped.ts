@@ -4,4 +4,4 @@ export enum Flipped {
   Horizontally = 0x80000000,
 }
 
-export const Flippeds = new Set(Object.values(Flipped));
+export const Flippeds: ReadonlySet<string | Flipped> = new Set(Object.values(Flipped));

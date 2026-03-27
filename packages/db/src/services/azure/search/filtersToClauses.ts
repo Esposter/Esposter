@@ -12,10 +12,8 @@ import {
   serializeValue,
   StandardMessageEntityPropertyNames,
 } from "@esposter/db-schema";
+import { ContentTypes } from "@/models/ContentType";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
-import { types } from "mime-types";
-
-const ContentTypes = Object.values(types);
 
 export const filtersToClauses = (filters: Filter[]): Clause[] => {
   const clauses: Clause[] = [];
@@ -50,21 +48,21 @@ export const filtersToClauses = (filters: Filter[]): Clause[] => {
               clauses.push({
                 key: `${StandardMessageEntityPropertyNames.files}/${FileEntityPropertyNames.mimetype}`,
                 operator: SearchOperator.arrayContains,
-                value: ContentTypes.filter((contentType) => contentType.startsWith("image/")),
+                value: [...ContentTypes].filter((contentType) => contentType.startsWith("image/")),
               });
               break;
             case FilterTypeHas.Video:
               clauses.push({
                 key: `${StandardMessageEntityPropertyNames.files}/${FileEntityPropertyNames.mimetype}`,
                 operator: SearchOperator.arrayContains,
-                value: ContentTypes.filter((contentType) => contentType.startsWith("video/")),
+                value: [...ContentTypes].filter((contentType) => contentType.startsWith("video/")),
               });
               break;
             case FilterTypeHas.Sound:
               clauses.push({
                 key: `${StandardMessageEntityPropertyNames.files}/${FileEntityPropertyNames.mimetype}`,
                 operator: SearchOperator.arrayContains,
-                value: ContentTypes.filter((contentType) => contentType.startsWith("audio/")),
+                value: [...ContentTypes].filter((contentType) => contentType.startsWith("audio/")),
               });
               break;
             case FilterTypeHas.Forward:
