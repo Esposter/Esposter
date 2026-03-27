@@ -16,7 +16,6 @@ describe(computeAggregationValue, () => {
     aggregationType: AggregationTransformationType,
   ): AggregationTransformation => ({
     aggregationType,
-    id: "",
     sourceColumnId: sourceColumn.id,
     type: ColumnTransformationType.Aggregation,
   });
@@ -26,7 +25,6 @@ describe(computeAggregationValue, () => {
 
     const transformation: AggregationTransformation = {
       aggregationType: AggregationTransformationType.RunningSum,
-      id: "",
       sourceColumnId: "-1",
       type: ColumnTransformationType.Aggregation,
     };
