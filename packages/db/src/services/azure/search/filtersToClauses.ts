@@ -1,6 +1,7 @@
 /* eslint-disable perfectionist/sort-switch-case */
 import type { Clause, Filter } from "@esposter/db-schema";
 
+import { ContentTypes } from "@/models/ContentType";
 import { getSearchNonNullClause } from "@/services/azure/search/getSearchNonNullClause";
 import { dayjs } from "@/services/dayjs";
 import {
@@ -12,7 +13,6 @@ import {
   serializeValue,
   StandardMessageEntityPropertyNames,
 } from "@esposter/db-schema";
-import { ContentTypes } from "@/models/ContentType";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 
 const IMAGE_CONTENT_TYPES = [...ContentTypes].filter((contentType) => contentType.startsWith("image/"));
