@@ -14,8 +14,7 @@ const { editItem } = tableEditorStore;
 const { isDirty, tableEditorType } = storeToRefs(tableEditorStore);
 const tableEditorTypeName = computed(() => getTableEditorTitle(tableEditorType.value));
 const itemType = route.query[ITEM_TYPE_QUERY_PARAMETER_KEY];
-if (TableEditorTypes.has(itemType as TableEditorType))
-  tableEditorType.value = itemType as TableEditorType;
+if (TableEditorTypes.has(itemType as TableEditorType)) tableEditorType.value = itemType as TableEditorType;
 const itemId = route.query[ID_QUERY_PARAMETER_KEY];
 
 useConfirmBeforeNavigation(isDirty);

@@ -28,7 +28,15 @@ const headers = computed(() => [
   ...displayColumns.value.map((column) => ({
     key: toColumnKey(column.name),
     title: column.name,
-    value: (row: Row) => computeValue(row, dataSource.columns, column),
+    value: (row: Row) =>
+      computeValue(
+        row,
+        dataSource.columns,
+        column,
+        new Set(),
+        filteredDataSource.value.rows,
+        rowIndexIdMap.value.get(row.id),
+      ),
   })),
   { key: "actions", sortable: false, title: "Actions" },
 ]);
@@ -110,6 +118,7 @@ const rowIndexIdMap = computed(() => new Map(filteredDataSource.value.rows.map((
             :columns="dataSource.columns"
             :item
             :row-index="rowIndexIdMap.get(item.id) ?? -1"
+            :rows="filteredDataSource.rows"
           />
         </template>
         <template #tfoot>

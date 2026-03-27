@@ -1,13 +1,10 @@
 import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
-import type { ComputedColumn } from "#shared/models/tableEditor/file/column/ComputedColumn";
 import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ColumnTransformationComputeMap } from "@/services/tableEditor/file/column/transformation/ColumnTransformationComputeMap";
 import { takeOne } from "@esposter/shared";
-
-const isComputedColumn = (column: Column): column is ComputedColumn => column.type === ColumnType.Computed;
 
 export const computeValue = (
   row: Row,
@@ -17,7 +14,7 @@ export const computeValue = (
   rows?: Row[],
   rowIndex?: number,
 ): ColumnValue => {
-  if (!isComputedColumn(column)) return takeOne(row.data, column.name);
+  if (column.type !== ColumnType.Computed) return takeOne(row.data, column.name);
   else if (visited.has(column.id)) return null;
   else {
     visited.add(column.id);

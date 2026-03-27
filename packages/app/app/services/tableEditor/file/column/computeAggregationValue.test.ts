@@ -87,8 +87,7 @@ describe(computeAggregationValue, () => {
     const transformation = makeAggregationTransformation(AggregationTransformationType.PercentOfTotal);
     const zeroRows = [makeRow({ "": 0 }), makeRow({ "": 0 })];
     const dataSourceZero = makeDataSource([sourceColumn], zeroRows);
-    const findSourceZero = (sourceColumnId: string) =>
-      dataSourceZero.columns.find(({ id }) => id === sourceColumnId);
+    const findSourceZero = (sourceColumnId: string) => dataSourceZero.columns.find(({ id }) => id === sourceColumnId);
 
     expect(computeAggregationValue(dataSourceZero.rows, findSourceZero, transformation, 0)).toBeNull();
   });

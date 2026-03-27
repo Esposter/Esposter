@@ -16,9 +16,10 @@ interface ItemSlotProps {
   columns: Column[];
   item: Row;
   rowIndex: number;
+  rows: Row[];
 }
 
-const { column, columns, item, rowIndex } = defineProps<ItemSlotProps>();
+const { column, columns, item, rowIndex, rows } = defineProps<ItemSlotProps>();
 const findReplaceStore = useFindReplaceStore();
 const { currentOccurrenceIndex, findValue, occurrences } = storeToRefs(findReplaceStore);
 const outlierStore = useOutlierStore();
@@ -27,7 +28,7 @@ const updateRow = useUpdateRow();
 const editableColumn = computed(() => (isEditableColumnValue(column) ? column : null));
 const currentOccurrence = computed(() => occurrences.value.at(currentOccurrenceIndex.value));
 const text = computed(() => {
-  const value = computeValue(item, columns, column);
+  const value = computeValue(item, columns, column, new Set(), rows, rowIndex);
   return value === null ? "" : String(value);
 });
 const isCurrentOccurrence = computed(

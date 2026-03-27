@@ -9,11 +9,7 @@ const emit = defineEmits<{ select: [value: SerializableValue] }>();
 
 <template>
   <v-list density="compact" py-0>
-    <v-hover
-      v-for="filterTypeHas in FilterTypeHases"
-      :key="filterTypeHas"
-      #default="{ isHovering, props }"
-    >
+    <v-hover v-for="filterTypeHas in FilterTypeHases" :key="filterTypeHas" #default="{ isHovering, props }">
       <v-list-item :="props" @click="emit('select', filterTypeHas)">
         <v-list-item-title font-semibold>
           <v-icon :icon="FilterTypeHasIconMap[filterTypeHas]" mr-2 />

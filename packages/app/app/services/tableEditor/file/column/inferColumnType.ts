@@ -11,8 +11,7 @@ export const inferColumnType = (values: string[]): ColumnType => {
   else if (trimmedValues.every((value) => !Number.isNaN(Number(value)))) return ColumnType.Number;
   else if (
     trimmedValues.every(
-      (value) =>
-        Number.isNaN(Number(value)) && [...DateFormats].some((format) => dayjs(value, format, true).isValid()),
+      (value) => Number.isNaN(Number(value)) && [...DateFormats].some((format) => dayjs(value, format, true).isValid()),
     )
   )
     return ColumnType.Date;
