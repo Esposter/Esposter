@@ -1,6 +1,5 @@
-import type { ToData } from "@esposter/shared";
-
 import type { Format } from "#shared/models/tableEditor/file/column/Format";
+import type { ToData } from "@esposter/shared";
 
 import { AColumn, createAColumnSchema } from "#shared/models/tableEditor/file/column/AColumn";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
