@@ -8,8 +8,6 @@ export const coerceValue = (value: string, type: ColumnType): ColumnValue => {
   const sanitizedValue = value.trim();
   if (!sanitizedValue) return null;
   switch (type) {
-    case ColumnType.Aggregation:
-      return null;
     case ColumnType.Boolean:
       return sanitizedValue.toLowerCase() === BooleanValue.True;
     case ColumnType.Computed:

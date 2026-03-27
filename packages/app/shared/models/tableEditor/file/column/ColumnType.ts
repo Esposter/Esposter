@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 export enum ColumnType {
-  Aggregation = "Aggregation",
   Boolean = "Boolean",
   Computed = "Computed",
   Date = "Date",

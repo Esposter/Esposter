@@ -4,4 +4,4 @@ import type { EditableColumnValue } from "#shared/models/tableEditor/file/column
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 
 export const isEditableColumnValue = (column: Column): column is EditableColumnValue =>
-  column.type !== ColumnType.Aggregation && column.type !== ColumnType.Computed;
+  column.type !== ColumnType.Computed;

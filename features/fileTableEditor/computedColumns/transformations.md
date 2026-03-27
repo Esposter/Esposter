@@ -6,6 +6,7 @@ Each transformation variant is a plain object identified by a `ColumnTransformat
 
 ```
 ColumnTransformationType
+├── Aggregation      — dataset-level aggregates (PercentOfTotal, Rank, RunningSum) (see aggregation.md)
 ├── ConvertTo        — type coercion: string → Number | Boolean | Date | String
 ├── DatePart         — extract a calendar field (Year, Month, Day, Weekday, Hour, Minute)
 ├── RegexMatch       — regex capture group extraction from a string value
@@ -17,21 +18,31 @@ ColumnTransformationType
 
 ## Source Column Mixins
 
-All single-source variants extend `WithSourceColumnId`. Multi-source variants extend `WithSourceColumnIds`.
+All single-source variants extend `SourceColumnId`. Multi-source variants extend `SourceColumnIds`.
 
 ```typescript
-// WithSourceColumnId — single source
+// SourceColumnId — single source
 { sourceColumnId: string }
 
-// WithSourceColumnIds — multi-source
+// SourceColumnIds — multi-source
 { sourceColumnIds: string[] }
+```
+
+---
+
+## `Aggregation`
+
+Extends `SourceColumnId`. See [`aggregation.md`](./aggregation.md) for full design.
+
+```typescript
+{ type: Aggregation, sourceColumnId: string, aggregationType: AggregationTransformationType }
 ```
 
 ---
 
 ## `ConvertTo`
 
-Extends `WithSourceColumnId`.
+Extends `SourceColumnId`.
 
 ```typescript
 { type: ConvertTo, sourceColumnId: string, targetType: ColumnType }
@@ -42,7 +53,7 @@ Extends `WithSourceColumnId`.
 
 ## `DatePart`
 
-Extends `WithSourceColumnId`.
+Extends `SourceColumnId`.
 
 ```typescript
 { type: DatePart, sourceColumnId: string, part: DatePartType }
@@ -54,7 +65,7 @@ Extends `WithSourceColumnId`.
 
 ## `RegexMatch`
 
-Extends `WithSourceColumnId`.
+Extends `SourceColumnId`.
 
 ```typescript
 { type: RegexMatch, sourceColumnId: string, pattern: string, groupIndex: number }
@@ -67,7 +78,7 @@ Extends `WithSourceColumnId`.
 
 See [`MathOperation.md`](./MathOperation.md) for full design rationale and composability.
 
-Does **not** extend `WithSourceColumnId` — sources are embedded in `first` and `steps`.
+Does **not** extend `SourceColumnId` — sources are embedded in `first` and `steps`.
 
 ---
 
@@ -75,4 +86,4 @@ Does **not** extend `WithSourceColumnId` — sources are embedded in `first` and
 
 See [`StringPattern.md`](./StringPattern.md) for full design and UI.
 
-Extends `WithSourceColumnIds`.
+Extends `SourceColumnIds`.

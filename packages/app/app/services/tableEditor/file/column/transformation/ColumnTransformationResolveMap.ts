@@ -1,11 +1,13 @@
 import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
+import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import type { ColumnTransformation } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformation";
 import type { MathOperand } from "#shared/models/tableEditor/file/column/transformation/MathOperand";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import { MathOperandType } from "#shared/models/tableEditor/file/column/transformation/MathOperandType";
+import { computeAggregationValue } from "@/services/tableEditor/file/column/computeAggregationValue";
 import { computeConvertToTransformation } from "@/services/tableEditor/file/column/transformation/computeConvertToTransformation";
 import { computeDatePartTransformation } from "@/services/tableEditor/file/column/transformation/computeDatePartTransformation";
 import { computeMathOperationTransformation } from "@/services/tableEditor/file/column/transformation/computeMathOperationTransformation";
@@ -15,6 +17,8 @@ import { computeStringPatternTransformation } from "@/services/tableEditor/file/
 export interface ResolveContext {
   findSource: (sourceColumnId: string) => Column | undefined;
   resolveSource: (sourceColumnId: string) => ColumnValue;
+  rowIndex?: number;
+  rows?: Row[];
 }
 
 type TransformationResolver<T extends ColumnTransformation> = (
@@ -23,6 +27,10 @@ type TransformationResolver<T extends ColumnTransformation> = (
 ) => ColumnValue;
 
 export const ColumnTransformationResolveMap = {
+  [ColumnTransformationType.Aggregation]: (transformation, { findSource, rowIndex, rows }) => {
+    if (!rows || rowIndex === undefined) return null;
+    return computeAggregationValue(rows, findSource, transformation, rowIndex);
+  },
   [ColumnTransformationType.ConvertTo]: (transformation, { resolveSource }) =>
     computeConvertToTransformation(resolveSource(transformation.sourceColumnId), transformation),
   [ColumnTransformationType.DatePart]: (transformation, { findSource, resolveSource }) => {

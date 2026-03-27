@@ -1,10 +1,10 @@
 import { z } from "zod";
 
-export interface WithSourceColumnIds {
+export interface SourceColumnIds {
   sourceColumnIds: string[];
 }
 
-export const withSourceColumnIdsSchema = z.object({
+export const sourceColumnIdsSchema = z.object({
   sourceColumnIds: z
     .array(
       z.string().meta({

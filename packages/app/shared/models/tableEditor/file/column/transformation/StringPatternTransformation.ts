@@ -1,20 +1,20 @@
-import type { WithSourceColumnIds } from "#shared/models/tableEditor/file/column/transformation/WithSourceColumnIds";
+import type { SourceColumnIds } from "#shared/models/tableEditor/file/column/transformation/SourceColumnIds";
 import type { ItemEntityType } from "@esposter/shared";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
-import { withSourceColumnIdsSchema } from "#shared/models/tableEditor/file/column/transformation/WithSourceColumnIds";
+import { sourceColumnIdsSchema } from "#shared/models/tableEditor/file/column/transformation/SourceColumnIds";
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
 export interface StringPatternTransformation
-  extends ItemEntityType<ColumnTransformationType.StringPattern>, WithSourceColumnIds {
+  extends ItemEntityType<ColumnTransformationType.StringPattern>, SourceColumnIds {
   pattern: string;
 }
 
 export const stringPatternTransformationSchema = z
   .object({
-    ...withSourceColumnIdsSchema.shape,
+    ...sourceColumnIdsSchema.shape,
     ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.StringPattern).readonly()).shape,
     pattern: z.string().meta({
       title: "Pattern",

@@ -1,18 +1,18 @@
-import type { AggregationColumn } from "#shared/models/tableEditor/file/column/AggregationColumn";
 import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
 import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
+import type { AggregationTransformation } from "#shared/models/tableEditor/file/column/transformation/AggregationTransformation";
 
-import { AggregationTransformationType } from "#shared/models/tableEditor/file/column/AggregationTransformationType";
+import { AggregationTransformationType } from "#shared/models/tableEditor/file/column/transformation/AggregationTransformationType";
 import { exhaustiveGuard, takeOne } from "@esposter/shared";
 
 export const computeAggregationValue = (
   rows: Row[],
-  columns: Column[],
-  column: AggregationColumn,
+  findSource: (sourceColumnId: string) => Column | undefined,
+  transformation: AggregationTransformation,
   rowIndex: number,
 ): ColumnValue => {
-  const sourceColumn = columns.find(({ id }) => id === column.sourceColumnId);
+  const sourceColumn = findSource(transformation.sourceColumnId);
   if (!sourceColumn) return null;
 
   const getNumber = (row: Row): null | number => {
@@ -20,7 +20,7 @@ export const computeAggregationValue = (
     return typeof value === "number" ? value : null;
   };
 
-  switch (column.aggregationType) {
+  switch (transformation.aggregationType) {
     case AggregationTransformationType.PercentOfTotal: {
       const currentValue = getNumber(takeOne(rows, rowIndex));
       if (currentValue === null) return null;
@@ -46,6 +46,6 @@ export const computeAggregationValue = (
       return sum;
     }
     default:
-      return exhaustiveGuard(column.aggregationType);
+      return exhaustiveGuard(transformation.aggregationType);
   }
 };

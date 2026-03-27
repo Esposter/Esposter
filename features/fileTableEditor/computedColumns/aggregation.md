@@ -1,17 +1,17 @@
 # Aggregation Columns
 
-## Why a Separate Column Type
+## Design (v3 refactor)
 
-Aggregation columns are **not** a `ColumnTransformation` variant. The row-local evaluation model (`resolveValue(row, columns, column)`) cannot express dataset-level aggregates — they require access to all rows and the current row index. A different class and evaluator signature is needed.
+Aggregation is now a `ColumnTransformationType` variant (`ColumnTransformationType.Aggregation`) rather than a separate `ColumnType`. Aggregation columns are ordinary `ComputedColumn` instances with `transformation.type === ColumnTransformationType.Aggregation`.
+
+The `AggregationColumn` class and `ColumnType.Aggregation` enum value have been removed.
 
 ---
 
-## `AggregationColumn`
+## `AggregationTransformation`
 
 ```typescript
-class AggregationColumn extends Column<ColumnType.Aggregation> {
-  readonly type = ColumnType.Aggregation;
-  sourceColumnId: string;
+interface AggregationTransformation extends ItemEntityType<ColumnTransformationType.Aggregation>, SourceColumnId {
   aggregationType: AggregationTransformationType;
 }
 
@@ -22,17 +22,20 @@ enum AggregationTransformationType {
 }
 ```
 
-`ColumnType.Aggregation` is added to the enum alongside `ColumnType.Computed`. The schema follows the `createColumnSchema` factory pattern. Aggregation columns are always read-only and never stored in `row.data`.
-
 ---
 
 ## Evaluator
 
 ```typescript
-computeAggregationValue(rows: Row[], column: AggregationColumn, rowIndex: number): ColumnValue
+computeAggregationValue(
+  rows: Row[],
+  findSource: (sourceColumnId: string) => Column | undefined,
+  transformation: AggregationTransformation,
+  rowIndex: number,
+): ColumnValue
 ```
 
-`resolveValue` gains a third branch: if the column is an `AggregationColumn`, delegate to `computeAggregationValue`. This requires `rows` and `rowIndex` — `resolveValue`'s signature gains these as optional parameters, only used when an aggregation column is in the dataset.
+The aggregation resolver is registered in `ColumnTransformationResolveMap` under `ColumnTransformationType.Aggregation`. `ResolveContext` carries optional `rows?: Row[]` and `rowIndex?: number` so `resolveValue` can pass dataset context through to the aggregation resolver.
 
 ---
 

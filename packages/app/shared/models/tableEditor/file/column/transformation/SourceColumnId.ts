@@ -1,10 +1,10 @@
 import { z } from "zod";
 
-export interface WithSourceColumnId {
+export interface SourceColumnId {
   sourceColumnId: string;
 }
 
-export const withSourceColumnIdSchema = z.object({
+export const sourceColumnIdSchema = z.object({
   sourceColumnId: z.string().meta({
     comp: "select",
     getItems: "context.sourceColumnItems",

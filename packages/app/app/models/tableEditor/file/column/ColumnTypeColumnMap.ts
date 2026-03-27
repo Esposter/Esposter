@@ -1,4 +1,3 @@
-import type { AggregationColumn } from "#shared/models/tableEditor/file/column/AggregationColumn";
 import type { BooleanColumn } from "#shared/models/tableEditor/file/column/BooleanColumn";
 import type { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import type { ComputedColumn } from "#shared/models/tableEditor/file/column/ComputedColumn";
@@ -7,7 +6,6 @@ import type { NumberColumn } from "#shared/models/tableEditor/file/column/Number
 import type { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 
 export interface ColumnTypeColumnMap {
-  [ColumnType.Aggregation]: AggregationColumn;
   [ColumnType.Boolean]: BooleanColumn;
   [ColumnType.Computed]: ComputedColumn;
   [ColumnType.Date]: DateColumn;

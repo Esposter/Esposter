@@ -21,6 +21,16 @@ All commands must be run from `packages/app/` using `pnpm`. Never use `npm` or `
 | `pnpm dev`          | `nuxt dev`                                                       | Start dev server                                          |
 | `pnpm build`        | `nuxt build`                                                     | Build for production                                      |
 
+## Package Registry Commands
+
+| Command                 | Purpose                                            |
+| ----------------------- | -------------------------------------------------- |
+| `pnpm info <pkg>`       | Show package metadata (version, description, deps) |
+| `pnpm show <pkg>`       | Alias for `pnpm info`                              |
+| `pnpm search <keyword>` | Search npm registry for packages                   |
+| `pnpm outdated`         | List outdated dependencies                         |
+| `pnpm list`             | List installed packages                            |
+
 ## Key Rules
 
 - **Lint errors**: always run `pnpm lint:fix` — never manually edit to satisfy ESLint/oxlint

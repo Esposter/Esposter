@@ -2,7 +2,6 @@ import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import type { Except } from "type-fest";
 
-import { AggregationColumn } from "#shared/models/tableEditor/file/column/AggregationColumn";
 import { BooleanColumn } from "#shared/models/tableEditor/file/column/BooleanColumn";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ComputedColumn } from "#shared/models/tableEditor/file/column/ComputedColumn";
@@ -13,10 +12,6 @@ import { CreateColumnCommand } from "@/models/tableEditor/file/commands/CreateCo
 import { CreateComputedColumnCommand } from "@/models/tableEditor/file/commands/CreateComputedColumnCommand";
 
 export const ColumnTypeCommandMap = {
-  [ColumnType.Aggregation]: (
-    columnIndex: number,
-    data: Except<Extract<Column, { type: ColumnType.Aggregation }>, "id">,
-  ) => new CreateColumnCommand(columnIndex, new AggregationColumn(data)),
   [ColumnType.Boolean]: (columnIndex: number, data: Except<Extract<Column, { type: ColumnType.Boolean }>, "id">) =>
     new CreateColumnCommand(columnIndex, new BooleanColumn(data)),
   [ColumnType.Computed]: (columnIndex: number, data: Except<Extract<Column, { type: ColumnType.Computed }>, "id">) =>

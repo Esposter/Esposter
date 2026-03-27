@@ -2,16 +2,16 @@ import type { ColumnFormat } from "#shared/models/tableEditor/file/column/Column
 import type { ColumnTransformation } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformation";
 import type { ToData } from "@esposter/shared";
 
+import { Format, createFormatSchema } from "#shared/models/tableEditor/file/column/Format";
+
 import { AColumn, createAColumnSchema } from "#shared/models/tableEditor/file/column/AColumn";
-import { booleanFormatSchema } from "#shared/models/tableEditor/file/column/BooleanFormat";
+import { columnFormatSchema } from "#shared/models/tableEditor/file/column/ColumnFormat";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import { dateFormatSchema } from "#shared/models/tableEditor/file/column/DateFormat";
-import { numberFormatSchema } from "#shared/models/tableEditor/file/column/NumberFormat";
 import { columnTransformationSchema } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformation";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import { z } from "zod";
 
-export class ComputedColumn extends AColumn<ColumnType.Computed> {
+export class ComputedColumn extends AColumn<ColumnType.Computed> implements Format<ColumnFormat> {
   format?: ColumnFormat;
   transformation: ColumnTransformation = {
     sourceColumnId: "",
@@ -28,6 +28,6 @@ export class ComputedColumn extends AColumn<ColumnType.Computed> {
 
 export const computedColumnSchema = z.object({
   ...createAColumnSchema(z.literal(ColumnType.Computed)).shape,
-  format: z.union([booleanFormatSchema, dateFormatSchema, numberFormatSchema]).optional(),
+  format: createFormatSchema(columnFormatSchema),
   transformation: columnTransformationSchema,
 }) satisfies z.ZodType<ToData<ComputedColumn>>;

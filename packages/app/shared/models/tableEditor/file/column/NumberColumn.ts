@@ -2,10 +2,11 @@ import type { ToData } from "@esposter/shared";
 
 import { AColumn, createAColumnSchema } from "#shared/models/tableEditor/file/column/AColumn";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
+import { Format, createFormatSchema } from "#shared/models/tableEditor/file/column/Format";
 import { NumberFormat, numberFormatSchema } from "#shared/models/tableEditor/file/column/NumberFormat";
 import { z } from "zod";
 
-export class NumberColumn extends AColumn<ColumnType.Number> {
+export class NumberColumn extends AColumn<ColumnType.Number> implements Format<NumberFormat> {
   format?: NumberFormat;
   override readonly type = ColumnType.Number;
 
@@ -17,5 +18,5 @@ export class NumberColumn extends AColumn<ColumnType.Number> {
 
 export const numberColumnSchema = z.object({
   ...createAColumnSchema(z.literal(ColumnType.Number)).shape,
-  format: numberFormatSchema.optional(),
+  format: createFormatSchema(numberFormatSchema),
 }) satisfies z.ZodType<ToData<NumberColumn>>;

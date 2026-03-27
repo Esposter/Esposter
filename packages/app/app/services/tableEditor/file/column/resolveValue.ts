@@ -1,15 +1,11 @@
-import type { AggregationColumn } from "#shared/models/tableEditor/file/column/AggregationColumn";
 import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
 import type { ComputedColumn } from "#shared/models/tableEditor/file/column/ComputedColumn";
 import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import { computeAggregationValue } from "@/services/tableEditor/file/column/computeAggregationValue";
 import { ColumnTransformationResolveMap } from "@/services/tableEditor/file/column/transformation/ColumnTransformationResolveMap";
 import { takeOne } from "@esposter/shared";
-
-const isAggregationColumn = (column: Column): column is AggregationColumn => column.type === ColumnType.Aggregation;
 
 const isComputedColumn = (column: Column): column is ComputedColumn => column.type === ColumnType.Computed;
 
@@ -21,10 +17,7 @@ export const resolveValue = (
   rows?: Row[],
   rowIndex?: number,
 ): ColumnValue => {
-  if (isAggregationColumn(column)) {
-    if (!rows || rowIndex === undefined) return null;
-    return computeAggregationValue(rows, columns, column, rowIndex);
-  } else if (!isComputedColumn(column)) return takeOne(row.data, column.name);
+  if (!isComputedColumn(column)) return takeOne(row.data, column.name);
   else if (visited.has(column.id)) return null;
   else {
     visited.add(column.id);
@@ -35,6 +28,8 @@ export const resolveValue = (
         if (!sourceColumn) return null;
         return resolveValue(row, columns, sourceColumn, visited, rows, rowIndex);
       },
+      rowIndex,
+      rows,
     });
   }
 };
