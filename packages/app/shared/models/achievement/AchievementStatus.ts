@@ -4,4 +4,4 @@ export enum AchievementStatus {
   Unlocked = "Unlocked",
 }
 
-export const AchievementStatuses = new Set(Object.values(AchievementStatus));
+export const AchievementStatuses: ReadonlySet<AchievementStatus> = new Set(Object.values(AchievementStatus));

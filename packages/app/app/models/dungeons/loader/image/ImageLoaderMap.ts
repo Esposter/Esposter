@@ -15,4 +15,6 @@ export const ImageLoaderMap = mergeObjectsStrict(
   UIImageLoaderMap,
 );
 
-export const ImageLoaders = new Set(Object.values(ImageLoaderMap));
+export const ImageLoaders: ReadonlySet<(typeof ImageLoaderMap)[keyof typeof ImageLoaderMap]> = new Set(
+  Object.values(ImageLoaderMap),
+);

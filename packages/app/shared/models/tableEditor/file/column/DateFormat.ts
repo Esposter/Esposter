@@ -19,4 +19,4 @@ export enum DateFormat {
 
 export const dateFormatSchema = z.enum(DateFormat) satisfies z.ZodType<DateFormat>;
 
-export const DateFormats = new Set(Object.values(DateFormat));
+export const DateFormats: ReadonlySet<DateFormat> = new Set(Object.values(DateFormat));

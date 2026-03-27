@@ -11,4 +11,4 @@ export enum BaseTilesetKey {
   Teleport = "Teleport",
 }
 
-export const BaseTilesetKeys = new Set(Object.values(BaseTilesetKey));
+export const BaseTilesetKeys: ReadonlySet<BaseTilesetKey> = new Set(Object.values(BaseTilesetKey));

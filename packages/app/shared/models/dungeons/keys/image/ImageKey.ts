@@ -12,4 +12,4 @@ export type ImageKey = BattleKey | InventoryKey | MonsterPartyKey | TitleKey | U
 
 export const imageKeySchema = z.enum(ImageKey) satisfies z.ZodType<ImageKey>;
 
-export const ImageKeys = new Set(Object.values(ImageKey));
+export const ImageKeys: ReadonlySet<ImageKey> = new Set(Object.values(ImageKey));

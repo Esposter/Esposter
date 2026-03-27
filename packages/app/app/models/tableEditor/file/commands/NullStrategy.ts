@@ -3,4 +3,4 @@ export enum NullStrategy {
   ReplaceWithNA = "Replace with N/A",
 }
 
-export const NullStrategies = new Set(Object.values(NullStrategy));
+export const NullStrategies: ReadonlySet<NullStrategy> = new Set(Object.values(NullStrategy));

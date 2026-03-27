@@ -4,4 +4,4 @@ export enum PlayerSpecialInput {
   Enter = "Enter",
 }
 
-export const PlayerSpecialInputs = new Set(Object.values(PlayerSpecialInput));
+export const PlayerSpecialInputs: ReadonlySet<PlayerSpecialInput> = new Set(Object.values(PlayerSpecialInput));

@@ -5,4 +5,4 @@ export enum NormalizeStringMode {
   Uppercase = "UPPERCASE",
 }
 
-export const NormalizeStringModes = new Set(Object.values(NormalizeStringMode));
+export const NormalizeStringModes: ReadonlySet<NormalizeStringMode> = new Set(Object.values(NormalizeStringMode));

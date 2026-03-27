@@ -3,4 +3,4 @@ import { z } from "zod";
 
 export const tilemapKeySchema = z.enum(TilemapKey) satisfies z.ZodType<TilemapKey>;
 
-export const TilemapKeys = new Set(Object.values(TilemapKey));
+export const TilemapKeys: ReadonlySet<TilemapKey> = new Set(Object.values(TilemapKey));

@@ -7,7 +7,7 @@ export enum MessageType {
   Webhook = "Webhook",
 }
 
-export const MessageTypes = new Set(Object.values(MessageType));
+export const MessageTypes: ReadonlySet<MessageType> = new Set(Object.values(MessageType));
 
 export type StandardMessageType = Exclude<MessageType, MessageType.Webhook>;
 

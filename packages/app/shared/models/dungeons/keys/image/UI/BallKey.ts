@@ -3,4 +3,4 @@ export enum BallKey {
   DamagedBall = "DamagedBall",
 }
 
-export const BallKeys = new Set(Object.values(BallKey));
+export const BallKeys: ReadonlySet<BallKey> = new Set(Object.values(BallKey));

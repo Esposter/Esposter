@@ -3,5 +3,5 @@ import { CharacterLoaderMap } from "@/models/dungeons/loader/spritesheet/Charact
 import { mergeObjectsStrict } from "@esposter/shared";
 
 export const SpritesheetLoaderMap = mergeObjectsStrict(AttackLoaderMap, CharacterLoaderMap);
-
-export const SpritesheetLoaders = new Set(Object.values(SpritesheetLoaderMap));
+export const SpritesheetLoaders: ReadonlySet<(typeof SpritesheetLoaderMap)[keyof typeof SpritesheetLoaderMap]> =
+  new Set(Object.values(SpritesheetLoaderMap));

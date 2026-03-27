@@ -12,4 +12,6 @@ export const TilemapLoaderMap: Record<TilemapKey, (scene: SceneWithPlugins) => L
   [TilemapKey.HomeBuilding2]: (scene) => scene.load.tilemapTiledJSONExternal(TilemapKey.HomeBuilding2, homeBuilding2),
 };
 
-export const TilemapLoaders = new Set(Object.values(TilemapLoaderMap));
+export const TilemapLoaders: ReadonlySet<(typeof TilemapLoaderMap)[keyof typeof TilemapLoaderMap]> = new Set(
+  Object.values(TilemapLoaderMap),
+);

@@ -7,4 +7,4 @@ export enum BooleanValue {
 
 export const booleanValueSchema = z.enum(BooleanValue) satisfies z.ZodType<BooleanValue>;
 
-export const BooleanValues = new Set(Object.values(BooleanValue));
+export const BooleanValues: ReadonlySet<BooleanValue> = new Set(Object.values(BooleanValue));

@@ -17,7 +17,7 @@ export enum UserStatus {
 
 const userStatusSchema = z.enum(UserStatus) satisfies z.ZodType<UserStatus>;
 
-export const UserStatuses = new Set(Object.values(UserStatus));
+export const UserStatuses: ReadonlySet<UserStatus> = new Set(Object.values(UserStatus));
 
 export const userStatusEnum = pgEnum("user_status", UserStatus);
 

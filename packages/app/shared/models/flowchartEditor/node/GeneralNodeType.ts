@@ -6,4 +6,4 @@ export enum GeneralNodeType {
 
 export const generalNodeTypeSchema = z.enum(GeneralNodeType);
 
-export const GeneralNodeTypes = new Set(Object.values(GeneralNodeType));
+export const GeneralNodeTypes: ReadonlySet<GeneralNodeType> = new Set(Object.values(GeneralNodeType));

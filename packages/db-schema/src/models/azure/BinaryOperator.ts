@@ -7,4 +7,4 @@ export enum BinaryOperator {
   ne = "ne",
 }
 
-export const BinaryOperators = new Set(Object.values(BinaryOperator));
+export const BinaryOperators: ReadonlySet<BinaryOperator> = new Set(Object.values(BinaryOperator));

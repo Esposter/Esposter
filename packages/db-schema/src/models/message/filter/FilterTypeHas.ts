@@ -8,4 +8,4 @@ export enum FilterTypeHas {
   Forward = "Forward",
 }
 
-export const FilterTypeHases = new Set(Object.values(FilterTypeHas));
+export const FilterTypeHases: ReadonlySet<FilterTypeHas> = new Set(Object.values(FilterTypeHas));
