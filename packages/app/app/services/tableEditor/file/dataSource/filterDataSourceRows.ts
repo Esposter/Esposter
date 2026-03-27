@@ -1,4 +1,4 @@
-import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
+import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import type { ColumnFilter } from "@/models/tableEditor/file/column/ColumnFilter";
 
 import { BooleanValue } from "#shared/models/tableEditor/file/column/BooleanValue";
@@ -6,13 +6,10 @@ import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { isActiveColumnFilter } from "@/services/tableEditor/file/column/isActiveColumnFilter";
 import { takeOne } from "@esposter/shared";
 
-export const filterDataSourceRows = (
-  dataSource: DataSource,
-  columnFilters: Record<string, ColumnFilter>,
-): DataSource => {
+export const filterDataSourceRows = (rows: Row[], columnFilters: Record<string, ColumnFilter>): Row[] => {
   const activeFilters = Object.entries(columnFilters).filter(([, filter]) => isActiveColumnFilter(filter));
-  if (activeFilters.length === 0) return dataSource;
-  const rows = dataSource.rows.filter((row) =>
+  if (activeFilters.length === 0) return rows;
+  return rows.filter((row) =>
     activeFilters.every(([columnName, filter]) => {
       const cellValue = takeOne(row.data, columnName);
       if (filter.type === ColumnType.Boolean) {
@@ -32,5 +29,4 @@ export const filterDataSourceRows = (
       return cellValue !== null && String(cellValue).toLowerCase().includes(filter.value.toLowerCase());
     }),
   );
-  return { ...dataSource, rows };
 };

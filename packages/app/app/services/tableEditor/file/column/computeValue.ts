@@ -7,12 +7,12 @@ import { ColumnTransformationComputeMap } from "@/services/tableEditor/file/colu
 import { takeOne } from "@esposter/shared";
 
 export const computeValue = (
+  rows: Row[],
   row: Row,
   columns: Column[],
   column: Column,
-  visited = new Set<string>(),
-  rows?: Row[],
   rowIndex?: number,
+  visited = new Set<string>(),
 ): ColumnValue => {
   if (column.type !== ColumnType.Computed) return takeOne(row.data, column.name);
   else if (visited.has(column.id)) return null;
@@ -22,7 +22,7 @@ export const computeValue = (
       computeSource: (sourceColumnId) => {
         const sourceColumn = columns.find(({ id }) => id === sourceColumnId);
         if (!sourceColumn) return null;
-        return computeValue(row, columns, sourceColumn, visited, rows, rowIndex);
+        return computeValue(rows, row, columns, sourceColumn, rowIndex, visited);
       },
       findSource: (sourceColumnId) => columns.find(({ id }) => id === sourceColumnId),
       rowIndex,

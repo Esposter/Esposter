@@ -20,7 +20,7 @@ const { itemsPerPage, page, search, selectedRowIds, sortBy } = storeToRefs(rowSt
 const filterStore = useFilterStore();
 const { columnFilters } = storeToRefs(filterStore);
 const reorderRows = useReorderRows();
-const filteredDataSource = computed(() => filterDataSourceRows(dataSource, columnFilters.value));
+const filteredRows = computed(() => filterDataSourceRows(dataSource.rows, columnFilters.value));
 const displayColumns = computed(() => dataSource.columns.filter((column) => !column.hidden));
 const headers = computed(() => [
   { key: "drag", sortable: false, title: "" },
@@ -29,29 +29,22 @@ const headers = computed(() => [
     key: toColumnKey(column.name),
     title: column.name,
     value: (row: Row) =>
-      computeValue(
-        row,
-        dataSource.columns,
-        column,
-        new Set(),
-        filteredDataSource.value.rows,
-        rowIndexIdMap.value.get(row.id),
-      ),
+      computeValue(filteredRows.value, row, dataSource.columns, column, rowIndexIdMap.value.get(row.id)),
   })),
   { key: "actions", sortable: false, title: "Actions" },
 ]);
 const dragRows = computed({
   get: () => {
-    if (itemsPerPage.value === -1) return filteredDataSource.value.rows;
+    if (itemsPerPage.value === -1) return filteredRows.value;
     const startIndex = (page.value - 1) * itemsPerPage.value;
-    return filteredDataSource.value.rows.slice(startIndex, startIndex + itemsPerPage.value);
+    return filteredRows.value.slice(startIndex, startIndex + itemsPerPage.value);
   },
   set: reorderRows,
 });
 const isDraggable = computed(
-  () => !search.value && sortBy.value.length === 0 && filteredDataSource.value === dataSource,
+  () => !search.value && sortBy.value.length === 0 && filteredRows.value === dataSource.rows,
 );
-const rowIndexIdMap = computed(() => new Map(filteredDataSource.value.rows.map((row, index) => [row.id, index])));
+const rowIndexIdMap = computed(() => new Map(filteredRows.value.map((row, index) => [row.id, index])));
 </script>
 
 <template>
@@ -68,7 +61,7 @@ const rowIndexIdMap = computed(() => new Map(filteredDataSource.value.rows.map((
           density: 'compact',
           headers,
           itemsPerPage,
-          items: filteredDataSource.rows,
+          items: filteredRows,
           modelValue: selectedRowIds,
           multiSort: true,
           page,
@@ -118,7 +111,7 @@ const rowIndexIdMap = computed(() => new Map(filteredDataSource.value.rows.map((
             :columns="dataSource.columns"
             :item
             :row-index="rowIndexIdMap.get(item.id) ?? -1"
-            :rows="filteredDataSource.rows"
+            :rows="filteredRows"
           />
         </template>
         <template #tfoot>

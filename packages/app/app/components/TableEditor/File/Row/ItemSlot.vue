@@ -28,7 +28,7 @@ const updateRow = useUpdateRow();
 const editableColumn = computed(() => (isEditableColumnValue(column) ? column : null));
 const currentOccurrence = computed(() => occurrences.value.at(currentOccurrenceIndex.value));
 const text = computed(() => {
-  const value = computeValue(item, columns, column, new Set(), rows, rowIndex);
+  const value = computeValue(rows, item, columns, column, rowIndex);
   return value === null ? "" : String(value);
 });
 const isCurrentOccurrence = computed(

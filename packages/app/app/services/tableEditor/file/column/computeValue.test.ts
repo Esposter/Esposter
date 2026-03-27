@@ -18,7 +18,7 @@ describe(computeValue, () => {
     const row = makeRow({ "": 0 });
     const dataSource = makeDataSource([column], [row]);
 
-    expect(computeValue(row, dataSource.columns, column)).toBe(0);
+    expect(computeValue(dataSource.rows, row, dataSource.columns, column)).toBe(0);
   });
 
   test("returns null for computed column when source column is not found", () => {
@@ -28,7 +28,7 @@ describe(computeValue, () => {
     const row = makeRow({});
     const dataSource = makeDataSource([computedColumn], [row]);
 
-    expect(computeValue(row, dataSource.columns, computedColumn)).toBeNull();
+    expect(computeValue(dataSource.rows, row, dataSource.columns, computedColumn)).toBeNull();
   });
 
   test("returns null for computed column when source column is itself computed", () => {
@@ -39,7 +39,7 @@ describe(computeValue, () => {
     const row = makeRow({});
     const dataSource = makeDataSource([sourceColumn, computedColumn], [row]);
 
-    expect(computeValue(row, dataSource.columns, computedColumn)).toBeNull();
+    expect(computeValue(dataSource.rows, row, dataSource.columns, computedColumn)).toBeNull();
   });
 
   test("returns null when two computed columns form a cycle", () => {
@@ -61,6 +61,6 @@ describe(computeValue, () => {
     const row = makeRow({});
     const dataSource = makeDataSource([columnAWithCycle, columnB], [row]);
 
-    expect(computeValue(row, dataSource.columns, columnAWithCycle)).toBeNull();
+    expect(computeValue(dataSource.rows, row, dataSource.columns, columnAWithCycle)).toBeNull();
   });
 });

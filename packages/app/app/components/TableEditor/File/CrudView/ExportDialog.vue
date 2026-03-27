@@ -40,11 +40,12 @@ watchImmediate(
           return;
         }
 
+        const { dataSource } = editedItem;
         const configuration = DataSourceConfigurationMap[dataSourceType];
-        const filteredByRows = filterDataSourceRows(editedItem.dataSource, filterStore.columnFilters);
-        const filteredDataSource = filterDataSourceColumns(filteredByRows, selectedColumnIds);
+        const filteredRows = filterDataSourceRows(dataSource.rows, filterStore.columnFilters);
+        const { columns, rows } = filterDataSourceColumns(dataSource.columns, filteredRows, selectedColumnIds);
         await exportFile(
-          (mimeType) => configuration.serialize(filteredDataSource, editedItem, mimeType),
+          (mimeType) => configuration.serialize({ ...dataSource, columns, rows }, editedItem, mimeType),
           editedItem.name,
           configuration.mimeType,
           configuration.accept,

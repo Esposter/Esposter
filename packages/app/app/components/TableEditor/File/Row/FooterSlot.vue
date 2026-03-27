@@ -14,13 +14,13 @@ const { dataSource } = defineProps<FooterSlotProps>();
 const filterStore = useFilterStore();
 const { columnFilters } = storeToRefs(filterStore);
 const displayColumns = computed(() => dataSource.columns.filter((column) => !column.hidden));
-const filteredRows = computed(() => filterDataSourceRows(dataSource, columnFilters.value).rows);
+const filteredRows = computed(() => filterDataSourceRows(dataSource.rows, columnFilters.value));
 const columnSummaries = computed(() => {
   const result = new Map<string, string>();
   for (const column of displayColumns.value) {
     if (column.type !== ColumnType.Number) continue;
     const sum = filteredRows.value.reduce((acc, row) => {
-      const value = computeValue(row, dataSource.columns, column);
+      const value = computeValue(filteredRows.value, row, dataSource.columns, column);
       return typeof value === "number" ? acc + value : acc;
     }, 0);
     result.set(column.name, `Σ ${Math.round(sum * 100) / 100}`);

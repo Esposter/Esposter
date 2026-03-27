@@ -1,14 +1,20 @@
-import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
+import type { Column } from "#shared/models/tableEditor/file/column/Column";
 
 import { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
-export const filterDataSourceColumns = (dataSource: DataSource, columnIds: string[]): DataSource => {
-  const columns = dataSource.columns.filter((column) => columnIds.includes(column.id));
-  const rows = dataSource.rows.map((row) => {
+export const filterDataSourceColumns = (
+  columns: Column[],
+  rows: Row[],
+  columnIds: string[],
+): { columns: Column[]; rows: Row[] } => {
+  const filteredColumns = columns.filter((column) => columnIds.includes(column.id));
+  const filteredRows = rows.map((row) => {
     const filteredRow = new Row(structuredClone(toRawDeep(row)));
-    filteredRow.data = Object.fromEntries(columns.map((column) => [column.name, takeOne(row.data, column.name)]));
+    filteredRow.data = Object.fromEntries(
+      filteredColumns.map((column) => [column.name, takeOne(row.data, column.name)]),
+    );
     return filteredRow;
   });
-  return { ...dataSource, columns, rows };
+  return { columns: filteredColumns, rows: filteredRows };
 };
