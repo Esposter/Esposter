@@ -8,6 +8,7 @@ import {
 } from "#shared/models/tableEditor/file/column/transformation/AggregationTransformationType";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import { createSourceColumnIdSchema } from "#shared/models/tableEditor/file/column/transformation/SourceColumnId";
+import { ColumnFormVjsfContextPropertyNames } from "@/models/tableEditor/file/column/ColumnFormVjsfContext";
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
@@ -19,7 +20,7 @@ export interface AggregationTransformation
 export const aggregationTransformationSchema = z
   .object({
     ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.Aggregation).readonly()).shape,
-    ...createSourceColumnIdSchema("context.numberColumnItems").shape,
+    ...createSourceColumnIdSchema(ColumnFormVjsfContextPropertyNames["context.numberColumnItems"]).shape,
     aggregationTransformationType: aggregationTransformationTypeSchema.meta({ title: "Aggregation" }),
   })
   .meta({

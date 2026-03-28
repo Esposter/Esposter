@@ -5,6 +5,7 @@ import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import { DatePartType, datePartTypeSchema } from "#shared/models/tableEditor/file/column/transformation/DatePartType";
 import { createSourceColumnIdSchema } from "#shared/models/tableEditor/file/column/transformation/SourceColumnId";
+import { ColumnFormVjsfContextPropertyNames } from "@/models/tableEditor/file/column/ColumnFormVjsfContext";
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
@@ -15,7 +16,7 @@ export interface DatePartTransformation extends ItemEntityType<ColumnTransformat
 export const datePartTransformationSchema = z
   .object({
     ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.DatePart).readonly()).shape,
-    ...createSourceColumnIdSchema("context.dateColumnItems").shape,
+    ...createSourceColumnIdSchema(ColumnFormVjsfContextPropertyNames["context.dateColumnItems"]).shape,
     part: datePartTypeSchema,
   })
   .meta({
