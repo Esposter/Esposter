@@ -4,10 +4,10 @@ import type { TRPCPaths } from "#shared/models/trpc/TRPCPaths";
 import type { TRPCRouterInputs } from "#shared/models/trpc/TRPCRouterInputs";
 import type { BinaryOperator } from "@esposter/db-schema";
 import type { GetProperties } from "@esposter/shared";
-import type { Except, Get } from "type-fest";
+import type { Get } from "type-fest";
 
 export type PropertyCondition<TPath extends TRPCPaths> =
-  Except<GetProperties<Get<TRPCRouterInputs, TPath>>, "type"> extends infer R
+  GetProperties<Get<TRPCRouterInputs, TPath>> extends infer R
     ? R extends { path: infer Path extends string; value: infer Value }
       ? (
           | {
