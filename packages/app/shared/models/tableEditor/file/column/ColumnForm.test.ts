@@ -163,8 +163,8 @@ describe("columnFormSchema", () => {
                       },
                     },
                     "required": [
-                      "sourceColumnId",
                       "type",
+                      "sourceColumnId",
                       "aggregationTransformationType",
                     ],
                     "title": "Aggregation",
@@ -201,8 +201,8 @@ describe("columnFormSchema", () => {
                       },
                     },
                     "required": [
-                      "sourceColumnId",
                       "type",
+                      "sourceColumnId",
                       "targetType",
                     ],
                     "title": "Convert To",
@@ -244,8 +244,8 @@ describe("columnFormSchema", () => {
                       },
                     },
                     "required": [
-                      "sourceColumnId",
                       "type",
+                      "sourceColumnId",
                       "part",
                     ],
                     "title": "Date Part",
@@ -337,8 +337,8 @@ describe("columnFormSchema", () => {
                       },
                     },
                     "required": [
-                      "sourceColumnId",
                       "type",
+                      "sourceColumnId",
                       "groupIndex",
                       "pattern",
                     ],
@@ -383,8 +383,8 @@ describe("columnFormSchema", () => {
                           },
                         },
                         "required": [
-                          "sourceColumnId",
                           "type",
+                          "sourceColumnId",
                           "stringTransformationType",
                         ],
                         "type": "object",
@@ -425,8 +425,8 @@ describe("columnFormSchema", () => {
                           },
                         },
                         "required": [
-                          "sourceColumnIds",
                           "type",
+                          "sourceColumnIds",
                           "pattern",
                           "stringTransformationType",
                         ],
