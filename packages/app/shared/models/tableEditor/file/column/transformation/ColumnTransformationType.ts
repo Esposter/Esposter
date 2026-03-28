@@ -4,9 +4,9 @@ export enum ColumnTransformationType {
   Aggregation = "Aggregation",
   ConvertTo = "ConvertTo",
   DatePart = "DatePart",
-  MathOperation = "MathOperation",
+  Math = "Math",
   RegexMatch = "RegexMatch",
-  StringPattern = "StringPattern",
+  String = "String",
 }
 
 export const columnTransformationTypeSchema = z.enum(

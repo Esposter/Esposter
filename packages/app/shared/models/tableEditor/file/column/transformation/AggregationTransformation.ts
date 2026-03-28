@@ -7,23 +7,21 @@ import {
   aggregationTransformationTypeSchema,
 } from "#shared/models/tableEditor/file/column/transformation/AggregationTransformationType";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
-import { sourceColumnIdSchema } from "#shared/models/tableEditor/file/column/transformation/SourceColumnId";
+import { createSourceColumnIdSchema } from "#shared/models/tableEditor/file/column/transformation/SourceColumnId";
+import { ColumnFormVjsfContextPropertyNames } from "@/models/tableEditor/file/column/ColumnFormVjsfContext";
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
 export interface AggregationTransformation
   extends ItemEntityType<ColumnTransformationType.Aggregation>, SourceColumnId {
-  aggregationType: AggregationTransformationType;
+  aggregationTransformationType: AggregationTransformationType;
 }
 
 export const aggregationTransformationSchema = z
   .object({
-    ...sourceColumnIdSchema.shape,
     ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.Aggregation).readonly()).shape,
-    aggregationType: aggregationTransformationTypeSchema.meta({ title: "Aggregation" }),
-    sourceColumnId: sourceColumnIdSchema.shape.sourceColumnId.meta({
-      getItems: "context.numberColumnItems",
-    }),
+    ...createSourceColumnIdSchema(ColumnFormVjsfContextPropertyNames["context.numberColumnItems"]).shape,
+    aggregationTransformationType: aggregationTransformationTypeSchema.meta({ title: "Aggregation" }),
   })
   .meta({
     applicableColumnTypes: [ColumnType.Number],

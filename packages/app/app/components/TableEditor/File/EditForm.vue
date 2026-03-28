@@ -59,7 +59,7 @@ const filteredRowCount = computed(() =>
               <TableEditorFileColumnStatsDialogButton />
               <TableEditorFileRowOutlierToggleButton />
               <TableEditorFileRowClearFiltersButton />
-              <TableEditorFileRowNormalizeStringsDialogButton />
+              <TableEditorFileRowStringTransformationDialogButton />
               <TableEditorFileRowNullStrategyDialogButton />
               <TableEditorFileRowDeduplicateDialogButton />
               <TableEditorFileRowCreateDialogButton :data-source="modelValue.dataSource" />

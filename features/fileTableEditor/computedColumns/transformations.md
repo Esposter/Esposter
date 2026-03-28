@@ -10,7 +10,7 @@ ColumnTransformationType
 ├── ConvertTo        — type coercion: string → Number | Boolean | Date | String
 ├── DatePart         — extract a calendar field (Year, Month, Day, Weekday, Hour, Minute)
 ├── RegexMatch       — regex capture group extraction from a string value
-├── MathOperation    — composable arithmetic/rounding step sequence (see MathOperation.md)
+├── Math              — math expressions via mathjs (see Math.md)
 └── StringPattern    — multi-column string templating via positional pattern (see StringPattern.md)
 ```
 
@@ -74,11 +74,11 @@ Extends `SourceColumnId`.
 
 ---
 
-## `MathOperation`
+## `Math`
 
-See [`MathOperation.md`](./MathOperation.md) for full design rationale and composability.
+See [`Math.md`](./Math.md) for full design rationale and expression syntax.
 
-Does **not** extend `SourceColumnId` — sources are embedded in `first` and `steps`.
+Does **not** extend `SourceColumnId` — sources are mapped via `variables`.
 
 ---
 

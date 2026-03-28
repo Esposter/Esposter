@@ -1,5 +1,6 @@
 /* oxlint-disable no-new-func */
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
+import { ColumnFormVjsfContextPropertyNames } from "@/models/tableEditor/file/column/ColumnFormVjsfContext";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { takeOne } from "@esposter/shared";
 import { assert, describe, expect, test } from "vitest";
@@ -11,7 +12,7 @@ interface EvaluatedProps {
 
 describe(zodToJsonSchema, () => {
   describe("flat object schema", () => {
-    test("returns properties, required, and type", () => {
+    test("matches inline snapshot", () => {
       expect.hasAssertions();
 
       const schema = z.object({ name: z.string() });
@@ -394,7 +395,9 @@ describe(zodToJsonSchema, () => {
     test("sets layout.getItems from meta", () => {
       expect.hasAssertions();
 
-      const schema = z.object({ sourceColumnId: z.string().meta({ getItems: "context.columnItems" }) });
+      const schema = z.object({
+        sourceColumnId: z.string().meta({ getItems: ColumnFormVjsfContextPropertyNames["context.columnItems"] }),
+      });
       const result = zodToJsonSchema(schema);
 
       expect(result).toMatchInlineSnapshot(`
@@ -450,7 +453,9 @@ describe(zodToJsonSchema, () => {
       expect.hasAssertions();
 
       const schema = z.object({
-        sourceColumnId: z.string().meta({ comp: "select", getItems: "context.columnItems" }),
+        sourceColumnId: z
+          .string()
+          .meta({ comp: "select", getItems: ColumnFormVjsfContextPropertyNames["context.columnItems"] }),
       });
       const result = zodToJsonSchema(schema);
 

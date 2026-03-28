@@ -13,9 +13,9 @@ describe(computeAggregationValue, () => {
   const findSource = (sourceColumnId: string) => dataSource.columns.find(({ id }) => id === sourceColumnId);
 
   const makeAggregationTransformation = (
-    aggregationType: AggregationTransformationType,
+    aggregationTransformationType: AggregationTransformationType,
   ): AggregationTransformation => ({
-    aggregationType,
+    aggregationTransformationType,
     sourceColumnId: sourceColumn.id,
     type: ColumnTransformationType.Aggregation,
   });
@@ -24,7 +24,7 @@ describe(computeAggregationValue, () => {
     expect.hasAssertions();
 
     const transformation: AggregationTransformation = {
-      aggregationType: AggregationTransformationType.RunningSum,
+      aggregationTransformationType: AggregationTransformationType.RunningSum,
       sourceColumnId: "-1",
       type: ColumnTransformationType.Aggregation,
     };

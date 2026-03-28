@@ -3,7 +3,8 @@ import type { ItemEntityType } from "@esposter/shared";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
-import { sourceColumnIdSchema } from "#shared/models/tableEditor/file/column/transformation/SourceColumnId";
+import { createSourceColumnIdSchema } from "#shared/models/tableEditor/file/column/transformation/SourceColumnId";
+import { ColumnFormVjsfContextPropertyNames } from "@/models/tableEditor/file/column/ColumnFormVjsfContext";
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 
@@ -14,13 +15,10 @@ export interface RegexMatchTransformation extends ItemEntityType<ColumnTransform
 
 export const regexMatchTransformationSchema = z
   .object({
-    ...sourceColumnIdSchema.shape,
     ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.RegexMatch).readonly()).shape,
+    ...createSourceColumnIdSchema(ColumnFormVjsfContextPropertyNames["context.stringColumnItems"]).shape,
     groupIndex: z.number().int().nonnegative().meta({ title: "Group Index" }),
     pattern: z.string().meta({ title: "Pattern" }),
-    sourceColumnId: sourceColumnIdSchema.shape.sourceColumnId.meta({
-      getItems: "context.stringColumnItems",
-    }),
   })
   .meta({
     applicableColumnTypes: [ColumnType.String],

@@ -128,6 +128,7 @@
     "is-mobile": "catalog:",
     "js-beautify": "catalog:",
     "marked": "catalog:",
+    "mathjs": "catalog:",
     "mime-types": "catalog:",
     "mjml-browser": "catalog:",
     "node-emoji": "catalog:",

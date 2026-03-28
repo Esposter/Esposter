@@ -28,4 +28,4 @@ export const ColumnTypeFormSchemaMap = {
   [ColumnType.Date]: dateColumnFormSchema,
   [ColumnType.Number]: numberColumnFormSchema,
   [ColumnType.String]: stringColumnFormSchema,
-} as const satisfies Record<ColumnType, z.ZodType>;
+} as const satisfies Record<ColumnType, z.ZodType<ColumnForm>>;

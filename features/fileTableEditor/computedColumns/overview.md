@@ -32,7 +32,7 @@ resolveValue(row, columns, column):
   ComputedColumn
     Aggregation      → computeAggregationValue(rows, findSource, transformation, rowIndex) via ColumnTransformationResolveMap
     StringPattern    → resolve all sourceColumnIds → computeStringPatternTransformation(values, pattern)
-    MathOperation    → resolve first + each binary step's column operands (recursive)
+    Math             → resolve all sourceColumnId variable bindings → computeMathTransformation(scope, expression)
     all others       → resolve single sourceColumnId → computeColumnTransformation(value, transformation)
   all other columns  → takeOne(row.data, column.name)
 ```
@@ -52,12 +52,12 @@ resolveValue(row, columns, column):
 
 ## Constraints
 
-| Constraint                               | v2                                                             | v3                               |
-| ---------------------------------------- | -------------------------------------------------------------- | -------------------------------- |
-| Single source per transformation         | ✓ (except `StringPattern` and `MathOperation` column operands) | lifted for multi-source variants |
-| No chaining (computed sourcing computed) | ✓                                                              | lifted — cycle detection added   |
-| Not stored in `row.data`                 | ✓                                                              | ✓ (unchanged)                    |
-| Read-only                                | ✓                                                              | ✓ (unchanged)                    |
+| Constraint                               | v2                                              | v3                               |
+| ---------------------------------------- | ----------------------------------------------- | -------------------------------- |
+| Single source per transformation         | ✓ (except `StringPattern` and `Math` variables) | lifted for multi-source variants |
+| No chaining (computed sourcing computed) | ✓                                               | lifted — cycle detection added   |
+| Not stored in `row.data`                 | ✓                                               | ✓ (unchanged)                    |
+| Read-only                                | ✓                                               | ✓ (unchanged)                    |
 
 **Chaining (v3)**: `detectColumnCycle(columns, candidateSourceIds): boolean` — DFS on the full column dependency graph. Called in `CreateComputedColumnCommand` before insertion. `resolveValue` becomes recursive for computed sources; safe because cycles are impossible post-validation.
 
@@ -81,7 +81,7 @@ resolveValue(row, columns, column):
 | `shared/models/tableEditor/file/column/transformation/ConvertToTransformation.ts`       |                                                |
 | `shared/models/tableEditor/file/column/transformation/DatePartTransformation.ts`        |                                                |
 | `shared/models/tableEditor/file/column/transformation/RegexMatchTransformation.ts`      |                                                |
-| `shared/models/tableEditor/file/column/transformation/MathOperationTransformation.ts`   | Redesigned in v3                               |
+| `shared/models/tableEditor/file/column/transformation/MathTransformation.ts`            | mathjs expressions (v3)                        |
 | `shared/models/tableEditor/file/column/transformation/StringPatternTransformation.ts`   | New (v3)                                       |
 
 ### App services
@@ -97,7 +97,7 @@ resolveValue(row, columns, column):
 | `app/services/tableEditor/file/column/transformation/computeConvertToTransformation.ts`     |                                                                   |
 | `app/services/tableEditor/file/column/transformation/computeDatePartTransformation.ts`      |                                                                   |
 | `app/services/tableEditor/file/column/transformation/computeRegexMatchTransformation.ts`    |                                                                   |
-| `app/services/tableEditor/file/column/transformation/computeMathOperationTransformation.ts` | Fold-left over `steps` (v3)                                       |
+| `app/services/tableEditor/file/column/transformation/computeMathTransformation.ts`          | mathjs evaluate (v3)                                              |
 | `app/services/tableEditor/file/column/transformation/computeStringPatternTransformation.ts` | `{N}` token substitution (v3)                                     |
 
 ### App commands + composables

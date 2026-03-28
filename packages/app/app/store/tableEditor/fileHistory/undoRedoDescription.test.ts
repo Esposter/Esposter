@@ -31,7 +31,7 @@ describe(useFileHistoryStore, () => {
     const { undoDescription } = storeToRefs(fileHistoryStore);
     deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
 
-    expect(undoDescription.value).toMatchInlineSnapshot(`"Delete Row 1"`);
+    expect(undoDescription.value).toBe("Delete Row 1");
   });
 
   test("redoDescription is null when no future", () => {
@@ -55,6 +55,6 @@ describe(useFileHistoryStore, () => {
     deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
     undo(editedItem.value);
 
-    expect(redoDescription.value).toMatchInlineSnapshot(`"Delete Row 1"`);
+    expect(redoDescription.value).toBe("Delete Row 1");
   });
 });
