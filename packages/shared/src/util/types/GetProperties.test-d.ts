@@ -1,13 +1,9 @@
 import type { GetProperties } from "@/util/types/GetProperties";
+import type { TableEntity } from "@azure/data-tables";
 
 import { describe, expect, expectTypeOf, test } from "vitest";
 
 describe("getProperties type", () => {
-  type TableEntity<T extends object = Record<string, unknown>> = T & {
-    partitionKey: string;
-    rowKey: string;
-  };
-
   test("array", () => {
     expect.hasAssertions();
 
@@ -116,18 +112,36 @@ describe("getProperties type", () => {
   test("union", () => {
     expect.hasAssertions();
 
-    expectTypeOf<GetProperties<number | string>>().toEqualTypeOf<never>();
+    expectTypeOf<GetProperties<number | string>>().toEqualTypeOf<{
+      path: "length";
+      value: number;
+    }>();
   });
 
   test("tableEntity", () => {
     expect.hasAssertions();
 
     expectTypeOf<GetProperties<TableEntity<{ "": number }>>>().toEqualTypeOf<
-      | { path: ""; value: number }
-      | { path: "partitionKey"; value: string }
-      | { path: "partitionKey.length"; value: number }
-      | { path: "rowKey"; value: string }
-      | { path: "rowKey.length"; value: number }
+      | {
+          path: "";
+          value: number;
+        }
+      | {
+          path: "partitionKey";
+          value: string;
+        }
+      | {
+          path: "partitionKey.length";
+          value: number;
+        }
+      | {
+          path: "rowKey";
+          value: string;
+        }
+      | {
+          path: "rowKey.length";
+          value: number;
+        }
     >();
   });
 });
