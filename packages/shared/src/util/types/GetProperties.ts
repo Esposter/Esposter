@@ -24,15 +24,13 @@ type GetArrayProps<T extends unknown[], P extends string, D extends unknown[], R
 type GetObjectProps<T, P extends string, D extends unknown[], R extends boolean> = {
   [K in keyof KnownKeys<T> & (number | string)]: K extends `${number}`
     ? never
-    : [NonNullable<T[K]>] extends [never]
+    : NonNullable<T[K]> extends Function
       ? never
-      : NonNullable<T[K]> extends Function
-        ? never
-        :
-            | (D extends [unknown, ...infer Rest]
-                ? GetProperties<T[K], R extends true ? `${K}` : `${P}.${K}`, Rest, false>
-                : never)
-            | { path: R extends true ? `${K}` : `${P}.${K}`; value: T[K] };
+      :
+          | (D extends [unknown, ...infer Rest]
+              ? GetProperties<T[K], R extends true ? `${K}` : `${P}.${K}`, Rest, false>
+              : never)
+          | { path: R extends true ? `${K}` : `${P}.${K}`; value: T[K] };
 }[keyof KnownKeys<T> & (number | string)];
 
 type GetPrimitiveProps<T, P extends string, D extends unknown[], R extends boolean> = T extends string
