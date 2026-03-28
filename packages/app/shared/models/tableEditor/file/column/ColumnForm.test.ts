@@ -368,7 +368,7 @@ describe("columnFormSchema", () => {
                           },
                           "stringTransformationType": {
                             "const": "Lowercase",
-                            "title": "String Transformation",
+                            "title": "String Transformation Type",
                             "type": "string",
                           },
                           "type": {
@@ -403,7 +403,7 @@ describe("columnFormSchema", () => {
                           },
                           "stringTransformationType": {
                             "const": "TitleCase",
-                            "title": "String Transformation",
+                            "title": "String Transformation Type",
                             "type": "string",
                           },
                           "type": {
@@ -438,7 +438,7 @@ describe("columnFormSchema", () => {
                           },
                           "stringTransformationType": {
                             "const": "Trim",
-                            "title": "String Transformation",
+                            "title": "String Transformation Type",
                             "type": "string",
                           },
                           "type": {
@@ -473,7 +473,7 @@ describe("columnFormSchema", () => {
                           },
                           "stringTransformationType": {
                             "const": "Uppercase",
-                            "title": "String Transformation",
+                            "title": "String Transformation Type",
                             "type": "string",
                           },
                           "type": {
@@ -502,7 +502,6 @@ describe("columnFormSchema", () => {
                           },
                           "sourceColumnIds": {
                             "items": {
-                              "additionalProperties": false,
                               "comp": "select",
                               "getItems": "context.columnItems",
                               "layout": {
@@ -518,7 +517,7 @@ describe("columnFormSchema", () => {
                           "stringTransformationType": {
                             "const": "Interpolate",
                             "readOnly": true,
-                            "title": "String Transformation",
+                            "title": "String Transformation Type",
                             "type": "string",
                           },
                           "type": {

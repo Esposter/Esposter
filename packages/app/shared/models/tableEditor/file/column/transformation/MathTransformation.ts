@@ -15,8 +15,8 @@ export interface MathTransformation extends ItemEntityType<ColumnTransformationT
 export const mathTransformationSchema = z
   .object({
     ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.Math).readonly()).shape,
-    expression: z.string().meta({ title: "Expression" }),
-    variables: z.array(mathVariableSchema).meta({ title: "Variables" }),
+    expression: z.string(),
+    variables: z.array(mathVariableSchema),
   })
   .superRefine(({ expression }, ctx) => {
     try {

@@ -20,6 +20,6 @@ export const basicStringTransformationSchema = z
   .object({
     ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.String).readonly()).shape,
     ...createSourceColumnIdSchema(ColumnFormVjsfContextPropertyNames["context.stringColumnItems"]).shape,
-    stringTransformationType: basicStringTransformationTypeSchema.meta({ title: "String Transformation" }),
+    stringTransformationType: basicStringTransformationTypeSchema,
   })
   .meta({ applicableColumnTypes: [ColumnType.String] }) satisfies z.ZodType<BasicStringTransformation>;

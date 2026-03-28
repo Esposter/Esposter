@@ -17,8 +17,8 @@ export const regexMatchTransformationSchema = z
   .object({
     ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.RegexMatch).readonly()).shape,
     ...createSourceColumnIdSchema(ColumnFormVjsfContextPropertyNames["context.stringColumnItems"]).shape,
-    groupIndex: z.number().int().nonnegative().meta({ title: "Group Index" }),
-    pattern: z.string().meta({ title: "Pattern" }),
+    groupIndex: z.number().int().nonnegative(),
+    pattern: z.string(),
   })
   .meta({
     applicableColumnTypes: [ColumnType.String],

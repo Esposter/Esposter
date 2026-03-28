@@ -18,7 +18,7 @@ export const interpolateStringTransformationSchema = z
   .object({
     ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.String).readonly()).shape,
     ...createSourceColumnIdsSchema().shape,
-    pattern: z.string().meta({ title: "Pattern" }),
+    pattern: z.string(),
     stringTransformationType: z.literal(StringTransformationType.Interpolate).readonly(),
   })
   .meta({

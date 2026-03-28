@@ -4,5 +4,4 @@ export interface Format<TFormat> {
   format: TFormat;
 }
 
-export const createFormatSchema = <TSchema extends z.ZodType>(formatSchema: TSchema) =>
-  formatSchema.meta({ title: "Format" });
+export const createFormatSchema = <TSchema extends z.ZodType>(formatSchema: TSchema) => formatSchema;

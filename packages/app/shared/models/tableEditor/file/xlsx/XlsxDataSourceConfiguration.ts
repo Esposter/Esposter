@@ -5,5 +5,5 @@ export interface XlsxDataSourceConfiguration {
 }
 
 export const xlsxDataSourceConfigurationSchema = z.object({
-  sheetIndex: z.number().int().min(0).meta({ title: "Sheet Index" }),
+  sheetIndex: z.number().int().min(0),
 }) satisfies z.ZodType<XlsxDataSourceConfiguration>;
