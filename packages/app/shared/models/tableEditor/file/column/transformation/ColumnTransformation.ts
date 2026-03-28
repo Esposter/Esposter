@@ -4,6 +4,7 @@ import type { DatePartTransformation } from "#shared/models/tableEditor/file/col
 import type { MathOperationTransformation } from "#shared/models/tableEditor/file/column/transformation/MathOperationTransformation";
 import type { RegexMatchTransformation } from "#shared/models/tableEditor/file/column/transformation/RegexMatchTransformation";
 import type { StringPatternTransformation } from "#shared/models/tableEditor/file/column/transformation/StringPatternTransformation";
+import type { StringTransformation } from "#shared/models/tableEditor/file/column/transformation/StringTransformation";
 
 import { aggregationTransformationSchema } from "#shared/models/tableEditor/file/column/transformation/AggregationTransformation";
 import { convertToTransformationSchema } from "#shared/models/tableEditor/file/column/transformation/ConvertToTransformation";
@@ -11,6 +12,7 @@ import { datePartTransformationSchema } from "#shared/models/tableEditor/file/co
 import { mathOperationTransformationSchema } from "#shared/models/tableEditor/file/column/transformation/MathOperationTransformation";
 import { regexMatchTransformationSchema } from "#shared/models/tableEditor/file/column/transformation/RegexMatchTransformation";
 import { stringPatternTransformationSchema } from "#shared/models/tableEditor/file/column/transformation/StringPatternTransformation";
+import { stringTransformationSchema } from "#shared/models/tableEditor/file/column/transformation/StringTransformation";
 import { z } from "zod";
 
 export type ColumnTransformation =
@@ -19,7 +21,8 @@ export type ColumnTransformation =
   | DatePartTransformation
   | MathOperationTransformation
   | RegexMatchTransformation
-  | StringPatternTransformation;
+  | StringPatternTransformation
+  | StringTransformation;
 
 export const columnTransformationSchema = z.discriminatedUnion("type", [
   aggregationTransformationSchema,
@@ -28,4 +31,5 @@ export const columnTransformationSchema = z.discriminatedUnion("type", [
   mathOperationTransformationSchema,
   regexMatchTransformationSchema,
   stringPatternTransformationSchema,
+  stringTransformationSchema,
 ]) satisfies z.ZodType<ColumnTransformation>;

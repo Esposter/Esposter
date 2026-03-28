@@ -7,13 +7,13 @@ import {
   setupEditedItem,
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
-import { NormalizeStringMode } from "@/models/tableEditor/file/commands/NormalizeStringMode";
+import { StringTransformationType } from "#shared/models/tableEditor/file/column/transformation/StringTransformationType";
 import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeEach, describe, expect, test } from "vitest";
 
-describe(useNormalizeStrings, () => {
+describe(useStringTransformation, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     const fileHistoryStore = useFileHistoryStore();
@@ -21,7 +21,7 @@ describe(useNormalizeStrings, () => {
     clear();
   });
 
-  test(`${NormalizeStringMode.Trim} strips whitespace from all string cells`, () => {
+  test(`${StringTransformationType.Trim} strips whitespace from all string cells`, () => {
     expect.hasAssertions();
 
     const ds = makeDataSource(
@@ -29,8 +29,8 @@ describe(useNormalizeStrings, () => {
       [makeRow({ "": " ", " ": " " }), makeRow({ "": " ", " ": " " })],
     );
     const { editedItem } = setupWithDataSource(ds);
-    const normalizeStrings = useNormalizeStrings();
-    normalizeStrings(NormalizeStringMode.Trim);
+    const stringTransformation = useStringTransformation();
+    stringTransformation(StringTransformationType.Trim);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
@@ -41,13 +41,13 @@ describe(useNormalizeStrings, () => {
     expect(takeOne(dataSource.rows, 1).data[" "]).toBe("");
   });
 
-  test(`${NormalizeStringMode.Lowercase} lowercases all string cells`, () => {
+  test(`${StringTransformationType.Lowercase} lowercases all string cells`, () => {
     expect.hasAssertions();
 
     const ds = makeDataSource([makeColumn("")], [makeRow({ "": "A" })]);
     const { editedItem } = setupWithDataSource(ds);
-    const normalizeStrings = useNormalizeStrings();
-    normalizeStrings(NormalizeStringMode.Lowercase);
+    const stringTransformation = useStringTransformation();
+    stringTransformation(StringTransformationType.Lowercase);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
@@ -55,13 +55,13 @@ describe(useNormalizeStrings, () => {
     expect(takeOne(dataSource.rows, 0).data[""]).toBe("a");
   });
 
-  test(`${NormalizeStringMode.Uppercase} uppercases all string cells`, () => {
+  test(`${StringTransformationType.Uppercase} uppercases all string cells`, () => {
     expect.hasAssertions();
 
     const ds = makeDataSource([makeColumn("")], [makeRow({ "": "a" })]);
     const { editedItem } = setupWithDataSource(ds);
-    const normalizeStrings = useNormalizeStrings();
-    normalizeStrings(NormalizeStringMode.Uppercase);
+    const stringTransformation = useStringTransformation();
+    stringTransformation(StringTransformationType.Uppercase);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
@@ -75,10 +75,10 @@ describe(useNormalizeStrings, () => {
     const numberColumn = new NumberColumn({ name: "", size: 0, sourceName: "" });
     const ds = makeDataSource([numberColumn], [makeRow({ "": 0 })]);
     const { editedItem } = setupWithDataSource(ds);
-    const normalizeStrings = useNormalizeStrings();
+    const stringTransformation = useStringTransformation();
     const fileHistoryStore = useFileHistoryStore();
     const { isUndoable } = storeToRefs(fileHistoryStore);
-    normalizeStrings(NormalizeStringMode.Trim);
+    stringTransformation(StringTransformationType.Trim);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
@@ -93,10 +93,10 @@ describe(useNormalizeStrings, () => {
     const hiddenColumn = new StringColumn({ hidden: true, name: "", size: 0, sourceName: "" });
     const ds = makeDataSource([hiddenColumn], [makeRow({ "": " " })]);
     const { editedItem } = setupWithDataSource(ds);
-    const normalizeStrings = useNormalizeStrings();
+    const stringTransformation = useStringTransformation();
     const fileHistoryStore = useFileHistoryStore();
     const { isUndoable } = storeToRefs(fileHistoryStore);
-    normalizeStrings(NormalizeStringMode.Trim);
+    stringTransformation(StringTransformationType.Trim);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
@@ -110,14 +110,14 @@ describe(useNormalizeStrings, () => {
 
     const ds = makeDataSource([makeColumn("")], [makeRow({ "": " " }), makeRow({ "": " " })]);
     const { editedItem } = setupWithDataSource(ds);
-    const normalizeStrings = useNormalizeStrings();
+    const stringTransformation = useStringTransformation();
     const fileHistoryStore = useFileHistoryStore();
     const { undo } = fileHistoryStore;
     const editedItemValue = editedItem.value;
 
     assert.exists(editedItemValue);
 
-    normalizeStrings(NormalizeStringMode.Trim);
+    stringTransformation(StringTransformationType.Trim);
     undo(editedItemValue);
     const dataSource = editedItem.value?.dataSource;
 
@@ -132,14 +132,14 @@ describe(useNormalizeStrings, () => {
 
     const ds = makeDataSource([makeColumn("")], [makeRow({ "": " " })]);
     const { editedItem } = setupWithDataSource(ds);
-    const normalizeStrings = useNormalizeStrings();
+    const stringTransformation = useStringTransformation();
     const fileHistoryStore = useFileHistoryStore();
     const { redo, undo } = fileHistoryStore;
     const editedItemValue = editedItem.value;
 
     assert.exists(editedItemValue);
 
-    normalizeStrings(NormalizeStringMode.Trim);
+    stringTransformation(StringTransformationType.Trim);
     undo(editedItemValue);
     redo(editedItemValue);
     const dataSource = editedItem.value?.dataSource;
@@ -154,8 +154,8 @@ describe(useNormalizeStrings, () => {
 
     const fileHistoryStore = useFileHistoryStore();
     const { isUndoable } = storeToRefs(fileHistoryStore);
-    const normalizeStrings = useNormalizeStrings();
-    normalizeStrings(NormalizeStringMode.Trim);
+    const stringTransformation = useStringTransformation();
+    stringTransformation(StringTransformationType.Trim);
 
     expect(isUndoable.value).toBe(false);
   });
@@ -166,22 +166,22 @@ describe(useNormalizeStrings, () => {
     setupEditedItem();
     const fileHistoryStore = useFileHistoryStore();
     const { isUndoable } = storeToRefs(fileHistoryStore);
-    const normalizeStrings = useNormalizeStrings();
-    normalizeStrings(NormalizeStringMode.Trim);
+    const stringTransformation = useStringTransformation();
+    stringTransformation(StringTransformationType.Trim);
 
     expect(isUndoable.value).toBe(false);
   });
 
-  test("description includes the mode", () => {
+  test("description includes the transform", () => {
     expect.hasAssertions();
 
     const ds = makeDataSource([makeColumn("")], [makeRow({ "": " " })]);
     setupWithDataSource(ds);
-    const normalizeStrings = useNormalizeStrings();
+    const stringTransformation = useStringTransformation();
     const fileHistoryStore = useFileHistoryStore();
     const { undoDescription } = storeToRefs(fileHistoryStore);
-    normalizeStrings(NormalizeStringMode.Trim);
+    stringTransformation(StringTransformationType.Trim);
 
-    expect(undoDescription.value).toBe(`Normalize Strings (${NormalizeStringMode.Trim})`);
+    expect(undoDescription.value).toBe(`Format Strings (${StringTransformationType.Trim})`);
   });
 });

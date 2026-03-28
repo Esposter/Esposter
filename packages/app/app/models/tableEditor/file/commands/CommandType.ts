@@ -10,7 +10,7 @@ export enum CommandType {
   FindReplace = "FindReplace",
   MoveColumn = "MoveColumn",
   MoveRow = "MoveRow",
-  NormalizeStrings = "NormalizeStrings",
+  StringTransformation = "StringTransformation",
   NullStrategy = "NullStrategy",
   ToggleColumnVisibility = "ToggleColumnVisibility",
   UpdateColumn = "UpdateColumn",

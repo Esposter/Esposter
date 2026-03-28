@@ -1,21 +1,21 @@
 import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 
-import { NormalizeStringMode } from "@/models/tableEditor/file/commands/NormalizeStringMode";
-import { NormalizeStringsCommand } from "@/models/tableEditor/file/commands/NormalizeStringsCommand";
+import { StringTransformationType } from "#shared/models/tableEditor/file/column/transformation/StringTransformationType";
+import { StringTransformationCommand } from "@/models/tableEditor/file/commands/StringTransformationCommand";
 import { getStringColumnsAffectedCells } from "@/services/tableEditor/file/commands/getStringColumnsAffectedCells";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 
-export const useNormalizeStrings = () => {
+export const useStringTransformation = () => {
   const tableEditorStore = useTableEditorStore<DataSourceItem>();
   const { editedItem } = storeToRefs(tableEditorStore);
   const fileHistoryStore = useFileHistoryStore();
   const { push } = fileHistoryStore;
-  return (mode: NormalizeStringMode) => {
+  return (transform: StringTransformationType) => {
     if (!editedItem.value?.dataSource) return;
     const affectedCells = getStringColumnsAffectedCells(editedItem.value.dataSource);
     if (affectedCells.length === 0) return;
-    const command = new NormalizeStringsCommand(mode, affectedCells);
+    const command = new StringTransformationCommand(transform, affectedCells);
     command.execute(editedItem.value);
     push(command);
   };

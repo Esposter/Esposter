@@ -7,6 +7,7 @@ export enum ColumnTransformationType {
   MathOperation = "MathOperation",
   RegexMatch = "RegexMatch",
   StringPattern = "StringPattern",
+  StringTransformation = "StringTransformation",
 }
 
 export const columnTransformationTypeSchema = z.enum(

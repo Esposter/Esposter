@@ -1,26 +1,26 @@
 import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 import type { AffectedCell } from "@/models/tableEditor/file/commands/AffectedCell";
 
+import { StringTransformationType } from "#shared/models/tableEditor/file/column/transformation/StringTransformationType";
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
-import { NormalizeStringMode } from "@/models/tableEditor/file/commands/NormalizeStringMode";
-import { applyNormalizeStringMode } from "@/services/tableEditor/file/commands/applyNormalizeStringMode";
+import { applyStringTransformation } from "@/services/tableEditor/file/commands/applyStringTransformation";
 import { getValueSize } from "@/services/tableEditor/file/commands/getValueSize";
 import { takeOne } from "@esposter/shared";
 
-export class NormalizeStringsCommand extends ADataSourceCommand<CommandType.NormalizeStrings> {
-  readonly type = CommandType.NormalizeStrings;
+export class StringTransformationCommand extends ADataSourceCommand<CommandType.StringTransformation> {
+  readonly type = CommandType.StringTransformation;
 
   get description() {
-    return `Normalize Strings (${this.mode})`;
+    return `Format Strings (${this.transform})`;
   }
 
   private readonly affectedCells: AffectedCell[];
-  private readonly mode: NormalizeStringMode;
+  private readonly transform: StringTransformationType;
 
-  constructor(mode: NormalizeStringMode, affectedCells: AffectedCell[]) {
+  constructor(transform: StringTransformationType, affectedCells: AffectedCell[]) {
     super();
-    this.mode = mode;
+    this.transform = transform;
     this.affectedCells = affectedCells;
   }
 
@@ -31,7 +31,7 @@ export class NormalizeStringsCommand extends ADataSourceCommand<CommandType.Norm
       const row = takeOne(item.dataSource.rows, rowIndex);
       const column = columnsByNameMap.get(columnName);
       if (!column) continue;
-      const newValue = applyNormalizeStringMode(String(originalValue), this.mode);
+      const newValue = applyStringTransformation(String(originalValue), this.transform);
       column.size += getValueSize(newValue) - getValueSize(takeOne(row.data, columnName));
       row.data[columnName] = newValue;
     }

@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { NormalizeStringModeItemCategoryDefinitions } from "@/services/tableEditor/file/commands/NormalizeStringModeItemCategoryDefinitions";
+import { StringTransformationItemCategoryDefinitions } from "@/services/tableEditor/file/commands/StringTransformationItemCategoryDefinitions";
 
-const normalizeStrings = useNormalizeStrings();
+const stringTransformation = useStringTransformation();
 </script>
 
 <template>
   <v-menu>
     <template #activator="{ props: menuProps }">
-      <v-tooltip text="Normalize Strings">
+      <v-tooltip text="String Transformation">
         <template #activator="{ props: tooltipProps }">
           <v-btn m-0 icon="mdi-format-letter-case" size="small" tile :="{ ...menuProps, ...tooltipProps }" />
         </template>
@@ -15,10 +15,10 @@ const normalizeStrings = useNormalizeStrings();
     </template>
     <v-list density="compact">
       <v-list-item
-        v-for="{ title, value } of NormalizeStringModeItemCategoryDefinitions"
+        v-for="{ title, value } of StringTransformationItemCategoryDefinitions"
         :key="value"
         :title
-        @click="normalizeStrings(value)"
+        @click="stringTransformation(value)"
       />
     </v-list>
   </v-menu>
