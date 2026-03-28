@@ -5,7 +5,7 @@ Architecture details in `v3-architecture.md`.
 ## Computed Columns — Extensions
 
 - [x] **StringPattern transformation** — multi-column string templating via `"{0} {1}"` positional pattern; extends `WithSourceColumnIds`; `PatternInput.vue` renders `{N}` tokens as inline chips using contenteditable + span re-render (no DOM replacement — backspace works character-by-character naturally)
-- [x] **MathOperation redesign** — composable step sequence replacing the flat `operation + operand` shape; `first: BinaryOperand` (column or constant) + `steps: MathStep[]` where each step is either a unary op or a binary op paired with its operand; enables composition like `Abs(Price * Quantity)` in a single transformation; `UnaryMathOperationType` and `BinaryMathOperationType` split from the existing `MathOperationType` enum
+- [x] **Math Transformation redesign** — expression-based overhaul using `mathjs` replacing the previous step-based sequence; users write plain expressions (e.g. `col0 * col1`) with auto-generated variable bindings; enables operator precedence, grouping, and standard math functions in a single transformation; `ColumnTransformationType.Math` used as discriminant.
 - [x] **Chained computed columns** — lifted the "no chaining" constraint; cycle detection is handled inline in `resolveValue` via a `visited: Set<string>` parameter (returns `null` on cycle); no separate `detectColumnCycle` function needed
 
 ## New Column Types

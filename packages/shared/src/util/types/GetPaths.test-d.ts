@@ -16,10 +16,9 @@ describe("getPaths type", () => {
     expectTypeOf<GetPaths<{ a: { b: string } }>>().toEqualTypeOf<"a" | "a.b" | "a.b.length">();
   });
 
-  test("tableEntity", () => {
+  test("tableEntity should keep the literal keys even if type has an index signature", () => {
     expect.hasAssertions();
 
-    // It should keep the literal keys even if T has an index signature
     expectTypeOf<GetPaths<TableEntity>>().toEqualTypeOf<
       "partitionKey" | "partitionKey.length" | "rowKey" | "rowKey.length"
     >();

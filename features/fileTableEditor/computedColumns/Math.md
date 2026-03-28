@@ -1,4 +1,4 @@
-# MathOperation Transformation — Expression-Based Overhaul
+# Math Transformation — Expression-Based Overhaul
 
 ## Motivation
 
@@ -25,7 +25,7 @@ Install: add `mathjs` to `packages/app` dependencies.
 ## New Shape
 
 ```typescript
-interface MathOperationTransformation extends ItemEntityType<ColumnTransformationType.MathOperation> {
+interface MathTransformation extends ItemEntityType<ColumnTransformationType.Math> {
   expression: string;
   variables: { name: string; sourceColumnId: string }[];
 }
@@ -42,7 +42,7 @@ Example:
 
 ```json
 {
-  "type": "MathOperation",
+  "type": "Math",
   "expression": "col0 * (1 - col1)",
   "variables": [
     { "name": "col0", "sourceColumnId": "col-id-price" },
@@ -115,9 +115,9 @@ Once implemented, delete all of:
 - `shared/models/tableEditor/file/column/transformation/MathOperandType.ts`
 - `shared/models/tableEditor/file/column/transformation/ColumnMathOperand.ts`
 - `shared/models/tableEditor/file/column/transformation/ConstantMathOperand.ts`
-- `app/services/tableEditor/file/column/transformation/computeMathOperationTransformation.ts` (and its test)
+- `app/services/tableEditor/file/column/transformation/computeMathTransformation.ts` (and its test)
 
-And rewrite `MathOperationTransformation.ts` to just the new shape.
+And rewrite `MathTransformation.ts` to just the new shape.
 
 ---
 
