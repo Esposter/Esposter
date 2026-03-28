@@ -9,12 +9,10 @@ describe("recursiveKeyOf test", () => {
     expectTypeOf<RecursiveKeyOf<{ a: string; b: number }>>().toEqualTypeOf<"a" | "b">();
   });
 
-  test("returns nested paths", () => {
+  test("returns nested keys without dot notation", () => {
     expect.hasAssertions();
 
-    expectTypeOf<RecursiveKeyOf<{ a: { b: string; c: { d: number } } }>>().toEqualTypeOf<
-      "a" | "a.b" | "a.c" | "a.c.d"
-    >();
+    expectTypeOf<RecursiveKeyOf<{ a: { b: string; c: { d: number } } }>>().toEqualTypeOf<"a" | "b" | "c" | "d">();
   });
 
   test("excludes array keys", () => {
@@ -53,10 +51,30 @@ describe("recursiveKeyOf test", () => {
     expectTypeOf<RecursiveKeyOf<{ a: Set<string> }>>().toEqualTypeOf<"a">();
   });
 
-  test("includes keys for nested excluded types", () => {
+  test("returns all nested keys including deeply nested", () => {
     expect.hasAssertions();
 
-    expectTypeOf<RecursiveKeyOf<{ a: { b: Date; c: { d: string } } }>>().toEqualTypeOf<"a" | "a.b" | "a.c" | "a.c.d">();
+    expectTypeOf<
+      RecursiveKeyOf<{
+        a: {
+          b: {
+            c: {
+              d: string;
+              e: number;
+            };
+            f: boolean;
+          };
+          g: Date;
+        };
+        h: string;
+      }>
+    >().toEqualTypeOf<"a" | "b" | "c" | "d" | "e" | "f" | "g" | "h">();
+  });
+
+  test("excludes nested excluded types but includes their parent keys", () => {
+    expect.hasAssertions();
+
+    expectTypeOf<RecursiveKeyOf<{ a: { b: Date; c: { d: string } } }>>().toEqualTypeOf<"a" | "b" | "c" | "d">();
   });
 
   test("returns never for empty object", () => {
@@ -73,21 +91,9 @@ describe("recursiveKeyOf test", () => {
     expectTypeOf<RecursiveKeyOf<boolean>>().toEqualTypeOf<never>();
   });
 
-  test("returns keys from nested structure with mixed types", () => {
+  test("handles empty string keys", () => {
     expect.hasAssertions();
 
-    expectTypeOf<
-      RecursiveKeyOf<{
-        a: {
-          b: string;
-          c: Date;
-          d: {
-            e: string;
-            f: RegExp;
-          };
-        };
-        g: number;
-      }>
-    >().toEqualTypeOf<"a" | "a.b" | "a.c" | "a.d" | "a.d.e" | "a.d.f" | "g">();
+    expectTypeOf<RecursiveKeyOf<{ "": string; " ": { "  ": number } }>>().toEqualTypeOf<"" | " " | "  ">();
   });
 });
