@@ -1,54 +1,48 @@
 export type GetProperties<
   T,
-  Prefix extends string = "",
-  Depth extends unknown[] = [unknown, unknown, unknown, unknown, unknown],
-  IsRoot extends boolean = true,
+  P extends string = "",
+  D extends unknown[] = [unknown, unknown, unknown, unknown, unknown],
+  R extends boolean = true,
 > = [T] extends [never]
   ? never
-  : Depth extends []
+  : D extends []
     ? never
     : NonNullable<T> extends infer O
       ? O extends unknown[]
-        ? GetArrayProps<O, Prefix, Depth, IsRoot>
+        ? GetArrayProps<O, P, D, R>
         : O extends object
-          ? GetObjectProps<O, Prefix, Depth, IsRoot>
-          : GetPrimitiveProps<O, Prefix, Depth, IsRoot>
+          ? GetObjectProps<O, P, D, R>
+          : GetPrimitiveProps<O, P, D, R>
       : never;
 
-type GetArrayProps<T extends unknown[], Prefix extends string, Depth extends unknown[], IsRoot extends boolean> =
-  | (Depth extends [unknown, ...infer Rest]
-      ? GetProperties<T[number], IsRoot extends true ? `${Prefix}[number]` : `${Prefix}.[number]`, Rest, false>
+type GetArrayProps<T extends unknown[], P extends string, D extends unknown[], R extends boolean> =
+  | (D extends [unknown, ...infer Rest]
+      ? GetProperties<T[number], R extends true ? `${P}[number]` : `${P}.[number]`, Rest, false>
       : never)
-  | {
-      path: IsRoot extends true ? "length" : `${Prefix}.length`;
-      value: T["length"];
-    };
+  | { path: R extends true ? "length" : `${P}.length`; value: T["length"] };
 
-type GetObjectProps<T, Prefix extends string, Depth extends unknown[], IsRoot extends boolean> = {
+type GetObjectProps<T, P extends string, D extends unknown[], R extends boolean> = {
   [K in keyof KnownKeys<T> & (number | string)]: K extends `${number}`
     ? never
-    : NonNullable<T[K]> extends Function
+    : [NonNullable<T[K]>] extends [never]
       ? never
-      :
-          | (Depth extends [unknown, ...infer Rest]
-              ? GetProperties<T[K], IsRoot extends true ? `${K}` : `${Prefix}.${K}`, Rest, false>
-              : never)
-          | { path: IsRoot extends true ? `${K}` : `${Prefix}.${K}`; value: T[K] };
+      : NonNullable<T[K]> extends Function
+        ? never
+        :
+            | (D extends [unknown, ...infer Rest]
+                ? GetProperties<T[K], R extends true ? `${K}` : `${P}.${K}`, Rest, false>
+                : never)
+            | { path: R extends true ? `${K}` : `${P}.${K}`; value: T[K] };
 }[keyof KnownKeys<T> & (number | string)];
 
-type GetPrimitiveProps<T, Prefix extends string, Depth extends unknown[], IsRoot extends boolean> = T extends string
-  ? { path: IsRoot extends true ? "length" : `${Prefix}.length`; value: number }
+type GetPrimitiveProps<T, P extends string, D extends unknown[], R extends boolean> = T extends string
+  ? { path: R extends true ? "length" : `${P}.length`; value: number }
   : T extends symbol
     ?
-        | (Depth extends [unknown, ...infer Rest]
-            ? GetProperties<
-                string | undefined,
-                IsRoot extends true ? "description" : `${Prefix}.description`,
-                Rest,
-                false
-              >
+        | (D extends [unknown, ...infer Rest]
+            ? GetProperties<string | undefined, R extends true ? "description" : `${P}.description`, Rest, false>
             : never)
-        | { path: IsRoot extends true ? "description" : `${Prefix}.description`; value: string | undefined }
+        | { path: R extends true ? "description" : `${P}.description`; value: string | undefined }
     : never;
 
 type KnownKeys<T> = {
