@@ -2,6 +2,7 @@ import type { BasicStringTransformation } from "#shared/models/tableEditor/file/
 import type { InterpolateStringTransformation } from "#shared/models/tableEditor/file/column/transformation/string/InterpolateStringTransformation";
 
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
+import { basicStringTransformationSchema } from "#shared/models/tableEditor/file/column/transformation/string/BasicStringTransformation";
 import { interpolateStringTransformationSchema } from "#shared/models/tableEditor/file/column/transformation/string/InterpolateStringTransformation";
 import { z } from "zod";
 
@@ -9,7 +10,7 @@ export type StringTransformation = BasicStringTransformation | InterpolateString
 
 export const stringTransformationSchema = z
   .discriminatedUnion("stringTransformationType", [
-    // basicStringTransformationSchema,
+    basicStringTransformationSchema,
     interpolateStringTransformationSchema,
   ])
   .meta({ title: ColumnTransformationType.String }) satisfies z.ZodType<StringTransformation>;

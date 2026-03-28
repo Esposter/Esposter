@@ -367,18 +367,119 @@ describe("columnFormSchema", () => {
                             "type": "string",
                           },
                           "stringTransformationType": {
-                            "enum": [
-                              "Lowercase",
-                              "TitleCase",
-                              "Trim",
-                              "Uppercase",
-                            ],
+                            "const": "Lowercase",
                             "title": "String Transformation",
                             "type": "string",
                           },
                           "type": {
                             "const": "String",
                             "readOnly": true,
+                            "title": "Type",
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "type",
+                          "sourceColumnId",
+                          "stringTransformationType",
+                        ],
+                        "type": "object",
+                      },
+                      {
+                        "additionalProperties": false,
+                        "applicableColumnTypes": [
+                          "String",
+                        ],
+                        "properties": {
+                          "sourceColumnId": {
+                            "comp": "select",
+                            "getItems": "context.stringColumnItems",
+                            "layout": {
+                              "comp": "select",
+                              "getItems": "context.stringColumnItems",
+                            },
+                            "title": "Source Column",
+                            "type": "string",
+                          },
+                          "stringTransformationType": {
+                            "const": "TitleCase",
+                            "title": "String Transformation",
+                            "type": "string",
+                          },
+                          "type": {
+                            "const": "String",
+                            "readOnly": true,
+                            "title": "Type",
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "type",
+                          "sourceColumnId",
+                          "stringTransformationType",
+                        ],
+                        "type": "object",
+                      },
+                      {
+                        "additionalProperties": false,
+                        "applicableColumnTypes": [
+                          "String",
+                        ],
+                        "properties": {
+                          "sourceColumnId": {
+                            "comp": "select",
+                            "getItems": "context.stringColumnItems",
+                            "layout": {
+                              "comp": "select",
+                              "getItems": "context.stringColumnItems",
+                            },
+                            "title": "Source Column",
+                            "type": "string",
+                          },
+                          "stringTransformationType": {
+                            "const": "Trim",
+                            "title": "String Transformation",
+                            "type": "string",
+                          },
+                          "type": {
+                            "const": "String",
+                            "readOnly": true,
+                            "title": "Type",
+                            "type": "string",
+                          },
+                        },
+                        "required": [
+                          "type",
+                          "sourceColumnId",
+                          "stringTransformationType",
+                        ],
+                        "type": "object",
+                      },
+                      {
+                        "additionalProperties": false,
+                        "applicableColumnTypes": [
+                          "String",
+                        ],
+                        "properties": {
+                          "sourceColumnId": {
+                            "comp": "select",
+                            "getItems": "context.stringColumnItems",
+                            "layout": {
+                              "comp": "select",
+                              "getItems": "context.stringColumnItems",
+                            },
+                            "title": "Source Column",
+                            "type": "string",
+                          },
+                          "stringTransformationType": {
+                            "const": "Uppercase",
+                            "title": "String Transformation",
+                            "type": "string",
+                          },
+                          "type": {
+                            "const": "String",
+                            "readOnly": true,
+                            "title": "Type",
                             "type": "string",
                           },
                         },
@@ -401,6 +502,7 @@ describe("columnFormSchema", () => {
                           },
                           "sourceColumnIds": {
                             "items": {
+                              "additionalProperties": false,
                               "comp": "select",
                               "getItems": "context.columnItems",
                               "layout": {
@@ -416,11 +518,13 @@ describe("columnFormSchema", () => {
                           "stringTransformationType": {
                             "const": "Interpolate",
                             "readOnly": true,
+                            "title": "String Transformation",
                             "type": "string",
                           },
                           "type": {
                             "const": "String",
                             "readOnly": true,
+                            "title": "Type",
                             "type": "string",
                           },
                         },

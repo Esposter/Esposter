@@ -1,11 +1,9 @@
-import { processOneOf } from "@/services/jsonSchema/processOneOf";
-import { processProperties } from "@/services/jsonSchema/processProperties";
+import { processSchema } from "@/services/jsonSchema/processSchema";
 import { z } from "zod";
 
 const layoutProperties = ["comp", "getProps", "getItems"] as const;
 
 export const zodToJsonSchema = (schema: z.ZodType) => {
-  // Only get the minimal information required to integrate with vjsf
   // $schema is stripped because vjsf's internal Ajv2019 instance does not have the draft 2020-12 meta-schema loaded
   const { $schema: _, ...result } = z.toJSONSchema(schema, {
     override: (ctx) => {
@@ -24,7 +22,6 @@ export const zodToJsonSchema = (schema: z.ZodType) => {
       jsonSchema.layout = layout;
     },
   });
-  processProperties(result.properties);
-  processOneOf(result.oneOf);
+  processSchema(result);
   return result;
 };
