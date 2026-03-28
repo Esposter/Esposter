@@ -15,40 +15,32 @@ describe("recursiveKeyOf test", () => {
     expectTypeOf<RecursiveKeyOf<{ a: { b: string; c: { d: number } } }>>().toEqualTypeOf<"a" | "b" | "c" | "d">();
   });
 
-  test("excludes array keys", () => {
+  test("includes Date methods and properties", () => {
     expect.hasAssertions();
 
-    expectTypeOf<RecursiveKeyOf<{ a: string[] }>>().toEqualTypeOf<"a">();
+    // Date objects have methods like getTime, toISOString, etc.
+    expectTypeOf<RecursiveKeyOf<{ a: Date }>>().toEqualTypeOf<"a" | keyof Date>();
   });
 
-  test("excludes Date", () => {
+  test("includes RegExp properties", () => {
     expect.hasAssertions();
 
-    expectTypeOf<RecursiveKeyOf<{ a: Date }>>().toEqualTypeOf<"a">();
+    // RegExp has properties like test, exec, etc.
+    expectTypeOf<RecursiveKeyOf<{ a: RegExp }>>().toEqualTypeOf<"a" | keyof RegExp>();
   });
 
-  test("excludes Function", () => {
+  test("includes Map properties", () => {
     expect.hasAssertions();
 
-    expectTypeOf<RecursiveKeyOf<{ a: () => void }>>().toEqualTypeOf<"a">();
+    // Map has methods like set, get, etc.
+    expectTypeOf<RecursiveKeyOf<{ a: Map<string, number> }>>().toEqualTypeOf<"a" | keyof Map<string, number>>();
   });
 
-  test("excludes RegExp", () => {
+  test("includes Set properties", () => {
     expect.hasAssertions();
 
-    expectTypeOf<RecursiveKeyOf<{ a: RegExp }>>().toEqualTypeOf<"a">();
-  });
-
-  test("excludes Map", () => {
-    expect.hasAssertions();
-
-    expectTypeOf<RecursiveKeyOf<{ a: Map<string, number> }>>().toEqualTypeOf<"a">();
-  });
-
-  test("excludes Set", () => {
-    expect.hasAssertions();
-
-    expectTypeOf<RecursiveKeyOf<{ a: Set<string> }>>().toEqualTypeOf<"a">();
+    // Set has methods like add, delete, etc.
+    expectTypeOf<RecursiveKeyOf<{ a: Set<string> }>>().toEqualTypeOf<"a" | keyof Set<string>>();
   });
 
   test("returns all nested keys including deeply nested", () => {
@@ -68,13 +60,15 @@ describe("recursiveKeyOf test", () => {
         };
         h: string;
       }>
-    >().toEqualTypeOf<"a" | "b" | "c" | "d" | "e" | "f" | "g" | "h">();
+    >().toEqualTypeOf<"a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | keyof Date>();
   });
 
-  test("excludes nested excluded types but includes their parent keys", () => {
+  test("includes nested excluded types properties", () => {
     expect.hasAssertions();
 
-    expectTypeOf<RecursiveKeyOf<{ a: { b: Date; c: { d: string } } }>>().toEqualTypeOf<"a" | "b" | "c" | "d">();
+    expectTypeOf<RecursiveKeyOf<{ a: { b: Date; c: { d: string } } }>>().toEqualTypeOf<
+      "a" | "b" | "c" | "d" | keyof Date
+    >();
   });
 
   test("returns never for empty object", () => {

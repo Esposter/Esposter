@@ -4,5 +4,5 @@ import type { RecursiveKeyOf } from "#shared/util/types/RecursiveKeyOf";
 
 export type RecursiveDeepOmitItemEntity<
   T extends AItemEntity,
-  TKeys extends RecursiveKeyOf<T>[] = [],
+  TKeys extends readonly RecursiveKeyOf<T>[] = readonly [],
 > = RecursiveDeepOmit<T, [...TKeys, "updatedAt", "toJSON"]>;
