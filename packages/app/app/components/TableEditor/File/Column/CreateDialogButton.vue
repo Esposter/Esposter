@@ -2,8 +2,9 @@
 import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
-import { columnFormSchema } from "#shared/models/tableEditor/file/column/ColumnForm";
+import { columnFormSchema, ColumnTypeFormSchemaMap } from "#shared/models/tableEditor/file/column/ColumnForm";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
+import { extractSchemaFields } from "#shared/services/zod/extractSchemaFields";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { ColumnTypeCreateMap } from "@/services/tableEditor/file/column/ColumnTypeCreateMap";
 import { Vjsf } from "@koumoul/vjsf";
@@ -37,9 +38,9 @@ const resetForm = () => {
     icon="mdi-table-column-plus-after"
     title="Create Column"
     tooltip-text="Add Column"
-    :edited-value="columnFormSchema.safeParse(editedColumn).data"
+    :edited-value="extractSchemaFields(ColumnTypeFormSchemaMap[editedColumn.type], editedColumn)"
     :schema="columnFormSchema"
-    :value="columnFormSchema.safeParse(defaultColumn).data"
+    :value="extractSchemaFields(ColumnTypeFormSchemaMap[defaultColumn.type], defaultColumn)"
     is-create
     @reset="resetForm()"
     @submit="

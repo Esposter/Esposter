@@ -9,6 +9,7 @@ import { computedColumnFormSchema } from "#shared/models/tableEditor/file/column
 import { dateColumnFormSchema } from "#shared/models/tableEditor/file/column/DateColumnForm";
 import { numberColumnFormSchema } from "#shared/models/tableEditor/file/column/NumberColumnForm";
 import { stringColumnFormSchema } from "#shared/models/tableEditor/file/column/StringColumnForm";
+import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { z } from "zod";
 
 export type ColumnForm = BooleanColumnForm | ComputedColumnForm | DateColumnForm | NumberColumnForm | StringColumnForm;
@@ -20,3 +21,11 @@ export const columnFormSchema = z.discriminatedUnion("type", [
   numberColumnFormSchema,
   stringColumnFormSchema,
 ]) satisfies z.ZodType<ColumnForm>;
+
+export const ColumnTypeFormSchemaMap = {
+  [ColumnType.Boolean]: booleanColumnFormSchema,
+  [ColumnType.Computed]: computedColumnFormSchema,
+  [ColumnType.Date]: dateColumnFormSchema,
+  [ColumnType.Number]: numberColumnFormSchema,
+  [ColumnType.String]: stringColumnFormSchema,
+} as const satisfies Record<ColumnType, z.ZodType>;

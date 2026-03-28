@@ -2,7 +2,8 @@
 import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
-import { columnFormSchema } from "#shared/models/tableEditor/file/column/ColumnForm";
+import { columnFormSchema, ColumnTypeFormSchemaMap } from "#shared/models/tableEditor/file/column/ColumnForm";
+import { extractSchemaFields } from "#shared/services/zod/extractSchemaFields";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { toRawDeep } from "@esposter/shared";
 import { Vjsf } from "@koumoul/vjsf";
@@ -36,9 +37,9 @@ const resetForm = () => {
   <TableEditorFileCrudViewEditDialogButton
     :title
     :tooltip-text="title"
+    :edited-value="extractSchemaFields(ColumnTypeFormSchemaMap[editedColumn.type], editedColumn)"
     :schema="columnFormSchema"
-    :value="columnFormSchema.safeParse(column).data"
-    :edited-value="columnFormSchema.safeParse(editedColumn).data"
+    :value="extractSchemaFields(ColumnTypeFormSchemaMap[column.type], column)"
     @reset="resetForm()"
     @submit="
       (onComplete) => {

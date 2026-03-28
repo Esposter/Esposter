@@ -17,6 +17,8 @@ description: Esposter file and folder organisation — one export per file, no e
 - **Never use `export { }` syntax** — always use `export const`, `export class`, `export interface`, `export type`, or `export function` at the declaration site. The only valid exceptions are empty `export {}` in `.d.ts` files (to mark them as a module) and `ctix`-generated barrel files (pinned package). If you see `export { ... }` in a hand-written `.ts` file, it is wrong — inline the `export` keyword at each declaration instead.
 - **Constants go in `constants.ts`** — all module-level constants in a `constants.ts` file under `services/` alongside the files that use them. Never put `constants.ts` inside `composables/`.
 - **Functions go in `services/`** — factory functions, command creators, and other exported functions belong in `services/`, not `models/`. `models/` is strictly for classes and interfaces/types.
+- **External library extensions go in `services/`** — helpers that extend or wrap third-party libraries (e.g. `services/zod/extractSchemaFields.ts`, `services/dayjs/index.ts`) belong in `services/`, not `utils/`.
+- **`utils/` is for truly universal utilities only** — math, string manipulation, regex, type utilities, and Node/browser engine extensions that have no dependency on external libraries. If the helper imports a third-party package, it belongs in `services/` instead.
 - **Generic browser utilities** go in `app/utils/` (e.g., `readFileAsText.ts`).
 - **Feature folders**: related models/services/components are grouped under a feature subfolder (e.g., `tableEditor/file/`).
 - **No magic strings** — always use enums instead of string literals for discriminants, command types, and other categorical values.
