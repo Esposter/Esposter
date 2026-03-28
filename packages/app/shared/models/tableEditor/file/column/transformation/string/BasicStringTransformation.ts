@@ -3,7 +3,7 @@ import type { ItemEntityType } from "@esposter/shared";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
-import { sourceColumnIdSchema } from "#shared/models/tableEditor/file/column/transformation/SourceColumnId";
+import { createSourceColumnIdSchema } from "#shared/models/tableEditor/file/column/transformation/SourceColumnId";
 import {
   BasicStringTransformationType,
   basicStringTransformationTypeSchema,
@@ -17,11 +17,8 @@ export interface BasicStringTransformation extends ItemEntityType<ColumnTransfor
 
 export const basicStringTransformationSchema = z
   .object({
-    ...sourceColumnIdSchema.shape,
     ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.String).readonly()).shape,
-    sourceColumnId: sourceColumnIdSchema.shape.sourceColumnId.meta({
-      getItems: "context.stringColumnItems",
-    }),
+    ...createSourceColumnIdSchema("context.stringColumnItems").shape,
     stringTransformationType: basicStringTransformationTypeSchema.meta({ title: "String Transformation" }),
   })
   .meta({ applicableColumnTypes: [ColumnType.String] }) satisfies z.ZodType<BasicStringTransformation>;

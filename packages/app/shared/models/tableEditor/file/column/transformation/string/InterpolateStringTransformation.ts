@@ -3,7 +3,7 @@ import type { ItemEntityType } from "@esposter/shared";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
-import { sourceColumnIdsSchema } from "#shared/models/tableEditor/file/column/transformation/SourceColumnIds";
+import { createSourceColumnIdsSchema } from "#shared/models/tableEditor/file/column/transformation/SourceColumnIds";
 import { StringTransformationType } from "#shared/models/tableEditor/file/column/transformation/string/StringTransformationType";
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
@@ -16,8 +16,8 @@ export interface InterpolateStringTransformation
 
 export const interpolateStringTransformationSchema = z
   .object({
-    ...sourceColumnIdsSchema.shape,
     ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.String).readonly()).shape,
+    ...createSourceColumnIdsSchema().shape,
     pattern: z.string().meta({ title: "Pattern" }),
     stringTransformationType: z.literal(StringTransformationType.Interpolate).readonly(),
   })
