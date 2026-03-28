@@ -1,5 +1,7 @@
+import type { BasicStringTransformationType } from "#shared/models/tableEditor/file/column/transformation/string/BasicStringTransformationType";
 import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 import type { AffectedCell } from "@/models/tableEditor/file/commands/AffectedCell";
+
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
 import { computeStringTransformation } from "@/services/tableEditor/file/column/transformation/string/computeStringTransformation";
