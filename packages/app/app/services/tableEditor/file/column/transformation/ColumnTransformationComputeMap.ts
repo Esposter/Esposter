@@ -5,13 +5,14 @@ import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
+import { StringTransformationType } from "#shared/models/tableEditor/file/column/transformation/string/StringTransformationType";
 import { computeAggregationValue } from "@/services/tableEditor/file/column/computeAggregationValue";
 import { computeConvertToTransformation } from "@/services/tableEditor/file/column/transformation/computeConvertToTransformation";
 import { computeDatePartTransformation } from "@/services/tableEditor/file/column/transformation/computeDatePartTransformation";
-import { computeMathOperationTransformation } from "@/services/tableEditor/file/column/transformation/computeMathOperationTransformation";
+import { computeMathTransformation } from "@/services/tableEditor/file/column/transformation/computeMathTransformation";
 import { computeRegexMatchTransformation } from "@/services/tableEditor/file/column/transformation/computeRegexMatchTransformation";
-import { computeStringPatternTransformation } from "@/services/tableEditor/file/column/transformation/computeStringPatternTransformation";
-import { computeStringTransformation } from "@/services/tableEditor/file/column/transformation/computeStringTransformation";
+import { computeStringInterpolation } from "@/services/tableEditor/file/column/transformation/string/computeStringInterpolation";
+import { computeStringTransformation } from "@/services/tableEditor/file/column/transformation/string/computeStringTransformation";
 
 export interface ComputeContext {
   computeSource: (sourceColumnId: string) => ColumnValue;
@@ -41,15 +42,15 @@ export const ColumnTransformationComputeMap = {
       sourceColumn.format,
     );
   },
-  [ColumnTransformationType.MathOperation]: (transformation, { computeSource }) =>
-    computeMathOperationTransformation(transformation, computeSource),
+  [ColumnTransformationType.Math]: (transformation, { computeSource }) =>
+    computeMathTransformation(transformation, computeSource),
   [ColumnTransformationType.RegexMatch]: (transformation, { computeSource }) =>
     computeRegexMatchTransformation(computeSource(transformation.sourceColumnId), transformation),
-  [ColumnTransformationType.StringPattern]: (transformation, { computeSource }) => {
-    const values = transformation.sourceColumnIds.map(computeSource);
-    return computeStringPatternTransformation(values, transformation.pattern);
-  },
-  [ColumnTransformationType.StringTransformation]: (transformation, { computeSource }) => {
+  [ColumnTransformationType.String]: (transformation, { computeSource }) => {
+    if (transformation.stringTransformationType === StringTransformationType.Interpolate) {
+      const values = transformation.sourceColumnIds.map(computeSource);
+      return computeStringInterpolation(values, transformation.pattern);
+    }
     const value = computeSource(transformation.sourceColumnId);
     if (value === null) return null;
     return computeStringTransformation(String(value), transformation.stringTransformationType);

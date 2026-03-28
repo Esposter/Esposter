@@ -1,6 +1,6 @@
 import { NumberColumn } from "#shared/models/tableEditor/file/column/NumberColumn";
 import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
-import { StringTransformationType } from "#shared/models/tableEditor/file/column/transformation/StringTransformationType";
+import { BasicStringTransformationType } from "#shared/models/tableEditor/file/column/transformation/string/BasicStringTransformationType";
 import {
   makeColumn,
   makeDataSource,
@@ -21,7 +21,7 @@ describe(useStringTransformation, () => {
     clear();
   });
 
-  test(`${StringTransformationType.Trim} strips whitespace from all string cells`, () => {
+  test(`${BasicStringTransformationType.Trim} strips whitespace from all string cells`, () => {
     expect.hasAssertions();
 
     const ds = makeDataSource(
@@ -30,7 +30,7 @@ describe(useStringTransformation, () => {
     );
     const { editedItem } = setupWithDataSource(ds);
     const stringTransformation = useStringTransformation();
-    stringTransformation(StringTransformationType.Trim);
+    stringTransformation(BasicStringTransformationType.Trim);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
@@ -41,13 +41,13 @@ describe(useStringTransformation, () => {
     expect(takeOne(dataSource.rows, 1).data[" "]).toBe("");
   });
 
-  test(`${StringTransformationType.Lowercase} lowercases all string cells`, () => {
+  test(`${BasicStringTransformationType.Lowercase} lowercases all string cells`, () => {
     expect.hasAssertions();
 
     const ds = makeDataSource([makeColumn("")], [makeRow({ "": "A" })]);
     const { editedItem } = setupWithDataSource(ds);
     const stringTransformation = useStringTransformation();
-    stringTransformation(StringTransformationType.Lowercase);
+    stringTransformation(BasicStringTransformationType.Lowercase);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
@@ -55,13 +55,13 @@ describe(useStringTransformation, () => {
     expect(takeOne(dataSource.rows, 0).data[""]).toBe("a");
   });
 
-  test(`${StringTransformationType.Uppercase} uppercases all string cells`, () => {
+  test(`${BasicStringTransformationType.Uppercase} uppercases all string cells`, () => {
     expect.hasAssertions();
 
     const ds = makeDataSource([makeColumn("")], [makeRow({ "": "a" })]);
     const { editedItem } = setupWithDataSource(ds);
     const stringTransformation = useStringTransformation();
-    stringTransformation(StringTransformationType.Uppercase);
+    stringTransformation(BasicStringTransformationType.Uppercase);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
@@ -69,13 +69,13 @@ describe(useStringTransformation, () => {
     expect(takeOne(dataSource.rows, 0).data[""]).toBe("A");
   });
 
-  test(`${StringTransformationType.TitleCase} title-cases all string cells`, () => {
+  test(`${BasicStringTransformationType.TitleCase} title-cases all string cells`, () => {
     expect.hasAssertions();
 
     const ds = makeDataSource([makeColumn("")], [makeRow({ "": "hello world" })]);
     const { editedItem } = setupWithDataSource(ds);
     const stringTransformation = useStringTransformation();
-    stringTransformation(StringTransformationType.TitleCase);
+    stringTransformation(BasicStringTransformationType.TitleCase);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
@@ -92,7 +92,7 @@ describe(useStringTransformation, () => {
     const stringTransformation = useStringTransformation();
     const fileHistoryStore = useFileHistoryStore();
     const { isUndoable } = storeToRefs(fileHistoryStore);
-    stringTransformation(StringTransformationType.Trim);
+    stringTransformation(BasicStringTransformationType.Trim);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
@@ -110,7 +110,7 @@ describe(useStringTransformation, () => {
     const stringTransformation = useStringTransformation();
     const fileHistoryStore = useFileHistoryStore();
     const { isUndoable } = storeToRefs(fileHistoryStore);
-    stringTransformation(StringTransformationType.Trim);
+    stringTransformation(BasicStringTransformationType.Trim);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
@@ -131,7 +131,7 @@ describe(useStringTransformation, () => {
 
     assert.exists(editedItemValue);
 
-    stringTransformation(StringTransformationType.Trim);
+    stringTransformation(BasicStringTransformationType.Trim);
     undo(editedItemValue);
     const dataSource = editedItem.value?.dataSource;
 
@@ -153,7 +153,7 @@ describe(useStringTransformation, () => {
 
     assert.exists(editedItemValue);
 
-    stringTransformation(StringTransformationType.Trim);
+    stringTransformation(BasicStringTransformationType.Trim);
     undo(editedItemValue);
     redo(editedItemValue);
     const dataSource = editedItem.value?.dataSource;
@@ -169,7 +169,7 @@ describe(useStringTransformation, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { isUndoable } = storeToRefs(fileHistoryStore);
     const stringTransformation = useStringTransformation();
-    stringTransformation(StringTransformationType.Trim);
+    stringTransformation(BasicStringTransformationType.Trim);
 
     expect(isUndoable.value).toBe(false);
   });
@@ -181,7 +181,7 @@ describe(useStringTransformation, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { isUndoable } = storeToRefs(fileHistoryStore);
     const stringTransformation = useStringTransformation();
-    stringTransformation(StringTransformationType.Trim);
+    stringTransformation(BasicStringTransformationType.Trim);
 
     expect(isUndoable.value).toBe(false);
   });
@@ -194,8 +194,8 @@ describe(useStringTransformation, () => {
     const stringTransformation = useStringTransformation();
     const fileHistoryStore = useFileHistoryStore();
     const { undoDescription } = storeToRefs(fileHistoryStore);
-    stringTransformation(StringTransformationType.Trim);
+    stringTransformation(BasicStringTransformationType.Trim);
 
-    expect(undoDescription.value).toBe(`Format Strings (${StringTransformationType.Trim})`);
+    expect(undoDescription.value).toBe(`Format Strings (${BasicStringTransformationType.Trim})`);
   });
 });

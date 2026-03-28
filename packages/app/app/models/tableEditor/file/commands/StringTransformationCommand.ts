@@ -1,10 +1,8 @@
 import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 import type { AffectedCell } from "@/models/tableEditor/file/commands/AffectedCell";
-
-import { StringTransformationType } from "#shared/models/tableEditor/file/column/transformation/StringTransformationType";
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
-import { computeStringTransformation } from "@/services/tableEditor/file/column/transformation/computeStringTransformation";
+import { computeStringTransformation } from "@/services/tableEditor/file/column/transformation/string/computeStringTransformation";
 import { getValueSize } from "@/services/tableEditor/file/commands/getValueSize";
 import { takeOne } from "@esposter/shared";
 
@@ -16,9 +14,9 @@ export class StringTransformationCommand extends ADataSourceCommand<CommandType.
   }
 
   private readonly affectedCells: AffectedCell[];
-  private readonly stringTransformationType: StringTransformationType;
+  private readonly stringTransformationType: BasicStringTransformationType;
 
-  constructor(stringTransformationType: StringTransformationType, affectedCells: AffectedCell[]) {
+  constructor(stringTransformationType: BasicStringTransformationType, affectedCells: AffectedCell[]) {
     super();
     this.stringTransformationType = stringTransformationType;
     this.affectedCells = affectedCells;

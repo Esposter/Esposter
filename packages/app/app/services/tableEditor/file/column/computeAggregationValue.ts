@@ -54,7 +54,6 @@ export const computeAggregationValue = (
     const value = takeOne(row.data, sourceColumn.name);
     return typeof value === "number" ? value : null;
   };
-
   return AggregationTransformationComputeMap[transformation.aggregationTransformationType]({
     getNumber,
     rowIndex,

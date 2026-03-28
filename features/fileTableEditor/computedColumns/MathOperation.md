@@ -74,19 +74,17 @@ return typeof result === "number" && isFinite(result) ? result : null;
 `parse()` throws with a descriptive message. Capture it in the `.refine()` message factory so it flows through `schema.safeParse()` → `z.prettifyError()` → the error icon:
 
 ```typescript
-.refine(
-  ({ expression }) => {
-    try { parse(expression); return true; }
-    catch { return false; }
-  },
-  ({ expression }) => {
-    try { parse(expression); }
-    catch (error) {
-      return { message: error instanceof Error ? error.message : "Invalid expression", path: ["expression"] };
-    }
-    return { message: "", path: ["expression"] };
-  },
-)
+.superRefine(({ expression }, ctx) => {
+  try {
+    parse(expression);
+  } catch (error) {
+    ctx.addIssue({
+      code: "custom",
+      message: error instanceof Error ? error.message : "Invalid expression",
+      path: ["expression"],
+    });
+  }
+})
 ```
 
 This means a user who types `col0 +` sees the exact mathjs error `"Unexpected end of expression"` in the error icon — no custom error string needed.

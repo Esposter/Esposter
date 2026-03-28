@@ -38,6 +38,7 @@ Always use the `z` namespace export: `z.ZodType`, `z.ZodError`, etc. Never use n
   ```
   Adding a new type = add its schema to the discriminated union array.
 - **vjsf form schemas** — never pass a full entity schema to `zodToJsonSchema()` if it contains `z.date()` fields — vjsf will throw. Create a separate `*FormSchema` co-located in the same file using `.pick().extend()` to add `.meta()` titles. The form schema picks only user-editable fields (no entity metadata like `id`, `createdAt`, `updatedAt`).
+- **`ColumnTransformationType` enum values** — use short descriptive names matching the transformation domain (e.g. `Aggregation`, `ConvertTo`, `DatePart`, `Math`, `RegexMatch`, `String`). These are distinct from the interface names (e.g. `AggregationTransformation` interface → `ColumnTransformationType.Aggregation`).
 - **`.meta({ title })` values** — use enum values directly rather than string literals; `zodToJsonSchema` runs `toTitleCase(prettify(...))` on all titles automatically, so `ColumnTransformationType.ConvertTo` (`"ConvertTo"`) renders as `"Convert To"` in the UI. Always prefer `meta({ title: ColumnTransformationType.X })` over a hand-written string.
 - **`.meta({ applicableColumnTypes })`** — when a transformation schema only applies to certain source column types, declare `applicableColumnTypes: ColumnType[]` in `.meta()`. This field is typed via `GlobalMeta extends Partial<WithApplicableColumnTypes>` in `shared/types/zod.d.ts`. The UI uses it to filter source column dropdowns to matching types:
   ```typescript
@@ -53,8 +54,8 @@ Always use the `z` namespace export: `z.ZodType`, `z.ZodError`, etc. Never use n
     datePartTransformationSchema.meta({ title: ColumnTransformationType.DatePart }),
   ]);
   // OR: set .meta({ title }) on the schema at definition time (preferred):
-  export const datePartTransformationSchema = withSourceColumnIdSchema
-    .extend({ ... })
+  export const datePartTransformationSchema = z
+    .object({ ... })
     .meta({ title: ColumnTransformationType.DatePart }); // ← on the variant schema itself
   ```
 

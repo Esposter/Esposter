@@ -104,6 +104,40 @@ Applies to nested switches too (each inner switch on an enum needs its own guard
 - **Never abbreviate enum value names** — use the full word: `Absolute` not `Abs`, `Subtract` not `Sub`, `Configuration` not `Config`. This applies to both the enum key and string value. Abbreviated names save nothing and hurt readability.
 - **Name interface fields by their full type name** — when an interface field holds a value of an enum type `FooType`, name the field `fooType` (not `foo`, `mode`, `type`, or any abbreviation). Examples: `aggregationType: AggregationTransformationType`, `stringTransformationType: StringTransformationType`, `datePartType: DatePartType`. Never shorten to generic names like `transform`, `mode`, or `value`.
 
+## Enum Extension via mergeObjectsStrict
+
+When a large enum has a meaningful "base" subset that should be handled separately (e.g. a function that only handles some variants), split it:
+
+1. Declare **named sub-groups that are used independently** as exported TypeScript enums in their own files (e.g. `BasicStringTransformationType.ts` — used by functions like `computeStringTransformation` that only handle the base variants).
+2. Declare **unlabelled/catch-all values** (e.g. `Interpolate`, future `Split`) as an **unexported `enum BaseXxxType`** inside the merged type's file — never a separate file.
+3. Merge using `mergeObjectsStrict` from `@esposter/shared` and export the union type using enum type names.
+
+```ts
+// BasicStringTransformationType.ts (exported — sub-functions accept this for exhaustive switch)
+export enum BasicStringTransformationType {
+  Lowercase = "Lowercase",
+  TitleCase = "TitleCase",
+  Trim = "Trim",
+  Uppercase = "Uppercase",
+}
+export const basicStringTransformationTypeSchema = z.enum(
+  BasicStringTransformationType,
+) satisfies z.ZodType<BasicStringTransformationType>;
+
+// StringTransformationType.ts (the merged full type)
+enum BaseStringTransformationType {
+  // NOT exported — internal only
+  Interpolate = "Interpolate",
+}
+export const StringTransformationType = mergeObjectsStrict(BasicStringTransformationType, BaseStringTransformationType);
+export type StringTransformationType = BasicStringTransformationType | BaseStringTransformationType;
+export const stringTransformationTypeSchema = z.enum(
+  StringTransformationType,
+) satisfies z.ZodType<StringTransformationType>;
+```
+
+**Why**: Functions like `computeStringTransformation` accept `BasicStringTransformationType` so their `switch` is **exhaustive** — TypeScript verifies all cases are handled and `default: exhaustiveGuard(transform)` is truly unreachable. `mergeObjectsStrict` ensures `StringTransformationType.Lowercase`, `StringTransformationType.Interpolate` etc. all work identically to a plain enum at call sites. Keeping the catch-all `enum BaseXxxType` unexported and co-located in the merged file avoids polluting exports with one-off internal groupings.
+
 ## Enum Values Array
 
 - **Export a pluralized `Set` constant from the enum's definition file only when `Object.values` is actually used** — add `export const EnumNames = new Set(Object.values(EnumName))` at the bottom of the file (after the Zod schema, if any). Do not pre-emptively add it if the enum values are never iterated or checked. Use this exported constant at every call site instead of `Object.values(EnumName)`.

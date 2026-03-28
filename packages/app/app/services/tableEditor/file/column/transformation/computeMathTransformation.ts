@@ -1,10 +1,10 @@
 import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
-import type { MathOperationTransformation } from "#shared/models/tableEditor/file/column/transformation/MathOperationTransformation";
+import type { MathTransformation } from "#shared/models/tableEditor/file/column/transformation/MathTransformation";
 
 import { evaluate } from "mathjs";
 
-export const computeMathOperationTransformation = (
-  transformation: MathOperationTransformation,
+export const computeMathTransformation = (
+  transformation: MathTransformation,
   computeSource: (sourceColumnId: string) => ColumnValue,
 ): ColumnValue => {
   const scope = Object.fromEntries(

@@ -1,10 +1,11 @@
 import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
 
-import { StringTransformationType } from "#shared/models/tableEditor/file/column/transformation/StringTransformationType";
+import { BasicStringTransformationType } from "#shared/models/tableEditor/file/column/transformation/string/BasicStringTransformationType";
 
-export const StringTransformationItemCategoryDefinitions: SelectItemCategoryDefinition<StringTransformationType>[] = [
-  { title: "Lowercase", value: StringTransformationType.Lowercase },
-  { title: "Title Case", value: StringTransformationType.TitleCase },
-  { title: "Trim", value: StringTransformationType.Trim },
-  { title: "Uppercase", value: StringTransformationType.Uppercase },
-];
+export const StringTransformationItemCategoryDefinitions: SelectItemCategoryDefinition<BasicStringTransformationType>[] =
+  [
+    { title: "Lowercase", value: BasicStringTransformationType.Lowercase },
+    { title: "Title Case", value: BasicStringTransformationType.TitleCase },
+    { title: "Trim", value: BasicStringTransformationType.Trim },
+    { title: "Uppercase", value: BasicStringTransformationType.Uppercase },
+  ];

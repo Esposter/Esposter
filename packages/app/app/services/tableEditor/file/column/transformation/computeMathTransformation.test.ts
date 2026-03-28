@@ -1,23 +1,23 @@
-import type { MathOperationTransformation } from "#shared/models/tableEditor/file/column/transformation/MathOperationTransformation";
+import type { MathTransformation } from "#shared/models/tableEditor/file/column/transformation/MathTransformation";
 
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
-import { computeMathOperationTransformation } from "@/services/tableEditor/file/column/transformation/computeMathOperationTransformation";
+import { computeMathTransformation } from "@/services/tableEditor/file/column/transformation/computeMathTransformation";
 import { describe, expect, test } from "vitest";
 
-describe(computeMathOperationTransformation, () => {
+describe(computeMathTransformation, () => {
   const makeTransformation = (
     expression: string,
     variables: { name: string; sourceColumnId: string }[],
-  ): MathOperationTransformation => ({
+  ): MathTransformation => ({
     expression,
-    type: ColumnTransformationType.MathOperation,
+    type: ColumnTransformationType.Math,
     variables,
   });
 
   test("evaluates a basic expression with column variables", () => {
     expect.hasAssertions();
 
-    const result = computeMathOperationTransformation(
+    const result = computeMathTransformation(
       makeTransformation("col0 * col1", [
         { name: "col0", sourceColumnId: "a" },
         { name: "col1", sourceColumnId: "b" },
@@ -31,7 +31,7 @@ describe(computeMathOperationTransformation, () => {
   test("respects operator precedence", () => {
     expect.hasAssertions();
 
-    const result = computeMathOperationTransformation(
+    const result = computeMathTransformation(
       makeTransformation("col0 + col1 * 2", [
         { name: "col0", sourceColumnId: "a" },
         { name: "col1", sourceColumnId: "b" },
@@ -45,7 +45,7 @@ describe(computeMathOperationTransformation, () => {
   test("coerces null source value to 0", () => {
     expect.hasAssertions();
 
-    const result = computeMathOperationTransformation(
+    const result = computeMathTransformation(
       makeTransformation("col0 + 10", [{ name: "col0", sourceColumnId: "a" }]),
       () => null,
     );
@@ -56,7 +56,7 @@ describe(computeMathOperationTransformation, () => {
   test("returns null for division by zero (Infinity)", () => {
     expect.hasAssertions();
 
-    const result = computeMathOperationTransformation(
+    const result = computeMathTransformation(
       makeTransformation("col0 / col1", [
         { name: "col0", sourceColumnId: "a" },
         { name: "col1", sourceColumnId: "b" },
@@ -70,7 +70,7 @@ describe(computeMathOperationTransformation, () => {
   test("returns null for non-finite result (NaN from sqrt of negative)", () => {
     expect.hasAssertions();
 
-    const result = computeMathOperationTransformation(
+    const result = computeMathTransformation(
       makeTransformation("sqrt(col0)", [{ name: "col0", sourceColumnId: "a" }]),
       () => -1,
     );
@@ -81,7 +81,7 @@ describe(computeMathOperationTransformation, () => {
   test("no variables — pure constant expression", () => {
     expect.hasAssertions();
 
-    const result = computeMathOperationTransformation(makeTransformation("2 ^ 10", []), () => null);
+    const result = computeMathTransformation(makeTransformation("2 ^ 10", []), () => null);
 
     expect(result).toBe(1024);
   });
