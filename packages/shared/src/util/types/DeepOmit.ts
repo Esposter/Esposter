@@ -1,12 +1,15 @@
-import type { DeepOmitArray } from "@/util/types/DeepOmitArray";
 import type { Primitive } from "type-fest";
 
-export type DeepOmit<T, TKey> = T extends Date | Function | Primitive
+export type DeepOmit<T, TKey extends PropertyKey> = [T] extends [Date | Function | Primitive]
   ? T
-  : Record<string, unknown> extends T
+  : [Record<string, unknown>] extends [T]
     ? T
-    : T extends unknown[]
-      ? DeepOmitArray<T, TKey>
-      : {
-          [P in Exclude<keyof T, TKey>]: DeepOmit<T[P], TKey>;
-        };
+    : T extends object
+      ? T extends unknown[]
+        ? T extends readonly unknown[]
+          ? { [K in keyof T]: DeepOmit<T[K], TKey> }
+          : Array<DeepOmit<T[number], TKey>>
+        : {
+            [P in keyof T as P extends TKey ? never : P]: DeepOmit<T[P], TKey>;
+          }
+      : T;

@@ -1,7 +1,13 @@
 export type RecursiveKeyOf<T> = T extends object
-  ? T extends Date | Function | RegExp | unknown[]
+  ? T extends Date | Function | Map<unknown, unknown> | RegExp | Set<unknown> | unknown[]
     ? never
     : {
-        [P in keyof T]: `${P & string}.${RecursiveKeyOf<T[P]> & string}` | P | RecursiveKeyOf<T[P]>;
+        [K in keyof T]: K extends number | string
+          ? T[K] extends Date | Function | Map<unknown, unknown> | RegExp | Set<unknown> | unknown[]
+            ? `${K}`
+            : T[K] extends object
+              ? `${K}.${RecursiveKeyOf<T[K]>}` | `${K}`
+              : `${K}`
+          : never;
       }[keyof T]
   : never;
