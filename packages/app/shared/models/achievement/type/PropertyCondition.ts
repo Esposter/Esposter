@@ -7,7 +7,7 @@ import type { GetProperties } from "@esposter/shared";
 import type { Except, Get } from "type-fest";
 
 export type PropertyCondition<TPath extends TRPCPaths> =
-  GetProperties<Except<Get<TRPCRouterInputs, TPath>, "type">> extends infer R
+  Except<GetProperties<Get<TRPCRouterInputs, TPath>>, "type"> extends infer R
     ? R extends { path: infer Path extends string; value: infer Value }
       ? (
           | {
