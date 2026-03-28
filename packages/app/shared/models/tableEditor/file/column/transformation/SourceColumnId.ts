@@ -10,4 +10,4 @@ export const sourceColumnIdSchema = z.object({
     getItems: "context.columnItems",
     title: "Source Column",
   }),
-});
+}) satisfies z.ZodType<SourceColumnId>;

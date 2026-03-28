@@ -1,15 +1,15 @@
+import type { ATableEditorItemEntity } from "#shared/models/tableEditor/data/ATableEditorItemEntity";
 import type { SourceColumnId } from "#shared/models/tableEditor/file/column/transformation/SourceColumnId";
 
+import { aTableEditorItemEntitySchema } from "#shared/models/tableEditor/data/ATableEditorItemEntity";
 import { sourceColumnIdSchema } from "#shared/models/tableEditor/file/column/transformation/SourceColumnId";
 import { z } from "zod";
 
-export interface MathVariable extends SourceColumnId {
-  name: string;
-}
+export interface MathVariable extends Pick<ATableEditorItemEntity, "name">, SourceColumnId {}
 
 export const mathVariableSchema = z.object({
-  name: z.string().meta({ title: "Name" }),
+  ...aTableEditorItemEntitySchema.pick({ name: true }).shape,
   sourceColumnId: sourceColumnIdSchema.shape.sourceColumnId.meta({
     getItems: "context.numberColumnItems",
   }),
-});
+}) satisfies z.ZodType<MathVariable>;

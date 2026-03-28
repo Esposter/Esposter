@@ -14,4 +14,4 @@ export const sourceColumnIdsSchema = z.object({
       }),
     )
     .meta({ title: "Source Columns" }),
-});
+}) satisfies z.ZodType<SourceColumnIds>;
