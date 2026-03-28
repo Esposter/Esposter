@@ -1,83 +1,128 @@
-# MathOperation Transformation
+# MathOperation Transformation — Expression-Based Overhaul
 
-## Design Rationale
+## Motivation
 
-The naive split into `UnaryMathOperation` and `BinaryMathOperation` as two separate `ColumnTransformationType` values breaks composition: `Abs(Price * Quantity)` would require two chained computed columns just to apply a unary op to the result of a binary one.
+The previous `first + steps[]` fold model required users to manually chain unary/binary step objects. It could not express operator precedence without nesting, was verbose for simple expressions, and required building and maintaining custom AST-walking code.
 
-Instead, `MathOperation` stays as a single transformation type whose internal structure is a composable fold-left sequence. Unary and binary ops are step variants within that sequence — they compose freely in any order.
+The replacement uses a **math expression library** that handles parsing, precedence, grouping, and evaluation. Users write a plain expression string; column values are bound as named variables.
 
 ---
 
-## Shape
+## Library Choice: mathjs
 
-Does **not** extend `WithSourceColumnId`. Sources are embedded in `first` and binary step operands.
+**mathjs** is the recommended library:
+
+- **Browser-compatible** — ships an ESM build, works with Vite/Rolldown without extra config.
+- **Tree-shakeable** — import only `evaluate` and `parse` from `"mathjs"` to keep bundle size small. The expression parser alone is ~30 KB min+gz.
+- **Variable substitution** — `evaluate("a + b * 2", { a: 5, b: 3 })` returns `11`.
+- **Parse-time validation** — `parse("a +")` throws with a descriptive message (`"Unexpected end of expression"`), enabling the exact error text to be surfaced in the error icon.
+- **Operator support** — `+`, `-`, `*`, `/`, `^` (power), `%` (mod), unary `-`, comparison operators, built-in functions (`abs`, `round`, `floor`, `ceil`, `sqrt`, `log`, etc.).
+
+Install: add `mathjs` to `packages/app` dependencies.
+
+---
+
+## New Shape
 
 ```typescript
-{ type: MathOperation, first: MathOperand, steps: MathStep[] }
+interface MathOperationTransformation extends ItemEntityType<ColumnTransformationType.MathOperation> {
+  expression: string;
+  variables: { name: string; sourceColumnId: string }[];
+}
+```
 
-type MathOperand =
-  | { type: 'column',   sourceColumnId: string }
-  | { type: 'constant', value: number }
+- **`expression`** — a mathjs expression string referencing auto-generated variable names, e.g. `"col0 * (col1 + col2)"`.
+- **`variables`** — ordered list binding each `colN` name to a source column ID.
 
-type MathStep =
-  | { type: 'unary',  operation: UnaryMathOperationType }
-  | { type: 'binary', operation: BinaryMathOperationType, operand: MathOperand }
+### Variable naming convention
 
-enum UnaryMathOperationType  { Abs, Round, Floor, Ceil }
-enum BinaryMathOperationType { Add, Subtract, Multiply, Divide }
+Variables are always auto-generated as `col0`, `col1`, `col2`, … These are valid mathjs identifiers, never conflict with any mathjs built-in (which are all lowercase words like `abs`, `sin`), and are visually distinct from user-typed constants. Users never type variable names manually — they always insert them via the UI.
+
+Example:
+
+```json
+{
+  "type": "MathOperation",
+  "expression": "col0 * (1 - col1)",
+  "variables": [
+    { "name": "col0", "sourceColumnId": "col-id-price" },
+    { "name": "col1", "sourceColumnId": "col-id-discount" }
+  ]
+}
 ```
 
 ---
 
 ## Evaluation
 
-Start with `first`, fold left over `steps`:
+```typescript
+import { evaluate } from "mathjs";
 
+const scope = Object.fromEntries(
+  transformation.variables.map(({ name, sourceColumnId }) => [name, Number(computeSource(sourceColumnId)) ?? 0]),
+);
+const result = evaluate(transformation.expression, scope);
+return typeof result === "number" && isFinite(result) ? result : null;
 ```
-result = resolve(first)
-for each step:
-  unary  → result = step.operation(result)
-  binary → result = step.operation(result, resolve(step.operand))
+
+`null` source values are coerced to `0` for numeric evaluation. Non-finite results (`Infinity`, `NaN`) return `null`.
+
+---
+
+## Validation (Zod `.refine()`) + Error Icon propagation
+
+`parse()` throws with a descriptive message. Capture it in the `.refine()` message factory so it flows through `schema.safeParse()` → `z.prettifyError()` → the error icon:
+
+```typescript
+.refine(
+  ({ expression }) => {
+    try { parse(expression); return true; }
+    catch { return false; }
+  },
+  ({ expression }) => {
+    try { parse(expression); }
+    catch (error) {
+      return { message: error instanceof Error ? error.message : "Invalid expression", path: ["expression"] };
+    }
+    return { message: "", path: ["expression"] };
+  },
+)
 ```
 
-`resolve` looks up a column value via `resolveValue` (supports chained computed columns) or returns the constant directly.
+This means a user who types `col0 +` sees the exact mathjs error `"Unexpected end of expression"` in the error icon — no custom error string needed.
 
 ---
 
-## Examples
+## UI (vjsf)
 
-| Expression              | `first`      | `steps`                                           |
-| ----------------------- | ------------ | ------------------------------------------------- |
-| `Abs(Price)`            | `col(price)` | `[unary(Abs)]`                                    |
-| `Price * 2`             | `col(price)` | `[binary(Multiply, const(2))]`                    |
-| `Price * Quantity`      | `col(price)` | `[binary(Multiply, col(quantity))]`               |
-| `Abs(Price * Quantity)` | `col(price)` | `[binary(Multiply, col(quantity)), unary(Abs)]`   |
-| `Round(Price * 0.9)`    | `col(price)` | `[binary(Multiply, const(0.9)), unary(Round)]`    |
-| `(A + B) * C`           | `col(A)`     | `[binary(Add, col(B)), binary(Multiply, col(C))]` |
+The form has two fields:
+
+1. **Expression** — `z.string()` plain text input. Users do not type variable names by hand; they use an "Insert Column" button (rendered outside vjsf or as a custom `comp`) that appends `col0`, `col1`, etc. at the cursor. The next variable name to insert is always `col${variables.length}` before the new variable is added. Expression syntax errors surface live via the error icon.
+
+2. **Variables** — `z.array(...)` of `{ name, sourceColumnId }`. Rendered as an ordered list; each row shows the auto-generated name (`col0`, `col1`, …) as a read-only label and a `sourceColumnId` column selector restricted to `context.numberColumnItems`. Adding a variable appends `{ name: "colN", sourceColumnId: "" }` and inserts `colN` into the expression at the cursor. Removing a variable is not supported after insertion (the name stays in the expression); reordering is also not needed since names are stable.
 
 ---
 
-## Structural Validation
+## Files to Remove
 
-`steps` is self-validating — each step carries its own operand. It is structurally impossible to have a mismatched count. No `.refine()` needed.
+Once implemented, delete all of:
+
+- `shared/models/tableEditor/file/column/transformation/BinaryMathOperationType.ts`
+- `shared/models/tableEditor/file/column/transformation/BinaryMathStep.ts`
+- `shared/models/tableEditor/file/column/transformation/UnaryMathOperationType.ts`
+- `shared/models/tableEditor/file/column/transformation/UnaryMathStep.ts`
+- `shared/models/tableEditor/file/column/transformation/MathStep.ts`
+- `shared/models/tableEditor/file/column/transformation/MathStepType.ts`
+- `shared/models/tableEditor/file/column/transformation/MathOperand.ts`
+- `shared/models/tableEditor/file/column/transformation/MathOperandType.ts`
+- `shared/models/tableEditor/file/column/transformation/ColumnMathOperand.ts`
+- `shared/models/tableEditor/file/column/transformation/ConstantMathOperand.ts`
+- `app/services/tableEditor/file/column/transformation/computeMathOperationTransformation.ts` (and its test)
+
+And rewrite `MathOperationTransformation.ts` to just the new shape.
 
 ---
 
-## Migration from v2
+## Migration
 
-The v2 flat shape `{ sourceColumnId, operation, operand? }` maps directly:
-
-- Unary (`Abs`, `Round`, `Floor`, `Ceil`) → `{ first: col(sourceColumnId), steps: [unary(operation)] }`
-- Binary with constant → `{ first: col(sourceColumnId), steps: [binary(operation, const(operand))] }`
-
----
-
-## UI
-
-The form renders `first` as a column/constant selector, then a dynamic list of steps. Each step row shows:
-
-- A step-type toggle (unary / binary)
-- Unary: operation dropdown only
-- Binary: operation dropdown + column-or-constant selector
-
-Adding a step appends a new row. Removing a step removes its row. No separate operation and operand arrays to keep in sync.
+No migration needed — not deployed to production. Delete the old shape outright and implement the new architecture clean.

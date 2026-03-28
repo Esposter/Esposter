@@ -5,7 +5,6 @@
       "Bash(cd:*)",
       "Bash(do echo:*)",
       "Bash(done)",
-      "Bash(echo EXIT: $?:*)",
       "Bash(file:*)",
       "Bash(find:*)",
       "Bash(for f:*)",
@@ -37,7 +36,10 @@
       "mcp__vuetify-mcp__get_v4_breaking_changes",
       "WebFetch(domain:nuxt.com)",
       "WebFetch(domain:vueuse.org)",
-      "Bash(echo \"EXIT:$?\")"
+      "Bash(echo \"EXIT:$?\")",
+      "WebFetch(domain:mathjs.org)",
+      "WebFetch(domain:bundlephobia.com)",
+      "WebFetch(domain:www.npmjs.com)"
     ]
   }
 }
