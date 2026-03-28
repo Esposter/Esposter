@@ -17,8 +17,8 @@ export type GetProperties<
             }
       : O extends object
         ? {
-            [K in keyof O & (number | string)]: K extends `${number}`
-              ? never // Skip numeric keys for non-array objects
+            [K in keyof KnownKeys<O> & (number | string)]: K extends `${number}`
+              ? never
               : NonNullable<O[K]> extends Function
                 ? never
                 :
@@ -26,8 +26,8 @@ export type GetProperties<
                         ? GetProperties<O[K], IsRoot extends true ? `${K}` : `${Prefix}.${K}`, Rest, false>
                         : never)
                     | { path: IsRoot extends true ? `${K}` : `${Prefix}.${K}`; value: O[K] };
-          }[keyof O & (number | string)]
-        : // For primitive types (string, symbol, etc.), get their properties
+          }[keyof KnownKeys<O> & (number | string)]
+        : // For primitive types
           O extends string
           ? { path: IsRoot extends true ? "length" : `${Prefix}.length`; value: number }
           : O extends symbol
@@ -43,3 +43,7 @@ export type GetProperties<
                 | { path: IsRoot extends true ? "description" : `${Prefix}.description`; value: string | undefined }
             : never
     : never;
+
+type KnownKeys<T> = {
+  [K in keyof T as string extends K ? never : number extends K ? never : K]: T[K];
+};
