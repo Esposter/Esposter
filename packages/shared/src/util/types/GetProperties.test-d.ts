@@ -1,36 +1,36 @@
-import type { RecursiveGetProperties } from "#shared/util/types/RecursiveGetProperties";
+import type { GetProperties } from "@/util/types/GetProperties";
 
 import { describe, expect, expectTypeOf, test } from "vitest";
 
-describe("recursiveGetProperties type", () => {
+describe("getProperties type", () => {
   test("array", () => {
     expect.hasAssertions();
 
-    expectTypeOf<RecursiveGetProperties<unknown[]>>().toEqualTypeOf<{ path: "length"; value: number }>();
+    expectTypeOf<GetProperties<unknown[]>>().toEqualTypeOf<{ path: "length"; value: number }>();
   });
 
   test("bigint", () => {
     expect.hasAssertions();
 
-    expectTypeOf<RecursiveGetProperties<bigint>>().toEqualTypeOf<never>();
+    expectTypeOf<GetProperties<bigint>>().toEqualTypeOf<never>();
   });
 
   test("boolean", () => {
     expect.hasAssertions();
 
-    expectTypeOf<RecursiveGetProperties<boolean>>().toEqualTypeOf<never>();
+    expectTypeOf<GetProperties<boolean>>().toEqualTypeOf<never>();
   });
 
   test("date", () => {
     expect.hasAssertions();
 
-    expectTypeOf<RecursiveGetProperties<Date>>().toEqualTypeOf<never>();
+    expectTypeOf<GetProperties<Date>>().toEqualTypeOf<never>();
   });
 
   test("nested", () => {
     expect.hasAssertions();
 
-    expectTypeOf<RecursiveGetProperties<{ a: { b: unknown[] } }>>().toEqualTypeOf<
+    expectTypeOf<GetProperties<{ a: { b: unknown[] } }>>().toEqualTypeOf<
       | {
           path: "a";
           value: { b: unknown[] };
@@ -49,13 +49,13 @@ describe("recursiveGetProperties type", () => {
   test("null", () => {
     expect.hasAssertions();
 
-    expectTypeOf<RecursiveGetProperties<null>>().toEqualTypeOf<never>();
+    expectTypeOf<GetProperties<null>>().toEqualTypeOf<never>();
   });
 
   test("nullable", () => {
     expect.hasAssertions();
 
-    expectTypeOf<RecursiveGetProperties<null | string | undefined>>().toEqualTypeOf<{
+    expectTypeOf<GetProperties<null | string | undefined>>().toEqualTypeOf<{
       path: "length";
       value: number;
     }>();
@@ -64,13 +64,13 @@ describe("recursiveGetProperties type", () => {
   test("number", () => {
     expect.hasAssertions();
 
-    expectTypeOf<RecursiveGetProperties<number>>().toEqualTypeOf<never>();
+    expectTypeOf<GetProperties<number>>().toEqualTypeOf<never>();
   });
 
   test("object", () => {
     expect.hasAssertions();
 
-    expectTypeOf<RecursiveGetProperties<{ "": string; function: Function }>>().toEqualTypeOf<
+    expectTypeOf<GetProperties<{ "": string; function: Function }>>().toEqualTypeOf<
       { path: ""; value: string } | { path: ".length"; value: number }
     >();
   });
@@ -78,13 +78,13 @@ describe("recursiveGetProperties type", () => {
   test("string", () => {
     expect.hasAssertions();
 
-    expectTypeOf<RecursiveGetProperties<string>>().toEqualTypeOf<{ path: "length"; value: number }>();
+    expectTypeOf<GetProperties<string>>().toEqualTypeOf<{ path: "length"; value: number }>();
   });
 
   test("symbol", () => {
     expect.hasAssertions();
 
-    expectTypeOf<RecursiveGetProperties<symbol>>().toEqualTypeOf<
+    expectTypeOf<GetProperties<symbol>>().toEqualTypeOf<
       | {
           path: "description";
           value: string | undefined;
@@ -99,18 +99,18 @@ describe("recursiveGetProperties type", () => {
   test("tuple", () => {
     expect.hasAssertions();
 
-    expectTypeOf<RecursiveGetProperties<[number]>>().toEqualTypeOf<{ path: "length"; value: 1 }>();
+    expectTypeOf<GetProperties<[number]>>().toEqualTypeOf<{ path: "length"; value: 1 }>();
   });
 
   test("undefined", () => {
     expect.hasAssertions();
 
-    expectTypeOf<RecursiveGetProperties<undefined>>().toEqualTypeOf<never>();
+    expectTypeOf<GetProperties<undefined>>().toEqualTypeOf<never>();
   });
 
   test("union", () => {
     expect.hasAssertions();
 
-    expectTypeOf<RecursiveGetProperties<number | string>>().toEqualTypeOf<never>();
+    expectTypeOf<GetProperties<number | string>>().toEqualTypeOf<never>();
   });
 });

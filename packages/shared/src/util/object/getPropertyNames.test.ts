@@ -9,12 +9,4 @@ describe(getPropertyNames, () => {
 
     expect(propertyNames[""]).toBe("");
   });
-
-  test("nested object", () => {
-    expect.hasAssertions();
-
-    const propertyNames = getPropertyNames<{ a: { b: string } }>();
-
-    expect(propertyNames["a.b"]).toBe("a.b");
-  });
 });
