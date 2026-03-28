@@ -1,17 +1,17 @@
 import type { Except } from "type-fest";
 
 export type DeepOmitByPath<T, Path extends PropertyKey> = T extends object
-  ? T extends readonly unknown[]
+  ? T extends unknown[]
     ? DeepOmitArray<T, Path>
     : DeepOmitObject<T, Path>
   : T;
 
-type DeepOmitArray<T, Path extends PropertyKey> = T extends readonly unknown[]
-  ? T extends readonly []
+type DeepOmitArray<T, Path extends PropertyKey> = T extends unknown[]
+  ? T extends []
     ? []
-    : T extends readonly [infer First, ...infer Rest]
-      ? readonly [DeepOmitByPath<First, Path>, ...DeepOmitArray<Rest, Path>]
-      : readonly DeepOmitByPath<T[number], Path>[]
+    : T extends [infer First, ...infer Rest]
+      ? [DeepOmitByPath<First, Path>, ...DeepOmitArray<Rest, Path>]
+      : DeepOmitByPath<T[number], Path>[]
   : T;
 
 type DeepOmitObject<T, Path extends PropertyKey> = Path extends `${infer Root}.${infer Rest}`
