@@ -11,7 +11,7 @@ interface EvaluatedProps {
 
 describe(zodToJsonSchema, () => {
   describe("flat object schema", () => {
-    test("returns properties, required, and type", () => {
+    test("matches inline snapshot", () => {
       expect.hasAssertions();
 
       const schema = z.object({ name: z.string() });
