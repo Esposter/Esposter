@@ -1,5 +1,6 @@
 import { NumberColumn } from "#shared/models/tableEditor/file/column/NumberColumn";
 import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
+import { StringTransformationType } from "#shared/models/tableEditor/file/column/transformation/StringTransformationType";
 import {
   makeColumn,
   makeDataSource,
@@ -7,7 +8,6 @@ import {
   setupEditedItem,
   setupWithDataSource,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
-import { StringTransformationType } from "#shared/models/tableEditor/file/column/transformation/StringTransformationType";
 import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
@@ -67,6 +67,20 @@ describe(useStringTransformation, () => {
     assert.exists(dataSource);
 
     expect(takeOne(dataSource.rows, 0).data[""]).toBe("A");
+  });
+
+  test(`${StringTransformationType.TitleCase} title-cases all string cells`, () => {
+    expect.hasAssertions();
+
+    const ds = makeDataSource([makeColumn("")], [makeRow({ "": "hello world" })]);
+    const { editedItem } = setupWithDataSource(ds);
+    const stringTransformation = useStringTransformation();
+    stringTransformation(StringTransformationType.TitleCase);
+    const dataSource = editedItem.value?.dataSource;
+
+    assert.exists(dataSource);
+
+    expect(takeOne(dataSource.rows, 0).data[""]).toBe("Hello World");
   });
 
   test("skips non-string columns", () => {

@@ -1,190 +1,88 @@
-import type { MathOperand } from "#shared/models/tableEditor/file/column/transformation/MathOperand";
+import type { MathOperationTransformation } from "#shared/models/tableEditor/file/column/transformation/MathOperationTransformation";
 
-import { BinaryMathOperationType } from "#shared/models/tableEditor/file/column/transformation/BinaryMathOperationType";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
-import { MathOperandType } from "#shared/models/tableEditor/file/column/transformation/MathOperandType";
-import { MathStepType } from "#shared/models/tableEditor/file/column/transformation/MathStepType";
-import { UnaryMathOperationType } from "#shared/models/tableEditor/file/column/transformation/UnaryMathOperationType";
 import { computeMathOperationTransformation } from "@/services/tableEditor/file/column/transformation/computeMathOperationTransformation";
 import { describe, expect, test } from "vitest";
 
 describe(computeMathOperationTransformation, () => {
-  const constantOperand = (value: number): MathOperand => ({ type: MathOperandType.Constant, value });
-
-  test("returns first operand with no steps", () => {
-    expect.hasAssertions();
-    expect(
-      computeMathOperationTransformation(
-        { first: constantOperand(0), steps: [], type: ColumnTransformationType.MathOperation },
-        (operand) => (operand.type === MathOperandType.Constant ? operand.value : null),
-      ),
-    ).toBe(0);
+  const makeTransformation = (
+    expression: string,
+    variables: { name: string; sourceColumnId: string }[],
+  ): MathOperationTransformation => ({
+    expression,
+    type: ColumnTransformationType.MathOperation,
+    variables,
   });
 
-  test("multiplies by constant operand", () => {
+  test("evaluates a basic expression with column variables", () => {
     expect.hasAssertions();
-    expect(
-      computeMathOperationTransformation(
-        {
-          first: constantOperand(0.1),
-          steps: [
-            { operand: constantOperand(2), operation: BinaryMathOperationType.Multiply, type: MathStepType.Binary },
-          ],
-          type: ColumnTransformationType.MathOperation,
-        },
-        (operand) => (operand.type === MathOperandType.Constant ? operand.value : null),
-      ),
-    ).toBeCloseTo(0.2);
+
+    const result = computeMathOperationTransformation(
+      makeTransformation("col0 * col1", [
+        { name: "col0", sourceColumnId: "a" },
+        { name: "col1", sourceColumnId: "b" },
+      ]),
+      (id) => (id === "a" ? 3 : 4),
+    );
+
+    expect(result).toBe(12);
   });
 
-  test("divides by constant operand", () => {
+  test("respects operator precedence", () => {
     expect.hasAssertions();
-    expect(
-      computeMathOperationTransformation(
-        {
-          first: constantOperand(0.1),
-          steps: [
-            { operand: constantOperand(2), operation: BinaryMathOperationType.Divide, type: MathStepType.Binary },
-          ],
-          type: ColumnTransformationType.MathOperation,
-        },
-        (operand) => (operand.type === MathOperandType.Constant ? operand.value : null),
-      ),
-    ).toBeCloseTo(0.05);
+
+    const result = computeMathOperationTransformation(
+      makeTransformation("col0 + col1 * 2", [
+        { name: "col0", sourceColumnId: "a" },
+        { name: "col1", sourceColumnId: "b" },
+      ]),
+      (id) => (id === "a" ? 1 : 3),
+    );
+
+    expect(result).toBe(7);
   });
 
-  test("returns null when dividing by zero", () => {
+  test("coerces null source value to 0", () => {
     expect.hasAssertions();
-    expect(
-      computeMathOperationTransformation(
-        {
-          first: constantOperand(1),
-          steps: [
-            { operand: constantOperand(0), operation: BinaryMathOperationType.Divide, type: MathStepType.Binary },
-          ],
-          type: ColumnTransformationType.MathOperation,
-        },
-        (operand) => (operand.type === MathOperandType.Constant ? operand.value : null),
-      ),
-    ).toBeNull();
+
+    const result = computeMathOperationTransformation(
+      makeTransformation("col0 + 10", [{ name: "col0", sourceColumnId: "a" }]),
+      () => null,
+    );
+
+    expect(result).toBe(10);
   });
 
-  test("adds constant operand", () => {
+  test("returns null for division by zero (Infinity)", () => {
     expect.hasAssertions();
-    expect(
-      computeMathOperationTransformation(
-        {
-          first: constantOperand(0),
-          steps: [{ operand: constantOperand(1), operation: BinaryMathOperationType.Add, type: MathStepType.Binary }],
-          type: ColumnTransformationType.MathOperation,
-        },
-        (operand) => (operand.type === MathOperandType.Constant ? operand.value : null),
-      ),
-    ).toBe(1);
+
+    const result = computeMathOperationTransformation(
+      makeTransformation("col0 / col1", [
+        { name: "col0", sourceColumnId: "a" },
+        { name: "col1", sourceColumnId: "b" },
+      ]),
+      (id) => (id === "a" ? 1 : 0),
+    );
+
+    expect(result).toBeNull();
   });
 
-  test("subtracts constant operand", () => {
+  test("returns null for non-finite result (NaN from sqrt of negative)", () => {
     expect.hasAssertions();
-    expect(
-      computeMathOperationTransformation(
-        {
-          first: constantOperand(1),
-          steps: [
-            { operand: constantOperand(1), operation: BinaryMathOperationType.Subtract, type: MathStepType.Binary },
-          ],
-          type: ColumnTransformationType.MathOperation,
-        },
-        (operand) => (operand.type === MathOperandType.Constant ? operand.value : null),
-      ),
-    ).toBe(0);
+
+    const result = computeMathOperationTransformation(
+      makeTransformation("sqrt(col0)", [{ name: "col0", sourceColumnId: "a" }]),
+      () => -1,
+    );
+
+    expect(result).toBeNull();
   });
 
-  test("rounds to nearest integer", () => {
+  test("no variables — pure constant expression", () => {
     expect.hasAssertions();
-    expect(
-      computeMathOperationTransformation(
-        {
-          first: constantOperand(0.1),
-          steps: [{ operation: UnaryMathOperationType.Round, type: MathStepType.Unary }],
-          type: ColumnTransformationType.MathOperation,
-        },
-        (operand) => (operand.type === MathOperandType.Constant ? operand.value : null),
-      ),
-    ).toBe(0);
-  });
 
-  test("floors to integer", () => {
-    expect.hasAssertions();
-    expect(
-      computeMathOperationTransformation(
-        {
-          first: constantOperand(0.1),
-          steps: [{ operation: UnaryMathOperationType.Floor, type: MathStepType.Unary }],
-          type: ColumnTransformationType.MathOperation,
-        },
-        (operand) => (operand.type === MathOperandType.Constant ? operand.value : null),
-      ),
-    ).toBe(0);
-  });
+    const result = computeMathOperationTransformation(makeTransformation("2 ^ 10", []), () => null);
 
-  test("ceils to integer", () => {
-    expect.hasAssertions();
-    expect(
-      computeMathOperationTransformation(
-        {
-          first: constantOperand(0.1),
-          steps: [{ operation: UnaryMathOperationType.Ceil, type: MathStepType.Unary }],
-          type: ColumnTransformationType.MathOperation,
-        },
-        (operand) => (operand.type === MathOperandType.Constant ? operand.value : null),
-      ),
-    ).toBe(1);
-  });
-
-  test("returns absolute value", () => {
-    expect.hasAssertions();
-    expect(
-      computeMathOperationTransformation(
-        {
-          first: constantOperand(-1),
-          steps: [{ operation: UnaryMathOperationType.Absolute, type: MathStepType.Unary }],
-          type: ColumnTransformationType.MathOperation,
-        },
-        (operand) => (operand.type === MathOperandType.Constant ? operand.value : null),
-      ),
-    ).toBe(1);
-  });
-
-  test("returns null when first operand resolves to non-number before binary step", () => {
-    expect.hasAssertions();
-    expect(
-      computeMathOperationTransformation(
-        {
-          first: { sourceColumnId: "", type: MathOperandType.Column },
-          steps: [
-            { operand: constantOperand(2), operation: BinaryMathOperationType.Multiply, type: MathStepType.Binary },
-          ],
-          type: ColumnTransformationType.MathOperation,
-        },
-        () => null,
-      ),
-    ).toBeNull();
-  });
-
-  test("composes multiple steps: multiply then add", () => {
-    expect.hasAssertions();
-    expect(
-      computeMathOperationTransformation(
-        {
-          first: constantOperand(2),
-          steps: [
-            { operand: constantOperand(3), operation: BinaryMathOperationType.Multiply, type: MathStepType.Binary },
-            { operand: constantOperand(1), operation: BinaryMathOperationType.Add, type: MathStepType.Binary },
-          ],
-          type: ColumnTransformationType.MathOperation,
-        },
-        (operand) => (operand.type === MathOperandType.Constant ? operand.value : null),
-      ),
-    ).toBe(7);
+    expect(result).toBe(1024);
   });
 });

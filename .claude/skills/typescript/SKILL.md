@@ -102,6 +102,7 @@ Applies to nested switches too (each inner switch on an enum needs its own guard
 ## Enum Naming
 
 - **Never abbreviate enum value names** — use the full word: `Absolute` not `Abs`, `Subtract` not `Sub`, `Configuration` not `Config`. This applies to both the enum key and string value. Abbreviated names save nothing and hurt readability.
+- **Name interface fields by their full type name** — when an interface field holds a value of an enum type `FooType`, name the field `fooType` (not `foo`, `mode`, `type`, or any abbreviation). Examples: `aggregationType: AggregationTransformationType`, `stringTransformationType: StringTransformationType`, `datePartType: DatePartType`. Never shorten to generic names like `transform`, `mode`, or `value`.
 
 ## Enum Values Array
 

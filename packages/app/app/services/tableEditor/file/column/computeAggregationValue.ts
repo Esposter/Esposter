@@ -55,5 +55,9 @@ export const computeAggregationValue = (
     return typeof value === "number" ? value : null;
   };
 
-  return AggregationTransformationComputeMap[transformation.aggregationType]({ getNumber, rowIndex, rows });
+  return AggregationTransformationComputeMap[transformation.aggregationTransformationType]({
+    getNumber,
+    rowIndex,
+    rows,
+  });
 };

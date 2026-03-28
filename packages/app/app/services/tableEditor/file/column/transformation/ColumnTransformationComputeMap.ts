@@ -1,12 +1,10 @@
 import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
 import type { ColumnTransformation } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformation";
-import type { MathOperand } from "#shared/models/tableEditor/file/column/transformation/MathOperand";
 import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
-import { MathOperandType } from "#shared/models/tableEditor/file/column/transformation/MathOperandType";
 import { computeAggregationValue } from "@/services/tableEditor/file/column/computeAggregationValue";
 import { computeConvertToTransformation } from "@/services/tableEditor/file/column/transformation/computeConvertToTransformation";
 import { computeDatePartTransformation } from "@/services/tableEditor/file/column/transformation/computeDatePartTransformation";
@@ -43,11 +41,8 @@ export const ColumnTransformationComputeMap = {
       sourceColumn.format,
     );
   },
-  [ColumnTransformationType.MathOperation]: (transformation, { computeSource }) => {
-    const computeOperand = (operand: MathOperand): ColumnValue =>
-      operand.type === MathOperandType.Constant ? operand.value : computeSource(operand.sourceColumnId);
-    return computeMathOperationTransformation(transformation, computeOperand);
-  },
+  [ColumnTransformationType.MathOperation]: (transformation, { computeSource }) =>
+    computeMathOperationTransformation(transformation, computeSource),
   [ColumnTransformationType.RegexMatch]: (transformation, { computeSource }) =>
     computeRegexMatchTransformation(computeSource(transformation.sourceColumnId), transformation),
   [ColumnTransformationType.StringPattern]: (transformation, { computeSource }) => {
@@ -57,7 +52,7 @@ export const ColumnTransformationComputeMap = {
   [ColumnTransformationType.StringTransformation]: (transformation, { computeSource }) => {
     const value = computeSource(transformation.sourceColumnId);
     if (value === null) return null;
-    return computeStringTransformation(String(value), transformation);
+    return computeStringTransformation(String(value), transformation.stringTransformationType);
   },
 } as const satisfies {
   [K in ColumnTransformationType]: TransformationComputer<Extract<ColumnTransformation, { type: K }>>;

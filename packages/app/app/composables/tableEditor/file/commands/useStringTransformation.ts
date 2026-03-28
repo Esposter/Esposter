@@ -11,11 +11,11 @@ export const useStringTransformation = () => {
   const { editedItem } = storeToRefs(tableEditorStore);
   const fileHistoryStore = useFileHistoryStore();
   const { push } = fileHistoryStore;
-  return (transform: StringTransformationType) => {
+  return (stringTransformationType: StringTransformationType) => {
     if (!editedItem.value?.dataSource) return;
     const affectedCells = getStringColumnsAffectedCells(editedItem.value.dataSource);
     if (affectedCells.length === 0) return;
-    const command = new StringTransformationCommand(transform, affectedCells);
+    const command = new StringTransformationCommand(stringTransformationType, affectedCells);
     command.execute(editedItem.value);
     push(command);
   };

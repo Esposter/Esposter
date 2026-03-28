@@ -13,7 +13,7 @@ import { z } from "zod";
 
 export interface StringTransformation
   extends ItemEntityType<ColumnTransformationType.StringTransformation>, SourceColumnId {
-  transform: StringTransformationType;
+  stringTransformationType: StringTransformationType;
 }
 
 export const stringTransformationSchema = z
@@ -23,7 +23,7 @@ export const stringTransformationSchema = z
     sourceColumnId: sourceColumnIdSchema.shape.sourceColumnId.meta({
       getItems: "context.stringColumnItems",
     }),
-    transform: stringTransformationTypeSchema.meta({ title: "Transform" }),
+    stringTransformationType: stringTransformationTypeSchema.meta({ title: "String Transformation" }),
   })
   .meta({
     applicableColumnTypes: [ColumnType.String],

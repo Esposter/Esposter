@@ -13,14 +13,14 @@ import { z } from "zod";
 
 export interface AggregationTransformation
   extends ItemEntityType<ColumnTransformationType.Aggregation>, SourceColumnId {
-  aggregationType: AggregationTransformationType;
+  aggregationTransformationType: AggregationTransformationType;
 }
 
 export const aggregationTransformationSchema = z
   .object({
     ...sourceColumnIdSchema.shape,
     ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.Aggregation).readonly()).shape,
-    aggregationType: aggregationTransformationTypeSchema.meta({ title: "Aggregation" }),
+    aggregationTransformationType: aggregationTransformationTypeSchema.meta({ title: "Aggregation" }),
     sourceColumnId: sourceColumnIdSchema.shape.sourceColumnId.meta({
       getItems: "context.numberColumnItems",
     }),
