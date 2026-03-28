@@ -26,9 +26,7 @@ describe("deepOmitByPath type", () => {
   test("omits key from array elements", () => {
     expect.hasAssertions();
 
-    expectTypeOf<DeepOmitByPath<Array<{ id: string; value: number }>, "value">>().toEqualTypeOf<
-      Array<{ id: string }>
-    >();
+    expectTypeOf<DeepOmitByPath<{ id: string; value: number }[], "value">>().toEqualTypeOf<{ id: string }[]>();
   });
 
   test("omits key from tuple elements", () => {

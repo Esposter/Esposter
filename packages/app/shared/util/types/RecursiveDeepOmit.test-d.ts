@@ -49,8 +49,8 @@ describe("recursiveDeepOmit type", () => {
   test("omits key from array elements", () => {
     expect.hasAssertions();
 
-    expectTypeOf<RecursiveDeepOmit<{ items: Array<{ id: string; value: number }> }, ["items.value"]>>().toEqualTypeOf<{
-      items: Array<{ id: string }>;
+    expectTypeOf<RecursiveDeepOmit<{ items: { id: string; value: number }[] }, ["items.value"]>>().toEqualTypeOf<{
+      items: { id: string }[];
     }>();
   });
 

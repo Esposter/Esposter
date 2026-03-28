@@ -8,7 +8,7 @@ export type DeepOmit<T, TKey extends PropertyKey> = [T] extends [Date | Function
       ? T extends unknown[]
         ? T extends readonly unknown[]
           ? { [K in keyof T]: DeepOmit<T[K], TKey> }
-          : Array<DeepOmit<T[number], TKey>>
+          : DeepOmit<T[number], TKey>[]
         : {
             [P in keyof T as P extends TKey ? never : P]: DeepOmit<T[P], TKey>;
           }

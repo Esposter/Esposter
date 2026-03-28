@@ -35,8 +35,8 @@ describe("deepOmit type", () => {
   test("omits key from array elements", () => {
     expect.hasAssertions();
 
-    expectTypeOf<DeepOmit<{ a: Array<{ b: string; c: boolean }> }, "c">>().toEqualTypeOf<{
-      a: Array<{ b: string }>;
+    expectTypeOf<DeepOmit<{ a: { b: string; c: boolean }[] }, "c">>().toEqualTypeOf<{
+      a: { b: string }[];
     }>();
   });
 
@@ -87,8 +87,8 @@ describe("deepOmit type", () => {
   test("omits key from array of objects at depth", () => {
     expect.hasAssertions();
 
-    expectTypeOf<DeepOmit<{ a: Array<{ b: string; c: string; d: string; e: string }> }, "c">>().toEqualTypeOf<{
-      a: Array<{ b: string; d: string; e: string }>;
+    expectTypeOf<DeepOmit<{ a: { b: string; c: string; d: string; e: string }[] }, "c">>().toEqualTypeOf<{
+      a: { b: string; d: string; e: string }[];
     }>();
   });
 
