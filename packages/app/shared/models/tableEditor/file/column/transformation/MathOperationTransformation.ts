@@ -17,6 +17,6 @@ export const mathOperationTransformationSchema = z
   .object({
     ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.MathOperation).readonly()).shape,
     first: mathOperandSchema.meta({ title: "First" }),
-    steps: z.array(mathStepSchema).default([]).meta({ title: "Steps" }),
+    steps: z.array(mathStepSchema).meta({ title: "Steps" }),
   })
   .meta({ title: ColumnTransformationType.MathOperation }) satisfies z.ZodType<MathOperationTransformation>;

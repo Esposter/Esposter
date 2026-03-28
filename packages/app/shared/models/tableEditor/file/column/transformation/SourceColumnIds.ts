@@ -13,6 +13,5 @@ export const sourceColumnIdsSchema = z.object({
         title: "Source Column",
       }),
     )
-    .default([])
     .meta({ title: "Source Columns" }),
 });

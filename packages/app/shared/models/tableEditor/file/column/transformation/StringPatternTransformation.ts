@@ -19,16 +19,6 @@ export const stringPatternTransformationSchema = z
     pattern: z.string().meta({
       title: "Pattern",
     }),
-    sourceColumnIds: z
-      .array(
-        z.string().meta({
-          comp: "select",
-          getItems: "context.stringColumnItems",
-          title: "Source Column",
-        }),
-      )
-      .default([])
-      .meta({ title: "Source Columns" }),
   })
   .meta({
     applicableColumnTypes: [ColumnType.String],

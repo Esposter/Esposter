@@ -5,11 +5,11 @@ import type { NumberColumnForm } from "#shared/models/tableEditor/file/column/Nu
 import type { StringColumnForm } from "#shared/models/tableEditor/file/column/StringColumnForm";
 
 import { booleanColumnFormSchema } from "#shared/models/tableEditor/file/column/BooleanColumnForm";
+import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { computedColumnFormSchema } from "#shared/models/tableEditor/file/column/ComputedColumnForm";
 import { dateColumnFormSchema } from "#shared/models/tableEditor/file/column/DateColumnForm";
 import { numberColumnFormSchema } from "#shared/models/tableEditor/file/column/NumberColumnForm";
 import { stringColumnFormSchema } from "#shared/models/tableEditor/file/column/StringColumnForm";
-import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { z } from "zod";
 
 export type ColumnForm = BooleanColumnForm | ComputedColumnForm | DateColumnForm | NumberColumnForm | StringColumnForm;
