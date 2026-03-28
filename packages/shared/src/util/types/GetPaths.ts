@@ -1,8 +1,9 @@
-import type { Decrement } from "@/util/types/Decrement";
-
-export type GetPaths<T, Prefix extends string = "", Depth extends number = 5, IsRoot extends boolean = true> = [
-  Depth,
-] extends [never]
+export type GetPaths<
+  T,
+  Prefix extends string = "",
+  Depth extends unknown[] = [unknown, unknown, unknown, unknown, unknown],
+  IsRoot extends boolean = true,
+> = Depth extends []
   ? never
   : NonNullable<T> extends infer O
     ? {
@@ -11,7 +12,9 @@ export type GetPaths<T, Prefix extends string = "", Depth extends number = 5, Is
           : NonNullable<O[K]> extends Function
             ? never
             :
-                | GetPaths<O[K], IsRoot extends true ? K : `${Prefix}.${K}`, Decrement<Depth>, false>
+                | (Depth extends [unknown, ...infer Rest]
+                    ? GetPaths<O[K], IsRoot extends true ? K : `${Prefix}.${K}`, Rest, false>
+                    : never)
                 | (IsRoot extends true ? K : `${Prefix}.${K}`);
       }[keyof O & string]
     : never;

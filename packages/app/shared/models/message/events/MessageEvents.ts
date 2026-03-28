@@ -3,7 +3,7 @@ import type { CreateTypingInput } from "#shared/models/db/message/CreateTypingIn
 import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
 import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessageInput";
 import type { StandardMessageEntity } from "@esposter/db-schema";
-import type { PartialByKeys } from "@esposter/shared";
+import type { SetOptional } from "type-fest";
 
 export interface MessageEvents {
   createMessage: [[StandardMessageEntity[], Pick<Device, "sessionId"> & { isSendToSelf?: true }]];
@@ -15,7 +15,7 @@ export interface MessageEvents {
   // And the fact that we never explicitly use updatedAt anyways (we always update all the properties via Object.assign),
   // We don't need to strictly declare the type c:
   updateMessage: [
-    PartialByKeys<
+    SetOptional<
       Pick<StandardMessageEntity, "files" | "isEdited" | "isPinned" | "linkPreviewResponse"> & UpdateMessageInput,
       "files" | "linkPreviewResponse" | "message"
     >,

@@ -1,5 +1,4 @@
 import type { Column } from "#shared/models/tableEditor/file/column/Column";
-import type { ToData } from "@esposter/shared";
 import type { Except } from "type-fest";
 
 import { BooleanColumn } from "#shared/models/tableEditor/file/column/BooleanColumn";
@@ -11,18 +10,20 @@ import { StringColumn } from "#shared/models/tableEditor/file/column/StringColum
 
 export const ColumnTypeCreateMap = {
   [ColumnType.Boolean]: {
-    create: (init?: ToData<Except<Partial<BooleanColumn>, "type">>) => new BooleanColumn({ ...init }),
+    create: (init?: Partial<Except<BooleanColumn, "type">>) => new BooleanColumn({ ...init }),
   },
   [ColumnType.Computed]: {
-    create: (init?: ToData<Except<Partial<ComputedColumn>, "type">>) => new ComputedColumn({ ...init }),
+    create: (init?: Partial<Except<ComputedColumn, "type">>) => new ComputedColumn({ ...init }),
   },
   [ColumnType.Date]: {
-    create: (init?: ToData<Except<Partial<DateColumn>, "type">>) => new DateColumn({ ...init }),
+    create: (init?: Partial<Except<DateColumn, "type">>) => new DateColumn({ ...init }),
   },
   [ColumnType.Number]: {
-    create: (init?: ToData<Except<Partial<NumberColumn>, "type">>) => new NumberColumn({ ...init }),
+    create: (init?: Partial<Except<NumberColumn, "type">>) => new NumberColumn({ ...init }),
   },
   [ColumnType.String]: {
-    create: (init?: ToData<Except<Partial<StringColumn>, "type">>) => new StringColumn({ ...init }),
+    create: (init?: Partial<Except<StringColumn, "type">>) => new StringColumn({ ...init }),
   },
-} as const satisfies Record<ColumnType, { create: (init?: ToData<Except<Partial<BooleanColumn>, "type">>) => Column }>;
+} as const satisfies {
+  [K in ColumnType]: { create: (init?: Partial<Except<Extract<Column, { type: K }>, "type">>) => Column };
+};

@@ -1,3 +1,3 @@
-export type BuildTuple<N extends number, T extends unknown[] = []> = T["length"] extends N
-  ? T
-  : BuildTuple<N, [...T, unknown]>;
+export type BuildTuple<N extends number, T = unknown, R extends unknown[] = []> = R["length"] extends N
+  ? R
+  : BuildTuple<N, T, [...R, T]>;

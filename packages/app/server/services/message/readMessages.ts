@@ -1,7 +1,7 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { ReadMessagesInput } from "@@/server/trpc/routers/message";
 import type { Clause } from "@esposter/db-schema";
-import type { PartialByKeys } from "@esposter/shared";
+import type { SetOptional } from "type-fest";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { DEFAULT_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
@@ -26,7 +26,7 @@ export const readMessages = async ({
   limit = DEFAULT_READ_LIMIT,
   order,
   roomId,
-}: PartialByKeys<ReadMessagesInput, "limit">) => {
+}: SetOptional<ReadMessagesInput, "limit">) => {
   const sortBy: SortItem<keyof CompositeKey>[] = [{ isIncludeValue, ...MESSAGE_ROWKEY_SORT_ITEM }];
   const clauses: Clause[] = [
     { key: StandardMessageEntityPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },

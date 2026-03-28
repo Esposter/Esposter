@@ -1,13 +1,12 @@
 import type { Npc } from "@/models/dungeons/npc/Npc";
-import type { PartialByKeys } from "@esposter/shared";
-import type { Except } from "type-fest";
+import type { Except, SetOptional } from "type-fest";
 
 import { NpcId } from "#shared/generated/tiled/propertyTypes/enum/NpcId";
 import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
 import { EffectType } from "@/models/dungeons/npc/effect/EffectType";
 import { MovementPattern } from "@/models/dungeons/npc/MovementPattern";
 
-const NpcMap: Record<NpcId, PartialByKeys<Except<Npc, "id">, "frame" | "movementPattern">> = {
+const NpcMap: Record<NpcId, SetOptional<Except<Npc, "id">, "frame" | "movementPattern">> = {
   [NpcId.John]: {
     effects: [
       {
