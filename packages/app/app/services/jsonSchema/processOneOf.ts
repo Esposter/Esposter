@@ -1,5 +1,4 @@
-import { processProperties } from "@/services/jsonSchema/processProperties";
-import { processTitle } from "@/services/jsonSchema/processTitle";
+import { processSchema } from "@/services/jsonSchema/processSchema";
 import { z } from "zod";
 
 export const processOneOf = (oneOf: z.core.JSONSchema.JSONSchema["oneOf"]) => {
@@ -7,7 +6,6 @@ export const processOneOf = (oneOf: z.core.JSONSchema.JSONSchema["oneOf"]) => {
 
   for (const variant of oneOf) {
     if (typeof variant === "boolean") continue;
-    processTitle(variant);
-    processProperties(variant.properties);
+    processSchema(variant);
   }
 };

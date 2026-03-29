@@ -1,15 +1,18 @@
+import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { VjsfOptions } from "@/models/vjsf/VjsfOptions";
 import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
 
 import { getPropertyNames } from "@esposter/shared";
 
 export interface ColumnFormVjsfContext {
-  columnItems: SelectItemCategoryDefinition<string>[];
-  columnNames: string[];
-  currentName: string;
-  dateColumnItems: SelectItemCategoryDefinition<string>[];
-  numberColumnItems: SelectItemCategoryDefinition<string>[];
-  stringColumnItems: SelectItemCategoryDefinition<string>[];
+  booleanColumnItems: SelectItemCategoryDefinition<Column["id"]>[];
+  columnItems: SelectItemCategoryDefinition<Column["id"]>[];
+  columnNames: Column["name"][];
+  computedColumnItems: SelectItemCategoryDefinition<Column["id"]>[];
+  currentName: Column["name"];
+  dateColumnItems: SelectItemCategoryDefinition<Column["id"]>[];
+  numberColumnItems: SelectItemCategoryDefinition<Column["id"]>[];
+  stringColumnItems: SelectItemCategoryDefinition<Column["id"]>[];
 }
 
 export const ColumnFormVjsfContextPropertyNames =
