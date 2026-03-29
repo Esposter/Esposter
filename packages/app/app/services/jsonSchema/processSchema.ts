@@ -1,3 +1,4 @@
+import { processAnyOf } from "@/services/jsonSchema/processAnyOf";
 import { processItems } from "@/services/jsonSchema/processItems";
 import { processOneOf } from "@/services/jsonSchema/processOneOf";
 import { processProperties } from "@/services/jsonSchema/processProperties";
@@ -8,16 +9,10 @@ const processedSchemas = new WeakSet<object>();
 
 export const processSchema = (schema: z.core.JSONSchema.JSONSchema, key?: string) => {
   if (typeof schema !== "object" || schema === null || processedSchemas.has(schema)) return;
-
   processedSchemas.add(schema);
   processTitle(schema, key);
-
-  if (schema.anyOf) {
-    schema.oneOf = schema.anyOf;
-    delete schema.anyOf;
-  }
-
-  processOneOf(schema);
+  processAnyOf(schema);
+  processOneOf(schema.oneOf);
+  processItems(schema.items);
   processProperties(schema.properties);
-  processItems(schema);
 };
