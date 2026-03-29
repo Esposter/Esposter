@@ -1,8 +1,8 @@
 import {
   benchColumns,
-  benchRows100,
-  benchRows10k,
   benchRows1k,
+  benchRows10k,
+  benchRows100,
   makeBenchItem,
   makeOriginalRowValues,
 } from "@/composables/tableEditor/file/commands/testUtils.bench";
