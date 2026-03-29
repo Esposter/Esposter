@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.20.0](https://github.com/Esposter/Esposter/compare/v2.19.2...v2.20.0) (2026-03-29)
+
+### Bug Fixes
+
+* format + fix up some ignores ([6cd632f](https://github.com/Esposter/Esposter/commit/6cd632ff672ad8e0adee51b42cb6f6925f894b96))
+* format ignores ([c3f38cf](https://github.com/Esposter/Esposter/commit/c3f38cf87331196fa0fedd2a18937fd9e578c4b5))
+* lint ([7e81f71](https://github.com/Esposter/Esposter/commit/7e81f7145c3a052c273c2a06cbfe5a275985876e))
+* lint ([2805841](https://github.com/Esposter/Esposter/commit/2805841bf558fa7a564275934d3e91afa8d3d52e))
+* lint ([9532341](https://github.com/Esposter/Esposter/commit/95323411a4c1b74a45da0600fee2f46abaeb30ef))
+
+### Features
+
+* Add oxlint type aware ([eb40e2d](https://github.com/Esposter/Esposter/commit/eb40e2d7da8c606c66053582284264e0fb3a2592))
+* migrate to oxfmt ([e7a0212](https://github.com/Esposter/Esposter/commit/e7a0212f9ec18d7193c96cc6069ac6ecf168e8bb))
+* switch to tsgo ([1e504b3](https://github.com/Esposter/Esposter/commit/1e504b3a6ce5144dadbdd9bc543018a35e7b6808))
+
 ## [2.19.2](https://github.com/Esposter/Esposter/compare/v2.19.1...v2.19.2) (2026-02-05)
 
 **Note:** Version bump only for package @esposter/xml2js

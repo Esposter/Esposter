@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.20.0](https://github.com/Esposter/Esposter/compare/v2.19.2...v2.20.0) (2026-03-29)
+
+### Bug Fixes
+
+* extends ([a0490c9](https://github.com/Esposter/Esposter/commit/a0490c9ab0829bd91590aed7a5649eec61525167))
+* format + fix up some ignores ([6cd632f](https://github.com/Esposter/Esposter/commit/6cd632ff672ad8e0adee51b42cb6f6925f894b96))
+* lint ([e2c4dd5](https://github.com/Esposter/Esposter/commit/e2c4dd52af7b1bbbbd3b7eacec95ff9a201d0b57))
+* lint ([5a8028b](https://github.com/Esposter/Esposter/commit/5a8028b6d7320ef1b64a3e9be05437d1f20e2e01))
+* lint ([36ee460](https://github.com/Esposter/Esposter/commit/36ee460ee9e2df82331b4fd852e4be5a1878cd6e))
+* lint ([62401c8](https://github.com/Esposter/Esposter/commit/62401c8447d5401188f849051a54f8fcdb313cbc))
+* merge conflicts ([09e04f7](https://github.com/Esposter/Esposter/commit/09e04f7f3c063bf8cb115e1172ae2c53aa95a8ca))
+* satisfies ([aeb7b1f](https://github.com/Esposter/Esposter/commit/aeb7b1f12e6775a98d002ce5d7e263874b7875cc))
+* types ([5c87276](https://github.com/Esposter/Esposter/commit/5c872765137f747621af219e2987c5d862728432))
+* types ([728e6df](https://github.com/Esposter/Esposter/commit/728e6dfa38d44fa104cba6d29e1e02ae4c74b3ec))
+* types ([7ce2839](https://github.com/Esposter/Esposter/commit/7ce28397859a6d943f2959f40be7c15a96368ee9))
+
+### Features
+
+* Add oxlint type aware ([eb40e2d](https://github.com/Esposter/Esposter/commit/eb40e2d7da8c606c66053582284264e0fb3a2592))
+* migrate to oxfmt ([e7a0212](https://github.com/Esposter/Esposter/commit/e7a0212f9ec18d7193c96cc6069ac6ecf168e8bb))
+* switch to tsgo ([1e504b3](https://github.com/Esposter/Esposter/commit/1e504b3a6ce5144dadbdd9bc543018a35e7b6808))
+
 ## [2.19.2](https://github.com/Esposter/Esposter/compare/v2.19.1...v2.19.2) (2026-02-05)
 
 **Note:** Version bump only for package @esposter/db-schema
