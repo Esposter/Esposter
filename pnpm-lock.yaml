@@ -634,8 +634,8 @@ catalogs:
       specifier: ^8.0.31
       version: 8.0.31
     write-excel-file:
-      specifier: ^3.0.6
-      version: 3.0.6
+      specifier: ^3.0.8
+      version: 3.0.8
     ws:
       specifier: ^8.20.0
       version: 8.20.0
@@ -1126,7 +1126,7 @@ importers:
         version: 8.0.31
       write-excel-file:
         specifier: 'catalog:'
-        version: 3.0.6
+        version: 3.0.8
       ws:
         specifier: 'catalog:'
         version: 8.20.0
@@ -6818,6 +6818,7 @@ packages:
   '@xmldom/xmldom@0.8.11':
     resolution: {integrity: sha512-cQzWCtO6C8TQiYl1ruKNn2U6Ao4o4WBBcbL61yJl84x+j5sOWWFU9X7DpND8XZG3daDppSsigMdfAIl2upQBRw==}
     engines: {node: '>=10.0.0'}
+    deprecated: this version has critical issues, please update to the latest version
 
   '@xtuc/ieee754@1.2.0':
     resolution: {integrity: sha512-DX8nKgqcGwsc0eJSqYt5lwP4DH5FlHnmuWWBRy7X0NcaGR0ZtuyeESgMwTYVEtxmsNGY+qit4QYT/MIYTOTPeA==}
@@ -12978,8 +12979,8 @@ packages:
     resolution: {integrity: sha512-42AtmgqjV+X1VpdOfyTGOYRi0/zsoLqtXQckTmqTeybT+BDIbM/Guxo7x3pE2vtpr1ok6xRqM9OpBe+Jyoqyww==}
     engines: {node: '>=18'}
 
-  write-excel-file@3.0.6:
-    resolution: {integrity: sha512-HeBcvD8VzezvnZvw4tbnUc6PXMRwk6qHrSBPeVuHQTe5Zwou+tm0OQcS9UVDzmMkBC0z6v+qzOW7um6nZQSN7Q==}
+  write-excel-file@3.0.8:
+    resolution: {integrity: sha512-JZ83QoZSggcIaQA9UeaR2loCNnyQT41b65cn9ogyJtGKedrRmBDTS0Hh6F9pOUfctPbWKTIWsfB14E6iCFfLfA==}
     engines: {node: '>=18'}
 
   write-file-atomic@6.0.0:
@@ -26577,7 +26578,7 @@ snapshots:
       string-width: 7.2.0
       strip-ansi: 7.2.0
 
-  write-excel-file@3.0.6:
+  write-excel-file@3.0.8:
     dependencies:
       archiver-node: 8.0.8
       fflate: 0.8.2
