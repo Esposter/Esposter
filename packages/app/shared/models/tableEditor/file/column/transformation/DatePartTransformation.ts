@@ -1,7 +1,6 @@
 import type { SourceColumnId } from "#shared/models/tableEditor/file/column/transformation/SourceColumnId";
 import type { ItemEntityType } from "@esposter/shared";
 
-import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import { DatePartType, datePartTypeSchema } from "#shared/models/tableEditor/file/column/transformation/DatePartType";
 import { createSourceColumnIdSchema } from "#shared/models/tableEditor/file/column/transformation/SourceColumnId";
@@ -19,7 +18,4 @@ export const datePartTransformationSchema = z
     ...createSourceColumnIdSchema(ColumnFormVjsfContextPropertyNames["context.dateColumnItems"]).shape,
     part: datePartTypeSchema,
   })
-  .meta({
-    applicableColumnTypes: [ColumnType.Date],
-    title: ColumnTransformationType.DatePart,
-  }) satisfies z.ZodType<DatePartTransformation>;
+  .meta({ title: ColumnTransformationType.DatePart }) satisfies z.ZodType<DatePartTransformation>;

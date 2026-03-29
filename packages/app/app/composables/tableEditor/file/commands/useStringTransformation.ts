@@ -1,6 +1,6 @@
 import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 
-import { BasicStringTransformationType } from "#shared/models/tableEditor/file/column/transformation/string/BasicStringTransformationType";
+import { StringTransformationType } from "#shared/models/tableEditor/file/column/transformation/string/StringTransformationType";
 import { StringTransformationCommand } from "@/models/tableEditor/file/commands/StringTransformationCommand";
 import { getStringColumnsAffectedCells } from "@/services/tableEditor/file/commands/getStringColumnsAffectedCells";
 import { useTableEditorStore } from "@/store/tableEditor";
@@ -11,7 +11,7 @@ export const useStringTransformation = () => {
   const { editedItem } = storeToRefs(tableEditorStore);
   const fileHistoryStore = useFileHistoryStore();
   const { push } = fileHistoryStore;
-  return (stringTransformationType: BasicStringTransformationType) => {
+  return (stringTransformationType: StringTransformationType) => {
     if (!editedItem.value?.dataSource) return;
     const affectedCells = getStringColumnsAffectedCells(editedItem.value.dataSource);
     if (affectedCells.length === 0) return;

@@ -1,4 +1,4 @@
-import type { BasicStringTransformationType } from "#shared/models/tableEditor/file/column/transformation/string/BasicStringTransformationType";
+import type { StringTransformationType } from "#shared/models/tableEditor/file/column/transformation/string/StringTransformationType";
 import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 import type { AffectedCell } from "@/models/tableEditor/file/commands/AffectedCell";
 
@@ -16,9 +16,9 @@ export class StringTransformationCommand extends ADataSourceCommand<CommandType.
   }
 
   private readonly affectedCells: AffectedCell[];
-  private readonly stringTransformationType: BasicStringTransformationType;
+  private readonly stringTransformationType: StringTransformationType;
 
-  constructor(stringTransformationType: BasicStringTransformationType, affectedCells: AffectedCell[]) {
+  constructor(stringTransformationType: StringTransformationType, affectedCells: AffectedCell[]) {
     super();
     this.stringTransformationType = stringTransformationType;
     this.affectedCells = affectedCells;
