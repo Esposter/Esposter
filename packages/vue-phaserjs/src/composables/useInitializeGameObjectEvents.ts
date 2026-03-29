@@ -32,8 +32,7 @@ export const useInitializeGameObjectEvents = () => {
     for (const gameObjectEvent of gameObjectEvents) {
       const context = GameObjectEventMap[gameObjectEvent];
       const eventListener = (...args: Types.Input.EventData[]) => {
-        if ("eventIndex" in context)
-          takeOne(args, 0).stopPropagation = takeOne(args, context.eventIndex).stopPropagation;
+        if ("eventIndex" in context) takeOne(args).stopPropagation = takeOne(args, context.eventIndex).stopPropagation;
         emit(gameObjectEvent, ...args);
       };
 

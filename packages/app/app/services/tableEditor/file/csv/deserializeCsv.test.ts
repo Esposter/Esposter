@@ -18,11 +18,11 @@ describe(deserializeCsv, () => {
     const { columns, rows } = await deserializeCsv(createFile("a,b\n0,1\n2,3"), new CsvDataSourceItem());
 
     expect(columns).toHaveLength(2);
-    expect(takeOne(columns, 0).name).toBe("a");
-    expect(takeOne(columns, 0).type).toBe(ColumnType.Number);
+    expect(takeOne(columns).name).toBe("a");
+    expect(takeOne(columns).type).toBe(ColumnType.Number);
     expect(takeOne(columns, 1).name).toBe("b");
     expect(rows).toHaveLength(2);
-    expect(takeOne(rows, 0).data).toStrictEqual({ a: 0, b: 1 });
+    expect(takeOne(rows).data).toStrictEqual({ a: 0, b: 1 });
     expect(takeOne(rows, 1).data).toStrictEqual({ a: 2, b: 3 });
   });
 
@@ -33,8 +33,8 @@ describe(deserializeCsv, () => {
     const { columns, rows } = await deserializeCsv(createFile("a;b\n0;1"), item);
 
     expect(columns).toHaveLength(2);
-    expect(takeOne(columns, 0).name).toBe("a");
-    expect(takeOne(rows, 0).data).toStrictEqual({ a: 0, b: 1 });
+    expect(takeOne(columns).name).toBe("a");
+    expect(takeOne(rows).data).toStrictEqual({ a: 0, b: 1 });
   });
 
   test("empty file returns DataSource with no columns and rows", async () => {
@@ -53,8 +53,8 @@ describe(deserializeCsv, () => {
     const { columns, rows } = await deserializeCsv(createFile("a,b"), new CsvDataSourceItem());
 
     expect(columns).toHaveLength(2);
-    expect(takeOne(columns, 0).name).toBe("a");
-    expect(takeOne(columns, 0).type).toBe(ColumnType.String);
+    expect(takeOne(columns).name).toBe("a");
+    expect(takeOne(columns).type).toBe(ColumnType.String);
     expect(rows).toHaveLength(0);
   });
 
@@ -63,7 +63,7 @@ describe(deserializeCsv, () => {
 
     const { columns } = await deserializeCsv(createFile(",b\n0,1"), new CsvDataSourceItem());
 
-    expect(takeOne(columns, 0).name).toBe("Column 1");
+    expect(takeOne(columns).name).toBe("Column 1");
     expect(takeOne(columns, 1).name).toBe("b");
   });
 });

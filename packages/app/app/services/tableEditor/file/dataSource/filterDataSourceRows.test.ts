@@ -40,7 +40,7 @@ describe(filterDataSourceRows, () => {
     const result = filterDataSourceRows(dataSource.rows, { "": { type: ColumnType.String, value: "abc" } });
 
     expect(result).toHaveLength(2);
-    expect(takeOne(takeOne(result, 0).data, "")).toBe("abc");
+    expect(takeOne(takeOne(result).data, "")).toBe("abc");
     expect(takeOne(takeOne(result, 1).data, "")).toBe("abcdef");
   });
 
@@ -52,7 +52,7 @@ describe(filterDataSourceRows, () => {
     const result = filterDataSourceRows(dataSource.rows, { "": { type: ColumnType.String, value: "abc" } });
 
     expect(result).toHaveLength(1);
-    expect(takeOne(takeOne(result, 0).data, "")).toBe("ABC");
+    expect(takeOne(takeOne(result).data, "")).toBe("ABC");
   });
 
   test("string filter excludes null cell values", () => {
@@ -79,7 +79,7 @@ describe(filterDataSourceRows, () => {
     });
 
     expect(result).toHaveLength(1);
-    expect(takeOne(takeOne(result, 0).data, "")).toBe("abc");
+    expect(takeOne(takeOne(result).data, "")).toBe("abc");
   });
 
   test("string filter with no matches returns empty rows", () => {
@@ -105,7 +105,7 @@ describe(filterDataSourceRows, () => {
     });
 
     expect(result).toHaveLength(1);
-    expect(takeOne(takeOne(result, 0).data, "")).toBe(true);
+    expect(takeOne(takeOne(result).data, "")).toBe(true);
   });
 
   test("boolean filter false keeps only false rows", () => {
@@ -121,7 +121,7 @@ describe(filterDataSourceRows, () => {
     });
 
     expect(result).toHaveLength(1);
-    expect(takeOne(takeOne(result, 0).data, "")).toBe(false);
+    expect(takeOne(takeOne(result).data, "")).toBe(false);
   });
 
   test("boolean filter null keeps only null rows", () => {
@@ -135,7 +135,7 @@ describe(filterDataSourceRows, () => {
     const result = filterDataSourceRows(dataSource.rows, { "": { type: ColumnType.Boolean, value: "null" } });
 
     expect(result).toHaveLength(1);
-    expect(takeOne(takeOne(result, 0).data, "")).toBeNull();
+    expect(takeOne(takeOne(result).data, "")).toBeNull();
   });
 
   test("boolean filter empty string keeps all rows", () => {
@@ -164,7 +164,7 @@ describe(filterDataSourceRows, () => {
     });
 
     expect(result).toHaveLength(2);
-    expect(takeOne(takeOne(result, 0).data, "")).toBe(1);
+    expect(takeOne(takeOne(result).data, "")).toBe(1);
     expect(takeOne(takeOne(result, 1).data, "")).toBe(2);
   });
 
@@ -181,7 +181,7 @@ describe(filterDataSourceRows, () => {
     });
 
     expect(result).toHaveLength(2);
-    expect(takeOne(takeOne(result, 0).data, "")).toBe(0);
+    expect(takeOne(takeOne(result).data, "")).toBe(0);
     expect(takeOne(takeOne(result, 1).data, "")).toBe(1);
   });
 
@@ -198,7 +198,7 @@ describe(filterDataSourceRows, () => {
     });
 
     expect(result).toHaveLength(1);
-    expect(takeOne(takeOne(result, 0).data, "")).toBe(1);
+    expect(takeOne(takeOne(result).data, "")).toBe(1);
   });
 
   test("number filter excludes null cell values", () => {

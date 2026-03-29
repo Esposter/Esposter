@@ -24,7 +24,7 @@ describe(useDeleteColumns, () => {
     const { editedItem } = setupWithDataSource();
     const deleteColumns = useDeleteColumns();
     const columns = editedItem.value?.dataSource?.columns ?? [];
-    deleteColumns([takeOne(columns, 0).id, takeOne(columns, 1).id]);
+    deleteColumns([takeOne(columns).id, takeOne(columns, 1).id]);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
@@ -38,13 +38,13 @@ describe(useDeleteColumns, () => {
     const { editedItem } = setupWithDataSource();
     const deleteColumns = useDeleteColumns();
     const columns = editedItem.value?.dataSource?.columns ?? [];
-    deleteColumns([takeOne(columns, 0).id]);
+    deleteColumns([takeOne(columns).id]);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
 
     expect(dataSource.columns).toHaveLength(1);
-    expect(takeOne(dataSource.columns, 0).name).toBe(" ");
+    expect(takeOne(dataSource.columns).name).toBe(" ");
   });
 
   test("also removes the column data from all rows", () => {
@@ -53,12 +53,12 @@ describe(useDeleteColumns, () => {
     const { editedItem } = setupWithDataSource();
     const deleteColumns = useDeleteColumns();
     const columns = editedItem.value?.dataSource?.columns ?? [];
-    deleteColumns([takeOne(columns, 0).id]);
+    deleteColumns([takeOne(columns).id]);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBeUndefined();
+    expect(takeOne(dataSource.rows).data[""]).toBeUndefined();
     expect(takeOne(dataSource.rows, 1).data[""]).toBeUndefined();
   });
 
@@ -70,14 +70,14 @@ describe(useDeleteColumns, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { undo } = fileHistoryStore;
     const columns = editedItem.value?.dataSource?.columns ?? [];
-    deleteColumns([takeOne(columns, 0).id, takeOne(columns, 1).id]);
+    deleteColumns([takeOne(columns).id, takeOne(columns, 1).id]);
     undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
 
     expect(dataSource.columns).toHaveLength(2);
-    expect(takeOne(dataSource.columns, 0).name).toBe("");
+    expect(takeOne(dataSource.columns).name).toBe("");
     expect(takeOne(dataSource.columns, 1).name).toBe(" ");
   });
 
@@ -89,13 +89,13 @@ describe(useDeleteColumns, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { undo } = fileHistoryStore;
     const columns = editedItem.value?.dataSource?.columns ?? [];
-    deleteColumns([takeOne(columns, 0).id]);
+    deleteColumns([takeOne(columns).id]);
     undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe(0);
+    expect(takeOne(dataSource.rows).data[""]).toBe(0);
     expect(takeOne(dataSource.rows, 1).data[""]).toBe(2);
   });
 
@@ -107,7 +107,7 @@ describe(useDeleteColumns, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { redo, undo } = fileHistoryStore;
     const columns = editedItem.value?.dataSource?.columns ?? [];
-    deleteColumns([takeOne(columns, 0).id, takeOne(columns, 1).id]);
+    deleteColumns([takeOne(columns).id, takeOne(columns, 1).id]);
     undo(editedItem.value);
     redo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
@@ -179,7 +179,7 @@ describe(useDeleteColumns, () => {
 
     assert.exists(dataSource);
 
-    expect(Object.keys(takeOne(dataSource.rows, 0).data)).toStrictEqual(["a", "b", "c"]);
+    expect(Object.keys(takeOne(dataSource.rows).data)).toStrictEqual(["a", "b", "c"]);
   });
 
   test("undo preserves row.data key order when restoring multiple deleted columns", () => {
@@ -200,6 +200,6 @@ describe(useDeleteColumns, () => {
 
     assert.exists(dataSource);
 
-    expect(Object.keys(takeOne(dataSource.rows, 0).data)).toStrictEqual(["a", "b", "c", "d"]);
+    expect(Object.keys(takeOne(dataSource.rows).data)).toStrictEqual(["a", "b", "c", "d"]);
   });
 });

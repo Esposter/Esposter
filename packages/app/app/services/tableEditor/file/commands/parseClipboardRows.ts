@@ -19,7 +19,7 @@ export const parseClipboardRows = (text: string, dataSource: DataSource): Row[] 
     .map((line) => parseMarkdownRow(line));
   const dataRows = allRows.filter((cells) => !isSeparatorRow(cells));
   if (dataRows.length < 2) return [];
-  const headers = takeOne(dataRows, 0);
+  const headers = takeOne(dataRows);
   return dataRows.slice(1).map((cells) => {
     const valueByHeader = new Map(headers.map((header, index) => [header, cells[index] ?? ""]));
     return new Row({

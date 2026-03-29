@@ -31,7 +31,7 @@ describe("tilemap", () => {
 
     startTestScene(sceneKey);
 
-    const firstTilemap = takeOne(completedTilemaps, 0);
+    const firstTilemap = takeOne(completedTilemaps);
     const destroySpy = vi.spyOn(firstTilemap, "destroy");
 
     await wrapper.setProps({ configuration: { key: " " } });

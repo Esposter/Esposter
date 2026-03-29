@@ -34,7 +34,7 @@ describe(useDeleteDuplicateRows, () => {
     assert.exists(dataSource);
 
     expect(dataSource.rows).toHaveLength(1);
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe(0);
+    expect(takeOne(dataSource.rows).data[""]).toBe(0);
   });
 
   test("removes duplicate rows keeping last occurrence", () => {
@@ -49,7 +49,7 @@ describe(useDeleteDuplicateRows, () => {
     assert.exists(dataSource);
 
     expect(dataSource.rows).toHaveLength(2);
-    expect(takeOne(dataSource.rows, 0).data.a).toBe(2);
+    expect(takeOne(dataSource.rows).data.a).toBe(2);
     expect(takeOne(dataSource.rows, 1).data.a).toBe(1);
   });
 

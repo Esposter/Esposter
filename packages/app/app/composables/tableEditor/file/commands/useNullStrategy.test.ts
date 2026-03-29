@@ -32,7 +32,7 @@ describe(useNullStrategy, () => {
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe("N/A");
+    expect(takeOne(dataSource.rows).data[""]).toBe("N/A");
   });
 
   test(`${NullStrategy.ReplaceWithNA} replaces empty string in string columns with "N/A"`, () => {
@@ -46,7 +46,7 @@ describe(useNullStrategy, () => {
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe("N/A");
+    expect(takeOne(dataSource.rows).data[""]).toBe("N/A");
   });
 
   test(`${NullStrategy.ReplaceWithNA} skips non-string columns`, () => {
@@ -62,7 +62,7 @@ describe(useNullStrategy, () => {
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBeNull();
+    expect(takeOne(dataSource.rows).data[""]).toBeNull();
     expect(isUndoable.value).toBe(false);
   });
 
@@ -80,7 +80,7 @@ describe(useNullStrategy, () => {
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBeNull();
+    expect(takeOne(dataSource.rows).data[""]).toBeNull();
     expect(isUndoable.value).toBe(false);
   });
 
@@ -99,7 +99,7 @@ describe(useNullStrategy, () => {
     assert.exists(dataSource);
 
     expect(dataSource.rows).toHaveLength(1);
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe(" ");
+    expect(takeOne(dataSource.rows).data[""]).toBe(" ");
   });
 
   test(`${NullStrategy.DropRow} drops rows with empty string cells`, () => {
@@ -114,7 +114,7 @@ describe(useNullStrategy, () => {
     assert.exists(dataSource);
 
     expect(dataSource.rows).toHaveLength(1);
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe(" ");
+    expect(takeOne(dataSource.rows).data[""]).toBe(" ");
   });
 
   test(`${NullStrategy.DropRow} skips hidden columns`, () => {
@@ -153,7 +153,7 @@ describe(useNullStrategy, () => {
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBeNull();
+    expect(takeOne(dataSource.rows).data[""]).toBeNull();
     expect(takeOne(dataSource.rows, 1).data[""]).toBe("");
   });
 
@@ -176,7 +176,7 @@ describe(useNullStrategy, () => {
     assert.exists(dataSource);
 
     expect(dataSource.rows).toHaveLength(3);
-    expect(takeOne(dataSource.rows, 0).data[""]).toBeNull();
+    expect(takeOne(dataSource.rows).data[""]).toBeNull();
     expect(takeOne(dataSource.rows, 1).data[""]).toBe(" ");
     expect(takeOne(dataSource.rows, 2).data[""]).toBe("");
   });
@@ -200,7 +200,7 @@ describe(useNullStrategy, () => {
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe("N/A");
+    expect(takeOne(dataSource.rows).data[""]).toBe("N/A");
   });
 
   test("no-op when editedItem is undefined", () => {

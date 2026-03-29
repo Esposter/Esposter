@@ -35,8 +35,8 @@ describe(useStringTransformation, () => {
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe("");
-    expect(takeOne(dataSource.rows, 0).data[" "]).toBe("");
+    expect(takeOne(dataSource.rows).data[""]).toBe("");
+    expect(takeOne(dataSource.rows).data[" "]).toBe("");
     expect(takeOne(dataSource.rows, 1).data[""]).toBe("");
     expect(takeOne(dataSource.rows, 1).data[" "]).toBe("");
   });
@@ -52,7 +52,7 @@ describe(useStringTransformation, () => {
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe("a");
+    expect(takeOne(dataSource.rows).data[""]).toBe("a");
   });
 
   test(`${StringTransformationType.Uppercase} uppercases all string cells`, () => {
@@ -66,7 +66,7 @@ describe(useStringTransformation, () => {
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe("A");
+    expect(takeOne(dataSource.rows).data[""]).toBe("A");
   });
 
   test(`${StringTransformationType.TitleCase} title-cases all string cells`, () => {
@@ -80,7 +80,7 @@ describe(useStringTransformation, () => {
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe("Hello World");
+    expect(takeOne(dataSource.rows).data[""]).toBe("Hello World");
   });
 
   test("skips non-string columns", () => {
@@ -97,7 +97,7 @@ describe(useStringTransformation, () => {
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe(0);
+    expect(takeOne(dataSource.rows).data[""]).toBe(0);
     expect(isUndoable.value).toBe(false);
   });
 
@@ -115,7 +115,7 @@ describe(useStringTransformation, () => {
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe(" ");
+    expect(takeOne(dataSource.rows).data[""]).toBe(" ");
     expect(isUndoable.value).toBe(false);
   });
 
@@ -137,7 +137,7 @@ describe(useStringTransformation, () => {
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe(" ");
+    expect(takeOne(dataSource.rows).data[""]).toBe(" ");
     expect(takeOne(dataSource.rows, 1).data[""]).toBe(" ");
   });
 
@@ -160,7 +160,7 @@ describe(useStringTransformation, () => {
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe("");
+    expect(takeOne(dataSource.rows).data[""]).toBe("");
   });
 
   test("no-op when editedItem is undefined", () => {

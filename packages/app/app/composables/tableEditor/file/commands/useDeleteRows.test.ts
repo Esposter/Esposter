@@ -18,7 +18,7 @@ describe(useDeleteRows, () => {
     const { editedItem } = setupWithDataSource();
     const deleteRows = useDeleteRows();
     const rows = editedItem.value?.dataSource?.rows ?? [];
-    deleteRows([takeOne(rows, 0).id, takeOne(rows, 1).id]);
+    deleteRows([takeOne(rows).id, takeOne(rows, 1).id]);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
@@ -32,13 +32,13 @@ describe(useDeleteRows, () => {
     const { editedItem } = setupWithDataSource();
     const deleteRows = useDeleteRows();
     const rows = editedItem.value?.dataSource?.rows ?? [];
-    deleteRows([takeOne(rows, 0).id]);
+    deleteRows([takeOne(rows).id]);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
 
     expect(dataSource.rows).toHaveLength(1);
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe(2);
+    expect(takeOne(dataSource.rows).data[""]).toBe(2);
   });
 
   test("undo restores all deleted rows at their original positions", () => {
@@ -49,14 +49,14 @@ describe(useDeleteRows, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { undo } = fileHistoryStore;
     const rows = editedItem.value?.dataSource?.rows ?? [];
-    deleteRows([takeOne(rows, 0).id, takeOne(rows, 1).id]);
+    deleteRows([takeOne(rows).id, takeOne(rows, 1).id]);
     undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
 
     expect(dataSource.rows).toHaveLength(2);
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe(0);
+    expect(takeOne(dataSource.rows).data[""]).toBe(0);
     expect(takeOne(dataSource.rows, 1).data[""]).toBe(2);
   });
 
@@ -68,7 +68,7 @@ describe(useDeleteRows, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { redo, undo } = fileHistoryStore;
     const rows = editedItem.value?.dataSource?.rows ?? [];
-    deleteRows([takeOne(rows, 0).id, takeOne(rows, 1).id]);
+    deleteRows([takeOne(rows).id, takeOne(rows, 1).id]);
     undo(editedItem.value);
     redo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;

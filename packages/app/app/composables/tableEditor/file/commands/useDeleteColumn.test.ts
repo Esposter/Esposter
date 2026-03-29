@@ -29,8 +29,8 @@ describe(useDeleteColumn, () => {
     assert.exists(dataSource);
 
     expect(dataSource.columns).toHaveLength(1);
-    expect(takeOne(dataSource.columns, 0).name).toBe(" ");
-    expect(takeOne(dataSource.rows, 0).data[""]).toBeUndefined();
+    expect(takeOne(dataSource.columns).name).toBe(" ");
+    expect(takeOne(dataSource.rows).data[""]).toBeUndefined();
   });
 
   test("undo restores deleted column and row values", () => {
@@ -47,8 +47,8 @@ describe(useDeleteColumn, () => {
     assert.exists(dataSource);
 
     expect(dataSource.columns).toHaveLength(2);
-    expect(takeOne(dataSource.columns, 0).name).toBe("");
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe(0);
+    expect(takeOne(dataSource.columns).name).toBe("");
+    expect(takeOne(dataSource.rows).data[""]).toBe(0);
     expect(takeOne(dataSource.rows, 1).data[""]).toBe(2);
   });
 
@@ -67,7 +67,7 @@ describe(useDeleteColumn, () => {
     assert.exists(dataSource);
 
     expect(dataSource.columns).toHaveLength(1);
-    expect(takeOne(dataSource.rows, 0).data[""]).toBeUndefined();
+    expect(takeOne(dataSource.rows).data[""]).toBeUndefined();
   });
 
   test("undo preserves row.data key order after restore", () => {
@@ -84,7 +84,7 @@ describe(useDeleteColumn, () => {
 
     assert.exists(dataSource);
 
-    expect(Object.keys(takeOne(dataSource.rows, 0).data)).toStrictEqual(["a", "b", "c"]);
+    expect(Object.keys(takeOne(dataSource.rows).data)).toStrictEqual(["a", "b", "c"]);
   });
 
   test("no-op when column name not found", () => {

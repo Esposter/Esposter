@@ -20,7 +20,7 @@ describe(useFileHistoryStore, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { undo } = fileHistoryStore;
     deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 1).id);
-    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
+    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? []).id);
     const dataSourceAfterDeletes = editedItem.value?.dataSource;
 
     assert.exists(dataSourceAfterDeletes);
@@ -33,7 +33,7 @@ describe(useFileHistoryStore, () => {
     assert.exists(dataSourceAfterUndo1);
 
     expect(dataSourceAfterUndo1.rows).toHaveLength(1);
-    expect(takeOne(dataSourceAfterUndo1.rows, 0).data[""]).toBe(0);
+    expect(takeOne(dataSourceAfterUndo1.rows).data[""]).toBe(0);
 
     undo(editedItem.value);
     const dataSourceAfterUndo2 = editedItem.value?.dataSource;
@@ -41,7 +41,7 @@ describe(useFileHistoryStore, () => {
     assert.exists(dataSourceAfterUndo2);
 
     expect(dataSourceAfterUndo2.rows).toHaveLength(2);
-    expect(takeOne(dataSourceAfterUndo2.rows, 0).data[""]).toBe(0);
+    expect(takeOne(dataSourceAfterUndo2.rows).data[""]).toBe(0);
     expect(takeOne(dataSourceAfterUndo2.rows, 1).data[""]).toBe(2);
   });
 
@@ -53,7 +53,7 @@ describe(useFileHistoryStore, () => {
     const deleteColumn = useDeleteColumn();
     const fileHistoryStore = useFileHistoryStore();
     const { redo, undo } = fileHistoryStore;
-    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
+    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? []).id);
     deleteColumn(" ");
     const dataSourceAfterOps = editedItem.value?.dataSource;
 

@@ -17,13 +17,13 @@ describe(useDeleteRow, () => {
 
     const { editedItem } = setupWithDataSource();
     const deleteRow = useDeleteRow();
-    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
+    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? []).id);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
 
     expect(dataSource.rows).toHaveLength(1);
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe(2);
+    expect(takeOne(dataSource.rows).data[""]).toBe(2);
   });
 
   test("undo restores deleted row", () => {
@@ -33,14 +33,14 @@ describe(useDeleteRow, () => {
     const deleteRow = useDeleteRow();
     const fileHistoryStore = useFileHistoryStore();
     const { undo } = fileHistoryStore;
-    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
+    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? []).id);
     undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
 
     expect(dataSource.rows).toHaveLength(2);
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe(0);
+    expect(takeOne(dataSource.rows).data[""]).toBe(0);
   });
 
   test("redo re-applies delete after undo", () => {
@@ -50,7 +50,7 @@ describe(useDeleteRow, () => {
     const deleteRow = useDeleteRow();
     const fileHistoryStore = useFileHistoryStore();
     const { redo, undo } = fileHistoryStore;
-    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
+    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? []).id);
     undo(editedItem.value);
     redo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
@@ -58,7 +58,7 @@ describe(useDeleteRow, () => {
     assert.exists(dataSource);
 
     expect(dataSource.rows).toHaveLength(1);
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe(2);
+    expect(takeOne(dataSource.rows).data[""]).toBe(2);
   });
 
   test("no-op when editedItem is undefined", () => {

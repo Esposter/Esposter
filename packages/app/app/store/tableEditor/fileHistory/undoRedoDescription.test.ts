@@ -29,7 +29,7 @@ describe(useFileHistoryStore, () => {
     const deleteRow = useDeleteRow();
     const fileHistoryStore = useFileHistoryStore();
     const { undoDescription } = storeToRefs(fileHistoryStore);
-    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
+    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? []).id);
 
     expect(undoDescription.value).toBe("Delete Row 1");
   });
@@ -52,7 +52,7 @@ describe(useFileHistoryStore, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { redoDescription } = storeToRefs(fileHistoryStore);
     const { undo } = fileHistoryStore;
-    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
+    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? []).id);
     undo(editedItem.value);
 
     expect(redoDescription.value).toBe("Delete Row 1");

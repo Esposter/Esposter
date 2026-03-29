@@ -18,14 +18,14 @@ describe(useUpdateRow, () => {
 
     const { editedItem } = setupWithDataSource();
     const updateRow = useUpdateRow();
-    const originalRow = takeOne(editedItem.value?.dataSource?.rows ?? [], 0);
+    const originalRow = takeOne(editedItem.value?.dataSource?.rows ?? []);
     updateRow(new Row(Object.assign(structuredClone(toRawDeep(originalRow)), { data: { "": 10, " ": 11 } })));
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe(10);
-    expect(takeOne(dataSource.rows, 0).data[" "]).toBe(11);
+    expect(takeOne(dataSource.rows).data[""]).toBe(10);
+    expect(takeOne(dataSource.rows).data[" "]).toBe(11);
   });
 
   test("undo restores original row data", () => {
@@ -35,15 +35,15 @@ describe(useUpdateRow, () => {
     const updateRow = useUpdateRow();
     const fileHistoryStore = useFileHistoryStore();
     const { undo } = fileHistoryStore;
-    const originalRow = takeOne(editedItem.value?.dataSource?.rows ?? [], 0);
+    const originalRow = takeOne(editedItem.value?.dataSource?.rows ?? []);
     updateRow(new Row(Object.assign(structuredClone(toRawDeep(originalRow)), { data: { "": 10, " ": 11 } })));
     undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe(0);
-    expect(takeOne(dataSource.rows, 0).data[" "]).toBe(1);
+    expect(takeOne(dataSource.rows).data[""]).toBe(0);
+    expect(takeOne(dataSource.rows).data[" "]).toBe(1);
   });
 
   test("redo re-applies update after undo", () => {
@@ -53,7 +53,7 @@ describe(useUpdateRow, () => {
     const updateRow = useUpdateRow();
     const fileHistoryStore = useFileHistoryStore();
     const { redo, undo } = fileHistoryStore;
-    const originalRow = takeOne(editedItem.value?.dataSource?.rows ?? [], 0);
+    const originalRow = takeOne(editedItem.value?.dataSource?.rows ?? []);
     updateRow(new Row(Object.assign(structuredClone(toRawDeep(originalRow)), { data: { "": 10, " ": 11 } })));
     undo(editedItem.value);
     redo(editedItem.value);
@@ -61,7 +61,7 @@ describe(useUpdateRow, () => {
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe(10);
+    expect(takeOne(dataSource.rows).data[""]).toBe(10);
   });
 
   test("no-op when row id not found", () => {
@@ -106,7 +106,7 @@ describe(useUpdateRow, () => {
     const updateRow = useUpdateRow();
     const fileHistoryStore = useFileHistoryStore();
     const { redo, undo } = fileHistoryStore;
-    const originalRow = takeOne(editedItem.value?.dataSource?.rows ?? [], 0);
+    const originalRow = takeOne(editedItem.value?.dataSource?.rows ?? []);
     const updatedRow = reactive(
       new Row(Object.assign(structuredClone(toRawDeep(originalRow)), { data: { "": 10, " ": 11 } })),
     );
@@ -118,15 +118,15 @@ describe(useUpdateRow, () => {
 
     assert.exists(dataSourceAfterUndo);
 
-    expect(takeOne(dataSourceAfterUndo.rows, 0).data[""]).toBe(0);
-    expect(takeOne(dataSourceAfterUndo.rows, 0).data[" "]).toBe(1);
+    expect(takeOne(dataSourceAfterUndo.rows).data[""]).toBe(0);
+    expect(takeOne(dataSourceAfterUndo.rows).data[" "]).toBe(1);
 
     redo(editedItem.value);
     const dataSourceAfterRedo = editedItem.value?.dataSource;
 
     assert.exists(dataSourceAfterRedo);
 
-    expect(takeOne(dataSourceAfterRedo.rows, 0).data[""]).toBe(10);
-    expect(takeOne(dataSourceAfterRedo.rows, 0).data[" "]).toBe(11);
+    expect(takeOne(dataSourceAfterRedo.rows).data[""]).toBe(10);
+    expect(takeOne(dataSourceAfterRedo.rows).data[" "]).toBe(11);
   });
 });

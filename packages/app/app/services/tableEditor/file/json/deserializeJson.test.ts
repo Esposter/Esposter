@@ -23,11 +23,11 @@ describe(deserializeJson, () => {
     const { columns, rows } = await deserializeJson(file, new JsonDataSourceItem());
 
     expect(columns).toHaveLength(2);
-    expect(takeOne(columns, 0).name).toBe("a");
-    expect(takeOne(columns, 0).type).toBe(ColumnType.Number);
+    expect(takeOne(columns).name).toBe("a");
+    expect(takeOne(columns).type).toBe(ColumnType.Number);
     expect(takeOne(columns, 1).name).toBe("b");
     expect(rows).toHaveLength(2);
-    expect(takeOne(rows, 0).data).toStrictEqual({ a: 0, b: 1 });
+    expect(takeOne(rows).data).toStrictEqual({ a: 0, b: 1 });
     expect(takeOne(rows, 1).data).toStrictEqual({ a: 2, b: 3 });
   });
 

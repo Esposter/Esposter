@@ -21,7 +21,7 @@ describe(computeColumnStats, () => {
       [makeRow({ "": 0 }), makeRow({ "": 2 }), makeRow({ "": 2 }), makeRow({ "": null })],
     );
 
-    expect(takeOne(computeColumnStats(dataSource), 0)).toStrictEqual({
+    expect(takeOne(computeColumnStats(dataSource))).toStrictEqual({
       average: 1.33,
       columnName: "",
       columnType: ColumnType.Number,
@@ -47,7 +47,7 @@ describe(computeColumnStats, () => {
       [makeRow({ "": 0 }), makeRow({ "": 0 }), makeRow({ "": 1 })],
     );
 
-    expect(takeOne(computeColumnStats(dataSource), 0)).toStrictEqual({
+    expect(takeOne(computeColumnStats(dataSource))).toStrictEqual({
       average: 0.33,
       columnName: "",
       columnType: ColumnType.Number,
@@ -68,7 +68,7 @@ describe(computeColumnStats, () => {
 
     const dataSource = makeDataSource([makeNumberColumn("")], [makeRow({ "": 1 })]);
 
-    expect(takeOne(computeColumnStats(dataSource), 0)).toStrictEqual({
+    expect(takeOne(computeColumnStats(dataSource))).toStrictEqual({
       average: 1,
       columnName: "",
       columnType: ColumnType.Number,
@@ -92,7 +92,7 @@ describe(computeColumnStats, () => {
       [makeRow({ "": true }), makeRow({ "": true }), makeRow({ "": false }), makeRow({ "": null })],
     );
 
-    expect(takeOne(computeColumnStats(dataSource), 0)).toStrictEqual({
+    expect(takeOne(computeColumnStats(dataSource))).toStrictEqual({
       average: null,
       columnName: "",
       columnType: ColumnType.Boolean,
@@ -116,7 +116,7 @@ describe(computeColumnStats, () => {
       [makeRow({ "": "" }), makeRow({ "": " " }), makeRow({ "": "" }), makeRow({ "": null })],
     );
 
-    expect(takeOne(computeColumnStats(dataSource), 0)).toStrictEqual({
+    expect(takeOne(computeColumnStats(dataSource))).toStrictEqual({
       average: null,
       columnName: "",
       columnType: ColumnType.String,
@@ -136,7 +136,7 @@ describe(computeColumnStats, () => {
     expect.hasAssertions();
 
     const dataSource = makeDataSource(
-      [makeDateColumn("", takeOne([...DateFormats], 0))],
+      [makeDateColumn("", takeOne([...DateFormats]))],
       [
         makeRow({ "": "1970-01-01" }),
         makeRow({ "": "1970-01-02" }),
@@ -145,7 +145,7 @@ describe(computeColumnStats, () => {
       ],
     );
 
-    expect(takeOne(computeColumnStats(dataSource), 0)).toStrictEqual({
+    expect(takeOne(computeColumnStats(dataSource))).toStrictEqual({
       average: null,
       columnName: "",
       columnType: ColumnType.Date,
@@ -166,7 +166,7 @@ describe(computeColumnStats, () => {
 
     const dataSource = makeDataSource([makeNumberColumn("")], [makeRow({ "": null })]);
 
-    expect(takeOne(computeColumnStats(dataSource), 0)).toStrictEqual({
+    expect(takeOne(computeColumnStats(dataSource))).toStrictEqual({
       average: null,
       columnName: "",
       columnType: ColumnType.Number,
@@ -187,7 +187,7 @@ describe(computeColumnStats, () => {
 
     const dataSource = makeDataSource([makeNumberColumn("")], []);
 
-    expect(takeOne(computeColumnStats(dataSource), 0)).toStrictEqual({
+    expect(takeOne(computeColumnStats(dataSource))).toStrictEqual({
       average: null,
       columnName: "",
       columnType: ColumnType.Number,
@@ -208,7 +208,7 @@ describe(computeColumnStats, () => {
 
     const dataSource = makeDataSource([new StringColumn({ name: "" })], [makeRow({ "": null }), makeRow({ "": null })]);
 
-    expect(takeOne(computeColumnStats(dataSource), 0)).toStrictEqual({
+    expect(takeOne(computeColumnStats(dataSource))).toStrictEqual({
       average: null,
       columnName: "",
       columnType: ColumnType.String,
@@ -229,7 +229,7 @@ describe(computeColumnStats, () => {
 
     const dataSource = makeDataSource([new StringColumn({ name: "" })], []);
 
-    expect(takeOne(computeColumnStats(dataSource), 0)).toStrictEqual({
+    expect(takeOne(computeColumnStats(dataSource))).toStrictEqual({
       average: null,
       columnName: "",
       columnType: ColumnType.String,
@@ -253,7 +253,7 @@ describe(computeColumnStats, () => {
       [makeRow({ "": "a" }), makeRow({ "": "b" }), makeRow({ "": "c" })],
     );
 
-    const result = takeOne(computeColumnStats(dataSource), 0);
+    const result = takeOne(computeColumnStats(dataSource));
 
     expect(result.mostFrequentValue).toBe("a");
     expect(result.uniqueCount).toBe(3);

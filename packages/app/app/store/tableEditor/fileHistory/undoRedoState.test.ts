@@ -30,7 +30,7 @@ describe(useFileHistoryStore, () => {
     const deleteRow = useDeleteRow();
     const fileHistoryStore = useFileHistoryStore();
     const { isRedoable, isUndoable } = storeToRefs(fileHistoryStore);
-    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
+    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? []).id);
 
     expect(isUndoable.value).toBe(true);
     expect(isRedoable.value).toBe(false);
@@ -44,7 +44,7 @@ describe(useFileHistoryStore, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { isRedoable, isUndoable } = storeToRefs(fileHistoryStore);
     const { undo } = fileHistoryStore;
-    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
+    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? []).id);
     undo(editedItem.value);
 
     expect(isUndoable.value).toBe(false);
@@ -93,12 +93,12 @@ describe(useFileHistoryStore, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { isRedoable } = storeToRefs(fileHistoryStore);
     const { undo } = fileHistoryStore;
-    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
+    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? []).id);
     undo(editedItem.value);
 
     expect(isRedoable.value).toBe(true);
 
-    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
+    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? []).id);
 
     expect(isRedoable.value).toBe(false);
   });

@@ -11,7 +11,7 @@ describe(getNullAffectedRows, () => {
     const result = getNullAffectedRows(ds);
 
     expect(result).toHaveLength(2);
-    expect(takeOne(result, 0).index).toBe(0);
+    expect(takeOne(result).index).toBe(0);
     expect(takeOne(result, 1).index).toBe(2);
   });
 });
