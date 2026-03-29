@@ -1,15 +1,15 @@
-import { BasicStringTransformationType } from "#shared/models/tableEditor/file/column/transformation/string/BasicStringTransformationType";
+import { StringTransformationType } from "#shared/models/tableEditor/file/column/transformation/string/StringTransformationType";
 import { exhaustiveGuard } from "@esposter/shared";
 
-export const computeStringTransformation = (value: string, transform: BasicStringTransformationType): string => {
+export const computeStringTransformation = (value: string, transform: StringTransformationType): string => {
   switch (transform) {
-    case BasicStringTransformationType.Lowercase:
+    case StringTransformationType.Lowercase:
       return value.toLowerCase();
-    case BasicStringTransformationType.TitleCase:
+    case StringTransformationType.TitleCase:
       return value.toLowerCase().replaceAll(/(?:^|\s)\S/g, (char) => char.toUpperCase());
-    case BasicStringTransformationType.Trim:
+    case StringTransformationType.Trim:
       return value.trim();
-    case BasicStringTransformationType.Uppercase:
+    case StringTransformationType.Uppercase:
       return value.toUpperCase();
     default:
       return exhaustiveGuard(transform);

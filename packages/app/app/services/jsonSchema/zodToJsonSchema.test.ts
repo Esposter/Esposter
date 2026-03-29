@@ -518,13 +518,13 @@ describe(zodToJsonSchema, () => {
         new Function("context", `return ${storedGetProps}`)({ columnNames }) as EvaluatedProps;
       const withEmpty = evaluate([""]);
 
-      expect(takeOne(withEmpty.rules, 0)("")).toBe("Column already exists");
-      expect(takeOne(withEmpty.rules, 0)(" ")).toBe(true);
+      expect(takeOne(withEmpty.rules)("")).toBe("Column already exists");
+      expect(takeOne(withEmpty.rules)(" ")).toBe(true);
 
       const withSpace = evaluate([" "]);
 
-      expect(takeOne(withSpace.rules, 0)("")).toBe(true);
-      expect(takeOne(withSpace.rules, 0)(" ")).toBe("Column already exists");
+      expect(takeOne(withSpace.rules)("")).toBe(true);
+      expect(takeOne(withSpace.rules)(" ")).toBe("Column already exists");
     });
   });
 });

@@ -37,7 +37,7 @@ describe(useCreateColumn, () => {
 
     expect(dataSource.columns).toHaveLength(3);
     expect(takeOne(dataSource.columns, 2).name).toBe("new");
-    expect(takeOne(dataSource.rows, 0).data.new).toBeNull();
+    expect(takeOne(dataSource.rows).data.new).toBeNull();
     expect(takeOne(dataSource.rows, 1).data.new).toBeNull();
   });
 
@@ -56,7 +56,7 @@ describe(useCreateColumn, () => {
     assert.exists(dataSource);
 
     expect(dataSource.columns).toHaveLength(2);
-    expect(takeOne(dataSource.rows, 0).data.new).toBeUndefined();
+    expect(takeOne(dataSource.rows).data.new).toBeUndefined();
   });
 
   test("redo re-applies create after undo", () => {
@@ -75,7 +75,7 @@ describe(useCreateColumn, () => {
     assert.exists(dataSource);
 
     expect(dataSource.columns).toHaveLength(3);
-    expect(takeOne(dataSource.rows, 0).data.new).toBeNull();
+    expect(takeOne(dataSource.rows).data.new).toBeNull();
   });
 
   test("creates a unique id when the same column instance is passed multiple times", () => {
@@ -171,7 +171,7 @@ describe(useCreateColumn, () => {
 
     assert.exists(dataSource);
 
-    expect(Object.keys(takeOne(dataSource.rows, 0).data)).toStrictEqual([SOURCE_COLUMN_NAME]);
+    expect(Object.keys(takeOne(dataSource.rows).data)).toStrictEqual([SOURCE_COLUMN_NAME]);
   });
 
   test("undo removes the computed column", () => {

@@ -42,7 +42,7 @@ describe(useSetDataSource, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { isRedoable, isUndoable } = storeToRefs(fileHistoryStore);
     const { undo } = fileHistoryStore;
-    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? [], 0).id);
+    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? []).id);
 
     expect(isUndoable.value).toBe(true);
 

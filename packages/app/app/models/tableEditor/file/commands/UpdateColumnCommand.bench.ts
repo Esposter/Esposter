@@ -10,7 +10,7 @@ import { UpdateColumnCommand } from "@/models/tableEditor/file/commands/UpdateCo
 import { takeOne } from "@esposter/shared";
 import { bench, describe } from "vitest";
 
-const originalColumn = takeOne(benchColumns, 0);
+const originalColumn = takeOne(benchColumns);
 const originalName = originalColumn.name;
 const updatedColumn = Object.assign(structuredClone(originalColumn), {
   name: `${originalName}_renamed`,

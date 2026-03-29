@@ -1,7 +1,6 @@
 import type { SourceColumnId } from "#shared/models/tableEditor/file/column/transformation/SourceColumnId";
 import type { ItemEntityType } from "@esposter/shared";
 
-import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import {
   AggregationTransformationType,
   aggregationTransformationTypeSchema,
@@ -23,7 +22,4 @@ export const aggregationTransformationSchema = z
     ...createSourceColumnIdSchema(ColumnFormVjsfContextPropertyNames["context.numberColumnItems"]).shape,
     aggregationTransformationType: aggregationTransformationTypeSchema.meta({ title: "Aggregation" }),
   })
-  .meta({
-    applicableColumnTypes: [ColumnType.Number],
-    title: ColumnTransformationType.Aggregation,
-  }) satisfies z.ZodType<AggregationTransformation>;
+  .meta({ title: ColumnTransformationType.Aggregation }) satisfies z.ZodType<AggregationTransformation>;

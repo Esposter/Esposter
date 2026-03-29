@@ -23,13 +23,13 @@ describe(useToggleColumnVisibility, () => {
 
     const { editedItem } = setupWithDataSource();
     const toggleColumnVisibility = useToggleColumnVisibility();
-    const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
+    const column = takeOne(editedItem.value?.dataSource?.columns ?? []);
     toggleColumnVisibility(column.id);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.columns, 0).hidden).toBe(true);
+    expect(takeOne(dataSource.columns).hidden).toBe(true);
   });
 
   test("shows a hidden column", () => {
@@ -43,7 +43,7 @@ describe(useToggleColumnVisibility, () => {
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.columns, 0).hidden).toBe(false);
+    expect(takeOne(dataSource.columns).hidden).toBe(false);
   });
 
   test("undo restores original visibility", () => {
@@ -53,14 +53,14 @@ describe(useToggleColumnVisibility, () => {
     const toggleColumnVisibility = useToggleColumnVisibility();
     const fileHistoryStore = useFileHistoryStore();
     const { undo } = fileHistoryStore;
-    const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
+    const column = takeOne(editedItem.value?.dataSource?.columns ?? []);
     toggleColumnVisibility(column.id);
     undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.columns, 0).hidden).toBe(false);
+    expect(takeOne(dataSource.columns).hidden).toBe(false);
   });
 
   test("redo re-applies toggle after undo", () => {
@@ -70,7 +70,7 @@ describe(useToggleColumnVisibility, () => {
     const toggleColumnVisibility = useToggleColumnVisibility();
     const fileHistoryStore = useFileHistoryStore();
     const { redo, undo } = fileHistoryStore;
-    const column = takeOne(editedItem.value?.dataSource?.columns ?? [], 0);
+    const column = takeOne(editedItem.value?.dataSource?.columns ?? []);
     toggleColumnVisibility(column.id);
     undo(editedItem.value);
     redo(editedItem.value);
@@ -78,7 +78,7 @@ describe(useToggleColumnVisibility, () => {
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.columns, 0).hidden).toBe(true);
+    expect(takeOne(dataSource.columns).hidden).toBe(true);
   });
 
   test("no-op when column id not found", () => {

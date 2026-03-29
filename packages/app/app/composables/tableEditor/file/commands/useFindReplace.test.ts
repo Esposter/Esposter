@@ -33,8 +33,8 @@ describe(useFindReplace, () => {
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe("");
-    expect(takeOne(dataSource.rows, 0).data[" "]).toBe("");
+    expect(takeOne(dataSource.rows).data[""]).toBe("");
+    expect(takeOne(dataSource.rows).data[" "]).toBe("");
     expect(takeOne(dataSource.rows, 1).data[""]).toBe("");
     expect(takeOne(dataSource.rows, 1).data[" "]).toBe(0);
   });
@@ -50,7 +50,7 @@ describe(useFindReplace, () => {
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe("a");
+    expect(takeOne(dataSource.rows).data[""]).toBe("a");
   });
 
   test("undo restores all original values", () => {
@@ -71,7 +71,7 @@ describe(useFindReplace, () => {
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe(" ");
+    expect(takeOne(dataSource.rows).data[""]).toBe(" ");
     expect(takeOne(dataSource.rows, 1).data[""]).toBe(" ");
   });
 
@@ -94,7 +94,7 @@ describe(useFindReplace, () => {
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe("");
+    expect(takeOne(dataSource.rows).data[""]).toBe("");
   });
 
   test("replaces only the specific cell when specificCell is provided", () => {
@@ -108,8 +108,8 @@ describe(useFindReplace, () => {
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe("");
-    expect(takeOne(dataSource.rows, 0).data[" "]).toBe(" ");
+    expect(takeOne(dataSource.rows).data[""]).toBe("");
+    expect(takeOne(dataSource.rows).data[" "]).toBe(" ");
   });
 
   test("no-op when find value equals replace value", () => {
@@ -125,7 +125,7 @@ describe(useFindReplace, () => {
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe(" ");
+    expect(takeOne(dataSource.rows).data[""]).toBe(" ");
     expect(isUndoable.value).toBe(false);
   });
 
@@ -140,7 +140,7 @@ describe(useFindReplace, () => {
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe(2);
+    expect(takeOne(dataSource.rows).data[""]).toBe(2);
   });
 
   test("no-op when find value is empty", () => {
@@ -156,7 +156,7 @@ describe(useFindReplace, () => {
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe(" ");
+    expect(takeOne(dataSource.rows).data[""]).toBe(" ");
     expect(isUndoable.value).toBe(false);
   });
 

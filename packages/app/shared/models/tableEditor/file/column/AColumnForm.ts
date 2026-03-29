@@ -12,12 +12,12 @@ export interface AColumnForm<TColumnType extends ColumnType = ColumnType> extend
 export const createAColumnFormSchema = <T extends z.ZodType<ColumnType>>(typeSchema: T) => {
   const aColumnSchema = createAColumnSchema(typeSchema);
   return z.object({
-    description: aColumnSchema.shape.description.meta({ title: "Description" }),
+    description: aColumnSchema.shape.description,
     name: aColumnSchema.shape.name.meta({
       getProps: `{ rules: [(value) => value === context.currentName || !context.columnNames.includes(value) || 'Column already exists'] }`,
       title: "Column",
     }),
     sourceName: aColumnSchema.shape.sourceName.meta({ title: "Source Column" }),
-    type: typeSchema.meta({ title: "Type" }),
+    type: typeSchema,
   });
 };

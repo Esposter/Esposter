@@ -132,9 +132,6 @@ describe("columnFormSchema", () => {
                 "oneOf": [
                   {
                     "additionalProperties": false,
-                    "applicableColumnTypes": [
-                      "Number",
-                    ],
                     "properties": {
                       "aggregationTransformationType": {
                         "enum": [
@@ -210,9 +207,6 @@ describe("columnFormSchema", () => {
                   },
                   {
                     "additionalProperties": false,
-                    "applicableColumnTypes": [
-                      "Date",
-                    ],
                     "properties": {
                       "part": {
                         "enum": [
@@ -305,9 +299,6 @@ describe("columnFormSchema", () => {
                   },
                   {
                     "additionalProperties": false,
-                    "applicableColumnTypes": [
-                      "String",
-                    ],
                     "properties": {
                       "groupIndex": {
                         "maximum": 9007199254740991,
@@ -346,95 +337,75 @@ describe("columnFormSchema", () => {
                     "type": "object",
                   },
                   {
-                    "discriminator": {
-                      "propertyName": "stringTransformationType",
+                    "additionalProperties": false,
+                    "properties": {
+                      "pattern": {
+                        "title": "Pattern",
+                        "type": "string",
+                      },
+                      "sourceColumnIds": {
+                        "getItems": "context.columnItems",
+                        "items": {
+                          "type": "string",
+                        },
+                        "layout": {
+                          "getItems": "context.columnItems",
+                        },
+                        "title": "Source Columns",
+                        "type": "array",
+                      },
+                      "type": {
+                        "const": "StringPattern",
+                        "readOnly": true,
+                        "title": "Type",
+                        "type": "string",
+                      },
                     },
-                    "oneOf": [
-                      {
-                        "additionalProperties": false,
-                        "applicableColumnTypes": [
-                          "String",
-                        ],
-                        "properties": {
-                          "sourceColumnId": {
-                            "comp": "select",
-                            "getItems": "context.stringColumnItems",
-                            "layout": {
-                              "comp": "select",
-                              "getItems": "context.stringColumnItems",
-                            },
-                            "title": "Source Column",
-                            "type": "string",
-                          },
-                          "stringTransformationType": {
-                            "enum": [
-                              "Lowercase",
-                              "TitleCase",
-                              "Trim",
-                              "Uppercase",
-                            ],
-                            "title": "String Transformation",
-                            "type": "string",
-                          },
-                          "type": {
-                            "const": "String",
-                            "readOnly": true,
-                            "type": "string",
-                          },
+                    "required": [
+                      "type",
+                      "sourceColumnIds",
+                      "pattern",
+                    ],
+                    "title": "String Pattern",
+                    "type": "object",
+                  },
+                  {
+                    "additionalProperties": false,
+                    "properties": {
+                      "sourceColumnId": {
+                        "comp": "select",
+                        "getItems": "context.stringColumnItems",
+                        "layout": {
+                          "comp": "select",
+                          "getItems": "context.stringColumnItems",
                         },
-                        "required": [
-                          "type",
-                          "sourceColumnId",
-                          "stringTransformationType",
-                        ],
-                        "type": "object",
+                        "title": "Source Column",
+                        "type": "string",
                       },
-                      {
-                        "additionalProperties": false,
-                        "applicableColumnTypes": [
-                          "String",
+                      "stringTransformationType": {
+                        "enum": [
+                          "Lowercase",
+                          "TitleCase",
+                          "Trim",
+                          "Uppercase",
                         ],
-                        "properties": {
-                          "pattern": {
-                            "title": "Pattern",
-                            "type": "string",
-                          },
-                          "sourceColumnIds": {
-                            "items": {
-                              "comp": "select",
-                              "getItems": "context.columnItems",
-                              "layout": {
-                                "comp": "select",
-                                "getItems": "context.columnItems",
-                              },
-                              "title": "Source Column",
-                              "type": "string",
-                            },
-                            "title": "Source Columns",
-                            "type": "array",
-                          },
-                          "stringTransformationType": {
-                            "const": "Interpolate",
-                            "readOnly": true,
-                            "type": "string",
-                          },
-                          "type": {
-                            "const": "String",
-                            "readOnly": true,
-                            "type": "string",
-                          },
-                        },
-                        "required": [
-                          "type",
-                          "sourceColumnIds",
-                          "pattern",
-                          "stringTransformationType",
-                        ],
-                        "title": "Interpolate",
-                        "type": "object",
+                        "title": "String Transformation Type",
+                        "type": "string",
                       },
+                      "type": {
+                        "const": "String",
+                        "readOnly": true,
+                        "title": "Type",
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "type",
+                      "sourceColumnId",
+                      "stringTransformationType",
                     ],
                     "title": "String",
+                    "type": "object",
                   },
                 ],
                 "title": "Transformation",

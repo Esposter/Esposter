@@ -11,8 +11,8 @@ describe(parseClipboardRows, () => {
     const rows = parseClipboardRows("| a | b |\n| --- | --- |\n| 0 | 1 |", dataSource);
 
     expect(rows).toHaveLength(1);
-    expect(takeOne(rows, 0).data.a).toBe("0");
-    expect(takeOne(rows, 0).data.b).toBe("1");
+    expect(takeOne(rows).data.a).toBe("0");
+    expect(takeOne(rows).data.b).toBe("1");
   });
 
   test("initializes unmatched columns to null", () => {
@@ -21,7 +21,7 @@ describe(parseClipboardRows, () => {
     const dataSource = makeDataSource([makeColumn("a"), makeColumn("b")]);
     const rows = parseClipboardRows("| a |\n| --- |\n| 0 |", dataSource);
 
-    expect(takeOne(rows, 0).data.b).toBeNull();
+    expect(takeOne(rows).data.b).toBeNull();
   });
 
   test("ignores extra columns not in dataSource", () => {
@@ -30,7 +30,7 @@ describe(parseClipboardRows, () => {
     const dataSource = makeDataSource([makeColumn("a")]);
     const rows = parseClipboardRows("| a | extra |\n| --- | --- |\n| 0 | ignored |", dataSource);
 
-    expect(Object.keys(takeOne(rows, 0).data)).toStrictEqual(["a"]);
+    expect(Object.keys(takeOne(rows).data)).toStrictEqual(["a"]);
   });
 
   test("matching is case-sensitive", () => {
@@ -39,7 +39,7 @@ describe(parseClipboardRows, () => {
     const dataSource = makeDataSource([makeColumn("a")]);
     const rows = parseClipboardRows("| A |\n| --- |\n| 0 |", dataSource);
 
-    expect(takeOne(rows, 0).data.a).toBeNull();
+    expect(takeOne(rows).data.a).toBeNull();
   });
 
   test("returns empty array when no data rows", () => {

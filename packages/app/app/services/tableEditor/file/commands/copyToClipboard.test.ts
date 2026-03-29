@@ -31,7 +31,7 @@ describe(copyToClipboard, () => {
     await copyToClipboard(dataSource);
     const lines = written.split("\n");
 
-    expect(takeOne(lines, 0)).toBe("| a | b |");
+    expect(takeOne(lines)).toBe("| a | b |");
     expect(takeOne(lines, 2)).toBe("| 0 | 1 |");
   });
 
@@ -43,7 +43,7 @@ describe(copyToClipboard, () => {
     const lines = written.split("\n");
 
     expect(lines).toHaveLength(2);
-    expect(takeOne(lines, 0)).toBe("| a |");
+    expect(takeOne(lines)).toBe("| a |");
   });
 
   test("copies only selected rows when rowIds passed", async () => {

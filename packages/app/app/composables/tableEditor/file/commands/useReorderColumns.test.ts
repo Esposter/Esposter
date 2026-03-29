@@ -26,13 +26,13 @@ describe(useReorderColumns, () => {
     const { editedItem } = setupWithDataSource();
     const reorderColumns = useReorderColumns();
     const columns = editedItem.value?.dataSource?.columns ?? [];
-    const newColumns = [takeOne(columns, 1), takeOne(columns, 0)] as StringColumn[];
+    const newColumns = [takeOne(columns, 1), takeOne(columns)] as StringColumn[];
     reorderColumns(newColumns);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.columns, 0).name).toBe(" ");
+    expect(takeOne(dataSource.columns).name).toBe(" ");
     expect(takeOne(dataSource.columns, 1).name).toBe("");
   });
 
@@ -44,14 +44,14 @@ describe(useReorderColumns, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { undo } = fileHistoryStore;
     const columns = editedItem.value?.dataSource?.columns ?? [];
-    const newColumns = [takeOne(columns, 1), takeOne(columns, 0)] as StringColumn[];
+    const newColumns = [takeOne(columns, 1), takeOne(columns)] as StringColumn[];
     reorderColumns(newColumns);
     undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.columns, 0).name).toBe("");
+    expect(takeOne(dataSource.columns).name).toBe("");
     expect(takeOne(dataSource.columns, 1).name).toBe(" ");
   });
 
@@ -63,7 +63,7 @@ describe(useReorderColumns, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { redo, undo } = fileHistoryStore;
     const columns = editedItem.value?.dataSource?.columns ?? [];
-    const newColumns = [takeOne(columns, 1), takeOne(columns, 0)] as StringColumn[];
+    const newColumns = [takeOne(columns, 1), takeOne(columns)] as StringColumn[];
     reorderColumns(newColumns);
     undo(editedItem.value);
     redo(editedItem.value);
@@ -71,7 +71,7 @@ describe(useReorderColumns, () => {
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.columns, 0).name).toBe(" ");
+    expect(takeOne(dataSource.columns).name).toBe(" ");
     expect(takeOne(dataSource.columns, 1).name).toBe("");
   });
 
@@ -85,13 +85,13 @@ describe(useReorderColumns, () => {
     const { editedItem } = setupWithDataSource(threeColumnDs);
     const reorderColumns = useReorderColumns();
     const columns = editedItem.value?.dataSource?.columns ?? [];
-    const newColumns = [takeOne(columns, 1), takeOne(columns, 0), takeOne(columns, 2)] as StringColumn[];
+    const newColumns = [takeOne(columns, 1), takeOne(columns), takeOne(columns, 2)] as StringColumn[];
     reorderColumns(newColumns);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.columns, 0).name).toBe("b");
+    expect(takeOne(dataSource.columns).name).toBe("b");
     expect(takeOne(dataSource.columns, 1).name).toBe("a");
     expect(takeOne(dataSource.columns, 2).name).toBe("c");
   });
@@ -106,13 +106,13 @@ describe(useReorderColumns, () => {
     const { editedItem } = setupWithDataSource(threeColumnDs);
     const reorderColumns = useReorderColumns();
     const columns = editedItem.value?.dataSource?.columns ?? [];
-    const newColumns = [takeOne(columns, 1), takeOne(columns, 2), takeOne(columns, 0)] as StringColumn[];
+    const newColumns = [takeOne(columns, 1), takeOne(columns, 2), takeOne(columns)] as StringColumn[];
     reorderColumns(newColumns);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.columns, 0).name).toBe("b");
+    expect(takeOne(dataSource.columns).name).toBe("b");
     expect(takeOne(dataSource.columns, 1).name).toBe("c");
     expect(takeOne(dataSource.columns, 2).name).toBe("a");
   });

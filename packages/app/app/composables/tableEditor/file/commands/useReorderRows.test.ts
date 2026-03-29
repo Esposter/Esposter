@@ -25,13 +25,13 @@ describe(useReorderRows, () => {
     const { editedItem } = setupWithDataSource();
     const reorderRows = useReorderRows();
     const rows = editedItem.value?.dataSource?.rows ?? [];
-    const newRows = [takeOne(rows, 1), takeOne(rows, 0)] as Row[];
+    const newRows = [takeOne(rows, 1), takeOne(rows)] as Row[];
     reorderRows(newRows);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe(2);
+    expect(takeOne(dataSource.rows).data[""]).toBe(2);
     expect(takeOne(dataSource.rows, 1).data[""]).toBe(0);
   });
 
@@ -43,14 +43,14 @@ describe(useReorderRows, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { undo } = fileHistoryStore;
     const rows = editedItem.value?.dataSource?.rows ?? [];
-    const newRows = [takeOne(rows, 1), takeOne(rows, 0)] as Row[];
+    const newRows = [takeOne(rows, 1), takeOne(rows)] as Row[];
     reorderRows(newRows);
     undo(editedItem.value);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe(0);
+    expect(takeOne(dataSource.rows).data[""]).toBe(0);
     expect(takeOne(dataSource.rows, 1).data[""]).toBe(2);
   });
 
@@ -62,7 +62,7 @@ describe(useReorderRows, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { redo, undo } = fileHistoryStore;
     const rows = editedItem.value?.dataSource?.rows ?? [];
-    const newRows = [takeOne(rows, 1), takeOne(rows, 0)] as Row[];
+    const newRows = [takeOne(rows, 1), takeOne(rows)] as Row[];
     reorderRows(newRows);
     undo(editedItem.value);
     redo(editedItem.value);
@@ -70,7 +70,7 @@ describe(useReorderRows, () => {
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe(2);
+    expect(takeOne(dataSource.rows).data[""]).toBe(2);
     expect(takeOne(dataSource.rows, 1).data[""]).toBe(0);
   });
 
@@ -81,13 +81,13 @@ describe(useReorderRows, () => {
     const { editedItem } = setupWithDataSource(threeRowDs);
     const reorderRows = useReorderRows();
     const rows = editedItem.value?.dataSource?.rows ?? [];
-    const newRows = [takeOne(rows, 2), takeOne(rows, 0), takeOne(rows, 1)] as Row[];
+    const newRows = [takeOne(rows, 2), takeOne(rows), takeOne(rows, 1)] as Row[];
     reorderRows(newRows);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe(2);
+    expect(takeOne(dataSource.rows).data[""]).toBe(2);
     expect(takeOne(dataSource.rows, 1).data[""]).toBe(0);
     expect(takeOne(dataSource.rows, 2).data[""]).toBe(1);
   });
@@ -99,13 +99,13 @@ describe(useReorderRows, () => {
     const { editedItem } = setupWithDataSource(threeRowDs);
     const reorderRows = useReorderRows();
     const rows = editedItem.value?.dataSource?.rows ?? [];
-    const newRows = [takeOne(rows, 1), takeOne(rows, 2), takeOne(rows, 0)] as Row[];
+    const newRows = [takeOne(rows, 1), takeOne(rows, 2), takeOne(rows)] as Row[];
     reorderRows(newRows);
     const dataSource = editedItem.value?.dataSource;
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe(1);
+    expect(takeOne(dataSource.rows).data[""]).toBe(1);
     expect(takeOne(dataSource.rows, 1).data[""]).toBe(2);
     expect(takeOne(dataSource.rows, 2).data[""]).toBe(0);
   });
@@ -134,7 +134,7 @@ describe(useReorderRows, () => {
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe(0);
+    expect(takeOne(dataSource.rows).data[""]).toBe(0);
     expect(takeOne(dataSource.rows, 1).data[""]).toBe(1);
     expect(takeOne(dataSource.rows, 2).data[""]).toBe(3);
     expect(takeOne(dataSource.rows, 3).data[""]).toBe(4);
@@ -166,7 +166,7 @@ describe(useReorderRows, () => {
 
     assert.exists(dataSource);
 
-    expect(takeOne(dataSource.rows, 0).data[""]).toBe(0);
+    expect(takeOne(dataSource.rows).data[""]).toBe(0);
     expect(takeOne(dataSource.rows, 1).data[""]).toBe(1);
     expect(takeOne(dataSource.rows, 2).data[""]).toBe(4);
     expect(takeOne(dataSource.rows, 3).data[""]).toBe(2);
