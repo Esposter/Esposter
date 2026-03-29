@@ -515,7 +515,7 @@ describe("columnFormSchema", () => {
                             "type": "array",
                           },
                           "stringTransformationType": {
-                            "const": "Interpolate",
+                            "const": "StringPattern",
                             "readOnly": true,
                             "title": "String Transformation Type",
                             "type": "string",
@@ -533,7 +533,7 @@ describe("columnFormSchema", () => {
                           "pattern",
                           "stringTransformationType",
                         ],
-                        "title": "Interpolate",
+                        "title": "String Pattern",
                         "type": "object",
                       },
                     ],

@@ -5,13 +5,12 @@ import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
-import { StringTransformationType } from "#shared/models/tableEditor/file/column/transformation/string/StringTransformationType";
 import { computeAggregationValue } from "@/services/tableEditor/file/column/computeAggregationValue";
 import { computeConvertToTransformation } from "@/services/tableEditor/file/column/transformation/computeConvertToTransformation";
 import { computeDatePartTransformation } from "@/services/tableEditor/file/column/transformation/computeDatePartTransformation";
 import { computeMathTransformation } from "@/services/tableEditor/file/column/transformation/computeMathTransformation";
 import { computeRegexMatchTransformation } from "@/services/tableEditor/file/column/transformation/computeRegexMatchTransformation";
-import { computeStringInterpolation } from "@/services/tableEditor/file/column/transformation/string/computeStringInterpolation";
+import { computeStringPatternTransformation } from "@/services/tableEditor/file/column/transformation/string/computeStringPatternTransformation";
 import { computeStringTransformation } from "@/services/tableEditor/file/column/transformation/string/computeStringTransformation";
 
 export interface ComputeContext {
@@ -47,13 +46,13 @@ export const ColumnTransformationComputeMap = {
   [ColumnTransformationType.RegexMatch]: (transformation, { computeSource }) =>
     computeRegexMatchTransformation(computeSource(transformation.sourceColumnId), transformation),
   [ColumnTransformationType.String]: (transformation, { computeSource }) => {
-    if (transformation.stringTransformationType === StringTransformationType.Interpolate) {
-      const values = transformation.sourceColumnIds.map(computeSource);
-      return computeStringInterpolation(values, transformation.pattern);
-    }
     const value = computeSource(transformation.sourceColumnId);
     if (value === null) return null;
     return computeStringTransformation(String(value), transformation.stringTransformationType);
+  },
+  [ColumnTransformationType.StringPattern]: (transformation, { computeSource }) => {
+    const values = transformation.sourceColumnIds.map(computeSource);
+    return computeStringPatternTransformation(values, transformation.pattern);
   },
 } as const satisfies {
   [K in ColumnTransformationType]: TransformationComputer<Extract<ColumnTransformation, { type: K }>>;
