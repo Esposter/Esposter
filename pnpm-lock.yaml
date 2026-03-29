@@ -361,8 +361,8 @@ catalogs:
       specifier: ^3.1.3
       version: 3.1.3
     filesize:
-      specifier: ^11.0.14
-      version: 11.0.14
+      specifier: ^11.0.15
+      version: 11.0.15
     fs-extra:
       specifier: ^11.3.4
       version: 11.3.4
@@ -922,7 +922,7 @@ importers:
         version: 3.1.3
       filesize:
         specifier: 'catalog:'
-        version: 11.0.14
+        version: 11.0.15
       fuse.js:
         specifier: 'catalog:'
         version: 7.1.0
@@ -8610,8 +8610,8 @@ packages:
     resolution: {integrity: sha512-hcFKyUG57yWGAzu1CMt/dPzYZuv+jAJUT85bL8mrXvNe6hWj6yEHEc4EdcgiA6Z3oi1/9wXJdZPXF2dZNgwgOg==}
     engines: {node: '>=8'}
 
-  filesize@11.0.14:
-    resolution: {integrity: sha512-2+pBV36IghE/lC78KmHqq4GGzSwqxisNb6YH17W6owdAFoXChND4WZ/51CUYXKyaEiJOhNKKsZSwZ8HbejrKTA==}
+  filesize@11.0.15:
+    resolution: {integrity: sha512-30TpbYxQxCpi4XdVjkwXYQ37CzZltV38+P7MYroQ+4NK/Dmx9mxixFNrolzcmEIBsjT/uowC9T7kiy2+C12r1A==}
     engines: {node: '>= 10.8.0'}
 
   fill-range@7.1.1:
@@ -21023,7 +21023,7 @@ snapshots:
       strip-outer: 1.0.1
       trim-repeated: 1.0.0
 
-  filesize@11.0.14: {}
+  filesize@11.0.15: {}
 
   fill-range@7.1.1:
     dependencies:
