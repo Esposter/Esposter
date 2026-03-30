@@ -64,9 +64,9 @@ catalog:
   "@tiptap/starter-kit": ^3.21.0
   "@tiptap/suggestion": ^3.21.0
   "@tiptap/vue-3": ^3.21.0
-  "@tresjs/cientos": ^5.6.0
-  "@tresjs/core": ^5.7.0
-  "@tresjs/nuxt": ^5.5.0
+  "@tresjs/cientos": ^5.7.0
+  "@tresjs/core": ^5.8.0
+  "@tresjs/nuxt": ^5.6.0
   "@trpc/client": ^11.16.0
   "@trpc/server": ^11.16.0
   "@types/data-urls": ^3.0.5
@@ -86,7 +86,7 @@ catalog:
   "@types/web-push": ^3.6.4
   "@types/ws": ^8.18.1
   "@types/xml2js": ^0.4.14
-  "@typescript/native-preview": ^7.0.0-dev.20260329.1
+  "@typescript/native-preview": ^7.0.0-dev.20260330.1
   "@unocss/eslint-config": ^66.6.7
   "@unocss/nuxt": ^66.6.7
   "@vite-pwa/nuxt": ^1.1.1
@@ -184,7 +184,7 @@ catalog:
   postgres: ^3.4.8
   prosemirror-state: ^1.4.4
   rate-limiter-flexible: ^10.0.1
-  read-excel-file: ^7.0.3
+  read-excel-file: ^8.0.2
   rolldown: ^1.0.0-rc.12
   rolldown-plugin-dts: ^0.23.2
   rxjs: ^7.8.2
@@ -236,7 +236,7 @@ cleanupUnusedCatalogs: true
 
 overrides:
   crossws: ^0.4.4
-  pdfjs-dist: ^5.5.207
+  pdfjs-dist: ^5.6.205
   vite: ^8.0.3
   vue-router: ^5.0.4
 
