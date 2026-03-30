@@ -1,16 +1,13 @@
-import type { MessageEntity } from "@esposter/db-schema";
+import type { MessageEntity, StandardMessageEntity, WebhookMessageEntity } from "@esposter/db-schema";
 
+import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
+import { readCachedMessages } from "@/services/message/cache/readCachedMessages";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
-import {
-  getReverseTickedTimestamp,
-  StandardMessageEntity,
-  StandardMessageEntityPropertyNames,
-  WebhookMessageEntity,
-} from "@esposter/db-schema";
+import { getReverseTickedTimestamp, MessageType, StandardMessageEntityPropertyNames } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 
 export const useReadMessages = () => {
@@ -21,6 +18,7 @@ export const useReadMessages = () => {
   const dataStore = useDataStore();
   const { readItems, readMoreItems } = dataStore;
   const { hasMoreNewer, nextCursorNewer } = storeToRefs(dataStore);
+  const online = useOnline();
   const { unshiftMessages } = dataStore;
   const readMembersByIds = useReadMembersByIds();
   const readAppUsers = useReadAppUsers();
@@ -32,7 +30,7 @@ export const useReadMessages = () => {
     const standardMessages: StandardMessageEntity[] = [];
 
     for (const message of messages)
-      if (message instanceof WebhookMessageEntity) webhookMessages.push(message);
+      if (message.type === MessageType.Webhook) webhookMessages.push(message);
       else standardMessages.push(message);
 
     await Promise.all([
@@ -56,12 +54,22 @@ export const useReadMessages = () => {
             StandardMessageEntityPropertyNames.partitionKey,
           );
         const roomId = currentRoomId.value;
+
+        if (!online.value) {
+          const cachedMessages = await readCachedMessages(roomId);
+          const cachedData = new CursorPaginationData<MessageEntity>();
+          cachedData.items = cachedMessages;
+          hasMoreNewer.value = false;
+          nextCursorNewer.value = undefined;
+          return cachedData;
+        }
+
         const rowKey = route.params.rowKey as string | undefined;
 
         if (rowKey) {
           const messagesByRowKeys = await $trpc.message.readMessagesByRowKeys.query({ roomId, rowKeys: [rowKey] });
           if (messagesByRowKeys.length > 0) {
-            const response = await $trpc.message.readMessages.useQuery({
+            const response = await $trpc.message.readMessages.query({
               cursor: serialize({ rowKey: takeOne(messagesByRowKeys).rowKey }, [MESSAGE_ROWKEY_SORT_ITEM]),
               isIncludeValue: true,
               roomId,
@@ -74,7 +82,7 @@ export const useReadMessages = () => {
           }
         }
 
-        const response = await $trpc.message.readMessages.useQuery({ roomId });
+        const response = await $trpc.message.readMessages.query({ roomId });
         hasMoreNewer.value = false;
         nextCursorNewer.value = undefined;
         return response;

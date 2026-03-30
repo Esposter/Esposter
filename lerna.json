@@ -3,5 +3,5 @@
   "conventionalCommits": true,
   "forcePublish": true,
   "npmClient": "pnpm",
-  "version": "2.19.2"
+  "version": "2.20.0"
 }

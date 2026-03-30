@@ -56,8 +56,8 @@ watch(optionsMenu, (newOptionsMenu) => {
         :is="MessageComponentMap[message.type]"
         :id="message.rowKey"
         :mt="isSameBatch ? undefined : 4"
-        py-1="!"
-        min-h-auto="!"
+        py-1
+        min-h-auto
         :op="message.isLoading ? 50 : undefined"
         :active="(isActive || activeReplyRowKey === message.rowKey) && !isOpen"
         :creator
@@ -66,10 +66,10 @@ watch(optionsMenu, (newOptionsMenu) => {
         @mouseenter="isMessageActive = true"
         @mouseleave="isMessageActive = false"
         @contextmenu.prevent="
-          ({ clientX, clientY }: MouseEvent) => {
+          (event: MouseEvent) => {
             optionsMenu = {
               rowKey: message.rowKey,
-              target: [clientX, clientY],
+              target: [event.clientX, event.clientY],
             };
           }
         "

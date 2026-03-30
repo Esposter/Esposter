@@ -9,7 +9,7 @@ describe(exhaustiveGuard, () => {
 
     const value = "" as never;
 
-    expect(() => exhaustiveGuard(value)).toThrowError(
+    expect(() => exhaustiveGuard(value)).toThrow(
       new InvalidOperationError(Operation.Read, exhaustiveGuard.name, JSON.stringify(value)),
     );
   });

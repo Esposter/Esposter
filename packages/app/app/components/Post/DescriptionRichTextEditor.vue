@@ -10,7 +10,7 @@ export interface DescriptionRichTextEditorProps {
 
 const modelValue = defineModel<string>({ required: true });
 const { height = "15rem", placeholder } = defineProps<DescriptionRichTextEditorProps>();
-const slots = defineSlots<{
+defineSlots<{
   "append-footer": (props: FooterBarAppendSlotProps) => VNode;
 }>();
 </script>

@@ -1,6 +1,6 @@
 {
   "name": "parse-tmx",
-  "version": "2.19.2",
+  "version": "2.20.0",
   "description": "A parser for tmx.",
   "keywords": [
     "parser",
@@ -29,10 +29,12 @@
     "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
     "coverage": "vitest run --coverage",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
     "lint": "oxlint && eslint .",
     "lint:fix": "oxlint --fix && eslint --fix .",
     "test": "vitest",
-    "typecheck": "tsc"
+    "typecheck": "tsgo"
   },
   "dependencies": {
     "@esposter/shared": "workspace:*",

@@ -16,7 +16,9 @@ import { DefaultDark, SC2020 } from "survey-creator-core/themes";
 export const useSurveyCreator = (survey: Ref<Survey>) => {
   const creator = new SurveyCreatorModel({ autoSaveEnabled: true, showThemeTab: true, showTranslationTab: true });
   const dialog = ref(false);
-  const actions = getActions(survey, creator, dialog);
+  const importJsonFile = useImportJsonFile();
+  const exportJsonFile = useExportJsonFile();
+  const actions = getActions(survey, creator, dialog, importJsonFile, exportJsonFile);
 
   for (const action of actions) {
     creator.toolbar.actions.push(action);
@@ -26,7 +28,7 @@ export const useSurveyCreator = (survey: Ref<Survey>) => {
   const { [THEME_KEY]: theme, ...model } = parseSurveyModel(survey.value.model);
   creator.JSON = model;
   if (theme) creator.theme = theme;
-  const save = useSave(survey, creator);
+  const save = useSurveySave(survey, creator);
   creator.saveSurveyFunc = save;
   creator.saveThemeFunc = save;
 

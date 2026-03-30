@@ -17,13 +17,11 @@ describe(getRandomValues, () => {
   test("fails for invalid range", () => {
     expect.hasAssertions();
 
-    expect(() => getRandomValues([], 0.1)).toThrowError(
+    expect(() => getRandomValues([], 0.1)).toThrow(
       new TypeError(`${getRandomValues.name}: taken length must be an integer`),
     );
-    expect(() => getRandomValues([], -1)).toThrowError(
-      new RangeError(`${getRandomValues.name}: taken length is negative`),
-    );
-    expect(() => getRandomValues([], 1)).toThrowError(
+    expect(() => getRandomValues([], -1)).toThrow(new RangeError(`${getRandomValues.name}: taken length is negative`));
+    expect(() => getRandomValues([], 1)).toThrow(
       new RangeError(`${getRandomValues.name}: more elements taken than available`),
     );
   });

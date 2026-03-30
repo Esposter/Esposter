@@ -49,7 +49,7 @@ const { optionsMenu } = storeToRefs(messageStore);
             <template #activator="{ props }">
               <v-btn
                 m-0
-                size-10="!"
+                size-10
                 flex-1
                 rounded="sm"
                 :text="emoji"
@@ -80,7 +80,7 @@ const { optionsMenu } = storeToRefs(messageStore);
         </template>
       </StyledEmojiPicker>
       <template v-if="updateMessageItems.length > 0">
-        <v-list-item py-2="!" min-height="auto">
+        <v-list-item py-2 min-height="auto">
           <v-divider />
         </v-list-item>
         <v-list-item v-for="{ title, color, icon, onClick } of updateMessageItems" :key="title" @click="onClick">
@@ -91,7 +91,7 @@ const { optionsMenu } = storeToRefs(messageStore);
         </v-list-item>
       </template>
       <template v-if="actionMessageItems.length > 0">
-        <v-list-item py-2="!" min-height="auto">
+        <v-list-item py-2 min-height="auto">
           <v-divider />
         </v-list-item>
         <v-list-item v-for="{ title, color, icon, onClick } of actionMessageItems" :key="title" @click="onClick">
@@ -102,7 +102,7 @@ const { optionsMenu } = storeToRefs(messageStore);
         </v-list-item>
       </template>
       <template v-if="deleteMessageItem">
-        <v-list-item py-2="!" min-height="auto">
+        <v-list-item py-2 min-height="auto">
           <v-divider />
         </v-list-item>
         <v-list-item @click="deleteMessageItem.onClick">

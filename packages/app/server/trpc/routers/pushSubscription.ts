@@ -24,7 +24,7 @@ export const pushSubscriptionRouter = router({
             endpoint,
             expirationTime: expirationTime ? new Date(expirationTime) : null,
             p256dh,
-            userId: ctx.session.user.id,
+            userId: ctx.getSessionPayload.user.id,
           })
           .onConflictDoUpdate({
             set: {
@@ -55,7 +55,7 @@ export const pushSubscriptionRouter = router({
         .where(
           and(
             eq(pushSubscriptionsInMessage.endpoint, input),
-            eq(pushSubscriptionsInMessage.userId, ctx.session.user.id),
+            eq(pushSubscriptionsInMessage.userId, ctx.getSessionPayload.user.id),
           ),
         )
         .returning()

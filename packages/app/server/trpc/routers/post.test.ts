@@ -94,6 +94,17 @@ describe("post", () => {
     );
   });
 
+  test("fails update with comment id", async () => {
+    expect.hasAssertions();
+
+    const newPost = await caller.createPost({ title });
+    const newComment = await caller.createComment({ description, parentId: newPost.id });
+
+    await expect(caller.updatePost({ description, id: newComment.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Post, newComment.id).message}]`,
+    );
+  });
+
   test("deletes", async () => {
     expect.hasAssertions();
 
@@ -184,6 +195,16 @@ describe("post", () => {
 
     await expect(caller.updateComment({ description, id: newComment.id })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Update, DerivedDatabaseEntityType.Comment, newComment.id).message}]`,
+    );
+  });
+
+  test("fails update comment with post id", async () => {
+    expect.hasAssertions();
+
+    const newPost = await caller.createPost({ title });
+
+    await expect(caller.updateComment({ description, id: newPost.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, DerivedDatabaseEntityType.Comment, newPost.id).message}]`,
     );
   });
 

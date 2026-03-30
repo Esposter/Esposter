@@ -15,7 +15,7 @@ export const getCreatorProcedure = <T extends z.ZodType>(schema: T, surveyIdKey:
           eq: surveyId,
         },
         userId: {
-          eq: ctx.session.user.id,
+          eq: ctx.getSessionPayload.user.id,
         },
       },
     });

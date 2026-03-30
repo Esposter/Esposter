@@ -11,7 +11,12 @@ interface FileRendererCodeProps extends FileRendererComponentProps {
 }
 
 const { isPreview, language, url } = defineProps<FileRendererCodeProps>();
-const code = ref(await (await fetch(url)).text());
+const code = ref("");
+try {
+  code.value = await (await fetch(url)).text();
+} catch {
+  // Offline or network error — show empty code block
+}
 const baseExtensions = computedAsync(() => getLanguageExtension(language), []);
 const extensions = useExtensions(baseExtensions);
 const editorView = shallowRef<EditorView>();

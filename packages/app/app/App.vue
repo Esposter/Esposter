@@ -36,4 +36,9 @@ p:empty::before {
 canvas {
   display: block;
 }
+
+.v-toolbar__content {
+  min-height: $app-bar-height;
+  height: auto !important;
+}
 </style>

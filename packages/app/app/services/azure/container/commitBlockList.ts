@@ -1,3 +1,4 @@
+import { MimeType } from "#shared/models/file/MimeType";
 import dedent from "dedent";
 
 export const commitBlockList = (sasUrl: string, blockIds: string[]) =>
@@ -8,8 +9,8 @@ export const commitBlockList = (sasUrl: string, blockIds: string[]) =>
     </BlockList>
   `,
     headers: {
-      "Content-Type": "application/xml",
-      "x-ms-blob-content-type": "application/xml",
+      "Content-Type": MimeType.Xml,
+      "x-ms-blob-content-type": MimeType.Xml,
     },
     method: "PUT",
   });

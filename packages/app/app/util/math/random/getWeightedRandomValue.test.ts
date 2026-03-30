@@ -12,7 +12,7 @@ describe(getWeightedRandomValue, () => {
   test("fails for empty array", () => {
     expect.hasAssertions();
 
-    expect(() => getWeightedRandomValue([])).toThrowError(
+    expect(() => getWeightedRandomValue([])).toThrow(
       new InvalidOperationError(
         Operation.Read,
         getWeightedRandomValue.name,

@@ -7,7 +7,7 @@ const { count, isSearching } = storeToRefs(searchMessageStore);
 
 <template>
   <v-container fluid>
-    <v-row gap-y-2 no-gutters>
+    <v-row gap-y-2 density="compact">
       <v-col cols="12">
         <MessageRightSideBarSearchMenu />
       </v-col>

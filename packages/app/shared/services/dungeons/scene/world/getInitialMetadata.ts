@@ -1,5 +1,5 @@
-import type { PartialByKeys } from "@esposter/shared";
 import type { Position } from "grid-engine";
+import type { SetOptional } from "type-fest";
 
 import { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/TilemapKey";
 import { NotFoundError } from "@esposter/shared";
@@ -10,7 +10,7 @@ interface InitialMetadata {
   position: Position;
 }
 
-const TilemapInitialMetadataMap: Partial<Record<TilemapKey, PartialByKeys<InitialMetadata, "direction">>> = {
+const TilemapInitialMetadataMap: Partial<Record<TilemapKey, SetOptional<InitialMetadata, "direction">>> = {
   [TilemapKey.Home]: { position: { x: 6, y: 21 } },
 };
 export const getInitialMetadata = (tilemapKey: TilemapKey): InitialMetadata => {

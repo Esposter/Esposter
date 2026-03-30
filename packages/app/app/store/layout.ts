@@ -1,5 +1,5 @@
 export const useLayoutStore = defineStore("layout", () => {
-  const { mobile } = useDisplay();
+  const { mobile } = useVDisplay();
   const isDesktop = computed(() => !mobile.value);
   const isLeftDrawerOpen = ref(isDesktop.value);
   const isRightDrawerOpen = ref(isDesktop.value);

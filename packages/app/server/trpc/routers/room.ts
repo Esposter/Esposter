@@ -118,14 +118,16 @@ export const roomRouter = router({
   ),
   createInvite: getMemberProcedure(createInviteInputSchema, "roomId").mutation<string>(
     async ({ ctx, input: { roomId } }) => {
-      let inviteCode = await readInviteCode(ctx.db, ctx.session.user.id, roomId, true);
+      let inviteCode = await readInviteCode(ctx.db, ctx.getSessionPayload.user.id, roomId, true);
       if (inviteCode) return inviteCode;
 
       for (let i = 0; i < 3; i++)
         try {
           // Create non-colliding invite code
           inviteCode = createCode(CODE_LENGTH);
-          await ctx.db.insert(invitesInMessage).values({ code: inviteCode, roomId, userId: ctx.session.user.id });
+          await ctx.db
+            .insert(invitesInMessage)
+            .values({ code: inviteCode, roomId, userId: ctx.getSessionPayload.user.id });
           return inviteCode;
         } catch {
           continue;
@@ -154,7 +156,7 @@ export const roomRouter = router({
       const newRoom = (
         await tx
           .insert(roomsInMessage)
-          .values({ ...input, userId: ctx.session.user.id })
+          .values({ ...input, userId: ctx.getSessionPayload.user.id })
           .returning()
       )[0];
       if (!newRoom)
@@ -163,13 +165,13 @@ export const roomRouter = router({
           message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Room, JSON.stringify(input)).message,
         });
 
-      await tx.insert(usersToRoomsInMessage).values({ roomId: newRoom.id, userId: ctx.session.user.id });
+      await tx.insert(usersToRoomsInMessage).values({ roomId: newRoom.id, userId: ctx.getSessionPayload.user.id });
       return newRoom;
     }),
   ),
   deleteMember: getCreatorProcedure(deleteMemberInputSchema, "roomId").mutation(
     async ({ ctx, input: { roomId, userId } }) => {
-      if (userId === ctx.session.user.id)
+      if (userId === ctx.getSessionPayload.user.id)
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: new InvalidOperationError(
@@ -195,11 +197,11 @@ export const roomRouter = router({
           ).message,
         });
 
-      roomEventEmitter.emit("leaveRoom", { ...deletedMember, sessionId: ctx.session.session.id });
+      roomEventEmitter.emit("leaveRoom", { ...deletedMember, sessionId: ctx.getSessionPayload.session.id });
     },
   ),
   deleteRoom: standardAuthedProcedure.input(deleteRoomInputSchema).mutation<RoomInMessage>(async ({ ctx, input }) => {
-    const deletedRoom = await deleteRoom(ctx.db, ctx.session, input);
+    const deletedRoom = await deleteRoom(ctx.db, ctx.getSessionPayload, input);
     const containerClient = await useContainerClient(AzureContainer.MessageAssets);
     await deleteDirectory(containerClient, input, true);
     return deletedRoom;
@@ -225,7 +227,7 @@ export const roomRouter = router({
       const userToRoom = (
         await tx
           .insert(usersToRoomsInMessage)
-          .values({ roomId: invite.roomId, userId: ctx.session.user.id })
+          .values({ roomId: invite.roomId, userId: ctx.getSessionPayload.user.id })
           .returning()
       )[0];
       if (!userToRoom)
@@ -234,7 +236,7 @@ export const roomRouter = router({
           message: new InvalidOperationError(
             Operation.Create,
             DatabaseEntityType.UserToRoom,
-            JSON.stringify({ roomId: invite.roomId, userId: ctx.session.user.id }),
+            JSON.stringify({ roomId: invite.roomId, userId: ctx.getSessionPayload.user.id }),
           ).message,
         });
 
@@ -256,7 +258,7 @@ export const roomRouter = router({
         });
 
       const { roomId, roomInMessage, user } = userToRoomWithRelations;
-      roomEventEmitter.emit("joinRoom", { roomId, sessionId: ctx.session.session.id, user });
+      roomEventEmitter.emit("joinRoom", { roomId, sessionId: ctx.getSessionPayload.session.id, user });
       return roomInMessage;
     }),
   ),
@@ -264,13 +266,18 @@ export const roomRouter = router({
     .input(leaveRoomInputSchema)
     .mutation<RoomInMessage["id"]>(async ({ ctx, input }) => {
       try {
-        const { id } = await deleteRoom(ctx.db, ctx.session, input);
+        const { id } = await deleteRoom(ctx.db, ctx.getSessionPayload, input);
         return id;
       } catch {
         const userToRoom = (
           await ctx.db
             .delete(usersToRoomsInMessage)
-            .where(and(eq(usersToRoomsInMessage.roomId, input), eq(usersToRoomsInMessage.userId, ctx.session.user.id)))
+            .where(
+              and(
+                eq(usersToRoomsInMessage.roomId, input),
+                eq(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id),
+              ),
+            )
             .returning()
         )[0];
         if (!userToRoom)
@@ -279,7 +286,7 @@ export const roomRouter = router({
             message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.UserToRoom, input).message,
           });
 
-        roomEventEmitter.emit("leaveRoom", { ...userToRoom, sessionId: ctx.session.session.id });
+        roomEventEmitter.emit("leaveRoom", { ...userToRoom, sessionId: ctx.getSessionPayload.session.id });
         return userToRoom.roomId;
       }
     }),
@@ -288,10 +295,10 @@ export const roomRouter = router({
     input,
     signal,
   }) {
-    await isMember(ctx.db, ctx.session, input);
+    await isMember(ctx.db, ctx.getSessionPayload, input);
 
     for await (const [{ roomId, sessionId, userId }] of on(roomEventEmitter, "deleteRoom", { signal })) {
-      if (!input.includes(roomId) || getIsSameDevice({ sessionId, userId }, ctx.session)) continue;
+      if (!input.includes(roomId) || getIsSameDevice({ sessionId, userId }, ctx.getSessionPayload)) continue;
       yield roomId;
     }
   }),
@@ -300,10 +307,10 @@ export const roomRouter = router({
     input,
     signal,
   }) {
-    await isMember(ctx.db, ctx.session, input);
+    await isMember(ctx.db, ctx.getSessionPayload, input);
 
     for await (const [{ roomId, sessionId, user }] of on(roomEventEmitter, "joinRoom", { signal })) {
-      if (!input.includes(roomId) || getIsSameDevice({ sessionId, userId: user.id }, ctx.session)) continue;
+      if (!input.includes(roomId) || getIsSameDevice({ sessionId, userId: user.id }, ctx.getSessionPayload)) continue;
       yield user;
     }
   }),
@@ -312,10 +319,10 @@ export const roomRouter = router({
     input,
     signal,
   }) {
-    await isMember(ctx.db, ctx.session, input);
+    await isMember(ctx.db, ctx.getSessionPayload, input);
 
     for await (const [{ roomId, sessionId, userId }] of on(roomEventEmitter, "leaveRoom", { signal })) {
-      if (!input.includes(roomId) || getIsSameDevice({ sessionId, userId }, ctx.session)) continue;
+      if (!input.includes(roomId) || getIsSameDevice({ sessionId, userId }, ctx.getSessionPayload)) continue;
       yield userId;
     }
   }),
@@ -324,7 +331,7 @@ export const roomRouter = router({
     input,
     signal,
   }) {
-    await isMember(ctx.db, ctx.session, input);
+    await isMember(ctx.db, ctx.getSessionPayload, input);
 
     for await (const [data] of on(roomEventEmitter, "updateRoom", { signal })) {
       if (!input.includes(data.id)) continue;
@@ -344,14 +351,14 @@ export const roomRouter = router({
           eq: invite.roomId,
         },
         userId: {
-          eq: ctx.session.user.id,
+          eq: ctx.getSessionPayload.user.id,
         },
       },
     });
     return { ...invite, isMember: Boolean(isMember) };
   }),
   readInviteCode: getMemberProcedure(readInviteCodeInputSchema, "roomId").query<null | string>(
-    ({ ctx, input: { roomId } }) => readInviteCode(ctx.db, ctx.session.user.id, roomId),
+    ({ ctx, input: { roomId } }) => readInviteCode(ctx.db, ctx.getSessionPayload.user.id, roomId),
   ),
   readMembers: getMemberProcedure(readMembersInputSchema, "roomId").query(
     async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
@@ -400,7 +407,7 @@ export const roomRouter = router({
                       // Condition 1 (Correlation): Link subquery room ID to the outer query room ID
                       eq(usersToRoomsInMessage.roomId, roomsInMessage.id),
                       // Condition 2: Ensure the row belongs to the specific user
-                      eq(usersToRoomsInMessage.userId, ctx.session.user.id),
+                      eq(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id),
                     ),
                   ),
               ),
@@ -423,7 +430,7 @@ export const roomRouter = router({
         .select({ room: roomsInMessage })
         .from(roomsInMessage)
         .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, roomsInMessage.id))
-        .where(eq(usersToRoomsInMessage.userId, ctx.session.user.id))
+        .where(eq(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id))
         .orderBy(desc(roomsInMessage.updatedAt))
         .limit(1)
     )[0];
@@ -433,7 +440,7 @@ export const roomRouter = router({
     async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
       const innerJoinCondition = and(
         eq(usersToRoomsInMessage.roomId, roomsInMessage.id),
-        eq(usersToRoomsInMessage.userId, ctx.session.user.id),
+        eq(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id),
       );
       let pinnedRoom: RoomInMessage | undefined;
 
@@ -480,7 +487,7 @@ export const roomRouter = router({
         await ctx.db
           .update(roomsInMessage)
           .set({ ...rest, name })
-          .where(and(eq(roomsInMessage.id, id), eq(roomsInMessage.userId, ctx.session.user.id)))
+          .where(and(eq(roomsInMessage.id, id), eq(roomsInMessage.userId, ctx.getSessionPayload.user.id)))
           .returning()
       )[0];
       if (!updatedRoom)

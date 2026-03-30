@@ -8,8 +8,8 @@ interface StyledCardProps {
   cardProps?: VCard["$props"];
 }
 
-const { cardAttrs = {}, cardProps = {} } = defineProps<StyledCardProps>();
 const slots = defineSlots<Record<keyof VCard["$slots"], () => VNode>>();
+const { cardAttrs = {}, cardProps = {} } = defineProps<StyledCardProps>();
 </script>
 
 <template>

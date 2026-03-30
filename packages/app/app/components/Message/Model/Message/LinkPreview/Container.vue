@@ -15,7 +15,7 @@ const isActive = ref(false);
 <template>
   <div flex @mouseenter="isActive = true" @mouseleave="isActive = false">
     <MessageModelMessageLinkPreview max-w-140 :="linkPreviewResponse" />
-    <StyledDeleteDialog
+    <StyledDeleteFormDialog
       :card-props="{
         title: 'Are you sure?',
         text: 'This will remove all embeds on this message for everyone.',
@@ -42,6 +42,6 @@ const isActive = ref(false);
           @click="updateIsOpen(true)"
         />
       </template>
-    </StyledDeleteDialog>
+    </StyledDeleteFormDialog>
   </div>
 </template>

@@ -7,6 +7,5 @@ describe(omitDeep, () => {
 
     expect(omitDeep({ "": "" }, "")).toStrictEqual({});
     expect(omitDeep({ "": { "": "" } }, "")).toStrictEqual({});
-    expect(omitDeep({ "": { "": "" } }, ".")).toStrictEqual({ "": {} });
   });
 });

@@ -6,13 +6,13 @@ interface BaseCardProps {
 }
 
 const { card } = defineProps<BaseCardProps>();
-const { sm, xs } = useDisplay();
+const { sm, xs } = useVDisplay();
 </script>
 
 <template>
   <StyledCard
-    :class="xs ? 'text-h6' : sm ? 'text-h5' : 'text-h4'"
-    flex="!"
+    :class="xs ? 'text-title-large' : sm ? 'text-headline-small' : 'text-headline-large'"
+    flex
     font="[Montserrat] italic"
     justify-center
     items-center

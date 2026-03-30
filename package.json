@@ -16,21 +16,24 @@
   "scripts": {
     "build": "pnpm build:packages && pnpm build:docs && pnpm build:app",
     "build:app": "lerna run build --scope=@esposter/app",
-    "build:docs": "typedoc",
     "build:docker": "pnpm crossOS copyfiles .gitignore .dockerignore && docker compose -f docker-compose.dev.yaml build",
+    "build:docs": "typedoc",
     "build:packages": "lerna run build --ignore @esposter/app",
     "coverage": "lerna run coverage",
     "crossOS": "node scripts/crossOS.ts",
     "dev:docker": "docker compose -f docker-compose.dev.yaml up",
+    "format": "oxfmt",
+    "prepare": "git config core.hooksPath .githooks || true",
+    "format:check": "oxfmt --check",
     "lint": "oxlint --disable-nested-config && eslint . && lerna run lint",
     "lint:fix": "oxlint --disable-nested-config --fix && eslint --fix . && lerna run lint:fix",
     "lint:fix:packages": "pnpm lint:fix --ignore @esposter/app",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted",
     "refresh:lockfile": "pnpm crossOS refresh:lockfile",
-    "release": "pnpm build:packages && pnpm lint:fix:packages && pnpm typecheck:packages && lerna publish --yes",
+    "release": "pnpm build:packages && pnpm lint:fix:packages && pnpm format && pnpm typecheck:packages && lerna publish --yes",
     "start": "lerna run start --scope=@esposter/app",
     "test": "lerna run test",
-    "typecheck": "tsc && lerna run typecheck",
+    "typecheck": "tsgo && lerna run typecheck",
     "typecheck:packages": "pnpm typecheck --ignore @esposter/app",
     "watch:packages": "lerna watch --ignore @esposter/app -- pnpm build:packages"
   },
@@ -40,14 +43,17 @@
     "@lerna-lite/publish": "catalog:",
     "@lerna-lite/run": "catalog:",
     "@lerna-lite/watch": "catalog:",
-    "@prettier/plugin-oxc": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native-preview": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "ctix": "catalog:",
     "dotenv": "catalog:",
     "eslint": "catalog:",
     "happy-dom": "catalog:",
+    "nano-staged": "catalog:",
+    "oxfmt": "catalog:",
     "oxlint": "catalog:",
+    "oxlint-tsgolint": "catalog:",
     "rolldown": "catalog:",
     "rolldown-plugin-dts": "catalog:",
     "tsx": "catalog:",
@@ -58,24 +64,23 @@
     "vitest": "catalog:",
     "vue-tsc": "catalog:"
   },
-  "engines": {
-    "node": "^24.13.0"
+  "nano-staged": {
+    "*": "oxfmt"
   },
-  "packageManager": "pnpm@10.29.2+sha512.bef43fa759d91fd2da4b319a5a0d13ef7a45bb985a3d7342058470f9d2051a3ba8674e629672654686ef9443ad13a82da2beb9eeb3e0221c87b8154fff9d74b8",
+  "engines": {
+    "node": "^24.14.1"
+  },
+  "packageManager": "pnpm@10.33.0+sha512.10568bb4a6afb58c9eb3630da90cc9516417abebd3fabbe6739f0ae795728da1491e9db5a544c76ad8eb7570f5c4bb3d6c637b2cb41bfdcdb47fa823c8649319",
   "crossOS": {
-    "refresh:lockfile": {
-      "darwin": "sh ./scripts/refreshLockfile.sh",
-      "linux": "./scripts/refreshLockfile.sh",
-      "win32": "pnpm pwsh scripts/refreshLockfile.ps1"
-    },
     "copyfiles": {
       "darwin": "cp -f",
       "linux": "cp -f",
       "win32": "pnpm pwsh -Command Copy-Item -Force"
+    },
+    "refresh:lockfile": {
+      "darwin": "sh ./scripts/refreshLockfile.sh",
+      "linux": "./scripts/refreshLockfile.sh",
+      "win32": "pnpm pwsh scripts/refreshLockfile.ps1"
     }
-  },
-  "devDependenciesComments": {
-    "oxlint": "@TODO: https://github.com/oxc-project/oxc/issues/13204",
-    "vite": "@TODO: v8.0.0-beta.11 breaks build"
   }
 }

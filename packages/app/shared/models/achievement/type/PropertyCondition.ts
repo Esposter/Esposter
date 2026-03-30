@@ -2,19 +2,16 @@ import type { AchievementOperator } from "#shared/models/achievement/Achievement
 import type { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
 import type { TRPCPaths } from "#shared/models/trpc/TRPCPaths";
 import type { TRPCRouterInputs } from "#shared/models/trpc/TRPCRouterInputs";
-import type { RecursiveGetProperties } from "#shared/util/types/RecursiveGetProperties";
 import type { BinaryOperator } from "@esposter/db-schema";
-import type { Except, Get } from "type-fest";
+import type { GetProperties } from "@esposter/shared";
+import type { Get } from "type-fest";
 
 export type PropertyCondition<TPath extends TRPCPaths> =
-  Except<RecursiveGetProperties<Get<TRPCRouterInputs, TPath>>, "type"> extends { path: infer Path; value: infer Value }
-    ? Path extends string
-      ? {
-          path: Path;
-          type: AchievementConditionType.Property;
-        } & (
+  GetProperties<Get<TRPCRouterInputs, TPath>> extends infer R
+    ? R extends { path: infer Path extends string; value: infer Value }
+      ? (
           | {
-              operation: (value: Get<TRPCRouterInputs, `${TPath}.${Path}`>) => boolean;
+              operation: (value: Value) => boolean;
               operator: AchievementOperator.Operation;
             }
           | {
@@ -33,6 +30,9 @@ export type PropertyCondition<TPath extends TRPCPaths> =
               operator: BinaryOperator;
               value: Value;
             }
-        )
+        ) & {
+          path: Path;
+          type: AchievementConditionType.Property;
+        }
       : never
     : never;

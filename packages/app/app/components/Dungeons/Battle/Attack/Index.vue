@@ -25,9 +25,9 @@ interface AttackProps {
   spritesheetKey: SpritesheetKey;
 }
 
+const isActive = defineModel<boolean>("isActive", { required: true });
 const { configuration, createAnimationConfigurations, isToEnemy, playAnimationKey, spritesheetKey } =
   defineProps<AttackProps>();
-const isActive = defineModel<boolean>("isActive", { required: true });
 const frame = ref<number>();
 const position = computed(() =>
   configuration.type === AttackGameObjectType.Sprite ? getAttackPosition(isToEnemy) : configuration.position,

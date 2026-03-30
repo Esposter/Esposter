@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ClickerType } from "#shared/models/clicker/data/ClickerType";
+import { ClickerTypes } from "#shared/models/clicker/data/ClickerType";
 import { IconComponentMap } from "@/services/clicker/properties/IconComponentMap";
 import { NameMap } from "@/services/clicker/properties/NameMap";
 import { useClickerStore } from "@/store/clicker";
@@ -9,7 +9,7 @@ const { clicker } = storeToRefs(clickerStore);
 </script>
 
 <template>
-  <v-tooltip v-for="clickerType of Object.values(ClickerType)" :key="clickerType" :text="NameMap[clickerType]">
+  <v-tooltip v-for="clickerType of ClickerTypes" :key="clickerType" :text="NameMap[clickerType]">
     <template #activator="{ props }">
       <v-btn
         class="bg-surface border-sm"

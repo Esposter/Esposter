@@ -5,8 +5,8 @@ describe(getPropertyNames, () => {
   test("empty string key", () => {
     expect.hasAssertions();
 
-    const properties = getPropertyNames<{ "": string }>();
+    const propertyNames = getPropertyNames<{ "": string }>();
 
-    expect(properties[""]).toBe("");
+    expect(propertyNames[""]).toBe("");
   });
 });

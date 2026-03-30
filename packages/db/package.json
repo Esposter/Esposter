@@ -1,6 +1,6 @@
 {
   "name": "@esposter/db",
-  "version": "2.19.2",
+  "version": "2.20.0",
   "private": true,
   "description": "A library of database utilities that is available in server environment only.",
   "keywords": [
@@ -35,10 +35,12 @@
     "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
     "coverage": "vitest run --coverage",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
     "lint": "oxlint && eslint .",
     "lint:fix": "oxlint --fix && eslint --fix .",
     "test": "vitest",
-    "typecheck": "tsc"
+    "typecheck": "tsgo"
   },
   "dependencies": {
     "@azure/data-tables": "catalog:",

@@ -34,8 +34,8 @@ export const useVisualStore = defineStore("dashboard/visual", () => {
     computed(() => visuals.value),
     ["id"],
   );
+  const { editFormDialog } = editFormData;
   const save = async (editedVisual: Visual) => {
-    const { editFormDialog } = editFormData;
     updateVisual(editedVisual);
     await saveDashboard();
     editFormDialog.value = false;

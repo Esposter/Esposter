@@ -1,6 +1,6 @@
 {
   "name": "@esposter/db-schema",
-  "version": "2.19.2",
+  "version": "2.20.0",
   "private": true,
   "description": "A library of database schemas and utilities using Drizzle ORM (PostgreSQL) that is available in both browser and server environments.",
   "keywords": [
@@ -40,10 +40,12 @@
     "db:studio": "pnpm db:run studio",
     "db:up": "pnpm db:run up",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
     "lint": "oxlint && eslint .",
     "lint:fix": "oxlint --fix && eslint --fix .",
     "test": "vitest",
-    "typecheck": "tsc"
+    "typecheck": "tsgo"
   },
   "dependencies": {
     "@esposter/shared": "workspace:*",

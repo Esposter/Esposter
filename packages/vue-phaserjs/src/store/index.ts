@@ -4,7 +4,10 @@ import type { Game } from "phaser";
 import { useGame } from "@/composables/useGame";
 
 export const usePhaserStore = defineStore("phaser", () => {
-  // @NOTE: A very weird bug will occur here with setInteractive input priority if the game is a ref >:C
+  // A writable computed is used instead of ref to keep the Game object unproxied.
+  // Ref() would wrap it in Vue's deep reactive Proxy, breaking Phaser's InputManager which
+  // Uses === identity to sort/find objects in its priority list — proxied objects have a
+  // Different reference than the raw objects Phaser stored, so setInteractive priority silently breaks.
   let baseGame: Game | undefined;
   const game = computed({
     get: () => baseGame,

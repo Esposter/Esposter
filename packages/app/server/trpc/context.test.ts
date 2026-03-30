@@ -1,6 +1,7 @@
-import type { Session } from "#shared/models/auth/Session";
+import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { Context } from "@@/server/trpc/context";
 import type { User } from "@esposter/db-schema";
+import type { Session } from "better-auth";
 import type { PgliteDatabase } from "drizzle-orm/pglite";
 
 import { dayjs } from "#shared/services/dayjs";
@@ -30,20 +31,23 @@ const mocks = vi.hoisted(() => {
     updatedAt: createdAt,
   };
   return {
-    getSession: vi.fn<() => Session>(() => {
+    getSession: vi.fn<() => GetSessionPayload>(() => {
       const session = createSession(user.id);
       return { session, user };
     }),
   };
 });
 
-vi.mock(import("@@/server/auth") as unknown as Promise<{ auth: { api: { getSession: () => Session } } }>, () => ({
-  auth: {
-    api: {
-      getSession: mocks.getSession,
+vi.mock(
+  import("@@/server/auth") as unknown as Promise<{ auth: { api: { getSession: () => GetSessionPayload } } }>,
+  () => ({
+    auth: {
+      api: {
+        getSession: mocks.getSession,
+      },
     },
-  },
-}));
+  }),
+);
 
 vi.mock(import("@@/server/composables/azure/container/useContainerClient"), () => ({
   useContainerClient: useContainerClientMock,
@@ -57,7 +61,7 @@ vi.mock(import("@@/server/composables/azure/table/useTableClient"), () => ({
   useTableClient: useTableClientMock,
 }));
 
-export const mockSessionOnce = async (db: Context["db"], mockUser?: Session["user"]) => {
+export const mockSessionOnce = async (db: Context["db"], mockUser?: User) => {
   const createdAt = new Date();
   const user =
     mockUser ??
@@ -75,14 +79,14 @@ export const mockSessionOnce = async (db: Context["db"], mockUser?: Session["use
         })
         .returning(),
     );
-  const session = { session: createSession(user.id), user };
-  mocks.getSession.mockImplementationOnce(() => session);
-  return session;
+  const getSessionPayload = { session: createSession(user.id), user } as const satisfies GetSessionPayload;
+  mocks.getSession.mockImplementationOnce(() => getSessionPayload);
+  return getSessionPayload;
 };
 
 export const getMockSession = () => mocks.getSession();
 
-const createSession = (userId: string): Session["session"] => {
+const createSession = (userId: string): Session => {
   const createdAt = new Date();
   return {
     createdAt,

@@ -13,25 +13,26 @@ interface DefaultProps {
   rightNavigationDrawerProps?: VNavigationDrawer["$props"];
 }
 
-const { footerStyle, hideGlobalScrollbar, leftNavigationDrawerProps, mainStyle, rightNavigationDrawerProps } =
-  defineProps<DefaultProps>();
 const slots = defineSlots<{
   default?: () => VNode;
   footer?: () => VNode;
   left?: () => VNode;
   right?: () => VNode;
 }>();
-const container = useTemplateRef("container");
-defineExpose({
-  container: computed<HTMLElement>(() => container.value?.$el),
-});
+const { footerStyle, hideGlobalScrollbar, leftNavigationDrawerProps, mainStyle, rightNavigationDrawerProps } =
+  defineProps<DefaultProps>();
 const layoutStore = useLayoutStore();
 const { isDesktop, isLeftDrawerOpen, isLeftDrawerOpenAuto, isRightDrawerOpen, isRightDrawerOpenAuto } =
   storeToRefs(layoutStore);
+const container = useTemplateRef("container");
 const footer = useTemplateRef("footer");
 const bottomOffset = ref(0);
 // Fix the layout structure so navigating does not cause a layout shift
 const { bottom, left, middle, right } = useFixedLayoutStyles(bottomOffset);
+
+defineExpose({
+  container: computed<HTMLElement>(() => container.value?.$el),
+});
 
 useResizeObserver(
   () => footer.value?.$el,

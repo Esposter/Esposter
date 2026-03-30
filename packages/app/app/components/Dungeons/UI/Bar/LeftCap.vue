@@ -10,8 +10,8 @@ interface LeftCapProps {
   texture: ImageKey;
 }
 
-const { imagePosition, scaleY, texture } = defineProps<LeftCapProps>();
 const displayWidth = defineModel<number | undefined>("displayWidth", { required: true });
+const { imagePosition, scaleY, texture } = defineProps<LeftCapProps>();
 const isVisible = computed(() => (displayWidth.value ?? 0) > 0);
 </script>
 

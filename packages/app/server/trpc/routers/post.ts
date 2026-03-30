@@ -71,7 +71,7 @@ export const postRouter = router({
               createdAt,
               depth: parentPost.depth + 1,
               ranking: ranking(0, createdAt),
-              userId: ctx.session.user.id,
+              userId: ctx.getSessionPayload.user.id,
             })
             .returning({ id: posts.id })
         )[0];
@@ -117,7 +117,7 @@ export const postRouter = router({
               ...input,
               createdAt,
               ranking: ranking(0, createdAt),
-              userId: ctx.session.user.id,
+              userId: ctx.getSessionPayload.user.id,
             })
             .returning({ id: posts.id })
         )[0];
@@ -149,7 +149,7 @@ export const postRouter = router({
       const deletedComment = (
         await tx
           .delete(posts)
-          .where(and(eq(posts.id, input), eq(posts.userId, ctx.session.user.id), isNotNull(posts.parentId)))
+          .where(and(eq(posts.id, input), eq(posts.userId, ctx.getSessionPayload.user.id), isNotNull(posts.parentId)))
           .returning()
       )[0];
       const postId = deletedComment?.parentId;
@@ -187,7 +187,7 @@ export const postRouter = router({
     const deletedPost = (
       await ctx.db
         .delete(posts)
-        .where(and(eq(posts.id, input), eq(posts.userId, ctx.session.user.id), isNull(posts.parentId)))
+        .where(and(eq(posts.id, input), eq(posts.userId, ctx.getSessionPayload.user.id), isNull(posts.parentId)))
         .returning()
     )[0];
     if (!deletedPost)
@@ -232,7 +232,7 @@ export const postRouter = router({
           await tx
             .update(posts)
             .set(rest)
-            .where(and(eq(posts.id, id), eq(posts.userId, ctx.session.user.id)))
+            .where(and(eq(posts.id, id), isNotNull(posts.parentId), eq(posts.userId, ctx.getSessionPayload.user.id)))
             .returning({ id: posts.id })
         )[0];
         if (!updatedComment)
@@ -250,7 +250,7 @@ export const postRouter = router({
               isNotNull: true,
             },
             userId: {
-              eq: ctx.session.user.id,
+              eq: ctx.getSessionPayload.user.id,
             },
           },
           with: PostRelations,
@@ -270,7 +270,7 @@ export const postRouter = router({
           await tx
             .update(posts)
             .set(rest)
-            .where(and(eq(posts.id, id), isNull(posts.parentId), eq(posts.userId, ctx.session.user.id)))
+            .where(and(eq(posts.id, id), isNull(posts.parentId), eq(posts.userId, ctx.getSessionPayload.user.id)))
             .returning({ id: posts.id })
         )[0];
         if (!updatedPost)
@@ -288,7 +288,7 @@ export const postRouter = router({
               isNull: true,
             },
             userId: {
-              eq: ctx.session.user.id,
+              eq: ctx.getSessionPayload.user.id,
             },
           },
           with: PostRelations,

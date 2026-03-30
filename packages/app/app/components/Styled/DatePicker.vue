@@ -1,16 +1,18 @@
 <script setup lang="ts">
+import { useColorsStore } from "@/store/colors";
 import { VueDatePicker } from "@vuepic/vue-datepicker";
 
 interface StyledDatePickerProps {
   datePickerProps?: InstanceType<typeof VueDatePicker>["$props"];
 }
 
+const slots = defineSlots<Record<keyof (typeof VueDatePicker)["$slots"], () => VNode>>();
 const modelValue = defineModel<Date | null>({ required: true });
 const { datePickerProps } = defineProps<StyledDatePickerProps>();
 defineEmits<(emitEvents: (typeof VueDatePicker)["emits"]) => void>();
-const slots = defineSlots<Record<keyof (typeof VueDatePicker)["$slots"], () => VNode>>();
 const isDark = useIsDark();
-const { border, surface } = useColors();
+const colorsStore = useColorsStore();
+const { border, surface } = storeToRefs(colorsStore);
 </script>
 
 <template>

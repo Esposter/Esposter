@@ -1,11 +1,11 @@
-import { CursorUpgradeMap } from "#shared/assets/clicker/data/upgrades/CursorUpgradeMap";
+import { CursorUpgrades } from "#shared/assets/clicker/data/upgrades/CursorUpgradeMap";
 import { describe, expect, test } from "vitest";
 
 describe("cursorUpgradeMap", () => {
   test("sorted by price", () => {
     expect.hasAssertions();
 
-    const cursorUpgrades = Object.values(CursorUpgradeMap);
+    const cursorUpgrades = [...CursorUpgrades];
 
     expect(cursorUpgrades).toStrictEqual(cursorUpgrades.toSorted((a, b) => a.price - b.price));
   });

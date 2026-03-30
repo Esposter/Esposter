@@ -77,7 +77,7 @@ const menu = ref(false);
       <v-tooltip v-if="session" location="bottom" text="Account">
         <template #activator="{ props: tooltipProps }">
           <v-avatar>
-            <v-btn h-full="!" :="mergeProps(menuProps, tooltipProps)">
+            <v-btn h-full :="mergeProps(menuProps, tooltipProps)">
               <StyledAvatar :image="session.user.image" :name="session.user.name" />
             </v-btn>
           </v-avatar>
@@ -110,7 +110,7 @@ const menu = ref(false);
               <v-icon :icon />
             </v-avatar>
           </template>
-          <v-list-item-title font-bold="!">{{ title }}</v-list-item-title>
+          <v-list-item-title font-bold>{{ title }}</v-list-item-title>
         </v-list-item>
       </NuxtInvisibleLink>
     </v-list>

@@ -1,13 +1,12 @@
 import type { Router } from "vue-router";
 
 import { TodoListItem } from "#shared/models/tableEditor/todoList/TodoListItem";
-import { expectToBeDefined } from "#shared/test/expectToBeDefined";
 import { ID_QUERY_PARAMETER_KEY } from "@/services/shared/constants";
 import { useTableEditorStore } from "@/store/tableEditor";
 import { useItemStore } from "@/store/tableEditor/item";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
-import { beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { assert, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe(useTableEditorStore, () => {
   let router: Router;
@@ -101,7 +100,7 @@ describe(useTableEditorStore, () => {
     expect(takeOne(tableEditor.value.items).name).not.toBe(updatedName);
 
     await editItem({ id: newItem.id });
-    expectToBeDefined(editedItem.value);
+    assert.exists(editedItem.value);
     editedItem.value.name = updatedName;
     await save();
 

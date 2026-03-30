@@ -10,7 +10,7 @@ export class ScatterResolver extends AVisualTypeResolver {
   }
 
   override handleConfiguration(apexOptions: ApexOptions) {
-    apexOptions.chart = defu<ApexChart, (ApexChart | undefined)[]>(
+    apexOptions.chart = defu<NonNullable<ApexOptions["chart"]>, ApexOptions["chart"][]>(
       {
         zoom: {
           enabled: true,

@@ -1,4 +1,5 @@
 import { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/TilemapKey";
+import { TilemapKeys } from "#shared/models/dungeons/keys/TilemapKey";
 
 export type WorldForegroundKey = `World${TilemapKey}Foreground`;
 type WorldForegroundKeyMap = {
@@ -6,7 +7,7 @@ type WorldForegroundKeyMap = {
 };
 
 export const WorldForegroundKey = Object.fromEntries(
-  Object.values(TilemapKey).map((k) => {
+  [...TilemapKeys].map((k) => {
     const key: WorldForegroundKey = `World${k}Foreground`;
     return [key, key];
   }),

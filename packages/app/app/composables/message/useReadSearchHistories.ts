@@ -17,7 +17,7 @@ export const useReadSearchHistories = () => {
           readSearchHistories.name,
           StandardMessageEntityPropertyNames.partitionKey,
         );
-      return $trpc.searchHistory.readSearchHistories.useQuery({ roomId: currentRoomId.value });
+      return $trpc.searchHistory.readSearchHistories.query({ roomId: currentRoomId.value });
     });
   const readMoreSearchHistories = (onComplete: () => void) =>
     readMoreItems((cursor) => {

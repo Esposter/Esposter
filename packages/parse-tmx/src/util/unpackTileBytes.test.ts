@@ -19,7 +19,7 @@ describe(unpackTileBytes, () => {
     const buffer = Buffer.alloc(bufferSize);
     buffer.writeUInt32LE(1, 0);
 
-    expect(() => unpackTileBytes(buffer, bufferSize + 1)).toThrowError(
+    expect(() => unpackTileBytes(buffer, bufferSize + 1)).toThrow(
       `Expected ${bufferSize + 1} bytes of tile data; received ${buffer.length}`,
     );
   });

@@ -14,7 +14,7 @@ const { deleteWebhook } = webhookStore;
 </script>
 
 <template>
-  <StyledDeleteDialog
+  <StyledDeleteFormDialog
     :card-props="{ title: 'Delete Webhook', text: `Are you sure you want to delete ${webhook.name}?` }"
     @delete="
       async (onComplete) => {
@@ -33,5 +33,5 @@ const { deleteWebhook } = webhookStore;
         </template>
       </v-tooltip>
     </template>
-  </StyledDeleteDialog>
+  </StyledDeleteFormDialog>
 </template>

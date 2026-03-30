@@ -26,7 +26,7 @@ const group = ref(initialValue.group);
 </script>
 
 <template>
-  <StyledCreateDialog
+  <StyledCreateFormDialog
     :card-props
     @create="
       async (onComplete) => {
@@ -56,5 +56,5 @@ const group = ref(initialValue.group);
         </v-col>
       </v-row>
     </v-container>
-  </StyledCreateDialog>
+  </StyledCreateFormDialog>
 </template>

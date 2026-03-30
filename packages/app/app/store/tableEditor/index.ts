@@ -1,6 +1,7 @@
 import type { EntityIdKeys } from "#shared/models/entity/EntityIdKeys";
 import type { Item } from "#shared/models/tableEditor/data/Item";
 import type { TableEditor } from "#shared/models/tableEditor/data/TableEditor";
+import type { ToData } from "@esposter/shared";
 import type {
   _ExtractActionsFromSetupStore,
   _ExtractGettersFromSetupStore,
@@ -8,18 +9,21 @@ import type {
   Store,
 } from "pinia";
 
-import { TableEditorConfiguration } from "#shared/models/tableEditor/data/TableEditorConfiguration";
+import {
+  TableEditorConfiguration,
+  tableEditorConfigurationSchema,
+} from "#shared/models/tableEditor/data/TableEditorConfiguration";
 import { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType";
-import { authClient } from "@/services/auth/authClient";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
-import { saveItemMetadata } from "@/services/shared/metadata/saveItemMetadata";
 import { TABLE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/tableEditor/constants";
 import { useItemStore } from "@/store/tableEditor/item";
+import { toRawDeep } from "@esposter/shared";
 
 type TableEditorStoreState<
-  TItem extends Item = Item,
+  TItem extends ToData<Item> = ToData<Item>,
   TIdKeys extends EntityIdKeys<TItem> = EntityIdKeys<TItem>,
 > = ReturnType<typeof createEditFormData<TItem, TIdKeys>> & {
+  importConfiguration: (data: Partial<TableEditor<ToData<Item>>>) => Promise<void>;
   save: (isDeleteAction?: true) => Promise<void>;
   searchQuery: Ref<string>;
   tableEditor: ComputedRef<TableEditor<TItem>>;
@@ -29,7 +33,6 @@ type TableEditorStoreState<
 
 const id = "tableEditor";
 const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id, () => {
-  const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
   const itemStore = useItemStore();
   const { createItem, deleteItem, updateItem } = itemStore;
@@ -41,22 +44,33 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
     computed(() => tableEditor.value.items as Item[]),
     ["id"],
   );
+  const saveTableEditorConfiguration = useSave(tableEditorConfiguration, {
+    auth: { save: $trpc.tableEditor.saveTableEditorConfiguration.mutate },
+    unauth: { key: TABLE_EDITOR_LOCAL_STORAGE_KEY, schema: tableEditorConfigurationSchema },
+  });
+
+  const saveConfiguration = async (snapshot: TableEditorConfiguration) => {
+    const isSuccessful = await saveTableEditorConfiguration();
+    if (!isSuccessful) tableEditorConfiguration.value = new TableEditorConfiguration(snapshot);
+  };
+
   const save = async (isDeleteAction?: true) => {
     if (!editedItem.value) return;
+
+    const snapshot = structuredClone(toRawDeep(tableEditorConfiguration.value));
 
     if (isDeleteAction) deleteItem({ id: editedItem.value.id });
     else if (editedIndex.value > -1) updateItem(editedItem.value);
     else createItem(editedItem.value);
-    // Optimistically close the edit form dialog
     editFormDialog.value = false;
 
-    if (session.value.data) {
-      saveItemMetadata(tableEditorConfiguration.value);
-      await $trpc.tableEditor.saveTableEditorConfiguration.mutate(tableEditorConfiguration.value);
-    } else {
-      saveItemMetadata(tableEditorConfiguration.value);
-      localStorage.setItem(TABLE_EDITOR_LOCAL_STORAGE_KEY, tableEditorConfiguration.value.toJSON());
-    }
+    await saveConfiguration(snapshot);
+  };
+
+  const importConfiguration = async (data: Partial<TableEditor<ToData<Item>>>) => {
+    const snapshot = structuredClone(toRawDeep(tableEditorConfiguration.value));
+    Object.assign(tableEditorConfiguration.value[tableEditorType.value], data);
+    await saveConfiguration(snapshot);
   };
 
   return {
@@ -68,11 +82,12 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
     tableEditorConfiguration,
     tableEditorType,
     ...rest,
+    importConfiguration,
     save,
   };
 });
 
-export const useTableEditorStore = <TItem extends Item = Item>() =>
+export const useTableEditorStore = <TItem extends ToData<Item> = ToData<Item>>() =>
   useBaseTableEditorStore() as unknown as Store<
     typeof id,
     _ExtractStateFromSetupStore<TableEditorStoreState<TItem>>,

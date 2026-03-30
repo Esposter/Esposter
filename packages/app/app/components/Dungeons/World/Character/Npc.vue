@@ -14,10 +14,10 @@ interface NpcProps {
   walkingAnimationMapping: CharacterProps["walkingAnimationMapping"];
 }
 
-const { asset, id, path, pathIndex, singleSidedSpritesheetDirection, walkingAnimationMapping } =
-  defineProps<NpcProps>();
 const direction = defineModel<Direction | undefined>("direction", { required: true });
 const isMoving = defineModel<boolean>("isMoving", { required: true });
+const { asset, id, path, pathIndex, singleSidedSpritesheetDirection, walkingAnimationMapping } =
+  defineProps<NpcProps>();
 </script>
 
 <template>

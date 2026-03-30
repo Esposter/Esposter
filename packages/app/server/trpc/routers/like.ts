@@ -35,7 +35,7 @@ export const likeRouter = router({
       const newLike = (
         await tx
           .insert(likes)
-          .values({ ...input, userId: ctx.session.user.id })
+          .values({ ...input, userId: ctx.getSessionPayload.user.id })
           .returning()
       )[0];
       if (!newLike)
@@ -79,7 +79,7 @@ export const likeRouter = router({
       const deletedLike = (
         await tx
           .delete(likes)
-          .where(and(eq(likes.userId, ctx.session.user.id), eq(likes.postId, input)))
+          .where(and(eq(likes.userId, ctx.getSessionPayload.user.id), eq(likes.postId, input)))
           .returning()
       )[0];
       if (!deletedLike)
@@ -120,7 +120,7 @@ export const likeRouter = router({
               eq: postId,
             },
             userId: {
-              eq: ctx.session.user.id,
+              eq: ctx.getSessionPayload.user.id,
             },
           },
         }),
@@ -151,7 +151,7 @@ export const likeRouter = router({
         await tx
           .update(likes)
           .set({ value })
-          .where(and(eq(likes.userId, ctx.session.user.id), eq(likes.postId, postId)))
+          .where(and(eq(likes.userId, ctx.getSessionPayload.user.id), eq(likes.postId, postId)))
           .returning()
       )[0];
       if (!updatedLike)

@@ -8,7 +8,9 @@ import { BlobServiceClient } from "@azure/storage-blob";
 import { AZURE_MAX_PAGE_SIZE, AzureContainer } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { config } from "dotenv";
-import { format, resolveConfig } from "prettier";
+import { format } from "oxfmt";
+
+import formatOptions from "../../../../../.oxfmtrc.json" with { type: "json" };
 
 export const createFilePack = async () => {
   config();
@@ -36,12 +38,8 @@ export const createFilePack = async () => {
   await Promise.all([
     outputFile(`${enumName}.ts`, createEnumString(enumName, [...fileKeys])),
     (async () => {
-      const options = await resolveConfig(process.cwd());
-      if (!options)
-        throw new InvalidOperationError(Operation.Read, "Prettier Configuration", "Missing Prettier Configuration");
-
-      const formatted = await format(JSON.stringify(files), { ...options, parser: "json" });
-      await outputFile("files.json", formatted);
+      const { code } = await format("files.json", JSON.stringify(files), formatOptions);
+      await outputFile("files.json", code);
     })(),
   ]);
 };

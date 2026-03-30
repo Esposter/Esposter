@@ -3,3 +3,7 @@ import { SoundEffectLoaderMap } from "@/models/dungeons/loader/sound/SoundEffect
 import { mergeObjectsStrict } from "@esposter/shared";
 
 export const SoundLoaderMap = mergeObjectsStrict(BackgroundMusicLoaderMap, SoundEffectLoaderMap);
+
+export const SoundLoaders: ReadonlySet<(typeof SoundLoaderMap)[keyof typeof SoundLoaderMap]> = new Set(
+  Object.values(SoundLoaderMap),
+);

@@ -106,3 +106,7 @@ export const BuildingMap = {
     baseValue: 6.4e13,
   },
 } as const satisfies Record<BuildingId, Except<Building, "id">>;
+
+export const Buildings: ReadonlySet<(typeof BuildingMap)[keyof typeof BuildingMap]> = new Set(
+  Object.values(BuildingMap),
+);

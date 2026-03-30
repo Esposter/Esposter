@@ -19,7 +19,7 @@ export const getMemberProcedure = <T extends z.ZodType>(schema: T, roomIdKey: ke
           eq: value,
         },
         userId: {
-          eq: ctx.session.user.id,
+          eq: ctx.getSessionPayload.user.id,
         },
       },
     });

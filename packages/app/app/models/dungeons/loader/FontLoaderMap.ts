@@ -7,3 +7,7 @@ import KenneyFutureNarrow from "@/assets/dungeons/thirdParty/kenneysAssets/fonts
 export const FontLoaderMap: Record<FontKey, (scene: SceneWithPlugins) => Loader.LoaderPlugin> = {
   [FontKey.KenneyFutureNarrow]: (scene) => scene.load.font(FontKey.KenneyFutureNarrow, KenneyFutureNarrow),
 };
+
+export const FontLoaders: ReadonlySet<(scene: SceneWithPlugins) => Loader.LoaderPlugin> = new Set(
+  Object.values(FontLoaderMap),
+);

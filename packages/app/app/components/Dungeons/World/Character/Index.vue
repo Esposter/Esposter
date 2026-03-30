@@ -31,6 +31,8 @@ export interface CharacterProps {
   walkingAnimationMapping: Character["walkingAnimationMapping"];
 }
 
+const position = defineModel<Position>("position", { required: true });
+const direction = defineModel<Direction | undefined>("direction", { required: true });
 const {
   id,
   onComplete,
@@ -43,8 +45,6 @@ const {
   spriteConfiguration,
   walkingAnimationMapping,
 } = defineProps<CharacterProps>();
-const position = defineModel<Position>("position", { required: true });
-const direction = defineModel<Direction | undefined>("direction", { required: true });
 const flipX = computed(
   () =>
     (singleSidedSpritesheetDirection === Direction.LEFT && direction.value === Direction.RIGHT) ||

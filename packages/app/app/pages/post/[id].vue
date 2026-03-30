@@ -20,7 +20,7 @@ currentPost.value = post;
       <Title>{{ post.title }}</Title>
     </Head>
     <v-container v-if="currentPost" h-full flex flex-col flex-1>
-      <v-row flex-none="!">
+      <v-row flex-none>
         <v-col>
           <PostCard :post="currentPost" is-comment-store />
         </v-col>
@@ -33,7 +33,7 @@ currentPost.value = post;
             </v-container>
             <v-container>
               <PostCommentEmptyBanner v-if="currentPost.noComments === 0" />
-              <template v-else-if="!isPending">
+              <template v-else>
                 <PostCommentCard v-for="comment of items" :key="comment.id" :comment />
                 <StyledWaypoint flex justify-center :is-active="hasMore" @change="readMoreComments" />
               </template>

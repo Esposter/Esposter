@@ -1,9 +1,12 @@
 <script setup lang="ts">
-const { "primary-lighten-1": primaryLighten1 } = useColors();
+import { useColorsStore } from "@/store/colors";
+
+const colorsStore = useColorsStore();
+const { "primary-lighten-1": primaryLighten1 } = storeToRefs(colorsStore);
 </script>
 
 <template>
-  <NuxtLoadingIndicator class="loading-indicator" :height="2" :color="primaryLighten1" />
+  <NuxtLoadingIndicator class="loading-indicator" :height="2" :color="primaryLighten1?.toString()" />
 </template>
 
 <style scoped lang="scss">

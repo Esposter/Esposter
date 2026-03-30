@@ -16,8 +16,15 @@ interface EditableNameDialogButtonProps {
 
 defineSlots<{ default?: () => VNode }>();
 const modelValue = defineModel<boolean>({ default: false });
-const { buttonProps, cardProps, isEditable, maxLength, name, placeholder, tooltipProps } =
-  defineProps<EditableNameDialogButtonProps>();
+const {
+  buttonProps,
+  cardProps,
+  isEditable = true,
+  maxLength,
+  name,
+  placeholder,
+  tooltipProps,
+} = defineProps<EditableNameDialogButtonProps>();
 const emit = defineEmits<{ submit: [name: string] }>();
 const editedName = ref(name);
 const displayName = computed(() => name || placeholder);
@@ -31,7 +38,7 @@ watch(
 </script>
 
 <template>
-  <StyledDialog
+  <StyledFormDialog
     v-model="modelValue"
     :card-props
     :confirm-button-props="{ text: 'Save', disabled: editedName === name }"
@@ -82,7 +89,7 @@ watch(
         </v-col>
       </v-row>
     </v-container>
-  </StyledDialog>
+  </StyledFormDialog>
 </template>
 
 <style scoped lang="scss">

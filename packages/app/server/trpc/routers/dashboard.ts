@@ -10,7 +10,7 @@ import { jsonDateParse, streamToText } from "@esposter/shared";
 export const dashboardRouter = router({
   readDashboard: standardAuthedProcedure.query<Dashboard>(async ({ ctx }) => {
     try {
-      const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
+      const blobName = `${ctx.getSessionPayload.user.id}/${SAVE_FILENAME}`;
       const { readableStreamBody } = await useDownload(AzureContainer.DashboardAssets, blobName);
       if (!readableStreamBody) return new Dashboard();
 
@@ -21,7 +21,7 @@ export const dashboardRouter = router({
     }
   }),
   saveDashboard: standardAuthedProcedure.input(dashboardSchema).mutation(async ({ ctx, input }) => {
-    const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
+    const blobName = `${ctx.getSessionPayload.user.id}/${SAVE_FILENAME}`;
     await useUpload(AzureContainer.DashboardAssets, blobName, JSON.stringify(input));
   }),
 });

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useColorsStore } from "@/store/colors";
 import { useReplyStore } from "@/store/message/reply";
 
 interface ReplySpineProps {
@@ -6,7 +7,8 @@ interface ReplySpineProps {
 }
 
 const { replyRowKey } = defineProps<ReplySpineProps>();
-const { border, text } = useColors();
+const colorsStore = useColorsStore();
+const { border, text } = storeToRefs(colorsStore);
 const replyStore = useReplyStore();
 const { isIndicatorActive } = storeToRefs(replyStore);
 const borderColor = computed(() => (isIndicatorActive.value ? text.value : border.value));
@@ -16,8 +18,8 @@ const scrollToMessage = useScrollToMessage();
 <template>
   <div
     class="custom-border"
-    b-l-2="!"
-    b-t-2="!"
+    b-l-2
+    b-t-2
     cursor-pointer
     w-8
     h-3

@@ -20,8 +20,8 @@ export const getCreatorProcedure = <T extends z.ZodType<Pick<MessageEntity, "par
       });
     else if (
       !(
-        (messageEntity.type === MessageType.Message && messageEntity.userId === ctx.session.user.id) ||
-        (await getIsCreator(ctx.db, ctx.session, messageEntity.partitionKey))
+        (messageEntity.type === MessageType.Message && messageEntity.userId === ctx.getSessionPayload.user.id) ||
+        (await getIsCreator(ctx.db, ctx.getSessionPayload, messageEntity.partitionKey))
       )
     )
       throw new TRPCError({ code: "UNAUTHORIZED" });

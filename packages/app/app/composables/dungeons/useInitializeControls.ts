@@ -14,7 +14,7 @@ export const useInitializeControls = (scene: SceneWithPlugins) => {
   const { controls } = storeToRefs(controlsStore);
 
   if (isMobile()) {
-    controls.value = new JoystickControls();
+    controls.value = markRaw(new JoystickControls());
     launchParallelScene(scene, SceneKey.MobileJoystick);
-  } else controls.value = new KeyboardControls(scene);
+  } else controls.value = markRaw(new KeyboardControls(scene));
 };
