@@ -7,9 +7,7 @@ import { getPropertyNames } from "@esposter/shared";
 export interface ColumnFormVjsfContext {
   booleanColumnItems: SelectItemCategoryDefinition<Column["id"]>[];
   columnItems: SelectItemCategoryDefinition<Column["id"]>[];
-  columnNames: Column["name"][];
   computedColumnItems: SelectItemCategoryDefinition<Column["id"]>[];
-  currentName: Column["name"];
   dateColumnItems: SelectItemCategoryDefinition<Column["id"]>[];
   numberColumnItems: SelectItemCategoryDefinition<Column["id"]>[];
   stringColumnItems: SelectItemCategoryDefinition<Column["id"]>[];

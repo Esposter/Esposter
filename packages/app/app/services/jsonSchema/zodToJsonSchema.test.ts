@@ -4,13 +4,8 @@ import { ColumnTransformationType } from "#shared/models/tableEditor/file/column
 import { ColumnFormVjsfContextPropertyNames } from "@/models/tableEditor/file/column/ColumnFormVjsfContext";
 import { uniqueColumnNameKeywordDefinition } from "@/services/ajv/keywords/uniqueColumnNameKeywordDefinition";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
-import { takeOne } from "@esposter/shared";
-import { assert, describe, expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 import { z } from "zod";
-
-interface EvaluatedProps {
-  rules: ((value: string) => boolean | string)[];
-}
 
 describe(zodToJsonSchema, () => {
   describe("flat object schema", () => {
@@ -298,37 +293,14 @@ describe(zodToJsonSchema, () => {
       expect(result.properties?.name).not.toHaveProperty("layout");
     });
 
-    test("getProps string evaluates to different rules when context changes", () => {
-      expect.hasAssertions();
+    describe(`${uniqueColumnNameKeywordDefinition.keyword} meta property`, () => {
+      test(`sets ${uniqueColumnNameKeywordDefinition.keyword} and auto-generates errorMessage`, () => {
+        expect.hasAssertions();
 
-      const getPropsStr = `{ rules: [(value) => !context.columnNames.includes(value) || 'Column already exists'] }`;
-      const schema = z.object({ name: z.string().meta({ layout: { getProps: getPropsStr } }) });
-      const result = zodToJsonSchema(schema) as { properties: Record<string, { layout?: { getProps?: string } }> };
-      const storedGetProps = result.properties.name?.layout?.getProps;
-      assert.exists(storedGetProps);
-      const evaluate = (columnNames: string[]): EvaluatedProps =>
-        // eslint-disable-next-line @typescript-eslint/no-implied-eval
-        new Function("context", `return ${storedGetProps}`)({ columnNames }) as EvaluatedProps;
-      const withEmpty = evaluate([""]);
+        const schema = z.object({ name: z.string().meta({ [uniqueColumnNameKeywordDefinition.keyword]: true }) });
+        const result = zodToJsonSchema(schema);
 
-      expect(takeOne(withEmpty.rules)("")).toBe("Column already exists");
-      expect(takeOne(withEmpty.rules)(" ")).toBe(true);
-
-      const withSpace = evaluate([" "]);
-
-      expect(takeOne(withSpace.rules)("")).toBe(true);
-      expect(takeOne(withSpace.rules)(" ")).toBe("Column already exists");
-    });
-  });
-
-  describe(`${uniqueColumnNameKeywordDefinition.keyword} meta property`, () => {
-    test(`sets ${uniqueColumnNameKeywordDefinition.keyword} and auto-generates errorMessage`, () => {
-      expect.hasAssertions();
-
-      const schema = z.object({ name: z.string().meta({ [uniqueColumnNameKeywordDefinition.keyword]: true }) });
-      const result = zodToJsonSchema(schema);
-
-      expect(result.properties?.name).toMatchInlineSnapshot(`
+        expect(result.properties?.name).toMatchInlineSnapshot(`
         {
           "errorMessage": {
             "uniqueColumnName": "Column already exists",
@@ -338,6 +310,7 @@ describe(zodToJsonSchema, () => {
           "uniqueColumnName": true,
         }
       `);
+      });
     });
   });
 });
