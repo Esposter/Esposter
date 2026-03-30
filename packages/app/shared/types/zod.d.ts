@@ -1,8 +1,8 @@
+import type { PartialCompObject } from "@json-layout/vocabulary";
+
 declare module "zod" {
   interface GlobalMeta {
-    comp?: string;
-    getItems?: string;
-    getProps?: string;
+    layout?: Partial<PartialCompObject>;
     uniqueColumnName?: boolean;
   }
 }

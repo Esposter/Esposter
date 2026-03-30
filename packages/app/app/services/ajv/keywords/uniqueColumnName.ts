@@ -1,4 +1,4 @@
-import type { KeywordDefinition, SchemaValidateFunction } from "ajv";
+import type { KeywordDefinition } from "ajv";
 
 interface ColumnNameValidationState {
   columnNames: string[];
@@ -11,15 +11,12 @@ export const setColumnNameValidationStateGetter = (getter: () => ColumnNameValid
   getColumnNameValidationState = getter;
 };
 
-const validate: SchemaValidateFunction = function validate(_schema: boolean, data: string) {
-  const { columnNames, currentName } = getColumnNameValidationState();
-  return data === currentName || !columnNames.includes(data);
-};
-validate.errors = [{ keyword: "uniqueColumnName", message: "Column already exists" }];
-
 export const uniqueColumnName: KeywordDefinition = {
   keyword: "uniqueColumnName",
   schemaType: "boolean",
   type: "string",
-  validate,
+  validate(_schema: boolean, data: string) {
+    const { columnNames, currentName } = getColumnNameValidationState();
+    return data === currentName || !columnNames.includes(data);
+  },
 };
