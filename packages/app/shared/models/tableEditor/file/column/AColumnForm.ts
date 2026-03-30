@@ -14,8 +14,8 @@ export const createAColumnFormSchema = <T extends z.ZodType<ColumnType>>(typeSch
   return z.object({
     description: aColumnSchema.shape.description,
     name: aColumnSchema.shape.name.meta({
-      getProps: `{ rules: [(value) => value === context.currentName || !context.columnNames.includes(value) || 'Column already exists'] }`,
       title: "Column",
+      uniqueColumnName: true,
     }),
     sourceName: aColumnSchema.shape.sourceName.meta({ title: "Source Column" }),
     type: typeSchema,

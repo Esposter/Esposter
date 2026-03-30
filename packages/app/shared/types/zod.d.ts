@@ -3,6 +3,7 @@ declare module "zod" {
     comp?: string;
     getItems?: string;
     getProps?: string;
+    uniqueColumnName?: boolean;
   }
 }
 

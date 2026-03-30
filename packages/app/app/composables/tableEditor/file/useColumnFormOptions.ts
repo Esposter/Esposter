@@ -6,17 +6,27 @@ import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCa
 import type { MaybeRefOrGetter } from "vue";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
+import { ajvOptions } from "@/services/ajv/ajvOptions";
+import { setColumnNameValidationStateGetter } from "@/services/ajv/keywords/uniqueColumnName";
 
 const mapColumnToSelectItemCategoryDefinition = ({ id, name }: Column): SelectItemCategoryDefinition<Column["id"]> => ({
   title: name,
   value: id,
 });
 
-export const useColumnFormOptions = (dataSource: MaybeRefOrGetter<DataSource>, currentName: MaybeRefOrGetter<string>) =>
-  computed<VjsfOptions<ColumnFormVjsfContext>>(() => {
+export const useColumnFormOptions = (
+  dataSource: MaybeRefOrGetter<DataSource>,
+  currentName: MaybeRefOrGetter<string>,
+) => {
+  setColumnNameValidationStateGetter(() => ({
+    columnNames: toValue(dataSource).columns.map(({ name }) => name),
+    currentName: toValue(currentName),
+  }));
+  return computed<VjsfOptions<ColumnFormVjsfContext>>(() => {
     const dataSourceValue = toValue(dataSource);
     const currentNameValue = toValue(currentName);
     return {
+      ajvOptions,
       context: {
         booleanColumnItems: dataSourceValue.columns
           .filter(({ type }) => type === ColumnType.Boolean)
@@ -39,3 +49,4 @@ export const useColumnFormOptions = (dataSource: MaybeRefOrGetter<DataSource>, c
       },
     };
   });
+};
