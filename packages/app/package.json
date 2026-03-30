@@ -177,6 +177,7 @@
   },
   "devDependencies": {
     "@electric-sql/pglite": "catalog:",
+    "@json-layout/vocabulary": "catalog:",
     "@nuxt/eslint": "catalog:",
     "@nuxt/fonts": "catalog:",
     "@nuxt/scripts": "catalog:",

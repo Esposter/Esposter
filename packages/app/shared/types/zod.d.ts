@@ -1,9 +1,11 @@
+import type { uniqueColumnNameKeywordDefinition } from "@/services/ajv/keywords/uniqueColumnNameKeywordDefinition";
+import type { PartialCompObject } from "@json-layout/vocabulary";
+
+type AjvKeywords = Partial<Record<(typeof uniqueColumnNameKeywordDefinition)["keyword"], boolean>>;
+
 declare module "zod" {
-  interface GlobalMeta {
-    comp?: string;
-    getItems?: string;
-    getProps?: string;
-    uniqueColumnName?: boolean;
+  interface GlobalMeta extends AjvKeywords {
+    layout?: Partial<PartialCompObject>;
   }
 }
 

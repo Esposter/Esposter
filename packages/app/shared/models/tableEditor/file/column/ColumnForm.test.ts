@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { columnFormSchema } from "#shared/models/tableEditor/file/column/ColumnForm";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { describe, expect, test } from "vitest";
@@ -31,14 +32,14 @@ describe("columnFormSchema", () => {
                 "type": "string",
               },
               "name": {
-                "getProps": "{ rules: [(value) => value === context.currentName || !context.columnNames.includes(value) || 'Column already exists'] }",
-                "layout": {
-                  "getProps": "{ rules: [(value) => value === context.currentName || !context.columnNames.includes(value) || 'Column already exists'] }",
+                "errorMessage": {
+                  "uniqueColumnName": "Column already exists",
                 },
                 "maxLength": 1000,
                 "minLength": 1,
                 "title": "Column",
                 "type": "string",
+                "uniqueColumnName": true,
               },
               "sourceName": {
                 "default": "",
@@ -110,14 +111,14 @@ describe("columnFormSchema", () => {
                 "title": "Format",
               },
               "name": {
-                "getProps": "{ rules: [(value) => value === context.currentName || !context.columnNames.includes(value) || 'Column already exists'] }",
-                "layout": {
-                  "getProps": "{ rules: [(value) => value === context.currentName || !context.columnNames.includes(value) || 'Column already exists'] }",
+                "errorMessage": {
+                  "uniqueColumnName": "Column already exists",
                 },
                 "maxLength": 1000,
                 "minLength": 1,
                 "title": "Column",
                 "type": "string",
+                "uniqueColumnName": true,
               },
               "sourceName": {
                 "default": "",
@@ -143,8 +144,6 @@ describe("columnFormSchema", () => {
                         "type": "string",
                       },
                       "sourceColumnId": {
-                        "comp": "select",
-                        "getItems": "context.numberColumnItems",
                         "layout": {
                           "comp": "select",
                           "getItems": "context.numberColumnItems",
@@ -171,8 +170,6 @@ describe("columnFormSchema", () => {
                     "additionalProperties": false,
                     "properties": {
                       "sourceColumnId": {
-                        "comp": "select",
-                        "getItems": "context.columnItems",
                         "layout": {
                           "comp": "select",
                           "getItems": "context.columnItems",
@@ -221,8 +218,6 @@ describe("columnFormSchema", () => {
                         "type": "string",
                       },
                       "sourceColumnId": {
-                        "comp": "select",
-                        "getItems": "context.dateColumnItems",
                         "layout": {
                           "comp": "select",
                           "getItems": "context.dateColumnItems",
@@ -269,8 +264,6 @@ describe("columnFormSchema", () => {
                               "type": "string",
                             },
                             "sourceColumnId": {
-                              "comp": "select",
-                              "getItems": "context.numberColumnItems",
                               "layout": {
                                 "comp": "select",
                                 "getItems": "context.numberColumnItems",
@@ -311,8 +304,6 @@ describe("columnFormSchema", () => {
                         "type": "string",
                       },
                       "sourceColumnId": {
-                        "comp": "select",
-                        "getItems": "context.stringColumnItems",
                         "layout": {
                           "comp": "select",
                           "getItems": "context.stringColumnItems",
@@ -344,7 +335,6 @@ describe("columnFormSchema", () => {
                         "type": "string",
                       },
                       "sourceColumnIds": {
-                        "getItems": "context.columnItems",
                         "items": {
                           "type": "string",
                         },
@@ -373,8 +363,6 @@ describe("columnFormSchema", () => {
                     "additionalProperties": false,
                     "properties": {
                       "sourceColumnId": {
-                        "comp": "select",
-                        "getItems": "context.stringColumnItems",
                         "layout": {
                           "comp": "select",
                           "getItems": "context.stringColumnItems",
@@ -453,14 +441,14 @@ describe("columnFormSchema", () => {
                 "type": "string",
               },
               "name": {
-                "getProps": "{ rules: [(value) => value === context.currentName || !context.columnNames.includes(value) || 'Column already exists'] }",
-                "layout": {
-                  "getProps": "{ rules: [(value) => value === context.currentName || !context.columnNames.includes(value) || 'Column already exists'] }",
+                "errorMessage": {
+                  "uniqueColumnName": "Column already exists",
                 },
                 "maxLength": 1000,
                 "minLength": 1,
                 "title": "Column",
                 "type": "string",
+                "uniqueColumnName": true,
               },
               "sourceName": {
                 "default": "",
@@ -506,14 +494,14 @@ describe("columnFormSchema", () => {
                 "type": "string",
               },
               "name": {
-                "getProps": "{ rules: [(value) => value === context.currentName || !context.columnNames.includes(value) || 'Column already exists'] }",
-                "layout": {
-                  "getProps": "{ rules: [(value) => value === context.currentName || !context.columnNames.includes(value) || 'Column already exists'] }",
+                "errorMessage": {
+                  "uniqueColumnName": "Column already exists",
                 },
                 "maxLength": 1000,
                 "minLength": 1,
                 "title": "Column",
                 "type": "string",
+                "uniqueColumnName": true,
               },
               "sourceName": {
                 "default": "",
@@ -547,14 +535,14 @@ describe("columnFormSchema", () => {
                 "type": "string",
               },
               "name": {
-                "getProps": "{ rules: [(value) => value === context.currentName || !context.columnNames.includes(value) || 'Column already exists'] }",
-                "layout": {
-                  "getProps": "{ rules: [(value) => value === context.currentName || !context.columnNames.includes(value) || 'Column already exists'] }",
+                "errorMessage": {
+                  "uniqueColumnName": "Column already exists",
                 },
                 "maxLength": 1000,
                 "minLength": 1,
                 "title": "Column",
                 "type": "string",
+                "uniqueColumnName": true,
               },
               "sourceName": {
                 "default": "",

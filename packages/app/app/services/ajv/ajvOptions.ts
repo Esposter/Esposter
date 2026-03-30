@@ -1,7 +1,7 @@
 import type { Options } from "ajv";
 
-import { uniqueColumnName } from "@/services/ajv/keywords/uniqueColumnName";
+import { uniqueColumnNameKeywordDefinition } from "@/services/ajv/keywords/uniqueColumnNameKeywordDefinition";
 
 export const ajvOptions: Options = {
-  keywords: [uniqueColumnName],
+  keywords: [uniqueColumnNameKeywordDefinition],
 };
