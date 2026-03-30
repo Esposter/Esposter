@@ -6,8 +6,7 @@ import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCa
 import type { MaybeRefOrGetter } from "vue";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import { ajvOptions } from "@/services/ajv/ajvOptions";
-import { setColumnNameValidationState } from "@/services/ajv/keywords/uniqueColumnNameKeywordDefinition";
+import { uniqueColumnNameKeywordDefinition } from "@/services/ajv/keywords/uniqueColumnNameKeywordDefinition";
 
 const mapColumnToSelectItemCategoryDefinition = ({ id, name }: Column): SelectItemCategoryDefinition<Column["id"]> => ({
   title: name,
@@ -18,30 +17,29 @@ export const useColumnFormOptions = (
   dataSource: MaybeRefOrGetter<DataSource>,
   currentName: MaybeRefOrGetter<string>,
 ) => {
-  watchImmediate(
-    [() => toValue(dataSource).columns.map(({ name }) => name), () => toValue(currentName)],
-    ([newColumnNames, newCurrentName]) => {
-      setColumnNameValidationState({
-        columnNames: newColumnNames,
-        currentName: newCurrentName,
-      });
-    },
+  const uniqueColumnNameKeywordDefinitionValidation = useUniqueColumnNameKeywordDefinitionValidation(
+    () => toValue(dataSource).columns.map(({ name }) => name),
+    currentName,
   );
   return computed<VjsfOptions<ColumnFormVjsfContext>>(() => {
     const dataSourceValue = toValue(dataSource);
-    const currentNameValue = toValue(currentName);
     return {
-      ajvOptions,
+      ajvOptions: {
+        keywords: [
+          {
+            ...uniqueColumnNameKeywordDefinition,
+            validate: uniqueColumnNameKeywordDefinitionValidation,
+          },
+        ],
+      },
       context: {
         booleanColumnItems: dataSourceValue.columns
           .filter(({ type }) => type === ColumnType.Boolean)
           .map((column) => mapColumnToSelectItemCategoryDefinition(column)),
-        columnItems: dataSourceValue.columns.map(mapColumnToSelectItemCategoryDefinition),
-        columnNames: dataSourceValue.columns.map(({ name }) => name),
+        columnItems: dataSourceValue.columns.map((column) => mapColumnToSelectItemCategoryDefinition(column)),
         computedColumnItems: dataSourceValue.columns
           .filter(({ type }) => type === ColumnType.Computed)
           .map((column) => mapColumnToSelectItemCategoryDefinition(column)),
-        currentName: currentNameValue,
         dateColumnItems: dataSourceValue.columns
           .filter(({ type }) => type === ColumnType.Date)
           .map((column) => mapColumnToSelectItemCategoryDefinition(column)),
