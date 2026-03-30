@@ -7,7 +7,7 @@ import type { MaybeRefOrGetter } from "vue";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ajvOptions } from "@/services/ajv/ajvOptions";
-import { setColumnNameValidationStateGetter } from "@/services/ajv/keywords/uniqueColumnName";
+import { setColumnNameValidationState } from "@/services/ajv/keywords/uniqueColumnNameKeywordDefinition";
 
 const mapColumnToSelectItemCategoryDefinition = ({ id, name }: Column): SelectItemCategoryDefinition<Column["id"]> => ({
   title: name,
@@ -18,10 +18,15 @@ export const useColumnFormOptions = (
   dataSource: MaybeRefOrGetter<DataSource>,
   currentName: MaybeRefOrGetter<string>,
 ) => {
-  setColumnNameValidationStateGetter(() => ({
-    columnNames: toValue(dataSource).columns.map(({ name }) => name),
-    currentName: toValue(currentName),
-  }));
+  watchImmediate(
+    [() => toValue(dataSource).columns.map(({ name }) => name), () => toValue(currentName)],
+    ([newColumnNames, newCurrentName]) => {
+      setColumnNameValidationState({
+        columnNames: newColumnNames,
+        currentName: newCurrentName,
+      });
+    },
+  );
   return computed<VjsfOptions<ColumnFormVjsfContext>>(() => {
     const dataSourceValue = toValue(dataSource);
     const currentNameValue = toValue(currentName);

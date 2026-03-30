@@ -2,6 +2,7 @@
 // @vitest-environment node
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import { ColumnFormVjsfContextPropertyNames } from "@/models/tableEditor/file/column/ColumnFormVjsfContext";
+import { uniqueColumnNameKeywordDefinition } from "@/services/ajv/keywords/uniqueColumnNameKeywordDefinition";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { takeOne } from "@esposter/shared";
 import { assert, describe, expect, test } from "vitest";
@@ -28,7 +29,7 @@ describe(zodToJsonSchema, () => {
       const schema = z.object({ firstName: z.string() });
       const result = zodToJsonSchema(schema);
 
-      expect(result.properties?.["firstName"]?.title).toBe("First Name");
+      expect(result.properties?.firstName).toHaveProperty("title", "First Name");
     });
 
     test("preserves meta title over generated title", () => {
@@ -37,7 +38,7 @@ describe(zodToJsonSchema, () => {
       const schema = z.object({ name: z.string().meta({ title: "Full Name" }) });
       const result = zodToJsonSchema(schema);
 
-      expect(result.properties?.["name"]?.title).toBe("Full Name");
+      expect(result.properties?.name).toHaveProperty("title", "Full Name");
     });
 
     test("prettifies enum-style meta title to spaced title case", () => {
@@ -46,7 +47,7 @@ describe(zodToJsonSchema, () => {
       const schema = z.object({ type: z.string().meta({ title: ColumnTransformationType.ConvertTo }) });
       const result = zodToJsonSchema(schema);
 
-      expect(result.properties?.["type"]?.title).toBe("Convert To");
+      expect(result.properties?.type).toHaveProperty("title", "Convert To");
     });
 
     test("converts anyOf to oneOf within properties", () => {
@@ -57,7 +58,7 @@ describe(zodToJsonSchema, () => {
       });
       const result = zodToJsonSchema(schema);
 
-      expect(result.properties?.["value"]).toMatchInlineSnapshot(`
+      expect(result.properties?.value).toMatchInlineSnapshot(`
         {
           "oneOf": [
             {
@@ -87,7 +88,7 @@ describe(zodToJsonSchema, () => {
       ]);
       const result = zodToJsonSchema(schema);
 
-      expect(result.discriminator).toEqual({ propertyName: "type" });
+      expect(result.discriminator).toStrictEqual({ propertyName: "type" });
     });
 
     test("returns oneOf instead of properties", () => {
@@ -187,7 +188,7 @@ describe(zodToJsonSchema, () => {
       const schema = z.object({ name: z.string(), value: z.number() });
       const result = zodToJsonSchema(schema);
 
-      expect(result.required).toEqual(["name", "value"]);
+      expect(result.required).toStrictEqual(["name", "value"]);
     });
 
     test("omits optional fields from required", () => {
@@ -196,7 +197,7 @@ describe(zodToJsonSchema, () => {
       const schema = z.object({ description: z.string().optional(), name: z.string() });
       const result = zodToJsonSchema(schema);
 
-      expect(result.required).toEqual(["name"]);
+      expect(result.required).toStrictEqual(["name"]);
     });
 
     test("returns undefined required when all fields are optional", () => {
@@ -216,7 +217,7 @@ describe(zodToJsonSchema, () => {
       const schema = z.object({ sourceColumnId: z.string().meta({ layout: { comp: "select" } }) });
       const result = zodToJsonSchema(schema);
 
-      expect(result.properties?.["sourceColumnId"]).toMatchInlineSnapshot(`
+      expect(result.properties?.sourceColumnId).toMatchInlineSnapshot(`
         {
           "layout": {
             "comp": "select",
@@ -237,7 +238,7 @@ describe(zodToJsonSchema, () => {
       });
       const result = zodToJsonSchema(schema);
 
-      expect(result.properties?.["sourceColumnId"]).toMatchInlineSnapshot(`
+      expect(result.properties?.sourceColumnId).toMatchInlineSnapshot(`
         {
           "layout": {
             "getItems": "context.columnItems",
@@ -255,7 +256,7 @@ describe(zodToJsonSchema, () => {
       const schema = z.object({ name: z.string().meta({ layout: { getProps } }) });
       const result = zodToJsonSchema(schema);
 
-      expect(result.properties?.["name"]).toMatchInlineSnapshot(`
+      expect(result.properties?.name).toMatchInlineSnapshot(`
         {
           "layout": {
             "getProps": "{ rules: [(value) => !context.columnNames.includes(value) || 'Column already exists'] }",
@@ -276,7 +277,7 @@ describe(zodToJsonSchema, () => {
       });
       const result = zodToJsonSchema(schema);
 
-      expect(result.properties?.["sourceColumnId"]).toMatchInlineSnapshot(`
+      expect(result.properties?.sourceColumnId).toMatchInlineSnapshot(`
         {
           "layout": {
             "comp": "select",
@@ -294,7 +295,7 @@ describe(zodToJsonSchema, () => {
       const schema = z.object({ name: z.string().meta({ title: "Name" }) });
       const result = zodToJsonSchema(schema);
 
-      expect(result.properties?.["name"]).not.toHaveProperty("layout");
+      expect(result.properties?.name).not.toHaveProperty("layout");
     });
 
     test("getProps string evaluates to different rules when context changes", () => {
@@ -320,14 +321,14 @@ describe(zodToJsonSchema, () => {
     });
   });
 
-  describe("uniqueColumnName meta property", () => {
-    test("sets uniqueColumnName and auto-generates errorMessage", () => {
+  describe(`${uniqueColumnNameKeywordDefinition.keyword} meta property`, () => {
+    test(`sets ${uniqueColumnNameKeywordDefinition.keyword} and auto-generates errorMessage`, () => {
       expect.hasAssertions();
 
-      const schema = z.object({ name: z.string().meta({ uniqueColumnName: true }) });
+      const schema = z.object({ name: z.string().meta({ [uniqueColumnNameKeywordDefinition.keyword]: true }) });
       const result = zodToJsonSchema(schema);
 
-      expect(result.properties?.["name"]).toMatchInlineSnapshot(`
+      expect(result.properties?.name).toMatchInlineSnapshot(`
         {
           "errorMessage": {
             "uniqueColumnName": "Column already exists",

@@ -1,3 +1,4 @@
+import { uniqueColumnNameKeywordDefinition } from "@/services/ajv/keywords/uniqueColumnNameKeywordDefinition";
 import { processSchema } from "@/services/jsonSchema/processSchema";
 import { z } from "zod";
 
@@ -14,9 +15,9 @@ export const zodToJsonSchema = (schema: z.ZodType) => {
       const meta = zodSchema.meta();
       if (!meta) return;
       if (meta.layout) jsonSchema.layout = meta.layout;
-      if (meta.uniqueColumnName) {
-        jsonSchema.uniqueColumnName = true;
-        jsonSchema.errorMessage = { uniqueColumnName: "Column already exists" };
+      if (meta[uniqueColumnNameKeywordDefinition.keyword]) {
+        jsonSchema[uniqueColumnNameKeywordDefinition.keyword] = true;
+        jsonSchema.errorMessage = { [uniqueColumnNameKeywordDefinition.keyword]: "Column already exists" };
       }
     },
   });
