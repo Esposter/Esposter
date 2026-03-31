@@ -69,6 +69,10 @@ describe(useMyComposable, () => {
 - Always unmount in `afterEach` to trigger `onUnmounted` cleanup
 - When re-mounting mid-test (e.g. to simulate offline restart), call `wrapper.unmount()` before `await mountComposable()`
 
+## What to Test
+
+- **Test composables, not the underlying service functions** — composable tests integration-test the full call chain (store wiring, command dispatch, history push) in one place. If the composable is tested, the service functions it calls are covered implicitly; there is no need to write separate unit tests for those functions. Only test a service function directly when it has no composable wrapper (e.g. standalone pure utilities like `coerceValue`, `inferColumnType`).
+
 ## Test Utility Files
 
 Shared test helpers (factory functions, setup helpers, etc.) must live in `.test.ts` files, never plain `.ts` files. To prevent Vitest from treating the file as a test suite, add `describe.todo("testUtils")` at the very bottom of the file.

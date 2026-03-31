@@ -1,5 +1,5 @@
-import type { AggregationTransformationComputeContext } from "@/models/tableEditor/file/column/transformation/AggregationTransformationComputeContext";
 import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
+import type { AggregationTransformationComputeContext } from "@/models/tableEditor/file/column/transformation/AggregationTransformationComputeContext";
 
 import { AggregationTransformationType } from "#shared/models/tableEditor/file/column/transformation/AggregationTransformationType";
 import { takeOne } from "@esposter/shared";
