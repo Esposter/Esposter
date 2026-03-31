@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import type { ColumnStatComputeContext } from "@/models/tableEditor/file/column/ColumnStatComputeContext";
-
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
+import { buildColumnStatComputeContext } from "@/services/tableEditor/file/column/buildColumnStatComputeContext";
 import { ColumnStatDefinitionMap } from "@/services/tableEditor/file/column/ColumnStatDefinitionMap";
 import { toColumnKey } from "@/services/tableEditor/file/column/toColumnKey";
 import { useColumnStore } from "@/store/tableEditor/file/column";
@@ -17,15 +16,7 @@ const columnSummaries = computed(() => {
   for (const column of displayColumns.value) {
     if (column.type !== ColumnType.Number) continue;
     const values = filteredRows.value.map((row) => takeOne(row.data, column.name));
-    const nonNullNumbers = values.filter((value): value is number => typeof value === "number");
-    const context: ColumnStatComputeContext = {
-      column,
-      nonNullBooleans: [],
-      nonNullNumbers,
-      nonNullStrings: [],
-      nullCount: values.filter((value) => value === null).length,
-      values,
-    };
+    const context = buildColumnStatComputeContext(column, values);
     const sumValue = ColumnStatDefinitionMap.sum.compute(context);
     result.set(toColumnKey(column.name), `Σ ${ColumnStatDefinitionMap.sum.format(sumValue)}`);
   }
