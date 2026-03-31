@@ -1,5 +1,5 @@
 export const createVariableRegex = (openDelimiter: string, closeDelimiter: string): RegExp => {
-  const escapedOpen = openDelimiter.replaceAll(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const escapedClose = closeDelimiter.replaceAll(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const escapedOpen = openDelimiter.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
+  const escapedClose = closeDelimiter.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
   return new RegExp(`${escapedOpen}([^${escapedClose}]+)${escapedClose}`, "g");
 };
