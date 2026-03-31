@@ -1,6 +1,7 @@
 import type { SourceColumnIds } from "#shared/models/tableEditor/file/column/transformation/SourceColumnIds";
 import type { ItemEntityType } from "@esposter/shared";
 
+import { Delimiter, DELIMITER_REGEX_MAP } from "#shared/models/compiler/Delimiter";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import { createSourceColumnIdsSchema } from "#shared/models/tableEditor/file/column/transformation/SourceColumnIds";
 import { createItemEntityTypeSchema } from "@esposter/shared";
@@ -18,7 +19,7 @@ export const stringPatternTransformationSchema = z
     pattern: z.string(),
   })
   .superRefine(({ pattern, sourceColumnIds }, ctx) => {
-    for (const [, indexString] of pattern.matchAll(/\{(\d+)\}/g)) {
+    for (const [, indexString] of pattern.matchAll(DELIMITER_REGEX_MAP[Delimiter.CurlyBraces])) {
       const index = Number(indexString);
 
       if (index >= sourceColumnIds.length) {
