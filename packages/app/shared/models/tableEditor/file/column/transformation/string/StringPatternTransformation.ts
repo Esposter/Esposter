@@ -18,10 +18,8 @@ export const stringPatternTransformationSchema = z
     pattern: z.string(),
   })
   .superRefine(({ pattern, sourceColumnIds }, ctx) => {
-    const matches = pattern.matchAll(/\{(\d+)\}/g);
-
-    for (const match of matches) {
-      const index = Number(match[1]);
+    for (const [, indexString] of pattern.matchAll(/\{(\d+)\}/g)) {
+      const index = Number(indexString);
 
       if (index >= sourceColumnIds.length) {
         ctx.addIssue({

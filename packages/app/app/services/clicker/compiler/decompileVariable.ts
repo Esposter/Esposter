@@ -5,10 +5,8 @@ import { VARIABLE_REGEX } from "@/services/clicker/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const decompileVariable = (string: string, clickerItemProperties: ClickerItemProperties) => {
-  const variableMatches = string.matchAll(VARIABLE_REGEX);
-
   let decompiledString = string;
-  for (const variableMatch of variableMatches) {
+  for (const variableMatch of string.matchAll(VARIABLE_REGEX)) {
     const property = variableMatch[1] as keyof ClickerItemProperties;
     const value = clickerItemProperties[property];
     if (typeof value !== "string")
