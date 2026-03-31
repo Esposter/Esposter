@@ -3,8 +3,7 @@ import type { ColumnStatKey } from "@/models/tableEditor/file/column/ColumnStatK
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { defineColumnStat } from "@/services/tableEditor/file/column/defineColumnStat";
-
-const formatNullable = (value: null | number | string) => (value === null ? "—" : String(value));
+import { formatNullable } from "@/util/formatNullable";
 
 export const ColumnStatDefinitionMap = {
   average: defineColumnStat({
@@ -17,14 +16,6 @@ export const ColumnStatDefinitionMap = {
     format: formatNullable,
     key: "average",
     title: "Average",
-  }),
-  emptyPercent: defineColumnStat({
-    applicableColumnTypes: [ColumnType.String, ColumnType.Date],
-    compute: ({ nullCount, values }) =>
-      values.length === 0 ? null : Math.round((nullCount / values.length) * 1000) / 10,
-    format: (value) => (value === null ? "—" : `${value}%`),
-    key: "emptyPercent",
-    title: "Empty %",
   }),
   falseCount: defineColumnStat({
     applicableColumnTypes: [ColumnType.Boolean],
@@ -77,6 +68,14 @@ export const ColumnStatDefinitionMap = {
     key: "nullCount",
     title: "Nulls",
   }),
+  nullPercent: defineColumnStat({
+    applicableColumnTypes: [ColumnType.Boolean, ColumnType.Date, ColumnType.Number, ColumnType.String],
+    compute: ({ nullCount, values }) =>
+      values.length === 0 ? null : Math.round((nullCount / values.length) * 1000) / 10,
+    format: (value) => (value === null ? "—" : `${value}%`),
+    key: "nullPercent",
+    title: "Null %",
+  }),
   standardDeviation: defineColumnStat({
     applicableColumnTypes: [ColumnType.Number],
     compute: ({ nonNullNumbers }) => {
@@ -89,6 +88,13 @@ export const ColumnStatDefinitionMap = {
     format: formatNullable,
     key: "standardDeviation",
     title: "Standard Deviation",
+  }),
+  sum: defineColumnStat({
+    applicableColumnTypes: [ColumnType.Number],
+    compute: ({ nonNullNumbers }) => Math.round(nonNullNumbers.reduce((acc, value) => acc + value, 0) * 100) / 100,
+    format: formatNullable,
+    key: "sum",
+    title: "Sum",
   }),
   trueCount: defineColumnStat({
     applicableColumnTypes: [ColumnType.Boolean],

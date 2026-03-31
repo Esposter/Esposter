@@ -2,10 +2,9 @@
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
 import { ColumnHeaders } from "@/services/tableEditor/file/column/ColumnHeaders";
-import { ColumnTypeColorMap } from "@/services/tableEditor/file/column/ColumnTypeColorMap";
+import { getEffectiveColumnColor } from "@/services/tableEditor/file/column/getEffectiveColumnColor";
 import { DRAG_HANDLE_CLASS } from "@/services/tableEditor/file/constants";
 import { useColumnStore } from "@/store/tableEditor/file/column";
-import { takeOne } from "@esposter/shared";
 import { VueDraggable } from "vue-draggable-plus";
 
 interface ColumnTableProps {
@@ -57,7 +56,7 @@ const dragColumns = computed({
           <TableEditorFileColumnItemSlot :column />
         </template>
         <template #[`item.type`]="{ item: column }">
-          <v-chip :color="takeOne(ColumnTypeColorMap, column.type)" label size="small">{{ column.type }}</v-chip>
+          <v-chip :color="getEffectiveColumnColor(column)" label size="small">{{ column.type }}</v-chip>
         </template>
         <template #[`item.actions`]="{ item: column }">
           <TableEditorFileColumnActionSlot :data-source :column />

@@ -1,5 +1,6 @@
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 import type { ColumnStatComputeContext } from "@/models/tableEditor/file/column/ColumnStatComputeContext";
+import type { ColumnStatKey } from "@/models/tableEditor/file/column/ColumnStatKey";
 import type { ColumnStats } from "@/models/tableEditor/file/column/ColumnStats";
 
 import { ColumnStatDefinitions } from "@/services/tableEditor/file/column/ColumnStatDefinitionMap";
@@ -16,14 +17,11 @@ export const computeColumnStats = (dataSource: DataSource): ColumnStats[] =>
       nullCount: values.filter((value) => value === null).length,
       values,
     };
-    return {
-      columnName: column.name,
-      columnType: column.type,
-      ...Object.fromEntries(
-        [...ColumnStatDefinitions].map(({ applicableColumnTypes, compute, key }) => [
-          key,
-          applicableColumnTypes.includes(column.type) ? compute(context) : null,
-        ]),
-      ),
-    } as ColumnStats;
+    const statValues = Object.fromEntries(
+      [...ColumnStatDefinitions].map(({ applicableColumnTypes, compute, key }) => [
+        key,
+        applicableColumnTypes.includes(column.type) ? compute(context) : null,
+      ]),
+    ) as Pick<ColumnStats, ColumnStatKey>;
+    return { columnName: column.name, columnType: column.type, ...statValues };
   });

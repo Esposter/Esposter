@@ -1,23 +1,33 @@
 <script setup lang="ts">
+import type { ColumnStatComputeContext } from "@/models/tableEditor/file/column/ColumnStatComputeContext";
+
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import { computeValue } from "@/services/tableEditor/file/column/computeValue";
+import { ColumnStatDefinitionMap } from "@/services/tableEditor/file/column/ColumnStatDefinitionMap";
 import { toColumnKey } from "@/services/tableEditor/file/column/toColumnKey";
 import { useColumnStore } from "@/store/tableEditor/file/column";
 import { useRowStore } from "@/store/tableEditor/file/row";
+import { takeOne } from "@esposter/shared";
 
 const columnStore = useColumnStore();
-const { columns, displayColumns } = storeToRefs(columnStore);
+const { displayColumns } = storeToRefs(columnStore);
 const rowStore = useRowStore();
 const { filteredRows, headers } = storeToRefs(rowStore);
 const columnSummaries = computed(() => {
   const result = new Map<string, string>();
   for (const column of displayColumns.value) {
     if (column.type !== ColumnType.Number) continue;
-    const sum = filteredRows.value.reduce((acc, row) => {
-      const value = computeValue(filteredRows.value, row, columns.value, column);
-      return typeof value === "number" ? acc + value : acc;
-    }, 0);
-    result.set(toColumnKey(column.name), `Σ ${Math.round(sum * 100) / 100}`);
+    const values = filteredRows.value.map((row) => takeOne(row.data, column.name));
+    const nonNullNumbers = values.filter((value): value is number => typeof value === "number");
+    const context: ColumnStatComputeContext = {
+      column,
+      nonNullBooleans: [],
+      nonNullNumbers,
+      nonNullStrings: [],
+      nullCount: values.filter((value) => value === null).length,
+      values,
+    };
+    const sumValue = ColumnStatDefinitionMap.sum.compute(context);
+    result.set(toColumnKey(column.name), `Σ ${ColumnStatDefinitionMap.sum.format(sumValue)}`);
   }
   return result;
 });
