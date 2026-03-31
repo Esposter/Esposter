@@ -19,7 +19,7 @@ export const stringPatternTransformationSchema = z
   })
   .refine(
     (data) => {
-      const indices = [...data.pattern.matchAll(/\{(\d+)\}/g)].map((match) => Number(match[1]));
+      const indices = data.pattern.matchAll(/\{(\d+)\}/g).map((match) => Number(match[1]));
       return indices.every((index) => index < data.sourceColumnIds.length);
     },
     { message: "{N} index out of range", path: ["pattern"] },
