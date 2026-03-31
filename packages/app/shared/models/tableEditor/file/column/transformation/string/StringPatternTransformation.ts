@@ -17,13 +17,21 @@ export const stringPatternTransformationSchema = z
     ...createSourceColumnIdsSchema().shape,
     pattern: z.string(),
   })
-  .refine(
-    (data) => {
-      const indices = data.pattern.matchAll(/\{(\d+)\}/g).map((match) => Number(match[1]));
-      return indices.every((index) => index < data.sourceColumnIds.length);
-    },
-    { message: "{N} index out of range", path: ["pattern"] },
-  )
+  .superRefine(({ pattern, sourceColumnIds }, ctx) => {
+    const matches = pattern.matchAll(/\{(\d+)\}/g);
+
+    for (const match of matches) {
+      const index = Number(match[1]);
+
+      if (index >= sourceColumnIds.length) {
+        ctx.addIssue({
+          code: "custom",
+          message: `{${index}} index out of range`,
+          path: ["pattern"],
+        });
+      }
+    }
+  })
   .meta({
     title: ColumnTransformationType.StringPattern,
   }) satisfies z.ZodType<StringPatternTransformation>;
