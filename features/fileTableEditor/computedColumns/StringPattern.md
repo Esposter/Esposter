@@ -1,8 +1,8 @@
-# StringPattern Transformation
+# StringPattern Transformation (`ColumnTransformationType.StringPattern`)
 
 ## Shape
 
-Extends `WithSourceColumnIds`.
+Extends `SourceColumnIds`.
 
 ```typescript
 { type: StringPattern, sourceColumnIds: string[], pattern: string }

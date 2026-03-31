@@ -1,6 +1,7 @@
 import type { FileEntity } from "@/models/azure/table/FileEntity";
 import type { LinkPreviewResponse } from "@/models/message/linkPreview/LinkPreviewResponse";
 import type { StandardMessageType } from "@/models/message/MessageType";
+import type { User } from "@/schema/users";
 import type { ItemEntityType, ToData } from "@esposter/shared";
 import type { Except } from "type-fest";
 
@@ -26,7 +27,7 @@ export class BaseMessageEntity<TType extends MessageType = StandardMessageType>
   isLoading?: true;
   isPinned?: true;
   linkPreviewResponse: LinkPreviewResponse | null = null;
-  mentions: string[] = [];
+  mentions: User["id"][] = [];
   message!: string;
   replyRowKey?: string;
   type = MessageType.Message as TType;
@@ -35,7 +36,8 @@ export class BaseMessageEntity<TType extends MessageType = StandardMessageType>
 export const baseMessageEntitySchema = z.object({
   ...createAzureEntitySchema(
     z.object({
-      partitionKey: selectRoomInMessageSchema.shape.id, // Reverse-ticked timestamp
+      // Reverse-ticked timestamp
+      partitionKey: selectRoomInMessageSchema.shape.id,
       rowKey: z.string(),
     }),
   ).shape,

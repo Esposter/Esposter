@@ -1,4 +1,5 @@
 import type { CompositeKeyEntity } from "@/models/azure/table/CompositeKeyEntity";
+import type { User } from "@/schema/users";
 import type { ToData } from "@esposter/shared";
 import type { Except } from "type-fest";
 
@@ -8,7 +9,7 @@ import { getPropertyNames } from "@esposter/shared";
 import { z } from "zod";
 
 export class StandardMessageEntity extends BaseMessageEntity {
-  userId!: string;
+  userId!: User["id"];
 
   constructor(init?: Partial<StandardMessageEntity> & ToData<CompositeKeyEntity>) {
     super();

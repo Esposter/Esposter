@@ -1,6 +1,7 @@
 import type { inferParser } from "@trpc/server/unstable-core-do-not-import";
 import type { z } from "zod";
 
+import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { uuidValidateV4 } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -13,16 +14,6 @@ export const getMemberProcedure = <T extends z.ZodType>(schema: T, roomIdKey: ke
     const value = input[roomIdKey];
     if (!(typeof value === "string" && uuidValidateV4(value))) throw new TRPCError({ code: "BAD_REQUEST" });
 
-    const isMember = await ctx.db.query.usersToRoomsInMessage.findFirst({
-      where: {
-        roomId: {
-          eq: value,
-        },
-        userId: {
-          eq: ctx.getSessionPayload.user.id,
-        },
-      },
-    });
-    if (!isMember) throw new TRPCError({ code: "UNAUTHORIZED" });
+    await isMember(ctx.db, ctx.getSessionPayload, value);
     return next();
   });

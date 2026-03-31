@@ -35,7 +35,7 @@ computeAggregationValue(
 ): ColumnValue
 ```
 
-The aggregation resolver is registered in `ColumnTransformationResolveMap` under `ColumnTransformationType.Aggregation`. `ResolveContext` carries optional `rows?: Row[]` and `rowIndex?: number` so `resolveValue` can pass dataset context through to the aggregation resolver.
+The aggregation resolver is registered in `ColumnTransformationComputeMap` under `ColumnTransformationType.Aggregation`. `ComputeContext` carries optional `rows?: Row[]` and `rowIndex?: number` so `computeValue` can pass dataset context through to the aggregation resolver.
 
 ---
 

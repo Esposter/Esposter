@@ -10,7 +10,8 @@ ColumnTransformationType
 ├── ConvertTo        — type coercion: string → Number | Boolean | Date | String
 ├── DatePart         — extract a calendar field (Year, Month, Day, Weekday, Hour, Minute)
 ├── RegexMatch       — regex capture group extraction from a string value
-├── Math              — math expressions via mathjs (see Math.md)
+├── Math             — math expressions via mathjs (see Math.md)
+├── String           — single-column basic string transformations (Lowercase, TitleCase, Trim, Uppercase)
 └── StringPattern    — multi-column string templating via positional pattern (see StringPattern.md)
 ```
 
@@ -79,6 +80,25 @@ Extends `SourceColumnId`.
 See [`Math.md`](./Math.md) for full design rationale and expression syntax.
 
 Does **not** extend `SourceColumnId` — sources are mapped via `variables`.
+
+---
+
+## `String`
+
+Extends `SourceColumnId`. Restricted to string-typed source columns.
+
+```typescript
+{ type: String, sourceColumnId: string, stringTransformationType: StringTransformationType }
+
+enum StringTransformationType {
+  Lowercase,
+  TitleCase,
+  Trim,
+  Uppercase,
+}
+```
+
+Single-column operation — the value is coerced to `String` before transformation.
 
 ---
 

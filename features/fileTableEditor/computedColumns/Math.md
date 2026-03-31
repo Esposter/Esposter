@@ -98,29 +98,3 @@ The form has two fields:
 1. **Expression** — `z.string()` plain text input. Users do not type variable names by hand; they use an "Insert Column" button (rendered outside vjsf or as a custom `comp`) that appends `col0`, `col1`, etc. at the cursor. The next variable name to insert is always `col${variables.length}` before the new variable is added. Expression syntax errors surface live via the error icon.
 
 2. **Variables** — `z.array(...)` of `{ name, sourceColumnId }`. Rendered as an ordered list; each row shows the auto-generated name (`col0`, `col1`, …) as a read-only label and a `sourceColumnId` column selector restricted to `context.numberColumnItems`. Adding a variable appends `{ name: "colN", sourceColumnId: "" }` and inserts `colN` into the expression at the cursor. Removing a variable is not supported after insertion (the name stays in the expression); reordering is also not needed since names are stable.
-
----
-
-## Files to Remove
-
-Once implemented, delete all of:
-
-- `shared/models/tableEditor/file/column/transformation/BinaryMathOperationType.ts`
-- `shared/models/tableEditor/file/column/transformation/BinaryMathStep.ts`
-- `shared/models/tableEditor/file/column/transformation/UnaryMathOperationType.ts`
-- `shared/models/tableEditor/file/column/transformation/UnaryMathStep.ts`
-- `shared/models/tableEditor/file/column/transformation/MathStep.ts`
-- `shared/models/tableEditor/file/column/transformation/MathStepType.ts`
-- `shared/models/tableEditor/file/column/transformation/MathOperand.ts`
-- `shared/models/tableEditor/file/column/transformation/MathOperandType.ts`
-- `shared/models/tableEditor/file/column/transformation/ColumnMathOperand.ts`
-- `shared/models/tableEditor/file/column/transformation/ConstantMathOperand.ts`
-- `app/services/tableEditor/file/column/transformation/computeMathTransformation.ts` (and its test)
-
-And rewrite `MathTransformation.ts` to just the new shape.
-
----
-
-## Migration
-
-No migration needed — not deployed to production. Delete the old shape outright and implement the new architecture clean.
