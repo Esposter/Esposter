@@ -72,44 +72,6 @@ describe("columnFormSchema", () => {
                 "title": "Description",
                 "type": "string",
               },
-              "format": {
-                "oneOf": [
-                  {
-                    "enum": [
-                      "OneZero",
-                      "TrueFalse",
-                      "YesNo",
-                    ],
-                    "type": "string",
-                  },
-                  {
-                    "enum": [
-                      "D/M/YYYY",
-                      "DD/MM/YYYY",
-                      "M/D/YYYY",
-                      "MM/DD/YYYY",
-                      "YYYY/MM/DD",
-                      "DD-MM-YYYY",
-                      "MM-DD-YYYY",
-                      "YYYY-MM-DD",
-                      "YYYY-MM-DDTHH:mm:ss",
-                      "YYYY-MM-DDTHH:mm:ssZ",
-                    ],
-                    "type": "string",
-                  },
-                  {
-                    "enum": [
-                      "Compact",
-                      "Currency",
-                      "Percentage",
-                      "Plain",
-                      "Scientific",
-                    ],
-                    "type": "string",
-                  },
-                ],
-                "title": "Format",
-              },
               "name": {
                 "errorMessage": {
                   "uniqueColumnName": "Column already exists",
@@ -136,6 +98,10 @@ describe("columnFormSchema", () => {
                     "properties": {
                       "aggregationTransformationType": {
                         "enum": [
+                          "Average",
+                          "Count",
+                          "Maximum",
+                          "Minimum",
                           "PercentOfTotal",
                           "Rank",
                           "RunningSum",
@@ -357,6 +323,43 @@ describe("columnFormSchema", () => {
                       "pattern",
                     ],
                     "title": "String Pattern",
+                    "type": "object",
+                  },
+                  {
+                    "additionalProperties": false,
+                    "properties": {
+                      "delimiter": {
+                        "title": "Delimiter",
+                        "type": "string",
+                      },
+                      "segmentIndex": {
+                        "maximum": 9007199254740991,
+                        "minimum": 0,
+                        "title": "Segment Index",
+                        "type": "integer",
+                      },
+                      "sourceColumnId": {
+                        "layout": {
+                          "comp": "select",
+                          "getItems": "context.stringColumnItems",
+                        },
+                        "title": "Source Column",
+                        "type": "string",
+                      },
+                      "type": {
+                        "const": "StringSplit",
+                        "readOnly": true,
+                        "title": "Type",
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "type",
+                      "sourceColumnId",
+                      "delimiter",
+                      "segmentIndex",
+                    ],
+                    "title": "String Split",
                     "type": "object",
                   },
                   {
