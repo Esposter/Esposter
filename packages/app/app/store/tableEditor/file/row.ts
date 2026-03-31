@@ -39,7 +39,7 @@ export const useRowStore = defineStore("tableEditor/file/row", () => {
     })),
     { key: "actions", sortable: false, title: "Actions" },
   ]);
-  const tableHeaders = computed(() => headers.value.filter((header) => header.key !== "data-table-select"));
+  const tableHeaders = computed(() => headers.value.filter(({ key }) => key !== "data-table-select"));
 
   watchDeep(
     () => filterStore.columnFilters,
