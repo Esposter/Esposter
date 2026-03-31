@@ -129,7 +129,7 @@ export const userRouter = router({
         .insert(userStatuses)
         .values({ ...input, userId: ctx.getSessionPayload.user.id })
         .onConflictDoUpdate({
-          set: { ...input },
+          set: input,
           target: userStatuses.userId,
         })
         .returning()
