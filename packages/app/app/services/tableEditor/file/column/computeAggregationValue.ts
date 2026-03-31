@@ -15,6 +15,22 @@ interface AggregationComputeContext {
 type AggregationTransformationComputer = (context: AggregationComputeContext) => ColumnValue;
 
 const AggregationTransformationComputeMap = {
+  [AggregationTransformationType.Average]: ({ getNumber, rows }) => {
+    const nonNullValues = rows.map((row) => getNumber(row)).filter((value) => value !== null);
+    if (nonNullValues.length === 0) return null;
+    return nonNullValues.reduce((sum, value) => sum + value, 0) / nonNullValues.length;
+  },
+  [AggregationTransformationType.Count]: ({ getNumber, rows }) => rows.filter((row) => getNumber(row) !== null).length,
+  [AggregationTransformationType.Max]: ({ getNumber, rows }) => {
+    const nonNullValues = rows.map((row) => getNumber(row)).filter((value) => value !== null);
+    if (nonNullValues.length === 0) return null;
+    return Math.max(...nonNullValues);
+  },
+  [AggregationTransformationType.Min]: ({ getNumber, rows }) => {
+    const nonNullValues = rows.map((row) => getNumber(row)).filter((value) => value !== null);
+    if (nonNullValues.length === 0) return null;
+    return Math.min(...nonNullValues);
+  },
   [AggregationTransformationType.PercentOfTotal]: ({ getNumber, rowIndex, rows }) => {
     const currentValue = getNumber(takeOne(rows, rowIndex));
     if (currentValue === null) return null;

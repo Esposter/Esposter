@@ -10,6 +10,7 @@ import { computeConvertToTransformation } from "@/services/tableEditor/file/colu
 import { computeDatePartTransformation } from "@/services/tableEditor/file/column/transformation/computeDatePartTransformation";
 import { computeMathTransformation } from "@/services/tableEditor/file/column/transformation/computeMathTransformation";
 import { computeRegexMatchTransformation } from "@/services/tableEditor/file/column/transformation/computeRegexMatchTransformation";
+import { computeSplitTransformation } from "@/services/tableEditor/file/column/transformation/string/computeSplitTransformation";
 import { computeStringPatternTransformation } from "@/services/tableEditor/file/column/transformation/string/computeStringPatternTransformation";
 import { computeStringTransformation } from "@/services/tableEditor/file/column/transformation/string/computeStringTransformation";
 
@@ -53,6 +54,11 @@ export const ColumnTransformationComputeMap = {
   [ColumnTransformationType.StringPattern]: (transformation, { computeSource }) => {
     const values = transformation.sourceColumnIds.map(computeSource);
     return computeStringPatternTransformation(values, transformation.pattern);
+  },
+  [ColumnTransformationType.StringSplit]: (transformation, { computeSource }) => {
+    const value = computeSource(transformation.sourceColumnId);
+    if (value === null) return null;
+    return computeSplitTransformation(String(value), transformation.delimiter, transformation.segmentIndex);
   },
 } as const satisfies {
   [K in ColumnTransformationType]: TransformationComputer<Extract<ColumnTransformation, { type: K }>>;

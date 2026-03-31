@@ -1,6 +1,10 @@
 import { z } from "zod";
 
 export enum AggregationTransformationType {
+  Average = "Average",
+  Count = "Count",
+  Max = "Max",
+  Min = "Min",
   PercentOfTotal = "PercentOfTotal",
   Rank = "Rank",
   RunningSum = "RunningSum",
