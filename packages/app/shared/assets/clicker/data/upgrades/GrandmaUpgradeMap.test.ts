@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { GrandmaUpgrades } from "#shared/assets/clicker/data/upgrades/GrandmaUpgradeMap";
 import { describe, expect, test } from "vitest";
 

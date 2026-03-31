@@ -1,3 +1,4 @@
+// @vitest-environment node
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { User } from "@esposter/db-schema";
 import type { BinaryOperator as DrizzleBinaryOperator } from "drizzle-orm";

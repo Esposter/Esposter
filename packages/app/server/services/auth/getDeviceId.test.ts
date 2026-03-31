@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { getDeviceId } from "@@/server/services/auth/getDeviceId";
 import { ID_SEPARATOR } from "@esposter/shared";
 import { describe, expect, test } from "vitest";

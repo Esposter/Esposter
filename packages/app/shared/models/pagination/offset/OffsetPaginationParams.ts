@@ -10,10 +10,10 @@ export interface OffsetPaginationParams<T extends string> extends BasePagination
 
 export const createOffsetPaginationParamsSchema = <T extends z.ZodType<string>>(
   sortKeySchema: T,
-  minSortBy = 0,
+  minimumSortBy = 0,
   defaultSortBy: SortItem<z.output<T>>[] = [],
 ) =>
   z.object({
-    ...createBasePaginationParamsSchema(sortKeySchema, minSortBy, defaultSortBy).shape,
+    ...createBasePaginationParamsSchema(sortKeySchema, minimumSortBy, defaultSortBy).shape,
     offset: z.int().nonnegative().default(0),
   });

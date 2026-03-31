@@ -21,12 +21,12 @@ const AggregationTransformationComputeMap = {
     return nonNullValues.reduce((sum, value) => sum + value, 0) / nonNullValues.length;
   },
   [AggregationTransformationType.Count]: ({ getNumber, rows }) => rows.filter((row) => getNumber(row) !== null).length,
-  [AggregationTransformationType.Max]: ({ getNumber, rows }) => {
+  [AggregationTransformationType.Maximum]: ({ getNumber, rows }) => {
     const nonNullValues = rows.map((row) => getNumber(row)).filter((value) => value !== null);
     if (nonNullValues.length === 0) return null;
     return Math.max(...nonNullValues);
   },
-  [AggregationTransformationType.Min]: ({ getNumber, rows }) => {
+  [AggregationTransformationType.Minimum]: ({ getNumber, rows }) => {
     const nonNullValues = rows.map((row) => getNumber(row)).filter((value) => value !== null);
     if (nonNullValues.length === 0) return null;
     return Math.min(...nonNullValues);

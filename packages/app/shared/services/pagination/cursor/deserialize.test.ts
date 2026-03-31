@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { deserialize } from "#shared/services/pagination/cursor/deserialize";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
