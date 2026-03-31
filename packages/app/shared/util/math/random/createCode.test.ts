@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { CHARACTERS, createCode } from "#shared/util/math/random/createCode";
 import { describe, expect, test } from "vitest";
 

@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
 import { users } from "@esposter/db-schema";

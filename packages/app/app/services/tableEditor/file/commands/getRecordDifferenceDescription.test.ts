@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { getRecordDifferenceDescription } from "@/services/tableEditor/file/commands/getRecordDifferenceDescription";
 import { describe, expect, test } from "vitest";
 

@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { AItemEntity } from "#shared/models/entity/AItemEntity";
 import { getOffsetPaginationData } from "@@/server/services/pagination/offset/getOffsetPaginationData";
 import { describe, expect, test } from "vitest";

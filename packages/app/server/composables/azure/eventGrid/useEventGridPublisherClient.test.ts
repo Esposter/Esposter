@@ -1,3 +1,4 @@
+// @vitest-environment node
 import type { useEventGridPublisherClient } from "@@/server/composables/azure/eventGrid/useEventGridPublisherClient";
 import type { EventGridPublisherClient } from "@azure/eventgrid";
 

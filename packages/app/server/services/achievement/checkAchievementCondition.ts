@@ -54,10 +54,10 @@ export const checkAchievementCondition = (
     }
     // oxlint-disable-next-line no-fallthrough
     case AchievementConditionType.Time: {
-      const { max, min, referenceUnit, unit } = condition;
+      const { maximum, minimum, referenceUnit, unit } = condition;
       const now = dayjs();
       const value = now.diff(now.startOf(referenceUnit), unit);
-      return value >= min && value < max;
+      return value >= minimum && value < maximum;
     }
   }
 };

@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { describe, expect, test } from "vitest";
 

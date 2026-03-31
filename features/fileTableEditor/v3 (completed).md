@@ -1,6 +1,6 @@
 # File Table Editor — Feature Roadmap v3
 
-Architecture details in `v3-architecture.md`.
+Architecture details in `computedColumns/overview.md`.
 
 ## Computed Columns — Extensions
 

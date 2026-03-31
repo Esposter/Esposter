@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { createRandomInteger } from "#shared/util/math/random/createRandomInteger";
 import { describe, expect, test } from "vitest";
 

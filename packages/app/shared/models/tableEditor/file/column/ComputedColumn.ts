@@ -1,18 +1,13 @@
-import type { ColumnFormat } from "#shared/models/tableEditor/file/column/ColumnFormat";
-import type { Format } from "#shared/models/tableEditor/file/column/Format";
 import type { ColumnTransformation } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformation";
 import type { ToData } from "@esposter/shared";
 
 import { AColumn, createAColumnSchema } from "#shared/models/tableEditor/file/column/AColumn";
-import { columnFormatSchema } from "#shared/models/tableEditor/file/column/ColumnFormat";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import { createFormatSchema } from "#shared/models/tableEditor/file/column/Format";
 import { columnTransformationSchema } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformation";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import { z } from "zod";
 
-export class ComputedColumn extends AColumn<ColumnType.Computed> implements Partial<Format<ColumnFormat>> {
-  format?: ColumnFormat;
+export class ComputedColumn extends AColumn<ColumnType.Computed> {
   transformation: ColumnTransformation = {
     sourceColumnId: "",
     targetType: ColumnType.String,
@@ -28,6 +23,5 @@ export class ComputedColumn extends AColumn<ColumnType.Computed> implements Part
 
 export const computedColumnSchema = z.object({
   ...createAColumnSchema(z.literal(ColumnType.Computed)).shape,
-  format: createFormatSchema(columnFormatSchema.optional()),
   transformation: columnTransformationSchema,
 }) satisfies z.ZodType<ToData<ComputedColumn>>;

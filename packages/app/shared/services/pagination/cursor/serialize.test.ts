@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { describe, expect, test } from "vitest";
 

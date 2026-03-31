@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { Buildings } from "#shared/assets/clicker/data/BuildingMap";
 import { describe, expect, test } from "vitest";
 

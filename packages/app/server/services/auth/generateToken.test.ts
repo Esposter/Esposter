@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { generateToken } from "@@/server/services/auth/generateToken";
 import { describe, expect, test } from "vitest";
 
