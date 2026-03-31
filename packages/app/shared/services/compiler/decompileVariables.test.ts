@@ -30,6 +30,6 @@ describe(decompileVariables, () => {
 
   test("substitutes a repeated variable consistently", () => {
     expect.hasAssertions();
-    expect(decompileVariables("{0} {0}", { "0": " " })).toBe("  ");
+    expect(decompileVariables("{0} {0}", { "0": " " })).toBe("   ");
   });
 });

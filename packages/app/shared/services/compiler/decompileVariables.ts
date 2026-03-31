@@ -6,6 +6,8 @@ export const decompileVariables = (
   context: Record<string, unknown>,
   delimiter: Delimiter = Delimiter.CurlyBraces,
 ): string =>
-  string.replaceAll(DelimiterRegexMap[delimiter], (_, key: keyof typeof context) =>
-    context[key] !== null && context[key] !== undefined ? String(context[key]) : "",
-  );
+  string.replaceAll(DelimiterRegexMap[delimiter], (_, key: string) => {
+    if (!Object.prototype.hasOwnProperty.call(context, key)) return "";
+    const value = context[key];
+    return value !== null && value !== undefined ? String(value) : "";
+  });
