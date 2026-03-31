@@ -1,7 +1,6 @@
-import type { Column } from "#shared/models/tableEditor/file/column/Column";
+import type { ColumnTransformationComputeContext } from "@/models/tableEditor/file/column/transformation/ColumnTransformationComputeContext";
 import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
 import type { ColumnTransformation } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformation";
-import type { Row } from "#shared/models/tableEditor/file/datasource/Row";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
@@ -14,16 +13,9 @@ import { computeSplitTransformation } from "@/services/tableEditor/file/column/t
 import { computeStringPatternTransformation } from "@/services/tableEditor/file/column/transformation/string/computeStringPatternTransformation";
 import { computeStringTransformation } from "@/services/tableEditor/file/column/transformation/string/computeStringTransformation";
 
-export interface ComputeContext {
-  computeSource: (sourceColumnId: string) => ColumnValue;
-  findSource: (sourceColumnId: string) => Column | undefined;
-  rowIndex?: number;
-  rows?: Row[];
-}
-
 type TransformationComputer<T extends ColumnTransformation> = (
   transformation: T,
-  context: ComputeContext,
+  context: ColumnTransformationComputeContext,
 ) => ColumnValue;
 
 export const ColumnTransformationComputeMap = {

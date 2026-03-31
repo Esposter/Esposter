@@ -22,7 +22,6 @@ export const stringPatternTransformationSchema = z
   .superRefine(({ pattern, sourceColumnIds }, ctx) => {
     for (const [, indexString] of pattern.matchAll(DelimiterRegexMap[Delimiter.CurlyBraces])) {
       const index = Number(indexString);
-
       if (index >= sourceColumnIds.length)
         ctx.addIssue({
           code: "custom",
