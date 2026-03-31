@@ -90,7 +90,7 @@ A well-engineered, TypeScript-strict monorepo with consistent architectural patt
 - `unsafe-eval` in CSP required by Desmos graphing library — unavoidable, documented
 - `unsafe-inline` required by Vuetify style injection and Nuxt hydration — unavoidable
 - `xssValidator: false` due to tRPC-Nuxt issue #215 — track resolution upstream
-- No visible CSRF token validation in tRPC handlers (Nuxt Security module likely covers this, but worth confirming)
+- No CSRF protection configured — `nuxt-security` v2 requires explicit `csrf: { enabled: true }` opt-in (not set in `configuration/security.ts`); tRPC's JSON content-type blocks HTML-form CSRF but not fetch-based attacks if CORS is permissive
 
 ---
 
@@ -125,7 +125,6 @@ The `eslint-plugin-depend` is configured and will surface issues here over time.
 
 **Gaps**
 
-- No dependency caching visible in the CI workflow (pnpm store cache would significantly speed up install step)
 - No parallelisation between lint, typecheck, and test jobs — they run sequentially
 - No coverage reporting or coverage thresholds enforced
 
@@ -157,7 +156,7 @@ The `eslint-plugin-depend` is configured and will surface issues here over time.
 | TypeScript Strictness       | 14/15      | skipLibCheck, one unchecked cast                   |
 | Code Quality & Patterns     | 13/15      | formatNullable util, if/else in chart data         |
 | Testing                     | 7/10       | Composable coverage gaps, no azure-functions tests |
-| Security                    | 8/10       | xssValidator off, no CSRF confirmation             |
+| Security                    | 8/10       | xssValidator off, CSRF not configured              |
 | Dependencies                | 6/10       | 5+ beta/RC packages in production paths            |
 | CI / CD                     | 8/10       | No caching, sequential jobs                        |
 | Bundle & Performance        | 6/10       | Large footprint, no size budgets                   |
