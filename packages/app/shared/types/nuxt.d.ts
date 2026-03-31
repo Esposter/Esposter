@@ -4,8 +4,9 @@ import type { PwaModuleOptions } from "@vite-pwa/nuxt";
 /// <reference types="nitropack/types" />
 import type { LogObject } from "consola";
 import type { H3Event } from "h3";
+import type { ModuleOptions as OgImageModuleOptions } from "nuxt-og-image";
 import type { NuxtSecurityRouteRules, ModuleOptions as SecurityModuleOptions } from "nuxt-security";
-import type { ModuleOptions } from "nuxt-site-config";
+import type { ModuleOptions as SiteModuleOptions } from "nuxt-site-config";
 import type { NuxtIslandContext, NuxtIslandResponse, NuxtRenderHTMLContext } from "nuxt/app";
 import type { DefineNuxtConfig } from "nuxt/config";
 
@@ -66,9 +67,10 @@ declare module "nitropack/types" {
 
 declare module "nuxt/schema" {
   interface NuxtConfig {
+    ogImage?: Partial<OgImageModuleOptions>;
     pwa?: PwaModuleOptions;
     security?: Partial<SecurityModuleOptions>;
-    site?: Partial<ModuleOptions>;
+    site?: Partial<SiteModuleOptions>;
     unocss?: UnocssNuxtOptions;
     vuetify?: VuetifyModuleOptions;
   }
