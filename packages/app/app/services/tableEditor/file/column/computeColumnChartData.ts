@@ -9,8 +9,16 @@ export interface ColumnChartData {
   type: NonNullable<ApexOptions["chart"]>["type"];
 }
 
-export const computeColumnChartData = (columnStats: ColumnStats): ColumnChartData | null => {
-  if (columnStats.columnType === ColumnType.Number) {
+const ColumnChartDataMap: Partial<Record<ColumnType, (stats: ColumnStats) => ColumnChartData | null>> = {
+  [ColumnType.Boolean]: (columnStats) => ({
+    options: {
+      chart: { toolbar: { show: false } },
+      labels: ["True", "False", "Null"],
+    },
+    series: [columnStats.trueCount ?? 0, columnStats.falseCount ?? 0, columnStats.nullCount],
+    type: "pie",
+  }),
+  [ColumnType.Number]: (columnStats) => {
     if (columnStats.minimum === null || columnStats.average === null || columnStats.maximum === null) return null;
     return {
       options: {
@@ -21,16 +29,10 @@ export const computeColumnChartData = (columnStats: ColumnStats): ColumnChartDat
       series: [{ data: [columnStats.minimum, columnStats.average, columnStats.maximum], name: columnStats.columnName }],
       type: "bar",
     };
-  }
+  },
+};
 
-  if (columnStats.columnType === ColumnType.Boolean)
-    return {
-      options: {
-        chart: { toolbar: { show: false } },
-        labels: ["True", "False", "Null"],
-      },
-      series: [columnStats.trueCount ?? 0, columnStats.falseCount ?? 0, columnStats.nullCount],
-      type: "pie",
-    };
-  return null;
+export const computeColumnChartData = (columnStats: ColumnStats): ColumnChartData | null => {
+  const compute = ColumnChartDataMap[columnStats.columnType];
+  return compute ? compute(columnStats) : null;
 };

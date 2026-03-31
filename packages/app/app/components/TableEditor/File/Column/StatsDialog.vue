@@ -1,20 +1,13 @@
 <script setup lang="ts">
-import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 import type { ColumnStats } from "@/models/tableEditor/file/column/ColumnStats";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ColumnStatDefinitions } from "@/services/tableEditor/file/column/ColumnStatDefinitionMap";
-import { computeColumnStats } from "@/services/tableEditor/file/column/computeColumnStats";
-import { useTableEditorStore } from "@/store/tableEditor";
 
 const isOpen = defineModel<boolean>();
-const tableEditorStore = useTableEditorStore<DataSourceItem>();
-const { editedItem } = storeToRefs(tableEditorStore);
+const columnStats = useColumnStats();
 const isChartOpen = ref(false);
 const selectedStats = ref<ColumnStats | null>(null);
-const columnStats = computed<ColumnStats[]>(() =>
-  editedItem.value?.dataSource ? computeColumnStats(editedItem.value.dataSource) : [],
-);
 const headers = [
   { key: "chart", sortable: false, title: "" },
   { key: "columnName", sortable: false, title: "Column" },
