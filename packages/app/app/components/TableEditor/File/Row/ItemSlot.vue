@@ -73,9 +73,9 @@ const navigateTo = (targetRowIndex: number, targetColumnName: string) => {
 const onTab = (event: KeyboardEvent) => {
   const currentIndex = editableColumns.value.findIndex(({ name }) => name === column.name);
   if (currentIndex === -1) return;
-  event.preventDefault();
   const nextIndex = event.shiftKey ? currentIndex - 1 : currentIndex + 1;
   if (nextIndex < 0 || nextIndex >= editableColumns.value.length) return;
+  event.preventDefault();
   navigateTo(rowIndex, takeOne(editableColumns.value, nextIndex).name);
 };
 </script>

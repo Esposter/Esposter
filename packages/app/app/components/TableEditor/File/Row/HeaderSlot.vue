@@ -22,11 +22,6 @@ const { columnFilters } = storeToRefs(filterStore);
 <template>
   <div flex flex-col @click.stop>
     <div class="group" flex cursor-pointer select-none items-center gap-1 @click="toggleSort(headerColumn)">
-      <v-tooltip v-if="column.description" :text="column.description">
-        <template #activator="{ props }">
-          <v-icon icon="mdi-information-outline" size="small" :="props" />
-        </template>
-      </v-tooltip>
       <span>{{ column.name }}</span>
       <v-icon
         transition-opacity

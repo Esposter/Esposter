@@ -9,5 +9,12 @@ const { column } = defineProps<ColumnItemSlotProps>();
 </script>
 
 <template>
-  <span>{{ column.name }}</span>
+  <div flex items-center gap-1>
+    <span>{{ column.name }}</span>
+    <v-tooltip v-if="column.description" :text="column.description">
+      <template #activator="{ props }">
+        <v-icon icon="mdi-information-outline" size="small" :="props" />
+      </template>
+    </v-tooltip>
+  </div>
 </template>
