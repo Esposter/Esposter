@@ -1,6 +1,6 @@
 # Esposter — Repository Score
 
-**Overall: 83 / 100**
+**Overall: 84 / 100**
 
 A well-engineered, TypeScript-strict monorepo with consistent architectural patterns and comprehensive linting. The main drag is beta/RC dependencies in production paths and uneven test coverage at the composable layer.
 
@@ -112,7 +112,7 @@ The `eslint-plugin-depend` is configured and will surface issues here over time.
 **Gaps**
 
 - No parallelisation between lint, typecheck, and test jobs — they run sequentially
-- No coverage reporting or coverage thresholds enforced
+- No coverage thresholds enforced (reporting added via `pnpm coverage` + artifact upload)
 
 ---
 
@@ -144,6 +144,6 @@ The `eslint-plugin-depend` is configured and will surface issues here over time.
 | Testing                     | 8/10       | No azure-functions tests; sparse store unit tests |
 | Security                    | 8/10       | xssValidator off, CSRF not configured             |
 | Dependencies                | 6/10       | 5+ beta/RC packages in production paths           |
-| CI / CD                     | 8/10       | No caching, sequential jobs                       |
+| CI / CD                     | 9/10       | Sequential jobs; coverage thresholds optional     |
 | Bundle & Performance        | 6/10       | Large footprint, no size budgets                  |
 | **Total**                   | **83/100** |                                                   |

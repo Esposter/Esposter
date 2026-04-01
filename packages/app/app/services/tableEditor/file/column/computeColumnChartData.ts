@@ -2,7 +2,6 @@ import type { ColumnStatistics } from "#shared/models/tableEditor/file/column/Co
 import type { ApexAxisChartSeries, ApexNonAxisChartSeries, ApexOptions } from "apexcharts";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import { dayjs } from "#shared/services/dayjs";
 
 export interface ColumnChartData {
   options: ApexOptions;
@@ -21,18 +20,17 @@ const ColumnChartDataMap: Partial<Record<ColumnType, (statistics: ColumnStatisti
   }),
   [ColumnType.Date]: (columnStatistics) => {
     if (!columnStatistics.topFrequencies?.length) return null;
-    const monthCounts = new Map<string, number>();
-    for (const [value, count] of columnStatistics.topFrequencies) {
-      const month = dayjs(value).format("YYYY-MM");
-      monthCounts.set(month, (monthCounts.get(month) ?? 0) + count);
-    }
-    const sortedMonths = [...monthCounts.keys()].toSorted();
     return {
       options: {
         chart: { toolbar: { show: false } },
-        xaxis: { categories: sortedMonths },
+        xaxis: { categories: columnStatistics.topFrequencies.map(([month]) => month) },
       },
-      series: [{ data: sortedMonths.map((month) => monthCounts.get(month) ?? 0), name: columnStatistics.columnName }],
+      series: [
+        {
+          data: columnStatistics.topFrequencies.map(([, count]) => count),
+          name: columnStatistics.columnName,
+        },
+      ],
       type: "bar",
     };
   },

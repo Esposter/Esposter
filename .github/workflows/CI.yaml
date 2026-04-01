@@ -31,4 +31,10 @@ jobs:
         run: pnpm typecheck
 
       - name: 🧪 Test
-        run: pnpm test
+        run: pnpm coverage
+
+      - name: 📊 Upload Coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: packages/app/coverage

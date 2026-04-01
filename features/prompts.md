@@ -1,2 +1,0 @@
-- computed column data actually needs to be persisted when exported
-- fix and refactor editable field and don't need use table cell navigation

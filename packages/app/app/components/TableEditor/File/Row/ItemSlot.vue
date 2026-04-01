@@ -5,8 +5,8 @@ import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnV
 import { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import { computeValue } from "@/services/tableEditor/file/column/computeValue";
 import { isEditableColumnValue } from "@/services/tableEditor/file/column/isEditableColumnValue";
-import { OUTLIER_HIGHLIGHT_CLASS } from "@/services/tableEditor/file/constants";
 import { getItemId } from "@/services/tableEditor/file/getItemId";
+import { useCellStore } from "@/store/tableEditor/file/cell";
 import { useFindReplaceStore } from "@/store/tableEditor/file/findReplace";
 import { useOutlierStore } from "@/store/tableEditor/file/outlier";
 import { takeOne, toRawDeep } from "@esposter/shared";
@@ -25,9 +25,10 @@ const { currentOccurrenceIndex, findValue, occurrences } = storeToRefs(findRepla
 const outlierStore = useOutlierStore();
 const { outlierCells } = storeToRefs(outlierStore);
 const updateRow = useUpdateRow();
-const { clearFocus, pendingFocusCell, requestFocus } = useTableCellNavigation();
+const cellStore = useCellStore();
+const { pendingFocusCell } = storeToRefs(cellStore);
+const { clearFocus } = cellStore;
 const editableColumn = computed(() => (isEditableColumnValue(column) ? column : null));
-const editableColumns = computed(() => columns.filter((column) => isEditableColumnValue(column)));
 const currentOccurrence = computed(() => occurrences.value.at(currentOccurrenceIndex.value));
 const text = computed(() => {
   const value = computeValue(rows, item, columns, column, rowIndex);
@@ -46,7 +47,7 @@ const startEditing = () => {
   isEditing.value = true;
 };
 
-const commitEdit = () => {
+const submitEdit = () => {
   if (!isEditing.value) return;
   isEditing.value = false;
   if (localValue.value === (takeOne(item.data, column.name) ?? null)) return;
@@ -64,42 +65,18 @@ watch(pendingFocusCell, (newPendingFocusCell) => {
   clearFocus();
   startEditing();
 });
-
-const navigateTo = (targetRowIndex: number, targetColumnName: string) => {
-  commitEdit();
-  requestFocus(targetRowIndex, targetColumnName);
-};
-
-const onTab = (event: KeyboardEvent) => {
-  const currentIndex = editableColumns.value.findIndex(({ name }) => name === column.name);
-  if (currentIndex === -1) return;
-  const nextIndex = event.shiftKey ? currentIndex - 1 : currentIndex + 1;
-  if (nextIndex < 0 || nextIndex >= editableColumns.value.length) return;
-  event.preventDefault();
-  navigateTo(rowIndex, takeOne(editableColumns.value, nextIndex).name);
-};
 </script>
 
 <template>
-  <div
+  <TableEditorFileRowFieldEditable
     v-if="isEditing && editableColumn"
-    @blur.capture="commitEdit"
-    @keydown.arrow-down.stop="rowIndex + 1 < rows.length && navigateTo(rowIndex + 1, column.name)"
-    @keydown.arrow-up.stop="rowIndex - 1 >= 0 && navigateTo(rowIndex - 1, column.name)"
-    @keydown.enter.stop="!$event.isComposing && commitEdit()"
-    @keydown.esc.stop="cancelEdit"
-    @keydown.tab.stop="onTab($event)"
-  >
-    <TableEditorFileRowFieldInput v-model="localValue" :column="editableColumn" autofocus hide-details inline />
-  </div>
-  <div v-else @dblclick.stop="startEditing">
-    <TableEditorFileFindReplaceHighlight
-      v-if="findValue"
-      :class="{ [OUTLIER_HIGHLIGHT_CLASS]: isOutlier }"
-      :is-current-occurrence
-      :search="findValue"
-      :text
-    />
-    <TableEditorFileRowOutlierHighlight v-else :is-outlier :text />
-  </div>
+    v-model="localValue"
+    :column="editableColumn"
+    :columns
+    :row-index
+    :rows
+    @cancel="cancelEdit"
+    @submit="submitEdit"
+  />
+  <TableEditorFileRowField v-else :find-value :is-current-occurrence :is-outlier :text @edit="startEditing()" />
 </template>
