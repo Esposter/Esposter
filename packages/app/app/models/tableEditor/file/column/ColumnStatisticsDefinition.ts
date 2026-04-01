@@ -3,8 +3,9 @@ import type { ColumnStatistics } from "@/models/tableEditor/file/column/ColumnSt
 import type { ColumnStatisticsComputeContext } from "@/models/tableEditor/file/column/ColumnStatisticsComputeContext";
 import type { ColumnStatisticsKey } from "@/models/tableEditor/file/column/ColumnStatisticsKey";
 
-export interface ColumnStatisticsDefinition<T extends ColumnStatisticsKey = ColumnStatisticsKey>
-  extends ApplicableColumnTypes {
+export interface ColumnStatisticsDefinition<
+  T extends ColumnStatisticsKey = ColumnStatisticsKey,
+> extends ApplicableColumnTypes {
   compute: (context: ColumnStatisticsComputeContext) => ColumnStatistics[T];
   format: (value: ColumnStatistics[T]) => string;
   key: T;

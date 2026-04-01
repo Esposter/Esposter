@@ -13,7 +13,10 @@ export const computeColumnStatistics = (dataSource: DataSource): ColumnStatistic
     const effectiveColumnType =
       column.type === ColumnType.Computed ? getComputedColumnEffectiveType(column) : column.type;
     const values = dataSource.rows.map((row) => takeOne(row.data, column.name));
-    const context = buildColumnStatisticsComputeContext(Object.assign(structuredClone(column), { type: effectiveColumnType }), values);
+    const context = buildColumnStatisticsComputeContext(
+      Object.assign(structuredClone(column), { type: effectiveColumnType }),
+      values,
+    );
     const statisticsValues = Object.fromEntries(
       [...ColumnStatisticsDefinitions].map(({ applicableColumnTypes, compute, key }) => [
         key,
