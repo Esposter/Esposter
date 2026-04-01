@@ -50,7 +50,7 @@ const filteredRowCount = computed(() =>
             <template #title>
               Data
               <v-spacer />
-              <TableEditorFileStatisticsBar mr-4 :filtered-row-count :stats="modelValue.dataSource.stats" />
+              <TableEditorFileStatisticsBar mr-4 :filtered-row-count :statistics="modelValue.dataSource.statistics" />
               <TableEditorFileRowCopyToClipboardButton
                 :row-ids="selectedRowIds.length > 0 ? selectedRowIds : undefined"
               />
