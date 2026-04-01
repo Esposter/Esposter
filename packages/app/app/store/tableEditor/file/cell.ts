@@ -1,10 +1,12 @@
 export const useCellStore = defineStore("tableEditor/file/cell", () => {
-  const pendingFocusCell = ref<null | { columnName: string; rowIndex: number }>(null);
+  const editingCell = ref<null | { columnName: string; rowIndex: number }>(null);
   const clearFocus = () => {
-    pendingFocusCell.value = null;
+    editingCell.value = null;
   };
   const requestFocus = (rowIndex: number, columnName: string) => {
-    pendingFocusCell.value = { columnName, rowIndex };
+    editingCell.value = { columnName, rowIndex };
   };
-  return { clearFocus, pendingFocusCell, requestFocus };
+  const isEditingCell = (rowIndex: number, columnName: string) =>
+    editingCell.value?.rowIndex === rowIndex && editingCell.value?.columnName === columnName;
+  return { clearFocus, isEditingCell, requestFocus };
 });

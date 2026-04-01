@@ -6,38 +6,47 @@ import type { EditableColumnValue } from "#shared/models/tableEditor/file/column
 import { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import { isEditableColumnValue } from "@/services/tableEditor/file/column/isEditableColumnValue";
 import { useCellStore } from "@/store/tableEditor/file/cell";
-import { takeOne } from "@esposter/shared";
+import { takeOne, toRawDeep } from "@esposter/shared";
 
 interface EditableProps {
   column: EditableColumnValue;
   columns: Column[];
+  item: Row;
   rowIndex: number;
   rows: Row[];
 }
 
-const { column, columns, rowIndex, rows } = defineProps<EditableProps>();
-const modelValue = defineModel<ColumnValue>({ required: true });
-const emit = defineEmits<{
-  cancel: [];
-  submit: [];
-}>();
+const { column, columns, item, rowIndex, rows } = defineProps<EditableProps>();
+const updateRow = useUpdateRow();
 const cellStore = useCellStore();
-const { requestFocus } = cellStore;
-const editableColumns = computed(() => columns.filter((c) => isEditableColumnValue(c)));
+const { clearFocus, requestFocus } = cellStore;
+const editableColumns = computed(() => columns.filter((column) => isEditableColumnValue(column)));
+const localValue = ref<ColumnValue>(takeOne(item.data, column.name) ?? null);
+let isSubmitted = false;
+
+const submitEdit = () => {
+  if (isSubmitted) return;
+  isSubmitted = true;
+  clearFocus();
+  if (localValue.value === (takeOne(item.data, column.name) ?? null)) return;
+  updateRow(
+    Object.assign(structuredClone(toRawDeep(item)), { data: { ...item.data, [column.name]: localValue.value } }),
+  );
+};
 
 const navigateTo = (targetRowIndex: number, targetColumnName: string) => {
-  emit("submit");
+  submitEdit();
   requestFocus(targetRowIndex, targetColumnName);
 };
 </script>
 
 <template>
   <div
-    @blur.capture="emit('submit')"
+    @blur.capture="submitEdit()"
     @keydown.arrow-down.stop="rowIndex + 1 < rows.length && navigateTo(rowIndex + 1, column.name)"
     @keydown.arrow-up.stop="rowIndex - 1 >= 0 && navigateTo(rowIndex - 1, column.name)"
-    @keydown.enter.stop="!$event.isComposing && emit('submit')"
-    @keydown.esc.stop="emit('cancel')"
+    @keydown.enter.stop="!$event.isComposing && submitEdit()"
+    @keydown.esc.stop="clearFocus()"
     @keydown.tab.stop="
       (event) => {
         const currentIndex = editableColumns.findIndex(({ name }) => name === column.name);
@@ -49,6 +58,6 @@ const navigateTo = (targetRowIndex: number, targetColumnName: string) => {
       }
     "
   >
-    <TableEditorFileRowFieldInput v-model="modelValue" :column autofocus hide-details inline />
+    <TableEditorFileRowFieldInput v-model="localValue" :column autofocus hide-details inline />
   </div>
 </template>
