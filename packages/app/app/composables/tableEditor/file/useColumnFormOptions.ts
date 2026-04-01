@@ -3,7 +3,6 @@ import type { DataSource } from "#shared/models/tableEditor/file/datasource/Data
 import type { ColumnFormVjsfContext } from "@/models/tableEditor/file/column/ColumnFormVjsfContext";
 import type { VjsfOptions } from "@/models/vjsf/VjsfOptions";
 import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
-import type { MaybeRefOrGetter } from "vue";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { uniqueColumnNameKeywordDefinition } from "@/services/ajv/keywords/uniqueColumnNameKeywordDefinition";

@@ -1,5 +1,4 @@
 import type { SchemaValidateFunction } from "ajv";
-import type { MaybeRefOrGetter } from "vue";
 
 export const useUniqueColumnNameKeywordDefinitionValidation = (
   columnNames: MaybeRefOrGetter<string[]>,

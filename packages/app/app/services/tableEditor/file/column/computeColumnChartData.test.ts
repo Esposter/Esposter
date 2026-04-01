@@ -1,5 +1,5 @@
 // @vitest-environment node
-import type { ColumnStatistics } from "@/models/tableEditor/file/column/ColumnStatistics";
+import type { ColumnStatistics } from "#shared/models/tableEditor/file/column/ColumnStatistics";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { computeColumnChartData } from "@/services/tableEditor/file/column/computeColumnChartData";
@@ -18,6 +18,7 @@ describe(computeColumnChartData, () => {
     nullPercent: null,
     standardDeviation: 1,
     summation: 0,
+    topFrequencies: null,
     trueCount: null,
     uniqueCount: 3,
     ...overrides,
@@ -35,8 +36,27 @@ describe(computeColumnChartData, () => {
     nullPercent: null,
     standardDeviation: null,
     summation: null,
+    topFrequencies: null,
     trueCount: 2,
     uniqueCount: null,
+    ...overrides,
+  });
+
+  const makeStringStats = (overrides: Partial<ColumnStatistics> = {}): ColumnStatistics => ({
+    average: null,
+    columnName: "",
+    columnType: ColumnType.String,
+    falseCount: null,
+    maximum: null,
+    minimum: null,
+    mostFrequentValue: null,
+    nullCount: 0,
+    nullPercent: 0,
+    standardDeviation: null,
+    summation: null,
+    topFrequencies: null,
+    trueCount: null,
+    uniqueCount: 1,
     ...overrides,
   });
 
@@ -72,33 +92,34 @@ describe(computeColumnChartData, () => {
     expect(result?.series).toStrictEqual([2, 1, 1]);
   });
 
-  test(`string column returns null`, () => {
-    expect.hasAssertions();
-
-    const stringStats: ColumnStatistics = {
-      average: null,
-      columnName: "",
-      columnType: ColumnType.String,
-      falseCount: null,
-      maximum: null,
-      minimum: null,
-      mostFrequentValue: null,
-      nullCount: 0,
-      nullPercent: 0,
-      standardDeviation: null,
-      summation: null,
-      trueCount: null,
-      uniqueCount: 1,
-    };
-
-    expect(computeColumnChartData(stringStats)).toBeNull();
-  });
-
   test(`boolean column with null trueCount and falseCount defaults to 0`, () => {
     expect.hasAssertions();
 
     const result = computeColumnChartData(makeBooleanStats({ falseCount: null, nullCount: 2, trueCount: null }));
 
     expect(result?.series).toStrictEqual([0, 0, 2]);
+  });
+
+  test(`string column with no top frequencies returns null`, () => {
+    expect.hasAssertions();
+
+    expect(computeColumnChartData(makeStringStats({ topFrequencies: null }))).toBeNull();
+  });
+
+  test(`string column returns horizontal bar chart of top frequencies`, () => {
+    expect.hasAssertions();
+
+    const result = computeColumnChartData(
+      makeStringStats({
+        columnName: " ",
+        topFrequencies: [
+          ["a", 3],
+          ["b", 1],
+        ],
+      }),
+    );
+
+    expect(result?.type).toBe("bar");
+    expect(result?.series).toStrictEqual([{ data: [1, 3], name: " " }]);
   });
 });

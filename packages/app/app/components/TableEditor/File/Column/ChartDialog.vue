@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ColumnStatistics } from "@/models/tableEditor/file/column/ColumnStatistics";
+import type { ColumnStatistics } from "#shared/models/tableEditor/file/column/ColumnStatistics";
 
 import { computeColumnChartData } from "@/services/tableEditor/file/column/computeColumnChartData";
 import VueApexCharts from "vue3-apexcharts";

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { ColumnStatistics } from "@/models/tableEditor/file/column/ColumnStatistics";
+import type { ColumnStatistics } from "#shared/models/tableEditor/file/column/ColumnStatistics";
 
-import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { ColumnStatisticsDefinitions } from "@/services/tableEditor/file/column/ColumnStatisticsDefinitionMap";
+import { ChartableColumnTypes } from "@/services/tableEditor/file/column/computeColumnChartData";
 
 const isOpen = defineModel<boolean>();
 const columnStatistics = useColumnStatistics();
@@ -24,10 +24,7 @@ const openChart = (statistics: ColumnStatistics) => {
   <TableEditorDialog v-model="isOpen" title="Column Statistics">
     <v-data-table density="compact" item-value="columnName" :headers :items="columnStatistics">
       <template #[`item.chart`]="{ item }">
-        <v-tooltip
-          v-if="item.columnType === ColumnType.Number || item.columnType === ColumnType.Boolean"
-          text="View Chart"
-        >
+        <v-tooltip v-if="ChartableColumnTypes.has(item.columnType)" text="View Chart">
           <template #activator="{ props }">
             <v-btn density="compact" icon="mdi-chart-bar" variant="text" :="props" @click.stop="openChart(item)" />
           </template>

@@ -18,6 +18,9 @@ describe("columnFormSchema", () => {
             "properties": {
               "description": {
                 "default": "",
+                "layout": {
+                  "comp": "textarea",
+                },
                 "maxLength": 1000,
                 "title": "Description",
                 "type": "string",
@@ -68,6 +71,9 @@ describe("columnFormSchema", () => {
             "properties": {
               "description": {
                 "default": "",
+                "layout": {
+                  "comp": "textarea",
+                },
                 "maxLength": 1000,
                 "title": "Description",
                 "type": "string",
@@ -423,6 +429,9 @@ describe("columnFormSchema", () => {
             "properties": {
               "description": {
                 "default": "",
+                "layout": {
+                  "comp": "textarea",
+                },
                 "maxLength": 1000,
                 "title": "Description",
                 "type": "string",
@@ -481,8 +490,28 @@ describe("columnFormSchema", () => {
             "properties": {
               "description": {
                 "default": "",
+                "layout": {
+                  "comp": "textarea",
+                },
                 "maxLength": 1000,
                 "title": "Description",
+                "type": "string",
+              },
+              "footerStatisticsKey": {
+                "enum": [
+                  "average",
+                  "falseCount",
+                  "maximum",
+                  "minimum",
+                  "mostFrequentValue",
+                  "nullCount",
+                  "nullPercent",
+                  "standardDeviation",
+                  "summation",
+                  "trueCount",
+                  "uniqueCount",
+                ],
+                "title": "Footer Statistics",
                 "type": "string",
               },
               "format": {
@@ -533,6 +562,9 @@ describe("columnFormSchema", () => {
             "properties": {
               "description": {
                 "default": "",
+                "layout": {
+                  "comp": "textarea",
+                },
                 "maxLength": 1000,
                 "title": "Description",
                 "type": "string",

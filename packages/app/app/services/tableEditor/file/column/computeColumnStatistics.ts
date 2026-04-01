@@ -1,10 +1,12 @@
+import type { ColumnStatistics } from "#shared/models/tableEditor/file/column/ColumnStatistics";
+import type { ColumnStatisticsKey } from "#shared/models/tableEditor/file/column/ColumnStatisticsKey";
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
-import type { ColumnStatistics } from "@/models/tableEditor/file/column/ColumnStatistics";
-import type { ColumnStatisticsKey } from "@/models/tableEditor/file/column/ColumnStatisticsKey";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { buildColumnStatisticsComputeContext } from "@/services/tableEditor/file/column/buildColumnStatisticsComputeContext";
 import { ColumnStatisticsDefinitions } from "@/services/tableEditor/file/column/ColumnStatisticsDefinitionMap";
+import { computeMonthFrequencies } from "@/services/tableEditor/file/column/computeMonthFrequencies";
+import { computeTopFrequencies } from "@/services/tableEditor/file/column/computeTopFrequencies";
 import { getComputedColumnEffectiveType } from "@/services/tableEditor/file/column/getComputedColumnEffectiveType";
 import { takeOne } from "@esposter/shared";
 
@@ -23,5 +25,11 @@ export const computeColumnStatistics = (dataSource: DataSource): ColumnStatistic
         applicableColumnTypes.includes(effectiveColumnType) ? compute(context) : null,
       ]),
     ) as Pick<ColumnStatistics, ColumnStatisticsKey>;
-    return { columnName: column.name, columnType: column.type, ...statisticsValues };
+    const topFrequencies =
+      effectiveColumnType === ColumnType.String
+        ? computeTopFrequencies(context.nonNullStrings)
+        : effectiveColumnType === ColumnType.Date
+          ? computeMonthFrequencies(context.nonNullStrings)
+          : null;
+    return { columnName: column.name, columnType: column.type, ...statisticsValues, topFrequencies };
   });

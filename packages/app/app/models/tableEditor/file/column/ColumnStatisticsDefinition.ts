@@ -1,7 +1,7 @@
+import type { ColumnStatistics } from "#shared/models/tableEditor/file/column/ColumnStatistics";
+import type { ColumnStatisticsKey } from "#shared/models/tableEditor/file/column/ColumnStatisticsKey";
 import type { ApplicableColumnTypes } from "#shared/models/tableEditor/file/column/transformation/ApplicableColumnTypes";
-import type { ColumnStatistics } from "@/models/tableEditor/file/column/ColumnStatistics";
 import type { ColumnStatisticsComputeContext } from "@/models/tableEditor/file/column/ColumnStatisticsComputeContext";
-import type { ColumnStatisticsKey } from "@/models/tableEditor/file/column/ColumnStatisticsKey";
 
 export interface ColumnStatisticsDefinition<
   T extends ColumnStatisticsKey = ColumnStatisticsKey,

@@ -1,7 +1,6 @@
 <!-- @BIG CREDIT TO Braedon Wooding for providing the base animation code for this AMAZING card carousel -->
 <script setup lang="ts">
 import type { Card } from "@/models/visual/Card";
-import type { Component } from "vue";
 
 import { dayjs } from "#shared/services/dayjs";
 import CardBase from "@/components/Visual/Card/Base.vue";

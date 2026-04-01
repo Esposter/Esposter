@@ -1,6 +1,5 @@
 import type { Creator } from "@/models/message/Creator";
 import type { MessageEntity } from "@esposter/db-schema";
-import type { Component } from "vue";
 
 import { MessageType } from "@esposter/db-schema";
 

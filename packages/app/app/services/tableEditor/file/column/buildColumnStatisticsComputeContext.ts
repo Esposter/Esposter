@@ -1,6 +1,6 @@
 import type { Column } from "#shared/models/tableEditor/file/column/Column";
-import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
 import type { ColumnStatisticsComputeContext } from "@/models/tableEditor/file/column/ColumnStatisticsComputeContext";
+import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
 
 export const buildColumnStatisticsComputeContext = (
   column: Column,

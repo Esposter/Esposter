@@ -105,6 +105,26 @@ When branching on a type/discriminant, use in this priority order:
 
 Prefer `watchDeep(source, cb)` over `watch(source, cb, { deep: true })` and `watchImmediate(source, cb)` over `watch(source, cb, { immediate: true })`. When both flags are needed, use `watchDeep(source, cb, { immediate: true })` (alphabetical: deep before immediate).
 
+## Prefer `watch` Over `watchEffect`
+
+Always use `watch` with explicit dependencies instead of `watchEffect`. `watchEffect` tracks dependencies implicitly, making them hard to audit and prone to unexpected re-runs when unrelated reactive data changes.
+
+```typescript
+// WRONG — implicit tracking, hard to audit
+watchEffect(() => {
+  if (!gem.value) return;
+  gem.value.material.roughnessMap = roughnessMap.value;
+});
+
+// CORRECT — explicit dependencies
+watch([gem, roughnessMap], ([newGem, newRoughnessMap]) => {
+  if (!newGem) return;
+  newGem.material.roughnessMap = newRoughnessMap;
+});
+```
+
+For a prop dependency, wrap it in a getter: `() => isActive`.
+
 ## Vue Hooks
 
 - Always place `watch`, `onMounted`, `onUnmounted`, and other Vue lifecycle hooks/watchers at the **bottom** of `<script setup>`, after all `const` assignments.
