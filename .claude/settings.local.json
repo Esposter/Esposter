@@ -39,7 +39,15 @@
       "Bash(echo \"EXIT:$?\")",
       "WebFetch(domain:mathjs.org)",
       "WebFetch(domain:bundlephobia.com)",
-      "WebFetch(domain:www.npmjs.com)"
+      "WebFetch(domain:www.npmjs.com)",
+      "Bash(wt=/c/Users/jimmyc/Documents/Esposter/.claude/worktrees/agent-aed7d2d2/packages/app echo '=== New files ===')",
+      "Read(//c/Users/jimmyc/Documents/Esposter/$wt/app/models/tableEditor/file/column/**)",
+      "Read(//c/Users/jimmyc/Documents/Esposter/$wt/app/composables/tableEditor/file/**)",
+      "Read(//c/Users/jimmyc/Documents/Esposter/$wt/app/services/tableEditor/file/column/**)",
+      "Read(//c/Users/jimmyc/Documents/Esposter/$wt/app/components/TableEditor/File/Column/**)",
+      "Bash(wt=\"/c/Users/jimmyc/Documents/Esposter/.claude/worktrees/agent-aed7d2d2/packages/app\")",
+      "Read(//c/Users/jimmyc/Documents/Esposter/$wt/app/components/TableEditor/File/**)",
+      "Read(//c/Users/jimmyc/Documents/Esposter/$wt/app/services/tableEditor/file/commands/**)"
     ]
   }
 }

@@ -8,5 +8,5 @@ const isOpen = ref(false);
       <v-btn m-0 icon="mdi-sigma" size="small" tile :="tooltipProps" @click.stop="isOpen = true" />
     </template>
   </v-tooltip>
-  <TableEditorFileColumnStatsDialog v-model="isOpen" />
+  <TableEditorFileColumnStatisticsDialog v-model="isOpen" />
 </template>

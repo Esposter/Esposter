@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import { buildColumnStatComputeContext } from "@/services/tableEditor/file/column/buildColumnStatComputeContext";
-import { ColumnStatDefinitionMap } from "@/services/tableEditor/file/column/ColumnStatDefinitionMap";
+import { buildColumnStatisticComputeContext } from "@/services/tableEditor/file/column/buildColumnStatisticComputeContext";
+import { ColumnStatisticDefinitionMap } from "@/services/tableEditor/file/column/ColumnStatisticDefinitionMap";
 import { toColumnKey } from "@/services/tableEditor/file/column/toColumnKey";
 import { useColumnStore } from "@/store/tableEditor/file/column";
 import { useRowStore } from "@/store/tableEditor/file/row";
@@ -16,9 +16,9 @@ const columnSummaries = computed(() => {
   for (const column of displayColumns.value) {
     if (column.type !== ColumnType.Number) continue;
     const values = filteredRows.value.map((row) => takeOne(row.data, column.name));
-    const context = buildColumnStatComputeContext(column, values);
-    const sumValue = ColumnStatDefinitionMap.sum.compute(context);
-    result.set(toColumnKey(column.name), `Σ ${ColumnStatDefinitionMap.sum.format(sumValue)}`);
+    const context = buildColumnStatisticComputeContext(column, values);
+    const summationValue = ColumnStatisticDefinitionMap.summation.compute(context);
+    result.set(toColumnKey(column.name), `Σ ${ColumnStatisticDefinitionMap.summation.format(summationValue)}`);
   }
   return result;
 });

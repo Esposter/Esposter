@@ -56,7 +56,7 @@ const filteredRowCount = computed(() =>
               />
               <TableEditorFileRowPasteFromClipboardButton />
               <TableEditorFileFindReplaceDialogButton />
-              <TableEditorFileColumnStatsDialogButton />
+              <TableEditorFileColumnStatisticsDialogButton />
               <TableEditorFileRowOutlierToggleButton />
               <TableEditorFileRowClearFiltersButton />
               <TableEditorFileRowStringTransformationDialogButton />

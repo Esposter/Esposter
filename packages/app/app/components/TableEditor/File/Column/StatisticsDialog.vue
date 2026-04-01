@@ -1,28 +1,28 @@
 <script setup lang="ts">
-import type { ColumnStats } from "@/models/tableEditor/file/column/ColumnStats";
+import type { ColumnStatistics } from "@/models/tableEditor/file/column/ColumnStatistics";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import { ColumnStatDefinitions } from "@/services/tableEditor/file/column/ColumnStatDefinitionMap";
+import { ColumnStatisticDefinitions } from "@/services/tableEditor/file/column/ColumnStatisticDefinitionMap";
 
 const isOpen = defineModel<boolean>();
-const columnStats = useColumnStats();
+const columnStatistics = useColumnStatistics();
 const isChartOpen = ref(false);
-const selectedStats = ref<ColumnStats | null>(null);
+const selectedStatistics = ref<ColumnStatistics | null>(null);
 const headers = [
   { key: "chart", sortable: false, title: "" },
   { key: "columnName", sortable: false, title: "Column" },
   { key: "columnType", sortable: false, title: "Type" },
-  ...[...ColumnStatDefinitions].map(({ key, sortable, title }) => ({ key, sortable, title })),
+  ...[...ColumnStatisticDefinitions].map(({ key, sortable, title }) => ({ key, sortable, title })),
 ];
-const openChart = (stats: ColumnStats) => {
-  selectedStats.value = stats;
+const openChart = (statistics: ColumnStatistics) => {
+  selectedStatistics.value = statistics;
   isChartOpen.value = true;
 };
 </script>
 
 <template>
   <TableEditorDialog v-model="isOpen" title="Column Statistics">
-    <v-data-table density="compact" item-value="columnName" :headers :items="columnStats">
+    <v-data-table density="compact" item-value="columnName" :headers :items="columnStatistics">
       <template #[`item.chart`]="{ item }">
         <v-tooltip
           v-if="item.columnType === ColumnType.Number || item.columnType === ColumnType.Boolean"
@@ -33,10 +33,10 @@ const openChart = (stats: ColumnStats) => {
           </template>
         </v-tooltip>
       </template>
-      <template v-for="{ key, format } of ColumnStatDefinitions" :key #[`item.${key}`]="{ item }">
+      <template v-for="{ key, format } of ColumnStatisticDefinitions" :key #[`item.${key}`]="{ item }">
         {{ format(item[key] as never) }}
       </template>
     </v-data-table>
   </TableEditorDialog>
-  <TableEditorFileColumnChartDialog v-model="isChartOpen" :column-stats="selectedStats" />
+  <TableEditorFileColumnChartDialog v-model="isChartOpen" :column-statistics="selectedStatistics" />
 </template>

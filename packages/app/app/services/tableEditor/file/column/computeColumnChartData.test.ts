@@ -1,12 +1,12 @@
 // @vitest-environment node
-import type { ColumnStats } from "@/models/tableEditor/file/column/ColumnStats";
+import type { ColumnStatistics } from "@/models/tableEditor/file/column/ColumnStatistics";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { computeColumnChartData } from "@/services/tableEditor/file/column/computeColumnChartData";
 import { describe, expect, test } from "vitest";
 
 describe(computeColumnChartData, () => {
-  const makeNumberStats = (overrides: Partial<ColumnStats> = {}): ColumnStats => ({
+  const makeNumberStats = (overrides: Partial<ColumnStatistics> = {}): ColumnStatistics => ({
     average: 1,
     columnName: "",
     columnType: ColumnType.Number,
@@ -17,13 +17,13 @@ describe(computeColumnChartData, () => {
     nullCount: 0,
     nullPercent: null,
     standardDeviation: 1,
-    sum: 0,
+    summation: 0,
     trueCount: null,
     uniqueCount: 3,
     ...overrides,
   });
 
-  const makeBooleanStats = (overrides: Partial<ColumnStats> = {}): ColumnStats => ({
+  const makeBooleanStats = (overrides: Partial<ColumnStatistics> = {}): ColumnStatistics => ({
     average: null,
     columnName: "",
     columnType: ColumnType.Boolean,
@@ -34,7 +34,7 @@ describe(computeColumnChartData, () => {
     nullCount: 1,
     nullPercent: null,
     standardDeviation: null,
-    sum: null,
+    summation: null,
     trueCount: 2,
     uniqueCount: null,
     ...overrides,
@@ -57,7 +57,7 @@ describe(computeColumnChartData, () => {
     expect(result?.series).toStrictEqual([{ data: [0, 1, 2], name: " " }]);
   });
 
-  test(`number column with all null stats returns null`, () => {
+  test(`number column with all null statistics returns null`, () => {
     expect.hasAssertions();
 
     expect(computeColumnChartData(makeNumberStats({ average: null, maximum: null, minimum: null }))).toBeNull();
@@ -75,7 +75,7 @@ describe(computeColumnChartData, () => {
   test(`string column returns null`, () => {
     expect.hasAssertions();
 
-    const stringStats: ColumnStats = {
+    const stringStats: ColumnStatistics = {
       average: null,
       columnName: "",
       columnType: ColumnType.String,
@@ -86,7 +86,7 @@ describe(computeColumnChartData, () => {
       nullCount: 0,
       nullPercent: 0,
       standardDeviation: null,
-      sum: null,
+      summation: null,
       trueCount: null,
       uniqueCount: 1,
     };

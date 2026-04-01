@@ -1,4 +1,4 @@
-import type { ColumnStats } from "@/models/tableEditor/file/column/ColumnStats";
+import type { ColumnStatistics } from "@/models/tableEditor/file/column/ColumnStatistics";
 import type { ApexAxisChartSeries, ApexNonAxisChartSeries, ApexOptions } from "apexcharts";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
@@ -9,30 +9,36 @@ export interface ColumnChartData {
   type: NonNullable<ApexOptions["chart"]>["type"];
 }
 
-const ColumnChartDataMap: Partial<Record<ColumnType, (stats: ColumnStats) => ColumnChartData | null>> = {
-  [ColumnType.Boolean]: (columnStats) => ({
+const ColumnChartDataMap: Partial<Record<ColumnType, (statistics: ColumnStatistics) => ColumnChartData | null>> = {
+  [ColumnType.Boolean]: (columnStatistics) => ({
     options: {
       chart: { toolbar: { show: false } },
       labels: ["True", "False", "Null"],
     },
-    series: [columnStats.trueCount ?? 0, columnStats.falseCount ?? 0, columnStats.nullCount],
+    series: [columnStatistics.trueCount ?? 0, columnStatistics.falseCount ?? 0, columnStatistics.nullCount],
     type: "pie",
   }),
-  [ColumnType.Number]: (columnStats) => {
-    if (columnStats.minimum === null || columnStats.average === null || columnStats.maximum === null) return null;
+  [ColumnType.Number]: (columnStatistics) => {
+    if (columnStatistics.minimum === null || columnStatistics.average === null || columnStatistics.maximum === null)
+      return null;
     return {
       options: {
         chart: { toolbar: { show: false } },
         plotOptions: { bar: { horizontal: true } },
         xaxis: { categories: ["Minimum", "Average", "Maximum"] },
       },
-      series: [{ data: [columnStats.minimum, columnStats.average, columnStats.maximum], name: columnStats.columnName }],
+      series: [
+        {
+          data: [columnStatistics.minimum, columnStatistics.average, columnStatistics.maximum],
+          name: columnStatistics.columnName,
+        },
+      ],
       type: "bar",
     };
   },
 };
 
-export const computeColumnChartData = (columnStats: ColumnStats): ColumnChartData | null => {
-  const compute = ColumnChartDataMap[columnStats.columnType];
-  return compute ? compute(columnStats) : null;
+export const computeColumnChartData = (columnStatistics: ColumnStatistics): ColumnChartData | null => {
+  const compute = ColumnChartDataMap[columnStatistics.columnType];
+  return compute ? compute(columnStatistics) : null;
 };
