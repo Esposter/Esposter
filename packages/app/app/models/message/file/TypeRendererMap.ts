@@ -1,5 +1,3 @@
-import type { Component } from "vue";
-
 import { MimeType } from "#shared/models/file/MimeType";
 
 export const TypeRendererMap: Record<string, Component> = {

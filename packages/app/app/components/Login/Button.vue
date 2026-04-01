@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { betterAuth } from "better-auth";
-import type { Component, CSSProperties } from "vue";
+import type { CSSProperties } from "vue";
 
 import { authClient } from "@/services/auth/authClient";
 import { useAlertStore } from "@/store/alert";
