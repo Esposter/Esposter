@@ -32,6 +32,7 @@ describe(filterDataSourceColumns, () => {
     const { columns, rows } = filterDataSourceColumns(dataSource.columns, dataSource.rows, [colA.id]);
 
     expect(columns).toHaveLength(1);
+    expect(takeOne(columns).id).toBe(colA.id);
     expect(takeOne(rows).data).toStrictEqual({ a: 1 });
   });
 });

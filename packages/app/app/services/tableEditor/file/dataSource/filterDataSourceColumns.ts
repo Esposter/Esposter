@@ -9,7 +9,8 @@ export const filterDataSourceColumns = (
   rows: Row[],
   columnIds: string[],
 ): { columns: Column[]; rows: Row[] } => {
-  const filteredColumns = columns.filter((column) => columnIds.includes(column.id));
+  const columnIdSet = new Set(columnIds);
+  const filteredColumns = columns.filter((column) => columnIdSet.has(column.id));
   const filteredRows = rows.map((row, rowIndex) => {
     const filteredRow = new Row(structuredClone(toRawDeep(row)));
     filteredRow.data = Object.fromEntries(
