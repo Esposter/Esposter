@@ -8,6 +8,14 @@ import { ColumnStatisticsDefinitions } from "@/services/tableEditor/file/column/
 import { getComputedColumnEffectiveType } from "@/services/tableEditor/file/column/getComputedColumnEffectiveType";
 import { takeOne } from "@esposter/shared";
 
+const computeTopFrequencies = (strings: string[]): ReadonlyArray<readonly [string, number]> => {
+  const countMap = new Map<string, number>();
+  for (const value of strings) countMap.set(value, (countMap.get(value) ?? 0) + 1);
+  return [...countMap.entries()]
+    .sort(([, countA], [, countB]) => countB - countA)
+    .slice(0, 10);
+};
+
 export const computeColumnStatistics = (dataSource: DataSource): ColumnStatistics[] =>
   dataSource.columns.map((column) => {
     const effectiveColumnType =
@@ -23,5 +31,9 @@ export const computeColumnStatistics = (dataSource: DataSource): ColumnStatistic
         applicableColumnTypes.includes(effectiveColumnType) ? compute(context) : null,
       ]),
     ) as Pick<ColumnStatistics, ColumnStatisticsKey>;
-    return { columnName: column.name, columnType: column.type, ...statisticsValues };
+    const topFrequencies =
+      effectiveColumnType === ColumnType.String || effectiveColumnType === ColumnType.Date
+        ? computeTopFrequencies(context.nonNullStrings)
+        : null;
+    return { columnName: column.name, columnType: column.type, ...statisticsValues, topFrequencies };
   });

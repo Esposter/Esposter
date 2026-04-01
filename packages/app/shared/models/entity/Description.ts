@@ -6,5 +6,5 @@ export interface Description {
 }
 
 export const descriptionSchema = z.object({
-  description: z.string().max(DESCRIPTION_MAX_LENGTH),
+  description: z.string().max(DESCRIPTION_MAX_LENGTH).default("").meta({ layout: { comp: "textarea" } }),
 }) satisfies z.ZodType<Description>;

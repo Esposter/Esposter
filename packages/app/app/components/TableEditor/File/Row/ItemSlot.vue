@@ -25,7 +25,9 @@ const { currentOccurrenceIndex, findValue, occurrences } = storeToRefs(findRepla
 const outlierStore = useOutlierStore();
 const { outlierCells } = storeToRefs(outlierStore);
 const updateRow = useUpdateRow();
+const { clearFocus, pendingFocusCell, requestFocus } = useTableCellNavigation();
 const editableColumn = computed(() => (isEditableColumnValue(column) ? column : null));
+const editableColumns = computed(() => columns.filter(isEditableColumnValue));
 const currentOccurrence = computed(() => occurrences.value.at(currentOccurrenceIndex.value));
 const text = computed(() => {
   const value = computeValue(rows, item, columns, column, rowIndex);
@@ -56,14 +58,37 @@ const commitEdit = () => {
 const cancelEdit = () => {
   isEditing.value = false;
 };
+
+watch(pendingFocusCell, (newPendingFocusCell) => {
+  if (newPendingFocusCell?.rowIndex !== rowIndex || newPendingFocusCell.columnName !== column.name) return;
+  clearFocus();
+  startEditing();
+});
+
+const navigateTo = (targetRowIndex: number, targetColumnName: string) => {
+  commitEdit();
+  requestFocus(targetRowIndex, targetColumnName);
+};
+
+const onTab = (event: KeyboardEvent) => {
+  const currentIndex = editableColumns.value.findIndex(({ name }) => name === column.name);
+  if (currentIndex === -1) return;
+  event.preventDefault();
+  const nextIndex = event.shiftKey ? currentIndex - 1 : currentIndex + 1;
+  if (nextIndex < 0 || nextIndex >= editableColumns.value.length) return;
+  navigateTo(rowIndex, takeOne(editableColumns.value, nextIndex).name);
+};
 </script>
 
 <template>
   <div
     v-if="isEditing && editableColumn"
     @blur.capture="commitEdit"
+    @keydown.arrow-down.stop="rowIndex + 1 < rows.length && navigateTo(rowIndex + 1, column.name)"
+    @keydown.arrow-up.stop="rowIndex - 1 >= 0 && navigateTo(rowIndex - 1, column.name)"
     @keydown.enter.stop="!$event.isComposing && commitEdit()"
     @keydown.esc.stop="cancelEdit"
+    @keydown.tab.stop="onTab($event)"
   >
     <TableEditorFileRowFieldInput v-model="localValue" :column="editableColumn" autofocus hide-details inline />
   </div>

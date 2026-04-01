@@ -7,6 +7,8 @@ import { getRecordDifferenceDescription } from "@/services/tableEditor/file/comm
 import { getValueSize } from "@/services/tableEditor/file/commands/getValueSize";
 import { takeOne } from "@esposter/shared";
 
+type RowSnapshot = { data: Record<string, ColumnValue>; description: string };
+
 export class UpdateRowCommand extends ADataSourceCommand<CommandType.UpdateRow> {
   readonly type = CommandType.UpdateRow;
 
@@ -17,14 +19,10 @@ export class UpdateRowCommand extends ADataSourceCommand<CommandType.UpdateRow> 
   }
 
   private readonly index: number;
-  private readonly originalRow: { data: Record<string, ColumnValue> };
-  private readonly updatedRow: { data: Record<string, ColumnValue> };
+  private readonly originalRow: RowSnapshot;
+  private readonly updatedRow: RowSnapshot;
 
-  constructor(
-    index: number,
-    originalRow: { data: Record<string, ColumnValue> },
-    updatedRow: { data: Record<string, ColumnValue> },
-  ) {
+  constructor(index: number, originalRow: RowSnapshot, updatedRow: RowSnapshot) {
     super();
     this.index = index;
     this.originalRow = originalRow;
@@ -38,6 +36,7 @@ export class UpdateRowCommand extends ADataSourceCommand<CommandType.UpdateRow> 
       column.size +=
         getValueSize(takeOne(this.updatedRow.data, column.name)) - getValueSize(takeOne(row.data, column.name));
     row.data = { ...this.updatedRow.data };
+    row.description = this.updatedRow.description;
   }
 
   protected doUndo(item: DataSourceItem) {
@@ -47,5 +46,6 @@ export class UpdateRowCommand extends ADataSourceCommand<CommandType.UpdateRow> 
       column.size +=
         getValueSize(takeOne(this.originalRow.data, column.name)) - getValueSize(takeOne(row.data, column.name));
     row.data = { ...this.originalRow.data };
+    row.description = this.originalRow.description;
   }
 }

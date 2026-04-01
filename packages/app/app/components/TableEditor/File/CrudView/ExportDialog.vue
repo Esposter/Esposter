@@ -6,6 +6,7 @@ import { DataSourceConfigurationMap } from "@/services/tableEditor/file/dataSour
 import { filterDataSourceColumns } from "@/services/tableEditor/file/dataSource/filterDataSourceColumns";
 import { filterDataSourceRows } from "@/services/tableEditor/file/dataSource/filterDataSourceRows";
 import { useFilterStore } from "@/store/tableEditor/file/filter";
+import { useRowStore } from "@/store/tableEditor/file/row";
 
 interface ExportDialogProps {
   dataSourceType: DataSourceType;
@@ -16,6 +17,8 @@ const isOpen = defineModel<boolean>({ default: false });
 const { dataSourceType, editedItem } = defineProps<ExportDialogProps>();
 const exportFile = useExportFile();
 const filterStore = useFilterStore();
+const rowStore = useRowStore();
+const { selectedRowIds } = storeToRefs(rowStore);
 const selectedColumnIds = ref<string[]>([]);
 
 watchImmediate(
@@ -43,7 +46,11 @@ watchImmediate(
         const { dataSource } = editedItem;
         const configuration = DataSourceConfigurationMap[dataSourceType];
         const filteredRows = filterDataSourceRows(dataSource.rows, filterStore.columnFilters);
-        const { columns, rows } = filterDataSourceColumns(dataSource.columns, filteredRows, selectedColumnIds);
+        const exportRows =
+          selectedRowIds.length > 0
+            ? filteredRows.filter((row) => selectedRowIds.includes(row.id))
+            : filteredRows;
+        const { columns, rows } = filterDataSourceColumns(dataSource.columns, exportRows, selectedColumnIds);
         await exportFile(
           (mimeType) => configuration.serialize({ ...dataSource, columns, rows }, editedItem, mimeType),
           editedItem.name,
