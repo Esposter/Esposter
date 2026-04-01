@@ -117,7 +117,7 @@ catalog:
   dayjs: ^1.11.20
   debug: ^4.4.3
   dedent: ^1.7.2
-  defu: ^6.1.4
+  defu: ^6.1.6
   dotenv: ^17.3.1
   drizzle-kit: ^0.31.10
   drizzle-orm: ^0.45.2
