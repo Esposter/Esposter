@@ -7,4 +7,4 @@ export interface Description {
 
 export const descriptionSchema = z.object({
   description: z.string().max(DESCRIPTION_MAX_LENGTH),
-});
+}) satisfies z.ZodType<Description>;

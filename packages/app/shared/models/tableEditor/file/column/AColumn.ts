@@ -27,7 +27,7 @@ export abstract class AColumn<TColumnType extends ColumnType = ColumnType>
 export const createAColumnSchema = <T extends z.ZodType<ColumnType>>(typeSchema: T) =>
   z.object({
     ...aTableEditorItemEntitySchema.shape,
-    ...descriptionSchema.shape,
+    ...descriptionSchema.extend({ description: z.string().default("") }).shape,
     hidden: z.boolean().default(false),
     size: z.number().default(0),
     sourceName: z.string().default("").readonly(),

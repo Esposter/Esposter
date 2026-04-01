@@ -15,7 +15,7 @@ describe(serializeXlsx, () => {
     columns,
     metadata: { dataSourceType: DataSourceType.Xlsx, importedAt: new Date(0), name: "", size: 0 },
     rows,
-    stats: { columnCount: columns.length, rowCount: rows.length, size: 0 },
+    statistics: { columnCount: columns.length, rowCount: rows.length, size: 0 },
   });
 
   const createColumn = (name: string) => new StringColumn({ name, size: 0, sourceName: name });
