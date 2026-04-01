@@ -5,7 +5,6 @@ type AjvKeywords = Partial<Record<(typeof uniqueColumnNameKeywordDefinition)["ke
 
 declare module "zod" {
   interface GlobalMeta extends AjvKeywords {
-    isHidden?: true;
     layout?: Partial<PartialCompObject>;
   }
 }

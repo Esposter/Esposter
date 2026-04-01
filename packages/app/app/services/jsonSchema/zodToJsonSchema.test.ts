@@ -293,44 +293,6 @@ describe(zodToJsonSchema, () => {
       expect(result.properties?.name).not.toHaveProperty("layout");
     });
 
-    describe("isHidden meta property", () => {
-      test("excludes isHidden property from output", () => {
-        expect.hasAssertions();
-
-        const schema = z.object({ name: z.string(), order: z.number().meta({ isHidden: true }) });
-        const result = zodToJsonSchema(schema);
-
-        expect(result.properties).not.toHaveProperty("order");
-      });
-
-      test("excludes isHidden field from required", () => {
-        expect.hasAssertions();
-
-        const schema = z.object({ name: z.string(), order: z.number().meta({ isHidden: true }) });
-        const result = zodToJsonSchema(schema);
-
-        expect(result.required).not.toContain("order");
-      });
-
-      test("omits required entirely when all non-hidden fields have defaults", () => {
-        expect.hasAssertions();
-
-        const schema = z.object({ order: z.number().meta({ isHidden: true }) });
-        const result = zodToJsonSchema(schema);
-
-        expect(result.required).toBeUndefined();
-      });
-
-      test("keeps visible fields in required alongside hidden ones", () => {
-        expect.hasAssertions();
-
-        const schema = z.object({ name: z.string(), order: z.number().meta({ isHidden: true }) });
-        const result = zodToJsonSchema(schema);
-
-        expect(result.required).toStrictEqual(["name"]);
-      });
-    });
-
     describe(`${uniqueColumnNameKeywordDefinition.keyword} meta property`, () => {
       test(`sets ${uniqueColumnNameKeywordDefinition.keyword} and auto-generates errorMessage`, () => {
         expect.hasAssertions();
