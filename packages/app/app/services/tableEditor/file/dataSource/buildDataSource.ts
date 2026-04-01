@@ -23,13 +23,13 @@ export const buildDataSource = (
     const type = inferColumnType(values);
     switch (type) {
       case ColumnType.Boolean:
-        return new BooleanColumn({ name: sourceName, order: index, sourceName });
+        return new BooleanColumn({ name: sourceName, sourceName });
       case ColumnType.Date:
-        return new DateColumn({ format: inferDateFormat(values), name: sourceName, order: index, sourceName });
+        return new DateColumn({ format: inferDateFormat(values), name: sourceName, sourceName });
       case ColumnType.Number:
-        return new NumberColumn({ name: sourceName, order: index, sourceName });
+        return new NumberColumn({ name: sourceName, sourceName });
       default:
-        return new StringColumn({ name: sourceName, order: index, sourceName });
+        return new StringColumn({ name: sourceName, sourceName });
     }
   });
   const rows = bodyRows.map((bodyRow) => {
