@@ -7,6 +7,6 @@ export const useCellStore = defineStore("tableEditor/file/cell", () => {
     editingCell.value = { columnName, rowIndex };
   };
   const isEditingCell = (rowIndex: number, columnName: string) =>
-    editingCell.value && editingCell.value.rowIndex === rowIndex && editingCell.value.columnName === columnName;
+    editingCell.value?.rowIndex === rowIndex && editingCell.value.columnName === columnName;
   return { clearFocus, isEditingCell, requestFocus };
 });

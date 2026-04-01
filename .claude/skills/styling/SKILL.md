@@ -9,3 +9,7 @@ description: Esposter UnoCSS Attributify Mode styling conventions — prop-based
 - Use `flex` not `d-flex`.
 - Use `size` attribute (or `width`/`height` props) instead of `w-<n>` / `h-<n>` where possible.
 - Only use `class="..."` when technically required (dynamic `:class` bindings, Vuetify-specific typography/colour classes like `text-overline`, `text-medium-emphasis`, `text-wrap`). UnoCSS utilities (spacing, flex, sizing) must always be attributes even when mixed with Vuetify classes: `<div class="text-overline" mb-2>`.
+
+## Style Block
+
+- Always use `<style scoped lang="scss">` — `scoped` before `lang`.

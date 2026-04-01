@@ -1,7 +1,7 @@
 import type { Column } from "#shared/models/tableEditor/file/column/Column";
 
-import { computeValue } from "@/services/tableEditor/file/column/computeValue";
 import { Row } from "#shared/models/tableEditor/file/datasource/Row";
+import { computeValue } from "@/services/tableEditor/file/column/computeValue";
 import { toRawDeep } from "@esposter/shared";
 
 export const filterDataSourceColumns = (
