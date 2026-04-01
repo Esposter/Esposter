@@ -24,17 +24,16 @@ export class CreateColumnCommand extends ADataSourceCommand<CommandType.CreateCo
   protected doExecute(item: DataSourceItem) {
     if (!item.dataSource) return;
     this.newColumn.size = item.dataSource.rows.length * getValueSize(null);
-    item.dataSource.columns = [
-      ...item.dataSource.columns.slice(0, this.columnIndex),
-      this.newColumn,
-      ...item.dataSource.columns.slice(this.columnIndex),
-    ];
+    this.newColumn.order = this.columnIndex;
+    for (const column of item.dataSource.columns) if (column.order >= this.columnIndex) column.order++;
+    item.dataSource.columns.push(this.newColumn);
     for (const row of item.dataSource.rows) row.data[this.newColumn.name] = null;
   }
 
   protected doUndo(item: DataSourceItem) {
     if (!item.dataSource) return;
     item.dataSource.columns = item.dataSource.columns.filter((column) => column.name !== this.newColumn.name);
+    for (const column of item.dataSource.columns) if (column.order > this.columnIndex) column.order--;
     for (const row of item.dataSource.rows) delete row.data[this.newColumn.name];
   }
 }

@@ -14,6 +14,7 @@ export abstract class AColumn<TColumnType extends ColumnType = ColumnType>
 {
   description = "";
   hidden = false;
+  order = 0;
   size = 0;
   readonly sourceName: string = "";
   abstract readonly type: TColumnType;
@@ -29,6 +30,7 @@ export const createAColumnSchema = <T extends z.ZodType<ColumnType>>(typeSchema:
     ...aTableEditorItemEntitySchema.shape,
     ...descriptionSchema.shape,
     hidden: z.boolean().default(false),
+    order: z.number().nonnegative().default(0).meta({ isHidden: true }),
     size: z.number().default(0),
     sourceName: z.string().default("").readonly(),
     type: typeSchema.readonly(),

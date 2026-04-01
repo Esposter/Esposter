@@ -26,7 +26,7 @@ const ColumnChartDataMap: Partial<Record<ColumnType, (statistics: ColumnStatisti
       const month = dayjs(value).format("YYYY-MM");
       monthCounts.set(month, (monthCounts.get(month) ?? 0) + count);
     }
-    const sortedMonths = [...monthCounts.keys()].sort();
+    const sortedMonths = [...monthCounts.keys()].toSorted();
     return {
       options: {
         chart: { toolbar: { show: false } },
@@ -56,7 +56,7 @@ const ColumnChartDataMap: Partial<Record<ColumnType, (statistics: ColumnStatisti
   },
   [ColumnType.String]: (columnStatistics) => {
     if (!columnStatistics.topFrequencies?.length) return null;
-    const entries = [...columnStatistics.topFrequencies].reverse();
+    const entries = [...columnStatistics.topFrequencies].toReversed();
     return {
       options: {
         chart: { toolbar: { show: false } },

@@ -12,7 +12,7 @@ export interface ColumnStatistics {
   nullPercent: null | number;
   standardDeviation: null | number;
   summation: null | number;
-  topFrequencies: null | ReadonlyArray<readonly [string, number]>;
+  topFrequencies: null | readonly (readonly [string, number])[];
   trueCount: null | number;
   uniqueCount: null | number;
 }

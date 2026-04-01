@@ -8,12 +8,10 @@ import { ColumnStatisticsDefinitions } from "@/services/tableEditor/file/column/
 import { getComputedColumnEffectiveType } from "@/services/tableEditor/file/column/getComputedColumnEffectiveType";
 import { takeOne } from "@esposter/shared";
 
-const computeTopFrequencies = (strings: string[]): ReadonlyArray<readonly [string, number]> => {
+const computeTopFrequencies = (strings: string[]): readonly (readonly [string, number])[] => {
   const countMap = new Map<string, number>();
   for (const value of strings) countMap.set(value, (countMap.get(value) ?? 0) + 1);
-  return [...countMap.entries()]
-    .sort(([, countA], [, countB]) => countB - countA)
-    .slice(0, 10);
+  return [...countMap.entries()].toSorted(([, countA], [, countB]) => countB - countA).slice(0, 10);
 };
 
 export const computeColumnStatistics = (dataSource: DataSource): ColumnStatistics[] =>

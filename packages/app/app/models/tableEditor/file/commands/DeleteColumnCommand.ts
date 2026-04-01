@@ -27,21 +27,20 @@ export class DeleteColumnCommand extends ADataSourceCommand<CommandType.DeleteCo
   protected doExecute(item: DataSourceItem) {
     if (!item.dataSource) return;
     item.dataSource.columns = item.dataSource.columns.filter((column) => column.name !== this.originalColumn.name);
+    for (const column of item.dataSource.columns) if (column.order > this.columnIndex) column.order--;
     for (const row of item.dataSource.rows) delete row.data[this.originalColumn.name];
   }
 
   protected doUndo(item: DataSourceItem) {
     if (!item.dataSource) return;
-    item.dataSource.columns = [
-      ...item.dataSource.columns.slice(0, this.columnIndex),
-      this.originalColumn,
-      ...item.dataSource.columns.slice(this.columnIndex),
-    ];
-    const restoredColumnNames = item.dataSource.columns.map(({ name }) => name);
+    for (const column of item.dataSource.columns) if (column.order >= this.columnIndex) column.order++;
+    this.originalColumn.order = this.columnIndex;
+    item.dataSource.columns.push(this.originalColumn);
+    const sortedColumnNames = item.dataSource.columns.toSorted((a, b) => a.order - b.order).map(({ name }) => name);
     for (const [index, row] of item.dataSource.rows.entries()) {
       row.data[this.originalColumn.name] = takeOne(this.originalRowValues, index);
       const newData: typeof row.data = {};
-      for (const name of restoredColumnNames) newData[name] = takeOne(row.data, name);
+      for (const name of sortedColumnNames) newData[name] = takeOne(row.data, name);
       row.data = newData;
     }
   }

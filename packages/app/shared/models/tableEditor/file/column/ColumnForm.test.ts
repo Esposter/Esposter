@@ -18,6 +18,9 @@ describe("columnFormSchema", () => {
             "properties": {
               "description": {
                 "default": "",
+                "layout": {
+                  "comp": "textarea",
+                },
                 "maxLength": 1000,
                 "title": "Description",
                 "type": "string",
@@ -68,6 +71,9 @@ describe("columnFormSchema", () => {
             "properties": {
               "description": {
                 "default": "",
+                "layout": {
+                  "comp": "textarea",
+                },
                 "maxLength": 1000,
                 "title": "Description",
                 "type": "string",
@@ -423,6 +429,9 @@ describe("columnFormSchema", () => {
             "properties": {
               "description": {
                 "default": "",
+                "layout": {
+                  "comp": "textarea",
+                },
                 "maxLength": 1000,
                 "title": "Description",
                 "type": "string",
@@ -481,6 +490,9 @@ describe("columnFormSchema", () => {
             "properties": {
               "description": {
                 "default": "",
+                "layout": {
+                  "comp": "textarea",
+                },
                 "maxLength": 1000,
                 "title": "Description",
                 "type": "string",
@@ -544,6 +556,9 @@ describe("columnFormSchema", () => {
             "properties": {
               "description": {
                 "default": "",
+                "layout": {
+                  "comp": "textarea",
+                },
                 "maxLength": 1000,
                 "title": "Description",
                 "type": "string",

@@ -42,7 +42,12 @@ const dragRows = computed({
     <template #text>
       <TableEditorFileRowTextSlot />
     </template>
-    <VueDraggable v-model="dragColumns" target="thead tr" :disabled="!isHeaderDraggable" :handle="`.${DRAG_HANDLE_CLASS}`">
+    <VueDraggable
+      v-model="dragColumns"
+      target="thead tr"
+      :disabled="!isHeaderDraggable"
+      :handle="`.${DRAG_HANDLE_CLASS}`"
+    >
       <VueDraggable v-model="dragRows" target="tbody" :disabled="!isDraggable" :handle="`.${DRAG_HANDLE_CLASS}`">
         <StyledDataTable
           flex

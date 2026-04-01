@@ -27,7 +27,7 @@ const { outlierCells } = storeToRefs(outlierStore);
 const updateRow = useUpdateRow();
 const { clearFocus, pendingFocusCell, requestFocus } = useTableCellNavigation();
 const editableColumn = computed(() => (isEditableColumnValue(column) ? column : null));
-const editableColumns = computed(() => columns.filter(isEditableColumnValue));
+const editableColumns = computed(() => columns.filter((column) => isEditableColumnValue(column)));
 const currentOccurrence = computed(() => occurrences.value.at(currentOccurrenceIndex.value));
 const text = computed(() => {
   const value = computeValue(rows, item, columns, column, rowIndex);

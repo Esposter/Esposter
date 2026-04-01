@@ -9,6 +9,8 @@ export const useColumnStore = defineStore("tableEditor/file/column", () => {
   const selectedColumnIds = ref<string[]>([]);
   const sortBy = ref<readonly SortItem[]>([]);
   const columns = computed(() => tableEditorStore.editedItem?.dataSource?.columns ?? []);
-  const displayColumns = computed(() => columns.value.filter((column) => !column.hidden));
+  const displayColumns = computed(() =>
+    columns.value.toSorted((a, b) => a.order - b.order).filter((column) => !column.hidden),
+  );
   return { columns, displayColumns, search, selectedColumnIds, sortBy };
 });

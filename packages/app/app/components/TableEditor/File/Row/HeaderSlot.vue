@@ -26,6 +26,11 @@ const { columnFilters } = storeToRefs(filterStore);
     <div class="group" flex cursor-pointer select-none items-center gap-1 @click="toggleSort(headerColumn)">
       <v-icon v-if="isDraggable" :class="DRAG_HANDLE_CLASS" icon="mdi-drag" cursor-move @click.stop />
       <span>{{ column.name }}</span>
+      <v-tooltip v-if="column.description" :text="column.description">
+        <template #activator="{ props }">
+          <v-icon icon="mdi-information-outline" size="small" :="props" @click.stop />
+        </template>
+      </v-tooltip>
       <v-icon
         transition-opacity
         duration-200

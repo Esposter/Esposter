@@ -8,45 +8,43 @@ export class MoveColumnCommand extends ADataSourceCommand<CommandType.MoveColumn
   readonly type = CommandType.MoveColumn;
 
   get description() {
-    return `Move "${this.columnName}" (Column ${this.fromIndex + 1}) to "${this.toColumnName}" (Column ${this.toIndex + 1})`;
+    return `Move "${this.columnName}" (Column ${this.fromOrder + 1}) to "${this.toColumnName}" (Column ${this.toOrder + 1})`;
   }
 
   private readonly columnName: string;
-  private readonly fromIndex: number;
+  private readonly fromOrder: number;
   private readonly toColumnName: string;
-  private readonly toIndex: number;
+  private readonly toOrder: number;
 
-  constructor(fromIndex: number, toIndex: number, columnName: string, toColumnName: string) {
+  constructor(fromOrder: number, toOrder: number, columnName: string, toColumnName: string) {
     super();
     this.columnName = columnName;
-    this.fromIndex = fromIndex;
+    this.fromOrder = fromOrder;
     this.toColumnName = toColumnName;
-    this.toIndex = toIndex;
+    this.toOrder = toOrder;
   }
 
   protected doExecute(item: DataSourceItem) {
-    if (!item.dataSource) return;
-    const columns = [...item.dataSource.columns];
-    const [moved] = columns.splice(this.fromIndex, 1);
-    if (!moved) return;
-    columns.splice(this.toIndex, 0, moved);
-    item.dataSource.columns = columns;
-    const columnNames = columns.map(({ name }) => name);
-    for (const row of item.dataSource.rows) {
-      const newData: typeof row.data = {};
-      for (const name of columnNames) newData[name] = takeOne(row.data, name);
-      row.data = newData;
-    }
+    this.shiftOrders(item, this.fromOrder, this.toOrder);
   }
 
   protected doUndo(item: DataSourceItem) {
+    this.shiftOrders(item, this.toOrder, this.fromOrder);
+  }
+
+  private shiftOrders(item: DataSourceItem, fromOrder: number, toOrder: number) {
     if (!item.dataSource) return;
-    const columns = [...item.dataSource.columns];
-    const [moved] = columns.splice(this.toIndex, 1);
-    if (!moved) return;
-    columns.splice(this.fromIndex, 0, moved);
-    item.dataSource.columns = columns;
-    const columnNames = columns.map(({ name }) => name);
+    const { columns } = item.dataSource;
+    if (fromOrder < toOrder)
+      for (const column of columns)
+        if (column.order === fromOrder) column.order = toOrder;
+        else if (column.order > fromOrder && column.order <= toOrder) column.order--;
+        else if (fromOrder > toOrder)
+          for (const column of columns)
+            if (column.order === fromOrder) column.order = toOrder;
+            else if (column.order >= toOrder && column.order < fromOrder) column.order++;
+    const sortedColumns = columns.toSorted((a, b) => a.order - b.order);
+    const columnNames = sortedColumns.map((column) => column.name);
     for (const row of item.dataSource.rows) {
       const newData: typeof row.data = {};
       for (const name of columnNames) newData[name] = takeOne(row.data, name);

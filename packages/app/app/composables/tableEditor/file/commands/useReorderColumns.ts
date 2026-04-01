@@ -13,23 +13,28 @@ export const useReorderColumns = () => {
   const { push } = fileHistoryStore;
   return (newColumns: Column[]) => {
     if (!editedItem.value?.dataSource) return;
-    const oldColumns = editedItem.value.dataSource.columns;
-    let fromIndex = -1;
-    let toIndex = -1;
+    const allColumns = editedItem.value.dataSource.columns;
+    const newIds = newColumns.map((column) => column.id);
+    const newIdsSet = new Set(newIds);
+    const oldRelevantColumns = allColumns
+      .toSorted((a, b) => a.order - b.order)
+      .filter((column) => newIdsSet.has(column.id));
+    let fromRelevantIndex = -1;
+    let toRelevantIndex = -1;
     let maxDisplacement = 0;
-    for (const [oldIndex, column] of oldColumns.entries()) {
-      const newIndex = newColumns.findIndex(({ id }) => id === column.id);
-      const displacement = Math.abs(newIndex - oldIndex);
+    for (const [oldIdx, column] of oldRelevantColumns.entries()) {
+      const newIdx = newIds.indexOf(column.id);
+      const displacement = Math.abs(newIdx - oldIdx);
       if (displacement > maxDisplacement) {
         maxDisplacement = displacement;
-        fromIndex = oldIndex;
-        toIndex = newIndex;
+        fromRelevantIndex = oldIdx;
+        toRelevantIndex = newIdx;
       }
     }
-    if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return;
-    const movedColumn = takeOne(oldColumns, fromIndex);
-    const toColumnName = oldColumns[toIndex]?.name ?? "";
-    const command = new MoveColumnCommand(fromIndex, toIndex, movedColumn.name, toColumnName);
+    if (fromRelevantIndex === -1 || toRelevantIndex === -1 || fromRelevantIndex === toRelevantIndex) return;
+    const movedColumn = takeOne(oldRelevantColumns, fromRelevantIndex);
+    const targetColumn = takeOne(oldRelevantColumns, toRelevantIndex);
+    const command = new MoveColumnCommand(movedColumn.order, targetColumn.order, movedColumn.name, targetColumn.name);
     command.execute(editedItem.value);
     push(command);
   };

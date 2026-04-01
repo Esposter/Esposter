@@ -47,9 +47,7 @@ watchImmediate(
         const configuration = DataSourceConfigurationMap[dataSourceType];
         const filteredRows = filterDataSourceRows(dataSource.rows, filterStore.columnFilters);
         const exportRows =
-          selectedRowIds.length > 0
-            ? filteredRows.filter((row) => selectedRowIds.includes(row.id))
-            : filteredRows;
+          selectedRowIds.length > 0 ? filteredRows.filter((row) => selectedRowIds.includes(row.id)) : filteredRows;
         const { columns, rows } = filterDataSourceColumns(dataSource.columns, exportRows, selectedColumnIds);
         await exportFile(
           (mimeType) => configuration.serialize({ ...dataSource, columns, rows }, editedItem, mimeType),

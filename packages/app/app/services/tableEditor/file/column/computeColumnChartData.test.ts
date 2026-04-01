@@ -110,7 +110,13 @@ describe(computeColumnChartData, () => {
     expect.hasAssertions();
 
     const result = computeColumnChartData(
-      makeStringStats({ columnName: " ", topFrequencies: [["a", 3], ["b", 1]] }),
+      makeStringStats({
+        columnName: " ",
+        topFrequencies: [
+          ["a", 3],
+          ["b", 1],
+        ],
+      }),
     );
 
     expect(result?.type).toBe("bar");
