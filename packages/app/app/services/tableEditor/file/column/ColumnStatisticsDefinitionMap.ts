@@ -10,7 +10,7 @@ export const ColumnStatisticsDefinitionMap = {
     applicableColumnTypes: [ColumnType.Number],
     compute: ({ nonNullNumbers }) => {
       if (nonNullNumbers.length === 0) return null;
-      const raw = nonNullNumbers.reduce((s, value) => s + value, 0) / nonNullNumbers.length;
+      const raw = nonNullNumbers.reduce((summation, value) => summation + value, 0) / nonNullNumbers.length;
       return Math.round(raw * 100) / 100;
     },
     format: formatNullable,
@@ -27,7 +27,7 @@ export const ColumnStatisticsDefinitionMap = {
   maximum: defineColumnStatistics({
     applicableColumnTypes: [ColumnType.Number],
     compute: ({ nonNullNumbers }) =>
-      nonNullNumbers.length > 0 ? nonNullNumbers.reduce((m, value) => Math.max(m, value), -Infinity) : null,
+      nonNullNumbers.length > 0 ? nonNullNumbers.reduce((maximum, value) => Math.max(maximum, value), -Infinity) : null,
     format: formatNullable,
     key: "maximum",
     title: "Maximum",
@@ -35,7 +35,7 @@ export const ColumnStatisticsDefinitionMap = {
   minimum: defineColumnStatistics({
     applicableColumnTypes: [ColumnType.Number],
     compute: ({ nonNullNumbers }) =>
-      nonNullNumbers.length > 0 ? nonNullNumbers.reduce((m, value) => Math.min(m, value), Infinity) : null,
+      nonNullNumbers.length > 0 ? nonNullNumbers.reduce((minimum, value) => Math.min(minimum, value), Infinity) : null,
     format: formatNullable,
     key: "minimum",
     title: "Minimum",
@@ -81,8 +81,9 @@ export const ColumnStatisticsDefinitionMap = {
     compute: ({ nonNullNumbers }) => {
       if (nonNullNumbers.length === 0) return null;
       // Use raw (unrounded) mean to avoid rounding error accumulation in the variance sum
-      const rawAverage = nonNullNumbers.reduce((s, value) => s + value, 0) / nonNullNumbers.length;
-      const variance = nonNullNumbers.reduce((s, value) => s + (value - rawAverage) ** 2, 0) / nonNullNumbers.length;
+      const rawAverage = nonNullNumbers.reduce((summation, value) => summation + value, 0) / nonNullNumbers.length;
+      const variance =
+        nonNullNumbers.reduce((summation, value) => summation + (value - rawAverage) ** 2, 0) / nonNullNumbers.length;
       return Math.round(Math.sqrt(variance) * 100) / 100;
     },
     format: formatNullable,
@@ -91,7 +92,8 @@ export const ColumnStatisticsDefinitionMap = {
   }),
   summation: defineColumnStatistics({
     applicableColumnTypes: [ColumnType.Number],
-    compute: ({ nonNullNumbers }) => Math.round(nonNullNumbers.reduce((acc, value) => acc + value, 0) * 100) / 100,
+    compute: ({ nonNullNumbers }) =>
+      Math.round(nonNullNumbers.reduce((summation, value) => summation + value, 0) * 100) / 100,
     format: formatNullable,
     key: "summation",
     title: "Sum",

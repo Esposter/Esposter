@@ -500,12 +500,18 @@ describe("columnFormSchema", () => {
               "footerStatisticsKey": {
                 "enum": [
                   "average",
+                  "falseCount",
                   "maximum",
                   "minimum",
+                  "mostFrequentValue",
+                  "nullCount",
+                  "nullPercent",
+                  "standardDeviation",
                   "summation",
+                  "trueCount",
                   "uniqueCount",
                 ],
-                "title": "Footer Statistic",
+                "title": "Footer Statistics",
                 "type": "string",
               },
               "format": {

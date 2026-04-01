@@ -1,3 +1,4 @@
+import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 import type { IndexedColumn } from "@/models/tableEditor/file/commands/IndexedColumn";
 
@@ -22,29 +23,33 @@ export class DeleteColumnsCommand extends ADataSourceCommand<CommandType.DeleteC
   protected doExecute(item: DataSourceItem) {
     if (!item.dataSource) return;
     const namesToDelete = new Set(this.indexedColumns.map(({ originalColumn }) => originalColumn.name));
-    const ordersToDelete = new Set(this.indexedColumns.map(({ originalColumn }) => originalColumn.order));
     item.dataSource.columns = item.dataSource.columns.filter((column) => !namesToDelete.has(column.name));
-    for (const column of item.dataSource.columns) {
-      const deletedBelow = [...ordersToDelete].filter((order) => order < column.order).length;
-      column.order -= deletedBelow;
-    }
     for (const row of item.dataSource.rows) for (const name of namesToDelete) delete row.data[name];
   }
 
   protected doUndo(item: DataSourceItem) {
     if (!item.dataSource) return;
     const ascendingColumns = this.indexedColumns.toSorted((a, b) => a.columnIndex - b.columnIndex);
+    const result: Column[] = [];
+    let existingIndex = 0;
     for (const { columnIndex, originalColumn } of ascendingColumns) {
-      for (const column of item.dataSource.columns) if (column.order >= columnIndex) column.order++;
-      originalColumn.order = columnIndex;
-      item.dataSource.columns.push(originalColumn);
+      while (result.length < columnIndex) {
+        result.push(takeOne(item.dataSource.columns, existingIndex));
+        existingIndex++;
+      }
+      result.push(originalColumn);
     }
-    const sortedColumnNames = item.dataSource.columns.toSorted((a, b) => a.order - b.order).map(({ name }) => name);
+    while (existingIndex < item.dataSource.columns.length) {
+      result.push(takeOne(item.dataSource.columns, existingIndex));
+      existingIndex++;
+    }
+    item.dataSource.columns = result;
+    const restoredColumnNames = result.map(({ name }) => name);
     for (const [rowIndex, row] of item.dataSource.rows.entries()) {
       for (const { originalColumn, originalRowValues } of ascendingColumns)
         row.data[originalColumn.name] = takeOne(originalRowValues, rowIndex);
       const newData: typeof row.data = {};
-      for (const name of sortedColumnNames) newData[name] = takeOne(row.data, name);
+      for (const name of restoredColumnNames) newData[name] = takeOne(row.data, name);
       row.data = newData;
     }
   }

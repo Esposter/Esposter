@@ -1,4 +1,4 @@
-import type { ColumnStatistics } from "@/models/tableEditor/file/column/ColumnStatistics";
+import type { ColumnStatistics } from "#shared/models/tableEditor/file/column/ColumnStatistics";
 import type { ApexAxisChartSeries, ApexNonAxisChartSeries, ApexOptions } from "apexcharts";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";

@@ -1,6 +1,6 @@
+import type { ColumnStatistics } from "#shared/models/tableEditor/file/column/ColumnStatistics";
+import type { ColumnStatisticsKey } from "#shared/models/tableEditor/file/column/ColumnStatisticsKey";
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
-import type { ColumnStatistics } from "@/models/tableEditor/file/column/ColumnStatistics";
-import type { ColumnStatisticsKey } from "@/models/tableEditor/file/column/ColumnStatisticsKey";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { buildColumnStatisticsComputeContext } from "@/services/tableEditor/file/column/buildColumnStatisticsComputeContext";

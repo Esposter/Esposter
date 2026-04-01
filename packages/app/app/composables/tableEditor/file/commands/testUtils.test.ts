@@ -17,15 +17,12 @@ import { useTableEditorStore } from "@/store/tableEditor";
 import { useItemStore } from "@/store/tableEditor/item";
 import { describe } from "vitest";
 
-export const makeDataSource = (columns: Column[] = [], rows: Row[] = []): DataSource => {
-  for (const [index, column] of columns.entries()) column.order = index;
-  return {
-    columns,
-    metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(0), name: "", size: 0 },
-    rows,
-    statistics: { columnCount: columns.length, rowCount: rows.length, size: 0 },
-  };
-};
+export const makeDataSource = (columns: Column[] = [], rows: Row[] = []): DataSource => ({
+  columns,
+  metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(0), name: "", size: 0 },
+  rows,
+  statistics: { columnCount: columns.length, rowCount: rows.length, size: 0 },
+});
 
 export const makeColumn = (name: string): StringColumn => new StringColumn({ name, size: 0, sourceName: name });
 

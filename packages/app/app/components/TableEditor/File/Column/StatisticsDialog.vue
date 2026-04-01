@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ColumnStatistics } from "@/models/tableEditor/file/column/ColumnStatistics";
+import type { ColumnStatistics } from "#shared/models/tableEditor/file/column/ColumnStatistics";
 
 import { ColumnStatisticsDefinitions } from "@/services/tableEditor/file/column/ColumnStatisticsDefinitionMap";
 import { ChartableColumnTypes } from "@/services/tableEditor/file/column/computeColumnChartData";
