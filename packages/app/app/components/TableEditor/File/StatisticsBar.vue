@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import type { DataSourceStats } from "#shared/models/tableEditor/file/datasource/DataSourceStats";
+import type { DataSourceStatistics } from "#shared/models/tableEditor/file/datasource/DataSourceStatistics";
 
 import { formatSize } from "@/util/formatSize";
 
-interface StatsBarProps {
+interface StatisticsBarProps {
   filteredRowCount?: number;
-  stats: DataSourceStats;
+  stats: DataSourceStatistics;
 }
 
-const { filteredRowCount, stats } = defineProps<StatsBarProps>();
+const { filteredRowCount, stats } = defineProps<StatisticsBarProps>();
 const isFiltered = computed(() => filteredRowCount !== undefined && filteredRowCount !== stats.rowCount);
 </script>
 

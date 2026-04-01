@@ -2,11 +2,11 @@ import type { ColumnStatisticDefinition } from "@/models/tableEditor/file/column
 import type { ColumnStatisticKey } from "@/models/tableEditor/file/column/ColumnStatisticKey";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import { defineColumnStatistic } from "@/services/tableEditor/file/column/defineColumnStatistic";
+import { defineColumnStatistics } from "@/services/tableEditor/file/column/defineColumnStatistics";
 import { formatNullable } from "@/util/formatNullable";
 
 export const ColumnStatisticDefinitionMap = {
-  average: defineColumnStatistic({
+  average: defineColumnStatistics({
     applicableColumnTypes: [ColumnType.Number],
     compute: ({ nonNullNumbers }) => {
       if (nonNullNumbers.length === 0) return null;
@@ -17,14 +17,14 @@ export const ColumnStatisticDefinitionMap = {
     key: "average",
     title: "Average",
   }),
-  falseCount: defineColumnStatistic({
+  falseCount: defineColumnStatistics({
     applicableColumnTypes: [ColumnType.Boolean],
     compute: ({ nonNullBooleans }) => nonNullBooleans.filter((value) => !value).length,
     format: formatNullable,
     key: "falseCount",
     title: "False",
   }),
-  maximum: defineColumnStatistic({
+  maximum: defineColumnStatistics({
     applicableColumnTypes: [ColumnType.Number],
     compute: ({ nonNullNumbers }) =>
       nonNullNumbers.length > 0 ? nonNullNumbers.reduce((m, value) => Math.max(m, value), -Infinity) : null,
@@ -32,7 +32,7 @@ export const ColumnStatisticDefinitionMap = {
     key: "maximum",
     title: "Maximum",
   }),
-  minimum: defineColumnStatistic({
+  minimum: defineColumnStatistics({
     applicableColumnTypes: [ColumnType.Number],
     compute: ({ nonNullNumbers }) =>
       nonNullNumbers.length > 0 ? nonNullNumbers.reduce((m, value) => Math.min(m, value), Infinity) : null,
@@ -40,7 +40,7 @@ export const ColumnStatisticDefinitionMap = {
     key: "minimum",
     title: "Minimum",
   }),
-  mostFrequentValue: defineColumnStatistic({
+  mostFrequentValue: defineColumnStatistics({
     applicableColumnTypes: [ColumnType.String, ColumnType.Date],
     compute: ({ nonNullStrings }) => {
       if (nonNullStrings.length === 0) return null;
@@ -61,14 +61,14 @@ export const ColumnStatisticDefinitionMap = {
     sortable: false,
     title: "Most Frequent",
   }),
-  nullCount: defineColumnStatistic({
+  nullCount: defineColumnStatistics({
     applicableColumnTypes: [ColumnType.Boolean, ColumnType.Date, ColumnType.Number, ColumnType.String],
     compute: ({ nullCount }) => nullCount,
     format: (value) => value.toString(),
     key: "nullCount",
     title: "Nulls",
   }),
-  nullPercent: defineColumnStatistic({
+  nullPercent: defineColumnStatistics({
     applicableColumnTypes: [ColumnType.Boolean, ColumnType.Date, ColumnType.Number, ColumnType.String],
     compute: ({ nullCount, values }) =>
       values.length === 0 ? null : Math.round((nullCount / values.length) * 1000) / 10,
@@ -76,7 +76,7 @@ export const ColumnStatisticDefinitionMap = {
     key: "nullPercent",
     title: "Null %",
   }),
-  standardDeviation: defineColumnStatistic({
+  standardDeviation: defineColumnStatistics({
     applicableColumnTypes: [ColumnType.Number],
     compute: ({ nonNullNumbers }) => {
       if (nonNullNumbers.length === 0) return null;
@@ -89,21 +89,21 @@ export const ColumnStatisticDefinitionMap = {
     key: "standardDeviation",
     title: "Standard Deviation",
   }),
-  summation: defineColumnStatistic({
+  summation: defineColumnStatistics({
     applicableColumnTypes: [ColumnType.Number],
     compute: ({ nonNullNumbers }) => Math.round(nonNullNumbers.reduce((acc, value) => acc + value, 0) * 100) / 100,
     format: formatNullable,
     key: "summation",
     title: "Sum",
   }),
-  trueCount: defineColumnStatistic({
+  trueCount: defineColumnStatistics({
     applicableColumnTypes: [ColumnType.Boolean],
     compute: ({ nonNullBooleans }) => nonNullBooleans.filter(Boolean).length,
     format: formatNullable,
     key: "trueCount",
     title: "True",
   }),
-  uniqueCount: defineColumnStatistic({
+  uniqueCount: defineColumnStatistics({
     applicableColumnTypes: [ColumnType.Number, ColumnType.String, ColumnType.Date],
     compute: ({ column, nonNullNumbers, nonNullStrings }) =>
       column.type === ColumnType.Number ? new Set(nonNullNumbers).size : new Set(nonNullStrings).size,
