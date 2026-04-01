@@ -12,15 +12,17 @@ export const zodToJsonSchema = (schema: z.ZodType) => {
       const def = zodSchema.def;
       if ("discriminator" in def && def.discriminator) jsonSchema.discriminator = { propertyName: def.discriminator };
 
-      const required = jsonSchema.required as string[] | undefined;
-      for (const [key, fieldSchema] of Object.entries(zodSchema.shape as Record<string, z.ZodType>)) {
-        if (!fieldSchema.meta()?.isHidden) continue;
-        delete (jsonSchema.properties as Record<string, unknown> | undefined)?.[key];
-        if (!required) continue;
-        const index = required.indexOf(key);
-        if (index !== -1) required.splice(index, 1);
+      if (zodSchema.shape) {
+        const required = jsonSchema.required as string[] | undefined;
+        for (const [key, fieldSchema] of Object.entries(zodSchema.shape as Record<string, z.ZodType>)) {
+          if (!fieldSchema.meta()?.isHidden) continue;
+          delete (jsonSchema.properties as Record<string, unknown>)[key];
+          if (!required) continue;
+          const index = required.indexOf(key);
+          if (index !== -1) required.splice(index, 1);
+        }
+        if (required?.length === 0) delete jsonSchema.required;
       }
-      if (required?.length === 0) delete jsonSchema.required;
 
       const meta = zodSchema.meta();
       if (!meta) return;
