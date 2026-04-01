@@ -1,8 +1,8 @@
 import type { ColumnStatistics } from "@/models/tableEditor/file/column/ColumnStatistics";
 import type { ApexAxisChartSeries, ApexNonAxisChartSeries, ApexOptions } from "apexcharts";
 
-import { dayjs } from "#shared/services/dayjs";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
+import { dayjs } from "#shared/services/dayjs";
 
 export interface ColumnChartData {
   options: ApexOptions;

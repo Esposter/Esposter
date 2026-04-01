@@ -1,6 +1,6 @@
 import type { AColumnForm } from "#shared/models/tableEditor/file/column/AColumnForm";
-import type { Format } from "#shared/models/tableEditor/file/column/Format";
 import type { FooterStatisticType } from "#shared/models/tableEditor/file/column/FooterStatisticType";
+import type { Format } from "#shared/models/tableEditor/file/column/Format";
 import type { NumberFormat } from "#shared/models/tableEditor/file/column/NumberFormat";
 
 import { createAColumnFormSchema } from "#shared/models/tableEditor/file/column/AColumnForm";

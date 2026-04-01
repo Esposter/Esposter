@@ -1,6 +1,6 @@
 import { readonly, ref } from "vue";
 
-const pendingFocusCell = ref<{ columnName: string; rowIndex: number } | null>(null);
+const pendingFocusCell = ref<null | { columnName: string; rowIndex: number }>(null);
 
 export const useTableCellNavigation = () => ({
   clearFocus: () => {

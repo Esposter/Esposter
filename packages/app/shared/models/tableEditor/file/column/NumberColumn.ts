@@ -3,8 +3,8 @@ import type { ToData } from "@esposter/shared";
 
 import { AColumn, createAColumnSchema } from "#shared/models/tableEditor/file/column/AColumn";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import { createFormatSchema } from "#shared/models/tableEditor/file/column/Format";
 import { FooterStatisticType, footerStatisticTypeSchema } from "#shared/models/tableEditor/file/column/FooterStatisticType";
+import { createFormatSchema } from "#shared/models/tableEditor/file/column/Format";
 import { NumberFormat, numberFormatSchema } from "#shared/models/tableEditor/file/column/NumberFormat";
 import { z } from "zod";
 
