@@ -93,6 +93,7 @@ Store MIME type strings in the relevant configuration map (e.g. `DataSourceConfi
   - `stat` / `stats` → `statistics` (both singular and plural — English treats "statistics" as the standard form, like "mathematics"; e.g. `ColumnStatistics`, `ColumnStatisticsKey`, `useColumnStatistics`, `computeColumnStatistics`)
   - `sum` (as a statistics identifier) → `summation` (e.g. `ColumnStatisticsDefinitionMap.summation`, `FooterStatisticsType.Summation`) — does NOT apply to math accumulator locals like `acc`, `s`, or the display title `"Sum"`
   - Prefer `FooterStatisticsType` over `FooterStatType`, `ColumnStatisticsDefinition` over `ColumnStatDefinition`, etc.
+
 ## Shared Schemas
 
 - **Shared field schemas** — when multiple models share a field (e.g. `description`), define a single named interface + schema (e.g. `Description` / `descriptionSchema`) in `shared/models/tableEditor/` and spread the schema's `.shape` into each model schema. No `With` prefix (follows the same convention as `SourceColumnId`, `ApplicableColumnTypes`). Do not add `.default(...)` to the shared schema — each implementing class declares its own default as a class field and adds it at the schema call site.
