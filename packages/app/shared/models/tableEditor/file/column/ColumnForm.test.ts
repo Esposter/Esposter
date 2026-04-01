@@ -104,7 +104,7 @@ describe("columnFormSchema", () => {
                           "Minimum",
                           "PercentOfTotal",
                           "Rank",
-                          "RunningSum",
+                          "RunningSummation",
                         ],
                         "title": "Aggregation",
                         "type": "string",
