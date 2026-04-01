@@ -2,7 +2,7 @@
 import type { ColumnStatistics } from "@/models/tableEditor/file/column/ColumnStatistics";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import { ColumnStatisticDefinitions } from "@/services/tableEditor/file/column/ColumnStatisticDefinitionMap";
+import { ColumnStatisticsDefinitions } from "@/services/tableEditor/file/column/ColumnStatisticsDefinitionMap";
 
 const isOpen = defineModel<boolean>();
 const columnStatistics = useColumnStatistics();
@@ -12,7 +12,7 @@ const headers = [
   { key: "chart", sortable: false, title: "" },
   { key: "columnName", sortable: false, title: "Column" },
   { key: "columnType", sortable: false, title: "Type" },
-  ...[...ColumnStatisticDefinitions].map(({ key, sortable, title }) => ({ key, sortable, title })),
+  ...[...ColumnStatisticsDefinitions].map(({ key, sortable, title }) => ({ key, sortable, title })),
 ];
 const openChart = (statistics: ColumnStatistics) => {
   selectedStatistics.value = statistics;
@@ -33,7 +33,7 @@ const openChart = (statistics: ColumnStatistics) => {
           </template>
         </v-tooltip>
       </template>
-      <template v-for="{ key, format } of ColumnStatisticDefinitions" :key #[`item.${key}`]="{ item }">
+      <template v-for="{ key, format } of ColumnStatisticsDefinitions" :key #[`item.${key}`]="{ item }">
         {{ format(item[key] as never) }}
       </template>
     </v-data-table>

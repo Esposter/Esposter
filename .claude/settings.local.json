@@ -47,7 +47,8 @@
       "Read(//c/Users/jimmyc/Documents/Esposter/$wt/app/components/TableEditor/File/Column/**)",
       "Bash(wt=\"/c/Users/jimmyc/Documents/Esposter/.claude/worktrees/agent-aed7d2d2/packages/app\")",
       "Read(//c/Users/jimmyc/Documents/Esposter/$wt/app/components/TableEditor/File/**)",
-      "Read(//c/Users/jimmyc/Documents/Esposter/$wt/app/services/tableEditor/file/commands/**)"
+      "Read(//c/Users/jimmyc/Documents/Esposter/$wt/app/services/tableEditor/file/commands/**)",
+      "Bash(git status:*)"
     ]
   }
 }
