@@ -1,11 +1,11 @@
 import type { ItemEntityType } from "@esposter/shared";
 
+import { descriptionSchema } from "#shared/models/entity/Description";
 import {
   ATableEditorItemEntity,
   aTableEditorItemEntitySchema,
 } from "#shared/models/tableEditor/data/ATableEditorItemEntity";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import { DESCRIPTION_MAX_LENGTH } from "#shared/services/constants";
 import { z } from "zod";
 
 export abstract class AColumn<TColumnType extends ColumnType = ColumnType>
@@ -27,7 +27,7 @@ export abstract class AColumn<TColumnType extends ColumnType = ColumnType>
 export const createAColumnSchema = <T extends z.ZodType<ColumnType>>(typeSchema: T) =>
   z.object({
     ...aTableEditorItemEntitySchema.shape,
-    description: z.string().max(DESCRIPTION_MAX_LENGTH).default(""),
+    ...descriptionSchema.extend({ description: z.string().default("") }).shape,
     hidden: z.boolean().default(false),
     size: z.number().default(0),
     sourceName: z.string().default("").readonly(),

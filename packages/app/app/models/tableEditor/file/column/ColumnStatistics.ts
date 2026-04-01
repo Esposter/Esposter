@@ -1,6 +1,6 @@
 import type { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 
-export interface ColumnStats {
+export interface ColumnStatistics {
   average: null | number;
   columnName: string;
   columnType: ColumnType;
@@ -11,7 +11,7 @@ export interface ColumnStats {
   nullCount: number;
   nullPercent: null | number;
   standardDeviation: null | number;
-  sum: null | number;
+  summation: null | number;
   trueCount: null | number;
   uniqueCount: null | number;
 }

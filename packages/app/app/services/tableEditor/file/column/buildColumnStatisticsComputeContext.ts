@@ -1,11 +1,11 @@
 import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
-import type { ColumnStatComputeContext } from "@/models/tableEditor/file/column/ColumnStatComputeContext";
+import type { ColumnStatisticsComputeContext } from "@/models/tableEditor/file/column/ColumnStatisticsComputeContext";
 
-export const buildColumnStatComputeContext = (
+export const buildColumnStatisticsComputeContext = (
   column: Column,
   values: (ColumnValue | undefined)[],
-): ColumnStatComputeContext => ({
+): ColumnStatisticsComputeContext => ({
   column,
   nonNullBooleans: values.filter((value): value is boolean => typeof value === "boolean"),
   nonNullNumbers: values.filter((value): value is number => typeof value === "number"),

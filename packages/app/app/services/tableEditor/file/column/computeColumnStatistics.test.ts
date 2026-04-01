@@ -8,11 +8,11 @@ import {
   makeNumberColumn,
   makeRow,
 } from "@/composables/tableEditor/file/commands/testUtils.test";
-import { computeColumnStats } from "@/services/tableEditor/file/column/computeColumnStats";
+import { computeColumnStatistics } from "@/services/tableEditor/file/column/computeColumnStatistics";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-describe(computeColumnStats, () => {
+describe(computeColumnStatistics, () => {
   test(`number column computes minimum, maximum, average, standardDeviation, uniqueCount, nullCount`, () => {
     expect.hasAssertions();
 
@@ -21,7 +21,7 @@ describe(computeColumnStats, () => {
       [makeRow({ "": 0 }), makeRow({ "": 2 }), makeRow({ "": 2 }), makeRow({ "": null })],
     );
 
-    expect(takeOne(computeColumnStats(dataSource))).toStrictEqual({
+    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
       average: 1.33,
       columnName: "",
       columnType: ColumnType.Number,
@@ -32,7 +32,7 @@ describe(computeColumnStats, () => {
       nullCount: 1,
       nullPercent: 25,
       standardDeviation: 0.94,
-      sum: 4,
+      summation: 4,
       trueCount: null,
       uniqueCount: 2,
     });
@@ -48,7 +48,7 @@ describe(computeColumnStats, () => {
       [makeRow({ "": 0 }), makeRow({ "": 0 }), makeRow({ "": 1 })],
     );
 
-    expect(takeOne(computeColumnStats(dataSource))).toStrictEqual({
+    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
       average: 0.33,
       columnName: "",
       columnType: ColumnType.Number,
@@ -59,7 +59,7 @@ describe(computeColumnStats, () => {
       nullCount: 0,
       nullPercent: 0,
       standardDeviation: 0.47,
-      sum: 1,
+      summation: 1,
       trueCount: null,
       uniqueCount: 2,
     });
@@ -70,7 +70,7 @@ describe(computeColumnStats, () => {
 
     const dataSource = makeDataSource([makeNumberColumn("")], [makeRow({ "": 1 })]);
 
-    expect(takeOne(computeColumnStats(dataSource))).toStrictEqual({
+    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
       average: 1,
       columnName: "",
       columnType: ColumnType.Number,
@@ -81,7 +81,7 @@ describe(computeColumnStats, () => {
       nullCount: 0,
       nullPercent: 0,
       standardDeviation: 0,
-      sum: 1,
+      summation: 1,
       trueCount: null,
       uniqueCount: 1,
     });
@@ -95,7 +95,7 @@ describe(computeColumnStats, () => {
       [makeRow({ "": true }), makeRow({ "": true }), makeRow({ "": false }), makeRow({ "": null })],
     );
 
-    expect(takeOne(computeColumnStats(dataSource))).toStrictEqual({
+    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
       average: null,
       columnName: "",
       columnType: ColumnType.Boolean,
@@ -106,7 +106,7 @@ describe(computeColumnStats, () => {
       nullCount: 1,
       nullPercent: 25,
       standardDeviation: null,
-      sum: null,
+      summation: null,
       trueCount: 2,
       uniqueCount: null,
     });
@@ -120,7 +120,7 @@ describe(computeColumnStats, () => {
       [makeRow({ "": "" }), makeRow({ "": " " }), makeRow({ "": "" }), makeRow({ "": null })],
     );
 
-    expect(takeOne(computeColumnStats(dataSource))).toStrictEqual({
+    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
       average: null,
       columnName: "",
       columnType: ColumnType.String,
@@ -131,7 +131,7 @@ describe(computeColumnStats, () => {
       nullCount: 1,
       nullPercent: 25,
       standardDeviation: null,
-      sum: null,
+      summation: null,
       trueCount: null,
       uniqueCount: 2,
     });
@@ -150,7 +150,7 @@ describe(computeColumnStats, () => {
       ],
     );
 
-    expect(takeOne(computeColumnStats(dataSource))).toStrictEqual({
+    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
       average: null,
       columnName: "",
       columnType: ColumnType.Date,
@@ -161,18 +161,18 @@ describe(computeColumnStats, () => {
       nullCount: 1,
       nullPercent: 25,
       standardDeviation: null,
-      sum: null,
+      summation: null,
       trueCount: null,
       uniqueCount: 2,
     });
   });
 
-  test("all null number column returns null stats", () => {
+  test("all null number column returns null statistics", () => {
     expect.hasAssertions();
 
     const dataSource = makeDataSource([makeNumberColumn("")], [makeRow({ "": null })]);
 
-    expect(takeOne(computeColumnStats(dataSource))).toStrictEqual({
+    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
       average: null,
       columnName: "",
       columnType: ColumnType.Number,
@@ -183,18 +183,18 @@ describe(computeColumnStats, () => {
       nullCount: 1,
       nullPercent: 100,
       standardDeviation: null,
-      sum: 0,
+      summation: 0,
       trueCount: null,
       uniqueCount: 0,
     });
   });
 
-  test("empty rows returns zero counts and null stats", () => {
+  test("empty rows returns zero counts and null statistics", () => {
     expect.hasAssertions();
 
     const dataSource = makeDataSource([makeNumberColumn("")], []);
 
-    expect(takeOne(computeColumnStats(dataSource))).toStrictEqual({
+    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
       average: null,
       columnName: "",
       columnType: ColumnType.Number,
@@ -205,7 +205,7 @@ describe(computeColumnStats, () => {
       nullCount: 0,
       nullPercent: null,
       standardDeviation: null,
-      sum: 0,
+      summation: 0,
       trueCount: null,
       uniqueCount: 0,
     });
@@ -216,7 +216,7 @@ describe(computeColumnStats, () => {
 
     const dataSource = makeDataSource([new StringColumn({ name: "" })], [makeRow({ "": null }), makeRow({ "": null })]);
 
-    expect(takeOne(computeColumnStats(dataSource))).toStrictEqual({
+    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
       average: null,
       columnName: "",
       columnType: ColumnType.String,
@@ -227,7 +227,7 @@ describe(computeColumnStats, () => {
       nullCount: 2,
       nullPercent: 100,
       standardDeviation: null,
-      sum: null,
+      summation: null,
       trueCount: null,
       uniqueCount: 0,
     });
@@ -238,7 +238,7 @@ describe(computeColumnStats, () => {
 
     const dataSource = makeDataSource([new StringColumn({ name: "" })], []);
 
-    expect(takeOne(computeColumnStats(dataSource))).toStrictEqual({
+    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
       average: null,
       columnName: "",
       columnType: ColumnType.String,
@@ -249,7 +249,7 @@ describe(computeColumnStats, () => {
       nullCount: 0,
       nullPercent: null,
       standardDeviation: null,
-      sum: null,
+      summation: null,
       trueCount: null,
       uniqueCount: 0,
     });
@@ -263,7 +263,7 @@ describe(computeColumnStats, () => {
       [makeRow({ "": "a" }), makeRow({ "": "b" }), makeRow({ "": "c" })],
     );
 
-    const result = takeOne(computeColumnStats(dataSource));
+    const result = takeOne(computeColumnStatistics(dataSource));
 
     expect(result.mostFrequentValue).toBe("a");
     expect(result.uniqueCount).toBe(3);

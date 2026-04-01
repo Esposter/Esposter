@@ -35,7 +35,7 @@ export const AggregationTransformationComputeMap = {
     const sorted = nonNullValues.toSorted((a, b) => b - a);
     return sorted.indexOf(currentValue) + 1;
   },
-  [AggregationTransformationType.RunningSum]: ({ getNumber, rowIndex, rows }) => {
+  [AggregationTransformationType.RunningSummation]: ({ getNumber, rowIndex, rows }) => {
     let sum = 0;
     for (let index = 0; index <= rowIndex; index++) {
       const value = getNumber(takeOne(rows, index));

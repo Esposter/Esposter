@@ -10,7 +10,7 @@ Architecture details in `computedColumns/overview.md`.
 
 ## New Column Types
 
-- [x] **Aggregation columns** — dataset-level aggregates (`PercentOfTotal`, `Rank`, `RunningSum`); `AggregationTransformation` is a `ColumnTransformationType` variant on `ComputedColumn` (no separate `ColumnType.Aggregation`); `computeAggregationValue(rows, findSource, transformation, rowIndex)` registered in `ColumnTransformationComputeMap`
+- [x] **Aggregation columns** — dataset-level aggregates (`PercentOfTotal`, `Rank`, `RunningSummation`); `AggregationTransformation` is a `ColumnTransformationType` variant on `ComputedColumn` (no separate `ColumnType.Aggregation`); `computeAggregationValue(rows, findSource, transformation, rowIndex)` registered in `ColumnTransformationComputeMap`
 
 ## Column Editing
 

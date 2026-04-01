@@ -7,7 +7,7 @@ export enum AggregationTransformationType {
   Minimum = "Minimum",
   PercentOfTotal = "PercentOfTotal",
   Rank = "Rank",
-  RunningSum = "RunningSum",
+  RunningSummation = "RunningSummation",
 }
 
 export const aggregationTransformationTypeSchema = z.enum(

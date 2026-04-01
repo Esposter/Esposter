@@ -45,7 +45,7 @@ export const buildDataSource = (
     columns,
     metadata: { dataSourceType, importedAt: new Date(), name: file.name, size: file.size },
     rows,
-    stats: {
+    statistics: {
       columnCount: columns.length,
       rowCount: rows.length,
       size: columns.reduce((total, column) => total + column.size, 0),
