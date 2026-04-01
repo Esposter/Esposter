@@ -1,5 +1,5 @@
+import type { ColumnStatisticsKey } from "#shared/models/tableEditor/file/column/ColumnStatisticsKey";
 import type { ColumnStatisticsDefinition } from "@/models/tableEditor/file/column/ColumnStatisticsDefinition";
-import type { ColumnStatisticsKey } from "@/models/tableEditor/file/column/ColumnStatisticsKey";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { defineColumnStatistics } from "@/services/tableEditor/file/column/defineColumnStatistics";

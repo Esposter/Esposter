@@ -14,11 +14,10 @@ const { filteredRows, headers } = storeToRefs(rowStore);
 const columnSummaries = computed(() => {
   const result = new Map<string, string>();
   for (const column of displayColumns.value) {
-    if (column.type !== ColumnType.Number) continue;
-    if (column.footerStatistic === undefined) continue;
+    if (column.type !== ColumnType.Number || !column.footerStatisticsKey) continue;
     const values = filteredRows.value.map((row) => takeOne(row.data, column.name));
     const context = buildColumnStatisticsComputeContext(column, values);
-    const definition = ColumnStatisticsDefinitionMap[column.footerStatistic];
+    const definition = ColumnStatisticsDefinitionMap[column.footerStatisticsKey];
     const value = definition.compute(context);
     result.set(toColumnKey(column.name), `${definition.title} ${definition.format(value as never)}`);
   }

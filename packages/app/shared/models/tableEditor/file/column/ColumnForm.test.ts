@@ -497,7 +497,7 @@ describe("columnFormSchema", () => {
                 "title": "Description",
                 "type": "string",
               },
-              "footerStatistic": {
+              "footerStatisticsKey": {
                 "enum": [
                   "average",
                   "maximum",
