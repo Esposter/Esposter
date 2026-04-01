@@ -38,3 +38,4 @@ jobs:
         with:
           name: coverage
           path: packages/app/coverage
+          if-no-files-found: error
