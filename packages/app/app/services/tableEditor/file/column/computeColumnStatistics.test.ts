@@ -33,6 +33,7 @@ describe(computeColumnStatistics, () => {
       nullPercent: 25,
       standardDeviation: 0.94,
       summation: 4,
+      topFrequencies: null,
       trueCount: null,
       uniqueCount: 2,
     });
@@ -60,6 +61,7 @@ describe(computeColumnStatistics, () => {
       nullPercent: 0,
       standardDeviation: 0.47,
       summation: 1,
+      topFrequencies: null,
       trueCount: null,
       uniqueCount: 2,
     });
@@ -82,6 +84,7 @@ describe(computeColumnStatistics, () => {
       nullPercent: 0,
       standardDeviation: 0,
       summation: 1,
+      topFrequencies: null,
       trueCount: null,
       uniqueCount: 1,
     });
@@ -107,6 +110,7 @@ describe(computeColumnStatistics, () => {
       nullPercent: 25,
       standardDeviation: null,
       summation: null,
+      topFrequencies: null,
       trueCount: 2,
       uniqueCount: null,
     });
@@ -132,6 +136,10 @@ describe(computeColumnStatistics, () => {
       nullPercent: 25,
       standardDeviation: null,
       summation: null,
+      topFrequencies: [
+        ["", 2],
+        [" ", 1],
+      ],
       trueCount: null,
       uniqueCount: 2,
     });
@@ -162,6 +170,7 @@ describe(computeColumnStatistics, () => {
       nullPercent: 25,
       standardDeviation: null,
       summation: null,
+      topFrequencies: [["1970-01", 3]],
       trueCount: null,
       uniqueCount: 2,
     });
@@ -184,6 +193,7 @@ describe(computeColumnStatistics, () => {
       nullPercent: 100,
       standardDeviation: null,
       summation: 0,
+      topFrequencies: null,
       trueCount: null,
       uniqueCount: 0,
     });
@@ -206,6 +216,7 @@ describe(computeColumnStatistics, () => {
       nullPercent: null,
       standardDeviation: null,
       summation: 0,
+      topFrequencies: null,
       trueCount: null,
       uniqueCount: 0,
     });
@@ -228,6 +239,7 @@ describe(computeColumnStatistics, () => {
       nullPercent: 100,
       standardDeviation: null,
       summation: null,
+      topFrequencies: [],
       trueCount: null,
       uniqueCount: 0,
     });
@@ -250,6 +262,7 @@ describe(computeColumnStatistics, () => {
       nullPercent: null,
       standardDeviation: null,
       summation: null,
+      topFrequencies: [],
       trueCount: null,
       uniqueCount: 0,
     });
