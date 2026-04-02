@@ -5,7 +5,7 @@ import type { StandardMessageEntity } from "@esposter/db-schema";
 import { pollMessageContentSchema } from "@/models/message/poll/PollMessageContent";
 import { authClient } from "@/services/auth/authClient";
 import { useDataStore } from "@/store/message/data";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
 
 interface PollProps extends MessageComponentProps<StandardMessageEntity> {}
 
@@ -15,13 +15,8 @@ const dataStore = useDataStore();
 const { storeUpdateMessage, updateMessage } = dataStore;
 
 const pollContent = computed(() => {
-  let parsed: unknown;
-  try {
-    parsed = JSON.parse(message.message);
-  } catch {
-    throw new InvalidOperationError(Operation.Read, message.rowKey, "Poll message is not valid JSON");
-  }
-  const result = pollMessageContentSchema.safeParse(parsed);
+  const parsedMessage = jsonDateParse(message.message);
+  const result = pollMessageContentSchema.safeParse(parsedMessage);
   if (!result.success) throw new InvalidOperationError(Operation.Read, message.rowKey, result.error.message);
   return result.data;
 });

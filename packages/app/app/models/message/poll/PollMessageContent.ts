@@ -10,7 +10,7 @@ export interface PollMessageContent {
 }
 
 export const pollMessageContentSchema = z.object({
-  options: z.array(pollOptionSchema),
-  question: z.string(),
-  votes: z.record(z.string(), z.string()),
+  options: z.array(pollOptionSchema).min(1),
+  question: z.string().min(1),
+  votes: z.record(z.string().min(1), z.string().min(1)),
 }) satisfies z.ZodType<PollMessageContent>;
