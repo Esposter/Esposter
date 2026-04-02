@@ -42,7 +42,7 @@ catalog:
   "@fullcalendar/timegrid": ^6.1.20
   "@fullcalendar/vue3": ^6.1.20
   "@json-layout/vocabulary": ^2.13.0
-  "@koumoul/vjsf": ^4.2.0
+  "@koumoul/vjsf": ^4.3.0
   "@lerna-lite/cli": ^4.11.5
   "@lerna-lite/publish": ^4.11.5
   "@lerna-lite/run": ^4.11.5
@@ -118,7 +118,7 @@ catalog:
   debug: ^4.4.3
   dedent: ^1.7.2
   defu: ^6.1.6
-  dotenv: ^17.3.1
+  dotenv: ^17.4.0
   drizzle-kit: ^0.31.10
   drizzle-orm: ^0.45.2
   drizzle-zod: ^0.8.3
