@@ -13,30 +13,32 @@ const { active, creator, isPreview = false, isSameBatch, message } = defineProps
 const session = authClient.useSession();
 const dataStore = useDataStore();
 const { storeUpdateMessage, updateMessage } = dataStore;
-
 const pollContent = computed(() => {
   const parsedMessage = jsonDateParse(message.message);
   const result = pollMessageContentSchema.safeParse(parsedMessage);
   if (!result.success) throw new InvalidOperationError(Operation.Read, message.rowKey, result.error.message);
   return result.data;
 });
-
 const totalVotes = computed(() => Object.keys(pollContent.value.votes).length);
-const currentUserId = computed(() => session.value.data?.user.id ?? "");
-const currentVoteOptionId = computed(() => pollContent.value.votes[currentUserId.value] ?? null);
 const voteCountMap = computed(() => {
-  const map: Record<string, number> = {};
-  for (const optionId of Object.values(pollContent.value.votes)) map[optionId] = (map[optionId] ?? 0) + 1;
+  const map = new Map<string, number>();
+  for (const optionId of Object.values(pollContent.value.votes)) map.set(optionId, (map.get(optionId) ?? 0) + 1);
   return map;
 });
+const getVoteDescription = (count: number) => `${count} vote${count !== 1 ? "s" : ""}`;
+const getVotePercentage = (optionId: string) => {
+  const count = voteCountMap.value.get(optionId) ?? 0;
+  return totalVotes.value > 0 ? Math.round((count / totalVotes.value) * 100) : 0;
+};
 const isVoting = ref(false);
-const vote = async (optionId: string) => {
-  if (!currentUserId.value || isPreview || isVoting.value) return;
+const userId = computed(() => session.value.data?.user.id);
+const vote = async (optionId: string | null) => {
+  if (!userId.value || isPreview || isVoting.value) return;
   isVoting.value = true;
   const previousMessage = message.message;
   const updatedVotes = { ...pollContent.value.votes };
-  if (updatedVotes[currentUserId.value] === optionId) delete updatedVotes[currentUserId.value];
-  else updatedVotes[currentUserId.value] = optionId;
+  if (optionId === null) delete updatedVotes[userId.value];
+  else updatedVotes[userId.value] = optionId;
   const updatedMessage = JSON.stringify({ ...pollContent.value, votes: updatedVotes });
   await storeUpdateMessage({ message: updatedMessage, partitionKey: message.partitionKey, rowKey: message.rowKey });
   try {
@@ -56,26 +58,35 @@ const vote = async (optionId: string) => {
       <v-icon icon="mdi-poll" size="small" />
     </template>
     <span font-bold>{{ creator.name }}</span>
-    <span text-gray> created a poll</span>
+    <span text-gray> created a poll </span>
     <MessageModelMessageCreatedAtDate :created-at="message.createdAt" />
     <v-card mt-2 variant="outlined" w-full>
+      <v-card-title>{{ pollContent.question }}</v-card-title>
       <v-card-text>
-        <p font-semibold mb-3>{{ pollContent.question }}</p>
-        <div flex flex-col gap-2>
-          <v-btn
-            v-for="{ id, label } of pollContent.options"
-            :key="id"
-            :color="currentVoteOptionId === id ? 'primary' : undefined"
-            :disabled="isPreview || !currentUserId || isVoting"
-            block
-            variant="tonal"
-            @click="vote(id)"
-          >
-            {{ label }}
-            <span ml-auto opacity-70>{{ voteCountMap[id] ?? 0 }}</span>
-          </v-btn>
-        </div>
-        <p mt-2 text-sm text-gray>{{ totalVotes }} vote{{ totalVotes !== 1 ? "s" : "" }}</p>
+        <v-radio-group
+          v-if="userId"
+          :model-value="pollContent.votes[userId]"
+          :disabled="isPreview || isVoting"
+          color="primary"
+          hide-details
+          @update:model-value="vote"
+        >
+          <template v-for="{ id, label } of pollContent.options" :key="id">
+            <v-radio :value="id">
+              <template #label>
+                <div flex w-full>
+                  <div flex-1>{{ label }}</div>
+                  <v-spacer />
+                  <div text-caption text-medium-emphasis>
+                    {{ getVoteDescription(voteCountMap.get(id) ?? 0) }} · {{ getVotePercentage(id) }}%
+                  </div>
+                </div>
+              </template>
+            </v-radio>
+            <v-progress-linear :model-value="getVotePercentage(id)" color="primary" mb-3 rounded-bar />
+          </template>
+          <v-list-subheader>{{ getVoteDescription(totalVotes) }}</v-list-subheader>
+        </v-radio-group>
       </v-card-text>
     </v-card>
     <MessageModelMessageEmojiList :is-preview :message />

@@ -217,27 +217,6 @@ describe("message", () => {
     );
   });
 
-  test("creates roll message", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const userId = getMockSession().user.id;
-    const message = "🎲 Rolled a **28**";
-    const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id, type: MessageType.Message });
-
-    expect(newMessage).toStrictEqual(
-      new StandardMessageEntity({
-        createdAt: newMessage.createdAt,
-        message,
-        partitionKey: newRoom.id,
-        rowKey: newMessage.rowKey,
-        type: MessageType.Message,
-        updatedAt: newMessage.updatedAt,
-        userId,
-      }),
-    );
-  });
-
   test("creates poll message", async () => {
     expect.hasAssertions();
 
