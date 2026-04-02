@@ -6,6 +6,6 @@ export interface PollOption {
 }
 
 export const pollOptionSchema = z.object({
-  id: z.string(),
-  label: z.string(),
+  id: z.uuid(),
+  label: z.string().min(1),
 }) satisfies z.ZodType<PollOption>;
