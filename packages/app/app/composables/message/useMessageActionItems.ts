@@ -110,6 +110,7 @@ export const useMessageActionItems = (
       case MessageType.Webhook:
         return [copyTextItem, pinMessageItem.value, copyMessageLinkItem];
       case MessageType.PinMessage:
+      case MessageType.Poll:
         return [copyMessageLinkItem];
       default:
         return exhaustiveGuard(message);

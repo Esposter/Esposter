@@ -1,19 +1,18 @@
 <script setup lang="ts">
-import type { MentionNodeAttributes } from "@/models/message/MentionNodeAttributes";
-import type { User } from "@esposter/db-schema";
+import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
 import type { SuggestionKeyDownProps, SuggestionProps } from "@tiptap/suggestion";
 
 import { takeOne } from "@esposter/shared";
 
-const { command, items, query } = defineProps<SuggestionProps<User, MentionNodeAttributes>>();
+const { command, items, query } = defineProps<SuggestionProps<SlashCommand>>();
 const title = computed(() => {
-  const title = "MEMBERS";
-  return query ? `${title} MATCHING @${query}` : title;
+  const baseTitle = "COMMANDS";
+  return query ? `${baseTitle} MATCHING /${query}` : baseTitle;
 });
 const selectedIndex = ref(0);
 const selectItem = (index: number) => {
-  const item = takeOne(items, index);
-  command({ id: item.id, label: item.name });
+  const slashCommand = takeOne(items, index);
+  command(slashCommand);
 };
 const onKeyDown = ({ event }: SuggestionKeyDownProps) => {
   switch (event.key) {
@@ -46,16 +45,17 @@ watch(
     <v-card-title text-sm font-bold>{{ title }}</v-card-title>
     <v-list density="compact" py-0>
       <v-list-item
-        v-for="({ id, image, name }, index) of items"
-        :key="id"
+        v-for="({ description, icon, title: commandTitle, type }, index) of items"
+        :key="type"
         :active="selectedIndex === index"
         :ripple="false"
         @click="selectItem(index)"
       >
         <template #prepend>
-          <MessageModelMemberStatusAvatar :id :image :name :avatar-props="{ size: 'x-small' }" />
+          <v-icon :icon size="small" mr-2 />
         </template>
-        <v-list-item-title font-semibold>{{ name }}</v-list-item-title>
+        <v-list-item-title font-semibold>{{ commandTitle }}</v-list-item-title>
+        <v-list-item-subtitle>{{ description }}</v-list-item-subtitle>
       </v-list-item>
     </v-list>
   </StyledCard>

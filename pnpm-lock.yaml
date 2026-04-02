@@ -10306,8 +10306,8 @@ packages:
   nuxt-csurf@1.6.5:
     resolution: {integrity: sha512-/DMNTON8LIVhntamKbBmAuM879B0QnuSJa7ZAkmkZe+21m+1QGcjVUxtSkizaM48NUvkuAGYOG0ncn+kqEgrzw==}
 
-  nuxt-link-checker@5.0.6:
-    resolution: {integrity: sha512-P95TdiVhbhkcLd/AmzoLSw5JfZhn+F9Dp8VRiGAFD4z5PLDdhOwsgmNM1GLnoVs2XH86+4cw5pabEBpLoHexRQ==}
+  nuxt-link-checker@5.0.7:
+    resolution: {integrity: sha512-tu8WKrFZ4zf+itrUbCIXVNu/FmkavSvQDDs08QNvvKzzbDxEjmeD0QvKg/nK9ckxr3AzCepZpU+9zMzMClQsNQ==}
     peerDependencies:
       nuxt: ^3.9.0 || ^4.0.0
 
@@ -10368,8 +10368,8 @@ packages:
     resolution: {integrity: sha512-gXUhJiOqgkKkP0FHDAPOuREjoala0p6G/4TIlkti1ZafpJV8TkjjFqCNT6NuiWHxKzVYY00OIR1tbRcZuJ7LmQ==}
     engines: {node: '>=20.0.0'}
 
-  nuxt-seo-utils@8.1.5:
-    resolution: {integrity: sha512-ikaP2dsOeZ175ACUL8zl2Lo3airJtDKXOdnlbVrpJO2fILwY2jjkxzhoT+FGUzWgQsh2yTS3/oOnolcD4g5ISQ==}
+  nuxt-seo-utils@8.1.6:
+    resolution: {integrity: sha512-KycKQEB3b9G9vzFo0FtzK0g8DlgAHVSzIgc1u8ClyN0RRyQ86hHZg0Be1R4W/CToOfmtP90oIHGMlIIg3X9IXw==}
     hasBin: true
     peerDependencies:
       esbuild: '>=0.17.0'
@@ -16484,10 +16484,10 @@ snapshots:
       '@nuxtjs/robots': 6.0.6(c894ff790243ae8e3ff9b9ff8279903d)
       '@nuxtjs/sitemap': 8.0.11(c894ff790243ae8e3ff9b9ff8279903d)
       nuxt: 4.3.1(b5156e2a236cadcdf4b2a3e6d49b29bc)
-      nuxt-link-checker: 5.0.6(@azure/data-tables@13.3.2)(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@nuxt/schema@4.4.2)(db0@0.3.4(@electric-sql/pglite@0.4.2)(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.2)(@opentelemetry/api@1.9.1)(kysely@0.28.15)(postgres@3.4.8)))(ioredis@5.10.1)(magicast@0.5.2)(nuxt@4.3.1(b5156e2a236cadcdf4b2a3e6d49b29bc))(srvx@0.11.14)(vite@8.0.3(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@25.5.0)(esbuild@0.27.5)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue@3.5.31(typescript@5.9.3))(zod@4.3.6)
+      nuxt-link-checker: 5.0.7(@azure/data-tables@13.3.2)(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@nuxt/schema@4.4.2)(db0@0.3.4(@electric-sql/pglite@0.4.2)(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.2)(@opentelemetry/api@1.9.1)(kysely@0.28.15)(postgres@3.4.8)))(ioredis@5.10.1)(magicast@0.5.2)(nuxt@4.3.1(b5156e2a236cadcdf4b2a3e6d49b29bc))(srvx@0.11.14)(vite@8.0.3(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@25.5.0)(esbuild@0.27.5)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue@3.5.31(typescript@5.9.3))(zod@4.3.6)
       nuxt-og-image: 6.3.2(8a71f9d9c086befeea54d00beb2cf495)
       nuxt-schema-org: 6.0.4(cbf791810fa47a379de2f5bf926ca1ff)
-      nuxt-seo-utils: 8.1.5(0a9e3879a6680783e2bd088ae38e19f8)
+      nuxt-seo-utils: 8.1.6(0a9e3879a6680783e2bd088ae38e19f8)
       nuxt-site-config: 4.0.7(@nuxt/schema@4.4.2)(magicast@0.5.2)(nuxt@4.3.1(b5156e2a236cadcdf4b2a3e6d49b29bc))(srvx@0.11.14)(vite@8.0.3(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@25.5.0)(esbuild@0.27.5)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue@3.5.31(typescript@5.9.3))(zod@4.3.6)
       nuxtseo-shared: 5.1.0(@nuxt/schema@4.4.2)(magicast@0.5.2)(nuxt-site-config@4.0.7(@nuxt/schema@4.4.2)(magicast@0.5.2)(nuxt@4.3.1(b5156e2a236cadcdf4b2a3e6d49b29bc))(srvx@0.11.14)(vite@8.0.3(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@25.5.0)(esbuild@0.27.5)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue@3.5.31(typescript@5.9.3))(zod@4.3.6))(nuxt@4.3.1(b5156e2a236cadcdf4b2a3e6d49b29bc))(vite@8.0.3(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@25.5.0)(esbuild@0.27.5)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue@3.5.31(typescript@5.9.3))(zod@4.3.6)
     transitivePeerDependencies:
@@ -22927,7 +22927,7 @@ snapshots:
     transitivePeerDependencies:
       - magicast
 
-  nuxt-link-checker@5.0.6(@azure/data-tables@13.3.2)(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@nuxt/schema@4.4.2)(db0@0.3.4(@electric-sql/pglite@0.4.2)(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.2)(@opentelemetry/api@1.9.1)(kysely@0.28.15)(postgres@3.4.8)))(ioredis@5.10.1)(magicast@0.5.2)(nuxt@4.3.1(b5156e2a236cadcdf4b2a3e6d49b29bc))(srvx@0.11.14)(vite@8.0.3(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@25.5.0)(esbuild@0.27.5)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue@3.5.31(typescript@5.9.3))(zod@4.3.6):
+  nuxt-link-checker@5.0.7(@azure/data-tables@13.3.2)(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@nuxt/schema@4.4.2)(db0@0.3.4(@electric-sql/pglite@0.4.2)(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.2)(@opentelemetry/api@1.9.1)(kysely@0.28.15)(postgres@3.4.8)))(ioredis@5.10.1)(magicast@0.5.2)(nuxt@4.3.1(b5156e2a236cadcdf4b2a3e6d49b29bc))(srvx@0.11.14)(vite@8.0.3(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@25.5.0)(esbuild@0.27.5)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue@3.5.31(typescript@5.9.3))(zod@4.3.6):
     dependencies:
       '@nuxt/devtools-kit': 4.0.0-alpha.3(magicast@0.5.2)(vite@8.0.3(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@25.5.0)(esbuild@0.27.5)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
       '@nuxt/kit': 4.4.2(magicast@0.5.2)
@@ -23158,7 +23158,7 @@ snapshots:
       - rollup
       - supports-color
 
-  nuxt-seo-utils@8.1.5(0a9e3879a6680783e2bd088ae38e19f8):
+  nuxt-seo-utils@8.1.6(0a9e3879a6680783e2bd088ae38e19f8):
     dependencies:
       '@nuxt/devtools-kit': 4.0.0-alpha.3(magicast@0.5.2)(vite@8.0.3(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(@types/node@25.5.0)(esbuild@0.27.5)(jiti@2.6.1)(sass-embedded@1.98.0)(sass@1.98.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
       '@nuxt/kit': 4.4.2(magicast@0.5.2)

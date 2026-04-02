@@ -1,4 +1,4 @@
-import { suggestion } from "@/services/message/suggestion";
+import { MentionSuggestion } from "@/services/message/MentionSuggestion";
 import { useColorsStore } from "@/store/colors";
 import { Mention } from "@tiptap/extension-mention";
 
@@ -10,7 +10,7 @@ export const useMentionExtension = () => {
       HTMLAttributes: {
         style: `color:${info.value};background-color:${infoOpacity10.value};border-radius:.25rem`,
       },
-      suggestion,
+      suggestion: MentionSuggestion,
     }),
   );
 };
