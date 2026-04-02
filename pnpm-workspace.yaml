@@ -126,7 +126,7 @@ catalog:
   eslint: ^10.1.0
   eslint-plugin-depend: ^1.5.0
   eslint-plugin-oxlint: ^1.58.0
-  eslint-plugin-perfectionist: ^5.7.0
+  eslint-plugin-perfectionist: ^5.8.0
   eslint-plugin-pinia: ^0.4.2
   eventemitter3: ^5.0.4
   fake-indexeddb: ^6.2.5
