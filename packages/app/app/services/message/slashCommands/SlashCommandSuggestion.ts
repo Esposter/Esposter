@@ -12,7 +12,7 @@ import { useRoomStore } from "@/store/message/room";
 import { MessageType } from "@esposter/db-schema";
 import { exhaustiveGuard } from "@esposter/shared";
 
-export const SlashCommandSuggestion: Except<SuggestionOptions<SlashCommand>, "editor"> = {
+export const SlashCommandSuggestion: Except<SuggestionOptions<SlashCommand, SlashCommand>, "editor"> = {
   char: "/",
   command: ({ editor, props: slashCommand, range }) => {
     editor.chain().focus().deleteRange(range).run();
