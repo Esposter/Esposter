@@ -43,10 +43,10 @@ catalog:
   "@fullcalendar/vue3": ^6.1.20
   "@json-layout/vocabulary": ^2.13.0
   "@koumoul/vjsf": ^4.3.0
-  "@lerna-lite/cli": ^4.11.5
-  "@lerna-lite/publish": ^4.11.5
-  "@lerna-lite/run": ^4.11.5
-  "@lerna-lite/watch": ^4.11.5
+  "@lerna-lite/cli": ^5.0.0
+  "@lerna-lite/publish": ^5.0.0
+  "@lerna-lite/run": ^5.0.0
+  "@lerna-lite/watch": ^5.0.0
   "@mdi/font": ^7.4.47
   "@nuxt/eslint": ^1.15.2
   "@nuxt/fonts": ^0.14.0
