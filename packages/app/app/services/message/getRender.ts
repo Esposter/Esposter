@@ -1,4 +1,4 @@
-import type { SuggestionKeyDownProps } from "@tiptap/suggestion";
+import type { SuggestionKeyDownProps, SuggestionOptions } from "@tiptap/suggestion";
 import type { Component } from "vue";
 
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
@@ -9,44 +9,46 @@ interface SuggestionList {
   onKeyDown: (props: SuggestionKeyDownProps) => boolean;
 }
 
-export const getRender = (ListComponent: Component) => () => {
-  let component: undefined | VueRenderer;
+export const getRender =
+  <TItem, TAsync = TItem>(ListComponent: Component): NonNullable<SuggestionOptions<TItem, TAsync>["render"]> =>
+  () => {
+    let component: undefined | VueRenderer;
 
-  return {
-    onExit: () => {
-      component?.element?.remove();
-      component?.destroy();
-    },
-
-    onKeyDown: (props: SuggestionKeyDownProps) => {
-      if (props.event.key === "Escape") {
+    return {
+      onExit: () => {
+        component?.element?.remove();
         component?.destroy();
-        return true;
-      }
+      },
 
-      if (!component) return false;
+      onKeyDown: (props: SuggestionKeyDownProps) => {
+        if (props.event.key === "Escape") {
+          component?.destroy();
+          return true;
+        }
 
-      return Boolean((component.ref as SuggestionList).onKeyDown(props));
-    },
+        if (!component) return false;
 
-    onStart: getSynchronizedFunction(async (props) => {
-      component = new VueRenderer(ListComponent, { editor: props.editor, props });
+        return (component.ref as SuggestionList).onKeyDown(props);
+      },
 
-      if (!(props.clientRect && component.element)) return;
+      onStart: getSynchronizedFunction(async (props) => {
+        component = new VueRenderer(ListComponent, { editor: props.editor, props });
 
-      const element = component.element as HTMLElement;
-      element.style.position = "absolute";
-      document.body.appendChild(element);
-      await updatePosition(props.editor, element);
-    }),
+        if (!(props.clientRect && component.element)) return;
 
-    onUpdate: getSynchronizedFunction(async (props) => {
-      component?.updateProps(props);
+        const element = component.element as HTMLElement;
+        element.style.position = "absolute";
+        document.body.appendChild(element);
+        await updatePosition(props.editor, element);
+      }),
 
-      if (!(props.clientRect && component?.element)) return;
+      onUpdate: getSynchronizedFunction(async (props) => {
+        component?.updateProps(props);
 
-      const element = component.element as HTMLElement;
-      await updatePosition(props.editor, element);
-    }),
+        if (!(props.clientRect && component?.element)) return;
+
+        const element = component.element as HTMLElement;
+        await updatePosition(props.editor, element);
+      }),
+    };
   };
-};
