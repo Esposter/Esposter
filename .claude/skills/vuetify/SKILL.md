@@ -47,6 +47,17 @@ The following variants are set globally and must **never** be repeated on indivi
 
 Always name the form validity ref `isEditFormValid`. Bind it via `v-model` on `<v-form>` and use `ref(true)` for optimistic initial state. Disable Save & Close via `:confirm-button-attrs="{ disabled: !isEditFormValid }"` (combined with other conditions as needed). Never use try/catch in submit handlers — prevent invalid submission through form validation rules so state is always consistent. Use `StyledEditFormDialogErrorIcon` with `:edit-form-ref :is-edit-form-valid` (plus optional `:schema :value` for Zod schema validation) in the `#prepend-actions` slot. `editFormRef` is a required prop typed `InstanceType<typeof VForm> | undefined` (always passed; `| undefined` reflects the ref being uninitialized before mount). `isEditFormValid` is field-level only (from `<v-form v-model>`); schema errors are computed internally inside `StyledEditFormDialogErrorIcon` via `watchDeep` on `value`.
 
+## Form Validation Rules
+
+- **Always use `formRules` from `@/services/vuetify/formRules`** — never write inline arrow-function rules in templates (the linter strips them). Import and use the pre-defined rules: `[formRules.required]`, `[formRules.isNotProfanity]`, `[formRules.requireAtMostNCharacters(n)]`, `[formRules.requireAtMostMaxFileSize]`.
+- Multiple rules combine naturally: `:rules="[formRules.required, formRules.requireAtMostNCharacters(100)]"`
+- The `required` HTML attribute is not a Vuetify prop — use `:rules="[formRules.required]"` instead.
+
+## HTML Footprint
+
+- **Prefer Vuetify components over raw HTML elements** — avoid `<div>`, `<span>`, `<p>`, `<ul>`, `<li>`, etc. unless there is genuinely no suitable Vuetify component. Use `v-container` / `v-row` / `v-col` for layout, `v-list` / `v-list-item` for lists (the `#append` slot centers inline actions), and `v-alert` or `v-messages` for inline text messages.
+- Only reach for raw HTML when a Vuetify component would add unnecessary complexity (e.g. a single text node inside a slot that needs no styling).
+
 ## Keyboard Shortcut Components
 
 When a button has an associated keyboard shortcut, extract it into its own component that owns both the `v-btn` and the `onKeyStroke` handler. This keeps each component focused on one action (e.g., `UndoButton.vue`, `RedoButton.vue`).

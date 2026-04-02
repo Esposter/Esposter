@@ -28,13 +28,13 @@ const isEditFormValid = ref(true);
               v-model="title"
               label="Title"
               placeholder="Title"
-              autofocus
               :counter="POST_TITLE_MAX_LENGTH"
               :rules="[
                 formRules.required,
                 formRules.requireAtMostNCharacters(POST_TITLE_MAX_LENGTH),
                 formRules.isNotProfanity,
               ]"
+              autofocus
             />
           </v-col>
         </v-row>

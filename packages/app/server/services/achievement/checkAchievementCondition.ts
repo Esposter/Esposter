@@ -17,7 +17,7 @@ export const checkAchievementCondition = (
       return condition.conditions.some((c) => checkAchievementCondition(c, data));
     case AchievementConditionType.Property: {
       // @ts-expect-error We can assume types are correct as achievementDefinitions is defined properly
-      const value = condition.path.split(".").reduce((property, key) => property[key], data);
+      const value = condition.path.split(".").reduce((property, key) => property?.[key], data);
       switch (condition.operator) {
         case AchievementOperator.Contains:
           return typeof value === "string" && value.toLowerCase().includes(condition.value.toLowerCase());
