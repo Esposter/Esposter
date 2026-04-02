@@ -32,7 +32,7 @@ const getVotePercentage = (optionId: string) => {
 };
 const isVoting = ref(false);
 const userId = computed(() => session.value.data?.user.id);
-const vote = async (optionId: string | null) => {
+const vote = async (optionId: null | string) => {
   if (!userId.value || isPreview || isVoting.value) return;
   isVoting.value = true;
   const previousMessage = message.message;
