@@ -26,6 +26,7 @@ const keyboardExtension = new Extension({
   },
 });
 const mentionExtension = useMentionExtension();
+const slashCommandExtension = useSlashCommandExtension();
 const inputStore = useInputStore();
 const { input } = storeToRefs(inputStore);
 const replyStore = useReplyStore();
@@ -36,6 +37,7 @@ const uploadFiles = useUploadFiles();
 
 <template>
   <MessageModelMessageForwardRoomDialog />
+  <MessageModelMessageInputPollDialog />
   <MessageModelMessageFileDropzoneBackground />
   <div w-full>
     <MessageModelMessageInputReplyHeader v-if="reply" :reply @close="rowKey = ''" />
@@ -43,7 +45,7 @@ const uploadFiles = useUploadFiles();
       v-model="input"
       :placeholder="`Message ${roomName}`"
       :limit="MESSAGE_MAX_LENGTH"
-      :extensions="[keyboardExtension, mentionExtension]"
+      :extensions="[keyboardExtension, mentionExtension, slashCommandExtension]"
       :card-props="reply ? { class: 'rd-t-none' } : undefined"
       @paste="(_editor, files) => uploadFiles(files)"
     >
