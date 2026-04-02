@@ -4,33 +4,19 @@ import type { SubmitEventPromise } from "vuetify";
 
 import { useDataStore } from "@/store/message/data";
 import { usePollDialogStore } from "@/store/message/pollDialog";
+import { useRoomStore } from "@/store/message/room";
 import { MessageType } from "@esposter/db-schema";
 
+const roomStore = useRoomStore();
+const { currentRoomId } = storeToRefs(roomStore);
 const pollDialogStore = usePollDialogStore();
-const { isOpen, roomId } = storeToRefs(pollDialogStore);
+const { isOpen } = storeToRefs(pollDialogStore);
 const dataStore = useDataStore();
 const { createMessage } = dataStore;
 const question = ref("");
 const options = ref(["", ""]);
-
-const updateOption = (index: number, value: string) => {
-  options.value = options.value.map((option, i) => (i === index ? value : option));
-};
-const addOption = () => {
-  if (options.value.length < 10) options.value = [...options.value, ""];
-};
-const removeOption = (index: number) => {
-  if (options.value.length > 2) options.value = options.value.filter((_, i) => i !== index);
-};
-
-watch(isOpen, (newIsOpen) => {
-  if (newIsOpen) return;
-  question.value = "";
-  options.value = ["", ""];
-});
-
 const onSubmit = async (_event: SubmitEventPromise, onComplete: () => void) => {
-  if (!roomId.value) return;
+  if (!currentRoomId.value) return;
   const pollContent: PollMessageContent = {
     options: options.value.map((label) => ({ id: crypto.randomUUID(), label: label.trim() })),
     question: question.value.trim(),
@@ -38,7 +24,7 @@ const onSubmit = async (_event: SubmitEventPromise, onComplete: () => void) => {
   };
   await createMessage({
     message: JSON.stringify(pollContent),
-    roomId: roomId.value,
+    roomId: currentRoomId.value,
     type: MessageType.Poll,
   });
   onComplete();
@@ -66,18 +52,18 @@ const onSubmit = async (_event: SubmitEventPromise, onComplete: () => void) => {
           :label="`Option ${index + 1}`"
           hide-details="auto"
           required
-          @update:model-value="updateOption(index, $event)"
+          @update:model-value="options[index] = $event"
         />
         <v-btn
           :disabled="options.length <= 2"
           icon="mdi-close"
           size="small"
           variant="text"
-          @click="removeOption(index)"
+          @click="options.splice(index, 1)"
         />
       </div>
     </div>
-    <v-btn :disabled="options.length >= 10" prepend-icon="mdi-plus" variant="text" @click="addOption">
+    <v-btn :disabled="options.length >= 10" prepend-icon="mdi-plus" variant="text" @click="options.push('')">
       Add Option
     </v-btn>
     <p v-if="options.length >= 10" text-sm text-gray mt-1>Maximum 10 options</p>

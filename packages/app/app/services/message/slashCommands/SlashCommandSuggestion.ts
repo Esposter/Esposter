@@ -23,13 +23,15 @@ export const SlashCommandSuggestion: Except<SuggestionOptions<SlashCommand, Slas
     switch (slashCommand.type) {
       case SlashCommandType.Poll: {
         const pollDialogStore = usePollDialogStore();
-        pollDialogStore.open(roomId);
+        const { isOpen } = storeToRefs(pollDialogStore);
+        isOpen.value = true;
         break;
       }
       case SlashCommandType.Roll: {
         const roll = Math.floor(Math.random() * 100) + 1;
         const dataStore = useDataStore();
-        void dataStore.createMessage({
+        const { createMessage } = dataStore;
+        void createMessage({
           message: `🎲 Rolled a **${roll}**`,
           roomId,
           type: MessageType.Message,
