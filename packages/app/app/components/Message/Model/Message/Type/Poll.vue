@@ -76,7 +76,6 @@ const vote = async (optionId: string | null) => {
               <template #label>
                 <div flex w-full>
                   <div flex-1>{{ label }}</div>
-                  <v-spacer />
                   <div text-caption text-medium-emphasis>
                     {{ getVoteDescription(voteCountMap.get(id) ?? 0) }} · {{ getVotePercentage(id) }}%
                   </div>
@@ -92,3 +91,9 @@ const vote = async (optionId: string | null) => {
     <MessageModelMessageEmojiList :is-preview :message />
   </MessageModelMessageTypeListItem>
 </template>
+
+<style scoped lang="scss">
+:deep(.v-label) {
+  width: 100%;
+}
+</style>
