@@ -32,8 +32,8 @@ watch(isOpen, (newIsOpen) => {
 const onSubmit = async (_event: SubmitEventPromise, onComplete: () => void) => {
   if (!roomId.value) return;
   const pollContent: PollMessageContent = {
-    options: options.value.map((label) => ({ id: crypto.randomUUID(), label })),
-    question: question.value,
+    options: options.value.map((label) => ({ id: crypto.randomUUID(), label: label.trim() })),
+    question: question.value.trim(),
     votes: {},
   };
   await createMessage({
@@ -54,7 +54,7 @@ const onSubmit = async (_event: SubmitEventPromise, onComplete: () => void) => {
   >
     <v-text-field
       v-model="question"
-      :rules="[(value: string) => Boolean(value) || 'Question is required']"
+      :rules="[(value: string) => Boolean(value.trim()) || 'Question is required']"
       label="Question"
       required
     />
@@ -62,7 +62,7 @@ const onSubmit = async (_event: SubmitEventPromise, onComplete: () => void) => {
       <div v-for="(option, index) of options" :key="index" flex items-center gap-2>
         <v-text-field
           :model-value="option"
-          :rules="[(value: string) => Boolean(value) || 'Option cannot be empty']"
+          :rules="[(value: string) => Boolean(value.trim()) || 'Option cannot be empty']"
           :label="`Option ${index + 1}`"
           hide-details="auto"
           required

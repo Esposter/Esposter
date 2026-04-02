@@ -29,15 +29,24 @@ const voteCountMap = computed(() => {
   for (const optionId of Object.values(pollContent.value.votes)) map[optionId] = (map[optionId] ?? 0) + 1;
   return map;
 });
-
+const isVoting = ref(false);
 const vote = async (optionId: string) => {
-  if (!currentUserId.value || isPreview) return;
+  if (!currentUserId.value || isPreview || isVoting.value) return;
+  isVoting.value = true;
+  const previousMessage = message.message;
   const updatedVotes = { ...pollContent.value.votes };
   if (updatedVotes[currentUserId.value] === optionId) delete updatedVotes[currentUserId.value];
   else updatedVotes[currentUserId.value] = optionId;
   const updatedMessage = JSON.stringify({ ...pollContent.value, votes: updatedVotes });
   await storeUpdateMessage({ message: updatedMessage, partitionKey: message.partitionKey, rowKey: message.rowKey });
-  await updateMessage({ message: updatedMessage, partitionKey: message.partitionKey, rowKey: message.rowKey });
+  try {
+    await updateMessage({ message: updatedMessage, partitionKey: message.partitionKey, rowKey: message.rowKey });
+  } catch (error) {
+    await storeUpdateMessage({ message: previousMessage, partitionKey: message.partitionKey, rowKey: message.rowKey });
+    throw error;
+  } finally {
+    isVoting.value = false;
+  }
 };
 </script>
 
@@ -57,7 +66,7 @@ const vote = async (optionId: string) => {
             v-for="{ id, label } of pollContent.options"
             :key="id"
             :color="currentVoteOptionId === id ? 'primary' : undefined"
-            :disabled="isPreview || !currentUserId"
+            :disabled="isPreview || !currentUserId || isVoting"
             block
             variant="tonal"
             @click="vote(id)"
