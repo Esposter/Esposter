@@ -625,7 +625,7 @@ catalogs:
       specifier: ^1.11.1
       version: 1.11.1
     vuetify:
-      specifier: ^4.0.4-master.2026-04-01
+      specifier: ^4.0.4
       version: 4.0.4
     vuetify-nuxt-module:
       specifier: ^1.0.0-beta.2

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
-import type { SuggestionProps } from "@tiptap/suggestion";
+import type { SuggestionKeyDownProps, SuggestionProps } from "@tiptap/suggestion";
 
 import { takeOne } from "@esposter/shared";
 
@@ -14,7 +14,7 @@ const selectItem = (index: number) => {
   const slashCommand = takeOne(items, index);
   command(slashCommand);
 };
-const onKeyDown = ({ event }: { event: KeyboardEvent }) => {
+const onKeyDown = ({ event }: SuggestionKeyDownProps) => {
   if (event.key === "ArrowUp") {
     selectedIndex.value = (selectedIndex.value + items.length - 1) % items.length;
     return true;

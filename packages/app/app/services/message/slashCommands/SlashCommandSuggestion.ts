@@ -2,7 +2,7 @@ import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
 import type { SuggestionOptions } from "@tiptap/suggestion";
 import type { Except } from "type-fest";
 
-import SlashCommandList from "@/components/Message/SlashCommand/List.vue";
+import SlashCommandList from "@/components/Message/Model/Message/SlashCommandList.vue";
 import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
 import { getRender } from "@/services/message/getRender";
 import { SlashCommandDefinitionMap } from "@/services/message/slashCommands/SlashCommandDefinitionMap";
