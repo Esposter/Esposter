@@ -71,7 +71,7 @@ const vote = async (optionId: string) => {
             variant="tonal"
             @click="vote(id)"
           >
-            <span>{{ label }}</span>
+            {{ label }}
             <span ml-auto opacity-70>{{ voteCountMap[id] ?? 0 }}</span>
           </v-btn>
         </div>

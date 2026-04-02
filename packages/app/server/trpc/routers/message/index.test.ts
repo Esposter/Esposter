@@ -217,6 +217,55 @@ describe("message", () => {
     );
   });
 
+  test("creates roll message", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const userId = getMockSession().user.id;
+    const message = "🎲 Rolled a **28**";
+    const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id, type: MessageType.Message });
+
+    expect(newMessage).toStrictEqual(
+      new StandardMessageEntity({
+        createdAt: newMessage.createdAt,
+        message,
+        partitionKey: newRoom.id,
+        rowKey: newMessage.rowKey,
+        type: MessageType.Message,
+        updatedAt: newMessage.updatedAt,
+        userId,
+      }),
+    );
+  });
+
+  test("creates poll message", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const userId = getMockSession().user.id;
+    const message = JSON.stringify({
+      options: [
+        { id: crypto.randomUUID(), label: "Option A" },
+        { id: crypto.randomUUID(), label: "Option B" },
+      ],
+      question: "Test question",
+      votes: {},
+    });
+    const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id, type: MessageType.Poll });
+
+    expect(newMessage).toStrictEqual(
+      new StandardMessageEntity({
+        createdAt: newMessage.createdAt,
+        message,
+        partitionKey: newRoom.id,
+        rowKey: newMessage.rowKey,
+        type: MessageType.Poll,
+        updatedAt: newMessage.updatedAt,
+        userId,
+      }),
+    );
+  });
+
   test("fails create with non-existent room id", async () => {
     expect.hasAssertions();
 

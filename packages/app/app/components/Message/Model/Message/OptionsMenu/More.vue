@@ -72,7 +72,7 @@ const { optionsMenu } = storeToRefs(messageStore);
       >
         <template #default="menuProps">
           <v-list-item :="menuProps">
-            <span>{{ EMOJI_PICKER_TOOLTIP_TEXT }}</span>
+            {{ EMOJI_PICKER_TOOLTIP_TEXT }}
             <template #append>
               <v-icon size="small" icon="mdi-emoticon" />
             </template>
