@@ -15,22 +15,19 @@ const selectItem = (index: number) => {
   command(slashCommand);
 };
 const onKeyDown = ({ event }: SuggestionKeyDownProps) => {
-  if (event.key === "ArrowUp") {
-    selectedIndex.value = (selectedIndex.value + items.length - 1) % items.length;
-    return true;
+  switch (event.key) {
+    case "ArrowDown":
+      selectedIndex.value = (selectedIndex.value + 1) % items.length;
+      return true;
+    case "ArrowUp":
+      selectedIndex.value = (selectedIndex.value + items.length - 1) % items.length;
+      return true;
+    case "Enter":
+      selectItem(selectedIndex.value);
+      return true;
+    default:
+      return false;
   }
-
-  if (event.key === "ArrowDown") {
-    selectedIndex.value = (selectedIndex.value + 1) % items.length;
-    return true;
-  }
-
-  if (event.key === "Enter") {
-    selectItem(selectedIndex.value);
-    return true;
-  }
-
-  return false;
 };
 
 defineExpose({ onKeyDown });
