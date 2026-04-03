@@ -101,6 +101,24 @@ description: Esposter Drizzle ORM conventions — column naming (camelCase match
   }));
   ```
 
+## Batch Inserts
+
+- **Always use batch inserts over sequential inserts** — never loop over an array and issue individual `INSERT` statements. Instead, map to a values array and insert in one statement:
+
+  ```ts
+  // CORRECT — one INSERT with multiple rows
+  await tx
+    .insert(usersToRooms)
+    .values(allUserIds.map((userId) => ({ roomId: room.id, userId })))
+    .onConflictDoNothing();
+
+  // WRONG — N individual INSERTs
+  for (const userId of allUserIds)
+    await tx.insert(usersToRooms).values({ roomId: room.id, userId }).onConflictDoNothing();
+  ```
+
+  This applies everywhere: seed scripts, junction-table population, bulk upserts, etc. The only exception is when each row's insert result must be inspected individually before proceeding.
+
 ## Primary Keys
 
 - **UUID PK for entities that are referenced by other tables** — `id: uuid("id").primaryKey().defaultRandom()` for rooms, invites, etc.

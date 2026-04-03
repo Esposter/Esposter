@@ -86,8 +86,10 @@ export const directMessageRouter = router({
             .message,
         });
 
-      for (const userId of allUserIds)
-        await tx.insert(usersToRooms).values({ roomId: room.id, userId }).onConflictDoNothing();
+      await tx
+        .insert(usersToRooms)
+        .values(allUserIds.map((userId) => ({ roomId: room.id, userId })))
+        .onConflictDoNothing();
       await tx
         .update(usersToRooms)
         .set({ isHidden: false })
