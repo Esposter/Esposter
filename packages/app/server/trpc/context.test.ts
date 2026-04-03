@@ -70,6 +70,7 @@ export const mockSessionOnce = async (db: Context["db"], mockUser?: User) => {
         .insert(users)
         .values({
           createdAt,
+          deletedAt: null,
           email: crypto.randomUUID(),
           emailVerified: true,
           id: crypto.randomUUID(),
