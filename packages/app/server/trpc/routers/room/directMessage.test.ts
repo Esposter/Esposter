@@ -1,12 +1,12 @@
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
-import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 import type { User } from "@esposter/db-schema";
+import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
-import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
 import { friendRouter } from "@@/server/trpc/routers/friend";
+import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
 import { DatabaseEntityType, friends, rooms } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
