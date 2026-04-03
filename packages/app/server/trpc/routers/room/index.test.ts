@@ -363,6 +363,80 @@ describe("room", () => {
     );
   });
 
+  test("fails create invite with direct message room", async () => {
+    expect.hasAssertions();
+
+    const mainUser = getMockSession().user;
+    const { user } = await mockSessionOnce(mockContext.db);
+    getMockSession();
+    await makeFriends(mainUser, user);
+    const directMessage = await directMessageCaller.createDirectMessage([user.id]);
+
+    await expect(roomCaller.createInvite({ roomId: directMessage.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, directMessage.id).message}]`,
+    );
+  });
+
+  test("fails read invite code with direct message room", async () => {
+    expect.hasAssertions();
+
+    const mainUser = getMockSession().user;
+    const { user } = await mockSessionOnce(mockContext.db);
+    getMockSession();
+    await makeFriends(mainUser, user);
+    const directMessage = await directMessageCaller.createDirectMessage([user.id]);
+
+    await expect(roomCaller.readInviteCode({ roomId: directMessage.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, directMessage.id).message}]`,
+    );
+  });
+
+  test("fails leave with direct message room", async () => {
+    expect.hasAssertions();
+
+    const mainUser = getMockSession().user;
+    const { user } = await mockSessionOnce(mockContext.db);
+    getMockSession();
+    await makeFriends(mainUser, user);
+    const directMessage = await directMessageCaller.createDirectMessage([user.id]);
+
+    await expect(roomCaller.leaveRoom(directMessage.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, directMessage.id).message}]`,
+    );
+  });
+
+  test("fails create members with direct message room", async () => {
+    expect.hasAssertions();
+
+    const mainUser = getMockSession().user;
+    const { user } = await mockSessionOnce(mockContext.db);
+    getMockSession();
+    await makeFriends(mainUser, user);
+    const directMessage = await directMessageCaller.createDirectMessage([user.id]);
+
+    await expect(
+      roomCaller.createMembers({ roomId: directMessage.id, userIds: [user.id] }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, directMessage.id).message}]`,
+    );
+  });
+
+  test("fails kick member with direct message room", async () => {
+    expect.hasAssertions();
+
+    const mainUser = getMockSession().user;
+    const { user } = await mockSessionOnce(mockContext.db);
+    getMockSession();
+    await makeFriends(mainUser, user);
+    const directMessage = await directMessageCaller.createDirectMessage([user.id]);
+
+    await expect(
+      roomCaller.deleteMember({ roomId: directMessage.id, userId: user.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, directMessage.id).message}]`,
+    );
+  });
+
   test("reads rooms excluding direct messages", async () => {
     expect.hasAssertions();
 

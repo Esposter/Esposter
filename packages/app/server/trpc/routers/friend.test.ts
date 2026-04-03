@@ -26,8 +26,8 @@ describe("friend", () => {
   test("sends friend request", async () => {
     expect.hasAssertions();
 
-    const { user } = await mockSessionOnce(mockContext.db);
     const userId = getMockSession().user.id;
+    const { user } = await mockSessionOnce(mockContext.db);
     // session=user: sends request to default user
     const friend = await caller.sendFriendRequest(userId);
 
@@ -39,10 +39,10 @@ describe("friend", () => {
   test("sends friend request is idempotent", async () => {
     expect.hasAssertions();
 
-    await mockSessionOnce(mockContext.db);
     const userId = getMockSession().user.id;
-    // session=user
+    await mockSessionOnce(mockContext.db);
     const friend1 = await caller.sendFriendRequest(userId);
+    await mockSessionOnce(mockContext.db);
     const friend2 = await caller.sendFriendRequest(userId);
 
     expect(friend1.id).toBe(friend2.id);
@@ -181,7 +181,8 @@ describe("friend", () => {
     expect.hasAssertions();
 
     const user = getMockSession().user;
-    // session=user: search for default user by name
+    // session=newUser: search for default user by name
+    await mockSessionOnce(mockContext.db);
     const results = await caller.searchUsers(user.name);
 
     expect(results).toHaveLength(1);
