@@ -514,8 +514,8 @@ catalogs:
       specifier: ^1.4.4
       version: 1.4.4
     rate-limiter-flexible:
-      specifier: ^10.0.1
-      version: 10.0.1
+      specifier: ^11.0.0
+      version: 11.0.0
     read-excel-file:
       specifier: ^8.0.3
       version: 8.0.3
@@ -1045,7 +1045,7 @@ importers:
         version: 1.4.4
       rate-limiter-flexible:
         specifier: 'catalog:'
-        version: 10.0.1
+        version: 11.0.0
       read-excel-file:
         specifier: 'catalog:'
         version: 8.0.3
@@ -11152,8 +11152,8 @@ packages:
     resolution: {integrity: sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==}
     engines: {node: '>= 0.6'}
 
-  rate-limiter-flexible@10.0.1:
-    resolution: {integrity: sha512-3G6GMFz5Oz5nVnDv9gQ1LLMdExR4B1lOjogPIjehtgyxPMIkY09BGyk2eCYt36/OkV/0t12GEt6J6HpTl6RzZg==}
+  rate-limiter-flexible@11.0.0:
+    resolution: {integrity: sha512-UhN3xVeU6Az3y6hAuxMUwFsKcKD1HffhMGK0MknbSxH9vkwslS/p19ovCvJqIVT97pE778nKu2sUgYAcxj4dmQ==}
 
   rc9@2.1.2:
     resolution: {integrity: sha512-btXCnMmRIBINM2LDZoEmOogIZU7Qe7zn4BpomSKZ/ykbLObuBdvG+mFq11DL6fjH1DRwHhrlgtYWG96bJiC7Cg==}
@@ -24542,7 +24542,7 @@ snapshots:
 
   range-parser@1.2.1: {}
 
-  rate-limiter-flexible@10.0.1: {}
+  rate-limiter-flexible@11.0.0: {}
 
   rc9@2.1.2:
     dependencies:
