@@ -9,11 +9,14 @@ Private 1:1 and small-group (up to 10 participants) conversations outside of pub
 ## User Experience
 
 - The sidebar gains a **Direct Messages** section below the room list, sorted by most-recent message
-- Click on any user's avatar or name → **Send Message** → navigates to the existing DM thread (creates it if it doesn't exist yet)
-- **New Group DM** button → multi-user picker → creates a group DM room
+- A **"+" button** next to the "Direct Messages" header opens a **New Message** dialog
+  - The dialog lists the current user's accepted friends with checkboxes and a name filter
+  - Selecting one or more friends and clicking **Create Message** calls `createDirectMessage` and navigates to the DM thread
+  - Requires the Friends system — see [`friends.md`](friends.md)
 - DM rooms are invisible to non-participants — no public discovery
 - Group DMs show a generated name ("You, Alice, Bob") unless the creator sets a custom name
 - 1:1 DM names are derived at display time from the other participant's username (never stored, so they stay fresh)
+- Hovering a DM row reveals a close button that soft-hides it (`isHidden = true`) without deleting the thread
 
 ---
 
@@ -91,20 +94,27 @@ Changes are additive to the existing room infrastructure — no new top-level fo
 
 ```
 packages/db-schema/src/
-  schema/rooms.ts                     # add type column
-  schema/usersToRooms.ts              # add isHidden column
-  models/room/RoomType.ts             # new enum
+  schema/rooms.ts                               # type + participantKey columns (implemented)
+  schema/usersToRooms.ts                        # isHidden column (implemented)
 
 packages/app/
   app/
-    components/Room/
-      Sidebar/
-        DirectMessageList.vue         # DM section (mirrors RoomList.vue)
-        DirectMessageItem.vue         # single DM row — other user's avatar for 1:1, generated name for group
-    composables/room/
-      useCreateDirectMessage.ts       # wraps createDirectMessage mutation; navigates on success
-  server/trpc/routers/room/
-    directMessage.ts                  # createDirectMessage, hideDirectMessage mutations
+    components/Message/
+      LeftSideBar/
+        DirectMessages.vue                      # DM sidebar section header + "+" button
+      Model/Room/
+        DirectMessageList.vue                   # scrollable DM list (implemented)
+        DirectMessageListItem.vue               # single DM row with close button (implemented)
+        CreateDirectMessageButton.vue           # "+" icon that opens the dialog (planned)
+        CreateDirectMessageDialog.vue           # friend picker dialog (planned)
+    composables/message/room/
+      useReadDirectMessages.ts                  # fetches DM list + participant map (implemented)
+      useDirectMessageName.ts                   # derives display name from participants (implemented)
+    store/message/room/
+      directMessage.ts                          # DM list state + createDirectMessage/hide actions (implemented)
+  server/trpc/routers/
+    directMessage.ts                            # createDirectMessage, readDirectMessages,
+                                                # readDirectMessageParticipants, hideDirectMessage (implemented)
 ```
 
 ---
