@@ -4,7 +4,7 @@ import type { VAvatar } from "vuetify/components";
 // @TODO: https://github.com/vuejs/core/issues/11371
 interface StyledAvatarProps {
   avatarProps?: VAvatar["$props"];
-  image: User["image"];
+  image?: User["image"];
   name: User["name"];
 }
 

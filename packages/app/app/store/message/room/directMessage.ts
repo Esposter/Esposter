@@ -4,16 +4,16 @@ import type { Room, User } from "@esposter/db-schema";
 import { dayjs } from "#shared/services/dayjs";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { DatabaseEntityType } from "@esposter/db-schema";
-import { Operation, RoutePath, takeOne, uuidValidateV4 } from "@esposter/shared";
+import { RoutePath, takeOne, uuidValidateV4 } from "@esposter/shared";
 
 export const useDirectMessageStore = defineStore("message/room/directMessage", () => {
   const { $trpc } = useNuxtApp();
   const { items, ...restData } = useCursorPaginationData<Room>();
-  const { deleteRoom: storeDeleteDirectMessage, ...restOperationData } = createOperationData(
-    items,
-    ["id"],
-    DatabaseEntityType.DirectMessage,
-  );
+  const {
+    createDirectMessage: storeCreateDirectMessage,
+    deleteDirectMessage: storeDeleteDirectMessage,
+    ...restOperationData
+  } = createOperationData(items, ["id"], DatabaseEntityType.DirectMessage);
   const directMessages = computed(() => items.value.toSorted((a, b) => dayjs(b.updatedAt).diff(a.updatedAt)));
   const directMessageParticipantsMap = ref(new Map<string, User[]>());
   const router = useRouter();
@@ -25,7 +25,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
   const createDirectMessage = async (userIds: string[]) => {
     const room = await $trpc.directMessage.createDirectMessage.mutate(userIds);
     const existingDirectMessage = directMessages.value.find(({ id }) => id === room.id);
-    if (!existingDirectMessage) restOperationData.storeCreateRoom(room, true);
+    if (!existingDirectMessage) storeCreateDirectMessage(room, true);
     await navigateTo(RoutePath.Messages(room.id));
   };
 
@@ -41,11 +41,11 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
 
   return {
     createDirectMessage,
-    directMessages,
+    currentDirectMessageId,
     directMessageParticipantsMap,
+    directMessages,
     hideDirectMessage,
     storeDeleteDirectMessage,
-    currentDirectMessageId,
     ...restOperationData,
     ...restData,
   };
