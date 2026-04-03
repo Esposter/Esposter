@@ -35,7 +35,7 @@ export const rooms = pgTable(
       check("name", sql`LENGTH(${name}) <= ${sql.raw(ROOM_NAME_MAX_LENGTH.toString())}`),
       check(
         "participant_key_type",
-        sql`(${type} = ${sql.raw(`'${RoomType.DirectMessage}'`)} AND ${participantKey} IS NOT NULL) OR (${type} = ${sql.raw(`'${RoomType.Room}'`)} AND ${participantKey} IS NULL)`,
+        sql`(${type} = '${sql.raw(RoomType.DirectMessage)}' AND ${participantKey} IS NOT NULL) OR (${type} = '${sql.raw(RoomType.Room)}' AND ${participantKey} IS NULL)`,
       ),
     ],
     schema: messageSchema,
