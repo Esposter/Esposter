@@ -7,7 +7,7 @@ import { createCode } from "#shared/util/math/random/createCode";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
-import { directMessageRouter } from "@@/server/trpc/routers/directMessage";
+import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { CODE_LENGTH, DatabaseEntityType, rooms } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
@@ -360,6 +360,18 @@ describe("room", () => {
 
     expect(readRooms.items).toHaveLength(1);
     expect(takeOne(readRooms.items).id).toBe(newRoom.id);
+  });
+
+  test("fails read multiple with direct message roomId", async () => {
+    expect.hasAssertions();
+
+    const { user } = await mockSessionOnce(mockContext.db);
+    getMockSession();
+    const directMessage = await directMessageCaller.createDirectMessage([user.id]);
+
+    await expect(roomCaller.readRooms({ roomId: directMessage.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Room, directMessage.id).message}]`,
+    );
   });
 
   test("fails join with joined room", async () => {

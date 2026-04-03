@@ -3,7 +3,7 @@ import { achievementRouter } from "@@/server/trpc/routers/achievement";
 import { appRouter } from "@@/server/trpc/routers/app";
 import { clickerRouter } from "@@/server/trpc/routers/clicker";
 import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
-import { directMessageRouter } from "@@/server/trpc/routers/directMessage";
+import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
 import { dungeonsRouter } from "@@/server/trpc/routers/dungeons";
 import { emailEditorRouter } from "@@/server/trpc/routers/emailEditor";
 import { flowchartEditorRouter } from "@@/server/trpc/routers/flowchartEditor";

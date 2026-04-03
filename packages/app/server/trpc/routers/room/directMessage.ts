@@ -54,7 +54,6 @@ export const directMessageRouter = router({
 
       for (const userId of allUserIds)
         await tx.insert(usersToRooms).values({ roomId: room.id, userId }).onConflictDoNothing();
-      // Unhide for the current user if they previously hid this DM
       await tx
         .update(usersToRooms)
         .set({ isHidden: false })

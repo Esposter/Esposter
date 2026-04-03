@@ -4,7 +4,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
-import { directMessageRouter } from "@@/server/trpc/routers/directMessage";
+import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
 import { rooms } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
@@ -51,9 +51,7 @@ describe("directMessage", () => {
 
     const initialUserId = getMockSession().user.id;
     const { user: userB } = await mockSessionOnce(mockContext.db);
-    // Session is now userB — userB creates DM with initialUser
     const directMessage1 = await caller.createDirectMessage([initialUserId]);
-    // Session reverts to initialUser — initialUser creates DM with userB (reverse order)
     const directMessage2 = await caller.createDirectMessage([userB.id]);
 
     expect(directMessage1.id).toBe(directMessage2.id);
@@ -147,7 +145,6 @@ describe("directMessage", () => {
 
     const participantsData = await caller.readDirectMessageParticipants([directMessage.id]);
 
-    // Non-member gets empty result (filtered out by membership join)
     expect(participantsData).toHaveLength(0);
   });
 

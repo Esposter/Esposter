@@ -2,6 +2,7 @@ import type { User } from "@esposter/db-schema";
 import type { z } from "zod";
 
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
+import { escapeLike } from "@@/server/services/db/escapeLike";
 import { router } from "@@/server/trpc";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { DatabaseEntityType, friends, FriendshipStatus, selectUserSchema, users } from "@esposter/db-schema";
@@ -84,7 +85,7 @@ export const friendRouter = router({
     const userId = ctx.getSessionPayload.user.id;
     return ctx.db.query.users.findMany({
       limit: MAX_READ_LIMIT,
-      where: (users, { and, ilike, ne }) => and(ilike(users.name, `%${name}%`), ne(users.id, userId)),
+      where: (users, { and, ilike, ne }) => and(ilike(users.name, `%${escapeLike(name)}%`), ne(users.id, userId)),
     });
   }),
   sendFriendRequest: standardAuthedProcedure

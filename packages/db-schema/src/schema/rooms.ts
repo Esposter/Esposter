@@ -24,9 +24,6 @@ export const rooms = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
     image: text("image"),
     name: text("name").notNull(),
-    // Canonical sorted participant fingerprint — set only for DirectMessage rooms.
-    // Computed as userIds.toSorted().join(ID_SEPARATOR) before insert.
-    // Unique index enforces one DM room per participant set at the DB level.
     participantKey: text("participantKey").unique(),
     type: roomTypeEnum("type").notNull().default(RoomType.Room),
     userId: text("userId")
@@ -34,7 +31,13 @@ export const rooms = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ name }) => [check("name", sql`LENGTH(${name}) <= ${sql.raw(ROOM_NAME_MAX_LENGTH.toString())}`)],
+    extraConfig: ({ name, participantKey, type }) => [
+      check("name", sql`LENGTH(${name}) <= ${sql.raw(ROOM_NAME_MAX_LENGTH.toString())}`),
+      check(
+        "participant_key_type",
+        sql`(${type} = ${sql.raw(`'${RoomType.DirectMessage}'`)} AND ${participantKey} IS NOT NULL) OR (${type} = ${sql.raw(`'${RoomType.Room}'`)} AND ${participantKey} IS NULL)`,
+      ),
+    ],
     schema: messageSchema,
   },
 );

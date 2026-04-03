@@ -3,16 +3,17 @@ import { useFriendStore } from "@/store/message/friend";
 export const useReadFriends = () => {
   const { $trpc } = useNuxtApp();
   const friendStore = useFriendStore();
+  const { friends, pendingRequests, sentRequests } = storeToRefs(friendStore);
 
   const readFriends = async () => {
-    const [friendUsers, pendingUsers, sentUsers] = await Promise.all([
+    const [readFriends, readPendingRequests, readSentRequests] = await Promise.all([
       $trpc.friend.readFriends.query(),
       $trpc.friend.readPendingRequests.query(),
       $trpc.friend.readSentRequests.query(),
     ]);
-    friendStore.friends = friendUsers;
-    friendStore.pendingRequests = pendingUsers;
-    friendStore.sentRequests = sentUsers;
+    friends.value = readFriends;
+    pendingRequests.value = readPendingRequests;
+    sentRequests.value = readSentRequests;
   };
 
   return { readFriends };

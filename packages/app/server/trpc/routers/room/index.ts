@@ -105,8 +105,7 @@ export type ReadInviteCodeInput = z.infer<typeof readInviteCodeInputSchema>;
 
 const createInviteInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type CreateInviteInput = z.infer<typeof createInviteInputSchema>;
-// For room-related queries/mutations we don't need to grab the room user procedure
-// As the SQL clauses inherently contain logic to filter if the user is a member/creator of the room
+
 export const roomRouter = router({
   countMembers: getMemberProcedure(countMembersInputSchema, "roomId").query(
     async ({ ctx, input: { roomId } }) =>
@@ -119,14 +118,12 @@ export const roomRouter = router({
 
       for (let i = 0; i < 3; i++)
         try {
-          // Create non-colliding invite code
           inviteCode = createCode(CODE_LENGTH);
           await ctx.db.insert(invites).values({ code: inviteCode, roomId, userId: ctx.getSessionPayload.user.id });
           return inviteCode;
         } catch {
           continue;
         }
-      // If we reach here, it means that we've failed to create a non-colliding invite code and something has gone horribly wrong
       throw new TRPCError({
         code: "UNPROCESSABLE_CONTENT",
         message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Invite, roomId).message,
@@ -368,18 +365,10 @@ export const roomRouter = router({
           and(
             eq(rooms.id, input),
             exists(
-              // Select a constant '1' - we only care if *any* row matches
               ctx.db
                 .select({ _: sql`1` })
                 .from(usersToRooms)
-                .where(
-                  and(
-                    // Condition 1 (Correlation): Link subquery room ID to the outer query room ID
-                    eq(usersToRooms.roomId, rooms.id),
-                    // Condition 2: Ensure the row belongs to the specific user
-                    eq(usersToRooms.userId, ctx.getSessionPayload.user.id),
-                  ),
-                ),
+                .where(and(eq(usersToRooms.roomId, rooms.id), eq(usersToRooms.userId, ctx.getSessionPayload.user.id))),
             ),
           ),
       });
@@ -390,7 +379,6 @@ export const roomRouter = router({
         });
       return room;
     }
-    // By default, we will return the latest updated room
     const readRoom = (
       await ctx.db
         .select(getTableColumns(rooms))
@@ -416,7 +404,7 @@ export const roomRouter = router({
             .select(getTableColumns(rooms))
             .from(rooms)
             .innerJoin(usersToRooms, innerJoinCondition)
-            .where(eq(rooms.id, roomId))
+            .where(and(eq(rooms.id, roomId), eq(rooms.type, RoomType.Room)))
         )[0];
         if (!room)
           throw new TRPCError({
