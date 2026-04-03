@@ -21,7 +21,7 @@ Private 1:1 and small-group (up to 10 participants) conversations outside of pub
 
 ### Schema change — rooms table
 
-Add a `type` column (default `RoomType.Room` for all existing rows):
+Add a `type` column (default `RoomType.Room` for all existing rows) and a `participantKey` column used exclusively by DM rooms for O(1) idempotency lookups:
 
 ```typescript
 // packages/db-schema/src/models/room/RoomType.ts
@@ -32,8 +32,12 @@ export enum RoomType {
 ```
 
 ```typescript
-// packages/db-schema/src/schema/rooms.ts  (additive change)
+// packages/db-schema/src/schema/rooms.ts  (additive changes)
 type: text("type").notNull().default(RoomType.Room).$type<RoomType>(),
+// Canonical sorted participant fingerprint — set only for DirectMessage rooms.
+// Computed as userIds.toSorted().join(ID_SEPARATOR) before insert.
+// Unique index enforces one DM room per participant set at the DB level.
+participantKey: text("participant_key").unique(),
 ```
 
 No other schema change is needed. The existing `usersToRooms` join table already models participants for both room types.
@@ -61,7 +65,7 @@ New/modified tRPC procedures:
 
 ### Idempotency in `createDirectMessage`
 
-Before inserting a new room, the mutation queries for an existing `RoomType.DirectMessage` room whose `usersToRooms` participant set exactly matches the provided `userIds`. If found, return it; otherwise create it. This prevents duplicate DM threads.
+Compute `participantKey = userIds.toSorted().join(ID_SEPARATOR)` before the insert and use an upsert (insert-on-conflict-do-nothing) keyed on `participantKey`. This makes the idempotency check a single unique-index lookup — O(1) — rather than a set-intersection query across `usersToRooms`. Duplicate DM threads are prevented at the DB level via the unique constraint.
 
 ### Permissions
 

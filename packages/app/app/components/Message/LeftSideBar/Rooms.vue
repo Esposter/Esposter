@@ -1,5 +1,5 @@
 <template>
-  <MessageModelRoomList overflow-y-auto>
+  <MessageModelRoomList>
     <template #prepend>
       <v-list-item font-bold>
         Rooms

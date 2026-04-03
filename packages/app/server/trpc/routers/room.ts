@@ -34,6 +34,7 @@ import {
   InviteRelations,
   invites,
   rooms,
+  RoomType,
   selectInviteSchema,
   selectRoomSchema,
   selectUserSchema,
@@ -211,6 +212,13 @@ export const roomRouter = router({
         throw new TRPCError({
           code: "NOT_FOUND",
           message: new NotFoundError(DatabaseEntityType.Invite, input).message,
+        });
+
+      const invitedRoom = await tx.query.rooms.findFirst({ where: (rooms, { eq }) => eq(rooms.id, invite.roomId) });
+      if (invitedRoom?.type === RoomType.DirectMessage)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, invite.roomId).message,
         });
 
       const userToRoom = (
@@ -424,7 +432,7 @@ export const roomRouter = router({
           });
       }
 
-      const wheres: (SQL | undefined)[] = [];
+      const wheres: (SQL | undefined)[] = [eq(rooms.type, RoomType.Room)];
       if (cursor) wheres.push(getCursorWhere(rooms, cursor, sortBy));
       if (filter?.name) wheres.push(ilike(rooms.name, `%${filter.name}%`));
       if (pinnedRoom) wheres.push(ne(rooms.id, pinnedRoom.id));
