@@ -82,7 +82,7 @@ Active voice participants are **ephemeral** — not persisted to Azure Table. Op
 
 ## Folder Structure
 
-```
+```text
 packages/shared/
   models/room/
     voice/

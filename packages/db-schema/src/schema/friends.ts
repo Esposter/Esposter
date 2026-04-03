@@ -1,7 +1,7 @@
 import { pgTable } from "@/pgTable";
 import { users } from "@/schema/users";
 import { relations, sql } from "drizzle-orm";
-import { check, pgEnum, text } from "drizzle-orm/pg-core";
+import { check, index, pgEnum, text } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -31,7 +31,11 @@ export const friends = pgTable(
     status: friendshipStatusEnum("status").notNull().default(FriendshipStatus.Pending),
   },
   {
-    extraConfig: ({ receiverId, senderId }) => [check("no_self_friendship", sql`${senderId} != ${receiverId}`)],
+    extraConfig: ({ receiverId, senderId }) => [
+      check("no_self_friendship", sql`${senderId} != ${receiverId}`),
+      index("friends_receiverId_idx").on(receiverId),
+      index("friends_senderId_idx").on(senderId),
+    ],
   },
 );
 

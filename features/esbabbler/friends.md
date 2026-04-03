@@ -66,7 +66,7 @@ This mirrors the `participantKey` pattern used on the `rooms` table for DMs — 
 
 ### Status state machine
 
-```
+```text
 (no row)  ──sendFriendRequest──►  Pending
 Pending   ──acceptFriendRequest──► Accepted
 Pending   ──declineFriendRequest──► (row deleted)
@@ -90,7 +90,7 @@ New tRPC router: `packages/app/server/trpc/routers/friend.ts`
 | `readPendingRequests`  | —                 | `WHERE receiverId=me AND status=Pending`. Returns `User[]` of senders.                                                |
 | `readSentRequests`     | —                 | `WHERE senderId=me AND status=Pending`. Returns `User[]` of receivers.                                                |
 
-New procedure added to `packages/app/server/trpc/routers/user.ts`:
+Additional procedure in `packages/app/server/trpc/routers/friend.ts`:
 
 | Procedure     | Input          | Action                                                                               |
 | ------------- | -------------- | ------------------------------------------------------------------------------------ |
@@ -100,7 +100,7 @@ New procedure added to `packages/app/server/trpc/routers/user.ts`:
 
 ## Folder Structure
 
-```
+```text
 packages/db-schema/src/
   schema/friends.ts                             # FriendshipStatus enum + friends table
   models/shared/DatabaseEntityType.ts           # add Friend variant
@@ -118,7 +118,6 @@ packages/app/
       useReadFriends.ts                         # populates friend store from tRPC
   server/trpc/routers/
     friend.ts                                   # all friend procedures
-    user.ts                                     # add searchUsers procedure
     index.ts                                    # register friendRouter
 ```
 

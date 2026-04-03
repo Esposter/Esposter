@@ -92,7 +92,7 @@ DMs should default to **notify on every message** regardless of the room's notif
 
 Changes are additive to the existing room infrastructure — no new top-level folders:
 
-```
+```text
 packages/db-schema/src/
   schema/rooms.ts                               # type + participantKey columns (implemented)
   schema/usersToRooms.ts                        # isHidden column (implemented)
@@ -112,7 +112,7 @@ packages/app/
       useDirectMessageName.ts                   # derives display name from participants (implemented)
     store/message/room/
       directMessage.ts                          # DM list state + createDirectMessage/hide actions (implemented)
-  server/trpc/routers/
+  server/trpc/routers/room/
     directMessage.ts                            # createDirectMessage, readDirectMessages,
                                                 # readDirectMessageParticipants, hideDirectMessage (implemented)
 ```
