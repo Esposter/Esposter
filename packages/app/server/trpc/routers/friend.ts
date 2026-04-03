@@ -1,12 +1,13 @@
 import type { User } from "@esposter/db-schema";
 import type { z } from "zod";
 
+import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { router } from "@@/server/trpc";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { DatabaseEntityType, friends, FriendshipStatus, selectUserSchema, users } from "@esposter/db-schema";
 import { ID_SEPARATOR, InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, eq, getTableColumns, ilike, ne, or } from "drizzle-orm";
+import { and, eq, getTableColumns, or } from "drizzle-orm";
 
 const friendUserIdInputSchema = selectUserSchema.shape.id;
 export type FriendUserIdInput = z.infer<typeof friendUserIdInputSchema>;
@@ -62,29 +63,29 @@ export const friendRouter = router({
       )
       .where(eq(friends.status, FriendshipStatus.Accepted));
   }),
-  readPendingRequests: standardAuthedProcedure.query<User[]>(({ ctx }) => {
+  readPendingRequests: standardAuthedProcedure.query<User[]>(async ({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
-    return ctx.db
-      .select(getTableColumns(users))
-      .from(friends)
-      .innerJoin(users, eq(users.id, friends.senderId))
-      .where(and(eq(friends.receiverId, userId), eq(friends.status, FriendshipStatus.Pending)));
+    const pendingFriendships = await ctx.db.query.friends.findMany({
+      where: (friends, { and, eq }) =>
+        and(eq(friends.receiverId, userId), eq(friends.status, FriendshipStatus.Pending)),
+      with: { sender: true },
+    });
+    return pendingFriendships.map(({ sender }) => sender);
   }),
-  readSentRequests: standardAuthedProcedure.query<User[]>(({ ctx }) => {
+  readSentRequests: standardAuthedProcedure.query<User[]>(async ({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
-    return ctx.db
-      .select(getTableColumns(users))
-      .from(friends)
-      .innerJoin(users, eq(users.id, friends.receiverId))
-      .where(and(eq(friends.senderId, userId), eq(friends.status, FriendshipStatus.Pending)));
+    const sentFriendships = await ctx.db.query.friends.findMany({
+      where: (friends, { and, eq }) => and(eq(friends.senderId, userId), eq(friends.status, FriendshipStatus.Pending)),
+      with: { receiver: true },
+    });
+    return sentFriendships.map(({ receiver }) => receiver);
   }),
   searchUsers: standardAuthedProcedure.input(searchUsersInputSchema).query(({ ctx, input: name }) => {
     const userId = ctx.getSessionPayload.user.id;
-    return ctx.db
-      .select()
-      .from(users)
-      .where(and(ilike(users.name, `%${name}%`), ne(users.id, userId)))
-      .limit(20);
+    return ctx.db.query.users.findMany({
+      limit: MAX_READ_LIMIT,
+      where: (users, { and, ilike, ne }) => and(ilike(users.name, `%${name}%`), ne(users.id, userId)),
+    });
   }),
   sendFriendRequest: standardAuthedProcedure
     .input(friendUserIdInputSchema)
