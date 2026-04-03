@@ -98,14 +98,19 @@ export const friendRouter = router({
           message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Friend, userId).message,
         });
       const id = getFriendshipId(userId, receiverId);
+      const [newFriend] = await ctx.db
+        .insert(friends)
+        .values({ id, receiverId, senderId: userId })
+        .onConflictDoNothing({ target: friends.id })
+        .returning();
+      if (newFriend) return newFriend;
+
       const existingFriend = await ctx.db.query.friends.findFirst({ where: eq(friends.id, id) });
-      if (existingFriend) return existingFriend;
-      const [newFriend] = await ctx.db.insert(friends).values({ id, receiverId, senderId: userId }).returning();
-      if (!newFriend)
+      if (!existingFriend)
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Friend, id).message,
         });
-      return newFriend;
+      return existingFriend;
     }),
 });

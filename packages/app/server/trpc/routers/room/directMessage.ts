@@ -12,10 +12,19 @@ import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSor
 import { router } from "@@/server/trpc";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { DatabaseEntityType, rooms, RoomType, selectRoomSchema, users, usersToRooms } from "@esposter/db-schema";
+import {
+  DatabaseEntityType,
+  friends,
+  FriendshipStatus,
+  rooms,
+  RoomType,
+  selectRoomSchema,
+  users,
+  usersToRooms,
+} from "@esposter/db-schema";
 import { ID_SEPARATOR, InvalidOperationError, ItemMetadataPropertyNames, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, eq, inArray, ne } from "drizzle-orm";
+import { and, eq, inArray, ne, or } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { z } from "zod";
 
@@ -36,6 +45,31 @@ export const directMessageRouter = router({
     ctx.db.transaction(async (tx) => {
       const userId = ctx.getSessionPayload.user.id;
       const allUserIds = [...new Set([userId, ...input])];
+      const targetUserIds = allUserIds.filter((id) => id !== userId);
+      if (targetUserIds.length === 0)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Create, DatabaseEntityType.DirectMessage, userId).message,
+        });
+
+      const acceptedFriendships = await tx
+        .select()
+        .from(friends)
+        .where(
+          and(
+            eq(friends.status, FriendshipStatus.Accepted),
+            or(
+              and(eq(friends.senderId, userId), inArray(friends.receiverId, targetUserIds)),
+              and(eq(friends.receiverId, userId), inArray(friends.senderId, targetUserIds)),
+            ),
+          ),
+        );
+      if (acceptedFriendships.length !== targetUserIds.length)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Create, DatabaseEntityType.DirectMessage, userId).message,
+        });
+
       const participantKey = allUserIds.toSorted().join(ID_SEPARATOR);
       const [newRoom] = await tx
         .insert(rooms)

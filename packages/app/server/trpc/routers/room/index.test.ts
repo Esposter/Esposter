@@ -2,6 +2,7 @@ import type { DeleteMemberInput } from "#shared/models/db/room/DeleteMemberInput
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
+import type { User } from "@esposter/db-schema";
 
 import { createCode } from "#shared/util/math/random/createCode";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
@@ -9,7 +10,8 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
-import { CODE_LENGTH, DatabaseEntityType, rooms } from "@esposter/db-schema";
+import { friendRouter } from "@@/server/trpc/routers/friend";
+import { CODE_LENGTH, DatabaseEntityType, friends, rooms } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
@@ -17,6 +19,7 @@ import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 describe("room", () => {
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let directMessageCaller: DecorateRouterRecord<TRPCRouter["directMessage"]>;
+  let friendCaller: DecorateRouterRecord<TRPCRouter["friend"]>;
   let mockContext: Context;
   const name = "name";
   const updatedName = "updatedName";
@@ -25,12 +28,21 @@ describe("room", () => {
     mockContext = await createMockContext();
     roomCaller = createCallerFactory(roomRouter)(mockContext);
     directMessageCaller = createCallerFactory(directMessageRouter)(mockContext);
+    friendCaller = createCallerFactory(friendRouter)(mockContext);
   });
 
   afterEach(async () => {
     MockContainerDatabase.clear();
+    await mockContext.db.delete(friends);
     await mockContext.db.delete(rooms);
   });
+
+  const makeFriends = async (userA: User, userB: User) => {
+    await mockSessionOnce(mockContext.db, userA);
+    await friendCaller.sendFriendRequest(userB.id);
+    await mockSessionOnce(mockContext.db, userB);
+    await friendCaller.acceptFriendRequest(userA.id);
+  };
 
   test("creates", async () => {
     expect.hasAssertions();
@@ -338,8 +350,10 @@ describe("room", () => {
   test("fails join with direct message room", async () => {
     expect.hasAssertions();
 
+    const mainUser = getMockSession().user;
     const { user } = await mockSessionOnce(mockContext.db);
     getMockSession();
+    await makeFriends(mainUser, user);
     const directMessageRoom = await directMessageCaller.createDirectMessage([user.id]);
     const inviteCode = await roomCaller.createInvite({ roomId: directMessageRoom.id });
     await mockSessionOnce(mockContext.db);
@@ -352,9 +366,11 @@ describe("room", () => {
   test("reads rooms excluding direct messages", async () => {
     expect.hasAssertions();
 
+    const mainUser = getMockSession().user;
     const newRoom = await roomCaller.createRoom({ name });
     const { user } = await mockSessionOnce(mockContext.db);
     getMockSession();
+    await makeFriends(mainUser, user);
     await directMessageCaller.createDirectMessage([user.id]);
     const readRooms = await roomCaller.readRooms();
 
@@ -365,8 +381,10 @@ describe("room", () => {
   test("fails read multiple with direct message roomId", async () => {
     expect.hasAssertions();
 
+    const mainUser = getMockSession().user;
     const { user } = await mockSessionOnce(mockContext.db);
     getMockSession();
+    await makeFriends(mainUser, user);
     const directMessage = await directMessageCaller.createDirectMessage([user.id]);
 
     await expect(roomCaller.readRooms({ roomId: directMessage.id })).rejects.toThrowErrorMatchingInlineSnapshot(
