@@ -9,7 +9,7 @@ const { isPending } = await readRooms();
 </script>
 
 <template>
-  <MessageModelRoomBaseList :has-more="hasMore" :is-pending="isPending" @load-more="readMoreRooms">
+  <MessageModelRoomBaseList :has-more :is-pending @load-more="readMoreRooms">
     <template #prepend>
       <slot name="prepend" />
     </template>
