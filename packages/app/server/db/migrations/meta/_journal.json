@@ -260,6 +260,13 @@
       "when": 1775203029124,
       "tag": "0036_rapid_jack_power",
       "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1775217688537,
+      "tag": "0037_glorious_namora",
+      "breakpoints": true
     }
   ]
 }
