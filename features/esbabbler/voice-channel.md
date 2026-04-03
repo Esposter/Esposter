@@ -114,7 +114,7 @@ packages/app/
 
 ## Open Questions
 
-- **Mute enforcement**: server-side mute (moderator can force-mute) vs client-side only — recommend client-side only for v1
+- **Mute enforcement**: server-side mute (moderator can force-mute) vs client-side handling — recommend client-side only for v1
 - **Video**: out of scope for v1; same `RTCPeerConnection` extends to video by adding a video track
 - **Screen share**: out of scope; requires `getDisplayMedia()` + SFU for performance beyond 2 viewers
 - **Recording**: out of scope; requires SFU with recording support (e.g. LiveKit Egress)
