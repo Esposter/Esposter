@@ -4,6 +4,7 @@ import { appRouter } from "@@/server/trpc/routers/app";
 import { clickerRouter } from "@@/server/trpc/routers/clicker";
 import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
 import { directMessageRouter } from "@@/server/trpc/routers/directMessage";
+import { friendRouter } from "@@/server/trpc/routers/friend";
 import { dungeonsRouter } from "@@/server/trpc/routers/dungeons";
 import { emailEditorRouter } from "@@/server/trpc/routers/emailEditor";
 import { flowchartEditorRouter } from "@@/server/trpc/routers/flowchartEditor";
@@ -27,6 +28,7 @@ const trpcRouterWithoutAchievements = router({
   dashboard: dashboardRouter,
   directMessage: directMessageRouter,
   dungeons: dungeonsRouter,
+  friend: friendRouter,
   emailEditor: emailEditorRouter,
   emoji: emojiRouter,
   flowchartEditor: flowchartEditorRouter,

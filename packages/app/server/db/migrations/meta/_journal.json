@@ -253,6 +253,13 @@
       "when": 1775198247845,
       "tag": "0035_outstanding_sentinels",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1775203029124,
+      "tag": "0036_rapid_jack_power",
+      "breakpoints": true
     }
   ]
 }

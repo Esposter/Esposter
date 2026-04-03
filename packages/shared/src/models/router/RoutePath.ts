@@ -19,6 +19,7 @@ export const RoutePath: {
   readonly Index: "/";
   readonly Login: "/login";
   readonly Messages: (id: string) => string;
+  readonly MessagesFriends: "/messages/friends";
   readonly MessagesIndex: "/messages";
   readonly MessagesInvite: (code: string) => string;
   readonly MessagesMessage: (id: string, rowKey: string) => string;
@@ -48,6 +49,7 @@ export const RoutePath: {
   Index: "/",
   Login: "/login",
   Messages: (id: string) => `/messages/${id}`,
+  MessagesFriends: "/messages/friends",
   MessagesIndex: "/messages",
   MessagesInvite: (code: string) => `/messages/invite/${code}`,
   MessagesMessage: (id: string, rowKey: string) => `/messages/${id}/${rowKey}`,

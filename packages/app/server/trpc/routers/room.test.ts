@@ -361,7 +361,7 @@ describe("room", () => {
     const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
 
     await expect(roomCaller.joinRoom(newInviteCode)).rejects.toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: Failed query: insert into "message"."users_to_rooms" ("notificationType", "roomId", "userId") values (default, $1, $2) returning "notificationType", "roomId", "userId"
+      [TRPCError: Failed query: insert into "message"."users_to_rooms" ("isHidden", "notificationType", "roomId", "userId") values (default, default, $1, $2) returning "isHidden", "notificationType", "roomId", "userId"
       params: ${newRoom.id},${getMockSession().user.id}]
     `);
   });
@@ -553,7 +553,7 @@ describe("room", () => {
 
     await expect(roomCaller.createMembers({ roomId: newRoom.id, userIds: [getMockSession().user.id] })).rejects
       .toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: Failed query: insert into "message"."users_to_rooms" ("notificationType", "roomId", "userId") values (default, $1, $2) returning "notificationType", "roomId", "userId"
+      [TRPCError: Failed query: insert into "message"."users_to_rooms" ("isHidden", "notificationType", "roomId", "userId") values (default, default, $1, $2) returning "isHidden", "notificationType", "roomId", "userId"
       params: ${newRoom.id},${getMockSession().user.id}]
     `);
   });
@@ -566,7 +566,7 @@ describe("room", () => {
 
     await expect(roomCaller.createMembers({ roomId: newRoom.id, userIds: [userId] })).rejects
       .toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: Failed query: insert into "message"."users_to_rooms" ("notificationType", "roomId", "userId") values (default, $1, $2) returning "notificationType", "roomId", "userId"
+      [TRPCError: Failed query: insert into "message"."users_to_rooms" ("isHidden", "notificationType", "roomId", "userId") values (default, default, $1, $2) returning "isHidden", "notificationType", "roomId", "userId"
       params: ${newRoom.id},${userId}]
     `);
   });

@@ -49,14 +49,12 @@ describe("directMessage", () => {
   test("creates direct message to be idempotent regardless of order", async () => {
     expect.hasAssertions();
 
-    const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
-    const userId = getMockSession().user.id;
-    const directMessage1 = await caller.createDirectMessage([user.id]);
-
-    await mockSessionOnce(mockContext.db, user);
-    getMockSession();
-    const directMessage2 = await caller.createDirectMessage([userId]);
+    const initialUserId = getMockSession().user.id;
+    const { user: userB } = await mockSessionOnce(mockContext.db);
+    // Session is now userB — userB creates DM with initialUser
+    const directMessage1 = await caller.createDirectMessage([initialUserId]);
+    // Session reverts to initialUser — initialUser creates DM with userB (reverse order)
+    const directMessage2 = await caller.createDirectMessage([userB.id]);
 
     expect(directMessage1.id).toBe(directMessage2.id);
   });
