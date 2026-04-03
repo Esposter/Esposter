@@ -61,8 +61,8 @@ describe("friend", () => {
   test("accepts friend request", async () => {
     expect.hasAssertions();
 
-    const { user } = await mockSessionOnce(mockContext.db);
     const userId = getMockSession().user.id;
+    const { user } = await mockSessionOnce(mockContext.db);
     // session=user: sends request to default user
     await caller.sendFriendRequest(userId);
     // session=default: accepts request from user
@@ -76,12 +76,12 @@ describe("friend", () => {
   test("fails accept non-existent friend request", async () => {
     expect.hasAssertions();
 
+    const userId = getMockSession().user.id;
     const { user } = await mockSessionOnce(mockContext.db);
-    const senderId = getMockSession().user.id;
-    const id = [senderId, user.id].toSorted().join(ID_SEPARATOR);
+    const id = [userId, user.id].toSorted().join(ID_SEPARATOR);
 
     // session=user: no request exists, try to accept from default user
-    await expect(caller.acceptFriendRequest(senderId)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(caller.acceptFriendRequest(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Friend, id).message}]`,
     );
   });
@@ -89,8 +89,8 @@ describe("friend", () => {
   test("declines friend request", async () => {
     expect.hasAssertions();
 
-    const { user } = await mockSessionOnce(mockContext.db);
     const userId = getMockSession().user.id;
+    const { user } = await mockSessionOnce(mockContext.db);
     // session=user: sends request to default user
     await caller.sendFriendRequest(userId);
     // session=default: declines
@@ -104,8 +104,8 @@ describe("friend", () => {
   test("deletes friend", async () => {
     expect.hasAssertions();
 
-    const { user } = await mockSessionOnce(mockContext.db);
     const userId = getMockSession().user.id;
+    const { user } = await mockSessionOnce(mockContext.db);
     // session=user: sends; session=default: accepts; then deletes
     await caller.sendFriendRequest(userId);
     await caller.acceptFriendRequest(user.id);
@@ -134,8 +134,8 @@ describe("friend", () => {
   test("reads friends as receiver", async () => {
     expect.hasAssertions();
 
-    const { user } = await mockSessionOnce(mockContext.db);
     const userId = getMockSession().user.id;
+    const { user } = await mockSessionOnce(mockContext.db);
     // session=user: sends; session=default: accepts
     await caller.sendFriendRequest(userId);
     await caller.acceptFriendRequest(user.id);
@@ -151,8 +151,8 @@ describe("friend", () => {
   test("reads pending requests", async () => {
     expect.hasAssertions();
 
-    const { user } = await mockSessionOnce(mockContext.db);
     const userId = getMockSession().user.id;
+    const { user } = await mockSessionOnce(mockContext.db);
     // session=user: sends request to default user
     await caller.sendFriendRequest(userId);
     // session=default: reads pending
@@ -165,8 +165,8 @@ describe("friend", () => {
   test("reads sent requests", async () => {
     expect.hasAssertions();
 
-    const { user } = await mockSessionOnce(mockContext.db);
     const userId = getMockSession().user.id;
+    const { user } = await mockSessionOnce(mockContext.db);
     // session=user: sends request to default user
     await caller.sendFriendRequest(userId);
     // session=user again: reads sent requests
@@ -180,20 +180,20 @@ describe("friend", () => {
   test("searches users by name", async () => {
     expect.hasAssertions();
 
-    await mockSessionOnce(mockContext.db);
+    const user = getMockSession().user;
     // session=user: search for default user by name
-    const results = await caller.searchUsers(getMockSession().user.name);
+    const results = await caller.searchUsers(user.name);
 
     expect(results).toHaveLength(1);
-    expect(takeOne(results).id).toBe(getMockSession().user.id);
+    expect(takeOne(results).id).toBe(user.id);
   });
 
   test("excludes self from search results", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    const results = await caller.searchUsers(getMockSession().user.name);
+    const user = getMockSession().user;
+    const results = await caller.searchUsers(user.name);
 
-    expect(results.every(({ id }) => id !== userId)).toBe(true);
+    expect(results.every(({ id }) => id !== user.id)).toBe(true);
   });
 });
