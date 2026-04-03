@@ -11,6 +11,7 @@ interface DirectMessageListItemProps {
 const { room } = defineProps<DirectMessageListItemProps>();
 const directMessageName = useDirectMessageName(() => room);
 const directMessageStore = useDirectMessageStore();
+const { hideDirectMessage } = directMessageStore;
 const { currentDirectMessageId } = storeToRefs(directMessageStore);
 const isActive = computed(() => room.id === currentDirectMessageId.value);
 </script>
@@ -33,7 +34,7 @@ const isActive = computed(() => room.id === currentDirectMessageId.value);
           variant="plain"
           size="small"
           :ripple="false"
-          @click.stop="directMessageStore.hideDirectMessage(room.id)"
+          @click.stop="hideDirectMessage(room.id)"
         />
       </template>
     </v-list-item>

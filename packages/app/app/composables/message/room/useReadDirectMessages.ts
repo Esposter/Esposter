@@ -4,6 +4,7 @@ export const useReadDirectMessages = () => {
   const { $trpc } = useNuxtApp();
   const directMessageStore = useDirectMessageStore();
   const { readItems, readMoreItems } = directMessageStore;
+  const { directMessageParticipantsMap } = storeToRefs(directMessageStore);
 
   const readDirectMessages = () =>
     readItems(async () => {
@@ -13,7 +14,7 @@ export const useReadDirectMessages = () => {
           data.items.map(({ id }) => id),
         );
         for (const { participants, roomId } of participantsData)
-          directMessageStore.directMessageParticipantsMap.set(roomId, participants);
+          directMessageParticipantsMap.value.set(roomId, participants);
       }
       return data;
     });
@@ -26,7 +27,7 @@ export const useReadDirectMessages = () => {
           data.items.map(({ id }) => id),
         );
         for (const { participants, roomId } of participantsData)
-          directMessageStore.directMessageParticipantsMap.set(roomId, participants);
+          directMessageParticipantsMap.value.set(roomId, participants);
       }
       return data;
     }, onComplete);
