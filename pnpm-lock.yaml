@@ -73,8 +73,8 @@ catalogs:
       specifier: ^0.4.3
       version: 0.4.3
     '@eslint/core':
-      specifier: ^1.1.1
-      version: 1.1.1
+      specifier: ^1.2.0
+      version: 1.2.0
     '@eslint/json':
       specifier: ^1.2.0
       version: 1.2.0
@@ -1351,7 +1351,7 @@ importers:
         version: 0.1.2
       '@eslint/core':
         specifier: 'catalog:'
-        version: 1.1.1
+        version: 1.2.0
       '@eslint/json':
         specifier: 'catalog:'
         version: 1.2.0
@@ -2985,6 +2985,10 @@ packages:
 
   '@eslint/core@1.1.1':
     resolution: {integrity: sha512-QUPblTtE51/7/Zhfv8BDwO0qkkzQL7P/aWWbqcf4xWLEYn1oKjdO0gglQBB4GAsu7u6wjijbCmzsUTy6mnk6oQ==}
+    engines: {node: ^20.19.0 || ^22.13.0 || >=24}
+
+  '@eslint/core@1.2.0':
+    resolution: {integrity: sha512-8FTGbNzTvmSlc4cZBaShkC6YvFMG0riksYWRFKXztqVdXaQbcZLXlFbSpC05s70sGEsXAw0qwhx69JiW7hQS7A==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
 
   '@eslint/js@9.39.4':
@@ -14894,11 +14898,15 @@ snapshots:
     dependencies:
       '@types/json-schema': 7.0.15
 
+  '@eslint/core@1.2.0':
+    dependencies:
+      '@types/json-schema': 7.0.15
+
   '@eslint/js@9.39.4': {}
 
   '@eslint/json@1.2.0':
     dependencies:
-      '@eslint/core': 1.1.1
+      '@eslint/core': 1.2.0
       '@eslint/plugin-kit': 0.6.1
       '@humanwhocodes/momoa': 3.3.10
       natural-compare: 1.4.0
@@ -14907,7 +14915,7 @@ snapshots:
 
   '@eslint/plugin-kit@0.6.1':
     dependencies:
-      '@eslint/core': 1.1.1
+      '@eslint/core': 1.2.0
       levn: 0.4.1
 
   '@exodus/bytes@1.15.0(@noble/hashes@2.0.1)':
