@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { SubmitEventPromise } from "vuetify";
+
 import { useFriendStore } from "@/store/message/friend";
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
 
@@ -14,8 +16,7 @@ const filteredFriends = computed(() =>
     ? friends.value.filter(({ name }) => name.toLowerCase().includes(search.value.toLowerCase()))
     : friends.value,
 );
-
-const onSubmit = async (_event: unknown, onComplete: () => void) => {
+const onSubmit = async (_event: SubmitEventPromise, onComplete: () => void) => {
   await createDirectMessage(selectedUserIds.value);
   selectedUserIds.value = [];
   search.value = "";
@@ -40,15 +41,12 @@ const onSubmit = async (_event: unknown, onComplete: () => void) => {
           :title="name"
           @click="
             selectedUserIds = selectedUserIds.includes(id)
-              ? selectedUserIds.filter((uid) => uid !== id)
+              ? selectedUserIds.filter((userId) => userId !== id)
               : [...selectedUserIds, id]
           "
         >
           <template #prepend>
-            <v-avatar :image size="36" mr-3>
-              <v-img v-if="image" :src="image" />
-              <span v-else>{{ name[0] }}</span>
-            </v-avatar>
+            <StyledAvatar mr-3 :image :name :avatar-props="{ size: '2.25rem' }" />
           </template>
           <template #append>
             <v-checkbox-btn :model-value="selectedUserIds.includes(id)" />
