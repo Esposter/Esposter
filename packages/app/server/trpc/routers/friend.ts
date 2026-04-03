@@ -3,10 +3,10 @@ import type { z } from "zod";
 
 import { router } from "@@/server/trpc";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { DatabaseEntityType, FriendshipStatus, friends, selectUserSchema, users } from "@esposter/db-schema";
+import { DatabaseEntityType, friends, FriendshipStatus, selectUserSchema, users } from "@esposter/db-schema";
 import { ID_SEPARATOR, InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, eq, ilike, ne } from "drizzle-orm";
+import { and, eq, getTableColumns, ilike, ne, or } from "drizzle-orm";
 
 const friendUserIdInputSchema = selectUserSchema.shape.id;
 export type FriendUserIdInput = z.infer<typeof friendUserIdInputSchema>;
@@ -20,90 +20,90 @@ export const friendRouter = router({
   acceptFriendRequest: standardAuthedProcedure
     .input(friendUserIdInputSchema)
     .mutation(async ({ ctx, input: senderId }) => {
-      const me = ctx.getSessionPayload.user.id;
-      const id = getFriendshipId(senderId, me);
-      const [updated] = await ctx.db
+      const userId = ctx.getSessionPayload.user.id;
+      const id = getFriendshipId(senderId, userId);
+      const [updatedFriend] = await ctx.db
         .update(friends)
         .set({ status: FriendshipStatus.Accepted })
-        .where(and(eq(friends.id, id), eq(friends.receiverId, me), eq(friends.status, FriendshipStatus.Pending)))
+        .where(and(eq(friends.id, id), eq(friends.receiverId, userId), eq(friends.status, FriendshipStatus.Pending)))
         .returning();
-      if (!updated)
+      if (!updatedFriend)
         throw new TRPCError({
           code: "NOT_FOUND",
           message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Friend, id).message,
         });
-      return updated;
+      return updatedFriend;
     }),
   declineFriendRequest: standardAuthedProcedure
     .input(friendUserIdInputSchema)
     .mutation(async ({ ctx, input: senderId }) => {
-      const me = ctx.getSessionPayload.user.id;
-      const id = getFriendshipId(senderId, me);
+      const userId = ctx.getSessionPayload.user.id;
+      const id = getFriendshipId(senderId, userId);
       await ctx.db
         .delete(friends)
-        .where(and(eq(friends.id, id), eq(friends.receiverId, me), eq(friends.status, FriendshipStatus.Pending)));
+        .where(and(eq(friends.id, id), eq(friends.receiverId, userId), eq(friends.status, FriendshipStatus.Pending)));
     }),
   deleteFriend: standardAuthedProcedure.input(friendUserIdInputSchema).mutation(async ({ ctx, input: friendId }) => {
-    const me = ctx.getSessionPayload.user.id;
-    const id = getFriendshipId(me, friendId);
+    const userId = ctx.getSessionPayload.user.id;
+    const id = getFriendshipId(userId, friendId);
     await ctx.db.delete(friends).where(and(eq(friends.id, id), eq(friends.status, FriendshipStatus.Accepted)));
   }),
-  readFriends: standardAuthedProcedure.query(async ({ ctx }): Promise<User[]> => {
-    const me = ctx.getSessionPayload.user.id;
-    const asSender = await ctx.db
-      .select({ ...users })
+  readFriends: standardAuthedProcedure.query<User[]>(({ ctx }) => {
+    const userId = ctx.getSessionPayload.user.id;
+    return ctx.db
+      .select(getTableColumns(users))
       .from(friends)
-      .innerJoin(users, eq(users.id, friends.receiverId))
-      .where(and(eq(friends.senderId, me), eq(friends.status, FriendshipStatus.Accepted)));
-    const asReceiver = await ctx.db
-      .select({ ...users })
+      .innerJoin(
+        users,
+        or(
+          and(eq(friends.senderId, userId), eq(users.id, friends.receiverId)),
+          and(eq(friends.receiverId, userId), eq(users.id, friends.senderId)),
+        ),
+      )
+      .where(eq(friends.status, FriendshipStatus.Accepted));
+  }),
+  readPendingRequests: standardAuthedProcedure.query<User[]>(({ ctx }) => {
+    const userId = ctx.getSessionPayload.user.id;
+    return ctx.db
+      .select(getTableColumns(users))
       .from(friends)
       .innerJoin(users, eq(users.id, friends.senderId))
-      .where(and(eq(friends.receiverId, me), eq(friends.status, FriendshipStatus.Accepted)));
-    return [...asSender, ...asReceiver];
+      .where(and(eq(friends.receiverId, userId), eq(friends.status, FriendshipStatus.Pending)));
   }),
-  readPendingRequests: standardAuthedProcedure.query(async ({ ctx }): Promise<User[]> => {
-    const me = ctx.getSessionPayload.user.id;
+  readSentRequests: standardAuthedProcedure.query<User[]>(({ ctx }) => {
+    const userId = ctx.getSessionPayload.user.id;
     return ctx.db
-      .select({ ...users })
-      .from(friends)
-      .innerJoin(users, eq(users.id, friends.senderId))
-      .where(and(eq(friends.receiverId, me), eq(friends.status, FriendshipStatus.Pending)));
-  }),
-  readSentRequests: standardAuthedProcedure.query(async ({ ctx }): Promise<User[]> => {
-    const me = ctx.getSessionPayload.user.id;
-    return ctx.db
-      .select({ ...users })
+      .select(getTableColumns(users))
       .from(friends)
       .innerJoin(users, eq(users.id, friends.receiverId))
-      .where(and(eq(friends.senderId, me), eq(friends.status, FriendshipStatus.Pending)));
+      .where(and(eq(friends.senderId, userId), eq(friends.status, FriendshipStatus.Pending)));
   }),
-  searchUsers: standardAuthedProcedure.input(searchUsersInputSchema).query(async ({ ctx, input: name }) => {
-    const me = ctx.getSessionPayload.user.id;
+  searchUsers: standardAuthedProcedure.input(searchUsersInputSchema).query(({ ctx, input: name }) => {
+    const userId = ctx.getSessionPayload.user.id;
     return ctx.db
       .select()
       .from(users)
-      .where(and(ilike(users.name, `%${name}%`), ne(users.id, me)))
+      .where(and(ilike(users.name, `%${name}%`), ne(users.id, userId)))
       .limit(20);
   }),
   sendFriendRequest: standardAuthedProcedure
     .input(friendUserIdInputSchema)
     .mutation(async ({ ctx, input: receiverId }) => {
-      const me = ctx.getSessionPayload.user.id;
-      if (me === receiverId)
+      const userId = ctx.getSessionPayload.user.id;
+      if (userId === receiverId)
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Friend, me).message,
+          message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Friend, userId).message,
         });
-      const id = getFriendshipId(me, receiverId);
-      const existing = await ctx.db.query.friends.findFirst({ where: (f, { eq }) => eq(f.id, id) });
-      if (existing) return existing;
-      const [created] = await ctx.db.insert(friends).values({ id, receiverId, senderId: me }).returning();
-      if (!created)
+      const id = getFriendshipId(userId, receiverId);
+      const existingFriend = await ctx.db.query.friends.findFirst({ where: eq(friends.id, id) });
+      if (existingFriend) return existingFriend;
+      const [newFriend] = await ctx.db.insert(friends).values({ id, receiverId, senderId: userId }).returning();
+      if (!newFriend)
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Friend, id).message,
         });
-      return created;
+      return newFriend;
     }),
 });

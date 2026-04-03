@@ -78,6 +78,14 @@ describe("room", () => {
     expect(readRooms).toStrictEqual(getCursorPaginationData([], 0, []));
   });
 
+  test("reads empty rooms with undefined roomId", async () => {
+    expect.hasAssertions();
+
+    const readRooms = await roomCaller.readRooms({ roomId: undefined });
+
+    expect(readRooms).toStrictEqual(getCursorPaginationData([], 0, []));
+  });
+
   test("reads multiple with roomId with inclusive filter", async () => {
     expect.hasAssertions();
 

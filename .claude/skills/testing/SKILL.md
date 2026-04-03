@@ -32,11 +32,9 @@ description: Esposter Vitest testing conventions — describe with function refs
 - **Minimize per-test setup** — declare shared mutable state (`source`, `callback`, `cleanup`, etc.) as `let` variables inside `describe`, initialize them in `beforeEach`. Mount helpers should take no arguments when all state is pre-initialized. Only reassign in the test body when a test needs a different variant (e.g. `callback = vi.fn(() => cleanup)` for cleanup tests).
 - **Reuse test utilities** — always check `testUtils.test.ts` for existing helpers (e.g. `makeDataSource`, `makeRow`, `makeColumn`, `makeNumberColumn`, `setupWithDataSource`) before writing local equivalents.
 
-## tRPC Router Tests
+## Error Assertions
 
-- **Always create test resources via `caller.method()`** — never insert rows directly into the DB in router tests. Direct DB insertion bypasses application logic (auth checks, business rules, cascades) and means the flow being tested is different from the real flow. If a resource belongs to a different router, create a second caller for that router using `createCallerFactory(otherRouter)`.
-- **Name callers after their router** — when a test file has multiple callers, name each one after its router: `roomCaller`, `directMessageCaller`. Never use a generic `caller`.
-- **Use `assert(value)` to narrow before accessing** — never use non-null assertion (`!`). After `const [row] = await ...returning()`, call `assert(row)` so TypeScript knows `row` is defined for subsequent lines.
+- **Never use `.rejects.toThrow()`** — bare `.toThrow()` passes for any error. Always assert the specific error with `.rejects.toThrowErrorMatchingInlineSnapshot(...)` or `.rejects.toBeInstanceOf(ErrorClass)`. See the **trpc** skill for tRPC-specific error assertion patterns.
 
 ## Running Validation Commands
 

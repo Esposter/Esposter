@@ -5,8 +5,8 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { friendRouter } from "@@/server/trpc/routers/friend";
-import { FriendshipStatus, friends } from "@esposter/db-schema";
-import { takeOne } from "@esposter/shared";
+import { DatabaseEntityType, friends, FriendshipStatus } from "@esposter/db-schema";
+import { ID_SEPARATOR, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("friend", () => {
@@ -39,7 +39,7 @@ describe("friend", () => {
   test("sends friend request is idempotent", async () => {
     expect.hasAssertions();
 
-    const { user } = await mockSessionOnce(mockContext.db);
+    await mockSessionOnce(mockContext.db);
     const userId = getMockSession().user.id;
     // session=user
     const friend1 = await caller.sendFriendRequest(userId);
@@ -52,7 +52,10 @@ describe("friend", () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
-    await expect(caller.sendFriendRequest(userId)).rejects.toThrow();
+
+    await expect(caller.sendFriendRequest(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.Friend, userId).message}]`,
+    );
   });
 
   test("accepts friend request", async () => {
@@ -74,8 +77,13 @@ describe("friend", () => {
     expect.hasAssertions();
 
     const { user } = await mockSessionOnce(mockContext.db);
+    const senderId = getMockSession().user.id;
+    const id = [senderId, user.id].toSorted().join(ID_SEPARATOR);
+
     // session=user: no request exists, try to accept from default user
-    await expect(caller.acceptFriendRequest(getMockSession().user.id)).rejects.toThrow();
+    await expect(caller.acceptFriendRequest(senderId)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Friend, id).message}]`,
+    );
   });
 
   test("declines friend request", async () => {
@@ -89,6 +97,7 @@ describe("friend", () => {
     await caller.declineFriendRequest(user.id);
 
     const pendingRequests = await caller.readPendingRequests();
+
     expect(pendingRequests).toHaveLength(0);
   });
 
@@ -103,6 +112,7 @@ describe("friend", () => {
     await caller.deleteFriend(user.id);
 
     const friendList = await caller.readFriends();
+
     expect(friendList).toHaveLength(0);
   });
 
@@ -116,6 +126,7 @@ describe("friend", () => {
     await caller.acceptFriendRequest(user.id);
 
     const friendList = await caller.readFriends();
+
     expect(friendList).toHaveLength(1);
     expect(takeOne(friendList).id).toBe(user.id);
   });
@@ -132,6 +143,7 @@ describe("friend", () => {
     // session=user: reads their own friends list
     await mockSessionOnce(mockContext.db, user);
     const friendList = await caller.readFriends();
+
     expect(friendList).toHaveLength(1);
     expect(takeOne(friendList).id).toBe(userId);
   });
@@ -168,7 +180,7 @@ describe("friend", () => {
   test("searches users by name", async () => {
     expect.hasAssertions();
 
-    const { user } = await mockSessionOnce(mockContext.db);
+    await mockSessionOnce(mockContext.db);
     // session=user: search for default user by name
     const results = await caller.searchUsers(getMockSession().user.name);
 

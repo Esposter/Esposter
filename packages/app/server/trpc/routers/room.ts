@@ -44,7 +44,7 @@ import {
 } from "@esposter/db-schema";
 import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, count, desc, eq, ilike, inArray, ne, sql } from "drizzle-orm";
+import { and, count, desc, eq, getTableColumns, ilike, inArray, ne, sql } from "drizzle-orm";
 import { z } from "zod";
 
 const readRoomInputSchema = selectRoomSchema.shape.id.optional();
@@ -345,28 +345,21 @@ export const roomRouter = router({
       if (filter?.name) wheres.push(ilike(users.name, `%${filter.name}%`));
 
       const readUsers = await ctx.db
-        .select({ user: users })
+        .select(getTableColumns(users))
         .from(users)
         .innerJoin(usersToRooms, eq(usersToRooms.userId, users.id))
         .where(and(...wheres))
         .orderBy(...parseSortByToSql(users, sortBy))
         .limit(limit + 1);
-      return getCursorPaginationData(
-        readUsers.map(({ user }) => user),
-        limit,
-        sortBy,
-      );
+      return getCursorPaginationData(readUsers, limit, sortBy);
     },
   ),
-  readMembersByIds: getMemberProcedure(readMembersByIdsInputSchema, "roomId").query(
-    async ({ ctx, input: { ids, roomId } }) => {
-      const readUsers = await ctx.db
-        .select({ user: users })
-        .from(users)
-        .innerJoin(usersToRooms, eq(usersToRooms.userId, users.id))
-        .where(and(eq(usersToRooms.roomId, roomId), inArray(users.id, ids)));
-      return readUsers.map(({ user }) => user);
-    },
+  readMembersByIds: getMemberProcedure(readMembersByIdsInputSchema, "roomId").query(({ ctx, input: { ids, roomId } }) =>
+    ctx.db
+      .select(getTableColumns(users))
+      .from(users)
+      .innerJoin(usersToRooms, eq(usersToRooms.userId, users.id))
+      .where(and(eq(usersToRooms.roomId, roomId), inArray(users.id, ids))),
   ),
   readRoom: standardAuthedProcedure.input(readRoomInputSchema).query<null | Room>(async ({ ctx, input }) => {
     if (input) {
@@ -400,14 +393,14 @@ export const roomRouter = router({
     // By default, we will return the latest updated room
     const readRoom = (
       await ctx.db
-        .select({ room: rooms })
+        .select(getTableColumns(rooms))
         .from(rooms)
         .innerJoin(usersToRooms, eq(usersToRooms.roomId, rooms.id))
         .where(eq(usersToRooms.userId, ctx.getSessionPayload.user.id))
         .orderBy(desc(rooms.updatedAt))
         .limit(1)
     )[0];
-    return readRoom?.room ?? null;
+    return readRoom ?? null;
   }),
   readRooms: getMemberProcedure(readRoomsInputSchema, "roomId").query(
     async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
@@ -415,17 +408,17 @@ export const roomRouter = router({
         eq(usersToRooms.roomId, rooms.id),
         eq(usersToRooms.userId, ctx.getSessionPayload.user.id),
       );
-      let pinnedRoom: Room | undefined;
+      let room: Room | undefined;
 
       if (roomId) {
-        pinnedRoom = (
+        room = (
           await ctx.db
-            .select({ room: rooms })
+            .select(getTableColumns(rooms))
             .from(rooms)
             .innerJoin(usersToRooms, innerJoinCondition)
             .where(eq(rooms.id, roomId))
-        )[0]?.room;
-        if (!pinnedRoom)
+        )[0];
+        if (!room)
           throw new TRPCError({
             code: "BAD_REQUEST",
             message: new NotFoundError(DatabaseEntityType.Room, roomId).message,
@@ -435,21 +428,17 @@ export const roomRouter = router({
       const wheres: (SQL | undefined)[] = [eq(rooms.type, RoomType.Room)];
       if (cursor) wheres.push(getCursorWhere(rooms, cursor, sortBy));
       if (filter?.name) wheres.push(ilike(rooms.name, `%${filter.name}%`));
-      if (pinnedRoom) wheres.push(ne(rooms.id, pinnedRoom.id));
+      if (room) wheres.push(ne(rooms.id, room.id));
 
       const readRooms = await ctx.db
-        .select({ rooms })
+        .select(getTableColumns(rooms))
         .from(rooms)
         .innerJoin(usersToRooms, innerJoinCondition)
         .where(and(...wheres))
         .orderBy(...parseSortByToSql(rooms, sortBy))
         .limit(limit + 1);
-      const cursorPaginationData = getCursorPaginationData(
-        readRooms.map(({ rooms }) => rooms),
-        limit,
-        sortBy,
-      );
-      if (pinnedRoom) cursorPaginationData.items.push(pinnedRoom);
+      const cursorPaginationData = getCursorPaginationData(readRooms, limit, sortBy);
+      if (room) cursorPaginationData.items.push(room);
       return cursorPaginationData;
     },
   ),

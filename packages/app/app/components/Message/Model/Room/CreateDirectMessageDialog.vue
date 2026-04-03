@@ -31,29 +31,31 @@ const onSubmit = async (_event: unknown, onComplete: () => void) => {
     :confirm-button-attrs="{ disabled: selectedUserIds.length === 0 }"
     @submit="onSubmit"
   >
-    <v-text-field v-model="search" placeholder="Search friends" autofocus clearable hide-details mb-2 />
-    <v-list lines="two" max-height="360" overflow-y-auto>
-      <v-list-item
-        v-for="{ id, name, image } of filteredFriends"
-        :key="id"
-        :title="name"
-        @click="
-          selectedUserIds = selectedUserIds.includes(id)
-            ? selectedUserIds.filter((uid) => uid !== id)
-            : [...selectedUserIds, id]
-        "
-      >
-        <template #prepend>
-          <v-avatar :image size="36" mr-3>
-            <v-img v-if="image" :src="image" />
-            <span v-else>{{ name[0] }}</span>
-          </v-avatar>
-        </template>
-        <template #append>
-          <v-checkbox-btn :model-value="selectedUserIds.includes(id)" />
-        </template>
-      </v-list-item>
-      <v-list-item v-if="filteredFriends.length === 0" title="No friends found" />
-    </v-list>
+    <v-container>
+      <v-text-field v-model="search" placeholder="Search friends" autofocus clearable hide-details mb-2 />
+      <v-list lines="two" max-height="360" overflow-y-auto>
+        <v-list-item
+          v-for="{ id, name, image } of filteredFriends"
+          :key="id"
+          :title="name"
+          @click="
+            selectedUserIds = selectedUserIds.includes(id)
+              ? selectedUserIds.filter((uid) => uid !== id)
+              : [...selectedUserIds, id]
+          "
+        >
+          <template #prepend>
+            <v-avatar :image size="36" mr-3>
+              <v-img v-if="image" :src="image" />
+              <span v-else>{{ name[0] }}</span>
+            </v-avatar>
+          </template>
+          <template #append>
+            <v-checkbox-btn :model-value="selectedUserIds.includes(id)" />
+          </template>
+        </v-list-item>
+        <v-list-item v-if="filteredFriends.length === 0" title="No friends found" />
+      </v-list>
+    </v-container>
   </StyledFormDialog>
 </template>

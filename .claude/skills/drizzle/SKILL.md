@@ -39,9 +39,12 @@ description: Esposter Drizzle ORM conventions — column naming (camelCase match
 
 ## Selects
 
-- **Use `.select({ ...tableObject })` to get flat typed results** — spreading the table object into `select()` returns a flat `TypeName` shaped result matching `typeof table.$inferSelect`. This is the correct pattern when joining tables and you want only one table's columns.
-- **Never use `.select(tableObject)` directly** — `select()` expects a `SelectFields` record (`{ key: column }`), not a table object.
-- **Use `.select({ alias: tableObject })` for namespaced results** — e.g. `.select({ user: users })` when you want the result nested under a key (`{ user: User }`).
+- **Use `getTableColumns(table)` for flat results** — `getTableColumns` (from `drizzle-orm`) extracts only the column definitions from a table object. Use it when joining and you want one table's columns flat:
+  ```ts
+  .select(getTableColumns(users))
+  ```
+  Never spread the table object directly (`{ ...users }`) — the table object contains metadata beyond columns.
+- **Use `.select({ alias: tableObject })` for namespaced results** — e.g. `.select({ user: users })` when you want the result nested under a key (`{ user: User }`), then `.map(({ user }) => user)` to unwrap.
 - **Use `.select()` with no args only when selecting all columns from the FROM table** — adding joins while using `.select()` mixes all joined columns into the result, losing type clarity.
 
 ## Relations
