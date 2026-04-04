@@ -160,6 +160,20 @@ describe("room", () => {
     expect(readRoom).toBeNull();
   });
 
+  test("reads latest updated room excluding direct messages", async () => {
+    expect.hasAssertions();
+
+    const mainUser = getMockSession().user;
+    const newRoom = await roomCaller.createRoom({ name });
+    const { user } = await mockSessionOnce(mockContext.db);
+    getMockSession();
+    await makeFriends(mainUser, user);
+    await directMessageCaller.createDirectMessage([user.id]);
+    const readRoom = await roomCaller.readRoom();
+
+    expect(readRoom).toStrictEqual(newRoom);
+  });
+
   test("updates", async () => {
     expect.hasAssertions();
 
@@ -373,7 +387,7 @@ describe("room", () => {
     const directMessage = await directMessageCaller.createDirectMessage([user.id]);
 
     await expect(roomCaller.createInvite({ roomId: directMessage.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, directMessage.id).message}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.UserToRoom, directMessage.id).message}]`,
     );
   });
 
@@ -387,7 +401,7 @@ describe("room", () => {
     const directMessage = await directMessageCaller.createDirectMessage([user.id]);
 
     await expect(roomCaller.readInviteCode({ roomId: directMessage.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, directMessage.id).message}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.UserToRoom, directMessage.id).message}]`,
     );
   });
 
@@ -401,7 +415,7 @@ describe("room", () => {
     const directMessage = await directMessageCaller.createDirectMessage([user.id]);
 
     await expect(roomCaller.leaveRoom(directMessage.id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, directMessage.id).message}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.UserToRoom, directMessage.id).message}]`,
     );
   });
 
@@ -417,7 +431,7 @@ describe("room", () => {
     await expect(
       roomCaller.createMembers({ roomId: directMessage.id, userIds: [user.id] }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, directMessage.id).message}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.UserToRoom, directMessage.id).message}]`,
     );
   });
 
@@ -433,7 +447,7 @@ describe("room", () => {
     await expect(
       roomCaller.deleteMember({ roomId: directMessage.id, userId: user.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, directMessage.id).message}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.UserToRoom, directMessage.id).message}]`,
     );
   });
 

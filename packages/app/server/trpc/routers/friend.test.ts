@@ -40,9 +40,9 @@ describe("friend", () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
-    await mockSessionOnce(mockContext.db);
+    const { user } = await mockSessionOnce(mockContext.db);
     const friend1 = await caller.sendFriendRequest(userId);
-    await mockSessionOnce(mockContext.db);
+    await mockSessionOnce(mockContext.db, user);
     const friend2 = await caller.sendFriendRequest(userId);
 
     expect(friend1.id).toBe(friend2.id);

@@ -388,7 +388,7 @@ export const roomRouter = router({
         .select(getTableColumns(rooms))
         .from(rooms)
         .innerJoin(usersToRooms, eq(usersToRooms.roomId, rooms.id))
-        .where(eq(usersToRooms.userId, ctx.getSessionPayload.user.id))
+        .where(and(eq(usersToRooms.userId, ctx.getSessionPayload.user.id), eq(rooms.type, RoomType.Room)))
         .orderBy(desc(rooms.updatedAt))
         .limit(1)
     )[0];
