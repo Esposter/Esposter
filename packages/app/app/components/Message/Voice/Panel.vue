@@ -1,13 +1,5 @@
 <script setup lang="ts">
-import { useRoomStore } from "@/store/message/room";
-import { useVoiceStore } from "@/store/message/voice";
-
-const roomStore = useRoomStore();
-const { currentRoomId } = storeToRefs(roomStore);
-const voiceStore = useVoiceStore();
-const { participantsByRoom } = storeToRefs(voiceStore);
-const participants = computed(() => (currentRoomId.value ? (participantsByRoom.value[currentRoomId.value] ?? []) : []));
-const { isInChannel, isMuted, join, leave, speakingUserIds, toggleMute } = useVoiceChannel();
+const { isInChannel, isMuted, join, leave, toggleMute } = useVoiceChannel();
 </script>
 
 <template>
@@ -47,10 +39,5 @@ const { isInChannel, isMuted, join, leave, speakingUserIds, toggleMute } = useVo
       </v-tooltip>
     </template>
   </v-list-item>
-  <MessageVoiceParticipant
-    v-for="participant in participants"
-    :key="participant.id"
-    :participant
-    :is-speaking="speakingUserIds.includes(participant.id)"
-  />
+  <MessageVoiceParticipantList />
 </template>
