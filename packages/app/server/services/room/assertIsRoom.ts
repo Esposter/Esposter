@@ -13,6 +13,6 @@ export const assertIsRoom = async (
   if (room?.type !== type)
     throw new TRPCError({
       code: "BAD_REQUEST",
-      message: new InvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, roomId).message,
+      message: new InvalidOperationError(Operation.Read, DatabaseEntityType.UserToRoom, roomId).message,
     });
 };

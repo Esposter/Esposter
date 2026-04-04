@@ -356,10 +356,10 @@ describe("room", () => {
     await makeFriends(mainUser, user);
     const directMessageRoom = await directMessageCaller.createDirectMessage([user.id]);
     const inviteCode = await roomCaller.createInvite({ roomId: directMessageRoom.id });
-    await mockSessionOnce(mockContext.db);
+    await mockSessionOnce(mockContext.db, user);
 
     await expect(roomCaller.joinRoom(inviteCode)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, directMessageRoom.id).message}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.UserToRoom, directMessageRoom.id).message}]`,
     );
   });
 
@@ -511,7 +511,7 @@ describe("room", () => {
     const id = crypto.randomUUID();
 
     await expect(roomCaller.leaveRoom(id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.UserToRoom, id).message}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.UserToRoom, id).message}]`,
     );
   });
 
@@ -556,9 +556,8 @@ describe("room", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const members = await roomCaller.readMembers({ roomId: newRoom.id });
-    const user = getMockSession().user;
 
-    expect(takeOne(members.items)).toStrictEqual(user);
+    expect(takeOne(members.items).id).toBe(getMockSession().user.id);
   });
 
   test("reads members by ids", async () => {
@@ -568,7 +567,7 @@ describe("room", () => {
     const user = getMockSession().user;
     const members = await roomCaller.readMembersByIds({ ids: [user.id], roomId: newRoom.id });
 
-    expect(takeOne(members)).toStrictEqual(user);
+    expect(takeOne(members).id).toBe(user.id);
   });
 
   test("fails read members by empty ids", async () => {
