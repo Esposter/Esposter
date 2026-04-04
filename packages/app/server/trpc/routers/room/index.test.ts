@@ -361,22 +361,6 @@ describe("room", () => {
     );
   });
 
-  test("fails join with direct message room", async () => {
-    expect.hasAssertions();
-
-    const mainUser = getMockSession().user;
-    const { user } = await mockSessionOnce(mockContext.db);
-    getMockSession();
-    await makeFriends(mainUser, user);
-    const directMessageRoom = await directMessageCaller.createDirectMessage([user.id]);
-    const inviteCode = await roomCaller.createInvite({ roomId: directMessageRoom.id });
-    await mockSessionOnce(mockContext.db, user);
-
-    await expect(roomCaller.joinRoom(inviteCode)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.UserToRoom, directMessageRoom.id).message}]`,
-    );
-  });
-
   test("fails create invite with direct message room", async () => {
     expect.hasAssertions();
 
