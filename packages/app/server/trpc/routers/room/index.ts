@@ -135,15 +135,10 @@ export const roomRouter = router({
   createMembers: getCreatorProcedure(createMembersInputSchema, "roomId")
     .use(isRoom)
     .mutation<UserToRoom[]>(({ ctx, input: { roomId, userIds } }) =>
-      ctx.db.transaction(async (tx) => {
-        const newMembers: UserToRoom[] = [];
-        for (const userId of userIds) {
-          const newMember = (await tx.insert(usersToRooms).values({ roomId, userId }).returning())[0];
-          if (!newMember) continue;
-          newMembers.push(newMember);
-        }
-        return newMembers;
-      }),
+      ctx.db
+        .insert(usersToRooms)
+        .values(userIds.map((userId) => ({ roomId, userId })))
+        .returning(),
     ),
   createRoom: getProfanityFilterProcedure(createRoomInputSchema, ["name"]).mutation<Room>(({ ctx, input }) =>
     ctx.db.transaction(async (tx) => {
@@ -252,25 +247,31 @@ export const roomRouter = router({
     .input(leaveRoomInputSchema)
     .use(isRoom)
     .mutation<Room["id"]>(async ({ ctx, input }) => {
-      try {
+      const userId = ctx.getSessionPayload.user.id;
+      const isCreator = await ctx.db.query.rooms.findFirst({
+        columns: { id: true },
+        where: (rooms, { and, eq }) => and(eq(rooms.id, input), eq(rooms.userId, userId)),
+      });
+
+      if (isCreator) {
         const { id } = await deleteRoom(ctx.db, ctx.getSessionPayload, input);
         return id;
-      } catch {
-        const userToRoom = (
-          await ctx.db
-            .delete(usersToRooms)
-            .where(and(eq(usersToRooms.roomId, input), eq(usersToRooms.userId, ctx.getSessionPayload.user.id)))
-            .returning()
-        )[0];
-        if (!userToRoom)
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.UserToRoom, input).message,
-          });
-
-        roomEventEmitter.emit("leaveRoom", { ...userToRoom, sessionId: ctx.getSessionPayload.session.id });
-        return userToRoom.roomId;
       }
+
+      const userToRoom = (
+        await ctx.db
+          .delete(usersToRooms)
+          .where(and(eq(usersToRooms.roomId, input), eq(usersToRooms.userId, userId)))
+          .returning()
+      )[0];
+      if (!userToRoom)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.UserToRoom, input).message,
+        });
+
+      roomEventEmitter.emit("leaveRoom", { ...userToRoom, sessionId: ctx.getSessionPayload.session.id });
+      return userToRoom.roomId;
     }),
   onDeleteRoom: standardAuthedProcedure.input(onDeleteRoomInputSchema).subscription(async function* ({
     ctx,

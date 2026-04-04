@@ -1,8 +1,8 @@
 import type { DeleteMemberInput } from "#shared/models/db/room/DeleteMemberInput";
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
-import type { User } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
+import type { User } from "better-auth";
 
 import { createCode } from "#shared/util/math/random/createCode";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";

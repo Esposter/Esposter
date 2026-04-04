@@ -1,11 +1,12 @@
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
-import type { User } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
+import type { User } from "better-auth";
 
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { friendRouter } from "@@/server/trpc/routers/friend";
+import { roomRouter } from "@@/server/trpc/routers/room";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
 import { DatabaseEntityType, friends, rooms } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
@@ -14,12 +15,14 @@ import { afterEach, beforeAll, describe, expect, test } from "vitest";
 describe("directMessage", () => {
   let caller: DecorateRouterRecord<TRPCRouter["directMessage"]>;
   let friendCaller: DecorateRouterRecord<TRPCRouter["friend"]>;
+  let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let mockContext: Context;
 
   beforeAll(async () => {
     mockContext = await createMockContext();
     caller = createCallerFactory(directMessageRouter)(mockContext);
     friendCaller = createCallerFactory(friendRouter)(mockContext);
+    roomCaller = createCallerFactory(roomRouter)(mockContext);
   });
 
   afterEach(async () => {
@@ -214,5 +217,24 @@ describe("directMessage", () => {
     await expect(caller.createDirectMessage([getMockSession().user.id])).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.DirectMessage, getMockSession().user.id).message}]`,
     );
+  });
+
+  test("fails hide with regular room", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name: "" });
+
+    await expect(caller.hideDirectMessage(newRoom.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, newRoom.id).message}]`,
+    );
+  });
+
+  test("filters regular rooms from read participants", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name: "" });
+    const participantsData = await caller.readDirectMessageParticipants([newRoom.id]);
+
+    expect(participantsData).toHaveLength(0);
   });
 });

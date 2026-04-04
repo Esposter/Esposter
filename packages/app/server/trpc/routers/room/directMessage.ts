@@ -9,6 +9,7 @@ import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSortByToSql";
+import { assertIsRoom } from "@@/server/services/room/assertIsRoom";
 import { router } from "@@/server/trpc";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
@@ -99,6 +100,7 @@ export const directMessageRouter = router({
   ),
   hideDirectMessage: standardAuthedProcedure.input(hideDirectMessageInputSchema).mutation(async ({ ctx, input }) => {
     await isMember(ctx.db, ctx.getSessionPayload, input);
+    await assertIsRoom(ctx.db, input, RoomType.DirectMessage);
     await ctx.db
       .update(usersToRooms)
       .set({ isHidden: true })
@@ -112,6 +114,7 @@ export const directMessageRouter = router({
       const rows = await ctx.db
         .select({ roomId: utr2.roomId, user: users })
         .from(utr1)
+        .innerJoin(rooms, and(eq(rooms.id, utr1.roomId), eq(rooms.type, RoomType.DirectMessage)))
         .innerJoin(utr2, and(eq(utr2.roomId, utr1.roomId), ne(utr2.userId, ctx.getSessionPayload.user.id)))
         .innerJoin(users, eq(users.id, utr2.userId))
         .where(and(eq(utr1.userId, ctx.getSessionPayload.user.id), inArray(utr1.roomId, roomIds)));
