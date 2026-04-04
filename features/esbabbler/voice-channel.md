@@ -83,22 +83,35 @@ Active voice participants are **ephemeral** — not persisted to Azure Table. Op
 ## Folder Structure
 
 ```text
-packages/shared/
-  models/room/
-    voice/
-      VoiceParticipant.ts         # { userId, username, avatarUrl, isMuted }
-      VoiceSignalPayload.ts       # { type: "offer" | "answer" | "candidate", data: string, targetUserId: string }
-
 packages/app/
-  app/
-    composables/room/
-      useVoiceChannel.ts          # join/leave, peer map, mute toggle, speaking detection (AudioWorklet)
-    components/Room/
-      Voice/
-        Panel.vue                 # sidebar panel: participant list + join/leave button
-        Participant.vue           # avatar + speaking ring + mute badge
+  shared/models/room/voice/
+    VoiceParticipant.ts           # extends Pick<User, "id" | "image" | "name"> & { isMuted }
+    VoiceSignalType.ts            # enum VoiceSignalType + voiceSignalTypeSchema
+    VoiceSignalPayload.ts         # interface + voiceSignalPayloadSchema
+
+  server/services/message/
+    events/
+      voiceEventEmitter.ts        # EventEmitter for joinVoiceChannel, leaveVoiceChannel, muteChanged, signal
+    voice/
+      voiceParticipantMap.ts      # voiceRoomParticipantMap: Map<roomId, Map<participantId, VoiceParticipant>>
+      addVoiceParticipant.ts
+      deleteVoiceParticipant.ts
+      getRoomParticipants.ts
+      updateVoiceParticipantMute.ts
+
   server/trpc/routers/room/
-    voice.ts                      # joinVoiceChannel, leaveVoiceChannel, sendSignal, subscriptions
+    voice.ts                      # readVoiceParticipants, joinVoiceChannel, leaveVoiceChannel, setMute,
+                                  # sendSignal, onParticipantJoin, onParticipantLeave, onMuteChanged, onSignal
+    voice.test.ts                 # tRPC router tests
+
+  app/
+    store/message/
+      voice.ts                    # participantsByRoom, storeJoinVoice, storeLeaveVoice, storeSetMute, storeSetParticipants
+    composables/message/room/
+      useVoiceChannel.ts          # join/leave, peer map, mute toggle, speaking detection, subscriptions
+    components/Message/Voice/
+      Panel.vue                   # sidebar panel: participant list + join/leave/mute buttons
+      Participant.vue             # avatar + speaking ring + mute badge
 ```
 
 ---

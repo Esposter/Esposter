@@ -1,0 +1,217 @@
+import type { VoiceSignalPayload } from "#shared/models/room/voice/VoiceSignalPayload";
+
+import { VoiceSignalType } from "#shared/models/room/voice/VoiceSignalType";
+import { ICE_SERVERS, LOCAL_PARTICIPANT_ID, SPEAKING_THRESHOLD } from "@/services/message/voice/constants";
+import { exhaustiveGuard } from "@esposter/shared";
+import { useRoomStore } from "@/store/message/room";
+import { useVoiceStore } from "@/store/message/voice";
+
+export const useVoiceChannel = () => {
+  const { $trpc } = useNuxtApp();
+  const roomStore = useRoomStore();
+  const { currentRoomId } = storeToRefs(roomStore);
+  const voiceStore = useVoiceStore();
+  const { storeJoinVoice, storeLeaveVoice, storeSetMute, storeSetParticipants } = voiceStore;
+
+  const isInChannel = ref(false);
+  const isMuted = ref(false);
+  const speakingUserIds = ref<string[]>([]);
+
+  let localStream: MediaStream | null = null;
+  const peerConnections = new Map<string, RTCPeerConnection>();
+  const remoteAudioElements = new Map<string, HTMLAudioElement>();
+  const speakingCleanups = new Map<string, () => void>();
+  let onSignalUnsubscribable: { unsubscribe(): void } | undefined;
+
+  const cleanupPeer = (id: string) => {
+    peerConnections.get(id)?.close();
+    peerConnections.delete(id);
+    remoteAudioElements.get(id)?.remove();
+    remoteAudioElements.delete(id);
+    speakingCleanups.get(id)?.();
+    speakingCleanups.delete(id);
+    speakingUserIds.value = speakingUserIds.value.filter((speakingId) => speakingId !== id);
+  };
+
+  const cleanupLocalStream = () => {
+    speakingCleanups.get(LOCAL_PARTICIPANT_ID)?.();
+    speakingCleanups.delete(LOCAL_PARTICIPANT_ID);
+    if (localStream) for (const track of localStream.getTracks()) track.stop();
+    localStream = null;
+  };
+
+  const setupSpeakingDetection = (id: string, stream: MediaStream) => {
+    if (!import.meta.client) return;
+    const audioContext = new AudioContext();
+    const analyser = audioContext.createAnalyser();
+    audioContext.createMediaStreamSource(stream).connect(analyser);
+    analyser.fftSize = 256;
+    const dataArray = new Uint8Array(analyser.frequencyBinCount);
+    let animationFrame = 0;
+
+    const detectSpeaking = () => {
+      analyser.getByteFrequencyData(dataArray);
+      const average = dataArray.reduce((acc, val) => acc + val, 0) / dataArray.length;
+      const isSpeaking = average > SPEAKING_THRESHOLD;
+      const isCurrentlySpeaking = speakingUserIds.value.includes(id);
+
+      if (isSpeaking && !isCurrentlySpeaking) speakingUserIds.value = [...speakingUserIds.value, id];
+      else if (!isSpeaking && isCurrentlySpeaking)
+        speakingUserIds.value = speakingUserIds.value.filter((speakingId) => speakingId !== id);
+
+      animationFrame = requestAnimationFrame(detectSpeaking);
+    };
+
+    animationFrame = requestAnimationFrame(detectSpeaking);
+    speakingCleanups.set(id, () => {
+      cancelAnimationFrame(animationFrame);
+      void audioContext.close();
+    });
+  };
+
+  const buildPeerConnection = (remoteId: string) => {
+    const peerConnection = new RTCPeerConnection({ iceServers: ICE_SERVERS });
+    peerConnections.set(remoteId, peerConnection);
+
+    if (localStream) for (const track of localStream.getTracks()) peerConnection.addTrack(track, localStream);
+
+    peerConnection.ontrack = ({ streams }) => {
+      const remoteStream = streams[0];
+      if (!remoteStream) return;
+      setupSpeakingDetection(remoteId, remoteStream);
+      const audio = new Audio();
+      audio.srcObject = remoteStream;
+      void audio.play();
+      remoteAudioElements.set(remoteId, audio);
+    };
+
+    peerConnection.onicecandidate = ({ candidate }) => {
+      if (!candidate || !currentRoomId.value) return;
+      void $trpc.voice.sendSignal.mutate({
+        payload: { data: JSON.stringify(candidate.toJSON()), targetUserId: remoteId, type: VoiceSignalType.Candidate },
+        roomId: currentRoomId.value,
+      });
+    };
+
+    return peerConnection;
+  };
+
+  const createPeerConnection = async (remoteId: string) => {
+    if (!import.meta.client || !currentRoomId.value) return;
+
+    const peerConnection = buildPeerConnection(remoteId);
+    const offer = await peerConnection.createOffer();
+    await peerConnection.setLocalDescription(offer);
+    await $trpc.voice.sendSignal.mutate({
+      payload: { data: JSON.stringify(offer), targetUserId: remoteId, type: VoiceSignalType.Offer },
+      roomId: currentRoomId.value,
+    });
+  };
+
+  const handleSignal = async ({ payload, senderId }: { payload: VoiceSignalPayload; senderId: string }) => {
+    if (!currentRoomId.value) return;
+    const { data, type } = payload;
+
+    switch (type) {
+      case VoiceSignalType.Offer: {
+        const peerConnection = buildPeerConnection(senderId);
+        await peerConnection.setRemoteDescription(JSON.parse(data) as RTCSessionDescriptionInit);
+        const answer = await peerConnection.createAnswer();
+        await peerConnection.setLocalDescription(answer);
+        await $trpc.voice.sendSignal.mutate({
+          payload: { data: JSON.stringify(answer), targetUserId: senderId, type: VoiceSignalType.Answer },
+          roomId: currentRoomId.value,
+        });
+        break;
+      }
+      case VoiceSignalType.Answer: {
+        const peerConnection = peerConnections.get(senderId);
+        if (!peerConnection) return;
+        await peerConnection.setRemoteDescription(JSON.parse(data) as RTCSessionDescriptionInit);
+        break;
+      }
+      case VoiceSignalType.Candidate: {
+        const peerConnection = peerConnections.get(senderId);
+        if (!peerConnection) return;
+        await peerConnection.addIceCandidate(JSON.parse(data) as RTCIceCandidateInit);
+        break;
+      }
+      default:
+        exhaustiveGuard(type);
+    }
+  };
+
+  const join = async () => {
+    if (!import.meta.client || !currentRoomId.value || isInChannel.value) return;
+
+    const roomId = currentRoomId.value;
+    localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+
+    // Subscribe to signals before joining so we don't miss offers from existing participants
+    onSignalUnsubscribable = $trpc.voice.onSignal.subscribe(roomId, { onData: handleSignal });
+
+    const participants = await $trpc.voice.joinVoiceChannel.mutate({ roomId });
+    isInChannel.value = true;
+    storeSetParticipants(roomId, participants);
+    setupSpeakingDetection(LOCAL_PARTICIPANT_ID, localStream);
+  };
+
+  const leave = async () => {
+    if (!currentRoomId.value || !isInChannel.value) return;
+
+    const roomId = currentRoomId.value;
+    await $trpc.voice.leaveVoiceChannel.mutate({ roomId });
+    isInChannel.value = false;
+    isMuted.value = false;
+
+    for (const id of [...peerConnections.keys()]) cleanupPeer(id);
+    cleanupLocalStream();
+    onSignalUnsubscribable?.unsubscribe();
+    onSignalUnsubscribable = undefined;
+    speakingUserIds.value = [];
+  };
+
+  const toggleMute = async () => {
+    if (!localStream || !currentRoomId.value) return;
+
+    isMuted.value = !isMuted.value;
+    for (const track of localStream.getAudioTracks()) track.enabled = !isMuted.value;
+    await $trpc.voice.setMute.mutate({ isMuted: isMuted.value, roomId: currentRoomId.value });
+  };
+
+  useOnlineSubscribable(currentRoomId, (roomId) => {
+    if (!roomId) return;
+
+    const onParticipantJoinUnsubscribable = $trpc.voice.onParticipantJoin.subscribe(roomId, {
+      onData: async (participant) => {
+        storeJoinVoice(roomId, participant);
+        if (isInChannel.value) await createPeerConnection(participant.id);
+      },
+    });
+    const onParticipantLeaveUnsubscribable = $trpc.voice.onParticipantLeave.subscribe(roomId, {
+      onData: (id) => {
+        storeLeaveVoice(roomId, id);
+        cleanupPeer(id);
+      },
+    });
+    const onMuteChangedUnsubscribable = $trpc.voice.onMuteChanged.subscribe(roomId, {
+      onData: ({ id, isMuted: participantIsMuted }) => storeSetMute(roomId, id, participantIsMuted),
+    });
+
+    return () => {
+      if (isInChannel.value) void $trpc.voice.leaveVoiceChannel.mutate({ roomId });
+      for (const id of [...peerConnections.keys()]) cleanupPeer(id);
+      cleanupLocalStream();
+      onSignalUnsubscribable?.unsubscribe();
+      onSignalUnsubscribable = undefined;
+      isInChannel.value = false;
+      isMuted.value = false;
+      speakingUserIds.value = [];
+      onParticipantJoinUnsubscribable.unsubscribe();
+      onParticipantLeaveUnsubscribable.unsubscribe();
+      onMuteChangedUnsubscribable.unsubscribe();
+    };
+  });
+
+  return { isInChannel, isMuted, join, leave, speakingUserIds, toggleMute };
+};
