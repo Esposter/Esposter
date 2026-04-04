@@ -16,6 +16,8 @@ import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@espos
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
+import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
+
 describe("room", () => {
   let mockContext: Context;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
@@ -218,10 +220,16 @@ describe("room", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const onUpdateRoom = await roomCaller.onUpdateRoom([newRoom.id]);
-    const [data] = await Promise.all([
-      onUpdateRoom[Symbol.asyncIterator]().next(),
-      roomCaller.updateRoom({ id: newRoom.id, name: updatedName }),
-    ]);
+    const data = await withAsyncIterator(
+      () => onUpdateRoom,
+      async (iterator) => {
+        const [result] = await Promise.all([
+          iterator.next(),
+          roomCaller.updateRoom({ id: newRoom.id, name: updatedName }),
+        ]);
+        return result;
+      },
+    );
 
     assert(!data.done);
 
@@ -263,7 +271,13 @@ describe("room", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const onDeleteRoom = await roomCaller.onDeleteRoom([newRoom.id]);
-    const [data] = await Promise.all([onDeleteRoom[Symbol.asyncIterator]().next(), roomCaller.deleteRoom(newRoom.id)]);
+    const data = await withAsyncIterator(
+      () => onDeleteRoom,
+      async (iterator) => {
+        const [result] = await Promise.all([iterator.next(), roomCaller.deleteRoom(newRoom.id)]);
+        return result;
+      },
+    );
 
     assert(!data.done);
 
@@ -483,7 +497,13 @@ describe("room", () => {
     const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
     const onJoinRoom = await roomCaller.onJoinRoom([newRoom.id]);
     const session = await mockSessionOnce(mockContext.db);
-    const [data] = await Promise.all([onJoinRoom[Symbol.asyncIterator]().next(), roomCaller.joinRoom(newInviteCode)]);
+    const data = await withAsyncIterator(
+      () => onJoinRoom,
+      async (iterator) => {
+        const [result] = await Promise.all([iterator.next(), roomCaller.joinRoom(newInviteCode)]);
+        return result;
+      },
+    );
 
     assert(!data.done);
 
@@ -533,7 +553,13 @@ describe("room", () => {
     await roomCaller.joinRoom(newInviteCode);
     const onLeaveRoom = await roomCaller.onLeaveRoom([newRoom.id]);
     const session = await mockSessionOnce(mockContext.db, user);
-    const [data] = await Promise.all([onLeaveRoom[Symbol.asyncIterator]().next(), roomCaller.leaveRoom(newRoom.id)]);
+    const data = await withAsyncIterator(
+      () => onLeaveRoom,
+      async (iterator) => {
+        const [result] = await Promise.all([iterator.next(), roomCaller.leaveRoom(newRoom.id)]);
+        return result;
+      },
+    );
 
     assert(!data.done);
 

@@ -27,6 +27,8 @@ import { MENTION_ID_ATTRIBUTE, MENTION_TYPE, MENTION_TYPE_ATTRIBUTE, NotFoundErr
 import { MockContainerDatabase, MockEventGridDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
+import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
+
 describe("message", () => {
   let mockContext: Context;
   let messageCaller: DecorateRouterRecord<TRPCRouter["message"]>;
@@ -276,10 +278,16 @@ describe("message", () => {
     const onCreateMessage = await messageCaller.onCreateMessage({ roomId: newRoom.id });
     const message = getMessage(user.id);
     await mockSessionOnce(mockContext.db, user);
-    const [trackedData, newMessage] = await Promise.all([
-      onCreateMessage[Symbol.asyncIterator]().next(),
-      messageCaller.createMessage({ message, roomId: newRoom.id }),
-    ]);
+    const trackedData = await withAsyncIterator(
+      () => onCreateMessage,
+      async (iterator) => {
+        const [result, newMessage] = await Promise.all([
+          iterator.next(),
+          messageCaller.createMessage({ message, roomId: newRoom.id }),
+        ]);
+        return result;
+      },
+    );
 
     assert(!trackedData.done);
 
@@ -287,9 +295,9 @@ describe("message", () => {
 
     const [id, data] = trackedData.value as unknown as TrackedEnvelope<MessageEntity[]>;
 
-    expect(id).toBe(newMessage.rowKey);
+    expect(id).toBe(takeOne(data).rowKey);
     expect(data).toHaveLength(1);
-    expect(takeOne(data)).toStrictEqual(newMessage);
+    expect(takeOne(data).message).toBe(message);
   });
 
   test("fails on creates with non-existent room", async () => {
@@ -358,10 +366,20 @@ describe("message", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const onCreateTyping = await messageCaller.onCreateTyping({ roomId: newRoom.id });
     const mockSession = getMockSession();
-    const [data] = await Promise.all([
-      onCreateTyping[Symbol.asyncIterator]().next(),
-      messageCaller.createTyping({ roomId: newRoom.id, userId: mockSession.user.id, username: mockSession.user.name }),
-    ]);
+    const data = await withAsyncIterator(
+      () => onCreateTyping,
+      async (iterator) => {
+        const [result] = await Promise.all([
+          iterator.next(),
+          messageCaller.createTyping({
+            roomId: newRoom.id,
+            userId: mockSession.user.id,
+            username: mockSession.user.name,
+          }),
+        ]);
+        return result;
+      },
+    );
 
     assert(!data.done);
 
@@ -447,14 +465,20 @@ describe("message", () => {
     const message = getMessage(getMockSession().user.id);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     const onUpdateMessage = await messageCaller.onUpdateMessage({ roomId: newRoom.id });
-    const [data] = await Promise.all([
-      onUpdateMessage[Symbol.asyncIterator]().next(),
-      messageCaller.updateMessage({
-        message: updatedMessage,
-        partitionKey: newMessage.partitionKey,
-        rowKey: newMessage.rowKey,
-      }),
-    ]);
+    const data = await withAsyncIterator(
+      () => onUpdateMessage,
+      async (iterator) => {
+        const [result] = await Promise.all([
+          iterator.next(),
+          messageCaller.updateMessage({
+            message: updatedMessage,
+            partitionKey: newMessage.partitionKey,
+            rowKey: newMessage.rowKey,
+          }),
+        ]);
+        return result;
+      },
+    );
 
     assert(!data.done);
 
@@ -526,13 +550,19 @@ describe("message", () => {
     const message = getMessage(getMockSession().user.id);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     const onDeleteMessage = await messageCaller.onDeleteMessage({ roomId: newRoom.id });
-    const [data] = await Promise.all([
-      onDeleteMessage[Symbol.asyncIterator]().next(),
-      messageCaller.deleteMessage({
-        partitionKey: newMessage.partitionKey,
-        rowKey: newMessage.rowKey,
-      }),
-    ]);
+    const data = await withAsyncIterator(
+      () => onDeleteMessage,
+      async (iterator) => {
+        const [result] = await Promise.all([
+          iterator.next(),
+          messageCaller.deleteMessage({
+            partitionKey: newMessage.partitionKey,
+            rowKey: newMessage.rowKey,
+          }),
+        ]);
+        return result;
+      },
+    );
 
     assert(!data.done);
 

@@ -12,6 +12,7 @@ import { achievements, UserAchievementRelations, WebpageAchievementName } from "
 import { takeOne } from "@esposter/shared";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
+import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
 describe("achievement", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["_def"]["procedures"]>;
@@ -56,10 +57,16 @@ describe("achievement", () => {
     expect.hasAssertions();
 
     const onUpdateAchievement = await caller.achievement.onUpdateAchievement();
-    const [data] = await Promise.all([
-      onUpdateAchievement[Symbol.asyncIterator]().next(),
-      caller.webpageEditor.saveWebpageEditor(new WebpageEditor()),
-    ]);
+    const data = await withAsyncIterator(
+      () => onUpdateAchievement,
+      async (iterator) => {
+        const [result] = await Promise.all([
+          iterator.next(),
+          caller.webpageEditor.saveWebpageEditor(new WebpageEditor()),
+        ]);
+        return result;
+      },
+    );
 
     const unlockedAchievements = [] as unknown as AchievementEvents["updateAchievement"][0];
 

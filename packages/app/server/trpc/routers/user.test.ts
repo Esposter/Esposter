@@ -10,6 +10,8 @@ import { takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
+import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
+
 describe("user", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["user"]>;
@@ -168,7 +170,13 @@ describe("user", () => {
     const onUpsertStatus = await caller.onUpsertStatus([user.id]);
     await mockSessionOnce(mockContext.db, user);
     const status = UserStatus.Online;
-    const [data] = await Promise.all([onUpsertStatus[Symbol.asyncIterator]().next(), caller.upsertStatus({ status })]);
+    const data = await withAsyncIterator(
+      () => onUpsertStatus,
+      async (iterator) => {
+        const [result] = await Promise.all([iterator.next(), caller.upsertStatus({ status })]);
+        return result;
+      },
+    );
 
     assert(!data.done);
 
@@ -183,7 +191,13 @@ describe("user", () => {
     getMockSession();
     const onUpsertStatus = await caller.onUpsertStatus([user.id]);
     await mockSessionOnce(mockContext.db, user);
-    const [data] = await Promise.all([onUpsertStatus[Symbol.asyncIterator]().next(), caller.connect()]);
+    const data = await withAsyncIterator(
+      () => onUpsertStatus,
+      async (iterator) => {
+        const [result] = await Promise.all([iterator.next(), caller.connect()]);
+        return result;
+      },
+    );
 
     assert(!data.done);
 
@@ -198,7 +212,13 @@ describe("user", () => {
     getMockSession();
     const onUpsertStatus = await caller.onUpsertStatus([user.id]);
     await mockSessionOnce(mockContext.db, user);
-    const [data] = await Promise.all([onUpsertStatus[Symbol.asyncIterator]().next(), caller.disconnect()]);
+    const data = await withAsyncIterator(
+      () => onUpsertStatus,
+      async (iterator) => {
+        const [result] = await Promise.all([iterator.next(), caller.disconnect()]);
+        return result;
+      },
+    );
 
     assert(!data.done);
 

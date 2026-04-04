@@ -12,6 +12,7 @@ import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
+import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
 describe("emoji", () => {
   let mockContext: Context;
   let emojiCaller: DecorateRouterRecord<TRPCRouter["emoji"]>;
@@ -145,10 +146,16 @@ describe("emoji", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const onCreateEmoji = await emojiCaller.onCreateEmoji({ roomId: newRoom.id });
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-    const [data] = await Promise.all([
-      onCreateEmoji[Symbol.asyncIterator]().next(),
-      emojiCaller.createEmoji({ emojiTag, messageRowKey: newMessage.rowKey, partitionKey: newRoom.id }),
-    ]);
+    const data = await withAsyncIterator(
+      () => onCreateEmoji,
+      async (iterator) => {
+        const [result] = await Promise.all([
+          iterator.next(),
+          emojiCaller.createEmoji({ emojiTag, messageRowKey: newMessage.rowKey, partitionKey: newRoom.id }),
+        ]);
+        return result;
+      },
+    );
 
     assert(!data.done);
 
@@ -289,14 +296,20 @@ describe("emoji", () => {
     await roomCaller.joinRoom(newInviteCode);
     const onUpdateEmoji = await emojiCaller.onUpdateEmoji({ roomId: newRoom.id });
     await mockSessionOnce(mockContext.db, user);
-    const [data] = await Promise.all([
-      onUpdateEmoji[Symbol.asyncIterator]().next(),
-      emojiCaller.updateEmoji({
-        messageRowKey: newEmoji.messageRowKey,
-        partitionKey: newEmoji.partitionKey,
-        rowKey: newEmoji.rowKey,
-      }),
-    ]);
+    const data = await withAsyncIterator(
+      () => onUpdateEmoji,
+      async (iterator) => {
+        const [result] = await Promise.all([
+          iterator.next(),
+          emojiCaller.updateEmoji({
+            messageRowKey: newEmoji.messageRowKey,
+            partitionKey: newEmoji.partitionKey,
+            rowKey: newEmoji.rowKey,
+          }),
+        ]);
+        return result;
+      },
+    );
 
     assert(!data.done);
 
@@ -397,14 +410,20 @@ describe("emoji", () => {
     });
 
     const onDeleteEmoji = await emojiCaller.onDeleteEmoji({ roomId: newRoom.id });
-    const [data] = await Promise.all([
-      onDeleteEmoji[Symbol.asyncIterator]().next(),
-      emojiCaller.deleteEmoji({
-        messageRowKey: newEmoji.messageRowKey,
-        partitionKey: newEmoji.partitionKey,
-        rowKey: newEmoji.rowKey,
-      }),
-    ]);
+    const data = await withAsyncIterator(
+      () => onDeleteEmoji,
+      async (iterator) => {
+        const [result] = await Promise.all([
+          iterator.next(),
+          emojiCaller.deleteEmoji({
+            messageRowKey: newEmoji.messageRowKey,
+            partitionKey: newEmoji.partitionKey,
+            rowKey: newEmoji.rowKey,
+          }),
+        ]);
+        return result;
+      },
+    );
 
     assert(!data.done);
 

@@ -35,13 +35,11 @@ export const voiceRouter = router({
       return getRoomParticipants(roomId);
     },
   ),
-
   leaveVoiceChannel: getMemberProcedure(roomIdInputSchema, "roomId").mutation(({ ctx, input: { roomId } }) => {
     const userId = ctx.getSessionPayload.user.id;
     deleteVoiceParticipant(roomId, userId);
     voiceEventEmitter.emit("leaveVoiceChannel", { id: userId, roomId, sessionId: ctx.getSessionPayload.session.id });
   }),
-
   onMuteChanged: standardAuthedProcedure.input(onVoiceInputSchema).subscription(async function* ({
     ctx,
     input,
@@ -54,7 +52,6 @@ export const voiceRouter = router({
       yield { id, isMuted };
     }
   }),
-
   onParticipantJoin: standardAuthedProcedure.input(onVoiceInputSchema).subscription(async function* ({
     ctx,
     input,
@@ -67,7 +64,6 @@ export const voiceRouter = router({
       yield participant;
     }
   }),
-
   onParticipantLeave: standardAuthedProcedure.input(onVoiceInputSchema).subscription(async function* ({
     ctx,
     input,
@@ -80,7 +76,6 @@ export const voiceRouter = router({
       yield id;
     }
   }),
-
   onSignal: standardAuthedProcedure.input(onVoiceInputSchema).subscription(async function* ({ ctx, input, signal }) {
     await isMember(ctx.db, ctx.getSessionPayload, input);
 
@@ -89,15 +84,12 @@ export const voiceRouter = router({
       yield { payload, senderId };
     }
   }),
-
   readVoiceParticipants: getMemberProcedure(roomIdInputSchema, "roomId").query<VoiceParticipant[]>(
     ({ input: { roomId } }) => getRoomParticipants(roomId),
   ),
-
   sendSignal: getMemberProcedure(sendSignalInputSchema, "roomId").mutation(({ ctx, input: { payload, roomId } }) => {
     voiceEventEmitter.emit("signal", { payload, roomId, senderId: ctx.getSessionPayload.user.id });
   }),
-
   setMute: getMemberProcedure(setMuteInputSchema, "roomId").mutation(({ ctx, input: { isMuted, roomId } }) => {
     const userId = ctx.getSessionPayload.user.id;
     updateVoiceParticipantMute(roomId, userId, isMuted);

@@ -8,6 +8,7 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { voiceRouter } from "@@/server/trpc/routers/room/voice";
+import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
 import { rooms } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
@@ -91,10 +92,13 @@ describe("voice", () => {
     const { user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInviteCode);
     await mockSessionOnce(mockContext.db, user);
-    const [data] = await Promise.all([
-      onParticipantJoin[Symbol.asyncIterator]().next(),
-      voiceCaller.joinVoiceChannel({ roomId: newRoom.id }),
-    ]);
+    const data = await withAsyncIterator(
+      () => onParticipantJoin,
+      async (iterator) => {
+        const [result] = await Promise.all([iterator.next(), voiceCaller.joinVoiceChannel({ roomId: newRoom.id })]);
+        return result;
+      },
+    );
 
     assert(!data.done);
 
@@ -112,10 +116,13 @@ describe("voice", () => {
     await voiceCaller.joinVoiceChannel({ roomId: newRoom.id });
     const onParticipantLeave = await voiceCaller.onParticipantLeave(newRoom.id);
     await mockSessionOnce(mockContext.db, user);
-    const [data] = await Promise.all([
-      onParticipantLeave[Symbol.asyncIterator]().next(),
-      voiceCaller.leaveVoiceChannel({ roomId: newRoom.id }),
-    ]);
+    const data = await withAsyncIterator(
+      () => onParticipantLeave,
+      async (iterator) => {
+        const [result] = await Promise.all([iterator.next(), voiceCaller.leaveVoiceChannel({ roomId: newRoom.id })]);
+        return result;
+      },
+    );
 
     assert(!data.done);
 
@@ -128,10 +135,16 @@ describe("voice", () => {
     const newRoom = await roomCaller.createRoom({ name });
     await voiceCaller.joinVoiceChannel({ roomId: newRoom.id });
     const onMuteChanged = await voiceCaller.onMuteChanged(newRoom.id);
-    const [data] = await Promise.all([
-      onMuteChanged[Symbol.asyncIterator]().next(),
-      voiceCaller.setMute({ isMuted: true, roomId: newRoom.id }),
-    ]);
+    const data = await withAsyncIterator(
+      () => onMuteChanged,
+      async (iterator) => {
+        const [result] = await Promise.all([
+          iterator.next(),
+          voiceCaller.setMute({ isMuted: true, roomId: newRoom.id }),
+        ]);
+        return result;
+      },
+    );
 
     assert(!data.done);
 
@@ -186,10 +199,13 @@ describe("voice", () => {
     await roomCaller.joinRoom(newInviteCode);
     await mockSessionOnce(mockContext.db, user);
     const payload = { data: "{}", targetUserId: userId, type: VoiceSignalType.Offer };
-    const [data] = await Promise.all([
-      onSignal[Symbol.asyncIterator]().next(),
-      voiceCaller.sendSignal({ payload, roomId: newRoom.id }),
-    ]);
+    const data = await withAsyncIterator(
+      () => onSignal,
+      async (iterator) => {
+        const [result] = await Promise.all([iterator.next(), voiceCaller.sendSignal({ payload, roomId: newRoom.id })]);
+        return result;
+      },
+    );
 
     assert(!data.done);
 
