@@ -180,11 +180,12 @@ describe("voice", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
+    const userId = getMockSession().user.id;
     const onSignal = await voiceCaller.onSignal(newRoom.id);
     const { user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInviteCode);
     await mockSessionOnce(mockContext.db, user);
-    const payload = { data: "{}", targetUserId: getMockSession().user.id, type: VoiceSignalType.Offer };
+    const payload = { data: "{}", targetUserId: userId, type: VoiceSignalType.Offer };
     const [data] = await Promise.all([
       onSignal[Symbol.asyncIterator]().next(),
       voiceCaller.sendSignal({ payload, roomId: newRoom.id }),
