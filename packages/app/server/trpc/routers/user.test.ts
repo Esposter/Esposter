@@ -11,15 +11,14 @@ import { MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("user", () => {
-  let caller: DecorateRouterRecord<TRPCRouter["user"]>;
   let mockContext: Context;
+  let caller: DecorateRouterRecord<TRPCRouter["user"]>;
   const message = "message";
   const updatedMessage = "updatedMessage";
 
   beforeAll(async () => {
-    const createCaller = createCallerFactory(userRouter);
     mockContext = await createMockContext();
-    caller = createCaller(mockContext);
+    caller = createCallerFactory(userRouter)(mockContext);
   });
 
   beforeEach(() => {

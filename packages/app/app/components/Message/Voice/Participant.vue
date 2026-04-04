@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import type { VoiceParticipant } from "#shared/models/room/voice/VoiceParticipant";
 
+import { useVoiceStore } from "@/store/message/voice";
+
 interface VoiceParticipantProps {
-  isSpeaking: boolean;
   participant: VoiceParticipant;
 }
 
-const { isSpeaking, participant } = defineProps<VoiceParticipantProps>();
+const { participant } = defineProps<VoiceParticipantProps>();
+const voiceStore = useVoiceStore();
+const { speakingUserIds } = storeToRefs(voiceStore);
+const isSpeaking = computed(() => speakingUserIds.value.includes(participant.id));
 </script>
 
 <template>

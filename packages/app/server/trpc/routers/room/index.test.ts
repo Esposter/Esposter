@@ -17,10 +17,10 @@ import { MockContainerDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("room", () => {
+  let mockContext: Context;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let directMessageCaller: DecorateRouterRecord<TRPCRouter["directMessage"]>;
   let friendCaller: DecorateRouterRecord<TRPCRouter["friend"]>;
-  let mockContext: Context;
   const name = "name";
   const updatedName = "updatedName";
 

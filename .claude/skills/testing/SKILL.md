@@ -7,6 +7,9 @@ description: Esposter Vitest testing conventions — describe with function refs
 
 - **`describe(functionRef, ...)`** — pass the function reference directly, not a string name. Only use a string when there is no importable function reference (e.g. methods on a composable's return object).
 - **Declare `const` inside `describe`** — all shared test constants (e.g. `HEADER`, reusable values) must be declared inside the `describe` callback scope, not at module level, so they are scoped and cleaned up correctly.
+- **`createCallerFactory` double-call** — always use the double-call form inline: `caller = createCallerFactory(router)(mockContext)`. Do not define an intermediate `const createCaller = createCallerFactory(router)` — the factory variable itself is unnecessary.
+- **`describe` declaration order** — inside `describe`, declare in this order: `let mockContext: Context` first, then caller `let`s, then `const` test value constants. Example: `let mockContext: Context`, `let caller`, `let roomCaller`, `const name = "name"`. Always type `mockContext` as `Context` (imported from `@@/server/trpc/context`), never as `Awaited<ReturnType<typeof createMockContext>>`.
+- **`beforeAll` body order** — assign `mockContext` first (`mockContext = await createMockContext()`), then assign each caller using the double-call form.
 - **`expect.hasAssertions()`** — always include at the top of every test body.
 - **Canonical test values** — always use minimal, meaningful values:
   - Boolean: `"true"`, `"false"` — test both together in one test

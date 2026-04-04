@@ -12,9 +12,8 @@ describe("dashboard", () => {
   let caller: DecorateRouterRecord<TRPCRouter["dashboard"]>;
 
   beforeAll(async () => {
-    const createCaller = createCallerFactory(dashboardRouter);
     const mockContext = await createMockContext();
-    caller = createCaller(mockContext);
+    caller = createCallerFactory(dashboardRouter)(mockContext);
   });
 
   afterEach(() => {

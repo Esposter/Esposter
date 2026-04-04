@@ -12,9 +12,8 @@ describe("flowchartEditor", () => {
   let caller: DecorateRouterRecord<TRPCRouter["flowchartEditor"]>;
 
   beforeAll(async () => {
-    const createCaller = createCallerFactory(flowchartEditorRouter);
     const mockContext = await createMockContext();
-    caller = createCaller(mockContext);
+    caller = createCallerFactory(flowchartEditorRouter)(mockContext);
   });
 
   afterEach(() => {

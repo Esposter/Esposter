@@ -26,9 +26,9 @@ describe(useVoiceChannel, () => {
       defineComponent({
         render: () => h("div"),
         setup: () => {
-          ({ isInChannel, isMuted, join, leave, speakingUserIds, toggleMute } = useVoiceChannel());
+          ({ isInChannel, isMuted, join, leave, toggleMute } = useVoiceChannel());
           const voiceStore = useVoiceStore();
-          ({ participantsByRoom } = storeToRefs(voiceStore));
+          ({ participantsByRoom, speakingUserIds } = storeToRefs(voiceStore));
           ({ joinVoice, leaveVoice, setMute, setParticipants } = voiceStore);
           participantsByRoom.value = {};
         },

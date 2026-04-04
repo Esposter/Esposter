@@ -13,10 +13,10 @@ import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("directMessage", () => {
+  let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["directMessage"]>;
   let friendCaller: DecorateRouterRecord<TRPCRouter["friend"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
-  let mockContext: Context;
 
   beforeAll(async () => {
     mockContext = await createMockContext();

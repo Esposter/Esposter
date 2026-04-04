@@ -28,9 +28,9 @@ import { MockContainerDatabase, MockEventGridDatabase, MockTableDatabase } from 
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("message", () => {
+  let mockContext: Context;
   let messageCaller: DecorateRouterRecord<TRPCRouter["message"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
-  let mockContext: Context;
   const filename = "filename";
   const mimetype = "image/jpeg";
   const size = 1000;
@@ -41,11 +41,9 @@ describe("message", () => {
   const rowKey = "rowKey";
 
   beforeAll(async () => {
-    const createMessageCaller = createCallerFactory(messageRouter);
-    const createRoomCaller = createCallerFactory(roomRouter);
     mockContext = await createMockContext();
-    messageCaller = createMessageCaller(mockContext);
-    roomCaller = createRoomCaller(mockContext);
+    messageCaller = createCallerFactory(messageRouter)(mockContext);
+    roomCaller = createCallerFactory(roomRouter)(mockContext);
   });
 
   afterEach(async () => {

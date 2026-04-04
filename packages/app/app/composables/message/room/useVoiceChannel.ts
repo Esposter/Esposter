@@ -1,6 +1,7 @@
 import type { VoiceSignalPayload } from "#shared/models/room/voice/VoiceSignalPayload";
 
 import { VoiceSignalType } from "#shared/models/room/voice/VoiceSignalType";
+import { authClient } from "@/services/auth/authClient";
 import { ICE_SERVERS, LOCAL_PARTICIPANT_ID, SPEAKING_THRESHOLD } from "@/services/message/voice/constants";
 import { useRoomStore } from "@/store/message/room";
 import { useVoiceStore } from "@/store/message/voice";
@@ -8,14 +9,15 @@ import { exhaustiveGuard } from "@esposter/shared";
 
 export const useVoiceChannel = () => {
   const { $trpc } = useNuxtApp();
+  const session = authClient.useSession();
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const voiceStore = useVoiceStore();
-  const { joinVoice, leaveVoice, setMute, setParticipants } = voiceStore;
-
+  const { addSpeakingUser, clearSpeakingUsers, joinVoice, leaveVoice, removeSpeakingUser, setMute, setParticipants } =
+    voiceStore;
+  const { speakingUserIds } = storeToRefs(voiceStore);
   const isInChannel = ref(false);
   const isMuted = ref(false);
-  const speakingUserIds = ref<string[]>([]);
 
   let localStream: MediaStream | null = null;
   const peerConnections = new Map<string, RTCPeerConnection>();
@@ -30,7 +32,7 @@ export const useVoiceChannel = () => {
     remoteAudioElements.delete(id);
     speakingCleanups.get(id)?.();
     speakingCleanups.delete(id);
-    speakingUserIds.value = speakingUserIds.value.filter((speakingId) => speakingId !== id);
+    removeSpeakingUser(id);
   };
 
   const cleanupLocalStream = () => {
@@ -55,9 +57,8 @@ export const useVoiceChannel = () => {
       const isSpeaking = average > SPEAKING_THRESHOLD;
       const isCurrentlySpeaking = speakingUserIds.value.includes(id);
 
-      if (isSpeaking && !isCurrentlySpeaking) speakingUserIds.value = [...speakingUserIds.value, id];
-      else if (!isSpeaking && isCurrentlySpeaking)
-        speakingUserIds.value = speakingUserIds.value.filter((speakingId) => speakingId !== id);
+      if (isSpeaking && !isCurrentlySpeaking) addSpeakingUser(id);
+      else if (!isSpeaking && isCurrentlySpeaking) removeSpeakingUser(id);
 
       animationFrame = requestAnimationFrame(detectSpeaking);
     };
@@ -160,15 +161,17 @@ export const useVoiceChannel = () => {
     if (!currentRoomId.value || !isInChannel.value) return;
 
     const roomId = currentRoomId.value;
+    const userId = session.value.data?.user.id;
     await $trpc.voice.leaveVoiceChannel.mutate({ roomId });
     isInChannel.value = false;
     isMuted.value = false;
+    if (userId) leaveVoice(roomId, userId);
 
     for (const id of [...peerConnections.keys()]) cleanupPeer(id);
     cleanupLocalStream();
     signalUnsubscribable?.unsubscribe();
     signalUnsubscribable = undefined;
-    speakingUserIds.value = [];
+    clearSpeakingUsers();
   };
 
   const toggleMute = async () => {
@@ -195,23 +198,27 @@ export const useVoiceChannel = () => {
       },
     });
     const muteChangedUnsubscribable = $trpc.voice.onMuteChanged.subscribe(roomId, {
-      onData: ({ id, isMuted: participantIsMuted }) => setMute(roomId, id, participantIsMuted),
+      onData: (muteChange) => setMute(roomId, muteChange.id, muteChange.isMuted),
     });
 
     return () => {
-      if (isInChannel.value) void $trpc.voice.leaveVoiceChannel.mutate({ roomId });
+      const userId = session.value.data?.user.id;
+      if (isInChannel.value) {
+        void $trpc.voice.leaveVoiceChannel.mutate({ roomId });
+        if (userId) leaveVoice(roomId, userId);
+      }
       for (const id of [...peerConnections.keys()]) cleanupPeer(id);
       cleanupLocalStream();
       signalUnsubscribable?.unsubscribe();
       signalUnsubscribable = undefined;
       isInChannel.value = false;
       isMuted.value = false;
-      speakingUserIds.value = [];
+      clearSpeakingUsers();
       participantJoinUnsubscribable.unsubscribe();
       participantLeaveUnsubscribable.unsubscribe();
       muteChangedUnsubscribable.unsubscribe();
     };
   });
 
-  return { isInChannel, isMuted, join, leave, speakingUserIds, toggleMute };
+  return { isInChannel, isMuted, join, leave, toggleMute };
 };

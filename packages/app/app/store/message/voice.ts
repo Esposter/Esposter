@@ -2,6 +2,7 @@ import type { VoiceParticipant } from "#shared/models/room/voice/VoiceParticipan
 
 export const useVoiceStore = defineStore("message/voice", () => {
   const participantsByRoom = ref<Record<string, VoiceParticipant[]>>({});
+  const speakingUserIds = ref<string[]>([]);
 
   const joinVoice = (roomId: string, participant: VoiceParticipant) => {
     const current = participantsByRoom.value[roomId] ?? [];
@@ -28,5 +29,28 @@ export const useVoiceStore = defineStore("message/voice", () => {
     participantsByRoom.value = { ...participantsByRoom.value, [roomId]: participants };
   };
 
-  return { joinVoice, leaveVoice, participantsByRoom, setMute, setParticipants };
+  const addSpeakingUser = (id: string) => {
+    if (speakingUserIds.value.includes(id)) return;
+    speakingUserIds.value = [...speakingUserIds.value, id];
+  };
+
+  const removeSpeakingUser = (id: string) => {
+    speakingUserIds.value = speakingUserIds.value.filter((speakingId) => speakingId !== id);
+  };
+
+  const clearSpeakingUsers = () => {
+    speakingUserIds.value = [];
+  };
+
+  return {
+    addSpeakingUser,
+    clearSpeakingUsers,
+    joinVoice,
+    leaveVoice,
+    participantsByRoom,
+    removeSpeakingUser,
+    setMute,
+    setParticipants,
+    speakingUserIds,
+  };
 });

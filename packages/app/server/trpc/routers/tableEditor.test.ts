@@ -13,9 +13,8 @@ describe("tableEditor", () => {
   let caller: DecorateRouterRecord<TRPCRouter["tableEditor"]>;
 
   beforeAll(async () => {
-    const createCaller = createCallerFactory(tableEditorRouter);
     const mockContext = await createMockContext();
-    caller = createCaller(mockContext);
+    caller = createCallerFactory(tableEditorRouter)(mockContext);
   });
 
   afterEach(() => {

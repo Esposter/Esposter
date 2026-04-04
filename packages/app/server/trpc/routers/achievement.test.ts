@@ -1,4 +1,5 @@
 import type { AchievementEvents } from "@@/server/services/achievement/events/achievementEventEmitter";
+import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
@@ -12,14 +13,13 @@ import { takeOne } from "@esposter/shared";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("achievement", () => {
+  let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["_def"]["procedures"]>;
-  let mockContext: Awaited<ReturnType<typeof createMockContext>>;
   const updatedAchievements = [WebpageAchievementName.WebDeveloper];
 
   beforeAll(async () => {
-    const createCaller = createCallerFactory(trpcRouter);
     mockContext = await createMockContext();
-    caller = createCaller(mockContext);
+    caller = createCallerFactory(trpcRouter)(mockContext);
   });
 
   afterEach(async () => {

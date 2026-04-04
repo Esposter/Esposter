@@ -11,17 +11,15 @@ import { takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("userToRoom", () => {
+  let mockContext: Context;
   let userToRoomCaller: DecorateRouterRecord<TRPCRouter["userToRoom"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
-  let mockContext: Context;
   const name = "name";
 
   beforeAll(async () => {
-    const createUserToRoomCaller = createCallerFactory(userToRoomRouter);
-    const createRoomCaller = createCallerFactory(roomRouter);
     mockContext = await createMockContext();
-    userToRoomCaller = createUserToRoomCaller(mockContext);
-    roomCaller = createRoomCaller(mockContext);
+    userToRoomCaller = createCallerFactory(userToRoomRouter)(mockContext);
+    roomCaller = createCallerFactory(roomRouter)(mockContext);
   });
 
   afterEach(async () => {

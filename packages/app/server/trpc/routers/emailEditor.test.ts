@@ -12,9 +12,8 @@ describe("emailEditor", () => {
   let caller: DecorateRouterRecord<TRPCRouter["emailEditor"]>;
 
   beforeAll(async () => {
-    const createCaller = createCallerFactory(emailEditorRouter);
     const mockContext = await createMockContext();
-    caller = createCaller(mockContext);
+    caller = createCallerFactory(emailEditorRouter)(mockContext);
   });
 
   afterEach(() => {

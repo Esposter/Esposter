@@ -10,13 +10,12 @@ import { ID_SEPARATOR, InvalidOperationError, Operation, takeOne } from "@espost
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("friend", () => {
-  let caller: DecorateRouterRecord<TRPCRouter["friend"]>;
   let mockContext: Context;
+  let caller: DecorateRouterRecord<TRPCRouter["friend"]>;
 
   beforeAll(async () => {
-    const createCaller = createCallerFactory(friendRouter);
     mockContext = await createMockContext();
-    caller = createCaller(mockContext);
+    caller = createCallerFactory(friendRouter)(mockContext);
   });
 
   afterEach(async () => {

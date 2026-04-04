@@ -11,17 +11,16 @@ import { InvalidOperationError, NotFoundError, Operation } from "@esposter/share
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("post", () => {
-  let caller: DecorateRouterRecord<TRPCRouter["post"]>;
   let mockContext: Context;
+  let caller: DecorateRouterRecord<TRPCRouter["post"]>;
   const title = "title";
   const updatedTitle = "updatedTitle";
   const description = "description";
   const updatedDescription = "updatedDescription";
 
   beforeAll(async () => {
-    const createCaller = createCallerFactory(postRouter);
     mockContext = await createMockContext();
-    caller = createCaller(mockContext);
+    caller = createCallerFactory(postRouter)(mockContext);
   });
 
   afterEach(async () => {

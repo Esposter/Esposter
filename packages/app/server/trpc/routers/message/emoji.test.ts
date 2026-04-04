@@ -13,22 +13,19 @@ import { MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("emoji", () => {
+  let mockContext: Context;
   let emojiCaller: DecorateRouterRecord<TRPCRouter["emoji"]>;
   let messageCaller: DecorateRouterRecord<TRPCRouter["message"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
-  let mockContext: Context;
   const name = "name";
   const message = "message";
   const emojiTag = "emojiTag";
 
   beforeAll(async () => {
-    const createEmojiCaller = createCallerFactory(emojiRouter);
-    const createMessageCaller = createCallerFactory(messageRouter);
-    const createRoomCaller = createCallerFactory(roomRouter);
     mockContext = await createMockContext();
-    emojiCaller = createEmojiCaller(mockContext);
-    messageCaller = createMessageCaller(mockContext);
-    roomCaller = createRoomCaller(mockContext);
+    emojiCaller = createCallerFactory(emojiRouter)(mockContext);
+    messageCaller = createCallerFactory(messageRouter)(mockContext);
+    roomCaller = createCallerFactory(roomRouter)(mockContext);
   });
 
   afterEach(async () => {
