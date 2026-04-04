@@ -11,6 +11,7 @@ import { usePollDialogStore } from "@/store/message/pollDialog";
 import { useRoomStore } from "@/store/message/room";
 import { MessageType } from "@esposter/db-schema";
 import { exhaustiveGuard } from "@esposter/shared";
+import { marked } from "marked";
 
 export const SlashCommandSuggestion: Except<SuggestionOptions<SlashCommand, SlashCommand>, "editor"> = {
   char: "/",
@@ -28,11 +29,11 @@ export const SlashCommandSuggestion: Except<SuggestionOptions<SlashCommand, Slas
         break;
       }
       case SlashCommandType.Roll: {
-        const roll = Math.floor(Math.random() * 100) + 1;
         const dataStore = useDataStore();
         const { createMessage } = dataStore;
+        const roll = Math.floor(Math.random() * 100) + 1;
         void createMessage({
-          message: `🎲 Rolled a **${roll}**`,
+          message: marked.parse(`🎲 Rolled a **${roll}**`, { async: false }),
           roomId,
           type: MessageType.Message,
         });

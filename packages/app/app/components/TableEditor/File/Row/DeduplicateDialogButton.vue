@@ -41,9 +41,9 @@ const duplicateHeaders = computed(() => {
     </template>
   </v-tooltip>
   <TableEditorDialog v-model="isOpen" close-button-text="Cancel" title="Duplicate Rows">
-    <p v-if="duplicateCount === 0">No duplicate rows found.</p>
+    <span v-if="duplicateCount === 0">No duplicate rows found.</span>
     <template v-else>
-      <p>{{ duplicateCount }} duplicate row{{ duplicateCount === 1 ? "" : "s" }} will be deleted.</p>
+      <span>{{ duplicateCount }} duplicate row{{ duplicateCount === 1 ? "" : "s" }} will be deleted.</span>
       <v-btn-toggle v-model="keepMode" density="compact" mandatory mt-4>
         <v-btn :value="KeepDuplicateMode.First">Keep First</v-btn>
         <v-btn :value="KeepDuplicateMode.Last">Keep Last</v-btn>

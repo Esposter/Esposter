@@ -1,6 +1,6 @@
 ---
 name: vuetify
-description: Esposter Vuetify 3 conventions — v-btn tooltips, typed SelectItemCategoryDefinition for selects/lists/menus, enum-value-as-display-title pattern, dialog form validity, and keyboard shortcut components. Apply when writing Vuetify components or dialogs.
+description: Esposter Vuetify 3 conventions — v-btn tooltips, typed SelectItemCategoryDefinition for selects/lists/menus, enum-value-as-display-title pattern, dialog form validity, StyledAvatar for user avatars, and keyboard shortcut components. Apply when writing Vuetify components or dialogs.
 ---
 
 # Vuetify Conventions
@@ -57,6 +57,23 @@ Always name the form validity ref `isEditFormValid`. Bind it via `v-model` on `<
 
 - **Prefer Vuetify components over raw HTML elements** — avoid `<div>`, `<span>`, `<p>`, `<ul>`, `<li>`, etc. unless there is genuinely no suitable Vuetify component. Use `v-container` / `v-row` / `v-col` for layout, `v-list` / `v-list-item` for lists (the `#append` slot centers inline actions), and `v-alert` or `v-messages` for inline text messages.
 - Only reach for raw HTML when a Vuetify component would add unnecessary complexity (e.g. a single text node inside a slot that needs no styling).
+
+## User Avatars
+
+- **Always use `<StyledAvatar>`** for displaying user avatars — never write inline `v-avatar` + `v-img` + fallback `<span>` combinations.
+- `StyledAvatar` handles the image/fallback logic internally (shows `v-img` when `image` is set, falls back to `StyledDefaultAvatar`).
+- Props: `image?: User["image"]`, `name: User["name"]`, `avatarProps?: VAvatar["$props"]`
+
+  ```vue
+  <!-- CORRECT -->
+  <StyledAvatar mr-3 :image="user.image" :name="user.name" :avatar-props="{ size: '2.25rem' }" />
+
+  <!-- WRONG — do not write this inline -->
+  <v-avatar :image size="36" mr-3>
+    <v-img v-if="image" :src="image" />
+    <span v-else>{{ name[0] }}</span>
+  </v-avatar>
+  ```
 
 ## Keyboard Shortcut Components
 

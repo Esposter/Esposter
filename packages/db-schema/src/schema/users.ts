@@ -1,4 +1,5 @@
 import { accounts } from "@/schema/accounts";
+import { friends } from "@/schema/friends";
 import { likes } from "@/schema/likes";
 import { posts } from "@/schema/posts";
 import { sessions } from "@/schema/sessions";
@@ -41,6 +42,8 @@ export const usersRelations = relations(users, ({ many, one }) => ({
   accounts: many(accounts),
   likes: many(likes),
   posts: many(posts),
+  receivedFriendRequests: many(friends, { relationName: "receiver" }),
+  sentFriendRequests: many(friends, { relationName: "sender" }),
   sessions: many(sessions),
   surveys: many(surveys),
   userAchievements: many(userAchievements),
