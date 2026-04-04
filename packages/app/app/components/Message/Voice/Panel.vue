@@ -7,7 +7,6 @@ const { currentRoomId } = storeToRefs(roomStore);
 const voiceStore = useVoiceStore();
 const { participantsByRoom } = storeToRefs(voiceStore);
 const participants = computed(() => (currentRoomId.value ? (participantsByRoom.value[currentRoomId.value] ?? []) : []));
-
 const { isInChannel, isMuted, join, leave, speakingUserIds, toggleMute } = useVoiceChannel();
 </script>
 
