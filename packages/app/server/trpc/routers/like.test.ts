@@ -95,8 +95,9 @@ describe("like", () => {
     const newPost = await postCaller.createPost({ title });
     await likeCaller.createLike({ postId: newPost.id, value });
     const deletedLike = await likeCaller.deleteLike(newPost.id);
+    const userId = getMockSession().user.id;
 
-    expect(deletedLike).toStrictEqual({ postId: newPost.id, userId: getMockSession().user.id, value });
+    expect(deletedLike).toStrictEqual({ postId: newPost.id, userId, value });
   });
 
   test("fails delete with non-existent post id", async () => {

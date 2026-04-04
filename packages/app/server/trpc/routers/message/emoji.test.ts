@@ -92,12 +92,13 @@ describe("emoji", () => {
       messageRowKey: newMessage.rowKey,
       partitionKey: newRoom.id,
     });
+    const userId = getMockSession().user.id;
 
     expect(newEmoji.emojiTag).toBe(emojiTag);
     expect(newEmoji.messageRowKey).toBe(newMessage.rowKey);
     expect(newEmoji.partitionKey).toBe(newRoom.id);
     expect(newEmoji.type).toBe(MessageMetadataType.Emoji);
-    expect(newEmoji.userIds).toContain(getMockSession().user.id);
+    expect(newEmoji.userIds).toContain(userId);
   });
 
   test("fails create with duplicate emoji", async () => {
@@ -205,9 +206,10 @@ describe("emoji", () => {
       rowKey: newEmoji.rowKey,
     });
     const readEmojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId: newRoom.id });
+    const userId = getMockSession().user.id;
 
     expect(readEmojis).toHaveLength(1);
-    expect(takeOne(readEmojis).userIds).toStrictEqual([getMockSession().user.id, user.id]);
+    expect(takeOne(readEmojis).userIds).toStrictEqual([userId, user.id]);
   });
 
   test("updates twice removes user id", async () => {
@@ -236,9 +238,10 @@ describe("emoji", () => {
       rowKey: newEmoji.rowKey,
     });
     const readEmojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId: newRoom.id });
+    const userId = getMockSession().user.id;
 
     expect(readEmojis).toHaveLength(1);
-    expect(takeOne(readEmojis).userIds).toStrictEqual([getMockSession().user.id]);
+    expect(takeOne(readEmojis).userIds).toStrictEqual([userId]);
   });
 
   test("fails update emoji with non-existent room", async () => {
@@ -310,13 +313,14 @@ describe("emoji", () => {
         return result;
       },
     );
+    const userId = getMockSession().user.id;
 
     assert(!data.done);
 
     expect(data.value.messageRowKey).toBe(newEmoji.messageRowKey);
     expect(data.value.partitionKey).toBe(newEmoji.partitionKey);
     expect(data.value.rowKey).toBe(newEmoji.rowKey);
-    expect(data.value.userIds).toStrictEqual([getMockSession().user.id, user.id]);
+    expect(data.value.userIds).toStrictEqual([userId, user.id]);
   });
 
   test("fails on updates emoji with non-existent room", async () => {

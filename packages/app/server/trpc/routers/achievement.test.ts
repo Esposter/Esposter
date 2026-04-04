@@ -85,11 +85,12 @@ describe("achievement", () => {
     expect(takeOne(unlockedAchievements).amount).toBe(1);
     expect(takeOne(unlockedAchievements).unlockedAt).toBeInstanceOf(Date);
 
+    const userId = getMockSession().user.id;
     const userAchievement = await mockContext.db.query.userAchievements.findFirst({
       where: (userAchievements, { and, eq }) =>
         and(
           eq(userAchievements.achievementId, takeOne(unlockedAchievements).achievementId),
-          eq(userAchievements.userId, getMockSession().user.id),
+          eq(userAchievements.userId, userId),
         ),
       with: UserAchievementRelations,
     });

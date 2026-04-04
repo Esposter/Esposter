@@ -101,7 +101,9 @@ export const voiceRouter = router({
   }),
   setMute: getMemberProcedure(setMuteInputSchema, "roomId").mutation(({ ctx, input: { isMuted, roomId } }) => {
     const sessionId = ctx.getSessionPayload.session.id;
-    updateVoiceParticipantMute(roomId, sessionId, isMuted);
+    if (!updateVoiceParticipantMute(roomId, sessionId, isMuted)) {
+      throw new TRPCError({ code: "FORBIDDEN", message: "Must join voice channel first" });
+    }
     voiceEventEmitter.emit("muteChanged", { id: sessionId, isMuted, roomId });
   }),
 });

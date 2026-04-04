@@ -22,6 +22,7 @@ describe("room", () => {
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let directMessageCaller: DecorateRouterRecord<TRPCRouter["directMessage"]>;
   let friendCaller: DecorateRouterRecord<TRPCRouter["friend"]>;
+  const roomId = crypto.randomUUID();
   const name = "name";
   const updatedName = "updatedName";
 
@@ -124,8 +125,6 @@ describe("room", () => {
 
   test("fails read multiple with non-existent room", async () => {
     expect.hasAssertions();
-
-    const roomId = crypto.randomUUID();
 
     await expect(roomCaller.readRooms({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,
@@ -289,10 +288,11 @@ describe("room", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
     const readInvite = await roomCaller.readInvite(newInviteCode);
+    const userId = getMockSession().user.id;
 
     assert(readInvite);
 
-    expect(readInvite.userId).toBe(getMockSession().user.id);
+    expect(readInvite.userId).toBe(userId);
     expect(readInvite.roomId).toBe(newRoom.id);
     expect(readInvite.code).toBe(newInviteCode);
     expect(readInvite.isMember).toBe(true);
@@ -482,10 +482,11 @@ describe("room", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
+    const userId = getMockSession().user.id;
 
     await expect(roomCaller.joinRoom(newInviteCode)).rejects.toThrowErrorMatchingInlineSnapshot(`
       [TRPCError: Failed query: insert into "message"."users_to_rooms" ("isHidden", "notificationType", "roomId", "userId") values (default, default, $1, $2) returning "isHidden", "notificationType", "roomId", "userId"
-      params: ${newRoom.id},${getMockSession().user.id}]
+      params: ${newRoom.id},${userId}]
     `);
   });
 
@@ -579,8 +580,9 @@ describe("room", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const members = await roomCaller.readMembers({ roomId: newRoom.id });
+    const userId = getMockSession().user.id;
 
-    expect(takeOne(members.items).id).toBe(getMockSession().user.id);
+    expect(takeOne(members.items).id).toBe(userId);
   });
 
   test("reads members by ids", async () => {
@@ -684,11 +686,12 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
+    const userId = getMockSession().user.id;
 
-    await expect(roomCaller.createMembers({ roomId: newRoom.id, userIds: [getMockSession().user.id] })).rejects
+    await expect(roomCaller.createMembers({ roomId: newRoom.id, userIds: [userId] })).rejects
       .toThrowErrorMatchingInlineSnapshot(`
       [TRPCError: Failed query: insert into "message"."users_to_rooms" ("isHidden", "notificationType", "roomId", "userId") values (default, default, $1, $2) returning "isHidden", "notificationType", "roomId", "userId"
-      params: ${newRoom.id},${getMockSession().user.id}]
+      params: ${newRoom.id},${userId}]
     `);
   });
 
@@ -708,11 +711,12 @@ describe("room", () => {
   test("fails create members with non-existent room", async () => {
     expect.hasAssertions();
 
-    const roomId = crypto.randomUUID();
+    const userId = getMockSession().user.id;
 
-    await expect(
-      roomCaller.createMembers({ roomId, userIds: [getMockSession().user.id] }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+    await expect(roomCaller.createMembers({ roomId, userIds: [userId] })).rejects.toThrowErrorMatchingInlineSnapshot(`
+      [TRPCError: Failed query: insert into "message"."users_to_rooms" ("isHidden", "notificationType", "roomId", "userId") values (default, default, $1, $2) returning "isHidden", "notificationType", "roomId", "userId"
+      params: ${roomId},${userId}]
+    `);
   });
 
   test("kicks member with owner", async () => {
@@ -745,7 +749,8 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const input: DeleteMemberInput = { roomId: newRoom.id, userId: getMockSession().user.id };
+    const userId = getMockSession().user.id;
+    const input: DeleteMemberInput = { roomId: newRoom.id, userId };
 
     await expect(roomCaller.deleteMember(input)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.UserToRoom, JSON.stringify(input)).message}]`,

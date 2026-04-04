@@ -142,7 +142,8 @@ describe("user", () => {
 
     await caller.upsertStatus({ message });
     vi.advanceTimersByTime(1);
-    const userStatus = takeOne(await caller.readStatuses([getMockSession().user.id]));
+    const userId = getMockSession().user.id;
+    const userStatus = takeOne(await caller.readStatuses([userId]));
 
     expect(userStatus.message).toBe(message);
   });
@@ -154,7 +155,8 @@ describe("user", () => {
     vi.advanceTimersByTime(1);
     await caller.upsertStatus({ message: updatedMessage });
     vi.advanceTimersByTime(1);
-    const userStatus = takeOne(await caller.readStatuses([getMockSession().user.id]));
+    const userId = getMockSession().user.id;
+    const userStatus = takeOne(await caller.readStatuses([userId]));
 
     expect(userStatus.message).toBe(updatedMessage);
   });

@@ -1,6 +1,7 @@
 import { resetMessageCacheDatabase } from "@/services/message/cache/openMessageCacheDatabase";
 import { readCachedMessages } from "@/services/message/cache/readCachedMessages";
 import { writeCachedMessages } from "@/services/message/cache/writeCachedMessages";
+import { getMockSession } from "@@/server/trpc/context.test";
 import { StandardMessageEntity } from "@esposter/db-schema";
 import { afterEach, describe, expect, test } from "vitest";
 
@@ -8,7 +9,6 @@ describe(readCachedMessages, () => {
   const partitionKey = "partitionKey";
   const rowKey = "rowKey";
   const message = "message";
-  const userId = crypto.randomUUID();
 
   afterEach(async () => {
     await resetMessageCacheDatabase();
@@ -45,6 +45,7 @@ describe(readCachedMessages, () => {
   test("returns cached messages for the correct room", async () => {
     expect.hasAssertions();
 
+    const userId = getMockSession().user.id;
     await writeCachedMessages(partitionKey, [new StandardMessageEntity({ message, partitionKey, rowKey, userId })]);
     const messages = await readCachedMessages(partitionKey);
 
@@ -55,6 +56,7 @@ describe(readCachedMessages, () => {
   test("does not return messages from a different room", async () => {
     expect.hasAssertions();
 
+    const userId = getMockSession().user.id;
     await writeCachedMessages(partitionKey, [new StandardMessageEntity({ message, partitionKey, rowKey, userId })]);
     const messages = await readCachedMessages(" ");
 

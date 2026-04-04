@@ -1,14 +1,17 @@
 import type { VoiceParticipant } from "#shared/models/room/voice/VoiceParticipant";
+import type { Context } from "@@/server/trpc/context";
 import type { VueWrapper } from "@vue/test-utils";
 
 import { useVoiceStore } from "@/store/message/voice";
+import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { afterEach, describe, expect, test } from "vitest";
+import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe(useVoiceChannel, () => {
   let wrapper: VueWrapper;
+  let mockContext: Context;
   let isInChannel: Ref<boolean>;
   let isMuted: Ref<boolean>;
   let speakingUserIds: Ref<string[]>;
@@ -20,6 +23,7 @@ describe(useVoiceChannel, () => {
   let leaveVoice: (roomId: string, id: string) => void;
   let setMute: (roomId: string, id: string, isMuted: boolean) => void;
   let setParticipants: (roomId: string, participants: VoiceParticipant[]) => void;
+  const roomId = crypto.randomUUID();
 
   const mountVoiceChannel = async () => {
     wrapper = await mountSuspended(
@@ -36,6 +40,10 @@ describe(useVoiceChannel, () => {
     );
     await flushPromises();
   };
+
+  beforeAll(async () => {
+    mockContext = await createMockContext();
+  });
 
   afterEach(() => {
     wrapper?.unmount();
@@ -89,8 +97,14 @@ describe(useVoiceChannel, () => {
   test("joinVoice adds participant to room", async () => {
     expect.hasAssertions();
 
-    const roomId = crypto.randomUUID();
-    const participant: VoiceParticipant = { id: crypto.randomUUID(), image: null, isMuted: false, name: "" };
+    const { session, user } = getMockSession();
+    const participant: VoiceParticipant = {
+      id: session.id,
+      image: user.image,
+      isMuted: false,
+      name: user.name,
+      userId: user.id,
+    };
 
     await mountVoiceChannel();
     joinVoice(roomId, participant);
@@ -104,8 +118,14 @@ describe(useVoiceChannel, () => {
   test("joinVoice deduplicates same participant", async () => {
     expect.hasAssertions();
 
-    const roomId = crypto.randomUUID();
-    const participant: VoiceParticipant = { id: crypto.randomUUID(), image: null, isMuted: false, name: "" };
+    const { session, user } = getMockSession();
+    const participant: VoiceParticipant = {
+      id: session.id,
+      image: user.image,
+      isMuted: false,
+      name: user.name,
+      userId: user.id,
+    };
 
     await mountVoiceChannel();
     joinVoice(roomId, participant);
@@ -117,8 +137,14 @@ describe(useVoiceChannel, () => {
   test("leaveVoice removes participant from room", async () => {
     expect.hasAssertions();
 
-    const roomId = crypto.randomUUID();
-    const participant: VoiceParticipant = { id: crypto.randomUUID(), image: null, isMuted: false, name: "" };
+    const { session, user } = getMockSession();
+    const participant: VoiceParticipant = {
+      id: session.id,
+      image: user.image,
+      isMuted: false,
+      name: user.name,
+      userId: user.id,
+    };
 
     await mountVoiceChannel();
     joinVoice(roomId, participant);
@@ -130,8 +156,14 @@ describe(useVoiceChannel, () => {
   test("setMute updates participant mute state", async () => {
     expect.hasAssertions();
 
-    const roomId = crypto.randomUUID();
-    const participant: VoiceParticipant = { id: crypto.randomUUID(), image: null, isMuted: false, name: "" };
+    const { session, user } = getMockSession();
+    const participant: VoiceParticipant = {
+      id: session.id,
+      image: user.image,
+      isMuted: false,
+      name: user.name,
+      userId: user.id,
+    };
 
     await mountVoiceChannel();
     joinVoice(roomId, participant);
@@ -145,10 +177,9 @@ describe(useVoiceChannel, () => {
   test("setMute is no-op when participant not in room", async () => {
     expect.hasAssertions();
 
-    const roomId = crypto.randomUUID();
-
+    const sessionId = getMockSession().session.id;
     await mountVoiceChannel();
-    setMute(roomId, crypto.randomUUID(), true);
+    setMute(roomId, sessionId, true);
 
     expect(participantsByRoom.value[roomId]).toBeUndefined();
   });
@@ -156,10 +187,11 @@ describe(useVoiceChannel, () => {
   test("setParticipants replaces all participants for room", async () => {
     expect.hasAssertions();
 
-    const roomId = crypto.randomUUID();
+    const { session: firstSession, user: firstUser } = getMockSession();
+    const { session: secondSession, user: secondUser } = await mockSessionOnce(mockContext.db);
     const participants: VoiceParticipant[] = [
-      { id: crypto.randomUUID(), image: null, isMuted: false, name: "" },
-      { id: crypto.randomUUID(), image: null, isMuted: false, name: " " },
+      { id: firstSession.id, image: firstUser.image, isMuted: false, name: firstUser.name, userId: firstUser.id },
+      { id: secondSession.id, image: secondUser.image, isMuted: false, name: secondUser.name, userId: secondUser.id },
     ];
 
     await mountVoiceChannel();

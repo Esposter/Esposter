@@ -44,10 +44,11 @@ describe("voice", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const participants = await voiceCaller.joinVoiceChannel({ roomId: newRoom.id });
+    const userId = getMockSession().user.id;
 
     expect(participants).toHaveLength(1);
     expect(takeOne(participants).id).toBe(getMockSession().session.id);
-    expect(takeOne(participants).userId).toBe(getMockSession().user.id);
+    expect(takeOne(participants).userId).toBe(userId);
     expect(takeOne(participants).isMuted).toBe(false);
   });
 
@@ -164,14 +165,14 @@ describe("voice", () => {
     );
   });
 
-  test("setMute is no-op when not in channel", async () => {
+  test("fails setMute if caller is not in voice channel", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    await voiceCaller.setMute({ isMuted: true, roomId: newRoom.id });
-    const participants = await voiceCaller.readVoiceParticipants({ roomId: newRoom.id });
 
-    expect(participants).toStrictEqual([]);
+    await expect(voiceCaller.setMute({ isMuted: true, roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Must join voice channel first]`,
+    );
   });
 
   test("multiple participants join and see each other", async () => {
