@@ -14,6 +14,7 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { messageRouter } from "@@/server/trpc/routers/message";
 import { roomRouter } from "@@/server/trpc/routers/room";
+import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
 import { getBlobName } from "@esposter/db";
 import {
   AzureContainer,
@@ -26,8 +27,6 @@ import {
 import { MENTION_ID_ATTRIBUTE, MENTION_TYPE, MENTION_TYPE_ATTRIBUTE, NotFoundError, takeOne } from "@esposter/shared";
 import { MockContainerDatabase, MockEventGridDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
-
-import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
 
 describe("message", () => {
   let mockContext: Context;
@@ -281,7 +280,7 @@ describe("message", () => {
     const trackedData = await withAsyncIterator(
       () => onCreateMessage,
       async (iterator) => {
-        const [result, newMessage] = await Promise.all([
+        const [result] = await Promise.all([
           iterator.next(),
           messageCaller.createMessage({ message, roomId: newRoom.id }),
         ]);

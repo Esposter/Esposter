@@ -1,7 +1,6 @@
 import type { VoiceParticipant } from "#shared/models/room/voice/VoiceParticipant";
 
 import { voiceSignalPayloadSchema } from "#shared/models/room/voice/VoiceSignalPayload";
-import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { on } from "@@/server/services/events/on";
 import { voiceEventEmitter } from "@@/server/services/message/events/voiceEventEmitter";
 import { addVoiceParticipant } from "@@/server/services/message/voice/addVoiceParticipant";
@@ -13,6 +12,7 @@ import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { selectRoomSchema } from "@esposter/db-schema";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 const roomIdInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
@@ -23,22 +23,23 @@ const onVoiceInputSchema = selectRoomSchema.shape.id;
 export const voiceRouter = router({
   joinVoiceChannel: getMemberProcedure(roomIdInputSchema, "roomId").mutation<VoiceParticipant[]>(
     ({ ctx, input: { roomId } }) => {
-      const { user } = ctx.getSessionPayload;
+      const { session, user } = ctx.getSessionPayload;
       const participant: VoiceParticipant = {
-        id: user.id,
+        id: session.id,
         image: user.image ?? null,
         isMuted: false,
         name: user.name,
+        userId: user.id,
       };
       addVoiceParticipant(roomId, participant);
-      voiceEventEmitter.emit("joinVoiceChannel", { participant, roomId, sessionId: ctx.getSessionPayload.session.id });
+      voiceEventEmitter.emit("joinVoiceChannel", { participant, roomId, sessionId: session.id });
       return getRoomParticipants(roomId);
     },
   ),
   leaveVoiceChannel: getMemberProcedure(roomIdInputSchema, "roomId").mutation(({ ctx, input: { roomId } }) => {
-    const userId = ctx.getSessionPayload.user.id;
-    deleteVoiceParticipant(roomId, userId);
-    voiceEventEmitter.emit("leaveVoiceChannel", { id: userId, roomId, sessionId: ctx.getSessionPayload.session.id });
+    const sessionId = ctx.getSessionPayload.session.id;
+    deleteVoiceParticipant(roomId, sessionId);
+    voiceEventEmitter.emit("leaveVoiceChannel", { id: sessionId, roomId, sessionId });
   }),
   onMuteChanged: standardAuthedProcedure.input(onVoiceInputSchema).subscription(async function* ({
     ctx,
@@ -60,7 +61,7 @@ export const voiceRouter = router({
     await isMember(ctx.db, ctx.getSessionPayload, input);
 
     for await (const [{ participant, roomId, sessionId }] of on(voiceEventEmitter, "joinVoiceChannel", { signal })) {
-      if (roomId !== input || getIsSameDevice({ sessionId, userId: participant.id }, ctx.getSessionPayload)) continue;
+      if (roomId !== input || sessionId === ctx.getSessionPayload.session.id) continue;
       yield participant;
     }
   }),
@@ -71,8 +72,8 @@ export const voiceRouter = router({
   }) {
     await isMember(ctx.db, ctx.getSessionPayload, input);
 
-    for await (const [{ id, roomId, sessionId }] of on(voiceEventEmitter, "leaveVoiceChannel", { signal })) {
-      if (roomId !== input || getIsSameDevice({ sessionId, userId: id }, ctx.getSessionPayload)) continue;
+    for await (const [{ id, roomId }] of on(voiceEventEmitter, "leaveVoiceChannel", { signal })) {
+      if (roomId !== input || id === ctx.getSessionPayload.session.id) continue;
       yield id;
     }
   }),
@@ -80,7 +81,7 @@ export const voiceRouter = router({
     await isMember(ctx.db, ctx.getSessionPayload, input);
 
     for await (const [{ payload, roomId, senderId }] of on(voiceEventEmitter, "signal", { signal })) {
-      if (roomId !== input || payload.targetUserId !== ctx.getSessionPayload.user.id) continue;
+      if (roomId !== input || payload.targetId !== ctx.getSessionPayload.session.id) continue;
       yield { payload, senderId };
     }
   }),
@@ -88,11 +89,19 @@ export const voiceRouter = router({
     ({ input: { roomId } }) => getRoomParticipants(roomId),
   ),
   sendSignal: getMemberProcedure(sendSignalInputSchema, "roomId").mutation(({ ctx, input: { payload, roomId } }) => {
-    voiceEventEmitter.emit("signal", { payload, roomId, senderId: ctx.getSessionPayload.user.id });
+    const sessionId = ctx.getSessionPayload.session.id;
+    const participants = getRoomParticipants(roomId);
+    if (!participants.some((p) => p.id === sessionId)) {
+      throw new TRPCError({ code: "FORBIDDEN", message: "Must join voice channel first" });
+    }
+    if (!participants.some((p) => p.id === payload.targetId)) {
+      throw new TRPCError({ code: "NOT_FOUND", message: "Target participant not found" });
+    }
+    voiceEventEmitter.emit("signal", { payload, roomId, senderId: sessionId });
   }),
   setMute: getMemberProcedure(setMuteInputSchema, "roomId").mutation(({ ctx, input: { isMuted, roomId } }) => {
-    const userId = ctx.getSessionPayload.user.id;
-    updateVoiceParticipantMute(roomId, userId, isMuted);
-    voiceEventEmitter.emit("muteChanged", { id: userId, isMuted, roomId });
+    const sessionId = ctx.getSessionPayload.session.id;
+    updateVoiceParticipantMute(roomId, sessionId, isMuted);
+    voiceEventEmitter.emit("muteChanged", { id: sessionId, isMuted, roomId });
   }),
 });

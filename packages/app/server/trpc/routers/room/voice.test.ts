@@ -46,7 +46,8 @@ describe("voice", () => {
     const participants = await voiceCaller.joinVoiceChannel({ roomId: newRoom.id });
 
     expect(participants).toHaveLength(1);
-    expect(takeOne(participants).id).toBe(getMockSession().user.id);
+    expect(takeOne(participants).id).toBe(getMockSession().session.id);
+    expect(takeOne(participants).userId).toBe(getMockSession().user.id);
     expect(takeOne(participants).isMuted).toBe(false);
   });
 
@@ -58,7 +59,7 @@ describe("voice", () => {
     const participants = await voiceCaller.readVoiceParticipants({ roomId: newRoom.id });
 
     expect(participants).toHaveLength(1);
-    expect(takeOne(participants).id).toBe(getMockSession().user.id);
+    expect(takeOne(participants).id).toBe(getMockSession().session.id);
   });
 
   test("leaves voice channel", async () => {
@@ -89,7 +90,7 @@ describe("voice", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
     const onParticipantJoin = await voiceCaller.onParticipantJoin(newRoom.id);
-    const { user } = await mockSessionOnce(mockContext.db);
+    const { session, user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInviteCode);
     await mockSessionOnce(mockContext.db, user);
     const data = await withAsyncIterator(
@@ -102,7 +103,8 @@ describe("voice", () => {
 
     assert(!data.done);
 
-    expect(data.value.id).toBe(user.id);
+    expect(data.value.id).toBe(session.id);
+    expect(data.value.userId).toBe(user.id);
     expect(data.value.isMuted).toBe(false);
   });
 
@@ -111,7 +113,7 @@ describe("voice", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
-    const { user } = await mockSessionOnce(mockContext.db);
+    const { session, user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInviteCode);
     await voiceCaller.joinVoiceChannel({ roomId: newRoom.id });
     const onParticipantLeave = await voiceCaller.onParticipantLeave(newRoom.id);
@@ -126,7 +128,7 @@ describe("voice", () => {
 
     assert(!data.done);
 
-    expect(data.value).toBe(user.id);
+    expect(data.value).toBe(session.id);
   });
 
   test("on mute changed", async () => {
@@ -148,7 +150,7 @@ describe("voice", () => {
 
     assert(!data.done);
 
-    expect(data.value).toStrictEqual({ id: getMockSession().user.id, isMuted: true });
+    expect(data.value).toStrictEqual({ id: getMockSession().session.id, isMuted: true });
   });
 
   test("fails join for non-member", async () => {
@@ -178,14 +180,14 @@ describe("voice", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
     await voiceCaller.joinVoiceChannel({ roomId: newRoom.id });
-    const { user } = await mockSessionOnce(mockContext.db);
+    const { session, user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInviteCode);
     await mockSessionOnce(mockContext.db, user);
     const participants = await voiceCaller.joinVoiceChannel({ roomId: newRoom.id });
 
     expect(participants).toHaveLength(2);
-    expect(participants.some(({ id }) => id === getMockSession().user.id)).toBe(true);
-    expect(participants.some(({ id }) => id === user.id)).toBe(true);
+    expect(participants.some(({ id }) => id === getMockSession().session.id)).toBe(true);
+    expect(participants.some(({ id }) => id === session.id)).toBe(true);
   });
 
   test("on signal delivers to target user", async () => {
@@ -193,12 +195,14 @@ describe("voice", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
-    const userId = getMockSession().user.id;
+    const sessionId = getMockSession().session.id;
+    await voiceCaller.joinVoiceChannel({ roomId: newRoom.id });
     const onSignal = await voiceCaller.onSignal(newRoom.id);
-    const { user } = await mockSessionOnce(mockContext.db);
+    const { session, user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInviteCode);
+    await voiceCaller.joinVoiceChannel({ roomId: newRoom.id });
     await mockSessionOnce(mockContext.db, user);
-    const payload = { data: "{}", targetUserId: userId, type: VoiceSignalType.Offer };
+    const payload = { data: "{}", targetId: sessionId, type: VoiceSignalType.Offer };
     const data = await withAsyncIterator(
       () => onSignal,
       async (iterator) => {
@@ -209,7 +213,30 @@ describe("voice", () => {
 
     assert(!data.done);
 
-    expect(data.value.senderId).toBe(user.id);
+    expect(data.value.senderId).toBe(session.id);
     expect(data.value.payload).toStrictEqual(payload);
+  });
+
+  test("fails sendSignal if sender is not in voice channel", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const payload = { data: "{}", targetId: getMockSession().session.id, type: VoiceSignalType.Offer };
+
+    await expect(voiceCaller.sendSignal({ payload, roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Must join voice channel first]`,
+    );
+  });
+
+  test("fails sendSignal if target is not in voice channel", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    await voiceCaller.joinVoiceChannel({ roomId: newRoom.id });
+    const payload = { data: "{}", targetId: crypto.randomUUID(), type: VoiceSignalType.Offer };
+
+    await expect(voiceCaller.sendSignal({ payload, roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Target participant not found]`,
+    );
   });
 });

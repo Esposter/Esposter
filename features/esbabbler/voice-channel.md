@@ -106,7 +106,7 @@ packages/app/
 
   app/
     store/message/
-      voice.ts                    # participantsByRoom, storeJoinVoice, storeLeaveVoice, storeSetMute, storeSetParticipants
+      voice.ts                    # participantsByRoom, joinVoice, leaveVoice, setMute, setParticipants
     composables/message/room/
       useVoiceChannel.ts          # join/leave, peer map, mute toggle, speaking detection, subscriptions
     components/Message/Voice/

@@ -3,12 +3,12 @@ import { z } from "zod";
 
 export interface VoiceSignalPayload {
   data: string;
-  targetUserId: string;
+  targetId: string;
   type: VoiceSignalType;
 }
 
 export const voiceSignalPayloadSchema = z.object({
   data: z.string(),
-  targetUserId: z.string(),
+  targetId: z.string(),
   type: voiceSignalTypeSchema,
 }) satisfies z.ZodType<VoiceSignalPayload>;

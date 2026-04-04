@@ -2,6 +2,7 @@ import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
 import type { SuggestionOptions } from "@tiptap/suggestion";
 import type { Except } from "type-fest";
 
+import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import SlashCommandList from "@/components/Message/Model/Message/SlashCommandList.vue";
 import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
 import { getRender } from "@/services/message/getRender";
@@ -15,7 +16,7 @@ import { marked } from "marked";
 
 export const SlashCommandSuggestion: Except<SuggestionOptions<SlashCommand, SlashCommand>, "editor"> = {
   char: "/",
-  command: ({ editor, props: slashCommand, range }) => {
+  command: getSynchronizedFunction(async ({ editor, props: slashCommand, range }) => {
     editor.chain().focus().deleteRange(range).run();
     const roomStore = useRoomStore();
     if (!roomStore.currentRoomId) return;
@@ -32,7 +33,7 @@ export const SlashCommandSuggestion: Except<SuggestionOptions<SlashCommand, Slas
         const dataStore = useDataStore();
         const { createMessage } = dataStore;
         const roll = Math.floor(Math.random() * 100) + 1;
-        void createMessage({
+        await createMessage({
           message: marked.parse(`🎲 Rolled a **${roll}**`, { async: false }),
           roomId,
           type: MessageType.Message,
@@ -42,7 +43,7 @@ export const SlashCommandSuggestion: Except<SuggestionOptions<SlashCommand, Slas
       default:
         exhaustiveGuard(slashCommand.type);
     }
-  },
+  }),
   items: ({ query }) => {
     const lowerQuery = query.toLowerCase();
     return Object.values(SlashCommandDefinitionMap).filter(
