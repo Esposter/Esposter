@@ -3,19 +3,19 @@ import type { VoiceParticipant } from "#shared/models/room/voice/VoiceParticipan
 export const useVoiceStore = defineStore("message/voice", () => {
   const participantsByRoom = ref<Record<string, VoiceParticipant[]>>({});
 
-  const storeJoinVoice = (roomId: string, participant: VoiceParticipant) => {
+  const joinVoice = (roomId: string, participant: VoiceParticipant) => {
     const current = participantsByRoom.value[roomId] ?? [];
     if (current.some(({ id }) => id === participant.id)) return;
     participantsByRoom.value = { ...participantsByRoom.value, [roomId]: [...current, participant] };
   };
 
-  const storeLeaveVoice = (roomId: string, id: string) => {
+  const leaveVoice = (roomId: string, id: string) => {
     const current = participantsByRoom.value[roomId];
     if (!current) return;
     participantsByRoom.value = { ...participantsByRoom.value, [roomId]: current.filter((p) => p.id !== id) };
   };
 
-  const storeSetMute = (roomId: string, id: string, isMuted: boolean) => {
+  const setMute = (roomId: string, id: string, isMuted: boolean) => {
     const current = participantsByRoom.value[roomId];
     if (!current) return;
     participantsByRoom.value = {
@@ -24,9 +24,9 @@ export const useVoiceStore = defineStore("message/voice", () => {
     };
   };
 
-  const storeSetParticipants = (roomId: string, participants: VoiceParticipant[]) => {
+  const setParticipants = (roomId: string, participants: VoiceParticipant[]) => {
     participantsByRoom.value = { ...participantsByRoom.value, [roomId]: participants };
   };
 
-  return { participantsByRoom, storeJoinVoice, storeLeaveVoice, storeSetMute, storeSetParticipants };
+  return { joinVoice, leaveVoice, participantsByRoom, setMute, setParticipants };
 });

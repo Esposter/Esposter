@@ -1,6 +1,5 @@
-import { z } from "zod";
-
 import { VoiceSignalType, voiceSignalTypeSchema } from "#shared/models/room/voice/VoiceSignalType";
+import { z } from "zod";
 
 export interface VoiceSignalPayload {
   data: string;

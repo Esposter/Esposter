@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { RoutePath } from "@esposter/shared";
 import { useRoomStore } from "@/store/message/room";
+import { RoutePath } from "@esposter/shared";
 
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);

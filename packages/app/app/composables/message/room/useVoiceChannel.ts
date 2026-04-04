@@ -2,16 +2,16 @@ import type { VoiceSignalPayload } from "#shared/models/room/voice/VoiceSignalPa
 
 import { VoiceSignalType } from "#shared/models/room/voice/VoiceSignalType";
 import { ICE_SERVERS, LOCAL_PARTICIPANT_ID, SPEAKING_THRESHOLD } from "@/services/message/voice/constants";
-import { exhaustiveGuard } from "@esposter/shared";
 import { useRoomStore } from "@/store/message/room";
 import { useVoiceStore } from "@/store/message/voice";
+import { exhaustiveGuard } from "@esposter/shared";
 
 export const useVoiceChannel = () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const voiceStore = useVoiceStore();
-  const { storeJoinVoice, storeLeaveVoice, storeSetMute, storeSetParticipants } = voiceStore;
+  const { joinVoice, leaveVoice, setMute, setParticipants } = voiceStore;
 
   const isInChannel = ref(false);
   const isMuted = ref(false);
@@ -21,7 +21,7 @@ export const useVoiceChannel = () => {
   const peerConnections = new Map<string, RTCPeerConnection>();
   const remoteAudioElements = new Map<string, HTMLAudioElement>();
   const speakingCleanups = new Map<string, () => void>();
-  let onSignalUnsubscribable: { unsubscribe(): void } | undefined;
+  let signalUnsubscribable: undefined | { unsubscribe(): void };
 
   const cleanupPeer = (id: string) => {
     peerConnections.get(id)?.close();
@@ -113,17 +113,6 @@ export const useVoiceChannel = () => {
     const { data, type } = payload;
 
     switch (type) {
-      case VoiceSignalType.Offer: {
-        const peerConnection = buildPeerConnection(senderId);
-        await peerConnection.setRemoteDescription(JSON.parse(data) as RTCSessionDescriptionInit);
-        const answer = await peerConnection.createAnswer();
-        await peerConnection.setLocalDescription(answer);
-        await $trpc.voice.sendSignal.mutate({
-          payload: { data: JSON.stringify(answer), targetUserId: senderId, type: VoiceSignalType.Answer },
-          roomId: currentRoomId.value,
-        });
-        break;
-      }
       case VoiceSignalType.Answer: {
         const peerConnection = peerConnections.get(senderId);
         if (!peerConnection) return;
@@ -134,6 +123,17 @@ export const useVoiceChannel = () => {
         const peerConnection = peerConnections.get(senderId);
         if (!peerConnection) return;
         await peerConnection.addIceCandidate(JSON.parse(data) as RTCIceCandidateInit);
+        break;
+      }
+      case VoiceSignalType.Offer: {
+        const peerConnection = buildPeerConnection(senderId);
+        await peerConnection.setRemoteDescription(JSON.parse(data) as RTCSessionDescriptionInit);
+        const answer = await peerConnection.createAnswer();
+        await peerConnection.setLocalDescription(answer);
+        await $trpc.voice.sendSignal.mutate({
+          payload: { data: JSON.stringify(answer), targetUserId: senderId, type: VoiceSignalType.Answer },
+          roomId: currentRoomId.value,
+        });
         break;
       }
       default:
@@ -148,11 +148,11 @@ export const useVoiceChannel = () => {
     localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
 
     // Subscribe to signals before joining so we don't miss offers from existing participants
-    onSignalUnsubscribable = $trpc.voice.onSignal.subscribe(roomId, { onData: handleSignal });
+    signalUnsubscribable = $trpc.voice.onSignal.subscribe(roomId, { onData: handleSignal });
 
     const participants = await $trpc.voice.joinVoiceChannel.mutate({ roomId });
     isInChannel.value = true;
-    storeSetParticipants(roomId, participants);
+    setParticipants(roomId, participants);
     setupSpeakingDetection(LOCAL_PARTICIPANT_ID, localStream);
   };
 
@@ -166,8 +166,8 @@ export const useVoiceChannel = () => {
 
     for (const id of [...peerConnections.keys()]) cleanupPeer(id);
     cleanupLocalStream();
-    onSignalUnsubscribable?.unsubscribe();
-    onSignalUnsubscribable = undefined;
+    signalUnsubscribable?.unsubscribe();
+    signalUnsubscribable = undefined;
     speakingUserIds.value = [];
   };
 
@@ -182,34 +182,34 @@ export const useVoiceChannel = () => {
   useOnlineSubscribable(currentRoomId, (roomId) => {
     if (!roomId) return;
 
-    const onParticipantJoinUnsubscribable = $trpc.voice.onParticipantJoin.subscribe(roomId, {
+    const participantJoinUnsubscribable = $trpc.voice.onParticipantJoin.subscribe(roomId, {
       onData: async (participant) => {
-        storeJoinVoice(roomId, participant);
+        joinVoice(roomId, participant);
         if (isInChannel.value) await createPeerConnection(participant.id);
       },
     });
-    const onParticipantLeaveUnsubscribable = $trpc.voice.onParticipantLeave.subscribe(roomId, {
+    const participantLeaveUnsubscribable = $trpc.voice.onParticipantLeave.subscribe(roomId, {
       onData: (id) => {
-        storeLeaveVoice(roomId, id);
+        leaveVoice(roomId, id);
         cleanupPeer(id);
       },
     });
-    const onMuteChangedUnsubscribable = $trpc.voice.onMuteChanged.subscribe(roomId, {
-      onData: ({ id, isMuted: participantIsMuted }) => storeSetMute(roomId, id, participantIsMuted),
+    const muteChangedUnsubscribable = $trpc.voice.onMuteChanged.subscribe(roomId, {
+      onData: ({ id, isMuted: participantIsMuted }) => setMute(roomId, id, participantIsMuted),
     });
 
     return () => {
       if (isInChannel.value) void $trpc.voice.leaveVoiceChannel.mutate({ roomId });
       for (const id of [...peerConnections.keys()]) cleanupPeer(id);
       cleanupLocalStream();
-      onSignalUnsubscribable?.unsubscribe();
-      onSignalUnsubscribable = undefined;
+      signalUnsubscribable?.unsubscribe();
+      signalUnsubscribable = undefined;
       isInChannel.value = false;
       isMuted.value = false;
       speakingUserIds.value = [];
-      onParticipantJoinUnsubscribable.unsubscribe();
-      onParticipantLeaveUnsubscribable.unsubscribe();
-      onMuteChangedUnsubscribable.unsubscribe();
+      participantJoinUnsubscribable.unsubscribe();
+      participantLeaveUnsubscribable.unsubscribe();
+      muteChangedUnsubscribable.unsubscribe();
     };
   });
 
