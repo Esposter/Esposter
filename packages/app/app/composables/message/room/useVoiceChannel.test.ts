@@ -34,6 +34,7 @@ describe(useVoiceChannel, () => {
           const voiceStore = useVoiceStore();
           ({ speakingIds, voiceParticipantsRoomMap } = storeToRefs(voiceStore));
           ({ joinVoice, leaveVoice, setMute, setParticipants } = voiceStore);
+          speakingIds.value = [];
           voiceParticipantsRoomMap.value = new Map<string, VoiceParticipant[]>();
         },
       }),
