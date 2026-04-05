@@ -9,6 +9,7 @@ import { useTableEditorStore } from "@/store/tableEditor";
 import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { useItemStore } from "@/store/tableEditor/item";
 import { takeOne } from "@esposter/shared";
+import { flushPromises } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
@@ -140,13 +141,14 @@ describe(useTableEditorStore, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { isUndoable } = storeToRefs(fileHistoryStore);
     const deleteRow = useDeleteRow();
-    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? []).id);
+    assert.exists(editedItem.value?.dataSource);
+    deleteRow(takeOne(editedItem.value.dataSource.rows).id);
     editFormDialog.value = true;
 
     expect(isUndoable.value).toBe(true);
 
     await save();
-    await nextTick();
+    await flushPromises();
 
     expect(isUndoable.value).toBe(false);
   });
@@ -160,13 +162,14 @@ describe(useTableEditorStore, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { isUndoable } = storeToRefs(fileHistoryStore);
     const deleteRow = useDeleteRow();
-    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? []).id);
+    assert.exists(editedItem.value?.dataSource);
+    deleteRow(takeOne(editedItem.value.dataSource.rows).id);
     editFormDialog.value = true;
 
     expect(isUndoable.value).toBe(true);
 
     editFormDialog.value = false;
-    await nextTick();
+    await flushPromises();
 
     expect(isUndoable.value).toBe(false);
   });
