@@ -55,7 +55,6 @@
   "devDependencies": {
     "@azure/data-tables": "catalog:",
     "@azure/storage-blob": "catalog:",
-    "@esposter/configuration": "workspace:*",
     "@trpc/server": "catalog:",
     "drizzle-kit": "catalog:"
   },

@@ -43,7 +43,6 @@
     "dayjs": "catalog:"
   },
   "devDependencies": {
-    "@esposter/configuration": "workspace:*",
     "@types/data-urls": "catalog:",
     "@types/xml2js": "catalog:"
   }

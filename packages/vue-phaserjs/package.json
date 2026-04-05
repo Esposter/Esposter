@@ -39,9 +39,6 @@
     "@esposter/shared": "workspace:*",
     "parse-tmx": "workspace:*"
   },
-  "devDependencies": {
-    "@esposter/configuration": "workspace:*"
-  },
   "peerDependencies": {
     "phaser": "catalog:",
     "phaser3-rex-plugins": "catalog:",

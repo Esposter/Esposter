@@ -48,7 +48,6 @@
     "@azure/eventgrid": "catalog:",
     "@azure/storage-blob": "catalog:",
     "@azure/storage-queue": "catalog:",
-    "@azure/web-pubsub": "catalog:",
-    "@esposter/configuration": "workspace:*"
+    "@azure/web-pubsub": "catalog:"
   }
 }

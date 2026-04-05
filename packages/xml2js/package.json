@@ -40,7 +40,6 @@
     "xmlbuilder2": "catalog:"
   },
   "devDependencies": {
-    "@esposter/configuration": "workspace:*",
     "@types/sax": "catalog:",
     "@types/xml2js": "catalog:"
   }
