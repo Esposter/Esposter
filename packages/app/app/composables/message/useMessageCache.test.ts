@@ -57,8 +57,10 @@ describe(useMessageCache, () => {
   };
 
   afterEach(async () => {
-    items.value = [];
-    wrapper?.unmount();
+    if (wrapper) {
+      items.value = [];
+      wrapper.unmount();
+    }
     vi.restoreAllMocks();
     await resetMessageCacheDatabase();
     const databases = await indexedDB.databases();
