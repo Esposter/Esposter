@@ -29,6 +29,7 @@ describe("voice", () => {
   afterEach(async () => {
     voiceRoomParticipantMap.clear();
     await mockContext.db.delete(rooms);
+    vi.clearAllMocks();
   });
 
   test("reads voice participants when empty", async () => {
