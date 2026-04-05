@@ -5,8 +5,10 @@ import { useVoiceStore } from "@/store/message/voice";
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const voiceStore = useVoiceStore();
-const { participantsByRoom } = storeToRefs(voiceStore);
-const participants = computed(() => (currentRoomId.value ? (participantsByRoom.value[currentRoomId.value] ?? []) : []));
+const { voiceParticipantsRoomMap } = storeToRefs(voiceStore);
+const participants = computed(() =>
+  currentRoomId.value ? (voiceParticipantsRoomMap.value.get(currentRoomId.value) ?? []) : [],
+);
 </script>
 
 <template>

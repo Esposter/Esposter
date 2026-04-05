@@ -18,16 +18,7 @@ const isSpeaking = computed(() => speakingUserIds.value.includes(participant.id)
     <template #prepend>
       <div relative mr-2>
         <StyledAvatar :image="participant.image" :name="participant.name" />
-        <div
-          v-if="isSpeaking"
-          absolute
-          inset-0
-          rounded-full
-          border-2
-          border-green-500
-          animate-pulse
-          pointer-events-none
-        />
+        <div v-if="isSpeaking" absolute inset-0 rd-full b-2 b-green-500 animate-pulse pointer-events-none />
       </div>
     </template>
     <template #append>

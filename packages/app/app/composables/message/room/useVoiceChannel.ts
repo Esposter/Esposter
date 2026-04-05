@@ -15,8 +15,15 @@ export const useVoiceChannel = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const voiceStore = useVoiceStore();
-  const { addSpeakingUser, clearSpeakingUsers, joinVoice, leaveVoice, removeSpeakingUser, setMute, setParticipants } =
-    voiceStore;
+  const {
+    createSpeakingUser,
+    clearSpeakingUsers,
+    joinVoice,
+    leaveVoice,
+    deleteSpeakingUser,
+    setMute,
+    setParticipants,
+  } = voiceStore;
   const { speakingUserIds } = storeToRefs(voiceStore);
   const isInChannel = ref(false);
   const isMuted = ref(false);
@@ -36,7 +43,7 @@ export const useVoiceChannel = () => {
     await speakingCleanups.get(id)?.();
     speakingCleanups.delete(id);
     candidateQueues.delete(id);
-    removeSpeakingUser(id);
+    deleteSpeakingUser(id);
   };
 
   const cleanupLocalStream = async () => {
@@ -63,8 +70,8 @@ export const useVoiceChannel = () => {
       const isSpeaking = average > SPEAKING_THRESHOLD;
       const isCurrentlySpeaking = speakingUserIds.value.includes(id);
 
-      if (isSpeaking && !isCurrentlySpeaking) addSpeakingUser(id);
-      else if (!isSpeaking && isCurrentlySpeaking) removeSpeakingUser(id);
+      if (isSpeaking && !isCurrentlySpeaking) createSpeakingUser(id);
+      else if (!isSpeaking && isCurrentlySpeaking) deleteSpeakingUser(id);
 
       animationFrame = requestAnimationFrame(detectSpeaking);
     };

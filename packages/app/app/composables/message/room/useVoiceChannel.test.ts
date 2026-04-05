@@ -18,7 +18,7 @@ describe(useVoiceChannel, () => {
   let join: () => Promise<void>;
   let leave: () => Promise<void>;
   let toggleMute: () => Promise<void>;
-  let participantsByRoom: Ref<Record<string, VoiceParticipant[]>>;
+  let voiceParticipantsRoomMap: Map<Record<string, VoiceParticipant[]>>;
   let joinVoice: (roomId: string, participant: VoiceParticipant) => void;
   let leaveVoice: (roomId: string, id: string) => void;
   let setMute: (roomId: string, id: string, isMuted: boolean) => void;
@@ -32,9 +32,9 @@ describe(useVoiceChannel, () => {
         setup: () => {
           ({ isInChannel, isMuted, join, leave, toggleMute } = useVoiceChannel());
           const voiceStore = useVoiceStore();
-          ({ participantsByRoom, speakingUserIds } = storeToRefs(voiceStore));
+          ({ voiceParticipantsRoomMap, speakingUserIds } = storeToRefs(voiceStore));
           ({ joinVoice, leaveVoice, setMute, setParticipants } = voiceStore);
-          participantsByRoom.value = {};
+          voiceParticipantsRoomMap.value = new Map<string, VoiceParticipant[]>();
         },
       }),
     );
@@ -64,7 +64,7 @@ describe(useVoiceChannel, () => {
 
     await mountVoiceChannel();
 
-    expect(Object.keys(participantsByRoom.value)).toHaveLength(0);
+    expect(Object.keys(voiceParticipantsRoomMap.value)).toHaveLength(0);
   });
 
   test("join is no-op without room id", async () => {
@@ -109,7 +109,7 @@ describe(useVoiceChannel, () => {
     await mountVoiceChannel();
     joinVoice(roomId, participant);
 
-    const roomParticipants = participantsByRoom.value[roomId] ?? [];
+    const roomParticipants = voiceParticipantsRoomMap.value.get(roomId) ?? [];
 
     expect(roomParticipants).toHaveLength(1);
     expect(takeOne(roomParticipants)).toStrictEqual(participant);
@@ -131,7 +131,7 @@ describe(useVoiceChannel, () => {
     joinVoice(roomId, participant);
     joinVoice(roomId, participant);
 
-    expect(participantsByRoom.value[roomId]).toHaveLength(1);
+    expect(voiceParticipantsRoomMap.value.get(roomId)).toHaveLength(1);
   });
 
   test("leaveVoice removes participant from room", async () => {
@@ -150,7 +150,7 @@ describe(useVoiceChannel, () => {
     joinVoice(roomId, participant);
     leaveVoice(roomId, participant.id);
 
-    expect(participantsByRoom.value[roomId]).toStrictEqual([]);
+    expect(voiceParticipantsRoomMap.value.get(roomId)).toStrictEqual([]);
   });
 
   test("setMute updates participant mute state", async () => {
@@ -169,7 +169,7 @@ describe(useVoiceChannel, () => {
     joinVoice(roomId, participant);
     setMute(roomId, participant.id, true);
 
-    const roomParticipants = participantsByRoom.value[roomId] ?? [];
+    const roomParticipants = voiceParticipantsRoomMap.value.get(roomId) ?? [];
 
     expect(takeOne(roomParticipants).isMuted).toBe(true);
   });
@@ -181,7 +181,7 @@ describe(useVoiceChannel, () => {
     await mountVoiceChannel();
     setMute(roomId, sessionId, true);
 
-    expect(participantsByRoom.value[roomId]).toBeUndefined();
+    expect(voiceParticipantsRoomMap.value.get(roomId)).toBeUndefined();
   });
 
   test("setParticipants replaces all participants for room", async () => {
@@ -197,6 +197,6 @@ describe(useVoiceChannel, () => {
     await mountVoiceChannel();
     setParticipants(roomId, participants);
 
-    expect(participantsByRoom.value[roomId]).toStrictEqual(participants);
+    expect(voiceParticipantsRoomMap.value.get(roomId)).toStrictEqual(participants);
   });
 });
