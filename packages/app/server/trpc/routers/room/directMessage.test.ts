@@ -13,10 +13,10 @@ import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("directMessage", () => {
+  let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["directMessage"]>;
   let friendCaller: DecorateRouterRecord<TRPCRouter["friend"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
-  let mockContext: Context;
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -203,19 +203,22 @@ describe("directMessage", () => {
   test("fails create direct message with non-friend", async () => {
     expect.hasAssertions();
 
+    const userId = getMockSession().user.id;
     const { user } = await mockSessionOnce(mockContext.db);
     getMockSession();
 
     await expect(caller.createDirectMessage([user.id])).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.DirectMessage, getMockSession().user.id).message}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.DirectMessage, userId).message}]`,
     );
   });
 
   test("fails create direct message with self-only", async () => {
     expect.hasAssertions();
 
-    await expect(caller.createDirectMessage([getMockSession().user.id])).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.DirectMessage, getMockSession().user.id).message}]`,
+    const userId = getMockSession().user.id;
+
+    await expect(caller.createDirectMessage([userId])).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.DirectMessage, userId).message}]`,
     );
   });
 

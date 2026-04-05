@@ -25,7 +25,7 @@ const voteCountMap = computed(() => {
   for (const optionId of Object.values(pollContent.value.votes)) map.set(optionId, (map.get(optionId) ?? 0) + 1);
   return map;
 });
-const getVoteDescription = (count: number) => `${count} vote${count !== 1 ? "s" : ""}`;
+const getVoteDescription = (count: number) => `${count} vote${count === 1 ? "" : "s"}`;
 const getVotePercentage = (optionId: string) => {
   const count = voteCountMap.value.get(optionId) ?? 0;
   return totalVotes.value > 0 ? Math.round((count / totalVotes.value) * 100) : 0;

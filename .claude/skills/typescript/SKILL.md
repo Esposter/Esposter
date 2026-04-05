@@ -34,6 +34,7 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 
 - **Always use `async`/`await`** — never use `.then()` or `.catch()` promise chains. Use `try`/`catch` blocks for error handling.
 - When fire-and-forgetting an async operation, extract to a named `async` function and call it without `await`.
+- **Never use `void asyncFn()`** — when passing an async function to a sync callback slot (e.g. `onScopeDispose`, event listeners, Phaser callbacks), wrap it with `getSynchronizedFunction(async fn)` from `#shared/util/getSynchronizedFunction` instead. This satisfies `@typescript-eslint/no-misused-promises` without suppressing the lint rule.
 
 ## Error Handling
 

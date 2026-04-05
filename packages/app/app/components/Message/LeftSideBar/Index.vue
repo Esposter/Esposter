@@ -1,5 +1,9 @@
 <script setup lang="ts">
+import { useRoomStore } from "@/store/message/room";
 import { RoutePath } from "@esposter/shared";
+
+const roomStore = useRoomStore();
+const { currentRoomId } = storeToRefs(roomStore);
 </script>
 
 <template>
@@ -11,6 +15,10 @@ import { RoutePath } from "@esposter/shared";
       <v-divider />
       <MessageLeftSideBarRooms />
       <v-divider />
+      <template v-if="currentRoomId">
+        <MessageVoicePanel />
+        <v-divider />
+      </template>
       <MessageLeftSideBarDirectMessages />
     </div>
     <MessageLeftSideBarStatusBar />

@@ -11,16 +11,18 @@ import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/tr
 import { friendRouter } from "@@/server/trpc/routers/friend";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
+import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
 import { CODE_LENGTH, DatabaseEntityType, friends, rooms } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("room", () => {
+  let mockContext: Context;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let directMessageCaller: DecorateRouterRecord<TRPCRouter["directMessage"]>;
   let friendCaller: DecorateRouterRecord<TRPCRouter["friend"]>;
-  let mockContext: Context;
+  const roomId = crypto.randomUUID();
   const name = "name";
   const updatedName = "updatedName";
 
@@ -124,8 +126,6 @@ describe("room", () => {
   test("fails read multiple with non-existent room", async () => {
     expect.hasAssertions();
 
-    const roomId = crypto.randomUUID();
-
     await expect(roomCaller.readRooms({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,
     );
@@ -218,10 +218,16 @@ describe("room", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const onUpdateRoom = await roomCaller.onUpdateRoom([newRoom.id]);
-    const [data] = await Promise.all([
-      onUpdateRoom[Symbol.asyncIterator]().next(),
-      roomCaller.updateRoom({ id: newRoom.id, name: updatedName }),
-    ]);
+    const data = await withAsyncIterator(
+      () => onUpdateRoom,
+      async (iterator) => {
+        const [result] = await Promise.all([
+          iterator.next(),
+          roomCaller.updateRoom({ id: newRoom.id, name: updatedName }),
+        ]);
+        return result;
+      },
+    );
 
     assert(!data.done);
 
@@ -263,7 +269,13 @@ describe("room", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const onDeleteRoom = await roomCaller.onDeleteRoom([newRoom.id]);
-    const [data] = await Promise.all([onDeleteRoom[Symbol.asyncIterator]().next(), roomCaller.deleteRoom(newRoom.id)]);
+    const data = await withAsyncIterator(
+      () => onDeleteRoom,
+      async (iterator) => {
+        const [result] = await Promise.all([iterator.next(), roomCaller.deleteRoom(newRoom.id)]);
+        return result;
+      },
+    );
 
     assert(!data.done);
 
@@ -276,10 +288,11 @@ describe("room", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
     const readInvite = await roomCaller.readInvite(newInviteCode);
+    const userId = getMockSession().user.id;
 
     assert(readInvite);
 
-    expect(readInvite.userId).toBe(getMockSession().user.id);
+    expect(readInvite.userId).toBe(userId);
     expect(readInvite.roomId).toBe(newRoom.id);
     expect(readInvite.code).toBe(newInviteCode);
     expect(readInvite.isMember).toBe(true);
@@ -469,10 +482,11 @@ describe("room", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
+    const userId = getMockSession().user.id;
 
     await expect(roomCaller.joinRoom(newInviteCode)).rejects.toThrowErrorMatchingInlineSnapshot(`
       [TRPCError: Failed query: insert into "message"."users_to_rooms" ("isHidden", "notificationType", "roomId", "userId") values (default, default, $1, $2) returning "isHidden", "notificationType", "roomId", "userId"
-      params: ${newRoom.id},${getMockSession().user.id}]
+      params: ${newRoom.id},${userId}]
     `);
   });
 
@@ -483,7 +497,13 @@ describe("room", () => {
     const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
     const onJoinRoom = await roomCaller.onJoinRoom([newRoom.id]);
     const session = await mockSessionOnce(mockContext.db);
-    const [data] = await Promise.all([onJoinRoom[Symbol.asyncIterator]().next(), roomCaller.joinRoom(newInviteCode)]);
+    const data = await withAsyncIterator(
+      () => onJoinRoom,
+      async (iterator) => {
+        const [result] = await Promise.all([iterator.next(), roomCaller.joinRoom(newInviteCode)]);
+        return result;
+      },
+    );
 
     assert(!data.done);
 
@@ -533,7 +553,13 @@ describe("room", () => {
     await roomCaller.joinRoom(newInviteCode);
     const onLeaveRoom = await roomCaller.onLeaveRoom([newRoom.id]);
     const session = await mockSessionOnce(mockContext.db, user);
-    const [data] = await Promise.all([onLeaveRoom[Symbol.asyncIterator]().next(), roomCaller.leaveRoom(newRoom.id)]);
+    const data = await withAsyncIterator(
+      () => onLeaveRoom,
+      async (iterator) => {
+        const [result] = await Promise.all([iterator.next(), roomCaller.leaveRoom(newRoom.id)]);
+        return result;
+      },
+    );
 
     assert(!data.done);
 
@@ -554,8 +580,9 @@ describe("room", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const members = await roomCaller.readMembers({ roomId: newRoom.id });
+    const userId = getMockSession().user.id;
 
-    expect(takeOne(members.items).id).toBe(getMockSession().user.id);
+    expect(takeOne(members.items).id).toBe(userId);
   });
 
   test("reads members by ids", async () => {
@@ -659,11 +686,12 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
+    const userId = getMockSession().user.id;
 
-    await expect(roomCaller.createMembers({ roomId: newRoom.id, userIds: [getMockSession().user.id] })).rejects
+    await expect(roomCaller.createMembers({ roomId: newRoom.id, userIds: [userId] })).rejects
       .toThrowErrorMatchingInlineSnapshot(`
       [TRPCError: Failed query: insert into "message"."users_to_rooms" ("isHidden", "notificationType", "roomId", "userId") values (default, default, $1, $2) returning "isHidden", "notificationType", "roomId", "userId"
-      params: ${newRoom.id},${getMockSession().user.id}]
+      params: ${newRoom.id},${userId}]
     `);
   });
 
@@ -683,11 +711,11 @@ describe("room", () => {
   test("fails create members with non-existent room", async () => {
     expect.hasAssertions();
 
-    const roomId = crypto.randomUUID();
+    const userId = getMockSession().user.id;
 
-    await expect(
-      roomCaller.createMembers({ roomId, userIds: [getMockSession().user.id] }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+    await expect(roomCaller.createMembers({ roomId, userIds: [userId] })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: UNAUTHORIZED]`,
+    );
   });
 
   test("kicks member with owner", async () => {
@@ -720,7 +748,8 @@ describe("room", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const input: DeleteMemberInput = { roomId: newRoom.id, userId: getMockSession().user.id };
+    const userId = getMockSession().user.id;
+    const input: DeleteMemberInput = { roomId: newRoom.id, userId };
 
     await expect(roomCaller.deleteMember(input)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.UserToRoom, JSON.stringify(input)).message}]`,

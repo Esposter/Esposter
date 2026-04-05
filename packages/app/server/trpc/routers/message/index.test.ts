@@ -14,6 +14,7 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { messageRouter } from "@@/server/trpc/routers/message";
 import { roomRouter } from "@@/server/trpc/routers/room";
+import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
 import { getBlobName } from "@esposter/db";
 import {
   AzureContainer,
@@ -28,9 +29,10 @@ import { MockContainerDatabase, MockEventGridDatabase, MockTableDatabase } from 
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("message", () => {
+  let mockContext: Context;
   let messageCaller: DecorateRouterRecord<TRPCRouter["message"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
-  let mockContext: Context;
+  const roomId = crypto.randomUUID();
   const filename = "filename";
   const mimetype = "image/jpeg";
   const size = 1000;
@@ -41,11 +43,9 @@ describe("message", () => {
   const rowKey = "rowKey";
 
   beforeAll(async () => {
-    const createMessageCaller = createCallerFactory(messageRouter);
-    const createRoomCaller = createCallerFactory(roomRouter);
     mockContext = await createMockContext();
-    messageCaller = createMessageCaller(mockContext);
-    roomCaller = createRoomCaller(mockContext);
+    messageCaller = createCallerFactory(messageRouter)(mockContext);
+    roomCaller = createCallerFactory(roomRouter)(mockContext);
   });
 
   afterEach(async () => {
@@ -68,7 +68,8 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const message = getMessage(getMockSession().user.id);
+    const userId = getMockSession().user.id;
+    const message = getMessage(userId);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     const readMessages = await messageCaller.readMessages({ roomId: newRoom.id });
 
@@ -80,7 +81,8 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const message = getMessage(getMockSession().user.id);
+    const userId = getMockSession().user.id;
+    const message = getMessage(userId);
     const firstMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     const secondMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     const cursor = serialize({ rowKey: secondMessage.rowKey }, [MESSAGE_ROWKEY_SORT_ITEM]);
@@ -104,7 +106,8 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const message = getMessage(getMockSession().user.id);
+    const userId = getMockSession().user.id;
+    const message = getMessage(userId);
     const firstMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     const secondMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     // Limit 1 should return oldest first
@@ -139,8 +142,6 @@ describe("message", () => {
   test("fails read with non-existent room id", async () => {
     expect.hasAssertions();
 
-    const roomId = crypto.randomUUID();
-
     await expect(messageCaller.readMessages({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,
     );
@@ -161,7 +162,8 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const message = getMessage(getMockSession().user.id);
+    const userId = getMockSession().user.id;
+    const message = getMessage(userId);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     const readMessages = await messageCaller.readMessagesByRowKeys({
       roomId: newRoom.id,
@@ -175,8 +177,6 @@ describe("message", () => {
   test("fails read by row keys with non-existent room id", async () => {
     expect.hasAssertions();
 
-    const roomId = crypto.randomUUID();
-
     await expect(
       messageCaller.readMessagesByRowKeys({ roomId, rowKeys: [""] }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
@@ -186,7 +186,8 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const message = getMessage(getMockSession().user.id);
+    const userId = getMockSession().user.id;
+    const message = getMessage(userId);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     await mockSessionOnce(mockContext.db);
 
@@ -248,8 +249,8 @@ describe("message", () => {
   test("fails create with non-existent room id", async () => {
     expect.hasAssertions();
 
-    const roomId = crypto.randomUUID();
-    const message = getMessage(getMockSession().user.id);
+    const userId = getMockSession().user.id;
+    const message = getMessage(userId);
 
     await expect(messageCaller.createMessage({ message, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,
@@ -278,10 +279,16 @@ describe("message", () => {
     const onCreateMessage = await messageCaller.onCreateMessage({ roomId: newRoom.id });
     const message = getMessage(user.id);
     await mockSessionOnce(mockContext.db, user);
-    const [trackedData, newMessage] = await Promise.all([
-      onCreateMessage[Symbol.asyncIterator]().next(),
-      messageCaller.createMessage({ message, roomId: newRoom.id }),
-    ]);
+    const trackedData = await withAsyncIterator(
+      () => onCreateMessage,
+      async (iterator) => {
+        const [result] = await Promise.all([
+          iterator.next(),
+          messageCaller.createMessage({ message, roomId: newRoom.id }),
+        ]);
+        return result;
+      },
+    );
 
     assert(!trackedData.done);
 
@@ -289,15 +296,13 @@ describe("message", () => {
 
     const [id, data] = trackedData.value as unknown as TrackedEnvelope<MessageEntity[]>;
 
-    expect(id).toBe(newMessage.rowKey);
+    expect(id).toBe(takeOne(data).rowKey);
     expect(data).toHaveLength(1);
-    expect(takeOne(data)).toStrictEqual(newMessage);
+    expect(takeOne(data).message).toBe(message);
   });
 
   test("fails on creates with non-existent room", async () => {
     expect.hasAssertions();
-
-    const roomId = crypto.randomUUID();
 
     await expect(messageCaller.onCreateMessage({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,
@@ -335,8 +340,6 @@ describe("message", () => {
 
     const mockSession = getMockSession();
 
-    const roomId = crypto.randomUUID();
-
     await expect(
       messageCaller.createTyping({ roomId, userId: mockSession.user.id, username: mockSession.user.name }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
@@ -360,10 +363,20 @@ describe("message", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const onCreateTyping = await messageCaller.onCreateTyping({ roomId: newRoom.id });
     const mockSession = getMockSession();
-    const [data] = await Promise.all([
-      onCreateTyping[Symbol.asyncIterator]().next(),
-      messageCaller.createTyping({ roomId: newRoom.id, userId: mockSession.user.id, username: mockSession.user.name }),
-    ]);
+    const data = await withAsyncIterator(
+      () => onCreateTyping,
+      async (iterator) => {
+        const [result] = await Promise.all([
+          iterator.next(),
+          messageCaller.createTyping({
+            roomId: newRoom.id,
+            userId: mockSession.user.id,
+            username: mockSession.user.name,
+          }),
+        ]);
+        return result;
+      },
+    );
 
     assert(!data.done);
 
@@ -372,8 +385,6 @@ describe("message", () => {
 
   test("fails on creates typing with non-existent room", async () => {
     expect.hasAssertions();
-
-    const roomId = crypto.randomUUID();
 
     await expect(messageCaller.onCreateTyping({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,
@@ -395,7 +406,8 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const message = getMessage(getMockSession().user.id);
+    const userId = getMockSession().user.id;
+    const message = getMessage(userId);
     const newMessage = await messageCaller.createMessage({
       files: [{ filename, id: crypto.randomUUID(), mimetype, size }],
       message,
@@ -429,7 +441,8 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const message = getMessage(getMockSession().user.id);
+    const userId = getMockSession().user.id;
+    const message = getMessage(userId);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     await mockSessionOnce(mockContext.db);
 
@@ -446,17 +459,24 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const message = getMessage(getMockSession().user.id);
+    const userId = getMockSession().user.id;
+    const message = getMessage(userId);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     const onUpdateMessage = await messageCaller.onUpdateMessage({ roomId: newRoom.id });
-    const [data] = await Promise.all([
-      onUpdateMessage[Symbol.asyncIterator]().next(),
-      messageCaller.updateMessage({
-        message: updatedMessage,
-        partitionKey: newMessage.partitionKey,
-        rowKey: newMessage.rowKey,
-      }),
-    ]);
+    const data = await withAsyncIterator(
+      () => onUpdateMessage,
+      async (iterator) => {
+        const [result] = await Promise.all([
+          iterator.next(),
+          messageCaller.updateMessage({
+            message: updatedMessage,
+            partitionKey: newMessage.partitionKey,
+            rowKey: newMessage.rowKey,
+          }),
+        ]);
+        return result;
+      },
+    );
 
     assert(!data.done);
 
@@ -465,8 +485,6 @@ describe("message", () => {
 
   test("fails on updates with non-existent room", async () => {
     expect.hasAssertions();
-
-    const roomId = crypto.randomUUID();
 
     await expect(messageCaller.onUpdateMessage({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,
@@ -488,7 +506,8 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const message = getMessage(getMockSession().user.id);
+    const userId = getMockSession().user.id;
+    const message = getMessage(userId);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     await messageCaller.deleteMessage({ partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey });
 
@@ -512,7 +531,8 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const message = getMessage(getMockSession().user.id);
+    const userId = getMockSession().user.id;
+    const message = getMessage(userId);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     await mockSessionOnce(mockContext.db);
 
@@ -525,16 +545,23 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const message = getMessage(getMockSession().user.id);
+    const userId = getMockSession().user.id;
+    const message = getMessage(userId);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     const onDeleteMessage = await messageCaller.onDeleteMessage({ roomId: newRoom.id });
-    const [data] = await Promise.all([
-      onDeleteMessage[Symbol.asyncIterator]().next(),
-      messageCaller.deleteMessage({
-        partitionKey: newMessage.partitionKey,
-        rowKey: newMessage.rowKey,
-      }),
-    ]);
+    const data = await withAsyncIterator(
+      () => onDeleteMessage,
+      async (iterator) => {
+        const [result] = await Promise.all([
+          iterator.next(),
+          messageCaller.deleteMessage({
+            partitionKey: newMessage.partitionKey,
+            rowKey: newMessage.rowKey,
+          }),
+        ]);
+        return result;
+      },
+    );
 
     assert(!data.done);
 
@@ -544,8 +571,6 @@ describe("message", () => {
 
   test("fails on deletes with non-existent room", async () => {
     expect.hasAssertions();
-
-    const roomId = crypto.randomUUID();
 
     await expect(messageCaller.onDeleteMessage({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,
@@ -567,7 +592,8 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const message = getMessage(getMockSession().user.id);
+    const userId = getMockSession().user.id;
+    const message = getMessage(userId);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     const forwardedRoom = await roomCaller.createRoom({ name });
 
@@ -587,7 +613,8 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const message = getMessage(getMockSession().user.id);
+    const userId = getMockSession().user.id;
+    const message = getMessage(userId);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     const forwardedRoom = await roomCaller.createRoom({ name });
 
@@ -621,7 +648,8 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const message = getMessage(getMockSession().user.id);
+    const userId = getMockSession().user.id;
+    const message = getMessage(userId);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     const forwardedRoom = await roomCaller.createRoom({ name });
     await mockSessionOnce(mockContext.db);
@@ -639,7 +667,8 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const message = getMessage(getMockSession().user.id);
+    const userId = getMockSession().user.id;
+    const message = getMessage(userId);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
 
     await expect(
@@ -665,8 +694,6 @@ describe("message", () => {
 
   test("fails generate upload file SAS entities with non-existent room id", async () => {
     expect.hasAssertions();
-
-    const roomId = crypto.randomUUID();
 
     await expect(
       messageCaller.generateUploadFileSasEntities({ files: [{ filename, mimetype }], roomId }),
@@ -696,8 +723,6 @@ describe("message", () => {
 
   test("fails generate download file SAS URLs with non-existent room id", async () => {
     expect.hasAssertions();
-
-    const roomId = crypto.randomUUID();
 
     await expect(
       messageCaller.generateDownloadFileSasUrls({
@@ -809,7 +834,8 @@ describe("message", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const id = crypto.randomUUID();
-    const message = getMessage(getMockSession().user.id);
+    const userId = getMockSession().user.id;
+    const message = getMessage(userId);
     const newMessage = await messageCaller.createMessage({
       files: [{ filename, id, mimetype, size }],
       message,
@@ -820,14 +846,20 @@ describe("message", () => {
       new Map([[getBlobName(`${newRoom.id}/${id}`, filename), Buffer.alloc(size)]]),
     );
     const onCreateMessage = await messageCaller.onCreateMessage({ roomId: newRoom.id });
-    const [trackedData] = await Promise.all([
-      onCreateMessage[Symbol.asyncIterator]().next(),
-      messageCaller.forwardMessage({
-        partitionKey: newMessage.partitionKey,
-        roomIds: [newRoom.id],
-        rowKey: newMessage.rowKey,
-      }),
-    ]);
+    const trackedData = await withAsyncIterator(
+      () => onCreateMessage,
+      async (iterator) => {
+        const [result] = await Promise.all([
+          iterator.next(),
+          messageCaller.forwardMessage({
+            partitionKey: newMessage.partitionKey,
+            roomIds: [newRoom.id],
+            rowKey: newMessage.rowKey,
+          }),
+        ]);
+        return result;
+      },
+    );
 
     assert(!trackedData.done);
 
@@ -847,7 +879,8 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const message = getMessage(getMockSession().user.id);
+    const userId = getMockSession().user.id;
+    const message = getMessage(userId);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
 
     await expect(
@@ -863,7 +896,8 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const message = getMessage(getMockSession().user.id);
+    const userId = getMockSession().user.id;
+    const message = getMessage(userId);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
 
     await messageCaller.deleteLinkPreviewResponse({
@@ -895,7 +929,8 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const message = getMessage(getMockSession().user.id);
+    const userId = getMockSession().user.id;
+    const message = getMessage(userId);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
     await mockSessionOnce(mockContext.db);
 
@@ -908,7 +943,8 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const message = getMessage(getMockSession().user.id);
+    const userId = getMockSession().user.id;
+    const message = getMessage(userId);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
 
     await messageCaller.pinMessage({ partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey });
@@ -927,7 +963,8 @@ describe("message", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const message = getMessage(getMockSession().user.id);
+    const userId = getMockSession().user.id;
+    const message = getMessage(userId);
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
 
     await messageCaller.pinMessage({ partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey });

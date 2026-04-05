@@ -1,5 +1,5 @@
 import { SlashCommandSuggestion } from "@/services/message/slashCommands/SlashCommandSuggestion";
-import Suggestion from "@tiptap/suggestion";
+import { Suggestion } from "@tiptap/suggestion";
 import { Extension } from "@tiptap/vue-3";
 
 const SlashCommandExtension = Extension.create({

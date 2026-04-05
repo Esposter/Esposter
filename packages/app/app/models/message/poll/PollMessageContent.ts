@@ -17,8 +17,7 @@ export const pollMessageContentSchema = z
   })
   .superRefine((value, ctx) => {
     const optionIds = new Set(value.options.map(({ id }) => id));
-    for (const [userId, optionId] of Object.entries(value.votes)) {
+    for (const [userId, optionId] of Object.entries(value.votes))
       if (!optionIds.has(optionId))
         ctx.addIssue({ code: "custom", message: "Vote must reference an existing option", path: ["votes", userId] });
-    }
   }) satisfies z.ZodType<PollMessageContent>;

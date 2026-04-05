@@ -6,6 +6,7 @@ import { resetMessageCacheDatabase } from "@/services/message/cache/openMessageC
 import { readCachedMessages } from "@/services/message/cache/readCachedMessages";
 import { writeCachedMessages } from "@/services/message/cache/writeCachedMessages";
 import { useDataStore } from "@/store/message/data";
+import { getMockSession } from "@@/server/trpc/context.test";
 import { StandardMessageEntity } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
@@ -17,9 +18,9 @@ describe(useMessageCache, () => {
   let flush: () => Promise<void>;
   let items: Ref<MessageEntity[]>;
   const partitionKey = crypto.randomUUID();
+  const secondPartitionKey = crypto.randomUUID();
   const rowKey = "rowKey";
   const message = "message";
-  const userId = crypto.randomUUID();
   const goOffline = () => {
     vi.spyOn(navigator, "onLine", "get").mockReturnValue(false);
     window.dispatchEvent(new Event("offline"));
@@ -56,7 +57,10 @@ describe(useMessageCache, () => {
   };
 
   afterEach(async () => {
-    wrapper?.unmount();
+    if (wrapper) {
+      items.value = [];
+      wrapper.unmount();
+    }
     vi.restoreAllMocks();
     await resetMessageCacheDatabase();
     const databases = await indexedDB.databases();
@@ -84,43 +88,46 @@ describe(useMessageCache, () => {
   test("persists messages to cache when items change", async () => {
     expect.hasAssertions();
 
+    const userId = getMockSession().user.id;
     await mountCache();
     items.value = [new StandardMessageEntity({ message, partitionKey, rowKey, userId })];
     await flushCache();
-    const cached = await readCachedMessages(partitionKey);
+    const cachedMessages = await readCachedMessages(partitionKey);
 
-    expect(cached).toHaveLength(1);
-    expect(cached[0]).toMatchObject({ message });
+    expect(cachedMessages).toHaveLength(1);
+    expect(cachedMessages[0]).toMatchObject({ message });
   });
 
   test("does not clear cache when items become empty on room switch", async () => {
     expect.hasAssertions();
 
+    const userId = getMockSession().user.id;
     await mountCache();
     items.value = [new StandardMessageEntity({ message, partitionKey, rowKey, userId })];
     await flushCache();
     setRouteId(crypto.randomUUID());
     await flushCache();
-    const cached = await readCachedMessages(partitionKey);
+    const cachedMessages = await readCachedMessages(partitionKey);
 
-    expect(cached).toHaveLength(1);
+    expect(cachedMessages).toHaveLength(1);
   });
 
   test("does not write to cache when room id is empty", async () => {
     expect.hasAssertions();
 
+    const userId = getMockSession().user.id;
     await mountCache("");
     items.value = [new StandardMessageEntity({ message, partitionKey, rowKey, userId })];
     await flushCache();
-    const cached = await readCachedMessages(partitionKey);
+    const cachedMessages = await readCachedMessages(partitionKey);
 
-    expect(cached).toHaveLength(0);
+    expect(cachedMessages).toHaveLength(0);
   });
 
   test("populates store from cache when switching rooms offline", async () => {
     expect.hasAssertions();
 
-    const secondPartitionKey = crypto.randomUUID();
+    const userId = getMockSession().user.id;
     await writeCachedMessages(secondPartitionKey, [
       new StandardMessageEntity({ message: " ", partitionKey: secondPartitionKey, rowKey, userId }),
     ]);
@@ -136,7 +143,7 @@ describe(useMessageCache, () => {
   test("does not populate store from cache when switching rooms online", async () => {
     expect.hasAssertions();
 
-    const secondPartitionKey = crypto.randomUUID();
+    const userId = getMockSession().user.id;
     await writeCachedMessages(secondPartitionKey, [
       new StandardMessageEntity({ message: " ", partitionKey: secondPartitionKey, rowKey, userId }),
     ]);
@@ -151,6 +158,7 @@ describe(useMessageCache, () => {
   test("does not populate store if room changed during async read", async () => {
     expect.hasAssertions();
 
+    const userId = getMockSession().user.id;
     await writeCachedMessages(partitionKey, [new StandardMessageEntity({ message, partitionKey, rowKey, userId })]);
     goOffline();
     await mountCache(crypto.randomUUID());

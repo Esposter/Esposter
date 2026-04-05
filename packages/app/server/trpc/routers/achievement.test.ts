@@ -1,4 +1,5 @@
 import type { AchievementEvents } from "@@/server/services/achievement/events/achievementEventEmitter";
+import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
@@ -7,19 +8,19 @@ import { AchievementDefinitionMap } from "#shared/services/achievement/achieveme
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession } from "@@/server/trpc/context.test";
 import { trpcRouter } from "@@/server/trpc/routers";
+import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
 import { achievements, UserAchievementRelations, WebpageAchievementName } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("achievement", () => {
+  let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["_def"]["procedures"]>;
-  let mockContext: Awaited<ReturnType<typeof createMockContext>>;
   const updatedAchievements = [WebpageAchievementName.WebDeveloper];
 
   beforeAll(async () => {
-    const createCaller = createCallerFactory(trpcRouter);
     mockContext = await createMockContext();
-    caller = createCaller(mockContext);
+    caller = createCallerFactory(trpcRouter)(mockContext);
   });
 
   afterEach(async () => {
@@ -56,10 +57,16 @@ describe("achievement", () => {
     expect.hasAssertions();
 
     const onUpdateAchievement = await caller.achievement.onUpdateAchievement();
-    const [data] = await Promise.all([
-      onUpdateAchievement[Symbol.asyncIterator]().next(),
-      caller.webpageEditor.saveWebpageEditor(new WebpageEditor()),
-    ]);
+    const data = await withAsyncIterator(
+      () => onUpdateAchievement,
+      async (iterator) => {
+        const [result] = await Promise.all([
+          iterator.next(),
+          caller.webpageEditor.saveWebpageEditor(new WebpageEditor()),
+        ]);
+        return result;
+      },
+    );
 
     const unlockedAchievements = [] as unknown as AchievementEvents["updateAchievement"][0];
 
@@ -78,11 +85,12 @@ describe("achievement", () => {
     expect(takeOne(unlockedAchievements).amount).toBe(1);
     expect(takeOne(unlockedAchievements).unlockedAt).toBeInstanceOf(Date);
 
+    const userId = getMockSession().user.id;
     const userAchievement = await mockContext.db.query.userAchievements.findFirst({
       where: (userAchievements, { and, eq }) =>
         and(
           eq(userAchievements.achievementId, takeOne(unlockedAchievements).achievementId),
-          eq(userAchievements.userId, getMockSession().user.id),
+          eq(userAchievements.userId, userId),
         ),
       with: UserAchievementRelations,
     });

@@ -14,6 +14,7 @@ import { postRouter } from "@@/server/trpc/routers/post";
 import { pushSubscriptionRouter } from "@@/server/trpc/routers/pushSubscription";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
+import { voiceRouter } from "@@/server/trpc/routers/room/voice";
 import { searchHistoryRouter } from "@@/server/trpc/routers/searchHistory";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
 import { tableEditorRouter } from "@@/server/trpc/routers/tableEditor";
@@ -42,6 +43,7 @@ const trpcRouterWithoutAchievements = router({
   tableEditor: tableEditorRouter,
   user: userRouter,
   userToRoom: userToRoomRouter,
+  voice: voiceRouter,
   webhook: webhookRouter,
   webpageEditor: webpageEditorRouter,
 });
