@@ -1,9 +1,8 @@
 import type { Plugin, RolldownOptions, RolldownPluginOption } from "rolldown";
 
 import { rolldownConfigurationNode } from "@esposter/configuration";
-import { defineConfig } from "rolldown";
 
-const rolldownConfiguration: RolldownOptions = defineConfig({
+const rolldownConfiguration: RolldownOptions = {
   ...rolldownConfigurationNode,
   external: [],
   plugins: [
@@ -12,6 +11,6 @@ const rolldownConfiguration: RolldownOptions = defineConfig({
         !(Array.isArray(plugins) && (plugins as Plugin[]).some(({ name }) => name.includes("rolldown-plugin-dts"))),
     ),
   ],
-});
+};
 
 export default rolldownConfiguration;
