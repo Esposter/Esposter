@@ -17,10 +17,9 @@ export const stringSplitTransformationSchema = z
   .object({
     ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.StringSplit).readonly()).shape,
     ...createSourceColumnIdSchema(ColumnFormVjsfContextPropertyNames["context.stringColumnItems"]).shape,
-    delimiter: z.string().meta({ title: "Delimiter" }),
-    segmentIndex: z.number().int().nonnegative().meta({ title: "Segment Index" }),
+    delimiter: z.string().default(",").meta({ title: "Delimiter" }),
+    segmentIndex: z.number().int().nonnegative().default(0).meta({ title: "Segment Index" }),
   })
-  .refine((data) => data.delimiter.length > 0, { message: "Delimiter must be non-empty", path: ["delimiter"] })
   .meta({
     title: ColumnTransformationType.StringSplit,
   }) satisfies z.ZodType<StringSplitTransformation>;

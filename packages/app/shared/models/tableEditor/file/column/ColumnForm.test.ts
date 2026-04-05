@@ -335,10 +335,12 @@ describe("columnFormSchema", () => {
                     "additionalProperties": false,
                     "properties": {
                       "delimiter": {
+                        "default": ",",
                         "title": "Delimiter",
                         "type": "string",
                       },
                       "segmentIndex": {
+                        "default": 0,
                         "maximum": 9007199254740991,
                         "minimum": 0,
                         "title": "Segment Index",
