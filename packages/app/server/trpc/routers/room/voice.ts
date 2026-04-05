@@ -92,19 +92,19 @@ export const voiceRouter = router({
   sendSignal: getMemberProcedure(sendSignalInputSchema, "roomId").mutation(({ ctx, input: { payload, roomId } }) => {
     const sessionId = ctx.getSessionPayload.session.id;
     const participants = getRoomParticipants(roomId);
-    if (!participants.some((p) => p.id === sessionId)) {
+    if (!participants.some((p) => p.id === sessionId))
       throw new TRPCError({ code: "FORBIDDEN", message: "Must join voice channel first" });
-    }
-    if (!participants.some((p) => p.id === payload.targetId)) {
+
+    if (!participants.some((p) => p.id === payload.targetId))
       throw new TRPCError({ code: "NOT_FOUND", message: "Target participant not found" });
-    }
+
     voiceEventEmitter.emit("signal", { payload, roomId, senderId: sessionId });
   }),
   setMute: getMemberProcedure(setMuteInputSchema, "roomId").mutation(({ ctx, input: { isMuted, roomId } }) => {
     const sessionId = ctx.getSessionPayload.session.id;
-    if (!updateVoiceParticipantMute(roomId, sessionId, isMuted)) {
+    if (!updateVoiceParticipantMute(roomId, sessionId, isMuted))
       throw new TRPCError({ code: "FORBIDDEN", message: "Must join voice channel first" });
-    }
+
     voiceEventEmitter.emit("muteChanged", { id: sessionId, isMuted, roomId });
   }),
 });

@@ -33,11 +33,12 @@ describe("userToRoom", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const readUserToRooms = await userToRoomCaller.readUserToRooms({ roomIds: [newRoom.id] });
     const userId = getMockSession().user.id;
+    const userToRoom = takeOne(readUserToRooms);
 
     expect(readUserToRooms).toHaveLength(1);
-    expect(takeOne(readUserToRooms).roomId).toBe(newRoom.id);
-    expect(takeOne(readUserToRooms).userId).toBe(userId);
-    expect(takeOne(readUserToRooms).notificationType).toBe(NotificationType.DirectMessage);
+    expect(userToRoom.roomId).toBe(newRoom.id);
+    expect(userToRoom.userId).toBe(userId);
+    expect(userToRoom.notificationType).toBe(NotificationType.DirectMessage);
   });
 
   test("fails read for non-member", async () => {

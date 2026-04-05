@@ -119,9 +119,8 @@ export const useVoiceChannel = () => {
     const peerConnection = peerConnections.get(id);
     const queue = candidateQueues.get(id);
     if (!peerConnection || !queue) return;
-    for (const candidate of queue) {
-      await peerConnection.addIceCandidate(candidate);
-    }
+    for (const candidate of queue) await peerConnection.addIceCandidate(candidate);
+
     candidateQueues.delete(id);
   };
 
@@ -178,7 +177,9 @@ export const useVoiceChannel = () => {
     try {
       localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
       // Subscribe to signals before joining so we don't miss offers from existing participants
-      signalUnsubscribable = $trpc.voice.onSignal.subscribe(roomId, { onData: getSignalHandler(roomId) });
+      signalUnsubscribable = $trpc.voice.onSignal.subscribe(roomId, {
+        onData: getSynchronizedFunction(getSignalHandler(roomId)),
+      });
 
       const participants = await $trpc.voice.joinVoiceChannel.mutate({ roomId });
       setParticipants(roomId, participants);
@@ -200,7 +201,7 @@ export const useVoiceChannel = () => {
       if (sessionId) leaveVoice(roomId, sessionId);
       await $trpc.voice.leaveVoiceChannel.mutate({ roomId });
     } finally {
-      for (const id of peerConnections.keys()) cleanupPeer(id);
+      await Promise.all(peerConnections.keys().map((id) => cleanupPeer(id)));
       await cleanupLocalStream();
       signalUnsubscribable?.unsubscribe();
       signalUnsubscribable = undefined;
@@ -232,7 +233,9 @@ export const useVoiceChannel = () => {
       }),
     });
     const muteChangedUnsubscribable = $trpc.voice.onMuteChanged.subscribe(roomId, {
-      onData: (muteChange) => setMute(roomId, muteChange.id, muteChange.isMuted),
+      onData: (muteChange) => {
+        setMute(roomId, muteChange.id, muteChange.isMuted);
+      },
     });
 
     return async () => {
@@ -241,7 +244,7 @@ export const useVoiceChannel = () => {
         await $trpc.voice.leaveVoiceChannel.mutate({ roomId });
         if (sessionId) leaveVoice(roomId, sessionId);
       }
-      for (const id of peerConnections.keys()) cleanupPeer(id);
+      await Promise.all(peerConnections.keys().map((id) => cleanupPeer(id)));
       await cleanupLocalStream();
       signalUnsubscribable?.unsubscribe();
       signalUnsubscribable = undefined;

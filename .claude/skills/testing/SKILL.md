@@ -1,6 +1,6 @@
 ---
 name: testing
-description: Esposter Vitest testing conventions — describe with function refs, canonical test values, takeOne for array access, destructuring from stores/composables, mock session patterns (getMockSession/mockSessionOnce/replayMockSession), and the Windows UnoCSS test-skip rule. Apply when writing .test.ts files.
+description: Esposter Vitest testing conventions — describe with function refs, canonical test values, targeted takeOne usage for unsafe index access patterns, destructuring from stores/composables, mock session patterns (getMockSession/mockSessionOnce/replayMockSession), and the Windows UnoCSS test-skip rule. Apply when writing .test.ts files.
 ---
 
 # Testing Conventions (Vitest)
@@ -26,7 +26,7 @@ description: Esposter Vitest testing conventions — describe with function refs
 - **Date format tests** — when testing all date formats, use a `for...of` loop inside a single test, converting epoch via `dayjs("1970-01-01", "YYYY-MM-DD", true).format(format)`. Never use `test.each` for date format iteration.
 - **Interpolated descriptions** — use template literals with enum values: `` `boolean returns ${ColumnType.Boolean}` ``.
 - **Human-readable names** — use plain English: "integer", "decimal", "negative", "epoch date", "NaN".
-- **Array index access** — always use `takeOne(arr, index)` from `@esposter/shared` instead of `arr[index]` or `arr[index]?.` — `noUncheckedIndexedAccess` makes direct index access return `T | undefined`, and `takeOne` throws on out-of-bounds while keeping the type non-nullable.
+- **Array index access** — use `takeOne(arr, index)` from `@esposter/shared` where it resolves real `noUncheckedIndexedAccess` type friction (i.e. where direct index access returns `T | undefined` and you need a non-nullable type). `takeOne` throws on out-of-bounds while keeping the type non-nullable. Do not use it universally — prefer `find`/`findIndex` + guard when that is more idiomatic for the pattern.
 - **Destructure from stores and composables** — always destructure return values: `const { deleteRow, undo, isUndoable } = operations` rather than calling `operations.deleteRow(...)`. Same for stores: `const { editedItem } = storeToRefs(store)` and `const { methodName } = store`. This applies inside `beforeEach` too — never chain `useX().method()` inline; always `const { method } = useX()` first.
 - **Always assign `getMockSession()` results** — never inline `getMockSession().user.id` or `getMockSession().session.id` directly in an expression. Always assign first. Use direct property access when only one property is needed (`const userId = getMockSession().user.id`), and destructure only when multiple properties are needed (`const { user } = getMockSession()` to use both `user.id` and `user.name`). This applies even when used only once.
 - **`getMockSession()` session ID is unstable** — `getMockSession().session.id` creates a **new random UUID on every call** (via `createSession`). It cannot be used to assert against what a tRPC procedure used internally, since the procedure's `auth.api.getSession()` call generates its own fresh UUID. `getMockSession().user.id` is stable (created once in `vi.hoisted`). Use the following patterns depending on what you need:

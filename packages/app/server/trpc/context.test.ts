@@ -1,7 +1,6 @@
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { Context } from "@@/server/trpc/context";
-import type { User } from "better-auth";
-import type { Session } from "better-auth";
+import type { Session, User } from "better-auth";
 import type { PgliteDatabase } from "drizzle-orm/pglite";
 
 import { dayjs } from "#shared/services/dayjs";
