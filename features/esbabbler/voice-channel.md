@@ -64,7 +64,7 @@ All procedures live in `server/trpc/routers/room/voice.ts`.
 
 ### Initial join
 
-```
+```text
 Client A (joining)                  Server                  Client B (already in)
         |                              |                              |
         |-- joinVoiceChannel --------->|                              |
@@ -82,7 +82,7 @@ Client A (joining)                  Server                  Client B (already in
 
 ### Mute toggle
 
-```
+```text
 Client A                            Server                  Client B
    |-- setMute(isMuted) ----------->|                              |
    |  [store.setMute optimistic]    |-- onMuteChanged ------------>|
@@ -91,7 +91,7 @@ Client A                            Server                  Client B
 
 ### Page refresh / reconnect
 
-```
+```text
 Client A (refreshing)              Server                   Client B (in channel)
         |                              |                              |
         | [useOnlineSubscribable fires]|                              |
