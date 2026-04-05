@@ -203,9 +203,8 @@ export const useVoiceChannel = () => {
 
   const toggleMute = async () => {
     const sessionId = session.value.data?.session.id;
-    console.log(localStream);
     if (!localStream || !currentRoomId.value || !sessionId) return;
-    console.log("???");
+
     const newIsMuted = !isMuted.value;
     setMute(currentRoomId.value, sessionId, newIsMuted);
     for (const track of localStream.getAudioTracks()) track.enabled = !newIsMuted;
