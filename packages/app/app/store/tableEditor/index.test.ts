@@ -9,7 +9,6 @@ import { useTableEditorStore } from "@/store/tableEditor";
 import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { useItemStore } from "@/store/tableEditor/item";
 import { takeOne } from "@esposter/shared";
-import { flushPromises } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { assert, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
@@ -148,7 +147,6 @@ describe(useTableEditorStore, () => {
     expect(isUndoable.value).toBe(true);
 
     await save();
-    await flushPromises();
 
     expect(isUndoable.value).toBe(false);
   });
@@ -169,7 +167,6 @@ describe(useTableEditorStore, () => {
     expect(isUndoable.value).toBe(true);
 
     editFormDialog.value = false;
-    await flushPromises();
 
     expect(isUndoable.value).toBe(false);
   });

@@ -49,7 +49,9 @@ description: Esposter Vitest testing conventions — describe with function refs
 
 There is no DOM in this test environment, so `nextTick` is never needed — synchronous reactive effects (computed re-evaluation, synchronous watch callbacks) take place immediately when a ref changes.
 
-For **async watch callbacks** (`watch(ref, async () => { ... })`), Vue fires the callback but does not await it. Use `flushPromises()` from `@vue/test-utils` to drain the entire microtask queue so the watch body fully completes before asserting:
+For **watchers that handle critical state synchronization or cleanup**, always use `{ flush: "sync" }` in the `watch` options. This ensures that the callback's synchronous side-effects (like clearing an array) happen immediately upon the ref change, allowing for cleaner tests without `nextTick` or `flushPromises`.
+
+For **async watch callbacks** (`watch(ref, async () => { ... })`) that are NOT flushed synchronously, Vue fires the callback but does not await it. Use `flushPromises()` from `@vue/test-utils` to drain the entire microtask queue so the watch body fully completes before asserting:
 
 ```ts
 import { flushPromises } from "@vue/test-utils";
@@ -59,7 +61,7 @@ await flushPromises();
 expect(isUndoable.value).toBe(false);
 ```
 
-Never use `await nextTick()` in tests — it is either unnecessary (sync effects) or insufficient (async watch bodies). Always use `flushPromises` when you need to wait for any pending async work.
+Never use `await nextTick()` in tests — it is either unnecessary (sync effects) or insufficient (async watch bodies). For synchronous side-effects of `{ flush: "sync" }` watchers, no waiting is required. For any other pending async work, always use `flushPromises`.
 
 ## Running Validation Commands
 
