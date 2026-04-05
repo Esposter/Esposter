@@ -246,7 +246,8 @@ describe("voice", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const payload = { data: "{}", targetId: getMockSession().session.id, type: VoiceSignalType.Offer };
+    const sessionId = getMockSession().session.id;
+    const payload = { data: "{}", targetId: sessionId, type: VoiceSignalType.Offer };
 
     await expect(voiceCaller.sendSignal({ payload, roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Must join voice channel first]`,
@@ -257,7 +258,8 @@ describe("voice", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const sessionPayload = await mockSessionOnce(mockContext.db, getMockSession().user);
+    const { user } = getMockSession();
+    const sessionPayload = await mockSessionOnce(mockContext.db, user);
     await voiceCaller.joinVoiceChannel({ roomId: newRoom.id });
     replayMockSession(sessionPayload);
     const payload = { data: "{}", targetId: crypto.randomUUID(), type: VoiceSignalType.Offer };

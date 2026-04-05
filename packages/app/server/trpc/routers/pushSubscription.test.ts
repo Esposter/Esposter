@@ -53,11 +53,12 @@ describe("pushSubscription", () => {
       expirationTime: null,
       keys: { auth, p256dh },
     });
+    const userId = getMockSession().user.id;
 
     expect(newPushSubscription.endpoint).toBe(endpoint);
     expect(newPushSubscription.auth).toBe(auth);
     expect(newPushSubscription.p256dh).toBe(p256dh);
-    expect(newPushSubscription.userId).toBe(getMockSession().user.id);
+    expect(newPushSubscription.userId).toBe(userId);
   });
 
   test("subscribes updates existing endpoint", async () => {
