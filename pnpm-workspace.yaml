@@ -159,7 +159,7 @@ catalog:
   js-beautify: ^1.15.4
   link-preview-js: ^4.0.0
   linkifyjs: ^4.3.2
-  marked: ^17.0.5
+  marked: ^17.0.6
   mathjs: ^15.1.1
   mime-types: ^3.0.2
   mjml-browser: ^4.18.0

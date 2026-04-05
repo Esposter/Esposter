@@ -448,7 +448,7 @@ catalogs:
       specifier: ^4.3.2
       version: 4.3.2
     marked:
-      specifier: ^17.0.5
+      specifier: ^17.0.6
       version: 17.0.6
     mathjs:
       specifier: ^15.1.1
