@@ -7,7 +7,7 @@ import { authClient } from "@/services/auth/authClient";
 import { ICE_SERVERS, LOCAL_PARTICIPANT_ID, SPEAKING_THRESHOLD } from "@/services/message/voice/constants";
 import { useRoomStore } from "@/store/message/room";
 import { useVoiceStore } from "@/store/message/voice";
-import { exhaustiveGuard, getIsServer, jsonDateParse } from "@esposter/shared";
+import { exhaustiveGuard, jsonDateParse } from "@esposter/shared";
 
 export const useVoiceChannel = () => {
   const { $trpc } = useNuxtApp();
@@ -46,7 +46,6 @@ export const useVoiceChannel = () => {
   };
 
   const setupSpeakingDetection = async (peerId: string, speakerId: string, stream: MediaStream) => {
-    if (getIsServer()) return;
     const audioContext = new AudioContext();
     await audioContext.resume();
     const analyser = audioContext.createAnalyser();
@@ -102,8 +101,6 @@ export const useVoiceChannel = () => {
   };
 
   const createPeerConnection = async (roomId: string, remoteId: string) => {
-    if (getIsServer()) return;
-
     const peerConnection = buildPeerConnection(roomId, remoteId);
     const offer = await peerConnection.createOffer();
     await peerConnection.setLocalDescription(offer);
@@ -167,7 +164,7 @@ export const useVoiceChannel = () => {
     };
 
   const join = async () => {
-    if (getIsServer() || !currentRoomId.value || isInChannel.value) return;
+    if (!currentRoomId.value || isInChannel.value) return;
 
     const roomId = currentRoomId.value;
 
