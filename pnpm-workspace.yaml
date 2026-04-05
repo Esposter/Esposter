@@ -180,7 +180,7 @@ catalog:
   phaser3-rex-plugins: ^1.80.20
   pinia: ^3.0.4
   pluralize: ^8.0.0
-  postgres: ^3.4.8
+  postgres: ^3.4.9
   prosemirror-state: ^1.4.4
   rate-limiter-flexible: ^11.0.0
   read-excel-file: ^8.0.3
