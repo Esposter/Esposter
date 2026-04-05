@@ -14,7 +14,7 @@ describe(useVoiceChannel, () => {
   let mockContext: Context;
   let isInChannel: Ref<boolean>;
   let isMuted: Ref<boolean>;
-  let speakingUserIds: Ref<string[]>;
+  let speakingIds: Ref<string[]>;
   let join: () => Promise<void>;
   let leave: () => Promise<void>;
   let toggleMute: () => Promise<void>;
@@ -32,7 +32,7 @@ describe(useVoiceChannel, () => {
         setup: () => {
           ({ isInChannel, isMuted, join, leave, toggleMute } = useVoiceChannel());
           const voiceStore = useVoiceStore();
-          ({ speakingUserIds, voiceParticipantsRoomMap } = storeToRefs(voiceStore));
+          ({ speakingIds, voiceParticipantsRoomMap } = storeToRefs(voiceStore));
           ({ joinVoice, leaveVoice, setMute, setParticipants } = voiceStore);
           voiceParticipantsRoomMap.value = new Map<string, VoiceParticipant[]>();
         },
@@ -56,7 +56,7 @@ describe(useVoiceChannel, () => {
 
     expect(isInChannel.value).toBe(false);
     expect(isMuted.value).toBe(false);
-    expect(speakingUserIds.value).toStrictEqual([]);
+    expect(speakingIds.value).toStrictEqual([]);
   });
 
   test("participants are empty initially", async () => {

@@ -2,7 +2,7 @@ import type { VoiceParticipant } from "#shared/models/room/voice/VoiceParticipan
 
 export const useVoiceStore = defineStore("message/voice", () => {
   const voiceParticipantsRoomMap = ref(new Map<string, VoiceParticipant[]>());
-  const speakingUserIds = ref<string[]>([]);
+  const speakingIds = ref<string[]>([]);
   const joinVoice = (roomId: string, participant: VoiceParticipant) => {
     const participants = voiceParticipantsRoomMap.value.get(roomId) ?? [];
     if (participants.some(({ id }) => id === participant.id)) return;
@@ -26,25 +26,25 @@ export const useVoiceStore = defineStore("message/voice", () => {
   const setParticipants = (roomId: string, participants: VoiceParticipant[]) => {
     voiceParticipantsRoomMap.value.set(roomId, participants);
   };
-  const createSpeakingUser = (id: string) => {
-    if (speakingUserIds.value.includes(id)) return;
-    speakingUserIds.value = [...speakingUserIds.value, id];
+  const createSpeaker = (id: string) => {
+    if (speakingIds.value.includes(id)) return;
+    speakingIds.value = [...speakingIds.value, id];
   };
-  const deleteSpeakingUser = (id: string) => {
-    speakingUserIds.value = speakingUserIds.value.filter((speakingId) => speakingId !== id);
+  const deleteSpeaker = (id: string) => {
+    speakingIds.value = speakingIds.value.filter((speakingId) => speakingId !== id);
   };
-  const clearSpeakingUsers = () => {
-    speakingUserIds.value = [];
+  const clearSpeakers = () => {
+    speakingIds.value = [];
   };
   return {
-    clearSpeakingUsers,
-    createSpeakingUser,
-    deleteSpeakingUser,
+    clearSpeakers,
+    createSpeaker,
+    deleteSpeaker,
     joinVoice,
     leaveVoice,
     setMute,
     setParticipants,
-    speakingUserIds,
+    speakingIds,
     voiceParticipantsRoomMap,
   };
 });

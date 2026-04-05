@@ -15,16 +15,8 @@ export const useVoiceChannel = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const voiceStore = useVoiceStore();
-  const {
-    clearSpeakingUsers,
-    createSpeakingUser,
-    deleteSpeakingUser,
-    joinVoice,
-    leaveVoice,
-    setMute,
-    setParticipants,
-  } = voiceStore;
-  const { speakingUserIds } = storeToRefs(voiceStore);
+  const { clearSpeakers, createSpeaker, deleteSpeaker, joinVoice, leaveVoice, setMute, setParticipants } = voiceStore;
+  const { speakingIds } = storeToRefs(voiceStore);
   const isInChannel = ref(false);
   const isMuted = ref(false);
 
@@ -43,7 +35,7 @@ export const useVoiceChannel = () => {
     await speakingCleanups.get(id)?.();
     speakingCleanups.delete(id);
     candidateQueues.delete(id);
-    deleteSpeakingUser(id);
+    deleteSpeaker(id);
   };
 
   const cleanupLocalStream = async () => {
@@ -68,10 +60,10 @@ export const useVoiceChannel = () => {
       analyser.getByteFrequencyData(dataArray);
       const average = dataArray.reduce((acc, val) => acc + val, 0) / dataArray.length;
       const isSpeaking = average > SPEAKING_THRESHOLD;
-      const isCurrentlySpeaking = speakingUserIds.value.includes(id);
+      const isCurrentlySpeaking = speakingIds.value.includes(id);
 
-      if (isSpeaking && !isCurrentlySpeaking) createSpeakingUser(id);
-      else if (!isSpeaking && isCurrentlySpeaking) deleteSpeakingUser(id);
+      if (isSpeaking && !isCurrentlySpeaking) createSpeaker(id);
+      else if (!isSpeaking && isCurrentlySpeaking) deleteSpeaker(id);
 
       animationFrame = requestAnimationFrame(detectSpeaking);
     };
@@ -212,7 +204,7 @@ export const useVoiceChannel = () => {
       await cleanupLocalStream();
       signalUnsubscribable?.unsubscribe();
       signalUnsubscribable = undefined;
-      clearSpeakingUsers();
+      clearSpeakers();
     }
   };
 
@@ -257,7 +249,7 @@ export const useVoiceChannel = () => {
       signalUnsubscribable = undefined;
       isInChannel.value = false;
       isMuted.value = false;
-      clearSpeakingUsers();
+      clearSpeakers();
       participantJoinUnsubscribable.unsubscribe();
       participantLeaveUnsubscribable.unsubscribe();
       muteChangedUnsubscribable.unsubscribe();
