@@ -20,50 +20,39 @@ export function useOnlineSubscribable(
 ) {
   const online = useOnline();
   const sources = (Array.isArray(source) ? [...source, online] : [source, online]) as MultiWatchSources;
+
   let currentCleanup: (() => Promisable<void>) | undefined;
-  let pendingOfflineCleanup: Promise<void> | undefined;
-  let isDisposed = false;
-  const { trigger } = watchTriggerable(sources, async (values, _oldValues, onCleanup) => {
-    const offlineCleanup = pendingOfflineCleanup;
-    pendingOfflineCleanup = undefined;
+  let isActive = true;
+  let chain: Promise<unknown> = Promise.resolve();
 
-    if (!online.value) {
-      const previousCleanup = currentCleanup;
+  const { trigger } = watchTriggerable(sources, (values) => {
+    const isOnline = online.value;
+    const value = isOnline ? (Array.isArray(source) ? values.slice(0, -1) : values[0]) : null;
+
+    chain = chain.then(async () => {
+      const prevCleanup = currentCleanup;
       currentCleanup = undefined;
-      pendingOfflineCleanup = Promise.resolve(previousCleanup?.());
-      await pendingOfflineCleanup;
-      return;
-    }
+      await prevCleanup?.();
 
-    await offlineCleanup;
+      if (!isOnline || !isActive) return;
 
-    const value = (Array.isArray(source) ? values.slice(0, -1) : values[0]) as unknown;
+      const newCleanup = await callback(value);
 
-    let isCurrent = true;
-
-    onCleanup(() => {
-      isCurrent = false;
+      if (isActive) currentCleanup = newCleanup;
+      else await newCleanup?.();
     });
-
-    const previousCleanup = currentCleanup;
-    currentCleanup = undefined;
-    await previousCleanup?.();
-
-    const cleanup = await callback(value);
-
-    if (isCurrent && !isDisposed) currentCleanup = cleanup;
-    else await cleanup?.();
   });
 
-  onMounted(async () => {
-    await trigger();
+  onMounted(() => {
+    trigger();
   });
 
   onScopeDispose(
     getSynchronizedFunction(async () => {
-      isDisposed = true;
-      await currentCleanup?.();
+      isActive = false;
+      const fn = currentCleanup;
       currentCleanup = undefined;
+      await fn?.();
     }),
   );
 }
