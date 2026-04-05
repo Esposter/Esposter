@@ -29,6 +29,7 @@ describe("voice", () => {
   afterEach(async () => {
     voiceRoomParticipantMap.clear();
     await mockContext.db.delete(rooms);
+    vi.clearAllMocks();
   });
 
   test("reads voice participants when empty", async () => {
@@ -53,7 +54,7 @@ describe("voice", () => {
     expect(takeOne(participants).isMuted).toBe(false);
   });
 
-  test("joining voice channel twice is idempotent", async () => {
+  test("joining voice channel twice keeps participant list at 1", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
@@ -64,6 +65,19 @@ describe("voice", () => {
 
     expect(participants).toHaveLength(1);
     expect(takeOne(participants).id).toBe(sessionPayload.session.id);
+  });
+
+  test("joining voice channel twice always emits join event for reconnect", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const sessionPayload = await mockSessionOnce(mockContext.db, getMockSession().user);
+    await voiceCaller.joinVoiceChannel({ roomId: newRoom.id });
+    const emitSpy = vi.spyOn(voiceEventEmitter, "emit");
+    replayMockSession(sessionPayload);
+    await voiceCaller.joinVoiceChannel({ roomId: newRoom.id });
+
+    expect(emitSpy).toHaveBeenCalledWith("joinVoiceChannel", expect.objectContaining({ roomId: newRoom.id }));
   });
 
   test("reads voice participants after join", async () => {

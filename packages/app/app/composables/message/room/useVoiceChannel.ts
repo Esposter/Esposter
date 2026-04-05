@@ -7,7 +7,7 @@ import { authClient } from "@/services/auth/authClient";
 import { ICE_SERVERS, LOCAL_PARTICIPANT_ID, SPEAKING_THRESHOLD } from "@/services/message/voice/constants";
 import { useRoomStore } from "@/store/message/room";
 import { useVoiceStore } from "@/store/message/voice";
-import { exhaustiveGuard, getIsServer, jsonDateParse } from "@esposter/shared";
+import { exhaustiveGuard, jsonDateParse } from "@esposter/shared";
 
 export const useVoiceChannel = () => {
   const { $trpc } = useNuxtApp();
@@ -15,11 +15,8 @@ export const useVoiceChannel = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const voiceStore = useVoiceStore();
-  const { addSpeakingUser, clearSpeakingUsers, joinVoice, leaveVoice, removeSpeakingUser, setMute, setParticipants } =
-    voiceStore;
-  const { speakingUserIds } = storeToRefs(voiceStore);
-  const isInChannel = ref(false);
-  const isMuted = ref(false);
+  const { clearSpeakers, createSpeaker, deleteSpeaker, joinVoice, leaveVoice, setMute, setParticipants } = voiceStore;
+  const { isInChannel, isMuted, speakingIds } = storeToRefs(voiceStore);
 
   let localStream: MediaStream | null = null;
   const peerConnections = new Map<string, RTCPeerConnection>();
@@ -36,7 +33,7 @@ export const useVoiceChannel = () => {
     await speakingCleanups.get(id)?.();
     speakingCleanups.delete(id);
     candidateQueues.delete(id);
-    removeSpeakingUser(id);
+    deleteSpeaker(id);
   };
 
   const cleanupLocalStream = async () => {
@@ -48,9 +45,9 @@ export const useVoiceChannel = () => {
     await cleanup?.();
   };
 
-  const setupSpeakingDetection = (id: string, stream: MediaStream) => {
-    if (getIsServer()) return;
+  const setupSpeakingDetection = async (peerId: string, speakerId: string, stream: MediaStream) => {
     const audioContext = new AudioContext();
+    await audioContext.resume();
     const analyser = audioContext.createAnalyser();
     audioContext.createMediaStreamSource(stream).connect(analyser);
     analyser.fftSize = 256;
@@ -61,16 +58,16 @@ export const useVoiceChannel = () => {
       analyser.getByteFrequencyData(dataArray);
       const average = dataArray.reduce((acc, val) => acc + val, 0) / dataArray.length;
       const isSpeaking = average > SPEAKING_THRESHOLD;
-      const isCurrentlySpeaking = speakingUserIds.value.includes(id);
+      const isCurrentlySpeaking = speakingIds.value.includes(speakerId);
 
-      if (isSpeaking && !isCurrentlySpeaking) addSpeakingUser(id);
-      else if (!isSpeaking && isCurrentlySpeaking) removeSpeakingUser(id);
+      if (isSpeaking && !isCurrentlySpeaking) createSpeaker(speakerId);
+      else if (!isSpeaking && isCurrentlySpeaking) deleteSpeaker(speakerId);
 
       animationFrame = requestAnimationFrame(detectSpeaking);
     };
 
     animationFrame = requestAnimationFrame(detectSpeaking);
-    speakingCleanups.set(id, async () => {
+    speakingCleanups.set(peerId, async () => {
       cancelAnimationFrame(animationFrame);
       await audioContext.close();
     });
@@ -85,7 +82,7 @@ export const useVoiceChannel = () => {
     peerConnection.ontrack = getSynchronizedFunction(async ({ streams }) => {
       const remoteStream = streams[0];
       if (!remoteStream) return;
-      setupSpeakingDetection(remoteId, remoteStream);
+      await setupSpeakingDetection(remoteId, remoteId, remoteStream);
       const audio = new Audio();
       audio.srcObject = remoteStream;
       await audio.play();
@@ -104,8 +101,6 @@ export const useVoiceChannel = () => {
   };
 
   const createPeerConnection = async (roomId: string, remoteId: string) => {
-    if (getIsServer()) return;
-
     const peerConnection = buildPeerConnection(roomId, remoteId);
     const offer = await peerConnection.createOffer();
     await peerConnection.setLocalDescription(offer);
@@ -169,10 +164,9 @@ export const useVoiceChannel = () => {
     };
 
   const join = async () => {
-    if (getIsServer() || !currentRoomId.value || isInChannel.value) return;
+    if (!currentRoomId.value || isInChannel.value) return;
 
     const roomId = currentRoomId.value;
-    isInChannel.value = true;
 
     try {
       localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
@@ -183,7 +177,8 @@ export const useVoiceChannel = () => {
 
       const participants = await $trpc.voice.joinVoiceChannel.mutate({ roomId });
       setParticipants(roomId, participants);
-      setupSpeakingDetection(LOCAL_PARTICIPANT_ID, localStream);
+      const localSessionId = session.value.data?.session.id;
+      if (localSessionId) await setupSpeakingDetection(LOCAL_PARTICIPANT_ID, localSessionId, localStream);
     } catch {
       await leave();
     }
@@ -194,9 +189,6 @@ export const useVoiceChannel = () => {
 
     const roomId = currentRoomId.value;
     const sessionId = session.value.data?.session.id;
-    isInChannel.value = false;
-    isMuted.value = false;
-
     try {
       if (sessionId) leaveVoice(roomId, sessionId);
       await $trpc.voice.leaveVoiceChannel.mutate({ roomId });
@@ -205,25 +197,39 @@ export const useVoiceChannel = () => {
       await cleanupLocalStream();
       signalUnsubscribable?.unsubscribe();
       signalUnsubscribable = undefined;
-      clearSpeakingUsers();
+      clearSpeakers();
     }
   };
 
   const toggleMute = async () => {
-    if (!localStream || !currentRoomId.value) return;
+    const sessionId = session.value.data?.session.id;
+    if (!localStream || !currentRoomId.value || !sessionId) return;
 
-    isMuted.value = !isMuted.value;
-    for (const track of localStream.getAudioTracks()) track.enabled = !isMuted.value;
-    await $trpc.voice.setMute.mutate({ isMuted: isMuted.value, roomId: currentRoomId.value });
+    const newIsMuted = !isMuted.value;
+    setMute(currentRoomId.value, sessionId, newIsMuted);
+    for (const track of localStream.getAudioTracks()) track.enabled = !newIsMuted;
+    await $trpc.voice.setMute.mutate({ isMuted: newIsMuted, roomId: currentRoomId.value });
   };
 
-  useOnlineSubscribable(currentRoomId, (roomId) => {
+  useOnlineSubscribable(currentRoomId, async (roomId) => {
     if (!roomId) return;
+
+    const participants = await $trpc.voice.readVoiceParticipants.query({ roomId });
+    setParticipants(roomId, participants);
+
+    if (isInChannel.value) {
+      const sessionId = session.value.data?.session.id;
+      if (sessionId) leaveVoice(roomId, sessionId);
+      await join();
+    }
 
     const participantJoinUnsubscribable = $trpc.voice.onParticipantJoin.subscribe(roomId, {
       onData: getSynchronizedFunction(async (participant) => {
         joinVoice(roomId, participant);
-        if (isInChannel.value) await createPeerConnection(roomId, participant.id);
+        if (isInChannel.value) {
+          await cleanupPeer(participant.id);
+          await createPeerConnection(roomId, participant.id);
+        }
       }),
     });
     const participantLeaveUnsubscribable = $trpc.voice.onParticipantLeave.subscribe(roomId, {
@@ -248,14 +254,12 @@ export const useVoiceChannel = () => {
       await cleanupLocalStream();
       signalUnsubscribable?.unsubscribe();
       signalUnsubscribable = undefined;
-      isInChannel.value = false;
-      isMuted.value = false;
-      clearSpeakingUsers();
+      clearSpeakers();
       participantJoinUnsubscribable.unsubscribe();
       participantLeaveUnsubscribable.unsubscribe();
       muteChangedUnsubscribable.unsubscribe();
     };
   });
 
-  return { isInChannel, isMuted, join, leave, toggleMute };
+  return { join, leave, toggleMute };
 };

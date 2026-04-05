@@ -140,13 +140,13 @@ describe(useTableEditorStore, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { isUndoable } = storeToRefs(fileHistoryStore);
     const deleteRow = useDeleteRow();
-    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? []).id);
+    assert.exists(editedItem.value?.dataSource);
+    deleteRow(takeOne(editedItem.value.dataSource.rows).id);
     editFormDialog.value = true;
 
     expect(isUndoable.value).toBe(true);
 
     await save();
-    await nextTick();
 
     expect(isUndoable.value).toBe(false);
   });
@@ -160,13 +160,13 @@ describe(useTableEditorStore, () => {
     const fileHistoryStore = useFileHistoryStore();
     const { isUndoable } = storeToRefs(fileHistoryStore);
     const deleteRow = useDeleteRow();
-    deleteRow(takeOne(editedItem.value?.dataSource?.rows ?? []).id);
+    assert.exists(editedItem.value?.dataSource);
+    deleteRow(takeOne(editedItem.value.dataSource.rows).id);
     editFormDialog.value = true;
 
     expect(isUndoable.value).toBe(true);
 
     editFormDialog.value = false;
-    await nextTick();
 
     expect(isUndoable.value).toBe(false);
   });

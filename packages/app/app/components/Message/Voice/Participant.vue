@@ -9,8 +9,8 @@ interface VoiceParticipantProps {
 
 const { participant } = defineProps<VoiceParticipantProps>();
 const voiceStore = useVoiceStore();
-const { speakingUserIds } = storeToRefs(voiceStore);
-const isSpeaking = computed(() => speakingUserIds.value.includes(participant.id));
+const { speakingIds } = storeToRefs(voiceStore);
+const isSpeaking = computed(() => speakingIds.value.includes(participant.id));
 </script>
 
 <template>
@@ -21,12 +21,11 @@ const isSpeaking = computed(() => speakingUserIds.value.includes(participant.id)
         <div
           v-if="isSpeaking"
           absolute
-          inset-0
-          rounded-full
-          border-2
-          border-green-500
           animate-pulse
+          inset-0
+          outline="2 solid green-500 offset-2"
           pointer-events-none
+          rd-full
         />
       </div>
     </template>

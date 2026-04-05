@@ -14,11 +14,11 @@ describe(useVoiceChannel, () => {
   let mockContext: Context;
   let isInChannel: Ref<boolean>;
   let isMuted: Ref<boolean>;
-  let speakingUserIds: Ref<string[]>;
+  let speakingIds: Ref<string[]>;
   let join: () => Promise<void>;
   let leave: () => Promise<void>;
   let toggleMute: () => Promise<void>;
-  let participantsByRoom: Ref<Record<string, VoiceParticipant[]>>;
+  let voiceParticipantsRoomMap: Ref<Map<string, VoiceParticipant[]>>;
   let joinVoice: (roomId: string, participant: VoiceParticipant) => void;
   let leaveVoice: (roomId: string, id: string) => void;
   let setMute: (roomId: string, id: string, isMuted: boolean) => void;
@@ -30,11 +30,12 @@ describe(useVoiceChannel, () => {
       defineComponent({
         render: () => h("div"),
         setup: () => {
-          ({ isInChannel, isMuted, join, leave, toggleMute } = useVoiceChannel());
+          ({ join, leave, toggleMute } = useVoiceChannel());
           const voiceStore = useVoiceStore();
-          ({ participantsByRoom, speakingUserIds } = storeToRefs(voiceStore));
+          ({ isInChannel, isMuted, speakingIds, voiceParticipantsRoomMap } = storeToRefs(voiceStore));
           ({ joinVoice, leaveVoice, setMute, setParticipants } = voiceStore);
-          participantsByRoom.value = {};
+          speakingIds.value = [];
+          voiceParticipantsRoomMap.value = new Map<string, VoiceParticipant[]>();
         },
       }),
     );
@@ -56,7 +57,7 @@ describe(useVoiceChannel, () => {
 
     expect(isInChannel.value).toBe(false);
     expect(isMuted.value).toBe(false);
-    expect(speakingUserIds.value).toStrictEqual([]);
+    expect(speakingIds.value).toStrictEqual([]);
   });
 
   test("participants are empty initially", async () => {
@@ -64,7 +65,7 @@ describe(useVoiceChannel, () => {
 
     await mountVoiceChannel();
 
-    expect(Object.keys(participantsByRoom.value)).toHaveLength(0);
+    expect(voiceParticipantsRoomMap.value.size).toBe(0);
   });
 
   test("join is no-op without room id", async () => {
@@ -109,7 +110,7 @@ describe(useVoiceChannel, () => {
     await mountVoiceChannel();
     joinVoice(roomId, participant);
 
-    const roomParticipants = participantsByRoom.value[roomId] ?? [];
+    const roomParticipants = voiceParticipantsRoomMap.value.get(roomId) ?? [];
 
     expect(roomParticipants).toHaveLength(1);
     expect(takeOne(roomParticipants)).toStrictEqual(participant);
@@ -131,7 +132,7 @@ describe(useVoiceChannel, () => {
     joinVoice(roomId, participant);
     joinVoice(roomId, participant);
 
-    expect(participantsByRoom.value[roomId]).toHaveLength(1);
+    expect(voiceParticipantsRoomMap.value.get(roomId)).toHaveLength(1);
   });
 
   test("leaveVoice removes participant from room", async () => {
@@ -150,7 +151,7 @@ describe(useVoiceChannel, () => {
     joinVoice(roomId, participant);
     leaveVoice(roomId, participant.id);
 
-    expect(participantsByRoom.value[roomId]).toStrictEqual([]);
+    expect(voiceParticipantsRoomMap.value.get(roomId)).toStrictEqual([]);
   });
 
   test("setMute updates participant mute state", async () => {
@@ -169,7 +170,7 @@ describe(useVoiceChannel, () => {
     joinVoice(roomId, participant);
     setMute(roomId, participant.id, true);
 
-    const roomParticipants = participantsByRoom.value[roomId] ?? [];
+    const roomParticipants = voiceParticipantsRoomMap.value.get(roomId) ?? [];
 
     expect(takeOne(roomParticipants).isMuted).toBe(true);
   });
@@ -181,7 +182,7 @@ describe(useVoiceChannel, () => {
     await mountVoiceChannel();
     setMute(roomId, sessionId, true);
 
-    expect(participantsByRoom.value[roomId]).toBeUndefined();
+    expect(voiceParticipantsRoomMap.value.get(roomId)).toBeUndefined();
   });
 
   test("setParticipants replaces all participants for room", async () => {
@@ -197,6 +198,6 @@ describe(useVoiceChannel, () => {
     await mountVoiceChannel();
     setParticipants(roomId, participants);
 
-    expect(participantsByRoom.value[roomId]).toStrictEqual(participants);
+    expect(voiceParticipantsRoomMap.value.get(roomId)).toStrictEqual(participants);
   });
 });

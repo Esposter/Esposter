@@ -45,10 +45,16 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
     computed(() => tableEditor.value.items as Item[]),
     ["id"],
   );
-  watch(editFormDialog, async (newEditFormDialog) => {
-    if (newEditFormDialog) return;
-    await Promise.all(TableEditorHookMap.Close.map((fn) => Promise.resolve(fn())));
-  });
+
+  watch(
+    editFormDialog,
+    async (newEditFormDialog) => {
+      if (newEditFormDialog) return;
+      await Promise.all(TableEditorHookMap.Close.map((fn) => Promise.resolve(fn())));
+    },
+    { flush: "sync" },
+  );
+
   const saveTableEditorConfiguration = useSave(tableEditorConfiguration, {
     auth: { save: $trpc.tableEditor.saveTableEditorConfiguration.mutate },
     unauth: { key: TABLE_EDITOR_LOCAL_STORAGE_KEY, schema: tableEditorConfigurationSchema },

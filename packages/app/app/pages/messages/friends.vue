@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useReadFriends } from "@/composables/message/friend/useReadFriends";
 import { useFriendStore } from "@/store/message/friend";
 
 definePageMeta({ middleware: "auth" });

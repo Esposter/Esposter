@@ -3,7 +3,7 @@ import type { VoiceParticipant } from "#shared/models/room/voice/VoiceParticipan
 import { voiceSignalPayloadSchema } from "#shared/models/room/voice/VoiceSignalPayload";
 import { on } from "@@/server/services/events/on";
 import { voiceEventEmitter } from "@@/server/services/message/events/voiceEventEmitter";
-import { addVoiceParticipant } from "@@/server/services/message/voice/addVoiceParticipant";
+import { createVoiceParticipant } from "@@/server/services/message/voice/createVoiceParticipant";
 import { deleteVoiceParticipant } from "@@/server/services/message/voice/deleteVoiceParticipant";
 import { getRoomParticipants } from "@@/server/services/message/voice/getRoomParticipants";
 import { updateVoiceParticipantMute } from "@@/server/services/message/voice/updateVoiceParticipantMute";
@@ -24,7 +24,6 @@ export const voiceRouter = router({
   joinVoiceChannel: getMemberProcedure(roomIdInputSchema, "roomId").mutation<VoiceParticipant[]>(
     ({ ctx, input: { roomId } }) => {
       const { session, user } = ctx.getSessionPayload;
-      const isAlreadyJoined = getRoomParticipants(roomId).some(({ id }) => id === session.id);
       const participant: VoiceParticipant = {
         id: session.id,
         image: user.image ?? null,
@@ -32,8 +31,8 @@ export const voiceRouter = router({
         name: user.name,
         userId: user.id,
       };
-      addVoiceParticipant(roomId, participant);
-      if (!isAlreadyJoined) voiceEventEmitter.emit("joinVoiceChannel", { participant, roomId, sessionId: session.id });
+      createVoiceParticipant(roomId, participant);
+      voiceEventEmitter.emit("joinVoiceChannel", { participant, roomId, sessionId: session.id });
       return getRoomParticipants(roomId);
     },
   ),
