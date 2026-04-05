@@ -33,10 +33,9 @@ jobs:
         run: |
           echo inject-workspace-packages=true >> .npmrc
           echo node-linker=hoisted >> .npmrc
-          pushd ${{ env.PACKAGE_PATH }}
           pnpm --filter @esposter/azure-functions... i --no-frozen-lockfile
+          pnpm --filter @esposter/configuration build
           pnpm --filter @esposter/azure-functions... build
-          popd
           pnpm --filter @esposter/azure-functions deploy ${{ env.OUTPUT_DIRECTORY }}
           cp ${{ env.PACKAGE_PATH }}/host.json ${{ env.OUTPUT_DIRECTORY }}/host.json
 
