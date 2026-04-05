@@ -17,8 +17,8 @@ export const stringSplitTransformationSchema = z
   .object({
     ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.StringSplit).readonly()).shape,
     ...createSourceColumnIdSchema(ColumnFormVjsfContextPropertyNames["context.stringColumnItems"]).shape,
-    delimiter: z.string().default(",").meta({ title: "Delimiter" }),
-    segmentIndex: z.number().int().nonnegative().default(0).meta({ title: "Segment Index" }),
+    delimiter: z.string().default(","),
+    segmentIndex: z.number().int().nonnegative().default(0),
   })
   .meta({
     title: ColumnTransformationType.StringSplit,
