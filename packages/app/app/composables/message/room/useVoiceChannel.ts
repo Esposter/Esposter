@@ -47,9 +47,10 @@ export const useVoiceChannel = () => {
     await cleanup?.();
   };
 
-  const setupSpeakingDetection = (id: string, stream: MediaStream) => {
+  const setupSpeakingDetection = async (peerId: string, speakerId: string, stream: MediaStream) => {
     if (getIsServer()) return;
     const audioContext = new AudioContext();
+    await audioContext.resume();
     const analyser = audioContext.createAnalyser();
     audioContext.createMediaStreamSource(stream).connect(analyser);
     analyser.fftSize = 256;
@@ -60,16 +61,16 @@ export const useVoiceChannel = () => {
       analyser.getByteFrequencyData(dataArray);
       const average = dataArray.reduce((acc, val) => acc + val, 0) / dataArray.length;
       const isSpeaking = average > SPEAKING_THRESHOLD;
-      const isCurrentlySpeaking = speakingIds.value.includes(id);
+      const isCurrentlySpeaking = speakingIds.value.includes(speakerId);
 
-      if (isSpeaking && !isCurrentlySpeaking) createSpeaker(id);
-      else if (!isSpeaking && isCurrentlySpeaking) deleteSpeaker(id);
+      if (isSpeaking && !isCurrentlySpeaking) createSpeaker(speakerId);
+      else if (!isSpeaking && isCurrentlySpeaking) deleteSpeaker(speakerId);
 
       animationFrame = requestAnimationFrame(detectSpeaking);
     };
 
     animationFrame = requestAnimationFrame(detectSpeaking);
-    speakingCleanups.set(id, async () => {
+    speakingCleanups.set(peerId, async () => {
       cancelAnimationFrame(animationFrame);
       await audioContext.close();
     });
@@ -84,7 +85,7 @@ export const useVoiceChannel = () => {
     peerConnection.ontrack = getSynchronizedFunction(async ({ streams }) => {
       const remoteStream = streams[0];
       if (!remoteStream) return;
-      setupSpeakingDetection(remoteId, remoteStream);
+      await setupSpeakingDetection(remoteId, remoteId, remoteStream);
       const audio = new Audio();
       audio.srcObject = remoteStream;
       await audio.play();
@@ -182,7 +183,8 @@ export const useVoiceChannel = () => {
 
       const participants = await $trpc.voice.joinVoiceChannel.mutate({ roomId });
       setParticipants(roomId, participants);
-      setupSpeakingDetection(LOCAL_PARTICIPANT_ID, localStream);
+      const localSessionId = session.value.data?.session.id;
+      if (localSessionId) await setupSpeakingDetection(LOCAL_PARTICIPANT_ID, localSessionId, localStream);
     } catch {
       await leave();
     }
