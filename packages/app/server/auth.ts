@@ -1,4 +1,5 @@
 import { db } from "@@/server/db";
+import { standardRateLimiter } from "@@/server/services/rateLimiter/standardRateLimiter";
 import { drizzleAdapter } from "@better-auth/drizzle-adapter";
 import { schema } from "@esposter/db-schema";
 import { betterAuth } from "better-auth";
@@ -9,6 +10,10 @@ export const auth = betterAuth({
     schema,
     usePlural: true,
   }),
+  rateLimit: {
+    max: standardRateLimiter.points,
+    window: standardRateLimiter.duration,
+  },
   socialProviders: {
     facebook: {
       clientId: process.env.FACEBOOK_CLIENT_ID,

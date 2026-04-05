@@ -16,6 +16,7 @@ import {
 import { TableEditorType } from "#shared/models/tableEditor/data/TableEditorType";
 import { createEditFormData } from "@/services/shared/editForm/createEditFormData";
 import { TABLE_EDITOR_LOCAL_STORAGE_KEY } from "@/services/tableEditor/constants";
+import { TableEditorHookMap } from "@/services/tableEditor/TableEditorHookMap";
 import { useItemStore } from "@/store/tableEditor/item";
 import { toRawDeep } from "@esposter/shared";
 
@@ -44,6 +45,10 @@ const useBaseTableEditorStore = defineStore<typeof id, TableEditorStoreState>(id
     computed(() => tableEditor.value.items as Item[]),
     ["id"],
   );
+  watch(editFormDialog, async (newEditFormDialog) => {
+    if (newEditFormDialog) return;
+    await Promise.all(TableEditorHookMap.Close.map((fn) => Promise.resolve(fn())));
+  });
   const saveTableEditorConfiguration = useSave(tableEditorConfiguration, {
     auth: { save: $trpc.tableEditor.saveTableEditorConfiguration.mutate },
     unauth: { key: TABLE_EDITOR_LOCAL_STORAGE_KEY, schema: tableEditorConfigurationSchema },

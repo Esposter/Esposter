@@ -2,6 +2,7 @@ import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/
 import type { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 
 import { MAX_HISTORY_SIZE } from "@/services/tableEditor/file/constants";
+import { TableEditorHookMap } from "@/services/tableEditor/TableEditorHookMap";
 import { takeOne } from "@esposter/shared";
 
 export const useFileHistoryStore = defineStore("tableEditor/file/history", () => {
@@ -19,6 +20,7 @@ export const useFileHistoryStore = defineStore("tableEditor/file/history", () =>
     future.value = [];
     history.value = [];
   };
+  TableEditorHookMap.Close.push(clear);
   const push = (command: ADataSourceCommand) => {
     history.value.push(command);
     if (history.value.length > MAX_HISTORY_SIZE) history.value.shift();
