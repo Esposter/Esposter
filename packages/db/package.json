@@ -59,6 +59,7 @@
   },
   "devDependencies": {
     "@azure/core-client": "catalog:",
+    "@esposter/configuration": "workspace:*",
     "@types/mime-types": "catalog:"
   },
   "peerDependencies": {

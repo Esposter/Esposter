@@ -24,6 +24,8 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
+    "export:gen": "ctix build --config .ctirc-ts",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lint": "oxlint && eslint .",
@@ -35,16 +37,16 @@
     "@dxup/unimport": "catalog:",
     "@eslint/core": "catalog:",
     "@eslint/json": "catalog:",
+    "@rolldown/plugin-node-polyfills": "catalog:",
     "@unocss/eslint-config": "catalog:",
-    "@vitejs/plugin-vue": "catalog:",
     "@vitest/eslint-plugin": "catalog:",
     "@vue/language-core": "catalog:",
     "eslint-plugin-depend": "catalog:",
     "eslint-plugin-oxlint": "catalog:",
     "eslint-plugin-perfectionist": "catalog:",
     "eslint-plugin-pinia": "catalog:",
+    "rolldown-plugin-dts": "catalog:",
     "typescript-eslint": "catalog:",
-    "unplugin-auto-import": "catalog:",
     "unplugin-dts": "catalog:",
     "vite-plugin-mkcert": "catalog:"
   }

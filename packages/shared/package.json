@@ -39,6 +39,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@azure/data-tables": "catalog:"
+    "@azure/data-tables": "catalog:",
+    "@esposter/configuration": "workspace:*"
   }
 }
