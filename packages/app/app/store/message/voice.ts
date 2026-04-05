@@ -1,23 +1,25 @@
 import type { VoiceParticipant } from "#shared/models/room/voice/VoiceParticipant";
 
 export const useVoiceStore = defineStore("message/voice", () => {
-  const voiceParticipantsRoomMap = ref<Map<string, VoiceParticipant[]>>(new Map<string, VoiceParticipant[]>());
+  const voiceParticipantsRoomMap = ref(new Map<string, VoiceParticipant[]>());
   const speakingUserIds = ref<string[]>([]);
   const joinVoice = (roomId: string, participant: VoiceParticipant) => {
-    const current = voiceParticipantsRoomMap.value.get(roomId) ?? [];
-    if (current.some(({ id }) => id === participant.id)) return;
-    voiceParticipantsRoomMap.value.set(roomId, [...current, participant]);
+    const participants = voiceParticipantsRoomMap.value.get(roomId) ?? [];
+    if (participants.some(({ id }) => id === participant.id)) return;
+    voiceParticipantsRoomMap.value.set(roomId, [...participants, participant]);
   };
   const leaveVoice = (roomId: string, id: string) => {
-    const current = voiceParticipantsRoomMap.value.get(roomId);
-    if (!current) return;
+    const participants = voiceParticipantsRoomMap.value.get(roomId);
+    if (!participants) return;
     voiceParticipantsRoomMap.value.set(
       roomId,
-      current.filter((p) => p.id !== id),
+      participants.filter((p) => p.id !== id),
     );
   };
   const setMute = (roomId: string, id: string, isMuted: boolean) => {
-    const participant = voiceParticipantsRoomMap.value.get(roomId)?.find((p) => p.id === id);
+    const participants = voiceParticipantsRoomMap.value.get(roomId);
+    if (!participants) return;
+    const participant = participants.find((p) => p.id === id);
     if (!participant) return;
     participant.isMuted = isMuted;
   };

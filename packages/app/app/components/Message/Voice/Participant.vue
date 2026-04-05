@@ -10,7 +10,7 @@ interface VoiceParticipantProps {
 const { participant } = defineProps<VoiceParticipantProps>();
 const voiceStore = useVoiceStore();
 const { speakingUserIds } = storeToRefs(voiceStore);
-const isSpeaking = computed(() => speakingUserIds.value.includes(participant.id));
+const isSpeaking = computed(() => speakingUserIds.value.includes(participant.userId));
 </script>
 
 <template>
