@@ -25,7 +25,7 @@ Each participant sends audio directly to every other participant (full mesh P2P)
 
 - **STUN**: `stun.l.google.com:19302` — free, no setup
 - **TURN**: Coturn self-hosted on a small VM, or a pay-as-you-go service (Twilio Network Traversal, Metered TURN) for NAT hole-punching fallback
-- **Browser API**: native `RTCPeerConnection` wrapped by `simple-peer` (lightweight, well-maintained)
+- **Browser API**: native `RTCPeerConnection`
 
 Mesh is appropriate for a casual platform where voice rooms will typically be 2–5 people.
 
@@ -42,41 +42,99 @@ Recommend starting with mesh and migrating to LiveKit when needed.
 
 ---
 
-## Signalling
+## tRPC Procedures
 
-WebRTC requires an out-of-band signalling channel to exchange SDP offers/answers and ICE candidates. The existing tRPC subscription infrastructure handles this.
+All procedures live in `server/trpc/routers/room/voice.ts`.
 
-New tRPC procedures in `server/trpc/routers/room/voice.ts`:
-
-| Procedure            | Type         | Purpose                                                             |
-| -------------------- | ------------ | ------------------------------------------------------------------- |
-| `joinVoiceChannel`   | mutation     | Add caller to the room's active participant list; broadcast to room |
-| `leaveVoiceChannel`  | mutation     | Remove caller from participant list; broadcast to room              |
-| `sendSignal`         | mutation     | Relay SDP offer/answer or ICE candidate to a specific peer          |
-| `onParticipantJoin`  | subscription | Fires for all room members when someone joins                       |
-| `onParticipantLeave` | subscription | Fires for all room members when someone leaves                      |
-| `onSignal`           | subscription | Delivers relayed SDP/ICE payload to the target peer                 |
-
-The signalling flow mirrors a standard WebRTC mesh:
-
-1. Joiner calls `joinVoiceChannel` → all existing participants receive `onParticipantJoin`
-2. Each existing participant sends an SDP offer to the joiner via `sendSignal`
-3. Joiner sends back SDP answers; both sides exchange ICE candidates via `sendSignal` / `onSignal`
-4. Audio streams once ICE negotiation completes
+| Procedure               | Type         | Purpose                                                                 |
+| ----------------------- | ------------ | ----------------------------------------------------------------------- |
+| `readVoiceParticipants` | query        | Return current participant list for a room (used on initial load)       |
+| `joinVoiceChannel`      | mutation     | Add caller to the room's active participant list; always broadcast join |
+| `leaveVoiceChannel`     | mutation     | Remove caller from participant list; broadcast leave                    |
+| `setMute`               | mutation     | Toggle caller's muted state; broadcast mute change                      |
+| `sendSignal`            | mutation     | Relay SDP offer/answer or ICE candidate to a specific peer              |
+| `onParticipantJoin`     | subscription | Fires for all room members (except self) when someone joins or rejoins  |
+| `onParticipantLeave`    | subscription | Fires for all room members (except self) when someone leaves            |
+| `onMuteChanged`         | subscription | Fires for all room members when a participant's muted state changes     |
+| `onSignal`              | subscription | Delivers relayed SDP/ICE payload to the target peer                     |
 
 ---
 
-## State Storage
+## Architectural Diagram
 
-Active voice participants are **ephemeral** — not persisted to Azure Table. Options:
+### Initial join
 
-| Approach                                           | Pros                                                 | Cons                                 |
-| -------------------------------------------------- | ---------------------------------------------------- | ------------------------------------ |
-| In-memory map on the server process                | Zero infra cost                                      | Lost on server restart/scale-out     |
-| SignalR presence group                             | Survives restarts, works across instances            | Requires Azure SignalR Service       |
-| `voiceParticipants` Azure Table with TTL heartbeat | Survives restarts, visible without being in the room | Extra writes (heartbeat every ~15 s) |
+```
+Client A (joining)                  Server                  Client B (already in)
+        |                              |                              |
+        |-- joinVoiceChannel --------->|                              |
+        |                              |-- onParticipantJoin -------->|
+        |<-- [participant list] --------|                              |
+        |                              |             createPeerConnection(A)
+        |                              |                              |
+        |<-- onSignal (offer) ---------|<-- sendSignal (offer) -------|
+        |-- sendSignal (answer) ------>|-- onSignal (answer) -------->|
+        |<-- onSignal (candidate) -----|<-- sendSignal (candidate) ---|
+        |-- sendSignal (candidate) --->|-- onSignal (candidate) ----->|
+        |                              |                              |
+        |========= audio stream (P2P, bypasses server) =============|
+```
 
-**Recommendation**: In-memory map for v1 (acceptable on a single-instance casual platform). If Azure SignalR is added for messaging, migrate presence to a SignalR group.
+### Mute toggle
+
+```
+Client A                            Server                  Client B
+   |-- setMute(isMuted) ----------->|                              |
+   |  [store.setMute optimistic]    |-- onMuteChanged ------------>|
+   |                                |               [store.setMute]
+```
+
+### Page refresh / reconnect
+
+```
+Client A (refreshing)              Server                   Client B (in channel)
+        |                              |                              |
+        | [useOnlineSubscribable fires]|                              |
+        |-- readVoiceParticipants ---->|                              |
+        |<-- [list includes A] --------|                              |
+        | [isInChannel=true detected]  |                              |
+        | [leaveVoice locally]         |                              |
+        | [isInChannel resets false]   |                              |
+        |-- joinVoiceChannel --------->|                              |
+        |                              |-- onParticipantJoin -------->|
+        |<-- [participant list] --------|       [cleanupPeer(A)]      |
+        |                              |       createPeerConnection(A)|
+        |<-- onSignal (offer) ---------|<-- sendSignal (offer) -------|
+        |       (full WebRTC           |       (full WebRTC           |
+        |        handshake...)         |        handshake...)         |
+        |========= audio stream (P2P, bypasses server) =============|
+```
+
+**Key design decisions:**
+
+- `joinVoiceChannel` always emits the event (no `isAlreadyJoined` skip) so peers always reconnect on rejoin
+- `onParticipantJoin` handler calls `cleanupPeer` before `createPeerConnection` to safely replace stale connections
+- `isInChannel` and `isMuted` are **derived computeds** in the Pinia store (not tracked refs), computed from `voiceParticipantsRoomMap + currentRoomId + session.id` — naturally correct after any `setParticipants` call and survive component re-mounts
+
+---
+
+## Signalling Flow Detail
+
+1. **On room enter** (`useOnlineSubscribable`): `readVoiceParticipants` populates the store for all observers
+2. **On join**: subscribe to `onSignal` first (to catch offers from existing peers), then `joinVoiceChannel.mutate()` — server always emits join event; existing peers receive it, clean up any stale connection, and send a new offer
+3. **On leave**: call `leaveVoiceChannel`, cleanup all peer connections, stop local stream, unsubscribe from `onSignal`
+4. **On refresh/reconnect**: `readVoiceParticipants` detects stale server membership → `leaveVoice` locally (resets computed) → `join()` re-establishes everything
+
+---
+
+## State — Pinia Store (`store/message/voice.ts`)
+
+| State                      | Kind       | Description                                                          |
+| -------------------------- | ---------- | -------------------------------------------------------------------- |
+| `voiceParticipantsRoomMap` | `ref`      | `Map<roomId, VoiceParticipant[]>` — source of truth for participants |
+| `speakingIds`              | `ref`      | Session IDs currently detected as speaking (via `AudioContext`)      |
+| `isInChannel`              | `computed` | Derived: current session ID present in current room's participants   |
+| `isMuted`                  | `computed` | Derived: current participant's `isMuted` flag from the map           |
 
 ---
 
@@ -85,32 +143,34 @@ Active voice participants are **ephemeral** — not persisted to Azure Table. Op
 ```text
 packages/app/
   shared/models/room/voice/
-    VoiceParticipant.ts           # extends Pick<User, "id" | "image" | "name"> & { isMuted }
-    VoiceSignalType.ts            # enum VoiceSignalType + voiceSignalTypeSchema
-    VoiceSignalPayload.ts         # interface + voiceSignalPayloadSchema
+    VoiceParticipant.ts           # { id: sessionId, userId, name, image, isMuted }
+    VoiceSignalType.ts            # enum: Offer | Answer | Candidate
+    VoiceSignalPayload.ts         # { type, targetId, data: string (JSON) }
 
   server/services/message/
     events/
-      voiceEventEmitter.ts        # EventEmitter for joinVoiceChannel, leaveVoiceChannel, muteChanged, signal
+      voiceEventEmitter.ts        # EventEmitter: joinVoiceChannel, leaveVoiceChannel, muteChanged, signal
     voice/
-      voiceParticipantMap.ts      # voiceRoomParticipantMap: Map<roomId, Map<participantId, VoiceParticipant>>
-      addVoiceParticipant.ts
+      voiceParticipantMap.ts      # voiceRoomParticipantMap: Map<roomId, Map<sessionId, VoiceParticipant>>
+      createVoiceParticipant.ts
       deleteVoiceParticipant.ts
       getRoomParticipants.ts
       updateVoiceParticipantMute.ts
 
   server/trpc/routers/room/
-    voice.ts                      # readVoiceParticipants, joinVoiceChannel, leaveVoiceChannel, setMute,
-                                  # sendSignal, onParticipantJoin, onParticipantLeave, onMuteChanged, onSignal
-    voice.test.ts                 # tRPC router tests
+    voice.ts                      # all 9 procedures (see table above)
+    voice.test.ts
 
   app/
     store/message/
-      voice.ts                    # participantsByRoom, joinVoice, leaveVoice, setMute, setParticipants
+      voice.ts                    # voiceParticipantsRoomMap, isInChannel (computed), isMuted (computed),
+                                  # joinVoice, leaveVoice, setMute, setParticipants, speakers
     composables/message/room/
-      useVoiceChannel.ts          # join/leave, peer map, mute toggle, speaking detection, subscriptions
+      useVoiceChannel.ts          # join/leave/toggleMute, peer map, speaking detection, subscriptions
+                                  # exposes: { join, leave, toggleMute } only — state via store
     components/Message/Voice/
-      Panel.vue                   # sidebar panel: participant list + join/leave/mute buttons
+      Panel.vue                   # sidebar panel: join/leave/mute buttons + participant list
+      ParticipantList.vue         # renders participants from store
       Participant.vue             # avatar + speaking ring + mute badge
 ```
 
@@ -120,8 +180,8 @@ packages/app/
 
 - Message infrastructure — voice channel is entirely separate from text messages
 - Room model — no new DB columns needed; voice state is ephemeral
-- Auth/permissions — existing room membership check in the room router gates `joinVoiceChannel`
-- Existing tRPC subscription pattern — `onParticipantJoin` / `onSignal` follow the same shape as `onCreateMessage`
+- Auth/permissions — existing room membership check in the room router gates all voice procedures
+- Existing tRPC subscription pattern — voice subscriptions follow the same shape as `onCreateMessage`
 
 ---
 

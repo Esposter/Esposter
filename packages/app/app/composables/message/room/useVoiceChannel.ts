@@ -170,7 +170,6 @@ export const useVoiceChannel = () => {
     if (getIsServer() || !currentRoomId.value || isInChannel.value) return;
 
     const roomId = currentRoomId.value;
-    isInChannel.value = true;
 
     try {
       localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
@@ -193,9 +192,6 @@ export const useVoiceChannel = () => {
 
     const roomId = currentRoomId.value;
     const sessionId = session.value.data?.session.id;
-    isInChannel.value = false;
-    isMuted.value = false;
-
     try {
       if (sessionId) leaveVoice(roomId, sessionId);
       await $trpc.voice.leaveVoiceChannel.mutate({ roomId });
@@ -209,11 +205,14 @@ export const useVoiceChannel = () => {
   };
 
   const toggleMute = async () => {
-    if (!localStream || !currentRoomId.value) return;
-
-    isMuted.value = !isMuted.value;
-    for (const track of localStream.getAudioTracks()) track.enabled = !isMuted.value;
-    await $trpc.voice.setMute.mutate({ isMuted: isMuted.value, roomId: currentRoomId.value });
+    const sessionId = session.value.data?.session.id;
+    console.log(localStream);
+    if (!localStream || !currentRoomId.value || !sessionId) return;
+    console.log("???");
+    const newIsMuted = !isMuted.value;
+    setMute(currentRoomId.value, sessionId, newIsMuted);
+    for (const track of localStream.getAudioTracks()) track.enabled = !newIsMuted;
+    await $trpc.voice.setMute.mutate({ isMuted: newIsMuted, roomId: currentRoomId.value });
   };
 
   useOnlineSubscribable(currentRoomId, async (roomId) => {
@@ -222,10 +221,19 @@ export const useVoiceChannel = () => {
     const participants = await $trpc.voice.readVoiceParticipants.query({ roomId });
     setParticipants(roomId, participants);
 
+    if (isInChannel.value) {
+      const sessionId = session.value.data?.session.id;
+      if (sessionId) leaveVoice(roomId, sessionId);
+      await join();
+    }
+
     const participantJoinUnsubscribable = $trpc.voice.onParticipantJoin.subscribe(roomId, {
       onData: getSynchronizedFunction(async (participant) => {
         joinVoice(roomId, participant);
-        if (isInChannel.value) await createPeerConnection(roomId, participant.id);
+        if (isInChannel.value) {
+          await cleanupPeer(participant.id);
+          await createPeerConnection(roomId, participant.id);
+        }
       }),
     });
     const participantLeaveUnsubscribable = $trpc.voice.onParticipantLeave.subscribe(roomId, {
@@ -250,8 +258,6 @@ export const useVoiceChannel = () => {
       await cleanupLocalStream();
       signalUnsubscribable?.unsubscribe();
       signalUnsubscribable = undefined;
-      isInChannel.value = false;
-      isMuted.value = false;
       clearSpeakers();
       participantJoinUnsubscribable.unsubscribe();
       participantLeaveUnsubscribable.unsubscribe();

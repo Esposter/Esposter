@@ -24,7 +24,6 @@ export const voiceRouter = router({
   joinVoiceChannel: getMemberProcedure(roomIdInputSchema, "roomId").mutation<VoiceParticipant[]>(
     ({ ctx, input: { roomId } }) => {
       const { session, user } = ctx.getSessionPayload;
-      const isAlreadyJoined = getRoomParticipants(roomId).some(({ id }) => id === session.id);
       const participant: VoiceParticipant = {
         id: session.id,
         image: user.image ?? null,
@@ -33,7 +32,7 @@ export const voiceRouter = router({
         userId: user.id,
       };
       createVoiceParticipant(roomId, participant);
-      if (!isAlreadyJoined) voiceEventEmitter.emit("joinVoiceChannel", { participant, roomId, sessionId: session.id });
+      voiceEventEmitter.emit("joinVoiceChannel", { participant, roomId, sessionId: session.id });
       return getRoomParticipants(roomId);
     },
   ),

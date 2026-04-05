@@ -1,10 +1,19 @@
 import type { VoiceParticipant } from "#shared/models/room/voice/VoiceParticipant";
 
+import { authClient } from "@/services/auth/authClient";
+import { useRoomStore } from "@/store/message/room";
+
 export const useVoiceStore = defineStore("message/voice", () => {
   const voiceParticipantsRoomMap = ref(new Map<string, VoiceParticipant[]>());
   const speakingIds = ref<string[]>([]);
-  const isInChannel = ref(false);
-  const isMuted = ref(false);
+  const roomStore = useRoomStore();
+  const session = authClient.useSession();
+  const sessionId = computed(() => session.value.data?.session.id);
+  const roomParticipants = computed(() =>
+    roomStore.currentRoomId ? (voiceParticipantsRoomMap.value.get(roomStore.currentRoomId) ?? []) : [],
+  );
+  const isInChannel = computed(() => roomParticipants.value.some(({ id }) => id === sessionId.value));
+  const isMuted = computed(() => roomParticipants.value.find(({ id }) => id === sessionId.value)?.isMuted ?? false);
   const joinVoice = (roomId: string, participant: VoiceParticipant) => {
     const participants = voiceParticipantsRoomMap.value.get(roomId) ?? [];
     if (participants.some(({ id }) => id === participant.id)) return;
