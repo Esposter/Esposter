@@ -7,7 +7,7 @@ import { authClient } from "@/services/auth/authClient";
 import { ICE_SERVERS, LOCAL_PARTICIPANT_ID, SPEAKING_THRESHOLD } from "@/services/message/voice/constants";
 import { useRoomStore } from "@/store/message/room";
 import { useVoiceStore } from "@/store/message/voice";
-import { exhaustiveGuard, getIsServer } from "@esposter/shared";
+import { exhaustiveGuard, getIsServer, jsonDateParse } from "@esposter/shared";
 
 export const useVoiceChannel = () => {
   const { $trpc } = useNuxtApp();
@@ -119,49 +119,52 @@ export const useVoiceChannel = () => {
     const peerConnection = peerConnections.get(id);
     const queue = candidateQueues.get(id);
     if (!peerConnection || !queue) return;
-    for (const candidate of queue) {
-      await peerConnection.addIceCandidate(candidate);
-    }
+    for (const candidate of queue) await peerConnection.addIceCandidate(candidate);
+
     candidateQueues.delete(id);
   };
 
   const getSignalHandler =
     (roomId: string) =>
     async ({ payload: { data, type }, senderId }: { payload: VoiceSignalPayload; senderId: string }) => {
-      switch (type) {
-        case VoiceSignalType.Answer: {
-          const peerConnection = peerConnections.get(senderId);
-          if (!peerConnection) return;
-          await peerConnection.setRemoteDescription(JSON.parse(data) as RTCSessionDescriptionInit);
-          await flushIceCandidates(senderId);
-          break;
-        }
-        case VoiceSignalType.Candidate: {
-          const peerConnection = peerConnections.get(senderId);
-          const candidateData = JSON.parse(data) as RTCIceCandidateInit;
-          if (!peerConnection?.remoteDescription) {
-            const queue = candidateQueues.get(senderId) ?? [];
-            queue.push(candidateData);
-            candidateQueues.set(senderId, queue);
-            return;
+      try {
+        switch (type) {
+          case VoiceSignalType.Answer: {
+            const peerConnection = peerConnections.get(senderId);
+            if (!peerConnection) return;
+            await peerConnection.setRemoteDescription(jsonDateParse<RTCSessionDescriptionInit>(data));
+            await flushIceCandidates(senderId);
+            break;
           }
-          await peerConnection.addIceCandidate(candidateData);
-          break;
+          case VoiceSignalType.Candidate: {
+            const peerConnection = peerConnections.get(senderId);
+            const candidateData = jsonDateParse<RTCIceCandidateInit>(data);
+            if (!peerConnection?.remoteDescription) {
+              const queue = candidateQueues.get(senderId) ?? [];
+              queue.push(candidateData);
+              candidateQueues.set(senderId, queue);
+              return;
+            }
+            await peerConnection.addIceCandidate(candidateData);
+            break;
+          }
+          case VoiceSignalType.Offer: {
+            const peerConnection = buildPeerConnection(roomId, senderId);
+            await peerConnection.setRemoteDescription(jsonDateParse<RTCSessionDescriptionInit>(data));
+            await flushIceCandidates(senderId);
+            const answer = await peerConnection.createAnswer();
+            await peerConnection.setLocalDescription(answer);
+            await $trpc.voice.sendSignal.mutate({
+              payload: { data: JSON.stringify(answer), targetId: senderId, type: VoiceSignalType.Answer },
+              roomId,
+            });
+            break;
+          }
+          default:
+            exhaustiveGuard(type);
         }
-        case VoiceSignalType.Offer: {
-          const peerConnection = buildPeerConnection(roomId, senderId);
-          await peerConnection.setRemoteDescription(JSON.parse(data) as RTCSessionDescriptionInit);
-          await flushIceCandidates(senderId);
-          const answer = await peerConnection.createAnswer();
-          await peerConnection.setLocalDescription(answer);
-          await $trpc.voice.sendSignal.mutate({
-            payload: { data: JSON.stringify(answer), targetId: senderId, type: VoiceSignalType.Answer },
-            roomId,
-          });
-          break;
-        }
-        default:
-          exhaustiveGuard(type);
+      } catch {
+        // Drop malformed signal payloads to prevent unhandled rejections from aborting the subscription
       }
     };
 
@@ -174,7 +177,9 @@ export const useVoiceChannel = () => {
     try {
       localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
       // Subscribe to signals before joining so we don't miss offers from existing participants
-      signalUnsubscribable = $trpc.voice.onSignal.subscribe(roomId, { onData: getSignalHandler(roomId) });
+      signalUnsubscribable = $trpc.voice.onSignal.subscribe(roomId, {
+        onData: getSynchronizedFunction(getSignalHandler(roomId)),
+      });
 
       const participants = await $trpc.voice.joinVoiceChannel.mutate({ roomId });
       setParticipants(roomId, participants);
@@ -189,7 +194,6 @@ export const useVoiceChannel = () => {
 
     const roomId = currentRoomId.value;
     const sessionId = session.value.data?.session.id;
-
     isInChannel.value = false;
     isMuted.value = false;
 
@@ -197,7 +201,7 @@ export const useVoiceChannel = () => {
       if (sessionId) leaveVoice(roomId, sessionId);
       await $trpc.voice.leaveVoiceChannel.mutate({ roomId });
     } finally {
-      for (const id of peerConnections.keys()) cleanupPeer(id);
+      await Promise.all(peerConnections.keys().map((id) => cleanupPeer(id)));
       await cleanupLocalStream();
       signalUnsubscribable?.unsubscribe();
       signalUnsubscribable = undefined;
@@ -229,7 +233,9 @@ export const useVoiceChannel = () => {
       }),
     });
     const muteChangedUnsubscribable = $trpc.voice.onMuteChanged.subscribe(roomId, {
-      onData: (muteChange) => setMute(roomId, muteChange.id, muteChange.isMuted),
+      onData: (muteChange) => {
+        setMute(roomId, muteChange.id, muteChange.isMuted);
+      },
     });
 
     return async () => {
@@ -238,7 +244,7 @@ export const useVoiceChannel = () => {
         await $trpc.voice.leaveVoiceChannel.mutate({ roomId });
         if (sessionId) leaveVoice(roomId, sessionId);
       }
-      for (const id of peerConnections.keys()) cleanupPeer(id);
+      await Promise.all(peerConnections.keys().map((id) => cleanupPeer(id)));
       await cleanupLocalStream();
       signalUnsubscribable?.unsubscribe();
       signalUnsubscribable = undefined;

@@ -24,6 +24,7 @@ export const voiceRouter = router({
   joinVoiceChannel: getMemberProcedure(roomIdInputSchema, "roomId").mutation<VoiceParticipant[]>(
     ({ ctx, input: { roomId } }) => {
       const { session, user } = ctx.getSessionPayload;
+      const isAlreadyJoined = getRoomParticipants(roomId).some(({ id }) => id === session.id);
       const participant: VoiceParticipant = {
         id: session.id,
         image: user.image ?? null,
@@ -32,14 +33,14 @@ export const voiceRouter = router({
         userId: user.id,
       };
       addVoiceParticipant(roomId, participant);
-      voiceEventEmitter.emit("joinVoiceChannel", { participant, roomId, sessionId: session.id });
+      if (!isAlreadyJoined) voiceEventEmitter.emit("joinVoiceChannel", { participant, roomId, sessionId: session.id });
       return getRoomParticipants(roomId);
     },
   ),
   leaveVoiceChannel: getMemberProcedure(roomIdInputSchema, "roomId").mutation(({ ctx, input: { roomId } }) => {
     const sessionId = ctx.getSessionPayload.session.id;
-    deleteVoiceParticipant(roomId, sessionId);
-    voiceEventEmitter.emit("leaveVoiceChannel", { id: sessionId, roomId, sessionId });
+    const wasDeleted = deleteVoiceParticipant(roomId, sessionId);
+    if (wasDeleted) voiceEventEmitter.emit("leaveVoiceChannel", { id: sessionId, roomId, sessionId });
   }),
   onMuteChanged: standardAuthedProcedure.input(onVoiceInputSchema).subscription(async function* ({
     ctx,
@@ -91,19 +92,19 @@ export const voiceRouter = router({
   sendSignal: getMemberProcedure(sendSignalInputSchema, "roomId").mutation(({ ctx, input: { payload, roomId } }) => {
     const sessionId = ctx.getSessionPayload.session.id;
     const participants = getRoomParticipants(roomId);
-    if (!participants.some((p) => p.id === sessionId)) {
+    if (!participants.some((p) => p.id === sessionId))
       throw new TRPCError({ code: "FORBIDDEN", message: "Must join voice channel first" });
-    }
-    if (!participants.some((p) => p.id === payload.targetId)) {
+
+    if (!participants.some((p) => p.id === payload.targetId))
       throw new TRPCError({ code: "NOT_FOUND", message: "Target participant not found" });
-    }
+
     voiceEventEmitter.emit("signal", { payload, roomId, senderId: sessionId });
   }),
   setMute: getMemberProcedure(setMuteInputSchema, "roomId").mutation(({ ctx, input: { isMuted, roomId } }) => {
     const sessionId = ctx.getSessionPayload.session.id;
-    if (!updateVoiceParticipantMute(roomId, sessionId, isMuted)) {
+    if (!updateVoiceParticipantMute(roomId, sessionId, isMuted))
       throw new TRPCError({ code: "FORBIDDEN", message: "Must join voice channel first" });
-    }
+
     voiceEventEmitter.emit("muteChanged", { id: sessionId, isMuted, roomId });
   }),
 });

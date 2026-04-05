@@ -17,12 +17,9 @@ export const useVoiceStore = defineStore("message/voice", () => {
   };
 
   const setMute = (roomId: string, id: string, isMuted: boolean) => {
-    const current = participantsByRoom.value[roomId];
-    if (!current) return;
-    participantsByRoom.value = {
-      ...participantsByRoom.value,
-      [roomId]: current.map((p) => (p.id === id ? { ...p, isMuted } : p)),
-    };
+    const participant = participantsByRoom.value[roomId]?.find((p) => p.id === id);
+    if (!participant) return;
+    participant.isMuted = isMuted;
   };
 
   const setParticipants = (roomId: string, participants: VoiceParticipant[]) => {

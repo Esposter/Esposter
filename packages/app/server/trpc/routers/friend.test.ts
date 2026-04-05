@@ -27,7 +27,7 @@ describe("friend", () => {
 
     const userId = getMockSession().user.id;
     const { user } = await mockSessionOnce(mockContext.db);
-    // session=user: sends request to default user
+    // Session=user: sends request to default user
     const friend = await caller.sendFriendRequest(userId);
 
     expect(friend.senderId).toBe(user.id);
@@ -62,9 +62,9 @@ describe("friend", () => {
 
     const userId = getMockSession().user.id;
     const { user } = await mockSessionOnce(mockContext.db);
-    // session=user: sends request to default user
+    // Session=user: sends request to default user
     await caller.sendFriendRequest(userId);
-    // session=default: accepts request from user
+    // Session=default: accepts request from user
     const accepted = await caller.acceptFriendRequest(user.id);
 
     expect(accepted.status).toBe(FriendshipStatus.Accepted);
@@ -79,7 +79,7 @@ describe("friend", () => {
     const { user } = await mockSessionOnce(mockContext.db);
     const id = [userId, user.id].toSorted().join(ID_SEPARATOR);
 
-    // session=user: no request exists, try to accept from default user
+    // Session=user: no request exists, try to accept from default user
     await expect(caller.acceptFriendRequest(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Friend, id).message}]`,
     );
@@ -90,9 +90,9 @@ describe("friend", () => {
 
     const userId = getMockSession().user.id;
     const { user } = await mockSessionOnce(mockContext.db);
-    // session=user: sends request to default user
+    // Session=user: sends request to default user
     await caller.sendFriendRequest(userId);
-    // session=default: declines
+    // Session=default: declines
     await caller.declineFriendRequest(user.id);
 
     const pendingRequests = await caller.readPendingRequests();
@@ -105,7 +105,7 @@ describe("friend", () => {
 
     const userId = getMockSession().user.id;
     const { user } = await mockSessionOnce(mockContext.db);
-    // session=user: sends; session=default: accepts; then deletes
+    // Session=user: sends; session=default: accepts; then deletes
     await caller.sendFriendRequest(userId);
     await caller.acceptFriendRequest(user.id);
     await caller.deleteFriend(user.id);
@@ -120,7 +120,7 @@ describe("friend", () => {
 
     const userId = getMockSession().user.id;
     const { user } = await mockSessionOnce(mockContext.db);
-    // session=user: sends; session=default: accepts
+    // Session=user: sends; session=default: accepts
     await caller.sendFriendRequest(userId);
     await caller.acceptFriendRequest(user.id);
 
@@ -135,11 +135,11 @@ describe("friend", () => {
 
     const userId = getMockSession().user.id;
     const { user } = await mockSessionOnce(mockContext.db);
-    // session=user: sends; session=default: accepts
+    // Session=user: sends; session=default: accepts
     await caller.sendFriendRequest(userId);
     await caller.acceptFriendRequest(user.id);
 
-    // session=user: reads their own friends list
+    // Session=user: reads their own friends list
     await mockSessionOnce(mockContext.db, user);
     const friendList = await caller.readFriends();
 
@@ -152,9 +152,9 @@ describe("friend", () => {
 
     const userId = getMockSession().user.id;
     const { user } = await mockSessionOnce(mockContext.db);
-    // session=user: sends request to default user
+    // Session=user: sends request to default user
     await caller.sendFriendRequest(userId);
-    // session=default: reads pending
+    // Session=default: reads pending
     const pendingRequests = await caller.readPendingRequests();
 
     expect(pendingRequests).toHaveLength(1);
@@ -166,9 +166,9 @@ describe("friend", () => {
 
     const userId = getMockSession().user.id;
     const { user } = await mockSessionOnce(mockContext.db);
-    // session=user: sends request to default user
+    // Session=user: sends request to default user
     await caller.sendFriendRequest(userId);
-    // session=user again: reads sent requests
+    // Session=user again: reads sent requests
     await mockSessionOnce(mockContext.db, user);
     const sentRequests = await caller.readSentRequests();
 
@@ -180,7 +180,7 @@ describe("friend", () => {
     expect.hasAssertions();
 
     const user = getMockSession().user;
-    // session=newUser: search for default user by name
+    // Session=newUser: search for default user by name
     await mockSessionOnce(mockContext.db);
     const results = await caller.searchUsers(user.name);
 

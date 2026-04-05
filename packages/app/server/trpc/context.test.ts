@@ -1,7 +1,6 @@
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { Context } from "@@/server/trpc/context";
-import type { User } from "better-auth";
-import type { Session } from "better-auth";
+import type { Session, User } from "better-auth";
 import type { PgliteDatabase } from "drizzle-orm/pglite";
 
 import { dayjs } from "#shared/services/dayjs";
@@ -81,6 +80,10 @@ export const mockSessionOnce = async (db: Context["db"], mockUser?: User) => {
   const getSessionPayload = { session: createSession(user.id), user } as const satisfies GetSessionPayload;
   mocks.getSession.mockImplementationOnce(() => getSessionPayload);
   return getSessionPayload;
+};
+
+export const replayMockSession = (getSessionPayload: GetSessionPayload) => {
+  mocks.getSession.mockImplementationOnce(() => getSessionPayload);
 };
 
 export const getMockSession = () => mocks.getSession();

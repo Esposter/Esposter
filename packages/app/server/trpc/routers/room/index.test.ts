@@ -713,10 +713,9 @@ describe("room", () => {
 
     const userId = getMockSession().user.id;
 
-    await expect(roomCaller.createMembers({ roomId, userIds: [userId] })).rejects.toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: Failed query: insert into "message"."users_to_rooms" ("isHidden", "notificationType", "roomId", "userId") values (default, default, $1, $2) returning "isHidden", "notificationType", "roomId", "userId"
-      params: ${roomId},${userId}]
-    `);
+    await expect(roomCaller.createMembers({ roomId, userIds: [userId] })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: UNAUTHORIZED]`,
+    );
   });
 
   test("kicks member with owner", async () => {

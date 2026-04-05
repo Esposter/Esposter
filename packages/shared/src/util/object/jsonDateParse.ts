@@ -2,8 +2,8 @@ import { takeOne } from "@/util/array/takeOne";
 
 const reISO = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.{0,1}\d*))(?:Z|(\+|-)([\d|:]*))?$/;
 const reMsAjax = /^\/Date\((d|-|.*)\)[/|\\]$/;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const jsonDateParse = (text: string): any =>
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unnecessary-type-parameters
+export const jsonDateParse = <T = any>(text: string): T =>
   JSON.parse(text, (_key, value) => {
     let parsedValue = value;
 
