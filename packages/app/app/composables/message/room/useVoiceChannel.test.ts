@@ -18,7 +18,7 @@ describe(useVoiceChannel, () => {
   let join: () => Promise<void>;
   let leave: () => Promise<void>;
   let toggleMute: () => Promise<void>;
-  let voiceParticipantsRoomMap: Map<Record<string, VoiceParticipant[]>>;
+  let voiceParticipantsRoomMap: Ref<Map<string, VoiceParticipant[]>>;
   let joinVoice: (roomId: string, participant: VoiceParticipant) => void;
   let leaveVoice: (roomId: string, id: string) => void;
   let setMute: (roomId: string, id: string, isMuted: boolean) => void;
@@ -32,7 +32,7 @@ describe(useVoiceChannel, () => {
         setup: () => {
           ({ isInChannel, isMuted, join, leave, toggleMute } = useVoiceChannel());
           const voiceStore = useVoiceStore();
-          ({ voiceParticipantsRoomMap, speakingUserIds } = storeToRefs(voiceStore));
+          ({ speakingUserIds, voiceParticipantsRoomMap } = storeToRefs(voiceStore));
           ({ joinVoice, leaveVoice, setMute, setParticipants } = voiceStore);
           voiceParticipantsRoomMap.value = new Map<string, VoiceParticipant[]>();
         },
@@ -64,7 +64,7 @@ describe(useVoiceChannel, () => {
 
     await mountVoiceChannel();
 
-    expect(Object.keys(voiceParticipantsRoomMap.value)).toHaveLength(0);
+    expect(voiceParticipantsRoomMap.value.size).toBe(0);
   });
 
   test("join is no-op without room id", async () => {

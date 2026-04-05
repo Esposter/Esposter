@@ -16,11 +16,11 @@ export const useVoiceChannel = () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const voiceStore = useVoiceStore();
   const {
-    createSpeakingUser,
     clearSpeakingUsers,
+    createSpeakingUser,
+    deleteSpeakingUser,
     joinVoice,
     leaveVoice,
-    deleteSpeakingUser,
     setMute,
     setParticipants,
   } = voiceStore;
