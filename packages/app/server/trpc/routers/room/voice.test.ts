@@ -3,6 +3,7 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { VoiceSignalType } from "#shared/models/room/voice/VoiceSignalType";
+import { voiceEventEmitter } from "@@/server/services/message/events/voiceEventEmitter";
 import { voiceRoomParticipantMap } from "@@/server/services/message/voice/voiceParticipantMap";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
@@ -11,7 +12,7 @@ import { voiceRouter } from "@@/server/trpc/routers/room/voice";
 import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
 import { rooms } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
+import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
 describe("voice", () => {
   let mockContext: Context;
@@ -90,6 +91,16 @@ describe("voice", () => {
     expect(participants).toStrictEqual([]);
   });
 
+  test("does not emit leave event when participant was not in voice channel", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const emitSpy = vi.spyOn(voiceEventEmitter, "emit");
+    await voiceCaller.leaveVoiceChannel({ roomId: newRoom.id });
+
+    expect(emitSpy).not.toHaveBeenCalled();
+  });
+
   test("sets mute", async () => {
     expect.hasAssertions();
 
@@ -135,9 +146,10 @@ describe("voice", () => {
     const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
     const { user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInviteCode);
+    const joiningSessionPayload = await mockSessionOnce(mockContext.db, user);
     await voiceCaller.joinVoiceChannel({ roomId: newRoom.id });
     const onParticipantLeave = await voiceCaller.onParticipantLeave(newRoom.id);
-    const { session: leaveSession } = await mockSessionOnce(mockContext.db, user);
+    replayMockSession(joiningSessionPayload);
     const data = await withAsyncIterator(
       () => onParticipantLeave,
       async (iterator) => {
@@ -148,7 +160,7 @@ describe("voice", () => {
 
     assert(!data.done);
 
-    expect(data.value).toBe(leaveSession.id);
+    expect(data.value).toBe(joiningSessionPayload.session.id);
   });
 
   test("on mute changed", async () => {

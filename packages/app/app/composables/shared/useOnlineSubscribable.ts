@@ -21,9 +21,22 @@ export function useOnlineSubscribable(
   const online = useOnline();
   const sources = (Array.isArray(source) ? [...source, online] : [source, online]) as MultiWatchSources;
   let currentCleanup: (() => Promisable<void>) | undefined;
+  let pendingOfflineCleanup: Promise<void> | undefined;
   let isDisposed = false;
   const { trigger } = watchTriggerable(sources, async (values, _oldValues, onCleanup) => {
-    if (!online.value) return;
+    const offlineCleanup = pendingOfflineCleanup;
+    pendingOfflineCleanup = undefined;
+
+    if (!online.value) {
+      const previousCleanup = currentCleanup;
+      currentCleanup = undefined;
+      pendingOfflineCleanup = Promise.resolve(previousCleanup?.());
+      await pendingOfflineCleanup;
+      return;
+    }
+
+    await offlineCleanup;
+
     const value = (Array.isArray(source) ? values.slice(0, -1) : values[0]) as unknown;
 
     let isCurrent = true;

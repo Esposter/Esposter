@@ -57,6 +57,7 @@ describe(useMessageCache, () => {
   };
 
   afterEach(async () => {
+    items.value = [];
     wrapper?.unmount();
     vi.restoreAllMocks();
     await resetMessageCacheDatabase();

@@ -39,8 +39,8 @@ export const voiceRouter = router({
   ),
   leaveVoiceChannel: getMemberProcedure(roomIdInputSchema, "roomId").mutation(({ ctx, input: { roomId } }) => {
     const sessionId = ctx.getSessionPayload.session.id;
-    deleteVoiceParticipant(roomId, sessionId);
-    voiceEventEmitter.emit("leaveVoiceChannel", { id: sessionId, roomId, sessionId });
+    const wasDeleted = deleteVoiceParticipant(roomId, sessionId);
+    if (wasDeleted) voiceEventEmitter.emit("leaveVoiceChannel", { id: sessionId, roomId, sessionId });
   }),
   onMuteChanged: standardAuthedProcedure.input(onVoiceInputSchema).subscription(async function* ({
     ctx,
