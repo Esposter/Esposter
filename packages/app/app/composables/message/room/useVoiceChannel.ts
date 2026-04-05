@@ -7,7 +7,7 @@ import { authClient } from "@/services/auth/authClient";
 import { ICE_SERVERS, LOCAL_PARTICIPANT_ID, SPEAKING_THRESHOLD } from "@/services/message/voice/constants";
 import { useRoomStore } from "@/store/message/room";
 import { useVoiceStore } from "@/store/message/voice";
-import { exhaustiveGuard, getIsServer } from "@esposter/shared";
+import { exhaustiveGuard, getIsServer, jsonDateParse } from "@esposter/shared";
 
 export const useVoiceChannel = () => {
   const { $trpc } = useNuxtApp();
@@ -132,13 +132,13 @@ export const useVoiceChannel = () => {
         case VoiceSignalType.Answer: {
           const peerConnection = peerConnections.get(senderId);
           if (!peerConnection) return;
-          await peerConnection.setRemoteDescription(JSON.parse(data) as RTCSessionDescriptionInit);
+          await peerConnection.setRemoteDescription(jsonDateParse<RTCSessionDescriptionInit>(data));
           await flushIceCandidates(senderId);
           break;
         }
         case VoiceSignalType.Candidate: {
           const peerConnection = peerConnections.get(senderId);
-          const candidateData = JSON.parse(data) as RTCIceCandidateInit;
+          const candidateData = jsonDateParse<RTCIceCandidateInit>(data);
           if (!peerConnection?.remoteDescription) {
             const queue = candidateQueues.get(senderId) ?? [];
             queue.push(candidateData);
@@ -150,7 +150,7 @@ export const useVoiceChannel = () => {
         }
         case VoiceSignalType.Offer: {
           const peerConnection = buildPeerConnection(roomId, senderId);
-          await peerConnection.setRemoteDescription(JSON.parse(data) as RTCSessionDescriptionInit);
+          await peerConnection.setRemoteDescription(jsonDateParse<RTCSessionDescriptionInit>(data));
           await flushIceCandidates(senderId);
           const answer = await peerConnection.createAnswer();
           await peerConnection.setLocalDescription(answer);

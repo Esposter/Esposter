@@ -83,6 +83,10 @@ export const mockSessionOnce = async (db: Context["db"], mockUser?: User) => {
   return getSessionPayload;
 };
 
+export const replayMockSession = (getSessionPayload: GetSessionPayload) => {
+  mocks.getSession.mockImplementationOnce(() => getSessionPayload);
+};
+
 export const getMockSession = () => mocks.getSession();
 
 const createSession = (userId: string): Session => {

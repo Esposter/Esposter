@@ -1,6 +1,6 @@
 ---
 name: testing
-description: Esposter Vitest testing conventions — describe with function refs, canonical test values, takeOne for array access, destructuring from stores/composables, and the Windows UnoCSS test-skip rule. Apply when writing .test.ts files.
+description: Esposter Vitest testing conventions — describe with function refs, canonical test values, takeOne for array access, destructuring from stores/composables, mock session patterns (getMockSession/mockSessionOnce/replayMockSession), and the Windows UnoCSS test-skip rule. Apply when writing .test.ts files.
 ---
 
 # Testing Conventions (Vitest)
@@ -28,7 +28,11 @@ description: Esposter Vitest testing conventions — describe with function refs
 - **Human-readable names** — use plain English: "integer", "decimal", "negative", "epoch date", "NaN".
 - **Array index access** — always use `takeOne(arr, index)` from `@esposter/shared` instead of `arr[index]` or `arr[index]?.` — `noUncheckedIndexedAccess` makes direct index access return `T | undefined`, and `takeOne` throws on out-of-bounds while keeping the type non-nullable.
 - **Destructure from stores and composables** — always destructure return values: `const { deleteRow, undo, isUndoable } = operations` rather than calling `operations.deleteRow(...)`. Same for stores: `const { editedItem } = storeToRefs(store)` and `const { methodName } = store`. This applies inside `beforeEach` too — never chain `useX().method()` inline; always `const { method } = useX()` first.
-- **Inline helper calls used only once** — only assign `getMockSession()`, `getMockSession().user`, or similar helper results to a `const` when the value is referenced more than once in the same test. If used exactly once, inline directly: `expect(x.id).toBe(getMockSession().user.id)` not `const { user } = getMockSession(); expect(x.id).toBe(user.id)`.
+- **Always assign `getMockSession()` results** — never inline `getMockSession().user.id` or `getMockSession().session.id` directly in an expression. Always assign first: `const { user } = getMockSession()` then use `user.id`. This applies even when used only once.
+- **`getMockSession()` session ID is unstable** — `getMockSession().session.id` creates a **new random UUID on every call** (via `createSession`). It cannot be used to assert against what a tRPC procedure used internally, since the procedure's `auth.api.getSession()` call generates its own fresh UUID. `getMockSession().user.id` is stable (created once in `vi.hoisted`). Use the following patterns depending on what you need:
+  - **user identity only** — `const { user } = getMockSession()` then use `user.id` / `user.name` etc.
+  - **session ID tied to a procedure** — use `mockSessionOnce` to queue a known session before the call, then destructure what you need: `const { session, user } = await mockSessionOnce(mockContext.db, getMockSession().user)`. Destructure only what the test uses — `{ session }` if only the session ID is needed, `{ session, user }` if both are needed.
+  - **same session across chained calls** — capture once then replay: `const sessionPayload = await mockSessionOnce(...); await caller.join(...); replayMockSession(sessionPayload); await caller.setMute(...)`. This ensures all operations use the same session ID (required when a later call looks up a participant stored by the earlier call's session ID).
 - **Cloning in tests** — use `structuredClone(obj)` for deep clones; use `Object.assign(structuredClone(obj), { ...updates })` to clone and override fields. Never use `{ ...spread }` syntax to clone — it creates a plain object losing the prototype. Pass `new Foo({ ... })` directly when a fresh instance already suffices (no need to clone or spread it).
 - **Assertions after all assignments** — put all `expect` and `expectToBeDefined` calls after all operation calls and local assignments for that phase, separated by a blank line. For multi-phase tests (e.g. undo then redo), each phase is its own block: operations + `const local = reactive.value?.x`, blank line, then assertions on `local`. Never interleave expects with assignments.
 - **Always use `toStrictEqual`** — never use `toEqual`.

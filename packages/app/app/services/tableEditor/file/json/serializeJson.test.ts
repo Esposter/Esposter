@@ -7,6 +7,7 @@ import { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import { JsonDataSourceItem } from "#shared/models/tableEditor/file/json/JsonDataSourceItem";
 import { DataSourceConfigurationMap } from "@/services/tableEditor/file/dataSource/DataSourceConfigurationMap";
 import { serializeJson } from "@/services/tableEditor/file/json/serializeJson";
+import { jsonDateParse } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(serializeJson, () => {
@@ -33,7 +34,7 @@ describe(serializeJson, () => {
     const blob = await serializeJson(dataSource, new JsonDataSourceItem(), MIME_TYPE);
     const text = await blob.text();
 
-    expect(JSON.parse(text)).toStrictEqual([
+    expect(jsonDateParse(text)).toStrictEqual([
       { a: 0, b: 1 },
       { a: 2, b: 3 },
     ]);
@@ -55,6 +56,6 @@ describe(serializeJson, () => {
     const blob = await serializeJson(dataSource, new JsonDataSourceItem(), MIME_TYPE);
     const text = await blob.text();
 
-    expect(JSON.parse(text)).toStrictEqual([]);
+    expect(jsonDateParse(text)).toStrictEqual([]);
   });
 });
