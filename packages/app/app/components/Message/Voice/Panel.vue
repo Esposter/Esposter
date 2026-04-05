@@ -1,5 +1,9 @@
 <script setup lang="ts">
-const { isInChannel, isMuted, join, leave, toggleMute } = useVoiceChannel();
+import { useVoiceStore } from "@/store/message/voice";
+
+const { join, leave, toggleMute } = useVoiceChannel();
+const voiceStore = useVoiceStore();
+const { isInChannel, isMuted } = storeToRefs(voiceStore);
 </script>
 
 <template>

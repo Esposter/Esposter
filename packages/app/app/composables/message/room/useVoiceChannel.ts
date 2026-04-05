@@ -16,9 +16,7 @@ export const useVoiceChannel = () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const voiceStore = useVoiceStore();
   const { clearSpeakers, createSpeaker, deleteSpeaker, joinVoice, leaveVoice, setMute, setParticipants } = voiceStore;
-  const { speakingIds } = storeToRefs(voiceStore);
-  const isInChannel = ref(false);
-  const isMuted = ref(false);
+  const { isInChannel, isMuted, speakingIds } = storeToRefs(voiceStore);
 
   let localStream: MediaStream | null = null;
   const peerConnections = new Map<string, RTCPeerConnection>();
@@ -218,8 +216,11 @@ export const useVoiceChannel = () => {
     await $trpc.voice.setMute.mutate({ isMuted: isMuted.value, roomId: currentRoomId.value });
   };
 
-  useOnlineSubscribable(currentRoomId, (roomId) => {
+  useOnlineSubscribable(currentRoomId, async (roomId) => {
     if (!roomId) return;
+
+    const participants = await $trpc.voice.readVoiceParticipants.query({ roomId });
+    setParticipants(roomId, participants);
 
     const participantJoinUnsubscribable = $trpc.voice.onParticipantJoin.subscribe(roomId, {
       onData: getSynchronizedFunction(async (participant) => {
@@ -258,5 +259,5 @@ export const useVoiceChannel = () => {
     };
   });
 
-  return { isInChannel, isMuted, join, leave, toggleMute };
+  return { join, leave, toggleMute };
 };

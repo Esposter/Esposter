@@ -3,6 +3,8 @@ import type { VoiceParticipant } from "#shared/models/room/voice/VoiceParticipan
 export const useVoiceStore = defineStore("message/voice", () => {
   const voiceParticipantsRoomMap = ref(new Map<string, VoiceParticipant[]>());
   const speakingIds = ref<string[]>([]);
+  const isInChannel = ref(false);
+  const isMuted = ref(false);
   const joinVoice = (roomId: string, participant: VoiceParticipant) => {
     const participants = voiceParticipantsRoomMap.value.get(roomId) ?? [];
     if (participants.some(({ id }) => id === participant.id)) return;
@@ -40,6 +42,8 @@ export const useVoiceStore = defineStore("message/voice", () => {
     clearSpeakers,
     createSpeaker,
     deleteSpeaker,
+    isInChannel,
+    isMuted,
     joinVoice,
     leaveVoice,
     setMute,

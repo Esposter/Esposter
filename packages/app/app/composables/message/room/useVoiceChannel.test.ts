@@ -30,9 +30,9 @@ describe(useVoiceChannel, () => {
       defineComponent({
         render: () => h("div"),
         setup: () => {
-          ({ isInChannel, isMuted, join, leave, toggleMute } = useVoiceChannel());
+          ({ join, leave, toggleMute } = useVoiceChannel());
           const voiceStore = useVoiceStore();
-          ({ speakingIds, voiceParticipantsRoomMap } = storeToRefs(voiceStore));
+          ({ isInChannel, isMuted, speakingIds, voiceParticipantsRoomMap } = storeToRefs(voiceStore));
           ({ joinVoice, leaveVoice, setMute, setParticipants } = voiceStore);
           speakingIds.value = [];
           voiceParticipantsRoomMap.value = new Map<string, VoiceParticipant[]>();
