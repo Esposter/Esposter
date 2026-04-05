@@ -198,7 +198,6 @@
     "@types/ws": "catalog:",
     "@unocss/nuxt": "catalog:",
     "@vite-pwa/nuxt": "catalog:",
-    "@vue/test-utils": "catalog:",
     "@vueuse/nuxt": "catalog:",
     "azure-mock": "workspace:*",
     "crossws": "catalog:",

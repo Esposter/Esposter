@@ -50,7 +50,6 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@esposter/configuration": "workspace:*",
     "@types/web-push": "catalog:"
   }
 }

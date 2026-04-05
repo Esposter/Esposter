@@ -1,6 +1,8 @@
+import type { RolldownOptions } from "rolldown";
+
 import { dts } from "rolldown-plugin-dts";
-/** @satisfies {import('rolldown').RolldownOptions} */
-const rolldownOptions = {
+
+export const rolldownConfigurationBrowser: RolldownOptions = {
   external: [
     // @esposter/db
     "@azure/data-tables",
@@ -23,5 +25,3 @@ const rolldownOptions = {
   plugins: [dts({ tsconfig: "tsconfig.build.json" })],
   tsconfig: "tsconfig.build.json",
 };
-
-export default rolldownOptions;
