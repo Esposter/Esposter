@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SubmitEventPromise } from "vuetify";
 
-import { useFriendStore } from "@/store/message/friend";
+import { useFriendStore } from "@/store/message/user/friend";
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
 
 const isOpen = defineModel<boolean>({ default: false });

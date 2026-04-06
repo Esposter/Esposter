@@ -1,6 +1,6 @@
 import type { FileEntity } from "@esposter/db-schema";
 
-import { useDownloadFileStore } from "@/store/message/downloadFile";
+import { useDownloadFileStore } from "@/store/message/file";
 import { useRoomStore } from "@/store/message/room";
 import { takeOne } from "@esposter/shared";
 

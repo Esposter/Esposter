@@ -9,9 +9,9 @@ import { authClient } from "@/services/auth/authClient";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { useInputStore } from "@/store/message/input";
-import { useReplyStore } from "@/store/message/reply";
+import { useReplyStore } from "@/store/message/input/reply";
 import { useRoomStore } from "@/store/message/room";
-import { useUploadFileStore } from "@/store/message/uploadFile";
+import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { AzureEntityType, createMessageEntity, MessageType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 

@@ -5,8 +5,8 @@ import type { MessageEntity } from "@esposter/db-schema";
 import { dayjs } from "#shared/services/dayjs";
 import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 import { useMessageStore } from "@/store/message";
-import { useForwardStore } from "@/store/message/forward";
-import { useReplyStore } from "@/store/message/reply";
+import { useForwardStore } from "@/store/message/input/forward";
+import { useReplyStore } from "@/store/message/input/reply";
 import { MessageType } from "@esposter/db-schema";
 
 interface MessageListItemProps {

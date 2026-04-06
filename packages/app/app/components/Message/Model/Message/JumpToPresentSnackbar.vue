@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import StyledButton from "@/components/Styled/Button.vue";
-import { useScrollStore } from "@/store/message/scroll";
+import { useScrollStore } from "@/store/message/ui/scroll";
 
 const scrollStore = useScrollStore();
 const { isViewingOlderMessages } = storeToRefs(scrollStore);

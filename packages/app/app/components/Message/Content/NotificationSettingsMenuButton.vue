@@ -2,7 +2,7 @@
 import type { Room } from "@esposter/db-schema";
 
 import { NotificationTypeLabelMap } from "@/services/message/NotificationTypeLabelMap";
-import { useUserToRoomStore } from "@/store/message/userToRoom";
+import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { NotificationType } from "@esposter/db-schema";
 import { mergeProps } from "vue";
 

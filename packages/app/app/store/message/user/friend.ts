@@ -1,6 +1,6 @@
 import type { User } from "@esposter/db-schema";
 
-export const useFriendStore = defineStore("message/friend", () => {
+export const useFriendStore = defineStore("message/user/friend", () => {
   const { $trpc } = useNuxtApp();
   const friends = ref<User[]>([]);
   const pendingRequests = ref<User[]>([]);

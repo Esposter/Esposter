@@ -4,7 +4,7 @@ import type { FileEntity } from "@esposter/db-schema";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { useRoomStore } from "@/store/message/room";
 
-export const useUploadFileStore = defineStore("message/uploadFile", () => {
+export const useUploadFileStore = defineStore("message/input/uploadFile", () => {
   const roomStore = useRoomStore();
   const { data: files } = useDataMap<FileEntity[]>(() => roomStore.currentRoomId, []);
   const { data: fileUrlMap } = useDataMap(() => roomStore.currentRoomId, new Map<string, UploadFileUrl>());

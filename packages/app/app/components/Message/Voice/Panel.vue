@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useVoiceStore } from "@/store/message/voice";
+import { useVoiceStore } from "@/store/message/room/voice";
 
 const { join, leave, toggleMute } = useVoiceChannel();
 const voiceStore = useVoiceStore();

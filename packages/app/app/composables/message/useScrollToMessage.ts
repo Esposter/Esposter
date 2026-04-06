@@ -1,6 +1,6 @@
 import { dayjs } from "#shared/services/dayjs";
 import { useDataStore } from "@/store/message/data";
-import { useReplyStore } from "@/store/message/reply";
+import { useReplyStore } from "@/store/message/input/reply";
 import { useRoomStore } from "@/store/message/room";
 import { RoutePath } from "@esposter/shared";
 

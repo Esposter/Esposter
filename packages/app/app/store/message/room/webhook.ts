@@ -9,7 +9,7 @@ import { createOperationData } from "@/services/shared/createOperationData";
 import { useRoomStore } from "@/store/message/room";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
-export const useWebhookStore = defineStore("message/webhook", () => {
+export const useWebhookStore = defineStore("message/room/webhook", () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const { items, ...restData } = useCursorPaginationDataMap<Webhook>(() => roomStore.currentRoomId);

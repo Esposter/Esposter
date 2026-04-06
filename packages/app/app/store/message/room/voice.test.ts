@@ -1,6 +1,6 @@
 import type { VoiceParticipant } from "#shared/models/room/voice/VoiceParticipant";
 
-import { useVoiceStore } from "@/store/message/voice";
+import { useVoiceStore } from "@/store/message/room/voice";
 import { getMockSession } from "@@/server/trpc/context.test";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";

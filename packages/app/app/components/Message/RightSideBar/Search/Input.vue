@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { getFilterDisplayValue } from "@/services/message/filter/getFilterDisplayValue";
-import { useSearchMessageStore } from "@/store/message/searchMessage";
+import { useSearchMessageStore } from "@/store/message/search";
 import { FilterTypes } from "@esposter/db-schema";
 
 const readSearchedMessages = useReadSearchedMessages();

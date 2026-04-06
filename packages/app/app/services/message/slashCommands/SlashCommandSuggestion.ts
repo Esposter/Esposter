@@ -8,7 +8,7 @@ import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandTyp
 import { getRender } from "@/services/message/getRender";
 import { SlashCommandDefinitionMap } from "@/services/message/slashCommands/SlashCommandDefinitionMap";
 import { useDataStore } from "@/store/message/data";
-import { usePollDialogStore } from "@/store/message/pollDialog";
+import { usePollDialogStore } from "@/store/message/input/pollDialog";
 import { useRoomStore } from "@/store/message/room";
 import { MessageType } from "@esposter/db-schema";
 import { exhaustiveGuard } from "@esposter/shared";

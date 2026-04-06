@@ -6,7 +6,7 @@ import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { authClient } from "@/services/auth/authClient";
 import { ICE_SERVERS, LOCAL_PARTICIPANT_ID, SPEAKING_THRESHOLD } from "@/services/message/voice/constants";
 import { useRoomStore } from "@/store/message/room";
-import { useVoiceStore } from "@/store/message/voice";
+import { useVoiceStore } from "@/store/message/room/voice";
 import { exhaustiveGuard, jsonDateParse } from "@esposter/shared";
 
 export const useVoiceChannel = () => {

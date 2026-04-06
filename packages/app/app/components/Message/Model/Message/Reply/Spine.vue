@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useColorsStore } from "@/store/colors";
-import { useReplyStore } from "@/store/message/reply";
+import { useReplyStore } from "@/store/message/input/reply";
 
 interface ReplySpineProps {
   replyRowKey: string;

@@ -1,4 +1,4 @@
-import { useFriendStore } from "@/store/message/friend";
+import { useFriendStore } from "@/store/message/user/friend";
 
 export const useReadFriends = () => {
   const { $trpc } = useNuxtApp();

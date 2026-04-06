@@ -2,7 +2,7 @@
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useAlertStore } from "@/store/alert";
 import { useDataStore } from "@/store/message/data";
-import { useForwardStore } from "@/store/message/forward";
+import { useForwardStore } from "@/store/message/input/forward";
 import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 import { RoutePath, takeOne } from "@esposter/shared";
 

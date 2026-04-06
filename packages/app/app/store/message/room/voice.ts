@@ -3,7 +3,7 @@ import type { VoiceParticipant } from "#shared/models/room/voice/VoiceParticipan
 import { authClient } from "@/services/auth/authClient";
 import { useRoomStore } from "@/store/message/room";
 
-export const useVoiceStore = defineStore("message/voice", () => {
+export const useVoiceStore = defineStore("message/room/voice", () => {
   const voiceParticipantsRoomMap = ref(new Map<string, VoiceParticipant[]>());
   const speakingIds = ref<string[]>([]);
   const roomStore = useRoomStore();
