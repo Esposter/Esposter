@@ -1,10 +1,10 @@
 import { dedupeFilters } from "#shared/services/message/dedupeFilters";
 import { RightDrawer } from "@/models/message/RightDrawer";
 import { useLayoutStore } from "@/store/layout";
-import { useLayoutStore as useMessageLayoutStore } from "@/store/message/ui/layout";
 import { useRoomStore } from "@/store/message/room";
-import { useSearchHistoryStore } from "@/store/message/search/history";
 import { useSearchMessageStore } from "@/store/message/search";
+import { useSearchHistoryStore } from "@/store/message/search/history";
+import { useLayoutStore as useMessageLayoutStore } from "@/store/message/ui/layout";
 import { StandardMessageEntityPropertyNames } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
