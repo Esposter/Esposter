@@ -8,7 +8,5 @@ const { isSearching } = storeToRefs(searchMessageStore);
 <template>
   <MessageRightSideBarSearchHeader />
   <v-divider />
-  <template v-if="!isSearching">
-    <MessageRightSideBarSearchMessageList />
-  </template>
+  <MessageRightSideBarSearchMessageList v-if="!isSearching" />
 </template>
