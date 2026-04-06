@@ -4,7 +4,7 @@ import type { SubmitEventPromise } from "vuetify";
 
 import { formRules } from "@/services/vuetify/formRules";
 import { useDataStore } from "@/store/message/data";
-import { usePollDialogStore } from "@/store/message/pollDialog";
+import { usePollDialogStore } from "@/store/message/input/pollDialog";
 import { useRoomStore } from "@/store/message/room";
 import { MessageType } from "@esposter/db-schema";
 

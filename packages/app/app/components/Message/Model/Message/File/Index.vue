@@ -2,7 +2,7 @@
 import type { FileEntity, MessageEntity } from "@esposter/db-schema";
 
 import { CONTAINER_BORDER_RADIUS } from "@/services/message/file/constants";
-import { useDownloadFileStore } from "@/store/message/downloadFile";
+import { useDownloadFileStore } from "@/store/message/file";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { takeOne } from "@esposter/shared";
 

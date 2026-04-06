@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useFriendStore } from "@/store/message/friend";
+import { useFriendStore } from "@/store/message/user/friend";
 
 definePageMeta({ middleware: "auth" });
 

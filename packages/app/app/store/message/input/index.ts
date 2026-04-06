@@ -1,8 +1,8 @@
 import type { Editor } from "@tiptap/core";
 
 import { validateFile } from "@/services/file/validateFile";
+import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { useRoomStore } from "@/store/message/room";
-import { useUploadFileStore } from "@/store/message/uploadFile";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 
 export const useInputStore = defineStore("message/input", () => {

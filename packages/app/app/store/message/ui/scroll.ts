@@ -3,7 +3,7 @@ import type { VList } from "vuetify/components";
 import { useRoomStore } from "@/store/message/room";
 import { RoutePath } from "@esposter/shared";
 
-export const useScrollStore = defineStore("message/scroll", () => {
+export const useScrollStore = defineStore("message/ui/scroll", () => {
   const messageContainer = ref<InstanceType<typeof VList> | null>(null);
   const messageContainerElement = computed(() => messageContainer.value?.$el as HTMLDivElement | null);
   const { isScrolling, y } = useScroll(messageContainerElement);

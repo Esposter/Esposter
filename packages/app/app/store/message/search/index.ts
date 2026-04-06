@@ -5,7 +5,7 @@ import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useRoomStore } from "@/store/message/room";
 import { FilterType } from "@esposter/db-schema";
 
-export const useSearchMessageStore = defineStore("message/searchMessage", () => {
+export const useSearchMessageStore = defineStore("message/search", () => {
   const roomStore = useRoomStore();
   const { data: searchQuery } = useDataMap<string>(() => roomStore.currentRoomId, "");
   const menu = ref(false);

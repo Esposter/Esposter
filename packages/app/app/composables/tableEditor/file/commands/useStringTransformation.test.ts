@@ -11,11 +11,14 @@ import {
 import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
-import { assert, beforeEach, describe, expect, test } from "vitest";
+import { afterEach, assert, beforeEach, describe, expect, test } from "vitest";
 
 describe(useStringTransformation, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
+  });
+
+  afterEach(() => {
     const fileHistoryStore = useFileHistoryStore();
     const { clear } = fileHistoryStore;
     clear();

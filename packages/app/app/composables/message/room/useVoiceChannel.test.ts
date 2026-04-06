@@ -2,7 +2,7 @@ import type { VoiceParticipant } from "#shared/models/room/voice/VoiceParticipan
 import type { Context } from "@@/server/trpc/context";
 import type { VueWrapper } from "@vue/test-utils";
 
-import { useVoiceStore } from "@/store/message/voice";
+import { useVoiceStore } from "@/store/message/room/voice";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";

@@ -5,7 +5,7 @@ import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { Operation } from "@esposter/shared";
 
-export const useReplyStore = defineStore("message/reply", () => {
+export const useReplyStore = defineStore("message/input/reply", () => {
   const roomStore = useRoomStore();
   const { data: rowKey } = useDataMap<string | undefined>(() => roomStore.currentRoomId, undefined);
   MessageHookMap.ResetSend.push(() => {

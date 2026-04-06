@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useColorsStore } from "@/store/colors";
-import { useReplyStore } from "@/store/message/reply";
+import { useReplyStore } from "@/store/message/input/reply";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { MessageType } from "@esposter/db-schema";
 

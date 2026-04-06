@@ -7,7 +7,7 @@ import { createOperationData } from "@/services/shared/createOperationData";
 import { useRoomStore } from "@/store/message/room";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
-export const useSearchHistoryStore = defineStore("message/searchHistory", () => {
+export const useSearchHistoryStore = defineStore("message/search/history", () => {
   const roomStore = useRoomStore();
   const { items, ...restData } = useCursorPaginationDataMap<SearchHistory>(() => roomStore.currentRoomId);
   const {

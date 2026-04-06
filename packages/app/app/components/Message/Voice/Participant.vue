@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { VoiceParticipant } from "#shared/models/room/voice/VoiceParticipant";
 
-import { useVoiceStore } from "@/store/message/voice";
+import { useVoiceStore } from "@/store/message/room/voice";
 
 interface VoiceParticipantProps {
   participant: VoiceParticipant;

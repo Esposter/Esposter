@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { FilterTypePlaceholderMap } from "@/services/message/filter/FilterTypePlaceholderMap";
-import { useSearchMessageStore } from "@/store/message/searchMessage";
+import { useSearchMessageStore } from "@/store/message/search";
 import { FilterTypes } from "@esposter/db-schema";
 import { uncapitalize } from "@esposter/shared";
 

@@ -7,7 +7,7 @@ import { useRoomStore } from "@/store/message/room";
 import { Operation, takeOne } from "@esposter/shared";
 import { api as viewerApi } from "v-viewer";
 
-export const useDownloadFileStore = defineStore("message/downloadFile", () => {
+export const useDownloadFileStore = defineStore("message/file", () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const dataStore = useDataStore();

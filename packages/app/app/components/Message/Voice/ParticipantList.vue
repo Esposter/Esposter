@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRoomStore } from "@/store/message/room";
-import { useVoiceStore } from "@/store/message/voice";
+import { useVoiceStore } from "@/store/message/room/voice";
 
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);

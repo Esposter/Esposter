@@ -2,7 +2,7 @@
 import type { Room } from "@esposter/db-schema";
 
 import { WEBHOOK_MAX_LENGTH } from "#shared/services/message/constants";
-import { useWebhookStore } from "@/store/message/webhook";
+import { useWebhookStore } from "@/store/message/room/webhook";
 
 interface WebhookSettingsProps {
   roomId: Room["id"];

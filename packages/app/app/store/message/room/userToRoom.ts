@@ -3,7 +3,7 @@ import type { UpdateUserToRoomInput } from "#shared/models/db/userToRoom/UpdateU
 import { useRoomStore } from "@/store/message/room";
 import { NotificationType } from "@esposter/db-schema";
 
-export const useUserToRoomStore = defineStore("message/userToRoom", () => {
+export const useUserToRoomStore = defineStore("message/room/userToRoom", () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const { data: notificationType, setDataMap: setNotificationTypeMap } = useDataMap<NotificationType>(

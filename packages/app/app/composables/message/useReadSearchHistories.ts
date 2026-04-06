@@ -1,5 +1,5 @@
 import { useRoomStore } from "@/store/message/room";
-import { useSearchHistoryStore } from "@/store/message/searchHistory";
+import { useSearchHistoryStore } from "@/store/message/search/history";
 import { StandardMessageEntityPropertyNames } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
