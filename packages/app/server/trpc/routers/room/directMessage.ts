@@ -21,7 +21,7 @@ import {
   RoomType,
   selectRoomInMessageSchema,
   users,
-  usersToRooms,
+  usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { ID_SEPARATOR, InvalidOperationError, ItemMetadataPropertyNames, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -88,13 +88,13 @@ export const directMessageRouter = router({
         });
 
       await tx
-        .insert(usersToRooms)
+        .insert(usersToRoomsInMessage)
         .values(allUserIds.map((userId) => ({ roomId: room.id, userId })))
         .onConflictDoNothing();
       await tx
-        .update(usersToRooms)
+        .update(usersToRoomsInMessage)
         .set({ isHidden: false })
-        .where(and(eq(usersToRooms.roomId, room.id), eq(usersToRooms.userId, userId)));
+        .where(and(eq(usersToRoomsInMessage.roomId, room.id), eq(usersToRoomsInMessage.userId, userId)));
       return room;
     }),
   ),
@@ -102,15 +102,17 @@ export const directMessageRouter = router({
     await isMember(ctx.db, ctx.getSessionPayload, input);
     await assertIsRoom(ctx.db, input, RoomType.DirectMessage);
     await ctx.db
-      .update(usersToRooms)
+      .update(usersToRoomsInMessage)
       .set({ isHidden: true })
-      .where(and(eq(usersToRooms.roomId, input), eq(usersToRooms.userId, ctx.getSessionPayload.user.id)));
+      .where(
+        and(eq(usersToRoomsInMessage.roomId, input), eq(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id)),
+      );
   }),
   readDirectMessageParticipants: standardAuthedProcedure
     .input(readDirectMessageParticipantsInputSchema)
     .query(async ({ ctx, input: roomIds }) => {
-      const utr1 = alias(usersToRooms, "utr1");
-      const utr2 = alias(usersToRooms, "utr2");
+      const utr1 = alias(usersToRoomsInMessage, "utr1");
+      const utr2 = alias(usersToRoomsInMessage, "utr2");
       const rows = await ctx.db
         .select({ roomId: utr2.roomId, user: users })
         .from(utr1)
@@ -130,9 +132,9 @@ export const directMessageRouter = router({
     .input(readDirectMessagesInputSchema)
     .query(async ({ ctx, input: { cursor, limit, sortBy } }) => {
       const innerJoinCondition = and(
-        eq(usersToRooms.roomId, rooms.id),
-        eq(usersToRooms.userId, ctx.getSessionPayload.user.id),
-        eq(usersToRooms.isHidden, false),
+        eq(usersToRoomsInMessage.roomId, rooms.id),
+        eq(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id),
+        eq(usersToRoomsInMessage.isHidden, false),
       );
       const wheres: (SQL | undefined)[] = [eq(rooms.type, RoomType.DirectMessage)];
       if (cursor) wheres.push(getCursorWhere(rooms, cursor, sortBy));
@@ -140,7 +142,7 @@ export const directMessageRouter = router({
       const readRooms = await ctx.db
         .select({ rooms })
         .from(rooms)
-        .innerJoin(usersToRooms, innerJoinCondition)
+        .innerJoin(usersToRoomsInMessage, innerJoinCondition)
         .where(and(...wheres))
         .orderBy(...parseSortByToSql(rooms, sortBy))
         .limit(limit + 1);
