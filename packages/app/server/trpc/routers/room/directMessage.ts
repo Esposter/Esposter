@@ -25,7 +25,7 @@ import {
 } from "@esposter/db-schema";
 import { ID_SEPARATOR, InvalidOperationError, ItemMetadataPropertyNames, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, eq, inArray, ne, or } from "drizzle-orm";
+import { and, eq, getTableColumns, inArray, ne, or } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { z } from "zod";
 
@@ -138,16 +138,12 @@ export const directMessageRouter = router({
       if (cursor) wheres.push(getCursorWhere(rooms, cursor, sortBy));
 
       const readRooms = await ctx.db
-        .select({ rooms })
+        .select(getTableColumns(rooms))
         .from(rooms)
         .innerJoin(usersToRooms, innerJoinCondition)
         .where(and(...wheres))
         .orderBy(...parseSortByToSql(rooms, sortBy))
         .limit(limit + 1);
-      return getCursorPaginationData(
-        readRooms.map(({ rooms }) => rooms),
-        limit,
-        sortBy,
-      );
+      return getCursorPaginationData(readRooms, limit, sortBy);
     }),
 });
