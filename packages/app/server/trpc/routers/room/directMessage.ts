@@ -17,7 +17,7 @@ import {
   DatabaseEntityType,
   friends,
   FriendshipStatus,
-  rooms,
+  roomsInMessage,
   RoomType,
   selectRoomInMessageSchema,
   users,
@@ -73,13 +73,12 @@ export const directMessageRouter = router({
 
       const participantKey = allUserIds.toSorted().join(ID_SEPARATOR);
       const [newRoom] = await tx
-        .insert(rooms)
+        .insert(roomsInMessage)
         .values({ name: "", participantKey, type: RoomType.DirectMessage, userId })
-        .onConflictDoNothing({ target: rooms.participantKey })
+        .onConflictDoNothing({ target: roomsInMessage.participantKey })
         .returning();
       const room =
-        newRoom ??
-        (await tx.query.rooms.findFirst({ where: (rooms, { eq }) => eq(rooms.participantKey, participantKey) }));
+        newRoom ?? (await tx.query.roomsInMessage.findFirst({ where: { participantKey: { eq: participantKey } } }));
       if (!room)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -116,7 +115,10 @@ export const directMessageRouter = router({
       const rows = await ctx.db
         .select({ roomId: utr2.roomId, user: users })
         .from(utr1)
-        .innerJoin(rooms, and(eq(rooms.id, utr1.roomId), eq(rooms.type, RoomType.DirectMessage)))
+        .innerJoin(
+          roomsInMessage,
+          and(eq(roomsInMessage.id, utr1.roomId), eq(roomsInMessage.type, RoomType.DirectMessage)),
+        )
         .innerJoin(utr2, and(eq(utr2.roomId, utr1.roomId), ne(utr2.userId, ctx.getSessionPayload.user.id)))
         .innerJoin(users, eq(users.id, utr2.userId))
         .where(and(eq(utr1.userId, ctx.getSessionPayload.user.id), inArray(utr1.roomId, roomIds)));
@@ -132,19 +134,19 @@ export const directMessageRouter = router({
     .input(readDirectMessagesInputSchema)
     .query(async ({ ctx, input: { cursor, limit, sortBy } }) => {
       const innerJoinCondition = and(
-        eq(usersToRoomsInMessage.roomId, rooms.id),
+        eq(usersToRoomsInMessage.roomId, roomsInMessage.id),
         eq(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id),
         eq(usersToRoomsInMessage.isHidden, false),
       );
-      const wheres: (SQL | undefined)[] = [eq(rooms.type, RoomType.DirectMessage)];
-      if (cursor) wheres.push(getCursorWhere(rooms, cursor, sortBy));
+      const wheres: (SQL | undefined)[] = [eq(roomsInMessage.type, RoomType.DirectMessage)];
+      if (cursor) wheres.push(getCursorWhere(roomsInMessage, cursor, sortBy));
 
       const readRooms = await ctx.db
-        .select(getTableColumns(rooms))
-        .from(rooms)
+        .select(getTableColumns(roomsInMessage))
+        .from(roomsInMessage)
         .innerJoin(usersToRoomsInMessage, innerJoinCondition)
         .where(and(...wheres))
-        .orderBy(...parseSortByToSql(rooms, sortBy))
+        .orderBy(...parseSortByToSql(roomsInMessage, sortBy))
         .limit(limit + 1);
       return getCursorPaginationData(readRooms, limit, sortBy);
     }),

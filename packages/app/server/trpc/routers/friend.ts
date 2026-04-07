@@ -67,8 +67,7 @@ export const friendRouter = router({
   readPendingRequests: standardAuthedProcedure.query<User[]>(async ({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
     const pendingFriendships = await ctx.db.query.friends.findMany({
-      where: (friends, { and, eq }) =>
-        and(eq(friends.receiverId, userId), eq(friends.status, FriendshipStatus.Pending)),
+      where: { receiverId: { eq: userId }, status: { eq: FriendshipStatus.Pending } },
       with: { sender: true },
     });
     return pendingFriendships.map(({ sender }) => sender);
@@ -76,7 +75,7 @@ export const friendRouter = router({
   readSentRequests: standardAuthedProcedure.query<User[]>(async ({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
     const sentFriendships = await ctx.db.query.friends.findMany({
-      where: (friends, { and, eq }) => and(eq(friends.senderId, userId), eq(friends.status, FriendshipStatus.Pending)),
+      where: { senderId: { eq: userId }, status: { eq: FriendshipStatus.Pending } },
       with: { receiver: true },
     });
     return sentFriendships.map(({ receiver }) => receiver);
@@ -85,7 +84,7 @@ export const friendRouter = router({
     const userId = ctx.getSessionPayload.user.id;
     return ctx.db.query.users.findMany({
       limit: MAX_READ_LIMIT,
-      where: (users, { and, ilike, ne }) => and(ilike(users.name, `%${escapeLike(name)}%`), ne(users.id, userId)),
+      where: { name: { ilike: `%${escapeLike(name)}%` }, id: { ne: userId } },
     });
   }),
   sendFriendRequest: standardAuthedProcedure
@@ -105,7 +104,7 @@ export const friendRouter = router({
         .returning();
       if (newFriend) return newFriend;
 
-      const existingFriend = await ctx.db.query.friends.findFirst({ where: eq(friends.id, id) });
+      const existingFriend = await ctx.db.query.friends.findFirst({ where: { id: { eq: id } } });
       if (!existingFriend)
         throw new TRPCError({
           code: "BAD_REQUEST",
