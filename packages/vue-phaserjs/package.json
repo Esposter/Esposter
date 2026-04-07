@@ -39,12 +39,6 @@
     "@esposter/shared": "workspace:*",
     "parse-tmx": "workspace:*"
   },
-  "devDependencies": {
-    "@esposter/configuration": "workspace:*",
-    "@vitejs/plugin-vue": "catalog:",
-    "@vue/test-utils": "catalog:",
-    "unplugin-auto-import": "catalog:"
-  },
   "peerDependencies": {
     "phaser": "catalog:",
     "phaser3-rex-plugins": "catalog:",

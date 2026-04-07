@@ -1,7 +1,7 @@
 import { messageSchema } from "@/schema/messageSchema";
 import { roomsInMessage } from "@/schema/roomsInMessage";
 import { users } from "@/schema/users";
-import { pgEnum, primaryKey, text, uuid } from "drizzle-orm/pg-core";
+import { boolean, pgEnum, primaryKey, text, uuid } from "drizzle-orm/pg-core";
 import { z } from "zod";
 
 export enum NotificationType {
@@ -17,6 +17,7 @@ export const notificationTypeEnum = pgEnum("notification_type", NotificationType
 export const usersToRoomsInMessage = messageSchema.table(
   "users_to_rooms",
   {
+    isHidden: boolean("isHidden").notNull().default(false),
     notificationType: notificationTypeEnum("notificationType").notNull().default(NotificationType.DirectMessage),
     roomId: uuid("roomId")
       .notNull()

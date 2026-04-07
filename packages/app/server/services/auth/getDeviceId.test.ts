@@ -1,14 +1,15 @@
+// @vitest-environment node
 import { getDeviceId } from "@@/server/services/auth/getDeviceId";
+import { getMockSession } from "@@/server/trpc/context.test";
 import { ID_SEPARATOR } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(getDeviceId, () => {
-  const sessionId = crypto.randomUUID();
-  const userId = crypto.randomUUID();
-
   test("gets", () => {
     expect.hasAssertions();
 
-    expect(getDeviceId({ sessionId, userId })).toBe(`${userId}${ID_SEPARATOR}${sessionId}`);
+    const { session, user } = getMockSession();
+
+    expect(getDeviceId({ sessionId: session.id, userId: user.id })).toBe(`${user.id}${ID_SEPARATOR}${session.id}`);
   });
 });

@@ -1,6 +1,7 @@
 import * as accounts from "@/schema/accounts";
 import * as achievements from "@/schema/achievements";
 import * as appUsersInMessage from "@/schema/appUsersInMessage";
+import * as friends from "@/schema/friends";
 import * as invitesInMessage from "@/schema/invitesInMessage";
 import * as likes from "@/schema/likes";
 import * as posts from "@/schema/posts";
@@ -21,6 +22,7 @@ export const schema = {
   ...accounts,
   ...achievements,
   ...appUsersInMessage,
+  ...friends,
   ...invitesInMessage,
   ...likes,
   ...posts,

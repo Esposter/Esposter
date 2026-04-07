@@ -1,0 +1,23 @@
+# File Table Editor — Feature Roadmap v4
+
+Architecture details in `computedColumns/overview.md`.
+
+## Schema Fixes
+
+- [x] **StringPattern `{N}` bounds validation** — add `.refine()` to `stringPatternTransformationSchema` that extracts all `\{(\d+)\}` indices from `pattern` and asserts each is `< sourceColumnIds.length`. Error message: `"{N} index out of range"`, path `["pattern"]`. Currently out-of-bounds references silently produce empty strings at compute time.
+
+## Aggregation Extensions
+
+- [x] **Average / Mean** — sum of non-null values divided by non-null count; returns `null` when count is 0. New `AggregationTransformationType.Average` variant.
+- [x] **Count** — number of non-null values in the column. New `AggregationTransformationType.Count` variant. No division-by-zero risk.
+- [x] **Minimum / Maximum** — minimum and maximum non-null numeric value. New `AggregationTransformationType.Minimum` and `AggregationTransformationType.Maximum` variants.
+
+## New Transformations
+
+- [x] **String** (String → String) — `ColumnTransformationType.String` for single-column Basic string operations, discriminated by `stringTransformationType: StringTransformationType`: `Lowercase`, `TitleCase`, `Trim`, `Uppercase`. Single `sourceColumnId` restricted to `context.stringColumnItems`. Logic in `string/computeStringTransformation.ts`. Schema: `StringTransformation` in `shared/models/.../transformation/string/`.
+  - Note: multi-column pattern interpolation (`{N}` placeholders) remains as the existing `ColumnTransformationType.StringPattern` (`StringPatternTransformation`) — it was not merged into `String`.
+- [x] **Split** (String → String) — extracts the Nth segment of a string split by a delimiter. Part of `ColumnTransformationType.String` via `StringTransformationType.Split`. Fields: `sourceColumnId` (string column), `delimiter: string`, `segmentIndex: number` (non-negative integer). Add `.refine()` ensuring `delimiter` is non-empty. Returns `null` when the index is out of range.
+
+## Math Transformation
+
+- [x] **Math** (`ColumnTransformationType.Math`) — replaces the old step-based model with mathjs. Shape: `{ expression: string, variables: MathVariable[] }`. Uses `mathjs` `evaluate` + `parse` for expression evaluation and parse-time validation (`.superRefine()`). Files in `shared/models/.../transformation/MathTransformation.ts`, `MathVariable.ts`, and `app/services/.../transformation/computeMathTransformation.ts`.

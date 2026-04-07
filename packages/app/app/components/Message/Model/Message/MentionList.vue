@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { MentionNodeAttributes } from "@/models/message/MentionNodeAttributes";
 import type { User } from "@esposter/db-schema";
-import type { SuggestionProps } from "@tiptap/suggestion";
+import type { SuggestionKeyDownProps, SuggestionProps } from "@tiptap/suggestion";
 
 import { takeOne } from "@esposter/shared";
 
@@ -15,23 +15,20 @@ const selectItem = (index: number) => {
   const item = takeOne(items, index);
   command({ id: item.id, label: item.name });
 };
-const onKeyDown = ({ event }: { event: KeyboardEvent }) => {
-  if (event.key === "ArrowUp") {
-    selectedIndex.value = (selectedIndex.value + items.length - 1) % items.length;
-    return true;
+const onKeyDown = ({ event }: SuggestionKeyDownProps) => {
+  switch (event.key) {
+    case "ArrowDown":
+      selectedIndex.value = (selectedIndex.value + 1) % items.length;
+      return true;
+    case "ArrowUp":
+      selectedIndex.value = (selectedIndex.value + items.length - 1) % items.length;
+      return true;
+    case "Enter":
+      selectItem(selectedIndex.value);
+      return true;
+    default:
+      return false;
   }
-
-  if (event.key === "ArrowDown") {
-    selectedIndex.value = (selectedIndex.value + 1) % items.length;
-    return true;
-  }
-
-  if (event.key === "Enter") {
-    selectItem(selectedIndex.value);
-    return true;
-  }
-
-  return false;
 };
 
 defineExpose({ onKeyDown });

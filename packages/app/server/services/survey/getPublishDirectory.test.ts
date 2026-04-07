@@ -1,3 +1,4 @@
+// @vitest-environment node
 import type { Survey } from "@esposter/db-schema";
 
 import { PUBLISH_DIRECTORY_PATH } from "@@/server/services/survey/constants";

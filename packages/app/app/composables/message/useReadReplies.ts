@@ -1,6 +1,6 @@
 import type { MessageEntity } from "@esposter/db-schema";
 
-import { useReplyStore } from "@/store/message/reply";
+import { useReplyStore } from "@/store/message/input/reply";
 import { useRoomStore } from "@/store/message/room";
 
 export const useReadReplies = () => {

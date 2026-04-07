@@ -1,6 +1,6 @@
-import type { ColumnValue } from "#shared/models/tableEditor/file/column/ColumnValue";
 import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 
+import { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import { ADataSourceCommand } from "@/models/tableEditor/file/commands/ADataSourceCommand";
 import { CommandType } from "@/models/tableEditor/file/commands/CommandType";
 import { getRecordDifferenceDescription } from "@/services/tableEditor/file/commands/getRecordDifferenceDescription";
@@ -17,14 +17,10 @@ export class UpdateRowCommand extends ADataSourceCommand<CommandType.UpdateRow> 
   }
 
   private readonly index: number;
-  private readonly originalRow: { data: Record<string, ColumnValue> };
-  private readonly updatedRow: { data: Record<string, ColumnValue> };
+  private readonly originalRow: Row;
+  private readonly updatedRow: Row;
 
-  constructor(
-    index: number,
-    originalRow: { data: Record<string, ColumnValue> },
-    updatedRow: { data: Record<string, ColumnValue> },
-  ) {
+  constructor(index: number, originalRow: Row, updatedRow: Row) {
     super();
     this.index = index;
     this.originalRow = originalRow;

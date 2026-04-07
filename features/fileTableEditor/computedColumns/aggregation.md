@@ -18,7 +18,7 @@ interface AggregationTransformation extends ItemEntityType<ColumnTransformationT
 enum AggregationTransformationType {
   PercentOfTotal,
   Rank,
-  RunningSum,
+  RunningSummation,
 }
 ```
 
@@ -41,8 +41,8 @@ The aggregation resolver is registered in `ColumnTransformationComputeMap` under
 
 ## Aggregation Types
 
-| Type             | Description                                                     |
-| ---------------- | --------------------------------------------------------------- |
-| `PercentOfTotal` | `row[sourceColumn] / sum(all rows[sourceColumn]) * 100`         |
-| `Rank`           | Position of `row[sourceColumn]` when all rows sorted descending |
-| `RunningSum`     | Cumulative sum of `row[sourceColumn]` from row 0 to `rowIndex`  |
+| Type               | Description                                                     |
+| ------------------ | --------------------------------------------------------------- |
+| `PercentOfTotal`   | `row[sourceColumn] / sum(all rows[sourceColumn]) * 100`         |
+| `Rank`             | Position of `row[sourceColumn]` when all rows sorted descending |
+| `RunningSummation` | Cumulative sum of `row[sourceColumn]` from row 0 to `rowIndex`  |

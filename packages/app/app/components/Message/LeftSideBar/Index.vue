@@ -1,8 +1,26 @@
+<script setup lang="ts">
+import { useRoomStore } from "@/store/message/room";
+import { RoutePath } from "@esposter/shared";
+
+const roomStore = useRoomStore();
+const { currentRoomId } = storeToRefs(roomStore);
+</script>
+
 <template>
   <div flex flex-col h-full>
     <MessageLeftSideBarHeader />
     <v-divider />
-    <MessageLeftSideBarRooms flex-1 />
+    <div flex-1 overflow-y-auto>
+      <v-list-item font-bold :to="RoutePath.MessagesFriends">Friends</v-list-item>
+      <v-divider />
+      <MessageLeftSideBarRooms />
+      <v-divider />
+      <template v-if="currentRoomId">
+        <MessageLeftSideBarVoicePanel />
+        <v-divider />
+      </template>
+      <MessageLeftSideBarDirectMessages />
+    </div>
     <MessageLeftSideBarStatusBar />
   </div>
 </template>

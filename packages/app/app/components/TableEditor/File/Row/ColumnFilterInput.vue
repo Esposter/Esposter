@@ -59,7 +59,7 @@ const stringValue = computed({
       v-model="minimumValue"
       density="compact"
       hide-details
-      placeholder="Min"
+      placeholder="Minimum"
       type="number"
       variant="underlined"
     />
@@ -67,7 +67,7 @@ const stringValue = computed({
       v-model="maximumValue"
       density="compact"
       hide-details
-      placeholder="Max"
+      placeholder="Maximum"
       type="number"
       variant="underlined"
     />

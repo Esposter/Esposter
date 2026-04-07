@@ -1,6 +1,5 @@
 import type { Creator } from "@/models/message/Creator";
 import type { MessageEntity } from "@esposter/db-schema";
-import type { Component } from "vue";
 
 import { MessageType } from "@esposter/db-schema";
 
@@ -18,5 +17,6 @@ export const MessageComponentMap = {
   [MessageType.PinMessage]: defineAsyncComponent(
     () => import("@/components/Message/Model/Message/Type/PinMessage.vue"),
   ),
+  [MessageType.Poll]: defineAsyncComponent(() => import("@/components/Message/Model/Message/Type/Poll.vue")),
   [MessageType.Webhook]: defineAsyncComponent(() => import("@/components/Message/Model/Message/Type/Index.vue")),
 } as const satisfies Record<MessageType, Component>;

@@ -3,7 +3,7 @@ import type { Column } from "#shared/models/tableEditor/file/column/Column";
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import { computeColumnStats } from "@/services/tableEditor/file/column/computeColumnStats";
+import { computeColumnStatistics } from "@/services/tableEditor/file/column/computeColumnStatistics";
 
 interface ChartDialogButtonProps {
   column: Column;
@@ -12,9 +12,9 @@ interface ChartDialogButtonProps {
 
 const { column, dataSource } = defineProps<ChartDialogButtonProps>();
 const isOpen = ref(false);
-const columnStats = computed(() => {
+const columnStatistics = computed(() => {
   if (!isOpen.value) return null;
-  return computeColumnStats(dataSource).find((stats) => stats.columnName === column.name) ?? null;
+  return computeColumnStatistics(dataSource).find((statistics) => statistics.columnName === column.name) ?? null;
 });
 </script>
 
@@ -25,6 +25,6 @@ const columnStats = computed(() => {
         <v-btn m-0 icon="mdi-chart-bar" size="small" tile :="tooltipProps" @click.stop="isOpen = true" />
       </template>
     </v-tooltip>
-    <TableEditorFileColumnChartDialog v-model="isOpen" :column-stats />
+    <TableEditorFileColumnChartDialog v-model="isOpen" :column-statistics />
   </template>
 </template>

@@ -1,7 +1,7 @@
 import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import { computeColumnStats } from "@/services/tableEditor/file/column/computeColumnStats";
+import { computeColumnStatistics } from "@/services/tableEditor/file/column/computeColumnStatistics";
 import { OUTLIER_STANDARD_DEVIATION_MULTIPLIER } from "@/services/tableEditor/file/constants";
 import { getItemId } from "@/services/tableEditor/file/getItemId";
 import { useTableEditorStore } from "@/store/tableEditor";
@@ -14,7 +14,7 @@ export const useOutlierStore = defineStore("tableEditor/file/outlier", () => {
     if (!isOutlierHighlightEnabled.value || !tableEditorStore.editedItem?.dataSource) return new Set();
     const dataSource = tableEditorStore.editedItem.dataSource;
     const result = new Set<string>();
-    for (const { average, columnName, columnType, standardDeviation } of computeColumnStats(dataSource)) {
+    for (const { average, columnName, columnType, standardDeviation } of computeColumnStatistics(dataSource)) {
       if (columnType !== ColumnType.Number || average === null || standardDeviation === null || standardDeviation <= 0)
         continue;
       const threshold = OUTLIER_STANDARD_DEVIATION_MULTIPLIER * standardDeviation;

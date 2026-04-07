@@ -1,3 +1,4 @@
+// @vitest-environment node
 import type { CompositeKey } from "@esposter/db-schema";
 
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";

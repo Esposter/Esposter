@@ -2,6 +2,7 @@ import { MESSAGE_CACHE_LIMIT } from "@/services/message/cache/constants";
 import { resetMessageCacheDatabase } from "@/services/message/cache/openMessageCacheDatabase";
 import { readCachedMessages } from "@/services/message/cache/readCachedMessages";
 import { writeCachedMessages } from "@/services/message/cache/writeCachedMessages";
+import { getMockSession } from "@@/server/trpc/context.test";
 import { StandardMessageEntity } from "@esposter/db-schema";
 import { afterEach, describe, expect, test } from "vitest";
 
@@ -9,7 +10,6 @@ describe(writeCachedMessages, () => {
   const partitionKey = "partitionKey";
   const rowKey = "rowKey";
   const message = "message";
-  const userId = crypto.randomUUID();
 
   afterEach(async () => {
     await resetMessageCacheDatabase();
@@ -38,6 +38,7 @@ describe(writeCachedMessages, () => {
   test("writes and reads back messages", async () => {
     expect.hasAssertions();
 
+    const userId = getMockSession().user.id;
     await writeCachedMessages(partitionKey, [new StandardMessageEntity({ message, partitionKey, rowKey, userId })]);
     const messages = await readCachedMessages(partitionKey);
 
@@ -47,6 +48,7 @@ describe(writeCachedMessages, () => {
   test("replaces existing messages for the same room", async () => {
     expect.hasAssertions();
 
+    const userId = getMockSession().user.id;
     const message1 = new StandardMessageEntity({ message, partitionKey, rowKey: "0", userId });
     const message2 = new StandardMessageEntity({ message: " ", partitionKey, rowKey: "1", userId });
     await writeCachedMessages(partitionKey, [message1]);
@@ -60,6 +62,7 @@ describe(writeCachedMessages, () => {
   test("filters out loading messages", async () => {
     expect.hasAssertions();
 
+    const userId = getMockSession().user.id;
     const normalMessage = new StandardMessageEntity({ message, partitionKey, rowKey, userId });
     const loadingMessage = new StandardMessageEntity({
       isLoading: true,
@@ -78,6 +81,7 @@ describe(writeCachedMessages, () => {
   test("trims to MESSAGE_CACHE_LIMIT", async () => {
     expect.hasAssertions();
 
+    const userId = getMockSession().user.id;
     const messages = Array.from(
       { length: MESSAGE_CACHE_LIMIT + 10 },
       (_, index) => new StandardMessageEntity({ message, partitionKey, rowKey: String(index), userId }),

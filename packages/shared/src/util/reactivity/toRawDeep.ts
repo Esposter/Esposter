@@ -8,7 +8,7 @@ export const toRawDeep = <T extends object>(data: T): T => {
     if (Object.hasOwn(rawData, key)) {
       const value = rawData[key];
       if (!isObject(value) && !Array.isArray(value)) continue;
-      rawData[key] = toRawDeep<typeof value>(value);
+      rawData[key] = toRawDeep(value);
     }
 
   return rawData;

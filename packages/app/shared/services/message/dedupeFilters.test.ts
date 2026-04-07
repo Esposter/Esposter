@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { dedupeFilters } from "#shared/services/message/dedupeFilters";
 import { FilterType } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";

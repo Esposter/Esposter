@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useSearchMessageStore } from "@/store/message/searchMessage";
+import { useSearchMessageStore } from "@/store/message/search";
 
 const searchMessageStore = useSearchMessageStore();
 const { isSearching } = storeToRefs(searchMessageStore);
@@ -8,7 +8,5 @@ const { isSearching } = storeToRefs(searchMessageStore);
 <template>
   <MessageRightSideBarSearchHeader />
   <v-divider />
-  <template v-if="!isSearching">
-    <MessageRightSideBarSearchMessageList />
-  </template>
+  <MessageRightSideBarSearchMessageList v-if="!isSearching" />
 </template>

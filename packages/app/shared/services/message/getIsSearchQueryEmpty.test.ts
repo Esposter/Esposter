@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { getIsSearchQueryEmpty } from "#shared/services/message/getIsSearchQueryEmpty";
 import { FilterType } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";

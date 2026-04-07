@@ -1,7 +1,6 @@
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { Context } from "@@/server/trpc/context";
-import type { User } from "@esposter/db-schema";
-import type { Session } from "better-auth";
+import type { Session, User } from "better-auth";
 import type { PgliteDatabase } from "drizzle-orm/pglite";
 
 import { dayjs } from "#shared/services/dayjs";
@@ -22,7 +21,6 @@ const mocks = vi.hoisted(() => {
   const createdAt = new Date();
   const user: User = {
     createdAt,
-    deletedAt: null,
     email: "",
     emailVerified: true,
     id: crypto.randomUUID(),
@@ -82,6 +80,10 @@ export const mockSessionOnce = async (db: Context["db"], mockUser?: User) => {
   const getSessionPayload = { session: createSession(user.id), user } as const satisfies GetSessionPayload;
   mocks.getSession.mockImplementationOnce(() => getSessionPayload);
   return getSessionPayload;
+};
+
+export const replayMockSession = (getSessionPayload: GetSessionPayload) => {
+  mocks.getSession.mockImplementationOnce(() => getSessionPayload);
 };
 
 export const getMockSession = () => mocks.getSession();

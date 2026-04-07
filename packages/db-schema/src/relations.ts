@@ -1,6 +1,7 @@
 import { accountsRelation } from "@/relations/accountsRelation";
 import { achievementsRelation } from "@/relations/achievementsRelation";
 import { appUsersInMessageRelation } from "@/relations/appUsersInMessageRelation";
+import { friendsRelation } from "@/relations/friendsRelation";
 import { invitesInMessageRelation } from "@/relations/invitesInMessageRelation";
 import { likesRelation } from "@/relations/likesRelation";
 import { postsRelation } from "@/relations/postsRelation";
@@ -18,6 +19,7 @@ export const relations = {
   ...accountsRelation,
   ...achievementsRelation,
   ...appUsersInMessageRelation,
+  ...friendsRelation,
   ...invitesInMessageRelation,
   ...likesRelation,
   ...postsRelation,

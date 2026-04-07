@@ -25,26 +25,20 @@ export class MoveColumnCommand extends ADataSourceCommand<CommandType.MoveColumn
   }
 
   protected doExecute(item: DataSourceItem) {
+    this.moveColumn(item);
+  }
+
+  protected doUndo(item: DataSourceItem) {
+    this.moveColumn(item);
+  }
+
+  private moveColumn(item: DataSourceItem) {
     if (!item.dataSource) return;
     const columns = [...item.dataSource.columns];
     const [moved] = columns.splice(this.fromIndex, 1);
     if (!moved) return;
-    columns.splice(this.toIndex, 0, moved);
-    item.dataSource.columns = columns;
-    const columnNames = columns.map(({ name }) => name);
-    for (const row of item.dataSource.rows) {
-      const newData: typeof row.data = {};
-      for (const name of columnNames) newData[name] = takeOne(row.data, name);
-      row.data = newData;
-    }
-  }
 
-  protected doUndo(item: DataSourceItem) {
-    if (!item.dataSource) return;
-    const columns = [...item.dataSource.columns];
-    const [moved] = columns.splice(this.toIndex, 1);
-    if (!moved) return;
-    columns.splice(this.fromIndex, 0, moved);
+    columns.splice(this.toIndex, 0, moved);
     item.dataSource.columns = columns;
     const columnNames = columns.map(({ name }) => name);
     for (const row of item.dataSource.rows) {

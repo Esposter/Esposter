@@ -15,11 +15,11 @@ import { MockEventGridDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("pushSubscription", () => {
+  let mockContext: Context;
   let pushSubscriptionCaller: DecorateRouterRecord<TRPCRouter["pushSubscription"]>;
   let messageCaller: DecorateRouterRecord<TRPCRouter["message"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let userToRoomCaller: DecorateRouterRecord<TRPCRouter["userToRoom"]>;
-  let mockContext: Context;
   const name = "name";
   const message = "message";
   const getMessage = (userId: string) =>
@@ -31,15 +31,11 @@ describe("pushSubscription", () => {
   const updatedP256dh = "updatedP256dh";
 
   beforeAll(async () => {
-    const createPushSubscriptionCaller = createCallerFactory(pushSubscriptionRouter);
-    const createMessageCaller = createCallerFactory(messageRouter);
-    const createRoomCaller = createCallerFactory(roomRouter);
-    const createUserToRoomCaller = createCallerFactory(userToRoomRouter);
     mockContext = await createMockContext();
-    pushSubscriptionCaller = createPushSubscriptionCaller(mockContext);
-    messageCaller = createMessageCaller(mockContext);
-    roomCaller = createRoomCaller(mockContext);
-    userToRoomCaller = createUserToRoomCaller(mockContext);
+    pushSubscriptionCaller = createCallerFactory(pushSubscriptionRouter)(mockContext);
+    messageCaller = createCallerFactory(messageRouter)(mockContext);
+    roomCaller = createCallerFactory(roomRouter)(mockContext);
+    userToRoomCaller = createCallerFactory(userToRoomRouter)(mockContext);
   });
 
   afterEach(async () => {
@@ -57,11 +53,12 @@ describe("pushSubscription", () => {
       expirationTime: null,
       keys: { auth, p256dh },
     });
+    const userId = getMockSession().user.id;
 
     expect(newPushSubscription.endpoint).toBe(endpoint);
     expect(newPushSubscription.auth).toBe(auth);
     expect(newPushSubscription.p256dh).toBe(p256dh);
-    expect(newPushSubscription.userId).toBe(getMockSession().user.id);
+    expect(newPushSubscription.userId).toBe(userId);
   });
 
   test("subscribes updates existing endpoint", async () => {

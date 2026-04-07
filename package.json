@@ -45,7 +45,9 @@
     "@lerna-lite/watch": "catalog:",
     "@types/node": "catalog:",
     "@typescript/native-preview": "catalog:",
+    "@vitejs/plugin-vue": "catalog:",
     "@vitest/coverage-v8": "catalog:",
+    "@vue/test-utils": "catalog:",
     "ctix": "catalog:",
     "dotenv": "catalog:",
     "eslint": "catalog:",
@@ -60,6 +62,7 @@
     "type-fest": "catalog:",
     "typedoc": "catalog:",
     "typescript": "catalog:",
+    "unplugin-auto-import": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",
     "vue-tsc": "catalog:"

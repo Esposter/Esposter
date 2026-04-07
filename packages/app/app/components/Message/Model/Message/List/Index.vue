@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useDataStore } from "@/store/message/data";
-import { useScrollStore } from "@/store/message/scroll";
+import { useScrollStore } from "@/store/message/ui/scroll";
 
 const { readMessages, readMoreMessages, readMoreNewerMessages: baseReadMoreNewerMessages } = useReadMessages();
 const { isPending } = await readMessages();

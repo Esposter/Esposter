@@ -6,7 +6,7 @@ Each transformation variant is a plain object identified by a `ColumnTransformat
 
 ```
 ColumnTransformationType
-├── Aggregation      — dataset-level aggregates (PercentOfTotal, Rank, RunningSum) (see aggregation.md)
+├── Aggregation      — dataset-level aggregates (PercentOfTotal, Rank, RunningSummation) (see aggregation.md)
 ├── ConvertTo        — type coercion: string → Number | Boolean | Date | String
 ├── DatePart         — extract a calendar field (Year, Month, Day, Weekday, Hour, Minute)
 ├── RegexMatch       — regex capture group extraction from a string value

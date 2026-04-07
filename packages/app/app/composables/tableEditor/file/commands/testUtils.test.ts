@@ -21,7 +21,7 @@ export const makeDataSource = (columns: Column[] = [], rows: Row[] = []): DataSo
   columns,
   metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(0), name: "", size: 0 },
   rows,
-  stats: { columnCount: columns.length, rowCount: rows.length, size: 0 },
+  statistics: { columnCount: columns.length, rowCount: rows.length, size: 0 },
 });
 
 export const makeColumn = (name: string): StringColumn => new StringColumn({ name, size: 0, sourceName: name });

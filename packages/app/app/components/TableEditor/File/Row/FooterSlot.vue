@@ -1,29 +1,25 @@
 <script setup lang="ts">
-import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
-
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
-import { computeValue } from "@/services/tableEditor/file/column/computeValue";
-import { filterDataSourceRows } from "@/services/tableEditor/file/dataSource/filterDataSourceRows";
-import { useFilterStore } from "@/store/tableEditor/file/filter";
+import { buildColumnStatisticsComputeContext } from "@/services/tableEditor/file/column/buildColumnStatisticsComputeContext";
+import { ColumnStatisticsDefinitionMap } from "@/services/tableEditor/file/column/ColumnStatisticsDefinitionMap";
+import { toColumnKey } from "@/services/tableEditor/file/column/toColumnKey";
+import { useColumnStore } from "@/store/tableEditor/file/column";
+import { useRowStore } from "@/store/tableEditor/file/row";
+import { takeOne } from "@esposter/shared";
 
-interface FooterSlotProps {
-  dataSource: DataSource;
-}
-
-const { dataSource } = defineProps<FooterSlotProps>();
-const filterStore = useFilterStore();
-const { columnFilters } = storeToRefs(filterStore);
-const displayColumns = computed(() => dataSource.columns.filter((column) => !column.hidden));
-const filteredRows = computed(() => filterDataSourceRows(dataSource.rows, columnFilters.value));
+const columnStore = useColumnStore();
+const { displayColumns } = storeToRefs(columnStore);
+const rowStore = useRowStore();
+const { filteredRows, headers } = storeToRefs(rowStore);
 const columnSummaries = computed(() => {
   const result = new Map<string, string>();
   for (const column of displayColumns.value) {
-    if (column.type !== ColumnType.Number) continue;
-    const sum = filteredRows.value.reduce((acc, row) => {
-      const value = computeValue(filteredRows.value, row, dataSource.columns, column);
-      return typeof value === "number" ? acc + value : acc;
-    }, 0);
-    result.set(column.name, `Σ ${Math.round(sum * 100) / 100}`);
+    if (column.type !== ColumnType.Number || !column.footerStatisticsKey) continue;
+    const values = filteredRows.value.map((row) => takeOne(row.data, column.name));
+    const context = buildColumnStatisticsComputeContext(column, values);
+    const definition = ColumnStatisticsDefinitionMap[column.footerStatisticsKey];
+    const value = definition.compute(context);
+    result.set(toColumnKey(column.name), `${definition.title} ${definition.format(value as never)}`);
   }
   return result;
 });
@@ -31,11 +27,8 @@ const columnSummaries = computed(() => {
 
 <template>
   <tr>
-    <td />
-    <td />
-    <td v-for="column of displayColumns" :key="column.id" font-weight-bold>
-      {{ columnSummaries.get(column.name) ?? "" }}
+    <td v-for="header of headers" :key="header.key" font-weight-bold>
+      {{ columnSummaries.get(header.key) ?? "" }}
     </td>
-    <td />
   </tr>
 </template>

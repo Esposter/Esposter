@@ -25,16 +25,16 @@ export const useTypingSubscribables = () => {
     const createTypingUnsubscribable = $trpc.message.onCreateTyping.subscribe(
       { roomId },
       {
-        onData: (data) => {
-          clearTypingTimeout(data.userId);
+        onData: (typing) => {
+          clearTypingTimeout(typing.userId);
 
           const id = window.setTimeout(() => {
-            typings.value = typings.value.filter(({ userId }) => userId !== data.userId);
-            clearTypingTimeout(data.userId);
+            typings.value = typings.value.filter(({ userId }) => userId !== typing.userId);
+            clearTypingTimeout(typing.userId);
           }, dayjs.duration(3, "seconds").asMilliseconds());
 
-          typingTimeoutIdMap.value.set(data.userId, id);
-          if (!typings.value.some(({ userId }) => userId === data.userId)) typings.value.push(data);
+          typingTimeoutIdMap.value.set(typing.userId, id);
+          if (!typings.value.some(({ userId }) => userId === typing.userId)) typings.value.push(typing);
         },
       },
     );

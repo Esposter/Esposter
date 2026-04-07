@@ -4,6 +4,7 @@ export enum MessageType {
   EditRoom = "EditRoom",
   Message = "Message",
   PinMessage = "PinMessage",
+  Poll = "Poll",
   Webhook = "Webhook",
 }
 

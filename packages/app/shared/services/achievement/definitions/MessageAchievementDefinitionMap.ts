@@ -38,8 +38,8 @@ export const MessageAchievementDefinitionMap = {
   [MessageAchievementName.EarlyBird]: defineAchievementDefinition({
     category: AchievementCategory.Message,
     condition: {
-      max: 7,
-      min: 5,
+      maximum: 7,
+      minimum: 5,
       referenceUnit: "day",
       type: AchievementConditionType.Time,
       unit: "hour",
@@ -155,8 +155,8 @@ export const MessageAchievementDefinitionMap = {
   [MessageAchievementName.NightOwl]: defineAchievementDefinition({
     category: AchievementCategory.Message,
     condition: {
-      max: 5,
-      min: 0,
+      maximum: 5,
+      minimum: 0,
       referenceUnit: "day",
       type: AchievementConditionType.Time,
       unit: "hour",

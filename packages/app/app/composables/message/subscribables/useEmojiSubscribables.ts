@@ -14,24 +14,24 @@ export const useEmojiSubscribables = () => {
     const createEmojiUnsubscribable = $trpc.emoji.onCreateEmoji.subscribe(
       { roomId },
       {
-        onData: (data) => {
-          storeCreateEmoji(data);
+        onData: (newEmoji) => {
+          storeCreateEmoji(newEmoji);
         },
       },
     );
     const updateEmojiUnsubscribable = $trpc.emoji.onUpdateEmoji.subscribe(
       { roomId },
       {
-        onData: (data) => {
-          storeUpdateEmoji(data);
+        onData: (updatedEmoji) => {
+          storeUpdateEmoji(updatedEmoji);
         },
       },
     );
     const deleteEmojiUnsubscribable = $trpc.emoji.onDeleteEmoji.subscribe(
       { roomId },
       {
-        onData: (data) => {
-          storeDeleteEmoji(data);
+        onData: (id) => {
+          storeDeleteEmoji(id);
         },
       },
     );

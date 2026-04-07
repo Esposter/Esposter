@@ -24,7 +24,7 @@ describe(computeAggregationValue, () => {
     expect.hasAssertions();
 
     const transformation: AggregationTransformation = {
-      aggregationTransformationType: AggregationTransformationType.RunningSum,
+      aggregationTransformationType: AggregationTransformationType.RunningSummation,
       sourceColumnId: "-1",
       type: ColumnTransformationType.Aggregation,
     };
@@ -56,10 +56,10 @@ describe(computeAggregationValue, () => {
     expect(computeAggregationValue(dataSource.rows, findSource, transformation, 0)).toBe(4);
   });
 
-  test(`${AggregationTransformationType.RunningSum} accumulates from row 0 to rowIndex`, () => {
+  test(`${AggregationTransformationType.RunningSummation} accumulates from row 0 to rowIndex`, () => {
     expect.hasAssertions();
 
-    const transformation = makeAggregationTransformation(AggregationTransformationType.RunningSum);
+    const transformation = makeAggregationTransformation(AggregationTransformationType.RunningSummation);
 
     expect(computeAggregationValue(dataSource.rows, findSource, transformation, 0)).toBe(10);
     expect(computeAggregationValue(dataSource.rows, findSource, transformation, 1)).toBe(30);
@@ -90,10 +90,10 @@ describe(computeAggregationValue, () => {
     expect(computeAggregationValue(dataSourceZero.rows, findSourceZero, transformation, 0)).toBeNull();
   });
 
-  test(`${AggregationTransformationType.RunningSum} skips null values`, () => {
+  test(`${AggregationTransformationType.RunningSummation} skips null values`, () => {
     expect.hasAssertions();
 
-    const transformation = makeAggregationTransformation(AggregationTransformationType.RunningSum);
+    const transformation = makeAggregationTransformation(AggregationTransformationType.RunningSummation);
     const rowsWithNull = [makeRow({ "": 10 }), makeRow({ "": null }), makeRow({ "": 20 })];
     const dataSourceWithNull = makeDataSource([sourceColumn], rowsWithNull);
     const findSourceWithNull = (sourceColumnId: string) =>

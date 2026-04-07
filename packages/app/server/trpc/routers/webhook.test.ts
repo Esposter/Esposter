@@ -13,19 +13,17 @@ import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@espos
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("webhook", () => {
+  let mockContext: Context;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let webhookCaller: DecorateRouterRecord<TRPCRouter["webhook"]>;
-  let mockContext: Context;
   const name = "name";
   const updatedName = "updatedName";
   const updatedIsActive = false;
 
   beforeAll(async () => {
-    const createRoomCaller = createCallerFactory(roomRouter);
-    const createWebhookCaller = createCallerFactory(webhookRouter);
     mockContext = await createMockContext();
-    roomCaller = createRoomCaller(mockContext);
-    webhookCaller = createWebhookCaller(mockContext);
+    roomCaller = createCallerFactory(roomRouter)(mockContext);
+    webhookCaller = createCallerFactory(webhookRouter)(mockContext);
   });
 
   afterEach(async () => {

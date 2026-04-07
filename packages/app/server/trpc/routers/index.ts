@@ -6,12 +6,15 @@ import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
 import { dungeonsRouter } from "@@/server/trpc/routers/dungeons";
 import { emailEditorRouter } from "@@/server/trpc/routers/emailEditor";
 import { flowchartEditorRouter } from "@@/server/trpc/routers/flowchartEditor";
+import { friendRouter } from "@@/server/trpc/routers/friend";
 import { likeRouter } from "@@/server/trpc/routers/like";
 import { messageRouter } from "@@/server/trpc/routers/message";
 import { emojiRouter } from "@@/server/trpc/routers/message/emoji";
 import { postRouter } from "@@/server/trpc/routers/post";
 import { pushSubscriptionRouter } from "@@/server/trpc/routers/pushSubscription";
 import { roomRouter } from "@@/server/trpc/routers/room";
+import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
+import { voiceRouter } from "@@/server/trpc/routers/room/voice";
 import { searchHistoryRouter } from "@@/server/trpc/routers/searchHistory";
 import { surveyRouter } from "@@/server/trpc/routers/survey";
 import { tableEditorRouter } from "@@/server/trpc/routers/tableEditor";
@@ -24,10 +27,12 @@ const trpcRouterWithoutAchievements = router({
   app: appRouter,
   clicker: clickerRouter,
   dashboard: dashboardRouter,
+  directMessage: directMessageRouter,
   dungeons: dungeonsRouter,
   emailEditor: emailEditorRouter,
   emoji: emojiRouter,
   flowchartEditor: flowchartEditorRouter,
+  friend: friendRouter,
   like: likeRouter,
   message: messageRouter,
   post: postRouter,
@@ -38,6 +43,7 @@ const trpcRouterWithoutAchievements = router({
   tableEditor: tableEditorRouter,
   user: userRouter,
   userToRoom: userToRoomRouter,
+  voice: voiceRouter,
   webhook: webhookRouter,
   webpageEditor: webpageEditorRouter,
 });

@@ -11,19 +11,17 @@ import { InvalidOperationError, NotFoundError, Operation } from "@esposter/share
 import { beforeAll, describe, expect, test } from "vitest";
 
 describe("like", () => {
+  let mockContext: Context;
   let likeCaller: DecorateRouterRecord<TRPCRouter["like"]>;
   let postCaller: DecorateRouterRecord<TRPCRouter["post"]>;
-  let mockContext: Context;
   const title = "title";
   const value = 1;
   const updatedValue = -1;
 
   beforeAll(async () => {
-    const createPostCaller = createCallerFactory(postRouter);
-    const createLikeCaller = createCallerFactory(likeRouter);
     mockContext = await createMockContext();
-    postCaller = createPostCaller(mockContext);
-    likeCaller = createLikeCaller(mockContext);
+    postCaller = createCallerFactory(postRouter)(mockContext);
+    likeCaller = createCallerFactory(likeRouter)(mockContext);
   });
 
   test("creates", async () => {
@@ -97,8 +95,9 @@ describe("like", () => {
     const newPost = await postCaller.createPost({ title });
     await likeCaller.createLike({ postId: newPost.id, value });
     const deletedLike = await likeCaller.deleteLike(newPost.id);
+    const userId = getMockSession().user.id;
 
-    expect(deletedLike).toStrictEqual({ postId: newPost.id, userId: getMockSession().user.id, value });
+    expect(deletedLike).toStrictEqual({ postId: newPost.id, userId, value });
   });
 
   test("fails delete with non-existent post id", async () => {

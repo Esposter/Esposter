@@ -12,19 +12,17 @@ import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("searchHistory", () => {
+  let mockContext: Context;
   let searchHistoryCaller: DecorateRouterRecord<TRPCRouter["searchHistory"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
-  let mockContext: Context;
   const name = "name";
   const query = "query";
   const updatedQuery = "updatedQuery";
 
   beforeAll(async () => {
-    const createCaller = createCallerFactory(searchHistoryRouter);
-    const createRoomCaller = createCallerFactory(roomRouter);
     mockContext = await createMockContext();
-    searchHistoryCaller = createCaller(mockContext);
-    roomCaller = createRoomCaller(mockContext);
+    searchHistoryCaller = createCallerFactory(searchHistoryRouter)(mockContext);
+    roomCaller = createCallerFactory(roomRouter)(mockContext);
   });
 
   afterEach(async () => {

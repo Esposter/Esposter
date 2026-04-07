@@ -1,6 +1,8 @@
 export enum DatabaseEntityType {
   Achievement = "Achievement",
   AppUser = "AppUser",
+  DirectMessage = "DirectMessage",
+  Friend = "Friend",
   Invite = "Invite",
   Like = "Like",
   Post = "Post",

@@ -3,7 +3,7 @@ import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { getTypingMessage } from "@/services/message/getTypingMessage";
 import { useDataStore } from "@/store/message/data";
 import { useInputStore } from "@/store/message/input";
-import { useReplyStore } from "@/store/message/reply";
+import { useReplyStore } from "@/store/message/input/reply";
 import { useRoomStore } from "@/store/message/room";
 import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 import { Extension } from "@tiptap/vue-3";
@@ -26,6 +26,7 @@ const keyboardExtension = new Extension({
   },
 });
 const mentionExtension = useMentionExtension();
+const slashCommandExtension = useSlashCommandExtension();
 const inputStore = useInputStore();
 const { input } = storeToRefs(inputStore);
 const replyStore = useReplyStore();
@@ -36,6 +37,7 @@ const uploadFiles = useUploadFiles();
 
 <template>
   <MessageModelMessageForwardRoomDialog />
+  <MessageModelMessageInputPollDialog />
   <MessageModelMessageFileDropzoneBackground />
   <div w-full>
     <MessageModelMessageInputReplyHeader v-if="reply" :reply @close="rowKey = ''" />
@@ -43,7 +45,7 @@ const uploadFiles = useUploadFiles();
       v-model="input"
       :placeholder="`Message ${roomName}`"
       :limit="MESSAGE_MAX_LENGTH"
-      :extensions="[keyboardExtension, mentionExtension]"
+      :extensions="[keyboardExtension, mentionExtension, slashCommandExtension]"
       :card-props="reply ? { class: 'rd-t-none' } : undefined"
       @paste="(_editor, files) => uploadFiles(files)"
     >

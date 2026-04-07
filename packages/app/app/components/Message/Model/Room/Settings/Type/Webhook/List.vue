@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { useWebhookStore } from "@/store/message/webhook";
+import { useWebhookStore } from "@/store/message/room/webhook";
 
 interface WebhookListProps {
   roomId: RoomInMessage["id"];

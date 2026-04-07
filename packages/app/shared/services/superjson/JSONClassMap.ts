@@ -13,6 +13,7 @@ import { FlowchartEditor } from "#shared/models/flowchartEditor/data/FlowchartEd
 import { TableEditor } from "#shared/models/tableEditor/data/TableEditor";
 import { TableEditorConfiguration } from "#shared/models/tableEditor/data/TableEditorConfiguration";
 import { BooleanColumn } from "#shared/models/tableEditor/file/column/BooleanColumn";
+import { ComputedColumn } from "#shared/models/tableEditor/file/column/ComputedColumn";
 import { DateColumn } from "#shared/models/tableEditor/file/column/DateColumn";
 import { NumberColumn } from "#shared/models/tableEditor/file/column/NumberColumn";
 import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
@@ -29,6 +30,7 @@ export const JSONClassMap: Record<string, Class<Serializable>> = {
   BooleanColumn,
   Chart,
   Clicker,
+  ComputedColumn,
   CsvDataSourceItem,
   Dashboard,
   DateColumn,

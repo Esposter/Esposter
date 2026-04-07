@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { BooleanFormat } from "#shared/models/tableEditor/file/column/BooleanFormat";
 import { DateFormat } from "#shared/models/tableEditor/file/column/DateFormat";
 import { NumberFormat } from "#shared/models/tableEditor/file/column/NumberFormat";
