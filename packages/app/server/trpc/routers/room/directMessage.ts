@@ -19,7 +19,7 @@ import {
   FriendshipStatus,
   rooms,
   RoomType,
-  selectRoomSchema,
+  selectRoomInMessageSchema,
   users,
   usersToRooms,
 } from "@esposter/db-schema";
@@ -31,14 +31,14 @@ import { z } from "zod";
 
 const readDirectMessagesInputSchema = z
   .object({
-    ...createCursorPaginationParamsSchema(selectRoomSchema.keyof(), [
+    ...createCursorPaginationParamsSchema(selectRoomInMessageSchema.keyof(), [
       { key: ItemMetadataPropertyNames.updatedAt, order: SortOrder.Desc },
     ]).shape,
   })
   .prefault({});
 export type ReadDirectMessagesInput = z.infer<typeof readDirectMessagesInputSchema>;
 
-const readDirectMessageParticipantsInputSchema = selectRoomSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
+const readDirectMessageParticipantsInputSchema = selectRoomInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
 export type ReadDirectMessageParticipantsInput = z.infer<typeof readDirectMessageParticipantsInputSchema>;
 
 export const directMessageRouter = router({

@@ -11,14 +11,17 @@ import { router } from "@@/server/trpc";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { selectRoomSchema } from "@esposter/db-schema";
+import { selectRoomInMessageSchema } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-const roomIdInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
-const setMuteInputSchema = z.object({ isMuted: z.boolean(), roomId: selectRoomSchema.shape.id });
-const sendSignalInputSchema = z.object({ payload: voiceSignalPayloadSchema, roomId: selectRoomSchema.shape.id });
-const onVoiceInputSchema = selectRoomSchema.shape.id;
+const roomIdInputSchema = z.object({ roomId: selectRoomInMessageSchema.shape.id });
+const setMuteInputSchema = z.object({ isMuted: z.boolean(), roomId: selectRoomInMessageSchema.shape.id });
+const sendSignalInputSchema = z.object({
+  payload: voiceSignalPayloadSchema,
+  roomId: selectRoomInMessageSchema.shape.id,
+});
+const onVoiceInputSchema = selectRoomInMessageSchema.shape.id;
 
 export const voiceRouter = router({
   joinVoiceChannel: getMemberProcedure(roomIdInputSchema, "roomId").mutation<VoiceParticipant[]>(
