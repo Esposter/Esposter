@@ -170,7 +170,7 @@ catalog:
   nuxt-security: ^2.5.1
   obscenity: ^0.4.6
   omit-deep-lodash: ^1.1.7
-  oxfmt: ^0.43.0
+  oxfmt: ^0.44.0
   oxlint: ^1.58.0
   oxlint-tsgolint: ^0.20.0
   p-progress: ^1.0.0
