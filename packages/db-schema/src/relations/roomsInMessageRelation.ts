@@ -5,6 +5,7 @@ export const roomsInMessageRelation = defineRelationsPart(schema, (r) => ({
   roomsInMessage: {
     user: r.one.users({
       from: r.roomsInMessage.userId,
+      optional: false,
       to: r.users.id,
     }),
     usersToRoomsInMessage: r.many.usersToRoomsInMessage({

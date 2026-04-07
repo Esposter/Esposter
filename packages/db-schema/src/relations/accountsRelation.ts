@@ -5,6 +5,7 @@ export const accountsRelation = defineRelationsPart(schema, (r) => ({
   accounts: {
     user: r.one.users({
       from: r.accounts.userId,
+      optional: false,
       to: r.users.id,
     }),
   },

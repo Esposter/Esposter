@@ -1,6 +1,6 @@
 ---
 name: drizzle
-description: Esposter Drizzle ORM conventions — column naming (camelCase matching property), pgTable wrapper for metadata, schema placement, select patterns, and relational vs SQL-style API preference. Apply when writing or modifying DB schema files in packages/db-schema or tRPC routers.
+description: Esposter Drizzle ORM conventions — column naming (camelCase matching property), pgTable wrapper for metadata, schema placement, select patterns, relational vs SQL-style API preference, and v2 relation definitions (defineRelationsPart, optional:false, naming). Apply when writing or modifying DB schema files in packages/db-schema or tRPC routers.
 ---
 
 # Drizzle ORM Conventions
@@ -80,25 +80,111 @@ description: Esposter Drizzle ORM conventions — column naming (camelCase match
   ctx.db.select(getTableColumns(users)).from(friends).innerJoin(users, or(...)).where(...)
   ```
 
-## Relations (Schema Definitions)
+## Relations (v2 API)
 
-- **Always define `relations()` for every table** — even if the table has FK columns already, Drizzle's relational API requires explicit `relations()` declarations to enable `db.query.*` and `with:` eager loading.
-- **Always add reciprocal entries** — if `friends` has `sender: one(users, ...)`, then `users` must have `sentFriendRequests: many(friends, { relationName: "sender" })`.
-- **Always export from `schema.ts`** — every table file's exports must be spread into the `schema` object in `packages/db-schema/src/schema.ts`. Missing this breaks `db.query.*` at runtime.
-- **`relationName` is required when two FK columns point to the same table** — Drizzle cannot infer which `one()` side maps to which `many()` side when there is ambiguity (e.g. `friends.senderId` and `friends.receiverId` both FK to `users`). Use a string `relationName` on both the `one()` and the matching `many()`:
+This project uses Drizzle ORM v2's `defineRelationsPart` API. **Never use the v1 `relations()` function** — it is incompatible with v2.
 
+### File Structure
+
+- **Relations live in separate files** under `packages/db-schema/src/relations/`, one file per table (e.g. `friendsRelation.ts`).
+- **Never define relations inside schema files** — schema files (`packages/db-schema/src/schema/*.ts`) must not import from `drizzle-orm` `relations` or define any `*Relations` with `relations()`.
+- **Register every relation file** in `packages/db-schema/src/relations.ts` — both the import and the spread into the `relations` export object.
+- **Always export from `schema.ts`** — every table file must be spread into the `schema` object in `packages/db-schema/src/schema.ts`. Missing this breaks `db.query.*` at runtime.
+
+### Defining Relations
+
+```ts
+// packages/db-schema/src/relations/friendsRelation.ts
+import { schema } from "@/schema";
+import { defineRelationsPart } from "drizzle-orm";
+
+export const friendsRelation = defineRelationsPart(schema, (r) => ({
+  friends: {
+    receiver: r.one.users({
+      from: r.friends.receiverId,
+      optional: false,
+      to: r.users.id,
+    }),
+    sender: r.one.users({
+      from: r.friends.senderId,
+      optional: false,
+      to: r.users.id,
+    }),
+  },
+}));
+```
+
+### `optional: false`
+
+- **Always set `optional: false` on `r.one` when the FK column is `notNull()`** — Drizzle v2 defaults to optional (nullable result), which is incorrect for non-nullable FKs. Omitting this produces wrong TypeScript types (e.g. `user: User | null` instead of `user: User`).
+- **Omit `optional` (or set `optional: true`) only when the FK column is nullable** — e.g. a soft-delete `deletedAt` style optional foreign key.
+
+### Naming Conventions
+
+- **`r.one` relations use singular, descriptive names** — name the relation after what it represents, not the table:
+  - FK to `users` → `user`
+  - FK to `roomsInMessage` → `roomInMessage`
+  - FK to `appUsersInMessage` (bot user) → `appUser` (not `appUsersInMessage`)
+  - FK to `achievements` → `achievement`
+- **`r.many` relations use camelCase plural** — name after the junction/child table:
+  - `usersToRoomsInMessage` (the junction table name)
+  - `webhooksInMessages` (plural of `webhooksInMessage`)
+- **Through relations (many-to-many)** use `{target}Via{JunctionTable}` pattern:
+  - `usersViaInvitesInMessage`, `postsViaLikes`, `achievementsViaUserAchievements`
+- **`alias` is required for through relations** — use `"{targetTable}_id_{sourceTable}_id_via_{junctionTable}"` format:
   ```ts
-  // friends.ts
-  export const friendsRelations = relations(friends, ({ one }) => ({
-    receiver: one(users, { fields: [friends.receiverId], references: [users.id], relationName: "receiver" }),
-    sender: one(users, { fields: [friends.senderId], references: [users.id], relationName: "sender" }),
-  }));
+  alias: "roomsInMessage_id_users_id_via_invitesInMessage";
+  ```
 
-  // users.ts
-  export const usersRelations = relations(users, ({ many }) => ({
-    receivedFriendRequests: many(friends, { relationName: "receiver" }),
-    sentFriendRequests: many(friends, { relationName: "sender" }),
-  }));
+### v2 `where` Syntax
+
+The v2 relational API uses **object-based `where`** (not callbacks):
+
+```ts
+// CORRECT — v2 object syntax
+const room = await ctx.db.query.roomsInMessage.findFirst({
+  where: { id: { eq: input }, userId: { eq: userId } },
+});
+
+// For EXISTS subqueries, use RAW escape hatch
+const room = await ctx.db.query.roomsInMessage.findFirst({
+  where: {
+    RAW: (roomsInMessage, { and, eq, exists }) => {
+      const where = and(eq(roomsInMessage.id, input), exists(...));
+      if (!where) throw new InvalidOperationError(...);
+      return where;
+    },
+  },
+});
+
+// WRONG — v1 callback syntax (incompatible with v2)
+where: (rooms, { and, eq }) => and(eq(rooms.id, input), eq(rooms.userId, userId)),
+```
+
+### `with:` Eager Loading Workaround
+
+Due to [drizzle-team/drizzle-orm#695](https://github.com/drizzle-team/drizzle-orm/issues/695), eager-loaded relation shapes must be specified as a constant object exported from the relation file:
+
+```ts
+// In the relation file (e.g. usersToRoomsInMessageRelation.ts)
+export const UserToRoomInMessageRelations = {
+  roomInMessage: true,
+  user: true,
+} as const;
+
+// In the router
+const result = await ctx.db.query.usersToRoomsInMessage.findFirst({
+  where: { ... },
+  with: UserToRoomInMessageRelations,
+});
+```
+
+### `createSelectSchema`
+
+- **Always import `createSelectSchema` from `drizzle-orm/zod`** — never from `drizzle-zod` (that is the v1 package):
+  ```ts
+  import { createSelectSchema } from "drizzle-orm/zod"; // ✓
+  import { createSelectSchema } from "drizzle-zod"; // ✗
   ```
 
 ## Batch Inserts
