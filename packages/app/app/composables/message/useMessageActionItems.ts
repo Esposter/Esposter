@@ -88,15 +88,16 @@ export const useMessageActionItems = (
     }),
     title: "Copy Message Link",
   };
+  const updateMessageTypes = [MessageType.Message, MessageType.Webhook];
   const updateMessageItems = computed<Item[]>(() =>
-    message.type === MessageType.Message || message.type === MessageType.Webhook
+    updateMessageTypes.includes(message.type)
       ? isEditable.value
         ? [editMessageItem, forwardMessageItem]
         : [replyItem, forwardMessageItem]
       : [],
   );
   const updateMessageMenuItems = computed<Item[]>(() =>
-    message.type === MessageType.Message || message.type === MessageType.Webhook
+    updateMessageTypes.includes(message.type)
       ? isEditable.value
         ? [editMessageItem, replyItem, forwardMessageItem]
         : [replyItem, forwardMessageItem]
@@ -117,7 +118,9 @@ export const useMessageActionItems = (
     }
   });
   const deleteMessageItem = computed<Item | undefined>(() =>
-    (message.type === MessageType.Message || message.type === MessageType.Webhook) && isCreator.value && onDeleteMode
+    [MessageType.Message, MessageType.Poll, MessageType.Webhook].includes(message.type) &&
+    isCreator.value &&
+    onDeleteMode
       ? {
           color: "error",
           icon: "mdi-delete",
