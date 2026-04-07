@@ -109,7 +109,7 @@ catalog:
   ajv-formats: ^3.0.1
   ajv-i18n: ^4.2.0
   apexcharts: ^5.10.5
-  better-auth: ^1.5.6
+  better-auth: ^1.6.0
   codemirror: ^6.0.2
   crossws: ^0.4.4
   ctix: 2.7.2
@@ -172,7 +172,7 @@ catalog:
   omit-deep-lodash: ^1.1.7
   oxfmt: ^0.43.0
   oxlint: ^1.58.0
-  oxlint-tsgolint: ^0.19.0
+  oxlint-tsgolint: ^0.20.0
   p-progress: ^1.0.0
   pathe: ^2.0.3
   pdfjs-dist: ^5.6.205
@@ -210,7 +210,7 @@ catalog:
   unplugin-dts: ^1.0.0-beta.6
   v-viewer: ^3.0.23
   viewerjs: ^1.11.7
-  vite: ^8.0.3
+  vite: ^8.0.5
   vite-plugin-mkcert: ^1.17.10
   vitest: ^4.1.2
   vue: ^3.5.32
@@ -236,7 +236,7 @@ cleanupUnusedCatalogs: true
 overrides:
   crossws: ^0.4.4
   pdfjs-dist: ^5.6.205
-  vite: ^8.0.3
+  vite: ^8.0.5
   vue-router: ^5.0.4
 
 shellEmulator: true

@@ -43,5 +43,5 @@ const { isInChannel, isMuted } = storeToRefs(voiceStore);
       </v-tooltip>
     </template>
   </v-list-item>
-  <MessageVoiceParticipantList />
+  <MessageLeftSideBarVoiceParticipantList />
 </template>

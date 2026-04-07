@@ -16,7 +16,7 @@ const { currentRoomId } = storeToRefs(roomStore);
       <MessageLeftSideBarRooms />
       <v-divider />
       <template v-if="currentRoomId">
-        <MessageVoicePanel />
+        <MessageLeftSideBarVoicePanel />
         <v-divider />
       </template>
       <MessageLeftSideBarDirectMessages />

@@ -13,6 +13,6 @@ const participants = computed(() =>
 
 <template>
   <v-list v-if="participants.length > 0" density="compact">
-    <MessageVoiceParticipant v-for="participant in participants" :key="participant.id" :participant />
+    <MessageLeftSideBarVoiceParticipant v-for="participant in participants" :key="participant.id" :participant />
   </v-list>
 </template>
