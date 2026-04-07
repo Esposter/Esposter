@@ -12,7 +12,7 @@ import { friendRouter } from "@@/server/trpc/routers/friend";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
 import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
-import { CODE_LENGTH, DatabaseEntityType, friends, rooms } from "@esposter/db-schema";
+import { CODE_LENGTH, DatabaseEntityType, friends, roomsInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
@@ -36,7 +36,7 @@ describe("room", () => {
   afterEach(async () => {
     MockContainerDatabase.clear();
     await mockContext.db.delete(friends);
-    await mockContext.db.delete(rooms);
+    await mockContext.db.delete(roomsInMessage);
   });
 
   const makeFriends = async (userA: User, userB: User) => {

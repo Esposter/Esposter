@@ -10,7 +10,7 @@ import { createMockContext, getMockSession, mockSessionOnce, replayMockSession }
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { voiceRouter } from "@@/server/trpc/routers/room/voice";
 import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
-import { rooms } from "@esposter/db-schema";
+import { roomsInMessage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -28,7 +28,7 @@ describe("voice", () => {
 
   afterEach(async () => {
     voiceRoomParticipantMap.clear();
-    await mockContext.db.delete(rooms);
+    await mockContext.db.delete(roomsInMessage);
     vi.clearAllMocks();
   });
 
