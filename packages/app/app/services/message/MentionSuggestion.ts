@@ -1,4 +1,5 @@
 import type { User } from "@esposter/db-schema";
+import type { User } from "@esposter/db-schema";
 import type { MentionOptions } from "@tiptap/extension-mention";
 
 import MentionList from "@/components/Message/Model/Message/MentionList.vue";

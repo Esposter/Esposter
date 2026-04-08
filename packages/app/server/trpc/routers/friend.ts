@@ -36,10 +36,12 @@ export const friendRouter = router({
           code: "NOT_FOUND",
           message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Friend, id).message,
         });
-      friendEventEmitter.emit("acceptFriendRequest", {
-        receiverUser: ctx.getSessionPayload.user as unknown as User,
-        senderId,
-      });
+      const receiverUser: User = {
+        ...ctx.getSessionPayload.user,
+        deletedAt: null,
+        image: ctx.getSessionPayload.user.image ?? null,
+      };
+      friendEventEmitter.emit("acceptFriendRequest", { receiverUser, senderId });
       return updatedFriend;
     }),
   declineFriendRequest: standardAuthedProcedure
@@ -47,16 +49,20 @@ export const friendRouter = router({
     .mutation(async ({ ctx, input: senderId }) => {
       const userId = ctx.getSessionPayload.user.id;
       const id = getFriendshipId(senderId, userId);
-      await ctx.db
+      const [declinedFriend] = await ctx.db
         .delete(friends)
-        .where(and(eq(friends.id, id), eq(friends.receiverId, userId), eq(friends.status, FriendshipStatus.Pending)));
-      friendEventEmitter.emit("declineFriendRequest", { receiverId: userId, senderId });
+        .where(and(eq(friends.id, id), eq(friends.receiverId, userId), eq(friends.status, FriendshipStatus.Pending)))
+        .returning();
+      if (declinedFriend) friendEventEmitter.emit("declineFriendRequest", { receiverId: userId, senderId });
     }),
   deleteFriend: standardAuthedProcedure.input(friendUserIdInputSchema).mutation(async ({ ctx, input: friendId }) => {
     const userId = ctx.getSessionPayload.user.id;
     const id = getFriendshipId(userId, friendId);
-    await ctx.db.delete(friends).where(and(eq(friends.id, id), eq(friends.status, FriendshipStatus.Accepted)));
-    friendEventEmitter.emit("deleteFriend", { receiverId: friendId, senderId: userId });
+    const [deletedFriend] = await ctx.db
+      .delete(friends)
+      .where(and(eq(friends.id, id), eq(friends.status, FriendshipStatus.Accepted)))
+      .returning();
+    if (deletedFriend) friendEventEmitter.emit("deleteFriend", { receiverId: friendId, senderId: userId });
   }),
   onAcceptFriendRequest: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {
     const userId = ctx.getSessionPayload.user.id;
@@ -145,11 +151,14 @@ export const friendRouter = router({
           code: "BAD_REQUEST",
           message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Friend, id).message,
         });
-      if (newFriend)
-        friendEventEmitter.emit("sendFriendRequest", {
-          receiverId,
-          senderUser: ctx.getSessionPayload.user as unknown as User,
-        });
+      if (newFriend) {
+        const senderUser: User = {
+          ...ctx.getSessionPayload.user,
+          deletedAt: null,
+          image: ctx.getSessionPayload.user.image ?? null,
+        };
+        friendEventEmitter.emit("sendFriendRequest", { receiverId, senderUser });
+      }
       return friendship;
     }),
 });

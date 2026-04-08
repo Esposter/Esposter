@@ -30,9 +30,8 @@ export const useFriendStore = defineStore("message/user/friend", () => {
   };
 
   const storeAcceptFriendRequest = (receiverUser: User) => {
-    const existing = sentRequests.value.find(({ id }) => id === receiverUser.id);
     sentRequests.value = sentRequests.value.filter(({ id }) => id !== receiverUser.id);
-    if (existing) friends.value = [existing, ...friends.value];
+    if (!friends.value.some(({ id }) => id === receiverUser.id)) friends.value = [receiverUser, ...friends.value];
   };
 
   const storeCreatePendingRequest = (senderUser: User) => {
