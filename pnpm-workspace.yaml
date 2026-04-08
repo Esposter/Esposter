@@ -92,7 +92,7 @@ catalog:
   "@unocss/nuxt": ^66.6.7
   "@vite-pwa/nuxt": ^1.1.1
   "@vitejs/plugin-vue": ^6.0.5
-  "@vitest/coverage-v8": ^4.1.2
+  "@vitest/coverage-v8": ^4.1.3
   "@vitest/eslint-plugin": ^1.6.14
   "@vue-flow/background": ^1.3.2
   "@vue-flow/controls": ^1.1.3
@@ -162,7 +162,7 @@ catalog:
   linkifyjs: ^4.3.2
   lowlight: ^3.2.0
   marked: ^18.0.0
-  mathjs: ^15.1.1
+  mathjs: ^15.2.0
   mime-types: ^3.0.2
   mjml-browser: ^4.18.0
   nano-staged: ^0.9.0
@@ -206,15 +206,15 @@ catalog:
   type-fest: ^5.5.0
   typedoc: ^0.28.18
   typescript: 5.9.3
-  typescript-eslint: ^8.58.0
+  typescript-eslint: ^8.58.1
   unocss: ^66.6.7
   unplugin-auto-import: ^21.0.0
   unplugin-dts: ^1.0.0-beta.6
   v-viewer: ^3.0.23
   viewerjs: ^1.11.7
-  vite: ^8.0.5
+  vite: ^8.0.7
   vite-plugin-mkcert: ^1.17.10
-  vitest: ^4.1.2
+  vitest: ^4.1.3
   vue: ^3.5.32
   vue-codemirror: ^6.1.1
   vue-draggable-plus: ^0.6.1
