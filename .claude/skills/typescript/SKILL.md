@@ -65,12 +65,10 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 
   ```ts
   // BAD — repeated comparisons
-  message.type === MessageType.Message ||
-    message.type ===
-      MessageType.Webhook(
-        // GOOD — inline array + .includes()
-        [MessageType.Message, MessageType.Webhook] as MessageType[],
-      ).includes(message.type);
+  message.type === MessageType.Message || message.type === MessageType.Webhook;
+
+  // GOOD — inline array + .includes()
+  [MessageType.Message, MessageType.Webhook].includes(message.type);
   ```
 
   Only extract to a named constant if the array is reused in multiple places. A single `=== X` check is fine as-is.

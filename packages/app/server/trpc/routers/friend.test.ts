@@ -8,7 +8,7 @@ import { friendRouter } from "@@/server/trpc/routers/friend";
 import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
 import { DatabaseEntityType, friends, FriendshipStatus } from "@esposter/db-schema";
 import { ID_SEPARATOR, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-import { assert, afterEach, beforeAll, describe, expect, test } from "vitest";
+import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("friend", () => {
   let mockContext: Context;
@@ -222,9 +222,9 @@ describe("friend", () => {
 
     const senderUser = getMockSession().user;
     const { user: receiverUser } = await mockSessionOnce(mockContext.db);
-    // receiver sends a request to sender (receiverUser is the "receiver" of the original request direction)
+    // Receiver sends a request to sender (receiverUser is the "receiver" of the original request direction)
     await caller.sendFriendRequest(senderUser.id);
-    // switch back to sender to set up subscription, then receiver accepts
+    // Switch back to sender to set up subscription, then receiver accepts
     const onAcceptFriendRequest = await caller.onAcceptFriendRequest();
     await mockSessionOnce(mockContext.db, receiverUser);
     const data = await withAsyncIterator(
@@ -266,10 +266,10 @@ describe("friend", () => {
 
     const senderPayload = getMockSession();
     const { user: receiverUser } = await mockSessionOnce(mockContext.db);
-    // receiverUser sends to sender; sender accepts
+    // ReceiverUser sends to sender; sender accepts
     await caller.sendFriendRequest(senderPayload.user.id);
     await caller.acceptFriendRequest(receiverUser.id);
-    // sender subscribes then receiverUser deletes
+    // Sender subscribes then receiverUser deletes
     const onDeleteFriend = await caller.onDeleteFriend();
     replayMockSession(senderPayload);
     await mockSessionOnce(mockContext.db, receiverUser);

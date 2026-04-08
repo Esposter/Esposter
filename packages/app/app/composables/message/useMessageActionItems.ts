@@ -88,16 +88,16 @@ export const useMessageActionItems = (
     }),
     title: "Copy Message Link",
   };
-  const updateMessageTypes = [MessageType.Message, MessageType.Webhook];
+  const updateMessageTypes = new Set([MessageType.Message, MessageType.Webhook]);
   const updateMessageItems = computed<Item[]>(() =>
-    updateMessageTypes.includes(message.type)
+    updateMessageTypes.has(message.type)
       ? isEditable.value
         ? [editMessageItem, forwardMessageItem]
         : [replyItem, forwardMessageItem]
       : [],
   );
   const updateMessageMenuItems = computed<Item[]>(() =>
-    updateMessageTypes.includes(message.type)
+    updateMessageTypes.has(message.type)
       ? isEditable.value
         ? [editMessageItem, replyItem, forwardMessageItem]
         : [replyItem, forwardMessageItem]
