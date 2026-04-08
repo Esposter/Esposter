@@ -3,7 +3,7 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, getMockSession, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
+import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { friendRouter } from "@@/server/trpc/routers/friend";
 import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
 import { DatabaseEntityType, friends, FriendshipStatus } from "@esposter/db-schema";
@@ -220,13 +220,13 @@ describe("friend", () => {
   test("on accept friend request notifies sender", async () => {
     expect.hasAssertions();
 
-    const senderUser = getMockSession().user;
-    const { user: receiverUser } = await mockSessionOnce(mockContext.db);
-    // Receiver sends a request to sender (receiverUser is the "receiver" of the original request direction)
-    await caller.sendFriendRequest(senderUser.id);
-    // Switch back to sender to set up subscription, then receiver accepts
+    const receiverUser = getMockSession().user;
+    const { user: senderUser } = await mockSessionOnce(mockContext.db);
+    // Sender sends request to receiver
+    await caller.sendFriendRequest(receiverUser.id);
+    // Sender subscribes to be notified when receiver accepts
+    await mockSessionOnce(mockContext.db, senderUser);
     const onAcceptFriendRequest = await caller.onAcceptFriendRequest();
-    await mockSessionOnce(mockContext.db, receiverUser);
     const data = await withAsyncIterator(
       () => onAcceptFriendRequest,
       async (iterator) => {
@@ -243,11 +243,13 @@ describe("friend", () => {
   test("on decline friend request notifies sender", async () => {
     expect.hasAssertions();
 
-    const senderUser = getMockSession().user;
-    const { user: receiverUser } = await mockSessionOnce(mockContext.db);
-    await caller.sendFriendRequest(senderUser.id);
+    const receiverUser = getMockSession().user;
+    const { user: senderUser } = await mockSessionOnce(mockContext.db);
+    // Sender sends request to receiver
+    await caller.sendFriendRequest(receiverUser.id);
+    // Sender subscribes to be notified when receiver declines
+    await mockSessionOnce(mockContext.db, senderUser);
     const onDeclineFriendRequest = await caller.onDeclineFriendRequest();
-    await mockSessionOnce(mockContext.db, receiverUser);
     const data = await withAsyncIterator(
       () => onDeclineFriendRequest,
       async (iterator) => {
@@ -271,7 +273,6 @@ describe("friend", () => {
     await caller.acceptFriendRequest(receiverUser.id);
     // Sender subscribes then receiverUser deletes
     const onDeleteFriend = await caller.onDeleteFriend();
-    replayMockSession(senderPayload);
     await mockSessionOnce(mockContext.db, receiverUser);
     const data = await withAsyncIterator(
       () => onDeleteFriend,
