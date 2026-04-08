@@ -7,7 +7,7 @@ import { FilterType } from "@esposter/db-schema";
 
 export const useSearchMessageStore = defineStore("message/search", () => {
   const roomStore = useRoomStore();
-  const { data: searchQuery } = useDataMap<string>(() => roomStore.currentRoomId, "");
+  const { data: searchQuery } = useDataMap(() => roomStore.currentRoomId, "");
   const menu = ref(false);
   const isSearching = ref(false);
   const { data: selectedFilters } = useDataMap<Filter[]>(() => roomStore.currentRoomId, []);
@@ -30,7 +30,7 @@ export const useSearchMessageStore = defineStore("message/search", () => {
   };
   const hasFilters = computed(() => selectedFilters.value.length > 0);
   const { items, ...restData } = useOffsetPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
-  const { data: count } = useDataMap<number>(() => roomStore.currentRoomId, 0);
+  const { data: count } = useDataMap(() => roomStore.currentRoomId, 0);
   const pageCount = computed(() => Math.ceil(count.value / DEFAULT_READ_LIMIT));
   const page = ref(1);
   return {

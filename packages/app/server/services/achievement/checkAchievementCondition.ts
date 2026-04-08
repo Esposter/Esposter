@@ -59,5 +59,8 @@ export const checkAchievementCondition = (
       const value = now.diff(now.startOf(referenceUnit), unit);
       return value >= minimum && value < maximum;
     }
+    default:
+      exhaustiveGuard(condition);
+      return false;
   }
 };

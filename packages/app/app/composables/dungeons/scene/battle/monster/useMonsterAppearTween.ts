@@ -16,7 +16,7 @@ export const useMonsterAppearTween = (isEnemy: boolean) => {
 
   if (isSkipAnimations.value) {
     monsterPosition.value.x = xEnd;
-    return;
+    return undefined;
   }
 
   return new Promise<void>((resolve) => {

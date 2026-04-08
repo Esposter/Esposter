@@ -19,7 +19,7 @@ export const pgTable = <
     schema?: TSchema extends string ? PgSchema<TSchema> : undefined;
   } = {},
 ) =>
-  (schema?.table<TTableName, TColumnsMap & typeof metadataSchema>(
+  (schema?.table(
     name,
     {
       ...metadataSchema,
@@ -27,7 +27,7 @@ export const pgTable = <
     },
     extraConfig,
   ) ??
-    basePgTable<TTableName, TColumnsMap & typeof metadataSchema>(
+    basePgTable(
       name,
       {
         ...metadataSchema,

@@ -7,6 +7,8 @@ import { useFriendStore } from "@/store/message/user/friend";
 const isOpen = defineModel<boolean>({ default: false });
 const friendStore = useFriendStore();
 const { friends } = storeToRefs(friendStore);
+const { readFriends } = useReadFriends();
+await readFriends();
 const directMessageStore = useDirectMessageStore();
 const { createDirectMessage } = directMessageStore;
 const search = ref("");

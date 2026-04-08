@@ -94,7 +94,7 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
 
     if (settingsStore.isSkipAnimations) {
       target.setMessage(message);
-      return;
+      return undefined;
     }
 
     const targetText = computed({

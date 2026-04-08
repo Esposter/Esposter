@@ -11,7 +11,7 @@ export const useRoomSubscribables = () => {
   const { storeCreateMember, storeDeleteMember } = memberStore;
 
   useOnlineSubscribable(rooms, (newRooms) => {
-    if (newRooms.length === 0) return;
+    if (newRooms.length === 0) return undefined;
 
     const newRoomIds = newRooms.map(({ id }) => id);
     const updateRoomUnsubscribable = $trpc.room.onUpdateRoom.subscribe(newRoomIds, {

@@ -212,7 +212,7 @@ export const useVoiceChannel = () => {
   };
 
   useOnlineSubscribable(currentRoomId, async (roomId) => {
-    if (!roomId) return;
+    if (!roomId) return undefined;
 
     const participants = await $trpc.voice.readVoiceParticipants.query({ roomId });
     setParticipants(roomId, participants);

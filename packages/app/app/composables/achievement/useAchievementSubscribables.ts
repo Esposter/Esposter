@@ -10,7 +10,7 @@ export const useAchievementSubscribables = () => {
   useOnlineSubscribable(
     () => session.value.data?.user.id,
     (userId) => {
-      if (!userId) return;
+      if (!userId) return undefined;
 
       const updateAchievementUnsubscribable = $trpc.achievement.onUpdateAchievement.subscribe(undefined, {
         onData: (achievements) => {

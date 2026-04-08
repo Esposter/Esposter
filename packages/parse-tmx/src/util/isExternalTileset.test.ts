@@ -1,5 +1,4 @@
 import type { TMXEmbeddedTilesetShared } from "@/models/tmx/shared/TMXEmbeddedTilesetShared";
-import type { TMXExternalTilesetShared } from "@/models/tmx/shared/TMXExternalTilesetShared";
 
 import { assertNode } from "@/test/assertNode.test";
 import { isExternalTileset } from "@/util/isExternalTileset";
@@ -9,7 +8,7 @@ describe(isExternalTileset, () => {
   test("external tileset", () => {
     expect.hasAssertions();
 
-    expect(isExternalTileset(assertNode<TMXExternalTilesetShared>({ firstgid: 0, source: "a" }))).toBe(true);
+    expect(isExternalTileset(assertNode({ firstgid: 0, source: "a" }))).toBe(true);
   });
 
   test("embedded tileset", () => {

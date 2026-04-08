@@ -34,7 +34,7 @@ export const useRoomStore = defineStore("message/room", () => {
     return typeof roomId === "string" && uuidValidateV4(roomId) ? roomId : undefined;
   });
   const currentRoom = computed(() => {
-    if (!currentRoomId.value) return;
+    if (!currentRoomId.value) return undefined;
     return rooms.value.find(({ id }) => id === currentRoomId.value);
   });
   const session = authClient.useSession();

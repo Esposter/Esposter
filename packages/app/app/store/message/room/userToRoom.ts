@@ -6,7 +6,7 @@ import { NotificationType } from "@esposter/db-schema";
 export const useUserToRoomStore = defineStore("message/room/userToRoom", () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
-  const { data: notificationType, setDataMap: setNotificationTypeMap } = useDataMap<NotificationType>(
+  const { data: notificationType, setDataMap: setNotificationTypeMap } = useDataMap(
     () => roomStore.currentRoomId,
     NotificationType.DirectMessage,
   );

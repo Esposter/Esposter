@@ -25,6 +25,7 @@ const keyboardExtension = new Extension({
     };
   },
 });
+const codeBlockExtension = useCodeBlockExtension();
 const mentionExtension = useMentionExtension();
 const slashCommandExtension = useSlashCommandExtension();
 const inputStore = useInputStore();
@@ -45,7 +46,7 @@ const uploadFiles = useUploadFiles();
       v-model="input"
       :placeholder="`Message ${roomName}`"
       :limit="MESSAGE_MAX_LENGTH"
-      :extensions="[keyboardExtension, mentionExtension, slashCommandExtension]"
+      :extensions="[keyboardExtension, codeBlockExtension, mentionExtension, slashCommandExtension]"
       :card-props="reply ? { class: 'rd-t-none' } : undefined"
       @paste="(_editor, files) => uploadFiles(files)"
     >
