@@ -1,3 +1,6 @@
+// oxlint-disable @typescript-eslint/no-unnecessary-type-arguments
+import type { UploadFileUrl } from "@/models/message/file/UploadFileUrl";
+
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
 import { validateFile } from "@/services/file/validateFile";
 import { useAlertStore } from "@/store/alert";
@@ -39,7 +42,7 @@ export const useUploadFiles = () => {
         .filter(({ size }) => validateFile(size))
         .map(async (file, index) => {
           const { id, sasUrl } = takeOne(fileSasEntities, index);
-          const uploadFileUrl = reactive({ progress: 0, url: URL.createObjectURL(file) });
+          const uploadFileUrl = reactive<UploadFileUrl>({ progress: 0, url: URL.createObjectURL(file) });
           fileUrlMap.value.set(id, uploadFileUrl);
           await uploadBlocks(file, sasUrl, (progress) => {
             uploadFileUrl.progress = progress;
