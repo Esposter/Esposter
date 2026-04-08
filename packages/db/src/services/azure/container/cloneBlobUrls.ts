@@ -6,7 +6,7 @@ export const cloneBlobUrls = (
   sourcePrefix: string,
   destinationPrefix: string,
 ) => {
-  if (blobUrls.length === 0) return;
+  if (blobUrls.length === 0) return undefined;
   else
     return Promise.all(
       blobUrls.map(async (blobUrl) => {

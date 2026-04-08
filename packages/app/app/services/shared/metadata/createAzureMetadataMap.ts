@@ -22,7 +22,7 @@ export const createAzureMetadataMap = <TType extends string>(
   };
   const setMetadatas = (rowKey: string, metadatas: TEntity<TType>[]) => {
     const currentIdValue = toValue(currentId);
-    if (!currentIdValue) return [];
+    if (!currentIdValue) return;
     const newMap = metadataMap.value.get(currentIdValue) ?? new Map<string, TEntity<TType>[]>();
     newMap.set(rowKey, metadatas);
     metadataMap.value.set(currentIdValue, newMap);

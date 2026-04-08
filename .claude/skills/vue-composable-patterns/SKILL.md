@@ -181,6 +181,24 @@ onMounted(async () => {
 });
 ```
 
+## Dialog Data Loading
+
+**Do NOT re-fetch on every dialog open.** Trust the Pinia store as the source of truth — CRUD operations flow through tRPC subscriptions which keep the store current automatically.
+
+```typescript
+// WRONG: re-fetches every time the dialog opens
+const { readFriends } = useReadFriends();
+watchImmediate(isOpen, async (newIsOpen) => {
+  if (newIsOpen) await readFriends();
+});
+
+// CORRECT: fetch once on mount; subsequent opens use the cached store data
+const { readFriends } = useReadFriends();
+await readFriends();
+```
+
+The one-time `await readFriends()` in `<script setup>` handles the case where the user opens the dialog without having visited the friends page first. After that, the store stays fresh via subscriptions.
+
 ## Composable Rules
 
 - **Never use `createSharedComposable`** — VueUse's `createSharedComposable` creates global singletons that bypass Pinia's devtools, HMR, and reactive reset behavior. All shared reactive state must live in a Pinia store (`defineStore`). Composables that previously used `createSharedComposable` should be either replaced by a store entirely, or made thin wrappers that delegate to the corresponding store.

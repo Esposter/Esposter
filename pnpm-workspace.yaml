@@ -52,11 +52,12 @@ catalog:
   "@nuxt/fonts": ^0.14.0
   "@nuxt/scripts": ^0.13.2
   "@nuxt/test-utils": ^4.0.0
-  "@nuxtjs/seo": ^5.1.0
+  "@nuxtjs/seo": ^5.1.2
   "@pinia/nuxt": ^0.11.3
   "@rolldown/plugin-node-polyfills": ^1.0.3
   "@takumi-rs/core": ^0.73.1
   "@tiptap/core": ^3.22.2
+  "@tiptap/extension-code-block-lowlight": ^3.22.2
   "@tiptap/extension-file-handler": ^3.22.2
   "@tiptap/extension-mention": ^3.22.2
   "@tiptap/extensions": ^3.22.2
@@ -86,7 +87,7 @@ catalog:
   "@types/web-push": ^3.6.4
   "@types/ws": ^8.18.1
   "@types/xml2js": ^0.4.14
-  "@typescript/native-preview": ^7.0.0-dev.20260406.1
+  "@typescript/native-preview": ^7.0.0-dev.20260407.1
   "@unocss/eslint-config": ^66.6.7
   "@unocss/nuxt": ^66.6.7
   "@vite-pwa/nuxt": ^1.1.1
@@ -117,7 +118,7 @@ catalog:
   dayjs: ^1.11.20
   debug: ^4.4.3
   dedent: ^1.7.2
-  defu: ^6.1.6
+  defu: ^6.1.7
   dotenv: ^17.4.1
   drizzle-kit: ^0.31.10
   drizzle-orm: ^0.45.2
@@ -125,7 +126,7 @@ catalog:
   emoji-mart-vue-fast: ^15.0.5
   eslint: ^10.2.0
   eslint-plugin-depend: ^1.5.0
-  eslint-plugin-oxlint: ^1.58.0
+  eslint-plugin-oxlint: ^1.59.0
   eslint-plugin-perfectionist: ^5.8.0
   eslint-plugin-pinia: ^0.4.2
   eventemitter3: ^5.0.4
@@ -159,7 +160,8 @@ catalog:
   js-beautify: ^1.15.4
   link-preview-js: ^4.0.0
   linkifyjs: ^4.3.2
-  marked: ^17.0.6
+  lowlight: ^3.2.0
+  marked: ^18.0.0
   mathjs: ^15.1.1
   mime-types: ^3.0.2
   mjml-browser: ^4.18.0
@@ -170,8 +172,8 @@ catalog:
   nuxt-security: ^2.5.1
   obscenity: ^0.4.6
   omit-deep-lodash: ^1.1.7
-  oxfmt: ^0.43.0
-  oxlint: ^1.58.0
+  oxfmt: ^0.44.0
+  oxlint: ^1.59.0
   oxlint-tsgolint: ^0.20.0
   p-progress: ^1.0.0
   pathe: ^2.0.3

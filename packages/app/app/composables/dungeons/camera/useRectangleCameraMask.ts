@@ -6,7 +6,7 @@ import { Geom, Math } from "phaser";
 export const useRectangleCameraMask = (scene: SceneWithPlugins) => {
   const settingsStore = useSettingsStore();
   const { isSkipAnimations } = storeToRefs(settingsStore);
-  if (isSkipAnimations.value) return;
+  if (isSkipAnimations.value) return undefined;
 
   const { height, width } = scene.scale;
   const rectangleShape = new Geom.Rectangle(0, height / 2, width, 0);

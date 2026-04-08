@@ -11,7 +11,7 @@ export const useCreator = (message: MaybeRefOrGetter<MessageEntity | undefined>)
   const { appUserMap } = storeToRefs(appUserStore);
   return computed(() => {
     const messageValue = toValue(message);
-    if (!messageValue) return;
+    if (!messageValue) return undefined;
 
     if (messageValue.type === MessageType.Webhook) {
       const appUser = appUserMap.value.get(messageValue.appUser.id);

@@ -12,7 +12,7 @@ export const useSound = (
 ) => {
   const sound = ref<Howl>();
   const duration = ref<number>();
-  const isPlaying = ref<boolean>(false);
+  const isPlaying = ref(false);
   // oxlint-disable-next-line func-style
   function handleLoad(this: ComposableOptions) {
     if (typeof onload === "function") onload.call(this);

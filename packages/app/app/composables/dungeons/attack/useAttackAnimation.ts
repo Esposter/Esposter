@@ -11,7 +11,7 @@ import { sleep } from "vue-phaserjs";
 export const useAttackAnimation = (scene: SceneWithPlugins, attack: Attack, isToEnemy: boolean) => {
   const settingsStore = useSettingsStore();
   const { isSkipAnimations } = storeToRefs(settingsStore);
-  if (isSkipAnimations.value) return;
+  if (isSkipAnimations.value) return undefined;
 
   const attackManagerStore = useAttackManagerStore();
   const storeRefs = storeToRefs(attackManagerStore);

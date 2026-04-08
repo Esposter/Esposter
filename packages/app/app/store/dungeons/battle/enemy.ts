@@ -4,11 +4,11 @@ import type { TweenBuilderConfiguration } from "vue-phaserjs";
 
 export const useEnemyStore = defineStore("dungeons/battle/enemy", () => {
   const activeMonster = ref<Monster>();
-  const initialMonsterPosition = Object.freeze<Position>({ x: -150, y: 144 });
-  const monsterPosition = ref(structuredClone<Position>(initialMonsterPosition));
+  const initialMonsterPosition = Object.freeze({ x: -150, y: 144 });
+  const monsterPosition = ref(structuredClone(initialMonsterPosition));
   const monsterTween = ref<TweenBuilderConfiguration>();
-  const initialMonsterInfoContainerPosition: Position = Object.freeze<Position>({ x: -600, y: 0 });
-  const monsterInfoContainerPosition = ref(structuredClone<Position>(initialMonsterInfoContainerPosition));
+  const initialMonsterInfoContainerPosition: Position = Object.freeze({ x: -600, y: 0 });
+  const monsterInfoContainerPosition = ref(structuredClone(initialMonsterInfoContainerPosition));
   const monsterInfoContainerTween = ref<TweenBuilderConfiguration>();
   return {
     activeMonster: activeMonster as Ref<Monster>,

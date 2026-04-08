@@ -1,4 +1,3 @@
-import type { Position } from "grid-engine";
 import type { TweenBuilderConfiguration } from "vue-phaserjs";
 
 import { getAttack } from "@/services/dungeons/attack/getAttack";
@@ -19,11 +18,11 @@ export const useBattlePlayerStore = defineStore("dungeons/battle/player", () => 
     activeMonsterIndex.value = monsterPartySceneStore.monsters.findIndex((m) => m.id === id);
   };
 
-  const initialMonsterPosition = Object.freeze<Position>({ x: -150, y: 316 });
-  const monsterPosition = ref(structuredClone<Position>(initialMonsterPosition));
+  const initialMonsterPosition = Object.freeze({ x: -150, y: 316 });
+  const monsterPosition = ref(structuredClone(initialMonsterPosition));
   const monsterTween = ref<TweenBuilderConfiguration>();
-  const initialMonsterInfoContainerPosition = Object.freeze<Position>({ x: 1200, y: 318 });
-  const monsterInfoContainerPosition = ref(structuredClone<Position>(initialMonsterInfoContainerPosition));
+  const initialMonsterInfoContainerPosition = Object.freeze({ x: 1200, y: 318 });
+  const monsterInfoContainerPosition = ref(structuredClone(initialMonsterInfoContainerPosition));
   const monsterInfoContainerTween = ref<TweenBuilderConfiguration>();
   const attacks = computed(() => activeMonster.value.attackIds.map(getAttack));
 

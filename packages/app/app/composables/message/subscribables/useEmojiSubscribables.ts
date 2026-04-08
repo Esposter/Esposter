@@ -9,7 +9,7 @@ export const useEmojiSubscribables = () => {
   const { storeCreateEmoji, storeDeleteEmoji, storeUpdateEmoji } = emojiStore;
 
   useOnlineSubscribable(currentRoomId, (roomId) => {
-    if (!roomId) return;
+    if (!roomId) return undefined;
 
     const createEmojiUnsubscribable = $trpc.emoji.onCreateEmoji.subscribe(
       { roomId },

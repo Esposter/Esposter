@@ -23,7 +23,7 @@ export const AggregationTransformationComputeMap = {
   [AggregationTransformationType.PercentOfTotal]: ({ getNumber, rowIndex, rows }) => {
     const currentValue = getNumber(takeOne(rows, rowIndex));
     if (currentValue === null) return null;
-    const total = rows.reduce<number>((sum, row) => {
+    const total = rows.reduce((sum, row) => {
       const value = getNumber(row);
       return value === null ? sum : sum + value;
     }, 0);

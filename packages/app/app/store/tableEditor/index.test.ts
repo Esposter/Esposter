@@ -151,7 +151,7 @@ describe(useTableEditorStore, () => {
     expect(isUndoable.value).toBe(false);
   });
 
-  test("discard clears file history", async () => {
+  test("discard clears file history", () => {
     expect.hasAssertions();
 
     const { editedItem } = setupWithDataSource();

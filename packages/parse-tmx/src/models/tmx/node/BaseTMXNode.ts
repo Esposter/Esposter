@@ -7,5 +7,5 @@ export class BaseTMXNode<T> {
   $!: T;
   // Property derived from xml parsing
   // eslint-disable-next-line no-unused-private-class-members
-  #name!: TMXNodeType;
+  readonly #name!: TMXNodeType;
 }

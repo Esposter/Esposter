@@ -20,7 +20,7 @@ export const useTypingSubscribables = () => {
   useCreateTyping();
 
   useOnlineSubscribable(currentRoomId, (roomId) => {
-    if (!roomId) return;
+    if (!roomId) return undefined;
 
     const createTypingUnsubscribable = $trpc.message.onCreateTyping.subscribe(
       { roomId },
