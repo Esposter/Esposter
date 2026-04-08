@@ -5,7 +5,7 @@ export const useRoomName = (roomId: MaybeRefOrGetter<string | undefined>) => {
   const { rooms } = storeToRefs(roomStore);
   const room = computed(() => {
     const roomIdValue = toValue(roomId);
-    if (!roomIdValue) return;
+    if (!roomIdValue) return undefined;
     return rooms.value.find(({ id }) => id === roomIdValue);
   });
   const placeholder = useRoomPlaceholder(room);

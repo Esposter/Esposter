@@ -1,4 +1,3 @@
-import type { MentionNodeAttributes } from "@/models/message/MentionNodeAttributes";
 import type { User } from "@esposter/db-schema";
 import type { MentionOptions } from "@tiptap/extension-mention";
 
@@ -6,7 +5,7 @@ import MentionList from "@/components/Message/Model/Message/MentionList.vue";
 import { getRender } from "@/services/message/getRender";
 import { useRoomStore } from "@/store/message/room";
 
-export const MentionSuggestion: MentionOptions<User, MentionNodeAttributes>["suggestion"] = {
+export const MentionSuggestion: MentionOptions<User>["suggestion"] = {
   items: async ({ query }) => {
     const roomStore = useRoomStore();
     const { currentRoomId } = storeToRefs(roomStore);

@@ -61,6 +61,18 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 
   Exception: when the second check has side effects or requires complex destructuring that depends on the first passing, separate guards are acceptable.
 
+- **Use `.includes()` for multi-value equality checks** — when the same variable is compared against **2 or more** values with `===`, use an inline array with `.includes()`. Never write `x === A || x === B` when there are two or more alternatives:
+
+  ```ts
+  // BAD — repeated comparisons
+  message.type === MessageType.Message || message.type === MessageType.Webhook;
+
+  // GOOD — inline array + .includes()
+  [MessageType.Message, MessageType.Webhook].includes(message.type);
+  ```
+
+  Only extract to a named constant if the array is reused in multiple places. A single `=== X` check is fine as-is.
+
 - **Use `switch` for type-based branching** — when branching on an enum or discriminant with multiple cases, use `switch` (with `exhaustiveGuard` in the default) instead of a chain of `if/else if`. Use `if/else if/else` only when conditions are non-enum expressions or when there are exactly two branches.
 - **Always use `if/else if/else` from the very first branch** when a function has multiple conditional returns — no standalone `if` followed by `else if`.
 

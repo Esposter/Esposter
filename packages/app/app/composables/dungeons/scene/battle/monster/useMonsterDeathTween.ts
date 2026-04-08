@@ -17,7 +17,7 @@ export const useMonsterDeathTween = (isEnemy: boolean) => {
   if (isSkipAnimations.value) {
     monsterPosition.value.y = monsterPositionYEnd;
     monsterInfoContainerPosition.value.x = monsterInfoContainerPositionXEnd;
-    return;
+    return undefined;
   }
 
   useTween(monsterInfoContainerTween, {

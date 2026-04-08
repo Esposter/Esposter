@@ -44,6 +44,7 @@ const editor = useEditor({
     }),
     Placeholder.configure({ placeholder: () => placeholder }),
     StarterKit.configure({
+      codeBlock: false,
       link: {
         // @ts-expect-error We can hijack the options property for our own purposes of reactively changing the cursor style
         cursorStyle: linkCursorStyle,

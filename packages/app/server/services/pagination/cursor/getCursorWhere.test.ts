@@ -34,7 +34,7 @@ describe(getCursorWhere, () => {
     expect.hasAssertions();
 
     for (const sortItem of BinaryOperatorSortItemMapValues) {
-      const serializedCursors = serialize<User>(user, [sortItem]);
+      const serializedCursors = serialize(user, [sortItem]);
 
       expect(getCursorWhere(users, serializedCursors, [sortItem])).toStrictEqual(
         and(sortItem.operator(users.id, user.id)),

@@ -5,9 +5,10 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { friendRouter } from "@@/server/trpc/routers/friend";
+import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
 import { DatabaseEntityType, friends, FriendshipStatus } from "@esposter/db-schema";
 import { ID_SEPARATOR, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-import { afterEach, beforeAll, describe, expect, test } from "vitest";
+import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("friend", () => {
   let mockContext: Context;
@@ -195,5 +196,94 @@ describe("friend", () => {
     const results = await caller.searchUsers(user.name);
 
     expect(results.every(({ id }) => id !== user.id)).toBe(true);
+  });
+
+  test("on send friend request notifies receiver", async () => {
+    expect.hasAssertions();
+
+    const receiverUser = getMockSession().user;
+    const onSendFriendRequest = await caller.onSendFriendRequest();
+    const { user: senderUser } = await mockSessionOnce(mockContext.db);
+    const data = await withAsyncIterator(
+      () => onSendFriendRequest,
+      async (iterator) => {
+        const [result] = await Promise.all([iterator.next(), caller.sendFriendRequest(receiverUser.id)]);
+        return result;
+      },
+    );
+
+    assert(!data.done);
+
+    expect(data.value.id).toBe(senderUser.id);
+  });
+
+  test("on accept friend request notifies sender", async () => {
+    expect.hasAssertions();
+
+    const receiverUser = getMockSession().user;
+    const { user: senderUser } = await mockSessionOnce(mockContext.db);
+    // Sender sends request to receiver
+    await caller.sendFriendRequest(receiverUser.id);
+    // Sender subscribes to be notified when receiver accepts
+    await mockSessionOnce(mockContext.db, senderUser);
+    const onAcceptFriendRequest = await caller.onAcceptFriendRequest();
+    const data = await withAsyncIterator(
+      () => onAcceptFriendRequest,
+      async (iterator) => {
+        const [result] = await Promise.all([iterator.next(), caller.acceptFriendRequest(senderUser.id)]);
+        return result;
+      },
+    );
+
+    assert(!data.done);
+
+    expect(data.value.id).toBe(receiverUser.id);
+  });
+
+  test("on decline friend request notifies sender", async () => {
+    expect.hasAssertions();
+
+    const receiverUser = getMockSession().user;
+    const { user: senderUser } = await mockSessionOnce(mockContext.db);
+    // Sender sends request to receiver
+    await caller.sendFriendRequest(receiverUser.id);
+    // Sender subscribes to be notified when receiver declines
+    await mockSessionOnce(mockContext.db, senderUser);
+    const onDeclineFriendRequest = await caller.onDeclineFriendRequest();
+    const data = await withAsyncIterator(
+      () => onDeclineFriendRequest,
+      async (iterator) => {
+        const [result] = await Promise.all([iterator.next(), caller.declineFriendRequest(senderUser.id)]);
+        return result;
+      },
+    );
+
+    assert(!data.done);
+
+    expect(data.value).toBe(receiverUser.id);
+  });
+
+  test("on delete friend notifies the other party", async () => {
+    expect.hasAssertions();
+
+    const senderPayload = getMockSession();
+    const { user: receiverUser } = await mockSessionOnce(mockContext.db);
+    // ReceiverUser sends to sender; sender accepts
+    await caller.sendFriendRequest(senderPayload.user.id);
+    await caller.acceptFriendRequest(receiverUser.id);
+    // Sender subscribes then receiverUser deletes
+    const onDeleteFriend = await caller.onDeleteFriend();
+    await mockSessionOnce(mockContext.db, receiverUser);
+    const data = await withAsyncIterator(
+      () => onDeleteFriend,
+      async (iterator) => {
+        const [result] = await Promise.all([iterator.next(), caller.deleteFriend(senderPayload.user.id)]);
+        return result;
+      },
+    );
+
+    assert(!data.done);
+
+    expect(data.value).toBe(receiverUser.id);
   });
 });

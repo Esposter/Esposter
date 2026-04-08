@@ -13,7 +13,7 @@ export const useMessageSubscribables = () => {
   const { storeCreateMessage, storeDeleteMessage, storeUpdateMessage } = dataStore;
 
   useOnlineSubscribable(currentRoomId, async (roomId) => {
-    if (!roomId) return;
+    if (!roomId) return undefined;
 
     const createMessageUnsubscribable = $trpc.message.onCreateMessage.subscribe(
       { roomId },

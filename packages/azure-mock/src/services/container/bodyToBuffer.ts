@@ -33,5 +33,8 @@ export const bodyToBuffer = async (body: HttpRequestBody): Promise<Buffer> => {
   }
   // FormData is not supported as its serialization is complex
   else if (body instanceof FormData) throw new Error("FormData is not supported in this mock implementation.");
-  else exhaustiveGuard(body);
+  else {
+    exhaustiveGuard(body);
+    return Buffer.alloc(0);
+  }
 };

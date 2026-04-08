@@ -20,7 +20,7 @@ export const friends = pgTable(
   {
     // Natural key — sorted([senderId, receiverId]).join(ID_SEPARATOR).
     // Text PK: every lookup goes through this value, it never changes,
-    // and there is exactly one row per user pair.
+    // And there is exactly one row per user pair.
     id: text("id").primaryKey(),
     receiverId: text("receiverId")
       .notNull()

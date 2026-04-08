@@ -13,10 +13,10 @@ export class Parser {
     return `${this.options.attrkey}ns`;
   }
 
-  private options: typeof DefaultParserOptions = structuredClone(DefaultParserOptions);
+  private readonly options: typeof DefaultParserOptions = structuredClone(DefaultParserOptions);
   private resultObject: Record<string, unknown> | string = {};
-  private saxParser: SAXParser;
-  private stack: Record<string, unknown>[] = [];
+  private readonly saxParser: SAXParser;
+  private readonly stack: Record<string, unknown>[] = [];
 
   constructor(init?: Partial<ParserOptions>) {
     Object.assign(this.options, init);
@@ -144,7 +144,7 @@ export class Parser {
 
     const ontext = (text: string): Record<string, unknown> | undefined => {
       const object = this.stack.at(-1);
-      if (!object) return;
+      if (!object) return undefined;
 
       object[this.options.charkey] += text;
 

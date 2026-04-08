@@ -29,6 +29,24 @@ export const useFriendStore = defineStore("message/user/friend", () => {
       sentRequests.value = [receiver, ...sentRequests.value];
   };
 
+  const storeAcceptFriendRequest = (receiverUser: User) => {
+    sentRequests.value = sentRequests.value.filter(({ id }) => id !== receiverUser.id);
+    if (!friends.value.some(({ id }) => id === receiverUser.id)) friends.value = [receiverUser, ...friends.value];
+  };
+
+  const storeCreatePendingRequest = (senderUser: User) => {
+    if (!pendingRequests.value.some(({ id }) => id === senderUser.id))
+      pendingRequests.value = [senderUser, ...pendingRequests.value];
+  };
+
+  const storeDeclineFriendRequest = (declinerId: string) => {
+    sentRequests.value = sentRequests.value.filter(({ id }) => id !== declinerId);
+  };
+
+  const storeDeleteFriend = (deleterId: string) => {
+    friends.value = friends.value.filter(({ id }) => id !== deleterId);
+  };
+
   return {
     acceptFriendRequest,
     declineFriendRequest,
@@ -37,5 +55,9 @@ export const useFriendStore = defineStore("message/user/friend", () => {
     pendingRequests,
     sendFriendRequest,
     sentRequests,
+    storeAcceptFriendRequest,
+    storeCreatePendingRequest,
+    storeDeclineFriendRequest,
+    storeDeleteFriend,
   };
 });

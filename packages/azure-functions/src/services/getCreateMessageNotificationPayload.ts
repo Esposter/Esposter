@@ -13,7 +13,7 @@ export const getCreateMessageNotificationPayload = (
     // eslint-disable-next-line no-empty
   } catch {}
 
-  if (!textContent) return;
+  if (!textContent) return undefined;
 
   return JSON.stringify({
     body: truncate(textContent, PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH),

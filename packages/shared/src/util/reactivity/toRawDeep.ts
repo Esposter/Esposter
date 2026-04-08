@@ -2,7 +2,7 @@ import { getRawData } from "@/util/reactivity/getRawData";
 import { isObject } from "@vueuse/core";
 
 export const toRawDeep = <T extends object>(data: T): T => {
-  const rawData = getRawData<T>(data);
+  const rawData = getRawData(data);
 
   for (const key in rawData)
     if (Object.hasOwn(rawData, key)) {

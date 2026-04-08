@@ -40,7 +40,7 @@ export const fixAjv = {
   name: "fix-ajv",
   transform: (code: string, id: string) => {
     const cleanId = id.split("?")[0]?.replaceAll("\\", "/");
-    if (!cleanId) return;
+    if (!cleanId) return undefined;
     // ── debug/src/browser.js ────────────────────────────────────────────────
     if (cleanId.includes("/debug/") && cleanId.endsWith("/src/browser.js")) {
       const inlineRequireMap = new Map<string, string>();
@@ -93,7 +93,7 @@ export const fixAjv = {
         cleanId.includes("/json-schema-traverse/")
       )
     )
-      return;
+      return undefined;
     // Build variable → module-path map for top-level requires (used by ODP re-export resolver).
     const requireMap = new Map<string, string>();
     // oxlint-disable-next-line unicorn/no-unreadable-array-destructuring

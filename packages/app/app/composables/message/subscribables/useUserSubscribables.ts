@@ -11,10 +11,10 @@ export const useUserSubscribables = () => {
   const { statusMap } = storeToRefs(statusStore);
 
   useOnlineSubscribable([members, () => session.value.data] as const, ([newMembers, newSessionData]) => {
-    if (!newSessionData) return;
+    if (!newSessionData) return undefined;
 
     const newMemberIds = newMembers.filter(({ id }) => id !== newSessionData.user.id).map(({ id }) => id);
-    if (newMemberIds.length === 0) return;
+    if (newMemberIds.length === 0) return undefined;
 
     const upsertStatusUnsubscribable = $trpc.user.onUpsertStatus.subscribe(newMemberIds, {
       onData: ({ userId, ...userStatus }) => {
