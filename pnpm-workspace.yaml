@@ -238,7 +238,7 @@ cleanupUnusedCatalogs: true
 overrides:
   crossws: ^0.4.4
   pdfjs-dist: ^5.6.205
-  vite: ^8.0.5
+  vite: ^8.0.7
   vue-router: ^5.0.4
 
 shellEmulator: true
