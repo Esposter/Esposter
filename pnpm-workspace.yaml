@@ -32,7 +32,7 @@ catalog:
   "@codemirror/view": ^6.41.0
   "@dxup/nuxt": ^0.4.0
   "@dxup/unimport": ^0.1.2
-  "@electric-sql/pglite": ^0.4.3
+  "@electric-sql/pglite": ^0.4.4
   "@eslint/core": ^1.2.1
   "@eslint/json": ^1.2.0
   "@floating-ui/dom": ^1.7.6
