@@ -1,6 +1,5 @@
 import type { VoiceParticipant } from "#shared/models/room/voice/VoiceParticipant";
-
-import type { DrizzleDb } from "@@/server/trpc/context.test";
+import type { Context } from "@@/server/trpc/context";
 
 import { useVoiceStore } from "@/store/message/room/voice";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
@@ -10,11 +9,10 @@ import { beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe(useVoiceStore, () => {
   const roomId = crypto.randomUUID();
-  let mockDb: DrizzleDb;
+  let mockContext: Context;
 
   beforeAll(async () => {
-    const mockContext = await createMockContext();
-    mockDb = mockContext.db;
+    mockContext = await createMockContext();
   });
 
   beforeEach(() => {
@@ -274,7 +272,7 @@ describe(useVoiceStore, () => {
       expect.hasAssertions();
 
       const { session: firstSession, user: firstUser } = getMockSession();
-      const { session: secondSession, user: secondUser } = await mockSessionOnce(mockDb);
+      const { session: secondSession, user: secondUser } = await mockSessionOnce(mockContext.db);
       const participants: VoiceParticipant[] = [
         { id: firstSession.id, image: firstUser.image, isMuted: false, name: firstUser.name, userId: firstUser.id },
         { id: secondSession.id, image: secondUser.image, isMuted: false, name: secondUser.name, userId: secondUser.id },

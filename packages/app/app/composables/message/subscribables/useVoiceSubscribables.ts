@@ -10,10 +10,18 @@ export const useVoiceSubscribables = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const voiceStore = useVoiceStore();
-  const { createVoiceParticipant, deleteVoiceParticipant, joinVoice, setMute, setParticipants } = voiceStore;
+  const {
+    clearSpeakers,
+    createVoiceParticipant,
+    deleteSpeaker,
+    deleteVoiceParticipant,
+    joinVoice,
+    setMute,
+    setParticipants,
+  } = voiceStore;
   const { isInChannel } = storeToRefs(voiceStore);
   const webRtcStore = useWebRtcStore();
-  const { cleanupPeer, createPeerConnectionOffer, deleteSpeaker } = webRtcStore;
+  const { cleanupAll, cleanupPeer, createPeerConnectionOffer } = webRtcStore;
 
   useOnlineSubscribable(currentRoomId, async (roomId) => {
     if (!roomId) return undefined;
@@ -56,8 +64,8 @@ export const useVoiceSubscribables = () => {
         await $trpc.voice.leaveVoiceChannel.mutate({ roomId });
         if (sessionId) deleteVoiceParticipant(roomId, sessionId);
       }
-      await webRtcStore.cleanupAll();
-      voiceStore.clearSpeakers();
+      await cleanupAll();
+      clearSpeakers();
       participantJoinUnsubscribable.unsubscribe();
       participantLeaveUnsubscribable.unsubscribe();
       muteChangedUnsubscribable.unsubscribe();

@@ -1,7 +1,7 @@
 import type { VoiceParticipant } from "#shared/models/room/voice/VoiceParticipant";
 
-import { LOCAL_PARTICIPANT_ID } from "@/services/message/voice/constants";
 import { authClient } from "@/services/auth/authClient";
+import { LOCAL_PARTICIPANT_ID } from "@/services/message/voice/constants";
 import { useRoomStore } from "@/store/message/room";
 import { useWebRtcStore } from "@/store/message/room/webRtc";
 
@@ -10,6 +10,8 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
   const session = authClient.useSession();
   const roomStore = useRoomStore();
   const webRtcStore = useWebRtcStore();
+  const { acquireLocalStream, cleanupAll, setLocalStreamMuted, setupSpeakingDetection, subscribeToSignals } =
+    webRtcStore;
   const callRoomId = ref<string>();
   const voiceParticipantsRoomMap = ref(new Map<string, VoiceParticipant[]>());
   const speakingIds = ref<string[]>([]);
@@ -58,13 +60,13 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
     const roomId = roomStore.currentRoomId;
     if (!roomId || isInChannel.value) return;
     try {
-      const stream = await webRtcStore.acquireLocalStream();
-      webRtcStore.subscribeToSignals(roomId);
+      const stream = await acquireLocalStream();
+      subscribeToSignals(roomId);
       const participants = await $trpc.voice.joinVoiceChannel.mutate({ roomId });
       callRoomId.value = roomId;
       setParticipants(roomId, participants);
       const localSessionId = sessionId.value;
-      if (localSessionId) await webRtcStore.setupSpeakingDetection(LOCAL_PARTICIPANT_ID, localSessionId, stream);
+      if (localSessionId) await setupSpeakingDetection(LOCAL_PARTICIPANT_ID, localSessionId, stream);
     } catch {
       await leaveVoice();
     }
@@ -79,7 +81,7 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
       await $trpc.voice.leaveVoiceChannel.mutate({ roomId });
     } finally {
       callRoomId.value = undefined;
-      await webRtcStore.cleanupAll();
+      await cleanupAll();
       clearSpeakers();
     }
   };
@@ -90,7 +92,7 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
     if (!roomId || !localSessionId || !isInChannel.value) return;
     const newIsMuted = !isMuted.value;
     setMute(roomId, localSessionId, newIsMuted);
-    webRtcStore.setLocalStreamMuted(newIsMuted);
+    setLocalStreamMuted(newIsMuted);
     await $trpc.voice.setMute.mutate({ isMuted: newIsMuted, roomId });
   };
 
@@ -99,8 +101,8 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
     clearSpeakers,
     createSpeaker,
     createVoiceParticipant,
-    deleteVoiceParticipant,
     deleteSpeaker,
+    deleteVoiceParticipant,
     isInChannel,
     isMuted,
     joinVoice,
