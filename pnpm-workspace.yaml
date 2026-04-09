@@ -51,7 +51,7 @@ catalog:
   "@nuxt/eslint": ^1.15.2
   "@nuxt/fonts": ^0.14.0
   "@nuxt/scripts": ^0.13.2
-  "@nuxt/test-utils": ^4.0.0
+  "@nuxt/test-utils": ^4.0.2
   "@nuxtjs/seo": ^5.1.2
   "@pinia/nuxt": ^0.11.3
   "@rolldown/plugin-node-polyfills": ^1.0.3
