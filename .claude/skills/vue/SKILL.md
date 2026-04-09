@@ -77,6 +77,20 @@ Example:
 - **Always use `:` shorthand** instead of `v-bind:propName` — write `:disabled="..."` not `v-bind:disabled="..."`. The object-spread form `v-bind="object"` has no shorthand and stays as-is.
 - **Never use `.value` in templates** — Vue auto-unwraps refs in template expressions. Writing `ref.value` in a template accesses `.value` on the already-unwrapped object (not on the ref), which is almost always `undefined`. Write `fn(ref)` not `fn(ref.value)`. `.value` is only needed in `<script setup>` (outside template expressions).
 
+## Optional Refs — Omit the Initial Value
+
+When a ref is initially `undefined`, **do not pass `undefined` as the argument** — just omit it. Vue's `ref<T>()` overload infers `Ref<T | undefined>` automatically:
+
+```typescript
+// WRONG — explicit undefined is redundant
+const callRoomId = ref<string | undefined>(undefined);
+
+// CORRECT — omit the argument; type is Ref<string | undefined>
+const callRoomId = ref<string>();
+```
+
+The same applies to other nullable-initial refs: `ref<User>()`, `ref<number>()`, etc.
+
 ## Refs & Computed
 
 - **Template refs** — always use `useTemplateRef` for both component and HTML element refs. Never suffix the variable with `Ref` — `const errorIcon = useTemplateRef(...)` not `const errorIconRef = useTemplateRef(...)`.
@@ -132,6 +146,30 @@ For a prop dependency, wrap it in a getter: `() => isActive`.
 - Always put a blank line before them to visually separate them from regular `const` assignments.
 - Always wrap the callback in an explicit arrow function — never pass a function reference directly. This avoids scope/binding issues and prevents accidental argument forwarding: `onUnmounted(() => { reset(); })` not `onUnmounted(reset)`.
 - This applies everywhere — `.map()`, `.filter()`, event handlers, lifecycle hooks, etc. Always use `array.map((item) => fn(item))` not `array.map(fn)`.
+
+## Browser Globals — Always Use `window.` Prefix
+
+Always prefix browser-only globals with `window.` for clarity. This makes it explicit that the code is browser-only and won't run on the server:
+
+```typescript
+// WRONG
+const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+const pc = new RTCPeerConnection({ iceServers });
+const ctx = new AudioContext();
+const audio = new Audio();
+const frame = requestAnimationFrame(cb);
+cancelAnimationFrame(frame);
+
+// CORRECT
+const stream = await window.navigator.mediaDevices.getUserMedia({ audio: true });
+const pc = new window.RTCPeerConnection({ iceServers });
+const ctx = new window.AudioContext();
+const audio = new window.Audio();
+const frame = window.requestAnimationFrame(cb);
+window.cancelAnimationFrame(frame);
+```
+
+Standard built-ins available in all environments (Node.js + browser) do **not** need the `window.` prefix: `Uint8Array`, `Map`, `Set`, `JSON`, `Promise`, `crypto`, etc.
 
 ## Vuetify
 

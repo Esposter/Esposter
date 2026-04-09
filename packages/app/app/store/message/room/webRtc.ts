@@ -3,27 +3,20 @@ import type { Unsubscribable } from "@trpc/server/observable";
 
 import { VoiceSignalType } from "#shared/models/room/voice/VoiceSignalType";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
-import { authClient } from "@/services/auth/authClient";
 import { ICE_SERVERS, LOCAL_PARTICIPANT_ID, SPEAKING_THRESHOLD } from "@/services/message/voice/constants";
-import { useRoomStore } from "@/store/message/room";
 import { useVoiceStore } from "@/store/message/room/voice";
 import { exhaustiveGuard, jsonDateParse } from "@esposter/shared";
 
-export const useVoiceChannel = () => {
-  const { $trpc } = useNuxtApp();
-  const session = authClient.useSession();
-  const roomStore = useRoomStore();
-  const { currentRoomId } = storeToRefs(roomStore);
-  const voiceStore = useVoiceStore();
-  const { clearSpeakers, createSpeaker, deleteSpeaker, joinVoice, leaveVoice, setMute, setParticipants } = voiceStore;
-  const { isInChannel, isMuted, speakingIds } = storeToRefs(voiceStore);
+// Module-level WebRTC state — only one voice call at a time.
+let localStream: MediaStream | null = null;
+const peerConnections = new Map<string, RTCPeerConnection>();
+const remoteAudioElements = new Map<string, HTMLAudioElement>();
+const speakingCleanups = new Map<string, () => Promise<void>>();
+const candidateQueues = new Map<string, RTCIceCandidateInit[]>();
+let signalUnsubscribable: Unsubscribable | undefined;
 
-  let localStream: MediaStream | null = null;
-  const peerConnections = new Map<string, RTCPeerConnection>();
-  const remoteAudioElements = new Map<string, HTMLAudioElement>();
-  const speakingCleanups = new Map<string, () => Promise<void>>();
-  const candidateQueues = new Map<string, RTCIceCandidateInit[]>();
-  let signalUnsubscribable: undefined | Unsubscribable;
+export const useWebRtcStore = defineStore("message/room/webRtc", () => {
+  const { $trpc } = useNuxtApp();
 
   const cleanupPeer = async (id: string) => {
     peerConnections.get(id)?.close();
@@ -33,7 +26,6 @@ export const useVoiceChannel = () => {
     await speakingCleanups.get(id)?.();
     speakingCleanups.delete(id);
     candidateQueues.delete(id);
-    deleteSpeaker(id);
   };
 
   const cleanupLocalStream = async () => {
@@ -46,35 +38,37 @@ export const useVoiceChannel = () => {
   };
 
   const setupSpeakingDetection = async (peerId: string, speakerId: string, stream: MediaStream) => {
-    const audioContext = new AudioContext();
+    const audioContext = new window.AudioContext();
     await audioContext.resume();
     const analyser = audioContext.createAnalyser();
     audioContext.createMediaStreamSource(stream).connect(analyser);
     analyser.fftSize = 256;
     const dataArray = new Uint8Array(analyser.frequencyBinCount);
     let animationFrame = 0;
+    const voiceStore = useVoiceStore();
+    const { createSpeaker, deleteSpeaker } = voiceStore;
 
     const detectSpeaking = () => {
       analyser.getByteFrequencyData(dataArray);
       const average = dataArray.reduce((acc, val) => acc + val, 0) / dataArray.length;
       const isSpeaking = average > SPEAKING_THRESHOLD;
-      const isCurrentlySpeaking = speakingIds.value.includes(speakerId);
+      const isCurrentlySpeaking = voiceStore.speakingIds.includes(speakerId);
 
       if (isSpeaking && !isCurrentlySpeaking) createSpeaker(speakerId);
       else if (!isSpeaking && isCurrentlySpeaking) deleteSpeaker(speakerId);
 
-      animationFrame = requestAnimationFrame(detectSpeaking);
+      animationFrame = window.requestAnimationFrame(detectSpeaking);
     };
 
-    animationFrame = requestAnimationFrame(detectSpeaking);
+    animationFrame = window.requestAnimationFrame(detectSpeaking);
     speakingCleanups.set(peerId, async () => {
-      cancelAnimationFrame(animationFrame);
+      window.cancelAnimationFrame(animationFrame);
       await audioContext.close();
     });
   };
 
   const buildPeerConnection = (roomId: string, remoteId: string) => {
-    const peerConnection = new RTCPeerConnection({ iceServers: ICE_SERVERS });
+    const peerConnection = new window.RTCPeerConnection({ iceServers: ICE_SERVERS });
     peerConnections.set(remoteId, peerConnection);
 
     if (localStream) for (const track of localStream.getTracks()) peerConnection.addTrack(track, localStream);
@@ -83,7 +77,7 @@ export const useVoiceChannel = () => {
       const remoteStream = streams[0];
       if (!remoteStream) return;
       await setupSpeakingDetection(remoteId, remoteId, remoteStream);
-      const audio = new Audio();
+      const audio = new window.Audio();
       audio.srcObject = remoteStream;
       await audio.play();
       remoteAudioElements.set(remoteId, audio);
@@ -100,7 +94,7 @@ export const useVoiceChannel = () => {
     return peerConnection;
   };
 
-  const createPeerConnection = async (roomId: string, remoteId: string) => {
+  const createPeerConnectionOffer = async (roomId: string, remoteId: string) => {
     const peerConnection = buildPeerConnection(roomId, remoteId);
     const offer = await peerConnection.createOffer();
     await peerConnection.setLocalDescription(offer);
@@ -115,7 +109,6 @@ export const useVoiceChannel = () => {
     const queue = candidateQueues.get(id);
     if (!peerConnection || !queue) return;
     for (const candidate of queue) await peerConnection.addIceCandidate(candidate);
-
     candidateQueues.delete(id);
   };
 
@@ -163,103 +156,44 @@ export const useVoiceChannel = () => {
       }
     };
 
-  const join = async () => {
-    if (!currentRoomId.value || isInChannel.value) return;
-
-    const roomId = currentRoomId.value;
-
-    try {
-      localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-      // Subscribe to signals before joining so we don't miss offers from existing participants
-      signalUnsubscribable = $trpc.voice.onSignal.subscribe(roomId, {
-        onData: getSynchronizedFunction(getSignalHandler(roomId)),
-      });
-
-      const participants = await $trpc.voice.joinVoiceChannel.mutate({ roomId });
-      setParticipants(roomId, participants);
-      const localSessionId = session.value.data?.session.id;
-      if (localSessionId) await setupSpeakingDetection(LOCAL_PARTICIPANT_ID, localSessionId, localStream);
-    } catch {
-      await leave();
-    }
+  const acquireLocalStream = async () => {
+    localStream = await window.navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+    return localStream;
   };
 
-  const leave = async () => {
-    if (!currentRoomId.value || !isInChannel.value) return;
-
-    const roomId = currentRoomId.value;
-    const sessionId = session.value.data?.session.id;
-    try {
-      if (sessionId) leaveVoice(roomId, sessionId);
-      await $trpc.voice.leaveVoiceChannel.mutate({ roomId });
-    } finally {
-      await Promise.all(peerConnections.keys().map((id) => cleanupPeer(id)));
-      await cleanupLocalStream();
-      signalUnsubscribable?.unsubscribe();
-      signalUnsubscribable = undefined;
-      clearSpeakers();
-    }
+  const setLocalStreamMuted = (isMuted: boolean) => {
+    if (!localStream) return;
+    for (const track of localStream.getAudioTracks()) track.enabled = !isMuted;
   };
 
-  const toggleMute = async () => {
-    const sessionId = session.value.data?.session.id;
-    if (!localStream || !currentRoomId.value || !sessionId) return;
-
-    const newIsMuted = !isMuted.value;
-    setMute(currentRoomId.value, sessionId, newIsMuted);
-    for (const track of localStream.getAudioTracks()) track.enabled = !newIsMuted;
-    await $trpc.voice.setMute.mutate({ isMuted: newIsMuted, roomId: currentRoomId.value });
+  const subscribeToSignals = (roomId: string) => {
+    signalUnsubscribable = $trpc.voice.onSignal.subscribe(roomId, {
+      onData: getSynchronizedFunction(getSignalHandler(roomId)),
+    });
   };
 
-  useOnlineSubscribable(currentRoomId, async (roomId) => {
-    if (!roomId) return undefined;
+  const unsubscribeFromSignals = () => {
+    signalUnsubscribable?.unsubscribe();
+    signalUnsubscribable = undefined;
+  };
 
-    const participants = await $trpc.voice.readVoiceParticipants.query({ roomId });
-    setParticipants(roomId, participants);
+  const cleanupAll = async () => {
+    await Promise.all([...peerConnections.keys()].map((id) => cleanupPeer(id)));
+    await cleanupLocalStream();
+    unsubscribeFromSignals();
+  };
 
-    if (isInChannel.value) {
-      const sessionId = session.value.data?.session.id;
-      if (sessionId) leaveVoice(roomId, sessionId);
-      await join();
-    }
-
-    const participantJoinUnsubscribable = $trpc.voice.onParticipantJoin.subscribe(roomId, {
-      onData: getSynchronizedFunction(async (participant) => {
-        joinVoice(roomId, participant);
-        if (isInChannel.value) {
-          await cleanupPeer(participant.id);
-          await createPeerConnection(roomId, participant.id);
-        }
-      }),
-    });
-    const participantLeaveUnsubscribable = $trpc.voice.onParticipantLeave.subscribe(roomId, {
-      onData: getSynchronizedFunction(async (id) => {
-        leaveVoice(roomId, id);
-        await cleanupPeer(id);
-      }),
-    });
-    const muteChangedUnsubscribable = $trpc.voice.onMuteChanged.subscribe(roomId, {
-      onData: (muteChange) => {
-        setMute(roomId, muteChange.id, muteChange.isMuted);
-      },
-    });
-
-    return async () => {
-      const sessionId = session.value.data?.session.id;
-      if (isInChannel.value) {
-        await $trpc.voice.leaveVoiceChannel.mutate({ roomId });
-        if (sessionId) leaveVoice(roomId, sessionId);
-      }
-      await Promise.all(peerConnections.keys().map((id) => cleanupPeer(id)));
-      await cleanupLocalStream();
-      signalUnsubscribable?.unsubscribe();
-      signalUnsubscribable = undefined;
-      clearSpeakers();
-      participantJoinUnsubscribable.unsubscribe();
-      participantLeaveUnsubscribable.unsubscribe();
-      muteChangedUnsubscribable.unsubscribe();
-    };
-  });
-
-  return { join, leave, toggleMute };
-};
+  return {
+    acquireLocalStream,
+    buildPeerConnection,
+    cleanupAll,
+    cleanupLocalStream,
+    cleanupPeer,
+    createPeerConnectionOffer,
+    getSignalHandler,
+    setLocalStreamMuted,
+    setupSpeakingDetection,
+    subscribeToSignals,
+    unsubscribeFromSignals,
+  };
+});

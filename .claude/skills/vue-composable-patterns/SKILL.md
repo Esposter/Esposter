@@ -199,6 +199,32 @@ await readFriends();
 
 The one-time `await readFriends()` in `<script setup>` handles the case where the user opens the dialog without having visited the friends page first. After that, the store stays fresh via subscriptions.
 
+## Subscribable Composables (`use*Subscribables`)
+
+Composables that manage tRPC subscriptions for a feature are named `use{Feature}Subscribables` and live in `composables/{domain}/subscribables/`. They are self-registering (no return value) and called from the aggregating `useSubscribables()` composable.
+
+```typescript
+// composables/message/subscribables/useVoiceSubscribables.ts
+export const useVoiceSubscribables = () => {
+  // calls useOnlineSubscribable, sets up tRPC subscriptions
+  // no return value
+};
+
+// composables/message/subscribables/useSubscribables.ts
+export const useSubscribables = () => {
+  useRoomSubscribables();
+  useVoiceSubscribables();
+  // ...
+};
+```
+
+Rules:
+
+- Name pattern: `use{Feature}Subscribables` — not `use{Feature}Channel`, not `use{Feature}Watcher`
+- Location: `composables/{domain}/subscribables/`
+- No return value — composables that manage subscriptions are self-registering side effects
+- Always call `useOnlineSubscribable` (not raw `watch`) so subscriptions are reconnected after going offline
+
 ## Composable Rules
 
 - **Never use `createSharedComposable`** — VueUse's `createSharedComposable` creates global singletons that bypass Pinia's devtools, HMR, and reactive reset behavior. All shared reactive state must live in a Pinia store (`defineStore`). Composables that previously used `createSharedComposable` should be either replaced by a store entirely, or made thin wrappers that delegate to the corresponding store.

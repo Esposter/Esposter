@@ -15,7 +15,16 @@ description: Esposter Pinia store conventions — full store name, destructure w
   3. `const { method1 } = xyzStore` _(omit if no methods needed)_
   4. _(repeat for next store)_
 - Never use dot-access (`store.method()`) in components.
-- **Store-to-store** (inside a Pinia store file): declare nested stores at the root of the setup function. Access refs/computeds via dot syntax (`otherStore.someRef`) to maintain reactivity — do NOT use `storeToRefs`. Methods may still be destructured: `const { methodName } = otherStore`.
+- **Store-to-store** (inside a Pinia store file): declare nested stores at the root of the setup function. Access refs/computeds via dot syntax (`otherStore.someRef`) to maintain reactivity — **never use `storeToRefs` inside a store**. Methods may still be destructured: `const { methodName } = otherStore`.
+
+  ```typescript
+  // WRONG — storeToRefs inside a store
+  const { currentRoomId } = storeToRefs(roomStore);
+  const roomParticipants = computed(() => roomParticipantsMap.value.get(currentRoomId.value));
+
+  // CORRECT — dot access, no storeToRefs
+  const roomParticipants = computed(() => roomParticipantsMap.value.get(roomStore.currentRoomId));
+  ```
 
 ## CRUD Store Patterns
 
