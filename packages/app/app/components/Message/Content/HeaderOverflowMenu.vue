@@ -13,9 +13,7 @@ import { mergeProps } from "vue";
     </template>
     <StyledCard>
       <div flex pa-1>
-        <MessageContentPinnedMessagesMenuButton />
-        <MessageContentAddFriendsDialogButton />
-        <MessageContentShowMemberListButton />
+        <MessageContentHeaderActionButtons />
       </div>
     </StyledCard>
   </v-menu>

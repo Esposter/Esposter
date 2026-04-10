@@ -48,9 +48,7 @@ const { smAndDown } = useVDisplay();
     <template #append>
       <MessageContentVoiceCallButton />
       <MessageContentNotificationSettingsMenuButton :room-id="currentRoom.id" />
-      <MessageContentPinnedMessagesMenuButton v-if="!smAndDown" />
-      <MessageContentAddFriendsDialogButton v-if="!smAndDown" />
-      <MessageContentShowMemberListButton v-if="!smAndDown" />
+      <MessageContentHeaderActionButtons v-if="!smAndDown" />
       <MessageContentShowSearchButton />
       <MessageContentHeaderOverflowMenu v-if="smAndDown" />
     </template>
