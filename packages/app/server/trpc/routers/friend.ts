@@ -1,15 +1,17 @@
-import type { User } from "@esposter/db-schema";
+import type { FriendRequestNotificationEventGridData, User } from "@esposter/db-schema";
 
 import { friendUserIdInputSchema } from "#shared/models/db/friend/FriendUserIdInput";
 import { searchUsersInputSchema } from "#shared/models/db/friend/SearchUsersInput";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
+import { useEventGridPublisherClient } from "@@/server/composables/azure/eventGrid/useEventGridPublisherClient";
 import { escapeLike } from "@@/server/services/db/escapeLike";
 import { on } from "@@/server/services/events/on";
 import { getFriendshipId } from "@@/server/services/friend/getFriendshipId";
 import { friendEventEmitter } from "@@/server/services/message/events/friendEventEmitter";
 import { router } from "@@/server/trpc";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { blocks, DatabaseEntityType, friends, FriendshipStatus, users } from "@esposter/db-schema";
+import { getPushSubscriptionsForUser } from "@esposter/db";
+import { AzureFunction, blocks, DatabaseEntityType, friends, FriendshipStatus, users } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, getTableColumns, isNull, ilike, ne, or } from "drizzle-orm";
@@ -214,6 +216,23 @@ export const friendRouter = router({
           image: ctx.getSessionPayload.user.image ?? null,
         };
         friendEventEmitter.emit("sendFriendRequest", { receiverId, senderUser });
+
+        const readPushSubscriptions = await getPushSubscriptionsForUser(ctx.db, receiverId);
+        if (readPushSubscriptions.length > 0) {
+          const eventGridPublisherClient = useEventGridPublisherClient();
+          const data: FriendRequestNotificationEventGridData = {
+            notificationOptions: { icon: senderUser.image, title: senderUser.name },
+            receiverId,
+          };
+          await eventGridPublisherClient.send([
+            {
+              data,
+              dataVersion: "1.0",
+              eventType: AzureFunction.ProcessFriendRequestNotification,
+              subject: `${userId}/${receiverId}`,
+            },
+          ]);
+        }
       }
       const receiverUser = await ctx.db.query.users.findFirst({ where: eq(users.id, receiverId) });
       if (!receiverUser)

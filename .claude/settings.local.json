@@ -40,7 +40,8 @@
       "WebFetch(domain:mathjs.org)",
       "WebFetch(domain:bundlephobia.com)",
       "WebFetch(domain:www.npmjs.com)",
-      "Bash(git status:*)"
+      "Bash(git status:*)",
+      "Bash(pnpm build:*)"
     ]
   }
 }
