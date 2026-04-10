@@ -16,7 +16,6 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import {
   DatabaseEntityType,
   friends,
-  FriendshipStatus,
   rooms,
   RoomType,
   selectRoomSchema,
@@ -57,12 +56,9 @@ export const directMessageRouter = router({
         .select()
         .from(friends)
         .where(
-          and(
-            eq(friends.status, FriendshipStatus.Accepted),
-            or(
-              and(eq(friends.senderId, userId), inArray(friends.receiverId, targetUserIds)),
-              and(eq(friends.receiverId, userId), inArray(friends.senderId, targetUserIds)),
-            ),
+          or(
+            and(eq(friends.senderId, userId), inArray(friends.receiverId, targetUserIds)),
+            and(eq(friends.receiverId, userId), inArray(friends.senderId, targetUserIds)),
           ),
         );
       if (acceptedFriendships.length !== targetUserIds.length)
