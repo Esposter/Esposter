@@ -373,8 +373,8 @@ catalogs:
       specifier: ^11.3.4
       version: 11.3.4
     grapesjs:
-      specifier: ^0.22.14
-      version: 0.22.14
+      specifier: ^0.22.15
+      version: 0.22.15
     grapesjs-blocks-basic:
       specifier: ^1.0.2
       version: 1.0.2
@@ -943,7 +943,7 @@ importers:
         version: 11.0.15
       grapesjs:
         specifier: 'catalog:'
-        version: 0.22.14
+        version: 0.22.15
       grapesjs-blocks-basic:
         specifier: 'catalog:'
         version: 1.0.2
@@ -8791,8 +8791,8 @@ packages:
   grapesjs-typed@2.0.1:
     resolution: {integrity: sha512-3Z5hATX/Zp9PkdOv94RtIzqB/n1mMUdTO5X/ZyNUMzSmGZG4CHtTmw3bIQDIkrSTWdbcqInlbFPzvzKYr4rKaw==}
 
-  grapesjs@0.22.14:
-    resolution: {integrity: sha512-UyHKGtB9YOQ4bmvhmwY3H7J6SO30qgIH4qRp1ucUlblS21btMxY90xwQuAVIi+EFGl0wi8v1NBEYvA52eIEfyg==}
+  grapesjs@0.22.15:
+    resolution: {integrity: sha512-A285579LiAWrRuN3G2doFn8gSdhA5lji4h7qGZ4X8FtSPIP/xJnx+sd+m0GAb3bTlJxQmAXYQYUwEIFOgt22sA==}
 
   graphlib@2.1.8:
     resolution: {integrity: sha512-jcLLfkpoVGmH7/InMC/1hIvOPSUh38oJtGhvrOFGzioE1DZ+0YW16RgmOJhHiuWTvGiJQ9Z1Ik43JvkRPRvE+A==}
@@ -12043,8 +12043,8 @@ packages:
   unctx@2.5.0:
     resolution: {integrity: sha512-p+Rz9x0R7X+CYDkT+Xg8/GhpcShTlU8n+cf9OtOEf7zEQsNcCZO1dPKNRDqvUTaq+P32PMMkxWHwfrxkqfqAYg==}
 
-  underscore@1.13.1:
-    resolution: {integrity: sha512-hzSoAVtJF+3ZtiFX0VgfFPHEDRm7Y/QPjGyNo4TVdnDTdft3tr8hEkD25a1jC+TjTuE7tkHGKkhwCgs9dgBB2g==}
+  underscore@1.13.8:
+    resolution: {integrity: sha512-DXtD3ZtEQzc7M8m4cXotyHR+FAS18C64asBYY5vqZexfYryNNnDc02W4hKg3rdQuqOYas1jkseX0+nZXjTXnvQ==}
 
   undici-types@7.18.2:
     resolution: {integrity: sha512-AsuCzffGHJybSaRrmr5eHr81mwJU3kjw6M+uprWvCXiNeN9SOGwQ3Jn8jb8m3Z6izVgknn1R0FTCEAP2QrLY/w==}
@@ -19206,11 +19206,11 @@ snapshots:
   backbone-undo@0.2.6:
     dependencies:
       backbone: 1.4.1
-      underscore: 1.13.1
+      underscore: 1.13.8
 
   backbone@1.4.1:
     dependencies:
-      underscore: 1.13.1
+      underscore: 1.13.8
 
   balanced-match@1.0.2: {}
 
@@ -21147,7 +21147,7 @@ snapshots:
 
   grapesjs-typed@2.0.1: {}
 
-  grapesjs@0.22.14:
+  grapesjs@0.22.15:
     dependencies:
       '@types/backbone': 1.4.15
       backbone: 1.4.1
@@ -21156,7 +21156,7 @@ snapshots:
       codemirror-formatting: 1.0.0
       html-entities: 1.4.0
       promise-polyfill: 8.3.0
-      underscore: 1.13.1
+      underscore: 1.13.8
 
   graphlib@2.1.8:
     dependencies:
@@ -25200,7 +25200,7 @@ snapshots:
       magic-string: 0.30.21
       unplugin: 2.3.11
 
-  underscore@1.13.1: {}
+  underscore@1.13.8: {}
 
   undici-types@7.18.2: {}
 
