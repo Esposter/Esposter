@@ -13,7 +13,7 @@ const peerConnections = new Map<string, RTCPeerConnection>();
 const remoteAudioElements = new Map<string, HTMLAudioElement>();
 const speakingCleanups = new Map<string, () => Promise<void>>();
 const candidateQueues = new Map<string, RTCIceCandidateInit[]>();
-let signalUnsubscribable: Unsubscribable | undefined;
+let signalUnsubscribable: undefined | Unsubscribable;
 
 export const useWebRtcStore = defineStore("message/room/webRtc", () => {
   const { $trpc } = useNuxtApp();
