@@ -152,7 +152,7 @@ catalog:
   grid-engine: ^2.48.2
   grid-layout-plus: ^1.1.1
   gsap: ^3.14.2
-  h3: ^1.15.10
+  h3: ^1.15.11
   happy-dom: ^20.8.9
   howler: ^2.2.4
   idb: ^8.0.3
