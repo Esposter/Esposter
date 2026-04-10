@@ -171,6 +171,16 @@ export const stringTransformationTypeSchema = z.enum(
 - **Never write `Object.values(SomeEnum)` inline** — always use the exported `Set` constant.
 - **Never use `new Set` just to call `.has()` on a small non-enum array** — if the values are already unique and the array is small, use `.some()` instead. Only `Set` when the source is an enum or the collection is large enough that O(n) repeated lookups would hurt performance.
 
+## Environment Checks
+
+- **Never use `import.meta.dev` or `import.meta.env.MODE`** — always use `useIsProduction()` from `@/composables/useIsProduction`:
+  ```ts
+  import { useIsProduction } from "@/composables/useIsProduction";
+  const isProduction = useIsProduction();
+  if (!isProduction) console.warn("...");
+  ```
+- Call `useIsProduction()` at the top level of the store/composable function (not inside callbacks).
+
 ## Enum Refs
 
 - **Never use `ref<EnumType | null>(null)`** — always default to a sensible first enum value: `ref(DataSourceType.Csv)`, `ref(ColumnType.String)`, etc.

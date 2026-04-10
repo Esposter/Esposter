@@ -58,7 +58,7 @@ When `isInChannel` is true, add a small green "In a call · #room-name" label ab
 
 ### DM voice call events
 
-When a user starts a call in a DM, post a `MessageType.VoiceCall` system message (new type): "Lain started a call." so the thread shows call history. When the last participant leaves, a follow-up message "Call ended · lasted Xm" is posted. This matches Discord's DM call UX exactly (see reference screenshots).
+When a user starts a call in a DM, post a `MessageType.VoiceCall` system message (new type): "Lain started a call." so the thread shows call history. This matches Discord's DM call UX.
 
 ---
 
@@ -75,13 +75,12 @@ When a user starts a call in a DM, post a `MessageType.VoiceCall` system message
 enum MessageType {
   // ...existing...
   VoiceCall = "VoiceCall", // "X started a call"
-  VoiceCallEnd = "VoiceCallEnd", // "Call ended · lasted Xm"
 }
 ```
 
-Post `VoiceCall` in `joinVoiceChannel` when the participant count goes from 0 → 1 (first joiner starts the call). Post `VoiceCallEnd` in `leaveVoiceChannel` when the count goes from 1 → 0 (last leaver ends the call); compute duration from the `VoiceCall` message's `createdAt`.
+Post `VoiceCall` in `joinVoiceChannel` when the participant count goes from 0 → 1 (first joiner starts the call).
 
-Render both as system messages (same style as `EditRoom` / `PinMessage`) in a new `Message/Model/Message/Type/VoiceCall.vue`.
+Render as a system message (same style as `EditRoom` / `PinMessage`) in a new `Message/Model/Message/Type/VoiceCall.vue`.
 
 ### 3. Remove sidebar voice components
 
@@ -175,4 +174,4 @@ On mobile: hide pin/add-friends/members buttons and show the overflow menu inste
 | New    | `Content/HeaderOverflowMenu.vue`                                        |
 | New    | `Model/Message/Type/VoiceCall.vue`                                      |
 | Modify | `server/trpc/routers/room/voice.ts` — allow DM room type                |
-| Modify | `db-schema/src/schema/MessageType` — add VoiceCall + VoiceCallEnd       |
+| Modify | `db-schema/src/schema/MessageType` — add VoiceCall                      |

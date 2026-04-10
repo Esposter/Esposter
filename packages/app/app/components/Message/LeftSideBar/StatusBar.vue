@@ -22,7 +22,7 @@ const callRoomName = useRoomName(callRoomId);
         density="compact"
         rounded
         base-color="success"
-        class="mb-1"
+        mb-1
       >
         <template #title>
           <span text-xs>In a call · {{ callRoomName }}</span>

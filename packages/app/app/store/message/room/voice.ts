@@ -19,8 +19,11 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
   const roomParticipants = computed(() =>
     roomStore.currentRoomId ? (voiceParticipantsRoomMap.value.get(roomStore.currentRoomId) ?? []) : [],
   );
-  const isInChannel = computed(() => roomParticipants.value.some(({ id }) => id === sessionId.value));
-  const isMuted = computed(() => roomParticipants.value.find(({ id }) => id === sessionId.value)?.isMuted ?? false);
+  const callParticipants = computed(() =>
+    callRoomId.value ? (voiceParticipantsRoomMap.value.get(callRoomId.value) ?? []) : [],
+  );
+  const isInChannel = computed(() => callParticipants.value.some(({ id }) => id === sessionId.value));
+  const isMuted = computed(() => callParticipants.value.find(({ id }) => id === sessionId.value)?.isMuted ?? false);
 
   const createVoiceParticipant = (roomId: string, participant: VoiceParticipant) => {
     const participants = voiceParticipantsRoomMap.value.get(roomId) ?? [];
@@ -58,12 +61,12 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
 
   const joinVoice = async () => {
     const roomId = roomStore.currentRoomId;
-    if (!roomId || isInChannel.value) return;
+    if (!roomId || callRoomId.value) return;
+    callRoomId.value = roomId;
     try {
       const stream = await acquireLocalStream();
       subscribeToSignals(roomId);
       const participants = await $trpc.voice.joinVoiceChannel.mutate({ roomId });
-      callRoomId.value = roomId;
       setParticipants(roomId, participants);
       const localSessionId = sessionId.value;
       if (localSessionId) await setupSpeakingDetection(LOCAL_PARTICIPANT_ID, localSessionId, stream);
@@ -73,8 +76,8 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
   };
 
   const leaveVoice = async () => {
-    const roomId = roomStore.currentRoomId;
-    if (!roomId || !isInChannel.value) return;
+    const roomId = callRoomId.value;
+    if (!roomId) return;
     const localSessionId = sessionId.value;
     try {
       if (localSessionId) deleteVoiceParticipant(roomId, localSessionId);
@@ -87,9 +90,9 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
   };
 
   const toggleMute = async () => {
-    const roomId = roomStore.currentRoomId;
+    const roomId = callRoomId.value;
     const localSessionId = sessionId.value;
-    if (!roomId || !localSessionId || !isInChannel.value) return;
+    if (!roomId || !localSessionId) return;
     const newIsMuted = !isMuted.value;
     setMute(roomId, localSessionId, newIsMuted);
     setLocalStreamMuted(newIsMuted);

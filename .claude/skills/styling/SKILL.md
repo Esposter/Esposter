@@ -9,7 +9,8 @@ description: Esposter UnoCSS Attributify Mode styling conventions — prop-based
 - **UnoCSS attributes go first** — before Vue/component props. e.g. `<StyledAvatar mr-3 :image="image" :name="name" />`
 - Use `flex` not `d-flex`.
 - Use `size` attribute (or `width`/`height` props) instead of `w-<n>` / `h-<n>` where possible.
-- Only use `class="..."` when technically required (dynamic `:class` bindings, Vuetify-specific typography/colour classes like `text-overline`, `text-medium-emphasis`, `text-wrap`). UnoCSS utilities (spacing, flex, sizing) must always be attributes even when mixed with Vuetify classes: `<div class="text-overline" mb-2>`.
+- Only use `class="..."` when technically required (dynamic `:class` bindings, Vuetify-specific typography/colour classes like `text-overline`, `text-medium-emphasis`, `text-wrap`, Vuetify CSS variable-based colours like `bg-surface-variant`). UnoCSS utilities (spacing, flex, sizing) must always be attributes even when mixed with Vuetify classes: `<div class="text-overline" mb-2>`.
+- **Vuetify colour tokens** (e.g. `bg-surface-variant`, `bg-surface`, `text-on-surface`) must stay in `class="..."` — they are Vuetify CSS variable shorthands, not UnoCSS utilities, and do not work as attributify props.
 
 ## Units
 

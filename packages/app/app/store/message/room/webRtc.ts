@@ -6,7 +6,6 @@ import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { ICE_SERVERS, LOCAL_PARTICIPANT_ID, SPEAKING_THRESHOLD } from "@/services/message/voice/constants";
 import { useVoiceStore } from "@/store/message/room/voice";
 import { exhaustiveGuard, jsonDateParse } from "@esposter/shared";
-
 // Module-level WebRTC state — only one voice call at a time.
 let localStream: MediaStream | null = null;
 const peerConnections = new Map<string, RTCPeerConnection>();
@@ -17,6 +16,7 @@ let signalUnsubscribable: undefined | Unsubscribable;
 
 export const useWebRtcStore = defineStore("message/room/webRtc", () => {
   const { $trpc } = useNuxtApp();
+  const isProduction = useIsProduction();
 
   const cleanupPeer = async (id: string) => {
     peerConnections.get(id)?.close();
@@ -151,8 +151,9 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
           default:
             exhaustiveGuard(type);
         }
-      } catch {
+      } catch (error) {
         // Drop malformed signal payloads to prevent unhandled rejections from aborting the subscription
+        if (!isProduction) console.warn("[WebRTC] Dropped malformed signal:", error);
       }
     };
 

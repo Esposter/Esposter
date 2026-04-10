@@ -25,12 +25,7 @@ const isCollapsed = useLocalStorage("voicePanel:isCollapsed", false);
               pointer-events-none
               rd-full
             />
-            <v-icon
-              v-if="participantIsMuted"
-              icon="mdi-microphone-off"
-              size="x-small"
-              class="absolute bottom-0 right-0"
-            />
+            <v-icon v-if="participantIsMuted" icon="mdi-microphone-off" size="x-small" absolute bottom-0 right-0 />
           </div>
         </div>
         <v-tooltip :text="isMuted ? 'Unmute' : 'Mute'" location="bottom">
