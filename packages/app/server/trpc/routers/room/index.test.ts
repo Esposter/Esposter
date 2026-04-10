@@ -8,7 +8,7 @@ import { createCode } from "#shared/util/math/random/createCode";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
-import { friendRouter } from "@@/server/trpc/routers/friend";
+import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
 import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
@@ -21,7 +21,7 @@ describe("room", () => {
   let mockContext: Context;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let directMessageCaller: DecorateRouterRecord<TRPCRouter["directMessage"]>;
-  let friendCaller: DecorateRouterRecord<TRPCRouter["friend"]>;
+  let friendRequestCaller: DecorateRouterRecord<TRPCRouter["friendRequest"]>;
   const roomId = crypto.randomUUID();
   const name = "name";
   const updatedName = "updatedName";
@@ -30,7 +30,7 @@ describe("room", () => {
     mockContext = await createMockContext();
     roomCaller = createCallerFactory(roomRouter)(mockContext);
     directMessageCaller = createCallerFactory(directMessageRouter)(mockContext);
-    friendCaller = createCallerFactory(friendRouter)(mockContext);
+    friendRequestCaller = createCallerFactory(friendRequestRouter)(mockContext);
   });
 
   afterEach(async () => {
@@ -41,9 +41,9 @@ describe("room", () => {
 
   const makeFriends = async (userA: User, userB: User) => {
     await mockSessionOnce(mockContext.db, userA);
-    await friendCaller.sendFriendRequest(userB.id);
+    await friendRequestCaller.sendFriendRequest(userB.id);
     await mockSessionOnce(mockContext.db, userB);
-    await friendCaller.acceptFriendRequest(userA.id);
+    await friendRequestCaller.acceptFriendRequest(userA.id);
   };
 
   test("creates", async () => {

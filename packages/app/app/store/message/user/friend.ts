@@ -6,11 +6,12 @@ import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const useFriendStore = defineStore("message/user/friend", () => {
   const { $trpc } = useNuxtApp();
-  const {
+  const friends = ref<User[]>([]);
+  const { createFriend: baseStoreCreateFriend, deleteFriend: baseStoreDeleteFriend } = createOperationData(
     friends,
-    createFriend: baseStoreCreateFriend,
-    deleteFriend: baseStoreDeleteFriend,
-  } = createOperationData(ref<User[]>([]), ["id"], DatabaseEntityType.Friend);
+    ["id"],
+    DatabaseEntityType.Friend,
+  );
 
   const storeCreateFriend = (friend: User) => {
     if (!friends.value.some(({ id }) => id === friend.id)) baseStoreCreateFriend(friend);

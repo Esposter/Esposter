@@ -113,7 +113,7 @@ Follow `createOperationData` conventions exactly when writing store update/delet
 
 ## Session Auth in Stores
 
-Never expose `sessionId` or any raw session identifier as a store state field. Session data must always be fetched directly in Vue components via `authClient.useSession(useFetch)`:
+Never expose `sessionId` or any raw session identifier as a store state field. Use `authClient.useSession(useFetch)` to fetch session data — this can be called in both Vue components and Pinia stores:
 
 ```ts
 // WRONG — session ID leaked into store state
@@ -122,11 +122,9 @@ const setSessionId = (id: string) => {
   sessionId.value = id;
 };
 
-// CORRECT — session stays in the component
+// CORRECT — call useSession wherever needed (component or store)
 const { data: session } = await authClient.useSession(useFetch);
 ```
-
-Stores that need the current user's identity should receive it as a parameter to their actions, not hold a session ref. This keeps auth concerns at the component boundary and avoids stale session state.
 
 ## Minimal Input Pattern for Store Actions
 
