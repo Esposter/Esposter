@@ -65,7 +65,7 @@ description: Esposter tRPC conventions — procedure typing with generics, route
 
 ## Input Schemas and Utility Functions
 
-- **Input schemas for procedures go in `shared/models/db/<feature>/`** — one file per input type, named after the type (e.g. `FriendUserIdInput.ts`, `SearchUsersInput.ts`). Export both the schema (`...Schema`) and the inferred type. Re-export the types from the router file for backward compatibility.
+- **Input schemas for procedures go in `shared/models/db/<feature>/`** — one file per input type, named after the type (e.g. `FriendUserIdInput.ts`, `SearchUsersInput.ts`). Export both the schema (`...Schema`) and the inferred type. Never re-export types from router files — each type lives in exactly one place.
 
   ```ts
   // shared/models/db/friend/FriendUserIdInput.ts
@@ -74,9 +74,6 @@ description: Esposter tRPC conventions — procedure typing with generics, route
 
   export const friendUserIdInputSchema = selectUserSchema.shape.id;
   export type FriendUserIdInput = z.infer<typeof friendUserIdInputSchema>;
-
-  // router file re-exports for backward compat:
-  export type { FriendUserIdInput } from "#shared/models/db/friend/FriendUserIdInput";
   ```
 
 - **Server-only utility functions go in `server/services/<feature>/`** — one function per file, named after the function (e.g. `getFriendshipId.ts`). Use this when the function is only used by server-side routers/services.

@@ -26,6 +26,34 @@ description: Esposter Pinia store conventions — full store name, destructure w
   const roomParticipants = computed(() => roomParticipantsMap.value.get(roomStore.currentRoomId));
   ```
 
+## createOperationData Usage
+
+- **Use `createOperationData` wherever the item type satisfies `ToData<AEntity>`** — call it at store setup to generate typed CRUD methods (`createXxx`, `updateXxx`, `deleteXxx`, `pushXxxs`, `unshiftXxxs`) for any ref that holds an entity list. Pass the ref, identity key array, and an `EntityTypeKey` (from `DatabaseEntityType` or a derived string literal). Note: `User` from `@esposter/db-schema` does NOT satisfy this constraint (it is a DB schema type, not an `AItemEntity` subclass), so friend/friendRequest stores must use manual implementations instead.
+
+- **`store` prefix is reserved for state-update-only counterparts of async user actions** — when you need BOTH a user-triggered async action (`deleteFriend`) AND a subscription-driven state-update with the same semantic (`storeDeleteFriend`), name the state-only version with `store` prefix. Never add `store` prefix to methods that are not paired with a user action of the same name. The message data store (`message/data.ts`) is the canonical large-scale example:
+
+  ```ts
+  // friend.ts — manual implementation (User doesn't satisfy ToData<AEntity>)
+  const friends = ref<User[]>([]);
+  const storeDeleteFriend = (friendId: string) => {
+    friends.value = friends.value.filter(({ id }) => id !== friendId);
+  };
+  const deleteFriend = async (friendId) => {
+    await $trpc.friend.deleteFriend.mutate(friendId);
+    storeDeleteFriend(friendId); // state-only — also used by subscription handlers
+  };
+  ```
+
+- **Subscription state-update methods use CRUD prefixes** — `createXxx` for inserting into a list, `deleteXxx` for removing. Never use `addXxx` as a prefix:
+
+  ```ts
+  // Called via subscription when a new request arrives — create prefix, no store (no name conflict)
+  const createFriendRequest = (senderUser: User) => {
+    if (!friendRequests.value.some(({ id }) => id === senderUser.id))
+      friendRequests.value = [senderUser, ...friendRequests.value];
+  };
+  ```
+
 ## CRUD Store Patterns
 
 Follow `createOperationData` conventions exactly when writing store update/delete methods:
@@ -53,7 +81,7 @@ Stores that need the current user's identity should receive it as a parameter to
 
 ## Minimal Input Pattern for Store Actions
 
-Store action parameters should always be the **minimum required input** — typically just an ID, not a full object. If the action needs a full entity (e.g. to update local state), it should come from the **API response**, not be passed in by the caller.
+Store action parameters should always be the **minimum input required** — typically just an ID, not a full object. If the action needs a full entity (e.g. to update local state), it should come from the **API response**, not be passed in by the caller.
 
 ```typescript
 // WRONG — forces caller to have the full User object upfront

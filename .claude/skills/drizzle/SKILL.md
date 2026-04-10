@@ -80,6 +80,32 @@ description: Esposter Drizzle ORM conventions — column naming (camelCase match
   ctx.db.select(getTableColumns(users)).from(friends).innerJoin(users, or(...)).where(...)
   ```
 
+## Relation Constants
+
+- **Export a `XxxRelations` constant from every schema file that is used in `with:` clauses** — co-locate the constant with the schema file, placed after `xxxRelations = relations(...)`, and include the `@TODO` comment linking the upstream Drizzle issue. Name it `PascalCase` matching the table's entity type:
+
+  ```ts
+  // posts.ts
+  export const postsRelations = relations(posts, ({ many, one }) => ({...}));
+  // @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
+  export const PostRelations = {
+    likes: true,
+    user: true,
+  } as const;
+  ```
+
+- **Use `XxxRelations` in router `with:` instead of inline objects** — import the constant from `@esposter/db-schema` and pass it to `with:`:
+
+  ```ts
+  // CORRECT
+  with: FriendRequestRelations,
+
+  // WRONG — inline object
+  with: { sender: true },
+  ```
+
+- **New schema files added to `packages/db-schema/src/schema/` must be individually exported from `src/index.ts`** — add `export * from "./schema/myNewTable"` to ensure all exports (table, type, schema, relations, and relation constants) are available from `@esposter/db-schema`.
+
 ## Relations (Schema Definitions)
 
 - **Always define `relations()` for every table** — even if the table has FK columns already, Drizzle's relational API requires explicit `relations()` declarations to enable `db.query.*` and `with:` eager loading.

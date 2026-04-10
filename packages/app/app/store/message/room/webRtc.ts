@@ -8,6 +8,7 @@ import { useVoiceStore } from "@/store/message/room/voice";
 import { exhaustiveGuard, jsonDateParse } from "@esposter/shared";
 // Module-level WebRTC state — only one voice call at a time.
 let localStream: MediaStream | null = null;
+let isRemoteAudioMuted = false;
 const peerConnections = new Map<string, RTCPeerConnection>();
 const remoteAudioElements = new Map<string, HTMLAudioElement>();
 const speakingCleanups = new Map<string, () => Promise<void>>();
@@ -80,6 +81,7 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
       await setupSpeakingDetection(remoteId, remoteId, remoteStream);
       const audio = new window.Audio();
       audio.srcObject = remoteStream;
+      audio.muted = isRemoteAudioMuted;
       remoteAudioElements.set(remoteId, audio);
       try {
         await audio.play();
@@ -174,6 +176,7 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
   };
 
   const setRemoteAudioMuted = (isDeafened: boolean) => {
+    isRemoteAudioMuted = isDeafened;
     for (const audio of remoteAudioElements.values()) audio.muted = isDeafened;
   };
 

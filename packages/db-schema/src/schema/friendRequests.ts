@@ -45,3 +45,8 @@ export const friendRequestsRelations = relations(friendRequests, ({ one }) => ({
     relationName: "sender",
   }),
 }));
+// @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
+export const FriendRequestRelations = {
+  receiver: true,
+  sender: true,
+} as const;

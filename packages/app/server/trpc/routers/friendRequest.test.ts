@@ -72,6 +72,24 @@ describe("friendRequest", () => {
     expect(accepted.receiverId).toBe(userId);
   });
 
+  test("fails to send friend request when already friends", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    const { user } = await mockSessionOnce(mockContext.db);
+    // Session=user: sends request to default user
+    await caller.sendFriendRequest(userId);
+    // Session=default: accepts request from user
+    await caller.acceptFriendRequest(user.id);
+    // Session=user: tries to send again to default user
+    await mockSessionOnce(mockContext.db, user);
+    const friendshipId = [userId, user.id].toSorted().join(ID_SEPARATOR);
+
+    await expect(caller.sendFriendRequest(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.FriendRequest, friendshipId).message}]`,
+    );
+  });
+
   test("fails accept non-existent friend request", async () => {
     expect.hasAssertions();
 
@@ -95,38 +113,38 @@ describe("friendRequest", () => {
     // Session=default: declines
     await caller.declineFriendRequest(user.id);
 
-    const pendingRequests = await caller.readPendingRequests();
+    const friendRequests = await caller.readFriendRequests();
 
-    expect(pendingRequests).toHaveLength(0);
+    expect(friendRequests).toHaveLength(0);
   });
 
-  test("reads pending requests", async () => {
+  test("reads friend requests", async () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
     const { user } = await mockSessionOnce(mockContext.db);
     // Session=user: sends request to default user
     await caller.sendFriendRequest(userId);
-    // Session=default: reads pending
-    const pendingRequests = await caller.readPendingRequests();
+    // Session=default: reads friend requests
+    const friendRequests = await caller.readFriendRequests();
 
-    expect(pendingRequests).toHaveLength(1);
-    expect(takeOne(pendingRequests).id).toBe(user.id);
+    expect(friendRequests).toHaveLength(1);
+    expect(takeOne(friendRequests).id).toBe(user.id);
   });
 
-  test("reads sent requests", async () => {
+  test("reads sent friend requests", async () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
     const { user } = await mockSessionOnce(mockContext.db);
     // Session=user: sends request to default user
     await caller.sendFriendRequest(userId);
-    // Session=user again: reads sent requests
+    // Session=user again: reads sent friend requests
     await mockSessionOnce(mockContext.db, user);
-    const sentRequests = await caller.readSentRequests();
+    const sentFriendRequests = await caller.readSentFriendRequests();
 
-    expect(sentRequests).toHaveLength(1);
-    expect(takeOne(sentRequests).id).toBe(userId);
+    expect(sentFriendRequests).toHaveLength(1);
+    expect(takeOne(sentFriendRequests).id).toBe(userId);
   });
 
   test("on send friend request notifies receiver", async () => {

@@ -8,7 +8,14 @@ import { friendEventEmitter } from "@@/server/services/message/events/friendEven
 import { router } from "@@/server/trpc";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { getPushSubscriptionsForUser } from "@esposter/db";
-import { AzureFunction, DatabaseEntityType, friendRequests, friends, users } from "@esposter/db-schema";
+import {
+  AzureFunction,
+  DatabaseEntityType,
+  FriendRequestRelations,
+  friendRequests,
+  friends,
+  users,
+} from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
@@ -76,7 +83,7 @@ export const friendRequestRouter = router({
     const userId = ctx.getSessionPayload.user.id;
     const receivedRequests = await ctx.db.query.friendRequests.findMany({
       where: (friendRequests, { eq }) => eq(friendRequests.receiverId, userId),
-      with: { sender: true },
+      with: FriendRequestRelations,
     });
     return receivedRequests.map(({ sender }) => sender);
   }),
@@ -84,7 +91,7 @@ export const friendRequestRouter = router({
     const userId = ctx.getSessionPayload.user.id;
     const sentRequests = await ctx.db.query.friendRequests.findMany({
       where: (friendRequests, { eq }) => eq(friendRequests.senderId, userId),
-      with: { receiver: true },
+      with: FriendRequestRelations,
     });
     return sentRequests.map(({ receiver }) => receiver);
   }),
@@ -96,6 +103,12 @@ export const friendRequestRouter = router({
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Friend, userId).message,
+        });
+      const receiverUser = await ctx.db.query.users.findFirst({ where: eq(users.id, receiverId) });
+      if (!receiverUser)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new InvalidOperationError(Operation.Read, DatabaseEntityType.Friend, receiverId).message,
         });
       const existingBlock = await ctx.db.query.blocks.findFirst({
         where: (blocks, { and, eq, or }) =>
@@ -110,18 +123,19 @@ export const friendRequestRouter = router({
           message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Friend, receiverId).message,
         });
       const friendshipId = getFriendshipId(userId, receiverId);
+      const existingFriend = await ctx.db.query.friends.findFirst({
+        where: (friends, { eq }) => eq(friends.id, friendshipId),
+      });
+      if (existingFriend)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Create, DatabaseEntityType.FriendRequest, friendshipId).message,
+        });
       const [newRequest] = await ctx.db
         .insert(friendRequests)
         .values({ id: friendshipId, receiverId, senderId: userId })
         .onConflictDoNothing({ target: friendRequests.id })
         .returning();
-      const request =
-        newRequest ?? (await ctx.db.query.friendRequests.findFirst({ where: eq(friendRequests.id, friendshipId) }));
-      if (!request)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Create, DatabaseEntityType.FriendRequest, friendshipId).message,
-        });
       if (newRequest) {
         const senderUser: User = {
           ...ctx.getSessionPayload.user,
@@ -147,12 +161,6 @@ export const friendRequestRouter = router({
           ]);
         }
       }
-      const receiverUser = await ctx.db.query.users.findFirst({ where: eq(users.id, receiverId) });
-      if (!receiverUser)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: new InvalidOperationError(Operation.Read, DatabaseEntityType.Friend, receiverId).message,
-        });
       return receiverUser;
     }),
 });

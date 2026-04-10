@@ -39,3 +39,7 @@ export const blocksRelations = relations(blocks, ({ one }) => ({
     relationName: "blocker",
   }),
 }));
+// @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
+export const BlockRelations = {
+  blocked: true,
+} as const;

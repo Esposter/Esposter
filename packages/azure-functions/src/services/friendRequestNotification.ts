@@ -40,6 +40,7 @@ export const friendRequestNotification = async (
               context.log(`Subscription for endpoint ${endpoint} has expired. Deleting.`);
               await db.delete(pushSubscriptions).where(eq(pushSubscriptions.id, id));
             } else context.error(`Failed to send push notification to ${endpoint}: `, error);
+          else context.error(`Unexpected error sending push notification to ${endpoint}: `, error);
         }
       })(),
     ),

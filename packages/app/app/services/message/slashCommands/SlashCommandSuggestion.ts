@@ -44,7 +44,6 @@ export const SlashCommandSuggestion: Except<SuggestionOptions<SlashCommand, Slas
         break;
       }
       case SlashCommandType.Me:
-        // Parameterized — handled via setPendingSlashCommand above, never reaches here
         break;
       case SlashCommandType.Poll: {
         const pollDialogStore = usePollDialogStore();
@@ -64,7 +63,6 @@ export const SlashCommandSuggestion: Except<SuggestionOptions<SlashCommand, Slas
         break;
       }
       case SlashCommandType.Shrug:
-        // Parameterized — handled via setPendingSlashCommand above, never reaches here
         break;
       case SlashCommandType.TableFlip: {
         const dataStore = useDataStore();

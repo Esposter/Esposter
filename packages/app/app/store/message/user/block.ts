@@ -9,12 +9,14 @@ export const useBlockStore = defineStore("message/user/block", () => {
   const blockedUsers = ref<User[]>([]);
   const friendStore = useFriendStore();
   const friendRequestStore = useFriendRequestStore();
+  const { storeDeleteFriend } = friendStore;
+  const { storeDeleteSentFriendRequest } = friendRequestStore;
 
   const blockUser = async (userId: FriendUserIdInput) => {
     const user = await $trpc.block.blockUser.mutate(userId);
-    friendStore.friends = friendStore.friends.filter(({ id }) => id !== userId);
-    friendRequestStore.friendRequests = friendRequestStore.friendRequests.filter(({ id }) => id !== userId);
-    friendRequestStore.sentFriendRequests = friendRequestStore.sentFriendRequests.filter(({ id }) => id !== userId);
+    storeDeleteFriend(userId);
+    friendRequestStore.storeDeleteFriendRequest({ id: userId });
+    storeDeleteSentFriendRequest(userId);
     if (!blockedUsers.value.some(({ id }) => id === userId)) blockedUsers.value = [user, ...blockedUsers.value];
   };
 
