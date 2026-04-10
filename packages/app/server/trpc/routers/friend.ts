@@ -11,7 +11,7 @@ import { friendEventEmitter } from "@@/server/services/message/events/friendEven
 import { router } from "@@/server/trpc";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { getPushSubscriptionsForUser } from "@esposter/db";
-import { AzureFunction, blocks, DatabaseEntityType, friends, FriendshipStatus, users } from "@esposter/db-schema";
+import { AzureFunction, blocks, DatabaseEntityType, friendRequests, friends, users } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, getTableColumns, isNull, ilike, ne, or } from "drizzle-orm";
@@ -25,18 +25,15 @@ export const friendRouter = router({
     .mutation(async ({ ctx, input: senderId }) => {
       const userId = ctx.getSessionPayload.user.id;
       const friendshipId = getFriendshipId(senderId, userId);
-      const [updatedFriend] = await ctx.db
-        .update(friends)
-        .set({ status: FriendshipStatus.Accepted })
-        .where(
-          and(
-            eq(friends.id, friendshipId),
-            eq(friends.receiverId, userId),
-            eq(friends.status, FriendshipStatus.Pending),
-          ),
-        )
-        .returning();
-      if (!updatedFriend)
+      const [acceptedFriend] = await ctx.db.transaction(async (tx) => {
+        const [deletedRequest] = await tx
+          .delete(friendRequests)
+          .where(and(eq(friendRequests.id, friendshipId), eq(friendRequests.receiverId, userId)))
+          .returning();
+        if (!deletedRequest) return [];
+        return tx.insert(friends).values({ id: friendshipId, receiverId: userId, senderId }).returning();
+      });
+      if (!acceptedFriend)
         throw new TRPCError({
           code: "NOT_FOUND",
           message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Friend, friendshipId).message,
@@ -47,7 +44,7 @@ export const friendRouter = router({
         image: ctx.getSessionPayload.user.image ?? null,
       };
       friendEventEmitter.emit("acceptFriendRequest", { receiverUser, senderId });
-      return updatedFriend;
+      return acceptedFriend;
     }),
   blockUser: standardAuthedProcedure.input(friendUserIdInputSchema).mutation(async ({ ctx, input: targetUserId }) => {
     const userId = ctx.getSessionPayload.user.id;
@@ -56,9 +53,9 @@ export const friendRouter = router({
         code: "BAD_REQUEST",
         message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Block, userId).message,
       });
-    // Remove any existing friendship in either direction
     const friendshipId = getFriendshipId(userId, targetUserId);
     await ctx.db.delete(friends).where(eq(friends.id, friendshipId));
+    await ctx.db.delete(friendRequests).where(eq(friendRequests.id, friendshipId));
     await ctx.db.insert(blocks).values({ blockedId: targetUserId, blockerId: userId }).onConflictDoNothing();
     const blockedUser = await ctx.db.query.users.findFirst({ where: eq(users.id, targetUserId) });
     if (!blockedUser)
@@ -73,25 +70,16 @@ export const friendRouter = router({
     .mutation(async ({ ctx, input: senderId }) => {
       const userId = ctx.getSessionPayload.user.id;
       const friendshipId = getFriendshipId(senderId, userId);
-      const [declinedFriend] = await ctx.db
-        .delete(friends)
-        .where(
-          and(
-            eq(friends.id, friendshipId),
-            eq(friends.receiverId, userId),
-            eq(friends.status, FriendshipStatus.Pending),
-          ),
-        )
+      const [declinedRequest] = await ctx.db
+        .delete(friendRequests)
+        .where(and(eq(friendRequests.id, friendshipId), eq(friendRequests.receiverId, userId)))
         .returning();
-      if (declinedFriend) friendEventEmitter.emit("declineFriendRequest", { receiverId: userId, senderId });
+      if (declinedRequest) friendEventEmitter.emit("declineFriendRequest", { receiverId: userId, senderId });
     }),
   deleteFriend: standardAuthedProcedure.input(friendUserIdInputSchema).mutation(async ({ ctx, input: friendId }) => {
     const userId = ctx.getSessionPayload.user.id;
     const friendshipId = getFriendshipId(userId, friendId);
-    const [deletedFriend] = await ctx.db
-      .delete(friends)
-      .where(and(eq(friends.id, friendshipId), eq(friends.status, FriendshipStatus.Accepted)))
-      .returning();
+    const [deletedFriend] = await ctx.db.delete(friends).where(eq(friends.id, friendshipId)).returning();
     if (deletedFriend) friendEventEmitter.emit("deleteFriend", { receiverId: friendId, senderId: userId });
   }),
   onAcceptFriendRequest: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {
@@ -141,25 +129,23 @@ export const friendRouter = router({
           and(eq(friends.senderId, userId), eq(users.id, friends.receiverId)),
           and(eq(friends.receiverId, userId), eq(users.id, friends.senderId)),
         ),
-      )
-      .where(eq(friends.status, FriendshipStatus.Accepted));
+      );
   }),
   readPendingRequests: standardAuthedProcedure.query<User[]>(async ({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
-    const pendingFriendships = await ctx.db.query.friends.findMany({
-      where: (friends, { and, eq }) =>
-        and(eq(friends.receiverId, userId), eq(friends.status, FriendshipStatus.Pending)),
+    const pendingRequests = await ctx.db.query.friendRequests.findMany({
+      where: (fr, { eq }) => eq(fr.receiverId, userId),
       with: { sender: true },
     });
-    return pendingFriendships.map(({ sender }) => sender);
+    return pendingRequests.map(({ sender }) => sender);
   }),
   readSentRequests: standardAuthedProcedure.query<User[]>(async ({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
-    const sentFriendships = await ctx.db.query.friends.findMany({
-      where: (friends, { and, eq }) => and(eq(friends.senderId, userId), eq(friends.status, FriendshipStatus.Pending)),
+    const sentRequests = await ctx.db.query.friendRequests.findMany({
+      where: (fr, { eq }) => eq(fr.senderId, userId),
       with: { receiver: true },
     });
-    return sentFriendships.map(({ receiver }) => receiver);
+    return sentRequests.map(({ receiver }) => receiver);
   }),
   searchUsers: standardAuthedProcedure.input(searchUsersInputSchema).query(({ ctx, input: name }) => {
     const userId = ctx.getSessionPayload.user.id;
@@ -198,18 +184,19 @@ export const friendRouter = router({
           message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Friend, receiverId).message,
         });
       const friendshipId = getFriendshipId(userId, receiverId);
-      const [newFriend] = await ctx.db
-        .insert(friends)
+      const [newRequest] = await ctx.db
+        .insert(friendRequests)
         .values({ id: friendshipId, receiverId, senderId: userId })
-        .onConflictDoNothing({ target: friends.id })
+        .onConflictDoNothing({ target: friendRequests.id })
         .returning();
-      const friendship = newFriend ?? (await ctx.db.query.friends.findFirst({ where: eq(friends.id, friendshipId) }));
-      if (!friendship)
+      const request =
+        newRequest ?? (await ctx.db.query.friendRequests.findFirst({ where: eq(friendRequests.id, friendshipId) }));
+      if (!request)
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Friend, friendshipId).message,
+          message: new InvalidOperationError(Operation.Create, DatabaseEntityType.FriendRequest, friendshipId).message,
         });
-      if (newFriend) {
+      if (newRequest) {
         const senderUser: User = {
           ...ctx.getSessionPayload.user,
           deletedAt: null,

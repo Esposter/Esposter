@@ -19,82 +19,106 @@ A bidirectional friend-request system that acts as the social graph for Direct M
 
 ## Data Model
 
-### Schema — `friends` table
+Two separate tables encode relationship state — no status enum needed.
+
+### `friend_requests` table — pending requests only
+
+```typescript
+// packages/db-schema/src/schema/friendRequests.ts
+
+export const friendRequests = pgTable("friend_requests", {
+  // Natural key — sorted([senderId, receiverId]).join(ID_SEPARATOR).
+  // Conflict on insert = idempotent: duplicate sends are no-ops.
+  id: text("id").primaryKey(),
+  senderId: text("senderId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  receiverId: text("receiverId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+});
+```
+
+### `friends` table — accepted friendships only
 
 ```typescript
 // packages/db-schema/src/schema/friends.ts
 
-export enum FriendshipStatus {
-  Pending = "Pending",
-  Accepted = "Accepted",
-  Blocked = "Blocked",
-}
+export const friends = pgTable("friends", {
+  // Same natural key — sorted([senderId, receiverId]).join(ID_SEPARATOR).
+  id: text("id").primaryKey(),
+  senderId: text("senderId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  receiverId: text("receiverId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+});
+```
 
-export const friends = pgTable(
-  "friends",
+`senderId`/`receiverId` are preserved on both tables to maintain directionality (who initiated the request). Both use the same `id` computation so any "are these two friends?" check is an O(1) PK lookup on either table.
+
+### `blocks` table — blocked users
+
+```typescript
+// packages/db-schema/src/schema/blocks.ts
+
+export const blocks = pgTable(
+  "blocks",
   {
-    // Natural key — sorted([senderId, receiverId]).join(ID_SEPARATOR).
-    // Text PK instead of UUID: every lookup goes through this value,
-    // it never changes, and there is exactly one row per user pair.
-    id: text("id").primaryKey(),
-
-    senderId: text("sender_id")
+    blockerId: text("blockerId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    receiverId: text("receiver_id")
+    blockedId: text("blockedId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    status: friendshipStatusEnum("status").notNull().default(FriendshipStatus.Pending),
-    createdAt: timestamp("created_at").notNull(),
-    updatedAt: timestamp("updated_at").notNull(),
   },
-  ({ senderId, receiverId }) => [check("no_self_friendship", sql`${senderId} != ${receiverId}`)],
+  { extraConfig: ({ blockerId, blockedId }) => [primaryKey({ columns: [blockerId, blockedId] })] },
 );
 ```
 
-`id` is a text PK (not UUID) computed as `sorted([senderId, receiverId]).join(ID_SEPARATOR)` — same logic as `participantKey` on `rooms`. It follows the same logic as `usersToRooms` using `(userId, roomId)` as its composite PK — no surrogate needed when the natural key is already stable and unique. `senderId`/`receiverId` stay as plain columns to preserve directionality: only the `receiverId` user can accept or decline a pending request.
+Blocking is unilateral and independent of friendship state. A block in either direction prevents friend requests and excludes the blocked user from search results.
 
 ### `id` idempotency
 
 `id = [senderId, receiverId].toSorted().join(ID_SEPARATOR)`
 
-This mirrors the `participantKey` pattern used on the `rooms` table for DMs — a deterministic text key computed from the two participants. Because it is the PK:
+This mirrors the `participantKey` pattern used on the `rooms` table for DMs — a deterministic text key from two participants. Because it is the PK:
 
 - If A sends a request to B, `id = sorted([A, B]).join('|')`
 - If B tries to send a request to A before accepting, the insert conflicts on `id` → no-op
 - Any query checking "do A and B have a relationship?" is a single O(1) PK lookup
 
-### Status state machine
+### State machine
 
 ```text
-(no row)  ──sendFriendRequest──►  Pending
-Pending   ──acceptFriendRequest──► Accepted
-Pending   ──declineFriendRequest──► (row deleted)
-Accepted  ──deleteFriend──────────► (row deleted)
-Accepted  ──blockUser──────────────► Blocked   (future)
+(no row anywhere)  ──sendFriendRequest──►  friend_requests row
+friend_requests    ──acceptFriendRequest──► (deleted) + friends row inserted
+friend_requests    ──declineFriendRequest──► (deleted)
+friends            ──deleteFriend──────────► (deleted)
+friends/requests   ──blockUser─────────────► both rows deleted + blocks row inserted
+blocks             ──unblockUser───────────► (deleted)
 ```
 
 ---
 
 ## API
 
-New tRPC router: `packages/app/server/trpc/routers/friend.ts`
+tRPC router: `packages/app/server/trpc/routers/friend.ts`
 
-| Procedure              | Input             | Action                                                                                                                |
-| ---------------------- | ----------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `sendFriendRequest`    | `receiverId`      | Insert row with `id=sorted([me,receiverId]).join(sep)`, `status=Pending`. Conflict on `id` → no-op (idempotent).      |
-| `acceptFriendRequest`  | `senderId`        | Update `WHERE id=sorted([senderId,me]).join(sep) AND receiverId=me AND status=Pending` → `status=Accepted`            |
-| `declineFriendRequest` | `senderId`        | Delete `WHERE id=sorted([senderId,me]).join(sep) AND receiverId=me AND status=Pending`                                |
-| `deleteFriend`         | `friendId`        | Delete `WHERE id=sorted([me,friendId]).join(sep) AND status=Accepted`                                                 |
-| `readFriends`          | cursor pagination | `WHERE (senderId=me OR receiverId=me) AND status=Accepted`. Returns paginated `User[]` of the _other_ party via join. |
-| `readPendingRequests`  | —                 | `WHERE receiverId=me AND status=Pending`. Returns `User[]` of senders.                                                |
-| `readSentRequests`     | —                 | `WHERE senderId=me AND status=Pending`. Returns `User[]` of receivers.                                                |
-
-Additional procedure in `packages/app/server/trpc/routers/friend.ts`:
-
-| Procedure     | Input          | Action                                                                               |
-| ------------- | -------------- | ------------------------------------------------------------------------------------ |
-| `searchUsers` | `name: string` | `WHERE ilike(users.name, '%name%')` with limit. Used by the Add Friend search input. |
+| Procedure              | Input           | Action                                                                                                            |
+| ---------------------- | --------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `sendFriendRequest`    | `receiverId`    | Insert into `friend_requests` with `id=sorted([me,receiverId]).join(sep)`. Conflict on `id` → no-op (idempotent). |
+| `acceptFriendRequest`  | `senderId`      | Transaction: DELETE from `friend_requests` WHERE `id=X AND receiverId=me`, then INSERT into `friends`.            |
+| `declineFriendRequest` | `senderId`      | DELETE from `friend_requests` WHERE `id=X AND receiverId=me`.                                                     |
+| `deleteFriend`         | `friendId`      | DELETE from `friends` WHERE `id=sorted([me,friendId]).join(sep)`.                                                 |
+| `blockUser`            | `targetUserId`  | DELETE from `friends` and `friend_requests` by id. INSERT into `blocks`. Idempotent via `onConflictDoNothing`.    |
+| `unblockUser`          | `blockedUserId` | DELETE from `blocks` WHERE `blockerId=me AND blockedId=target`.                                                   |
+| `readFriends`          | —               | SELECT from `friends` WHERE `senderId=me OR receiverId=me`. Returns `User[]` of the other party via join.         |
+| `readPendingRequests`  | —               | SELECT from `friend_requests` WHERE `receiverId=me`. Returns `User[]` of senders.                                 |
+| `readSentRequests`     | —               | SELECT from `friend_requests` WHERE `senderId=me`. Returns `User[]` of receivers.                                 |
+| `readBlockedUsers`     | —               | SELECT from `blocks` WHERE `blockerId=me`. Returns `User[]`.                                                      |
+| `searchUsers`          | `name: string`  | `WHERE ilike(users.name, '%name%')` excluding self and any block relationship in either direction.                |
 
 ---
 
@@ -102,8 +126,10 @@ Additional procedure in `packages/app/server/trpc/routers/friend.ts`:
 
 ```text
 packages/db-schema/src/
-  schema/friends.ts                             # FriendshipStatus enum + friends table
-  models/shared/DatabaseEntityType.ts           # add Friend variant
+  schema/friendRequests.ts                      # friend_requests table
+  schema/friends.ts                             # friends table (accepted only)
+  schema/blocks.ts                              # blocks table
+  models/shared/DatabaseEntityType.ts           # Friend + FriendRequest + Block variants
 
 packages/app/
   app/
@@ -139,6 +165,5 @@ This keeps DM creation gated behind a mutual opt-in, matching the privacy expect
 
 ## Open Questions
 
-- **Blocked status**: the `Blocked` variant is reserved in the enum but not yet implemented. When added, blocked users should be excluded from `searchUsers` results for the blocker, and `sendFriendRequest` should reject if a block row exists in either direction.
 - **Friend request notifications**: should the recipient receive a Web Push notification when a friend request arrives? Low-urgency — can be added alongside the main notification pass.
 - **Mutual friend discovery**: "You may know" suggestions based on shared room membership — YAGNI at current scale.

@@ -5,12 +5,11 @@ import { check, index, text } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const friends = pgTable(
-  "friends",
+export const friendRequests = pgTable(
+  "friend_requests",
   {
     // Natural key — sorted([senderId, receiverId]).join(ID_SEPARATOR).
-    // Text PK: every lookup goes through this value, it never changes,
-    // And there is exactly one row per user pair.
+    // Conflicts on insert act as idempotency: if A already sent to B, a second send is a no-op.
     id: text("id").primaryKey(),
     receiverId: text("receiverId")
       .notNull()
@@ -21,27 +20,27 @@ export const friends = pgTable(
   },
   {
     extraConfig: ({ receiverId, senderId }) => [
-      check("no_self_friendship", sql`${senderId} != ${receiverId}`),
-      index("friends_receiverId_idx").on(receiverId),
-      index("friends_senderId_idx").on(senderId),
+      check("no_self_friend_request", sql`${senderId} != ${receiverId}`),
+      index("friend_requests_receiverId_idx").on(receiverId),
+      index("friend_requests_senderId_idx").on(senderId),
     ],
   },
 );
 
-export type Friend = typeof friends.$inferSelect;
+export type FriendRequest = typeof friendRequests.$inferSelect;
 
-export const selectFriendSchema = createSelectSchema(friends, {
+export const selectFriendRequestSchema = createSelectSchema(friendRequests, {
   id: z.string().min(1),
 });
 
-export const friendsRelations = relations(friends, ({ one }) => ({
+export const friendRequestsRelations = relations(friendRequests, ({ one }) => ({
   receiver: one(users, {
-    fields: [friends.receiverId],
+    fields: [friendRequests.receiverId],
     references: [users.id],
     relationName: "receiver",
   }),
   sender: one(users, {
-    fields: [friends.senderId],
+    fields: [friendRequests.senderId],
     references: [users.id],
     relationName: "sender",
   }),

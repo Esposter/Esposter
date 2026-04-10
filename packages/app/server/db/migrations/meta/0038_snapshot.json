@@ -1,5 +1,5 @@
 {
-  "id": "27ca6f8f-b5f4-4695-8eaa-6a3ab30e674c",
+  "id": "06f460c3-7b53-42bb-8705-89c5e08f1add",
   "prevId": "3b58b9e9-7db9-4dd9-b6b1-62cb5a4173b9",
   "version": "7",
   "dialect": "postgresql",
@@ -324,6 +324,119 @@
       },
       "isRLSEnabled": false
     },
+    "public.friend_requests": {
+      "name": "friend_requests",
+      "schema": "",
+      "columns": {
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deletedAt": {
+          "name": "deletedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "receiverId": {
+          "name": "receiverId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "senderId": {
+          "name": "senderId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "friend_requests_receiverId_idx": {
+          "name": "friend_requests_receiverId_idx",
+          "columns": [
+            {
+              "expression": "receiverId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "friend_requests_senderId_idx": {
+          "name": "friend_requests_senderId_idx",
+          "columns": [
+            {
+              "expression": "senderId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "friend_requests_receiverId_users_id_fk": {
+          "name": "friend_requests_receiverId_users_id_fk",
+          "tableFrom": "friend_requests",
+          "tableTo": "users",
+          "columnsFrom": [
+            "receiverId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "friend_requests_senderId_users_id_fk": {
+          "name": "friend_requests_senderId_users_id_fk",
+          "tableFrom": "friend_requests",
+          "tableTo": "users",
+          "columnsFrom": [
+            "senderId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "no_self_friend_request": {
+          "name": "no_self_friend_request",
+          "value": "\"friend_requests\".\"senderId\" != \"friend_requests\".\"receiverId\""
+        }
+      },
+      "isRLSEnabled": false
+    },
     "public.friends": {
       "name": "friends",
       "schema": "",
@@ -364,13 +477,6 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
-        },
-        "status": {
-          "name": "status",
-          "type": "friendship_status",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'Pending'"
         }
       },
       "indexes": {
@@ -1868,14 +1974,6 @@
         "DataAnalyst",
         "MathWhiz",
         "WebDeveloper"
-      ]
-    },
-    "public.friendship_status": {
-      "name": "friendship_status",
-      "schema": "public",
-      "values": [
-        "Accepted",
-        "Pending"
       ]
     },
     "public.room_type": {

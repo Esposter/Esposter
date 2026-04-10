@@ -6,7 +6,7 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { friendRouter } from "@@/server/trpc/routers/friend";
 import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
-import { blocks, DatabaseEntityType, friends, FriendshipStatus } from "@esposter/db-schema";
+import { blocks, DatabaseEntityType, friendRequests, friends } from "@esposter/db-schema";
 import { ID_SEPARATOR, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
@@ -22,6 +22,7 @@ describe("friend", () => {
   afterEach(async () => {
     await mockContext.db.delete(blocks);
     await mockContext.db.delete(friends);
+    await mockContext.db.delete(friendRequests);
   });
 
   test("sends friend request", async () => {
@@ -67,7 +68,6 @@ describe("friend", () => {
     // Session=default: accepts request from user
     const accepted = await caller.acceptFriendRequest(user.id);
 
-    expect(accepted.status).toBe(FriendshipStatus.Accepted);
     expect(accepted.senderId).toBe(user.id);
     expect(accepted.receiverId).toBe(userId);
   });
@@ -262,9 +262,9 @@ describe("friend", () => {
 
     const userId = getMockSession().user.id;
     const { user } = await mockSessionOnce(mockContext.db);
-    // user blocks the default user
+    // User blocks the default user
     await caller.blockUser(userId);
-    // default user tries to send request to user — blocked in either direction
+    // Default user tries to send request to user — blocked in either direction
     const receiverId = user.id;
 
     await expect(caller.sendFriendRequest(receiverId)).rejects.toThrowErrorMatchingInlineSnapshot(

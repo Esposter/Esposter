@@ -4,6 +4,7 @@ export enum DatabaseEntityType {
   Block = "Block",
   DirectMessage = "DirectMessage",
   Friend = "Friend",
+  FriendRequest = "FriendRequest",
   Invite = "Invite",
   Like = "Like",
   Post = "Post",
