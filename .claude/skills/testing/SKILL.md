@@ -67,6 +67,11 @@ Never use `await nextTick()` in tests — it is either unnecessary (sync effects
 
 - **Always run `pnpm lint`, `pnpm typecheck`, and test commands in the background** — use `run_in_background: true` on the Bash tool so the main conversation is not blocked. These commands can take over 2 minutes. Continue addressing other tasks while waiting for results.
 
+## Vitest Environment Selection
+
+- **tRPC router tests (`server/trpc/routers/**/\*.test.ts`)** — do NOT add `// @vitest-environment node`. These tests run in the Nuxt environment (required for `createCallerFactory`, `createMockContext`, and Nuxt module integration). Adding the directive breaks the setup.
+- **All other server-side tests** — add `// @vitest-environment node` as the first line. This includes `server/services/**`, `server/composables/**`, and any standalone utility tests.
+
 ## Running Tests
 
 - **Do not run tests on Windows** — Vitest currently fails on Windows with `TypeError: The argument 'filename' must be a file URL object, file URL string, or absolute path string. Received 'file:///__uno.css'`. This is a known environment issue with UnoCSS + happy-dom. Write tests but skip running them; the user runs them manually.

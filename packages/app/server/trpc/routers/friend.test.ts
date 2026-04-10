@@ -6,7 +6,7 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { friendRouter } from "@@/server/trpc/routers/friend";
 import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
-import { DatabaseEntityType, friends, FriendshipStatus } from "@esposter/db-schema";
+import { blocks, DatabaseEntityType, friends, FriendshipStatus } from "@esposter/db-schema";
 import { ID_SEPARATOR, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
@@ -20,6 +20,7 @@ describe("friend", () => {
   });
 
   afterEach(async () => {
+    await mockContext.db.delete(blocks);
     await mockContext.db.delete(friends);
   });
 
@@ -27,13 +28,11 @@ describe("friend", () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
-    const { user } = await mockSessionOnce(mockContext.db);
-    // Session=user: sends request to default user
-    const friend = await caller.sendFriendRequest(userId);
+    await mockSessionOnce(mockContext.db);
+    // Session=user: sends request to default user, returns the receiver
+    const receiver = await caller.sendFriendRequest(userId);
 
-    expect(friend.senderId).toBe(user.id);
-    expect(friend.receiverId).toBe(userId);
-    expect(friend.status).toBe(FriendshipStatus.Pending);
+    expect(receiver.id).toBe(userId);
   });
 
   test("sends friend request is idempotent", async () => {
@@ -196,6 +195,81 @@ describe("friend", () => {
     const results = await caller.searchUsers(user.name);
 
     expect(results.every(({ id }) => id !== user.id)).toBe(true);
+  });
+
+  test("blocks user and removes friendship", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    const { user } = await mockSessionOnce(mockContext.db);
+    await caller.sendFriendRequest(userId);
+    await caller.acceptFriendRequest(user.id);
+
+    const blockedUser = await caller.blockUser(user.id);
+    const friendList = await caller.readFriends();
+
+    expect(blockedUser.id).toBe(user.id);
+    expect(friendList).toHaveLength(0);
+  });
+
+  test("fails to block self", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+
+    await expect(caller.blockUser(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.Block, userId).message}]`,
+    );
+  });
+
+  test("reads blocked users", async () => {
+    expect.hasAssertions();
+
+    const { user } = await mockSessionOnce(mockContext.db);
+    await caller.blockUser(user.id);
+
+    const blockedUsers = await caller.readBlockedUsers();
+
+    expect(blockedUsers).toHaveLength(1);
+    expect(takeOne(blockedUsers).id).toBe(user.id);
+  });
+
+  test("unblocks user", async () => {
+    expect.hasAssertions();
+
+    const { user } = await mockSessionOnce(mockContext.db);
+    await caller.blockUser(user.id);
+    await caller.unblockUser(user.id);
+
+    const blockedUsers = await caller.readBlockedUsers();
+
+    expect(blockedUsers).toHaveLength(0);
+  });
+
+  test("search excludes blocked users", async () => {
+    expect.hasAssertions();
+
+    const { user: blockedUser } = await mockSessionOnce(mockContext.db);
+    await caller.blockUser(blockedUser.id);
+
+    const results = await caller.searchUsers(blockedUser.name);
+
+    expect(results.every(({ id }) => id !== blockedUser.id)).toBe(true);
+  });
+
+  test("fails to send friend request when block exists", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    const { user } = await mockSessionOnce(mockContext.db);
+    // user blocks the default user
+    await caller.blockUser(userId);
+    // default user tries to send request to user — blocked in either direction
+    const receiverId = user.id;
+
+    await expect(caller.sendFriendRequest(receiverId)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.Friend, receiverId).message}]`,
+    );
   });
 
   test("on send friend request notifies receiver", async () => {
