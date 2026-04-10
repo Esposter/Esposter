@@ -83,10 +83,18 @@ description: Esposter Pinia store conventions — full store name, destructure w
 - **`store` prefix is reserved for state-update-only counterparts of async user actions** — when you need BOTH a user-triggered async action (`deleteFriend`) AND a subscription-driven state-update with the same semantic (`storeDeleteFriend`), name the state-only version with `store` prefix. Never add `store` prefix to methods that are not paired with a user action of the same name. The message data store (`message/data.ts`) is the canonical large-scale example:
 
   ```ts
-  // friend.ts — manual implementation (User doesn't satisfy ToData<AEntity>)
+  // friend.ts — createOperationData wraps base CRUD; store methods add dedup / id-mapping
   const friends = ref<User[]>([]);
+  const { createFriend: baseStoreCreateFriend, deleteFriend: baseStoreDeleteFriend } = createOperationData(
+    friends,
+    ["id"],
+    DatabaseEntityType.Friend,
+  );
+  const storeCreateFriend = (friend: User) => {
+    if (!friends.value.some(({ id }) => id === friend.id)) baseStoreCreateFriend(friend);
+  };
   const storeDeleteFriend = (friendId: string) => {
-    friends.value = friends.value.filter(({ id }) => id !== friendId);
+    baseStoreDeleteFriend({ id: friendId });
   };
   const deleteFriend = async (friendId) => {
     await $trpc.friend.deleteFriend.mutate(friendId);

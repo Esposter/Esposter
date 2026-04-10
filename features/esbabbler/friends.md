@@ -19,7 +19,7 @@ A bidirectional friend-request system that acts as the social graph for Direct M
 
 ## Data Model
 
-Two separate tables encode relationship state — no status enum needed.
+Three separate tables encode relationship state — no status enum needed.
 
 ### `friend_requests` table — pending requests only
 
