@@ -3,7 +3,6 @@ import type { SuggestionOptions } from "@tiptap/suggestion";
 import type { Except } from "type-fest";
 
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
-import { createRandomBoolean } from "@/util/math/random/createRandomBoolean";
 import SlashCommandList from "@/components/Message/Model/Message/SlashCommandList.vue";
 import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
 import { getRender } from "@/services/message/getRender";
@@ -12,6 +11,7 @@ import { useDataStore } from "@/store/message/data";
 import { usePollDialogStore } from "@/store/message/input/pollDialog";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 import { useRoomStore } from "@/store/message/room";
+import { createRandomBoolean } from "@/util/math/random/createRandomBoolean";
 import { MessageType } from "@esposter/db-schema";
 import { exhaustiveGuard } from "@esposter/shared";
 import { marked } from "marked";

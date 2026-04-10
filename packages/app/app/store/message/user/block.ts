@@ -1,8 +1,8 @@
 import type { FriendUserIdInput } from "#shared/models/db/friend/FriendUserIdInput";
 import type { User } from "@esposter/db-schema";
 
-import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 import { useFriendStore } from "@/store/message/user/friend";
+import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 
 export const useBlockStore = defineStore("message/user/block", () => {
   const { $trpc } = useNuxtApp();

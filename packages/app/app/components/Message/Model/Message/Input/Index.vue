@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
-import { getTypingMessage } from "@/services/message/getTypingMessage";
 import { authClient } from "@/services/auth/authClient";
+import { getTypingMessage } from "@/services/message/getTypingMessage";
+import { useMessageStore } from "@/store/message";
 import { useDataStore } from "@/store/message/data";
 import { useInputStore } from "@/store/message/input";
 import { useKeyboardShortcutsDialogStore } from "@/store/message/input/keyboardShortcutsDialog";
 import { useReplyStore } from "@/store/message/input/reply";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
-import { useMessageStore } from "@/store/message";
 import { useRoomStore } from "@/store/message/room";
-import { MESSAGE_MAX_LENGTH, MessageType } from "@esposter/db-schema";
 import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
+import { MESSAGE_MAX_LENGTH, MessageType } from "@esposter/db-schema";
 import { Extension } from "@tiptap/vue-3";
 
 const session = authClient.useSession();

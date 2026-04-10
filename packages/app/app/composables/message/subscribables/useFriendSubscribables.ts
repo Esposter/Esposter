@@ -1,6 +1,6 @@
 import { authClient } from "@/services/auth/authClient";
-import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 import { useFriendStore } from "@/store/message/user/friend";
+import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 
 export const useFriendSubscribables = () => {
   const session = authClient.useSession();

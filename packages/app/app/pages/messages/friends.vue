@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useBlockStore } from "@/store/message/user/block";
-import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 import { useFriendStore } from "@/store/message/user/friend";
+import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 
 definePageMeta({ middleware: "auth" });
 

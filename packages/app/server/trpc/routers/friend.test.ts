@@ -4,8 +4,8 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
-import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { friendRouter } from "@@/server/trpc/routers/friend";
+import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
 import { blocks, friendRequests, friends } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
@@ -34,7 +34,7 @@ describe("friend", () => {
     const { user } = await mockSessionOnce(mockContext.db);
     await friendRequestCaller.sendFriendRequest(userId);
     await friendRequestCaller.acceptFriendRequest(user.id);
-    return { userId, user };
+    return { user, userId };
   };
 
   test("reads friends as sender", async () => {
@@ -50,7 +50,7 @@ describe("friend", () => {
   test("reads friends as receiver", async () => {
     expect.hasAssertions();
 
-    const { userId, user } = await setupFriendship();
+    const { user, userId } = await setupFriendship();
     await mockSessionOnce(mockContext.db, user);
     const friendList = await friendCaller.readFriends();
 

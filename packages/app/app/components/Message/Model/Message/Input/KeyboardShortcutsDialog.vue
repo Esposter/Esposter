@@ -49,7 +49,7 @@ const shortcuts = [
           <div v-for="{ description, keys } of items" :key="description" flex items-center justify-between py-1>
             <span text-sm>{{ description }}</span>
             <div flex items-center gap-1>
-              <template v-for="(key, keyIndex) of keys" :key="key">
+              <template v-for="(key, keyIndex) of keys" :key>
                 <span v-if="keyIndex > 0" text-xs opacity-50>+</span>
                 <kbd text-xs px-1 py-0 rounded border border-current opacity-70 font-mono>{{ key }}</kbd>
               </template>
