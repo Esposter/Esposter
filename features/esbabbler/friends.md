@@ -104,21 +104,30 @@ blocks             ──unblockUser───────────► (delete
 
 ## API
 
-tRPC router: `packages/app/server/trpc/routers/friend.ts`
+### `packages/app/server/trpc/routers/friend.ts`
 
-| Procedure              | Input           | Action                                                                                                            |
-| ---------------------- | --------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `sendFriendRequest`    | `receiverId`    | Insert into `friend_requests` with `id=sorted([me,receiverId]).join(sep)`. Conflict on `id` → no-op (idempotent). |
-| `acceptFriendRequest`  | `senderId`      | Transaction: DELETE from `friend_requests` WHERE `id=X AND receiverId=me`, then INSERT into `friends`.            |
-| `declineFriendRequest` | `senderId`      | DELETE from `friend_requests` WHERE `id=X AND receiverId=me`.                                                     |
-| `deleteFriend`         | `friendId`      | DELETE from `friends` WHERE `id=sorted([me,friendId]).join(sep)`.                                                 |
-| `blockUser`            | `targetUserId`  | DELETE from `friends` and `friend_requests` by id. INSERT into `blocks`. Idempotent via `onConflictDoNothing`.    |
-| `unblockUser`          | `blockedUserId` | DELETE from `blocks` WHERE `blockerId=me AND blockedId=target`.                                                   |
-| `readFriends`          | —               | SELECT from `friends` WHERE `senderId=me OR receiverId=me`. Returns `User[]` of the other party via join.         |
-| `readPendingRequests`  | —               | SELECT from `friend_requests` WHERE `receiverId=me`. Returns `User[]` of senders.                                 |
-| `readSentRequests`     | —               | SELECT from `friend_requests` WHERE `senderId=me`. Returns `User[]` of receivers.                                 |
-| `readBlockedUsers`     | —               | SELECT from `blocks` WHERE `blockerId=me`. Returns `User[]`.                                                      |
-| `searchUsers`          | `name: string`  | `WHERE ilike(users.name, '%name%')` excluding self and any block relationship in either direction.                |
+| Procedure      | Input          | Action                                                                                                    |
+| -------------- | -------------- | --------------------------------------------------------------------------------------------------------- |
+| `deleteFriend` | `friendId`     | DELETE from `friends` WHERE `id=sorted([me,friendId]).join(sep)`.                                         |
+| `readFriends`  | —              | SELECT from `friends` WHERE `senderId=me OR receiverId=me`. Returns `User[]` of the other party via join. |
+| `searchUsers`  | `name: string` | `WHERE ilike(users.name, '%name%')` excluding self and any block relationship in either direction.        |
+
+### `packages/app/server/trpc/routers/friendRequest.ts`
+
+| Procedure              | Input        | Action                                                                                                            |
+| ---------------------- | ------------ | ----------------------------------------------------------------------------------------------------------------- |
+| `sendFriendRequest`    | `receiverId` | Insert into `friend_requests` with `id=sorted([me,receiverId]).join(sep)`. Conflict on `id` → no-op (idempotent). |
+| `acceptFriendRequest`  | `senderId`   | Transaction: DELETE from `friend_requests` WHERE `id=X AND receiverId=me`, then INSERT into `friends`.            |
+| `declineFriendRequest` | `senderId`   | DELETE from `friend_requests` WHERE `id=X AND receiverId=me`.                                                     |
+| `readFriendRequests`   | —            | SELECT from `friend_requests` WHERE `senderId=me OR receiverId=me`. Returns `FriendRequestWithRelations[]`.       |
+
+### `packages/app/server/trpc/routers/block.ts`
+
+| Procedure          | Input           | Action                                                                                                         |
+| ------------------ | --------------- | -------------------------------------------------------------------------------------------------------------- |
+| `blockUser`        | `targetUserId`  | DELETE from `friends` and `friend_requests` by id. INSERT into `blocks`. Idempotent via `onConflictDoNothing`. |
+| `unblockUser`      | `blockedUserId` | DELETE from `blocks` WHERE `blockerId=me AND blockedId=target`.                                                |
+| `readBlockedUsers` | —               | SELECT from `blocks` WHERE `blockerId=me`. Returns `User[]`.                                                   |
 
 ---
 
@@ -138,13 +147,19 @@ packages/app/
         Index.vue                               # add Friends nav item above Rooms
     pages/messages/
       friends.vue                               # Friends management page
-    store/message/
-      friend.ts                                 # friends / pendingRequests / sentRequests state
-    composables/message/friend/
+    store/message/user/
+      friend.ts                                 # friends state
+      friendRequest.ts                          # pendingRequests / sentRequests state
+      block.ts                                  # blockedUsers state
+    composables/message/user/
       useReadFriends.ts                         # populates friend store from tRPC
+    composables/message/subscribables/
+      useFriendSubscribables.ts                 # real-time subscriptions for friend events
   server/trpc/routers/
-    friend.ts                                   # all friend procedures
-    index.ts                                    # register friendRouter
+    friend.ts                                   # deleteFriend, readFriends, searchUsers
+    friendRequest.ts                            # sendFriendRequest, acceptFriendRequest, declineFriendRequest, readFriendRequests
+    block.ts                                    # blockUser, unblockUser, readBlockedUsers
+    index.ts                                    # register friendRouter, friendRequestRouter, blockRouter
 ```
 
 ---
