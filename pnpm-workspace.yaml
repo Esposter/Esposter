@@ -178,7 +178,7 @@ catalog:
   p-progress: ^1.0.0
   pathe: ^2.0.3
   pdfjs-dist: ^5.6.205
-  phaser: ^4.0.0-rc.7
+  phaser: ^4.0.0
   phaser3-rex-plugins: ^1.80.20
   pinia: ^3.0.4
   pluralize: ^8.0.0

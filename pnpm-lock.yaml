@@ -502,8 +502,8 @@ catalogs:
       specifier: ^2.0.3
       version: 2.0.3
     phaser:
-      specifier: ^4.0.0-rc.7
-      version: 4.0.0-rc.7
+      specifier: ^4.0.0
+      version: 4.0.0
     phaser3-rex-plugins:
       specifier: ^1.80.20
       version: 1.80.20
@@ -988,7 +988,7 @@ importers:
         version: 2.0.1
       grid-engine:
         specifier: 'catalog:'
-        version: 2.48.2(phaser@4.0.0-rc.7)
+        version: 2.48.2(phaser@4.0.0)
       grid-layout-plus:
         specifier: 'catalog:'
         version: 1.1.1(vue@3.5.32(typescript@5.9.3))
@@ -1048,7 +1048,7 @@ importers:
         version: 5.6.205
       phaser:
         specifier: 'catalog:'
-        version: 4.0.0-rc.7
+        version: 4.0.0
       phaser3-rex-plugins:
         specifier: 'catalog:'
         version: 1.80.20(graphology-types@0.24.8)
@@ -1535,7 +1535,7 @@ importers:
         version: link:../parse-tmx
       phaser:
         specifier: 'catalog:'
-        version: 4.0.0-rc.7
+        version: 4.0.0
       phaser3-rex-plugins:
         specifier: 'catalog:'
         version: 1.80.20(graphology-types@0.24.8)
@@ -10522,8 +10522,8 @@ packages:
   phaser3-rex-plugins@1.80.20:
     resolution: {integrity: sha512-XZLUy74r1jUaRWpGplRhhA+wEeOvnNb0qlhlyMtwdwZwIlCA7C7WtgvynOB/PyVrzS09cUBwEFyG+A3P5fL+Uw==}
 
-  phaser@4.0.0-rc.7:
-    resolution: {integrity: sha512-4ResXEPHK4+jBdrYdq6HtfSSmX6bvTIw3js6Y9p4nniYog4Y0CZxmZ+xabCNCFDE9vBj2D/mxexJ4TPObJ5WCg==}
+  phaser@4.0.0:
+    resolution: {integrity: sha512-f9oYpu3/UymB5JJDZRqOsNQm5FkMMC7u8eL8yQuqGAa54wTbgE2QbTOn70vgvlOVuYeQcw2mOQ52PpJHBSBkfQ==}
 
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
@@ -21174,10 +21174,10 @@ snapshots:
 
   grapick@0.1.13: {}
 
-  grid-engine@2.48.2(phaser@4.0.0-rc.7):
+  grid-engine@2.48.2(phaser@4.0.0):
     dependencies:
       mnemonist: 0.40.3
-      phaser: 4.0.0-rc.7
+      phaser: 4.0.0
       rxjs: 7.8.2
       tiled-property-flattener: 1.1.1
 
@@ -23524,7 +23524,7 @@ snapshots:
       - encoding
       - graphology-types
 
-  phaser@4.0.0-rc.7:
+  phaser@4.0.0:
     dependencies:
       eventemitter3: 5.0.4
 
