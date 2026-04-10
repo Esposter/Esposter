@@ -39,13 +39,19 @@ export const friendRequestRouter = router({
           code: "NOT_FOUND",
           message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Friend, friendshipId).message,
         });
+      const senderUser = await ctx.db.query.users.findFirst({ where: eq(users.id, senderId) });
+      if (!senderUser)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new InvalidOperationError(Operation.Read, DatabaseEntityType.Friend, senderId).message,
+        });
       const receiverUser: User = {
         ...ctx.getSessionPayload.user,
         deletedAt: null,
         image: ctx.getSessionPayload.user.image ?? null,
       };
       friendEventEmitter.emit("acceptFriendRequest", { receiverUser, senderId });
-      return acceptedFriend;
+      return senderUser;
     }),
   declineFriendRequest: standardAuthedProcedure
     .input(friendUserIdInputSchema)
@@ -136,37 +142,41 @@ export const friendRequestRouter = router({
           .onConflictDoNothing({ target: friendRequests.id })
           .returning();
       });
+      if (!newRequest) {
+        const existingRequest = await ctx.db.query.friendRequests.findFirst({
+          where: (friendRequests, { eq }) => eq(friendRequests.id, friendshipId),
+          with: FriendRequestRelations,
+        });
+        if (!existingRequest || existingRequest.senderId !== userId)
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: new InvalidOperationError(Operation.Create, DatabaseEntityType.FriendRequest, friendshipId)
+              .message,
+          });
+        return existingRequest;
+      }
       const friendRequest: FriendRequestWithRelations = {
-        ...(newRequest ?? {
-          createdAt: new Date(),
-          deletedAt: null,
-          id: friendshipId,
-          receiverId,
-          senderId: userId,
-          updatedAt: new Date(),
-        }),
+        ...newRequest,
         receiver: receiverUser,
         sender: senderUser,
       };
-      if (newRequest) {
-        friendEventEmitter.emit("sendFriendRequest", { friendRequest, receiverId });
+      friendEventEmitter.emit("sendFriendRequest", { friendRequest, receiverId });
 
-        const readPushSubscriptions = await getPushSubscriptionsForUser(ctx.db, receiverId);
-        if (readPushSubscriptions.length > 0) {
-          const eventGridPublisherClient = useEventGridPublisherClient();
-          const data: FriendRequestNotificationEventGridData = {
-            notificationOptions: { icon: senderUser.image, title: senderUser.name },
-            receiverId,
-          };
-          await eventGridPublisherClient.send([
-            {
-              data,
-              dataVersion: "1.0",
-              eventType: AzureFunction.ProcessFriendRequestNotification,
-              subject: `${userId}/${receiverId}`,
-            },
-          ]);
-        }
+      const readPushSubscriptions = await getPushSubscriptionsForUser(ctx.db, receiverId);
+      if (readPushSubscriptions.length > 0) {
+        const eventGridPublisherClient = useEventGridPublisherClient();
+        const data: FriendRequestNotificationEventGridData = {
+          notificationOptions: { icon: senderUser.image, title: senderUser.name },
+          receiverId,
+        };
+        await eventGridPublisherClient.send([
+          {
+            data,
+            dataVersion: "1.0",
+            eventType: AzureFunction.ProcessFriendRequestNotification,
+            subject: `${userId}/${receiverId}`,
+          },
+        ]);
       }
       return friendRequest;
     }),

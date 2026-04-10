@@ -65,11 +65,10 @@ describe("friendRequest", () => {
     const { user } = await mockSessionOnce(mockContext.db);
     // Session=user: sends request to default user
     await friendRequestCaller.sendFriendRequest(userId);
-    // Session=default: accepts request from user
-    const accepted = await friendRequestCaller.acceptFriendRequest(user.id);
+    // Session=default: accepts request from user, returns sender user
+    const senderUser = await friendRequestCaller.acceptFriendRequest(user.id);
 
-    expect(accepted.senderId).toBe(user.id);
-    expect(accepted.receiverId).toBe(userId);
+    expect(senderUser.id).toBe(user.id);
   });
 
   test("fails to send friend request when already friends", async () => {

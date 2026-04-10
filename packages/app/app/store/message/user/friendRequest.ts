@@ -30,14 +30,11 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
   };
 
   const acceptFriendRequest = async (senderId: FriendUserIdInput) => {
-    await $trpc.friendRequest.acceptFriendRequest.mutate(senderId);
-    const accepted = friendRequests.value.find(
-      (friendRequest) => friendRequest.senderId === senderId && friendRequest.receiverId === currentUserId.value,
-    );
+    const senderUser = await $trpc.friendRequest.acceptFriendRequest.mutate(senderId);
     friendRequests.value = friendRequests.value.filter(
       (friendRequest) => !(friendRequest.senderId === senderId && friendRequest.receiverId === currentUserId.value),
     );
-    if (accepted) storeCreateFriend(accepted.sender);
+    storeCreateFriend(senderUser);
   };
 
   const declineFriendRequest = async (senderId: FriendUserIdInput) => {
