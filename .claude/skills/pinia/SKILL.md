@@ -51,6 +51,26 @@ const { data: session } = await authClient.useSession(useFetch);
 
 Stores that need the current user's identity should receive it as a parameter to their actions, not hold a session ref. This keeps auth concerns at the component boundary and avoids stale session state.
 
+## Minimal Input Pattern for Store Actions
+
+Store action parameters should always be the **minimum required input** — typically just an ID, not a full object. If the action needs a full entity (e.g. to update local state), it should come from the **API response**, not be passed in by the caller.
+
+```typescript
+// WRONG — forces caller to have the full User object upfront
+const blockUser = async (user: User) => {
+  await $trpc.friend.blockUser.mutate(user.id);
+  blockedUsers.value = [user, ...blockedUsers.value]; // user came from caller
+};
+
+// CORRECT — caller only passes the ID; entity comes back from the API
+const blockUser = async (userId: FriendUserIdInput) => {
+  const user = await $trpc.friend.blockUser.mutate(userId);
+  blockedUsers.value = [user, ...blockedUsers.value]; // user came from API
+};
+```
+
+This means the tRPC mutation should return the affected entity when the store needs it for local state updates. Design the API contract around what the store needs, not what the caller already has.
+
 ## CRUD Parameter Naming
 
 Use consistent parameter names across stores, composables, and functions:

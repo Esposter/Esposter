@@ -122,12 +122,12 @@ This applies in `SlashCommandSuggestion.ts`, `SlashCommandParams.vue`, and any s
 
 ## Existing Commands
 
-| Command      | Parameters                                | Mode                                                                     |
-| ------------ | ----------------------------------------- | ------------------------------------------------------------------------ |
-| `/roll`      | `[]`                                      | Immediate — posts `🎲 Rolled a **N**`                                    |
-| `/poll`      | `[]`                                      | Immediate → opens `PollDialog` (special case: dialog, not inline params) |
-| `/me`        | `[{ name: "message", isRequired: true }]` | Parameterized                                                            |
-| `/shrug`     | `[{ name: "text", isRequired: false }]`   | Parameterized (optional — appends `¯\_(ツ)_/¯`)                          |
-| `/flip`      | `[]`                                      | Immediate — posts `🪙 Heads` or `🪙 Tails`                               |
-| `/tableflip` | `[]`                                      | Immediate — posts `(╯°□°）╯︵ ┻━┻`                                       |
-| `/unflip`    | `[]`                                      | Immediate — posts `┬─┬ノ( º _ ºノ)`                                      |
+| Command      | Parameters                                | Mode                                                                             |
+| ------------ | ----------------------------------------- | -------------------------------------------------------------------------------- |
+| `/roll`      | `[]`                                      | Immediate — posts `🎲 Rolled a **N**`                                            |
+| `/poll`      | `[]`                                      | Immediate → opens `PollDialog` (special case: dialog, not inline params)         |
+| `/me`        | `[{ name: "message", isRequired: true }]` | Parameterized                                                                    |
+| `/shrug`     | `[{ name: "text", isRequired: false }]`   | Parameterized (optional — appends `¯\_(ツ)_/¯`)                                  |
+| `/flip`      | `[]`                                      | Immediate — posts `🪙 **Heads**` or `🟡 **Tails**` (different sides of the coin) |
+| `/tableflip` | `[]`                                      | Immediate — posts `(╯°□°）╯︵ ┻━┻`                                               |
+| `/unflip`    | `[]`                                      | Immediate — posts `┬─┬ノ( º _ ºノ)`                                              |

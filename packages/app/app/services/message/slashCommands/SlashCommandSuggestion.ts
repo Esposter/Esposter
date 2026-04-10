@@ -3,6 +3,7 @@ import type { SuggestionOptions } from "@tiptap/suggestion";
 import type { Except } from "type-fest";
 
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
+import { createRandomBoolean } from "@/util/math/random/createRandomBoolean";
 import SlashCommandList from "@/components/Message/Model/Message/SlashCommandList.vue";
 import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
 import { getRender } from "@/services/message/getRender";
@@ -34,9 +35,9 @@ export const SlashCommandSuggestion: Except<SuggestionOptions<SlashCommand, Slas
       case SlashCommandType.Flip: {
         const dataStore = useDataStore();
         const { createMessage } = dataStore;
-        const result = Math.random() < 0.5 ? "Heads" : "Tails";
+        const isHeads = createRandomBoolean();
         await createMessage({
-          message: marked.parse(`🪙 **${result}**`, { async: false }),
+          message: marked.parse(isHeads ? `🪙 **Heads**` : `🟡 **Tails**`, { async: false }),
           roomId,
           type: MessageType.Message,
         });

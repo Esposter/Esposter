@@ -1,40 +1,43 @@
 import type { User } from "@esposter/db-schema";
-import type { z } from "zod";
 
+import { friendUserIdInputSchema } from "#shared/models/db/friend/FriendUserIdInput";
+import { searchUsersInputSchema } from "#shared/models/db/friend/SearchUsersInput";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { escapeLike } from "@@/server/services/db/escapeLike";
 import { on } from "@@/server/services/events/on";
+import { getFriendshipId } from "@@/server/services/friend/getFriendshipId";
 import { friendEventEmitter } from "@@/server/services/message/events/friendEventEmitter";
 import { router } from "@@/server/trpc";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { blocks, DatabaseEntityType, friends, FriendshipStatus, selectUserSchema, users } from "@esposter/db-schema";
-import { ID_SEPARATOR, InvalidOperationError, Operation } from "@esposter/shared";
+import { blocks, DatabaseEntityType, friends, FriendshipStatus, users } from "@esposter/db-schema";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, getTableColumns, isNull, ilike, ne, or } from "drizzle-orm";
 
-const friendUserIdInputSchema = selectUserSchema.shape.id;
-export type FriendUserIdInput = z.infer<typeof friendUserIdInputSchema>;
-
-const searchUsersInputSchema = selectUserSchema.shape.name;
-export type SearchUsersInput = z.infer<typeof searchUsersInputSchema>;
-
-const getFriendshipId = (userIdA: string, userIdB: string) => [userIdA, userIdB].toSorted().join(ID_SEPARATOR);
+export type { FriendUserIdInput } from "#shared/models/db/friend/FriendUserIdInput";
+export type { SearchUsersInput } from "#shared/models/db/friend/SearchUsersInput";
 
 export const friendRouter = router({
   acceptFriendRequest: standardAuthedProcedure
     .input(friendUserIdInputSchema)
     .mutation(async ({ ctx, input: senderId }) => {
       const userId = ctx.getSessionPayload.user.id;
-      const id = getFriendshipId(senderId, userId);
+      const friendshipId = getFriendshipId(senderId, userId);
       const [updatedFriend] = await ctx.db
         .update(friends)
         .set({ status: FriendshipStatus.Accepted })
-        .where(and(eq(friends.id, id), eq(friends.receiverId, userId), eq(friends.status, FriendshipStatus.Pending)))
+        .where(
+          and(
+            eq(friends.id, friendshipId),
+            eq(friends.receiverId, userId),
+            eq(friends.status, FriendshipStatus.Pending),
+          ),
+        )
         .returning();
       if (!updatedFriend)
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Friend, id).message,
+          message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Friend, friendshipId).message,
         });
       const receiverUser: User = {
         ...ctx.getSessionPayload.user,
@@ -55,25 +58,37 @@ export const friendRouter = router({
     const friendshipId = getFriendshipId(userId, targetUserId);
     await ctx.db.delete(friends).where(eq(friends.id, friendshipId));
     await ctx.db.insert(blocks).values({ blockedId: targetUserId, blockerId: userId }).onConflictDoNothing();
-    return targetUserId;
+    const blockedUser = await ctx.db.query.users.findFirst({ where: eq(users.id, targetUserId) });
+    if (!blockedUser)
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: new InvalidOperationError(Operation.Read, DatabaseEntityType.Block, targetUserId).message,
+      });
+    return blockedUser;
   }),
   declineFriendRequest: standardAuthedProcedure
     .input(friendUserIdInputSchema)
     .mutation(async ({ ctx, input: senderId }) => {
       const userId = ctx.getSessionPayload.user.id;
-      const id = getFriendshipId(senderId, userId);
+      const friendshipId = getFriendshipId(senderId, userId);
       const [declinedFriend] = await ctx.db
         .delete(friends)
-        .where(and(eq(friends.id, id), eq(friends.receiverId, userId), eq(friends.status, FriendshipStatus.Pending)))
+        .where(
+          and(
+            eq(friends.id, friendshipId),
+            eq(friends.receiverId, userId),
+            eq(friends.status, FriendshipStatus.Pending),
+          ),
+        )
         .returning();
       if (declinedFriend) friendEventEmitter.emit("declineFriendRequest", { receiverId: userId, senderId });
     }),
   deleteFriend: standardAuthedProcedure.input(friendUserIdInputSchema).mutation(async ({ ctx, input: friendId }) => {
     const userId = ctx.getSessionPayload.user.id;
-    const id = getFriendshipId(userId, friendId);
+    const friendshipId = getFriendshipId(userId, friendId);
     const [deletedFriend] = await ctx.db
       .delete(friends)
-      .where(and(eq(friends.id, id), eq(friends.status, FriendshipStatus.Accepted)))
+      .where(and(eq(friends.id, friendshipId), eq(friends.status, FriendshipStatus.Accepted)))
       .returning();
     if (deletedFriend) friendEventEmitter.emit("deleteFriend", { receiverId: friendId, senderId: userId });
   }),
@@ -180,17 +195,17 @@ export const friendRouter = router({
           code: "BAD_REQUEST",
           message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Friend, receiverId).message,
         });
-      const id = getFriendshipId(userId, receiverId);
+      const friendshipId = getFriendshipId(userId, receiverId);
       const [newFriend] = await ctx.db
         .insert(friends)
-        .values({ id, receiverId, senderId: userId })
+        .values({ id: friendshipId, receiverId, senderId: userId })
         .onConflictDoNothing({ target: friends.id })
         .returning();
-      const friendship = newFriend ?? (await ctx.db.query.friends.findFirst({ where: eq(friends.id, id) }));
+      const friendship = newFriend ?? (await ctx.db.query.friends.findFirst({ where: eq(friends.id, friendshipId) }));
       if (!friendship)
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Friend, id).message,
+          message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Friend, friendshipId).message,
         });
       if (newFriend) {
         const senderUser: User = {
@@ -200,7 +215,13 @@ export const friendRouter = router({
         };
         friendEventEmitter.emit("sendFriendRequest", { receiverId, senderUser });
       }
-      return friendship;
+      const receiverUser = await ctx.db.query.users.findFirst({ where: eq(users.id, receiverId) });
+      if (!receiverUser)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new InvalidOperationError(Operation.Read, DatabaseEntityType.Friend, receiverId).message,
+        });
+      return receiverUser;
     }),
   unblockUser: standardAuthedProcedure
     .input(friendUserIdInputSchema)

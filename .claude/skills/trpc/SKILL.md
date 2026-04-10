@@ -63,6 +63,26 @@ description: Esposter tRPC conventions — procedure typing with generics, route
   })
   ```
 
+## Input Schemas and Utility Functions
+
+- **Input schemas for procedures go in `shared/models/db/<feature>/`** — one file per input type, named after the type (e.g. `FriendUserIdInput.ts`, `SearchUsersInput.ts`). Export both the schema (`...Schema`) and the inferred type. Re-export the types from the router file for backward compatibility.
+
+  ```ts
+  // shared/models/db/friend/FriendUserIdInput.ts
+  import { selectUserSchema } from "@esposter/db-schema";
+  import { z } from "zod";
+
+  export const friendUserIdInputSchema = selectUserSchema.shape.id;
+  export type FriendUserIdInput = z.infer<typeof friendUserIdInputSchema>;
+
+  // router file re-exports for backward compat:
+  export type { FriendUserIdInput } from "#shared/models/db/friend/FriendUserIdInput";
+  ```
+
+- **Server-only utility functions go in `server/services/<feature>/`** — one function per file, named after the function (e.g. `getFriendshipId.ts`). Use this when the function is only used by server-side routers/services.
+
+- **If a utility function is also needed by a Pinia store (frontend), put it in `shared/services/<feature>/` instead** — this makes it importable on both server and client without duplication.
+
 ## Router Test Patterns
 
 - **Always create test resources via `caller.method()`** — never insert rows directly into the DB in router tests. Direct DB insertion bypasses application logic (auth checks, business rules, cascades) and means the flow being tested is different from the real flow. If a resource belongs to a different router, create a second caller for that router using `createCallerFactory(otherRouter)`.

@@ -65,7 +65,7 @@ const isBlocked = (userId: string) => blockedUsers.value.some(({ id }) => id ===
                     text="Send Request"
                     variant="tonal"
                     size="small"
-                    @click="sendFriendRequest({ id, name, image })"
+                    @click="sendFriendRequest(id)"
                   />
                   <v-chip v-else-if="hasSentRequest(id)" text="Request Sent" size="small" />
                   <v-chip v-else text="Friends" size="small" color="success" />
@@ -75,7 +75,7 @@ const isBlocked = (userId: string) => blockedUsers.value.some(({ id }) => id ===
                     variant="tonal"
                     color="error"
                     size="small"
-                    @click="blockUser({ id, name, image })"
+                    @click="blockUser(id)"
                   />
                 </div>
               </template>
@@ -115,13 +115,7 @@ const isBlocked = (userId: string) => blockedUsers.value.some(({ id }) => id ===
               <template #append>
                 <div flex gap-2>
                   <v-btn text="Remove" variant="tonal" color="error" size="small" @click="deleteFriend(id)" />
-                  <v-btn
-                    text="Block"
-                    variant="tonal"
-                    color="error"
-                    size="small"
-                    @click="blockUser({ id, name, image })"
-                  />
+                  <v-btn text="Block" variant="tonal" color="error" size="small" @click="blockUser(id)" />
                 </div>
               </template>
             </v-list-item>

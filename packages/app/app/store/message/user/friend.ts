@@ -1,3 +1,4 @@
+import type { FriendUserIdInput } from "#shared/models/db/friend/FriendUserIdInput";
 import type { User } from "@esposter/db-schema";
 
 export const useFriendStore = defineStore("message/user/friend", () => {
@@ -7,38 +8,37 @@ export const useFriendStore = defineStore("message/user/friend", () => {
   const pendingRequests = ref<User[]>([]);
   const sentRequests = ref<User[]>([]);
 
-  const acceptFriendRequest = async (senderId: string) => {
+  const acceptFriendRequest = async (senderId: FriendUserIdInput) => {
     await $trpc.friend.acceptFriendRequest.mutate(senderId);
     const sender = pendingRequests.value.find(({ id }) => id === senderId);
     pendingRequests.value = pendingRequests.value.filter(({ id }) => id !== senderId);
     if (sender) friends.value = [sender, ...friends.value];
   };
 
-  const blockUser = async (user: User) => {
-    await $trpc.friend.blockUser.mutate(user.id);
-    friends.value = friends.value.filter(({ id }) => id !== user.id);
-    pendingRequests.value = pendingRequests.value.filter(({ id }) => id !== user.id);
-    sentRequests.value = sentRequests.value.filter(({ id }) => id !== user.id);
-    if (!blockedUsers.value.some(({ id }) => id === user.id)) blockedUsers.value = [user, ...blockedUsers.value];
+  const blockUser = async (userId: FriendUserIdInput) => {
+    const user = await $trpc.friend.blockUser.mutate(userId);
+    friends.value = friends.value.filter(({ id }) => id !== userId);
+    pendingRequests.value = pendingRequests.value.filter(({ id }) => id !== userId);
+    sentRequests.value = sentRequests.value.filter(({ id }) => id !== userId);
+    if (!blockedUsers.value.some(({ id }) => id === userId)) blockedUsers.value = [user, ...blockedUsers.value];
   };
 
-  const declineFriendRequest = async (senderId: string) => {
+  const declineFriendRequest = async (senderId: FriendUserIdInput) => {
     await $trpc.friend.declineFriendRequest.mutate(senderId);
     pendingRequests.value = pendingRequests.value.filter(({ id }) => id !== senderId);
   };
 
-  const deleteFriend = async (friendId: string) => {
+  const deleteFriend = async (friendId: FriendUserIdInput) => {
     await $trpc.friend.deleteFriend.mutate(friendId);
     friends.value = friends.value.filter(({ id }) => id !== friendId);
   };
 
-  const sendFriendRequest = async (receiver: User) => {
-    await $trpc.friend.sendFriendRequest.mutate(receiver.id);
-    if (!sentRequests.value.some(({ id }) => id === receiver.id))
-      sentRequests.value = [receiver, ...sentRequests.value];
+  const sendFriendRequest = async (receiverId: FriendUserIdInput) => {
+    const receiver = await $trpc.friend.sendFriendRequest.mutate(receiverId);
+    if (!sentRequests.value.some(({ id }) => id === receiverId)) sentRequests.value = [receiver, ...sentRequests.value];
   };
 
-  const unblockUser = async (blockedUserId: string) => {
+  const unblockUser = async (blockedUserId: FriendUserIdInput) => {
     await $trpc.friend.unblockUser.mutate(blockedUserId);
     blockedUsers.value = blockedUsers.value.filter(({ id }) => id !== blockedUserId);
   };
@@ -63,8 +63,8 @@ export const useFriendStore = defineStore("message/user/friend", () => {
 
   return {
     acceptFriendRequest,
-    blockUser,
     blockedUsers,
+    blockUser,
     declineFriendRequest,
     deleteFriend,
     friends,
