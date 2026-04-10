@@ -1,6 +1,7 @@
 import { router } from "@@/server/trpc";
 import { achievementRouter } from "@@/server/trpc/routers/achievement";
 import { appRouter } from "@@/server/trpc/routers/app";
+import { blockRouter } from "@@/server/trpc/routers/block";
 import { clickerRouter } from "@@/server/trpc/routers/clicker";
 import { dashboardRouter } from "@@/server/trpc/routers/dashboard";
 import { dungeonsRouter } from "@@/server/trpc/routers/dungeons";
@@ -26,6 +27,7 @@ import { webpageEditorRouter } from "@@/server/trpc/routers/webpageEditor";
 // We need to declare a base router without achievements to avoid circular dependencies
 const trpcRouterWithoutAchievements = router({
   app: appRouter,
+  block: blockRouter,
   clicker: clickerRouter,
   dashboard: dashboardRouter,
   directMessage: directMessageRouter,

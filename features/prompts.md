@@ -1,0 +1,3 @@
+- we need to fix blocking of the user, it might not make sense to delete friend? maybe just friend request, think about the most common sense logic here
+- double check the tests for the routes, we may need to refactor them out as well to be aligned consistently with the route files
+- we should also refactor with the relation contants, so we don't do things like "with { blocked: true }" etc and should be from a constant, we do this for other files already you can reference

@@ -1,53 +1,58 @@
 import type { FriendUserIdInput } from "#shared/models/db/friend/FriendUserIdInput";
 import type { User } from "@esposter/db-schema";
 
+import { useFriendStore } from "@/store/message/user/friend";
+
 export const useFriendRequestStore = defineStore("message/user/friendRequest", () => {
   const { $trpc } = useNuxtApp();
-  const pendingRequests = ref<User[]>([]);
-  const sentRequests = ref<User[]>([]);
+  const friendRequests = ref<User[]>([]);
+  const sentFriendRequests = ref<User[]>([]);
 
   const acceptFriendRequest = async (senderId: FriendUserIdInput) => {
     await $trpc.friendRequest.acceptFriendRequest.mutate(senderId);
-    const sender = pendingRequests.value.find(({ id }) => id === senderId);
-    pendingRequests.value = pendingRequests.value.filter(({ id }) => id !== senderId);
+    const sender = friendRequests.value.find(({ id }) => id === senderId);
+    friendRequests.value = friendRequests.value.filter(({ id }) => id !== senderId);
     const friendStore = useFriendStore();
-    if (sender) friendStore.friends = [sender, ...friendStore.friends];
+    if (sender) friendStore.storeAddFriend(sender);
   };
 
   const declineFriendRequest = async (senderId: FriendUserIdInput) => {
     await $trpc.friendRequest.declineFriendRequest.mutate(senderId);
-    pendingRequests.value = pendingRequests.value.filter(({ id }) => id !== senderId);
+    friendRequests.value = friendRequests.value.filter(({ id }) => id !== senderId);
   };
 
   const sendFriendRequest = async (receiverId: FriendUserIdInput) => {
     const receiver = await $trpc.friendRequest.sendFriendRequest.mutate(receiverId);
-    if (!sentRequests.value.some(({ id }) => id === receiverId)) sentRequests.value = [receiver, ...sentRequests.value];
+    if (!sentFriendRequests.value.some(({ id }) => id === receiverId))
+      sentFriendRequests.value = [receiver, ...sentFriendRequests.value];
   };
 
+  // Called via subscription when the receiver accepted our sent request
   const storeAcceptFriendRequest = (receiverUser: User) => {
-    sentRequests.value = sentRequests.value.filter(({ id }) => id !== receiverUser.id);
+    sentFriendRequests.value = sentFriendRequests.value.filter(({ id }) => id !== receiverUser.id);
     const friendStore = useFriendStore();
-    if (!friendStore.friends.some(({ id }) => id === receiverUser.id))
-      friendStore.friends = [receiverUser, ...friendStore.friends];
+    friendStore.storeAddFriend(receiverUser);
   };
 
-  const storeCreatePendingRequest = (senderUser: User) => {
-    if (!pendingRequests.value.some(({ id }) => id === senderUser.id))
-      pendingRequests.value = [senderUser, ...pendingRequests.value];
+  // Called via subscription when a new request arrives from a sender
+  const storeCreateFriendRequest = (senderUser: User) => {
+    if (!friendRequests.value.some(({ id }) => id === senderUser.id))
+      friendRequests.value = [senderUser, ...friendRequests.value];
   };
 
+  // Called via subscription when the receiver declined our sent request
   const storeDeclineFriendRequest = (declinerId: string) => {
-    sentRequests.value = sentRequests.value.filter(({ id }) => id !== declinerId);
+    sentFriendRequests.value = sentFriendRequests.value.filter(({ id }) => id !== declinerId);
   };
 
   return {
     acceptFriendRequest,
     declineFriendRequest,
-    pendingRequests,
+    friendRequests,
     sendFriendRequest,
-    sentRequests,
+    sentFriendRequests,
     storeAcceptFriendRequest,
-    storeCreatePendingRequest,
+    storeCreateFriendRequest,
     storeDeclineFriendRequest,
   };
 });

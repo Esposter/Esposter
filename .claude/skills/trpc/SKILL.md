@@ -83,6 +83,15 @@ description: Esposter tRPC conventions — procedure typing with generics, route
 
 - **If a utility function is also needed by a Pinia store (frontend), put it in `shared/services/<feature>/` instead** — this makes it importable on both server and client without duplication.
 
+## Router and Store Structure
+
+- **One router + one Pinia store per DB table** — each table in `packages/db-schema/src/schema/` gets its own router file and its own Pinia store file. Never bundle multiple tables into one router or store.
+- **Naming derived from the table name, not from semantics** — use the table name as the basis for procedure and store ref names, not business descriptions:
+  - `friend_requests` table → `friendRequests` store ref, `readFriendRequests` procedure, `readSentFriendRequests` procedure
+  - Never use descriptive names like `pendingRequests` or `sentRequests` — the table already implies the state
+  - `blocks` table → `blockUser`, `unblockUser`, `readBlockedUsers` procedures; `blockedUsers` store ref
+- **Nuxt does NOT auto-import store functions** — always use explicit `import { useXxxStore } from "@/store/..."` in files that call other stores. Circular imports are avoided by choosing a one-way dependency direction: `block` store may import `friend` and `friendRequest` stores; `friendRequest` store may import `friend` store; `friend` store imports neither.
+
 ## Router Test Patterns
 
 - **Always create test resources via `caller.method()`** — never insert rows directly into the DB in router tests. Direct DB insertion bypasses application logic (auth checks, business rules, cascades) and means the flow being tested is different from the real flow. If a resource belongs to a different router, create a second caller for that router using `createCallerFactory(otherRouter)`.

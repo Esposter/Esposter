@@ -1,15 +1,14 @@
-import type { User } from "@esposter/db-schema";
+import type { FriendRequestNotificationEventGridData, User } from "@esposter/db-schema";
 
 import { friendUserIdInputSchema } from "#shared/models/db/friend/FriendUserIdInput";
+import { useEventGridPublisherClient } from "@@/server/composables/azure/eventGrid/useEventGridPublisherClient";
 import { on } from "@@/server/services/events/on";
 import { getFriendshipId } from "@@/server/services/friend/getFriendshipId";
 import { friendEventEmitter } from "@@/server/services/message/events/friendEventEmitter";
-import { useEventGridPublisherClient } from "@@/server/composables/azure/eventGrid/useEventGridPublisherClient";
 import { router } from "@@/server/trpc";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { getPushSubscriptionsForUser } from "@esposter/db";
-import { AzureFunction, blocks, DatabaseEntityType, friendRequests, friends } from "@esposter/db-schema";
-import type { FriendRequestNotificationEventGridData } from "@esposter/db-schema";
+import { AzureFunction, blocks, DatabaseEntityType, friendRequests, friends, users } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
@@ -75,15 +74,15 @@ export const friendRequestRouter = router({
       yield senderUser;
     }
   }),
-  readPendingRequests: standardAuthedProcedure.query<User[]>(async ({ ctx }) => {
+  readFriendRequests: standardAuthedProcedure.query<User[]>(async ({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
-    const pendingRequests = await ctx.db.query.friendRequests.findMany({
+    const receivedRequests = await ctx.db.query.friendRequests.findMany({
       where: (friendRequests, { eq }) => eq(friendRequests.receiverId, userId),
       with: { sender: true },
     });
-    return pendingRequests.map(({ sender }) => sender);
+    return receivedRequests.map(({ sender }) => sender);
   }),
-  readSentRequests: standardAuthedProcedure.query<User[]>(async ({ ctx }) => {
+  readSentFriendRequests: standardAuthedProcedure.query<User[]>(async ({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
     const sentRequests = await ctx.db.query.friendRequests.findMany({
       where: (friendRequests, { eq }) => eq(friendRequests.senderId, userId),
@@ -150,7 +149,7 @@ export const friendRequestRouter = router({
           ]);
         }
       }
-      const receiverUser = await ctx.db.query.users.findFirst({ where: (users, { eq }) => eq(users.id, receiverId) });
+      const receiverUser = await ctx.db.query.users.findFirst({ where: eq(users.id, receiverId) });
       if (!receiverUser)
         throw new TRPCError({
           code: "NOT_FOUND",
