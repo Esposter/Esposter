@@ -9,8 +9,6 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 
-export type { FriendUserIdInput } from "#shared/models/db/friend/FriendUserIdInput";
-
 export const blockRouter = router({
   blockUser: standardAuthedProcedure.input(friendUserIdInputSchema).mutation(async ({ ctx, input: targetUserId }) => {
     const userId = ctx.getSessionPayload.user.id;

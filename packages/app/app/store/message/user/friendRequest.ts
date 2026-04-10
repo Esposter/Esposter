@@ -5,6 +5,8 @@ import { useFriendStore } from "@/store/message/user/friend";
 
 export const useFriendRequestStore = defineStore("message/user/friendRequest", () => {
   const { $trpc } = useNuxtApp();
+  const friendStore = useFriendStore();
+  const { addFriend } = friendStore;
   const friendRequests = ref<User[]>([]);
   const sentFriendRequests = ref<User[]>([]);
 
@@ -12,8 +14,7 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
     await $trpc.friendRequest.acceptFriendRequest.mutate(senderId);
     const sender = friendRequests.value.find(({ id }) => id === senderId);
     friendRequests.value = friendRequests.value.filter(({ id }) => id !== senderId);
-    const friendStore = useFriendStore();
-    if (sender) friendStore.storeAddFriend(sender);
+    if (sender) addFriend(sender);
   };
 
   const declineFriendRequest = async (senderId: FriendUserIdInput) => {
@@ -30,8 +31,7 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
   // Called via subscription when the receiver accepted our sent request
   const storeAcceptFriendRequest = (receiverUser: User) => {
     sentFriendRequests.value = sentFriendRequests.value.filter(({ id }) => id !== receiverUser.id);
-    const friendStore = useFriendStore();
-    friendStore.storeAddFriend(receiverUser);
+    addFriend(receiverUser);
   };
 
   // Called via subscription when a new request arrives from a sender

@@ -7,11 +7,11 @@ import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 export const useBlockStore = defineStore("message/user/block", () => {
   const { $trpc } = useNuxtApp();
   const blockedUsers = ref<User[]>([]);
+  const friendStore = useFriendStore();
+  const friendRequestStore = useFriendRequestStore();
 
   const blockUser = async (userId: FriendUserIdInput) => {
     const user = await $trpc.block.blockUser.mutate(userId);
-    const friendStore = useFriendStore();
-    const friendRequestStore = useFriendRequestStore();
     friendStore.friends = friendStore.friends.filter(({ id }) => id !== userId);
     friendRequestStore.friendRequests = friendRequestStore.friendRequests.filter(({ id }) => id !== userId);
     friendRequestStore.sentFriendRequests = friendRequestStore.sentFriendRequests.filter(({ id }) => id !== userId);

@@ -5,7 +5,7 @@ export const useFriendSubscribables = () => {
   const { $trpc } = useNuxtApp();
   const friendStore = useFriendStore();
   const friendRequestStore = useFriendRequestStore();
-  const { storeDeleteFriend } = friendStore;
+  const { deleteFriend } = friendStore;
   const { storeAcceptFriendRequest, storeCreatePendingRequest, storeDeclineFriendRequest } = friendRequestStore;
 
   useOnlineSubscribable(
@@ -30,7 +30,7 @@ export const useFriendSubscribables = () => {
       });
       const deleteFriendUnsubscribable = $trpc.friend.onDeleteFriend.subscribe(undefined, {
         onData: (deleterId) => {
-          storeDeleteFriend(deleterId);
+          deleteFriend(deleterId);
         },
       });
 

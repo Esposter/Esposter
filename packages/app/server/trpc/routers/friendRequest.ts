@@ -8,12 +8,10 @@ import { friendEventEmitter } from "@@/server/services/message/events/friendEven
 import { router } from "@@/server/trpc";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { getPushSubscriptionsForUser } from "@esposter/db";
-import { AzureFunction, blocks, DatabaseEntityType, friendRequests, friends, users } from "@esposter/db-schema";
+import { AzureFunction, DatabaseEntityType, friendRequests, friends, users } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
-
-export type { FriendUserIdInput } from "#shared/models/db/friend/FriendUserIdInput";
 
 export const friendRequestRouter = router({
   acceptFriendRequest: standardAuthedProcedure
@@ -100,7 +98,7 @@ export const friendRequestRouter = router({
           message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Friend, userId).message,
         });
       const existingBlock = await ctx.db.query.blocks.findFirst({
-        where: (blocks, { and, or, eq }) =>
+        where: (blocks, { and, eq, or }) =>
           or(
             and(eq(blocks.blockerId, userId), eq(blocks.blockedId, receiverId)),
             and(eq(blocks.blockerId, receiverId), eq(blocks.blockedId, userId)),

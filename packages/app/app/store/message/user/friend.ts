@@ -10,18 +10,18 @@ export const useFriendStore = defineStore("message/user/friend", () => {
     friends.value = friends.value.filter(({ id }) => id !== friendId);
   };
 
-  const storeAddFriend = (user: User) => {
+  const addFriend = (user: User) => {
     if (!friends.value.some(({ id }) => id === user.id)) friends.value = [user, ...friends.value];
   };
 
-  const storeDeleteFriend = (userId: string) => {
+  const deleteFriend = (userId: string) => {
     friends.value = friends.value.filter(({ id }) => id !== userId);
   };
 
   return {
+    addFriend,
+    deleteFriend,
     deleteFriend,
     friends,
-    storeAddFriend,
-    storeDeleteFriend,
   };
 });

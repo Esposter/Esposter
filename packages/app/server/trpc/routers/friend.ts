@@ -12,9 +12,6 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import { blocks, friends, users } from "@esposter/db-schema";
 import { and, eq, getTableColumns, ilike, isNull, ne, or } from "drizzle-orm";
 
-export type { FriendUserIdInput } from "#shared/models/db/friend/FriendUserIdInput";
-export type { SearchUsersInput } from "#shared/models/db/friend/SearchUsersInput";
-
 export const friendRouter = router({
   deleteFriend: standardAuthedProcedure.input(friendUserIdInputSchema).mutation(async ({ ctx, input: friendId }) => {
     const userId = ctx.getSessionPayload.user.id;
