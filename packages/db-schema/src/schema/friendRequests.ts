@@ -1,5 +1,7 @@
+import type { User } from "@/schema/users";
+
 import { pgTable } from "@/pgTable";
-import { type User, users } from "@/schema/users";
+import { users } from "@/schema/users";
 import { relations, sql } from "drizzle-orm";
 import { check, index, text } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
