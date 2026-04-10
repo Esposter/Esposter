@@ -16,6 +16,7 @@ const dialogStore = useDialogStore();
 const { isEditRoomDialogOpen } = storeToRefs(dialogStore);
 const roomName = useRoomName(() => currentRoom.value?.id);
 const placeholder = useRoomPlaceholder(currentRoom);
+const { smAndDown } = useVDisplay();
 </script>
 
 <template>
@@ -45,11 +46,11 @@ const placeholder = useRoomPlaceholder(currentRoom);
       <span pl-2>{{ roomName }}</span>
     </StyledEditableNameDialogButton>
     <template #append>
+      <MessageContentVoiceCallButton />
       <MessageContentNotificationSettingsMenuButton :room-id="currentRoom.id" />
-      <MessageContentPinnedMessagesMenuButton />
-      <MessageContentAddFriendsDialogButton />
-      <MessageContentShowMemberListButton />
+      <MessageContentHeaderActionButtons v-if="!smAndDown" />
       <MessageContentShowSearchButton />
+      <MessageContentHeaderOverflowMenu v-if="smAndDown" />
     </template>
   </v-toolbar>
 </template>

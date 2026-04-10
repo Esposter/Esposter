@@ -7,4 +7,5 @@ export const useSubscribables = () => {
   useRoomSubscribables();
   useTypingSubscribables();
   useUserSubscribables();
+  useVoiceSubscribables();
 };

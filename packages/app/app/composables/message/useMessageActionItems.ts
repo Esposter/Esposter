@@ -112,6 +112,7 @@ export const useMessageActionItems = (
         return [copyTextItem, pinMessageItem.value, copyMessageLinkItem];
       case MessageType.PinMessage:
       case MessageType.Poll:
+      case MessageType.VoiceCall:
         return [copyMessageLinkItem];
       default:
         return exhaustiveGuard(message);

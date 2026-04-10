@@ -9,7 +9,6 @@ export const useScrollStore = defineStore("message/ui/scroll", () => {
   const { isScrolling, y } = useScroll(messageContainerElement);
   const isViewingOlderMessages = computed(() => y.value < -2000);
   const roomStore = useRoomStore();
-  // We're gonna cheat here and just send them to the messages page C:
   const jumpToPresent = async () => {
     if (!roomStore.currentRoomId) return;
     await navigateTo(RoutePath.Messages(roomStore.currentRoomId));

@@ -33,6 +33,7 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 ## Promise Style
 
 - **Always use `async`/`await`** — never use `.then()` or `.catch()` promise chains. Use `try`/`catch` blocks for error handling.
+  - **Exception**: `.then()` is acceptable only for building a **promise queue** (serialising sequential async operations in a sync context, e.g. `chain = chain.then(async () => {...})`). This pattern cannot be expressed with `await` inside a synchronous watcher/event callback. All other `.then()`/`.catch()` usages must be converted.
 - When fire-and-forgetting an async operation, extract to a named `async` function and call it without `await`.
 - **Never use `void asyncFn()`** — when passing an async function to a sync callback slot (e.g. `onScopeDispose`, event listeners, Phaser callbacks), wrap it with `getSynchronizedFunction(async fn)` from `#shared/util/getSynchronizedFunction` instead. This satisfies `@typescript-eslint/no-misused-promises` without suppressing the lint rule.
 
@@ -170,6 +171,16 @@ export const stringTransformationTypeSchema = z.enum(
 
 - **Never write `Object.values(SomeEnum)` inline** — always use the exported `Set` constant.
 - **Never use `new Set` just to call `.has()` on a small non-enum array** — if the values are already unique and the array is small, use `.some()` instead. Only `Set` when the source is an enum or the collection is large enough that O(n) repeated lookups would hurt performance.
+
+## Environment Checks
+
+- **Never use `import.meta.dev` or `import.meta.env.MODE`** — always use `useIsProduction()` from `@/composables/useIsProduction`:
+  ```ts
+  import { useIsProduction } from "@/composables/useIsProduction";
+  const isProduction = useIsProduction();
+  if (!isProduction) console.warn("...");
+  ```
+- Call `useIsProduction()` at the top level of the store/composable function (not inside callbacks).
 
 ## Enum Refs
 

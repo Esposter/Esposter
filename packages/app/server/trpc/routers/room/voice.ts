@@ -1,17 +1,21 @@
 import type { VoiceParticipant } from "#shared/models/room/voice/VoiceParticipant";
 
 import { voiceSignalPayloadSchema } from "#shared/models/room/voice/VoiceSignalPayload";
+import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { on } from "@@/server/services/events/on";
+import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
 import { voiceEventEmitter } from "@@/server/services/message/events/voiceEventEmitter";
 import { createVoiceParticipant } from "@@/server/services/message/voice/createVoiceParticipant";
 import { deleteVoiceParticipant } from "@@/server/services/message/voice/deleteVoiceParticipant";
 import { getRoomParticipants } from "@@/server/services/message/voice/getRoomParticipants";
 import { updateVoiceParticipantMute } from "@@/server/services/message/voice/updateVoiceParticipantMute";
+import { voiceCallStartTimeMap } from "@@/server/services/message/voice/voiceCallStartTimeMap";
 import { router } from "@@/server/trpc";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { selectRoomSchema } from "@esposter/db-schema";
+import { createMessage } from "@esposter/db";
+import { AzureTable, MessageType, selectRoomSchema } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -22,7 +26,7 @@ const onVoiceInputSchema = selectRoomSchema.shape.id;
 
 export const voiceRouter = router({
   joinVoiceChannel: getMemberProcedure(roomIdInputSchema, "roomId").mutation<VoiceParticipant[]>(
-    ({ ctx, input: { roomId } }) => {
+    async ({ ctx, input: { roomId } }) => {
       const { session, user } = ctx.getSessionPayload;
       const participant: VoiceParticipant = {
         id: session.id,
@@ -31,15 +35,54 @@ export const voiceRouter = router({
         name: user.name,
         userId: user.id,
       };
+      const isFirstJoiner = getRoomParticipants(roomId).length === 0;
       createVoiceParticipant(roomId, participant);
       voiceEventEmitter.emit("joinVoiceChannel", { participant, roomId, sessionId: session.id });
+
+      if (isFirstJoiner) {
+        voiceCallStartTimeMap.set(roomId, new Date());
+        try {
+          const messageClient = await useTableClient(AzureTable.Messages);
+          const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
+          const systemMessage = await createMessage(messageClient, messageAscendingClient, {
+            roomId,
+            type: MessageType.VoiceCall,
+            userId: user.id,
+          });
+          messageEventEmitter.emit("createMessage", [[systemMessage], { isSendToSelf: true, sessionId: session.id }]);
+        } catch {
+          // System message creation is best-effort — voice membership is already committed
+        }
+      }
+
       return getRoomParticipants(roomId);
     },
   ),
-  leaveVoiceChannel: getMemberProcedure(roomIdInputSchema, "roomId").mutation(({ ctx, input: { roomId } }) => {
-    const sessionId = ctx.getSessionPayload.session.id;
+  leaveVoiceChannel: getMemberProcedure(roomIdInputSchema, "roomId").mutation(async ({ ctx, input: { roomId } }) => {
+    const { session, user } = ctx.getSessionPayload;
+    const sessionId = session.id;
     const wasDeleted = deleteVoiceParticipant(roomId, sessionId);
     if (wasDeleted) voiceEventEmitter.emit("leaveVoiceChannel", { id: sessionId, roomId, sessionId });
+
+    if (wasDeleted && getRoomParticipants(roomId).length === 0) {
+      const callStart = voiceCallStartTimeMap.get(roomId);
+      voiceCallStartTimeMap.delete(roomId);
+      const durationSeconds = callStart ? Math.round((Date.now() - callStart.getTime()) / 1000) : 0;
+      try {
+        const messageClient = await useTableClient(AzureTable.Messages);
+        const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
+        // Non-empty message field signals "call ended" — value is duration in seconds
+        const systemMessage = await createMessage(messageClient, messageAscendingClient, {
+          message: String(durationSeconds),
+          roomId,
+          type: MessageType.VoiceCall,
+          userId: user.id,
+        });
+        messageEventEmitter.emit("createMessage", [[systemMessage], { isSendToSelf: true, sessionId }]);
+      } catch {
+        // System message creation is best-effort — voice membership is already committed
+      }
+    }
   }),
   onMuteChanged: standardAuthedProcedure.input(onVoiceInputSchema).subscription(async function* ({
     ctx,

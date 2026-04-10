@@ -5,6 +5,21 @@ description: Esposter Vuetify 3 conventions — v-btn tooltips, typed SelectItem
 
 # Vuetify Conventions
 
+## Auto-Imported Composables — `v` Prefix
+
+Vuetify composables are auto-imported with a `v` prefix. **Never import them from `"vuetify"` directly** — they are already globally available:
+
+```typescript
+// WRONG — explicit import
+import { useDisplay } from "vuetify";
+const { smAndDown } = useDisplay();
+
+// CORRECT — auto-import with v prefix
+const { smAndDown } = useVDisplay();
+```
+
+Common composables: `useVDisplay()`, `useVTheme()`, `useVLocale()`, `useVDate()`.
+
 ## Global Defaults (vuetify.config.ts)
 
 The following variants are set globally and must **never** be repeated on individual components:
