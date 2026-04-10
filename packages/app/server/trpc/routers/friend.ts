@@ -7,10 +7,10 @@ import { on } from "@@/server/services/events/on";
 import { friendEventEmitter } from "@@/server/services/message/events/friendEventEmitter";
 import { router } from "@@/server/trpc";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { DatabaseEntityType, friends, FriendshipStatus, selectUserSchema, users } from "@esposter/db-schema";
+import { blocks, DatabaseEntityType, friends, FriendshipStatus, selectUserSchema, users } from "@esposter/db-schema";
 import { ID_SEPARATOR, InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, eq, getTableColumns, or } from "drizzle-orm";
+import { and, eq, getTableColumns, isNull, ilike, ne, or } from "drizzle-orm";
 
 const friendUserIdInputSchema = selectUserSchema.shape.id;
 export type FriendUserIdInput = z.infer<typeof friendUserIdInputSchema>;
@@ -44,6 +44,19 @@ export const friendRouter = router({
       friendEventEmitter.emit("acceptFriendRequest", { receiverUser, senderId });
       return updatedFriend;
     }),
+  blockUser: standardAuthedProcedure.input(friendUserIdInputSchema).mutation(async ({ ctx, input: targetUserId }) => {
+    const userId = ctx.getSessionPayload.user.id;
+    if (userId === targetUserId)
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Block, userId).message,
+      });
+    // Remove any existing friendship in either direction
+    const friendshipId = getFriendshipId(userId, targetUserId);
+    await ctx.db.delete(friends).where(eq(friends.id, friendshipId));
+    await ctx.db.insert(blocks).values({ blockedId: targetUserId, blockerId: userId }).onConflictDoNothing();
+    return targetUserId;
+  }),
   declineFriendRequest: standardAuthedProcedure
     .input(friendUserIdInputSchema)
     .mutation(async ({ ctx, input: senderId }) => {
@@ -92,6 +105,14 @@ export const friendRouter = router({
       yield senderUser;
     }
   }),
+  readBlockedUsers: standardAuthedProcedure.query<User[]>(async ({ ctx }) => {
+    const userId = ctx.getSessionPayload.user.id;
+    const blockedRows = await ctx.db.query.blocks.findMany({
+      where: (b, { eq }) => eq(b.blockerId, userId),
+      with: { blocked: true },
+    });
+    return blockedRows.map(({ blocked }) => blocked);
+  }),
   readFriends: standardAuthedProcedure.query<User[]>(({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
     return ctx.db
@@ -125,10 +146,18 @@ export const friendRouter = router({
   }),
   searchUsers: standardAuthedProcedure.input(searchUsersInputSchema).query(({ ctx, input: name }) => {
     const userId = ctx.getSessionPayload.user.id;
-    return ctx.db.query.users.findMany({
-      limit: MAX_READ_LIMIT,
-      where: (users, { and, ilike, ne }) => and(ilike(users.name, `%${escapeLike(name)}%`), ne(users.id, userId)),
-    });
+    const blockedSubquery = ctx.db
+      .select({ id: blocks.blockedId })
+      .from(blocks)
+      .where(eq(blocks.blockerId, userId))
+      .union(ctx.db.select({ id: blocks.blockerId }).from(blocks).where(eq(blocks.blockedId, userId)))
+      .as("blocked_users");
+    return ctx.db
+      .select(getTableColumns(users))
+      .from(users)
+      .leftJoin(blockedSubquery, eq(blockedSubquery.id, users.id))
+      .where(and(ilike(users.name, `%${escapeLike(name)}%`), ne(users.id, userId), isNull(blockedSubquery.id)))
+      .limit(MAX_READ_LIMIT);
   }),
   sendFriendRequest: standardAuthedProcedure
     .input(friendUserIdInputSchema)
@@ -138,6 +167,18 @@ export const friendRouter = router({
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Friend, userId).message,
+        });
+      const existingBlock = await ctx.db.query.blocks.findFirst({
+        where: (b, { and, or, eq }) =>
+          or(
+            and(eq(b.blockerId, userId), eq(b.blockedId, receiverId)),
+            and(eq(b.blockerId, receiverId), eq(b.blockedId, userId)),
+          ),
+      });
+      if (existingBlock)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Friend, receiverId).message,
         });
       const id = getFriendshipId(userId, receiverId);
       const [newFriend] = await ctx.db
@@ -160,5 +201,12 @@ export const friendRouter = router({
         friendEventEmitter.emit("sendFriendRequest", { receiverId, senderUser });
       }
       return friendship;
+    }),
+  unblockUser: standardAuthedProcedure
+    .input(friendUserIdInputSchema)
+    .mutation(async ({ ctx, input: blockedUserId }) => {
+      const userId = ctx.getSessionPayload.user.id;
+      await ctx.db.delete(blocks).where(and(eq(blocks.blockerId, userId), eq(blocks.blockedId, blockedUserId)));
+      return blockedUserId;
     }),
 });

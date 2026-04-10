@@ -173,6 +173,10 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
     for (const track of localStream.getAudioTracks()) track.enabled = !isMuted;
   };
 
+  const setRemoteAudioMuted = (isDeafened: boolean) => {
+    for (const audio of remoteAudioElements.values()) audio.muted = isDeafened;
+  };
+
   const subscribeToSignals = (roomId: string) => {
     unsubscribeFromSignals();
     signalUnsubscribable = $trpc.voice.onSignal.subscribe(roomId, {
@@ -198,6 +202,7 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
     cleanupPeer,
     createPeerConnectionOffer,
     setLocalStreamMuted,
+    setRemoteAudioMuted,
     setupSpeakingDetection,
     subscribeToSignals,
   };

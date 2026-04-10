@@ -26,7 +26,7 @@ const isSameBatch = computed(
     dayjs(message.createdAt).diff(nextMessage.createdAt, "minutes") <= 5,
 );
 const messageStore = useMessageStore();
-const { optionsMenu } = storeToRefs(messageStore);
+const { editingRowKey, optionsMenu } = storeToRefs(messageStore);
 const replyStore = useReplyStore();
 const { activeRowKey: activeReplyRowKey, rowKey: replyRowKey } = storeToRefs(replyStore);
 const forwardStore = useForwardStore();
@@ -43,6 +43,12 @@ const isActive = computed(
 );
 const isActiveAndNotUpdateMode = computed(() => isActive.value && !isUpdateMode.value);
 const selectEmoji = await useSelectEmoji(message);
+
+watch(editingRowKey, (newEditingRowKey) => {
+  if (newEditingRowKey !== message.rowKey) return;
+  isUpdateMode.value = true;
+  editingRowKey.value = undefined;
+});
 
 watch(optionsMenu, (newOptionsMenu) => {
   isOptionsChildrenActive.value = newOptionsMenu?.rowKey === message.rowKey;

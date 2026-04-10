@@ -6,6 +6,7 @@ export const useMessageStore = defineStore("message", () => {
     rowKey: MessageEntity["rowKey"];
     target: InstanceType<typeof VMenu>["$props"]["target"];
   }>();
+  const editingRowKey = ref<MessageEntity["rowKey"]>();
   const { copied, copy, text } = useClipboard();
-  return { copied, copy, optionsMenu, text };
+  return { copied, copy, editingRowKey, optionsMenu, text };
 });

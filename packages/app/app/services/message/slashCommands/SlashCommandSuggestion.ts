@@ -8,8 +8,8 @@ import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandTyp
 import { getRender } from "@/services/message/getRender";
 import { SlashCommandDefinitionMap } from "@/services/message/slashCommands/SlashCommandDefinitionMap";
 import { useDataStore } from "@/store/message/data";
-import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 import { usePollDialogStore } from "@/store/message/input/pollDialog";
+import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 import { useRoomStore } from "@/store/message/room";
 import { MessageType } from "@esposter/db-schema";
 import { exhaustiveGuard } from "@esposter/shared";
@@ -36,7 +36,7 @@ export const SlashCommandSuggestion: Except<SuggestionOptions<SlashCommand, Slas
         const { createMessage } = dataStore;
         const result = Math.random() < 0.5 ? "Heads" : "Tails";
         await createMessage({
-          message: marked.parse(`🪙 ${result}`, { async: false }),
+          message: marked.parse(`🪙 **${result}**`, { async: false }),
           roomId,
           type: MessageType.Message,
         });

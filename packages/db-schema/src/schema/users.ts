@@ -1,4 +1,5 @@
 import { accounts } from "@/schema/accounts";
+import { blocks } from "@/schema/blocks";
 import { friends } from "@/schema/friends";
 import { likes } from "@/schema/likes";
 import { posts } from "@/schema/posts";
@@ -40,6 +41,8 @@ export const selectUserSchema = createSelectSchema(users, {
 
 export const usersRelations = relations(users, ({ many, one }) => ({
   accounts: many(accounts),
+  blocksAsBlocked: many(blocks, { relationName: "blocked" }),
+  blocksAsBlocker: many(blocks, { relationName: "blocker" }),
   likes: many(likes),
   posts: many(posts),
   receivedFriendRequests: many(friends, { relationName: "receiver" }),

@@ -13,7 +13,7 @@ export const SlashCommandDefinitionMap = {
   [SlashCommandType.Me]: {
     description: "Displays text with emphasis",
     icon: "mdi-slash-forward",
-    parameters: [{ description: "The action or text to display with emphasis", name: "message", isRequired: true }],
+    parameters: [{ description: "The action or text to display with emphasis", isRequired: true, name: "message" }],
     title: "Me",
     type: SlashCommandType.Me,
   },
@@ -34,7 +34,7 @@ export const SlashCommandDefinitionMap = {
   [SlashCommandType.Shrug]: {
     description: "Appends ¯\\_(ツ)_/¯ to your message",
     icon: "mdi-emoticon-confused-outline",
-    parameters: [{ description: "Optional text to prepend before the shrug", name: "text", isRequired: false }],
+    parameters: [{ description: "Optional text to prepend before the shrug", isRequired: false, name: "text" }],
     title: "Shrug",
     type: SlashCommandType.Shrug,
   },

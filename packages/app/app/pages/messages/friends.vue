@@ -5,8 +5,9 @@ definePageMeta({ middleware: "auth" });
 
 const { $trpc } = useNuxtApp();
 const friendStore = useFriendStore();
-const { friends, pendingRequests, sentRequests } = storeToRefs(friendStore);
-const { acceptFriendRequest, declineFriendRequest, deleteFriend, sendFriendRequest } = friendStore;
+const { blockedUsers, friends, pendingRequests, sentRequests } = storeToRefs(friendStore);
+const { acceptFriendRequest, blockUser, declineFriendRequest, deleteFriend, sendFriendRequest, unblockUser } =
+  friendStore;
 const { readFriends } = useReadFriends();
 await readFriends();
 
@@ -26,6 +27,7 @@ const onSearch = async () => {
 
 const isFriend = (userId: string) => friends.value.some(({ id }) => id === userId);
 const hasSentRequest = (userId: string) => sentRequests.value.some(({ id }) => id === userId);
+const isBlocked = (userId: string) => blockedUsers.value.some(({ id }) => id === userId);
 </script>
 
 <template>
@@ -57,15 +59,25 @@ const hasSentRequest = (userId: string) => sentRequests.value.some(({ id }) => i
                 </v-avatar>
               </template>
               <template #append>
-                <v-btn
-                  v-if="!isFriend(id) && !hasSentRequest(id)"
-                  text="Send Request"
-                  variant="tonal"
-                  size="small"
-                  @click="sendFriendRequest({ id, name, image } as Parameters<typeof sendFriendRequest>[0])"
-                />
-                <v-chip v-else-if="hasSentRequest(id)" text="Request Sent" size="small" />
-                <v-chip v-else text="Friends" size="small" color="success" />
+                <div flex gap-2>
+                  <v-btn
+                    v-if="!isFriend(id) && !hasSentRequest(id)"
+                    text="Send Request"
+                    variant="tonal"
+                    size="small"
+                    @click="sendFriendRequest({ id, name, image })"
+                  />
+                  <v-chip v-else-if="hasSentRequest(id)" text="Request Sent" size="small" />
+                  <v-chip v-else text="Friends" size="small" color="success" />
+                  <v-btn
+                    v-if="!isBlocked(id)"
+                    text="Block"
+                    variant="tonal"
+                    color="error"
+                    size="small"
+                    @click="blockUser({ id, name, image })"
+                  />
+                </div>
               </template>
             </v-list-item>
           </v-list>
@@ -90,7 +102,7 @@ const hasSentRequest = (userId: string) => sentRequests.value.some(({ id }) => i
             </v-list-item>
           </v-list>
         </div>
-        <div>
+        <div mb-8>
           <div class="text-title-large" mb-3>Friends — {{ friends.length }}</div>
           <v-list v-if="friends.length > 0" rounded>
             <v-list-item v-for="{ id, name, image } of friends" :key="id" :title="name">
@@ -101,11 +113,36 @@ const hasSentRequest = (userId: string) => sentRequests.value.some(({ id }) => i
                 </v-avatar>
               </template>
               <template #append>
-                <v-btn text="Remove" variant="tonal" color="error" size="small" @click="deleteFriend(id)" />
+                <div flex gap-2>
+                  <v-btn text="Remove" variant="tonal" color="error" size="small" @click="deleteFriend(id)" />
+                  <v-btn
+                    text="Block"
+                    variant="tonal"
+                    color="error"
+                    size="small"
+                    @click="blockUser({ id, name, image })"
+                  />
+                </div>
               </template>
             </v-list-item>
           </v-list>
           <span v-else class="text-medium-emphasis">No friends yet. Search for users above to add them.</span>
+        </div>
+        <div v-if="blockedUsers.length > 0">
+          <div class="text-title-large" mb-3>Blocked — {{ blockedUsers.length }}</div>
+          <v-list rounded>
+            <v-list-item v-for="{ id, name, image } of blockedUsers" :key="id" :title="name">
+              <template #prepend>
+                <v-avatar size="36" mr-3>
+                  <v-img v-if="image" :src="image" />
+                  <span v-else>{{ name[0] }}</span>
+                </v-avatar>
+              </template>
+              <template #append>
+                <v-btn text="Unblock" variant="tonal" size="small" @click="unblockUser(id)" />
+              </template>
+            </v-list-item>
+          </v-list>
         </div>
       </v-container>
     </div>

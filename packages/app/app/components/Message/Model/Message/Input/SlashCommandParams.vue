@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { SubmitEventPromise } from "vuetify";
+import type { VForm } from "vuetify/components";
 
 import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
 import { formRules } from "@/services/vuetify/formRules";
@@ -9,6 +10,8 @@ import { useRoomStore } from "@/store/message/room";
 import { MessageType } from "@esposter/db-schema";
 import { marked } from "marked";
 
+const formRef = useTemplateRef<InstanceType<typeof VForm>>("formRef");
+const isFormValid = ref(true);
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const slashCommandStore = useSlashCommandStore();
@@ -62,6 +65,7 @@ useEventListener("keydown", (event: KeyboardEvent) => {
         <span font-bold>{{ pendingSlashCommand.title }}</span>
         <span opacity-60 ml-1>{{ pendingSlashCommand.description }}</span>
       </span>
+      <StyledEditFormDialogErrorIcon :edit-form="formRef ?? undefined" :is-edit-form-valid="isFormValid" />
       <v-btn
         absolute
         top="1/2"
@@ -73,7 +77,7 @@ useEventListener("keydown", (event: KeyboardEvent) => {
         @click="onDismiss"
       />
     </div>
-    <v-form @submit.prevent="onSubmit">
+    <v-form ref="formRef" v-model="isFormValid" @submit.prevent="onSubmit">
       <StyledCard>
         <div flex items-start gap-2 px-4 py-3>
           <template v-for="{ description, isRequired, name } of pendingSlashCommand.parameters" :key="name">
@@ -84,6 +88,7 @@ useEventListener("keydown", (event: KeyboardEvent) => {
               :rules="isRequired ? [formRules.required] : []"
               density="compact"
               variant="plain"
+              hide-details
               autofocus
               flex-1
             />

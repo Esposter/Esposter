@@ -2,8 +2,8 @@
 import { useVoiceStore } from "@/store/message/room/voice";
 
 const voiceStore = useVoiceStore();
-const { leaveVoice, toggleMute } = voiceStore;
-const { isInChannel, isMuted, roomParticipants, speakingIds } = storeToRefs(voiceStore);
+const { leaveVoice, toggleDeafen, toggleMute } = voiceStore;
+const { isDeafened, isInChannel, isMuted, roomParticipants, sessionId, speakingIds } = storeToRefs(voiceStore);
 const isCollapsed = useLocalStorage("voicePanel:isCollapsed", false);
 </script>
 
@@ -26,6 +26,14 @@ const isCollapsed = useLocalStorage("voicePanel:isCollapsed", false);
               rd-full
             />
             <v-icon v-if="participantIsMuted" icon="mdi-microphone-off" size="x-small" absolute bottom-0 right-0 />
+            <v-icon
+              v-if="isDeafened && id === sessionId"
+              icon="mdi-headphones-off"
+              size="x-small"
+              absolute
+              bottom-0
+              left-0
+            />
           </div>
         </div>
         <v-tooltip :text="isMuted ? 'Unmute' : 'Mute'" location="bottom">
@@ -38,6 +46,19 @@ const isCollapsed = useLocalStorage("voicePanel:isCollapsed", false);
               variant="plain"
               :ripple="false"
               @click="toggleMute"
+            />
+          </template>
+        </v-tooltip>
+        <v-tooltip :text="isDeafened ? 'Undeafen' : 'Deafen'" location="bottom">
+          <template #activator="{ props }">
+            <v-btn
+              :="props"
+              :icon="isDeafened ? 'mdi-headphones-off' : 'mdi-headphones'"
+              :color="isDeafened ? 'error' : undefined"
+              size="x-small"
+              variant="plain"
+              :ripple="false"
+              @click="toggleDeafen"
             />
           </template>
         </v-tooltip>

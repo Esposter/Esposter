@@ -34,6 +34,23 @@ Follow `createOperationData` conventions exactly when writing store update/delet
 - **delete**: reassign the array — `items.value = items.value.filter(...)` — never `splice`.
 - Always guard against a missing parent ref before any operation: `if (!parentRef.value) return`.
 
+## Session Auth in Stores
+
+Never expose `sessionId` or any raw session identifier as a store state field. Session data must always be fetched directly in Vue components via `authClient.useSession(useFetch)`:
+
+```ts
+// WRONG — session ID leaked into store state
+const sessionId = ref<string | null>(null);
+const setSessionId = (id: string) => {
+  sessionId.value = id;
+};
+
+// CORRECT — session stays in the component
+const { data: session } = await authClient.useSession(useFetch);
+```
+
+Stores that need the current user's identity should receive it as a parameter to their actions, not hold a session ref. This keeps auth concerns at the component boundary and avoids stale session state.
+
 ## CRUD Parameter Naming
 
 Use consistent parameter names across stores, composables, and functions:

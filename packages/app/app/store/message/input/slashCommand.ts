@@ -1,7 +1,7 @@
 import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
 
 export const useSlashCommandStore = defineStore("message/input/slashCommand", () => {
-  const pendingSlashCommand = ref<SlashCommand | null>(null);
+  const pendingSlashCommand = ref<null | SlashCommand>(null);
   const paramValues = ref<Record<string, string>>({});
 
   const setPendingSlashCommand = (slashCommand: SlashCommand) => {

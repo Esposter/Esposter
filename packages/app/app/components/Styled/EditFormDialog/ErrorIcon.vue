@@ -5,10 +5,10 @@ import { takeOne } from "@esposter/shared";
 import { z } from "zod";
 
 interface ErrorIconProps {
-  editedValue: unknown;
+  editedValue?: unknown;
   editForm: InstanceType<typeof VForm> | undefined;
   isEditFormValid: boolean;
-  schema: z.ZodType;
+  schema?: z.ZodType;
 }
 
 const { editedValue, editForm, isEditFormValid, schema } = defineProps<ErrorIconProps>();
@@ -20,6 +20,7 @@ const errorMessage = computed(() => {
     return element ? `${element.textContent}: ${errorText}` : errorText;
   }
 
+  if (!schema) return "";
   const result = schema.safeParse(editedValue);
   return result.success ? "" : z.prettifyError(result.error);
 });

@@ -2,6 +2,7 @@ import type { User } from "@esposter/db-schema";
 
 export const useFriendStore = defineStore("message/user/friend", () => {
   const { $trpc } = useNuxtApp();
+  const blockedUsers = ref<User[]>([]);
   const friends = ref<User[]>([]);
   const pendingRequests = ref<User[]>([]);
   const sentRequests = ref<User[]>([]);
@@ -11,6 +12,14 @@ export const useFriendStore = defineStore("message/user/friend", () => {
     const sender = pendingRequests.value.find(({ id }) => id === senderId);
     pendingRequests.value = pendingRequests.value.filter(({ id }) => id !== senderId);
     if (sender) friends.value = [sender, ...friends.value];
+  };
+
+  const blockUser = async (user: User) => {
+    await $trpc.friend.blockUser.mutate(user.id);
+    friends.value = friends.value.filter(({ id }) => id !== user.id);
+    pendingRequests.value = pendingRequests.value.filter(({ id }) => id !== user.id);
+    sentRequests.value = sentRequests.value.filter(({ id }) => id !== user.id);
+    if (!blockedUsers.value.some(({ id }) => id === user.id)) blockedUsers.value = [user, ...blockedUsers.value];
   };
 
   const declineFriendRequest = async (senderId: string) => {
@@ -27,6 +36,11 @@ export const useFriendStore = defineStore("message/user/friend", () => {
     await $trpc.friend.sendFriendRequest.mutate(receiver.id);
     if (!sentRequests.value.some(({ id }) => id === receiver.id))
       sentRequests.value = [receiver, ...sentRequests.value];
+  };
+
+  const unblockUser = async (blockedUserId: string) => {
+    await $trpc.friend.unblockUser.mutate(blockedUserId);
+    blockedUsers.value = blockedUsers.value.filter(({ id }) => id !== blockedUserId);
   };
 
   const storeAcceptFriendRequest = (receiverUser: User) => {
@@ -49,6 +63,8 @@ export const useFriendStore = defineStore("message/user/friend", () => {
 
   return {
     acceptFriendRequest,
+    blockUser,
+    blockedUsers,
     declineFriendRequest,
     deleteFriend,
     friends,
@@ -59,5 +75,6 @@ export const useFriendStore = defineStore("message/user/friend", () => {
     storeCreatePendingRequest,
     storeDeclineFriendRequest,
     storeDeleteFriend,
+    unblockUser,
   };
 });

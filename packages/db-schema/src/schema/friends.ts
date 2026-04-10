@@ -7,7 +7,6 @@ import { z } from "zod";
 
 export enum FriendshipStatus {
   Accepted = "Accepted",
-  Blocked = "Blocked",
   Pending = "Pending",
 }
 
