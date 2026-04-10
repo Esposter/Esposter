@@ -8,7 +8,7 @@ const isCollapsed = useLocalStorage("voicePanel:isCollapsed", false);
 </script>
 
 <template>
-  <Transition name="voice-panel">
+  <TransitionFade>
     <div v-if="isInChannel" class="bg-surface-variant" border-b flex items-center gap-x-3 px-4 py-2>
       <v-icon icon="mdi-volume-high" size="small" color="success" />
       <span text-sm font-medium flex-1>Voice</span>
@@ -73,17 +73,5 @@ const isCollapsed = useLocalStorage("voicePanel:isCollapsed", false);
         </template>
       </v-tooltip>
     </div>
-  </Transition>
+  </TransitionFade>
 </template>
-
-<style scoped lang="scss">
-.voice-panel-enter-active,
-.voice-panel-leave-active {
-  transition: opacity 0.2s ease;
-}
-
-.voice-panel-enter-from,
-.voice-panel-leave-to {
-  opacity: 0;
-}
-</style>
