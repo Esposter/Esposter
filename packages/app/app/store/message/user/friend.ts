@@ -1,16 +1,23 @@
 import type { FriendUserIdInput } from "#shared/models/db/friend/FriendUserIdInput";
 import type { User } from "@esposter/db-schema";
 
+import { createOperationData } from "@/services/shared/createOperationData";
+import { DatabaseEntityType } from "@esposter/db-schema";
+
 export const useFriendStore = defineStore("message/user/friend", () => {
   const { $trpc } = useNuxtApp();
-  const friends = ref<User[]>([]);
+  const {
+    friends,
+    createFriend: baseStoreCreateFriend,
+    deleteFriend: baseStoreDeleteFriend,
+  } = createOperationData(ref<User[]>([]), ["id"], DatabaseEntityType.Friend);
 
-  const createFriend = (user: User) => {
-    if (!friends.value.some(({ id }) => id === user.id)) friends.value = [user, ...friends.value];
+  const storeCreateFriend = (friend: User) => {
+    if (!friends.value.some(({ id }) => id === friend.id)) baseStoreCreateFriend(friend);
   };
 
   const storeDeleteFriend = (friendId: string) => {
-    friends.value = friends.value.filter(({ id }) => id !== friendId);
+    baseStoreDeleteFriend({ id: friendId });
   };
 
   const deleteFriend = async (friendId: FriendUserIdInput) => {
@@ -19,9 +26,9 @@ export const useFriendStore = defineStore("message/user/friend", () => {
   };
 
   return {
-    createFriend,
     deleteFriend,
     friends,
+    storeCreateFriend,
     storeDeleteFriend,
   };
 });

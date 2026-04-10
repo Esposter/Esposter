@@ -25,8 +25,8 @@ export const blockRouter = router({
       });
     const friendshipId = getFriendshipId(userId, targetUserId);
     await ctx.db.transaction(async (tx) => {
-      await tx.delete(friends).where(eq(friends.id, friendshipId));
       await tx.delete(friendRequests).where(eq(friendRequests.id, friendshipId));
+      await tx.delete(friends).where(eq(friends.id, friendshipId));
       await tx.insert(blocks).values({ blockedId: targetUserId, blockerId: userId }).onConflictDoNothing();
     });
     return blockedUser;

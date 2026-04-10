@@ -12,11 +12,11 @@ import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("friendRequest", () => {
   let mockContext: Context;
-  let caller: DecorateRouterRecord<TRPCRouter["friendRequest"]>;
+  let friendRequestCaller: DecorateRouterRecord<TRPCRouter["friendRequest"]>;
 
   beforeAll(async () => {
     mockContext = await createMockContext();
-    caller = createCallerFactory(friendRequestRouter)(mockContext);
+    friendRequestCaller = createCallerFactory(friendRequestRouter)(mockContext);
   });
 
   afterEach(async () => {
@@ -30,10 +30,10 @@ describe("friendRequest", () => {
 
     const userId = getMockSession().user.id;
     await mockSessionOnce(mockContext.db);
-    // Session=user: sends request to default user, returns the receiver
-    const receiver = await caller.sendFriendRequest(userId);
+    // Session=user: sends request to default user, returns the friend request with relations
+    const friendRequest = await friendRequestCaller.sendFriendRequest(userId);
 
-    expect(receiver.id).toBe(userId);
+    expect(friendRequest.receiverId).toBe(userId);
   });
 
   test("sends friend request is idempotent", async () => {
@@ -41,11 +41,11 @@ describe("friendRequest", () => {
 
     const userId = getMockSession().user.id;
     const { user } = await mockSessionOnce(mockContext.db);
-    const friend1 = await caller.sendFriendRequest(userId);
+    const friendRequest1 = await friendRequestCaller.sendFriendRequest(userId);
     await mockSessionOnce(mockContext.db, user);
-    const friend2 = await caller.sendFriendRequest(userId);
+    const friendRequest2 = await friendRequestCaller.sendFriendRequest(userId);
 
-    expect(friend1.id).toBe(friend2.id);
+    expect(friendRequest1.id).toBe(friendRequest2.id);
   });
 
   test("fails send friend request to self", async () => {
@@ -53,7 +53,7 @@ describe("friendRequest", () => {
 
     const userId = getMockSession().user.id;
 
-    await expect(caller.sendFriendRequest(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(friendRequestCaller.sendFriendRequest(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.Friend, userId).message}]`,
     );
   });
@@ -64,9 +64,9 @@ describe("friendRequest", () => {
     const userId = getMockSession().user.id;
     const { user } = await mockSessionOnce(mockContext.db);
     // Session=user: sends request to default user
-    await caller.sendFriendRequest(userId);
+    await friendRequestCaller.sendFriendRequest(userId);
     // Session=default: accepts request from user
-    const accepted = await caller.acceptFriendRequest(user.id);
+    const accepted = await friendRequestCaller.acceptFriendRequest(user.id);
 
     expect(accepted.senderId).toBe(user.id);
     expect(accepted.receiverId).toBe(userId);
@@ -78,14 +78,14 @@ describe("friendRequest", () => {
     const userId = getMockSession().user.id;
     const { user } = await mockSessionOnce(mockContext.db);
     // Session=user: sends request to default user
-    await caller.sendFriendRequest(userId);
+    await friendRequestCaller.sendFriendRequest(userId);
     // Session=default: accepts request from user
-    await caller.acceptFriendRequest(user.id);
+    await friendRequestCaller.acceptFriendRequest(user.id);
     // Session=user: tries to send again to default user
     await mockSessionOnce(mockContext.db, user);
     const friendshipId = [userId, user.id].toSorted().join(ID_SEPARATOR);
 
-    await expect(caller.sendFriendRequest(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(friendRequestCaller.sendFriendRequest(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.FriendRequest, friendshipId).message}]`,
     );
   });
@@ -98,7 +98,7 @@ describe("friendRequest", () => {
     const id = [userId, user.id].toSorted().join(ID_SEPARATOR);
 
     // Session=user: no request exists, try to accept from default user
-    await expect(caller.acceptFriendRequest(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(friendRequestCaller.acceptFriendRequest(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Friend, id).message}]`,
     );
   });
@@ -109,27 +109,28 @@ describe("friendRequest", () => {
     const userId = getMockSession().user.id;
     const { user } = await mockSessionOnce(mockContext.db);
     // Session=user: sends request to default user
-    await caller.sendFriendRequest(userId);
+    await friendRequestCaller.sendFriendRequest(userId);
     // Session=default: declines
-    await caller.declineFriendRequest(user.id);
+    await friendRequestCaller.declineFriendRequest(user.id);
 
-    const friendRequests = await caller.readFriendRequests();
+    const allFriendRequests = await friendRequestCaller.readFriendRequests();
 
-    expect(friendRequests).toHaveLength(0);
+    expect(allFriendRequests).toHaveLength(0);
   });
 
-  test("reads friend requests", async () => {
+  test("reads received friend requests", async () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
     const { user } = await mockSessionOnce(mockContext.db);
     // Session=user: sends request to default user
-    await caller.sendFriendRequest(userId);
+    await friendRequestCaller.sendFriendRequest(userId);
     // Session=default: reads friend requests
-    const friendRequests = await caller.readFriendRequests();
+    const allFriendRequests = await friendRequestCaller.readFriendRequests();
+    const receivedFriendRequests = allFriendRequests.filter(({ receiverId }) => receiverId === userId);
 
-    expect(friendRequests).toHaveLength(1);
-    expect(takeOne(friendRequests).id).toBe(user.id);
+    expect(receivedFriendRequests).toHaveLength(1);
+    expect(takeOne(receivedFriendRequests).senderId).toBe(user.id);
   });
 
   test("reads sent friend requests", async () => {
@@ -138,32 +139,35 @@ describe("friendRequest", () => {
     const userId = getMockSession().user.id;
     const { user } = await mockSessionOnce(mockContext.db);
     // Session=user: sends request to default user
-    await caller.sendFriendRequest(userId);
+    await friendRequestCaller.sendFriendRequest(userId);
     // Session=user again: reads sent friend requests
     await mockSessionOnce(mockContext.db, user);
-    const sentFriendRequests = await caller.readSentFriendRequests();
+    const allFriendRequests = await friendRequestCaller.readFriendRequests();
+    const sentFriendRequests = allFriendRequests.filter(({ senderId }) => senderId === user.id);
 
     expect(sentFriendRequests).toHaveLength(1);
-    expect(takeOne(sentFriendRequests).id).toBe(userId);
+    expect(takeOne(sentFriendRequests).receiverId).toBe(userId);
   });
 
   test("on send friend request notifies receiver", async () => {
     expect.hasAssertions();
 
     const receiverUser = getMockSession().user;
-    const onSendFriendRequest = await caller.onSendFriendRequest();
+    const onSendFriendRequest = await friendRequestCaller.onSendFriendRequest();
     const { user: senderUser } = await mockSessionOnce(mockContext.db);
     const data = await withAsyncIterator(
       () => onSendFriendRequest,
       async (iterator) => {
-        const [result] = await Promise.all([iterator.next(), caller.sendFriendRequest(receiverUser.id)]);
+        const [result] = await Promise.all([iterator.next(), friendRequestCaller.sendFriendRequest(receiverUser.id)]);
         return result;
       },
     );
 
     assert(!data.done);
 
-    expect(data.value.id).toBe(senderUser.id);
+    expect(data.value.senderId).toBe(senderUser.id);
+    expect(data.value.receiverId).toBe(receiverUser.id);
+    expect(data.value.sender.id).toBe(senderUser.id);
   });
 
   test("on accept friend request notifies sender", async () => {
@@ -172,14 +176,14 @@ describe("friendRequest", () => {
     const receiverUser = getMockSession().user;
     const { user: senderUser } = await mockSessionOnce(mockContext.db);
     // Sender sends request to receiver
-    await caller.sendFriendRequest(receiverUser.id);
+    await friendRequestCaller.sendFriendRequest(receiverUser.id);
     // Sender subscribes to be notified when receiver accepts
     await mockSessionOnce(mockContext.db, senderUser);
-    const onAcceptFriendRequest = await caller.onAcceptFriendRequest();
+    const onAcceptFriendRequest = await friendRequestCaller.onAcceptFriendRequest();
     const data = await withAsyncIterator(
       () => onAcceptFriendRequest,
       async (iterator) => {
-        const [result] = await Promise.all([iterator.next(), caller.acceptFriendRequest(senderUser.id)]);
+        const [result] = await Promise.all([iterator.next(), friendRequestCaller.acceptFriendRequest(senderUser.id)]);
         return result;
       },
     );
@@ -195,14 +199,14 @@ describe("friendRequest", () => {
     const receiverUser = getMockSession().user;
     const { user: senderUser } = await mockSessionOnce(mockContext.db);
     // Sender sends request to receiver
-    await caller.sendFriendRequest(receiverUser.id);
+    await friendRequestCaller.sendFriendRequest(receiverUser.id);
     // Sender subscribes to be notified when receiver declines
     await mockSessionOnce(mockContext.db, senderUser);
-    const onDeclineFriendRequest = await caller.onDeclineFriendRequest();
+    const onDeclineFriendRequest = await friendRequestCaller.onDeclineFriendRequest();
     const data = await withAsyncIterator(
       () => onDeclineFriendRequest,
       async (iterator) => {
-        const [result] = await Promise.all([iterator.next(), caller.declineFriendRequest(senderUser.id)]);
+        const [result] = await Promise.all([iterator.next(), friendRequestCaller.declineFriendRequest(senderUser.id)]);
         return result;
       },
     );

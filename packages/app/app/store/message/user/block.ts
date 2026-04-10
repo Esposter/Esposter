@@ -1,22 +1,21 @@
 import type { FriendUserIdInput } from "#shared/models/db/friend/FriendUserIdInput";
 import type { User } from "@esposter/db-schema";
 
-import { useFriendStore } from "@/store/message/user/friend";
 import { useFriendRequestStore } from "@/store/message/user/friendRequest";
+import { useFriendStore } from "@/store/message/user/friend";
 
 export const useBlockStore = defineStore("message/user/block", () => {
   const { $trpc } = useNuxtApp();
-  const blockedUsers = ref<User[]>([]);
   const friendStore = useFriendStore();
-  const friendRequestStore = useFriendRequestStore();
   const { storeDeleteFriend } = friendStore;
-  const { storeDeleteSentFriendRequest } = friendRequestStore;
+  const friendRequestStore = useFriendRequestStore();
+  const { storeDeleteFriendRequestsByUser } = friendRequestStore;
+  const blockedUsers = ref<User[]>([]);
 
   const blockUser = async (userId: FriendUserIdInput) => {
     const user = await $trpc.block.blockUser.mutate(userId);
     storeDeleteFriend(userId);
-    friendRequestStore.storeDeleteFriendRequest({ id: userId });
-    storeDeleteSentFriendRequest(userId);
+    storeDeleteFriendRequestsByUser(userId);
     if (!blockedUsers.value.some(({ id }) => id === userId)) blockedUsers.value = [user, ...blockedUsers.value];
   };
 

@@ -5,8 +5,8 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { blockRouter } from "@@/server/trpc/routers/block";
-import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { friendRouter } from "@@/server/trpc/routers/friend";
+import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { blocks, DatabaseEntityType, friendRequests, friends } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
@@ -30,13 +30,12 @@ describe("block", () => {
     await mockContext.db.delete(friendRequests);
   });
 
-  // Helper: establish an accepted friendship between default user and a new user
   const setupFriendship = async () => {
     const userId = getMockSession().user.id;
     const { user } = await mockSessionOnce(mockContext.db);
     await friendRequestCaller.sendFriendRequest(userId);
     await friendRequestCaller.acceptFriendRequest(user.id);
-    return { userId, user };
+    return { user, userId };
   };
 
   test("blocks user", async () => {

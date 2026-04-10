@@ -1,4 +1,4 @@
-import type { FriendRequestNotificationEventGridData, User } from "@esposter/db-schema";
+import type { FriendRequestNotificationEventGridData, FriendRequestWithRelations, User } from "@esposter/db-schema";
 
 import { friendUserIdInputSchema } from "#shared/models/db/friend/FriendUserIdInput";
 import { useEventGridPublisherClient } from "@@/server/composables/azure/eventGrid/useEventGridPublisherClient";
@@ -74,26 +74,18 @@ export const friendRequestRouter = router({
   }),
   onSendFriendRequest: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {
     const userId = ctx.getSessionPayload.user.id;
-    for await (const [{ receiverId, senderUser }] of on(friendEventEmitter, "sendFriendRequest", { signal })) {
+    for await (const [{ friendRequest, receiverId }] of on(friendEventEmitter, "sendFriendRequest", { signal })) {
       if (receiverId !== userId) continue;
-      yield senderUser;
+      yield friendRequest;
     }
   }),
-  readFriendRequests: standardAuthedProcedure.query<User[]>(async ({ ctx }) => {
+  readFriendRequests: standardAuthedProcedure.query<FriendRequestWithRelations[]>(({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
-    const receivedRequests = await ctx.db.query.friendRequests.findMany({
-      where: (friendRequests, { eq }) => eq(friendRequests.receiverId, userId),
+    return ctx.db.query.friendRequests.findMany({
+      where: (friendRequests, { eq, or }) =>
+        or(eq(friendRequests.receiverId, userId), eq(friendRequests.senderId, userId)),
       with: FriendRequestRelations,
     });
-    return receivedRequests.map(({ sender }) => sender);
-  }),
-  readSentFriendRequests: standardAuthedProcedure.query<User[]>(async ({ ctx }) => {
-    const userId = ctx.getSessionPayload.user.id;
-    const sentRequests = await ctx.db.query.friendRequests.findMany({
-      where: (friendRequests, { eq }) => eq(friendRequests.senderId, userId),
-      with: FriendRequestRelations,
-    });
-    return sentRequests.map(({ receiver }) => receiver);
   }),
   sendFriendRequest: standardAuthedProcedure
     .input(friendUserIdInputSchema)
@@ -110,39 +102,54 @@ export const friendRequestRouter = router({
           code: "NOT_FOUND",
           message: new InvalidOperationError(Operation.Read, DatabaseEntityType.Friend, receiverId).message,
         });
-      const existingBlock = await ctx.db.query.blocks.findFirst({
-        where: (blocks, { and, eq, or }) =>
-          or(
-            and(eq(blocks.blockerId, userId), eq(blocks.blockedId, receiverId)),
-            and(eq(blocks.blockerId, receiverId), eq(blocks.blockedId, userId)),
-          ),
-      });
-      if (existingBlock)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Friend, receiverId).message,
-        });
       const friendshipId = getFriendshipId(userId, receiverId);
-      const existingFriend = await ctx.db.query.friends.findFirst({
-        where: (friends, { eq }) => eq(friends.id, friendshipId),
-      });
-      if (existingFriend)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Create, DatabaseEntityType.FriendRequest, friendshipId).message,
+      const senderUser: User = {
+        ...ctx.getSessionPayload.user,
+        deletedAt: null,
+        image: ctx.getSessionPayload.user.image ?? null,
+      };
+      const [newRequest] = await ctx.db.transaction(async (tx) => {
+        const existingBlock = await tx.query.blocks.findFirst({
+          where: (blocks, { and, eq, or }) =>
+            or(
+              and(eq(blocks.blockerId, userId), eq(blocks.blockedId, receiverId)),
+              and(eq(blocks.blockerId, receiverId), eq(blocks.blockedId, userId)),
+            ),
         });
-      const [newRequest] = await ctx.db
-        .insert(friendRequests)
-        .values({ id: friendshipId, receiverId, senderId: userId })
-        .onConflictDoNothing({ target: friendRequests.id })
-        .returning();
-      if (newRequest) {
-        const senderUser: User = {
-          ...ctx.getSessionPayload.user,
+        if (existingBlock)
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Friend, receiverId).message,
+          });
+        const existingFriend = await tx.query.friends.findFirst({
+          where: (friends, { eq }) => eq(friends.id, friendshipId),
+        });
+        if (existingFriend)
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: new InvalidOperationError(Operation.Create, DatabaseEntityType.FriendRequest, friendshipId)
+              .message,
+          });
+        return tx
+          .insert(friendRequests)
+          .values({ id: friendshipId, receiverId, senderId: userId })
+          .onConflictDoNothing({ target: friendRequests.id })
+          .returning();
+      });
+      const friendRequest: FriendRequestWithRelations = {
+        ...(newRequest ?? {
+          createdAt: new Date(),
           deletedAt: null,
-          image: ctx.getSessionPayload.user.image ?? null,
-        };
-        friendEventEmitter.emit("sendFriendRequest", { receiverId, senderUser });
+          id: friendshipId,
+          receiverId,
+          senderId: userId,
+          updatedAt: new Date(),
+        }),
+        receiver: receiverUser,
+        sender: senderUser,
+      };
+      if (newRequest) {
+        friendEventEmitter.emit("sendFriendRequest", { friendRequest, receiverId });
 
         const readPushSubscriptions = await getPushSubscriptionsForUser(ctx.db, receiverId);
         if (readPushSubscriptions.length > 0) {
@@ -161,6 +168,6 @@ export const friendRequestRouter = router({
           ]);
         }
       }
-      return receiverUser;
+      return friendRequest;
     }),
 });

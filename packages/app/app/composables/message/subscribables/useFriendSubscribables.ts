@@ -1,12 +1,14 @@
 import { authClient } from "@/services/auth/authClient";
+import { useFriendRequestStore } from "@/store/message/user/friendRequest";
+import { useFriendStore } from "@/store/message/user/friend";
 
 export const useFriendSubscribables = () => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
-  const friendStore = useFriendStore();
   const friendRequestStore = useFriendRequestStore();
+  const friendStore = useFriendStore();
   const { storeDeleteFriend } = friendStore;
-  const { createFriendRequest, storeAcceptFriendRequest, storeDeleteSentFriendRequest } = friendRequestStore;
+  const { storeAcceptFriendRequest, storeCreateFriendRequest, storeDeclineFriendRequest } = friendRequestStore;
 
   useOnlineSubscribable(
     () => session.value.data?.user.id,
@@ -14,8 +16,8 @@ export const useFriendSubscribables = () => {
       if (!userId) return undefined;
 
       const sendFriendRequestUnsubscribable = $trpc.friendRequest.onSendFriendRequest.subscribe(undefined, {
-        onData: (senderUser) => {
-          createFriendRequest(senderUser);
+        onData: (friendRequest) => {
+          storeCreateFriendRequest(friendRequest);
         },
       });
       const acceptFriendRequestUnsubscribable = $trpc.friendRequest.onAcceptFriendRequest.subscribe(undefined, {
@@ -25,7 +27,7 @@ export const useFriendSubscribables = () => {
       });
       const declineFriendRequestUnsubscribable = $trpc.friendRequest.onDeclineFriendRequest.subscribe(undefined, {
         onData: (declinerId) => {
-          storeDeleteSentFriendRequest({ id: declinerId });
+          storeDeclineFriendRequest(declinerId);
         },
       });
       const deleteFriendUnsubscribable = $trpc.friend.onDeleteFriend.subscribe(undefined, {
