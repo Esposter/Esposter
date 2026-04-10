@@ -55,7 +55,7 @@ catalog:
   "@nuxtjs/seo": ^5.1.2
   "@pinia/nuxt": ^0.11.3
   "@rolldown/plugin-node-polyfills": ^1.0.3
-  "@takumi-rs/core": ^0.73.1
+  "@takumi-rs/core": ^1.0.1
   "@tiptap/core": ^3.22.3
   "@tiptap/extension-code-block-lowlight": ^3.22.3
   "@tiptap/extension-file-handler": ^3.22.3
