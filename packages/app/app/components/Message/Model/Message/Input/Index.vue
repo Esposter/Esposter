@@ -3,6 +3,7 @@ import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { getTypingMessage } from "@/services/message/getTypingMessage";
 import { useDataStore } from "@/store/message/data";
 import { useInputStore } from "@/store/message/input";
+import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 import { useReplyStore } from "@/store/message/input/reply";
 import { useRoomStore } from "@/store/message/room";
 import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
@@ -34,6 +35,8 @@ const replyStore = useReplyStore();
 const { replyMap, rowKey } = storeToRefs(replyStore);
 const reply = computed(() => (rowKey.value ? replyMap.value.get(rowKey.value) : undefined));
 const uploadFiles = useUploadFiles();
+const slashCommandStore = useSlashCommandStore();
+const { pendingSlashCommand } = storeToRefs(slashCommandStore);
 </script>
 
 <template>
@@ -42,7 +45,9 @@ const uploadFiles = useUploadFiles();
   <MessageModelMessageFileDropzoneBackground />
   <div w-full>
     <MessageModelMessageInputReplyHeader v-if="reply" :reply @close="rowKey = ''" />
+    <MessageModelMessageInputSlashCommandParams v-if="pendingSlashCommand" />
     <RichTextEditor
+      v-else
       v-model="input"
       :placeholder="`Message ${roomName}`"
       :limit="MESSAGE_MAX_LENGTH"

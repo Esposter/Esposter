@@ -45,7 +45,7 @@ watch(
     <v-card-title text-sm font-bold>{{ title }}</v-card-title>
     <v-list density="compact" py-0>
       <v-list-item
-        v-for="({ description, icon, title: commandTitle, type }, index) of items"
+        v-for="({ description, icon, parameters, title: commandTitle, type }, index) of items"
         :key="type"
         :active="selectedIndex === index"
         :ripple="false"
@@ -54,7 +54,25 @@ watch(
         <template #prepend>
           <v-icon :icon size="small" mr-2 />
         </template>
-        <v-list-item-title font-semibold>{{ commandTitle }}</v-list-item-title>
+        <v-list-item-title flex items-center gap-1 font-semibold>
+          {{ commandTitle }}
+          <v-chip
+            v-for="{ name } of parameters.filter(({ isRequired }) => isRequired)"
+            :key="name"
+            size="x-small"
+            label
+          >
+            {{ name }}
+          </v-chip>
+          <v-chip
+            v-if="parameters.filter(({ isRequired }) => !isRequired).length > 0"
+            size="x-small"
+            label
+            variant="outlined"
+          >
+            +{{ parameters.filter(({ isRequired }) => !isRequired).length }} optional
+          </v-chip>
+        </v-list-item-title>
         <v-list-item-subtitle>{{ description }}</v-list-item-subtitle>
       </v-list-item>
     </v-list>
