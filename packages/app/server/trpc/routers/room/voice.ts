@@ -41,14 +41,18 @@ export const voiceRouter = router({
 
       if (isFirstJoiner) {
         voiceCallStartTimeMap.set(roomId, new Date());
-        const messageClient = await useTableClient(AzureTable.Messages);
-        const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
-        const systemMessage = await createMessage(messageClient, messageAscendingClient, {
-          roomId,
-          type: MessageType.VoiceCall,
-          userId: user.id,
-        });
-        messageEventEmitter.emit("createMessage", [[systemMessage], { isSendToSelf: true, sessionId: session.id }]);
+        try {
+          const messageClient = await useTableClient(AzureTable.Messages);
+          const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
+          const systemMessage = await createMessage(messageClient, messageAscendingClient, {
+            roomId,
+            type: MessageType.VoiceCall,
+            userId: user.id,
+          });
+          messageEventEmitter.emit("createMessage", [[systemMessage], { isSendToSelf: true, sessionId: session.id }]);
+        } catch {
+          // System message creation is best-effort — voice membership is already committed
+        }
       }
 
       return getRoomParticipants(roomId);
@@ -64,16 +68,20 @@ export const voiceRouter = router({
       const callStart = voiceCallStartTimeMap.get(roomId);
       voiceCallStartTimeMap.delete(roomId);
       const durationSeconds = callStart ? Math.round((Date.now() - callStart.getTime()) / 1000) : 0;
-      const messageClient = await useTableClient(AzureTable.Messages);
-      const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
-      // Non-empty message field signals "call ended" — value is duration in seconds
-      const systemMessage = await createMessage(messageClient, messageAscendingClient, {
-        message: String(durationSeconds),
-        roomId,
-        type: MessageType.VoiceCall,
-        userId: user.id,
-      });
-      messageEventEmitter.emit("createMessage", [[systemMessage], { isSendToSelf: true, sessionId }]);
+      try {
+        const messageClient = await useTableClient(AzureTable.Messages);
+        const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
+        // Non-empty message field signals "call ended" — value is duration in seconds
+        const systemMessage = await createMessage(messageClient, messageAscendingClient, {
+          message: String(durationSeconds),
+          roomId,
+          type: MessageType.VoiceCall,
+          userId: user.id,
+        });
+        messageEventEmitter.emit("createMessage", [[systemMessage], { isSendToSelf: true, sessionId }]);
+      } catch {
+        // System message creation is best-effort — voice membership is already committed
+      }
     }
   }),
   onMuteChanged: standardAuthedProcedure.input(onVoiceInputSchema).subscription(async function* ({

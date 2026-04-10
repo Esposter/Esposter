@@ -79,8 +79,12 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
       await setupSpeakingDetection(remoteId, remoteId, remoteStream);
       const audio = new window.Audio();
       audio.srcObject = remoteStream;
-      await audio.play();
       remoteAudioElements.set(remoteId, audio);
+      try {
+        await audio.play();
+      } catch (error: unknown) {
+        if (!isProduction) console.warn("[WebRTC] audio.play() rejected (autoplay policy?):", error);
+      }
     });
 
     peerConnection.onicecandidate = getSynchronizedFunction(async ({ candidate }) => {
