@@ -3,6 +3,7 @@ import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { getTypingMessage } from "@/services/message/getTypingMessage";
 import { useDataStore } from "@/store/message/data";
 import { useInputStore } from "@/store/message/input";
+import { useKeyboardShortcutsDialogStore } from "@/store/message/input/keyboardShortcutsDialog";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 import { useReplyStore } from "@/store/message/input/reply";
 import { useRoomStore } from "@/store/message/room";
@@ -37,11 +38,17 @@ const reply = computed(() => (rowKey.value ? replyMap.value.get(rowKey.value) : 
 const uploadFiles = useUploadFiles();
 const slashCommandStore = useSlashCommandStore();
 const { pendingSlashCommand } = storeToRefs(slashCommandStore);
+const keyboardShortcutsDialogStore = useKeyboardShortcutsDialogStore();
+const { isOpen } = storeToRefs(keyboardShortcutsDialogStore);
+useEventListener("keydown", (event: KeyboardEvent) => {
+  if (event.shiftKey && event.key === "?") isOpen.value = true;
+});
 </script>
 
 <template>
   <MessageModelMessageForwardRoomDialog />
   <MessageModelMessageInputPollDialog />
+  <MessageModelMessageInputKeyboardShortcutsDialog />
   <MessageModelMessageFileDropzoneBackground />
   <div w-full>
     <MessageModelMessageInputReplyHeader v-if="reply" :reply @close="rowKey = ''" />

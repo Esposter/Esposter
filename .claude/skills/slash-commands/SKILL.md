@@ -127,7 +127,7 @@ This applies in `SlashCommandSuggestion.ts`, `SlashCommandParams.vue`, and any s
 | `/roll`      | `[]`                                      | Immediate — posts `🎲 Rolled a **N**`                                    |
 | `/poll`      | `[]`                                      | Immediate → opens `PollDialog` (special case: dialog, not inline params) |
 | `/me`        | `[{ name: "message", isRequired: true }]` | Parameterized                                                            |
-| `/shrug`     | `[{ name: "text", required: false }]`     | Parameterized (optional — appends `¯\_(ツ)_/¯`)                          |
+| `/shrug`     | `[{ name: "text", isRequired: false }]`   | Parameterized (optional — appends `¯\_(ツ)_/¯`)                          |
 | `/flip`      | `[]`                                      | Immediate — posts `🪙 Heads` or `🪙 Tails`                               |
 | `/tableflip` | `[]`                                      | Immediate — posts `(╯°□°）╯︵ ┻━┻`                                       |
 | `/unflip`    | `[]`                                      | Immediate — posts `┬─┬ノ( º _ ºノ)`                                      |
