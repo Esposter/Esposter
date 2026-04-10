@@ -38,6 +38,7 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
   };
 
   const setupSpeakingDetection = async (peerId: string, speakerId: string, stream: MediaStream) => {
+    await speakingCleanups.get(peerId)?.();
     const audioContext = new window.AudioContext();
     await audioContext.resume();
     const analyser = audioContext.createAnalyser();
@@ -162,6 +163,7 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
     };
 
   const acquireLocalStream = async () => {
+    if (localStream) return localStream;
     localStream = await window.navigator.mediaDevices.getUserMedia({ audio: true, video: false });
     return localStream;
   };
@@ -172,6 +174,7 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
   };
 
   const subscribeToSignals = (roomId: string) => {
+    unsubscribeFromSignals();
     signalUnsubscribable = $trpc.voice.onSignal.subscribe(roomId, {
       onData: getSynchronizedFunction(getSignalHandler(roomId)),
     });
@@ -183,22 +186,19 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
   };
 
   const cleanupAll = async () => {
+    unsubscribeFromSignals();
     await Promise.all([...peerConnections.keys()].map((id) => cleanupPeer(id)));
     await cleanupLocalStream();
-    unsubscribeFromSignals();
+    candidateQueues.clear();
   };
 
   return {
     acquireLocalStream,
-    buildPeerConnection,
     cleanupAll,
-    cleanupLocalStream,
     cleanupPeer,
     createPeerConnectionOffer,
-    getSignalHandler,
     setLocalStreamMuted,
     setupSpeakingDetection,
     subscribeToSignals,
-    unsubscribeFromSignals,
   };
 });
