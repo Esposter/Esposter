@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { User } from "@esposter/db-schema";
+import type { SerializableValue } from "@esposter/db-schema";
 
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useMemberStore } from "@/store/message/user/member";
 
-const emit = defineEmits<{ select: [value: User["id"]] }>();
+const emit = defineEmits<{ select: [value: SerializableValue] }>();
 const { readMembers, readMoreMembers } = useReadMembers();
 const { isPending } = await readMembers();
 const memberStore = useMemberStore();
