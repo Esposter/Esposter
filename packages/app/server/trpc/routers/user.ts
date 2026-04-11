@@ -82,7 +82,15 @@ export const userRouter = router({
     input,
     signal,
   }) {
-    if (input.includes(ctx.getSessionPayload.user.id)) throw new TRPCError({ code: "BAD_REQUEST" });
+    if (input.includes(ctx.getSessionPayload.user.id))
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: new InvalidOperationError(
+          Operation.Create,
+          DatabaseEntityType.UserStatus,
+          userRouter.onUpsertStatus.name,
+        ).message,
+      });
 
     for await (const [data] of on(userEventEmitter, "upsertStatus", { signal })) {
       if (!input.includes(data.userId)) continue;

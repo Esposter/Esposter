@@ -16,6 +16,7 @@ import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProce
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { createMessage } from "@esposter/db";
 import { AzureTable, MessageType, selectRoomSchema } from "@esposter/db-schema";
+import { ForbiddenError, NotFoundError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -135,17 +136,26 @@ export const voiceRouter = router({
     const sessionId = ctx.getSessionPayload.session.id;
     const participants = getRoomParticipants(roomId);
     if (!participants.some((p) => p.id === sessionId))
-      throw new TRPCError({ code: "FORBIDDEN", message: "Must join voice channel first" });
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: new ForbiddenError("Must join voice channel first").message,
+      });
 
     if (!participants.some((p) => p.id === payload.targetId))
-      throw new TRPCError({ code: "NOT_FOUND", message: "Target participant not found" });
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: new NotFoundError("Target participant", payload.targetId).message,
+      });
 
     voiceEventEmitter.emit("signal", { payload, roomId, senderId: sessionId });
   }),
   setMute: getMemberProcedure(setMuteInputSchema, "roomId").mutation(({ ctx, input: { isMuted, roomId } }) => {
     const sessionId = ctx.getSessionPayload.session.id;
     if (!updateVoiceParticipantMute(roomId, sessionId, isMuted))
-      throw new TRPCError({ code: "FORBIDDEN", message: "Must join voice channel first" });
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: new ForbiddenError("Must join voice channel first").message,
+      });
 
     voiceEventEmitter.emit("muteChanged", { id: sessionId, isMuted, roomId });
   }),

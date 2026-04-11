@@ -202,7 +202,11 @@ export const messageRouter = router({
     }),
   deleteFile: getCreatorProcedure(deleteFileInputSchema).mutation(
     async ({ ctx: { messageClient, messageEntity }, input: { id, partitionKey, rowKey } }) => {
-      if (messageEntity.isForward || messageEntity.files.length === 0) throw new TRPCError({ code: "BAD_REQUEST" });
+      if (messageEntity.isForward || messageEntity.files.length === 0)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Delete, AzureEntityType.Message, id).message,
+        });
 
       const index = messageEntity.files.findIndex((f) => f.id === id);
       if (index === -1)

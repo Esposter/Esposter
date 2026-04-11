@@ -1,10 +1,6 @@
 # Esbabbler — Voice Channel Architecture
 
-## Overview
-
-Discord-style persistent per-room voice channel. Every room has a single voice channel slot that any room member can drop into and leave freely — no separate "start a call" concept, the channel is always available.
-
----
+Discord-style persistent per-room voice channel. Any member can join/leave freely — no "start a call" concept.
 
 ## User Experience
 
@@ -14,8 +10,6 @@ Discord-style persistent per-room voice channel. Every room has a single voice c
 - **Mute toggle** — mic off but still present in the channel (others can see you're there)
 - **Speaking indicator** — ring/pulse on avatar when audio is detected from that participant
 - The room list in the main sidebar shows a small "🔊 N" badge on rooms with active voice participants
-
----
 
 ## Technology Choice
 
@@ -40,8 +34,6 @@ Recommended options:
 
 Recommend starting with mesh and migrating to LiveKit when needed.
 
----
-
 ## tRPC Procedures
 
 All procedures live in `server/trpc/routers/room/voice.ts`.
@@ -57,8 +49,6 @@ All procedures live in `server/trpc/routers/room/voice.ts`.
 | `onParticipantLeave`    | subscription | Fires for all room members (except self) when someone leaves            |
 | `onMuteChanged`         | subscription | Fires for all room members when a participant's muted state changes     |
 | `onSignal`              | subscription | Delivers relayed SDP/ICE payload to the target peer                     |
-
----
 
 ## Architectural Diagram
 
@@ -116,16 +106,12 @@ Client A (refreshing)              Server                   Client B (in channel
 - `onParticipantJoin` handler calls `cleanupPeer` before `createPeerConnection` to safely replace stale connections
 - `isInChannel` and `isMuted` are **derived computeds** in the Pinia store (not tracked refs), computed from `voiceParticipantsRoomMap + currentRoomId + session.id` — naturally correct after any `setParticipants` call and survive component re-mounts
 
----
-
 ## Signalling Flow Detail
 
 1. **On room enter** (`useOnlineSubscribable`): `readVoiceParticipants` populates the store for all observers
 2. **On join**: subscribe to `onSignal` first (to catch offers from existing peers), then `joinVoiceChannel.mutate()` — server always emits join event; existing peers receive it, clean up any stale connection, and send a new offer
 3. **On leave**: call `leaveVoiceChannel`, cleanup all peer connections, stop local stream, unsubscribe from `onSignal`
 4. **On refresh/reconnect**: `readVoiceParticipants` detects stale server membership → `leaveVoice` locally (resets computed) → `join()` re-establishes everything
-
----
 
 ## State — Pinia Store (`store/message/voice.ts`)
 
@@ -135,8 +121,6 @@ Client A (refreshing)              Server                   Client B (in channel
 | `speakingIds`              | `ref`      | Session IDs currently detected as speaking (via `AudioContext`)      |
 | `isInChannel`              | `computed` | Derived: current session ID present in current room's participants   |
 | `isMuted`                  | `computed` | Derived: current participant's `isMuted` flag from the map           |
-
----
 
 ## Folder Structure
 
@@ -174,16 +158,9 @@ packages/app/
       Participant.vue             # avatar + speaking ring + mute badge
 ```
 
----
-
 ## What Does Not Change
 
-- Message infrastructure — voice channel is entirely separate from text messages
-- Room model — no new DB columns needed; voice state is ephemeral
-- Auth/permissions — existing room membership check in the room router gates all voice procedures
-- Existing tRPC subscription pattern — voice subscriptions follow the same shape as `onCreateMessage`
-
----
+Message infrastructure, room model (no new DB columns; voice state is ephemeral), auth/permissions, tRPC subscription pattern.
 
 ## Open Questions
 

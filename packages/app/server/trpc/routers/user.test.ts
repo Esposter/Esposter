@@ -6,8 +6,8 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
 import { userRouter } from "@@/server/trpc/routers/user";
-import { UserStatus, userStatuses } from "@esposter/db-schema";
-import { takeOne } from "@esposter/shared";
+import { DatabaseEntityType, UserStatus, userStatuses } from "@esposter/db-schema";
+import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -225,5 +225,21 @@ describe("user", () => {
 
     expect(data.value.status).toBe(UserStatus.Offline);
     expect(data.value.userId).toBe(user.id);
+  });
+
+  test("fails on upserts status with self", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    const subscription = await caller.onUpsertStatus([userId]);
+
+    await expect(
+      withAsyncIterator(
+        () => subscription,
+        (iterator) => iterator.next(),
+      ),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.UserStatus, userRouter.onUpsertStatus.name).message}]`,
+    );
   });
 });

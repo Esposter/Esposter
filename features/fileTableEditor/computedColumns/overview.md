@@ -1,10 +1,6 @@
 # Computed Columns — Overview
 
-## Design Philosophy
-
-Inspired by Vue 3's computed refs: a computed column declares its dependencies upfront and its value is computed lazily on access — never stored, always fresh. Unlike Vue's reactive computed, caching is skipped because row values are plain objects (not reactive), so there is no dirty-tracking overhead and evaluation is cheap.
-
-**Key invariant**: source data is the only source of truth. Computed values are a pure function of it.
+Lazy, never-stored values — pure function of source data. No caching needed (row values are plain objects, no dirty-tracking).
 
 ---
 

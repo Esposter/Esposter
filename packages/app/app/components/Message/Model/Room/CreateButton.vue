@@ -15,7 +15,7 @@ const { createRoom } = roomStore;
         size="small"
         :ripple="false"
         :="props"
-        @click="createRoom({ name: DEFAULT_NAME })"
+        @click.stop="createRoom({ name: DEFAULT_NAME })"
       />
     </template>
   </v-tooltip>

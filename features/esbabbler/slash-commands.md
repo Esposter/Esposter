@@ -1,15 +1,9 @@
 # Esbabbler — Slash Command Architecture
 
-## Overview
+Triggered by `/` in the message input. Tiptap suggestion API powers the picker. Definitions in `SlashCommandDefinitionMap`.
 
-Slash commands are triggered by `/` in the message input. The Tiptap suggestion API (already used for `@` mentions) powers the picker UI. Each command is a definition in a `SlashCommandDefinitionMap` — the same map-based pattern used in `ColumnStatisticsDefinitionMap` and `ColumnChartDataMap`.
-
-Commands fall into two categories:
-
-- **Immediate** — execute on selection with no extra input (e.g. `/roll`)
-- **Dialog** — open a form dialog to collect parameters before sending (e.g. `/poll`)
-
----
+- **Immediate** — execute on selection (e.g. `/roll`)
+- **Dialog** — open form dialog before sending (e.g. `/poll`)
 
 ## Folder Structure
 
@@ -43,8 +37,6 @@ packages/app/
     vote.ts                         # createVote / deleteVote mutations
 ```
 
----
-
 ## Core Types
 
 ### `SlashCommandType.ts`
@@ -57,8 +49,6 @@ export enum SlashCommandType {
 ```
 
 ### `SlashCommand.ts`
-
-Interface-first. The `execute` function receives a `SlashCommandContext` and is responsible for the full action — either firing a tRPC call directly (Roll) or triggering a dialog that eventually does (Poll).
 
 ```typescript
 export interface SlashCommandContext {
@@ -73,8 +63,6 @@ export interface SlashCommand extends ItemEntityType<SlashCommandType> {
 }
 ```
 
-`ItemEntityType<SlashCommandType>` provides `readonly type: SlashCommandType` — same pattern as column and transformation types.
-
 ### `SlashCommandDefinitionMap.ts`
 
 ```typescript
@@ -84,11 +72,9 @@ export const SlashCommandDefinitionMap = {
 } as const satisfies Record<SlashCommandType, SlashCommand>;
 ```
 
----
-
 ## Poll Message Type
 
-`/poll` introduces a new `MessageType.Poll`. Poll data lives in the existing `message` string field serialised as JSON (no schema change needed beyond the new enum value).
+`/poll` → `MessageType.Poll`. Poll data serialised as JSON in the existing `message` field.
 
 ### `PollMessageContent.ts`
 
@@ -104,7 +90,7 @@ export interface PollMessageContent {
 }
 ```
 
-Votes are stored separately via a new `votes` Azure Table (partitioned by `roomId`, row key `messageRowKey|userId`) — one row per user per poll, value is `optionId`. This avoids mutating the original message and keeps vote writes cheap.
+Votes: separate `votes` Azure Table (`roomId` partition, `messageRowKey|userId` row key). One row per user per poll, value = `optionId`.
 
 ### New `MessageType`
 
@@ -118,24 +104,9 @@ enum MessageType {
 }
 ```
 
----
-
 ## Tiptap Integration
 
-Mirrors the existing `@` mention flow exactly:
-
-| Mention                                        | Slash Command                                                            |
-| ---------------------------------------------- | ------------------------------------------------------------------------ |
-| `useMentionExtension.ts`                       | `useSlashCommandExtension.ts`                                            |
-| `services/message/suggestion.ts`               | `services/message/slashCommands/SlashCommandSuggestion.ts`               |
-| `components/Message/.../MentionSuggestion.vue` | `components/Message/SlashCommand/Suggestion.vue`                         |
-| Trigger char: `@`                              | Trigger char: `/`                                                        |
-| Items: room members                            | Items: `Object.values(SlashCommandDefinitionMap)`                        |
-| On select: inserts mention node                | On select: calls `command.execute(context)` then clears the editor input |
-
-`useSlashCommandExtension` is passed into `RichTextEditor` via the existing `extensions` prop on `Message/Model/Message/Input/Index.vue`.
-
----
+Mirrors `@` mention flow. Trigger: `/`. Items: `Object.values(SlashCommandDefinitionMap)`. On select: `command.execute(context)` then clears input. Pass `useSlashCommandExtension` via `extensions` prop on `Message/Model/Message/Input/Index.vue`.
 
 ## Per-Command Specs
 
@@ -155,10 +126,6 @@ Mirrors the existing `@` mention flow exactly:
 - **Rendered by**: `Message/Model/Message/Type/Poll.vue` — shows question, option buttons, live vote counts, highlights the user's current vote
 - **Vote**: `createVote` / `deleteVote` tRPC mutations in `server/trpc/routers/message/vote.ts`
 
----
-
 ## What Does Not Change
 
-- `sendMessage(editor)` in `store/message/data.ts` — slash commands bypass the normal send flow entirely; `execute()` calls `createMessage` directly
-- `RichTextEditor` — no changes; extensions are passed in as props
-- `suggestion.ts` for mentions — untouched
+`sendMessage`, `RichTextEditor`, `suggestion.ts` for mentions — untouched. `execute()` calls `createMessage` directly, bypassing normal send flow.

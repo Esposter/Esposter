@@ -8,20 +8,20 @@ import { createCode } from "#shared/util/math/random/createCode";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
-import { friendRouter } from "@@/server/trpc/routers/friend";
+import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
 import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
 import { CODE_LENGTH, DatabaseEntityType, friends, rooms } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
-import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
+import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("room", () => {
   let mockContext: Context;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let directMessageCaller: DecorateRouterRecord<TRPCRouter["directMessage"]>;
-  let friendCaller: DecorateRouterRecord<TRPCRouter["friend"]>;
+  let friendRequestCaller: DecorateRouterRecord<TRPCRouter["friendRequest"]>;
   const roomId = crypto.randomUUID();
   const name = "name";
   const updatedName = "updatedName";
@@ -30,10 +30,16 @@ describe("room", () => {
     mockContext = await createMockContext();
     roomCaller = createCallerFactory(roomRouter)(mockContext);
     directMessageCaller = createCallerFactory(directMessageRouter)(mockContext);
-    friendCaller = createCallerFactory(friendRouter)(mockContext);
+    friendRequestCaller = createCallerFactory(friendRequestRouter)(mockContext);
+  });
+
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(0);
   });
 
   afterEach(async () => {
+    vi.useRealTimers();
     MockContainerDatabase.clear();
     await mockContext.db.delete(friends);
     await mockContext.db.delete(rooms);
@@ -41,9 +47,9 @@ describe("room", () => {
 
   const makeFriends = async (userA: User, userB: User) => {
     await mockSessionOnce(mockContext.db, userA);
-    await friendCaller.sendFriendRequest(userB.id);
+    await friendRequestCaller.sendFriendRequest(userB.id);
     await mockSessionOnce(mockContext.db, userB);
-    await friendCaller.acceptFriendRequest(userA.id);
+    await friendRequestCaller.acceptFriendRequest(userA.id);
   };
 
   test("creates", async () => {
@@ -485,8 +491,8 @@ describe("room", () => {
     const userId = getMockSession().user.id;
 
     await expect(roomCaller.joinRoom(newInviteCode)).rejects.toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: Failed query: insert into "message"."users_to_rooms" ("isHidden", "notificationType", "roomId", "userId") values (default, default, $1, $2) returning "isHidden", "notificationType", "roomId", "userId"
-      params: ${newRoom.id},${userId}]
+      [TRPCError: Failed query: insert into "message"."users_to_rooms" ("createdAt", "deletedAt", "updatedAt", "isHidden", "notificationType", "roomId", "userId") values (default, default, $1, default, default, $2, $3) returning "createdAt", "deletedAt", "updatedAt", "isHidden", "notificationType", "roomId", "userId"
+      params: 1970-01-01T00:00:00.000Z,${newRoom.id},${userId}]
     `);
   });
 
@@ -690,8 +696,8 @@ describe("room", () => {
 
     await expect(roomCaller.createMembers({ roomId: newRoom.id, userIds: [userId] })).rejects
       .toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: Failed query: insert into "message"."users_to_rooms" ("isHidden", "notificationType", "roomId", "userId") values (default, default, $1, $2) returning "isHidden", "notificationType", "roomId", "userId"
-      params: ${newRoom.id},${userId}]
+      [TRPCError: Failed query: insert into "message"."users_to_rooms" ("createdAt", "deletedAt", "updatedAt", "isHidden", "notificationType", "roomId", "userId") values (default, default, $1, default, default, $2, $3) returning "createdAt", "deletedAt", "updatedAt", "isHidden", "notificationType", "roomId", "userId"
+      params: 1970-01-01T00:00:00.000Z,${newRoom.id},${userId}]
     `);
   });
 
@@ -703,8 +709,8 @@ describe("room", () => {
 
     await expect(roomCaller.createMembers({ roomId: newRoom.id, userIds: [userId] })).rejects
       .toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: Failed query: insert into "message"."users_to_rooms" ("isHidden", "notificationType", "roomId", "userId") values (default, default, $1, $2) returning "isHidden", "notificationType", "roomId", "userId"
-      params: ${newRoom.id},${userId}]
+      [TRPCError: Failed query: insert into "message"."users_to_rooms" ("createdAt", "deletedAt", "updatedAt", "isHidden", "notificationType", "roomId", "userId") values (default, default, $1, default, default, $2, $3) returning "createdAt", "deletedAt", "updatedAt", "isHidden", "notificationType", "roomId", "userId"
+      params: 1970-01-01T00:00:00.000Z,${newRoom.id},${userId}]
     `);
   });
 

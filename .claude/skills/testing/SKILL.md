@@ -1,6 +1,6 @@
 ---
 name: testing
-description: Esposter Vitest testing conventions — describe with function refs, canonical test values, targeted takeOne usage for unsafe index access patterns, destructuring from stores/composables, mock session patterns (getMockSession/mockSessionOnce/replayMockSession), and the Windows UnoCSS test-skip rule. Apply when writing .test.ts files.
+description: Esposter Vitest testing conventions — describe with function refs, canonical test values, targeted takeOne usage for unsafe index access patterns, destructuring from stores/composables, mock session patterns (getMockSession/mockSessionOnce/replayMockSession), the Windows UnoCSS test-skip rule, and type-level test conventions for .test-d.ts files. Apply when writing .test.ts or .test-d.ts files.
 ---
 
 # Testing Conventions (Vitest)
@@ -30,10 +30,10 @@ description: Esposter Vitest testing conventions — describe with function refs
 - **`assert.exists` instead of `?? []` coalescing** — when you know a value should exist (e.g. `editedItem.value?.dataSource`), use `assert.exists(editedItem.value?.dataSource)` to narrow the type and fail fast, then access the value directly. Never use `?? []` (or similar falsy coalescing) to silence a type error in tests — it hides the failure and passes an empty collection to `takeOne`, producing a misleading error. Pattern: `assert.exists(editedItem.value?.dataSource); deleteRow(takeOne(editedItem.value.dataSource.rows).id);`
 - **Destructure from stores and composables** — always destructure return values: `const { deleteRow, undo, isUndoable } = operations` rather than calling `operations.deleteRow(...)`. Same for stores: `const { editedItem } = storeToRefs(store)` and `const { methodName } = store`. This applies inside `beforeEach` too — never chain `useX().method()` inline; always `const { method } = useX()` first.
 - **Always assign `getMockSession()` results** — never inline `getMockSession().user.id` or `getMockSession().session.id` directly in an expression. Always assign first. Use direct property access when only one property is needed (`const userId = getMockSession().user.id`), and destructure only when multiple properties are needed (`const { user } = getMockSession()` to use both `user.id` and `user.name`). This applies even when used only once.
-- **`getMockSession()` session ID is unstable** — `getMockSession().session.id` creates a **new random UUID on every call** (via `createSession`). It cannot be used to assert against what a tRPC procedure used internally, since the procedure's `auth.api.getSession()` call generates its own fresh UUID. `getMockSession().user.id` is stable (created once in `vi.hoisted`). Use the following patterns depending on what you need:
-  - **user identity only** — `const { user } = getMockSession()` then use `user.id` / `user.name` etc.
-  - **session ID tied to a procedure** — use `mockSessionOnce` to queue a known session before the call, then destructure what you need: `const { session, user } = await mockSessionOnce(mockContext.db, getMockSession().user)`. Destructure only what the test uses — `{ session }` if only the session ID is needed, `{ session, user }` if both are needed.
-  - **same session across chained calls** — capture once then replay: `const sessionPayload = await mockSessionOnce(...); await caller.join(...); replayMockSession(sessionPayload); await caller.setMute(...)`. This ensures all operations use the same session ID (required when a later call looks up a participant stored by the earlier call's session ID).
+- **`getMockSession()` session ID is unstable** — `getMockSession().session.id` creates a new UUID on every call. `getMockSession().user.id` is stable (created once in `vi.hoisted`). Patterns:
+  - **user identity only** — `const { user } = getMockSession()`
+  - **session ID tied to a procedure** — `const { session, user } = await mockSessionOnce(mockContext.db, getMockSession().user)` — destructure only what's needed
+  - **same session across chained calls** — `const sessionPayload = await mockSessionOnce(...); replayMockSession(sessionPayload)` before each call
 - **Cloning in tests** — use `structuredClone(obj)` for deep clones; use `Object.assign(structuredClone(obj), { ...updates })` to clone and override fields. Never use `{ ...spread }` syntax to clone — it creates a plain object losing the prototype. Pass `new Foo({ ... })` directly when a fresh instance already suffices (no need to clone or spread it).
 - **Assertions after all assignments** — put all `expect` and `expectToBeDefined` calls after all operation calls and local assignments for that phase, separated by a blank line. For multi-phase tests (e.g. undo then redo), each phase is its own block: operations + `const local = reactive.value?.x`, blank line, then assertions on `local`. Never interleave expects with assignments.
 - **Always use `toStrictEqual`** — never use `toEqual`.
@@ -47,11 +47,11 @@ description: Esposter Vitest testing conventions — describe with function refs
 
 ## Waiting for Reactive Effects in Tests
 
-There is no DOM in this test environment, so `nextTick` is never needed — synchronous reactive effects (computed re-evaluation, synchronous watch callbacks) take place immediately when a ref changes.
+No DOM → `nextTick` never needed. Sync reactive effects fire immediately on ref change.
 
-For **watchers that handle critical state synchronization or cleanup**, always use `{ flush: "sync" }` in the `watch` options. This ensures that the callback's synchronous side-effects (like clearing an array) happen immediately upon the ref change, allowing for cleaner tests without `nextTick` or `flushPromises`.
+For **critical sync watchers**: use `{ flush: "sync" }` — side-effects fire immediately, no `flushPromises` needed.
 
-For **async watch callbacks** (`watch(ref, async () => { ... })`) that are NOT flushed synchronously, Vue fires the callback but does not await it. Use `flushPromises()` from `@vue/test-utils` to drain the entire microtask queue so the watch body fully completes before asserting:
+For **async watch callbacks**: Vue fires but doesn't await. Use `flushPromises()` from `@vue/test-utils`:
 
 ```ts
 import { flushPromises } from "@vue/test-utils";
@@ -61,11 +61,16 @@ await flushPromises();
 expect(isUndoable.value).toBe(false);
 ```
 
-Never use `await nextTick()` in tests — it is either unnecessary (sync effects) or insufficient (async watch bodies). For synchronous side-effects of `{ flush: "sync" }` watchers, no waiting is required. For any other pending async work, always use `flushPromises`.
+Never use `await nextTick()` — unnecessary for sync effects, insufficient for async watch bodies. Always use `flushPromises` for pending async work.
 
 ## Running Validation Commands
 
-- **Always run `pnpm lint`, `pnpm typecheck`, and test commands in the background** — use `run_in_background: true` on the Bash tool so the main conversation is not blocked. These commands can take over 2 minutes. Continue addressing other tasks while waiting for results.
+- Always run `pnpm lint`, `pnpm typecheck`, and tests with `run_in_background: true` — they can take 2+ minutes.
+
+## Vitest Environment Selection
+
+- **tRPC router tests (`server/trpc/routers/**/\*.test.ts`)** — do NOT add `// @vitest-environment node`. These tests run in the Nuxt environment (required for `createCallerFactory`, `createMockContext`, and Nuxt module integration). Adding the directive breaks the setup.
+- **All other server-side tests** — add `// @vitest-environment node` as the first line. This includes `server/services/**`, `server/composables/**`, and any standalone utility tests.
 
 ## Running Tests
 
@@ -104,6 +109,30 @@ describe(useMyComposable, () => {
 ## What to Test
 
 - **Test composables, not the underlying service functions** — composable tests integration-test the full call chain (store wiring, command dispatch, history push) in one place. If the composable is tested, the service functions it calls are covered implicitly; there is no need to write separate unit tests for those functions. Only test a service function directly when it has no composable wrapper (e.g. standalone pure utilities like `coerceValue`, `inferColumnType`).
+
+## Type-Level Tests (.test-d.ts)
+
+- **File placement** — co-locate the `.test-d.ts` file next to the type it tests (e.g. `SlashCommandParameters.test-d.ts` beside `SlashCommandParameters.ts`).
+- **`describe` string** — always `"{camelCaseName} type"` where the name is the camelCase form of the type/file name (e.g. `"slashCommandParameters type"`, `"recursiveKeyOf type"`).
+- **`test` descriptions** — use the enum value or type argument directly when testing a union/enum-parameterised type (e.g. `test(SlashCommandType.Me, ...)`). Do not write prose descriptions.
+- **`expectTypeOf` assertion** — always use `.toEqualTypeOf<ExpectedType>()` for strict structural equality.
+- **`expect.hasAssertions()`** — include at the top of every test body, same as `.test.ts` files.
+
+```ts
+describe("slashCommandParameters type", () => {
+  test(SlashCommandType.Me, () => {
+    expect.hasAssertions();
+
+    expectTypeOf<SlashCommandParameters<SlashCommandType.Me>>().toEqualTypeOf<{ message: string }>();
+  });
+
+  test(SlashCommandType.Shrug, () => {
+    expect.hasAssertions();
+
+    expectTypeOf<SlashCommandParameters<SlashCommandType.Shrug>>().toEqualTypeOf<{ text?: string }>();
+  });
+});
+```
 
 ## Test Utility Files
 

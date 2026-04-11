@@ -10,9 +10,16 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
   const session = authClient.useSession();
   const roomStore = useRoomStore();
   const webRtcStore = useWebRtcStore();
-  const { acquireLocalStream, cleanupAll, setLocalStreamMuted, setupSpeakingDetection, subscribeToSignals } =
-    webRtcStore;
+  const {
+    acquireLocalStream,
+    cleanupAll,
+    setLocalStreamMuted,
+    setRemoteAudioMuted,
+    setupSpeakingDetection,
+    subscribeToSignals,
+  } = webRtcStore;
   const callRoomId = ref<string>();
+  const isDeafened = ref(false);
   const voiceParticipantsRoomMap = ref(new Map<string, VoiceParticipant[]>());
   const speakingIds = ref<string[]>([]);
   const sessionId = computed(() => session.value.data?.session.id);
@@ -84,9 +91,15 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
       await $trpc.voice.leaveVoiceChannel.mutate({ roomId });
     } finally {
       callRoomId.value = undefined;
+      isDeafened.value = false;
       await cleanupAll();
       clearSpeakers();
     }
+  };
+
+  const toggleDeafen = () => {
+    isDeafened.value = !isDeafened.value;
+    setRemoteAudioMuted(isDeafened.value);
   };
 
   const toggleMute = async () => {
@@ -106,6 +119,7 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
     createVoiceParticipant,
     deleteSpeaker,
     deleteVoiceParticipant,
+    isDeafened,
     isInChannel,
     isMuted,
     joinVoice,
@@ -114,6 +128,7 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
     setMute,
     setParticipants,
     speakingIds,
+    toggleDeafen,
     toggleMute,
     voiceParticipantsRoomMap,
   };

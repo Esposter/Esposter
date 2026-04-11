@@ -11,7 +11,7 @@ import { roomRouter } from "@@/server/trpc/routers/room";
 import { voiceRouter } from "@@/server/trpc/routers/room/voice";
 import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
 import { rooms } from "@esposter/db-schema";
-import { takeOne } from "@esposter/shared";
+import { ForbiddenError, NotFoundError, takeOne } from "@esposter/shared";
 import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
 describe("voice", () => {
@@ -218,7 +218,7 @@ describe("voice", () => {
     const newRoom = await roomCaller.createRoom({ name });
 
     await expect(voiceCaller.setMute({ isMuted: true, roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Must join voice channel first]`,
+      `[TRPCError: ${new ForbiddenError("Must join voice channel first").message}]`,
     );
   });
 
@@ -276,7 +276,7 @@ describe("voice", () => {
     const payload = { data: "{}", targetId: sessionId, type: VoiceSignalType.Offer };
 
     await expect(voiceCaller.sendSignal({ payload, roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Must join voice channel first]`,
+      `[TRPCError: ${new ForbiddenError("Must join voice channel first").message}]`,
     );
   });
 
@@ -291,7 +291,7 @@ describe("voice", () => {
     const payload = { data: "{}", targetId: crypto.randomUUID(), type: VoiceSignalType.Offer };
 
     await expect(voiceCaller.sendSignal({ payload, roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Target participant not found]`,
+      `[TRPCError: ${new NotFoundError("Target participant", payload.targetId).message}]`,
     );
   });
 });

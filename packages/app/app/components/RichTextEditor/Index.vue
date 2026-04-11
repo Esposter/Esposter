@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { FooterBarAppendSlotProps, FooterBarPrependSlotProps } from "@/components/RichTextEditor/FooterBar.vue";
 import type { FileHandlePluginOptions } from "@tiptap/extension-file-handler";
-import type { AnyExtension } from "@tiptap/vue-3";
+import type { AnyExtension, FocusPosition } from "@tiptap/vue-3";
 import type { CSSProperties } from "vue";
 import type { VCard } from "vuetify/components";
 
@@ -12,6 +12,7 @@ import { EditorContent, useEditor } from "@tiptap/vue-3";
 import { Plugin } from "prosemirror-state";
 
 interface RichTextEditorProps {
+  autofocus?: FocusPosition;
   cardProps?: VCard["$props"];
   extensions?: AnyExtension[];
   height?: string;
@@ -27,6 +28,7 @@ defineSlots<{
 }>();
 const modelValue = defineModel<string>({ required: true });
 const {
+  autofocus = false,
   cardProps,
   extensions,
   height = "auto",
@@ -36,6 +38,7 @@ const {
 const emit = defineEmits<{ paste: Parameters<NonNullable<FileHandlePluginOptions["onPaste"]>> }>();
 const linkCursorStyle = ref<CSSProperties["cursor"]>("text");
 const editor = useEditor({
+  autofocus,
   content: modelValue.value,
   extensions: [
     CharacterCount.configure({ limit }),

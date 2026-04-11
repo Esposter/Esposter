@@ -10,6 +10,7 @@
       "Bash(for f:*)",
       "Bash(grep:*)",
       "Bash(git log:*)",
+      "Bash(git status:*)",
       "Bash(head:*)",
       "Bash(ls:*)",
       "Bash(pnpm export:gen)",
@@ -25,6 +26,7 @@
       "Bash(pnpm test:*)",
       "Bash(pnpm typecheck:*)",
       "Bash(pnpm vitest:*)",
+      "Bash(pnpm build:*)",
       "Bash(read f:package.json)",
       "Bash(read f:packages/app/**)",
       "Bash(read f:plugins/**)",
@@ -39,8 +41,7 @@
       "Bash(echo \"EXIT:$?\")",
       "WebFetch(domain:mathjs.org)",
       "WebFetch(domain:bundlephobia.com)",
-      "WebFetch(domain:www.npmjs.com)",
-      "Bash(git status:*)"
+      "WebFetch(domain:www.npmjs.com)"
     ]
   }
 }

@@ -1,12 +1,20 @@
 <script setup lang="ts">
+import { useBlockStore } from "@/store/message/user/block";
 import { useFriendStore } from "@/store/message/user/friend";
+import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 
 definePageMeta({ middleware: "auth" });
 
 const { $trpc } = useNuxtApp();
+const blockStore = useBlockStore();
+const { blockedUsers } = storeToRefs(blockStore);
+const { blockUser, unblockUser } = blockStore;
+const friendRequestStore = useFriendRequestStore();
+const { receivedFriendRequests, sentFriendRequests } = storeToRefs(friendRequestStore);
+const { acceptFriendRequest, declineFriendRequest, sendFriendRequest } = friendRequestStore;
 const friendStore = useFriendStore();
-const { friends, pendingRequests, sentRequests } = storeToRefs(friendStore);
-const { acceptFriendRequest, declineFriendRequest, deleteFriend, sendFriendRequest } = friendStore;
+const { friends } = storeToRefs(friendStore);
+const { deleteFriend } = friendStore;
 const { readFriends } = useReadFriends();
 await readFriends();
 
@@ -24,8 +32,14 @@ const onSearch = async () => {
   isSearching.value = false;
 };
 
+const displayFriends = computed(() => friends.value.toSorted((a, b) => b.createdAt.getTime() - a.createdAt.getTime()));
+const displayReceivedFriendRequests = computed(() =>
+  receivedFriendRequests.value.toSorted((a, b) => b.createdAt.getTime() - a.createdAt.getTime()),
+);
+
 const isFriend = (userId: string) => friends.value.some(({ id }) => id === userId);
-const hasSentRequest = (userId: string) => sentRequests.value.some(({ id }) => id === userId);
+const hasSentRequest = (userId: string) => sentFriendRequests.value.some(({ receiverId }) => receiverId === userId);
+const isBlocked = (userId: string) => blockedUsers.value.some(({ id }) => id === userId);
 </script>
 
 <template>
@@ -57,24 +71,65 @@ const hasSentRequest = (userId: string) => sentRequests.value.some(({ id }) => i
                 </v-avatar>
               </template>
               <template #append>
-                <v-btn
-                  v-if="!isFriend(id) && !hasSentRequest(id)"
-                  text="Send Request"
-                  variant="tonal"
-                  size="small"
-                  @click="sendFriendRequest({ id, name, image } as Parameters<typeof sendFriendRequest>[0])"
-                />
-                <v-chip v-else-if="hasSentRequest(id)" text="Request Sent" size="small" />
-                <v-chip v-else text="Friends" size="small" color="success" />
+                <div flex gap-2>
+                  <v-btn
+                    v-if="!isFriend(id) && !hasSentRequest(id)"
+                    text="Send Request"
+                    variant="tonal"
+                    size="small"
+                    @click="sendFriendRequest(id)"
+                  />
+                  <v-chip v-else-if="hasSentRequest(id)" text="Request Sent" size="small" />
+                  <v-chip v-else text="Friends" size="small" color="success" />
+                  <v-btn
+                    v-if="!isBlocked(id)"
+                    text="Block"
+                    variant="tonal"
+                    color="error"
+                    size="small"
+                    @click="blockUser(id)"
+                  />
+                </div>
               </template>
             </v-list-item>
           </v-list>
           <v-progress-linear v-if="isSearching" indeterminate mt-2 />
         </div>
-        <div v-if="pendingRequests.length > 0" mb-8>
-          <div class="text-title-large" mb-3>Pending Requests — {{ pendingRequests.length }}</div>
+        <div v-if="displayReceivedFriendRequests.length > 0" mb-8>
+          <div class="text-title-large" mb-3>Pending Requests — {{ displayReceivedFriendRequests.length }}</div>
           <v-list rounded>
-            <v-list-item v-for="{ id, name, image } of pendingRequests" :key="id" :title="name">
+            <v-list-item v-for="{ id, sender } of displayReceivedFriendRequests" :key="id" :title="sender.name">
+              <template #prepend>
+                <v-avatar size="36" mr-3>
+                  <v-img v-if="sender.image" :src="sender.image" />
+                  <span v-else>{{ sender.name[0] }}</span>
+                </v-avatar>
+              </template>
+              <template #append>
+                <div flex gap-2>
+                  <v-btn
+                    text="Accept"
+                    variant="tonal"
+                    color="success"
+                    size="small"
+                    @click="acceptFriendRequest(sender.id)"
+                  />
+                  <v-btn
+                    text="Decline"
+                    variant="tonal"
+                    color="error"
+                    size="small"
+                    @click="declineFriendRequest(sender.id)"
+                  />
+                </div>
+              </template>
+            </v-list-item>
+          </v-list>
+        </div>
+        <div mb-8>
+          <div class="text-title-large" mb-3>Friends — {{ displayFriends.length }}</div>
+          <v-list v-if="displayFriends.length > 0" rounded>
+            <v-list-item v-for="{ id, name, image } of displayFriends" :key="id" :title="name">
               <template #prepend>
                 <v-avatar size="36" mr-3>
                   <v-img v-if="image" :src="image" />
@@ -83,17 +138,18 @@ const hasSentRequest = (userId: string) => sentRequests.value.some(({ id }) => i
               </template>
               <template #append>
                 <div flex gap-2>
-                  <v-btn text="Accept" variant="tonal" color="success" size="small" @click="acceptFriendRequest(id)" />
-                  <v-btn text="Decline" variant="tonal" color="error" size="small" @click="declineFriendRequest(id)" />
+                  <v-btn text="Remove" variant="tonal" color="error" size="small" @click="deleteFriend(id)" />
+                  <v-btn text="Block" variant="tonal" color="error" size="small" @click="blockUser(id)" />
                 </div>
               </template>
             </v-list-item>
           </v-list>
+          <span v-else class="text-medium-emphasis">No friends yet. Search for users above to add them.</span>
         </div>
-        <div>
-          <div class="text-title-large" mb-3>Friends — {{ friends.length }}</div>
-          <v-list v-if="friends.length > 0" rounded>
-            <v-list-item v-for="{ id, name, image } of friends" :key="id" :title="name">
+        <div v-if="blockedUsers.length > 0">
+          <div class="text-title-large" mb-3>Blocked — {{ blockedUsers.length }}</div>
+          <v-list rounded>
+            <v-list-item v-for="{ id, name, image } of blockedUsers" :key="id" :title="name">
               <template #prepend>
                 <v-avatar size="36" mr-3>
                   <v-img v-if="image" :src="image" />
@@ -101,11 +157,10 @@ const hasSentRequest = (userId: string) => sentRequests.value.some(({ id }) => i
                 </v-avatar>
               </template>
               <template #append>
-                <v-btn text="Remove" variant="tonal" color="error" size="small" @click="deleteFriend(id)" />
+                <v-btn text="Unblock" variant="tonal" size="small" @click="unblockUser(id)" />
               </template>
             </v-list-item>
           </v-list>
-          <span v-else class="text-medium-emphasis">No friends yet. Search for users above to add them.</span>
         </div>
       </v-container>
     </div>

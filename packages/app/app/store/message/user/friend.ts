@@ -1,63 +1,32 @@
+import type { FriendUserIdInput } from "#shared/models/db/friend/FriendUserIdInput";
 import type { User } from "@esposter/db-schema";
+
+import { createOperationData } from "@/services/shared/createOperationData";
+import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const useFriendStore = defineStore("message/user/friend", () => {
   const { $trpc } = useNuxtApp();
   const friends = ref<User[]>([]);
-  const pendingRequests = ref<User[]>([]);
-  const sentRequests = ref<User[]>([]);
-
-  const acceptFriendRequest = async (senderId: string) => {
-    await $trpc.friend.acceptFriendRequest.mutate(senderId);
-    const sender = pendingRequests.value.find(({ id }) => id === senderId);
-    pendingRequests.value = pendingRequests.value.filter(({ id }) => id !== senderId);
-    if (sender) friends.value = [sender, ...friends.value];
+  const { createFriend: baseStoreCreateFriend, deleteFriend: baseStoreDeleteFriend } = createOperationData(
+    friends,
+    ["id"],
+    DatabaseEntityType.Friend,
+  );
+  const storeCreateFriend = (friend: User) => {
+    if (!friends.value.some(({ id }) => id === friend.id)) baseStoreCreateFriend(friend);
   };
-
-  const declineFriendRequest = async (senderId: string) => {
-    await $trpc.friend.declineFriendRequest.mutate(senderId);
-    pendingRequests.value = pendingRequests.value.filter(({ id }) => id !== senderId);
+  const storeDeleteFriend = (friendId: string) => {
+    baseStoreDeleteFriend({ id: friendId });
   };
-
-  const deleteFriend = async (friendId: string) => {
+  const deleteFriend = async (friendId: FriendUserIdInput) => {
     await $trpc.friend.deleteFriend.mutate(friendId);
-    friends.value = friends.value.filter(({ id }) => id !== friendId);
-  };
-
-  const sendFriendRequest = async (receiver: User) => {
-    await $trpc.friend.sendFriendRequest.mutate(receiver.id);
-    if (!sentRequests.value.some(({ id }) => id === receiver.id))
-      sentRequests.value = [receiver, ...sentRequests.value];
-  };
-
-  const storeAcceptFriendRequest = (receiverUser: User) => {
-    sentRequests.value = sentRequests.value.filter(({ id }) => id !== receiverUser.id);
-    if (!friends.value.some(({ id }) => id === receiverUser.id)) friends.value = [receiverUser, ...friends.value];
-  };
-
-  const storeCreatePendingRequest = (senderUser: User) => {
-    if (!pendingRequests.value.some(({ id }) => id === senderUser.id))
-      pendingRequests.value = [senderUser, ...pendingRequests.value];
-  };
-
-  const storeDeclineFriendRequest = (declinerId: string) => {
-    sentRequests.value = sentRequests.value.filter(({ id }) => id !== declinerId);
-  };
-
-  const storeDeleteFriend = (deleterId: string) => {
-    friends.value = friends.value.filter(({ id }) => id !== deleterId);
+    storeDeleteFriend(friendId);
   };
 
   return {
-    acceptFriendRequest,
-    declineFriendRequest,
     deleteFriend,
     friends,
-    pendingRequests,
-    sendFriendRequest,
-    sentRequests,
-    storeAcceptFriendRequest,
-    storeCreatePendingRequest,
-    storeDeclineFriendRequest,
+    storeCreateFriend,
     storeDeleteFriend,
   };
 });

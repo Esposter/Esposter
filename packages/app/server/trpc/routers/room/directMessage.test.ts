@@ -5,7 +5,7 @@ import type { User } from "better-auth";
 
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
-import { friendRouter } from "@@/server/trpc/routers/friend";
+import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
 import { DatabaseEntityType, friends, rooms } from "@esposter/db-schema";
@@ -15,13 +15,13 @@ import { afterEach, beforeAll, describe, expect, test } from "vitest";
 describe("directMessage", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["directMessage"]>;
-  let friendCaller: DecorateRouterRecord<TRPCRouter["friend"]>;
+  let friendRequestCaller: DecorateRouterRecord<TRPCRouter["friendRequest"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
 
   beforeAll(async () => {
     mockContext = await createMockContext();
     caller = createCallerFactory(directMessageRouter)(mockContext);
-    friendCaller = createCallerFactory(friendRouter)(mockContext);
+    friendRequestCaller = createCallerFactory(friendRequestRouter)(mockContext);
     roomCaller = createCallerFactory(roomRouter)(mockContext);
   });
 
@@ -32,9 +32,9 @@ describe("directMessage", () => {
 
   const makeFriends = async (userA: User, userB: User) => {
     await mockSessionOnce(mockContext.db, userA);
-    await friendCaller.sendFriendRequest(userB.id);
+    await friendRequestCaller.sendFriendRequest(userB.id);
     await mockSessionOnce(mockContext.db, userB);
-    await friendCaller.acceptFriendRequest(userA.id);
+    await friendRequestCaller.acceptFriendRequest(userA.id);
   };
 
   test("creates direct message", async () => {

@@ -1,109 +1,152 @@
 # Esbabbler — Friends Architecture
 
-## Overview
-
-A bidirectional friend-request system that acts as the social graph for Direct Messages. Users must be mutual friends before they can appear in each other's DM picker. This keeps the platform from becoming an open messaging free-for-all while staying lightweight — no separate messaging permissions layer is needed.
-
----
+Bidirectional friend-request system. Mutual friends are the only source of DM recipients — no separate messaging permissions layer needed.
 
 ## User Experience
 
-- A **Friends** nav item in the sidebar (above Rooms) navigates to `/messages/friends`
-- The Friends page has three sections:
-  1. **Add Friend** — search users by name; send a friend request
-  2. **Pending Requests** — incoming requests with Accept / Decline buttons
-  3. **Friends** — list of accepted friends with a Remove button
-- Accepted friends appear in the **New Message** dialog (see [`direct-messages.md`](direct-messages.md)) so you can start a DM with them
-
----
+- **Friends** nav item (above Rooms) → `/messages/friends`
+- Page sections: **Add Friend** (search by name), **Pending Requests** (Accept/Decline), **Friends** (list with Remove)
+- Accepted friends appear in **New Message** dialog (see [`direct-messages.md`](direct-messages.md))
 
 ## Data Model
 
-### Schema — `friends` table
+Three separate tables encode relationship state — no status enum needed.
+
+### `friend_requests` table — pending requests only
+
+```typescript
+// packages/db-schema/src/schema/friendRequests.ts
+
+export const friendRequests = pgTable(
+  "friend_requests",
+  {
+    // Natural key — getFriendshipId(senderId, receiverId).
+    // Conflict on insert = idempotent: duplicate sends are no-ops.
+    id: text("id").primaryKey(),
+    senderId: text("senderId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    receiverId: text("receiverId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+  },
+  {
+    extraConfig: ({ receiverId, senderId }) => [
+      // DB-side guard: self-requests rejected at the database level, not just the router.
+      check("no_self_friend_request", sql`${senderId} != ${receiverId}`),
+      index("friend_requests_receiverId_idx").on(receiverId),
+      index("friend_requests_senderId_idx").on(senderId),
+    ],
+  },
+);
+```
+
+### `friends` table — accepted friendships only
 
 ```typescript
 // packages/db-schema/src/schema/friends.ts
 
-export enum FriendshipStatus {
-  Pending = "Pending",
-  Accepted = "Accepted",
-  Blocked = "Blocked",
-}
-
 export const friends = pgTable(
   "friends",
   {
-    // Natural key — sorted([senderId, receiverId]).join(ID_SEPARATOR).
-    // Text PK instead of UUID: every lookup goes through this value,
-    // it never changes, and there is exactly one row per user pair.
+    // Same natural key — getFriendshipId(senderId, receiverId).
     id: text("id").primaryKey(),
-
-    senderId: text("sender_id")
+    receiverId: text("receiverId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    receiverId: text("receiver_id")
+    senderId: text("senderId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    status: friendshipStatusEnum("status").notNull().default(FriendshipStatus.Pending),
-    createdAt: timestamp("created_at").notNull(),
-    updatedAt: timestamp("updated_at").notNull(),
   },
-  ({ senderId, receiverId }) => [check("no_self_friendship", sql`${senderId} != ${receiverId}`)],
+  {
+    extraConfig: ({ receiverId, senderId }) => [
+      check("no_self_friendship", sql`${senderId} != ${receiverId}`),
+      index("friends_receiverId_idx").on(receiverId),
+      index("friends_senderId_idx").on(senderId),
+    ],
+  },
 );
 ```
 
-`id` is a text PK (not UUID) computed as `sorted([senderId, receiverId]).join(ID_SEPARATOR)` — same logic as `participantKey` on `rooms`. It follows the same logic as `usersToRooms` using `(userId, roomId)` as its composite PK — no surrogate needed when the natural key is already stable and unique. `senderId`/`receiverId` stay as plain columns to preserve directionality: only the `receiverId` user can accept or decline a pending request.
+Directionality preserved (who initiated). Same `id` computation → O(1) friendship check on either table.
+
+### `blocks` table — blocked users
+
+```typescript
+// packages/db-schema/src/schema/blocks.ts
+
+export const blocks = pgTable(
+  "blocks",
+  {
+    blockedId: text("blockedId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    blockerId: text("blockerId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+  },
+  {
+    extraConfig: ({ blockedId, blockerId }) => [
+      primaryKey({ columns: [blockerId, blockedId] }),
+      check("no_self_block", sql`${blockerId} != ${blockedId}`),
+      index("blocks_blockedId_idx").on(blockedId),
+    ],
+  },
+);
+```
+
+Blocking is unilateral. Either direction prevents friend requests and excludes from search.
 
 ### `id` idempotency
 
-`id = [senderId, receiverId].toSorted().join(ID_SEPARATOR)`
+`id = getFriendshipId(senderId, receiverId)` — deterministic text PK (mirrors `participantKey` on rooms). Duplicate send → conflict on `id` → no-op. Relationship check → O(1) PK lookup.
 
-This mirrors the `participantKey` pattern used on the `rooms` table for DMs — a deterministic text key computed from the two participants. Because it is the PK:
-
-- If A sends a request to B, `id = sorted([A, B]).join('|')`
-- If B tries to send a request to A before accepting, the insert conflicts on `id` → no-op
-- Any query checking "do A and B have a relationship?" is a single O(1) PK lookup
-
-### Status state machine
+### State machine
 
 ```text
-(no row)  ──sendFriendRequest──►  Pending
-Pending   ──acceptFriendRequest──► Accepted
-Pending   ──declineFriendRequest──► (row deleted)
-Accepted  ──deleteFriend──────────► (row deleted)
-Accepted  ──blockUser──────────────► Blocked   (future)
+(no row anywhere)  ──sendFriendRequest──►  friend_requests row
+friend_requests    ──acceptFriendRequest──► (deleted) + friends row inserted
+friend_requests    ──declineFriendRequest──► (deleted)
+friends            ──deleteFriend──────────► (deleted)
+friends/requests   ──blockUser─────────────► both rows deleted + blocks row inserted
+blocks             ──unblockUser───────────► (deleted)
 ```
-
----
 
 ## API
 
-New tRPC router: `packages/app/server/trpc/routers/friend.ts`
+### `packages/app/server/trpc/routers/friend.ts`
 
-| Procedure              | Input             | Action                                                                                                                |
-| ---------------------- | ----------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `sendFriendRequest`    | `receiverId`      | Insert row with `id=sorted([me,receiverId]).join(sep)`, `status=Pending`. Conflict on `id` → no-op (idempotent).      |
-| `acceptFriendRequest`  | `senderId`        | Update `WHERE id=sorted([senderId,me]).join(sep) AND receiverId=me AND status=Pending` → `status=Accepted`            |
-| `declineFriendRequest` | `senderId`        | Delete `WHERE id=sorted([senderId,me]).join(sep) AND receiverId=me AND status=Pending`                                |
-| `deleteFriend`         | `friendId`        | Delete `WHERE id=sorted([me,friendId]).join(sep) AND status=Accepted`                                                 |
-| `readFriends`          | cursor pagination | `WHERE (senderId=me OR receiverId=me) AND status=Accepted`. Returns paginated `User[]` of the _other_ party via join. |
-| `readPendingRequests`  | —                 | `WHERE receiverId=me AND status=Pending`. Returns `User[]` of senders.                                                |
-| `readSentRequests`     | —                 | `WHERE senderId=me AND status=Pending`. Returns `User[]` of receivers.                                                |
+| Procedure      | Input          | Action                                                                                                    |
+| -------------- | -------------- | --------------------------------------------------------------------------------------------------------- |
+| `deleteFriend` | `friendId`     | DELETE from `friends` WHERE `id=sorted([me,friendId]).join(sep)`.                                         |
+| `readFriends`  | —              | SELECT from `friends` WHERE `senderId=me OR receiverId=me`. Returns `User[]` of the other party via join. |
+| `searchUsers`  | `name: string` | `WHERE ilike(users.name, '%name%')` excluding self and any block relationship in either direction.        |
 
-Additional procedure in `packages/app/server/trpc/routers/friend.ts`:
+### `packages/app/server/trpc/routers/friendRequest.ts`
 
-| Procedure     | Input          | Action                                                                               |
-| ------------- | -------------- | ------------------------------------------------------------------------------------ |
-| `searchUsers` | `name: string` | `WHERE ilike(users.name, '%name%')` with limit. Used by the Add Friend search input. |
+| Procedure              | Input        | Action                                                                                                            |
+| ---------------------- | ------------ | ----------------------------------------------------------------------------------------------------------------- |
+| `sendFriendRequest`    | `receiverId` | Insert into `friend_requests` with `id=sorted([me,receiverId]).join(sep)`. Conflict on `id` → no-op (idempotent). |
+| `acceptFriendRequest`  | `senderId`   | Transaction: DELETE from `friend_requests` WHERE `id=X AND receiverId=me`, then INSERT into `friends`.            |
+| `declineFriendRequest` | `senderId`   | DELETE from `friend_requests` WHERE `id=X AND receiverId=me`.                                                     |
+| `readFriendRequests`   | —            | SELECT from `friend_requests` WHERE `receiverId=me`. Returns incoming pending `FriendRequestWithRelations[]`.     |
 
----
+### `packages/app/server/trpc/routers/block.ts`
+
+| Procedure          | Input           | Action                                                                                                         |
+| ------------------ | --------------- | -------------------------------------------------------------------------------------------------------------- |
+| `blockUser`        | `targetUserId`  | DELETE from `friends` and `friend_requests` by id. INSERT into `blocks`. Idempotent via `onConflictDoNothing`. |
+| `unblockUser`      | `blockedUserId` | DELETE from `blocks` WHERE `blockerId=me AND blockedId=target`.                                                |
+| `readBlockedUsers` | —               | SELECT from `blocks` WHERE `blockerId=me`. Returns `User[]`.                                                   |
 
 ## Folder Structure
 
 ```text
 packages/db-schema/src/
-  schema/friends.ts                             # FriendshipStatus enum + friends table
-  models/shared/DatabaseEntityType.ts           # add Friend variant
+  schema/friendRequests.ts                      # friend_requests table
+  schema/friends.ts                             # friends table (accepted only)
+  schema/blocks.ts                              # blocks table
+  models/shared/DatabaseEntityType.ts           # Friend + FriendRequest + Block variants
 
 packages/app/
   app/
@@ -112,33 +155,26 @@ packages/app/
         Index.vue                               # add Friends nav item above Rooms
     pages/messages/
       friends.vue                               # Friends management page
-    store/message/
-      friend.ts                                 # friends / pendingRequests / sentRequests state
-    composables/message/friend/
+    store/message/user/
+      friend.ts                                 # friends state
+      friendRequest.ts                          # pendingRequests / sentRequests state
+      block.ts                                  # blockedUsers state
+    composables/message/user/
       useReadFriends.ts                         # populates friend store from tRPC
+    composables/message/subscribables/
+      useFriendSubscribables.ts                 # real-time subscriptions for friend events
   server/trpc/routers/
-    friend.ts                                   # all friend procedures
-    index.ts                                    # register friendRouter
+    friend.ts                                   # deleteFriend, readFriends, searchUsers
+    friendRequest.ts                            # sendFriendRequest, acceptFriendRequest, declineFriendRequest, readFriendRequests
+    block.ts                                    # blockUser, unblockUser, readBlockedUsers
+    index.ts                                    # register friendRouter, friendRequestRouter, blockRouter
 ```
-
----
 
 ## Relationship to Direct Messages
 
-Friends are the only source of recipients in the New Message dialog. The flow is:
-
-1. User navigates to Friends page → sends a friend request to another user
-2. Recipient accepts on their Friends page
-3. Either user clicks "+" next to Direct Messages → dialog lists their accepted friends
-4. They select one or more friends → `createDirectMessage(selectedUserIds)` is called
-5. The DM room is created (or the existing one is surfaced) and the user is navigated there
-
-This keeps DM creation gated behind a mutual opt-in, matching the privacy expectations of a casual social platform.
-
----
+Friends are the only DM recipients. New Message dialog lists accepted friends → `createDirectMessage(selectedUserIds)` → DM room created/surfaced.
 
 ## Open Questions
 
-- **Blocked status**: the `Blocked` variant is reserved in the enum but not yet implemented. When added, blocked users should be excluded from `searchUsers` results for the blocker, and `sendFriendRequest` should reject if a block row exists in either direction.
 - **Friend request notifications**: should the recipient receive a Web Push notification when a friend request arrives? Low-urgency — can be added alongside the main notification pass.
 - **Mutual friend discovery**: "You may know" suggestions based on shared room membership — YAGNI at current scale.

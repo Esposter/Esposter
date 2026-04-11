@@ -1,23 +1,43 @@
 <script setup lang="ts">
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
+import { authClient } from "@/services/auth/authClient";
 import { getTypingMessage } from "@/services/message/getTypingMessage";
+import { useMessageStore } from "@/store/message";
 import { useDataStore } from "@/store/message/data";
 import { useInputStore } from "@/store/message/input";
+import { useKeyboardShortcutsDialogStore } from "@/store/message/input/keyboardShortcutsDialog";
 import { useReplyStore } from "@/store/message/input/reply";
+import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 import { useRoomStore } from "@/store/message/room";
-import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
+import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
+import { MESSAGE_MAX_LENGTH, MessageType } from "@esposter/db-schema";
 import { Extension } from "@tiptap/vue-3";
 
+const session = authClient.useSession();
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const roomName = useRoomName(currentRoomId);
 const dataStore = useDataStore();
 const { sendMessage } = dataStore;
-const { typings } = storeToRefs(dataStore);
+const { items, typings } = storeToRefs(dataStore);
 const typingMessage = computed(() => getTypingMessage(typings.value.map(({ username }) => username)));
+const messageStore = useMessageStore();
+const { editingRowKey } = storeToRefs(messageStore);
 const keyboardExtension = new Extension({
   addKeyboardShortcuts() {
     return {
+      ArrowUp: () => {
+        if (!EMPTY_TEXT_REGEX.test(this.editor.getText())) return false;
+        const userId = session.value.data?.user.id;
+        if (!userId) return false;
+        const lastOwnMessage = items.value.find(
+          ({ deletedAt, type, userId: messageUserId }) =>
+            !deletedAt && type === MessageType.Message && messageUserId === userId,
+        );
+        if (!lastOwnMessage) return false;
+        editingRowKey.value = lastOwnMessage.rowKey;
+        return true;
+      },
       Enter: () => {
         getSynchronizedFunction(() => sendMessage(this.editor))();
         return true;
@@ -34,15 +54,32 @@ const replyStore = useReplyStore();
 const { replyMap, rowKey } = storeToRefs(replyStore);
 const reply = computed(() => (rowKey.value ? replyMap.value.get(rowKey.value) : undefined));
 const uploadFiles = useUploadFiles();
+const slashCommandStore = useSlashCommandStore();
+const { pendingSlashCommand } = storeToRefs(slashCommandStore);
+const keyboardShortcutsDialogStore = useKeyboardShortcutsDialogStore();
+const { isOpen } = storeToRefs(keyboardShortcutsDialogStore);
+
+useEventListener("keydown", (event: KeyboardEvent) => {
+  const target = event.target;
+  if (
+    target instanceof HTMLElement &&
+    (target.isContentEditable || target.tagName === "INPUT" || target.tagName === "TEXTAREA")
+  )
+    return;
+  else if (event.shiftKey && event.key === "?") isOpen.value = true;
+});
 </script>
 
 <template>
   <MessageModelMessageForwardRoomDialog />
   <MessageModelMessageInputPollDialog />
+  <MessageModelMessageInputKeyboardShortcutsDialog />
   <MessageModelMessageFileDropzoneBackground />
   <div w-full>
     <MessageModelMessageInputReplyHeader v-if="reply" :reply @close="rowKey = ''" />
+    <MessageModelMessageInputSlashCommandParameters v-if="pendingSlashCommand" />
     <RichTextEditor
+      v-else
       v-model="input"
       :placeholder="`Message ${roomName}`"
       :limit="MESSAGE_MAX_LENGTH"

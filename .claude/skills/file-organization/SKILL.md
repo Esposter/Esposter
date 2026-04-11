@@ -75,6 +75,23 @@ Commands are classes extending `ADataSourceCommand<T extends CommandType>`. Each
 
 Store MIME type strings in the relevant configuration map (e.g. `DataSourceConfigurationMap`) rather than calling `mime-types` `lookup` at runtime — `mime-types` uses Node.js `path.extname` which is not available in the browser. Access `mimeType` through the configuration map at the call site.
 
+## Whitespace & Comments
+
+- **No blank line before a `//` comment that introduces the next block** — the comment itself is the separator. Only add a blank line before an uncommented block:
+
+  ```ts
+  // CORRECT — comment acts as separator, no blank line needed before it
+  const foo = () => { ... };
+  // Called when something happens
+  const bar = () => { ... };
+
+  // WRONG — blank line + comment is redundant
+  const foo = () => { ... };
+
+  // Called when something happens
+  const bar = () => { ... };
+  ```
+
 ## Line Endings
 
 - All files must use **LF** line endings (`\n`), not CRLF.

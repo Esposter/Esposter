@@ -1,6 +1,7 @@
 import type { Room } from "@/schema/rooms";
 import type { User } from "@/schema/users";
 
+import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { rooms } from "@/schema/rooms";
 import { users } from "@/schema/users";
@@ -18,7 +19,7 @@ export const notificationTypeSchema = z.enum(NotificationType) satisfies z.ZodTy
 
 export const notificationTypeEnum = pgEnum("notification_type", NotificationType);
 
-export const usersToRooms = messageSchema.table(
+export const usersToRooms = pgTable(
   "users_to_rooms",
   {
     isHidden: boolean("isHidden").notNull().default(false),
@@ -30,7 +31,10 @@ export const usersToRooms = messageSchema.table(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },
-  ({ roomId, userId }) => [primaryKey({ columns: [userId, roomId] })],
+  {
+    extraConfig: ({ roomId, userId }) => [primaryKey({ columns: [userId, roomId] })],
+    schema: messageSchema,
+  },
 );
 export type UserToRoom = typeof usersToRooms.$inferSelect;
 
