@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { Room } from "@esposter/db-schema";
 
-import { useRoomCategoryStore } from "@/store/message/roomCategory";
 import { useRoomStore } from "@/store/message/room";
+import { useRoomCategoryStore } from "@/store/message/roomCategory";
 
 interface RoomSettingsGeneralProps {
   roomId: Room["id"];
@@ -19,15 +19,20 @@ const roomStore = useRoomStore();
 const { storeUpdateRoom } = roomStore;
 const { rooms } = storeToRefs(roomStore);
 const room = computed(() => rooms.value.find(({ id }) => id === roomId));
-
-const selectedCategoryId = ref<null | string>(room.value?.categoryId ?? null);
+const selectedCategoryId = ref<null | string>(null);
+const categoryItems = computed(() => [{ id: null, name: "None (uncategorized)" }, ...categories.value]);
 
 const save = async () => {
   const updatedRoom = await $trpc.room.updateRoom.mutate({ categoryId: selectedCategoryId.value, id: roomId });
   storeUpdateRoom(updatedRoom);
 };
 
-const categoryItems = computed(() => [{ id: null, name: "None (uncategorized)" }, ...categories.value]);
+watchImmediate(
+  () => room.value?.categoryId,
+  (categoryId) => {
+    selectedCategoryId.value = categoryId ?? null;
+  },
+);
 </script>
 
 <template>
@@ -43,7 +48,7 @@ const categoryItems = computed(() => [{ id: null, name: "None (uncategorized)" }
         density="compact"
         variant="outlined"
         hide-details
-        @update:model-value="save"
+        @update:model-value="save()"
       />
       <div text-xs text-gray>Assign this room to a category to group it in the sidebar.</div>
     </div>

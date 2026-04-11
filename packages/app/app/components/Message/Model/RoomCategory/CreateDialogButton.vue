@@ -8,9 +8,9 @@ const dialog = ref(false);
 const name = ref("");
 
 const onSubmit = async () => {
-  const trimmed = name.value.trim();
-  if (!trimmed) return;
-  await createRoomCategory({ name: trimmed });
+  const trimmedName = name.value.trim();
+  if (!trimmedName) return;
+  await createRoomCategory({ name: trimmedName });
   name.value = "";
   dialog.value = false;
 };
@@ -35,11 +35,11 @@ const onSubmit = async () => {
         :maxlength="ROOM_CATEGORY_NAME_MAX_LENGTH"
         variant="outlined"
         autofocus
-        @keydown.enter="onSubmit"
+        @keydown.enter="onSubmit()"
       />
       <div flex justify-end gap-2>
         <v-btn text="Cancel" variant="plain" @click="dialog = false" />
-        <v-btn color="primary" text="Create" variant="elevated" @click="onSubmit" />
+        <v-btn color="primary" text="Create" variant="elevated" @click="onSubmit()" />
       </div>
     </StyledCard>
   </v-dialog>

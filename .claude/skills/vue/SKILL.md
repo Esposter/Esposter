@@ -215,6 +215,11 @@ window.cancelAnimationFrame(frame);
 
 Standard built-ins available in all environments (Node.js + browser) do **not** need the `window.` prefix: `Uint8Array`, `Map`, `Set`, `JSON`, `Promise`, `crypto`, etc.
 
+## Routing
+
+- **`useRouter()` for reactive contexts** — use when reading route data inside a `computed` or `watch` (e.g. `router.currentRoute.value.params.id` in a `computed`), or when calling navigation methods (`router.push`, `router.replace`).
+- **`useRoute()` for plain reads** — use when reading params/query outside of a reactive context (e.g. inside a regular function or async handler).
+
 ## Vuetify
 
 See the **vuetify** skill for all Vuetify-specific conventions.

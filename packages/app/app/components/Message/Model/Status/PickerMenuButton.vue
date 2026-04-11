@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { SelectableStatuses } from "@/models/message/user/status/SelectableStatuses";
+import { StatusIconMap } from "@/models/message/user/status/StatusIconMap";
 import { authClient } from "@/services/auth/authClient";
+import { StatusBadgePropsMap } from "@/services/message/StatusBadgePropsMap";
 import { useStatusStore } from "@/store/message/user/status";
 import { STATUS_MESSAGE_MAX_LENGTH, UserStatus } from "@esposter/db-schema";
 
@@ -20,19 +23,10 @@ watch(menu, (isOpen) => {
   statusMessage.value = message.value;
 });
 
-const onSave = async () => {
+const save = async () => {
   await $trpc.user.upsertStatus.mutate({ message: statusMessage.value, status: selectedStatus.value });
   menu.value = false;
 };
-
-const StatusIconMap = {
-  [UserStatus.DoNotDisturb]: { color: "red", icon: "mdi-minus-circle" },
-  [UserStatus.Idle]: { color: "yellow-darken-2", icon: "mdi-moon-waning-crescent" },
-  [UserStatus.Offline]: { color: "grey", icon: "mdi-circle-outline" },
-  [UserStatus.Online]: { color: "green", icon: "mdi-circle" },
-} as const satisfies Record<UserStatus, { color: string; icon: string }>;
-
-const selectableStatuses = [UserStatus.Online, UserStatus.Idle, UserStatus.DoNotDisturb] as const;
 </script>
 
 <template>
@@ -44,17 +38,17 @@ const selectableStatuses = [UserStatus.Online, UserStatus.Idle, UserStatus.DoNot
       <div text-sm font-bold>Set Status</div>
       <v-list density="compact" py-0>
         <v-list-item
-          v-for="selectableStatus in selectableStatuses"
+          v-for="selectableStatus in SelectableStatuses"
           :key="selectableStatus"
-          :active="selectableStatus === status"
+          :active="selectableStatus === selectedStatus"
           :value="selectableStatus"
           rounded
           @click="selectedStatus = selectableStatus"
         >
           <template #prepend>
             <v-icon
-              :color="StatusIconMap[selectableStatus].color"
-              :icon="StatusIconMap[selectableStatus].icon"
+              :color="StatusBadgePropsMap[selectableStatus].color"
+              :icon="StatusIconMap[selectableStatus]"
               size="small"
               mr-2
             />
@@ -70,10 +64,10 @@ const selectableStatuses = [UserStatus.Online, UserStatus.Idle, UserStatus.DoNot
         hide-details
         :maxlength="STATUS_MESSAGE_MAX_LENGTH"
         variant="outlined"
-        @keydown.enter="onSave()"
+        @keydown.enter="save()"
       />
       <div flex justify-end>
-        <v-btn color="primary" size="small" text="Save" variant="elevated" @click="onSave()" />
+        <v-btn color="primary" size="small" text="Save" variant="elevated" @click="save()" />
       </div>
     </StyledCard>
   </v-menu>

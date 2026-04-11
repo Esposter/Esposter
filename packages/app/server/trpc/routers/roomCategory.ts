@@ -5,12 +5,10 @@ import { deleteRoomCategoryInputSchema } from "#shared/models/db/roomCategory/De
 import { updateRoomCategoryInputSchema } from "#shared/models/db/roomCategory/UpdateRoomCategoryInput";
 import { router } from "@@/server/trpc";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { DatabaseEntityType, roomCategories, selectRoomCategorySchema } from "@esposter/db-schema";
+import { DatabaseEntityType, roomCategories } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, asc, eq } from "drizzle-orm";
-
-const readRoomCategoriesInputSchema = selectRoomCategorySchema.shape.userId.optional();
 
 export const roomCategoryRouter = router({
   createRoomCategory: standardAuthedProcedure
@@ -48,16 +46,13 @@ export const roomCategoryRouter = router({
         });
       return deleted;
     }),
-  readRoomCategories: standardAuthedProcedure
-    .input(readRoomCategoriesInputSchema)
-    .query<RoomCategory[]>(async ({ ctx, input }) => {
-      const userId = input ?? ctx.getSessionPayload.user.id;
-      return ctx.db
-        .select()
-        .from(roomCategories)
-        .where(eq(roomCategories.userId, userId))
-        .orderBy(asc(roomCategories.position), asc(roomCategories.name));
-    }),
+  readRoomCategories: standardAuthedProcedure.query<RoomCategory[]>(({ ctx }) =>
+    ctx.db
+      .select()
+      .from(roomCategories)
+      .where(eq(roomCategories.userId, ctx.getSessionPayload.user.id))
+      .orderBy(asc(roomCategories.position), asc(roomCategories.name)),
+  ),
   updateRoomCategory: standardAuthedProcedure
     .input(updateRoomCategoryInputSchema)
     .mutation<RoomCategory>(async ({ ctx, input: { id, ...rest } }) => {
