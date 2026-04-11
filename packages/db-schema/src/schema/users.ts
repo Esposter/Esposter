@@ -28,9 +28,7 @@ export const users = pgTable(
     name: text("name").notNull(),
     updatedAt: timestamp("updated_at").notNull(),
   },
-  ({ name }) => [
-    check("name", sql`LENGTH(${name}) >= 1 AND LENGTH(${name}) <= ${sql.raw(USER_NAME_MAX_LENGTH.toString())}`),
-  ],
+  ({ name }) => [check("name", sql`LENGTH(${name}) BETWEEN 1 AND ${sql.raw(USER_NAME_MAX_LENGTH.toString())}`)],
 );
 
 export type User = typeof users.$inferSelect;

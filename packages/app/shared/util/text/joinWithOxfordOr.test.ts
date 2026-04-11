@@ -1,4 +1,4 @@
-import { joinWithOxfordOr } from "@/util/text/joinWithOxfordOr";
+import { joinWithOxfordOr } from "#shared/util/text/joinWithOxfordOr";
 import { describe, expect, test } from "vitest";
 
 describe(joinWithOxfordOr, () => {

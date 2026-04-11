@@ -3,7 +3,7 @@ import type { FooterBarAppendSlotProps } from "@/components/RichTextEditor/Foote
 
 import { POST_DESCRIPTION_MAX_LENGTH } from "@esposter/db-schema";
 
-export interface DescriptionRichTextEditorProps {
+interface DescriptionRichTextEditorProps {
   height?: string;
   placeholder?: string;
 }

@@ -18,7 +18,7 @@ const filteredFriends = computed(() =>
     ? friends.value.filter(({ name }) => name.toLowerCase().includes(search.value.toLowerCase()))
     : friends.value,
 );
-const onSubmit = async (_event: SubmitEventPromise, onComplete: () => void) => {
+const submit = async (_event: SubmitEventPromise, onComplete: () => void) => {
   await createDirectMessage(selectedUserIds.value);
   selectedUserIds.value = [];
   search.value = "";
@@ -32,7 +32,7 @@ const onSubmit = async (_event: SubmitEventPromise, onComplete: () => void) => {
     :card-props="{ title: 'New Message', minWidth: 400 }"
     :confirm-button-props="{ text: 'Create Message' }"
     :confirm-button-attrs="{ disabled: selectedUserIds.length === 0 }"
-    @submit="onSubmit"
+    @submit="submit"
   >
     <v-container>
       <v-text-field v-model="search" placeholder="Search friends" autofocus clearable hide-details mb-2 />

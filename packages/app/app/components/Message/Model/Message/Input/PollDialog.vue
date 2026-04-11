@@ -16,8 +16,11 @@ const dataStore = useDataStore();
 const { createMessage } = dataStore;
 const question = ref("");
 const options = ref(["", ""]);
-const onSubmit = async (_event: SubmitEventPromise, onComplete: () => void) => {
-  if (!currentRoomId.value) return;
+const submit = async (_event: SubmitEventPromise, onComplete: () => void) => {
+  if (!currentRoomId.value) {
+    onComplete();
+    return;
+  }
   const pollContent: PollMessageContent = {
     options: options.value.map((label) => ({ id: crypto.randomUUID(), label: label.trim() })),
     question: question.value.trim(),
@@ -37,7 +40,7 @@ const onSubmit = async (_event: SubmitEventPromise, onComplete: () => void) => {
     v-model="isOpen"
     :card-props="{ title: 'Create Poll' }"
     :confirm-button-props="{ text: 'Create Poll', prependIcon: 'mdi-poll' }"
-    @submit="onSubmit"
+    @submit="submit"
   >
     <v-container>
       <v-row>

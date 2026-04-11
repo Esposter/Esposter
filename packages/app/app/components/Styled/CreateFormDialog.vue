@@ -2,7 +2,7 @@
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
 import type { VBtn, VCard } from "vuetify/components";
 
-export interface StyledCreateFormDialogProps {
+interface StyledCreateFormDialogProps {
   cardProps?: VCard["$props"];
   confirmButtonProps?: VBtn["$props"];
 }

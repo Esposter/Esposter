@@ -69,7 +69,19 @@ Example:
 
 ## Template Conventions
 
-- **No bare function references in `@event` bindings** — always wrap in an explicit arrow function: `@complete="(scene, tilemap) => useCreateTilemapAssets(scene, tilemap)"` not `@complete="useCreateTilemapAssets"`. Bare references cause accidental argument forwarding (extra Vue-internal args get passed). This mirrors the TypeScript rule: never pass a naked function reference.
+- **No bare function references in `@event` bindings** — bare references forward the DOM/Vue event object as the first argument, which is almost always unintended. Use `fn()` for zero-arg calls and an explicit arrow function when arguments are needed:
+
+  ```vue
+  <!-- CORRECT — zero-arg call, no event forwarding -->
+  @click="onSave()" @keydown.enter="onSave()"
+
+  <!-- CORRECT — arrow function when passing specific args -->
+  @complete="(scene, tilemap) => useCreateTilemapAssets(scene, tilemap)"
+
+  <!-- WRONG — forwards the click/keydown Event object as first arg -->
+  @click="onSave" @keydown.enter="onSave"
+  ```
+
 - **`v-for` destructuring** — always destructure `v-for` bindings when properties are accessed in the template: `v-for="{ value, icon, title } of items"` not `v-for="item of items"` + `item.value`. Only keep a full reference when the whole object is needed (e.g. passed as a prop or stored in a ref). In that case, name the loop variable to match the prop it will be passed to, enabling `:propName` shorthand.
 - **Prop shorthand naming** — name local variables to match their target prop so Vue's `:propName` shorthand works without explicit assignment. For example, if the prop is `dataSourceType`, the local variable must also be `dataSourceType`.
 - **`#activator` always first** — in components that use both `#activator` and other slots (e.g. `v-tooltip`, `v-menu`), always place the `#activator` template as the first child.
@@ -131,10 +143,161 @@ When branching on a type/discriminant, use in this priority order:
 3. **`if / else if / else`** — explicit branches for complex conditions
 4. **Never** chain standalone `if` statements for mutually exclusive conditions. Always use `else if` / `else` or a `switch`.
 
+## Auth Session
+
+Always pass `useFetch` as the argument to `authClient.useSession()` in Vue components. This makes better-auth use Nuxt's SSR-aware `useFetch` internally instead of its default fetch:
+
+```ts
+// CORRECT — SSR-aware
+const { data: session } = await authClient.useSession(useFetch);
+
+// WRONG — skips Nuxt's useFetch, breaks SSR
+const { data: session } = await authClient.useSession();
+```
+
+## Upsert Forms — Create vs Edit Mode
+
+When a form component handles both create and edit, use an explicit `isCreate` prop (default `false`) rather than deriving mode from the presence of `initialValues`. The parent page knows the intent and passes `is-create` explicitly.
+
+For local form state, use a single `values` ref over separate per-field refs:
+
+```ts
+interface PostUpsertFormProps {
+  initialValues?: Pick<Post, "description" | "title">;
+  isCreate?: boolean;
+}
+
+const { initialValues = { description: "", title: "" }, isCreate = false } = defineProps<PostUpsertFormProps>();
+const values = ref(initialValues);
+```
+
+- Template binds to `values.title`, `values.description` — Vue auto-unwraps the ref
+- Emit passes `values` directly (auto-unwrapped in template to the plain object)
+- `isCreate` drives button text: `isCreate ? 'Post' : 'Edit Post'`
+- Create page passes `is-create`; update page passes `:initial-values` — no `is-create`
+
+The same `isCreate?: boolean` pattern applies to dialog buttons (e.g. `CrudView/EditDialogButton`) where it also skips the equality check that would otherwise disable the save button when form state matches the original.
+
 ## After Finishing Code Changes
 
 1. Run `pnpm format` from the **repo root** — formats all packages at once (~1.6s, oxfmt).
 2. Run `pnpm typecheck` in `packages/app` as a background task — takes too long to block on. The user reviews results when ready.
+
+## Watch Decision Tree — When to Use (and When Not to Use) `watch`
+
+Reach for `watch` only after exhausting these alternatives:
+
+### 1. Read-only derived value → `computed`
+
+If a value is entirely derived from existing reactive state and never independently set, use `computed`. No `watch` needed.
+
+```typescript
+// WRONG — watch + local ref for read-only derivation
+const displayName = ref("");
+watchImmediate(
+  () => user.value?.name,
+  (name) => {
+    displayName.value = name ?? "";
+  },
+);
+
+// CORRECT
+const displayName = computed(() => user.value?.name ?? "");
+```
+
+### 2. Form state initialized from props/store → initialize the `ref` directly
+
+When a component has local form state that starts from a prop or store value but is independently editable by the user, initialize the `ref` directly. **Never use `watchImmediate` just to set an initial value** — that is always a code smell.
+
+```typescript
+// WRONG — watchImmediate to initialize is redundant; ref starts as null then immediately overwritten
+const selectedCategoryId = ref<null | string>(null);
+watchImmediate(
+  () => room.value?.categoryId,
+  (categoryId) => {
+    selectedCategoryId.value = categoryId ?? null;
+  },
+);
+
+// CORRECT — initialize directly; no watch needed
+const selectedCategoryId = ref(room.value?.categoryId ?? null);
+```
+
+If the source can change externally while the form is open (e.g. real-time collaboration), add a plain `watch` — but not `watchImmediate`:
+
+```typescript
+const selectedCategoryId = ref(room.value?.categoryId ?? null);
+watch(
+  () => room.value?.categoryId,
+  (categoryId) => {
+    selectedCategoryId.value = categoryId ?? null;
+  },
+);
+```
+
+**Prefer props-down when the parent is adjacent and already has the data.** If the immediate parent already computes the value, pass it as a prop. The child initializes from the prop — no watch, no store duplication:
+
+```typescript
+// Parent passes :category-id="room?.categoryId ?? null"
+// Child:
+const { categoryId } = defineProps<Props>();
+const selectedCategoryId = ref(categoryId); // no watch, no store read
+```
+
+Only pass through an intermediate generic router component (e.g. `Content.vue` that routes to all settings types) if the prop is truly shared by all children. If only one specific settings type needs it, keep the store read in the leaf component and just initialize the ref directly.
+
+### 3. Reset form state when a dialog/menu opens → only if data changes externally
+
+Ask: **can the underlying data change between opens from an external source** (WebSocket push, another tab, another user)?
+
+- **Yes** → `watch` the open boolean and reset on open
+- **No** → just initialize the `ref` once at setup; the watch is ceremony
+
+```typescript
+// ONLY justified if status can change from an external source (e.g. WebSocket)
+watch(menu, (isOpen) => {
+  if (!isOpen) return;
+  selectedStatus.value = status.value;
+  statusMessage.value = message.value;
+});
+
+// If this component is the only mutation path, skip the watch entirely:
+const selectedStatus = ref(status.value); // initialized once; fine
+```
+
+If the user opens → changes → closes without saving → reopens, they'll see their unsaved selection. That is usually acceptable (or even desirable — they indicated intent). The watch-to-reset pattern forces a reset on every open, which can feel punishing.
+
+### 4. Bridging to external imperative APIs → `watch` is correct
+
+Vue's reactivity cannot reach into Phaser, Three.js, Tiptap, Desmos, or any DOM-imperative API. `watch` is the correct bridge:
+
+```typescript
+watch(isDark, (newIsDark) => {
+  calculator.updateSettings({ invertedColors: newIsDark });
+});
+```
+
+### 5. Async side effects triggered by reactive state → `watch` is correct
+
+Auto-save, API calls on throttled search, typing indicators — these are inherently imperative:
+
+```typescript
+watch(throttledSearchQuery, async (newQuery) => {
+  const results = await search(newQuery);
+  initializePaginationData(results);
+});
+```
+
+### Summary
+
+| Scenario                       | Pattern                                                   |
+| ------------------------------ | --------------------------------------------------------- |
+| Read-only derivation           | `computed`                                                |
+| Form init from prop/store      | `ref(source.value)` directly — never `watchImmediate`     |
+| Form reset on dialog/menu open | `watch(dialog, (isOpen) => { if (!isOpen) return; ... })` |
+| Two-way store binding          | Writable `computed` (get/set)                             |
+| External imperative API        | `watch`                                                   |
+| Async side effect              | `watch`                                                   |
 
 ## Watch Aliases
 
@@ -165,7 +328,7 @@ For a prop dependency, wrap it in a getter: `() => isActive`.
 - Always place `watch`, `onMounted`, `onUnmounted`, and other Vue lifecycle hooks/watchers at the **bottom** of `<script setup>`, after all `const` assignments.
 - Always put a blank line before them to visually separate them from regular `const` assignments.
 - Always wrap the callback in an explicit arrow function — never pass a function reference directly. This avoids scope/binding issues and prevents accidental argument forwarding: `onUnmounted(() => { reset(); })` not `onUnmounted(reset)`.
-- This applies everywhere — `.map()`, `.filter()`, event handlers, lifecycle hooks, etc. Always use `array.map((item) => fn(item))` not `array.map(fn)`.
+- This applies everywhere — `.map()`, `.filter()`, lifecycle hooks, JS event listeners, etc. Always use `array.map((item) => fn(item))` not `array.map(fn)`. Vue template `@event` bindings are handled separately in Template Conventions: use `@click="fn()"` (call expression), not `@click="fn"` (bare reference).
 
 ## Browser Globals — Always Use `window.` Prefix
 
@@ -190,6 +353,11 @@ window.cancelAnimationFrame(frame);
 ```
 
 Standard built-ins available in all environments (Node.js + browser) do **not** need the `window.` prefix: `Uint8Array`, `Map`, `Set`, `JSON`, `Promise`, `crypto`, etc.
+
+## Routing
+
+- **`useRouter()` for reactive contexts** — use when reading route data inside a `computed` or `watch` (e.g. `router.currentRoute.value.params.id` in a `computed`), or when calling navigation methods (`router.push`, `router.replace`).
+- **`useRoute()` for plain reads** — use when reading params/query outside of a reactive context (e.g. inside a regular function or async handler).
 
 ## Vuetify
 

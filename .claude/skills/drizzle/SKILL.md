@@ -126,6 +126,17 @@ description: Esposter Drizzle ORM conventions — column naming (camelCase match
   }));
   ```
 
+## Self-Joins (Same Table Twice)
+
+- **Always use `alias()` for both references** when joining a table to itself — never use the raw table object for either side. Drizzle does not auto-alias; using the raw table twice emits the same SQL table name in both join clauses.
+- **Name variables and alias strings `tableName1`, `tableName2`, etc.** — consistent numeric suffix, no role-based names:
+
+  ```ts
+  const usersToRooms1 = alias(usersToRooms, "usersToRooms1");
+  const usersToRooms2 = alias(usersToRooms, "usersToRooms2");
+  ctx.db.from(usersToRooms1).innerJoin(usersToRooms2, eq(usersToRooms2.roomId, usersToRooms1.roomId));
+  ```
+
 ## Batch Inserts
 
 - **Always use batch inserts over sequential inserts** — never loop over an array and issue individual `INSERT` statements. Instead, map to a values array and insert in one statement:
@@ -143,6 +154,48 @@ description: Esposter Drizzle ORM conventions — column naming (camelCase match
   ```
 
   This applies everywhere: seed scripts, junction-table population, bulk upserts, etc. The only exception is when each row's insert result must be inspected individually before proceeding.
+
+## CHECK Constraints with `sql` Template Literals
+
+- **Always use `sql\`\`` template literals** for CHECK constraint expressions — never pass a raw string.
+- **Column references interpolate directly** — `${columnRef}` is fine; Drizzle recognises column objects and emits the correct column name in the SQL:
+  ```ts
+  check("name", sql`LENGTH(${name}) <= ${sql.raw(MAX_LENGTH.toString())}`);
+  ```
+- **Numeric literals MUST use `sql.raw()`** — bare number interpolation (e.g. `${MY_CONST}`) makes Drizzle produce a parameterised placeholder (`$1`), which is invalid in DDL. Always wrap with `sql.raw(NUMBER.toString())`:
+
+  ```ts
+  // CORRECT
+  check("name", sql`LENGTH(${name}) <= ${sql.raw(ROOM_NAME_MAX_LENGTH.toString())}`);
+
+  // WRONG — becomes LENGTH("name") <= $1 in DDL
+  check("name", sql`LENGTH(${name}) <= ${ROOM_NAME_MAX_LENGTH}`);
+  ```
+
+- **Use `BETWEEN` when a column has both a lower and upper bound** — prefer `BETWEEN min AND max` over `>= min AND <= max`. Both bounds must use `sql.raw()`:
+
+  ```ts
+  // CORRECT — BETWEEN for min + max
+  check("name", sql`LENGTH(${name}) BETWEEN 1 AND ${sql.raw(ROOM_CATEGORY_NAME_MAX_LENGTH.toString())}`);
+
+  // WRONG — verbose AND form
+  check("name", sql`LENGTH(${name}) >= 1 AND LENGTH(${name}) <= ${sql.raw(ROOM_CATEGORY_NAME_MAX_LENGTH.toString())}`);
+  ```
+
+  When the Zod schema has `.min(1).max(MAX)`, the DB constraint must also enforce the lower bound — use BETWEEN to keep both in sync.
+
+- **String enum literals** that are part of SQL logic (e.g. comparing a pg enum column to a constant) can be hardcoded directly in the template as single-quoted SQL strings:
+  ```ts
+  check("participant_key_type", sql`(${type} = 'DirectMessage' AND ...) OR (${type} = 'Room' AND ...)`);
+  ```
+
+## Migrations
+
+- **Never run `pnpm db:gen` or `pnpm db:up` automatically** — always let the user decide when to generate and apply migrations. After schema changes, note what migration is needed and instruct the user to run it manually from `packages/db-schema`:
+  ```sh
+  pnpm db:gen   # generates migration SQL from schema diff
+  pnpm db:up    # applies pending migrations to the DB
+  ```
 
 ## Primary Keys
 

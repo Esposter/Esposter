@@ -105,22 +105,25 @@ export const directMessageRouter = router({
   readDirectMessageParticipants: standardAuthedProcedure
     .input(readDirectMessageParticipantsInputSchema)
     .query(async ({ ctx, input: roomIds }) => {
-      const utr1 = alias(usersToRooms, "utr1");
-      const utr2 = alias(usersToRooms, "utr2");
+      const usersToRooms1 = alias(usersToRooms, "usersToRooms1");
+      const usersToRooms2 = alias(usersToRooms, "usersToRooms2");
       const rows = await ctx.db
-        .select({ roomId: utr2.roomId, user: users })
-        .from(utr1)
-        .innerJoin(rooms, and(eq(rooms.id, utr1.roomId), eq(rooms.type, RoomType.DirectMessage)))
-        .innerJoin(utr2, and(eq(utr2.roomId, utr1.roomId), ne(utr2.userId, ctx.getSessionPayload.user.id)))
-        .innerJoin(users, eq(users.id, utr2.userId))
-        .where(and(eq(utr1.userId, ctx.getSessionPayload.user.id), inArray(utr1.roomId, roomIds)));
+        .select({ roomId: usersToRooms2.roomId, user: users })
+        .from(usersToRooms1)
+        .innerJoin(
+          usersToRooms2,
+          and(eq(usersToRooms2.roomId, usersToRooms1.roomId), ne(usersToRooms2.userId, ctx.getSessionPayload.user.id)),
+        )
+        .innerJoin(rooms, and(eq(rooms.id, usersToRooms1.roomId), eq(rooms.type, RoomType.DirectMessage)))
+        .innerJoin(users, eq(users.id, usersToRooms2.userId))
+        .where(and(eq(usersToRooms1.userId, ctx.getSessionPayload.user.id), inArray(usersToRooms1.roomId, roomIds)));
       const participantsMap = new Map<string, User[]>();
       for (const { roomId, user } of rows) {
         const existingParticipants = participantsMap.get(roomId) ?? [];
         existingParticipants.push(user);
         participantsMap.set(roomId, existingParticipants);
       }
-      return [...participantsMap.entries()].map(([roomId, participants]) => ({ participants, roomId }));
+      return Array.from(participantsMap, ([roomId, participants]) => ({ participants, roomId }));
     }),
   readDirectMessages: standardAuthedProcedure
     .input(readDirectMessagesInputSchema)

@@ -194,7 +194,7 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
 
   const cleanupAll = async () => {
     unsubscribeFromSignals();
-    await Promise.all([...peerConnections.keys()].map((id) => cleanupPeer(id)));
+    await Promise.all(Array.from(peerConnections.keys(), (id) => cleanupPeer(id)));
     await cleanupLocalStream();
     candidateQueues.clear();
   };

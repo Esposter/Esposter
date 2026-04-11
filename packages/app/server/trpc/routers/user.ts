@@ -4,6 +4,7 @@ import type { SetNonNullable } from "type-fest";
 import type { z } from "zod";
 
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
+import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { on } from "@@/server/services/events/on";
 import { userEventEmitter } from "@@/server/services/message/events/userEventEmitter";
@@ -27,10 +28,10 @@ import { Readable } from "node:stream";
 const readStatusesInputSchema = selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
 export type ReadStatusesInput = z.infer<typeof readStatusesInputSchema>;
 
-const upsertStatusInputSchema = selectUserStatusSchema
-  .pick({ message: true, status: true })
-  .partial()
-  .refine(({ message, status }) => message !== undefined || status !== undefined);
+const upsertStatusInputSchema = refineAtLeastOne(
+  selectUserStatusSchema.pick({ message: true, status: true }).partial(),
+  ["message", "status"],
+);
 export type UpsertStatusInput = z.infer<typeof upsertStatusInputSchema>;
 
 const onUpsertStatusInputSchema = selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);

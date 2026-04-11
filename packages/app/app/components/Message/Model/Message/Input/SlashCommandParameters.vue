@@ -21,36 +21,37 @@ const dataStore = useDataStore();
 const { createMessage } = dataStore;
 const formRef = useTemplateRef<InstanceType<typeof VForm>>("formRef");
 const isFormValid = ref(true);
+const { execute, isLoading } = useInFlight();
+const submit = (event: SubmitEventPromise) =>
+  execute(async () => {
+    const { valid } = await event;
+    if (!valid || !pendingSlashCommand.value || !currentRoomId.value) return;
+    const command = { parameterValues: parameterValues.value, type: pendingSlashCommand.value.type } as {
+      [K in SlashCommandType]: { parameterValues: SlashCommandParameters<K>; type: K };
+    }[SlashCommandType];
+    const roomId = currentRoomId.value;
 
-const onSubmit = async (event: SubmitEventPromise) => {
-  const { valid } = await event;
-  if (!valid || !pendingSlashCommand.value || !currentRoomId.value) return;
-  const command = { parameterValues: parameterValues.value, type: pendingSlashCommand.value.type } as {
-    [K in SlashCommandType]: { parameterValues: SlashCommandParameters<K>; type: K };
-  }[SlashCommandType];
-  const roomId = currentRoomId.value;
-
-  switch (command.type) {
-    case SlashCommandType.Me:
-      await createMessage({
-        message: marked.parse(`*${sanitizeHtml(command.parameterValues.message)}*`, { async: false }),
-        roomId,
-        type: MessageType.Message,
-      });
-      break;
-    case SlashCommandType.Shrug: {
-      const prefix = command.parameterValues.text?.trim() ?? "";
-      await createMessage({
-        message: marked.parse(`${prefix}¯\\\\\\_(ツ)\\_/¯`, { async: false }),
-        roomId,
-        type: MessageType.Message,
-      });
-      break;
+    switch (command.type) {
+      case SlashCommandType.Me:
+        await createMessage({
+          message: marked.parse(`*${sanitizeHtml(command.parameterValues.message)}*`, { async: false }),
+          roomId,
+          type: MessageType.Message,
+        });
+        break;
+      case SlashCommandType.Shrug: {
+        const prefix = command.parameterValues.text?.trim() ?? "";
+        await createMessage({
+          message: marked.parse(`${prefix}¯\\\\\\_(ツ)\\_/¯`, { async: false }),
+          roomId,
+          type: MessageType.Message,
+        });
+        break;
+      }
     }
-  }
 
-  clearPendingSlashCommand();
-};
+    clearPendingSlashCommand();
+  });
 
 useEventListener("keydown", (event: KeyboardEvent) => {
   if (event.key === "Escape") clearPendingSlashCommand();
@@ -77,7 +78,7 @@ useEventListener("keydown", (event: KeyboardEvent) => {
         @click="clearPendingSlashCommand()"
       />
     </div>
-    <v-form ref="formRef" v-model="isFormValid" @submit.prevent="onSubmit">
+    <v-form ref="formRef" v-model="isFormValid" @submit.prevent="submit">
       <StyledCard>
         <div flex items-start gap-2 px-4 py-3>
           <template v-for="{ description, isRequired, name } of pendingSlashCommand.parameters" :key="name">
@@ -102,6 +103,8 @@ useEventListener("keydown", (event: KeyboardEvent) => {
                 density="compact"
                 variant="text"
                 mt-2
+                :disabled="isLoading"
+                :loading="isLoading"
                 :="tooltipProps"
               />
             </template>

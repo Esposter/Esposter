@@ -79,7 +79,7 @@ export const fixAjv = {
           return vn ? `(${vn}.default ?? ${vn})` : `require("${path}")`;
         })
         .replace(/^module\.exports = ([\w$]+);?\n/m, (_, x) => `${x}.default = ${x};\nexport default ${x};\n`);
-      const imports = [...pkgRequireMap.entries()].map(([path, vn]) => `import * as ${vn} from "${path}";\n`).join("");
+      const imports = Array.from(pkgRequireMap, ([path, vn]) => `import * as ${vn} from "${path}";\n`).join("");
       return `${imports}${result}`;
     }
     // ── Generic ajv transform ────────────────────────────────────────────────

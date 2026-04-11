@@ -47,10 +47,14 @@ import {
 import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, count, desc, eq, getTableColumns, ilike, inArray, ne, sql } from "drizzle-orm";
+import { alias } from "drizzle-orm/pg-core";
 import { z } from "zod";
 
 const readRoomInputSchema = selectRoomSchema.shape.id.optional();
 export type ReadRoomInput = z.infer<typeof readRoomInputSchema>;
+
+const readMutualRoomsInputSchema = z.object({ userId: selectUserSchema.shape.id });
+export type ReadMutualRoomsInput = z.infer<typeof readMutualRoomsInputSchema>;
 
 const readRoomsInputSchema = z
   .object({
@@ -362,6 +366,21 @@ export const roomRouter = router({
       .innerJoin(usersToRooms, eq(usersToRooms.userId, users.id))
       .where(and(eq(usersToRooms.roomId, roomId), inArray(users.id, ids))),
   ),
+  readMutualRooms: standardAuthedProcedure.input(readMutualRoomsInputSchema).query<Room[]>(({ ctx, input }) => {
+    const usersToRooms1 = alias(usersToRooms, "usersToRooms1");
+    const usersToRooms2 = alias(usersToRooms, "usersToRooms2");
+    return ctx.db
+      .select(getTableColumns(rooms))
+      .from(rooms)
+      .innerJoin(
+        usersToRooms1,
+        and(eq(usersToRooms1.roomId, rooms.id), eq(usersToRooms1.userId, ctx.getSessionPayload.user.id)),
+      )
+      .innerJoin(usersToRooms2, and(eq(usersToRooms2.roomId, rooms.id), eq(usersToRooms2.userId, input.userId)))
+      .where(eq(rooms.type, RoomType.Room))
+      .orderBy(desc(rooms.updatedAt))
+      .limit(MAX_READ_LIMIT);
+  }),
   readRoom: standardAuthedProcedure.input(readRoomInputSchema).query<null | Room>(async ({ ctx, input }) => {
     if (input) {
       const room = await ctx.db.query.rooms.findFirst({

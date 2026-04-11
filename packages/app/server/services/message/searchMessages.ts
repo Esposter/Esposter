@@ -7,6 +7,7 @@ import { getOffsetPaginationData } from "@@/server/services/pagination/offset/ge
 import { deserializeKey, filtersToClauses, getSearchNullClause, serializeClauses } from "@esposter/db";
 import {
   BinaryOperator,
+  FilterType,
   MessageType,
   SearchIndex,
   SearchIndexSearchableFieldsMap,
@@ -18,11 +19,15 @@ import { ItemMetadataPropertyNames } from "@esposter/shared";
 
 export const searchMessages = async ({ filters, limit, offset, query, roomId, sortBy }: SearchMessagesInput) => {
   const client = useSearchClient(SearchIndex.Messages);
+  const dedupedFilters = dedupeFilters(filters);
+  const hasRoomInFilter = dedupedFilters.some(({ type }) => type === FilterType.In);
   const clauses: Clause[] = [
-    { key: StandardMessageEntityPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
+    ...(hasRoomInFilter
+      ? []
+      : [{ key: StandardMessageEntityPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId }]),
     getSearchNullClause(ItemMetadataPropertyNames.deletedAt),
   ];
-  if (filters.length > 0) clauses.push(...filtersToClauses(dedupeFilters(filters)));
+  if (dedupedFilters.length > 0) clauses.push(...filtersToClauses(dedupedFilters));
   const { count, results } = await client.search(query, {
     filter: serializeClauses(clauses),
     includeTotalCount: true,

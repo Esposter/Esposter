@@ -1,5 +1,6 @@
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
+import { roomCategories } from "@/schema/roomCategories";
 import { users } from "@/schema/users";
 import { usersToRooms } from "@/schema/usersToRooms";
 import { relations, sql } from "drizzle-orm";
@@ -21,6 +22,7 @@ export const roomTypeEnum = pgEnum("room_type", RoomType);
 export const rooms = pgTable(
   "rooms",
   {
+    categoryId: uuid("categoryId").references(() => roomCategories.id, { onDelete: "set null" }),
     id: uuid("id").primaryKey().defaultRandom(),
     image: text("image"),
     name: text("name").notNull(),
@@ -48,6 +50,10 @@ export const selectRoomSchema = createSelectSchema(rooms, {
   name: z.string().max(ROOM_NAME_MAX_LENGTH),
 });
 
-export const roomsRelations = relations(rooms, ({ many }) => ({
+export const roomsRelations = relations(rooms, ({ many, one }) => ({
+  category: one(roomCategories, {
+    fields: [rooms.categoryId],
+    references: [roomCategories.id],
+  }),
   usersToRooms: many(usersToRooms),
 }));

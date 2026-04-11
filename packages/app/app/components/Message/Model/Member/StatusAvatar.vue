@@ -14,13 +14,27 @@ interface StatusAvatarProps {
 
 const { avatarProps, id, image, name } = defineProps<StatusAvatarProps>();
 const statusStore = useStatusStore();
-const { getStatusEnum } = statusStore;
+const { getStatusEnum, getStatusMessage } = statusStore;
 const badge = computed(() => {
   const userStatusEnum = getStatusEnum(id);
   return StatusBadgePropsMap[userStatusEnum];
 });
+const statusTooltip = computed(() => {
+  const message = getStatusMessage(id);
+  const status = getStatusEnum(id);
+  return message ? `${status} — ${message}` : status;
+});
 </script>
 
 <template>
-  <StyledAvatar :badge="{ ...badge, location: 'bottom end' }" :image :name :="avatarProps" />
+  <v-tooltip :text="statusTooltip" location="top">
+    <template #activator="{ props: tooltipProps }">
+      <StyledAvatar
+        :="{ ...avatarProps, ...tooltipProps }"
+        :badge="{ ...badge, location: 'bottom end' }"
+        :image
+        :name
+      />
+    </template>
+  </v-tooltip>
 </template>
