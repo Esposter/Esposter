@@ -19,20 +19,13 @@ const roomStore = useRoomStore();
 const { storeUpdateRoom } = roomStore;
 const { rooms } = storeToRefs(roomStore);
 const room = computed(() => rooms.value.find(({ id }) => id === roomId));
-const selectedCategoryId = ref<null | string>(null);
+const selectedCategoryId = ref(room.value?.categoryId ?? null);
 const categoryItems = computed(() => [{ id: null, name: "None (uncategorized)" }, ...categories.value]);
 
 const save = async () => {
   const updatedRoom = await $trpc.room.updateRoom.mutate({ categoryId: selectedCategoryId.value, id: roomId });
   storeUpdateRoom(updatedRoom);
 };
-
-watchImmediate(
-  () => room.value?.categoryId,
-  (categoryId) => {
-    selectedCategoryId.value = categoryId ?? null;
-  },
-);
 </script>
 
 <template>

@@ -160,6 +160,122 @@ const { data: session } = await authClient.useSession();
 1. Run `pnpm format` from the **repo root** — formats all packages at once (~1.6s, oxfmt).
 2. Run `pnpm typecheck` in `packages/app` as a background task — takes too long to block on. The user reviews results when ready.
 
+## Watch Decision Tree — When to Use (and When Not to Use) `watch`
+
+Reach for `watch` only after exhausting these alternatives:
+
+### 1. Read-only derived value → `computed`
+
+If a value is entirely derived from existing reactive state and never independently set, use `computed`. No `watch` needed.
+
+```typescript
+// WRONG — watch + local ref for read-only derivation
+const displayName = ref("");
+watchImmediate(
+  () => user.value?.name,
+  (name) => {
+    displayName.value = name ?? "";
+  },
+);
+
+// CORRECT
+const displayName = computed(() => user.value?.name ?? "");
+```
+
+### 2. Form state initialized from props/store → initialize the `ref` directly
+
+When a component has local form state that starts from a prop or store value but is independently editable by the user, initialize the `ref` directly. **Never use `watchImmediate` just to set an initial value** — that is always a code smell.
+
+```typescript
+// WRONG — watchImmediate to initialize is redundant; ref starts as null then immediately overwritten
+const selectedCategoryId = ref<null | string>(null);
+watchImmediate(
+  () => room.value?.categoryId,
+  (categoryId) => {
+    selectedCategoryId.value = categoryId ?? null;
+  },
+);
+
+// CORRECT — initialize directly; no watch needed
+const selectedCategoryId = ref(room.value?.categoryId ?? null);
+```
+
+If the source can change externally while the form is open (e.g. real-time collaboration), add a plain `watch` — but not `watchImmediate`:
+
+```typescript
+const selectedCategoryId = ref(room.value?.categoryId ?? null);
+watch(
+  () => room.value?.categoryId,
+  (categoryId) => {
+    selectedCategoryId.value = categoryId ?? null;
+  },
+);
+```
+
+**Prefer props-down when the parent is adjacent and already has the data.** If the immediate parent already computes the value, pass it as a prop. The child initializes from the prop — no watch, no store duplication:
+
+```typescript
+// Parent passes :category-id="room?.categoryId ?? null"
+// Child:
+const { categoryId } = defineProps<Props>();
+const selectedCategoryId = ref(categoryId); // no watch, no store read
+```
+
+Only pass through an intermediate generic router component (e.g. `Content.vue` that routes to all settings types) if the prop is truly shared by all children. If only one specific settings type needs it, keep the store read in the leaf component and just initialize the ref directly.
+
+### 3. Reset form state when a dialog/menu opens → only if data changes externally
+
+Ask: **can the underlying data change between opens from an external source** (WebSocket push, another tab, another user)?
+
+- **Yes** → `watch` the open boolean and reset on open
+- **No** → just initialize the `ref` once at setup; the watch is ceremony
+
+```typescript
+// ONLY justified if status can change from an external source (e.g. WebSocket)
+watch(menu, (isOpen) => {
+  if (!isOpen) return;
+  selectedStatus.value = status.value;
+  statusMessage.value = message.value;
+});
+
+// If this component is the only mutation path, skip the watch entirely:
+const selectedStatus = ref(status.value); // initialized once; fine
+```
+
+If the user opens → changes → closes without saving → reopens, they'll see their unsaved selection. That is usually acceptable (or even desirable — they indicated intent). The watch-to-reset pattern forces a reset on every open, which can feel punishing.
+
+### 4. Bridging to external imperative APIs → `watch` is correct
+
+Vue's reactivity cannot reach into Phaser, Three.js, Tiptap, Desmos, or any DOM-imperative API. `watch` is the correct bridge:
+
+```typescript
+watch(isDark, (newIsDark) => {
+  calculator.updateSettings({ invertedColors: newIsDark });
+});
+```
+
+### 5. Async side effects triggered by reactive state → `watch` is correct
+
+Auto-save, API calls on throttled search, typing indicators — these are inherently imperative:
+
+```typescript
+watch(throttledSearchQuery, async (newQuery) => {
+  const results = await search(newQuery);
+  initializePaginationData(results);
+});
+```
+
+### Summary
+
+| Scenario                       | Pattern                                                   |
+| ------------------------------ | --------------------------------------------------------- |
+| Read-only derivation           | `computed`                                                |
+| Form init from prop/store      | `ref(source.value)` directly — never `watchImmediate`     |
+| Form reset on dialog/menu open | `watch(dialog, (isOpen) => { if (!isOpen) return; ... })` |
+| Two-way store binding          | Writable `computed` (get/set)                             |
+| External imperative API        | `watch`                                                   |
+| Async side effect              | `watch`                                                   |
+
 ## Watch Aliases
 
 Prefer `watchDeep(source, cb)` over `watch(source, cb, { deep: true })` and `watchImmediate(source, cb)` over `watch(source, cb, { immediate: true })`. When both flags are needed, use `watchDeep(source, cb, { immediate: true })` (alphabetical: deep before immediate).

@@ -17,12 +17,6 @@ const selectedStatus = ref(status.value);
 const statusMessage = ref(message.value);
 const menu = ref(false);
 
-watch(menu, (isOpen) => {
-  if (!isOpen) return;
-  selectedStatus.value = status.value;
-  statusMessage.value = message.value;
-});
-
 const save = async () => {
   await $trpc.user.upsertStatus.mutate({ message: statusMessage.value, status: selectedStatus.value });
   menu.value = false;
@@ -47,10 +41,10 @@ const save = async () => {
         >
           <template #prepend>
             <v-icon
+              mr-2
+              size="small"
               :color="StatusBadgePropsMap[selectableStatus].color"
               :icon="StatusIconMap[selectableStatus]"
-              size="small"
-              mr-2
             />
           </template>
           <v-list-item-title>{{ selectableStatus }}</v-list-item-title>
