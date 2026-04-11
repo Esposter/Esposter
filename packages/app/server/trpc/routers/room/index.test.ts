@@ -152,6 +152,7 @@ describe("room", () => {
     expect.hasAssertions();
 
     await roomCaller.createRoom({ name });
+    vi.setSystemTime(1);
     const newRoom = await roomCaller.createRoom({ name });
     const readRoom = await roomCaller.readRoom();
 
@@ -651,8 +652,8 @@ describe("room", () => {
     const members = await roomCaller.readMembers({ roomId: newRoom.id });
 
     expect(members.items).toHaveLength(2);
-    expect(takeOne(members.items)).toStrictEqual(user);
-    expect(takeOne(members.items, 1).id).toBe(userId);
+    expect(takeOne(members.items).id).toBe(userId);
+    expect(takeOne(members.items, 1)).toStrictEqual(user);
   });
 
   test("fails create members with empty ids", async () => {
