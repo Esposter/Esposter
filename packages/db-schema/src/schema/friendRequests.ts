@@ -10,7 +10,7 @@ import { z } from "zod";
 export const friendRequests = pgTable(
   "friend_requests",
   {
-    // Natural key — sorted([senderId, receiverId]).join(ID_SEPARATOR).
+    // Natural key — getFriendshipId(senderId, receiverId).
     // Conflicts on insert act as idempotency: if A already sent to B, a second send is a no-op.
     id: text("id").primaryKey(),
     receiverId: text("receiverId")

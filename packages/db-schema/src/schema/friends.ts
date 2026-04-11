@@ -8,7 +8,7 @@ import { z } from "zod";
 export const friends = pgTable(
   "friends",
   {
-    // Natural key — sorted([senderId, receiverId]).join(ID_SEPARATOR).
+    // Natural key — getFriendshipId(senderId, receiverId).
     // Text PK: every lookup goes through this value, it never changes,
     // And there is exactly one row per user pair.
     id: text("id").primaryKey(),

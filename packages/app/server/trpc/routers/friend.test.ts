@@ -8,7 +8,7 @@ import { friendRouter } from "@@/server/trpc/routers/friend";
 import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
 import { blocks, DatabaseEntityType, friendRequests, friends } from "@esposter/db-schema";
-import { ID_SEPARATOR, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("friend", () => {
@@ -83,7 +83,7 @@ describe("friend", () => {
     expect.hasAssertions();
 
     const userId = crypto.randomUUID();
-    const friendshipId = [getMockSession().user.id, userId].toSorted().join(ID_SEPARATOR);
+    const friendshipId = getFriendshipId(getMockSession().user.id, userId);
 
     await expect(friendCaller.deleteFriend(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Friend, friendshipId).message}]`,

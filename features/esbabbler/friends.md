@@ -27,7 +27,7 @@ Three separate tables encode relationship state — no status enum needed.
 // packages/db-schema/src/schema/friendRequests.ts
 
 export const friendRequests = pgTable("friend_requests", {
-  // Natural key — sorted([senderId, receiverId]).join(ID_SEPARATOR).
+  // Natural key — getFriendshipId(senderId, receiverId).
   // Conflict on insert = idempotent: duplicate sends are no-ops.
   id: text("id").primaryKey(),
   senderId: text("senderId")
@@ -45,7 +45,7 @@ export const friendRequests = pgTable("friend_requests", {
 // packages/db-schema/src/schema/friends.ts
 
 export const friends = pgTable("friends", {
-  // Same natural key — sorted([senderId, receiverId]).join(ID_SEPARATOR).
+  // Same natural key — getFriendshipId(senderId, receiverId).
   id: text("id").primaryKey(),
   senderId: text("senderId")
     .notNull()
@@ -81,11 +81,11 @@ Blocking is unilateral and independent of friendship state. A block in either di
 
 ### `id` idempotency
 
-`id = [senderId, receiverId].toSorted().join(ID_SEPARATOR)`
+`id = getFriendshipId(senderId, receiverId)`
 
 This mirrors the `participantKey` pattern used on the `rooms` table for DMs — a deterministic text key from two participants. Because it is the PK:
 
-- If A sends a request to B, `id = sorted([A, B]).join('|')`
+- If A sends a request to B, `id = getFriendshipId(A, B)`
 - If B tries to send a request to A before accepting, the insert conflicts on `id` → no-op
 - Any query checking "do A and B have a relationship?" is a single O(1) PK lookup
 

@@ -2,13 +2,14 @@ import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { getFriendshipId } from "@@/server/services/friend/getFriendshipId";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { blockRouter } from "@@/server/trpc/routers/block";
 import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
 import { blocks, DatabaseEntityType, friendRequests, friends, users } from "@esposter/db-schema";
-import { ID_SEPARATOR, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
@@ -86,7 +87,7 @@ describe("friendRequest", () => {
     await friendRequestCaller.acceptFriendRequest(user.id);
     // Session=user: tries to send again to default user
     await mockSessionOnce(mockContext.db, user);
-    const friendshipId = [userId, user.id].toSorted().join(ID_SEPARATOR);
+    const friendshipId = getFriendshipId(userId, user.id);
 
     await expect(friendRequestCaller.sendFriendRequest(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.FriendRequest, friendshipId).message}]`,
@@ -98,11 +99,11 @@ describe("friendRequest", () => {
 
     const userId = getMockSession().user.id;
     const { user } = await mockSessionOnce(mockContext.db);
-    const id = [userId, user.id].toSorted().join(ID_SEPARATOR);
+    const friendshipId = getFriendshipId(userId, user.id);
 
     // Session=user: no request exists, try to accept from default user
     await expect(friendRequestCaller.acceptFriendRequest(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Friend, id).message}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Friend, friendshipId).message}]`,
     );
   });
 
@@ -121,9 +122,7 @@ describe("friendRequest", () => {
 
     const receiverUser = getMockSession().user;
     const { user: blockerUser } = await mockSessionOnce(mockContext.db);
-    // blockerUser blocks receiverUser
     await blockCaller.blockUser(receiverUser.id);
-    // receiverUser tries to send friend request to blockerUser
     getMockSession();
 
     await expect(friendRequestCaller.sendFriendRequest(blockerUser.id)).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -136,9 +135,7 @@ describe("friendRequest", () => {
 
     const blockedUser = getMockSession().user;
     const { user: blockerUser } = await mockSessionOnce(mockContext.db);
-    // blockerUser blocks blockedUser
     await blockCaller.blockUser(blockedUser.id);
-    // blockerUser tries to send friend request to blockedUser
     await mockSessionOnce(mockContext.db, blockerUser);
 
     await expect(friendRequestCaller.sendFriendRequest(blockedUser.id)).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -151,13 +148,11 @@ describe("friendRequest", () => {
 
     const userId = getMockSession().user.id;
     const { user: senderUser } = await mockSessionOnce(mockContext.db);
-    // senderUser sends request to userId (Default user)
     await friendRequestCaller.sendFriendRequest(userId);
-    // userId (Default user) tries to send friend request to senderUser
-    const id = [userId, senderUser.id].toSorted().join(ID_SEPARATOR);
+    const friendshipId = getFriendshipId(userId, senderUser.id);
 
     await expect(friendRequestCaller.sendFriendRequest(senderUser.id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.FriendRequest, id).message}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.FriendRequest, friendshipId).message}]`,
     );
   });
 
@@ -176,10 +171,10 @@ describe("friendRequest", () => {
 
     const userId = getMockSession().user.id;
     const { user } = await mockSessionOnce(mockContext.db);
-    const id = [userId, user.id].toSorted().join(ID_SEPARATOR);
+    const friendshipId = getFriendshipId(userId, user.id);
 
     await expect(friendRequestCaller.declineFriendRequest(user.id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.FriendRequest, id).message}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.FriendRequest, friendshipId).message}]`,
     );
   });
 
