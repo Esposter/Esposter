@@ -32,6 +32,14 @@ export const filtersToClauses = (filters: Filter[]): Clause[] => {
             value,
           });
         break;
+      case FilterType.In:
+        for (const { value } of filtersByType)
+          clauses.push({
+            key: StandardMessageEntityPropertyNames.partitionKey,
+            operator: BinaryOperator.eq,
+            value,
+          });
+        break;
       case FilterType.Mentions: {
         clauses.push({
           key: StandardMessageEntityPropertyNames.mentions,

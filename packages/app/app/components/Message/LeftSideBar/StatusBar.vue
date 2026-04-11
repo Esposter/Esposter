@@ -6,7 +6,7 @@ import { RoutePath } from "@esposter/shared";
 
 const { data: session } = await authClient.useSession(useFetch);
 const statusStore = useStatusStore();
-const { getStatusEnum } = statusStore;
+const { getStatusEnum, getStatusMessage } = statusStore;
 const voiceStore = useVoiceStore();
 const { callRoomId, isInChannel } = storeToRefs(voiceStore);
 const callRoomName = useRoomName(callRoomId);
@@ -30,17 +30,27 @@ const callRoomName = useRoomName(callRoomId);
       </v-list-item>
     </TransitionFade>
     <StyledCard flex p-2 rd-2>
-      <MessageModelMemberStatusAvatar :id="session.user.id" :image="session.user.image" :name="session.user.name" />
-      <div w-full flex justify-between>
-        <div pl-2 flex flex-col justify-center>
-          <div class="text-xs">
+      <MessageModelStatusPickerMenuButton>
+        <template #activator="{ menuProps }">
+          <div cursor-pointer :="menuProps">
+            <MessageModelMemberStatusAvatar
+              :id="session.user.id"
+              :image="session.user.image"
+              :name="session.user.name"
+            />
+          </div>
+        </template>
+      </MessageModelStatusPickerMenuButton>
+      <div w-full flex justify-between overflow-hidden>
+        <div pl-2 flex flex-col justify-center overflow-hidden>
+          <div class="text-xs" truncate>
             {{ session.user.name }}
           </div>
-          <div class="text-xs text-gray">
-            {{ getStatusEnum(session.user.id) }}
+          <div class="text-xs text-gray" truncate>
+            {{ getStatusMessage(session.user.id) || getStatusEnum(session.user.id) }}
           </div>
         </div>
-        <div flex>
+        <div flex flex-shrink-0>
           <MessageLeftSideBarSettingsDialogButton>
             <template #activator="activatorProps">
               <v-btn :="activatorProps" icon="mdi-cog" size="small" />

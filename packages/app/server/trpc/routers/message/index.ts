@@ -55,6 +55,7 @@ import {
   DatabaseEntityType,
   FileEntity,
   fileEntitySchema,
+  FilterType,
   getReverseTickedTimestamp,
   MessageEntityMap,
   MessageType,
@@ -427,7 +428,15 @@ export const messageRouter = router({
       });
     },
   ),
-  searchMessages: getMemberProcedure(searchMessagesInputSchema, "roomId").query(({ input }) => searchMessages(input)),
+  searchMessages: getMemberProcedure(searchMessagesInputSchema, "roomId").query(async ({ ctx, input }) => {
+    const inFilter = input.filters.find(({ type }) => type === FilterType.In);
+    if (inFilter) {
+      const targetRoomId = inFilter.value;
+      if (typeof targetRoomId !== "string") throw new TRPCError({ code: "BAD_REQUEST" });
+      await isMember(ctx.db, ctx.getSessionPayload, targetRoomId);
+    }
+    return searchMessages(input);
+  }),
   unpinMessage: getMemberProcedure(unpinMessageInputSchema, "partitionKey").mutation(async ({ input }) => {
     const messageClient = await useTableClient(AzureTable.Messages);
     const messageEntity = await getEntity(messageClient, StandardMessageEntity, input.partitionKey, input.rowKey);

@@ -19,7 +19,7 @@ const { rooms } = storeToRefs(roomStore);
 const room = computed(() => rooms.value.find(({ id }) => id === roomId));
 const isCreator = computed(() => room.value?.userId === session.value?.user.id);
 const dialog = ref(false);
-const settingsType = ref(SettingsType.Webhooks);
+const settingsType = ref(SettingsType.General);
 </script>
 
 <template>

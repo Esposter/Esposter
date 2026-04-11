@@ -5,7 +5,7 @@ import { VisualType, VisualTypes } from "#shared/models/dashboard/data/VisualTyp
 import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
 import { prettify } from "@/util/text/prettify";
 
-const VisualTypeItemCategoryDefinitionMap = Object.fromEntries([...VisualTypes].map((v) => [v, {}])) as Record<
+const VisualTypeItemCategoryDefinitionMap = Object.fromEntries(Array.from(VisualTypes, (v) => [v, {}])) as Record<
   VisualType,
   Except<SelectItemCategoryDefinition<VisualType>, "title" | "value">
 >;

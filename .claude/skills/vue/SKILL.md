@@ -69,7 +69,19 @@ Example:
 
 ## Template Conventions
 
-- **No bare function references in `@event` bindings** — always wrap in an explicit arrow function: `@complete="(scene, tilemap) => useCreateTilemapAssets(scene, tilemap)"` not `@complete="useCreateTilemapAssets"`. Bare references cause accidental argument forwarding (extra Vue-internal args get passed). This mirrors the TypeScript rule: never pass a naked function reference.
+- **No bare function references in `@event` bindings** — bare references forward the DOM/Vue event object as the first argument, which is almost always unintended. Use `fn()` for zero-arg calls and an explicit arrow function when arguments are needed:
+
+  ```vue
+  <!-- CORRECT — zero-arg call, no event forwarding -->
+  @click="onSave()" @keydown.enter="onSave()"
+
+  <!-- CORRECT — arrow function when passing specific args -->
+  @complete="(scene, tilemap) => useCreateTilemapAssets(scene, tilemap)"
+
+  <!-- WRONG — forwards the click/keydown Event object as first arg -->
+  @click="onSave" @keydown.enter="onSave"
+  ```
+
 - **`v-for` destructuring** — always destructure `v-for` bindings when properties are accessed in the template: `v-for="{ value, icon, title } of items"` not `v-for="item of items"` + `item.value`. Only keep a full reference when the whole object is needed (e.g. passed as a prop or stored in a ref). In that case, name the loop variable to match the prop it will be passed to, enabling `:propName` shorthand.
 - **Prop shorthand naming** — name local variables to match their target prop so Vue's `:propName` shorthand works without explicit assignment. For example, if the prop is `dataSourceType`, the local variable must also be `dataSourceType`.
 - **`#activator` always first** — in components that use both `#activator` and other slots (e.g. `v-tooltip`, `v-menu`), always place the `#activator` template as the first child.
@@ -130,6 +142,18 @@ When branching on a type/discriminant, use in this priority order:
 2. **`switch` expression** — use a `switch` in script when a map is impractical
 3. **`if / else if / else`** — explicit branches for complex conditions
 4. **Never** chain standalone `if` statements for mutually exclusive conditions. Always use `else if` / `else` or a `switch`.
+
+## Auth Session
+
+Always pass `useFetch` as the argument to `authClient.useSession()` in Vue components. This makes better-auth use Nuxt's SSR-aware `useFetch` internally instead of its default fetch:
+
+```ts
+// CORRECT — SSR-aware
+const { data: session } = await authClient.useSession(useFetch);
+
+// WRONG — skips Nuxt's useFetch, breaks SSR
+const { data: session } = await authClient.useSession();
+```
 
 ## After Finishing Code Changes
 

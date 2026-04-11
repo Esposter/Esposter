@@ -5,6 +5,7 @@ import { uncapitalize } from "@esposter/shared";
 
 export const FilterTypePlaceholderMap = {
   [FilterType.From]: "user",
+  [FilterType.In]: "room",
   [FilterType.Mentions]: "user",
   [FilterType.Has]: joinWithOxfordOr([...FilterTypeHases].map((has) => uncapitalize(has))),
   [FilterType.Before]: "specific date",

@@ -4,6 +4,9 @@ import type { Except } from "type-fest";
 import { SettingsType } from "@/models/message/room/SettingsType";
 
 export const SettingsListItemMap = {
+  [SettingsType.General]: {
+    icon: "mdi-cog-outline",
+  },
   [SettingsType.Webhooks]: {
     icon: "mdi-webhook",
   },

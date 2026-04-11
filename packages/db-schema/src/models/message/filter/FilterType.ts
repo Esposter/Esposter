@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export enum FilterType {
   From = "From",
+  In = "In",
   Mentions = "Mentions",
   Has = "Has",
   Before = "Before",

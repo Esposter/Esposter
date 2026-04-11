@@ -12,12 +12,12 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
   const friendStore = useFriendStore();
   const { storeCreateFriend } = friendStore;
   const friendRequests = ref<FriendRequestWithRelations[]>([]);
-  const currentUserId = computed(() => session.value.data?.user.id ?? "");
+  const userId = computed(() => session.value.data?.user.id ?? "");
   const receivedFriendRequests = computed(() =>
-    friendRequests.value.filter((friendRequest) => friendRequest.receiverId === currentUserId.value),
+    friendRequests.value.filter((friendRequest) => friendRequest.receiverId === userId.value),
   );
   const sentFriendRequests = computed(() =>
-    friendRequests.value.filter((friendRequest) => friendRequest.senderId === currentUserId.value),
+    friendRequests.value.filter((friendRequest) => friendRequest.senderId === userId.value),
   );
   const { createFriendRequest: baseStoreCreateFriendRequest } = createOperationData(
     friendRequests,
@@ -32,7 +32,7 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
   const acceptFriendRequest = async (senderId: FriendUserIdInput) => {
     const senderUser = await $trpc.friendRequest.acceptFriendRequest.mutate(senderId);
     friendRequests.value = friendRequests.value.filter(
-      (friendRequest) => !(friendRequest.senderId === senderId && friendRequest.receiverId === currentUserId.value),
+      (friendRequest) => !(friendRequest.senderId === senderId && friendRequest.receiverId === userId.value),
     );
     storeCreateFriend(senderUser);
   };
@@ -40,7 +40,7 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
   const declineFriendRequest = async (senderId: FriendUserIdInput) => {
     await $trpc.friendRequest.declineFriendRequest.mutate(senderId);
     friendRequests.value = friendRequests.value.filter(
-      (friendRequest) => !(friendRequest.senderId === senderId && friendRequest.receiverId === currentUserId.value),
+      (friendRequest) => !(friendRequest.senderId === senderId && friendRequest.receiverId === userId.value),
     );
   };
 
@@ -50,14 +50,13 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
   };
   const storeAcceptFriendRequest = (receiverUser: User) => {
     friendRequests.value = friendRequests.value.filter(
-      (friendRequest) =>
-        !(friendRequest.senderId === currentUserId.value && friendRequest.receiverId === receiverUser.id),
+      (friendRequest) => !(friendRequest.senderId === userId.value && friendRequest.receiverId === receiverUser.id),
     );
     storeCreateFriend(receiverUser);
   };
   const storeDeclineFriendRequest = (declinerId: string) => {
     friendRequests.value = friendRequests.value.filter(
-      (friendRequest) => !(friendRequest.senderId === currentUserId.value && friendRequest.receiverId === declinerId),
+      (friendRequest) => !(friendRequest.senderId === userId.value && friendRequest.receiverId === declinerId),
     );
   };
   const storeDeleteFriendRequestsByUser = (userId: string) => {

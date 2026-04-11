@@ -5,6 +5,7 @@ export const SearchFilterComponentMap = {
   [FilterType.From]: defineAsyncComponent(
     () => import("@/components/Message/RightSideBar/Search/Filter/UserPicker.vue"),
   ),
+  [FilterType.In]: defineAsyncComponent(() => import("@/components/Message/RightSideBar/Search/Filter/RoomPicker.vue")),
   [FilterType.Mentions]: defineAsyncComponent(
     () => import("@/components/Message/RightSideBar/Search/Filter/UserPicker.vue"),
   ),

@@ -156,10 +156,29 @@ export const stringTransformationTypeSchema = z.enum(
   // call sites
   BooleanFormats.has(format); // O(1) lookup
   for (const f of BooleanFormats) // iteration (Set is iterable)
-    [...BooleanFormats].map(fn); // spread when array methods are needed
+    Array.from(BooleanFormats, fn); // map over a Set — see below
   ```
 
 - **Never write `Object.values(SomeEnum)` inline** — always use the exported `Set` constant.
+
+## Iterating Non-Array Iterables (Set, Map, etc.)
+
+- **`Array.from(iterable, mapFn)` over `[...iterable].map(mapFn)`** — the two-argument form of `Array.from` maps while converting, producing no intermediate array. Use it whenever mapping over a `Set`, `Map`, or other non-array iterable:
+
+  ```ts
+  // CORRECT — Set
+  Object.fromEntries(Array.from(VisualTypes, (v) => [v, {}]));
+
+  // CORRECT — Map (iterates as [key, value] pairs directly; no need for .entries())
+  Array.from(participantsMap, ([roomId, participants]) => ({ participants, roomId }));
+
+  // WRONG — creates an intermediate array just to map
+  Object.fromEntries([...VisualTypes].map((v) => [v, {}]));
+  [...participantsMap.entries()].map(([roomId, participants]) => ({ participants, roomId }));
+  ```
+
+  The spread + `.map()` pattern is only acceptable when a plain array is already the source.
+
 - **Never use `new Set` just to call `.has()` on a small non-enum array** — if the values are already unique and the array is small, use `.some()` instead. Only `Set` when the source is an enum or the collection is large enough that O(n) repeated lookups would hurt performance.
 
 ## Environment Checks
