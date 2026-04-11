@@ -653,7 +653,7 @@ catalogs:
       version: 4.3.6
 
 overrides:
-  crossws: ^0.4.4
+  crossws: ^0.4.5
   pdfjs-dist: ^5.6.205
   vite: ^8.0.8
   vue-router: ^5.0.4
@@ -1228,7 +1228,7 @@ importers:
         specifier: workspace:*
         version: link:../azure-mock
       crossws:
-        specifier: ^0.4.4
+        specifier: ^0.4.5
         version: 0.4.5(srvx@0.11.15)
       drizzle-kit:
         specifier: 'catalog:'
@@ -8820,7 +8820,7 @@ packages:
     engines: {node: '>=20.11.1'}
     hasBin: true
     peerDependencies:
-      crossws: ^0.4.4
+      crossws: ^0.4.5
     peerDependenciesMeta:
       crossws:
         optional: true
