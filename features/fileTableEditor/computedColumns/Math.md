@@ -1,10 +1,6 @@
 # Math Transformation — Expression-Based Overhaul
 
-## Motivation
-
-The previous `first + steps[]` fold model required users to manually chain unary/binary step objects. It could not express operator precedence without nesting, was verbose for simple expressions, and required building and maintaining custom AST-walking code.
-
-The replacement uses a **math expression library** that handles parsing, precedence, grouping, and evaluation. Users write a plain expression string; column values are bound as named variables.
+Replaced `first + steps[]` fold model with **mathjs** expression strings. Users write plain expressions; column values bound as named variables.
 
 ---
 

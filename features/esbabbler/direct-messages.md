@@ -1,10 +1,6 @@
 # Esbabbler — Direct Messages Architecture
 
-## Overview
-
-Private 1:1 and small-group (up to 10 participants) conversations outside of public rooms. DMs reuse the entire message infrastructure (tRPC routers, Azure Table storage, all message components) by introducing a new `RoomType.DirectMessage` variant on the existing rooms table.
-
----
+Private 1:1 and small-group (≤10 participants) conversations. Reuses message infrastructure via `RoomType.DirectMessage` on the existing rooms table.
 
 ## User Experience
 
@@ -17,8 +13,6 @@ Private 1:1 and small-group (up to 10 participants) conversations outside of pub
 - Group DMs show a generated name ("You, Alice, Bob") unless the creator sets a custom name
 - 1:1 DM names are derived at display time from the other participant's username (never stored, so they stay fresh)
 - Hovering a DM row reveals a close button that soft-hides it (`isHidden = true`) without deleting the thread
-
----
 
 ## Data Model
 
@@ -54,8 +48,6 @@ Add an `isHidden` boolean column to `usersToRooms` (default `false`). When a use
 isHidden: boolean("is_hidden").notNull().default(false),
 ```
 
----
-
 ## API Changes
 
 New/modified tRPC procedures:
@@ -68,25 +60,19 @@ New/modified tRPC procedures:
 
 ### Idempotency in `createDirectMessage`
 
-Compute `participantKey = userIds.toSorted().join(ID_SEPARATOR)` before the insert and use an upsert (insert-on-conflict-do-nothing) keyed on `participantKey`. This makes the idempotency check a single unique-index lookup — O(1) — rather than a set-intersection query across `usersToRooms`. Duplicate DM threads are prevented at the DB level via the unique constraint.
+`participantKey = userIds.toSorted().join(ID_SEPARATOR)` → upsert on conflict. O(1) unique-index check; duplicate DM threads prevented at DB level.
 
 ### Permissions
 
-All existing room-level permission checks use the `usersToRooms` membership check — DMs automatically inherit the same gating with no changes to the auth layer.
-
-Additional constraints enforced in `createDirectMessage` and room middleware:
+DMs inherit existing `usersToRooms` membership checks. Additional constraints in `createDirectMessage`:
 
 - Public join/invite links (`invites` table) are rejected for `RoomType.DirectMessage`
 - Room discovery / `listPublicRooms` excludes DMs
 - Max 10 participants enforced on `createDirectMessage`
 
----
-
 ## Notifications
 
-DMs should default to **notify on every message** regardless of the room's notification setting. On `createMessage`, if the room type is `DirectMessage` bypass the keyword-rule check and always publish to the recipient's Web Push subscription.
-
----
+DMs default to notify-on-every-message. In `createMessage`, if `RoomType.DirectMessage` → bypass keyword-rule check, always publish to recipient's Web Push.
 
 ## Folder Structure
 
@@ -117,17 +103,9 @@ packages/app/
                                                 # readDirectMessageParticipants, hideDirectMessage (implemented)
 ```
 
----
-
 ## What Does Not Change
 
-- All message tRPC routers — DM rooms use identical `roomId`-keyed message storage
-- All message components — same rendering pipeline
-- Voice channel — DM rooms can optionally get voice support later; `RoomType.DirectMessage` just needs to be allowed in `joinVoiceChannel`
-- Emoji reactions, quote replies, polls, file uploads — all work inside DMs without modification
-- Rate limiting / slowmode — inherited from existing `createMessage` guards
-
----
+Message routers, components, emoji reactions, quote replies, polls, file uploads, rate limiting — all unchanged. Voice: allow `RoomType.DirectMessage` in `joinVoiceChannel` when needed.
 
 ## Open Questions
 

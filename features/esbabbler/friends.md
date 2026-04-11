@@ -1,21 +1,12 @@
 # Esbabbler — Friends Architecture
 
-## Overview
-
-A bidirectional friend-request system that acts as the social graph for Direct Messages. Users must be mutual friends before they can appear in each other's DM picker. This keeps the platform from becoming an open messaging free-for-all while staying lightweight — no separate messaging permissions layer is needed.
-
----
+Bidirectional friend-request system. Mutual friends are the only source of DM recipients — no separate messaging permissions layer needed.
 
 ## User Experience
 
-- A **Friends** nav item in the sidebar (above Rooms) navigates to `/messages/friends`
-- The Friends page has three sections:
-  1. **Add Friend** — search users by name; send a friend request
-  2. **Pending Requests** — incoming requests with Accept / Decline buttons
-  3. **Friends** — list of accepted friends with a Remove button
-- Accepted friends appear in the **New Message** dialog (see [`direct-messages.md`](direct-messages.md)) so you can start a DM with them
-
----
+- **Friends** nav item (above Rooms) → `/messages/friends`
+- Page sections: **Add Friend** (search by name), **Pending Requests** (Accept/Decline), **Friends** (list with Remove)
+- Accepted friends appear in **New Message** dialog (see [`direct-messages.md`](direct-messages.md))
 
 ## Data Model
 
@@ -56,7 +47,7 @@ export const friends = pgTable("friends", {
 });
 ```
 
-`senderId`/`receiverId` are preserved on both tables to maintain directionality (who initiated the request). Both use the same `id` computation so any "are these two friends?" check is an O(1) PK lookup on either table.
+Directionality preserved (who initiated). Same `id` computation → O(1) friendship check on either table.
 
 ### `blocks` table — blocked users
 
@@ -77,17 +68,11 @@ export const blocks = pgTable(
 );
 ```
 
-Blocking is unilateral and independent of friendship state. A block in either direction prevents friend requests and excludes the blocked user from search results.
+Blocking is unilateral. Either direction prevents friend requests and excludes from search.
 
 ### `id` idempotency
 
-`id = getFriendshipId(senderId, receiverId)`
-
-This mirrors the `participantKey` pattern used on the `rooms` table for DMs — a deterministic text key from two participants. Because it is the PK:
-
-- If A sends a request to B, `id = getFriendshipId(A, B)`
-- If B tries to send a request to A before accepting, the insert conflicts on `id` → no-op
-- Any query checking "do A and B have a relationship?" is a single O(1) PK lookup
+`id = getFriendshipId(senderId, receiverId)` — deterministic text PK (mirrors `participantKey` on rooms). Duplicate send → conflict on `id` → no-op. Relationship check → O(1) PK lookup.
 
 ### State machine
 
@@ -99,8 +84,6 @@ friends            ──deleteFriend──────────► (deleted)
 friends/requests   ──blockUser─────────────► both rows deleted + blocks row inserted
 blocks             ──unblockUser───────────► (deleted)
 ```
-
----
 
 ## API
 
@@ -128,8 +111,6 @@ blocks             ──unblockUser───────────► (delete
 | `blockUser`        | `targetUserId`  | DELETE from `friends` and `friend_requests` by id. INSERT into `blocks`. Idempotent via `onConflictDoNothing`. |
 | `unblockUser`      | `blockedUserId` | DELETE from `blocks` WHERE `blockerId=me AND blockedId=target`.                                                |
 | `readBlockedUsers` | —               | SELECT from `blocks` WHERE `blockerId=me`. Returns `User[]`.                                                   |
-
----
 
 ## Folder Structure
 
@@ -162,21 +143,9 @@ packages/app/
     index.ts                                    # register friendRouter, friendRequestRouter, blockRouter
 ```
 
----
-
 ## Relationship to Direct Messages
 
-Friends are the only source of recipients in the New Message dialog. The flow is:
-
-1. User navigates to Friends page → sends a friend request to another user
-2. Recipient accepts on their Friends page
-3. Either user clicks "+" next to Direct Messages → dialog lists their accepted friends
-4. They select one or more friends → `createDirectMessage(selectedUserIds)` is called
-5. The DM room is created (or the existing one is surfaced) and the user is navigated there
-
-This keeps DM creation gated behind a mutual opt-in, matching the privacy expectations of a casual social platform.
-
----
+Friends are the only DM recipients. New Message dialog lists accepted friends → `createDirectMessage(selectedUserIds)` → DM room created/surfaced.
 
 ## Open Questions
 

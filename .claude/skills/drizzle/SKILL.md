@@ -24,9 +24,8 @@ description: Esposter Drizzle ORM conventions — column naming (camelCase match
 
 ## Table Definition
 
-- **Use the `pgTable` wrapper from `@/pgTable`** (not the raw `drizzle-orm/pg-core` `pgTable`) for all tables that need `createdAt`, `updatedAt`, `deletedAt` metadata. The wrapper automatically injects `metadataSchema` columns.
-- **Exception**: `usersToRooms` uses `messageSchema.table(...)` directly (no metadata) — only follow this pattern when a join table intentionally has no timestamps.
-- **Pass `schema: messageSchema`** for all message-feature tables (rooms, users_to_rooms, invites, friends, etc.) to group them under the `message` Postgres schema.
+- **Use `pgTable` wrapper from `@/pgTable`** (not raw `drizzle-orm/pg-core`) for all tables needing `createdAt`/`updatedAt`/`deletedAt` metadata. Exception: join tables without timestamps use `messageSchema.table(...)` directly.
+- **Pass `schema: messageSchema`** for all message-feature tables to group them under the `message` Postgres schema.
 
   ```typescript
   // Standard table with metadata + schema
@@ -65,8 +64,8 @@ description: Esposter Drizzle ORM conventions — column naming (camelCase match
   where: eq(friends.receiverId, userId),
   ```
 
-- **Never use number literals for `limit:`** — always use `MAX_READ_LIMIT` (or `DEFAULT_READ_LIMIT` for paginated queries) from `#shared/services/pagination/constants`. `MAX_READ_LIMIT = 1000`, `DEFAULT_READ_LIMIT = 15`.
-- **Use `with:` for eager loading instead of manual joins** when using the relational API. The `.map()` to unwrap the related entity is intentional and expected — Drizzle's relational API always nests `with:` results. When Drizzle v2 relational API adds direct column selection on `with:`, the `.map()` can be eliminated:
+- **Never use number literals for `limit:`** — use `MAX_READ_LIMIT` (1000) or `DEFAULT_READ_LIMIT` (15) from `#shared/services/pagination/constants`.
+- **Use `with:` for eager loading** in the relational API. `.map()` to unwrap is intentional — Drizzle always nests `with:` results.
 
   ```ts
   // CORRECT — relational API with eager loading; .map() is intentional for now
@@ -82,7 +81,7 @@ description: Esposter Drizzle ORM conventions — column naming (camelCase match
 
 ## Relation Constants
 
-- **Export a `XxxRelations` constant from every schema file that is used in `with:` clauses** — co-locate the constant with the schema file, placed after `xxxRelations = relations(...)`, and include the `@TODO` comment linking the upstream Drizzle issue. Name it `PascalCase` matching the table's entity type:
+- **Export a `XxxRelations` constant from every schema file used in `with:` clauses** — placed after `xxxRelations = relations(...)`, includes `@TODO` comment. Named `PascalCase` matching the entity type:
 
   ```ts
   // posts.ts
@@ -104,14 +103,14 @@ description: Esposter Drizzle ORM conventions — column naming (camelCase match
   with: { sender: true },
   ```
 
-- **New schema files added to `packages/db-schema/src/schema/` must be individually exported from `src/index.ts`** — add `export * from "./schema/myNewTable"` to ensure all exports (table, type, schema, relations, and relation constants) are available from `@esposter/db-schema`.
+- **New schema files** must be exported from `src/index.ts` — add `export * from "./schema/myNewTable"`.
 
 ## Relations (Schema Definitions)
 
-- **Always define `relations()` for every table** — even if the table has FK columns already, Drizzle's relational API requires explicit `relations()` declarations to enable `db.query.*` and `with:` eager loading.
-- **Always add reciprocal entries** — if `friends` has `sender: one(users, ...)`, then `users` must have `sentFriendRequests: many(friends, { relationName: "sender" })`.
-- **Always export from `schema.ts`** — every table file's exports must be spread into the `schema` object in `packages/db-schema/src/schema.ts`. Missing this breaks `db.query.*` at runtime.
-- **`relationName` is required when two FK columns point to the same table** — Drizzle cannot infer which `one()` side maps to which `many()` side when there is ambiguity (e.g. `friends.senderId` and `friends.receiverId` both FK to `users`). Use a string `relationName` on both the `one()` and the matching `many()`:
+- **Define `relations()` for every table** — required for `db.query.*` and `with:` eager loading even if FK columns exist.
+- **Add reciprocal entries** — `sender: one(users)` on `friends` requires `sentFriendRequests: many(friends, { relationName: "sender" })` on `users`.
+- **Export from `schema.ts`** — every table must be spread into the `schema` object in `packages/db-schema/src/schema.ts` or `db.query.*` breaks at runtime.
+- **`relationName` required when two FK columns point to the same table** (e.g. `friends.senderId` and `friends.receiverId` both FK to `users`):
 
   ```ts
   // friends.ts

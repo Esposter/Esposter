@@ -21,7 +21,7 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
   - `arr.toReversed()` instead of `[...arr].reverse()` — `reverse()` is **BANNED**
   - `arr.toSpliced(start, deleteCount, ...items)` instead of manual splice + spread — `splice()` is **BANNED** for producing new arrays (it is still allowed for in-place mutation of store/reactive arrays)
   - `arr.with(index, value)` instead of `[...arr.slice(0, i), value, ...arr.slice(i + 1)]`
-- **Only use `new Set` when deduplication is actually needed** — do not wrap an array in `Set` just to call `.has()` if the values are already unique. Use `.some()` instead: `arr.some(({ id }) => id === targetId)`. Only reach for `Set` when: (a) the source array may contain duplicates and deduplication is the goal, or (b) the collection is large enough that repeated O(n) `.some()` calls would materially hurt performance.
+- **Only use `new Set` when deduplication is needed** — use `.some()` for unique arrays. `Set` only when: (a) deduplication is the goal, or (b) collection large enough that O(n) `.some()` hurts perf.
 - Always use named imports from libraries — only when not already auto-imported by Nuxt or Nuxt modules (e.g. `ref`, `computed`, `watch` from Vue; `storeToRefs` from Pinia; VueUse composables are all auto-imported and must not be manually imported).
 - Explicitly type variables with proper types.
 - **Never use generic variable names like `parsed`** — always use a descriptive name that includes the type: `parsedDate`, `parsedResult`, `parsedConfig`, etc.
@@ -48,7 +48,7 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 ## Control Flow
 
 - **Guard clauses first**: always use `if (!condition) return` to exit early instead of wrapping the main body in an `if` block. Reduce nesting aggressively — if the body of an `if` is the rest of the function, invert the condition and return early instead.
-- **Combine consecutive guards with `||`** — when two or more consecutive early-return guards share the same return value (typically `return` or `return null`), combine them into a single `if` with `||`. Never write two separate `if` statements that both `return` when they can be one:
+- **Combine consecutive guards with `||`** — when consecutive early-return guards share the same return value, combine into a single `if`:
 
   ```ts
   // BAD — two separate guards
@@ -60,22 +60,12 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
     return;
   ```
 
-  Exception: when the second check has side effects or requires complex destructuring that depends on the first passing, separate guards are acceptable.
+  Exception: when the second check has side effects or depends on the first passing.
 
-- **Use `.includes()` for multi-value equality checks** — when the same variable is compared against **2 or more** values with `===`, use an inline array with `.includes()`. Never write `x === A || x === B` when there are two or more alternatives:
-
-  ```ts
-  // BAD — repeated comparisons
-  message.type === MessageType.Message || message.type === MessageType.Webhook;
-
-  // GOOD — inline array + .includes()
-  [MessageType.Message, MessageType.Webhook].includes(message.type);
-  ```
-
-  Only extract to a named constant if the array is reused in multiple places. A single `=== X` check is fine as-is.
+- **Use `.includes()` for 2+ equality checks** — `[A, B].includes(x)` not `x === A || x === B`. Extract to named constant only if reused.
 
 - **Use `switch` for type-based branching** — when branching on an enum or discriminant with multiple cases, use `switch` (with `exhaustiveGuard` in the default) instead of a chain of `if/else if`. Use `if/else if/else` only when conditions are non-enum expressions or when there are exactly two branches.
-- **Always use `if/else if/else` from the very first branch** when a function has multiple conditional returns — no standalone `if` followed by `else if`.
+- **Always use `if/else if/else` from the first branch** — no standalone `if` followed by `else if`.
 
 ## Return Type Annotations
 

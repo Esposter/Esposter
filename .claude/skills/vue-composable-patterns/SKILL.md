@@ -5,8 +5,6 @@ description: Esposter-specific Vue 3 composable and form patterns — MaybeRefOr
 
 # Vue Composable & Form Patterns (Esposter)
 
-Patterns learned through development of the Esposter project. Apply these whenever writing Vue composables, validation rules, or form dialogs.
-
 ## When to Use `MaybeRefOrGetter` vs Function Argument
 
 Use `MaybeRefOrGetter<T>` when the composable **internally reacts** to the value — i.e., it's used inside a `computed` or `watch`. The composable needs to observe changes between calls.
@@ -119,7 +117,7 @@ Note use of `name` (not `currentName`) to enable object shorthand `{ name }`.
 
 Only call `structuredClone(toRawDeep(...))` on data pulled from Vue reactive stores or refs. Freshly constructed class instances are already plain, non-reactive objects.
 
-````typescript
+```typescript
 // WRONG: Unnecessary wrapping
 const newRow = new Row({ data: { ... } })
 executeAndRecord(new CreateRowCommand(index, structuredClone(toRawDeep(newRow))))
@@ -130,6 +128,7 @@ executeAndRecord(new CreateRowCommand(index, newRow))
 
 // CORRECT: Clone IS needed for data from reactive stores
 const originalRow = structuredClone(toRawDeep(takeOne(editedItem.value.dataSource.rows, index)))
+```
 
 ## Unwrapping Reactive Proxies
 
@@ -167,7 +166,7 @@ export const useBrowserFeature = () => {
     // ...
   });
 };
-````
+```
 
 **`watchImmediate` is the SSR concern** — it executes the callback during `setup()`, which runs on the server. If the callback accesses browser APIs, use `watchTriggerable` + `onMounted` to defer the first execution (see `useOnlineSubscribable`):
 

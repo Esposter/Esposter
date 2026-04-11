@@ -62,7 +62,7 @@ description: Esposter Pinia store conventions — full store name, destructure w
 
 ## createOperationData Usage
 
-- **Use `createOperationData` wherever the item type satisfies `ToData<AEntity>`** — call it at store setup to generate typed CRUD methods (`createXxx`, `updateXxx`, `deleteXxx`, `pushXxxs`, `unshiftXxxs`) for any ref that holds an entity list. Pass the ref, identity key array, and an `EntityTypeKey` (from `DatabaseEntityType` or a derived string literal). `User` from `@esposter/db-schema` DOES satisfy this constraint (it has `id`, `createdAt`, `updatedAt`, `deletedAt` from the `pgTable` wrapper). The canonical pattern is to destructure as `base` aliases and wrap them in `storeXxx` functions that add side effects (dedup guards, map updates, count adjustments, etc.):
+- **Use `createOperationData` wherever the item type satisfies `ToData<AEntity>`** — generates typed CRUD methods (`createXxx`, `updateXxx`, `deleteXxx`, `pushXxxs`, `unshiftXxxs`) for entity list refs. `User` satisfies this (`id`, `createdAt`, `updatedAt`, `deletedAt` from `pgTable` wrapper). Destructure as `base` aliases and wrap in `storeXxx` functions for side effects:
 
   ```ts
   const friends = ref<User[]>([]);
@@ -81,7 +81,7 @@ description: Esposter Pinia store conventions — full store name, destructure w
   };
   ```
 
-- **`store` prefix is reserved for state-update-only counterparts of async user actions** — when you need BOTH a user-triggered async action (`deleteFriend`) AND a subscription-driven state-update with the same semantic (`storeDeleteFriend`), name the state-only version with `store` prefix. Never add `store` prefix to methods that are not paired with a user action of the same name. The message data store (`message/data.ts`) is the canonical large-scale example:
+- **`store` prefix for state-update-only counterparts of async user actions** — `deleteFriend` (user action) + `storeDeleteFriend` (subscription-driven state update). Never add `store` prefix to unpaired methods:
 
   ```ts
   // friend.ts — createOperationData wraps base CRUD; store methods add dedup / id-mapping
@@ -137,7 +137,7 @@ const { data: session } = await authClient.useSession(useFetch);
 
 ## Minimal Input Pattern for Store Actions
 
-Store action parameters should always be the **minimum input required** — typically just an ID, not a full object. If the action needs a full entity (e.g. to update local state), it should come from the **API response**, not be passed in by the caller.
+Store action params = minimum input required (typically just an ID). Full entity comes from the **API response**, not the caller.
 
 ```typescript
 // WRONG — forces caller to have the full User object upfront
@@ -153,7 +153,7 @@ const blockUser = async (userId: FriendUserIdInput) => {
 };
 ```
 
-This means the tRPC mutation should return the affected entity when the store needs it for local state updates. Design the API contract around what the store needs, not what the caller already has.
+Design tRPC mutations to return the affected entity when the store needs it for local state.
 
 ## CRUD Parameter Naming
 
