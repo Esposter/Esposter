@@ -65,8 +65,9 @@ description: Esposter Pinia store conventions — full store name, destructure w
 - **Use `createOperationData` wherever the item type satisfies `ToData<AEntity>`** — call it at store setup to generate typed CRUD methods (`createXxx`, `updateXxx`, `deleteXxx`, `pushXxxs`, `unshiftXxxs`) for any ref that holds an entity list. Pass the ref, identity key array, and an `EntityTypeKey` (from `DatabaseEntityType` or a derived string literal). `User` from `@esposter/db-schema` DOES satisfy this constraint (it has `id`, `createdAt`, `updatedAt`, `deletedAt` from the `pgTable` wrapper). The canonical pattern is to destructure as `base` aliases and wrap them in `storeXxx` functions that add side effects (dedup guards, map updates, count adjustments, etc.):
 
   ```ts
+  const friends = ref<User[]>([]);
   const { createFriend: baseStoreCreateFriend, deleteFriend: baseStoreDeleteFriend } = createOperationData(
-    ref<User[]>([]),
+    friends,
     ["id"],
     DatabaseEntityType.Friend,
   );
