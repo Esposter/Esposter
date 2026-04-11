@@ -24,7 +24,7 @@ description: Esposter Drizzle ORM conventions — column naming (camelCase match
 
 ## Table Definition
 
-- **Use `pgTable` wrapper from `@/pgTable`** (not raw `drizzle-orm/pg-core`) for all tables needing `createdAt`/`updatedAt`/`deletedAt` metadata. Exception: join tables without timestamps use `messageSchema.table(...)` directly.
+- **Use `pgTable` wrapper from `@/pgTable`** (not raw `drizzle-orm/pg-core`) for all tables — including join tables. Pass composite PKs via `extraConfig`.
 - **Pass `schema: messageSchema`** for all message-feature tables to group them under the `message` Postgres schema.
 
   ```typescript

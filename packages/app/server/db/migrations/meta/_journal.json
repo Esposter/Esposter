@@ -274,6 +274,13 @@
       "when": 1775801563849,
       "tag": "0038_furry_ben_urich",
       "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "7",
+      "when": 1775873430499,
+      "tag": "0039_worried_blacklash",
+      "breakpoints": true
     }
   ]
 }
