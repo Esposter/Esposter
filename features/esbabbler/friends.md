@@ -46,16 +46,26 @@ export const friendRequests = pgTable(
 ```typescript
 // packages/db-schema/src/schema/friends.ts
 
-export const friends = pgTable("friends", {
-  // Same natural key — getFriendshipId(senderId, receiverId).
-  id: text("id").primaryKey(),
-  senderId: text("senderId")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  receiverId: text("receiverId")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-});
+export const friends = pgTable(
+  "friends",
+  {
+    // Same natural key — getFriendshipId(senderId, receiverId).
+    id: text("id").primaryKey(),
+    receiverId: text("receiverId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    senderId: text("senderId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+  },
+  {
+    extraConfig: ({ receiverId, senderId }) => [
+      check("no_self_friendship", sql`${senderId} != ${receiverId}`),
+      index("friends_receiverId_idx").on(receiverId),
+      index("friends_senderId_idx").on(senderId),
+    ],
+  },
+);
 ```
 
 Directionality preserved (who initiated). Same `id` computation → O(1) friendship check on either table.
@@ -68,14 +78,20 @@ Directionality preserved (who initiated). Same `id` computation → O(1) friends
 export const blocks = pgTable(
   "blocks",
   {
-    blockerId: text("blockerId")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
     blockedId: text("blockedId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
+    blockerId: text("blockerId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
   },
-  { extraConfig: ({ blockerId, blockedId }) => [primaryKey({ columns: [blockerId, blockedId] })] },
+  {
+    extraConfig: ({ blockedId, blockerId }) => [
+      primaryKey({ columns: [blockerId, blockedId] }),
+      check("no_self_block", sql`${blockerId} != ${blockedId}`),
+      index("blocks_blockedId_idx").on(blockedId),
+    ],
+  },
 );
 ```
 
