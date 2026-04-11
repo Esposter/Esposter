@@ -12,7 +12,7 @@ const headers = [
   { key: "chart", sortable: false, title: "" },
   { key: "columnName", sortable: false, title: "Column" },
   { key: "columnType", sortable: false, title: "Type" },
-  ...[...ColumnStatisticsDefinitions].map(({ key, sortable, title }) => ({ key, sortable, title })),
+  ...Array.from(ColumnStatisticsDefinitions, ({ key, sortable, title }) => ({ key, sortable, title })),
 ];
 const openChart = (statistics: ColumnStatistics) => {
   selectedStatistics.value = statistics;

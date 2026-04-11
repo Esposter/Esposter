@@ -7,7 +7,7 @@ export const FilterTypePlaceholderMap = {
   [FilterType.From]: "user",
   [FilterType.In]: "room",
   [FilterType.Mentions]: "user",
-  [FilterType.Has]: joinWithOxfordOr([...FilterTypeHases].map((has) => uncapitalize(has))),
+  [FilterType.Has]: joinWithOxfordOr(Array.from(FilterTypeHases, (has) => uncapitalize(has))),
   [FilterType.Before]: "specific date",
   [FilterType.During]: "specific date",
   [FilterType.After]: "specific date",

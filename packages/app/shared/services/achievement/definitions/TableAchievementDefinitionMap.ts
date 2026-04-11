@@ -17,7 +17,7 @@ export const TableAchievementDefinitionMap = {
     amount: 1,
     category: AchievementCategory.Table,
     condition: {
-      conditions: [...TableEditorTypes].map((tableEditorType) => ({
+      conditions: Array.from(TableEditorTypes, (tableEditorType) => ({
         operator: BinaryOperator.ge,
         path: `${tableEditorType}.items.length` as const,
         type: AchievementConditionType.Property,
