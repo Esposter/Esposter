@@ -129,7 +129,7 @@ blocks             ──unblockUser───────────► (delete
 | `sendFriendRequest`    | `receiverId` | Insert into `friend_requests` with `id=sorted([me,receiverId]).join(sep)`. Conflict on `id` → no-op (idempotent). |
 | `acceptFriendRequest`  | `senderId`   | Transaction: DELETE from `friend_requests` WHERE `id=X AND receiverId=me`, then INSERT into `friends`.            |
 | `declineFriendRequest` | `senderId`   | DELETE from `friend_requests` WHERE `id=X AND receiverId=me`.                                                     |
-| `readFriendRequests`   | —            | SELECT from `friend_requests` WHERE `senderId=me OR receiverId=me`. Returns `FriendRequestWithRelations[]`.       |
+| `readFriendRequests`   | —            | SELECT from `friend_requests` WHERE `receiverId=me`. Returns incoming pending `FriendRequestWithRelations[]`.     |
 
 ### `packages/app/server/trpc/routers/block.ts`
 
