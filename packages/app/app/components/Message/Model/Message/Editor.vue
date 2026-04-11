@@ -59,10 +59,10 @@ const mentionExtension = useMentionExtension();
 <template>
   <RichTextEditor
     v-model="editedMessageHtml"
-    placeholder="Edit message"
-    :limit="MESSAGE_MAX_LENGTH"
-    :extensions="[keyboardExtension, mentionExtension]"
     autofocus="end"
+    placeholder="Edit message"
+    :extensions="[keyboardExtension, mentionExtension]"
+    :limit="MESSAGE_MAX_LENGTH"
     @keydown.esc="emit('update:update-mode', false)"
   >
     <template #append-footer="{ editor }">

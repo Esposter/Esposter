@@ -31,7 +31,12 @@ const replyStore = useReplyStore();
 const { activeRowKey: activeReplyRowKey, rowKey: replyRowKey } = storeToRefs(replyStore);
 const forwardStore = useForwardStore();
 const { rowKey: forwardRowKey } = storeToRefs(forwardStore);
-const isUpdateMode = ref(false);
+const isUpdateMode = computed({
+  get: () => editingRowKey.value === message.rowKey,
+  set: (value) => {
+    editingRowKey.value = value ? message.rowKey : undefined;
+  },
+});
 const isMessageActive = ref(false);
 const isOptionsActive = ref(false);
 const isOptionsChildrenActive = ref(false);
@@ -43,12 +48,6 @@ const isActive = computed(
 );
 const isActiveAndNotUpdateMode = computed(() => isActive.value && !isUpdateMode.value);
 const selectEmoji = await useSelectEmoji(message);
-
-watch(editingRowKey, (newEditingRowKey) => {
-  if (newEditingRowKey !== message.rowKey) return;
-  isUpdateMode.value = true;
-  editingRowKey.value = undefined;
-});
 
 watch(optionsMenu, (newOptionsMenu) => {
   isOptionsChildrenActive.value = newOptionsMenu?.rowKey === message.rowKey;

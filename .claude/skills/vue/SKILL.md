@@ -102,6 +102,25 @@ The same applies to other nullable-initial refs: `ref<User>()`, `ref<number>()`,
 - **Computed for reused expressions** — extract a `computed` (named to match the prop, e.g. `title`) when the same derived value is bound to two or more props. This enables the `:propName` shorthand for one binding and avoids repeating the expression: `const title = computed(() => ...)` → `:title :tooltip-text="title"`. No need for a computed if the value is only used in one place.
 - **Inline prop values** — inline prop values directly in the template to take advantage of Vue TypeScript inference. Only extract to a `computed` when the same logic is reused in multiple places. Single-use derived values stay inline.
 - **Map lookups over computed** — when a value depends on an enum/discriminant key, use a `Map[type]` lookup directly in the template instead of a computed. If multiple properties are needed from the same map entry, use `Map[type].value`. Only fall back to computed when the same map lookup is duplicated in two or more places.
+- **Writable computed over watch + local ref** — when a local boolean ref is entirely derived from (and writes back to) a store value, replace both the `ref` and the `watch` with a writable `computed`. This eliminates the indirect trigger pattern and keeps the store as the single source of truth:
+
+  ```typescript
+  // WRONG — local ref + watch as indirect trigger
+  const isUpdateMode = ref(false);
+  watch(editingRowKey, (newEditingRowKey) => {
+    if (newEditingRowKey !== message.rowKey) return;
+    isUpdateMode.value = true;
+    editingRowKey.value = undefined;
+  });
+
+  // CORRECT — writable computed; no watch needed
+  const isUpdateMode = computed({
+    get: () => editingRowKey.value === message.rowKey,
+    set: (value) => {
+      editingRowKey.value = value ? message.rowKey : undefined;
+    },
+  });
+  ```
 
 ## Conditional Logic
 
