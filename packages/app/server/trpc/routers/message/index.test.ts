@@ -24,7 +24,15 @@ import {
   rooms,
   StandardMessageEntity,
 } from "@esposter/db-schema";
-import { MENTION_ID_ATTRIBUTE, MENTION_TYPE, MENTION_TYPE_ATTRIBUTE, NotFoundError, takeOne } from "@esposter/shared";
+import {
+  InvalidOperationError,
+  MENTION_ID_ATTRIBUTE,
+  MENTION_TYPE,
+  MENTION_TYPE_ATTRIBUTE,
+  NotFoundError,
+  Operation,
+  takeOne,
+} from "@esposter/shared";
 import { MockContainerDatabase, MockEventGridDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
@@ -873,7 +881,7 @@ describe("message", () => {
         rowKey: takeOne(data).rowKey,
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Message, id).message}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Delete, AzureEntityType.Message, id).message}]`,
     );
   });
 
@@ -886,6 +894,7 @@ describe("message", () => {
     const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
 
     const id = crypto.randomUUID();
+
     await expect(
       messageCaller.deleteFile({
         id,
@@ -893,7 +902,7 @@ describe("message", () => {
         rowKey: newMessage.rowKey,
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Message, id).message}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Delete, AzureEntityType.Message, id).message}]`,
     );
   });
 
