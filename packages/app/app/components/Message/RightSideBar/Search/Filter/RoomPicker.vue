@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import type { SerializableValue } from "@esposter/db-schema";
-
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useRoomStore } from "@/store/message/room";
 
-const emit = defineEmits<{ select: [value: SerializableValue] }>();
+const emit = defineEmits<{ select: [value: string] }>();
 const { readMoreRooms, readRooms } = useReadRooms();
 const { isPending } = await readRooms();
 const roomStore = useRoomStore();

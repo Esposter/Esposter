@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import type { SerializableValue } from "@esposter/db-schema";
-
 import { FilterTypeHasIconMap } from "@/models/message/FilterTypeHasIconMap";
 import { FilterTypeHas, FilterTypeHases } from "@esposter/db-schema";
 
-const emit = defineEmits<{ select: [value: SerializableValue] }>();
+const emit = defineEmits<{ select: [value: FilterTypeHas] }>();
 </script>
 
 <template>

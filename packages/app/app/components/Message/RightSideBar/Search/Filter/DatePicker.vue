@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import type { SerializableValue } from "@esposter/db-schema";
-
 import { dayjs } from "#shared/services/dayjs";
 
-const emit = defineEmits<{ select: [value: SerializableValue] }>();
+const emit = defineEmits<{ select: [value: Date] }>();
 const { toJsDate } = useVDate();
 const date = ref<Date | null>(null);
 </script>

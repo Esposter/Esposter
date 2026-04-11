@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import type { SerializableValue } from "@esposter/db-schema";
-
-const emit = defineEmits<{ select: [value: SerializableValue] }>();
+const emit = defineEmits<{ select: [value: boolean] }>();
 const options = [true, false] as const;
 </script>
 
