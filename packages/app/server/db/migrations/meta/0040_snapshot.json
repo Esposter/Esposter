@@ -1,5 +1,5 @@
 {
-  "id": "eb239164-6598-414d-a38a-4f75954e922b",
+  "id": "23041b35-1294-4a45-9021-e05660398857",
   "prevId": "7aad4348-e508-49f1-b13d-347388d5837a",
   "version": "7",
   "dialect": "postgresql",
@@ -219,7 +219,7 @@
       "checkConstraints": {
         "name": {
           "name": "name",
-          "value": "LENGTH(\"message\".\"app_users\".\"name\") >= 1 AND LENGTH(\"message\".\"app_users\".\"name\") <= 100"
+          "value": "LENGTH(\"message\".\"app_users\".\"name\") BETWEEN 1 AND 100"
         }
       },
       "isRLSEnabled": false
@@ -1042,7 +1042,7 @@
       "checkConstraints": {
         "name": {
           "name": "name",
-          "value": "LENGTH(\"message\".\"room_categories\".\"name\") <= 100"
+          "value": "LENGTH(\"message\".\"room_categories\".\"name\") BETWEEN 1 AND 100"
         },
         "position": {
           "name": "position",
@@ -1457,7 +1457,7 @@
       "checkConstraints": {
         "name": {
           "name": "name",
-          "value": "LENGTH(\"surveys\".\"name\") >= 1 AND LENGTH(\"surveys\".\"name\") <= 100"
+          "value": "LENGTH(\"surveys\".\"name\") BETWEEN 1 AND 100"
         }
       },
       "isRLSEnabled": false
@@ -1648,7 +1648,7 @@
       "checkConstraints": {
         "name": {
           "name": "name",
-          "value": "LENGTH(\"users\".\"name\") >= 1 AND LENGTH(\"users\".\"name\") <= 100"
+          "value": "LENGTH(\"users\".\"name\") BETWEEN 1 AND 100"
         }
       },
       "isRLSEnabled": false

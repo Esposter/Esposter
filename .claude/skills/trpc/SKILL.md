@@ -89,6 +89,36 @@ description: Esposter tRPC conventions — procedure typing with generics, route
   - `blocks` table → `blockUser`, `unblockUser`, `readBlockedUsers` procedures; `blockedUsers` store ref
 - **Nuxt does NOT auto-import store functions** — always use explicit `import { useXxxStore } from "@/store/..."` in files that call other stores. Circular imports are avoided by choosing a one-way dependency direction: `block` store may import `friend` and `friendRequest` stores; `friendRequest` store may import `friend` store; `friend` store imports neither.
 
+## Error Handling
+
+- **`BAD_REQUEST` always includes a `message`** — never throw a bare `new TRPCError({ code: "BAD_REQUEST" })`. Always add `message: new InvalidOperationError(Operation.X, EntityType, name).message` so the error is identifiable. Pick the `Operation` that matches the procedure (e.g. `Operation.Read` for a query, `Operation.Create`/`Operation.Update`/`Operation.Delete` for mutations), the entity type being operated on, and a `name` that identifies the invalid value (`JSON.stringify(input)`, the relevant ID, etc.):
+
+  ```ts
+  // CORRECT
+  throw new TRPCError({
+    code: "BAD_REQUEST",
+    message: new InvalidOperationError(Operation.Read, AzureEntityType.Message, JSON.stringify(inFilterRoomIds))
+      .message,
+  });
+
+  // WRONG — no message, impossible to debug
+  throw new TRPCError({ code: "BAD_REQUEST" });
+  ```
+
+- **`if/else if` when an early-exit `if` is followed by a conditional** — if the first branch throws (or returns), the next conditional must be `else if`, not a standalone `if`. This applies even when the two conditions are logically independent:
+
+  ```ts
+  // CORRECT
+  if (inFilterRoomIds.some((value) => typeof value !== "string"))
+    throw new TRPCError({ ... });
+  else if (inFilterRoomIds.length > 0)
+    await isMember(...);
+
+  // WRONG — two standalone ifs when first throws
+  if (inFilterRoomIds.some((value) => typeof value !== "string")) throw new TRPCError({ ... });
+  if (inFilterRoomIds.length > 0) await isMember(...);
+  ```
+
 ## Router Test Patterns
 
 - **Always create test resources via `caller.method()`** — never insert rows directly into the DB in router tests. Direct DB insertion bypasses application logic (auth checks, business rules, cascades) and means the flow being tested is different from the real flow. If a resource belongs to a different router, create a second caller for that router using `createCallerFactory(otherRouter)`.

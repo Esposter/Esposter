@@ -21,7 +21,7 @@ export const roomCategories = pgTable(
   },
   {
     extraConfig: ({ name, position }) => [
-      check("name", sql`LENGTH(${name}) <= ${sql.raw(ROOM_CATEGORY_NAME_MAX_LENGTH.toString())}`),
+      check("name", sql`LENGTH(${name}) BETWEEN 1 AND ${sql.raw(ROOM_CATEGORY_NAME_MAX_LENGTH.toString())}`),
       check("position", sql`${position} >= 0`),
     ],
     schema: messageSchema,

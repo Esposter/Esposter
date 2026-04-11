@@ -21,7 +21,16 @@ const { cardProps, confirmButtonAttrs = {}, confirmButtonProps = {} } = definePr
 const emit = defineEmits<{ submit: [event: SubmitEventPromise, onComplete: () => void] }>();
 const editForm = ref<InstanceType<typeof VForm>>();
 const isEditFormValid = ref(true);
+const isSubmitting = ref(false);
 const formId = useId();
+const submit = (event: SubmitEventPromise) => {
+  if (isSubmitting.value) return;
+  isSubmitting.value = true;
+  emit("submit", event, () => {
+    modelValue.value = false;
+    isSubmitting.value = false;
+  });
+};
 
 defineExpose({ editForm, isEditFormValid });
 </script>
@@ -35,19 +44,15 @@ defineExpose({ editForm, isEditFormValid });
       mergeProps(confirmButtonAttrs, {
         type: 'submit',
         form: formId,
-        disabled: Boolean(confirmButtonAttrs.disabled) || !isEditFormValid,
+        disabled: Boolean(confirmButtonAttrs.disabled) || !isEditFormValid || isSubmitting,
+        loading: isSubmitting,
       })
     "
   >
     <template #activator="activatorProps">
       <slot name="activator" :="activatorProps" />
     </template>
-    <v-form
-      :id="formId"
-      ref="editForm"
-      v-model="isEditFormValid"
-      @submit.prevent="emit('submit', $event, () => (modelValue = false))"
-    >
+    <v-form :id="formId" ref="editForm" v-model="isEditFormValid" @submit.prevent="submit">
       <slot />
     </v-form>
     <template #prepend-actions>

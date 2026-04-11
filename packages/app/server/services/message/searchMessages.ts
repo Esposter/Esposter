@@ -20,9 +20,9 @@ import { ItemMetadataPropertyNames } from "@esposter/shared";
 export const searchMessages = async ({ filters, limit, offset, query, roomId, sortBy }: SearchMessagesInput) => {
   const client = useSearchClient(SearchIndex.Messages);
   const dedupedFilters = dedupeFilters(filters);
-  const hasInFilter = dedupedFilters.some(({ type }) => type === FilterType.In);
+  const hasRoomInFilter = dedupedFilters.some(({ type }) => type === FilterType.In);
   const clauses: Clause[] = [
-    ...(!hasInFilter
+    ...(!hasRoomInFilter
       ? [{ key: StandardMessageEntityPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId }]
       : []),
     getSearchNullClause(ItemMetadataPropertyNames.deletedAt),

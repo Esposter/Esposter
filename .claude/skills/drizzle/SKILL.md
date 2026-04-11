@@ -172,6 +172,18 @@ description: Esposter Drizzle ORM conventions — column naming (camelCase match
   check("name", sql`LENGTH(${name}) <= ${ROOM_NAME_MAX_LENGTH}`);
   ```
 
+- **Use `BETWEEN` when a column has both a lower and upper bound** — prefer `BETWEEN min AND max` over `>= min AND <= max`. Both bounds must use `sql.raw()`:
+
+  ```ts
+  // CORRECT — BETWEEN for min + max
+  check("name", sql`LENGTH(${name}) BETWEEN 1 AND ${sql.raw(ROOM_CATEGORY_NAME_MAX_LENGTH.toString())}`);
+
+  // WRONG — verbose AND form
+  check("name", sql`LENGTH(${name}) >= 1 AND LENGTH(${name}) <= ${sql.raw(ROOM_CATEGORY_NAME_MAX_LENGTH.toString())}`);
+  ```
+
+  When the Zod schema has `.min(1).max(MAX)`, the DB constraint must also enforce the lower bound — use BETWEEN to keep both in sync.
+
 - **String enum literals** that are part of SQL logic (e.g. comparing a pg enum column to a constant) can be hardcoded directly in the template as single-quoted SQL strings:
   ```ts
   check("participant_key_type", sql`(${type} = 'DirectMessage' AND ...) OR (${type} = 'Room' AND ...)`);

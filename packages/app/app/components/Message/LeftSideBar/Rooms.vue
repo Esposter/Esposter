@@ -4,13 +4,12 @@ import { useRoomStore } from "@/store/message/room";
 
 const isCollapsed = useLocalStorage("message-sidebar-rooms-collapsed", false);
 const { readRoomCategories } = useReadRoomCategories();
-await readRoomCategories();
 const roomCategoryStore = useRoomCategoryStore();
 const { categories } = storeToRefs(roomCategoryStore);
 const roomStore = useRoomStore();
 const { rooms } = storeToRefs(roomStore);
 const { readRooms, readMoreRooms } = useReadRooms();
-const { isPending, hasMore } = await readRooms();
+const [{ isPending, hasMore }] = await Promise.all([readRooms(), readRoomCategories()]);
 
 const uncategorizedRooms = computed(() => rooms.value.filter(({ categoryId }) => !categoryId));
 const roomsByCategory = computed(() =>

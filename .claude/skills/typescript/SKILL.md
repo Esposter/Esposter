@@ -30,6 +30,21 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 - **Cloning objects** — use `structuredClone(obj)` for deep clones; use `Object.assign(structuredClone(obj), { ...updates })` to clone and override fields. Never use `{ ...spread }` to clone a class instance — spread creates a plain object losing the prototype. **Exception**: `structuredClone(new ClassName(...))` is intentional when a plain object is explicitly required (e.g. Vjsf does not accept class instances — must use `structuredClone` to strip the prototype). Always add a comment explaining why.
 - **Boolean casting** — never use `!!` to cast to boolean. Always use `Boolean(value)`.
 
+## Function Syntax
+
+- **Always use arrow functions** — `const fn = () => { ... }` and `export const fn = () => { ... }`. Never use the `function` keyword except for the narrow cases below.
+- **`function` keyword only when `this` binding is required** — class methods, object methods that reference `this`, and generator functions (`function*`). All other functions — module-level, composables, callbacks, helpers — must be arrow functions.
+
+  ```ts
+  // WRONG — function declaration for a utility
+  export function useInFlight() { ... }
+  async function execute<T>(fn: () => Promise<T>) { ... }
+
+  // CORRECT
+  export const useInFlight = () => { ... };
+  const execute = async <T>(fn: () => Promise<T>): Promise<T | undefined> => { ... };
+  ```
+
 ## Promise Style
 
 - **Always use `async`/`await`** — never use `.then()` or `.catch()` promise chains. Use `try`/`catch` blocks for error handling.
@@ -155,8 +170,8 @@ export const stringTransformationTypeSchema = z.enum(
 
   // call sites
   BooleanFormats.has(format); // O(1) lookup
-  for (const f of BooleanFormats) // iteration (Set is iterable)
-    Array.from(BooleanFormats, fn); // map over a Set — see below
+  for (const f of BooleanFormats) { ... } // iteration (Set is iterable)
+  Array.from(BooleanFormats, fn); // map over a Set — see below
   ```
 
 - **Never write `Object.values(SomeEnum)` inline** — always use the exported `Set` constant.

@@ -23,7 +23,7 @@ export const surveys = pgTable(
   },
   {
     extraConfig: ({ name }) => [
-      check("name", sql`LENGTH(${name}) >= 1 AND LENGTH(${name}) <= ${sql.raw(SURVEY_NAME_MAX_LENGTH.toString())}`),
+      check("name", sql`LENGTH(${name}) BETWEEN 1 AND ${sql.raw(SURVEY_NAME_MAX_LENGTH.toString())}`),
     ],
   },
 );

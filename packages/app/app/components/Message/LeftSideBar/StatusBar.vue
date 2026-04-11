@@ -43,10 +43,10 @@ const callRoomName = useRoomName(callRoomId);
       </MessageModelStatusPickerMenuButton>
       <div w-full flex justify-between overflow-hidden>
         <div pl-2 flex flex-col justify-center overflow-hidden>
-          <div class="text-xs" truncate>
+          <div text-xs truncate>
             {{ session.user.name }}
           </div>
-          <div class="text-xs text-gray" truncate>
+          <div text-xs text-gray truncate>
             {{ getStatusMessage(session.user.id) || getStatusEnum(session.user.id) }}
           </div>
         </div>

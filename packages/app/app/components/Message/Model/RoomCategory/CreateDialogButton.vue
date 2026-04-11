@@ -6,14 +6,15 @@ const roomCategoryStore = useRoomCategoryStore();
 const { createRoomCategory } = roomCategoryStore;
 const dialog = ref(false);
 const name = ref("");
-
-const onSubmit = async () => {
-  const trimmedName = name.value.trim();
-  if (!trimmedName) return;
-  await createRoomCategory({ name: trimmedName });
-  name.value = "";
-  dialog.value = false;
-};
+const { execute, isLoading } = useInFlight();
+const submit = () =>
+  execute(async () => {
+    const trimmedName = name.value.trim();
+    if (!trimmedName) return;
+    await createRoomCategory({ name: trimmedName });
+    name.value = "";
+    dialog.value = false;
+  });
 </script>
 
 <template>
@@ -35,11 +36,18 @@ const onSubmit = async () => {
         :maxlength="ROOM_CATEGORY_NAME_MAX_LENGTH"
         variant="outlined"
         autofocus
-        @keydown.enter="onSubmit()"
+        @keydown.enter="submit()"
       />
       <div flex justify-end gap-2>
         <v-btn text="Cancel" variant="plain" @click="dialog = false" />
-        <v-btn color="primary" text="Create" variant="elevated" @click="onSubmit()" />
+        <v-btn
+          color="primary"
+          text="Create"
+          variant="elevated"
+          :disabled="isLoading"
+          :loading="isLoading"
+          @click="submit()"
+        />
       </div>
     </StyledCard>
   </v-dialog>

@@ -378,7 +378,8 @@ export const roomRouter = router({
       )
       .innerJoin(usersToRooms2, and(eq(usersToRooms2.roomId, rooms.id), eq(usersToRooms2.userId, input.userId)))
       .where(eq(rooms.type, RoomType.Room))
-      .orderBy(desc(rooms.updatedAt));
+      .orderBy(desc(rooms.updatedAt))
+      .limit(MAX_READ_LIMIT);
   }),
   readRoom: standardAuthedProcedure.input(readRoomInputSchema).query<null | Room>(async ({ ctx, input }) => {
     if (input) {

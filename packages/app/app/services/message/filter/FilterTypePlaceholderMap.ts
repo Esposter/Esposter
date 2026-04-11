@@ -1,5 +1,5 @@
 /* eslint-disable perfectionist/sort-objects */
-import { joinWithOxfordOr } from "@/util/text/joinWithOxfordOr";
+import { joinWithOxfordOr } from "#shared/util/text/joinWithOxfordOr";
 import { FilterType, FilterTypeHases } from "@esposter/db-schema";
 import { uncapitalize } from "@esposter/shared";
 

@@ -189,7 +189,7 @@ For a prop dependency, wrap it in a getter: `() => isActive`.
 - Always place `watch`, `onMounted`, `onUnmounted`, and other Vue lifecycle hooks/watchers at the **bottom** of `<script setup>`, after all `const` assignments.
 - Always put a blank line before them to visually separate them from regular `const` assignments.
 - Always wrap the callback in an explicit arrow function — never pass a function reference directly. This avoids scope/binding issues and prevents accidental argument forwarding: `onUnmounted(() => { reset(); })` not `onUnmounted(reset)`.
-- This applies everywhere — `.map()`, `.filter()`, event handlers, lifecycle hooks, etc. Always use `array.map((item) => fn(item))` not `array.map(fn)`.
+- This applies everywhere — `.map()`, `.filter()`, lifecycle hooks, JS event listeners, etc. Always use `array.map((item) => fn(item))` not `array.map(fn)`. Vue template `@event` bindings are handled separately in Template Conventions: use `@click="fn()"` (call expression), not `@click="fn"` (bare reference).
 
 ## Browser Globals — Always Use `window.` Prefix
 

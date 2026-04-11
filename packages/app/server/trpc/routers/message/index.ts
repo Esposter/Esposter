@@ -429,12 +429,14 @@ export const messageRouter = router({
     },
   ),
   searchMessages: getMemberProcedure(searchMessagesInputSchema, "roomId").query(async ({ ctx, input }) => {
-    const inFilter = input.filters.find(({ type }) => type === FilterType.In);
-    if (inFilter) {
-      const targetRoomId = inFilter.value;
-      if (typeof targetRoomId !== "string") throw new TRPCError({ code: "BAD_REQUEST" });
-      await isMember(ctx.db, ctx.getSessionPayload, targetRoomId);
-    }
+    const inFilterRoomIds = input.filters.filter(({ type }) => type === FilterType.In).map(({ value }) => value);
+    if (inFilterRoomIds.some((value) => typeof value !== "string"))
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: new InvalidOperationError(Operation.Read, AzureEntityType.Message, JSON.stringify(inFilterRoomIds))
+          .message,
+      });
+    else if (inFilterRoomIds.length > 0) await isMember(ctx.db, ctx.getSessionPayload, inFilterRoomIds as string[]);
     return searchMessages(input);
   }),
   unpinMessage: getMemberProcedure(unpinMessageInputSchema, "partitionKey").mutation(async ({ input }) => {
