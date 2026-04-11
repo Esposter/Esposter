@@ -16,7 +16,6 @@ const message = computed(() => statusMap.value.get(userId.value)?.message ?? "")
 const selectedStatus = ref(status.value);
 const statusMessage = ref(message.value);
 const menu = ref(false);
-
 const save = async () => {
   await $trpc.user.upsertStatus.mutate({ message: statusMessage.value, status: selectedStatus.value });
   menu.value = false;

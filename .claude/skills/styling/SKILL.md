@@ -12,6 +12,17 @@ description: Esposter UnoCSS Attributify Mode styling conventions — prop-based
 - Only use `class="..."` when technically required (dynamic `:class` bindings, Vuetify-specific typography/colour classes like `text-overline`, `text-medium-emphasis`, `text-wrap`, Vuetify CSS variable-based colours like `bg-surface-variant`). UnoCSS utilities (spacing, flex, sizing) must always be attributes even when mixed with Vuetify classes: `<div class="text-overline" mb-2>`.
 - **Vuetify colour tokens** (e.g. `bg-surface-variant`, `bg-surface`, `text-on-surface`) must stay in `class="..."` — they are Vuetify CSS variable shorthands, not UnoCSS utilities, and do not work as attributify props.
 
+## Abbreviated Utilities
+
+Always use UnoCSS abbreviated shorthand forms — they are first-class UnoCSS utilities:
+
+- `b-none` not `border-none`
+- `b-1` not `border-1`
+- `b-solid` not `border-solid`
+- `b-t-2` not `border-top-2`
+
+When in doubt, prefer the shorter form — UnoCSS abbreviations are canonical in this project.
+
 ## Units
 
 - **Always use `rem` instead of `px`** for all CSS values (font sizes, spacing, widths, heights, borders, etc.).

@@ -32,13 +32,13 @@ const callRoomName = useRoomName(callRoomId);
     <StyledCard flex p-2 rd-2>
       <MessageModelStatusPickerMenuButton>
         <template #activator="{ menuProps }">
-          <div cursor-pointer :="menuProps">
+          <button type="button" cursor-pointer bg-transparent b-none p-0 :="menuProps">
             <MessageModelMemberStatusAvatar
               :id="session.user.id"
               :image="session.user.image"
               :name="session.user.name"
             />
-          </div>
+          </button>
         </template>
       </MessageModelStatusPickerMenuButton>
       <div w-full flex justify-between overflow-hidden>

@@ -1,7 +1,7 @@
 import type { z } from "zod";
 
-import { selectSurveySchema } from "@esposter/db-schema";
 import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
+import { selectSurveySchema } from "@esposter/db-schema";
 
 export const updateSurveyInputSchema = refineAtLeastOne(
   selectSurveySchema.pick({ group: true, id: true, name: true }).partial({ group: true, name: true }),

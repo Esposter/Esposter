@@ -14,37 +14,35 @@ export const roomCategoryRouter = router({
   createRoomCategory: standardAuthedProcedure
     .input(createRoomCategoryInputSchema)
     .mutation<RoomCategory>(async ({ ctx, input }) => {
-      const userId = ctx.getSessionPayload.user.id;
-      const created = (
+      const createdRoomCategory = (
         await ctx.db
           .insert(roomCategories)
-          .values({ ...input, userId })
+          .values({ ...input, userId: ctx.getSessionPayload.user.id })
           .returning()
       )[0];
-      if (!created)
+      if (!createdRoomCategory)
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: new InvalidOperationError(Operation.Create, DatabaseEntityType.RoomCategory, JSON.stringify(input))
             .message,
         });
-      return created;
+      return createdRoomCategory;
     }),
   deleteRoomCategory: standardAuthedProcedure
     .input(deleteRoomCategoryInputSchema)
     .mutation<RoomCategory>(async ({ ctx, input }) => {
-      const userId = ctx.getSessionPayload.user.id;
-      const deleted = (
+      const deletedRoomCategory = (
         await ctx.db
           .delete(roomCategories)
-          .where(and(eq(roomCategories.id, input), eq(roomCategories.userId, userId)))
+          .where(and(eq(roomCategories.id, input), eq(roomCategories.userId, ctx.getSessionPayload.user.id)))
           .returning()
       )[0];
-      if (!deleted)
+      if (!deletedRoomCategory)
         throw new TRPCError({
           code: "NOT_FOUND",
           message: new NotFoundError(DatabaseEntityType.RoomCategory, input).message,
         });
-      return deleted;
+      return deletedRoomCategory;
     }),
   readRoomCategories: standardAuthedProcedure.query<RoomCategory[]>(({ ctx }) =>
     ctx.db
@@ -56,19 +54,18 @@ export const roomCategoryRouter = router({
   updateRoomCategory: standardAuthedProcedure
     .input(updateRoomCategoryInputSchema)
     .mutation<RoomCategory>(async ({ ctx, input: { id, ...rest } }) => {
-      const userId = ctx.getSessionPayload.user.id;
-      const updated = (
+      const updatedRoomCategory = (
         await ctx.db
           .update(roomCategories)
           .set(rest)
-          .where(and(eq(roomCategories.id, id), eq(roomCategories.userId, userId)))
+          .where(and(eq(roomCategories.id, id), eq(roomCategories.userId, ctx.getSessionPayload.user.id)))
           .returning()
       )[0];
-      if (!updated)
+      if (!updatedRoomCategory)
         throw new TRPCError({
           code: "NOT_FOUND",
           message: new NotFoundError(DatabaseEntityType.RoomCategory, id).message,
         });
-      return updated;
+      return updatedRoomCategory;
     }),
 });

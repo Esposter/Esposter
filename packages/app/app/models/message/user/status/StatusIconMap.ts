@@ -1,4 +1,3 @@
-/* eslint-disable perfectionist/sort-objects */
 import { UserStatus } from "@esposter/db-schema";
 
 export const StatusIconMap = {

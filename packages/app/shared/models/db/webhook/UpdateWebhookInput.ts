@@ -1,5 +1,5 @@
-import { selectRoomSchema, selectWebhookSchema } from "@esposter/db-schema";
 import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
+import { selectRoomSchema, selectWebhookSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
 export const updateWebhookInputSchema = refineAtLeastOne(

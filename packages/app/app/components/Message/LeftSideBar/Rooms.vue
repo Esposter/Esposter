@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useRoomCategoryStore } from "@/store/message/roomCategory";
 import { useRoomStore } from "@/store/message/room";
+import { useRoomCategoryStore } from "@/store/message/roomCategory";
 
 const isCollapsed = useLocalStorage("message-sidebar-rooms-collapsed", false);
 const { readRoomCategories } = useReadRoomCategories();
@@ -8,8 +8,8 @@ const roomCategoryStore = useRoomCategoryStore();
 const { categories } = storeToRefs(roomCategoryStore);
 const roomStore = useRoomStore();
 const { rooms } = storeToRefs(roomStore);
-const { readRooms, readMoreRooms } = useReadRooms();
-const [{ isPending, hasMore }] = await Promise.all([readRooms(), readRoomCategories()]);
+const { readMoreRooms, readRooms } = useReadRooms();
+const [{ hasMore, isPending }] = await Promise.all([readRooms(), readRoomCategories()]);
 
 const uncategorizedRooms = computed(() => rooms.value.filter(({ categoryId }) => !categoryId));
 const roomsByCategory = computed(() =>

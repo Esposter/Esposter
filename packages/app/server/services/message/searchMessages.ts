@@ -22,9 +22,9 @@ export const searchMessages = async ({ filters, limit, offset, query, roomId, so
   const dedupedFilters = dedupeFilters(filters);
   const hasRoomInFilter = dedupedFilters.some(({ type }) => type === FilterType.In);
   const clauses: Clause[] = [
-    ...(!hasRoomInFilter
-      ? [{ key: StandardMessageEntityPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId }]
-      : []),
+    ...(hasRoomInFilter
+      ? []
+      : [{ key: StandardMessageEntityPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId }]),
     getSearchNullClause(ItemMetadataPropertyNames.deletedAt),
   ];
   if (dedupedFilters.length > 0) clauses.push(...filtersToClauses(dedupedFilters));

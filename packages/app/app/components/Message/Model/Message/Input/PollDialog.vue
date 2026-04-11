@@ -17,7 +17,10 @@ const { createMessage } = dataStore;
 const question = ref("");
 const options = ref(["", ""]);
 const submit = async (_event: SubmitEventPromise, onComplete: () => void) => {
-  if (!currentRoomId.value) return;
+  if (!currentRoomId.value) {
+    onComplete();
+    return;
+  }
   const pollContent: PollMessageContent = {
     options: options.value.map((label) => ({ id: crypto.randomUUID(), label: label.trim() })),
     question: question.value.trim(),
