@@ -17,17 +17,28 @@ Three separate tables encode relationship state — no status enum needed.
 ```typescript
 // packages/db-schema/src/schema/friendRequests.ts
 
-export const friendRequests = pgTable("friend_requests", {
-  // Natural key — getFriendshipId(senderId, receiverId).
-  // Conflict on insert = idempotent: duplicate sends are no-ops.
-  id: text("id").primaryKey(),
-  senderId: text("senderId")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  receiverId: text("receiverId")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-});
+export const friendRequests = pgTable(
+  "friend_requests",
+  {
+    // Natural key — getFriendshipId(senderId, receiverId).
+    // Conflict on insert = idempotent: duplicate sends are no-ops.
+    id: text("id").primaryKey(),
+    senderId: text("senderId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    receiverId: text("receiverId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+  },
+  {
+    extraConfig: ({ receiverId, senderId }) => [
+      // DB-side guard: self-requests rejected at the database level, not just the router.
+      check("no_self_friend_request", sql`${senderId} != ${receiverId}`),
+      index("friend_requests_receiverId_idx").on(receiverId),
+      index("friend_requests_senderId_idx").on(senderId),
+    ],
+  },
+);
 ```
 
 ### `friends` table — accepted friendships only

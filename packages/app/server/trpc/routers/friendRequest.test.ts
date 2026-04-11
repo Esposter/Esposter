@@ -172,6 +172,7 @@ describe("friendRequest", () => {
     const userId = getMockSession().user.id;
     const { user } = await mockSessionOnce(mockContext.db);
     const friendshipId = getFriendshipId(userId, user.id);
+    getMockSession();
 
     await expect(friendRequestCaller.declineFriendRequest(user.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.FriendRequest, friendshipId).message}]`,
@@ -191,7 +192,7 @@ describe("friendRequest", () => {
     getMockSession();
 
     await expect(friendRequestCaller.acceptFriendRequest(senderUser.id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.Friend, senderUser.id).message}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Friend, getFriendshipId(senderUser.id, receiverUser.id)).message}]`,
     );
   });
 

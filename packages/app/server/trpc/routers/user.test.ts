@@ -231,8 +231,14 @@ describe("user", () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
+    const subscription = await caller.onUpsertStatus([userId]);
 
-    await expect(caller.onUpsertStatus([userId])).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(
+      withAsyncIterator(
+        () => subscription,
+        (iterator) => iterator.next(),
+      ),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.UserStatus, userRouter.onUpsertStatus.name).message}]`,
     );
   });
