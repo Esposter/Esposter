@@ -42,6 +42,7 @@ describe("block", () => {
     expect.hasAssertions();
 
     const { user } = await mockSessionOnce(mockContext.db);
+    getMockSession();
     const blockedUser = await blockCaller.blockUser(user.id);
 
     expect(blockedUser.id).toBe(user.id);
@@ -71,8 +72,8 @@ describe("block", () => {
     expect.hasAssertions();
 
     const { user } = await mockSessionOnce(mockContext.db);
+    getMockSession();
     await blockCaller.blockUser(user.id);
-
     const blockedUsers = await blockCaller.readBlockedUsers();
 
     expect(blockedUsers).toHaveLength(1);
@@ -83,9 +84,9 @@ describe("block", () => {
     expect.hasAssertions();
 
     const { user } = await mockSessionOnce(mockContext.db);
+    getMockSession();
     await blockCaller.blockUser(user.id);
     await blockCaller.unblockUser(user.id);
-
     const blockedUsers = await blockCaller.readBlockedUsers();
 
     expect(blockedUsers).toHaveLength(0);
@@ -95,8 +96,8 @@ describe("block", () => {
     expect.hasAssertions();
 
     const { user: blockedUser } = await mockSessionOnce(mockContext.db);
+    getMockSession();
     await blockCaller.blockUser(blockedUser.id);
-
     const results = await friendCaller.searchUsers(blockedUser.name);
 
     expect(results.every(({ id }) => id !== blockedUser.id)).toBe(true);

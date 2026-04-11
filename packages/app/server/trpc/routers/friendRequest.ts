@@ -147,7 +147,7 @@ export const friendRequestRouter = router({
           where: (friendRequests, { eq }) => eq(friendRequests.id, friendshipId),
           with: FriendRequestRelations,
         });
-        if (!existingRequest || existingRequest.senderId !== userId)
+        if (existingRequest?.senderId !== userId)
           throw new TRPCError({
             code: "BAD_REQUEST",
             message: new InvalidOperationError(Operation.Create, DatabaseEntityType.FriendRequest, friendshipId)
