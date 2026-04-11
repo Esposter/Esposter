@@ -20,8 +20,9 @@ export const roomCategories = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ name }) => [
+    extraConfig: ({ name, position }) => [
       check("name", sql`LENGTH(${name}) <= ${sql.raw(ROOM_CATEGORY_NAME_MAX_LENGTH.toString())}`),
+      check("position", sql`${position} >= 0`),
     ],
     schema: messageSchema,
   },
@@ -31,6 +32,7 @@ export type RoomCategory = typeof roomCategories.$inferSelect;
 
 export const selectRoomCategorySchema = createSelectSchema(roomCategories, {
   name: z.string().min(1).max(ROOM_CATEGORY_NAME_MAX_LENGTH),
+  position: z.number().int().nonnegative(),
 });
 
 export const roomCategoriesRelations = relations(roomCategories, ({ many, one }) => ({
