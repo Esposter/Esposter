@@ -6,7 +6,7 @@ import { boolean, check, pgEnum, text, timestamp } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const STATUS_MESSAGE_MAX_LENGTH = 1000;
+export const STATUS_MESSAGE_MAX_LENGTH = 64;
 
 export enum UserStatus {
   DoNotDisturb = "DoNotDisturb",

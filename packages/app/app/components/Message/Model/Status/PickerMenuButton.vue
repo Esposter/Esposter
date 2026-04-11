@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { STATUS_MESSAGE_UI_MAX_LENGTH } from "#shared/services/message/constants";
 import { authClient } from "@/services/auth/authClient";
 import { useStatusStore } from "@/store/message/user/status";
-import { UserStatus } from "@esposter/db-schema";
+import { STATUS_MESSAGE_MAX_LENGTH, UserStatus } from "@esposter/db-schema";
 
 const { $trpc } = useNuxtApp();
 const { data: session } = await authClient.useSession(useFetch);
@@ -69,7 +68,7 @@ const selectableStatuses = [UserStatus.Online, UserStatus.Idle, UserStatus.DoNot
         label="What's on your mind?"
         density="compact"
         hide-details
-        :maxlength="STATUS_MESSAGE_UI_MAX_LENGTH"
+        :maxlength="STATUS_MESSAGE_MAX_LENGTH"
         variant="outlined"
         @keydown.enter="onSave()"
       />
