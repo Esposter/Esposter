@@ -41,10 +41,10 @@ describe("friend", () => {
     expect.hasAssertions();
 
     const { user } = await setupFriendship();
-    const friendList = await friendCaller.readFriends();
+    const friends = await friendCaller.readFriends();
 
-    expect(friendList).toHaveLength(1);
-    expect(takeOne(friendList).id).toBe(user.id);
+    expect(friends).toHaveLength(1);
+    expect(takeOne(friends).id).toBe(user.id);
   });
 
   test("reads friends as receiver", async () => {
@@ -52,10 +52,10 @@ describe("friend", () => {
 
     const { user, userId } = await setupFriendship();
     await mockSessionOnce(mockContext.db, user);
-    const friendList = await friendCaller.readFriends();
+    const friends = await friendCaller.readFriends();
 
-    expect(friendList).toHaveLength(1);
-    expect(takeOne(friendList).id).toBe(userId);
+    expect(friends).toHaveLength(1);
+    expect(takeOne(friends).id).toBe(userId);
   });
 
   test("deletes friend", async () => {
@@ -64,9 +64,21 @@ describe("friend", () => {
     const { user } = await setupFriendship();
     await friendCaller.deleteFriend(user.id);
 
-    const friendList = await friendCaller.readFriends();
+    const friends = await friendCaller.readFriends();
 
-    expect(friendList).toHaveLength(0);
+    expect(friends).toHaveLength(0);
+  });
+
+  test("deleting non-existent friendship (no-op)", async () => {
+    expect.hasAssertions();
+
+    const userId = crypto.randomUUID();
+
+    await expect(friendCaller.deleteFriend(userId)).resolves.not.toThrow();
+
+    const friends = await friendCaller.readFriends();
+
+    expect(friends).toHaveLength(0);
   });
 
   test("searches users by name", async () => {

@@ -4,6 +4,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
+import { blockRouter } from "@@/server/trpc/routers/block";
 import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
 import { blocks, DatabaseEntityType, friendRequests, friends } from "@esposter/db-schema";
@@ -12,10 +13,12 @@ import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("friendRequest", () => {
   let mockContext: Context;
+  let blockCaller: DecorateRouterRecord<TRPCRouter["block"]>;
   let friendRequestCaller: DecorateRouterRecord<TRPCRouter["friendRequest"]>;
 
   beforeAll(async () => {
     mockContext = await createMockContext();
+    blockCaller = createCallerFactory(blockRouter)(mockContext);
     friendRequestCaller = createCallerFactory(friendRequestRouter)(mockContext);
   });
 
@@ -99,6 +102,61 @@ describe("friendRequest", () => {
     // Session=user: no request exists, try to accept from default user
     await expect(friendRequestCaller.acceptFriendRequest(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Friend, id).message}]`,
+    );
+  });
+
+  test("fails send friend request to non-existent user", async () => {
+    expect.hasAssertions();
+
+    const userId = crypto.randomUUID();
+
+    await expect(friendRequestCaller.sendFriendRequest(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.Friend, userId).message}]`,
+    );
+  });
+
+  test("fails to send friend request when you are blocked", async () => {
+    expect.hasAssertions();
+
+    const receiverUser = getMockSession().user;
+    const { user: blockerUser } = await mockSessionOnce(mockContext.db);
+    // blockerUser blocks receiverUser
+    await blockCaller.blockUser(receiverUser.id);
+    // receiverUser tries to send friend request to blockerUser
+    getMockSession();
+
+    await expect(friendRequestCaller.sendFriendRequest(blockerUser.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.Friend, blockerUser.id).message}]`,
+    );
+  });
+
+  test("fails to send friend request when block exists (blocker side)", async () => {
+    expect.hasAssertions();
+
+    const blockedUser = getMockSession().user;
+    const { user: blockerUser } = await mockSessionOnce(mockContext.db);
+    // blockerUser blocks blockedUser
+    await blockCaller.blockUser(blockedUser.id);
+    // blockerUser tries to send friend request to blockedUser
+    await mockSessionOnce(mockContext.db, blockerUser);
+
+    await expect(friendRequestCaller.sendFriendRequest(blockedUser.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.Friend, blockedUser.id).message}]`,
+    );
+  });
+
+  test("fails send friend request when they already sent one to you", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    const { user: senderUser } = await mockSessionOnce(mockContext.db);
+    // senderUser sends request to userId (Default user)
+    await friendRequestCaller.sendFriendRequest(userId);
+    // userId (Default user) tries to send friend request to senderUser
+    const id = [userId, senderUser.id].toSorted().join(ID_SEPARATOR);
+
+    await expect(friendRequestCaller.sendFriendRequest(senderUser.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.FriendRequest, id).message}]`,
     );
   });
 

@@ -68,6 +68,27 @@ describe("block", () => {
     );
   });
 
+  test("fails to block non-existent user", async () => {
+    expect.hasAssertions();
+
+    const userId = crypto.randomUUID();
+
+    await expect(blockCaller.blockUser(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.Block, userId).message}]`,
+    );
+  });
+
+  test("blocks user twice (idempotent)", async () => {
+    expect.hasAssertions();
+
+    const { user } = await mockSessionOnce(mockContext.db);
+    getMockSession();
+    await blockCaller.blockUser(user.id);
+    const blockedUser = await blockCaller.blockUser(user.id);
+
+    expect(blockedUser.id).toBe(user.id);
+  });
+
   test("reads blocked users", async () => {
     expect.hasAssertions();
 
@@ -114,18 +135,5 @@ describe("block", () => {
     const results = await friendCaller.searchUsers(blockerUser.name);
 
     expect(results.every(({ id }) => id !== blockerUser.id)).toBe(true);
-  });
-
-  test("fails to send friend request when block exists", async () => {
-    expect.hasAssertions();
-
-    const userId = getMockSession().user.id;
-    const { user } = await mockSessionOnce(mockContext.db);
-    await blockCaller.blockUser(userId);
-    const receiverId = user.id;
-
-    await expect(friendRequestCaller.sendFriendRequest(receiverId)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.Friend, receiverId).message}]`,
-    );
   });
 });
