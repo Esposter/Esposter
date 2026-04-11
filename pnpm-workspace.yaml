@@ -109,7 +109,7 @@ catalog:
   ajv-errors: ^3.0.0
   ajv-formats: ^3.0.1
   ajv-i18n: ^4.2.0
-  apexcharts: ^5.10.5
+  apexcharts: ^5.10.6
   better-auth: ^1.6.2
   codemirror: ^6.0.2
   crossws: ^0.4.5
