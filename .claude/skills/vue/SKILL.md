@@ -155,6 +155,29 @@ const { data: session } = await authClient.useSession(useFetch);
 const { data: session } = await authClient.useSession();
 ```
 
+## Upsert Forms — Create vs Edit Mode
+
+When a form component handles both create and edit, use an explicit `isCreate` prop (default `false`) rather than deriving mode from the presence of `initialValues`. The parent page knows the intent and passes `is-create` explicitly.
+
+For local form state, use a single `values` ref over separate per-field refs:
+
+```ts
+interface PostUpsertFormProps {
+  initialValues?: Pick<Post, "description" | "title">;
+  isCreate?: boolean;
+}
+
+const { initialValues = { description: "", title: "" }, isCreate = false } = defineProps<PostUpsertFormProps>();
+const values = ref(initialValues);
+```
+
+- Template binds to `values.title`, `values.description` — Vue auto-unwraps the ref
+- Emit passes `values` directly (auto-unwrapped in template to the plain object)
+- `isCreate` drives button text: `isCreate ? 'Post' : 'Edit Post'`
+- Create page passes `is-create`; update page passes `:initial-values` — no `is-create`
+
+The same `isCreate?: boolean` pattern applies to dialog buttons (e.g. `CrudView/EditDialogButton`) where it also skips the equality check that would otherwise disable the save button when form state matches the original.
+
 ## After Finishing Code Changes
 
 1. Run `pnpm format` from the **repo root** — formats all packages at once (~1.6s, oxfmt).
