@@ -43,7 +43,22 @@ export const blockRouter = router({
     .input(friendUserIdInputSchema)
     .mutation(async ({ ctx, input: blockedUserId }) => {
       const userId = ctx.getSessionPayload.user.id;
-      await ctx.db.delete(blocks).where(and(eq(blocks.blockerId, userId), eq(blocks.blockedId, blockedUserId)));
+      if (userId === blockedUserId)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.Block, userId).message,
+        });
+
+      const [deletedBlock] = await ctx.db
+        .delete(blocks)
+        .where(and(eq(blocks.blockerId, userId), eq(blocks.blockedId, blockedUserId)))
+        .returning();
+      if (!deletedBlock)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.Block, blockedUserId).message,
+        });
+
       return blockedUserId;
     }),
 });

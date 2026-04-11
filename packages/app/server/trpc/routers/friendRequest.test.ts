@@ -7,8 +7,9 @@ import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/tr
 import { blockRouter } from "@@/server/trpc/routers/block";
 import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
-import { blocks, DatabaseEntityType, friendRequests, friends } from "@esposter/db-schema";
+import { blocks, DatabaseEntityType, friendRequests, friends, users } from "@esposter/db-schema";
 import { ID_SEPARATOR, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("friendRequest", () => {
@@ -157,6 +158,45 @@ describe("friendRequest", () => {
 
     await expect(friendRequestCaller.sendFriendRequest(senderUser.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.FriendRequest, id).message}]`,
+    );
+  });
+
+  test("fails to decline self friend request", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+
+    await expect(friendRequestCaller.declineFriendRequest(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.FriendRequest, userId).message}]`,
+    );
+  });
+
+  test("fails to decline non-existent friend request", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    const { user } = await mockSessionOnce(mockContext.db);
+    const id = [userId, user.id].toSorted().join(ID_SEPARATOR);
+
+    await expect(friendRequestCaller.declineFriendRequest(user.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.FriendRequest, id).message}]`,
+    );
+  });
+
+  test("fails accept friend request if sender user was deleted", async () => {
+    expect.hasAssertions();
+
+    const receiverUser = getMockSession().user;
+    const { user: senderUser } = await mockSessionOnce(mockContext.db);
+    // Sender sends request to receiver
+    await friendRequestCaller.sendFriendRequest(receiverUser.id);
+    // DELETE sender from DB
+    await mockContext.db.delete(users).where(eq(users.id, senderUser.id));
+    // Receiver tries to accept
+    getMockSession();
+
+    await expect(friendRequestCaller.acceptFriendRequest(senderUser.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.Friend, senderUser.id).message}]`,
     );
   });
 

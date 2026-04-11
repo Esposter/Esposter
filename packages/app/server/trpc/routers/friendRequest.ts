@@ -57,12 +57,24 @@ export const friendRequestRouter = router({
     .input(friendUserIdInputSchema)
     .mutation(async ({ ctx, input: senderId }) => {
       const userId = ctx.getSessionPayload.user.id;
+      if (userId === senderId)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.FriendRequest, userId).message,
+        });
+
       const friendshipId = getFriendshipId(senderId, userId);
       const [declinedRequest] = await ctx.db
         .delete(friendRequests)
         .where(and(eq(friendRequests.id, friendshipId), eq(friendRequests.receiverId, userId)))
         .returning();
-      if (declinedRequest) friendEventEmitter.emit("declineFriendRequest", { receiverId: userId, senderId });
+      if (!declinedRequest)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.FriendRequest, friendshipId).message,
+        });
+
+      friendEventEmitter.emit("declineFriendRequest", { receiverId: userId, senderId });
     }),
   onAcceptFriendRequest: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {
     const userId = ctx.getSessionPayload.user.id;

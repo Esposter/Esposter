@@ -9,15 +9,29 @@ import { getFriendshipId } from "@@/server/services/friend/getFriendshipId";
 import { friendEventEmitter } from "@@/server/services/message/events/friendEventEmitter";
 import { router } from "@@/server/trpc";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { blocks, friends, users } from "@esposter/db-schema";
+import { blocks, DatabaseEntityType, friends, users } from "@esposter/db-schema";
+import { InvalidOperationError, Operation } from "@esposter/shared";
+import { TRPCError } from "@trpc/server";
 import { and, eq, getTableColumns, ilike, isNull, ne, or } from "drizzle-orm";
 
 export const friendRouter = router({
   deleteFriend: standardAuthedProcedure.input(friendUserIdInputSchema).mutation(async ({ ctx, input: friendId }) => {
     const userId = ctx.getSessionPayload.user.id;
+    if (userId === friendId)
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.Friend, userId).message,
+      });
+
     const friendshipId = getFriendshipId(userId, friendId);
     const [deletedFriend] = await ctx.db.delete(friends).where(eq(friends.id, friendshipId)).returning();
-    if (deletedFriend) friendEventEmitter.emit("deleteFriend", { receiverId: friendId, senderId: userId });
+    if (!deletedFriend)
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.Friend, friendshipId).message,
+      });
+
+    friendEventEmitter.emit("deleteFriend", { receiverId: friendId, senderId: userId });
   }),
   onDeleteFriend: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {
     const userId = ctx.getSessionPayload.user.id;

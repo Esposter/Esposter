@@ -7,8 +7,8 @@ import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/tr
 import { friendRouter } from "@@/server/trpc/routers/friend";
 import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
-import { blocks, friendRequests, friends } from "@esposter/db-schema";
-import { takeOne } from "@esposter/shared";
+import { blocks, DatabaseEntityType, friendRequests, friends } from "@esposter/db-schema";
+import { ID_SEPARATOR, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("friend", () => {
@@ -69,16 +69,25 @@ describe("friend", () => {
     expect(friends).toHaveLength(0);
   });
 
-  test("deleting non-existent friendship (no-op)", async () => {
+  test("fails to delete self as friend", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+
+    await expect(friendCaller.deleteFriend(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Friend, userId).message}]`,
+    );
+  });
+
+  test("fails to delete non-existent friend", async () => {
     expect.hasAssertions();
 
     const userId = crypto.randomUUID();
+    const friendshipId = [getMockSession().user.id, userId].toSorted().join(ID_SEPARATOR);
 
-    await expect(friendCaller.deleteFriend(userId)).resolves.not.toThrow();
-
-    const friends = await friendCaller.readFriends();
-
-    expect(friends).toHaveLength(0);
+    await expect(friendCaller.deleteFriend(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Friend, friendshipId).message}]`,
+    );
   });
 
   test("searches users by name", async () => {

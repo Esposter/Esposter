@@ -113,6 +113,26 @@ describe("block", () => {
     expect(blockedUsers).toHaveLength(0);
   });
 
+  test("fails to unblock self", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+
+    await expect(blockCaller.unblockUser(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Block, userId).message}]`,
+    );
+  });
+
+  test("fails to unblock non-existent block", async () => {
+    expect.hasAssertions();
+
+    const userId = crypto.randomUUID();
+
+    await expect(blockCaller.unblockUser(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Block, userId).message}]`,
+    );
+  });
+
   test("search excludes blocked users", async () => {
     expect.hasAssertions();
 
