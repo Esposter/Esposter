@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import type { SlashCommandParameters } from "@/models/message/slashCommands/SlashCommandParameters";
 import type { SubmitEventPromise } from "vuetify";
 import type { VForm } from "vuetify/components";
 
 import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
+import { sanitizeHtml } from "@/services/sanitizeHtml/sanitizeHtml";
 import { formRules } from "@/services/vuetify/formRules";
 import { useDataStore } from "@/store/message/data";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
@@ -10,34 +12,34 @@ import { useRoomStore } from "@/store/message/room";
 import { MessageType } from "@esposter/db-schema";
 import { marked } from "marked";
 
-const formRef = useTemplateRef<InstanceType<typeof VForm>>("formRef");
-const isFormValid = ref(true);
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const slashCommandStore = useSlashCommandStore();
-const { paramValues, pendingSlashCommand } = storeToRefs(slashCommandStore);
+const { parameterValues, pendingSlashCommand } = storeToRefs(slashCommandStore);
 const { clearPendingSlashCommand } = slashCommandStore;
 const dataStore = useDataStore();
 const { createMessage } = dataStore;
+const formRef = useTemplateRef<InstanceType<typeof VForm>>("formRef");
+const isFormValid = ref(true);
 
 const onSubmit = async (event: SubmitEventPromise) => {
   const { valid } = await event;
   if (!valid || !pendingSlashCommand.value || !currentRoomId.value) return;
-
-  const { type } = pendingSlashCommand.value;
-  const params = paramValues.value;
+  const command = { parameterValues: parameterValues.value, type: pendingSlashCommand.value.type } as {
+    [K in SlashCommandType]: { parameterValues: SlashCommandParameters<K>; type: K };
+  }[SlashCommandType];
   const roomId = currentRoomId.value;
 
-  switch (type) {
+  switch (command.type) {
     case SlashCommandType.Me:
       await createMessage({
-        message: marked.parse(`*${params.message}*`, { async: false }),
+        message: marked.parse(`*${sanitizeHtml(command.parameterValues.message)}*`, { async: false }),
         roomId,
         type: MessageType.Message,
       });
       break;
     case SlashCommandType.Shrug: {
-      const prefix = params.text?.trim() ? `${params.text.trim()} ` : "";
+      const prefix = command.parameterValues.text?.trim() ?? "";
       await createMessage({
         message: marked.parse(`${prefix}¯\\\\\\_(ツ)\\_/¯`, { async: false }),
         roomId,
@@ -47,13 +49,11 @@ const onSubmit = async (event: SubmitEventPromise) => {
     }
   }
 
-  slashCommandStore.clearPendingSlashCommand();
+  clearPendingSlashCommand();
 };
 
-const onDismiss = () => slashCommandStore.clearPendingSlashCommand();
-
 useEventListener("keydown", (event: KeyboardEvent) => {
-  if (event.key === "Escape") onDismiss();
+  if (event.key === "Escape") clearPendingSlashCommand();
 });
 </script>
 
@@ -74,7 +74,7 @@ useEventListener("keydown", (event: KeyboardEvent) => {
         icon="mdi-close"
         size="small"
         density="compact"
-        @click="onDismiss"
+        @click="clearPendingSlashCommand()"
       />
     </div>
     <v-form ref="formRef" v-model="isFormValid" @submit.prevent="onSubmit">
@@ -82,7 +82,7 @@ useEventListener("keydown", (event: KeyboardEvent) => {
         <div flex items-start gap-2 px-4 py-3>
           <template v-for="{ description, isRequired, name } of pendingSlashCommand.parameters" :key="name">
             <v-text-field
-              v-model="paramValues[name]"
+              v-model="parameterValues[name]"
               :placeholder="isRequired ? name : `${name} (optional)`"
               :label="description"
               :rules="isRequired ? [formRules.required] : []"

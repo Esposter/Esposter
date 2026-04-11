@@ -62,6 +62,7 @@ const mentionExtension = useMentionExtension();
     placeholder="Edit message"
     :limit="MESSAGE_MAX_LENGTH"
     :extensions="[keyboardExtension, mentionExtension]"
+    autofocus="end"
     @keydown.esc="emit('update:update-mode', false)"
   >
     <template #append-footer="{ editor }">

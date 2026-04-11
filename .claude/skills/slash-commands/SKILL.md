@@ -60,7 +60,7 @@ Messages use **markdown** via `marked.parse()`. Rich text formatting applies:
 ```typescript
 // CORRECT
 await createMessage({
-  message: marked.parse(`*${params.message}*`, { async: false }),
+  message: marked.parse(`*${sanitizeHtml(params.message)}*`, { async: false }),
   roomId,
   type: MessageType.Message,
 });
@@ -71,7 +71,7 @@ type: MessageType.Me ❌
 
 ## Parameterized Command UI
 
-`SlashCommandParams.vue` handles the inline parameter input mode:
+`SlashCommandParameters.vue` handles the inline parameter input mode:
 
 - Styled header bar (like `ReplyHeader.vue`) showing command name + description + close button
 - `<v-form @submit.prevent="onSubmit">` wrapping all parameter inputs
@@ -109,7 +109,7 @@ case "Me":
 case "Shrug":
 ```
 
-This applies in `SlashCommandSuggestion.ts`, `SlashCommandParams.vue`, and any switch over `slashCommand.type`.
+This applies in `SlashCommandSuggestion.ts`, `SlashCommandParameters.vue`, and any switch over `slashCommand.type`.
 
 ## Adding a New Command
 

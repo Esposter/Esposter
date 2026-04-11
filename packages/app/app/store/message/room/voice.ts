@@ -125,7 +125,6 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
     joinVoice,
     leaveVoice,
     roomParticipants,
-    sessionId,
     setMute,
     setParticipants,
     speakingIds,

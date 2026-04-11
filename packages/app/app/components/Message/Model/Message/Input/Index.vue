@@ -58,8 +58,15 @@ const slashCommandStore = useSlashCommandStore();
 const { pendingSlashCommand } = storeToRefs(slashCommandStore);
 const keyboardShortcutsDialogStore = useKeyboardShortcutsDialogStore();
 const { isOpen } = storeToRefs(keyboardShortcutsDialogStore);
+
 useEventListener("keydown", (event: KeyboardEvent) => {
-  if (event.shiftKey && event.key === "?") isOpen.value = true;
+  const target = event.target;
+  if (
+    target instanceof HTMLElement &&
+    (target.isContentEditable || target.tagName === "INPUT" || target.tagName === "TEXTAREA")
+  )
+    return;
+  else if (event.shiftKey && event.key === "?") isOpen.value = true;
 });
 </script>
 
@@ -70,7 +77,7 @@ useEventListener("keydown", (event: KeyboardEvent) => {
   <MessageModelMessageFileDropzoneBackground />
   <div w-full>
     <MessageModelMessageInputReplyHeader v-if="reply" :reply @close="rowKey = ''" />
-    <MessageModelMessageInputSlashCommandParams v-if="pendingSlashCommand" />
+    <MessageModelMessageInputSlashCommandParameters v-if="pendingSlashCommand" />
     <RichTextEditor
       v-else
       v-model="input"

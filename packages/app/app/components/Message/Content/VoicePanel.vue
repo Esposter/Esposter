@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import { authClient } from "@/services/auth/authClient";
 import { useVoiceStore } from "@/store/message/room/voice";
 
 const voiceStore = useVoiceStore();
 const { leaveVoice, toggleDeafen, toggleMute } = voiceStore;
-const { isDeafened, isInChannel, isMuted, roomParticipants, sessionId, speakingIds } = storeToRefs(voiceStore);
+const { isDeafened, isInChannel, isMuted, roomParticipants, speakingIds } = storeToRefs(voiceStore);
+const { data: session } = await authClient.useSession(useFetch);
+const sessionId = computed(() => session.value?.session.id);
 const isCollapsed = useLocalStorage("voicePanel:isCollapsed", false);
 </script>
 

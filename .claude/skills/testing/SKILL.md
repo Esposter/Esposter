@@ -1,6 +1,6 @@
 ---
 name: testing
-description: Esposter Vitest testing conventions — describe with function refs, canonical test values, targeted takeOne usage for unsafe index access patterns, destructuring from stores/composables, mock session patterns (getMockSession/mockSessionOnce/replayMockSession), and the Windows UnoCSS test-skip rule. Apply when writing .test.ts files.
+description: Esposter Vitest testing conventions — describe with function refs, canonical test values, targeted takeOne usage for unsafe index access patterns, destructuring from stores/composables, mock session patterns (getMockSession/mockSessionOnce/replayMockSession), the Windows UnoCSS test-skip rule, and type-level test conventions for .test-d.ts files. Apply when writing .test.ts or .test-d.ts files.
 ---
 
 # Testing Conventions (Vitest)
@@ -109,6 +109,30 @@ describe(useMyComposable, () => {
 ## What to Test
 
 - **Test composables, not the underlying service functions** — composable tests integration-test the full call chain (store wiring, command dispatch, history push) in one place. If the composable is tested, the service functions it calls are covered implicitly; there is no need to write separate unit tests for those functions. Only test a service function directly when it has no composable wrapper (e.g. standalone pure utilities like `coerceValue`, `inferColumnType`).
+
+## Type-Level Tests (.test-d.ts)
+
+- **File placement** — co-locate the `.test-d.ts` file next to the type it tests (e.g. `SlashCommandParameters.test-d.ts` beside `SlashCommandParameters.ts`).
+- **`describe` string** — always `"{camelCaseName} type"` where the name is the camelCase form of the type/file name (e.g. `"slashCommandParameters type"`, `"recursiveKeyOf type"`).
+- **`test` descriptions** — use the enum value or type argument directly when testing a union/enum-parameterised type (e.g. `test(SlashCommandType.Me, ...)`). Do not write prose descriptions.
+- **`expectTypeOf` assertion** — always use `.toEqualTypeOf<ExpectedType>()` for strict structural equality.
+- **`expect.hasAssertions()`** — include at the top of every test body, same as `.test.ts` files.
+
+```ts
+describe("slashCommandParameters type", () => {
+  test(SlashCommandType.Me, () => {
+    expect.hasAssertions();
+
+    expectTypeOf<SlashCommandParameters<SlashCommandType.Me>>().toEqualTypeOf<{ message: string }>();
+  });
+
+  test(SlashCommandType.Shrug, () => {
+    expect.hasAssertions();
+
+    expectTypeOf<SlashCommandParameters<SlashCommandType.Shrug>>().toEqualTypeOf<{ text?: string }>();
+  });
+});
+```
 
 ## Test Utility Files
 
