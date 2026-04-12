@@ -7,7 +7,7 @@ import { useContainerClientMock } from "@@/server/composables/azure/container/us
 import { useEventGridPublisherClientMock } from "@@/server/composables/azure/eventGrid/useEventGridPublisherClient.test";
 import { useTableClientMock } from "@@/server/composables/azure/table/useTableClient.test";
 import { users } from "@esposter/db-schema";
-import { createMockDb as baseCreateMockDb } from "@esposter/db/test/createMockDb";
+import { createMockDb as baseCreateMockDb } from "@esposter/db/test/createMockDb.test";
 import { takeOne } from "@esposter/shared";
 import { IncomingMessage, ServerResponse } from "node:http";
 import { Socket } from "node:net";
