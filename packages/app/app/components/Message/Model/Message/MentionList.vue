@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import type { MentionNodeAttributes } from "@/models/message/MentionNodeAttributes";
+import type { SpecialMentionItem } from "@/models/message/SpecialMentionItem";
 import type { User } from "@esposter/db-schema";
 import type { SuggestionKeyDownProps, SuggestionProps } from "@tiptap/suggestion";
 
 import { takeOne } from "@esposter/shared";
 
-const { command, items, query } = defineProps<SuggestionProps<User, MentionNodeAttributes>>();
+const { command, items, query } = defineProps<SuggestionProps<SpecialMentionItem | User, MentionNodeAttributes>>();
 const title = computed(() => {
   const title = "MEMBERS";
   return query ? `${title} MATCHING @${query}` : title;
@@ -53,7 +54,10 @@ watch(
         @click="selectItem(index)"
       >
         <template #prepend>
-          <MessageModelMemberStatusAvatar :id :image :name :avatar-props="{ size: 'x-small' }" />
+          <MessageModelMemberStatusAvatar v-if="image" :id :image :name :avatar-props="{ size: 'x-small' }" />
+          <v-avatar v-else size="x-small">
+            <v-icon>mdi-at</v-icon>
+          </v-avatar>
         </template>
         <v-list-item-title font-semibold>{{ name }}</v-list-item-title>
       </v-list-item>

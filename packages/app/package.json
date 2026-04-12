@@ -177,7 +177,6 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "catalog:",
     "@json-layout/vocabulary": "catalog:",
     "@nuxt/eslint": "catalog:",
     "@nuxt/fonts": "catalog:",
@@ -203,7 +202,6 @@
     "@vueuse/nuxt": "catalog:",
     "azure-mock": "workspace:*",
     "crossws": "catalog:",
-    "drizzle-kit": "catalog:",
     "fake-indexeddb": "catalog:",
     "fs-extra": "catalog:",
     "h3": "catalog:",

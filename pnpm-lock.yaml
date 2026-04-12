@@ -1152,9 +1152,6 @@ importers:
         specifier: 'catalog:'
         version: 4.3.6
     devDependencies:
-      '@electric-sql/pglite':
-        specifier: 'catalog:'
-        version: 0.4.4
       '@json-layout/vocabulary':
         specifier: 'catalog:'
         version: 2.13.0
@@ -1230,9 +1227,6 @@ importers:
       crossws:
         specifier: ^0.4.5
         version: 0.4.5(srvx@0.11.15)
-      drizzle-kit:
-        specifier: 'catalog:'
-        version: 0.31.10
       fake-indexeddb:
         specifier: 'catalog:'
         version: 6.2.5
@@ -1452,9 +1446,15 @@ importers:
       '@azure/core-client':
         specifier: 'catalog:'
         version: 1.10.1
+      '@electric-sql/pglite':
+        specifier: 'catalog:'
+        version: 0.4.4
       '@types/mime-types':
         specifier: 'catalog:'
         version: 3.0.1
+      drizzle-kit:
+        specifier: 'catalog:'
+        version: 0.31.10
 
   packages/db-schema:
     dependencies:
