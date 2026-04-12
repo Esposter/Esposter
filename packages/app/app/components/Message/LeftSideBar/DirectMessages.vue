@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const isCollapsed = useLocalStorage("message-sidebar-dms-collapsed", false);
+const isCollapsed = useLocalStorage("message-sidebar-direct-messages-collapsed", false);
 </script>
 
 <template>

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { Room } from "@esposter/db-schema";
+
 import { useRoomStore } from "@/store/message/room";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
 
@@ -10,11 +12,20 @@ const roomStore = useRoomStore();
 const { hasMore, rooms } = storeToRefs(roomStore);
 const { readMoreRooms, readRooms } = useReadRooms();
 const [{ isPending }] = await Promise.all([readRooms(), readRoomCategories()]);
-const uncategorizedRooms = computed(() => rooms.value.filter(({ categoryId }) => !categoryId));
+const roomsByCategoryId = computed(() => {
+  const map = new Map<null | string, Room[]>();
+  for (const room of rooms.value) {
+    const group = map.get(room.categoryId) ?? [];
+    group.push(room);
+    map.set(room.categoryId, group);
+  }
+  return map;
+});
+const uncategorizedRooms = computed(() => roomsByCategoryId.value.get(null) ?? []);
 const roomsByCategory = computed(() =>
   categories.value.map((category) => ({
     category,
-    rooms: rooms.value.filter(({ categoryId }) => categoryId === category.id),
+    rooms: roomsByCategoryId.value.get(category.id) ?? [],
   })),
 );
 </script>
