@@ -69,6 +69,8 @@ Example:
 
 ## Template Conventions
 
+- **Truthiness checks** — use `v-if="value"` not `v-if="value !== null"`. Explicit null/undefined comparisons are only needed when distinguishing between multiple falsy values (e.g. a number where `0` is valid, a boolean where `false` is meaningful, or when `null` vs `undefined` must be treated differently).
+
 - **No bare function references in `@event` bindings** — bare references forward the DOM/Vue event object as the first argument, which is almost always unintended. Use `fn()` for zero-arg calls and an explicit arrow function when arguments are needed:
 
   ```vue
