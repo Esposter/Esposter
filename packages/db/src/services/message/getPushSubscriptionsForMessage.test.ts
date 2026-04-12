@@ -22,6 +22,8 @@ import {
 } from "@esposter/shared";
 import { beforeAll, describe, expect, test } from "vitest";
 
+const getEndpoint = (userId: string) => `https://push.example.com/${userId}`;
+
 describe(getPushSubscriptionsForMessage, () => {
   let db: PostgresJsDatabase<typeof schema>;
   const roomId = crypto.randomUUID();
@@ -32,7 +34,6 @@ describe(getPushSubscriptionsForMessage, () => {
   const directMessageOfflineUserId = crypto.randomUUID();
   const neverUserId = crypto.randomUUID();
   const senderUserId = crypto.randomUUID();
-  const getEndpoint = (userId: string) => `https://push.example.com/${userId}`;
   const getMentionMessage = (id: string) =>
     `<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}" ${MENTION_ID_ATTRIBUTE}="${id}" />`;
 
@@ -95,7 +96,7 @@ describe(getPushSubscriptionsForMessage, () => {
       { status: UserStatus.Offline, userId: directMessageOfflineUserId },
       { status: UserStatus.Online, userId: neverUserId },
       { status: UserStatus.Online, userId: senderUserId },
-      // allNullStatusUserId intentionally has no status row (null status = treated as online for @here)
+      // AllNullStatusUserId intentionally has no status row (null status = treated as online for @here)
     ]);
   });
 

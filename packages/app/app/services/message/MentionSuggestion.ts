@@ -4,22 +4,17 @@ import type { MentionOptions } from "@tiptap/extension-mention";
 
 import MentionList from "@/components/Message/Model/Message/MentionList.vue";
 import { getRender } from "@/services/message/getRender";
+import { SpecialMentionItems } from "@/services/message/SpecialMentionItems";
 import { useRoomStore } from "@/store/message/room";
-import { MENTION_EVERYONE_ID, MENTION_HERE_ID } from "@esposter/shared";
 
-const SPECIAL_MENTIONS: SpecialMentionItem[] = [
-  { id: MENTION_EVERYONE_ID, image: null, name: "everyone" },
-  { id: MENTION_HERE_ID, image: null, name: "here" },
-];
-
-export const MentionSuggestion: MentionOptions<User | SpecialMentionItem>["suggestion"] = {
+export const MentionSuggestion: MentionOptions<SpecialMentionItem | User>["suggestion"] = {
   items: async ({ query }) => {
     const roomStore = useRoomStore();
     const { currentRoomId } = storeToRefs(roomStore);
     if (!currentRoomId.value) return [];
 
     const normalizedQuery = query.toLowerCase();
-    const matchingSpecialMentions = SPECIAL_MENTIONS.filter(
+    const matchingSpecialMentions = SpecialMentionItems.filter(
       (specialMentionItem) => !query || specialMentionItem.name.startsWith(normalizedQuery),
     );
 

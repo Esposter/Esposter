@@ -6,7 +6,7 @@ import type { SuggestionKeyDownProps, SuggestionProps } from "@tiptap/suggestion
 
 import { takeOne } from "@esposter/shared";
 
-const { command, items, query } = defineProps<SuggestionProps<User | SpecialMentionItem, MentionNodeAttributes>>();
+const { command, items, query } = defineProps<SuggestionProps<SpecialMentionItem | User, MentionNodeAttributes>>();
 const title = computed(() => {
   const title = "MEMBERS";
   return query ? `${title} MATCHING @${query}` : title;
