@@ -55,7 +55,7 @@ catalog:
   "@nuxtjs/seo": ^5.1.2
   "@pinia/nuxt": ^0.11.3
   "@rolldown/plugin-node-polyfills": ^1.0.3
-  "@takumi-rs/core": ^1.0.1
+  "@takumi-rs/core": ^1.0.4
   "@tiptap/core": ^3.22.3
   "@tiptap/extension-code-block-lowlight": ^3.22.3
   "@tiptap/extension-file-handler": ^3.22.3
@@ -87,7 +87,7 @@ catalog:
   "@types/web-push": ^3.6.4
   "@types/ws": ^8.18.1
   "@types/xml2js": ^0.4.14
-  "@typescript/native-preview": ^7.0.0-dev.20260410.1
+  "@typescript/native-preview": ^7.0.0-dev.20260411.1
   "@unocss/eslint-config": ^66.6.8
   "@unocss/nuxt": ^66.6.8
   "@vite-pwa/nuxt": ^1.1.1
@@ -109,7 +109,7 @@ catalog:
   ajv-errors: ^3.0.0
   ajv-formats: ^3.0.1
   ajv-i18n: ^4.2.0
-  apexcharts: ^5.10.5
+  apexcharts: ^5.10.6
   better-auth: ^1.6.2
   codemirror: ^6.0.2
   crossws: ^0.4.5
@@ -236,7 +236,7 @@ catalogMode: strict
 cleanupUnusedCatalogs: true
 
 overrides:
-  crossws: ^0.4.4
+  crossws: ^0.4.5
   pdfjs-dist: ^5.6.205
   vite: ^8.0.8
   vue-router: ^5.0.4
