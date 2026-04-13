@@ -40,21 +40,25 @@ PK: `(userId, roomId, roleId)`.
 
 `packages/shared/src/models/room/RoomPermission.ts`
 
+> `bigint` is used over `number` so the bitfield can grow beyond 32 bits without overflow. TypeScript enums don't support `bigint` values — use a `const` object instead:
+
 ```typescript
-export enum RoomPermission {
-  ReadMessages = 1 << 0, // 1     — see message history
-  SendMessages = 1 << 1, // 2     — post messages
-  ManageMessages = 1 << 2, // 4     — delete/pin others' messages
-  MentionEveryone = 1 << 3, // 8     — use @here / @everyone
-  ManageRoom = 1 << 4, // 16    — edit room name, image, settings
-  ManageRoles = 1 << 5, // 32    — create/edit/delete roles below own top position
-  ManageInvites = 1 << 6, // 64    — create/delete invite codes
-  KickMembers = 1 << 7, // 128   — remove a member from room
-  BanMembers = 1 << 8, // 256   — permanent ban
-  MuteMembers = 1 << 9, // 512   — force-mute/unmute in voice
-  MoveMembers = 1 << 10, // 1024  — kick from voice channel
-  Administrator = 1 << 11, // 2048  — all permissions; bypasses hierarchy checks
-}
+export const RoomPermission = {
+  ReadMessages: 1n << 0n, // 1     — see message history
+  SendMessages: 1n << 1n, // 2     — post messages
+  ManageMessages: 1n << 2n, // 4     — delete/pin others' messages
+  MentionEveryone: 1n << 3n, // 8     — use @here / @everyone
+  ManageRoom: 1n << 4n, // 16    — edit room name, image, settings
+  ManageRoles: 1n << 5n, // 32    — create/edit/delete roles below own top position
+  ManageInvites: 1n << 6n, // 64    — create/delete invite codes
+  KickMembers: 1n << 7n, // 128   — remove a member from room
+  BanMembers: 1n << 8n, // 256   — permanent ban
+  MuteMembers: 1n << 9n, // 512   — force-mute/unmute in voice
+  MoveMembers: 1n << 10n, // 1024  — kick from voice channel
+  Administrator: 1n << 11n, // 2048  — all permissions; bypasses hierarchy checks
+} as const;
+
+export type RoomPermission = (typeof RoomPermission)[keyof typeof RoomPermission];
 ```
 
 ---

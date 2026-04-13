@@ -49,7 +49,7 @@ export enum AdminActionType {
 - **Force-mute / force-unmute** — targeted client receives action via `onAdminAction`; sets `isMuted = true`, disables local toggle until `ForceUnmute`
 - **Kick from voice** — targeted client calls `leaveVoice()` locally; shows snackbar
 - **Kick from room** — targeted client navigates away; server deletes `usersToRooms` row
-- **Timeout** — `durationMs` required; server sets `timeoutUntil` on `usersToRooms`; `createMessage` rejects if `timeoutUntil > now()`
+- **Timeout** — `durationMs` required; server sets `timeoutUntil` on `usersToRooms`; all message-producing mutations (`createMessage`, `forwardMessage`, etc.) reject if `timeoutUntil > now()`
 - **Ban** — permanent; deletes `usersToRooms` + all `usersToRoomRoles` rows; inserts into `bans` table; join/invite flows reject banned users; `readBans`/`unbanUser` added behind `BanMembers`
 
 ---
