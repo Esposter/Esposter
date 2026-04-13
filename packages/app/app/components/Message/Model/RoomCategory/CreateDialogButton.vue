@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
 import { ROOM_CATEGORY_NAME_MAX_LENGTH } from "@esposter/db-schema";
+import { mergeProps } from "vue";
 
 const roomCategoryStore = useRoomCategoryStore();
 const { createRoomCategory } = roomCategoryStore;
@@ -22,7 +23,12 @@ const submit = () =>
     <template #activator="{ props: dialogProps }">
       <v-tooltip text="Add Category">
         <template #activator="{ props: tooltipProps }">
-          <v-btn :="{ ...dialogProps, ...tooltipProps }" icon="mdi-folder-plus-outline" size="small" variant="plain" />
+          <v-btn
+            :="mergeProps(dialogProps, tooltipProps)"
+            icon="mdi-folder-plus-outline"
+            size="small"
+            variant="plain"
+          />
         </template>
       </v-tooltip>
     </template>

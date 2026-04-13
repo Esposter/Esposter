@@ -7,6 +7,7 @@ import type { ListItemSlot } from "vuetify/lib/components/VList/VListItem.mjs";
 import { authClient } from "@/services/auth/authClient";
 import { useRoomStore } from "@/store/message/room";
 import { useMemberStore } from "@/store/message/user/member";
+import { mergeProps } from "vue";
 
 interface MemberListItemProps {
   member: User;
@@ -32,7 +33,7 @@ const { deleteMember } = memberStore;
   <v-hover #default="{ isHovering, props: hoverProps }">
     <v-menu location="end" :close-on-content-click="false" open-on-hover :open-delay="400" :close-delay="100">
       <template #activator="{ props: menuProps }">
-        <v-list-item :="{ ...hoverProps, ...menuProps }" :value="member.name" @click="emit('click', $event)">
+        <v-list-item :="mergeProps(hoverProps, menuProps)" :value="member.name" @click="emit('click', $event)">
           <template #prepend>
             <MessageModelMemberStatusAvatar :id="member.id" :image="member.image" :name="member.name" />
           </template>
