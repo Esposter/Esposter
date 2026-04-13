@@ -19,10 +19,10 @@ const isCopied = ref(false);
 
 <template>
   <v-dialog v-model="dialog">
-    <template #activator>
+    <template #activator="{ props: dialogProps }">
       <v-tooltip location="bottom" text="Add Friends to Room">
-        <template #activator="{ props }">
-          <v-btn icon="mdi-account-plus" size="small" :="props" @click="dialog = true" />
+        <template #activator="{ props: tooltipProps }">
+          <v-btn icon="mdi-account-plus" size="small" :="{ ...dialogProps, ...tooltipProps }" />
         </template>
       </v-tooltip>
     </template>

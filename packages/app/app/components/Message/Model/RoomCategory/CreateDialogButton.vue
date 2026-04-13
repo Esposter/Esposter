@@ -26,19 +26,22 @@ const submit = () =>
         </template>
       </v-tooltip>
     </template>
-    <StyledCard p-4 flex flex-col gap-4>
-      <div font-bold text-base>New Category</div>
-      <v-text-field
-        v-model="name"
-        label="Category name"
-        density="compact"
-        hide-details
-        :maxlength="ROOM_CATEGORY_NAME_MAX_LENGTH"
-        variant="outlined"
-        autofocus
-        @keydown.enter="submit()"
-      />
-      <div flex justify-end gap-2>
+    <StyledCard>
+      <v-card-title>New Category</v-card-title>
+      <v-card-text>
+        <v-text-field
+          v-model="name"
+          label="Category name"
+          density="compact"
+          hide-details
+          :maxlength="ROOM_CATEGORY_NAME_MAX_LENGTH"
+          variant="outlined"
+          autofocus
+          @keydown.enter="submit()"
+        />
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer />
         <v-btn text="Cancel" variant="plain" @click="dialog = false" />
         <v-btn
           color="primary"
@@ -48,7 +51,7 @@ const submit = () =>
           :loading="isLoading"
           @click="submit()"
         />
-      </div>
+      </v-card-actions>
     </StyledCard>
   </v-dialog>
 </template>
