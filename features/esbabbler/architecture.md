@@ -136,10 +136,16 @@ Messages stored in **Azure Table Storage** (not Postgres):
 
 ---
 
-## v2 Feature Status (as of 2026-04-12)
+## v2 Feature Status
 
-All items complete except:
+All items complete. See `completed/v2.md`.
 
-- **Moderator force-mute** — deferred; needs unified `moderationRouter` + `AdminActionType` enum design first
+## v3 Feature Status (as of 2026-04-13)
 
-See `v2.md` for full list.
+In progress. Key themes:
+
+- **Room Member Roles** — `RoomMemberRole` enum on `usersToRooms`; prerequisite for moderation
+- **Moderation System** — unified `moderationRouter` + `AdminActionType` enum; unblocks v2 pending force-mute
+- **User Profile Editing** — avatar upload + bio + display name edit
+
+See `v3.md` for full list.

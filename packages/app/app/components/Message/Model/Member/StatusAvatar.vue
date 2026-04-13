@@ -4,6 +4,7 @@ import type { VAvatar } from "vuetify/components/VAvatar";
 
 import { StatusBadgePropsMap } from "@/services/message/StatusBadgePropsMap";
 import { useStatusStore } from "@/store/message/user/status";
+import { mergeProps } from "vue";
 // @TODO: https://github.com/vuejs/core/issues/11371
 interface StatusAvatarProps {
   avatarProps?: VAvatar["$props"];
@@ -30,7 +31,7 @@ const statusTooltip = computed(() => {
   <v-tooltip :text="statusTooltip" location="top">
     <template #activator="{ props: tooltipProps }">
       <StyledAvatar
-        :="{ ...avatarProps, ...tooltipProps }"
+        :="mergeProps(avatarProps ?? {}, tooltipProps)"
         :badge="{ ...badge, location: 'bottom end' }"
         :image
         :name
