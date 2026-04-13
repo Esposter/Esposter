@@ -107,13 +107,45 @@ getPushSubscriptionsForMessage(db, { message, partitionKey, userId })
 
 ## DB Schema Highlights
 
-| Table               | Key Fields                                                                     |
-| ------------------- | ------------------------------------------------------------------------------ |
-| `rooms`             | `id`, `userId` (owner), `type` (Room/DM), `categoryId`, `participantKey`       |
-| `usersToRooms`      | `userId`, `roomId` (PK), `notificationType` (All/DM/Never), `isHidden`         |
-| `userStatuses`      | `userId` (PK), `status` (nullable enum), `isConnected`, `message`, `expiresAt` |
-| `pushSubscriptions` | `id`, `userId`, `endpoint`, `auth`, `p256dh`, `expirationTime`                 |
-| `roomCategories`    | `id`, `userId` (owner), `name`, `position`                                     |
+| Table               | Key Fields                                                                                      |
+| ------------------- | ----------------------------------------------------------------------------------------------- |
+| `rooms`             | `id`, `userId` (owner), `type` (Room/DM), `categoryId`, `participantKey`                        |
+| `usersToRooms`      | `userId`, `roomId` (PK), `notificationType` (All/DM/Never), `isHidden`, `timeoutUntil`          |
+| `roomRoles`         | `id`, `roomId`, `name`, `color`, `position`, `permissions` (bigint bitfield), `isEveryone`      |
+| `usersToRoomRoles`  | `userId`, `roomId`, `roleId` (composite PK); @everyone applied implicitly via `isEveryone` flag |
+| `bans`              | `roomId`, `userId`, `bannedByUserId`, `createdAt`                                               |
+| `userStatuses`      | `userId` (PK), `status` (nullable enum), `isConnected`, `message`, `expiresAt`                  |
+| `pushSubscriptions` | `id`, `userId`, `endpoint`, `auth`, `p256dh`, `expirationTime`                                  |
+| `roomCategories`    | `id`, `userId` (owner), `name`, `position`                                                      |
+
+### RBAC Permission Bitfield (`RoomPermission` enum, `packages/shared`)
+
+| Bit    | Value | Permission      | Controls                               |
+| ------ | ----- | --------------- | -------------------------------------- |
+| 1 << 0 | 1     | ReadMessages    | See message history                    |
+| 1 << 1 | 2     | SendMessages    | Post messages                          |
+| 1 << 2 | 4     | ManageMessages  | Delete/pin others' messages            |
+| 1 << 3 | 8     | MentionEveryone | Use @here / @everyone                  |
+| 1 << 4 | 16    | ManageRoom      | Edit room name, image, settings        |
+| 1 << 5 | 32    | ManageRoles     | Create/edit/delete roles below own top |
+| 1 << 6 | 64    | ManageInvites   | Create/delete invite codes             |
+| 1 << 7 | 128   | KickMembers     | Remove members; timeout                |
+| 1 << 8 | 256   | BanMembers      | Permanent ban                          |
+| 1 << 9 | 512   | MuteMembers     | Force-mute/unmute in voice             |
+| 1<<10  | 1024  | MoveMembers     | Kick from voice channel                |
+| 1<<11  | 2048  | Administrator   | All permissions; bypasses hierarchy    |
+
+Effective permissions = `BIT_OR(permissions)` over (@everyone role ∪ user's assigned roles).
+Owner (`rooms.userId`) bypasses all checks.
+
+### RBAC Service Layer (`server/services/room/rbac/`)
+
+| Function             | Purpose                                                                                             |
+| -------------------- | --------------------------------------------------------------------------------------------------- |
+| `getPermission`      | SQL BIT_OR; includes @everyone + assigned roles                                                     |
+| `hasPermission`      | Owner bypass → Administrator bit → specific bit                                                     |
+| `getTopRolePosition` | Max position across user's assigned roles                                                           |
+| `isManageable`       | Actor's top > targetPosition. Caller resolves targetPosition (user's top or role.position directly) |
 
 ### UserStatus enum
 
@@ -144,8 +176,8 @@ All items complete. See `completed/v2.md`.
 
 In progress. Key themes:
 
-- **Room Member Roles** — `RoomMemberRole` enum on `usersToRooms`; prerequisite for moderation
-- **Moderation System** — unified `moderationRouter` + `AdminActionType` enum; unblocks v2 pending force-mute
+- **RBAC System** — Discord-complexity: `roomRoles` table, `usersToRoomRoles` join, `RoomPermission` bitfield, `@everyone` implicit role, role hierarchy by position, owner bypass. Replaces the simple `Owner|Admin|Member` enum approach entirely. Prerequisite for all privileged operations.
+- **Moderation System** — unified `moderationRouter` + `AdminActionType` enum; each action gated by specific `RoomPermission` bit; hierarchy-safe (`canManageTarget`). Unblocks v2 pending force-mute.
 - **User Profile Editing** — avatar upload + bio + display name edit
 
 See `v3.md` for full list.
