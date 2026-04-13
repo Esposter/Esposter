@@ -74,12 +74,16 @@ useEventListener("keydown", (event: KeyboardEvent) => {
   <MessageModelMessageInputKeyboardShortcutsDialog />
   <MessageModelMessageFileDropzoneBackground />
   <div w-full>
-    <MessageModelMessageInputHeaderSlashCommandParameters v-if="pendingSlashCommand" />
+    <MessageModelMessageInputHeaderSlashCommandParameters />
     <MessageModelMessageInputHeaderReply
       v-if="reply"
       :reply
       :is-top-attached="Boolean(pendingSlashCommand)"
       @close="rowKey = ''"
+    />
+    <MessageModelMessageInputSlashCommandParameters
+      v-if="pendingSlashCommand"
+      :slash-command-parameters="pendingSlashCommand"
     />
     <RichTextEditor
       v-else
