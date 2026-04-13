@@ -151,7 +151,7 @@ catalog:
   grapesjs-typed: ^2.0.1
   grid-engine: ^2.48.2
   grid-layout-plus: ^1.1.1
-  gsap: ^3.14.2
+  gsap: ^3.15.0
   h3: ^1.15.11
   happy-dom: ^20.8.9
   howler: ^2.2.4
