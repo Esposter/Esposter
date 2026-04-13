@@ -38,7 +38,7 @@ describe("columnFormSchema", () => {
                 "errorMessage": {
                   "uniqueColumnName": "Column already exists",
                 },
-                "maxLength": 10000,
+                "maxLength": 1000,
                 "minLength": 1,
                 "title": "Column",
                 "type": "string",
@@ -82,7 +82,7 @@ describe("columnFormSchema", () => {
                 "errorMessage": {
                   "uniqueColumnName": "Column already exists",
                 },
-                "maxLength": 10000,
+                "maxLength": 1000,
                 "minLength": 1,
                 "title": "Column",
                 "type": "string",
@@ -230,7 +230,7 @@ describe("columnFormSchema", () => {
                           "additionalProperties": false,
                           "properties": {
                             "name": {
-                              "maxLength": 10000,
+                              "maxLength": 1000,
                               "minLength": 1,
                               "title": "Name",
                               "type": "string",
@@ -458,7 +458,7 @@ describe("columnFormSchema", () => {
                 "errorMessage": {
                   "uniqueColumnName": "Column already exists",
                 },
-                "maxLength": 10000,
+                "maxLength": 1000,
                 "minLength": 1,
                 "title": "Column",
                 "type": "string",
@@ -531,7 +531,7 @@ describe("columnFormSchema", () => {
                 "errorMessage": {
                   "uniqueColumnName": "Column already exists",
                 },
-                "maxLength": 10000,
+                "maxLength": 1000,
                 "minLength": 1,
                 "title": "Column",
                 "type": "string",
@@ -575,7 +575,7 @@ describe("columnFormSchema", () => {
                 "errorMessage": {
                   "uniqueColumnName": "Column already exists",
                 },
-                "maxLength": 10000,
+                "maxLength": 1000,
                 "minLength": 1,
                 "title": "Column",
                 "type": "string",
