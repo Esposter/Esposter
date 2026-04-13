@@ -17,8 +17,8 @@ const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const roomName = useRoomName(currentRoomId);
 const dataStore = useDataStore();
-const { sendMessage } = dataStore;
 const { items } = storeToRefs(dataStore);
+const { sendMessage } = dataStore;
 const messageStore = useMessageStore();
 const { editingRowKey } = storeToRefs(messageStore);
 const keyboardExtension = new Extension({
@@ -83,10 +83,7 @@ useEventListener("keydown", (event: KeyboardEvent) => {
       :is-top-attached="Boolean(pendingSlashCommand)"
       @close="rowKey = ''"
     />
-    <MessageModelMessageInputSlashCommandParameters
-      v-if="pendingSlashCommand"
-      :slash-command-parameters="pendingSlashCommand"
-    />
+    <MessageModelMessageInputSlashCommandParameters v-if="pendingSlashCommand" />
     <RichTextEditor
       v-else
       v-model="input"

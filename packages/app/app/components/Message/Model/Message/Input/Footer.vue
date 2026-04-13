@@ -9,5 +9,5 @@ const typingMessage = computed(() => getTypingMessage(typings.value.map(({ usern
 
 <template>
   <!-- Add &nbsp; to avoid layout shift -->
-  <div class="text-sm">{{ typingMessage }}&nbsp;</div>
+  <div text-sm>{{ typingMessage }}&nbsp;</div>
 </template>

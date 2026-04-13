@@ -11,10 +11,9 @@ const dialog = ref(false);
 const name = ref("");
 
 const submit = async (_event: SubmitEventPromise, onComplete: () => void) => {
-  const trimmedName = name.value.trim();
-  if (!trimmedName) return;
-
   try {
+    const trimmedName = name.value.trim();
+    if (!trimmedName) return;
     await createRoomCategory({ name: trimmedName });
     name.value = "";
   } finally {
