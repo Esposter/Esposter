@@ -21,7 +21,7 @@ describe("columnFormSchema", () => {
                 "layout": {
                   "comp": "textarea",
                 },
-                "maxLength": 1000,
+                "maxLength": 10000,
                 "title": "Description",
                 "type": "string",
               },
@@ -38,7 +38,7 @@ describe("columnFormSchema", () => {
                 "errorMessage": {
                   "uniqueColumnName": "Column already exists",
                 },
-                "maxLength": 1000,
+                "maxLength": 10000,
                 "minLength": 1,
                 "title": "Column",
                 "type": "string",
@@ -74,7 +74,7 @@ describe("columnFormSchema", () => {
                 "layout": {
                   "comp": "textarea",
                 },
-                "maxLength": 1000,
+                "maxLength": 10000,
                 "title": "Description",
                 "type": "string",
               },
@@ -82,7 +82,7 @@ describe("columnFormSchema", () => {
                 "errorMessage": {
                   "uniqueColumnName": "Column already exists",
                 },
-                "maxLength": 1000,
+                "maxLength": 10000,
                 "minLength": 1,
                 "title": "Column",
                 "type": "string",
@@ -230,7 +230,7 @@ describe("columnFormSchema", () => {
                           "additionalProperties": false,
                           "properties": {
                             "name": {
-                              "maxLength": 1000,
+                              "maxLength": 10000,
                               "minLength": 1,
                               "title": "Name",
                               "type": "string",
@@ -434,7 +434,7 @@ describe("columnFormSchema", () => {
                 "layout": {
                   "comp": "textarea",
                 },
-                "maxLength": 1000,
+                "maxLength": 10000,
                 "title": "Description",
                 "type": "string",
               },
@@ -458,7 +458,7 @@ describe("columnFormSchema", () => {
                 "errorMessage": {
                   "uniqueColumnName": "Column already exists",
                 },
-                "maxLength": 1000,
+                "maxLength": 10000,
                 "minLength": 1,
                 "title": "Column",
                 "type": "string",
@@ -495,7 +495,7 @@ describe("columnFormSchema", () => {
                 "layout": {
                   "comp": "textarea",
                 },
-                "maxLength": 1000,
+                "maxLength": 10000,
                 "title": "Description",
                 "type": "string",
               },
@@ -531,7 +531,7 @@ describe("columnFormSchema", () => {
                 "errorMessage": {
                   "uniqueColumnName": "Column already exists",
                 },
-                "maxLength": 1000,
+                "maxLength": 10000,
                 "minLength": 1,
                 "title": "Column",
                 "type": "string",
@@ -567,7 +567,7 @@ describe("columnFormSchema", () => {
                 "layout": {
                   "comp": "textarea",
                 },
-                "maxLength": 1000,
+                "maxLength": 10000,
                 "title": "Description",
                 "type": "string",
               },
@@ -575,7 +575,7 @@ describe("columnFormSchema", () => {
                 "errorMessage": {
                   "uniqueColumnName": "Column already exists",
                 },
-                "maxLength": 1000,
+                "maxLength": 10000,
                 "minLength": 1,
                 "title": "Column",
                 "type": "string",
