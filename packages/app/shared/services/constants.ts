@@ -1,2 +1,2 @@
 export const DEFAULT_NAME = "Unnamed";
-export const DESCRIPTION_MAX_LENGTH = 1000;
+export const DESCRIPTION_MAX_LENGTH = 10000;

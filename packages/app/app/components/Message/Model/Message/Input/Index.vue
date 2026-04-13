@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { authClient } from "@/services/auth/authClient";
-import { getTypingMessage } from "@/services/message/getTypingMessage";
 import { useMessageStore } from "@/store/message";
 import { useDataStore } from "@/store/message/data";
 import { useInputStore } from "@/store/message/input";
@@ -19,8 +18,7 @@ const { currentRoomId } = storeToRefs(roomStore);
 const roomName = useRoomName(currentRoomId);
 const dataStore = useDataStore();
 const { sendMessage } = dataStore;
-const { items, typings } = storeToRefs(dataStore);
-const typingMessage = computed(() => getTypingMessage(typings.value.map(({ username }) => username)));
+const { items } = storeToRefs(dataStore);
 const messageStore = useMessageStore();
 const { editingRowKey } = storeToRefs(messageStore);
 const keyboardExtension = new Extension({
@@ -76,8 +74,13 @@ useEventListener("keydown", (event: KeyboardEvent) => {
   <MessageModelMessageInputKeyboardShortcutsDialog />
   <MessageModelMessageFileDropzoneBackground />
   <div w-full>
-    <MessageModelMessageInputReplyHeader v-if="reply" :reply @close="rowKey = ''" />
-    <MessageModelMessageInputSlashCommandParameters v-if="pendingSlashCommand" />
+    <MessageModelMessageInputHeaderSlashCommandParameters v-if="pendingSlashCommand" />
+    <MessageModelMessageInputHeaderReply
+      v-if="reply"
+      :reply
+      :is-top-attached="Boolean(pendingSlashCommand)"
+      @close="rowKey = ''"
+    />
     <RichTextEditor
       v-else
       v-model="input"
@@ -98,8 +101,7 @@ useEventListener("keydown", (event: KeyboardEvent) => {
         <RichTextEditorCustomSendMessageButton :="editorProps" />
       </template>
       <template #prepend-outer-footer>
-        <!-- Add &nbsp; to avoid layout shift -->
-        <div class="text-sm">{{ typingMessage }}&nbsp;</div>
+        <MessageModelMessageInputFooter />
       </template>
     </RichTextEditor>
   </div>

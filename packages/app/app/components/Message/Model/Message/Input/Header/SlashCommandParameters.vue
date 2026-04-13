@@ -60,24 +60,14 @@ useEventListener("keydown", (event: KeyboardEvent) => {
 
 <template>
   <div v-if="pendingSlashCommand" w-full>
-    <div class="bg-background" relative text-sm px-4 py-2 rd-t-2 flex items-center gap-2>
+    <MessageModelMessageInputHeader @close="clearPendingSlashCommand()">
       <v-icon icon="mdi-slash-forward" size="small" />
       <span>
         <span font-bold>{{ pendingSlashCommand.title }}</span>
         <span opacity-60 ml-1>{{ pendingSlashCommand.description }}</span>
       </span>
       <StyledEditFormDialogErrorIcon :edit-form="formRef ?? undefined" :is-edit-form-valid="isFormValid" />
-      <v-btn
-        absolute
-        top="1/2"
-        right-4
-        translate-y="-1/2"
-        icon="mdi-close"
-        size="small"
-        density="compact"
-        @click="clearPendingSlashCommand()"
-      />
-    </div>
+    </MessageModelMessageInputHeader>
     <v-form ref="formRef" v-model="isFormValid" @submit.prevent="submit">
       <StyledCard>
         <div flex items-start gap-2 px-4 py-3>
@@ -112,5 +102,8 @@ useEventListener("keydown", (event: KeyboardEvent) => {
         </div>
       </StyledCard>
     </v-form>
+    <div flex justify-between px-1 pt-1>
+      <MessageModelMessageInputFooter />
+    </div>
   </div>
 </template>

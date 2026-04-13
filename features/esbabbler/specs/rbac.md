@@ -86,7 +86,7 @@ WHERE rr.room_id = $roomId
 
 ## Authority Hierarchy
 
-```
+```text
 Owner (rooms.userId)          — immune to all role manipulation; can do everything
   └── Administrator permission — bypass all checks; can manage all roles below top
         └── Explicit permissions  — granular; subject to role hierarchy
@@ -137,7 +137,7 @@ Owner (rooms.userId)          — immune to all role manipulation; can do everyt
 
 ## Implementation Tasks
 
-- [ ] **`RoomPermission` enum** — `packages/shared/src/models/room/RoomPermission.ts`
+- [ ] **`RoomPermission` const object + type alias** — `packages/shared/src/models/room/RoomPermission.ts`
 - [ ] **`roomRoles` Drizzle schema** — `packages/db-schema/src/schema/roomRoles.ts`; partial unique index on `(roomId) WHERE isEveryone = true`
 - [ ] **`usersToRoomRoles` Drizzle schema** — `packages/db-schema/src/schema/usersToRoomRoles.ts`
 - [ ] **Migration** — add both tables; seed one `@everyone` role for every existing room
