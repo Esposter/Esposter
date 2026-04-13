@@ -173,8 +173,3 @@ packages/app/
 ## Relationship to Direct Messages
 
 Friends are the only DM recipients. New Message dialog lists accepted friends → `createDirectMessage(selectedUserIds)` → DM room created/surfaced.
-
-## Open Questions
-
-- **Friend request notifications**: should the recipient receive a Web Push notification when a friend request arrives? Low-urgency — can be added alongside the main notification pass.
-- **Mutual friend discovery**: "You may know" suggestions based on shared room membership — YAGNI at current scale.

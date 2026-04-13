@@ -1,22 +1,19 @@
 <script setup lang="ts">
-import type { MessageEntity } from "@esposter/db-schema";
-
 import { useColorsStore } from "@/store/colors";
 
-interface ReplyHeaderProps {
-  reply: MessageEntity;
+interface HeaderProps {
+  isTopAttached?: boolean;
 }
 
-const { reply } = defineProps<ReplyHeaderProps>();
+const { isTopAttached } = defineProps<HeaderProps>();
 const emit = defineEmits<{ close: [] }>();
 const colorsStore = useColorsStore();
 const { text } = storeToRefs(colorsStore);
-const creator = useCreator(() => reply);
 </script>
 
 <template>
-  <div v-if="creator" class="bg-background" relative text-sm px-4 py-2 rd-t-2>
-    Replying to <span font-bold>{{ creator.name }}</span>
+  <div class="bg-background" :class="isTopAttached ? '' : 'rd-t-2'" relative text-sm px-4 py-2 flex items-center gap-2>
+    <slot />
     <v-btn
       class="custom-border"
       absolute

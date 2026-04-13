@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { authClient } from "@/services/auth/authClient";
-import { getTypingMessage } from "@/services/message/getTypingMessage";
 import { useMessageStore } from "@/store/message";
 import { useDataStore } from "@/store/message/data";
 import { useInputStore } from "@/store/message/input";
@@ -18,9 +17,8 @@ const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const roomName = useRoomName(currentRoomId);
 const dataStore = useDataStore();
+const { items } = storeToRefs(dataStore);
 const { sendMessage } = dataStore;
-const { items, typings } = storeToRefs(dataStore);
-const typingMessage = computed(() => getTypingMessage(typings.value.map(({ username }) => username)));
 const messageStore = useMessageStore();
 const { editingRowKey } = storeToRefs(messageStore);
 const keyboardExtension = new Extension({
@@ -51,8 +49,10 @@ const slashCommandExtension = useSlashCommandExtension();
 const inputStore = useInputStore();
 const { input } = storeToRefs(inputStore);
 const replyStore = useReplyStore();
-const { replyMap, rowKey } = storeToRefs(replyStore);
-const reply = computed(() => (rowKey.value ? replyMap.value.get(rowKey.value) : undefined));
+const { rowKey } = storeToRefs(replyStore);
+const replyToMessage = computed(() =>
+  rowKey.value ? items.value.find(({ rowKey: messageRowKey }) => messageRowKey === rowKey.value) : undefined,
+);
 const uploadFiles = useUploadFiles();
 const slashCommandStore = useSlashCommandStore();
 const { pendingSlashCommand } = storeToRefs(slashCommandStore);
@@ -76,7 +76,13 @@ useEventListener("keydown", (event: KeyboardEvent) => {
   <MessageModelMessageInputKeyboardShortcutsDialog />
   <MessageModelMessageFileDropzoneBackground />
   <div w-full>
-    <MessageModelMessageInputReplyHeader v-if="reply" :reply @close="rowKey = ''" />
+    <MessageModelMessageInputHeaderSlashCommandParameters />
+    <MessageModelMessageInputHeaderReply
+      v-if="replyToMessage"
+      :message="replyToMessage"
+      :is-top-attached="Boolean(pendingSlashCommand)"
+      @close="rowKey = ''"
+    />
     <MessageModelMessageInputSlashCommandParameters v-if="pendingSlashCommand" />
     <RichTextEditor
       v-else
@@ -84,7 +90,7 @@ useEventListener("keydown", (event: KeyboardEvent) => {
       :placeholder="`Message ${roomName}`"
       :limit="MESSAGE_MAX_LENGTH"
       :extensions="[keyboardExtension, codeBlockExtension, mentionExtension, slashCommandExtension]"
-      :card-props="reply ? { class: 'rd-t-none' } : undefined"
+      :card-props="replyToMessage ? { class: 'rd-t-none' } : undefined"
       @paste="(_editor, files) => uploadFiles(files)"
     >
       <template #prepend-inner-header>
@@ -98,8 +104,7 @@ useEventListener("keydown", (event: KeyboardEvent) => {
         <RichTextEditorCustomSendMessageButton :="editorProps" />
       </template>
       <template #prepend-outer-footer>
-        <!-- Add &nbsp; to avoid layout shift -->
-        <div class="text-sm">{{ typingMessage }}&nbsp;</div>
+        <MessageModelMessageInputFooter />
       </template>
     </RichTextEditor>
   </div>

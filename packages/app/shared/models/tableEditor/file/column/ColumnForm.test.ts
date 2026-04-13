@@ -21,7 +21,7 @@ describe("columnFormSchema", () => {
                 "layout": {
                   "comp": "textarea",
                 },
-                "maxLength": 1000,
+                "maxLength": 10000,
                 "title": "Description",
                 "type": "string",
               },
@@ -74,7 +74,7 @@ describe("columnFormSchema", () => {
                 "layout": {
                   "comp": "textarea",
                 },
-                "maxLength": 1000,
+                "maxLength": 10000,
                 "title": "Description",
                 "type": "string",
               },
@@ -434,7 +434,7 @@ describe("columnFormSchema", () => {
                 "layout": {
                   "comp": "textarea",
                 },
-                "maxLength": 1000,
+                "maxLength": 10000,
                 "title": "Description",
                 "type": "string",
               },
@@ -495,7 +495,7 @@ describe("columnFormSchema", () => {
                 "layout": {
                   "comp": "textarea",
                 },
-                "maxLength": 1000,
+                "maxLength": 10000,
                 "title": "Description",
                 "type": "string",
               },
@@ -567,7 +567,7 @@ describe("columnFormSchema", () => {
                 "layout": {
                   "comp": "textarea",
                 },
-                "maxLength": 1000,
+                "maxLength": 10000,
                 "title": "Description",
                 "type": "string",
               },

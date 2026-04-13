@@ -90,6 +90,7 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 
 - **Don't extract helpers that add no value** — if a helper function just wraps an inline object literal or a single expression without reuse or meaningful abstraction, return/use the value directly. Three lines of inline code is better than a named wrapper used once.
 - **Function naming prefixes** — use `get*` for functions that derive or compute a display value (e.g. `getVisibilityTooltip`, `getRowTitle`). Use CRUD prefixes (`create*`, `update*`, `delete*`) for heavier operations that interact with data or stores.
+- **Boolean-returning functions** — always use `is*` prefix (e.g. `isManageable`, `isExpired`, `isRoomAdmin`). Never `can*` or `should*`. Exception: use `has*` when `is*` reads unnaturally — specifically when checking possession/membership (e.g. `hasPermission`, `hasMember`). The rule in full: prefer `is` → fall back to `has` → never `can`/`should`/`get` for booleans.
 
 ## Exhaustive Switch Guards
 

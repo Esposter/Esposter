@@ -105,15 +105,20 @@ getPushSubscriptionsForMessage(db, { message, partitionKey, userId })
 
 ---
 
-## DB Schema Highlights
+## DB Schema
 
-| Table               | Key Fields                                                                     |
-| ------------------- | ------------------------------------------------------------------------------ |
-| `rooms`             | `id`, `userId` (owner), `type` (Room/DM), `categoryId`, `participantKey`       |
-| `usersToRooms`      | `userId`, `roomId` (PK), `notificationType` (All/DM/Never), `isHidden`         |
-| `userStatuses`      | `userId` (PK), `status` (nullable enum), `isConnected`, `message`, `expiresAt` |
-| `pushSubscriptions` | `id`, `userId`, `endpoint`, `auth`, `p256dh`, `expirationTime`                 |
-| `roomCategories`    | `id`, `userId` (owner), `name`, `position`                                     |
+| Table               | Key Fields                                                                                 |
+| ------------------- | ------------------------------------------------------------------------------------------ |
+| `rooms`             | `id`, `userId` (owner), `type` (Room/DM), `categoryId`, `participantKey`                   |
+| `usersToRooms`      | `userId`, `roomId` (PK), `notificationType` (All/DM/Never), `isHidden`, `timeoutUntil`     |
+| `roomRoles`         | `id`, `roomId`, `name`, `color`, `position`, `permissions` (bigint bitfield), `isEveryone` |
+| `usersToRoomRoles`  | `userId`, `roomId`, `roleId` (composite PK)                                                |
+| `bans`              | `roomId`, `userId`, `bannedByUserId`, `createdAt`                                          |
+| `userStatuses`      | `userId` (PK), `status` (nullable enum), `isConnected`, `message`, `expiresAt`             |
+| `pushSubscriptions` | `id`, `userId`, `endpoint`, `auth`, `p256dh`, `expirationTime`                             |
+| `roomCategories`    | `id`, `userId` (owner), `name`, `position`                                                 |
+
+RBAC details (permission bitfield, service layer, role hierarchy) → see `specs/rbac.md`.
 
 ### UserStatus enum
 
@@ -133,19 +138,3 @@ Messages stored in **Azure Table Storage** (not Postgres):
 - `partitionKey = roomId`, `rowKey = reverseTickedTimestamp` (newest first)
 - `MessageType` enum: `Message | PinMessage | VoiceCall | ...`
 - Pinned messages filter: `isPinned = true`
-
----
-
-## v2 Feature Status
-
-All items complete. See `completed/v2.md`.
-
-## v3 Feature Status (as of 2026-04-13)
-
-In progress. Key themes:
-
-- **Room Member Roles** — `RoomMemberRole` enum on `usersToRooms`; prerequisite for moderation
-- **Moderation System** — unified `moderationRouter` + `AdminActionType` enum; unblocks v2 pending force-mute
-- **User Profile Editing** — avatar upload + bio + display name edit
-
-See `v3.md` for full list.

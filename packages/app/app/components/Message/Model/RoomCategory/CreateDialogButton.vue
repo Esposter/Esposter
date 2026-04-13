@@ -1,63 +1,57 @@
 <script setup lang="ts">
+import type { SubmitEventPromise } from "vuetify";
+
+import { formRules } from "@/services/vuetify/formRules";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
 import { ROOM_CATEGORY_NAME_MAX_LENGTH } from "@esposter/db-schema";
-import { mergeProps } from "vue";
 
 const roomCategoryStore = useRoomCategoryStore();
 const { createRoomCategory } = roomCategoryStore;
 const dialog = ref(false);
 const name = ref("");
-const { execute, isLoading } = useInFlight();
-const submit = () =>
-  execute(async () => {
+
+const submit = async (_event: SubmitEventPromise, onComplete: () => void) => {
+  try {
     const trimmedName = name.value.trim();
     if (!trimmedName) return;
     await createRoomCategory({ name: trimmedName });
     name.value = "";
-    dialog.value = false;
-  });
+  } finally {
+    onComplete();
+  }
+};
 </script>
 
 <template>
-  <v-dialog v-model="dialog" max-width="400">
-    <template #activator="{ props: dialogProps }">
+  <StyledFormDialog
+    v-model="dialog"
+    :card-props="{ title: 'New Category', minWidth: 400 }"
+    :confirm-button-props="{ text: 'Create Category' }"
+    @submit="submit"
+  >
+    <template #activator="{ updateIsOpen }">
       <v-tooltip text="Add Category">
         <template #activator="{ props: tooltipProps }">
           <v-btn
-            :="mergeProps(dialogProps, tooltipProps)"
+            :="tooltipProps"
             icon="mdi-folder-plus-outline"
             size="small"
             variant="plain"
+            @click="updateIsOpen(true)"
           />
         </template>
       </v-tooltip>
     </template>
-    <StyledCard>
-      <v-card-title>New Category</v-card-title>
-      <v-card-text>
-        <v-text-field
-          v-model="name"
-          label="Category name"
-          density="compact"
-          hide-details
-          :maxlength="ROOM_CATEGORY_NAME_MAX_LENGTH"
-          variant="outlined"
-          autofocus
-          @keydown.enter="submit()"
-        />
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer />
-        <v-btn text="Cancel" variant="plain" @click="dialog = false" />
-        <v-btn
-          color="primary"
-          text="Create"
-          variant="elevated"
-          :disabled="isLoading"
-          :loading="isLoading"
-          @click="submit()"
-        />
-      </v-card-actions>
-    </StyledCard>
-  </v-dialog>
+    <v-container>
+      <v-text-field
+        v-model="name"
+        label="Category name"
+        density="compact"
+        autofocus
+        :maxlength="ROOM_CATEGORY_NAME_MAX_LENGTH"
+        :rules="[formRules.required, formRules.requireAtMostNCharacters(ROOM_CATEGORY_NAME_MAX_LENGTH)]"
+        variant="outlined"
+      />
+    </v-container>
+  </StyledFormDialog>
 </template>
