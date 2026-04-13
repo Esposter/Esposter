@@ -102,14 +102,3 @@ packages/app/
     directMessage.ts                            # createDirectMessage, readDirectMessages,
                                                 # readDirectMessageParticipants, hideDirectMessage (implemented)
 ```
-
-## What Does Not Change
-
-Message routers, components, emoji reactions, quote replies, polls, file uploads, rate limiting — all unchanged. Voice: allow `RoomType.DirectMessage` in `joinVoiceChannel` when needed.
-
-## Open Questions
-
-- **Max group DM size**: 10 (Slack's model) — beyond that, the UX nudges users to create a room instead
-- **Re-adding hidden participants**: if a user hid a group DM and is re-invited, reset `isHidden = false` on their row
-- **Read state**: DMs are a natural candidate for unread badges (already ruled out room-wide in v1, but DMs have higher urgency — worth revisiting)
-- **Admin visibility**: should server admins be able to see DMs? Recommend no — store and treat them as private

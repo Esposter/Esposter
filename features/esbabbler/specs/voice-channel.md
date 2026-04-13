@@ -161,11 +161,3 @@ packages/app/
 ## What Does Not Change
 
 Message infrastructure, room model (no new DB columns; voice state is ephemeral), auth/permissions, tRPC subscription pattern.
-
-## Open Questions
-
-- **Mute enforcement**: server-side mute (moderator can force-mute) vs client-side handling — recommend client-side only for v1
-- **Video**: out of scope for v1; same `RTCPeerConnection` extends to video by adding a video track
-- **Screen share**: out of scope; requires `getDisplayMedia()` + SFU for performance beyond 2 viewers
-- **Recording**: out of scope; requires SFU with recording support (e.g. LiveKit Egress)
-- **DM voice**: once Direct Messages land, DM rooms can opt into the same voice infrastructure
