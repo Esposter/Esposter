@@ -3,12 +3,12 @@ import type { MessageEntity } from "@esposter/db-schema";
 
 interface ReplyProps {
   isTopAttached?: boolean;
-  reply: MessageEntity;
+  message: MessageEntity;
 }
 
-const { isTopAttached, reply } = defineProps<ReplyProps>();
+const { isTopAttached, message } = defineProps<ReplyProps>();
 const emit = defineEmits<{ close: [] }>();
-const creator = useCreator(() => reply);
+const creator = useCreator(() => message);
 </script>
 
 <template>

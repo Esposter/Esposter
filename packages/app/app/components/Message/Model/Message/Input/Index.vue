@@ -49,8 +49,10 @@ const slashCommandExtension = useSlashCommandExtension();
 const inputStore = useInputStore();
 const { input } = storeToRefs(inputStore);
 const replyStore = useReplyStore();
-const { replyMap, rowKey } = storeToRefs(replyStore);
-const reply = computed(() => (rowKey.value ? replyMap.value.get(rowKey.value) : undefined));
+const { rowKey } = storeToRefs(replyStore);
+const replyToMessage = computed(() =>
+  rowKey.value ? items.value.find(({ rowKey: messageRowKey }) => messageRowKey === rowKey.value) : undefined,
+);
 const uploadFiles = useUploadFiles();
 const slashCommandStore = useSlashCommandStore();
 const { pendingSlashCommand } = storeToRefs(slashCommandStore);
@@ -76,8 +78,8 @@ useEventListener("keydown", (event: KeyboardEvent) => {
   <div w-full>
     <MessageModelMessageInputHeaderSlashCommandParameters />
     <MessageModelMessageInputHeaderReply
-      v-if="reply"
-      :reply
+      v-if="replyToMessage"
+      :message="replyToMessage"
       :is-top-attached="Boolean(pendingSlashCommand)"
       @close="rowKey = ''"
     />
@@ -91,7 +93,7 @@ useEventListener("keydown", (event: KeyboardEvent) => {
       :placeholder="`Message ${roomName}`"
       :limit="MESSAGE_MAX_LENGTH"
       :extensions="[keyboardExtension, codeBlockExtension, mentionExtension, slashCommandExtension]"
-      :card-props="reply ? { class: 'rd-t-none' } : undefined"
+      :card-props="replyToMessage ? { class: 'rd-t-none' } : undefined"
       @paste="(_editor, files) => uploadFiles(files)"
     >
       <template #prepend-inner-header>
