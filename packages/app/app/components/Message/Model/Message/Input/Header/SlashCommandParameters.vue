@@ -8,10 +8,7 @@ const { clearPendingSlashCommand } = slashCommandStore;
 
 <template>
   <MessageModelMessageInputHeader v-if="pendingSlashCommand" @close="clearPendingSlashCommand()">
-    <v-icon icon="mdi-slash-forward" size="small" />
-    <span>
-      <span font-bold>{{ pendingSlashCommand.title }}</span>
-      <span opacity-60 ml-1>{{ pendingSlashCommand.description }}</span>
-    </span>
+    <span font-bold>/{{ pendingSlashCommand.title }}</span>
+    <span opacity-60 ml-1>{{ pendingSlashCommand.description }}</span>
   </MessageModelMessageInputHeader>
 </template>
