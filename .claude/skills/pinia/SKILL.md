@@ -60,6 +60,27 @@ description: Esposter Pinia store conventions — full store name, destructure w
   const roomParticipants = computed(() => roomParticipantsMap.value.get(roomStore.currentRoomId));
   ```
 
+## useDataMap Generic Usage
+
+Always pass the explicit type generic when the default value alone can't infer the full type (union types, empty `{}` or `[]`). Primitives with unambiguous defaults (`""`, `0`, `true`) don't need a generic.
+
+```typescript
+// CORRECT — generic for union / complex types
+const { data: pendingSlashCommand } = useDataMap<null | SlashCommand>(() => roomStore.currentRoomId, null);
+const { data: parameterValues } = useDataMap<Record<string, string>>(() => roomStore.currentRoomId, {});
+const { data: activeParameterNames } = useDataMap<string[]>(() => roomStore.currentRoomId, []);
+const { data: errors } = useDataMap<SlashCommandParameterError[]>(() => roomStore.currentRoomId, []);
+const { data: lastAddedParameterName } = useDataMap<null | string>(() => roomStore.currentRoomId, null);
+
+// OK — primitive default infers correctly, no generic needed
+const { data: trailingMessage } = useDataMap(() => roomStore.currentRoomId, "");
+const { data: focusedIndex } = useDataMap(() => roomStore.currentRoomId, 0);
+
+// WRONG — as-cast instead of generic
+const { data: pendingSlashCommand } = useDataMap(() => roomStore.currentRoomId, null as null | SlashCommand); // ❌
+const { data: parameterValues } = useDataMap(() => roomStore.currentRoomId, {} as Record<string, string>); // ❌
+```
+
 ## createOperationData Usage
 
 - **Use `createOperationData` wherever the item type satisfies `ToData<AEntity>`** — generates typed CRUD methods (`createXxx`, `updateXxx`, `deleteXxx`, `pushXxxs`, `unshiftXxxs`) for entity list refs. `User` satisfies this (`id`, `createdAt`, `updatedAt`, `deletedAt` from `pgTable` wrapper). Destructure as `base` aliases and wrap in `storeXxx` functions for side effects:

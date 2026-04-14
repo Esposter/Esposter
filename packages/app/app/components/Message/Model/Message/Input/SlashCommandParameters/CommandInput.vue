@@ -8,7 +8,6 @@ const emit = defineEmits<{
   blur: [];
   delete: [];
   focus: [];
-  keydown: [event: KeyboardEvent];
   "navigate:next": [];
 }>();
 const modelValue = defineModel<string>({ required: true });
@@ -27,7 +26,7 @@ onMounted(() => {
 
 <template>
   <div inline-flex items-center gap-0.5>
-    <span font-bold text-sm opacity-70>/</span>
+    <span font-bold text-sm>/</span>
     <input
       ref="input"
       v-model="modelValue"
@@ -39,7 +38,6 @@ onMounted(() => {
       font-bold
       @focus="emit('focus')"
       @blur="emit('blur')"
-      @keydown="emit('keydown', $event)"
       @keydown.enter.prevent="emit('navigate:next')"
       @keydown.space.prevent="emit('navigate:next')"
       @keydown.tab.prevent="emit('navigate:next')"

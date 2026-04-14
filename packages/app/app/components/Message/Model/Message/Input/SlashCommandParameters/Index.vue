@@ -12,23 +12,16 @@ import { useRoomStore } from "@/store/message/room";
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const slashCommandStore = useSlashCommandStore();
-const { activeParameterNames, focusedIndex, parameterValues, pendingSlashCommand } = storeToRefs(slashCommandStore);
-const { buildText, clearPendingSlashCommand, setErrors, setPendingSlashCommand } = slashCommandStore;
+const { activeParameterNames, focusedIndex, lastAddedParameterName, parameterValues, pendingSlashCommand } =
+  storeToRefs(slashCommandStore);
+const { buildText, clearPendingSlashCommand, createParameter, setErrors, setPendingSlashCommand } = slashCommandStore;
 const inputStore = useInputStore();
 const { input } = storeToRefs(inputStore);
 const executeSlashCommand = useExecuteSlashCommand();
 const commandTitle = ref(pendingSlashCommand.value?.type ?? "");
-const lastAddedParameterName = ref<null | string>(null);
-const suggestedItems = computed(() => {
-  const query = commandTitle.value.toLowerCase();
-  return Object.values(SlashCommandDefinitionMap).filter(
-    ({ description, title }) => title.toLowerCase().includes(query) || description.toLowerCase().includes(query),
-  );
-});
 
 watchImmediate(pendingSlashCommand, (newPendingSlashCommand) => {
   if (newPendingSlashCommand) commandTitle.value = newPendingSlashCommand.type;
-  lastAddedParameterName.value = null;
 });
 
 const activeParameters = computed(
@@ -37,18 +30,12 @@ const activeParameters = computed(
 const hiddenParameters = computed(
   () => pendingSlashCommand.value?.parameters.filter(({ name }) => !activeParameterNames.value.includes(name)) ?? [],
 );
-const requiredHiddenParameters = computed(() => hiddenParameters.value.filter(({ isRequired }) => isRequired));
-const optionalHiddenParameters = computed(() => hiddenParameters.value.filter(({ isRequired }) => !isRequired));
 
 const collapseToText = () => {
   input.value = buildText();
   clearPendingSlashCommand();
 };
 
-const createParameter = (name: string) => {
-  lastAddedParameterName.value = name;
-  activeParameterNames.value = [...activeParameterNames.value, name];
-};
 const deleteParameter = (index: number) => {
   const name = activeParameters.value[index]?.name;
   if (!name) return;
@@ -127,13 +114,11 @@ useEventListener("keydown", (event: KeyboardEvent) => {
   <div v-if="pendingSlashCommand" w-full>
     <StyledCard>
       <div flex items-center gap-2 px-4 pt-3 pb-2>
-        <MessageModelMessageInputSlashCommandParametersCommandInputMenu
+        <MessageModelMessageInputSlashCommandParametersCommandInput
           v-model="commandTitle"
-          :items="suggestedItems"
           :is-focused="focusedIndex === -1"
           @navigate:next="commandNavigateNext"
           @delete="collapseToText"
-          @select:command="selectCommand"
           @focus="focus(-1)"
           @blur="blur(-1)"
         />
@@ -153,11 +138,8 @@ useEventListener("keydown", (event: KeyboardEvent) => {
             @blur="blur(index)"
           />
         </template>
-        <MessageModelMessageInputSlashCommandParametersTrailingInputMenu
+        <MessageModelMessageInputSlashCommandParametersTrailingInput
           :hidden-parameters
-          :required-hidden-parameters
-          :optional-hidden-parameters
-          :options-label="`+${hiddenParameters.length} ${hiddenParameters.length === 1 ? 'option' : 'options'}`"
           :active-parameters-length="activeParameters.length"
           :is-focused="focusedIndex === activeParameters.length"
           @create-parameter="createParameter"

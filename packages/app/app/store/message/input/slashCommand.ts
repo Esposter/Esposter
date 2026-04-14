@@ -7,17 +7,28 @@ import { ID_SEPARATOR, takeOne, toRawDeep } from "@esposter/shared";
 
 export const useSlashCommandStore = defineStore("message/input/slashCommand", () => {
   const roomStore = useRoomStore();
-  const { data: pendingSlashCommand } = useDataMap(() => roomStore.currentRoomId, null as null | SlashCommand);
-  const { data: parameterValues } = useDataMap(() => roomStore.currentRoomId, {} as Record<string, string>);
-  const { data: activeParameterNames } = useDataMap(() => roomStore.currentRoomId, [] as string[]);
-  const { data: errors } = useDataMap(() => roomStore.currentRoomId, [] as SlashCommandParameterError[]);
+  const { data: pendingSlashCommand } = useDataMap<null | SlashCommand>(() => roomStore.currentRoomId, null);
+  const { data: parameterValues } = useDataMap<Record<string, string>>(() => roomStore.currentRoomId, {});
+  const { data: activeParameterNames } = useDataMap<string[]>(() => roomStore.currentRoomId, []);
+  const { data: errors } = useDataMap<SlashCommandParameterError[]>(() => roomStore.currentRoomId, []);
   const { data: trailingMessage } = useDataMap(() => roomStore.currentRoomId, "");
   const { data: focusedIndex } = useDataMap(() => roomStore.currentRoomId, 0);
+  const { data: selectedHiddenIndex } = useDataMap(() => roomStore.currentRoomId, 0);
+  const { data: lastAddedParameterName } = useDataMap<null | string>(() => roomStore.currentRoomId, null);
+
+  watch(activeParameterNames, () => {
+    selectedHiddenIndex.value = 0;
+  });
 
   const setErrors = (id: string, messages: string[]) => {
     const index = errors.value.findIndex((e) => e.id === id);
     if (index === -1) errors.value = [...errors.value, { id, messages }];
     else errors.value = errors.value.map((e) => (e.id === id ? { ...e, messages } : e));
+  };
+
+  const createParameter = (name: string) => {
+    lastAddedParameterName.value = name;
+    activeParameterNames.value = [...activeParameterNames.value, name];
   };
 
   const parseTextAndParameters = (
@@ -75,6 +86,7 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
     activeParameterNames.value = parameters.map(({ name }) => name);
     errors.value = [];
     focusedIndex.value = 0;
+    lastAddedParameterName.value = null;
   };
 
   const buildText = (): string => {
@@ -98,16 +110,20 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
     errors.value = [];
     trailingMessage.value = "";
     focusedIndex.value = 0;
+    lastAddedParameterName.value = null;
   };
 
   return {
     activeParameterNames,
     buildText,
     clearPendingSlashCommand,
+    createParameter,
     errors,
     focusedIndex,
+    lastAddedParameterName,
     parameterValues,
     pendingSlashCommand,
+    selectedHiddenIndex,
     setErrors,
     setPendingSlashCommand,
     trailingMessage,
