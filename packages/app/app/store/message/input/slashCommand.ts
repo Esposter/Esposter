@@ -2,7 +2,7 @@ import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
 import type { SlashCommandParameter } from "@/models/message/slashCommands/SlashCommandParameter";
 import type { SlashCommandParameterError } from "@/models/message/slashCommands/SlashCommandParameterError";
 
-import { ID_SEPARATOR, toRawDeep } from "@esposter/shared";
+import { ID_SEPARATOR, takeOne, toRawDeep } from "@esposter/shared";
 
 export const useSlashCommandStore = defineStore("message/input/slashCommand", () => {
   const pendingSlashCommand = ref<null | SlashCommand>(null);
@@ -55,7 +55,9 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
     if (remainingText && parameters.length > 0) {
       const parsedTextAndParameters = parseTextAndParameters(remainingText, parameters);
       parameterValues.value = Object.fromEntries(
-        parameters.map(({ name }) => [name, parsedTextAndParameters.parameterValues[name] ?? ""]),
+        parameters
+          .filter(({ name }) => !Object.hasOwn(parsedTextAndParameters.parameterValues, name))
+          .map(({ name }) => [name, takeOne(parsedTextAndParameters.parameterValues, name)]),
       );
       trailingMessage.value = parsedTextAndParameters.trailingMessage;
     } else {

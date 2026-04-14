@@ -1,4 +1,5 @@
 import type { SlashCommandParameters } from "@/models/message/slashCommands/SlashCommandParameters";
+import type { StandardCreateMessageInput } from "@esposter/db-schema";
 
 import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
 import { sanitizeHtml } from "@/services/sanitizeHtml/sanitizeHtml";
@@ -23,23 +24,17 @@ export const useExecuteSlashCommand = () => {
     const roomId = currentRoomId.value;
     if (!roomId) return;
 
+    let createMessageInput: StandardCreateMessageInput | undefined;
+
     switch (command.type) {
       case SlashCommandType.Flip: {
         const isHeads = createRandomBoolean();
-        await createMessage({
-          message: marked.parse(isHeads ? `🪙 **Heads**` : `🟡 **Tails**`, { async: false }),
-          roomId,
-          type: MessageType.Message,
-        });
+        createMessageInput = { message: isHeads ? `🪙 **Heads**` : `🟡 **Tails**`, roomId, type: MessageType.Message };
         break;
       }
       case SlashCommandType.Me: {
         const { message } = command.parameterValues;
-        await createMessage({
-          message: marked.parse(`*${sanitizeHtml(message)}*`, { async: false }),
-          roomId,
-          type: MessageType.Message,
-        });
+        createMessageInput = { message: `*${message}*`, roomId, type: MessageType.Message };
         break;
       }
       case SlashCommandType.Poll:
@@ -47,39 +42,31 @@ export const useExecuteSlashCommand = () => {
         break;
       case SlashCommandType.Roll: {
         const roll = Math.floor(Math.random() * 100) + 1;
-        await createMessage({
-          message: marked.parse(`🎲 Rolled a **${roll}**`, { async: false }),
-          roomId,
-          type: MessageType.Message,
-        });
+        createMessageInput = { message: `🎲 Rolled a **${roll}**`, roomId, type: MessageType.Message };
         break;
       }
       case SlashCommandType.Shrug: {
         const { text } = command.parameterValues;
         const prefix = text?.trim() ?? "";
-        await createMessage({
-          message: marked.parse(`${prefix}¯\\_(ツ)_/¯`, { async: false }),
-          roomId,
-          type: MessageType.Message,
-        });
+        createMessageInput = { message: `${prefix}¯\\_(ツ)_/¯`, roomId, type: MessageType.Message };
         break;
       }
       case SlashCommandType.TableFlip:
-        await createMessage({
-          message: marked.parse(`(╯°□°）╯︵ ┻━┻`, { async: false }),
-          roomId,
-          type: MessageType.Message,
-        });
+        createMessageInput = { message: `(╯°□°）╯︵ ┻━┻`, roomId, type: MessageType.Message };
         break;
       case SlashCommandType.Unflip:
-        await createMessage({
-          message: marked.parse(`┬─┬ノ( º _ ºノ)`, { async: false }),
-          roomId,
-          type: MessageType.Message,
-        });
+        createMessageInput = { message: `┬─┬ノ( º _ ºノ)`, roomId, type: MessageType.Message };
         break;
       default:
         exhaustiveGuard(command);
     }
+
+    if (createMessageInput)
+      await createMessage({
+        ...createMessageInput,
+        message: createMessageInput.message
+          ? marked.parse(sanitizeHtml(createMessageInput.message), { async: false })
+          : undefined,
+      });
   };
 };
