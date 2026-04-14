@@ -96,7 +96,7 @@ onMounted(() => {
   border: 1.5px solid rgba(var(--v-border-color), var(--v-border-opacity));
 
   &:focus-within {
-    border-color: rgb(var(--v-theme-primary));
+    border-color: rgb(var(--v-theme-info));
   }
 
   &--error {
@@ -113,7 +113,6 @@ onMounted(() => {
 
   &__input {
     field-sizing: content;
-    min-width: 4rem;
   }
 }
 </style>
