@@ -1,5 +1,7 @@
 import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
 
+import { toRawDeep } from "@esposter/shared";
+
 export interface SlashCommandParameterError {
   id: string;
   messages: string[];
@@ -18,8 +20,8 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
   };
 
   const setPendingSlashCommand = (slashCommand: SlashCommand) => {
-    pendingSlashCommand.value = slashCommand;
-    parameterValues.value = Object.fromEntries(slashCommand.parameters.map(({ name }) => [name, ""]));
+    pendingSlashCommand.value = structuredClone(toRawDeep(slashCommand));
+    parameterValues.value = Object.fromEntries(pendingSlashCommand.value.parameters.map(({ name }) => [name, ""]));
     errors.value = [];
     trailingMessage.value = "";
   };
