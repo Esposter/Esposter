@@ -139,7 +139,7 @@ flowchart TD
     E --> F[Read remaining editor text after range]
     F --> G[Delete from range.from to doc end]
     G --> H{remainingText?}
-    H -->|yes| I[parseParamText → restore parameterValues + trailingMessage]
+    H -->|yes| I[parseTextAndParameters → restore parameterValues + trailingMessage]
     H -->|no| J[empty parameterValues]
     I --> K[setPendingSlashCommand + parsed values]
     J --> K
@@ -152,9 +152,9 @@ flowchart TD
 flowchart TD
     A([User in param mode]) --> B{Collapse trigger}
     B -->|Escape| C[collapseToText]
-    B -->|Backspace in CommandInput\nwhen empty| C
-    B -->|Backspace in TrailingInput\nwhen no params + no trailing| C
-    C --> D[buildText: /CommandType paramName|value ...]
+    B -->|Backspace in CommandInput<br/>when empty| C
+    B -->|Backspace in TrailingInput<br/>when no params + no trailing| C
+    C --> D["buildText: /CommandType paramName|value ..."]
     D --> E[input.value = formatted text]
     E --> F[clearPendingSlashCommand]
     F --> G[RichTextEditor remounts with formatted text]
@@ -165,13 +165,13 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    A([Editor shows /Me message|hello world]) --> B[User positions cursor in /Me]
+    A(["Editor shows /Me message|hello world"]) --> B[User positions cursor in /Me]
     B --> C[Tiptap suggestion active: query = Me]
     C --> D{User presses Space}
     D --> E[SlashCommandSuggestion.command fires]
     E --> F["remainingText = message|hello world"]
     F --> G[Delete entire editor content]
-    G --> H["parseParamText → {message: 'hello world'}"]
+    G --> H["parseTextAndParameters → {message: 'hello world'}"]
     H --> I[Param mode: message chip pre-filled]
 ```
 
