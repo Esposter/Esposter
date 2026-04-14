@@ -44,7 +44,7 @@ defineExpose({ focus });
       outline-none
       text-sm
       :autofocus
-      @update:model-value="setErrors(name, isRequired && !modelValue.trim() ? [`${name} is required`] : [])"
+      @update:model-value="setErrors(name, isRequired && !$event.trim() ? [`${name} is required`] : [])"
       @keydown.enter.prevent="emit('submit')"
       @keydown.delete="!modelValue && emit('remove')"
       @keydown.left.exact="

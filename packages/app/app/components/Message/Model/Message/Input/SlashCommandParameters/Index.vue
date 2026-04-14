@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SlashCommandParameters } from "@/models/message/slashCommands/SlashCommandParameters";
 
-import SlashCommandParameterChip from "@/components/Message/Model/Message/Input/SlashCommandParameterChip.vue";
+import SlashCommandParametersChip from "@/components/Message/Model/Message/Input/SlashCommandParameters/Chip.vue";
 import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
 import { sanitizeHtml } from "@/services/sanitizeHtml/sanitizeHtml";
 import { useDataStore } from "@/store/message/data";
@@ -21,7 +21,7 @@ const { execute, isLoading } = useInFlight();
 const activeParameterNames = ref<string[]>([]);
 const selectedHiddenIndex = ref(0);
 const lastAddedParameterName = ref<null | string>(null);
-const parameterInputRefs = ref<InstanceType<typeof SlashCommandParameterChip>[]>([]);
+const parameterInputRefs = ref<InstanceType<typeof SlashCommandParametersChip>[]>([]);
 const input = useTemplateRef("input");
 
 watchImmediate(pendingSlashCommand, (newPendingSlashCommand) => {
@@ -187,17 +187,17 @@ useEventListener("keydown", (event: KeyboardEvent) => {
     <StyledCard>
       <div flex items-center gap-2 px-4 pt-3 pb-2>
         <template v-for="({ isRequired, name }, index) of activeParameters" :key="name">
-          <MessageModelMessageInputSlashCommandParameterChip
+          <MessageModelMessageInputSlashCommandParametersChip
             :ref="
               (el) => {
-                if (el) parameterInputRefs[index] = el as InstanceType<typeof SlashCommandParameterChip>;
+                if (el) parameterInputRefs[index] = el as InstanceType<typeof SlashCommandParametersChip>;
               }
             "
             :is-required
             :name
             :autofocus="lastAddedParameterName === name || (lastAddedParameterName === null && index === 0)"
             :model-value="parameterValues[name] ?? ''"
-            @update:model-value="(value) => updateParameterValue(name, value)"
+            @update:model-value="updateParameterValue(name, $event)"
             @remove="removeParameter(name)"
             @submit="submit"
             @navigate:previous="navigatePrevious(index)"
@@ -260,7 +260,7 @@ useEventListener("keydown", (event: KeyboardEvent) => {
           </v-list>
         </v-menu>
         <v-spacer />
-        <MessageModelMessageInputSendButton :is-loading @click="submit" />
+        <MessageModelMessageInputSlashCommandParametersSendButton :is-loading @click="submit" />
       </div>
     </StyledCard>
     <div flex justify-between px-1 pt-1>
