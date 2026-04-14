@@ -24,8 +24,7 @@ const emit = defineEmits<{
 
 const slashCommandStore = useSlashCommandStore();
 const { trailingMessage } = storeToRefs(slashCommandStore);
-
-const input = useTemplateRef<HTMLInputElement>("input");
+const input = useTemplateRef("input");
 const selectedHiddenIndex = ref(0);
 
 watch(

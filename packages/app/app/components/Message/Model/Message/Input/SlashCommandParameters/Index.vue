@@ -23,7 +23,7 @@ const inputMenuRef = useTemplateRef("inputMenu");
 const lastAddedParameterName = ref<null | string>(null);
 const parameterInputRefs = ref<InstanceType<typeof SlashCommandParametersChip>[]>([]);
 
-watchImmediate(pendingSlashCommand, (newPendingSlashCommand) => {
+watch(pendingSlashCommand, (newPendingSlashCommand) => {
   activeParameterNames.value = newPendingSlashCommand?.parameters.map(({ name }) => name) ?? [];
   lastAddedParameterName.value = null;
 });
