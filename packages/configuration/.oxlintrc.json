@@ -64,6 +64,7 @@
     "typescript/no-unsafe-member-access": "off",
     "typescript/no-unsafe-return": "off",
     "typescript/no-unsafe-type-assertion": "off",
+    "typescript/prefer-readonly-parameter-types": "off",
     "typescript/restrict-plus-operands": "off",
     "typescript/restrict-template-expressions": "off",
     "typescript/strict-boolean-expressions": "off",

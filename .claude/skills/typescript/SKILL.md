@@ -224,7 +224,7 @@ When a definition array has entries typed as `Definition<T>` where the generic `
 
 ```ts
 // ColumnStatDefinition<T> has format: (value: ColumnStats[T]) => string  — contravariant in T
-// satisfies readonly ColumnStatDefinition[] FAILS (widens T → ColumnStatKey → function param too broad)
+// satisfies readonly ColumnStatDefinition[] FAILS (widens T → ColumnStatKey → function parameter too broad)
 // as const alone PASSES — preserves ColumnStatDefinition<"nullCount">, etc.
 export const ColumnStatDefinitions = [
   defineColumnStat({ key: "nullCount", format: (value) => String(value), ... }),

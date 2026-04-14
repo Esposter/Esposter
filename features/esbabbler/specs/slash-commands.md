@@ -126,6 +126,70 @@ Mirrors `@` mention flow. Trigger: `/`. Items: `Object.values(SlashCommandDefini
 - **Rendered by**: `Message/Model/Message/Type/Poll.vue` — shows question, option buttons, live vote counts, highlights the user's current vote
 - **Vote**: `createVote` / `deleteVote` tRPC mutations in `server/trpc/routers/message/vote.ts`
 
+## User Flow Diagram
+
+### Typing a slash command
+
+```mermaid
+flowchart TD
+    A([User types /]) --> B[Tiptap suggestion activates]
+    B --> C{User picks command}
+    C -->|no parameters| D[executeSlashCommand immediately]
+    C -->|has parameters| E[SlashCommandSuggestion.command fires]
+    E --> F[Read remaining editor text after range]
+    F --> G[Delete from range.from to doc end]
+    G --> H{remainingText?}
+    H -->|yes| I[parseTextAndParameters → restore parameterValues + trailingMessage]
+    H -->|no| J[empty parameterValues]
+    I --> K[setPendingSlashCommand + parsed values]
+    J --> K
+    K --> L[SlashCommandParameters UI shows with chips pre-filled]
+```
+
+### Collapsing parameters back to text
+
+```mermaid
+flowchart TD
+    A([User in parameter mode]) --> B{Collapse trigger}
+    B -->|Escape| C[collapseToText]
+    B -->|Backspace in CommandInput<br/>when empty| C
+    B -->|Backspace in TrailingInput<br/>when no parameters + no trailing| C
+    C --> D["buildText: /CommandType paramName|value ..."]
+    D --> E[input.value = formatted text]
+    E --> F[clearPendingSlashCommand]
+    F --> G[RichTextEditor remounts with formatted text]
+    G --> H[autofocus=end → editor focuses at end]
+```
+
+### Re-selecting an existing command from formatted text
+
+```mermaid
+flowchart TD
+    A(["Editor shows /Me message|hello world"]) --> B[User positions cursor in /Me]
+    B --> C[Tiptap suggestion active: query = Me]
+    C --> D{User presses Space}
+    D --> E[SlashCommandSuggestion.command fires]
+    E --> F["remainingText = message|hello world"]
+    F --> G[Delete entire editor content]
+    G --> H["parseTextAndParameters → {message: 'hello world'}"]
+    H --> I[Parameter mode: message chip pre-filled]
+```
+
+## Text Format for Parameter Serialisation
+
+When collapsing parameter mode back to normal text, parameters are serialised as:
+
+```text
+/CommandType parameterName1|value1 parameterName2|value2 trailingMessage
+```
+
+- Separator between parameter name and value: `ID_SEPARATOR` (`|`)
+- Parameters separated by space
+- Last parameter's value is greedy (captures trailing spaces and text until next `parameterName|` or end)
+- `trailingMessage` appended after all parameters
+
+Re-parsing uses prefix matching per parameter in definition order, so multi-word values for the last parameter round-trip correctly.
+
 ## What Does Not Change
 
 `sendMessage`, `RichTextEditor`, `suggestion.ts` for mentions — untouched. `execute()` calls `createMessage` directly, bypassing normal send flow.

@@ -8,7 +8,9 @@ export class WssAdapter extends EventEmitter {
 
   addConnection(ws: WsAdapter, req: IncomingMessage) {
     this.clients.add(ws);
-    ws.once("close", () => this.clients.delete(ws));
+    ws.once("close", () => {
+      this.clients.delete(ws);
+    });
     this.emit("connection", ws, req);
   }
 

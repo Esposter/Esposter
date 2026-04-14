@@ -61,13 +61,13 @@ const uniqueNameRule = useColumnNameRule(() => dataSource.columns); // create
 
 ## Extract Duplicate Validation Rules
 
-When the same validation rule appears in 2+ components, extract it to a shared composable immediately. Don't copy-paste. The `currentName` optional param handles the "allow own name" case for edit vs create:
+When the same validation rule appears in 2+ components, extract it to a shared composable immediately. Don't copy-paste. The `currentName` optional parameter handles the "allow own name" case for edit vs create:
 
 ```typescript
 // WRONG: Duplicate inline rules in EditDialogButton and CreateDialogButton
 const uniqueNameRule = (v: string) => v === column.name || !columns.some(...) || 'Column already exists'
 
-// RIGHT: Single composable, optional exclude param covers both edit and create
+// RIGHT: Single composable, optional exclude parameter covers both edit and create
 const uniqueNameRule = useColumnNameRule(() => dataSource.columns, column.name) // edit
 const uniqueNameRule = useColumnNameRule(() => dataSource.columns)               // create (no exclude)
 ```

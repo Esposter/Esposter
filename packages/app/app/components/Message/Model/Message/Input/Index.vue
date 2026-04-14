@@ -48,6 +48,7 @@ const mentionExtension = useMentionExtension();
 const slashCommandExtension = useSlashCommandExtension();
 const inputStore = useInputStore();
 const { input } = storeToRefs(inputStore);
+const { validateInput } = inputStore;
 const replyStore = useReplyStore();
 const { rowKey } = storeToRefs(replyStore);
 const replyToMessage = computed(() =>
@@ -87,6 +88,7 @@ useEventListener("keydown", (event: KeyboardEvent) => {
     <RichTextEditor
       v-else
       v-model="input"
+      autofocus="end"
       :placeholder="`Message ${roomName}`"
       :limit="MESSAGE_MAX_LENGTH"
       :extensions="[keyboardExtension, codeBlockExtension, mentionExtension, slashCommandExtension]"
@@ -99,9 +101,17 @@ useEventListener("keydown", (event: KeyboardEvent) => {
       <template #prepend-footer>
         <RichTextEditorCustomUploadFileButton @upload-file="uploadFiles" />
       </template>
-      <template #append-footer="editorProps">
+      <template #append-footer="{ editor }">
         <RichTextEditorCustomVoiceRecorderButton @upload-file="uploadFiles" />
-        <RichTextEditorCustomSendMessageButton :="editorProps" />
+        <MessageModelMessageInputSendMessageButton
+          :disabled="!validateInput(editor)"
+          @click="
+            () => {
+              if (!editor) return;
+              sendMessage(editor);
+            }
+          "
+        />
       </template>
       <template #prepend-outer-footer>
         <MessageModelMessageInputFooter />

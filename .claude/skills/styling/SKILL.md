@@ -16,10 +16,29 @@ description: Esposter UnoCSS Attributify Mode styling conventions — prop-based
 
 Always use UnoCSS abbreviated shorthand forms — they are first-class UnoCSS utilities:
 
+**Border (`b-` prefix):**
+
 - `b-none` not `border-none`
+- `b-0` not `border-0`
 - `b-1` not `border-1`
 - `b-solid` not `border-solid`
 - `b-t-2` not `border-top-2`
+- `b-x-1` not `border-x-1`
+
+**Border-radius (`rd` prefix):**
+
+- `rd` not `rounded`
+- `rd-1` not `rounded-1`
+- `rd-t-2` not `rounded-t-2`
+- `rd-full` not `rounded-full`
+
+**Background (`bg-` prefix):**
+
+- `bg-transparent` not `background-transparent`
+
+**Outline:**
+
+- `outline-none` not `outline-0` (sets `outline: 2px solid transparent`)
 
 When in doubt, prefer the shorter form — UnoCSS abbreviations are canonical in this project.
 

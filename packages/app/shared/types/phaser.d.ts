@@ -3,7 +3,7 @@ import "phaser";
 declare module "phaser" {
   namespace Loader {
     interface LoaderPlugin {
-      tilemapTiledJSONExternal: InstanceType<typeof Loader.LoaderPlugin>["tilemapTiledJSON"];
+      tilemapTiledJSONExternal: InstanceType<typeof LoaderPlugin>["tilemapTiledJSON"];
     }
   }
 }

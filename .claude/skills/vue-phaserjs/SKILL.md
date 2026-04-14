@@ -40,6 +40,20 @@ export interface ArcConfiguration extends ShapeConfiguration {
 
 Keep explicit declarations only for `Parameters<GameObjects.X["method"]>` tuples and plain primitives (`number`, `string`) that are constructor args without a matching readable property.
 
+## SetterMap void-return
+
+`SetterMap` types the inner setter function as returning `void`. When the setter body is a single method call that returns a value (Phaser fluent API), wrap it in braces — never use the `void` operator:
+
+```ts
+// ✅ Correct
+x: (gameObject) => (value) => { gameObject.setX(value); },
+
+// ❌ Wrong — void operator banned
+x: (gameObject) => (value) => void gameObject.setX(value),
+```
+
+Multi-line setters already use braces naturally — no change needed.
+
 ## Phaser Objects in Pinia Stores
 
 **Always use `markRaw()` when assigning a Phaser object to any reactive ref in a Pinia store.**

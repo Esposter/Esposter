@@ -32,18 +32,18 @@ const onKeyDown = ({ event }: SuggestionKeyDownProps) => {
   }
 };
 
-defineExpose({ onKeyDown });
-
 watch(
   () => items,
   () => {
     selectedIndex.value = 0;
   },
 );
+
+defineExpose({ onKeyDown });
 </script>
 
 <template>
-  <StyledCard v-if="items.length > 0" overflow-y-auto :card-props="{ maxHeight: '250', width: '400' }" :elevation="1">
+  <StyledCard v-if="items.length > 0" overflow-y-auto :card-props="{ maxHeight: 250, width: 400 }" :elevation="1">
     <v-card-title text-sm font-bold>{{ title }}</v-card-title>
     <StyledList :selected-index :list-props="{ density: 'compact' }" py-0>
       <v-list-item

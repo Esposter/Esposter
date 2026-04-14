@@ -170,9 +170,11 @@ export class Parser {
       return object;
     };
 
-    this.saxParser.ontext = ontext;
-    this.saxParser.oncdata = (text: string) => {
-      const object = ontext(text);
+    this.saxParser.ontext = (text) => {
+      ontext(text);
+    };
+    this.saxParser.oncdata = (cdata) => {
+      const object = ontext(cdata);
       if (!object) return;
       object.cdata = true;
     };
@@ -192,7 +194,7 @@ export class Parser {
     } else if (this.options.explicitArray) defineProperty(object, key, [newValue]);
     else defineProperty(object, key, newValue);
   }
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+  // oxlint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
   private parseString<T>(convertableToString: convertableToString, callback: (result: T) => void): SAXParser {
     const string = stripBOM(convertableToString.toString());
     this.saxParser.onend = () => {

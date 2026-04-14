@@ -18,7 +18,9 @@ const usePhaserListener = <TEvent extends EventEmitter.EventNames<PhaserEvents>>
   listener: EventEmitter.EventListener<PhaserEvents, TEvent>,
 ) => {
   phaserEventEmitter.on(event, listener);
-  unsubscribes.push(() => phaserEventEmitter.off(event, listener));
+  unsubscribes.push(() => {
+    phaserEventEmitter.off(event, listener);
+  });
 };
 
 export const ItemAttempt: State<StateName> = {
