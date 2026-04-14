@@ -11,15 +11,18 @@ const emit = defineEmits<{
   keydown: [event: KeyboardEvent];
   "navigate:next": [];
 }>();
-const modelValue = defineModel<string>({ default: "" });
+const modelValue = defineModel<string>({ required: true });
 const input = useTemplateRef("input");
-
-watch(
+const { trigger } = watchTriggerable(
   () => isFocused,
   (newIsFocused) => {
     if (newIsFocused) input.value?.focus();
   },
 );
+
+onMounted(() => {
+  trigger();
+});
 </script>
 
 <template>
@@ -29,6 +32,7 @@ watch(
       ref="input"
       v-model="modelValue"
       class="input"
+      color-inherit
       bg-transparent
       b-none
       outline-none

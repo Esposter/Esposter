@@ -88,6 +88,7 @@ useEventListener("keydown", (event: KeyboardEvent) => {
     <RichTextEditor
       v-else
       v-model="input"
+      autofocus="end"
       :placeholder="`Message ${roomName}`"
       :limit="MESSAGE_MAX_LENGTH"
       :extensions="[keyboardExtension, codeBlockExtension, mentionExtension, slashCommandExtension]"

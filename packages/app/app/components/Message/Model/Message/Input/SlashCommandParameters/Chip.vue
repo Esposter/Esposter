@@ -23,13 +23,16 @@ const { errors } = storeToRefs(slashCommandStore);
 const { setErrors } = slashCommandStore;
 const input = useTemplateRef("input");
 const isError = computed(() => Boolean(errors.value.find((e) => e.id === name)?.messages.length));
-
-watch(
+const { trigger } = watchTriggerable(
   () => isFocused,
   (newIsFocused) => {
     if (newIsFocused) input.value?.focus();
   },
 );
+
+onMounted(() => {
+  trigger();
+});
 </script>
 
 <template>

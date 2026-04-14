@@ -152,11 +152,13 @@ flowchart TD
 flowchart TD
     A([User in param mode]) --> B{Collapse trigger}
     B -->|Escape| C[collapseToText]
+    B -->|Backspace in CommandInput\nwhen empty| C
     B -->|Backspace in TrailingInput\nwhen no params + no trailing| C
     C --> D[buildText: /CommandType paramName|value ...]
     D --> E[input.value = formatted text]
     E --> F[clearPendingSlashCommand]
-    F --> G[RichTextEditor mounts with formatted text]
+    F --> G[RichTextEditor remounts with formatted text]
+    G --> H[autofocus=end → editor focuses at end]
 ```
 
 ### Re-selecting an existing command from formatted text
