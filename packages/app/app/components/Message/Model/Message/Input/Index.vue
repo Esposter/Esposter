@@ -48,6 +48,7 @@ const mentionExtension = useMentionExtension();
 const slashCommandExtension = useSlashCommandExtension();
 const inputStore = useInputStore();
 const { input } = storeToRefs(inputStore);
+const { validateInput } = inputStore;
 const replyStore = useReplyStore();
 const { rowKey } = storeToRefs(replyStore);
 const replyToMessage = computed(() =>
@@ -99,9 +100,17 @@ useEventListener("keydown", (event: KeyboardEvent) => {
       <template #prepend-footer>
         <RichTextEditorCustomUploadFileButton @upload-file="uploadFiles" />
       </template>
-      <template #append-footer="editorProps">
+      <template #append-footer="{ editor }">
         <RichTextEditorCustomVoiceRecorderButton @upload-file="uploadFiles" />
-        <RichTextEditorCustomSendMessageButton :="editorProps" />
+        <MessageModelMessageInputSendMessageButton
+          :disabled="!validateInput(editor)"
+          @click="
+            () => {
+              if (!editor) return;
+              sendMessage(editor);
+            }
+          "
+        />
       </template>
       <template #prepend-outer-footer>
         <MessageModelMessageInputFooter />
