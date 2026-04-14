@@ -13,17 +13,17 @@ describe(useSlashCommandStore, () => {
 
   const description = "description";
   const icon = "icon";
-  const p1 = "p1";
-  const p2 = "p2";
-  const p3 = "p3";
+  const parameter1 = "parameter1";
+  const parameter2 = "parameter2";
+  const parameter3 = "parameter3";
   const title = "title";
   const mockSlashCommand: SlashCommand = {
     description,
     icon,
     parameters: [
-      { description, isRequired: true, name: p1 },
-      { description, isRequired: false, name: p2 },
-      { description, isRequired: false, name: p3 },
+      { description, isRequired: true, name: parameter1 },
+      { description, isRequired: false, name: parameter2 },
+      { description, isRequired: false, name: parameter3 },
     ],
     title,
     type: SlashCommandType.Me,
@@ -38,8 +38,8 @@ describe(useSlashCommandStore, () => {
     setPendingSlashCommand(mockSlashCommand);
 
     expect(pendingSlashCommand.value).toStrictEqual(mockSlashCommand);
-    expect(parameterValues.value).toStrictEqual({ [p1]: "", [p2]: "", [p3]: "" });
-    expect(activeParameterNames.value).toStrictEqual([p1, p2, p3]);
+    expect(parameterValues.value).toStrictEqual({ [parameter1]: "", [parameter2]: "", [parameter3]: "" });
+    expect(activeParameterNames.value).toStrictEqual([parameter1, parameter2, parameter3]);
     expect(focusedIndex.value).toBe(0);
   });
 
@@ -50,9 +50,9 @@ describe(useSlashCommandStore, () => {
     const { parameterValues, trailingMessage } = storeToRefs(store);
     const { setPendingSlashCommand } = store;
     const value = "";
-    setPendingSlashCommand(mockSlashCommand, `${p1}${ID_SEPARATOR}${value}`);
+    setPendingSlashCommand(mockSlashCommand, `${parameter1}${ID_SEPARATOR}${value}`);
 
-    expect(parameterValues.value).toStrictEqual({ [p1]: value });
+    expect(parameterValues.value).toStrictEqual({ [parameter1]: value });
     expect(trailingMessage.value).toBe("");
   });
 
@@ -64,9 +64,9 @@ describe(useSlashCommandStore, () => {
     const { setPendingSlashCommand } = store;
     const v1 = "";
     const v2 = " ";
-    setPendingSlashCommand(mockSlashCommand, `${p1}${ID_SEPARATOR}${v1} ${p2}${ID_SEPARATOR}${v2}`);
+    setPendingSlashCommand(mockSlashCommand, `${parameter1}${ID_SEPARATOR}${v1} ${parameter2}${ID_SEPARATOR}${v2}`);
 
-    expect(parameterValues.value).toStrictEqual({ [p1]: v1, [p2]: v2 });
+    expect(parameterValues.value).toStrictEqual({ [parameter1]: v1, [parameter2]: v2 });
     expect(trailingMessage.value).toBe("");
   });
 
@@ -78,9 +78,9 @@ describe(useSlashCommandStore, () => {
     const { setPendingSlashCommand } = store;
     const v1 = `a${ID_SEPARATOR}b`;
     const v2 = " ";
-    setPendingSlashCommand(mockSlashCommand, `${p1}${ID_SEPARATOR}${v1} ${p2}${ID_SEPARATOR}${v2}`);
+    setPendingSlashCommand(mockSlashCommand, `${parameter1}${ID_SEPARATOR}${v1} ${parameter2}${ID_SEPARATOR}${v2}`);
 
-    expect(parameterValues.value).toStrictEqual({ [p1]: v1, [p2]: v2 });
+    expect(parameterValues.value).toStrictEqual({ [parameter1]: v1, [parameter2]: v2 });
   });
 
   test("parses parameters with spaces in values", () => {
@@ -91,9 +91,9 @@ describe(useSlashCommandStore, () => {
     const { setPendingSlashCommand } = store;
     const v1 = "a b";
     const v2 = " ";
-    setPendingSlashCommand(mockSlashCommand, `${p1}${ID_SEPARATOR}${v1} ${p2}${ID_SEPARATOR}${v2}`);
+    setPendingSlashCommand(mockSlashCommand, `${parameter1}${ID_SEPARATOR}${v1} ${parameter2}${ID_SEPARATOR}${v2}`);
 
-    expect(parameterValues.value).toStrictEqual({ [p1]: v1, [p2]: v2 });
+    expect(parameterValues.value).toStrictEqual({ [parameter1]: v1, [parameter2]: v2 });
   });
 
   test("parses parameters out of order (finding earliest next parameter)", () => {
@@ -107,12 +107,12 @@ describe(useSlashCommandStore, () => {
     const v3 = "a";
     setPendingSlashCommand(
       mockSlashCommand,
-      `${p1}${ID_SEPARATOR}${v1} ${p3}${ID_SEPARATOR}${v3} ${p2}${ID_SEPARATOR}${v2}`,
+      `${parameter1}${ID_SEPARATOR}${v1} ${parameter3}${ID_SEPARATOR}${v3} ${parameter2}${ID_SEPARATOR}${v2}`,
     );
 
-    expect(parameterValues.value[p1]).toBe(v1);
-    expect(parameterValues.value[p3]).toBe(`${v3} ${p2}${ID_SEPARATOR}${v2}`);
-    expect(parameterValues.value[p2]).toBeUndefined();
+    expect(parameterValues.value[parameter1]).toBe(v1);
+    expect(parameterValues.value[parameter3]).toBe(`${v3} ${parameter2}${ID_SEPARATOR}${v2}`);
+    expect(parameterValues.value[parameter2]).toBeUndefined();
   });
 
   test("clears store correctly", () => {
@@ -121,7 +121,7 @@ describe(useSlashCommandStore, () => {
     const store = useSlashCommandStore();
     const { activeParameterNames, focusedIndex, parameterValues, pendingSlashCommand } = storeToRefs(store);
     const { clearPendingSlashCommand, setPendingSlashCommand } = store;
-    setPendingSlashCommand(mockSlashCommand, `${p1}${ID_SEPARATOR}`);
+    setPendingSlashCommand(mockSlashCommand, `${parameter1}${ID_SEPARATOR}`);
     clearPendingSlashCommand();
 
     expect(pendingSlashCommand.value).toBeNull();
