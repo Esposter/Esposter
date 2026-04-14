@@ -40,12 +40,7 @@ defineExpose({
 </script>
 
 <template>
-  <v-menu
-    :model-value="hiddenParameters.length > 0"
-    location="top"
-    :close-on-content-click="false"
-    @update:model-value="() => {}"
-  >
+  <v-menu :model-value="hiddenParameters.length > 0" location="top" :close-on-content-click="false">
     <template #activator="{ props: menuProps }">
       <span flex-1 :="menuProps">
         <input

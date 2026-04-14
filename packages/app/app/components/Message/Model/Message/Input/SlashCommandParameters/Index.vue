@@ -3,6 +3,7 @@ import type { SlashCommandParameters } from "@/models/message/slashCommands/Slas
 
 import SlashCommandParametersChip from "@/components/Message/Model/Message/Input/SlashCommandParameters/Chip.vue";
 import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
+import { SlashCommandDefinitionMap } from "@/services/message/slashCommands/SlashCommandDefinitionMap";
 import { sanitizeHtml } from "@/services/sanitizeHtml/sanitizeHtml";
 import { useDataStore } from "@/store/message/data";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
@@ -14,16 +15,19 @@ const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const slashCommandStore = useSlashCommandStore();
 const { parameterValues, pendingSlashCommand } = storeToRefs(slashCommandStore);
-const { clearPendingSlashCommand, setErrors } = slashCommandStore;
+const { clearPendingSlashCommand, setErrors, setPendingSlashCommand } = slashCommandStore;
 const dataStore = useDataStore();
 const { createMessage } = dataStore;
 const { execute, isLoading } = useInFlight();
 const activeParameterNames = ref<string[]>([]);
+const commandInputRef = useTemplateRef("commandInput");
+const commandTitle = ref(pendingSlashCommand.value?.type ?? "");
 const inputMenuRef = useTemplateRef("inputMenu");
 const lastAddedParameterName = ref<null | string>(null);
 const parameterInputRefs = ref<InstanceType<typeof SlashCommandParametersChip>[]>([]);
 
-watch(pendingSlashCommand, (newPendingSlashCommand) => {
+watchImmediate(pendingSlashCommand, (newPendingSlashCommand) => {
+  if (newPendingSlashCommand) commandTitle.value = newPendingSlashCommand.type;
   activeParameterNames.value = newPendingSlashCommand?.parameters.map(({ name }) => name) ?? [];
   lastAddedParameterName.value = null;
 });
@@ -46,8 +50,24 @@ const removeParameter = (name: string) => {
   parameterValues.value[name] = "";
   setErrors(name, []);
 };
+const onCommandNavigateNext = async () => {
+  const newSlashCommand = Object.values(SlashCommandDefinitionMap).find(
+    (c) => c.type.toLowerCase() === commandTitle.value.toLowerCase(),
+  );
+  if (newSlashCommand && newSlashCommand.type !== pendingSlashCommand.value?.type) {
+    setPendingSlashCommand(newSlashCommand);
+    await nextTick();
+    if (activeParameters.value.length > 0) parameterInputRefs.value[0]?.focus();
+    else inputMenuRef.value?.focus();
+    return;
+  }
+
+  if (activeParameters.value.length > 0) parameterInputRefs.value[0]?.focus();
+  else inputMenuRef.value?.focus();
+};
 const navigatePrevious = (index: number) => {
   if (index > 0) parameterInputRefs.value[index - 1]?.focus();
+  else commandInputRef.value?.focus();
 };
 const navigateNext = (index: number) => {
   if (index < activeParameters.value.length - 1) parameterInputRefs.value[index + 1]?.focus();
@@ -123,6 +143,12 @@ useEventListener("keydown", (event: KeyboardEvent) => {
   <div v-if="pendingSlashCommand" w-full>
     <StyledCard>
       <div flex items-center gap-2 px-4 pt-3 pb-2>
+        <MessageModelMessageInputSlashCommandParametersCommandInput
+          ref="commandInput"
+          v-model="commandTitle"
+          @navigate:next="onCommandNavigateNext"
+          @remove="clearPendingSlashCommand"
+        />
         <template v-for="({ isRequired, name }, index) of activeParameters" :key="name">
           <MessageModelMessageInputSlashCommandParametersChip
             :ref="
@@ -154,7 +180,6 @@ useEventListener("keydown", (event: KeyboardEvent) => {
           @navigate:previous="navigatePrevious(activeParameters.length)"
           @remove-last-parameter="removeLastParameter"
         />
-        <v-spacer />
         <MessageModelMessageInputSendMessageButton :is-loading @click="submit" />
       </div>
     </StyledCard>

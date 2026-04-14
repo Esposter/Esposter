@@ -15,6 +15,16 @@ const selectItem = (index: number) => {
   command(slashCommand);
 };
 const onKeyDown = ({ event }: SuggestionKeyDownProps) => {
+  if (event.key === " ") {
+    const matchedItemIndex = items.findIndex(
+      (item) => item.title.toLowerCase() === query.toLowerCase() || item.type.toLowerCase() === query.toLowerCase(),
+    );
+    if (matchedItemIndex !== -1) {
+      selectItem(matchedItemIndex);
+      return true;
+    }
+  }
+
   switch (event.key) {
     case "ArrowDown":
       selectedIndex.value = (selectedIndex.value + 1) % items.length;
