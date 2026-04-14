@@ -65,6 +65,7 @@ watch(
           ref="input"
           v-model="trailingMessage"
           w-full
+          bg-transparent
           b-none
           outline-none
           text-sm

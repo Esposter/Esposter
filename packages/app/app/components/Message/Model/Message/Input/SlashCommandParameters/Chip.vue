@@ -57,6 +57,7 @@ onMounted(() => {
       ref="input"
       v-model="modelValue"
       class="parameter-chip__input"
+      color-inherit
       bg-transparent
       b-none
       outline-none
