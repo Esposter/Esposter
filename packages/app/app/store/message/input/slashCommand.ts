@@ -27,10 +27,12 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
     const result: Record<string, string> = {};
     let remainingText = text.trim();
 
-    for (const { name } of parameters) {
-      const prefix = `${name}${ID_SEPARATOR}`;
-      if (!remainingText.startsWith(prefix)) continue;
-      remainingText = remainingText.slice(prefix.length);
+    while (remainingText.length > 0) {
+      const parameter = parameters.find(({ name }) => remainingText.startsWith(`${name}${ID_SEPARATOR}`));
+      if (!parameter) break;
+
+      const { name } = parameter;
+      remainingText = remainingText.slice(name.length + ID_SEPARATOR.length);
 
       let nextParameterStartIndex = -1;
       for (const { name: nextName } of parameters) {
@@ -46,7 +48,7 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
         break;
       } else {
         result[name] = remainingText.slice(0, nextParameterStartIndex);
-        remainingText = remainingText.slice(nextParameterStartIndex + 1);
+        remainingText = remainingText.slice(nextParameterStartIndex + 1).trimStart();
       }
     }
 
