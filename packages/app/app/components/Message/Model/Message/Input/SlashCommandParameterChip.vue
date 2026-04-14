@@ -26,9 +26,9 @@ const isError = computed(() => (isTouched.value || isSubmitAttempted) && isRequi
     px-2
     overflow-hidden
   >
-    <span class="parameter-chip__label bg-background" font-bold text-sm :class="isError ? 'text-error' : ''">{{
-      name
-    }}</span>
+    <span class="parameter-chip__label bg-background" font-bold text-sm :class="isError ? 'text-error' : ''">
+      {{ name }}
+    </span>
     <input
       v-model="modelValue"
       class="parameter-chip__input"

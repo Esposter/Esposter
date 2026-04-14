@@ -3,7 +3,7 @@ interface SendButtonProps {
   isLoading: boolean;
 }
 
-defineProps<SendButtonProps>();
+const { isLoading } = defineProps<SendButtonProps>();
 const emit = defineEmits<{ click: [] }>();
 </script>
 
@@ -13,8 +13,7 @@ const emit = defineEmits<{ click: [] }>();
       <v-btn
         icon="mdi-send"
         size="small"
-        density="compact"
-        variant="text"
+        bg-transparent
         :disabled="isLoading"
         :loading="isLoading"
         :="tooltipProps"
