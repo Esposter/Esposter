@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 
-interface SlashCommandParameterChipProps {
+interface ChipProps {
   autofocus?: boolean;
   isRequired: boolean;
   name: string;
 }
 
 const modelValue = defineModel<string>({ default: "" });
-const { isRequired, name } = defineProps<SlashCommandParameterChipProps>();
+const { isRequired, name } = defineProps<ChipProps>();
 const emit = defineEmits<{ delete: []; "navigate:next": []; "navigate:previous": []; submit: [] }>();
 const slashCommandStore = useSlashCommandStore();
 const { errors } = storeToRefs(slashCommandStore);

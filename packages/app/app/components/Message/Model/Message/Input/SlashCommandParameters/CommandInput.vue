@@ -1,9 +1,4 @@
 <script setup lang="ts">
-interface SlashCommandParameterCommandInputProps {
-  autofocus?: boolean;
-}
-
-const { autofocus } = defineProps<SlashCommandParameterCommandInputProps>();
 const emit = defineEmits<{
   blur: [];
   delete: [];
@@ -29,7 +24,6 @@ defineExpose({ focus: () => input.value?.focus() });
       outline-none
       text-sm
       font-bold
-      :autofocus
       @focus="emit('focus')"
       @blur="emit('blur')"
       @keydown="emit('keydown', $event)"

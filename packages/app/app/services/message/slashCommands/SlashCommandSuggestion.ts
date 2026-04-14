@@ -23,7 +23,8 @@ export const SlashCommandSuggestion: Except<SuggestionOptions<SlashCommand, Slas
 
     if (slashCommand.parameters.length > 0) {
       const slashCommandStore = useSlashCommandStore();
-      slashCommandStore.setPendingSlashCommand(slashCommand);
+      const { setPendingSlashCommand } = slashCommandStore;
+      setPendingSlashCommand(slashCommand);
       return;
     }
 
