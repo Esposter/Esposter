@@ -18,8 +18,10 @@ const modelValue = defineModel<string>({ required: true });
 const slashCommandStore = useSlashCommandStore();
 const { pendingSlashCommand } = storeToRefs(slashCommandStore);
 const isCommandInputFocused = ref(false);
+const isMenuFocused = ref(false);
 const isOpen = computed({
-  get: () => isCommandInputFocused.value && modelValue.value !== pendingSlashCommand.value?.type,
+  get: () =>
+    (isCommandInputFocused.value || isMenuFocused.value) && modelValue.value !== pendingSlashCommand.value?.type,
   set: (value) => {
     isCommandInputFocused.value = value;
   },
@@ -44,11 +46,13 @@ defineExpose({ focus: () => commandInput.value?.focus() });
         @delete="emit('delete')"
       />
     </template>
-    <MessageModelMessageSlashCommandList
-      ref="slashCommandList"
-      :items
-      :query="modelValue"
-      :command="(command) => emit('select:command', command)"
-    />
+    <div @mousedown.prevent @focusin="isMenuFocused = true" @focusout="isMenuFocused = false">
+      <MessageModelMessageSlashCommandList
+        ref="slashCommandList"
+        :items
+        :query="modelValue"
+        :command="(command) => emit('select:command', command)"
+      />
+    </div>
   </v-menu>
 </template>

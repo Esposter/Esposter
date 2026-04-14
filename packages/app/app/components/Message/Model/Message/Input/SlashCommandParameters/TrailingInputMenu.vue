@@ -60,12 +60,7 @@ defineExpose({ focus: () => input.value?.focus() });
             (event) => {
               const target = event.target as HTMLInputElement;
 
-              if (
-                event.key === 'ArrowLeft' &&
-                target.selectionStart === 0 &&
-                target.selectionEnd === 0 &&
-                activeParametersLength > 0
-              ) {
+              if (event.key === 'ArrowLeft' && target.selectionStart === 0 && target.selectionEnd === 0) {
                 event.preventDefault();
                 emit('navigate:previous');
                 return;
