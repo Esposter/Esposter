@@ -28,20 +28,21 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
       if (!remainingText.startsWith(prefix)) continue;
       remainingText = remainingText.slice(prefix.length);
 
-      let nextParameterStart = -1;
+      let nextParameterStartIndex = -1;
       for (const { name: nextName } of parameters) {
         if (nextName === name) continue;
-        const idx = remainingText.indexOf(` ${nextName}${ID_SEPARATOR}`);
-        if (idx !== -1 && (nextParameterStart === -1 || idx < nextParameterStart)) nextParameterStart = idx;
+        const index = remainingText.indexOf(` ${nextName}${ID_SEPARATOR}`);
+        if (index !== -1 && (nextParameterStartIndex === -1 || index < nextParameterStartIndex))
+          nextParameterStartIndex = index;
       }
 
-      if (nextParameterStart !== -1) {
-        result[name] = remainingText.slice(0, nextParameterStart);
-        remainingText = remainingText.slice(nextParameterStart + 1);
-      } else {
+      if (nextParameterStartIndex === -1) {
         result[name] = remainingText;
         remainingText = "";
         break;
+      } else {
+        result[name] = remainingText.slice(0, nextParameterStartIndex);
+        remainingText = remainingText.slice(nextParameterStartIndex + 1);
       }
     }
 

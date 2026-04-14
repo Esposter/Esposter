@@ -100,9 +100,8 @@ const submit = () =>
       ({ isRequired, name }) => isRequired && !parameterValues.value[name]?.trim(),
     );
 
-    for (const { isRequired, name } of pendingSlashCommand.value.parameters) {
+    for (const { isRequired, name } of pendingSlashCommand.value.parameters)
       if (isRequired) setErrors(name, parameterValues.value[name]?.trim() ? [] : [`${name} is required`]);
-    }
 
     if (missingRequiredParameters.length > 0) {
       const hiddenMissingParameters = missingRequiredParameters.filter(
