@@ -23,6 +23,7 @@ const {
 
 const emit = defineEmits<{
   blur: [];
+  collapse: [];
   createParameter: [name: string];
   deleteLastParameter: [];
   focus: [];
@@ -82,9 +83,10 @@ watch(
                 return;
               }
 
-              if (event.key === 'Backspace' && !trailingMessage && activeParametersLength > 0) {
+              if (event.key === 'Backspace' && !trailingMessage) {
                 event.preventDefault();
-                emit('deleteLastParameter');
+                if (activeParametersLength > 0) emit('deleteLastParameter');
+                else emit('collapse');
                 return;
               }
 

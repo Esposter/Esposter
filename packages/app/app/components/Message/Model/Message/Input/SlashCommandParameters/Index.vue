@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
+import type { SlashCommandParameters } from "@/models/message/slashCommands/SlashCommandParameters";
+import type { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
 
 import { SlashCommandDefinitionMap } from "@/services/message/slashCommands/SlashCommandDefinitionMap";
+import { useInputStore } from "@/store/message/input";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 import { useRoomStore } from "@/store/message/room";
 
@@ -9,7 +12,9 @@ const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const slashCommandStore = useSlashCommandStore();
 const { parameterValues, pendingSlashCommand } = storeToRefs(slashCommandStore);
-const { clearPendingSlashCommand, setErrors, setPendingSlashCommand } = slashCommandStore;
+const { buildText, clearPendingSlashCommand, setErrors, setPendingSlashCommand } = slashCommandStore;
+const inputStore = useInputStore();
+const { input } = storeToRefs(inputStore);
 const executeSlashCommand = useExecuteSlashCommand();
 const { execute, isLoading } = useInFlight();
 const activeParameterNames = ref<string[]>([]);
@@ -37,6 +42,11 @@ const hiddenParameters = computed(
 );
 const requiredHiddenParameters = computed(() => hiddenParameters.value.filter(({ isRequired }) => isRequired));
 const optionalHiddenParameters = computed(() => hiddenParameters.value.filter(({ isRequired }) => !isRequired));
+
+const collapseToText = () => {
+  input.value = buildText();
+  clearPendingSlashCommand();
+};
 
 const createParameter = (name: string) => {
   lastAddedParameterName.value = name;
@@ -106,12 +116,14 @@ const submit = () =>
       return;
     }
 
-    await executeSlashCommand(pendingSlashCommand.value.type, parameterValues.value);
+    await executeSlashCommand({ parameterValues: parameterValues.value, type: pendingSlashCommand.value.type } as {
+      [P in SlashCommandType]: { parameterValues: SlashCommandParameters<P>; type: P };
+    }[SlashCommandType]);
     clearPendingSlashCommand();
   });
 
 useEventListener("keydown", (event: KeyboardEvent) => {
-  if (event.key === "Escape") clearPendingSlashCommand();
+  if (event.key === "Escape" || (event.key === "Backspace" && focusedIndex.value === -1)) collapseToText();
 });
 </script>
 
@@ -124,7 +136,7 @@ useEventListener("keydown", (event: KeyboardEvent) => {
           :items="suggestedItems"
           :is-focused="focusedIndex === -1"
           @navigate:next="commandNavigateNext"
-          @delete="clearPendingSlashCommand"
+          @delete="collapseToText"
           @select:command="selectCommand"
           @focus="focus(-1)"
           @blur="blur(-1)"
@@ -157,6 +169,7 @@ useEventListener("keydown", (event: KeyboardEvent) => {
           @submit="submit"
           @navigate:previous="navigatePrevious(activeParameters.length)"
           @delete-last-parameter="deleteLastParameter"
+          @collapse="collapseToText"
           @focus="focus(activeParameters.length)"
           @blur="blur(activeParameters.length)"
         />

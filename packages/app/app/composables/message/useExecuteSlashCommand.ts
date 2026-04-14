@@ -17,11 +17,13 @@ export const useExecuteSlashCommand = () => {
   const { createMessage } = dataStore;
   const pollDialogStore = usePollDialogStore();
   const { isOpen } = storeToRefs(pollDialogStore);
-  return async <T extends SlashCommandType>(type: T, parameterValues: SlashCommandParameters<T>) => {
+  return async (
+    command: { [P in SlashCommandType]: { parameterValues: SlashCommandParameters<P>; type: P } }[SlashCommandType],
+  ) => {
     const roomId = currentRoomId.value;
     if (!roomId) return;
 
-    switch (type) {
+    switch (command.type) {
       case SlashCommandType.Flip: {
         const isHeads = createRandomBoolean();
         await createMessage({
@@ -31,13 +33,15 @@ export const useExecuteSlashCommand = () => {
         });
         break;
       }
-      case SlashCommandType.Me:
+      case SlashCommandType.Me: {
+        const { message } = command.parameterValues;
         await createMessage({
-          message: marked.parse(`*${sanitizeHtml(parameterValues.message as string)}*`, { async: false }),
+          message: marked.parse(`*${sanitizeHtml(message)}*`, { async: false }),
           roomId,
           type: MessageType.Message,
         });
         break;
+      }
       case SlashCommandType.Poll:
         isOpen.value = true;
         break;
@@ -51,7 +55,8 @@ export const useExecuteSlashCommand = () => {
         break;
       }
       case SlashCommandType.Shrug: {
-        const prefix = (parameterValues.text as string)?.trim() ?? "";
+        const { text } = command.parameterValues;
+        const prefix = text?.trim() ?? "";
         await createMessage({
           message: marked.parse(`${prefix}¯\\_(ツ)_/¯`, { async: false }),
           roomId,
@@ -74,7 +79,7 @@ export const useExecuteSlashCommand = () => {
         });
         break;
       default:
-        exhaustiveGuard(type);
+        exhaustiveGuard(command);
     }
   };
 };
