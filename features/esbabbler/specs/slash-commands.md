@@ -134,8 +134,8 @@ Mirrors `@` mention flow. Trigger: `/`. Items: `Object.values(SlashCommandDefini
 flowchart TD
     A([User types /]) --> B[Tiptap suggestion activates]
     B --> C{User picks command}
-    C -->|no params| D[executeSlashCommand immediately]
-    C -->|has params| E[SlashCommandSuggestion.command fires]
+    C -->|no parameters| D[executeSlashCommand immediately]
+    C -->|has parameters| E[SlashCommandSuggestion.command fires]
     E --> F[Read remaining editor text after range]
     F --> G[Delete from range.from to doc end]
     G --> H{remainingText?}
@@ -146,14 +146,14 @@ flowchart TD
     K --> L[SlashCommandParameters UI shows with chips pre-filled]
 ```
 
-### Collapsing params back to text
+### Collapsing parameters back to text
 
 ```mermaid
 flowchart TD
-    A([User in param mode]) --> B{Collapse trigger}
+    A([User in parameter mode]) --> B{Collapse trigger}
     B -->|Escape| C[collapseToText]
     B -->|Backspace in CommandInput<br/>when empty| C
-    B -->|Backspace in TrailingInput<br/>when no params + no trailing| C
+    B -->|Backspace in TrailingInput<br/>when no parameters + no trailing| C
     C --> D["buildText: /CommandType paramName|value ..."]
     D --> E[input.value = formatted text]
     E --> F[clearPendingSlashCommand]
@@ -172,23 +172,23 @@ flowchart TD
     E --> F["remainingText = message|hello world"]
     F --> G[Delete entire editor content]
     G --> H["parseTextAndParameters → {message: 'hello world'}"]
-    H --> I[Param mode: message chip pre-filled]
+    H --> I[Parameter mode: message chip pre-filled]
 ```
 
-## Text Format for Param Serialisation
+## Text Format for Parameter Serialisation
 
-When collapsing param mode back to normal text, params are serialised as:
+When collapsing parameter mode back to normal text, parameters are serialised as:
 
 ```
 /CommandType paramName1|value1 paramName2|value2 trailingMessage
 ```
 
-- Separator between param name and value: `ID_SEPARATOR` (`|`)
-- Params separated by space
-- Last param's value is greedy (captures trailing spaces and text until next `paramName|` or end)
-- `trailingMessage` appended after all params
+- Separator between parameter name and value: `ID_SEPARATOR` (`|`)
+- Parameters separated by space
+- Last parameter's value is greedy (captures trailing spaces and text until next `paramName|` or end)
+- `trailingMessage` appended after all parameters
 
-Re-parsing uses prefix matching per param in definition order, so multi-word values for the last param round-trip correctly.
+Re-parsing uses prefix matching per parameter in definition order, so multi-word values for the last parameter round-trip correctly.
 
 ## What Does Not Change
 

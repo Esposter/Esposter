@@ -41,7 +41,7 @@ description: Esposter tRPC conventions — procedure typing with generics, route
   // CORRECT
   ctx.db.query.friends.findFirst({ where: eq(friends.id, id) });
 
-  // WRONG — abbreviated param, duplicates already-imported eq
+  // WRONG — abbreviated parameter, duplicates already-imported eq
   ctx.db.query.friends.findFirst({ where: (f, { eq }) => eq(f.id, id) });
   ```
 

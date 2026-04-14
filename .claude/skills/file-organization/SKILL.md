@@ -33,7 +33,7 @@ description: Esposter file and folder organisation — one export per file, no e
   ```typescript
   // 1. Explicit type map (one file, in models/)
   type DataSourceItemTypeMap = { [DataSourceType.Csv]: CsvDataSourceItem };
-  // 2. Satisfies mapped type — each entry is checked against its specific type param
+  // 2. Satisfies mapped type — each entry is checked against its specific type parameter
   export const DataSourceConfigurationMap: Record<
     DataSourceType,
     DataSourceConfiguration<DataSourceItemTypeMap[keyof DataSourceItemTypeMap]>
