@@ -16,20 +16,23 @@ const isError = computed(() => (isTouched.value || isSubmitAttempted) && isRequi
 
 <template>
   <div
-    class="parameter-chip"
+    class="parameter-chip bg-border"
     :class="{ 'parameter-chip--error': isError, 'parameter-chip--focused': isFocused }"
     inline-flex
     items-center
     gap-1.5
     rd
     py-1
-    pr-0.5
-    pl-2
+    px-2
+    overflow-hidden
   >
-    <span class="bg-background" font-bold text-sm :class="isError ? 'text-error' : ''">{{ name }}</span>
+    <span class="parameter-chip__label bg-background" font-bold text-sm :class="isError ? 'text-error' : ''">{{
+      name
+    }}</span>
     <input
       v-model="modelValue"
-      flex-1
+      class="parameter-chip__input"
+      bg-transparent
       b-none
       outline-none
       text-sm
@@ -42,8 +45,8 @@ const isError = computed(() => (isTouched.value || isSubmitAttempted) && isRequi
         }
       "
       @keydown.enter.prevent="emit('submit')"
+      @keydown.delete="!modelValue && emit('remove')"
     />
-    <v-btn icon="mdi-close" size="x-small" density="compact" variant="text" @click="emit('remove')" />
   </div>
 </template>
 
@@ -57,6 +60,19 @@ const isError = computed(() => (isTouched.value || isSubmitAttempted) && isRequi
 
   &--error {
     border-color: rgb(var(--v-theme-error));
+  }
+
+  &__label {
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    margin: -0.25rem 0 -0.25rem -0.5rem;
+    padding: 0.25rem 0.25rem 0.25rem 0.5rem;
+  }
+
+  &__input {
+    field-sizing: content;
+    min-width: 4rem;
   }
 }
 </style>
