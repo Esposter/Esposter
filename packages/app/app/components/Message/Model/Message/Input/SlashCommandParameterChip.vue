@@ -1,17 +1,24 @@
 <script setup lang="ts">
+import { useSlashCommandStore } from "@/store/message/input/slashCommand";
+
 interface SlashCommandParameterChipProps {
   autofocus?: boolean;
   isRequired: boolean;
-  isSubmitAttempted: boolean;
   name: string;
 }
 
-const { isRequired, isSubmitAttempted, name } = defineProps<SlashCommandParameterChipProps>();
-const emit = defineEmits<{ remove: []; submit: [] }>();
+const { isRequired, name } = defineProps<SlashCommandParameterChipProps>();
+const emit = defineEmits<{ "navigate:next": []; "navigate:previous": []; remove: []; submit: [] }>();
 const modelValue = defineModel<string>({ default: "" });
+const slashCommandStore = useSlashCommandStore();
+const { errors } = storeToRefs(slashCommandStore);
+const { setErrors } = slashCommandStore;
 const isFocused = ref(false);
-const isTouched = ref(false);
-const isError = computed(() => (isTouched.value || isSubmitAttempted) && isRequired && !modelValue.value.trim());
+const input = useTemplateRef("input");
+const isError = computed(() => Boolean(errors.value.find((e) => e.id === name)?.messages.length));
+const focus = () => input.value?.focus();
+
+defineExpose({ focus });
 </script>
 
 <template>
@@ -30,6 +37,7 @@ const isError = computed(() => (isTouched.value || isSubmitAttempted) && isRequi
       {{ name }}
     </span>
     <input
+      ref="input"
       v-model="modelValue"
       class="parameter-chip__input"
       bg-transparent
@@ -39,13 +47,31 @@ const isError = computed(() => (isTouched.value || isSubmitAttempted) && isRequi
       :autofocus
       @focus="isFocused = true"
       @blur="
-        {
+        () => {
           isFocused = false;
-          isTouched = true;
+          setErrors(name, isRequired && !modelValue.trim() ? [`${name} is required`] : []);
         }
       "
       @keydown.enter.prevent="emit('submit')"
       @keydown.delete="!modelValue && emit('remove')"
+      @keydown.left.exact="
+        (event) => {
+          const target = event.target as HTMLInputElement;
+          if (target.selectionStart === 0) {
+            event.preventDefault();
+            emit('navigate:previous');
+          }
+        }
+      "
+      @keydown.right.exact="
+        (event) => {
+          const target = event.target as HTMLInputElement;
+          if (target.selectionStart === target.value.length) {
+            event.preventDefault();
+            emit('navigate:next');
+          }
+        }
+      "
     />
   </div>
 </template>

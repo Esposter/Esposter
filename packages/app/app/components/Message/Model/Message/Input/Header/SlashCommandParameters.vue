@@ -2,15 +2,9 @@
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 
 const slashCommandStore = useSlashCommandStore();
-const { isSubmitAttempted, parameterValues, pendingSlashCommand } = storeToRefs(slashCommandStore);
+const { errors, pendingSlashCommand } = storeToRefs(slashCommandStore);
 const { clearPendingSlashCommand } = slashCommandStore;
-const firstError = computed(() => {
-  if (!isSubmitAttempted.value || !pendingSlashCommand.value) return null;
-  const parameter = pendingSlashCommand.value.parameters.find(
-    ({ isRequired, name }) => isRequired && !parameterValues.value[name]?.trim(),
-  );
-  return parameter ? `${parameter.name} is required` : null;
-});
+const firstError = computed(() => errors.value.find((e) => e.messages.length > 0)?.messages[0] ?? null);
 </script>
 
 <template>

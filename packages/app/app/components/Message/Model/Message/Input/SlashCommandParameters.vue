@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { SlashCommandParameters } from "@/models/message/slashCommands/SlashCommandParameters";
 
+import SlashCommandParameterChip from "@/components/Message/Model/Message/Input/SlashCommandParameterChip.vue";
 import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
 import { sanitizeHtml } from "@/services/sanitizeHtml/sanitizeHtml";
 import { useDataStore } from "@/store/message/data";
@@ -12,14 +13,16 @@ import { marked } from "marked";
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const slashCommandStore = useSlashCommandStore();
-const { isSubmitAttempted, parameterValues, pendingSlashCommand, trailingMessage } = storeToRefs(slashCommandStore);
-const { clearPendingSlashCommand } = slashCommandStore;
+const { parameterValues, pendingSlashCommand, trailingMessage } = storeToRefs(slashCommandStore);
+const { clearPendingSlashCommand, setErrors } = slashCommandStore;
 const dataStore = useDataStore();
 const { createMessage } = dataStore;
 const { execute, isLoading } = useInFlight();
 const activeParameterNames = ref<string[]>([]);
 const selectedHiddenIndex = ref(0);
 const lastAddedParameterName = ref<null | string>(null);
+const parameterInputRefs = ref<InstanceType<typeof SlashCommandParameterChip>[]>([]);
+const input = useTemplateRef("input");
 
 watchImmediate(pendingSlashCommand, (newPendingSlashCommand) => {
   activeParameterNames.value = newPendingSlashCommand?.parameters.map(({ name }) => name) ?? [];
@@ -52,6 +55,16 @@ const addParameter = (name: string) => {
 const removeParameter = (name: string) => {
   activeParameterNames.value = activeParameterNames.value.filter((paramName) => paramName !== name);
   parameterValues.value[name] = "";
+  setErrors(name, []);
+};
+
+const navigatePrevious = (index: number) => {
+  if (index > 0) parameterInputRefs.value[index - 1]?.focus();
+};
+
+const navigateNext = (index: number) => {
+  if (index < activeParameters.value.length - 1) parameterInputRefs.value[index + 1]?.focus();
+  else input.value?.focus();
 };
 
 const updateParameterValue = (name: string, value: string) => {
@@ -89,6 +102,20 @@ const handleTrailingKeydown = (event: KeyboardEvent) => {
     submit();
   }
 
+  if (event.key === "ArrowLeft") {
+    const target = event.target as HTMLInputElement;
+    if (
+      target.selectionStart === 0 &&
+      target.selectionEnd === 0 &&
+      hiddenParameters.value.length === 0 &&
+      activeParameters.value.length > 0
+    ) {
+      event.preventDefault();
+      parameterInputRefs.value.at(-1)?.focus();
+      return;
+    }
+  }
+
   if (event.key === "Backspace" && !trailingMessage.value && activeParameters.value.length > 0) {
     event.preventDefault();
     const lastParameter = activeParameters.value.at(-1);
@@ -100,17 +127,23 @@ const submit = () =>
   execute(async () => {
     if (!pendingSlashCommand.value || !currentRoomId.value) return;
 
-    const missingRequiredParameterNames = pendingSlashCommand.value.parameters
-      .filter(({ isRequired, name }) => isRequired && !parameterValues.value[name]?.trim())
-      .map(({ name }) => name);
+    const missingRequiredParameters = pendingSlashCommand.value.parameters.filter(
+      ({ isRequired, name }) => isRequired && !parameterValues.value[name]?.trim(),
+    );
 
-    if (missingRequiredParameterNames.length > 0) {
-      const hiddenRequiredParameterNames = missingRequiredParameterNames.filter(
-        (name) => !activeParameterNames.value.includes(name),
+    for (const { isRequired, name } of pendingSlashCommand.value.parameters) {
+      if (isRequired) setErrors(name, parameterValues.value[name]?.trim() ? [] : [`${name} is required`]);
+    }
+
+    if (missingRequiredParameters.length > 0) {
+      const hiddenMissingParameters = missingRequiredParameters.filter(
+        ({ name }) => !activeParameterNames.value.includes(name),
       );
-      if (hiddenRequiredParameterNames.length > 0)
-        activeParameterNames.value = [...activeParameterNames.value, ...hiddenRequiredParameterNames];
-      isSubmitAttempted.value = true;
+      if (hiddenMissingParameters.length > 0)
+        activeParameterNames.value = [
+          ...activeParameterNames.value,
+          ...hiddenMissingParameters.map(({ name }) => name),
+        ];
       return;
     }
 
@@ -155,14 +188,20 @@ useEventListener("keydown", (event: KeyboardEvent) => {
       <div flex items-center gap-2 px-4 pt-3 pb-2 flex-wrap>
         <template v-for="({ isRequired, name }, index) of activeParameters" :key="name">
           <MessageModelMessageInputSlashCommandParameterChip
+            :ref="
+              (el) => {
+                if (el) parameterInputRefs[index] = el as InstanceType<typeof SlashCommandParameterChip>;
+              }
+            "
             :is-required
-            :is-submit-attempted
             :name
             :autofocus="lastAddedParameterName === name || (lastAddedParameterName === null && index === 0)"
             :model-value="parameterValues[name] ?? ''"
             @update:model-value="(value) => updateParameterValue(name, value)"
             @remove="removeParameter(name)"
             @submit="submit"
+            @navigate:previous="navigatePrevious(index)"
+            @navigate:next="navigateNext(index)"
           />
         </template>
         <v-menu
@@ -173,6 +212,7 @@ useEventListener("keydown", (event: KeyboardEvent) => {
         >
           <template #activator="{ props: menuProps }">
             <input
+              ref="input"
               v-model="trailingMessage"
               flex-1
               b-none
