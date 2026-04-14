@@ -39,7 +39,8 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
     let remainingText = text.trim();
 
     while (remainingText.length > 0) {
-      const parameter = parameters.find(({ name }) => remainingText.startsWith(`${name}${ID_SEPARATOR}`));
+      const currentText = remainingText;
+      const parameter = parameters.find(({ name }) => currentText.startsWith(`${name}${ID_SEPARATOR}`));
       if (!parameter) break;
 
       const { name } = parameter;

@@ -41,7 +41,9 @@
       "Bash(echo \"EXIT:$?\")",
       "WebFetch(domain:mathjs.org)",
       "WebFetch(domain:bundlephobia.com)",
-      "WebFetch(domain:www.npmjs.com)"
+      "WebFetch(domain:www.npmjs.com)",
+      "Bash(wait)",
+      "Read(//c/Users/jimmyc/AppData/Local/Temp/claude/C--Users-jimmyc-Documents-Esposter/6a3dc16a-7082-4884-bb27-f8849eec2940/tasks/**)"
     ]
   }
 }
