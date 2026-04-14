@@ -15,9 +15,8 @@ const { errors } = storeToRefs(slashCommandStore);
 const { setErrors } = slashCommandStore;
 const input = useTemplateRef("input");
 const isError = computed(() => Boolean(errors.value.find((e) => e.id === name)?.messages.length));
-const focus = () => input.value?.focus();
 
-defineExpose({ focus });
+defineExpose({ focus: () => input.value?.focus() });
 </script>
 
 <template>

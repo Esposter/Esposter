@@ -32,14 +32,14 @@ const onKeyDown = ({ event }: SuggestionKeyDownProps) => {
   }
 };
 
-defineExpose({ onKeyDown });
-
 watch(
   () => items,
   () => {
     selectedIndex.value = 0;
   },
 );
+
+defineExpose({ onKeyDown });
 </script>
 
 <template>

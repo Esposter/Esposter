@@ -4,28 +4,35 @@ interface SlashCommandParameterCommandInputProps {
 }
 
 const { autofocus } = defineProps<SlashCommandParameterCommandInputProps>();
-const emit = defineEmits<{ "navigate:next": []; remove: [] }>();
+const emit = defineEmits<{
+  blur: [];
+  focus: [];
+  keydown: [event: KeyboardEvent];
+  "navigate:next": [];
+  remove: [];
+}>();
 const modelValue = defineModel<string>({ default: "" });
 const input = useTemplateRef("input");
-const focus = () => input.value?.focus();
 
-defineExpose({ focus });
+defineExpose({ focus: () => input.value?.focus() });
 </script>
 
 <template>
-  <div inline-flex items-center self-stretch gap-0.5>
-    <span flex items-center self-stretch font-bold text-sm opacity-70>/</span>
+  <div inline-flex items-center gap-0.5>
+    <span font-bold text-sm opacity-70>/</span>
     <input
       ref="input"
       v-model="modelValue"
       class="command-input"
-      self-stretch
       bg-transparent
       b-none
       outline-none
       text-sm
       font-bold
       :autofocus
+      @focus="emit('focus')"
+      @blur="emit('blur')"
+      @keydown="emit('keydown', $event)"
       @keydown.enter.prevent="emit('navigate:next')"
       @keydown.space.prevent="emit('navigate:next')"
       @keydown.tab.prevent="emit('navigate:next')"

@@ -4,7 +4,7 @@ import type { SuggestionKeyDownProps, SuggestionProps } from "@tiptap/suggestion
 
 import { takeOne } from "@esposter/shared";
 
-const { command, items, query } = defineProps<SuggestionProps<SlashCommand>>();
+const { command, items, query } = defineProps<Pick<SuggestionProps<SlashCommand>, "command" | "items" | "query">>();
 const title = computed(() => {
   const baseTitle = "COMMANDS";
   return query ? `${baseTitle} MATCHING /${query}` : baseTitle;
@@ -14,7 +14,7 @@ const selectItem = (index: number) => {
   const slashCommand = takeOne(items, index);
   command(slashCommand);
 };
-const onKeyDown = ({ event }: SuggestionKeyDownProps) => {
+const onKeyDown = ({ event }: Pick<SuggestionKeyDownProps, "event">) => {
   if (event.key === " ") {
     const matchedItemIndex = items.findIndex(
       (item) => item.title.toLowerCase() === query.toLowerCase() || item.type.toLowerCase() === query.toLowerCase(),
@@ -40,14 +40,14 @@ const onKeyDown = ({ event }: SuggestionKeyDownProps) => {
   }
 };
 
-defineExpose({ onKeyDown });
-
 watch(
   () => items,
   () => {
     selectedIndex.value = 0;
   },
 );
+
+defineExpose({ onKeyDown });
 </script>
 
 <template>

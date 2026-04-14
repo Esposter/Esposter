@@ -3,7 +3,7 @@ import type { SlashCommandParameter } from "@/models/message/slashCommands/Slash
 
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 
-interface InputMenuProps {
+interface TrailingInputMenuProps {
   activeParametersLength: number;
   hiddenParameters: SlashCommandParameter[];
   optionalHiddenParameters: SlashCommandParameter[];
@@ -12,7 +12,7 @@ interface InputMenuProps {
 }
 
 const { activeParametersLength, hiddenParameters, optionalHiddenParameters, optionsLabel, requiredHiddenParameters } =
-  defineProps<InputMenuProps>();
+  defineProps<TrailingInputMenuProps>();
 
 const emit = defineEmits<{
   addParameter: [name: string];
@@ -34,9 +34,7 @@ watch(
   },
 );
 
-defineExpose({
-  focus: () => input.value?.focus(),
-});
+defineExpose({ focus: () => input.value?.focus() });
 </script>
 
 <template>
