@@ -53,14 +53,13 @@ const addParameter = (name: string) => {
   lastAddedParameterName.value = name;
   activeParameterNames.value = [...activeParameterNames.value, name];
 };
-const removeParameter = async (index: number) => {
+const removeParameter = (index: number) => {
   const name = activeParameters.value[index]?.name;
   if (!name) return;
 
   activeParameterNames.value = activeParameterNames.value.filter((paramName) => paramName !== name);
   parameterValues.value[name] = "";
   setErrors(name, []);
-  await nextTick();
   if (index === 0) commandInputMenuRef.value?.focus();
   else parameterInputRefs.value[index - 1]?.focus();
 };
@@ -78,7 +77,6 @@ const commandNavigateNext = async () => {
 };
 const selectCommand = async (slashCommand: SlashCommand) => {
   setPendingSlashCommand(slashCommand);
-  await nextTick();
   if (activeParameters.value.length > 0) parameterInputRefs.value[0]?.focus();
   else trailingInputMenuRef.value?.focus();
 };

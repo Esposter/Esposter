@@ -2,6 +2,7 @@
 import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
 
 import MessageModelMessageSlashCommandList from "@/components/Message/Model/Message/SlashCommandList.vue";
+import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 
 interface CommandInputMenuProps {
   items: SlashCommand[];
@@ -14,7 +15,15 @@ const emit = defineEmits<{
   "select:command": [command: SlashCommand];
 }>();
 const modelValue = defineModel<string>({ required: true });
+const slashCommandStore = useSlashCommandStore();
+const { pendingSlashCommand } = storeToRefs(slashCommandStore);
 const isCommandInputFocused = ref(false);
+const isOpen = computed({
+  get: () => isCommandInputFocused.value && modelValue.value !== pendingSlashCommand.value?.type,
+  set: (value) => {
+    isCommandInputFocused.value = value;
+  },
+});
 const commandInput = useTemplateRef("commandInput");
 const slashCommandList = useTemplateRef<InstanceType<typeof MessageModelMessageSlashCommandList>>("slashCommandList");
 
@@ -22,7 +31,14 @@ defineExpose({ focus: () => commandInput.value?.focus() });
 </script>
 
 <template>
-  <v-menu v-model="isCommandInputFocused" :close-on-content-click="false" location="top" offset="15" :min-width="400">
+  <v-menu
+    v-model="isOpen"
+    :close-on-content-click="false"
+    location="top"
+    offset="15"
+    :min-width="400"
+    @update:model-value="() => {}"
+  >
     <template #activator="{ props: menuProps }">
       <MessageModelMessageInputSlashCommandParametersCommandInput
         ref="commandInput"
