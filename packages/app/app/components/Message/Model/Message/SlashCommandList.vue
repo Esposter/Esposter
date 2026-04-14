@@ -55,7 +55,16 @@ defineExpose({ onKeyDown });
 </script>
 
 <template>
-  <StyledCard v-if="items.length > 0" overflow-y-auto :card-props="{ maxHeight: 250, width: 400 }" :elevation="1">
+  <div
+    v-if="items.length > 0"
+    class="bg-surface elevation-1 border-sm"
+    max-h-64
+    max-w-100
+    flex
+    flex-col
+    rd
+    overflow-y-auto
+  >
     <v-card-title text-sm font-bold>{{ title }}</v-card-title>
     <StyledList :selected-index :list-props="{ density: 'compact' }" py-0>
       <v-list-item
@@ -90,5 +99,5 @@ defineExpose({ onKeyDown });
         <v-list-item-subtitle>{{ description }}</v-list-item-subtitle>
       </v-list-item>
     </StyledList>
-  </StyledCard>
+  </div>
 </template>
