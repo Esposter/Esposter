@@ -1,4 +1,9 @@
 <script setup lang="ts">
+interface CommandInputProps {
+  isFocused?: boolean;
+}
+
+const { isFocused } = defineProps<CommandInputProps>();
 const emit = defineEmits<{
   blur: [];
   delete: [];
@@ -9,7 +14,12 @@ const emit = defineEmits<{
 const modelValue = defineModel<string>({ default: "" });
 const input = useTemplateRef("input");
 
-defineExpose({ focus: () => input.value?.focus() });
+watch(
+  () => isFocused,
+  (newIsFocused) => {
+    if (newIsFocused) input.value?.focus();
+  },
+);
 </script>
 
 <template>

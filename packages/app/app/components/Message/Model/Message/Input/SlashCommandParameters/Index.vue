@@ -2,7 +2,6 @@
 import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
 import type { SlashCommandParameters } from "@/models/message/slashCommands/SlashCommandParameters";
 
-import SlashCommandParametersChip from "@/components/Message/Model/Message/Input/SlashCommandParameters/Chip.vue";
 import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
 import { SlashCommandDefinitionMap } from "@/services/message/slashCommands/SlashCommandDefinitionMap";
 import { sanitizeHtml } from "@/services/sanitizeHtml/sanitizeHtml";
@@ -21,11 +20,9 @@ const dataStore = useDataStore();
 const { createMessage } = dataStore;
 const { execute, isLoading } = useInFlight();
 const activeParameterNames = ref<string[]>([]);
-const commandInputMenuRef = useTemplateRef("commandInputMenu");
 const commandTitle = ref(pendingSlashCommand.value?.type ?? "");
-const trailingInputMenuRef = useTemplateRef("trailingInputMenu");
 const lastAddedParameterName = ref<null | string>(null);
-const parameterInputRefs = ref<InstanceType<typeof SlashCommandParametersChip>[]>([]);
+const focusedIndex = ref(0);
 const suggestedItems = computed(() => {
   const query = commandTitle.value.toLowerCase();
   return Object.values(SlashCommandDefinitionMap).filter(
@@ -52,46 +49,39 @@ const createParameter = (name: string) => {
   lastAddedParameterName.value = name;
   activeParameterNames.value = [...activeParameterNames.value, name];
 };
-const deleteParameter = async (index: number) => {
+const deleteParameter = (index: number) => {
   const name = activeParameters.value[index]?.name;
   if (!name) return;
 
   activeParameterNames.value = activeParameterNames.value.filter((paramName) => paramName !== name);
   parameterValues.value[name] = "";
   setErrors(name, []);
-
-  await nextTick();
-  if (index === 0) commandInputMenuRef.value?.focus();
-  else parameterInputRefs.value[index - 1]?.focus();
+  focus(index - 1);
 };
-const commandNavigateNext = async () => {
+const commandNavigateNext = () => {
   const newSlashCommand = Object.values(SlashCommandDefinitionMap).find(
     ({ type }) => type.toLowerCase() === commandTitle.value.toLowerCase(),
   );
   if (newSlashCommand && newSlashCommand.type !== pendingSlashCommand.value?.type) {
     selectCommand(newSlashCommand);
     return;
-  }
-
-  await nextTick();
-  if (activeParameters.value.length > 0) parameterInputRefs.value[0]?.focus();
-  else trailingInputMenuRef.value?.focus();
+  } else focus(activeParameters.value.length > 0 ? 0 : activeParameters.value.length);
 };
-const selectCommand = async (slashCommand: SlashCommand) => {
+const selectCommand = (slashCommand: SlashCommand) => {
   setPendingSlashCommand(slashCommand);
-  await nextTick();
-  if (activeParameters.value.length > 0) parameterInputRefs.value[0]?.focus();
-  else trailingInputMenuRef.value?.focus();
+  focus(activeParameters.value.length > 0 ? 0 : activeParameters.value.length);
 };
-const navigatePrevious = async (index: number) => {
-  await nextTick();
-  if (index > 0) parameterInputRefs.value[index - 1]?.focus();
-  else commandInputMenuRef.value?.focus();
+const navigatePrevious = (index: number) => {
+  focusedIndex.value = index - 1;
 };
-const navigateNext = async (index: number) => {
-  await nextTick();
-  if (index < activeParameters.value.length - 1) parameterInputRefs.value[index + 1]?.focus();
-  else trailingInputMenuRef.value?.focus();
+const navigateNext = (index: number) => {
+  focusedIndex.value = index + 1;
+};
+const focus = (index: number) => {
+  focusedIndex.value = index;
+};
+const blur = (index: number) => {
+  if (focusedIndex.value === index) focusedIndex.value = -2;
 };
 const updateParameterValue = (name: string, value: string) => {
   parameterValues.value[name] = value;
@@ -164,43 +154,45 @@ useEventListener("keydown", (event: KeyboardEvent) => {
     <StyledCard>
       <div flex items-center gap-2 px-4 pt-3 pb-2>
         <MessageModelMessageInputSlashCommandParametersCommandInputMenu
-          ref="commandInputMenu"
           v-model="commandTitle"
           :items="suggestedItems"
+          :is-focused="focusedIndex === -1"
           @navigate:next="commandNavigateNext"
           @delete="clearPendingSlashCommand"
           @select:command="selectCommand"
+          @focus="focus(-1)"
+          @blur="blur(-1)"
         />
         <template v-for="({ isRequired, name }, index) of activeParameters" :key="name">
           <MessageModelMessageInputSlashCommandParametersChip
-            :ref="
-              (el) => {
-                if (el) parameterInputRefs[index] = el as InstanceType<typeof SlashCommandParametersChip>;
-              }
-            "
             :is-required
             :name
             :autofocus="lastAddedParameterName === name || (lastAddedParameterName === null && index === 0)"
+            :is-focused="focusedIndex === index"
             :model-value="parameterValues[name] ?? ''"
             @update:model-value="updateParameterValue(name, $event)"
             @delete="deleteParameter(index)"
             @submit="submit"
             @navigate:previous="navigatePrevious(index)"
             @navigate:next="navigateNext(index)"
+            @focus="focus(index)"
+            @blur="blur(index)"
           />
         </template>
         <MessageModelMessageInputSlashCommandParametersTrailingInputMenu
-          ref="trailingInputMenu"
           :hidden-parameters
           :required-hidden-parameters
           :optional-hidden-parameters
           :options-label="`+${hiddenParameters.length} ${hiddenParameters.length === 1 ? 'option' : 'options'}`"
           :active-parameters-length="activeParameters.length"
+          :is-focused="focusedIndex === activeParameters.length"
           @create-parameter="createParameter"
           @update-parameter-value="updateParameterValue"
           @submit="submit"
           @navigate:previous="navigatePrevious(activeParameters.length)"
           @delete-last-parameter="deleteLastParameter"
+          @focus="focus(activeParameters.length)"
+          @blur="blur(activeParameters.length)"
         />
         <MessageModelMessageInputSendMessageButton :is-loading @click="submit" />
       </div>

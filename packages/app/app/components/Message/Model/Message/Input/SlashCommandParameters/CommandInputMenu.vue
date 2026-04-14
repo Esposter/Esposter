@@ -4,12 +4,15 @@ import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 
 interface CommandInputMenuProps {
+  isFocused?: boolean;
   items: SlashCommand[];
 }
 
-const { items } = defineProps<CommandInputMenuProps>();
+const { isFocused, items } = defineProps<CommandInputMenuProps>();
 const emit = defineEmits<{
+  blur: [];
   delete: [];
+  focus: [];
   "navigate:next": [];
   "select:command": [command: SlashCommand];
 }>();
@@ -26,10 +29,7 @@ const isOpen = computed({
     isInputFocused.value = value;
   },
 });
-const input = useTemplateRef("input");
 const slashCommandList = useTemplateRef("slashCommandList");
-
-defineExpose({ focus: () => input.value?.focus() });
 </script>
 
 <template>
@@ -42,11 +42,21 @@ defineExpose({ focus: () => input.value?.focus() });
   >
     <template #activator="{ props: menuProps }">
       <MessageModelMessageInputSlashCommandParametersCommandInput
-        ref="input"
         v-model="modelValue"
+        :is-focused
         :="menuProps"
-        @focus="isInputFocused = true"
-        @blur="isInputFocused = false"
+        @focus="
+          () => {
+            isInputFocused = true;
+            emit('focus');
+          }
+        "
+        @blur="
+          () => {
+            isInputFocused = false;
+            emit('blur');
+          }
+        "
         @keydown="slashCommandList?.onKeyDown({ event: $event })"
         @navigate:next="emit('navigate:next')"
         @delete="emit('delete')"

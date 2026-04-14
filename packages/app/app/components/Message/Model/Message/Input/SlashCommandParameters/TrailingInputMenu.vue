@@ -6,17 +6,26 @@ import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 interface TrailingInputMenuProps {
   activeParametersLength: number;
   hiddenParameters: SlashCommandParameter[];
+  isFocused?: boolean;
   optionalHiddenParameters: SlashCommandParameter[];
   optionsLabel: string;
   requiredHiddenParameters: SlashCommandParameter[];
 }
 
-const { activeParametersLength, hiddenParameters, optionalHiddenParameters, optionsLabel, requiredHiddenParameters } =
-  defineProps<TrailingInputMenuProps>();
+const {
+  activeParametersLength,
+  hiddenParameters,
+  isFocused,
+  optionalHiddenParameters,
+  optionsLabel,
+  requiredHiddenParameters,
+} = defineProps<TrailingInputMenuProps>();
 
 const emit = defineEmits<{
+  blur: [];
   createParameter: [name: string];
   deleteLastParameter: [];
+  focus: [];
   "navigate:previous": [];
   submit: [];
   updateParameterValue: [name: string, value: string];
@@ -34,7 +43,12 @@ watch(
   },
 );
 
-defineExpose({ focus: () => input.value?.focus() });
+watch(
+  () => isFocused,
+  (newIsFocused) => {
+    if (newIsFocused) input.value?.focus();
+  },
+);
 </script>
 
 <template>
@@ -56,6 +70,8 @@ defineExpose({ focus: () => input.value?.focus() });
           cursor-text
           :readonly="hiddenParameters.length > 0"
           :placeholder="hiddenParameters.length > 0 ? optionsLabel : ''"
+          @focus="emit('focus')"
+          @blur="emit('blur')"
           @keydown="
             (event) => {
               const target = event.target as HTMLInputElement;

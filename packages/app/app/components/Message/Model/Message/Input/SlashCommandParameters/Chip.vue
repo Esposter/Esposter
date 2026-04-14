@@ -3,20 +3,33 @@ import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 
 interface ChipProps {
   autofocus?: boolean;
+  isFocused?: boolean;
   isRequired: boolean;
   name: string;
 }
 
 const modelValue = defineModel<string>({ default: "" });
-const { isRequired, name } = defineProps<ChipProps>();
-const emit = defineEmits<{ delete: []; "navigate:next": []; "navigate:previous": []; submit: [] }>();
+const { isFocused, isRequired, name } = defineProps<ChipProps>();
+const emit = defineEmits<{
+  blur: [];
+  delete: [];
+  focus: [];
+  "navigate:next": [];
+  "navigate:previous": [];
+  submit: [];
+}>();
 const slashCommandStore = useSlashCommandStore();
 const { errors } = storeToRefs(slashCommandStore);
 const { setErrors } = slashCommandStore;
 const input = useTemplateRef("input");
 const isError = computed(() => Boolean(errors.value.find((e) => e.id === name)?.messages.length));
 
-defineExpose({ focus: () => input.value?.focus() });
+watch(
+  () => isFocused,
+  (newIsFocused) => {
+    if (newIsFocused) input.value?.focus();
+  },
+);
 </script>
 
 <template>
@@ -43,6 +56,8 @@ defineExpose({ focus: () => input.value?.focus() });
       outline-none
       text-sm
       :autofocus
+      @focus="emit('focus')"
+      @blur="emit('blur')"
       @update:model-value="setErrors(name, isRequired && !$event.trim() ? [`${name} is required`] : [])"
       @keydown.enter.prevent="emit('submit')"
       @keydown.delete="!modelValue && emit('delete')"
