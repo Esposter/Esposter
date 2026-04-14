@@ -4,7 +4,7 @@ import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 const slashCommandStore = useSlashCommandStore();
 const { errors, pendingSlashCommand } = storeToRefs(slashCommandStore);
 const { clearPendingSlashCommand } = slashCommandStore;
-const firstError = computed(() => errors.value.find((e) => e.messages.length > 0)?.messages[0] ?? null);
+const firstError = computed(() => errors.value[0]?.messages[0]);
 </script>
 
 <template>

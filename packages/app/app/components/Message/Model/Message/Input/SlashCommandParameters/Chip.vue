@@ -22,7 +22,10 @@ const slashCommandStore = useSlashCommandStore();
 const { errors } = storeToRefs(slashCommandStore);
 const { setErrors } = slashCommandStore;
 const input = useTemplateRef("input");
-const isError = computed(() => Boolean(errors.value.find((e) => e.id === name)?.messages.length > 0));
+const isError = computed(() => {
+  const error = errors.value.find((e) => e.id === name);
+  return error && error.messages.length > 0;
+});
 const { trigger } = watchTriggerable(
   () => isFocused,
   (newIsFocused) => {
