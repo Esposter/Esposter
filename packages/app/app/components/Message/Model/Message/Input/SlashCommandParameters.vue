@@ -185,7 +185,7 @@ useEventListener("keydown", (event: KeyboardEvent) => {
 <template>
   <div v-if="pendingSlashCommand" w-full>
     <StyledCard>
-      <div flex items-center gap-2 px-4 pt-3 pb-2 flex-wrap>
+      <div flex items-center gap-2 px-4 pt-3 pb-2>
         <template v-for="({ isRequired, name }, index) of activeParameters" :key="name">
           <MessageModelMessageInputSlashCommandParameterChip
             :ref="
@@ -211,19 +211,20 @@ useEventListener("keydown", (event: KeyboardEvent) => {
           @update:model-value="() => {}"
         >
           <template #activator="{ props: menuProps }">
-            <input
-              ref="input"
-              v-model="trailingMessage"
-              flex-1
-              b-none
-              outline-none
-              text-sm
-              cursor-text
-              :readonly="hiddenParameters.length > 0"
-              :placeholder="hiddenParameters.length > 0 ? optionsLabel : ''"
-              :="menuProps"
-              @keydown="handleTrailingKeydown"
-            />
+            <span flex-1 :="menuProps">
+              <input
+                ref="input"
+                v-model="trailingMessage"
+                w-full
+                b-none
+                outline-none
+                text-sm
+                cursor-text
+                :readonly="hiddenParameters.length > 0"
+                :placeholder="hiddenParameters.length > 0 ? optionsLabel : ''"
+                @keydown="handleTrailingKeydown"
+              />
+            </span>
           </template>
           <v-list density="compact" min-w-48>
             <v-list-subheader v-if="requiredHiddenParameters.length > 0">REQUIRED OPTIONS</v-list-subheader>

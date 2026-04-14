@@ -13,7 +13,6 @@ const modelValue = defineModel<string>({ default: "" });
 const slashCommandStore = useSlashCommandStore();
 const { errors } = storeToRefs(slashCommandStore);
 const { setErrors } = slashCommandStore;
-const isFocused = ref(false);
 const input = useTemplateRef("input");
 const isError = computed(() => Boolean(errors.value.find((e) => e.id === name)?.messages.length));
 const focus = () => input.value?.focus();
@@ -24,7 +23,7 @@ defineExpose({ focus });
 <template>
   <div
     class="parameter-chip bg-border"
-    :class="{ 'parameter-chip--error': isError, 'parameter-chip--focused': isFocused }"
+    :class="{ 'parameter-chip--error': isError }"
     inline-flex
     items-center
     gap-1.5
@@ -45,13 +44,7 @@ defineExpose({ focus });
       outline-none
       text-sm
       :autofocus
-      @focus="isFocused = true"
-      @blur="
-        () => {
-          isFocused = false;
-          setErrors(name, isRequired && !modelValue.trim() ? [`${name} is required`] : []);
-        }
-      "
+      @update:model-value="setErrors(name, isRequired && !modelValue.trim() ? [`${name} is required`] : [])"
       @keydown.enter.prevent="emit('submit')"
       @keydown.delete="!modelValue && emit('remove')"
       @keydown.left.exact="
@@ -80,7 +73,7 @@ defineExpose({ focus });
 .parameter-chip {
   border: 1.5px solid rgba(var(--v-border-color), var(--v-border-opacity));
 
-  &--focused {
+  &:focus-within {
     border-color: rgb(var(--v-theme-primary));
   }
 
