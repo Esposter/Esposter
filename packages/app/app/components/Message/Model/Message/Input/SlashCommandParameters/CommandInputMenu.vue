@@ -33,7 +33,13 @@ defineExpose({ focus: () => commandInput.value?.focus() });
 </script>
 
 <template>
-  <v-menu v-model="isOpen" :close-on-content-click="false" location="top" offset="15" @update:model-value="() => {}">
+  <v-menu
+    :model-value="isOpen"
+    :close-on-content-click="false"
+    location="top"
+    offset="15"
+    @update:model-value="() => {}"
+  >
     <template #activator="{ props: menuProps }">
       <MessageModelMessageInputSlashCommandParametersCommandInput
         ref="commandInput"

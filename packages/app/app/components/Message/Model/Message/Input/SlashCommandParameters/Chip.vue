@@ -7,9 +7,9 @@ interface SlashCommandParameterChipProps {
   name: string;
 }
 
+const modelValue = defineModel<string>({ default: "" });
 const { isRequired, name } = defineProps<SlashCommandParameterChipProps>();
 const emit = defineEmits<{ delete: []; "navigate:next": []; "navigate:previous": []; submit: [] }>();
-const modelValue = defineModel<string>({ default: "" });
 const slashCommandStore = useSlashCommandStore();
 const { errors } = storeToRefs(slashCommandStore);
 const { setErrors } = slashCommandStore;

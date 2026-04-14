@@ -26,7 +26,6 @@ const commandTitle = ref(pendingSlashCommand.value?.type ?? "");
 const trailingInputMenuRef = useTemplateRef("trailingInputMenu");
 const lastAddedParameterName = ref<null | string>(null);
 const parameterInputRefs = ref<InstanceType<typeof SlashCommandParametersChip>[]>([]);
-
 const suggestedItems = computed(() => {
   const query = commandTitle.value.toLowerCase();
   return Object.values(SlashCommandDefinitionMap).filter(
@@ -81,6 +80,7 @@ const selectCommand = async (slashCommand: SlashCommand) => {
   else trailingInputMenuRef.value?.focus();
 };
 const navigatePrevious = (index: number) => {
+  console.log(index);
   if (index > 0) parameterInputRefs.value[index - 1]?.focus();
   else commandInputMenuRef.value?.focus();
 };
