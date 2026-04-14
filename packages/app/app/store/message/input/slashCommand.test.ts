@@ -1,3 +1,5 @@
+import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
+
 import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 import { ID_SEPARATOR } from "@esposter/shared";
@@ -15,7 +17,7 @@ describe(useSlashCommandStore, () => {
   const p2 = "p2";
   const p3 = "p3";
   const title = "title";
-  const mockSlashCommand = {
+  const mockSlashCommand: SlashCommand = {
     description,
     icon,
     parameters: [
