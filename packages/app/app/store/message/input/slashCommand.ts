@@ -57,7 +57,7 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
       const parsedTextAndParameters = parseTextAndParameters(remainingText, parameters);
       parameterValues.value = Object.fromEntries(
         parameters
-          .filter(({ name }) => !Object.hasOwn(parsedTextAndParameters.parameterValues, name))
+          .filter(({ name }) => Object.hasOwn(parsedTextAndParameters.parameterValues, name))
           .map(({ name }) => [name, takeOne(parsedTextAndParameters.parameterValues, name)]),
       );
       trailingMessage.value = parsedTextAndParameters.trailingMessage;

@@ -179,13 +179,13 @@ flowchart TD
 
 When collapsing parameter mode back to normal text, parameters are serialised as:
 
-```
-/CommandType paramName1|value1 paramName2|value2 trailingMessage
+```text
+/CommandType parameterName1|value1 parameterName2|value2 trailingMessage
 ```
 
 - Separator between parameter name and value: `ID_SEPARATOR` (`|`)
 - Parameters separated by space
-- Last parameter's value is greedy (captures trailing spaces and text until next `paramName|` or end)
+- Last parameter's value is greedy (captures trailing spaces and text until next `parameterName|` or end)
 - `trailingMessage` appended after all parameters
 
 Re-parsing uses prefix matching per parameter in definition order, so multi-word values for the last parameter round-trip correctly.
