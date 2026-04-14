@@ -52,13 +52,15 @@ const createParameter = (name: string) => {
   lastAddedParameterName.value = name;
   activeParameterNames.value = [...activeParameterNames.value, name];
 };
-const deleteParameter = (index: number) => {
+const deleteParameter = async (index: number) => {
   const name = activeParameters.value[index]?.name;
   if (!name) return;
 
   activeParameterNames.value = activeParameterNames.value.filter((paramName) => paramName !== name);
   parameterValues.value[name] = "";
   setErrors(name, []);
+
+  await nextTick();
   if (index === 0) commandInputMenuRef.value?.focus();
   else parameterInputRefs.value[index - 1]?.focus();
 };
@@ -71,20 +73,23 @@ const commandNavigateNext = async () => {
     return;
   }
 
+  await nextTick();
   if (activeParameters.value.length > 0) parameterInputRefs.value[0]?.focus();
   else trailingInputMenuRef.value?.focus();
 };
 const selectCommand = async (slashCommand: SlashCommand) => {
   setPendingSlashCommand(slashCommand);
+  await nextTick();
   if (activeParameters.value.length > 0) parameterInputRefs.value[0]?.focus();
   else trailingInputMenuRef.value?.focus();
 };
-const navigatePrevious = (index: number) => {
-  console.log(index);
+const navigatePrevious = async (index: number) => {
+  await nextTick();
   if (index > 0) parameterInputRefs.value[index - 1]?.focus();
   else commandInputMenuRef.value?.focus();
 };
-const navigateNext = (index: number) => {
+const navigateNext = async (index: number) => {
+  await nextTick();
   if (index < activeParameters.value.length - 1) parameterInputRefs.value[index + 1]?.focus();
   else trailingInputMenuRef.value?.focus();
 };

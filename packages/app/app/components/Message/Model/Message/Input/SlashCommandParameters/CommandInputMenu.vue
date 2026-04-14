@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
 
-import MessageModelMessageSlashCommandList from "@/components/Message/Model/Message/SlashCommandList.vue";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 
 interface CommandInputMenuProps {
@@ -17,36 +16,37 @@ const emit = defineEmits<{
 const modelValue = defineModel<string>({ required: true });
 const slashCommandStore = useSlashCommandStore();
 const { pendingSlashCommand } = storeToRefs(slashCommandStore);
-const isCommandInputFocused = ref(false);
+const isInputFocused = ref(false);
 const isMenuFocused = ref(false);
 const isOpen = computed({
   get: () =>
-    (isCommandInputFocused.value || isMenuFocused.value) && modelValue.value !== pendingSlashCommand.value?.type,
+    (isInputFocused.value || isMenuFocused.value) &&
+    modelValue.value?.toLowerCase() !== pendingSlashCommand.value?.type?.toLowerCase(),
   set: (value) => {
-    isCommandInputFocused.value = value;
+    isInputFocused.value = value;
   },
 });
-const commandInput = useTemplateRef("commandInput");
-const slashCommandList = useTemplateRef<InstanceType<typeof MessageModelMessageSlashCommandList>>("slashCommandList");
+const input = useTemplateRef("input");
+const slashCommandList = useTemplateRef("slashCommandList");
 
-defineExpose({ focus: () => commandInput.value?.focus() });
+defineExpose({ focus: () => input.value?.focus() });
 </script>
 
 <template>
   <v-menu
     :model-value="isOpen"
-    :close-on-content-click="false"
     location="top"
     offset="15"
+    :close-on-content-click="false"
     @update:model-value="() => {}"
   >
     <template #activator="{ props: menuProps }">
       <MessageModelMessageInputSlashCommandParametersCommandInput
-        ref="commandInput"
+        ref="input"
         v-model="modelValue"
         :="menuProps"
-        @focus="isCommandInputFocused = true"
-        @blur="isCommandInputFocused = false"
+        @focus="isInputFocused = true"
+        @blur="isInputFocused = false"
         @keydown="slashCommandList?.onKeyDown({ event: $event })"
         @navigate:next="emit('navigate:next')"
         @delete="emit('delete')"

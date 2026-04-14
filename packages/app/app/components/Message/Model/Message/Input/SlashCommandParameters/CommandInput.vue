@@ -23,7 +23,7 @@ defineExpose({ focus: () => input.value?.focus() });
     <input
       ref="input"
       v-model="modelValue"
-      class="command-input"
+      class="input"
       bg-transparent
       b-none
       outline-none
@@ -52,8 +52,7 @@ defineExpose({ focus: () => input.value?.focus() });
 </template>
 
 <style scoped lang="scss">
-.command-input {
+.input {
   field-sizing: content;
-  min-width: 0.5rem;
 }
 </style>
