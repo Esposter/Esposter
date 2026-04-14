@@ -1,23 +1,16 @@
 <script setup lang="ts">
 import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
-import type { SlashCommandParameters } from "@/models/message/slashCommands/SlashCommandParameters";
 
-import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
 import { SlashCommandDefinitionMap } from "@/services/message/slashCommands/SlashCommandDefinitionMap";
-import { sanitizeHtml } from "@/services/sanitizeHtml/sanitizeHtml";
-import { useDataStore } from "@/store/message/data";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 import { useRoomStore } from "@/store/message/room";
-import { MessageType } from "@esposter/db-schema";
-import { marked } from "marked";
 
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const slashCommandStore = useSlashCommandStore();
 const { parameterValues, pendingSlashCommand } = storeToRefs(slashCommandStore);
 const { clearPendingSlashCommand, setErrors, setPendingSlashCommand } = slashCommandStore;
-const dataStore = useDataStore();
-const { createMessage } = dataStore;
+const executeSlashCommand = useExecuteSlashCommand();
 const { execute, isLoading } = useInFlight();
 const activeParameterNames = ref<string[]>([]);
 const commandTitle = ref(pendingSlashCommand.value?.type ?? "");
@@ -62,14 +55,13 @@ const commandNavigateNext = () => {
   const newSlashCommand = Object.values(SlashCommandDefinitionMap).find(
     ({ type }) => type.toLowerCase() === commandTitle.value.toLowerCase(),
   );
-  if (newSlashCommand && newSlashCommand.type !== pendingSlashCommand.value?.type) {
-    selectCommand(newSlashCommand);
-    return;
-  } else focus(activeParameters.value.length > 0 ? 0 : activeParameters.value.length);
+  if (newSlashCommand && newSlashCommand.type !== pendingSlashCommand.value?.type) selectCommand(newSlashCommand);
+  else if (activeParameters.value.length > 0) focus(0);
 };
 const selectCommand = (slashCommand: SlashCommand) => {
   setPendingSlashCommand(slashCommand);
-  focus(activeParameters.value.length > 0 ? 0 : activeParameters.value.length);
+  if (slashCommand.parameters.length === 0) submit();
+  else focus(0);
 };
 const navigatePrevious = (index: number) => {
   focusedIndex.value = index - 1;
@@ -114,33 +106,7 @@ const submit = () =>
       return;
     }
 
-    const command = {
-      parameterValues: parameterValues.value,
-      type: pendingSlashCommand.value.type,
-    } as {
-      [K in SlashCommandType]: { parameterValues: SlashCommandParameters<K>; type: K };
-    }[SlashCommandType];
-    const roomId = currentRoomId.value;
-
-    switch (command.type) {
-      case SlashCommandType.Me:
-        await createMessage({
-          message: marked.parse(`*${sanitizeHtml(command.parameterValues.message)}*`, { async: false }),
-          roomId,
-          type: MessageType.Message,
-        });
-        break;
-      case SlashCommandType.Shrug: {
-        const prefix = command.parameterValues.text?.trim() ?? "";
-        await createMessage({
-          message: marked.parse(`${prefix}¯\\\\\\_(ツ)\\_/¯`, { async: false }),
-          roomId,
-          type: MessageType.Message,
-        });
-        break;
-      }
-    }
-
+    await executeSlashCommand(pendingSlashCommand.value.type, parameterValues.value);
     clearPendingSlashCommand();
   });
 
