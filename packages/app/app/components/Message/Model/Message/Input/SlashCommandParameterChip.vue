@@ -2,7 +2,7 @@
 interface SlashCommandParameterChipProps {
   autofocus?: boolean;
   isRequired: boolean;
-  isSubmitAttempted?: boolean;
+  isSubmitAttempted: boolean;
   name: string;
 }
 
@@ -11,17 +11,28 @@ const emit = defineEmits<{ remove: []; submit: [] }>();
 const modelValue = defineModel<string>({ default: "" });
 const isFocused = ref(false);
 const isTouched = ref(false);
-const isError = computed(
-  () => (isTouched.value || Boolean(isSubmitAttempted)) && isRequired && !modelValue.value.trim(),
-);
+const isError = computed(() => (isTouched.value || isSubmitAttempted) && isRequired && !modelValue.value.trim());
 </script>
 
 <template>
-  <div class="parameter-chip" :class="{ 'parameter-chip--error': isError, 'parameter-chip--focused': isFocused }">
-    <span class="chip-label bg-background" :class="isError ? 'text-error' : ''" font-bold text-sm>{{ name }}</span>
+  <div
+    class="parameter-chip"
+    :class="{ 'parameter-chip--error': isError, 'parameter-chip--focused': isFocused }"
+    inline-flex
+    items-center
+    gap-1.5
+    rd
+    py-1
+    pr-0.5
+    pl-2
+  >
+    <span class="bg-background" font-bold text-sm :class="isError ? 'text-error' : ''">{{ name }}</span>
     <input
       v-model="modelValue"
-      class="chip-input"
+      flex-1
+      b-none
+      outline-none
+      text-sm
       :autofocus
       @focus="isFocused = true"
       @blur="
@@ -38,12 +49,7 @@ const isError = computed(
 
 <style scoped lang="scss">
 .parameter-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  border-radius: 4px;
   border: 1.5px solid rgba(var(--v-border-color), var(--v-border-opacity));
-  padding: 4px 2px 4px 8px;
 
   &--focused {
     border-color: rgb(var(--v-theme-primary));
@@ -51,14 +57,6 @@ const isError = computed(
 
   &--error {
     border-color: rgb(var(--v-theme-error));
-  }
-
-  .chip-input {
-    flex: 1;
-    background: transparent;
-    border: none;
-    outline: none;
-    font-size: 0.875rem;
   }
 }
 </style>

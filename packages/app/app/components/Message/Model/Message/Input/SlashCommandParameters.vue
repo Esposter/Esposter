@@ -62,13 +62,11 @@ const submit = () =>
   execute(async () => {
     if (!pendingSlashCommand.value || !currentRoomId.value) return;
 
-    const missingRequiredParameterNames = new Set(
-      pendingSlashCommand.value.parameters
-        .filter(({ isRequired, name }) => isRequired && !parameterValues.value[name]?.trim())
-        .map(({ name }) => name),
-    );
+    const missingRequiredParameterNames = pendingSlashCommand.value.parameters
+      .filter(({ isRequired, name }) => isRequired && !parameterValues.value[name]?.trim())
+      .map(({ name }) => name);
 
-    if (missingRequiredParameterNames.size > 0) {
+    if (missingRequiredParameterNames.length > 0) {
       const hiddenRequiredParameterNames = missingRequiredParameterNames.filter(
         (name) => !activeParameterNames.value.includes(name),
       );

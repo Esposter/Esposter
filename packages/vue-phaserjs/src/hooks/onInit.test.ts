@@ -11,8 +11,12 @@ describe(onInit, () => {
     expect.hasAssertions();
 
     const order: Lifecycle[] = [];
-    onInit(() => order.push(Lifecycle.Init), sceneKey);
-    onCreate(() => order.push(Lifecycle.Create), sceneKey);
+    onInit(() => {
+      order.push(Lifecycle.Init);
+    }, sceneKey);
+    onCreate(() => {
+      order.push(Lifecycle.Create);
+    }, sceneKey);
     startTestScene(sceneKey);
 
     expect(order).toStrictEqual([Lifecycle.Init, Lifecycle.Create]);
