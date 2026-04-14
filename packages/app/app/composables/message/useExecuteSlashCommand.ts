@@ -29,7 +29,7 @@ export const useExecuteSlashCommand = () => {
     switch (command.type) {
       case SlashCommandType.Flip: {
         const isHeads = createRandomBoolean();
-        createMessageInput = { message: isHeads ? `🪙 **Heads**` : `🟡 **Tails**`, roomId, type: MessageType.Message };
+        createMessageInput = { message: isHeads ? `🌝 **Heads**` : `🌚 **Tails**`, roomId, type: MessageType.Message };
         break;
       }
       case SlashCommandType.Me: {
