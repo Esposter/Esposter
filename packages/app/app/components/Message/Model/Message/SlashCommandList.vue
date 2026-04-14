@@ -20,6 +20,7 @@ const onKeyDown = ({ event }: Pick<SuggestionKeyDownProps, "event">) => {
       (item) => item.title.toLowerCase() === query.toLowerCase() || item.type.toLowerCase() === query.toLowerCase(),
     );
     if (matchedItemIndex !== -1) {
+      event.preventDefault();
       selectItem(matchedItemIndex);
       return true;
     }
@@ -27,12 +28,15 @@ const onKeyDown = ({ event }: Pick<SuggestionKeyDownProps, "event">) => {
 
   switch (event.key) {
     case "ArrowDown":
+      event.preventDefault();
       selectedIndex.value = (selectedIndex.value + 1) % items.length;
       return true;
     case "ArrowUp":
+      event.preventDefault();
       selectedIndex.value = (selectedIndex.value + items.length - 1) % items.length;
       return true;
     case "Enter":
+      event.preventDefault();
       selectItem(selectedIndex.value);
       return true;
     default:

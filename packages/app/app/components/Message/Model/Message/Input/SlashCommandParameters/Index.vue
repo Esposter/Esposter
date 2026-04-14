@@ -49,11 +49,11 @@ const hiddenParameters = computed(
 const requiredHiddenParameters = computed(() => hiddenParameters.value.filter(({ isRequired }) => isRequired));
 const optionalHiddenParameters = computed(() => hiddenParameters.value.filter(({ isRequired }) => !isRequired));
 
-const addParameter = (name: string) => {
+const createParameter = (name: string) => {
   lastAddedParameterName.value = name;
   activeParameterNames.value = [...activeParameterNames.value, name];
 };
-const removeParameter = (index: number) => {
+const deleteParameter = (index: number) => {
   const name = activeParameters.value[index]?.name;
   if (!name) return;
 
@@ -91,9 +91,9 @@ const navigateNext = (index: number) => {
 const updateParameterValue = (name: string, value: string) => {
   parameterValues.value[name] = value;
 };
-const removeLastParameter = () => {
+const deleteLastParameter = () => {
   const lastIndex = activeParameters.value.length - 1;
-  if (lastIndex >= 0) removeParameter(lastIndex);
+  if (lastIndex >= 0) deleteParameter(lastIndex);
 };
 const submit = () =>
   execute(async () => {
@@ -163,7 +163,7 @@ useEventListener("keydown", (event: KeyboardEvent) => {
           v-model="commandTitle"
           :items="suggestedItems"
           @navigate:next="commandNavigateNext"
-          @remove="clearPendingSlashCommand"
+          @delete="clearPendingSlashCommand"
           @select:command="selectCommand"
         />
         <template v-for="({ isRequired, name }, index) of activeParameters" :key="name">
@@ -178,7 +178,7 @@ useEventListener("keydown", (event: KeyboardEvent) => {
             :autofocus="lastAddedParameterName === name || (lastAddedParameterName === null && index === 0)"
             :model-value="parameterValues[name] ?? ''"
             @update:model-value="updateParameterValue(name, $event)"
-            @remove="removeParameter(index)"
+            @delete="deleteParameter(index)"
             @submit="submit"
             @navigate:previous="navigatePrevious(index)"
             @navigate:next="navigateNext(index)"
@@ -191,11 +191,11 @@ useEventListener("keydown", (event: KeyboardEvent) => {
           :optional-hidden-parameters
           :options-label="`+${hiddenParameters.length} ${hiddenParameters.length === 1 ? 'option' : 'options'}`"
           :active-parameters-length="activeParameters.length"
-          @add-parameter="addParameter"
+          @create-parameter="createParameter"
           @update-parameter-value="updateParameterValue"
           @submit="submit"
           @navigate:previous="navigatePrevious(activeParameters.length)"
-          @remove-last-parameter="removeLastParameter"
+          @delete-last-parameter="deleteLastParameter"
         />
         <MessageModelMessageInputSendMessageButton :is-loading @click="submit" />
       </div>

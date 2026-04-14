@@ -8,7 +8,7 @@ interface SlashCommandParameterChipProps {
 }
 
 const { isRequired, name } = defineProps<SlashCommandParameterChipProps>();
-const emit = defineEmits<{ "navigate:next": []; "navigate:previous": []; remove: []; submit: [] }>();
+const emit = defineEmits<{ delete: []; "navigate:next": []; "navigate:previous": []; submit: [] }>();
 const modelValue = defineModel<string>({ default: "" });
 const slashCommandStore = useSlashCommandStore();
 const { errors } = storeToRefs(slashCommandStore);
@@ -45,11 +45,11 @@ defineExpose({ focus: () => input.value?.focus() });
       :autofocus
       @update:model-value="setErrors(name, isRequired && !$event.trim() ? [`${name} is required`] : [])"
       @keydown.enter.prevent="emit('submit')"
-      @keydown.delete="!modelValue && emit('remove')"
+      @keydown.delete="!modelValue && emit('delete')"
       @keydown.left.exact="
         (event) => {
           const target = event.target as HTMLInputElement;
-          if (target.selectionStart === 0) {
+          if (target.selectionStart === 0 && target.selectionEnd === 0) {
             event.preventDefault();
             emit('navigate:previous');
           }
@@ -58,7 +58,7 @@ defineExpose({ focus: () => input.value?.focus() });
       @keydown.right.exact="
         (event) => {
           const target = event.target as HTMLInputElement;
-          if (target.selectionStart === target.value.length) {
+          if (target.selectionStart === target.value.length && target.selectionEnd === target.value.length) {
             event.preventDefault();
             emit('navigate:next');
           }

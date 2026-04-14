@@ -10,8 +10,8 @@ interface CommandInputMenuProps {
 
 const { items } = defineProps<CommandInputMenuProps>();
 const emit = defineEmits<{
+  delete: [];
   "navigate:next": [];
-  remove: [];
   "select:command": [command: SlashCommand];
 }>();
 const modelValue = defineModel<string>({ required: true });
@@ -31,14 +31,7 @@ defineExpose({ focus: () => commandInput.value?.focus() });
 </script>
 
 <template>
-  <v-menu
-    v-model="isOpen"
-    :close-on-content-click="false"
-    location="top"
-    offset="15"
-    :min-width="400"
-    @update:model-value="() => {}"
-  >
+  <v-menu v-model="isOpen" :close-on-content-click="false" location="top" offset="15" @update:model-value="() => {}">
     <template #activator="{ props: menuProps }">
       <MessageModelMessageInputSlashCommandParametersCommandInput
         ref="commandInput"
@@ -48,7 +41,7 @@ defineExpose({ focus: () => commandInput.value?.focus() });
         @blur="isCommandInputFocused = false"
         @keydown="slashCommandList?.onKeyDown({ event: $event })"
         @navigate:next="emit('navigate:next')"
-        @remove="emit('remove')"
+        @delete="emit('delete')"
       />
     </template>
     <MessageModelMessageSlashCommandList

@@ -6,10 +6,10 @@ interface SlashCommandParameterCommandInputProps {
 const { autofocus } = defineProps<SlashCommandParameterCommandInputProps>();
 const emit = defineEmits<{
   blur: [];
+  delete: [];
   focus: [];
   keydown: [event: KeyboardEvent];
   "navigate:next": [];
-  remove: [];
 }>();
 const modelValue = defineModel<string>({ default: "" });
 const input = useTemplateRef("input");
@@ -36,12 +36,12 @@ defineExpose({ focus: () => input.value?.focus() });
       @keydown.enter.prevent="emit('navigate:next')"
       @keydown.space.prevent="emit('navigate:next')"
       @keydown.tab.prevent="emit('navigate:next')"
-      @keydown.delete="!modelValue && emit('remove')"
-      @keydown.backspace="!modelValue && emit('remove')"
+      @keydown.delete="!modelValue && emit('delete')"
+      @keydown.backspace="!modelValue && emit('delete')"
       @keydown.right.exact="
         (event) => {
           const target = event.target as HTMLInputElement;
-          if (target.selectionStart === target.value.length) {
+          if (target.selectionStart === target.value.length && target.selectionEnd === target.value.length) {
             event.preventDefault();
             emit('navigate:next');
           }

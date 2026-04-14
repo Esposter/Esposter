@@ -15,9 +15,9 @@ const { activeParametersLength, hiddenParameters, optionalHiddenParameters, opti
   defineProps<TrailingInputMenuProps>();
 
 const emit = defineEmits<{
-  addParameter: [name: string];
+  createParameter: [name: string];
+  deleteLastParameter: [];
   "navigate:previous": [];
-  removeLastParameter: [];
   submit: [];
   updateParameterValue: [name: string, value: string];
 }>();
@@ -60,21 +60,27 @@ defineExpose({ focus: () => input.value?.focus() });
             (event) => {
               const target = event.target as HTMLInputElement;
 
+              if (
+                event.key === 'ArrowLeft' &&
+                target.selectionStart === 0 &&
+                target.selectionEnd === 0 &&
+                activeParametersLength > 0
+              ) {
+                event.preventDefault();
+                emit('navigate:previous');
+                return;
+              }
+
+              if (event.key === 'Backspace' && !trailingMessage && activeParametersLength > 0) {
+                event.preventDefault();
+                emit('deleteLastParameter');
+                return;
+              }
+
               if (hiddenParameters.length === 0) {
                 if (event.key === 'Enter') {
                   event.preventDefault();
                   emit('submit');
-                } else if (
-                  event.key === 'ArrowLeft' &&
-                  target.selectionStart === 0 &&
-                  target.selectionEnd === 0 &&
-                  activeParametersLength > 0
-                ) {
-                  event.preventDefault();
-                  emit('navigate:previous');
-                } else if (event.key === 'Backspace' && !trailingMessage && activeParametersLength > 0) {
-                  event.preventDefault();
-                  emit('removeLastParameter');
                 }
                 return;
               }
@@ -88,12 +94,12 @@ defineExpose({ focus: () => input.value?.focus() });
               } else if (event.key === 'Enter') {
                 event.preventDefault();
                 const parameter = hiddenParameters[selectedHiddenIndex] ?? hiddenParameters[0];
-                if (parameter) emit('addParameter', parameter.name);
+                if (parameter) emit('createParameter', parameter.name);
               } else if (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
                 event.preventDefault();
                 const parameter = hiddenParameters[selectedHiddenIndex] ?? hiddenParameters[0];
                 if (parameter) {
-                  emit('addParameter', parameter.name);
+                  emit('createParameter', parameter.name);
                   emit('updateParameterValue', parameter.name, event.key);
                 }
               }
@@ -108,7 +114,7 @@ defineExpose({ focus: () => input.value?.focus() });
         v-for="({ name }, i) of requiredHiddenParameters"
         :key="name"
         :active="i === selectedHiddenIndex"
-        @click="emit('addParameter', name)"
+        @click="emit('createParameter', name)"
       >
         <template #title>
           <span font-bold>{{ name }}</span>
@@ -123,7 +129,7 @@ defineExpose({ focus: () => input.value?.focus() });
           v-for="({ name }, i) of optionalHiddenParameters"
           :key="name"
           :active="i + requiredHiddenParameters.length === selectedHiddenIndex"
-          @click="emit('addParameter', name)"
+          @click="emit('createParameter', name)"
         >
           <template #title>
             <span font-bold>{{ name }}</span>
