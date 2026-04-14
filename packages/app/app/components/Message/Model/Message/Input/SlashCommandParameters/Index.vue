@@ -3,6 +3,7 @@ import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
 import type { SlashCommandParameters } from "@/models/message/slashCommands/SlashCommandParameters";
 import type { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
 
+import { REQUIRED_ERROR_MESSAGE } from "@/services/message/slashCommands/constants";
 import { SlashCommandDefinitionMap } from "@/services/message/slashCommands/SlashCommandDefinitionMap";
 import { useInputStore } from "@/store/message/input";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
@@ -11,16 +12,14 @@ import { useRoomStore } from "@/store/message/room";
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const slashCommandStore = useSlashCommandStore();
-const { parameterValues, pendingSlashCommand } = storeToRefs(slashCommandStore);
+const { activeParameterNames, focusedIndex, parameterValues, pendingSlashCommand } = storeToRefs(slashCommandStore);
 const { buildText, clearPendingSlashCommand, setErrors, setPendingSlashCommand } = slashCommandStore;
 const inputStore = useInputStore();
 const { input } = storeToRefs(inputStore);
 const executeSlashCommand = useExecuteSlashCommand();
 const { execute, isLoading } = useInFlight();
-const activeParameterNames = ref<string[]>([]);
 const commandTitle = ref(pendingSlashCommand.value?.type ?? "");
 const lastAddedParameterName = ref<null | string>(null);
-const focusedIndex = ref(0);
 const suggestedItems = computed(() => {
   const query = commandTitle.value.toLowerCase();
   return Object.values(SlashCommandDefinitionMap).filter(
@@ -30,7 +29,6 @@ const suggestedItems = computed(() => {
 
 watchImmediate(pendingSlashCommand, (newPendingSlashCommand) => {
   if (newPendingSlashCommand) commandTitle.value = newPendingSlashCommand.type;
-  activeParameterNames.value = newPendingSlashCommand?.parameters.map(({ name }) => name) ?? [];
   lastAddedParameterName.value = null;
 });
 
@@ -101,7 +99,7 @@ const submit = () =>
     );
 
     for (const { isRequired, name } of pendingSlashCommand.value.parameters)
-      if (isRequired) setErrors(name, parameterValues.value[name]?.trim() ? [] : [`${name} is required`]);
+      if (isRequired) setErrors(name, parameterValues.value[name]?.trim() ? [] : [REQUIRED_ERROR_MESSAGE]);
 
     if (missingRequiredParameters.length > 0) {
       const hiddenMissingParameters = missingRequiredParameters.filter(

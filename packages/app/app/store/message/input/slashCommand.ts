@@ -7,8 +7,10 @@ import { ID_SEPARATOR, takeOne, toRawDeep } from "@esposter/shared";
 export const useSlashCommandStore = defineStore("message/input/slashCommand", () => {
   const pendingSlashCommand = ref<null | SlashCommand>(null);
   const parameterValues = ref<Record<string, string>>({});
+  const activeParameterNames = ref<string[]>([]);
   const errors = ref<SlashCommandParameterError[]>([]);
   const trailingMessage = ref("");
+  const focusedIndex = ref(0);
 
   const setErrors = (id: string, messages: string[]) => {
     const index = errors.value.findIndex((e) => e.id === id);
@@ -66,7 +68,9 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
       trailingMessage.value = "";
     }
 
+    activeParameterNames.value = parameters.map(({ name }) => name);
     errors.value = [];
+    focusedIndex.value = 0;
   };
 
   const buildText = (): string => {
@@ -86,14 +90,18 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
   const clearPendingSlashCommand = () => {
     pendingSlashCommand.value = null;
     parameterValues.value = {};
+    activeParameterNames.value = [];
     errors.value = [];
     trailingMessage.value = "";
+    focusedIndex.value = 0;
   };
 
   return {
+    activeParameterNames,
     buildText,
     clearPendingSlashCommand,
     errors,
+    focusedIndex,
     parameterValues,
     pendingSlashCommand,
     setErrors,
