@@ -2,15 +2,17 @@ import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
 import type { SlashCommandParameter } from "@/models/message/slashCommands/SlashCommandParameter";
 import type { SlashCommandParameterError } from "@/models/message/slashCommands/SlashCommandParameterError";
 
+import { useRoomStore } from "@/store/message/room";
 import { ID_SEPARATOR, takeOne, toRawDeep } from "@esposter/shared";
 
 export const useSlashCommandStore = defineStore("message/input/slashCommand", () => {
-  const pendingSlashCommand = ref<null | SlashCommand>(null);
-  const parameterValues = ref<Record<string, string>>({});
-  const activeParameterNames = ref<string[]>([]);
-  const errors = ref<SlashCommandParameterError[]>([]);
-  const trailingMessage = ref("");
-  const focusedIndex = ref(0);
+  const roomStore = useRoomStore();
+  const { data: pendingSlashCommand } = useDataMap(() => roomStore.currentRoomId, null as null | SlashCommand);
+  const { data: parameterValues } = useDataMap(() => roomStore.currentRoomId, {} as Record<string, string>);
+  const { data: activeParameterNames } = useDataMap(() => roomStore.currentRoomId, [] as string[]);
+  const { data: errors } = useDataMap(() => roomStore.currentRoomId, [] as SlashCommandParameterError[]);
+  const { data: trailingMessage } = useDataMap(() => roomStore.currentRoomId, "");
+  const { data: focusedIndex } = useDataMap(() => roomStore.currentRoomId, 0);
 
   const setErrors = (id: string, messages: string[]) => {
     const index = errors.value.findIndex((e) => e.id === id);
