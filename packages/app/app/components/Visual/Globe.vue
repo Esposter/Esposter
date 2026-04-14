@@ -155,7 +155,7 @@ onMounted(async () => {
   const animate = () => {
     controls.update();
     renderer.render(scene, camera);
-    animationFrameId = requestAnimationFrame(animate);
+    animationFrameId = window.requestAnimationFrame(animate);
   };
   animate();
 

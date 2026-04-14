@@ -6,5 +6,5 @@ export const copyToClipboard = (dataSource: DataSource, rowIds?: string[]): Prom
   const visibleColumns = dataSource.columns.filter((column) => !column.hidden);
   const rowIdSet = rowIds ? new Set(rowIds) : null;
   const rows = rowIdSet ? dataSource.rows.filter((row) => rowIdSet.has(row.id)) : dataSource.rows;
-  return navigator.clipboard.writeText(serializeToMarkdown({ ...dataSource, columns: visibleColumns, rows }));
+  return window.navigator.clipboard.writeText(serializeToMarkdown({ ...dataSource, columns: visibleColumns, rows }));
 };

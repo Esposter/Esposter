@@ -13,7 +13,7 @@ export const usePasteFromClipboard = () => {
   return async () => {
     if (!editedItem.value?.dataSource) return;
     try {
-      const text = await navigator.clipboard.readText();
+      const text = await window.navigator.clipboard.readText();
       const rows = parseClipboardRows(text, editedItem.value.dataSource);
       createRows(rows);
     } catch (error) {
