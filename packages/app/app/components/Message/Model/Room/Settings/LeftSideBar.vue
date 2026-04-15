@@ -4,10 +4,6 @@ import { SettingsListItemMap } from "@/services/message/settings/SettingsListIte
 
 const modelValue = defineModel<SettingsType>({ required: true });
 const emit = defineEmits<{ "open:delete": [] }>();
-const onClick = (settingsType: SettingsType) => {
-  if (settingsType === SettingsType.Delete) emit("open:delete");
-  else modelValue.value = settingsType;
-};
 </script>
 
 <template>
@@ -20,7 +16,12 @@ const onClick = (settingsType: SettingsType) => {
         :icon
         :is-active="settingsType === modelValue"
         :settings-type
-        @click="onClick($event)"
+        @click="
+          (settingsType) => {
+            if (settingsType === SettingsType.Delete) emit('open:delete');
+            else modelValue.value = settingsType;
+          }
+        "
       />
     </v-list>
   </MessageModelSettingsLeftSideBar>
