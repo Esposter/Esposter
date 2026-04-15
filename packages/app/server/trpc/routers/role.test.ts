@@ -5,7 +5,8 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
 import { roleRouter } from "@@/server/trpc/routers/role";
-import { roomRoles, rooms, RoomPermission, RoomType, usersToRooms } from "@esposter/db-schema";
+import { DatabaseEntityType, RoomPermission, roomRoles, rooms, RoomType, usersToRooms } from "@esposter/db-schema";
+import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
@@ -16,9 +17,9 @@ describe("role", () => {
 
   const setupRoom = async () => {
     const { user: owner } = await mockSessionOnce(mockContext.db);
-    const room = (
-      await mockContext.db.insert(rooms).values({ name: "", type: RoomType.Room, userId: owner.id }).returning()
-    )[0]!;
+    const room = takeOne(
+      await mockContext.db.insert(rooms).values({ name: "", type: RoomType.Room, userId: owner.id }).returning(),
+    );
     await mockContext.db.insert(usersToRooms).values({ roomId: room.id, userId: owner.id });
     await mockContext.db.insert(roomRoles).values({
       isEveryone: true,
@@ -43,7 +44,7 @@ describe("role", () => {
     expect.hasAssertions();
 
     const { owner } = await setupRoom();
-    roomId = (await mockContext.db.select().from(rooms).where(eq(rooms.userId, owner.id)))[0]!.id;
+    roomId = takeOne(await mockContext.db.select().from(rooms).where(eq(rooms.userId, owner.id))).id;
     replayMockSession({
       session: {
         createdAt: new Date(),
@@ -165,7 +166,7 @@ describe("role", () => {
 
     const { owner, roomId: rid } = await setupRoom();
     roomId = rid;
-    const everyoneRole = (await mockContext.db.select().from(roomRoles).where(eq(roomRoles.roomId, roomId)))[0]!;
+    const everyoneRole = takeOne(await mockContext.db.select().from(roomRoles).where(eq(roomRoles.roomId, roomId)));
     replayMockSession({
       session: {
         createdAt: new Date(),
@@ -178,7 +179,9 @@ describe("role", () => {
       user: owner,
     });
 
-    await expect(caller.deleteRole({ id: everyoneRole.id, roomId })).rejects.toThrow();
+    await expect(caller.deleteRole({ id: everyoneRole.id, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.RoomRole, everyoneRole.id).message}]`,
+    );
   });
 
   test("unauthorized without ManageRoles permission", async () => {
@@ -189,6 +192,8 @@ describe("role", () => {
     const { user: member } = await mockSessionOnce(mockContext.db);
     await mockContext.db.insert(usersToRooms).values({ roomId, userId: member.id });
 
-    await expect(caller.createRole({ name: "Mod", permissions: 0n, position: 0, roomId })).rejects.toThrow();
+    await expect(
+      caller.createRole({ name: "Mod", permissions: 0n, position: 0, roomId }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 });

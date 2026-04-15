@@ -7,7 +7,7 @@ interface PermissionListItemProps {
 const { permission, permissionKey } = defineProps<PermissionListItemProps>();
 const modelValue = defineModel<bigint>({ required: true });
 const isEnabled = computed(() => Boolean(modelValue.value & permission));
-const formatLabel = (key: string) => key.replace(/([A-Z])/g, " $1").trim();
+const formatLabel = (key: string) => key.replaceAll(/([A-Z])/g, " $1").trim();
 </script>
 
 <template>
