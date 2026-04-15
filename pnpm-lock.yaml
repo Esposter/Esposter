@@ -124,7 +124,7 @@ catalogs:
       specifier: ^0.14.0
       version: 0.14.0
     '@nuxt/scripts':
-      specifier: ^0.13.3
+      specifier: ^0.13.4
       version: 0.13.4
     '@nuxt/test-utils':
       specifier: ^4.0.2
@@ -235,7 +235,7 @@ catalogs:
       specifier: ^0.4.14
       version: 0.4.14
     '@typescript/native-preview':
-      specifier: ^7.0.0-dev.20260413.1
+      specifier: ^7.0.0-dev.20260414.1
       version: 7.0.0-dev.20260414.1
     '@unocss/eslint-config':
       specifier: ^66.6.8
