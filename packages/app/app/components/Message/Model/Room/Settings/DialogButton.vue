@@ -32,7 +32,7 @@ const room = computed(() => rooms.value.find(({ id }) => id === roomId));
       </v-tooltip>
     </template>
     <v-app>
-      <MessageModelRoomSettingsLeftSideBar v-model="settingsType" @open-delete="isDeleteOpen = true" />
+      <MessageModelRoomSettingsLeftSideBar v-model="settingsType" @open:delete="isDeleteOpen = true" />
       <MessageModelRoomSettingsRightSideBar @close="dialog = false" />
       <MessageModelRoomSettingsContent :room-id :settings-type />
     </v-app>

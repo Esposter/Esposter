@@ -3,24 +3,25 @@ import { SettingsType } from "@/models/message/room/SettingsType";
 import { SettingsListItemMap } from "@/services/message/settings/SettingsListItemMap";
 
 const modelValue = defineModel<SettingsType>({ required: true });
-const emit = defineEmits<{ openDelete: [] }>();
+const emit = defineEmits<{ "open:delete": [] }>();
+const onClick = (settingsType: SettingsType) => {
+  if (settingsType === SettingsType.Delete) emit("open:delete");
+  else modelValue.value = settingsType;
+};
 </script>
 
 <template>
   <MessageModelSettingsLeftSideBar>
     <v-list pt-10>
-      <v-list-item
+      <MessageModelRoomSettingsLeftSideBarItem
         v-for="[settingsType, { color, icon }] of Object.entries(SettingsListItemMap)"
         :key="settingsType"
-        :active="settingsType === modelValue"
-        :base-color="color"
-        @click="settingsType === SettingsType.Delete ? emit('openDelete') : (modelValue = settingsType)"
-      >
-        <template #prepend>
-          <v-icon :icon />
-        </template>
-        <v-list-item-title font-bold>{{ settingsType }}</v-list-item-title>
-      </v-list-item>
+        :color
+        :icon
+        :is-active="settingsType === modelValue"
+        :settings-type
+        @click="onClick($event)"
+      />
     </v-list>
   </MessageModelSettingsLeftSideBar>
 </template>

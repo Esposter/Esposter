@@ -36,18 +36,12 @@ const save = async () => {
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="12" sm="8" md="6">
-        <div font-semibold mb-1>Category</div>
-        <v-select
+      <v-col cols="12" md="6" sm="8">
+        <MessageModelRoomSettingsTypeOverviewCategoryField
           v-model="selectedCategoryId"
           :items="categoryItems"
-          item-title="name"
-          item-value="id"
-          density="compact"
-          hide-details
-          @update:model-value="save()"
+          @save="save()"
         />
-        <div text-xs class="text-medium-emphasis" mt-1>Assign this room to a category to group it in the sidebar.</div>
       </v-col>
     </v-row>
   </v-container>
