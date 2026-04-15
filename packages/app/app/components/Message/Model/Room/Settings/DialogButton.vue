@@ -19,12 +19,6 @@ const isDeleteOpen = ref(false);
 const roomStore = useRoomStore();
 const { rooms } = storeToRefs(roomStore);
 const room = computed(() => rooms.value.find(({ id }) => id === roomId));
-
-watch(settingsType, (newSettingsType) => {
-  if (newSettingsType !== SettingsType.Delete) return;
-  settingsType.value = SettingsType.Overview;
-  isDeleteOpen.value = true;
-});
 </script>
 
 <template>
@@ -38,7 +32,7 @@ watch(settingsType, (newSettingsType) => {
       </v-tooltip>
     </template>
     <v-app>
-      <MessageModelRoomSettingsLeftSideBar v-model="settingsType" />
+      <MessageModelRoomSettingsLeftSideBar v-model="settingsType" @open-delete="isDeleteOpen = true" />
       <MessageModelRoomSettingsRightSideBar @close="dialog = false" />
       <MessageModelRoomSettingsContent :room-id :settings-type />
     </v-app>

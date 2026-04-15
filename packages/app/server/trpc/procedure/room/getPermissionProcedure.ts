@@ -1,4 +1,4 @@
-import type { RoomPermission } from "@esposter/shared";
+import type { RoomPermission } from "@esposter/db-schema";
 import type { inferParser } from "@trpc/server/unstable-core-do-not-import";
 import type { z } from "zod";
 

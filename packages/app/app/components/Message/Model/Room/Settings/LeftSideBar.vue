@@ -3,6 +3,7 @@ import { SettingsType } from "@/models/message/room/SettingsType";
 import { SettingsListItemMap } from "@/services/message/settings/SettingsListItemMap";
 
 const modelValue = defineModel<SettingsType>({ required: true });
+const emit = defineEmits<{ openDelete: [] }>();
 </script>
 
 <template>
@@ -13,7 +14,7 @@ const modelValue = defineModel<SettingsType>({ required: true });
         :key="settingsType"
         :active="settingsType === modelValue"
         :base-color="color"
-        @click="modelValue = settingsType"
+        @click="settingsType === SettingsType.Delete ? emit('openDelete') : (modelValue = settingsType)"
       >
         <template #prepend>
           <v-icon :icon />

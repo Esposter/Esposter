@@ -5,8 +5,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
 import { roleRouter } from "@@/server/trpc/routers/role";
-import { roomRoles, rooms, RoomType, usersToRooms } from "@esposter/db-schema";
-import { RoomPermission } from "@esposter/shared";
+import { roomRoles, rooms, RoomPermission, RoomType, usersToRooms } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 

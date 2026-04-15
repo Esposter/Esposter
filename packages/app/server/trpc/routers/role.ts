@@ -13,13 +13,14 @@ import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProce
 import { getPermissionProcedure } from "@@/server/trpc/procedure/room/getPermissionProcedure";
 import {
   DatabaseEntityType,
+  RoomPermission,
   roomRoles,
   selectRoomRoleSchema,
   selectRoomSchema,
   selectUserSchema,
   usersToRoomRoles,
 } from "@esposter/db-schema";
-import { InvalidOperationError, NotFoundError, Operation, RoomPermission } from "@esposter/shared";
+import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, desc, eq } from "drizzle-orm";
 import { z } from "zod";
