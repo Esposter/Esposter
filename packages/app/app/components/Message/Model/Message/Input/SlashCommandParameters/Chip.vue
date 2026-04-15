@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { REQUIRED_ERROR_MESSAGE } from "@/services/message/slashCommands/constants";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 
 interface ChipProps {
@@ -57,6 +58,7 @@ onMounted(() => {
       ref="input"
       v-model="modelValue"
       class="parameter-chip__input"
+      color-inherit
       bg-transparent
       b-none
       outline-none
@@ -64,7 +66,7 @@ onMounted(() => {
       :autofocus
       @focus="emit('focus')"
       @blur="emit('blur')"
-      @update:model-value="setErrors(name, isRequired && !$event.trim() ? [`${name} is required`] : [])"
+      @update:model-value="setErrors(name, isRequired && !$event.trim() ? [REQUIRED_ERROR_MESSAGE] : [])"
       @keydown.enter.prevent="emit('submit')"
       @keydown.delete="!modelValue && emit('delete')"
       @keydown.left.exact="
@@ -94,7 +96,7 @@ onMounted(() => {
   border: 1.5px solid rgba(var(--v-border-color), var(--v-border-opacity));
 
   &:focus-within {
-    border-color: rgb(var(--v-theme-primary));
+    border-color: rgb(var(--v-theme-info));
   }
 
   &--error {
@@ -111,7 +113,6 @@ onMounted(() => {
 
   &__input {
     field-sizing: content;
-    min-width: 4rem;
   }
 }
 </style>

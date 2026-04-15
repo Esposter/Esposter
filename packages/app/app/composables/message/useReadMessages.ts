@@ -19,7 +19,6 @@ export const useReadMessages = () => {
   const { readItems, readMoreItems } = dataStore;
   const { hasMoreNewer, nextCursorNewer } = storeToRefs(dataStore);
   const online = useOnline();
-  const { unshiftMessages } = dataStore;
   const readMembersByIds = useReadMembersByIds();
   const readAppUsers = useReadAppUsers();
   const readReplies = useReadReplies();
@@ -105,19 +104,26 @@ export const useReadMessages = () => {
 
   const readMoreNewerMessages = async (onComplete: () => void) => {
     if (!currentRoomId.value) return;
-    const {
-      hasMore: newHasMore,
-      items,
-      nextCursor: newNextCursor,
-    } = await $trpc.message.readMessages.query({
+
+    const response = await $trpc.message.readMessages.query({
       cursor: nextCursorNewer.value,
       order: SortOrder.Asc,
       roomId: currentRoomId.value,
     });
-    hasMoreNewer.value = newHasMore;
-    nextCursorNewer.value = newNextCursor;
-    unshiftMessages(...items);
-    await readMetadata(items);
+    hasMoreNewer.value = response.hasMore;
+    nextCursorNewer.value = response.nextCursor;
+
+    const rowKeys = new Set(response.items.map((i) => i.rowKey));
+    const newerItems: MessageEntity[] = [];
+    const olderItems: MessageEntity[] = [];
+
+    for (const item of dataStore.items)
+      if (!rowKeys.has(item.rowKey))
+        if (response.items.length > 0 && item.rowKey < takeOne(response.items).rowKey) newerItems.push(item);
+        else olderItems.push(item);
+
+    dataStore.items = [...newerItems, ...response.items, ...olderItems];
+    await readMetadata(response.items);
     onComplete();
   };
 

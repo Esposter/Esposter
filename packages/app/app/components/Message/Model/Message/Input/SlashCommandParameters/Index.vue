@@ -3,6 +3,7 @@ import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
 import type { SlashCommandParameters } from "@/models/message/slashCommands/SlashCommandParameters";
 import type { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
 
+import { REQUIRED_ERROR_MESSAGE } from "@/services/message/slashCommands/constants";
 import { SlashCommandDefinitionMap } from "@/services/message/slashCommands/SlashCommandDefinitionMap";
 import { useInputStore } from "@/store/message/input";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
@@ -11,27 +12,16 @@ import { useRoomStore } from "@/store/message/room";
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const slashCommandStore = useSlashCommandStore();
-const { parameterValues, pendingSlashCommand } = storeToRefs(slashCommandStore);
-const { buildText, clearPendingSlashCommand, setErrors, setPendingSlashCommand } = slashCommandStore;
+const { activeParameterNames, focusedIndex, lastAddedParameterName, parameterValues, pendingSlashCommand } =
+  storeToRefs(slashCommandStore);
+const { buildText, clearPendingSlashCommand, createParameter, setErrors, setPendingSlashCommand } = slashCommandStore;
 const inputStore = useInputStore();
 const { input } = storeToRefs(inputStore);
 const executeSlashCommand = useExecuteSlashCommand();
-const { execute, isLoading } = useInFlight();
-const activeParameterNames = ref<string[]>([]);
 const commandTitle = ref(pendingSlashCommand.value?.type ?? "");
-const lastAddedParameterName = ref<null | string>(null);
-const focusedIndex = ref(0);
-const suggestedItems = computed(() => {
-  const query = commandTitle.value.toLowerCase();
-  return Object.values(SlashCommandDefinitionMap).filter(
-    ({ description, title }) => title.toLowerCase().includes(query) || description.toLowerCase().includes(query),
-  );
-});
 
 watchImmediate(pendingSlashCommand, (newPendingSlashCommand) => {
   if (newPendingSlashCommand) commandTitle.value = newPendingSlashCommand.type;
-  activeParameterNames.value = newPendingSlashCommand?.parameters.map(({ name }) => name) ?? [];
-  lastAddedParameterName.value = null;
 });
 
 const activeParameters = computed(
@@ -40,18 +30,12 @@ const activeParameters = computed(
 const hiddenParameters = computed(
   () => pendingSlashCommand.value?.parameters.filter(({ name }) => !activeParameterNames.value.includes(name)) ?? [],
 );
-const requiredHiddenParameters = computed(() => hiddenParameters.value.filter(({ isRequired }) => isRequired));
-const optionalHiddenParameters = computed(() => hiddenParameters.value.filter(({ isRequired }) => !isRequired));
 
 const collapseToText = () => {
   input.value = buildText();
   clearPendingSlashCommand();
 };
 
-const createParameter = (name: string) => {
-  lastAddedParameterName.value = name;
-  activeParameterNames.value = [...activeParameterNames.value, name];
-};
 const deleteParameter = (index: number) => {
   const name = activeParameters.value[index]?.name;
   if (!name) return;
@@ -92,34 +76,34 @@ const deleteLastParameter = () => {
   const lastIndex = activeParameters.value.length - 1;
   if (lastIndex >= 0) deleteParameter(lastIndex);
 };
-const submit = () =>
-  execute(async () => {
-    if (!pendingSlashCommand.value || !currentRoomId.value) return;
+const submit = async () => {
+  if (!pendingSlashCommand.value || !currentRoomId.value) return;
 
-    const missingRequiredParameters = pendingSlashCommand.value.parameters.filter(
-      ({ isRequired, name }) => isRequired && !parameterValues.value[name]?.trim(),
+  const missingRequiredParameters = pendingSlashCommand.value.parameters.filter(
+    ({ isRequired, name }) => isRequired && !parameterValues.value[name]?.trim(),
+  );
+
+  for (const { isRequired, name } of pendingSlashCommand.value.parameters)
+    if (isRequired) setErrors(name, parameterValues.value[name]?.trim() ? [] : [REQUIRED_ERROR_MESSAGE]);
+
+  if (missingRequiredParameters.length > 0) {
+    const hiddenMissingParameters = missingRequiredParameters.filter(
+      ({ name }) => !activeParameterNames.value.includes(name),
     );
+    if (hiddenMissingParameters.length > 0)
+      activeParameterNames.value = [...activeParameterNames.value, ...hiddenMissingParameters.map(({ name }) => name)];
+    return;
+  }
 
-    for (const { isRequired, name } of pendingSlashCommand.value.parameters)
-      if (isRequired) setErrors(name, parameterValues.value[name]?.trim() ? [] : [`${name} is required`]);
-
-    if (missingRequiredParameters.length > 0) {
-      const hiddenMissingParameters = missingRequiredParameters.filter(
-        ({ name }) => !activeParameterNames.value.includes(name),
-      );
-      if (hiddenMissingParameters.length > 0)
-        activeParameterNames.value = [
-          ...activeParameterNames.value,
-          ...hiddenMissingParameters.map(({ name }) => name),
-        ];
-      return;
-    }
-
-    await executeSlashCommand({ parameterValues: parameterValues.value, type: pendingSlashCommand.value.type } as {
-      [P in SlashCommandType]: { parameterValues: SlashCommandParameters<P>; type: P };
-    }[SlashCommandType]);
-    clearPendingSlashCommand();
-  });
+  const payload = {
+    parameterValues: parameterValues.value,
+    type: pendingSlashCommand.value.type,
+  } as {
+    [P in SlashCommandType]: { parameterValues: SlashCommandParameters<P>; type: P };
+  }[SlashCommandType];
+  clearPendingSlashCommand();
+  await executeSlashCommand(payload);
+};
 
 useEventListener("keydown", (event: KeyboardEvent) => {
   if (event.key === "Escape" || (event.key === "Backspace" && focusedIndex.value === -1)) collapseToText();
@@ -130,13 +114,11 @@ useEventListener("keydown", (event: KeyboardEvent) => {
   <div v-if="pendingSlashCommand" w-full>
     <StyledCard>
       <div flex items-center gap-2 px-4 pt-3 pb-2>
-        <MessageModelMessageInputSlashCommandParametersCommandInputMenu
+        <MessageModelMessageInputSlashCommandParametersCommandInput
           v-model="commandTitle"
-          :items="suggestedItems"
           :is-focused="focusedIndex === -1"
           @navigate:next="commandNavigateNext"
           @delete="collapseToText"
-          @select:command="selectCommand"
           @focus="focus(-1)"
           @blur="blur(-1)"
         />
@@ -156,11 +138,8 @@ useEventListener("keydown", (event: KeyboardEvent) => {
             @blur="blur(index)"
           />
         </template>
-        <MessageModelMessageInputSlashCommandParametersTrailingInputMenu
+        <MessageModelMessageInputSlashCommandParametersTrailingInput
           :hidden-parameters
-          :required-hidden-parameters
-          :optional-hidden-parameters
-          :options-label="`+${hiddenParameters.length} ${hiddenParameters.length === 1 ? 'option' : 'options'}`"
           :active-parameters-length="activeParameters.length"
           :is-focused="focusedIndex === activeParameters.length"
           @create-parameter="createParameter"
@@ -172,7 +151,7 @@ useEventListener("keydown", (event: KeyboardEvent) => {
           @focus="focus(activeParameters.length)"
           @blur="blur(activeParameters.length)"
         />
-        <MessageModelMessageInputSendMessageButton :is-loading @click="submit" />
+        <MessageModelMessageInputSendMessageButton @click="submit" />
       </div>
     </StyledCard>
     <div flex justify-between px-1 pt-1>

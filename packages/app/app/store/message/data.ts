@@ -29,6 +29,7 @@ export const useDataStore = defineStore("message/data", () => {
   const files = computed(() => items.value.flatMap(({ files }) => files));
   const hasMoreNewer = ref(false);
   const nextCursorNewer = ref<string>();
+  const typings = ref<CreateTypingInput[]>([]);
 
   const createMessage = async (input: StandardCreateMessageInput) => {
     if (!session.value.data) return;
@@ -75,7 +76,6 @@ export const useDataStore = defineStore("message/data", () => {
   MessageHookMap.ResetSend.push((editor) => {
     editor.commands.clearContent(true);
   });
-  const typings = ref<CreateTypingInput[]>([]);
   // We only expose the internal store crud message functions for subscriptions
   // Everything else will directly use trpc mutations that are tracked by the related subscriptions
   return {

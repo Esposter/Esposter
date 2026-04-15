@@ -2,18 +2,33 @@ import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
 import type { SlashCommandParameter } from "@/models/message/slashCommands/SlashCommandParameter";
 import type { SlashCommandParameterError } from "@/models/message/slashCommands/SlashCommandParameterError";
 
+import { useRoomStore } from "@/store/message/room";
 import { ID_SEPARATOR, takeOne, toRawDeep } from "@esposter/shared";
 
 export const useSlashCommandStore = defineStore("message/input/slashCommand", () => {
-  const pendingSlashCommand = ref<null | SlashCommand>(null);
-  const parameterValues = ref<Record<string, string>>({});
-  const errors = ref<SlashCommandParameterError[]>([]);
-  const trailingMessage = ref("");
+  const roomStore = useRoomStore();
+  const { data: pendingSlashCommand } = useDataMap<null | SlashCommand>(() => roomStore.currentRoomId, null);
+  const { data: parameterValues } = useDataMap<Record<string, string>>(() => roomStore.currentRoomId, {});
+  const { data: activeParameterNames } = useDataMap<string[]>(() => roomStore.currentRoomId, []);
+  const { data: errors } = useDataMap<SlashCommandParameterError[]>(() => roomStore.currentRoomId, []);
+  const { data: trailingMessage } = useDataMap(() => roomStore.currentRoomId, "");
+  const { data: focusedIndex } = useDataMap(() => roomStore.currentRoomId, 0);
+  const { data: selectedHiddenIndex } = useDataMap(() => roomStore.currentRoomId, 0);
+  const { data: lastAddedParameterName } = useDataMap<null | string>(() => roomStore.currentRoomId, null);
+
+  watch(activeParameterNames, () => {
+    selectedHiddenIndex.value = 0;
+  });
 
   const setErrors = (id: string, messages: string[]) => {
     const index = errors.value.findIndex((e) => e.id === id);
     if (index === -1) errors.value = [...errors.value, { id, messages }];
     else errors.value = errors.value.map((e) => (e.id === id ? { ...e, messages } : e));
+  };
+
+  const createParameter = (name: string) => {
+    lastAddedParameterName.value = name;
+    activeParameterNames.value = [...activeParameterNames.value, name];
   };
 
   const parseTextAndParameters = (
@@ -23,10 +38,13 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
     const result: Record<string, string> = {};
     let remainingText = text.trim();
 
-    for (const { name } of parameters) {
-      const prefix = `${name}${ID_SEPARATOR}`;
-      if (!remainingText.startsWith(prefix)) continue;
-      remainingText = remainingText.slice(prefix.length);
+    while (remainingText.length > 0) {
+      const currentText = remainingText;
+      const parameter = parameters.find(({ name }) => currentText.startsWith(`${name}${ID_SEPARATOR}`));
+      if (!parameter) break;
+
+      const { name } = parameter;
+      remainingText = remainingText.slice(name.length + ID_SEPARATOR.length);
 
       let nextParameterStartIndex = -1;
       for (const { name: nextName } of parameters) {
@@ -42,7 +60,7 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
         break;
       } else {
         result[name] = remainingText.slice(0, nextParameterStartIndex);
-        remainingText = remainingText.slice(nextParameterStartIndex + 1);
+        remainingText = remainingText.slice(nextParameterStartIndex + 1).trimStart();
       }
     }
 
@@ -66,7 +84,10 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
       trailingMessage.value = "";
     }
 
+    activeParameterNames.value = parameters.map(({ name }) => name);
     errors.value = [];
+    focusedIndex.value = 0;
+    lastAddedParameterName.value = null;
   };
 
   const buildText = (): string => {
@@ -86,16 +107,24 @@ export const useSlashCommandStore = defineStore("message/input/slashCommand", ()
   const clearPendingSlashCommand = () => {
     pendingSlashCommand.value = null;
     parameterValues.value = {};
+    activeParameterNames.value = [];
     errors.value = [];
     trailingMessage.value = "";
+    focusedIndex.value = 0;
+    lastAddedParameterName.value = null;
   };
 
   return {
+    activeParameterNames,
     buildText,
     clearPendingSlashCommand,
+    createParameter,
     errors,
+    focusedIndex,
+    lastAddedParameterName,
     parameterValues,
     pendingSlashCommand,
+    selectedHiddenIndex,
     setErrors,
     setPendingSlashCommand,
     trailingMessage,
