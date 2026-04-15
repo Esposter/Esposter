@@ -1,14 +1,23 @@
+import type { Router } from "vue-router";
+
 import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
 
 import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 import { ID_SEPARATOR } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe(useSlashCommandStore, () => {
+  let router: Router;
+
+  beforeAll(() => {
+    router = useRouter();
+  });
+
   beforeEach(() => {
     setActivePinia(createPinia());
+    router.currentRoute.value.params.id = crypto.randomUUID();
   });
 
   const description = "description";
