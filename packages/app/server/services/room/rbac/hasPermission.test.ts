@@ -1,13 +1,11 @@
-// @vitest-environment node
 import type { Context } from "@@/server/trpc/context";
 
+import { hasPermission } from "@@/server/services/room/rbac/hasPermission";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { roomRoles, rooms, RoomType, usersToRoomRoles, usersToRooms } from "@esposter/db-schema";
-import { RoomPermission } from "@esposter/shared";
+import { RoomPermission, takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";
-
-import { hasPermission } from "./hasPermission";
 
 describe(hasPermission, () => {
   let mockContext: Context;
@@ -22,9 +20,9 @@ describe(hasPermission, () => {
     await mockContext.db.delete(rooms);
     const { user: owner } = await mockSessionOnce(mockContext.db);
     ownerId = owner.id;
-    const room = (
-      await mockContext.db.insert(rooms).values({ name: "", type: RoomType.Room, userId: ownerId }).returning()
-    )[0]!;
+    const room = takeOne(
+      await mockContext.db.insert(rooms).values({ name: "", type: RoomType.Room, userId: ownerId }).returning(),
+    );
     roomId = room.id;
     await mockContext.db.delete(roomRoles).where(eq(roomRoles.roomId, roomId));
   });
@@ -46,16 +44,16 @@ describe(hasPermission, () => {
     expect(result).toBe(false);
   });
 
-  test("Administrator bit grants all permissions", async () => {
+  test("administrator bit grants all permissions", async () => {
     expect.hasAssertions();
 
     await mockContext.db
       .insert(roomRoles)
       .values({ name: "Admin", permissions: RoomPermission.Administrator, position: 1, roomId });
-    const [adminRole] = await mockContext.db.select().from(roomRoles).where(eq(roomRoles.roomId, roomId));
+    const adminRole = takeOne(await mockContext.db.select().from(roomRoles).where(eq(roomRoles.roomId, roomId)));
     const { user } = await mockSessionOnce(mockContext.db);
     await mockContext.db.insert(usersToRooms).values({ roomId, userId: user.id });
-    await mockContext.db.insert(usersToRoomRoles).values({ roleId: adminRole!.id, roomId, userId: user.id });
+    await mockContext.db.insert(usersToRoomRoles).values({ roleId: adminRole.id, roomId, userId: user.id });
 
     const result = await hasPermission(mockContext.db, user.id, roomId, RoomPermission.ManageMessages);
 
