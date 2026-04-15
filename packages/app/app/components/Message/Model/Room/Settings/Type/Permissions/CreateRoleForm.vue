@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { CreateRoleInput } from "#shared/models/db/role/CreateRoleInput";
 import type { Room } from "@esposter/db-schema";
 
 import { useRoleStore } from "@/store/message/room/role";
@@ -14,9 +13,9 @@ const roleStore = useRoleStore();
 const { createRole } = roleStore;
 const name = ref("");
 const submit = async () => {
-  const createRoleInput: CreateRoleInput = { name: name.value, permissions: 0n, position: 0 };
+  const nameValue = name.value;
   name.value = "";
-  await createRole(roomId, createRoleInput);
+  await createRole({ name: nameValue, permissions: 0n, position: 0, roomId });
   emit("create:role");
 };
 </script>

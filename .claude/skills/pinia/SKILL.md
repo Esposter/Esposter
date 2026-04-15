@@ -156,6 +156,63 @@ const setSessionId = (id: string) => {
 const { data: session } = await authClient.useSession(useFetch);
 ```
 
+## tRPC Input Types — Pass Full Object, Never Split
+
+Store action params mirror the tRPC input type directly. Never split a shared field (e.g. `roomId`) out as a separate argument and use `Except<Input, "roomId">` for the rest. Pass the full input type as a single argument and spread it directly to the mutation.
+
+```typescript
+// WRONG — splits roomId out, reconstructs with spread
+const createRole = async (roomId: Room["id"], input: Except<CreateRoleInput, "roomId">) => {
+  const newRole = await $trpc.role.createRole.mutate({ ...input, roomId });
+};
+
+// CORRECT — single input matching the tRPC type
+const createRole = async (input: CreateRoleInput) => {
+  const newRole = await $trpc.role.createRole.mutate(input);
+};
+```
+
+Call sites pass the full object inline:
+
+```typescript
+// WRONG
+await createRole(roomId, { id: selectedRole.value.id, permissions: pendingPermissions.value });
+
+// CORRECT
+await createRole({ roomId, id: selectedRole.value.id, permissions: pendingPermissions.value });
+```
+
+## Reactive Map Mutations
+
+Vue 3 tracks `Map` mutations (`set`, `delete`, `clear`) on a `ref(new Map(...))` — no need to clone and reassign. Call `.set()` directly on `rolesMap.value`.
+
+```typescript
+// WRONG — unnecessary clone + reassign
+rolesMap.value = new Map(rolesMap.value).set(roomId, result);
+
+// CORRECT — mutate in place; Vue reactivity picks it up
+rolesMap.value.set(roomId, result);
+```
+
+## useDataMap for Key-to-Value State
+
+Use `useDataMap<T>(currentId, defaultValue)` for state keyed by an id **when there is a meaningful "current" id** (e.g. `currentRoomId`) — `useDataMap` provides `getDataMap`, `setDataMap`, `data`, `initializeData`, and `resetData` out of the box. The `data` computed is tied to the current key.
+
+**Do NOT use** `useDataMap` when the store must read/write arbitrary keys with no concept of a "current" one. In that case, a plain `ref(new Map<string, T>())` with a manual getter is correct.
+
+```typescript
+// useDataMap — correct when "current room" concept applies (e.g. message input state)
+const roomStore = useRoomStore();
+const { data: notificationType, setDataMap } = useDataMap(
+  () => roomStore.currentRoomId,
+  NotificationType.DirectMessage,
+);
+
+// Manual Map — correct when any key can be accessed (e.g. roles loaded per room on demand)
+const rolesMap = ref(new Map<string, RoomRole[]>());
+const getRoles = (roomId: string) => rolesMap.value.get(roomId) ?? [];
+```
+
 ## Minimal Input Pattern for Store Actions
 
 Store action params = minimum input required (typically just an ID). Full entity comes from the **API response**, not the caller.

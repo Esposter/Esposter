@@ -10,7 +10,7 @@ interface PermissionsSettingsProps {
 const { roomId } = defineProps<PermissionsSettingsProps>();
 const roleStore = useRoleStore();
 const { getRoles, readRoles, updateRole } = roleStore;
-await readRoles(roomId);
+await readRoles({ roomId });
 
 const roles = computed(() => getRoles(roomId));
 const selectedRoleId = ref(roles.value[0]?.id ?? null);
@@ -32,7 +32,7 @@ const isDirty = computed(
 
 const save = async () => {
   if (!selectedRole.value) return;
-  await updateRole(roomId, { id: selectedRole.value.id, permissions: pendingPermissions.value });
+  await updateRole({ roomId, id: selectedRole.value.id, permissions: pendingPermissions.value });
 };
 
 const reset = () => {

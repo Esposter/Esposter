@@ -23,7 +23,7 @@ const { deleteRole } = roleStore;
         icon="mdi-trash-can-outline"
         size="x-small"
         variant="plain"
-        @click.stop="deleteRole(roomId, { id: roleId })"
+        @click.stop="deleteRole({ roomId, id: roleId })"
       />
     </template>
   </v-tooltip>
