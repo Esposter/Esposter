@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SettingsType } from "@/models/message/room/SettingsType";
+import type { SettingsType } from "@/models/message/room/SettingsType";
 
 interface RoomSettingsLeftSideBarItemProps {
   color?: string;

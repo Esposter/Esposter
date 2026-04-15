@@ -15,6 +15,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
   const createRole = async (input: CreateRoleInput) => {
     const newRole = await $trpc.role.createRole.mutate(input);
     rolesMap.value.set(input.roomId, [newRole, ...getRoles(input.roomId)]);
+    return newRole;
   };
   const updateRole = async (input: UpdateRoleInput) => {
     const updatedRole = await $trpc.role.updateRole.mutate(input);
