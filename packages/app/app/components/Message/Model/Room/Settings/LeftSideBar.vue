@@ -19,7 +19,7 @@ const emit = defineEmits<{ "open:delete": [] }>();
         @click="
           (settingsType) => {
             if (settingsType === SettingsType.Delete) emit('open:delete');
-            else modelValue.value = settingsType;
+            else modelValue = settingsType;
           }
         "
       />

@@ -15,10 +15,10 @@ await readRoles({ roomId });
 const roles = computed(() => getRoles(roomId));
 const selectedRoleId = ref(roles.value[0]?.id ?? null);
 const selectedRole = computed(() => roles.value.find(({ id }) => id === selectedRoleId.value) ?? null);
-const pendingPermissions = ref(selectedRole.value?.permissions ?? 0n);
+const permissions = ref(selectedRole.value?.permissions ?? 0n);
 
 watch(selectedRole, (newSelectedRole) => {
-  pendingPermissions.value = newSelectedRole?.permissions ?? 0n;
+  permissions.value = newSelectedRole?.permissions ?? 0n;
 });
 
 watch(roles, (newRoles) => {
@@ -26,18 +26,7 @@ watch(roles, (newRoles) => {
     selectedRoleId.value = newRoles[0]?.id ?? null;
 });
 
-const isDirty = computed(
-  () => selectedRole.value !== null && pendingPermissions.value !== selectedRole.value.permissions,
-);
-
-const save = async () => {
-  if (!selectedRole.value) return;
-  await updateRole({ id: selectedRole.value.id, permissions: pendingPermissions.value, roomId });
-};
-
-const reset = () => {
-  pendingPermissions.value = selectedRole.value?.permissions ?? 0n;
-};
+const isDirty = computed(() => selectedRole.value && permissions.value !== selectedRole.value.permissions);
 </script>
 
 <template>
@@ -57,10 +46,12 @@ const reset = () => {
       </v-col>
       <v-col v-if="selectedRole">
         <div mb-2 text-lg font-bold>{{ selectedRole.name }}</div>
-        <MessageModelRoomSettingsTypePermissionsPermissionList v-model="pendingPermissions" />
+        <MessageModelRoomSettingsTypePermissionsPermissionList v-model="permissions" />
         <template v-if="isDirty">
-          <MessageModelRoomSettingsTypePermissionsSaveButton @save="save()" />
-          <MessageModelRoomSettingsTypePermissionsResetButton @reset="reset()" />
+          <MessageModelRoomSettingsTypePermissionsSaveButton
+            @save="updateRole({ id: selectedRole.id, permissions, roomId })"
+          />
+          <MessageModelRoomSettingsTypePermissionsResetButton @reset="permissions = selectedRole.permissions" />
         </template>
       </v-col>
       <v-col v-else class="text-medium-emphasis" align-center d-flex justify-center>
