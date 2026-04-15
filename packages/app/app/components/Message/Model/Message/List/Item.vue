@@ -111,7 +111,7 @@ watch(optionsMenu, (newOptionsMenu) => {
                 />
               </template>
               <template #messagePreview>
-                <MessageModelMessageType :creator :message :next-message is-preview />
+                <component :is="MessageComponentMap[message.type]" :creator :message is-preview />
               </template>
             </MessageModelMessageConfirmPinDialog>
           </v-hover>
@@ -119,7 +119,7 @@ watch(optionsMenu, (newOptionsMenu) => {
       </div>
     </template>
     <template #messagePreview>
-      <MessageModelMessageType :creator :message :next-message is-preview />
+      <component :is="MessageComponentMap[message.type]" :creator :message is-preview />
     </template>
   </MessageModelMessageConfirmDeleteDialog>
 </template>

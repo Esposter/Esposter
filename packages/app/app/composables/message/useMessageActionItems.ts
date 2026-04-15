@@ -111,7 +111,9 @@ export const useMessageActionItems = (
       case MessageType.Webhook:
         return [copyTextItem, pinMessageItem.value, copyMessageLinkItem];
       case MessageType.PinMessage:
+        return [copyMessageLinkItem];
       case MessageType.Poll:
+        return [pinMessageItem.value, copyMessageLinkItem];
       case MessageType.VoiceCall:
         return [copyMessageLinkItem];
       default:
