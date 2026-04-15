@@ -9,16 +9,10 @@ interface RoleEditorProps {
 }
 
 const { role, roomId } = defineProps<RoleEditorProps>();
-const { updateRole } = useRoleStore();
+const roleStore = useRoleStore();
+const { updateRole } = roleStore;
 const permissions = ref(role.permissions);
 const isDirty = computed(() => permissions.value !== role.permissions);
-
-watch(
-  () => role.permissions,
-  (newPermissions) => {
-    permissions.value = newPermissions;
-  },
-);
 </script>
 
 <template>

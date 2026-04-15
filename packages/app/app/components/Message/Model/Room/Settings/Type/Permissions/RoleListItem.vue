@@ -1,18 +1,21 @@
 <script setup lang="ts">
 import type { Room, RoomRole } from "@esposter/db-schema";
 
+import { useRoleStore } from "@/store/message/room/role";
+
 interface RoleListItemProps {
-  isActive: boolean;
   role: RoomRole;
   roomId: Room["id"];
 }
 
-const { isActive, role, roomId } = defineProps<RoleListItemProps>();
-const emit = defineEmits<{ click: [] }>();
+const { role, roomId } = defineProps<RoleListItemProps>();
+const roleStore = useRoleStore();
+const { selectRole } = roleStore;
+const { selectedRoleId } = storeToRefs(roleStore);
 </script>
 
 <template>
-  <v-list-item :active="isActive" @click="emit('click')">
+  <v-list-item :active="role.id === selectedRoleId" @click="selectRole(role.id)">
     <template #prepend>
       <div h-3 mr-2 rd-full w-3 :style="{ backgroundColor: role.color ?? 'rgb(var(--v-theme-on-surface-variant))' }" />
     </template>

@@ -9,13 +9,16 @@ description: Esposter Pinia store conventions — full store name, destructure w
 
 - **`storeToRefs` is auto-imported** — never write `import { storeToRefs } from "pinia"`. Same applies to `defineStore` in `.vue` and composable files.
 - **Naming**: always use the full descriptive store name — `const fileTableEditorStore = useFileTableEditorStore()`, `const objectStore = useObjectStore()`. Never use `const store = ...` — the only exception is a conditional assignment where the store type varies at runtime (e.g. `const store = isEnemy ? useEnemyStore() : usePlayerStore()`).
-- **In Vue components**: always destructure, and keep each store's lines grouped together in this order — fully extract one store before moving to the next. Never batch all store inits, then all storeToRefs, then all methods:
+- **In Vue components**: always assign the store to a named variable first (`const roleStore = useRoleStore()`), then destructure from it. Never destructure directly from the `useXxxStore()` call. Then keep each store's lines grouped together in this order — fully extract one store before moving to the next. Never batch all store inits, then all storeToRefs, then all methods:
   1. `const xyzStore = useXyzStore()`
   2. `const { ref1, ref2 } = storeToRefs(xyzStore)` _(omit if no refs/computeds needed)_
   3. `const { method1 } = xyzStore` _(omit if no methods needed)_
   4. _(repeat for next store)_
 
   ```typescript
+  // WRONG — destructuring directly from the call, no named store variable
+  const { createRole } = useRoleStore(); // ❌
+
   // CORRECT — each store fully extracted before moving to the next
   const blockStore = useBlockStore();
   const { blockedUsers } = storeToRefs(blockStore);
@@ -59,6 +62,79 @@ description: Esposter Pinia store conventions — full store name, destructure w
   // CORRECT — dot access, no storeToRefs
   const roomParticipants = computed(() => roomParticipantsMap.value.get(roomStore.currentRoomId));
   ```
+
+## Store as Single Source of Truth — Eliminate Watches and Prop Threading
+
+**Rule:** Reactive state shared across a component tree belongs in the store, not in local refs. Local refs + watches to sync state are a sign the data should live in the store.
+
+### Selection State
+
+When a component tree has a "selected item" concept (e.g. `selectedRoleId`), put it in the store:
+
+```typescript
+// store/message/room/role.ts
+const selectedRoleId = ref<string | null>(null);
+const selectedRole = computed(() => {
+  if (!selectedRoleId.value) return null;
+  for (const roles of rolesMap.value.values()) {
+    const role = roles.find(({ id }) => id === selectedRoleId.value);
+    if (role) return role;
+  }
+  return null;
+});
+const selectRole = (id: string) => {
+  selectedRoleId.value = id;
+};
+
+// Store mutations update selection directly — no emits needed
+const readRoles = async (input: ReadRolesInput) => {
+  const result = await $trpc.role.readRoles.query(input);
+  rolesMap.value.set(input.roomId, result);
+  selectedRoleId.value = result[0]?.id ?? null; // init selection
+};
+const createRole = async (input: CreateRoleInput) => {
+  const newRole = await $trpc.role.createRole.mutate(input);
+  rolesMap.value.set(input.roomId, [newRole, ...getRoles(input.roomId)]);
+  selectedRoleId.value = newRole.id; // auto-select created item
+  return newRole;
+};
+```
+
+Benefits:
+
+- Children read `selectedRoleId`/`selectedRole` from store directly — no prop threading
+- No `defineModel` + `watchImmediate` to sync parent ↔ child
+- Deletion automatically reflects: `selectedRole` computed returns `null` when the role is gone
+- No component-level watches to reset state on selection change
+
+### Eliminating Watches with `:key`
+
+When a child component has **local mutable state initialized from a prop** (e.g. `permissions = ref(role.permissions)`), the naive fix is a watch to reset it when the prop changes. The idiomatic fix is `:key`:
+
+```vue
+<!-- WRONG: watch in RoleEditor syncing permissions when role prop changes -->
+watch(() => role.permissions, (newPermissions) => { permissions.value = newPermissions; });
+
+<!-- CORRECT: :key forces Vue to remount RoleEditor when selection changes -->
+<RoleEditor :key="selectedRole.id" :role="selectedRole" :room-id />
+```
+
+The remounted component always initializes from the fresh prop — no watch needed.
+
+### Eliminating Prop Threading
+
+When children need store state, have them read the store directly. Don't thread props just to pass store data down:
+
+```vue
+<!-- WRONG: Index threads selectedRoleId → RoleList → RoleListItem as isActive prop -->
+<RoleList :roles :selected-role-id @select="selectRole($event)" />
+
+<!-- CORRECT: RoleListItem reads selectedRoleId from store directly -->
+<!-- RoleListItem.vue -->
+const { selectedRoleId } = storeToRefs(useRoleStore()); // template: :active="role.id === selectedRoleId"
+```
+
+This also eliminates the emit chain: `RoleListItem` calls `selectRole()` directly instead of emitting `click` → `RoleList` emitting `select` → parent calling `selectRole`.
 
 ## useDataMap Generic Usage
 

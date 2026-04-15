@@ -9,21 +9,19 @@ interface PermissionsSettingsProps {
 
 const { roomId } = defineProps<PermissionsSettingsProps>();
 const roleStore = useRoleStore();
-const { getRoles, readRoles } = roleStore;
+const { readRoles } = roleStore;
 const { selectedRole } = storeToRefs(roleStore);
 await readRoles({ roomId });
-
-const roles = computed(() => getRoles(roomId));
 </script>
 
 <template>
   <v-container fluid>
     <v-row>
       <v-col>
-        <MessageModelRoomSettingsTypePermissionsRoleSelector :roles :room-id />
+        <MessageModelRoomSettingsTypePermissionsRoleSelector :room-id />
       </v-col>
       <v-col v-if="selectedRole">
-        <MessageModelRoomSettingsTypePermissionsRoleEditor :role="selectedRole" :room-id />
+        <MessageModelRoomSettingsTypePermissionsRoleEditor :key="selectedRole.id" :role="selectedRole" :room-id />
       </v-col>
       <v-col v-else class="text-medium-emphasis" align-center d-flex justify-center>
         Select a role to edit its permissions.

@@ -8,7 +8,8 @@ interface CreateRoleFormProps {
 }
 
 const { roomId } = defineProps<CreateRoleFormProps>();
-const { createRole } = useRoleStore();
+const roleStore = useRoleStore();
+const { createRole } = roleStore;
 const name = ref("");
 const submit = async () => {
   const nameValue = name.value;
