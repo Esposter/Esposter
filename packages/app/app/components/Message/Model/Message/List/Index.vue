@@ -38,6 +38,7 @@ watchOnce(messageContainerElement, (newMessageContainerElement) => {
     flex-col-reverse
     overflow-x-hidden
     overflow-y-auto
+    overflow-anchor-none
     lines="two"
   >
     <template v-if="isPending">
