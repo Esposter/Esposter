@@ -105,25 +105,25 @@ export const useReadMessages = () => {
   const readMoreNewerMessages = async (onComplete: () => void) => {
     if (!currentRoomId.value) return;
 
-    const response = await $trpc.message.readMessages.query({
+    const { hasMore, items, nextCursor } = await $trpc.message.readMessages.query({
       cursor: nextCursorNewer.value,
       order: SortOrder.Asc,
       roomId: currentRoomId.value,
     });
-    hasMoreNewer.value = response.hasMore;
-    nextCursorNewer.value = response.nextCursor;
+    hasMoreNewer.value = hasMore;
+    nextCursorNewer.value = nextCursor;
 
-    const rowKeys = new Set(response.items.map((i) => i.rowKey));
+    const rowKeys = new Set(items.map((i) => i.rowKey));
     const newerItems: MessageEntity[] = [];
     const olderItems: MessageEntity[] = [];
 
     for (const item of dataStore.items)
       if (!rowKeys.has(item.rowKey))
-        if (response.items.length > 0 && item.rowKey < takeOne(response.items).rowKey) newerItems.push(item);
+        if (items.length > 0 && item.rowKey < takeOne(items).rowKey) newerItems.push(item);
         else olderItems.push(item);
 
-    dataStore.items = [...newerItems, ...response.items, ...olderItems];
-    await readMetadata(response.items);
+    dataStore.items = [...newerItems, ...items, ...olderItems];
+    await readMetadata(items);
     onComplete();
   };
 
