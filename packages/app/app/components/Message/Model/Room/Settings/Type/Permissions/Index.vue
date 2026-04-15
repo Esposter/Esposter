@@ -32,7 +32,7 @@ const isDirty = computed(
 
 const save = async () => {
   if (!selectedRole.value) return;
-  await updateRole({ roomId, id: selectedRole.value.id, permissions: pendingPermissions.value });
+  await updateRole({ id: selectedRole.value.id, permissions: pendingPermissions.value, roomId });
 };
 
 const reset = () => {
