@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Room, RoomRole } from "@esposter/db-schema";
+import type { Room } from "@esposter/db-schema";
 
 import { useRoleStore } from "@/store/message/room/role";
 
@@ -8,18 +8,19 @@ interface PermissionsSettingsProps {
 }
 
 const { roomId } = defineProps<PermissionsSettingsProps>();
-const { getRoles, readRoles } = useRoleStore();
+const roleStore = useRoleStore();
+const { getRoles, readRoles } = roleStore;
+const { selectedRole } = storeToRefs(roleStore);
 await readRoles({ roomId });
 
 const roles = computed(() => getRoles(roomId));
-const selectedRole = ref<null | RoomRole>(null);
 </script>
 
 <template>
   <v-container fluid>
     <v-row>
       <v-col>
-        <MessageModelRoomSettingsTypePermissionsRoleSelector v-model="selectedRole" :roles :room-id />
+        <MessageModelRoomSettingsTypePermissionsRoleSelector :roles :room-id />
       </v-col>
       <v-col v-if="selectedRole">
         <MessageModelRoomSettingsTypePermissionsRoleEditor :role="selectedRole" :room-id />

@@ -8,13 +8,27 @@ export const useRoleStore = defineStore("message/room/role", () => {
   const { $trpc } = useNuxtApp();
   const rolesMap = ref(new Map<string, RoomRole[]>());
   const getRoles = (roomId: string) => rolesMap.value.get(roomId) ?? [];
+  const selectedRoleId = ref<string | null>(null);
+  const selectedRole = computed(() => {
+    if (!selectedRoleId.value) return null;
+    for (const roles of rolesMap.value.values()) {
+      const role = roles.find(({ id }) => id === selectedRoleId.value);
+      if (role) return role;
+    }
+    return null;
+  });
+  const selectRole = (id: string) => {
+    selectedRoleId.value = id;
+  };
   const readRoles = async (input: ReadRolesInput) => {
     const result = await $trpc.role.readRoles.query(input);
     rolesMap.value.set(input.roomId, result);
+    selectedRoleId.value = result[0]?.id ?? null;
   };
   const createRole = async (input: CreateRoleInput) => {
     const newRole = await $trpc.role.createRole.mutate(input);
     rolesMap.value.set(input.roomId, [newRole, ...getRoles(input.roomId)]);
+    selectedRoleId.value = newRole.id;
     return newRole;
   };
   const updateRole = async (input: UpdateRoleInput) => {
@@ -31,5 +45,5 @@ export const useRoleStore = defineStore("message/room/role", () => {
       getRoles(input.roomId).filter((role) => role.id !== id),
     );
   };
-  return { createRole, deleteRole, getRoles, readRoles, updateRole };
+  return { createRole, deleteRole, getRoles, readRoles, selectRole, selectedRole, selectedRoleId, updateRole };
 });

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Room, RoomRole } from "@esposter/db-schema";
+import type { Room } from "@esposter/db-schema";
 
 import { useRoleStore } from "@/store/message/room/role";
 
@@ -8,14 +8,12 @@ interface CreateRoleFormProps {
 }
 
 const { roomId } = defineProps<CreateRoleFormProps>();
-const emit = defineEmits<{ "create:role": [role: RoomRole] }>();
 const { createRole } = useRoleStore();
 const name = ref("");
 const submit = async () => {
   const nameValue = name.value;
   name.value = "";
-  const newRole = await createRole({ name: nameValue, permissions: 0n, position: 0, roomId });
-  emit("create:role", newRole);
+  await createRole({ name: nameValue, permissions: 0n, position: 0, roomId });
 };
 </script>
 
