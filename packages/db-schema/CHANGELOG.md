@@ -3,26 +3,64 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.21.0](https://github.com/Esposter/Esposter/compare/v2.20.0...v2.21.0) (2026-04-15)
+
+### Bug Fixes
+
+* actually include room categories in schema ([9699eb7](https://github.com/Esposter/Esposter/commit/9699eb77e0962a0f8bfc17076499d8e6a87d2c0e))
+* cleanup schemas to be non-negative ([db5d026](https://github.com/Esposter/Esposter/commit/db5d026529d7860a74164ed66e478c70c918e896))
+* deps + disable unnecessary type args ([13cc22a](https://github.com/Esposter/Esposter/commit/13cc22a02897aa84b7cb637412a64d37aacbe2bd))
+* docs ([404622d](https://github.com/Esposter/Esposter/commit/404622dd7447dda768cfd7f53d3a0ed8b84840a4))
+* friend req table ([2dc91c8](https://github.com/Esposter/Esposter/commit/2dc91c8778f85f23cc90cdaea0e75bbf7964a80a))
+* lint ([9ead58f](https://github.com/Esposter/Esposter/commit/9ead58f7fa5276723753b4dc9c328061ff342bbf))
+* relations ([f6bc608](https://github.com/Esposter/Esposter/commit/f6bc60848404aa400f12b4916f026a78151805ef))
+* review comments ([7d73920](https://github.com/Esposter/Esposter/commit/7d739208fff3c295296afda42e3dedce484b25cd))
+* review comments ([2396844](https://github.com/Esposter/Esposter/commit/23968440ae923c0fd1d1fce3d178eb69c31485c4))
+* types ([ea4a525](https://github.com/Esposter/Esposter/commit/ea4a525ca46f0bbec11e23a1b458a5755e164ace))
+* user to rooms table ([a0426de](https://github.com/Esposter/Esposter/commit/a0426dea6ca3df478e17cd00525ad3d288f99e45))
+
+### Features
+
+* Add DMs ([d6315b1](https://github.com/Esposter/Esposter/commit/d6315b1a385e9df8bfcc720394bdd666bd6ffd89))
+* add friend request notification ([3bbd448](https://github.com/Esposter/Esposter/commit/3bbd448dcc23330bee926215d8ad196ce0388c94))
+* Add friends ([9ff1c3e](https://github.com/Esposter/Esposter/commit/9ff1c3e02c6c016d358189b7fe557d48273e54ef))
+* Add slash commands ([89d5ffc](https://github.com/Esposter/Esposter/commit/89d5ffce07f42e847f8d37d534174bcd40461c5f))
+* implement features + fix lint ([e62cdd4](https://github.com/Esposter/Esposter/commit/e62cdd42a44775ba52e06d57030da740c61e1a7a))
+* wip ([7e5afb7](https://github.com/Esposter/Esposter/commit/7e5afb71132ca4db8a2c55bb15916e583095cfd4))
+* wip ([efdfaeb](https://github.com/Esposter/Esposter/commit/efdfaeb3ee1b86edf2083dbc1f02fb3338111663))
+
 # [2.20.0](https://github.com/Esposter/Esposter/compare/v2.19.2...v2.20.0) (2026-03-29)
 
 ### Bug Fixes
 
 * extends ([a0490c9](https://github.com/Esposter/Esposter/commit/a0490c9ab0829bd91590aed7a5649eec61525167))
+
 * format + fix up some ignores ([6cd632f](https://github.com/Esposter/Esposter/commit/6cd632ff672ad8e0adee51b42cb6f6925f894b96))
+
 * lint ([e2c4dd5](https://github.com/Esposter/Esposter/commit/e2c4dd52af7b1bbbbd3b7eacec95ff9a201d0b57))
+
 * lint ([5a8028b](https://github.com/Esposter/Esposter/commit/5a8028b6d7320ef1b64a3e9be05437d1f20e2e01))
+
 * lint ([36ee460](https://github.com/Esposter/Esposter/commit/36ee460ee9e2df82331b4fd852e4be5a1878cd6e))
+
 * lint ([62401c8](https://github.com/Esposter/Esposter/commit/62401c8447d5401188f849051a54f8fcdb313cbc))
+
 * merge conflicts ([09e04f7](https://github.com/Esposter/Esposter/commit/09e04f7f3c063bf8cb115e1172ae2c53aa95a8ca))
+
 * satisfies ([aeb7b1f](https://github.com/Esposter/Esposter/commit/aeb7b1f12e6775a98d002ce5d7e263874b7875cc))
+
 * types ([5c87276](https://github.com/Esposter/Esposter/commit/5c872765137f747621af219e2987c5d862728432))
+
 * types ([728e6df](https://github.com/Esposter/Esposter/commit/728e6dfa38d44fa104cba6d29e1e02ae4c74b3ec))
+
 * types ([7ce2839](https://github.com/Esposter/Esposter/commit/7ce28397859a6d943f2959f40be7c15a96368ee9))
 
 ### Features
 
 * Add oxlint type aware ([eb40e2d](https://github.com/Esposter/Esposter/commit/eb40e2d7da8c606c66053582284264e0fb3a2592))
+
 * migrate to oxfmt ([e7a0212](https://github.com/Esposter/Esposter/commit/e7a0212f9ec18d7193c96cc6069ac6ecf168e8bb))
+
 * switch to tsgo ([1e504b3](https://github.com/Esposter/Esposter/commit/1e504b3a6ce5144dadbdd9bc543018a35e7b6808))
 
 ## [2.19.2](https://github.com/Esposter/Esposter/compare/v2.19.1...v2.19.2) (2026-02-05)
@@ -38,14 +76,19 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * lint ([8de2c97](https://github.com/Esposter/Esposter/commit/8de2c976c7ead4bb24607b7f28a2d50006ab7202))
+
 * lint ([7ace84b](https://github.com/Esposter/Esposter/commit/7ace84b2f3add94d5f555c17d5f3751864f0427b))
+
 * oxlint ([3df2ec1](https://github.com/Esposter/Esposter/commit/3df2ec1ad17f36d77780656e27d3034cd3ac32de))
 
 ### Features
 
 * **test:** add message tests ([3673b8e](https://github.com/Esposter/Esposter/commit/3673b8e6f0923a5761c058a333425617e639414d))
+
 * **test:** Add misc tests ([bcd0a9c](https://github.com/Esposter/Esposter/commit/bcd0a9c847f45a4686e126e2a10d5b8a9a704c10))
+
 * **test:** Add some omit tests ([0a44737](https://github.com/Esposter/Esposter/commit/0a44737e9535ed6de24533d40a670e41cdffdd73))
+
 * **test:** add some text tests ([1e251d1](https://github.com/Esposter/Esposter/commit/1e251d1b31a66127e4fb379bed5bc20274cd26b1))
 
 ## [2.18.2](https://github.com/Esposter/Esposter/compare/v2.18.1...v2.18.2) (2025-12-10)
@@ -61,24 +104,39 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * add achievement definitions + only show achievement snackbar for authed users ([458b26a](https://github.com/Esposter/Esposter/commit/458b26afbcc53a9e391bb5380ecfc9437b7c004f))
+
 * add mathwhiz + fix up recursive get props ([294460d](https://github.com/Esposter/Esposter/commit/294460dde615386683fb7bd0de3c5bf0d8e55b90))
+
 * definitions ([e7d2301](https://github.com/Esposter/Esposter/commit/e7d2301406c39b5cfd58e6537dd4f1786f1ffb3d))
+
 * imports ([f953ac2](https://github.com/Esposter/Esposter/commit/f953ac249d0881c59e6dfaf2dc7f0581cb333c13))
+
 * more fixes ([fe2193a](https://github.com/Esposter/Esposter/commit/fe2193ab7831a3b9bc0eab12003f78175417eea1))
+
 * tests ([be2a1be](https://github.com/Esposter/Esposter/commit/be2a1be6c92da786751c3c58cbbbf4da0a671912))
+
 * types ([977d0d1](https://github.com/Esposter/Esposter/commit/977d0d1b2d77756a24381cb7ede390bbd0a36875))
+
 * types ([aada69f](https://github.com/Esposter/Esposter/commit/aada69f31c3e199bd814e013883462b0b7f7fcd5))
+
 * use esm imports ([e583736](https://github.com/Esposter/Esposter/commit/e5837369bff15c20868d9486d93bf5192c48c58c))
 
 ### Features
 
 * Add achievement definitions ([97accb3](https://github.com/Esposter/Esposter/commit/97accb397c869a649855cff7b486b6c6a46de8bc))
+
 * Add achievements ([b77aa1d](https://github.com/Esposter/Esposter/commit/b77aa1d74af96d1e1445b94417f798b69464a1e4))
+
 * add activity plugin ([75aab58](https://github.com/Esposter/Esposter/commit/75aab58238f9a64954c2cff870f3a5ffc1536f01))
+
 * Add endpoints for user room settings ([316ccff](https://github.com/Esposter/Esposter/commit/316ccff0a3fb23f701778b1004a1af0bf0d7de34))
+
 * Add more definitions ([4d8e17d](https://github.com/Esposter/Esposter/commit/4d8e17d00457ffe5efcbf2bea10c8e11946446e5))
+
 * Add more definitions ([59623cf](https://github.com/Esposter/Esposter/commit/59623cf708634b9c9c2b7cda75dafde61bf6142c))
+
 * Add notification settings button ([0f49913](https://github.com/Esposter/Esposter/commit/0f49913a0190ea3784e549a0264ef3711d06338c))
+
 * Add procedure type ([b63f37d](https://github.com/Esposter/Esposter/commit/b63f37d1512c5a85265527e209580379f33eebda))
 
 # [2.17.0](https://github.com/Esposter/Esposter/compare/v2.16.0...v2.17.0) (2025-11-03)
@@ -86,12 +144,15 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * align webhook schema with discord ([1608774](https://github.com/Esposter/Esposter/commit/160877412cbc2f37977e61ac2b4171c6e2f35f72))
+
 * don't send notif to self ([eb5be0d](https://github.com/Esposter/Esposter/commit/eb5be0dece285943425a09199ac6a5a74f701bfd))
 
 ### Features
 
 * Add mock queue client ([079340a](https://github.com/Esposter/Esposter/commit/079340a01b61f47cb0ac753cc811de5676dc0e65))
+
 * Add queue pushing ([5bf052a](https://github.com/Esposter/Esposter/commit/5bf052a89762871279ce4c310d11c6060097cf45))
+
 * migrate to event grid instead of storage queue ([6987115](https://github.com/Esposter/Esposter/commit/69871155a7f1114cb62229173c4c70a7f3ce1d81))
 
 # [2.16.0](https://github.com/Esposter/Esposter/compare/v2.15.1...v2.16.0) (2025-10-19)
