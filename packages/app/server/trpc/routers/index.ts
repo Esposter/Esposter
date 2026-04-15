@@ -14,6 +14,7 @@ import { messageRouter } from "@@/server/trpc/routers/message";
 import { emojiRouter } from "@@/server/trpc/routers/message/emoji";
 import { postRouter } from "@@/server/trpc/routers/post";
 import { pushSubscriptionRouter } from "@@/server/trpc/routers/pushSubscription";
+import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
 import { voiceRouter } from "@@/server/trpc/routers/room/voice";
@@ -42,6 +43,7 @@ const trpcRouterWithoutAchievements = router({
   message: messageRouter,
   post: postRouter,
   pushSubscription: pushSubscriptionRouter,
+  role: roleRouter,
   room: roomRouter,
   roomCategory: roomCategoryRouter,
   searchHistory: searchHistoryRouter,

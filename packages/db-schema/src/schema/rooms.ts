@@ -1,6 +1,7 @@
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { roomCategories } from "@/schema/roomCategories";
+import { roomRoles } from "@/schema/roomRoles";
 import { users } from "@/schema/users";
 import { usersToRooms } from "@/schema/usersToRooms";
 import { relations, sql } from "drizzle-orm";
@@ -55,5 +56,6 @@ export const roomsRelations = relations(rooms, ({ many, one }) => ({
     fields: [rooms.categoryId],
     references: [roomCategories.id],
   }),
+  roomRoles: many(roomRoles),
   usersToRooms: many(usersToRooms),
 }));

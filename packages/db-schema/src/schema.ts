@@ -10,6 +10,7 @@ import * as posts from "@/schema/posts";
 import * as pushSubscriptions from "@/schema/pushSubscriptions";
 import * as rateLimiterFlexible from "@/schema/rateLimiterFlexible";
 import * as roomCategories from "@/schema/roomCategories";
+import * as roomRoles from "@/schema/roomRoles";
 import * as rooms from "@/schema/rooms";
 import * as searchHistories from "@/schema/searchHistories";
 import * as sessions from "@/schema/sessions";
@@ -17,6 +18,7 @@ import * as surveys from "@/schema/surveys";
 import * as userAchievements from "@/schema/userAchievements";
 import * as users from "@/schema/users";
 import * as userStatuses from "@/schema/userStatuses";
+import * as usersToRoomRoles from "@/schema/usersToRoomRoles";
 import * as usersToRooms from "@/schema/usersToRooms";
 import * as verifications from "@/schema/verifications";
 import * as webhooks from "@/schema/webhooks";
@@ -34,6 +36,7 @@ export const schema = {
   ...pushSubscriptions,
   ...rateLimiterFlexible,
   ...roomCategories,
+  ...roomRoles,
   ...rooms,
   ...searchHistories,
   ...sessions,
@@ -41,6 +44,7 @@ export const schema = {
   ...userAchievements,
   ...users,
   ...userStatuses,
+  ...usersToRoomRoles,
   ...usersToRooms,
   ...verifications,
   ...webhooks,
