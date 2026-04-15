@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { SettingsType } from "@/models/message/room/SettingsType";
-
+import { SettingsType } from "@/models/message/room/SettingsType";
 import { SettingsListItemMap } from "@/services/message/settings/SettingsListItemMap";
 
 const modelValue = defineModel<SettingsType>({ required: true });
@@ -10,9 +9,10 @@ const modelValue = defineModel<SettingsType>({ required: true });
   <MessageModelSettingsLeftSideBar>
     <v-list pt-10>
       <v-list-item
-        v-for="[settingsType, { icon }] of Object.entries(SettingsListItemMap)"
+        v-for="[settingsType, { color, icon }] of Object.entries(SettingsListItemMap)"
         :key="settingsType"
         :active="settingsType === modelValue"
+        :base-color="color"
         @click="modelValue = settingsType"
       >
         <template #prepend>

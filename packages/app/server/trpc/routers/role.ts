@@ -1,5 +1,9 @@
 import type { RoomRole } from "@esposter/db-schema";
 
+import { createRoleInputSchema } from "#shared/models/db/role/CreateRoleInput";
+import { deleteRoleInputSchema } from "#shared/models/db/role/DeleteRoleInput";
+import { readRolesInputSchema } from "#shared/models/db/role/ReadRolesInput";
+import { updateRoleInputSchema } from "#shared/models/db/role/UpdateRoleInput";
 import { on } from "@@/server/services/events/on";
 import { roleEventEmitter } from "@@/server/services/message/events/roleEventEmitter";
 import { getTopRolePosition } from "@@/server/services/room/rbac/getTopRolePosition";
@@ -20,33 +24,10 @@ import { TRPCError } from "@trpc/server";
 import { and, desc, eq } from "drizzle-orm";
 import { z } from "zod";
 
-const createRoleInputSchema = z.object({
-  color: selectRoomRoleSchema.shape.color.optional(),
-  name: selectRoomRoleSchema.shape.name,
-  permissions: selectRoomRoleSchema.shape.permissions.optional().default(0n),
-  position: selectRoomRoleSchema.shape.position.optional().default(0),
-  roomId: selectRoomSchema.shape.id,
-});
-export type CreateRoleInput = z.infer<typeof createRoleInputSchema>;
-
-const updateRoleInputSchema = z.object({
-  color: selectRoomRoleSchema.shape.color.optional(),
-  id: selectRoomRoleSchema.shape.id,
-  name: selectRoomRoleSchema.shape.name.optional(),
-  permissions: selectRoomRoleSchema.shape.permissions.optional(),
-  position: selectRoomRoleSchema.shape.position.optional(),
-  roomId: selectRoomSchema.shape.id,
-});
-export type UpdateRoleInput = z.infer<typeof updateRoleInputSchema>;
-
-const deleteRoleInputSchema = z.object({
-  id: selectRoomRoleSchema.shape.id,
-  roomId: selectRoomSchema.shape.id,
-});
-export type DeleteRoleInput = z.infer<typeof deleteRoleInputSchema>;
-
-const readRolesInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
-export type ReadRolesInput = z.infer<typeof readRolesInputSchema>;
+export type { CreateRoleInput } from "#shared/models/db/role/CreateRoleInput";
+export type { DeleteRoleInput } from "#shared/models/db/role/DeleteRoleInput";
+export type { ReadRolesInput } from "#shared/models/db/role/ReadRolesInput";
+export type { UpdateRoleInput } from "#shared/models/db/role/UpdateRoleInput";
 
 const assignRoleInputSchema = z.object({
   roleId: selectRoomRoleSchema.shape.id,

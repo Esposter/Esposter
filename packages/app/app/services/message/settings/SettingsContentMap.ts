@@ -1,10 +1,13 @@
 import { SettingsType } from "@/models/message/room/SettingsType";
 
-export const SettingsContentMap = {
-  [SettingsType.General]: defineAsyncComponent(
-    () => import("@/components/Message/Model/Room/Settings/Type/General/Index.vue"),
+export const SettingsContentMap: Partial<Record<SettingsType, Component>> = {
+  [SettingsType.Overview]: defineAsyncComponent(
+    () => import("@/components/Message/Model/Room/Settings/Type/Overview/Index.vue"),
+  ),
+  [SettingsType.Permissions]: defineAsyncComponent(
+    () => import("@/components/Message/Model/Room/Settings/Type/Permissions/Index.vue"),
   ),
   [SettingsType.Webhooks]: defineAsyncComponent(
     () => import("@/components/Message/Model/Room/Settings/Type/Webhook/Index.vue"),
   ),
-} as const satisfies Record<SettingsType, Component>;
+};

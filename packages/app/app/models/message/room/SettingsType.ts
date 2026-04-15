@@ -1,4 +1,6 @@
 export enum SettingsType {
-  General = "General",
+  Overview = "Overview",
+  Permissions = "Permissions",
   Webhooks = "Webhooks",
+  Delete = "Delete",
 }

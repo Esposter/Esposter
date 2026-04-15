@@ -10,10 +10,11 @@ interface RoomSettingsContentProps {
 }
 
 const { roomId, settingsType } = defineProps<RoomSettingsContentProps>();
+const component = computed(() => SettingsContentMap[settingsType]);
 </script>
 
 <template>
   <MessageModelSettingsContent>
-    <component :is="SettingsContentMap[settingsType]" pt-10 :room-id />
+    <component :is="component" v-if="component" pt-10 :room-id />
   </MessageModelSettingsContent>
 </template>
