@@ -14,7 +14,7 @@ const hiddenParameters = computed(
 const requiredHiddenParameters = computed(() => hiddenParameters.value.filter(({ isRequired }) => isRequired));
 const optionalHiddenParameters = computed(() => hiddenParameters.value.filter(({ isRequired }) => !isRequired));
 const focusedParameter = computed(() => activeParameters.value[focusedIndex.value]);
-const firstError = computed(() => errors.value[0]?.messages[0]);
+const error = computed(() => errors.value.find((error) => error.id === focusedParameter.value?.name)?.messages[0]);
 </script>
 
 <template>
@@ -56,7 +56,7 @@ const firstError = computed(() => errors.value[0]?.messages[0]);
     <MessageModelMessageInputHeader @close="clearPendingSlashCommand()">
       <template v-if="focusedParameter">
         <span font-bold>{{ focusedParameter.name }}</span>
-        <span v-if="firstError" class="text-error">{{ firstError }}</span>
+        <span v-if="error" class="text-error">{{ error }}</span>
         <span v-else opacity-60>Your {{ focusedParameter.name }}</span>
       </template>
       <template v-else>
