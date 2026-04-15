@@ -1,6 +1,5 @@
-import type { Router } from "vue-router";
-
 import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
+import type { Router } from "vue-router";
 
 import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
