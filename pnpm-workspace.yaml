@@ -189,7 +189,7 @@ catalog:
   rolldown: ^1.0.0-rc.15
   rolldown-plugin-dts: ^0.23.2
   rxjs: ^7.8.2
-  sanitize-html: ^2.17.2
+  sanitize-html: ^2.17.3
   sass-embedded: ^1.99.0
   sax: ^1.6.0
   show-open-file-picker: ^0.4.0
