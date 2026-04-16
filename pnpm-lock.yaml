@@ -466,8 +466,8 @@ catalogs:
       specifier: ^3.0.2
       version: 3.0.2
     mjml-browser:
-      specifier: ^4.18.0
-      version: 4.18.0
+      specifier: ^5.0.0
+      version: 5.0.0
     nano-staged:
       specifier: ^1.0.2
       version: 1.0.2
@@ -1024,7 +1024,7 @@ importers:
         version: 3.0.2
       mjml-browser:
         specifier: 'catalog:'
-        version: 4.18.0
+        version: 5.0.0
       node-emoji:
         specifier: 'catalog:'
         version: 2.2.0
@@ -7441,6 +7441,10 @@ packages:
   citty@0.2.2:
     resolution: {integrity: sha512-+6vJA3L98yv+IdfKGZHBNiGW5KHn22e/JwID0Strsz8h4S/csAu/OuICwxrg44k5MRiZHWIo8XXuJgQTriRP4w==}
 
+  clean-css@5.3.3:
+    resolution: {integrity: sha512-D5J+kHaVb/wKSFcyyV75uCn8fiY4sV38XJoe4CUyGQ+mOU/fMVYUdH1hJC+CJQ5uY3EnW27SbJYS4X8BiLrAFg==}
+    engines: {node: '>= 10.0'}
+
   clean-regexp@1.0.0:
     resolution: {integrity: sha512-GfisEZEJvzKrmGWkvfhgzcz/BllN1USeqD2V6tg14OAOgaCD2Z/PUEuxnAZ/nPvmaHRG7a8y77p1T/IRQ4D1Hw==}
     engines: {node: '>=4'}
@@ -9072,6 +9076,11 @@ packages:
   html-escaper@2.0.2:
     resolution: {integrity: sha512-H2iMtd0I4Mt5eYiapRdIDjp+XzelXQ0tFE4JS7YFwFevXXMmOp9myNrUvCg0D6ws8iqkRPBfKHgbwig1SmlLfg==}
 
+  html-minifier-terser@7.2.0:
+    resolution: {integrity: sha512-tXgn3QfqPIpGl9o+K5tpcj3/MN4SfLtsx2GWwBC3SSd0tXQGyF3gsSqad8loJgKZGM3ZxbYDd5yhiBIdWpmvLA==}
+    engines: {node: ^14.13.1 || >=16.0.0}
+    hasBin: true
+
   html-void-elements@3.0.0:
     resolution: {integrity: sha512-bEqo66MRXsUGxWHV5IP0PUiAWwoEjba4VCzg0LjFJBpchPaTfyfCKTG6bc5F8ucKec3q5y6qOdGyYTSBEvhCrg==}
 
@@ -10016,6 +10025,9 @@ packages:
 
   mjml-browser@4.18.0:
     resolution: {integrity: sha512-Y3kpr3IFBk3Wm7AwONZ5vDAX7FxAaMk+RKbcKKewsuGI9oNCOSM2dWNcWVFdzZ9PF7awoaCgBSQudnJaJbUiBA==}
+
+  mjml-browser@5.0.0:
+    resolution: {integrity: sha512-vBwt0vVbznMmI9NfWc++3363WT+r4Tjk1kgzVxenD+dPEKkZ4SNOhvKBP6OWvBohz/xjdEtSD7Uuoi/Eo59Hfw==}
 
   mlly@1.8.2:
     resolution: {integrity: sha512-d+ObxMQFmbt10sretNDytwt85VrbkhhUA/JBGm1MPaWJ65Cl4wOgLaB1NYvJSZ0Ef03MMEU/0xpPMXUIQ29UfA==}
@@ -11169,6 +11181,10 @@ packages:
     resolution: {integrity: sha512-K6bL457owpvWONc7hsjFxo3HDC9s6IzhRqShW0w9JSKelPGfRbkHD558UQTn/NH1cvrXVHygKyC7fExFmRketg==}
     peerDependencies:
       vue: '>= 3.4.0'
+
+  relateurl@0.2.7:
+    resolution: {integrity: sha512-G08Dxvm4iDN3MLM0EsP62EDV9IuhXPR6blNz6Utcp7zyV3tr4HVNINt6MpaRWbxoOHT3Q7YN2P+jaHX8vUbgog==}
+    engines: {node: '>= 0.10'}
 
   require-directory@2.1.1:
     resolution: {integrity: sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q==}
@@ -19702,6 +19718,10 @@ snapshots:
 
   citty@0.2.2: {}
 
+  clean-css@5.3.3:
+    dependencies:
+      source-map: 0.6.1
+
   clean-regexp@1.0.0:
     dependencies:
       escape-string-regexp: 1.0.5
@@ -21460,6 +21480,16 @@ snapshots:
 
   html-escaper@2.0.2: {}
 
+  html-minifier-terser@7.2.0:
+    dependencies:
+      camel-case: 4.1.2
+      clean-css: 5.3.3
+      commander: 10.0.1
+      entities: 4.5.0
+      param-case: 3.0.4
+      relateurl: 0.2.7
+      terser: 5.46.1
+
   html-void-elements@3.0.0: {}
 
   htmlparser2@10.1.0:
@@ -22395,6 +22425,13 @@ snapshots:
   mitt@3.0.1: {}
 
   mjml-browser@4.18.0: {}
+
+  mjml-browser@5.0.0:
+    dependencies:
+      buffer: 6.0.3
+      html-minifier-terser: 7.2.0
+      path-browserify: 1.0.1
+      process: 0.11.10
 
   mlly@1.8.2:
     dependencies:
@@ -24235,6 +24272,8 @@ snapshots:
       vue: 3.5.32(typescript@5.9.3)
     transitivePeerDependencies:
       - '@vue/composition-api'
+
+  relateurl@0.2.7: {}
 
   require-directory@2.1.1: {}
 
