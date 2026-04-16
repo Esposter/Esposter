@@ -23,7 +23,7 @@ catalog:
   "@azure/storage-queue": ^12.29.0
   "@azure/web-pubsub": ^1.2.0
   "@azure/web-pubsub-client": ^1.0.4
-  "@better-auth/drizzle-adapter": ^1.6.4
+  "@better-auth/drizzle-adapter": ^1.6.5
   "@codemirror/lang-vue": ^0.1.3
   "@codemirror/language": ^6.12.3
   "@codemirror/language-data": ^6.5.2
@@ -88,7 +88,7 @@ catalog:
   "@types/web-push": ^3.6.4
   "@types/ws": ^8.18.1
   "@types/xml2js": ^0.4.14
-  "@typescript/native-preview": ^7.0.0-dev.20260415.1
+  "@typescript/native-preview": ^7.0.0-dev.20260416.1
   "@unocss/eslint-config": ^66.6.8
   "@unocss/nuxt": ^66.6.8
   "@vite-pwa/nuxt": ^1.1.1
@@ -111,7 +111,7 @@ catalog:
   ajv-formats: ^3.0.1
   ajv-i18n: ^4.2.0
   apexcharts: ^5.10.6
-  better-auth: ^1.6.4
+  better-auth: ^1.6.5
   codemirror: ^6.0.2
   crossws: ^0.4.5
   ctix: 2.7.2
@@ -150,7 +150,7 @@ catalog:
   grapesjs-touch: ^0.1.1
   grapesjs-tui-image-editor: ^1.0.2
   grapesjs-typed: ^2.0.1
-  grid-engine: ^2.48.2
+  grid-engine: ^2.52.0
   grid-layout-plus: ^1.1.1
   gsap: ^3.15.0
   h3: ^1.15.11
@@ -165,7 +165,7 @@ catalog:
   marked: ^18.0.0
   mathjs: ^15.2.0
   mime-types: ^3.0.2
-  mjml-browser: ^5.0.0
+  mjml-browser: ^5.0.1
   nano-staged: ^1.0.2
   node-emoji: ^2.2.0
   node-html-parser: ^7.1.0
@@ -175,7 +175,7 @@ catalog:
   omit-deep-lodash: ^1.1.7
   oxfmt: ^0.45.0
   oxlint: ^1.60.0
-  oxlint-tsgolint: ^0.21.0
+  oxlint-tsgolint: ^0.21.1
   p-progress: ^1.0.0
   pathe: ^2.0.3
   pdfjs-dist: ^5.6.205
@@ -187,7 +187,7 @@ catalog:
   prosemirror-state: ^1.4.4
   rate-limiter-flexible: ^11.0.0
   read-excel-file: ^8.0.3
-  rolldown: ^1.0.0-rc.15
+  rolldown: ^1.0.0-rc.16
   rolldown-plugin-dts: ^0.23.2
   rxjs: ^7.8.2
   sanitize-html: ^2.17.3
