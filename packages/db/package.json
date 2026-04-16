@@ -31,10 +31,6 @@
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "exports": {
-    ".": "./dist/index.js",
-    "./test/createMockDb.test": "./src/test/createMockDb.test.ts"
-  },
   "scripts": {
     "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
     "coverage": "vitest run --coverage",
@@ -63,9 +59,7 @@
   },
   "devDependencies": {
     "@azure/core-client": "catalog:",
-    "@electric-sql/pglite": "catalog:",
-    "@types/mime-types": "catalog:",
-    "drizzle-kit": "catalog:"
+    "@types/mime-types": "catalog:"
   },
   "peerDependencies": {
     "@azure/data-tables": "catalog:",

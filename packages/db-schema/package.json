@@ -35,7 +35,7 @@
     "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
     "coverage": "vitest run --coverage",
     "db:gen": "pnpm db:run generate",
-    "db:run": "tsx node_modules/drizzle-kit/bin.cjs",
+    "db:run": "tsx --import ./src/util/bigintPolyfill.ts node_modules/drizzle-kit/bin.cjs",
     "db:studio": "pnpm db:run studio",
     "db:up": "pnpm db:run up",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts",
@@ -47,7 +47,9 @@
     "typecheck": "tsgo"
   },
   "dependencies": {
+    "@electric-sql/pglite": "catalog:",
     "@esposter/shared": "workspace:*",
+    "drizzle-kit": "catalog:",
     "drizzle-orm": "catalog:",
     "drizzle-zod": "catalog:",
     "zod": "catalog:"
@@ -55,8 +57,7 @@
   "devDependencies": {
     "@azure/data-tables": "catalog:",
     "@azure/storage-blob": "catalog:",
-    "@trpc/server": "catalog:",
-    "drizzle-kit": "catalog:"
+    "@trpc/server": "catalog:"
   },
   "peerDependencies": {
     "@esposter/shared": "workspace:*",

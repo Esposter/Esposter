@@ -1446,21 +1446,21 @@ importers:
       '@azure/core-client':
         specifier: 'catalog:'
         version: 1.10.1
-      '@electric-sql/pglite':
-        specifier: 'catalog:'
-        version: 0.4.4
       '@types/mime-types':
         specifier: 'catalog:'
         version: 3.0.1
-      drizzle-kit:
-        specifier: 'catalog:'
-        version: 0.31.10
 
   packages/db-schema:
     dependencies:
+      '@electric-sql/pglite':
+        specifier: 'catalog:'
+        version: 0.4.4
       '@esposter/shared':
         specifier: workspace:*
         version: link:../shared
+      drizzle-kit:
+        specifier: 'catalog:'
+        version: 0.31.10
       drizzle-orm:
         specifier: 'catalog:'
         version: 0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9)
@@ -1480,9 +1480,6 @@ importers:
       '@trpc/server':
         specifier: 'catalog:'
         version: 11.16.0(typescript@5.9.3)
-      drizzle-kit:
-        specifier: 'catalog:'
-        version: 0.31.10
 
   packages/parse-tmx:
     dependencies:
