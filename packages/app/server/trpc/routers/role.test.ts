@@ -5,7 +5,15 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
 import { roleRouter } from "@@/server/trpc/routers/role";
-import { DatabaseEntityType, RoomPermission, roomRoles, rooms, RoomType, usersToRooms } from "@esposter/db-schema";
+import {
+  DatabaseEntityType,
+  RoomPermission,
+  roomRoles,
+  rooms,
+  RoomType,
+  users,
+  usersToRooms,
+} from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
@@ -16,7 +24,21 @@ describe("role", () => {
   let roomId: string;
 
   const setupRoom = async () => {
-    const { user: owner } = await mockSessionOnce(mockContext.db);
+    const createdAt = new Date();
+    const owner = takeOne(
+      await mockContext.db
+        .insert(users)
+        .values({
+          createdAt,
+          email: crypto.randomUUID(),
+          emailVerified: true,
+          id: crypto.randomUUID(),
+          image: null,
+          name: crypto.randomUUID(),
+          updatedAt: createdAt,
+        })
+        .returning(),
+    );
     const room = takeOne(
       await mockContext.db.insert(rooms).values({ name: "", type: RoomType.Room, userId: owner.id }).returning(),
     );

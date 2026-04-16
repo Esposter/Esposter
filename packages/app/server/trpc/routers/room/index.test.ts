@@ -205,7 +205,7 @@ describe("room", () => {
     const id = crypto.randomUUID();
 
     await expect(roomCaller.updateRoom({ id, name })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Room, id).message}]`,
+      `[TRPCError: UNAUTHORIZED]`,
     );
   });
 
@@ -216,7 +216,7 @@ describe("room", () => {
     await mockSessionOnce(mockContext.db);
 
     await expect(roomCaller.updateRoom({ id: newRoom.id, name })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Room, newRoom.id).message}]`,
+      `[TRPCError: UNAUTHORIZED]`,
     );
   });
 
