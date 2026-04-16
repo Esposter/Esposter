@@ -12,6 +12,6 @@ export default defineVitestConfig({
     // The nuxt mock `indexedDb: true` only sets `indexedDB` itself, but the `idb` library's
     // Proxy mechanism also requires the class constructors (IDBDatabase, IDBObjectStore, etc.)
     // To be available as globals — without them, idb operations silently fail
-    setupFiles: ["fake-indexeddb/auto"],
+    setupFiles: ["fake-indexeddb/auto", "./shared/test/setup.ts"],
   },
 });

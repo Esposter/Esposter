@@ -1,3 +1,4 @@
+// @vitest-environment nuxt
 import { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import {
   makeColumn,
