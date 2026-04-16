@@ -105,9 +105,14 @@ New workspace packages follow the pattern of existing packages (e.g. `packages/d
    New-Item -ItemType SymbolicLink -Path "packages\db-mock\eslint.config.js" -Target "..\configuration\eslint\index.typescript.js"
    ```
    Use `index.typescript.js` (TypeScript-only package) or `index.vue.js` (Vue package). On Linux/macOS: `ln -s ../configuration/eslint/index.typescript.js eslint.config.js`.
-6. **`src/index.ts`** — minimal barrel; `ctix` will regenerate it on `pnpm export:gen`.
-7. **Run `pnpm install`** from the repo root to link the new package into the workspace.
-8. **Run `pnpm build`** in the new package to produce `dist/`.
+6. **`.oxlintrc.json`** — symlink to the shared oxlint config. On Windows:
+   ```powershell
+   New-Item -ItemType SymbolicLink -Path "packages\db-mock\.oxlintrc.json" -Target "..\configuration\.oxlintrc.json"
+   ```
+   On Linux/macOS: `ln -s ../configuration/.oxlintrc.json .oxlintrc.json`.
+7. **`src/index.ts`** — minimal barrel; `ctix` will regenerate it on `pnpm export:gen`.
+8. **Run `pnpm install`** from the repo root to link the new package into the workspace.
+9. **Run `pnpm build`** in the new package to produce `dist/`.
 
 ### Rolldown externals
 

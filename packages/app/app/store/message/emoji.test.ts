@@ -1,3 +1,4 @@
+// @vitest-environment nuxt
 import type { Router } from "vue-router";
 
 import { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";

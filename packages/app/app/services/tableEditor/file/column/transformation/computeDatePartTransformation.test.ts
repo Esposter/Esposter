@@ -1,4 +1,3 @@
-// @vitest-environment node
 import { DateFormat } from "#shared/models/tableEditor/file/column/DateFormat";
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import { DatePartType } from "#shared/models/tableEditor/file/column/transformation/DatePartType";

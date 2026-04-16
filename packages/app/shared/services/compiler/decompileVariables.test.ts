@@ -1,4 +1,3 @@
-// @vitest-environment node
 import { decompileVariables } from "#shared/services/compiler/decompileVariables";
 import { describe, expect, test } from "vitest";
 

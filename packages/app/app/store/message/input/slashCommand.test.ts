@@ -1,3 +1,4 @@
+// @vitest-environment nuxt
 import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
 import type { Router } from "vue-router";
 

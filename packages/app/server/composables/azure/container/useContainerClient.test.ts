@@ -1,4 +1,3 @@
-// @vitest-environment node
 import type { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import type { ContainerClient } from "@azure/storage-blob";
 

@@ -1,4 +1,3 @@
-// @vitest-environment node
 import type { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import type { AzureTableEntityMap, CustomTableClient } from "@esposter/db-schema";
 

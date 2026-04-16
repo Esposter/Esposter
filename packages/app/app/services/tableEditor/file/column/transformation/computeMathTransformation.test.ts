@@ -1,4 +1,3 @@
-// @vitest-environment node
 import type { MathTransformation } from "#shared/models/tableEditor/file/column/transformation/MathTransformation";
 
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";

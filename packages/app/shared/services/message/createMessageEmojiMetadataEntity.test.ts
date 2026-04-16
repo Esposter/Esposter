@@ -1,4 +1,3 @@
-// @vitest-environment node
 import { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import { createMessageEmojiMetadataEntity } from "#shared/services/message/createMessageEmojiMetadataEntity";
 import { MessageMetadataType } from "@esposter/db-schema";

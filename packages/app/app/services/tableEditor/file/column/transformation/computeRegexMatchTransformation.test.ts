@@ -1,4 +1,3 @@
-// @vitest-environment node
 import { ColumnTransformationType } from "#shared/models/tableEditor/file/column/transformation/ColumnTransformationType";
 import { computeRegexMatchTransformation } from "@/services/tableEditor/file/column/transformation/computeRegexMatchTransformation";
 import { describe, expect, test } from "vitest";

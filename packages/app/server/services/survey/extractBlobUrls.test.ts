@@ -1,4 +1,3 @@
-// @vitest-environment node
 import { extractBlobUrls } from "@@/server/services/survey/extractBlobUrls";
 import { AzureContainer } from "@esposter/db-schema";
 import { describe, expect, test, vi } from "vitest";

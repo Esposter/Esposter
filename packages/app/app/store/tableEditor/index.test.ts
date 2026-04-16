@@ -1,3 +1,4 @@
+// @vitest-environment nuxt
 import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
 import type { Router } from "vue-router";
 

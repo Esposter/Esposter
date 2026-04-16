@@ -1,3 +1,4 @@
+// @vitest-environment nuxt
 import type { MessageEntity } from "@esposter/db-schema";
 import type { VueWrapper } from "@vue/test-utils";
 import type { Router } from "vue-router";
