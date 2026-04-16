@@ -68,7 +68,7 @@ const {
         </v-list>
       </v-card-text>
       <v-divider />
-      <component v-if="forward" :is="MessageComponentMap[forward.type]" :creator :message="forward" is-preview />
+      <component :is="MessageComponentMap[forward.type]" v-if="forward" :creator :message="forward" is-preview />
       <v-divider />
       <v-card-actions flex-col gap-0>
         <RichTextEditor v-model="messageInput" :limit="MESSAGE_MAX_LENGTH" placeholder="Add an optional message..." />
