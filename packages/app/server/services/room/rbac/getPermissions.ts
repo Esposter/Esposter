@@ -3,7 +3,7 @@ import type { Context } from "@@/server/trpc/context";
 import { roomRoles, usersToRoomRoles } from "@esposter/db-schema";
 import { and, eq, inArray, or } from "drizzle-orm";
 
-export const getPermission = async (db: Context["db"], userId: string, roomId: string): Promise<bigint> => {
+export const getPermissions = async (db: Context["db"], userId: string, roomId: string): Promise<bigint> => {
   const roleIdSubquery = db
     .select({ id: usersToRoomRoles.roleId })
     .from(usersToRoomRoles)

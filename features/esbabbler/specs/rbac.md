@@ -117,7 +117,7 @@ Owner (rooms.userId)          — immune to all role manipulation; can do everyt
 
 | Function                                                        | Returns            | Notes                                                                                                        |
 | :-------------------------------------------------------------- | :----------------- | :----------------------------------------------------------------------------------------------------------- |
-| `getPermission(db, userId, roomId)`                             | `Promise<bigint>`  | SQL `BIT_OR` over @everyone + assigned roles                                                                 |
+| `getPermissions(db, userId, roomId)`                            | `Promise<bigint>`  | SQL `BIT_OR` over @everyone + assigned roles                                                                 |
 | `hasPermission(db, userId, roomId, permission: RoomPermission)` | `Promise<boolean>` | Owner bypass → `Administrator` bit → specific bit                                                            |
 | `getTopRolePosition(db, userId, roomId)`                        | `Promise<number>`  | Max position across assigned roles (not @everyone)                                                           |
 | `isManageable(db, actorId, roomId, targetPosition: number)`     | `Promise<boolean>` | Actor's top > targetPosition. For a user: resolve their top first; for a role: pass `role.position` directly |
@@ -126,12 +126,12 @@ Owner (rooms.userId)          — immune to all role manipulation; can do everyt
 
 ## tRPC Procedure Guards
 
-| Guard                                                   | When to use                                                   |
-| :------------------------------------------------------ | :------------------------------------------------------------ |
-| `getOwnerProcedure(schema, roomIdKey)`                  | Owner-only: `deleteRoom`, `transferOwnership`                 |
-| `getPermissionProcedure(permission, schema, roomIdKey)` | Any procedure requiring a specific permission; owner bypasses |
+| Guard                                                    | When to use                                                   |
+| :------------------------------------------------------- | :------------------------------------------------------------ |
+| `getOwnerProcedure(schema, roomIdKey)`                   | Owner-only: `deleteRoom`, `transferOwnership`                 |
+| `getPermissionsProcedure(permission, schema, roomIdKey)` | Any procedure requiring a specific permission; owner bypasses |
 
-`getCreatorProcedure` retired — replaced by `getOwnerProcedure` and `getPermissionProcedure`.
+`getCreatorProcedure` retired — replaced by `getOwnerProcedure` and `getPermissionsProcedure`.
 
 ---
 
@@ -143,7 +143,7 @@ Owner (rooms.userId)          — immune to all role manipulation; can do everyt
 - [ ] **Migration** — add both tables; seed one `@everyone` role for every existing room
 - [ ] **RBAC service functions** — `server/services/room/rbac/` (4 functions above)
 - [ ] **`getOwnerProcedure`** — `server/trpc/procedure/room/getOwnerProcedure.ts`
-- [ ] **`getPermissionProcedure`** — `server/trpc/procedure/room/getPermissionProcedure.ts`
+- [ ] **`getPermissionsProcedure`** — `server/trpc/procedure/room/getPermissionsProcedure.ts`
 - [ ] **Wire up `createRoom`** — transaction inserts @everyone role + optional Admin role
 - [ ] **Retire `getCreatorProcedure`** — migrate callers: `updateRoom` → `ManageRoom`, `createMembers` → `ManageRoom`, `deleteMember` → `KickMembers`
 - [ ] **`roleRouter`** — `server/trpc/routers/role.ts`

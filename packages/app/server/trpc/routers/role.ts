@@ -10,7 +10,7 @@ import { getTopRolePosition } from "@@/server/services/room/rbac/getTopRolePosit
 import { isManageable } from "@@/server/services/room/rbac/isManageable";
 import { router } from "@@/server/trpc";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
-import { getPermissionProcedure } from "@@/server/trpc/procedure/room/getPermissionProcedure";
+import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
 import {
   DatabaseEntityType,
   RoomPermission,
@@ -48,7 +48,7 @@ const onRoleUpdateInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnRoleUpdateInput = z.infer<typeof onRoleUpdateInputSchema>;
 
 export const roleRouter = router({
-  assignRole: getPermissionProcedure(RoomPermission.ManageRoles, assignRoleInputSchema, "roomId").mutation(
+  assignRole: getPermissionsProcedure(RoomPermission.ManageRoles, assignRoleInputSchema, "roomId").mutation(
     async ({ ctx, input: { roleId, roomId, userId } }) => {
       const role = await ctx.db.query.roomRoles.findFirst({
         columns: { position: true },
@@ -72,7 +72,7 @@ export const roleRouter = router({
       roleEventEmitter.emit("updateRole", { roomId });
     },
   ),
-  createRole: getPermissionProcedure(RoomPermission.ManageRoles, createRoleInputSchema, "roomId").mutation<RoomRole>(
+  createRole: getPermissionsProcedure(RoomPermission.ManageRoles, createRoleInputSchema, "roomId").mutation<RoomRole>(
     async ({ ctx, input: { color, name, permissions, position, roomId } }) => {
       const manageable = await isManageable(ctx.db, ctx.getSessionPayload.user.id, roomId, position);
       if (!manageable) throw new TRPCError({ code: "UNAUTHORIZED" });
@@ -94,7 +94,7 @@ export const roleRouter = router({
       return createdRole;
     },
   ),
-  deleteRole: getPermissionProcedure(RoomPermission.ManageRoles, deleteRoleInputSchema, "roomId").mutation<RoomRole>(
+  deleteRole: getPermissionsProcedure(RoomPermission.ManageRoles, deleteRoleInputSchema, "roomId").mutation<RoomRole>(
     async ({ ctx, input: { id, roomId } }) => {
       const role = await ctx.db.query.roomRoles.findFirst({
         columns: { isEveryone: true, position: true },
@@ -142,7 +142,7 @@ export const roleRouter = router({
   readRoles: getMemberProcedure(readRolesInputSchema, "roomId").query<RoomRole[]>(({ ctx, input: { roomId } }) =>
     ctx.db.select().from(roomRoles).where(eq(roomRoles.roomId, roomId)).orderBy(desc(roomRoles.position)),
   ),
-  revokeRole: getPermissionProcedure(RoomPermission.ManageRoles, revokeRoleInputSchema, "roomId").mutation(
+  revokeRole: getPermissionsProcedure(RoomPermission.ManageRoles, revokeRoleInputSchema, "roomId").mutation(
     async ({ ctx, input: { roleId, roomId, userId } }) => {
       const role = await ctx.db.query.roomRoles.findFirst({
         columns: { position: true },
@@ -174,7 +174,7 @@ export const roleRouter = router({
       roleEventEmitter.emit("updateRole", { roomId });
     },
   ),
-  updateRole: getPermissionProcedure(RoomPermission.ManageRoles, updateRoleInputSchema, "roomId").mutation<RoomRole>(
+  updateRole: getPermissionsProcedure(RoomPermission.ManageRoles, updateRoleInputSchema, "roomId").mutation<RoomRole>(
     async ({ ctx, input: { id, roomId, ...rest } }) => {
       const role = await ctx.db.query.roomRoles.findFirst({
         columns: { position: true },

@@ -27,7 +27,7 @@ import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { isRoom } from "@@/server/trpc/middleware/userToRoom/isRoom";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
-import { getPermissionProcedure } from "@@/server/trpc/procedure/room/getPermissionProcedure";
+import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { deleteDirectory } from "@esposter/db";
 import {
@@ -139,7 +139,7 @@ export const roomRouter = router({
         message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Invite, roomId).message,
       });
     }),
-  createMembers: getPermissionProcedure(RoomPermission.ManageRoom, createMembersInputSchema, "roomId")
+  createMembers: getPermissionsProcedure(RoomPermission.ManageRoom, createMembersInputSchema, "roomId")
     .use(isRoom)
     .mutation<UserToRoom[]>(({ ctx, input: { roomId, userIds } }) =>
       ctx.db
@@ -178,7 +178,7 @@ export const roomRouter = router({
       return newRoom;
     }),
   ),
-  deleteMember: getPermissionProcedure(RoomPermission.KickMembers, deleteMemberInputSchema, "roomId")
+  deleteMember: getPermissionsProcedure(RoomPermission.KickMembers, deleteMemberInputSchema, "roomId")
     .use(isRoom)
     .mutation(async ({ ctx, input: { roomId, userId } }) => {
       if (userId === ctx.getSessionPayload.user.id)
@@ -470,7 +470,7 @@ export const roomRouter = router({
     },
   ),
   updateRoom: addProfanityFilterMiddleware(
-    getPermissionProcedure(RoomPermission.ManageRoom, updateRoomInputSchema, "id"),
+    getPermissionsProcedure(RoomPermission.ManageRoom, updateRoomInputSchema, "id"),
     ["name"],
   ).mutation<Room>(async ({ ctx, input: { id, ...rest } }) => {
     const name = rest.name?.trim();

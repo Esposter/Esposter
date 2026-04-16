@@ -1,13 +1,13 @@
 import type { Context } from "@@/server/trpc/context";
 
-import { getPermission } from "@@/server/services/room/rbac/getPermission";
+import { getPermissions } from "@@/server/services/room/rbac/getPermissions";
 import { RoomPermission } from "@esposter/db-schema";
 
 export const hasPermission = async (
   db: Context["db"],
   userId: string,
   roomId: string,
-  roomPermission: RoomPermission,
+  permission: RoomPermission,
 ): Promise<boolean> => {
   const room = await db.query.rooms.findFirst({
     columns: { userId: true },
@@ -16,7 +16,7 @@ export const hasPermission = async (
   if (!room) return false;
   else if (room.userId === userId) return true;
 
-  const permission = await getPermission(db, userId, roomId);
-  if ((permission & RoomPermission.Administrator) !== 0n) return true;
-  return (permission & roomPermission) !== 0n;
+  const permissions = await getPermissions(db, userId, roomId);
+  if ((permissions & RoomPermission.Administrator) !== 0n) return true;
+  return (permissions & permission) !== 0n;
 };

@@ -8,7 +8,7 @@ import { AuthedProcedureMap } from "@@/server/trpc/procedure/AuthedProcedureMap"
 import { uuidValidateV4 } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
-export const getPermissionProcedure = <T extends z.ZodType>(
+export const getPermissionsProcedure = <T extends z.ZodType>(
   permission: RoomPermission,
   schema: T,
   roomIdKey: keyof inferParser<T>["out"],
