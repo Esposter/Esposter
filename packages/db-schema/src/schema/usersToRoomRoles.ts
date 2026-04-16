@@ -9,18 +9,18 @@ import { primaryKey, text, uuid } from "drizzle-orm/pg-core";
 export const usersToRoomRoles = pgTable(
   "users_to_room_roles",
   {
-    userId: text("userId")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    roomId: uuid("roomId")
-      .notNull()
-      .references(() => rooms.id, { onDelete: "cascade" }),
     roleId: uuid("roleId")
       .notNull()
       .references(() => roomRoles.id, { onDelete: "cascade" }),
+    roomId: uuid("roomId")
+      .notNull()
+      .references(() => rooms.id, { onDelete: "cascade" }),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ userId, roomId, roleId }) => [primaryKey({ columns: [userId, roomId, roleId] })],
+    extraConfig: ({ roleId, roomId, userId }) => [primaryKey({ columns: [userId, roomId, roleId] })],
     schema: messageSchema,
   },
 );
