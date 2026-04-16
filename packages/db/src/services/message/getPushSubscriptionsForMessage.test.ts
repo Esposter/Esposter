@@ -1,8 +1,8 @@
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import { getPushSubscriptionsForMessage } from "@/services/message/getPushSubscriptionsForMessage";
-import { createMockDb } from "@/test/createMockDb.test";
 import {
+  createMockDb,
   NotificationType,
   pushSubscriptions,
   rooms,
