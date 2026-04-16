@@ -42,8 +42,7 @@
       "WebFetch(domain:mathjs.org)",
       "WebFetch(domain:bundlephobia.com)",
       "WebFetch(domain:www.npmjs.com)",
-      "Bash(wait)",
-      "Read(//c/Users/jimmyc/.claude/**)"
+      "Bash(wait)"
     ]
   }
 }

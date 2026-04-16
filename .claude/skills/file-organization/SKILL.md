@@ -100,7 +100,7 @@ New workspace packages follow the pattern of existing packages (e.g. `packages/d
 2. **`tsconfig.json`** — `{ "extends": "../configuration/tsconfig.node.json" }` (node-only) or `"../configuration/tsconfig.vue.json"` (browser/Vue).
 3. **`tsconfig.build.json`** — `{ "extends": ["./tsconfig.json", "../configuration/tsconfig.build.json"] }`.
 4. **`rolldown.config.ts`** — use `rolldownConfigurationNode` (server-only), `rolldownConfigurationBrowser` (browser/isomorphic), or a custom extension if extra externals are needed.
-5. **`eslint.config.js`** — symlink to the shared config. On Windows (requires elevated PowerShell or Developer Mode enabled):
+5. **`eslint.config.js`** — symlink to the shared config. On Windows (requires PowerShell to be elevated or Developer Mode enabled):
    ```powershell
    New-Item -ItemType SymbolicLink -Path "packages\db-mock\eslint.config.js" -Target "..\configuration\eslint\index.typescript.js"
    ```
