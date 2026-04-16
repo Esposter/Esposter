@@ -1,4 +1,3 @@
-// @vitest-environment node
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { describe, expect, test, vi } from "vitest";
 

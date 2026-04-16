@@ -46,11 +46,9 @@
     "@azure/data-tables": "catalog:",
     "@azure/storage-blob": "catalog:",
     "@azure/web-pubsub": "catalog:",
-    "@electric-sql/pglite": "catalog:",
     "@esposter/db-schema": "workspace:*",
     "@esposter/shared": "workspace:*",
     "dayjs": "catalog:",
-    "drizzle-kit": "catalog:",
     "drizzle-orm": "catalog:",
     "drizzle-zod": "catalog:",
     "link-preview-js": "catalog:",
@@ -61,6 +59,7 @@
   },
   "devDependencies": {
     "@azure/core-client": "catalog:",
+    "@esposter/db-mock": "workspace:*",
     "@types/mime-types": "catalog:"
   },
   "peerDependencies": {

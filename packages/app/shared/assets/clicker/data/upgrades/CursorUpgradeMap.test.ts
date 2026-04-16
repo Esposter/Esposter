@@ -1,4 +1,3 @@
-// @vitest-environment node
 import { CursorUpgrades } from "#shared/assets/clicker/data/upgrades/CursorUpgradeMap";
 import { describe, expect, test } from "vitest";
 

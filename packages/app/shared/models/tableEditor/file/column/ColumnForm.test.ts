@@ -1,4 +1,3 @@
-// @vitest-environment node
 import { columnFormSchema } from "#shared/models/tableEditor/file/column/ColumnForm";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { describe, expect, test } from "vitest";

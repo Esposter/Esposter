@@ -7,6 +7,7 @@ describe(copyToClipboard, () => {
   let written = "";
 
   beforeAll(() => {
+    vi.stubGlobal("window", globalThis);
     vi.stubGlobal("navigator", {
       clipboard: {
         writeText: (text: string) => {

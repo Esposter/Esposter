@@ -1,4 +1,3 @@
-// @vitest-environment node
 import type { PropertyCondition } from "#shared/models/achievement/type/PropertyCondition";
 
 import { AchievementOperator } from "#shared/models/achievement/AchievementOperator";

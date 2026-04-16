@@ -1,3 +1,4 @@
+// @vitest-environment nuxt
 import { BooleanValue } from "#shared/models/tableEditor/file/column/BooleanValue";
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
 import { DateColumn } from "#shared/models/tableEditor/file/column/DateColumn";

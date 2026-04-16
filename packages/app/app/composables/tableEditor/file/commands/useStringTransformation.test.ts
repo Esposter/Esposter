@@ -1,3 +1,4 @@
+// @vitest-environment nuxt
 import { NumberColumn } from "#shared/models/tableEditor/file/column/NumberColumn";
 import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
 import { StringTransformationType } from "#shared/models/tableEditor/file/column/transformation/string/StringTransformationType";

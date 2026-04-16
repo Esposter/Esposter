@@ -1,3 +1,4 @@
+// @vitest-environment nuxt
 import {
   makeColumn,
   makeDataSource,

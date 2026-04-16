@@ -1,3 +1,4 @@
+// @vitest-environment nuxt
 /* eslint-disable @typescript-eslint/no-invalid-void-type */
 import type { VueWrapper } from "@vue/test-utils";
 import type { Promisable } from "type-fest";

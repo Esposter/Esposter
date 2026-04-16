@@ -1,0 +1,1 @@
+../configuration/eslint/index.typescript.js

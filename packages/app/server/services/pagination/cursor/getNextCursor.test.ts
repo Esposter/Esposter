@@ -1,4 +1,3 @@
-// @vitest-environment node
 import type { CompositeKey } from "@esposter/db-schema";
 
 import { serialize } from "#shared/services/pagination/cursor/serialize";

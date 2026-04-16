@@ -1,4 +1,3 @@
-// @vitest-environment node
 import { parseDictionaryToArray } from "#shared/util/parseDictionaryToArray";
 import { describe, expect, test } from "vitest";
 

@@ -1,4 +1,3 @@
-// @vitest-environment node
 import { compileVariable } from "#shared/services/compiler/compileVariable";
 import { describe, expect, test } from "vitest";
 

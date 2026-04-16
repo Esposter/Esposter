@@ -1,4 +1,3 @@
-// @vitest-environment node
 import type { ColumnStatistics } from "#shared/models/tableEditor/file/column/ColumnStatistics";
 
 import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
