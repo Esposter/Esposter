@@ -1,11 +1,11 @@
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
+import "@/util/bigintPolyfill";
 import { PGlite } from "@electric-sql/pglite";
 import { messageSchema, schema } from "@esposter/db-schema";
 import { generateDrizzleJson, generateMigration } from "drizzle-kit/api";
 import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/pglite";
-import { describe } from "vitest";
 
 export const createMockDb = async (): Promise<PostgresJsDatabase<typeof schema>> => {
   const client = new PGlite();
@@ -17,5 +17,3 @@ export const createMockDb = async (): Promise<PostgresJsDatabase<typeof schema>>
   for (const statement of statements) await db.execute(statement);
   return db as unknown as PostgresJsDatabase<typeof schema>;
 };
-
-describe.todo("createMockDb");

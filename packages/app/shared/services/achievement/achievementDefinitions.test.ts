@@ -1,4 +1,3 @@
-// @vitest-environment node
 import { AchievementDefinitionMap } from "#shared/services/achievement/achievementDefinitions";
 import { AchievementName, AchievementNames } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";

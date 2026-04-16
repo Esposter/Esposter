@@ -92,6 +92,50 @@ Store MIME type strings in the relevant configuration map (e.g. `DataSourceConfi
   const bar = () => { ... };
   ```
 
+## Creating a New Package
+
+New workspace packages follow the pattern of existing packages (e.g. `packages/db`, `packages/db-mock`). Checklist:
+
+1. **`package.json`** — set `name`, `private: true` (internal) or omit (publishable), `"type": "module"`, `"main": "dist/index.js"`, `"types": "dist/index.d.ts"`, `"files": ["dist"]`. Standard scripts: `build`, `export:gen`, `format`, `format:check`, `lint`, `lint:fix`, `typecheck`. Add `test`/`coverage` if the package has tests.
+2. **`tsconfig.json`** — `{ "extends": "../configuration/tsconfig.node.json" }` (node-only) or `"../configuration/tsconfig.vue.json"` (browser/Vue).
+3. **`tsconfig.build.json`** — `{ "extends": ["./tsconfig.json", "../configuration/tsconfig.build.json"] }`.
+4. **`rolldown.config.ts`** — use `rolldownConfigurationNode` (server-only), `rolldownConfigurationBrowser` (browser/isomorphic), or a custom extension if extra externals are needed.
+5. **`eslint.config.js`** — symlink to the shared config. On Windows (requires PowerShell to be elevated or Developer Mode enabled):
+   ```powershell
+   New-Item -ItemType SymbolicLink -Path "packages\db-mock\eslint.config.js" -Target "..\configuration\eslint\index.typescript.js"
+   ```
+   Use `index.typescript.js` (TypeScript-only package) or `index.vue.js` (Vue package). On Linux/macOS: `ln -s ../configuration/eslint/index.typescript.js eslint.config.js`.
+6. **`.oxlintrc.json`** — symlink to the shared oxlint config. On Windows:
+   ```powershell
+   New-Item -ItemType SymbolicLink -Path "packages\db-mock\.oxlintrc.json" -Target "..\configuration\.oxlintrc.json"
+   ```
+   On Linux/macOS: `ln -s ../configuration/.oxlintrc.json .oxlintrc.json`.
+7. **`src/index.ts`** — minimal barrel; `ctix` will regenerate it on `pnpm export:gen`.
+8. **Run `pnpm install`** from the repo root to link the new package into the workspace.
+9. **Run `pnpm build`** in the new package to produce `dist/`.
+
+### Rolldown externals
+
+Packages declared as `peerDependencies` must also be listed in the rolldown `external` array — pnpm doesn't automatically tell rolldown to skip them. Either:
+
+- Add them to the shared `rolldownConfigurationBrowser.external` list in `packages/configuration/src/rolldownConfigurationBrowser.ts` (preferred when the peer is used by multiple packages), OR
+- Override locally: `export default { ...rolldownConfigurationNode, external: [...rolldownConfigurationNode.external as string[], "my-peer-dep"] }`.
+
+After adding to the shared config, rebuild `packages/configuration` (`pnpm build`) before rebuilding dependent packages.
+
+### peerDependencies vs dependencies
+
+Use `peerDependencies` for packages that:
+
+- Are heavy/complex (e.g. `drizzle-kit`, `@electric-sql/pglite`) and should not be bundled into the dist.
+- Are already present in every consumer's package (e.g. `drizzle-orm`, `zod`).
+
+Use `dependencies` for packages that are not installed elsewhere and must be bundled or auto-installed.
+
+### Example: `packages/db-mock`
+
+A test-only node package. `drizzle-kit` and `@electric-sql/pglite` are peers (heavy, not bundled). Both are listed in `rolldownConfigurationBrowser.external`. `eslint.config.js` is a symlink to `../configuration/eslint/index.typescript.js`.
+
 ## Line Endings
 
 - All files must use **LF** line endings (`\n`), not CRLF.

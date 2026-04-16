@@ -1,3 +1,4 @@
+// @vitest-environment nuxt
 import { Row } from "#shared/models/tableEditor/file/datasource/Row";
 import { setupEditedItem, setupWithDataSource } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";

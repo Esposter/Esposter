@@ -1,3 +1,4 @@
+// @vitest-environment nuxt
 import type { VoiceParticipant } from "#shared/models/room/voice/VoiceParticipant";
 import type { Context } from "@@/server/trpc/context";
 

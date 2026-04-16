@@ -1,4 +1,3 @@
-// @vitest-environment node
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";

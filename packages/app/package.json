@@ -177,6 +177,8 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@esposter/db-mock": "workspace:*",
+    "@happy-dom/global-registrator": "catalog:",
     "@json-layout/vocabulary": "catalog:",
     "@nuxt/eslint": "catalog:",
     "@nuxt/fonts": "catalog:",
@@ -205,10 +207,12 @@
     "fake-indexeddb": "catalog:",
     "fs-extra": "catalog:",
     "h3": "catalog:",
+    "happy-dom": "catalog:",
     "nuxt": "catalog:",
     "nuxt-security": "catalog:",
     "sass-embedded": "catalog:",
     "unocss": "catalog:",
+    "vitest": "catalog:",
     "vuetify-nuxt-module": "catalog:"
   }
 }

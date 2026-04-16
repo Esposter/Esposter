@@ -1,4 +1,3 @@
-// @vitest-environment node
 import { getDeviceId } from "@@/server/services/auth/getDeviceId";
 import { getMockSession } from "@@/server/trpc/context.test";
 import { ID_SEPARATOR } from "@esposter/shared";

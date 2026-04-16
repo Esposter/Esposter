@@ -1,4 +1,3 @@
-// @vitest-environment node
 import { startsWithNumber } from "#shared/util/regex/startsWithNumber";
 import { describe, expect, test } from "vitest";
 
