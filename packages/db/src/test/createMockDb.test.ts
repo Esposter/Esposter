@@ -1,5 +1,6 @@
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
+import "@/util/bigintPolyfill";
 import { PGlite } from "@electric-sql/pglite";
 import { messageSchema, schema } from "@esposter/db-schema";
 import { generateDrizzleJson, generateMigration } from "drizzle-kit/api";
