@@ -6,7 +6,7 @@ import { dayjs } from "#shared/services/dayjs";
 import { useContainerClientMock } from "@@/server/composables/azure/container/useContainerClient.test";
 import { useEventGridPublisherClientMock } from "@@/server/composables/azure/eventGrid/useEventGridPublisherClient.test";
 import { useTableClientMock } from "@@/server/composables/azure/table/useTableClient.test";
-import { createMockDb as baseCreateMockDb } from "@esposter/db";
+import { createMockDb as baseCreateMockDb } from "@esposter/db-mock";
 import { users } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { IncomingMessage, ServerResponse } from "node:http";

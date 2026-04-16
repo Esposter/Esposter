@@ -1152,6 +1152,9 @@ importers:
         specifier: 'catalog:'
         version: 4.3.6
     devDependencies:
+      '@esposter/db-mock':
+        specifier: workspace:*
+        version: link:../db-mock
       '@json-layout/vocabulary':
         specifier: 'catalog:'
         version: 2.13.0
@@ -1412,9 +1415,6 @@ importers:
       '@azure/web-pubsub':
         specifier: 'catalog:'
         version: 1.2.0
-      '@electric-sql/pglite':
-        specifier: 'catalog:'
-        version: 0.4.4
       '@esposter/db-schema':
         specifier: workspace:*
         version: link:../db-schema
@@ -1424,9 +1424,6 @@ importers:
       dayjs:
         specifier: 'catalog:'
         version: 1.11.20
-      drizzle-kit:
-        specifier: 'catalog:'
-        version: 0.31.10
       drizzle-orm:
         specifier: 'catalog:'
         version: 0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9)
@@ -1452,9 +1449,27 @@ importers:
       '@azure/core-client':
         specifier: 'catalog:'
         version: 1.10.1
+      '@esposter/db-mock':
+        specifier: workspace:*
+        version: link:../db-mock
       '@types/mime-types':
         specifier: 'catalog:'
         version: 3.0.1
+
+  packages/db-mock:
+    dependencies:
+      '@electric-sql/pglite':
+        specifier: 'catalog:'
+        version: 0.4.4
+      '@esposter/db-schema':
+        specifier: workspace:*
+        version: link:../db-schema
+      drizzle-kit:
+        specifier: 'catalog:'
+        version: 0.31.10
+      drizzle-orm:
+        specifier: 'catalog:'
+        version: 0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9)
 
   packages/db-schema:
     dependencies:

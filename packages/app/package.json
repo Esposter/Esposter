@@ -177,6 +177,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@esposter/db-mock": "workspace:*",
     "@json-layout/vocabulary": "catalog:",
     "@nuxt/eslint": "catalog:",
     "@nuxt/fonts": "catalog:",
