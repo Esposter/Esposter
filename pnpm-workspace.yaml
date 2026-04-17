@@ -23,7 +23,7 @@ catalog:
   "@azure/storage-queue": ^12.29.0
   "@azure/web-pubsub": ^1.2.0
   "@azure/web-pubsub-client": ^1.0.4
-  "@better-auth/drizzle-adapter": ^1.6.3
+  "@better-auth/drizzle-adapter": ^1.6.5
   "@codemirror/lang-vue": ^0.1.3
   "@codemirror/language": ^6.12.3
   "@codemirror/language-data": ^6.5.2
@@ -51,12 +51,12 @@ catalog:
   "@mdi/font": ^7.4.47
   "@nuxt/eslint": ^1.15.2
   "@nuxt/fonts": ^0.14.0
-  "@nuxt/scripts": ^0.13.4
+  "@nuxt/scripts": ^1.0.1
   "@nuxt/test-utils": ^4.0.2
   "@nuxtjs/seo": ^5.1.3
   "@pinia/nuxt": ^0.11.3
   "@rolldown/plugin-node-polyfills": ^1.0.3
-  "@takumi-rs/core": ^1.0.9
+  "@takumi-rs/core": ^1.0.12
   "@tiptap/core": ^3.22.3
   "@tiptap/extension-code-block-lowlight": ^3.22.3
   "@tiptap/extension-file-handler": ^3.22.3
@@ -84,17 +84,17 @@ catalog:
   "@types/pluralize": ^0.0.33
   "@types/sanitize-html": ^2.16.1
   "@types/sax": ^1.2.7
-  "@types/three": ^0.183.1
+  "@types/three": ^0.184.0
   "@types/web-push": ^3.6.4
   "@types/ws": ^8.18.1
   "@types/xml2js": ^0.4.14
-  "@typescript/native-preview": ^7.0.0-dev.20260414.1
+  "@typescript/native-preview": ^7.0.0-dev.20260416.2
   "@unocss/eslint-config": ^66.6.8
   "@unocss/nuxt": ^66.6.8
   "@vite-pwa/nuxt": ^1.1.1
   "@vitejs/plugin-vue": ^6.0.6
   "@vitest/coverage-v8": ^4.1.4
-  "@vitest/eslint-plugin": ^1.6.15
+  "@vitest/eslint-plugin": ^1.6.16
   "@vue-flow/background": ^1.3.2
   "@vue-flow/controls": ^1.1.3
   "@vue-flow/core": ^1.48.2
@@ -111,7 +111,7 @@ catalog:
   ajv-formats: ^3.0.1
   ajv-i18n: ^4.2.0
   apexcharts: ^5.10.6
-  better-auth: ^1.6.3
+  better-auth: ^1.6.5
   codemirror: ^6.0.2
   crossws: ^0.4.5
   ctix: 2.7.2
@@ -150,7 +150,7 @@ catalog:
   grapesjs-touch: ^0.1.1
   grapesjs-tui-image-editor: ^1.0.2
   grapesjs-typed: ^2.0.1
-  grid-engine: ^2.48.2
+  grid-engine: ^2.52.0
   grid-layout-plus: ^1.1.1
   gsap: ^3.15.0
   h3: ^1.15.11
@@ -162,10 +162,10 @@ catalog:
   link-preview-js: ^4.0.0
   linkifyjs: ^4.3.2
   lowlight: ^3.3.0
-  marked: ^18.0.0
+  marked: ^18.0.1
   mathjs: ^15.2.0
   mime-types: ^3.0.2
-  mjml-browser: ^4.18.0
+  mjml-browser: ^5.0.1
   nano-staged: ^1.0.2
   node-emoji: ^2.2.0
   node-html-parser: ^7.1.0
@@ -175,7 +175,7 @@ catalog:
   omit-deep-lodash: ^1.1.7
   oxfmt: ^0.45.0
   oxlint: ^1.60.0
-  oxlint-tsgolint: ^0.21.0
+  oxlint-tsgolint: ^0.21.1
   p-progress: ^1.0.0
   pathe: ^2.0.3
   pdfjs-dist: ^5.6.205
@@ -187,10 +187,10 @@ catalog:
   prosemirror-state: ^1.4.4
   rate-limiter-flexible: ^11.0.0
   read-excel-file: ^8.0.3
-  rolldown: ^1.0.0-rc.15
+  rolldown: ^1.0.0-rc.16
   rolldown-plugin-dts: ^0.23.2
   rxjs: ^7.8.2
-  sanitize-html: ^2.17.2
+  sanitize-html: ^2.17.3
   sass-embedded: ^1.99.0
   sax: ^1.6.0
   show-open-file-picker: ^0.4.0
@@ -200,11 +200,11 @@ catalog:
   survey-creator-core: 3.0.0-beta.0
   survey-creator-vue: 3.0.0-beta.0
   survey-vue3-ui: 3.0.0-beta.0
-  three: ^0.183.2
+  three: ^0.184.0
   three-globe: ^2.45.2
   trpc-nuxt: ^2.0.2
   tsx: ^4.21.0
-  type-fest: ^5.5.0
+  type-fest: ^5.6.0
   typedoc: ^0.28.19
   typescript: 5.9.3
   typescript-eslint: ^8.58.2
@@ -237,6 +237,10 @@ catalogMode: strict
 cleanupUnusedCatalogs: true
 
 overrides:
+  # @TODO: nuxt-seo-utils@8.1.9 broadened its peer dep to allow @unhead/addons@^3, which installs
+  # @unhead/bundler@3 — its Vite plugin injects a ValidatePlugin import that doesn't exist
+  # in unhead@2.x (used by Nuxt 4.3.1). Pin to ^2 until Nuxt upgrades its unhead major.
+  "@unhead/addons": "^2.1.13"
   crossws: ^0.4.5
   pdfjs-dist: ^5.6.205
   vite: ^8.0.8
