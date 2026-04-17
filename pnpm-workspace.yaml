@@ -237,6 +237,10 @@ catalogMode: strict
 cleanupUnusedCatalogs: true
 
 overrides:
+  # @TODO: nuxt-seo-utils@8.1.9 broadened its peer dep to allow @unhead/addons@^3, which installs
+  # @unhead/bundler@3 — its Vite plugin injects a ValidatePlugin import that doesn't exist
+  # in unhead@2.x (used by Nuxt 4.3.1). Pin to ^2 until Nuxt upgrades its unhead major.
+  "@unhead/addons": "^2.1.13"
   crossws: ^0.4.5
   pdfjs-dist: ^5.6.205
   vite: ^8.0.8

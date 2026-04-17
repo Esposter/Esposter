@@ -42,7 +42,9 @@
       "WebFetch(domain:mathjs.org)",
       "WebFetch(domain:bundlephobia.com)",
       "WebFetch(domain:www.npmjs.com)",
-      "Bash(wait)"
+      "Bash(wait)",
+      "Bash(pnpm ls *)",
+      "Bash(pnpm why *)"
     ]
   }
 }

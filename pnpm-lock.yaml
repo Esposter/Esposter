@@ -656,6 +656,7 @@ catalogs:
       version: 4.3.6
 
 overrides:
+  '@unhead/addons': ^2.1.13
   crossws: ^0.4.5
   pdfjs-dist: ^5.6.205
   vite: ^8.0.8
@@ -1178,7 +1179,7 @@ importers:
         version: 4.0.2(@vue/test-utils@2.4.6)(crossws@0.4.5(srvx@0.11.15))(happy-dom@20.9.0)(magicast@0.5.2)(srvx@0.11.15)(typescript@5.9.3)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vitest@4.1.4)
       '@nuxtjs/seo':
         specifier: 'catalog:'
-        version: 5.1.3(520941f1f3ee91ce3999274dc0407fc3)
+        version: 5.1.3(18d552582728a61b8f18a9f0615bb076)
       '@pinia/nuxt':
         specifier: 'catalog:'
         version: 0.11.3(magicast@0.5.2)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.32(typescript@5.9.3)))
@@ -6518,25 +6519,10 @@ packages:
   '@ungap/structured-clone@1.3.0':
     resolution: {integrity: sha512-WmoN8qaIAo7WTYWbAZuG8PYEhn5fkz7dZrqTBZ7dtt//lL2Gwms1IcnQ5yHqjDfX8Ft5j4YzDM23f87zBfDe9g==}
 
-  '@unhead/addons@3.0.4':
-    resolution: {integrity: sha512-bHiJdi5BHEz/JmFmPrEPjAIqva4Q1/1NCyWlXZEYpzQyIhuc862oExk3KkSmNs9j4TrKoKQUjLZB24l/JoJw1w==}
+  '@unhead/addons@2.1.13':
+    resolution: {integrity: sha512-xiM5ERU68FEuiBCCiPZ1EDkja+kH4hKKot/7dNJufneACtGoAFWnKUcmj/iB9BKjVwgBBF3sFYO3qXjkNFXWxA==}
     peerDependencies:
-      '@unhead/bundler': 3.0.4
-
-  '@unhead/bundler@3.0.4':
-    resolution: {integrity: sha512-Ho8dKVM5RM5rUk3pxRz9NdWZR0jO/RkPrc0r40msYhkxWrTyWK0qEfd9U9aFa+LQEsvJiQSnzcnSWzJIKHb0YQ==}
-    peerDependencies:
-      esbuild: '>=0.17.0'
-      lightningcss: '>=1.20.0'
-      rolldown: '>=1.0.0-beta.0'
-      unhead: ^3.0.4
-    peerDependenciesMeta:
-      esbuild:
-        optional: true
-      lightningcss:
-        optional: true
-      rolldown:
-        optional: true
+      unhead: ^2.1.13
 
   '@unhead/schema-org@2.1.13':
     resolution: {integrity: sha512-D9458jeB20lgLRgZxiTGi/iSbqP/pPsD2klGO5P2PlHOFxvejh9RUAhsz6LILac28Z6lFZPY4hs3mpW3batUtA==}
@@ -6770,19 +6756,6 @@ packages:
       '@vite-pwa/assets-generator': ^1.0.0
     peerDependenciesMeta:
       '@vite-pwa/assets-generator':
-        optional: true
-
-  '@vitejs/devtools-kit@0.1.13':
-    resolution: {integrity: sha512-8TqyrrPTB8KNGb2ukVHNo4aMhGYJgUypVNMnqOvxaWYln3QAXK6CFxifK3lZGOHWKAUqWAiTmZUsYzV4S0Kn7g==}
-    peerDependencies:
-      vite: ^8.0.8
-
-  '@vitejs/devtools-rpc@0.1.13':
-    resolution: {integrity: sha512-IbYRlvVJMdlQiRPU5fDnIAwgTu43O7v5/a1cUFp8t77zXLvg+3g2hbqrYzoqxIgAyLTr2KMY7HoYm6j/kIMB6Q==}
-    peerDependencies:
-      ws: '*'
-    peerDependenciesMeta:
-      ws:
         optional: true
 
   '@vitejs/plugin-vue-jsx@5.1.5':
@@ -12563,6 +12536,10 @@ packages:
       '@unocss/webpack':
         optional: true
 
+  unplugin-ast@0.16.0:
+    resolution: {integrity: sha512-1ow2FlRznoSKE7Fjk2bSxqDsvHyj/O876RqsNlipsM6A+I91t7Mi+jG7tCNNcl3vZx14z4pGXBLSl8KOPrMuFQ==}
+    engines: {node: '>=20.19.0'}
+
   unplugin-auto-import@21.0.0:
     resolution: {integrity: sha512-vWuC8SwqJmxZFYwPojhOhOXDb5xFhNNcEVb9K/RFkyk/3VnfaOjzitWN7v+8DEKpMjSsY2AEGXNgt6I0yQrhRQ==}
     engines: {node: '>=20.19.0'}
@@ -16665,7 +16642,7 @@ snapshots:
       - vite
       - vue
 
-  '@nuxtjs/seo@5.1.3(520941f1f3ee91ce3999274dc0407fc3)':
+  '@nuxtjs/seo@5.1.3(18d552582728a61b8f18a9f0615bb076)':
     dependencies:
       '@nuxt/kit': 4.4.2(magicast@0.5.2)
       '@nuxtjs/robots': 6.0.7(9f3ef4eefde4d40da6ba52f2553c8eb9)
@@ -16674,7 +16651,7 @@ snapshots:
       nuxt-link-checker: 5.0.9(b3a7c0daa705b9dc78afe22f5fa8828e)
       nuxt-og-image: 6.4.3(080ae1220f532ad68636d77910baf319)
       nuxt-schema-org: 6.0.4(6e31fdd8432f8527f158dc0d5216b5d9)
-      nuxt-seo-utils: 8.1.9(91a4a8fc83337a46724bc1e862fdb211)
+      nuxt-seo-utils: 8.1.9(8a0ab03545f9ba547471f248b058d217)
       nuxt-site-config: 4.0.8(9f3ef4eefde4d40da6ba52f2553c8eb9)
       nuxtseo-shared: 5.1.3(37a4efa07237b7c01a400270369835d7)
     transitivePeerDependencies:
@@ -16698,7 +16675,6 @@ snapshots:
       - '@takumi-rs/wasm'
       - '@tiptap/extensions'
       - '@tiptap/y-tiptap'
-      - '@unhead/bundler'
       - '@unhead/react'
       - '@unhead/solid-js'
       - '@unhead/svelte'
@@ -16730,6 +16706,7 @@ snapshots:
       - react
       - react-dom
       - rolldown
+      - rollup
       - satori
       - sharp
       - sortablejs
@@ -18747,27 +18724,18 @@ snapshots:
 
   '@ungap/structured-clone@1.3.0': {}
 
-  '@unhead/addons@3.0.4(@unhead/bundler@3.0.4(esbuild@0.27.7)(lightningcss@1.32.0)(rolldown@1.0.0-rc.16)(typescript@5.9.3)(unhead@2.1.13)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(ws@8.20.0))':
+  '@unhead/addons@2.1.13(rollup@4.60.1)(unhead@2.1.13)':
     dependencies:
-      '@unhead/bundler': 3.0.4(esbuild@0.27.7)(lightningcss@1.32.0)(rolldown@1.0.0-rc.16)(typescript@5.9.3)(unhead@2.1.13)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(ws@8.20.0)
-
-  '@unhead/bundler@3.0.4(esbuild@0.27.7)(lightningcss@1.32.0)(rolldown@1.0.0-rc.16)(typescript@5.9.3)(unhead@2.1.13)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(ws@8.20.0)':
-    dependencies:
-      '@vitejs/devtools-kit': 0.1.13(typescript@5.9.3)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(ws@8.20.0)
+      '@rollup/pluginutils': 5.3.0(rollup@4.60.1)
+      estree-walker: 3.0.3
       magic-string: 0.30.21
-      oxc-parser: 0.125.0
-      oxc-walker: 0.7.0(oxc-parser@0.125.0)
+      mlly: 1.8.2
       ufo: 1.6.3
       unhead: 2.1.13
       unplugin: 3.0.0
-    optionalDependencies:
-      esbuild: 0.27.7
-      lightningcss: 1.32.0
-      rolldown: 1.0.0-rc.16
+      unplugin-ast: 0.16.0
     transitivePeerDependencies:
-      - typescript
-      - vite
-      - ws
+      - rollup
 
   '@unhead/schema-org@2.1.13(@unhead/vue@2.1.13(vue@3.5.32(typescript@5.9.3)))':
     dependencies:
@@ -19075,28 +19043,6 @@ snapshots:
       - vite
       - workbox-build
       - workbox-window
-
-  '@vitejs/devtools-kit@0.1.13(typescript@5.9.3)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(ws@8.20.0)':
-    dependencies:
-      '@vitejs/devtools-rpc': 0.1.13(typescript@5.9.3)(ws@8.20.0)
-      birpc: 4.0.0
-      ohash: 2.0.11
-      vite: 8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3)
-    transitivePeerDependencies:
-      - typescript
-      - ws
-
-  '@vitejs/devtools-rpc@0.1.13(typescript@5.9.3)(ws@8.20.0)':
-    dependencies:
-      birpc: 4.0.0
-      ohash: 2.0.11
-      p-limit: 7.3.0
-      structured-clone-es: 2.0.0
-      valibot: 1.3.1(typescript@5.9.3)
-    optionalDependencies:
-      ws: 8.20.0
-    transitivePeerDependencies:
-      - typescript
 
   '@vitejs/plugin-vue-jsx@5.1.5(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue@3.5.32(typescript@5.9.3))':
     dependencies:
@@ -23347,10 +23293,10 @@ snapshots:
       - rollup
       - supports-color
 
-  nuxt-seo-utils@8.1.9(91a4a8fc83337a46724bc1e862fdb211):
+  nuxt-seo-utils@8.1.9(8a0ab03545f9ba547471f248b058d217):
     dependencies:
       '@nuxt/kit': 4.4.2(magicast@0.5.2)
-      '@unhead/addons': 3.0.4(@unhead/bundler@3.0.4(esbuild@0.27.7)(lightningcss@1.32.0)(rolldown@1.0.0-rc.16)(typescript@5.9.3)(unhead@2.1.13)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(ws@8.20.0))
+      '@unhead/addons': 2.1.13(rollup@4.60.1)(unhead@2.1.13)
       citty: 0.2.2
       defu: 6.1.7
       escape-string-regexp: 5.0.0
@@ -23370,9 +23316,10 @@ snapshots:
       sharp: 0.34.5
     transitivePeerDependencies:
       - '@nuxt/schema'
-      - '@unhead/bundler'
       - magicast
+      - rollup
       - srvx
+      - unhead
       - vite
       - vue
       - zod
@@ -26010,6 +25957,15 @@ snapshots:
       - '@emnapi/core'
       - '@emnapi/runtime'
       - vite
+
+  unplugin-ast@0.16.0:
+    dependencies:
+      '@babel/generator': 8.0.0-rc.3
+      '@babel/parser': 8.0.0-rc.3
+      '@babel/types': 8.0.0-rc.3
+      ast-kit: 3.0.0-beta.1
+      magic-string-ast: 1.0.3
+      unplugin: 3.0.0
 
   unplugin-auto-import@21.0.0(@nuxt/kit@4.4.2(magicast@0.5.2))(@vueuse/core@14.2.1(vue@3.5.32(typescript@5.9.3))):
     dependencies:
