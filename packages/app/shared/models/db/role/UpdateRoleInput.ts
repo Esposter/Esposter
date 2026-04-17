@@ -1,12 +1,16 @@
+import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
 import { selectRoomRoleSchema, selectRoomSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
-export const updateRoleInputSchema = z.object({
-  color: selectRoomRoleSchema.shape.color.optional(),
-  id: selectRoomRoleSchema.shape.id,
-  name: selectRoomRoleSchema.shape.name.optional(),
-  permissions: selectRoomRoleSchema.shape.permissions.optional(),
-  position: selectRoomRoleSchema.shape.position.optional(),
-  roomId: selectRoomSchema.shape.id,
-});
+export const updateRoleInputSchema = refineAtLeastOne(
+  z.object({
+    color: selectRoomRoleSchema.shape.color.optional(),
+    id: selectRoomRoleSchema.shape.id,
+    name: selectRoomRoleSchema.shape.name.optional(),
+    permissions: selectRoomRoleSchema.shape.permissions.optional(),
+    position: selectRoomRoleSchema.shape.position.optional(),
+    roomId: selectRoomSchema.shape.id,
+  }),
+  ["color", "name", "permissions", "position"],
+);
 export type UpdateRoleInput = z.infer<typeof updateRoleInputSchema>;

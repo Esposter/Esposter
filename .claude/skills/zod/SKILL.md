@@ -207,6 +207,16 @@ Always use the `z` namespace export: `z.ZodType`, `z.ZodError`, etc. Never use n
   });
   ```
 
+- **`refineAtLeastOne`** — when an update/patch schema has all-optional fields and at least one must be provided, always use `refineAtLeastOne(schema, ["field1", "field2", ...])` from `#shared/services/zod/refineAtLeastOne`. Never inline `.refine((data) => ...)` for this pattern:
+
+  ```typescript
+  import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
+  export const updateFooInputSchema = refineAtLeastOne(
+    z.object({ id: ..., name: z.string().optional(), color: z.string().optional() }),
+    ["name", "color"],
+  );
+  ```
+
 - **`satisfies z.ZodType<T>` with class types** — when a schema output has plain objects but the interface uses class instances (with `toJSON`), use `Except` + `ToData` in the satisfies to strip `toJSON` from nested classes:
   ```typescript
   export const dataSourceSchema = z.object({...})

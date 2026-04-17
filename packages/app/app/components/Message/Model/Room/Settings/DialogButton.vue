@@ -22,7 +22,7 @@ const room = computed(() => rooms.value.find(({ id }) => id === roomId));
 </script>
 
 <template>
-  <MessageModelRoomConfirmDeleteDialog v-model="isDeleteOpen" :room-id :creator-id="room?.userId ?? ''" />
+  <MessageModelRoomConfirmDeleteDialog v-if="room" v-model="isDeleteOpen" :room-id :creator-id="room.userId" />
   <v-dialog v-model="dialog" fullscreen>
     <template #activator="{ props: dialogProps }">
       <v-tooltip :text="`${DatabaseEntityType.Room} Settings`">

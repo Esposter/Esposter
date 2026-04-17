@@ -18,7 +18,7 @@ const memberRoles = computed(() => getMemberRoles(member.id));
 const hasRole = (roleId: string) => memberRoles.value.some(({ id }) => id === roleId);
 const isRoleManageable = (role: RoomRole) => {
   const data = myPermissionsMap.value.get(roomId);
-  if (!data) return true;
+  if (!data) return false;
   return isManageable(data.topRolePosition, role.position, data.isRoomOwner);
 };
 
