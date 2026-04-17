@@ -1,8 +1,8 @@
 import { selectRoomSchema, selectUserSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
-export const getMemberRolesInputSchema = z.object({
+export const readMemberRolesInputSchema = z.object({
   roomId: selectRoomSchema.shape.id,
   userId: selectUserSchema.shape.id,
 });
-export type GetMemberRolesInput = z.infer<typeof getMemberRolesInputSchema>;
+export type ReadMemberRolesInput = z.infer<typeof readMemberRolesInputSchema>;

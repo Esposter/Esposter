@@ -1,4 +1,4 @@
 export enum PermissionsTab {
-  CreateRole = "Create Role",
+  CreateRoles = "Create Roles",
   EditRoles = "Edit Roles",
 }

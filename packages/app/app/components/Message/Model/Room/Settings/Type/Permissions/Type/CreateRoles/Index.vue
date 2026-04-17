@@ -7,7 +7,6 @@ interface CreateRoleIndexProps {
   roomId: Room["id"];
 }
 
-const emit = defineEmits<{ created: [] }>();
 const { roomId } = defineProps<CreateRoleIndexProps>();
 const roleStore = useRoleStore();
 const { createRole } = roleStore;
@@ -18,12 +17,11 @@ const submit = async () => {
   if (!trimmedName) return;
   await createRole({ name: trimmedName, permissions: 0n, position: 0, roomId });
   name.value = "";
-  emit("created");
 };
 </script>
 
 <template>
-  <div flex flex-col gap-y-4 max-w-md>
+  <div flex flex-col gap-y-4>
     <v-text-field v-model="name" label="Role name" density="compact" hide-details @keyup.enter="submit" />
     <div>
       <v-btn :disabled="!name.trim()" color="primary" @click="submit">Create Role</v-btn>

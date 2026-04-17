@@ -3,7 +3,7 @@ import type { RoomRole } from "@esposter/db-schema";
 import { assignRoleInputSchema } from "#shared/models/db/role/AssignRoleInput";
 import { createRoleInputSchema } from "#shared/models/db/role/CreateRoleInput";
 import { deleteRoleInputSchema } from "#shared/models/db/role/DeleteRoleInput";
-import { getMemberRolesInputSchema } from "#shared/models/db/role/GetMemberRolesInput";
+import { readMemberRolesInputSchema } from "#shared/models/db/role/ReadMemberRolesInput";
 import { readRolesInputSchema } from "#shared/models/db/role/ReadRolesInput";
 import { revokeRoleInputSchema } from "#shared/models/db/role/RevokeRoleInput";
 import { updateRoleInputSchema } from "#shared/models/db/role/UpdateRoleInput";
@@ -24,7 +24,7 @@ import { z } from "zod";
 export type { AssignRoleInput } from "#shared/models/db/role/AssignRoleInput";
 export type { CreateRoleInput } from "#shared/models/db/role/CreateRoleInput";
 export type { DeleteRoleInput } from "#shared/models/db/role/DeleteRoleInput";
-export type { GetMemberRolesInput } from "#shared/models/db/role/GetMemberRolesInput";
+export type { ReadMemberRolesInput } from "#shared/models/db/role/ReadMemberRolesInput";
 export type { ReadRolesInput } from "#shared/models/db/role/ReadRolesInput";
 export type { RevokeRoleInput } from "#shared/models/db/role/RevokeRoleInput";
 export type { UpdateRoleInput } from "#shared/models/db/role/UpdateRoleInput";
@@ -115,17 +115,29 @@ export const roleRouter = router({
       return deletedRole;
     },
   ),
-  getMemberRoles: getMemberProcedure(getMemberRolesInputSchema, "roomId").query<RoomRole[]>(
+  onRoleUpdate: getMemberProcedure(onRoleUpdateInputSchema, "roomId").subscription(async function* ({
+    input: { roomId },
+    signal,
+  }) {
+    for await (const [{ roomId: emittedRoomId }] of on(roleEventEmitter, "updateRole", { signal })) {
+      if (emittedRoomId !== roomId) continue;
+      yield roomId;
+    }
+  }),
+  readMemberRoles: getMemberProcedure(readMemberRolesInputSchema, "roomId").query<RoomRole[]>(
     ({ ctx, input: { roomId, userId } }) =>
       ctx.db
         .select({
           color: roomRoles.color,
+          createdAt: roomRoles.createdAt,
+          deletedAt: roomRoles.deletedAt,
           id: roomRoles.id,
           isEveryone: roomRoles.isEveryone,
           name: roomRoles.name,
           permissions: roomRoles.permissions,
           position: roomRoles.position,
           roomId: roomRoles.roomId,
+          updatedAt: roomRoles.updatedAt,
         })
         .from(roomRoles)
         .innerJoin(usersToRoomRoles, eq(usersToRoomRoles.roleId, roomRoles.id))
@@ -133,7 +145,7 @@ export const roleRouter = router({
           and(eq(roomRoles.roomId, roomId), eq(usersToRoomRoles.userId, userId), eq(usersToRoomRoles.roomId, roomId)),
         ),
   ),
-  getMyPermissions: getMemberProcedure(readRolesInputSchema, "roomId").query(async ({ ctx, input: { roomId } }) => {
+  readMyPermissions: getMemberProcedure(readRolesInputSchema, "roomId").query(async ({ ctx, input: { roomId } }) => {
     const userId = ctx.getSessionPayload.user.id;
     const room = await ctx.db.query.rooms.findFirst({
       columns: { userId: true },
@@ -146,15 +158,6 @@ export const roleRouter = router({
       getTopRolePosition(ctx.db, userId, roomId),
     ]);
     return { isRoomOwner: room.userId === userId, permissions, topRolePosition };
-  }),
-  onRoleUpdate: getMemberProcedure(onRoleUpdateInputSchema, "roomId").subscription(async function* ({
-    input: { roomId },
-    signal,
-  }) {
-    for await (const [{ roomId: emittedRoomId }] of on(roleEventEmitter, "updateRole", { signal })) {
-      if (emittedRoomId !== roomId) continue;
-      yield roomId;
-    }
   }),
   readRoles: getMemberProcedure(readRolesInputSchema, "roomId").query<RoomRole[]>(({ ctx, input: { roomId } }) =>
     ctx.db.select().from(roomRoles).where(eq(roomRoles.roomId, roomId)).orderBy(desc(roomRoles.position)),

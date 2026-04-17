@@ -18,15 +18,12 @@ await readRoles({ roomId });
 <template>
   <div flex flex-col h-full>
     <v-tabs v-model="tab" mb-4>
-      <v-tab :value="PermissionsTab.CreateRole">{{ PermissionsTab.CreateRole }}</v-tab>
+      <v-tab :value="PermissionsTab.CreateRoles">{{ PermissionsTab.CreateRoles }}</v-tab>
       <v-tab :value="PermissionsTab.EditRoles">{{ PermissionsTab.EditRoles }}</v-tab>
     </v-tabs>
     <v-window v-model="tab" flex-1 overflow-hidden>
-      <v-window-item :value="PermissionsTab.CreateRole" h-full>
-        <MessageModelRoomSettingsTypePermissionsTypeCreateRoleIndex
-          :room-id
-          @created="tab = PermissionsTab.EditRoles"
-        />
+      <v-window-item :value="PermissionsTab.CreateRoles" h-full>
+        <MessageModelRoomSettingsTypePermissionsTypeCreateRolesIndex :room-id />
       </v-window-item>
       <v-window-item :value="PermissionsTab.EditRoles" h-full>
         <MessageModelRoomSettingsTypePermissionsTypeEditRolesIndex :room-id />

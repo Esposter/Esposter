@@ -1,11 +1,12 @@
 import type { AssignRoleInput } from "#shared/models/db/role/AssignRoleInput";
 import type { CreateRoleInput } from "#shared/models/db/role/CreateRoleInput";
 import type { DeleteRoleInput } from "#shared/models/db/role/DeleteRoleInput";
-import type { GetMemberRolesInput } from "#shared/models/db/role/GetMemberRolesInput";
+import type { ReadMemberRolesInput } from "#shared/models/db/role/ReadMemberRolesInput";
 import type { ReadRolesInput } from "#shared/models/db/role/ReadRolesInput";
 import type { RevokeRoleInput } from "#shared/models/db/role/RevokeRoleInput";
 import type { UpdateRoleInput } from "#shared/models/db/role/UpdateRoleInput";
 import type { RoomRole } from "@esposter/db-schema";
+
 import { MANAGEMENT_PERMISSIONS } from "#shared/services/room/rbac/constants";
 import { isManageable as isManageableByPosition } from "#shared/services/room/rbac/isManageable";
 
@@ -50,11 +51,11 @@ export const useRoleStore = defineStore("message/room/role", () => {
     selectedRoleId.value = (everyoneRole ?? roles[0])?.id ?? null;
   };
   const readMyPermissions = async (input: ReadRolesInput) => {
-    const data = await $trpc.role.getMyPermissions.query(input);
+    const data = await $trpc.role.readMyPermissions.query(input);
     myPermissionsMap.value.set(input.roomId, data);
   };
-  const readMemberRoles = async (input: GetMemberRolesInput) => {
-    const roles = await $trpc.role.getMemberRoles.query(input);
+  const readMemberRoles = async (input: ReadMemberRolesInput) => {
+    const roles = await $trpc.role.readMemberRoles.query(input);
     memberRolesMap.value.set(input.userId, roles);
   };
   const createRole = async (input: CreateRoleInput) => {
@@ -81,16 +82,17 @@ export const useRoleStore = defineStore("message/room/role", () => {
     await $trpc.role.assignRole.mutate(input);
     const role = getRoles(input.roomId).find(({ id }) => id === input.roleId);
     if (role) {
-      const existing = getMemberRoles(input.userId);
-      if (!existing.some(({ id }) => id === input.roleId)) memberRolesMap.value.set(input.userId, [...existing, role]);
+      const existingMemberRoles = getMemberRoles(input.userId);
+      if (!existingMemberRoles.some(({ id }) => id === input.roleId))
+        memberRolesMap.value.set(input.userId, [...existingMemberRoles, role]);
     }
   };
   const revokeRole = async (input: RevokeRoleInput) => {
     await $trpc.role.revokeRole.mutate(input);
-    const existing = getMemberRoles(input.userId);
+    const existingMemberRoles = getMemberRoles(input.userId);
     memberRolesMap.value.set(
       input.userId,
-      existing.filter(({ id }) => id !== input.roleId),
+      existingMemberRoles.filter(({ id }) => id !== input.roleId),
     );
   };
   return {
