@@ -196,10 +196,10 @@ catalog:
   show-open-file-picker: ^0.4.0
   sql-highlight: ^6.1.0
   superjson: ^2.2.6
-  survey-core: ^3.0.0-beta.3
-  survey-creator-core: ^3.0.0-beta.3
-  survey-creator-vue: ^3.0.0-beta.3
-  survey-vue3-ui: ^3.0.0-beta.3
+  survey-core: 3.0.0-beta.0
+  survey-creator-core: 3.0.0-beta.0
+  survey-creator-vue: 3.0.0-beta.0
+  survey-vue3-ui: 3.0.0-beta.0
   three: ^0.184.0
   three-globe: ^2.45.2
   trpc-nuxt: ^2.0.2
