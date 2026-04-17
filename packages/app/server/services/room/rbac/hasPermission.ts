@@ -1,8 +1,8 @@
 import type { Context } from "@@/server/trpc/context";
 import type { RoomPermission } from "@esposter/db-schema";
 
-import { getPermissions } from "@@/server/services/room/rbac/getPermissions";
 import { hasPermission as hasPermissionPure } from "#shared/services/room/rbac/hasPermission";
+import { getPermissions } from "@@/server/services/room/rbac/getPermissions";
 
 export const hasPermission = async (
   db: Context["db"],
