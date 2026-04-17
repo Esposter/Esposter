@@ -23,10 +23,10 @@ await readRoles({ roomId });
     </v-tabs>
     <v-window v-model="tab" flex-1 overflow-hidden>
       <v-window-item :value="PermissionsTab.CreateRoles" h-full>
-        <MessageModelRoomSettingsTypePermissionsTypeCreateRolesIndex :room-id />
+        <MessageModelRoomSettingsTypePermissionsTypeCreateRoles :room-id />
       </v-window-item>
       <v-window-item :value="PermissionsTab.EditRoles" h-full>
-        <MessageModelRoomSettingsTypePermissionsTypeEditRolesIndex :room-id />
+        <MessageModelRoomSettingsTypePermissionsTypeEditRoles :room-id />
       </v-window-item>
     </v-window>
   </div>
