@@ -238,7 +238,7 @@ catalogs:
       specifier: ^0.4.14
       version: 0.4.14
     '@typescript/native-preview':
-      specifier: ^7.0.0-dev.20260416.2
+      specifier: ^7.0.0-dev.20260417.1
       version: 7.0.0-dev.20260417.1
     '@unocss/eslint-config':
       specifier: ^66.6.8
