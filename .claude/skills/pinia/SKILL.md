@@ -270,6 +270,30 @@ rolesMap.value = new Map(rolesMap.value).set(roomId, result);
 rolesMap.value.set(roomId, result);
 ```
 
+## Optimistic Input Clearing on Submit
+
+Clear local form input **before** `await`-ing the store action so the field empties instantly rather than waiting for the server round-trip.
+
+```typescript
+// WRONG — field stays filled until server responds
+const submit = async () => {
+  const trimmedName = name.value.trim();
+  if (!trimmedName) return;
+  await createRole({ name: trimmedName, permissions: 0n, position: 0, roomId });
+  name.value = "";
+};
+
+// CORRECT — clear first, then fire the request
+const submit = async () => {
+  const trimmedName = name.value.trim();
+  if (!trimmedName) return;
+  name.value = "";
+  await createRole({ name: trimmedName, permissions: 0n, position: 0, roomId });
+};
+```
+
+Capture the trimmed value in a local variable first so clearing `name` doesn't affect the value passed to the store.
+
 ## useDataMap for Key-to-Value State
 
 Use `useDataMap<T>(currentId, defaultValue)` for state keyed by an id **when there is a meaningful "current" id** (e.g. `currentRoomId`) — `useDataMap` provides `getDataMap`, `setDataMap`, `data`, `initializeData`, and `resetData` out of the box. The `data` computed is tied to the current key.
