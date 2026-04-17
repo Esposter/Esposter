@@ -8,18 +8,23 @@ import { z } from "zod";
 
 /* eslint-disable perfectionist/sort-objects */
 export const RoomPermission = {
-  ReadMessages: 1n,
-  SendMessages: 2n,
-  ManageMessages: 4n,
-  MentionEveryone: 8n,
-  ManageRoom: 16n,
-  ManageRoles: 32n,
-  ManageInvites: 64n,
-  KickMembers: 128n,
-  BanMembers: 256n,
-  MuteMembers: 512n,
-  MoveMembers: 1024n,
-  Administrator: 2048n,
+  // Text channel
+  ReadMessages: 1n << 0n, // 1    — see message history / view channel
+  SendMessages: 1n << 1n, // 2    — post messages
+  ManageMessages: 1n << 2n, // 4    — delete/pin others' messages
+  MentionEveryone: 1n << 3n, // 8    — use @here / @everyone
+  // General
+  ManageRoom: 1n << 4n, // 16   — edit room name, image, settings
+  ManageRoles: 1n << 5n, // 32   — create/edit/delete roles below own top position
+  ManageInvites: 1n << 6n, // 64   — create/delete invite codes
+  // Moderation
+  KickMembers: 1n << 7n, // 128  — remove a member from room
+  BanMembers: 1n << 8n, // 256  — permanent ban
+  MuteMembers: 1n << 9n, // 512  — force-mute/unmute in voice
+  MoveMembers: 1n << 10n, // 1024 — kick from voice channel
+  // Advanced
+  ManageWebhooks: 1n << 11n, // 2048 — create/edit/delete webhooks
+  Administrator: 1n << 12n, // 4096 — all permissions; bypasses hierarchy checks; always the highest bit
 } as const;
 /* eslint-enable perfectionist/sort-objects */
 

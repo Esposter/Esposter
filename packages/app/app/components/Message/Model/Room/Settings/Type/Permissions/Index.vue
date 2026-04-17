@@ -15,17 +15,15 @@ await readRoles({ roomId });
 </script>
 
 <template>
-  <v-container fluid>
-    <v-row>
-      <v-col>
-        <MessageModelRoomSettingsTypePermissionsRoleSelector :room-id />
-      </v-col>
-      <v-col v-if="selectedRole">
-        <MessageModelRoomSettingsTypePermissionsRoleEditor :key="selectedRole.id" :role="selectedRole" :room-id />
-      </v-col>
-      <v-col v-else class="text-medium-emphasis" align-center d-flex justify-center>
-        Select a role to edit its permissions.
-      </v-col>
-    </v-row>
-  </v-container>
+  <div flex h-full gap-x-6>
+    <div w-56 flex-shrink-0 flex flex-col>
+      <MessageModelRoomSettingsTypePermissionsRoleSelector :room-id />
+    </div>
+    <div v-if="selectedRole" flex-1 overflow-y-auto>
+      <MessageModelRoomSettingsTypePermissionsRoleEditor :key="selectedRole.id" :role="selectedRole" :room-id />
+    </div>
+    <div v-else flex-1 flex items-center justify-center text-medium-emphasis>
+      Select a role to edit its permissions.
+    </div>
+  </div>
 </template>

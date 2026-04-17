@@ -1,6 +1,8 @@
+import type { AssignRoleInput } from "#shared/models/db/role/AssignRoleInput";
 import type { CreateRoleInput } from "#shared/models/db/role/CreateRoleInput";
 import type { DeleteRoleInput } from "#shared/models/db/role/DeleteRoleInput";
 import type { ReadRolesInput } from "#shared/models/db/role/ReadRolesInput";
+import type { RevokeRoleInput } from "#shared/models/db/role/RevokeRoleInput";
 import type { UpdateRoleInput } from "#shared/models/db/role/UpdateRoleInput";
 import type { RoomRole } from "@esposter/db-schema";
 
@@ -23,7 +25,8 @@ export const useRoleStore = defineStore("message/room/role", () => {
   const readRoles = async (input: ReadRolesInput) => {
     const roles = await $trpc.role.readRoles.query(input);
     rolesMap.value.set(input.roomId, roles);
-    selectedRoleId.value = roles[0]?.id ?? null;
+    const everyoneRole = roles.find(({ isEveryone }) => isEveryone);
+    selectedRoleId.value = (everyoneRole ?? roles[0])?.id ?? null;
   };
   const createRole = async (input: CreateRoleInput) => {
     const newRole = await $trpc.role.createRole.mutate(input);
@@ -45,5 +48,22 @@ export const useRoleStore = defineStore("message/room/role", () => {
       getRoles(input.roomId).filter((role) => role.id !== id),
     );
   };
-  return { createRole, deleteRole, getRoles, readRoles, selectedRole, selectedRoleId, selectRole, updateRole };
+  const assignRole = async (input: AssignRoleInput) => {
+    await $trpc.role.assignRole.mutate(input);
+  };
+  const revokeRole = async (input: RevokeRoleInput) => {
+    await $trpc.role.revokeRole.mutate(input);
+  };
+  return {
+    assignRole,
+    createRole,
+    deleteRole,
+    getRoles,
+    readRoles,
+    revokeRole,
+    selectedRole,
+    selectedRoleId,
+    selectRole,
+    updateRole,
+  };
 });

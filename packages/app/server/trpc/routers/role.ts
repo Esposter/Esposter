@@ -1,8 +1,10 @@
 import type { RoomRole } from "@esposter/db-schema";
 
+import { assignRoleInputSchema } from "#shared/models/db/role/AssignRoleInput";
 import { createRoleInputSchema } from "#shared/models/db/role/CreateRoleInput";
 import { deleteRoleInputSchema } from "#shared/models/db/role/DeleteRoleInput";
 import { readRolesInputSchema } from "#shared/models/db/role/ReadRolesInput";
+import { revokeRoleInputSchema } from "#shared/models/db/role/RevokeRoleInput";
 import { updateRoleInputSchema } from "#shared/models/db/role/UpdateRoleInput";
 import { on } from "@@/server/services/events/on";
 import { roleEventEmitter } from "@@/server/services/message/events/roleEventEmitter";
@@ -11,38 +13,18 @@ import { isManageable } from "@@/server/services/room/rbac/isManageable";
 import { router } from "@@/server/trpc";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
-import {
-  DatabaseEntityType,
-  RoomPermission,
-  roomRoles,
-  selectRoomRoleSchema,
-  selectRoomSchema,
-  selectUserSchema,
-  usersToRoomRoles,
-} from "@esposter/db-schema";
+import { DatabaseEntityType, RoomPermission, roomRoles, selectRoomSchema, usersToRoomRoles } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, desc, eq } from "drizzle-orm";
 import { z } from "zod";
 
+export type { AssignRoleInput } from "#shared/models/db/role/AssignRoleInput";
 export type { CreateRoleInput } from "#shared/models/db/role/CreateRoleInput";
 export type { DeleteRoleInput } from "#shared/models/db/role/DeleteRoleInput";
 export type { ReadRolesInput } from "#shared/models/db/role/ReadRolesInput";
+export type { RevokeRoleInput } from "#shared/models/db/role/RevokeRoleInput";
 export type { UpdateRoleInput } from "#shared/models/db/role/UpdateRoleInput";
-
-const assignRoleInputSchema = z.object({
-  roleId: selectRoomRoleSchema.shape.id,
-  roomId: selectRoomSchema.shape.id,
-  userId: selectUserSchema.shape.id,
-});
-export type AssignRoleInput = z.infer<typeof assignRoleInputSchema>;
-
-const revokeRoleInputSchema = z.object({
-  roleId: selectRoomRoleSchema.shape.id,
-  roomId: selectRoomSchema.shape.id,
-  userId: selectUserSchema.shape.id,
-});
-export type RevokeRoleInput = z.infer<typeof revokeRoleInputSchema>;
 
 const onRoleUpdateInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnRoleUpdateInput = z.infer<typeof onRoleUpdateInputSchema>;

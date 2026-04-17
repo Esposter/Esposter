@@ -38,28 +38,35 @@ PK: `(userId, roomId, roleId)`.
 
 ## `RoomPermission` Bitfield Enum
 
-`packages/shared/src/models/room/RoomPermission.ts`
+`packages/db-schema/src/schema/roomRoles.ts`
 
 > `bigint` is used over `number` so the bitfield can grow beyond 32 bits without overflow. TypeScript enums don't support `bigint` values — use a `const` object instead:
 
 ```typescript
 export const RoomPermission = {
-  ReadMessages: 1n << 0n, // 1     — see message history
-  SendMessages: 1n << 1n, // 2     — post messages
-  ManageMessages: 1n << 2n, // 4     — delete/pin others' messages
-  MentionEveryone: 1n << 3n, // 8     — use @here / @everyone
-  ManageRoom: 1n << 4n, // 16    — edit room name, image, settings
-  ManageRoles: 1n << 5n, // 32    — create/edit/delete roles below own top position
-  ManageInvites: 1n << 6n, // 64    — create/delete invite codes
-  KickMembers: 1n << 7n, // 128   — remove a member from room
-  BanMembers: 1n << 8n, // 256   — permanent ban
-  MuteMembers: 1n << 9n, // 512   — force-mute/unmute in voice
-  MoveMembers: 1n << 10n, // 1024  — kick from voice channel
-  Administrator: 1n << 11n, // 2048  — all permissions; bypasses hierarchy checks
+  // Text channel
+  ReadMessages: 1n << 0n, // 1    — see message history / view channel
+  SendMessages: 1n << 1n, // 2    — post messages
+  ManageMessages: 1n << 2n, // 4    — delete/pin others' messages
+  MentionEveryone: 1n << 3n, // 8    — use @here / @everyone
+  // General
+  ManageRoom: 1n << 4n, // 16   — edit room name, image, settings
+  ManageRoles: 1n << 5n, // 32   — create/edit/delete roles below own top position
+  ManageInvites: 1n << 6n, // 64   — create/delete invite codes
+  // Moderation
+  KickMembers: 1n << 7n, // 128  — remove a member from room
+  BanMembers: 1n << 8n, // 256  — permanent ban
+  MuteMembers: 1n << 9n, // 512  — force-mute/unmute in voice
+  MoveMembers: 1n << 10n, // 1024 — kick from voice channel
+  // Advanced — keep these last; Administrator must be the highest bit
+  ManageWebhooks: 1n << 11n, // 2048 — create/edit/delete webhooks
+  Administrator: 1n << 12n, // 4096 — all permissions; bypasses hierarchy checks; always the highest bit
 } as const;
 
 export type RoomPermission = (typeof RoomPermission)[keyof typeof RoomPermission];
 ```
+
+> **Bit ordering rule**: `Administrator` must remain the highest-value bit so that future permissions can be inserted before it by shifting it up. New permissions go in front of `ManageWebhooks`/`Administrator`, incrementing their bit positions accordingly (requires a migration to update existing stored values).
 
 ---
 
@@ -137,16 +144,16 @@ Owner (rooms.userId)          — immune to all role manipulation; can do everyt
 
 ## Implementation Tasks
 
-- [ ] **`RoomPermission` const object + type alias** — `packages/shared/src/models/room/RoomPermission.ts`
-- [ ] **`roomRoles` Drizzle schema** — `packages/db-schema/src/schema/roomRoles.ts`; partial unique index on `(roomId) WHERE isEveryone = true`
-- [ ] **`usersToRoomRoles` Drizzle schema** — `packages/db-schema/src/schema/usersToRoomRoles.ts`
+- [x] **`RoomPermission` const object + type alias** — `packages/db-schema/src/schema/roomRoles.ts`
+- [x] **`roomRoles` Drizzle schema** — `packages/db-schema/src/schema/roomRoles.ts`; partial unique index on `(roomId) WHERE isEveryone = true`
+- [x] **`usersToRoomRoles` Drizzle schema** — `packages/db-schema/src/schema/usersToRoomRoles.ts`
 - [ ] **Migration** — add both tables; seed one `@everyone` role for every existing room
-- [ ] **RBAC service functions** — `server/services/room/rbac/` (4 functions above)
+- [x] **RBAC service functions** — `server/services/room/rbac/` (4 functions above)
 - [ ] **`getOwnerProcedure`** — `server/trpc/procedure/room/getOwnerProcedure.ts`
-- [ ] **`getPermissionsProcedure`** — `server/trpc/procedure/room/getPermissionsProcedure.ts`
+- [x] **`getPermissionsProcedure`** — `server/trpc/procedure/room/getPermissionsProcedure.ts`
 - [ ] **Wire up `createRoom`** — transaction inserts @everyone role + optional Admin role
 - [ ] **Retire `getCreatorProcedure`** — migrate callers: `updateRoom` → `ManageRoom`, `createMembers` → `ManageRoom`, `deleteMember` → `KickMembers`
-- [ ] **`roleRouter`** — `server/trpc/routers/role.ts`
+- [x] **`roleRouter`** — `server/trpc/routers/role.ts`
   - `createRole({ roomId, name, color?, permissions?, position? })` — behind `ManageRoles` + `canManageRole(position)`
   - `updateRole({ id, roomId, ...partial })` — behind `ManageRoles` + `canManageRole(role.position)`
   - `deleteRole({ id, roomId })` — behind `ManageRoles` + `canManageRole(role.position)`
@@ -155,5 +162,5 @@ Owner (rooms.userId)          — immune to all role manipulation; can do everyt
   - `revokeRole({ roomId, userId, roleId })` — same guards as `assignRole`
   - `onRoleUpdate({ roomId })` — subscription; emits on create/update/delete role or assign/revoke
 - [ ] **`readMembers` enrichment** — include each member's roles (sorted by position DESC)
-- [ ] **Role assignment UI** — context menu on member in member list; shows roles below actor's top; Owner manages all
+- [x] **Role assignment UI** — + button on Permissions tab opens Discord-style dropdown to search and assign members to roles (`Permissions/AddMemberMenu.vue`)
 - [ ] **Tests** — `server/services/room/rbac/*.test.ts` for `getPermission`, `hasPermission`, `getTopRolePosition`, `isManageable`; `server/trpc/routers/role.test.ts` for all `roleRouter` procedures (CRUD, assign/revoke), owner bypass, Administrator bypass, hierarchy enforcement

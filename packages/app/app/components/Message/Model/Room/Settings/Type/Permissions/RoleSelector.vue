@@ -10,7 +10,7 @@ interface RoleSelectorProps {
 const { roomId } = defineProps<RoleSelectorProps>();
 const roleStore = useRoleStore();
 const { getRoles } = roleStore;
-const roles = computed(() => getRoles(roomId));
+const roles = computed(() => getRoles(roomId).toSorted((a, b) => (a.isEveryone ? -1 : b.isEveryone ? 1 : 0)));
 </script>
 
 <template>
