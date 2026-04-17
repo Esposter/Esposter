@@ -84,7 +84,7 @@ catalog:
   "@types/pluralize": ^0.0.33
   "@types/sanitize-html": ^2.16.1
   "@types/sax": ^1.2.7
-  "@types/three": ^0.183.1
+  "@types/three": ^0.184.0
   "@types/web-push": ^3.6.4
   "@types/ws": ^8.18.1
   "@types/xml2js": ^0.4.14
@@ -162,7 +162,7 @@ catalog:
   link-preview-js: ^4.0.0
   linkifyjs: ^4.3.2
   lowlight: ^3.3.0
-  marked: ^18.0.0
+  marked: ^18.0.1
   mathjs: ^15.2.0
   mime-types: ^3.0.2
   mjml-browser: ^5.0.1
@@ -196,15 +196,15 @@ catalog:
   show-open-file-picker: ^0.4.0
   sql-highlight: ^6.1.0
   superjson: ^2.2.6
-  survey-core: 3.0.0-beta.0
-  survey-creator-core: 3.0.0-beta.0
-  survey-creator-vue: 3.0.0-beta.0
-  survey-vue3-ui: 3.0.0-beta.0
-  three: ^0.183.2
+  survey-core: ^3.0.0-beta.3
+  survey-creator-core: ^3.0.0-beta.3
+  survey-creator-vue: ^3.0.0-beta.3
+  survey-vue3-ui: ^3.0.0-beta.3
+  three: ^0.184.0
   three-globe: ^2.45.2
   trpc-nuxt: ^2.0.2
   tsx: ^4.21.0
-  type-fest: ^5.5.0
+  type-fest: ^5.6.0
   typedoc: ^0.28.19
   typescript: 5.9.3
   typescript-eslint: ^8.58.2
