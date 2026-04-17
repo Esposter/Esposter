@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Room } from "@esposter/db-schema";
 
+import { PermissionsTab } from "@/models/message/room/PermissionsTab";
 import { useRoleStore } from "@/store/message/room/role";
 
 interface PermissionsSettingsProps {
@@ -10,20 +11,26 @@ interface PermissionsSettingsProps {
 const { roomId } = defineProps<PermissionsSettingsProps>();
 const roleStore = useRoleStore();
 const { readRoles } = roleStore;
-const { selectedRole } = storeToRefs(roleStore);
+const tab = ref(PermissionsTab.EditRoles);
 await readRoles({ roomId });
 </script>
 
 <template>
-  <div flex h-full gap-x-6>
-    <div w-56 flex-shrink-0 flex flex-col>
-      <MessageModelRoomSettingsTypePermissionsRoleSelector :room-id />
-    </div>
-    <div v-if="selectedRole" flex-1 overflow-y-auto>
-      <MessageModelRoomSettingsTypePermissionsRoleEditor :key="selectedRole.id" :role="selectedRole" :room-id />
-    </div>
-    <div v-else flex-1 flex items-center justify-center text-medium-emphasis>
-      Select a role to edit its permissions.
-    </div>
+  <div flex flex-col h-full>
+    <v-tabs v-model="tab" mb-4>
+      <v-tab :value="PermissionsTab.CreateRole">{{ PermissionsTab.CreateRole }}</v-tab>
+      <v-tab :value="PermissionsTab.EditRoles">{{ PermissionsTab.EditRoles }}</v-tab>
+    </v-tabs>
+    <v-window v-model="tab" flex-1 overflow-hidden>
+      <v-window-item :value="PermissionsTab.CreateRole" h-full>
+        <MessageModelRoomSettingsTypePermissionsTypeCreateRoleIndex
+          :room-id
+          @created="tab = PermissionsTab.EditRoles"
+        />
+      </v-window-item>
+      <v-window-item :value="PermissionsTab.EditRoles" h-full>
+        <MessageModelRoomSettingsTypePermissionsTypeEditRolesIndex :room-id />
+      </v-window-item>
+    </v-window>
   </div>
 </template>

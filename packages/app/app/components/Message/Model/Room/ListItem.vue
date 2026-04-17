@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type { Room } from "@esposter/db-schema";
 
+import { authClient } from "@/services/auth/authClient";
 import { useRoomStore } from "@/store/message/room";
+import { useRoleStore } from "@/store/message/room/role";
 import { RoutePath } from "@esposter/shared";
 
 interface RoomListItemProps {
@@ -13,6 +15,15 @@ const roomName = useRoomName(() => room.id);
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const isActive = computed(() => room.id === currentRoomId.value);
+const session = authClient.useSession();
+const isCreator = computed(() => room.userId === session.value.data?.user.id);
+const roleStore = useRoleStore();
+const { isManageable, readMyPermissions } = roleStore;
+const showSettings = computed(() => isCreator.value || isManageable(room.id));
+
+onMounted(async () => {
+  if (!isCreator.value) await readMyPermissions({ roomId: room.id });
+});
 </script>
 
 <template>
@@ -28,7 +39,7 @@ const isActive = computed(() => room.id === currentRoomId.value);
         <MessageModelRoomSettingsDialogButton :room-id="room.id">
           <template #activator="activatorProps">
             <v-btn
-              v-show="isActive || isHovering"
+              v-show="(isActive || isHovering) && showSettings"
               bg-transparent
               :="activatorProps"
               :ripple="false"

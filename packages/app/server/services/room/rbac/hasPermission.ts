@@ -1,7 +1,8 @@
 import type { Context } from "@@/server/trpc/context";
+import type { RoomPermission } from "@esposter/db-schema";
 
 import { getPermissions } from "@@/server/services/room/rbac/getPermissions";
-import { RoomPermission } from "@esposter/db-schema";
+import { hasPermission as hasPermissionPure } from "#shared/services/room/rbac/hasPermission";
 
 export const hasPermission = async (
   db: Context["db"],
@@ -17,6 +18,5 @@ export const hasPermission = async (
   else if (room.userId === userId) return true;
 
   const permissions = await getPermissions(db, userId, roomId);
-  if ((permissions & RoomPermission.Administrator) !== 0n) return true;
-  return (permissions & permission) !== 0n;
+  return hasPermissionPure(permissions, permission, false);
 };
