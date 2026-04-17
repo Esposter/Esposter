@@ -31,7 +31,7 @@ await readRoles({ roomId });
         <v-tab :value="PermissionsTab.Members">{{ PermissionsTab.Members }}</v-tab>
       </v-tabs>
       <div flex-1 overflow-y-auto>
-        <v-window v-model="tab">
+        <v-window v-model="tab" pt-2>
           <v-window-item :value="PermissionsTab.Roles">
             <MessageModelRoomSettingsTypePermissionsCreateRoleForm :room-id />
             <MessageModelRoomSettingsTypePermissionsRoleList :roles :room-id />

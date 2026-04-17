@@ -21,15 +21,14 @@ const submit = async () => {
 </script>
 
 <template>
-  <v-text-field v-model="name" pt-2 label="New role name" density="compact" hide-details @keyup.enter="submit()">
+  <v-text-field v-model="name" label="New role name" density="compact" hide-details @keyup.enter="submit()">
     <template #append-inner>
       <v-btn
         :disabled="!name.trim()"
-        color="primary"
         density="compact"
         icon="mdi-plus"
         size="small"
-        variant="flat"
+        variant="plain"
         @click="submit()"
       />
     </template>
