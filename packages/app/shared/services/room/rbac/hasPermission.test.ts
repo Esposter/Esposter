@@ -1,6 +1,7 @@
-import { hasPermission } from "./hasPermission";
 import { RoomPermission } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
+
+import { hasPermission } from "./hasPermission";
 
 describe(hasPermission, () => {
   test("owner always has permission regardless of permission bits", () => {
@@ -8,7 +9,7 @@ describe(hasPermission, () => {
     expect(hasPermission(0n, RoomPermission.ManageRoom, true)).toBe(true);
   });
 
-  test("Administrator bit grants any permission", () => {
+  test("administrator bit grants any permission", () => {
     expect.hasAssertions();
     expect(hasPermission(RoomPermission.Administrator, RoomPermission.ManageRoom, false)).toBe(true);
   });
@@ -25,13 +26,17 @@ describe(hasPermission, () => {
 
   test("combined mask: all bits present returns true", () => {
     expect.hasAssertions();
+
     const combined = RoomPermission.ReadMessages | RoomPermission.SendMessages;
+
     expect(hasPermission(combined, combined, false)).toBe(true);
   });
 
   test("combined mask: partial bit match returns false", () => {
     expect.hasAssertions();
+
     const combined = RoomPermission.ReadMessages | RoomPermission.SendMessages;
+
     expect(hasPermission(RoomPermission.ReadMessages, combined, false)).toBe(false);
   });
 });
