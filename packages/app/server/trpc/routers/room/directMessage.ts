@@ -95,10 +95,8 @@ export const directMessageRouter = router({
     }),
   ),
   hideDirectMessage: standardAuthedProcedure.input(hideDirectMessageInputSchema).mutation(async ({ ctx, input }) => {
-    await Promise.all([
-      isMember(ctx.db, ctx.getSessionPayload, input),
-      assertIsRoom(ctx.db, input, RoomType.DirectMessage),
-    ]);
+    await isMember(ctx.db, ctx.getSessionPayload, input);
+    await assertIsRoom(ctx.db, input, RoomType.DirectMessage);
     await ctx.db
       .update(usersToRooms)
       .set({ isHidden: true })

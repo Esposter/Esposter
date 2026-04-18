@@ -232,6 +232,17 @@ describe("directMessage", () => {
     );
   });
 
+  test("fails hide non-member non-DM room with UNAUTHORIZED before room type check", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name: "" });
+    await mockSessionOnce(mockContext.db);
+
+    await expect(caller.hideDirectMessage(newRoom.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: UNAUTHORIZED]`,
+    );
+  });
+
   test("filters regular rooms from read participants", async () => {
     expect.hasAssertions();
 
