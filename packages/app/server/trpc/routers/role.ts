@@ -15,14 +15,7 @@ import { isManageable } from "@@/server/services/room/rbac/isManageable";
 import { router } from "@@/server/trpc";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
-import {
-  DatabaseEntityType,
-  RoomPermission,
-  roomRoles,
-  selectRoomSchema,
-  usersToRoomRoles,
-  usersToRooms,
-} from "@esposter/db-schema";
+import { DatabaseEntityType, RoomPermission, roomRoles, selectRoomSchema, usersToRoomRoles } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, desc, eq } from "drizzle-orm";
