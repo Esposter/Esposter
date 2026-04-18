@@ -2,6 +2,7 @@
 import type { Room } from "@esposter/db-schema";
 
 import { SettingsType } from "@/models/message/room/SettingsType";
+import { SettingsContentMap } from "@/services/message/settings/SettingsContentMap";
 import { useRoomStore } from "@/store/message/room";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import { mergeProps } from "vue";
@@ -13,7 +14,7 @@ interface RoomSettingsDialogButtonProps {
 defineSlots<{ activator: (props: Record<string, unknown>) => VNode }>();
 const { roomId } = defineProps<RoomSettingsDialogButtonProps>();
 const dialog = ref(false);
-const settingsType = ref(SettingsType.Overview);
+const settingsType = ref<keyof typeof SettingsContentMap>(SettingsType.Overview);
 const isDeleteOpen = ref(false);
 
 const roomStore = useRoomStore();

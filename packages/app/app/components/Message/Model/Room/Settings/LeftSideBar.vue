@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { SettingsType } from "@/models/message/room/SettingsType";
+import { SettingsContentMap } from "@/services/message/settings/SettingsContentMap";
 import { SettingsListItemMap } from "@/services/message/settings/SettingsListItemMap";
 
-const modelValue = defineModel<SettingsType>({ required: true });
+const modelValue = defineModel<keyof typeof SettingsContentMap>({ required: true });
 const emit = defineEmits<{ "open:delete": [] }>();
 </script>
 

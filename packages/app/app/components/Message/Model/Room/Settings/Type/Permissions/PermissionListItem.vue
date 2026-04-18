@@ -7,11 +7,11 @@ interface PermissionListItemProps {
 const { permission, permissionKey } = defineProps<PermissionListItemProps>();
 const modelValue = defineModel<bigint>({ required: true });
 const isEnabled = computed(() => Boolean(modelValue.value & permission));
-const formatLabel = (key: string) => key.replaceAll(/([A-Z])/g, " $1").trim();
+const title = computed(() => permissionKey.replaceAll(/([A-Z])/g, " $1").trim());
 </script>
 
 <template>
-  <v-list-item :title="formatLabel(permissionKey)">
+  <v-list-item :title>
     <template #append>
       <v-switch
         :model-value="isEnabled"

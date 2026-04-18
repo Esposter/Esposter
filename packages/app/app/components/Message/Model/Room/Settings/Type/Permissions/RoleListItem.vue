@@ -17,7 +17,7 @@ const { selectedRoleId } = storeToRefs(roleStore);
 <template>
   <v-list-item :active="role.id === selectedRoleId" @click="selectRole(role.id)">
     <template #prepend>
-      <div h-3 mr-2 rd-full w-3 :style="{ backgroundColor: role.color ?? 'rgb(var(--v-theme-on-surface-variant))' }" />
+      <div mr-2 rd-full size-3 :style="{ backgroundColor: role.color ?? 'rgb(var(--v-theme-on-surface-variant))' }" />
     </template>
     <v-list-item-title>{{ role.name }}</v-list-item-title>
     <template v-if="!role.isEveryone" #append>

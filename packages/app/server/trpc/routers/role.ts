@@ -9,7 +9,7 @@ import { revokeRoleInputSchema } from "#shared/models/db/role/RevokeRoleInput";
 import { updateRoleInputSchema } from "#shared/models/db/role/UpdateRoleInput";
 import { isManageable } from "#shared/services/room/rbac/isManageable";
 import { on } from "@@/server/services/events/on";
-import { roleEventEmitter } from "@@/server/services/message/events/roleEventEmitter";
+import { getRoleEventEmitter } from "@@/server/services/message/events/getRoleEventEmitter";
 import { getActorContext } from "@@/server/services/room/rbac/getActorContext";
 import { getPermissions } from "@@/server/services/room/rbac/getPermissions";
 import { getTopRolePosition } from "@@/server/services/room/rbac/getTopRolePosition";
@@ -73,7 +73,7 @@ export const roleRouter = router({
         throw new TRPCError({ code: "UNAUTHORIZED" });
 
       await ctx.db.insert(usersToRoomRoles).values({ roleId, roomId, userId }).onConflictDoNothing();
-      roleEventEmitter.emit("updateRole", { roomId });
+      getRoleEventEmitter(roomId).emit("updateRole");
     },
   ),
   createRole: getPermissionsProcedure(RoomPermission.ManageRoles, createRoleInputSchema, "roomId").mutation<RoomRole>(
@@ -102,7 +102,7 @@ export const roleRouter = router({
           ).message,
         });
 
-      roleEventEmitter.emit("updateRole", { roomId });
+      getRoleEventEmitter(roomId).emit("updateRole");
       return createdRole;
     },
   ),
@@ -143,7 +143,7 @@ export const roleRouter = router({
           message: new NotFoundError(DatabaseEntityType.RoomRole, id).message,
         });
 
-      roleEventEmitter.emit("updateRole", { roomId });
+      getRoleEventEmitter(roomId).emit("updateRole");
       return deletedRole;
     },
   ),
@@ -151,10 +151,7 @@ export const roleRouter = router({
     input: { roomId },
     signal,
   }) {
-    for await (const [{ roomId: emittedRoomId }] of on(roleEventEmitter, "updateRole", { signal })) {
-      if (emittedRoomId !== roomId) continue;
-      yield roomId;
-    }
+    for await (const [] of on(getRoleEventEmitter(roomId), "updateRole", { signal })) yield roomId;
   }),
   readMemberRoles: getMemberProcedure(readMemberRolesInputSchema, "roomId").query<RoomRole[]>(
     ({ ctx, input: { roomId, userId } }) =>
@@ -222,7 +219,7 @@ export const roleRouter = router({
             eq(usersToRoomRoles.roleId, roleId),
           ),
         );
-      roleEventEmitter.emit("updateRole", { roomId });
+      getRoleEventEmitter(roomId).emit("updateRole");
     },
   ),
   updateRole: getPermissionsProcedure(RoomPermission.ManageRoles, updateRoleInputSchema, "roomId").mutation<RoomRole>(
@@ -267,7 +264,7 @@ export const roleRouter = router({
           message: new NotFoundError(DatabaseEntityType.RoomRole, id).message,
         });
 
-      roleEventEmitter.emit("updateRole", { roomId });
+      getRoleEventEmitter(roomId).emit("updateRole");
       return updatedRole;
     },
   ),
