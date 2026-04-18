@@ -1,11 +1,7 @@
+import type { ActorContext } from "@@/server/models/room/ActorContext";
 import type { Context } from "@@/server/trpc/context";
 
 import { getTopRolePosition } from "@@/server/services/room/rbac/getTopRolePosition";
-
-export interface ActorContext {
-  actorTopPosition: number;
-  isOwner: boolean;
-}
 
 export const getActorContext = async (db: Context["db"], actorId: string, roomId: string): Promise<ActorContext> => {
   const [room, actorTopPosition] = await Promise.all([
