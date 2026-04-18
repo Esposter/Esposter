@@ -1,6 +1,7 @@
 import type { Context } from "@@/server/trpc/context";
 
-import { getTopRolePosition } from "@@/server/services/room/rbac/getTopRolePosition";
+import { getActorContext } from "@@/server/services/room/rbac/getActorContext";
+import { isManageable as isManageablePure } from "#shared/services/room/rbac/isManageable";
 
 export const isManageable = async (
   db: Context["db"],
@@ -8,13 +9,6 @@ export const isManageable = async (
   roomId: string,
   targetPosition: number,
 ): Promise<boolean> => {
-  const room = await db.query.rooms.findFirst({
-    columns: { userId: true },
-    where: (rooms, { eq }) => eq(rooms.id, roomId),
-  });
-  if (!room) return false;
-  else if (room.userId === actorId) return true;
-
-  const actorTopRolePosition = await getTopRolePosition(db, actorId, roomId);
-  return actorTopRolePosition > targetPosition;
+  const { isOwner, actorTopPosition } = await getActorContext(db, actorId, roomId);
+  return isManageablePure(actorTopPosition, targetPosition, isOwner);
 };
