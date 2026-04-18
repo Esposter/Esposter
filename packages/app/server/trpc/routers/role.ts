@@ -9,7 +9,7 @@ import { revokeRoleInputSchema } from "#shared/models/db/role/RevokeRoleInput";
 import { updateRoleInputSchema } from "#shared/models/db/role/UpdateRoleInput";
 import { isManageable } from "#shared/services/room/rbac/isManageable";
 import { on } from "@@/server/services/events/on";
-import { getRoleEventEmitter } from "@@/server/services/message/events/getRoleEventEmitter";
+import { getRoleEventEmitter } from "@@/server/services/message/events/roleEventEmitter";
 import { getActorContext } from "@@/server/services/room/rbac/getActorContext";
 import { getPermissions } from "@@/server/services/room/rbac/getPermissions";
 import { getTopRolePosition } from "@@/server/services/room/rbac/getTopRolePosition";
@@ -151,7 +151,7 @@ export const roleRouter = router({
     input: { roomId },
     signal,
   }) {
-    for await (const _ of on(getRoleEventEmitter(roomId), "updateRole", { signal })) yield roomId;
+    for await (const _ of on(getRoleEventEmitter(roomId, signal), "updateRole", { signal })) yield roomId;
   }),
   readMemberRoles: getMemberProcedure(readMemberRolesInputSchema, "roomId").query<RoomRole[]>(
     ({ ctx, input: { roomId, userId } }) =>
