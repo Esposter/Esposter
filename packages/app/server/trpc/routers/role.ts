@@ -65,7 +65,7 @@ export const roleRouter = router({
           message: new NotFoundError(DatabaseEntityType.UserToRoom, userId).message,
         });
 
-      const { isOwner, actorTopPosition } = actorContext;
+      const { actorTopPosition, isOwner } = actorContext;
       if (!isManageable(actorTopPosition, role.position, isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
 
       const targetTopRolePosition = await getTopRolePosition(ctx.db, userId, roomId);
@@ -79,7 +79,7 @@ export const roleRouter = router({
   createRole: getPermissionsProcedure(RoomPermission.ManageRoles, createRoleInputSchema, "roomId").mutation<RoomRole>(
     async ({ ctx, input: { color, name, permissions, position, roomId } }) => {
       const actorId = ctx.getSessionPayload.user.id;
-      const { isOwner, actorTopPosition } = await getActorContext(ctx.db, actorId, roomId);
+      const { actorTopPosition, isOwner } = await getActorContext(ctx.db, actorId, roomId);
 
       if (!isManageable(actorTopPosition, position, isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
 
@@ -128,7 +128,7 @@ export const roleRouter = router({
           message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.RoomRole, id).message,
         });
 
-      const { isOwner, actorTopPosition } = actorContext;
+      const { actorTopPosition, isOwner } = actorContext;
       if (!isManageable(actorTopPosition, role.position, isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
 
       const deletedRole = (
@@ -151,7 +151,7 @@ export const roleRouter = router({
     input: { roomId },
     signal,
   }) {
-    for await (const [] of on(getRoleEventEmitter(roomId), "updateRole", { signal })) yield roomId;
+    for await (const _ of on(getRoleEventEmitter(roomId), "updateRole", { signal })) yield roomId;
   }),
   readMemberRoles: getMemberProcedure(readMemberRolesInputSchema, "roomId").query<RoomRole[]>(
     ({ ctx, input: { roomId, userId } }) =>
@@ -203,7 +203,7 @@ export const roleRouter = router({
           message: new NotFoundError(DatabaseEntityType.RoomRole, roleId).message,
         });
 
-      const { isOwner, actorTopPosition } = actorContext;
+      const { actorTopPosition, isOwner } = actorContext;
       if (!isManageable(actorTopPosition, role.position, isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
 
       const targetTopRolePosition = await getTopRolePosition(ctx.db, userId, roomId);
@@ -239,7 +239,7 @@ export const roleRouter = router({
           message: new NotFoundError(DatabaseEntityType.RoomRole, id).message,
         });
 
-      const { isOwner, actorTopPosition } = actorContext;
+      const { actorTopPosition, isOwner } = actorContext;
       if (!isManageable(actorTopPosition, role.position, isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
 
       if (rest.position !== undefined && !isManageable(actorTopPosition, rest.position, isOwner))
