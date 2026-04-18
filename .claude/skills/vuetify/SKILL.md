@@ -57,10 +57,18 @@ When placing a `v-btn` inside a `v-text-field` slot (e.g. `#append-inner`), use 
 
 ```vue
 <!-- WRONG — we default to inline backgroundColor: transparent in vuetify.config.ts for convenience with avatar backgrounds and icons -->
-<v-btn color="primary" icon="mdi-plus" @click="submit()" />
+<v-tooltip text="Add item">
+  <template #activator="{ props: tooltipProps }">
+    <v-btn color="primary" icon="mdi-plus" :="tooltipProps" @click="submit()" />
+  </template>
+</v-tooltip>
 
 <!-- CORRECT — plain variant works with the transparent default -->
-<v-btn icon="mdi-plus" variant="plain" @click="submit()" />
+<v-tooltip text="Add item">
+  <template #activator="{ props: tooltipProps }">
+    <v-btn icon="mdi-plus" variant="plain" :="tooltipProps" @click="submit()" />
+  </template>
+</v-tooltip>
 ```
 
 ## Vuetify Selects and List Items

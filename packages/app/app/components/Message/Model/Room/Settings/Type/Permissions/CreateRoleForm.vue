@@ -23,14 +23,19 @@ const submit = async () => {
 <template>
   <v-text-field v-model="name" label="New role name" density="compact" hide-details @keyup.enter="submit()">
     <template #append-inner>
-      <v-btn
-        :disabled="!name.trim()"
-        density="compact"
-        icon="mdi-plus"
-        size="small"
-        variant="plain"
-        @click="submit()"
-      />
+      <v-tooltip text="Create role">
+        <template #activator="{ props: tooltipProps }">
+          <v-btn
+            :disabled="!name.trim()"
+            density="compact"
+            icon="mdi-plus"
+            size="small"
+            variant="plain"
+            :="tooltipProps"
+            @click="submit()"
+          />
+        </template>
+      </v-tooltip>
     </template>
   </v-text-field>
 </template>

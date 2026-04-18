@@ -189,6 +189,7 @@ describe("role", () => {
 
     await mockSessionOnce(mockContext.db, owner);
     const memberRoles = await caller.readMemberRoles({ roomId, userId: targetMember.id });
+
     expect(memberRoles.some(({ id }) => id === role.id)).toBe(true);
   });
 
@@ -205,6 +206,7 @@ describe("role", () => {
     await caller.assignRole({ roleId: role.id, roomId, userId: targetMember.id });
 
     await mockSessionOnce(mockContext.db, owner);
+
     await expect(caller.assignRole({ roleId: role.id, roomId, userId: targetMember.id })).resolves.toBeUndefined();
   });
 
@@ -219,6 +221,7 @@ describe("role", () => {
     const targetMember = await createMember(roomId);
 
     await mockSessionOnce(mockContext.db, actor);
+
     await expect(caller.assignRole({ roleId: peerRole.id, roomId, userId: targetMember.id })).rejects.toThrow(
       "UNAUTHORIZED",
     );
@@ -235,6 +238,7 @@ describe("role", () => {
     const { member: targetMember } = await setupMemberWithRole(roomId, 0n, 5);
 
     await mockSessionOnce(mockContext.db, actor);
+
     await expect(caller.assignRole({ roleId: lowRole.id, roomId, userId: targetMember.id })).rejects.toThrow(
       "UNAUTHORIZED",
     );
@@ -255,6 +259,7 @@ describe("role", () => {
 
     await mockSessionOnce(mockContext.db, owner);
     const memberRoles = await caller.readMemberRoles({ roomId, userId: targetMember.id });
+
     expect(memberRoles.some(({ id }) => id === role.id)).toBe(false);
   });
 
@@ -266,6 +271,7 @@ describe("role", () => {
     const { member: targetMember, role: peerRole } = await setupMemberWithRole(roomId, 0n, 5);
 
     await mockSessionOnce(mockContext.db, actor);
+
     await expect(caller.revokeRole({ roleId: peerRole.id, roomId, userId: targetMember.id })).rejects.toThrow(
       "UNAUTHORIZED",
     );
@@ -280,6 +286,7 @@ describe("role", () => {
     const lowRole = await caller.createRole({ name: "Low", permissions: 0n, position: 3, roomId });
 
     await mockSessionOnce(mockContext.db, actor);
+
     await expect(caller.updateRole({ id: lowRole.id, position: 10, roomId })).rejects.toThrow("UNAUTHORIZED");
   });
 
@@ -296,6 +303,7 @@ describe("role", () => {
     const lowRole = await caller.createRole({ name: "Low", permissions: 0n, position: 3, roomId });
 
     await mockSessionOnce(mockContext.db, actor);
+
     await expect(caller.updateRole({ id: lowRole.id, permissions: RoomPermission.ManageRoom, roomId })).rejects.toThrow(
       "UNAUTHORIZED",
     );
