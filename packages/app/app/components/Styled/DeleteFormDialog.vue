@@ -11,12 +11,14 @@ defineSlots<{
   activator: (props: StyledDialogActivatorSlotProps) => VNode;
   default: () => VNode;
 }>();
+const modelValue = defineModel<boolean>({ default: false });
 const { cardProps, confirmButtonProps } = defineProps<StyledDeleteFormDialogProps>();
 const emit = defineEmits<{ delete: [onComplete: () => void] }>();
 </script>
 
 <template>
   <StyledFormDialog
+    v-model="modelValue"
     :card-props
     :confirm-button-props="{ color: 'error', text: 'Delete', ...confirmButtonProps }"
     @submit="(_event, onComplete) => emit('delete', onComplete)"

@@ -22,11 +22,12 @@ import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSor
 import { assertIsRoom } from "@@/server/services/room/assertIsRoom";
 import { deleteRoom } from "@@/server/services/room/deleteRoom";
 import { router } from "@@/server/trpc";
+import { addProfanityFilterMiddleware } from "@@/server/trpc/middleware/addProfanityFilterMiddleware";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { isRoom } from "@@/server/trpc/middleware/userToRoom/isRoom";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
-import { getCreatorProcedure } from "@@/server/trpc/procedure/room/getCreatorProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
+import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { deleteDirectory } from "@esposter/db";
 import {
@@ -35,6 +36,8 @@ import {
   DatabaseEntityType,
   InviteRelations,
   invites,
+  RoomPermission,
+  roomRoles,
   rooms,
   RoomType,
   selectInviteSchema,
@@ -136,7 +139,7 @@ export const roomRouter = router({
         message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Invite, roomId).message,
       });
     }),
-  createMembers: getCreatorProcedure(createMembersInputSchema, "roomId")
+  createMembers: getPermissionsProcedure(RoomPermission.ManageRoom, createMembersInputSchema, "roomId")
     .use(isRoom)
     .mutation<UserToRoom[]>(({ ctx, input: { roomId, userIds } }) =>
       ctx.db
@@ -158,11 +161,24 @@ export const roomRouter = router({
           message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Room, JSON.stringify(input)).message,
         });
 
-      await tx.insert(usersToRooms).values({ roomId: newRoom.id, userId: ctx.getSessionPayload.user.id });
+      await Promise.all([
+        tx.insert(usersToRooms).values({ roomId: newRoom.id, userId: ctx.getSessionPayload.user.id }),
+        tx.insert(roomRoles).values({
+          isEveryone: true,
+          name: "@everyone",
+          permissions:
+            RoomPermission.ReadMessages |
+            RoomPermission.SendMessages |
+            RoomPermission.MentionEveryone |
+            RoomPermission.ManageInvites,
+          position: 0,
+          roomId: newRoom.id,
+        }),
+      ]);
       return newRoom;
     }),
   ),
-  deleteMember: getCreatorProcedure(deleteMemberInputSchema, "roomId")
+  deleteMember: getPermissionsProcedure(RoomPermission.KickMembers, deleteMemberInputSchema, "roomId")
     .use(isRoom)
     .mutation(async ({ ctx, input: { roomId, userId } }) => {
       if (userId === ctx.getSessionPayload.user.id)
@@ -453,24 +469,25 @@ export const roomRouter = router({
       return cursorPaginationData;
     },
   ),
-  updateRoom: getProfanityFilterProcedure(updateRoomInputSchema, ["name"]).mutation<Room>(
-    async ({ ctx, input: { id, ...rest } }) => {
-      const name = rest.name?.trim();
-      const updatedRoom = (
-        await ctx.db
-          .update(rooms)
-          .set({ ...rest, name })
-          .where(and(eq(rooms.id, id), eq(rooms.userId, ctx.getSessionPayload.user.id)))
-          .returning()
-      )[0];
-      if (!updatedRoom)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Room, id).message,
-        });
+  updateRoom: addProfanityFilterMiddleware(
+    getPermissionsProcedure(RoomPermission.ManageRoom, updateRoomInputSchema, "id"),
+    ["name"],
+  ).mutation<Room>(async ({ ctx, input: { id, ...rest } }) => {
+    const name = rest.name?.trim();
+    const updatedRoom = (
+      await ctx.db
+        .update(rooms)
+        .set({ ...rest, name })
+        .where(eq(rooms.id, id))
+        .returning()
+    )[0];
+    if (!updatedRoom)
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Room, id).message,
+      });
 
-      roomEventEmitter.emit("updateRoom", updatedRoom);
-      return updatedRoom;
-    },
-  ),
+    roomEventEmitter.emit("updateRoom", updatedRoom);
+    return updatedRoom;
+  }),
 });

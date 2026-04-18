@@ -1,9 +1,42 @@
 ---
 name: vue-component-patterns
-description: Esposter Vue 3 component architecture patterns — generic components, type correctness, co-location, file length, and slot extraction. Apply when designing or refactoring Vue components.
+description: Esposter Vue 3 component architecture patterns — generic components, type correctness, co-location, file length, slot extraction, and same-level abstraction. Apply when designing or refactoring Vue components.
 ---
 
 # Vue Component Patterns (Esposter)
+
+## Same Level of Abstraction
+
+Every statement in `<script setup>` must operate at the same conceptual level. Mix low-level detail with high-level orchestration and the component becomes hard to read and hard to extend.
+
+**Rule:** If one line calls a composable that encapsulates a concept, all other lines should be at that same call-site level — not implementing sub-steps inline.
+
+```vue
+<!-- WRONG: selectedRoleId/selectedRole management is a lower-level concern mixed in -->
+<script setup lang="ts">
+const roles = computed(() => getRoles(roomId));
+const selectedRoleId = ref(roles.value[0]?.id ?? null);
+const selectedRole = computed(() => roles.value.find(({ id }) => id === selectedRoleId.value) ?? null);
+watch(roles, (newRoles) => {
+  if (selectedRoleId.value !== null && !newRoles.some(({ id }) => id === selectedRoleId.value))
+    selectedRoleId.value = newRoles[0]?.id ?? null;
+});
+</script>
+
+<!-- CORRECT: all lines at the same orchestration level -->
+<script setup lang="ts">
+const roles = computed(() => getRoles(roomId));
+const { selectedRole, selectedRoleId } = useSelectedRole(roles);
+</script>
+```
+
+**Signals that abstraction levels are mixed:**
+
+- A composable call sits next to a manual `ref` + `computed` + `watch` block implementing the same concept
+- A `v-if="x !== null"` guard exists so that the template body can avoid null checks (extract to a child component receiving a non-null prop instead)
+- Inline `watch` callbacks contain multi-step logic that belongs in a composable
+
+**Fix:** extract the lower-level block into a composable (`use*`) or a child component, then call it at the same level as everything else.
 
 ## Generic SFC Components
 

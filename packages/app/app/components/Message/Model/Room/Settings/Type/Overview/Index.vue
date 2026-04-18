@@ -4,11 +4,11 @@ import type { Room } from "@esposter/db-schema";
 import { useRoomStore } from "@/store/message/room";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
 
-interface RoomSettingsGeneralProps {
+interface OverviewSettingsProps {
   roomId: Room["id"];
 }
 
-const { roomId } = defineProps<RoomSettingsGeneralProps>();
+const { roomId } = defineProps<OverviewSettingsProps>();
 const { $trpc } = useNuxtApp();
 const { readRoomCategories } = useReadRoomCategories();
 await readRoomCategories();
@@ -29,21 +29,20 @@ const save = async () => {
 </script>
 
 <template>
-  <div flex flex-col gap-6 max-w="480px">
-    <div text-lg font-bold>General</div>
-    <div flex flex-col gap-2>
-      <div font-semibold>Category</div>
-      <v-select
-        v-model="selectedCategoryId"
-        :items="categoryItems"
-        item-title="name"
-        item-value="id"
-        density="compact"
-        variant="outlined"
-        hide-details
-        @update:model-value="save()"
-      />
-      <div text-xs text-gray>Assign this room to a category to group it in the sidebar.</div>
-    </div>
-  </div>
+  <v-container fluid>
+    <v-row>
+      <v-col cols="12">
+        <div text-lg font-bold>Overview</div>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12" md="6" sm="8">
+        <MessageModelRoomSettingsTypeOverviewCategoryField
+          v-model="selectedCategoryId"
+          :items="categoryItems"
+          @save="save()"
+        />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
