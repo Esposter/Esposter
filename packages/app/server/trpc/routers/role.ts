@@ -15,7 +15,14 @@ import { isManageable } from "@@/server/services/room/rbac/isManageable";
 import { router } from "@@/server/trpc";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
-import { DatabaseEntityType, RoomPermission, roomRoles, selectRoomSchema, usersToRoomRoles } from "@esposter/db-schema";
+import {
+  DatabaseEntityType,
+  RoomPermission,
+  roomRoles,
+  selectRoomSchema,
+  usersToRoomRoles,
+  usersToRooms,
+} from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, desc, eq } from "drizzle-orm";
@@ -36,13 +43,28 @@ export const roleRouter = router({
   assignRole: getPermissionsProcedure(RoomPermission.ManageRoles, assignRoleInputSchema, "roomId").mutation(
     async ({ ctx, input: { roleId, roomId, userId } }) => {
       const role = await ctx.db.query.roomRoles.findFirst({
-        columns: { position: true },
+        columns: { isEveryone: true, position: true },
         where: (roomRoles, { and, eq }) => and(eq(roomRoles.id, roleId), eq(roomRoles.roomId, roomId)),
       });
       if (!role)
         throw new TRPCError({
           code: "NOT_FOUND",
           message: new NotFoundError(DatabaseEntityType.RoomRole, roleId).message,
+        });
+      if (role.isEveryone)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoomRole, roleId).message,
+        });
+
+      const member = await ctx.db.query.usersToRooms.findFirst({
+        columns: { userId: true },
+        where: (usersToRooms, { and, eq }) => and(eq(usersToRooms.userId, userId), eq(usersToRooms.roomId, roomId)),
+      });
+      if (!member)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new NotFoundError(DatabaseEntityType.UserToRoom, userId).message,
         });
 
       const actorId = ctx.getSessionPayload.user.id;
@@ -59,8 +81,20 @@ export const roleRouter = router({
   ),
   createRole: getPermissionsProcedure(RoomPermission.ManageRoles, createRoleInputSchema, "roomId").mutation<RoomRole>(
     async ({ ctx, input: { color, name, permissions, position, roomId } }) => {
-      const manageable = await isManageable(ctx.db, ctx.getSessionPayload.user.id, roomId, position);
-      if (!manageable) throw new TRPCError({ code: "UNAUTHORIZED" });
+      const actorId = ctx.getSessionPayload.user.id;
+      const isPositionManageable = await isManageable(ctx.db, actorId, roomId, position);
+      if (!isPositionManageable) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+      const room = await ctx.db.query.rooms.findFirst({
+        columns: { userId: true },
+        where: (rooms, { eq }) => eq(rooms.id, roomId),
+      });
+      const isOwner = room?.userId === actorId;
+      if (!isOwner) {
+        const actorPermissions = await getPermissions(ctx.db, actorId, roomId);
+        const hasAdmin = Boolean(actorPermissions & RoomPermission.Administrator);
+        if (!hasAdmin && (permissions & ~actorPermissions) !== 0n) throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
 
       const createdRole = (
         await ctx.db.insert(roomRoles).values({ color, name, permissions, position, roomId }).returning()
@@ -96,8 +130,8 @@ export const roleRouter = router({
           message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.RoomRole, id).message,
         });
 
-      const manageable = await isManageable(ctx.db, ctx.getSessionPayload.user.id, roomId, role.position);
-      if (!manageable) throw new TRPCError({ code: "UNAUTHORIZED" });
+      const isRoleManageable = await isManageable(ctx.db, ctx.getSessionPayload.user.id, roomId, role.position);
+      if (!isRoleManageable) throw new TRPCError({ code: "UNAUTHORIZED" });
 
       const deletedRole = (
         await ctx.db
@@ -202,12 +236,12 @@ export const roleRouter = router({
         });
 
       const actorId = ctx.getSessionPayload.user.id;
-      const manageable = await isManageable(ctx.db, actorId, roomId, role.position);
-      if (!manageable) throw new TRPCError({ code: "UNAUTHORIZED" });
+      const isRoleManageable = await isManageable(ctx.db, actorId, roomId, role.position);
+      if (!isRoleManageable) throw new TRPCError({ code: "UNAUTHORIZED" });
 
       if (rest.position !== undefined) {
-        const newPositionManageable = await isManageable(ctx.db, actorId, roomId, rest.position);
-        if (!newPositionManageable) throw new TRPCError({ code: "UNAUTHORIZED" });
+        const isNewPositionManageable = await isManageable(ctx.db, actorId, roomId, rest.position);
+        if (!isNewPositionManageable) throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 
       if (rest.permissions !== undefined) {

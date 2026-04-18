@@ -15,7 +15,7 @@ import {
   usersToRoomRoles,
   usersToRooms,
 } from "@esposter/db-schema";
-import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
@@ -210,6 +210,54 @@ describe("role", () => {
     await expect(caller.assignRole({ roleId: role.id, roomId, userId: targetMember.id })).resolves.toBeUndefined();
   });
 
+  test("cannot assign @everyone role explicitly", async () => {
+    expect.hasAssertions();
+
+    const { owner, roomId } = await setupRoom();
+    const everyoneRole = takeOne(await mockContext.db.select().from(roomRoles).where(eq(roomRoles.roomId, roomId)));
+    const targetMember = await createMember(roomId);
+
+    await mockSessionOnce(mockContext.db, owner);
+
+    await expect(
+      caller.assignRole({ roleId: everyoneRole.id, roomId, userId: targetMember.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoomRole, everyoneRole.id).message}]`,
+    );
+  });
+
+  test("cannot assign role to non-member", async () => {
+    expect.hasAssertions();
+
+    const { owner, roomId } = await setupRoom();
+    const role = takeOne(
+      await mockContext.db.insert(roomRoles).values({ name: "Mod", permissions: 0n, position: 1, roomId }).returning(),
+    );
+    const createdAt = new Date();
+    const nonMember = takeOne(
+      await mockContext.db
+        .insert(users)
+        .values({
+          createdAt,
+          email: crypto.randomUUID(),
+          emailVerified: true,
+          id: crypto.randomUUID(),
+          image: null,
+          name: crypto.randomUUID(),
+          updatedAt: createdAt,
+        })
+        .returning(),
+    );
+
+    await mockSessionOnce(mockContext.db, owner);
+
+    await expect(
+      caller.assignRole({ roleId: role.id, roomId, userId: nonMember.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.UserToRoom, nonMember.id).message}]`,
+    );
+  });
+
   test("cannot assign role at or above own top position", async () => {
     expect.hasAssertions();
 
@@ -288,6 +336,22 @@ describe("role", () => {
     await mockSessionOnce(mockContext.db, actor);
 
     await expect(caller.updateRole({ id: lowRole.id, position: 10, roomId })).rejects.toThrow("UNAUTHORIZED");
+  });
+
+  test("cannot create role with permissions not held by actor", async () => {
+    expect.hasAssertions();
+
+    const { roomId } = await setupRoom();
+    const { member: actor } = await setupMemberWithRole(
+      roomId,
+      RoomPermission.ManageRoles | RoomPermission.ReadMessages,
+      10,
+    );
+    await mockSessionOnce(mockContext.db, actor);
+
+    await expect(
+      caller.createRole({ name: "Escalated", permissions: RoomPermission.ManageRoom, position: 3, roomId }),
+    ).rejects.toThrow("UNAUTHORIZED");
   });
 
   test("cannot grant permissions not held by actor", async () => {
