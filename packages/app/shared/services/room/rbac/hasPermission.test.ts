@@ -1,7 +1,6 @@
+import { hasPermission } from "#shared/services/room/rbac/hasPermission";
 import { RoomPermission } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
-
-import { hasPermission } from "./hasPermission";
 
 describe(hasPermission, () => {
   test("owner always has permission regardless of permission bits", () => {
