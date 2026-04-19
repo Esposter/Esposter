@@ -162,7 +162,7 @@ catalog:
   link-preview-js: ^4.0.0
   linkifyjs: ^4.3.2
   lowlight: ^3.3.0
-  marked: ^18.0.1
+  marked: ^18.0.2
   mathjs: ^15.2.0
   mime-types: ^3.0.2
   mjml-browser: ^5.0.1
