@@ -23,7 +23,7 @@ const save = async () => {
 </script>
 
 <template>
-  <v-menu v-model="menu" location="top" :close-on-content-click="false" min-width="260">
+  <v-menu v-model="menu" location="top" :close-on-content-click="false">
     <template #activator="{ props: menuProps }">
       <slot name="activator" :menu-props />
     </template>
@@ -35,7 +35,7 @@ const save = async () => {
           :key="selectableStatus"
           :active="selectableStatus === selectedStatus"
           :value="selectableStatus"
-          rounded
+          rd
           @click="selectedStatus = selectableStatus"
         >
           <template #prepend>

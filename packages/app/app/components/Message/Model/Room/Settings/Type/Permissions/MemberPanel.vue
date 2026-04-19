@@ -16,14 +16,11 @@ const { selectedMemberId } = storeToRefs(roleStore);
 const memberStore = useMemberStore();
 const { hasMore, members } = storeToRefs(memberStore);
 const { readMembers, readMoreMembers } = useReadMembers();
-
-onMounted(() => {
-  readMembers();
-});
+await readMembers();
 </script>
 
 <template>
-  <v-list density="compact" rounded>
+  <v-list density="compact" rd>
     <v-list-item
       v-for="member of members"
       :key="member.id"

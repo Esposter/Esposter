@@ -14,7 +14,7 @@ const emit = defineEmits<{ click: [event: MouseEvent] }>();
         color="white"
         icon="mdi-draw"
         size="small"
-        rounded
+        rd
         :="props"
         @click="emit('click', $event)"
       />

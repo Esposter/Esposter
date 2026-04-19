@@ -26,7 +26,7 @@ const { columnFilters } = storeToRefs(filterStore);
       <v-icon
         transition-opacity
         duration-200
-        :class="isSorted(headerColumn) ? '' : 'opacity-0 group-hover:opacity-50'"
+        :class="isSorted(headerColumn) ? '' : 'op-0 group-hover:op-50'"
         :icon="getSortIcon(headerColumn)"
       />
     </div>

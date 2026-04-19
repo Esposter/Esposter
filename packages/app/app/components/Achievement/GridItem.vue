@@ -35,7 +35,7 @@ const { achievementDefinition, userAchievement } = defineProps<GridItemProps>();
           mt-2
           :height="6"
           color="primary"
-          rounded
+          rd
         />
         <div class="text-body-small" mt-1>
           {{ userAchievement?.amount ?? 0 }} / {{ achievementDefinition.amount ?? 1 }}

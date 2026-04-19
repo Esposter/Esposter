@@ -20,7 +20,7 @@ const callRoomName = useRoomName(callRoomId);
         :to="callRoomId && RoutePath.Messages(callRoomId)"
         prepend-icon="mdi-phone"
         density="compact"
-        rounded
+        rd
         base-color="success"
         mb-1
       >
@@ -29,20 +29,20 @@ const callRoomName = useRoomName(callRoomId);
         </template>
       </v-list-item>
     </TransitionFade>
-    <StyledCard flex p-2 rd-2>
+    <StyledCard flex p-2 items-center rd-2>
       <MessageModelStatusPickerMenuButton>
         <template #activator="{ menuProps }">
-          <button type="button" cursor-pointer bg-transparent b-none p-0 :="menuProps">
-            <MessageModelMemberStatusAvatar
-              :id="session.user.id"
-              :image="session.user.image"
-              :name="session.user.name"
-            />
-          </button>
+          <MessageModelMemberStatusAvatar
+            :id="session.user.id"
+            :image="session.user.image"
+            :name="session.user.name"
+            :avatar-attrs="{ cursor: 'pointer' }"
+            :avatar-props="menuProps"
+          />
         </template>
       </MessageModelStatusPickerMenuButton>
-      <div w-full flex justify-between overflow-hidden>
-        <div pl-2 flex flex-col justify-center overflow-hidden>
+      <div w-full flex justify-between>
+        <div pl-2 flex flex-col justify-center>
           <div text-xs truncate>
             {{ session.user.name }}
           </div>
@@ -50,13 +50,11 @@ const callRoomName = useRoomName(callRoomId);
             {{ getStatusMessage(session.user.id) || getStatusEnum(session.user.id) }}
           </div>
         </div>
-        <div flex flex-shrink-0>
-          <MessageLeftSideBarSettingsDialogButton>
-            <template #activator="activatorProps">
-              <v-btn :="activatorProps" icon="mdi-cog" size="small" />
-            </template>
-          </MessageLeftSideBarSettingsDialogButton>
-        </div>
+        <MessageLeftSideBarSettingsDialogButton>
+          <template #activator="activatorProps">
+            <v-btn :="activatorProps" icon="mdi-cog" size="small" />
+          </template>
+        </MessageLeftSideBarSettingsDialogButton>
       </div>
     </StyledCard>
   </div>

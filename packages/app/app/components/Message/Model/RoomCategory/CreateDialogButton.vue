@@ -25,20 +25,14 @@ const submit = async (_event: SubmitEventPromise, onComplete: () => void) => {
 <template>
   <StyledFormDialog
     v-model="dialog"
-    :card-props="{ title: 'New Category', minWidth: 400 }"
+    :card-props="{ title: 'New Category' }"
     :confirm-button-props="{ text: 'Create Category' }"
     @submit="submit"
   >
     <template #activator="{ updateIsOpen }">
-      <v-tooltip text="Add Category">
+      <v-tooltip text="Create Category">
         <template #activator="{ props: tooltipProps }">
-          <v-btn
-            :="tooltipProps"
-            icon="mdi-folder-plus-outline"
-            size="small"
-            variant="plain"
-            @click="updateIsOpen(true)"
-          />
+          <v-btn :="tooltipProps" icon="mdi-folder-plus-outline" size="small" @click.stop="updateIsOpen(true)" />
         </template>
       </v-tooltip>
     </template>

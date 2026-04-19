@@ -5,7 +5,7 @@ const modelValue = defineModel<bigint>({ required: true });
 </script>
 
 <template>
-  <v-list density="compact" rounded>
+  <v-list density="compact" rd>
     <MessageModelRoomSettingsTypePermissionsPermissionListItem
       v-for="[key, permission] of Object.entries(RoomPermission)"
       :key

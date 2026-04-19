@@ -4,16 +4,16 @@ import type { VAvatar } from "vuetify/components/VAvatar";
 
 import { StatusBadgePropsMap } from "@/services/message/StatusBadgePropsMap";
 import { useStatusStore } from "@/store/message/user/status";
-import { mergeProps } from "vue";
 // @TODO: https://github.com/vuejs/core/issues/11371
 interface StatusAvatarProps {
+  avatarAttrs?: VAvatar["$attrs"];
   avatarProps?: VAvatar["$props"];
   id: User["id"];
   image: User["image"];
   name: User["name"];
 }
 
-const { avatarProps, id, image, name } = defineProps<StatusAvatarProps>();
+const { avatarAttrs = {}, avatarProps = {}, id, image, name } = defineProps<StatusAvatarProps>();
 const statusStore = useStatusStore();
 const { getStatusEnum, getStatusMessage } = statusStore;
 const badge = computed(() => {
@@ -31,10 +31,12 @@ const statusTooltip = computed(() => {
   <v-tooltip :text="statusTooltip" location="top">
     <template #activator="{ props: tooltipProps }">
       <StyledAvatar
-        :="mergeProps(avatarProps ?? {}, tooltipProps)"
+        :avatar-attrs
+        :avatar-props
         :badge="{ ...badge, location: 'bottom end' }"
         :image
         :name
+        :="tooltipProps"
       />
     </template>
   </v-tooltip>

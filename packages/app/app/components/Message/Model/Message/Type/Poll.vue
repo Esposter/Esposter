@@ -82,7 +82,7 @@ const vote = async (optionId: null | string) => {
                 </div>
               </template>
             </v-radio>
-            <v-progress-linear :model-value="getVotePercentage(id)" color="primary" mb-3 rounded-bar />
+            <v-progress-linear :model-value="getVotePercentage(id)" color="primary" mb-3 />
           </template>
           <v-list-subheader>{{ getVoteDescription(totalVotes) }}</v-list-subheader>
         </v-radio-group>
