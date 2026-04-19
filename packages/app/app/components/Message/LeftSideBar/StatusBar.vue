@@ -41,8 +41,8 @@ const callRoomName = useRoomName(callRoomId);
           />
         </template>
       </MessageModelStatusPickerMenuButton>
-      <div w-full flex justify-between>
-        <div pl-2 flex flex-col justify-center>
+      <div w-full min-w-0 flex justify-between>
+        <div pl-2 min-w-0 flex flex-col justify-center>
           <div text-xs truncate>
             {{ session.user.name }}
           </div>
