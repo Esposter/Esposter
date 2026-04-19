@@ -17,7 +17,7 @@ interface EditableNameDialogButtonProps {
 defineSlots<{ default?: () => VNode }>();
 const modelValue = defineModel<boolean>({ default: false });
 const {
-  buttonProps,
+  buttonProps = {},
   cardProps,
   isEditable = true,
   maxLength,
@@ -60,7 +60,7 @@ watch(
                 rounded="lg"
                 :ripple="false"
                 slim
-                :="mergeProps(tooltipActivatorProps, hoverProps, buttonProps ?? {})"
+                :="mergeProps(tooltipActivatorProps, hoverProps, buttonProps)"
                 @click="updateIsOpen(true)"
               >
                 <slot>

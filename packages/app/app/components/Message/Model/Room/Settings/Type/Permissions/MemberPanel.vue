@@ -16,27 +16,29 @@ const { selectedMemberId } = storeToRefs(roleStore);
 const memberStore = useMemberStore();
 const { hasMore, members } = storeToRefs(memberStore);
 const { readMembers, readMoreMembers } = useReadMembers();
-
-onMounted(() => {
-  readMembers();
-});
+const { isPending } = await readMembers();
 </script>
 
 <template>
-  <v-list density="compact" rounded>
-    <v-list-item
-      v-for="member of members"
-      :key="member.id"
-      :active="member.id === selectedMemberId"
-      @click="selectMember(member.id)"
-    >
-      <template #prepend>
-        <StyledAvatar :image="member.image" :name="member.name" mr-2 size="24" />
-      </template>
-      <v-list-item-title>{{ member.name }}</v-list-item-title>
-    </v-list-item>
-    <StyledWaypoint :is-active="hasMore" @change="readMoreMembers">
+  <v-list density="compact" rd>
+    <template v-if="isPending">
       <MessageModelMemberSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
-    </StyledWaypoint>
+    </template>
+    <template v-else>
+      <v-list-item
+        v-for="member of members"
+        :key="member.id"
+        :active="member.id === selectedMemberId"
+        @click="selectMember(member.id)"
+      >
+        <template #prepend>
+          <StyledAvatar :image="member.image" :name="member.name" mr-2 />
+        </template>
+        <v-list-item-title>{{ member.name }}</v-list-item-title>
+      </v-list-item>
+      <StyledWaypoint :is-active="hasMore" @change="readMoreMembers">
+        <MessageModelMemberSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+      </StyledWaypoint>
+    </template>
   </v-list>
 </template>

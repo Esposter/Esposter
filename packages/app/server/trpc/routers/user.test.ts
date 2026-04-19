@@ -140,25 +140,32 @@ describe("user", () => {
   test("upsert status inserts", async () => {
     expect.hasAssertions();
 
-    await caller.upsertStatus({ message });
+    const status = UserStatus.DoNotDisturb;
+    const returned = await caller.upsertStatus({ message, status });
     vi.advanceTimersByTime(1);
     const userId = getMockSession().user.id;
     const userStatus = takeOne(await caller.readStatuses([userId]));
 
+    expect(returned.status).toBe(status);
+    expect(returned.userId).toBe(userId);
     expect(userStatus.message).toBe(message);
+    expect(userStatus.status).toBe(status);
   });
 
   test("upsert status updates", async () => {
     expect.hasAssertions();
 
-    await caller.upsertStatus({ message });
+    await caller.upsertStatus({ message, status: UserStatus.DoNotDisturb });
     vi.advanceTimersByTime(1);
-    await caller.upsertStatus({ message: updatedMessage });
+    const returned = await caller.upsertStatus({ message: updatedMessage, status: UserStatus.Idle });
     vi.advanceTimersByTime(1);
     const userId = getMockSession().user.id;
     const userStatus = takeOne(await caller.readStatuses([userId]));
 
+    expect(returned.status).toBe(UserStatus.Idle);
+    expect(returned.userId).toBe(userId);
     expect(userStatus.message).toBe(updatedMessage);
+    expect(userStatus.status).toBe(UserStatus.Idle);
   });
 
   test("on upserts status", async () => {

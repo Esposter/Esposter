@@ -37,7 +37,7 @@ await readMemberRoles({ roomId, userId: member.id });
       <div text-lg font-bold>{{ member.name }}</div>
     </div>
     <div v-if="allRoles.length === 0" text-medium-emphasis>No roles available.</div>
-    <v-list v-else density="compact" rounded>
+    <v-list v-else density="compact" rd>
       <v-list-item v-for="role of allRoles" :key="role.id" :title="role.name">
         <template #prepend>
           <div

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SelectableStatuses } from "@/models/message/user/status/SelectableStatuses";
+import { SelectableStatusDefinitionList } from "@/models/message/user/status/SelectableStatusDefinitionList";
 import { StatusIconMap } from "@/models/message/user/status/StatusIconMap";
 import { authClient } from "@/services/auth/authClient";
 import { StatusBadgePropsMap } from "@/services/message/StatusBadgePropsMap";
@@ -17,13 +17,22 @@ const selectedStatus = ref(status.value);
 const statusMessage = ref(message.value);
 const menu = ref(false);
 const save = async () => {
-  await $trpc.user.upsertStatus.mutate({ message: statusMessage.value, status: selectedStatus.value });
+  const upsertedStatus = await $trpc.user.upsertStatus.mutate({
+    message: statusMessage.value,
+    status: selectedStatus.value,
+  });
+  const { userId, ...rest } = upsertedStatus;
+  statusMap.value.set(userId, rest);
   menu.value = false;
+};
+const onStatusClick = (clickedStatus: UserStatus) => {
+  if (clickedStatus === selectedStatus.value) save();
+  else selectedStatus.value = clickedStatus;
 };
 </script>
 
 <template>
-  <v-menu v-model="menu" location="top" :close-on-content-click="false" min-width="260">
+  <v-menu v-model="menu" location="top" :close-on-content-click="false">
     <template #activator="{ props: menuProps }">
       <slot name="activator" :menu-props />
     </template>
@@ -31,12 +40,12 @@ const save = async () => {
       <div text-sm font-bold>Set Status</div>
       <v-list density="compact" py-0>
         <v-list-item
-          v-for="selectableStatus in SelectableStatuses"
+          v-for="{ label, status: selectableStatus, subtitle } in SelectableStatusDefinitionList"
           :key="selectableStatus"
           :active="selectableStatus === selectedStatus"
-          :value="selectableStatus"
-          rounded
-          @click="selectedStatus = selectableStatus"
+          :subtitle
+          rd
+          @click="onStatusClick(selectableStatus)"
         >
           <template #prepend>
             <v-icon
@@ -46,7 +55,7 @@ const save = async () => {
               :icon="StatusIconMap[selectableStatus]"
             />
           </template>
-          <v-list-item-title>{{ selectableStatus }}</v-list-item-title>
+          <v-list-item-title>{{ label }}</v-list-item-title>
         </v-list-item>
       </v-list>
       <v-divider />
@@ -56,12 +65,8 @@ const save = async () => {
         density="compact"
         hide-details
         :maxlength="STATUS_MESSAGE_MAX_LENGTH"
-        variant="outlined"
-        @keydown.enter="save()"
       />
-      <div flex justify-end>
-        <v-btn color="primary" size="small" text="Save" variant="elevated" @click="save()" />
-      </div>
+      <StyledButton text="Save" @click="save()" />
     </StyledCard>
   </v-menu>
 </template>

@@ -29,7 +29,7 @@ const submit = async (_event: SubmitEventPromise, onComplete: () => void) => {
 <template>
   <StyledFormDialog
     v-model="isOpen"
-    :card-props="{ title: 'New Message', minWidth: 400 }"
+    :card-props="{ title: 'New Message' }"
     :confirm-button-props="{ text: 'Create Message' }"
     :confirm-button-attrs="{ disabled: selectedUserIds.length === 0 }"
     @submit="submit"

@@ -62,7 +62,7 @@ const isBlocked = (userId: string) => blockedUsers.value.some(({ id }) => id ===
               @click:clear="searchResults = []"
             />
           </div>
-          <v-list v-if="searchResults.length > 0" mt-2 rounded>
+          <v-list v-if="searchResults.length > 0" mt-2 rd>
             <v-list-item v-for="{ id, name, image } of searchResults" :key="id" :title="name">
               <template #prepend>
                 <v-avatar size="36" mr-3>
@@ -97,7 +97,7 @@ const isBlocked = (userId: string) => blockedUsers.value.some(({ id }) => id ===
         </div>
         <div v-if="displayReceivedFriendRequests.length > 0" mb-8>
           <div class="text-title-large" mb-3>Pending Requests — {{ displayReceivedFriendRequests.length }}</div>
-          <v-list rounded>
+          <v-list rd>
             <v-list-item v-for="{ id, sender } of displayReceivedFriendRequests" :key="id" :title="sender.name">
               <template #prepend>
                 <v-avatar size="36" mr-3>
@@ -128,7 +128,7 @@ const isBlocked = (userId: string) => blockedUsers.value.some(({ id }) => id ===
         </div>
         <div mb-8>
           <div class="text-title-large" mb-3>Friends — {{ displayFriends.length }}</div>
-          <v-list v-if="displayFriends.length > 0" rounded>
+          <v-list v-if="displayFriends.length > 0" rd>
             <v-list-item v-for="{ id, name, image } of displayFriends" :key="id" :title="name">
               <template #prepend>
                 <v-avatar size="36" mr-3>
@@ -148,7 +148,7 @@ const isBlocked = (userId: string) => blockedUsers.value.some(({ id }) => id ===
         </div>
         <div v-if="blockedUsers.length > 0">
           <div class="text-title-large" mb-3>Blocked — {{ blockedUsers.length }}</div>
-          <v-list rounded>
+          <v-list rd>
             <v-list-item v-for="{ id, name, image } of blockedUsers" :key="id" :title="name">
               <template #prepend>
                 <v-avatar size="36" mr-3>
