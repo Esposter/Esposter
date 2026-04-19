@@ -10,7 +10,13 @@ export const getRoleEventEmitter = (roomId: string, signal?: AbortSignal): Event
   const existingEmitter = roleEventEmitters.get(roomId);
   const emitter = existingEmitter ?? new EventEmitter<RoleEvents>();
   if (!existingEmitter) roleEventEmitters.set(roomId, emitter);
-  signal?.addEventListener("abort", () => releaseRoleEventEmitter(roomId), { once: true });
+  signal?.addEventListener(
+    "abort",
+    () => {
+      releaseRoleEventEmitter(roomId);
+    },
+    { once: true },
+  );
   return emitter;
 };
 
