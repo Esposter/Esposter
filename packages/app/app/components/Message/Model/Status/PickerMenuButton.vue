@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SelectableStatuses } from "@/models/message/user/status/SelectableStatuses";
+import { SelectableStatusDefinitionList } from "@/models/message/user/status/SelectableStatusDefinitionList";
 import { StatusIconMap } from "@/models/message/user/status/StatusIconMap";
 import { authClient } from "@/services/auth/authClient";
 import { StatusBadgePropsMap } from "@/services/message/StatusBadgePropsMap";
@@ -25,6 +25,10 @@ const save = async () => {
   statusMap.value.set(userId, rest);
   menu.value = false;
 };
+const onStatusClick = (clickedStatus: UserStatus) => {
+  if (clickedStatus === selectedStatus.value) save();
+  else selectedStatus.value = clickedStatus;
+};
 </script>
 
 <template>
@@ -36,12 +40,12 @@ const save = async () => {
       <div text-sm font-bold>Set Status</div>
       <v-list density="compact" py-0>
         <v-list-item
-          v-for="selectableStatus in SelectableStatuses"
+          v-for="{ label, status: selectableStatus, subtitle } in SelectableStatusDefinitionList"
           :key="selectableStatus"
           :active="selectableStatus === selectedStatus"
-          :value="selectableStatus"
+          :subtitle
           rd
-          @click="selectedStatus = selectableStatus"
+          @click="onStatusClick(selectableStatus)"
         >
           <template #prepend>
             <v-icon
@@ -51,7 +55,7 @@ const save = async () => {
               :icon="StatusIconMap[selectableStatus]"
             />
           </template>
-          <v-list-item-title>{{ selectableStatus }}</v-list-item-title>
+          <v-list-item-title>{{ label }}</v-list-item-title>
         </v-list-item>
       </v-list>
       <v-divider />
@@ -61,12 +65,8 @@ const save = async () => {
         density="compact"
         hide-details
         :maxlength="STATUS_MESSAGE_MAX_LENGTH"
-        variant="outlined"
-        @keydown.enter="save()"
       />
-      <div flex justify-end>
-        <v-btn color="primary" size="small" text="Save" variant="elevated" @click="save()" />
-      </div>
+      <StyledButton text="Save" @click="save()" />
     </StyledCard>
   </v-menu>
 </template>
