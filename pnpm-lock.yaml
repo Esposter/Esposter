@@ -526,8 +526,8 @@ catalogs:
       specifier: ^11.0.1
       version: 11.0.1
     read-excel-file:
-      specifier: ^8.0.3
-      version: 8.0.3
+      specifier: ^9.0.2
+      version: 9.0.2
     rolldown:
       specifier: ^1.0.0-rc.16
       version: 1.0.0-rc.16
@@ -1073,7 +1073,7 @@ importers:
         version: 11.0.1
       read-excel-file:
         specifier: 'catalog:'
-        version: 8.0.3
+        version: 9.0.2
       rxjs:
         specifier: 'catalog:'
         version: 7.8.2
@@ -6992,10 +6992,9 @@ packages:
   '@webassemblyjs/wast-printer@1.14.1':
     resolution: {integrity: sha512-kPSSXE6De1XOR820C90RIo2ogvZG+c3KiHzqUoO/F34Y2shGzesfqv7o57xrxovZJH/MetF5UjroJ/R/3isoiw==}
 
-  '@xmldom/xmldom@0.8.12':
-    resolution: {integrity: sha512-9k/gHF6n/pAi/9tqr3m3aqkuiNosYTurLLUtc7xQ9sxB/wm7WPygCv8GYa6mS0fLJEHhqMC1ATYhz++U/lRHqg==}
-    engines: {node: '>=10.0.0'}
-    deprecated: this version has critical issues, please update to the latest version
+  '@xmldom/xmldom@0.9.10':
+    resolution: {integrity: sha512-A9gOqLdi6cV4ibazAjcQufGj0B1y/vDqYrcuP6d/6x8P27gRS8643Dj9o1dEKtB6O7fwxb2FgBmJS2mX7gpvdw==}
+    engines: {node: '>=14.6'}
 
   '@xtuc/ieee754@1.2.0':
     resolution: {integrity: sha512-DX8nKgqcGwsc0eJSqYt5lwP4DH5FlHnmuWWBRy7X0NcaGR0ZtuyeESgMwTYVEtxmsNGY+qit4QYT/MIYTOTPeA==}
@@ -11171,8 +11170,8 @@ packages:
     resolution: {integrity: sha512-1zM5HuOfagXCBWMN83fuFI/x+T/UhZ7k+KIzhrHXcQoeX5+7gmaDYjELQHmmzIodumBHeByBJT4QYS7ufAgs7A==}
     engines: {node: ^20.17.0 || >=22.9.0}
 
-  read-excel-file@8.0.3:
-    resolution: {integrity: sha512-IPxOBdWNAn0FZuWB49IVj+8e4zkLJMGDMRwUErmvuyu42brAnOkvdkm0j/RD+nMabNjNs+LFmbwdm9qUQ12SgA==}
+  read-excel-file@9.0.2:
+    resolution: {integrity: sha512-uBV2g3VEb2GZmYF9jBy0kuj0S9scdtDpMPlhFH8Cxq4cx5cYt0mQlRHVn02DHglWSnqVXtdEJJZLfjACmUSDJg==}
     engines: {node: '>=18'}
 
   readable-stream@1.0.34:
@@ -19307,7 +19306,7 @@ snapshots:
       '@webassemblyjs/ast': 1.14.1
       '@xtuc/long': 4.2.2
 
-  '@xmldom/xmldom@0.8.12': {}
+  '@xmldom/xmldom@0.9.10': {}
 
   '@xtuc/ieee754@1.2.0': {}
 
@@ -24250,9 +24249,9 @@ snapshots:
 
   read-cmd-shim@6.0.0: {}
 
-  read-excel-file@8.0.3:
+  read-excel-file@9.0.2:
     dependencies:
-      '@xmldom/xmldom': 0.8.12
+      '@xmldom/xmldom': 0.9.10
       fflate: 0.8.2
       unzipper: 0.12.3
 
