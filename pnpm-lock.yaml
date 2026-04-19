@@ -625,8 +625,8 @@ catalogs:
       specifier: ^2.1.4
       version: 2.1.4
     vue-tsc:
-      specifier: ^3.2.6
-      version: 3.2.6
+      specifier: ^3.2.7
+      version: 3.2.7
     vue3-apexcharts:
       specifier: ^1.11.1
       version: 1.11.1
@@ -698,7 +698,7 @@ importers:
         version: 2.4.6
       ctix:
         specifier: 'catalog:'
-        version: 2.7.2(@types/node@25.6.0)(prettier-plugin-organize-imports@4.3.0(prettier@3.8.3)(typescript@5.9.3)(vue-tsc@3.2.6(typescript@5.9.3)))(prettier@3.8.3)(typescript@5.9.3)
+        version: 2.7.2(@types/node@25.6.0)(prettier-plugin-organize-imports@4.3.0(prettier@3.8.3)(typescript@5.9.3)(vue-tsc@3.2.7(typescript@5.9.3)))(prettier@3.8.3)(typescript@5.9.3)
       dotenv:
         specifier: 'catalog:'
         version: 17.4.2
@@ -725,7 +725,7 @@ importers:
         version: 1.0.0-rc.16
       rolldown-plugin-dts:
         specifier: 'catalog:'
-        version: 0.23.2(@typescript/native-preview@7.0.0-dev.20260419.1)(rolldown@1.0.0-rc.16)(typescript@5.9.3)(vue-tsc@3.2.6(typescript@5.9.3))
+        version: 0.23.2(@typescript/native-preview@7.0.0-dev.20260419.1)(rolldown@1.0.0-rc.16)(typescript@5.9.3)(vue-tsc@3.2.7(typescript@5.9.3))
       tsx:
         specifier: 'catalog:'
         version: 4.21.0
@@ -749,7 +749,7 @@ importers:
         version: 4.1.4(@opentelemetry/api@1.9.1)(@types/node@25.6.0)(@vitest/coverage-v8@4.1.4)(happy-dom@20.9.0)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
       vue-tsc:
         specifier: 'catalog:'
-        version: 3.2.6(typescript@5.9.3)
+        version: 3.2.7(typescript@5.9.3)
 
   packages/app:
     dependencies:
@@ -1179,7 +1179,7 @@ importers:
         version: 4.0.2(@vue/test-utils@2.4.6)(crossws@0.4.5(srvx@0.11.15))(happy-dom@20.9.0)(magicast@0.5.2)(srvx@0.11.15)(typescript@5.9.3)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vitest@4.1.4)
       '@nuxtjs/seo':
         specifier: 'catalog:'
-        version: 5.1.3(7a7701df24b16b128a5e51c52539062b)
+        version: 5.1.3(8cb65a9fd25c766a8d5532891b66f3f2)
       '@pinia/nuxt':
         specifier: 'catalog:'
         version: 0.11.3(magicast@0.5.2)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.32(typescript@5.9.3)))
@@ -1230,7 +1230,7 @@ importers:
         version: 1.1.1(magicast@0.5.2)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(workbox-build@7.4.0)(workbox-window@7.4.0)
       '@vueuse/nuxt':
         specifier: 'catalog:'
-        version: 14.2.1(6dc20e45da377b7d76228c36f969a119)
+        version: 14.2.1(30653cf90588d2f30106933e55a26ec1)
       azure-mock:
         specifier: workspace:*
         version: link:../azure-mock
@@ -1251,7 +1251,7 @@ importers:
         version: 20.9.0
       nuxt:
         specifier: 'catalog:'
-        version: 4.3.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@electric-sql/pglite@0.4.4)(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@parcel/watcher@2.5.6)(@types/node@25.6.0)(@vue/compiler-sfc@3.5.32)(cac@6.7.14)(db0@0.3.4(@electric-sql/pglite@0.4.4)(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9)))(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9))(eslint@10.2.1(jiti@2.6.1))(ioredis@5.10.1)(magicast@0.5.2)(meow@13.2.0)(optionator@0.9.4)(oxlint@1.60.0(oxlint-tsgolint@0.21.1))(pinia@3.0.4(typescript@5.9.3)(vue@3.5.32(typescript@5.9.3)))(rolldown@1.0.0-rc.16)(rollup@4.60.1)(sass-embedded@1.99.0)(sass@1.99.0)(srvx@0.11.15)(terser@5.46.1)(tsx@4.21.0)(typescript@5.9.3)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue-tsc@3.2.6(typescript@5.9.3))(yaml@2.8.3)
+        version: 4.3.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@electric-sql/pglite@0.4.4)(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@parcel/watcher@2.5.6)(@types/node@25.6.0)(@vue/compiler-sfc@3.5.32)(cac@6.7.14)(db0@0.3.4(@electric-sql/pglite@0.4.4)(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9)))(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9))(eslint@10.2.1(jiti@2.6.1))(ioredis@5.10.1)(magicast@0.5.2)(meow@13.2.0)(optionator@0.9.4)(oxlint@1.60.0(oxlint-tsgolint@0.21.1))(pinia@3.0.4(typescript@5.9.3)(vue@3.5.32(typescript@5.9.3)))(rolldown@1.0.0-rc.16)(rollup@4.60.1)(sass-embedded@1.99.0)(sass@1.99.0)(srvx@0.11.15)(terser@5.46.1)(tsx@4.21.0)(typescript@5.9.3)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue-tsc@3.2.7(typescript@5.9.3))(yaml@2.8.3)
       nuxt-security:
         specifier: 'catalog:'
         version: 2.5.1(magicast@0.5.2)(rollup@4.60.1)
@@ -1406,7 +1406,7 @@ importers:
         version: 0.4.2(@typescript-eslint/utils@8.58.2(eslint@10.2.1(jiti@2.6.1))(typescript@5.9.3))(eslint@10.2.1(jiti@2.6.1))
       rolldown-plugin-dts:
         specifier: 'catalog:'
-        version: 0.23.2(@typescript/native-preview@7.0.0-dev.20260419.1)(rolldown@1.0.0-rc.16)(typescript@5.9.3)(vue-tsc@3.2.6(typescript@5.9.3))
+        version: 0.23.2(@typescript/native-preview@7.0.0-dev.20260419.1)(rolldown@1.0.0-rc.16)(typescript@5.9.3)(vue-tsc@3.2.7(typescript@5.9.3))
       typescript-eslint:
         specifier: 'catalog:'
         version: 8.58.2(eslint@10.2.1(jiti@2.6.1))(typescript@5.9.3)
@@ -6819,9 +6819,6 @@ packages:
 
   '@vue/devtools-shared@8.1.1':
     resolution: {integrity: sha512-+h4ttmJYl/txpxHKaoZcaKpC+pvckgLzIDiSQlaQ7kKthKh8KuwoLW2D8hPJEnqKzXOvu15UHEoGyngAXCz0EQ==}
-
-  '@vue/language-core@3.2.6':
-    resolution: {integrity: sha512-xYYYX3/aVup576tP/23sEUpgiEnujrENaoNRbaozC1/MA9I6EGFQRJb4xrt/MmUCAGlxTKL2RmT8JLTPqagCkg==}
 
   '@vue/language-core@3.2.7':
     resolution: {integrity: sha512-Gn4q/tRxbpVGLEuARQ43p3YELlNAFgRUVCgW9U5Cr+5q4vfD2bWDWpl3ABbJMXUt5xlE1dF8dkigg2aUq7JYYw==}
@@ -12896,8 +12893,8 @@ packages:
       pinia:
         optional: true
 
-  vue-tsc@3.2.6:
-    resolution: {integrity: sha512-gYW/kWI0XrwGzd0PKc7tVB/qpdeAkIZLNZb10/InizkQjHjnT8weZ/vBarZoj4kHKbUTZT/bAVgoOr8x4NsQ/Q==}
+  vue-tsc@3.2.7:
+    resolution: {integrity: sha512-zc1tL3HoQni1zGTGrwBVRQb7rGP5SWdu/m4rGB6JcnAC5MT5LFZIxF7Y+EJEnt4hGF23d60rXH7gRjHGb5KQQQ==}
     hasBin: true
     peerDependencies:
       typescript: '>=5.0.0'
@@ -16110,7 +16107,7 @@ snapshots:
     transitivePeerDependencies:
       - magicast
 
-  '@nuxt/nitro-server@4.3.1(1b94fe2d321f78fa918de10f48d46926)':
+  '@nuxt/nitro-server@4.3.1(44610f6e13e6691557cda2e1bd96bb05)':
     dependencies:
       '@nuxt/devalue': 2.0.2
       '@nuxt/kit': 4.3.1(magicast@0.5.2)
@@ -16128,7 +16125,7 @@ snapshots:
       klona: 2.0.6
       mocked-exports: 0.1.1
       nitropack: 2.13.3(@azure/data-tables@13.3.2)(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@electric-sql/pglite@0.4.4)(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9))(rolldown@1.0.0-rc.16)(srvx@0.11.15)
-      nuxt: 4.3.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@electric-sql/pglite@0.4.4)(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@parcel/watcher@2.5.6)(@types/node@25.6.0)(@vue/compiler-sfc@3.5.32)(cac@6.7.14)(db0@0.3.4(@electric-sql/pglite@0.4.4)(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9)))(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9))(eslint@10.2.1(jiti@2.6.1))(ioredis@5.10.1)(magicast@0.5.2)(meow@13.2.0)(optionator@0.9.4)(oxlint@1.60.0(oxlint-tsgolint@0.21.1))(pinia@3.0.4(typescript@5.9.3)(vue@3.5.32(typescript@5.9.3)))(rolldown@1.0.0-rc.16)(rollup@4.60.1)(sass-embedded@1.99.0)(sass@1.99.0)(srvx@0.11.15)(terser@5.46.1)(tsx@4.21.0)(typescript@5.9.3)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue-tsc@3.2.6(typescript@5.9.3))(yaml@2.8.3)
+      nuxt: 4.3.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@electric-sql/pglite@0.4.4)(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@parcel/watcher@2.5.6)(@types/node@25.6.0)(@vue/compiler-sfc@3.5.32)(cac@6.7.14)(db0@0.3.4(@electric-sql/pglite@0.4.4)(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9)))(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9))(eslint@10.2.1(jiti@2.6.1))(ioredis@5.10.1)(magicast@0.5.2)(meow@13.2.0)(optionator@0.9.4)(oxlint@1.60.0(oxlint-tsgolint@0.21.1))(pinia@3.0.4(typescript@5.9.3)(vue@3.5.32(typescript@5.9.3)))(rolldown@1.0.0-rc.16)(rollup@4.60.1)(sass-embedded@1.99.0)(sass@1.99.0)(srvx@0.11.15)(terser@5.46.1)(tsx@4.21.0)(typescript@5.9.3)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue-tsc@3.2.7(typescript@5.9.3))(yaml@2.8.3)
       ohash: 2.0.11
       pathe: 2.0.3
       pkg-types: 2.3.0
@@ -16409,7 +16406,7 @@ snapshots:
       - vue
       - yjs
 
-  '@nuxt/vite-builder@4.3.1(ce9a390a770b3a12e1a224a0f34a909e)':
+  '@nuxt/vite-builder@4.3.1(b5374930fc50b830f4c75fa14d3e952a)':
     dependencies:
       '@nuxt/kit': 4.3.1(magicast@0.5.2)
       '@rollup/plugin-replace': 6.0.3(rollup@4.60.1)
@@ -16428,7 +16425,7 @@ snapshots:
       magic-string: 0.30.21
       mlly: 1.8.2
       mocked-exports: 0.1.1
-      nuxt: 4.3.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@electric-sql/pglite@0.4.4)(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@parcel/watcher@2.5.6)(@types/node@25.6.0)(@vue/compiler-sfc@3.5.32)(cac@6.7.14)(db0@0.3.4(@electric-sql/pglite@0.4.4)(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9)))(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9))(eslint@10.2.1(jiti@2.6.1))(ioredis@5.10.1)(magicast@0.5.2)(meow@13.2.0)(optionator@0.9.4)(oxlint@1.60.0(oxlint-tsgolint@0.21.1))(pinia@3.0.4(typescript@5.9.3)(vue@3.5.32(typescript@5.9.3)))(rolldown@1.0.0-rc.16)(rollup@4.60.1)(sass-embedded@1.99.0)(sass@1.99.0)(srvx@0.11.15)(terser@5.46.1)(tsx@4.21.0)(typescript@5.9.3)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue-tsc@3.2.6(typescript@5.9.3))(yaml@2.8.3)
+      nuxt: 4.3.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@electric-sql/pglite@0.4.4)(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@parcel/watcher@2.5.6)(@types/node@25.6.0)(@vue/compiler-sfc@3.5.32)(cac@6.7.14)(db0@0.3.4(@electric-sql/pglite@0.4.4)(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9)))(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9))(eslint@10.2.1(jiti@2.6.1))(ioredis@5.10.1)(magicast@0.5.2)(meow@13.2.0)(optionator@0.9.4)(oxlint@1.60.0(oxlint-tsgolint@0.21.1))(pinia@3.0.4(typescript@5.9.3)(vue@3.5.32(typescript@5.9.3)))(rolldown@1.0.0-rc.16)(rollup@4.60.1)(sass-embedded@1.99.0)(sass@1.99.0)(srvx@0.11.15)(terser@5.46.1)(tsx@4.21.0)(typescript@5.9.3)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue-tsc@3.2.7(typescript@5.9.3))(yaml@2.8.3)
       pathe: 2.0.3
       pkg-types: 2.3.0
       postcss: 8.5.10
@@ -16439,7 +16436,7 @@ snapshots:
       unenv: 2.0.0-rc.24
       vite: 8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3)
       vite-node: 5.3.0(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3)
-      vite-plugin-checker: 0.12.0(eslint@10.2.1(jiti@2.6.1))(meow@13.2.0)(optionator@0.9.4)(oxlint@1.60.0(oxlint-tsgolint@0.21.1))(typescript@5.9.3)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue-tsc@3.2.6(typescript@5.9.3))
+      vite-plugin-checker: 0.12.0(eslint@10.2.1(jiti@2.6.1))(meow@13.2.0)(optionator@0.9.4)(oxlint@1.60.0(oxlint-tsgolint@0.21.1))(typescript@5.9.3)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue-tsc@3.2.7(typescript@5.9.3))
       vue: 3.5.32(typescript@5.9.3)
       vue-bundle-renderer: 2.2.0
     optionalDependencies:
@@ -16478,15 +16475,15 @@ snapshots:
     transitivePeerDependencies:
       - magicast
 
-  '@nuxtjs/robots@6.0.7(2314a7a1a077838e1a9995d68d2a4b68)':
+  '@nuxtjs/robots@6.0.7(7f3c5cf8247b56833c031fdcd5f7cc62)':
     dependencies:
       '@fingerprintjs/botd': 2.0.0
       '@nuxt/kit': 4.4.2(magicast@0.5.2)
       consola: 3.4.2
       defu: 6.1.7
       h3: 1.15.11(srvx@0.11.15)
-      nuxt-site-config: 4.0.8(2314a7a1a077838e1a9995d68d2a4b68)
-      nuxtseo-shared: 5.1.3(b5ef5d416e90b3914baebc841c23afba)
+      nuxt-site-config: 4.0.8(7f3c5cf8247b56833c031fdcd5f7cc62)
+      nuxtseo-shared: 5.1.3(0ef69599f3fcfff92d00e2d3dfd6a66a)
       pathe: 2.0.3
       pkg-types: 2.3.0
       ufo: 1.6.3
@@ -16500,18 +16497,18 @@ snapshots:
       - vite
       - vue
 
-  '@nuxtjs/seo@5.1.3(7a7701df24b16b128a5e51c52539062b)':
+  '@nuxtjs/seo@5.1.3(8cb65a9fd25c766a8d5532891b66f3f2)':
     dependencies:
       '@nuxt/kit': 4.4.2(magicast@0.5.2)
-      '@nuxtjs/robots': 6.0.7(2314a7a1a077838e1a9995d68d2a4b68)
-      '@nuxtjs/sitemap': 8.0.13(2314a7a1a077838e1a9995d68d2a4b68)
-      nuxt: 4.3.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@electric-sql/pglite@0.4.4)(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@parcel/watcher@2.5.6)(@types/node@25.6.0)(@vue/compiler-sfc@3.5.32)(cac@6.7.14)(db0@0.3.4(@electric-sql/pglite@0.4.4)(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9)))(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9))(eslint@10.2.1(jiti@2.6.1))(ioredis@5.10.1)(magicast@0.5.2)(meow@13.2.0)(optionator@0.9.4)(oxlint@1.60.0(oxlint-tsgolint@0.21.1))(pinia@3.0.4(typescript@5.9.3)(vue@3.5.32(typescript@5.9.3)))(rolldown@1.0.0-rc.16)(rollup@4.60.1)(sass-embedded@1.99.0)(sass@1.99.0)(srvx@0.11.15)(terser@5.46.1)(tsx@4.21.0)(typescript@5.9.3)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue-tsc@3.2.6(typescript@5.9.3))(yaml@2.8.3)
-      nuxt-link-checker: 5.0.9(761dce50cef276a4e30d3ff93c8fc322)
-      nuxt-og-image: 6.4.3(ce45efad86f2d9885a76701622f2fa81)
-      nuxt-schema-org: 6.0.4(b360149dab04fe12465a58968357742f)
-      nuxt-seo-utils: 8.1.9(d9432f697a652d61cb5f9f23d5125e09)
-      nuxt-site-config: 4.0.8(2314a7a1a077838e1a9995d68d2a4b68)
-      nuxtseo-shared: 5.1.3(b5ef5d416e90b3914baebc841c23afba)
+      '@nuxtjs/robots': 6.0.7(7f3c5cf8247b56833c031fdcd5f7cc62)
+      '@nuxtjs/sitemap': 8.0.13(7f3c5cf8247b56833c031fdcd5f7cc62)
+      nuxt: 4.3.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@electric-sql/pglite@0.4.4)(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@parcel/watcher@2.5.6)(@types/node@25.6.0)(@vue/compiler-sfc@3.5.32)(cac@6.7.14)(db0@0.3.4(@electric-sql/pglite@0.4.4)(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9)))(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9))(eslint@10.2.1(jiti@2.6.1))(ioredis@5.10.1)(magicast@0.5.2)(meow@13.2.0)(optionator@0.9.4)(oxlint@1.60.0(oxlint-tsgolint@0.21.1))(pinia@3.0.4(typescript@5.9.3)(vue@3.5.32(typescript@5.9.3)))(rolldown@1.0.0-rc.16)(rollup@4.60.1)(sass-embedded@1.99.0)(sass@1.99.0)(srvx@0.11.15)(terser@5.46.1)(tsx@4.21.0)(typescript@5.9.3)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue-tsc@3.2.7(typescript@5.9.3))(yaml@2.8.3)
+      nuxt-link-checker: 5.0.9(91ab969186bffafd59e165b90f33be7f)
+      nuxt-og-image: 6.4.3(cdd0dbeeb50739527d00ecf5c67051c9)
+      nuxt-schema-org: 6.0.4(009e463f27208d26b757e5c717343f30)
+      nuxt-seo-utils: 8.1.9(165d5d5a2b8f81086a3813b9e1f922ae)
+      nuxt-site-config: 4.0.8(7f3c5cf8247b56833c031fdcd5f7cc62)
+      nuxtseo-shared: 5.1.3(0ef69599f3fcfff92d00e2d3dfd6a66a)
     transitivePeerDependencies:
       - '@azure/app-configuration'
       - '@azure/cosmos'
@@ -16586,14 +16583,14 @@ snapshots:
       - yup
       - zod
 
-  '@nuxtjs/sitemap@8.0.13(2314a7a1a077838e1a9995d68d2a4b68)':
+  '@nuxtjs/sitemap@8.0.13(7f3c5cf8247b56833c031fdcd5f7cc62)':
     dependencies:
       '@nuxt/kit': 4.4.2(magicast@0.5.2)
       consola: 3.4.2
       defu: 6.1.7
       fast-xml-parser: 5.6.0
-      nuxt-site-config: 4.0.8(2314a7a1a077838e1a9995d68d2a4b68)
-      nuxtseo-shared: 5.1.3(b5ef5d416e90b3914baebc841c23afba)
+      nuxt-site-config: 4.0.8(7f3c5cf8247b56833c031fdcd5f7cc62)
+      nuxtseo-shared: 5.1.3(0ef69599f3fcfff92d00e2d3dfd6a66a)
       ofetch: 1.5.1
       pathe: 2.0.3
       pkg-types: 2.3.0
@@ -19096,16 +19093,6 @@ snapshots:
 
   '@vue/devtools-shared@8.1.1': {}
 
-  '@vue/language-core@3.2.6':
-    dependencies:
-      '@volar/language-core': 2.4.28
-      '@vue/compiler-dom': 3.5.32
-      '@vue/shared': 3.5.32
-      alien-signals: 3.1.2
-      muggle-string: 0.4.1
-      path-browserify: 1.0.1
-      picomatch: 4.0.4
-
   '@vue/language-core@3.2.7':
     dependencies:
       '@volar/language-core': 2.4.28
@@ -19211,13 +19198,13 @@ snapshots:
 
   '@vueuse/metadata@14.2.1': {}
 
-  '@vueuse/nuxt@14.2.1(6dc20e45da377b7d76228c36f969a119)':
+  '@vueuse/nuxt@14.2.1(30653cf90588d2f30106933e55a26ec1)':
     dependencies:
       '@nuxt/kit': 4.4.2(magicast@0.5.2)
       '@vueuse/core': 14.2.1(vue@3.5.32(typescript@5.9.3))
       '@vueuse/metadata': 14.2.1
       local-pkg: 1.1.2
-      nuxt: 4.3.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@electric-sql/pglite@0.4.4)(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@parcel/watcher@2.5.6)(@types/node@25.6.0)(@vue/compiler-sfc@3.5.32)(cac@6.7.14)(db0@0.3.4(@electric-sql/pglite@0.4.4)(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9)))(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9))(eslint@10.2.1(jiti@2.6.1))(ioredis@5.10.1)(magicast@0.5.2)(meow@13.2.0)(optionator@0.9.4)(oxlint@1.60.0(oxlint-tsgolint@0.21.1))(pinia@3.0.4(typescript@5.9.3)(vue@3.5.32(typescript@5.9.3)))(rolldown@1.0.0-rc.16)(rollup@4.60.1)(sass-embedded@1.99.0)(sass@1.99.0)(srvx@0.11.15)(terser@5.46.1)(tsx@4.21.0)(typescript@5.9.3)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue-tsc@3.2.6(typescript@5.9.3))(yaml@2.8.3)
+      nuxt: 4.3.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@electric-sql/pglite@0.4.4)(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@parcel/watcher@2.5.6)(@types/node@25.6.0)(@vue/compiler-sfc@3.5.32)(cac@6.7.14)(db0@0.3.4(@electric-sql/pglite@0.4.4)(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9)))(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9))(eslint@10.2.1(jiti@2.6.1))(ioredis@5.10.1)(magicast@0.5.2)(meow@13.2.0)(optionator@0.9.4)(oxlint@1.60.0(oxlint-tsgolint@0.21.1))(pinia@3.0.4(typescript@5.9.3)(vue@3.5.32(typescript@5.9.3)))(rolldown@1.0.0-rc.16)(rollup@4.60.1)(sass-embedded@1.99.0)(sass@1.99.0)(srvx@0.11.15)(terser@5.46.1)(tsx@4.21.0)(typescript@5.9.3)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue-tsc@3.2.7(typescript@5.9.3))(yaml@2.8.3)
       vue: 3.5.32(typescript@5.9.3)
     transitivePeerDependencies:
       - magicast
@@ -20215,7 +20202,7 @@ snapshots:
 
   csstype@3.2.3: {}
 
-  ctix@2.7.2(@types/node@25.6.0)(prettier-plugin-organize-imports@4.3.0(prettier@3.8.3)(typescript@5.9.3)(vue-tsc@3.2.6(typescript@5.9.3)))(prettier@3.8.3)(typescript@5.9.3):
+  ctix@2.7.2(@types/node@25.6.0)(prettier-plugin-organize-imports@4.3.0(prettier@3.8.3)(typescript@5.9.3)(vue-tsc@3.2.7(typescript@5.9.3)))(prettier@3.8.3)(typescript@5.9.3):
     dependencies:
       chalk: 4.1.2
       change-case: 4.1.2
@@ -20241,7 +20228,7 @@ snapshots:
       ora: 5.4.1
       pathe: 2.0.3
       prettier: 3.8.3
-      prettier-plugin-organize-imports: 4.3.0(prettier@3.8.3)(typescript@5.9.3)(vue-tsc@3.2.6(typescript@5.9.3))
+      prettier-plugin-organize-imports: 4.3.0(prettier@3.8.3)(typescript@5.9.3)(vue-tsc@3.2.7(typescript@5.9.3))
       source-map-support: 0.5.21
       ts-morph: 27.0.0
       ts-pattern: 5.9.0
@@ -22920,7 +22907,7 @@ snapshots:
     transitivePeerDependencies:
       - magicast
 
-  nuxt-link-checker@5.0.9(761dce50cef276a4e30d3ff93c8fc322):
+  nuxt-link-checker@5.0.9(91ab969186bffafd59e165b90f33be7f):
     dependencies:
       '@nuxt/kit': 4.4.2(magicast@0.5.2)
       '@vueuse/core': 14.2.1(vue@3.5.32(typescript@5.9.3))
@@ -22928,9 +22915,9 @@ snapshots:
       diff: 8.0.4
       fuse.js: 7.3.0
       magic-string: 0.30.21
-      nuxt: 4.3.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@electric-sql/pglite@0.4.4)(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@parcel/watcher@2.5.6)(@types/node@25.6.0)(@vue/compiler-sfc@3.5.32)(cac@6.7.14)(db0@0.3.4(@electric-sql/pglite@0.4.4)(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9)))(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9))(eslint@10.2.1(jiti@2.6.1))(ioredis@5.10.1)(magicast@0.5.2)(meow@13.2.0)(optionator@0.9.4)(oxlint@1.60.0(oxlint-tsgolint@0.21.1))(pinia@3.0.4(typescript@5.9.3)(vue@3.5.32(typescript@5.9.3)))(rolldown@1.0.0-rc.16)(rollup@4.60.1)(sass-embedded@1.99.0)(sass@1.99.0)(srvx@0.11.15)(terser@5.46.1)(tsx@4.21.0)(typescript@5.9.3)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue-tsc@3.2.6(typescript@5.9.3))(yaml@2.8.3)
-      nuxt-site-config: 4.0.8(2314a7a1a077838e1a9995d68d2a4b68)
-      nuxtseo-shared: 5.1.3(b5ef5d416e90b3914baebc841c23afba)
+      nuxt: 4.3.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@electric-sql/pglite@0.4.4)(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@parcel/watcher@2.5.6)(@types/node@25.6.0)(@vue/compiler-sfc@3.5.32)(cac@6.7.14)(db0@0.3.4(@electric-sql/pglite@0.4.4)(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9)))(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9))(eslint@10.2.1(jiti@2.6.1))(ioredis@5.10.1)(magicast@0.5.2)(meow@13.2.0)(optionator@0.9.4)(oxlint@1.60.0(oxlint-tsgolint@0.21.1))(pinia@3.0.4(typescript@5.9.3)(vue@3.5.32(typescript@5.9.3)))(rolldown@1.0.0-rc.16)(rollup@4.60.1)(sass-embedded@1.99.0)(sass@1.99.0)(srvx@0.11.15)(terser@5.46.1)(tsx@4.21.0)(typescript@5.9.3)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue-tsc@3.2.7(typescript@5.9.3))(yaml@2.8.3)
+      nuxt-site-config: 4.0.8(7f3c5cf8247b56833c031fdcd5f7cc62)
+      nuxtseo-shared: 5.1.3(0ef69599f3fcfff92d00e2d3dfd6a66a)
       ofetch: 1.5.1
       pathe: 2.0.3
       pkg-types: 2.3.0
@@ -22965,7 +22952,7 @@ snapshots:
       - vue
       - zod
 
-  nuxt-og-image@6.4.3(ce45efad86f2d9885a76701622f2fa81):
+  nuxt-og-image@6.4.3(cdd0dbeeb50739527d00ecf5c67051c9):
     dependencies:
       '@clack/prompts': 1.2.0
       '@nuxt/kit': 4.4.2(magicast@0.5.2)
@@ -22981,8 +22968,8 @@ snapshots:
       magic-string: 0.30.21
       magicast: 0.5.2
       mocked-exports: 0.1.1
-      nuxt-site-config: 4.0.8(2314a7a1a077838e1a9995d68d2a4b68)
-      nuxtseo-shared: 5.1.3(b5ef5d416e90b3914baebc841c23afba)
+      nuxt-site-config: 4.0.8(7f3c5cf8247b56833c031fdcd5f7cc62)
+      nuxtseo-shared: 5.1.3(0ef69599f3fcfff92d00e2d3dfd6a66a)
       nypm: 0.6.5
       ofetch: 1.5.1
       ohash: 2.0.11
@@ -23014,14 +23001,14 @@ snapshots:
       - vue
       - zod
 
-  nuxt-schema-org@6.0.4(b360149dab04fe12465a58968357742f):
+  nuxt-schema-org@6.0.4(009e463f27208d26b757e5c717343f30):
     dependencies:
       '@nuxt/kit': 4.4.2(magicast@0.5.2)
       '@unhead/schema-org': 2.1.13(@unhead/vue@2.1.13(vue@3.5.32(typescript@5.9.3)))
       defu: 6.1.7
-      nuxt-site-config: 4.0.8(2314a7a1a077838e1a9995d68d2a4b68)
-      nuxtseo-layer-devtools: 0.5.1(7e0399524a3abf932e74fa28b2a66cd7)
-      nuxtseo-shared: 0.9.0(b5ef5d416e90b3914baebc841c23afba)
+      nuxt-site-config: 4.0.8(7f3c5cf8247b56833c031fdcd5f7cc62)
+      nuxtseo-layer-devtools: 0.5.1(3d2713323b2413b163a9156c322727fc)
+      nuxtseo-shared: 0.9.0(0ef69599f3fcfff92d00e2d3dfd6a66a)
       pkg-types: 2.3.0
     optionalDependencies:
       '@unhead/vue': 2.1.13(vue@3.5.32(typescript@5.9.3))
@@ -23098,7 +23085,7 @@ snapshots:
       - rollup
       - supports-color
 
-  nuxt-seo-utils@8.1.9(d9432f697a652d61cb5f9f23d5125e09):
+  nuxt-seo-utils@8.1.9(165d5d5a2b8f81086a3813b9e1f922ae):
     dependencies:
       '@nuxt/kit': 4.4.2(magicast@0.5.2)
       '@unhead/addons': 2.1.13(rollup@4.60.1)(unhead@2.1.13)
@@ -23106,9 +23093,9 @@ snapshots:
       defu: 6.1.7
       escape-string-regexp: 5.0.0
       image-size: 2.0.2
-      nuxt: 4.3.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@electric-sql/pglite@0.4.4)(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@parcel/watcher@2.5.6)(@types/node@25.6.0)(@vue/compiler-sfc@3.5.32)(cac@6.7.14)(db0@0.3.4(@electric-sql/pglite@0.4.4)(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9)))(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9))(eslint@10.2.1(jiti@2.6.1))(ioredis@5.10.1)(magicast@0.5.2)(meow@13.2.0)(optionator@0.9.4)(oxlint@1.60.0(oxlint-tsgolint@0.21.1))(pinia@3.0.4(typescript@5.9.3)(vue@3.5.32(typescript@5.9.3)))(rolldown@1.0.0-rc.16)(rollup@4.60.1)(sass-embedded@1.99.0)(sass@1.99.0)(srvx@0.11.15)(terser@5.46.1)(tsx@4.21.0)(typescript@5.9.3)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue-tsc@3.2.6(typescript@5.9.3))(yaml@2.8.3)
-      nuxt-site-config: 4.0.8(2314a7a1a077838e1a9995d68d2a4b68)
-      nuxtseo-shared: 5.1.3(b5ef5d416e90b3914baebc841c23afba)
+      nuxt: 4.3.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@electric-sql/pglite@0.4.4)(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@parcel/watcher@2.5.6)(@types/node@25.6.0)(@vue/compiler-sfc@3.5.32)(cac@6.7.14)(db0@0.3.4(@electric-sql/pglite@0.4.4)(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9)))(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9))(eslint@10.2.1(jiti@2.6.1))(ioredis@5.10.1)(magicast@0.5.2)(meow@13.2.0)(optionator@0.9.4)(oxlint@1.60.0(oxlint-tsgolint@0.21.1))(pinia@3.0.4(typescript@5.9.3)(vue@3.5.32(typescript@5.9.3)))(rolldown@1.0.0-rc.16)(rollup@4.60.1)(sass-embedded@1.99.0)(sass@1.99.0)(srvx@0.11.15)(terser@5.46.1)(tsx@4.21.0)(typescript@5.9.3)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue-tsc@3.2.7(typescript@5.9.3))(yaml@2.8.3)
+      nuxt-site-config: 4.0.8(7f3c5cf8247b56833c031fdcd5f7cc62)
+      nuxtseo-shared: 5.1.3(0ef69599f3fcfff92d00e2d3dfd6a66a)
       pathe: 2.0.3
       pkg-types: 2.3.0
       scule: 1.3.0
@@ -23139,12 +23126,12 @@ snapshots:
       - magicast
       - vue
 
-  nuxt-site-config@4.0.8(2314a7a1a077838e1a9995d68d2a4b68):
+  nuxt-site-config@4.0.8(7f3c5cf8247b56833c031fdcd5f7cc62):
     dependencies:
       '@nuxt/kit': 4.4.2(magicast@0.5.2)
       h3: 1.15.11(srvx@0.11.15)
       nuxt-site-config-kit: 4.0.8(magicast@0.5.2)(vue@3.5.32(typescript@5.9.3))
-      nuxtseo-shared: 5.1.3(b5ef5d416e90b3914baebc841c23afba)
+      nuxtseo-shared: 5.1.3(0ef69599f3fcfff92d00e2d3dfd6a66a)
       pathe: 2.0.3
       pkg-types: 2.3.0
       site-config-stack: 4.0.8(vue@3.5.32(typescript@5.9.3))
@@ -23158,16 +23145,16 @@ snapshots:
       - vue
       - zod
 
-  nuxt@4.3.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@electric-sql/pglite@0.4.4)(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@parcel/watcher@2.5.6)(@types/node@25.6.0)(@vue/compiler-sfc@3.5.32)(cac@6.7.14)(db0@0.3.4(@electric-sql/pglite@0.4.4)(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9)))(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9))(eslint@10.2.1(jiti@2.6.1))(ioredis@5.10.1)(magicast@0.5.2)(meow@13.2.0)(optionator@0.9.4)(oxlint@1.60.0(oxlint-tsgolint@0.21.1))(pinia@3.0.4(typescript@5.9.3)(vue@3.5.32(typescript@5.9.3)))(rolldown@1.0.0-rc.16)(rollup@4.60.1)(sass-embedded@1.99.0)(sass@1.99.0)(srvx@0.11.15)(terser@5.46.1)(tsx@4.21.0)(typescript@5.9.3)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue-tsc@3.2.6(typescript@5.9.3))(yaml@2.8.3):
+  nuxt@4.3.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@electric-sql/pglite@0.4.4)(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@parcel/watcher@2.5.6)(@types/node@25.6.0)(@vue/compiler-sfc@3.5.32)(cac@6.7.14)(db0@0.3.4(@electric-sql/pglite@0.4.4)(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9)))(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9))(eslint@10.2.1(jiti@2.6.1))(ioredis@5.10.1)(magicast@0.5.2)(meow@13.2.0)(optionator@0.9.4)(oxlint@1.60.0(oxlint-tsgolint@0.21.1))(pinia@3.0.4(typescript@5.9.3)(vue@3.5.32(typescript@5.9.3)))(rolldown@1.0.0-rc.16)(rollup@4.60.1)(sass-embedded@1.99.0)(sass@1.99.0)(srvx@0.11.15)(terser@5.46.1)(tsx@4.21.0)(typescript@5.9.3)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue-tsc@3.2.7(typescript@5.9.3))(yaml@2.8.3):
     dependencies:
       '@dxup/nuxt': 0.3.2(magicast@0.5.2)
       '@nuxt/cli': 3.34.0(@nuxt/schema@4.3.1)(cac@6.7.14)(magicast@0.5.2)
       '@nuxt/devtools': 3.2.4(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue@3.5.32(typescript@5.9.3))
       '@nuxt/kit': 4.3.1(magicast@0.5.2)
-      '@nuxt/nitro-server': 4.3.1(1b94fe2d321f78fa918de10f48d46926)
+      '@nuxt/nitro-server': 4.3.1(44610f6e13e6691557cda2e1bd96bb05)
       '@nuxt/schema': 4.3.1
       '@nuxt/telemetry': 2.8.0(@nuxt/kit@4.3.1(magicast@0.5.2))
-      '@nuxt/vite-builder': 4.3.1(ce9a390a770b3a12e1a224a0f34a909e)
+      '@nuxt/vite-builder': 4.3.1(b5374930fc50b830f4c75fa14d3e952a)
       '@unhead/vue': 2.1.13(vue@3.5.32(typescript@5.9.3))
       '@vue/shared': 3.5.32
       c12: 3.3.4(magicast@0.5.2)
@@ -23286,15 +23273,15 @@ snapshots:
       - xml2js
       - yaml
 
-  nuxtseo-layer-devtools@0.5.1(7e0399524a3abf932e74fa28b2a66cd7):
+  nuxtseo-layer-devtools@0.5.1(3d2713323b2413b163a9156c322727fc):
     dependencies:
       '@nuxt/devtools-kit': 4.0.0-alpha.3(magicast@0.5.2)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
       '@nuxt/kit': 4.4.2(magicast@0.5.2)
       '@nuxt/ui': 4.6.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@tiptap/extensions@3.22.4(@tiptap/core@3.22.4(@tiptap/pm@3.22.4))(@tiptap/pm@3.22.4))(@tiptap/y-tiptap@3.0.3(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.8)(y-protocols@1.0.7(yjs@13.6.30))(yjs@13.6.30))(change-case@5.4.4)(db0@0.3.4(@electric-sql/pglite@0.4.4)(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9)))(embla-carousel@8.6.0)(ioredis@5.10.1)(magicast@0.5.2)(react@19.2.5)(srvx@0.11.15)(tailwindcss@4.2.2)(typescript@5.9.3)(valibot@1.3.1(typescript@5.9.3))(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue-router@5.0.4(@vue/compiler-sfc@3.5.32)(pinia@3.0.4(typescript@5.9.3)(vue@3.5.32(typescript@5.9.3)))(vue@3.5.32(typescript@5.9.3)))(vue@3.5.32(typescript@5.9.3))(yjs@13.6.30)(zod@4.3.6)
       '@shikijs/langs': 4.0.2
       '@shikijs/themes': 4.0.2
-      '@vueuse/nuxt': 14.2.1(6dc20e45da377b7d76228c36f969a119)
-      nuxtseo-shared: 0.9.0(b5ef5d416e90b3914baebc841c23afba)
+      '@vueuse/nuxt': 14.2.1(30653cf90588d2f30106933e55a26ec1)
+      nuxtseo-shared: 0.9.0(0ef69599f3fcfff92d00e2d3dfd6a66a)
       ofetch: 1.5.1
       shiki: 4.0.2
       ufo: 1.6.3
@@ -23354,7 +23341,7 @@ snapshots:
       - yup
       - zod
 
-  nuxtseo-shared@0.9.0(b5ef5d416e90b3914baebc841c23afba):
+  nuxtseo-shared@0.9.0(0ef69599f3fcfff92d00e2d3dfd6a66a):
     dependencies:
       '@clack/prompts': 1.2.0
       '@nuxt/devtools-kit': 4.0.0-alpha.3(magicast@0.5.2)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
@@ -23363,7 +23350,7 @@ snapshots:
       birpc: 4.0.0
       consola: 3.4.2
       defu: 6.1.7
-      nuxt: 4.3.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@electric-sql/pglite@0.4.4)(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@parcel/watcher@2.5.6)(@types/node@25.6.0)(@vue/compiler-sfc@3.5.32)(cac@6.7.14)(db0@0.3.4(@electric-sql/pglite@0.4.4)(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9)))(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9))(eslint@10.2.1(jiti@2.6.1))(ioredis@5.10.1)(magicast@0.5.2)(meow@13.2.0)(optionator@0.9.4)(oxlint@1.60.0(oxlint-tsgolint@0.21.1))(pinia@3.0.4(typescript@5.9.3)(vue@3.5.32(typescript@5.9.3)))(rolldown@1.0.0-rc.16)(rollup@4.60.1)(sass-embedded@1.99.0)(sass@1.99.0)(srvx@0.11.15)(terser@5.46.1)(tsx@4.21.0)(typescript@5.9.3)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue-tsc@3.2.6(typescript@5.9.3))(yaml@2.8.3)
+      nuxt: 4.3.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@electric-sql/pglite@0.4.4)(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@parcel/watcher@2.5.6)(@types/node@25.6.0)(@vue/compiler-sfc@3.5.32)(cac@6.7.14)(db0@0.3.4(@electric-sql/pglite@0.4.4)(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9)))(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9))(eslint@10.2.1(jiti@2.6.1))(ioredis@5.10.1)(magicast@0.5.2)(meow@13.2.0)(optionator@0.9.4)(oxlint@1.60.0(oxlint-tsgolint@0.21.1))(pinia@3.0.4(typescript@5.9.3)(vue@3.5.32(typescript@5.9.3)))(rolldown@1.0.0-rc.16)(rollup@4.60.1)(sass-embedded@1.99.0)(sass@1.99.0)(srvx@0.11.15)(terser@5.46.1)(tsx@4.21.0)(typescript@5.9.3)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue-tsc@3.2.7(typescript@5.9.3))(yaml@2.8.3)
       ofetch: 1.5.1
       pathe: 2.0.3
       pkg-types: 2.3.0
@@ -23373,13 +23360,13 @@ snapshots:
       ufo: 1.6.3
       vue: 3.5.32(typescript@5.9.3)
     optionalDependencies:
-      nuxt-site-config: 4.0.8(2314a7a1a077838e1a9995d68d2a4b68)
+      nuxt-site-config: 4.0.8(7f3c5cf8247b56833c031fdcd5f7cc62)
       zod: 4.3.6
     transitivePeerDependencies:
       - magicast
       - vite
 
-  nuxtseo-shared@5.1.3(b5ef5d416e90b3914baebc841c23afba):
+  nuxtseo-shared@5.1.3(0ef69599f3fcfff92d00e2d3dfd6a66a):
     dependencies:
       '@clack/prompts': 1.2.0
       '@nuxt/devtools-kit': 4.0.0-alpha.3(magicast@0.5.2)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
@@ -23388,7 +23375,7 @@ snapshots:
       birpc: 4.0.0
       consola: 3.4.2
       defu: 6.1.7
-      nuxt: 4.3.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@electric-sql/pglite@0.4.4)(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@parcel/watcher@2.5.6)(@types/node@25.6.0)(@vue/compiler-sfc@3.5.32)(cac@6.7.14)(db0@0.3.4(@electric-sql/pglite@0.4.4)(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9)))(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9))(eslint@10.2.1(jiti@2.6.1))(ioredis@5.10.1)(magicast@0.5.2)(meow@13.2.0)(optionator@0.9.4)(oxlint@1.60.0(oxlint-tsgolint@0.21.1))(pinia@3.0.4(typescript@5.9.3)(vue@3.5.32(typescript@5.9.3)))(rolldown@1.0.0-rc.16)(rollup@4.60.1)(sass-embedded@1.99.0)(sass@1.99.0)(srvx@0.11.15)(terser@5.46.1)(tsx@4.21.0)(typescript@5.9.3)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue-tsc@3.2.6(typescript@5.9.3))(yaml@2.8.3)
+      nuxt: 4.3.1(@azure/data-tables@13.3.2)(@azure/identity@4.13.1)(@azure/storage-blob@12.31.0)(@electric-sql/pglite@0.4.4)(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@parcel/watcher@2.5.6)(@types/node@25.6.0)(@vue/compiler-sfc@3.5.32)(cac@6.7.14)(db0@0.3.4(@electric-sql/pglite@0.4.4)(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9)))(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(@opentelemetry/api@1.9.1)(kysely@0.28.16)(postgres@3.4.9))(eslint@10.2.1(jiti@2.6.1))(ioredis@5.10.1)(magicast@0.5.2)(meow@13.2.0)(optionator@0.9.4)(oxlint@1.60.0(oxlint-tsgolint@0.21.1))(pinia@3.0.4(typescript@5.9.3)(vue@3.5.32(typescript@5.9.3)))(rolldown@1.0.0-rc.16)(rollup@4.60.1)(sass-embedded@1.99.0)(sass@1.99.0)(srvx@0.11.15)(terser@5.46.1)(tsx@4.21.0)(typescript@5.9.3)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue-tsc@3.2.7(typescript@5.9.3))(yaml@2.8.3)
       ofetch: 1.5.1
       pathe: 2.0.3
       pkg-types: 2.3.0
@@ -23398,7 +23385,7 @@ snapshots:
       ufo: 1.6.3
       vue: 3.5.32(typescript@5.9.3)
     optionalDependencies:
-      nuxt-site-config: 4.0.8(2314a7a1a077838e1a9995d68d2a4b68)
+      nuxt-site-config: 4.0.8(7f3c5cf8247b56833c031fdcd5f7cc62)
       zod: 4.3.6
     transitivePeerDependencies:
       - magicast
@@ -24117,12 +24104,12 @@ snapshots:
 
   prelude-ls@1.2.1: {}
 
-  prettier-plugin-organize-imports@4.3.0(prettier@3.8.3)(typescript@5.9.3)(vue-tsc@3.2.6(typescript@5.9.3)):
+  prettier-plugin-organize-imports@4.3.0(prettier@3.8.3)(typescript@5.9.3)(vue-tsc@3.2.7(typescript@5.9.3)):
     dependencies:
       prettier: 3.8.3
       typescript: 5.9.3
     optionalDependencies:
-      vue-tsc: 3.2.6(typescript@5.9.3)
+      vue-tsc: 3.2.7(typescript@5.9.3)
 
   prettier@3.8.3: {}
 
@@ -24445,7 +24432,7 @@ snapshots:
 
   robust-predicates@3.0.3: {}
 
-  rolldown-plugin-dts@0.23.2(@typescript/native-preview@7.0.0-dev.20260419.1)(rolldown@1.0.0-rc.16)(typescript@5.9.3)(vue-tsc@3.2.6(typescript@5.9.3)):
+  rolldown-plugin-dts@0.23.2(@typescript/native-preview@7.0.0-dev.20260419.1)(rolldown@1.0.0-rc.16)(typescript@5.9.3)(vue-tsc@3.2.7(typescript@5.9.3)):
     dependencies:
       '@babel/generator': 8.0.0-rc.3
       '@babel/helper-validator-identifier': 8.0.0-rc.3
@@ -24461,7 +24448,7 @@ snapshots:
     optionalDependencies:
       '@typescript/native-preview': 7.0.0-dev.20260419.1
       typescript: 5.9.3
-      vue-tsc: 3.2.6(typescript@5.9.3)
+      vue-tsc: 3.2.7(typescript@5.9.3)
     transitivePeerDependencies:
       - oxc-resolver
 
@@ -25780,7 +25767,7 @@ snapshots:
       '@babel/generator': 7.29.1
       '@vue-macros/common': 3.1.2(vue@3.5.32(typescript@5.9.3))
       '@vue/compiler-sfc': 3.5.32
-      '@vue/language-core': 3.2.6
+      '@vue/language-core': 3.2.7
       ast-walker-scope: 0.8.3
       chokidar: 5.0.0
       json5: 2.2.3
@@ -25990,7 +25977,7 @@ snapshots:
       - tsx
       - yaml
 
-  vite-plugin-checker@0.12.0(eslint@10.2.1(jiti@2.6.1))(meow@13.2.0)(optionator@0.9.4)(oxlint@1.60.0(oxlint-tsgolint@0.21.1))(typescript@5.9.3)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue-tsc@3.2.6(typescript@5.9.3)):
+  vite-plugin-checker@0.12.0(eslint@10.2.1(jiti@2.6.1))(meow@13.2.0)(optionator@0.9.4)(oxlint@1.60.0(oxlint-tsgolint@0.21.1))(typescript@5.9.3)(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))(vue-tsc@3.2.7(typescript@5.9.3)):
     dependencies:
       '@babel/code-frame': 7.29.0
       chokidar: 4.0.3
@@ -26007,7 +25994,7 @@ snapshots:
       optionator: 0.9.4
       oxlint: 1.60.0(oxlint-tsgolint@0.21.1)
       typescript: 5.9.3
-      vue-tsc: 3.2.6(typescript@5.9.3)
+      vue-tsc: 3.2.7(typescript@5.9.3)
 
   vite-plugin-css-injected-by-js@3.5.2(vite@8.0.8(@types/node@25.6.0)(esbuild@0.27.7)(jiti@2.6.1)(sass-embedded@1.99.0)(sass@1.99.0)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3)):
     dependencies:
@@ -26214,10 +26201,10 @@ snapshots:
       '@vue/compiler-sfc': 3.5.32
       pinia: 3.0.4(typescript@5.9.3)(vue@3.5.32(typescript@5.9.3))
 
-  vue-tsc@3.2.6(typescript@5.9.3):
+  vue-tsc@3.2.7(typescript@5.9.3):
     dependencies:
       '@volar/typescript': 2.4.28
-      '@vue/language-core': 3.2.6
+      '@vue/language-core': 3.2.7
       typescript: 5.9.3
 
   vue3-apexcharts@1.11.1(apexcharts@5.10.6)(vue@3.5.32(typescript@5.9.3)):
