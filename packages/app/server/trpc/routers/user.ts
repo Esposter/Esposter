@@ -150,6 +150,8 @@ export const userRouter = router({
           .message,
       });
 
-    userEventEmitter.emit("upsertStatus", { ...upsertedStatus, status: getDetectedUserStatus(upsertedStatus) });
+    const detectedStatus = { ...upsertedStatus, status: getDetectedUserStatus(upsertedStatus) };
+    userEventEmitter.emit("upsertStatus", detectedStatus);
+    return detectedStatus;
   }),
 });
