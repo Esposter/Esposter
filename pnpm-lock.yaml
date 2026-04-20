@@ -656,7 +656,7 @@ catalogs:
       version: 4.3.6
 
 overrides:
-  '@unhead/addons': ^2.1.13
+  '@unhead/addons': 2.1.13
   crossws: ^0.4.5
   pdfjs-dist: ^5.6.205
   vite: ^8.0.8
