@@ -1,3 +1,4 @@
+import { createNameCheckSql, createNameSchema } from "@/models/shared/Name";
 import { accounts } from "@/schema/accounts";
 import { blocks } from "@/schema/blocks";
 import { friendRequests } from "@/schema/friendRequests";
@@ -9,7 +10,6 @@ import { surveys } from "@/schema/surveys";
 import { userAchievements } from "@/schema/userAchievements";
 import { userStatuses } from "@/schema/userStatuses";
 import { usersToRooms } from "@/schema/usersToRooms";
-import { createNameSchema } from "@/services/zod";
 import { relations, sql } from "drizzle-orm";
 import { boolean, check, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
@@ -36,7 +36,7 @@ export const users = pgTable(
       "biography",
       sql`${biography} IS NULL OR LENGTH(${biography}) <= ${sql.raw(USER_BIOGRAPHY_MAX_LENGTH.toString())}`,
     ),
-    check("name", sql`LENGTH(${name}) BETWEEN 1 AND ${sql.raw(USER_NAME_MAX_LENGTH.toString())}`),
+    check("name", createNameCheckSql(name, USER_NAME_MAX_LENGTH)),
   ],
 );
 

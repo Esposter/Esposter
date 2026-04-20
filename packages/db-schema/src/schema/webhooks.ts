@@ -1,14 +1,14 @@
 import type { Room } from "@/schema/rooms";
 import type { User } from "@/schema/users";
 
+import { createNameCheckSql, createNameSchema } from "@/models/shared/Name";
 import { pgTable } from "@/pgTable";
 import { appUsers } from "@/schema/appUsers";
 import { messageSchema } from "@/schema/messageSchema";
 import { rooms } from "@/schema/rooms";
 import { users } from "@/schema/users";
-import { createNameSchema } from "@/services/zod";
-import { relations, sql } from "drizzle-orm";
-import { boolean, text, uuid } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+import { boolean, check, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 
 export const WEBHOOK_NAME_MAX_LENGTH = 100;
@@ -33,9 +33,7 @@ export const webhooks = pgTable(
       .references(() => appUsers.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ name }) => [
-      sql`CHECK (LENGTH(${name}) >= 1 AND LENGTH(${name}) <= ${sql.raw(WEBHOOK_NAME_MAX_LENGTH.toString())})`,
-    ],
+    extraConfig: ({ name }) => [check("name", createNameCheckSql(name, WEBHOOK_NAME_MAX_LENGTH))],
     schema: messageSchema,
   },
 );

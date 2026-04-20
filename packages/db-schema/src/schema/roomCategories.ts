@@ -1,8 +1,8 @@
+import { createNameCheckSql, createNameSchema } from "@/models/shared/Name";
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { rooms } from "@/schema/rooms";
 import { users } from "@/schema/users";
-import { createNameSchema } from "@/services/zod";
 import { relations, sql } from "drizzle-orm";
 import { check, integer, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
@@ -22,7 +22,7 @@ export const roomCategories = pgTable(
   },
   {
     extraConfig: ({ name, position }) => [
-      check("name", sql`LENGTH(${name}) BETWEEN 1 AND ${sql.raw(ROOM_CATEGORY_NAME_MAX_LENGTH.toString())}`),
+      check("name", createNameCheckSql(name, ROOM_CATEGORY_NAME_MAX_LENGTH)),
       check("position", sql`${position} >= 0`),
     ],
     schema: messageSchema,

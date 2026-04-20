@@ -1,4 +1,4 @@
-import { createNameSchema } from "@/services/zod";
+import { createNameSchema } from "@/models/shared/Name";
 import { z } from "zod";
 
 export interface EmbedAuthor {

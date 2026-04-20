@@ -1,10 +1,10 @@
+import { createNameCheckSql, createNameSchema } from "@/models/shared/Name";
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { roomCategories } from "@/schema/roomCategories";
 import { roomRoles } from "@/schema/roomRoles";
 import { users } from "@/schema/users";
 import { usersToRooms } from "@/schema/usersToRooms";
-import { createNameSchema } from "@/services/zod";
 import { relations, sql } from "drizzle-orm";
 import { check, pgEnum, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
@@ -36,7 +36,7 @@ export const rooms = pgTable(
   },
   {
     extraConfig: ({ name, participantKey, type }) => [
-      check("name", sql`LENGTH(${name}) <= ${sql.raw(ROOM_NAME_MAX_LENGTH.toString())}`),
+      check("name", createNameCheckSql(name, ROOM_NAME_MAX_LENGTH)),
       check(
         "participant_key_type",
         sql`(${type} = '${sql.raw(RoomType.DirectMessage)}' AND ${participantKey} IS NOT NULL) OR (${type} = '${sql.raw(RoomType.Room)}' AND ${participantKey} IS NULL)`,

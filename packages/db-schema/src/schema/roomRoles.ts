@@ -1,7 +1,7 @@
+import { createNameCheckSql, createNameSchema } from "@/models/shared/Name";
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { rooms } from "@/schema/rooms";
-import { createNameSchema } from "@/services/zod";
 import { relations, sql } from "drizzle-orm";
 import { bigint, boolean, check, index, integer, text, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
@@ -48,7 +48,7 @@ export const roomRoles = pgTable(
   },
   {
     extraConfig: (table) => [
-      check("name", sql`LENGTH(${table.name}) <= ${sql.raw(ROOM_ROLE_NAME_MAX_LENGTH.toString())}`),
+      check("name", createNameCheckSql(table.name, ROOM_ROLE_NAME_MAX_LENGTH)),
       check("position", sql`${table.position} >= 0`),
       index("room_roles_room_id_position_idx").on(table.roomId, table.position),
       uniqueIndex("room_roles_everyone_unique")

@@ -1,8 +1,8 @@
+import { createNameCheckSql, createNameSchema } from "@/models/shared/Name";
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { webhooks } from "@/schema/webhooks";
-import { createNameSchema } from "@/services/zod";
-import { relations, sql } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 import { check, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 
@@ -16,9 +16,7 @@ export const appUsers = pgTable(
     name: text("name").notNull(),
   },
   {
-    extraConfig: ({ name }) => [
-      check("name", sql`LENGTH(${name}) BETWEEN 1 AND ${sql.raw(APP_USER_NAME_MAX_LENGTH.toString())}`),
-    ],
+    extraConfig: ({ name }) => [check("name", createNameCheckSql(name, APP_USER_NAME_MAX_LENGTH))],
     schema: messageSchema,
   },
 );

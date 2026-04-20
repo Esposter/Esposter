@@ -1,7 +1,7 @@
+import { createNameCheckSql, createNameSchema } from "@/models/shared/Name";
 import { pgTable } from "@/pgTable";
 import { users } from "@/schema/users";
-import { createNameSchema } from "@/services/zod";
-import { relations, sql } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 import { check, integer, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 
@@ -22,9 +22,7 @@ export const surveys = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ name }) => [
-      check("name", sql`LENGTH(${name}) BETWEEN 1 AND ${sql.raw(SURVEY_NAME_MAX_LENGTH.toString())}`),
-    ],
+    extraConfig: ({ name }) => [check("name", createNameCheckSql(name, SURVEY_NAME_MAX_LENGTH))],
   },
 );
 
