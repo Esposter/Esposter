@@ -127,7 +127,7 @@ catalog:
   emoji-mart-vue-fast: ^15.0.5
   eslint: ^10.2.1
   eslint-plugin-depend: ^1.5.0
-  eslint-plugin-oxlint: ^1.60.0
+  eslint-plugin-oxlint: ^1.61.0
   eslint-plugin-perfectionist: ^5.9.0
   eslint-plugin-pinia: ^0.4.2
   eventemitter3: ^5.0.4
@@ -174,7 +174,7 @@ catalog:
   obscenity: ^0.4.6
   omit-deep-lodash: ^1.1.7
   oxfmt: ^0.45.0
-  oxlint: ^1.60.0
+  oxlint: ^1.61.0
   oxlint-tsgolint: ^0.21.1
   p-progress: ^1.0.0
   pathe: ^2.0.3
