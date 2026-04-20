@@ -3,9 +3,9 @@ import type { ReadableStream } from "node:stream/web";
 import type { SetNonNullable } from "type-fest";
 import type { z } from "zod";
 
+import { updateUserInputSchema } from "#shared/models/db/user/UpdateUserInput";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
-import { updateUserInputSchema } from "#shared/models/db/user/UpdateUserInput";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { on } from "@@/server/services/events/on";
 import { userEventEmitter } from "@@/server/services/message/events/userEventEmitter";
@@ -17,9 +17,9 @@ import {
   DatabaseEntityType,
   selectUserSchema,
   selectUserStatusSchema,
+  users,
   UserStatus,
   userStatuses,
-  users,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -125,25 +125,6 @@ export const userRouter = router({
 
     return resultUserStatuses;
   }),
-  uploadProfileImage: standardAuthedProcedure.input(octetInputParser).mutation(async ({ ctx, input }) => {
-    const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
-    const blobName = `${ctx.getSessionPayload.user.id}/ProfileImage`;
-    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-    // @TODO: https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/65542
-    const readable = Readable.fromWeb(input as ReadableStream);
-    await blockBlobClient.uploadStream(readable);
-    return blockBlobClient.url;
-  }),
-  readCurrentUser: standardAuthedProcedure.query<User>(async ({ ctx }) => {
-    const user = (await ctx.db.select().from(users).where(eq(users.id, ctx.getSessionPayload.user.id)).limit(1))[0];
-    if (!user)
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: new InvalidOperationError(Operation.Read, DatabaseEntityType.User, ctx.getSessionPayload.user.id)
-          .message,
-      });
-    return user;
-  }),
   updateUser: standardAuthedProcedure.input(updateUserInputSchema).mutation<User>(async ({ ctx, input }) => {
     const name = input.name?.trim();
     const updatedUser = (
@@ -160,6 +141,15 @@ export const userRouter = router({
           .message,
       });
     return updatedUser;
+  }),
+  uploadProfileImage: standardAuthedProcedure.input(octetInputParser).mutation(async ({ ctx, input }) => {
+    const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
+    const blobName = `${ctx.getSessionPayload.user.id}/ProfileImage`;
+    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+    // @TODO: https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/65542
+    const readable = Readable.fromWeb(input as ReadableStream);
+    await blockBlobClient.uploadStream(readable);
+    return blockBlobClient.url;
   }),
   upsertStatus: standardAuthedProcedure.input(upsertStatusInputSchema).mutation(async ({ ctx, input }) => {
     const upsertedStatus = (

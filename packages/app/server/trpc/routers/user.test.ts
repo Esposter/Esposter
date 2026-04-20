@@ -302,21 +302,23 @@ describe("user", () => {
     test("fails with no fields provided", async () => {
       expect.hasAssertions();
 
-      await expect(caller.updateUser({})).rejects.toThrow("At least one of");
+      await expect(caller.updateUser({})).rejects.toThrowErrorMatchingInlineSnapshot();
     });
 
     test("fails name exceeds max length", async () => {
       expect.hasAssertions();
 
-      await expect(caller.updateUser({ name: "a".repeat(USER_NAME_MAX_LENGTH + 1) })).rejects.toThrow("Too large");
+      await expect(
+        caller.updateUser({ name: "a".repeat(USER_NAME_MAX_LENGTH + 1) }),
+      ).rejects.toThrowErrorMatchingInlineSnapshot();
     });
 
     test("fails biography exceeds max length", async () => {
       expect.hasAssertions();
 
-      await expect(caller.updateUser({ biography: "a".repeat(USER_BIOGRAPHY_MAX_LENGTH + 1) })).rejects.toThrow(
-        "Too large",
-      );
+      await expect(
+        caller.updateUser({ biography: "a".repeat(USER_BIOGRAPHY_MAX_LENGTH + 1) }),
+      ).rejects.toThrowErrorMatchingInlineSnapshot();
     });
   });
 });
