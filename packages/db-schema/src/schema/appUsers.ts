@@ -1,10 +1,10 @@
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { webhooks } from "@/schema/webhooks";
+import { createNameSchema } from "@/services/zod";
 import { relations, sql } from "drizzle-orm";
 import { check, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
-import { z } from "zod";
 
 export const APP_USER_NAME_MAX_LENGTH = 100;
 
@@ -26,7 +26,7 @@ export const appUsers = pgTable(
 export type AppUser = typeof appUsers.$inferSelect;
 
 export const selectAppUserSchema = createSelectSchema(appUsers, {
-  name: z.string().min(1).max(APP_USER_NAME_MAX_LENGTH),
+  name: createNameSchema(APP_USER_NAME_MAX_LENGTH),
 });
 
 export const appUsersRelations = relations(appUsers, ({ one }) => ({

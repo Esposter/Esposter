@@ -126,13 +126,8 @@ export const userRouter = router({
     return resultUserStatuses;
   }),
   updateUser: standardAuthedProcedure.input(updateUserInputSchema).mutation<User>(async ({ ctx, input }) => {
-    const name = input.name?.trim();
     const updatedUser = (
-      await ctx.db
-        .update(users)
-        .set({ ...input, name })
-        .where(eq(users.id, ctx.getSessionPayload.user.id))
-        .returning()
+      await ctx.db.update(users).set(input).where(eq(users.id, ctx.getSessionPayload.user.id)).returning()
     )[0];
     if (!updatedUser)
       throw new TRPCError({

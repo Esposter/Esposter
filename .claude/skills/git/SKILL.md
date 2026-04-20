@@ -7,7 +7,7 @@ description: Esposter git workflow conventions — commit message format, safety
 
 ## Commit Message Format
 
-```
+```text
 <type>: <description>
 
 <optional body>

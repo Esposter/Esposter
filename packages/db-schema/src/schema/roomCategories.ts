@@ -2,6 +2,7 @@ import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { rooms } from "@/schema/rooms";
 import { users } from "@/schema/users";
+import { createNameSchema } from "@/services/zod";
 import { relations, sql } from "drizzle-orm";
 import { check, integer, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
@@ -31,7 +32,7 @@ export const roomCategories = pgTable(
 export type RoomCategory = typeof roomCategories.$inferSelect;
 
 export const selectRoomCategorySchema = createSelectSchema(roomCategories, {
-  name: z.string().min(1).max(ROOM_CATEGORY_NAME_MAX_LENGTH),
+  name: createNameSchema(ROOM_CATEGORY_NAME_MAX_LENGTH),
   position: z.number().int().nonnegative(),
 });
 

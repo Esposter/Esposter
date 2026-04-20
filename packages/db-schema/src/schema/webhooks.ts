@@ -6,10 +6,10 @@ import { appUsers } from "@/schema/appUsers";
 import { messageSchema } from "@/schema/messageSchema";
 import { rooms } from "@/schema/rooms";
 import { users } from "@/schema/users";
+import { createNameSchema } from "@/services/zod";
 import { relations, sql } from "drizzle-orm";
 import { boolean, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
-import { z } from "zod";
 
 export const WEBHOOK_NAME_MAX_LENGTH = 100;
 
@@ -43,7 +43,7 @@ export const webhooks = pgTable(
 export type Webhook = typeof webhooks.$inferSelect;
 
 export const selectWebhookSchema = createSelectSchema(webhooks, {
-  name: z.string().min(1).max(WEBHOOK_NAME_MAX_LENGTH),
+  name: createNameSchema(WEBHOOK_NAME_MAX_LENGTH),
 });
 
 export const webhooksRelations = relations(webhooks, ({ one }) => ({

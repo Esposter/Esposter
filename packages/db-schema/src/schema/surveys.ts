@@ -1,9 +1,9 @@
 import { pgTable } from "@/pgTable";
 import { users } from "@/schema/users";
+import { createNameSchema } from "@/services/zod";
 import { relations, sql } from "drizzle-orm";
 import { check, integer, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
-import { z } from "zod";
 
 export const SURVEY_NAME_MAX_LENGTH = 100;
 
@@ -31,7 +31,7 @@ export const surveys = pgTable(
 export type Survey = typeof surveys.$inferSelect;
 
 export const selectSurveySchema = createSelectSchema(surveys, {
-  name: z.string().min(1).max(SURVEY_NAME_MAX_LENGTH),
+  name: createNameSchema(SURVEY_NAME_MAX_LENGTH),
 });
 
 export const surveysRelations = relations(surveys, ({ one }) => ({

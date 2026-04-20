@@ -9,6 +9,7 @@ import { surveys } from "@/schema/surveys";
 import { userAchievements } from "@/schema/userAchievements";
 import { userStatuses } from "@/schema/userStatuses";
 import { usersToRooms } from "@/schema/usersToRooms";
+import { createNameSchema } from "@/services/zod";
 import { relations, sql } from "drizzle-orm";
 import { boolean, check, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
@@ -44,7 +45,7 @@ export type User = typeof users.$inferSelect;
 export const selectUserSchema = createSelectSchema(users, {
   biography: z.string().max(USER_BIOGRAPHY_MAX_LENGTH).nullable(),
   email: z.email(),
-  name: z.string().min(1).max(USER_NAME_MAX_LENGTH),
+  name: createNameSchema(USER_NAME_MAX_LENGTH),
 });
 
 export const usersRelations = relations(users, ({ many, one }) => ({

@@ -47,6 +47,7 @@ export const friendRequestRouter = router({
         });
       const receiverUser: User = {
         ...ctx.getSessionPayload.user,
+        biography: ctx.getSessionPayload.user.biography ?? null,
         deletedAt: null,
         image: ctx.getSessionPayload.user.image ?? null,
       };
@@ -123,6 +124,7 @@ export const friendRequestRouter = router({
       const friendshipId = getFriendshipId(userId, receiverId);
       const senderUser: User = {
         ...ctx.getSessionPayload.user,
+        biography: ctx.getSessionPayload.user.biography ?? null,
         deletedAt: null,
         image: ctx.getSessionPayload.user.image ?? null,
       };

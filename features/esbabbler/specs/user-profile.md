@@ -38,5 +38,5 @@ Reuse existing Azure Blob SAS upload flow (same as file attachments). Client upl
 - [x] **`biography` column** - migration; show in profile card
 - [x] **`updateUser` procedure** - `server/trpc/routers/user.ts`; validate `name`, `biography`, `image`
 - [x] **Avatar upload** - `uploadProfileImage` via `AzureContainer.PublicUserAssets`
-- [ ] **Edit profile dialog** - bottom-left user panel; fields + preview
+- [x] **Edit profile dialog** - bottom-left user panel; fields + preview
 - [x] **Tests** - `server/trpc/routers/user.test.ts`; cover `updateUser` (validation, field limits, clear biography)
