@@ -14,7 +14,6 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { messageRouter } from "@@/server/trpc/routers/message";
 import { roomRouter } from "@@/server/trpc/routers/room";
-import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
 import { getBlobName } from "@esposter/db";
 import {
   AzureContainer,
@@ -35,6 +34,7 @@ import {
 } from "@esposter/shared";
 import { MockContainerDatabase, MockEventGridDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
+import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 
 describe("message", () => {
   let mockContext: Context;

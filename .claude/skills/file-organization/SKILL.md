@@ -7,7 +7,11 @@ description: Esposter file and folder organisation — one export per file, no e
 
 ## Imports
 
-- **Always use `@/` alias imports** — never use relative imports (`./`, `../`), even for files in the same folder. Example: `import { ... } from "@/composables/tableEditor/file/useEditedItemDataSourceOperations/testUtils"` not `"./testUtils"`.
+- **Always use alias imports** — never use relative imports (`./`, `../`), even for files in the same folder.
+  - `#shared/` — shared package (`packages/app/app/shared/`). Use for shared models, services, and constants. Example: `import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor"`.
+  - `@@/` — project root (`packages/app/`). Use for `server/` and other root-level paths. Example: `import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test"`.
+  - `@/` — app source dir (`packages/app/app/`). Use for `composables/`, `components/`, `store/`, `services/`, etc. Example: `import { ... } from "@/composables/tableEditor/file/useEditedItemDataSourceOperations/testUtils"`.
+  - Never use `~~/` (old Nuxt alias) — replace with `@@/`.
 
 ## Files and Exports
 

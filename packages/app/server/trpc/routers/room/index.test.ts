@@ -11,11 +11,11 @@ import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/tr
 import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
-import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
 import { CODE_LENGTH, DatabaseEntityType, friends, rooms } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 
 describe("room", () => {
   let mockContext: Context;

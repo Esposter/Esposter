@@ -111,6 +111,10 @@ describe(useMyComposable, () => {
 ## What to Test
 
 - **Test composables, not the underlying service functions** — composable tests integration-test the full call chain (store wiring, command dispatch, history push) in one place. If the composable is tested, the service functions it calls are covered implicitly; there is no need to write separate unit tests for those functions. Only test a service function directly when it has no composable wrapper (e.g. standalone pure utilities like `coerceValue`, `inferColumnType`).
+- **Don't repeat generic middleware tests** — shared middleware (auth, room membership, permission checks) is tested once in the router where it is most meaningful. Do not add an UNAUTHORIZED/NotFound test for every procedure that uses the same middleware — that adds noise without coverage value. Only add a test when the procedure has unique error-path logic beyond what the shared middleware already provides.
+- **Don't test Zod schema constraints** — length limits, min/max, regex, required-field refines are Zod's concern. They add no observability about business logic and will fail/pass regardless of procedure changes. Skip tests like "fails name exceeds max length" or "fails with no fields provided".
+- **One test per operation, not per field** — when verifying a mutation updates data, test all relevant fields in a single test case. Do not split "updates name", "updates biography", "updates image" into separate tests — combine them: `updateUser({ biography, image, name })` and assert all three.
+- **Flat describe structure** — do not nest `describe` blocks for sub-grouping procedure variants (e.g. `describe("router.updateUser")`). Keep all tests flat inside the top-level `describe(routerRef)` to reduce nesting and indentation.
 
 ## Type-Level Tests (.test-d.ts)
 

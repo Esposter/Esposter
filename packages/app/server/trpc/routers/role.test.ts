@@ -22,6 +22,7 @@ import { afterEach, beforeAll, describe, expect, test } from "vitest";
 describe("role", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["role"]>;
+  const name = "name";
 
   const createMember = async (roomId: string) => {
     const createdAt = new Date();
@@ -72,7 +73,7 @@ describe("role", () => {
         .returning(),
     );
     const room = takeOne(
-      await mockContext.db.insert(rooms).values({ name: "", type: RoomType.Room, userId: owner.id }).returning(),
+      await mockContext.db.insert(rooms).values({ name, type: RoomType.Room, userId: owner.id }).returning(),
     );
     await mockContext.db.insert(usersToRooms).values({ roomId: room.id, userId: owner.id });
     await mockContext.db.insert(roomRoles).values({
@@ -270,9 +271,9 @@ describe("role", () => {
 
     await mockSessionOnce(mockContext.db, actor);
 
-    await expect(caller.assignRole({ roleId: peerRole.id, roomId, userId: targetMember.id })).rejects.toThrow(
-      "UNAUTHORIZED",
-    );
+    await expect(
+      caller.assignRole({ roleId: peerRole.id, roomId, userId: targetMember.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
   test("cannot assign role to member with equal or higher top position", async () => {
@@ -287,9 +288,9 @@ describe("role", () => {
 
     await mockSessionOnce(mockContext.db, actor);
 
-    await expect(caller.assignRole({ roleId: lowRole.id, roomId, userId: targetMember.id })).rejects.toThrow(
-      "UNAUTHORIZED",
-    );
+    await expect(
+      caller.assignRole({ roleId: lowRole.id, roomId, userId: targetMember.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
   test("revokes role from member", async () => {
@@ -320,9 +321,9 @@ describe("role", () => {
 
     await mockSessionOnce(mockContext.db, actor);
 
-    await expect(caller.revokeRole({ roleId: peerRole.id, roomId, userId: targetMember.id })).rejects.toThrow(
-      "UNAUTHORIZED",
-    );
+    await expect(
+      caller.revokeRole({ roleId: peerRole.id, roomId, userId: targetMember.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
   test("cannot update role to position at or above own top", async () => {
@@ -335,7 +336,9 @@ describe("role", () => {
 
     await mockSessionOnce(mockContext.db, actor);
 
-    await expect(caller.updateRole({ id: lowRole.id, position: 10, roomId })).rejects.toThrow("UNAUTHORIZED");
+    await expect(
+      caller.updateRole({ id: lowRole.id, position: 10, roomId }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
   test("cannot create role with permissions not held by actor", async () => {
@@ -351,7 +354,7 @@ describe("role", () => {
 
     await expect(
       caller.createRole({ name: "Escalated", permissions: RoomPermission.ManageRoom, position: 3, roomId }),
-    ).rejects.toThrow("UNAUTHORIZED");
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
   test("cannot grant permissions not held by actor", async () => {
@@ -368,9 +371,9 @@ describe("role", () => {
 
     await mockSessionOnce(mockContext.db, actor);
 
-    await expect(caller.updateRole({ id: lowRole.id, permissions: RoomPermission.ManageRoom, roomId })).rejects.toThrow(
-      "UNAUTHORIZED",
-    );
+    await expect(
+      caller.updateRole({ id: lowRole.id, permissions: RoomPermission.ManageRoom, roomId }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
   test("owner can update role to any position and permissions", async () => {

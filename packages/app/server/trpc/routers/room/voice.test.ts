@@ -9,10 +9,10 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { voiceRouter } from "@@/server/trpc/routers/room/voice";
-import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
 import { rooms } from "@esposter/db-schema";
 import { ForbiddenError, NotFoundError, takeOne } from "@esposter/shared";
 import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
+import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 
 describe("voice", () => {
   let mockContext: Context;

@@ -4,15 +4,9 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
-import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
 import { userRouter } from "@@/server/trpc/routers/user";
-import {
-  DatabaseEntityType,
-  USER_BIOGRAPHY_MAX_LENGTH,
-  USER_NAME_MAX_LENGTH,
-  UserStatus,
-  userStatuses,
-} from "@esposter/db-schema";
+import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
+import { DatabaseEntityType, UserStatus, userStatuses } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -20,7 +14,10 @@ import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } 
 describe("user", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["user"]>;
+  const biography = "biography";
+  const image = "image";
   const message = "message";
+  const name = "name";
   const updatedMessage = "updatedMessage";
 
   beforeAll(async () => {
@@ -48,23 +45,6 @@ describe("user", () => {
     expect(userStatus.message).toBe("");
     expect(userStatus.status).toBe(UserStatus.Online);
     expect(userStatus.userId).toBe(userId);
-  });
-
-  test("fails read statuses with empty user ids", async () => {
-    expect.hasAssertions();
-
-    await expect(caller.readStatuses([])).rejects.toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: [
-        {
-          "origin": "array",
-          "code": "too_small",
-          "minimum": 1,
-          "inclusive": true,
-          "path": [],
-          "message": "Too small: expected array to have >=1 items"
-        }
-      ]]
-    `);
   });
 
   test("connect inserts", async () => {
@@ -256,69 +236,25 @@ describe("user", () => {
     );
   });
 
-  describe(userRouter.updateUser, () => {
-    const biography = "biography";
-    const image = "image";
-    const name = "name";
+  test("updates", async () => {
+    expect.hasAssertions();
 
-    test("updates name", async () => {
-      expect.hasAssertions();
+    await mockSessionOnce(mockContext.db);
+    const updatedUser = await caller.updateUser({ biography, image, name: ` ${name} ` });
 
-      await mockSessionOnce(mockContext.db);
-      const updatedUser = await caller.updateUser({ name: ` ${name} ` });
+    expect(updatedUser.biography).toBe(biography);
+    expect(updatedUser.image).toBe(image);
+    expect(updatedUser.name).toBe(name);
+  });
 
-      expect(updatedUser.name).toBe(name);
-    });
+  test("clears biography", async () => {
+    expect.hasAssertions();
 
-    test("updates biography", async () => {
-      expect.hasAssertions();
+    const getSessionPayload = await mockSessionOnce(mockContext.db);
+    await caller.updateUser({ biography });
+    replayMockSession(getSessionPayload);
+    const updatedUser = await caller.updateUser({ biography: null });
 
-      await mockSessionOnce(mockContext.db);
-      const updatedUser = await caller.updateUser({ biography });
-
-      expect(updatedUser.biography).toBe(biography);
-    });
-
-    test("clears biography", async () => {
-      expect.hasAssertions();
-
-      const getSessionPayload = await mockSessionOnce(mockContext.db);
-      await caller.updateUser({ biography });
-      replayMockSession(getSessionPayload);
-      const updatedUser = await caller.updateUser({ biography: null });
-
-      expect(updatedUser.biography).toBeNull();
-    });
-
-    test("updates image", async () => {
-      expect.hasAssertions();
-
-      await mockSessionOnce(mockContext.db);
-      const updatedUser = await caller.updateUser({ image });
-
-      expect(updatedUser.image).toBe(image);
-    });
-
-    test("fails with no fields provided", async () => {
-      expect.hasAssertions();
-
-      await expect(caller.updateUser({})).rejects.toThrowErrorMatchingInlineSnapshot();
-    });
-
-    test("fails name exceeds max length", async () => {
-      expect.hasAssertions();
-
-      await expect(
-        caller.updateUser({ name: "a".repeat(USER_NAME_MAX_LENGTH + 1) }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot();
-    });
-
-    test("fails biography exceeds max length", async () => {
-      expect.hasAssertions();
-
-      await expect(
-        caller.updateUser({ biography: "a".repeat(USER_BIOGRAPHY_MAX_LENGTH + 1) }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot();
-    });
+    expect(updatedUser.biography).toBeNull();
   });
 });

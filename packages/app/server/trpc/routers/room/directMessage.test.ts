@@ -17,6 +17,7 @@ describe("directMessage", () => {
   let caller: DecorateRouterRecord<TRPCRouter["directMessage"]>;
   let friendRequestCaller: DecorateRouterRecord<TRPCRouter["friendRequest"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
+  const name = "name";
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -225,7 +226,7 @@ describe("directMessage", () => {
   test("fails hide with regular room", async () => {
     expect.hasAssertions();
 
-    const newRoom = await roomCaller.createRoom({ name: "" });
+    const newRoom = await roomCaller.createRoom({ name });
 
     await expect(caller.hideDirectMessage(newRoom.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.UserToRoom, newRoom.id).message}]`,
@@ -235,7 +236,7 @@ describe("directMessage", () => {
   test("fails hide non-member non-DM room with UNAUTHORIZED before room type check", async () => {
     expect.hasAssertions();
 
-    const newRoom = await roomCaller.createRoom({ name: "" });
+    const newRoom = await roomCaller.createRoom({ name });
     await mockSessionOnce(mockContext.db);
 
     await expect(caller.hideDirectMessage(newRoom.id)).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -246,7 +247,7 @@ describe("directMessage", () => {
   test("filters regular rooms from read participants", async () => {
     expect.hasAssertions();
 
-    const newRoom = await roomCaller.createRoom({ name: "" });
+    const newRoom = await roomCaller.createRoom({ name });
     const participantsData = await caller.readDirectMessageParticipants([newRoom.id]);
 
     expect(participantsData).toHaveLength(0);
