@@ -302,6 +302,13 @@
       "when": 1776476031890,
       "tag": "0042_graceful_alex_wilder",
       "breakpoints": true
+    },
+    {
+      "idx": 43,
+      "version": "7",
+      "when": 1776645504715,
+      "tag": "0043_hot_professor_monster",
+      "breakpoints": true
     }
   ]
 }

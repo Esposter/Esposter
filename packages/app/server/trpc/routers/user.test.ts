@@ -3,10 +3,16 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
+import { createMockContext, getMockSession, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
 import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
 import { userRouter } from "@@/server/trpc/routers/user";
-import { DatabaseEntityType, UserStatus, userStatuses } from "@esposter/db-schema";
+import {
+  DatabaseEntityType,
+  USER_BIOGRAPHY_MAX_LENGTH,
+  USER_NAME_MAX_LENGTH,
+  UserStatus,
+  userStatuses,
+} from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -248,5 +254,69 @@ describe("user", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.UserStatus, userRouter.onUpsertStatus.name).message}]`,
     );
+  });
+
+  describe(userRouter.updateUser, () => {
+    const biography = "biography";
+    const image = "image";
+    const name = "name";
+
+    test("updates name", async () => {
+      expect.hasAssertions();
+
+      await mockSessionOnce(mockContext.db);
+      const updatedUser = await caller.updateUser({ name: ` ${name} ` });
+
+      expect(updatedUser.name).toBe(name);
+    });
+
+    test("updates biography", async () => {
+      expect.hasAssertions();
+
+      await mockSessionOnce(mockContext.db);
+      const updatedUser = await caller.updateUser({ biography });
+
+      expect(updatedUser.biography).toBe(biography);
+    });
+
+    test("clears biography", async () => {
+      expect.hasAssertions();
+
+      const getSessionPayload = await mockSessionOnce(mockContext.db);
+      await caller.updateUser({ biography });
+      replayMockSession(getSessionPayload);
+      const updatedUser = await caller.updateUser({ biography: null });
+
+      expect(updatedUser.biography).toBeNull();
+    });
+
+    test("updates image", async () => {
+      expect.hasAssertions();
+
+      await mockSessionOnce(mockContext.db);
+      const updatedUser = await caller.updateUser({ image });
+
+      expect(updatedUser.image).toBe(image);
+    });
+
+    test("fails with no fields provided", async () => {
+      expect.hasAssertions();
+
+      await expect(caller.updateUser({})).rejects.toThrow("At least one of");
+    });
+
+    test("fails name exceeds max length", async () => {
+      expect.hasAssertions();
+
+      await expect(caller.updateUser({ name: "a".repeat(USER_NAME_MAX_LENGTH + 1) })).rejects.toThrow("Too large");
+    });
+
+    test("fails biography exceeds max length", async () => {
+      expect.hasAssertions();
+
+      await expect(caller.updateUser({ biography: "a".repeat(USER_BIOGRAPHY_MAX_LENGTH + 1) })).rejects.toThrow(
+        "Too large",
+      );
+    });
   });
 });
