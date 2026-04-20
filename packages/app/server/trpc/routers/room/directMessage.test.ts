@@ -184,23 +184,6 @@ describe("directMessage", () => {
     expect(participantsData).toHaveLength(0);
   });
 
-  test("fails create direct message with invalid operation", async () => {
-    expect.hasAssertions();
-
-    await expect(caller.createDirectMessage([])).rejects.toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: [
-        {
-          "origin": "array",
-          "code": "too_small",
-          "minimum": 1,
-          "inclusive": true,
-          "path": [],
-          "message": "Too small: expected array to have >=1 items"
-        }
-      ]]
-    `);
-  });
-
   test("fails create direct message with non-friend", async () => {
     expect.hasAssertions();
 

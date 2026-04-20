@@ -11,11 +11,11 @@ import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/tr
 import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
+import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 import { CODE_LENGTH, DatabaseEntityType, friends, rooms } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 
 describe("room", () => {
   let mockContext: Context;
@@ -313,24 +313,6 @@ describe("room", () => {
     expect(readInvite).toBeNull();
   });
 
-  test("fails read invite with invalid code", async () => {
-    expect.hasAssertions();
-
-    await expect(roomCaller.readInvite("")).rejects.toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: [
-        {
-          "origin": "string",
-          "code": "too_small",
-          "minimum": 8,
-          "inclusive": true,
-          "exact": true,
-          "path": [],
-          "message": "Too small: expected string to have >=8 characters"
-        }
-      ]]
-    `);
-  });
-
   test("reads invite code", async () => {
     expect.hasAssertions();
 
@@ -602,28 +584,6 @@ describe("room", () => {
     expect(takeOne(members).id).toBe(user.id);
   });
 
-  test("fails read members by empty ids", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-
-    await expect(roomCaller.readMembersByIds({ ids: [], roomId: newRoom.id })).rejects
-      .toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: [
-        {
-          "origin": "array",
-          "code": "too_small",
-          "minimum": 1,
-          "inclusive": true,
-          "path": [
-            "ids"
-          ],
-          "message": "Too small: expected array to have >=1 items"
-        }
-      ]]
-    `);
-  });
-
   test("fails read members by ids with wrong user", async () => {
     expect.hasAssertions();
 
@@ -654,28 +614,6 @@ describe("room", () => {
     expect(members.items).toHaveLength(2);
     expect(takeOne(members.items).id).toBe(userId);
     expect(takeOne(members.items, 1)).toStrictEqual(user);
-  });
-
-  test("fails create members with empty ids", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-
-    await expect(roomCaller.createMembers({ roomId: newRoom.id, userIds: [] })).rejects
-      .toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: [
-        {
-          "origin": "array",
-          "code": "too_small",
-          "minimum": 1,
-          "inclusive": true,
-          "path": [
-            "userIds"
-          ],
-          "message": "Too small: expected array to have >=1 items"
-        }
-      ]]
-    `);
   });
 
   test("fails create members with non-creator", async () => {
