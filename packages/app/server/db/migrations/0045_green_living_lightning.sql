@@ -1,3 +1,0 @@
-ALTER TABLE "message"."rooms" DROP CONSTRAINT "name";--> statement-breakpoint
-ALTER TABLE "message"."rooms" ALTER COLUMN "name" DROP NOT NULL;--> statement-breakpoint
-ALTER TABLE "message"."rooms" ADD CONSTRAINT "name" CHECK (("message"."rooms"."type" = 'DirectMessage' AND "message"."rooms"."name" IS NULL) OR ("message"."rooms"."type" = 'Room' AND LENGTH(TRIM("message"."rooms"."name")) BETWEEN 1 AND 100));

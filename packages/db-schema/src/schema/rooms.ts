@@ -37,8 +37,8 @@ export const rooms = pgTable(
   {
     extraConfig: ({ name, participantKey, type }) => [
       check(
-        "name",
-        sql`(${type} = '${sql.raw(RoomType.DirectMessage)}' AND ${name} IS NULL) OR (${type} = '${sql.raw(RoomType.Room)}' AND ${createNameCheckSql(name, ROOM_NAME_MAX_LENGTH)})`,
+        "rooms_name_check",
+        sql`(${type} = '${sql.raw(RoomType.DirectMessage)}' AND ${name} IS NULL) OR (${type} = '${sql.raw(RoomType.Room)}' AND ${name} IS NOT NULL AND ${createNameCheckSql(name, ROOM_NAME_MAX_LENGTH)})`,
       ),
       check(
         "participant_key_type",

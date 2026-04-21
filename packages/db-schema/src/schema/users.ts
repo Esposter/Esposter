@@ -33,10 +33,10 @@ export const users = pgTable(
   },
   ({ biography, name }) => [
     check(
-      "biography",
+      "users_biography_length_check",
       sql`${biography} IS NULL OR LENGTH(${biography}) <= ${sql.raw(USER_BIOGRAPHY_MAX_LENGTH.toString())}`,
     ),
-    check("name", createNameCheckSql(name, USER_NAME_MAX_LENGTH)),
+    check("users_name_length_check", createNameCheckSql(name, USER_NAME_MAX_LENGTH)),
   ],
 );
 

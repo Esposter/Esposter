@@ -48,9 +48,9 @@ export const roomRoles = pgTable(
   },
   {
     extraConfig: (table) => [
-      check("name", createNameCheckSql(table.name, ROOM_ROLE_NAME_MAX_LENGTH)),
-      check("position", sql`${table.position} >= 0`),
-      index("room_roles_room_id_position_idx").on(table.roomId, table.position),
+      check("room_roles_name_length_check", createNameCheckSql(table.name, ROOM_ROLE_NAME_MAX_LENGTH)),
+      check("room_roles_position_check", sql`${table.position} >= 0`),
+      index("room_roles_room_id_position_index").on(table.roomId, table.position),
       uniqueIndex("room_roles_everyone_unique")
         .on(table.roomId)
         .where(sql`${table.isEveryone} = TRUE`),

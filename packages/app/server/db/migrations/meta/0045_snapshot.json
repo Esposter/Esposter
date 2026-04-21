@@ -1,5 +1,5 @@
 {
-  "id": "f2c40abb-de6f-46f2-bb8f-cb3bbe8da65d",
+  "id": "fd7d6fd6-512e-44b8-91ed-00b741fd5900",
   "prevId": "888222a2-5a52-413f-b2a8-f521b03cc048",
   "version": "7",
   "dialect": "postgresql",
@@ -217,8 +217,8 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {
-        "name": {
-          "name": "name",
+        "app_users_name_length_check": {
+          "name": "app_users_name_length_check",
           "value": "LENGTH(TRIM(\"message\".\"app_users\".\"name\")) BETWEEN 1 AND 100"
         }
       },
@@ -261,8 +261,8 @@
         }
       },
       "indexes": {
-        "blocks_blockedId_idx": {
-          "name": "blocks_blockedId_idx",
+        "blocks_blockedId_index": {
+          "name": "blocks_blockedId_index",
           "columns": [
             {
               "expression": "blockedId",
@@ -367,8 +367,8 @@
         }
       },
       "indexes": {
-        "friend_requests_receiverId_idx": {
-          "name": "friend_requests_receiverId_idx",
+        "friend_requests_receiverId_index": {
+          "name": "friend_requests_receiverId_index",
           "columns": [
             {
               "expression": "receiverId",
@@ -382,8 +382,8 @@
           "method": "btree",
           "with": {}
         },
-        "friend_requests_senderId_idx": {
-          "name": "friend_requests_senderId_idx",
+        "friend_requests_senderId_index": {
+          "name": "friend_requests_senderId_index",
           "columns": [
             {
               "expression": "senderId",
@@ -480,8 +480,8 @@
         }
       },
       "indexes": {
-        "friends_receiverId_idx": {
-          "name": "friends_receiverId_idx",
+        "friends_receiverId_index": {
+          "name": "friends_receiverId_index",
           "columns": [
             {
               "expression": "receiverId",
@@ -495,8 +495,8 @@
           "method": "btree",
           "with": {}
         },
-        "friends_senderId_idx": {
-          "name": "friends_senderId_idx",
+        "friends_senderId_index": {
+          "name": "friends_senderId_index",
           "columns": [
             {
               "expression": "senderId",
@@ -641,8 +641,8 @@
       },
       "policies": {},
       "checkConstraints": {
-        "code": {
-          "name": "code",
+        "invites_code_length_check": {
+          "name": "invites_code_length_check",
           "value": "LENGTH(\"message\".\"invites\".\"code\") = 8"
         }
       },
@@ -712,8 +712,8 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {
-        "value": {
-          "name": "value",
+        "likes_value_check": {
+          "name": "likes_value_check",
           "value": "\"likes\".\"value\" = 1 OR \"likes\".\"value\" = -1"
         }
       },
@@ -836,12 +836,12 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {
-        "title": {
-          "name": "title",
+        "posts_title_length_check": {
+          "name": "posts_title_length_check",
           "value": "LENGTH(\"posts\".\"title\") <= 300"
         },
-        "description": {
-          "name": "description",
+        "posts_description_length_check": {
+          "name": "posts_description_length_check",
           "value": "LENGTH(\"posts\".\"description\") <= 1000"
         }
       },
@@ -1040,12 +1040,12 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {
-        "name": {
-          "name": "name",
+        "room_categories_name_length_check": {
+          "name": "room_categories_name_length_check",
           "value": "LENGTH(TRIM(\"message\".\"room_categories\".\"name\")) BETWEEN 1 AND 100"
         },
-        "position": {
-          "name": "position",
+        "room_categories_position_check": {
+          "name": "room_categories_position_check",
           "value": "\"message\".\"room_categories\".\"position\" >= 0"
         }
       },
@@ -1122,8 +1122,8 @@
         }
       },
       "indexes": {
-        "room_roles_room_id_position_idx": {
-          "name": "room_roles_room_id_position_idx",
+        "room_roles_room_id_position_index": {
+          "name": "room_roles_room_id_position_index",
           "columns": [
             {
               "expression": "roomId",
@@ -1180,12 +1180,12 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {
-        "name": {
-          "name": "name",
+        "room_roles_name_length_check": {
+          "name": "room_roles_name_length_check",
           "value": "LENGTH(TRIM(\"message\".\"room_roles\".\"name\")) BETWEEN 1 AND 100"
         },
-        "position": {
-          "name": "position",
+        "room_roles_position_check": {
+          "name": "room_roles_position_check",
           "value": "\"message\".\"room_roles\".\"position\" >= 0"
         }
       },
@@ -1301,9 +1301,9 @@
       },
       "policies": {},
       "checkConstraints": {
-        "name": {
-          "name": "name",
-          "value": "(\"message\".\"rooms\".\"type\" = 'DirectMessage' AND \"message\".\"rooms\".\"name\" IS NULL) OR (\"message\".\"rooms\".\"type\" = 'Room' AND LENGTH(TRIM(\"message\".\"rooms\".\"name\")) BETWEEN 1 AND 100)"
+        "rooms_name_check": {
+          "name": "rooms_name_check",
+          "value": "(\"message\".\"rooms\".\"type\" = 'DirectMessage' AND \"message\".\"rooms\".\"name\" IS NULL) OR (\"message\".\"rooms\".\"type\" = 'Room' AND \"message\".\"rooms\".\"name\" IS NOT NULL AND LENGTH(TRIM(\"message\".\"rooms\".\"name\")) BETWEEN 1 AND 100)"
         },
         "participant_key_type": {
           "name": "participant_key_type",
@@ -1403,8 +1403,8 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {
-        "query": {
-          "name": "query",
+        "search_histories_query_length_check": {
+          "name": "search_histories_query_length_check",
           "value": "LENGTH(\"message\".\"search_histories\".\"query\") <= 10000"
         }
       },
@@ -1595,8 +1595,8 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {
-        "name": {
-          "name": "name",
+        "surveys_name_length_check": {
+          "name": "surveys_name_length_check",
           "value": "LENGTH(TRIM(\"surveys\".\"name\")) BETWEEN 1 AND 100"
         }
       },
@@ -1658,8 +1658,8 @@
         }
       },
       "indexes": {
-        "user_achievements_user_id_achievement_id_index": {
-          "name": "user_achievements_user_id_achievement_id_index",
+        "user_achievements_user_id_achievement_id_unique": {
+          "name": "user_achievements_user_id_achievement_id_unique",
           "columns": [
             {
               "expression": "user_id",
@@ -1712,8 +1712,8 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {
-        "amount": {
-          "name": "amount",
+        "user_achievements_amount_check": {
+          "name": "user_achievements_amount_check",
           "value": "\"user_achievements\".\"amount\" >= 1"
         }
       },
@@ -1792,12 +1792,12 @@
       },
       "policies": {},
       "checkConstraints": {
-        "biography": {
-          "name": "biography",
+        "users_biography_length_check": {
+          "name": "users_biography_length_check",
           "value": "\"users\".\"biography\" IS NULL OR LENGTH(\"users\".\"biography\") <= 160"
         },
-        "name": {
-          "name": "name",
+        "users_name_length_check": {
+          "name": "users_name_length_check",
           "value": "LENGTH(TRIM(\"users\".\"name\")) BETWEEN 1 AND 100"
         }
       },
@@ -1879,8 +1879,8 @@
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {
-        "message": {
-          "name": "message",
+        "user_statuses_message_length_check": {
+          "name": "user_statuses_message_length_check",
           "value": "LENGTH(\"message\".\"user_statuses\".\"message\") <= 64"
         }
       },
@@ -1929,8 +1929,8 @@
         }
       },
       "indexes": {
-        "users_to_room_roles_roleId_idx": {
-          "name": "users_to_room_roles_roleId_idx",
+        "users_to_room_roles_roleId_index": {
+          "name": "users_to_room_roles_roleId_index",
           "columns": [
             {
               "expression": "roleId",
@@ -1944,8 +1944,8 @@
           "method": "btree",
           "with": {}
         },
-        "users_to_room_roles_roomId_idx": {
-          "name": "users_to_room_roles_roomId_idx",
+        "users_to_room_roles_roomId_index": {
+          "name": "users_to_room_roles_roomId_index",
           "columns": [
             {
               "expression": "roomId",
@@ -2292,8 +2292,8 @@
       },
       "policies": {},
       "checkConstraints": {
-        "name": {
-          "name": "name",
+        "webhooks_name_length_check": {
+          "name": "webhooks_name_length_check",
           "value": "LENGTH(TRIM(\"message\".\"webhooks\".\"name\")) BETWEEN 1 AND 100"
         }
       },

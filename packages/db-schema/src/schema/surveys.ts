@@ -22,7 +22,7 @@ export const surveys = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ name }) => [check("name", createNameCheckSql(name, SURVEY_NAME_MAX_LENGTH))],
+    extraConfig: ({ name }) => [check("surveys_name_length_check", createNameCheckSql(name, SURVEY_NAME_MAX_LENGTH))],
   },
 );
 

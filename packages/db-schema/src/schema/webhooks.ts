@@ -33,7 +33,7 @@ export const webhooks = pgTable(
       .references(() => appUsers.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ name }) => [check("name", createNameCheckSql(name, WEBHOOK_NAME_MAX_LENGTH))],
+    extraConfig: ({ name }) => [check("webhooks_name_length_check", createNameCheckSql(name, WEBHOOK_NAME_MAX_LENGTH))],
     schema: messageSchema,
   },
 );

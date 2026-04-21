@@ -22,8 +22,8 @@ export const roomCategories = pgTable(
   },
   {
     extraConfig: ({ name, position }) => [
-      check("name", createNameCheckSql(name, ROOM_CATEGORY_NAME_MAX_LENGTH)),
-      check("position", sql`${position} >= 0`),
+      check("room_categories_name_length_check", createNameCheckSql(name, ROOM_CATEGORY_NAME_MAX_LENGTH)),
+      check("room_categories_position_check", sql`${position} >= 0`),
     ],
     schema: messageSchema,
   },

@@ -16,7 +16,9 @@ export const appUsers = pgTable(
     name: text("name").notNull(),
   },
   {
-    extraConfig: ({ name }) => [check("name", createNameCheckSql(name, APP_USER_NAME_MAX_LENGTH))],
+    extraConfig: ({ name }) => [
+      check("app_users_name_length_check", createNameCheckSql(name, APP_USER_NAME_MAX_LENGTH)),
+    ],
     schema: messageSchema,
   },
 );

@@ -1,7 +1,7 @@
 import { db } from "@@/server/db";
 import { standardRateLimiter } from "@@/server/services/rateLimiter/standardRateLimiter";
 import { drizzleAdapter } from "@better-auth/drizzle-adapter";
-import { schema } from "@esposter/db-schema";
+import { schema, selectUserSchema } from "@esposter/db-schema";
 import { betterAuth } from "better-auth";
 
 export const auth = betterAuth({
@@ -33,6 +33,9 @@ export const auth = betterAuth({
       biography: {
         required: false,
         type: "string",
+        validator: {
+          input: selectUserSchema.shape.biography,
+        },
       },
     },
   },

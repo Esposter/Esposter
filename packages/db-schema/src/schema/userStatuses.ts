@@ -35,7 +35,10 @@ export const userStatuses = pgTable(
   },
   {
     extraConfig: ({ message }) => [
-      check("message", sql`LENGTH(${message}) <= ${sql.raw(STATUS_MESSAGE_MAX_LENGTH.toString())}`),
+      check(
+        "user_statuses_message_length_check",
+        sql`LENGTH(${message}) <= ${sql.raw(STATUS_MESSAGE_MAX_LENGTH.toString())}`,
+      ),
     ],
     schema: messageSchema,
   },
