@@ -8,8 +8,7 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
-import { rooms, users } from "@esposter/db-schema";
-import { takeOne } from "@esposter/shared";
+import { rooms } from "@esposter/db-schema";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe(isManageable, () => {
@@ -27,8 +26,7 @@ describe(isManageable, () => {
   });
 
   beforeEach(async () => {
-    const { user: ownerUser } = await mockSessionOnce(mockContext.db);
-    owner = ownerUser;
+    owner = getMockSession().user;
     const room = await roomCaller.createRoom({ name });
     roomId = room.id;
   });
@@ -58,23 +56,7 @@ describe(isManageable, () => {
 
     await mockSessionOnce(mockContext.db, owner);
     const role = await roleCaller.createRole({ name: "Mod", permissions: 0n, position: 5, roomId });
-    const createdAt = new Date();
-    // niche: non-owner user needed for createMembers/assignRole FK; mockSessionOnce would leak into next test
-    const user = takeOne(
-      await mockContext.db
-        .insert(users)
-        .values({
-          createdAt,
-          email: crypto.randomUUID(),
-          emailVerified: true,
-          id: crypto.randomUUID(),
-          image: null,
-          name: crypto.randomUUID(),
-          updatedAt: createdAt,
-        })
-        .returning(),
-    );
-    await mockSessionOnce(mockContext.db, owner);
+    const { user } = await mockSessionOnce(mockContext.db);
     await roomCaller.createMembers({ roomId, userIds: [user.id] });
     await mockSessionOnce(mockContext.db, owner);
     await roleCaller.assignRole({ roleId: role.id, roomId, userId: user.id });
@@ -89,23 +71,7 @@ describe(isManageable, () => {
 
     await mockSessionOnce(mockContext.db, owner);
     const role = await roleCaller.createRole({ name: "Mod", permissions: 0n, position: 5, roomId });
-    const createdAt = new Date();
-    // niche: non-owner user needed for createMembers/assignRole FK; mockSessionOnce would leak into next test
-    const user = takeOne(
-      await mockContext.db
-        .insert(users)
-        .values({
-          createdAt,
-          email: crypto.randomUUID(),
-          emailVerified: true,
-          id: crypto.randomUUID(),
-          image: null,
-          name: crypto.randomUUID(),
-          updatedAt: createdAt,
-        })
-        .returning(),
-    );
-    await mockSessionOnce(mockContext.db, owner);
+    const { user } = await mockSessionOnce(mockContext.db);
     await roomCaller.createMembers({ roomId, userIds: [user.id] });
     await mockSessionOnce(mockContext.db, owner);
     await roleCaller.assignRole({ roleId: role.id, roomId, userId: user.id });

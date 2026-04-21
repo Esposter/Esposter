@@ -5,7 +5,7 @@ import type { User } from "better-auth";
 
 import { getTopRolePosition } from "@@/server/services/room/rbac/getTopRolePosition";
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
+import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { rooms } from "@esposter/db-schema";
@@ -26,8 +26,7 @@ describe(getTopRolePosition, () => {
   });
 
   beforeEach(async () => {
-    const { user: ownerUser } = await mockSessionOnce(mockContext.db);
-    owner = ownerUser;
+    owner = getMockSession().user;
     const room = await roomCaller.createRoom({ name });
     roomId = room.id;
   });

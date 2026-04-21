@@ -1,3 +1,2 @@
-- regex search all mockContext.db.insert, we should replace them all with callers so it mocks the actual logic of the app, only use it if it's absolutely necessary for niche cases, note down in skills md
+- regex search all mockContext.db.select, we should replace them all with callers so it mocks the actual logic of the app, note down in skills md
 - we should always cleanup tables in afterEach or afterAll, not beforeEach, for example await mockContext.db.delete(rooms);, search all router tests to fix them all up, note this down in skills md
-- also fix up all the name: "" in router tests, to define the const name = "name" in describe scope, since we can't have empty names
