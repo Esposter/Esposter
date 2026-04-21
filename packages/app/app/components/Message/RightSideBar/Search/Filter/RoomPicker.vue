@@ -20,9 +20,9 @@ const { hasMore, rooms } = storeToRefs(roomStore);
       <v-hover v-for="room of rooms" :key="room.id" #default="{ isHovering, props: hoverProps }">
         <v-list-item :="hoverProps" @click="emit('select', room.id)">
           <template #prepend>
-            <StyledAvatar :image="room.image" :name="room.name" size="small" />
+            <StyledAvatar :image="room.image" :name="room.name ?? ''" size="small" />
           </template>
-          <v-list-item-title>{{ room.name }}</v-list-item-title>
+          <v-list-item-title>{{ room.name ?? "" }}</v-list-item-title>
           <template #append>
             <v-icon :op="isHovering ? undefined : '0!'" icon="mdi-plus" />
           </template>

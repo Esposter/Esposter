@@ -31,7 +31,7 @@ const { smAndDown } = useVDisplay();
       :card-props="{ title: 'Edit Room' }"
       :is-editable="isCreator"
       :max-length="ROOM_NAME_MAX_LENGTH"
-      :name="currentRoom.name"
+      :name="currentRoom.name ?? ''"
       :placeholder
       :tooltip-props="{ location: 'bottom', text: 'Edit Room' }"
       @submit="

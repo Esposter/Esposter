@@ -88,19 +88,31 @@ For inline forms (e.g. slash command params, embedded editors) where showing val
 
 - Add `hide-details` to all `v-text-field` / `v-textarea` inputs
 - Show `StyledEditFormDialogErrorIcon` in the form's header row instead
-- Use `useTemplateRef<InstanceType<typeof VForm>>("formRef")` and `const isFormValid = ref(true)` locally — no store needed
-- Pass `:edit-form="formRef ?? undefined" :is-edit-form-valid="isFormValid"` to the error icon
+- Name locals to match prop names so `:edit-form :is-edit-form-valid` shorthands work:
+  - `const editForm = useTemplateRef<InstanceType<typeof VForm>>("editForm")`
+  - `const isEditFormValid = ref(true)`
+- Ref the error icon to gate submit: `const errorIcon = useTemplateRef<InstanceType<typeof StyledEditFormDialogErrorIcon>>("errorIcon")` → `errorIcon.value?.isValid`
 
 ```vue
+<script setup lang="ts">
+import type StyledEditFormDialogErrorIcon from "@/components/Styled/EditFormDialog/ErrorIcon.vue";
+import type { VForm } from "vuetify/components";
+
+const editForm = useTemplateRef<InstanceType<typeof VForm>>("editForm");
+const isEditFormValid = ref(true);
+const errorIcon = useTemplateRef<InstanceType<typeof StyledEditFormDialogErrorIcon>>("errorIcon");
+const disabled = computed(() => !(errorIcon.value?.isValid ?? true));
+</script>
+
 <!-- Header row with error icon -->
 <div flex items-center gap-2>
   <v-icon ... />
   <span>{{ title }}</span>
-  <StyledEditFormDialogErrorIcon :edit-form="formRef ?? undefined" :is-edit-form-valid="isFormValid" />
+  <StyledEditFormDialogErrorIcon ref="errorIcon" :edit-form :is-edit-form-valid />
 </div>
 
 <!-- Form body with hide-details on all fields -->
-<v-form ref="formRef" v-model="isFormValid">
+<v-form ref="editForm" v-model="isEditFormValid">
   <v-text-field :rules="[formRules.required]" hide-details ... />
 </v-form>
 ```
