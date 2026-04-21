@@ -18,7 +18,7 @@ export const likes = pgTable(
   },
   ({ postId, userId, value }) => [
     primaryKey({ columns: [userId, postId] }),
-    check("value", sql`${value} = 1 OR ${value} = -1`),
+    check("likes_value_check", sql`${value} = 1 OR ${value} = -1`),
   ],
 );
 

@@ -26,6 +26,7 @@ const getEndpoint = (userId: string) => `https://push.example.com/${userId}`;
 
 describe(getPushSubscriptionsForMessage, () => {
   let db: PostgresJsDatabase<typeof schema>;
+  const name = "name";
   const roomId = crypto.randomUUID();
   const allOnlineUserId = crypto.randomUUID();
   const allOfflineUserId = crypto.randomUUID();
@@ -46,7 +47,7 @@ describe(getPushSubscriptionsForMessage, () => {
       emailVerified: true,
       id,
       image: null,
-      name: id,
+      name,
       updatedAt: createdAt,
     });
 
@@ -64,7 +65,7 @@ describe(getPushSubscriptionsForMessage, () => {
 
     await db.insert(rooms).values({
       id: roomId,
-      name: "",
+      name,
       type: RoomType.Room,
       userId: allOnlineUserId,
     });
@@ -108,7 +109,6 @@ describe(getPushSubscriptionsForMessage, () => {
       partitionKey: roomId,
       userId: senderUserId,
     });
-
     const endpointSet = new Set(result.map((subscription) => subscription.endpoint));
 
     expect(result).toHaveLength(3);
@@ -125,7 +125,6 @@ describe(getPushSubscriptionsForMessage, () => {
       partitionKey: roomId,
       userId: senderUserId,
     });
-
     const endpointSet = new Set(result.map((subscription) => subscription.endpoint));
 
     expect(result).toHaveLength(4);

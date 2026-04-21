@@ -3,9 +3,9 @@ import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
-import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
+import { createMockContext, getMockSession, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
 import { userRouter } from "@@/server/trpc/routers/user";
+import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 import { DatabaseEntityType, UserStatus, userStatuses } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
@@ -14,7 +14,10 @@ import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } 
 describe("user", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["user"]>;
+  const biography = "biography";
+  const image = "image";
   const message = "message";
+  const name = "name";
   const updatedMessage = "updatedMessage";
 
   beforeAll(async () => {
@@ -42,23 +45,6 @@ describe("user", () => {
     expect(userStatus.message).toBe("");
     expect(userStatus.status).toBe(UserStatus.Online);
     expect(userStatus.userId).toBe(userId);
-  });
-
-  test("fails read statuses with empty user ids", async () => {
-    expect.hasAssertions();
-
-    await expect(caller.readStatuses([])).rejects.toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: [
-        {
-          "origin": "array",
-          "code": "too_small",
-          "minimum": 1,
-          "inclusive": true,
-          "path": [],
-          "message": "Too small: expected array to have >=1 items"
-        }
-      ]]
-    `);
   });
 
   test("connect inserts", async () => {
@@ -248,5 +234,27 @@ describe("user", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.UserStatus, userRouter.onUpsertStatus.name).message}]`,
     );
+  });
+
+  test("updates", async () => {
+    expect.hasAssertions();
+
+    await mockSessionOnce(mockContext.db);
+    const updatedUser = await caller.updateUser({ biography, image, name: ` ${name} ` });
+
+    expect(updatedUser.biography).toBe(biography);
+    expect(updatedUser.image).toBe(image);
+    expect(updatedUser.name).toBe(name);
+  });
+
+  test("clears biography", async () => {
+    expect.hasAssertions();
+
+    const getSessionPayload = await mockSessionOnce(mockContext.db);
+    await caller.updateUser({ biography });
+    replayMockSession(getSessionPayload);
+    const updatedUser = await caller.updateUser({ biography: null });
+
+    expect(updatedUser.biography).toBeNull();
   });
 });

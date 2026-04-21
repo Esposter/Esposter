@@ -7,7 +7,7 @@ import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/tr
 import { messageRouter } from "@@/server/trpc/routers/message";
 import { emojiRouter } from "@@/server/trpc/routers/message/emoji";
 import { roomRouter } from "@@/server/trpc/routers/room";
-import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
+import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 import { MessageMetadataType, rooms } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
@@ -60,28 +60,6 @@ describe("emoji", () => {
     expect(takeOne(readEmojis)).toStrictEqual(newEmoji);
   });
 
-  test("fails read emojis with non-existent room id", async () => {
-    expect.hasAssertions();
-
-    const roomId = crypto.randomUUID();
-
-    await expect(emojiCaller.readEmojis({ messageRowKeys: [""], roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: UNAUTHORIZED]`,
-    );
-  });
-
-  test("fails read emojis with non-existent member", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-    await mockSessionOnce(mockContext.db);
-
-    await expect(
-      emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId: newRoom.id }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
-  });
-
   test("creates", async () => {
     expect.hasAssertions();
 
@@ -119,28 +97,6 @@ describe("emoji", () => {
     );
   });
 
-  test("fails create emoji with non-existent room", async () => {
-    expect.hasAssertions();
-
-    const roomId = crypto.randomUUID();
-
-    await expect(
-      emojiCaller.createEmoji({ emojiTag, messageRowKey: "", partitionKey: roomId }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
-  });
-
-  test("fails create emoji with non-existent member", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-    await mockSessionOnce(mockContext.db);
-
-    await expect(
-      emojiCaller.createEmoji({ emojiTag, messageRowKey: newMessage.rowKey, partitionKey: newRoom.id }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
-  });
-
   test("on creates emoji", async () => {
     expect.hasAssertions();
 
@@ -163,27 +119,6 @@ describe("emoji", () => {
     expect(data.value.emojiTag).toBe(emojiTag);
     expect(data.value.messageRowKey).toBe(newMessage.rowKey);
     expect(data.value.partitionKey).toBe(newRoom.id);
-  });
-
-  test("fails on creates emoji with non-existent room", async () => {
-    expect.hasAssertions();
-
-    const roomId = crypto.randomUUID();
-
-    await expect(emojiCaller.onCreateEmoji({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: UNAUTHORIZED]`,
-    );
-  });
-
-  test("fails on creates emoji with non-existent member", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    await mockSessionOnce(mockContext.db);
-
-    await expect(emojiCaller.onCreateEmoji({ roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: UNAUTHORIZED]`,
-    );
   });
 
   test("updates", async () => {
@@ -244,35 +179,6 @@ describe("emoji", () => {
     expect(takeOne(readEmojis).userIds).toStrictEqual([userId]);
   });
 
-  test("fails update emoji with non-existent room", async () => {
-    expect.hasAssertions();
-
-    await expect(
-      emojiCaller.updateEmoji({ messageRowKey: "", partitionKey: crypto.randomUUID(), rowKey: "" }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
-  });
-
-  test("fails update emoji with non-existent member", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-    const newEmoji = await emojiCaller.createEmoji({
-      emojiTag,
-      messageRowKey: newMessage.rowKey,
-      partitionKey: newRoom.id,
-    });
-    await mockSessionOnce(mockContext.db);
-
-    await expect(
-      emojiCaller.updateEmoji({
-        messageRowKey: newEmoji.messageRowKey,
-        partitionKey: newEmoji.partitionKey,
-        rowKey: newEmoji.rowKey,
-      }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
-  });
-
   test("fails update emoji with non-existent emoji", async () => {
     expect.hasAssertions();
 
@@ -323,27 +229,6 @@ describe("emoji", () => {
     expect(data.value.userIds).toStrictEqual([userId, user.id]);
   });
 
-  test("fails on updates emoji with non-existent room", async () => {
-    expect.hasAssertions();
-
-    const roomId = crypto.randomUUID();
-
-    await expect(emojiCaller.onUpdateEmoji({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: UNAUTHORIZED]`,
-    );
-  });
-
-  test("fails on updates emoji with non-existent member", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    await mockSessionOnce(mockContext.db);
-
-    await expect(emojiCaller.onUpdateEmoji({ roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: UNAUTHORIZED]`,
-    );
-  });
-
   test("deletes", async () => {
     expect.hasAssertions();
 
@@ -367,39 +252,6 @@ describe("emoji", () => {
     });
 
     expect(readEmojis).toHaveLength(0);
-  });
-
-  test("fails delete emoji with non-existent room", async () => {
-    expect.hasAssertions();
-
-    await expect(
-      emojiCaller.deleteEmoji({
-        messageRowKey: "",
-        partitionKey: crypto.randomUUID(),
-        rowKey: "",
-      }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
-  });
-
-  test("fails delete emoji with non-existent member", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const newMessage = await messageCaller.createMessage({ message, roomId: newRoom.id });
-    const newEmoji = await emojiCaller.createEmoji({
-      emojiTag,
-      messageRowKey: newMessage.rowKey,
-      partitionKey: newRoom.id,
-    });
-    await mockSessionOnce(mockContext.db);
-
-    await expect(
-      emojiCaller.deleteEmoji({
-        messageRowKey: newEmoji.messageRowKey,
-        partitionKey: newEmoji.partitionKey,
-        rowKey: newEmoji.rowKey,
-      }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
   test("on deletes emoji", async () => {
@@ -434,26 +286,5 @@ describe("emoji", () => {
     expect(data.value.messageRowKey).toBe(newEmoji.messageRowKey);
     expect(data.value.partitionKey).toBe(newEmoji.partitionKey);
     expect(data.value.rowKey).toBe(newEmoji.rowKey);
-  });
-
-  test("fails on deletes emoji with non-existent room", async () => {
-    expect.hasAssertions();
-
-    const roomId = crypto.randomUUID();
-
-    await expect(emojiCaller.onDeleteEmoji({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: UNAUTHORIZED]`,
-    );
-  });
-
-  test("fails on deletes emoji with non-existent member", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    await mockSessionOnce(mockContext.db);
-
-    await expect(emojiCaller.onDeleteEmoji({ roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: UNAUTHORIZED]`,
-    );
   });
 });

@@ -22,8 +22,8 @@ export const usersToRoomRoles = pgTable(
   {
     extraConfig: ({ roleId, roomId, userId }) => [
       primaryKey({ columns: [userId, roomId, roleId] }),
-      index("users_to_room_roles_roleId_idx").on(roleId),
-      index("users_to_room_roles_roomId_idx").on(roomId),
+      index("users_to_room_roles_roleId_index").on(roleId),
+      index("users_to_room_roles_roomId_index").on(roomId),
     ],
     schema: messageSchema,
   },

@@ -6,7 +6,7 @@ v2 added the profile card (view). This adds editing.
 
 ## DB Change
 
-`bio` column on `users` table - text, nullable, max 160 chars; additive migration; shown in profile card beneath display name.
+`biography` column on `users` table - text, nullable, max 160 chars (`USER_BIOGRAPHY_MAX_LENGTH`); additive migration; shown in profile card beneath display name.
 
 ---
 
@@ -15,7 +15,7 @@ v2 added the profile card (view). This adds editing.
 `server/trpc/routers/user.ts` - `updateUser` procedure:
 
 - Restricted to `session.userId = targetId`
-- Validates: `name` (max 100 chars, existing `USER_NAME_MAX_LENGTH`), `bio` (max 160 chars), `image`
+- Validates: `name` (max 100 chars, `USER_NAME_MAX_LENGTH`), `biography` (max 160 chars, `USER_BIOGRAPHY_MAX_LENGTH`), `image`
 
 ---
 
@@ -35,8 +35,8 @@ Reuse existing Azure Blob SAS upload flow (same as file attachments). Client upl
 
 ## Implementation Tasks
 
-- [ ] **`bio` column** - migration; show in profile card
-- [ ] **`updateUser` procedure** - `server/trpc/routers/user.ts`; validate `name`, `bio`, `image`
-- [ ] **Avatar upload** - `/avatars/{userId}` blob path; store `image` on `users`
-- [ ] **Edit profile dialog** - bottom-left user panel; fields + preview
-- [ ] **Tests** - `server/trpc/routers/user.test.ts`; cover `updateUser` (validation, auth guard, field limits)
+- [x] **`biography` column** - migration; show in profile card
+- [x] **`updateUser` procedure** - `server/trpc/routers/user.ts`; validate `name`, `biography`, `image`
+- [x] **Avatar upload** - `uploadProfileImage` via `AzureContainer.PublicUserAssets`
+- [x] **Edit profile dialog** - bottom-left user panel; fields + preview
+- [x] **Tests** - `server/trpc/routers/user.test.ts`; cover `updateUser` (validation, field limits, clear biography)

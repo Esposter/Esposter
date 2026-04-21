@@ -1,8 +1,9 @@
-import type { IUserStatus } from "@esposter/db-schema";
+import type { IUserStatus, User } from "@esposter/db-schema";
 import type { ReadableStream } from "node:stream/web";
 import type { SetNonNullable } from "type-fest";
 import type { z } from "zod";
 
+import { updateUserInputSchema } from "#shared/models/db/user/UpdateUserInput";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
@@ -16,13 +17,14 @@ import {
   DatabaseEntityType,
   selectUserSchema,
   selectUserStatusSchema,
+  users,
   UserStatus,
   userStatuses,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { octetInputParser } from "@trpc/server/http";
-import { inArray } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { Readable } from "node:stream";
 
 const readStatusesInputSchema = selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
@@ -122,6 +124,18 @@ export const userRouter = router({
     }
 
     return resultUserStatuses;
+  }),
+  updateUser: standardAuthedProcedure.input(updateUserInputSchema).mutation<User>(async ({ ctx, input }) => {
+    const updatedUser = (
+      await ctx.db.update(users).set(input).where(eq(users.id, ctx.getSessionPayload.user.id)).returning()
+    )[0];
+    if (!updatedUser)
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: new InvalidOperationError(Operation.Update, DatabaseEntityType.User, ctx.getSessionPayload.user.id)
+          .message,
+      });
+    return updatedUser;
   }),
   uploadProfileImage: standardAuthedProcedure.input(octetInputParser).mutation(async ({ ctx, input }) => {
     const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);

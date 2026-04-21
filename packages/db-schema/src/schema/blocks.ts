@@ -18,7 +18,7 @@ export const blocks = pgTable(
     extraConfig: ({ blockedId, blockerId }) => [
       primaryKey({ columns: [blockerId, blockedId] }),
       check("no_self_block", sql`${blockerId} != ${blockedId}`),
-      index("blocks_blockedId_idx").on(blockedId),
+      index("blocks_blockedId_index").on(blockedId),
     ],
   },
 );

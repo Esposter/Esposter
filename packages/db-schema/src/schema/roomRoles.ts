@@ -1,3 +1,4 @@
+import { createNameCheckSql, createNameSchema } from "@/models/shared/Name";
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { rooms } from "@/schema/rooms";
@@ -47,9 +48,9 @@ export const roomRoles = pgTable(
   },
   {
     extraConfig: (table) => [
-      check("name", sql`LENGTH(${table.name}) <= ${sql.raw(ROOM_ROLE_NAME_MAX_LENGTH.toString())}`),
-      check("position", sql`${table.position} >= 0`),
-      index("room_roles_room_id_position_idx").on(table.roomId, table.position),
+      check("room_roles_name_length_check", createNameCheckSql(table.name, ROOM_ROLE_NAME_MAX_LENGTH)),
+      check("room_roles_position_check", sql`${table.position} >= 0`),
+      index("room_roles_room_id_position_index").on(table.roomId, table.position),
       uniqueIndex("room_roles_everyone_unique")
         .on(table.roomId)
         .where(sql`${table.isEveryone} = TRUE`),
@@ -61,7 +62,7 @@ export const roomRoles = pgTable(
 export type RoomRole = typeof roomRoles.$inferSelect;
 
 export const selectRoomRoleSchema = createSelectSchema(roomRoles, {
-  name: z.string().max(ROOM_ROLE_NAME_MAX_LENGTH),
+  name: createNameSchema(ROOM_ROLE_NAME_MAX_LENGTH),
   permissions: z.bigint(),
   position: z.number().int().nonnegative(),
 });

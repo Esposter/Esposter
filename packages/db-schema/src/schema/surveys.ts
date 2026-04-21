@@ -1,9 +1,9 @@
+import { createNameCheckSql, createNameSchema } from "@/models/shared/Name";
 import { pgTable } from "@/pgTable";
 import { users } from "@/schema/users";
-import { relations, sql } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 import { check, integer, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
-import { z } from "zod";
 
 export const SURVEY_NAME_MAX_LENGTH = 100;
 
@@ -22,16 +22,14 @@ export const surveys = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ name }) => [
-      check("name", sql`LENGTH(${name}) BETWEEN 1 AND ${sql.raw(SURVEY_NAME_MAX_LENGTH.toString())}`),
-    ],
+    extraConfig: ({ name }) => [check("surveys_name_length_check", createNameCheckSql(name, SURVEY_NAME_MAX_LENGTH))],
   },
 );
 
 export type Survey = typeof surveys.$inferSelect;
 
 export const selectSurveySchema = createSelectSchema(surveys, {
-  name: z.string().min(1).max(SURVEY_NAME_MAX_LENGTH),
+  name: createNameSchema(SURVEY_NAME_MAX_LENGTH),
 });
 
 export const surveysRelations = relations(surveys, ({ one }) => ({

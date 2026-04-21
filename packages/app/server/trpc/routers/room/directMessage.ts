@@ -70,7 +70,7 @@ export const directMessageRouter = router({
       const participantKey = allUserIds.toSorted().join(ID_SEPARATOR);
       const [newRoom] = await tx
         .insert(rooms)
-        .values({ name: "", participantKey, type: RoomType.DirectMessage, userId })
+        .values({ participantKey, type: RoomType.DirectMessage, userId })
         .onConflictDoNothing({ target: rooms.participantKey })
         .returning();
       const room =

@@ -21,7 +21,7 @@ export const pushSubscriptions = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ endpoint, userId }) => [unique().on(endpoint, userId)],
+    extraConfig: ({ endpoint, userId }) => [unique("push_subscriptions_endpoint_user_id_unique").on(endpoint, userId)],
     schema: messageSchema,
   },
 );

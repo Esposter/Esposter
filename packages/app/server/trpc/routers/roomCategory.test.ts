@@ -51,23 +51,18 @@ describe("roomCategory", () => {
     expect(newRoomCategory.name).toBe(name);
   });
 
-  test("updates name", async () => {
+  test("updates", async () => {
     expect.hasAssertions();
 
     const newRoomCategory = await caller.createRoomCategory({ name });
-    const updatedRoomCategory = await caller.updateRoomCategory({ id: newRoomCategory.id, name: updatedName });
+    const updatedRoomCategory = await caller.updateRoomCategory({
+      id: newRoomCategory.id,
+      name: updatedName,
+      position: 1,
+    });
 
     expect(updatedRoomCategory.id).toBe(newRoomCategory.id);
     expect(updatedRoomCategory.name).toBe(updatedName);
-  });
-
-  test("updates position", async () => {
-    expect.hasAssertions();
-
-    const newRoomCategory = await caller.createRoomCategory({ name });
-    const updatedRoomCategory = await caller.updateRoomCategory({ id: newRoomCategory.id, position: 1 });
-
-    expect(updatedRoomCategory.id).toBe(newRoomCategory.id);
     expect(updatedRoomCategory.position).toBe(1);
   });
 

@@ -23,8 +23,8 @@ export const userAchievements = pgTable(
   },
   {
     extraConfig: ({ achievementId, amount, userId }) => [
-      uniqueIndex().on(userId, achievementId),
-      check("amount", sql`${amount} >= 1`),
+      uniqueIndex("user_achievements_user_id_achievement_id_unique").on(userId, achievementId),
+      check("user_achievements_amount_check", sql`${amount} >= 1`),
     ],
   },
 );

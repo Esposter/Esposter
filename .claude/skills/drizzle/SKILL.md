@@ -155,6 +155,33 @@ description: Esposter Drizzle ORM conventions — column naming (camelCase match
 
   This applies everywhere: seed scripts, junction-table population, bulk upserts, etc. The only exception is when each row's insert result must be inspected individually before proceeding.
 
+## Constraint & Index Naming
+
+Always use explicit, descriptive names — never bare column names like `"name"` or `"position"`.
+
+| Type              | Pattern                         | Example                                        |
+| ----------------- | ------------------------------- | ---------------------------------------------- |
+| Length check      | `{table}_{column}_length_check` | `"users_name_length_check"`                    |
+| Other check       | `{table}_{column}_check`        | `"room_categories_position_check"`             |
+| Semantic check    | descriptive phrase              | `"no_self_block"`, `"rooms_name_check"`        |
+| Unique constraint | `{table}_{col1}_{col2}_unique`  | `"push_subscriptions_endpoint_user_id_unique"` |
+| Index             | `{table}_{col}_index`           | `"blocks_blockedId_index"`                     |
+| Composite index   | `{table}_{col1}_{col2}_index`   | `"room_roles_room_id_position_index"`          |
+
+Use DB column names (snake_case where applicable) in constraint/index names, not TS property names.
+
+```typescript
+// CORRECT
+check("users_name_length_check", createNameCheckSql(name, USER_NAME_MAX_LENGTH)),
+check("room_categories_position_check", sql`${position} >= 0`),
+unique("push_subscriptions_endpoint_user_id_unique").on(endpoint, userId),
+
+// WRONG — bare column name, collides across tables, unclear purpose
+check("name", createNameCheckSql(name, USER_NAME_MAX_LENGTH)),
+check("position", sql`${position} >= 0`),
+unique().on(endpoint, userId),
+```
+
 ## CHECK Constraints with `sql` Template Literals
 
 - **Always use `sql\`\`` template literals** for CHECK constraint expressions — never pass a raw string.

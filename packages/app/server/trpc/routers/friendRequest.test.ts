@@ -7,7 +7,7 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { blockRouter } from "@@/server/trpc/routers/block";
 import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
-import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
+import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 import { blocks, DatabaseEntityType, friendRequests, friends, users } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";

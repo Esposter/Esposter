@@ -20,6 +20,10 @@ const profileCardRows = computed(() => {
       type: RowValueType.Text,
       value: session.value.user.name,
     },
+    biography: {
+      type: RowValueType.Textarea,
+      value: session.value.user.biography,
+    },
     image: {
       type: RowValueType.Image,
       value: session.value.user.image,

@@ -1,3 +1,4 @@
+import { createNameCheckSql, createNameSchema } from "@/models/shared/Name";
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { rooms } from "@/schema/rooms";
@@ -21,8 +22,8 @@ export const roomCategories = pgTable(
   },
   {
     extraConfig: ({ name, position }) => [
-      check("name", sql`LENGTH(${name}) BETWEEN 1 AND ${sql.raw(ROOM_CATEGORY_NAME_MAX_LENGTH.toString())}`),
-      check("position", sql`${position} >= 0`),
+      check("room_categories_name_length_check", createNameCheckSql(name, ROOM_CATEGORY_NAME_MAX_LENGTH)),
+      check("room_categories_position_check", sql`${position} >= 0`),
     ],
     schema: messageSchema,
   },
@@ -31,7 +32,7 @@ export const roomCategories = pgTable(
 export type RoomCategory = typeof roomCategories.$inferSelect;
 
 export const selectRoomCategorySchema = createSelectSchema(roomCategories, {
-  name: z.string().min(1).max(ROOM_CATEGORY_NAME_MAX_LENGTH),
+  name: createNameSchema(ROOM_CATEGORY_NAME_MAX_LENGTH),
   position: z.number().int().nonnegative(),
 });
 
