@@ -1,7 +1,7 @@
 import type { AuthedContext } from "@@/server/models/auth/AuthedContext";
 
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
-import { createEntity } from "@esposter/db";
+import { upsertEntity } from "@esposter/db";
 import { AzureTable, getReverseTickedTimestamp, UserActivityEntity } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { initTRPC } from "@trpc/server";
@@ -14,7 +14,7 @@ export const userActivityPlugin = t.procedure.use(async ({ ctx, next, path, type
 
   const forwardedFor = ctx.req.headers["x-forwarded-for"] as string | undefined;
   const userActivitiesTableClient = await useTableClient(AzureTable.UserActivities);
-  await createEntity(
+  await upsertEntity(
     userActivitiesTableClient,
     new UserActivityEntity({
       acceptLanguage: ctx.req.headers["accept-language"],

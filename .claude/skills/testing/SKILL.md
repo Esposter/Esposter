@@ -65,6 +65,12 @@ expect(isUndoable.value).toBe(false);
 
 Never use `await nextTick()` — unnecessary for sync effects, insufficient for async watch bodies. Always use `flushPromises` for pending async work.
 
+## Fake Timers
+
+- **`beforeEach(() => vi.useFakeTimers())`** — use this pattern the moment ANY test in a `describe` block requires fake timers. Never add `vi.useFakeTimers()` inside individual tests; always hoist it to `beforeEach` so every test in the block gets a clean, consistent timer environment.
+- **No `toFake` restriction** — use plain `vi.useFakeTimers()` without any `{ toFake: [...] }` option. `withAsyncIterator` and tRPC subscriptions are purely promise-based and are not affected by timer faking.
+- **`vi.useRealTimers()` in `afterEach`** — always pair with `vi.useRealTimers()` in `afterEach` to restore real timers after each test.
+
 ## Running Validation Commands
 
 - Always run `pnpm lint`, `pnpm typecheck`, and tests with `run_in_background: true` — they can take 2+ minutes.

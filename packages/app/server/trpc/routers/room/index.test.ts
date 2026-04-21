@@ -34,7 +34,7 @@ describe("room", () => {
   });
 
   beforeEach(() => {
-    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.useFakeTimers();
     vi.setSystemTime(0);
   });
 
