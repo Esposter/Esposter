@@ -1,2 +1,0 @@
-- regex search all mockContext.db.select, we should replace them all with callers so it mocks the actual logic of the app, note down in skills md
-- we should always cleanup tables in afterEach or afterAll, not beforeEach, for example await mockContext.db.delete(rooms);, search all router tests to fix them all up, note this down in skills md

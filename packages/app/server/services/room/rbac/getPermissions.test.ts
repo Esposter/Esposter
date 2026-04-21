@@ -47,18 +47,15 @@ describe(getPermissions, () => {
   test("updates @everyone permissions for all members", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    await roomCaller.createMembers({ roomId, userIds: [userId] });
+    await mockSessionOnce(mockContext.db);
+    const { user } = getMockSession();
+    await roomCaller.createMembers({ roomId, userIds: [user.id] });
 
-    await mockSessionOnce(mockContext.db, owner);
     const roles = await roleCaller.readRoles({ roomId });
     const everyoneRole = roles.find(({ isEveryone }) => isEveryone);
     assert.exists(everyoneRole);
-
-    await mockSessionOnce(mockContext.db, owner);
     await roleCaller.updateRole({ id: everyoneRole.id, permissions: updatedPermissions, roomId });
-
-    const result = await getPermissions(mockContext.db, userId, roomId);
+    const result = await getPermissions(mockContext.db, user.id, roomId);
 
     expect(result).toBe(updatedPermissions);
   });
@@ -66,27 +63,23 @@ describe(getPermissions, () => {
   test("oRs @everyone + assigned role permissions", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    await roomCaller.createMembers({ roomId, userIds: [userId] });
+    await mockSessionOnce(mockContext.db);
+    const { user } = getMockSession();
+    await roomCaller.createMembers({ roomId, userIds: [user.id] });
 
-    await mockSessionOnce(mockContext.db, owner);
     const roles = await roleCaller.readRoles({ roomId });
     const everyoneRole = roles.find(({ isEveryone }) => isEveryone);
     assert.exists(everyoneRole);
-
-    await mockSessionOnce(mockContext.db, owner);
     await roleCaller.updateRole({ id: everyoneRole.id, permissions: RoomPermission.ReadMessages, roomId });
-    await mockSessionOnce(mockContext.db, owner);
     const adminRole = await roleCaller.createRole({
       name: "Admin",
       permissions: RoomPermission.ManageRoom,
       position: 1,
       roomId,
     });
-    await mockSessionOnce(mockContext.db, owner);
-    await roleCaller.assignRole({ roleId: adminRole.id, roomId, userId });
+    await roleCaller.assignRole({ roleId: adminRole.id, roomId, userId: user.id });
 
-    const result = await getPermissions(mockContext.db, userId, roomId);
+    const result = await getPermissions(mockContext.db, user.id, roomId);
 
     expect(result).toBe(RoomPermission.ReadMessages | RoomPermission.ManageRoom);
   });

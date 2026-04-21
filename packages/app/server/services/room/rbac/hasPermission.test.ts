@@ -54,20 +54,18 @@ describe(hasPermission, () => {
   test("administrator bit grants all permissions", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    await mockSessionOnce(mockContext.db, owner);
     const adminRole = await roleCaller.createRole({
       name: "Admin",
       permissions: RoomPermission.Administrator,
       position: 1,
       roomId,
     });
-    await mockSessionOnce(mockContext.db, owner);
-    await roomCaller.createMembers({ roomId, userIds: [userId] });
-    await mockSessionOnce(mockContext.db, owner);
-    await roleCaller.assignRole({ roleId: adminRole.id, roomId, userId });
+    await mockSessionOnce(mockContext.db);
+    const { user } = getMockSession();
+    await roomCaller.createMembers({ roomId, userIds: [user.id] });
+    await roleCaller.assignRole({ roleId: adminRole.id, roomId, userId: user.id });
 
-    const result = await hasPermission(mockContext.db, userId, roomId, RoomPermission.ManageMessages);
+    const result = await hasPermission(mockContext.db, user.id, roomId, RoomPermission.ManageMessages);
 
     expect(result).toBe(true);
   });
@@ -75,20 +73,17 @@ describe(hasPermission, () => {
   test("specific permission check works", async () => {
     expect.hasAssertions();
 
-    const userId = getMockSession().user.id;
-    await roomCaller.createMembers({ roomId, userIds: [userId] });
+    await mockSessionOnce(mockContext.db);
+    const { user } = getMockSession();
+    await roomCaller.createMembers({ roomId, userIds: [user.id] });
 
-    await mockSessionOnce(mockContext.db, owner);
     const roles = await roleCaller.readRoles({ roomId });
     const everyoneRole = roles.find(({ isEveryone }) => isEveryone);
     assert.exists(everyoneRole);
-
-    await mockSessionOnce(mockContext.db, owner);
     await roleCaller.updateRole({ id: everyoneRole.id, permissions: RoomPermission.ReadMessages, roomId });
-
     const [canRead, canManage] = await Promise.all([
-      hasPermission(mockContext.db, userId, roomId, RoomPermission.ReadMessages),
-      hasPermission(mockContext.db, userId, roomId, RoomPermission.ManageRoom),
+      hasPermission(mockContext.db, user.id, roomId, RoomPermission.ReadMessages),
+      hasPermission(mockContext.db, user.id, roomId, RoomPermission.ManageRoom),
     ]);
 
     expect(canRead).toBe(true);

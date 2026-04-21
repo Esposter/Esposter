@@ -109,7 +109,6 @@ describe(getPushSubscriptionsForMessage, () => {
       partitionKey: roomId,
       userId: senderUserId,
     });
-
     const endpointSet = new Set(result.map((subscription) => subscription.endpoint));
 
     expect(result).toHaveLength(3);
@@ -126,7 +125,6 @@ describe(getPushSubscriptionsForMessage, () => {
       partitionKey: roomId,
       userId: senderUserId,
     });
-
     const endpointSet = new Set(result.map((subscription) => subscription.endpoint));
 
     expect(result).toHaveLength(4);

@@ -5,7 +5,7 @@ import type { User } from "better-auth";
 
 import { isManageable } from "@@/server/services/room/rbac/isManageable";
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test";
+import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { rooms } from "@esposter/db-schema";
@@ -54,11 +54,10 @@ describe(isManageable, () => {
   test("user with higher top can manage lower position", async () => {
     expect.hasAssertions();
 
-    await mockSessionOnce(mockContext.db, owner);
     const role = await roleCaller.createRole({ name: "Mod", permissions: 0n, position: 5, roomId });
-    const { user } = await mockSessionOnce(mockContext.db);
+    await mockSessionOnce(mockContext.db);
+    const { user } = getMockSession();
     await roomCaller.createMembers({ roomId, userIds: [user.id] });
-    await mockSessionOnce(mockContext.db, owner);
     await roleCaller.assignRole({ roleId: role.id, roomId, userId: user.id });
 
     const result = await isManageable(mockContext.db, user.id, roomId, 4);
@@ -69,19 +68,18 @@ describe(isManageable, () => {
   test("user cannot manage equal or higher position", async () => {
     expect.hasAssertions();
 
-    await mockSessionOnce(mockContext.db, owner);
     const role = await roleCaller.createRole({ name: "Mod", permissions: 0n, position: 5, roomId });
-    const { user } = await mockSessionOnce(mockContext.db);
+    await mockSessionOnce(mockContext.db);
+    const { user } = getMockSession();
     await roomCaller.createMembers({ roomId, userIds: [user.id] });
-    await mockSessionOnce(mockContext.db, owner);
     await roleCaller.assignRole({ roleId: role.id, roomId, userId: user.id });
 
-    const [equalPos, higherPos] = await Promise.all([
+    const [equalPosition, higherPosition] = await Promise.all([
       isManageable(mockContext.db, user.id, roomId, 5),
       isManageable(mockContext.db, user.id, roomId, 6),
     ]);
 
-    expect(equalPos).toBe(false);
-    expect(higherPos).toBe(false);
+    expect(equalPosition).toBe(false);
+    expect(higherPosition).toBe(false);
   });
 });

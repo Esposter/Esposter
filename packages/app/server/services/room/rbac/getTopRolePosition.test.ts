@@ -5,7 +5,7 @@ import type { User } from "better-auth";
 
 import { getTopRolePosition } from "@@/server/services/room/rbac/getTopRolePosition";
 import { createCallerFactory } from "@@/server/trpc";
-import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
+import { createMockContext, getMockSession } from "@@/server/trpc/context.test";
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { rooms } from "@esposter/db-schema";
@@ -46,9 +46,7 @@ describe(getTopRolePosition, () => {
   test("returns the assigned role position", async () => {
     expect.hasAssertions();
 
-    await mockSessionOnce(mockContext.db, owner);
     const role = await roleCaller.createRole({ name: "Mod", permissions: 0n, position: 5, roomId });
-    await mockSessionOnce(mockContext.db, owner);
     await roleCaller.assignRole({ roleId: role.id, roomId, userId: owner.id });
 
     const result = await getTopRolePosition(mockContext.db, owner.id, roomId);
@@ -59,13 +57,9 @@ describe(getTopRolePosition, () => {
   test("returns max position across multiple roles", async () => {
     expect.hasAssertions();
 
-    await mockSessionOnce(mockContext.db, owner);
     const mod = await roleCaller.createRole({ name: "Mod", permissions: 0n, position: 3, roomId });
-    await mockSessionOnce(mockContext.db, owner);
     const senior = await roleCaller.createRole({ name: "Senior", permissions: 0n, position: 7, roomId });
-    await mockSessionOnce(mockContext.db, owner);
     await roleCaller.assignRole({ roleId: mod.id, roomId, userId: owner.id });
-    await mockSessionOnce(mockContext.db, owner);
     await roleCaller.assignRole({ roleId: senior.id, roomId, userId: owner.id });
 
     const result = await getTopRolePosition(mockContext.db, owner.id, roomId);
