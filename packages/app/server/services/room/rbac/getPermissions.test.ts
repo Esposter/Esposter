@@ -39,7 +39,9 @@ describe(getPermissions, () => {
   test("returns 0n with no roles", async () => {
     expect.hasAssertions();
 
-    const result = await getPermissions(mockContext.db, owner.id, roomId);
+    await mockSessionOnce(mockContext.db);
+    const { user: nonMember } = getMockSession();
+    const result = await getPermissions(mockContext.db, nonMember.id, roomId);
 
     expect(result).toBe(0n);
   });
