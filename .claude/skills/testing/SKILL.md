@@ -71,6 +71,14 @@ Never use `await nextTick()` — unnecessary for sync effects, insufficient for 
 - **No `toFake` restriction** — use plain `vi.useFakeTimers()` without any `{ toFake: [...] }` option. `withAsyncIterator` and tRPC subscriptions are purely promise-based and are not affected by timer faking.
 - **`vi.useRealTimers()` in `afterEach`** — always pair with `vi.useRealTimers()` in `afterEach` to restore real timers after each test.
 
+## DB Cleanup in Router/Service Tests
+
+- **Always clean up in `afterEach`/`afterAll`, never `beforeEach`** — place `await mockContext.db.delete(table)` in `afterEach` so state is cleaned after each test, not before. Cleaning before hides leaks from failed tests.
+- **Use callers, not `mockContext.db.insert`** — in router tests, always set up test state via tRPC callers (e.g. `roomCaller.createRoom`, `caller.createRole`, `caller.assignRole`). Direct DB inserts bypass app logic and miss side effects (e.g. `createRoom` auto-creates `usersToRooms` and `@everyone` role). Only use `mockContext.db.insert` when no caller equivalent exists (niche cases):
+  - Creating a user that should NOT have an active session (e.g. a non-member for auth failure tests) — use `db.insert(users)` directly since `mockSessionOnce` also queues a session slot
+  - Service-layer unit tests (`server/services/**`) — these test internal functions directly and using router callers would create upward coupling; direct DB inserts are acceptable here
+- **`mockSessionOnce` for user creation** — in router tests, create users via `mockSessionOnce(mockContext.db)` which inserts the user AND queues a session for the next caller call. Pass an existing `User` object to requeue their session without re-inserting: `await mockSessionOnce(mockContext.db, existingUser)`.
+
 ## Running Validation Commands
 
 - Always run `pnpm lint`, `pnpm typecheck`, and tests with `run_in_background: true` — they can take 2+ minutes.
