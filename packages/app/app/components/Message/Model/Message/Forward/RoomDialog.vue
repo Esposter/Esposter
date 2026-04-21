@@ -29,14 +29,16 @@ const {
   readMoreItemsSearched,
   searchQuery,
 } = useCursorSearcher(
-  (searchQuery, cursor, opts) =>
-    $trpc.room.readRooms.query(
+  (searchQuery, cursor, opts) => {
+    const trimmedSearchQuery = searchQuery.trim();
+    return $trpc.room.readRooms.query(
       {
         cursor,
-        filter: { name: searchQuery },
+        filter: trimmedSearchQuery ? { name: trimmedSearchQuery } : undefined,
       },
       opts,
-    ),
+    );
+  },
   true,
   true,
 );
