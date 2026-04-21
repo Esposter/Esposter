@@ -1,7 +1,6 @@
 import type { Context } from "@@/server/trpc/context";
 import type { TRPCRouter } from "@@/server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
-import type { User } from "better-auth";
 
 import { getPermissions } from "@@/server/services/room/rbac/getPermissions";
 import { createCallerFactory } from "@@/server/trpc";
@@ -16,7 +15,6 @@ describe(getPermissions, () => {
   let roleCaller: DecorateRouterRecord<TRPCRouter["role"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let roomId: string;
-  let owner: User;
   const name = "name";
   const updatedPermissions = RoomPermission.ReadMessages | RoomPermission.SendMessages;
 
@@ -27,7 +25,6 @@ describe(getPermissions, () => {
   });
 
   beforeEach(async () => {
-    owner = getMockSession().user;
     const room = await roomCaller.createRoom({ name });
     roomId = room.id;
   });
@@ -80,7 +77,6 @@ describe(getPermissions, () => {
       roomId,
     });
     await roleCaller.assignRole({ roleId: adminRole.id, roomId, userId: user.id });
-
     const result = await getPermissions(mockContext.db, user.id, roomId);
 
     expect(result).toBe(RoomPermission.ReadMessages | RoomPermission.ManageRoom);
