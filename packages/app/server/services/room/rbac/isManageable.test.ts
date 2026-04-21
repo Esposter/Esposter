@@ -14,23 +14,21 @@ import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest
 
 describe(isManageable, () => {
   let mockContext: Context;
-  let caller: DecorateRouterRecord<TRPCRouter["role"]>;
+  let roleCaller: DecorateRouterRecord<TRPCRouter["role"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let roomId: string;
-  let ownerId: string;
   let owner: User;
   const name = "name";
 
   beforeAll(async () => {
     mockContext = await createMockContext();
-    caller = createCallerFactory(roleRouter)(mockContext);
+    roleCaller = createCallerFactory(roleRouter)(mockContext);
     roomCaller = createCallerFactory(roomRouter)(mockContext);
   });
 
   beforeEach(async () => {
     const { user: ownerUser } = await mockSessionOnce(mockContext.db);
     owner = ownerUser;
-    ownerId = owner.id;
     const room = await roomCaller.createRoom({ name });
     roomId = room.id;
   });
@@ -42,7 +40,7 @@ describe(isManageable, () => {
   test("owner can manage any target position", async () => {
     expect.hasAssertions();
 
-    const result = await isManageable(mockContext.db, ownerId, roomId, 9999);
+    const result = await isManageable(mockContext.db, owner.id, roomId, 9999);
 
     expect(result).toBe(true);
   });
@@ -50,22 +48,7 @@ describe(isManageable, () => {
   test("returns false for non-existent room", async () => {
     expect.hasAssertions();
 
-    const createdAt = new Date();
-    const user = takeOne(
-      await mockContext.db
-        .insert(users)
-        .values({
-          createdAt,
-          email: crypto.randomUUID(),
-          emailVerified: true,
-          id: crypto.randomUUID(),
-          image: null,
-          name: crypto.randomUUID(),
-          updatedAt: createdAt,
-        })
-        .returning(),
-    );
-    const result = await isManageable(mockContext.db, user.id, crypto.randomUUID(), 0);
+    const result = await isManageable(mockContext.db, owner.id, crypto.randomUUID(), 0);
 
     expect(result).toBe(false);
   });
@@ -74,8 +57,9 @@ describe(isManageable, () => {
     expect.hasAssertions();
 
     await mockSessionOnce(mockContext.db, owner);
-    const role = await caller.createRole({ name: "Mod", permissions: 0n, position: 5, roomId });
+    const role = await roleCaller.createRole({ name: "Mod", permissions: 0n, position: 5, roomId });
     const createdAt = new Date();
+    // niche: non-owner user needed for createMembers/assignRole FK; mockSessionOnce would leak into next test
     const user = takeOne(
       await mockContext.db
         .insert(users)
@@ -93,7 +77,7 @@ describe(isManageable, () => {
     await mockSessionOnce(mockContext.db, owner);
     await roomCaller.createMembers({ roomId, userIds: [user.id] });
     await mockSessionOnce(mockContext.db, owner);
-    await caller.assignRole({ roleId: role.id, roomId, userId: user.id });
+    await roleCaller.assignRole({ roleId: role.id, roomId, userId: user.id });
 
     const result = await isManageable(mockContext.db, user.id, roomId, 4);
 
@@ -104,8 +88,9 @@ describe(isManageable, () => {
     expect.hasAssertions();
 
     await mockSessionOnce(mockContext.db, owner);
-    const role = await caller.createRole({ name: "Mod", permissions: 0n, position: 5, roomId });
+    const role = await roleCaller.createRole({ name: "Mod", permissions: 0n, position: 5, roomId });
     const createdAt = new Date();
+    // niche: non-owner user needed for createMembers/assignRole FK; mockSessionOnce would leak into next test
     const user = takeOne(
       await mockContext.db
         .insert(users)
@@ -123,7 +108,7 @@ describe(isManageable, () => {
     await mockSessionOnce(mockContext.db, owner);
     await roomCaller.createMembers({ roomId, userIds: [user.id] });
     await mockSessionOnce(mockContext.db, owner);
-    await caller.assignRole({ roleId: role.id, roomId, userId: user.id });
+    await roleCaller.assignRole({ roleId: role.id, roomId, userId: user.id });
 
     const [equalPos, higherPos] = await Promise.all([
       isManageable(mockContext.db, user.id, roomId, 5),
