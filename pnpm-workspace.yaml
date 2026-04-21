@@ -30,7 +30,7 @@ catalog:
   "@codemirror/state": ^6.6.0
   "@codemirror/theme-one-dark": ^6.1.3
   "@codemirror/view": ^6.41.1
-  "@dxup/nuxt": ^0.4.0
+  "@dxup/nuxt": ^0.4.1
   "@dxup/unimport": ^0.1.2
   "@electric-sql/pglite": ^0.4.4
   "@eslint/core": ^1.2.1
