@@ -316,6 +316,13 @@
       "when": 1776663070113,
       "tag": "0044_sweet_hydra",
       "breakpoints": true
+    },
+    {
+      "idx": 45,
+      "version": "7",
+      "when": 1776732857219,
+      "tag": "0045_green_living_lightning",
+      "breakpoints": true
     }
   ]
 }

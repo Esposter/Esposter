@@ -27,7 +27,7 @@ export const rooms = pgTable(
     categoryId: uuid("categoryId").references(() => roomCategories.id, { onDelete: "set null" }),
     id: uuid("id").primaryKey().defaultRandom(),
     image: text("image"),
-    name: text("name").notNull(),
+    name: text("name"),
     participantKey: text("participantKey").unique(),
     type: roomTypeEnum("type").notNull().default(RoomType.Room),
     userId: text("userId")
@@ -36,7 +36,10 @@ export const rooms = pgTable(
   },
   {
     extraConfig: ({ name, participantKey, type }) => [
-      check("name", createNameCheckSql(name, ROOM_NAME_MAX_LENGTH)),
+      check(
+        "name",
+        sql`(${type} = '${sql.raw(RoomType.DirectMessage)}' AND ${name} IS NULL) OR (${type} = '${sql.raw(RoomType.Room)}' AND ${createNameCheckSql(name, ROOM_NAME_MAX_LENGTH)})`,
+      ),
       check(
         "participant_key_type",
         sql`(${type} = '${sql.raw(RoomType.DirectMessage)}' AND ${participantKey} IS NOT NULL) OR (${type} = '${sql.raw(RoomType.Room)}' AND ${participantKey} IS NULL)`,
@@ -49,7 +52,7 @@ export const rooms = pgTable(
 export type Room = typeof rooms.$inferSelect;
 
 export const selectRoomSchema = createSelectSchema(rooms, {
-  name: createNameSchema(ROOM_NAME_MAX_LENGTH),
+  name: createNameSchema(ROOM_NAME_MAX_LENGTH).nullable(),
 });
 
 export const roomsRelations = relations(rooms, ({ many, one }) => ({
