@@ -46,7 +46,7 @@ description: Esposter Vitest testing conventions — describe with function refs
 ## Destructuring
 
 - **Stores and composables** — always destructure: `const { deleteRow, isUndoable } = operations`, `const { editedItem } = storeToRefs(store)`. Never chain `useX().method()` — destructure first.
-- **No unnecessary destructure** — if a property is only used once, access it directly instead.
+- **No unnecessary destructure** — for plain objects (not stores/composables), access a property directly when used only once instead of destructuring it into a variable.
 
 ## Mock Session Patterns
 
@@ -134,4 +134,4 @@ describe(useMyComposable, () => {
 
 ## Test Utility Files
 
-Shared helpers must live in `.test.ts` files. Add `describe.todo("testUtils")` at the bottom to prevent Vitest from treating the file as a test suite.
+Shared helpers must live in `.test.ts` files. Add `describe.todo("testUtils")` at the bottom as a placeholder suite so Vitest accepts the file without requiring a real test.
