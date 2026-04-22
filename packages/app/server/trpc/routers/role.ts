@@ -34,12 +34,11 @@ const onUpdateRoleInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export type OnUpdateRoleInput = z.infer<typeof onUpdateRoleInputSchema>;
 
 export const roleRouter = router({
-  assignRole: getPermissionsProcedure(RoomPermission.ManageRoles, assignRoleInputSchema, "roomId").mutation(
+  assignRole: getPermissionsProcedure(RoomPermission.ManageRoles, assignRoleInputSchema, "roomId").mutation<RoomRole>(
     async ({ ctx, input: { roleId, roomId, userId } }) => {
       const actorId = ctx.getSessionPayload.user.id;
       const [role, member, actorContext] = await Promise.all([
         ctx.db.query.roomRoles.findFirst({
-          columns: { isEveryone: true, position: true },
           where: (roomRoles, { and, eq }) => and(eq(roomRoles.id, roleId), eq(roomRoles.roomId, roomId)),
         }),
         ctx.db.query.usersToRooms.findFirst({
@@ -74,6 +73,7 @@ export const roleRouter = router({
 
       await ctx.db.insert(usersToRoomRoles).values({ roleId, roomId, userId }).onConflictDoNothing();
       getRoleEventEmitter(roomId).emit("updateRole");
+      return role;
     },
   ),
   createRole: getPermissionsProcedure(RoomPermission.ManageRoles, createRoleInputSchema, "roomId").mutation<RoomRole>(

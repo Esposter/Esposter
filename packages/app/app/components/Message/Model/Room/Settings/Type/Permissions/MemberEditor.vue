@@ -14,7 +14,7 @@ const roleStore = useRoleStore();
 const { assignRole, getMemberRoles, getRoles, readMemberRoles, revokeRole } = roleStore;
 const { myPermissionsMap } = storeToRefs(roleStore);
 const allRoles = computed(() => getRoles(roomId).filter(({ isEveryone }) => !isEveryone));
-const memberRoles = computed(() => getMemberRoles(member.id));
+const memberRoles = computed(() => getMemberRoles(roomId, member.id));
 const hasRole = (roleId: string) => memberRoles.value.some(({ id }) => id === roleId);
 const isRoleManageable = (role: RoomRole) => {
   const data = myPermissionsMap.value.get(roomId);

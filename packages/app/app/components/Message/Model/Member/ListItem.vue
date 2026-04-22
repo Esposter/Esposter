@@ -5,8 +5,8 @@ import type { VHover } from "vuetify/lib/components/VHover/VHover.mjs";
 import type { ListItemSlot } from "vuetify/lib/components/VList/VListItem.mjs";
 
 import { authClient } from "@/services/auth/authClient";
-import { useRoleStore } from "@/store/message/room/role";
 import { useRoomStore } from "@/store/message/room";
+import { useRoleStore } from "@/store/message/room/role";
 import { useMemberStore } from "@/store/message/user/member";
 import { mergeProps } from "vue";
 
@@ -29,8 +29,8 @@ const isKickable = computed(() => isRoomCreator.value && member.id !== session.v
 const memberStore = useMemberStore();
 const { deleteMember } = memberStore;
 const roleStore = useRoleStore();
-const { getMemberRoles } = roleStore;
-const memberRoles = computed(() => getMemberRoles(member.id));
+const { memberRoleMap } = storeToRefs(roleStore);
+const memberRoles = computed(() => (currentRoom.value?.id ? (memberRoleMap.value.get(member.id) ?? []) : []));
 </script>
 
 <template>

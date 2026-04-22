@@ -16,9 +16,8 @@ export const useReadMembers = () => {
   const readUserStatuses = useReadUserStatuses();
   const roleStore = useRoleStore();
   const { readMemberRoles } = roleStore;
-  const readMetadata = (memberIds: User["id"][]) => {
-    if (!currentRoomId.value || memberIds.length === 0) return Promise.resolve();
-    const roomId = currentRoomId.value;
+  const readMetadata = (roomId: string, memberIds: User["id"][]) => {
+    if (memberIds.length === 0) return Promise.resolve();
     return Promise.all([readUserStatuses(memberIds), readMemberRoles({ roomId, userIds: memberIds })]);
   };
   const readMembers = () =>
@@ -34,8 +33,17 @@ export const useReadMembers = () => {
         return $trpc.room.readMembers.query({ roomId: currentRoomId.value });
       },
       async ({ items }) => {
+        if (!currentRoomId.value)
+          throw new InvalidOperationError(
+            Operation.Read,
+            readMoreMembers.name,
+            StandardMessageEntityPropertyNames.partitionKey,
+          );
         for (const member of items) memberMap.value.set(member.id, member);
-        await readMetadata(items.map(({ id }) => id));
+        await readMetadata(
+          currentRoomId.value,
+          items.map(({ id }) => id),
+        );
       },
     );
   const readMoreMembers = (onComplete: () => void) =>
@@ -48,7 +56,10 @@ export const useReadMembers = () => {
         );
       const cursorPaginationData = await $trpc.room.readMembers.query({ cursor, roomId: currentRoomId.value });
       for (const member of cursorPaginationData.items) memberMap.value.set(member.id, member);
-      await readMetadata(cursorPaginationData.items.map(({ id }) => id));
+      await readMetadata(
+        currentRoomId.value,
+        cursorPaginationData.items.map(({ id }) => id),
+      );
       return cursorPaginationData;
     }, onComplete);
   return { readMembers, readMoreMembers };

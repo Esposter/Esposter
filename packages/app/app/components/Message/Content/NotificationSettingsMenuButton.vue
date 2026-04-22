@@ -1,16 +1,9 @@
 <script setup lang="ts">
-import type { Room } from "@esposter/db-schema";
-
 import { NotificationTypeLabelMap } from "@/services/message/NotificationTypeLabelMap";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { NotificationType } from "@esposter/db-schema";
 import { mergeProps } from "vue";
 
-interface NotificationSettingsMenuButtonProps {
-  roomId: Room["id"];
-}
-
-const { roomId } = defineProps<NotificationSettingsMenuButtonProps>();
 const userToRoomStore = useUserToRoomStore();
 const { updateUserToRoom } = userToRoomStore;
 const { notificationType } = storeToRefs(userToRoomStore);
@@ -33,7 +26,7 @@ const { notificationType } = storeToRefs(userToRoomStore);
       <v-radio-group
         v-model="notificationType"
         hide-details
-        @update:model-value="(value) => value && updateUserToRoom({ notificationType: value, roomId })"
+        @update:model-value="(value) => value && updateUserToRoom({ notificationType: value })"
       >
         <v-radio v-for="[value, label] of Object.entries(NotificationTypeLabelMap)" :key="value" :value :label>
           <template #label="{ props: labelProps }">

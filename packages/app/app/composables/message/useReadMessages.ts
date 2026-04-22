@@ -25,6 +25,8 @@ export const useReadMessages = () => {
   const readFiles = useReadFiles();
   const readEmojis = useReadEmojis();
   const readMetadata = async (messages: MessageEntity[]) => {
+    if (messages.length === 0) return;
+
     const webhookMessages: WebhookMessageEntity[] = [];
     const standardMessages: StandardMessageEntity[] = [];
 
