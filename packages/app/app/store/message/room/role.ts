@@ -123,11 +123,13 @@ export const useRoleStore = defineStore("message/room/role", () => {
     readMyPermissions,
     readRoles,
     revokeRole,
+    rolesMap,
     selectedMemberId,
     selectedRole,
     selectedRoleId,
     selectMember,
     selectRole,
+    setMemberRoles,
     updateRole,
   };
 });

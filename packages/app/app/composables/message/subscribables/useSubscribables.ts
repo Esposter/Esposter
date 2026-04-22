@@ -4,6 +4,7 @@ export const useSubscribables = () => {
   useMessageCache();
   useMessageSubscribables();
   usePushSubscription();
+  useRoleSubscribables();
   useRoomSubscribables();
   useTypingSubscribables();
   useUserSubscribables();

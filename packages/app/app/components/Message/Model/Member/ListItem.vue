@@ -30,7 +30,9 @@ const memberStore = useMemberStore();
 const { deleteMember } = memberStore;
 const roleStore = useRoleStore();
 const { memberRoleMap } = storeToRefs(roleStore);
-const memberRoles = computed(() => (currentRoom.value?.id ? (memberRoleMap.value.get(member.id) ?? []) : []));
+const memberRoles = computed(() =>
+  (currentRoom.value?.id ? (memberRoleMap.value.get(member.id) ?? []) : []).toSorted((a, b) => b.position - a.position),
+);
 </script>
 
 <template>

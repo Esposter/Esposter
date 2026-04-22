@@ -1,27 +1,15 @@
+import type { Device } from "#shared/models/auth/Device";
+import type { RevokeRoleInput } from "#shared/models/db/role/RevokeRoleInput";
+import type { RoomRole, User } from "@esposter/db-schema";
+
 import { EventEmitter } from "node:events";
 
 interface RoleEvents {
-  updateRole: [];
+  assignRole: [[RoomRole & { userId: User["id"] }, Device]];
+  createRole: [[RoomRole, Device]];
+  deleteRole: [[Pick<RoomRole, "id" | "roomId">, Device]];
+  revokeRole: [[RevokeRoleInput, Device]];
+  updateRole: [[RoomRole, Device]];
 }
 
-const roleEventEmitters = new Map<string, EventEmitter<RoleEvents>>();
-
-export const getRoleEventEmitter = (roomId: string, signal?: AbortSignal): EventEmitter<RoleEvents> => {
-  const existingEmitter = roleEventEmitters.get(roomId);
-  const emitter = existingEmitter ?? new EventEmitter<RoleEvents>();
-  if (!existingEmitter) roleEventEmitters.set(roomId, emitter);
-  signal?.addEventListener(
-    "abort",
-    () => {
-      releaseRoleEventEmitter(roomId);
-    },
-    { once: true },
-  );
-  return emitter;
-};
-
-export const releaseRoleEventEmitter = (roomId: string): void => {
-  const emitter = roleEventEmitters.get(roomId);
-  if (emitter?.eventNames().length !== 0) return;
-  roleEventEmitters.delete(roomId);
-};
+export const roleEventEmitter = new EventEmitter<RoleEvents>();

@@ -8,8 +8,9 @@ import { readRolesInputSchema } from "#shared/models/db/role/ReadRolesInput";
 import { revokeRoleInputSchema } from "#shared/models/db/role/RevokeRoleInput";
 import { updateRoleInputSchema } from "#shared/models/db/role/UpdateRoleInput";
 import { isManageable } from "#shared/services/room/rbac/isManageable";
+import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { on } from "@@/server/services/events/on";
-import { getRoleEventEmitter } from "@@/server/services/message/events/roleEventEmitter";
+import { roleEventEmitter } from "@@/server/services/message/events/roleEventEmitter";
 import { getActorContext } from "@@/server/services/room/rbac/getActorContext";
 import { getPermissions } from "@@/server/services/room/rbac/getPermissions";
 import { getTopRolePosition } from "@@/server/services/room/rbac/getTopRolePosition";
@@ -22,16 +23,7 @@ import { TRPCError } from "@trpc/server";
 import { and, desc, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 
-export type { AssignRoleInput } from "#shared/models/db/role/AssignRoleInput";
-export type { CreateRoleInput } from "#shared/models/db/role/CreateRoleInput";
-export type { DeleteRoleInput } from "#shared/models/db/role/DeleteRoleInput";
-export type { ReadMemberRolesInput } from "#shared/models/db/role/ReadMemberRolesInput";
-export type { ReadRolesInput } from "#shared/models/db/role/ReadRolesInput";
-export type { RevokeRoleInput } from "#shared/models/db/role/RevokeRoleInput";
-export type { UpdateRoleInput } from "#shared/models/db/role/UpdateRoleInput";
-
-const onUpdateRoleInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
-export type OnUpdateRoleInput = z.infer<typeof onUpdateRoleInputSchema>;
+const onRoleInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 
 export const roleRouter = router({
   assignRole: getPermissionsProcedure(RoomPermission.ManageRoles, assignRoleInputSchema, "roomId").mutation<RoomRole>(
@@ -53,12 +45,12 @@ export const roleRouter = router({
           code: "NOT_FOUND",
           message: new NotFoundError(DatabaseEntityType.RoomRole, roleId).message,
         });
-      if (role.isEveryone)
+      else if (role.isEveryone)
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: new InvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoomRole, roleId).message,
         });
-      if (!member)
+      else if (!member)
         throw new TRPCError({
           code: "NOT_FOUND",
           message: new NotFoundError(DatabaseEntityType.UserToRoom, userId).message,
@@ -71,8 +63,13 @@ export const roleRouter = router({
       if (!isManageable(actorTopPosition, targetTopRolePosition, isOwner))
         throw new TRPCError({ code: "UNAUTHORIZED" });
 
-      await ctx.db.insert(usersToRoomRoles).values({ roleId, roomId, userId }).onConflictDoNothing();
-      getRoleEventEmitter(roomId).emit("updateRole");
+      const device = { sessionId: ctx.getSessionPayload.session.id, userId: actorId };
+      const [userToRoomRole] = await ctx.db
+        .insert(usersToRoomRoles)
+        .values({ roleId, roomId, userId })
+        .onConflictDoNothing()
+        .returning();
+      if (userToRoomRole) roleEventEmitter.emit("assignRole", [{ ...role, userId }, device]);
       return role;
     },
   ),
@@ -102,7 +99,10 @@ export const roleRouter = router({
           ).message,
         });
 
-      getRoleEventEmitter(roomId).emit("updateRole");
+      roleEventEmitter.emit("createRole", [
+        createdRole,
+        { sessionId: ctx.getSessionPayload.session.id, userId: actorId },
+      ]);
       return createdRole;
     },
   ),
@@ -143,15 +143,52 @@ export const roleRouter = router({
           message: new NotFoundError(DatabaseEntityType.RoomRole, id).message,
         });
 
-      getRoleEventEmitter(roomId).emit("updateRole");
+      roleEventEmitter.emit("deleteRole", [
+        { id, roomId },
+        { sessionId: ctx.getSessionPayload.session.id, userId: actorId },
+      ]);
       return deletedRole;
     },
   ),
-  onUpdateRole: getMemberProcedure(onUpdateRoleInputSchema, "roomId").subscription(async function* ({
+  onAssignRole: getMemberProcedure(onRoleInputSchema, "roomId").subscription(async function* ({
+    ctx,
     input: { roomId },
     signal,
   }) {
-    for await (const _ of on(getRoleEventEmitter(roomId, signal), "updateRole", { signal })) yield roomId;
+    for await (const [[data, device]] of on(roleEventEmitter, "assignRole", { signal }))
+      if (data.roomId === roomId && !getIsSameDevice(device, ctx.getSessionPayload)) yield data;
+  }),
+  onCreateRole: getMemberProcedure(onRoleInputSchema, "roomId").subscription(async function* ({
+    ctx,
+    input: { roomId },
+    signal,
+  }) {
+    for await (const [[data, device]] of on(roleEventEmitter, "createRole", { signal }))
+      if (data.roomId === roomId && !getIsSameDevice(device, ctx.getSessionPayload)) yield data;
+  }),
+  onDeleteRole: getMemberProcedure(onRoleInputSchema, "roomId").subscription(async function* ({
+    ctx,
+    input: { roomId },
+    signal,
+  }) {
+    for await (const [[data, device]] of on(roleEventEmitter, "deleteRole", { signal }))
+      if (data.roomId === roomId && !getIsSameDevice(device, ctx.getSessionPayload)) yield data;
+  }),
+  onRevokeRole: getMemberProcedure(onRoleInputSchema, "roomId").subscription(async function* ({
+    ctx,
+    input: { roomId },
+    signal,
+  }) {
+    for await (const [[data, device]] of on(roleEventEmitter, "revokeRole", { signal }))
+      if (data.roomId === roomId && !getIsSameDevice(device, ctx.getSessionPayload)) yield data;
+  }),
+  onUpdateRole: getMemberProcedure(onRoleInputSchema, "roomId").subscription(async function* ({
+    ctx,
+    input: { roomId },
+    signal,
+  }) {
+    for await (const [[data, device]] of on(roleEventEmitter, "updateRole", { signal }))
+      if (data.roomId === roomId && !getIsSameDevice(device, ctx.getSessionPayload)) yield data;
   }),
   readMemberRoles: getMemberProcedure(readMemberRolesInputSchema, "roomId").query<(RoomRole & { userId: string })[]>(
     ({ ctx, input: { roomId, userIds } }) =>
@@ -224,7 +261,10 @@ export const roleRouter = router({
             eq(usersToRoomRoles.roleId, roleId),
           ),
         );
-      getRoleEventEmitter(roomId).emit("updateRole");
+      roleEventEmitter.emit("revokeRole", [
+        { roleId, roomId, userId },
+        { sessionId: ctx.getSessionPayload.session.id, userId: actorId },
+      ]);
     },
   ),
   updateRole: getPermissionsProcedure(RoomPermission.ManageRoles, updateRoleInputSchema, "roomId").mutation<RoomRole>(
@@ -269,7 +309,10 @@ export const roleRouter = router({
           message: new NotFoundError(DatabaseEntityType.RoomRole, id).message,
         });
 
-      getRoleEventEmitter(roomId).emit("updateRole");
+      roleEventEmitter.emit("updateRole", [
+        updatedRole,
+        { sessionId: ctx.getSessionPayload.session.id, userId: actorId },
+      ]);
       return updatedRole;
     },
   ),
