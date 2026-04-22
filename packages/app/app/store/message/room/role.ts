@@ -114,6 +114,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
     assignRole,
     createRole,
     deleteRole,
+    getMemberRoleMap,
     getMemberRoles,
     getRoles,
     isManageable,
