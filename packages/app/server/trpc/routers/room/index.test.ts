@@ -613,7 +613,7 @@ describe("room", () => {
 
     expect(members.items).toHaveLength(2);
     expect(takeOne(members.items).id).toBe(userId);
-    expect(takeOne(members.items, 1)).toStrictEqual({ ...user, roles: [] });
+    expect(takeOne(members.items, 1)).toStrictEqual(user);
   });
 
   test("fails create members with non-creator", async () => {
