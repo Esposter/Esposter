@@ -19,7 +19,7 @@ import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermis
 import { DatabaseEntityType, RoomPermission, roomRoles, selectRoomSchema, usersToRoomRoles } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 
 export type { AssignRoleInput } from "#shared/models/db/role/AssignRoleInput";
@@ -30,8 +30,8 @@ export type { ReadRolesInput } from "#shared/models/db/role/ReadRolesInput";
 export type { RevokeRoleInput } from "#shared/models/db/role/RevokeRoleInput";
 export type { UpdateRoleInput } from "#shared/models/db/role/UpdateRoleInput";
 
-const onRoleUpdateInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
-export type OnRoleUpdateInput = z.infer<typeof onRoleUpdateInputSchema>;
+const onUpdateRoleInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
+export type OnUpdateRoleInput = z.infer<typeof onUpdateRoleInputSchema>;
 
 export const roleRouter = router({
   assignRole: getPermissionsProcedure(RoomPermission.ManageRoles, assignRoleInputSchema, "roomId").mutation(
@@ -147,14 +147,14 @@ export const roleRouter = router({
       return deletedRole;
     },
   ),
-  onRoleUpdate: getMemberProcedure(onRoleUpdateInputSchema, "roomId").subscription(async function* ({
+  onUpdateRole: getMemberProcedure(onUpdateRoleInputSchema, "roomId").subscription(async function* ({
     input: { roomId },
     signal,
   }) {
     for await (const _ of on(getRoleEventEmitter(roomId, signal), "updateRole", { signal })) yield roomId;
   }),
-  readMemberRoles: getMemberProcedure(readMemberRolesInputSchema, "roomId").query<RoomRole[]>(
-    ({ ctx, input: { roomId, userId } }) =>
+  readMemberRoles: getMemberProcedure(readMemberRolesInputSchema, "roomId").query<(RoomRole & { userId: string })[]>(
+    ({ ctx, input: { roomId, userIds } }) =>
       ctx.db
         .select({
           color: roomRoles.color,
@@ -167,11 +167,16 @@ export const roleRouter = router({
           position: roomRoles.position,
           roomId: roomRoles.roomId,
           updatedAt: roomRoles.updatedAt,
+          userId: usersToRoomRoles.userId,
         })
         .from(roomRoles)
         .innerJoin(usersToRoomRoles, eq(usersToRoomRoles.roleId, roomRoles.id))
         .where(
-          and(eq(roomRoles.roomId, roomId), eq(usersToRoomRoles.userId, userId), eq(usersToRoomRoles.roomId, roomId)),
+          and(
+            eq(roomRoles.roomId, roomId),
+            inArray(usersToRoomRoles.userId, userIds),
+            eq(usersToRoomRoles.roomId, roomId),
+          ),
         ),
   ),
   readMyPermissions: getMemberProcedure(readRolesInputSchema, "roomId").query(async ({ ctx, input: { roomId } }) => {

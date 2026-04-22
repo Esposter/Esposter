@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import type { UserWithRelations } from "@esposter/db-schema";
+import type { User } from "@esposter/db-schema";
 import type { VNodeChild } from "vue";
 import type { VHover } from "vuetify/lib/components/VHover/VHover.mjs";
 import type { ListItemSlot } from "vuetify/lib/components/VList/VListItem.mjs";
 
 import { authClient } from "@/services/auth/authClient";
+import { useRoleStore } from "@/store/message/room/role";
 import { useRoomStore } from "@/store/message/room";
 import { useMemberStore } from "@/store/message/user/member";
 import { mergeProps } from "vue";
 
 interface MemberListItemProps {
-  member: UserWithRelations;
+  member: User;
 }
 
 type VHoverSlotProps = Extract<VHover["v-slot:default"], Function> extends (props: infer P) => VNodeChild ? P : never;
@@ -27,6 +28,9 @@ const isCreator = computed(() => currentRoom.value?.userId === member.id);
 const isKickable = computed(() => isRoomCreator.value && member.id !== session.value?.user.id);
 const memberStore = useMemberStore();
 const { deleteMember } = memberStore;
+const roleStore = useRoleStore();
+const { getMemberRoles } = roleStore;
+const memberRoles = computed(() => getMemberRoles(member.id));
 </script>
 
 <template>
@@ -46,8 +50,8 @@ const { deleteMember } = memberStore;
                 </template>
               </v-tooltip>
             </div>
-            <div v-if="member.roles.length > 0" flex flex-wrap gap-1 mt-1>
-              <v-chip v-for="{ id, name, color } of member.roles" :key="id" size="x-small" :color="color ?? undefined">
+            <div v-if="memberRoles.length > 0" flex flex-wrap gap-1 mt-1>
+              <v-chip v-for="{ id, name, color } of memberRoles" :key="id" size="x-small" :color="color ?? undefined">
                 {{ name }}
               </v-chip>
             </div>

@@ -1,5 +1,3 @@
-import type { RoomRole } from "@/schema/roomRoles";
-
 import { createNameCheckSql, createNameSchema } from "@/models/shared/Name";
 import { accounts } from "@/schema/accounts";
 import { blocks } from "@/schema/blocks";
@@ -43,7 +41,6 @@ export const users = pgTable(
 );
 
 export type User = typeof users.$inferSelect;
-export type UserWithRelations = User & { roles: RoomRole[] };
 
 export const selectUserSchema = createSelectSchema(users, {
   biography: z.string().max(USER_BIOGRAPHY_MAX_LENGTH).nullable(),

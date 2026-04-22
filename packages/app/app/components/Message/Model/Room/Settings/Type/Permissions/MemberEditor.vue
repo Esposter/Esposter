@@ -27,7 +27,7 @@ const toggleRole = async (role: RoomRole) => {
   else await assignRole({ roleId: role.id, roomId, userId: member.id });
 };
 
-await readMemberRoles({ roomId, userId: member.id });
+await readMemberRoles({ roomId, userIds: [member.id] });
 </script>
 
 <template>

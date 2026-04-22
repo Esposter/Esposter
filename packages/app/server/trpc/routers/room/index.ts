@@ -1,5 +1,5 @@
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import type { Room, RoomRole, UserToRoom, UserWithRelations } from "@esposter/db-schema";
+import type { Room, User, UserToRoom } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
 import { createRoomInputSchema } from "#shared/models/db/room/CreateRoomInput";
@@ -45,10 +45,8 @@ import {
   selectRoomSchema,
   selectUserSchema,
   users,
-  usersToRoomRoles,
   usersToRooms,
   UserToRoomRelations,
-  UserWithRelations,
 } from "@esposter/db-schema";
 import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -362,7 +360,7 @@ export const roomRouter = router({
     .query<null | string>(({ ctx, input: { roomId } }) =>
       readInviteCode(ctx.db, ctx.getSessionPayload.user.id, roomId),
     ),
-  readMembers: getMemberProcedure(readMembersInputSchema, "roomId").query<CursorPaginationData<UserWithRelations>>(
+  readMembers: getMemberProcedure(readMembersInputSchema, "roomId").query<CursorPaginationData<User>>(
     async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
       const wheres: (SQL | undefined)[] = [eq(usersToRooms.roomId, roomId)];
       if (cursor) wheres.push(getCursorWhere(users, cursor, sortBy));
@@ -375,26 +373,7 @@ export const roomRouter = router({
         .where(and(...wheres))
         .orderBy(...parseSortByToSql(users, sortBy))
         .limit(limit + 1);
-      const { items, ...rest } = getCursorPaginationData(readUsers, limit, sortBy);
-      if (items.length === 0) return { ...rest, items };
-
-      const memberIds = items.map(({ id }) => id);
-      const memberRoles = await ctx.db
-        .select({ ...getTableColumns(roomRoles), userId: usersToRoomRoles.userId })
-        .from(roomRoles)
-        .innerJoin(usersToRoomRoles, eq(usersToRoomRoles.roleId, roomRoles.id))
-        .where(and(eq(usersToRoomRoles.roomId, roomId), inArray(usersToRoomRoles.userId, memberIds)));
-      const rolesByUserId = new Map<string, RoomRole[]>();
-      for (const { userId, ...role } of memberRoles) {
-        const existingRoles = rolesByUserId.get(userId) ?? [];
-        existingRoles.push(role);
-        rolesByUserId.set(userId, existingRoles);
-      }
-
-      return {
-        ...rest,
-        items: items.map((member) => Object.assign(member, { roles: rolesByUserId.get(member.id) ?? [] })),
-      };
+      return getCursorPaginationData(readUsers, limit, sortBy);
     },
   ),
   readMembersByIds: getMemberProcedure(readMembersByIdsInputSchema, "roomId").query(({ ctx, input: { ids, roomId } }) =>

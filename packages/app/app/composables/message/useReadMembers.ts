@@ -1,6 +1,7 @@
 import type { User } from "@esposter/db-schema";
 
 import { useRoomStore } from "@/store/message/room";
+import { useRoleStore } from "@/store/message/room/role";
 import { useMemberStore } from "@/store/message/user/member";
 import { StandardMessageEntityPropertyNames } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -13,7 +14,13 @@ export const useReadMembers = () => {
   const { readItems, readMoreItems } = memberStore;
   const { count, memberMap } = storeToRefs(memberStore);
   const readUserStatuses = useReadUserStatuses();
-  const readMetadata = (memberIds: User["id"][]) => readUserStatuses(memberIds);
+  const roleStore = useRoleStore();
+  const { readMemberRoles } = roleStore;
+  const readMetadata = (memberIds: User["id"][]) => {
+    if (!currentRoomId.value || memberIds.length === 0) return Promise.resolve();
+    const roomId = currentRoomId.value;
+    return Promise.all([readUserStatuses(memberIds), readMemberRoles({ roomId, userIds: memberIds })]);
+  };
   const readMembers = () =>
     readItems(
       async () => {

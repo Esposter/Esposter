@@ -118,7 +118,7 @@ describe("role", () => {
     const targetMember = await createMember();
     const role = await roleCaller.createRole({ name: "Mod", permissions: 0n, position: 1, roomId });
     await roleCaller.assignRole({ roleId: role.id, roomId, userId: targetMember.id });
-    const memberRoles = await roleCaller.readMemberRoles({ roomId, userId: targetMember.id });
+    const memberRoles = await roleCaller.readMemberRoles({ roomId, userIds: [targetMember.id] });
 
     expect(memberRoles.some(({ id }) => id === role.id)).toBe(true);
   });
@@ -182,7 +182,6 @@ describe("role", () => {
     const { member: actor } = await setupMemberWithRole(RoomPermission.ManageRoles, 5);
     const lowRole = await roleCaller.createRole({ name: "Low", permissions: 0n, position: 2, roomId });
     const { member: targetMember } = await setupMemberWithRole(0n, 5);
-
     await mockSessionOnce(mockContext.db, actor);
 
     await expect(
@@ -196,10 +195,8 @@ describe("role", () => {
     const targetMember = await createMember();
     const role = await roleCaller.createRole({ name: "Mod", permissions: 0n, position: 1, roomId });
     await roleCaller.assignRole({ roleId: role.id, roomId, userId: targetMember.id });
-
     await roleCaller.revokeRole({ roleId: role.id, roomId, userId: targetMember.id });
-
-    const memberRoles = await roleCaller.readMemberRoles({ roomId, userId: targetMember.id });
+    const memberRoles = await roleCaller.readMemberRoles({ roomId, userIds: [targetMember.id] });
 
     expect(memberRoles.some(({ id }) => id === role.id)).toBe(false);
   });
@@ -209,7 +206,6 @@ describe("role", () => {
 
     const { member: actor } = await setupMemberWithRole(RoomPermission.ManageRoles, 5);
     const { member: targetMember, role: peerRole } = await setupMemberWithRole(0n, 5);
-
     await mockSessionOnce(mockContext.db, actor);
 
     await expect(
@@ -222,7 +218,6 @@ describe("role", () => {
 
     const { member: actor } = await setupMemberWithRole(RoomPermission.ManageRoles, 10);
     const lowRole = await roleCaller.createRole({ name: "Low", permissions: 0n, position: 3, roomId });
-
     await mockSessionOnce(mockContext.db, actor);
 
     await expect(
@@ -246,7 +241,6 @@ describe("role", () => {
 
     const { member: actor } = await setupMemberWithRole(RoomPermission.ManageRoles | RoomPermission.ReadMessages, 10);
     const lowRole = await roleCaller.createRole({ name: "Low", permissions: 0n, position: 3, roomId });
-
     await mockSessionOnce(mockContext.db, actor);
 
     await expect(
