@@ -88,14 +88,6 @@ export const voiceRouter = router({
       }
     }
   }),
-  onSetMute: standardAuthedProcedure.input(onSetMuteInputSchema).subscription(async function* ({ ctx, input, signal }) {
-    await isMember(ctx.db, ctx.getSessionPayload, input);
-
-    for await (const [{ id, isMuted, roomId }] of on(voiceEventEmitter, "muteChanged", { signal })) {
-      if (roomId !== input) continue;
-      yield { id, isMuted };
-    }
-  }),
   onJoinVoiceChannel: standardAuthedProcedure.input(onJoinVoiceChannelInputSchema).subscription(async function* ({
     ctx,
     input,
@@ -130,6 +122,14 @@ export const voiceRouter = router({
     for await (const [{ payload, roomId, senderId }] of on(voiceEventEmitter, "signal", { signal })) {
       if (roomId !== input || payload.targetId !== ctx.getSessionPayload.session.id) continue;
       yield { payload, senderId };
+    }
+  }),
+  onSetMute: standardAuthedProcedure.input(onSetMuteInputSchema).subscription(async function* ({ ctx, input, signal }) {
+    await isMember(ctx.db, ctx.getSessionPayload, input);
+
+    for await (const [{ id, isMuted, roomId }] of on(voiceEventEmitter, "muteChanged", { signal })) {
+      if (roomId !== input) continue;
+      yield { id, isMuted };
     }
   }),
   readVoiceParticipants: getMemberProcedure(roomIdInputSchema, "roomId").query<VoiceParticipant[]>(
