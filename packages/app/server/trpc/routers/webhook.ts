@@ -40,8 +40,8 @@ export const webhookRouter = router({
     createWebhookInputSchema,
     "roomId",
     RateLimiterType.Slow,
-  ).mutation<Webhook>(async ({ ctx, input: { name, roomId } }) => {
-    return ctx.db.transaction(async (tx) => {
+  ).mutation<Webhook>(({ ctx, input: { name, roomId } }) =>
+    ctx.db.transaction(async (tx) => {
       const webhookCount = takeOne(
         await tx.select({ count: count() }).from(webhooks).where(eq(webhooks.roomId, roomId)),
       ).count;
@@ -87,8 +87,8 @@ export const webhookRouter = router({
           ).message,
         });
       return newWebhook;
-    });
-  }),
+    }),
+  ),
   deleteWebhook: getPermissionsProcedure(
     RoomPermission.ManageWebhooks,
     deleteWebhookInputSchema,
