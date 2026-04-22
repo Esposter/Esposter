@@ -20,44 +20,41 @@ export const useReadMembers = () => {
     if (memberIds.length === 0) return Promise.resolve();
     return Promise.all([readUserStatuses(memberIds), readMemberRoles({ roomId, userIds: memberIds })]);
   };
-  const readMembers = () =>
-    readItems(
+  const readMembers = () => {
+    const roomId = currentRoomId.value;
+    if (!roomId)
+      throw new InvalidOperationError(
+        Operation.Read,
+        readMoreMembers.name,
+        StandardMessageEntityPropertyNames.partitionKey,
+      );
+    return readItems(
       async () => {
-        if (!currentRoomId.value)
-          throw new InvalidOperationError(
-            Operation.Read,
-            readMoreMembers.name,
-            StandardMessageEntityPropertyNames.partitionKey,
-          );
-        count.value = await $trpc.room.countMembers.query({ roomId: currentRoomId.value });
-        return $trpc.room.readMembers.query({ roomId: currentRoomId.value });
+        count.value = await $trpc.room.countMembers.query({ roomId });
+        return $trpc.room.readMembers.query({ roomId });
       },
       async ({ items }) => {
-        if (!currentRoomId.value)
-          throw new InvalidOperationError(
-            Operation.Read,
-            readMoreMembers.name,
-            StandardMessageEntityPropertyNames.partitionKey,
-          );
         for (const member of items) memberMap.value.set(member.id, member);
         await readMetadata(
-          currentRoomId.value,
+          roomId,
           items.map(({ id }) => id),
         );
       },
     );
+  };
   const readMoreMembers = (onComplete: () => void) =>
     readMoreItems(async (cursor) => {
-      if (!currentRoomId.value)
+      const roomId = currentRoomId.value;
+      if (!roomId)
         throw new InvalidOperationError(
           Operation.Read,
           readMoreMembers.name,
           StandardMessageEntityPropertyNames.partitionKey,
         );
-      const cursorPaginationData = await $trpc.room.readMembers.query({ cursor, roomId: currentRoomId.value });
+      const cursorPaginationData = await $trpc.room.readMembers.query({ cursor, roomId });
       for (const member of cursorPaginationData.items) memberMap.value.set(member.id, member);
       await readMetadata(
-        currentRoomId.value,
+        roomId,
         cursorPaginationData.items.map(({ id }) => id),
       );
       return cursorPaginationData;
