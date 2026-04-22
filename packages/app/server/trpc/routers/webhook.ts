@@ -41,51 +41,53 @@ export const webhookRouter = router({
     "roomId",
     RateLimiterType.Slow,
   ).mutation<Webhook>(async ({ ctx, input: { name, roomId } }) => {
-    const webhookCount = takeOne(
-      await ctx.db.select({ count: count() }).from(webhooks).where(eq(webhooks.roomId, roomId)),
-    ).count;
-    if (webhookCount >= WEBHOOK_MAX_LENGTH)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(
-          Operation.Create,
-          DatabaseEntityType.Webhook,
-          JSON.stringify({ name, roomId }),
-        ).message,
-      });
+    return ctx.db.transaction(async (tx) => {
+      const webhookCount = takeOne(
+        await tx.select({ count: count() }).from(webhooks).where(eq(webhooks.roomId, roomId)),
+      ).count;
+      if (webhookCount >= WEBHOOK_MAX_LENGTH)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(
+            Operation.Create,
+            DatabaseEntityType.Webhook,
+            JSON.stringify({ name, roomId }),
+          ).message,
+        });
 
-    const newAppUser = (await ctx.db.insert(appUsers).values({ name }).returning())[0];
-    if (!newAppUser)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(Operation.Create, DatabaseEntityType.AppUser, JSON.stringify({ name }))
-          .message,
-      });
+      const newAppUser = (await tx.insert(appUsers).values({ name }).returning())[0];
+      if (!newAppUser)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Create, DatabaseEntityType.AppUser, JSON.stringify({ name }))
+            .message,
+        });
 
-    const token = generateToken();
-    const newWebhook = (
-      await ctx.db
-        .insert(webhooks)
-        .values({
-          creatorId: ctx.getSessionPayload.user.id,
-          isActive: true,
-          name,
-          roomId,
-          token,
-          userId: newAppUser.id,
-        })
-        .returning()
-    )[0];
-    if (!newWebhook)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(
-          Operation.Create,
-          DatabaseEntityType.Webhook,
-          JSON.stringify({ name, roomId }),
-        ).message,
-      });
-    return newWebhook;
+      const token = generateToken();
+      const newWebhook = (
+        await tx
+          .insert(webhooks)
+          .values({
+            creatorId: ctx.getSessionPayload.user.id,
+            isActive: true,
+            name,
+            roomId,
+            token,
+            userId: newAppUser.id,
+          })
+          .returning()
+      )[0];
+      if (!newWebhook)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(
+            Operation.Create,
+            DatabaseEntityType.Webhook,
+            JSON.stringify({ name, roomId }),
+          ).message,
+        });
+      return newWebhook;
+    });
   }),
   deleteWebhook: getPermissionsProcedure(
     RoomPermission.ManageWebhooks,
