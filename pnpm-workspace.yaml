@@ -30,7 +30,7 @@ catalog:
   "@codemirror/state": ^6.6.0
   "@codemirror/theme-one-dark": ^6.1.3
   "@codemirror/view": ^6.41.1
-  "@dxup/nuxt": ^0.4.0
+  "@dxup/nuxt": ^0.4.1
   "@dxup/unimport": ^0.1.2
   "@electric-sql/pglite": ^0.4.4
   "@eslint/core": ^1.2.1
@@ -44,10 +44,10 @@ catalog:
   "@happy-dom/global-registrator": ^20.9.0
   "@json-layout/vocabulary": ^2.13.0
   "@koumoul/vjsf": ^4.3.0
-  "@lerna-lite/cli": ^5.0.0
-  "@lerna-lite/publish": ^5.0.0
-  "@lerna-lite/run": ^5.0.0
-  "@lerna-lite/watch": ^5.0.0
+  "@lerna-lite/cli": ^5.1.0
+  "@lerna-lite/publish": ^5.1.0
+  "@lerna-lite/run": ^5.1.0
+  "@lerna-lite/watch": ^5.1.0
   "@mdi/font": ^7.4.47
   "@nuxt/eslint": ^1.15.2
   "@nuxt/fonts": ^0.14.0
@@ -88,19 +88,19 @@ catalog:
   "@types/web-push": ^3.6.4
   "@types/ws": ^8.18.1
   "@types/xml2js": ^0.4.14
-  "@typescript/native-preview": ^7.0.0-dev.20260421.1
+  "@typescript/native-preview": ^7.0.0-dev.20260421.2
   "@unocss/eslint-config": ^66.6.8
   "@unocss/nuxt": ^66.6.8
   "@vite-pwa/nuxt": ^1.1.1
   "@vitejs/plugin-vue": ^6.0.6
-  "@vitest/coverage-v8": ^4.1.4
+  "@vitest/coverage-v8": ^4.1.5
   "@vitest/eslint-plugin": ^1.6.16
   "@vue-flow/background": ^1.3.2
   "@vue-flow/controls": ^1.1.3
   "@vue-flow/core": ^1.48.2
   "@vue-flow/minimap": ^1.5.4
   "@vue-flow/node-resizer": ^1.5.1
-  "@vue-pdf-viewer/viewer": ^4.0.0
+  "@vue-pdf-viewer/viewer": ^4.1.0
   "@vue/language-core": ^3.2.7
   "@vue/test-utils": ^2.4.6
   "@vuepic/vue-datepicker": ^12.1.0
@@ -111,7 +111,7 @@ catalog:
   ajv-formats: ^3.0.1
   ajv-i18n: ^4.2.0
   apexcharts: ^5.10.6
-  better-auth: ^1.6.5
+  better-auth: ^1.6.6
   codemirror: ^6.0.2
   crossws: ^0.4.5
   ctix: 2.7.2
@@ -173,7 +173,7 @@ catalog:
   nuxt-security: ^2.5.1
   obscenity: ^0.4.6
   omit-deep-lodash: ^1.1.7
-  oxfmt: ^0.45.0
+  oxfmt: ^0.46.0
   oxlint: ^1.61.0
   oxlint-tsgolint: ^0.21.1
   p-progress: ^1.0.0
@@ -207,7 +207,7 @@ catalog:
   type-fest: ^5.6.0
   typedoc: ^0.28.19
   typescript: 5.9.3
-  typescript-eslint: ^8.58.2
+  typescript-eslint: ^8.59.0
   unocss: ^66.6.8
   unplugin-auto-import: ^21.0.0
   unplugin-dts: ^1.0.0-beta.6
@@ -215,7 +215,7 @@ catalog:
   viewerjs: ^1.11.7
   vite: ^8.0.9
   vite-plugin-mkcert: ^2.0.0
-  vitest: ^4.1.4
+  vitest: ^4.1.5
   vue: ^3.5.32
   vue-codemirror: ^6.1.1
   vue-draggable-plus: ^0.6.1

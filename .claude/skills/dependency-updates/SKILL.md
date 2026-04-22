@@ -25,7 +25,6 @@ All version numbers live in the `catalog:` section of `pnpm-workspace.yaml` at t
 - **`h3`** — skip major/RC bumps; only update minor/patch within the current major.
 - **`ctix`** — pinned (no `^`) due to open issue https://github.com/imjuni/ctix/issues/192.
 - **`typescript`** — skip; user manages manually (major version bumps need explicit review).
-- **`@typescript/native-preview`** — skip; user manages manually (dev preview channel, updated on demand).
 
 ## Overrides (`overrides:` in `pnpm-workspace.yaml`)
 
