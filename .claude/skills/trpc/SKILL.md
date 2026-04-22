@@ -119,6 +119,67 @@ description: Esposter tRPC conventions — procedure typing with generics, route
   if (inFilterRoomIds.length > 0) await isMember(...);
   ```
 
+## Subscription Naming
+
+Subscriptions must be named `on` + the **exact mutation procedure name** (camelCase, verbObject order):
+
+- `createMessage` mutation → `onCreateMessage` subscription ✓
+- `updateRole` mutation → `onUpdateRole` subscription ✓
+- `joinVoiceChannel` mutation → `onJoinVoiceChannel` subscription ✓
+- `setMute` mutation → `onSetMute` subscription ✓
+
+The corresponding input schema and exported type follow the same pattern:
+
+- Schema: `onUpdateRoleInputSchema = z.object({ ... })`
+- Type: `export type OnUpdateRoleInput = z.infer<typeof onUpdateRoleInputSchema>`
+
+When a single subscription fires for multiple mutation types (e.g. a role-change subscription that covers createRole/updateRole/deleteRole/assignRole/revokeRole), name it after the **primary** mutation it corresponds to (`onUpdateRole`, not `onRoleUpdate`).
+
+## Metadata Loading in useRead\* Composables
+
+When a `useRead*` composable fetches a list of entities, load all per-item metadata in a single `readMetadata` helper that fires concurrently via `Promise.all`. Callers (`readItems` callback and `readMoreItems` callback) both call the same `readMetadata` so the logic is never duplicated.
+
+```ts
+const readMetadata = (memberIds: User["id"][]) => {
+  if (!currentRoomId.value || memberIds.length === 0) return Promise.resolve();
+  const roomId = currentRoomId.value;
+  return Promise.all([readUserStatuses(memberIds), readMemberRoles({ roomId, userIds: memberIds })]);
+};
+```
+
+- Capture any reactive refs (e.g. `currentRoomId.value`) into a local `const` before the `Promise.all` so all concurrent calls see the same value.
+- Guard `memberIds.length === 0` to avoid unnecessary requests.
+- Every call inside `Promise.all` must be a **single batch request** — never spread N individual calls (no `...ids.map((id) => readX({ id }))`). If the endpoint only accepts one ID, make it accept an array first.
+
+## Read Endpoints Must Accept Arrays (No N+1)
+
+Every `read*` procedure that may be called for multiple items **must** accept an array of IDs, not a single ID:
+
+```ts
+// CORRECT — one request for N items
+export const readMemberRolesInputSchema = z.object({
+  roomId: selectRoomSchema.shape.id,
+  userIds: selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
+});
+
+// WRONG — forces N requests for N items
+export const readMemberRolesInputSchema = z.object({
+  roomId: selectRoomSchema.shape.id,
+  userId: selectUserSchema.shape.id,
+});
+```
+
+Server-side: use `inArray(table.userId, userIds)` and include `userId` in the select so the client can group results. Client-side: initialize all requested IDs to `[]` before grouping so users with no results are still set (clearing stale data):
+
+```ts
+const readMemberRoles = async (input: ReadMemberRolesInput) => {
+  const memberRoles = await $trpc.role.readMemberRoles.query(input);
+  const rolesByUserId = new Map<string, RoomRole[]>(input.userIds.map((userId) => [userId, []]));
+  for (const { userId, ...role } of memberRoles) rolesByUserId.get(userId)?.push(role);
+  for (const [userId, roles] of rolesByUserId) setDataMap(userId, roles);
+};
+```
+
 ## Router Test Patterns
 
 - **Always create test resources via `caller.method()`** — never insert rows directly into the DB in router tests. Direct DB insertion bypasses application logic (auth checks, business rules, cascades) and means the flow being tested is different from the real flow. If a resource belongs to a different router, create a second caller for that router using `createCallerFactory(otherRouter)`.

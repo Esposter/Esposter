@@ -134,12 +134,12 @@ describe("voice", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
-    const onParticipantJoin = await voiceCaller.onParticipantJoin(newRoom.id);
+    const onJoinVoiceChannel = await voiceCaller.onJoinVoiceChannel(newRoom.id);
     const { user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInviteCode);
     const { session: voiceSession } = await mockSessionOnce(mockContext.db, user);
     const data = await withAsyncIterator(
-      () => onParticipantJoin,
+      () => onJoinVoiceChannel,
       async (iterator) => {
         const [result] = await Promise.all([iterator.next(), voiceCaller.joinVoiceChannel({ roomId: newRoom.id })]);
         return result;
@@ -162,10 +162,10 @@ describe("voice", () => {
     await roomCaller.joinRoom(newInviteCode);
     const joiningSessionPayload = await mockSessionOnce(mockContext.db, user);
     await voiceCaller.joinVoiceChannel({ roomId: newRoom.id });
-    const onParticipantLeave = await voiceCaller.onParticipantLeave(newRoom.id);
+    const onLeaveVoiceChannel = await voiceCaller.onLeaveVoiceChannel(newRoom.id);
     replayMockSession(joiningSessionPayload);
     const data = await withAsyncIterator(
-      () => onParticipantLeave,
+      () => onLeaveVoiceChannel,
       async (iterator) => {
         const [result] = await Promise.all([iterator.next(), voiceCaller.leaveVoiceChannel({ roomId: newRoom.id })]);
         return result;
@@ -183,10 +183,10 @@ describe("voice", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const sessionPayload = await mockSessionOnce(mockContext.db, getMockSession().user);
     await voiceCaller.joinVoiceChannel({ roomId: newRoom.id });
-    const onMuteChanged = await voiceCaller.onMuteChanged(newRoom.id);
+    const onSetMute = await voiceCaller.onSetMute(newRoom.id);
     replayMockSession(sessionPayload);
     const data = await withAsyncIterator(
-      () => onMuteChanged,
+      () => onSetMute,
       async (iterator) => {
         const [result] = await Promise.all([
           iterator.next(),
@@ -247,7 +247,7 @@ describe("voice", () => {
     const defaultSessionPayload = await mockSessionOnce(mockContext.db, getMockSession().user);
     await voiceCaller.joinVoiceChannel({ roomId: newRoom.id });
     replayMockSession(defaultSessionPayload);
-    const onSignal = await voiceCaller.onSignal(newRoom.id);
+    const onSendSignal = await voiceCaller.onSendSignal(newRoom.id);
     const { user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInviteCode);
     const userBSessionPayload = await mockSessionOnce(mockContext.db, user);
@@ -255,7 +255,7 @@ describe("voice", () => {
     replayMockSession(userBSessionPayload);
     const payload = { data: "{}", targetId: defaultSessionPayload.session.id, type: VoiceSignalType.Offer };
     const data = await withAsyncIterator(
-      () => onSignal,
+      () => onSendSignal,
       async (iterator) => {
         const [result] = await Promise.all([iterator.next(), voiceCaller.sendSignal({ payload, roomId: newRoom.id })]);
         return result;

@@ -182,7 +182,7 @@ export const useWebRtcStore = defineStore("message/room/webRtc", () => {
 
   const subscribeToSignals = (roomId: string) => {
     unsubscribeFromSignals();
-    signalUnsubscribable = $trpc.voice.onSignal.subscribe(roomId, {
+    signalUnsubscribable = $trpc.voice.onSendSignal.subscribe(roomId, {
       onData: getSynchronizedFunction(getSignalHandler(roomId)),
     });
   };

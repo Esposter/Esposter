@@ -160,7 +160,7 @@ Owner (rooms.userId)          — immune to all role manipulation; can do everyt
   - `readRoles({ roomId })` — behind `getMemberProcedure`; returns all roles sorted by position DESC
   - `assignRole({ roomId, userId, roleId })` — behind `ManageRoles` + `canManageRole(role.position)` + `canManageTarget`
   - `revokeRole({ roomId, userId, roleId })` — same guards as `assignRole`
-  - `onRoleUpdate({ roomId })` — subscription; emits on create/update/delete role or assign/revoke
+  - `onUpdateRole({ roomId })` — subscription; emits on create/update/delete role or assign/revoke
 - [ ] **`readMembers` enrichment** — include each member's roles (sorted by position DESC)
 - [x] **Role assignment UI** — + button on Permissions tab opens Discord-style dropdown to search and assign members to roles (`Permissions/AddMemberMenu.vue`)
 - [ ] **Tests** — `server/services/room/rbac/*.test.ts` for `getPermissions`, `hasPermission`, `getTopRolePosition`, `isManageable`; `server/trpc/routers/role.test.ts` for all `roleRouter` procedures (CRUD, assign/revoke), owner bypass, Administrator bypass, hierarchy enforcement

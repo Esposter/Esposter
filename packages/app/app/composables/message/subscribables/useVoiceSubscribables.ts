@@ -35,7 +35,7 @@ export const useVoiceSubscribables = () => {
       await joinVoice();
     }
 
-    const participantJoinUnsubscribable = $trpc.voice.onParticipantJoin.subscribe(roomId, {
+    const participantJoinUnsubscribable = $trpc.voice.onJoinVoiceChannel.subscribe(roomId, {
       onData: getSynchronizedFunction(async (participant) => {
         createVoiceParticipant(roomId, participant);
         if (isInChannel.value) {
@@ -45,14 +45,14 @@ export const useVoiceSubscribables = () => {
         }
       }),
     });
-    const participantLeaveUnsubscribable = $trpc.voice.onParticipantLeave.subscribe(roomId, {
+    const participantLeaveUnsubscribable = $trpc.voice.onLeaveVoiceChannel.subscribe(roomId, {
       onData: getSynchronizedFunction(async (id) => {
         deleteVoiceParticipant(roomId, id);
         await cleanupPeer(id);
         deleteSpeaker(id);
       }),
     });
-    const muteChangedUnsubscribable = $trpc.voice.onMuteChanged.subscribe(roomId, {
+    const muteChangedUnsubscribable = $trpc.voice.onSetMute.subscribe(roomId, {
       onData: (muteChange) => {
         setMute(roomId, muteChange.id, muteChange.isMuted);
       },

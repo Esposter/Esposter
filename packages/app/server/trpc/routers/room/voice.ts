@@ -23,7 +23,10 @@ import { z } from "zod";
 const roomIdInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 const setMuteInputSchema = z.object({ isMuted: z.boolean(), roomId: selectRoomSchema.shape.id });
 const sendSignalInputSchema = z.object({ payload: voiceSignalPayloadSchema, roomId: selectRoomSchema.shape.id });
-const onVoiceInputSchema = selectRoomSchema.shape.id;
+const onJoinVoiceChannelInputSchema = selectRoomSchema.shape.id;
+const onLeaveVoiceChannelInputSchema = selectRoomSchema.shape.id;
+const onSetMuteInputSchema = selectRoomSchema.shape.id;
+const onSendSignalInputSchema = selectRoomSchema.shape.id;
 
 export const voiceRouter = router({
   joinVoiceChannel: getMemberProcedure(roomIdInputSchema, "roomId").mutation<VoiceParticipant[]>(
@@ -85,19 +88,7 @@ export const voiceRouter = router({
       }
     }
   }),
-  onMuteChanged: standardAuthedProcedure.input(onVoiceInputSchema).subscription(async function* ({
-    ctx,
-    input,
-    signal,
-  }) {
-    await isMember(ctx.db, ctx.getSessionPayload, input);
-
-    for await (const [{ id, isMuted, roomId }] of on(voiceEventEmitter, "muteChanged", { signal })) {
-      if (roomId !== input) continue;
-      yield { id, isMuted };
-    }
-  }),
-  onParticipantJoin: standardAuthedProcedure.input(onVoiceInputSchema).subscription(async function* ({
+  onJoinVoiceChannel: standardAuthedProcedure.input(onJoinVoiceChannelInputSchema).subscription(async function* ({
     ctx,
     input,
     signal,
@@ -109,7 +100,7 @@ export const voiceRouter = router({
       yield participant;
     }
   }),
-  onParticipantLeave: standardAuthedProcedure.input(onVoiceInputSchema).subscription(async function* ({
+  onLeaveVoiceChannel: standardAuthedProcedure.input(onLeaveVoiceChannelInputSchema).subscription(async function* ({
     ctx,
     input,
     signal,
@@ -121,12 +112,24 @@ export const voiceRouter = router({
       yield id;
     }
   }),
-  onSignal: standardAuthedProcedure.input(onVoiceInputSchema).subscription(async function* ({ ctx, input, signal }) {
+  onSendSignal: standardAuthedProcedure.input(onSendSignalInputSchema).subscription(async function* ({
+    ctx,
+    input,
+    signal,
+  }) {
     await isMember(ctx.db, ctx.getSessionPayload, input);
 
     for await (const [{ payload, roomId, senderId }] of on(voiceEventEmitter, "signal", { signal })) {
       if (roomId !== input || payload.targetId !== ctx.getSessionPayload.session.id) continue;
       yield { payload, senderId };
+    }
+  }),
+  onSetMute: standardAuthedProcedure.input(onSetMuteInputSchema).subscription(async function* ({ ctx, input, signal }) {
+    await isMember(ctx.db, ctx.getSessionPayload, input);
+
+    for await (const [{ id, isMuted, roomId }] of on(voiceEventEmitter, "muteChanged", { signal })) {
+      if (roomId !== input) continue;
+      yield { id, isMuted };
     }
   }),
   readVoiceParticipants: getMemberProcedure(roomIdInputSchema, "roomId").query<VoiceParticipant[]>(

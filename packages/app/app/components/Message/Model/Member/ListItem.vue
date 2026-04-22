@@ -6,6 +6,7 @@ import type { ListItemSlot } from "vuetify/lib/components/VList/VListItem.mjs";
 
 import { authClient } from "@/services/auth/authClient";
 import { useRoomStore } from "@/store/message/room";
+import { useRoleStore } from "@/store/message/room/role";
 import { useMemberStore } from "@/store/message/user/member";
 import { mergeProps } from "vue";
 
@@ -27,6 +28,11 @@ const isCreator = computed(() => currentRoom.value?.userId === member.id);
 const isKickable = computed(() => isRoomCreator.value && member.id !== session.value?.user.id);
 const memberStore = useMemberStore();
 const { deleteMember } = memberStore;
+const roleStore = useRoleStore();
+const { memberRoleMap } = storeToRefs(roleStore);
+const memberRoles = computed(() =>
+  (currentRoom.value?.id ? (memberRoleMap.value.get(member.id) ?? []) : []).toSorted((a, b) => b.position - a.position),
+);
 </script>
 
 <template>
@@ -45,6 +51,11 @@ const { deleteMember } = memberStore;
                   <v-icon icon="mdi-crown" :="props" color="yellow-darken-4" />
                 </template>
               </v-tooltip>
+            </div>
+            <div v-if="memberRoles.length > 0" flex flex-wrap gap-1 mt-1>
+              <v-chip v-for="{ id, name, color } of memberRoles" :key="id" size="x-small" :color="color ?? undefined">
+                {{ name }}
+              </v-chip>
             </div>
           </v-list-item-title>
           <template #append="listItemProps">

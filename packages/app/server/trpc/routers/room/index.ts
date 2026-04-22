@@ -1,4 +1,5 @@
-import type { Room, UserToRoom } from "@esposter/db-schema";
+import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
+import type { Room, User, UserToRoom } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
 import { createRoomInputSchema } from "#shared/models/db/room/CreateRoomInput";
@@ -359,7 +360,7 @@ export const roomRouter = router({
     .query<null | string>(({ ctx, input: { roomId } }) =>
       readInviteCode(ctx.db, ctx.getSessionPayload.user.id, roomId),
     ),
-  readMembers: getMemberProcedure(readMembersInputSchema, "roomId").query(
+  readMembers: getMemberProcedure(readMembersInputSchema, "roomId").query<CursorPaginationData<User>>(
     async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
       const wheres: (SQL | undefined)[] = [eq(usersToRooms.roomId, roomId)];
       if (cursor) wheres.push(getCursorWhere(users, cursor, sortBy));
