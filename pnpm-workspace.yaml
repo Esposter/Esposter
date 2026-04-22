@@ -56,7 +56,7 @@ catalog:
   "@nuxtjs/seo": ^5.1.3
   "@pinia/nuxt": ^0.11.3
   "@rolldown/plugin-node-polyfills": ^1.0.3
-  "@takumi-rs/core": ^1.0.15
+  "@takumi-rs/core": ^1.0.16
   "@tiptap/core": ^3.22.4
   "@tiptap/extension-code-block-lowlight": ^3.22.4
   "@tiptap/extension-file-handler": ^3.22.4
@@ -111,7 +111,7 @@ catalog:
   ajv-formats: ^3.0.1
   ajv-i18n: ^4.2.0
   apexcharts: ^5.10.6
-  better-auth: ^1.6.6
+  better-auth: ^1.6.7
   codemirror: ^6.0.2
   crossws: ^0.4.5
   ctix: 2.7.2
@@ -187,7 +187,7 @@ catalog:
   prosemirror-state: ^1.4.4
   rate-limiter-flexible: ^11.0.1
   read-excel-file: ^9.0.6
-  rolldown: ^1.0.0-rc.16
+  rolldown: ^1.0.0-rc.17
   rolldown-plugin-dts: ^0.23.2
   rxjs: ^7.8.2
   sanitize-html: ^2.17.3
@@ -227,7 +227,7 @@ catalog:
   vuetify-nuxt-module: ^1.0.0-beta.2
   web-push: ^3.6.7
   worker-timers: ^8.0.31
-  write-excel-file: ^3.0.8
+  write-excel-file: ^4.0.2
   ws: ^8.20.0
   xmlbuilder2: ^4.0.3
   zod: ^4.3.6
