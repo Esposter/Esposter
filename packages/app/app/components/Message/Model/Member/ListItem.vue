@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { User } from "@esposter/db-schema";
+import type { UserWithRelations } from "@esposter/db-schema";
 import type { VNodeChild } from "vue";
 import type { VHover } from "vuetify/lib/components/VHover/VHover.mjs";
 import type { ListItemSlot } from "vuetify/lib/components/VList/VListItem.mjs";
@@ -10,7 +10,7 @@ import { useMemberStore } from "@/store/message/user/member";
 import { mergeProps } from "vue";
 
 interface MemberListItemProps {
-  member: User;
+  member: UserWithRelations;
 }
 
 type VHoverSlotProps = Extract<VHover["v-slot:default"], Function> extends (props: infer P) => VNodeChild ? P : never;
@@ -45,6 +45,11 @@ const { deleteMember } = memberStore;
                   <v-icon icon="mdi-crown" :="props" color="yellow-darken-4" />
                 </template>
               </v-tooltip>
+            </div>
+            <div v-if="member.roles.length > 0" flex flex-wrap gap-1 mt-1>
+              <v-chip v-for="{ id, name, color } of member.roles" :key="id" size="x-small" :color="color ?? undefined">
+                {{ name }}
+              </v-chip>
             </div>
           </v-list-item-title>
           <template #append="listItemProps">

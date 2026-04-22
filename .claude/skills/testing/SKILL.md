@@ -15,7 +15,7 @@ description: Esposter Vitest testing conventions — describe with function refs
 - **`beforeAll` body order** — `mockContext` first, then callers. Never extract sub-properties (no `let db = mockContext.db`); always access via `mockContext.db` etc.
 - **`expect.hasAssertions()`** — top of every test body.
 - **Assertions after all assignments** — put all `expect` calls after all operations and local assignments for that phase, separated by a blank line.
-- **`toStrictEqual` always** — never `toEqual`. Assert exact counts: no `.toBeGreaterThan(0)` on collections.
+- **`toStrictEqual` always** — never `toEqual`, never `toMatchObject`. Assert exact counts: no `.toBeGreaterThan(0)` on collections. When enriched response adds new fields (e.g. `roles`), include them explicitly: `toStrictEqual({ ...user, roles: [] })`.
 - **Minimize per-test setup** — shared mutable state as `let` inside `describe`, init in `beforeEach`. Mount helpers take no arguments when state is pre-initialized.
 - **Reuse utilities** — check `testUtils.test.ts` for existing helpers before writing local equivalents.
 

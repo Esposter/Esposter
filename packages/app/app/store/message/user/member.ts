@@ -1,14 +1,14 @@
 import type { DeleteMemberInput } from "#shared/models/db/room/DeleteMemberInput";
-import type { User } from "@esposter/db-schema";
+import type { User, UserWithRelations } from "@esposter/db-schema";
 
 import { EN_US_COMPARATOR } from "@/services/shared/constants";
 import { createOperationData } from "@/services/shared/createOperationData";
 
 export const useMemberStore = defineStore("message/user/member", () => {
   const { $trpc } = useNuxtApp();
-  const { items, ...restData } = useCursorPaginationData<User>();
+  const { items, ...restData } = useCursorPaginationData<UserWithRelations>();
   const members = computed(() => items.value.toSorted((a, b) => EN_US_COMPARATOR.compare(a.name, b.name)));
-  const memberMap = ref(new Map<string, User>());
+  const memberMap = ref(new Map<string, UserWithRelations>());
   const count = ref(0);
   const {
     createMember: baseStoreCreateMember,
@@ -26,8 +26,9 @@ export const useMemberStore = defineStore("message/user/member", () => {
     "Member",
   );
   const storeCreateMember = (member: User) => {
-    baseStoreCreateMember(member);
-    memberMap.value.set(member.id, member);
+    const memberWithRelations: UserWithRelations = Object.assign(member, { roles: [] });
+    baseStoreCreateMember(memberWithRelations);
+    memberMap.value.set(memberWithRelations.id, memberWithRelations);
     count.value++;
   };
   const storeDeleteMember = (id: User["id"]) => {

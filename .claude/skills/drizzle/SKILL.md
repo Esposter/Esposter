@@ -79,6 +79,23 @@ description: Esposter Drizzle ORM conventions — column naming (camelCase match
   ctx.db.select(getTableColumns(users)).from(friends).innerJoin(users, or(...)).where(...)
   ```
 
+## WithRelations Types
+
+- **Define `XxxWithRelations` types inline in the schema file** — never as a standalone file in `packages/app/`. Place them directly after the base `type Xxx = typeof xxx.$inferSelect` line in `packages/db-schema/src/schema/xxx.ts`:
+
+  ```ts
+  // users.ts
+  export type User = typeof users.$inferSelect;
+  export type UserWithRelations = User & { roles: RoomRole[] };
+  ```
+
+- **Import from `@esposter/db-schema`** — consumers always import `XxxWithRelations` from the package, never from `#shared/...` paths:
+
+  ```ts
+  import type { UserWithRelations } from "@esposter/db-schema"; // CORRECT
+  import type { UserWithRelations } from "#shared/models/db/user/UserWithRelations"; // WRONG
+  ```
+
 ## Relation Constants
 
 - **Export a `XxxRelations` constant from every schema file used in `with:` clauses** — placed after `xxxRelations = relations(...)`, includes `@TODO` comment. Named `PascalCase` matching the entity type:
