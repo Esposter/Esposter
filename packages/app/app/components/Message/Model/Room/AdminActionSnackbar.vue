@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useAdminActionNotification } from "@/composables/message/useAdminActionNotification";
-
 const { isVisible, message } = useAdminActionNotification();
 </script>
 

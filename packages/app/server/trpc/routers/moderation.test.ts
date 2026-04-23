@@ -52,7 +52,7 @@ describe("moderation", () => {
   });
 
   describe("executeAdminAction", () => {
-    test("BanUser: owner bans member — ban row inserted and usersToRooms row deleted", async () => {
+    test(`${AdminActionType.BanUser}: owner bans member — ban row inserted and usersToRooms row deleted`, async () => {
       expect.hasAssertions();
 
       const member = await createMember();
@@ -76,7 +76,7 @@ describe("moderation", () => {
       expect(membershipRows).toHaveLength(0);
     });
 
-    test("KickFromRoom: owner kicks member — usersToRooms row deleted", async () => {
+    test(`${AdminActionType.KickFromRoom}: owner kicks member — usersToRooms row deleted`, async () => {
       expect.hasAssertions();
 
       const member = await createMember();
@@ -94,7 +94,7 @@ describe("moderation", () => {
       expect(membershipRows).toHaveLength(0);
     });
 
-    test("TimeoutUser: owner times out member — timeoutUntil is set in the future", async () => {
+    test(`${AdminActionType.TimeoutUser}: owner times out member — timeoutUntil is set in the future`, async () => {
       expect.hasAssertions();
 
       const member = await createMember();
@@ -117,7 +117,7 @@ describe("moderation", () => {
       expect(timeoutUntil.getTime()).toBeGreaterThan(before.getTime());
     });
 
-    test("TimeoutUser without durationMs — throws BAD_REQUEST", async () => {
+    test(`${AdminActionType.TimeoutUser} without durationMs — throws BAD_REQUEST`, async () => {
       expect.hasAssertions();
 
       const member = await createMember();
@@ -131,7 +131,7 @@ describe("moderation", () => {
       ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: BAD_REQUEST]`);
     });
 
-    test("ForceMute: owner mutes member — succeeds with no error", async () => {
+    test(`${AdminActionType.ForceMute}: owner mutes member — succeeds with no error`, async () => {
       expect.hasAssertions();
 
       const member = await createMember();
@@ -145,7 +145,7 @@ describe("moderation", () => {
       ).resolves.toBeUndefined();
     });
 
-    test("ForceUnmute: owner unmutes member — succeeds with no error", async () => {
+    test(`${AdminActionType.ForceUnmute}: owner unmutes member — succeeds with no error`, async () => {
       expect.hasAssertions();
 
       const member = await createMember();
@@ -159,7 +159,7 @@ describe("moderation", () => {
       ).resolves.toBeUndefined();
     });
 
-    test("KickFromVoice: owner kicks member from voice — succeeds with no error", async () => {
+    test(`${AdminActionType.KickFromVoice}: owner kicks member from voice — succeeds with no error`, async () => {
       expect.hasAssertions();
 
       const member = await createMember();

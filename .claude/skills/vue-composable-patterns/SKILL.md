@@ -27,6 +27,31 @@ export const useCopyToClipboard = () => {
 }
 ```
 
+## StyledWaypoint — Infinite Scroll Pattern
+
+Use `<StyledWaypoint>` for cursor-paginated lists instead of a "Load more" button. It fires `@change` when scrolled into view and manages its own loading indicator via the default slot.
+
+- `:is-active="hasMore"` — hides and deactivates when no more pages
+- `@change="readMoreXxx"` — the handler must accept `(onComplete: () => void)` and call `onComplete()` when done (via the `onComplete` arg to `readMoreItems`)
+- Default slot: shown while loading (skeleton items); omit to use the built-in `v-progress-circular`
+
+```vue
+<StyledWaypoint :is-active="hasMore" @change="readMoreBans" />
+
+<!-- or with loading skeleton: -->
+<StyledWaypoint :is-active="hasMore" @change="readMoreMembers">
+  <MessageModelMemberSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+</StyledWaypoint>
+```
+
+Composable `readMoreXxx` signature must match the `@change` emitted callback:
+```typescript
+const readMoreBans = (onComplete: () => void) =>
+  readMoreItems((cursor) => $trpc.moderation.readBans.query({ cursor, limit: LIMIT, roomId }), onComplete);
+```
+
+Never use a manual "Load more" `v-btn` with `isLoadingMore` state — that belongs to `StyledWaypoint`.
+
 ## MaybeRefOrGetter Composables
 
 When a composable argument should work with a plain value, a `ref`, or a getter function, type it as `MaybeRefOrGetter<T>` and unwrap with `toValue()`.

@@ -35,7 +35,7 @@ description: Esposter Vitest testing conventions — describe with function refs
 | Entity fields  | Use field name as literal: `const name = "name"`. UUIDs for IDs.        |
 
 - **Date format tests** — `for...of` inside a single test using `dayjs("1970-01-01", "YYYY-MM-DD", true).format(format)`. Never `test.each`.
-- **Interpolated descriptions** — `` `boolean returns ${ColumnType.Boolean}` ``. Plain English names: "integer", "decimal", "epoch date".
+- **Interpolated descriptions** — `` `${AdminActionType.BanUser}: owner bans member — ban inserted` ``. **Never write enum values as string literals** in describe/test titles; always use template literals with the enum reference. Plain English names for non-enum cases: "integer", "decimal", "epoch date".
 
 ## Array / Type Utilities
 
