@@ -1,6 +1,7 @@
 import * as accounts from "@/schema/accounts";
 import * as achievements from "@/schema/achievements";
 import * as appUsers from "@/schema/appUsers";
+import * as bans from "@/schema/bans";
 import * as blocks from "@/schema/blocks";
 import * as friendRequests from "@/schema/friendRequests";
 import * as friends from "@/schema/friends";
@@ -27,6 +28,7 @@ export const schema = {
   ...accounts,
   ...achievements,
   ...appUsers,
+  ...bans,
   ...blocks,
   ...friendRequests,
   ...friends,

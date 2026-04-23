@@ -1,12 +1,10 @@
-import type { AEntity } from "#shared/models/entity/AEntity";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { ToData } from "@esposter/shared";
+import type { ItemMetadata } from "@esposter/shared";
 
 import { getNextCursor } from "@@/server/services/pagination/cursor/getNextCursor";
-import { CompositeKey } from "@esposter/db-schema";
 
-export const getCursorPaginationData = <TItem extends CompositeKey | ToData<AEntity>>(
+export const getCursorPaginationData = <TItem extends ItemMetadata>(
   items: TItem[],
   limit: number,
   sortBy: SortItem<keyof TItem & string>[],
