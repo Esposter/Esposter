@@ -13,19 +13,19 @@ export const moderationLogPlugin = t.procedure.use(async ({ ctx, getRawInput, ne
   if (!result.ok || procedureType !== "mutation") return result;
 
   const rawInput = await getRawInput();
-  const parsed = executeAdminActionInputSchema.safeParse(rawInput);
-  if (!parsed.success) return result;
+  const parsedInput = executeAdminActionInputSchema.safeParse(rawInput);
+  if (!parsedInput.success) return result;
 
-  const { durationMs, roomId, targetUserId, type } = parsed.data;
+  const { durationMs, roomId, targetUserId, type } = parsedInput.data;
   const moderationLogClient = await useTableClient(AzureTable.ModerationLog);
   await createEntity(
     moderationLogClient,
     new ModerationLogEntity({
       actorId: ctx.getSessionPayload.user.id,
-      ...(durationMs !== undefined && { durationMs }),
+      durationMs,
       partitionKey: roomId,
       rowKey: getReverseTickedTimestamp(),
-      targetId: targetUserId,
+      targetUserId,
       type,
     }),
   );

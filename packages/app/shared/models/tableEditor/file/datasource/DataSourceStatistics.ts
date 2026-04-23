@@ -7,7 +7,7 @@ export interface DataSourceStatistics {
 }
 
 export const dataSourceStatisticsSchema = z.object({
-  columnCount: z.number().int().nonnegative(),
-  rowCount: z.number().int().nonnegative(),
-  size: z.number().int().nonnegative(),
+  columnCount: z.int().nonnegative(),
+  rowCount: z.int(),
+  size: z.int(),
 }) satisfies z.ZodType<DataSourceStatistics>;

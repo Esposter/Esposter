@@ -64,7 +64,7 @@ export type RoomRole = typeof roomRoles.$inferSelect;
 export const selectRoomRoleSchema = createSelectSchema(roomRoles, {
   name: createNameSchema(ROOM_ROLE_NAME_MAX_LENGTH),
   permissions: z.bigint(),
-  position: z.number().int().nonnegative(),
+  position: z.int().nonnegative(),
 });
 
 export const roomRolesRelations = relations(roomRoles, ({ one }) => ({
