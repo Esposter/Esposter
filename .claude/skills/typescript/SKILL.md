@@ -7,6 +7,7 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 
 ## Core Rules
 
+- **Constant arrays use PascalCase** — `export const PermissionItems = [...]`, `export const FrierenExpressions: Expression[] = [...]`. This applies to all static data arrays exported from `services/`. File names match: `PermissionItems.ts`, `FrierenExpressions.ts`.
 - **No `With` prefix on mixin interfaces** — name them after the capability they represent: `SourceColumnId`, `SourceColumnIds`, `ApplicableColumnTypes`. Not `WithSourceColumnId`, `WithSourceColumnIds`, `WithApplicableColumnTypes`. The corresponding schema variables drop the `with` prefix too: `sourceColumnIdSchema` not `withSourceColumnIdSchema`.
 - **`A` prefix is for abstract classes only** — never use `A` prefix on interfaces. `AColumn` is an abstract class → correct. `ASlashCommand` as an interface → wrong, use `SlashCommand`. If it's an interface, just name it after the concept.
 - TypeScript compiler: `strict` mode enabled. ESLint: `tseslint.configs.strictTypeChecked`. `any` is **BANNED**.
