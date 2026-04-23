@@ -1,4 +1,5 @@
 import type { SearchMessagesInput } from "#shared/models/db/message/SearchMessagesInput";
+import type { SelectFields } from "@azure/search-documents";
 import type { Clause, MessageEntity } from "@esposter/db-schema";
 
 import { dedupeFilters } from "#shared/services/message/dedupeFilters";
@@ -21,7 +22,7 @@ export const searchMessages = async ({ filters, limit, offset, query, roomId, so
   const client = useSearchClient(SearchIndex.Messages);
   const dedupedFilters = dedupeFilters(filters);
   const hasRoomInFilter = dedupedFilters.some(({ type }) => type === FilterType.In);
-  const clauses: Clause<MessageEntity>[] = [
+  const clauses: Clause<Record<SelectFields<MessageEntity> & string, unknown>>[] = [
     ...(hasRoomInFilter
       ? []
       : [{ key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId }]),

@@ -59,6 +59,7 @@
   },
   "devDependencies": {
     "@azure/core-client": "catalog:",
+    "@azure/search-documents": "catalog:",
     "@esposter/db-mock": "workspace:*",
     "@types/mime-types": "catalog:"
   },

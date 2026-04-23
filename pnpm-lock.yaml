@@ -1462,6 +1462,9 @@ importers:
       '@azure/core-client':
         specifier: 'catalog:'
         version: 1.10.1
+      '@azure/search-documents':
+        specifier: 'catalog:'
+        version: 12.2.0
       '@esposter/db-mock':
         specifier: workspace:*
         version: link:../db-mock

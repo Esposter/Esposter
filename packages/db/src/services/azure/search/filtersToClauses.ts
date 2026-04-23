@@ -1,5 +1,6 @@
 /* eslint-disable perfectionist/sort-switch-case */
-import type { Clause, Filter } from "@esposter/db-schema";
+import type { SelectFields } from "@azure/search-documents";
+import type { Clause, Filter, MessageEntity } from "@esposter/db-schema";
 
 import { ContentTypes } from "@/models/ContentType";
 import { getSearchNonNullClause } from "@/services/azure/search/getSearchNonNullClause";
@@ -20,8 +21,10 @@ const IMAGE_CONTENT_TYPES = [...ContentTypes].filter((contentType) => contentTyp
 const VIDEO_CONTENT_TYPES = [...ContentTypes].filter((contentType) => contentType.startsWith("video/"));
 const AUDIO_CONTENT_TYPES = [...ContentTypes].filter((contentType) => contentType.startsWith("audio/"));
 
-export const filtersToClauses = (filters: Filter[]): Clause<Record<string, unknown>>[] => {
-  const clauses: Clause<Record<string, unknown>>[] = [];
+export const filtersToClauses = (
+  filters: Filter[],
+): Clause<Record<SelectFields<MessageEntity> & string, unknown>>[] => {
+  const clauses: Clause<Record<SelectFields<MessageEntity> & string, unknown>>[] = [];
 
   for (const [type, filtersByType] of Object.entries(Object.groupBy(filters, ({ type }) => type)))
     switch (type) {
