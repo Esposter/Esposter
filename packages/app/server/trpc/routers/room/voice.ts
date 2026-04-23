@@ -1,7 +1,6 @@
 import type { VoiceParticipant } from "#shared/models/room/voice/VoiceParticipant";
 
 import { voiceSignalPayloadSchema } from "#shared/models/room/voice/VoiceSignalPayload";
-import { roomIdSchema } from "#shared/models/shared/RoomId";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { on } from "@@/server/services/events/on";
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
@@ -16,7 +15,7 @@ import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { createMessage } from "@esposter/db";
-import { AzureTable, MessageType, selectRoomSchema } from "@esposter/db-schema";
+import { AzureTable, MessageType, roomIdSchema, selectRoomSchema } from "@esposter/db-schema";
 import { ForbiddenError, NotFoundError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
