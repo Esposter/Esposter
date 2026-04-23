@@ -1,6 +1,7 @@
 import type { VoiceParticipant } from "#shared/models/room/voice/VoiceParticipant";
 
 import { voiceSignalPayloadSchema } from "#shared/models/room/voice/VoiceSignalPayload";
+import { roomIdSchema } from "#shared/models/shared/RoomId";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { on } from "@@/server/services/events/on";
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
@@ -20,9 +21,9 @@ import { ForbiddenError, NotFoundError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-const roomIdInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
-const setMuteInputSchema = z.object({ isMuted: z.boolean(), roomId: selectRoomSchema.shape.id });
-const sendSignalInputSchema = z.object({ payload: voiceSignalPayloadSchema, roomId: selectRoomSchema.shape.id });
+const roomIdInputSchema = roomIdSchema;
+const setMuteInputSchema = z.object({ ...roomIdSchema.shape, isMuted: z.boolean() });
+const sendSignalInputSchema = z.object({ ...roomIdSchema.shape, payload: voiceSignalPayloadSchema });
 const onJoinVoiceChannelInputSchema = selectRoomSchema.shape.id;
 const onLeaveVoiceChannelInputSchema = selectRoomSchema.shape.id;
 const onSetMuteInputSchema = selectRoomSchema.shape.id;

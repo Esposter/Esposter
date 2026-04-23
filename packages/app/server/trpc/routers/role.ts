@@ -28,7 +28,7 @@ const onRoleInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 export const roleRouter = router({
   assignRole: getPermissionsProcedure(RoomPermission.ManageRoles, assignRoleInputSchema, "roomId").mutation<RoomRole>(
     async ({ ctx, input: { roleId, roomId, userId } }) => {
-      const actorId = ctx.getSessionPayload.user.id;
+      const actorUserId = ctx.getSessionPayload.user.id;
       const [role, member, actorContext] = await Promise.all([
         ctx.db.query.roomRoles.findFirst({
           where: (roomRoles, { and, eq }) => and(eq(roomRoles.id, roleId), eq(roomRoles.roomId, roomId)),
@@ -37,7 +37,7 @@ export const roleRouter = router({
           columns: { userId: true },
           where: (usersToRooms, { and, eq }) => and(eq(usersToRooms.userId, userId), eq(usersToRooms.roomId, roomId)),
         }),
-        getActorContext(ctx.db, actorId, roomId),
+        getActorContext(ctx.db, actorUserId, roomId),
       ]);
 
       if (!role)
@@ -63,7 +63,7 @@ export const roleRouter = router({
       if (!isManageable(actorTopPosition, targetTopRolePosition, isOwner))
         throw new TRPCError({ code: "UNAUTHORIZED" });
 
-      const device = { sessionId: ctx.getSessionPayload.session.id, userId: actorId };
+      const device = { sessionId: ctx.getSessionPayload.session.id, userId: actorUserId };
       const [userToRoomRole] = await ctx.db
         .insert(usersToRoomRoles)
         .values({ roleId, roomId, userId })
@@ -75,13 +75,13 @@ export const roleRouter = router({
   ),
   createRole: getPermissionsProcedure(RoomPermission.ManageRoles, createRoleInputSchema, "roomId").mutation<RoomRole>(
     async ({ ctx, input: { color, name, permissions, position, roomId } }) => {
-      const actorId = ctx.getSessionPayload.user.id;
-      const { actorTopPosition, isOwner } = await getActorContext(ctx.db, actorId, roomId);
+      const actorUserId = ctx.getSessionPayload.user.id;
+      const { actorTopPosition, isOwner } = await getActorContext(ctx.db, actorUserId, roomId);
 
       if (!isManageable(actorTopPosition, position, isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
 
       if (!isOwner) {
-        const actorPermissions = await getPermissions(ctx.db, actorId, roomId);
+        const actorPermissions = await getPermissions(ctx.db, actorUserId, roomId);
         const hasAdmin = Boolean(actorPermissions & RoomPermission.Administrator);
         if (!hasAdmin && (permissions & ~actorPermissions) !== 0n) throw new TRPCError({ code: "UNAUTHORIZED" });
       }
@@ -101,20 +101,20 @@ export const roleRouter = router({
 
       roleEventEmitter.emit("createRole", [
         createdRole,
-        { sessionId: ctx.getSessionPayload.session.id, userId: actorId },
+        { sessionId: ctx.getSessionPayload.session.id, userId: actorUserId },
       ]);
       return createdRole;
     },
   ),
   deleteRole: getPermissionsProcedure(RoomPermission.ManageRoles, deleteRoleInputSchema, "roomId").mutation<RoomRole>(
     async ({ ctx, input: { id, roomId } }) => {
-      const actorId = ctx.getSessionPayload.user.id;
+      const actorUserId = ctx.getSessionPayload.user.id;
       const [role, actorContext] = await Promise.all([
         ctx.db.query.roomRoles.findFirst({
           columns: { isEveryone: true, position: true },
           where: (roomRoles, { and, eq }) => and(eq(roomRoles.id, id), eq(roomRoles.roomId, roomId)),
         }),
-        getActorContext(ctx.db, actorId, roomId),
+        getActorContext(ctx.db, actorUserId, roomId),
       ]);
 
       if (!role)
@@ -145,7 +145,7 @@ export const roleRouter = router({
 
       roleEventEmitter.emit("deleteRole", [
         { id, roomId },
-        { sessionId: ctx.getSessionPayload.session.id, userId: actorId },
+        { sessionId: ctx.getSessionPayload.session.id, userId: actorUserId },
       ]);
       return deletedRole;
     },
@@ -230,13 +230,13 @@ export const roleRouter = router({
   ),
   revokeRole: getPermissionsProcedure(RoomPermission.ManageRoles, revokeRoleInputSchema, "roomId").mutation(
     async ({ ctx, input: { roleId, roomId, userId } }) => {
-      const actorId = ctx.getSessionPayload.user.id;
+      const actorUserId = ctx.getSessionPayload.user.id;
       const [role, actorContext] = await Promise.all([
         ctx.db.query.roomRoles.findFirst({
           columns: { position: true },
           where: (roomRoles, { and, eq }) => and(eq(roomRoles.id, roleId), eq(roomRoles.roomId, roomId)),
         }),
-        getActorContext(ctx.db, actorId, roomId),
+        getActorContext(ctx.db, actorUserId, roomId),
       ]);
 
       if (!role)
@@ -263,19 +263,19 @@ export const roleRouter = router({
         );
       roleEventEmitter.emit("revokeRole", [
         { roleId, roomId, userId },
-        { sessionId: ctx.getSessionPayload.session.id, userId: actorId },
+        { sessionId: ctx.getSessionPayload.session.id, userId: actorUserId },
       ]);
     },
   ),
   updateRole: getPermissionsProcedure(RoomPermission.ManageRoles, updateRoleInputSchema, "roomId").mutation<RoomRole>(
     async ({ ctx, input: { id, roomId, ...rest } }) => {
-      const actorId = ctx.getSessionPayload.user.id;
+      const actorUserId = ctx.getSessionPayload.user.id;
       const [role, actorContext] = await Promise.all([
         ctx.db.query.roomRoles.findFirst({
           columns: { position: true },
           where: (roomRoles, { and, eq }) => and(eq(roomRoles.id, id), eq(roomRoles.roomId, roomId)),
         }),
-        getActorContext(ctx.db, actorId, roomId),
+        getActorContext(ctx.db, actorUserId, roomId),
       ]);
 
       if (!role)
@@ -291,7 +291,7 @@ export const roleRouter = router({
       )
         throw new TRPCError({ code: "UNAUTHORIZED" });
       else if (rest.permissions !== undefined && !isOwner) {
-        const actorPermissions = await getPermissions(ctx.db, actorId, roomId);
+        const actorPermissions = await getPermissions(ctx.db, actorUserId, roomId);
         const hasAdmin = Boolean(actorPermissions & RoomPermission.Administrator);
         if (!hasAdmin && (rest.permissions & ~actorPermissions) !== 0n) throw new TRPCError({ code: "UNAUTHORIZED" });
       }
@@ -311,7 +311,7 @@ export const roleRouter = router({
 
       roleEventEmitter.emit("updateRole", [
         updatedRole,
-        { sessionId: ctx.getSessionPayload.session.id, userId: actorId },
+        { sessionId: ctx.getSessionPayload.session.id, userId: actorUserId },
       ]);
       return updatedRole;
     },

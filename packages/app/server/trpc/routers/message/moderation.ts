@@ -1,10 +1,10 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { Ban, BanWithRelations, Clause } from "@esposter/db-schema";
 
+import { deleteBanInputSchema } from "#shared/models/db/moderation/DeleteBanInput";
 import { executeAdminActionInputSchema } from "#shared/models/db/moderation/ExecuteAdminActionInput";
 import { readBansInputSchema } from "#shared/models/db/moderation/ReadBansInput";
 import { readModerationLogInputSchema } from "#shared/models/db/moderation/ReadModerationLogInput";
-import { unbanUserInputSchema } from "#shared/models/db/moderation/UnbanUserInput";
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
@@ -33,8 +33,8 @@ import {
   CompositeKeyPropertyNames,
   DatabaseEntityType,
   ModerationLogEntity,
+  roomIdSchema,
   RoomPermission,
-  selectRoomSchema,
   users,
   usersToRoomRoles,
   usersToRooms,
@@ -43,18 +43,32 @@ import { ItemMetadataPropertyNames, NotFoundError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, getTableColumns, isNull, SQL } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
-import { z } from "zod";
 
-const onAdminActionInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
+const onAdminActionInputSchema = roomIdSchema;
 
 export const moderationRouter = router({
+  deleteBan: getPermissionsProcedure(RoomPermission.BanMembers, deleteBanInputSchema, "roomId").mutation(
+    async ({ ctx, input: { roomId, userId } }) => {
+      const ban = await ctx.db.query.bans.findFirst({
+        columns: { userId: true },
+        where: (bans, { and, eq }) => and(eq(bans.roomId, roomId), eq(bans.userId, userId)),
+      });
+      if (!ban)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new NotFoundError(DatabaseEntityType.Ban, userId).message,
+        });
+
+      await ctx.db.delete(bans).where(and(eq(bans.roomId, roomId), eq(bans.userId, userId)));
+    },
+  ),
   executeAdminAction: getMemberProcedure(executeAdminActionInputSchema, "roomId")
     .concat(moderationLogPlugin)
     .mutation(async ({ ctx, input: { durationMs, roomId, targetUserId, type } }) => {
-      const actorId = ctx.getSessionPayload.user.id;
+      const actorUserId = ctx.getSessionPayload.user.id;
       const [isPermitted, actorContext, targetTopPosition] = await Promise.all([
-        hasPermission(ctx.db, actorId, roomId, AdminActionPermissionMap[type]),
-        getActorContext(ctx.db, actorId, roomId),
+        hasPermission(ctx.db, actorUserId, roomId, AdminActionPermissionMap[type]),
+        getActorContext(ctx.db, actorUserId, roomId),
         getTopRolePosition(ctx.db, targetUserId, roomId),
       ]);
 
@@ -72,7 +86,7 @@ export const moderationRouter = router({
               .where(and(eq(usersToRoomRoles.userId, targetUserId), eq(usersToRoomRoles.roomId, roomId)));
             await tx
               .insert(bans)
-              .values({ bannedByUserId: actorId, roomId, userId: targetUserId })
+              .values({ bannedByUserId: actorUserId, roomId, userId: targetUserId })
               .onConflictDoNothing();
           });
           break;
@@ -144,21 +158,6 @@ export const moderationRouter = router({
         filter: serializeClauses(clauses),
       });
       return getCursorPaginationData(entries, limit, sortBy);
-    },
-  ),
-  unbanUser: getPermissionsProcedure(RoomPermission.BanMembers, unbanUserInputSchema, "roomId").mutation(
-    async ({ ctx, input: { roomId, userId } }) => {
-      const ban = await ctx.db.query.bans.findFirst({
-        columns: { userId: true },
-        where: (bans, { and, eq }) => and(eq(bans.roomId, roomId), eq(bans.userId, userId)),
-      });
-      if (!ban)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: new NotFoundError(DatabaseEntityType.Ban, userId).message,
-        });
-
-      await ctx.db.delete(bans).where(and(eq(bans.roomId, roomId), eq(bans.userId, userId)));
     },
   ),
 });

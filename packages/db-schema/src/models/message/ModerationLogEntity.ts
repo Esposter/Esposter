@@ -8,7 +8,7 @@ import { selectUserSchema } from "@/schema/users";
 import { z } from "zod";
 
 export class ModerationLogEntity extends AzureEntity {
-  actorId!: User["id"];
+  actorUserId!: User["id"];
   durationMs?: number;
   targetUserId!: User["id"];
   type!: AdminActionType;
@@ -28,7 +28,7 @@ export const moderationLogEntitySchema = z.object({
       rowKey: z.string(),
     }),
   ).shape,
-  actorId: selectUserSchema.shape.id,
+  actorUserId: selectUserSchema.shape.id,
   durationMs: z.int().positive().optional(),
   targetUserId: selectUserSchema.shape.id,
   type: adminActionTypeSchema,

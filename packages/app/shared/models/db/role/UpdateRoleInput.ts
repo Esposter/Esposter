@@ -1,15 +1,15 @@
 import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
-import { selectRoomRoleSchema, selectRoomSchema } from "@esposter/db-schema";
+import { roomIdSchema, selectRoomRoleSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
 export const updateRoleInputSchema = refineAtLeastOne(
   z.object({
+    ...roomIdSchema.shape,
     color: selectRoomRoleSchema.shape.color.optional(),
     id: selectRoomRoleSchema.shape.id,
     name: selectRoomRoleSchema.shape.name.optional(),
     permissions: selectRoomRoleSchema.shape.permissions.optional(),
     position: selectRoomRoleSchema.shape.position.optional(),
-    roomId: selectRoomSchema.shape.id,
   }),
   ["color", "name", "permissions", "position"],
 );

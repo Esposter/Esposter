@@ -1,9 +1,9 @@
-import { adminActionTypeSchema, selectRoomSchema, selectUserSchema } from "@esposter/db-schema";
+import { adminActionTypeSchema, roomIdSchema, selectUserSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
 export const executeAdminActionInputSchema = z.object({
+  ...roomIdSchema.shape,
   durationMs: z.int().positive().optional(),
-  roomId: selectRoomSchema.shape.id,
   targetUserId: selectUserSchema.shape.id,
   type: adminActionTypeSchema,
 });

@@ -49,11 +49,7 @@ export const useReadMessages = () => {
     readItems(
       async () => {
         if (!currentRoomId.value)
-          throw new InvalidOperationError(
-            Operation.Read,
-            readMessages.name,
-            CompositeKeyPropertyNames.partitionKey,
-          );
+          throw new InvalidOperationError(Operation.Read, readMessages.name, CompositeKeyPropertyNames.partitionKey);
         const roomId = currentRoomId.value;
 
         if (!online.value) {
@@ -94,11 +90,7 @@ export const useReadMessages = () => {
   const readMoreMessages = (onComplete: () => void) =>
     readMoreItems(async (cursor) => {
       if (!currentRoomId.value)
-        throw new InvalidOperationError(
-          Operation.Read,
-          readMessages.name,
-          CompositeKeyPropertyNames.partitionKey,
-        );
+        throw new InvalidOperationError(Operation.Read, readMessages.name, CompositeKeyPropertyNames.partitionKey);
       const response = await $trpc.message.readMessages.query({ cursor, roomId: currentRoomId.value });
       await readMetadata(response.items);
       return response;

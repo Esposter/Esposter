@@ -174,7 +174,7 @@ describe("moderation", () => {
       ).resolves.toBeUndefined();
     });
 
-    test("member without BanMembers permission cannot ban — throws UNAUTHORIZED", async () => {
+    test(`member without ${RoomPermission.BanMembers} permission cannot ban — throws UNAUTHORIZED`, async () => {
       expect.hasAssertions();
 
       const target = await createMember();
@@ -233,7 +233,7 @@ describe("moderation", () => {
       expect(takeOne(result.items).userId).toBe(member.id);
     });
 
-    test("member without BanMembers permission cannot readBans — throws UNAUTHORIZED", async () => {
+    test(`member without ${RoomPermission.BanMembers} permission cannot readBans — throws UNAUTHORIZED`, async () => {
       expect.hasAssertions();
 
       const member = await createMember();
@@ -246,7 +246,7 @@ describe("moderation", () => {
   });
 
   describe("readModerationLog", () => {
-    test("member without ManageRoom permission cannot readModerationLog — throws UNAUTHORIZED", async () => {
+    test(`member without ${RoomPermission.ManageRoom} permission cannot readModerationLog — throws UNAUTHORIZED`, async () => {
       expect.hasAssertions();
 
       const member = await createMember();
@@ -258,8 +258,8 @@ describe("moderation", () => {
     });
   });
 
-  describe("unbanUser", () => {
-    test("owner unbans a previously banned user — ban record deleted, readBans returns empty", async () => {
+  describe("deleteBan", () => {
+    test("owner deletes a ban for a previously banned user — ban record deleted, readBans returns empty", async () => {
       expect.hasAssertions();
 
       const member = await createMember();
@@ -268,33 +268,33 @@ describe("moderation", () => {
         targetUserId: member.id,
         type: AdminActionType.BanUser,
       });
-      await moderationCaller.unbanUser({ roomId, userId: member.id });
+      await moderationCaller.deleteBan({ roomId, userId: member.id });
 
       const result = await moderationCaller.readBans({ limit: 15, roomId });
 
       expect(result.items).toHaveLength(0);
     });
 
-    test("unban non-existent userId — throws NOT_FOUND", async () => {
+    test("delete ban with non-existent userId — throws NOT_FOUND", async () => {
       expect.hasAssertions();
 
       const nonExistentUserId = crypto.randomUUID();
 
       await expect(
-        moderationCaller.unbanUser({ roomId, userId: nonExistentUserId }),
+        moderationCaller.deleteBan({ roomId, userId: nonExistentUserId }),
       ).rejects.toThrowErrorMatchingInlineSnapshot(
         `[TRPCError: ${new NotFoundError(DatabaseEntityType.Ban, nonExistentUserId).message}]`,
       );
     });
 
-    test("member without BanMembers permission cannot unban — throws UNAUTHORIZED", async () => {
+    test(`member without ${RoomPermission.BanMembers} permission cannot delete ban — throws UNAUTHORIZED`, async () => {
       expect.hasAssertions();
 
       const member = await createMember();
       await mockSessionOnce(mockContext.db, member);
 
       await expect(
-        moderationCaller.unbanUser({ roomId, userId: crypto.randomUUID() }),
+        moderationCaller.deleteBan({ roomId, userId: crypto.randomUUID() }),
       ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
     });
   });

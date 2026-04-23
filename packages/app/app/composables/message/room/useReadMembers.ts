@@ -23,11 +23,7 @@ export const useReadMembers = () => {
   const readMembers = () => {
     const roomId = currentRoomId.value;
     if (!roomId)
-      throw new InvalidOperationError(
-        Operation.Read,
-        readMoreMembers.name,
-        CompositeKeyPropertyNames.partitionKey,
-      );
+      throw new InvalidOperationError(Operation.Read, readMoreMembers.name, CompositeKeyPropertyNames.partitionKey);
     return readItems(
       async () => {
         count.value = await $trpc.room.countMembers.query({ roomId });
@@ -46,11 +42,7 @@ export const useReadMembers = () => {
     readMoreItems(async (cursor) => {
       const roomId = currentRoomId.value;
       if (!roomId)
-        throw new InvalidOperationError(
-          Operation.Read,
-          readMoreMembers.name,
-          CompositeKeyPropertyNames.partitionKey,
-        );
+        throw new InvalidOperationError(Operation.Read, readMoreMembers.name, CompositeKeyPropertyNames.partitionKey);
       const cursorPaginationData = await $trpc.room.readMembers.query({ cursor, roomId });
       for (const member of cursorPaginationData.items) memberMap.value.set(member.id, member);
       await readMetadata(

@@ -21,11 +21,11 @@ await readModerationLog();
   <div flex flex-col gap-4>
     <div v-if="items.length === 0" text-medium-emphasis>No audit log entries.</div>
     <v-list v-else lines="two">
-      <v-list-item v-for="{ actorId, durationMs, rowKey, targetUserId, type } of items" :key="rowKey">
+      <v-list-item v-for="{ actorUserId, durationMs, rowKey, targetUserId, type } of items" :key="rowKey">
         <template #prepend>
           <v-icon :color="AdminActionColorMap[type]">{{ AdminActionIconMap[type] }}</v-icon>
         </template>
-        <v-list-item-title>{{ type }} — {{ actorId }} acted on {{ targetUserId }}</v-list-item-title>
+        <v-list-item-title>{{ type }} — {{ actorUserId }} acted on {{ targetUserId }}</v-list-item-title>
         <v-list-item-subtitle>
           <template v-if="durationMs"> · {{ Math.round(durationMs / 60000) }} min</template>
         </v-list-item-subtitle>

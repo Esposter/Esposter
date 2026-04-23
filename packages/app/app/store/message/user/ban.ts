@@ -1,4 +1,4 @@
-import type { UnbanUserInput } from "#shared/models/db/moderation/UnbanUserInput";
+import type { DeleteBanInput } from "#shared/models/db/moderation/DeleteBanInput";
 import type { BanWithRelations } from "@esposter/db-schema";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
@@ -13,9 +13,9 @@ export const useBanStore = defineStore("message/user/ban", () => {
   const { hasMore, items, readItems, readMoreItems } = useCursorPaginationOperationData(cursorPaginationData);
   const { deleteBan: storeDeleteBan } = createOperationData(items, ["roomId", "userId"], DatabaseEntityType.Ban);
 
-  const deleteBan = async (input: UnbanUserInput) => {
-    await $trpc.moderation.unbanUser.mutate(input);
-    storeDeleteBan({ roomId: input.roomId, userId: input.userId });
+  const deleteBan = async (input: DeleteBanInput) => {
+    await $trpc.moderation.deleteBan.mutate(input);
+    storeDeleteBan(input);
   };
 
   return { deleteBan, hasMore, items, readItems, readMoreItems, storeDeleteBan };

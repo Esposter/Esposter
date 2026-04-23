@@ -1,9 +1,9 @@
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
-import { selectRoomSchema } from "@esposter/db-schema";
+import { roomIdSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
 export const readModerationLogInputSchema = z.object({
+  ...roomIdSchema.shape,
   ...createCursorPaginationParamsSchema(z.string(), []).omit({ sortBy: true }).shape,
-  roomId: selectRoomSchema.shape.id,
 });
 export type ReadModerationLogInput = z.infer<typeof readModerationLogInputSchema>;

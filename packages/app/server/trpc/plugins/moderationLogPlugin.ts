@@ -21,7 +21,7 @@ export const moderationLogPlugin = t.procedure.use(async ({ ctx, getRawInput, ne
   await createEntity(
     moderationLogClient,
     new ModerationLogEntity({
-      actorId: ctx.getSessionPayload.user.id,
+      actorUserId: ctx.getSessionPayload.user.id,
       durationMs,
       partitionKey: roomId,
       rowKey: getReverseTickedTimestamp(),

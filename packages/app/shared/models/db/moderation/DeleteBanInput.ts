@@ -1,8 +1,8 @@
 import { roomIdSchema, userIdSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
-export const deleteMemberInputSchema = z.object({
+export const deleteBanInputSchema = z.object({
   ...roomIdSchema.shape,
   ...userIdSchema.shape,
 });
-export type DeleteMemberInput = z.infer<typeof deleteMemberInputSchema>;
+export type DeleteBanInput = z.infer<typeof deleteBanInputSchema>;

@@ -1,18 +1,14 @@
 import type { VoiceParticipant } from "#shared/models/room/voice/VoiceParticipant";
 
-import { useAdminActionNotification } from "@/composables/message/useAdminActionNotification";
 import { authClient } from "@/services/auth/authClient";
 import { LOCAL_PARTICIPANT_ID } from "@/services/message/voice/constants";
 import { useRoomStore } from "@/store/message/room";
 import { useWebRtcStore } from "@/store/message/room/webRtc";
-import { AdminActionType } from "@esposter/db-schema";
-import { exhaustiveGuard } from "@esposter/shared";
 
 export const useVoiceStore = defineStore("message/room/voice", () => {
   const { $trpc } = useNuxtApp();
-  const session = authClient.useSession();
   const roomStore = useRoomStore();
-  const { storeDeleteRoom } = roomStore;
+  const session = authClient.useSession();
   const webRtcStore = useWebRtcStore();
   const {
     acquireLocalStream,
@@ -22,7 +18,6 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
     setupSpeakingDetection,
     subscribeToSignals,
   } = webRtcStore;
-  const { notify } = useAdminActionNotification();
   const callRoomId = ref<string>();
   const isDeafened = ref(false);
   const isForceMuted = ref(false);
@@ -70,41 +65,6 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
   };
   const clearSpeakers = () => {
     speakingIds.value = [];
-  };
-
-  const handleAdminAction = async (roomId: string, type: AdminActionType, durationMs?: number) => {
-    switch (type) {
-      case AdminActionType.BanUser:
-        await leaveVoice();
-        await storeDeleteRoom({ id: roomId });
-        break;
-      case AdminActionType.ForceMute:
-        if (sessionId.value) setMute(roomId, sessionId.value, true);
-        setLocalStreamMuted(true);
-        isForceMuted.value = true;
-        break;
-      case AdminActionType.ForceUnmute:
-        if (sessionId.value) setMute(roomId, sessionId.value, false);
-        setLocalStreamMuted(false);
-        isForceMuted.value = false;
-        break;
-      case AdminActionType.KickFromRoom:
-        await leaveVoice();
-        await storeDeleteRoom({ id: roomId });
-        break;
-      case AdminActionType.KickFromVoice:
-        await leaveVoice();
-        notify("You have been kicked from voice.");
-        break;
-      case AdminActionType.TimeoutUser: {
-        const minutes = durationMs ? Math.round(durationMs / 60000) : 0;
-        notify(`You have been timed out for ${minutes} minute${minutes === 1 ? "" : "s"}.`);
-        await leaveVoice();
-        break;
-      }
-      default:
-        exhaustiveGuard(type);
-    }
   };
 
   const joinVoice = async () => {
@@ -157,7 +117,6 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
     createVoiceParticipant,
     deleteSpeaker,
     deleteVoiceParticipant,
-    handleAdminAction,
     isDeafened,
     isForceMuted,
     isInChannel,
