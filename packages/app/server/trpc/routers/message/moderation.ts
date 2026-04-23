@@ -51,6 +51,9 @@ export const moderationRouter = router({
   executeAdminAction: getMemberProcedure(executeAdminActionInputSchema, "roomId")
     .concat(moderationLogPlugin)
     .mutation(async ({ ctx, input: { durationMs, roomId, targetUserId, type } }) => {
+      if (![AdminActionType.BanUser, AdminActionType.KickFromRoom, AdminActionType.TimeoutUser].includes(type))
+        throw new TRPCError({ code: "BAD_REQUEST" });
+
       const actorId = ctx.getSessionPayload.user.id;
       const [isPermitted, actorContext, targetTopPosition] = await Promise.all([
         hasPermission(ctx.db, actorId, roomId, AdminActionPermissionMap[type]),
@@ -89,7 +92,6 @@ export const moderationRouter = router({
             .where(and(eq(usersToRooms.userId, targetUserId), eq(usersToRooms.roomId, roomId)));
           break;
         }
-        // ForceMute, ForceUnmute, KickFromVoice: client-side only via subscription
       }
 
       moderationEventEmitter.emit("adminAction", { durationMs, roomId, targetUserId, type });
