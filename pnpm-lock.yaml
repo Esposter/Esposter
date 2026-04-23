@@ -43,8 +43,8 @@ catalogs:
       specifier: ^1.0.4
       version: 1.0.4
     '@better-auth/drizzle-adapter':
-      specifier: ^1.6.7
-      version: 1.6.7
+      specifier: ^1.6.8
+      version: 1.6.8
     '@codemirror/lang-vue':
       specifier: ^0.1.3
       version: 0.1.3
@@ -773,7 +773,7 @@ importers:
         version: 1.0.4
       '@better-auth/drizzle-adapter':
         specifier: 'catalog:'
-        version: 1.6.7(@better-auth/core@1.6.7(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-call@1.3.5(zod@4.3.6))(jose@6.2.2)(kysely@0.28.16)(nanostores@1.3.0))(@better-auth/utils@0.4.0)(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(kysely@0.28.16)(postgres@3.4.9))
+        version: 1.6.8(@better-auth/core@1.6.7(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-call@1.3.5(zod@4.3.6))(jose@6.2.2)(kysely@0.28.16)(nanostores@1.3.0))(@better-auth/utils@0.4.0)(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(kysely@0.28.16)(postgres@3.4.9))
       '@codemirror/lang-vue':
         specifier: 'catalog:'
         version: 0.1.3
@@ -2276,6 +2276,16 @@ packages:
     resolution: {integrity: sha512-x6yL1PXQwxa7tmKfPiCG1yrOvP+8n86FuueY5Cfc0XDMaAWzNt8oBqt+WLo6rkL7BcRiFBUA3r86s7nCwO1xrQ==}
     peerDependencies:
       '@better-auth/core': ^1.6.7
+      '@better-auth/utils': 0.4.0
+      drizzle-orm: ^0.45.2
+    peerDependenciesMeta:
+      drizzle-orm:
+        optional: true
+
+  '@better-auth/drizzle-adapter@1.6.8':
+    resolution: {integrity: sha512-iAQ8KWPfGppcakZXStbX7aWGeK0pLlDlzkQN6NhFM7Qm2KwBcc0X1EyRGIiLSIiGw8hTNppGp8igliMm2ti0zw==}
+    peerDependencies:
+      '@better-auth/core': ^1.6.8
       '@better-auth/utils': 0.4.0
       drizzle-orm: ^0.45.2
     peerDependenciesMeta:
@@ -14352,6 +14362,13 @@ snapshots:
       zod: 4.3.6
 
   '@better-auth/drizzle-adapter@1.6.7(@better-auth/core@1.6.7(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-call@1.3.5(zod@4.3.6))(jose@6.2.2)(kysely@0.28.16)(nanostores@1.3.0))(@better-auth/utils@0.4.0)(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(kysely@0.28.16)(postgres@3.4.9))':
+    dependencies:
+      '@better-auth/core': 1.6.7(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-call@1.3.5(zod@4.3.6))(jose@6.2.2)(kysely@0.28.16)(nanostores@1.3.0)
+      '@better-auth/utils': 0.4.0
+    optionalDependencies:
+      drizzle-orm: 0.45.2(@electric-sql/pglite@0.4.4)(kysely@0.28.16)(postgres@3.4.9)
+
+  '@better-auth/drizzle-adapter@1.6.8(@better-auth/core@1.6.7(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-call@1.3.5(zod@4.3.6))(jose@6.2.2)(kysely@0.28.16)(nanostores@1.3.0))(@better-auth/utils@0.4.0)(drizzle-orm@0.45.2(@electric-sql/pglite@0.4.4)(kysely@0.28.16)(postgres@3.4.9))':
     dependencies:
       '@better-auth/core': 1.6.7(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-call@1.3.5(zod@4.3.6))(jose@6.2.2)(kysely@0.28.16)(nanostores@1.3.0)
       '@better-auth/utils': 0.4.0
