@@ -112,7 +112,7 @@ const canKickFromVoice = computed(() => {
             size="x-small"
             variant="plain"
             :ripple="false"
-            @click="toggleMute"
+            @click="toggleMute()"
           />
         </template>
       </v-tooltip>
@@ -125,7 +125,7 @@ const canKickFromVoice = computed(() => {
             size="x-small"
             variant="plain"
             :ripple="false"
-            @click="toggleDeafen"
+            @click="toggleDeafen()"
           />
         </template>
       </v-tooltip>
@@ -138,7 +138,7 @@ const canKickFromVoice = computed(() => {
             size="x-small"
             variant="tonal"
             :ripple="false"
-            @click="leaveVoice"
+            @click="leaveVoice()"
           />
         </template>
       </v-tooltip>
