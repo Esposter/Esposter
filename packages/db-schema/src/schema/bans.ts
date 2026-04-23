@@ -31,6 +31,10 @@ export type Ban = typeof bans.$inferSelect;
 export const selectBanSchema = createSelectSchema(bans);
 
 export const bansRelations = relations(bans, ({ one }) => ({
+  bannedByUser: one(users, {
+    fields: [bans.bannedByUserId],
+    references: [users.id],
+  }),
   user: one(users, {
     fields: [bans.userId],
     references: [users.id],
@@ -38,7 +42,8 @@ export const bansRelations = relations(bans, ({ one }) => ({
 }));
 // @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
 export const BanRelations = {
+  bannedByUser: true,
   user: true,
 } as const;
 
-export type BanWithRelations = Ban & { user: User };
+export type BanWithRelations = Ban & { bannedByUser: User | null; user: User };

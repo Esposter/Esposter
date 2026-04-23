@@ -27,6 +27,37 @@ export const useCopyToClipboard = () => {
 }
 ```
 
+## Settings Tab Permissions — Hide at the Tab Level
+
+Permission-gated settings tabs are hidden via `SettingsPermissionMap`, not guarded inside the tab component. Individual tab components never check permissions — they render unconditionally (the tab is simply not shown to users who lack permission).
+
+**Pattern:**
+
+1. Add `[SettingsType.Xxx]: RoomPermission.YYY` to `services/message/settings/SettingsPermissionMap.ts`
+2. `LeftSideBar.vue` filters visible tabs using `hasPermission` inside a `computed`
+3. The tab component itself just fetches and renders — no `isPermitted` check
+
+```typescript
+// services/message/settings/SettingsPermissionMap.ts
+export const SettingsPermissionMap: Partial<Record<SettingsType, RoomPermission>> = {
+  [SettingsType.Bans]: RoomPermission.BanMembers,
+  [SettingsType.AuditLog]: RoomPermission.ManageRoom,
+};
+
+// LeftSideBar.vue — filters entries via computed, no per-component checks
+const visibleSettings = computed(() =>
+  Object.entries(SettingsListItemMap).filter(([settingsType]) => {
+    const permission = SettingsPermissionMap[settingsType as SettingsType];
+    if (!permission) return true;
+    const data = myPermissionsMap.value.get(roomId);
+    if (!data) return false;
+    return hasPermission(data.permissions, permission, data.isRoomOwner);
+  }),
+);
+```
+
+**Do NOT** check `isPermitted` inside the tab component and show "Insufficient permissions" text — hide the tab entirely instead.
+
 ## StyledWaypoint — Infinite Scroll Pattern
 
 Use `<StyledWaypoint>` for cursor-paginated lists instead of a "Load more" button. It fires `@change` when scrolled into view and manages its own loading indicator via the default slot.
@@ -45,6 +76,7 @@ Use `<StyledWaypoint>` for cursor-paginated lists instead of a "Load more" butto
 ```
 
 Composable `readMoreXxx` signature must match the `@change` emitted callback:
+
 ```typescript
 const readMoreBans = (onComplete: () => void) =>
   readMoreItems((cursor) => $trpc.moderation.readBans.query({ cursor, limit: LIMIT, roomId }), onComplete);

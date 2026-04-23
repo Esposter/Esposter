@@ -40,7 +40,7 @@ import {
 } from "@esposter/db-schema";
 import { ItemMetadataPropertyNames, NotFoundError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, eq, getTableColumns, isNull, SQL } from "drizzle-orm";
+import { alias, and, eq, getTableColumns, isNull, SQL } from "drizzle-orm";
 import { z } from "zod";
 
 const permissionForType: Record<AdminActionType, RoomPermission> = {
@@ -124,10 +124,16 @@ export const moderationRouter = router({
     const wheres: (SQL | undefined)[] = [eq(bans.roomId, roomId), isNull(bans.deletedAt)];
     if (cursor) wheres.push(getCursorWhere(bans, cursor, sortBy));
 
+    const bannedByUsers = alias(users, "bannedByUsers");
     const results = await ctx.db
-      .select({ ...getTableColumns(bans), user: getTableColumns(users) })
+      .select({
+        ...getTableColumns(bans),
+        bannedByUser: getTableColumns(bannedByUsers),
+        user: getTableColumns(users),
+      })
       .from(bans)
       .innerJoin(users, eq(bans.userId, users.id))
+      .leftJoin(bannedByUsers, eq(bans.bannedByUserId, bannedByUsers.id))
       .where(and(...wheres))
       .orderBy(...parseSortByToSql(bans, sortBy))
       .limit(limit + 1);

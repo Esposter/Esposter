@@ -1,17 +1,40 @@
 <script setup lang="ts">
+import type { Room } from "@esposter/db-schema";
+
+import { hasPermission } from "#shared/services/room/rbac/hasPermission";
 import { SettingsType } from "@/models/message/room/SettingsType";
 import { SettingsContentMap } from "@/services/message/settings/SettingsContentMap";
 import { SettingsListItemMap } from "@/services/message/settings/SettingsListItemMap";
+import { SettingsPermissionMap } from "@/services/message/settings/SettingsPermissionMap";
+import { useRoleStore } from "@/store/message/room/role";
 
+interface LeftSideBarProps {
+  roomId: Room["id"];
+}
+
+const { roomId } = defineProps<LeftSideBarProps>();
 const modelValue = defineModel<keyof typeof SettingsContentMap>({ required: true });
 const emit = defineEmits<{ "open:delete": [] }>();
+
+const roleStore = useRoleStore();
+const { myPermissionsMap } = storeToRefs(roleStore);
+
+const visibleSettings = computed(() =>
+  Object.entries(SettingsListItemMap).filter(([settingsType]) => {
+    const permission = SettingsPermissionMap[settingsType as SettingsType];
+    if (!permission) return true;
+    const data = myPermissionsMap.value.get(roomId);
+    if (!data) return false;
+    return hasPermission(data.permissions, permission, data.isRoomOwner);
+  }),
+);
 </script>
 
 <template>
   <MessageModelSettingsLeftSideBar>
     <v-list pt-10>
       <MessageModelRoomSettingsLeftSideBarItem
-        v-for="[settingsType, { color, icon }] of Object.entries(SettingsListItemMap)"
+        v-for="[settingsType, { color, icon }] of visibleSettings"
         :key="settingsType"
         :color
         :icon

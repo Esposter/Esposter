@@ -1,7 +1,9 @@
 import type { UnbanUserInput } from "#shared/models/db/moderation/UnbanUserInput";
-import type { BanWithRelations, User } from "@esposter/db-schema";
+import type { BanWithRelations } from "@esposter/db-schema";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
+import { createOperationData } from "@/services/shared/createOperationData";
+import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const useBanStore = defineStore("message/user/ban", () => {
   const { $trpc } = useNuxtApp();
@@ -9,14 +11,11 @@ export const useBanStore = defineStore("message/user/ban", () => {
     CursorPaginationData<BanWithRelations>
   >;
   const { hasMore, items, readItems, readMoreItems } = useCursorPaginationOperationData(cursorPaginationData);
-
-  const storeDeleteBan = (userId: User["id"]) => {
-    items.value = items.value.filter((ban) => ban.userId !== userId);
-  };
+  const { deleteBan: storeDeleteBan } = createOperationData(items, ["roomId", "userId"], DatabaseEntityType.Ban);
 
   const deleteBan = async (input: UnbanUserInput) => {
     await $trpc.moderation.unbanUser.mutate(input);
-    storeDeleteBan(input.userId);
+    storeDeleteBan({ roomId: input.roomId, userId: input.userId });
   };
 
   return { deleteBan, hasMore, items, readItems, readMoreItems, storeDeleteBan };
