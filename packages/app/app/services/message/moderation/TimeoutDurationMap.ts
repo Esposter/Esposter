@@ -1,3 +1,4 @@
+/* eslint-disable perfectionist/sort-objects */
 export const TimeoutDurationMap = {
   "1 minute": 60_000,
   "5 minutes": 300_000,

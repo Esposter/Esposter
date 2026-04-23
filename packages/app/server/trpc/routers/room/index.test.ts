@@ -474,7 +474,7 @@ describe("room", () => {
     const userId = getMockSession().user.id;
 
     await expect(roomCaller.joinRoom(newInviteCode)).rejects.toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: Failed query: insert into "message"."users_to_rooms" ("createdAt", "deletedAt", "updatedAt", "isHidden", "notificationType", "roomId", "userId") values (default, default, $1, default, default, $2, $3) returning "createdAt", "deletedAt", "updatedAt", "isHidden", "notificationType", "roomId", "userId"
+      [TRPCError: Failed query: insert into "message"."users_to_rooms" ("createdAt", "deletedAt", "updatedAt", "isHidden", "notificationType", "roomId", "timeoutUntil", "userId") values (default, default, $1, default, default, $2, default, $3) returning "createdAt", "deletedAt", "updatedAt", "isHidden", "notificationType", "roomId", "timeoutUntil", "userId"
       params: 1970-01-01T00:00:00.000Z,${newRoom.id},${userId}]
     `);
   });
@@ -635,7 +635,7 @@ describe("room", () => {
 
     await expect(roomCaller.createMembers({ roomId: newRoom.id, userIds: [userId] })).rejects
       .toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: Failed query: insert into "message"."users_to_rooms" ("createdAt", "deletedAt", "updatedAt", "isHidden", "notificationType", "roomId", "userId") values (default, default, $1, default, default, $2, $3) returning "createdAt", "deletedAt", "updatedAt", "isHidden", "notificationType", "roomId", "userId"
+      [TRPCError: Failed query: insert into "message"."users_to_rooms" ("createdAt", "deletedAt", "updatedAt", "isHidden", "notificationType", "roomId", "timeoutUntil", "userId") values (default, default, $1, default, default, $2, default, $3) returning "createdAt", "deletedAt", "updatedAt", "isHidden", "notificationType", "roomId", "timeoutUntil", "userId"
       params: 1970-01-01T00:00:00.000Z,${newRoom.id},${userId}]
     `);
   });
@@ -648,7 +648,7 @@ describe("room", () => {
 
     await expect(roomCaller.createMembers({ roomId: newRoom.id, userIds: [userId] })).rejects
       .toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: Failed query: insert into "message"."users_to_rooms" ("createdAt", "deletedAt", "updatedAt", "isHidden", "notificationType", "roomId", "userId") values (default, default, $1, default, default, $2, $3) returning "createdAt", "deletedAt", "updatedAt", "isHidden", "notificationType", "roomId", "userId"
+      [TRPCError: Failed query: insert into "message"."users_to_rooms" ("createdAt", "deletedAt", "updatedAt", "isHidden", "notificationType", "roomId", "timeoutUntil", "userId") values (default, default, $1, default, default, $2, default, $3) returning "createdAt", "deletedAt", "updatedAt", "isHidden", "notificationType", "roomId", "timeoutUntil", "userId"
       params: 1970-01-01T00:00:00.000Z,${newRoom.id},${userId}]
     `);
   });
