@@ -153,6 +153,7 @@ const getWebPubSubClientAccessUrlInputSchema = z.object({ roomId: selectRoomSche
 export type GetWebPubSubClientAccessUrlInput = z.infer<typeof getWebPubSubClientAccessUrlInputSchema>;
 
 export const messageRouter = router({
+  // oxlint-disable-next-line prefer-spread
   createMessage: getMemberProcedure(standardCreateMessageInputSchema, "roomId")
     .concat(timeoutPlugin)
     .mutation<MessageEntity>(async ({ ctx, input }) => {

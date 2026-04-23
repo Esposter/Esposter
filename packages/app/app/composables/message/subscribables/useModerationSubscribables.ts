@@ -1,3 +1,4 @@
+import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { useRoomStore } from "@/store/message/room";
 
 export const useModerationSubscribables = () => {
@@ -11,12 +12,14 @@ export const useModerationSubscribables = () => {
     const adminActionUnsubscribable = $trpc.moderation.onAdminAction.subscribe(
       { roomId },
       {
-        onData: ({ durationMs, type }) => {
-          adminActionMap[type](roomId, durationMs);
-        },
+        onData: getSynchronizedFunction(async ({ durationMs, type }) => {
+          await adminActionMap[type](roomId, durationMs);
+        }),
       },
     );
 
-    return () => adminActionUnsubscribable.unsubscribe();
+    return () => {
+      adminActionUnsubscribable.unsubscribe();
+    };
   });
 };

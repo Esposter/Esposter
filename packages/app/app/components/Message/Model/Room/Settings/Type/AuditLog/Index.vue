@@ -4,6 +4,7 @@ import type { Room } from "@esposter/db-schema";
 import { AdminActionColorMap } from "@/services/message/moderation/AdminActionColorMap";
 import { AdminActionIconMap } from "@/services/message/moderation/AdminActionIconMap";
 import { useModerationLogStore } from "@/store/message/moderation/log";
+import { formatDuration } from "@/util/formatDuration";
 
 interface AuditLogProps {
   roomId: Room["id"];
@@ -26,9 +27,7 @@ await readModerationLog();
           <v-icon :color="AdminActionColorMap[type]">{{ AdminActionIconMap[type] }}</v-icon>
         </template>
         <v-list-item-title>{{ type }} — {{ actorUserId }} acted on {{ targetUserId }}</v-list-item-title>
-        <v-list-item-subtitle>
-          <template v-if="durationMs"> · {{ Math.round(durationMs / 60000) }} min</template>
-        </v-list-item-subtitle>
+        <v-list-item-subtitle v-if="durationMs">{{ formatDuration(durationMs) }}</v-list-item-subtitle>
       </v-list-item>
       <StyledWaypoint :is-active="hasMore" @change="readMoreModerationLog" />
     </v-list>

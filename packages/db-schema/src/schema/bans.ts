@@ -46,4 +46,4 @@ export const BanRelations = {
   user: true,
 } as const;
 
-export type BanWithRelations = Ban & { bannedByUser: User | null; user: User };
+export type BanWithRelations = Ban & { bannedByUser: null | User; user: User };

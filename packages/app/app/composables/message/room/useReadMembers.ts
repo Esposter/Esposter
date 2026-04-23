@@ -23,7 +23,7 @@ export const useReadMembers = () => {
   const readMembers = () => {
     const roomId = currentRoomId.value;
     if (!roomId)
-      throw new InvalidOperationError(Operation.Read, readMoreMembers.name, CompositeKeyPropertyNames.partitionKey);
+      throw new InvalidOperationError(Operation.Read, readMembers.name, CompositeKeyPropertyNames.partitionKey);
     return readItems(
       async () => {
         count.value = await $trpc.room.countMembers.query({ roomId });

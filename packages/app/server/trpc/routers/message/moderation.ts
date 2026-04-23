@@ -39,7 +39,7 @@ import {
   usersToRoomRoles,
   usersToRooms,
 } from "@esposter/db-schema";
-import { ItemMetadataPropertyNames, NotFoundError } from "@esposter/shared";
+import { exhaustiveGuard, ItemMetadataPropertyNames, NotFoundError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, getTableColumns, isNull, SQL } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
@@ -62,6 +62,7 @@ export const moderationRouter = router({
       await ctx.db.delete(bans).where(and(eq(bans.roomId, roomId), eq(bans.userId, userId)));
     },
   ),
+  // oxlint-disable-next-line prefer-spread
   executeAdminAction: getMemberProcedure(executeAdminActionInputSchema, "roomId")
     .concat(moderationLogPlugin)
     .mutation(async ({ ctx, input: { durationMs, roomId, targetUserId, type } }) => {
@@ -90,6 +91,10 @@ export const moderationRouter = router({
               .onConflictDoNothing();
           });
           break;
+        case AdminActionType.ForceMute:
+        case AdminActionType.ForceUnmute:
+        case AdminActionType.KickFromVoice:
+          break;
         case AdminActionType.KickFromRoom:
           await ctx.db
             .delete(usersToRooms)
@@ -103,6 +108,8 @@ export const moderationRouter = router({
             .where(and(eq(usersToRooms.userId, targetUserId), eq(usersToRooms.roomId, roomId)));
           break;
         }
+        default:
+          exhaustiveGuard(type);
       }
 
       moderationEventEmitter.emit("adminAction", { durationMs, roomId, targetUserId, type });

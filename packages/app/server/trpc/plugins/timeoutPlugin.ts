@@ -9,7 +9,7 @@ const t = initTRPC.context<AuthedContext>().create();
 
 export const timeoutPlugin = t.procedure.use(async ({ ctx, getRawInput, next }) => {
   const rawInput = await getRawInput();
-  const parsedInput = z.object({ roomId: selectRoomSchema.shape.id }).safeParse(rawInput);
-  if (parsedInput.success) await assertNotTimedOut(ctx.db, ctx.getSessionPayload.user.id, parsedInput.data.roomId);
+  const { roomId } = z.object({ roomId: selectRoomSchema.shape.id }).parse(rawInput);
+  await assertNotTimedOut(ctx.db, ctx.getSessionPayload.user.id, roomId);
   return next();
 });

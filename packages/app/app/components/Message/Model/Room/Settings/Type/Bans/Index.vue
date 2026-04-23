@@ -30,18 +30,34 @@ await readBans();
           <template v-if="bannedByUser"> by {{ bannedByUser.name }}</template>
         </v-list-item-subtitle>
         <template #append>
-          <v-tooltip location="top" text="Unban">
-            <template #activator="{ props: tooltipProps }">
-              <v-btn
-                v-bind="tooltipProps"
-                color="error"
-                icon="mdi-account-check-outline"
-                size="small"
-                variant="text"
-                @click="deleteBan({ roomId, userId })"
-              />
+          <StyledDeleteFormDialog
+            :card-props="{ title: 'Unban User', text: `Are you sure you want to unban ${user.name}?` }"
+            :confirm-button-props="{ color: 'primary', text: 'Unban' }"
+            @delete="
+              async (onComplete) => {
+                try {
+                  await deleteBan({ roomId, userId });
+                } finally {
+                  onComplete();
+                }
+              }
+            "
+          >
+            <template #activator="{ updateIsOpen }">
+              <v-tooltip location="top" text="Unban">
+                <template #activator="{ props: tooltipProps }">
+                  <v-btn
+                    :="tooltipProps"
+                    color="error"
+                    icon="mdi-account-check-outline"
+                    size="small"
+                    variant="text"
+                    @click.stop="updateIsOpen(true)"
+                  />
+                </template>
+              </v-tooltip>
             </template>
-          </v-tooltip>
+          </StyledDeleteFormDialog>
         </template>
       </v-list-item>
       <StyledWaypoint :is-active="hasMore" @change="readMoreBans" />
