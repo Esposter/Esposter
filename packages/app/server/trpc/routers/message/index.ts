@@ -30,9 +30,9 @@ import { updateMessage } from "@@/server/services/message/updateMessage";
 import { assertNotTimedOut } from "@@/server/services/moderation/assertNotTimedOut";
 import { router } from "@@/server/trpc";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
+import { timeoutPlugin } from "@@/server/trpc/plugins/timeoutPlugin";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/message/getCreatorProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
-import { timeoutPlugin } from "@@/server/trpc/plugins/timeoutPlugin";
 import {
   cloneFiles,
   createMessage,
@@ -66,8 +66,7 @@ import {
   selectRoomSchema,
   standardCreateMessageInputSchema,
   StandardMessageEntity,
-  StandardMessageEntityPropertyNames,
-  standardMessageEntitySchema,
+  standardMessageEntitySchema
 } from "@esposter/db-schema";
 import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";

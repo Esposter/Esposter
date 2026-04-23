@@ -76,6 +76,10 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
     const roomId = callRoomId.value;
     const localSessionId = sessionId.value;
     switch (type) {
+      case AdminActionType.BanUser:
+        await leaveVoice();
+        await navigateTo("/");
+        break;
       case AdminActionType.ForceMute:
         if (roomId && localSessionId) setMute(roomId, localSessionId, true);
         setLocalStreamMuted(true);
@@ -86,13 +90,13 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
         setLocalStreamMuted(false);
         isForceMuted.value = false;
         break;
-      case AdminActionType.KickFromVoice:
-        await leaveVoice();
-        notify("You have been kicked from voice.");
-        break;
       case AdminActionType.KickFromRoom:
         await leaveVoice();
         await navigateTo("/");
+        break;
+      case AdminActionType.KickFromVoice:
+        await leaveVoice();
+        notify("You have been kicked from voice.");
         break;
       case AdminActionType.TimeoutUser: {
         const minutes = durationMs ? Math.round(durationMs / 60000) : 0;
@@ -100,10 +104,6 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
         if (roomId) await leaveVoice();
         break;
       }
-      case AdminActionType.BanUser:
-        await leaveVoice();
-        await navigateTo("/");
-        break;
       default:
         exhaustiveGuard(type);
     }
@@ -113,7 +113,9 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
     unsubscribeFromAdminActions();
     adminActionUnsubscribable = $trpc.moderation.onAdminAction.subscribe(
       { roomId },
-      { onData: ({ durationMs, type }) => handleAdminAction(type, durationMs) },
+      { onData: ({ durationMs, type }) => {
+        handleAdminAction(type, durationMs)
+       } },
     );
   };
 

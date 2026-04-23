@@ -3,7 +3,7 @@ import type { User } from "@esposter/db-schema";
 import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
 import { useMemberStore } from "@/store/message/user/member";
-import { StandardMessageEntityPropertyNames } from "@esposter/db-schema";
+import { CompositeKeyPropertyNames } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const useReadMembers = () => {
@@ -26,7 +26,7 @@ export const useReadMembers = () => {
       throw new InvalidOperationError(
         Operation.Read,
         readMoreMembers.name,
-        StandardMessageEntityPropertyNames.partitionKey,
+        CompositeKeyPropertyNames.partitionKey,
       );
     return readItems(
       async () => {
@@ -49,7 +49,7 @@ export const useReadMembers = () => {
         throw new InvalidOperationError(
           Operation.Read,
           readMoreMembers.name,
-          StandardMessageEntityPropertyNames.partitionKey,
+          CompositeKeyPropertyNames.partitionKey,
         );
       const cursorPaginationData = await $trpc.room.readMembers.query({ cursor, roomId });
       for (const member of cursorPaginationData.items) memberMap.value.set(member.id, member);

@@ -7,7 +7,7 @@ import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { readCachedMessages } from "@/services/message/cache/readCachedMessages";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
-import { getReverseTickedTimestamp, MessageType, StandardMessageEntityPropertyNames } from "@esposter/db-schema";
+import { CompositeKeyPropertyNames, getReverseTickedTimestamp, MessageType } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 
 export const useReadMessages = () => {
@@ -52,7 +52,7 @@ export const useReadMessages = () => {
           throw new InvalidOperationError(
             Operation.Read,
             readMessages.name,
-            StandardMessageEntityPropertyNames.partitionKey,
+            CompositeKeyPropertyNames.partitionKey,
           );
         const roomId = currentRoomId.value;
 
@@ -97,7 +97,7 @@ export const useReadMessages = () => {
         throw new InvalidOperationError(
           Operation.Read,
           readMessages.name,
-          StandardMessageEntityPropertyNames.partitionKey,
+          CompositeKeyPropertyNames.partitionKey,
         );
       const response = await $trpc.message.readMessages.query({ cursor, roomId: currentRoomId.value });
       await readMetadata(response.items);

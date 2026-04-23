@@ -22,9 +22,9 @@ export class ModerationLogEntity extends AzureEntity {
 export const moderationLogEntitySchema = z.object({
   ...createAzureEntitySchema(
     z.object({
-      // roomId
+      // RoomId
       partitionKey: z.uuid(),
-      // reverseTickedTimestamp
+      // ReverseTickedTimestamp
       rowKey: z.string(),
     }),
   ).shape,
