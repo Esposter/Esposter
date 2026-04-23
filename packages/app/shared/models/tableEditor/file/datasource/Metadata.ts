@@ -14,5 +14,5 @@ export const metadataSchema = z.object({
   dataSourceType: dataSourceTypeSchema,
   importedAt: z.date(),
   name: z.string(),
-  size: z.number().int().nonnegative(),
+  size: z.int().nonnegative(),
 }) satisfies z.ZodType<Metadata>;

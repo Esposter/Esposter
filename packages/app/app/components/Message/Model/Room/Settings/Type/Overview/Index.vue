@@ -4,11 +4,11 @@ import type { Room } from "@esposter/db-schema";
 import { useRoomStore } from "@/store/message/room";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
 
-interface OverviewSettingsProps {
+interface OverviewProps {
   roomId: Room["id"];
 }
 
-const { roomId } = defineProps<OverviewSettingsProps>();
+const { roomId } = defineProps<OverviewProps>();
 const { $trpc } = useNuxtApp();
 const { readRoomCategories } = useReadRoomCategories();
 await readRoomCategories();

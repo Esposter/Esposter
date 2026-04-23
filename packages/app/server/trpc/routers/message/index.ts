@@ -27,10 +27,12 @@ import { isRoomId } from "@@/server/services/message/isRoomId";
 import { readMessages } from "@@/server/services/message/readMessages";
 import { searchMessages } from "@@/server/services/message/searchMessages";
 import { updateMessage } from "@@/server/services/message/updateMessage";
+import { assertNotTimedOut } from "@@/server/services/moderation/assertNotTimedOut";
 import { router } from "@@/server/trpc";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getCreatorProcedure } from "@@/server/trpc/procedure/message/getCreatorProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
+import { timeoutPlugin } from "@@/server/trpc/plugins/timeoutPlugin";
 import {
   cloneFiles,
   createMessage,
@@ -152,7 +154,7 @@ const getWebPubSubClientAccessUrlInputSchema = z.object({ roomId: selectRoomSche
 export type GetWebPubSubClientAccessUrlInput = z.infer<typeof getWebPubSubClientAccessUrlInputSchema>;
 
 export const messageRouter = router({
-  createMessage: getMemberProcedure(standardCreateMessageInputSchema, "roomId").mutation<MessageEntity>(
+  createMessage: getMemberProcedure(standardCreateMessageInputSchema, "roomId").concat(timeoutPlugin).mutation<MessageEntity>(
     async ({ ctx, input }) => {
       const messageClient = await useTableClient(AzureTable.Messages);
       const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
@@ -269,6 +271,7 @@ export const messageRouter = router({
       const containerClient = await useContainerClient(AzureContainer.MessageAssets);
       await Promise.all(
         roomIds.map(async (roomId) => {
+          await assertNotTimedOut(ctx.db, ctx.getSessionPayload.user.id, roomId);
           const newFileIds = await cloneFiles(containerClient, messageEntity.files, messageEntity.partitionKey, roomId);
           const forward = await createMessage(messageClient, messageAscendingClient, {
             // eslint-disable-next-line @typescript-eslint/no-misused-spread

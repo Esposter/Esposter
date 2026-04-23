@@ -14,6 +14,12 @@ export const SettingsListItemMap: Record<SettingsType, Except<Item, "onClick" | 
   [SettingsType.Webhooks]: {
     icon: "mdi-webhook",
   },
+  [SettingsType.Bans]: {
+    icon: "mdi-account-cancel-outline",
+  },
+  [SettingsType.AuditLog]: {
+    icon: "mdi-clipboard-list-outline",
+  },
   [SettingsType.Delete]: {
     color: "error",
     icon: "mdi-trash-can-outline",

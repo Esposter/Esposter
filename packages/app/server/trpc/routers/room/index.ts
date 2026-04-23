@@ -37,6 +37,7 @@ import {
   DatabaseEntityType,
   InviteRelations,
   invites,
+  bans,
   RoomPermission,
   roomRoles,
   rooms,
@@ -231,6 +232,13 @@ export const roomRouter = router({
         });
 
       await assertIsRoom(tx, invite.roomId);
+
+      const ban = await tx.query.bans.findFirst({
+        columns: { userId: true },
+        where: (bans, { and, eq, isNull }) =>
+          and(eq(bans.roomId, invite.roomId), eq(bans.userId, ctx.getSessionPayload.user.id), isNull(bans.deletedAt)),
+      });
+      if (ban) throw new TRPCError({ code: "FORBIDDEN" });
 
       const userToRoom = (
         await tx

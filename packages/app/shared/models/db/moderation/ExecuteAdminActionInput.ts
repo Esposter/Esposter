@@ -2,7 +2,7 @@ import { adminActionTypeSchema, selectRoomSchema, selectUserSchema } from "@espo
 import { z } from "zod";
 
 export const executeAdminActionInputSchema = z.object({
-  durationMs: z.number().int().positive().optional(),
+  durationMs: z.int().positive().optional(),
   roomId: selectRoomSchema.shape.id,
   targetUserId: selectUserSchema.shape.id,
   type: adminActionTypeSchema,

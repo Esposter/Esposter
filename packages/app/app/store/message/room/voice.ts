@@ -1,9 +1,12 @@
 import type { VoiceParticipant } from "#shared/models/room/voice/VoiceParticipant";
 
+import { useAdminActionNotification } from "@/composables/message/useAdminActionNotification";
 import { authClient } from "@/services/auth/authClient";
 import { LOCAL_PARTICIPANT_ID } from "@/services/message/voice/constants";
 import { useRoomStore } from "@/store/message/room";
 import { useWebRtcStore } from "@/store/message/room/webRtc";
+import { AdminActionType } from "@esposter/db-schema";
+import { exhaustiveGuard } from "@esposter/shared";
 
 export const useVoiceStore = defineStore("message/room/voice", () => {
   const { $trpc } = useNuxtApp();
@@ -18,9 +21,12 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
     setupSpeakingDetection,
     subscribeToSignals,
   } = webRtcStore;
+  const { notify } = useAdminActionNotification();
   const callRoomId = ref<string>();
   const isDeafened = ref(false);
+  const isForceMuted = ref(false);
   const voiceParticipantsRoomMap = ref(new Map<string, VoiceParticipant[]>());
+  let adminActionUnsubscribable: undefined | { unsubscribe: () => void };
   const speakingIds = ref<string[]>([]);
   const sessionId = computed(() => session.value.data?.session.id);
   const roomParticipants = computed(() =>
@@ -66,6 +72,56 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
     speakingIds.value = [];
   };
 
+  const handleAdminAction = async (type: AdminActionType, durationMs?: number) => {
+    const roomId = callRoomId.value;
+    const localSessionId = sessionId.value;
+    switch (type) {
+      case AdminActionType.ForceMute:
+        if (roomId && localSessionId) setMute(roomId, localSessionId, true);
+        setLocalStreamMuted(true);
+        isForceMuted.value = true;
+        break;
+      case AdminActionType.ForceUnmute:
+        if (roomId && localSessionId) setMute(roomId, localSessionId, false);
+        setLocalStreamMuted(false);
+        isForceMuted.value = false;
+        break;
+      case AdminActionType.KickFromVoice:
+        await leaveVoice();
+        notify("You have been kicked from voice.");
+        break;
+      case AdminActionType.KickFromRoom:
+        await leaveVoice();
+        await navigateTo("/");
+        break;
+      case AdminActionType.TimeoutUser: {
+        const minutes = durationMs ? Math.round(durationMs / 60000) : 0;
+        notify(`You have been timed out for ${minutes} minute${minutes === 1 ? "" : "s"}.`);
+        if (roomId) await leaveVoice();
+        break;
+      }
+      case AdminActionType.BanUser:
+        await leaveVoice();
+        await navigateTo("/");
+        break;
+      default:
+        exhaustiveGuard(type);
+    }
+  };
+
+  const subscribeToAdminActions = (roomId: string) => {
+    unsubscribeFromAdminActions();
+    adminActionUnsubscribable = $trpc.moderation.onAdminAction.subscribe(
+      { roomId },
+      { onData: ({ durationMs, type }) => handleAdminAction(type, durationMs) },
+    );
+  };
+
+  const unsubscribeFromAdminActions = () => {
+    adminActionUnsubscribable?.unsubscribe();
+    adminActionUnsubscribable = undefined;
+  };
+
   const joinVoice = async () => {
     const roomId = roomStore.currentRoomId;
     if (!roomId || callRoomId.value) return;
@@ -73,6 +129,7 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
     try {
       const stream = await acquireLocalStream();
       subscribeToSignals(roomId);
+      subscribeToAdminActions(roomId);
       const participants = await $trpc.voice.joinVoiceChannel.mutate({ roomId });
       setParticipants(roomId, participants);
       const localSessionId = sessionId.value;
@@ -92,6 +149,8 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
     } finally {
       callRoomId.value = undefined;
       isDeafened.value = false;
+      isForceMuted.value = false;
+      unsubscribeFromAdminActions();
       await cleanupAll();
       clearSpeakers();
     }
@@ -120,6 +179,7 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
     deleteSpeaker,
     deleteVoiceParticipant,
     isDeafened,
+    isForceMuted,
     isInChannel,
     isMuted,
     joinVoice,
