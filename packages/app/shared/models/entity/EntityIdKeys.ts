@@ -1,10 +1,10 @@
-import type { AItemEntity } from "#shared/models/entity/AItemEntity";
-import type { AzureEntity } from "@esposter/db-schema";
+import type { AItemEntity, AItemEntityPropertyNames } from "#shared/models/entity/AItemEntity";
+import type { AzureEntity, CompositeKeyPropertyNames } from "@esposter/db-schema";
 import type { ToData } from "@esposter/shared";
 
-export type EntityIdKeys<TEntity extends Record<string, unknown>> =
+export type EntityIdKeys<TEntity extends object> =
   TEntity extends ToData<AItemEntity>
-    ? ["id"]
+    ? [typeof AItemEntityPropertyNames.id]
     : TEntity extends ToData<AzureEntity>
-      ? ["partitionKey", "rowKey"]
+      ? [typeof CompositeKeyPropertyNames.partitionKey, typeof CompositeKeyPropertyNames.rowKey]
       : (keyof TEntity & string)[];

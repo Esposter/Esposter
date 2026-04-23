@@ -66,7 +66,7 @@ import {
   selectRoomSchema,
   standardCreateMessageInputSchema,
   StandardMessageEntity,
-  standardMessageEntitySchema
+  standardMessageEntitySchema,
 } from "@esposter/db-schema";
 import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
@@ -153,8 +153,9 @@ const getWebPubSubClientAccessUrlInputSchema = z.object({ roomId: selectRoomSche
 export type GetWebPubSubClientAccessUrlInput = z.infer<typeof getWebPubSubClientAccessUrlInputSchema>;
 
 export const messageRouter = router({
-  createMessage: getMemberProcedure(standardCreateMessageInputSchema, "roomId").concat(timeoutPlugin).mutation<MessageEntity>(
-    async ({ ctx, input }) => {
+  createMessage: getMemberProcedure(standardCreateMessageInputSchema, "roomId")
+    .concat(timeoutPlugin)
+    .mutation<MessageEntity>(async ({ ctx, input }) => {
       const messageClient = await useTableClient(AzureTable.Messages);
       const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
       const newMessageEntity = await createMessage(messageClient, messageAscendingClient, {
@@ -196,8 +197,7 @@ export const messageRouter = router({
 
       roomEventEmitter.emit("updateRoom", updatedRoom);
       return newMessageEntity;
-    },
-  ),
+    }),
   createTyping: getMemberProcedure(createTypingInputSchema, "roomId")
     // Query instead of mutation as there are no concurrency issues with ordering for simply emitting
     .query(({ ctx, input }) => {
@@ -254,7 +254,7 @@ export const messageRouter = router({
       await deleteFiles(containerClient, messageEntity.files);
     },
   ),
-  forwardMessage: getMemberProcedure(forwardMessageInputSchema, "partitionKey").mutation(
+  forwardMessage: getMemberProcedure(forwardMessageInputSchema, CompositeKeyPropertyNames.partitionKey).mutation(
     async ({ ctx, input: { message, partitionKey, roomIds, rowKey } }) => {
       await isMember(ctx.db, ctx.getSessionPayload, roomIds);
 
@@ -394,24 +394,26 @@ export const messageRouter = router({
     for await (const [data] of on(messageEventEmitter, "updateMessage", { signal }))
       if (isRoomId(data.partitionKey, input.roomId)) yield data;
   }),
-  pinMessage: getMemberProcedure(pinMessageInputSchema, "partitionKey").mutation(async ({ ctx, input }) => {
-    const messageClient = await useTableClient(AzureTable.Messages);
-    const updatedMessageEntity: AzureUpdateEntity<MessageEntity> = { ...input, isPinned: true };
-    await updateEntity(messageClient, updatedMessageEntity);
-    messageEventEmitter.emit("updateMessage", updatedMessageEntity);
+  pinMessage: getMemberProcedure(pinMessageInputSchema, CompositeKeyPropertyNames.partitionKey).mutation(
+    async ({ ctx, input }) => {
+      const messageClient = await useTableClient(AzureTable.Messages);
+      const updatedMessageEntity: AzureUpdateEntity<MessageEntity> = { ...input, isPinned: true };
+      await updateEntity(messageClient, updatedMessageEntity);
+      messageEventEmitter.emit("updateMessage", updatedMessageEntity);
 
-    const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
-    const systemMessage = await createMessage(messageClient, messageAscendingClient, {
-      replyRowKey: input.rowKey,
-      roomId: input.partitionKey,
-      type: MessageType.PinMessage,
-      userId: ctx.getSessionPayload.user.id,
-    });
-    messageEventEmitter.emit("createMessage", [
-      [systemMessage],
-      { isSendToSelf: true, sessionId: ctx.getSessionPayload.session.id },
-    ]);
-  }),
+      const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
+      const systemMessage = await createMessage(messageClient, messageAscendingClient, {
+        replyRowKey: input.rowKey,
+        roomId: input.partitionKey,
+        type: MessageType.PinMessage,
+        userId: ctx.getSessionPayload.user.id,
+      });
+      messageEventEmitter.emit("createMessage", [
+        [systemMessage],
+        { isSendToSelf: true, sessionId: ctx.getSessionPayload.session.id },
+      ]);
+    },
+  ),
   readMessages: getMemberProcedure(readMessagesInputSchema, "roomId").query(({ input }) => readMessages(input)),
   readMessagesByRowKeys: getMemberProcedure(readMessagesByRowKeysInputSchema, "roomId").query(
     async ({ input: { roomId, rowKeys } }) => {
@@ -442,20 +444,22 @@ export const messageRouter = router({
     else if (inFilterRoomIds.length > 0) await isMember(ctx.db, ctx.getSessionPayload, inFilterRoomIds as string[]);
     return searchMessages(input);
   }),
-  unpinMessage: getMemberProcedure(unpinMessageInputSchema, "partitionKey").mutation(async ({ input }) => {
-    const messageClient = await useTableClient(AzureTable.Messages);
-    const messageEntity = await getEntity(messageClient, StandardMessageEntity, input.partitionKey, input.rowKey);
-    if (!messageEntity)
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: new NotFoundError(AzureEntityType.Message, JSON.stringify(input)).message,
-      });
+  unpinMessage: getMemberProcedure(unpinMessageInputSchema, CompositeKeyPropertyNames.partitionKey).mutation(
+    async ({ input }) => {
+      const messageClient = await useTableClient(AzureTable.Messages);
+      const messageEntity = await getEntity(messageClient, StandardMessageEntity, input.partitionKey, input.rowKey);
+      if (!messageEntity)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: new NotFoundError(AzureEntityType.Message, JSON.stringify(input)).message,
+        });
 
-    const updatedMessageEntity: AzureUpdateEntity<MessageEntity> = { ...input, isPinned: undefined };
-    Object.assign(messageEntity, updatedMessageEntity);
-    await updateEntity(messageClient, messageEntity, "Replace");
-    messageEventEmitter.emit("updateMessage", updatedMessageEntity);
-  }),
+      const updatedMessageEntity: AzureUpdateEntity<MessageEntity> = { ...input, isPinned: undefined };
+      Object.assign(messageEntity, updatedMessageEntity);
+      await updateEntity(messageClient, messageEntity, "Replace");
+      messageEventEmitter.emit("updateMessage", updatedMessageEntity);
+    },
+  ),
   updateMessage: getCreatorProcedure(updateMessageInputSchema).mutation(async ({ ctx: { messageClient }, input }) => {
     await updateMessage(messageClient, input);
     messageEventEmitter.emit("updateMessage", input);

@@ -40,7 +40,8 @@ import {
 } from "@esposter/db-schema";
 import { ItemMetadataPropertyNames, NotFoundError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { alias, and, eq, getTableColumns, isNull, SQL } from "drizzle-orm";
+import { and, eq, getTableColumns, isNull, SQL } from "drizzle-orm";
+import { alias } from "drizzle-orm/pg-core";
 import { z } from "zod";
 
 const permissionForType: Record<AdminActionType, RoomPermission> = {
