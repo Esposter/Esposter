@@ -52,6 +52,7 @@ import {
   AzureTable,
   AzureWebPubSubHub,
   BinaryOperator,
+  CompositeKeyPropertyNames,
   DatabaseEntityType,
   FileEntity,
   fileEntitySchema,
@@ -413,13 +414,13 @@ export const messageRouter = router({
   readMessagesByRowKeys: getMemberProcedure(readMessagesByRowKeysInputSchema, "roomId").query(
     async ({ input: { roomId, rowKeys } }) => {
       const messageClient = await useTableClient(AzureTable.Messages);
-      const clauses: Clause[] = [
-        { key: StandardMessageEntityPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
+      const clauses: Clause<StandardMessageEntity>[] = [
+        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
         getTableNullClause(ItemMetadataPropertyNames.deletedAt),
       ];
       for (const rowKey of rowKeys)
         clauses.push({
-          key: StandardMessageEntityPropertyNames.rowKey,
+          key: CompositeKeyPropertyNames.rowKey,
           operator: BinaryOperator.eq,
           value: rowKey,
         });

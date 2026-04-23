@@ -6,6 +6,7 @@ import { getSearchNonNullClause } from "@/services/azure/search/getSearchNonNull
 import { dayjs } from "@/services/dayjs";
 import {
   BinaryOperator,
+  CompositeKeyPropertyNames,
   FileEntityPropertyNames,
   FilterType,
   FilterTypeHas,
@@ -19,8 +20,8 @@ const IMAGE_CONTENT_TYPES = [...ContentTypes].filter((contentType) => contentTyp
 const VIDEO_CONTENT_TYPES = [...ContentTypes].filter((contentType) => contentType.startsWith("video/"));
 const AUDIO_CONTENT_TYPES = [...ContentTypes].filter((contentType) => contentType.startsWith("audio/"));
 
-export const filtersToClauses = (filters: Filter[]): Clause[] => {
-  const clauses: Clause[] = [];
+export const filtersToClauses = (filters: Filter[]): Clause<Record<string, unknown>>[] => {
+  const clauses: Clause<Record<string, unknown>>[] = [];
 
   for (const [type, filtersByType] of Object.entries(Object.groupBy(filters, ({ type }) => type)))
     switch (type) {
@@ -35,7 +36,7 @@ export const filtersToClauses = (filters: Filter[]): Clause[] => {
       case FilterType.In:
         for (const { value } of filtersByType)
           clauses.push({
-            key: StandardMessageEntityPropertyNames.partitionKey,
+            key: CompositeKeyPropertyNames.partitionKey,
             operator: BinaryOperator.eq,
             value,
           });

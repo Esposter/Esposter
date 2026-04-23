@@ -1,6 +1,6 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { ReadMessagesInput } from "@@/server/trpc/routers/message";
-import type { Clause } from "@esposter/db-schema";
+import type { Clause, MessageEntity } from "@esposter/db-schema";
 import type { SetOptional } from "type-fest";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
@@ -13,6 +13,7 @@ import {
   AzureTable,
   BinaryOperator,
   CompositeKey,
+  CompositeKeyPropertyNames,
   getReverseTickedTimestamp,
   MessageEntityMap,
   StandardMessageEntityPropertyNames,
@@ -28,8 +29,8 @@ export const readMessages = async ({
   roomId,
 }: SetOptional<ReadMessagesInput, "limit">) => {
   const sortBy: SortItem<keyof CompositeKey>[] = [{ isIncludeValue, ...MESSAGE_ROWKEY_SORT_ITEM }];
-  const clauses: Clause[] = [
-    { key: StandardMessageEntityPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
+  const clauses: Clause<MessageEntity>[] = [
+    { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
     getTableNullClause(ItemMetadataPropertyNames.deletedAt),
   ];
   if (inputFilter?.isPinned)
@@ -37,8 +38,8 @@ export const readMessages = async ({
 
   if (order === SortOrder.Asc) {
     // 1. Get ascending ids from the index table (MessagesAscending)
-    const indexClauses: Clause[] = [
-      { key: StandardMessageEntityPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
+    const indexClauses: Clause<MessageEntity>[] = [
+      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
     ];
     if (cursor) indexClauses.push(...getCursorWhereAzureTable(cursor, sortBy));
     const indexClient = await useTableClient(AzureTable.MessagesAscending);
@@ -51,7 +52,7 @@ export const readMessages = async ({
     const messageClient = await useTableClient(AzureTable.Messages);
     for (const { rowKey } of items)
       clauses.push({
-        key: StandardMessageEntityPropertyNames.rowKey,
+        key: CompositeKeyPropertyNames.rowKey,
         operator: BinaryOperator.eq,
         value: getReverseTickedTimestamp(rowKey),
       });

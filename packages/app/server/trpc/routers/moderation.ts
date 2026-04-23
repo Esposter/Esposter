@@ -29,6 +29,7 @@ import {
   AzureTable,
   bans,
   BinaryOperator,
+  CompositeKeyPropertyNames,
   DatabaseEntityType,
   ModerationLogEntity,
   RoomPermission,
@@ -136,8 +137,8 @@ export const moderationRouter = router({
   readModerationLog: getPermissionsProcedure(RoomPermission.ManageRoom, readModerationLogInputSchema, "roomId").query(
     async ({ input: { cursor, limit, roomId } }) => {
       const sortBy: SortItem<keyof ModerationLogEntity>[] = [MESSAGE_ROWKEY_SORT_ITEM];
-      const clauses: Clause[] = [
-        { key: "partitionKey", operator: BinaryOperator.eq, value: roomId },
+      const clauses: Clause<ModerationLogEntity>[] = [
+        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
         getTableNullClause(ItemMetadataPropertyNames.deletedAt),
       ];
       if (cursor) clauses.push(...getCursorWhereAzureTable(cursor, sortBy));

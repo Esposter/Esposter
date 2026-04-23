@@ -10,7 +10,7 @@ import { exhaustiveGuard, NotFoundError } from "@esposter/shared";
 export const getCursorWhereAzureTable = <TItem extends AzureEntity>(
   serializedCursors: string,
   sortBy: SortItem<keyof TItem & string>[],
-): Clause[] => {
+): Clause<TItem>[] => {
   const cursors = deserialize(serializedCursors);
   const serializedSortBy = sortBy.map(({ key, ...rest }) => ({ key: serializeKey(key), ...rest }));
   return Object.entries(cursors).map(([key, value]) => {
@@ -29,6 +29,6 @@ export const getCursorWhereAzureTable = <TItem extends AzureEntity>(
       default:
         exhaustiveGuard(sortItem.order);
     }
-    return { key, operator, value };
+    return { key, operator, value } as Clause<TItem>;
   });
 };

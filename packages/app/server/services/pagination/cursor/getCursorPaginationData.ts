@@ -1,10 +1,11 @@
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
+import type { CompositeKey } from "@esposter/db-schema";
 import type { ItemMetadata } from "@esposter/shared";
 
 import { getNextCursor } from "@@/server/services/pagination/cursor/getNextCursor";
 
-export const getCursorPaginationData = <TItem extends ItemMetadata>(
+export const getCursorPaginationData = <TItem extends CompositeKey | ItemMetadata>(
   items: TItem[],
   limit: number,
   sortBy: SortItem<keyof TItem & string>[],

@@ -22,6 +22,7 @@ import {
   AZURE_MAX_PAGE_SIZE,
   AzureTable,
   BinaryOperator,
+  CompositeKeyPropertyNames,
   MessageMetadataType,
   selectRoomSchema,
 } from "@esposter/db-schema";
@@ -43,9 +44,9 @@ export const emojiRouter = router({
     const messagesMetadataClient = (await useTableClient(
       AzureTable.MessagesMetadata,
     )) as CustomTableClient<MessageEmojiMetadataEntity>;
-    const clauses: Clause[] = [
+    const clauses: Clause<MessageEmojiMetadataEntity>[] = [
       {
-        key: MessageEmojiMetadataEntityPropertyNames.partitionKey,
+        key: CompositeKeyPropertyNames.partitionKey,
         operator: BinaryOperator.eq,
         value: input.partitionKey,
       },
@@ -122,9 +123,9 @@ export const emojiRouter = router({
       const messagesMetadataClient = (await useTableClient(
         AzureTable.MessagesMetadata,
       )) as CustomTableClient<MessageEmojiMetadataEntity>;
-      const clauses: Clause[] = [
+      const clauses: Clause<MessageEmojiMetadataEntity>[] = [
         {
-          key: MessageEmojiMetadataEntityPropertyNames.partitionKey,
+          key: CompositeKeyPropertyNames.partitionKey,
           operator: BinaryOperator.eq,
           value: roomId,
         },
