@@ -4,11 +4,11 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
-import { moderationRouter } from "@@/server/trpc/routers/moderation";
+import { moderationRouter } from "@@/server/trpc/routers/message/moderation";
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
-import { AdminActionType, DatabaseEntityType, RoomPermission, bans, rooms, usersToRooms } from "@esposter/db-schema";
+import { AdminActionType, bans, DatabaseEntityType, RoomPermission, rooms, usersToRooms } from "@esposter/db-schema";
 import { NotFoundError, takeOne } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test } from "vitest";
@@ -85,7 +85,6 @@ describe("moderation", () => {
         targetUserId: member.id,
         type: AdminActionType.KickFromRoom,
       });
-
       const membershipRows = await mockContext.db
         .select()
         .from(usersToRooms)
@@ -112,8 +111,10 @@ describe("moderation", () => {
         .where(and(eq(usersToRooms.roomId, roomId), eq(usersToRooms.userId, member.id)));
 
       expect(membershipRows).toHaveLength(1);
+
       const { timeoutUntil } = takeOne(membershipRows);
       assert(timeoutUntil !== null);
+
       expect(timeoutUntil.getTime()).toBeGreaterThan(before.getTime());
     });
 
@@ -238,9 +239,9 @@ describe("moderation", () => {
       const member = await createMember();
       await mockSessionOnce(mockContext.db, member);
 
-      await expect(
-        moderationCaller.readBans({ limit: 15, roomId }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+      await expect(moderationCaller.readBans({ limit: 15, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
+        `[TRPCError: UNAUTHORIZED]`,
+      );
     });
   });
 

@@ -285,12 +285,12 @@ export const roleRouter = router({
         });
 
       const { actorTopPosition, isOwner } = actorContext;
-      if (!isManageable(actorTopPosition, role.position, isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
-
-      if (rest.position !== undefined && !isManageable(actorTopPosition, rest.position, isOwner))
+      if (
+        !isManageable(actorTopPosition, role.position, isOwner) ||
+        (rest.position !== undefined && !isManageable(actorTopPosition, rest.position, isOwner))
+      )
         throw new TRPCError({ code: "UNAUTHORIZED" });
-
-      if (rest.permissions !== undefined && !isOwner) {
+      else if (rest.permissions !== undefined && !isOwner) {
         const actorPermissions = await getPermissions(ctx.db, actorId, roomId);
         const hasAdmin = Boolean(actorPermissions & RoomPermission.Administrator);
         if (!hasAdmin && (rest.permissions & ~actorPermissions) !== 0n) throw new TRPCError({ code: "UNAUTHORIZED" });

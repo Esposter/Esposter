@@ -12,6 +12,7 @@ import { isManageable } from "#shared/services/room/rbac/isManageable";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { on } from "@@/server/services/events/on";
 import { moderationEventEmitter } from "@@/server/services/message/events/moderationEventEmitter";
+import { AdminActionPermissionMap } from "@@/server/services/message/moderation/AdminActionPermissionMap";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "@@/server/services/pagination/cursor/getCursorWhere";
 import { getCursorWhereAzureTable } from "@@/server/services/pagination/cursor/getCursorWhereAzureTable";
@@ -44,15 +45,6 @@ import { and, eq, getTableColumns, isNull, SQL } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { z } from "zod";
 
-const permissionForType: Record<AdminActionType, RoomPermission> = {
-  [AdminActionType.BanUser]: RoomPermission.BanMembers,
-  [AdminActionType.ForceMute]: RoomPermission.MuteMembers,
-  [AdminActionType.ForceUnmute]: RoomPermission.MuteMembers,
-  [AdminActionType.KickFromRoom]: RoomPermission.KickMembers,
-  [AdminActionType.KickFromVoice]: RoomPermission.MoveMembers,
-  [AdminActionType.TimeoutUser]: RoomPermission.KickMembers,
-};
-
 const onAdminActionInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
 
 export const moderationRouter = router({
@@ -60,15 +52,13 @@ export const moderationRouter = router({
     .concat(moderationLogPlugin)
     .mutation(async ({ ctx, input: { durationMs, roomId, targetUserId, type } }) => {
       const actorId = ctx.getSessionPayload.user.id;
-
       const [isPermitted, actorContext, targetTopPosition] = await Promise.all([
-        hasPermission(ctx.db, actorId, roomId, permissionForType[type]),
+        hasPermission(ctx.db, actorId, roomId, AdminActionPermissionMap[type]),
         getActorContext(ctx.db, actorId, roomId),
         getTopRolePosition(ctx.db, targetUserId, roomId),
       ]);
 
-      if (!isPermitted) throw new TRPCError({ code: "UNAUTHORIZED" });
-      if (!isManageable(actorContext.actorTopPosition, targetTopPosition, actorContext.isOwner))
+      if (!isPermitted || !isManageable(actorContext.actorTopPosition, targetTopPosition, actorContext.isOwner))
         throw new TRPCError({ code: "UNAUTHORIZED" });
 
       switch (type) {

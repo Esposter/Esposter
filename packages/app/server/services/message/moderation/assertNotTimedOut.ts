@@ -7,6 +7,5 @@ export const assertNotTimedOut = async (db: Context["db"], userId: string, roomI
     columns: { timeoutUntil: true },
     where: (usersToRooms, { and, eq }) => and(eq(usersToRooms.userId, userId), eq(usersToRooms.roomId, roomId)),
   });
-  if (userToRoom?.timeoutUntil !== null && userToRoom?.timeoutUntil !== undefined && userToRoom.timeoutUntil > new Date())
-    throw new TRPCError({ code: "FORBIDDEN" });
+  if (userToRoom?.timeoutUntil && userToRoom.timeoutUntil > new Date()) throw new TRPCError({ code: "FORBIDDEN" });
 };
