@@ -39,7 +39,13 @@ import {
   usersToRoomRoles,
   usersToRooms,
 } from "@esposter/db-schema";
-import { exhaustiveGuard, ItemMetadataPropertyNames, NotFoundError } from "@esposter/shared";
+import {
+  exhaustiveGuard,
+  InvalidOperationError,
+  ItemMetadataPropertyNames,
+  NotFoundError,
+  Operation,
+} from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, getTableColumns, isNull, SQL } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
@@ -101,7 +107,12 @@ export const moderationRouter = router({
             .where(and(eq(usersToRooms.userId, targetUserId), eq(usersToRooms.roomId, roomId)));
           break;
         case AdminActionType.TimeoutUser: {
-          if (!durationMs) throw new TRPCError({ code: "BAD_REQUEST" });
+          if (durationMs === undefined)
+            throw new InvalidOperationError(
+              Operation.Update,
+              "executeAdminAction",
+              "durationMs must be defined for TimeoutUser",
+            );
           await ctx.db
             .update(usersToRooms)
             .set({ timeoutUntil: new Date(Date.now() + durationMs) })

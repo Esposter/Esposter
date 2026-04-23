@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Room } from "@esposter/db-schema";
 
+import { dayjs } from "#shared/services/dayjs";
 import { useBanStore } from "@/store/message/user/ban";
 
 interface BansProps {
@@ -26,7 +27,7 @@ await readBans();
         </template>
         <v-list-item-title>{{ user.name }}</v-list-item-title>
         <v-list-item-subtitle>
-          Banned on {{ new Date(createdAt).toLocaleString() }}
+          Banned on {{ dayjs(createdAt).format("MMM D, YYYY h:mm A") }}
           <template v-if="bannedByUser"> by {{ bannedByUser.name }}</template>
         </v-list-item-subtitle>
         <template #append>

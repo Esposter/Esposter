@@ -207,9 +207,9 @@ Always use the `z` namespace export: `z.ZodType`, `z.ZodError`, etc. Never use n
   });
   ```
 
-- **Shared ID field schemas** — when `z.object({ roomId: selectRoomSchema.shape.id })` or `z.object({ userId: selectUserSchema.shape.id })` appears in more than one file, extract into a named schema (`roomIdSchema`, `userIdSchema`) and spread its shape: `z.object({ ...roomIdSchema.shape, otherField: ... })`. Keeps the UUID type in sync and documents intent. TODO: create these in `shared/models/db/` and replace all usages in moderation, room, and role input schemas.
+- **Shared ID field schemas** — when `z.object({ roomId: selectRoomSchema.shape.id })` or `z.object({ userId: selectUserSchema.shape.id })` appears in more than one file, extract into a named schema (`roomIdSchema`, `userIdSchema`) and spread its shape: `z.object({ ...roomIdSchema.shape, otherField: ... })`. Keeps the UUID type in sync and documents intent.
 
-- **Record maps over switch statements** — when a switch on an enum drives different async operations, prefer `const actionMap: Record<EnumType, (args) => Promise<void>> = { [Enum.A]: ..., [Enum.B]: ... }` and call `await actionMap[type](args)`. Exhaustiveness is enforced by the Record key type; no `default: exhaustiveGuard(type)` needed. TODO: refactor `executeAdminAction` switch case and `handleAdminAction` switch case in voice store to use this pattern.
+- **Record maps over switch statements** — when a switch on an enum drives different async operations, prefer `const actionMap: Record<EnumType, (args) => Promise<void>> = { [Enum.A]: ..., [Enum.B]: ... }` and call `await actionMap[type](args)`. Exhaustiveness is enforced by the Record key type; no `default: exhaustiveGuard(type)` needed.
 
 - **`refineAtLeastOne`** — when an update/patch schema has all-optional fields and at least one must be provided, always use `refineAtLeastOne(schema, ["field1", "field2", ...])` from `#shared/services/zod/refineAtLeastOne`. Never inline `.refine((data) => ...)` for this pattern:
 

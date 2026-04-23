@@ -34,10 +34,12 @@ export const bansRelations = relations(bans, ({ one }) => ({
   bannedByUser: one(users, {
     fields: [bans.bannedByUserId],
     references: [users.id],
+    relationName: "bannedByUser",
   }),
   user: one(users, {
     fields: [bans.userId],
     references: [users.id],
+    relationName: "bannedUser",
   }),
 }));
 // @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695

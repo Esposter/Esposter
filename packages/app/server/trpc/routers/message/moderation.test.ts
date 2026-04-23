@@ -11,7 +11,7 @@ import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test
 import { AdminActionType, bans, DatabaseEntityType, RoomPermission, rooms, usersToRooms } from "@esposter/db-schema";
 import { NotFoundError, takeOne } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
-import { afterEach, assert, beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("moderation", () => {
   let mockContext: Context;
@@ -19,6 +19,7 @@ describe("moderation", () => {
   let roleCaller: DecorateRouterRecord<TRPCRouter["role"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let roomId: string;
+  const durationMs = 1;
   const name = "name";
 
   const createMember = async () => {
@@ -43,11 +44,14 @@ describe("moderation", () => {
   });
 
   beforeEach(async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(0);
     const room = await roomCaller.createRoom({ name });
     roomId = room.id;
   });
 
   afterEach(async () => {
+    vi.useRealTimers();
     await mockContext.db.delete(rooms);
   });
 
@@ -93,13 +97,12 @@ describe("moderation", () => {
       expect(membershipRows).toHaveLength(0);
     });
 
-    test(`${AdminActionType.TimeoutUser}: owner times out member — timeoutUntil is set in the future`, async () => {
+    test(`${AdminActionType.TimeoutUser}: owner times out member — timeoutUntil equals now plus durationMs`, async () => {
       expect.hasAssertions();
 
       const member = await createMember();
-      const before = new Date();
       await moderationCaller.executeAdminAction({
-        durationMs: 60000,
+        durationMs,
         roomId,
         targetUserId: member.id,
         type: AdminActionType.TimeoutUser,
@@ -115,7 +118,7 @@ describe("moderation", () => {
       const { timeoutUntil } = takeOne(membershipRows);
       assert(timeoutUntil !== null);
 
-      expect(timeoutUntil.getTime()).toBeGreaterThan(before.getTime());
+      expect(timeoutUntil.getTime()).toBe(durationMs);
     });
 
     test(`${AdminActionType.TimeoutUser} without durationMs — throws BAD_REQUEST`, async () => {
@@ -129,7 +132,7 @@ describe("moderation", () => {
           targetUserId: member.id,
           type: AdminActionType.TimeoutUser,
         }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: BAD_REQUEST]`);
+      ).rejects.toThrowErrorMatchingInlineSnapshot();
     });
 
     test(`${AdminActionType.ForceMute}: owner mutes member — succeeds with no error`, async () => {
