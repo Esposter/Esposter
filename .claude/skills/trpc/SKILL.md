@@ -180,6 +180,54 @@ const readMemberRoles = async (input: ReadMemberRolesInput) => {
 };
 ```
 
+## Azure Table Clause Typing
+
+`Clause<T extends Record<string, unknown>>` has no default — always provide the entity type. Never write bare `Clause[]`.
+
+**Type the array with the entity being queried:**
+
+```ts
+// CORRECT
+const clauses: Clause<ModerationLogEntity>[] = [...];
+const clauses: Clause<MessageEntity>[] = [...];
+
+// WRONG — no entity type
+const clauses: Clause[] = [...];
+```
+
+**Key constants — always `CompositeKeyPropertyNames` for `partitionKey`/`rowKey`:**
+
+```ts
+// CORRECT
+{ key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId }
+
+// WRONG — partitionKey/rowKey belong to CompositeKey, not the message entity
+{ key: StandardMessageEntityPropertyNames.partitionKey, ... }
+{ key: "partitionKey", ... }  // never string literals
+```
+
+**Null clause helpers infer automatically — no explicit type arg needed:**
+
+```ts
+// CORRECT — T inferred from the key argument
+getTableNullClause(ItemMetadataPropertyNames.deletedAt);
+getSearchNullClause(ItemMetadataPropertyNames.deletedAt);
+
+// WRONG — redundant explicit type arg
+getTableNullClause<ModerationLogEntity>(ItemMetadataPropertyNames.deletedAt);
+```
+
+**`getCursorWhereAzureTable` returns `Clause<TItem>[]`** — typed via a cast in the body since deserialized cursor keys are plain strings at runtime.
+
+**Entity-specific fields stay on their own `PropertyNames` constant:**
+
+```ts
+StandardMessageEntityPropertyNames.isPinned; // ✓ specific to StandardMessageEntity
+MessageEmojiMetadataEntityPropertyNames.type; // ✓ specific to that entity
+CompositeKeyPropertyNames.partitionKey; // ✓ always for partitionKey/rowKey
+ItemMetadataPropertyNames.deletedAt; // ✓ always for metadata fields
+```
+
 ## Router Test Patterns
 
 - **Always create test resources via `caller.method()`** — never insert rows directly into the DB in router tests. Direct DB insertion bypasses application logic (auth checks, business rules, cascades) and means the flow being tested is different from the real flow. If a resource belongs to a different router, create a second caller for that router using `createCallerFactory(otherRouter)`.
