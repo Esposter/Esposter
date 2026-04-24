@@ -4,7 +4,8 @@ import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPag
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
-import { readCachedMessages } from "@/services/message/cache/readCachedMessages";
+import { MessageCacheStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageCacheStoreConfiguration";
+import { readCached } from "@/services/cache/indexedDb/readCached";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { CompositeKeyPropertyNames, getReverseTickedTimestamp, MessageType } from "@esposter/db-schema";
@@ -53,7 +54,7 @@ export const useReadMessages = () => {
         const roomId = currentRoomId.value;
 
         if (!online.value) {
-          const cachedMessages = await readCachedMessages(roomId);
+          const cachedMessages = await readCached<MessageEntity>(MessageCacheStoreConfiguration, roomId);
           const cachedData = new CursorPaginationData<MessageEntity>();
           cachedData.items = cachedMessages;
           hasMoreNewer.value = false;

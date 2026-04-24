@@ -1,10 +1,12 @@
 import type { MessageEntity } from "@esposter/db-schema";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import { readCachedMessages } from "@/services/message/cache/readCachedMessages";
-import { writeCachedMessages } from "@/services/message/cache/writeCachedMessages";
+import { MessageCacheStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageCacheStoreConfiguration";
+import { readCached } from "@/services/cache/indexedDb/readCached";
+import { writeCached } from "@/services/cache/indexedDb/writeCached";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
+
 // @TODO: Cached messages flash then disappear on offline room switch — root cause still unknown
 export const useMessageCache = () => {
   const roomStore = useRoomStore();
@@ -16,13 +18,17 @@ export const useMessageCache = () => {
 
   watchDeep(items, (messages) => {
     if (!currentRoomId.value || messages.length === 0) return;
-    pendingOperation = writeCachedMessages(currentRoomId.value, messages);
+    pendingOperation = writeCached(
+      MessageCacheStoreConfiguration,
+      messages.filter((message) => !message.isLoading),
+      currentRoomId.value,
+    );
   });
 
   watch(currentRoomId, (roomId) => {
     if (!roomId || online.value) return;
     pendingOperation = (async () => {
-      const cachedMessages = await readCachedMessages(roomId);
+      const cachedMessages = await readCached<MessageEntity>(MessageCacheStoreConfiguration, roomId);
       if (currentRoomId.value !== roomId || items.value.length > 0 || cachedMessages.length === 0) return;
 
       const cachedData = new CursorPaginationData<MessageEntity>();
