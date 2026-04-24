@@ -9,6 +9,48 @@ description: Esposter Zod schema conventions — z namespace imports, no optiona
 
 Always use the `z` namespace export: `z.ZodType`, `z.ZodError`, etc. Never use named imports like `import type { ZodType }`.
 
+## Zod 4 Shorthand APIs
+
+**Never use the old chained syntax** — Zod 4 promotes string format validators and numeric refinements to standalone top-level functions:
+
+| Use (Zod 4)             | Never use (Zod 3 legacy)           |
+| ----------------------- | ---------------------------------- |
+| `z.email()`             | `z.string().email()`               |
+| `z.url()`               | `z.string().url()`                 |
+| `z.uuid()`              | `z.string().uuid()`                |
+| `z.nanoid()`            | `z.string().nanoid()`              |
+| `z.cuid()`              | `z.string().cuid()`                |
+| `z.cuid2()`             | `z.string().cuid2()`               |
+| `z.ulid()`              | `z.string().ulid()`                |
+| `z.emoji()`             | `z.string().emoji()`               |
+| `z.base64()`            | `z.string().base64()`              |
+| `z.base64url()`         | `z.string().base64url()`           |
+| `z.ipv4()`              | `z.string().ip({ version: "v4" })` |
+| `z.ipv6()`              | `z.string().ip({ version: "v6" })` |
+| `z.int()`               | `z.number().int()`                 |
+| `z.iso.date()`          | `z.string().date()`                |
+| `z.iso.datetime()`      | `z.string().datetime()`            |
+| `z.iso.time()`          | `z.string().time()`                |
+| `z.iso.duration()`      | `z.string().duration()`            |
+| `z.strictObject({...})` | `z.object({...}).strict()`         |
+| `z.looseObject({...})`  | `z.object({...}).passthrough()`    |
+
+Note: `z.uuid()` now strictly validates RFC 9562/4122. Use `z.guid()` for permissive "UUID-like" validation.
+
+## ZodError Issue Mutation
+
+**Never call `.addIssue()` or `.addIssues()` on a `ZodError`** — these methods are deprecated in Zod 4. Push directly to the issues array:
+
+```typescript
+// WRONG
+myError.addIssue({ code: "custom", message: "..." });
+
+// CORRECT
+myError.issues.push({ code: "custom", message: "..." });
+```
+
+`ctx.addIssue()` inside `superRefine` is still valid (it operates on the refinement context, not a `ZodError` instance).
+
 ## Schema Rules
 
 - **`z.enum` with native enums (Zod 4)** — use `z.enum(MyEnum)` directly for TypeScript string enums; `z.nativeEnum` is Zod 3 only.
