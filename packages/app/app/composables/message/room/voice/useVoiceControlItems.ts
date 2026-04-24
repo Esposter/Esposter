@@ -16,21 +16,27 @@ export const useVoiceControlItems = () => {
     {
       color: isMuted.value ? "error" : undefined,
       icon: isMuted.value ? "mdi-microphone-off" : "mdi-microphone",
-      onClick: toggleMute,
+      onClick: () => {
+        toggleMute();
+      },
       tooltip: isMuted.value ? "Unmute" : "Mute",
       variant: "plain",
     },
     {
       color: isDeafened.value ? "error" : undefined,
       icon: isDeafened.value ? "mdi-headphones-off" : "mdi-headphones",
-      onClick: toggleDeafen,
+      onClick: () => {
+        toggleDeafen();
+      },
       tooltip: isDeafened.value ? "Undeafen" : "Deafen",
       variant: "plain",
     },
     {
       color: "error",
       icon: "mdi-phone-hangup",
-      onClick: leaveVoice,
+      onClick: () => {
+        leaveVoice();
+      },
       tooltip: "Leave Voice",
       variant: "tonal",
     },

@@ -31,7 +31,7 @@ import { updateMessage } from "@@/server/services/message/updateMessage";
 import { router } from "@@/server/trpc";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { timeoutPlugin } from "@@/server/trpc/plugins/timeoutPlugin";
-import { getCreatorProcedure } from "@@/server/trpc/procedure/message/getCreatorProcedure";
+import { getMessageProcedure } from "@@/server/trpc/procedure/message/getMessageProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import {
   cloneFiles,
@@ -204,7 +204,7 @@ export const messageRouter = router({
     .query(({ ctx, input }) => {
       messageEventEmitter.emit("createTyping", { ...input, sessionId: ctx.getSessionPayload.session.id });
     }),
-  deleteFile: getCreatorProcedure(deleteFileInputSchema).mutation(
+  deleteFile: getMessageProcedure(deleteFileInputSchema).mutation(
     async ({ ctx: { messageClient, messageEntity }, input: { id, partitionKey, rowKey } }) => {
       if (messageEntity.isForward || messageEntity.files.length === 0)
         throw new TRPCError({
@@ -234,7 +234,7 @@ export const messageRouter = router({
       await containerClient.deleteBlob(blobName);
     },
   ),
-  deleteLinkPreviewResponse: getCreatorProcedure(deleteLinkPreviewResponseInputSchema).mutation(
+  deleteLinkPreviewResponse: getMessageProcedure(deleteLinkPreviewResponseInputSchema).mutation(
     async ({ ctx: { messageClient, messageEntity } }) => {
       const updatedMessageEntity: AzureUpdateEntity<StandardMessageEntity> = {
         linkPreviewResponse: null,
@@ -246,7 +246,7 @@ export const messageRouter = router({
       messageEventEmitter.emit("updateMessage", updatedMessageEntity);
     },
   ),
-  deleteMessage: getCreatorProcedure(deleteMessageInputSchema).mutation(
+  deleteMessage: getMessageProcedure(deleteMessageInputSchema).mutation(
     async ({ ctx: { messageClient, messageEntity }, input }) => {
       await updateMessage(messageClient, { ...input, deletedAt: new Date() });
       messageEventEmitter.emit("deleteMessage", input);
@@ -461,7 +461,7 @@ export const messageRouter = router({
       messageEventEmitter.emit("updateMessage", updatedMessageEntity);
     },
   ),
-  updateMessage: getCreatorProcedure(updateMessageInputSchema).mutation(async ({ ctx: { messageClient }, input }) => {
+  updateMessage: getMessageProcedure(updateMessageInputSchema).mutation(async ({ ctx: { messageClient }, input }) => {
     await updateMessage(messageClient, input);
     messageEventEmitter.emit("updateMessage", input);
   }),

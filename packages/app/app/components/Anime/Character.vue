@@ -10,5 +10,5 @@ const { expressions, id } = defineProps<CharacterProps>();
 </script>
 
 <template>
-  <VisualDesmosDisplayGraph :id="id" :expressions="expressions" />
+  <VisualDesmosDisplayGraph :id :expressions />
 </template>
