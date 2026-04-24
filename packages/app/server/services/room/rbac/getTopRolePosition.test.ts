@@ -38,7 +38,7 @@ describe(getTopRolePosition, () => {
   test("returns -1 with no assigned roles", async () => {
     expect.hasAssertions();
 
-    const result = await getTopRolePosition(mockContext.db, owner.id, roomId);
+    const result = await getTopRolePosition(mockContext.db, owner.id, [roomId]);
 
     expect(result).toBe(-1);
   });
@@ -49,7 +49,7 @@ describe(getTopRolePosition, () => {
     const role = await roleCaller.createRole({ name: "Mod", permissions: 0n, position: 5, roomId });
     await roleCaller.assignRole({ roleId: role.id, roomId, userId: owner.id });
 
-    const result = await getTopRolePosition(mockContext.db, owner.id, roomId);
+    const result = await getTopRolePosition(mockContext.db, owner.id, [roomId]);
 
     expect(result).toBe(5);
   });
@@ -62,7 +62,7 @@ describe(getTopRolePosition, () => {
     await roleCaller.assignRole({ roleId: mod.id, roomId, userId: owner.id });
     await roleCaller.assignRole({ roleId: senior.id, roomId, userId: owner.id });
 
-    const result = await getTopRolePosition(mockContext.db, owner.id, roomId);
+    const result = await getTopRolePosition(mockContext.db, owner.id, [roomId]);
 
     expect(result).toBe(7);
   });
