@@ -38,12 +38,7 @@ describe(getPermissions, () => {
 
     await mockSessionOnce(mockContext.db);
     const { user: nonMember } = getMockSession();
-    const result = await getPermissions(mockContext.db, nonMember.id, [roomId]);
-
-    expect(result.size).toBe(1);
-
-    const permissions = result.get(roomId);
-    assert.exists(permissions);
+    const permissions = await getPermissions(mockContext.db, nonMember.id, roomId);
 
     expect(permissions).toBe(0n);
   });
@@ -59,12 +54,7 @@ describe(getPermissions, () => {
     const everyoneRole = roles.find(({ isEveryone }) => isEveryone);
     assert.exists(everyoneRole);
     await roleCaller.updateRole({ id: everyoneRole.id, permissions: updatedPermissions, roomId });
-    const result = await getPermissions(mockContext.db, user.id, [roomId]);
-
-    expect(result.size).toBe(1);
-
-    const permissions = result.get(roomId);
-    assert.exists(permissions);
+    const permissions = await getPermissions(mockContext.db, user.id, roomId);
 
     expect(permissions).toBe(updatedPermissions);
   });
@@ -87,12 +77,7 @@ describe(getPermissions, () => {
       roomId,
     });
     await roleCaller.assignRole({ roleId: adminRole.id, roomId, userId: user.id });
-    const result = await getPermissions(mockContext.db, user.id, [roomId]);
-
-    expect(result.size).toBe(1);
-
-    const permissions = result.get(roomId);
-    assert.exists(permissions);
+    const permissions = await getPermissions(mockContext.db, user.id, roomId);
 
     expect(permissions).toBe(RoomPermission.ReadMessages | RoomPermission.ManageRoom);
   });

@@ -46,6 +46,29 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
   const execute = async <T>(fn: () => Promise<T>): Promise<T | undefined> => { ... };
   ```
 
+## Arrow Function Overloads
+
+Use call signature syntax on the variable type — never `function` declarations for overloads:
+
+```ts
+interface GetPermissions {
+  (db: Db, userId: string, roomId: string): Promise<bigint>;
+  (db: Db, userId: string, roomIds: string[]): Promise<Map<string, bigint>>;
+}
+
+export const getPermissions: GetPermissions = async (db, userId, roomIds: string | string[]) => {
+  const roomIdArray = Array.isArray(roomIds) ? roomIds : [roomIds];
+  // ...shared implementation...
+  if (Array.isArray(roomIds)) return result; // Map branch
+  return result.get(roomIds) ?? fallback; // scalar branch
+};
+```
+
+- Overload signatures go on the **type annotation** of the `const`, not repeated in the body
+- Implementation parameter types must be the **union** of all overload variants
+- Use `Array.isArray` to branch; each branch returns the corresponding specific type
+- TypeScript uses overload signatures at call sites; the implementation body is not exposed
+
 ## Promise Style
 
 - **Always use `async`/`await`** — never use `.then()` or `.catch()` promise chains. Use `try`/`catch` blocks for error handling.

@@ -3,5 +3,5 @@ import { FrierenExpressions } from "@/services/anime/frierenExpressions";
 </script>
 
 <template>
-  <AnimeCharacter id="frieren" :expressions="FrierenExpressions" />
+  <VisualDesmosDisplayGraph id="frieren" :expressions="FrierenExpressions" />
 </template>

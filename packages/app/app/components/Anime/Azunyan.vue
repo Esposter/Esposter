@@ -3,5 +3,5 @@ import { AzunyanExpressions } from "@/services/anime/azunyanExpressions";
 </script>
 
 <template>
-  <AnimeCharacter id="azunyan" :expressions="AzunyanExpressions" />
+  <VisualDesmosDisplayGraph id="azunyan" :expressions="AzunyanExpressions" />
 </template>
