@@ -21,10 +21,11 @@ export const useRoleStore = defineStore("message/room/role", () => {
     setData: setRoles,
   } = useDataMap<RoomRole[]>(() => roomStore.currentRoomId, []);
   const getRoles = (roomId: string) => baseGetRoles(roomId) ?? [];
-  const { data: selectedRoleId, setData: setSelectedRoleId } = useDataMap<null | string>(
-    () => roomStore.currentRoomId,
-    null,
-  );
+  const {
+    data: selectedRoleId,
+    getData: getSelectedRoleId,
+    setData: setSelectedRoleId,
+  } = useDataMap<null | string>(() => roomStore.currentRoomId, null);
   const selectedRole = computed(() => {
     if (!selectedRoleId.value) return null;
     return roles.value.find(({ id }) => id === selectedRoleId.value) ?? null;
@@ -77,6 +78,8 @@ export const useRoleStore = defineStore("message/room/role", () => {
       const roomRoles = rolesByRoomId.get(roomId) ?? [];
       setRoles(roomId, roomRoles);
 
+      const currentSelectedId = getSelectedRoleId(roomId);
+      if (currentSelectedId && roomRoles.some(({ id }) => id === currentSelectedId)) continue;
       const everyoneRole = roomRoles.find(({ isEveryone }) => isEveryone);
       setSelectedRoleId(roomId, (everyoneRole ?? roomRoles[0])?.id ?? null);
     }
