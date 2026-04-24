@@ -111,7 +111,7 @@ catalog:
   ajv-formats: ^3.0.1
   ajv-i18n: ^4.2.0
   apexcharts: ^5.10.6
-  better-auth: ^1.6.8
+  better-auth: ^1.6.9
   codemirror: ^6.0.2
   crossws: ^0.4.5
   ctix: 2.7.2
