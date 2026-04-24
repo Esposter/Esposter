@@ -4,6 +4,7 @@ import { assignRoleInputSchema } from "#shared/models/db/role/AssignRoleInput";
 import { createRoleInputSchema } from "#shared/models/db/role/CreateRoleInput";
 import { deleteRoleInputSchema } from "#shared/models/db/role/DeleteRoleInput";
 import { readMemberRolesInputSchema } from "#shared/models/db/role/ReadMemberRolesInput";
+import { readMyPermissionsInputSchema } from "#shared/models/db/role/ReadMyPermissionsInput";
 import { readRolesInputSchema } from "#shared/models/db/role/ReadRolesInput";
 import { revokeRoleInputSchema } from "#shared/models/db/role/RevokeRoleInput";
 import { updateRoleInputSchema } from "#shared/models/db/role/UpdateRoleInput";
@@ -16,6 +17,7 @@ import { getPermissions } from "@@/server/services/room/rbac/getPermissions";
 import { getTopRolePosition } from "@@/server/services/room/rbac/getTopRolePosition";
 import { router } from "@@/server/trpc";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
+import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
 import { DatabaseEntityType, RoomPermission, roomRoles, selectRoomSchema, usersToRoomRoles } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
@@ -59,7 +61,7 @@ export const roleRouter = router({
       const { actorTopPosition, isOwner } = actorContext;
       if (!isManageable(actorTopPosition, role.position, isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
 
-      const targetTopRolePosition = await getTopRolePosition(ctx.db, userId, roomId);
+      const targetTopRolePosition = (await getTopRolePosition(ctx.db, userId, [roomId])).get(roomId) ?? -1;
       if (!isManageable(actorTopPosition, targetTopRolePosition, isOwner))
         throw new TRPCError({ code: "UNAUTHORIZED" });
 
@@ -81,7 +83,7 @@ export const roleRouter = router({
       if (!isManageable(actorTopPosition, position, isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
 
       if (!isOwner) {
-        const actorPermissions = await getPermissions(ctx.db, actorUserId, roomId);
+        const actorPermissions = (await getPermissions(ctx.db, actorUserId, [roomId])).get(roomId) ?? 0n;
         const hasAdmin = Boolean(actorPermissions & RoomPermission.Administrator);
         if (!hasAdmin && (permissions & ~actorPermissions) !== 0n) throw new TRPCError({ code: "UNAUTHORIZED" });
       }
@@ -216,15 +218,25 @@ export const roleRouter = router({
           ),
         ),
   ),
-  readMyPermissions: getMemberProcedure(readRolesInputSchema, "roomId").query(async ({ ctx, input: { roomId } }) => {
-    const userId = ctx.getSessionPayload.user.id;
-    const [room, permissions, topRolePosition] = await Promise.all([
-      ctx.db.query.rooms.findFirst({ columns: { userId: true }, where: (rooms, { eq }) => eq(rooms.id, roomId) }),
-      getPermissions(ctx.db, userId, roomId),
-      getTopRolePosition(ctx.db, userId, roomId),
-    ]);
-    return { isRoomOwner: room?.userId === userId, permissions, topRolePosition };
-  }),
+  readMyPermissions: standardAuthedProcedure
+    .input(readMyPermissionsInputSchema)
+    .query(async ({ ctx, input: { roomIds } }) => {
+      const userId = ctx.getSessionPayload.user.id;
+      const [rooms, permissionsMap, topRolePositionMap] = await Promise.all([
+        ctx.db.query.rooms.findMany({
+          columns: { id: true, userId: true },
+          where: (rooms, { inArray }) => inArray(rooms.id, roomIds),
+        }),
+        getPermissions(ctx.db, userId, roomIds),
+        getTopRolePosition(ctx.db, userId, roomIds),
+      ]);
+      return roomIds.map((roomId) => ({
+        isRoomOwner: rooms.find(({ id }) => id === roomId)?.userId === userId,
+        permissions: permissionsMap.get(roomId) ?? 0n,
+        roomId,
+        topRolePosition: topRolePositionMap.get(roomId) ?? -1,
+      }));
+    }),
   readRoles: getMemberProcedure(readRolesInputSchema, "roomId").query<RoomRole[]>(({ ctx, input: { roomId } }) =>
     ctx.db.select().from(roomRoles).where(eq(roomRoles.roomId, roomId)).orderBy(desc(roomRoles.position)),
   ),
@@ -248,7 +260,7 @@ export const roleRouter = router({
       const { actorTopPosition, isOwner } = actorContext;
       if (!isManageable(actorTopPosition, role.position, isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
 
-      const targetTopRolePosition = await getTopRolePosition(ctx.db, userId, roomId);
+      const targetTopRolePosition = (await getTopRolePosition(ctx.db, userId, [roomId])).get(roomId) ?? -1;
       if (!isManageable(actorTopPosition, targetTopRolePosition, isOwner))
         throw new TRPCError({ code: "UNAUTHORIZED" });
 
@@ -291,7 +303,7 @@ export const roleRouter = router({
       )
         throw new TRPCError({ code: "UNAUTHORIZED" });
       else if (rest.permissions !== undefined && !isOwner) {
-        const actorPermissions = await getPermissions(ctx.db, actorUserId, roomId);
+        const actorPermissions = (await getPermissions(ctx.db, actorUserId, [roomId])).get(roomId) ?? 0n;
         const hasAdmin = Boolean(actorPermissions & RoomPermission.Administrator);
         if (!hasAdmin && (rest.permissions & ~actorPermissions) !== 0n) throw new TRPCError({ code: "UNAUTHORIZED" });
       }

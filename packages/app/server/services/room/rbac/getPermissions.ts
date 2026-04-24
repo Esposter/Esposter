@@ -1,25 +1,30 @@
 import type { Context } from "@@/server/trpc/context";
 
 import { roomRoles, usersToRoomRoles, usersToRooms } from "@esposter/db-schema";
-import { and, eq, exists, inArray, or } from "drizzle-orm";
+import { and, eq, inArray, or } from "drizzle-orm";
 
-export const getPermissions = async (db: Context["db"], userId: string, roomId: string): Promise<bigint> => {
-  const roleIdSubquery = db
-    .select({ id: usersToRoomRoles.roleId })
-    .from(usersToRoomRoles)
-    .where(and(eq(usersToRoomRoles.userId, userId), eq(usersToRoomRoles.roomId, roomId)));
-  const memberSubquery = db
+export const getPermissions = async (db: Context["db"], userId: string, roomIds: string[]) => {
+  const memberRoomIdsSubquery = db
     .select({ roomId: usersToRooms.roomId })
     .from(usersToRooms)
-    .where(and(eq(usersToRooms.userId, userId), eq(usersToRooms.roomId, roomId)));
+    .where(and(eq(usersToRooms.userId, userId), inArray(usersToRooms.roomId, roomIds)));
+  const roleIdsSubquery = db
+    .select({ id: usersToRoomRoles.roleId })
+    .from(usersToRoomRoles)
+    .where(and(eq(usersToRoomRoles.userId, userId), inArray(usersToRoomRoles.roomId, roomIds)));
   const rows = await db
-    .select({ permissions: roomRoles.permissions })
+    .select({ permissions: roomRoles.permissions, roomId: roomRoles.roomId })
     .from(roomRoles)
     .where(
       and(
-        eq(roomRoles.roomId, roomId),
-        or(and(eq(roomRoles.isEveryone, true), exists(memberSubquery)), inArray(roomRoles.id, roleIdSubquery)),
+        inArray(roomRoles.roomId, roomIds),
+        or(
+          and(eq(roomRoles.isEveryone, true), inArray(roomRoles.roomId, memberRoomIdsSubquery)),
+          inArray(roomRoles.id, roleIdsSubquery),
+        ),
       ),
     );
-  return rows.reduce((acc, { permissions }) => acc | permissions, 0n);
+  const result = new Map<string, bigint>();
+  for (const { roomId, permissions } of rows) result.set(roomId, (result.get(roomId) ?? 0n) | permissions);
+  return result;
 };

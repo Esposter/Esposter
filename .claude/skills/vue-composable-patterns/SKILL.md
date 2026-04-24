@@ -340,4 +340,33 @@ watch(
 
 - Always initialize the local type ref from the current model value, not a hardcoded default
 - `if (newType === oldType) return;` in a watch callback is always redundant — Vue only fires when the value changes
+
+## Bundle Ancillary Reads with the Primary Read
+
+When a component needs ancillary data (e.g. permissions, metadata) alongside a primary list load, bundle the ancillary read inside the primary read composable — not in the component's `onMounted`.
+
+**Rule:** `readMyPermissions` and similar ancillary fetches belong inside the composable that owns the load (`useReadRooms`, `useReadMembers`, etc.), called in `Promise.all` alongside other metadata reads. If there is no natural companion read, call it directly in `<script setup>` — still no `onMounted`.
+
+```typescript
+// WRONG: component fetches permissions separately in onMounted
+const { isManageable, readMyPermissions } = roleStore;
+onMounted(async () => {
+  if (!isCreator.value) await readMyPermissions({ roomId: room.id });
+});
+
+// CORRECT: bundled in the owning read composable alongside other metadata
+// useReadRooms.ts
+const readMyPermissions = useReadMyPermissions();
+const readRooms = () =>
+  readItems(
+    () => $trpc.room.readRooms.query({ roomId: currentRoomId.value }),
+    ({ items }) => {
+      const roomIds = items.map(({ id }) => id);
+      return Promise.all([readUserToRoomsMetadata(roomIds), readMyPermissions(roomIds)]);
+    },
+  );
+```
+
+Follow the `useReadUserToRooms` pattern for batch ancillary reads — a composable that accepts an array of IDs and calls the store method for each in `Promise.all`.
+
 - Writable computed is NOT the right tool here — it requires a backing `_ref` and still needs an external sync watch when a parent can reset the model

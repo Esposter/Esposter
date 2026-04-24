@@ -92,6 +92,8 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 - **Don't extract helpers that add no value** — if a helper function just wraps an inline object literal or a single expression without reuse or meaningful abstraction, return/use the value directly. Three lines of inline code is better than a named wrapper used once.
 - **Function naming prefixes** — use `get*` for functions that derive or compute a display value (e.g. `getVisibilityTooltip`, `getRowTitle`). Use CRUD prefixes (`create*`, `update*`, `delete*`) for heavier operations that interact with data or stores.
 - **Boolean-returning functions** — always use `is*` prefix (e.g. `isManageable`, `isExpired`, `isRoomAdmin`). Never `can*` or `should*`. Exception: use `has*` when `is*` reads unnaturally — specifically when checking possession/membership (e.g. `hasPermission`, `hasMember`). The rule in full: prefer `is` → fall back to `has` → never `can`/`should`/`get` for booleans.
+- **No cardinality suffixes on function names** — when upgrading a function from single-item to batch (array) inputs, keep the same name. Don't add `ByRooms`, `ByIds`, `Many`, `Batch`, or similar suffixes — the parameter type already communicates that. Callers that previously passed a single value now wrap in `[value]` and extract from the returned map: `(await getPermissions(db, userId, [roomId])).get(roomId) ?? 0n`.
+- **Prefer inferred return types on service functions** — don't annotate `Promise<Map<string, bigint>>` when TypeScript can infer it. Only annotate when the inferred type is too broad or when enforcing a public API contract (see `Return Type Annotations` above).
 
 ## Exhaustive Switch Guards
 
