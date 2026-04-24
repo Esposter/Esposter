@@ -32,7 +32,7 @@ export const achievementRouter = router({
         {
           ...achievementDefinition,
           description:
-            achievementDefinition.isHidden && !unlockedUserAchievementNames.some(({ name }) => name === achievementName)
+            achievementDefinition.isHidden && !unlockedUserAchievementNames.some((name) => name === achievementName)
               ? "???"
               : achievementDefinition.description,
         },
