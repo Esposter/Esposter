@@ -1,19 +1,26 @@
-import { AdminActionType, adminActionTypeSchema, roomIdSchema, selectUserSchema } from "@esposter/db-schema";
+import { AdminActionType, roomIdSchema, selectUserSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
-export const executeAdminActionInputSchema = z
-  .object({
-    ...roomIdSchema.shape,
-    durationMs: z.int().positive().optional(),
-    targetUserId: selectUserSchema.shape.id,
-    type: adminActionTypeSchema,
-  })
-  .superRefine(({ durationMs, type }, ctx) => {
-    if (type !== AdminActionType.TimeoutUser || durationMs !== undefined) return;
-    ctx.addIssue({
-      code: "custom",
-      message: "durationMs is required for timeout actions",
-      path: ["durationMs"],
-    });
-  });
+const baseExecuteAdminActionInputSchema = z.object({
+  ...roomIdSchema.shape,
+  targetUserId: selectUserSchema.shape.id,
+});
+
+export const executeAdminActionInputSchema = z.discriminatedUnion("type", [
+  z.object({
+    ...baseExecuteAdminActionInputSchema.shape,
+    durationMs: z.int().positive(),
+    type: z.literal(AdminActionType.TimeoutUser),
+  }),
+  z.object({
+    ...baseExecuteAdminActionInputSchema.shape,
+    type: z.enum([
+      AdminActionType.BanUser,
+      AdminActionType.ForceMute,
+      AdminActionType.ForceUnmute,
+      AdminActionType.KickFromRoom,
+      AdminActionType.KickFromVoice,
+    ]),
+  }),
+]);
 export type ExecuteAdminActionInput = z.infer<typeof executeAdminActionInputSchema>;

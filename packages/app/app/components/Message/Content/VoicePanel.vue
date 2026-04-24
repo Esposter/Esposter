@@ -16,10 +16,7 @@ const voiceControlItems = useVoiceControlItems();
       <span text-sm font-medium flex-1>Voice</span>
       <div flex items-center gap-x-1>
         <div v-for="{ id, image, isMuted: participantIsMuted, name, userId } of roomParticipants" :key="id" relative>
-          <v-menu
-            v-if="userId !== session?.user.id && (canForceMute || canKickFromVoice)"
-            :close-on-content-click="true"
-          >
+          <v-menu v-if="userId !== session?.user.id && (canForceMute || canKickFromVoice)">
             <template #activator="{ props: menuProps }">
               <StyledAvatar size="x-small" :image :name :="menuProps" cursor-pointer />
             </template>

@@ -39,13 +39,7 @@ import {
   usersToRoomRoles,
   usersToRooms,
 } from "@esposter/db-schema";
-import {
-  exhaustiveGuard,
-  InvalidOperationError,
-  ItemMetadataPropertyNames,
-  NotFoundError,
-  Operation,
-} from "@esposter/shared";
+import { exhaustiveGuard, ItemMetadataPropertyNames, NotFoundError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq, getTableColumns, isNull, SQL } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
@@ -71,10 +65,11 @@ export const moderationRouter = router({
   // oxlint-disable-next-line prefer-spread
   executeAdminAction: getMemberProcedure(executeAdminActionInputSchema, "roomId")
     .concat(moderationLogPlugin)
-    .mutation(async ({ ctx, input: { durationMs, roomId, targetUserId, type } }) => {
+    .mutation(async ({ ctx, input }) => {
+      const { roomId, targetUserId } = input;
       const actorUserId = ctx.getSessionPayload.user.id;
       const [isPermitted, actorContext, targetTopPosition] = await Promise.all([
-        hasPermission(ctx.db, actorUserId, roomId, AdminActionPermissionMap[type]),
+        hasPermission(ctx.db, actorUserId, roomId, AdminActionPermissionMap[input.type]),
         getActorContext(ctx.db, actorUserId, roomId),
         getTopRolePosition(ctx.db, targetUserId, roomId),
       ]);
@@ -82,7 +77,7 @@ export const moderationRouter = router({
       if (!isPermitted || !isManageable(actorContext.actorTopPosition, targetTopPosition, actorContext.isOwner))
         throw new TRPCError({ code: "UNAUTHORIZED" });
 
-      switch (type) {
+      switch (input.type) {
         case AdminActionType.BanUser:
           await ctx.db.transaction(async (tx) => {
             await tx
@@ -106,24 +101,22 @@ export const moderationRouter = router({
             .delete(usersToRooms)
             .where(and(eq(usersToRooms.userId, targetUserId), eq(usersToRooms.roomId, roomId)));
           break;
-        case AdminActionType.TimeoutUser: {
-          if (durationMs === undefined)
-            throw new InvalidOperationError(
-              Operation.Update,
-              "executeAdminAction",
-              "durationMs must be defined for TimeoutUser",
-            );
+        case AdminActionType.TimeoutUser:
           await ctx.db
             .update(usersToRooms)
-            .set({ timeoutUntil: new Date(Date.now() + durationMs) })
+            .set({ timeoutUntil: new Date(Date.now() + input.durationMs) })
             .where(and(eq(usersToRooms.userId, targetUserId), eq(usersToRooms.roomId, roomId)));
           break;
-        }
         default:
-          exhaustiveGuard(type);
+          exhaustiveGuard(input.type);
       }
 
-      moderationEventEmitter.emit("adminAction", { durationMs, roomId, targetUserId, type });
+      moderationEventEmitter.emit("adminAction", {
+        durationMs: input.durationMs,
+        roomId,
+        targetUserId,
+        type: input.type,
+      });
     }),
   onAdminAction: getMemberProcedure(onAdminActionInputSchema, "roomId").subscription(async function* ({
     ctx,
