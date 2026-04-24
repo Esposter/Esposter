@@ -101,7 +101,9 @@ export const userRouter = router({
     }
   }),
   readStatuses: standardAuthedProcedure.input(readStatusesInputSchema).query(async ({ ctx, input }) => {
-    const foundUserStatuses = await ctx.db.select().from(userStatuses).where(inArray(userStatuses.userId, input));
+    const foundUserStatuses = await ctx.db.query.userStatuses.findMany({
+      where: (userStatuses, { inArray }) => inArray(userStatuses.userId, input),
+    });
     const resultUserStatuses: SetNonNullable<IUserStatus, "status">[] = [];
     const statusMap = new Map(foundUserStatuses.map((us) => [us.userId, us]));
 

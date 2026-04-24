@@ -52,10 +52,20 @@ describe("role", () => {
   test("reads empty roles (only @everyone)", async () => {
     expect.hasAssertions();
 
-    const roles = await roleCaller.readRoles({ roomId });
+    const roles = await roleCaller.readRoles({ roomIds: [roomId] });
 
     expect(roles.length).toBeGreaterThanOrEqual(1);
     expect(roles.some(({ isEveryone }) => isEveryone)).toBe(true);
+  });
+
+  test("readRoles throws UNAUTHORIZED if not a member", async () => {
+    expect.hasAssertions();
+
+    await mockSessionOnce(mockContext.db);
+
+    await expect(roleCaller.readRoles({ roomIds: [roomId] })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: UNAUTHORIZED]`,
+    );
   });
 
   test("creates role (owner)", async () => {

@@ -11,6 +11,7 @@ export const useMessageSubscribables = () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const dataStore = useDataStore();
   const { storeCreateMessage, storeDeleteMessage, storeUpdateMessage } = dataStore;
+  const readMembersByIds = useReadMembersByIds();
 
   useOnlineSubscribable(currentRoomId, async (roomId) => {
     if (!roomId) return undefined;
@@ -19,7 +20,12 @@ export const useMessageSubscribables = () => {
       { roomId },
       {
         onData: getSynchronizedFunction(async ({ data }) => {
-          for (const newMessage of data) await storeCreateMessage(newMessage);
+          for (const newMessage of data) {
+            // Existing members who joined in a previous session won't fire onJoinRoom
+            // So we need to ensure their data is loaded for author info on new messages
+            if (newMessage.userId) await readMembersByIds([newMessage.userId]);
+            await storeCreateMessage(newMessage);
+          }
         }),
       },
     );

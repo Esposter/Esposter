@@ -16,13 +16,14 @@ import { getActorContext } from "@@/server/services/room/rbac/getActorContext";
 import { getPermissions } from "@@/server/services/room/rbac/getPermissions";
 import { getTopRolePosition } from "@@/server/services/room/rbac/getTopRolePosition";
 import { router } from "@@/server/trpc";
+import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { DatabaseEntityType, RoomPermission, roomRoles, selectRoomSchema, usersToRoomRoles } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, desc, eq, inArray } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
 const onRoleInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
@@ -193,30 +194,14 @@ export const roleRouter = router({
       if (data.roomId === roomId && !getIsSameDevice(device, ctx.getSessionPayload)) yield data;
   }),
   readMemberRoles: getMemberProcedure(readMemberRolesInputSchema, "roomId").query<(RoomRole & { userId: string })[]>(
-    ({ ctx, input: { roomId, userIds } }) =>
-      ctx.db
-        .select({
-          color: roomRoles.color,
-          createdAt: roomRoles.createdAt,
-          deletedAt: roomRoles.deletedAt,
-          id: roomRoles.id,
-          isEveryone: roomRoles.isEveryone,
-          name: roomRoles.name,
-          permissions: roomRoles.permissions,
-          position: roomRoles.position,
-          roomId: roomRoles.roomId,
-          updatedAt: roomRoles.updatedAt,
-          userId: usersToRoomRoles.userId,
-        })
-        .from(roomRoles)
-        .innerJoin(usersToRoomRoles, eq(usersToRoomRoles.roleId, roomRoles.id))
-        .where(
-          and(
-            eq(roomRoles.roomId, roomId),
-            inArray(usersToRoomRoles.userId, userIds),
-            eq(usersToRoomRoles.roomId, roomId),
-          ),
-        ),
+    async ({ ctx, input: { roomId, userIds } }) => {
+      const results = await ctx.db.query.usersToRoomRoles.findMany({
+        where: (usersToRoomRoles, { and, eq, inArray }) =>
+          and(eq(usersToRoomRoles.roomId, roomId), inArray(usersToRoomRoles.userId, userIds)),
+        with: { role: true },
+      });
+      return results.map((r) => ({ ...r.role, userId: r.userId }));
+    },
   ),
   readMyPermissions: standardAuthedProcedure
     .input(readMyPermissionsInputSchema)
@@ -237,9 +222,15 @@ export const roleRouter = router({
         topRolePosition: topRolePositionMap.get(roomId) ?? -1,
       }));
     }),
-  readRoles: getMemberProcedure(readRolesInputSchema, "roomId").query<RoomRole[]>(({ ctx, input: { roomId } }) =>
-    ctx.db.select().from(roomRoles).where(eq(roomRoles.roomId, roomId)).orderBy(desc(roomRoles.position)),
-  ),
+  readRoles: standardAuthedProcedure
+    .input(readRolesInputSchema)
+    .query<RoomRole[]>(async ({ ctx, input: { roomIds } }) => {
+      await isMember(ctx.db, ctx.getSessionPayload, roomIds);
+      return ctx.db.query.roomRoles.findMany({
+        orderBy: (roomRoles, { desc }) => [desc(roomRoles.position)],
+        where: (roomRoles, { inArray }) => inArray(roomRoles.roomId, roomIds),
+      });
+    }),
   revokeRole: getPermissionsProcedure(RoomPermission.ManageRoles, revokeRoleInputSchema, "roomId").mutation(
     async ({ ctx, input: { roleId, roomId, userId } }) => {
       const actorUserId = ctx.getSessionPayload.user.id;

@@ -11,13 +11,12 @@ interface MemberEditorProps {
 
 const { member, roomId } = defineProps<MemberEditorProps>();
 const roleStore = useRoleStore();
-const { assignRole, getMemberRoles, getRoles, readMemberRoles, revokeRole } = roleStore;
-const { myPermissionsMap } = storeToRefs(roleStore);
+const { assignRole, getMemberRoles, getMyPermissionsMap, getRoles, readMemberRoles, revokeRole } = roleStore;
 const allRoles = computed(() => getRoles(roomId).filter(({ isEveryone }) => !isEveryone));
 const memberRoles = computed(() => getMemberRoles(roomId, member.id));
 const hasRole = (roleId: string) => memberRoles.value.some(({ id }) => id === roleId);
 const isRoleManageable = (role: RoomRole) => {
-  const data = myPermissionsMap.value.get(roomId);
+  const data = getMyPermissionsMap(roomId);
   if (!data) return false;
   return isManageable(data.topRolePosition, role.position, data.isRoomOwner);
 };

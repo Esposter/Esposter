@@ -29,14 +29,14 @@ const { currentRoom } = storeToRefs(roomStore);
 const isCreator = computed(() => currentRoom.value?.userId === member.id);
 const { $trpc } = useNuxtApp();
 const roleStore = useRoleStore();
-const { memberRoleMap, myPermissionsMap } = storeToRefs(roleStore);
+const { getMemberRoles, getMyPermissionsMap } = roleStore;
 const memberRoles = computed(() =>
-  (currentRoom.value?.id ? (memberRoleMap.value.get(member.id) ?? []) : []).toSorted((a, b) => b.position - a.position),
+  currentRoom.value?.id
+    ? getMemberRoles(currentRoom.value.id, member.id).toSorted((a, b) => b.position - a.position)
+    : [],
 );
 const isSelf = computed(() => session.value?.user.id === member.id);
-const permissionsData = computed(() =>
-  currentRoom.value?.id ? myPermissionsMap.value.get(currentRoom.value.id) : undefined,
-);
+const permissionsData = computed(() => (currentRoom.value?.id ? getMyPermissionsMap(currentRoom.value.id) : undefined));
 const canBan = computed(() => {
   const data = permissionsData.value;
   if (!data) return false;

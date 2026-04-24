@@ -11,11 +11,9 @@ export const useVoiceParticipantActions = () => {
   const voiceStore = useVoiceStore();
   const { callRoomId } = storeToRefs(voiceStore);
   const roleStore = useRoleStore();
-  const { myPermissionsMap } = storeToRefs(roleStore);
+  const { getMyPermissionsMap } = roleStore;
 
-  const voicePermissionsData = computed(() =>
-    callRoomId.value ? myPermissionsMap.value.get(callRoomId.value) : undefined,
-  );
+  const voicePermissionsData = computed(() => (callRoomId.value ? getMyPermissionsMap(callRoomId.value) : undefined));
   const canForceMute = computed(() => {
     const data = voicePermissionsData.value;
     if (!data) return false;
