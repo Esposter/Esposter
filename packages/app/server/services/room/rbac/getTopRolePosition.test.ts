@@ -19,6 +19,8 @@ describe(getTopRolePosition, () => {
   let owner: User;
   const name = "name";
   const updatedName = "updatedName";
+  const position = 5;
+  const updatedPosition = 7;
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -40,37 +42,42 @@ describe(getTopRolePosition, () => {
     expect.hasAssertions();
 
     const result = await getTopRolePosition(mockContext.db, owner.id, [roomId]);
-    const position = result.get(roomId);
-    assert.exists(position);
+    const readPosition = result.get(roomId);
+    assert.exists(readPosition);
 
-    expect(position).toBe(-1);
+    expect(readPosition).toBe(-1);
   });
 
   test("returns the assigned role position", async () => {
     expect.hasAssertions();
 
-    const role = await roleCaller.createRole({ name, permissions: 0n, position: 5, roomId });
+    const role = await roleCaller.createRole({ name, permissions: 0n, position, roomId });
     await roleCaller.assignRole({ roleId: role.id, roomId, userId: owner.id });
 
     const result = await getTopRolePosition(mockContext.db, owner.id, [roomId]);
-    const position = result.get(roomId);
-    assert.exists(position);
+    const readPosition = result.get(roomId);
+    assert.exists(readPosition);
 
-    expect(position).toBe(5);
+    expect(readPosition).toBe(position);
   });
 
   test("returns max position across multiple roles", async () => {
     expect.hasAssertions();
 
-    const mod = await roleCaller.createRole({ name, permissions: 0n, position: 3, roomId });
-    const senior = await roleCaller.createRole({ name: updatedName, permissions: 0n, position: 7, roomId });
+    const mod = await roleCaller.createRole({ name, permissions: 0n, position, roomId });
+    const senior = await roleCaller.createRole({
+      name: updatedName,
+      permissions: 0n,
+      position: updatedPosition,
+      roomId,
+    });
     await roleCaller.assignRole({ roleId: mod.id, roomId, userId: owner.id });
     await roleCaller.assignRole({ roleId: senior.id, roomId, userId: owner.id });
 
     const result = await getTopRolePosition(mockContext.db, owner.id, [roomId]);
-    const position = result.get(roomId);
-    assert.exists(position);
+    const readPosition = result.get(roomId);
+    assert.exists(readPosition);
 
-    expect(position).toBe(7);
+    expect(readPosition).toBe(updatedPosition);
   });
 });

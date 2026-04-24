@@ -18,6 +18,7 @@ describe("role", () => {
   let roomId: string;
   const name = "name";
   const updatedName = "updatedName";
+  const position = 5;
 
   const createMember = async () => {
     const { user } = await mockSessionOnce(mockContext.db);
@@ -171,10 +172,9 @@ describe("role", () => {
   test("cannot assign role at or above own top position", async () => {
     expect.hasAssertions();
 
-    const { member: actor } = await setupMemberWithRole(RoomPermission.ManageRoles, 5);
-    const peerRole = await roleCaller.createRole({ name, permissions: 0n, position: 5, roomId });
+    const { member: actor } = await setupMemberWithRole(RoomPermission.ManageRoles, position);
+    const peerRole = await roleCaller.createRole({ name, permissions: 0n, position, roomId });
     const targetMember = await createMember();
-
     await mockSessionOnce(mockContext.db, actor);
 
     await expect(
@@ -185,9 +185,9 @@ describe("role", () => {
   test("cannot assign role to member with equal or higher top position", async () => {
     expect.hasAssertions();
 
-    const { member: actor } = await setupMemberWithRole(RoomPermission.ManageRoles, 5);
+    const { member: actor } = await setupMemberWithRole(RoomPermission.ManageRoles, position);
     const lowRole = await roleCaller.createRole({ name, permissions: 0n, position: 2, roomId });
-    const { member: targetMember } = await setupMemberWithRole(0n, 5);
+    const { member: targetMember } = await setupMemberWithRole(0n, position);
     await mockSessionOnce(mockContext.db, actor);
 
     await expect(
@@ -210,8 +210,8 @@ describe("role", () => {
   test("cannot revoke role at or above own top position", async () => {
     expect.hasAssertions();
 
-    const { member: actor } = await setupMemberWithRole(RoomPermission.ManageRoles, 5);
-    const { member: targetMember, role: peerRole } = await setupMemberWithRole(0n, 5);
+    const { member: actor } = await setupMemberWithRole(RoomPermission.ManageRoles, position);
+    const { member: targetMember, role: peerRole } = await setupMemberWithRole(0n, position);
     await mockSessionOnce(mockContext.db, actor);
 
     await expect(
@@ -282,13 +282,13 @@ describe("role", () => {
   test("readMyPermissions returns member permissions and top position", async () => {
     expect.hasAssertions();
 
-    const { member } = await setupMemberWithRole(RoomPermission.ManageRoles, 5);
+    const { member } = await setupMemberWithRole(RoomPermission.ManageRoles, position);
     await mockSessionOnce(mockContext.db, member);
     const result = await roleCaller.readMyPermissions({ roomIds: [roomId] });
 
     expect(result).toHaveLength(1);
     expect(takeOne(result).isRoomOwner).toBe(false);
-    expect(takeOne(result).topRolePosition).toBe(5);
+    expect(takeOne(result).topRolePosition).toBe(position);
     expect(takeOne(result).permissions & RoomPermission.ManageRoles).toBe(RoomPermission.ManageRoles);
   });
 
