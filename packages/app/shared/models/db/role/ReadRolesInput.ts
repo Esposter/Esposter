@@ -1,5 +1,5 @@
-import { selectRoomSchema } from "@esposter/db-schema";
+import { roomIdSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
-export const readRolesInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
+export const readRolesInputSchema = roomIdSchema;
 export type ReadRolesInput = z.infer<typeof readRolesInputSchema>;

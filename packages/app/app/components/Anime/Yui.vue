@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { yuiExpressions } from "@/services/anime/yuiExpressions";
+import { YuiExpressions } from "@/services/anime/yuiExpressions";
 </script>
 
 <template>
-  <VisualDesmosDisplayGraph id="yui" :expressions="yuiExpressions" />
+  <VisualDesmosDisplayGraph id="yui" :expressions="YuiExpressions" />
 </template>

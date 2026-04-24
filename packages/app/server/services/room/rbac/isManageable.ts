@@ -5,10 +5,10 @@ import { getActorContext } from "@@/server/services/room/rbac/getActorContext";
 
 export const isManageable = async (
   db: Context["db"],
-  actorId: string,
+  actorUserId: string,
   roomId: string,
   targetPosition: number,
 ): Promise<boolean> => {
-  const { actorTopPosition, isOwner } = await getActorContext(db, actorId, roomId);
+  const { actorTopPosition, isOwner } = await getActorContext(db, actorUserId, roomId);
   return isManageablePure(actorTopPosition, targetPosition, isOwner);
 };

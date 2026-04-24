@@ -6,6 +6,7 @@ export const rolldownConfigurationBrowser: RolldownOptions = {
   external: [
     // @esposter/db
     "@azure/data-tables",
+    "@azure/search-documents",
     "@azure/storage-blob",
     "@azure/web-pubsub",
     "@esposter/db-schema",

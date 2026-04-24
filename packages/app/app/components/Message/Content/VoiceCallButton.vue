@@ -30,13 +30,13 @@ const { isInChannel, roomParticipants } = storeToRefs(voiceStore);
           </template>
         </v-list-item>
         <v-divider />
-        <v-list-item prepend-icon="mdi-phone-hangup" title="Leave Call" base-color="error" @click="leaveVoice" />
+        <v-list-item prepend-icon="mdi-phone-hangup" title="Leave Call" base-color="error" @click="leaveVoice()" />
       </v-list>
     </StyledCard>
   </v-menu>
   <v-tooltip v-else location="bottom" text="Start Voice Call">
     <template #activator="{ props }">
-      <v-btn :="props" icon="mdi-phone" size="small" @click="joinVoice" />
+      <v-btn :="props" icon="mdi-phone" size="small" @click="joinVoice()" />
     </template>
   </v-tooltip>
 </template>

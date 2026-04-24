@@ -1,13 +1,25 @@
 import type { Context } from "@@/server/trpc/context";
 
 import { roomRoles, usersToRoomRoles } from "@esposter/db-schema";
-import { and, eq, max } from "drizzle-orm";
+import { and, eq, inArray, max } from "drizzle-orm";
 
-export const getTopRolePosition = async (db: Context["db"], userId: string, roomId: string): Promise<number> => {
-  const result = await db
-    .select({ maxPosition: max(roomRoles.position) })
+interface GetTopRolePosition {
+  (db: Context["db"], userId: string, roomId: string): Promise<number>;
+  (db: Context["db"], userId: string, roomIds: string[]): Promise<Map<string, number>>;
+}
+
+export const getTopRolePosition: GetTopRolePosition = (async (
+  db: Context["db"],
+  userId: string,
+  roomIds: string | string[],
+): Promise<Map<string, number> | number> => {
+  const roomIdArray = Array.isArray(roomIds) ? roomIds : [roomIds];
+  const results = await db
+    .select({ maxPosition: max(roomRoles.position), roomId: roomRoles.roomId })
     .from(roomRoles)
     .innerJoin(usersToRoomRoles, eq(usersToRoomRoles.roleId, roomRoles.id))
-    .where(and(eq(usersToRoomRoles.userId, userId), eq(usersToRoomRoles.roomId, roomId)));
-  return result[0]?.maxPosition ?? -1;
-};
+    .where(and(eq(usersToRoomRoles.userId, userId), inArray(roomRoles.roomId, roomIdArray)))
+    .groupBy(roomRoles.roomId);
+  const result = new Map(results.map(({ maxPosition, roomId }) => [roomId, maxPosition ?? -1]));
+  return Array.isArray(roomIds) ? result : (result.get(roomIds) ?? -1);
+}) as GetTopRolePosition;

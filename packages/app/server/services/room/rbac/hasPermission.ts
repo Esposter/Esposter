@@ -18,5 +18,6 @@ export const hasPermission = async (
   else if (room.userId === userId) return true;
 
   const permissions = await getPermissions(db, userId, roomId);
+  if (!permissions) return false;
   return hasPermissionPure(permissions, permission, false);
 };

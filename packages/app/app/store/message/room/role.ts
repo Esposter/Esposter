@@ -2,6 +2,7 @@ import type { AssignRoleInput } from "#shared/models/db/role/AssignRoleInput";
 import type { CreateRoleInput } from "#shared/models/db/role/CreateRoleInput";
 import type { DeleteRoleInput } from "#shared/models/db/role/DeleteRoleInput";
 import type { ReadMemberRolesInput } from "#shared/models/db/role/ReadMemberRolesInput";
+import type { ReadMyPermissionsInput } from "#shared/models/db/role/ReadMyPermissionsInput";
 import type { ReadRolesInput } from "#shared/models/db/role/ReadRolesInput";
 import type { RevokeRoleInput } from "#shared/models/db/role/RevokeRoleInput";
 import type { UpdateRoleInput } from "#shared/models/db/role/UpdateRoleInput";
@@ -61,9 +62,9 @@ export const useRoleStore = defineStore("message/room/role", () => {
     const everyoneRole = roles.find(({ isEveryone }) => isEveryone);
     selectedRoleId.value = (everyoneRole ?? roles[0])?.id ?? null;
   };
-  const readMyPermissions = async (input: ReadRolesInput) => {
+  const readMyPermissions = async (input: ReadMyPermissionsInput) => {
     const data = await $trpc.role.readMyPermissions.query(input);
-    myPermissionsMap.value.set(input.roomId, data);
+    for (const { roomId, ...rest } of data) myPermissionsMap.value.set(roomId, rest);
   };
   const readMemberRoles = async (input: ReadMemberRolesInput) => {
     const memberRoles = await $trpc.role.readMemberRoles.query(input);

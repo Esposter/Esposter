@@ -27,6 +27,63 @@ export const useCopyToClipboard = () => {
 }
 ```
 
+## Settings Tab Permissions — Hide at the Tab Level
+
+Permission-gated settings tabs are hidden via `SettingsPermissionMap`, not guarded inside the tab component. Individual tab components never check permissions — they render unconditionally (the tab is simply not shown to users who lack permission).
+
+**Pattern:**
+
+1. Add `[SettingsType.Xxx]: RoomPermission.YYY` to `services/message/settings/SettingsPermissionMap.ts`
+2. `LeftSideBar.vue` filters visible tabs using `hasPermission` inside a `computed`
+3. The tab component itself just fetches and renders — no `isPermitted` check
+
+```typescript
+// services/message/settings/SettingsPermissionMap.ts
+export const SettingsPermissionMap: Partial<Record<SettingsType, RoomPermission>> = {
+  [SettingsType.Bans]: RoomPermission.BanMembers,
+  [SettingsType.AuditLog]: RoomPermission.ManageRoom,
+};
+
+// LeftSideBar.vue — filters entries via computed, no per-component checks
+const visibleSettings = computed(() =>
+  Object.entries(SettingsListItemMap).filter(([settingsType]) => {
+    const permission = SettingsPermissionMap[settingsType as SettingsType];
+    if (!permission) return true;
+    const data = myPermissionsMap.value.get(roomId);
+    if (!data) return false;
+    return hasPermission(data.permissions, permission, data.isRoomOwner);
+  }),
+);
+```
+
+**Do NOT** check `isPermitted` inside the tab component and show "Insufficient permissions" text — hide the tab entirely instead.
+
+## StyledWaypoint — Infinite Scroll Pattern
+
+Use `<StyledWaypoint>` for cursor-paginated lists instead of a "Load more" button. It fires `@change` when scrolled into view and manages its own loading indicator via the default slot.
+
+- `:is-active="hasMore"` — hides and deactivates when no more pages
+- `@change="readMoreXxx"` — the handler must accept `(onComplete: () => void)` and call `onComplete()` when done (via the `onComplete` arg to `readMoreItems`)
+- Default slot: shown while loading (skeleton items); omit to use the built-in `v-progress-circular`
+
+```vue
+<StyledWaypoint :is-active="hasMore" @change="readMoreBans" />
+
+<!-- or with loading skeleton: -->
+<StyledWaypoint :is-active="hasMore" @change="readMoreMembers">
+  <MessageModelMemberSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+</StyledWaypoint>
+```
+
+Composable `readMoreXxx` signature must match the `@change` emitted callback:
+
+```typescript
+const readMoreBans = (onComplete: () => void) =>
+  readMoreItems((cursor) => $trpc.moderation.readBans.query({ cursor, limit: LIMIT, roomId }), onComplete);
+```
+
+Never use a manual "Load more" `v-btn` with `isLoadingMore` state — that belongs to `StyledWaypoint`.
+
 ## MaybeRefOrGetter Composables
 
 When a composable argument should work with a plain value, a `ref`, or a getter function, type it as `MaybeRefOrGetter<T>` and unwrap with `toValue()`.
@@ -283,4 +340,33 @@ watch(
 
 - Always initialize the local type ref from the current model value, not a hardcoded default
 - `if (newType === oldType) return;` in a watch callback is always redundant — Vue only fires when the value changes
+
+## Bundle Ancillary Reads with the Primary Read
+
+When a component needs ancillary data (e.g. permissions, metadata) alongside a primary list load, bundle the ancillary read inside the primary read composable — not in the component's `onMounted`.
+
+**Rule:** `readMyPermissions` and similar ancillary fetches belong inside the composable that owns the load (`useReadRooms`, `useReadMembers`, etc.), called in `Promise.all` alongside other metadata reads. If there is no natural companion read, call it directly in `<script setup>` — still no `onMounted`.
+
+```typescript
+// WRONG: component fetches permissions separately in onMounted
+const { isManageable, readMyPermissions } = roleStore;
+onMounted(async () => {
+  if (!isCreator.value) await readMyPermissions({ roomId: room.id });
+});
+
+// CORRECT: bundled in the owning read composable alongside other metadata
+// useReadRooms.ts
+const readMyPermissions = useReadMyPermissions();
+const readRooms = () =>
+  readItems(
+    () => $trpc.room.readRooms.query({ roomId: currentRoomId.value }),
+    ({ items }) => {
+      const roomIds = items.map(({ id }) => id);
+      return Promise.all([readUserToRoomsMetadata(roomIds), readMyPermissions(roomIds)]);
+    },
+  );
+```
+
+Follow the `useReadUserToRooms` pattern for batch ancillary reads — a composable that accepts an array of IDs and calls the store method for each in `Promise.all`.
+
 - Writable computed is NOT the right tool here — it requires a backing `_ref` and still needs an external sync watch when a parent can reset the model

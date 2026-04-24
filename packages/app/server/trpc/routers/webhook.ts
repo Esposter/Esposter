@@ -14,9 +14,9 @@ import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermis
 import {
   appUsers,
   DatabaseEntityType,
+  roomIdSchema,
   RoomPermission,
   selectAppUserSchema,
-  selectRoomSchema,
   WebhookRelations,
   webhooks,
 } from "@esposter/db-schema";
@@ -25,12 +25,12 @@ import { TRPCError } from "@trpc/server";
 import { and, count, eq, getTableColumns, inArray } from "drizzle-orm";
 import { z } from "zod";
 
-const readWebhooksInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
+const readWebhooksInputSchema = roomIdSchema;
 export type ReadWebhooksInput = z.infer<typeof readWebhooksInputSchema>;
 
 const readAppUsersByIdsInputSchema = z.object({
+  ...roomIdSchema.shape,
   ids: selectAppUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
-  roomId: selectRoomSchema.shape.id,
 });
 export type ReadAppUsersByIdsInput = z.infer<typeof readAppUsersByIdsInputSchema>;
 

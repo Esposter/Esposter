@@ -3,8 +3,9 @@ import { messageSchema } from "@/schema/messageSchema";
 import { roomRoles } from "@/schema/roomRoles";
 import { rooms } from "@/schema/rooms";
 import { users } from "@/schema/users";
+import { usersToRooms } from "@/schema/usersToRooms";
 import { relations } from "drizzle-orm";
-import { index, primaryKey, text, uuid } from "drizzle-orm/pg-core";
+import { foreignKey, index, primaryKey, text, uuid } from "drizzle-orm/pg-core";
 
 export const usersToRoomRoles = pgTable(
   "users_to_room_roles",
@@ -22,6 +23,9 @@ export const usersToRoomRoles = pgTable(
   {
     extraConfig: ({ roleId, roomId, userId }) => [
       primaryKey({ columns: [userId, roomId, roleId] }),
+      foreignKey({ columns: [userId, roomId], foreignColumns: [usersToRooms.userId, usersToRooms.roomId] }).onDelete(
+        "cascade",
+      ),
       index("users_to_room_roles_roleId_index").on(roleId),
       index("users_to_room_roles_roomId_index").on(roomId),
     ],

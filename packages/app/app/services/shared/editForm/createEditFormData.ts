@@ -19,7 +19,7 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
   const originalItem = computed(() => {
     const editedItemValue = editedItem.value;
     return editedItemValue
-      ? items.value.find((i) => getIsEntityIdEqualComparator(idKeys, editedItemValue)(i))
+      ? items.value.find((i) => getIsEntityIdEqualComparator(idKeys as (keyof TItem & string)[], editedItemValue)(i))
       : undefined;
   });
   const isFullScreenDialog = ref(false);
@@ -41,7 +41,10 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
   const isDirty = computed(() => !isEditFormValid.value || isSavable.value);
 
   const editItem = async (ids: { [P in keyof TItem & TIdKeys[number]]: TItem[P] }) => {
-    const isEntityIdEqualComparator = getIsEntityIdEqualComparator(Object.keys(ids) as [...TIdKeys], ids);
+    const isEntityIdEqualComparator = getIsEntityIdEqualComparator(
+      Object.keys(ids) as (keyof TItem & string)[],
+      ids as Partial<TItem>,
+    );
     const item = items.value.find((i) => isEntityIdEqualComparator(i));
     if (!item) return;
 

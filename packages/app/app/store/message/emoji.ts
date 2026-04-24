@@ -7,7 +7,7 @@ import { getIsEntityIdEqualComparator } from "#shared/services/entity/getIsEntit
 import { createMessageEmojiMetadataEntity } from "#shared/services/message/createMessageEmojiMetadataEntity";
 import { getUpdatedUserIds } from "#shared/services/message/emoji/getUpdatedUserIds";
 import { authClient } from "@/services/auth/authClient";
-import { MessageMetadataType } from "@esposter/db-schema";
+import { CompositeKeyPropertyNames, MessageMetadataType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 
 export const useEmojiStore = defineStore("message/emoji", () => {
@@ -39,7 +39,12 @@ export const useEmojiStore = defineStore("message/emoji", () => {
   };
   const storeUpdateEmoji = (input: UpdateEmojiInput) => {
     const emojis = getEmojis(input.messageRowKey);
-    const index = emojis.findIndex((e) => getIsEntityIdEqualComparator(["partitionKey", "rowKey"], input)(e));
+    const index = emojis.findIndex((e) =>
+      getIsEntityIdEqualComparator(
+        [CompositeKeyPropertyNames.partitionKey, CompositeKeyPropertyNames.rowKey],
+        input,
+      )(e),
+    );
     if (index === -1) return;
 
     Object.assign(takeOne(emojis, index), input);
@@ -49,7 +54,13 @@ export const useEmojiStore = defineStore("message/emoji", () => {
     const emojis = getEmojis(input.messageRowKey);
     setEmojis(
       input.messageRowKey,
-      emojis.filter((e) => !getIsEntityIdEqualComparator(["partitionKey", "rowKey"], input)(e)),
+      emojis.filter(
+        (e) =>
+          !getIsEntityIdEqualComparator(
+            [CompositeKeyPropertyNames.partitionKey, CompositeKeyPropertyNames.rowKey],
+            input,
+          )(e),
+      ),
     );
   };
 

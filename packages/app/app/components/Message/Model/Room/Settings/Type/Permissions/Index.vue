@@ -5,11 +5,11 @@ import { PermissionsTab } from "@/models/message/room/PermissionsTab";
 import { useRoleStore } from "@/store/message/room/role";
 import { useMemberStore } from "@/store/message/user/member";
 
-interface PermissionsSettingsProps {
+interface PermissionsProps {
   roomId: Room["id"];
 }
 
-const { roomId } = defineProps<PermissionsSettingsProps>();
+const { roomId } = defineProps<PermissionsProps>();
 const roleStore = useRoleStore();
 const { getRoles, readRoles } = roleStore;
 const { selectedMemberId, selectedRole } = storeToRefs(roleStore);

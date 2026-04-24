@@ -37,6 +37,7 @@ import {
   DatabaseEntityType,
   InviteRelations,
   invites,
+  roomIdSchema,
   RoomPermission,
   roomRoles,
   rooms,
@@ -54,7 +55,7 @@ import { and, count, desc, eq, getTableColumns, ilike, inArray, ne, sql } from "
 import { alias } from "drizzle-orm/pg-core";
 import { z } from "zod";
 
-const readRoomInputSchema = selectRoomSchema.shape.id.optional();
+const readRoomInputSchema = roomIdSchema.shape.roomId.optional();
 export type ReadRoomInput = z.infer<typeof readRoomInputSchema>;
 
 const readMutualRoomsInputSchema = z.object({ userId: selectUserSchema.shape.id });
@@ -62,7 +63,7 @@ export type ReadMutualRoomsInput = z.infer<typeof readMutualRoomsInputSchema>;
 
 const readRoomsInputSchema = z
   .object({
-    roomId: selectRoomSchema.shape.id.optional(),
+    ...roomIdSchema.partial().shape,
     ...createCursorPaginationParamsSchema(selectRoomSchema.keyof(), [
       { key: ItemMetadataPropertyNames.updatedAt, order: SortOrder.Desc },
     ]).shape,
@@ -84,25 +85,25 @@ const onLeaveRoomInputSchema = selectRoomSchema.shape.id.array().min(1).max(MAX_
 export type OnLeaveRoomInput = z.infer<typeof onLeaveRoomInputSchema>;
 
 const readMembersInputSchema = z.object({
+  ...roomIdSchema.shape,
   ...createCursorPaginationParamsSchema(selectUserSchema.keyof(), [
     { key: ItemMetadataPropertyNames.updatedAt, order: SortOrder.Desc },
   ]).shape,
   filter: selectUserSchema.pick({ name: true }).optional(),
-  roomId: selectRoomSchema.shape.id,
 });
 export type ReadMembersInput = z.infer<typeof readMembersInputSchema>;
 
 const readMembersByIdsInputSchema = z.object({
+  ...roomIdSchema.shape,
   ids: selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
-  roomId: selectRoomSchema.shape.id,
 });
 export type ReadMembersByIdsInput = z.infer<typeof readMembersByIdsInputSchema>;
 
-const countMembersInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
+const countMembersInputSchema = roomIdSchema;
 export type CountMembersInput = z.infer<typeof countMembersInputSchema>;
 
 const createMembersInputSchema = z.object({
-  roomId: selectRoomSchema.shape.id,
+  ...roomIdSchema.shape,
   userIds: selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
 });
 export type CreateMembersInput = z.infer<typeof createMembersInputSchema>;
@@ -110,10 +111,10 @@ export type CreateMembersInput = z.infer<typeof createMembersInputSchema>;
 const readInviteInputSchema = selectInviteSchema.shape.code;
 export type ReadInviteInput = z.infer<typeof readInviteInputSchema>;
 
-const readInviteCodeInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
+const readInviteCodeInputSchema = roomIdSchema;
 export type ReadInviteCodeInput = z.infer<typeof readInviteCodeInputSchema>;
 
-const createInviteInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
+const createInviteInputSchema = roomIdSchema;
 export type CreateInviteInput = z.infer<typeof createInviteInputSchema>;
 
 export const roomRouter = router({
@@ -231,6 +232,13 @@ export const roomRouter = router({
         });
 
       await assertIsRoom(tx, invite.roomId);
+
+      const ban = await tx.query.bans.findFirst({
+        columns: { userId: true },
+        where: (bans, { and, eq, isNull }) =>
+          and(eq(bans.roomId, invite.roomId), eq(bans.userId, ctx.getSessionPayload.user.id), isNull(bans.deletedAt)),
+      });
+      if (ban) throw new TRPCError({ code: "FORBIDDEN" });
 
       const userToRoom = (
         await tx

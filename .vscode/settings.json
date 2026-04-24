@@ -33,6 +33,7 @@
   "search.followSymlinks": false,
   "symlink-follow.autoFollow": true,
   "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.tsserver.maxTsServerMemory": 8000,
+  "typescript.tsserver.maxTsServerMemory": 16384,
+  "typescript.tsserver.nodePath": "node",
   "typescript.updateImportsOnFileMove.enabled": "always"
 }

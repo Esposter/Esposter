@@ -18,6 +18,8 @@ describe(isManageable, () => {
   let roomId: string;
   let owner: User;
   const name = "name";
+  const position = 5;
+  const updatedPosition = 6;
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -54,7 +56,7 @@ describe(isManageable, () => {
   test("user with higher top can manage lower position", async () => {
     expect.hasAssertions();
 
-    const role = await roleCaller.createRole({ name: "Mod", permissions: 0n, position: 5, roomId });
+    const role = await roleCaller.createRole({ name, permissions: 0n, position, roomId });
     await mockSessionOnce(mockContext.db);
     const { user } = getMockSession();
     await roomCaller.createMembers({ roomId, userIds: [user.id] });
@@ -68,15 +70,15 @@ describe(isManageable, () => {
   test("user cannot manage equal or higher position", async () => {
     expect.hasAssertions();
 
-    const role = await roleCaller.createRole({ name: "Mod", permissions: 0n, position: 5, roomId });
+    const role = await roleCaller.createRole({ name, permissions: 0n, position, roomId });
     await mockSessionOnce(mockContext.db);
     const { user } = getMockSession();
     await roomCaller.createMembers({ roomId, userIds: [user.id] });
     await roleCaller.assignRole({ roleId: role.id, roomId, userId: user.id });
 
     const [equalPosition, higherPosition] = await Promise.all([
-      isManageable(mockContext.db, user.id, roomId, 5),
-      isManageable(mockContext.db, user.id, roomId, 6),
+      isManageable(mockContext.db, user.id, roomId, position),
+      isManageable(mockContext.db, user.id, roomId, updatedPosition),
     ]);
 
     expect(equalPosition).toBe(false);

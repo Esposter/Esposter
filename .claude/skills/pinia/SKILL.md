@@ -157,6 +157,51 @@ const { data: pendingSlashCommand } = useDataMap(() => roomStore.currentRoomId, 
 const { data: parameterValues } = useDataMap(() => roomStore.currentRoomId, {} as Record<string, string>); // ❌
 ```
 
+## Cursor Pagination in Stores
+
+Three helpers — pick based on type and keying needs:
+
+| Helper                                       | When to use                                                                        |
+| -------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `useCursorPaginationData<T>()`               | `T extends ToData<AEntity>` (has top-level `id` or `partitionKey`/`rowKey`)        |
+| `useCursorPaginationOperationData(ref(...))` | Any `T` — wrap the ref yourself; layer `createOperationData` on top for typed CRUD |
+| `useCursorPaginationDataMap<T>(currentId)`   | same store holds per-key lists (e.g. pinned messages per room)                     |
+
+**`createOperationData` supports any entity type** — `EntityIdKeys<T>` resolves to `["id"]` (SQL entities extending `AItemEntity`), `["partitionKey","rowKey"]` (Azure entities), or `(keyof T & string)[]` as a generic fallback for any other type. `Ban` uses `(roomId, userId)` composite PK — always pass both keys exactly matching the DB primary key:
+
+```typescript
+// useBanStore — layered: cursor pagination + createOperationData for typed delete
+const { hasMore, items, readItems, readMoreItems } = useCursorPaginationOperationData(cursorPaginationData);
+const { deleteBan: storeDeleteBan } = createOperationData(items, ["roomId", "userId"], DatabaseEntityType.Ban);
+
+const deleteBan = async (input: UnbanUserInput) => {
+  await $trpc.moderation.unbanUser.mutate(input);
+  storeDeleteBan({ roomId: input.roomId, userId: input.userId });
+};
+```
+
+`useCursorPaginationOperationData` provides the cursor pagination layer; `createOperationData` provides typed CRUD on top of its `items` ref.
+
+**When to add `storeCreateXxx`/`storeDeleteXxx` driven by subscriptions:** only when a subscription exists that fires to _all_ affected parties. For bans, `onAdminAction` only fires to the banned user — the moderator initiates the ban themselves, so the ban store just updates locally after the mutation. No `storeCreateBan` subscription handler needed.
+
+## tRPC Mutations Belong in Stores — Never in Components
+
+All `$trpc.xxx.mutate(...)` calls must live in a Pinia store action, not in a component's `<script setup>`. Components call the store action; the store owns the tRPC call and the local state update.
+
+```typescript
+// WRONG — tRPC mutation in component
+const unban = async (userId: string) => {
+  await $trpc.moderation.unbanUser.mutate({ roomId, userId }); // ❌
+  items.value = items.value.filter((ban) => ban.userId !== userId);
+};
+
+// CORRECT — store action: tRPC + state update together
+const unban = async (input: UnbanUserInput) => {
+  await $trpc.moderation.unbanUser.mutate(input);
+  storeDeleteBan(input.userId);
+};
+```
+
 ## createOperationData Usage
 
 - **Use `createOperationData` wherever the item type satisfies `ToData<AEntity>`** — generates typed CRUD methods (`createXxx`, `updateXxx`, `deleteXxx`, `pushXxxs`, `unshiftXxxs`) for entity list refs. `User` satisfies this (`id`, `createdAt`, `updatedAt`, `deletedAt` from `pgTable` wrapper). Destructure as `base` aliases and wrap in `storeXxx` functions for side effects:
@@ -177,6 +222,8 @@ const { data: parameterValues } = useDataMap(() => roomStore.currentRoomId, {} a
     baseStoreDeleteFriend({ id: friendId });
   };
   ```
+
+- **Prefer CRUD verbs over domain-specific verbs** — when a store action clearly maps to creating or deleting a record, name it `createXxx`/`deleteXxx`, never a domain-specific synonym: `deleteBan` not `unban`, `deleteMember` not `kick`. Reserve domain terms only when there is no clean CRUD mapping.
 
 - **`store` prefix for state-update-only counterparts of async user actions** — `deleteFriend` (user action) + `storeDeleteFriend` (subscription-driven state update). Never add `store` prefix to unpaired methods:
 

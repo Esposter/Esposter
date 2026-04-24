@@ -33,7 +33,7 @@ export type RoomCategory = typeof roomCategories.$inferSelect;
 
 export const selectRoomCategorySchema = createSelectSchema(roomCategories, {
   name: createNameSchema(ROOM_CATEGORY_NAME_MAX_LENGTH),
-  position: z.number().int().nonnegative(),
+  position: z.int().nonnegative(),
 });
 
 export const roomCategoriesRelations = relations(roomCategories, ({ many, one }) => ({

@@ -7,6 +7,7 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 
 ## Core Rules
 
+- **Constant arrays use PascalCase** — `export const PermissionItems = [...]`, `export const FrierenExpressions: Expression[] = [...]`. This applies to all static data arrays exported from `services/`. File names match: `PermissionItems.ts`, `FrierenExpressions.ts`.
 - **No `With` prefix on mixin interfaces** — name them after the capability they represent: `SourceColumnId`, `SourceColumnIds`, `ApplicableColumnTypes`. Not `WithSourceColumnId`, `WithSourceColumnIds`, `WithApplicableColumnTypes`. The corresponding schema variables drop the `with` prefix too: `sourceColumnIdSchema` not `withSourceColumnIdSchema`.
 - **`A` prefix is for abstract classes only** — never use `A` prefix on interfaces. `AColumn` is an abstract class → correct. `ASlashCommand` as an interface → wrong, use `SlashCommand`. If it's an interface, just name it after the concept.
 - TypeScript compiler: `strict` mode enabled. ESLint: `tseslint.configs.strictTypeChecked`. `any` is **BANNED**.
@@ -44,6 +45,29 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
   export const useInFlight = () => { ... };
   const execute = async <T>(fn: () => Promise<T>): Promise<T | undefined> => { ... };
   ```
+
+## Arrow Function Overloads
+
+Use call signature syntax on the variable type — never `function` declarations for overloads:
+
+```ts
+interface GetPermissions {
+  (db: Db, userId: string, roomId: string): Promise<bigint>;
+  (db: Db, userId: string, roomIds: string[]): Promise<Map<string, bigint>>;
+}
+
+export const getPermissions: GetPermissions = async (db, userId, roomIds: string | string[]) => {
+  const roomIdArray = Array.isArray(roomIds) ? roomIds : [roomIds];
+  // ...shared implementation...
+  if (Array.isArray(roomIds)) return result; // Map branch
+  return result.get(roomIds) ?? fallback; // scalar branch
+};
+```
+
+- Overload signatures go on the **type annotation** of the `const`, not repeated in the body
+- Implementation parameter types must be the **union** of all overload variants
+- Use `Array.isArray` to branch; each branch returns the corresponding specific type
+- TypeScript uses overload signatures at call sites; the implementation body is not exposed
 
 ## Promise Style
 
@@ -91,6 +115,8 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 - **Don't extract helpers that add no value** — if a helper function just wraps an inline object literal or a single expression without reuse or meaningful abstraction, return/use the value directly. Three lines of inline code is better than a named wrapper used once.
 - **Function naming prefixes** — use `get*` for functions that derive or compute a display value (e.g. `getVisibilityTooltip`, `getRowTitle`). Use CRUD prefixes (`create*`, `update*`, `delete*`) for heavier operations that interact with data or stores.
 - **Boolean-returning functions** — always use `is*` prefix (e.g. `isManageable`, `isExpired`, `isRoomAdmin`). Never `can*` or `should*`. Exception: use `has*` when `is*` reads unnaturally — specifically when checking possession/membership (e.g. `hasPermission`, `hasMember`). The rule in full: prefer `is` → fall back to `has` → never `can`/`should`/`get` for booleans.
+- **No cardinality suffixes on function names** — when upgrading a function from single-item to batch (array) inputs, keep the same name. Don't add `ByRooms`, `ByIds`, `Many`, `Batch`, or similar suffixes — the parameter type already communicates that. Callers that previously passed a single value now wrap in `[value]` and extract from the returned map: `(await getPermissions(db, userId, [roomId])).get(roomId) ?? 0n`.
+- **Prefer inferred return types on service functions** — don't annotate `Promise<Map<string, bigint>>` when TypeScript can infer it. Only annotate when the inferred type is too broad or when enforcing a public API contract (see `Return Type Annotations` above).
 
 ## Exhaustive Switch Guards
 

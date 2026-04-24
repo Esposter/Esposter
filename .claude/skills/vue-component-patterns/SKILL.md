@@ -107,3 +107,151 @@ The extracted component:
 ```
 
 This keeps the parent component lean and makes each slot independently readable and testable.
+
+## List Item Rendering: Array + v-for over Hardcoded Items
+
+**Never hardcode repeated `<v-list-item>` (or any list item) elements** when the items share the same structure — extract to an array and render with `v-for`.
+
+The array lives in `services/` (co-located with the component's feature folder), not inline in the component. **Constant arrays use PascalCase names.**
+
+```
+services/permission/PermissionItems.ts   ← array defined here
+components/Permission/List.vue           ← imports and v-for renders
+```
+
+```ts
+// services/permission/PermissionItems.ts
+export const PermissionItems = [
+  { value: "read", title: "Read", prependIcon: "mdi-eye" },
+  { value: "write", title: "Write", prependIcon: "mdi-pencil" },
+  { value: "admin", title: "Admin", prependIcon: "mdi-shield" },
+] as const;
+```
+
+```vue
+<!-- WRONG: hardcoded items with identical structure -->
+<v-list>
+  <v-list-item value="read" title="Read" prepend-icon="mdi-eye" />
+  <v-list-item value="write" title="Write" prepend-icon="mdi-pencil" />
+  <v-list-item value="admin" title="Admin" prepend-icon="mdi-shield" />
+</v-list>
+
+<!-- CORRECT: import array from services/, v-for in template -->
+<script setup lang="ts">
+import { PermissionItems } from "@/services/permission/PermissionItems";
+</script>
+<template>
+  <v-list>
+    <v-list-item
+      v-for="{ value, title, prependIcon } of PermissionItems"
+      :key="value"
+      :value="value"
+      :title="title"
+      :prepend-icon="prependIcon"
+    />
+  </v-list>
+</template>
+```
+
+**When to apply:**
+
+- 3+ list items with the same props shape — always extract
+- 2 items — extract if they'll grow or the props are non-trivial
+- Items that differ in non-trivial ways (different slots, conditional logic) — keep separate or use a dispatcher child component
+
+## Permission-Filtered Action Items: Composable + v-for
+
+When list items or icon buttons are guarded by `v-if` permission checks, **move the filtering into a composable** — the template gets a plain `v-for` with no conditions.
+
+Use the existing `Item` type (`@/models/shared/Item`) for the array element shape. The composable reads permissions from stores internally; only pass per-item runtime data (e.g. `userId`, `isMuted`) as arguments to the getter function.
+
+```ts
+// composables/feature/useFeatureActionItems.ts
+import type { Item } from "@/models/shared/Item";
+
+export const useFeatureActionItems = () => {
+  const canDoA = computed(() => /* permission check */);
+  const canDoB = computed(() => /* permission check */);
+
+  const getActions = (targetId: string, someState: boolean): Item[] => {
+    const items: Item[] = [];
+    if (canDoA.value && !someState)
+      items.push({ icon: "mdi-x", title: "Action A", onClick: () => doA(targetId) });
+    if (canDoB.value)
+      items.push({ icon: "mdi-y", title: "Action B", onClick: () => doB(targetId) });
+    return items;
+  };
+
+  return { canDoA, canDoB, getActions };
+};
+```
+
+```vue
+<!-- WRONG: v-if on each list item -->
+<v-list-item v-if="canDoA && !someState" prepend-icon="mdi-x" title="Action A" @click="doA(id)" />
+<v-list-item v-if="canDoB" prepend-icon="mdi-y" title="Action B" @click="doB(id)" />
+
+<!-- CORRECT: filtered array from composable, single v-for -->
+<v-list-item
+  v-for="{ icon, title, onClick } of getActions(id, someState)"
+  :key="title"
+  :prepend-icon="icon"
+  :title
+  @click="onClick"
+/>
+```
+
+## Icon Buttons with Tooltips: Computed Array + v-for
+
+Repeated `v-tooltip` + `v-btn` (icon button) blocks with the same structure should be extracted to a `computed` array in a composable. Dynamic props (icon, color, tooltip text) that depend on reactive state belong in the `computed`.
+
+```ts
+// Composable defines the interface and computed
+interface ControlItem {
+  color?: string;
+  icon: string;
+  onClick: () => void;
+  tooltip: string;
+  variant: "plain" | "tonal";
+}
+
+const controlItems = computed<ControlItem[]>(() => [
+  {
+    tooltip: isActive.value ? "Deactivate" : "Activate",
+    icon: isActive.value ? "mdi-off" : "mdi-on",
+    color: isActive.value ? "error" : undefined,
+    variant: "plain",
+    onClick: toggle,
+  },
+  { tooltip: "Leave", icon: "mdi-exit", color: "error", variant: "tonal", onClick: leave },
+]);
+```
+
+```vue
+<!-- WRONG: three identical v-tooltip+v-btn blocks -->
+<v-tooltip :text="isActive ? 'Deactivate' : 'Activate'" location="bottom">
+  <template #activator="{ props }">
+    <v-btn :="props" :icon="isActive ? 'mdi-off' : 'mdi-on'" :color="isActive ? 'error' : undefined"
+      size="x-small" variant="plain" :ripple="false" @click="toggle" />
+  </template>
+</v-tooltip>
+<v-tooltip text="Leave" location="bottom">
+  <template #activator="{ props }">
+    <v-btn :="props" icon="mdi-exit" color="error" size="x-small" variant="tonal" :ripple="false" @click="leave" />
+  </template>
+</v-tooltip>
+
+<!-- CORRECT: single v-for -->
+<v-tooltip
+  v-for="{ tooltip, icon, color, variant, onClick } of controlItems"
+  :key="tooltip"
+  :text="tooltip"
+  location="bottom"
+>
+  <template #activator="{ props }">
+    <v-btn :="props" :icon :color size="x-small" :variant :ripple="false" @click="onClick" />
+  </template>
+</v-tooltip>
+```
+
+**When NOT to extract:** Items that render fundamentally different components (e.g. `StyledDeleteFormDialog` vs `StyledFormDialog` with unique slot content) — the template structure diverges too much for a shared shape.

@@ -64,7 +64,6 @@ describe(hasPermission, () => {
     const { user } = getMockSession();
     await roomCaller.createMembers({ roomId, userIds: [user.id] });
     await roleCaller.assignRole({ roleId: adminRole.id, roomId, userId: user.id });
-
     const result = await hasPermission(mockContext.db, user.id, roomId, RoomPermission.ManageMessages);
 
     expect(result).toBe(true);

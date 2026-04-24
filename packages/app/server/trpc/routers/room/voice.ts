@@ -15,14 +15,14 @@ import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { createMessage } from "@esposter/db";
-import { AzureTable, MessageType, selectRoomSchema } from "@esposter/db-schema";
+import { AzureTable, MessageType, roomIdSchema, selectRoomSchema } from "@esposter/db-schema";
 import { ForbiddenError, NotFoundError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-const roomIdInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
-const setMuteInputSchema = z.object({ isMuted: z.boolean(), roomId: selectRoomSchema.shape.id });
-const sendSignalInputSchema = z.object({ payload: voiceSignalPayloadSchema, roomId: selectRoomSchema.shape.id });
+const roomIdInputSchema = roomIdSchema;
+const setMuteInputSchema = z.object({ ...roomIdSchema.shape, isMuted: z.boolean() });
+const sendSignalInputSchema = z.object({ ...roomIdSchema.shape, payload: voiceSignalPayloadSchema });
 const onJoinVoiceChannelInputSchema = selectRoomSchema.shape.id;
 const onLeaveVoiceChannelInputSchema = selectRoomSchema.shape.id;
 const onSetMuteInputSchema = selectRoomSchema.shape.id;

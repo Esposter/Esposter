@@ -1,6 +1,6 @@
 import type { ToData } from "@esposter/shared";
 
-import { applyItemMetadataMixin, itemMetadataSchema, Serializable } from "@esposter/shared";
+import { applyItemMetadataMixin, getPropertyNames, itemMetadataSchema, Serializable } from "@esposter/shared";
 import { z } from "zod";
 
 class BaseAItemEntity extends Serializable {
@@ -8,6 +8,8 @@ class BaseAItemEntity extends Serializable {
 }
 export const AItemEntity = applyItemMetadataMixin(BaseAItemEntity);
 export type AItemEntity = typeof AItemEntity.prototype;
+
+export const AItemEntityPropertyNames = getPropertyNames<AItemEntity>();
 
 export const aItemEntitySchema = z.object({
   ...itemMetadataSchema.shape,

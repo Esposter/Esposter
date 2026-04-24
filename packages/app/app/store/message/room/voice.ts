@@ -1,14 +1,16 @@
 import type { VoiceParticipant } from "#shared/models/room/voice/VoiceParticipant";
 
 import { authClient } from "@/services/auth/authClient";
+import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
 import { LOCAL_PARTICIPANT_ID } from "@/services/message/voice/constants";
 import { useRoomStore } from "@/store/message/room";
 import { useWebRtcStore } from "@/store/message/room/webRtc";
+import { AdminActionType } from "@esposter/db-schema";
 
 export const useVoiceStore = defineStore("message/room/voice", () => {
   const { $trpc } = useNuxtApp();
-  const session = authClient.useSession();
   const roomStore = useRoomStore();
+  const session = authClient.useSession();
   const webRtcStore = useWebRtcStore();
   const {
     acquireLocalStream,
@@ -20,6 +22,7 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
   } = webRtcStore;
   const callRoomId = ref<string>();
   const isDeafened = ref(false);
+  const isForceMuted = ref(false);
   const voiceParticipantsRoomMap = ref(new Map<string, VoiceParticipant[]>());
   const speakingIds = ref<string[]>([]);
   const sessionId = computed(() => session.value.data?.session.id);
@@ -75,8 +78,7 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
       subscribeToSignals(roomId);
       const participants = await $trpc.voice.joinVoiceChannel.mutate({ roomId });
       setParticipants(roomId, participants);
-      const localSessionId = sessionId.value;
-      if (localSessionId) await setupSpeakingDetection(LOCAL_PARTICIPANT_ID, localSessionId, stream);
+      if (sessionId.value) await setupSpeakingDetection(LOCAL_PARTICIPANT_ID, sessionId.value, stream);
     } catch {
       await leaveVoice();
     }
@@ -85,13 +87,13 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
   const leaveVoice = async () => {
     const roomId = callRoomId.value;
     if (!roomId) return;
-    const localSessionId = sessionId.value;
     try {
-      if (localSessionId) deleteVoiceParticipant(roomId, localSessionId);
+      if (sessionId.value) deleteVoiceParticipant(roomId, sessionId.value);
       await $trpc.voice.leaveVoiceChannel.mutate({ roomId });
     } finally {
       callRoomId.value = undefined;
       isDeafened.value = false;
+      isForceMuted.value = false;
       await cleanupAll();
       clearSpeakers();
     }
@@ -103,14 +105,37 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
   };
 
   const toggleMute = async () => {
-    const roomId = callRoomId.value;
-    const localSessionId = sessionId.value;
-    if (!roomId || !localSessionId) return;
+    if (!callRoomId.value || !sessionId.value) return;
     const newIsMuted = !isMuted.value;
-    setMute(roomId, localSessionId, newIsMuted);
+    setMute(callRoomId.value, sessionId.value, newIsMuted);
     setLocalStreamMuted(newIsMuted);
-    await $trpc.voice.setMute.mutate({ isMuted: newIsMuted, roomId });
+    await $trpc.voice.setMute.mutate({ isMuted: newIsMuted, roomId: callRoomId.value });
   };
+
+  AdminActionHookMap[AdminActionType.CreateBan].push(async (roomId) => {
+    if (callRoomId.value === roomId) await leaveVoice();
+  });
+  AdminActionHookMap[AdminActionType.ForceMute].push((roomId) => {
+    if (sessionId.value) setMute(roomId, sessionId.value, true);
+    if (callRoomId.value !== roomId) return;
+    setLocalStreamMuted(true);
+    isForceMuted.value = true;
+  });
+  AdminActionHookMap[AdminActionType.ForceUnmute].push((roomId) => {
+    if (sessionId.value) setMute(roomId, sessionId.value, false);
+    if (callRoomId.value !== roomId) return;
+    setLocalStreamMuted(false);
+    isForceMuted.value = false;
+  });
+  AdminActionHookMap[AdminActionType.KickFromRoom].push(async (roomId) => {
+    if (callRoomId.value === roomId) await leaveVoice();
+  });
+  AdminActionHookMap[AdminActionType.KickFromVoice].push(async () => {
+    await leaveVoice();
+  });
+  AdminActionHookMap[AdminActionType.TimeoutUser].push(async (roomId) => {
+    if (callRoomId.value === roomId) await leaveVoice();
+  });
 
   return {
     callRoomId,
@@ -120,6 +145,7 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
     deleteSpeaker,
     deleteVoiceParticipant,
     isDeafened,
+    isForceMuted,
     isInChannel,
     isMuted,
     joinVoice,
