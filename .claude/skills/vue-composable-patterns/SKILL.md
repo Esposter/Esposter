@@ -362,7 +362,7 @@ const readRooms = () =>
     () => $trpc.room.readRooms.query({ roomId: currentRoomId.value }),
     ({ items }) => {
       const roomIds = items.map(({ id }) => id);
-      return Promise.all([readUserToRoomsMetadata(roomIds), readMyPermissions(roomIds)]);
+      return Promise.all([readUserToRooms(roomIds), readMyPermissions(roomIds)]);
     },
   );
 ```
