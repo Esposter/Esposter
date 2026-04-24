@@ -25,6 +25,6 @@ export const getPermissions = async (db: Context["db"], userId: string, roomIds:
       ),
     );
   const result = new Map<string, bigint>();
-  for (const { roomId, permissions } of rows) result.set(roomId, (result.get(roomId) ?? 0n) | permissions);
+  for (const { permissions, roomId } of rows) result.set(roomId, (result.get(roomId) ?? 0n) | permissions);
   return result;
 };

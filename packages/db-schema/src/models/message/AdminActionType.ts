@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export enum AdminActionType {
-  BanUser = "BanUser",
+  CreateBan = "CreateBan",
   ForceMute = "ForceMute",
   ForceUnmute = "ForceUnmute",
   KickFromRoom = "KickFromRoom",

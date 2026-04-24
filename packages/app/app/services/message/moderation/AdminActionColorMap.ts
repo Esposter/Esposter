@@ -1,7 +1,7 @@
 import { AdminActionType } from "@esposter/db-schema";
 
 export const AdminActionColorMap = {
-  [AdminActionType.BanUser]: "error",
+  [AdminActionType.CreateBan]: "error",
   [AdminActionType.ForceMute]: "warning",
   [AdminActionType.ForceUnmute]: "success",
   [AdminActionType.KickFromRoom]: "error",

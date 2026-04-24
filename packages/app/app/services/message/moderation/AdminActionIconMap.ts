@@ -1,7 +1,7 @@
 import { AdminActionType } from "@esposter/db-schema";
 
 export const AdminActionIconMap = {
-  [AdminActionType.BanUser]: "mdi-account-cancel",
+  [AdminActionType.CreateBan]: "mdi-account-cancel",
   [AdminActionType.ForceMute]: "mdi-microphone-off",
   [AdminActionType.ForceUnmute]: "mdi-microphone",
   [AdminActionType.KickFromRoom]: "mdi-account-remove",

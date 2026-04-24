@@ -10,5 +10,5 @@ export const getTopRolePosition = async (db: Context["db"], userId: string, room
     .innerJoin(usersToRoomRoles, eq(usersToRoomRoles.roleId, roomRoles.id))
     .where(and(eq(usersToRoomRoles.userId, userId), inArray(roomRoles.roomId, roomIds)))
     .groupBy(roomRoles.roomId);
-  return new Map(results.map(({ roomId, maxPosition }) => [roomId, maxPosition ?? -1]));
+  return new Map(results.map(({ maxPosition, roomId }) => [roomId, maxPosition ?? -1]));
 };

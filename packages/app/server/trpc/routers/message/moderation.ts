@@ -36,7 +36,6 @@ import {
   roomIdSchema,
   RoomPermission,
   users,
-  usersToRoomRoles,
   usersToRooms,
 } from "@esposter/db-schema";
 import { exhaustiveGuard, ItemMetadataPropertyNames, NotFoundError } from "@esposter/shared";
@@ -78,14 +77,11 @@ export const moderationRouter = router({
         throw new TRPCError({ code: "UNAUTHORIZED" });
 
       switch (input.type) {
-        case AdminActionType.BanUser:
+        case AdminActionType.CreateBan:
           await ctx.db.transaction(async (tx) => {
             await tx
               .delete(usersToRooms)
               .where(and(eq(usersToRooms.userId, targetUserId), eq(usersToRooms.roomId, roomId)));
-            await tx
-              .delete(usersToRoomRoles)
-              .where(and(eq(usersToRoomRoles.userId, targetUserId), eq(usersToRoomRoles.roomId, roomId)));
             await tx
               .insert(bans)
               .values({ bannedByUserId: actorUserId, roomId, userId: targetUserId })

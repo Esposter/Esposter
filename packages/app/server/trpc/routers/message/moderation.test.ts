@@ -56,14 +56,14 @@ describe("moderation", () => {
   });
 
   describe("executeAdminAction", () => {
-    test(`${AdminActionType.BanUser}: owner bans member — ban row inserted and usersToRooms row deleted`, async () => {
+    test(`${AdminActionType.CreateBan}: owner bans member — ban row inserted, usersToRooms and usersToRoomRoles rows deleted`, async () => {
       expect.hasAssertions();
 
       const member = await createMember();
       await moderationCaller.executeAdminAction({
         roomId,
         targetUserId: member.id,
-        type: AdminActionType.BanUser,
+        type: AdminActionType.CreateBan,
       });
 
       const banRows = await mockContext.db
@@ -174,7 +174,7 @@ describe("moderation", () => {
         moderationCaller.executeAdminAction({
           roomId,
           targetUserId: target.id,
-          type: AdminActionType.BanUser,
+          type: AdminActionType.CreateBan,
         }),
       ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
     });
@@ -190,7 +190,7 @@ describe("moderation", () => {
         moderationCaller.executeAdminAction({
           roomId,
           targetUserId: target.id,
-          type: AdminActionType.BanUser,
+          type: AdminActionType.CreateBan,
         }),
       ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
     });
@@ -213,7 +213,7 @@ describe("moderation", () => {
       await moderationCaller.executeAdminAction({
         roomId,
         targetUserId: member.id,
-        type: AdminActionType.BanUser,
+        type: AdminActionType.CreateBan,
       });
 
       const result = await moderationCaller.readBans({ limit: 15, roomId });
@@ -255,7 +255,7 @@ describe("moderation", () => {
       await moderationCaller.executeAdminAction({
         roomId,
         targetUserId: member.id,
-        type: AdminActionType.BanUser,
+        type: AdminActionType.CreateBan,
       });
       await moderationCaller.deleteBan({ roomId, userId: member.id });
 

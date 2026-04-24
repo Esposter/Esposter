@@ -19,7 +19,7 @@ export const useAdminActionMap = () => {
   const sessionId = computed(() => session.value.data?.session.id);
 
   const adminActionMap: Record<AdminActionType, (roomId: string, durationMs?: number) => Promisable<void>> = {
-    [AdminActionType.BanUser]: async (roomId) => {
+    [AdminActionType.CreateBan]: async (roomId) => {
       await leaveVoice();
       await storeDeleteRoom({ id: roomId });
       notify("You have been banned from this room.");

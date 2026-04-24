@@ -330,6 +330,13 @@
       "when": 1776910933720,
       "tag": "0046_overrated_whizzer",
       "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "7",
+      "when": 1776998360012,
+      "tag": "0047_nostalgic_vertigo",
+      "breakpoints": true
     }
   ]
 }

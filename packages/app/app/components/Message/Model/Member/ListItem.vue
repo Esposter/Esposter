@@ -88,7 +88,7 @@ const selectedTimeoutDurationMs = ref(TimeoutDurationMap["1 minute"]);
                         await $trpc.moderation.executeAdminAction.mutate({
                           roomId: currentRoom.id,
                           targetUserId: member.id,
-                          type: AdminActionType.BanUser,
+                          type: AdminActionType.CreateBan,
                         });
                       } finally {
                         onComplete();

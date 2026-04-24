@@ -15,7 +15,7 @@ export const executeAdminActionInputSchema = z.discriminatedUnion("type", [
   z.object({
     ...baseExecuteAdminActionInputSchema.shape,
     type: z.enum([
-      AdminActionType.BanUser,
+      AdminActionType.CreateBan,
       AdminActionType.ForceMute,
       AdminActionType.ForceUnmute,
       AdminActionType.KickFromRoom,
