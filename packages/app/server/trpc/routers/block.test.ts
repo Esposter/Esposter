@@ -139,9 +139,9 @@ describe("block", () => {
     const { user: blockedUser } = await mockSessionOnce(mockContext.db);
     getMockSession();
     await blockCaller.blockUser(blockedUser.id);
-    const results = await friendCaller.searchUsers(blockedUser.name);
+    const blocks = await friendCaller.searchUsers(blockedUser.name);
 
-    expect(results.every(({ id }) => id !== blockedUser.id)).toBe(true);
+    expect(blocks.every(({ id }) => id !== blockedUser.id)).toBe(true);
   });
 
   test("search excludes users who blocked you", async () => {
@@ -152,8 +152,8 @@ describe("block", () => {
     await blockCaller.blockUser(user.id);
     await mockSessionOnce(mockContext.db, user);
 
-    const results = await friendCaller.searchUsers(blockerUser.name);
+    const users = await friendCaller.searchUsers(blockerUser.name);
 
-    expect(results.every(({ id }) => id !== blockerUser.id)).toBe(true);
+    expect(users.every(({ id }) => id !== blockerUser.id)).toBe(true);
   });
 });

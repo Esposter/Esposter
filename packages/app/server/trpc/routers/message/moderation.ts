@@ -136,7 +136,7 @@ export const moderationRouter = router({
     if (cursor) wheres.push(getCursorWhere(bans, cursor, sortBy));
 
     const bannedByUsers = alias(users, "bannedByUsers");
-    const results = await ctx.db
+    const readBans = await ctx.db
       .select({
         ...getTableColumns(bans),
         bannedByUser: getTableColumns(bannedByUsers),
@@ -148,8 +148,7 @@ export const moderationRouter = router({
       .where(and(...wheres))
       .orderBy(...parseSortByToSql(bans, sortBy))
       .limit(limit + 1);
-
-    return getCursorPaginationData(results, limit, sortBy);
+    return getCursorPaginationData(readBans, limit, sortBy);
   }),
   readModerationLog: getPermissionsProcedure(RoomPermission.ManageRoom, readModerationLogInputSchema, "roomId").query(
     async ({ input: { cursor, limit, roomId } }) => {

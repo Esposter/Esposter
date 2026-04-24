@@ -11,27 +11,23 @@ export const useVoiceParticipantActions = () => {
   const voiceStore = useVoiceStore();
   const { callRoomId } = storeToRefs(voiceStore);
   const roleStore = useRoleStore();
-  const { myPermissionsMap } = storeToRefs(roleStore);
+  const { getMyPermissions } = roleStore;
 
-  const voicePermissionsData = computed(() =>
-    callRoomId.value ? myPermissionsMap.value.get(callRoomId.value) : undefined,
-  );
-  const canForceMute = computed(() => {
-    const data = voicePermissionsData.value;
-    if (!data) return false;
-    return hasPermission(data.permissions, RoomPermission.MuteMembers, data.isRoomOwner);
+  const myPermissions = computed(() => (callRoomId.value ? getMyPermissions(callRoomId.value) : undefined));
+  const isForceMuteable = computed(() => {
+    if (!myPermissions.value) return false;
+    return hasPermission(myPermissions.value.permissions, RoomPermission.MuteMembers, myPermissions.value.isRoomOwner);
   });
-  const canKickFromVoice = computed(() => {
-    const data = voicePermissionsData.value;
-    if (!data) return false;
-    return hasPermission(data.permissions, RoomPermission.MoveMembers, data.isRoomOwner);
+  const isKickableFromVoice = computed(() => {
+    if (!myPermissions.value) return false;
+    return hasPermission(myPermissions.value.permissions, RoomPermission.MoveMembers, myPermissions.value.isRoomOwner);
   });
 
   const getActions = (userId: string, participantIsMuted: boolean): Item[] => {
     const roomId = callRoomId.value;
     if (!roomId) return [];
     const items: Item[] = [];
-    if (canForceMute.value && !participantIsMuted)
+    if (isForceMuteable.value && !participantIsMuted)
       items.push({
         icon: "mdi-microphone-off",
         onClick: getSynchronizedFunction(async () => {
@@ -43,7 +39,7 @@ export const useVoiceParticipantActions = () => {
         }),
         title: "Force Mute",
       });
-    if (canForceMute.value && participantIsMuted)
+    if (isForceMuteable.value && participantIsMuted)
       items.push({
         icon: "mdi-microphone",
         onClick: getSynchronizedFunction(async () => {
@@ -55,7 +51,7 @@ export const useVoiceParticipantActions = () => {
         }),
         title: "Force Unmute",
       });
-    if (canKickFromVoice.value)
+    if (isKickableFromVoice.value)
       items.push({
         icon: "mdi-account-remove",
         onClick: getSynchronizedFunction(async () => {
@@ -70,5 +66,5 @@ export const useVoiceParticipantActions = () => {
     return items;
   };
 
-  return { canForceMute, canKickFromVoice, getActions };
+  return { getActions, isForceMuteable, isKickableFromVoice };
 };

@@ -47,7 +47,7 @@ export const SettingsPermissionMap: Partial<Record<SettingsType, RoomPermission>
 // LeftSideBar.vue — filters entries via computed, no per-component checks
 const visibleSettings = computed(() =>
   Object.entries(SettingsListItemMap).filter(([settingsType]) => {
-    const permission = SettingsPermissionMap[settingsType as SettingsType];
+    const permission = SettingsPermissionMap[settingsType];
     if (!permission) return true;
     const data = myPermissionsMap.value.get(roomId);
     if (!data) return false;
@@ -362,7 +362,7 @@ const readRooms = () =>
     () => $trpc.room.readRooms.query({ roomId: currentRoomId.value }),
     ({ items }) => {
       const roomIds = items.map(({ id }) => id);
-      return Promise.all([readUserToRoomsMetadata(roomIds), readMyPermissions(roomIds)]);
+      return Promise.all([readUserToRooms(roomIds), readMyPermissions(roomIds)]);
     },
   );
 ```

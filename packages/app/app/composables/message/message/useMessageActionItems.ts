@@ -1,6 +1,8 @@
 import type { Item } from "@/models/shared/Item";
 import type { MessageEntity } from "@esposter/db-schema";
 
+import { DeletableMessageTypes } from "#shared/services/message/DeletableMessageTypes";
+import { UpdatableMessageTypes } from "#shared/services/message/UpdatableMessageTypes";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { useMessageStore } from "@/store/message";
 import { useRoomStore } from "@/store/message/room";
@@ -88,16 +90,15 @@ export const useMessageActionItems = (
     }),
     title: "Copy Message Link",
   };
-  const updateMessageTypes = new Set([MessageType.Message, MessageType.Webhook]);
   const updateMessageItems = computed<Item[]>(() =>
-    updateMessageTypes.has(message.type)
+    UpdatableMessageTypes.has(message.type)
       ? isEditable.value
         ? [editMessageItem, forwardMessageItem]
         : [replyItem, forwardMessageItem]
       : [],
   );
   const updateMessageMenuItems = computed<Item[]>(() =>
-    updateMessageTypes.has(message.type)
+    UpdatableMessageTypes.has(message.type)
       ? isEditable.value
         ? [editMessageItem, replyItem, forwardMessageItem]
         : [replyItem, forwardMessageItem]
@@ -121,9 +122,7 @@ export const useMessageActionItems = (
     }
   });
   const deleteMessageItem = computed<Item | undefined>(() =>
-    [MessageType.Message, MessageType.Poll, MessageType.Webhook].includes(message.type) &&
-    isCreator.value &&
-    onDeleteMode
+    DeletableMessageTypes.has(message.type) && isCreator.value && onDeleteMode
       ? {
           color: "error",
           icon: "mdi-delete",

@@ -11,7 +11,7 @@ interface PermissionsProps {
 
 const { roomId } = defineProps<PermissionsProps>();
 const roleStore = useRoleStore();
-const { getRoles, readRoles } = roleStore;
+const { getRoles } = roleStore;
 const { selectedMemberId, selectedRole } = storeToRefs(roleStore);
 const memberStore = useMemberStore();
 const { memberMap } = storeToRefs(memberStore);
@@ -20,7 +20,6 @@ const selectedMember = computed(() =>
 );
 const roles = computed(() => getRoles(roomId).toSorted((a, b) => (a.isEveryone ? -1 : b.isEveryone ? 1 : 0)));
 const tab = ref(PermissionsTab.Roles);
-await readRoles({ roomId });
 </script>
 
 <template>

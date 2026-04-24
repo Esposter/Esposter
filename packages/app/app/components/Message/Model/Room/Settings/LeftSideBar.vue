@@ -15,17 +15,15 @@ interface LeftSideBarProps {
 const { roomId } = defineProps<LeftSideBarProps>();
 const modelValue = defineModel<keyof typeof SettingsContentMap>({ required: true });
 const emit = defineEmits<{ "open:delete": [] }>();
-
 const roleStore = useRoleStore();
-const { myPermissionsMap } = storeToRefs(roleStore);
-
+const { getMyPermissions } = roleStore;
 const visibleSettings = computed(() =>
   Object.entries(SettingsListItemMap).filter(([settingsType]) => {
-    const permission = SettingsPermissionMap[settingsType as SettingsType];
+    const permission = SettingsPermissionMap[settingsType];
     if (!permission) return true;
-    const data = myPermissionsMap.value.get(roomId);
-    if (!data) return false;
-    return hasPermission(data.permissions, permission, data.isRoomOwner);
+    const myPermissions = getMyPermissions(roomId);
+    if (!myPermissions) return false;
+    return hasPermission(myPermissions.permissions, permission, myPermissions.isRoomOwner);
   }),
 );
 </script>

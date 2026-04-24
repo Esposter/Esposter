@@ -76,7 +76,7 @@ describe(hasPermission, () => {
     const { user } = getMockSession();
     await roomCaller.createMembers({ roomId, userIds: [user.id] });
 
-    const roles = await roleCaller.readRoles({ roomId });
+    const roles = await roleCaller.readRoles({ roomIds: [roomId] });
     const everyoneRole = roles.find(({ isEveryone }) => isEveryone);
     assert.exists(everyoneRole);
     await roleCaller.updateRole({ id: everyoneRole.id, permissions: RoomPermission.ReadMessages, roomId });

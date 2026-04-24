@@ -17,7 +17,7 @@ export const pushNotification = async (
     notificationOptions: { icon, title },
   }: PushNotificationEventGridData,
 ): Promise<void> => {
-  const payload = getCreateMessageNotificationPayload(message, {
+  const payload = getCreateMessageNotificationPayload(context, message, {
     icon,
     title,
     url: `${process.env.BASE_URL}${RoutePath.MessagesMessage(partitionKey, rowKey)}`,

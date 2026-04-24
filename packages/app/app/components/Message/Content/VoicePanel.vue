@@ -5,7 +5,7 @@ import { useVoiceStore } from "@/store/message/room/voice";
 const voiceStore = useVoiceStore();
 const { isDeafened, isInChannel, roomParticipants, speakingIds } = storeToRefs(voiceStore);
 const { data: session } = await authClient.useSession(useFetch);
-const { canForceMute, canKickFromVoice, getActions } = useVoiceParticipantActions();
+const { getActions, isForceMuteable, isKickableFromVoice } = useVoiceParticipantActions();
 const voiceControlItems = useVoiceControlItems();
 </script>
 
@@ -15,14 +15,14 @@ const voiceControlItems = useVoiceControlItems();
       <v-icon icon="mdi-volume-high" size="small" color="success" />
       <span text-sm font-medium flex-1>Voice</span>
       <div flex items-center gap-x-1>
-        <div v-for="{ id, image, isMuted: participantIsMuted, name, userId } of roomParticipants" :key="id" relative>
-          <v-menu v-if="userId !== session?.user.id && (canForceMute || canKickFromVoice)">
+        <div v-for="{ id, image, isMuted: isParticipantMuted, name, userId } of roomParticipants" :key="id" relative>
+          <v-menu v-if="userId !== session?.user.id && (isForceMuteable || isKickableFromVoice)">
             <template #activator="{ props: menuProps }">
               <StyledAvatar size="x-small" :image :name :="menuProps" cursor-pointer />
             </template>
             <v-list density="compact">
               <v-list-item
-                v-for="{ icon, title, onClick } of getActions(userId, participantIsMuted)"
+                v-for="{ icon, title, onClick } of getActions(userId, isParticipantMuted)"
                 :key="title"
                 :prepend-icon="icon"
                 :title
@@ -40,7 +40,7 @@ const voiceControlItems = useVoiceControlItems();
             pointer-events-none
             rd-full
           />
-          <v-icon v-if="participantIsMuted" icon="mdi-microphone-off" size="x-small" absolute bottom-0 right-0 />
+          <v-icon v-if="isParticipantMuted" icon="mdi-microphone-off" size="x-small" absolute bottom-0 right-0 />
           <v-icon
             v-if="isDeafened && id === session?.session.id"
             icon="mdi-headphones-off"

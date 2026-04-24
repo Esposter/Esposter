@@ -24,7 +24,7 @@ import {
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { octetInputParser } from "@trpc/server/http";
-import { eq, inArray } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { Readable } from "node:stream";
 
 const readStatusesInputSchema = selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
@@ -101,7 +101,9 @@ export const userRouter = router({
     }
   }),
   readStatuses: standardAuthedProcedure.input(readStatusesInputSchema).query(async ({ ctx, input }) => {
-    const foundUserStatuses = await ctx.db.select().from(userStatuses).where(inArray(userStatuses.userId, input));
+    const foundUserStatuses = await ctx.db.query.userStatuses.findMany({
+      where: (userStatuses, { inArray }) => inArray(userStatuses.userId, input),
+    });
     const resultUserStatuses: SetNonNullable<IUserStatus, "status">[] = [];
     const statusMap = new Map(foundUserStatuses.map((us) => [us.userId, us]));
 
