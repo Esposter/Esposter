@@ -97,19 +97,19 @@ describe("friend", () => {
     const user = getMockSession().user;
     // Session=newUser: search for default user by name
     await mockSessionOnce(mockContext.db);
-    const results = await friendCaller.searchUsers(user.name);
+    const users = await friendCaller.searchUsers(user.name);
 
-    expect(results).toHaveLength(1);
-    expect(takeOne(results).id).toBe(user.id);
+    expect(users).toHaveLength(1);
+    expect(takeOne(users).id).toBe(user.id);
   });
 
   test("excludes self from search results", async () => {
     expect.hasAssertions();
 
     const user = getMockSession().user;
-    const results = await friendCaller.searchUsers(user.name);
+    const users = await friendCaller.searchUsers(user.name);
 
-    expect(results.every(({ id }) => id !== user.id)).toBe(true);
+    expect(users.every(({ id }) => id !== user.id)).toBe(true);
   });
 
   test("on delete friend notifies the other party", async () => {

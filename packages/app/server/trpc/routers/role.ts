@@ -201,14 +201,12 @@ export const roleRouter = router({
       if (data.roomId === roomId && !getIsSameDevice(device, ctx.getSessionPayload)) yield data;
   }),
   readMemberRoles: getMemberProcedure(readMemberRolesInputSchema, "roomId").query<UserToRoomRoleWithRelations[]>(
-    async ({ ctx, input: { roomId, userIds } }) => {
-      const results = await ctx.db.query.usersToRoomRoles.findMany({
+    ({ ctx, input: { roomId, userIds } }) =>
+      ctx.db.query.usersToRoomRoles.findMany({
         where: (usersToRoomRoles, { and, eq, inArray }) =>
           and(eq(usersToRoomRoles.roomId, roomId), inArray(usersToRoomRoles.userId, userIds)),
         with: UserToRoomRoleRelations,
-      });
-      return results;
-    },
+      }),
   ),
   readMyPermissions: standardAuthedProcedure
     .input(readMyPermissionsInputSchema)
