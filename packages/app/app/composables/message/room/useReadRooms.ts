@@ -12,6 +12,7 @@ export const useReadRooms = () => {
       () => $trpc.room.readRooms.query({ roomId: currentRoomId.value }),
       async ({ items }) => {
         const roomIds = items.map(({ id }) => id);
+        if (roomIds.length === 0) return;
         await Promise.all([readUserToRoomsMetadata(roomIds), readMyPermissions(roomIds)]);
       },
     );
@@ -19,6 +20,7 @@ export const useReadRooms = () => {
     readMoreItems(async (cursor) => {
       const response = await $trpc.room.readRooms.query({ cursor });
       const roomIds = response.items.map(({ id }) => id);
+      if (roomIds.length === 0) return response;
       await Promise.all([readUserToRoomsMetadata(roomIds), readMyPermissions(roomIds)]);
       return response;
     }, onComplete);

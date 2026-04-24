@@ -56,7 +56,7 @@ describe("moderation", () => {
   });
 
   describe("executeAdminAction", () => {
-    test(`${AdminActionType.CreateBan}: owner bans member — ban row inserted, usersToRooms and usersToRoomRoles rows deleted`, async () => {
+    test(`${AdminActionType.CreateBan}: owner bans member — ban row inserted, usersToRooms rows deleted`, async () => {
       expect.hasAssertions();
 
       const member = await createMember();

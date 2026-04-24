@@ -2,8 +2,8 @@ import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { roomRoles } from "@/schema/roomRoles";
 import { rooms } from "@/schema/rooms";
-import { usersToRooms } from "@/schema/usersToRooms";
 import { users } from "@/schema/users";
+import { usersToRooms } from "@/schema/usersToRooms";
 import { relations } from "drizzle-orm";
 import { foreignKey, index, primaryKey, text, uuid } from "drizzle-orm/pg-core";
 

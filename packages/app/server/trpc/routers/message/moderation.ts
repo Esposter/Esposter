@@ -70,10 +70,13 @@ export const moderationRouter = router({
       const [isPermitted, actorContext, targetTopPosition] = await Promise.all([
         hasPermission(ctx.db, actorUserId, roomId, AdminActionPermissionMap[input.type]),
         getActorContext(ctx.db, actorUserId, roomId),
-        getTopRolePosition(ctx.db, targetUserId, roomId),
+        getTopRolePosition(ctx.db, targetUserId, [roomId]),
       ]);
 
-      if (!isPermitted || !isManageable(actorContext.actorTopPosition, targetTopPosition, actorContext.isOwner))
+      if (
+        !isPermitted ||
+        !isManageable(actorContext.actorTopPosition, targetTopPosition.get(roomId) ?? -1, actorContext.isOwner)
+      )
         throw new TRPCError({ code: "UNAUTHORIZED" });
 
       switch (input.type) {
