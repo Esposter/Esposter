@@ -14,7 +14,7 @@ export default defineConfig({
     },
     rolldownOptions: {
       // Vue-phaserjs
-      external: ["phaser", "phaser3-rex-plugins", "pinia", "vue"],
+      external: ["phaser", /^phaser3-rex-plugins/, "pinia", "vue"],
     },
   },
   plugins: [

@@ -13,16 +13,12 @@ export const rolldownConfigurationBrowser: RolldownOptions = {
     // Most packages depend on @esposter/shared
     "@esposter/shared",
     // @esposter/db-schema
-    "drizzle-orm",
-    "drizzle-orm/pg-core",
-    // @esposter/db
-    "drizzle-orm/postgres-js",
     "drizzle-zod",
     "zod",
     // @esposter/db-mock
+    /^drizzle-kit/,
+    /^drizzle-orm/,
     "@electric-sql/pglite",
-    "drizzle-kit",
-    /^drizzle-kit\//,
   ],
   input: "src/index.ts",
   output: { dir: "dist", format: "es" },
