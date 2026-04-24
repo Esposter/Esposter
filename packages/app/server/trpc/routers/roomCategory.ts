@@ -8,7 +8,7 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import { DatabaseEntityType, roomCategories } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, asc, eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 export const roomCategoryRouter = router({
   createRoomCategory: standardAuthedProcedure
@@ -45,11 +45,10 @@ export const roomCategoryRouter = router({
       return deletedRoomCategory;
     }),
   readRoomCategories: standardAuthedProcedure.query<RoomCategory[]>(({ ctx }) =>
-    ctx.db
-      .select()
-      .from(roomCategories)
-      .where(eq(roomCategories.userId, ctx.getSessionPayload.user.id))
-      .orderBy(asc(roomCategories.position), asc(roomCategories.name)),
+    ctx.db.query.roomCategories.findMany({
+      orderBy: (roomCategories, { asc }) => [asc(roomCategories.position), asc(roomCategories.name)],
+      where: (roomCategories, { eq }) => eq(roomCategories.userId, ctx.getSessionPayload.user.id),
+    }),
   ),
   updateRoomCategory: standardAuthedProcedure
     .input(updateRoomCategoryInputSchema)

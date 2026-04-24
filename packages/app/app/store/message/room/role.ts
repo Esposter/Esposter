@@ -88,7 +88,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
   const readMemberRoles = async (input: ReadMemberRolesInput) => {
     const memberRoles = await $trpc.role.readMemberRoles.query(input);
     const rolesByUserId = new Map<string, RoomRole[]>();
-    for (const { userId, ...role } of memberRoles) {
+    for (const { role, userId } of memberRoles) {
       const roles = rolesByUserId.get(userId) ?? [];
       roles.push(role);
       rolesByUserId.set(userId, roles);

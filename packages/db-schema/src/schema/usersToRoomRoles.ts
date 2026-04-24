@@ -1,3 +1,5 @@
+import type { RoomRole } from "@/schema/roomRoles";
+
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { roomRoles } from "@/schema/roomRoles";
@@ -49,3 +51,8 @@ export const usersToRoomRolesRelations = relations(usersToRoomRoles, ({ one }) =
     references: [users.id],
   }),
 }));
+// @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
+export const UserToRoomRoleRelations = {
+  role: true,
+} as const;
+export type UserToRoomRoleWithRelations = UserToRoomRole & { role: RoomRole };

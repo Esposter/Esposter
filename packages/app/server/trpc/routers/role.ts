@@ -1,4 +1,4 @@
-import type { RoomRole } from "@esposter/db-schema";
+import type { RoomRole, UserToRoomRoleWithRelations } from "@esposter/db-schema";
 
 import { assignRoleInputSchema } from "#shared/models/db/role/AssignRoleInput";
 import { createRoleInputSchema } from "#shared/models/db/role/CreateRoleInput";
@@ -20,7 +20,14 @@ import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { DatabaseEntityType, RoomPermission, roomRoles, selectRoomSchema, usersToRoomRoles } from "@esposter/db-schema";
+import {
+  DatabaseEntityType,
+  RoomPermission,
+  roomRoles,
+  selectRoomSchema,
+  usersToRoomRoles,
+  UserToRoomRoleRelations,
+} from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
@@ -193,14 +200,14 @@ export const roleRouter = router({
     for await (const [[data, device]] of on(roleEventEmitter, "updateRole", { signal }))
       if (data.roomId === roomId && !getIsSameDevice(device, ctx.getSessionPayload)) yield data;
   }),
-  readMemberRoles: getMemberProcedure(readMemberRolesInputSchema, "roomId").query<(RoomRole & { userId: string })[]>(
+  readMemberRoles: getMemberProcedure(readMemberRolesInputSchema, "roomId").query<UserToRoomRoleWithRelations[]>(
     async ({ ctx, input: { roomId, userIds } }) => {
       const results = await ctx.db.query.usersToRoomRoles.findMany({
         where: (usersToRoomRoles, { and, eq, inArray }) =>
           and(eq(usersToRoomRoles.roomId, roomId), inArray(usersToRoomRoles.userId, userIds)),
-        with: { role: true },
+        with: UserToRoomRoleRelations,
       });
-      return results.map((r) => ({ ...r.role, userId: r.userId }));
+      return results;
     },
   ),
   readMyPermissions: standardAuthedProcedure

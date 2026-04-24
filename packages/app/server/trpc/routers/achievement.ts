@@ -4,9 +4,8 @@ import { on } from "@@/server/services/events/on";
 import { router } from "@@/server/trpc";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
-import { achievements, selectUserSchema, userAchievements } from "@esposter/db-schema";
+import { selectUserSchema } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
-import { and, eq, isNull } from "drizzle-orm";
 import { z } from "zod";
 
 const readUserAchievementsInputSchema = selectUserSchema.shape.id.optional();
@@ -21,11 +20,12 @@ export const achievementRouter = router({
   }),
   readAchievementMap: standardAuthedProcedure.query(async ({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
-    const unlockedUserAchievementNames = await ctx.db
-      .select({ name: achievements.name })
-      .from(userAchievements)
-      .innerJoin(achievements, eq(achievements.id, userAchievements.achievementId))
-      .where(and(eq(userAchievements.userId, userId), isNull(userAchievements.unlockedAt)));
+    const unlockedUserAchievements = await ctx.db.query.userAchievements.findMany({
+      where: (userAchievements, { and, eq, isNull }) =>
+        and(eq(userAchievements.userId, userId), isNull(userAchievements.unlockedAt)),
+      with: { achievement: { columns: { name: true } } },
+    });
+    const unlockedUserAchievementNames = unlockedUserAchievements.map(({ achievement }) => achievement.name);
     return Object.fromEntries(
       Object.entries(AchievementDefinitionMap).map(([achievementName, achievementDefinition]) => [
         achievementName,
@@ -45,13 +45,10 @@ export const achievementRouter = router({
       const userId = input ?? ctx.getSessionPayload?.user.id;
       if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
 
-      const joinedUserAchievements = await ctx.db
-        .select()
-        .from(userAchievements)
-        .innerJoin(achievements, eq(achievements.id, userAchievements.achievementId))
-        .where(and(eq(userAchievements.userId, userId)));
-      return joinedUserAchievements.map(({ achievements, user_achievements }) =>
-        Object.assign(user_achievements, { achievement: achievements }),
-      );
+      const joinedUserAchievements = await ctx.db.query.userAchievements.findMany({
+        where: (userAchievements, { eq }) => eq(userAchievements.userId, userId),
+        with: { achievement: true },
+      });
+      return joinedUserAchievements.map((ua) => Object.assign(ua, { achievement: ua.achievement }));
     }),
 });

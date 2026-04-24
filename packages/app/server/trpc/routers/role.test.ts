@@ -54,8 +54,8 @@ describe("role", () => {
 
     const roles = await roleCaller.readRoles({ roomIds: [roomId] });
 
-    expect(roles.length).toBeGreaterThanOrEqual(1);
-    expect(roles.some(({ isEveryone }) => isEveryone)).toBe(true);
+    expect(roles).toHaveLength(1);
+    expect(takeOne(roles).isEveryone).toBe(true);
   });
 
   test("readRoles throws UNAUTHORIZED if not a member", async () => {
@@ -107,7 +107,7 @@ describe("role", () => {
   test("cannot delete @everyone role", async () => {
     expect.hasAssertions();
 
-    const roles = await roleCaller.readRoles({ roomId });
+    const roles = await roleCaller.readRoles({ roomIds: [roomId] });
     const everyoneRole = roles.find(({ isEveryone }) => isEveryone);
     assert.exists(everyoneRole);
 
@@ -135,7 +135,7 @@ describe("role", () => {
     await roleCaller.assignRole({ roleId: role.id, roomId, userId: targetMember.id });
     const memberRoles = await roleCaller.readMemberRoles({ roomId, userIds: [targetMember.id] });
 
-    expect(memberRoles.some(({ id }) => id === role.id)).toBe(true);
+    expect(memberRoles.some(({ roleId }) => roleId === role.id)).toBe(true);
   });
 
   test("assignRole is idempotent on duplicate", async () => {
@@ -153,7 +153,7 @@ describe("role", () => {
   test("cannot assign @everyone role explicitly", async () => {
     expect.hasAssertions();
 
-    const roles = await roleCaller.readRoles({ roomId });
+    const roles = await roleCaller.readRoles({ roomIds: [roomId] });
     const everyoneRole = roles.find(({ isEveryone }) => isEveryone);
     assert.exists(everyoneRole);
     const targetMember = await createMember();
@@ -214,7 +214,7 @@ describe("role", () => {
     await roleCaller.revokeRole({ roleId: role.id, roomId, userId: targetMember.id });
     const memberRoles = await roleCaller.readMemberRoles({ roomId, userIds: [targetMember.id] });
 
-    expect(memberRoles.some(({ id }) => id === role.id)).toBe(false);
+    expect(memberRoles.some(({ roleId }) => roleId === role.id)).toBe(false);
   });
 
   test("cannot revoke role at or above own top position", async () => {
