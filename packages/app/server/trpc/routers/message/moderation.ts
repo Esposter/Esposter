@@ -108,11 +108,11 @@ export const moderationRouter = router({
             .where(and(eq(usersToRooms.userId, targetUserId), eq(usersToRooms.roomId, roomId)));
           break;
         default:
-          exhaustiveGuard(input.type);
+          exhaustiveGuard(input);
       }
 
       moderationEventEmitter.emit("adminAction", {
-        durationMs: input.durationMs,
+        durationMs: input.type === AdminActionType.TimeoutUser ? input.durationMs : undefined,
         roomId,
         targetUserId,
         type: input.type,

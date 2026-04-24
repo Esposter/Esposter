@@ -4,7 +4,7 @@ import { executeAdminActionInputSchema } from "#shared/models/db/moderation/Exec
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { useIsProduction } from "@@/server/composables/useIsProduction";
 import { createEntity } from "@esposter/db";
-import { AzureTable, getReverseTickedTimestamp, ModerationLogEntity } from "@esposter/db-schema";
+import { AdminActionType, AzureTable, getReverseTickedTimestamp, ModerationLogEntity } from "@esposter/db-schema";
 import { initTRPC } from "@trpc/server";
 
 const t = initTRPC.context<AuthedContext>().create();
@@ -18,7 +18,8 @@ export const moderationLogPlugin = t.procedure.use(async ({ ctx, getRawInput, ne
   if (!parsedInput.success) return result;
 
   const isProduction = useIsProduction();
-  const { durationMs, roomId, targetUserId, type } = parsedInput.data;
+  const { roomId, targetUserId, type } = parsedInput.data;
+  const durationMs = parsedInput.data.type === AdminActionType.TimeoutUser ? parsedInput.data.durationMs : undefined;
   try {
     const moderationLogClient = await useTableClient(AzureTable.ModerationLog);
     await createEntity(

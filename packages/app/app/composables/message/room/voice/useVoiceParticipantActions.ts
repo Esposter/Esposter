@@ -1,6 +1,7 @@
 import type { Item } from "@/models/shared/Item";
 
 import { hasPermission } from "#shared/services/room/rbac/hasPermission";
+import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { useRoleStore } from "@/store/message/room/role";
 import { useVoiceStore } from "@/store/message/room/voice";
 import { AdminActionType, RoomPermission } from "@esposter/db-schema";
@@ -33,33 +34,37 @@ export const useVoiceParticipantActions = () => {
     if (canForceMute.value && !participantIsMuted)
       items.push({
         icon: "mdi-microphone-off",
-        onClick: () => {
-          $trpc.moderation.executeAdminAction.mutate({ roomId, targetUserId: userId, type: AdminActionType.ForceMute });
-        },
+        onClick: getSynchronizedFunction(async () => {
+          await $trpc.moderation.executeAdminAction.mutate({
+            roomId,
+            targetUserId: userId,
+            type: AdminActionType.ForceMute,
+          });
+        }),
         title: "Force Mute",
       });
     if (canForceMute.value && participantIsMuted)
       items.push({
         icon: "mdi-microphone",
-        onClick: () => {
-          $trpc.moderation.executeAdminAction.mutate({
+        onClick: getSynchronizedFunction(async () => {
+          await $trpc.moderation.executeAdminAction.mutate({
             roomId,
             targetUserId: userId,
             type: AdminActionType.ForceUnmute,
           });
-        },
+        }),
         title: "Force Unmute",
       });
     if (canKickFromVoice.value)
       items.push({
         icon: "mdi-account-remove",
-        onClick: () => {
-          $trpc.moderation.executeAdminAction.mutate({
+        onClick: getSynchronizedFunction(async () => {
+          await $trpc.moderation.executeAdminAction.mutate({
             roomId,
             targetUserId: userId,
             type: AdminActionType.KickFromVoice,
           });
-        },
+        }),
         title: "Kick from Voice",
       });
     return items;

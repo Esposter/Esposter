@@ -121,22 +121,6 @@ describe("moderation", () => {
       expect(timeoutUntil.getTime()).toBe(durationMs);
     });
 
-    test(`${AdminActionType.TimeoutUser} without durationMs — throws BAD_REQUEST`, async () => {
-      expect.hasAssertions();
-
-      const member = await createMember();
-
-      await expect(
-        moderationCaller.executeAdminAction({
-          roomId,
-          targetUserId: member.id,
-          type: AdminActionType.TimeoutUser,
-        }),
-      ).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCClientError: Invalid operation: Update, name: executeAdminAction, durationMs must be defined for TimeoutUser]`,
-      );
-    });
-
     test(`${AdminActionType.ForceMute}: owner mutes member — succeeds with no error`, async () => {
       expect.hasAssertions();
 

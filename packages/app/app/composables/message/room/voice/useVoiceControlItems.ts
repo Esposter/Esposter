@@ -1,3 +1,4 @@
+import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { useVoiceStore } from "@/store/message/room/voice";
 
 interface VoiceControlItem {
@@ -16,9 +17,9 @@ export const useVoiceControlItems = () => {
     {
       color: isMuted.value ? "error" : undefined,
       icon: isMuted.value ? "mdi-microphone-off" : "mdi-microphone",
-      onClick: () => {
-        toggleMute();
-      },
+      onClick: getSynchronizedFunction(async () => {
+        await toggleMute();
+      }),
       tooltip: isMuted.value ? "Unmute" : "Mute",
       variant: "plain",
     },
@@ -34,9 +35,9 @@ export const useVoiceControlItems = () => {
     {
       color: "error",
       icon: "mdi-phone-hangup",
-      onClick: () => {
-        leaveVoice();
-      },
+      onClick: getSynchronizedFunction(async () => {
+        await leaveVoice();
+      }),
       tooltip: "Leave Voice",
       variant: "tonal",
     },
