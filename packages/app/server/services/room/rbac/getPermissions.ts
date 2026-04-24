@@ -36,6 +36,5 @@ export const getPermissions: GetPermissions = (async (
     );
   const result = new Map<string, bigint>();
   for (const { permissions, roomId } of rows) result.set(roomId, (result.get(roomId) ?? 0n) | permissions);
-  if (Array.isArray(roomIds)) return result;
-  return result.get(roomIds) ?? 0n;
+  return Array.isArray(roomIds) ? result : (result.get(roomIds) ?? 0n);
 }) as GetPermissions;
