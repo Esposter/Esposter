@@ -11,7 +11,7 @@ interface PermissionsProps {
 
 const { roomId } = defineProps<PermissionsProps>();
 const roleStore = useRoleStore();
-const { getRoles, readMyPermissions, readRoles } = roleStore;
+const { getRoles } = roleStore;
 const { selectedMemberId, selectedRole } = storeToRefs(roleStore);
 const memberStore = useMemberStore();
 const { memberMap } = storeToRefs(memberStore);

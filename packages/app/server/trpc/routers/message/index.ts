@@ -254,7 +254,11 @@ export const messageRouter = router({
       if (!DeletableMessageTypes.has(messageEntity.type))
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Delete, AzureEntityType.Message, messageEntity.type).message,
+          message: new InvalidOperationError(
+            Operation.Delete,
+            AzureEntityType.Message,
+            JSON.stringify({ partitionKey: messageEntity.partitionKey, rowKey: messageEntity.rowKey }),
+          ).message,
         });
       await updateMessage(messageClient, { ...input, deletedAt: new Date() });
       messageEventEmitter.emit("deleteMessage", input);
@@ -408,7 +412,11 @@ export const messageRouter = router({
       if (!PinnableMessageTypes.has(messageEntity.type))
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Update, AzureEntityType.Message, messageEntity.type).message,
+          message: new InvalidOperationError(
+            Operation.Update,
+            AzureEntityType.Message,
+            JSON.stringify({ partitionKey: messageEntity.partitionKey, rowKey: messageEntity.rowKey }),
+          ).message,
         });
 
       const updatedMessageEntity: AzureUpdateEntity<MessageEntity> = { ...input, isPinned: true };
@@ -460,6 +468,16 @@ export const messageRouter = router({
   }),
   unpinMessage: getMessageProcedure(unpinMessageInputSchema).mutation(
     async ({ ctx: { messageClient, messageEntity }, input }) => {
+      if (!PinnableMessageTypes.has(messageEntity.type))
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(
+            Operation.Update,
+            AzureEntityType.Message,
+            JSON.stringify({ partitionKey: messageEntity.partitionKey, rowKey: messageEntity.rowKey }),
+          ).message,
+        });
+
       const updatedMessageEntity: AzureUpdateEntity<MessageEntity> = { ...input, isPinned: undefined };
       Object.assign(messageEntity, updatedMessageEntity);
       await updateEntity(messageClient, messageEntity, "Replace");
@@ -471,7 +489,11 @@ export const messageRouter = router({
       if (!UpdatableMessageTypes.has(messageEntity.type))
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Update, AzureEntityType.Message, messageEntity.type).message,
+          message: new InvalidOperationError(
+            Operation.Update,
+            AzureEntityType.Message,
+            JSON.stringify({ partitionKey: messageEntity.partitionKey, rowKey: messageEntity.rowKey }),
+          ).message,
         });
       await updateMessage(messageClient, input);
       messageEventEmitter.emit("updateMessage", input);

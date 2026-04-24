@@ -1,7 +1,7 @@
 import type { InvocationContext } from "@azure/functions";
 
 import { PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH } from "@/services/constants";
-import { InvalidOperationError, Operation, truncate } from "@esposter/shared";
+import { truncate } from "@esposter/shared";
 import parse from "node-html-parser";
 
 export const getCreateMessageNotificationPayload = (
@@ -13,11 +13,8 @@ export const getCreateMessageNotificationPayload = (
 
   try {
     textContent = parse(message).querySelector("p")?.structuredText?.trim();
-  } catch {
-    context.error(
-      new InvalidOperationError(Operation.Create, getCreateMessageNotificationPayload.name, message).message,
-    );
-    return undefined;
+  } catch (error) {
+    context.error(`Failed to create message notification payload for message ${message}: `, error);
   }
 
   if (!textContent) return undefined;

@@ -9,7 +9,13 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession } from "@@/server/trpc/context.test";
 import { trpcRouter } from "@@/server/trpc/routers";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
-import { achievements, UserAchievementRelations, WebpageAchievementName } from "@esposter/db-schema";
+import {
+  achievements,
+  SpecialAchievementName,
+  UserAchievementRelations,
+  userAchievements,
+  WebpageAchievementName,
+} from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
@@ -27,22 +33,46 @@ describe("achievement", () => {
     await mockContext.db.delete(achievements);
   });
 
-  test("readAchievementMap", async () => {
-    expect.hasAssertions();
+  describe("readAchievementMap", () => {
+    test("when no achievements are unlocked, hidden achievements show '???'", async () => {
+      expect.hasAssertions();
 
-    const result = await caller.achievement.readAchievementMap();
+      const result = await caller.achievement.readAchievementMap();
 
-    expect(result).toStrictEqual(
-      Object.fromEntries(
-        Object.entries(AchievementDefinitionMap).map(([achievementName, achievementDefinition]) => [
-          achievementName,
-          {
-            ...achievementDefinition,
-            description: achievementDefinition.isHidden ? "???" : achievementDefinition.description,
-          },
-        ]),
-      ),
-    );
+      expect(result).toStrictEqual(
+        Object.fromEntries(
+          Object.entries(AchievementDefinitionMap).map(([achievementName, achievementDefinition]) => [
+            achievementName,
+            {
+              ...achievementDefinition,
+              description: achievementDefinition.isHidden ? "???" : achievementDefinition.description,
+            },
+          ]),
+        ),
+      );
+    });
+
+    test("when a hidden achievement is unlocked, it shows its real description", async () => {
+      expect.hasAssertions();
+
+      const userId = getMockSession().user.id;
+      const [achievement] = await mockContext.db
+        .insert(achievements)
+        .values({ name: SpecialAchievementName.EmojiLover })
+        .returning();
+      assert(achievement);
+      await mockContext.db.insert(userAchievements).values({
+        achievementId: achievement.id,
+        amount: 1,
+        unlockedAt: new Date(),
+        userId,
+      });
+      const result = await caller.achievement.readAchievementMap();
+
+      expect(result[SpecialAchievementName.EmojiLover].description).toBe(
+        AchievementDefinitionMap[SpecialAchievementName.EmojiLover].description,
+      );
+    });
   });
 
   test("readUserAchievements", async () => {

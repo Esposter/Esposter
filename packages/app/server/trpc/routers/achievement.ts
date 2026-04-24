@@ -4,7 +4,7 @@ import { on } from "@@/server/services/events/on";
 import { router } from "@@/server/trpc";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "@@/server/trpc/procedure/standardRateLimitedProcedure";
-import { selectUserSchema } from "@esposter/db-schema";
+import { selectUserSchema, UserAchievementRelations } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -21,18 +21,18 @@ export const achievementRouter = router({
   readAchievementMap: standardAuthedProcedure.query(async ({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
     const unlockedUserAchievements = await ctx.db.query.userAchievements.findMany({
-      where: (userAchievements, { and, eq, isNull }) =>
-        and(eq(userAchievements.userId, userId), isNull(userAchievements.unlockedAt)),
+      where: (userAchievements, { and, eq, isNotNull }) =>
+        and(eq(userAchievements.userId, userId), isNotNull(userAchievements.unlockedAt)),
       with: { achievement: { columns: { name: true } } },
     });
-    const unlockedUserAchievementNames = unlockedUserAchievements.map(({ achievement }) => achievement.name);
+    const unlockedUserAchievementNames = new Set(unlockedUserAchievements.map(({ achievement }) => achievement.name));
     return Object.fromEntries(
       Object.entries(AchievementDefinitionMap).map(([achievementName, achievementDefinition]) => [
         achievementName,
         {
           ...achievementDefinition,
           description:
-            achievementDefinition.isHidden && !unlockedUserAchievementNames.some((name) => name === achievementName)
+            achievementDefinition.isHidden && !unlockedUserAchievementNames.has(achievementName)
               ? "???"
               : achievementDefinition.description,
         },
@@ -45,10 +45,9 @@ export const achievementRouter = router({
       const userId = input ?? ctx.getSessionPayload?.user.id;
       if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
 
-      const joinedUserAchievements = await ctx.db.query.userAchievements.findMany({
+      return ctx.db.query.userAchievements.findMany({
         where: (userAchievements, { eq }) => eq(userAchievements.userId, userId),
-        with: { achievement: true },
+        with: UserAchievementRelations,
       });
-      return joinedUserAchievements.map((ua) => Object.assign(ua, { achievement: ua.achievement }));
     }),
 });
