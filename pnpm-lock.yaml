@@ -292,8 +292,8 @@ catalogs:
       specifier: ^14.2.1
       version: 14.2.1
     ajv:
-      specifier: ^8.18.0
-      version: 8.18.0
+      specifier: ^8.20.0
+      version: 8.20.0
     ajv-errors:
       specifier: ^3.0.0
       version: 3.0.0
@@ -896,16 +896,16 @@ importers:
         version: 14.2.1(vue@3.5.33(typescript@5.9.3))
       ajv:
         specifier: 'catalog:'
-        version: 8.18.0
+        version: 8.20.0
       ajv-errors:
         specifier: 'catalog:'
-        version: 3.0.0(ajv@8.18.0)
+        version: 3.0.0(ajv@8.20.0)
       ajv-formats:
         specifier: 'catalog:'
-        version: 3.0.1(ajv@8.18.0)
+        version: 3.0.1(ajv@8.20.0)
       ajv-i18n:
         specifier: 'catalog:'
-        version: 4.2.0(ajv@8.18.0)
+        version: 4.2.0(ajv@8.20.0)
       apexcharts:
         specifier: 'catalog:'
         version: 5.10.6
@@ -7136,6 +7136,9 @@ packages:
 
   ajv@8.18.0:
     resolution: {integrity: sha512-PlXPeEWMXMZ7sPYOHqmDyCJzcfNrUr3fGNKtezX14ykXOEIvyK81d+qydx89KY5O71FKMPaQ2vBfBFI5NHR63A==}
+
+  ajv@8.20.0:
+    resolution: {integrity: sha512-Thbli+OlOj+iMPYFBVBfJ3OmCAnaSyNn4M1vz9T6Gka5Jt9ba/HIR56joy65tY6kx/FCF5VXNB819Y7/GUrBGA==}
 
   alien-signals@3.1.2:
     resolution: {integrity: sha512-d9dYqZTS90WLiU0I5c6DHj/HcKkF8ZyGN3G5x8wSbslulz70KOxaqCT0hQCo9KOyhVqzqGojvNdJXoTumZOtcw==}
@@ -15269,10 +15272,10 @@ snapshots:
   '@json-layout/core@2.7.1(@json-layout/vocabulary@2.13.0)':
     dependencies:
       '@json-layout/vocabulary': 2.13.0
-      ajv: 8.18.0
-      ajv-errors: 3.0.0(ajv@8.18.0)
-      ajv-formats: 3.0.1(ajv@8.18.0)
-      ajv-i18n: 4.2.0(ajv@8.18.0)
+      ajv: 8.20.0
+      ajv-errors: 3.0.0(ajv@8.20.0)
+      ajv-formats: 3.0.1(ajv@8.20.0)
+      ajv-i18n: 4.2.0(ajv@8.20.0)
       debug: 4.4.3(supports-color@10.2.2)
       fast-deep-equal: 3.1.3
       immer: 10.2.0
@@ -15283,9 +15286,9 @@ snapshots:
 
   '@json-layout/vocabulary@2.13.0':
     dependencies:
-      ajv: 8.18.0
-      ajv-errors: 3.0.0(ajv@8.18.0)
-      ajv-formats: 3.0.1(ajv@8.18.0)
+      ajv: 8.20.0
+      ajv-errors: 3.0.0(ajv@8.20.0)
+      ajv-formats: 3.0.1(ajv@8.20.0)
       debug: 4.4.3(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color
@@ -19408,21 +19411,21 @@ snapshots:
       clean-stack: 4.2.0
       indent-string: 5.0.0
 
-  ajv-errors@3.0.0(ajv@8.18.0):
+  ajv-errors@3.0.0(ajv@8.20.0):
     dependencies:
-      ajv: 8.18.0
+      ajv: 8.20.0
 
   ajv-formats@2.1.1(ajv@8.18.0):
     optionalDependencies:
       ajv: 8.18.0
 
-  ajv-formats@3.0.1(ajv@8.18.0):
+  ajv-formats@3.0.1(ajv@8.20.0):
     optionalDependencies:
-      ajv: 8.18.0
+      ajv: 8.20.0
 
-  ajv-i18n@4.2.0(ajv@8.18.0):
+  ajv-i18n@4.2.0(ajv@8.20.0):
     dependencies:
-      ajv: 8.18.0
+      ajv: 8.20.0
 
   ajv-keywords@5.1.0(ajv@8.18.0):
     dependencies:
@@ -19437,6 +19440,13 @@ snapshots:
       uri-js: 4.4.1
 
   ajv@8.18.0:
+    dependencies:
+      fast-deep-equal: 3.1.3
+      fast-uri: 3.1.0
+      json-schema-traverse: 1.0.0
+      require-from-string: 2.0.2
+
+  ajv@8.20.0:
     dependencies:
       fast-deep-equal: 3.1.3
       fast-uri: 3.1.0
