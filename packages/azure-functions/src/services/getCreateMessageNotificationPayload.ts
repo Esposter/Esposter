@@ -12,7 +12,7 @@ export const getCreateMessageNotificationPayload = (
   let textContent: string | undefined = message;
 
   try {
-    textContent = parse(message).textContent?.trim();
+    textContent = parse(message).querySelector("p")?.structuredText?.trim();
   } catch {
     context.error(
       new InvalidOperationError(Operation.Create, getCreateMessageNotificationPayload.name, message).message,
