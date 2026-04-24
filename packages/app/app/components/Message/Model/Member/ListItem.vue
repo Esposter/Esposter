@@ -29,23 +29,21 @@ const { currentRoom } = storeToRefs(roomStore);
 const isCreator = computed(() => currentRoom.value?.userId === member.id);
 const { $trpc } = useNuxtApp();
 const roleStore = useRoleStore();
-const { getMemberRoles, getMyPermissionsMap } = roleStore;
+const { getMemberRoles, getMyPermissions } = roleStore;
 const memberRoles = computed(() =>
   currentRoom.value?.id
     ? getMemberRoles(currentRoom.value.id, member.id).toSorted((a, b) => b.position - a.position)
     : [],
 );
 const isSelf = computed(() => session.value?.user.id === member.id);
-const permissionsData = computed(() => (currentRoom.value?.id ? getMyPermissionsMap(currentRoom.value.id) : undefined));
-const canBan = computed(() => {
-  const data = permissionsData.value;
-  if (!data) return false;
-  return hasPermission(data.permissions, RoomPermission.BanMembers, data.isRoomOwner);
+const myPermissions = computed(() => (currentRoom.value?.id ? getMyPermissions(currentRoom.value.id) : undefined));
+const isBannable = computed(() => {
+  if (!myPermissions.value) return false;
+  return hasPermission(myPermissions.value.permissions, RoomPermission.BanMembers, myPermissions.value.isRoomOwner);
 });
-const canKick = computed(() => {
-  const data = permissionsData.value;
-  if (!data) return false;
-  return hasPermission(data.permissions, RoomPermission.KickMembers, data.isRoomOwner);
+const isKickable = computed(() => {
+  if (!myPermissions.value) return false;
+  return hasPermission(myPermissions.value.permissions, RoomPermission.KickMembers, myPermissions.value.isRoomOwner);
 });
 const timeoutDurationSelectItems = Object.entries(TimeoutDurationMap).map(([title, value]) => ({ title, value }));
 const selectedTimeoutDurationMs = ref(TimeoutDurationMap["1 minute"]);
@@ -78,7 +76,7 @@ const selectedTimeoutDurationMs = ref(TimeoutDurationMap["1 minute"]);
             <slot name="append" :="{ hoverProps: { props: hoverProps, isHovering }, listItemProps }">
               <template v-if="!isSelf">
                 <StyledDeleteFormDialog
-                  v-if="canBan"
+                  v-if="isBannable"
                   :card-props="{ title: 'Ban User', text: `Are you sure you want to ban ${member.name}?` }"
                   :confirm-button-props="{ text: 'Ban' }"
                   @delete="
@@ -114,7 +112,7 @@ const selectedTimeoutDurationMs = ref(TimeoutDurationMap["1 minute"]);
                   </template>
                 </StyledDeleteFormDialog>
                 <StyledDeleteFormDialog
-                  v-if="canKick"
+                  v-if="isKickable"
                   :card-props="{ title: 'Kick Member', text: `Are you sure you want to kick ${member.name}?` }"
                   :confirm-button-props="{ text: 'Kick' }"
                   @delete="
@@ -149,7 +147,7 @@ const selectedTimeoutDurationMs = ref(TimeoutDurationMap["1 minute"]);
                   </template>
                 </StyledDeleteFormDialog>
                 <StyledFormDialog
-                  v-if="canKick"
+                  v-if="isKickable"
                   :card-props="{ title: `Timeout ${member.name}` }"
                   :confirm-button-props="{ color: 'warning', text: 'Timeout' }"
                   @submit="

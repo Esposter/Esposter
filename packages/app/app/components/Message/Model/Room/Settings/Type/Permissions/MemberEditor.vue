@@ -11,16 +11,15 @@ interface MemberEditorProps {
 
 const { member, roomId } = defineProps<MemberEditorProps>();
 const roleStore = useRoleStore();
-const { assignRole, getMemberRoles, getMyPermissionsMap, getRoles, readMemberRoles, revokeRole } = roleStore;
+const { assignRole, getMemberRoles, getMyPermissions, getRoles, readMemberRoles, revokeRole } = roleStore;
 const allRoles = computed(() => getRoles(roomId).filter(({ isEveryone }) => !isEveryone));
 const memberRoles = computed(() => getMemberRoles(roomId, member.id));
 const hasRole = (roleId: string) => memberRoles.value.some(({ id }) => id === roleId);
 const isRoleManageable = (role: RoomRole) => {
-  const data = getMyPermissionsMap(roomId);
-  if (!data) return false;
-  return isManageable(data.topRolePosition, role.position, data.isRoomOwner);
+  const myPermissions = getMyPermissions(roomId);
+  if (!myPermissions) return false;
+  return isManageable(myPermissions.topRolePosition, role.position, myPermissions.isRoomOwner);
 };
-
 const toggleRole = async (role: RoomRole) => {
   if (hasRole(role.id)) await revokeRole({ roleId: role.id, roomId, userId: member.id });
   else await assignRole({ roleId: role.id, roomId, userId: member.id });

@@ -17,11 +17,11 @@ export const useRoleStore = defineStore("message/room/role", () => {
   const roomStore = useRoomStore();
   const {
     data: roles,
-    getDataMap: getRolesMap,
-    setDataMap: setRolesMap,
+    getData: baseGetRoles,
+    setData: setRoles,
   } = useDataMap<RoomRole[]>(() => roomStore.currentRoomId, []);
-  const getRoles = (roomId: string) => getRolesMap(roomId) ?? [];
-  const { data: selectedRoleId, setDataMap: setSelectedRoleIdMap } = useDataMap<null | string>(
+  const getRoles = (roomId: string) => baseGetRoles(roomId) ?? [];
+  const { data: selectedRoleId, setData: setSelectedRoleId } = useDataMap<null | string>(
     () => roomStore.currentRoomId,
     null,
   );
@@ -34,8 +34,8 @@ export const useRoleStore = defineStore("message/room/role", () => {
   };
   const {
     data: myPermissions,
-    getDataMap: getMyPermissionsMap,
-    setDataMap: setMyPermissionsMap,
+    getData: getMyPermissions,
+    setData: setMyPermissions,
   } = useDataMap(() => roomStore.currentRoomId, {
     isRoomOwner: false,
     permissions: 0n,
@@ -46,17 +46,17 @@ export const useRoleStore = defineStore("message/room/role", () => {
     selectedMemberId.value = id;
   };
   const isManageable = (roomId: string) => {
-    const data = getMyPermissionsMap(roomId);
-    if (!data) return false;
+    const myPermissions = getMyPermissions(roomId);
+    if (!myPermissions) return false;
     return (
-      isManageableByPosition(data.topRolePosition, 0, data.isRoomOwner) ||
-      Boolean(data.permissions & MANAGEMENT_PERMISSIONS)
+      isManageableByPosition(myPermissions.topRolePosition, 0, myPermissions.isRoomOwner) ||
+      Boolean(myPermissions.permissions & MANAGEMENT_PERMISSIONS)
     );
   };
   const {
     data: memberRoleMap,
-    getDataMap: getMemberRoleMap,
-    setDataMap: setMemberRoleMap,
+    getData: getMemberRoleMap,
+    setData: setMemberRoleMap,
   } = useDataMap(() => roomStore.currentRoomId, new Map<string, RoomRole[]>());
   const getMemberRoles = (roomId: string, userId: string) => getMemberRoleMap(roomId)?.get(userId) ?? [];
   const setMemberRoles = (roomId: string, userId: string, roles: RoomRole[]) => {
@@ -75,15 +75,15 @@ export const useRoleStore = defineStore("message/room/role", () => {
     }
     for (const roomId of input.roomIds) {
       const roomRoles = rolesByRoomId.get(roomId) ?? [];
-      setRolesMap(roomId, roomRoles);
+      setRoles(roomId, roomRoles);
 
       const everyoneRole = roomRoles.find(({ isEveryone }) => isEveryone);
-      setSelectedRoleIdMap(roomId, (everyoneRole ?? roomRoles[0])?.id ?? null);
+      setSelectedRoleId(roomId, (everyoneRole ?? roomRoles[0])?.id ?? null);
     }
   };
   const readMyPermissions = async (input: ReadMyPermissionsInput) => {
     const data = await $trpc.role.readMyPermissions.query(input);
-    for (const { roomId, ...rest } of data) setMyPermissionsMap(roomId, rest);
+    for (const { roomId, ...rest } of data) setMyPermissions(roomId, rest);
   };
   const readMemberRoles = async (input: ReadMemberRolesInput) => {
     const memberRoles = await $trpc.role.readMemberRoles.query(input);
@@ -97,20 +97,20 @@ export const useRoleStore = defineStore("message/room/role", () => {
   };
   const createRole = async (input: CreateRoleInput) => {
     const newRole = await $trpc.role.createRole.mutate(input);
-    setRolesMap(input.roomId, [newRole, ...getRoles(input.roomId)]);
-    setSelectedRoleIdMap(input.roomId, newRole.id);
+    setRoles(input.roomId, [newRole, ...getRoles(input.roomId)]);
+    setSelectedRoleId(input.roomId, newRole.id);
     return newRole;
   };
   const updateRole = async (input: UpdateRoleInput) => {
     const updatedRole = await $trpc.role.updateRole.mutate(input);
-    setRolesMap(
+    setRoles(
       input.roomId,
       getRoles(input.roomId).map((role) => (role.id === updatedRole.id ? updatedRole : role)),
     );
   };
   const deleteRole = async (input: DeleteRoleInput) => {
     const { id } = await $trpc.role.deleteRole.mutate(input);
-    setRolesMap(
+    setRoles(
       input.roomId,
       getRoles(input.roomId).filter((role) => role.id !== id),
     );
@@ -136,7 +136,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
     deleteRole,
     getMemberRoleMap,
     getMemberRoles,
-    getMyPermissionsMap,
+    getMyPermissions,
     getRoles,
     isManageable,
     memberRoleMap,
@@ -152,7 +152,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
     selectMember,
     selectRole,
     setMemberRoles,
-    setRolesMap,
+    setRoles,
     updateRole,
   };
 });
