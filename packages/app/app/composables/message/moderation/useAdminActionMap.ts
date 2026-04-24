@@ -1,54 +1,39 @@
 import type { Promisable } from "type-fest";
 
-import { authClient } from "@/services/auth/authClient";
+import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
 import { useRoomStore } from "@/store/message/room";
-import { useVoiceStore } from "@/store/message/room/voice";
-import { useWebRtcStore } from "@/store/message/room/webRtc";
 import { AdminActionType } from "@esposter/db-schema";
+
+type Action = (roomId: string, durationMs?: number) => Promisable<void>;
 
 export const useAdminActionMap = () => {
   const { notify } = useAdminActionNotification();
   const roomStore = useRoomStore();
   const { storeDeleteRoom } = roomStore;
-  const voiceStore = useVoiceStore();
-  const { leaveVoice, setMute } = voiceStore;
-  const { isForceMuted } = storeToRefs(voiceStore);
-  const webRtcStore = useWebRtcStore();
-  const { setLocalStreamMuted } = webRtcStore;
-  const session = authClient.useSession();
-  const sessionId = computed(() => session.value.data?.session.id);
-
-  const adminActionMap: Record<AdminActionType, (roomId: string, durationMs?: number) => Promisable<void>> = {
-    [AdminActionType.CreateBan]: async (roomId) => {
-      await leaveVoice();
+  const adminActionMap: Partial<Record<AdminActionType, Action>> = {
+    [AdminActionType.CreateBan]: async (roomId: string) => {
       await storeDeleteRoom({ id: roomId });
       notify("You have been banned from this room.");
     },
-    [AdminActionType.ForceMute]: (roomId) => {
-      if (sessionId.value) setMute(roomId, sessionId.value, true);
-      setLocalStreamMuted(true);
-      isForceMuted.value = true;
-    },
-    [AdminActionType.ForceUnmute]: (roomId) => {
-      if (sessionId.value) setMute(roomId, sessionId.value, false);
-      setLocalStreamMuted(false);
-      isForceMuted.value = false;
-    },
-    [AdminActionType.KickFromRoom]: async (roomId) => {
-      await leaveVoice();
+    [AdminActionType.KickFromRoom]: async (roomId: string) => {
       await storeDeleteRoom({ id: roomId });
       notify("You have been kicked from this room.");
     },
-    [AdminActionType.KickFromVoice]: async () => {
-      await leaveVoice();
+    [AdminActionType.KickFromVoice]: () => {
       notify("You have been kicked from voice.");
     },
-    [AdminActionType.TimeoutUser]: async (roomId, durationMs) => {
+    [AdminActionType.TimeoutUser]: (_roomId: string, durationMs?: number) => {
       const minutes = durationMs ? Math.max(1, Math.ceil(durationMs / 60000)) : 0;
       notify(`You have been timed out for ${minutes} minute${minutes === 1 ? "" : "s"}.`);
-      await leaveVoice();
     },
   };
-
-  return adminActionMap;
+  return Object.fromEntries(
+    Object.values(AdminActionType).map((adminActionType) => [
+      adminActionType,
+      async (roomId: string, durationMs?: number) => {
+        await Promise.all(AdminActionHookMap[adminActionType].map((fn) => Promise.resolve(fn(roomId))));
+        await adminActionMap[adminActionType]?.(roomId, durationMs);
+      },
+    ]),
+  );
 };

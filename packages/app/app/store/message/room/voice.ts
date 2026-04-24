@@ -1,9 +1,11 @@
 import type { VoiceParticipant } from "#shared/models/room/voice/VoiceParticipant";
 
 import { authClient } from "@/services/auth/authClient";
+import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
 import { LOCAL_PARTICIPANT_ID } from "@/services/message/voice/constants";
 import { useRoomStore } from "@/store/message/room";
 import { useWebRtcStore } from "@/store/message/room/webRtc";
+import { AdminActionType } from "@esposter/db-schema";
 
 export const useVoiceStore = defineStore("message/room/voice", () => {
   const { $trpc } = useNuxtApp();
@@ -109,6 +111,31 @@ export const useVoiceStore = defineStore("message/room/voice", () => {
     setLocalStreamMuted(newIsMuted);
     await $trpc.voice.setMute.mutate({ isMuted: newIsMuted, roomId: callRoomId.value });
   };
+
+  AdminActionHookMap[AdminActionType.CreateBan].push(async (roomId) => {
+    if (callRoomId.value === roomId) await leaveVoice();
+  });
+  AdminActionHookMap[AdminActionType.ForceMute].push((roomId) => {
+    if (sessionId.value) setMute(roomId, sessionId.value, true);
+    if (callRoomId.value !== roomId) return;
+    setLocalStreamMuted(true);
+    isForceMuted.value = true;
+  });
+  AdminActionHookMap[AdminActionType.ForceUnmute].push((roomId) => {
+    if (sessionId.value) setMute(roomId, sessionId.value, false);
+    if (callRoomId.value !== roomId) return;
+    setLocalStreamMuted(false);
+    isForceMuted.value = false;
+  });
+  AdminActionHookMap[AdminActionType.KickFromRoom].push(async (roomId) => {
+    if (callRoomId.value === roomId) await leaveVoice();
+  });
+  AdminActionHookMap[AdminActionType.KickFromVoice].push(async () => {
+    await leaveVoice();
+  });
+  AdminActionHookMap[AdminActionType.TimeoutUser].push(async (roomId) => {
+    if (callRoomId.value === roomId) await leaveVoice();
+  });
 
   return {
     callRoomId,

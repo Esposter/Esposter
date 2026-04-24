@@ -8,7 +8,11 @@ interface GetPermissions {
   (db: Context["db"], userId: string, roomIds: string[]): Promise<Map<string, bigint>>;
 }
 
-export const getPermissions: GetPermissions = async (db: Context["db"], userId: string, roomIds: string | string[]) => {
+export const getPermissions: GetPermissions = (async (
+  db: Context["db"],
+  userId: string,
+  roomIds: string | string[],
+): Promise<bigint | Map<string, bigint>> => {
   const roomIdArray = Array.isArray(roomIds) ? roomIds : [roomIds];
   const memberRoomIdsSubquery = db
     .select({ roomId: usersToRooms.roomId })
@@ -34,4 +38,4 @@ export const getPermissions: GetPermissions = async (db: Context["db"], userId: 
   for (const { permissions, roomId } of rows) result.set(roomId, (result.get(roomId) ?? 0n) | permissions);
   if (Array.isArray(roomIds)) return result;
   return result.get(roomIds) ?? 0n;
-};
+}) as GetPermissions;
