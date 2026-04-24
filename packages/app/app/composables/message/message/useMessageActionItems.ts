@@ -1,9 +1,9 @@
 import type { Item } from "@/models/shared/Item";
 import type { MessageEntity } from "@esposter/db-schema";
 
-import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { DeletableMessageTypes } from "#shared/services/message/DeletableMessageTypes";
 import { UpdatableMessageTypes } from "#shared/services/message/UpdatableMessageTypes";
+import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { useMessageStore } from "@/store/message";
 import { useRoomStore } from "@/store/message/room";
 import { MessageType } from "@esposter/db-schema";

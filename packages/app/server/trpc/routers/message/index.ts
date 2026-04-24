@@ -7,14 +7,14 @@ import type {
 } from "@esposter/db-schema";
 
 import { createTypingInputSchema } from "#shared/models/db/message/CreateTypingInput";
-import { DeletableMessageTypes } from "#shared/services/message/DeletableMessageTypes";
-import { PinnableMessageTypes } from "#shared/services/message/PinnableMessageTypes";
-import { UpdatableMessageTypes } from "#shared/services/message/UpdatableMessageTypes";
 import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
 import { searchMessagesInputSchema } from "#shared/models/db/message/SearchMessagesInput";
 import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { DeletableMessageTypes } from "#shared/services/message/DeletableMessageTypes";
+import { PinnableMessageTypes } from "#shared/services/message/PinnableMessageTypes";
+import { UpdatableMessageTypes } from "#shared/services/message/UpdatableMessageTypes";
 import { MAX_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
@@ -404,7 +404,7 @@ export const messageRouter = router({
       if (isRoomId(data.partitionKey, input.roomId)) yield data;
   }),
   pinMessage: getMessageProcedure(pinMessageInputSchema).mutation(
-    async ({ ctx: { messageClient, messageEntity }, input }) => {
+    async ({ ctx: { getSessionPayload, messageClient, messageEntity }, input }) => {
       if (!PinnableMessageTypes.has(messageEntity.type))
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -420,11 +420,11 @@ export const messageRouter = router({
         replyRowKey: input.rowKey,
         roomId: input.partitionKey,
         type: MessageType.PinMessage,
-        userId: ctx.getSessionPayload.user.id,
+        userId: getSessionPayload.user.id,
       });
       messageEventEmitter.emit("createMessage", [
         [systemMessage],
-        { isSendToSelf: true, sessionId: ctx.getSessionPayload.session.id },
+        { isSendToSelf: true, sessionId: getSessionPayload.session.id },
       ]);
     },
   ),
