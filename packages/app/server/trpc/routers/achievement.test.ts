@@ -13,7 +13,6 @@ import {
   achievements,
   SpecialAchievementName,
   UserAchievementRelations,
-  userAchievements,
   WebpageAchievementName,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
@@ -22,6 +21,7 @@ import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 describe("achievement", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["_def"]["procedures"]>;
+  const name = "name";
   const updatedAchievements = [WebpageAchievementName.WebDeveloper];
 
   beforeAll(async () => {
@@ -55,17 +55,10 @@ describe("achievement", () => {
     test("when a hidden achievement is unlocked, it shows its real description", async () => {
       expect.hasAssertions();
 
-      const userId = getMockSession().user.id;
-      const [achievement] = await mockContext.db
-        .insert(achievements)
-        .values({ name: SpecialAchievementName.EmojiLover })
-        .returning();
-      assert(achievement);
-      await mockContext.db.insert(userAchievements).values({
-        achievementId: achievement.id,
-        amount: 1,
-        unlockedAt: new Date(),
-        userId,
+      const room = await caller.room.createRoom({ name });
+      await caller.message.createMessage({
+        message: "😀😀😀😀😀😀😀😀😀😀",
+        roomId: room.id,
       });
       const result = await caller.achievement.readAchievementMap();
 

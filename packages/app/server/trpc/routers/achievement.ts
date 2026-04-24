@@ -39,15 +39,12 @@ export const achievementRouter = router({
       ]),
     ) as typeof AchievementDefinitionMap;
   }),
-  readUserAchievements: standardRateLimitedProcedure
-    .input(readUserAchievementsInputSchema)
-    .query(async ({ ctx, input }) => {
-      const userId = input ?? ctx.getSessionPayload?.user.id;
-      if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
-
-      return ctx.db.query.userAchievements.findMany({
-        where: (userAchievements, { eq }) => eq(userAchievements.userId, userId),
-        with: UserAchievementRelations,
-      });
-    }),
+  readUserAchievements: standardRateLimitedProcedure.input(readUserAchievementsInputSchema).query(({ ctx, input }) => {
+    const userId = input ?? ctx.getSessionPayload?.user.id;
+    if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
+    return ctx.db.query.userAchievements.findMany({
+      where: (userAchievements, { eq }) => eq(userAchievements.userId, userId),
+      with: UserAchievementRelations,
+    });
+  }),
 });
