@@ -102,7 +102,7 @@ catalog:
   "@vue-flow/node-resizer": ^1.5.1
   "@vue-pdf-viewer/viewer": ^4.1.0
   "@vue/language-core": ^3.2.7
-  "@vue/test-utils": ^2.4.6
+  "@vue/test-utils": ^2.4.8
   "@vuepic/vue-datepicker": ^12.1.0
   "@vueuse/core": ^14.2.1
   "@vueuse/nuxt": ^14.2.1
