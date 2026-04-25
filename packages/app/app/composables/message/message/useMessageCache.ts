@@ -32,14 +32,16 @@ export const useMessageCache = () => {
 
   watch(currentRoomId, (roomId) => {
     if (!roomId || online.value) return;
-    pendingOperation = (async () => {
-      const cachedMessages = await readIndexedDb(MessageIndexedDbStoreConfiguration, roomId);
-      if (currentRoomId.value !== roomId || items.value.length > 0 || cachedMessages.length === 0) return;
+    pendingOperation = pendingOperation
+      .catch(() => undefined)
+      .then(async () => {
+        const cachedMessages = await readIndexedDb(MessageIndexedDbStoreConfiguration, roomId);
+        if (currentRoomId.value !== roomId || items.value.length > 0 || cachedMessages.length === 0) return;
 
-      const cachedData = new CursorPaginationData<MessageEntity>();
-      cachedData.items = cachedMessages;
-      initializeCursorPaginationData(cachedData);
-    })();
+        const cachedData = new CursorPaginationData<MessageEntity>();
+        cachedData.items = cachedMessages;
+        initializeCursorPaginationData(cachedData);
+      });
   });
 
   const flush = () => pendingOperation;
