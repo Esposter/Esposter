@@ -33,7 +33,7 @@ const isActive = ref(false);
     >
       <template #activator="{ updateIsOpen }">
         <v-btn
-          v-show="isActive"
+          :class="isActive ? undefined : 'invisible'"
           density="comfortable"
           icon="mdi-close"
           size="small"
