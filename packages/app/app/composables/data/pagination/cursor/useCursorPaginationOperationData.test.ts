@@ -50,6 +50,6 @@ describe(useCursorPaginationOperationData, () => {
     await readMoreItems(query, onComplete);
 
     expect(query).not.toHaveBeenCalled();
-    expect(onComplete).toHaveBeenCalledOnce();
+    expect(onComplete).toHaveBeenCalledTimes(1);
   });
 });
