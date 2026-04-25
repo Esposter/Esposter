@@ -11,7 +11,7 @@ const DATABASE_VERSION = 1;
 
 let databasePromise: Promise<IDBPDatabase<IndexedDbDatabaseSchema>> | undefined;
 
-export const openIndexedDb = async (): Promise<IDBPDatabase<IndexedDbDatabaseSchema>> => {
+export const openIndexedDb = (): Promise<IDBPDatabase<IndexedDbDatabaseSchema>> => {
   if (databasePromise) return databasePromise;
   const promise = openDB<IndexedDbDatabaseSchema>(DATABASE_NAME, DATABASE_VERSION, {
     upgrade: (db) => {

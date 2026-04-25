@@ -4,14 +4,14 @@ import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 import { StandardMessageEntity } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { beforeEach, describe, expect, test } from "vitest";
+import { afterEach, describe, expect, test } from "vitest";
 
 describe(readIndexedDb, () => {
   const message1 = new StandardMessageEntity({ partitionKey: crypto.randomUUID(), rowKey: crypto.randomUUID() });
   const message2 = new StandardMessageEntity({ partitionKey: crypto.randomUUID(), rowKey: crypto.randomUUID() });
 
-  beforeEach(() => {
-    resetIndexedDb();
+  afterEach(async () => {
+    await resetIndexedDb();
   });
 
   test("returns empty array when no items exist for partitionKey", async () => {
