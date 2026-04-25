@@ -13,7 +13,7 @@ let databasePromise: Promise<IDBPDatabase<IndexedDbDatabaseSchema>> | undefined;
 
 export const openIndexedDb = async (): Promise<IDBPDatabase<IndexedDbDatabaseSchema>> => {
   if (databasePromise) return databasePromise;
-  databasePromise = openDB<IndexedDbDatabaseSchema>(DATABASE_NAME, DATABASE_VERSION, {
+  const promise = openDB<IndexedDbDatabaseSchema>(DATABASE_NAME, DATABASE_VERSION, {
     upgrade: (db) => {
       const configurations = [
         MemberIndexedDbStoreConfiguration,
@@ -26,6 +26,10 @@ export const openIndexedDb = async (): Promise<IDBPDatabase<IndexedDbDatabaseSch
       }
     },
   });
+  promise.catch(() => {
+    if (databasePromise === promise) databasePromise = undefined;
+  });
+  databasePromise = promise;
   return databasePromise;
 };
 

@@ -12,6 +12,7 @@ export const useMessageCache = () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const dataStore = useDataStore();
   const { items } = storeToRefs(dataStore);
+  const online = useOnline();
   let pendingOperation: Promise<void> = Promise.resolve();
 
   watchDeep(items, (messages) => {
@@ -27,7 +28,7 @@ export const useMessageCache = () => {
   });
 
   watch(currentRoomId, (roomId) => {
-    if (!roomId || useOnline().value) return;
+    if (!roomId || online.value) return;
     pendingOperation = (async () => {
       const cachedMessages = await readIndexedDb(MessageIndexedDbStoreConfiguration, roomId);
       if (currentRoomId.value !== roomId || items.value.length > 0 || cachedMessages.length === 0) return;
