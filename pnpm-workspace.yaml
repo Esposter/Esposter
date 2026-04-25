@@ -175,7 +175,7 @@ catalog:
   omit-deep-lodash: ^1.1.7
   oxfmt: ^0.46.0
   oxlint: ^1.61.0
-  oxlint-tsgolint: ^0.21.1
+  oxlint-tsgolint: ^0.22.0
   p-progress: ^1.0.0
   pathe: ^2.0.3
   pdfjs-dist: ^5.6.205
