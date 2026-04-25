@@ -4,8 +4,6 @@ import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
-import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
-import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { CompositeKeyPropertyNames, getReverseTickedTimestamp, MessageType } from "@esposter/db-schema";
@@ -76,14 +74,7 @@ export const useReadMessages = () => {
       },
       ({ items }) => readMetadata(items),
       {
-        cache: {
-          read: (partitionKey) => readIndexedDb(MessageIndexedDbStoreConfiguration, partitionKey),
-          write: (items, partitionKey) => writeIndexedDb(MessageIndexedDbStoreConfiguration, items, partitionKey),
-        },
-        onCacheRead: () => {
-          hasMoreNewer.value = false;
-          nextCursorNewer.value = undefined;
-        },
+        configuration: MessageIndexedDbStoreConfiguration,
         partitionKey: roomId,
       },
     );
@@ -101,10 +92,7 @@ export const useReadMessages = () => {
       },
       onComplete,
       {
-        cache: {
-          read: (partitionKey) => readIndexedDb(MessageIndexedDbStoreConfiguration, partitionKey),
-          write: (items, partitionKey) => writeIndexedDb(MessageIndexedDbStoreConfiguration, items, partitionKey),
-        },
+        configuration: MessageIndexedDbStoreConfiguration,
         partitionKey: roomId,
       },
     );

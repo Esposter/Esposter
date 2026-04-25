@@ -1,7 +1,10 @@
-import type { ReadItemsCacheOptions } from "@/models/pagination/cursor/ReadItemsCacheOptions";
+import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
+import type { ReadItemsCacheOptions } from "@/models/cache/indexedDb/ReadItemsCacheOptions";
 import type { Promisable } from "type-fest";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
+import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
+import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 
 export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Ref<CursorPaginationData<TItem>>) => {
   const online = useOnline();
@@ -29,29 +32,30 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
   const resetCursorPaginationData = () => {
     cursorPaginationData.value = new CursorPaginationData<TItem>();
   };
-  const readItems = async (
+  const readItems = async <T extends IndexedDbStoreName>(
     query: () => Promise<CursorPaginationData<TItem>>,
     onComplete?: (data: CursorPaginationData<TItem>) => Promisable<void>,
-    cacheOptions?: ReadItemsCacheOptions<TItem>,
+    cacheOptions?: ReadItemsCacheOptions<T>,
   ) => {
     const isPending = ref(true);
     const refresh = async () => {
       isPending.value = true;
       try {
         if (!online.value && cacheOptions) {
-          const cachedItems = await cacheOptions.cache.read(cacheOptions.partitionKey);
+          const cachedItems = await readIndexedDb(cacheOptions.configuration, cacheOptions.partitionKey);
           const cachedData = new CursorPaginationData<TItem>();
           cachedData.items = cachedItems;
           initializeCursorPaginationData(cachedData);
-          cacheOptions.onCacheRead?.();
           await Promise.allSettled([onComplete?.(cachedData)]);
           return;
         }
         const data = await query();
         initializeCursorPaginationData(data);
-        if (cacheOptions) await cacheOptions.cache.write(data.items, cacheOptions.partitionKey);
         // Absorbs onComplete errors so data already set above is never lost
-        await Promise.allSettled([onComplete?.(data)]);
+        await Promise.allSettled([
+          cacheOptions ? writeIndexedDb(cacheOptions.configuration, data.items, cacheOptions.partitionKey) : undefined,
+          onComplete?.(data),
+        ]);
       } finally {
         isPending.value = false;
       }
@@ -60,17 +64,17 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
     await Promise.allSettled([refresh()]);
     return { isPending, refresh };
   };
-  const readMoreItems = async (
+  const readMoreItems = async <T extends IndexedDbStoreName>(
     query: (cursor?: string) => Promise<CursorPaginationData<TItem>>,
     onComplete?: () => Promisable<void>,
-    cacheOptions?: ReadItemsCacheOptions<TItem>,
+    cacheOptions?: ReadItemsCacheOptions<T>,
   ) => {
     try {
       const { hasMore: newHasMore, items: newItems, nextCursor: newNextCursor } = await query(nextCursor.value);
       hasMore.value = newHasMore;
       nextCursor.value = newNextCursor;
       items.value.push(...newItems);
-      if (cacheOptions) await cacheOptions.cache.write(items.value, cacheOptions.partitionKey);
+      if (cacheOptions) await writeIndexedDb(cacheOptions.configuration, items.value, cacheOptions.partitionKey);
     } finally {
       await onComplete?.();
     }

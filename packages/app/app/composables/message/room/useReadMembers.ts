@@ -1,8 +1,6 @@
 import type { User } from "@esposter/db-schema";
 
 import { MemberIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
-import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
-import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
 import { useMemberStore } from "@/store/message/user/member";
@@ -40,10 +38,7 @@ export const useReadMembers = () => {
         );
       },
       {
-        cache: {
-          read: (partitionKey) => readIndexedDb(MemberIndexedDbStoreConfiguration, partitionKey),
-          write: (items, partitionKey) => writeIndexedDb(MemberIndexedDbStoreConfiguration, items, partitionKey),
-        },
+        configuration: MemberIndexedDbStoreConfiguration,
         partitionKey: roomId,
       },
     );
@@ -64,10 +59,7 @@ export const useReadMembers = () => {
       },
       onComplete,
       {
-        cache: {
-          read: (partitionKey) => readIndexedDb(MemberIndexedDbStoreConfiguration, partitionKey),
-          write: (items, partitionKey) => writeIndexedDb(MemberIndexedDbStoreConfiguration, items, partitionKey),
-        },
+        configuration: MemberIndexedDbStoreConfiguration,
         partitionKey: roomId,
       },
     );
