@@ -3,7 +3,7 @@ import { MESSAGE_DISPLAY_NAME } from "#shared/services/message/constants";
 import { useRoomStore } from "@/store/message/room";
 
 useHead({ titleTemplate: (title) => (title ? `${MESSAGE_DISPLAY_NAME} | ${title}` : MESSAGE_DISPLAY_NAME) });
-useSubscribables();
+await useSubscribables();
 
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);

@@ -10,7 +10,7 @@ const roomCategoryStore = useRoomCategoryStore();
 const { categories } = storeToRefs(roomCategoryStore);
 const roomStore = useRoomStore();
 const { hasMore, rooms } = storeToRefs(roomStore);
-const { readMoreRooms, readRooms } = useReadRooms();
+const { readMoreRooms, readRooms } = await useReadRooms();
 const [{ isPending }] = await Promise.all([readRooms(), readRoomCategories()]);
 const roomsByCategoryId = computed(() => {
   const map = new Map<null | string, Room[]>();

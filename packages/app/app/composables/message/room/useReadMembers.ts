@@ -1,5 +1,6 @@
 import type { User } from "@esposter/db-schema";
 
+import { MemberIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
 import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
 import { useMemberStore } from "@/store/message/user/member";
@@ -36,20 +37,32 @@ export const useReadMembers = () => {
           items.map(({ id }) => id),
         );
       },
+      {
+        configuration: MemberIndexedDbStoreConfiguration,
+        partitionKey: roomId,
+      },
     );
   };
-  const readMoreMembers = (onComplete: () => void) =>
-    readMoreItems(async (cursor) => {
-      const roomId = currentRoomId.value;
-      if (!roomId)
-        throw new InvalidOperationError(Operation.Read, readMoreMembers.name, CompositeKeyPropertyNames.partitionKey);
-      const cursorPaginationData = await $trpc.room.readMembers.query({ cursor, roomId });
-      for (const member of cursorPaginationData.items) memberMap.value.set(member.id, member);
-      await readMetadata(
-        roomId,
-        cursorPaginationData.items.map(({ id }) => id),
-      );
-      return cursorPaginationData;
-    }, onComplete);
+  const readMoreMembers = (onComplete: () => void) => {
+    const roomId = currentRoomId.value;
+    if (!roomId)
+      throw new InvalidOperationError(Operation.Read, readMoreMembers.name, CompositeKeyPropertyNames.partitionKey);
+    return readMoreItems(
+      async (cursor) => {
+        const cursorPaginationData = await $trpc.room.readMembers.query({ cursor, roomId });
+        for (const member of cursorPaginationData.items) memberMap.value.set(member.id, member);
+        await readMetadata(
+          roomId,
+          cursorPaginationData.items.map(({ id }) => id),
+        );
+        return cursorPaginationData;
+      },
+      onComplete,
+      {
+        configuration: MemberIndexedDbStoreConfiguration,
+        partitionKey: roomId,
+      },
+    );
+  };
   return { readMembers, readMoreMembers };
 };

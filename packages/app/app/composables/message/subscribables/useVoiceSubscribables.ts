@@ -4,9 +4,9 @@ import { useRoomStore } from "@/store/message/room";
 import { useVoiceStore } from "@/store/message/room/voice";
 import { useWebRtcStore } from "@/store/message/room/webRtc";
 
-export const useVoiceSubscribables = () => {
+export const useVoiceSubscribables = async () => {
   const { $trpc } = useNuxtApp();
-  const session = authClient.useSession();
+  const { data: session } = await authClient.useSession(useFetch);
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const voiceStore = useVoiceStore();
@@ -30,7 +30,7 @@ export const useVoiceSubscribables = () => {
     setParticipants(roomId, participants);
 
     if (isInChannel.value) {
-      const sessionId = session.value.data?.session.id;
+      const sessionId = session.value?.session.id;
       if (sessionId) deleteVoiceParticipant(roomId, sessionId);
       await joinVoice();
     }
@@ -59,7 +59,7 @@ export const useVoiceSubscribables = () => {
     });
 
     return async () => {
-      const sessionId = session.value.data?.session.id;
+      const sessionId = session.value?.session.id;
       if (isInChannel.value) {
         await $trpc.voice.leaveVoiceChannel.mutate({ roomId });
         if (sessionId) deleteVoiceParticipant(roomId, sessionId);

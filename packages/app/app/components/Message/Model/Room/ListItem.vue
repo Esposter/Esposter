@@ -11,12 +11,12 @@ interface RoomListItemProps {
 }
 
 const { room } = defineProps<RoomListItemProps>();
+const { data: session } = await authClient.useSession(useFetch);
 const roomName = useRoomName(() => room.id);
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const isActive = computed(() => room.id === currentRoomId.value);
-const session = authClient.useSession();
-const isCreator = computed(() => room.userId === session.value.data?.user.id);
+const isCreator = computed(() => room.userId === session.value?.user.id);
 const roleStore = useRoleStore();
 const { isManageable } = roleStore;
 const showSettings = computed(() => isCreator.value || isManageable(room.id));
