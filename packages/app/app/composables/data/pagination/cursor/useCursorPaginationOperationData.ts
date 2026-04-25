@@ -1,3 +1,4 @@
+import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
 import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
 import type { ReadItemsCacheOptions } from "@/models/cache/indexedDb/ReadItemsCacheOptions";
 import type { Promisable } from "type-fest";
@@ -44,7 +45,7 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
         if (!online.value && cacheOptions) {
           const cachedItems = await readIndexedDb(cacheOptions.configuration, cacheOptions.partitionKey);
           const cachedData = new CursorPaginationData<TItem>();
-          cachedData.items = cachedItems;
+          cachedData.items = cachedItems as TItem[];
           initializeCursorPaginationData(cachedData);
           await Promise.allSettled([onComplete?.(cachedData)]);
           return;
@@ -53,7 +54,13 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
         initializeCursorPaginationData(data);
         // Absorbs onComplete errors so data already set above is never lost
         await Promise.allSettled([
-          cacheOptions ? writeIndexedDb(cacheOptions.configuration, data.items, cacheOptions.partitionKey) : undefined,
+          cacheOptions
+            ? writeIndexedDb(
+                cacheOptions.configuration,
+                data.items as IndexedDbDatabaseSchema[T]["value"][],
+                cacheOptions.partitionKey,
+              )
+            : undefined,
           onComplete?.(data),
         ]);
       } finally {
@@ -74,7 +81,12 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
       hasMore.value = newHasMore;
       nextCursor.value = newNextCursor;
       items.value.push(...newItems);
-      if (cacheOptions) await writeIndexedDb(cacheOptions.configuration, items.value, cacheOptions.partitionKey);
+      if (cacheOptions)
+        await writeIndexedDb(
+          cacheOptions.configuration,
+          items.value as IndexedDbDatabaseSchema[T]["value"][],
+          cacheOptions.partitionKey,
+        );
     } finally {
       await onComplete?.();
     }

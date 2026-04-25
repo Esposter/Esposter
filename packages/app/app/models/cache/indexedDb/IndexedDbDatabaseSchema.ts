@@ -10,8 +10,8 @@ export interface IndexedDbDatabaseSchema extends DBSchema {
   [IndexedDbStoreName.Rooms]: IndexedDbStoreSchema<Room>;
 }
 
-interface IndexedDbStoreSchema<T extends CompositeKey | ItemMetadata> {
+interface IndexedDbStoreSchema<TItem extends CompositeKey | ItemMetadata> {
   indexes: Record<string, IDBValidKey>;
   key: IDBValidKey;
-  value: T;
+  value: TItem;
 }
