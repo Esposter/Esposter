@@ -17,7 +17,7 @@ export const useMessageCache = () => {
   watchDeep(items, (messages) => {
     if (!currentRoomId.value || messages.length === 0) return;
     const roomId = currentRoomId.value;
-    pendingOperation = pendingOperation.then(() =>
+    pendingOperation = pendingOperation.catch().then(() =>
       writeIndexedDb(
         MessageIndexedDbStoreConfiguration,
         messages.filter((message) => !message.isLoading),
