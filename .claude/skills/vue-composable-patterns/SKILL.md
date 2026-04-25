@@ -341,6 +341,56 @@ watch(
 - Always initialize the local type ref from the current model value, not a hardcoded default
 - `if (newType === oldType) return;` in a watch callback is always redundant — Vue only fires when the value changes
 
+## Offline IndexedDB Cache via `readItems` cacheOptions
+
+Room-switch composables (`useReadMessages`, `useReadMembers`, `useReadRooms`) pass a `ReadItemsCacheOptions<TItem>` as the third argument to `readItems`. `readItems` in `useCursorPaginationOperationData` handles the if-online/offline logic centrally — no manual `if (!online.value)` branches in composables.
+
+**`ReadItemsCacheOptions<TItem>`** (`app/models/pagination/cursor/ReadItemsCacheOptions.ts`):
+
+```typescript
+interface ReadItemsCacheOptions<TItem> {
+  cache: {
+    read: (partitionKey: string) => Promise<TItem[]>;
+    write: (items: TItem[], partitionKey: string) => Promise<void>;
+  };
+  onCacheRead?: () => void; // fires only on offline cache hit
+  partitionKey: string;
+}
+```
+
+**`readItems` behavior:**
+
+- Offline + `cacheOptions` present → read from cache, call `onCacheRead?.()`, skip tRPC query
+- Online → run tRPC query, then write results to cache
+
+**Generic base functions** (`app/services/cache/indexedDb/`):
+
+- `readIndexedDb(configuration, partitionKey)` — reads all items for a partition key
+- `writeIndexedDb(configuration, items, partitionKey)` — replaces all items for a partition key (respects `configuration.limit`)
+- `resetIndexedDb()` — clears the singleton (used in tests)
+
+**Configuration objects** (one per file, `as const satisfies IndexedDbStoreConfiguration`):
+
+- `MessageIndexedDbStoreConfiguration` — `CompositeAzureKeyPath`, `limit: 50`
+- `MemberIndexedDbStoreConfiguration` — `PartitionedIdKeyPath`
+- `RoomIndexedDbStoreConfiguration` — `PartitionedIdKeyPath`
+
+**partitionKey injection pattern** — when the entity type lacks a `partitionKey` field (e.g. `User`, `Room`), inject/strip it in the `cache.read/write` lambdas:
+
+```typescript
+cache: {
+  read: (partitionKey) => readIndexedDb(MemberIndexedDbStoreConfiguration, partitionKey),
+  write: (items, partitionKey) => writeIndexedDb(MemberIndexedDbStoreConfiguration, items, partitionKey),
+},
+```
+
+**`useMessageCache`** — additional composable for messages only, because the message component doesn't re-mount on room switch:
+
+- `watchDeep(items, ...)` — writes to IndexedDB when live subscription adds messages
+- `watch(currentRoomId, ...)` — hydrates store from IndexedDB on offline room switch
+
+Architecture doc: `features/esbabbler/cache.md`
+
 ## Bundle Ancillary Reads with the Primary Read
 
 When a component needs ancillary data (e.g. permissions, metadata) alongside a primary list load, bundle the ancillary read inside the primary read composable — not in the component's `onMounted`.

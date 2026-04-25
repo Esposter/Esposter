@@ -1,52 +1,107 @@
-# Offline Cache (IndexedDB)
+# Esbabbler — Offline IndexedDB Cache
 
-IndexedDB-backed offline cache for per-room data. When the user is offline and switches rooms, composables fall back to cached data automatically.
+## Overview
 
-## Structure
+Room-switch composables (`useReadMessages`, `useReadMembers`, `useReadRooms`) cache their fetched data in IndexedDB so the app can function offline. The cache is transparent — each composable passes `ReadItemsCacheOptions` to `readItems`, which handles read/write internally.
 
+## Architecture
+
+### Models
+
+| File                                                           | Purpose                                                     |
+| -------------------------------------------------------------- | ----------------------------------------------------------- |
+| `app/models/cache/indexedDb/IndexedDbStoreName.ts`             | Enum of object store names (`Members`, `Messages`, `Rooms`) |
+| `app/models/cache/indexedDb/IndexedDbStoreConfiguration.ts`    | Interface: `{ storeName, keyPath, indexName, limit? }`      |
+| `app/models/cache/indexedDb/IndexedDbDatabaseSchema.ts`        | Typed `DBSchema` (from `idb`) for all stores                |
+| `app/models/cache/indexedDb/keyPaths/CompositeAzureKeyPath.ts` | `[partitionKey, rowKey]` — for Azure Table entities         |
+| `app/models/cache/indexedDb/keyPaths/PartitionedIdKeyPath.ts`  | `[partitionKey, id]` — for injected-partitionKey entities   |
+| `app/models/pagination/cursor/ReadItemsCacheOptions.ts`        | Cache parameter for `readItems`                             |
+
+### Services
+
+| File                                                                                | Purpose                                                   |
+| ----------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| `app/services/cache/indexedDb/openIndexedDb.ts`                                     | Singleton `openDB` + `resetIndexedDb` (for tests)         |
+| `app/services/cache/indexedDb/readIndexedDb.ts`                                     | Read all items by `partitionKey` from a store             |
+| `app/services/cache/indexedDb/writeIndexedDb.ts`                                    | Replace all items for a `partitionKey` (respects `limit`) |
+| `app/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration.ts` | Messages config: CompositeAzureKeyPath, limit 50          |
+| `app/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration.ts`  | Members config: PartitionedIdKeyPath                      |
+| `app/services/cache/indexedDb/configurations/RoomIndexedDbStoreConfiguration.ts`    | Rooms config: PartitionedIdKeyPath                        |
+
+### Key Principle: partitionKey is Always Required
+
+Every store is partitioned. `readIndexedDb` / `writeIndexedDb` always take an explicit `partitionKey` string:
+
+- **Messages** → `roomId` (entity already has `partitionKey` field)
+- **Members** → `roomId` (inject `{ ...user, partitionKey: roomId }` on write, strip on read)
+- **Rooms** → `userId` (inject `{ ...room, partitionKey: userId }` on write, strip on read)
+
+## Pattern: `readItems` with `ReadItemsCacheOptions`
+
+`readItems` in `useCursorPaginationOperationData` accepts an optional third argument. When provided and the user is offline, it reads from the cache instead of calling the tRPC query. When online, it writes the fetched data back to the cache after every successful query.
+
+```typescript
+interface ReadItemsCacheOptions<TItem> {
+  cache: {
+    read: (partitionKey: string) => Promise<TItem[]>;
+    write: (items: TItem[], partitionKey: string) => Promise<void>;
+  };
+  onCacheRead?: () => void; // called only on offline cache hit (e.g. reset pagination state)
+  partitionKey: string;
+}
 ```
-models/cache/indexedDb/
-  CacheStoreName.ts              — enum (PascalCase values: Messages, Members, Rooms)
-  CacheStoreConfiguration.ts    — interface: storeName, keyPath, indexName (required), limit?
-  CacheDBSchema.ts               — idb typed schema used by openCacheDatabase
-  keyPaths/
-    CompositeAzureKeyPath.ts     — ["partitionKey", "rowKey"] for Azure entities
-    PartitionedIdKeyPath.ts      — ["partitionKey", "id"] for AItemEntity with injected partition
 
-services/cache/indexedDb/
-  configurations/
-    MessageCacheStoreConfiguration.ts
-    MemberCacheStoreConfiguration.ts
-    RoomCacheStoreConfiguration.ts
-  CacheStoreConfigurationMap.ts  — Record<CacheStoreName, CacheStoreConfiguration>
-  openCacheDatabase.ts           — singleton IDBPDatabase; creates all stores from the map
-  readCached.ts                  — readCached<T>(config, partitionKey): Promise<T[]>
-  writeCached.ts                 — writeCached<T>(config, items, partitionKey): Promise<void>
-  readCached.test.ts             — tests for base read/write functions only
+**Usage in composables:**
+
+```typescript
+// useReadMessages.ts — partitionKey = roomId, entity has partitionKey natively
+readItems(
+  () => $trpc.message.readMessages.query({ roomId }),
+  ({ items }) => readMetadata(items),
+  {
+    cache: {
+      read: (partitionKey) => readIndexedDb(MessageIndexedDbStoreConfiguration, partitionKey),
+      write: (items, partitionKey) => writeIndexedDb(MessageIndexedDbStoreConfiguration, items, partitionKey),
+    },
+    onCacheRead: () => {
+      hasMoreNewer.value = false;
+      nextCursorNewer.value = undefined;
+    },
+    partitionKey: roomId,
+  },
+);
+
+// useReadMembers.ts — partitionKey = roomId, inject partitionKey (User has no partitionKey)
+readItems(
+  () => $trpc.room.readMembers.query({ roomId }),
+  ...,
+  {
+    cache: {
+      read: (partitionKey) => readIndexedDb(MemberIndexedDbStoreConfiguration, partitionKey),
+      write: (items, partitionKey) => writeIndexedDb(MemberIndexedDbStoreConfiguration, items, partitionKey),
+    },
+    partitionKey: roomId,
+  },
+);
 ```
 
-## Conventions
+## Additional: `useMessageCache`
 
-**`indexName` is always required.** Every store is partitioned. `partitionKey` is required on every `readCached`/`writeCached` call.
+`useMessageCache` supplements `readItems` with two extra behaviors that `readItems` cannot handle on its own:
 
-**Partition keys by entity:**
+1. **`watchDeep(items, ...)`** — writes to IndexedDB whenever the in-memory message list changes (e.g., new messages via tRPC subscription)
+2. **`watch(currentRoomId, ...)`** — when offline and the user switches rooms, hydrates the store from IndexedDB (since the Messages component doesn't re-mount on room change)
 
-- Messages: `roomId` (MessageEntity already has `partitionKey` field)
-- Members: `roomId` (inject `{ ...user, partitionKey: roomId }` when writing; strip when reading)
-- Rooms: `userId` (inject `{ ...room, partitionKey: userId }` when writing; strip when reading)
+This is the only composable that needs both a reactive watcher and a room-switch watcher. All other room-switch composables are fully covered by the `readItems` cacheOptions pattern.
 
-**Target composables** — any `useRead*` that fires on `currentRoomId` change:
+## Tests
 
-- Read path: check `online.value`; if offline return `readCached(config, partitionKey)` in a `CursorPaginationData`
-- Write path: `await writeCached(config, items.map(item => ({ ...item, partitionKey })), partitionKey)` after a successful online fetch
+`app/services/cache/indexedDb/readIndexedDb.test.ts` — tests for `readIndexedDb` / `writeIndexedDb` using `MessageIndexedDbStoreConfiguration`:
 
-**Tests:** test `readCached`/`writeCached` directly against `MessageCacheStoreConfiguration`. No per-composable cache tests.
+- empty read returns `[]`
+- write then read returns items
+- reads only items for the requested `partitionKey`
+- re-write replaces existing items
+- write respects the `limit`
 
-## Adding a new cached entity
-
-1. Add a value to `CacheStoreName`
-2. Add a key path constant to `keyPaths/` if not already present
-3. Create `*CacheStoreConfiguration.ts` in `services/cache/indexedDb/configurations/`
-4. Register in `CacheStoreConfigurationMap`
-5. Bump `CACHE_DATABASE_VERSION` in `openCacheDatabase` (required for new IDB stores)
-6. Add offline fallback + write-after-fetch to the relevant `useRead*` composable
+`fake-indexeddb/auto` is loaded in `vitest.config.ts` `setupFiles` — no mocking needed.

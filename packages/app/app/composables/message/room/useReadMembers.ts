@@ -1,9 +1,8 @@
 import type { User } from "@esposter/db-schema";
 
-import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import { MemberCacheStoreConfiguration } from "@/services/cache/indexedDb/configurations/MemberCacheStoreConfiguration";
-import { readCached } from "@/services/cache/indexedDb/readCached";
-import { writeCached } from "@/services/cache/indexedDb/writeCached";
+import { MemberIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MemberIndexedDbStoreConfiguration";
+import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
+import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
 import { useMemberStore } from "@/store/message/user/member";
@@ -17,7 +16,6 @@ export const useReadMembers = () => {
   const memberStore = useMemberStore();
   const { readItems, readMoreItems } = memberStore;
   const { count, memberMap } = storeToRefs(memberStore);
-  const online = useOnline();
   const readUserStatuses = useReadUserStatuses();
   const roleStore = useRoleStore();
   const { readMemberRoles } = roleStore;
@@ -31,22 +29,8 @@ export const useReadMembers = () => {
       throw new InvalidOperationError(Operation.Read, readMembers.name, CompositeKeyPropertyNames.partitionKey);
     return readItems(
       async () => {
-        if (!online.value) {
-          const cachedEntries = await readCached<User & { partitionKey: string }>(
-            MemberCacheStoreConfiguration,
-            roomId,
-          );
-          const cachedData = new CursorPaginationData<User>();
-          cachedData.items = cachedEntries.map(({ partitionKey: _partitionKey, ...member }) => member as User);
-          return cachedData;
-        }
         count.value = await $trpc.room.countMembers.query({ roomId });
         const result = await $trpc.room.readMembers.query({ roomId });
-        await writeCached(
-          MemberCacheStoreConfiguration,
-          result.items.map((member) => ({ ...member, partitionKey: roomId })),
-          roomId,
-        );
         return result;
       },
       async ({ items }) => {
@@ -55,6 +39,13 @@ export const useReadMembers = () => {
           roomId,
           items.map(({ id }) => id),
         );
+      },
+      {
+        cache: {
+          read: (partitionKey) => readIndexedDb(MemberIndexedDbStoreConfiguration, partitionKey),
+          write: (items, partitionKey) => writeIndexedDb(MemberIndexedDbStoreConfiguration, items, partitionKey),
+        },
+        partitionKey: roomId,
       },
     );
   };

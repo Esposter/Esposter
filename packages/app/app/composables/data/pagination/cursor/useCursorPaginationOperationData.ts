@@ -1,8 +1,10 @@
+import type { ReadItemsCacheOptions } from "@/models/pagination/cursor/ReadItemsCacheOptions";
 import type { Promisable } from "type-fest";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 
 export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Ref<CursorPaginationData<TItem>>) => {
+  const online = useOnline();
   const items = computed({
     get: () => cursorPaginationData.value.items,
     set: (items) => {
@@ -30,13 +32,24 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
   const readItems = async (
     query: () => Promise<CursorPaginationData<TItem>>,
     onComplete?: (data: CursorPaginationData<TItem>) => Promisable<void>,
+    cacheOptions?: ReadItemsCacheOptions<TItem>,
   ) => {
     const isPending = ref(true);
     const refresh = async () => {
       isPending.value = true;
       try {
+        if (!online.value && cacheOptions) {
+          const cachedItems = await cacheOptions.cache.read(cacheOptions.partitionKey);
+          const cachedData = new CursorPaginationData<TItem>();
+          cachedData.items = cachedItems;
+          initializeCursorPaginationData(cachedData);
+          cacheOptions.onCacheRead?.();
+          await Promise.allSettled([onComplete?.(cachedData)]);
+          return;
+        }
         const data = await query();
         initializeCursorPaginationData(data);
+        if (cacheOptions) await cacheOptions.cache.write(data.items, cacheOptions.partitionKey);
         // Absorbs onComplete errors so data already set above is never lost
         await Promise.allSettled([onComplete?.(data)]);
       } finally {

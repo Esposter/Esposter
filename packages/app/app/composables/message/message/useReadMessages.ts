@@ -1,11 +1,11 @@
 import type { MessageEntity, StandardMessageEntity, WebhookMessageEntity } from "@esposter/db-schema";
 
-import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
-import { MessageCacheStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageCacheStoreConfiguration";
-import { readCached } from "@/services/cache/indexedDb/readCached";
+import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
+import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
+import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { CompositeKeyPropertyNames, getReverseTickedTimestamp, MessageType } from "@esposter/db-schema";
@@ -19,7 +19,6 @@ export const useReadMessages = () => {
   const dataStore = useDataStore();
   const { readItems, readMoreItems } = dataStore;
   const { hasMoreNewer, nextCursorNewer } = storeToRefs(dataStore);
-  const online = useOnline();
   const readMembersByIds = useReadMembersByIds();
   const readAppUsers = useReadAppUsers();
   const readReplies = useReadReplies();
@@ -46,22 +45,12 @@ export const useReadMessages = () => {
     ]);
   };
 
-  const readMessages = () =>
-    readItems(
+  const readMessages = () => {
+    const roomId = currentRoomId.value;
+    if (!roomId)
+      throw new InvalidOperationError(Operation.Read, readMessages.name, CompositeKeyPropertyNames.partitionKey);
+    return readItems(
       async () => {
-        if (!currentRoomId.value)
-          throw new InvalidOperationError(Operation.Read, readMessages.name, CompositeKeyPropertyNames.partitionKey);
-        const roomId = currentRoomId.value;
-
-        if (!online.value) {
-          const cachedMessages = await readCached<MessageEntity>(MessageCacheStoreConfiguration, roomId);
-          const cachedData = new CursorPaginationData<MessageEntity>();
-          cachedData.items = cachedMessages;
-          hasMoreNewer.value = false;
-          nextCursorNewer.value = undefined;
-          return cachedData;
-        }
-
         const rowKey = route.params.rowKey as string | undefined;
 
         if (rowKey) {
@@ -86,7 +75,19 @@ export const useReadMessages = () => {
         return response;
       },
       ({ items }) => readMetadata(items),
+      {
+        cache: {
+          read: (partitionKey) => readIndexedDb(MessageIndexedDbStoreConfiguration, partitionKey),
+          write: (items, partitionKey) => writeIndexedDb(MessageIndexedDbStoreConfiguration, items, partitionKey),
+        },
+        onCacheRead: () => {
+          hasMoreNewer.value = false;
+          nextCursorNewer.value = undefined;
+        },
+        partitionKey: roomId,
+      },
     );
+  };
 
   const readMoreMessages = (onComplete: () => void) =>
     readMoreItems(async (cursor) => {
@@ -108,7 +109,7 @@ export const useReadMessages = () => {
     hasMoreNewer.value = hasMore;
     nextCursorNewer.value = nextCursor;
 
-    const rowKeys = new Set(items.map((i) => i.rowKey));
+    const rowKeys = new Set(items.map((item) => item.rowKey));
     const newerItems: MessageEntity[] = [];
     const olderItems: MessageEntity[] = [];
 
