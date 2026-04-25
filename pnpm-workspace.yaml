@@ -159,7 +159,7 @@ catalog:
   idb: ^8.0.3
   is-mobile: ^5.0.0
   js-beautify: ^1.15.4
-  link-preview-js: ^4.0.0
+  link-preview-js: ^4.0.1
   linkifyjs: ^4.3.2
   lowlight: ^3.3.0
   marked: ^18.0.2
