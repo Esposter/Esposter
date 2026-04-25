@@ -98,6 +98,14 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
     throw new Error("Method not implemented.");
   }
 
+  generateUserDelegationSasUrl(): string {
+    throw new Error("Method not implemented.");
+  }
+
+  generateUserDelegationStringToSign(): string {
+    throw new Error("Method not implemented.");
+  }
+
   getAccessPolicy(): Promise<QueueGetAccessPolicyResponse> {
     throw new Error("Method not implemented.");
   }

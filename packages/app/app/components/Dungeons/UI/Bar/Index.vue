@@ -43,7 +43,7 @@ const barTextureMap = computed<Record<BarOrigin, FileKey>>(() =>
 );
 const barWidth = computed(() => (width * barPercentage) / 100);
 const barDisplayWidth = ref(barWidth.value);
-const { leftCapDisplayWidth, middleDisplayWidth, rightCapDisplayWidth, syncDisplayWidths } = useDisplayWidths(
+const { leftCapDisplayWidth, middleDisplayWidth, rightCapDisplayWidth, syncDisplayWidths } = useVDisplayWidths(
   () => width,
   barWidth,
 );

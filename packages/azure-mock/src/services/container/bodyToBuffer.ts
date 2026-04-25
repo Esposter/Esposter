@@ -24,7 +24,6 @@ export const bodyToBuffer = async (body: HttpRequestBody): Promise<Buffer> => {
   else if (body instanceof ReadableStream) {
     const reader = body.getReader();
     const chunks: Uint8Array[] = [];
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
@@ -34,5 +33,8 @@ export const bodyToBuffer = async (body: HttpRequestBody): Promise<Buffer> => {
   }
   // FormData is not supported as its serialization is complex
   else if (body instanceof FormData) throw new Error("FormData is not supported in this mock implementation.");
-  else exhaustiveGuard(body);
+  else {
+    exhaustiveGuard(body);
+    return Buffer.alloc(0);
+  }
 };

@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import { useColorsStore } from "@/store/colors";
 import { useVisualStore } from "@/store/dashboard/visual";
 import { GridItem, GridLayout } from "grid-layout-plus";
 
 const visualStore = useVisualStore();
 const { noColumns, visuals } = storeToRefs(visualStore);
-const { background, border, surface } = useColors();
+const colorsStore = useColorsStore();
+const { background, border, surface } = storeToRefs(colorsStore);
 </script>
 
 <template>

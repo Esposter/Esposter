@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type { Room } from "@esposter/db-schema";
 
+import { authClient } from "@/services/auth/authClient";
 import { useRoomStore } from "@/store/message/room";
+import { useRoleStore } from "@/store/message/room/role";
 import { RoutePath } from "@esposter/shared";
 
 interface RoomListItemProps {
@@ -9,10 +11,15 @@ interface RoomListItemProps {
 }
 
 const { room } = defineProps<RoomListItemProps>();
+const { data: session } = await authClient.useSession(useFetch);
 const roomName = useRoomName(() => room.id);
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const isActive = computed(() => room.id === currentRoomId.value);
+const isCreator = computed(() => room.userId === session.value?.user.id);
+const roleStore = useRoleStore();
+const { isManageable } = roleStore;
+const showSettings = computed(() => isCreator.value || isManageable(room.id));
 </script>
 
 <template>
@@ -28,8 +35,8 @@ const isActive = computed(() => room.id === currentRoomId.value);
         <MessageModelRoomSettingsDialogButton :room-id="room.id">
           <template #activator="activatorProps">
             <v-btn
-              v-show="isActive || isHovering"
-              bg-transparent="!"
+              v-show="(isActive || isHovering) && showSettings"
+              bg-transparent
               :="activatorProps"
               :ripple="false"
               density="compact"
@@ -39,21 +46,6 @@ const isActive = computed(() => room.id === currentRoomId.value);
             />
           </template>
         </MessageModelRoomSettingsDialogButton>
-        <MessageModelRoomConfirmDeleteDialog :room-id="room.id" :creator-id="room.userId">
-          <template #activator="{ updateIsOpen, tooltipProps }">
-            <v-btn
-              v-show="isActive || isHovering"
-              bg-transparent="!"
-              density="compact"
-              icon="mdi-close"
-              variant="plain"
-              size="small"
-              :ripple="false"
-              :="tooltipProps"
-              @click.stop="updateIsOpen(true)"
-            />
-          </template>
-        </MessageModelRoomConfirmDeleteDialog>
       </template>
     </v-list-item>
   </v-hover>
@@ -61,6 +53,6 @@ const isActive = computed(() => room.id === currentRoomId.value);
 
 <style scoped lang="scss">
 :deep(.v-list-item__prepend > .v-list-item__spacer) {
-  width: 0.5rem !important;
+  width: 0.5rem;
 }
 </style>

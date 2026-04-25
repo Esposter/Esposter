@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-dynamic-delete */
 import type { QualifiedTag, SAXParser, Tag } from "sax";
 import type { convertableToString, ParserOptions } from "xml2js";
 
@@ -6,6 +5,7 @@ import { BUILTIN_NAME_KEY, TEXT_NODE_NAME } from "@/constants";
 import { DefaultParserOptions } from "@/DefaultParserOptions";
 import { normalize } from "@/processors";
 import { stripBOM } from "@/stripBOM";
+import { takeOne } from "@esposter/shared";
 import { parser } from "sax";
 
 export class Parser {
@@ -13,10 +13,10 @@ export class Parser {
     return `${this.options.attrkey}ns`;
   }
 
-  private options: typeof DefaultParserOptions = structuredClone(DefaultParserOptions);
+  private readonly options: typeof DefaultParserOptions = structuredClone(DefaultParserOptions);
   private resultObject: Record<string, unknown> | string = {};
-  private saxParser: SAXParser;
-  private stack: Record<string, unknown>[] = [];
+  private readonly saxParser: SAXParser;
+  private readonly stack: Record<string, unknown>[] = [];
 
   constructor(init?: Partial<ParserOptions>) {
     Object.assign(this.options, init);
@@ -31,15 +31,16 @@ export class Parser {
       this.saxParser.resume();
     };
     this.saxParser.onopentag = (node) => {
-      const newObject: Record<string, unknown> = {};
-      newObject[this.options.charkey] = "";
+      const newObject: Record<string, unknown> = {
+        [this.options.charkey]: "",
+      };
       if (!this.options.ignoreAttrs)
         for (const key in node.attributes)
           if (Object.hasOwn(node.attributes, key)) {
             if (!(this.options.attrkey in newObject) && !this.options.mergeAttrs) newObject[this.options.attrkey] = {};
 
             const newValue = this.options.attrValueProcessors
-              ? processItem(this.options.attrValueProcessors, (node as Tag).attributes[key], key)
+              ? processItem(this.options.attrValueProcessors, takeOne((node as Tag).attributes, key), key)
               : node.attributes[key];
             const processedKey = this.options.attrNameProcessors
               ? processItem(this.options.attrNameProcessors, key, "")
@@ -143,7 +144,7 @@ export class Parser {
 
     const ontext = (text: string): Record<string, unknown> | undefined => {
       const object = this.stack.at(-1);
-      if (!object) return;
+      if (!object) return undefined;
 
       object[this.options.charkey] += text;
 
@@ -156,10 +157,12 @@ export class Parser {
         object[this.options.childkey] ??= [];
         const charChild: Record<string, string> = {
           [BUILTIN_NAME_KEY]: TEXT_NODE_NAME,
+          [this.options.charkey]: text,
         };
-        charChild[this.options.charkey] = text;
         if (this.options.normalize)
-          charChild[this.options.charkey] = charChild[this.options.charkey].replaceAll(/\s{2,}/g, " ").trim();
+          charChild[this.options.charkey] = takeOne(charChild, this.options.charkey)
+            .replaceAll(/\s{2,}/g, " ")
+            .trim();
 
         (object[this.options.childkey] as Record<string, string>[]).push(charChild);
       }
@@ -167,16 +170,20 @@ export class Parser {
       return object;
     };
 
-    this.saxParser.ontext = ontext;
-    this.saxParser.oncdata = (text: string) => {
-      const object = ontext(text);
+    this.saxParser.ontext = (text) => {
+      ontext(text);
+    };
+    this.saxParser.oncdata = (cdata) => {
+      const object = ontext(cdata);
       if (!object) return;
       object.cdata = true;
     };
   }
 
   parseStringPromise<T>(convertableToString: convertableToString): Promise<T> {
-    return new Promise<T>((resolve) => this.parseString(convertableToString, resolve));
+    return new Promise<T>((resolve) => {
+      this.parseString(convertableToString, resolve);
+    });
   }
 
   private assignOrPush(object: Record<string, unknown>, key: string, newValue: unknown): void {
@@ -187,7 +194,7 @@ export class Parser {
     } else if (this.options.explicitArray) defineProperty(object, key, [newValue]);
     else defineProperty(object, key, newValue);
   }
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+  // oxlint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
   private parseString<T>(convertableToString: convertableToString, callback: (result: T) => void): SAXParser {
     const string = stripBOM(convertableToString.toString());
     this.saxParser.onend = () => {

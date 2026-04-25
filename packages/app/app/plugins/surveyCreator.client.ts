@@ -1,6 +1,6 @@
 import "survey-core/survey-core.min.css";
 import "survey-core/survey.i18n";
-import SurveyTheme from "survey-core/themes"; // An object that contains all theme configurations
+import SurveyTheme from "survey-core/themes";
 import { registerSurveyTheme } from "survey-creator-core";
 import "survey-creator-core/survey-creator-core.i18n";
 import "survey-creator-core/survey-creator-core.min.css";

@@ -17,7 +17,8 @@ import type { Types } from "phaser";
 import type { Except } from "type-fest";
 
 export interface SpriteConfiguration
-  extends AlphaConfiguration,
+  extends
+    AlphaConfiguration,
     AnimationConfiguration,
     BlendModeConfiguration,
     DepthConfiguration,

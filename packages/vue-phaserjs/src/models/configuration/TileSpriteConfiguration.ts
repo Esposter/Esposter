@@ -16,7 +16,8 @@ import type { Types } from "phaser";
 import type { Except } from "type-fest";
 
 export interface TileSpriteConfiguration
-  extends AlphaConfiguration,
+  extends
+    AlphaConfiguration,
     BlendModeConfiguration,
     ComputedSizeConfiguration,
     DepthConfiguration,

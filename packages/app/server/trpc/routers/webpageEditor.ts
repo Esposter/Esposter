@@ -10,7 +10,7 @@ import { jsonDateParse, streamToText } from "@esposter/shared";
 export const webpageEditorRouter = router({
   readWebpageEditor: standardAuthedProcedure.query<WebpageEditor>(async ({ ctx }) => {
     try {
-      const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
+      const blobName = `${ctx.getSessionPayload.user.id}/${SAVE_FILENAME}`;
       const { readableStreamBody } = await useDownload(AzureContainer.WebpageEditorAssets, blobName);
       if (!readableStreamBody) return new WebpageEditor();
 
@@ -21,7 +21,7 @@ export const webpageEditorRouter = router({
     }
   }),
   saveWebpageEditor: standardAuthedProcedure.input(webpageEditorSchema).mutation(async ({ ctx, input }) => {
-    const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
+    const blobName = `${ctx.getSessionPayload.user.id}/${SAVE_FILENAME}`;
     await useUpload(AzureContainer.WebpageEditorAssets, blobName, JSON.stringify(input));
   }),
 });

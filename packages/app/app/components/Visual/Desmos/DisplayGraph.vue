@@ -6,6 +6,7 @@ import AnimateButton from "@/components/Visual/Desmos/AnimateButton.vue";
 import WindowControls from "@/components/Visual/Desmos/WindowControls.vue";
 import { Colors } from "@/models/desmos/Colors";
 import { ignoreWarn } from "@/util/console/ignoreWarn";
+import { takeOne } from "@esposter/shared";
 
 interface VisualDesmosDisplayGraphProps {
   expressions: Expression[];
@@ -43,7 +44,7 @@ const animate = () => {
   const savedSettings = { ...calculator.settings };
   calculator.setBlank();
   // Ignore warnings from updateSettings about
-  // unsupported extraneous calculator settings which is fine
+  // Unsupported extraneous calculator settings which is fine
   ignoreWarn(() => {
     calculator?.updateSettings(savedSettings);
   });
@@ -51,7 +52,7 @@ const animate = () => {
   const drawingTime = dayjs.duration(5, "seconds").asMilliseconds();
   let i = 0;
   const { pause } = useIntervalFn(() => {
-    const expression = expressions[i++];
+    const expression = takeOne(expressions, i++);
     calculator?.setExpression({ ...expression, color: expression.color ?? Colors.BLACK });
     if (i === expressions.length) {
       pause();
@@ -70,8 +71,7 @@ watch(componentsToRender, (newComponentsToRender) => {
 });
 
 onMounted(() => {
-  const element = document.getElementById(id) as HTMLDivElement | null;
-  if (!element) return;
+  const element = document.getElementById(id) as HTMLDivElement;
 
   onLoaded(async ({ GraphingCalculator }) => {
     calculator = await GraphingCalculator(element, {
@@ -84,7 +84,7 @@ onMounted(() => {
       showYAxis: false,
       trace: false,
     });
-    calculator.setExpressions(expressions.map((e) => ({ ...e, color: e.color ?? Colors.BLACK })));
+    calculator.setExpressions(expressions.map((e) => Object.assign(e, { color: e.color ?? Colors.BLACK })));
     const newExpressionPanel = element.querySelector<HTMLDivElement>(".dcg-exppanel-outer");
     if (!newExpressionPanel) return;
 

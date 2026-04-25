@@ -9,6 +9,8 @@ export const MessageEntityMap = {
   [MessageType.EditRoom]: StandardMessageEntity,
   [MessageType.Message]: StandardMessageEntity,
   [MessageType.PinMessage]: StandardMessageEntity,
+  [MessageType.Poll]: StandardMessageEntity,
+  [MessageType.VoiceCall]: StandardMessageEntity,
   [MessageType.Webhook]: WebhookMessageEntity,
 } as const satisfies Record<MessageType, Class<MessageEntity>>;
 export type MessageEntityMap = typeof MessageEntityMap;

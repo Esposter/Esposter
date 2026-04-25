@@ -13,6 +13,7 @@ import { toWebResourceLike } from "@/services/container/toWebResourceLike";
 import { MockContainerDatabase } from "@/store/MockContainerDatabase";
 import { toHttpHeadersLike } from "@azure/core-http-compat";
 import { createHttpHeaders, createPipelineRequest } from "@azure/core-rest-pipeline";
+import { takeOne } from "@esposter/shared";
 
 export class MockBlobBatchClient implements BlobBatchClient {
   url: string;
@@ -38,7 +39,7 @@ export class MockBlobBatchClient implements BlobBatchClient {
 
     for (const url of urls) {
       const urlParts = new URL(url);
-      // pathname is like "/container/blob/name.txt"
+      // Pathname is like "/container/blob/name.txt"
       const pathSegments = urlParts.pathname.split("/").filter(Boolean);
       if (pathSegments.length < 2) {
         const errorCode = "InvalidUri";
@@ -54,7 +55,7 @@ export class MockBlobBatchClient implements BlobBatchClient {
         subResponsesFailedCount++;
       }
 
-      const containerName = pathSegments[0];
+      const containerName = takeOne(pathSegments);
       const blobName = pathSegments.slice(1).join("/");
       const container = this.getContainer(containerName);
 

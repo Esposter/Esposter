@@ -4,6 +4,7 @@ import { compare } from "@/services/table/compare";
 import { isTableNullClause } from "@/services/table/isTableNullClause";
 import { deserializeClause } from "@esposter/db";
 import { BinaryOperator } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
 
 export const createTableFilterPredicate = <T extends Record<string, unknown>>(
   filter: string,
@@ -18,7 +19,7 @@ export const createTableFilterPredicate = <T extends Record<string, unknown>>(
 
       for (const group of orGroup) {
         const clause = deserializeClause(group);
-        const value = entity[clause.key as keyof typeof entity];
+        const value = takeOne(entity, clause.key as keyof typeof entity);
         let isMatched = false;
 
         if (isTableNullClause(clause)) isMatched = compare(BinaryOperator.eq, value, null);

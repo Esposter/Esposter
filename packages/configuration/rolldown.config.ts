@@ -1,8 +1,14 @@
-import type { ConfigExport } from "rolldown";
+import type { RolldownOptions } from "rolldown";
 
-import rolldownConfigurationBase from "@esposter/configuration/rolldown.config.base.js";
-import { defineConfig } from "rolldown";
+import { dts } from "rolldown-plugin-dts";
 
-const rolldownConfiguration: ConfigExport = defineConfig([rolldownConfigurationBase]);
+const rolldownConfiguration: RolldownOptions = {
+  input: "src/index.ts",
+  output: { dir: "dist", format: "es" },
+  platform: "node",
+  // @TODO: https://github.com/qmhc/unplugin-dts/issues/458
+  plugins: [dts({ tsconfig: "tsconfig.build.json" })],
+  tsconfig: "tsconfig.build.json",
+};
 
 export default rolldownConfiguration;

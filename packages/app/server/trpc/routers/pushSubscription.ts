@@ -24,7 +24,7 @@ export const pushSubscriptionRouter = router({
             endpoint,
             expirationTime: expirationTime ? new Date(expirationTime) : null,
             p256dh,
-            userId: ctx.session.user.id,
+            userId: ctx.getSessionPayload.user.id,
           })
           .onConflictDoUpdate({
             set: {
@@ -35,7 +35,7 @@ export const pushSubscriptionRouter = router({
             target: [pushSubscriptions.endpoint, pushSubscriptions.userId],
           })
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!newPushSubscription)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -52,9 +52,9 @@ export const pushSubscriptionRouter = router({
     const deletedPushSubscription = (
       await ctx.db
         .delete(pushSubscriptions)
-        .where(and(eq(pushSubscriptions.endpoint, input), eq(pushSubscriptions.userId, ctx.session.user.id)))
+        .where(and(eq(pushSubscriptions.endpoint, input), eq(pushSubscriptions.userId, ctx.getSessionPayload.user.id)))
         .returning()
-    ).find(Boolean);
+    )[0];
     if (!deletedPushSubscription)
       throw new TRPCError({
         code: "BAD_REQUEST",

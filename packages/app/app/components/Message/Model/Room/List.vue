@@ -1,25 +1,23 @@
 <script setup lang="ts">
-import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useRoomStore } from "@/store/message/room";
 
+interface MessageModelRoomListProps {
+  isCollapsed?: boolean;
+}
+
 defineSlots<{ prepend: () => VNode }>();
+const { isCollapsed = false } = defineProps<MessageModelRoomListProps>();
 const roomStore = useRoomStore();
 const { hasMore, rooms } = storeToRefs(roomStore);
-const { readMoreRooms, readRooms } = useReadRooms();
+const { readMoreRooms, readRooms } = await useReadRooms();
 const { isPending } = await readRooms();
 </script>
 
 <template>
-  <v-list>
-    <slot name="prepend" />
-    <template v-if="isPending">
-      <MessageModelRoomSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+  <MessageModelRoomBaseList :has-more :is-collapsed :is-pending @load-more="readMoreRooms">
+    <template #prepend>
+      <slot name="prepend" />
     </template>
-    <template v-else>
-      <MessageModelRoomListItem v-for="room of rooms" :key="room.id" :room />
-      <StyledWaypoint :is-active="hasMore" @change="readMoreRooms">
-        <MessageModelRoomSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
-      </StyledWaypoint>
-    </template>
-  </v-list>
+    <MessageModelRoomListItem v-for="room of rooms" :key="room.id" :room />
+  </MessageModelRoomBaseList>
 </template>

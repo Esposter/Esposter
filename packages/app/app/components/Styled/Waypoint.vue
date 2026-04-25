@@ -10,8 +10,8 @@ const isLoading = ref(false);
 const container = useTemplateRef("container");
 const isVisible = useElementVisibility(container);
 
-watchEffect(() => {
-  if (!isVisible.value || !isActive || isLoading.value) return;
+watch([isVisible, () => isActive, isLoading], ([newIsVisible, newIsActive, newIsLoading]) => {
+  if (!newIsVisible || !newIsActive || newIsLoading) return;
   isLoading.value = true;
   emit("change", () => {
     isLoading.value = false;

@@ -1,7 +1,8 @@
 import { db } from "@@/server/db";
-import { schema } from "@esposter/db-schema";
+import { standardRateLimiter } from "@@/server/services/rateLimiter/standardRateLimiter";
+import { drizzleAdapter } from "@better-auth/drizzle-adapter";
+import { schema, selectUserSchema } from "@esposter/db-schema";
 import { betterAuth } from "better-auth";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -9,6 +10,10 @@ export const auth = betterAuth({
     schema,
     usePlural: true,
   }),
+  rateLimit: {
+    max: standardRateLimiter.points,
+    window: standardRateLimiter.duration,
+  },
   socialProviders: {
     facebook: {
       clientId: process.env.FACEBOOK_CLIENT_ID,
@@ -21,6 +26,17 @@ export const auth = betterAuth({
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    },
+  },
+  user: {
+    additionalFields: {
+      biography: {
+        required: false,
+        type: "string",
+        validator: {
+          input: selectUserSchema.shape.biography,
+        },
+      },
     },
   },
 });

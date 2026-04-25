@@ -4,8 +4,8 @@ import { transformer } from "#shared/services/trpc/transformer";
 import { initTRPC } from "@trpc/server";
 import { z } from "zod";
 // Avoid exporting the entire t-object since it's not very
-// descriptive and can be confusing to newcomers used to t
-// meaning translation in i18n libraries
+// Descriptive and can be confusing to newcomers used to t
+// Meaning translation in i18n libraries
 const t = initTRPC.context<Context>().create({
   errorFormatter: ({ error, shape }) => ({
     ...shape,

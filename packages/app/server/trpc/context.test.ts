@@ -1,17 +1,14 @@
-import type { Session } from "#shared/models/auth/Session";
+import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { Context } from "@@/server/trpc/context";
-import type { User } from "@esposter/db-schema";
-import type { PgliteDatabase } from "drizzle-orm/pglite";
+import type { Session, User } from "better-auth";
 
 import { dayjs } from "#shared/services/dayjs";
 import { useContainerClientMock } from "@@/server/composables/azure/container/useContainerClient.test";
 import { useEventGridPublisherClientMock } from "@@/server/composables/azure/eventGrid/useEventGridPublisherClient.test";
 import { useTableClientMock } from "@@/server/composables/azure/table/useTableClient.test";
-import { PGlite } from "@electric-sql/pglite";
-import { messageSchema, schema, users } from "@esposter/db-schema";
-import { generateDrizzleJson, generateMigration } from "drizzle-kit/api";
-import { sql } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/pglite";
+import { createMockDb as baseCreateMockDb } from "@esposter/db-mock";
+import { users } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
 import { IncomingMessage, ServerResponse } from "node:http";
 import { Socket } from "node:net";
 import { describe, vi } from "vitest";
@@ -20,7 +17,6 @@ const mocks = vi.hoisted(() => {
   const createdAt = new Date();
   const user: User = {
     createdAt,
-    deletedAt: null,
     email: "",
     emailVerified: true,
     id: crypto.randomUUID(),
@@ -29,20 +25,23 @@ const mocks = vi.hoisted(() => {
     updatedAt: createdAt,
   };
   return {
-    getSession: vi.fn<() => Session>(() => {
+    getSession: vi.fn<() => GetSessionPayload>(() => {
       const session = createSession(user.id);
       return { session, user };
     }),
   };
 });
 
-vi.mock(import("@@/server/auth") as unknown as Promise<{ auth: { api: { getSession: () => Session } } }>, () => ({
-  auth: {
-    api: {
-      getSession: mocks.getSession,
+vi.mock(
+  import("@@/server/auth") as unknown as Promise<{ auth: { api: { getSession: () => GetSessionPayload } } }>,
+  () => ({
+    auth: {
+      api: {
+        getSession: mocks.getSession,
+      },
     },
-  },
-}));
+  }),
+);
 
 vi.mock(import("@@/server/composables/azure/container/useContainerClient"), () => ({
   useContainerClient: useContainerClientMock,
@@ -56,11 +55,11 @@ vi.mock(import("@@/server/composables/azure/table/useTableClient"), () => ({
   useTableClient: useTableClientMock,
 }));
 
-export const mockSessionOnce = async (db: Context["db"], mockUser?: Session["user"]) => {
+export const mockSessionOnce = async (db: Context["db"], mockUser?: User) => {
   const createdAt = new Date();
   const user =
     mockUser ??
-    (
+    takeOne(
       await db
         .insert(users)
         .values({
@@ -72,16 +71,20 @@ export const mockSessionOnce = async (db: Context["db"], mockUser?: Session["use
           name: crypto.randomUUID(),
           updatedAt: createdAt,
         })
-        .returning()
-    )[0];
-  const session = { session: createSession(user.id), user };
-  mocks.getSession.mockImplementationOnce(() => session);
-  return session;
+        .returning(),
+    );
+  const getSessionPayload = { session: createSession(user.id), user } as const satisfies GetSessionPayload;
+  mocks.getSession.mockImplementationOnce(() => getSessionPayload);
+  return getSessionPayload;
+};
+
+export const replayMockSession = (getSessionPayload: GetSessionPayload) => {
+  mocks.getSession.mockImplementationOnce(() => getSessionPayload);
 };
 
 export const getMockSession = () => mocks.getSession();
 
-const createSession = (userId: string): Session["session"] => {
+const createSession = (userId: string): Session => {
   const createdAt = new Date();
   return {
     createdAt,
@@ -107,23 +110,9 @@ export const createMockContext = async (): Promise<Context> => {
 };
 
 const createMockDb = async () => {
-  const client = new PGlite();
-  const db = drizzle(client, { schema });
-  await createSchema(db);
-  await pushSchema(db);
+  const db = await baseCreateMockDb();
   await db.insert(users).values(mocks.getSession().user);
-  return db as unknown as Context["db"];
-};
-
-const createSchema = async (db: PgliteDatabase<typeof schema>) => {
-  await db.execute(sql.raw(`CREATE SCHEMA "${messageSchema.schemaName}"`));
-};
-
-const pushSchema = async (db: PgliteDatabase<typeof schema>) => {
-  const previousJson = generateDrizzleJson({});
-  const currentJson = generateDrizzleJson(schema, previousJson.id);
-  const statements = await generateMigration(previousJson, currentJson);
-  for (const statement of statements) await db.execute(statement);
+  return db as Context["db"];
 };
 
 describe.todo("context");

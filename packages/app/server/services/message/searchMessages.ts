@@ -1,4 +1,5 @@
 import type { SearchMessagesInput } from "#shared/models/db/message/SearchMessagesInput";
+import type { SelectFields } from "@azure/search-documents";
 import type { Clause, MessageEntity } from "@esposter/db-schema";
 
 import { dedupeFilters } from "#shared/services/message/dedupeFilters";
@@ -7,22 +8,27 @@ import { getOffsetPaginationData } from "@@/server/services/pagination/offset/ge
 import { deserializeKey, filtersToClauses, getSearchNullClause, serializeClauses } from "@esposter/db";
 import {
   BinaryOperator,
+  CompositeKeyPropertyNames,
+  FilterType,
   MessageType,
   SearchIndex,
   SearchIndexSearchableFieldsMap,
   StandardMessageEntity,
-  StandardMessageEntityPropertyNames,
   WebhookMessageEntity,
 } from "@esposter/db-schema";
 import { ItemMetadataPropertyNames } from "@esposter/shared";
 
 export const searchMessages = async ({ filters, limit, offset, query, roomId, sortBy }: SearchMessagesInput) => {
   const client = useSearchClient(SearchIndex.Messages);
-  const clauses: Clause[] = [
-    { key: StandardMessageEntityPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
+  const dedupedFilters = dedupeFilters(filters);
+  const hasRoomInFilter = dedupedFilters.some(({ type }) => type === FilterType.In);
+  const clauses: Clause<Record<SelectFields<MessageEntity> & string, unknown>>[] = [
+    ...(hasRoomInFilter
+      ? []
+      : [{ key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId }]),
     getSearchNullClause(ItemMetadataPropertyNames.deletedAt),
   ];
-  if (filters.length > 0) clauses.push(...filtersToClauses(dedupeFilters(filters)));
+  if (dedupedFilters.length > 0) clauses.push(...filtersToClauses(dedupedFilters));
   const { count, results } = await client.search(query, {
     filter: serializeClauses(clauses),
     includeTotalCount: true,

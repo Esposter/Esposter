@@ -3,6 +3,136 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.21.0](https://github.com/Esposter/Esposter/compare/v2.20.0...v2.21.0) (2026-04-15)
+
+### Bug Fixes
+
+* wip ([52a3ba5](https://github.com/Esposter/Esposter/commit/52a3ba58288c49b37072407f1514bed94fd90f2a))
+
+### Features
+
+* Add [@here](https://github.com/here) and [@everyone](https://github.com/everyone) ([710b702](https://github.com/Esposter/Esposter/commit/710b7026e2f6705513f4561327f2d04fb70350e1))
+* Add friends ([9ff1c3e](https://github.com/Esposter/Esposter/commit/9ff1c3e02c6c016d358189b7fe557d48273e54ef))
+* implement features + fix lint ([e62cdd4](https://github.com/Esposter/Esposter/commit/e62cdd42a44775ba52e06d57030da740c61e1a7a))
+
+# [2.20.0](https://github.com/Esposter/Esposter/compare/v2.19.2...v2.20.0) (2026-03-29)
+
+### Bug Fixes
+
+* cleanup tojson ([33079be](https://github.com/Esposter/Esposter/commit/33079be6c915f062fb7f1029b05d95be0c0ee0bb))
+
+* docs ([34ddfcd](https://github.com/Esposter/Esposter/commit/34ddfcd97470596e5709731a452287b8191545cb))
+
+* finally fix up type issue ([e011ff9](https://github.com/Esposter/Esposter/commit/e011ff94eaa6ee72c49e1d007dbeec35eaf811c8))
+
+* format + fix up some ignores ([6cd632f](https://github.com/Esposter/Esposter/commit/6cd632ff672ad8e0adee51b42cb6f6925f894b96))
+
+* lint ([c2791fb](https://github.com/Esposter/Esposter/commit/c2791fb77b0310d52842e852327b85009021ccb1))
+
+* lint ([82e0aad](https://github.com/Esposter/Esposter/commit/82e0aadfafa9640640963c6b2bcbd8685da1bc48))
+
+* names ([5d3f5fd](https://github.com/Esposter/Esposter/commit/5d3f5fd41eef8b2b841ee9cfc3ebe39ebf8f5f6e))
+
+* types ([4ac6e7c](https://github.com/Esposter/Esposter/commit/4ac6e7c584b15ee11d21420d9cd8f91823b27971))
+
+### Features
+
+* Add oxlint type aware ([eb40e2d](https://github.com/Esposter/Esposter/commit/eb40e2d7da8c606c66053582284264e0fb3a2592))
+
+* Add vue-phaserjs tests ([cd2100f](https://github.com/Esposter/Esposter/commit/cd2100f5c7fd98c8932a48f22f5601d1bba6a905))
+
+* Add vue-phaserjs tests and consolidated scene class ([cc800b6](https://github.com/Esposter/Esposter/commit/cc800b63cff283500e32f5910b669d2c56d34395))
+
+* migrate to oxfmt ([e7a0212](https://github.com/Esposter/Esposter/commit/e7a0212f9ec18d7193c96cc6069ac6ecf168e8bb))
+
+* optimized get properties ([5d0989e](https://github.com/Esposter/Esposter/commit/5d0989edf40586db47880394e6fb104842c0dc72))
+
+* switch to tsgo ([1e504b3](https://github.com/Esposter/Esposter/commit/1e504b3a6ce5144dadbdd9bc543018a35e7b6808))
+
+### Performance Improvements
+
+* optimize ([55c2476](https://github.com/Esposter/Esposter/commit/55c2476eef1a575e5975c8901ec8243496cb19af))
+
+* optimize ([dbbf198](https://github.com/Esposter/Esposter/commit/dbbf198c7b80b0b3f68b19895e9013f345e35854))
+
+* optimize ([1fe0664](https://github.com/Esposter/Esposter/commit/1fe066498dba0ed7705edfe58bd88e7e61373307))
+
+## [2.19.2](https://github.com/Esposter/Esposter/compare/v2.19.1...v2.19.2) (2026-02-05)
+
+**Note:** Version bump only for package @esposter/shared
+
+## [2.19.1](https://github.com/Esposter/Esposter/compare/v2.19.0...v2.19.1) (2026-02-05)
+
+**Note:** Version bump only for package @esposter/shared
+
+# [2.19.0](https://github.com/Esposter/Esposter/compare/v2.18.2...v2.19.0) (2026-02-05)
+
+### Bug Fixes
+
+* add comments and fixup takeOne to just be semantically the same ([d0f74d7](https://github.com/Esposter/Esposter/commit/d0f74d747bd63b968c2a6739fd8a3815430233f7))
+
+* add more fixes ([01d99c3](https://github.com/Esposter/Esposter/commit/01d99c3999de559c97947d9548ee6d2926c2dc36))
+
+* cleanup to have interface in type folder ([e2ddc57](https://github.com/Esposter/Esposter/commit/e2ddc57fbaee004ae656c40aa18d13c06f83b13b))
+
+* directly use index access instead of find boolean ([69fdae5](https://github.com/Esposter/Esposter/commit/69fdae5efd850805ce06595e973c90bed4ddb430))
+
+* finally fix up all type issues ([179e963](https://github.com/Esposter/Esposter/commit/179e9639f3cfdf05e08aff88e4844748158f0a1c))
+
+* oxlint ([3df2ec1](https://github.com/Esposter/Esposter/commit/3df2ec1ad17f36d77780656e27d3034cd3ac32de))
+
+* remaining type issues ([8d87ab9](https://github.com/Esposter/Esposter/commit/8d87ab99a01f59fd70a05a0980a3180416e15bd6))
+
+* remove page ([cc94539](https://github.com/Esposter/Esposter/commit/cc94539eab89680f927f8d6c9f95bd40af34677e))
+
+* remove page ([b287b34](https://github.com/Esposter/Esposter/commit/b287b34cf1d899b1c304c300eb74f549dbf43506))
+
+* replace with takeOne ([845c9ed](https://github.com/Esposter/Esposter/commit/845c9ed7d1fd9d8b9a4d5e730f2f92ad03e3085d))
+
+### Features
+
+* Add fluid simulator ([6c37027](https://github.com/Esposter/Esposter/commit/6c370272187d3892c5bcf97ce6230fa8000d5248))
+
+* Add page ([d186eba](https://github.com/Esposter/Esposter/commit/d186eba58e1e8b1417d0831722876acfee3b67b3))
+
+* Add takeOne ([0924a39](https://github.com/Esposter/Esposter/commit/0924a3914d1d8cf2f863070d1e0dc98e13c2d1c4))
+
+* **test:** add basic tests ([c8779c4](https://github.com/Esposter/Esposter/commit/c8779c4e77457df8f2520d4cc9d08c120493d7e4))
+
+* **test:** add basic tests for text ([95af749](https://github.com/Esposter/Esposter/commit/95af749e61d30fa2daf4a5129190e013966624cd))
+
+* **test:** add basic tests for time ([0f4d55c](https://github.com/Esposter/Esposter/commit/0f4d55c42e524c9ec2bcc67d4964b2c73fa17b2f))
+
+* **test:** add message tests ([3673b8e](https://github.com/Esposter/Esposter/commit/3673b8e6f0923a5761c058a333425617e639414d))
+
+* **test:** Add misc tests ([bcd0a9c](https://github.com/Esposter/Esposter/commit/bcd0a9c847f45a4686e126e2a10d5b8a9a704c10))
+
+* **test:** add more tests + some refactors ([a0ec126](https://github.com/Esposter/Esposter/commit/a0ec12663c8b42ec91d6e87b949c7a21ce744cf1))
+
+* **test:** Add some misc tests ([593b66f](https://github.com/Esposter/Esposter/commit/593b66fdd1a6f3fc0d8d731a0316d4e0b861dc62))
+
+* **test:** add some text tests ([1e251d1](https://github.com/Esposter/Esposter/commit/1e251d1b31a66127e4fb379bed5bc20274cd26b1))
+
+## [2.18.2](https://github.com/Esposter/Esposter/compare/v2.18.1...v2.18.2) (2025-12-10)
+
+**Note:** Version bump only for package @esposter/shared
+
+## [2.18.1](https://github.com/Esposter/Esposter/compare/v2.18.0...v2.18.1) (2025-12-10)
+
+**Note:** Version bump only for package @esposter/shared
+
+# [2.18.0](https://github.com/Esposter/Esposter/compare/v2.17.0...v2.18.0) (2025-12-10)
+
+### Bug Fixes
+
+* lint ([70399d2](https://github.com/Esposter/Esposter/commit/70399d2428f55466828962d7091ca579a1e7ef5c))
+
+### Features
+
+* Add endpoints for user room settings ([316ccff](https://github.com/Esposter/Esposter/commit/316ccff0a3fb23f701778b1004a1af0bf0d7de34))
+
+* fix up the UI to be nice ([a02a4ae](https://github.com/Esposter/Esposter/commit/a02a4ae84884fee5824a22caf0f57a8da845394f))
+
 # [2.17.0](https://github.com/Esposter/Esposter/compare/v2.16.0...v2.17.0) (2025-11-03)
 
 ### Features

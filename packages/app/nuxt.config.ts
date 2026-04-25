@@ -1,3 +1,6 @@
+// @TODO: This should not be required once nuxt fixes its types
+// oxlint-disable-next-line ban-ts-comment
+// @ts-nocheck
 import { app } from "./configuration/app";
 import { build } from "./configuration/build";
 import { compatibilityDate } from "./configuration/compatibilityDate";
@@ -7,6 +10,7 @@ import { experimental } from "./configuration/experimental";
 import { imports } from "./configuration/imports";
 import { modules } from "./configuration/modules";
 import { nitro } from "./configuration/nitro";
+import { ogImage } from "./configuration/ogImage";
 import { pwa } from "./configuration/pwa";
 import { runtimeConfig } from "./configuration/runtimeConfig";
 import { security } from "./configuration/security";
@@ -26,6 +30,7 @@ export default defineNuxtConfig({
   imports,
   modules,
   nitro,
+  ogImage,
   pwa,
   runtimeConfig,
   security,

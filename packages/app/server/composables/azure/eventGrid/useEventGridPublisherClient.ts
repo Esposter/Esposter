@@ -1,4 +1,5 @@
 import { AzureKeyCredential, EventGridPublisherClient } from "@azure/eventgrid";
+import { useRuntimeConfig } from "nitropack/runtime";
 
 export const useEventGridPublisherClient = () => {
   const runtimeConfig = useRuntimeConfig();

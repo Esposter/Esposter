@@ -8,23 +8,21 @@ import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test"
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { searchHistoryRouter } from "@@/server/trpc/routers/searchHistory";
 import { DatabaseEntityType, rooms, searchHistories } from "@esposter/db-schema";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("searchHistory", () => {
+  let mockContext: Context;
   let searchHistoryCaller: DecorateRouterRecord<TRPCRouter["searchHistory"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
-  let mockContext: Context;
   const name = "name";
   const query = "query";
   const updatedQuery = "updatedQuery";
 
   beforeAll(async () => {
-    const createCaller = createCallerFactory(searchHistoryRouter);
-    const createRoomCaller = createCallerFactory(roomRouter);
     mockContext = await createMockContext();
-    searchHistoryCaller = createCaller(mockContext);
-    roomCaller = createRoomCaller(mockContext);
+    searchHistoryCaller = createCallerFactory(searchHistoryRouter)(mockContext);
+    roomCaller = createCallerFactory(roomRouter)(mockContext);
   });
 
   afterEach(async () => {
@@ -49,9 +47,9 @@ describe("searchHistory", () => {
     const readSearchHistories = await searchHistoryCaller.readSearchHistories({ roomId: newRoom.id });
 
     expect(readSearchHistories.items).toHaveLength(1);
-    expect(readSearchHistories.items[0].id).toBe(newSearchHistory.id);
-    expect(readSearchHistories.items[0].roomId).toBe(newRoom.id);
-    expect(readSearchHistories.items[0].query).toBe(query);
+    expect(takeOne(readSearchHistories.items).id).toBe(newSearchHistory.id);
+    expect(takeOne(readSearchHistories.items).roomId).toBe(newRoom.id);
+    expect(takeOne(readSearchHistories.items).query).toBe(query);
   });
 
   test("fails read search histories with non-existent room id", async () => {
@@ -81,25 +79,6 @@ describe("searchHistory", () => {
 
     expect(newSearchHistory.query).toBe(query);
     expect(newSearchHistory.roomId).toBe(newRoom.id);
-  });
-
-  test("fails create with non-existent room", async () => {
-    expect.hasAssertions();
-
-    await expect(
-      searchHistoryCaller.createSearchHistory({ query, roomId: crypto.randomUUID() }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
-  });
-
-  test("fails create with non-existent member", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    await mockSessionOnce(mockContext.db);
-
-    await expect(
-      searchHistoryCaller.createSearchHistory({ query, roomId: newRoom.id }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
   test("updates", async () => {

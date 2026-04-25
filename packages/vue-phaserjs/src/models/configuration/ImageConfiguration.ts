@@ -16,7 +16,8 @@ import type { Types } from "phaser";
 import type { Except } from "type-fest";
 
 export interface ImageConfiguration
-  extends AlphaConfiguration,
+  extends
+    AlphaConfiguration,
     BlendModeConfiguration,
     DepthConfiguration,
     Except<Types.GameObjects.Sprite.SpriteConfig, "frame" | keyof Types.GameObjects.GameObjectConfig>,

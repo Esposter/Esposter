@@ -17,7 +17,8 @@ import type { Types } from "phaser";
 import type { Except } from "type-fest";
 
 export interface PathFollowerConfiguration
-  extends AlphaConfiguration,
+  extends
+    AlphaConfiguration,
     BlendModeConfiguration,
     DepthConfiguration,
     Except<Types.GameObjects.PathFollower.PathConfig, "rotateToPath">,

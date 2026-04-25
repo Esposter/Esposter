@@ -69,7 +69,7 @@ const { trigger } = watchTriggerable(session, (newSession) => {
           const css = editor.getCss();
           return css ? `${htmlFormat(html)}<style>\n${cssFormat(css)}</style>` : htmlFormat(html);
         },
-        modalImportLabel: '<div class="text-subtitle-2" mb-2.5>Paste here your HTML/CSS and click Import</div>',
+        modalImportLabel: '<div class="text-title-small" mb-2.5>Paste here your HTML/CSS and click Import</div>',
         modalImportTitle: "Import Template",
       }),
     ],
@@ -378,7 +378,10 @@ const { trigger } = watchTriggerable(session, (newSession) => {
         webpageEditorJson ? new WebpageEditor(jsonDateParse(webpageEditorJson)) : new WebpageEditor(),
       );
     },
-    store: (data) => new Promise(() => localStorage.setItem(WEBPAGE_EDITOR_LOCAL_STORAGE_KEY, JSON.stringify(data))),
+    store: (data) =>
+      new Promise<void>(() => {
+        localStorage.setItem(WEBPAGE_EDITOR_LOCAL_STORAGE_KEY, JSON.stringify(data));
+      }),
   });
   editor.Storage.add("remote", {
     load: () => readWebpageEditor(),

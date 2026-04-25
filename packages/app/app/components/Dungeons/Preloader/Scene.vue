@@ -4,9 +4,9 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 
 import files from "#shared/generated/phaser/files.json";
 import { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
-import { SpritesheetLoaderMap } from "@/models/dungeons/loader/spritesheet/SpritesheetLoaderMap";
-import { TilemapLoaderMap } from "@/models/dungeons/loader/TilemapLoaderMap";
-import { TilesetLoaderMap } from "@/models/dungeons/loader/TilesetLoaderMap";
+import { SpritesheetLoaders } from "@/models/dungeons/loader/spritesheet/SpritesheetLoaderMap";
+import { TilemapLoaders } from "@/models/dungeons/loader/TilemapLoaderMap";
+import { TilesetLoaders } from "@/models/dungeons/loader/TilesetLoaderMap";
 import { prettify } from "@/util/text/prettify";
 import { AzureContainer } from "@esposter/db-schema";
 import { Rectangle, Text, usePhaserStore } from "vue-phaserjs";
@@ -43,9 +43,9 @@ const preload = (scene: SceneWithPlugins) => {
       await switchToScene(isProduction ? SceneKey.Title : SceneKey.Title);
     });
 
-  for (const spritesheetLoader of Object.values(SpritesheetLoaderMap)) spritesheetLoader(scene);
-  for (const tilesetLoader of Object.values(TilesetLoaderMap)) tilesetLoader(scene);
-  for (const tilemapLoader of Object.values(TilemapLoaderMap)) tilemapLoader(scene);
+  for (const spritesheetLoader of SpritesheetLoaders) spritesheetLoader(scene);
+  for (const tilesetLoader of TilesetLoaders) tilesetLoader(scene);
+  for (const tilemapLoader of TilemapLoaders) tilemapLoader(scene);
 
   scene.load.setBaseURL(`${containerBaseUrl}/${AzureContainer.DungeonsAssets}`);
   scene.load.pack(files);

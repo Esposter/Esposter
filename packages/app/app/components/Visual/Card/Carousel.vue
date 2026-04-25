@@ -1,10 +1,10 @@
 <!-- @BIG CREDIT TO Braedon Wooding for providing the base animation code for this AMAZING card carousel -->
 <script setup lang="ts">
 import type { Card } from "@/models/visual/Card";
-import type { Component } from "vue";
 
 import { dayjs } from "#shared/services/dayjs";
 import CardBase from "@/components/Visual/Card/Base.vue";
+import { takeOne } from "@esposter/shared";
 
 interface VisualCardCarouselProps {
   cards: Card[];
@@ -68,7 +68,7 @@ interface CardStyleVariables {
 // This can also act as a z index for us to use, which is pretty convenient C:
 const cardIds = ref<number[]>(cards.map((_card, index) => index));
 
-// the active card is the card that's moving from right -> left -> right.
+// The active card is the card that's moving from right -> left -> right.
 const activeCardId = ref<number>();
 const inactiveCardId = ref<number>();
 
@@ -97,7 +97,7 @@ const getClass = (cardId: number): string => {
 const moveCardsTimer = ref<number>();
 
 // This marks the first card as active (which is the top card on the right)
-// then moves it to the end of the array, and after a timeout unmarks it as active.
+// Then moves it to the end of the array, and after a timeout unmarks it as active.
 const moveCards = () => {
   if (cards.length === 0) return;
   else if (cards.length === 1) {
@@ -106,7 +106,7 @@ const moveCards = () => {
   }
 
   inactiveCardId.value = activeCardId.value;
-  activeCardId.value = cardIds.value[0];
+  activeCardId.value = takeOne(cardIds.value);
   // "Rotate" the cards
   cardIds.value = cardIds.value.map((id) => (id + 1) % cards.length);
 };
@@ -118,7 +118,7 @@ const moveOneCard = () => {
 };
 
 // Everytime the screen changes we animate, this is to avoid the cards getting stuck in weird positions.
-const { thresholds, width } = useDisplay();
+const { thresholds, width } = useVDisplay();
 
 const gap = computed<string>(() => {
   let gap = 2;
@@ -128,7 +128,7 @@ const gap = computed<string>(() => {
 });
 
 // Every card from right -> left has increasing margin (by 1rem each time)
-// this is scaled by 'scale', so in 1920 it's 1.25rem and in 3840 it's 2.5rem
+// This is scaled by 'scale', so in 1920 it's 1.25rem and in 3840 it's 2.5rem
 const scale = computed<number>(() => {
   let scale = 1;
   if (width.value >= thresholds.value.xxl) scale = 2.5;
@@ -142,16 +142,16 @@ const normalCardStyles = computed<CardStyleVariables[]>(() => {
   const items: CardStyleVariables[] = [];
 
   // Start from the right most card and calculate recursively by moving left
-  // so we are able to use the right-neighbour card's marginRight and scaleY
-  // for the current card's oldMarginRight and oldScaleY
+  // So we are able to use the right-neighbour card's marginRight and scaleY
+  // For the current card's oldMarginRight and oldScaleY
   // Remember that our animation flows from right (old) to left (new)
   // We'll reverse the items at the end so it still maintains LTR chronological order
   for (let i = 0; i < numberOfCards; i++)
     items.push({
       marginRight: `${i * scale.value}rem`,
       // Normal cards talk about how they move from their position to the next one
-      oldMarginRight: i === 0 ? inactiveCardStyle.value.marginRight : items[items.length - 1].marginRight,
-      oldScaleY: i === 0 ? inactiveCardStyle.value.scaleY : items[items.length - 1].scaleY,
+      oldMarginRight: i === 0 ? inactiveCardStyle.value.marginRight : takeOne(items, items.length - 1).marginRight,
+      oldScaleY: i === 0 ? inactiveCardStyle.value.scaleY : takeOne(items, items.length - 1).scaleY,
       // We lose 10% for each shift
       scaleY: `${1 - Math.max(0, cardScaleYRatioLoss * (numberOfCards - 1 - i))}`,
     });
@@ -164,7 +164,7 @@ const normalCardStyles = computed<CardStyleVariables[]>(() => {
 });
 
 const activeCardStyle = computed<CardStyleVariables>(() => ({
-  oldMarginRight: normalCardStyles.value.length > 0 ? normalCardStyles.value[0].marginRight : "0",
+  oldMarginRight: normalCardStyles.value.length > 0 ? takeOne(normalCardStyles.value).marginRight : "0",
 }));
 
 const inactiveCardStyle = computed<CardStyleVariables>(() => {
@@ -322,21 +322,21 @@ watch(
 // this sadly means that we need to list all variables here.
 // This is quite ugly, but does solve having to list out each class manually...
 .force-vue-to-pickup-bindings {
-  left: v-bind("normalCardStyles[0].marginRight");
-  left: v-bind("normalCardStyles[0].oldMarginRight");
-  left: v-bind("normalCardStyles[0].scaleY");
-  left: v-bind("normalCardStyles[0].oldScaleY");
-  left: v-bind("normalCardStyles[1].marginRight");
-  left: v-bind("normalCardStyles[1].oldMarginRight");
-  left: v-bind("normalCardStyles[1].scaleY");
-  left: v-bind("normalCardStyles[1].oldScaleY");
-  left: v-bind("normalCardStyles[2].marginRight");
-  left: v-bind("normalCardStyles[2].oldMarginRight");
-  left: v-bind("normalCardStyles[2].scaleY");
-  left: v-bind("normalCardStyles[2].oldScaleY");
-  left: v-bind("normalCardStyles[3].marginRight");
-  left: v-bind("normalCardStyles[3].oldMarginRight");
-  left: v-bind("normalCardStyles[3].scaleY");
-  left: v-bind("normalCardStyles[3].oldScaleY");
+  left: v-bind("takeOne(normalCardStyles).marginRight");
+  left: v-bind("takeOne(normalCardStyles).oldMarginRight");
+  left: v-bind("takeOne(normalCardStyles).scaleY");
+  left: v-bind("takeOne(normalCardStyles).oldScaleY");
+  left: v-bind("takeOne(normalCardStyles).marginRight");
+  left: v-bind("takeOne(normalCardStyles).oldMarginRight");
+  left: v-bind("takeOne(normalCardStyles, 1).scaleY");
+  left: v-bind("takeOne(normalCardStyles, 1).oldScaleY");
+  left: v-bind("takeOne(normalCardStyles, 2).marginRight");
+  left: v-bind("takeOne(normalCardStyles, 2).oldMarginRight");
+  left: v-bind("takeOne(normalCardStyles, 2).scaleY");
+  left: v-bind("takeOne(normalCardStyles, 2).oldScaleY");
+  left: v-bind("takeOne(normalCardStyles, 3).marginRight");
+  left: v-bind("takeOne(normalCardStyles, 3).oldMarginRight");
+  left: v-bind("takeOne(normalCardStyles, 3).scaleY");
+  left: v-bind("takeOne(normalCardStyles, 3).oldScaleY");
 }
 </style>

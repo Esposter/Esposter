@@ -1,15 +1,17 @@
+// oxlint-disable @typescript-eslint/no-unnecessary-type-arguments
 import type { Position } from "grid-engine";
 import type { TweenBuilderConfiguration } from "vue-phaserjs";
 
 import { getAttack } from "@/services/dungeons/attack/getAttack";
 import { isMonsterFainted } from "@/services/dungeons/monster/isMonsterFainted";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
+import { takeOne } from "@esposter/shared";
 
 export const useBattlePlayerStore = defineStore("dungeons/battle/player", () => {
   const monsterPartySceneStore = useMonsterPartySceneStore();
   const activeMonsterIndex = ref(monsterPartySceneStore.monsters.findIndex((m) => !isMonsterFainted(m)));
   const activeMonster = computed({
-    get: () => monsterPartySceneStore.monsters[activeMonsterIndex.value],
+    get: () => takeOne(monsterPartySceneStore.monsters, activeMonsterIndex.value),
     set: (newActiveMonster) => {
       monsterPartySceneStore.monsters[activeMonsterIndex.value] = newActiveMonster;
     },
@@ -19,12 +21,11 @@ export const useBattlePlayerStore = defineStore("dungeons/battle/player", () => 
   };
 
   const initialMonsterPosition = Object.freeze<Position>({ x: -150, y: 316 });
-  const monsterPosition = ref({ ...initialMonsterPosition });
+  const monsterPosition = ref(structuredClone<Position>(initialMonsterPosition));
   const monsterTween = ref<TweenBuilderConfiguration>();
   const initialMonsterInfoContainerPosition = Object.freeze<Position>({ x: 1200, y: 318 });
-  const monsterInfoContainerPosition = ref({ ...initialMonsterInfoContainerPosition });
+  const monsterInfoContainerPosition = ref(structuredClone<Position>(initialMonsterInfoContainerPosition));
   const monsterInfoContainerTween = ref<TweenBuilderConfiguration>();
-  const takeDamage = useTakeDamage(false);
   const attacks = computed(() => activeMonster.value.attackIds.map(getAttack));
 
   return {
@@ -37,6 +38,5 @@ export const useBattlePlayerStore = defineStore("dungeons/battle/player", () => 
     monsterPosition,
     monsterTween,
     switchActiveMonster,
-    takeDamage,
   };
 });

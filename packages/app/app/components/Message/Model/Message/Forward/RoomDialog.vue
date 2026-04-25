@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
+import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 import { useAlertStore } from "@/store/alert";
 import { useDataStore } from "@/store/message/data";
-import { useForwardStore } from "@/store/message/forward";
+import { useForwardStore } from "@/store/message/input/forward";
 import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
-import { RoutePath } from "@esposter/shared";
+import { RoutePath, takeOne } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
 const alertStore = useAlertStore();
@@ -28,19 +29,16 @@ const {
   readMoreItemsSearched,
   searchQuery,
 } = useCursorSearcher(
-  (searchQuery, cursor) =>
-    $trpc.room.readRooms.useQuery({
-      cursor,
-      filter: { name: searchQuery },
-    }),
-  (searchQuery, cursor, opts) =>
-    $trpc.room.readRooms.query(
+  (searchQuery, cursor, opts) => {
+    const trimmedSearchQuery = searchQuery.trim();
+    return $trpc.room.readRooms.query(
       {
         cursor,
-        filter: { name: searchQuery },
+        filter: trimmedSearchQuery ? { name: trimmedSearchQuery } : undefined,
       },
       opts,
-    ),
+    );
+  },
   true,
   true,
 );
@@ -54,7 +52,7 @@ const {
           Forward To
           <v-btn density="comfortable" icon="mdi-close" @click="dialog = false" />
         </div>
-        <div class="text-subtitle-2" text-gray pb-2>Select where you want to share this message.</div>
+        <div class="text-title-small" text-gray pb-2>Select where you want to share this message.</div>
         <v-text-field
           v-model="searchQuery"
           append-inner-icon="mdi-magnify"
@@ -63,7 +61,7 @@ const {
           hide-details
         />
       </v-card-title>
-      <v-card-text p-4="!" overflow-y-auto>
+      <v-card-text p-4 overflow-y-auto>
         <v-list py-0>
           <MessageModelMessageForwardRoomListItem v-for="room of itemsSearched" :key="room.id" :room />
           <StyledWaypoint :is-active="hasMore" @change="readMoreItemsSearched">
@@ -72,7 +70,7 @@ const {
         </v-list>
       </v-card-text>
       <v-divider />
-      <MessageModelMessageType :creator :message="forward" is-preview />
+      <component :is="MessageComponentMap[forward.type]" v-if="forward" :creator :message="forward" is-preview />
       <v-divider />
       <v-card-actions flex-col gap-0>
         <RichTextEditor v-model="messageInput" :limit="MESSAGE_MAX_LENGTH" placeholder="Add an optional message..." />
@@ -88,7 +86,7 @@ const {
               const { partitionKey, rowKey } = forward;
               await $trpc.message.forwardMessage.mutate({ partitionKey, rowKey, roomIds, message: messageInput });
               if (roomIds.length === 1) {
-                await navigateTo(RoutePath.Messages(roomIds[0]));
+                await navigateTo(RoutePath.Messages(takeOne(roomIds)));
                 createAlert('Message forwarded!', 'success', { location: 'top center', icon: 'mdi-share' });
               }
               dialog = false;

@@ -3,6 +3,7 @@ import type { CSSProperties } from "vue";
 import type { VNavigationDrawer } from "vuetify/components";
 
 import { useLayoutStore } from "@/store/layout";
+import { takeOne } from "@esposter/shared";
 
 interface DefaultProps {
   footerStyle?: CSSProperties;
@@ -12,17 +13,18 @@ interface DefaultProps {
   rightNavigationDrawerProps?: VNavigationDrawer["$props"];
 }
 
-const { footerStyle, hideGlobalScrollbar, leftNavigationDrawerProps, mainStyle, rightNavigationDrawerProps } =
-  defineProps<DefaultProps>();
 const slots = defineSlots<{
   default?: () => VNode;
   footer?: () => VNode;
   left?: () => VNode;
   right?: () => VNode;
 }>();
+const { footerStyle, hideGlobalScrollbar, leftNavigationDrawerProps, mainStyle, rightNavigationDrawerProps } =
+  defineProps<DefaultProps>();
 const layoutStore = useLayoutStore();
 const { isDesktop, isLeftDrawerOpen, isLeftDrawerOpenAuto, isRightDrawerOpen, isRightDrawerOpenAuto } =
   storeToRefs(layoutStore);
+const container = useTemplateRef("container");
 const footer = useTemplateRef("footer");
 const bottomOffset = ref(0);
 // Fix the layout structure so navigating does not cause a layout shift
@@ -31,7 +33,7 @@ const { bottom, left, middle, right } = useFixedLayoutStyles(bottomOffset);
 useResizeObserver(
   () => footer.value?.$el,
   (entries) => {
-    const entry = entries[0];
+    const entry = takeOne(entries);
     const { bottom } = entry.contentRect;
     bottomOffset.value = bottom;
   },
@@ -41,6 +43,8 @@ onMounted(() => {
   isLeftDrawerOpen.value = isLeftDrawerOpenAuto.value = slots.left ? isDesktop.value : false;
   isRightDrawerOpen.value = isRightDrawerOpenAuto.value = slots.right ? isDesktop.value : false;
 });
+
+defineExpose({ container: computed<HTMLElement>(() => container.value?.$el) });
 </script>
 
 <template>
@@ -76,7 +80,7 @@ onMounted(() => {
       <slot name="right" />
     </v-navigation-drawer>
     <!-- Set max height here so we can hide global window scrollbar -->
-    <v-main :style="{ ...middle, ...mainStyle, maxHeight: hideGlobalScrollbar ? '100dvh' : undefined }">
+    <v-main ref="container" :style="{ ...middle, ...mainStyle, maxHeight: hideGlobalScrollbar ? '100dvh' : undefined }">
       <slot />
     </v-main>
 

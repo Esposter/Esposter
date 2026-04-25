@@ -5,8 +5,8 @@ import type { MessageEntity } from "@esposter/db-schema";
 import { dayjs } from "#shared/services/dayjs";
 import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 import { useMessageStore } from "@/store/message";
-import { useForwardStore } from "@/store/message/forward";
-import { useReplyStore } from "@/store/message/reply";
+import { useForwardStore } from "@/store/message/input/forward";
+import { useReplyStore } from "@/store/message/input/reply";
 import { MessageType } from "@esposter/db-schema";
 
 interface MessageListItemProps {
@@ -26,12 +26,17 @@ const isSameBatch = computed(
     dayjs(message.createdAt).diff(nextMessage.createdAt, "minutes") <= 5,
 );
 const messageStore = useMessageStore();
-const { optionsMenu } = storeToRefs(messageStore);
+const { editingRowKey, optionsMenu } = storeToRefs(messageStore);
 const replyStore = useReplyStore();
 const { activeRowKey: activeReplyRowKey, rowKey: replyRowKey } = storeToRefs(replyStore);
 const forwardStore = useForwardStore();
 const { rowKey: forwardRowKey } = storeToRefs(forwardStore);
-const isUpdateMode = ref(false);
+const isUpdateMode = computed({
+  get: () => editingRowKey.value === message.rowKey,
+  set: (value) => {
+    editingRowKey.value = value ? message.rowKey : undefined;
+  },
+});
 const isMessageActive = ref(false);
 const isOptionsActive = ref(false);
 const isOptionsChildrenActive = ref(false);
@@ -56,8 +61,8 @@ watch(optionsMenu, (newOptionsMenu) => {
         :is="MessageComponentMap[message.type]"
         :id="message.rowKey"
         :mt="isSameBatch ? undefined : 4"
-        py-1="!"
-        min-h-auto="!"
+        py-1
+        min-h-auto
         :op="message.isLoading ? 50 : undefined"
         :active="(isActive || activeReplyRowKey === message.rowKey) && !isOpen"
         :creator
@@ -66,10 +71,10 @@ watch(optionsMenu, (newOptionsMenu) => {
         @mouseenter="isMessageActive = true"
         @mouseleave="isMessageActive = false"
         @contextmenu.prevent="
-          ({ clientX, clientY }: MouseEvent) => {
+          (event: MouseEvent) => {
             optionsMenu = {
               rowKey: message.rowKey,
-              target: [clientX, clientY],
+              target: [event.clientX, event.clientY],
             };
           }
         "
@@ -106,7 +111,7 @@ watch(optionsMenu, (newOptionsMenu) => {
                 />
               </template>
               <template #messagePreview>
-                <MessageModelMessageType :creator :message :next-message is-preview />
+                <component :is="MessageComponentMap[message.type]" :creator :message is-preview />
               </template>
             </MessageModelMessageConfirmPinDialog>
           </v-hover>
@@ -114,7 +119,7 @@ watch(optionsMenu, (newOptionsMenu) => {
       </div>
     </template>
     <template #messagePreview>
-      <MessageModelMessageType :creator :message :next-message is-preview />
+      <component :is="MessageComponentMap[message.type]" :creator :message is-preview />
     </template>
   </MessageModelMessageConfirmDeleteDialog>
 </template>

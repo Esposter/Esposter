@@ -5,8 +5,7 @@ import { useClickerStore } from "@/store/clicker";
 await useReadClicker();
 useTimers();
 const clickerStore = useClickerStore();
-const { clicker } = storeToRefs(clickerStore);
-const clickerItemProperties = useClickerItemProperties();
+const { clicker, clickerItemProperties } = storeToRefs(clickerStore);
 const displayNoPoints = computed(() => formatNumberLong(clicker.value.noPoints, 3));
 </script>
 
@@ -34,6 +33,6 @@ const displayNoPoints = computed(() => formatNumberLong(clicker.value.noPoints, 
 
 <style scoped lang="scss">
 :deep(.v-list-group__items > .v-list-item) {
-  padding-inline-start: 1rem !important;
+  padding-inline-start: 1rem;
 }
 </style>

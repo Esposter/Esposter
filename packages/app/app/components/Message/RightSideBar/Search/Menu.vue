@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { SearchFilterComponentMap } from "@/services/message/filter/SearchFilterComponentMap";
-import { useSearchMessageStore } from "@/store/message/searchMessage";
+import { useSearchMessageStore } from "@/store/message/search";
 
 const searchMessageStore = useSearchMessageStore();
 const { activeSelectedFilter, menu } = storeToRefs(searchMessageStore);

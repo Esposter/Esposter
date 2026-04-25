@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
+/* oxlint-disable @typescript-eslint/prefer-nullish-coalescing */
+import type { FileFieldValue } from "@/models/vuetify/FileFieldValue";
+import type { TextFieldValue } from "@/models/vuetify/TextFieldValue";
 import type { ValidationRule } from "vuetify";
 
 import { MAX_REQUEST_SIZE, MEGABYTE } from "#shared/services/app/constants";
 import { profanityMatcher } from "#shared/services/obscenity/profanityMatcher";
-
-type FileFieldValue = File | undefined;
-type TextFieldValue = null | string;
 
 export const formRules: {
   isNotProfanity: ValidationRule;
@@ -17,7 +16,7 @@ export const formRules: {
     !value || !profanityMatcher.hasMatch(value) || `This field cannot contain profanity`,
   requireAtMostMaxFileSize: (value: FileFieldValue) =>
     // @TODO: Right now trpc uses application/octet-stream for uploading files which uses the same namespace as normal requests
-    // compared to using multipart/form-data, so we'll apply the same frontend validation for now for simplicity
+    // Compared to using multipart/form-data, so we'll apply the same frontend validation for now for simplicity
     !value ||
     value.size < MAX_REQUEST_SIZE ||
     `This field's file size should be less than ${MAX_REQUEST_SIZE / MEGABYTE} MB`,

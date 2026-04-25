@@ -1,9 +1,10 @@
 /* eslint-disable perfectionist/sort-switch-case */
 import type { Filter } from "@esposter/db-schema";
 
+import { useRoomStore } from "@/store/message/room";
 import { useMemberStore } from "@/store/message/user/member";
 import { FilterType, serializeValue } from "@esposter/db-schema";
-import { InvalidOperationError, Operation, uncapitalize } from "@esposter/shared";
+import { exhaustiveGuard, InvalidOperationError, Operation, uncapitalize } from "@esposter/shared";
 
 export const getFilterDisplayValue = ({ type, value }: Filter) => {
   const displayType = `${uncapitalize(type)}:`;
@@ -19,6 +20,14 @@ export const getFilterDisplayValue = ({ type, value }: Filter) => {
       const member = memberMap.value.get(value);
       return `${displayType} ${member?.name ?? value}`;
     }
+    case FilterType.In: {
+      if (typeof value !== "string")
+        throw new InvalidOperationError(Operation.Read, getFilterDisplayValue.name, serializeValue(value));
+      const roomStore = useRoomStore();
+      const { rooms } = storeToRefs(roomStore);
+      const room = rooms.value.find(({ id }) => id === value);
+      return `${displayType} ${room?.name ?? value}`;
+    }
     case FilterType.Has:
       if (typeof value !== "string")
         throw new InvalidOperationError(Operation.Read, getFilterDisplayValue.name, serializeValue(value));
@@ -33,5 +42,7 @@ export const getFilterDisplayValue = ({ type, value }: Filter) => {
       if (typeof value !== "boolean")
         throw new InvalidOperationError(Operation.Read, getFilterDisplayValue.name, serializeValue(value));
       return `${displayType} ${value}`;
+    default:
+      return exhaustiveGuard(type);
   }
 };

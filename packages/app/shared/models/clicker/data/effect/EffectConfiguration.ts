@@ -10,10 +10,10 @@ import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";
 // Only used for effect types that are based off other specific targets
 export interface EffectConfiguration extends ItemEntityType<EffectType> {
-  // e.g. "Upgrade" item type would apply the effect to enhance the upgrade effects themselves
+  // E.g. "Upgrade" item type would apply the effect to enhance the upgrade effects themselves
   itemType?: ItemType;
   // Only used if the effect type affects special item types
-  // e.g. BuildingAdditive requires number of buildings (targets)
+  // E.g. BuildingAdditive requires number of buildings (targets)
   targets?: Target[];
 }
 

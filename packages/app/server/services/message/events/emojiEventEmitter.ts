@@ -7,10 +7,10 @@ import { EventEmitter } from "node:events";
 
 interface EmojiEvents {
   // We need to know who actually operated on the emoji
-  // so we don't send duplicate events back to the original user
-  createEmoji: [MessageEmojiMetadataEntity, Device][];
-  deleteEmoji: [DeleteEmojiInput, Device][];
-  updateEmoji: [Pick<MessageEmojiMetadataEntity, "userIds"> & UpdateEmojiInput, Device][];
+  // So we don't send duplicate events back to the original user
+  createEmoji: [[MessageEmojiMetadataEntity, Device]];
+  deleteEmoji: [[DeleteEmojiInput, Device]];
+  updateEmoji: [[Pick<MessageEmojiMetadataEntity, "userIds"> & UpdateEmojiInput, Device]];
 }
 
 export const emojiEventEmitter = new EventEmitter<EmojiEvents>();

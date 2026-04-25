@@ -1,20 +1,19 @@
 // https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/desmos/index.d.ts
 declare namespace Desmos {
-  interface BasicCalculator
-    extends Pick<
-      Calculator,
-      | "clearHistory"
-      | "destroy"
-      | "focusFirstExpression"
-      | "getState"
-      | "observeEvent"
-      | "redo"
-      | "resize"
-      | "setBlank"
-      | "setState"
-      | "undo"
-      | "unobserveEvent"
-    > {
+  interface BasicCalculator extends Pick<
+    Calculator,
+    | "clearHistory"
+    | "destroy"
+    | "focusFirstExpression"
+    | "getState"
+    | "observeEvent"
+    | "redo"
+    | "resize"
+    | "setBlank"
+    | "setState"
+    | "undo"
+    | "unobserveEvent"
+  > {
     updateSettings(
       settings: Parameters<typeof FourFunctionCalculator>[1] | Parameters<typeof ScientificCalculator>[1],
     ): void;
@@ -24,7 +23,7 @@ declare namespace Desmos {
    * The page element which will display your axes, grid-lines, equations, and points.
    */
   interface Calculator {
-    // methods
+    // Methods
     /**
      * Similar to GraphingCalculator.screenshot, but asynchronous. Rather than returning a PNG data URI directly,
      * callback will be called with the either a URI string or SVG string as its argument.
@@ -143,7 +142,7 @@ declare namespace Desmos {
       observe(eventName: "listValue" | "numericValue" | string, callback: () => void): void;
     };
     /**
-     * true when an expression is selected, false when no expression is selected.
+     * True when an expression is selected, false when no expression is selected.
      */
     isAnyExpressionSelected: boolean;
     /**
@@ -254,7 +253,7 @@ declare namespace Desmos {
      */
     setMathBounds(bounds: { bottom?: number; left?: number; right?: number; top?: number }): void;
 
-    // properties
+    // Properties
     /**
      * Reset the calculator to a state previously saved using GraphingCalculator.getState.
      */
@@ -516,7 +515,7 @@ declare namespace Desmos {
      */
     brailleControls?: boolean;
     /**
-     * none'   Set the input and output Braille code for persons using refreshable Braille displays. Valid options are 'nemeth', 'ueb', or 'none'.
+     * None'   Set the input and output Braille code for persons using refreshable Braille displays. Valid options are 'nemeth', 'ueb', or 'none'.
      * @default "none"
      */
     brailleMode?: "nemeth" | "none" | "ueb";

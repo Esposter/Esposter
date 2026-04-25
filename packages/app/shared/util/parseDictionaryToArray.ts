@@ -2,4 +2,6 @@ export const parseDictionaryToArray = <TId extends string, T extends object, TId
   dictionary: Record<TId, T>,
   idKey: TIdKey = "id" as TIdKey,
 ) =>
-  Object.entries(dictionary).map(([id, rest]) => ({ [idKey]: id as TId, ...(rest as T) }) as Record<TIdKey, TId> & T);
+  Object.entries(dictionary).map(
+    ([id, rest]) => Object.assign(rest as T, { [idKey]: id as TId }) as Record<TIdKey, TId> & T,
+  );

@@ -39,7 +39,7 @@ import {
   surveyResponseEntitySchema,
   surveys,
 } from "@esposter/db-schema";
-import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
+import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, count, eq } from "drizzle-orm";
 import { z } from "zod";
@@ -95,15 +95,17 @@ export type UpdateSurveyResponseInput = z.infer<typeof updateSurveyResponseInput
 export const surveyRouter = router({
   count: standardAuthedProcedure.query(
     async ({ ctx }) =>
-      (await ctx.db.select({ count: count() }).from(surveys).where(eq(surveys.userId, ctx.session.user.id)))[0].count,
+      takeOne(
+        await ctx.db.select({ count: count() }).from(surveys).where(eq(surveys.userId, ctx.getSessionPayload.user.id)),
+      ).count,
   ),
   createSurvey: standardAuthedProcedure.input(createSurveyInputSchema).mutation<Survey>(async ({ ctx, input }) => {
     const newSurvey = (
       await ctx.db
         .insert(surveys)
-        .values({ ...input, userId: ctx.session.user.id })
+        .values({ ...input, userId: ctx.getSessionPayload.user.id })
         .returning()
-    ).find(Boolean);
+    )[0];
     if (!newSurvey)
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -134,9 +136,9 @@ export const surveyRouter = router({
     const deletedSurvey = (
       await ctx.db
         .delete(surveys)
-        .where(and(eq(surveys.id, input), eq(surveys.userId, ctx.session.user.id)))
+        .where(and(eq(surveys.id, input), eq(surveys.userId, ctx.getSessionPayload.user.id)))
         .returning()
-    ).find(Boolean);
+    )[0];
     if (!deletedSurvey)
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -221,7 +223,7 @@ export const surveyRouter = router({
         offset,
         orderBy: (surveys, { desc }) =>
           sortBy.length > 0 ? parseSortByToSql(surveys, sortBy) : desc(surveys.updatedAt),
-        where: (surveys) => eq(surveys.userId, ctx.session.user.id),
+        where: (surveys) => eq(surveys.userId, ctx.getSessionPayload.user.id),
       });
       return getOffsetPaginationData(resultSurveys, limit);
     }),
@@ -232,9 +234,9 @@ export const surveyRouter = router({
         await ctx.db
           .update(surveys)
           .set(rest)
-          .where(and(eq(surveys.id, id), eq(surveys.userId, ctx.session.user.id)))
+          .where(and(eq(surveys.id, id), eq(surveys.userId, ctx.getSessionPayload.user.id)))
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!updatedSurvey)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -265,9 +267,9 @@ export const surveyRouter = router({
         await ctx.db
           .update(surveys)
           .set(rest)
-          .where(and(eq(surveys.id, id), eq(surveys.userId, ctx.session.user.id)))
+          .where(and(eq(surveys.id, id), eq(surveys.userId, ctx.getSessionPayload.user.id)))
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!updatedSurvey)
         throw new TRPCError({
           code: "BAD_REQUEST",

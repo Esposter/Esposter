@@ -1,19 +1,22 @@
 <script setup lang="ts">
-import type { Session } from "@/models/auth/Session";
+import type { User } from "better-auth";
 import type { VAvatar } from "vuetify/components";
+
+import { mergeProps } from "vue";
 // @TODO: https://github.com/vuejs/core/issues/11371
 interface StyledAvatarProps {
+  avatarAttrs?: VAvatar["$attrs"];
   avatarProps?: VAvatar["$props"];
-  image: Session["user"]["image"];
-  name: Session["user"]["name"];
+  image?: User["image"];
+  name: User["name"];
 }
 
-const { avatarProps, image } = defineProps<StyledAvatarProps>();
+const { avatarAttrs = {}, avatarProps = {}, image, name } = defineProps<StyledAvatarProps>();
 </script>
 
 <template>
-  <v-avatar v-if="image" :="avatarProps">
+  <v-avatar v-if="image" :="mergeProps(avatarAttrs, avatarProps)">
     <v-img :src="image" :alt="name" />
   </v-avatar>
-  <StyledDefaultAvatar v-else :="avatarProps" />
+  <StyledDefaultAvatar v-else :="mergeProps(avatarAttrs, avatarProps)" />
 </template>

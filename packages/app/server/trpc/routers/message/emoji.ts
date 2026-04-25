@@ -22,6 +22,7 @@ import {
   AZURE_MAX_PAGE_SIZE,
   AzureTable,
   BinaryOperator,
+  CompositeKeyPropertyNames,
   MessageMetadataType,
   selectRoomSchema,
 } from "@esposter/db-schema";
@@ -39,64 +40,71 @@ const onDeleteEmojiInputSchema = z.object({ roomId: selectRoomSchema.shape.id })
 export type OnDeleteEmojiInput = z.infer<typeof onDeleteEmojiInputSchema>;
 
 export const emojiRouter = router({
-  createEmoji: getMemberProcedure(createEmojiInputSchema, "partitionKey").mutation(async ({ ctx, input }) => {
-    const messagesMetadataClient = (await useTableClient(
-      AzureTable.MessagesMetadata,
-    )) as CustomTableClient<MessageEmojiMetadataEntity>;
-    const clauses: Clause[] = [
-      {
-        key: MessageEmojiMetadataEntityPropertyNames.partitionKey,
-        operator: BinaryOperator.eq,
-        value: input.partitionKey,
-      },
-      {
-        key: MessageEmojiMetadataEntityPropertyNames.type,
-        operator: BinaryOperator.eq,
-        value: MessageMetadataType.Emoji,
-      },
-      {
-        key: MessageEmojiMetadataEntityPropertyNames.messageRowKey,
-        operator: BinaryOperator.eq,
-        value: input.messageRowKey,
-      },
-      {
-        key: MessageEmojiMetadataEntityPropertyNames.emojiTag,
-        operator: BinaryOperator.eq,
-        value: input.emojiTag,
-      },
-    ];
-    const foundEmoji = (
-      await getTopNEntities(messagesMetadataClient, 1, MessageEmojiMetadataEntity, {
-        filter: serializeClauses(clauses),
-      })
-    ).find(Boolean);
-    if (foundEmoji)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(Operation.Create, MessageMetadataType.Emoji, JSON.stringify(foundEmoji))
-          .message,
-      });
+  createEmoji: getMemberProcedure(createEmojiInputSchema, CompositeKeyPropertyNames.partitionKey).mutation(
+    async ({ ctx, input }) => {
+      const messagesMetadataClient = (await useTableClient(
+        AzureTable.MessagesMetadata,
+      )) as CustomTableClient<MessageEmojiMetadataEntity>;
+      const clauses: Clause<MessageEmojiMetadataEntity>[] = [
+        {
+          key: CompositeKeyPropertyNames.partitionKey,
+          operator: BinaryOperator.eq,
+          value: input.partitionKey,
+        },
+        {
+          key: MessageEmojiMetadataEntityPropertyNames.type,
+          operator: BinaryOperator.eq,
+          value: MessageMetadataType.Emoji,
+        },
+        {
+          key: MessageEmojiMetadataEntityPropertyNames.messageRowKey,
+          operator: BinaryOperator.eq,
+          value: input.messageRowKey,
+        },
+        {
+          key: MessageEmojiMetadataEntityPropertyNames.emojiTag,
+          operator: BinaryOperator.eq,
+          value: input.emojiTag,
+        },
+      ];
+      const foundEmoji = (
+        await getTopNEntities(messagesMetadataClient, 1, MessageEmojiMetadataEntity, {
+          filter: serializeClauses(clauses),
+        })
+      )[0];
+      if (foundEmoji)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Create, MessageMetadataType.Emoji, JSON.stringify(foundEmoji))
+            .message,
+        });
 
-    const newEmoji = createMessageEmojiMetadataEntity({ ...input, userIds: [ctx.session.user.id] });
-    await createEntity(messagesMetadataClient, newEmoji);
-    emojiEventEmitter.emit("createEmoji", [
-      newEmoji,
-      { sessionId: ctx.session.session.id, userId: ctx.session.user.id },
-    ]);
-    return newEmoji;
-  }),
-  deleteEmoji: getMemberProcedure(deleteEmojiInputSchema, "partitionKey").mutation(async ({ ctx, input }) => {
-    const messagesMetadataClient = await useTableClient(AzureTable.MessagesMetadata);
-    await deleteEntity(messagesMetadataClient, input.partitionKey, input.rowKey);
-    emojiEventEmitter.emit("deleteEmoji", [input, { sessionId: ctx.session.session.id, userId: ctx.session.user.id }]);
-  }),
+      const newEmoji = createMessageEmojiMetadataEntity({ ...input, userIds: [ctx.getSessionPayload.user.id] });
+      await createEntity(messagesMetadataClient, newEmoji);
+      emojiEventEmitter.emit("createEmoji", [
+        newEmoji,
+        { sessionId: ctx.getSessionPayload.session.id, userId: ctx.getSessionPayload.user.id },
+      ]);
+      return newEmoji;
+    },
+  ),
+  deleteEmoji: getMemberProcedure(deleteEmojiInputSchema, CompositeKeyPropertyNames.partitionKey).mutation(
+    async ({ ctx, input }) => {
+      const messagesMetadataClient = await useTableClient(AzureTable.MessagesMetadata);
+      await deleteEntity(messagesMetadataClient, input.partitionKey, input.rowKey);
+      emojiEventEmitter.emit("deleteEmoji", [
+        input,
+        { sessionId: ctx.getSessionPayload.session.id, userId: ctx.getSessionPayload.user.id },
+      ]);
+    },
+  ),
   onCreateEmoji: getMemberProcedure(onCreateEmojiInputSchema, "roomId").subscription(async function* ({
     ctx,
     input,
     signal,
   }) {
     for await (const [[data, device]] of on(emojiEventEmitter, "createEmoji", { signal }))
-      if (isRoomId(data.partitionKey, input.roomId) && !getIsSameDevice(device, ctx.session)) yield data;
+      if (isRoomId(data.partitionKey, input.roomId) && !getIsSameDevice(device, ctx.getSessionPayload)) yield data;
   }),
   onDeleteEmoji: getMemberProcedure(onDeleteEmojiInputSchema, "roomId").subscription(async function* ({
     ctx,
@@ -104,7 +112,7 @@ export const emojiRouter = router({
     signal,
   }) {
     for await (const [[data, device]] of on(emojiEventEmitter, "deleteEmoji", { signal }))
-      if (isRoomId(data.partitionKey, input.roomId) && !getIsSameDevice(device, ctx.session)) yield data;
+      if (isRoomId(data.partitionKey, input.roomId) && !getIsSameDevice(device, ctx.getSessionPayload)) yield data;
   }),
   onUpdateEmoji: getMemberProcedure(onUpdateEmojiInputSchema, "roomId").subscription(async function* ({
     ctx,
@@ -112,16 +120,16 @@ export const emojiRouter = router({
     signal,
   }) {
     for await (const [[data, device]] of on(emojiEventEmitter, "updateEmoji", { signal }))
-      if (isRoomId(data.partitionKey, input.roomId) && !getIsSameDevice(device, ctx.session)) yield data;
+      if (isRoomId(data.partitionKey, input.roomId) && !getIsSameDevice(device, ctx.getSessionPayload)) yield data;
   }),
   readEmojis: getMemberProcedure(readMetadataInputSchema, "roomId").query(
     async ({ input: { messageRowKeys, roomId } }) => {
       const messagesMetadataClient = (await useTableClient(
         AzureTable.MessagesMetadata,
       )) as CustomTableClient<MessageEmojiMetadataEntity>;
-      const clauses: Clause[] = [
+      const clauses: Clause<MessageEmojiMetadataEntity>[] = [
         {
-          key: MessageEmojiMetadataEntityPropertyNames.partitionKey,
+          key: CompositeKeyPropertyNames.partitionKey,
           operator: BinaryOperator.eq,
           value: roomId,
         },
@@ -142,33 +150,35 @@ export const emojiRouter = router({
       });
     },
   ),
-  updateEmoji: getMemberProcedure(updateEmojiInputSchema, "partitionKey").mutation(async ({ ctx, input }) => {
-    const messagesMetadataClient = (await useTableClient(
-      AzureTable.MessagesMetadata,
-    )) as CustomTableClient<MessageEmojiMetadataEntity>;
-    const readEmoji = await getEntity(
-      messagesMetadataClient,
-      MessageEmojiMetadataEntity,
-      input.partitionKey,
-      input.rowKey,
-    );
-    if (!readEmoji)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(Operation.Read, MessageMetadataType.Emoji, JSON.stringify(input)).message,
-      });
-    else if (readEmoji.userIds.length === 1 && readEmoji.userIds[0] === ctx.session.user.id)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(Operation.Update, MessageMetadataType.Emoji, JSON.stringify(readEmoji))
-          .message,
-      });
+  updateEmoji: getMemberProcedure(updateEmojiInputSchema, CompositeKeyPropertyNames.partitionKey).mutation(
+    async ({ ctx, input }) => {
+      const messagesMetadataClient = (await useTableClient(
+        AzureTable.MessagesMetadata,
+      )) as CustomTableClient<MessageEmojiMetadataEntity>;
+      const readEmoji = await getEntity(
+        messagesMetadataClient,
+        MessageEmojiMetadataEntity,
+        input.partitionKey,
+        input.rowKey,
+      );
+      if (!readEmoji)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Read, MessageMetadataType.Emoji, JSON.stringify(input)).message,
+        });
+      else if (readEmoji.userIds.length === 1 && readEmoji.userIds[0] === ctx.getSessionPayload.user.id)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Update, MessageMetadataType.Emoji, JSON.stringify(readEmoji))
+            .message,
+        });
 
-    const updatedEmoji = { ...input, userIds: getUpdatedUserIds(readEmoji.userIds, ctx.session.user.id) };
-    await updateEntity(messagesMetadataClient, updatedEmoji);
-    emojiEventEmitter.emit("updateEmoji", [
-      updatedEmoji,
-      { sessionId: ctx.session.session.id, userId: ctx.session.user.id },
-    ]);
-  }),
+      const updatedEmoji = { ...input, userIds: getUpdatedUserIds(readEmoji.userIds, ctx.getSessionPayload.user.id) };
+      await updateEntity(messagesMetadataClient, updatedEmoji);
+      emojiEventEmitter.emit("updateEmoji", [
+        updatedEmoji,
+        { sessionId: ctx.getSessionPayload.session.id, userId: ctx.getSessionPayload.user.id },
+      ]);
+    },
+  ),
 });

@@ -10,7 +10,7 @@ import { jsonDateParse, streamToText } from "@esposter/shared";
 export const flowchartEditorRouter = router({
   readFlowchartEditor: standardAuthedProcedure.query<FlowchartEditor>(async ({ ctx }) => {
     try {
-      const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
+      const blobName = `${ctx.getSessionPayload.user.id}/${SAVE_FILENAME}`;
       const { readableStreamBody } = await useDownload(AzureContainer.FlowchartEditorAssets, blobName);
       if (!readableStreamBody) return new FlowchartEditor();
 
@@ -21,7 +21,7 @@ export const flowchartEditorRouter = router({
     }
   }),
   saveFlowchartEditor: standardAuthedProcedure.input(flowchartEditorSchema).mutation(async ({ ctx, input }) => {
-    const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
+    const blobName = `${ctx.getSessionPayload.user.id}/${SAVE_FILENAME}`;
     await useUpload(AzureContainer.FlowchartEditorAssets, blobName, JSON.stringify(input));
   }),
 });

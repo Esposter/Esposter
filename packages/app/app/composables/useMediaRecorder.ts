@@ -98,12 +98,12 @@ export const useMediaRecorder = (options: UseMediaRecorderOptions = {}) => {
     };
   };
 
-  const start = async (timeslice: number | undefined = undefined) => {
+  const start = async (timeslice?: number) => {
     if (state.value === "recording") return;
     data.value = [];
 
     try {
-      stream.value = await navigator.mediaDevices.getUserMedia(toValue(constraints));
+      stream.value = await window.navigator.mediaDevices.getUserMedia(toValue(constraints));
     } catch (error) {
       if (error instanceof DOMException) createAlert(error.message, "error");
       return;

@@ -9,7 +9,7 @@ import { isMovingDirection } from "@/services/dungeons/UI/input/isMovingDirectio
 import { useInfoPanelStore } from "@/store/dungeons/monsterParty/infoPanel";
 import { useMonsterPartySceneStore } from "@/store/dungeons/monsterParty/scene";
 import { usePlayerStore } from "@/store/dungeons/player";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 
 export class MoveInputResolver extends AInputResolver {
   override handleInput(_scene: SceneWithPlugins, justDownInput: PlayerInput) {
@@ -37,8 +37,8 @@ export class MoveInputResolver extends AInputResolver {
       const infoPanelStore = useInfoPanelStore();
       const { infoDialogMessage } = storeToRefs(infoPanelStore);
       [player.value.monsters[index], player.value.monsters[monsterPartyOptionGrid.index]] = [
-        player.value.monsters[monsterPartyOptionGrid.index],
-        player.value.monsters[index],
+        takeOne(player.value.monsters, monsterPartyOptionGrid.index),
+        takeOne(player.value.monsters, index),
       ];
 
       sceneMode.value = SceneMode.Default;

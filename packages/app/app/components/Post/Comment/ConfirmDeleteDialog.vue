@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { StyledDialogActivatorSlotProps } from "@/components/Styled/Dialog.vue";
 
+import { useColorsStore } from "@/store/colors";
 import { useCommentStore } from "@/store/post/comment";
 
 interface PostCommentConfirmDeleteDialogProps {
@@ -14,11 +15,12 @@ defineSlots<{
 const { commentId } = defineProps<PostCommentConfirmDeleteDialogProps>();
 const commentStore = useCommentStore();
 const { deleteComment } = commentStore;
-const { text } = useColors();
+const colorsStore = useColorsStore();
+const { text } = storeToRefs(colorsStore);
 </script>
 
 <template>
-  <StyledDeleteDialog
+  <StyledDeleteFormDialog
     :card-props="{
       title: 'Delete Comment',
       text: 'Are you sure you want to delete this comment?',
@@ -39,7 +41,7 @@ const { text } = useColors();
     <div class="custom-border" py-2 mx-4 rd-lg shadow-md>
       <slot name="commentPreview" />
     </div>
-  </StyledDeleteDialog>
+  </StyledDeleteFormDialog>
 </template>
 <!-- @TODO: https://github.com/vuejs/core/issues/7312 -->
 <style scoped lang="scss">

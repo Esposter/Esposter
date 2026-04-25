@@ -1,28 +1,43 @@
 <script setup lang="ts">
-import type { Session } from "@/models/auth/Session";
+import type { User } from "better-auth";
 import type { VAvatar } from "vuetify/components/VAvatar";
 
 import { StatusBadgePropsMap } from "@/services/message/StatusBadgePropsMap";
 import { useStatusStore } from "@/store/message/user/status";
 // @TODO: https://github.com/vuejs/core/issues/11371
 interface StatusAvatarProps {
+  avatarAttrs?: VAvatar["$attrs"];
   avatarProps?: VAvatar["$props"];
-  id: Session["user"]["id"];
-  image: Session["user"]["image"];
-  name: Session["user"]["name"];
+  id: User["id"];
+  image: User["image"];
+  name: User["name"];
 }
 
-const { avatarProps, id, image, name } = defineProps<StatusAvatarProps>();
+const { avatarAttrs = {}, avatarProps = {}, id, image, name } = defineProps<StatusAvatarProps>();
 const statusStore = useStatusStore();
-const { getStatusEnum } = statusStore;
-const badgeProps = computed(() => {
+const { getStatusEnum, getStatusMessage } = statusStore;
+const badge = computed(() => {
   const userStatusEnum = getStatusEnum(id);
   return StatusBadgePropsMap[userStatusEnum];
+});
+const statusTooltip = computed(() => {
+  const message = getStatusMessage(id);
+  const status = getStatusEnum(id);
+  return message ? `${status} — ${message}` : status;
 });
 </script>
 
 <template>
-  <v-badge location="bottom end" dot :="badgeProps">
-    <StyledAvatar :image :name :="avatarProps" />
-  </v-badge>
+  <v-tooltip :text="statusTooltip" location="top">
+    <template #activator="{ props: tooltipProps }">
+      <StyledAvatar
+        :avatar-attrs
+        :avatar-props
+        :badge="{ ...badge, location: 'bottom end' }"
+        :image
+        :name
+        :="tooltipProps"
+      />
+    </template>
+  </v-tooltip>
 </template>

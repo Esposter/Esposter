@@ -28,7 +28,7 @@ export const useSurveyStore = defineStore("survey", () => {
     storeUpdateSurvey(updatedSurvey);
   };
   // This is called by surveyjs externally so we will also need to
-  // update our reactivity externally outside from our stores
+  // Update our reactivity externally outside from our stores
   const updateSurveyModel = (input: UpdateSurveyModelInput) => $trpc.survey.updateSurveyModel.mutate(input);
   const deleteSurvey = async (input: DeleteSurveyInput) => {
     const { id } = await $trpc.survey.deleteSurvey.mutate(input);

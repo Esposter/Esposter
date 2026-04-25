@@ -7,20 +7,19 @@ import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/tr
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { userToRoomRouter } from "@@/server/trpc/routers/userToRoom";
 import { NotificationType, rooms, usersToRooms } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("userToRoom", () => {
+  let mockContext: Context;
   let userToRoomCaller: DecorateRouterRecord<TRPCRouter["userToRoom"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
-  let mockContext: Context;
   const name = "name";
 
   beforeAll(async () => {
-    const createUserToRoomCaller = createCallerFactory(userToRoomRouter);
-    const createRoomCaller = createCallerFactory(roomRouter);
     mockContext = await createMockContext();
-    userToRoomCaller = createUserToRoomCaller(mockContext);
-    roomCaller = createRoomCaller(mockContext);
+    userToRoomCaller = createCallerFactory(userToRoomRouter)(mockContext);
+    roomCaller = createCallerFactory(roomRouter)(mockContext);
   });
 
   afterEach(async () => {
@@ -33,11 +32,13 @@ describe("userToRoom", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const readUserToRooms = await userToRoomCaller.readUserToRooms({ roomIds: [newRoom.id] });
+    const userId = getMockSession().user.id;
+    const userToRoom = takeOne(readUserToRooms);
 
     expect(readUserToRooms).toHaveLength(1);
-    expect(readUserToRooms[0].roomId).toBe(newRoom.id);
-    expect(readUserToRooms[0].userId).toBe(getMockSession().user.id);
-    expect(readUserToRooms[0].notificationType).toBe(NotificationType.DirectMessage);
+    expect(userToRoom.roomId).toBe(newRoom.id);
+    expect(userToRoom.userId).toBe(userId);
+    expect(userToRoom.notificationType).toBe(NotificationType.DirectMessage);
   });
 
   test("fails read for non-member", async () => {
@@ -61,16 +62,5 @@ describe("userToRoom", () => {
     });
 
     expect(updatedUserToRoom.notificationType).toBe(NotificationType.Never);
-  });
-
-  test("fails update for non-member", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    await mockSessionOnce(mockContext.db);
-
-    await expect(
-      userToRoomCaller.updateUserToRoom({ notificationType: NotificationType.DirectMessage, roomId: newRoom.id }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 });

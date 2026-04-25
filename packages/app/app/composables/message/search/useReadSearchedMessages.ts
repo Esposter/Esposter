@@ -1,0 +1,60 @@
+import { dedupeFilters } from "#shared/services/message/dedupeFilters";
+import { RightDrawer } from "@/models/message/RightDrawer";
+import { useLayoutStore } from "@/store/layout";
+import { useRoomStore } from "@/store/message/room";
+import { useSearchMessageStore } from "@/store/message/search";
+import { useSearchHistoryStore } from "@/store/message/search/history";
+import { useLayoutStore as useMessageLayoutStore } from "@/store/message/ui/layout";
+import { CompositeKeyPropertyNames } from "@esposter/db-schema";
+import { InvalidOperationError, Operation } from "@esposter/shared";
+
+export const useReadSearchedMessages = () => {
+  const { $trpc } = useNuxtApp();
+  const layoutStore = useLayoutStore();
+  const { isRightDrawerOpen } = storeToRefs(layoutStore);
+  const messageLayoutStore = useMessageLayoutStore();
+  const { rightDrawer } = storeToRefs(messageLayoutStore);
+  const roomStore = useRoomStore();
+  const { currentRoomId } = storeToRefs(roomStore);
+  const searchMessageStore = useSearchMessageStore();
+  const { getReadMoreItems } = searchMessageStore;
+  const { count, isSearching, menu, page, searchQuery } = storeToRefs(searchMessageStore);
+  const { selectedFilters } = storeToRefs(searchMessageStore);
+  const searchHistoryStore = useSearchHistoryStore();
+  const { createSearchHistory } = searchHistoryStore;
+  return getReadMoreItems(
+    async (offset) => {
+      if (!currentRoomId.value)
+        throw new InvalidOperationError(
+          Operation.Read,
+          useReadSearchedMessages.name,
+          CompositeKeyPropertyNames.partitionKey,
+        );
+
+      menu.value = false;
+      isSearching.value = true;
+      isRightDrawerOpen.value = true;
+      rightDrawer.value = RightDrawer.Search;
+      const { count: newCount, data } = await $trpc.message.searchMessages.query({
+        filters: dedupeFilters(selectedFilters.value),
+        offset,
+        query: searchQuery.value,
+        roomId: currentRoomId.value,
+      });
+      // No offset means the user has searched the message instead of reading from the offset pagination
+      if (!offset) {
+        page.value = 1;
+        await createSearchHistory({
+          filters: selectedFilters.value.length > 0 ? selectedFilters.value : undefined,
+          query: searchQuery.value,
+          roomId: currentRoomId.value,
+        });
+      }
+      if (newCount !== undefined) count.value = newCount;
+      return data;
+    },
+    () => {
+      isSearching.value = false;
+    },
+  );
+};

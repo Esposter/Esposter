@@ -10,6 +10,21 @@ const { signOut } = authClient;
 const items = computed<ListLinkItem[]>(() => {
   const commonItems: ListLinkItem[] = [
     {
+      href: RoutePath.Achievements,
+      icon: "mdi-trophy",
+      title: "Achievements",
+    },
+    {
+      href: RoutePath.Anime,
+      icon: "custom:anime",
+      title: "Anime",
+    },
+    {
+      href: RoutePath.FluidSimulator,
+      icon: "mdi-water",
+      title: "Fluid Simulator",
+    },
+    {
       href: RoutePath.About,
       icon: "mdi-information",
       title: "About",
@@ -20,11 +35,6 @@ const items = computed<ListLinkItem[]>(() => {
       icon: "mdi-book-open-page-variant",
       title: "Documentation",
       trailingSlash: "append",
-    },
-    {
-      href: RoutePath.Anime,
-      icon: "custom:anime",
-      title: "Anime",
     },
     {
       href: RoutePath.PrivacyPolicy,
@@ -67,7 +77,7 @@ const menu = ref(false);
       <v-tooltip v-if="session" location="bottom" text="Account">
         <template #activator="{ props: tooltipProps }">
           <v-avatar>
-            <v-btn h-full="!" :="mergeProps(menuProps, tooltipProps)">
+            <v-btn h-full :="mergeProps(menuProps, tooltipProps)">
               <StyledAvatar :image="session.user.image" :name="session.user.name" />
             </v-btn>
           </v-avatar>
@@ -100,7 +110,7 @@ const menu = ref(false);
               <v-icon :icon />
             </v-avatar>
           </template>
-          <v-list-item-title font-bold="!">{{ title }}</v-list-item-title>
+          <v-list-item-title font-bold>{{ title }}</v-list-item-title>
         </v-list-item>
       </NuxtInvisibleLink>
     </v-list>

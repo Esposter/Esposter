@@ -1,3 +1,4 @@
+import { createNameSchema } from "@/models/shared/Name";
 import { z } from "zod";
 
 export interface EmbedAuthor {
@@ -6,8 +7,8 @@ export interface EmbedAuthor {
   url?: string;
 }
 
-export const embedAuthorSchema: z.ZodType<EmbedAuthor> = z.object({
+export const embedAuthorSchema = z.object({
   icon_url: z.url().optional(),
-  name: z.string().max(256),
+  name: createNameSchema(256),
   url: z.url().optional(),
-});
+}) satisfies z.ZodType<EmbedAuthor>;

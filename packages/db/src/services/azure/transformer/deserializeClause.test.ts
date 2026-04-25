@@ -10,15 +10,11 @@ import {
 import { describe, expect, test } from "vitest";
 
 describe(deserializeClause, () => {
-  test("deserializes", () => {
+  test("deserializes with empty key and value", () => {
     expect.hasAssertions();
 
-    expect(
-      deserializeClause(
-        `${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.eq} ${escapeValue("")}`,
-      ),
-    ).toStrictEqual({
-      key: CompositeKeyPropertyNames.partitionKey,
+    expect(deserializeClause(`${BinaryOperator.eq} ${escapeValue("")}`)).toStrictEqual({
+      key: "",
       not: false,
       operator: BinaryOperator.eq,
       value: "",
@@ -50,11 +46,13 @@ describe(deserializeClause, () => {
     });
   });
 
-  test("deserializes unquoted numeric literal", () => {
+  test("deserializes numeric literal", () => {
     expect.hasAssertions();
 
-    expect(deserializeClause(`a ${BinaryOperator.eq} 0`)).toStrictEqual({
-      key: "a",
+    expect(
+      deserializeClause(`${serializeKey(CompositeKeyPropertyNames.partitionKey)} ${BinaryOperator.eq} 0`),
+    ).toStrictEqual({
+      key: CompositeKeyPropertyNames.partitionKey,
       not: false,
       operator: BinaryOperator.eq,
       value: 0,

@@ -31,9 +31,9 @@ export const likeRouter = router({
       const newLike = (
         await tx
           .insert(likes)
-          .values({ ...input, userId: ctx.session.user.id })
+          .values({ ...input, userId: ctx.getSessionPayload.user.id })
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!newLike)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -71,9 +71,9 @@ export const likeRouter = router({
       const deletedLike = (
         await tx
           .delete(likes)
-          .where(and(eq(likes.userId, ctx.session.user.id), eq(likes.postId, input)))
+          .where(and(eq(likes.userId, ctx.getSessionPayload.user.id), eq(likes.postId, input)))
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!deletedLike)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -103,7 +103,7 @@ export const likeRouter = router({
           where: (posts, { eq }) => eq(posts.id, postId),
         }),
         tx.query.likes.findFirst({
-          where: (likes, { and, eq }) => and(eq(likes.userId, ctx.session.user.id), eq(likes.postId, postId)),
+          where: (likes, { and, eq }) => and(eq(likes.userId, ctx.getSessionPayload.user.id), eq(likes.postId, postId)),
         }),
       ]);
 
@@ -132,9 +132,9 @@ export const likeRouter = router({
         await tx
           .update(likes)
           .set({ value })
-          .where(and(eq(likes.userId, ctx.session.user.id), eq(likes.postId, postId)))
+          .where(and(eq(likes.userId, ctx.getSessionPayload.user.id), eq(likes.postId, postId)))
           .returning()
-      ).find(Boolean);
+      )[0];
       if (!updatedLike)
         throw new TRPCError({
           code: "BAD_REQUEST",

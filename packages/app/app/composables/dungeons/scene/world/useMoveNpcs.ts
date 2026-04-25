@@ -3,7 +3,7 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 import { MovementPattern } from "@/models/dungeons/npc/MovementPattern";
 import { getNextDirection } from "@/services/dungeons/UI/input/getNextDirection";
 import { useNpcStore } from "@/store/dungeons/world/npc";
-import { exhaustiveGuard } from "@esposter/shared";
+import { exhaustiveGuard, takeOne } from "@esposter/shared";
 
 export const useMoveNpcs = (scene: SceneWithPlugins) => {
   const npcStore = useNpcStore();
@@ -18,8 +18,8 @@ export const useMoveNpcs = (scene: SceneWithPlugins) => {
       case MovementPattern.Clockwise: {
         const pathSize = Object.keys(npc.path).length;
         const newPathIndex = (npc.pathIndex + 1) % pathSize;
-        const currentPosition = npc.path[npc.pathIndex];
-        const nextPosition = npc.path[newPathIndex];
+        const currentPosition = takeOne(npc.path, npc.pathIndex);
+        const nextPosition = takeOne(npc.path, newPathIndex);
         if (scene.gridEngine.isBlocked(nextPosition)) continue;
 
         scene.gridEngine.move(npc.id, getNextDirection(currentPosition, nextPosition));

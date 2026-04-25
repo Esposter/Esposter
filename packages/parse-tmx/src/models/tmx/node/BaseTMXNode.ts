@@ -1,11 +1,11 @@
 import type { TMXNodeType } from "@/models/tmx/node/TMXNodeType";
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+// oxlint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
 export class BaseTMXNode<T> {
   // We add indexable signature because we can't access #name properly
-  // due to typescript shenanigans with private properties >:C
+  // Due to typescript shenanigans with private properties >:C
   [key: string]: unknown;
   $!: T;
   // Property derived from xml parsing
   // eslint-disable-next-line no-unused-private-class-members
-  #name!: TMXNodeType;
+  readonly #name!: TMXNodeType;
 }

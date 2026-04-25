@@ -13,18 +13,17 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
 ) => {
   const router = useRouter();
   const editFormDialog = ref(false);
-  const editFormRef = ref<InstanceType<typeof VForm>>();
+  const editForm = ref<InstanceType<typeof VForm>>();
   const editedItem = ref<TItem>();
   const editedIndex = ref(-1);
   const originalItem = computed(() => {
     const editedItemValue = editedItem.value;
     return editedItemValue
-      ? items.value.find((i) => getIsEntityIdEqualComparator(idKeys, editedItemValue)(i))
+      ? items.value.find((i) => getIsEntityIdEqualComparator(idKeys as (keyof TItem & string)[], editedItemValue)(i))
       : undefined;
   });
   const isFullScreenDialog = ref(false);
-  // The form is "valid" if there's no form open/no errors
-  const isEditFormValid = computed(() => !editFormRef.value || editFormRef.value.errors.length === 0);
+  const isEditFormValid = computed(() => !editForm.value || editForm.value.errors.length === 0);
   const isSavable = computed(
     () =>
       // For the form to be savable, it has to:
@@ -33,7 +32,7 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
       isEditFormValid.value &&
       // 2. Be a new item or be not equal to the original item
       // The edited item is a clone of original item which does not clone the class information
-      // so it's not "strictly" equal but deepEqual is not a strict check so it's ok
+      // So it's not "strictly" equal but deepEqual is not a strict check so it's ok
       (!originalItem.value || !deepEqual(editedItem.value, structuredClone(toRawDeep(originalItem.value)))),
   );
   // We know the form is dirty if:
@@ -42,7 +41,10 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
   const isDirty = computed(() => !isEditFormValid.value || isSavable.value);
 
   const editItem = async (ids: { [P in keyof TItem & TIdKeys[number]]: TItem[P] }) => {
-    const isEntityIdEqualComparator = getIsEntityIdEqualComparator(Object.keys(ids) as [...TIdKeys], ids);
+    const isEntityIdEqualComparator = getIsEntityIdEqualComparator(
+      Object.keys(ids) as (keyof TItem & string)[],
+      ids as Partial<TItem>,
+    );
     const item = items.value.find((i) => isEntityIdEqualComparator(i));
     if (!item) return;
 
@@ -62,8 +64,8 @@ export const createEditFormData = <TItem extends ToData<AEntity>, TIdKeys extend
   return {
     editedIndex,
     editedItem,
+    editForm,
     editFormDialog,
-    editFormRef,
     editItem,
     isDirty,
     isEditFormValid,

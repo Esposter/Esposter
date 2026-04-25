@@ -12,8 +12,8 @@ import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("survey", () => {
-  let caller: DecorateRouterRecord<TRPCRouter["survey"]>;
   let mockContext: Context;
+  let caller: DecorateRouterRecord<TRPCRouter["survey"]>;
   const name = "name";
   const updatedName = "updatedName";
   const group = "group";
@@ -21,9 +21,8 @@ describe("survey", () => {
   const updatedModel = "updatedModel";
 
   beforeAll(async () => {
-    const createCaller = createCallerFactory(surveyRouter);
     mockContext = await createMockContext();
-    caller = createCaller(mockContext);
+    caller = createCallerFactory(surveyRouter)(mockContext);
   });
 
   afterEach(async () => {

@@ -2,11 +2,11 @@ import type { CreateLikeInput } from "#shared/models/db/post/CreateLikeInput";
 import type { DeleteLikeInput } from "#shared/models/db/post/DeleteLikeInput";
 import type { UpdateLikeInput } from "#shared/models/db/post/UpdateLikeInput";
 import type { PostWithRelations } from "@esposter/db-schema";
-import type { ReadonlyRefOrGetter } from "@vueuse/core";
 
 import { authClient } from "@/services/auth/authClient";
+import { takeOne } from "@esposter/shared";
 
-export const useLikeOperations = (allPosts: ReadonlyRefOrGetter<PostWithRelations[]>) => {
+export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostWithRelations[]>) => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
 
@@ -28,7 +28,7 @@ export const useLikeOperations = (allPosts: ReadonlyRefOrGetter<PostWithRelation
     );
     if (index === -1) return;
 
-    Object.assign(post.likes[index], updatedLike);
+    Object.assign(takeOne(post.likes, index), updatedLike);
     post.noLikes += updatedLike.value * 2;
   };
   const deleteLike = async (postId: DeleteLikeInput) => {

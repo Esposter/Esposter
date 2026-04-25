@@ -2,10 +2,11 @@ import type { BuilderOptions } from "xml2js";
 import type { XMLBuilder } from "xmlbuilder2/lib/interfaces";
 
 import { DefaultBuilderOptions } from "@/DefaultBuilderOptions";
+import { takeOne } from "@esposter/shared";
 import { create } from "xmlbuilder2";
 
 export class Builder {
-  private options: typeof DefaultBuilderOptions = structuredClone(DefaultBuilderOptions);
+  private readonly options: typeof DefaultBuilderOptions = structuredClone(DefaultBuilderOptions);
 
   constructor(init?: Partial<BuilderOptions>) {
     Object.assign(this.options, init);
@@ -13,12 +14,12 @@ export class Builder {
 
   buildObject(rootObj: Record<string, unknown>): string {
     // If there is a sane-looking first element to use as the root,
-    // and the user hasn't specified a non-default rootName,
+    // And the user hasn't specified a non-default rootName,
     let rootName = this.options.rootName;
     let rootObject = rootObj;
     if (Object.keys(rootObject).length === 1 && this.options.rootName === DefaultBuilderOptions.rootName) {
       // We'll take the first element as the root element
-      rootName = Object.keys(rootObject)[0];
+      rootName = takeOne(Object.keys(rootObject));
       rootObject = rootObject[rootName] as Record<string, unknown>;
     }
 

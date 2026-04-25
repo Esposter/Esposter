@@ -1,15 +1,16 @@
+import { MimeType } from "#shared/models/file/MimeType";
 import dedent from "dedent";
 
-export const commitBlockList = async (sasUrl: string, blockIds: string[]) =>
-  await fetch(`${sasUrl}&comp=blocklist`, {
+export const commitBlockList = (sasUrl: string, blockIds: string[]) =>
+  fetch(`${sasUrl}&comp=blocklist`, {
     body: dedent`
     <BlockList>
       ${blockIds.map((blockId) => `<Latest>${blockId}</Latest>`).join("\n")}
     </BlockList>
   `,
     headers: {
-      "Content-Type": "application/xml",
-      "x-ms-blob-content-type": "application/xml",
+      "Content-Type": MimeType.Xml,
+      "x-ms-blob-content-type": MimeType.Xml,
     },
     method: "PUT",
   });

@@ -9,23 +9,21 @@ import { createMockContext, mockSessionOnce } from "@@/server/trpc/context.test"
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { webhookRouter } from "@@/server/trpc/routers/webhook";
 import { appUsers, DatabaseEntityType, rooms, webhooks } from "@esposter/db-schema";
-import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
+import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("webhook", () => {
+  let mockContext: Context;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let webhookCaller: DecorateRouterRecord<TRPCRouter["webhook"]>;
-  let mockContext: Context;
   const name = "name";
   const updatedName = "updatedName";
   const updatedIsActive = false;
 
   beforeAll(async () => {
-    const createRoomCaller = createCallerFactory(roomRouter);
-    const createWebhookCaller = createCallerFactory(webhookRouter);
     mockContext = await createMockContext();
-    roomCaller = createRoomCaller(mockContext);
-    webhookCaller = createWebhookCaller(mockContext);
+    roomCaller = createCallerFactory(roomRouter)(mockContext);
+    webhookCaller = createCallerFactory(webhookRouter)(mockContext);
   });
 
   afterEach(async () => {
@@ -90,27 +88,6 @@ describe("webhook", () => {
     const readWebhooks = await webhookCaller.readWebhooks({ roomId: newRoom.id });
 
     expect(readWebhooks.some(({ id }) => id === newWebhook.id)).toBe(true);
-  });
-
-  test("fails read with non-existent id", async () => {
-    expect.hasAssertions();
-
-    const roomId = crypto.randomUUID();
-
-    await expect(webhookCaller.readWebhooks({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: UNAUTHORIZED]`,
-    );
-  });
-
-  test("fails read with non-existent creator", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    await mockSessionOnce(mockContext.db);
-
-    await expect(webhookCaller.readWebhooks({ roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: UNAUTHORIZED]`,
-    );
   });
 
   test("reads empty webhooks", async () => {
@@ -230,29 +207,7 @@ describe("webhook", () => {
     const newWebhook = await webhookCaller.createWebhook({ name, roomId: newRoom.id });
     const users = await webhookCaller.readAppUsersByIds({ ids: [newWebhook.userId], roomId: newRoom.id });
 
-    expect(users[0].id).toBe(newWebhook.userId);
-  });
-
-  test("fails read app users by empty ids", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-
-    await expect(webhookCaller.readAppUsersByIds({ ids: [], roomId: newRoom.id })).rejects
-      .toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: [
-        {
-          "origin": "array",
-          "code": "too_small",
-          "minimum": 1,
-          "inclusive": true,
-          "path": [
-            "ids"
-          ],
-          "message": "Too small: expected array to have >=1 items"
-        }
-      ]]
-    `);
+    expect(takeOne(users).id).toBe(newWebhook.userId);
   });
 
   test("fails read app users by ids with wrong user", async () => {

@@ -3,12 +3,11 @@ import type { Clause } from "@esposter/db-schema";
 
 import { applyTableFilter } from "@/services/table/applyTableFilter";
 import { BinaryOperator } from "@esposter/db-schema";
-import { getPropertyNames } from "@esposter/shared";
+import { getPropertyNames, takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const TableEntityPropertyNames = getPropertyNames<TableEntity>();
-
 describe(applyTableFilter, () => {
+  const TableEntityPropertyNames = getPropertyNames<TableEntity>();
   const partitionKey = "0";
   const rowKey = "0";
   const tableEntities: TableEntity[] = [{ partitionKey, rowKey }];
@@ -16,7 +15,7 @@ describe(applyTableFilter, () => {
   test(BinaryOperator.eq, () => {
     expect.hasAssertions();
 
-    const clauses: Clause[] = [
+    const clauses: Clause<Record<string, unknown>>[] = [
       {
         key: TableEntityPropertyNames.partitionKey,
         operator: BinaryOperator.eq,
@@ -26,13 +25,13 @@ describe(applyTableFilter, () => {
     const filteredTableEntities = applyTableFilter(tableEntities, clauses);
 
     expect(filteredTableEntities).toHaveLength(1);
-    expect(filteredTableEntities[0].partitionKey).toBe(partitionKey);
+    expect(takeOne(filteredTableEntities).partitionKey).toBe(partitionKey);
   });
 
   test(`${BinaryOperator.eq} negative`, () => {
     expect.hasAssertions();
 
-    const clauses: Clause[] = [
+    const clauses: Clause<Record<string, unknown>>[] = [
       {
         key: TableEntityPropertyNames.partitionKey,
         operator: BinaryOperator.eq,
@@ -47,7 +46,7 @@ describe(applyTableFilter, () => {
   test(BinaryOperator.gt, () => {
     expect.hasAssertions();
 
-    const clauses: Clause[] = [
+    const clauses: Clause<Record<string, unknown>>[] = [
       {
         key: TableEntityPropertyNames.partitionKey,
         operator: BinaryOperator.gt,
@@ -57,17 +56,17 @@ describe(applyTableFilter, () => {
     const filteredTableEntities = applyTableFilter(tableEntities, clauses);
 
     expect(filteredTableEntities).toHaveLength(1);
-    expect(filteredTableEntities[0].partitionKey).toBe(partitionKey);
+    expect(takeOne(filteredTableEntities).partitionKey).toBe(partitionKey);
   });
 
   test(`${BinaryOperator.gt} negative`, () => {
     expect.hasAssertions();
 
-    const clauses: Clause[] = [
+    const clauses: Clause<Record<string, unknown>>[] = [
       {
         key: TableEntityPropertyNames.partitionKey,
         operator: BinaryOperator.gt,
-        value: "1",
+        value: partitionKey,
       },
     ];
     const filteredTableEntities = applyTableFilter(tableEntities, clauses);
@@ -78,23 +77,7 @@ describe(applyTableFilter, () => {
   test(BinaryOperator.ge, () => {
     expect.hasAssertions();
 
-    const clauses: Clause[] = [
-      {
-        key: TableEntityPropertyNames.partitionKey,
-        operator: BinaryOperator.ge,
-        value: "-1",
-      },
-    ];
-    const filteredTableEntities = applyTableFilter(tableEntities, clauses);
-
-    expect(filteredTableEntities).toHaveLength(1);
-    expect(filteredTableEntities[0].partitionKey).toBe(partitionKey);
-  });
-
-  test(`${BinaryOperator.ge} equals`, () => {
-    expect.hasAssertions();
-
-    const clauses: Clause[] = [
+    const clauses: Clause<Record<string, unknown>>[] = [
       {
         key: TableEntityPropertyNames.partitionKey,
         operator: BinaryOperator.ge,
@@ -104,13 +87,28 @@ describe(applyTableFilter, () => {
     const filteredTableEntities = applyTableFilter(tableEntities, clauses);
 
     expect(filteredTableEntities).toHaveLength(1);
-    expect(filteredTableEntities[0].partitionKey).toBe(partitionKey);
+    expect(takeOne(filteredTableEntities).partitionKey).toBe(partitionKey);
+  });
+
+  test(`${BinaryOperator.ge} negative`, () => {
+    expect.hasAssertions();
+
+    const clauses: Clause<Record<string, unknown>>[] = [
+      {
+        key: TableEntityPropertyNames.partitionKey,
+        operator: BinaryOperator.ge,
+        value: "1",
+      },
+    ];
+    const filteredTableEntities = applyTableFilter(tableEntities, clauses);
+
+    expect(filteredTableEntities).toHaveLength(0);
   });
 
   test(BinaryOperator.lt, () => {
     expect.hasAssertions();
 
-    const clauses: Clause[] = [
+    const clauses: Clause<Record<string, unknown>>[] = [
       {
         key: TableEntityPropertyNames.partitionKey,
         operator: BinaryOperator.lt,
@@ -120,17 +118,17 @@ describe(applyTableFilter, () => {
     const filteredTableEntities = applyTableFilter(tableEntities, clauses);
 
     expect(filteredTableEntities).toHaveLength(1);
-    expect(filteredTableEntities[0].partitionKey).toBe(partitionKey);
+    expect(takeOne(filteredTableEntities).partitionKey).toBe(partitionKey);
   });
 
   test(`${BinaryOperator.lt} negative`, () => {
     expect.hasAssertions();
 
-    const clauses: Clause[] = [
+    const clauses: Clause<Record<string, unknown>>[] = [
       {
         key: TableEntityPropertyNames.partitionKey,
         operator: BinaryOperator.lt,
-        value: "-1",
+        value: partitionKey,
       },
     ];
     const filteredTableEntities = applyTableFilter(tableEntities, clauses);
@@ -141,23 +139,7 @@ describe(applyTableFilter, () => {
   test(BinaryOperator.le, () => {
     expect.hasAssertions();
 
-    const clauses: Clause[] = [
-      {
-        key: TableEntityPropertyNames.partitionKey,
-        operator: BinaryOperator.le,
-        value: "1",
-      },
-    ];
-    const filteredTableEntities = applyTableFilter(tableEntities, clauses);
-
-    expect(filteredTableEntities).toHaveLength(1);
-    expect(filteredTableEntities[0].partitionKey).toBe(partitionKey);
-  });
-
-  test(`${BinaryOperator.le} equals`, () => {
-    expect.hasAssertions();
-
-    const clauses: Clause[] = [
+    const clauses: Clause<Record<string, unknown>>[] = [
       {
         key: TableEntityPropertyNames.partitionKey,
         operator: BinaryOperator.le,
@@ -167,6 +149,52 @@ describe(applyTableFilter, () => {
     const filteredTableEntities = applyTableFilter(tableEntities, clauses);
 
     expect(filteredTableEntities).toHaveLength(1);
-    expect(filteredTableEntities[0].partitionKey).toBe(partitionKey);
+    expect(takeOne(filteredTableEntities).partitionKey).toBe(partitionKey);
+  });
+
+  test(`${BinaryOperator.le} negative`, () => {
+    expect.hasAssertions();
+
+    const clauses: Clause<Record<string, unknown>>[] = [
+      {
+        key: TableEntityPropertyNames.partitionKey,
+        operator: BinaryOperator.le,
+        value: "-1",
+      },
+    ];
+    const filteredTableEntities = applyTableFilter(tableEntities, clauses);
+
+    expect(filteredTableEntities).toHaveLength(0);
+  });
+
+  test(BinaryOperator.ne, () => {
+    expect.hasAssertions();
+
+    const clauses: Clause<Record<string, unknown>>[] = [
+      {
+        key: TableEntityPropertyNames.partitionKey,
+        operator: BinaryOperator.ne,
+        value: "1",
+      },
+    ];
+    const filteredTableEntities = applyTableFilter(tableEntities, clauses);
+
+    expect(filteredTableEntities).toHaveLength(1);
+    expect(takeOne(filteredTableEntities).partitionKey).toBe(partitionKey);
+  });
+
+  test(`${BinaryOperator.ne} negative`, () => {
+    expect.hasAssertions();
+
+    const clauses: Clause<Record<string, unknown>>[] = [
+      {
+        key: TableEntityPropertyNames.partitionKey,
+        operator: BinaryOperator.ne,
+        value: partitionKey,
+      },
+    ];
+    const filteredTableEntities = applyTableFilter(tableEntities, clauses);
+
+    expect(filteredTableEntities).toHaveLength(0);
   });
 });

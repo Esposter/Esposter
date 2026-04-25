@@ -31,6 +31,8 @@ export interface CharacterProps {
   walkingAnimationMapping: Character["walkingAnimationMapping"];
 }
 
+const position = defineModel<Position>("position", { required: true });
+const direction = defineModel<Direction | undefined>("direction", { required: true });
 const {
   id,
   onComplete,
@@ -43,8 +45,6 @@ const {
   spriteConfiguration,
   walkingAnimationMapping,
 } = defineProps<CharacterProps>();
-const position = defineModel<Position>("position", { required: true });
-const direction = defineModel<Direction | undefined>("direction", { required: true });
 const flipX = computed(
   () =>
     (singleSidedSpritesheetDirection === Direction.LEFT && direction.value === Direction.RIGHT) ||
@@ -56,7 +56,7 @@ const subscriptionPositionChangeStarted = ref<Subscription>();
 const subscriptionPositionChangeFinished = ref<Subscription>();
 const subscriptionDirectionChanged = ref<Subscription>();
 // We don't need to remove our character here from grid engine
-// since it will automatically be removed when we create a new tilemap
+// Since it will automatically be removed when we create a new tilemap
 onUnmounted(() => {
   subscriptionMovementStarted.value?.unsubscribe();
   subscriptionMovementStopped.value?.unsubscribe();

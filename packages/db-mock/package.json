@@ -1,0 +1,49 @@
+{
+  "name": "@esposter/db-mock",
+  "version": "2.21.0",
+  "private": true,
+  "description": "A library of database mock utilities for testing, available in server environment only.",
+  "keywords": [
+    "database",
+    "drizzle",
+    "mock",
+    "orm",
+    "pg",
+    "postgres",
+    "postgresql",
+    "test",
+    "ts",
+    "typescript"
+  ],
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/db-mock#readme",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esposter/Esposter.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
+    "export:gen": "ctix build --config ../configuration/.ctirc-ts",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "lint": "oxlint && eslint .",
+    "lint:fix": "oxlint --fix && eslint --fix .",
+    "typecheck": "tsgo"
+  },
+  "peerDependencies": {
+    "@electric-sql/pglite": "catalog:",
+    "@esposter/db-schema": "workspace:*",
+    "drizzle-kit": "catalog:",
+    "drizzle-orm": "catalog:"
+  }
+}

@@ -18,7 +18,9 @@ const usePhaserListener = <TEvent extends EventEmitter.EventNames<PhaserEvents>>
   listener: EventEmitter.EventListener<PhaserEvents, TEvent>,
 ) => {
   phaserEventEmitter.on(event, listener);
-  unsubscribes.push(() => phaserEventEmitter.off(event, listener));
+  unsubscribes.push(() => {
+    phaserEventEmitter.off(event, listener);
+  });
 };
 
 export const ItemAttempt: State<StateName> = {
@@ -35,7 +37,7 @@ export const ItemAttempt: State<StateName> = {
         const { previousSceneKey, previousSceneKeyStack } = storeToRefs(sceneStore);
         const { switchToPreviousScene } = usePreviousScene(scene.scene.key);
         // Remove all in-between scenes until we can switch directly back to the battle scene
-        // to avoid epilepsy flashing of multiple scenes when switching
+        // To avoid epilepsy flashing of multiple scenes when switching
         for (let i = 0; i < previousSceneKeyStack.value.length && previousSceneKey.value !== SceneKey.Battle; i++)
           removeScene(scene, previousSceneKey.value);
         switchToPreviousScene(scene);

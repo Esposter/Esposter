@@ -25,7 +25,7 @@ const { isEditRoomDialogOpen } = storeToRefs(dialogStore);
       <span text-gray> removed the custom room name. </span>
     </template>
     <span class="text-info" cursor-pointer hover:underline @click="isEditRoomDialogOpen = true">Edit Room</span>
-    <span>&nbsp;</span>
+    &nbsp;
     <MessageModelMessageCreatedAtDate :created-at="message.createdAt" />
     <MessageModelMessageEmojiList :is-preview :message />
   </MessageModelMessageTypeListItem>

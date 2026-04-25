@@ -1,3 +1,9 @@
+<script setup lang="ts">
+import { authClient } from "@/services/auth/authClient";
+
+const { data: session } = await authClient.useSession(useFetch);
+</script>
+
 <template>
   <NuxtPwaAssets />
   <NuxtTheme>
@@ -7,6 +13,7 @@
         <AppLoadingIndicator />
         <NuxtPage />
         <StyledAlertList />
+        <AchievementNotificationSnackBarList v-if="session" />
       </v-app>
     </NuxtSEO>
   </NuxtTheme>
@@ -28,5 +35,10 @@ p:empty::before {
 // https://stackoverflow.com/questions/37765215/canvas-dimensions-cause-a-vertical-scroll-bar-to-appear
 canvas {
   display: block;
+}
+
+.v-toolbar__content {
+  min-height: $app-bar-height;
+  height: auto !important;
 }
 </style>

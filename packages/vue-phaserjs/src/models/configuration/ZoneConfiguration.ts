@@ -8,7 +8,8 @@ import type { GameObjects, Types } from "phaser";
 import type { Except } from "type-fest";
 
 export interface ZoneConfiguration
-  extends DepthConfiguration,
+  extends
+    DepthConfiguration,
     Except<Types.GameObjects.Zone.ZoneConfig, keyof Types.GameObjects.GameObjectConfig>,
     GlobalConfiguration,
     OriginConfiguration,

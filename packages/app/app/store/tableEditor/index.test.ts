@@ -1,16 +1,28 @@
+// @vitest-environment nuxt
+import type { DataSourceItem } from "#shared/models/tableEditor/file/datasource/DataSourceItem";
+import type { Router } from "vue-router";
+
 import { TodoListItem } from "#shared/models/tableEditor/todoList/TodoListItem";
+import { setupWithDataSource } from "@/composables/tableEditor/file/commands/testUtils.test";
 import { ID_QUERY_PARAMETER_KEY } from "@/services/shared/constants";
+import { TableEditorHookMap } from "@/services/tableEditor/TableEditorHookMap";
 import { useTableEditorStore } from "@/store/tableEditor";
+import { useFileHistoryStore } from "@/store/tableEditor/fileHistory";
 import { useItemStore } from "@/store/tableEditor/item";
-import { expectToBeDefined } from "@/util/test/expectToBeDefined";
+import { takeOne } from "@esposter/shared";
 import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, test } from "vitest";
+import { assert, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe(useTableEditorStore, () => {
+  let router: Router;
+
+  beforeAll(() => {
+    router = useRouter();
+  });
+
   beforeEach(() => {
     setActivePinia(createPinia());
-
-    const router = useRouter();
+    TableEditorHookMap.Close = [];
     router.currentRoute.value.query = {};
   });
 
@@ -44,7 +56,7 @@ describe(useTableEditorStore, () => {
 
     expect(router.currentRoute.value.query).toStrictEqual({ [ID_QUERY_PARAMETER_KEY]: newItem.id });
     // The edited item will be a structured clone object of the original item class
-    // object !== class (not strictly equal) so we manually convert it to the class
+    // Object !== class (not strictly equal) so we manually convert it to the class
     expect(new TodoListItem(editedItem.value)).toStrictEqual(newItem);
     expect(editedIndex.value).toBe(0);
     expect(editFormDialog.value).toBe(true);
@@ -75,7 +87,7 @@ describe(useTableEditorStore, () => {
     await save();
 
     expect(tableEditor.value.items).toHaveLength(1);
-    expect(tableEditor.value.items[0]).toStrictEqual(newItem);
+    expect(takeOne(tableEditor.value.items)).toStrictEqual(newItem);
   });
 
   test("save update item", async () => {
@@ -91,14 +103,14 @@ describe(useTableEditorStore, () => {
 
     createItem(newItem);
 
-    expect(tableEditor.value.items[0].name).not.toBe(updatedName);
+    expect(takeOne(tableEditor.value.items).name).not.toBe(updatedName);
 
     await editItem({ id: newItem.id });
-    expectToBeDefined(editedItem.value);
+    assert.exists(editedItem.value);
     editedItem.value.name = updatedName;
     await save();
 
-    expect(tableEditor.value.items[0].name).toBe(updatedName);
+    expect(takeOne(tableEditor.value.items).name).toBe(updatedName);
   });
 
   test("save delete item", async () => {
@@ -117,6 +129,47 @@ describe(useTableEditorStore, () => {
     await save(true);
 
     expect(tableEditor.value.items).toHaveLength(0);
+  });
+
+  test("save clears file history", async () => {
+    expect.hasAssertions();
+
+    const { editedItem } = setupWithDataSource();
+    const tableEditorStore = useTableEditorStore<DataSourceItem>();
+    const { editFormDialog } = storeToRefs(tableEditorStore);
+    const { save } = tableEditorStore;
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
+    const deleteRow = useDeleteRow();
+    assert.exists(editedItem.value?.dataSource);
+    deleteRow(takeOne(editedItem.value.dataSource.rows).id);
+    editFormDialog.value = true;
+
+    expect(isUndoable.value).toBe(true);
+
+    await save();
+
+    expect(isUndoable.value).toBe(false);
+  });
+
+  test("discard clears file history", () => {
+    expect.hasAssertions();
+
+    const { editedItem } = setupWithDataSource();
+    const tableEditorStore = useTableEditorStore<DataSourceItem>();
+    const { editFormDialog } = storeToRefs(tableEditorStore);
+    const fileHistoryStore = useFileHistoryStore();
+    const { isUndoable } = storeToRefs(fileHistoryStore);
+    const deleteRow = useDeleteRow();
+    assert.exists(editedItem.value?.dataSource);
+    deleteRow(takeOne(editedItem.value.dataSource.rows).id);
+    editFormDialog.value = true;
+
+    expect(isUndoable.value).toBe(true);
+
+    editFormDialog.value = false;
+
+    expect(isUndoable.value).toBe(false);
   });
 
   test("reset item", async () => {

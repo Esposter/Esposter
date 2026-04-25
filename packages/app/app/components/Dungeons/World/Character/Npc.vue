@@ -3,6 +3,8 @@ import type { CharacterProps } from "@/components/Dungeons/World/Character/Index
 import type { Npc } from "@/models/dungeons/scene/world/Npc";
 import type { Direction } from "grid-engine";
 
+import { takeOne } from "@esposter/shared";
+
 interface NpcProps {
   asset: Npc["asset"];
   id: CharacterProps["id"];
@@ -12,17 +14,17 @@ interface NpcProps {
   walkingAnimationMapping: CharacterProps["walkingAnimationMapping"];
 }
 
-const { asset, id, path, pathIndex, singleSidedSpritesheetDirection, walkingAnimationMapping } =
-  defineProps<NpcProps>();
 const direction = defineModel<Direction | undefined>("direction", { required: true });
 const isMoving = defineModel<boolean>("isMoving", { required: true });
+const { asset, id, path, pathIndex, singleSidedSpritesheetDirection, walkingAnimationMapping } =
+  defineProps<NpcProps>();
 </script>
 
 <template>
   <DungeonsWorldCharacter
     :id
     v-model:direction="direction"
-    :position="path[pathIndex]"
+    :position="takeOne(path, pathIndex)"
     :sprite-configuration="{ texture: asset.key, frame: asset.frame, scale: 4 }"
     :walking-animation-mapping
     :single-sided-spritesheet-direction

@@ -7,7 +7,7 @@ import { useSettingsStore } from "@/store/dungeons/settings";
 export const useAnimateText = (scene: SceneWithPlugins, targetText: Ref<string>, text: string) => {
   const settingsStore = useSettingsStore();
   const { isSkipAnimations } = storeToRefs(settingsStore);
-  if (isSkipAnimations.value) return;
+  if (isSkipAnimations.value) return undefined;
 
   const { play, stop } = getDungeonsSoundEffect(scene, FileKey.SoundTextBlip, { loop: true });
   const textDelay = useTextDelay();

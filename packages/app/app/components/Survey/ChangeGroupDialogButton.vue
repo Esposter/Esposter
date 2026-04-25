@@ -17,8 +17,8 @@ const group = ref(survey.group);
   <StyledDialog
     :card-props="{ title: 'Change Group' }"
     :confirm-button-props="{ text: 'Change', disabled: group === survey.group }"
-    @submit="
-      async (_event, onComplete) => {
+    @confirm="
+      async (onComplete) => {
         await updateSurvey({ ...survey, group });
         onComplete();
       }

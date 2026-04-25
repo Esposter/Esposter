@@ -1,10 +1,8 @@
-import type { WatchHandle } from "vue";
-
 import { dayjs } from "#shared/services/dayjs";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 
-export const useTypingSubscribables = () => {
+export const useTypingSubscribables = async () => {
   const { $trpc } = useNuxtApp();
   const dataStore = useDataStore();
   const { typings } = storeToRefs(dataStore);
@@ -18,40 +16,33 @@ export const useTypingSubscribables = () => {
       window.clearTimeout(timeoutId);
     }
   };
-  let watchHandle: undefined | WatchHandle;
 
-  useCreateTyping();
+  await useCreateTyping();
 
-  onMounted(() => {
-    watchHandle = watchImmediate(currentRoomId, (roomId) => {
-      if (!roomId) return;
+  useOnlineSubscribable(currentRoomId, (roomId) => {
+    if (!roomId) return undefined;
 
-      const createTypingUnsubscribable = $trpc.message.onCreateTyping.subscribe(
-        { roomId },
-        {
-          onData: (data) => {
-            clearTypingTimeout(data.userId);
+    const createTypingUnsubscribable = $trpc.message.onCreateTyping.subscribe(
+      { roomId },
+      {
+        onData: (typing) => {
+          clearTypingTimeout(typing.userId);
 
-            const id = window.setTimeout(() => {
-              typings.value = typings.value.filter(({ userId }) => userId !== data.userId);
-              clearTypingTimeout(data.userId);
-            }, dayjs.duration(3, "seconds").asMilliseconds());
+          const id = window.setTimeout(() => {
+            typings.value = typings.value.filter(({ userId }) => userId !== typing.userId);
+            clearTypingTimeout(typing.userId);
+          }, dayjs.duration(3, "seconds").asMilliseconds());
 
-            typingTimeoutIdMap.value.set(data.userId, id);
-            if (!typings.value.some(({ userId }) => userId === data.userId)) typings.value.push(data);
-          },
+          typingTimeoutIdMap.value.set(typing.userId, id);
+          if (!typings.value.some(({ userId }) => userId === typing.userId)) typings.value.push(typing);
         },
-      );
+      },
+    );
 
-      return () => {
-        createTypingUnsubscribable.unsubscribe();
-        for (const userId of typingTimeoutIdMap.value.keys()) clearTypingTimeout(userId);
-        typings.value = [];
-      };
-    });
-  });
-
-  onUnmounted(() => {
-    watchHandle?.();
+    return () => {
+      createTypingUnsubscribable.unsubscribe();
+      for (const userId of typingTimeoutIdMap.value.keys()) clearTypingTimeout(userId);
+      typings.value = [];
+    };
   });
 };

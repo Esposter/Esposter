@@ -1,34 +1,36 @@
 {
   "name": "@esposter/shared",
+  "version": "2.21.0",
   "description": "A library that contains shared typescript code.",
-  "version": "2.17.0",
-  "type": "module",
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/shared#readme",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
   "license": "Apache-2.0",
   "author": "Jimmy Chen",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
-  "publishConfig": {
-    "access": "public"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Esposter/Esposter.git"
   },
-  "bugs": {
-    "url": "https://github.com/Esposter/Esposter/issues"
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
     "coverage": "vitest run --coverage",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
     "lint": "oxlint && eslint .",
     "lint:fix": "oxlint --fix && eslint --fix .",
     "test": "vitest",
-    "typecheck": "tsc"
+    "typecheck": "tsgo"
   },
   "dependencies": {
     "@vueuse/core": "catalog:",

@@ -11,17 +11,16 @@ import { InvalidOperationError, NotFoundError, Operation } from "@esposter/share
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("post", () => {
-  let caller: DecorateRouterRecord<TRPCRouter["post"]>;
   let mockContext: Context;
+  let caller: DecorateRouterRecord<TRPCRouter["post"]>;
   const title = "title";
   const updatedTitle = "updatedTitle";
   const description = "description";
   const updatedDescription = "updatedDescription";
 
   beforeAll(async () => {
-    const createCaller = createCallerFactory(postRouter);
     mockContext = await createMockContext();
-    caller = createCaller(mockContext);
+    caller = createCallerFactory(postRouter)(mockContext);
   });
 
   afterEach(async () => {
@@ -91,6 +90,17 @@ describe("post", () => {
 
     await expect(caller.updatePost({ description, id: newPost.id })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Post, newPost.id).message}]`,
+    );
+  });
+
+  test("fails update with comment id", async () => {
+    expect.hasAssertions();
+
+    const newPost = await caller.createPost({ title });
+    const newComment = await caller.createComment({ description, parentId: newPost.id });
+
+    await expect(caller.updatePost({ description, id: newComment.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Post, newComment.id).message}]`,
     );
   });
 
@@ -184,6 +194,16 @@ describe("post", () => {
 
     await expect(caller.updateComment({ description, id: newComment.id })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Update, DerivedDatabaseEntityType.Comment, newComment.id).message}]`,
+    );
+  });
+
+  test("fails update comment with post id", async () => {
+    expect.hasAssertions();
+
+    const newPost = await caller.createPost({ title });
+
+    await expect(caller.updateComment({ description, id: newPost.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, DerivedDatabaseEntityType.Comment, newPost.id).message}]`,
     );
   });
 

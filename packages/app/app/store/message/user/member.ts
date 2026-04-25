@@ -10,7 +10,6 @@ export const useMemberStore = defineStore("message/user/member", () => {
   const members = computed(() => items.value.toSorted((a, b) => EN_US_COMPARATOR.compare(a.name, b.name)));
   const memberMap = ref(new Map<string, User>());
   const count = ref(0);
-
   const {
     createMember: baseStoreCreateMember,
     deleteMember: baseStoreDeleteMember,

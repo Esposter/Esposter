@@ -14,7 +14,7 @@ export const usePlayAnimation = (
       return;
     }
     // We'll assume here that if we're setting isActive to false,
-    // then that means that we've completed our animation
+    // Then that means that we've completed our animation
     playAnimationKey.value = undefined;
     emit("complete");
   });

@@ -1,35 +1,38 @@
 {
   "name": "vue-phaserjs",
+  "version": "2.21.0",
   "description": "A component library to integrate Phaser Framework with Vue.",
-  "version": "2.17.0",
-  "type": "module",
+  "keywords": [
+    "phaser",
+    "vue"
+  ],
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/vue-phaserjs#readme",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
   "license": "Apache-2.0",
   "author": "Jimmy Chen",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
-  "keywords": [
-    "vue",
-    "phaser"
-  ],
-  "publishConfig": {
-    "access": "public"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Esposter/Esposter.git"
   },
-  "bugs": {
-    "url": "https://github.com/Esposter/Esposter/issues"
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "build": "pnpm export:gen && vite build",
     "export:gen": "ctix build --config ../configuration/.ctirc-vue && ctix build --config ../configuration/.ctirc-ts",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
     "lint": "oxlint && eslint .",
     "lint:fix": "oxlint --fix && eslint --fix .",
+    "test": "vitest",
     "typecheck": "vue-tsc"
   },
   "dependencies": {

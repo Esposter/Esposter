@@ -7,3 +7,5 @@ export enum FilterTypeHas {
   Sound = "Sound",
   Forward = "Forward",
 }
+
+export const FilterTypeHases: ReadonlySet<FilterTypeHas> = new Set(Object.values(FilterTypeHas));

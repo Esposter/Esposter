@@ -1,50 +1,41 @@
 {
   "name": "esposter",
-  "description": "A nice and casual place for posting random things.",
   "version": "1.0.0",
-  "type": "module",
+  "description": "A nice and casual place for posting random things.",
   "homepage": "https://github.com/Esposter/Esposter#readme",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
   "license": "Apache-2.0",
   "author": "Jimmy Chen",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Esposter/Esposter.git"
   },
-  "bugs": {
-    "url": "https://github.com/Esposter/Esposter/issues"
-  },
+  "type": "module",
   "scripts": {
     "build": "pnpm build:packages && pnpm build:docs && pnpm build:app",
     "build:app": "lerna run build --scope=@esposter/app",
-    "build:docs": "typedoc",
     "build:docker": "pnpm crossOS copyfiles .gitignore .dockerignore && docker compose -f docker-compose.dev.yaml build",
+    "build:docs": "typedoc",
     "build:packages": "lerna run build --ignore @esposter/app",
     "coverage": "lerna run coverage",
     "crossOS": "node scripts/crossOS.ts",
     "dev:docker": "docker compose -f docker-compose.dev.yaml up",
+    "format": "oxfmt",
+    "prepare": "git config core.hooksPath .githooks || true",
+    "format:check": "oxfmt --check",
     "lint": "oxlint --disable-nested-config && eslint . && lerna run lint",
     "lint:fix": "oxlint --disable-nested-config --fix && eslint --fix . && lerna run lint:fix",
     "lint:fix:packages": "pnpm lint:fix --ignore @esposter/app",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted",
     "refresh:lockfile": "pnpm crossOS refresh:lockfile",
-    "release": "pnpm build:packages && pnpm lint:fix:packages && pnpm typecheck:packages && lerna publish --yes",
+    "release": "pnpm build:packages && pnpm lint:fix:packages && pnpm format && pnpm typecheck:packages && lerna publish --yes",
     "start": "lerna run start --scope=@esposter/app",
     "test": "lerna run test",
-    "typecheck": "tsc && lerna run typecheck",
+    "typecheck": "tsgo && lerna run typecheck",
     "typecheck:packages": "pnpm typecheck --ignore @esposter/app",
     "watch:packages": "lerna watch --ignore @esposter/app -- pnpm build:packages"
-  },
-  "crossOS": {
-    "refresh:lockfile": {
-      "darwin": "sh ./scripts/refreshLockfile.sh",
-      "linux": "./scripts/refreshLockfile.sh",
-      "win32": "pnpm pwsh scripts/refreshLockfile.ps1"
-    },
-    "copyfiles": {
-      "darwin": "cp -f",
-      "linux": "cp -f",
-      "win32": "pnpm pwsh -Command Copy-Item -Force"
-    }
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
@@ -52,30 +43,47 @@
     "@lerna-lite/publish": "catalog:",
     "@lerna-lite/run": "catalog:",
     "@lerna-lite/watch": "catalog:",
-    "@prettier/plugin-oxc": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native-preview": "catalog:",
+    "@vitejs/plugin-vue": "catalog:",
     "@vitest/coverage-v8": "catalog:",
-    "@vue/language-core": "catalog:",
+    "@vue/test-utils": "catalog:",
     "ctix": "catalog:",
     "dotenv": "catalog:",
     "eslint": "catalog:",
     "happy-dom": "catalog:",
+    "nano-staged": "catalog:",
+    "oxfmt": "catalog:",
     "oxlint": "catalog:",
+    "oxlint-tsgolint": "catalog:",
     "rolldown": "catalog:",
     "rolldown-plugin-dts": "catalog:",
     "tsx": "catalog:",
     "type-fest": "catalog:",
     "typedoc": "catalog:",
     "typescript": "catalog:",
+    "unplugin-auto-import": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",
     "vue-tsc": "catalog:"
   },
-  "devDependenciesComments": {
-    "oxlint": "@TODO: https://github.com/oxc-project/oxc/issues/13204"
+  "nano-staged": {
+    "*": "oxfmt"
   },
   "engines": {
-    "node": "^24.11.1"
+    "node": "^24.15.0"
   },
-  "packageManager": "pnpm@10.23.0+sha512.21c4e5698002ade97e4efe8b8b4a89a8de3c85a37919f957e7a0f30f38fbc5bbdd05980ffe29179b2fb6e6e691242e098d945d1601772cad0fef5fb6411e2a4b"
+  "packageManager": "pnpm@10.33.1+sha512.05ba3c1d5d1c18f68df06470d74055e62d41fc110a0c660db1b2dfb2785327f04cf0f68345d4609bc52089e7fa0343c31593b2f9594e2c5d5da426230acc9820",
+  "crossOS": {
+    "copyfiles": {
+      "darwin": "cp -f",
+      "linux": "cp -f",
+      "win32": "pnpm pwsh -Command Copy-Item -Force"
+    },
+    "refresh:lockfile": {
+      "darwin": "sh ./scripts/refreshLockfile.sh",
+      "linux": "./scripts/refreshLockfile.sh",
+      "win32": "pnpm pwsh scripts/refreshLockfile.ps1"
+    }
+  }
 }

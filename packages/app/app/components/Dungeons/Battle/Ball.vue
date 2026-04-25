@@ -29,7 +29,7 @@ onUnmounted(() => {
     :configuration="{ visible: isVisible, path, texture, scale, alpha }"
     @complete="
       (_scene, newPathFollower) => {
-        pathFollower = newPathFollower;
+        pathFollower = markRaw(newPathFollower);
       }
     "
   />

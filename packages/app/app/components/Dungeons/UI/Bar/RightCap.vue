@@ -12,8 +12,8 @@ interface RightCapProps {
   tween?: TweenBuilderConfiguration;
 }
 
-const { imagePosition, scaleY, texture, tween } = defineProps<RightCapProps>();
 const displayWidth = defineModel<number | undefined>("displayWidth", { required: true });
+const { imagePosition, scaleY, texture, tween } = defineProps<RightCapProps>();
 const isVisible = computed(() => (displayWidth.value ?? 0) > 0);
 </script>
 

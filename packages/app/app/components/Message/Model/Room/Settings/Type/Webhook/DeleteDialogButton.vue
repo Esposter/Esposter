@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Room, Webhook } from "@esposter/db-schema";
 
-import { useWebhookStore } from "@/store/message/webhook";
+import { useWebhookStore } from "@/store/message/room/webhook";
 
 interface DeleteDialogButtonProps {
   roomId: Room["id"];
@@ -14,7 +14,7 @@ const { deleteWebhook } = webhookStore;
 </script>
 
 <template>
-  <StyledDeleteDialog
+  <StyledDeleteFormDialog
     :card-props="{ title: 'Delete Webhook', text: `Are you sure you want to delete ${webhook.name}?` }"
     @delete="
       async (onComplete) => {
@@ -33,5 +33,5 @@ const { deleteWebhook } = webhookStore;
         </template>
       </v-tooltip>
     </template>
-  </StyledDeleteDialog>
+  </StyledDeleteFormDialog>
 </template>

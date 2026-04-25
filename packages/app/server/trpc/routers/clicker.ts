@@ -14,7 +14,7 @@ export const clickerRouter = router({
   readBuildingMap: standardRateLimitedProcedure.query(() => BuildingMap),
   readClicker: standardAuthedProcedure.query<Clicker>(async ({ ctx }) => {
     try {
-      const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
+      const blobName = `${ctx.getSessionPayload.user.id}/${SAVE_FILENAME}`;
       const { readableStreamBody } = await useDownload(AzureContainer.ClickerAssets, blobName);
       if (!readableStreamBody) return new Clicker();
 
@@ -26,7 +26,7 @@ export const clickerRouter = router({
   }),
   readUpgradeMap: standardRateLimitedProcedure.query(() => UpgradeMap),
   saveClicker: standardAuthedProcedure.input(clickerSchema).mutation(async ({ ctx, input }) => {
-    const blobName = `${ctx.session.user.id}/${SAVE_FILENAME}`;
+    const blobName = `${ctx.getSessionPayload.user.id}/${SAVE_FILENAME}`;
     await useUpload(AzureContainer.ClickerAssets, blobName, JSON.stringify(input));
   }),
 });

@@ -1,5 +1,3 @@
-import type { WatchHandle } from "vue";
-
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
@@ -13,62 +11,60 @@ export const useMessageSubscribables = () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const dataStore = useDataStore();
   const { storeCreateMessage, storeDeleteMessage, storeUpdateMessage } = dataStore;
-  let watchHandle: undefined | WatchHandle;
+  const readMembersByIds = useReadMembersByIds();
 
-  onMounted(() => {
-    watchHandle = watchImmediate(currentRoomId, async (roomId) => {
-      if (!roomId) return;
+  useOnlineSubscribable(currentRoomId, async (roomId) => {
+    if (!roomId) return undefined;
 
-      const createMessageUnsubscribable = $trpc.message.onCreateMessage.subscribe(
-        { roomId },
-        {
-          onData: getSynchronizedFunction(async ({ data }) => {
-            for (const newMessage of data) await storeCreateMessage(newMessage);
-          }),
-        },
-      );
-      const updateMessageUnsubscribable = $trpc.message.onUpdateMessage.subscribe(
-        { roomId },
-        {
-          onData: (data) => {
-            storeUpdateMessage(data);
-          },
-        },
-      );
-      const deleteMessageUnsubscribable = $trpc.message.onDeleteMessage.subscribe(
-        { roomId },
-        {
-          onData: getSynchronizedFunction(async (data) => {
-            await storeDeleteMessage(data);
-          }),
-        },
-      );
-      const webPubSubClient = new WebPubSubClient({
-        getClientAccessUrl: (options) =>
-          $trpc.message.getWebPubSubClientAccessUrl.query(
-            { roomId },
-            { signal: options?.abortSignal as AbortSignal | undefined },
-          ),
-      });
-      await webPubSubClient.start();
-      webPubSubClient.on(
-        "group-message",
-        getSynchronizedFunction(async ({ message: { data } }) => {
-          const entity = new WebhookMessageEntity(jsonDateParse(data as string));
-          await storeCreateMessage(entity);
+    const createMessageUnsubscribable = $trpc.message.onCreateMessage.subscribe(
+      { roomId },
+      {
+        onData: getSynchronizedFunction(async ({ data }) => {
+          // Existing members who joined in a previous session won't fire onJoinRoom
+          // So we need to ensure their data is loaded for author info on new messages
+          const userIds = Array.from(new Set(data), ({ userId }) => userId).filter((userId) => userId !== undefined);
+          if (userIds.length > 0) await readMembersByIds(userIds);
+          for (const newMessage of data) await storeCreateMessage(newMessage);
         }),
-      );
-
-      return () => {
-        createMessageUnsubscribable.unsubscribe();
-        updateMessageUnsubscribable.unsubscribe();
-        deleteMessageUnsubscribable.unsubscribe();
-        webPubSubClient.stop();
-      };
+      },
+    );
+    const updateMessageUnsubscribable = $trpc.message.onUpdateMessage.subscribe(
+      { roomId },
+      {
+        onData: getSynchronizedFunction(async (updatedMessage) => {
+          await storeUpdateMessage(updatedMessage);
+        }),
+      },
+    );
+    const deleteMessageUnsubscribable = $trpc.message.onDeleteMessage.subscribe(
+      { roomId },
+      {
+        onData: getSynchronizedFunction(async (deleteInput) => {
+          await storeDeleteMessage(deleteInput);
+        }),
+      },
+    );
+    const webPubSubClient = new WebPubSubClient({
+      getClientAccessUrl: (options) =>
+        $trpc.message.getWebPubSubClientAccessUrl.query(
+          { roomId },
+          { signal: options?.abortSignal as AbortSignal | undefined },
+        ),
     });
-  });
+    await webPubSubClient.start();
+    webPubSubClient.on(
+      "group-message",
+      getSynchronizedFunction(async ({ message: { data } }) => {
+        const entity = new WebhookMessageEntity(jsonDateParse(data as string));
+        await storeCreateMessage(entity);
+      }),
+    );
 
-  onUnmounted(() => {
-    watchHandle?.();
+    return () => {
+      createMessageUnsubscribable.unsubscribe();
+      updateMessageUnsubscribable.unsubscribe();
+      deleteMessageUnsubscribable.unsubscribe();
+      webPubSubClient.stop();
+    };
   });
 };

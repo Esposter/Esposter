@@ -1,0 +1,69 @@
+<script setup lang="ts">
+import type StyledEditFormDialogErrorIcon from "@/components/Styled/EditFormDialog/ErrorIcon.vue";
+import type StyledFormDialog from "@/components/Styled/FormDialog.vue";
+import type { z } from "zod";
+
+import deepEqual from "fast-deep-equal";
+
+interface EditDialogButtonProps {
+  editedValue: unknown;
+  icon?: string;
+  isCreate?: boolean;
+  schema: z.ZodType;
+  title: string;
+  tooltipText: string;
+  value: unknown;
+}
+
+defineSlots<{ default: () => VNode; "prepend-actions"?: () => VNode }>();
+const {
+  editedValue,
+  icon = "mdi-pencil",
+  isCreate = false,
+  schema,
+  title,
+  tooltipText,
+  value,
+} = defineProps<EditDialogButtonProps>();
+const emit = defineEmits<{ reset: []; submit: [onComplete: () => void] }>();
+const styledDialog = useTemplateRef<InstanceType<typeof StyledFormDialog>>("styledDialog");
+const errorIcon = useTemplateRef<InstanceType<typeof StyledEditFormDialogErrorIcon>>("errorIcon");
+const isEqual = computed(() => deepEqual(value, editedValue));
+const disabled = computed(() => !(errorIcon.value?.isValid ?? true) || (!isCreate && isEqual.value));
+</script>
+
+<template>
+  <StyledFormDialog
+    ref="styledDialog"
+    :card-props="{ title }"
+    :confirm-button-attrs="{ disabled }"
+    :confirm-button-props="{ text: 'Save & Close' }"
+    @submit="(_event, onComplete) => emit('submit', onComplete)"
+  >
+    <template #activator="{ updateIsOpen }">
+      <v-tooltip :text="tooltipText">
+        <template #activator="{ props: tooltipProps }">
+          <v-btn m-0 :icon size="small" tile :="tooltipProps" @click.stop="updateIsOpen(true)" />
+        </template>
+      </v-tooltip>
+    </template>
+    <template #prepend-actions>
+      <StyledEditFormDialogErrorIcon
+        ref="errorIcon"
+        :edited-value
+        :edit-form="styledDialog?.editForm"
+        :is-edit-form-valid="styledDialog?.isEditFormValid ?? true"
+        :schema
+      />
+      <v-tooltip text="Reset changes">
+        <template #activator="{ props: tooltipProps }">
+          <v-btn :disabled="isEqual" text="Reset" :="tooltipProps" @click="emit('reset')" />
+        </template>
+      </v-tooltip>
+      <slot name="prepend-actions" />
+    </template>
+    <v-container overflow-y-auto fluid>
+      <slot />
+    </v-container>
+  </StyledFormDialog>
+</template>

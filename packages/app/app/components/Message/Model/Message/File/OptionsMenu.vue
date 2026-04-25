@@ -22,7 +22,7 @@ const menuItems: Item[] = [
 
 <template>
   <StyledCard :card-props="{ elevation: isHovering ? 12 : 2, ...hoverProps }">
-    <v-card-actions p-0="!" gap-0 min-h-auto="!">
+    <v-card-actions p-0 gap-0 min-h-auto>
       <v-tooltip
         v-for="{ color, icon, shortTitle, title, onClick } of menuItems"
         :key="title"

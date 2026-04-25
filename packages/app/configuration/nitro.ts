@@ -1,6 +1,9 @@
-import type { NuxtConfig } from "nuxt/schema";
+import type { NitroConfig } from "nitropack/types";
 // @TODO: https://github.com/nuxt/nuxt/issues/33664
-export const nitro: NuxtConfig["nitro"] = {
+export const nitro: NitroConfig = {
+  experimental: {
+    websocket: true,
+  },
   typescript: {
     tsConfig: {
       compilerOptions: {

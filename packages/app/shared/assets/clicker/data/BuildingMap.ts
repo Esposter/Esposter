@@ -3,7 +3,7 @@ import type { Building } from "#shared/models/clicker/data/building/Building";
 import type { Except } from "type-fest";
 
 import { BuildingId } from "#shared/models/clicker/data/building/BuildingId";
-import { compileVariable } from "#shared/services/clicker/compiler/compileVariable";
+import { compileVariable } from "#shared/services/compiler/compileVariable";
 
 export const BuildingMap = {
   [BuildingId.Cursor]: {
@@ -106,3 +106,7 @@ export const BuildingMap = {
     baseValue: 6.4e13,
   },
 } as const satisfies Record<BuildingId, Except<Building, "id">>;
+
+export const Buildings: ReadonlySet<(typeof BuildingMap)[keyof typeof BuildingMap]> = new Set(
+  Object.values(BuildingMap),
+);

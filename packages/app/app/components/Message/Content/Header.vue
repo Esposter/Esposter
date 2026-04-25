@@ -16,6 +16,7 @@ const dialogStore = useDialogStore();
 const { isEditRoomDialogOpen } = storeToRefs(dialogStore);
 const roomName = useRoomName(() => currentRoom.value?.id);
 const placeholder = useRoomPlaceholder(currentRoom);
+const { smAndDown } = useVDisplay();
 </script>
 
 <template>
@@ -30,7 +31,7 @@ const placeholder = useRoomPlaceholder(currentRoom);
       :card-props="{ title: 'Edit Room' }"
       :is-editable="isCreator"
       :max-length="ROOM_NAME_MAX_LENGTH"
-      :name="currentRoom.name"
+      :name="currentRoom.name ?? ''"
       :placeholder
       :tooltip-props="{ location: 'bottom', text: 'Edit Room' }"
       @submit="
@@ -45,18 +46,11 @@ const placeholder = useRoomPlaceholder(currentRoom);
       <span pl-2>{{ roomName }}</span>
     </StyledEditableNameDialogButton>
     <template #append>
-      <MessageContentNotificationSettingsMenuButton :room-id="currentRoom.id" />
-      <MessageContentPinnedMessagesMenuButton />
-      <MessageContentAddFriendsDialogButton />
-      <MessageContentShowMemberListButton />
+      <MessageContentVoiceCallButton />
+      <MessageContentNotificationSettingsMenuButton />
+      <MessageContentHeaderActionButtons v-if="!smAndDown" />
       <MessageContentShowSearchButton />
+      <MessageContentHeaderOverflowMenu v-if="smAndDown" />
     </template>
   </v-toolbar>
 </template>
-
-<style scoped lang="scss">
-:deep(.v-toolbar__content) {
-  min-height: $app-bar-height;
-  height: auto !important;
-}
-</style>

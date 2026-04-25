@@ -35,8 +35,12 @@ export const ShapeSetterMap = {
     if (value === undefined) return;
     gameObject.setDisplaySize(value, gameObject.displayHeight);
   },
-  fillAlpha: (gameObject) => (value) => gameObject.setFillStyle(gameObject.fillColor, value),
-  fillColor: (gameObject) => (value) => gameObject.setFillStyle(value, gameObject.alpha),
+  fillAlpha: (gameObject) => (value) => {
+    gameObject.setFillStyle(gameObject.fillColor, value);
+  },
+  fillColor: (gameObject) => (value) => {
+    gameObject.setFillStyle(value, gameObject.fillAlpha);
+  },
   strokeStyle: (gameObject) => (value) => {
     if (!value) return;
     gameObject.setStrokeStyle(...value);

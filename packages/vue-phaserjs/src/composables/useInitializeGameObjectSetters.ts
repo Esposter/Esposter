@@ -31,7 +31,7 @@ export const useInitializeGameObjectSetters = <
       setter(gameObject, emit)(value);
       if (value !== undefined) emit(getUpdateEvent(key as string), value);
       // If we haven't defined a proper value for the game object property,
-      // we should emit the intrinsic gameObject value so vue can grab it
+      // We should emit the intrinsic gameObject value so vue can grab it
       else if (key in gameObject) emit(getUpdateEvent(key as string), gameObject[key as keyof typeof gameObject]);
     });
 

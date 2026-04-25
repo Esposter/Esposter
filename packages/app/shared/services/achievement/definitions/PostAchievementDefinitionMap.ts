@@ -1,0 +1,105 @@
+import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
+import { AchievementConditionType } from "#shared/models/achievement/type/AchievementConditionType";
+import { defineAchievementDefinition } from "#shared/services/achievement/defineAchievementDefinition";
+import { BinaryOperator, PostAchievementName } from "@esposter/db-schema";
+
+export const PostAchievementDefinitionMap = {
+  [PostAchievementName.BriefComment]: defineAchievementDefinition({
+    amount: 50,
+    category: AchievementCategory.Post,
+    condition: {
+      operator: BinaryOperator.lt,
+      path: "description.length",
+      type: AchievementConditionType.Property,
+      value: 50,
+    },
+    description: "Create 50 comments under 50 characters",
+    icon: "mdi-comment-flash",
+    points: 40,
+    triggerPath: "post.createComment" as const,
+  }),
+  [PostAchievementName.Commentator]: defineAchievementDefinition({
+    amount: 1,
+    category: AchievementCategory.Post,
+    description: "Comment on a post",
+    icon: "mdi-comment-plus",
+    points: 10,
+    triggerPath: "post.createComment" as const,
+  }),
+  [PostAchievementName.CommentDeleter]: defineAchievementDefinition({
+    amount: 1,
+    category: AchievementCategory.Post,
+    description: "Delete a comment",
+    icon: "mdi-comment-remove",
+    points: 5,
+    triggerPath: "post.deleteComment" as const,
+  }),
+  [PostAchievementName.CommentEditor]: defineAchievementDefinition({
+    amount: 1,
+    category: AchievementCategory.Post,
+    description: "Edit a comment",
+    icon: "mdi-comment-edit",
+    points: 5,
+    triggerPath: "post.updateComment" as const,
+  }),
+  [PostAchievementName.DetailedPost]: defineAchievementDefinition({
+    amount: 1,
+    category: AchievementCategory.Post,
+    condition: {
+      operator: BinaryOperator.ge,
+      path: "description.length",
+      type: AchievementConditionType.Property,
+      value: 1000,
+    },
+    description: "Create a post with 1000-4999 characters",
+    icon: "mdi-text-box",
+    points: 30,
+    triggerPath: "post.createPost" as const,
+  }),
+  [PostAchievementName.Novelist]: defineAchievementDefinition({
+    amount: 1,
+    category: AchievementCategory.Post,
+    condition: {
+      operator: BinaryOperator.ge,
+      path: "description.length",
+      type: AchievementConditionType.Property,
+      value: 5000,
+    },
+    description: "Create a post with 5000+ characters",
+    icon: "mdi-book-open-page-variant",
+    points: 50,
+    triggerPath: "post.createPost" as const,
+  }),
+  [PostAchievementName.PostDeleter]: defineAchievementDefinition({
+    amount: 1,
+    category: AchievementCategory.Post,
+    description: "Delete a post",
+    icon: "mdi-delete-circle",
+    points: 5,
+    triggerPath: "post.deletePost" as const,
+  }),
+  [PostAchievementName.PostEditor]: defineAchievementDefinition({
+    amount: 1,
+    category: AchievementCategory.Post,
+    description: "Edit a post",
+    icon: "mdi-file-document-edit",
+    points: 5,
+    triggerPath: "post.updatePost" as const,
+  }),
+  [PostAchievementName.PosterChild]: defineAchievementDefinition({
+    amount: 1,
+    category: AchievementCategory.Post,
+    description: "Create a post",
+    icon: "mdi-post",
+    points: 10,
+    triggerPath: "post.createPost" as const,
+  }),
+  [PostAchievementName.ProlificPoster]: defineAchievementDefinition({
+    amount: 25,
+    category: AchievementCategory.Post,
+    description: "Create 25 posts",
+    icon: "mdi-magnify",
+    points: 35,
+    triggerPath: "post.createPost" as const,
+  }),
+};

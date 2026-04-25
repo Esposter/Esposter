@@ -4,7 +4,10 @@ import type { Game } from "phaser";
 import { useGame } from "@/composables/useGame";
 
 export const usePhaserStore = defineStore("phaser", () => {
-  // @NOTE: A very weird bug will occur here with setInteractive input priority if the game is a ref >:C
+  // A writable computed is used instead of ref to keep the Game object unproxied.
+  // Ref() would wrap it in Vue's deep reactive Proxy, breaking Phaser's InputManager which
+  // Uses === identity to sort/find objects in its priority list — proxied objects have a
+  // Different reference than the raw objects Phaser stored, so setInteractive priority silently breaks.
   let baseGame: Game | undefined;
   const game = computed({
     get: () => baseGame,
@@ -23,7 +26,7 @@ export const usePhaserStore = defineStore("phaser", () => {
     const oldSceneKey = sceneKey.value;
     sceneKey.value = newSceneKey;
     // We need to wait until all the vue components for the new scene have been rendered
-    // and the hooks have all been executed before we can tell phaser to start the new scene
+    // And the hooks have all been executed before we can tell phaser to start the new scene
     await nextTick();
     // Cleanup old scene resources
     if (oldSceneKey && game.scene.isActive(oldSceneKey)) game.scene.stop(oldSceneKey);

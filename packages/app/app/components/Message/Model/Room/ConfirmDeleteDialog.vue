@@ -12,6 +12,7 @@ interface RoomConfirmDeleteDialogProps {
 defineSlots<{
   activator: (props: StyledDialogActivatorSlotProps & { tooltipProps: Record<string, unknown> }) => VNode;
 }>();
+const modelValue = defineModel<boolean>({ default: false });
 const { creatorId, roomId } = defineProps<RoomConfirmDeleteDialogProps>();
 const { data: session } = await authClient.useSession(useFetch);
 const isCreator = computed(() => creatorId === session.value?.user.id);
@@ -20,7 +21,8 @@ const { deleteRoom, leaveRoom } = roomStore;
 </script>
 
 <template>
-  <StyledDeleteDialog
+  <StyledDeleteFormDialog
+    v-model="modelValue"
     :card-props="
       isCreator
         ? { title: 'Delete Room', text: 'Are you sure you want to delete this room?' }
@@ -44,5 +46,5 @@ const { deleteRoom, leaveRoom } = roomStore;
         </template>
       </v-tooltip>
     </template>
-  </StyledDeleteDialog>
+  </StyledDeleteFormDialog>
 </template>

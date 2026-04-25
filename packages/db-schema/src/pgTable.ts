@@ -1,3 +1,4 @@
+/* oxlint-disable @typescript-eslint/no-unnecessary-type-arguments */
 import type { BuildColumns, BuildExtraConfigColumns } from "drizzle-orm";
 import type { PgColumnBuilderBase, PgSchema, PgTableExtraConfigValue, PgTableWithColumns } from "drizzle-orm/pg-core";
 
@@ -17,7 +18,7 @@ export const pgTable = <
   }: {
     extraConfig?: (self: BuildExtraConfigColumns<TTableName, TColumnsMap, "pg">) => PgTableExtraConfigValue[];
     schema?: TSchema extends string ? PgSchema<TSchema> : undefined;
-  },
+  } = {},
 ) =>
   (schema?.table<TTableName, TColumnsMap & typeof metadataSchema>(
     name,

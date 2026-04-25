@@ -25,16 +25,16 @@ const BaseColorsMap = {
     surface: "#fff",
     text: "#000",
   },
-} as const satisfies Record<ThemeMode, Partial<Colors>>;
+} as const satisfies Partial<Record<ThemeMode, Partial<Colors>>>;
 
-type BaseColors = (typeof BaseColorsMap)[ThemeMode];
+export type BaseColors = (typeof BaseColorsMap)[Exclude<ThemeMode, ThemeMode.system>];
 
 const toSixDigitHexColor = (hexColor: string) =>
   hexColor.length === 3
-    ? [...EN_US_SEGMENTER.segment(hexColor)].map((s) => s.segment).reduce((acc, curr) => `${acc}${curr}${curr}`, "")
+    ? Array.from(EN_US_SEGMENTER.segment(hexColor), (s) => s.segment).reduce((acc, curr) => `${acc}${curr}${curr}`, "")
     : hexColor;
 
-const getBaseColorsExtension = (colors: BaseColors) => {
+export const getBaseColorsExtension = (colors: BaseColors) => {
   const sanitisedColors = Object.fromEntries(
     Object.entries(colors).map(([color, hex]) => [color, `${hex[0]}${toSixDigitHexColor(hex.slice(1))}`]),
   );
@@ -96,11 +96,7 @@ const defaults: DefaultsOptions = {
   VSelect: { variant: "outlined" },
   VTextarea: { variant: "outlined" },
   VTextField: { variant: "outlined" },
-  VToolbar: {
-    style: {
-      backgroundColor: "transparent",
-    },
-  },
+  VToolbar: { color: "surface" },
   VToolbarTitle: {
     style: {
       marginInlineStart: 0,

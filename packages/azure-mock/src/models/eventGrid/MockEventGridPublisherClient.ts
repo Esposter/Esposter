@@ -6,9 +6,10 @@ import { MockEventGridDatabase } from "@/store/MockEventGridDatabase";
  * An in-memory mock of the Azure EventGridPublisherClient.
  * It uses a Map to simulate event grid storage and correctly implements the EventGridPublisherClient interface.
  */
-export class MockEventGridPublisherClient
-  implements Except<EventGridPublisherClient<"EventGrid">, "apiVersion" | "endpointUrl">
-{
+export class MockEventGridPublisherClient implements Except<
+  EventGridPublisherClient<"EventGrid">,
+  "apiVersion" | "endpointUrl"
+> {
   endpoint: string;
   topicType: "EventGrid";
 

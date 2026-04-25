@@ -1,17 +1,14 @@
 import type { SceneKey } from "#shared/models/dungeons/keys/SceneKey";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { Dungeons } from "#shared/models/dungeons/data/Dungeons";
+import { Dungeons, dungeonsSchema } from "#shared/models/dungeons/data/Dungeons";
 import { Save } from "#shared/models/dungeons/data/Save";
 import { dayjs } from "#shared/services/dayjs";
-import { authClient } from "@/services/auth/authClient";
 import { DUNGEONS_LOCAL_STORAGE_KEY } from "@/services/dungeons/constants";
-import { saveItemMetadata } from "@/services/shared/metadata/saveItemMetadata";
 import { Cameras } from "phaser";
 import { useCameraStore, usePhaserStore } from "vue-phaserjs";
 
 export const useDungeonsStore = defineStore("dungeons", () => {
-  const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
   const phaserStore = usePhaserStore();
   const { switchToScene } = phaserStore;
@@ -19,15 +16,10 @@ export const useDungeonsStore = defineStore("dungeons", () => {
   const { fadeOut } = cameraStore;
 
   const dungeons = ref(new Dungeons());
-  const saveDungeons = async () => {
-    if (session.value.data) {
-      saveItemMetadata(dungeons.value);
-      await $trpc.dungeons.saveDungeons.mutate(dungeons.value);
-    } else {
-      saveItemMetadata(dungeons.value);
-      localStorage.setItem(DUNGEONS_LOCAL_STORAGE_KEY, dungeons.value.toJSON());
-    }
-  };
+  const saveDungeons = useSave(dungeons, {
+    auth: { save: $trpc.dungeons.saveDungeons.mutate },
+    unauth: { key: DUNGEONS_LOCAL_STORAGE_KEY, schema: dungeonsSchema },
+  });
 
   const save = ref(new Save());
   const saveIndex = ref(0);

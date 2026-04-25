@@ -34,7 +34,7 @@ export const DefaultParserOptions: SetRequired<
   explicitChildren: false,
   explicitRoot: true,
   ignoreAttrs: false,
-  // include white-space only text nodes
+  // Include white-space only text nodes
   includeWhiteChars: false,
   mergeAttrs: false,
   normalize: false,

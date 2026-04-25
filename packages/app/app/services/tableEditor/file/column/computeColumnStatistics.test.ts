@@ -1,0 +1,285 @@
+import { BooleanColumn } from "#shared/models/tableEditor/file/column/BooleanColumn";
+import { ColumnType } from "#shared/models/tableEditor/file/column/ColumnType";
+import { DateFormats } from "#shared/models/tableEditor/file/column/DateFormat";
+import { StringColumn } from "#shared/models/tableEditor/file/column/StringColumn";
+import {
+  makeDataSource,
+  makeDateColumn,
+  makeNumberColumn,
+  makeRow,
+} from "@/composables/tableEditor/file/commands/testUtils.test";
+import { computeColumnStatistics } from "@/services/tableEditor/file/column/computeColumnStatistics";
+import { takeOne } from "@esposter/shared";
+import { describe, expect, test } from "vitest";
+
+describe(computeColumnStatistics, () => {
+  test(`number column computes minimum, maximum, average, standardDeviation, uniqueCount, nullCount`, () => {
+    expect.hasAssertions();
+
+    const dataSource = makeDataSource(
+      [makeNumberColumn("")],
+      [makeRow({ "": 0 }), makeRow({ "": 2 }), makeRow({ "": 2 }), makeRow({ "": null })],
+    );
+
+    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
+      average: 1.33,
+      columnName: "",
+      columnType: ColumnType.Number,
+      falseCount: null,
+      maximum: 2,
+      minimum: 0,
+      mostFrequentValue: null,
+      nullCount: 1,
+      nullPercent: 25,
+      standardDeviation: 0.94,
+      summation: 4,
+      topFrequencies: null,
+      trueCount: null,
+      uniqueCount: 2,
+    });
+  });
+
+  test(`number column with repeating decimal mean computes standardDeviation precisely`, () => {
+    expect.hasAssertions();
+
+    // Mean = 1/3 (repeating decimal); variance = 2/9 ≈ 0.2222; std = √(2/9) ≈ 0.4714
+    // Using raw mean avoids rounding error accumulation in the variance sum
+    const dataSource = makeDataSource(
+      [makeNumberColumn("")],
+      [makeRow({ "": 0 }), makeRow({ "": 0 }), makeRow({ "": 1 })],
+    );
+
+    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
+      average: 0.33,
+      columnName: "",
+      columnType: ColumnType.Number,
+      falseCount: null,
+      maximum: 1,
+      minimum: 0,
+      mostFrequentValue: null,
+      nullCount: 0,
+      nullPercent: 0,
+      standardDeviation: 0.47,
+      summation: 1,
+      topFrequencies: null,
+      trueCount: null,
+      uniqueCount: 2,
+    });
+  });
+
+  test(`number column with single value has standardDeviation of 0`, () => {
+    expect.hasAssertions();
+
+    const dataSource = makeDataSource([makeNumberColumn("")], [makeRow({ "": 1 })]);
+
+    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
+      average: 1,
+      columnName: "",
+      columnType: ColumnType.Number,
+      falseCount: null,
+      maximum: 1,
+      minimum: 1,
+      mostFrequentValue: null,
+      nullCount: 0,
+      nullPercent: 0,
+      standardDeviation: 0,
+      summation: 1,
+      topFrequencies: null,
+      trueCount: null,
+      uniqueCount: 1,
+    });
+  });
+
+  test(`boolean column computes trueCount, falseCount, nullCount`, () => {
+    expect.hasAssertions();
+
+    const dataSource = makeDataSource(
+      [new BooleanColumn({ name: "" })],
+      [makeRow({ "": true }), makeRow({ "": true }), makeRow({ "": false }), makeRow({ "": null })],
+    );
+
+    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
+      average: null,
+      columnName: "",
+      columnType: ColumnType.Boolean,
+      falseCount: 1,
+      maximum: null,
+      minimum: null,
+      mostFrequentValue: null,
+      nullCount: 1,
+      nullPercent: 25,
+      standardDeviation: null,
+      summation: null,
+      topFrequencies: null,
+      trueCount: 2,
+      uniqueCount: null,
+    });
+  });
+
+  test(`string column computes uniqueCount, nullCount, nullPercent, mostFrequentValue`, () => {
+    expect.hasAssertions();
+
+    const dataSource = makeDataSource(
+      [new StringColumn({ name: "" })],
+      [makeRow({ "": "" }), makeRow({ "": " " }), makeRow({ "": "" }), makeRow({ "": null })],
+    );
+
+    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
+      average: null,
+      columnName: "",
+      columnType: ColumnType.String,
+      falseCount: null,
+      maximum: null,
+      minimum: null,
+      mostFrequentValue: "",
+      nullCount: 1,
+      nullPercent: 25,
+      standardDeviation: null,
+      summation: null,
+      topFrequencies: [
+        ["", 2],
+        [" ", 1],
+      ],
+      trueCount: null,
+      uniqueCount: 2,
+    });
+  });
+
+  test(`date column computes uniqueCount, nullCount, nullPercent, mostFrequentValue`, () => {
+    expect.hasAssertions();
+
+    const dataSource = makeDataSource(
+      [makeDateColumn("", takeOne([...DateFormats]))],
+      [
+        makeRow({ "": "1970-01-01" }),
+        makeRow({ "": "1970-01-02" }),
+        makeRow({ "": "1970-01-01" }),
+        makeRow({ "": null }),
+      ],
+    );
+
+    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
+      average: null,
+      columnName: "",
+      columnType: ColumnType.Date,
+      falseCount: null,
+      maximum: null,
+      minimum: null,
+      mostFrequentValue: "1970-01-01",
+      nullCount: 1,
+      nullPercent: 25,
+      standardDeviation: null,
+      summation: null,
+      topFrequencies: [["1970-01", 3]],
+      trueCount: null,
+      uniqueCount: 2,
+    });
+  });
+
+  test("all null number column returns null statistics", () => {
+    expect.hasAssertions();
+
+    const dataSource = makeDataSource([makeNumberColumn("")], [makeRow({ "": null })]);
+
+    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
+      average: null,
+      columnName: "",
+      columnType: ColumnType.Number,
+      falseCount: null,
+      maximum: null,
+      minimum: null,
+      mostFrequentValue: null,
+      nullCount: 1,
+      nullPercent: 100,
+      standardDeviation: null,
+      summation: 0,
+      topFrequencies: null,
+      trueCount: null,
+      uniqueCount: 0,
+    });
+  });
+
+  test("empty rows returns zero counts and null statistics", () => {
+    expect.hasAssertions();
+
+    const dataSource = makeDataSource([makeNumberColumn("")], []);
+
+    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
+      average: null,
+      columnName: "",
+      columnType: ColumnType.Number,
+      falseCount: null,
+      maximum: null,
+      minimum: null,
+      mostFrequentValue: null,
+      nullCount: 0,
+      nullPercent: null,
+      standardDeviation: null,
+      summation: 0,
+      topFrequencies: null,
+      trueCount: null,
+      uniqueCount: 0,
+    });
+  });
+
+  test("string column with all null values returns null mostFrequentValue and 100 nullPercent", () => {
+    expect.hasAssertions();
+
+    const dataSource = makeDataSource([new StringColumn({ name: "" })], [makeRow({ "": null }), makeRow({ "": null })]);
+
+    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
+      average: null,
+      columnName: "",
+      columnType: ColumnType.String,
+      falseCount: null,
+      maximum: null,
+      minimum: null,
+      mostFrequentValue: null,
+      nullCount: 2,
+      nullPercent: 100,
+      standardDeviation: null,
+      summation: null,
+      topFrequencies: [],
+      trueCount: null,
+      uniqueCount: 0,
+    });
+  });
+
+  test("string column with no rows returns null nullPercent", () => {
+    expect.hasAssertions();
+
+    const dataSource = makeDataSource([new StringColumn({ name: "" })], []);
+
+    expect(takeOne(computeColumnStatistics(dataSource))).toStrictEqual({
+      average: null,
+      columnName: "",
+      columnType: ColumnType.String,
+      falseCount: null,
+      maximum: null,
+      minimum: null,
+      mostFrequentValue: null,
+      nullCount: 0,
+      nullPercent: null,
+      standardDeviation: null,
+      summation: null,
+      topFrequencies: [],
+      trueCount: null,
+      uniqueCount: 0,
+    });
+  });
+
+  test("string column with all unique values returns first-encountered mostFrequentValue with count 1", () => {
+    expect.hasAssertions();
+
+    const dataSource = makeDataSource(
+      [new StringColumn({ name: "" })],
+      [makeRow({ "": "a" }), makeRow({ "": "b" }), makeRow({ "": "c" })],
+    );
+
+    const result = takeOne(computeColumnStatistics(dataSource));
+
+    expect(result.mostFrequentValue).toBe("a");
+    expect(result.uniqueCount).toBe(3);
+    expect(result.nullPercent).toBe(0);
+  });
+});

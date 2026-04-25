@@ -3,7 +3,7 @@ const emit = defineEmits<{ clickLeft: [event: MouseEvent]; clickRight: [event: M
 </script>
 
 <template>
-  <div class="v-window__controls" fixed="!" top-auto="!" bottom-0="!">
+  <div class="v-window__controls" fixed top-auto bottom-0>
     <v-tooltip location="right center" text="Left">
       <template #activator="{ props }">
         <v-btn icon="mdi-chevron-left" size="small" :="props" @click="emit('clickLeft', $event)" />

@@ -16,7 +16,7 @@ export const useSettingsStore = defineStore("dungeons/settings", () => {
     value: (typeof settings.value)[typeof settingsOption],
   ) => {
     // Doing this casting hack here because we'll assume that
-    // the correct settings option + value will always be passed in
+    // The correct settings option + value will always be passed in
     settings.value[settingsOption] = value as never;
     await saveDungeons();
   };

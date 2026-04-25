@@ -10,7 +10,7 @@ export const getLinkPreviewResponse = async (message: string): Promise<LinkPrevi
   const url = messageHtml.querySelector("a")?.getAttribute("href");
   if (!url) return null;
 
-  const link = find(url, "url", { defaultProtocol: "https" }).find(Boolean);
+  const link = find(url, "url", { defaultProtocol: "https" })[0];
   if (!link) return null;
 
   try {

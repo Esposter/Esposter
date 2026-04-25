@@ -19,7 +19,9 @@ const usePhaserListener = <TEvent extends EventEmitter.EventNames<PhaserEvents>>
   listener: EventEmitter.EventListener<PhaserEvents, TEvent>,
 ) => {
   phaserEventEmitter.on(event, listener);
-  unsubscribes.push(() => phaserEventEmitter.off(event, listener));
+  unsubscribes.push(() => {
+    phaserEventEmitter.off(event, listener);
+  });
 };
 
 export const SwitchAttempt: State<StateName> = {
@@ -44,7 +46,7 @@ export const SwitchAttempt: State<StateName> = {
       getSynchronizedFunction(async (monster) => {
         const isActiveMonsterFainted = isMonsterFainted(activeMonster.value);
         // If our active monster has fainted, then the death tween would have already been played
-        // so we don't have to play it again
+        // So we don't have to play it again
         if (isActiveMonsterFainted) {
           switchActiveMonster(monster.id);
           await battleStateMachine.setState(StateName.BringOutMonster);

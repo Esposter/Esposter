@@ -12,6 +12,9 @@ import { searchMessagesInputSchema } from "#shared/models/db/message/SearchMessa
 import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { DeletableMessageTypes } from "#shared/services/message/DeletableMessageTypes";
+import { PinnableMessageTypes } from "#shared/services/message/PinnableMessageTypes";
+import { UpdatableMessageTypes } from "#shared/services/message/UpdatableMessageTypes";
 import { MAX_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
@@ -24,12 +27,14 @@ import { on } from "@@/server/services/events/on";
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
 import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmitter";
 import { isRoomId } from "@@/server/services/message/isRoomId";
+import { assertNotTimedOut } from "@@/server/services/message/moderation/assertNotTimedOut";
 import { readMessages } from "@@/server/services/message/readMessages";
 import { searchMessages } from "@@/server/services/message/searchMessages";
 import { updateMessage } from "@@/server/services/message/updateMessage";
 import { router } from "@@/server/trpc";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
-import { getCreatorProcedure } from "@@/server/trpc/procedure/message/getCreatorProcedure";
+import { timeoutPlugin } from "@@/server/trpc/plugins/timeoutPlugin";
+import { getMessageProcedure } from "@@/server/trpc/procedure/message/getMessageProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import {
   cloneFiles,
@@ -52,9 +57,11 @@ import {
   AzureTable,
   AzureWebPubSubHub,
   BinaryOperator,
+  CompositeKeyPropertyNames,
   DatabaseEntityType,
   FileEntity,
   fileEntitySchema,
+  FilterType,
   getReverseTickedTimestamp,
   MessageEntityMap,
   MessageType,
@@ -62,10 +69,9 @@ import {
   selectRoomSchema,
   standardCreateMessageInputSchema,
   StandardMessageEntity,
-  StandardMessageEntityPropertyNames,
   standardMessageEntitySchema,
 } from "@esposter/db-schema";
-import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation } from "@esposter/shared";
+import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
@@ -76,9 +82,9 @@ export const readMetadataInputSchema = z.object({
 });
 export type ReadMetadataInput = z.infer<typeof readMetadataInputSchema>;
 // Azure table storage doesn't actually support sorting but remember that it is internally insert-sorted
-// as we insert our messages with a reverse-ticked timestamp as our rowKey
-// so unfortunately we have to provide a dummy default to keep the consistency here that cursor pagination
-// always requires a sortBy even though we don't actually need the user to specify it
+// As we insert our messages with a reverse-ticked timestamp as our rowKey
+// So unfortunately we have to provide a dummy default to keep the consistency here that cursor pagination
+// Always requires a sortBy even though we don't actually need the user to specify it
 const readMessagesInputSchema = z
   .object({
     ...createCursorPaginationParamsSchema(standardMessageEntitySchema.keyof(), [
@@ -150,15 +156,17 @@ const getWebPubSubClientAccessUrlInputSchema = z.object({ roomId: selectRoomSche
 export type GetWebPubSubClientAccessUrlInput = z.infer<typeof getWebPubSubClientAccessUrlInputSchema>;
 
 export const messageRouter = router({
-  createMessage: getMemberProcedure(standardCreateMessageInputSchema, "roomId").mutation<MessageEntity>(
-    async ({ ctx, input }) => {
+  // oxlint-disable-next-line prefer-spread
+  createMessage: getMemberProcedure(standardCreateMessageInputSchema, "roomId")
+    .concat(timeoutPlugin)
+    .mutation<MessageEntity>(async ({ ctx, input }) => {
       const messageClient = await useTableClient(AzureTable.Messages);
       const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
       const newMessageEntity = await createMessage(messageClient, messageAscendingClient, {
         ...input,
-        userId: ctx.session.user.id,
+        userId: ctx.getSessionPayload.user.id,
       });
-      messageEventEmitter.emit("createMessage", [[newMessageEntity], { sessionId: ctx.session.session.id }]);
+      messageEventEmitter.emit("createMessage", [[newMessageEntity], { sessionId: ctx.getSessionPayload.session.id }]);
 
       const readPushSubscriptions = await getPushSubscriptionsForMessage(ctx.db, newMessageEntity);
       if (readPushSubscriptions.length > 0) {
@@ -170,7 +178,7 @@ export const messageRouter = router({
             rowKey: newMessageEntity.rowKey,
             userId: newMessageEntity.userId,
           },
-          notificationOptions: { icon: ctx.session.user.image, title: ctx.session.user.name },
+          notificationOptions: { icon: ctx.getSessionPayload.user.image, title: ctx.getSessionPayload.user.name },
         };
         await eventGridPublisherClient.send([
           {
@@ -184,7 +192,7 @@ export const messageRouter = router({
 
       const updatedRoom = (
         await ctx.db.update(rooms).set({ updatedAt: new Date() }).where(eq(rooms.id, input.roomId)).returning()
-      ).find(Boolean);
+      )[0];
       if (!updatedRoom)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -193,16 +201,19 @@ export const messageRouter = router({
 
       roomEventEmitter.emit("updateRoom", updatedRoom);
       return newMessageEntity;
-    },
-  ),
+    }),
   createTyping: getMemberProcedure(createTypingInputSchema, "roomId")
     // Query instead of mutation as there are no concurrency issues with ordering for simply emitting
     .query(({ ctx, input }) => {
-      messageEventEmitter.emit("createTyping", { ...input, sessionId: ctx.session.session.id });
+      messageEventEmitter.emit("createTyping", { ...input, sessionId: ctx.getSessionPayload.session.id });
     }),
-  deleteFile: getCreatorProcedure(deleteFileInputSchema).mutation(
+  deleteFile: getMessageProcedure(deleteFileInputSchema).mutation(
     async ({ ctx: { messageClient, messageEntity }, input: { id, partitionKey, rowKey } }) => {
-      if (messageEntity.isForward || messageEntity.files.length === 0) throw new TRPCError({ code: "BAD_REQUEST" });
+      if (messageEntity.isForward || messageEntity.files.length === 0)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Delete, AzureEntityType.Message, id).message,
+        });
 
       const index = messageEntity.files.findIndex((f) => f.id === id);
       if (index === -1)
@@ -214,7 +225,7 @@ export const messageRouter = router({
       const containerClient = await useContainerClient(AzureContainer.MessageAssets);
       const blobName = getBlobName(
         `${messageEntity.partitionKey}/${id}`,
-        messageEntity.files.splice(index, 1)[0].filename,
+        takeOne(messageEntity.files.splice(index, 1)).filename,
       );
       const updatedMessageEntity: AzureUpdateEntity<StandardMessageEntity> = {
         files: messageEntity.files,
@@ -226,7 +237,7 @@ export const messageRouter = router({
       await containerClient.deleteBlob(blobName);
     },
   ),
-  deleteLinkPreviewResponse: getCreatorProcedure(deleteLinkPreviewResponseInputSchema).mutation(
+  deleteLinkPreviewResponse: getMessageProcedure(deleteLinkPreviewResponseInputSchema).mutation(
     async ({ ctx: { messageClient, messageEntity } }) => {
       const updatedMessageEntity: AzureUpdateEntity<StandardMessageEntity> = {
         linkPreviewResponse: null,
@@ -238,8 +249,17 @@ export const messageRouter = router({
       messageEventEmitter.emit("updateMessage", updatedMessageEntity);
     },
   ),
-  deleteMessage: getCreatorProcedure(deleteMessageInputSchema).mutation(
+  deleteMessage: getMessageProcedure(deleteMessageInputSchema).mutation(
     async ({ ctx: { messageClient, messageEntity }, input }) => {
+      if (!DeletableMessageTypes.has(messageEntity.type))
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(
+            Operation.Delete,
+            AzureEntityType.Message,
+            JSON.stringify({ partitionKey: messageEntity.partitionKey, rowKey: messageEntity.rowKey }),
+          ).message,
+        });
       await updateMessage(messageClient, { ...input, deletedAt: new Date() });
       messageEventEmitter.emit("deleteMessage", input);
 
@@ -247,9 +267,9 @@ export const messageRouter = router({
       await deleteFiles(containerClient, messageEntity.files);
     },
   ),
-  forwardMessage: getMemberProcedure(forwardMessageInputSchema, "partitionKey").mutation(
+  forwardMessage: getMemberProcedure(forwardMessageInputSchema, CompositeKeyPropertyNames.partitionKey).mutation(
     async ({ ctx, input: { message, partitionKey, roomIds, rowKey } }) => {
-      await isMember(ctx.db, ctx.session, roomIds);
+      await isMember(ctx.db, ctx.getSessionPayload, roomIds);
 
       const messageClient = await useTableClient(AzureTable.Messages);
       const messageEntity = await getEntity(messageClient, StandardMessageEntity, partitionKey, rowKey);
@@ -263,6 +283,7 @@ export const messageRouter = router({
       const containerClient = await useContainerClient(AzureContainer.MessageAssets);
       await Promise.all(
         roomIds.map(async (roomId) => {
+          await assertNotTimedOut(ctx.db, ctx.getSessionPayload.user.id, roomId);
           const newFileIds = await cloneFiles(containerClient, messageEntity.files, messageEntity.partitionKey, roomId);
           const forward = await createMessage(messageClient, messageAscendingClient, {
             // eslint-disable-next-line @typescript-eslint/no-misused-spread
@@ -273,7 +294,7 @@ export const messageRouter = router({
             replyRowKey: undefined,
             roomId,
             type: MessageType.Message,
-            userId: ctx.session.user.id,
+            userId: ctx.getSessionPayload.user.id,
           });
           const messages = [forward];
 
@@ -282,15 +303,15 @@ export const messageRouter = router({
               message,
               roomId,
               type: MessageType.Message,
-              userId: ctx.session.user.id,
+              userId: ctx.getSessionPayload.user.id,
             });
             messages.push(newMessageEntity);
           }
           // We don't need visual effects like isLoading when forwarding messages
-          // so we'll instead rely on the subscription to auto-add the forwarded message for convenience
+          // So we'll instead rely on the subscription to auto-add the forwarded message for convenience
           messageEventEmitter.emit("createMessage", [
             messages,
-            { isSendToSelf: true, sessionId: ctx.session.session.id },
+            { isSendToSelf: true, sessionId: ctx.getSessionPayload.session.id },
           ]);
         }),
       );
@@ -315,7 +336,7 @@ export const messageRouter = router({
         abortSignal: signal,
         groups: [roomId],
         roles: [`webPubSub.joinLeaveGroup.${roomId}`],
-        userId: getDeviceId({ sessionId: ctx.session.session.id, userId: ctx.session.user.id }),
+        userId: getDeviceId({ sessionId: ctx.getSessionPayload.session.id, userId: ctx.getSessionPayload.user.id }),
       });
       return url;
     },
@@ -341,9 +362,9 @@ export const messageRouter = router({
 
       if (messages.length > 0) {
         // Remember that Azure Table Storage is insert-sorted by rowKey
-        // so the first message is the newest one but we want to yield from oldest to newest
+        // So the first message is the newest one but we want to yield from oldest to newest
         const reversedMessages = messages.toReversed();
-        const newestMessage = reversedMessages[reversedMessages.length - 1];
+        const newestMessage = takeOne(reversedMessages, reversedMessages.length - 1);
         yield tracked(newestMessage.rowKey, reversedMessages);
       }
     }
@@ -354,12 +375,12 @@ export const messageRouter = router({
       for (const newMessage of data)
         if (
           isRoomId(newMessage.partitionKey, roomId) &&
-          (isSendToSelf || !getIsSameDevice({ sessionId, userId: newMessage.userId }, ctx.session))
+          (isSendToSelf || !getIsSameDevice({ sessionId, userId: newMessage.userId }, ctx.getSessionPayload))
         )
           dataToYield.push(newMessage);
 
       if (dataToYield.length > 0) {
-        const newestMessage = dataToYield[dataToYield.length - 1];
+        const newestMessage = takeOne(dataToYield, dataToYield.length - 1);
         yield tracked(newestMessage.rowKey, dataToYield);
       }
     }
@@ -370,7 +391,7 @@ export const messageRouter = router({
     signal,
   }) {
     for await (const [data] of on(messageEventEmitter, "createTyping", { signal }))
-      if (data.roomId === input.roomId && !getIsSameDevice(data, ctx.session)) yield data;
+      if (data.roomId === input.roomId && !getIsSameDevice(data, ctx.getSessionPayload)) yield data;
   }),
   onDeleteMessage: getMemberProcedure(onDeleteMessageInputSchema, "roomId").subscription(async function* ({
     input,
@@ -386,35 +407,46 @@ export const messageRouter = router({
     for await (const [data] of on(messageEventEmitter, "updateMessage", { signal }))
       if (isRoomId(data.partitionKey, input.roomId)) yield data;
   }),
-  pinMessage: getMemberProcedure(pinMessageInputSchema, "partitionKey").mutation(async ({ ctx, input }) => {
-    const messageClient = await useTableClient(AzureTable.Messages);
-    const updatedMessageEntity: AzureUpdateEntity<MessageEntity> = { ...input, isPinned: true };
-    await updateEntity(messageClient, updatedMessageEntity);
-    messageEventEmitter.emit("updateMessage", updatedMessageEntity);
+  pinMessage: getMessageProcedure(pinMessageInputSchema).mutation(
+    async ({ ctx: { getSessionPayload, messageClient, messageEntity }, input }) => {
+      if (!PinnableMessageTypes.has(messageEntity.type))
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(
+            Operation.Update,
+            AzureEntityType.Message,
+            JSON.stringify({ partitionKey: messageEntity.partitionKey, rowKey: messageEntity.rowKey }),
+          ).message,
+        });
 
-    const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
-    const systemMessage = await createMessage(messageClient, messageAscendingClient, {
-      replyRowKey: input.rowKey,
-      roomId: input.partitionKey,
-      type: MessageType.PinMessage,
-      userId: ctx.session.user.id,
-    });
-    messageEventEmitter.emit("createMessage", [
-      [systemMessage],
-      { isSendToSelf: true, sessionId: ctx.session.session.id },
-    ]);
-  }),
+      const updatedMessageEntity: AzureUpdateEntity<MessageEntity> = { ...input, isPinned: true };
+      await updateEntity(messageClient, updatedMessageEntity);
+      messageEventEmitter.emit("updateMessage", updatedMessageEntity);
+
+      const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
+      const systemMessage = await createMessage(messageClient, messageAscendingClient, {
+        replyRowKey: input.rowKey,
+        roomId: input.partitionKey,
+        type: MessageType.PinMessage,
+        userId: getSessionPayload.user.id,
+      });
+      messageEventEmitter.emit("createMessage", [
+        [systemMessage],
+        { isSendToSelf: true, sessionId: getSessionPayload.session.id },
+      ]);
+    },
+  ),
   readMessages: getMemberProcedure(readMessagesInputSchema, "roomId").query(({ input }) => readMessages(input)),
   readMessagesByRowKeys: getMemberProcedure(readMessagesByRowKeysInputSchema, "roomId").query(
     async ({ input: { roomId, rowKeys } }) => {
       const messageClient = await useTableClient(AzureTable.Messages);
-      const clauses: Clause[] = [
-        { key: StandardMessageEntityPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
+      const clauses: Clause<StandardMessageEntity>[] = [
+        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
         getTableNullClause(ItemMetadataPropertyNames.deletedAt),
       ];
       for (const rowKey of rowKeys)
         clauses.push({
-          key: StandardMessageEntityPropertyNames.rowKey,
+          key: CompositeKeyPropertyNames.rowKey,
           operator: BinaryOperator.eq,
           value: rowKey,
         });
@@ -423,23 +455,48 @@ export const messageRouter = router({
       });
     },
   ),
-  searchMessages: getMemberProcedure(searchMessagesInputSchema, "roomId").query(({ input }) => searchMessages(input)),
-  unpinMessage: getMemberProcedure(unpinMessageInputSchema, "partitionKey").mutation(async ({ input }) => {
-    const messageClient = await useTableClient(AzureTable.Messages);
-    const messageEntity = await getEntity(messageClient, StandardMessageEntity, input.partitionKey, input.rowKey);
-    if (!messageEntity)
+  searchMessages: getMemberProcedure(searchMessagesInputSchema, "roomId").query(async ({ ctx, input }) => {
+    const inFilterRoomIds = input.filters.filter(({ type }) => type === FilterType.In).map(({ value }) => value);
+    if (inFilterRoomIds.some((value) => typeof value !== "string"))
       throw new TRPCError({
-        code: "NOT_FOUND",
-        message: new NotFoundError(AzureEntityType.Message, JSON.stringify(input)).message,
+        code: "BAD_REQUEST",
+        message: new InvalidOperationError(Operation.Read, AzureEntityType.Message, JSON.stringify(inFilterRoomIds))
+          .message,
       });
+    else if (inFilterRoomIds.length > 0) await isMember(ctx.db, ctx.getSessionPayload, inFilterRoomIds as string[]);
+    return searchMessages(input);
+  }),
+  unpinMessage: getMessageProcedure(unpinMessageInputSchema).mutation(
+    async ({ ctx: { messageClient, messageEntity }, input }) => {
+      if (!PinnableMessageTypes.has(messageEntity.type))
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(
+            Operation.Update,
+            AzureEntityType.Message,
+            JSON.stringify({ partitionKey: messageEntity.partitionKey, rowKey: messageEntity.rowKey }),
+          ).message,
+        });
 
-    const updatedMessageEntity: AzureUpdateEntity<MessageEntity> = { ...input, isPinned: undefined };
-    Object.assign(messageEntity, updatedMessageEntity);
-    await updateEntity(messageClient, messageEntity, "Replace");
-    messageEventEmitter.emit("updateMessage", updatedMessageEntity);
-  }),
-  updateMessage: getCreatorProcedure(updateMessageInputSchema).mutation(async ({ ctx: { messageClient }, input }) => {
-    await updateMessage(messageClient, input);
-    messageEventEmitter.emit("updateMessage", input);
-  }),
+      const updatedMessageEntity: AzureUpdateEntity<MessageEntity> = { ...input, isPinned: undefined };
+      Object.assign(messageEntity, updatedMessageEntity);
+      await updateEntity(messageClient, messageEntity, "Replace");
+      messageEventEmitter.emit("updateMessage", updatedMessageEntity);
+    },
+  ),
+  updateMessage: getMessageProcedure(updateMessageInputSchema).mutation(
+    async ({ ctx: { messageClient, messageEntity }, input }) => {
+      if (!UpdatableMessageTypes.has(messageEntity.type))
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(
+            Operation.Update,
+            AzureEntityType.Message,
+            JSON.stringify({ partitionKey: messageEntity.partitionKey, rowKey: messageEntity.rowKey }),
+          ).message,
+        });
+      await updateMessage(messageClient, input);
+      messageEventEmitter.emit("updateMessage", input);
+    },
+  ),
 });

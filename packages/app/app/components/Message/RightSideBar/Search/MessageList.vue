@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
-import { useSearchMessageStore } from "@/store/message/searchMessage";
+import { useSearchMessageStore } from "@/store/message/search";
 
 const readSearchedMessages = useReadSearchedMessages();
 const searchMessageStore = useSearchMessageStore();

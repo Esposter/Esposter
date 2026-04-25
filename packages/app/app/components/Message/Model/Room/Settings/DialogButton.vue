@@ -2,7 +2,7 @@
 import type { Room } from "@esposter/db-schema";
 
 import { SettingsType } from "@/models/message/room/SettingsType";
-import { authClient } from "@/services/auth/authClient";
+import { SettingsContentMap } from "@/services/message/settings/SettingsContentMap";
 import { useRoomStore } from "@/store/message/room";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import { mergeProps } from "vue";
@@ -13,17 +13,18 @@ interface RoomSettingsDialogButtonProps {
 
 defineSlots<{ activator: (props: Record<string, unknown>) => VNode }>();
 const { roomId } = defineProps<RoomSettingsDialogButtonProps>();
-const { data: session } = await authClient.useSession(useFetch);
+const dialog = ref(false);
+const settingsType = ref<keyof typeof SettingsContentMap>(SettingsType.Overview);
+const isDeleteOpen = ref(false);
+
 const roomStore = useRoomStore();
 const { rooms } = storeToRefs(roomStore);
 const room = computed(() => rooms.value.find(({ id }) => id === roomId));
-const isCreator = computed(() => room.value?.userId === session.value?.user.id);
-const dialog = ref(false);
-const settingsType = ref(SettingsType.Webhooks);
 </script>
 
 <template>
-  <v-dialog v-if="isCreator" v-model="dialog" fullscreen>
+  <MessageModelRoomConfirmDeleteDialog v-if="room" v-model="isDeleteOpen" :room-id :creator-id="room.userId" />
+  <v-dialog v-model="dialog" fullscreen>
     <template #activator="{ props: dialogProps }">
       <v-tooltip :text="`${DatabaseEntityType.Room} Settings`">
         <template #activator="{ props: tooltipProps }">
@@ -32,7 +33,7 @@ const settingsType = ref(SettingsType.Webhooks);
       </v-tooltip>
     </template>
     <v-app>
-      <MessageModelRoomSettingsLeftSideBar v-model="settingsType" />
+      <MessageModelRoomSettingsLeftSideBar v-model="settingsType" :room-id @open:delete="isDeleteOpen = true" />
       <MessageModelRoomSettingsRightSideBar @close="dialog = false" />
       <MessageModelRoomSettingsContent :room-id :settings-type />
     </v-app>

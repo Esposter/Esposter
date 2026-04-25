@@ -6,6 +6,7 @@ import { extractBlobUrls } from "@@/server/services/survey/extractBlobUrls";
 import { getPublishDirectory } from "@@/server/services/survey/getPublishDirectory";
 import { ContainerSASPermissions } from "@azure/storage-blob";
 import { AzureContainer } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
 import dayjs from "dayjs";
 import { lookup } from "mime-types";
 import { extname } from "node:path";
@@ -44,8 +45,8 @@ export const useUpdateBlobUrls = async (survey: Survey, isPublish?: true) => {
   let updatedModel = survey.model;
 
   for (let i = 0; i < blobUrls.length; i++) {
-    const blobUrl = blobUrls[i];
-    const updatedBlobUrl = updatedBlobUrls[i];
+    const blobUrl = takeOne(blobUrls, i);
+    const updatedBlobUrl = takeOne(updatedBlobUrls, i);
     updatedModel = updatedModel.replaceAll(useBlobUrlSearchRegex(blobUrl), updatedBlobUrl);
   }
 

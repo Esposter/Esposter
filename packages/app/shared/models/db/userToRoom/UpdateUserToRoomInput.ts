@@ -1,8 +1,8 @@
-import { notificationTypeSchema, selectRoomSchema } from "@esposter/db-schema";
+import { notificationTypeSchema, roomIdSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
 export const updateUserToRoomInputSchema = z.object({
+  ...roomIdSchema.shape,
   notificationType: notificationTypeSchema,
-  roomId: selectRoomSchema.shape.id,
 });
 export type UpdateUserToRoomInput = z.infer<typeof updateUserToRoomInputSchema>;

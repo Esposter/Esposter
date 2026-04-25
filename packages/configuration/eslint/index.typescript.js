@@ -23,4 +23,5 @@ export default withNuxt(plugins, {
       rules: typescriptRulesOverrides,
     },
   })
-  .append(oxlint);
+  .append(oxlint)
+  .append({ ignores: ["**/*.md"] });
