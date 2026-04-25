@@ -5,9 +5,12 @@ import type { IndexKey, IndexNames } from "idb";
 
 import { openIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
 
-export const readIndexedDb = async <T extends IndexedDbStoreName>(
-  { indexName, storeName }: IndexedDbStoreConfiguration<T>,
-  partitionKey: IndexKey<IndexedDbDatabaseSchema, T, IndexNames<IndexedDbDatabaseSchema, T>>,
+export const readIndexedDb = async <
+  T extends IndexedDbStoreName,
+  TIndex extends IndexNames<IndexedDbDatabaseSchema, T>,
+>(
+  { indexName, storeName }: IndexedDbStoreConfiguration<T, TIndex>,
+  partitionKey: IndexKey<IndexedDbDatabaseSchema, T, TIndex>,
 ): Promise<IndexedDbDatabaseSchema[T]["value"][]> => {
   try {
     const db = await openIndexedDb();

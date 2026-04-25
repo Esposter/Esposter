@@ -9,6 +9,7 @@ import { afterEach, describe, expect, test } from "vitest";
 describe(writeIndexedDb, () => {
   const message1 = new StandardMessageEntity({ partitionKey: crypto.randomUUID(), rowKey: crypto.randomUUID() });
   const message2 = new StandardMessageEntity({ partitionKey: crypto.randomUUID(), rowKey: crypto.randomUUID() });
+  const message3 = new StandardMessageEntity({ partitionKey: message1.partitionKey, rowKey: crypto.randomUUID() });
 
   afterEach(async () => {
     await resetIndexedDb();
@@ -17,7 +18,7 @@ describe(writeIndexedDb, () => {
   test("writes items for a given partitionKey successfully", async () => {
     expect.hasAssertions();
 
-    const messages = [message1, message2];
+    const messages = [message1, message3];
     await writeIndexedDb(MessageIndexedDbStoreConfiguration, messages, message1.partitionKey);
     const result = await readIndexedDb(MessageIndexedDbStoreConfiguration, message1.partitionKey);
 
@@ -27,12 +28,12 @@ describe(writeIndexedDb, () => {
   test("replaces existing items on re-write", async () => {
     expect.hasAssertions();
 
-    await writeIndexedDb(MessageIndexedDbStoreConfiguration, [message1, message2], message1.partitionKey);
+    await writeIndexedDb(MessageIndexedDbStoreConfiguration, [message1, message3], message1.partitionKey);
     await writeIndexedDb(MessageIndexedDbStoreConfiguration, [message1], message1.partitionKey);
     const result = await readIndexedDb(MessageIndexedDbStoreConfiguration, message1.partitionKey);
 
     expect(result).toHaveLength(1);
-    expect(takeOne(result)).toStrictEqual(message1);
+    expect(takeOne(result)).toStrictEqual(message1.toJSON());
   });
 
   test("does not exceed limit from configuration", async () => {
@@ -60,7 +61,7 @@ describe(writeIndexedDb, () => {
 
     expect(result1).toHaveLength(1);
     expect(result2).toHaveLength(1);
-    expect(takeOne(result1)).toStrictEqual(message1);
-    expect(takeOne(result2)).toStrictEqual(message2);
+    expect(takeOne(result1)).toStrictEqual(message1.toJSON());
+    expect(takeOne(result2)).toStrictEqual(message2.toJSON());
   });
 });

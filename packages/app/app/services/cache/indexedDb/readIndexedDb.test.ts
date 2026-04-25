@@ -9,6 +9,7 @@ import { afterEach, describe, expect, test } from "vitest";
 describe(readIndexedDb, () => {
   const message1 = new StandardMessageEntity({ partitionKey: crypto.randomUUID(), rowKey: crypto.randomUUID() });
   const message2 = new StandardMessageEntity({ partitionKey: crypto.randomUUID(), rowKey: crypto.randomUUID() });
+  const message3 = new StandardMessageEntity({ partitionKey: message1.partitionKey, rowKey: crypto.randomUUID() });
 
   afterEach(async () => {
     await resetIndexedDb();
@@ -25,7 +26,7 @@ describe(readIndexedDb, () => {
   test("returns written items for the given partitionKey", async () => {
     expect.hasAssertions();
 
-    const messages = [message1, message2];
+    const messages = [message1, message3];
     await writeIndexedDb(MessageIndexedDbStoreConfiguration, messages, message1.partitionKey);
 
     const result = await readIndexedDb(MessageIndexedDbStoreConfiguration, message1.partitionKey);
@@ -42,7 +43,7 @@ describe(readIndexedDb, () => {
     const result = await readIndexedDb(MessageIndexedDbStoreConfiguration, message1.partitionKey);
 
     expect(result).toHaveLength(1);
-    expect(takeOne(result)).toStrictEqual(message1);
+    expect(takeOne(result)).toStrictEqual(message1.toJSON());
   });
 
   test("overwrites existing items on re-write", async () => {
@@ -54,7 +55,7 @@ describe(readIndexedDb, () => {
     const result = await readIndexedDb(MessageIndexedDbStoreConfiguration, message1.partitionKey);
 
     expect(result).toHaveLength(1);
-    expect(takeOne(result)).toStrictEqual(message1);
+    expect(takeOne(result)).toStrictEqual(message1.toJSON());
   });
 
   test("respects the limit from configuration", async () => {

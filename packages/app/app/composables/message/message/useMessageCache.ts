@@ -12,6 +12,7 @@ export const useMessageCache = () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const dataStore = useDataStore();
   const { items } = storeToRefs(dataStore);
+  const { initializeCursorPaginationData } = dataStore;
   const online = useOnline();
   let pendingOperation: Promise<void> = Promise.resolve();
 
@@ -37,8 +38,7 @@ export const useMessageCache = () => {
 
       const cachedData = new CursorPaginationData<MessageEntity>();
       cachedData.items = cachedMessages;
-      cachedData.hasMore = true;
-      dataStore.initializeCursorPaginationData(cachedData);
+      initializeCursorPaginationData(cachedData);
     })();
   });
 

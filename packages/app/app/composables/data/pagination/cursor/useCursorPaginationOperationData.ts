@@ -27,8 +27,8 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
       cursorPaginationData.value.hasMore = hasMore;
     },
   });
-  const initializeCursorPaginationData = (data: CursorPaginationData<TItem>) => {
-    cursorPaginationData.value = data;
+  const initializeCursorPaginationData = <TDataItem extends TItem>(data: CursorPaginationData<TDataItem>) => {
+    cursorPaginationData.value = data as CursorPaginationData<TItem>;
   };
   const resetCursorPaginationData = () => {
     cursorPaginationData.value = new CursorPaginationData<TItem>();
@@ -77,6 +77,7 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
     cacheOptions?: ReadItemsCacheOptions<T>,
   ) => {
     try {
+      if (!online.value) return;
       const { hasMore: newHasMore, items: newItems, nextCursor: newNextCursor } = await query(nextCursor.value);
       hasMore.value = newHasMore;
       nextCursor.value = newNextCursor;
