@@ -2,8 +2,8 @@ import { authClient } from "@/services/auth/authClient";
 import { useFriendStore } from "@/store/message/user/friend";
 import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 
-export const useFriendSubscribables = () => {
-  const session = authClient.useSession();
+export const useFriendSubscribables = async () => {
+  const { data: session } = await authClient.useSession(useFetch);
   const { $trpc } = useNuxtApp();
   const friendRequestStore = useFriendRequestStore();
   const friendStore = useFriendStore();
@@ -11,7 +11,7 @@ export const useFriendSubscribables = () => {
   const { storeAcceptFriendRequest, storeCreateFriendRequest, storeDeclineFriendRequest } = friendRequestStore;
 
   useOnlineSubscribable(
-    () => session.value.data?.user.id,
+    () => session.value?.user.id,
     (userId) => {
       if (!userId) return undefined;
 

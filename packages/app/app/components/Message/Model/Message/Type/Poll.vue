@@ -10,7 +10,7 @@ import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/share
 interface PollProps extends MessageComponentProps<StandardMessageEntity> {}
 
 const { active, creator, isPreview = false, isSameBatch, message } = defineProps<PollProps>();
-const session = authClient.useSession();
+const { data: session } = await authClient.useSession(useFetch);
 const dataStore = useDataStore();
 const { storeUpdateMessage, updateMessage } = dataStore;
 const pollContent = computed(() => {
@@ -31,7 +31,7 @@ const getVotePercentage = (optionId: string) => {
   return totalVotes.value > 0 ? Math.round((count / totalVotes.value) * 100) : 0;
 };
 const isVoting = ref(false);
-const userId = computed(() => session.value.data?.user.id);
+const userId = computed(() => session.value?.user.id);
 const vote = async (optionId: null | string) => {
   if (!userId.value || isPreview || isVoting.value) return;
   isVoting.value = true;

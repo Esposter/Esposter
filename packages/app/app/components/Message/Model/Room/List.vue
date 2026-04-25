@@ -9,7 +9,7 @@ defineSlots<{ prepend: () => VNode }>();
 const { isCollapsed = false } = defineProps<MessageModelRoomListProps>();
 const roomStore = useRoomStore();
 const { hasMore, rooms } = storeToRefs(roomStore);
-const { readMoreRooms, readRooms } = useReadRooms();
+const { readMoreRooms, readRooms } = await useReadRooms();
 const { isPending } = await readRooms();
 </script>
 

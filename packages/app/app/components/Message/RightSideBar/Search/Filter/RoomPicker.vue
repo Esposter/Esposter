@@ -5,7 +5,7 @@ import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useRoomStore } from "@/store/message/room";
 
 const emit = defineEmits<{ select: [value: SerializableValue] }>();
-const { readMoreRooms, readRooms } = useReadRooms();
+const { readMoreRooms, readRooms } = await useReadRooms();
 const { isPending } = await readRooms();
 const roomStore = useRoomStore();
 const { hasMore, rooms } = storeToRefs(roomStore);

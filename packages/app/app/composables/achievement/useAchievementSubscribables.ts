@@ -1,14 +1,14 @@
 import { authClient } from "@/services/auth/authClient";
 import { useAchievementStore } from "@/store/achievement";
 
-export const useAchievementSubscribables = () => {
+export const useAchievementSubscribables = async () => {
   const { $trpc } = useNuxtApp();
   const achievementStore = useAchievementStore();
   const { updateAchievement } = achievementStore;
-  const session = authClient.useSession();
+  const { data: session } = await authClient.useSession(useFetch);
 
   useOnlineSubscribable(
-    () => session.value.data?.user.id,
+    () => session.value?.user.id,
     (userId) => {
       if (!userId) return undefined;
 

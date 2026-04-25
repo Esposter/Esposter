@@ -2,7 +2,7 @@ import { dayjs } from "#shared/services/dayjs";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 
-export const useTypingSubscribables = () => {
+export const useTypingSubscribables = async () => {
   const { $trpc } = useNuxtApp();
   const dataStore = useDataStore();
   const { typings } = storeToRefs(dataStore);
@@ -17,7 +17,7 @@ export const useTypingSubscribables = () => {
     }
   };
 
-  useCreateTyping();
+  await useCreateTyping();
 
   useOnlineSubscribable(currentRoomId, (roomId) => {
     if (!roomId) return undefined;

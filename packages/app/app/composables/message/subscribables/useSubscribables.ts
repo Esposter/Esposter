@@ -1,13 +1,13 @@
-export const useSubscribables = () => {
+export const useSubscribables = async () => {
   useEmojiSubscribables();
-  useFriendSubscribables();
+  await useFriendSubscribables();
   useMessageCache();
   useModerationSubscribables();
   useMessageSubscribables();
   usePushSubscription();
   useRoleSubscribables();
   useRoomSubscribables();
-  useTypingSubscribables();
-  useUserSubscribables();
-  useVoiceSubscribables();
+  await useTypingSubscribables();
+  await useUserSubscribables();
+  await useVoiceSubscribables();
 };

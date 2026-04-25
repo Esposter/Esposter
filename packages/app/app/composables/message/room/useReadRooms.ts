@@ -4,23 +4,21 @@ import { useRoomStore } from "@/store/message/room";
 import { CompositeKeyPropertyNames } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-export const useReadRooms = () => {
+export const useReadRooms = async () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const { readItems, readMoreItems } = roomStore;
   const { currentRoomId } = storeToRefs(roomStore);
-  const session = authClient.useSession();
+  const { data: session } = await authClient.useSession(useFetch);
   const readUserToRooms = useReadUserToRooms();
   const readMyPermissions = useReadMyPermissions();
   const readRoles = useReadRoles();
   const readRooms = () => {
-    const userId = session.value.data?.user.id;
+    const userId = session.value?.user.id;
     if (!userId)
       throw new InvalidOperationError(Operation.Read, readRooms.name, CompositeKeyPropertyNames.partitionKey);
     return readItems(
-      async () => {
-        return $trpc.room.readRooms.query({ roomId: currentRoomId.value });
-      },
+      () => $trpc.room.readRooms.query({ roomId: currentRoomId.value }),
       async ({ items }) => {
         const roomIds = items.map(({ id }) => id);
         if (roomIds.length === 0) return;
@@ -33,7 +31,7 @@ export const useReadRooms = () => {
     );
   };
   const readMoreRooms = (onComplete: () => void) => {
-    const userId = session.value.data?.user.id;
+    const userId = session.value?.user.id;
     if (!userId)
       throw new InvalidOperationError(Operation.Read, readMoreRooms.name, CompositeKeyPropertyNames.partitionKey);
     return readMoreItems(

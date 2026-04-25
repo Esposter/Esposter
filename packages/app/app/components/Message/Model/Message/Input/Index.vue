@@ -12,7 +12,7 @@ import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { MESSAGE_MAX_LENGTH, MessageType } from "@esposter/db-schema";
 import { Extension } from "@tiptap/vue-3";
 
-const session = authClient.useSession();
+const { data: session } = await authClient.useSession(useFetch);
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const roomName = useRoomName(currentRoomId);
@@ -26,7 +26,7 @@ const keyboardExtension = new Extension({
     return {
       ArrowUp: () => {
         if (!EMPTY_TEXT_REGEX.test(this.editor.getText())) return false;
-        const userId = session.value.data?.user.id;
+        const userId = session.value?.user.id;
         if (!userId) return false;
         const lastOwnMessage = items.value.find(
           ({ deletedAt, type, userId: messageUserId }) =>
