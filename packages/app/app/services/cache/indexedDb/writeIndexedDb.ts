@@ -1,12 +1,15 @@
+import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
 import type { IndexedDbStoreConfiguration } from "@/models/cache/indexedDb/IndexedDbStoreConfiguration";
+import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
+import type { IndexKey, IndexNames } from "idb";
 
 import { openIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
 import { toRawDeep } from "@esposter/shared";
 
-export const writeIndexedDb = async (
-  configuration: IndexedDbStoreConfiguration,
-  items: object[],
-  partitionKey: string,
+export const writeIndexedDb = async <T extends IndexedDbStoreName>(
+  configuration: IndexedDbStoreConfiguration<T>,
+  items: IndexedDbDatabaseSchema[T]["value"][],
+  partitionKey: IndexKey<IndexedDbDatabaseSchema, T, IndexNames<IndexedDbDatabaseSchema, T>>,
 ): Promise<void> => {
   try {
     const { indexName, limit, storeName } = configuration;
