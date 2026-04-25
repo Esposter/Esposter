@@ -9,11 +9,11 @@ import { openDB } from "idb";
 const DATABASE_NAME = "esposter";
 const DATABASE_VERSION = 1;
 
-let database: IDBPDatabase<IndexedDbDatabaseSchema> | undefined;
+let databasePromise: Promise<IDBPDatabase<IndexedDbDatabaseSchema>> | undefined;
 
 export const openIndexedDb = async (): Promise<IDBPDatabase<IndexedDbDatabaseSchema>> => {
-  if (database) return database;
-  database = await openDB<IndexedDbDatabaseSchema>(DATABASE_NAME, DATABASE_VERSION, {
+  if (databasePromise) return databasePromise;
+  databasePromise = openDB<IndexedDbDatabaseSchema>(DATABASE_NAME, DATABASE_VERSION, {
     upgrade: (db) => {
       const configurations = [
         MemberIndexedDbStoreConfiguration,
@@ -21,16 +21,16 @@ export const openIndexedDb = async (): Promise<IDBPDatabase<IndexedDbDatabaseSch
         RoomIndexedDbStoreConfiguration,
       ];
       for (const { indexName, keyPath, storeName } of configurations) {
-        const objectStore = db.createObjectStore(storeName, {
-          keyPath: keyPath as unknown as string | string[],
-        });
+        const objectStore = db.createObjectStore(storeName, { keyPath });
         objectStore.createIndex(indexName, indexName);
       }
     },
   });
-  return database;
+  return databasePromise;
 };
 
-export const resetIndexedDb = () => {
-  database = undefined;
+export const resetIndexedDb = async () => {
+  const db = await databasePromise;
+  db?.close();
+  databasePromise = undefined;
 };

@@ -11,7 +11,7 @@ export interface IndexedDbDatabaseSchema extends DBSchema {
 }
 
 interface IndexedDbStoreSchema<T extends CompositeKey | ItemMetadata> {
-  indexes: Record<string, string>;
-  key: [string, string] | string;
+  indexes: Record<string, IDBValidKey>;
+  key: IDBValidKey;
   value: T;
 }

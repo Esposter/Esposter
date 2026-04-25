@@ -13,28 +13,22 @@ export const useReadRooms = () => {
   const readUserToRooms = useReadUserToRooms();
   const readMyPermissions = useReadMyPermissions();
   const readRoles = useReadRoles();
-  const readRooms = () => {
-    const userId = session.value.data?.user.id;
-    if (!userId)
-      throw new InvalidOperationError(Operation.Read, readRooms.name, CompositeKeyPropertyNames.partitionKey);
-    return readItems(
+  const readRooms = () =>
+    readItems(
       () => $trpc.room.readRooms.query({ roomId: currentRoomId.value }),
       async ({ items }) => {
         const roomIds = items.map(({ id }) => id);
         if (roomIds.length === 0) return;
         await Promise.all([readUserToRooms(roomIds), readMyPermissions(roomIds), readRoles(roomIds)]);
       },
-      userId
-        ? {
-            cache: {
-              read: (partitionKey) => readIndexedDb(RoomIndexedDbStoreConfiguration, partitionKey),
-              write: (items, partitionKey) => writeIndexedDb(RoomIndexedDbStoreConfiguration, items, partitionKey),
-            },
-            partitionKey: userId,
-          }
-        : undefined,
+      {
+        cache: {
+          read: (partitionKey) => readIndexedDb(RoomIndexedDbStoreConfiguration, partitionKey),
+          write: (items, partitionKey) => writeIndexedDb(RoomIndexedDbStoreConfiguration, items, partitionKey),
+        },
+        partitionKey: session.value.data?.user.id ?? "",
+      },
     );
-  };
   const readMoreRooms = (onComplete: () => void) =>
     readMoreItems(async (cursor) => {
       const response = await $trpc.room.readRooms.query({ cursor });

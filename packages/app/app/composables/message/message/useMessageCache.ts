@@ -16,10 +16,13 @@ export const useMessageCache = () => {
 
   watchDeep(items, (messages) => {
     if (!currentRoomId.value || messages.length === 0) return;
-    pendingOperation = writeIndexedDb(
-      MessageIndexedDbStoreConfiguration,
-      messages.filter((message) => !message.isLoading),
-      currentRoomId.value,
+    const roomId = currentRoomId.value;
+    pendingOperation = pendingOperation.then(() =>
+      writeIndexedDb(
+        MessageIndexedDbStoreConfiguration,
+        messages.filter((message) => !message.isLoading),
+        roomId,
+      ),
     );
   });
 

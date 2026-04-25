@@ -4,7 +4,7 @@ import type { IndexNames } from "idb";
 
 export interface IndexedDbStoreConfiguration<T extends IndexedDbStoreName> {
   indexName: IndexNames<IndexedDbDatabaseSchema, T>;
-  keyPath: readonly string[] | string;
+  keyPath: IndexedDbDatabaseSchema[T]["key"];
   limit?: number;
   storeName: T;
 }

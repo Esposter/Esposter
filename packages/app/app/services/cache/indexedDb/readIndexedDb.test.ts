@@ -42,7 +42,7 @@ describe(readIndexedDb, () => {
     const result = await readIndexedDb(MessageIndexedDbStoreConfiguration, message1.partitionKey);
 
     expect(result).toHaveLength(1);
-    expect(result[0]?.partitionKey).toBe(message1.partitionKey);
+    expect(takeOne(result)).toStrictEqual(message1);
   });
 
   test("overwrites existing items on re-write", async () => {
@@ -54,7 +54,7 @@ describe(readIndexedDb, () => {
     const result = await readIndexedDb(MessageIndexedDbStoreConfiguration, message1.partitionKey);
 
     expect(result).toHaveLength(1);
-    expect(takeOne(result)).toBe(message1);
+    expect(takeOne(result)).toStrictEqual(message1);
   });
 
   test("respects the limit from configuration", async () => {

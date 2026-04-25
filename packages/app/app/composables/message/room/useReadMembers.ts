@@ -30,8 +30,7 @@ export const useReadMembers = () => {
     return readItems(
       async () => {
         count.value = await $trpc.room.countMembers.query({ roomId });
-        const result = await $trpc.room.readMembers.query({ roomId });
-        return result;
+        return $trpc.room.readMembers.query({ roomId });
       },
       async ({ items }) => {
         for (const member of items) memberMap.value.set(member.id, member);
