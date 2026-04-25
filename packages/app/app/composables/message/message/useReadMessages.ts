@@ -89,14 +89,26 @@ export const useReadMessages = () => {
     );
   };
 
-  const readMoreMessages = (onComplete: () => void) =>
-    readMoreItems(async (cursor) => {
-      if (!currentRoomId.value)
-        throw new InvalidOperationError(Operation.Read, readMessages.name, CompositeKeyPropertyNames.partitionKey);
-      const response = await $trpc.message.readMessages.query({ cursor, roomId: currentRoomId.value });
-      await readMetadata(response.items);
-      return response;
-    }, onComplete);
+  const readMoreMessages = (onComplete: () => void) => {
+    const roomId = currentRoomId.value;
+    if (!roomId)
+      throw new InvalidOperationError(Operation.Read, readMoreMessages.name, CompositeKeyPropertyNames.partitionKey);
+    return readMoreItems(
+      async (cursor) => {
+        const response = await $trpc.message.readMessages.query({ cursor, roomId });
+        await readMetadata(response.items);
+        return response;
+      },
+      onComplete,
+      {
+        cache: {
+          read: (partitionKey) => readIndexedDb(MessageIndexedDbStoreConfiguration, partitionKey),
+          write: (items, partitionKey) => writeIndexedDb(MessageIndexedDbStoreConfiguration, items, partitionKey),
+        },
+        partitionKey: roomId,
+      },
+    );
+  };
 
   const readMoreNewerMessages = async (onComplete: () => void) => {
     if (!currentRoomId.value) return;

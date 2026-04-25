@@ -63,12 +63,14 @@ export const useCursorPaginationOperationData = <TItem>(cursorPaginationData: Re
   const readMoreItems = async (
     query: (cursor?: string) => Promise<CursorPaginationData<TItem>>,
     onComplete?: () => Promisable<void>,
+    cacheOptions?: ReadItemsCacheOptions<TItem>,
   ) => {
     try {
       const { hasMore: newHasMore, items: newItems, nextCursor: newNextCursor } = await query(nextCursor.value);
       hasMore.value = newHasMore;
       nextCursor.value = newNextCursor;
       items.value.push(...newItems);
+      if (cacheOptions) await cacheOptions.cache.write(items.value, cacheOptions.partitionKey);
     } finally {
       await onComplete?.();
     }

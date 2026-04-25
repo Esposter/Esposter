@@ -30,12 +30,22 @@ export const useReadRooms = () => {
       },
     );
   const readMoreRooms = (onComplete: () => void) =>
-    readMoreItems(async (cursor) => {
-      const response = await $trpc.room.readRooms.query({ cursor });
-      const roomIds = response.items.map(({ id }) => id);
-      if (roomIds.length === 0) return response;
-      await Promise.all([readUserToRooms(roomIds), readMyPermissions(roomIds), readRoles(roomIds)]);
-      return response;
-    }, onComplete);
+    readMoreItems(
+      async (cursor) => {
+        const response = await $trpc.room.readRooms.query({ cursor });
+        const roomIds = response.items.map(({ id }) => id);
+        if (roomIds.length === 0) return response;
+        await Promise.all([readUserToRooms(roomIds), readMyPermissions(roomIds), readRoles(roomIds)]);
+        return response;
+      },
+      onComplete,
+      {
+        cache: {
+          read: (partitionKey) => readIndexedDb(RoomIndexedDbStoreConfiguration, partitionKey),
+          write: (items, partitionKey) => writeIndexedDb(RoomIndexedDbStoreConfiguration, items, partitionKey),
+        },
+        partitionKey: session.value.data?.user.id ?? "",
+      },
+    );
   return { readMoreRooms, readRooms };
 };

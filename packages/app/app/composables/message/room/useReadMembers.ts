@@ -48,18 +48,29 @@ export const useReadMembers = () => {
       },
     );
   };
-  const readMoreMembers = (onComplete: () => void) =>
-    readMoreItems(async (cursor) => {
-      const roomId = currentRoomId.value;
-      if (!roomId)
-        throw new InvalidOperationError(Operation.Read, readMoreMembers.name, CompositeKeyPropertyNames.partitionKey);
-      const cursorPaginationData = await $trpc.room.readMembers.query({ cursor, roomId });
-      for (const member of cursorPaginationData.items) memberMap.value.set(member.id, member);
-      await readMetadata(
-        roomId,
-        cursorPaginationData.items.map(({ id }) => id),
-      );
-      return cursorPaginationData;
-    }, onComplete);
+  const readMoreMembers = (onComplete: () => void) => {
+    const roomId = currentRoomId.value;
+    if (!roomId)
+      throw new InvalidOperationError(Operation.Read, readMoreMembers.name, CompositeKeyPropertyNames.partitionKey);
+    return readMoreItems(
+      async (cursor) => {
+        const cursorPaginationData = await $trpc.room.readMembers.query({ cursor, roomId });
+        for (const member of cursorPaginationData.items) memberMap.value.set(member.id, member);
+        await readMetadata(
+          roomId,
+          cursorPaginationData.items.map(({ id }) => id),
+        );
+        return cursorPaginationData;
+      },
+      onComplete,
+      {
+        cache: {
+          read: (partitionKey) => readIndexedDb(MemberIndexedDbStoreConfiguration, partitionKey),
+          write: (items, partitionKey) => writeIndexedDb(MemberIndexedDbStoreConfiguration, items, partitionKey),
+        },
+        partitionKey: roomId,
+      },
+    );
+  };
   return { readMembers, readMoreMembers };
 };
