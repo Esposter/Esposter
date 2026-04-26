@@ -44,7 +44,8 @@
       "WebFetch(domain:www.npmjs.com)",
       "Bash(wait)",
       "Bash(pnpm ls *)",
-      "Bash(pnpm why *)"
+      "Bash(pnpm why *)",
+      "Bash(git diff *)"
     ]
   }
 }

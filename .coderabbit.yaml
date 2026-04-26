@@ -1,4 +1,71 @@
 reviews:
+  path_filters:
+    - "!pnpm-lock.yaml"
+
+    # auto-generated migrations
+    - "!packages/app/server/db/migrations/**"
+
+    # type-only renames (Room→RoomInMessage, AppUser→AppUserInMessage, etc.) — no logic changes
+    - "!packages/app/shared/models/db/**"
+    - "!packages/app/app/components/Message/**"
+    - "!packages/app/app/pages/messages/invite/[code].vue"
+    - "!packages/app/app/composables/message/**"
+    - "!packages/app/app/store/message/**"
+    - "!packages/app/app/models/message/Creator.ts"
+    - "!packages/app/app/models/cache/indexedDb/IndexedDbDatabaseSchema.ts"
+
+    # db-schema: existing schema files — only change is removing inline relations() blocks
+    # and updating drizzle-zod → drizzle-orm/zod import; new schema is in relations/ files
+    - "!packages/db-schema/src/schema/accounts.ts"
+    - "!packages/db-schema/src/schema/achievements.ts"
+    - "!packages/db-schema/src/schema/appUsersInMessage.ts"
+    - "!packages/db-schema/src/schema/bans.ts"
+    - "!packages/db-schema/src/schema/blocks.ts"
+    - "!packages/db-schema/src/schema/friendRequests.ts"
+    - "!packages/db-schema/src/schema/friends.ts"
+    - "!packages/db-schema/src/schema/invites.ts"
+    - "!packages/db-schema/src/schema/likes.ts"
+    - "!packages/db-schema/src/schema/posts.ts"
+    - "!packages/db-schema/src/schema/pushSubscriptionsInMessage.ts"
+    - "!packages/db-schema/src/schema/roomCategoriesInMessage.ts"
+    - "!packages/db-schema/src/schema/roomRolesInMessage.ts"
+    - "!packages/db-schema/src/schema/roomsInMessage.ts"
+    - "!packages/db-schema/src/schema/searchHistoriesInMessage.ts"
+    - "!packages/db-schema/src/schema/sessions.ts"
+    - "!packages/db-schema/src/schema/surveys.ts"
+    - "!packages/db-schema/src/schema/userAchievements.ts"
+    - "!packages/db-schema/src/schema/users.ts"
+    - "!packages/db-schema/src/schema/userStatusesInMessage.ts"
+    - "!packages/db-schema/src/schema/usersToRoomRoles.ts"
+    - "!packages/db-schema/src/schema/usersToRoomsInMessage.ts"
+    - "!packages/db-schema/src/schema/webhooks.ts"
+
+    # db-schema: boilerplate defineRelationsPart files — all follow identical pattern,
+    # review the barrel (src/relations.ts) and one example instead
+    - "!packages/db-schema/src/relations/accountsRelation.ts"
+    - "!packages/db-schema/src/relations/achievementsRelation.ts"
+    - "!packages/db-schema/src/relations/appUsersInMessageRelation.ts"
+    - "!packages/db-schema/src/relations/bansInMessageRelation.ts"
+    - "!packages/db-schema/src/relations/blocksRelation.ts"
+    - "!packages/db-schema/src/relations/friendRequestsRelation.ts"
+    - "!packages/db-schema/src/relations/friendsRelation.ts"
+    - "!packages/db-schema/src/relations/invitesInMessageRelation.ts"
+    - "!packages/db-schema/src/relations/likesRelation.ts"
+    - "!packages/db-schema/src/relations/postsRelation.ts"
+    - "!packages/db-schema/src/relations/pushSubscriptionsInMessageRelation.ts"
+    - "!packages/db-schema/src/relations/roomCategoriesInMessageRelation.ts"
+    - "!packages/db-schema/src/relations/roomRolesInMessageRelation.ts"
+    - "!packages/db-schema/src/relations/roomsInMessageRelation.ts"
+    - "!packages/db-schema/src/relations/searchHistoriesInMessage.ts"
+    - "!packages/db-schema/src/relations/sessionsRelation.ts"
+    - "!packages/db-schema/src/relations/surveysRelation.ts"
+    - "!packages/db-schema/src/relations/userAchievementsRelation.ts"
+    - "!packages/db-schema/src/relations/userStatusesInMessageRelation.ts"
+    - "!packages/db-schema/src/relations/usersRelation.ts"
+    - "!packages/db-schema/src/relations/usersToRoomRolesInMessageRelation.ts"
+    - "!packages/db-schema/src/relations/usersToRoomsInMessageRelation.ts"
+    - "!packages/db-schema/src/relations/webhooksInMessageRelation.ts"
+
   auto_review:
     ignore_usernames:
       - renovate[bot]
