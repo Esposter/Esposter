@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { RoomCategory } from "@esposter/db-schema";
+import type { RoomCategoryInMessage } from "@esposter/db-schema";
 
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
 
 interface RoomCategoryDeleteDialogButtonProps {
-  category: RoomCategory;
+  category: RoomCategoryInMessage;
 }
 
 const { category } = defineProps<RoomCategoryDeleteDialogButtonProps>();

@@ -1,6 +1,6 @@
 import type { Context } from "@@/server/trpc/context";
 
-import { roomRolesInMessageInMessage, usersToRoomRolesInMessageInMessage, usersToRoomsInMessageInMessage } from "@esposter/db-schema";
+import { roomRolesInMessage, usersToRoomRolesInMessage, usersToRoomsInMessage } from "@esposter/db-schema";
 import { and, eq, inArray, or } from "drizzle-orm";
 
 interface GetPermissions {

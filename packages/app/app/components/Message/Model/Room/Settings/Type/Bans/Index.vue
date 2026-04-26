@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { Room } from "@esposter/db-schema";
+import type { RoomInMessage } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
 import { useBanStore } from "@/store/message/user/ban";
 
 interface BansProps {
-  roomId: Room["id"];
+  roomId: RoomInMessage["id"];
 }
 
 const { roomId } = defineProps<BansProps>();

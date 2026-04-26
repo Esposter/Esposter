@@ -1,5 +1,5 @@
 import type { HideDirectMessageInput } from "#shared/models/db/room/HideDirectMessageInput";
-import type { Room, User } from "@esposter/db-schema";
+import type { RoomInMessage, User } from "@esposter/db-schema";
 
 import { dayjs } from "#shared/services/dayjs";
 import { createOperationData } from "@/services/shared/createOperationData";
@@ -8,7 +8,7 @@ import { RoutePath, takeOne, uuidValidateV4 } from "@esposter/shared";
 
 export const useDirectMessageStore = defineStore("message/room/directMessage", () => {
   const { $trpc } = useNuxtApp();
-  const { items, ...restData } = useCursorPaginationData<Room>();
+  const { items, ...restData } = useCursorPaginationData<RoomInMessage>();
   const {
     createDirectMessage: storeCreateDirectMessage,
     deleteDirectMessage: storeDeleteDirectMessage,
