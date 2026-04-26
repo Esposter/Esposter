@@ -1,6 +1,6 @@
 import type { Context } from "@@/server/trpc/context";
 
-import { roomRolesInMessageInMessage, usersToRoomRolesInMessageInMessage } from "@esposter/db-schema";
+import { roomRolesInMessage, usersToRoomRolesInMessage } from "@esposter/db-schema";
 import { and, eq, inArray, max } from "drizzle-orm";
 
 interface GetTopRolePosition {

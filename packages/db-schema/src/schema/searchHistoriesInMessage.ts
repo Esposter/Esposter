@@ -1,6 +1,7 @@
 import type { Filter } from "@/models/message/filter/Filter";
 
 import { MESSAGE_MAX_LENGTH } from "@/models/message/BaseMessageEntity";
+import { filterSchema } from "@/models/message/filter/Filter";
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { roomsInMessage } from "@/schema/roomsInMessage";
@@ -34,5 +35,6 @@ export const searchHistoriesInMessage = pgTable(
 export type SearchHistoryInMessage = typeof searchHistoriesInMessage.$inferSelect;
 
 export const selectSearchHistoryInMessageSchema = createSelectSchema(searchHistoriesInMessage, {
+  filters: z.array(filterSchema),
   query: z.string().max(MESSAGE_MAX_LENGTH),
 });

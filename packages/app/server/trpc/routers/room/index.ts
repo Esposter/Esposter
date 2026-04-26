@@ -248,12 +248,15 @@ export const roomRouter = router({
       const ban = await tx.query.bansInMessage.findFirst({
         columns: { userId: true },
         where: {
-          RAW: (bansInMessage, { and, eq, isNull }) =>
-            and(
+          RAW: (bansInMessage, { and, eq, isNull }) => {
+            const where = and(
               eq(bansInMessage.roomId, invite.roomId),
               eq(bansInMessage.userId, ctx.getSessionPayload.user.id),
               isNull(bansInMessage.deletedAt),
-            ),
+            );
+            if (!where) throw new InvalidOperationError(Operation.Read, DatabaseEntityType.Ban, invite.roomId);
+            return where;
+          },
         },
       });
       if (ban) throw new TRPCError({ code: "FORBIDDEN" });

@@ -21,9 +21,11 @@ export const achievementRouter = router({
   readAchievementMap: standardAuthedProcedure.query(async ({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
     const unlockedUserAchievements = await ctx.db.query.userAchievements.findMany({
-      where: (userAchievements, { and, eq, isNotNull }) =>
-        and(eq(userAchievements.userId, userId), isNotNull(userAchievements.unlockedAt)),
-      with: { achievement: { columns: { name: true } } },
+      where: {
+        RAW: (userAchievements, { and, eq, isNotNull }) =>
+          and(eq(userAchievements.userId, userId), isNotNull(userAchievements.unlockedAt)),
+      },
+      with: UserAchievementRelations,
     });
     const unlockedUserAchievementNames = new Set(unlockedUserAchievements.map(({ achievement }) => achievement.name));
     return Object.fromEntries(
@@ -43,7 +45,7 @@ export const achievementRouter = router({
     const userId = input ?? ctx.getSessionPayload?.user.id;
     if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
     return ctx.db.query.userAchievements.findMany({
-      where: (userAchievements, { eq }) => eq(userAchievements.userId, userId),
+      where: { userId: { eq: userId } },
       with: UserAchievementRelations,
     });
   }),
