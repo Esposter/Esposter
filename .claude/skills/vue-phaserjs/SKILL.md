@@ -19,12 +19,7 @@ All game object components follow the same 4-file pattern: `{Name}Configuration.
 
 **Structure**: `<Container>`, `<Zone>`, `<Tilemap>`, `<Scene>`
 
-**Not implemented** (crossed off with rationale in `features/vue-phaserjs/v1 (completed).md`):
-
-- `<Group>` — extends `EventEmitter` not `GameObject`; `v-for` handles grouping in Vue
-- `<Layer>` — extends `List<GameObject>` not `GameObject`; incompatible with `useInitializeGameObject`
-- Input composables (`usePointer`, `useGamepad`, `useDrag`) — per-frame reactive polling adds overhead; use `onUpdate` directly
-- `useTimeline`, physics, camera components, tilemap layer components — app-specific or don't map to Vue component model
+**Not implemented**: `<Group>` (use `v-for`), `<Layer>` (incompatible with `useInitializeGameObject`), input composables (use `onUpdate` directly), `useTimeline`/physics/camera/tilemap-layer components.
 
 ## Configuration Interfaces — `Pick` from Game Object Types
 
@@ -45,15 +40,25 @@ export interface ArcConfiguration extends ShapeConfiguration {
 
 Keep explicit declarations only for `Parameters<GameObjects.X["method"]>` tuples and plain primitives (`number`, `string`) that are constructor args without a matching readable property.
 
+## SetterMap void-return
+
+`SetterMap` types the inner setter function as returning `void`. When the setter body is a single method call that returns a value (Phaser fluent API), wrap it in braces — never use the `void` operator:
+
+```ts
+// ✅ Correct
+x: (gameObject) => (value) => { gameObject.setX(value); },
+
+// ❌ Wrong — void operator banned
+x: (gameObject) => (value) => void gameObject.setX(value),
+```
+
+Multi-line setters already use braces naturally — no change needed.
+
 ## Phaser Objects in Pinia Stores
 
 **Always use `markRaw()` when assigning a Phaser object to any reactive ref in a Pinia store.**
 
-Pinia devtools (dev mode only) deep-watches all store state via Vue's `traverse`. When it encounters a ref holding a Phaser object, it unwraps the ref and traverses into the Phaser internals. Phaser 3.85+ added `Frame.get glTexture()` as a getter that returns `null` before WebGL texture upload — causing a crash in dev mode that never occurs in prod.
-
-`markRaw(obj)` sets `__v_skip = true`, which causes Vue's `traverse` to skip the object entirely.
-
-When assigning a Phaser game object, plugin instance, or any class that holds Phaser scene/texture/keyboard references to a Pinia store ref, wrap the value with `markRaw()`:
+Pinia devtools traverse store state via Vue's `traverse`. Phaser 3.85+ `Frame.get glTexture()` returns `null` before WebGL upload — crash in dev when traversed. `markRaw(obj)` sets `__v_skip = true` to skip traversal.
 
 ```ts
 // ✅ Correct — traverse-safe
@@ -76,3 +81,19 @@ Any Phaser class that chains to `Scene → TextureManager → Texture → Frame 
 - `Input.Keyboard.Key`, `Input.Keyboard.CursorKeys` (via KeyboardPlugin → Scene)
 - Rex plugin instances (Slider, VirtualJoystick, etc.)
 - Any class that holds a `scene` reference
+
+## SSR / "Phaser is not defined" Fix
+
+**Problem**: `vue-phaserjs/dist/index.js` bundled `phaser3-rex-plugins` subpath imports (e.g. `phaser3-rex-plugins/plugins/clickoutside.js`). The bundled code accesses `Phaser.Scene`, `Phaser.Game`, etc. as globals at module-evaluation time, which fails in Node.js SSR.
+
+**Root cause**: The `external` array used string literal `"phaser3-rex-plugins"` which only matches the root package name, not subpath imports like `"phaser3-rex-plugins/plugins/clickoutside.js"`.
+
+**Fix** (`packages/vue-phaserjs/vite.config.js`): Use a RegExp to match all subpaths:
+
+```js
+rolldownOptions: {
+  external: ["phaser", /^phaser3-rex-plugins/, "pinia", "vue"],
+},
+```
+
+**Rule**: In Rolldown `external`, always use `/^package-name/` (regex) instead of `"package-name"` (string) when the package may be imported via subpaths. String literals only match exact module IDs.

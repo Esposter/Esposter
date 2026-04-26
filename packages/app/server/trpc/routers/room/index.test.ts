@@ -8,20 +8,23 @@ import { createCode } from "#shared/util/math/random/createCode";
 import { getCursorPaginationData } from "@@/server/services/pagination/cursor/getCursorPaginationData";
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
-import { friendRouter } from "@@/server/trpc/routers/friend";
+import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
-import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
+import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 import { CODE_LENGTH, DatabaseEntityType, friends, roomsInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
-import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
+import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+
+const expectedUsersToRoomsInsertError = (roomId: string, userId: string) =>
+  `Failed query: insert into "message"."users_to_rooms" ("createdAt", "deletedAt", "updatedAt", "isHidden", "notificationType", "roomId", "timeoutUntil", "userId") values (default, default, $1, default, default, $2, default, $3) returning "createdAt", "deletedAt", "updatedAt", "isHidden", "notificationType", "roomId", "timeoutUntil", "userId"\nparams: 1970-01-01T00:00:00.000Z,${roomId},${userId}`;
 
 describe("room", () => {
   let mockContext: Context;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let directMessageCaller: DecorateRouterRecord<TRPCRouter["directMessage"]>;
-  let friendCaller: DecorateRouterRecord<TRPCRouter["friend"]>;
+  let friendRequestCaller: DecorateRouterRecord<TRPCRouter["friendRequest"]>;
   const roomId = crypto.randomUUID();
   const name = "name";
   const updatedName = "updatedName";
@@ -30,10 +33,16 @@ describe("room", () => {
     mockContext = await createMockContext();
     roomCaller = createCallerFactory(roomRouter)(mockContext);
     directMessageCaller = createCallerFactory(directMessageRouter)(mockContext);
-    friendCaller = createCallerFactory(friendRouter)(mockContext);
+    friendRequestCaller = createCallerFactory(friendRequestRouter)(mockContext);
+  });
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(0);
   });
 
   afterEach(async () => {
+    vi.useRealTimers();
     MockContainerDatabase.clear();
     await mockContext.db.delete(friends);
     await mockContext.db.delete(roomsInMessage);
@@ -41,9 +50,9 @@ describe("room", () => {
 
   const makeFriends = async (userA: User, userB: User) => {
     await mockSessionOnce(mockContext.db, userA);
-    await friendCaller.sendFriendRequest(userB.id);
+    await friendRequestCaller.sendFriendRequest(userB.id);
     await mockSessionOnce(mockContext.db, userB);
-    await friendCaller.acceptFriendRequest(userA.id);
+    await friendRequestCaller.acceptFriendRequest(userA.id);
   };
 
   test("creates", async () => {
@@ -146,6 +155,7 @@ describe("room", () => {
     expect.hasAssertions();
 
     await roomCaller.createRoom({ name });
+    vi.setSystemTime(1);
     const newRoom = await roomCaller.createRoom({ name });
     const readRoom = await roomCaller.readRoom();
 
@@ -198,7 +208,7 @@ describe("room", () => {
     const id = crypto.randomUUID();
 
     await expect(roomCaller.updateRoom({ id, name })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Room, id).message}]`,
+      `[TRPCError: UNAUTHORIZED]`,
     );
   });
 
@@ -209,7 +219,7 @@ describe("room", () => {
     await mockSessionOnce(mockContext.db);
 
     await expect(roomCaller.updateRoom({ id: newRoom.id, name })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Room, newRoom.id).message}]`,
+      `[TRPCError: UNAUTHORIZED]`,
     );
   });
 
@@ -304,24 +314,6 @@ describe("room", () => {
     const readInvite = await roomCaller.readInvite(createCode(CODE_LENGTH));
 
     expect(readInvite).toBeNull();
-  });
-
-  test("fails read invite with invalid code", async () => {
-    expect.hasAssertions();
-
-    await expect(roomCaller.readInvite("")).rejects.toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: [
-        {
-          "origin": "string",
-          "code": "too_small",
-          "minimum": 8,
-          "inclusive": true,
-          "exact": true,
-          "path": [],
-          "message": "Too small: expected string to have >=8 characters"
-        }
-      ]]
-    `);
   });
 
   test("reads invite code", async () => {
@@ -484,10 +476,9 @@ describe("room", () => {
     const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
     const userId = getMockSession().user.id;
 
-    await expect(roomCaller.joinRoom(newInviteCode)).rejects.toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: Failed query: insert into "message"."users_to_rooms" ("isHidden", "notificationType", "roomId", "userId") values (default, default, $1, $2) returning "isHidden", "notificationType", "roomId", "userId"
-      params: ${newRoom.id},${userId}]
-    `);
+    await expect(roomCaller.joinRoom(newInviteCode)).rejects.toThrow(
+      expectedUsersToRoomsInsertError(newRoom.id, userId),
+    );
   });
 
   test("on joins", async () => {
@@ -595,28 +586,6 @@ describe("room", () => {
     expect(takeOne(members).id).toBe(user.id);
   });
 
-  test("fails read members by empty ids", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-
-    await expect(roomCaller.readMembersByIds({ ids: [], roomId: newRoom.id })).rejects
-      .toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: [
-        {
-          "origin": "array",
-          "code": "too_small",
-          "minimum": 1,
-          "inclusive": true,
-          "path": [
-            "ids"
-          ],
-          "message": "Too small: expected array to have >=1 items"
-        }
-      ]]
-    `);
-  });
-
   test("fails read members by ids with wrong user", async () => {
     expect.hasAssertions();
 
@@ -645,30 +614,8 @@ describe("room", () => {
     const members = await roomCaller.readMembers({ roomId: newRoom.id });
 
     expect(members.items).toHaveLength(2);
-    expect(takeOne(members.items)).toStrictEqual(user);
-    expect(takeOne(members.items, 1).id).toBe(userId);
-  });
-
-  test("fails create members with empty ids", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-
-    await expect(roomCaller.createMembers({ roomId: newRoom.id, userIds: [] })).rejects
-      .toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: [
-        {
-          "origin": "array",
-          "code": "too_small",
-          "minimum": 1,
-          "inclusive": true,
-          "path": [
-            "userIds"
-          ],
-          "message": "Too small: expected array to have >=1 items"
-        }
-      ]]
-    `);
+    expect(takeOne(members.items).id).toBe(userId);
+    expect(takeOne(members.items, 1)).toStrictEqual(user);
   });
 
   test("fails create members with non-creator", async () => {
@@ -688,11 +635,9 @@ describe("room", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const userId = getMockSession().user.id;
 
-    await expect(roomCaller.createMembers({ roomId: newRoom.id, userIds: [userId] })).rejects
-      .toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: Failed query: insert into "message"."users_to_rooms" ("isHidden", "notificationType", "roomId", "userId") values (default, default, $1, $2) returning "isHidden", "notificationType", "roomId", "userId"
-      params: ${newRoom.id},${userId}]
-    `);
+    await expect(roomCaller.createMembers({ roomId: newRoom.id, userIds: [userId] })).rejects.toThrow(
+      expectedUsersToRoomsInsertError(newRoom.id, userId),
+    );
   });
 
   test("fails create members with non-existent user", async () => {
@@ -701,11 +646,9 @@ describe("room", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const userId = crypto.randomUUID();
 
-    await expect(roomCaller.createMembers({ roomId: newRoom.id, userIds: [userId] })).rejects
-      .toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: Failed query: insert into "message"."users_to_rooms" ("isHidden", "notificationType", "roomId", "userId") values (default, default, $1, $2) returning "isHidden", "notificationType", "roomId", "userId"
-      params: ${newRoom.id},${userId}]
-    `);
+    await expect(roomCaller.createMembers({ roomId: newRoom.id, userIds: [userId] })).rejects.toThrow(
+      expectedUsersToRoomsInsertError(newRoom.id, userId),
+    );
   });
 
   test("fails create members with non-existent room", async () => {

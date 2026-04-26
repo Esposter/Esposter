@@ -3,19 +3,34 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.21.0](https://github.com/Esposter/Esposter/compare/v2.20.0...v2.21.0) (2026-04-15)
+
+### Bug Fixes
+
+* wip ([52a3ba5](https://github.com/Esposter/Esposter/commit/52a3ba58288c49b37072407f1514bed94fd90f2a))
+
+### Features
+
+* implement features + fix lint ([e62cdd4](https://github.com/Esposter/Esposter/commit/e62cdd42a44775ba52e06d57030da740c61e1a7a))
+
 # [2.20.0](https://github.com/Esposter/Esposter/compare/v2.19.2...v2.20.0) (2026-03-29)
 
 ### Bug Fixes
 
 * format + fix up some ignores ([6cd632f](https://github.com/Esposter/Esposter/commit/6cd632ff672ad8e0adee51b42cb6f6925f894b96))
+
 * imports ([a511b26](https://github.com/Esposter/Esposter/commit/a511b2626a7200912f9e29572269b3d585e6d3eb))
+
 * lint ([7e81f71](https://github.com/Esposter/Esposter/commit/7e81f7145c3a052c273c2a06cbfe5a275985876e))
+
 * lint ([82e0aad](https://github.com/Esposter/Esposter/commit/82e0aadfafa9640640963c6b2bcbd8685da1bc48))
 
 ### Features
 
 * Add oxlint type aware ([eb40e2d](https://github.com/Esposter/Esposter/commit/eb40e2d7da8c606c66053582284264e0fb3a2592))
+
 * migrate to oxfmt ([e7a0212](https://github.com/Esposter/Esposter/commit/e7a0212f9ec18d7193c96cc6069ac6ecf168e8bb))
+
 * switch to tsgo ([1e504b3](https://github.com/Esposter/Esposter/commit/1e504b3a6ce5144dadbdd9bc543018a35e7b6808))
 
 ## [2.19.2](https://github.com/Esposter/Esposter/compare/v2.19.1...v2.19.2) (2026-02-05)
@@ -31,15 +46,21 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * add todo ([8200943](https://github.com/Esposter/Esposter/commit/8200943c77705cfcc3ead98f5520942ff4dda906))
+
 * finally fix up all type issues ([179e963](https://github.com/Esposter/Esposter/commit/179e9639f3cfdf05e08aff88e4844748158f0a1c))
+
 * lint ([20f1fa4](https://github.com/Esposter/Esposter/commit/20f1fa4f098406c552958404e7ea5ce5c3302415))
+
 * oxlint ([3df2ec1](https://github.com/Esposter/Esposter/commit/3df2ec1ad17f36d77780656e27d3034cd3ac32de))
 
 ### Features
 
 * **test:** add more parse tests ([202cfcf](https://github.com/Esposter/Esposter/commit/202cfcf7ed9ca2e313aea4b45b2ff9616d908aac))
+
 * **test:** add more tests + some refactors ([a0ec126](https://github.com/Esposter/Esposter/commit/a0ec12663c8b42ec91d6e87b949c7a21ce744cf1))
+
 * **test:** Add some misc tests ([704bdca](https://github.com/Esposter/Esposter/commit/704bdca66fff695fee12bd2f507b99783eeb0336))
+
 * **test:** add some parse tests ([bcfa373](https://github.com/Esposter/Esposter/commit/bcfa373755b26f2a607db4607a758aa081b04fc9))
 
 ## [2.18.2](https://github.com/Esposter/Esposter/compare/v2.18.1...v2.18.2) (2025-12-10)

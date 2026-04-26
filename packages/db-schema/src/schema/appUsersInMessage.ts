@@ -1,9 +1,8 @@
+import { createNameCheckSql, createNameSchema } from "@/models/shared/Name";
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
-import { sql } from "drizzle-orm";
 import { check, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
-import { z } from "zod";
 
 export const APP_USER_NAME_MAX_LENGTH = 100;
 
@@ -16,7 +15,7 @@ export const appUsersInMessage = pgTable(
   },
   {
     extraConfig: ({ name }) => [
-      check("name", sql`LENGTH(${name}) >= 1 AND LENGTH(${name}) <= ${sql.raw(APP_USER_NAME_MAX_LENGTH.toString())}`),
+      check("app_users_name_length_check", createNameCheckSql(name, APP_USER_NAME_MAX_LENGTH)),
     ],
     schema: messageSchema,
   },
@@ -25,5 +24,5 @@ export const appUsersInMessage = pgTable(
 export type AppUserInMessage = typeof appUsersInMessage.$inferSelect;
 
 export const selectAppUserInMessageSchema = createSelectSchema(appUsersInMessage, {
-  name: z.string().min(1).max(APP_USER_NAME_MAX_LENGTH),
+  name: createNameSchema(APP_USER_NAME_MAX_LENGTH),
 });

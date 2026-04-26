@@ -8,14 +8,22 @@ import { AchievementDefinitionMap } from "#shared/services/achievement/achieveme
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession } from "@@/server/trpc/context.test";
 import { trpcRouter } from "@@/server/trpc/routers";
-import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
-import { achievements, UserAchievementRelations, WebpageAchievementName } from "@esposter/db-schema";
+import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
+import {
+  achievements,
+  rooms,
+  SpecialAchievementName,
+  UserAchievementRelations,
+  WebpageAchievementName,
+} from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
+import { MockContainerDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("achievement", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["_def"]["procedures"]>;
+  const name = "name";
   const updatedAchievements = [WebpageAchievementName.WebDeveloper];
 
   beforeAll(async () => {
@@ -24,25 +32,44 @@ describe("achievement", () => {
   });
 
   afterEach(async () => {
+    MockContainerDatabase.clear();
+    await mockContext.db.delete(rooms);
     await mockContext.db.delete(achievements);
   });
 
-  test("readAchievementMap", async () => {
-    expect.hasAssertions();
+  describe("readAchievementMap", () => {
+    test("when no achievements are unlocked, hidden achievements show '???'", async () => {
+      expect.hasAssertions();
 
-    const result = await caller.achievement.readAchievementMap();
+      const result = await caller.achievement.readAchievementMap();
 
-    expect(result).toStrictEqual(
-      Object.fromEntries(
-        Object.entries(AchievementDefinitionMap).map(([achievementName, achievementDefinition]) => [
-          achievementName,
-          {
-            ...achievementDefinition,
-            description: achievementDefinition.isHidden ? "???" : achievementDefinition.description,
-          },
-        ]),
-      ),
-    );
+      expect(result).toStrictEqual(
+        Object.fromEntries(
+          Object.entries(AchievementDefinitionMap).map(([achievementName, achievementDefinition]) => [
+            achievementName,
+            {
+              ...achievementDefinition,
+              description: achievementDefinition.isHidden ? "???" : achievementDefinition.description,
+            },
+          ]),
+        ),
+      );
+    });
+
+    test("when a hidden achievement is unlocked, it shows its real description", async () => {
+      expect.hasAssertions();
+
+      const room = await caller.room.createRoom({ name });
+      await caller.message.createMessage({
+        message: "😀😀😀😀😀😀😀😀😀😀",
+        roomId: room.id,
+      });
+      const result = await caller.achievement.readAchievementMap();
+
+      expect(result[SpecialAchievementName.EmojiLover].description).toBe(
+        AchievementDefinitionMap[SpecialAchievementName.EmojiLover].description,
+      );
+    });
   });
 
   test("readUserAchievements", async () => {

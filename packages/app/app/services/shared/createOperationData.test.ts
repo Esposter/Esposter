@@ -1,4 +1,3 @@
-// @vitest-environment node
 import { TodoListItem } from "#shared/models/tableEditor/todoList/TodoListItem";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { beforeEach, describe, expect, test } from "vitest";

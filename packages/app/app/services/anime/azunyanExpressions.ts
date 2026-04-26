@@ -2,7 +2,7 @@ import type { Expression } from "@/models/desmos/Expression";
 
 import { Colors } from "@/models/desmos/Colors";
 
-export const azunyanExpressions: Expression[] = [
+export const AzunyanExpressions: Expression[] = [
   { latex: "y=-0.17\\left(x-0.66\\right)^{2}+3.8\\left\\{-0.542<x<1.2\\right\\}" },
   { latex: "\\left(y-1.6\\right)^{2}=2.7\\left(x+2.03\\right)\\left\\{1.82<y<3.4\\right\\}" },
   { latex: "y=0.53x+3.84\\left\\{-0.83<x<-0.542\\right\\}" },

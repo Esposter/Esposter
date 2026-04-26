@@ -5,6 +5,21 @@ description: Esposter Vuetify 3 conventions — v-btn tooltips, typed SelectItem
 
 # Vuetify Conventions
 
+## Auto-Imported Composables — `v` Prefix
+
+Vuetify composables are auto-imported with a `v` prefix. **Never import them from `"vuetify"` directly** — they are already globally available:
+
+```typescript
+// WRONG — explicit import
+import { useDisplay } from "vuetify";
+const { smAndDown } = useDisplay();
+
+// CORRECT — auto-import with v prefix
+const { smAndDown } = useVDisplay();
+```
+
+Common composables: `useVDisplay()`, `useVTheme()`, `useVLocale()`, `useVDate()`.
+
 ## Global Defaults (vuetify.config.ts)
 
 The following variants are set globally and must **never** be repeated on individual components:
@@ -36,6 +51,26 @@ The following variants are set globally and must **never** be repeated on indivi
 - **`#activator` slot always first** — the `#activator` template must be the first child in `v-tooltip` (and `v-menu`).
 - **Icon choice for create actions** — use the semantically specific MDI icon when available: `mdi-table-row-plus-after` for adding rows, `mdi-table-column-plus-after` for adding columns. Fall back to `mdi-plus` for generic create actions.
 
+## Icon Buttons Inside Input Slots
+
+When placing a `v-btn` inside a `v-text-field` slot (e.g. `#append-inner`), use `variant="plain"` and omit `color`. The global `VBtn` default sets `style: { backgroundColor: "transparent" }` as an inline style — `variant="flat"` with `color="primary"` cannot override an inline style. `variant="plain"` works with the transparent default and lets the icon inherit the surrounding text color naturally.
+
+```vue
+<!-- WRONG — we default to inline backgroundColor: transparent in vuetify.config.ts for convenience with avatar backgrounds and icons -->
+<v-tooltip text="Add item">
+  <template #activator="{ props: tooltipProps }">
+    <v-btn color="primary" icon="mdi-plus" :="tooltipProps" @click="submit()" />
+  </template>
+</v-tooltip>
+
+<!-- CORRECT — plain variant works with the transparent default -->
+<v-tooltip text="Add item">
+  <template #activator="{ props: tooltipProps }">
+    <v-btn icon="mdi-plus" variant="plain" :="tooltipProps" @click="submit()" />
+  </template>
+</v-tooltip>
+```
+
 ## Vuetify Selects and List Items
 
 - When building items for `v-autocomplete`, `v-select`, or `v-list-item` (in a `v-menu` / `v-list`), always type them as `SelectItemCategoryDefinition<T>[]` (`{ title: string, value: T }`) from `@/models/vuetify/SelectItemCategoryDefinition`. Never inline untyped `{ title, value }` arrays — always extract to a typed constant.
@@ -45,7 +80,56 @@ The following variants are set globally and must **never** be repeated on indivi
 
 ## Dialog Form Validity
 
-Always name the form validity ref `isEditFormValid`. Bind it via `v-model` on `<v-form>` and use `ref(true)` for optimistic initial state. Disable Save & Close via `:confirm-button-attrs="{ disabled: !isEditFormValid }"` (combined with other conditions as needed). Never use try/catch in submit handlers — prevent invalid submission through form validation rules so state is always consistent. Use `StyledEditFormDialogErrorIcon` with `:edit-form-ref :is-edit-form-valid` (plus optional `:schema :value` for Zod schema validation) in the `#prepend-actions` slot. `editFormRef` is a required prop typed `InstanceType<typeof VForm> | undefined` (always passed; `| undefined` reflects the ref being uninitialized before mount). `isEditFormValid` is field-level only (from `<v-form v-model>`); schema errors are computed internally inside `StyledEditFormDialogErrorIcon` via `watchDeep` on `value`.
+Always name the form validity ref `isEditFormValid`. Bind it via `v-model` on `<v-form>` and use `ref(true)` for optimistic initial state. Disable Save & Close via `:confirm-button-attrs="{ disabled: !isEditFormValid }"` (combined with other conditions as needed). Never use try/catch in submit handlers — prevent invalid submission through form validation rules so state is always consistent. Use `StyledEditFormDialogErrorIcon` with `:edit-form :is-edit-form-valid` (plus optional `:schema :edited-value` for Zod schema validation). `editForm` is a required prop typed `InstanceType<typeof VForm> | undefined` (always passed; `| undefined` reflects the ref being uninitialized before mount). `isEditFormValid` is field-level only (from `<v-form v-model>`); schema errors are computed internally inside `StyledEditFormDialogErrorIcon`.
+
+## Inline Form Error Display (non-dialog)
+
+For inline forms (e.g. slash command params, embedded editors) where showing validation errors inline would break the layout:
+
+- Add `hide-details` to all `v-text-field` / `v-textarea` inputs
+- Show `StyledEditFormDialogErrorIcon` in the form's header row instead
+- Name locals to match prop names so `:edit-form :is-edit-form-valid` shorthands work:
+  - `const editForm = useTemplateRef<InstanceType<typeof VForm>>("editForm")`
+  - `const isEditFormValid = ref(true)`
+- Ref the error icon to gate submit: `const errorIcon = useTemplateRef<InstanceType<typeof StyledEditFormDialogErrorIcon>>("errorIcon")` → `errorIcon.value?.isValid`
+
+```vue
+<script setup lang="ts">
+import type StyledEditFormDialogErrorIcon from "@/components/Styled/EditFormDialog/ErrorIcon.vue";
+import type { VForm } from "vuetify/components";
+
+const editForm = useTemplateRef<InstanceType<typeof VForm>>("editForm");
+const isEditFormValid = ref(true);
+const errorIcon = useTemplateRef<InstanceType<typeof StyledEditFormDialogErrorIcon>>("errorIcon");
+const disabled = computed(() => !(errorIcon.value?.isValid ?? true));
+</script>
+
+<!-- Header row with error icon -->
+<div flex items-center gap-2>
+  <v-icon ... />
+  <span>{{ title }}</span>
+  <StyledEditFormDialogErrorIcon ref="errorIcon" :edit-form :is-edit-form-valid />
+</div>
+
+<!-- Form body with hide-details on all fields -->
+<v-form ref="editForm" v-model="isEditFormValid">
+  <v-text-field :rules="[formRules.required]" hide-details ... />
+</v-form>
+```
+
+## Keyboard-Navigable Lists (StyledList)
+
+Use `<StyledList>` instead of `<v-list>` whenever a list supports arrow-key navigation. `StyledList` accepts a `:selected-index` prop and automatically smooth-scrolls to the active item:
+
+```vue
+<StyledList :selected-index="selectedIndex" :list-props="{ density: 'compact' }">
+  <v-list-item v-for="..." :active="selectedIndex === index" ... />
+</StyledList>
+```
+
+- Never replicate the `watch(selectedIndex) → scrollIntoView` logic manually — always delegate to `StyledList`
+- Props: `selectedIndex?: number`, `listProps?: VList["$props"]`, `listAttrs?: VList["$attrs"]`
+- Scroll uses `{ behavior: 'smooth', block: 'nearest' }` — only scrolls when item is out of view
 
 ## Form Validation Rules
 

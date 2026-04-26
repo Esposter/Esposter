@@ -1,4 +1,3 @@
-// @vitest-environment node
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { User } from "@esposter/db-schema";
 import type { BinaryOperator as DrizzleBinaryOperator } from "drizzle-orm";
@@ -13,6 +12,7 @@ import { describe, expect, test } from "vitest";
 describe(getCursorWhere, () => {
   const createdAt = new Date();
   const user: User = {
+    biography: null,
     createdAt,
     deletedAt: null,
     email: "",
@@ -34,7 +34,7 @@ describe(getCursorWhere, () => {
     expect.hasAssertions();
 
     for (const sortItem of BinaryOperatorSortItemMapValues) {
-      const serializedCursors = serialize<User>(user, [sortItem]);
+      const serializedCursors = serialize(user, [sortItem]);
 
       expect(getCursorWhere(users, serializedCursors, [sortItem])).toStrictEqual(
         and(sortItem.operator(users.id, user.id)),

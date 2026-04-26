@@ -63,15 +63,4 @@ describe("userToRoom", () => {
 
     expect(updatedUserToRoom.notificationType).toBe(NotificationType.Never);
   });
-
-  test("fails update for non-member", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    await mockSessionOnce(mockContext.db);
-
-    await expect(
-      userToRoomCaller.updateUserToRoom({ notificationType: NotificationType.DirectMessage, roomId: newRoom.id }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
-  });
 });

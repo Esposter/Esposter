@@ -1,26 +1,16 @@
 import { pgTable } from "@/pgTable";
 import { users } from "@/schema/users";
 import { sql } from "drizzle-orm";
-import { check, index, pgEnum, text } from "drizzle-orm/pg-core";
+import { check, index, text } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
-
-export enum FriendshipStatus {
-  Accepted = "Accepted",
-  Blocked = "Blocked",
-  Pending = "Pending",
-}
-
-export const friendshipStatusSchema = z.enum(FriendshipStatus) satisfies z.ZodType<FriendshipStatus>;
-
-export const friendshipStatusEnum = pgEnum("friendship_status", FriendshipStatus);
 
 export const friends = pgTable(
   "friends",
   {
-    // Natural key — sorted([senderId, receiverId]).join(ID_SEPARATOR).
+    // Natural key — getFriendshipId(senderId, receiverId).
     // Text PK: every lookup goes through this value, it never changes,
-    // and there is exactly one row per user pair.
+    // And there is exactly one row per user pair.
     id: text("id").primaryKey(),
     receiverId: text("receiverId")
       .notNull()
@@ -28,13 +18,12 @@ export const friends = pgTable(
     senderId: text("senderId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    status: friendshipStatusEnum("status").notNull().default(FriendshipStatus.Pending),
   },
   {
     extraConfig: ({ receiverId, senderId }) => [
       check("no_self_friendship", sql`${senderId} != ${receiverId}`),
-      index("friends_receiverId_idx").on(receiverId),
-      index("friends_senderId_idx").on(senderId),
+      index("friends_receiverId_index").on(receiverId),
+      index("friends_senderId_index").on(senderId),
     ],
   },
 );

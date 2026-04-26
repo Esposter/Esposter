@@ -16,7 +16,7 @@ export const regexMatchTransformationSchema = z
   .object({
     ...createItemEntityTypeSchema(z.literal(ColumnTransformationType.RegexMatch).readonly()).shape,
     ...createSourceColumnIdSchema(ColumnFormVjsfContextPropertyNames["context.stringColumnItems"]).shape,
-    groupIndex: z.number().int().nonnegative(),
+    groupIndex: z.int().nonnegative(),
     pattern: z.string(),
   })
   .meta({ title: ColumnTransformationType.RegexMatch }) satisfies z.ZodType<RegexMatchTransformation>;

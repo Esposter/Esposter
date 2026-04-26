@@ -3,7 +3,9 @@ import type { ReadableStream } from "node:stream/web";
 import type { SetNonNullable } from "type-fest";
 import type { z } from "zod";
 
+import { updateUserInputSchema } from "#shared/models/db/user/UpdateUserInput";
 import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
+import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
 import { useContainerClient } from "@@/server/composables/azure/container/useContainerClient";
 import { on } from "@@/server/services/events/on";
 import { userEventEmitter } from "@@/server/services/message/events/userEventEmitter";
@@ -15,22 +17,23 @@ import {
   DatabaseEntityType,
   selectUserSchema,
   selectUserStatusInMessageSchema,
+  users,
   UserStatus,
   userStatusesInMessage,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { octetInputParser } from "@trpc/server/http";
-import { inArray } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { Readable } from "node:stream";
 
 const readStatusesInputSchema = selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
 export type ReadStatusesInput = z.infer<typeof readStatusesInputSchema>;
 
-const upsertStatusInputSchema = selectUserStatusInMessageSchema
-  .pick({ message: true, status: true })
-  .partial()
-  .refine(({ message, status }) => message !== undefined || status !== undefined);
+const upsertStatusInputSchema = refineAtLeastOne(
+  selectUserStatusInMessageSchema.pick({ message: true, status: true }).partial(),
+  ["message", "status"],
+);
 export type UpsertStatusInput = z.infer<typeof upsertStatusInputSchema>;
 
 const onUpsertStatusInputSchema = selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
@@ -82,7 +85,15 @@ export const userRouter = router({
     input,
     signal,
   }) {
-    if (input.includes(ctx.getSessionPayload.user.id)) throw new TRPCError({ code: "BAD_REQUEST" });
+    if (input.includes(ctx.getSessionPayload.user.id))
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: new InvalidOperationError(
+          Operation.Create,
+          DatabaseEntityType.UserStatus,
+          userRouter.onUpsertStatus.name,
+        ).message,
+      });
 
     for await (const [data] of on(userEventEmitter, "upsertStatus", { signal })) {
       if (!input.includes(data.userId)) continue;
@@ -117,6 +128,18 @@ export const userRouter = router({
 
     return resultUserStatuses;
   }),
+  updateUser: standardAuthedProcedure.input(updateUserInputSchema).mutation(async ({ ctx, input }) => {
+    const updatedUser = (
+      await ctx.db.update(users).set(input).where(eq(users.id, ctx.getSessionPayload.user.id)).returning()
+    )[0];
+    if (!updatedUser)
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: new InvalidOperationError(Operation.Update, DatabaseEntityType.User, ctx.getSessionPayload.user.id)
+          .message,
+      });
+    return updatedUser;
+  }),
   uploadProfileImage: standardAuthedProcedure.input(octetInputParser).mutation(async ({ ctx, input }) => {
     const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
     const blobName = `${ctx.getSessionPayload.user.id}/ProfileImage`;
@@ -144,6 +167,8 @@ export const userRouter = router({
           .message,
       });
 
-    userEventEmitter.emit("upsertStatus", { ...upsertedStatus, status: getDetectedUserStatus(upsertedStatus) });
+    const detectedStatus = { ...upsertedStatus, status: getDetectedUserStatus(upsertedStatus) };
+    userEventEmitter.emit("upsertStatus", detectedStatus);
+    return detectedStatus;
   }),
 });

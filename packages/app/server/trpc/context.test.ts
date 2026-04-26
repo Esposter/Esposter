@@ -1,18 +1,14 @@
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { Context } from "@@/server/trpc/context";
 import type { Session, User } from "better-auth";
-import type { PgliteDatabase } from "drizzle-orm/pglite";
 
 import { dayjs } from "#shared/services/dayjs";
 import { useContainerClientMock } from "@@/server/composables/azure/container/useContainerClient.test";
 import { useEventGridPublisherClientMock } from "@@/server/composables/azure/eventGrid/useEventGridPublisherClient.test";
 import { useTableClientMock } from "@@/server/composables/azure/table/useTableClient.test";
-import { PGlite } from "@electric-sql/pglite";
-import { messageSchema, relations, schema, users } from "@esposter/db-schema";
+import { createMockDb as baseCreateMockDb } from "@esposter/db-mock";
+import { users } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { generateDrizzleJson, generateMigration } from "drizzle-kit/api-postgres";
-import { sql } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/pglite";
 import { IncomingMessage, ServerResponse } from "node:http";
 import { Socket } from "node:net";
 import { describe, vi } from "vitest";
@@ -114,23 +110,9 @@ export const createMockContext = async (): Promise<Context> => {
 };
 
 const createMockDb = async () => {
-  const client = new PGlite();
-  const db = drizzle({ client, relations, schema });
-  await createSchema(db);
-  await pushSchema(db);
+  const db = await baseCreateMockDb();
   await db.insert(users).values(mocks.getSession().user);
-  return db as unknown as Context["db"];
-};
-
-const createSchema = async (db: PgliteDatabase<typeof schema>) => {
-  await db.execute(sql.raw(`CREATE SCHEMA "${messageSchema.schemaName}"`));
-};
-
-const pushSchema = async (db: PgliteDatabase<typeof schema>) => {
-  const previousJson = await generateDrizzleJson({});
-  const currentJson = await generateDrizzleJson(schema, previousJson.id);
-  const statements = await generateMigration(previousJson, currentJson);
-  for (const statement of statements) await db.execute(statement);
+  return db as Context["db"];
 };
 
 describe.todo("context");

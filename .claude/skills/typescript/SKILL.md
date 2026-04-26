@@ -7,6 +7,7 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 
 ## Core Rules
 
+- **Constant arrays use PascalCase** — `export const PermissionItems = [...]`, `export const FrierenExpressions: Expression[] = [...]`. This applies to all static data arrays exported from `services/`. File names match: `PermissionItems.ts`, `FrierenExpressions.ts`.
 - **No `With` prefix on mixin interfaces** — name them after the capability they represent: `SourceColumnId`, `SourceColumnIds`, `ApplicableColumnTypes`. Not `WithSourceColumnId`, `WithSourceColumnIds`, `WithApplicableColumnTypes`. The corresponding schema variables drop the `with` prefix too: `sourceColumnIdSchema` not `withSourceColumnIdSchema`.
 - **`A` prefix is for abstract classes only** — never use `A` prefix on interfaces. `AColumn` is an abstract class → correct. `ASlashCommand` as an interface → wrong, use `SlashCommand`. If it's an interface, just name it after the concept.
 - TypeScript compiler: `strict` mode enabled. ESLint: `tseslint.configs.strictTypeChecked`. `any` is **BANNED**.
@@ -21,7 +22,7 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
   - `arr.toReversed()` instead of `[...arr].reverse()` — `reverse()` is **BANNED**
   - `arr.toSpliced(start, deleteCount, ...items)` instead of manual splice + spread — `splice()` is **BANNED** for producing new arrays (it is still allowed for in-place mutation of store/reactive arrays)
   - `arr.with(index, value)` instead of `[...arr.slice(0, i), value, ...arr.slice(i + 1)]`
-- **Only use `new Set` when deduplication is actually needed** — do not wrap an array in `Set` just to call `.has()` if the values are already unique. Use `.some()` instead: `arr.some(({ id }) => id === targetId)`. Only reach for `Set` when: (a) the source array may contain duplicates and deduplication is the goal, or (b) the collection is large enough that repeated O(n) `.some()` calls would materially hurt performance.
+- **Only use `new Set` when deduplication is needed** — use `.some()` for unique arrays. `Set` only when: (a) deduplication is the goal, or (b) collection large enough that O(n) `.some()` hurts perf.
 - Always use named imports from libraries — only when not already auto-imported by Nuxt or Nuxt modules (e.g. `ref`, `computed`, `watch` from Vue; `storeToRefs` from Pinia; VueUse composables are all auto-imported and must not be manually imported).
 - Explicitly type variables with proper types.
 - **Never use generic variable names like `parsed`** — always use a descriptive name that includes the type: `parsedDate`, `parsedResult`, `parsedConfig`, etc.
@@ -30,9 +31,48 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 - **Cloning objects** — use `structuredClone(obj)` for deep clones; use `Object.assign(structuredClone(obj), { ...updates })` to clone and override fields. Never use `{ ...spread }` to clone a class instance — spread creates a plain object losing the prototype. **Exception**: `structuredClone(new ClassName(...))` is intentional when a plain object is explicitly required (e.g. Vjsf does not accept class instances — must use `structuredClone` to strip the prototype). Always add a comment explaining why.
 - **Boolean casting** — never use `!!` to cast to boolean. Always use `Boolean(value)`.
 
+## Function Syntax
+
+- **Always use arrow functions** — `const fn = () => { ... }` and `export const fn = () => { ... }`. Never use the `function` keyword except for the narrow cases below.
+- **`function` keyword only when `this` binding is required** — class methods, object methods that reference `this`, and generator functions (`function*`). All other functions — module-level, composables, callbacks, helpers — must be arrow functions.
+
+  ```ts
+  // WRONG — function declaration for a utility
+  export function useInFlight() { ... }
+  async function execute<T>(fn: () => Promise<T>) { ... }
+
+  // CORRECT
+  export const useInFlight = () => { ... };
+  const execute = async <T>(fn: () => Promise<T>): Promise<T | undefined> => { ... };
+  ```
+
+## Arrow Function Overloads
+
+Use call signature syntax on the variable type — never `function` declarations for overloads:
+
+```ts
+interface GetPermissions {
+  (db: Db, userId: string, roomId: string): Promise<bigint>;
+  (db: Db, userId: string, roomIds: string[]): Promise<Map<string, bigint>>;
+}
+
+export const getPermissions: GetPermissions = async (db, userId, roomIds: string | string[]) => {
+  const roomIdArray = Array.isArray(roomIds) ? roomIds : [roomIds];
+  // ...shared implementation...
+  if (Array.isArray(roomIds)) return result; // Map branch
+  return result.get(roomIds) ?? fallback; // scalar branch
+};
+```
+
+- Overload signatures go on the **type annotation** of the `const`, not repeated in the body
+- Implementation parameter types must be the **union** of all overload variants
+- Use `Array.isArray` to branch; each branch returns the corresponding specific type
+- TypeScript uses overload signatures at call sites; the implementation body is not exposed
+
 ## Promise Style
 
 - **Always use `async`/`await`** — never use `.then()` or `.catch()` promise chains. Use `try`/`catch` blocks for error handling.
+  - **Exception**: `.then()` is acceptable only for building a **promise queue** (serialising sequential async operations in a sync context, e.g. `chain = chain.then(async () => {...})`). This pattern cannot be expressed with `await` inside a synchronous watcher/event callback. All other `.then()`/`.catch()` usages must be converted.
 - When fire-and-forgetting an async operation, extract to a named `async` function and call it without `await`.
 - **Never use `void asyncFn()`** — when passing an async function to a sync callback slot (e.g. `onScopeDispose`, event listeners, Phaser callbacks), wrap it with `getSynchronizedFunction(async fn)` from `#shared/util/getSynchronizedFunction` instead. This satisfies `@typescript-eslint/no-misused-promises` without suppressing the lint rule.
 
@@ -47,7 +87,7 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 ## Control Flow
 
 - **Guard clauses first**: always use `if (!condition) return` to exit early instead of wrapping the main body in an `if` block. Reduce nesting aggressively — if the body of an `if` is the rest of the function, invert the condition and return early instead.
-- **Combine consecutive guards with `||`** — when two or more consecutive early-return guards share the same return value (typically `return` or `return null`), combine them into a single `if` with `||`. Never write two separate `if` statements that both `return` when they can be one:
+- **Combine consecutive guards with `||`** — when consecutive early-return guards share the same return value, combine into a single `if`:
 
   ```ts
   // BAD — two separate guards
@@ -59,10 +99,12 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
     return;
   ```
 
-  Exception: when the second check has side effects or requires complex destructuring that depends on the first passing, separate guards are acceptable.
+  Exception: when the second check has side effects or depends on the first passing.
+
+- **Use `.includes()` for 2+ equality checks** — `[A, B].includes(x)` not `x === A || x === B`. Extract to named constant only if reused.
 
 - **Use `switch` for type-based branching** — when branching on an enum or discriminant with multiple cases, use `switch` (with `exhaustiveGuard` in the default) instead of a chain of `if/else if`. Use `if/else if/else` only when conditions are non-enum expressions or when there are exactly two branches.
-- **Always use `if/else if/else` from the very first branch** when a function has multiple conditional returns — no standalone `if` followed by `else if`.
+- **Always use `if/else if/else` from the first branch** — no standalone `if` followed by `else if`.
 
 ## Return Type Annotations
 
@@ -72,6 +114,9 @@ description: Esposter TypeScript conventions — banned patterns (any, Omit, !, 
 
 - **Don't extract helpers that add no value** — if a helper function just wraps an inline object literal or a single expression without reuse or meaningful abstraction, return/use the value directly. Three lines of inline code is better than a named wrapper used once.
 - **Function naming prefixes** — use `get*` for functions that derive or compute a display value (e.g. `getVisibilityTooltip`, `getRowTitle`). Use CRUD prefixes (`create*`, `update*`, `delete*`) for heavier operations that interact with data or stores.
+- **Boolean-returning functions** — always use `is*` prefix (e.g. `isManageable`, `isExpired`, `isRoomAdmin`). Never `can*` or `should*`. Exception: use `has*` when `is*` reads unnaturally — specifically when checking possession/membership (e.g. `hasPermission`, `hasMember`). The rule in full: prefer `is` → fall back to `has` → never `can`/`should`/`get` for booleans.
+- **No cardinality suffixes on function names** — when upgrading a function from single-item to batch (array) inputs, keep the same name. Don't add `ByRooms`, `ByIds`, `Many`, `Batch`, or similar suffixes — the parameter type already communicates that. Callers that previously passed a single value now wrap in `[value]` and extract from the returned map: `(await getPermissions(db, userId, [roomId])).get(roomId) ?? 0n`.
+- **Prefer inferred return types on service functions** — don't annotate `Promise<Map<string, bigint>>` when TypeScript can infer it. Only annotate when the inferred type is too broad or when enforcing a public API contract (see `Return Type Annotations` above).
 
 ## Exhaustive Switch Guards
 
@@ -152,12 +197,41 @@ export const stringTransformationTypeSchema = z.enum(
 
   // call sites
   BooleanFormats.has(format); // O(1) lookup
-  for (const f of BooleanFormats) // iteration (Set is iterable)
-    [...BooleanFormats].map(fn); // spread when array methods are needed
+  for (const f of BooleanFormats) { ... } // iteration (Set is iterable)
+  Array.from(BooleanFormats, fn); // map over a Set — see below
   ```
 
 - **Never write `Object.values(SomeEnum)` inline** — always use the exported `Set` constant.
+
+## Iterating Non-Array Iterables (Set, Map, etc.)
+
+- **`Array.from(iterable, mapFn)` over `[...iterable].map(mapFn)`** — the two-argument form of `Array.from` maps while converting, producing no intermediate array. Use it whenever mapping over a `Set`, `Map`, or other non-array iterable:
+
+  ```ts
+  // CORRECT — Set
+  Object.fromEntries(Array.from(VisualTypes, (v) => [v, {}]));
+
+  // CORRECT — Map (iterates as [key, value] pairs directly; no need for .entries())
+  Array.from(participantsMap, ([roomId, participants]) => ({ participants, roomId }));
+
+  // WRONG — creates an intermediate array just to map
+  Object.fromEntries([...VisualTypes].map((v) => [v, {}]));
+  [...participantsMap.entries()].map(([roomId, participants]) => ({ participants, roomId }));
+  ```
+
+  The spread + `.map()` pattern is only acceptable when a plain array is already the source.
+
 - **Never use `new Set` just to call `.has()` on a small non-enum array** — if the values are already unique and the array is small, use `.some()` instead. Only `Set` when the source is an enum or the collection is large enough that O(n) repeated lookups would hurt performance.
+
+## Environment Checks
+
+- **Never use `import.meta.dev` or `import.meta.env.MODE`** — always use `useIsProduction()` from `@/composables/useIsProduction`:
+  ```ts
+  import { useIsProduction } from "@/composables/useIsProduction";
+  const isProduction = useIsProduction();
+  if (!isProduction) console.warn("...");
+  ```
+- Call `useIsProduction()` at the top level of the store/composable function (not inside callbacks).
 
 ## Enum Refs
 
@@ -176,7 +250,7 @@ When a definition array has entries typed as `Definition<T>` where the generic `
 
 ```ts
 // ColumnStatDefinition<T> has format: (value: ColumnStats[T]) => string  — contravariant in T
-// satisfies readonly ColumnStatDefinition[] FAILS (widens T → ColumnStatKey → function param too broad)
+// satisfies readonly ColumnStatDefinition[] FAILS (widens T → ColumnStatKey → function parameter too broad)
 // as const alone PASSES — preserves ColumnStatDefinition<"nullCount">, etc.
 export const ColumnStatDefinitions = [
   defineColumnStat({ key: "nullCount", format: (value) => String(value), ... }),

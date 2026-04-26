@@ -1,90 +1,109 @@
 ---
 name: testing
-description: Esposter Vitest testing conventions — describe with function refs, canonical test values, targeted takeOne usage for unsafe index access patterns, destructuring from stores/composables, mock session patterns (getMockSession/mockSessionOnce/replayMockSession), and the Windows UnoCSS test-skip rule. Apply when writing .test.ts files.
+description: Esposter Vitest testing conventions — describe with function refs, canonical test values, targeted takeOne usage for unsafe index access patterns, destructuring from stores/composables, mock session patterns (getMockSession/mockSessionOnce/replayMockSession), the Windows UnoCSS test-skip rule, and type-level test conventions for .test-d.ts files. Apply when writing .test.ts or .test-d.ts files.
 ---
 
 # Testing Conventions (Vitest)
 
-- **`describe(functionRef, ...)`** — pass the function reference directly, not a string name. Only use a string when there is no importable function reference (e.g. methods on a composable's return object).
-- **Declare `const` inside `describe`** — all shared test constants (e.g. `HEADER`, reusable values) must be declared inside the `describe` callback scope, not at module level, so they are scoped and cleaned up correctly.
-- **`createCallerFactory` double-call** — always use the double-call form inline: `caller = createCallerFactory(router)(mockContext)`. Do not define an intermediate `const createCaller = createCallerFactory(router)` — the factory variable itself is unnecessary.
-- **`describe` declaration order** — inside `describe`, declare in this order: `let mockContext: Context` first, then caller `let`s, then `const` test value constants. Example: `let mockContext: Context`, `let caller`, `let roomCaller`, `const name = "name"`. Always type `mockContext` as `Context` (imported from `@@/server/trpc/context`), never as `Awaited<ReturnType<typeof createMockContext>>`.
-- **`beforeAll` body order** — assign `mockContext` first (`mockContext = await createMockContext()`), then assign each caller using the double-call form.
-- **`expect.hasAssertions()`** — always include at the top of every test body.
-- **Canonical test values** — always use minimal, meaningful values:
-  - Boolean: `"true"`, `"false"` — test both together in one test
-  - Integer: `"0"` / number `0`
-  - Decimal: `"0.1"` / number `0.1`
-  - Negative: `"-1"` / number `-1`
-  - NaN: `String(Number.NaN)`
-  - Date (epoch): `"1970-01-01"` (YYYY-MM-DD); second date: `"1970-01-02"`
-  - String: `""` as base value; use `" "` for a different value. Only use `"a"` when a space would be trimmed to `""` (making it identical to base). Never use named strings like `"Alice"` / `"Bob"`.
-  - Object keys in tests: use `""` as base key, `" "` as a second key — never use semantic names like `"name"` / `"age"`.
-  - Number diff values: `0`, `1`, `2`, etc.
-  - Non-existent / sentinel values: use `"-1"` for a nonexistent string ID, `-1` for a nonexistent numeric ID. Never use verbose strings like `"non-existent-id"`, `"nonexistent"`, `"some-id"`, `"fake-..."`, etc.
-  - Entity fields: use the field name as the literal value — `const partitionKey = "partitionKey"`, `const rowKey = "rowKey"`, `const message = "message"`. Use `crypto.randomUUID()` for ID fields (`userId`, `partitionKey` when used as a room/entity ID, route params) to match real-world UUID-based IDs. Never inline constructor args — always declare shared constants and reference them.
-- **Date format tests** — when testing all date formats, use a `for...of` loop inside a single test, converting epoch via `dayjs("1970-01-01", "YYYY-MM-DD", true).format(format)`. Never use `test.each` for date format iteration.
-- **Interpolated descriptions** — use template literals with enum values: `` `boolean returns ${ColumnType.Boolean}` ``.
-- **Human-readable names** — use plain English: "integer", "decimal", "negative", "epoch date", "NaN".
-- **Array index access** — use `takeOne(arr, index)` from `@esposter/shared` where it resolves real `noUncheckedIndexedAccess` type friction (i.e. where direct index access returns `T | undefined` and you need a non-nullable type). `takeOne` throws on out-of-bounds while keeping the type non-nullable. Do not use it universally — prefer `find`/`findIndex` + guard when that is more idiomatic for the pattern.
-- **`assert.exists` instead of `?? []` coalescing** — when you know a value should exist (e.g. `editedItem.value?.dataSource`), use `assert.exists(editedItem.value?.dataSource)` to narrow the type and fail fast, then access the value directly. Never use `?? []` (or similar falsy coalescing) to silence a type error in tests — it hides the failure and passes an empty collection to `takeOne`, producing a misleading error. Pattern: `assert.exists(editedItem.value?.dataSource); deleteRow(takeOne(editedItem.value.dataSource.rows).id);`
-- **Destructure from stores and composables** — always destructure return values: `const { deleteRow, undo, isUndoable } = operations` rather than calling `operations.deleteRow(...)`. Same for stores: `const { editedItem } = storeToRefs(store)` and `const { methodName } = store`. This applies inside `beforeEach` too — never chain `useX().method()` inline; always `const { method } = useX()` first.
-- **Always assign `getMockSession()` results** — never inline `getMockSession().user.id` or `getMockSession().session.id` directly in an expression. Always assign first. Use direct property access when only one property is needed (`const userId = getMockSession().user.id`), and destructure only when multiple properties are needed (`const { user } = getMockSession()` to use both `user.id` and `user.name`). This applies even when used only once.
-- **`getMockSession()` session ID is unstable** — `getMockSession().session.id` creates a **new random UUID on every call** (via `createSession`). It cannot be used to assert against what a tRPC procedure used internally, since the procedure's `auth.api.getSession()` call generates its own fresh UUID. `getMockSession().user.id` is stable (created once in `vi.hoisted`). Use the following patterns depending on what you need:
-  - **user identity only** — `const { user } = getMockSession()` then use `user.id` / `user.name` etc.
-  - **session ID tied to a procedure** — use `mockSessionOnce` to queue a known session before the call, then destructure what you need: `const { session, user } = await mockSessionOnce(mockContext.db, getMockSession().user)`. Destructure only what the test uses — `{ session }` if only the session ID is needed, `{ session, user }` if both are needed.
-  - **same session across chained calls** — capture once then replay: `const sessionPayload = await mockSessionOnce(...); await caller.join(...); replayMockSession(sessionPayload); await caller.setMute(...)`. This ensures all operations use the same session ID (required when a later call looks up a participant stored by the earlier call's session ID).
-- **Cloning in tests** — use `structuredClone(obj)` for deep clones; use `Object.assign(structuredClone(obj), { ...updates })` to clone and override fields. Never use `{ ...spread }` syntax to clone — it creates a plain object losing the prototype. Pass `new Foo({ ... })` directly when a fresh instance already suffices (no need to clone or spread it).
-- **Assertions after all assignments** — put all `expect` and `expectToBeDefined` calls after all operation calls and local assignments for that phase, separated by a blank line. For multi-phase tests (e.g. undo then redo), each phase is its own block: operations + `const local = reactive.value?.x`, blank line, then assertions on `local`. Never interleave expects with assignments.
-- **Always use `toStrictEqual`** — never use `toEqual`.
-- **Always assert exact counts** — never use `.toBeGreaterThan(0)` or `.toBeTruthy()` on collections. Tests must be deterministic: if you expect 1 result, write `expect(results).toHaveLength(1)`. If you don't know the exact count, the test is incomplete. `toStrictEqual` checks object types and class instances correctly; `toEqual` silently ignores prototype differences.
-- **Minimize per-test setup** — declare shared mutable state (`source`, `callback`, `cleanup`, etc.) as `let` variables inside `describe`, initialize them in `beforeEach`. Mount helpers should take no arguments when all state is pre-initialized. Only reassign in the test body when a test needs a different variant (e.g. `callback = vi.fn(() => cleanup)` for cleanup tests).
-- **Reuse test utilities** — always check `testUtils.test.ts` for existing helpers (e.g. `makeDataSource`, `makeRow`, `makeColumn`, `makeNumberColumn`, `setupWithDataSource`) before writing local equivalents.
+## Structure
+
+- **`describe(functionRef, ...)`** — pass the function reference directly; use a string only when no importable reference exists.
+- **Declare `const` inside `describe`** — all shared test constants must be scoped inside the `describe` callback.
+- **`createCallerFactory` double-call** — always inline: `caller = createCallerFactory(router)(mockContext)`. No intermediate variable.
+- **Caller naming** — single caller: `caller`. Multiple: descriptive names (`roomCaller`, `roleCaller`).
+- **Declaration order inside `describe`** — `let mockContext: Context` → caller `let`s → `const` test constants.
+- **`beforeAll` body order** — `mockContext` first, then callers. Never extract sub-properties (no `let db = mockContext.db`); always access via `mockContext.db` etc.
+- **`expect.hasAssertions()`** — top of every test body.
+- **Assertions after all assignments** — put all `expect` calls after all operations and local assignments for that phase, separated by a blank line.
+- **`toStrictEqual` always** — never `toEqual`, never `toMatchObject`. Assert exact counts: no `.toBeGreaterThan(0)` on collections.
+- **Minimize per-test setup** — shared mutable state as `let` inside `describe`, init in `beforeEach`. Mount helpers take no arguments when state is pre-initialized.
+- **Reuse utilities** — check `testUtils.test.ts` for existing helpers before writing local equivalents.
+
+## Canonical Test Values
+
+| Type           | Value(s)                                                                |
+| -------------- | ----------------------------------------------------------------------- |
+| Boolean        | `"true"`, `"false"` — test both in one case                             |
+| Integer        | `"0"` / `0`                                                             |
+| Decimal        | `"0.1"` / `0.1`                                                         |
+| Negative       | `"-1"` / `-1`                                                           |
+| NaN            | `String(Number.NaN)`                                                    |
+| Date           | `"1970-01-01"`; second date: `"1970-01-02"`                             |
+| String base    | `""` ; different value: `" "` ; use `"a"` only when space trims to `""` |
+| Object keys    | `""` base, `" "` second — never semantic names                          |
+| Nonexistent ID | `"-1"` (string), `-1` (number) — never `"non-existent-id"` etc.         |
+| Entity fields  | Use field name as literal: `const name = "name"`. UUIDs for IDs.        |
+
+- **Date format tests** — `for...of` inside a single test using `dayjs("1970-01-01", "YYYY-MM-DD", true).format(format)`. Never `test.each`.
+- **Interpolated descriptions** — `` `${AdminActionType.BanUser}: owner bans member — ban inserted` ``. **Never write enum values as string literals** in describe/test titles; always use template literals with the enum reference. Plain English names for non-enum cases: "integer", "decimal", "epoch date".
+
+## Array / Type Utilities
+
+- **`takeOne(arr, index)`** — use instead of `arr[index]` where `noUncheckedIndexedAccess` makes it `T | undefined`. Do not use universally — prefer `find` when more idiomatic.
+- **`assert.exists(value)`** — use to narrow nullable values and fail fast instead of `?? []` coalescing.
+- **Cloning** — `structuredClone(obj)` for deep clones; `Object.assign(structuredClone(obj), updates)` to clone + override. Never `{ ...spread }` (loses prototype).
+
+## Destructuring
+
+- **Stores and composables** — always destructure: `const { deleteRow, isUndoable } = operations`, `const { editedItem } = storeToRefs(store)`. Never chain `useX().method()` — destructure first.
+- **No unnecessary destructure** — for plain objects (not stores/composables), access a property directly when used only once instead of destructuring it into a variable.
+
+## Mock Session Patterns
+
+The default mock session is always the **base user** (inserted by `createMockContext`). This user is the owner for all rooms created in tests.
+
+- **Owner = base user, always** — the room owner is always the base user from `getMockSession()`. Never use `mockSessionOnce(db)` to create a different user just to be a room owner. This applies to `beforeEach` and helper functions like `setupRoom`.
+- **`getMockSession()`** — returns the base user session (stable `user.id`, new `session.id` each call). Assign before use: `const owner = getMockSession().user` or `const { user } = getMockSession()`.
+- **Default session is owner** — API calls with no queued `mockSessionOnce` run as the base owner. Never call `mockSessionOnce(db, owner)` before owner operations; use it only when a prior `mockSessionOnce(db)` queued a non-owner session that hasn't been consumed.
+- **`mockSessionOnce(db)`** — creates a new user in the DB AND queues their session for the next API call. After that call consumes the slot, the default (owner) resumes.
+- **Consume pattern** — use `getMockSession()` to consume a queued session slot without making an API call:
+  ```ts
+  await mockSessionOnce(mockContext.db);  // create user, queue session
+  const { user } = getMockSession();       // consume slot, get user
+  await roomCaller.createMembers(...);     // runs as default owner
+  ```
+- **`mockSessionOnce(db, existingUser)`** — requeues an existing user's session without re-inserting. Use for non-owner member operations.
+- **Target: 1 `mockSessionOnce` per test** — one for non-owner user creation. All owner operations use the default.
+- **`replayMockSession`** — only when the same session payload must be reused across multiple calls.
+- **`getMockSession().session.id` is unstable** — creates a new UUID each call. `user.id` is stable.
+
+## DB Cleanup and Setup
+
+- **Clean in `afterEach`, never `beforeEach`** — `await mockContext.db.delete(table)` in `afterEach` so leaks from failed tests are visible.
+- **Use callers, not `db.insert`** — set up state via tRPC callers; direct DB inserts bypass app logic. Only use `db.insert` when:
+  - Creating a user who should NOT have a session (non-member auth failure tests)
+  - Service-layer unit tests (`server/services/**`) where using router callers creates upward coupling
+- **Never `mockContext.db.select`** — read state via callers (e.g. `caller.readRoles`), not raw DB queries.
 
 ## Error Assertions
 
-- **Never use `.rejects.toThrow()`** — bare `.toThrow()` passes for any error. Always assert the specific error with `.rejects.toThrowErrorMatchingInlineSnapshot(...)` or `.rejects.toBeInstanceOf(ErrorClass)`. See the **trpc** skill for tRPC-specific error assertion patterns.
+- **Never `.rejects.toThrow()`** — always assert the specific error: `.rejects.toThrowErrorMatchingInlineSnapshot(...)` or `.rejects.toBeInstanceOf(ErrorClass)`.
 
-## Waiting for Reactive Effects in Tests
+## Reactive Effects and Timers
 
-There is no DOM in this test environment, so `nextTick` is never needed — synchronous reactive effects (computed re-evaluation, synchronous watch callbacks) take place immediately when a ref changes.
+- **No `nextTick`** — no DOM, sync effects fire immediately. Use `flushPromises()` from `@vue/test-utils` for async watch callbacks.
+- **Fake timers** — `vi.useFakeTimers()` in `beforeEach`, `vi.useRealTimers()` in `afterEach`. Never inside individual tests.
 
-For **watchers that handle critical state synchronization or cleanup**, always use `{ flush: "sync" }` in the `watch` options. This ensures that the callback's synchronous side-effects (like clearing an array) happen immediately upon the ref change, allowing for cleaner tests without `nextTick` or `flushPromises`.
+## Vitest Environment
 
-For **async watch callbacks** (`watch(ref, async () => { ... })`) that are NOT flushed synchronously, Vue fires the callback but does not await it. Use `flushPromises()` from `@vue/test-utils` to drain the entire microtask queue so the watch body fully completes before asserting:
-
-```ts
-import { flushPromises } from "@vue/test-utils";
-
-editFormDialog.value = false;
-await flushPromises();
-expect(isUndoable.value).toBe(false);
-```
-
-Never use `await nextTick()` in tests — it is either unnecessary (sync effects) or insufficient (async watch bodies). For synchronous side-effects of `{ flush: "sync" }` watchers, no waiting is required. For any other pending async work, always use `flushPromises`.
-
-## Running Validation Commands
-
-- **Always run `pnpm lint`, `pnpm typecheck`, and test commands in the background** — use `run_in_background: true` on the Bash tool so the main conversation is not blocked. These commands can take over 2 minutes. Continue addressing other tasks while waiting for results.
+- **tRPC router tests** (`server/trpc/routers/**/*.test.ts`) — no `// @vitest-environment` directive (Nuxt env required).
+- **All other server-side tests** — add `// @vitest-environment node` as first line.
 
 ## Running Tests
 
-- **Do not run tests on Windows** — Vitest currently fails on Windows with `TypeError: The argument 'filename' must be a file URL object, file URL string, or absolute path string. Received 'file:///__uno.css'`. This is a known environment issue with UnoCSS + happy-dom. Write tests but skip running them; the user runs them manually.
+- **Do not run tests on Windows** — known Vitest crash: `TypeError: The argument 'filename' must be a file URL object...` with UnoCSS + happy-dom. Write tests; user runs them manually.
+- **Always use `run_in_background: true`** for `pnpm lint`, `pnpm typecheck`, and test commands.
 
 ## Testing Composables with Lifecycle Hooks
 
-Composables that use `onMounted`/`onUnmounted` require a component lifecycle to trigger. Use `mountSuspended` from `@nuxt/test-utils/runtime` with a minimal wrapper:
+Use `mountSuspended` from `@nuxt/test-utils/runtime` with a minimal wrapper when `onMounted`/`onUnmounted` are needed:
 
 ```ts
-import type { VueWrapper } from "@vue/test-utils";
-import { mountSuspended } from "@nuxt/test-utils/runtime";
-
 describe(useMyComposable, () => {
   let wrapper: VueWrapper;
   const mountComposable = async () => {
     wrapper = await mountSuspended(defineComponent({ render: () => h("div"), setup: () => useMyComposable() }));
   };
-
   afterEach(() => {
     wrapper?.unmount();
   });
@@ -93,18 +112,26 @@ describe(useMyComposable, () => {
     expect.hasAssertions();
     await mountComposable();
     await flushPromises();
-    // assertions...
   });
 });
 ```
 
-- Always unmount in `afterEach` to trigger `onUnmounted` cleanup
-- When re-mounting mid-test (e.g. to simulate offline restart), call `wrapper.unmount()` before `await mountComposable()`
-
 ## What to Test
 
-- **Test composables, not the underlying service functions** — composable tests integration-test the full call chain (store wiring, command dispatch, history push) in one place. If the composable is tested, the service functions it calls are covered implicitly; there is no need to write separate unit tests for those functions. Only test a service function directly when it has no composable wrapper (e.g. standalone pure utilities like `coerceValue`, `inferColumnType`).
+- **Test composables, not underlying service functions** — composable tests cover the full call chain. Only test a service function directly when it has no composable wrapper.
+- **Don't repeat generic middleware tests** — shared middleware (auth, membership, permissions) is tested once. Skip redundant UNAUTHORIZED/NotFound tests per procedure.
+- **Don't test Zod schema constraints** — min/max, regex, required-field are Zod's concern.
+- **One test per operation** — combine all field assertions in a single test case; don't split "updates name", "updates bio" into separate tests.
+- **Flat `describe` structure** — no nested `describe` for sub-grouping.
+
+## Type-Level Tests (.test-d.ts)
+
+- **Placement** — co-locate beside the type file.
+- **`describe` string** — `"{camelCaseName} type"`.
+- **`test` descriptions** — enum value or type arg directly.
+- **Assertion** — always `expectTypeOf(...).toEqualTypeOf<ExpectedType>()`.
+- **`expect.hasAssertions()`** — in every test body.
 
 ## Test Utility Files
 
-Shared test helpers (factory functions, setup helpers, etc.) must live in `.test.ts` files, never plain `.ts` files. To prevent Vitest from treating the file as a test suite, add `describe.todo("testUtils")` at the very bottom of the file.
+Shared helpers must live in `.test.ts` files. Add `describe.todo("testUtils")` at the bottom as a placeholder suite so Vitest accepts the file without requiring a real test.

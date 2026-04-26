@@ -22,7 +22,9 @@ export const useRoomStore = defineStore("message/room", () => {
   } = createOperationData(items, ["id"], DatabaseEntityType.Room);
   const rooms = computed(() => items.value.toSorted((a, b) => dayjs(b.updatedAt).diff(a.updatedAt)));
   const storeDeleteRoom = async (...args: Parameters<typeof baseStoreDeleteRoom>) => {
+    const [{ id }] = args;
     baseStoreDeleteRoom(...args);
+    if (currentRoomId.value !== id) return;
     await router.push({
       path: rooms.value.length > 0 ? RoutePath.Messages(takeOne(rooms.value).id) : RoutePath.MessagesIndex,
       replace: true,
@@ -34,7 +36,7 @@ export const useRoomStore = defineStore("message/room", () => {
     return typeof roomId === "string" && uuidValidateV4(roomId) ? roomId : undefined;
   });
   const currentRoom = computed(() => {
-    if (!currentRoomId.value) return;
+    if (!currentRoomId.value) return undefined;
     return rooms.value.find(({ id }) => id === currentRoomId.value);
   });
   const session = authClient.useSession();

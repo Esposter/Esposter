@@ -1,0 +1,87 @@
+import type { Context } from "@@/server/trpc/context";
+import type { TRPCRouter } from "@@/server/trpc/routers";
+import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
+import type { User } from "better-auth";
+
+import { isManageable } from "@@/server/services/room/rbac/isManageable";
+import { createCallerFactory } from "@@/server/trpc";
+import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
+import { roleRouter } from "@@/server/trpc/routers/role";
+import { roomRouter } from "@@/server/trpc/routers/room";
+import { rooms } from "@esposter/db-schema";
+import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
+
+describe(isManageable, () => {
+  let mockContext: Context;
+  let roleCaller: DecorateRouterRecord<TRPCRouter["role"]>;
+  let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
+  let roomId: string;
+  let owner: User;
+  const name = "name";
+  const position = 5;
+  const updatedPosition = 6;
+
+  beforeAll(async () => {
+    mockContext = await createMockContext();
+    roleCaller = createCallerFactory(roleRouter)(mockContext);
+    roomCaller = createCallerFactory(roomRouter)(mockContext);
+  });
+
+  beforeEach(async () => {
+    owner = getMockSession().user;
+    const room = await roomCaller.createRoom({ name });
+    roomId = room.id;
+  });
+
+  afterEach(async () => {
+    await mockContext.db.delete(rooms);
+  });
+
+  test("owner can manage any target position", async () => {
+    expect.hasAssertions();
+
+    const result = await isManageable(mockContext.db, owner.id, roomId, 9999);
+
+    expect(result).toBe(true);
+  });
+
+  test("returns false for non-existent room", async () => {
+    expect.hasAssertions();
+
+    const result = await isManageable(mockContext.db, owner.id, crypto.randomUUID(), 0);
+
+    expect(result).toBe(false);
+  });
+
+  test("user with higher top can manage lower position", async () => {
+    expect.hasAssertions();
+
+    const role = await roleCaller.createRole({ name, permissions: 0n, position, roomId });
+    await mockSessionOnce(mockContext.db);
+    const { user } = getMockSession();
+    await roomCaller.createMembers({ roomId, userIds: [user.id] });
+    await roleCaller.assignRole({ roleId: role.id, roomId, userId: user.id });
+
+    const result = await isManageable(mockContext.db, user.id, roomId, 4);
+
+    expect(result).toBe(true);
+  });
+
+  test("user cannot manage equal or higher position", async () => {
+    expect.hasAssertions();
+
+    const role = await roleCaller.createRole({ name, permissions: 0n, position, roomId });
+    await mockSessionOnce(mockContext.db);
+    const { user } = getMockSession();
+    await roomCaller.createMembers({ roomId, userIds: [user.id] });
+    await roleCaller.assignRole({ roleId: role.id, roomId, userId: user.id });
+
+    const [equalPosition, higherPosition] = await Promise.all([
+      isManageable(mockContext.db, user.id, roomId, position),
+      isManageable(mockContext.db, user.id, roomId, updatedPosition),
+    ]);
+
+    expect(equalPosition).toBe(false);
+    expect(higherPosition).toBe(false);
+  });
+});

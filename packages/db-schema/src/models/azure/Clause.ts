@@ -2,8 +2,8 @@ import type { BinaryOperator } from "@/models/azure/BinaryOperator";
 import type { SearchOperator } from "@/models/azure/search/SearchOperator";
 import type { SerializableValue } from "@/models/azure/SerializableValue";
 
-export type Clause = {
-  key: string;
+export type Clause<T extends object> = {
+  key: keyof T & string;
   not?: boolean;
 } & (
   | {

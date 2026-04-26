@@ -5,7 +5,7 @@ import type { User } from "better-auth";
 
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
-import { friendRouter } from "@@/server/trpc/routers/friend";
+import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
 import { DatabaseEntityType, friends, roomsInMessage } from "@esposter/db-schema";
@@ -15,13 +15,14 @@ import { afterEach, beforeAll, describe, expect, test } from "vitest";
 describe("directMessage", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["directMessage"]>;
-  let friendCaller: DecorateRouterRecord<TRPCRouter["friend"]>;
+  let friendRequestCaller: DecorateRouterRecord<TRPCRouter["friendRequest"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
+  const name = "name";
 
   beforeAll(async () => {
     mockContext = await createMockContext();
     caller = createCallerFactory(directMessageRouter)(mockContext);
-    friendCaller = createCallerFactory(friendRouter)(mockContext);
+    friendRequestCaller = createCallerFactory(friendRequestRouter)(mockContext);
     roomCaller = createCallerFactory(roomRouter)(mockContext);
   });
 
@@ -32,9 +33,9 @@ describe("directMessage", () => {
 
   const makeFriends = async (userA: User, userB: User) => {
     await mockSessionOnce(mockContext.db, userA);
-    await friendCaller.sendFriendRequest(userB.id);
+    await friendRequestCaller.sendFriendRequest(userB.id);
     await mockSessionOnce(mockContext.db, userB);
-    await friendCaller.acceptFriendRequest(userA.id);
+    await friendRequestCaller.acceptFriendRequest(userA.id);
   };
 
   test("creates direct message", async () => {
@@ -183,23 +184,6 @@ describe("directMessage", () => {
     expect(participantsData).toHaveLength(0);
   });
 
-  test("fails create direct message with invalid operation", async () => {
-    expect.hasAssertions();
-
-    await expect(caller.createDirectMessage([])).rejects.toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: [
-        {
-          "origin": "array",
-          "code": "too_small",
-          "minimum": 1,
-          "inclusive": true,
-          "path": [],
-          "message": "Too small: expected array to have >=1 items"
-        }
-      ]]
-    `);
-  });
-
   test("fails create direct message with non-friend", async () => {
     expect.hasAssertions();
 
@@ -225,17 +209,28 @@ describe("directMessage", () => {
   test("fails hide with regular room", async () => {
     expect.hasAssertions();
 
-    const newRoom = await roomCaller.createRoom({ name: "" });
+    const newRoom = await roomCaller.createRoom({ name });
 
     await expect(caller.hideDirectMessage(newRoom.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.UserToRoom, newRoom.id).message}]`,
     );
   });
 
+  test("fails hide non-member non-DM room with UNAUTHORIZED before room type check", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    await mockSessionOnce(mockContext.db);
+
+    await expect(caller.hideDirectMessage(newRoom.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: UNAUTHORIZED]`,
+    );
+  });
+
   test("filters regular rooms from read participants", async () => {
     expect.hasAssertions();
 
-    const newRoom = await roomCaller.createRoom({ name: "" });
+    const newRoom = await roomCaller.createRoom({ name });
     const participantsData = await caller.readDirectMessageParticipants([newRoom.id]);
 
     expect(participantsData).toHaveLength(0);

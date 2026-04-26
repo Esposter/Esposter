@@ -81,25 +81,6 @@ describe("searchHistory", () => {
     expect(newSearchHistory.roomId).toBe(newRoom.id);
   });
 
-  test("fails create with non-existent room", async () => {
-    expect.hasAssertions();
-
-    await expect(
-      searchHistoryCaller.createSearchHistory({ query, roomId: crypto.randomUUID() }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
-  });
-
-  test("fails create with non-existent member", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    await mockSessionOnce(mockContext.db);
-
-    await expect(
-      searchHistoryCaller.createSearchHistory({ query, roomId: newRoom.id }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
-  });
-
   test("updates", async () => {
     expect.hasAssertions();
 

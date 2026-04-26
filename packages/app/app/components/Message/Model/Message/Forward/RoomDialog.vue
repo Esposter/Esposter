@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
+import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 import { useAlertStore } from "@/store/alert";
 import { useDataStore } from "@/store/message/data";
 import { useForwardStore } from "@/store/message/input/forward";
@@ -28,14 +29,16 @@ const {
   readMoreItemsSearched,
   searchQuery,
 } = useCursorSearcher(
-  (searchQuery, cursor, opts) =>
-    $trpc.room.readRooms.query(
+  (searchQuery, cursor, opts) => {
+    const trimmedSearchQuery = searchQuery.trim();
+    return $trpc.room.readRooms.query(
       {
         cursor,
-        filter: { name: searchQuery },
+        filter: trimmedSearchQuery ? { name: trimmedSearchQuery } : undefined,
       },
       opts,
-    ),
+    );
+  },
   true,
   true,
 );
@@ -67,7 +70,7 @@ const {
         </v-list>
       </v-card-text>
       <v-divider />
-      <MessageModelMessageType :creator :message="forward" is-preview />
+      <component :is="MessageComponentMap[forward.type]" v-if="forward" :creator :message="forward" is-preview />
       <v-divider />
       <v-card-actions flex-col gap-0>
         <RichTextEditor v-model="messageInput" :limit="MESSAGE_MAX_LENGTH" placeholder="Add an optional message..." />

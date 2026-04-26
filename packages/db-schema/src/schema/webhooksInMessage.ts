@@ -1,12 +1,11 @@
+import { createNameCheckSql, createNameSchema } from "@/models/shared/Name";
 import { pgTable } from "@/pgTable";
 import { appUsersInMessage } from "@/schema/appUsersInMessage";
 import { messageSchema } from "@/schema/messageSchema";
 import { roomsInMessage } from "@/schema/roomsInMessage";
 import { users } from "@/schema/users";
-import { sql } from "drizzle-orm";
-import { boolean, text, uuid } from "drizzle-orm/pg-core";
+import { boolean, check, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
-import { z } from "zod";
 
 export const WEBHOOK_NAME_MAX_LENGTH = 100;
 
@@ -30,9 +29,7 @@ export const webhooksInMessage = pgTable(
       .references(() => appUsersInMessage.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ name }) => [
-      sql`CHECK (LENGTH(${name}) >= 1 AND LENGTH(${name}) <= ${sql.raw(WEBHOOK_NAME_MAX_LENGTH.toString())})`,
-    ],
+    extraConfig: ({ name }) => [check("webhooks_name_length_check", createNameCheckSql(name, WEBHOOK_NAME_MAX_LENGTH))],
     schema: messageSchema,
   },
 );
@@ -40,5 +37,5 @@ export const webhooksInMessage = pgTable(
 export type WebhookInMessage = typeof webhooksInMessage.$inferSelect;
 
 export const selectWebhookInMessageSchema = createSelectSchema(webhooksInMessage, {
-  name: z.string().min(1).max(WEBHOOK_NAME_MAX_LENGTH),
+  name: createNameSchema(WEBHOOK_NAME_MAX_LENGTH),
 });

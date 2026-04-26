@@ -18,5 +18,7 @@ export const getPropertySchema = (type: Class<unknown>): undefined | z.core.JSON
         title: "Value",
         type: "string",
       };
+    default:
+      return undefined;
   }
 };

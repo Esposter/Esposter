@@ -9,13 +9,14 @@ import { MAX_READ_LIMIT } from "#shared/services/pagination/constants";
 import { RateLimiterType } from "@@/server/models/rateLimiter/RateLimiterType";
 import { generateToken } from "@@/server/services/auth/generateToken";
 import { router } from "@@/server/trpc";
-import { getCreatorProcedure } from "@@/server/trpc/procedure/room/getCreatorProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
+import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
 import {
   appUsersInMessage,
   DatabaseEntityType,
+  roomIdSchema,
+  RoomPermission,
   selectAppUserInMessageSchema,
-  selectRoomInMessageSchema,
   WebhookInMessageRelations,
   webhooksInMessage,
 } from "@esposter/db-schema";
@@ -24,89 +25,94 @@ import { TRPCError } from "@trpc/server";
 import { and, count, eq, getTableColumns, inArray } from "drizzle-orm";
 import { z } from "zod";
 
-const readWebhooksInputSchema = z.object({ roomId: selectRoomInMessageSchema.shape.id });
+const readWebhooksInputSchema = roomIdSchema;
 export type ReadWebhooksInput = z.infer<typeof readWebhooksInputSchema>;
 
 const readAppUsersByIdsInputSchema = z.object({
+  ...roomIdSchema.shape,
   ids: selectAppUserInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
-  roomId: selectRoomInMessageSchema.shape.id,
 });
 export type ReadAppUsersByIdsInput = z.infer<typeof readAppUsersByIdsInputSchema>;
 
 export const webhookRouter = router({
-  createWebhook: getCreatorProcedure(
+  createWebhook: getPermissionsProcedure(
+    RoomPermission.ManageWebhooks,
     createWebhookInputSchema,
     "roomId",
     RateLimiterType.Slow,
-  ).mutation<WebhookInMessage>(async ({ ctx, input: { name, roomId } }) => {
-    const webhookCount = takeOne(
-      await ctx.db.select({ count: count() }).from(webhooksInMessage).where(eq(webhooksInMessage.roomId, roomId)),
-    ).count;
-    if (webhookCount >= WEBHOOK_MAX_LENGTH)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(
-          Operation.Create,
-          DatabaseEntityType.Webhook,
-          JSON.stringify({ name, roomId }),
-        ).message,
-      });
-
-    const newAppUser = (await ctx.db.insert(appUsersInMessage).values({ name }).returning()).find(Boolean);
-    if (!newAppUser)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(Operation.Create, DatabaseEntityType.AppUser, JSON.stringify({ name }))
-          .message,
-      });
-
-    const token = generateToken();
-    const newWebhook = (
-      await ctx.db
-        .insert(webhooksInMessage)
-        .values({
-          creatorId: ctx.getSessionPayload.user.id,
-          isActive: true,
-          name,
-          roomId,
-          token,
-          userId: newAppUser.id,
-        })
-        .returning()
-    ).find(Boolean);
-    if (!newWebhook)
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: new InvalidOperationError(
-          Operation.Create,
-          DatabaseEntityType.Webhook,
-          JSON.stringify({ name, roomId }),
-        ).message,
-      });
-    return newWebhook;
-  }),
-  deleteWebhook: getCreatorProcedure(deleteWebhookInputSchema, "roomId").mutation<WebhookInMessage>(
-    async ({ ctx, input: { id, roomId } }) => {
-      const webhook = await ctx.db.query.webhooksInMessage.findFirst({
-        where: { id: { eq: id }, roomId: { eq: roomId } },
-      });
-      if (!webhook)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: new NotFoundError(DatabaseEntityType.Webhook, id).message,
-        });
-
-      const deletedAppUser = (
-        await ctx.db.delete(appUsersInMessage).where(eq(appUsersInMessage.id, webhook.userId)).returning()
-      ).find(Boolean);
-      if (!deletedAppUser)
+  ).mutation<WebhookInMessage>(({ ctx, input: { name, roomId } }) =>
+    ctx.db.transaction(async (tx) => {
+      const webhookCount = takeOne(
+        await tx.select({ count: count() }).from(webhooksInMessage).where(eq(webhooksInMessage.roomId, roomId)),
+      ).count;
+      if (webhookCount >= WEBHOOK_MAX_LENGTH)
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.AppUser, webhook.userId).message,
+          message: new InvalidOperationError(
+            Operation.Create,
+            DatabaseEntityType.Webhook,
+            JSON.stringify({ name, roomId }),
+          ).message,
         });
-      return webhook;
-    },
+
+      const newAppUser = (await tx.insert(appUsersInMessage).values({ name }).returning())[0];
+      if (!newAppUser)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(Operation.Create, DatabaseEntityType.AppUser, JSON.stringify({ name }))
+            .message,
+        });
+
+      const token = generateToken();
+      const newWebhook = (
+        await tx
+          .insert(webhooksInMessage)
+          .values({
+            creatorId: ctx.getSessionPayload.user.id,
+            isActive: true,
+            name,
+            roomId,
+            token,
+            userId: newAppUser.id,
+          })
+          .returning()
+      )[0];
+      if (!newWebhook)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: new InvalidOperationError(
+            Operation.Create,
+            DatabaseEntityType.Webhook,
+            JSON.stringify({ name, roomId }),
+          ).message,
+        });
+      return newWebhook;
+    }),
   ),
+  deleteWebhook: getPermissionsProcedure(
+    RoomPermission.ManageWebhooks,
+    deleteWebhookInputSchema,
+    "roomId",
+  ).mutation<WebhookInMessage>(async ({ ctx, input: { id, roomId } }) => {
+    const webhook = await ctx.db.query.webhooksInMessage.findFirst({
+      where: { id: { eq: id }, roomId: { eq: roomId } },
+    });
+    if (!webhook)
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: new NotFoundError(DatabaseEntityType.Webhook, id).message,
+      });
+
+    const deletedAppUser = (
+      await ctx.db.delete(appUsersInMessage).where(eq(appUsersInMessage.id, webhook.userId)).returning()
+    ).find(Boolean);
+    if (!deletedAppUser)
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: new InvalidOperationError(Operation.Delete, DatabaseEntityType.AppUser, webhook.userId).message,
+      });
+    return webhook;
+  }),
   readAppUsersByIds: getMemberProcedure(readAppUsersByIdsInputSchema, "roomId").query(
     ({ ctx, input: { ids, roomId } }) =>
       ctx.db
@@ -115,46 +121,51 @@ export const webhookRouter = router({
         .innerJoin(webhooksInMessage, eq(webhooksInMessage.userId, appUsersInMessage.id))
         .where(and(eq(webhooksInMessage.roomId, roomId), inArray(appUsersInMessage.id, ids))),
   ),
-  readWebhooks: getCreatorProcedure(readWebhooksInputSchema, "roomId").query(({ ctx, input: { roomId } }) =>
-    ctx.db.query.webhooksInMessage.findMany({
-      orderBy: { createdAt: "desc" },
-      where: { roomId: { eq: roomId } },
-      with: WebhookInMessageRelations,
-    }),
+  readWebhooks: getPermissionsProcedure(RoomPermission.ManageWebhooks, readWebhooksInputSchema, "roomId").query(
+    ({ ctx, input: { roomId } }) =>
+      ctx.db.query.webhooksInMessage.findMany({
+        orderBy: { createdAt: "desc" },
+        where: { roomId: { eq: roomId } },
+        with: WebhookInMessageRelations,
+      }),
   ),
-  rotateToken: getCreatorProcedure(rotateTokenInputSchema, "roomId").mutation<WebhookInMessage>(
-    async ({ ctx, input: { id, roomId } }) => {
-      const token = generateToken();
-      const updatedWebhook = (
-        await ctx.db
-          .update(webhooksInMessage)
-          .set({ token })
-          .where(and(eq(webhooksInMessage.id, id), eq(webhooksInMessage.roomId, roomId)))
-          .returning()
-      )[0];
-      if (!updatedWebhook)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Webhook, id).message,
-        });
-      return updatedWebhook;
-    },
-  ),
-  updateWebhook: getCreatorProcedure(updateWebhookInputSchema, "roomId").mutation<WebhookInMessage>(
-    async ({ ctx, input: { id, roomId, ...rest } }) => {
-      const updatedWebhook = (
-        await ctx.db
-          .update(webhooksInMessage)
-          .set(rest)
-          .where(and(eq(webhooksInMessage.id, id), eq(webhooksInMessage.roomId, roomId)))
-          .returning()
-      )[0];
-      if (!updatedWebhook)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Webhook, id).message,
-        });
-      return updatedWebhook;
-    },
-  ),
+  rotateToken: getPermissionsProcedure(
+    RoomPermission.ManageWebhooks,
+    rotateTokenInputSchema,
+    "roomId",
+  ).mutation<WebhookInMessage>(async ({ ctx, input: { id, roomId } }) => {
+    const token = generateToken();
+    const updatedWebhook = (
+      await ctx.db
+        .update(webhooksInMessage)
+        .set({ token })
+        .where(and(eq(webhooksInMessage.id, id), eq(webhooksInMessage.roomId, roomId)))
+        .returning()
+    )[0];
+    if (!updatedWebhook)
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Webhook, id).message,
+      });
+    return updatedWebhook;
+  }),
+  updateWebhook: getPermissionsProcedure(
+    RoomPermission.ManageWebhooks,
+    updateWebhookInputSchema,
+    "roomId",
+  ).mutation<WebhookInMessage>(async ({ ctx, input: { id, roomId, ...rest } }) => {
+    const updatedWebhook = (
+      await ctx.db
+        .update(webhooksInMessage)
+        .set(rest)
+        .where(and(eq(webhooksInMessage.id, id), eq(webhooksInMessage.roomId, roomId)))
+        .returning()
+    )[0];
+    if (!updatedWebhook)
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Webhook, id).message,
+      });
+    return updatedWebhook;
+  }),
 });

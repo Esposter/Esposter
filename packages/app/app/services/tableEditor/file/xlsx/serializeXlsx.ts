@@ -12,5 +12,5 @@ export const serializeXlsx = (
 ): Promise<Blob> => {
   const headerRow = dataSource.columns.map((column) => column.name);
   const dataRows = dataSource.rows.map((row) => dataSource.columns.map((column) => takeOne(row.data, column.name)));
-  return writeXlsxFile([headerRow, ...dataRows], {});
+  return writeXlsxFile([headerRow, ...dataRows]).toBlob();
 };

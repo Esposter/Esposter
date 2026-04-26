@@ -1,4 +1,3 @@
-// @vitest-environment node
 import { zodStrictRecord } from "#shared/services/zod/zodStrictRecord";
 import { AllSpecialValues } from "@esposter/shared";
 import { describe, expect, test } from "vitest";

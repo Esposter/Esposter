@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { DRAWINGS } from "@/services/anime/constants";
+import { Drawings } from "@/services/anime/constants";
 import { mod } from "@/util/math/mod";
 
 const carousel = ref(0);
@@ -9,11 +9,11 @@ const carousel = ref(0);
   <NuxtLayout>
     <div h-full>
       <v-carousel v-model="carousel" height="100%" :touch="false" :show-arrows="false" hide-delimiters>
-        <v-carousel-item v-for="(drawing, index) of DRAWINGS" :key="index">
+        <v-carousel-item v-for="(drawing, index) of Drawings" :key="index">
           <component
             :is="drawing"
-            @click-left="carousel = mod(carousel - 1, DRAWINGS.length)"
-            @click-right="carousel = mod(carousel + 1, DRAWINGS.length)"
+            @click-left="carousel = mod(carousel - 1, Drawings.length)"
+            @click-right="carousel = mod(carousel + 1, Drawings.length)"
           />
         </v-carousel-item>
       </v-carousel>

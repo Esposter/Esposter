@@ -7,6 +7,8 @@ import { useFriendStore } from "@/store/message/user/friend";
 const isOpen = defineModel<boolean>({ default: false });
 const friendStore = useFriendStore();
 const { friends } = storeToRefs(friendStore);
+const { readFriends } = useReadFriends();
+await readFriends();
 const directMessageStore = useDirectMessageStore();
 const { createDirectMessage } = directMessageStore;
 const search = ref("");
@@ -16,7 +18,7 @@ const filteredFriends = computed(() =>
     ? friends.value.filter(({ name }) => name.toLowerCase().includes(search.value.toLowerCase()))
     : friends.value,
 );
-const onSubmit = async (_event: SubmitEventPromise, onComplete: () => void) => {
+const submit = async (_event: SubmitEventPromise, onComplete: () => void) => {
   await createDirectMessage(selectedUserIds.value);
   selectedUserIds.value = [];
   search.value = "";
@@ -27,10 +29,10 @@ const onSubmit = async (_event: SubmitEventPromise, onComplete: () => void) => {
 <template>
   <StyledFormDialog
     v-model="isOpen"
-    :card-props="{ title: 'New Message', minWidth: 400 }"
+    :card-props="{ title: 'New Message' }"
     :confirm-button-props="{ text: 'Create Message' }"
     :confirm-button-attrs="{ disabled: selectedUserIds.length === 0 }"
-    @submit="onSubmit"
+    @submit="submit"
   >
     <v-container>
       <v-text-field v-model="search" placeholder="Search friends" autofocus clearable hide-details mb-2 />

@@ -1,6 +1,6 @@
 {
   "name": "@esposter/app",
-  "version": "2.20.0",
+  "version": "2.21.0",
   "private": true,
   "description": "An approachable, performant and versatile javascript application powered by Vue.",
   "homepage": "https://github.com/Esposter/Esposter#readme",
@@ -67,6 +67,7 @@
     "@mdi/font": "catalog:",
     "@takumi-rs/core": "catalog:",
     "@tiptap/core": "catalog:",
+    "@tiptap/extension-code-block-lowlight": "catalog:",
     "@tiptap/extension-file-handler": "catalog:",
     "@tiptap/extension-mention": "catalog:",
     "@tiptap/extensions": "catalog:",
@@ -125,6 +126,7 @@
     "idb": "catalog:",
     "is-mobile": "catalog:",
     "js-beautify": "catalog:",
+    "lowlight": "catalog:",
     "marked": "catalog:",
     "mathjs": "catalog:",
     "mime-types": "catalog:",
@@ -174,7 +176,8 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "catalog:",
+    "@esposter/db-mock": "workspace:*",
+    "@happy-dom/global-registrator": "catalog:",
     "@json-layout/vocabulary": "catalog:",
     "@nuxt/eslint": "catalog:",
     "@nuxt/fonts": "catalog:",
@@ -200,14 +203,15 @@
     "@vueuse/nuxt": "catalog:",
     "azure-mock": "workspace:*",
     "crossws": "catalog:",
-    "drizzle-kit": "catalog:",
     "fake-indexeddb": "catalog:",
     "fs-extra": "catalog:",
     "h3": "catalog:",
+    "happy-dom": "catalog:",
     "nuxt": "catalog:",
     "nuxt-security": "catalog:",
     "sass-embedded": "catalog:",
     "unocss": "catalog:",
+    "vitest": "catalog:",
     "vuetify-nuxt-module": "catalog:"
   }
 }

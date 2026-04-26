@@ -3,30 +3,57 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.21.0](https://github.com/Esposter/Esposter/compare/v2.20.0...v2.21.0) (2026-04-15)
+
+### Bug Fixes
+
+* wip ([52a3ba5](https://github.com/Esposter/Esposter/commit/52a3ba58288c49b37072407f1514bed94fd90f2a))
+
+### Features
+
+* add input ([fd6307e](https://github.com/Esposter/Esposter/commit/fd6307e10d548614e1d0d028159dfd2905fa6280))
+* implement features + fix lint ([e62cdd4](https://github.com/Esposter/Esposter/commit/e62cdd42a44775ba52e06d57030da740c61e1a7a))
+
 # [2.20.0](https://github.com/Esposter/Esposter/compare/v2.19.2...v2.20.0) (2026-03-29)
 
 ### Bug Fixes
 
 * allow attributes ([75c4c80](https://github.com/Esposter/Esposter/commit/75c4c805e77d72f784d73971545b2c9f12199bc1))
+
 * cleanup docs ([d6009f3](https://github.com/Esposter/Esposter/commit/d6009f367c2c3ae2b34fed4dd78bb1d8cf64eb0f))
+
 * format ([a27b423](https://github.com/Esposter/Esposter/commit/a27b42385548f4ba0dbeb975835e02fe1ccd3d6a))
+
 * format + fix up some ignores ([6cd632f](https://github.com/Esposter/Esposter/commit/6cd632ff672ad8e0adee51b42cb6f6925f894b96))
+
 * format ignores ([c3f38cf](https://github.com/Esposter/Esposter/commit/c3f38cf87331196fa0fedd2a18937fd9e578c4b5))
+
 * lint and remove unnecessary param for takeOne ([0d9e637](https://github.com/Esposter/Esposter/commit/0d9e6372079385520875a515d0a07e381832ee5f))
+
 * renames ([18f7937](https://github.com/Esposter/Esposter/commit/18f79372056ed6e4e8c2cca517c1cf588bcb320d))
+
 * shallow ref container and tilemap ([8b4558d](https://github.com/Esposter/Esposter/commit/8b4558da265521360bca7700eb41edfcfe732375))
+
 * tests ([0b10a71](https://github.com/Esposter/Esposter/commit/0b10a712e8ebf49cf38a5a8e1e507770f56ce14d))
+
 * tests + lint ([9f7488b](https://github.com/Esposter/Esposter/commit/9f7488b3c7e8ea08079ea739fd1ce69e9d90eeb7))
+
 * trim unnecessary tests ([320b0b8](https://github.com/Esposter/Esposter/commit/320b0b805a2dea0a3fc5f711927ebee4d4648e15))
+
 * vue-phaserjs ([fc702b0](https://github.com/Esposter/Esposter/commit/fc702b0484e1748ee2429088476ccf2cfc86e4df))
+
 * vue-phaserjs typecheck ([7d56353](https://github.com/Esposter/Esposter/commit/7d5635391265779018dbac666a247b7c8eb630f8))
 
 ### Features
 
 * Add last few components that make sense ([628f81f](https://github.com/Esposter/Esposter/commit/628f81ff1d683033fa2c2f4e384b213d3b2ce9db))
+
 * Add remaining components ([b5c5b66](https://github.com/Esposter/Esposter/commit/b5c5b6658791ee5c33d52be0b0aec08a29a19f4f))
+
 * Add vue-phaserjs tests ([cd2100f](https://github.com/Esposter/Esposter/commit/cd2100f5c7fd98c8932a48f22f5601d1bba6a905))
+
 * Add vue-phaserjs tests and consolidated scene class ([cc800b6](https://github.com/Esposter/Esposter/commit/cc800b63cff283500e32f5910b669d2c56d34395))
+
 * migrate to oxfmt ([e7a0212](https://github.com/Esposter/Esposter/commit/e7a0212f9ec18d7193c96cc6069ac6ecf168e8bb))
 
 ## [2.19.2](https://github.com/Esposter/Esposter/compare/v2.19.1...v2.19.2) (2026-02-05)
@@ -42,7 +69,9 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * finally fix up all type issues ([179e963](https://github.com/Esposter/Esposter/commit/179e9639f3cfdf05e08aff88e4844748158f0a1c))
+
 * oxlint ([3df2ec1](https://github.com/Esposter/Esposter/commit/3df2ec1ad17f36d77780656e27d3034cd3ac32de))
+
 * plugins + getEventName ([543b801](https://github.com/Esposter/Esposter/commit/543b801c7b11acde7081334b68bcf07b1786f7be))
 
 ### Features

@@ -11,14 +11,19 @@ export const useMessageSubscribables = () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const dataStore = useDataStore();
   const { storeCreateMessage, storeDeleteMessage, storeUpdateMessage } = dataStore;
+  const readMembersByIds = useReadMembersByIds();
 
   useOnlineSubscribable(currentRoomId, async (roomId) => {
-    if (!roomId) return;
+    if (!roomId) return undefined;
 
     const createMessageUnsubscribable = $trpc.message.onCreateMessage.subscribe(
       { roomId },
       {
         onData: getSynchronizedFunction(async ({ data }) => {
+          // Existing members who joined in a previous session won't fire onJoinRoom
+          // So we need to ensure their data is loaded for author info on new messages
+          const userIds = Array.from(new Set(data), ({ userId }) => userId).filter((userId) => userId !== undefined);
+          if (userIds.length > 0) await readMembersByIds(userIds);
           for (const newMessage of data) await storeCreateMessage(newMessage);
         }),
       },

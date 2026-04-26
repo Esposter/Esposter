@@ -6,18 +6,18 @@ export const rolldownConfigurationBrowser: RolldownOptions = {
   external: [
     // @esposter/db
     "@azure/data-tables",
+    "@azure/search-documents",
     "@azure/storage-blob",
     "@azure/web-pubsub",
     "@esposter/db-schema",
     // Most packages depend on @esposter/shared
     "@esposter/shared",
     // @esposter/db-schema
-    "drizzle-orm",
-    "drizzle-orm/pg-core",
-    // @esposter/db
-    "drizzle-orm/postgres-js",
-    "drizzle-orm/zod",
     "zod",
+    // @esposter/db-mock
+    /^drizzle-kit/,
+    /^drizzle-orm/,
+    "@electric-sql/pglite",
   ],
   input: "src/index.ts",
   output: { dir: "dist", format: "es" },

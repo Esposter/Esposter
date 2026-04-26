@@ -1,4 +1,3 @@
-// @vitest-environment node
 import { getDetectedUserStatus } from "@@/server/services/message/getDetectedUserStatus";
 import { UserStatus, UserStatuses } from "@esposter/db-schema";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";

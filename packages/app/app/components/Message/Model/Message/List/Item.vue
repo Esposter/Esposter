@@ -26,12 +26,17 @@ const isSameBatch = computed(
     dayjs(message.createdAt).diff(nextMessage.createdAt, "minutes") <= 5,
 );
 const messageStore = useMessageStore();
-const { optionsMenu } = storeToRefs(messageStore);
+const { editingRowKey, optionsMenu } = storeToRefs(messageStore);
 const replyStore = useReplyStore();
 const { activeRowKey: activeReplyRowKey, rowKey: replyRowKey } = storeToRefs(replyStore);
 const forwardStore = useForwardStore();
 const { rowKey: forwardRowKey } = storeToRefs(forwardStore);
-const isUpdateMode = ref(false);
+const isUpdateMode = computed({
+  get: () => editingRowKey.value === message.rowKey,
+  set: (value) => {
+    editingRowKey.value = value ? message.rowKey : undefined;
+  },
+});
 const isMessageActive = ref(false);
 const isOptionsActive = ref(false);
 const isOptionsChildrenActive = ref(false);
@@ -106,7 +111,7 @@ watch(optionsMenu, (newOptionsMenu) => {
                 />
               </template>
               <template #messagePreview>
-                <MessageModelMessageType :creator :message :next-message is-preview />
+                <component :is="MessageComponentMap[message.type]" :creator :message is-preview />
               </template>
             </MessageModelMessageConfirmPinDialog>
           </v-hover>
@@ -114,7 +119,7 @@ watch(optionsMenu, (newOptionsMenu) => {
       </div>
     </template>
     <template #messagePreview>
-      <MessageModelMessageType :creator :message :next-message is-preview />
+      <component :is="MessageComponentMap[message.type]" :creator :message is-preview />
     </template>
   </MessageModelMessageConfirmDeleteDialog>
 </template>

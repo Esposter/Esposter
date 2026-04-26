@@ -9,9 +9,9 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { voiceRouter } from "@@/server/trpc/routers/room/voice";
-import { withAsyncIterator } from "@@/server/trpc/routers/testUtils.test";
+import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 import { roomsInMessage } from "@esposter/db-schema";
-import { takeOne } from "@esposter/shared";
+import { ForbiddenError, NotFoundError, takeOne } from "@esposter/shared";
 import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
 describe("voice", () => {
@@ -134,12 +134,12 @@ describe("voice", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
-    const onParticipantJoin = await voiceCaller.onParticipantJoin(newRoom.id);
+    const onJoinVoiceChannel = await voiceCaller.onJoinVoiceChannel(newRoom.id);
     const { user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInviteCode);
     const { session: voiceSession } = await mockSessionOnce(mockContext.db, user);
     const data = await withAsyncIterator(
-      () => onParticipantJoin,
+      () => onJoinVoiceChannel,
       async (iterator) => {
         const [result] = await Promise.all([iterator.next(), voiceCaller.joinVoiceChannel({ roomId: newRoom.id })]);
         return result;
@@ -162,10 +162,10 @@ describe("voice", () => {
     await roomCaller.joinRoom(newInviteCode);
     const joiningSessionPayload = await mockSessionOnce(mockContext.db, user);
     await voiceCaller.joinVoiceChannel({ roomId: newRoom.id });
-    const onParticipantLeave = await voiceCaller.onParticipantLeave(newRoom.id);
+    const onLeaveVoiceChannel = await voiceCaller.onLeaveVoiceChannel(newRoom.id);
     replayMockSession(joiningSessionPayload);
     const data = await withAsyncIterator(
-      () => onParticipantLeave,
+      () => onLeaveVoiceChannel,
       async (iterator) => {
         const [result] = await Promise.all([iterator.next(), voiceCaller.leaveVoiceChannel({ roomId: newRoom.id })]);
         return result;
@@ -183,10 +183,10 @@ describe("voice", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const sessionPayload = await mockSessionOnce(mockContext.db, getMockSession().user);
     await voiceCaller.joinVoiceChannel({ roomId: newRoom.id });
-    const onMuteChanged = await voiceCaller.onMuteChanged(newRoom.id);
+    const onSetMute = await voiceCaller.onSetMute(newRoom.id);
     replayMockSession(sessionPayload);
     const data = await withAsyncIterator(
-      () => onMuteChanged,
+      () => onSetMute,
       async (iterator) => {
         const [result] = await Promise.all([
           iterator.next(),
@@ -218,7 +218,7 @@ describe("voice", () => {
     const newRoom = await roomCaller.createRoom({ name });
 
     await expect(voiceCaller.setMute({ isMuted: true, roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Must join voice channel first]`,
+      `[TRPCError: ${new ForbiddenError("Must join voice channel first").message}]`,
     );
   });
 
@@ -247,7 +247,7 @@ describe("voice", () => {
     const defaultSessionPayload = await mockSessionOnce(mockContext.db, getMockSession().user);
     await voiceCaller.joinVoiceChannel({ roomId: newRoom.id });
     replayMockSession(defaultSessionPayload);
-    const onSignal = await voiceCaller.onSignal(newRoom.id);
+    const onSendSignal = await voiceCaller.onSendSignal(newRoom.id);
     const { user } = await mockSessionOnce(mockContext.db);
     await roomCaller.joinRoom(newInviteCode);
     const userBSessionPayload = await mockSessionOnce(mockContext.db, user);
@@ -255,7 +255,7 @@ describe("voice", () => {
     replayMockSession(userBSessionPayload);
     const payload = { data: "{}", targetId: defaultSessionPayload.session.id, type: VoiceSignalType.Offer };
     const data = await withAsyncIterator(
-      () => onSignal,
+      () => onSendSignal,
       async (iterator) => {
         const [result] = await Promise.all([iterator.next(), voiceCaller.sendSignal({ payload, roomId: newRoom.id })]);
         return result;
@@ -276,7 +276,7 @@ describe("voice", () => {
     const payload = { data: "{}", targetId: sessionId, type: VoiceSignalType.Offer };
 
     await expect(voiceCaller.sendSignal({ payload, roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Must join voice channel first]`,
+      `[TRPCError: ${new ForbiddenError("Must join voice channel first").message}]`,
     );
   });
 
@@ -291,7 +291,7 @@ describe("voice", () => {
     const payload = { data: "{}", targetId: crypto.randomUUID(), type: VoiceSignalType.Offer };
 
     await expect(voiceCaller.sendSignal({ payload, roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: Target participant not found]`,
+      `[TRPCError: ${new NotFoundError("Target participant", payload.targetId).message}]`,
     );
   });
 });

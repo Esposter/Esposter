@@ -1,4 +1,3 @@
-// @vitest-environment node
 import { getIsSameDevice } from "@@/server/services/auth/getIsSameDevice";
 import { getMockSession } from "@@/server/trpc/context.test";
 import { describe, expect, test } from "vitest";

@@ -1,4 +1,3 @@
-// @vitest-environment node
 import { columnFormSchema } from "#shared/models/tableEditor/file/column/ColumnForm";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { describe, expect, test } from "vitest";
@@ -21,7 +20,7 @@ describe("columnFormSchema", () => {
                 "layout": {
                   "comp": "textarea",
                 },
-                "maxLength": 1000,
+                "maxLength": 10000,
                 "title": "Description",
                 "type": "string",
               },
@@ -74,7 +73,7 @@ describe("columnFormSchema", () => {
                 "layout": {
                   "comp": "textarea",
                 },
-                "maxLength": 1000,
+                "maxLength": 10000,
                 "title": "Description",
                 "type": "string",
               },
@@ -434,7 +433,7 @@ describe("columnFormSchema", () => {
                 "layout": {
                   "comp": "textarea",
                 },
-                "maxLength": 1000,
+                "maxLength": 10000,
                 "title": "Description",
                 "type": "string",
               },
@@ -495,7 +494,7 @@ describe("columnFormSchema", () => {
                 "layout": {
                   "comp": "textarea",
                 },
-                "maxLength": 1000,
+                "maxLength": 10000,
                 "title": "Description",
                 "type": "string",
               },
@@ -567,7 +566,7 @@ describe("columnFormSchema", () => {
                 "layout": {
                   "comp": "textarea",
                 },
-                "maxLength": 1000,
+                "maxLength": 10000,
                 "title": "Description",
                 "type": "string",
               },

@@ -42,7 +42,7 @@ const tab = ref(AchievementStatus.All);
         :model-value="(stats.unlockedAchievements / stats.totalAchievements) * 100"
         :height="8"
         color="primary"
-        rounded
+        rd
       />
       <v-tabs v-model="tab" mt-4>
         <v-tab v-for="key in AchievementStatuses" :key :value="key">{{ key }}</v-tab>

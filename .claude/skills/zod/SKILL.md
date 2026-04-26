@@ -9,9 +9,52 @@ description: Esposter Zod schema conventions — z namespace imports, no optiona
 
 Always use the `z` namespace export: `z.ZodType`, `z.ZodError`, etc. Never use named imports like `import type { ZodType }`.
 
+## Zod 4 Shorthand APIs
+
+**Never use the old chained syntax** — Zod 4 promotes string format validators and numeric refinements to standalone top-level functions:
+
+| Use (Zod 4)             | Never use (Zod 3 legacy)           |
+| ----------------------- | ---------------------------------- |
+| `z.email()`             | `z.string().email()`               |
+| `z.url()`               | `z.string().url()`                 |
+| `z.uuid()`              | `z.string().uuid()`                |
+| `z.nanoid()`            | `z.string().nanoid()`              |
+| `z.cuid()`              | `z.string().cuid()`                |
+| `z.cuid2()`             | `z.string().cuid2()`               |
+| `z.ulid()`              | `z.string().ulid()`                |
+| `z.emoji()`             | `z.string().emoji()`               |
+| `z.base64()`            | `z.string().base64()`              |
+| `z.base64url()`         | `z.string().base64url()`           |
+| `z.ipv4()`              | `z.string().ip({ version: "v4" })` |
+| `z.ipv6()`              | `z.string().ip({ version: "v6" })` |
+| `z.int()`               | `z.number().int()`                 |
+| `z.iso.date()`          | `z.string().date()`                |
+| `z.iso.datetime()`      | `z.string().datetime()`            |
+| `z.iso.time()`          | `z.string().time()`                |
+| `z.iso.duration()`      | `z.string().duration()`            |
+| `z.strictObject({...})` | `z.object({...}).strict()`         |
+| `z.looseObject({...})`  | `z.object({...}).passthrough()`    |
+
+Note: `z.uuid()` now strictly validates RFC 9562/4122. Use `z.guid()` for permissive "UUID-like" validation.
+
+## ZodError Issue Mutation
+
+**Never call `.addIssue()` or `.addIssues()` on a `ZodError`** — these methods are deprecated in Zod 4. Push directly to the issues array:
+
+```typescript
+// WRONG
+myError.addIssue({ code: "custom", message: "..." });
+
+// CORRECT
+myError.issues.push({ code: "custom", message: "..." });
+```
+
+`ctx.addIssue()` inside `superRefine` is still valid (it operates on the refinement context, not a `ZodError` instance).
+
 ## Schema Rules
 
 - **`z.enum` with native enums (Zod 4)** — use `z.enum(MyEnum)` directly for TypeScript string enums; `z.nativeEnum` is Zod 3 only.
+- **Non-negative integers** — use `.nonnegative()` instead of `.min(0)` for fields that must be ≥ 0 (e.g. `position`, `sheetIndex`). Reserve `.min(N)` for ranges where N > 0 or where the intent is a specific lower bound alongside an upper bound.
 - **Schema must match its type exactly** — if a field's TypeScript type is `ColumnFormat`, use `columnFormatSchema` (defined alongside `ColumnFormat`), never inline the equivalent union `z.union([booleanFormatSchema, dateFormatSchema, numberFormatSchema])`. Every named type must have exactly one named schema; never reconstruct a union inline when a schema for that union already exists or should exist.
 - **`.default()`** — do not combine `.optional().default(value)`; `.default()` already handles `undefined` input, so `.optional()` is redundant. More importantly: **only use `.default()` in schemas whose TypeScript type is a class with actual property defaults** (e.g. `class Foo { bar = [] }`). Never add `.default()` to schemas that `satisfies z.ZodType<Interface>` — interfaces have no defaults, so the schema and the type would be misaligned. If a field should start empty, initialise it explicitly at the call site (e.g. `new MyClass()` or `{ steps: [] }`).
 - **Generic schemas** — when an abstract class has a generic type parameter (e.g. `ADataSourceItem<TType, TConfig>`), its schema must also be generic. Export a `create*Schema` function that takes typed zod schemas as parameters and returns the composed schema. Never hardcode type-specific values in a base schema. Use `T` for a single type parameter, descriptive `T*` names (e.g. `TType`, `TConfiguration`) for multiple:
@@ -204,6 +247,20 @@ Always use the `z` namespace export: `z.ZodType`, `z.ZodError`, etc. Never use n
       expect(zodToJsonSchema(dateColumnFormSchema)).toMatchInlineSnapshot();
     });
   });
+  ```
+
+- **Shared ID field schemas** — when `z.object({ roomId: selectRoomSchema.shape.id })` or `z.object({ userId: selectUserSchema.shape.id })` appears in more than one file, extract into a named schema (`roomIdSchema`, `userIdSchema`) and spread its shape: `z.object({ ...roomIdSchema.shape, otherField: ... })`. Keeps the UUID type in sync and documents intent.
+
+- **Record maps over switch statements** — when a switch on an enum drives different async operations, prefer `const actionMap: Record<EnumType, (args) => Promise<void>> = { [Enum.A]: ..., [Enum.B]: ... }` and call `await actionMap[type](args)`. Exhaustiveness is enforced by the Record key type; no `default: exhaustiveGuard(type)` needed.
+
+- **`refineAtLeastOne`** — when an update/patch schema has all-optional fields and at least one must be provided, always use `refineAtLeastOne(schema, ["field1", "field2", ...])` from `#shared/services/zod/refineAtLeastOne`. Never inline `.refine((data) => ...)` for this pattern:
+
+  ```typescript
+  import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
+  export const updateFooInputSchema = refineAtLeastOne(
+    z.object({ id: ..., name: z.string().optional(), color: z.string().optional() }),
+    ["name", "color"],
+  );
   ```
 
 - **`satisfies z.ZodType<T>` with class types** — when a schema output has plain objects but the interface uses class instances (with `toJSON`), use `Except` + `ToData` in the satisfies to strip `toJSON` from nested classes:

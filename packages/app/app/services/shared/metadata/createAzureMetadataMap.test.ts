@@ -1,4 +1,3 @@
-// @vitest-environment node
 import { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import { createAzureMetadataMap } from "@/services/shared/metadata/createAzureMetadataMap";
 import { MessageMetadataType } from "@esposter/db-schema";

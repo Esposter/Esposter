@@ -1,4 +1,5 @@
-import type { RoomInMessage, UserToRoomInMessage } from "@esposter/db-schema";
+import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
+import type { RoomInMessage, User, UserToRoomInMessage } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
 import { createRoomInputSchema } from "#shared/models/db/room/CreateRoomInput";
@@ -22,20 +23,25 @@ import { parseSortByToSql } from "@@/server/services/pagination/sorting/parseSor
 import { assertIsRoom } from "@@/server/services/room/assertIsRoom";
 import { deleteRoom } from "@@/server/services/room/deleteRoom";
 import { router } from "@@/server/trpc";
+import { addProfanityFilterMiddleware } from "@@/server/trpc/middleware/addProfanityFilterMiddleware";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { isRoom } from "@@/server/trpc/middleware/userToRoom/isRoom";
 import { getProfanityFilterProcedure } from "@@/server/trpc/procedure/getProfanityFilterProcedure";
-import { getCreatorProcedure } from "@@/server/trpc/procedure/room/getCreatorProcedure";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
+import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { deleteDirectory } from "@esposter/db";
 import {
   AzureContainer,
+  bansInMessage,
   CODE_LENGTH,
   DatabaseEntityType,
   InviteInMessageRelations,
   invitesInMessage,
+  roomIdSchema,
+  roomRolesInMessage,
   roomsInMessage,
+  RoomPermission,
   RoomType,
   selectInviteInMessageSchema,
   selectRoomInMessageSchema,
@@ -47,10 +53,14 @@ import {
 import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, count, desc, eq, getTableColumns, ilike, inArray, ne, sql } from "drizzle-orm";
+import { alias } from "drizzle-orm/pg-core";
 import { z } from "zod";
 
 const readRoomInputSchema = selectRoomInMessageSchema.shape.id.optional();
 export type ReadRoomInput = z.infer<typeof readRoomInputSchema>;
+
+const readMutualRoomsInputSchema = z.object({ userId: selectUserSchema.shape.id });
+export type ReadMutualRoomsInput = z.infer<typeof readMutualRoomsInputSchema>;
 
 const readRoomsInputSchema = z
   .object({
@@ -76,25 +86,25 @@ const onLeaveRoomInputSchema = selectRoomInMessageSchema.shape.id.array().min(1)
 export type OnLeaveRoomInput = z.infer<typeof onLeaveRoomInputSchema>;
 
 const readMembersInputSchema = z.object({
+  ...roomIdSchema.shape,
   ...createCursorPaginationParamsSchema(selectUserSchema.keyof(), [
     { key: ItemMetadataPropertyNames.updatedAt, order: SortOrder.Desc },
   ]).shape,
   filter: selectUserSchema.pick({ name: true }).optional(),
-  roomId: selectRoomInMessageSchema.shape.id,
 });
 export type ReadMembersInput = z.infer<typeof readMembersInputSchema>;
 
 const readMembersByIdsInputSchema = z.object({
+  ...roomIdSchema.shape,
   ids: selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
-  roomId: selectRoomInMessageSchema.shape.id,
 });
 export type ReadMembersByIdsInput = z.infer<typeof readMembersByIdsInputSchema>;
 
-const countMembersInputSchema = z.object({ roomId: selectRoomInMessageSchema.shape.id });
+const countMembersInputSchema = roomIdSchema;
 export type CountMembersInput = z.infer<typeof countMembersInputSchema>;
 
 const createMembersInputSchema = z.object({
-  roomId: selectRoomInMessageSchema.shape.id,
+  ...roomIdSchema.shape,
   userIds: selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
 });
 export type CreateMembersInput = z.infer<typeof createMembersInputSchema>;
@@ -102,10 +112,10 @@ export type CreateMembersInput = z.infer<typeof createMembersInputSchema>;
 const readInviteInputSchema = selectInviteInMessageSchema.shape.code;
 export type ReadInviteInput = z.infer<typeof readInviteInputSchema>;
 
-const readInviteCodeInputSchema = z.object({ roomId: selectRoomInMessageSchema.shape.id });
+const readInviteCodeInputSchema = roomIdSchema;
 export type ReadInviteCodeInput = z.infer<typeof readInviteCodeInputSchema>;
 
-const createInviteInputSchema = z.object({ roomId: selectRoomInMessageSchema.shape.id });
+const createInviteInputSchema = roomIdSchema;
 export type CreateInviteInput = z.infer<typeof createInviteInputSchema>;
 
 export const roomRouter = router({
@@ -139,7 +149,7 @@ export const roomRouter = router({
         message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Invite, roomId).message,
       });
     }),
-  createMembers: getCreatorProcedure(createMembersInputSchema, "roomId")
+  createMembers: getPermissionsProcedure(RoomPermission.ManageRoom, createMembersInputSchema, "roomId")
     .use(isRoom)
     .mutation<UserToRoomInMessage[]>(({ ctx, input: { roomId, userIds } }) =>
       ctx.db
@@ -161,11 +171,24 @@ export const roomRouter = router({
           message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Room, JSON.stringify(input)).message,
         });
 
-      await tx.insert(usersToRoomsInMessage).values({ roomId: newRoom.id, userId: ctx.getSessionPayload.user.id });
+      await Promise.all([
+        tx.insert(usersToRoomsInMessage).values({ roomId: newRoom.id, userId: ctx.getSessionPayload.user.id }),
+        tx.insert(roomRolesInMessage).values({
+          isEveryone: true,
+          name: "@everyone",
+          permissions:
+            RoomPermission.ReadMessages |
+            RoomPermission.SendMessages |
+            RoomPermission.MentionEveryone |
+            RoomPermission.ManageInvites,
+          position: 0,
+          roomId: newRoom.id,
+        }),
+      ]);
       return newRoom;
     }),
   ),
-  deleteMember: getCreatorProcedure(deleteMemberInputSchema, "roomId")
+  deleteMember: getPermissionsProcedure(RoomPermission.KickMembers, deleteMemberInputSchema, "roomId")
     .use(isRoom)
     .mutation(async ({ ctx, input: { roomId, userId } }) => {
       if (userId === ctx.getSessionPayload.user.id)
@@ -221,6 +244,19 @@ export const roomRouter = router({
         });
 
       await assertIsRoom(tx, invite.roomId);
+
+      const ban = await tx.query.bansInMessage.findFirst({
+        columns: { userId: true },
+        where: {
+          RAW: (bansInMessage, { and, eq, isNull }) =>
+            and(
+              eq(bansInMessage.roomId, invite.roomId),
+              eq(bansInMessage.userId, ctx.getSessionPayload.user.id),
+              isNull(bansInMessage.deletedAt),
+            ),
+        },
+      });
+      if (ban) throw new TRPCError({ code: "FORBIDDEN" });
 
       const userToRoom = (
         await tx
@@ -362,7 +398,7 @@ export const roomRouter = router({
     .query<null | string>(({ ctx, input: { roomId } }) =>
       readInviteCode(ctx.db, ctx.getSessionPayload.user.id, roomId),
     ),
-  readMembers: getMemberProcedure(readMembersInputSchema, "roomId").query(
+  readMembers: getMemberProcedure(readMembersInputSchema, "roomId").query<CursorPaginationData<User>>(
     async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
       const wheres: (SQL | undefined)[] = [eq(usersToRoomsInMessage.roomId, roomId)];
       if (cursor) wheres.push(getCursorWhere(users, cursor, sortBy));
@@ -385,6 +421,27 @@ export const roomRouter = router({
       .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.userId, users.id))
       .where(and(eq(usersToRoomsInMessage.roomId, roomId), inArray(users.id, ids))),
   ),
+  readMutualRooms: standardAuthedProcedure.input(readMutualRoomsInputSchema).query<RoomInMessage[]>(({ ctx, input }) => {
+    const usersToRoomsInMessage1 = alias(usersToRoomsInMessage, "usersToRoomsInMessage1");
+    const usersToRoomsInMessage2 = alias(usersToRoomsInMessage, "usersToRoomsInMessage2");
+    return ctx.db
+      .select(getTableColumns(roomsInMessage))
+      .from(roomsInMessage)
+      .innerJoin(
+        usersToRoomsInMessage1,
+        and(
+          eq(usersToRoomsInMessage1.roomId, roomsInMessage.id),
+          eq(usersToRoomsInMessage1.userId, ctx.getSessionPayload.user.id),
+        ),
+      )
+      .innerJoin(
+        usersToRoomsInMessage2,
+        and(eq(usersToRoomsInMessage2.roomId, roomsInMessage.id), eq(usersToRoomsInMessage2.userId, input.userId)),
+      )
+      .where(eq(roomsInMessage.type, RoomType.Room))
+      .orderBy(desc(roomsInMessage.updatedAt))
+      .limit(MAX_READ_LIMIT);
+  }),
   readRoom: standardAuthedProcedure.input(readRoomInputSchema).query<null | RoomInMessage>(async ({ ctx, input }) => {
     if (input) {
       const room = await ctx.db.query.roomsInMessage.findFirst({
@@ -472,24 +529,25 @@ export const roomRouter = router({
       return cursorPaginationData;
     },
   ),
-  updateRoom: getProfanityFilterProcedure(updateRoomInputSchema, ["name"]).mutation<RoomInMessage>(
-    async ({ ctx, input: { id, ...rest } }) => {
-      const name = rest.name?.trim();
-      const updatedRoom = (
-        await ctx.db
-          .update(roomsInMessage)
-          .set({ ...rest, name })
-          .where(and(eq(roomsInMessage.id, id), eq(roomsInMessage.userId, ctx.getSessionPayload.user.id)))
-          .returning()
-      )[0];
-      if (!updatedRoom)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Room, id).message,
-        });
+  updateRoom: addProfanityFilterMiddleware(
+    getPermissionsProcedure(RoomPermission.ManageRoom, updateRoomInputSchema, "id"),
+    ["name"],
+  ).mutation<RoomInMessage>(async ({ ctx, input: { id, ...rest } }) => {
+    const name = rest.name?.trim();
+    const updatedRoom = (
+      await ctx.db
+        .update(roomsInMessage)
+        .set({ ...rest, name })
+        .where(eq(roomsInMessage.id, id))
+        .returning()
+    )[0];
+    if (!updatedRoom)
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Room, id).message,
+      });
 
-      roomEventEmitter.emit("updateRoom", updatedRoom);
-      return updatedRoom;
-    },
-  ),
+    roomEventEmitter.emit("updateRoom", updatedRoom);
+    return updatedRoom;
+  }),
 });

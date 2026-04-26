@@ -12,6 +12,18 @@ export const usersRelation = defineRelationsPart(schema, (r) => ({
       from: r.users.id.through(r.userAchievements.userId),
       to: r.achievements.id.through(r.userAchievements.achievementId),
     }),
+    bansInMessages: r.many.bansInMessage({
+      from: r.users.id,
+      to: r.bansInMessage.userId,
+    }),
+    blocks: r.many.blocks({
+      from: r.users.id,
+      to: r.blocks.blockerId,
+    }),
+    friendRequests: r.many.friendRequests({
+      from: r.users.id,
+      to: r.friendRequests.senderId,
+    }),
     postsViaLikes: r.many.posts({
       alias: "posts_id_users_id_via_likes",
       from: r.users.id.through(r.likes.userId),
@@ -25,6 +37,14 @@ export const usersRelation = defineRelationsPart(schema, (r) => ({
     pushSubscriptionsInMessages: r.many.pushSubscriptionsInMessage({
       from: r.users.id,
       to: r.pushSubscriptionsInMessage.userId,
+    }),
+    receivedFriendRequests: r.many.friendRequests({
+      from: r.users.id,
+      to: r.friendRequests.receiverId,
+    }),
+    roomCategoriesInMessages: r.many.roomCategoriesInMessage({
+      from: r.users.id,
+      to: r.roomCategoriesInMessage.userId,
     }),
     roomsInMessages: r.many.roomsInMessage({
       from: r.users.id,
@@ -61,9 +81,13 @@ export const usersRelation = defineRelationsPart(schema, (r) => ({
       from: r.users.id,
       to: r.userStatusesInMessage.userId,
     }),
+    usersToRoomRolesInMessages: r.many.usersToRoomRolesInMessage({
+      from: r.users.id,
+      to: r.usersToRoomRolesInMessage.userId,
+    }),
     webhooksInMessages: r.many.webhooksInMessage({
       from: r.users.id,
-      to: r.webhooksInMessage.userId,
+      to: r.webhooksInMessage.creatorId,
     }),
   },
 }));

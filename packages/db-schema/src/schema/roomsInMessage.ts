@@ -1,5 +1,7 @@
+import { createNameCheckSql, createNameSchema } from "@/models/shared/Name";
 import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
+import { roomCategoriesInMessage } from "@/schema/roomCategoriesInMessage";
 import { users } from "@/schema/users";
 import { sql } from "drizzle-orm";
 import { check, pgEnum, text, uuid } from "drizzle-orm/pg-core";
@@ -20,9 +22,10 @@ export const roomTypeEnum = pgEnum("room_type", RoomType);
 export const roomsInMessage = pgTable(
   "rooms",
   {
+    categoryId: uuid("categoryId").references(() => roomCategoriesInMessage.id, { onDelete: "set null" }),
     id: uuid("id").primaryKey().defaultRandom(),
     image: text("image"),
-    name: text("name").notNull(),
+    name: text("name"),
     participantKey: text("participantKey").unique(),
     type: roomTypeEnum("type").notNull().default(RoomType.Room),
     userId: text("userId")
@@ -31,7 +34,10 @@ export const roomsInMessage = pgTable(
   },
   {
     extraConfig: ({ name, participantKey, type }) => [
-      check("name", sql`LENGTH(${name}) <= ${sql.raw(ROOM_NAME_MAX_LENGTH.toString())}`),
+      check(
+        "rooms_name_check",
+        sql`(${type} = '${sql.raw(RoomType.DirectMessage)}' AND ${name} IS NULL) OR (${type} = '${sql.raw(RoomType.Room)}' AND ${name} IS NOT NULL AND ${createNameCheckSql(name, ROOM_NAME_MAX_LENGTH)})`,
+      ),
       check(
         "participant_key_type",
         sql`(${type} = '${sql.raw(RoomType.DirectMessage)}' AND ${participantKey} IS NOT NULL) OR (${type} = '${sql.raw(RoomType.Room)}' AND ${participantKey} IS NULL)`,
@@ -44,5 +50,5 @@ export const roomsInMessage = pgTable(
 export type RoomInMessage = typeof roomsInMessage.$inferSelect;
 
 export const selectRoomInMessageSchema = createSelectSchema(roomsInMessage, {
-  name: z.string().max(ROOM_NAME_MAX_LENGTH),
+  name: createNameSchema(ROOM_NAME_MAX_LENGTH).nullable(),
 });

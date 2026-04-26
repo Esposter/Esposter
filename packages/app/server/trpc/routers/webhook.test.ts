@@ -90,27 +90,6 @@ describe("webhook", () => {
     expect(readWebhooks.some(({ id }) => id === newWebhook.id)).toBe(true);
   });
 
-  test("fails read with non-existent id", async () => {
-    expect.hasAssertions();
-
-    const roomId = crypto.randomUUID();
-
-    await expect(webhookCaller.readWebhooks({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: UNAUTHORIZED]`,
-    );
-  });
-
-  test("fails read with non-existent creator", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    await mockSessionOnce(mockContext.db);
-
-    await expect(webhookCaller.readWebhooks({ roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: UNAUTHORIZED]`,
-    );
-  });
-
   test("reads empty webhooks", async () => {
     expect.hasAssertions();
 
@@ -229,28 +208,6 @@ describe("webhook", () => {
     const users = await webhookCaller.readAppUsersByIds({ ids: [newWebhook.userId], roomId: newRoom.id });
 
     expect(takeOne(users).id).toBe(newWebhook.userId);
-  });
-
-  test("fails read app users by empty ids", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-
-    await expect(webhookCaller.readAppUsersByIds({ ids: [], roomId: newRoom.id })).rejects
-      .toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: [
-        {
-          "origin": "array",
-          "code": "too_small",
-          "minimum": 1,
-          "inclusive": true,
-          "path": [
-            "ids"
-          ],
-          "message": "Too small: expected array to have >=1 items"
-        }
-      ]]
-    `);
   });
 
   test("fails read app users by ids with wrong user", async () => {

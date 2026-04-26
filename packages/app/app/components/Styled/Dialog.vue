@@ -8,7 +8,7 @@ export interface StyledDialogActivatorSlotProps {
   updateIsOpen: (value: true) => boolean;
 }
 
-export interface StyledDialogProps {
+interface StyledDialogProps {
   cardProps?: VCard["$props"];
   confirmButtonAttrs?: VBtn["$attrs"];
   confirmButtonProps: VBtn["$props"];

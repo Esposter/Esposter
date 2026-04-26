@@ -9,6 +9,7 @@ const { copied, text } = storeToRefs(messageStore);
   <div class="bg-surface" relative h-full flex flex-col>
     <MessageContentHeader />
     <v-divider />
+    <MessageContentVoicePanel />
     <MessageContentMessages />
     <StyledClipboardSnackbar v-model="copied" :source="text" />
   </div>

@@ -2,7 +2,7 @@ import type { Expression } from "@/models/desmos/Expression";
 
 import { Colors } from "@/models/desmos/Colors";
 
-export const yuiExpressions: Expression[] = [
+export const YuiExpressions: Expression[] = [
   { latex: "y=-0.1\\left(x-1\\right)^{2}+4.5\\left\\{-2.05<x<1\\right\\}" },
   { latex: "y=-0.1\\left(x-1.2\\right)^{2}+4.5\\left\\{1<x<3.67\\right\\}" },
   { latex: "\\left(y-1.2\\right)^{2}=-6\\left(x-5.03\\right)\\left\\{0.57<y<3.437\\right\\}" },

@@ -1,6 +1,6 @@
 {
   "name": "@esposter/db-schema",
-  "version": "2.20.0",
+  "version": "2.21.0",
   "private": true,
   "description": "A library of database schemas and utilities using Drizzle ORM (PostgreSQL) that is available in both browser and server environments.",
   "keywords": [
@@ -36,7 +36,7 @@
     "coverage": "vitest run --coverage",
     "db:gen": "pnpm db:run generate",
     "db:pull": "pnpm db:run pull",
-    "db:run": "tsx node_modules/drizzle-kit/bin.cjs",
+    "db:run": "tsx --import ../db-mock/src/util/bigintPolyfill.ts node_modules/drizzle-kit/bin.cjs",
     "db:studio": "pnpm db:run studio",
     "db:up": "pnpm db:run up",
     "export:gen": "ctix build --config ../configuration/.ctirc-ts",

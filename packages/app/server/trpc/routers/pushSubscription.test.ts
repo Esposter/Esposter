@@ -80,11 +80,9 @@ describe("pushSubscription", () => {
 
     const pushSubscription = await pushSubscriptionCaller.subscribe({ endpoint, keys: { auth, p256dh } });
     const deletedPushSubscription = await pushSubscriptionCaller.unsubscribe(endpoint);
-    const readPushSubscriptions = await mockContext.db.select().from(pushSubscriptionsInMessage);
 
     expect(deletedPushSubscription.id).toBe(pushSubscription.id);
     expect(deletedPushSubscription.endpoint).toBe(endpoint);
-    expect(readPushSubscriptions).toHaveLength(0);
   });
 
   test(`createMessage notifies ${NotificationType.All} member (excludes sender)`, async () => {

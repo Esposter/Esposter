@@ -17,7 +17,7 @@ export const pushNotification = async (
     notificationOptions: { icon, title },
   }: PushNotificationEventGridData,
 ): Promise<void> => {
-  const payload = getCreateMessageNotificationPayload(message, {
+  const payload = getCreateMessageNotificationPayload(context, message, {
     icon,
     title,
     url: `${process.env.BASE_URL}${RoutePath.MessagesMessage(partitionKey, rowKey)}`,
@@ -45,6 +45,7 @@ export const pushNotification = async (
               context.log(`Subscription for endpoint ${endpoint} has expired. Deleting.`);
               await db.delete(pushSubscriptionsInMessage).where(eq(pushSubscriptionsInMessage.id, id));
             } else context.error(`Failed to send push notification to ${endpoint}: `, error);
+          else context.error(`Unexpected error sending push notification to ${endpoint}: `, error);
         }
       })(),
     ),

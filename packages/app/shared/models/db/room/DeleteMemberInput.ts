@@ -1,8 +1,8 @@
-import { selectRoomInMessageSchema, selectUserSchema } from "@esposter/db-schema";
+import { roomIdSchema, userIdSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
 export const deleteMemberInputSchema = z.object({
-  roomId: selectRoomInMessageSchema.shape.id,
-  userId: selectUserSchema.shape.id,
+  ...roomIdSchema.shape,
+  ...userIdSchema.shape,
 });
 export type DeleteMemberInput = z.infer<typeof deleteMemberInputSchema>;

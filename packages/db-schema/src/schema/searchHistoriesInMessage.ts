@@ -24,7 +24,9 @@ export const searchHistoriesInMessage = pgTable(
       .references(() => users.id),
   },
   {
-    extraConfig: ({ query }) => [check("query", sql`LENGTH(${query}) <= ${sql.raw(MESSAGE_MAX_LENGTH.toString())}`)],
+    extraConfig: ({ query }) => [
+      check("search_histories_query_length_check", sql`LENGTH(${query}) <= ${sql.raw(MESSAGE_MAX_LENGTH.toString())}`),
+    ],
     schema: messageSchema,
   },
 );

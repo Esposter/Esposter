@@ -22,7 +22,9 @@ export const invitesInMessage = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ code }) => [check("code", sql`LENGTH(${code}) = ${sql.raw(CODE_LENGTH.toString())}`)],
+    extraConfig: ({ code }) => [
+      check("invites_code_length_check", sql`LENGTH(${code}) = ${sql.raw(CODE_LENGTH.toString())}`),
+    ],
     schema: messageSchema,
   },
 );

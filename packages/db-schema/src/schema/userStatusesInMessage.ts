@@ -6,7 +6,7 @@ import { boolean, check, pgEnum, text, timestamp } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
 
-export const STATUS_MESSAGE_MAX_LENGTH = 1000;
+export const STATUS_MESSAGE_MAX_LENGTH = 64;
 
 export enum UserStatus {
   DoNotDisturb = "DoNotDisturb",
@@ -35,7 +35,10 @@ export const userStatusesInMessage = pgTable(
   },
   {
     extraConfig: ({ message }) => [
-      check("message", sql`LENGTH(${message}) <= ${sql.raw(STATUS_MESSAGE_MAX_LENGTH.toString())}`),
+      check(
+        "user_statuses_message_length_check",
+        sql`LENGTH(${message}) <= ${sql.raw(STATUS_MESSAGE_MAX_LENGTH.toString())}`,
+      ),
     ],
     schema: messageSchema,
   },

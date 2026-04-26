@@ -1,15 +1,13 @@
-import type { AEntity } from "#shared/models/entity/AEntity";
 import type { EntityIdKeys } from "#shared/models/entity/EntityIdKeys";
 import type { OperationDataKey } from "@/models/shared/pagination/OperationDataKey";
 import type { EntityTypeKey } from "@esposter/db-schema";
-import type { ToData } from "@esposter/shared";
 
 import { getIsEntityIdEqualComparator } from "#shared/services/entity/getIsEntityIdEqualComparator";
 import { Operation, takeOne, uncapitalize } from "@esposter/shared";
 
 export const createOperationData = <
-  TItem extends ToData<AEntity>,
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
+  TItem extends object,
+  // oxlint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
   TIdKeys extends EntityIdKeys<TItem>,
   TEntityTypeKey extends EntityTypeKey,
 >(
@@ -28,13 +26,17 @@ export const createOperationData = <
     else items.value.push(newItem);
   };
   const updateItem = (updatedItem: Partial<TItem>) => {
-    const index = items.value.findIndex((i) => getIsEntityIdEqualComparator(idKeys, updatedItem)(i));
+    const index = items.value.findIndex((i) =>
+      getIsEntityIdEqualComparator(idKeys as (keyof TItem & string)[], updatedItem)(i),
+    );
     if (index === -1) return;
 
     Object.assign(takeOne(items.value, index), updatedItem);
   };
   const deleteItem = (ids: { [P in keyof TItem & TIdKeys[number]]: TItem[P] }) => {
-    items.value = items.value.filter((i) => !getIsEntityIdEqualComparator(idKeys, ids)(i));
+    items.value = items.value.filter(
+      (i) => !getIsEntityIdEqualComparator(idKeys as (keyof TItem & string)[], ids as Partial<TItem>)(i),
+    );
   };
   return {
     [`${uncapitalize(entityTypeKey)}s`]: items,

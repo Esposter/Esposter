@@ -1,4 +1,4 @@
-import type { Room, User } from "@esposter/db-schema";
+import type { RoomInMessage, User } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
 import { createDirectMessageInputSchema } from "#shared/models/db/room/CreateDirectMessageInput";
@@ -16,7 +16,6 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import {
   DatabaseEntityType,
   friends,
-  FriendshipStatus,
   roomsInMessage,
   RoomType,
   selectRoomInMessageSchema,
@@ -42,61 +41,60 @@ const readDirectMessageParticipantsInputSchema = selectRoomInMessageSchema.shape
 export type ReadDirectMessageParticipantsInput = z.infer<typeof readDirectMessageParticipantsInputSchema>;
 
 export const directMessageRouter = router({
-  createDirectMessage: standardAuthedProcedure.input(createDirectMessageInputSchema).mutation<Room>(({ ctx, input }) =>
-    ctx.db.transaction(async (tx) => {
-      const userId = ctx.getSessionPayload.user.id;
-      const allUserIds = [...new Set([userId, ...input])];
-      const targetUserIds = allUserIds.filter((id) => id !== userId);
-      if (targetUserIds.length === 0)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Create, DatabaseEntityType.DirectMessage, userId).message,
-        });
+  createDirectMessage: standardAuthedProcedure
+    .input(createDirectMessageInputSchema)
+    .mutation<RoomInMessage>(({ ctx, input }) =>
+      ctx.db.transaction(async (tx) => {
+        const userId = ctx.getSessionPayload.user.id;
+        const allUserIds = [...new Set([userId, ...input])];
+        const targetUserIds = allUserIds.filter((id) => id !== userId);
+        if (targetUserIds.length === 0)
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: new InvalidOperationError(Operation.Create, DatabaseEntityType.DirectMessage, userId).message,
+          });
 
-      const acceptedFriendships = await tx
-        .select()
-        .from(friends)
-        .where(
-          and(
-            eq(friends.status, FriendshipStatus.Accepted),
+        const acceptedFriendships = await tx
+          .select()
+          .from(friends)
+          .where(
             or(
               and(eq(friends.senderId, userId), inArray(friends.receiverId, targetUserIds)),
               and(eq(friends.receiverId, userId), inArray(friends.senderId, targetUserIds)),
             ),
-          ),
-        );
-      if (acceptedFriendships.length !== targetUserIds.length)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Create, DatabaseEntityType.DirectMessage, userId).message,
-        });
+          );
+        if (acceptedFriendships.length !== targetUserIds.length)
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: new InvalidOperationError(Operation.Create, DatabaseEntityType.DirectMessage, userId).message,
+          });
 
-      const participantKey = allUserIds.toSorted().join(ID_SEPARATOR);
-      const [newRoom] = await tx
-        .insert(roomsInMessage)
-        .values({ name: "", participantKey, type: RoomType.DirectMessage, userId })
-        .onConflictDoNothing({ target: roomsInMessage.participantKey })
-        .returning();
-      const room =
-        newRoom ?? (await tx.query.roomsInMessage.findFirst({ where: { participantKey: { eq: participantKey } } }));
-      if (!room)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: new InvalidOperationError(Operation.Create, DatabaseEntityType.DirectMessage, participantKey)
-            .message,
-        });
+        const participantKey = allUserIds.toSorted().join(ID_SEPARATOR);
+        const [newRoom] = await tx
+          .insert(roomsInMessage)
+          .values({ name: "", participantKey, type: RoomType.DirectMessage, userId })
+          .onConflictDoNothing({ target: roomsInMessage.participantKey })
+          .returning();
+        const room =
+          newRoom ?? (await tx.query.roomsInMessage.findFirst({ where: { participantKey: { eq: participantKey } } }));
+        if (!room)
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: new InvalidOperationError(Operation.Create, DatabaseEntityType.DirectMessage, participantKey)
+              .message,
+          });
 
-      await tx
-        .insert(usersToRoomsInMessage)
-        .values(allUserIds.map((userId) => ({ roomId: room.id, userId })))
-        .onConflictDoNothing();
-      await tx
-        .update(usersToRoomsInMessage)
-        .set({ isHidden: false })
-        .where(and(eq(usersToRoomsInMessage.roomId, room.id), eq(usersToRoomsInMessage.userId, userId)));
-      return room;
-    }),
-  ),
+        await tx
+          .insert(usersToRoomsInMessage)
+          .values(allUserIds.map((userId) => ({ roomId: room.id, userId })))
+          .onConflictDoNothing();
+        await tx
+          .update(usersToRoomsInMessage)
+          .set({ isHidden: false })
+          .where(and(eq(usersToRoomsInMessage.roomId, room.id), eq(usersToRoomsInMessage.userId, userId)));
+        return room;
+      }),
+    ),
   hideDirectMessage: standardAuthedProcedure.input(hideDirectMessageInputSchema).mutation(async ({ ctx, input }) => {
     await isMember(ctx.db, ctx.getSessionPayload, input);
     await assertIsRoom(ctx.db, input, RoomType.DirectMessage);
@@ -128,7 +126,7 @@ export const directMessageRouter = router({
         existingParticipants.push(user);
         participantsMap.set(roomId, existingParticipants);
       }
-      return [...participantsMap.entries()].map(([roomId, participants]) => ({ participants, roomId }));
+      return Array.from(participantsMap, ([roomId, participants]) => ({ participants, roomId }));
     }),
   readDirectMessages: standardAuthedProcedure
     .input(readDirectMessagesInputSchema)

@@ -5,7 +5,7 @@ const isOpen = defineModel<boolean>({ default: false });
 <template>
   <v-tooltip text="New Message">
     <template #activator="{ props }">
-      <v-btn icon="mdi-plus" variant="plain" size="small" :ripple="false" :="props" @click="isOpen = true" />
+      <v-btn icon="mdi-plus" size="small" :ripple="false" :="props" @click.stop="isOpen = true" />
     </template>
   </v-tooltip>
   <MessageModelRoomCreateDirectMessageDialog v-model="isOpen" />

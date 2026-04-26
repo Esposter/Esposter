@@ -16,7 +16,7 @@ export const getIsRateLimited = (type: RateLimiterType) =>
     const ipAddress = forwardedFor ? takeOne(forwardedFor.split(",")).trim() : ctx.req.socket.remoteAddress;
     if (!ipAddress) {
       console.warn(
-        "Rate Limiter: Could not determine IP address. Bypassing middleware... This is expected for local production builds.",
+        "[RateLimiter] Could not determine IP address. Bypassing middleware... This is expected for local production builds.",
       );
       return next({ ctx: { getSessionPayload } });
     }

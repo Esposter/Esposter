@@ -12,8 +12,8 @@ const { isScrolling, messageContainer, messageContainerElement } = storeToRefs(s
 const previousScrollHeight = ref(0);
 const readMoreNewerMessages = async (onComplete: () => void) => {
   await baseReadMoreNewerMessages(() => {
-    requestAnimationFrame(() => {
-      if (isScrolling.value || !messageContainerElement.value) return;
+    window.requestAnimationFrame(() => {
+      if (!hasMoreNewer.value || isScrolling.value || !messageContainerElement.value) return;
       messageContainerElement.value.scrollTop -=
         messageContainerElement.value.scrollHeight - previousScrollHeight.value;
       previousScrollHeight.value = messageContainerElement.value.scrollHeight;
@@ -38,6 +38,7 @@ watchOnce(messageContainerElement, (newMessageContainerElement) => {
     flex-col-reverse
     overflow-x-hidden
     overflow-y-auto
+    overflow-anchor-none
     lines="two"
   >
     <template v-if="isPending">

@@ -4,11 +4,11 @@ import type { RoomInMessage } from "@esposter/db-schema";
 import { WEBHOOK_MAX_LENGTH } from "#shared/services/message/constants";
 import { useWebhookStore } from "@/store/message/room/webhook";
 
-interface WebhookSettingsProps {
+interface WebhookProps {
   roomId: RoomInMessage["id"];
 }
 
-const { roomId } = defineProps<WebhookSettingsProps>();
+const { roomId } = defineProps<WebhookProps>();
 const webhookStore = useWebhookStore();
 const { createWebhook, readWebhooks } = webhookStore;
 const { items } = storeToRefs(webhookStore);

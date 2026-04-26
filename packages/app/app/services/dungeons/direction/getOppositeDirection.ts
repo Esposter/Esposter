@@ -23,5 +23,6 @@ export const getOppositeDirection = (direction: Direction): Direction => {
       return Direction.DOWN_LEFT;
     default:
       exhaustiveGuard(direction);
+      return Direction.NONE;
   }
 };

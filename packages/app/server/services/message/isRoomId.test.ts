@@ -1,4 +1,3 @@
-// @vitest-environment node
 import { isRoomId } from "@@/server/services/message/isRoomId";
 import { describe, expect, test } from "vitest";
 

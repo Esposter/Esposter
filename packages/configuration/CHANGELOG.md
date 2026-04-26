@@ -3,34 +3,60 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.21.0](https://github.com/Esposter/Esposter/compare/v2.20.0...v2.21.0) (2026-04-15)
+
+### Features
+
+* slash command params chip ([458dfbb](https://github.com/Esposter/Esposter/commit/458dfbbfd5a0e01727c9fc7d985e11c66eea8e4f))
+
 # [2.20.0](https://github.com/Esposter/Esposter/compare/v2.19.2...v2.20.0) (2026-03-29)
 
 ### Bug Fixes
 
 * add back rule since oxfmt enables it ([bd3717f](https://github.com/Esposter/Esposter/commit/bd3717f9a26290e025df141926b48e500aa978a7))
+
 * cleanup types ([e323410](https://github.com/Esposter/Esposter/commit/e3234109352839da2a538a97687be08240c3cce5))
+
 * edit name ([16ccadc](https://github.com/Esposter/Esposter/commit/16ccadc77d0c2247252131ab0544427dbd61176c))
+
 * format + fix up some ignores ([6cd632f](https://github.com/Esposter/Esposter/commit/6cd632ff672ad8e0adee51b42cb6f6925f894b96))
+
 * ignore md files ([d2255bb](https://github.com/Esposter/Esposter/commit/d2255bb2214428ccd4b39f8f53dd9d467bfe8f35))
+
 * lint ([8e76d68](https://github.com/Esposter/Esposter/commit/8e76d689953131beb15892d20747efebbf819fea))
+
 * lint ([7e81f71](https://github.com/Esposter/Esposter/commit/7e81f7145c3a052c273c2a06cbfe5a275985876e))
+
 * lint ([2805841](https://github.com/Esposter/Esposter/commit/2805841bf558fa7a564275934d3e91afa8d3d52e))
+
 * lint and remove unnecessary options ([619dac8](https://github.com/Esposter/Esposter/commit/619dac87654a95fc5c58d75c04999cd116f4e93d))
+
 * lint, ignore md files ([c6edd09](https://github.com/Esposter/Esposter/commit/c6edd097f365ff168ab3755b28845b5ba403931e))
+
 * override html self closing ([a2a6ee7](https://github.com/Esposter/Esposter/commit/a2a6ee712c2fe1d2baeb4274dbfc0937de4e093f))
+
 * put options in root ([920882f](https://github.com/Esposter/Esposter/commit/920882f58743ab23cfbce541d33de521dbe326ef))
+
 * remove unnecessary self closing tags ([b8d0e63](https://github.com/Esposter/Esposter/commit/b8d0e6372ca66d380646eafbfa7e8a3078b6575e))
+
 * renames ([83abc7f](https://github.com/Esposter/Esposter/commit/83abc7fe92213c024702ce8668cb321b287bb017))
+
 * types ([77147d6](https://github.com/Esposter/Esposter/commit/77147d616ac90f4b56ee2444f54bdce32ae89b0d))
+
 * update oxlintrc options ([1375d2d](https://github.com/Esposter/Esposter/commit/1375d2d0635a1c882d87f12831b1f10920fc282c))
 
 ### Features
 
 * Add oxlint type aware ([eb40e2d](https://github.com/Esposter/Esposter/commit/eb40e2d7da8c606c66053582284264e0fb3a2592))
+
 * Add vue-phaserjs tests ([cd2100f](https://github.com/Esposter/Esposter/commit/cd2100f5c7fd98c8932a48f22f5601d1bba6a905))
+
 * migrate to oxfmt ([e7a0212](https://github.com/Esposter/Esposter/commit/e7a0212f9ec18d7193c96cc6069ac6ecf168e8bb))
+
 * migrate to unplugin-dts ([fddd059](https://github.com/Esposter/Esposter/commit/fddd0593fa0ab3edb8ddf0c969222fef87c7c639))
+
 * switch to tsgo ([3137e2f](https://github.com/Esposter/Esposter/commit/3137e2f068cf03eb13c93e108736b034fbf9cea5))
+
 * switch to tsgo ([1e504b3](https://github.com/Esposter/Esposter/commit/1e504b3a6ce5144dadbdd9bc543018a35e7b6808))
 
 ## [2.19.2](https://github.com/Esposter/Esposter/compare/v2.19.1...v2.19.2) (2026-02-05)
@@ -46,19 +72,29 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * finally fix up all type issues ([179e963](https://github.com/Esposter/Esposter/commit/179e9639f3cfdf05e08aff88e4844748158f0a1c))
+
 * lint ([cbe435c](https://github.com/Esposter/Esposter/commit/cbe435cd043ed53734efac8ae72058434ee2869b))
+
 * lint ([e9c15a4](https://github.com/Esposter/Esposter/commit/e9c15a42d958fbc960ba343822808cd1ab6c92b3))
+
 * lint ([37dc547](https://github.com/Esposter/Esposter/commit/37dc5471141f1823c88b522ae7c9083843b562e6))
+
 * lint ([735fdaf](https://github.com/Esposter/Esposter/commit/735fdafcfae087a1325de4688342fbe4d92f2350))
+
 * lint rule name ([cf238a9](https://github.com/Esposter/Esposter/commit/cf238a9cc7b6049edbd7d7e62e9c0ab335abc190))
+
 * oxlint ([3df2ec1](https://github.com/Esposter/Esposter/commit/3df2ec1ad17f36d77780656e27d3034cd3ac32de))
+
 * plugins + getEventName ([543b801](https://github.com/Esposter/Esposter/commit/543b801c7b11acde7081334b68bcf07b1786f7be))
+
 * turn off rule ([0a8a5a6](https://github.com/Esposter/Esposter/commit/0a8a5a60f46178198e5063abdaa84bf02958919a))
+
 * update rolldown-plugin-dts and remove resolve option ([251fe7d](https://github.com/Esposter/Esposter/commit/251fe7d7811121e514fcadaafeafd20a6460dca4))
 
 ### Features
 
 * migrate to unplugin-dts ([2bedfa3](https://github.com/Esposter/Esposter/commit/2bedfa301872a9c371434e1a061e27757129609d))
+
 * update eslint plugin perfectionist ([83ac04f](https://github.com/Esposter/Esposter/commit/83ac04f92b2c2e23d5fbbd1256658c431e0933ef))
 
 ## [2.18.2](https://github.com/Esposter/Esposter/compare/v2.18.1...v2.18.2) (2025-12-10)
@@ -74,6 +110,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * revert vue rule, the issue is with the vue parser most likely ([732da00](https://github.com/Esposter/Esposter/commit/732da00b426248b6e1cd670b67a246d604a579b5))
+
 * turn off time-consuming rule ([3033838](https://github.com/Esposter/Esposter/commit/3033838b2bae9630018f38af0aacd0dc85bd41bb))
 
 ### Features
@@ -85,6 +122,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * lint ([bdbac7f](https://github.com/Esposter/Esposter/commit/bdbac7fa5e14b2ff333c897fed653090b1a9f975))
+
 * webhook to be based on room id ([4f0a701](https://github.com/Esposter/Esposter/commit/4f0a7019cad8061bff1077711ff708434cb56283))
 
 ### Features

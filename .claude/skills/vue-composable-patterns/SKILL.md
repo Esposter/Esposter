@@ -5,8 +5,6 @@ description: Esposter-specific Vue 3 composable and form patterns — MaybeRefOr
 
 # Vue Composable & Form Patterns (Esposter)
 
-Patterns learned through development of the Esposter project. Apply these whenever writing Vue composables, validation rules, or form dialogs.
-
 ## When to Use `MaybeRefOrGetter` vs Function Argument
 
 Use `MaybeRefOrGetter<T>` when the composable **internally reacts** to the value — i.e., it's used inside a `computed` or `watch`. The composable needs to observe changes between calls.
@@ -28,6 +26,63 @@ export const useCopyToClipboard = () => {
   }
 }
 ```
+
+## Settings Tab Permissions — Hide at the Tab Level
+
+Permission-gated settings tabs are hidden via `SettingsPermissionMap`, not guarded inside the tab component. Individual tab components never check permissions — they render unconditionally (the tab is simply not shown to users who lack permission).
+
+**Pattern:**
+
+1. Add `[SettingsType.Xxx]: RoomPermission.YYY` to `services/message/settings/SettingsPermissionMap.ts`
+2. `LeftSideBar.vue` filters visible tabs using `hasPermission` inside a `computed`
+3. The tab component itself just fetches and renders — no `isPermitted` check
+
+```typescript
+// services/message/settings/SettingsPermissionMap.ts
+export const SettingsPermissionMap: Partial<Record<SettingsType, RoomPermission>> = {
+  [SettingsType.Bans]: RoomPermission.BanMembers,
+  [SettingsType.AuditLog]: RoomPermission.ManageRoom,
+};
+
+// LeftSideBar.vue — filters entries via computed, no per-component checks
+const visibleSettings = computed(() =>
+  Object.entries(SettingsListItemMap).filter(([settingsType]) => {
+    const permission = SettingsPermissionMap[settingsType];
+    if (!permission) return true;
+    const data = myPermissionsMap.value.get(roomId);
+    if (!data) return false;
+    return hasPermission(data.permissions, permission, data.isRoomOwner);
+  }),
+);
+```
+
+**Do NOT** check `isPermitted` inside the tab component and show "Insufficient permissions" text — hide the tab entirely instead.
+
+## StyledWaypoint — Infinite Scroll Pattern
+
+Use `<StyledWaypoint>` for cursor-paginated lists instead of a "Load more" button. It fires `@change` when scrolled into view and manages its own loading indicator via the default slot.
+
+- `:is-active="hasMore"` — hides and deactivates when no more pages
+- `@change="readMoreXxx"` — the handler must accept `(onComplete: () => void)` and call `onComplete()` when done (via the `onComplete` arg to `readMoreItems`)
+- Default slot: shown while loading (skeleton items); omit to use the built-in `v-progress-circular`
+
+```vue
+<StyledWaypoint :is-active="hasMore" @change="readMoreBans" />
+
+<!-- or with loading skeleton: -->
+<StyledWaypoint :is-active="hasMore" @change="readMoreMembers">
+  <MessageModelMemberSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+</StyledWaypoint>
+```
+
+Composable `readMoreXxx` signature must match the `@change` emitted callback:
+
+```typescript
+const readMoreBans = (onComplete: () => void) =>
+  readMoreItems((cursor) => $trpc.moderation.readBans.query({ cursor, limit: LIMIT, roomId }), onComplete);
+```
+
+Never use a manual "Load more" `v-btn` with `isLoadingMore` state — that belongs to `StyledWaypoint`.
 
 ## MaybeRefOrGetter Composables
 
@@ -63,13 +118,13 @@ const uniqueNameRule = useColumnNameRule(() => dataSource.columns); // create
 
 ## Extract Duplicate Validation Rules
 
-When the same validation rule appears in 2+ components, extract it to a shared composable immediately. Don't copy-paste. The `currentName` optional param handles the "allow own name" case for edit vs create:
+When the same validation rule appears in 2+ components, extract it to a shared composable immediately. Don't copy-paste. The `currentName` optional parameter handles the "allow own name" case for edit vs create:
 
 ```typescript
 // WRONG: Duplicate inline rules in EditDialogButton and CreateDialogButton
 const uniqueNameRule = (v: string) => v === column.name || !columns.some(...) || 'Column already exists'
 
-// RIGHT: Single composable, optional exclude param covers both edit and create
+// RIGHT: Single composable, optional exclude parameter covers both edit and create
 const uniqueNameRule = useColumnNameRule(() => dataSource.columns, column.name) // edit
 const uniqueNameRule = useColumnNameRule(() => dataSource.columns)               // create (no exclude)
 ```
@@ -119,7 +174,7 @@ Note use of `name` (not `currentName`) to enable object shorthand `{ name }`.
 
 Only call `structuredClone(toRawDeep(...))` on data pulled from Vue reactive stores or refs. Freshly constructed class instances are already plain, non-reactive objects.
 
-````typescript
+```typescript
 // WRONG: Unnecessary wrapping
 const newRow = new Row({ data: { ... } })
 executeAndRecord(new CreateRowCommand(index, structuredClone(toRawDeep(newRow))))
@@ -130,6 +185,7 @@ executeAndRecord(new CreateRowCommand(index, newRow))
 
 // CORRECT: Clone IS needed for data from reactive stores
 const originalRow = structuredClone(toRawDeep(takeOne(editedItem.value.dataSource.rows, index)))
+```
 
 ## Unwrapping Reactive Proxies
 
@@ -167,7 +223,7 @@ export const useBrowserFeature = () => {
     // ...
   });
 };
-````
+```
 
 **`watchImmediate` is the SSR concern** — it executes the callback during `setup()`, which runs on the server. If the callback accesses browser APIs, use `watchTriggerable` + `onMounted` to defer the first execution (see `useOnlineSubscribable`):
 
@@ -180,6 +236,50 @@ onMounted(async () => {
   await trigger();
 });
 ```
+
+## Dialog Data Loading
+
+**Do NOT re-fetch on every dialog open.** Trust the Pinia store as the source of truth — CRUD operations flow through tRPC subscriptions which keep the store current automatically.
+
+```typescript
+// WRONG: re-fetches every time the dialog opens
+const { readFriends } = useReadFriends();
+watchImmediate(isOpen, async (newIsOpen) => {
+  if (newIsOpen) await readFriends();
+});
+
+// CORRECT: fetch once on mount; subsequent opens use the cached store data
+const { readFriends } = useReadFriends();
+await readFriends();
+```
+
+The one-time `await readFriends()` in `<script setup>` handles the case where the user opens the dialog without having visited the friends page first. After that, the store stays fresh via subscriptions.
+
+## Subscribable Composables (`use*Subscribables`)
+
+Composables that manage tRPC subscriptions for a feature are named `use{Feature}Subscribables` and live in `composables/{domain}/subscribables/`. They are self-registering (no return value) and called from the aggregating `useSubscribables()` composable.
+
+```typescript
+// composables/message/subscribables/useVoiceSubscribables.ts
+export const useVoiceSubscribables = async () => {
+  // calls useOnlineSubscribable, sets up tRPC subscriptions
+  // no return value
+};
+
+// composables/message/subscribables/useSubscribables.ts
+export const useSubscribables = async () => {
+  await useRoomSubscribables();
+  await useVoiceSubscribables();
+  // ...
+};
+```
+
+Rules:
+
+- Name pattern: `use{Feature}Subscribables` — not `use{Feature}Channel`, not `use{Feature}Watcher`
+- Location: `composables/{domain}/subscribables/`
+- No return value — composables that manage subscriptions are self-registering side effects
+- Always call `useOnlineSubscribable` (not raw `watch`) so subscriptions are reconnected after going offline
 
 ## Composable Rules
 
@@ -240,4 +340,83 @@ watch(
 
 - Always initialize the local type ref from the current model value, not a hardcoded default
 - `if (newType === oldType) return;` in a watch callback is always redundant — Vue only fires when the value changes
+
+## Offline IndexedDB Cache via `readItems` cacheOptions
+
+Room-switch composables (`useReadMessages`, `useReadMembers`, `useReadRooms`) pass a `ReadItemsCacheOptions<TItem>` as the third argument to `readItems`. `readItems` in `useCursorPaginationOperationData` handles the if-online/offline logic centrally — no manual `if (!online.value)` branches in composables.
+
+**`ReadItemsCacheOptions<TItem>`** (`app/models/pagination/cursor/ReadItemsCacheOptions.ts`):
+
+```typescript
+interface ReadItemsCacheOptions<TItem> {
+  cache: {
+    read: (partitionKey: string) => Promise<TItem[]>;
+    write: (items: TItem[], partitionKey: string) => Promise<void>;
+  };
+  onCacheRead?: () => void; // fires only on offline cache hit
+  partitionKey: string;
+}
+```
+
+**`readItems` behavior:**
+
+- Offline + `cacheOptions` present → read from cache, call `onCacheRead?.()`, skip tRPC query
+- Online → run tRPC query, then write results to cache
+
+**Generic base functions** (`app/services/cache/indexedDb/`):
+
+- `readIndexedDb(configuration, partitionKey)` — reads all items for a partition key
+- `writeIndexedDb(configuration, items, partitionKey)` — replaces all items for a partition key (respects `configuration.limit`)
+- `resetIndexedDb()` — clears the singleton (used in tests)
+
+**Configuration objects** (one per file, `as const satisfies IndexedDbStoreConfiguration`):
+
+- `MessageIndexedDbStoreConfiguration` — `CompositeAzureKeyPath`, `limit: 50`
+- `MemberIndexedDbStoreConfiguration` — `PartitionedIdKeyPath`
+- `RoomIndexedDbStoreConfiguration` — `PartitionedIdKeyPath`
+
+**partitionKey injection pattern** — when the entity type lacks a `partitionKey` field (e.g. `User`, `Room`), inject/strip it in the `cache.read/write` lambdas:
+
+```typescript
+cache: {
+  read: (partitionKey) => readIndexedDb(MemberIndexedDbStoreConfiguration, partitionKey),
+  write: (items, partitionKey) => writeIndexedDb(MemberIndexedDbStoreConfiguration, items, partitionKey),
+},
+```
+
+**`useMessageCache`** — additional composable for messages only, because the message component doesn't re-mount on room switch:
+
+- `watchDeep(items, ...)` — writes to IndexedDB when live subscription adds messages
+- `watch(currentRoomId, ...)` — hydrates store from IndexedDB on offline room switch
+
+Architecture doc: `features/esbabbler/cache.md`
+
+## Bundle Ancillary Reads with the Primary Read
+
+When a component needs ancillary data (e.g. permissions, metadata) alongside a primary list load, bundle the ancillary read inside the primary read composable — not in the component's `onMounted`.
+
+**Rule:** `readMyPermissions` and similar ancillary fetches belong inside the composable that owns the load (`useReadRooms`, `useReadMembers`, etc.), called in `Promise.all` alongside other metadata reads. If there is no natural companion read, call it directly in `<script setup>` — still no `onMounted`.
+
+```typescript
+// WRONG: component fetches permissions separately in onMounted
+const { isManageable, readMyPermissions } = roleStore;
+onMounted(async () => {
+  if (!isCreator.value) await readMyPermissions({ roomId: room.id });
+});
+
+// CORRECT: bundled in the owning read composable alongside other metadata
+// useReadRooms.ts
+const readMyPermissions = useReadMyPermissions();
+const readRooms = () =>
+  readItems(
+    () => $trpc.room.readRooms.query({ roomId: currentRoomId.value }),
+    ({ items }) => {
+      const roomIds = items.map(({ id }) => id);
+      return Promise.all([readUserToRooms(roomIds), readMyPermissions(roomIds)]);
+    },
+  );
+```
+
+Follow the `useReadUserToRooms` pattern for batch ancillary reads — a composable that accepts an array of IDs and calls the store method for each in `Promise.all`.
+
 - Writable computed is NOT the right tool here — it requires a backing `_ref` and still needs an external sync watch when a parent can reset the model

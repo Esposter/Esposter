@@ -3,11 +3,14 @@ import type { MultiWatchSources, WatchSource } from "vue";
 
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 
-export function useOnlineSubscribable<T extends Readonly<MultiWatchSources>>(
-  source: [...T],
-  callback: (value: { -readonly [K in keyof T]: T[K] extends WatchSource<infer V> ? V : never }) => Promisable<
-    (() => Promisable<void>) | undefined
-  >,
+type OnlineSubscribableSource = object | WatchSource<unknown>;
+type OnlineSubscribableValues<TSources extends readonly OnlineSubscribableSource[]> = {
+  -readonly [K in keyof TSources]: TSources[K] extends WatchSource<infer V> ? V : TSources[K];
+};
+
+export function useOnlineSubscribable<const TSources extends readonly OnlineSubscribableSource[]>(
+  source: TSources,
+  callback: (value: OnlineSubscribableValues<TSources>) => Promisable<(() => Promisable<void>) | undefined>,
 ): void;
 export function useOnlineSubscribable<TSource>(
   source: WatchSource<TSource>,
@@ -30,9 +33,9 @@ export function useOnlineSubscribable(
     const value = isOnline ? (Array.isArray(source) ? values.slice(0, -1) : values[0]) : null;
 
     chain = chain.then(async () => {
-      const prevCleanup = currentCleanup;
+      const previousCleanup = currentCleanup;
       currentCleanup = undefined;
-      await prevCleanup?.();
+      await previousCleanup?.();
 
       if (!isOnline || !isActive) return;
 

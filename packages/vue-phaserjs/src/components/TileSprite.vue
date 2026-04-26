@@ -8,13 +8,13 @@ import type { SetRequired } from "type-fest";
 import { useInitializeGameObject } from "@/composables/useInitializeGameObject";
 import { TileSpriteSetterMap } from "@/util/setterMap/TileSpriteSetterMap";
 
-export interface TileSpriteProps {
+interface TileSpriteEmits extends /** @vue-ignore */ TileSpriteEventEmitsOptions {}
+
+interface TileSpriteProps {
   configuration: SetRequired<Partial<TileSpriteConfiguration>, "texture">;
   immediate?: true;
   onComplete?: (scene: SceneWithPlugins, tileSprite: GameObjects.TileSprite) => void;
 }
-
-interface TileSpriteEmits extends /** @vue-ignore */ TileSpriteEventEmitsOptions {}
 
 const { configuration, immediate, onComplete } = defineProps<TileSpriteProps>();
 const emit = defineEmits<TileSpriteEmits>();

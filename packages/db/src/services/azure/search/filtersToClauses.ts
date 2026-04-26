@@ -1,11 +1,13 @@
 /* eslint-disable perfectionist/sort-switch-case */
-import type { Clause, Filter } from "@esposter/db-schema";
+import type { SelectFields } from "@azure/search-documents";
+import type { Clause, Filter, MessageEntity } from "@esposter/db-schema";
 
 import { ContentTypes } from "@/models/ContentType";
 import { getSearchNonNullClause } from "@/services/azure/search/getSearchNonNullClause";
 import { dayjs } from "@/services/dayjs";
 import {
   BinaryOperator,
+  CompositeKeyPropertyNames,
   FileEntityPropertyNames,
   FilterType,
   FilterTypeHas,
@@ -19,8 +21,10 @@ const IMAGE_CONTENT_TYPES = [...ContentTypes].filter((contentType) => contentTyp
 const VIDEO_CONTENT_TYPES = [...ContentTypes].filter((contentType) => contentType.startsWith("video/"));
 const AUDIO_CONTENT_TYPES = [...ContentTypes].filter((contentType) => contentType.startsWith("audio/"));
 
-export const filtersToClauses = (filters: Filter[]): Clause[] => {
-  const clauses: Clause[] = [];
+export const filtersToClauses = (
+  filters: Filter[],
+): Clause<Record<SelectFields<MessageEntity> & string, unknown>>[] => {
+  const clauses: Clause<Record<SelectFields<MessageEntity> & string, unknown>>[] = [];
 
   for (const [type, filtersByType] of Object.entries(Object.groupBy(filters, ({ type }) => type)))
     switch (type) {
@@ -28,6 +32,14 @@ export const filtersToClauses = (filters: Filter[]): Clause[] => {
         for (const { value } of filtersByType)
           clauses.push({
             key: StandardMessageEntityPropertyNames.userId,
+            operator: BinaryOperator.eq,
+            value,
+          });
+        break;
+      case FilterType.In:
+        for (const { value } of filtersByType)
+          clauses.push({
+            key: CompositeKeyPropertyNames.partitionKey,
             operator: BinaryOperator.eq,
             value,
           });

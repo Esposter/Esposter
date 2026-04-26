@@ -35,6 +35,10 @@ export const VideoSetterMap: SetterMap<VideoConfiguration, GameObjects.Video, Vi
     if (!value) return;
     gameObject.changeSource(value);
   },
-  muted: (gameObject) => (value) => gameObject.setMute(value),
-  volume: (gameObject) => (value) => gameObject.setVolume(value),
+  muted: (gameObject) => (value) => {
+    gameObject.setMute(value);
+  },
+  volume: (gameObject) => (value) => {
+    gameObject.setVolume(value);
+  },
 };

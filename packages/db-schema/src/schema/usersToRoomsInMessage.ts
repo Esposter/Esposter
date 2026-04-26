@@ -1,7 +1,8 @@
+import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { roomsInMessage } from "@/schema/roomsInMessage";
 import { users } from "@/schema/users";
-import { boolean, pgEnum, primaryKey, text, uuid } from "drizzle-orm/pg-core";
+import { boolean, pgEnum, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { z } from "zod";
 
 export enum NotificationType {
@@ -14,7 +15,7 @@ export const notificationTypeSchema = z.enum(NotificationType) satisfies z.ZodTy
 
 export const notificationTypeEnum = pgEnum("notification_type", NotificationType);
 
-export const usersToRoomsInMessage = messageSchema.table(
+export const usersToRoomsInMessage = pgTable(
   "users_to_rooms",
   {
     isHidden: boolean("isHidden").notNull().default(false),
@@ -22,10 +23,15 @@ export const usersToRoomsInMessage = messageSchema.table(
     roomId: uuid("roomId")
       .notNull()
       .references(() => roomsInMessage.id, { onDelete: "cascade" }),
+    timeoutUntil: timestamp("timeoutUntil"),
     userId: text("userId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },
-  ({ roomId, userId }) => [primaryKey({ columns: [userId, roomId] })],
+  {
+    extraConfig: ({ roomId, userId }) => [primaryKey({ columns: [userId, roomId] })],
+    schema: messageSchema,
+  },
 );
+
 export type UserToRoomInMessage = typeof usersToRoomsInMessage.$inferSelect;

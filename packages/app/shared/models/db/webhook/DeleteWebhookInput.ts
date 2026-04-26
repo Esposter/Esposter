@@ -1,8 +1,8 @@
-import { selectRoomInMessageSchema, selectWebhookInMessageSchema } from "@esposter/db-schema";
+import { roomIdSchema, selectWebhookInMessageSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
 export const deleteWebhookInputSchema = z.object({
+  ...roomIdSchema.shape,
   ...selectWebhookInMessageSchema.pick({ id: true }).shape,
-  roomId: selectRoomInMessageSchema.shape.id,
 });
 export type DeleteWebhookInput = z.infer<typeof deleteWebhookInputSchema>;
