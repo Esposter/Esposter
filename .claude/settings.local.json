@@ -45,7 +45,9 @@
       "Bash(wait)",
       "Bash(pnpm ls *)",
       "Bash(pnpm why *)",
-      "WebFetch(domain:orm.drizzle.team)"
+      "WebFetch(domain:orm.drizzle.team)",
+      "Bash(pnpm build:packages *)",
+      "Bash(pnpm typecheck:packages *)"
     ]
   }
 }

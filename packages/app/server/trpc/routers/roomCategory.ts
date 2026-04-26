@@ -35,7 +35,10 @@ export const roomCategoryRouter = router({
         await ctx.db
           .delete(roomCategoriesInMessage)
           .where(
-            and(eq(roomCategoriesInMessage.id, input), eq(roomCategoriesInMessage.userId, ctx.getSessionPayload.user.id)),
+            and(
+              eq(roomCategoriesInMessage.id, input),
+              eq(roomCategoriesInMessage.userId, ctx.getSessionPayload.user.id),
+            ),
           )
           .returning()
       )[0];
@@ -48,7 +51,7 @@ export const roomCategoryRouter = router({
     }),
   readRoomCategories: standardAuthedProcedure.query<RoomCategoryInMessage[]>(({ ctx }) =>
     ctx.db.query.roomCategoriesInMessage.findMany({
-      orderBy: { position: "asc", name: "asc" },
+      orderBy: { name: "asc", position: "asc" },
       where: { userId: { eq: ctx.getSessionPayload.user.id } },
     }),
   ),

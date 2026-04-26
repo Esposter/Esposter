@@ -130,8 +130,8 @@ export const friendRequestRouter = router({
         const existingBlock = await tx.query.blocks.findFirst({
           where: {
             OR: [
-              { blockerId: { eq: userId }, blockedId: { eq: receiverId } },
-              { blockerId: { eq: receiverId }, blockedId: { eq: userId } },
+              { blockedId: { eq: receiverId }, blockerId: { eq: userId } },
+              { blockedId: { eq: userId }, blockerId: { eq: receiverId } },
             ],
           },
         });

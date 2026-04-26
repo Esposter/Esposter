@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { RoomInMessage, RoomCategoryInMessage } from "@esposter/db-schema";
+import type { RoomCategoryInMessage, RoomInMessage } from "@esposter/db-schema";
 
 interface RoomCategoryRoomGroupProps {
   category?: RoomCategoryInMessage;

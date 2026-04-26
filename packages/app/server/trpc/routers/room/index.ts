@@ -247,9 +247,9 @@ export const roomRouter = router({
       const ban = await tx.query.bansInMessage.findFirst({
         columns: { userId: true },
         where: {
+          deletedAt: { isNull: true },
           roomId: { eq: invite.roomId },
           userId: { eq: ctx.getSessionPayload.user.id },
-          deletedAt: { isNull: true },
         },
       });
       if (ban) throw new TRPCError({ code: "FORBIDDEN" });
