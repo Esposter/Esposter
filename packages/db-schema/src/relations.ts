@@ -12,7 +12,7 @@ import { pushSubscriptionsInMessageRelation } from "@/relations/pushSubscription
 import { roomCategoriesInMessageRelation } from "@/relations/roomCategoriesInMessageRelation";
 import { roomRolesInMessageRelation } from "@/relations/roomRolesInMessageRelation";
 import { roomsInMessageRelation } from "@/relations/roomsInMessageRelation";
-import { searchHistoriesInMessageRelation } from "@/relations/searchHistoriesInMessage";
+import { searchHistoriesInMessageRelation } from "@/relations/searchHistoriesInMessageRelation";
 import { sessionsRelation } from "@/relations/sessionsRelation";
 import { surveysRelation } from "@/relations/surveysRelation";
 import { userAchievementsRelation } from "@/relations/userAchievementsRelation";

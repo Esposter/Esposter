@@ -47,7 +47,8 @@
       "Bash(pnpm why *)",
       "WebFetch(domain:orm.drizzle.team)",
       "Bash(pnpm build:packages *)",
-      "Bash(pnpm typecheck:packages *)"
+      "Bash(pnpm typecheck:packages *)",
+      "Bash(git diff *)"
     ]
   }
 }

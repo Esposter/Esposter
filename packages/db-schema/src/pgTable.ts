@@ -1,5 +1,12 @@
 /* oxlint-disable @typescript-eslint/no-unnecessary-type-arguments */
-import type { AnyPgColumnBuilder, PgBuildColumns, PgBuildExtraConfigColumns, PgSchema, PgTableExtraConfigValue, PgTableWithColumns } from "drizzle-orm/pg-core";
+import type {
+  AnyPgColumnBuilder,
+  PgBuildColumns,
+  PgBuildExtraConfigColumns,
+  PgSchema,
+  PgTableExtraConfigValue,
+  PgTableWithColumns,
+} from "drizzle-orm/pg-core";
 
 import { metadataSchema } from "@/metadataSchema";
 import { pgTable as basePgTable } from "drizzle-orm/pg-core";
