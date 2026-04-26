@@ -24,7 +24,7 @@ import {
 } from "@esposter/db-schema";
 import { ID_SEPARATOR, InvalidOperationError, ItemMetadataPropertyNames, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, eq, getTableColumns, inArray, ne, or } from "drizzle-orm";
+import { and, eq, getColumns, inArray, ne, or } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { z } from "zod";
 
@@ -140,7 +140,7 @@ export const directMessageRouter = router({
       if (cursor) wheres.push(getCursorWhere(roomsInMessage, cursor, sortBy));
 
       const readRooms = await ctx.db
-        .select(getTableColumns(roomsInMessage))
+        .select(getColumns(roomsInMessage))
         .from(roomsInMessage)
         .innerJoin(usersToRoomsInMessage, innerJoinCondition)
         .where(and(...wheres))

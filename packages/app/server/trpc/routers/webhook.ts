@@ -22,7 +22,7 @@ import {
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, count, eq, getTableColumns, inArray } from "drizzle-orm";
+import { and, count, eq, getColumns, inArray } from "drizzle-orm";
 import { z } from "zod";
 
 const readWebhooksInputSchema = roomIdSchema;
@@ -116,7 +116,7 @@ export const webhookRouter = router({
   readAppUsersByIds: getMemberProcedure(readAppUsersByIdsInputSchema, "roomId").query(
     ({ ctx, input: { ids, roomId } }) =>
       ctx.db
-        .select(getTableColumns(appUsersInMessage))
+        .select(getColumns(appUsersInMessage))
         .from(appUsersInMessage)
         .innerJoin(webhooksInMessage, eq(webhooksInMessage.userId, appUsersInMessage.id))
         .where(and(eq(webhooksInMessage.roomId, roomId), inArray(appUsersInMessage.id, ids))),

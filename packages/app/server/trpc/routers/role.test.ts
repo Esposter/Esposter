@@ -7,7 +7,7 @@ import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/tr
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
-import { DatabaseEntityType, RoomPermission, rooms } from "@esposter/db-schema";
+import { DatabaseEntityType, RoomPermission, roomsInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
@@ -46,7 +46,7 @@ describe("role", () => {
   });
 
   afterEach(async () => {
-    await mockContext.db.delete(rooms);
+    await mockContext.db.delete(roomsInMessage);
   });
 
   test("reads empty roles (only @everyone)", async () => {

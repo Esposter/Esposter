@@ -40,7 +40,7 @@ import {
 } from "@esposter/db-schema";
 import { exhaustiveGuard, ItemMetadataPropertyNames, NotFoundError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, eq, getTableColumns, isNull, SQL } from "drizzle-orm";
+import { and, eq, getColumns, isNull, SQL } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 
 const onAdminActionInputSchema = roomIdSchema;
@@ -138,9 +138,9 @@ export const moderationRouter = router({
     const bannedByUsers = alias(users, "bannedByUsers");
     const readBans = await ctx.db
       .select({
-        ...getTableColumns(bansInMessage),
-        bannedByUser: getTableColumns(bannedByUsers),
-        user: getTableColumns(users),
+        ...getColumns(bansInMessage),
+        bannedByUser: getColumns(bannedByUsers),
+        user: getColumns(users),
       })
       .from(bansInMessage)
       .innerJoin(users, eq(bansInMessage.userId, users.id))

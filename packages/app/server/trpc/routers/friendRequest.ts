@@ -100,13 +100,7 @@ export const friendRequestRouter = router({
   readFriendRequests: standardAuthedProcedure.query<FriendRequestWithRelations[]>(({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
     return ctx.db.query.friendRequests.findMany({
-      where: {
-        RAW: (friendRequests, { or, eq }) => {
-          const where = or(eq(friendRequests.receiverId, userId), eq(friendRequests.senderId, userId));
-          if (!where) return eq(friendRequests.receiverId, userId);
-          return where;
-        },
-      },
+      where: { OR: [{ receiverId: { eq: userId } }, { senderId: { eq: userId } }] },
       with: FriendRequestRelations,
     });
   }),
@@ -135,14 +129,10 @@ export const friendRequestRouter = router({
       const [newRequest] = await ctx.db.transaction(async (tx) => {
         const existingBlock = await tx.query.blocks.findFirst({
           where: {
-            RAW: (blocks, { and, eq, or }) => {
-              const where = or(
-                and(eq(blocks.blockerId, userId), eq(blocks.blockedId, receiverId)),
-                and(eq(blocks.blockerId, receiverId), eq(blocks.blockedId, userId)),
-              );
-              if (!where) return eq(blocks.blockerId, userId);
-              return where;
-            },
+            OR: [
+              { blockerId: { eq: userId }, blockedId: { eq: receiverId } },
+              { blockerId: { eq: receiverId }, blockedId: { eq: userId } },
+            ],
           },
         });
         if (existingBlock)

@@ -33,15 +33,14 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import { deleteDirectory } from "@esposter/db";
 import {
   AzureContainer,
-  bansInMessage,
   CODE_LENGTH,
   DatabaseEntityType,
   InviteInMessageRelations,
   invitesInMessage,
   roomIdSchema,
+  RoomPermission,
   roomRolesInMessage,
   roomsInMessage,
-  RoomPermission,
   RoomType,
   selectInviteInMessageSchema,
   selectRoomInMessageSchema,
@@ -52,7 +51,7 @@ import {
 } from "@esposter/db-schema";
 import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, count, desc, eq, getTableColumns, ilike, inArray, ne, sql } from "drizzle-orm";
+import { and, count, desc, eq, getColumns, ilike, inArray, ne, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { z } from "zod";
 
@@ -248,15 +247,9 @@ export const roomRouter = router({
       const ban = await tx.query.bansInMessage.findFirst({
         columns: { userId: true },
         where: {
-          RAW: (bansInMessage, { and, eq, isNull }) => {
-            const where = and(
-              eq(bansInMessage.roomId, invite.roomId),
-              eq(bansInMessage.userId, ctx.getSessionPayload.user.id),
-              isNull(bansInMessage.deletedAt),
-            );
-            if (!where) throw new InvalidOperationError(Operation.Read, DatabaseEntityType.Ban, invite.roomId);
-            return where;
-          },
+          roomId: { eq: invite.roomId },
+          userId: { eq: ctx.getSessionPayload.user.id },
+          deletedAt: { isNull: true },
         },
       });
       if (ban) throw new TRPCError({ code: "FORBIDDEN" });
@@ -408,7 +401,7 @@ export const roomRouter = router({
       if (filter?.name) wheres.push(ilike(users.name, `%${filter.name}%`));
 
       const readUsers = await ctx.db
-        .select(getTableColumns(users))
+        .select(getColumns(users))
         .from(users)
         .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.userId, users.id))
         .where(and(...wheres))
@@ -419,32 +412,34 @@ export const roomRouter = router({
   ),
   readMembersByIds: getMemberProcedure(readMembersByIdsInputSchema, "roomId").query(({ ctx, input: { ids, roomId } }) =>
     ctx.db
-      .select(getTableColumns(users))
+      .select(getColumns(users))
       .from(users)
       .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.userId, users.id))
       .where(and(eq(usersToRoomsInMessage.roomId, roomId), inArray(users.id, ids))),
   ),
-  readMutualRooms: standardAuthedProcedure.input(readMutualRoomsInputSchema).query<RoomInMessage[]>(({ ctx, input }) => {
-    const usersToRoomsInMessage1 = alias(usersToRoomsInMessage, "usersToRoomsInMessage1");
-    const usersToRoomsInMessage2 = alias(usersToRoomsInMessage, "usersToRoomsInMessage2");
-    return ctx.db
-      .select(getTableColumns(roomsInMessage))
-      .from(roomsInMessage)
-      .innerJoin(
-        usersToRoomsInMessage1,
-        and(
-          eq(usersToRoomsInMessage1.roomId, roomsInMessage.id),
-          eq(usersToRoomsInMessage1.userId, ctx.getSessionPayload.user.id),
-        ),
-      )
-      .innerJoin(
-        usersToRoomsInMessage2,
-        and(eq(usersToRoomsInMessage2.roomId, roomsInMessage.id), eq(usersToRoomsInMessage2.userId, input.userId)),
-      )
-      .where(eq(roomsInMessage.type, RoomType.Room))
-      .orderBy(desc(roomsInMessage.updatedAt))
-      .limit(MAX_READ_LIMIT);
-  }),
+  readMutualRooms: standardAuthedProcedure
+    .input(readMutualRoomsInputSchema)
+    .query<RoomInMessage[]>(({ ctx, input }) => {
+      const usersToRoomsInMessage1 = alias(usersToRoomsInMessage, "usersToRoomsInMessage1");
+      const usersToRoomsInMessage2 = alias(usersToRoomsInMessage, "usersToRoomsInMessage2");
+      return ctx.db
+        .select(getColumns(roomsInMessage))
+        .from(roomsInMessage)
+        .innerJoin(
+          usersToRoomsInMessage1,
+          and(
+            eq(usersToRoomsInMessage1.roomId, roomsInMessage.id),
+            eq(usersToRoomsInMessage1.userId, ctx.getSessionPayload.user.id),
+          ),
+        )
+        .innerJoin(
+          usersToRoomsInMessage2,
+          and(eq(usersToRoomsInMessage2.roomId, roomsInMessage.id), eq(usersToRoomsInMessage2.userId, input.userId)),
+        )
+        .where(eq(roomsInMessage.type, RoomType.Room))
+        .orderBy(desc(roomsInMessage.updatedAt))
+        .limit(MAX_READ_LIMIT);
+    }),
   readRoom: standardAuthedProcedure.input(readRoomInputSchema).query<null | RoomInMessage>(async ({ ctx, input }) => {
     if (input) {
       const room = await ctx.db.query.roomsInMessage.findFirst({
@@ -481,7 +476,7 @@ export const roomRouter = router({
     }
     const readRoom = (
       await ctx.db
-        .select(getTableColumns(roomsInMessage))
+        .select(getColumns(roomsInMessage))
         .from(roomsInMessage)
         .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, roomsInMessage.id))
         .where(
@@ -503,7 +498,7 @@ export const roomRouter = router({
       if (roomId) {
         room = (
           await ctx.db
-            .select(getTableColumns(roomsInMessage))
+            .select(getColumns(roomsInMessage))
             .from(roomsInMessage)
             .innerJoin(usersToRoomsInMessage, innerJoinCondition)
             .where(and(eq(roomsInMessage.id, roomId), eq(roomsInMessage.type, RoomType.Room)))
@@ -521,7 +516,7 @@ export const roomRouter = router({
       if (room) wheres.push(ne(roomsInMessage.id, room.id));
 
       const readRooms = await ctx.db
-        .select(getTableColumns(roomsInMessage))
+        .select(getColumns(roomsInMessage))
         .from(roomsInMessage)
         .innerJoin(usersToRoomsInMessage, innerJoinCondition)
         .where(and(...wheres))

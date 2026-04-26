@@ -12,7 +12,7 @@ import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthed
 import { blocks, DatabaseEntityType, friendRequests, friends, users } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, eq, getTableColumns, ilike, isNull, ne, or } from "drizzle-orm";
+import { and, eq, getColumns, ilike, isNull, ne, or } from "drizzle-orm";
 
 export const friendRouter = router({
   deleteFriend: standardAuthedProcedure.input(friendUserIdInputSchema).mutation(async ({ ctx, input: friendId }) => {
@@ -43,7 +43,7 @@ export const friendRouter = router({
   readFriends: standardAuthedProcedure.query<User[]>(({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
     return ctx.db
-      .select(getTableColumns(users))
+      .select(getColumns(users))
       .from(friends)
       .innerJoin(
         users,
@@ -78,7 +78,7 @@ export const friendRouter = router({
       .union(ctx.db.select({ id: blocks.blockerId }).from(blocks).where(eq(blocks.blockedId, userId)))
       .as("blocked_users");
     return ctx.db
-      .select(getTableColumns(users))
+      .select(getColumns(users))
       .from(users)
       .leftJoin(blockedSubquery, eq(blockedSubquery.id, users.id))
       .where(and(ilike(users.name, `%${escapeLike(name)}%`), ne(users.id, userId), isNull(blockedSubquery.id)))

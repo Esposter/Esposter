@@ -21,10 +21,7 @@ export const achievementRouter = router({
   readAchievementMap: standardAuthedProcedure.query(async ({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
     const unlockedUserAchievements = await ctx.db.query.userAchievements.findMany({
-      where: {
-        RAW: (userAchievements, { and, eq, isNotNull }) =>
-          and(eq(userAchievements.userId, userId), isNotNull(userAchievements.unlockedAt)),
-      },
+      where: { userId: { eq: userId }, unlockedAt: { isNotNull: true } },
       with: UserAchievementRelations,
     });
     const unlockedUserAchievementNames = new Set(unlockedUserAchievements.map(({ achievement }) => achievement.name));

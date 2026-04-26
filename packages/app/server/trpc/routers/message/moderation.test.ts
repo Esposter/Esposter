@@ -10,11 +10,11 @@ import { roomRouter } from "@@/server/trpc/routers/room";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 import {
   AdminActionType,
-  bansInMessageInMessage,
+  bansInMessage,
   DatabaseEntityType,
   RoomPermission,
   roomsInMessage,
-  usersToRoomsInMessageInMessage,
+  usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { NotFoundError, takeOne } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";

@@ -35,9 +35,9 @@ description: Esposter Drizzle ORM conventions — column naming (camelCase match
 
 ## Selects
 
-- **Use `getTableColumns(table)` for flat results** — `getTableColumns` (from `drizzle-orm`) extracts only the column definitions from a table object. Use it when joining and you want one table's columns flat:
+- **Use `getColumns(table)` for flat results** — `getColumns` (from `drizzle-orm`) extracts only the column definitions from a table object. Use it when joining and you want one table's columns flat:
   ```ts
-  .select(getTableColumns(users))
+  .select(getColumns(users))
   ```
   Never spread the table object directly (`{ ...users }`) — the table object contains metadata beyond columns.
 - **Use `.select({ alias: tableObject })` for namespaced results** — e.g. `.select({ user: users })` when you want the result nested under a key (`{ user: User }`), then `.map(({ user }) => user)` to unwrap.
@@ -112,27 +112,53 @@ export const friendsRelation = defineRelationsPart(schema, (r) => ({
 
 ### v2 `where` Syntax
 
-The v2 relational API uses **object-based `where`** (not callbacks):
+The v2 relational API uses **object-based `where`** (not callbacks). **Almost never use `RAW:`** — all common operators have first-class object syntax:
 
 ```ts
-// CORRECT — v2 object syntax
-const room = await ctx.db.query.rooms.findFirst({
-  where: { id: { eq: input }, userId: { eq: userId } },
-});
+// Simple equality (implicit AND when multiple fields)
+where: { id: { eq: input }, userId: { eq: userId } }
 
-// For EXISTS subqueries, use RAW escape hatch
-const room = await ctx.db.query.rooms.findFirst({
-  where: {
-    RAW: (rooms, { and, eq, exists }) => {
-      const where = and(eq(rooms.id, input), exists(...));
-      if (!where) throw new InvalidOperationError(...);
-      return where;
-    },
-  },
-});
+// isNull / isNotNull
+where: { deletedAt: { isNull: true } }
+where: { unlockedAt: { isNotNull: true } }
+
+// AND + isNull combined (implicit AND)
+where: { roomId: { eq: roomId }, userId: { eq: userId }, deletedAt: { isNull: true } }
+
+// OR — use OR: array
+where: { OR: [{ receiverId: { eq: userId } }, { senderId: { eq: userId } }] }
+
+// Nested OR with AND (each element of OR: is implicitly ANDed)
+where: {
+  OR: [
+    { blockerId: { eq: userId }, blockedId: { eq: targetId } },
+    { blockerId: { eq: targetId }, blockedId: { eq: userId } },
+  ],
+}
+
+// NOT
+where: { NOT: { id: { gt: 10 } } }
+
+// Other operators: gt, gte, lt, lte, ne, in, notIn, like, ilike
+where: { position: { gte: 0 } }
+where: { name: { like: "John%" } }
+where: { id: { in: [1, 2, 3] } }
 
 // WRONG — v1 callback syntax (incompatible with v2)
 where: (rooms, { and, eq }) => and(eq(rooms.id, input), eq(rooms.userId, userId)),
+```
+
+**Use `RAW:` ONLY for operators with no object equivalent** — currently: `EXISTS` subqueries, `isNull` on a join condition (not a column filter), or raw SQL expressions. When using `RAW:`, always guard against `undefined`:
+
+```ts
+// RAW only when genuinely needed (e.g. EXISTS)
+where: {
+  RAW: (rooms, { and, eq, exists }) => {
+    const where = and(eq(rooms.id, input), exists(...));
+    if (!where) throw new InvalidOperationError(...);
+    return where;
+  },
+},
 ```
 
 ### v2 `orderBy` Syntax

@@ -11,7 +11,7 @@ import { trpcRouter } from "@@/server/trpc/routers";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 import {
   achievements,
-  rooms,
+  roomsInMessage,
   SpecialAchievementName,
   UserAchievementRelations,
   WebpageAchievementName,
@@ -33,7 +33,7 @@ describe("achievement", () => {
 
   afterEach(async () => {
     MockContainerDatabase.clear();
-    await mockContext.db.delete(rooms);
+    await mockContext.db.delete(roomsInMessage);
     await mockContext.db.delete(achievements);
   });
 

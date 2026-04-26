@@ -8,7 +8,7 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession } from "@@/server/trpc/context.test";
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
-import { rooms } from "@esposter/db-schema";
+import { roomsInMessage } from "@esposter/db-schema";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe(getTopRolePosition, () => {
@@ -35,7 +35,7 @@ describe(getTopRolePosition, () => {
   });
 
   afterEach(async () => {
-    await mockContext.db.delete(rooms);
+    await mockContext.db.delete(roomsInMessage);
   });
 
   test("returns -1 with no assigned roles", async () => {
@@ -75,7 +75,7 @@ describe(getTopRolePosition, () => {
     expect(result).toBe(updatedPosition);
   });
 
-  test("returns positions across multiple rooms", async () => {
+  test("returns positions across multiple roomsInMessage", async () => {
     expect.hasAssertions();
 
     const otherRoom = await roomCaller.createRoom({ name: "other" });
