@@ -17,7 +17,7 @@ export const userToRoomRouter = router({
     await isMember(ctx.db, ctx.getSessionPayload, input.roomIds);
     return ctx.db.query.usersToRoomsInMessage.findMany({
       columns: { notificationType: true, roomId: true, userId: true },
-      where: { roomId: { arrayContains: input.roomIds }, userId: { eq: ctx.getSessionPayload.user.id } },
+      where: { roomId: { in: input.roomIds }, userId: { eq: ctx.getSessionPayload.user.id } },
     });
   }),
   updateUserToRoom: getMemberProcedure(updateUserToRoomInputSchema, "roomId").mutation(
