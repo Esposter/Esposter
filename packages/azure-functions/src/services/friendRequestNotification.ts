@@ -4,7 +4,7 @@ import type { FriendRequestNotificationEventGridData } from "@esposter/db-schema
 import { db } from "@/services/db";
 import { webpush } from "@/services/webpush";
 import { getPushSubscriptionsForUser } from "@esposter/db";
-import { pushSubscriptions } from "@esposter/db-schema";
+import { pushSubscriptionsInMessage } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { WebPushError } from "web-push";
@@ -38,7 +38,7 @@ export const friendRequestNotification = async (
           if (error instanceof WebPushError)
             if (error.statusCode === 410) {
               context.log(`Subscription for endpoint ${endpoint} has expired. Deleting.`);
-              await db.delete(pushSubscriptions).where(eq(pushSubscriptions.id, id));
+              await db.delete(pushSubscriptionsInMessage).where(eq(pushSubscriptionsInMessage.id, id));
             } else context.error(`Failed to send push notification to ${endpoint}: `, error);
           else context.error(`Unexpected error sending push notification to ${endpoint}: `, error);
         }

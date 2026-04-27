@@ -3,31 +3,35 @@ import { router } from "@@/server/trpc";
 import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { DatabaseEntityType, selectRoomSchema, usersToRooms } from "@esposter/db-schema";
+import { DatabaseEntityType, selectRoomInMessageSchema, usersToRoomsInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
-const readUserToRoomsInputSchema = z.object({ roomIds: selectRoomSchema.shape.id.array().min(1) });
+const readUserToRoomsInputSchema = z.object({ roomIds: selectRoomInMessageSchema.shape.id.array().min(1) });
 export type ReadUserToRoomsInput = z.infer<typeof readUserToRoomsInputSchema>;
 
 export const userToRoomRouter = router({
   readUserToRooms: standardAuthedProcedure.input(readUserToRoomsInputSchema).query(async ({ ctx, input }) => {
     await isMember(ctx.db, ctx.getSessionPayload, input.roomIds);
-    return ctx.db.query.usersToRooms.findMany({
+    return ctx.db.query.usersToRoomsInMessage.findMany({
       columns: { notificationType: true, roomId: true, userId: true },
-      where: (usersToRooms, { and, eq, inArray }) =>
-        and(eq(usersToRooms.userId, ctx.getSessionPayload.user.id), inArray(usersToRooms.roomId, input.roomIds)),
+      where: { roomId: { in: input.roomIds }, userId: { eq: ctx.getSessionPayload.user.id } },
     });
   }),
   updateUserToRoom: getMemberProcedure(updateUserToRoomInputSchema, "roomId").mutation(
     async ({ ctx, input: { notificationType, roomId } }) => {
       const updatedUserToRoom = (
         await ctx.db
-          .update(usersToRooms)
+          .update(usersToRoomsInMessage)
           .set({ notificationType })
-          .where(and(eq(usersToRooms.roomId, roomId), eq(usersToRooms.userId, ctx.getSessionPayload.user.id)))
+          .where(
+            and(
+              eq(usersToRoomsInMessage.roomId, roomId),
+              eq(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id),
+            ),
+          )
           .returning()
       )[0];
       if (!updatedUserToRoom)

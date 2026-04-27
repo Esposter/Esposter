@@ -8,7 +8,7 @@ import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/tr
 import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
-import { DatabaseEntityType, friends, rooms } from "@esposter/db-schema";
+import { DatabaseEntityType, friends, roomsInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
@@ -28,7 +28,7 @@ describe("directMessage", () => {
 
   afterEach(async () => {
     await mockContext.db.delete(friends);
-    await mockContext.db.delete(rooms);
+    await mockContext.db.delete(roomsInMessage);
   });
 
   const makeFriends = async (userA: User, userB: User) => {

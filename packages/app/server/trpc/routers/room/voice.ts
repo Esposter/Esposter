@@ -15,7 +15,7 @@ import { isMember } from "@@/server/trpc/middleware/userToRoom/isMember";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
 import { createMessage } from "@esposter/db";
-import { AzureTable, MessageType, roomIdSchema, selectRoomSchema } from "@esposter/db-schema";
+import { AzureTable, MessageType, roomIdSchema, selectRoomInMessageSchema } from "@esposter/db-schema";
 import { ForbiddenError, NotFoundError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
@@ -23,10 +23,10 @@ import { z } from "zod";
 const roomIdInputSchema = roomIdSchema;
 const setMuteInputSchema = z.object({ ...roomIdSchema.shape, isMuted: z.boolean() });
 const sendSignalInputSchema = z.object({ ...roomIdSchema.shape, payload: voiceSignalPayloadSchema });
-const onJoinVoiceChannelInputSchema = selectRoomSchema.shape.id;
-const onLeaveVoiceChannelInputSchema = selectRoomSchema.shape.id;
-const onSetMuteInputSchema = selectRoomSchema.shape.id;
-const onSendSignalInputSchema = selectRoomSchema.shape.id;
+const onJoinVoiceChannelInputSchema = selectRoomInMessageSchema.shape.id;
+const onLeaveVoiceChannelInputSchema = selectRoomInMessageSchema.shape.id;
+const onSetMuteInputSchema = selectRoomInMessageSchema.shape.id;
+const onSendSignalInputSchema = selectRoomInMessageSchema.shape.id;
 
 export const voiceRouter = router({
   joinVoiceChannel: getMemberProcedure(roomIdInputSchema, "roomId").mutation<VoiceParticipant[]>(

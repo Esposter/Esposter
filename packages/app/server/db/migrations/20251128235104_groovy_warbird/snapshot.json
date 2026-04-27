@@ -1,0 +1,2670 @@
+{
+  "id": "00e79b74-b11f-4d01-a0a4-da8c3a2a5f8a",
+  "prevIds": [
+    "2bd2d58b-8474-4c2e-a70b-2264411d89b0"
+  ],
+  "version": "8",
+  "dialect": "postgres",
+  "ddl": [
+    {
+      "name": "message",
+      "entityType": "schemas"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "accounts",
+      "schema": "public",
+      "entityType": "tables"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "access_token",
+      "schema": "public",
+      "table": "accounts",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "access_token_expires_at",
+      "schema": "public",
+      "table": "accounts",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "account_id",
+      "schema": "public",
+      "table": "accounts",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "created_at",
+      "schema": "public",
+      "table": "accounts",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "deleted_at",
+      "schema": "public",
+      "table": "accounts",
+      "entityType": "columns"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "accounts_pkey",
+      "schema": "public",
+      "table": "accounts",
+      "entityType": "pks"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "id",
+      "schema": "public",
+      "table": "accounts",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "id_token",
+      "schema": "public",
+      "table": "accounts",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "password",
+      "schema": "public",
+      "table": "accounts",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "provider_id",
+      "schema": "public",
+      "table": "accounts",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "refresh_token",
+      "schema": "public",
+      "table": "accounts",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "refresh_token_expires_at",
+      "schema": "public",
+      "table": "accounts",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "scope",
+      "schema": "public",
+      "table": "accounts",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "updated_at",
+      "schema": "public",
+      "table": "accounts",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "user_id",
+      "schema": "public",
+      "table": "accounts",
+      "entityType": "columns"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "user_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "users",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "name": "accounts_user_id_users_id_fk",
+      "schema": "public",
+      "table": "accounts",
+      "entityType": "fks"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "achievements",
+      "schema": "public",
+      "entityType": "tables"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "createdAt",
+      "schema": "public",
+      "table": "achievements",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "deletedAt",
+      "schema": "public",
+      "table": "achievements",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "updatedAt",
+      "schema": "public",
+      "table": "achievements",
+      "entityType": "columns"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "achievements_pkey",
+      "schema": "public",
+      "table": "achievements",
+      "entityType": "pks"
+    },
+    {
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "gen_random_uuid()",
+      "generated": null,
+      "identity": null,
+      "name": "id",
+      "schema": "public",
+      "table": "achievements",
+      "entityType": "columns"
+    },
+    {
+      "type": "achievement_name",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "name",
+      "schema": "public",
+      "table": "achievements",
+      "entityType": "columns"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "name"
+      ],
+      "nullsNotDistinct": false,
+      "name": "achievements_name_unique",
+      "schema": "public",
+      "table": "achievements",
+      "entityType": "uniques"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "app_users",
+      "schema": "message",
+      "entityType": "tables"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "createdAt",
+      "schema": "message",
+      "table": "app_users",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "deletedAt",
+      "schema": "message",
+      "table": "app_users",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "updatedAt",
+      "schema": "message",
+      "table": "app_users",
+      "entityType": "columns"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "app_users_pkey",
+      "schema": "message",
+      "table": "app_users",
+      "entityType": "pks"
+    },
+    {
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "gen_random_uuid()",
+      "generated": null,
+      "identity": null,
+      "name": "id",
+      "schema": "message",
+      "table": "app_users",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "image",
+      "schema": "message",
+      "table": "app_users",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "name",
+      "schema": "message",
+      "table": "app_users",
+      "entityType": "columns"
+    },
+    {
+      "value": "LENGTH(\"message\".\"app_users\".\"name\") >= 1 AND LENGTH(\"message\".\"app_users\".\"name\") <= 100",
+      "name": "name",
+      "schema": "message",
+      "table": "app_users",
+      "entityType": "checks"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "invites",
+      "schema": "message",
+      "entityType": "tables"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "createdAt",
+      "schema": "message",
+      "table": "invites",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "deletedAt",
+      "schema": "message",
+      "table": "invites",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "updatedAt",
+      "schema": "message",
+      "table": "invites",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "code",
+      "schema": "message",
+      "table": "invites",
+      "entityType": "columns"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "invites_pkey",
+      "schema": "message",
+      "table": "invites",
+      "entityType": "pks"
+    },
+    {
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "gen_random_uuid()",
+      "generated": null,
+      "identity": null,
+      "name": "id",
+      "schema": "message",
+      "table": "invites",
+      "entityType": "columns"
+    },
+    {
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "roomId",
+      "schema": "message",
+      "table": "invites",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "userId",
+      "schema": "message",
+      "table": "invites",
+      "entityType": "columns"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "code"
+      ],
+      "nullsNotDistinct": false,
+      "name": "invites_code_unique",
+      "schema": "message",
+      "table": "invites",
+      "entityType": "uniques"
+    },
+    {
+      "value": "LENGTH(\"message\".\"invites\".\"code\") = 8",
+      "name": "code",
+      "schema": "message",
+      "table": "invites",
+      "entityType": "checks"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "roomId"
+      ],
+      "schemaTo": "message",
+      "tableTo": "rooms",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "invites_roomId_rooms_id_fk",
+      "schema": "message",
+      "table": "invites",
+      "entityType": "fks"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "userId"
+      ],
+      "schemaTo": "public",
+      "tableTo": "users",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "invites_userId_users_id_fk",
+      "schema": "message",
+      "table": "invites",
+      "entityType": "fks"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "likes",
+      "schema": "public",
+      "entityType": "tables"
+    },
+    {
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "postId",
+      "schema": "public",
+      "table": "likes",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "userId",
+      "schema": "public",
+      "table": "likes",
+      "entityType": "columns"
+    },
+    {
+      "type": "integer",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "value",
+      "schema": "public",
+      "table": "likes",
+      "entityType": "columns"
+    },
+    {
+      "columns": [
+        "userId",
+        "postId"
+      ],
+      "nameExplicit": false,
+      "name": "likes_userId_postId_pk",
+      "schema": "public",
+      "table": "likes",
+      "entityType": "pks"
+    },
+    {
+      "value": "\"likes\".\"value\" = 1 OR \"likes\".\"value\" = -1",
+      "name": "value",
+      "schema": "public",
+      "table": "likes",
+      "entityType": "checks"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "postId"
+      ],
+      "schemaTo": "public",
+      "tableTo": "posts",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "likes_postId_posts_id_fk",
+      "schema": "public",
+      "table": "likes",
+      "entityType": "fks"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "userId"
+      ],
+      "schemaTo": "public",
+      "tableTo": "users",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "likes_userId_users_id_fk",
+      "schema": "public",
+      "table": "likes",
+      "entityType": "fks"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "posts",
+      "schema": "public",
+      "entityType": "tables"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "createdAt",
+      "schema": "public",
+      "table": "posts",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "deletedAt",
+      "schema": "public",
+      "table": "posts",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "updatedAt",
+      "schema": "public",
+      "table": "posts",
+      "entityType": "columns"
+    },
+    {
+      "type": "integer",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "0",
+      "generated": null,
+      "identity": null,
+      "name": "depth",
+      "schema": "public",
+      "table": "posts",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "''",
+      "generated": null,
+      "identity": null,
+      "name": "description",
+      "schema": "public",
+      "table": "posts",
+      "entityType": "columns"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "posts_pkey",
+      "schema": "public",
+      "table": "posts",
+      "entityType": "pks"
+    },
+    {
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "gen_random_uuid()",
+      "generated": null,
+      "identity": null,
+      "name": "id",
+      "schema": "public",
+      "table": "posts",
+      "entityType": "columns"
+    },
+    {
+      "type": "integer",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "0",
+      "generated": null,
+      "identity": null,
+      "name": "noComments",
+      "schema": "public",
+      "table": "posts",
+      "entityType": "columns"
+    },
+    {
+      "type": "integer",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "0",
+      "generated": null,
+      "identity": null,
+      "name": "noLikes",
+      "schema": "public",
+      "table": "posts",
+      "entityType": "columns"
+    },
+    {
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "parentId",
+      "schema": "public",
+      "table": "posts",
+      "entityType": "columns"
+    },
+    {
+      "type": "double precision",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "ranking",
+      "schema": "public",
+      "table": "posts",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "''",
+      "generated": null,
+      "identity": null,
+      "name": "title",
+      "schema": "public",
+      "table": "posts",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "userId",
+      "schema": "public",
+      "table": "posts",
+      "entityType": "columns"
+    },
+    {
+      "value": "LENGTH(\"posts\".\"title\") <= 300",
+      "name": "title",
+      "schema": "public",
+      "table": "posts",
+      "entityType": "checks"
+    },
+    {
+      "value": "LENGTH(\"posts\".\"description\") <= 1000",
+      "name": "description",
+      "schema": "public",
+      "table": "posts",
+      "entityType": "checks"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "parentId"
+      ],
+      "schemaTo": "public",
+      "tableTo": "posts",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "posts_parentId_posts_id_fk",
+      "schema": "public",
+      "table": "posts",
+      "entityType": "fks"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "userId"
+      ],
+      "schemaTo": "public",
+      "tableTo": "users",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "posts_userId_users_id_fk",
+      "schema": "public",
+      "table": "posts",
+      "entityType": "fks"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "push_subscriptions",
+      "schema": "message",
+      "entityType": "tables"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "createdAt",
+      "schema": "message",
+      "table": "push_subscriptions",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "deletedAt",
+      "schema": "message",
+      "table": "push_subscriptions",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "updatedAt",
+      "schema": "message",
+      "table": "push_subscriptions",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "auth",
+      "schema": "message",
+      "table": "push_subscriptions",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "endpoint",
+      "schema": "message",
+      "table": "push_subscriptions",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "expiration_time",
+      "schema": "message",
+      "table": "push_subscriptions",
+      "entityType": "columns"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "push_subscriptions_pkey",
+      "schema": "message",
+      "table": "push_subscriptions",
+      "entityType": "pks"
+    },
+    {
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "gen_random_uuid()",
+      "generated": null,
+      "identity": null,
+      "name": "id",
+      "schema": "message",
+      "table": "push_subscriptions",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "p256dh",
+      "schema": "message",
+      "table": "push_subscriptions",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "user_id",
+      "schema": "message",
+      "table": "push_subscriptions",
+      "entityType": "columns"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "endpoint",
+        "user_id"
+      ],
+      "nullsNotDistinct": false,
+      "name": "push_subscriptions_endpoint_user_id_unique",
+      "schema": "message",
+      "table": "push_subscriptions",
+      "entityType": "uniques"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "user_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "users",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "push_subscriptions_user_id_users_id_fk",
+      "schema": "message",
+      "table": "push_subscriptions",
+      "entityType": "fks"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "rate_limiter_flexible",
+      "schema": "public",
+      "entityType": "tables"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "expire",
+      "schema": "public",
+      "table": "rate_limiter_flexible",
+      "entityType": "columns"
+    },
+    {
+      "columns": [
+        "key"
+      ],
+      "nameExplicit": false,
+      "name": "rate_limiter_flexible_pkey",
+      "schema": "public",
+      "table": "rate_limiter_flexible",
+      "entityType": "pks"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "key",
+      "schema": "public",
+      "table": "rate_limiter_flexible",
+      "entityType": "columns"
+    },
+    {
+      "type": "integer",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "points",
+      "schema": "public",
+      "table": "rate_limiter_flexible",
+      "entityType": "columns"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "rooms",
+      "schema": "message",
+      "entityType": "tables"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "createdAt",
+      "schema": "message",
+      "table": "rooms",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "deletedAt",
+      "schema": "message",
+      "table": "rooms",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "updatedAt",
+      "schema": "message",
+      "table": "rooms",
+      "entityType": "columns"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "rooms_pkey",
+      "schema": "message",
+      "table": "rooms",
+      "entityType": "pks"
+    },
+    {
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "gen_random_uuid()",
+      "generated": null,
+      "identity": null,
+      "name": "id",
+      "schema": "message",
+      "table": "rooms",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "image",
+      "schema": "message",
+      "table": "rooms",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "name",
+      "schema": "message",
+      "table": "rooms",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "userId",
+      "schema": "message",
+      "table": "rooms",
+      "entityType": "columns"
+    },
+    {
+      "value": "LENGTH(\"message\".\"rooms\".\"name\") <= 100",
+      "name": "name",
+      "schema": "message",
+      "table": "rooms",
+      "entityType": "checks"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "userId"
+      ],
+      "schemaTo": "public",
+      "tableTo": "users",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "rooms_userId_users_id_fk",
+      "schema": "message",
+      "table": "rooms",
+      "entityType": "fks"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "search_histories",
+      "schema": "message",
+      "entityType": "tables"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "createdAt",
+      "schema": "message",
+      "table": "search_histories",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "deletedAt",
+      "schema": "message",
+      "table": "search_histories",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "updatedAt",
+      "schema": "message",
+      "table": "search_histories",
+      "entityType": "columns"
+    },
+    {
+      "type": "jsonb",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "'[]'",
+      "generated": null,
+      "identity": null,
+      "name": "filters",
+      "schema": "message",
+      "table": "search_histories",
+      "entityType": "columns"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "search_histories_pkey",
+      "schema": "message",
+      "table": "search_histories",
+      "entityType": "pks"
+    },
+    {
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "gen_random_uuid()",
+      "generated": null,
+      "identity": null,
+      "name": "id",
+      "schema": "message",
+      "table": "search_histories",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "''",
+      "generated": null,
+      "identity": null,
+      "name": "query",
+      "schema": "message",
+      "table": "search_histories",
+      "entityType": "columns"
+    },
+    {
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "room_id",
+      "schema": "message",
+      "table": "search_histories",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "user_id",
+      "schema": "message",
+      "table": "search_histories",
+      "entityType": "columns"
+    },
+    {
+      "value": "LENGTH(\"message\".\"search_histories\".\"query\") <= 10000",
+      "name": "query",
+      "schema": "message",
+      "table": "search_histories",
+      "entityType": "checks"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "room_id"
+      ],
+      "schemaTo": "message",
+      "tableTo": "rooms",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "name": "search_histories_room_id_rooms_id_fk",
+      "schema": "message",
+      "table": "search_histories",
+      "entityType": "fks"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "user_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "users",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "name": "search_histories_user_id_users_id_fk",
+      "schema": "message",
+      "table": "search_histories",
+      "entityType": "fks"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "sessions",
+      "schema": "public",
+      "entityType": "tables"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "created_at",
+      "schema": "public",
+      "table": "sessions",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "deleted_at",
+      "schema": "public",
+      "table": "sessions",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "expires_at",
+      "schema": "public",
+      "table": "sessions",
+      "entityType": "columns"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "sessions_pkey",
+      "schema": "public",
+      "table": "sessions",
+      "entityType": "pks"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "id",
+      "schema": "public",
+      "table": "sessions",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "ip_address",
+      "schema": "public",
+      "table": "sessions",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "token",
+      "schema": "public",
+      "table": "sessions",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "updated_at",
+      "schema": "public",
+      "table": "sessions",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "user_agent",
+      "schema": "public",
+      "table": "sessions",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "user_id",
+      "schema": "public",
+      "table": "sessions",
+      "entityType": "columns"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "token"
+      ],
+      "nullsNotDistinct": false,
+      "name": "sessions_token_unique",
+      "schema": "public",
+      "table": "sessions",
+      "entityType": "uniques"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "user_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "users",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "name": "sessions_user_id_users_id_fk",
+      "schema": "public",
+      "table": "sessions",
+      "entityType": "fks"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "surveys",
+      "schema": "public",
+      "entityType": "tables"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "createdAt",
+      "schema": "public",
+      "table": "surveys",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "deletedAt",
+      "schema": "public",
+      "table": "surveys",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "updatedAt",
+      "schema": "public",
+      "table": "surveys",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "group",
+      "schema": "public",
+      "table": "surveys",
+      "entityType": "columns"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "surveys_pkey",
+      "schema": "public",
+      "table": "surveys",
+      "entityType": "pks"
+    },
+    {
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "gen_random_uuid()",
+      "generated": null,
+      "identity": null,
+      "name": "id",
+      "schema": "public",
+      "table": "surveys",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "''",
+      "generated": null,
+      "identity": null,
+      "name": "model",
+      "schema": "public",
+      "table": "surveys",
+      "entityType": "columns"
+    },
+    {
+      "type": "integer",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "0",
+      "generated": null,
+      "identity": null,
+      "name": "modelVersion",
+      "schema": "public",
+      "table": "surveys",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "name",
+      "schema": "public",
+      "table": "surveys",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "publishedAt",
+      "schema": "public",
+      "table": "surveys",
+      "entityType": "columns"
+    },
+    {
+      "type": "integer",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "0",
+      "generated": null,
+      "identity": null,
+      "name": "publishVersion",
+      "schema": "public",
+      "table": "surveys",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "userId",
+      "schema": "public",
+      "table": "surveys",
+      "entityType": "columns"
+    },
+    {
+      "value": "LENGTH(\"surveys\".\"name\") >= 1 AND LENGTH(\"surveys\".\"name\") <= 100",
+      "name": "name",
+      "schema": "public",
+      "table": "surveys",
+      "entityType": "checks"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "userId"
+      ],
+      "schemaTo": "public",
+      "tableTo": "users",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "surveys_userId_users_id_fk",
+      "schema": "public",
+      "table": "surveys",
+      "entityType": "fks"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "user_achievements",
+      "schema": "public",
+      "entityType": "tables"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "createdAt",
+      "schema": "public",
+      "table": "user_achievements",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "deletedAt",
+      "schema": "public",
+      "table": "user_achievements",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "updatedAt",
+      "schema": "public",
+      "table": "user_achievements",
+      "entityType": "columns"
+    },
+    {
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "achievement_id",
+      "schema": "public",
+      "table": "user_achievements",
+      "entityType": "columns"
+    },
+    {
+      "type": "integer",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "amount",
+      "schema": "public",
+      "table": "user_achievements",
+      "entityType": "columns"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "user_achievements_pkey",
+      "schema": "public",
+      "table": "user_achievements",
+      "entityType": "pks"
+    },
+    {
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "gen_random_uuid()",
+      "generated": null,
+      "identity": null,
+      "name": "id",
+      "schema": "public",
+      "table": "user_achievements",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "unlocked_at",
+      "schema": "public",
+      "table": "user_achievements",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "user_id",
+      "schema": "public",
+      "table": "user_achievements",
+      "entityType": "columns"
+    },
+    {
+      "value": "\"user_achievements\".\"amount\" >= 1",
+      "name": "amount",
+      "schema": "public",
+      "table": "user_achievements",
+      "entityType": "checks"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        {
+          "value": "user_id",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        },
+        {
+          "value": "achievement_id",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": true,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "name": "user_achievements_user_id_achievement_id_index",
+      "schema": "public",
+      "table": "user_achievements",
+      "entityType": "indexes"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "achievement_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "achievements",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "user_achievements_achievement_id_achievements_id_fk",
+      "schema": "public",
+      "table": "user_achievements",
+      "entityType": "fks"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "user_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "users",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "user_achievements_user_id_users_id_fk",
+      "schema": "public",
+      "table": "user_achievements",
+      "entityType": "fks"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "users",
+      "schema": "public",
+      "entityType": "tables"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "created_at",
+      "schema": "public",
+      "table": "users",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "deleted_at",
+      "schema": "public",
+      "table": "users",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "email",
+      "schema": "public",
+      "table": "users",
+      "entityType": "columns"
+    },
+    {
+      "type": "boolean",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "email_verified",
+      "schema": "public",
+      "table": "users",
+      "entityType": "columns"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "users_pkey",
+      "schema": "public",
+      "table": "users",
+      "entityType": "pks"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "id",
+      "schema": "public",
+      "table": "users",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "image",
+      "schema": "public",
+      "table": "users",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "name",
+      "schema": "public",
+      "table": "users",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "updated_at",
+      "schema": "public",
+      "table": "users",
+      "entityType": "columns"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "email"
+      ],
+      "nullsNotDistinct": false,
+      "name": "users_email_unique",
+      "schema": "public",
+      "table": "users",
+      "entityType": "uniques"
+    },
+    {
+      "value": "LENGTH(\"users\".\"name\") >= 1 AND LENGTH(\"users\".\"name\") <= 100",
+      "name": "name",
+      "schema": "public",
+      "table": "users",
+      "entityType": "checks"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "user_statuses",
+      "schema": "message",
+      "entityType": "tables"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "createdAt",
+      "schema": "message",
+      "table": "user_statuses",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "deletedAt",
+      "schema": "message",
+      "table": "user_statuses",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "updatedAt",
+      "schema": "message",
+      "table": "user_statuses",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "expiresAt",
+      "schema": "message",
+      "table": "user_statuses",
+      "entityType": "columns"
+    },
+    {
+      "type": "boolean",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "true",
+      "generated": null,
+      "identity": null,
+      "name": "isConnected",
+      "schema": "message",
+      "table": "user_statuses",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "''",
+      "generated": null,
+      "identity": null,
+      "name": "message",
+      "schema": "message",
+      "table": "user_statuses",
+      "entityType": "columns"
+    },
+    {
+      "type": "user_status",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "status",
+      "schema": "message",
+      "table": "user_statuses",
+      "entityType": "columns"
+    },
+    {
+      "columns": [
+        "userId"
+      ],
+      "nameExplicit": false,
+      "name": "user_statuses_pkey",
+      "schema": "message",
+      "table": "user_statuses",
+      "entityType": "pks"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "userId",
+      "schema": "message",
+      "table": "user_statuses",
+      "entityType": "columns"
+    },
+    {
+      "value": "LENGTH(\"message\".\"user_statuses\".\"message\") <= 1000",
+      "name": "message",
+      "schema": "message",
+      "table": "user_statuses",
+      "entityType": "checks"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "userId"
+      ],
+      "schemaTo": "public",
+      "tableTo": "users",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "user_statuses_userId_users_id_fk",
+      "schema": "message",
+      "table": "user_statuses",
+      "entityType": "fks"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "users_to_rooms",
+      "schema": "message",
+      "entityType": "tables"
+    },
+    {
+      "type": "notification_type",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "'DirectMessage'",
+      "generated": null,
+      "identity": null,
+      "name": "notificationType",
+      "schema": "message",
+      "table": "users_to_rooms",
+      "entityType": "columns"
+    },
+    {
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "roomId",
+      "schema": "message",
+      "table": "users_to_rooms",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "userId",
+      "schema": "message",
+      "table": "users_to_rooms",
+      "entityType": "columns"
+    },
+    {
+      "columns": [
+        "userId",
+        "roomId"
+      ],
+      "nameExplicit": false,
+      "name": "users_to_rooms_userId_roomId_pk",
+      "schema": "message",
+      "table": "users_to_rooms",
+      "entityType": "pks"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "roomId"
+      ],
+      "schemaTo": "message",
+      "tableTo": "rooms",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "users_to_rooms_roomId_rooms_id_fk",
+      "schema": "message",
+      "table": "users_to_rooms",
+      "entityType": "fks"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "userId"
+      ],
+      "schemaTo": "public",
+      "tableTo": "users",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "users_to_rooms_userId_users_id_fk",
+      "schema": "message",
+      "table": "users_to_rooms",
+      "entityType": "fks"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "verifications",
+      "schema": "public",
+      "entityType": "tables"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "created_at",
+      "schema": "public",
+      "table": "verifications",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "deleted_at",
+      "schema": "public",
+      "table": "verifications",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "expires_at",
+      "schema": "public",
+      "table": "verifications",
+      "entityType": "columns"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "verifications_pkey",
+      "schema": "public",
+      "table": "verifications",
+      "entityType": "pks"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "id",
+      "schema": "public",
+      "table": "verifications",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "identifier",
+      "schema": "public",
+      "table": "verifications",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "updated_at",
+      "schema": "public",
+      "table": "verifications",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "value",
+      "schema": "public",
+      "table": "verifications",
+      "entityType": "columns"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "webhooks",
+      "schema": "message",
+      "entityType": "tables"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "createdAt",
+      "schema": "message",
+      "table": "webhooks",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "deletedAt",
+      "schema": "message",
+      "table": "webhooks",
+      "entityType": "columns"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "updatedAt",
+      "schema": "message",
+      "table": "webhooks",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "creator_id",
+      "schema": "message",
+      "table": "webhooks",
+      "entityType": "columns"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "name": "webhooks_pkey",
+      "schema": "message",
+      "table": "webhooks",
+      "entityType": "pks"
+    },
+    {
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "gen_random_uuid()",
+      "generated": null,
+      "identity": null,
+      "name": "id",
+      "schema": "message",
+      "table": "webhooks",
+      "entityType": "columns"
+    },
+    {
+      "type": "boolean",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "true",
+      "generated": null,
+      "identity": null,
+      "name": "is_active",
+      "schema": "message",
+      "table": "webhooks",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "''",
+      "generated": null,
+      "identity": null,
+      "name": "name",
+      "schema": "message",
+      "table": "webhooks",
+      "entityType": "columns"
+    },
+    {
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "room_id",
+      "schema": "message",
+      "table": "webhooks",
+      "entityType": "columns"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "token",
+      "schema": "message",
+      "table": "webhooks",
+      "entityType": "columns"
+    },
+    {
+      "type": "uuid",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "user_id",
+      "schema": "message",
+      "table": "webhooks",
+      "entityType": "columns"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "user_id"
+      ],
+      "nullsNotDistinct": false,
+      "name": "webhooks_user_id_unique",
+      "schema": "message",
+      "table": "webhooks",
+      "entityType": "uniques"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "creator_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "users",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "webhooks_creator_id_users_id_fk",
+      "schema": "message",
+      "table": "webhooks",
+      "entityType": "fks"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "room_id"
+      ],
+      "schemaTo": "message",
+      "tableTo": "rooms",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "webhooks_room_id_rooms_id_fk",
+      "schema": "message",
+      "table": "webhooks",
+      "entityType": "fks"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "user_id"
+      ],
+      "schemaTo": "message",
+      "tableTo": "app_users",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "webhooks_user_id_app_users_id_fk",
+      "schema": "message",
+      "table": "webhooks",
+      "entityType": "fks"
+    },
+    {
+      "values": [
+        "CenturyClub",
+        "ConversationKeeper",
+        "EssayWriter",
+        "FileSharer",
+        "FirstMessage",
+        "MessageForwarder",
+        "MessageMaster",
+        "Meta",
+        "NightOwl",
+        "PinCollector",
+        "ProlificPoster",
+        "RoomCreator",
+        "SecondThoughts",
+        "Socialite"
+      ],
+      "name": "achievement_name",
+      "schema": "public",
+      "entityType": "enums"
+    },
+    {
+      "values": [
+        "DoNotDisturb",
+        "Idle",
+        "Offline",
+        "Online"
+      ],
+      "name": "user_status",
+      "schema": "public",
+      "entityType": "enums"
+    },
+    {
+      "values": [
+        "All",
+        "DirectMessage",
+        "Never"
+      ],
+      "name": "notification_type",
+      "schema": "public",
+      "entityType": "enums"
+    }
+  ],
+  "renames": []
+}

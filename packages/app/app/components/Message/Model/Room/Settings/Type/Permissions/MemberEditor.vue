@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { Room, RoomRole, User } from "@esposter/db-schema";
+import type { RoomInMessage, RoomRoleInMessage, User } from "@esposter/db-schema";
 
 import { isManageable } from "#shared/services/room/rbac/isManageable";
 import { useRoleStore } from "@/store/message/room/role";
 
 interface MemberEditorProps {
   member: User;
-  roomId: Room["id"];
+  roomId: RoomInMessage["id"];
 }
 
 const { member, roomId } = defineProps<MemberEditorProps>();
@@ -15,12 +15,12 @@ const { assignRole, getMemberRoles, getMyPermissions, getRoles, readMemberRoles,
 const allRoles = computed(() => getRoles(roomId).filter(({ isEveryone }) => !isEveryone));
 const memberRoles = computed(() => getMemberRoles(roomId, member.id));
 const hasRole = (roleId: string) => memberRoles.value.some(({ id }) => id === roleId);
-const isRoleManageable = (role: RoomRole) => {
+const isRoleManageable = (role: RoomRoleInMessage) => {
   const myPermissions = getMyPermissions(roomId);
   if (!myPermissions) return false;
   return isManageable(myPermissions.topRolePosition, role.position, myPermissions.isRoomOwner);
 };
-const toggleRole = async (role: RoomRole) => {
+const toggleRole = async (role: RoomRoleInMessage) => {
   if (hasRole(role.id)) await revokeRole({ roleId: role.id, roomId, userId: member.id });
   else await assignRole({ roleId: role.id, roomId, userId: member.id });
 };

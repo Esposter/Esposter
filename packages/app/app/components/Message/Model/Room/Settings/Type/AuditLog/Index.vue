@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Room } from "@esposter/db-schema";
+import type { RoomInMessage } from "@esposter/db-schema";
 
 import { AdminActionColorMap } from "@/services/message/moderation/AdminActionColorMap";
 import { AdminActionIconMap } from "@/services/message/moderation/AdminActionIconMap";
@@ -7,7 +7,7 @@ import { useModerationLogStore } from "@/store/message/moderation/log";
 import { formatDuration } from "@/util/formatDuration";
 
 interface AuditLogProps {
-  roomId: Room["id"];
+  roomId: RoomInMessage["id"];
 }
 
 const { roomId } = defineProps<AuditLogProps>();

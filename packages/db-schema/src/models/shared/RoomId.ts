@@ -1,6 +1,6 @@
-import { selectRoomSchema } from "@/schema/rooms";
+import { selectRoomInMessageSchema } from "@/schema/roomsInMessage";
 import { z } from "zod";
 
 export const roomIdSchema = z.object({
-  roomId: selectRoomSchema.shape.id,
+  roomId: selectRoomInMessageSchema.shape.id,
 });

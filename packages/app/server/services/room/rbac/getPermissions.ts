@@ -1,6 +1,6 @@
 import type { Context } from "@@/server/trpc/context";
 
-import { roomRoles, usersToRoomRoles, usersToRooms } from "@esposter/db-schema";
+import { roomRolesInMessage, usersToRoomRolesInMessage, usersToRoomsInMessage } from "@esposter/db-schema";
 import { and, eq, inArray, or } from "drizzle-orm";
 
 interface GetPermissions {
@@ -15,22 +15,22 @@ export const getPermissions: GetPermissions = (async (
 ): Promise<bigint | Map<string, bigint>> => {
   const roomIdArray = Array.isArray(roomIds) ? roomIds : [roomIds];
   const memberRoomIdsSubquery = db
-    .select({ roomId: usersToRooms.roomId })
-    .from(usersToRooms)
-    .where(and(eq(usersToRooms.userId, userId), inArray(usersToRooms.roomId, roomIdArray)));
+    .select({ roomId: usersToRoomsInMessage.roomId })
+    .from(usersToRoomsInMessage)
+    .where(and(eq(usersToRoomsInMessage.userId, userId), inArray(usersToRoomsInMessage.roomId, roomIdArray)));
   const roleIdsSubquery = db
-    .select({ id: usersToRoomRoles.roleId })
-    .from(usersToRoomRoles)
-    .where(and(eq(usersToRoomRoles.userId, userId), inArray(usersToRoomRoles.roomId, roomIdArray)));
+    .select({ id: usersToRoomRolesInMessage.roleId })
+    .from(usersToRoomRolesInMessage)
+    .where(and(eq(usersToRoomRolesInMessage.userId, userId), inArray(usersToRoomRolesInMessage.roomId, roomIdArray)));
   const rows = await db
-    .select({ permissions: roomRoles.permissions, roomId: roomRoles.roomId })
-    .from(roomRoles)
+    .select({ permissions: roomRolesInMessage.permissions, roomId: roomRolesInMessage.roomId })
+    .from(roomRolesInMessage)
     .where(
       and(
-        inArray(roomRoles.roomId, roomIdArray),
+        inArray(roomRolesInMessage.roomId, roomIdArray),
         or(
-          and(eq(roomRoles.isEveryone, true), inArray(roomRoles.roomId, memberRoomIdsSubquery)),
-          inArray(roomRoles.id, roleIdsSubquery),
+          and(eq(roomRolesInMessage.isEveryone, true), inArray(roomRolesInMessage.roomId, memberRoomIdsSubquery)),
+          inArray(roomRolesInMessage.id, roleIdsSubquery),
         ),
       ),
     );

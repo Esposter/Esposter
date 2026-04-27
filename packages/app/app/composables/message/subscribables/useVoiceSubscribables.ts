@@ -1,4 +1,5 @@
 import type { OnlineSubscribableContext } from "@/composables/shared/useOnlineSubscribable";
+
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { authClient } from "@/services/auth/authClient";
 import { useRoomStore } from "@/store/message/room";

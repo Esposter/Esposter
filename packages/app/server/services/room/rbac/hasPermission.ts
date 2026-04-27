@@ -10,9 +10,9 @@ export const hasPermission = async (
   roomId: string,
   permission: RoomPermission,
 ): Promise<boolean> => {
-  const room = await db.query.rooms.findFirst({
+  const room = await db.query.roomsInMessage.findFirst({
     columns: { userId: true },
-    where: (rooms, { eq }) => eq(rooms.id, roomId),
+    where: { id: { eq: roomId } },
   });
   if (!room) return false;
   else if (room.userId === userId) return true;

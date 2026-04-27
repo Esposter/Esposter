@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Room } from "@esposter/db-schema";
+import type { RoomInMessage } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
 import { useRoomStore } from "@/store/message/room";
@@ -7,7 +7,7 @@ import { useRoleStore } from "@/store/message/room/role";
 import { RoutePath } from "@esposter/shared";
 
 interface RoomListItemProps {
-  room: Room;
+  room: RoomInMessage;
 }
 
 const { room } = defineProps<RoomListItemProps>();

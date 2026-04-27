@@ -14,7 +14,6 @@ import {
   FriendRequestRelations,
   friendRequests,
   friends,
-  users,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -39,7 +38,7 @@ export const friendRequestRouter = router({
           code: "NOT_FOUND",
           message: new InvalidOperationError(Operation.Update, DatabaseEntityType.Friend, friendshipId).message,
         });
-      const senderUser = await ctx.db.query.users.findFirst({ where: eq(users.id, senderId) });
+      const senderUser = await ctx.db.query.users.findFirst({ where: { id: { eq: senderId } } });
       if (!senderUser)
         throw new TRPCError({
           code: "NOT_FOUND",
@@ -101,8 +100,7 @@ export const friendRequestRouter = router({
   readFriendRequests: standardAuthedProcedure.query<FriendRequestWithRelations[]>(({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
     return ctx.db.query.friendRequests.findMany({
-      where: (friendRequests, { eq, or }) =>
-        or(eq(friendRequests.receiverId, userId), eq(friendRequests.senderId, userId)),
+      where: { OR: [{ receiverId: { eq: userId } }, { senderId: { eq: userId } }] },
       with: FriendRequestRelations,
     });
   }),
@@ -115,7 +113,7 @@ export const friendRequestRouter = router({
           code: "BAD_REQUEST",
           message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Friend, userId).message,
         });
-      const receiverUser = await ctx.db.query.users.findFirst({ where: eq(users.id, receiverId) });
+      const receiverUser = await ctx.db.query.users.findFirst({ where: { id: { eq: receiverId } } });
       if (!receiverUser)
         throw new TRPCError({
           code: "NOT_FOUND",
@@ -130,11 +128,12 @@ export const friendRequestRouter = router({
       };
       const [newRequest] = await ctx.db.transaction(async (tx) => {
         const existingBlock = await tx.query.blocks.findFirst({
-          where: (blocks, { and, eq, or }) =>
-            or(
-              and(eq(blocks.blockerId, userId), eq(blocks.blockedId, receiverId)),
-              and(eq(blocks.blockerId, receiverId), eq(blocks.blockedId, userId)),
-            ),
+          where: {
+            OR: [
+              { blockedId: { eq: receiverId }, blockerId: { eq: userId } },
+              { blockedId: { eq: userId }, blockerId: { eq: receiverId } },
+            ],
+          },
         });
         if (existingBlock)
           throw new TRPCError({
@@ -142,7 +141,7 @@ export const friendRequestRouter = router({
             message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Friend, receiverId).message,
           });
         const existingFriend = await tx.query.friends.findFirst({
-          where: (friends, { eq }) => eq(friends.id, friendshipId),
+          where: { id: { eq: friendshipId } },
         });
         if (existingFriend)
           throw new TRPCError({
@@ -158,7 +157,7 @@ export const friendRequestRouter = router({
       });
       if (!newRequest) {
         const existingRequest = await ctx.db.query.friendRequests.findFirst({
-          where: (friendRequests, { eq }) => eq(friendRequests.id, friendshipId),
+          where: { id: { eq: friendshipId } },
           with: FriendRequestRelations,
         });
         if (existingRequest?.senderId !== userId)

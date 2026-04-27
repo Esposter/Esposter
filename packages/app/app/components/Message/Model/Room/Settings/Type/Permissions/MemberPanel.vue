@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { Room } from "@esposter/db-schema";
+import type { RoomInMessage } from "@esposter/db-schema";
 
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useRoleStore } from "@/store/message/room/role";
 import { useMemberStore } from "@/store/message/user/member";
 
 interface MemberPanelProps {
-  roomId: Room["id"];
+  roomId: RoomInMessage["id"];
 }
 
 defineProps<MemberPanelProps>();

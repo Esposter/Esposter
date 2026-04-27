@@ -1,9 +1,8 @@
 import { createNameCheckSql, createNameSchema } from "@/models/shared/Name";
 import { pgTable } from "@/pgTable";
 import { users } from "@/schema/users";
-import { relations } from "drizzle-orm";
 import { check, integer, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import { createSelectSchema } from "drizzle-zod";
+import { createSelectSchema } from "drizzle-orm/zod";
 
 export const SURVEY_NAME_MAX_LENGTH = 100;
 
@@ -31,10 +30,3 @@ export type Survey = typeof surveys.$inferSelect;
 export const selectSurveySchema = createSelectSchema(surveys, {
   name: createNameSchema(SURVEY_NAME_MAX_LENGTH),
 });
-
-export const surveysRelations = relations(surveys, ({ one }) => ({
-  user: one(users, {
-    fields: [surveys.userId],
-    references: [users.id],
-  }),
-}));

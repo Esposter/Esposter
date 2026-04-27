@@ -1,4 +1,5 @@
 import type { OnlineSubscribableContext } from "@/composables/shared/useOnlineSubscribable";
+
 import { authClient } from "@/services/auth/authClient";
 import { useAchievementStore } from "@/store/achievement";
 

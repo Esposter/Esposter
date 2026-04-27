@@ -6,7 +6,7 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce, replayMockSession } from "@@/server/trpc/context.test";
 import { userRouter } from "@@/server/trpc/routers/user";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
-import { DatabaseEntityType, UserStatus, userStatuses } from "@esposter/db-schema";
+import { DatabaseEntityType, UserStatus, userStatusesInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -32,7 +32,7 @@ describe("user", () => {
   afterEach(async () => {
     vi.useRealTimers();
     MockTableDatabase.clear();
-    await mockContext.db.delete(userStatuses);
+    await mockContext.db.delete(userStatusesInMessage);
   });
 
   test("reads empty statuses with default values", async () => {

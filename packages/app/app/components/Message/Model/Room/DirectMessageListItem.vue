@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { Room } from "@esposter/db-schema";
+import type { RoomInMessage } from "@esposter/db-schema";
 
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
 import { RoutePath } from "@esposter/shared";
 
 interface DirectMessageListItemProps {
-  room: Room;
+  room: RoomInMessage;
 }
 
 const { room } = defineProps<DirectMessageListItemProps>();

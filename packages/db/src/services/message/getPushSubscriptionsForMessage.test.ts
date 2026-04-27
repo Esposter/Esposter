@@ -4,14 +4,14 @@ import { getPushSubscriptionsForMessage } from "@/services/message/getPushSubscr
 import { createMockDb } from "@esposter/db-mock";
 import {
   NotificationType,
-  pushSubscriptions,
-  rooms,
+  pushSubscriptionsInMessage,
+  roomsInMessage,
   RoomType,
   schema,
   users,
   UserStatus,
-  userStatuses,
-  usersToRooms,
+  userStatusesInMessage,
+  usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import {
   MENTION_EVERYONE_ID,
@@ -63,14 +63,14 @@ describe(getPushSubscriptionsForMessage, () => {
         makeUser(senderUserId),
       ]);
 
-    await db.insert(rooms).values({
+    await db.insert(roomsInMessage).values({
       id: roomId,
       name,
       type: RoomType.Room,
       userId: allOnlineUserId,
     });
 
-    await db.insert(usersToRooms).values([
+    await db.insert(usersToRoomsInMessage).values([
       { notificationType: NotificationType.All, roomId, userId: allOnlineUserId },
       { notificationType: NotificationType.All, roomId, userId: allOfflineUserId },
       { notificationType: NotificationType.All, roomId, userId: allNullStatusUserId },
@@ -80,7 +80,7 @@ describe(getPushSubscriptionsForMessage, () => {
       { notificationType: NotificationType.All, roomId, userId: senderUserId },
     ]);
 
-    await db.insert(pushSubscriptions).values([
+    await db.insert(pushSubscriptionsInMessage).values([
       { auth: "", endpoint: getEndpoint(allOnlineUserId), p256dh: "", userId: allOnlineUserId },
       { auth: "", endpoint: getEndpoint(allOfflineUserId), p256dh: "", userId: allOfflineUserId },
       { auth: "", endpoint: getEndpoint(allNullStatusUserId), p256dh: "", userId: allNullStatusUserId },
@@ -90,7 +90,7 @@ describe(getPushSubscriptionsForMessage, () => {
       { auth: "", endpoint: getEndpoint(senderUserId), p256dh: "", userId: senderUserId },
     ]);
 
-    await db.insert(userStatuses).values([
+    await db.insert(userStatusesInMessage).values([
       { status: UserStatus.Online, userId: allOnlineUserId },
       { status: UserStatus.Offline, userId: allOfflineUserId },
       { status: UserStatus.Online, userId: directMessageOnlineUserId },

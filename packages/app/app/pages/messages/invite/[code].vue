@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { getEntityNotFoundStatusMessage } from "@/services/shared/error/getEntityNotFoundStatusMessage";
 import { useRoomStore } from "@/store/message/room";
-import { DatabaseEntityType, selectInviteSchema } from "@esposter/db-schema";
+import { DatabaseEntityType, selectInviteInMessageSchema } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
 definePageMeta({
   middleware: "auth",
   validate: async (route) => {
     const code = route.params.code;
-    const result = await selectInviteSchema.shape.code.safeParseAsync(code);
+    const result = await selectInviteInMessageSchema.shape.code.safeParseAsync(code);
     return result.success;
   },
 });
@@ -43,14 +43,16 @@ const { joinRoom } = roomStore;
             <div text-center>
               You've been invited to join
               <span font-bold>
-                {{ invite.room.name }}
+                {{ invite.roomInMessage.name }}
               </span>
               by
               <div text-2xl font-bold>
                 {{ invite.user.name }}
               </div>
               <div>
-                {{ invite.room.usersToRooms.length }} Member{{ invite.room.usersToRooms.length === 1 ? "" : "s" }}
+                {{ invite.roomInMessage.usersToRoomsInMessage.length }} Member{{
+                  invite.roomInMessage.usersToRoomsInMessage.length === 1 ? "" : "s"
+                }}
               </div>
             </div>
           </v-card-text>

@@ -45,7 +45,11 @@
       "Bash(wait)",
       "Bash(pnpm ls *)",
       "Bash(pnpm why *)",
-      "Bash(git diff *)"
+      "WebFetch(domain:orm.drizzle.team)",
+      "Bash(pnpm build:packages *)",
+      "Bash(pnpm typecheck:packages *)",
+      "Bash(git diff *)",
+      "Bash(git ls-tree *)"
     ]
   }
 }

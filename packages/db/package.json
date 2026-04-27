@@ -50,7 +50,6 @@
     "@esposter/shared": "workspace:*",
     "dayjs": "catalog:",
     "drizzle-orm": "catalog:",
-    "drizzle-zod": "catalog:",
     "link-preview-js": "catalog:",
     "linkifyjs": "catalog:",
     "mime-types": "catalog:",

@@ -21,7 +21,7 @@ import {
   AzureEntityType,
   getReverseTickedTimestamp,
   MessageType,
-  rooms,
+  roomsInMessage,
   StandardMessageEntity,
 } from "@esposter/db-schema";
 import {
@@ -60,7 +60,7 @@ describe("message", () => {
     MockContainerDatabase.clear();
     MockEventGridDatabase.clear();
     MockTableDatabase.clear();
-    await mockContext.db.delete(rooms);
+    await mockContext.db.delete(roomsInMessage);
   });
 
   test("reads empty", async () => {

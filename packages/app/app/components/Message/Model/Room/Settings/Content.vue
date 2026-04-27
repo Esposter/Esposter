@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { Room } from "@esposter/db-schema";
+import type { RoomInMessage } from "@esposter/db-schema";
 
 import { SettingsContentMap } from "@/services/message/settings/SettingsContentMap";
 
 interface RoomSettingsContentProps {
-  roomId: Room["id"];
+  roomId: RoomInMessage["id"];
   settingsType: keyof typeof SettingsContentMap;
 }
 

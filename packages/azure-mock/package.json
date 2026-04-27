@@ -37,7 +37,6 @@
     "@esposter/db-schema": "workspace:*",
     "@esposter/shared": "workspace:*",
     "drizzle-orm": "catalog:",
-    "drizzle-zod": "catalog:",
     "fast-deep-equal": "catalog:",
     "zod": "catalog:"
   },
