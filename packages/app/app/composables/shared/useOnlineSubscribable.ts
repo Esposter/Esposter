@@ -67,9 +67,9 @@ export function useOnlineSubscribable(
     await fn?.();
   });
 
-  if (scope) {
+  if (scope)
     scope.run(() => {
       onScopeDispose(disposeHandler);
     });
-  } else onScopeDispose(disposeHandler);
+  else onScopeDispose(disposeHandler);
 }
