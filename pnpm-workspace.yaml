@@ -126,7 +126,7 @@ catalog:
   emoji-mart-vue-fast: ^15.0.5
   eslint: ^10.2.1
   eslint-plugin-depend: ^1.5.0
-  eslint-plugin-oxlint: ^1.61.0
+  eslint-plugin-oxlint: ^1.62.0
   eslint-plugin-perfectionist: ^5.9.0
   eslint-plugin-pinia: ^0.4.2
   eventemitter3: ^5.0.4
@@ -174,10 +174,10 @@ catalog:
   omit-deep-lodash: ^1.1.7
   oxfmt: ^0.47.0
   oxlint: ^1.62.0
-  oxlint-tsgolint: ^0.22.0
+  oxlint-tsgolint: ^0.22.1
   p-progress: ^1.0.0
   pathe: ^2.0.3
-  pdfjs-dist: ^5.6.205
+  pdfjs-dist: ^5.7.284
   phaser: ^4.0.0
   phaser3-rex-plugins: ^1.80.20
   pinia: ^3.0.4
@@ -206,7 +206,7 @@ catalog:
   type-fest: ^5.6.0
   typedoc: ^0.28.19
   typescript: 5.9.3
-  typescript-eslint: ^8.59.0
+  typescript-eslint: ^8.59.1
   unocss: ^66.6.8
   unplugin-auto-import: ^21.0.0
   unplugin-dts: ^1.0.0-beta.6
@@ -241,7 +241,7 @@ overrides:
   # in unhead@2.x (used by Nuxt 4.3.1). Pin to 2 until Nuxt upgrades its unhead major.
   "@unhead/addons": "2.1.13"
   crossws: ^0.4.5
-  pdfjs-dist: ^5.6.205
+  pdfjs-dist: ^5.7.284
   vite: ^8.0.10
   vue-router: ^5.0.6
 
