@@ -10,12 +10,13 @@ export const useVDisplayWidths = (totalDisplayWidth: MaybeRefOrGetter<number>, d
       leftCapDisplayWidth.value = newTotalDisplayWidth;
       middleDisplayWidth.value = 0;
       rightCapDisplayWidth.value = 0;
-    } else if (newTotalDisplayWidth <= (totalLeftCapDisplayWidth.value ?? 0) + (totalMiddleDisplayWidth.value ?? 0)) {
-      leftCapDisplayWidth.value = totalLeftCapDisplayWidth.value;
+      return;
+    }
+    leftCapDisplayWidth.value = totalLeftCapDisplayWidth.value;
+    if (newTotalDisplayWidth <= (totalLeftCapDisplayWidth.value ?? 0) + (totalMiddleDisplayWidth.value ?? 0)) {
       middleDisplayWidth.value = newTotalDisplayWidth - (leftCapDisplayWidth.value ?? 0);
       rightCapDisplayWidth.value = 0;
     } else {
-      leftCapDisplayWidth.value = totalLeftCapDisplayWidth.value;
       middleDisplayWidth.value = totalMiddleDisplayWidth.value;
       rightCapDisplayWidth.value =
         newTotalDisplayWidth - ((leftCapDisplayWidth.value ?? 0) + (middleDisplayWidth.value ?? 0));

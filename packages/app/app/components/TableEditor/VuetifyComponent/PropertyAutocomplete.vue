@@ -20,15 +20,14 @@ const propertySchemaMap = computed<Record<string, Component>>(() => {
     { type?: Class<unknown> | Class<unknown>[] }
   >;
 
-  for (const [name, prop] of Object.entries(props))
+  for (const [name, prop] of Object.entries(props)) {
     if (!prop.type) continue;
-    else if (Array.isArray(prop.type) && prop.type.length > 0) {
-      const componentSchema = getPropertySchema(takeOne(prop.type));
-      if (componentSchema) result[name] = markRaw(componentSchema);
-    } else {
-      const componentSchema = getPropertySchema(prop.type as Class<unknown>);
-      if (componentSchema) result[name] = markRaw(componentSchema);
-    }
+    const componentSchema =
+      Array.isArray(prop.type) && prop.type.length > 0
+        ? getPropertySchema(takeOne(prop.type))
+        : getPropertySchema(prop.type as Class<unknown>);
+    if (componentSchema) result[name] = markRaw(componentSchema);
+  }
 
   return result;
 });

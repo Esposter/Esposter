@@ -27,6 +27,7 @@ import { userRouter } from "@@/server/trpc/routers/user";
 import { userToRoomRouter } from "@@/server/trpc/routers/userToRoom";
 import { webhookRouter } from "@@/server/trpc/routers/webhook";
 import { webpageEditorRouter } from "@@/server/trpc/routers/webpageEditor";
+import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 // We need to declare a base router without achievements to avoid circular dependencies
 const trpcRouterWithoutAchievements = router({
   app: appRouter,
@@ -60,9 +61,6 @@ const trpcRouterWithoutAchievements = router({
 
 export type TRPCRouterWithoutAchievements = typeof trpcRouterWithoutAchievements;
 
-export const trpcRouter = router({
-  achievement: achievementRouter,
-  ...trpcRouterWithoutAchievements._def.procedures,
-});
+export const trpcRouter = mergeRouters(trpcRouterWithoutAchievements, router({ achievement: achievementRouter }));
 
 export type TRPCRouter = typeof trpcRouter;

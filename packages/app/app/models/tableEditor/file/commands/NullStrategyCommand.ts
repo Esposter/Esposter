@@ -28,8 +28,8 @@ export class NullStrategyCommand extends ADataSourceCommand<CommandType.NullStra
 
   protected doExecute(item: DataSourceItem) {
     if (!item.dataSource) return;
-    if (this.mode === NullStrategy.ReplaceWithNA) {
-      const columnsByNameMap = new Map(item.dataSource.columns.map((column) => [column.name, column]));
+    const columnsByNameMap = new Map(item.dataSource.columns.map((column) => [column.name, column]));
+    if (this.mode === NullStrategy.ReplaceWithNA)
       for (const { columnName, rowIndex } of this.affectedCells) {
         const row = takeOne(item.dataSource.rows, rowIndex);
         const column = columnsByNameMap.get(columnName);
@@ -37,8 +37,7 @@ export class NullStrategyCommand extends ADataSourceCommand<CommandType.NullStra
         column.size += getValueSize("N/A") - getValueSize(takeOne(row.data, columnName));
         row.data[columnName] = "N/A";
       }
-    } else {
-      const columnsByNameMap = new Map(item.dataSource.columns.map((column) => [column.name, column]));
+    else {
       for (const { row } of this.affectedRows)
         for (const [columnName, value] of Object.entries(row.data)) {
           const column = columnsByNameMap.get(columnName);
