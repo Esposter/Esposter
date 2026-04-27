@@ -1,9 +1,14 @@
 import type { Promisable } from "type-fest";
-import type { MultiWatchSources, WatchSource } from "vue";
+import type { ComponentInternalInstance, EffectScope, MultiWatchSources, WatchSource } from "vue";
 
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 
+export interface OnlineSubscribableContext {
+  instance?: ComponentInternalInstance | null;
+  scope?: EffectScope | null;
+}
 type OnlineSubscribableSource = object | WatchSource<unknown>;
+
 type OnlineSubscribableValues<TSources extends readonly OnlineSubscribableSource[]> = {
   -readonly [K in keyof TSources]: TSources[K] extends WatchSource<infer V> ? V : TSources[K];
 };
@@ -11,16 +16,21 @@ type OnlineSubscribableValues<TSources extends readonly OnlineSubscribableSource
 export function useOnlineSubscribable<const TSources extends readonly OnlineSubscribableSource[]>(
   source: TSources,
   callback: (value: OnlineSubscribableValues<TSources>) => Promisable<(() => Promisable<void>) | undefined>,
+  context?: OnlineSubscribableContext,
 ): void;
 export function useOnlineSubscribable<TSource>(
   source: WatchSource<TSource>,
   callback: (value: TSource) => Promisable<(() => Promisable<void>) | undefined>,
+  context?: OnlineSubscribableContext,
 ): void;
 export function useOnlineSubscribable(
   source: MultiWatchSources | WatchSource,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   callback: (value: any) => Promisable<(() => Promisable<void>) | undefined>,
+  context?: OnlineSubscribableContext,
 ) {
+  const instance = context?.instance ?? getCurrentInstance();
+  const scope = context?.scope ?? getCurrentScope();
   const online = useOnline();
   const sources = (Array.isArray(source) ? [...source, online] : [source, online]) as MultiWatchSources;
 
@@ -48,14 +58,15 @@ export function useOnlineSubscribable(
 
   onMounted(() => {
     trigger();
+  }, instance);
+
+  const disposeHandler = getSynchronizedFunction(async () => {
+    isActive = false;
+    const fn = currentCleanup;
+    currentCleanup = undefined;
+    await fn?.();
   });
 
-  onScopeDispose(
-    getSynchronizedFunction(async () => {
-      isActive = false;
-      const fn = currentCleanup;
-      currentCleanup = undefined;
-      await fn?.();
-    }),
-  );
+  if (scope) scope.run(() => onScopeDispose(disposeHandler));
+  else onScopeDispose(disposeHandler);
 }
