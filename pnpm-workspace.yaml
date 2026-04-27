@@ -43,7 +43,7 @@ catalog:
   "@fullcalendar/vue3": ^6.1.20
   "@happy-dom/global-registrator": ^20.9.0
   "@json-layout/vocabulary": ^2.13.0
-  "@koumoul/vjsf": ^4.3.0
+  "@koumoul/vjsf": ^4.3.1
   "@lerna-lite/cli": ^5.2.0
   "@lerna-lite/publish": ^5.2.0
   "@lerna-lite/run": ^5.2.0

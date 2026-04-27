@@ -103,8 +103,8 @@ catalogs:
       specifier: ^2.13.0
       version: 2.13.0
     '@koumoul/vjsf':
-      specifier: ^4.3.0
-      version: 4.3.0
+      specifier: ^4.3.1
+      version: 4.3.1
     '@lerna-lite/cli':
       specifier: ^5.2.0
       version: 5.2.0
@@ -818,7 +818,7 @@ importers:
         version: 6.1.20(@fullcalendar/core@6.1.20)(vue@3.5.33(typescript@5.9.3))
       '@koumoul/vjsf':
         specifier: 'catalog:'
-        version: 4.3.0(typescript@5.9.3)(vue@3.5.33(typescript@5.9.3))(vuetify@4.0.6)
+        version: 4.3.1(typescript@5.9.3)(vue@3.5.33(typescript@5.9.3))(vuetify@4.0.6)
       '@mdi/font':
         specifier: 'catalog:'
         version: 7.4.47
@@ -3250,8 +3250,8 @@ packages:
   '@juggle/resize-observer@3.4.0':
     resolution: {integrity: sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==}
 
-  '@koumoul/vjsf@4.3.0':
-    resolution: {integrity: sha512-o5CqkaF7RL4Jm3RqX+5J29c9UY03LpQLckECR3nMxB58xkWNtEm2Ay97iv876EbnDLXvOOBw+qm4w99QOML2hg==}
+  '@koumoul/vjsf@4.3.1':
+    resolution: {integrity: sha512-wdsjLzlMoocqfEagvpmh+Z43+Pz3+OPZCWOPrwoibig4cRXmYSEF373PDmgO8cU5bETQCXUaky4/0aeEfW8tZg==}
     peerDependencies:
       vue: ^3.4.3
       vuetify: ^4.0.0
@@ -15063,7 +15063,7 @@ snapshots:
 
   '@juggle/resize-observer@3.4.0': {}
 
-  '@koumoul/vjsf@4.3.0(typescript@5.9.3)(vue@3.5.33(typescript@5.9.3))(vuetify@4.0.6)':
+  '@koumoul/vjsf@4.3.1(typescript@5.9.3)(vue@3.5.33(typescript@5.9.3))(vuetify@4.0.6)':
     dependencies:
       '@json-layout/core': 2.7.1(@json-layout/vocabulary@2.13.0)
       '@json-layout/vocabulary': 2.13.0
