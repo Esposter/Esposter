@@ -8,7 +8,7 @@ export const isMember = async (db: Context["db"], { user }: GetSessionPayload, r
   const foundUsersToRooms = await db.query.usersToRoomsInMessage.findMany({
     where: {
       roomId: {
-        arrayContains: roomIdArray,
+        in: roomIdArray,
       },
       userId: {
         eq: user.id,

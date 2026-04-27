@@ -1,8 +1,13 @@
+import type { OnlineSubscribableContext } from "@/composables/shared/useOnlineSubscribable";
 import { dayjs } from "#shared/services/dayjs";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 
 export const useTypingSubscribables = async () => {
+  const onlineSubscribableContext: OnlineSubscribableContext = {
+    instance: getCurrentInstance(),
+    scope: getCurrentScope(),
+  };
   const { $trpc } = useNuxtApp();
   const dataStore = useDataStore();
   const { typings } = storeToRefs(dataStore);
@@ -19,30 +24,34 @@ export const useTypingSubscribables = async () => {
 
   await useCreateTyping();
 
-  useOnlineSubscribable(currentRoomId, (roomId) => {
-    if (!roomId) return undefined;
+  useOnlineSubscribable(
+    currentRoomId,
+    (roomId) => {
+      if (!roomId) return undefined;
 
-    const createTypingUnsubscribable = $trpc.message.onCreateTyping.subscribe(
-      { roomId },
-      {
-        onData: (typing) => {
-          clearTypingTimeout(typing.userId);
-
-          const id = window.setTimeout(() => {
-            typings.value = typings.value.filter(({ userId }) => userId !== typing.userId);
+      const createTypingUnsubscribable = $trpc.message.onCreateTyping.subscribe(
+        { roomId },
+        {
+          onData: (typing) => {
             clearTypingTimeout(typing.userId);
-          }, dayjs.duration(3, "seconds").asMilliseconds());
 
-          typingTimeoutIdMap.value.set(typing.userId, id);
-          if (!typings.value.some(({ userId }) => userId === typing.userId)) typings.value.push(typing);
+            const id = window.setTimeout(() => {
+              typings.value = typings.value.filter(({ userId }) => userId !== typing.userId);
+              clearTypingTimeout(typing.userId);
+            }, dayjs.duration(3, "seconds").asMilliseconds());
+
+            typingTimeoutIdMap.value.set(typing.userId, id);
+            if (!typings.value.some(({ userId }) => userId === typing.userId)) typings.value.push(typing);
+          },
         },
-      },
-    );
+      );
 
-    return () => {
-      createTypingUnsubscribable.unsubscribe();
-      for (const userId of typingTimeoutIdMap.value.keys()) clearTypingTimeout(userId);
-      typings.value = [];
-    };
-  });
+      return () => {
+        createTypingUnsubscribable.unsubscribe();
+        for (const userId of typingTimeoutIdMap.value.keys()) clearTypingTimeout(userId);
+        typings.value = [];
+      };
+    },
+    onlineSubscribableContext,
+  );
 };

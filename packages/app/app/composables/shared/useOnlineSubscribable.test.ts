@@ -159,6 +159,44 @@ describe(useOnlineSubscribable, () => {
     expect(callback).toHaveBeenLastCalledWith(" ");
   });
 
+  test("calls callback when called after an async operation with pre-captured context", async () => {
+    expect.hasAssertions();
+
+    wrapper = await mountSuspended(
+      defineComponent({
+        render: () => h("div"),
+        setup: async () => {
+          const context = { instance: getCurrentInstance(), scope: getCurrentScope() };
+          await Promise.resolve();
+          useOnlineSubscribable(source, callback, context);
+        },
+      }),
+    );
+    await flushPromises();
+
+    expect(callback).toHaveBeenCalledWith("");
+  });
+
+  test("calls cleanup on unmount when called after an async operation with pre-captured context", async () => {
+    expect.hasAssertions();
+
+    callback = vi.fn<(value: string) => Promisable<(() => Promisable<void>) | undefined>>(() => cleanup);
+    wrapper = await mountSuspended(
+      defineComponent({
+        render: () => h("div"),
+        setup: async () => {
+          const context = { instance: getCurrentInstance(), scope: getCurrentScope() };
+          await Promise.resolve();
+          useOnlineSubscribable(source, callback, context);
+        },
+      }),
+    );
+    await flushPromises();
+    wrapper.unmount();
+
+    expect(cleanup).toHaveBeenCalledWith();
+  });
+
   test("awaits async cleanup before re-establishing callback when coming back online", async () => {
     expect.hasAssertions();
 
