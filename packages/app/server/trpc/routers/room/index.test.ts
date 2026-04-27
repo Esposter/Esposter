@@ -17,9 +17,6 @@ import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@espos
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-const expectedUsersToRoomsInsertError = (roomId: string, userId: string) =>
-  `Failed query: insert into "message"."users_to_rooms" ("createdAt", "deletedAt", "updatedAt", "isHidden", "notificationType", "roomId", "timeoutUntil", "userId") values (default, default, $1, default, default, $2, default, $3) returning "createdAt", "deletedAt", "updatedAt", "isHidden", "notificationType", "roomId", "timeoutUntil", "userId"\nparams: 1970-01-01T00:00:00.000Z,${roomId},${userId}`;
-
 describe("room", () => {
   let mockContext: Context;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
@@ -28,6 +25,8 @@ describe("room", () => {
   const roomId = crypto.randomUUID();
   const name = "name";
   const updatedName = "updatedName";
+  const expectedUsersToRoomsInsertError = (roomId: string, userId: string) =>
+    `Failed query: insert into "message"."users_to_rooms" ("createdAt", "deletedAt", "updatedAt", "isHidden", "notificationType", "roomId", "timeoutUntil", "userId") values (default, default, $1, default, default, $2, default, $3) returning "createdAt", "deletedAt", "updatedAt", "isHidden", "notificationType", "roomId", "timeoutUntil", "userId"\nparams: 1970-01-01T00:00:00.000Z,${roomId},${userId}`;
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -476,8 +475,8 @@ describe("room", () => {
     const newInviteCode = await roomCaller.createInvite({ roomId: newRoom.id });
     const userId = getMockSession().user.id;
 
-    await expect(roomCaller.joinRoom(newInviteCode)).rejects.toThrow(
-      expectedUsersToRoomsInsertError(newRoom.id, userId),
+    await expect(roomCaller.joinRoom(newInviteCode)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${expectedUsersToRoomsInsertError(newRoom.id, userId)}]`,
     );
   });
 
@@ -635,9 +634,9 @@ describe("room", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const userId = getMockSession().user.id;
 
-    await expect(roomCaller.createMembers({ roomId: newRoom.id, userIds: [userId] })).rejects.toThrow(
-      expectedUsersToRoomsInsertError(newRoom.id, userId),
-    );
+    await expect(
+      roomCaller.createMembers({ roomId: newRoom.id, userIds: [userId] }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${expectedUsersToRoomsInsertError(newRoom.id, userId)}]`);
   });
 
   test("fails create members with non-existent user", async () => {
@@ -646,9 +645,9 @@ describe("room", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const userId = crypto.randomUUID();
 
-    await expect(roomCaller.createMembers({ roomId: newRoom.id, userIds: [userId] })).rejects.toThrow(
-      expectedUsersToRoomsInsertError(newRoom.id, userId),
-    );
+    await expect(
+      roomCaller.createMembers({ roomId: newRoom.id, userIds: [userId] }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${expectedUsersToRoomsInsertError(newRoom.id, userId)}]`);
   });
 
   test("fails create members with non-existent room", async () => {
