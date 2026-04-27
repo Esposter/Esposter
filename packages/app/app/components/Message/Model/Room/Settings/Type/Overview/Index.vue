@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { Room } from "@esposter/db-schema";
+import type { RoomInMessage } from "@esposter/db-schema";
 
 import { useRoomStore } from "@/store/message/room";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
 
 interface OverviewProps {
-  roomId: Room["id"];
+  roomId: RoomInMessage["id"];
 }
 
 const { roomId } = defineProps<OverviewProps>();

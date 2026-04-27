@@ -1,14 +1,14 @@
 import type { CreateRoomCategoryInput } from "#shared/models/db/roomCategory/CreateRoomCategoryInput";
 import type { DeleteRoomCategoryInput } from "#shared/models/db/roomCategory/DeleteRoomCategoryInput";
 import type { UpdateRoomCategoryInput } from "#shared/models/db/roomCategory/UpdateRoomCategoryInput";
-import type { RoomCategory } from "@esposter/db-schema";
+import type { RoomCategoryInMessage } from "@esposter/db-schema";
 
 import { createOperationData } from "@/services/shared/createOperationData";
 import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
   const { $trpc } = useNuxtApp();
-  const categories = ref<RoomCategory[]>([]);
+  const categories = ref<RoomCategoryInMessage[]>([]);
   const {
     createRoomCategory: storeCreateRoomCategory,
     deleteRoomCategory: storeDeleteRoomCategory,

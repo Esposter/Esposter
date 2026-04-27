@@ -8,7 +8,7 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
-import { rooms } from "@esposter/db-schema";
+import { roomsInMessage } from "@esposter/db-schema";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe(isManageable, () => {
@@ -34,7 +34,7 @@ describe(isManageable, () => {
   });
 
   afterEach(async () => {
-    await mockContext.db.delete(rooms);
+    await mockContext.db.delete(roomsInMessage);
   });
 
   test("owner can manage any target position", async () => {

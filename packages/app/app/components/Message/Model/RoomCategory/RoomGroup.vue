@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { Room, RoomCategory } from "@esposter/db-schema";
+import type { RoomCategoryInMessage, RoomInMessage } from "@esposter/db-schema";
 
 interface RoomCategoryRoomGroupProps {
-  category?: RoomCategory;
-  rooms: Room[];
+  category?: RoomCategoryInMessage;
+  rooms: RoomInMessage[];
 }
 
 const { category, rooms } = defineProps<RoomCategoryRoomGroupProps>();

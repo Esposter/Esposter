@@ -1,8 +1,8 @@
-import type { Room } from "@esposter/db-schema";
+import type { RoomInMessage } from "@esposter/db-schema";
 
 import { useModerationLogStore } from "@/store/message/moderation/log";
 
-export const useReadModerationLog = (roomId: Room["id"]) => {
+export const useReadModerationLog = (roomId: RoomInMessage["id"]) => {
   const { $trpc } = useNuxtApp();
   const moderationLogStore = useModerationLogStore();
   const { readItems, readMoreItems } = moderationLogStore;

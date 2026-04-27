@@ -5,7 +5,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext } from "@@/server/trpc/context.test";
 import { roomCategoryRouter } from "@@/server/trpc/routers/roomCategory";
-import { DatabaseEntityType, roomCategories } from "@esposter/db-schema";
+import { DatabaseEntityType, roomCategoriesInMessage } from "@esposter/db-schema";
 import { NotFoundError, takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
@@ -21,7 +21,7 @@ describe("roomCategory", () => {
   });
 
   afterEach(async () => {
-    await mockContext.db.delete(roomCategories);
+    await mockContext.db.delete(roomCategoriesInMessage);
   });
 
   test("reads empty room categories", async () => {

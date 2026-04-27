@@ -1,4 +1,4 @@
-import type { IUserStatus, User } from "@esposter/db-schema";
+import type { UserStatusInMessage } from "@esposter/db-schema";
 import type { ReadableStream } from "node:stream/web";
 import type { SetNonNullable } from "type-fest";
 import type { z } from "zod";
@@ -16,22 +16,22 @@ import {
   AzureContainer,
   DatabaseEntityType,
   selectUserSchema,
-  selectUserStatusSchema,
+  selectUserStatusInMessageSchema,
   users,
   UserStatus,
-  userStatuses,
+  userStatusesInMessage,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { octetInputParser } from "@trpc/server/http";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { Readable } from "node:stream";
 
 const readStatusesInputSchema = selectUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
 export type ReadStatusesInput = z.infer<typeof readStatusesInputSchema>;
 
 const upsertStatusInputSchema = refineAtLeastOne(
-  selectUserStatusSchema.pick({ message: true, status: true }).partial(),
+  selectUserStatusInMessageSchema.pick({ message: true, status: true }).partial(),
   ["message", "status"],
 );
 export type UpsertStatusInput = z.infer<typeof upsertStatusInputSchema>;
@@ -43,11 +43,11 @@ export const userRouter = router({
   connect: standardAuthedProcedure.mutation(async ({ ctx }) => {
     const upsertedStatus = (
       await ctx.db
-        .insert(userStatuses)
+        .insert(userStatusesInMessage)
         .values({ isConnected: true, userId: ctx.getSessionPayload.user.id })
         .onConflictDoUpdate({
           set: { isConnected: true },
-          target: userStatuses.userId,
+          target: userStatusesInMessage.userId,
         })
         .returning()
     )[0];
@@ -63,11 +63,11 @@ export const userRouter = router({
   disconnect: standardAuthedProcedure.mutation(async ({ ctx }) => {
     const upsertedStatus = (
       await ctx.db
-        .insert(userStatuses)
+        .insert(userStatusesInMessage)
         .values({ isConnected: false, userId: ctx.getSessionPayload.user.id })
         .onConflictDoUpdate({
           set: { isConnected: false },
-          target: userStatuses.userId,
+          target: userStatusesInMessage.userId,
         })
         .returning()
     )[0];
@@ -101,10 +101,11 @@ export const userRouter = router({
     }
   }),
   readStatuses: standardAuthedProcedure.input(readStatusesInputSchema).query(async ({ ctx, input }) => {
-    const foundUserStatuses = await ctx.db.query.userStatuses.findMany({
-      where: (userStatuses, { inArray }) => inArray(userStatuses.userId, input),
-    });
-    const resultUserStatuses: SetNonNullable<IUserStatus, "status">[] = [];
+    const foundUserStatuses = await ctx.db
+      .select()
+      .from(userStatusesInMessage)
+      .where(inArray(userStatusesInMessage.userId, input));
+    const resultUserStatuses: SetNonNullable<UserStatusInMessage, "status">[] = [];
     const statusMap = new Map(foundUserStatuses.map((us) => [us.userId, us]));
 
     for (const userId of input) {
@@ -127,7 +128,7 @@ export const userRouter = router({
 
     return resultUserStatuses;
   }),
-  updateUser: standardAuthedProcedure.input(updateUserInputSchema).mutation<User>(async ({ ctx, input }) => {
+  updateUser: standardAuthedProcedure.input(updateUserInputSchema).mutation(async ({ ctx, input }) => {
     const updatedUser = (
       await ctx.db.update(users).set(input).where(eq(users.id, ctx.getSessionPayload.user.id)).returning()
     )[0];
@@ -151,11 +152,11 @@ export const userRouter = router({
   upsertStatus: standardAuthedProcedure.input(upsertStatusInputSchema).mutation(async ({ ctx, input }) => {
     const upsertedStatus = (
       await ctx.db
-        .insert(userStatuses)
+        .insert(userStatusesInMessage)
         .values({ ...input, userId: ctx.getSessionPayload.user.id })
         .onConflictDoUpdate({
           set: input,
-          target: userStatuses.userId,
+          target: userStatusesInMessage.userId,
         })
         .returning()
     )[0];

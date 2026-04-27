@@ -2,9 +2,9 @@ import type { User } from "@/schema/users";
 
 import { pgTable } from "@/pgTable";
 import { users } from "@/schema/users";
-import { relations, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import { check, index, text } from "drizzle-orm/pg-core";
-import { createSelectSchema } from "drizzle-zod";
+import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
 
 export const friendRequests = pgTable(
@@ -35,21 +35,3 @@ export type FriendRequestWithRelations = FriendRequest & { receiver: User; sende
 export const selectFriendRequestSchema = createSelectSchema(friendRequests, {
   id: z.string().min(1),
 });
-
-export const friendRequestsRelations = relations(friendRequests, ({ one }) => ({
-  receiver: one(users, {
-    fields: [friendRequests.receiverId],
-    references: [users.id],
-    relationName: "receiver",
-  }),
-  sender: one(users, {
-    fields: [friendRequests.senderId],
-    references: [users.id],
-    relationName: "sender",
-  }),
-}));
-// @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
-export const FriendRequestRelations = {
-  receiver: true,
-  sender: true,
-} as const;

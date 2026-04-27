@@ -24,19 +24,19 @@ import {
   BinaryOperator,
   CompositeKeyPropertyNames,
   MessageMetadataType,
-  selectRoomSchema,
+  selectRoomInMessageSchema,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-const onCreateEmojiInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
+const onCreateEmojiInputSchema = z.object({ roomId: selectRoomInMessageSchema.shape.id });
 export type OnCreateEmojiInput = z.infer<typeof onCreateEmojiInputSchema>;
 
-const onUpdateEmojiInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
+const onUpdateEmojiInputSchema = z.object({ roomId: selectRoomInMessageSchema.shape.id });
 export type OnUpdateEmojiInput = z.infer<typeof onUpdateEmojiInputSchema>;
 
-const onDeleteEmojiInputSchema = z.object({ roomId: selectRoomSchema.shape.id });
+const onDeleteEmojiInputSchema = z.object({ roomId: selectRoomInMessageSchema.shape.id });
 export type OnDeleteEmojiInput = z.infer<typeof onDeleteEmojiInputSchema>;
 
 export const emojiRouter = router({

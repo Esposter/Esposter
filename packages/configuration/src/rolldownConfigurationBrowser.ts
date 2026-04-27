@@ -13,7 +13,6 @@ export const rolldownConfigurationBrowser: RolldownOptions = {
     // Most packages depend on @esposter/shared
     "@esposter/shared",
     // @esposter/db-schema
-    "drizzle-zod",
     "zod",
     // @esposter/db-mock
     /^drizzle-kit/,

@@ -9,7 +9,7 @@ import { messageRouter } from "@@/server/trpc/routers/message";
 import { pushSubscriptionRouter } from "@@/server/trpc/routers/pushSubscription";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { userToRoomRouter } from "@@/server/trpc/routers/userToRoom";
-import { NotificationType, pushSubscriptions, rooms } from "@esposter/db-schema";
+import { NotificationType, pushSubscriptionsInMessage, roomsInMessage } from "@esposter/db-schema";
 import { MENTION_ID_ATTRIBUTE, MENTION_TYPE, MENTION_TYPE_ATTRIBUTE, takeOne } from "@esposter/shared";
 import { MockEventGridDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
@@ -41,8 +41,8 @@ describe("pushSubscription", () => {
   afterEach(async () => {
     MockEventGridDatabase.clear();
     MockTableDatabase.clear();
-    await mockContext.db.delete(rooms);
-    await mockContext.db.delete(pushSubscriptions);
+    await mockContext.db.delete(roomsInMessage);
+    await mockContext.db.delete(pushSubscriptionsInMessage);
   });
 
   test("subscribes", async () => {

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { Room } from "@esposter/db-schema";
+import type { RoomInMessage } from "@esposter/db-schema";
 
 import { WEBHOOK_MAX_LENGTH } from "#shared/services/message/constants";
 import { useWebhookStore } from "@/store/message/room/webhook";
 
 interface WebhookProps {
-  roomId: Room["id"];
+  roomId: RoomInMessage["id"];
 }
 
 const { roomId } = defineProps<WebhookProps>();

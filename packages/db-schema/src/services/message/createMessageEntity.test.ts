@@ -1,4 +1,4 @@
-import type { AppUser } from "@/schema/appUsers";
+import type { AppUserInMessage } from "@/schema/appUsersInMessage";
 
 import { MessageType } from "@/models/message/MessageType";
 import { StandardMessageEntity } from "@/models/message/StandardMessageEntity";
@@ -8,7 +8,7 @@ import { describe, expect, test } from "vitest";
 
 describe(createMessageEntity, () => {
   const createdAt = new Date();
-  const appUser: AppUser = {
+  const appUser: AppUserInMessage = {
     createdAt,
     deletedAt: null,
     id: crypto.randomUUID(),

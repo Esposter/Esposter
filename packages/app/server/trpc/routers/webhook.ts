@@ -1,4 +1,4 @@
-import type { Webhook } from "@esposter/db-schema";
+import type { WebhookInMessage } from "@esposter/db-schema";
 
 import { createWebhookInputSchema } from "#shared/models/db/webhook/CreateWebhookInput";
 import { deleteWebhookInputSchema } from "#shared/models/db/webhook/DeleteWebhookInput";
@@ -12,17 +12,17 @@ import { router } from "@@/server/trpc";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
 import {
-  appUsers,
+  appUsersInMessage,
   DatabaseEntityType,
   roomIdSchema,
   RoomPermission,
-  selectAppUserSchema,
-  WebhookRelations,
-  webhooks,
+  selectAppUserInMessageSchema,
+  WebhookInMessageRelations,
+  webhooksInMessage,
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, count, eq, getTableColumns, inArray } from "drizzle-orm";
+import { and, count, eq, getColumns, inArray } from "drizzle-orm";
 import { z } from "zod";
 
 const readWebhooksInputSchema = roomIdSchema;
@@ -30,7 +30,7 @@ export type ReadWebhooksInput = z.infer<typeof readWebhooksInputSchema>;
 
 const readAppUsersByIdsInputSchema = z.object({
   ...roomIdSchema.shape,
-  ids: selectAppUserSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
+  ids: selectAppUserInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT),
 });
 export type ReadAppUsersByIdsInput = z.infer<typeof readAppUsersByIdsInputSchema>;
 
@@ -40,10 +40,10 @@ export const webhookRouter = router({
     createWebhookInputSchema,
     "roomId",
     RateLimiterType.Slow,
-  ).mutation<Webhook>(({ ctx, input: { name, roomId } }) =>
+  ).mutation<WebhookInMessage>(({ ctx, input: { name, roomId } }) =>
     ctx.db.transaction(async (tx) => {
       const webhookCount = takeOne(
-        await tx.select({ count: count() }).from(webhooks).where(eq(webhooks.roomId, roomId)),
+        await tx.select({ count: count() }).from(webhooksInMessage).where(eq(webhooksInMessage.roomId, roomId)),
       ).count;
       if (webhookCount >= WEBHOOK_MAX_LENGTH)
         throw new TRPCError({
@@ -55,7 +55,7 @@ export const webhookRouter = router({
           ).message,
         });
 
-      const newAppUser = (await tx.insert(appUsers).values({ name }).returning())[0];
+      const newAppUser = (await tx.insert(appUsersInMessage).values({ name }).returning())[0];
       if (!newAppUser)
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -66,7 +66,7 @@ export const webhookRouter = router({
       const token = generateToken();
       const newWebhook = (
         await tx
-          .insert(webhooks)
+          .insert(webhooksInMessage)
           .values({
             creatorId: ctx.getSessionPayload.user.id,
             isActive: true,
@@ -93,9 +93,9 @@ export const webhookRouter = router({
     RoomPermission.ManageWebhooks,
     deleteWebhookInputSchema,
     "roomId",
-  ).mutation<Webhook>(async ({ ctx, input: { id, roomId } }) => {
-    const webhook = await ctx.db.query.webhooks.findFirst({
-      where: (webhooks, { eq }) => and(eq(webhooks.id, id), eq(webhooks.roomId, roomId)),
+  ).mutation<WebhookInMessage>(async ({ ctx, input: { id, roomId } }) => {
+    const webhook = await ctx.db.query.webhooksInMessage.findFirst({
+      where: { id: { eq: id }, roomId: { eq: roomId } },
     });
     if (!webhook)
       throw new TRPCError({
@@ -103,9 +103,9 @@ export const webhookRouter = router({
         message: new NotFoundError(DatabaseEntityType.Webhook, id).message,
       });
 
-    const deletedAppUser = (await ctx.db.delete(appUsers).where(eq(appUsers.id, webhook.userId)).returning()).find(
-      Boolean,
-    );
+    const deletedAppUser = (
+      await ctx.db.delete(appUsersInMessage).where(eq(appUsersInMessage.id, webhook.userId)).returning()
+    ).find(Boolean);
     if (!deletedAppUser)
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -116,30 +116,30 @@ export const webhookRouter = router({
   readAppUsersByIds: getMemberProcedure(readAppUsersByIdsInputSchema, "roomId").query(
     ({ ctx, input: { ids, roomId } }) =>
       ctx.db
-        .select(getTableColumns(appUsers))
-        .from(appUsers)
-        .innerJoin(webhooks, eq(webhooks.userId, appUsers.id))
-        .where(and(eq(webhooks.roomId, roomId), inArray(appUsers.id, ids))),
+        .select(getColumns(appUsersInMessage))
+        .from(appUsersInMessage)
+        .innerJoin(webhooksInMessage, eq(webhooksInMessage.userId, appUsersInMessage.id))
+        .where(and(eq(webhooksInMessage.roomId, roomId), inArray(appUsersInMessage.id, ids))),
   ),
   readWebhooks: getPermissionsProcedure(RoomPermission.ManageWebhooks, readWebhooksInputSchema, "roomId").query(
     ({ ctx, input: { roomId } }) =>
-      ctx.db.query.webhooks.findMany({
-        orderBy: (webhooks, { desc }) => [desc(webhooks.createdAt)],
-        where: (webhooks, { eq }) => eq(webhooks.roomId, roomId),
-        with: WebhookRelations,
+      ctx.db.query.webhooksInMessage.findMany({
+        orderBy: { createdAt: "desc" },
+        where: { roomId: { eq: roomId } },
+        with: WebhookInMessageRelations,
       }),
   ),
   rotateToken: getPermissionsProcedure(
     RoomPermission.ManageWebhooks,
     rotateTokenInputSchema,
     "roomId",
-  ).mutation<Webhook>(async ({ ctx, input: { id, roomId } }) => {
+  ).mutation<WebhookInMessage>(async ({ ctx, input: { id, roomId } }) => {
     const token = generateToken();
     const updatedWebhook = (
       await ctx.db
-        .update(webhooks)
+        .update(webhooksInMessage)
         .set({ token })
-        .where(and(eq(webhooks.id, id), eq(webhooks.roomId, roomId)))
+        .where(and(eq(webhooksInMessage.id, id), eq(webhooksInMessage.roomId, roomId)))
         .returning()
     )[0];
     if (!updatedWebhook)
@@ -153,12 +153,12 @@ export const webhookRouter = router({
     RoomPermission.ManageWebhooks,
     updateWebhookInputSchema,
     "roomId",
-  ).mutation<Webhook>(async ({ ctx, input: { id, roomId, ...rest } }) => {
+  ).mutation<WebhookInMessage>(async ({ ctx, input: { id, roomId, ...rest } }) => {
     const updatedWebhook = (
       await ctx.db
-        .update(webhooks)
+        .update(webhooksInMessage)
         .set(rest)
-        .where(and(eq(webhooks.id, id), eq(webhooks.roomId, roomId)))
+        .where(and(eq(webhooksInMessage.id, id), eq(webhooksInMessage.roomId, roomId)))
         .returning()
     )[0];
     if (!updatedWebhook)

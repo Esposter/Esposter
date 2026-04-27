@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { Room, RoomRole } from "@esposter/db-schema";
+import type { RoomInMessage, RoomRoleInMessage } from "@esposter/db-schema";
 
 interface RoleListProps {
-  roles: RoomRole[];
-  roomId: Room["id"];
+  roles: RoomRoleInMessage[];
+  roomId: RoomInMessage["id"];
 }
 
 const { roles, roomId } = defineProps<RoleListProps>();

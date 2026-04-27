@@ -1,8 +1,8 @@
-import type { Room } from "@esposter/db-schema";
+import type { RoomInMessage } from "@esposter/db-schema";
 
 import { useBanStore } from "@/store/message/user/ban";
 
-export const useReadBans = (roomId: Room["id"]) => {
+export const useReadBans = (roomId: RoomInMessage["id"]) => {
   const { $trpc } = useNuxtApp();
   const banStore = useBanStore();
   const { readItems, readMoreItems } = banStore;

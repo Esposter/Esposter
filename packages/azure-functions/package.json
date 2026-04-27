@@ -43,7 +43,6 @@
     "@esposter/db-schema": "workspace:*",
     "@esposter/shared": "workspace:*",
     "drizzle-orm": "catalog:",
-    "drizzle-zod": "catalog:",
     "node-html-parser": "catalog:",
     "postgres": "catalog:",
     "web-push": "catalog:",

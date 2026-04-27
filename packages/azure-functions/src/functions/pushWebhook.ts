@@ -3,7 +3,7 @@ import type { WebhookEventGridData } from "@/models/WebhookEventGridData";
 import { db } from "@/services/db";
 import { eventGridPublisherClient } from "@/services/eventGridPublisherClient";
 import { app } from "@azure/functions";
-import { AzureFunction, selectWebhookSchema, webhookPayloadSchema } from "@esposter/db-schema";
+import { AzureFunction, selectWebhookInMessageSchema, webhookPayloadSchema } from "@esposter/db-schema";
 import { z, ZodError } from "zod";
 
 app.http(AzureFunction.PushWebhook, {
@@ -12,11 +12,12 @@ app.http(AzureFunction.PushWebhook, {
     context.log(`${AzureFunction.PushWebhook} processed a request for URL: ${request.url}`);
 
     try {
-      const { id, token } = await selectWebhookSchema.pick({ id: true, token: true }).parseAsync(request.params);
-      const webhook = await db.query.webhooks.findFirst({
+      const { id, token } = await selectWebhookInMessageSchema
+        .pick({ id: true, token: true })
+        .parseAsync(request.params);
+      const webhook = await db.query.webhooksInMessage.findFirst({
         columns: { id: true, roomId: true, userId: true },
-        where: (webhooks, { and, eq }) =>
-          and(eq(webhooks.id, id), eq(webhooks.token, token), eq(webhooks.isActive, true)),
+        where: { id: { eq: id }, isActive: { eq: true }, token: { eq: token } },
       });
       if (!webhook) return { jsonBody: { message: "Webhook not found." }, status: 404 };
 

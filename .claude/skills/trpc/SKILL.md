@@ -33,20 +33,6 @@ description: Esposter tRPC conventions — procedure typing with generics, route
 
 - **Name DB result variables after the entity** — `newFriend`, `updatedFriend`, `existingFriend`, not `created`, `updated`, `existing`.
 
-## Drizzle Query Conditions
-
-- **Use imported operators directly, not the callback form** — when `eq`, `and`, `or`, etc. are already imported from `drizzle-orm`, pass the condition directly instead of using the relational query callback `(table, { eq }) => eq(table.id, id)`:
-
-  ```ts
-  // CORRECT
-  ctx.db.query.friends.findFirst({ where: eq(friends.id, id) });
-
-  // WRONG — abbreviated parameter, duplicates already-imported eq
-  ctx.db.query.friends.findFirst({ where: (f, { eq }) => eq(f.id, id) });
-  ```
-
-  If the callback form must be used (e.g. when the column reference is unavailable), use the full table name as the parameter, not a single-letter abbreviation: `(friends, { eq }) => eq(friends.id, id)`.
-
 ## Async Procedures
 
 - **Omit `async` when there is no `await`** — if a procedure body only `return`s a promise (e.g. a Drizzle query chain), drop the `async` keyword:
@@ -54,12 +40,12 @@ description: Esposter tRPC conventions — procedure typing with generics, route
   ```ts
   // CORRECT — no await, no async
   readFriends: standardAuthedProcedure.query<User[]>(({ ctx }) => {
-    return ctx.db.select(...).from(...).where(...);
+    return ctx.db.query.friends.findMany(...);
   })
 
   // WRONG — async with no await
   readFriends: standardAuthedProcedure.query<User[]>(async ({ ctx }) => {
-    return ctx.db.select(...).from(...).where(...);
+    return ctx.db.query.friends.findMany(...);
   })
   ```
 

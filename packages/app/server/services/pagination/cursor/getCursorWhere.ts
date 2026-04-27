@@ -1,32 +1,19 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { BinaryOperator, SQL, TableConfig, TableRelationalConfig } from "drizzle-orm";
-import type { PgTableWithColumns } from "drizzle-orm/pg-core";
+import type { BinaryOperator } from "drizzle-orm";
+import type { PgTableWithColumns, TableConfig } from "drizzle-orm/pg-core";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { deserialize } from "#shared/services/pagination/cursor/deserialize";
-import { exhaustiveGuard, NotFoundError, takeOne } from "@esposter/shared";
+import { exhaustiveGuard, InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { and, gt, gte, lt, lte } from "drizzle-orm";
 
-interface GetCursorWhere {
-  <TTable extends TableRelationalConfig["columns"]>(
-    table: TTable,
-    serializedCursors: string,
-    sortBy: SortItem<keyof TTable & string>[],
-  ): SQL | undefined;
-  <TTable extends TableConfig>(
-    table: PgTableWithColumns<TTable>,
-    serializedCursors: string,
-    sortBy: SortItem<keyof TTable["columns"] & string>[],
-  ): SQL | undefined;
-}
-
-export const getCursorWhere: GetCursorWhere = <TTable extends TableConfig>(
+export const getCursorWhere = <TTable extends TableConfig>(
   table: PgTableWithColumns<TTable>,
   serializedCursors: string,
   sortBy: SortItem<keyof TTable["columns"] & string>[],
 ) => {
   const cursors = deserialize(serializedCursors);
-  return and(
+  const where = and(
     ...Object.entries(cursors).map(([key, value]) => {
       const sortItem = sortBy.find((s) => s.key === key);
       if (!sortItem) throw new NotFoundError(getCursorWhere.name, key);
@@ -45,4 +32,6 @@ export const getCursorWhere: GetCursorWhere = <TTable extends TableConfig>(
       return operator(takeOne(table, key), value);
     }),
   );
+  if (!where) throw new InvalidOperationError(Operation.Read, getCursorWhere.name, serializedCursors);
+  return where;
 };

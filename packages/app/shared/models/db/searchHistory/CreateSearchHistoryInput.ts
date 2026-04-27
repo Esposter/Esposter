@@ -1,7 +1,7 @@
-import { selectSearchHistorySchema } from "@esposter/db-schema";
+import { selectSearchHistoryInMessageSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
-export const createSearchHistoryInputSchema = selectSearchHistorySchema
+export const createSearchHistoryInputSchema = selectSearchHistoryInMessageSchema
   .pick({
     filters: true,
     query: true,

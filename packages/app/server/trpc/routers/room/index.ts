@@ -1,5 +1,5 @@
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import type { Room, User, UserToRoom } from "@esposter/db-schema";
+import type { RoomInMessage, User, UserToRoomInMessage } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
 import { createRoomInputSchema } from "#shared/models/db/room/CreateRoomInput";
@@ -35,27 +35,27 @@ import {
   AzureContainer,
   CODE_LENGTH,
   DatabaseEntityType,
-  InviteRelations,
-  invites,
+  InviteInMessageRelations,
+  invitesInMessage,
   roomIdSchema,
   RoomPermission,
-  roomRoles,
-  rooms,
+  roomRolesInMessage,
+  roomsInMessage,
   RoomType,
-  selectInviteSchema,
-  selectRoomSchema,
+  selectInviteInMessageSchema,
+  selectRoomInMessageSchema,
   selectUserSchema,
   users,
-  usersToRooms,
-  UserToRoomRelations,
+  usersToRoomsInMessage,
+  UserToRoomInMessageRelations,
 } from "@esposter/db-schema";
 import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, count, desc, eq, getTableColumns, ilike, inArray, ne, sql } from "drizzle-orm";
+import { and, count, desc, eq, getColumns, ilike, inArray, ne, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { z } from "zod";
 
-const readRoomInputSchema = roomIdSchema.shape.roomId.optional();
+const readRoomInputSchema = selectRoomInMessageSchema.shape.id.optional();
 export type ReadRoomInput = z.infer<typeof readRoomInputSchema>;
 
 const readMutualRoomsInputSchema = z.object({ userId: selectUserSchema.shape.id });
@@ -63,25 +63,25 @@ export type ReadMutualRoomsInput = z.infer<typeof readMutualRoomsInputSchema>;
 
 const readRoomsInputSchema = z
   .object({
-    ...roomIdSchema.partial().shape,
-    ...createCursorPaginationParamsSchema(selectRoomSchema.keyof(), [
+    roomId: selectRoomInMessageSchema.shape.id.optional(),
+    ...createCursorPaginationParamsSchema(selectRoomInMessageSchema.keyof(), [
       { key: ItemMetadataPropertyNames.updatedAt, order: SortOrder.Desc },
     ]).shape,
-    filter: selectRoomSchema.pick({ name: true }).optional(),
+    filter: selectRoomInMessageSchema.pick({ name: true }).optional(),
   })
   .prefault({});
 export type ReadRoomsInput = z.infer<typeof readRoomsInputSchema>;
 
-const onUpdateRoomInputSchema = selectRoomSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
+const onUpdateRoomInputSchema = selectRoomInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
 export type OnUpdateRoomInput = z.infer<typeof onUpdateRoomInputSchema>;
 
-const onDeleteRoomInputSchema = selectRoomSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
+const onDeleteRoomInputSchema = selectRoomInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
 export type OnDeleteRoomInput = z.infer<typeof onDeleteRoomInputSchema>;
 
-const onJoinRoomInputSchema = selectRoomSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
+const onJoinRoomInputSchema = selectRoomInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
 export type OnJoinRoomInput = z.infer<typeof onJoinRoomInputSchema>;
 
-const onLeaveRoomInputSchema = selectRoomSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
+const onLeaveRoomInputSchema = selectRoomInMessageSchema.shape.id.array().min(1).max(MAX_READ_LIMIT);
 export type OnLeaveRoomInput = z.infer<typeof onLeaveRoomInputSchema>;
 
 const readMembersInputSchema = z.object({
@@ -108,7 +108,7 @@ const createMembersInputSchema = z.object({
 });
 export type CreateMembersInput = z.infer<typeof createMembersInputSchema>;
 
-const readInviteInputSchema = selectInviteSchema.shape.code;
+const readInviteInputSchema = selectInviteInMessageSchema.shape.code;
 export type ReadInviteInput = z.infer<typeof readInviteInputSchema>;
 
 const readInviteCodeInputSchema = roomIdSchema;
@@ -120,7 +120,12 @@ export type CreateInviteInput = z.infer<typeof createInviteInputSchema>;
 export const roomRouter = router({
   countMembers: getMemberProcedure(countMembersInputSchema, "roomId").query(
     async ({ ctx, input: { roomId } }) =>
-      takeOne(await ctx.db.select({ count: count() }).from(usersToRooms).where(eq(usersToRooms.roomId, roomId))).count,
+      takeOne(
+        await ctx.db
+          .select({ count: count() })
+          .from(usersToRoomsInMessage)
+          .where(eq(usersToRoomsInMessage.roomId, roomId)),
+      ).count,
   ),
   createInvite: getMemberProcedure(createInviteInputSchema, "roomId")
     .use(isRoom)
@@ -131,7 +136,9 @@ export const roomRouter = router({
       for (let i = 0; i < 3; i++)
         try {
           inviteCode = createCode(CODE_LENGTH);
-          await ctx.db.insert(invites).values({ code: inviteCode, roomId, userId: ctx.getSessionPayload.user.id });
+          await ctx.db
+            .insert(invitesInMessage)
+            .values({ code: inviteCode, roomId, userId: ctx.getSessionPayload.user.id });
           return inviteCode;
         } catch {
           continue;
@@ -143,17 +150,17 @@ export const roomRouter = router({
     }),
   createMembers: getPermissionsProcedure(RoomPermission.ManageRoom, createMembersInputSchema, "roomId")
     .use(isRoom)
-    .mutation<UserToRoom[]>(({ ctx, input: { roomId, userIds } }) =>
+    .mutation<UserToRoomInMessage[]>(({ ctx, input: { roomId, userIds } }) =>
       ctx.db
-        .insert(usersToRooms)
+        .insert(usersToRoomsInMessage)
         .values(userIds.map((userId) => ({ roomId, userId })))
         .returning(),
     ),
-  createRoom: getProfanityFilterProcedure(createRoomInputSchema, ["name"]).mutation<Room>(({ ctx, input }) =>
+  createRoom: getProfanityFilterProcedure(createRoomInputSchema, ["name"]).mutation<RoomInMessage>(({ ctx, input }) =>
     ctx.db.transaction(async (tx) => {
       const newRoom = (
         await tx
-          .insert(rooms)
+          .insert(roomsInMessage)
           .values({ ...input, userId: ctx.getSessionPayload.user.id })
           .returning()
       )[0];
@@ -164,8 +171,8 @@ export const roomRouter = router({
         });
 
       await Promise.all([
-        tx.insert(usersToRooms).values({ roomId: newRoom.id, userId: ctx.getSessionPayload.user.id }),
-        tx.insert(roomRoles).values({
+        tx.insert(usersToRoomsInMessage).values({ roomId: newRoom.id, userId: ctx.getSessionPayload.user.id }),
+        tx.insert(roomRolesInMessage).values({
           isEveryone: true,
           name: "@everyone",
           permissions:
@@ -195,8 +202,8 @@ export const roomRouter = router({
 
       const deletedMember = (
         await ctx.db
-          .delete(usersToRooms)
-          .where(and(eq(usersToRooms.roomId, roomId), eq(usersToRooms.userId, userId)))
+          .delete(usersToRoomsInMessage)
+          .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, userId)))
           .returning()
       )[0];
       if (!deletedMember)
@@ -211,19 +218,23 @@ export const roomRouter = router({
 
       roomEventEmitter.emit("leaveRoom", { ...deletedMember, sessionId: ctx.getSessionPayload.session.id });
     }),
-  deleteRoom: standardAuthedProcedure.input(deleteRoomInputSchema).mutation<Room>(async ({ ctx, input }) => {
+  deleteRoom: standardAuthedProcedure.input(deleteRoomInputSchema).mutation<RoomInMessage>(async ({ ctx, input }) => {
     const deletedRoom = await deleteRoom(ctx.db, ctx.getSessionPayload, input);
     const containerClient = await useContainerClient(AzureContainer.MessageAssets);
     await deleteDirectory(containerClient, input, true);
     return deletedRoom;
   }),
-  joinRoom: standardAuthedProcedure.input(joinRoomInputSchema).mutation<Room>(({ ctx, input }) =>
+  joinRoom: standardAuthedProcedure.input(joinRoomInputSchema).mutation<RoomInMessage>(({ ctx, input }) =>
     ctx.db.transaction(async (tx) => {
-      const invite = await tx.query.invites.findFirst({
+      const invite = await tx.query.invitesInMessage.findFirst({
         columns: {
           roomId: true,
         },
-        where: (invites, { eq }) => eq(invites.code, input),
+        where: {
+          code: {
+            eq: input,
+          },
+        },
       });
       if (!invite)
         throw new TRPCError({
@@ -233,16 +244,19 @@ export const roomRouter = router({
 
       await assertIsRoom(tx, invite.roomId);
 
-      const ban = await tx.query.bans.findFirst({
+      const ban = await tx.query.bansInMessage.findFirst({
         columns: { userId: true },
-        where: (bans, { and, eq, isNull }) =>
-          and(eq(bans.roomId, invite.roomId), eq(bans.userId, ctx.getSessionPayload.user.id), isNull(bans.deletedAt)),
+        where: {
+          deletedAt: { isNull: true },
+          roomId: { eq: invite.roomId },
+          userId: { eq: ctx.getSessionPayload.user.id },
+        },
       });
       if (ban) throw new TRPCError({ code: "FORBIDDEN" });
 
       const userToRoom = (
         await tx
-          .insert(usersToRooms)
+          .insert(usersToRoomsInMessage)
           .values({ roomId: invite.roomId, userId: ctx.getSessionPayload.user.id })
           .returning()
       )[0];
@@ -256,10 +270,16 @@ export const roomRouter = router({
           ).message,
         });
 
-      const userToRoomWithRelations = await tx.query.usersToRooms.findFirst({
-        where: (usersToRooms, { and, eq }) =>
-          and(eq(usersToRooms.userId, userToRoom.userId), eq(usersToRooms.roomId, userToRoom.roomId)),
-        with: UserToRoomRelations,
+      const userToRoomWithRelations = await tx.query.usersToRoomsInMessage.findFirst({
+        where: {
+          roomId: {
+            eq: userToRoom.roomId,
+          },
+          userId: {
+            eq: userToRoom.userId,
+          },
+        },
+        with: UserToRoomInMessageRelations,
       });
       if (!userToRoomWithRelations)
         throw new TRPCError({
@@ -267,19 +287,19 @@ export const roomRouter = router({
           message: new NotFoundError(DatabaseEntityType.UserToRoom, JSON.stringify(userToRoom)).message,
         });
 
-      const { room, roomId, user } = userToRoomWithRelations;
+      const { roomId, roomInMessage, user } = userToRoomWithRelations;
       roomEventEmitter.emit("joinRoom", { roomId, sessionId: ctx.getSessionPayload.session.id, user });
-      return room;
+      return roomInMessage;
     }),
   ),
   leaveRoom: standardAuthedProcedure
     .input(leaveRoomInputSchema)
     .use(isRoom)
-    .mutation<Room["id"]>(async ({ ctx, input }) => {
+    .mutation<RoomInMessage["id"]>(async ({ ctx, input }) => {
       const userId = ctx.getSessionPayload.user.id;
-      const isCreator = await ctx.db.query.rooms.findFirst({
+      const isCreator = await ctx.db.query.roomsInMessage.findFirst({
         columns: { id: true },
-        where: (rooms, { and, eq }) => and(eq(rooms.id, input), eq(rooms.userId, userId)),
+        where: { id: { eq: input }, userId: { eq: userId } },
       });
 
       if (isCreator) {
@@ -289,8 +309,8 @@ export const roomRouter = router({
 
       const userToRoom = (
         await ctx.db
-          .delete(usersToRooms)
-          .where(and(eq(usersToRooms.roomId, input), eq(usersToRooms.userId, userId)))
+          .delete(usersToRoomsInMessage)
+          .where(and(eq(usersToRoomsInMessage.roomId, input), eq(usersToRoomsInMessage.userId, userId)))
           .returning()
       )[0];
       if (!userToRoom)
@@ -351,15 +371,21 @@ export const roomRouter = router({
     }
   }),
   readInvite: standardAuthedProcedure.input(readInviteInputSchema).query(async ({ ctx, input }) => {
-    const invite = await ctx.db.query.invites.findFirst({
-      where: (invites, { eq }) => eq(invites.code, input),
-      with: InviteRelations,
+    const invite = await ctx.db.query.invitesInMessage.findFirst({
+      where: { code: { eq: input } },
+      with: InviteInMessageRelations,
     });
     if (!invite) return null;
 
-    const isMember = await ctx.db.query.usersToRooms.findFirst({
-      where: (usersToRooms, { and, eq }) =>
-        and(eq(usersToRooms.userId, ctx.getSessionPayload.user.id), eq(usersToRooms.roomId, invite.roomId)),
+    const isMember = await ctx.db.query.usersToRoomsInMessage.findFirst({
+      where: {
+        roomId: {
+          eq: invite.roomId,
+        },
+        userId: {
+          eq: ctx.getSessionPayload.user.id,
+        },
+      },
     });
     return { ...invite, isMember: Boolean(isMember) };
   }),
@@ -370,14 +396,14 @@ export const roomRouter = router({
     ),
   readMembers: getMemberProcedure(readMembersInputSchema, "roomId").query<CursorPaginationData<User>>(
     async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
-      const wheres: (SQL | undefined)[] = [eq(usersToRooms.roomId, roomId)];
+      const wheres: (SQL | undefined)[] = [eq(usersToRoomsInMessage.roomId, roomId)];
       if (cursor) wheres.push(getCursorWhere(users, cursor, sortBy));
       if (filter?.name) wheres.push(ilike(users.name, `%${filter.name}%`));
 
       const readUsers = await ctx.db
-        .select(getTableColumns(users))
+        .select(getColumns(users))
         .from(users)
-        .innerJoin(usersToRooms, eq(usersToRooms.userId, users.id))
+        .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.userId, users.id))
         .where(and(...wheres))
         .orderBy(...parseSortByToSql(users, sortBy))
         .limit(limit + 1);
@@ -386,39 +412,60 @@ export const roomRouter = router({
   ),
   readMembersByIds: getMemberProcedure(readMembersByIdsInputSchema, "roomId").query(({ ctx, input: { ids, roomId } }) =>
     ctx.db
-      .select(getTableColumns(users))
+      .select(getColumns(users))
       .from(users)
-      .innerJoin(usersToRooms, eq(usersToRooms.userId, users.id))
-      .where(and(eq(usersToRooms.roomId, roomId), inArray(users.id, ids))),
+      .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.userId, users.id))
+      .where(and(eq(usersToRoomsInMessage.roomId, roomId), inArray(users.id, ids))),
   ),
-  readMutualRooms: standardAuthedProcedure.input(readMutualRoomsInputSchema).query<Room[]>(({ ctx, input }) => {
-    const usersToRooms1 = alias(usersToRooms, "usersToRooms1");
-    const usersToRooms2 = alias(usersToRooms, "usersToRooms2");
-    return ctx.db
-      .select(getTableColumns(rooms))
-      .from(rooms)
-      .innerJoin(
-        usersToRooms1,
-        and(eq(usersToRooms1.roomId, rooms.id), eq(usersToRooms1.userId, ctx.getSessionPayload.user.id)),
-      )
-      .innerJoin(usersToRooms2, and(eq(usersToRooms2.roomId, rooms.id), eq(usersToRooms2.userId, input.userId)))
-      .where(eq(rooms.type, RoomType.Room))
-      .orderBy(desc(rooms.updatedAt))
-      .limit(MAX_READ_LIMIT);
-  }),
-  readRoom: standardAuthedProcedure.input(readRoomInputSchema).query<null | Room>(async ({ ctx, input }) => {
-    if (input) {
-      const room = await ctx.db.query.rooms.findFirst({
-        where: (rooms, { and, eq, exists }) =>
+  readMutualRooms: standardAuthedProcedure
+    .input(readMutualRoomsInputSchema)
+    .query<RoomInMessage[]>(({ ctx, input }) => {
+      const usersToRoomsInMessage1 = alias(usersToRoomsInMessage, "usersToRoomsInMessage1");
+      const usersToRoomsInMessage2 = alias(usersToRoomsInMessage, "usersToRoomsInMessage2");
+      return ctx.db
+        .select(getColumns(roomsInMessage))
+        .from(roomsInMessage)
+        .innerJoin(
+          usersToRoomsInMessage1,
           and(
-            eq(rooms.id, input),
-            exists(
-              ctx.db
-                .select({ _: sql`1` })
-                .from(usersToRooms)
-                .where(and(eq(usersToRooms.roomId, rooms.id), eq(usersToRooms.userId, ctx.getSessionPayload.user.id))),
-            ),
+            eq(usersToRoomsInMessage1.roomId, roomsInMessage.id),
+            eq(usersToRoomsInMessage1.userId, ctx.getSessionPayload.user.id),
           ),
+        )
+        .innerJoin(
+          usersToRoomsInMessage2,
+          and(eq(usersToRoomsInMessage2.roomId, roomsInMessage.id), eq(usersToRoomsInMessage2.userId, input.userId)),
+        )
+        .where(eq(roomsInMessage.type, RoomType.Room))
+        .orderBy(desc(roomsInMessage.updatedAt))
+        .limit(MAX_READ_LIMIT);
+    }),
+  readRoom: standardAuthedProcedure.input(readRoomInputSchema).query<null | RoomInMessage>(async ({ ctx, input }) => {
+    if (input) {
+      const room = await ctx.db.query.roomsInMessage.findFirst({
+        where: {
+          RAW: (roomsInMessage, { and, eq, exists }) => {
+            const where = and(
+              eq(roomsInMessage.id, input),
+              exists(
+                // Select a constant '1' - we only care if *any* row matches
+                ctx.db
+                  .select({ _: sql`1` })
+                  .from(usersToRoomsInMessage)
+                  .where(
+                    and(
+                      // Condition 1 (Correlation): Link subquery room ID to the outer query room ID
+                      eq(usersToRoomsInMessage.roomId, roomsInMessage.id),
+                      // Condition 2: Ensure the row belongs to the specific user
+                      eq(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id),
+                    ),
+                  ),
+              ),
+            );
+            if (!where) throw new InvalidOperationError(Operation.Read, DatabaseEntityType.Room, input);
+            return where;
+          },
+        },
       });
       if (!room)
         throw new TRPCError({
@@ -429,11 +476,13 @@ export const roomRouter = router({
     }
     const readRoom = (
       await ctx.db
-        .select(getTableColumns(rooms))
-        .from(rooms)
-        .innerJoin(usersToRooms, eq(usersToRooms.roomId, rooms.id))
-        .where(and(eq(usersToRooms.userId, ctx.getSessionPayload.user.id), eq(rooms.type, RoomType.Room)))
-        .orderBy(desc(rooms.updatedAt))
+        .select(getColumns(roomsInMessage))
+        .from(roomsInMessage)
+        .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, roomsInMessage.id))
+        .where(
+          and(eq(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id), eq(roomsInMessage.type, RoomType.Room)),
+        )
+        .orderBy(desc(roomsInMessage.updatedAt))
         .limit(1)
     )[0];
     return readRoom ?? null;
@@ -441,18 +490,18 @@ export const roomRouter = router({
   readRooms: getMemberProcedure(readRoomsInputSchema, "roomId").query(
     async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
       const innerJoinCondition = and(
-        eq(usersToRooms.roomId, rooms.id),
-        eq(usersToRooms.userId, ctx.getSessionPayload.user.id),
+        eq(usersToRoomsInMessage.roomId, roomsInMessage.id),
+        eq(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id),
       );
-      let room: Room | undefined;
+      let room: RoomInMessage | undefined;
 
       if (roomId) {
         room = (
           await ctx.db
-            .select(getTableColumns(rooms))
-            .from(rooms)
-            .innerJoin(usersToRooms, innerJoinCondition)
-            .where(and(eq(rooms.id, roomId), eq(rooms.type, RoomType.Room)))
+            .select(getColumns(roomsInMessage))
+            .from(roomsInMessage)
+            .innerJoin(usersToRoomsInMessage, innerJoinCondition)
+            .where(and(eq(roomsInMessage.id, roomId), eq(roomsInMessage.type, RoomType.Room)))
         )[0];
         if (!room)
           throw new TRPCError({
@@ -461,17 +510,17 @@ export const roomRouter = router({
           });
       }
 
-      const wheres: (SQL | undefined)[] = [eq(rooms.type, RoomType.Room)];
-      if (cursor) wheres.push(getCursorWhere(rooms, cursor, sortBy));
-      if (filter?.name) wheres.push(ilike(rooms.name, `%${filter.name}%`));
-      if (room) wheres.push(ne(rooms.id, room.id));
+      const wheres: (SQL | undefined)[] = [eq(roomsInMessage.type, RoomType.Room)];
+      if (cursor) wheres.push(getCursorWhere(roomsInMessage, cursor, sortBy));
+      if (filter?.name) wheres.push(ilike(roomsInMessage.name, `%${filter.name}%`));
+      if (room) wheres.push(ne(roomsInMessage.id, room.id));
 
       const readRooms = await ctx.db
-        .select(getTableColumns(rooms))
-        .from(rooms)
-        .innerJoin(usersToRooms, innerJoinCondition)
+        .select(getColumns(roomsInMessage))
+        .from(roomsInMessage)
+        .innerJoin(usersToRoomsInMessage, innerJoinCondition)
         .where(and(...wheres))
-        .orderBy(...parseSortByToSql(rooms, sortBy))
+        .orderBy(...parseSortByToSql(roomsInMessage, sortBy))
         .limit(limit + 1);
       const cursorPaginationData = getCursorPaginationData(readRooms, limit, sortBy);
       if (room) cursorPaginationData.items.push(room);
@@ -481,13 +530,13 @@ export const roomRouter = router({
   updateRoom: addProfanityFilterMiddleware(
     getPermissionsProcedure(RoomPermission.ManageRoom, updateRoomInputSchema, "id"),
     ["name"],
-  ).mutation<Room>(async ({ ctx, input: { id, ...rest } }) => {
+  ).mutation<RoomInMessage>(async ({ ctx, input: { id, ...rest } }) => {
     const name = rest.name?.trim();
     const updatedRoom = (
       await ctx.db
-        .update(rooms)
+        .update(roomsInMessage)
         .set({ ...rest, name })
-        .where(eq(rooms.id, id))
+        .where(eq(roomsInMessage.id, id))
         .returning()
     )[0];
     if (!updatedRoom)

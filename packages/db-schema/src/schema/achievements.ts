@@ -1,9 +1,7 @@
 import { pgTable } from "@/pgTable";
-import { userAchievements } from "@/schema/userAchievements";
 import { AchievementName, achievementNameSchema } from "@/services/achievement/AchievementName";
-import { relations } from "drizzle-orm";
 import { pgEnum, uuid } from "drizzle-orm/pg-core";
-import { createSelectSchema } from "drizzle-zod";
+import { createSelectSchema } from "drizzle-orm/zod";
 
 export const achievementNameEnum = pgEnum("achievement_name", AchievementName);
 
@@ -17,7 +15,3 @@ export type Achievement = typeof achievements.$inferSelect;
 export const selectAchievementSchema = createSelectSchema(achievements, {
   name: achievementNameSchema,
 });
-
-export const achievementsRelations = relations(achievements, ({ many }) => ({
-  userAchievements: many(userAchievements),
-}));

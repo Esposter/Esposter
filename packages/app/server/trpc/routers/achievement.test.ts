@@ -11,7 +11,7 @@ import { trpcRouter } from "@@/server/trpc/routers";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
 import {
   achievements,
-  rooms,
+  roomsInMessage,
   SpecialAchievementName,
   UserAchievementRelations,
   WebpageAchievementName,
@@ -33,7 +33,7 @@ describe("achievement", () => {
 
   afterEach(async () => {
     MockContainerDatabase.clear();
-    await mockContext.db.delete(rooms);
+    await mockContext.db.delete(roomsInMessage);
     await mockContext.db.delete(achievements);
   });
 
@@ -114,11 +114,14 @@ describe("achievement", () => {
 
     const userId = getMockSession().user.id;
     const userAchievement = await mockContext.db.query.userAchievements.findFirst({
-      where: (userAchievements, { and, eq }) =>
-        and(
-          eq(userAchievements.achievementId, takeOne(unlockedAchievements).achievementId),
-          eq(userAchievements.userId, userId),
-        ),
+      where: {
+        achievementId: {
+          eq: takeOne(unlockedAchievements).achievementId,
+        },
+        userId: {
+          eq: userId,
+        },
+      },
       with: UserAchievementRelations,
     });
     assert(userAchievement);

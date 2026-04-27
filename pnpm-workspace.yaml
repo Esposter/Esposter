@@ -121,9 +121,8 @@ catalog:
   dedent: ^1.7.2
   defu: ^6.1.7
   dotenv: ^17.4.2
-  drizzle-kit: ^0.31.10
-  drizzle-orm: ^0.45.2
-  drizzle-zod: ^0.8.3
+  drizzle-kit: 1.0.0-beta.23
+  drizzle-orm: 1.0.0-beta.23
   emoji-mart-vue-fast: ^15.0.5
   eslint: ^10.2.1
   eslint-plugin-depend: ^1.5.0

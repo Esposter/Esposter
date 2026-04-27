@@ -7,7 +7,7 @@ import { createCallerFactory } from "@@/server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "@@/server/trpc/context.test";
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
-import { RoomPermission, rooms } from "@esposter/db-schema";
+import { RoomPermission, roomsInMessage } from "@esposter/db-schema";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe(getPermissions, () => {
@@ -30,7 +30,7 @@ describe(getPermissions, () => {
   });
 
   afterEach(async () => {
-    await mockContext.db.delete(rooms);
+    await mockContext.db.delete(roomsInMessage);
   });
 
   test("returns 0n with no roles", async () => {

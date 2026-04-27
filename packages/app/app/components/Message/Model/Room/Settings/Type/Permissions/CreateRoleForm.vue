@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { Room } from "@esposter/db-schema";
+import type { RoomInMessage } from "@esposter/db-schema";
 
 import { useRoleStore } from "@/store/message/room/role";
 
 interface CreateRoleFormProps {
-  roomId: Room["id"];
+  roomId: RoomInMessage["id"];
 }
 
 const { roomId } = defineProps<CreateRoleFormProps>();

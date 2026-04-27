@@ -4,7 +4,7 @@ import { friendUserIdInputSchema } from "#shared/models/db/friend/FriendUserIdIn
 import { getFriendshipId } from "@@/server/services/friend/getFriendshipId";
 import { router } from "@@/server/trpc";
 import { standardAuthedProcedure } from "@@/server/trpc/procedure/standardAuthedProcedure";
-import { BlockRelations, blocks, DatabaseEntityType, friendRequests, friends, users } from "@esposter/db-schema";
+import { BlockRelations, blocks, DatabaseEntityType, friendRequests, friends } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
@@ -17,7 +17,7 @@ export const blockRouter = router({
         code: "BAD_REQUEST",
         message: new InvalidOperationError(Operation.Create, DatabaseEntityType.Block, userId).message,
       });
-    const blockedUser = await ctx.db.query.users.findFirst({ where: eq(users.id, targetUserId) });
+    const blockedUser = await ctx.db.query.users.findFirst({ where: { id: { eq: targetUserId } } });
     if (!blockedUser)
       throw new TRPCError({
         code: "NOT_FOUND",
@@ -34,7 +34,7 @@ export const blockRouter = router({
   readBlockedUsers: standardAuthedProcedure.query<User[]>(async ({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
     const blockedRows = await ctx.db.query.blocks.findMany({
-      where: (blocks, { eq }) => eq(blocks.blockerId, userId),
+      where: { blockerId: { eq: userId } },
       with: BlockRelations,
     });
     return blockedRows.map(({ blocked }) => blocked);

@@ -35,6 +35,7 @@
     "build": "pnpm export:gen && rolldown --config rolldown.config.ts",
     "coverage": "vitest run --coverage",
     "db:gen": "pnpm db:run generate",
+    "db:pull": "pnpm db:run pull",
     "db:run": "tsx --import ../db-mock/src/util/bigintPolyfill.ts node_modules/drizzle-kit/bin.cjs",
     "db:studio": "pnpm db:run studio",
     "db:up": "pnpm db:run up",
@@ -49,7 +50,6 @@
   "dependencies": {
     "@esposter/shared": "workspace:*",
     "drizzle-orm": "catalog:",
-    "drizzle-zod": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
@@ -61,7 +61,6 @@
   "peerDependencies": {
     "@esposter/shared": "workspace:*",
     "drizzle-orm": "catalog:",
-    "drizzle-zod": "catalog:",
     "zod": "catalog:"
   }
 }

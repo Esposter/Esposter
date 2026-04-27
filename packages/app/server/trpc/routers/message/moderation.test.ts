@@ -8,7 +8,14 @@ import { moderationRouter } from "@@/server/trpc/routers/message/moderation";
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
 import { withAsyncIterator } from "@@/server/trpc/routers/withAsyncIterator.test";
-import { AdminActionType, bans, DatabaseEntityType, RoomPermission, rooms, usersToRooms } from "@esposter/db-schema";
+import {
+  AdminActionType,
+  bansInMessage,
+  DatabaseEntityType,
+  RoomPermission,
+  roomsInMessage,
+  usersToRoomsInMessage,
+} from "@esposter/db-schema";
 import { NotFoundError, takeOne } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -52,11 +59,11 @@ describe("moderation", () => {
 
   afterEach(async () => {
     vi.useRealTimers();
-    await mockContext.db.delete(rooms);
+    await mockContext.db.delete(roomsInMessage);
   });
 
   describe("executeAdminAction", () => {
-    test(`${AdminActionType.CreateBan}: owner bans member — ban row inserted, usersToRooms rows deleted`, async () => {
+    test(`${AdminActionType.CreateBan}: owner bansInMessage member — ban row inserted, usersToRoomsInMessage rows deleted`, async () => {
       expect.hasAssertions();
 
       const member = await createMember();
@@ -68,19 +75,19 @@ describe("moderation", () => {
 
       const banRows = await mockContext.db
         .select()
-        .from(bans)
-        .where(and(eq(bans.roomId, roomId), eq(bans.userId, member.id)));
+        .from(bansInMessage)
+        .where(and(eq(bansInMessage.roomId, roomId), eq(bansInMessage.userId, member.id)));
       const membershipRows = await mockContext.db
         .select()
-        .from(usersToRooms)
-        .where(and(eq(usersToRooms.roomId, roomId), eq(usersToRooms.userId, member.id)));
+        .from(usersToRoomsInMessage)
+        .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, member.id)));
 
       expect(banRows).toHaveLength(1);
       expect(takeOne(banRows).userId).toBe(member.id);
       expect(membershipRows).toHaveLength(0);
     });
 
-    test(`${AdminActionType.KickFromRoom}: owner kicks member — usersToRooms row deleted`, async () => {
+    test(`${AdminActionType.KickFromRoom}: owner kicks member — usersToRoomsInMessage row deleted`, async () => {
       expect.hasAssertions();
 
       const member = await createMember();
@@ -91,8 +98,8 @@ describe("moderation", () => {
       });
       const membershipRows = await mockContext.db
         .select()
-        .from(usersToRooms)
-        .where(and(eq(usersToRooms.roomId, roomId), eq(usersToRooms.userId, member.id)));
+        .from(usersToRoomsInMessage)
+        .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, member.id)));
 
       expect(membershipRows).toHaveLength(0);
     });
@@ -110,8 +117,8 @@ describe("moderation", () => {
 
       const membershipRows = await mockContext.db
         .select()
-        .from(usersToRooms)
-        .where(and(eq(usersToRooms.roomId, roomId), eq(usersToRooms.userId, member.id)));
+        .from(usersToRoomsInMessage)
+        .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, member.id)));
 
       expect(membershipRows).toHaveLength(1);
 
