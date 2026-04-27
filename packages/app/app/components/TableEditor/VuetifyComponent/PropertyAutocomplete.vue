@@ -22,10 +22,11 @@ const propertySchemaMap = computed<Record<string, Component>>(() => {
 
   for (const [name, prop] of Object.entries(props)) {
     if (!prop.type) continue;
-    const componentSchema =
-      Array.isArray(prop.type) && prop.type.length > 0
+    const componentSchema = Array.isArray(prop.type)
+      ? prop.type.length > 0
         ? getPropertySchema(takeOne(prop.type))
-        : getPropertySchema(prop.type as Class<unknown>);
+        : undefined
+      : getPropertySchema(prop.type as Class<unknown>);
     if (componentSchema) result[name] = markRaw(componentSchema);
   }
 
