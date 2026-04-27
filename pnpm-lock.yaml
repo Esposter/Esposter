@@ -70,7 +70,7 @@ catalogs:
       specifier: ^0.1.2
       version: 0.1.2
     '@electric-sql/pglite':
-      specifier: ^0.4.4
+      specifier: ^0.4.5
       version: 0.4.5
     '@eslint/core':
       specifier: ^1.2.1
