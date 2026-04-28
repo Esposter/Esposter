@@ -6,6 +6,7 @@ export enum AdminActionType {
   ForceUnmute = "ForceUnmute",
   KickFromRoom = "KickFromRoom",
   KickFromVoice = "KickFromVoice",
+  SoftBan = "SoftBan",
   TimeoutUser = "TimeoutUser",
   Warn = "Warn",
 }

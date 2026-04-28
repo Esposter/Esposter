@@ -19,6 +19,10 @@ export const useAdminActionMap = () => {
       await storeDeleteRoom({ id: roomId });
       notify("You have been kicked from this room.");
     },
+    [AdminActionType.SoftBan]: async (roomId: string) => {
+      await storeDeleteRoom({ id: roomId });
+      notify("You have been soft-banned from this room.");
+    },
     [AdminActionType.KickFromVoice]: () => {
       notify("You have been kicked from voice.");
     },

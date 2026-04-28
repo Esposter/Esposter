@@ -2,6 +2,7 @@ import type { SlashCommandParameters } from "@/models/message/slashCommands/Slas
 import type { StandardCreateMessageInput } from "@esposter/db-schema";
 
 import { SlashCommandType } from "@/models/message/slashCommands/SlashCommandType";
+import { parseDuration } from "@/services/message/slashCommands/parseDuration";
 import { sanitizeHtml } from "@/services/sanitizeHtml/sanitizeHtml";
 import { useDataStore } from "@/store/message/data";
 import { usePollDialogStore } from "@/store/message/input/pollDialog";
@@ -41,6 +42,17 @@ export const useExecuteSlashCommand = () => {
       case SlashCommandType.Poll:
         isOpen.value = true;
         break;
+      case SlashCommandType.Remind: {
+        const { message, time } = command.parameterValues;
+        const durationMs = parseDuration(time);
+        if (!durationMs) break;
+        setTimeout(() => {
+          if (Notification.permission === "granted") {
+            new Notification("Reminder", { body: message });
+          }
+        }, durationMs);
+        break;
+      }
       case SlashCommandType.Roll: {
         const roll = Math.floor(Math.random() * 100) + 1;
         createMessageInput = { message: `🎲 Rolled a **${roll}**`, roomId, type: MessageType.Message };

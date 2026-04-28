@@ -4,6 +4,7 @@ import type { MessageEntity } from "@esposter/db-schema";
 import { DeletableMessageTypes } from "#shared/services/message/DeletableMessageTypes";
 import { UpdatableMessageTypes } from "#shared/services/message/UpdatableMessageTypes";
 import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
+import { useBookmarkStore } from "@/store/message/bookmark";
 import { useMessageStore } from "@/store/message";
 import { useRoomStore } from "@/store/message/room";
 import { MessageType } from "@esposter/db-schema";
@@ -33,6 +34,8 @@ export const useMessageActionItems = (
   const { copy } = messageStore;
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
+  const bookmarkStore = useBookmarkStore();
+  const { createBookmark, deleteBookmark } = bookmarkStore;
   const runtimeConfig = useRuntimeConfig();
   const editMessageItem: Item = {
     icon: "mdi-pencil",
@@ -81,6 +84,23 @@ export const useMessageActionItems = (
           title: "Pin Message",
         },
   );
+  const bookmarkItem = computed<Item>(() =>
+    bookmarkStore.isBookmarked(message.partitionKey, message.rowKey)
+      ? {
+          icon: "mdi-bookmark-remove",
+          onClick: getSynchronizedFunction(async () => {
+            await deleteBookmark(message.partitionKey, message.rowKey);
+          }),
+          title: "Remove Bookmark",
+        }
+      : {
+          icon: "mdi-bookmark-outline",
+          onClick: getSynchronizedFunction(async () => {
+            await createBookmark(message.partitionKey, message.rowKey);
+          }),
+          title: "Bookmark Message",
+        },
+  );
   const copyMessageLinkItem: Item = {
     icon: "mdi-link-variant",
     onClick: getSynchronizedFunction(async () => {
@@ -110,11 +130,13 @@ export const useMessageActionItems = (
         return [copyTextItem, copyMessageLinkItem];
       case MessageType.Message:
       case MessageType.Webhook:
-        return [copyTextItem, pinMessageItem.value, copyMessageLinkItem];
+        return [copyTextItem, pinMessageItem.value, bookmarkItem.value, copyMessageLinkItem];
       case MessageType.PinMessage:
         return [copyMessageLinkItem];
       case MessageType.Poll:
         return [pinMessageItem.value, copyMessageLinkItem];
+      case MessageType.System:
+        return [copyMessageLinkItem];
       case MessageType.VoiceCall:
         return [copyMessageLinkItem];
       default:

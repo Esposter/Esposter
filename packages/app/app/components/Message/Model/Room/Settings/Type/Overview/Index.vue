@@ -22,6 +22,7 @@ const { rooms } = storeToRefs(roomStore);
 const room = computed(() => rooms.value.find(({ id }) => id === roomId));
 const selectedCategoryId = ref(room.value?.categoryId ?? null);
 const isReadOnly = ref(room.value?.isReadOnly ?? false);
+const slowmodeMs = ref(room.value?.slowmodeMs ?? null);
 const topic = ref(room.value?.topic ?? "");
 const categoryItems = computed<SelectItemCategoryDefinition<null | string>[]>(() => [
   { title: "None (uncategorized)", value: null },
@@ -30,8 +31,9 @@ const categoryItems = computed<SelectItemCategoryDefinition<null | string>[]>(()
 const isChanged = computed(
   () =>
     selectedCategoryId.value !== (room.value?.categoryId ?? null) ||
-    topic.value.trim() !== (room.value?.topic ?? "") ||
-    isReadOnly.value !== (room.value?.isReadOnly ?? false),
+    isReadOnly.value !== (room.value?.isReadOnly ?? false) ||
+    slowmodeMs.value !== (room.value?.slowmodeMs ?? null) ||
+    topic.value.trim() !== (room.value?.topic ?? ""),
 );
 const save = async () => {
   if (!isChanged.value) return;
@@ -39,6 +41,7 @@ const save = async () => {
     categoryId: selectedCategoryId.value,
     id: roomId,
     isReadOnly: isReadOnly.value,
+    slowmodeMs: slowmodeMs.value,
     topic: topic.value.trim() || null,
   });
   storeUpdateRoom(updatedRoom);
@@ -64,6 +67,11 @@ const save = async () => {
     <v-row>
       <v-col cols="12" md="6" sm="8">
         <MessageModelRoomSettingsTypeOverviewTopicField v-model="topic" @save="save()" />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12" md="6" sm="8">
+        <MessageModelRoomSettingsTypeOverviewSlowmodeField v-model="slowmodeMs" @save="save()" />
       </v-col>
     </v-row>
     <v-row>

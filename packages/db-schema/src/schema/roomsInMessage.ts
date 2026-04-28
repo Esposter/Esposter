@@ -4,7 +4,7 @@ import { messageSchema } from "@/schema/messageSchema";
 import { roomCategoriesInMessage } from "@/schema/roomCategoriesInMessage";
 import { users } from "@/schema/users";
 import { sql } from "drizzle-orm";
-import { boolean, check, pgEnum, text, uuid } from "drizzle-orm/pg-core";
+import { boolean, check, integer, pgEnum, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
 
@@ -27,6 +27,7 @@ export const roomsInMessage = pgTable(
     image: text("image"),
     isReadOnly: boolean("isReadOnly").notNull().default(false),
     name: text("name"),
+    slowmodeMs: integer("slowmodeMs"),
     participantKey: text("participantKey").unique(),
     topic: text("topic"),
     type: roomTypeEnum("type").notNull().default(RoomType.Room),

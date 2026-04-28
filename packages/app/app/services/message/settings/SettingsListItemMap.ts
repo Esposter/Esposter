@@ -20,6 +20,9 @@ export const SettingsListItemMap: Record<SettingsType, Except<Item, "onClick" | 
   [SettingsType.AuditLog]: {
     icon: "mdi-clipboard-list-outline",
   },
+  [SettingsType.WordFilter]: {
+    icon: "mdi-filter-outline",
+  },
   [SettingsType.Delete]: {
     color: "error",
     icon: "mdi-trash-can-outline",

@@ -20,6 +20,7 @@ export const usersToRoomsInMessage = pgTable(
   "users_to_rooms",
   {
     isHidden: boolean("isHidden").notNull().default(false),
+    lastMessageAt: timestamp("lastMessageAt"),
     notificationType: notificationTypeEnum("notificationType").notNull().default(NotificationType.DirectMessage),
     roomId: uuid("roomId")
       .notNull()

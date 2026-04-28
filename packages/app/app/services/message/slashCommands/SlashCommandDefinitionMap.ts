@@ -24,6 +24,16 @@ export const SlashCommandDefinitionMap = {
     title: "Poll",
     type: SlashCommandType.Poll,
   },
+  [SlashCommandType.Remind]: {
+    description: "Set a reminder. Duration format: 1h30m, 10m, 30s",
+    icon: "mdi-bell-outline",
+    parameters: [
+      { description: "Duration until reminder fires (e.g. 10m, 1h30m)", isRequired: true, name: "time" },
+      { description: "What to remind you about", isRequired: true, name: "message" },
+    ],
+    title: "Remind",
+    type: SlashCommandType.Remind,
+  },
   [SlashCommandType.Roll]: {
     description: "Roll a random number between 1 and 100",
     icon: "mdi-dice-5",

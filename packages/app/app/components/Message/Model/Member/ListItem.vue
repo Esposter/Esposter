@@ -117,6 +117,45 @@ const warnReason = ref("");
                   </template>
                 </StyledDeleteFormDialog>
                 <StyledDeleteFormDialog
+                  v-if="isBannable"
+                  :card-props="{
+                    title: 'Soft Ban Member',
+                    text: `Are you sure you want to soft-ban ${member.name}? They will be kicked and their recent messages deleted, but can rejoin via invite.`,
+                  }"
+                  :confirm-button-props="{ text: 'Soft Ban' }"
+                  @delete="
+                    async (onComplete) => {
+                      try {
+                        if (!currentRoom) return;
+                        await $trpc.moderation.executeAdminAction.mutate({
+                          roomId: currentRoom.id,
+                          targetUserId: member.id,
+                          type: AdminActionType.SoftBan,
+                        });
+                      } finally {
+                        onComplete();
+                      }
+                    }
+                  "
+                >
+                  <template #activator="{ updateIsOpen }">
+                    <v-tooltip text="Soft Ban" location="top">
+                      <template #activator="{ props: tooltipProps }">
+                        <v-btn
+                          v-show="isHovering"
+                          :="tooltipProps"
+                          color="error"
+                          icon="mdi-account-arrow-left"
+                          variant="plain"
+                          size="small"
+                          :ripple="false"
+                          @click.stop="updateIsOpen(true)"
+                        />
+                      </template>
+                    </v-tooltip>
+                  </template>
+                </StyledDeleteFormDialog>
+                <StyledDeleteFormDialog
                   v-if="isKickable"
                   :card-props="{ title: 'Kick Member', text: `Are you sure you want to kick ${member.name}?` }"
                   :confirm-button-props="{ text: 'Kick' }"

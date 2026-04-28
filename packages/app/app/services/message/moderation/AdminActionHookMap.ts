@@ -8,6 +8,7 @@ export interface AdminActionHookMap {
   [AdminActionType.ForceUnmute]: AdminActionHook[];
   [AdminActionType.KickFromRoom]: AdminActionHook[];
   [AdminActionType.KickFromVoice]: AdminActionHook[];
+  [AdminActionType.SoftBan]: AdminActionHook[];
   [AdminActionType.TimeoutUser]: AdminActionHook[];
   [AdminActionType.Warn]: AdminActionHook[];
 }
@@ -20,6 +21,7 @@ export const AdminActionHookMap: AdminActionHookMap = {
   [AdminActionType.ForceUnmute]: [],
   [AdminActionType.KickFromRoom]: [],
   [AdminActionType.KickFromVoice]: [],
+  [AdminActionType.SoftBan]: [],
   [AdminActionType.TimeoutUser]: [],
   [AdminActionType.Warn]: [],
 };

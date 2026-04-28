@@ -1,0 +1,12 @@
+const DURATION_PATTERN = /^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$/i;
+
+export const parseDuration = (input: string): number | null => {
+  const match = DURATION_PATTERN.exec(input.trim());
+  if (!match) return null;
+
+  const hours = Number(match[1] ?? 0);
+  const minutes = Number(match[2] ?? 0);
+  const seconds = Number(match[3] ?? 0);
+  const totalMs = (hours * 3600 + minutes * 60 + seconds) * 1000;
+  return totalMs > 0 ? totalMs : null;
+};

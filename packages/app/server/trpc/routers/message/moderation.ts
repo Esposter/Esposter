@@ -1,5 +1,5 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { BanInMessage, BanInMessageWithRelations, Clause } from "@esposter/db-schema";
+import type { BanInMessage, BanInMessageWithRelations, Clause, StandardMessageEntity } from "@esposter/db-schema";
 
 import { deleteBanInputSchema } from "#shared/models/db/moderation/DeleteBanInput";
 import { executeAdminActionInputSchema } from "#shared/models/db/moderation/ExecuteAdminActionInput";
@@ -7,7 +7,7 @@ import { readBansInputSchema } from "#shared/models/db/moderation/ReadBansInput"
 import { readModerationLogInputSchema } from "#shared/models/db/moderation/ReadModerationLogInput";
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
+import { MAX_READ_LIMIT, MESSAGE_ROWKEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { isManageable } from "#shared/services/room/rbac/isManageable";
 import { useTableClient } from "@@/server/composables/azure/table/useTableClient";
 import { on } from "@@/server/services/events/on";
@@ -24,14 +24,22 @@ import { router } from "@@/server/trpc";
 import { moderationLogPlugin } from "@@/server/trpc/plugins/moderationLogPlugin";
 import { getMemberProcedure } from "@@/server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "@@/server/trpc/procedure/room/getPermissionsProcedure";
-import { getTableNullClause, getTopNEntities, serializeClauses } from "@esposter/db";
+import {
+  getTableNullClause,
+  getTopNEntities,
+  getTopNEntitiesByType,
+  serializeClauses,
+  updateEntity,
+} from "@esposter/db";
 import {
   AdminActionType,
   AzureTable,
+  AzureUpdateEntity,
   bansInMessage,
   BinaryOperator,
   CompositeKeyPropertyNames,
   DatabaseEntityType,
+  MessageEntityMap,
   ModerationLogEntity,
   roomIdSchema,
   RoomPermission,
@@ -97,6 +105,39 @@ export const moderationRouter = router({
             .delete(usersToRoomsInMessage)
             .where(and(eq(usersToRoomsInMessage.userId, targetUserId), eq(usersToRoomsInMessage.roomId, roomId)));
           break;
+        case AdminActionType.SoftBan: {
+          const maxDeleteCount = MAX_READ_LIMIT;
+          await ctx.db.transaction(async (tx) => {
+            await tx
+              .delete(usersToRoomsInMessage)
+              .where(and(eq(usersToRoomsInMessage.userId, targetUserId), eq(usersToRoomsInMessage.roomId, roomId)));
+            await tx
+              .insert(bansInMessage)
+              .values({ bannedByUserId: actorUserId, roomId, userId: targetUserId })
+              .onConflictDoNothing();
+          });
+          const messageClient = await useTableClient(AzureTable.Messages);
+          const clauses: Clause<StandardMessageEntity>[] = [
+            { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
+            { key: "userId", operator: BinaryOperator.eq, value: targetUserId },
+            getTableNullClause(ItemMetadataPropertyNames.deletedAt),
+          ];
+          const recentMessages = await getTopNEntitiesByType(messageClient, maxDeleteCount, MessageEntityMap, {
+            filter: serializeClauses(clauses),
+          });
+          const now = new Date();
+          await Promise.all(
+            recentMessages.map((message) => {
+              const updatedMessage: AzureUpdateEntity<StandardMessageEntity> = {
+                deletedAt: now,
+                partitionKey: message.partitionKey,
+                rowKey: message.rowKey,
+              };
+              return updateEntity(messageClient, updatedMessage);
+            }),
+          );
+          break;
+        }
         case AdminActionType.TimeoutUser:
           await ctx.db
             .update(usersToRoomsInMessage)

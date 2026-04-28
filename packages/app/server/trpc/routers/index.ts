@@ -11,12 +11,14 @@ import { friendRouter } from "@@/server/trpc/routers/friend";
 import { friendRequestRouter } from "@@/server/trpc/routers/friendRequest";
 import { likeRouter } from "@@/server/trpc/routers/like";
 import { messageRouter } from "@@/server/trpc/routers/message";
+import { bookmarkRouter } from "@@/server/trpc/routers/message/bookmark";
 import { emojiRouter } from "@@/server/trpc/routers/message/emoji";
 import { moderationRouter } from "@@/server/trpc/routers/message/moderation";
 import { postRouter } from "@@/server/trpc/routers/post";
 import { pushSubscriptionRouter } from "@@/server/trpc/routers/pushSubscription";
 import { roleRouter } from "@@/server/trpc/routers/role";
 import { roomRouter } from "@@/server/trpc/routers/room";
+import { roomFilterRouter } from "@@/server/trpc/routers/roomFilter";
 import { directMessageRouter } from "@@/server/trpc/routers/room/directMessage";
 import { voiceRouter } from "@@/server/trpc/routers/room/voice";
 import { roomCategoryRouter } from "@@/server/trpc/routers/roomCategory";
@@ -42,12 +44,14 @@ const trpcRouterWithoutAchievements = router({
   friend: friendRouter,
   friendRequest: friendRequestRouter,
   like: likeRouter,
+  bookmark: bookmarkRouter,
   message: messageRouter,
   moderation: moderationRouter,
   post: postRouter,
   pushSubscription: pushSubscriptionRouter,
   role: roleRouter,
   room: roomRouter,
+  roomFilter: roomFilterRouter,
   roomCategory: roomCategoryRouter,
   searchHistory: searchHistoryRouter,
   survey: surveyRouter,
