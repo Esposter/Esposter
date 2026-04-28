@@ -640,8 +640,8 @@ catalogs:
       specifier: ^8.0.31
       version: 8.0.31
     write-excel-file:
-      specifier: ^4.0.2
-      version: 4.0.2
+      specifier: ^4.0.3
+      version: 4.0.3
     ws:
       specifier: ^8.20.0
       version: 8.20.0
@@ -1142,7 +1142,7 @@ importers:
         version: 8.0.31
       write-excel-file:
         specifier: 'catalog:'
-        version: 4.0.2
+        version: 4.0.3
       ws:
         specifier: 'catalog:'
         version: 8.20.0
@@ -13005,8 +13005,8 @@ packages:
     resolution: {integrity: sha512-42AtmgqjV+X1VpdOfyTGOYRi0/zsoLqtXQckTmqTeybT+BDIbM/Guxo7x3pE2vtpr1ok6xRqM9OpBe+Jyoqyww==}
     engines: {node: '>=18'}
 
-  write-excel-file@4.0.2:
-    resolution: {integrity: sha512-PFA+YjkoyxNZC+VMcNNjwmfj070impQfsuIYkRRvpSJzvEnUi6CcwT/ws/du1PpO4dcB7E+z8VQv6M9CvkCQ7A==}
+  write-excel-file@4.0.3:
+    resolution: {integrity: sha512-Kcvqq7UD+XcYIPowaF+/1slS3w7sb23DzkkTBOEOyb0A14/surFeYR81agbY7849OvzX+ioaxmJtZWf9+Fw6Wg==}
     engines: {node: '>=18'}
 
   write-file-atomic@6.0.0:
@@ -26318,7 +26318,7 @@ snapshots:
       string-width: 7.2.0
       strip-ansi: 7.2.0
 
-  write-excel-file@4.0.2:
+  write-excel-file@4.0.3:
     dependencies:
       archiver-node: 8.0.8
       fflate: 0.8.2
