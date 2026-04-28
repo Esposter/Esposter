@@ -5,6 +5,7 @@ import type { VBtn, VCard, VForm } from "vuetify/components";
 
 import { mergeProps } from "vue";
 
+// @TODO: https://github.com/vuejs/core/issues/11371
 export interface StyledFormDialogProps {
   cardProps?: VCard["$props"];
   confirmButtonAttrs?: VBtn["$attrs"];

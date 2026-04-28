@@ -2,7 +2,7 @@
 import type { VCard } from "vuetify/components";
 
 import { mergeProps } from "vue";
-
+// @TODO: https://github.com/vuejs/core/issues/11371
 interface StyledCardProps {
   cardAttrs?: VCard["$attrs"];
   cardProps?: VCard["$props"];

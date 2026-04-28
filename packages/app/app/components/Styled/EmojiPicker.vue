@@ -7,7 +7,7 @@ import Picker from "emoji-mart-vue-fast/src/components/Picker.vue";
 // @ts-expect-error @TODO: https://github.com/serebrov/emoji-mart-vue/issues/121
 import { EmojiIndex } from "emoji-mart-vue-fast/src/utils/emoji-data";
 import { mergeProps } from "vue";
-
+// @TODO: https://github.com/vuejs/core/issues/11371
 interface StyledEmojiPickerProps {
   buttonAttrs?: VBtn["$attrs"];
   buttonProps?: VBtn["$props"];
