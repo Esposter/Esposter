@@ -23,7 +23,7 @@ const hasDraft = computed(() => draftRoomIds.value.has(room.id) && room.id !== c
 const isCreator = computed(() => room.userId === session.value?.user.id);
 const roleStore = useRoleStore();
 const { isManageable } = roleStore;
-const showSettings = computed(() => isCreator.value || isManageable(room.id));
+const isVisible = computed(() => isCreator.value || isManageable(room.id));
 </script>
 
 <template>
@@ -38,14 +38,14 @@ const showSettings = computed(() => isCreator.value || isManageable(room.id));
       </v-list-item-title>
       <template #append>
         <v-tooltip v-if="room.isReadOnly" text="Read-only" location="top">
-          <template #activator="{ props }">
-            <v-icon :="props" icon="mdi-bullhorn-outline" size="x-small" class="text-medium-emphasis" />
+          <template #activator="{ props: activatorProps }">
+            <v-icon :="activatorProps" icon="mdi-bullhorn-outline" size="x-small" class="text-medium-emphasis" />
           </template>
         </v-tooltip>
         <MessageModelRoomSettingsDialogButton :room-id="room.id">
           <template #activator="activatorProps">
             <v-btn
-              v-show="(isActive || isHovering) && showSettings"
+              v-show="(isActive || isHovering) && isVisible"
               bg-transparent
               :="activatorProps"
               :ripple="false"
