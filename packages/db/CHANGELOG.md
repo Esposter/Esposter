@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.22.0](https://github.com/Esposter/Esposter/compare/v2.21.0...v2.22.0) (2026-04-28)
+
+### Bug Fixes
+
+* add types ([4e939f6](https://github.com/Esposter/Esposter/commit/4e939f638a1c692f0eca92bf47ca489f6f6bcdfc))
+* imports ([aac4bbd](https://github.com/Esposter/Esposter/commit/aac4bbd06079cc4657ef1d23c609e67441d0bbaa))
+* move create mock db ([b024631](https://github.com/Esposter/Esposter/commit/b0246312f69f77e2db4ace0803688b64b3b16304))
+* move create mock db back to node build ([46122a8](https://github.com/Esposter/Esposter/commit/46122a8a2fd1083dc9b8b17a561993bc75b557c7))
+* move to db-mock package ([2df4164](https://github.com/Esposter/Esposter/commit/2df416413bb4385f050c81213193bff200f24a66))
+* tests ([58d6224](https://github.com/Esposter/Esposter/commit/58d62241bba057c39bcc300384df577dfe846196))
+* tests wip ([02a5d6a](https://github.com/Esposter/Esposter/commit/02a5d6a5305bd208f746bb5bddd20025044b6dbe))
+* types ([caf4700](https://github.com/Esposter/Esposter/commit/caf47007ad6bfaada08adca4c7283361e3995d61))
+* types and lint ([ad56572](https://github.com/Esposter/Esposter/commit/ad56572087670f66d878cfa8f1778a78582c950b))
+* use upsert ([8794f62](https://github.com/Esposter/Esposter/commit/8794f620187c671f881773e2b2d5546051cb256c))
+* wip ([821d331](https://github.com/Esposter/Esposter/commit/821d331f5b0301ec37e0a5b6269e64d66fbb07cb))
+
 # [2.21.0](https://github.com/Esposter/Esposter/compare/v2.20.0...v2.21.0) (2026-04-15)
 
 ### Bug Fixes
@@ -12,8 +28,11 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Features
 
 * Add [@here](https://github.com/here) and [@everyone](https://github.com/everyone) ([710b702](https://github.com/Esposter/Esposter/commit/710b7026e2f6705513f4561327f2d04fb70350e1))
+
 * add friend request notification ([3bbd448](https://github.com/Esposter/Esposter/commit/3bbd448dcc23330bee926215d8ad196ce0388c94))
+
 * implement features + fix lint ([e62cdd4](https://github.com/Esposter/Esposter/commit/e62cdd42a44775ba52e06d57030da740c61e1a7a))
+
 * wip ([7e5afb7](https://github.com/Esposter/Esposter/commit/7e5afb71132ca4db8a2c55bb15916e583095cfd4))
 
 # [2.20.0](https://github.com/Esposter/Esposter/compare/v2.19.2...v2.20.0) (2026-03-29)

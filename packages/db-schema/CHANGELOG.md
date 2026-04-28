@@ -3,30 +3,113 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.22.0](https://github.com/Esposter/Esposter/compare/v2.21.0...v2.22.0) (2026-04-28)
+
+### Bug Fixes
+
+* add back junction table relations ([2631f2d](https://github.com/Esposter/Esposter/commit/2631f2dfbe6d35541b0ae8e7d0e6731a2a5b7633))
+* also migrate db checks ([43dfd26](https://github.com/Esposter/Esposter/commit/43dfd26ef51d53f4e3e9f06c9c9c1c983d616c47))
+* batch room ids ([e8fc438](https://github.com/Esposter/Esposter/commit/e8fc438c41f3f4d9caeb2c5da0b4ab401837dc2b))
+* code review comments ([346b7f9](https://github.com/Esposter/Esposter/commit/346b7f947c18f6a1dc753b530f22be69e74db5b7))
+* code review comments ([bc643c3](https://github.com/Esposter/Esposter/commit/bc643c377fee97f8a68ee71c66d7bbd3c9dbdf8d))
+* code review comments ([c655535](https://github.com/Esposter/Esposter/commit/c65553551e8cb9561f2b46fa21af2a50827a82cf))
+* code review comments ([144d33c](https://github.com/Esposter/Esposter/commit/144d33c40c6a9f643ede58a9922c5defb8742342))
+* index names ([bd355d6](https://github.com/Esposter/Esposter/commit/bd355d62e8afafdbdd667745e8592f45ff2f9461))
+* lint ([09df7c8](https://github.com/Esposter/Esposter/commit/09df7c8525373de546369ecaca9f6952e3338021))
+* lint and foreign keys ([edc697b](https://github.com/Esposter/Esposter/commit/edc697bbf7d9f89fd1d67f4232e63004da84956e))
+* lint and review comments ([df9ad6d](https://github.com/Esposter/Esposter/commit/df9ad6d05530f162021e2e754f94e10f37d57db8))
+* migration wip ([73268a8](https://github.com/Esposter/Esposter/commit/73268a856748e134bf1866af4bcfd3faf264862e))
+* more type issues ([6a468b6](https://github.com/Esposter/Esposter/commit/6a468b6c2b2b0f3579737dcb1c466f394210cf2e))
+* move bigintpolyfill ([ce96d0e](https://github.com/Esposter/Esposter/commit/ce96d0e6395ee0939e4a91475975e668c633f237))
+* move create mock db ([b024631](https://github.com/Esposter/Esposter/commit/b0246312f69f77e2db4ace0803688b64b3b16304))
+* move create mock db back to node build ([46122a8](https://github.com/Esposter/Esposter/commit/46122a8a2fd1083dc9b8b17a561993bc75b557c7))
+* name for direct message is null ([61a7af5](https://github.com/Esposter/Esposter/commit/61a7af5c7a34e90549e98b2b9f0e3c749079da76))
+* pg table types ([49e7ca0](https://github.com/Esposter/Esposter/commit/49e7ca035936d289bdad23049b78469ae52c26ac))
+* pg table types ([b4972cd](https://github.com/Esposter/Esposter/commit/b4972cd5bffd3501e6ff4469ca888819fcddd027))
+* refactor things ([3be1176](https://github.com/Esposter/Esposter/commit/3be11767c8d48da3ff66265a4ec3c066380ef51c))
+* refactor to relational api ([dd22cd9](https://github.com/Esposter/Esposter/commit/dd22cd9b86434029b93f95575726ea1c07f3c1bb))
+* refactors ([582bbfb](https://github.com/Esposter/Esposter/commit/582bbfbfa973c7f7fc944881259df93ab05cf9d0))
+* relations ([b08c6aa](https://github.com/Esposter/Esposter/commit/b08c6aa677dd942658c6e7af366bb6a76f0f8ad2))
+* relations ([606f1cb](https://github.com/Esposter/Esposter/commit/606f1cbb9f58106485052673e9808d7d78583620))
+* remaining types ([56b8b10](https://github.com/Esposter/Esposter/commit/56b8b102d57f3e9a343fe04f80efe9e95a59a187))
+* remove now unnecessary todo ([bf4f72d](https://github.com/Esposter/Esposter/commit/bf4f72d344241eafe8f6f452ec3ce0160825f9af))
+* renames ([03a7ec7](https://github.com/Esposter/Esposter/commit/03a7ec76f8e24247bbf658885df8377f1778423f))
+* room permissions ([1ceae16](https://github.com/Esposter/Esposter/commit/1ceae1644034f52ca9cd0e4ba5e9ffc2da801c3a))
+* some lint issues ([6ac5961](https://github.com/Esposter/Esposter/commit/6ac596184c37d1b4ac79298de564541066f01895))
+* types ([8d48f18](https://github.com/Esposter/Esposter/commit/8d48f1819894240c85a5e5b43191a95141a92f34))
+* types ([9430781](https://github.com/Esposter/Esposter/commit/94307815f5f35b3bcd8e97f953cc01f9a29d895a))
+* types ([caf4700](https://github.com/Esposter/Esposter/commit/caf47007ad6bfaada08adca4c7283361e3995d61))
+* types ([82fdfeb](https://github.com/Esposter/Esposter/commit/82fdfeb804d2d780aa94ae411d65d2d0bda8d375))
+* wip ([7bcd4ec](https://github.com/Esposter/Esposter/commit/7bcd4ecf53bdd44ad7dee8a2fb5a9ec429718a40))
+* wip ([821d331](https://github.com/Esposter/Esposter/commit/821d331f5b0301ec37e0a5b6269e64d66fbb07cb))
+* zod schemas ([d9eb27d](https://github.com/Esposter/Esposter/commit/d9eb27d957eb704d5b221c7278ace1c6717dbdab))
+
+### Features
+
+* add back users to rooms relations ([811708c](https://github.com/Esposter/Esposter/commit/811708c54c85cd13c37d0c6c1af6da1c53d7731f))
+* Add bio ([9ba1709](https://github.com/Esposter/Esposter/commit/9ba17094fdc4456bbc50705e067274960c083795))
+* Add roles ([6374285](https://github.com/Esposter/Esposter/commit/6374285474f5aba65309e59e5270ec1ad1816b06))
+* Add search history relations ([07d5f2e](https://github.com/Esposter/Esposter/commit/07d5f2e767d13b987a66f9aeafdf1cc4fc0da9e1))
+* Add UI ([b09c23d](https://github.com/Esposter/Esposter/commit/b09c23da94ebd67c6382997e58d8d70d9e2aecdb))
+* Add user achievement relations ([8ff1f6e](https://github.com/Esposter/Esposter/commit/8ff1f6e50e9c208a71fce04dec37c8cf2f6a8183))
+* migrate accounts ([1c61085](https://github.com/Esposter/Esposter/commit/1c61085a1cf933e9aaaa24c142f18efb6cdca472))
+* migrate achievements ([ca343c9](https://github.com/Esposter/Esposter/commit/ca343c92cef4e9e093e16d4d8666af959cbc166c))
+* migrate app users ([c7053e4](https://github.com/Esposter/Esposter/commit/c7053e45485601ab9bbc2dbb5a716267e93f1001))
+* migrate invites ([a126d6b](https://github.com/Esposter/Esposter/commit/a126d6b5636d4ce0eea67593daf342ea9fb59b82))
+* migrate likes ([af6b2ce](https://github.com/Esposter/Esposter/commit/af6b2ce9b5bf38393189a772e55c2648f4df6482))
+* migrate posts ([50d6075](https://github.com/Esposter/Esposter/commit/50d607537b525f3ad23f792a21f20c4e5cc45f15))
+* migrate push subscriptions ([bcc7f9a](https://github.com/Esposter/Esposter/commit/bcc7f9abfe53ec854f317534a08fb1e8c1f25608))
+* migrate search histories ([3cfbdab](https://github.com/Esposter/Esposter/commit/3cfbdabf4fa01c4dfe6b03520f75c14be5aa9683))
+* migrate sessions ([cbe93bc](https://github.com/Esposter/Esposter/commit/cbe93bcbe3b974f2f1b739764044a97c9d74c64e))
+* migrate surveys ([cd98bcd](https://github.com/Esposter/Esposter/commit/cd98bcd8921f5972cf2dea65c8b0559c328895e9))
+* migrate syntax for like,post and achievements ([57eaa25](https://github.com/Esposter/Esposter/commit/57eaa25e4870069e16b55d9233fb74d86ecd3bd0))
+* migrate user statuses in message ([ffe3408](https://github.com/Esposter/Esposter/commit/ffe34083300de924820139a4898943c277477f96))
+* migrate user to rooms in message ([49ee9f2](https://github.com/Esposter/Esposter/commit/49ee9f2fe536592f2c26a02829773e3aeff40e9b))
+* migrate users ([52a6899](https://github.com/Esposter/Esposter/commit/52a6899f504f58f31e24b694d79ad14b1cef0420))
+* migrate webhooks ([13db264](https://github.com/Esposter/Esposter/commit/13db2645fde13ae4bac6e77fd12ab54d20a65ab0))
+* moderation wip ([c9b5310](https://github.com/Esposter/Esposter/commit/c9b5310d50b22ce68fb27d2975fc36ed20494602))
+* pull and add relations ([e5ba7bf](https://github.com/Esposter/Esposter/commit/e5ba7bfa7a55390ed0e0f1c4e46ed29866ebc881))
+
 # [2.21.0](https://github.com/Esposter/Esposter/compare/v2.20.0...v2.21.0) (2026-04-15)
 
 ### Bug Fixes
 
 * actually include room categories in schema ([9699eb7](https://github.com/Esposter/Esposter/commit/9699eb77e0962a0f8bfc17076499d8e6a87d2c0e))
+
 * cleanup schemas to be non-negative ([db5d026](https://github.com/Esposter/Esposter/commit/db5d026529d7860a74164ed66e478c70c918e896))
+
 * deps + disable unnecessary type args ([13cc22a](https://github.com/Esposter/Esposter/commit/13cc22a02897aa84b7cb637412a64d37aacbe2bd))
+
 * docs ([404622d](https://github.com/Esposter/Esposter/commit/404622dd7447dda768cfd7f53d3a0ed8b84840a4))
+
 * friend req table ([2dc91c8](https://github.com/Esposter/Esposter/commit/2dc91c8778f85f23cc90cdaea0e75bbf7964a80a))
+
 * lint ([9ead58f](https://github.com/Esposter/Esposter/commit/9ead58f7fa5276723753b4dc9c328061ff342bbf))
+
 * relations ([f6bc608](https://github.com/Esposter/Esposter/commit/f6bc60848404aa400f12b4916f026a78151805ef))
+
 * review comments ([7d73920](https://github.com/Esposter/Esposter/commit/7d739208fff3c295296afda42e3dedce484b25cd))
+
 * review comments ([2396844](https://github.com/Esposter/Esposter/commit/23968440ae923c0fd1d1fce3d178eb69c31485c4))
+
 * types ([ea4a525](https://github.com/Esposter/Esposter/commit/ea4a525ca46f0bbec11e23a1b458a5755e164ace))
+
 * user to rooms table ([a0426de](https://github.com/Esposter/Esposter/commit/a0426dea6ca3df478e17cd00525ad3d288f99e45))
 
 ### Features
 
 * Add DMs ([d6315b1](https://github.com/Esposter/Esposter/commit/d6315b1a385e9df8bfcc720394bdd666bd6ffd89))
+
 * add friend request notification ([3bbd448](https://github.com/Esposter/Esposter/commit/3bbd448dcc23330bee926215d8ad196ce0388c94))
+
 * Add friends ([9ff1c3e](https://github.com/Esposter/Esposter/commit/9ff1c3e02c6c016d358189b7fe557d48273e54ef))
+
 * Add slash commands ([89d5ffc](https://github.com/Esposter/Esposter/commit/89d5ffce07f42e847f8d37d534174bcd40461c5f))
+
 * implement features + fix lint ([e62cdd4](https://github.com/Esposter/Esposter/commit/e62cdd42a44775ba52e06d57030da740c61e1a7a))
+
 * wip ([7e5afb7](https://github.com/Esposter/Esposter/commit/7e5afb71132ca4db8a2c55bb15916e583095cfd4))
+
 * wip ([efdfaeb](https://github.com/Esposter/Esposter/commit/efdfaeb3ee1b86edf2083dbc1f02fb3338111663))
 
 # [2.20.0](https://github.com/Esposter/Esposter/compare/v2.19.2...v2.20.0) (2026-03-29)

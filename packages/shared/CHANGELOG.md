@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.22.0](https://github.com/Esposter/Esposter/compare/v2.21.0...v2.22.0) (2026-04-28)
+
+### Bug Fixes
+
+* loosen TakeOne type ([151ccec](https://github.com/Esposter/Esposter/commit/151ccec377a40445dcc072f8deb501680f01a2e8))
+
 # [2.21.0](https://github.com/Esposter/Esposter/compare/v2.20.0...v2.21.0) (2026-04-15)
 
 ### Bug Fixes
@@ -12,7 +18,9 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Features
 
 * Add [@here](https://github.com/here) and [@everyone](https://github.com/everyone) ([710b702](https://github.com/Esposter/Esposter/commit/710b7026e2f6705513f4561327f2d04fb70350e1))
+
 * Add friends ([9ff1c3e](https://github.com/Esposter/Esposter/commit/9ff1c3e02c6c016d358189b7fe557d48273e54ef))
+
 * implement features + fix lint ([e62cdd4](https://github.com/Esposter/Esposter/commit/e62cdd42a44775ba52e06d57030da740c61e1a7a))
 
 # [2.20.0](https://github.com/Esposter/Esposter/compare/v2.19.2...v2.20.0) (2026-03-29)

@@ -3,11 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.22.0](https://github.com/Esposter/Esposter/compare/v2.21.0...v2.22.0) (2026-04-28)
+
+### Bug Fixes
+
+* bugs ([70417cd](https://github.com/Esposter/Esposter/commit/70417cd42515c5cfee36d179f75d8b46898cbfda))
+* get structured text ([63fbd76](https://github.com/Esposter/Esposter/commit/63fbd76f44462a71cb8aebfab34d15bf013fb92f))
+* push subscription rename ([83dce01](https://github.com/Esposter/Esposter/commit/83dce014c94ee7b1db33933a54e3eadb48d5ac9e))
+* types and lint ([ad56572](https://github.com/Esposter/Esposter/commit/ad56572087670f66d878cfa8f1778a78582c950b))
+* webhooks relation types as well as drizzle types ([6aaa379](https://github.com/Esposter/Esposter/commit/6aaa37935553103c7cb79829cf7e7fc1475356fc))
+
 # [2.21.0](https://github.com/Esposter/Esposter/compare/v2.20.0...v2.21.0) (2026-04-15)
 
 ### Bug Fixes
 
 * lint and code review comments ([f476766](https://github.com/Esposter/Esposter/commit/f476766af58ddcaa125faddf83dcd569cc164329))
+
 * review comments ([2396844](https://github.com/Esposter/Esposter/commit/23968440ae923c0fd1d1fce3d178eb69c31485c4))
 
 ### Features

@@ -1,6 +1,6 @@
 {
   "name": "@esposter/db-mock",
-  "version": "2.21.0",
+  "version": "2.22.0",
   "private": true,
   "description": "A library of database mock utilities for testing, available in server environment only.",
   "keywords": [
