@@ -35,7 +35,7 @@ const {
   ringMaxRadius,
   rings,
   shininess,
-  showAtmosphere,
+  isAtmosphereVisible,
 } = {
   arcLength: 0.9,
   arcTime: dayjs.duration(2, "second").asMilliseconds(),
@@ -48,7 +48,7 @@ const {
   ringMaxRadius: 3,
   rings: 3,
   shininess: 0.7,
-  showAtmosphere: true,
+  isAtmosphereVisible: true,
 };
 const id = "globe";
 const { width } = useWindowSize();
@@ -114,7 +114,7 @@ onMounted(async () => {
     .hexPolygonsData(features)
     .hexPolygonResolution(3)
     .hexPolygonMargin(0.7)
-    .showAtmosphere(showAtmosphere)
+    .showAtmosphere(isAtmosphereVisible)
     .atmosphereColor(atmosphereColor)
     .atmosphereAltitude(atmosphereAltitude)
     .hexPolygonColor(() => hexPolygonColor)
