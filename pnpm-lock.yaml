@@ -373,8 +373,8 @@ catalogs:
       specifier: ^11.3.4
       version: 11.3.4
     grapesjs:
-      specifier: ^0.22.15
-      version: 0.22.15
+      specifier: ^0.22.16
+      version: 0.22.16
     grapesjs-blocks-basic:
       specifier: ^1.0.2
       version: 1.0.2
@@ -941,7 +941,7 @@ importers:
         version: 11.0.17
       grapesjs:
         specifier: 'catalog:'
-        version: 0.22.15
+        version: 0.22.16
       grapesjs-blocks-basic:
         specifier: 'catalog:'
         version: 1.0.2
@@ -9103,8 +9103,8 @@ packages:
   grapesjs-typed@2.0.1:
     resolution: {integrity: sha512-3Z5hATX/Zp9PkdOv94RtIzqB/n1mMUdTO5X/ZyNUMzSmGZG4CHtTmw3bIQDIkrSTWdbcqInlbFPzvzKYr4rKaw==}
 
-  grapesjs@0.22.15:
-    resolution: {integrity: sha512-A285579LiAWrRuN3G2doFn8gSdhA5lji4h7qGZ4X8FtSPIP/xJnx+sd+m0GAb3bTlJxQmAXYQYUwEIFOgt22sA==}
+  grapesjs@0.22.16:
+    resolution: {integrity: sha512-kCfphgpC7pqJPuMYmIhMR6ueyB3+V67isdpMZOvmuGeWDMomkgzqRWOMH3matfdqIJW7LUivHZo9GeyVQAGmLw==}
 
   graphlib@2.1.8:
     resolution: {integrity: sha512-jcLLfkpoVGmH7/InMC/1hIvOPSUh38oJtGhvrOFGzioE1DZ+0YW16RgmOJhHiuWTvGiJQ9Z1Ik43JvkRPRvE+A==}
@@ -21461,7 +21461,7 @@ snapshots:
 
   grapesjs-typed@2.0.1: {}
 
-  grapesjs@0.22.15:
+  grapesjs@0.22.16:
     dependencies:
       '@types/backbone': 1.4.15
       backbone: 1.4.1
