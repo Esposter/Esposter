@@ -7,6 +7,7 @@ export enum AdminActionType {
   KickFromRoom = "KickFromRoom",
   KickFromVoice = "KickFromVoice",
   TimeoutUser = "TimeoutUser",
+  Warn = "Warn",
 }
 
 export const adminActionTypeSchema = z.enum(AdminActionType) satisfies z.ZodType<AdminActionType>;

@@ -47,6 +47,11 @@ const isKickable = computed(() => {
 });
 const timeoutDurationSelectItems = Object.entries(TimeoutDurationMap).map(([title, value]) => ({ title, value }));
 const selectedTimeoutDurationMs = ref(TimeoutDurationMap["1 minute"]);
+const isWarnable = computed(() => {
+  if (!myPermissions.value) return false;
+  return hasPermission(myPermissions.value.permissions, RoomPermission.ManageMessages, myPermissions.value.isRoomOwner);
+});
+const warnReason = ref("");
 </script>
 
 <template>
@@ -187,6 +192,51 @@ const selectedTimeoutDurationMs = ref(TimeoutDurationMap["1 minute"]);
                       v-model="selectedTimeoutDurationMs"
                       :items="timeoutDurationSelectItems"
                       label="Duration"
+                    />
+                  </div>
+                </StyledFormDialog>
+                <StyledFormDialog
+                  v-if="isWarnable && !isSelf"
+                  :card-props="{ title: `Warn ${member.name}` }"
+                  :confirm-button-props="{ color: 'warning', text: 'Warn' }"
+                  @submit="
+                    async (_event, onComplete) => {
+                      try {
+                        if (!currentRoom) return;
+                        await $trpc.moderation.executeAdminAction.mutate({
+                          reason: warnReason || undefined,
+                          roomId: currentRoom.id,
+                          targetUserId: member.id,
+                          type: AdminActionType.Warn,
+                        });
+                      } finally {
+                        onComplete();
+                      }
+                    }
+                  "
+                >
+                  <template #activator="{ updateIsOpen }">
+                    <v-tooltip text="Warn" location="top">
+                      <template #activator="{ props: tooltipProps }">
+                        <v-btn
+                          v-show="isHovering"
+                          :="tooltipProps"
+                          color="warning"
+                          icon="mdi-alert-circle-outline"
+                          variant="plain"
+                          size="small"
+                          :ripple="false"
+                          @click.stop="updateIsOpen(true)"
+                        />
+                      </template>
+                    </v-tooltip>
+                  </template>
+                  <div px-4 py-2>
+                    <v-text-field
+                      v-model="warnReason"
+                      label="Reason (optional)"
+                      hint="Visible in the audit log"
+                      persistent-hint
                     />
                   </div>
                 </StyledFormDialog>

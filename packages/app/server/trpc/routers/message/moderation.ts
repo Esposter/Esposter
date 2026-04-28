@@ -103,6 +103,8 @@ export const moderationRouter = router({
             .set({ timeoutUntil: new Date(Date.now() + input.durationMs) })
             .where(and(eq(usersToRoomsInMessage.userId, targetUserId), eq(usersToRoomsInMessage.roomId, roomId)));
           break;
+        case AdminActionType.Warn:
+          break;
         default:
           exhaustiveGuard(input);
       }

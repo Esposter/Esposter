@@ -2,7 +2,8 @@ import { pgTable } from "@/pgTable";
 import { messageSchema } from "@/schema/messageSchema";
 import { roomsInMessage } from "@/schema/roomsInMessage";
 import { users } from "@/schema/users";
-import { boolean, pgEnum, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import { boolean, index, pgEnum, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { z } from "zod";
 
 export enum NotificationType {
@@ -29,7 +30,12 @@ export const usersToRoomsInMessage = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ roomId, userId }) => [primaryKey({ columns: [userId, roomId] })],
+    extraConfig: ({ roomId, timeoutUntil, userId }) => [
+      primaryKey({ columns: [userId, roomId] }),
+      index("users_to_rooms_timeout_until_index")
+        .on(timeoutUntil)
+        .where(sql`${timeoutUntil} IS NOT NULL`),
+    ],
     schema: messageSchema,
   },
 );

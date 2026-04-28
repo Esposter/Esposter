@@ -12,6 +12,7 @@ import { exhaustiveGuard } from "@esposter/shared";
 import { marked } from "marked";
 
 export const useExecuteSlashCommand = () => {
+  const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const dataStore = useDataStore();
@@ -54,6 +55,11 @@ export const useExecuteSlashCommand = () => {
       case SlashCommandType.TableFlip:
         createMessageInput = { message: `(╯°□°）╯︵ ┻━┻`, roomId, type: MessageType.Message };
         break;
+      case SlashCommandType.Topic: {
+        const topic = command.parameterValues.text?.trim() || null;
+        await $trpc.room.updateRoom.mutate({ id: roomId, topic });
+        break;
+      }
       case SlashCommandType.Unflip:
         createMessageInput = { message: `┬─┬ノ( º _ ºノ)`, roomId, type: MessageType.Message };
         break;

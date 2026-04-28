@@ -2,6 +2,7 @@
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
+import { useInputStore } from "@/store/message/input";
 import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
 import { RoutePath } from "@esposter/shared";
@@ -13,9 +14,12 @@ interface RoomListItemProps {
 const { room } = defineProps<RoomListItemProps>();
 const { data: session } = await authClient.useSession(useFetch);
 const roomName = useRoomName(() => room.id);
+const inputStore = useInputStore();
+const { draftRoomIds } = storeToRefs(inputStore);
 const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const isActive = computed(() => room.id === currentRoomId.value);
+const hasDraft = computed(() => draftRoomIds.value.has(room.id) && room.id !== currentRoomId.value);
 const isCreator = computed(() => room.userId === session.value?.user.id);
 const roleStore = useRoleStore();
 const { isManageable } = roleStore;
@@ -30,8 +34,14 @@ const showSettings = computed(() => isCreator.value || isManageable(room.id));
       </template>
       <v-list-item-title pr-6>
         {{ roomName }}
+        <span v-if="hasDraft" class="text-medium-emphasis" italic text-xs> — Draft</span>
       </v-list-item-title>
       <template #append>
+        <v-tooltip v-if="room.isReadOnly" text="Read-only" location="top">
+          <template #activator="{ props }">
+            <v-icon :="props" icon="mdi-bullhorn-outline" size="x-small" class="text-medium-emphasis" />
+          </template>
+        </v-tooltip>
         <MessageModelRoomSettingsDialogButton :room-id="room.id">
           <template #activator="activatorProps">
             <v-btn

@@ -74,7 +74,21 @@ When placing a `v-btn` inside a `v-text-field` slot (e.g. `#append-inner`), use 
 ## Vuetify Selects and List Items
 
 - When building items for `v-autocomplete`, `v-select`, or `v-list-item` (in a `v-menu` / `v-list`), always type them as `SelectItemCategoryDefinition<T>[]` (`{ title: string, value: T }`) from `@/models/vuetify/SelectItemCategoryDefinition`. Never inline untyped `{ title, value }` arrays — always extract to a typed constant.
-- **Never specify `item-title` or `item-value` props** — Vuetify's defaults are already `"title"` and `"value"`, which match `SelectItemCategoryDefinition` exactly.
+- **Never specify `item-title` or `item-value` props** — Vuetify's defaults are already `"title"` and `"value"`, which match `SelectItemCategoryDefinition` exactly. If your source data has different field names (e.g. `{ id, name }`), map it to `{ title, value }` at the call site — never pass the raw shape and compensate with `item-title`/`item-value`.
+
+  ```typescript
+  // WRONG — raw entity shape + item-title/item-value to compensate
+  const categoryItems = computed(() => [{ id: null, name: "None" }, ...categories.value]);
+  // <v-select :items="categoryItems" item-title="name" item-value="id" />
+
+  // CORRECT — map to SelectItemCategoryDefinition<T> so no extra props needed
+  const categoryItems = computed<SelectItemCategoryDefinition<null | string>[]>(() => [
+    { title: "None", value: null },
+    ...categories.value.map(({ id, name }) => ({ title: name, value: id })),
+  ]);
+  // <v-select :items="categoryItems" />
+  ```
+
 - Name the items constant to reflect what the value represents — e.g. `columnIds` for `SelectItemCategoryDefinition<string>[]` where each `value` is a column ID.
 - **Prefer enum values as display titles** — when the enum string value IS the display label, use `Object.values(EnumType).map((v) => ({ title: v, value: v }))` (`ColumnTypeItemCategoryDefinitions` pattern). When the display must differ from the enum value (rare), use a `const Map = { ... } as const satisfies Record<Enum, Except<SelectItemCategoryDefinition<Enum>, "value">>` + `parseDictionaryToArray` (`CsvDelimiterItemCategoryDefinitions` pattern). Update enum string values to match their display label when reasonable, to keep enum key and value the same string.
 

@@ -14,6 +14,11 @@ export const executeAdminActionInputSchema = z.discriminatedUnion("type", [
   }),
   z.object({
     ...baseExecuteAdminActionInputSchema.shape,
+    reason: z.string().optional(),
+    type: z.literal(AdminActionType.Warn),
+  }),
+  z.object({
+    ...baseExecuteAdminActionInputSchema.shape,
     type: z.enum([
       AdminActionType.CreateBan,
       AdminActionType.ForceMute,

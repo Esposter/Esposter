@@ -61,21 +61,23 @@ export const useDataStore = defineStore("message/data", () => {
   };
 
   const inputStore = useInputStore();
-  const { validateInput } = inputStore;
+  const { clearDraft, validateInput } = inputStore;
   const uploadFileStore = useUploadFileStore();
   const replyStore = useReplyStore();
   const sendMessage = async (editor: Editor) => {
-    if (!roomStore.currentRoomId || !validateInput(editor, true)) return;
+    const roomId = roomStore.currentRoomId;
+    if (!roomId || !validateInput(editor, true)) return;
 
     const input: StandardCreateMessageInput = {
       files: uploadFileStore.files,
       message: inputStore.input,
       replyRowKey: replyStore.rowKey,
-      roomId: roomStore.currentRoomId,
+      roomId,
       type: MessageType.Message,
     };
     await Promise.all(MessageHookMap.ResetSend.map((fn) => Promise.resolve(fn(editor))));
     await createMessage(input);
+    clearDraft(roomId);
   };
   MessageHookMap.ResetSend.push((editor) => {
     editor.commands.clearContent(true);

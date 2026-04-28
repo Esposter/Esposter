@@ -27,6 +27,7 @@ import { on } from "@@/server/services/events/on";
 import { messageEventEmitter } from "@@/server/services/message/events/messageEventEmitter";
 import { roomEventEmitter } from "@@/server/services/message/events/roomEventEmitter";
 import { isRoomId } from "@@/server/services/message/isRoomId";
+import { assertNotReadOnly } from "@@/server/services/message/moderation/assertNotReadOnly";
 import { assertNotTimedOut } from "@@/server/services/message/moderation/assertNotTimedOut";
 import { readMessages } from "@@/server/services/message/readMessages";
 import { searchMessages } from "@@/server/services/message/searchMessages";
@@ -160,6 +161,7 @@ export const messageRouter = router({
   createMessage: getMemberProcedure(standardCreateMessageInputSchema, "roomId")
     .concat(timeoutPlugin)
     .mutation<MessageEntity>(async ({ ctx, input }) => {
+      await assertNotReadOnly(ctx.db, ctx.getSessionPayload.user.id, input.roomId);
       const messageClient = await useTableClient(AzureTable.Messages);
       const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
       const newMessageEntity = await createMessage(messageClient, messageAscendingClient, {

@@ -45,6 +45,13 @@ export const SlashCommandDefinitionMap = {
     title: "TableFlip",
     type: SlashCommandType.TableFlip,
   },
+  [SlashCommandType.Topic]: {
+    description: "Set the room topic. Omit text to clear.",
+    icon: "mdi-forum-outline",
+    parameters: [{ description: "The new topic for this room", isRequired: false, name: "text" }],
+    title: "Topic",
+    type: SlashCommandType.Topic,
+  },
   [SlashCommandType.Unflip]: {
     description: "Appends ┬─┬ノ(° -°ノ) to your message",
     icon: "mdi-emoticon-cool-outline",

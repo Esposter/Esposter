@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { SelectItemCategoryDefinition } from "@/models/vuetify/SelectItemCategoryDefinition";
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { useRoomStore } from "@/store/message/room";
@@ -20,10 +21,26 @@ const { storeUpdateRoom } = roomStore;
 const { rooms } = storeToRefs(roomStore);
 const room = computed(() => rooms.value.find(({ id }) => id === roomId));
 const selectedCategoryId = ref(room.value?.categoryId ?? null);
-const categoryItems = computed(() => [{ id: null, name: "None (uncategorized)" }, ...categories.value]);
-
+const isReadOnly = ref(room.value?.isReadOnly ?? false);
+const topic = ref(room.value?.topic ?? "");
+const categoryItems = computed<SelectItemCategoryDefinition<null | string>[]>(() => [
+  { title: "None (uncategorized)", value: null },
+  ...categories.value.map(({ id, name }) => ({ title: name, value: id })),
+]);
+const isChanged = computed(
+  () =>
+    selectedCategoryId.value !== (room.value?.categoryId ?? null) ||
+    topic.value.trim() !== (room.value?.topic ?? "") ||
+    isReadOnly.value !== (room.value?.isReadOnly ?? false),
+);
 const save = async () => {
-  const updatedRoom = await $trpc.room.updateRoom.mutate({ categoryId: selectedCategoryId.value, id: roomId });
+  if (!isChanged.value) return;
+  const updatedRoom = await $trpc.room.updateRoom.mutate({
+    categoryId: selectedCategoryId.value,
+    id: roomId,
+    isReadOnly: isReadOnly.value,
+    topic: topic.value.trim() || null,
+  });
   storeUpdateRoom(updatedRoom);
 };
 </script>
@@ -42,6 +59,16 @@ const save = async () => {
           :items="categoryItems"
           @save="save()"
         />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12" md="6" sm="8">
+        <MessageModelRoomSettingsTypeOverviewTopicField v-model="topic" @save="save()" />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12" md="6" sm="8">
+        <MessageModelRoomSettingsTypeOverviewReadOnlyField v-model="isReadOnly" @save="save()" />
       </v-col>
     </v-row>
   </v-container>

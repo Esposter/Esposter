@@ -281,6 +281,21 @@ Use DB column names (snake_case where applicable) in constraint/index names, not
   pnpm db:up    # applies pending migrations to the DB
   ```
 
+## Time Duration Columns
+
+- **Always store time durations in milliseconds** — never seconds, minutes, or hours. Milliseconds is the standard unit; only deviate when sub-millisecond precision is genuinely required.
+- **Column names must carry the `Ms` suffix** — `slowmodeMs`, `durationMs`, `timeoutMs`. This is an explicit exception to the no-abbreviation rule: `Ms` is a widely recognized, unambiguous suffix for milliseconds.
+
+  ```ts
+  // CORRECT
+  slowmodeMs: integer("slowmodeMs"),
+  durationMs: integer("durationMs").notNull(),
+
+  // WRONG
+  slowmodeSeconds: integer("slowmodeSeconds"),
+  durationMilliseconds: integer("durationMilliseconds"),
+  ```
+
 ## Primary Keys
 
 - **UUID PK for entities that are referenced by other tables** — `id: uuid("id").primaryKey().defaultRandom()`.

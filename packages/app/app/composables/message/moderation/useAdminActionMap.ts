@@ -26,6 +26,9 @@ export const useAdminActionMap = () => {
       const minutes = durationMs ? Math.max(1, Math.ceil(durationMs / 60000)) : 0;
       notify(`You have been timed out for ${minutes} minute${minutes === 1 ? "" : "s"}.`);
     },
+    [AdminActionType.Warn]: () => {
+      notify("You have been warned.");
+    },
   };
   return Object.fromEntries(
     Object.values(AdminActionType).map((adminActionType) => [

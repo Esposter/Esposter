@@ -21,18 +21,19 @@ description: Esposter Vitest testing conventions — describe with function refs
 
 ## Canonical Test Values
 
-| Type           | Value(s)                                                                |
-| -------------- | ----------------------------------------------------------------------- |
-| Boolean        | `"true"`, `"false"` — test both in one case                             |
-| Integer        | `"0"` / `0`                                                             |
-| Decimal        | `"0.1"` / `0.1`                                                         |
-| Negative       | `"-1"` / `-1`                                                           |
-| NaN            | `String(Number.NaN)`                                                    |
-| Date           | `"1970-01-01"`; second date: `"1970-01-02"`                             |
-| String base    | `""` ; different value: `" "` ; use `"a"` only when space trims to `""` |
-| Object keys    | `""` base, `" "` second — never semantic names                          |
-| Nonexistent ID | `"-1"` (string), `-1` (number) — never `"non-existent-id"` etc.         |
-| Entity fields  | Use field name as literal: `const name = "name"`. UUIDs for IDs.        |
+| Type           | Value(s)                                                                                                                                                                            |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Boolean        | `"true"`, `"false"` — test both in one case                                                                                                                                         |
+| Integer        | `"0"` / `0`                                                                                                                                                                         |
+| Decimal        | `"0.1"` / `0.1`                                                                                                                                                                     |
+| Negative       | `"-1"` / `-1`                                                                                                                                                                       |
+| NaN            | `String(Number.NaN)`                                                                                                                                                                |
+| Date           | `"1970-01-01"`; second date: `"1970-01-02"`                                                                                                                                         |
+| String base    | `""` ; different value: `" "` ; use `"a"` only when space trims to `""`                                                                                                             |
+| Object keys    | `""` base, `" "` second — never semantic names                                                                                                                                      |
+| Nonexistent ID | `"-1"` (string), `-1` (number) — never `"non-existent-id"` etc.                                                                                                                     |
+| Entity fields  | Use field name as literal: `const name = "name"`. UUIDs for IDs.                                                                                                                    |
+| UUID/ID fields | `const roomId = crypto.randomUUID()` at **describe scope** — never `"room-1"` or `"test-id"`. Never regenerate in `beforeEach` unless each test genuinely needs a unique ID (rare). |
 
 - **Date format tests** — `for...of` inside a single test using `dayjs("1970-01-01", "YYYY-MM-DD", true).format(format)`. Never `test.each`.
 - **Interpolated descriptions** — `` `${AdminActionType.BanUser}: owner bans member — ban inserted` ``. **Never write enum values as string literals** in describe/test titles; always use template literals with the enum reference. Plain English names for non-enum cases: "integer", "decimal", "epoch date".

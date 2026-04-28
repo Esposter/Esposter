@@ -9,6 +9,7 @@ export interface AdminActionHookMap {
   [AdminActionType.KickFromRoom]: AdminActionHook[];
   [AdminActionType.KickFromVoice]: AdminActionHook[];
   [AdminActionType.TimeoutUser]: AdminActionHook[];
+  [AdminActionType.Warn]: AdminActionHook[];
 }
 
 type AdminActionHook = (roomId: string) => Promisable<void>;
@@ -20,4 +21,5 @@ export const AdminActionHookMap: AdminActionHookMap = {
   [AdminActionType.KickFromRoom]: [],
   [AdminActionType.KickFromVoice]: [],
   [AdminActionType.TimeoutUser]: [],
+  [AdminActionType.Warn]: [],
 };
