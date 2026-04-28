@@ -16,6 +16,7 @@ import {
   roomsInMessage,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
+import { MockTableDatabase } from "azure-mock";
 import { NotFoundError, takeOne } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -59,6 +60,7 @@ describe("moderation", () => {
 
   afterEach(async () => {
     vi.useRealTimers();
+    MockTableDatabase.clear();
     await mockContext.db.delete(roomsInMessage);
   });
 
@@ -200,6 +202,30 @@ describe("moderation", () => {
           type: AdminActionType.CreateBan,
         }),
       ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+    });
+
+    test(`${AdminActionType.SoftBan}: owner soft-bans member — ban row inserted, usersToRoomsInMessage row deleted`, async () => {
+      expect.hasAssertions();
+
+      const member = await createMember();
+      await moderationCaller.executeAdminAction({
+        roomId,
+        targetUserId: member.id,
+        type: AdminActionType.SoftBan,
+      });
+
+      const banRows = await mockContext.db
+        .select()
+        .from(bansInMessage)
+        .where(and(eq(bansInMessage.roomId, roomId), eq(bansInMessage.userId, member.id)));
+      const membershipRows = await mockContext.db
+        .select()
+        .from(usersToRoomsInMessage)
+        .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, member.id)));
+
+      expect(banRows).toHaveLength(1);
+      expect(takeOne(banRows).userId).toBe(member.id);
+      expect(membershipRows).toHaveLength(0);
     });
   });
 

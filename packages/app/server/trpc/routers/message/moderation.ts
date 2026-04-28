@@ -1,5 +1,11 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { BanInMessage, BanInMessageWithRelations, Clause, StandardMessageEntity } from "@esposter/db-schema";
+import type {
+  AzureUpdateEntity,
+  BanInMessage,
+  BanInMessageWithRelations,
+  Clause,
+  StandardMessageEntity,
+} from "@esposter/db-schema";
 
 import { deleteBanInputSchema } from "#shared/models/db/moderation/DeleteBanInput";
 import { executeAdminActionInputSchema } from "#shared/models/db/moderation/ExecuteAdminActionInput";
@@ -34,7 +40,6 @@ import {
 import {
   AdminActionType,
   AzureTable,
-  AzureUpdateEntity,
   bansInMessage,
   BinaryOperator,
   CompositeKeyPropertyNames,
@@ -43,6 +48,7 @@ import {
   ModerationLogEntity,
   roomIdSchema,
   RoomPermission,
+  StandardMessageEntityPropertyNames,
   users,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
@@ -106,7 +112,6 @@ export const moderationRouter = router({
             .where(and(eq(usersToRoomsInMessage.userId, targetUserId), eq(usersToRoomsInMessage.roomId, roomId)));
           break;
         case AdminActionType.SoftBan: {
-          const maxDeleteCount = MAX_READ_LIMIT;
           await ctx.db.transaction(async (tx) => {
             await tx
               .delete(usersToRoomsInMessage)
@@ -119,10 +124,10 @@ export const moderationRouter = router({
           const messageClient = await useTableClient(AzureTable.Messages);
           const clauses: Clause<StandardMessageEntity>[] = [
             { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.eq, value: roomId },
-            { key: "userId", operator: BinaryOperator.eq, value: targetUserId },
+            { key: StandardMessageEntityPropertyNames.userId, operator: BinaryOperator.eq, value: targetUserId },
             getTableNullClause(ItemMetadataPropertyNames.deletedAt),
           ];
-          const recentMessages = await getTopNEntitiesByType(messageClient, maxDeleteCount, MessageEntityMap, {
+          const recentMessages = await getTopNEntitiesByType(messageClient, MAX_READ_LIMIT, MessageEntityMap, {
             filter: serializeClauses(clauses),
           });
           const now = new Date();
@@ -174,7 +179,9 @@ export const moderationRouter = router({
   readBans: getPermissionsProcedure(RoomPermission.BanMembers, readBansInputSchema, "roomId").query<
     CursorPaginationData<BanInMessageWithRelations>
   >(async ({ ctx, input: { cursor, limit, roomId } }) => {
-    const sortBy: SortItem<keyof BanInMessage>[] = [{ key: "createdAt", order: SortOrder.Desc }];
+    const sortBy: SortItem<keyof BanInMessage>[] = [
+      { key: ItemMetadataPropertyNames.createdAt, order: SortOrder.Desc },
+    ];
     const wheres: (SQL | undefined)[] = [eq(bansInMessage.roomId, roomId), isNull(bansInMessage.deletedAt)];
     if (cursor) wheres.push(getCursorWhere(bansInMessage, cursor, sortBy));
 

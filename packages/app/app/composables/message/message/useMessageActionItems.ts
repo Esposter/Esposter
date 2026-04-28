@@ -7,6 +7,7 @@ import { getSynchronizedFunction } from "#shared/util/getSynchronizedFunction";
 import { useBookmarkStore } from "@/store/message/bookmark";
 import { useMessageStore } from "@/store/message";
 import { useRoomStore } from "@/store/message/room";
+import { useThreadStore } from "@/store/message/thread";
 import { MessageType } from "@esposter/db-schema";
 import { exhaustiveGuard, RoutePath } from "@esposter/shared";
 import { parse } from "node-html-parser";
@@ -36,6 +37,8 @@ export const useMessageActionItems = (
   const { currentRoomId } = storeToRefs(roomStore);
   const bookmarkStore = useBookmarkStore();
   const { createBookmark, deleteBookmark } = bookmarkStore;
+  const threadStore = useThreadStore();
+  const { openThread } = threadStore;
   const runtimeConfig = useRuntimeConfig();
   const editMessageItem: Item = {
     icon: "mdi-pencil",
@@ -84,6 +87,13 @@ export const useMessageActionItems = (
           title: "Pin Message",
         },
   );
+  const viewThreadItem: Item = {
+    icon: "mdi-comment-multiple-outline",
+    onClick: () => {
+      openThread(message.partitionKey, message.rowKey);
+    },
+    title: "View Thread",
+  };
   const bookmarkItem = computed<Item>(() =>
     bookmarkStore.isBookmarked(message.partitionKey, message.rowKey)
       ? {
@@ -129,6 +139,7 @@ export const useMessageActionItems = (
       case MessageType.EditRoom:
         return [copyTextItem, copyMessageLinkItem];
       case MessageType.Message:
+        return [copyTextItem, viewThreadItem, pinMessageItem.value, bookmarkItem.value, copyMessageLinkItem];
       case MessageType.Webhook:
         return [copyTextItem, pinMessageItem.value, bookmarkItem.value, copyMessageLinkItem];
       case MessageType.PinMessage:
