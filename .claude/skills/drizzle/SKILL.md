@@ -303,6 +303,16 @@ All mutations that call `.returning()` must:
   pnpm db:up    # applies pending migrations to the DB
   ```
 
+## Nullable String Columns
+
+- **Use `.notNull().default("")` for optional user-editable text fields** — never use `null` as the "not set" state for strings. Empty string `""` is the canonical absent value for text content (biography, color, topic, group, description, etc.).
+- **Keep `null` only for semantically distinct absence**:
+  - URL fields (`image`, `url`) — null means "no image/URL set"; `""` would fail URL validation
+  - Fields constrained to `null` by a CHECK constraint (e.g. `roomsInMessage.name` must be `null` for DirectMessage type)
+  - Nullable FK references where `null` means the referenced row was deleted (audit trail semantics)
+  - Auth-framework-managed fields (`accounts`, `sessions`) — do not touch
+- **Update downstream `??` fallbacks to `||`** when a field changes from nullable to `""` — `"" ?? fallback` returns `""` (not the fallback), so `??` must become `||` in template expressions and JS/TS checks.
+
 ## Time Duration Columns
 
 - **Always store time durations in milliseconds** — never seconds, minutes, or hours. Milliseconds is the standard unit; only deviate when sub-millisecond precision is genuinely required.

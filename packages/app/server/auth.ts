@@ -31,7 +31,7 @@ export const auth = betterAuth({
   user: {
     additionalFields: {
       biography: {
-        required: false,
+        required: true,
         type: "string",
         validator: {
           input: selectUserSchema.shape.biography,

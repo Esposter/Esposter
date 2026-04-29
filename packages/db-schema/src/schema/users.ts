@@ -10,7 +10,7 @@ export const USER_NAME_MAX_LENGTH = 100;
 export const users = pgTable(
   "users",
   {
-    biography: text("biography"),
+    biography: text("biography").notNull().default(""),
     createdAt: timestamp("created_at").notNull(),
     deletedAt: timestamp("deleted_at"),
     email: text("email").notNull().unique(),
@@ -23,7 +23,7 @@ export const users = pgTable(
   ({ biography, name }) => [
     check(
       "users_biography_length_check",
-      sql`${biography} IS NULL OR LENGTH(${biography}) <= ${sql.raw(USER_BIOGRAPHY_MAX_LENGTH.toString())}`,
+      sql`LENGTH(${biography}) <= ${sql.raw(USER_BIOGRAPHY_MAX_LENGTH.toString())}`,
     ),
     check("users_name_length_check", createNameCheckSql(name, USER_NAME_MAX_LENGTH)),
   ],
@@ -32,7 +32,7 @@ export const users = pgTable(
 export type User = typeof users.$inferSelect;
 
 export const selectUserSchema = createSelectSchema(users, {
-  biography: z.string().max(USER_BIOGRAPHY_MAX_LENGTH).nullable(),
+  biography: z.string().max(USER_BIOGRAPHY_MAX_LENGTH),
   email: z.email(),
   name: createNameSchema(USER_NAME_MAX_LENGTH),
 });

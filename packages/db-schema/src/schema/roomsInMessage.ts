@@ -28,8 +28,8 @@ export const roomsInMessage = pgTable(
     image: text("image"),
     isReadOnly: boolean("isReadOnly").notNull().default(false),
     name: text("name"),
-    slowmodeMs: integer("slowmodeMs"),
     participantKey: text("participantKey").unique(),
+    slowmodeMs: integer("slowmodeMs"),
     topic: text("topic").notNull().default(""),
     type: roomTypeEnum("type").notNull().default(RoomType.Room),
     userId: text("userId")

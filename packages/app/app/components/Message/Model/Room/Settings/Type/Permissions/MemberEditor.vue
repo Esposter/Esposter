@@ -42,7 +42,7 @@ await readMemberRoles({ roomId, userIds: [member.id] });
             mr-2
             rd-full
             size-3
-            :style="{ backgroundColor: role.color ?? 'rgb(var(--v-theme-on-surface-variant))' }"
+            :style="{ backgroundColor: role.color || 'rgb(var(--v-theme-on-surface-variant))' }"
           />
         </template>
         <template #append>

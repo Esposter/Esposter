@@ -127,7 +127,7 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
   async submitTransaction(actions: Parameters<TableClient["submitTransaction"]>[0]): Promise<TableTransactionResponse> {
     const snapshot = new Map(this.table);
     try {
-      for (const [type, entity, updateMode] of actions) {
+      for (const [type, entity, updateMode] of actions)
         switch (type) {
           case "create":
             await this.createEntity(entity);
@@ -144,7 +144,6 @@ export class MockTableClient implements Except<TableClient, "pipeline"> {
           default:
             exhaustiveGuard(type);
         }
-      }
     } catch (error) {
       this.table.clear();
       for (const [key, value] of snapshot) this.table.set(key, value);

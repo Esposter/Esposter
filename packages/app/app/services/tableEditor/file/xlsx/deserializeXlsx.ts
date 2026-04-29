@@ -1,3 +1,4 @@
+/* oxlint-disable @typescript-eslint/prefer-nullish-coalescing */
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 import type { XlsxDataSourceItem } from "#shared/models/tableEditor/file/xlsx/XlsxDataSourceItem";
 

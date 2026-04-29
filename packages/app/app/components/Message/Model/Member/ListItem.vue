@@ -72,7 +72,7 @@ const warnReason = ref("");
               </v-tooltip>
             </div>
             <div v-if="memberRoles.length > 0" flex flex-wrap gap-1 mt-1>
-              <v-chip v-for="{ id, name, color } of memberRoles" :key="id" size="x-small" :color="color ?? undefined">
+              <v-chip v-for="{ id, name, color } of memberRoles" :key="id" size="x-small" :color>
                 {{ name }}
               </v-chip>
             </div>

@@ -12,7 +12,7 @@ export const getCreateMessageNotificationPayload = (
   let textContent: string | undefined = message;
 
   try {
-    textContent = normalizeString(parse(message).querySelector("p")?.structuredText) || undefined;
+    textContent = normalizeString(parse(message).querySelector("p")?.structuredText);
   } catch (error) {
     context.error(`Failed to create message notification payload for message ${message}: `, error);
   }

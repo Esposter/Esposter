@@ -1,3 +1,4 @@
+/* oxlint-disable @typescript-eslint/prefer-nullish-coalescing */
 import type { CsvDataSourceItem } from "#shared/models/tableEditor/file/csv/CsvDataSourceItem";
 import type { DataSource } from "#shared/models/tableEditor/file/datasource/DataSource";
 

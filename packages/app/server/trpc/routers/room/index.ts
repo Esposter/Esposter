@@ -53,14 +53,7 @@ import {
   usersToRoomsInMessage,
   UserToRoomInMessageRelations,
 } from "@esposter/db-schema";
-import {
-  InvalidOperationError,
-  ItemMetadataPropertyNames,
-  normalizeString,
-  NotFoundError,
-  Operation,
-  takeOne,
-} from "@esposter/shared";
+import { InvalidOperationError, ItemMetadataPropertyNames, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { and, count, desc, eq, getColumns, ilike, inArray, ne, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
@@ -625,14 +618,7 @@ export const roomRouter = router({
     getPermissionsProcedure(RoomPermission.ManageRoom, updateRoomInputSchema, "id"),
     ["name"],
   ).mutation<RoomInMessage>(async ({ ctx, input: { id, ...rest } }) => {
-    const name = normalizeString(rest.name) || undefined;
-    const updatedRoom = (
-      await ctx.db
-        .update(roomsInMessage)
-        .set({ ...rest, name })
-        .where(eq(roomsInMessage.id, id))
-        .returning()
-    )[0];
+    const updatedRoom = (await ctx.db.update(roomsInMessage).set(rest).where(eq(roomsInMessage.id, id)).returning())[0];
     if (!updatedRoom)
       throw new TRPCError({
         code: "BAD_REQUEST",

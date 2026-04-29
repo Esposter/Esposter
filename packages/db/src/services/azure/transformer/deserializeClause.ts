@@ -4,7 +4,7 @@ import { deserializeKey } from "@/services/azure/table/deserializeKey";
 import { CLAUSE_REGEX } from "@/services/azure/transformer/constants";
 import { deserializeValue } from "@/services/azure/transformer/deserializeValue";
 import { BinaryOperator } from "@esposter/db-schema";
-import { NotFoundError, normalizeString } from "@esposter/shared";
+import { normalizeString, NotFoundError } from "@esposter/shared";
 
 export const deserializeClause = (
   string: string,
